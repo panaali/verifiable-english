@@ -247,6 +247,16 @@
    ]
   },
   {
+   "test": "tests/test_ci_workflow.py",
+   "why": "starts git in tests/test_ci_workflow.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_ci_workflow.py:git: git"
+   ]
+  },
+  {
    "test": "tests/test_closure_witnesses.py",
    "why": "starts git (git cat-file) in experiments/E0/closure_witnesses/validate.py",
    "recorded": [
@@ -681,6 +691,17 @@
     "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
     "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
     "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_inventory_path.py",
+   "why": "starts git (git check-ignore, git ls-files) in tests/test_inventory_path.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_inventory_path.py:test_no_train_only_path_is_read_outside_the_accessor: git ls-files",
+    "tests/test_inventory_path.py:test_the_overlay_is_git_ignored_and_the_committed_copies_are_not.<locals>.<lambda>: git check-ignore"
    ]
   },
   {

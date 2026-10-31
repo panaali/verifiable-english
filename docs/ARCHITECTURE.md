@@ -70,16 +70,19 @@ the gate now stores collected IDs with the checked commit and compares them with
 
 `tools/layer_policy.py` is the single table of five layers (kernel, profiles, surface, tools, apps) for Python and
 Lean; `tools/check_python_layers.py`, `tools/check_lean_imports.py` and `tools/check_rust_deps.py` enforce
-inward-only imports against the exception ledgers counted above. Most Python exceptions are kernel, profile or
-surface modules importing `ve.backends`; most Lean exceptions are the legacy `Core` and `TableauExtended*` proofs
+inward-only imports against the exception ledgers counted above. The remaining Python exceptions are helpers
+that sit one layer too far out (the AST's wire tag table and numeral reader, search's formula walkers) and a few
+legacy registration and entry-point edges; most Lean exceptions are the legacy `Core` and `TableauExtended*` proofs
 importing `Closure` and `Route` machinery. Rust's crate split is done: `ve-kernel` and `ve-profile` are separate
 crates and `ve-core` is a re-export facade, so cargo enforces the Rust boundary. How to run the checkers and the
 test-selection policy: [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md).
 
-The Python layer table predates lean-first. It files `entailment`, `evaluate`, `norms`, `rights`, `softnorms` and
-`units` as layer 2 "profiles" although they now relay and hold data, and it files the relay (`ve.backends`) as
-layer 4, so every module that relays Lean's answer is an exception. Under lean-first rule 2 the transport is the
-innermost Python layer; the DRI adopted the five-layer map of review T5, checked by `import-linter` (D5).
+The Python layer table follows the five-layer map of review T5 that the DRI adopted (D5), and `import-linter`
+checks it through the generated `.importlinter`: 1 transport and wire (`errors`, `wire`, `limits`, the relay and
+service clients in `ve.backends`), 2 containers built from Lean's answers (`ast`, `environment`, `model`, the
+profile containers), 3 display and English rendering, 4 CLI, documents, assist, adapters and route modules, 5 apps.
+Under lean-first rule 2 the transport is the innermost Python layer, so a module that relays Lean's answer imports
+inward. A package's row places every module under it; a module no row places fails the check (batch AR-14).
 
 ## 3. The wire contract and the response shapes
 
@@ -177,8 +180,8 @@ superseded, with a link here) or waits for the named reason; `tests/test_archite
 | 2 | [implementation.md](implementation.md) | "Experimental Python VE v0 core … supports exactly `ve.core@0`, `relational-fol@0` … no third-party runtime dependencies" | Python is the CLI and relay over Lean's checker; runtime dependencies are counted in section 1 | corrected |
 | 3 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md) table | Rust: "one crate holds all three groups until the crate split" | `ve-kernel`, `ve-profile`, `ve-core` facade (section 2); batch AR-8 deleted the module check and `tools/rust-module-exceptions.json` that its Rust paragraph describes: `tools/check_rust_deps.py` reads cargo's crate graph from `cargo metadata` | waits: branches `infra/ts-B1` and `lean-first/b16d` edit this file |
 | 4 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md) table | Lean entry points "`NormsMain`, `SoftNormsMain`, `RightsMain`", … | deleted by lean-first batch 1; the `[[lean_exe]]` count is in section 1 | waits: `ts-B1` and `b16d` edit this file |
-| 5 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md) | the service is "still outside the `ve` command path" | every statement-layer route is a service mode (section 3) | waits: `ts-B1` and `b16d` edit this file |
-| 6 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md), "Current exceptions" | "12 Python edges plus the assist CLI app edge" | the Python layer exception count is in section 1 | waits: `ts-B1` and `b16d` edit this file |
+| 5 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md) | the service is "still outside the `ve` command path" | every statement-layer route is a service mode (section 3) | corrected |
+| 6 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md), "Current exceptions" | "12 Python edges plus the assist CLI app edge" | the Python layer exception count is in section 1 | corrected |
 | 7 | [INTEGRATION-GAPS.md](INTEGRATION-GAPS.md) | the service "is not yet called by `ve`"; alternatives, reports and quantity are not service modes: "`alternatives@0` continues through the dedicated `ve_alternatives_route`", "The stage-1 service also has no reports mode", "The stage-1 `ve_service` has no quantity mode" | all three are modes and `ve` calls the service (section 3) | corrected |
 | 8 | [spec/lean-service.md](spec/lean-service.md) | "Nothing in `ve` calls the service yet" | the relay is the main path (section 3) | corrected |
 | 9 | `docs/trust-baseline.json`, `section11` | per-file classes for 12 `*Main.lean` files ("NormsMain.lean", "RightsMain.lean", "RiskMain.lean", …) | those files no longer exist | corrected |

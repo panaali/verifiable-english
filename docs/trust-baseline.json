@@ -1573,6 +1573,27 @@
    "reason": "ap-1bf: V +61 (VE/WireContract/Hooks/Acts.lean +57, VE/WireContract/Diagnose.lean +2, VE/WireContract/Tables/Acts.lean +2), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bf, 2026-10-18",
    "commit": "11de39bd88e07d7d1cf75e16ae956e3179b324c3"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "qt-a3cb: lean/VE/Cardinality/Run.lean +8 untied V (D[V] sizesJson 4; G[V] runCase +4, the countermodel kind; Run.countermodel is G[V] tied by countermodel_sound; regionSizes, sizeIndex, withSizes, Body.evalBy are C by withSizes_eq; regionCost G[R]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3cb, 2026-10-30",
+   "commit": "96c5d418d98eb79a764b513f6f2d8f9b65125fcf"
+  },
+  {
+   "class": "S",
+   "lines": 31,
+   "reason": "ap-4a: lean/VE/Acts/Grammar.lean S +31 (Attach, Kind, the rule kind field and the edge kinds the table writes, attachOf, edgeLhs; modifier_edges); K +0; phraseReadings G[V] tied to phraseReadings_exact",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4a, 2026-10-18",
+   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
   }
  ]
 }

@@ -1,0 +1,30 @@
+# sc-2c checks (worktree ve-sc-2c; the command, then the lines of its output this report cites)
+## PATH=~/.elan/bin:$PATH lake build (lean/), on 1cd8ca688
+Build completed successfully (1182 jobs).
+## python3 lean/audit.py, on 3436a8551
+PASS: 684 source files; 7650 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+## uv run python tools/regen_generated.py --write (after be7db6564..ea6f40639), then tools/lean_statements.py after 63bf17240
+regen_generated: wrote 34 entries
+## uv run python tools/regen_generated.py --check (3436a8551); --check --only assurance-manifest|trust-tables|codemap (1cd8ca688)
+exit: exit 0
+regen_generated: checked 1 entries (each of the three)
+## uv run python tools/trust_map.py --check (1cd8ca688)
+against 0c4ea31d21fb: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
+PASS: K, S and untied [V] within 0c4ea31d21fb and the allowances introduced since
+## zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run
+run 1: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD c2f56b4c (clean); 523s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+run 1 stopped at lean/audit.py: declarations.txt is stale (VE.Scope.Examples), fixed in 3436a8551
+run 2: 405/508 test units (map 0c4ea31d21, 1.07 s)
+run 2: FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified; log /tmp/ve-select-run-b1ss45bl/tests__test_assurance_manifest.py.log
+run 2: FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
+run 2: FAILED tests/test_scope_lean.py (exit 1): tests/test_scope_lean.py::test_the_scope_files_are_classified; log /tmp/ve-select-run-b1ss45bl/tests__test_scope_lean.py.log
+run 2: FAILED tests/test_scope_lean.py::test_the_scope_files_are_classified - assert...
+run 2: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD 3436a855 (clean); 2058s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none
+## zsh mac-pytest.sh -- <the two failed ids> (1cd8ca688)
+2 passed in 0.99s; ran LOCALLY (VM): no mac-pytest slot on ve-mac-1 within 600s; exit=0
+## uv run python tools/gate_collection.py --check --prebuilt (1cd8ca688)
+30820 collected, 30811 at 0c4ea31d21fb9e055e34a455dee6d3b3afb47947; 9 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
+## uv run python tools/repo_map.py --check
+PASS: 40 modes, each with its schema file; shared: common.json, envelope.json
+## uv run python tools/select_tests.py --paths <file> (1cd8ca688)
+lean/VE/Scope/Theorems.lean -> lake build, tests/test_scope_5_4_statements.py; docs/spec/scope.md -> tests/test_scope_5_4_statements.py; lean/VE/Scope/Govern.lean -> lake build

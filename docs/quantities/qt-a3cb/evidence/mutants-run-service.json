@@ -1,0 +1,34 @@
+{
+ "mutants": [
+  {
+   "id": "charge-dropped",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the region sizes are charged against W6a's budget before they are computed (deliverable 2; the task's seeded bug: the region size left uncharged)",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 21.7,
+   "output_tail": "n_sizes_are_charged_before_they_are_computed(service):\n        \"\"\"The DRI's rule of 2026-10-27 (plan failure 8, qt-a3c review F1): each region's size is computed once per model\n        and its work, 2^6 x 1,000 x 7 = 448,000 evaluations per sort of 1,000 objects and six predicates, is charged\n        against W6a's evaluation budget of 1,000,000 before any size is computed. The growing chain is counted and\n        refuted at one and two sorts and ends at three in the refusal (UNKNOWN), within the deadline.\"\"\"\n        answers = [says(bound[\"result\"]) for bound in exchange(service, [chain(k, 1000) for k in (1, 2, 3)])[1][\"results\"]]\n>       assert answers == [\"ok refutes\", \"ok refutes\", EXHAUSTED]\nE       AssertionError: assert ['ok refutes'... 'ok refutes'] == ['ok refutes'...00 exhausted']\nE         \nE         At index 2 diff: 'ok refutes' != 'ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted'\nE         Use -v to get more diff\n\ntests/test_cardinality_service.py:314: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_cardinality_service.py::test_region_sizes_are_charged_before_they_are_computed\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 0.95s\n    Finished `release` profile [optimized] target(s) in 0.03s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rqfegik8)\n"
+  },
+  {
+   "id": "regionCost-predicates",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionCost charges each region's body by its predicates",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.4,
+   "output_tail": "n_sizes_are_charged_before_they_are_computed(service):\n        \"\"\"The DRI's rule of 2026-10-27 (plan failure 8, qt-a3c review F1): each region's size is computed once per model\n        and its work, 2^6 x 1,000 x 7 = 448,000 evaluations per sort of 1,000 objects and six predicates, is charged\n        against W6a's evaluation budget of 1,000,000 before any size is computed. The growing chain is counted and\n        refuted at one and two sorts and ends at three in the refusal (UNKNOWN), within the deadline.\"\"\"\n        answers = [says(bound[\"result\"]) for bound in exchange(service, [chain(k, 1000) for k in (1, 2, 3)])[1][\"results\"]]\n>       assert answers == [\"ok refutes\", \"ok refutes\", EXHAUSTED]\nE       AssertionError: assert ['ok refutes'... 'ok refutes'] == ['ok refutes'...00 exhausted']\nE         \nE         At index 2 diff: 'ok refutes' != 'ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted'\nE         Use -v to get more diff\n\ntests/test_cardinality_service.py:314: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_cardinality_service.py::test_region_sizes_are_charged_before_they_are_computed\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 0.94s\n    Finished `release` profile [optimized] target(s) in 0.03s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-o2tv5tq6)\n"
+  }
+ ]
+}
