@@ -1,0 +1,4 @@
+# lake env lean docs/scope/sc-2c/evidence/raw-counterexample.lean (worktree ve-sc-2c, base 0c4ea31d2)
+ok: (VE.Formula.top, (VE.Formula.top, (VE.Formula.not (VE.Formula.top), (false, false))))
+Except.ok (0, 0, false)
+Except.ok (false, false)
