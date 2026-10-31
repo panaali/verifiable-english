@@ -1728,6 +1728,57 @@
    "follow_up": "DF-13"
   },
   {
+   "id": "environment-2fe7028deaf61868",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/wire-contract/norms@0-test-inputs.json/120/1",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "reorder",
+     [
+      "profiles"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0"
+    ],
+    "spec_revision": "v",
+    "vocabulary": {}
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "property not found: predicates"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "property not found: predicates"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "Missing profile relational-fol@0"
+    }
+   },
+   "signature": "2fe7028deaf61868",
+   "follow_up": "DF-6"
+  },
+  {
    "id": "requests-0118b2cc107d0c39",
    "surface": "requests",
    "profile": "dependency-order:dependency-order",
@@ -45129,10 +45180,10 @@
    "follow_up": "DF-14"
   },
   {
-   "id": "environment-2fe7028deaf61868",
+   "id": "environment-ac3e8bc51108a1c4",
    "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/wire-contract/norms@0-test-inputs.json/120/1",
+   "profile": "soft-norms",
+   "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/18/1",
    "engines": [
     "python",
     "lean",
@@ -45141,20 +45192,60 @@
    "meta": {},
    "mutation": [
     [
-     "reorder",
+     "limit",
      [
-      "profiles"
+      "vocabulary",
+      "soft",
+      "ranks"
      ],
-     null
+     17
     ]
    ],
    "input": {
     "language": "ve.core@0.2",
     "profiles": [
-     "norms@0"
+     "norms@0",
+     "relational-fol@0",
+     "soft-norms@0"
     ],
-    "spec_revision": "v",
-    "vocabulary": {}
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "constants": {
+      "alice": {
+       "description": "a",
+       "sort": "user",
+       "verbalisation": "A"
+      }
+     },
+     "predicates": {},
+     "soft": {
+      "outranking": {},
+      "ranks": [
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a",
+       "b",
+       "a"
+      ]
+     },
+     "sorts": {
+      "user": {
+       "description": "u"
+      }
+     }
+    }
    },
    "classes": [
     "code"
@@ -45162,13 +45253,87 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "property not found: predicates"
+     "code": "ResourceLimit",
+     "text": "ResourceLimit: ranks"
     },
     "lean": {
      "outcome": "error",
+     "code": "ResourceLimit",
+     "text": "ResourceLimit: ranks"
+    },
+    "rust": {
+     "outcome": "error",
      "code": "InvalidInput",
-     "text": "property not found: predicates"
+     "text": "expected exactly fields [\"sort\", \"description\"]"
+    }
+   },
+   "signature": "ac3e8bc51108a1c4",
+   "follow_up": "DF-19"
+  },
+  {
+   "id": "environment-67f9be29550cf4b5",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/norm_defaults_rust.json/74/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "profiles",
+      1
+     ],
+     "cr"
+    ],
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "x_required",
+      "arguments",
+      0
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "constants": {},
+     "predicates": {
+      "x_required": {
+       "arguments": [
+        "A"
+       ],
+       "description": "o"
+      }
+     },
+     "sorts": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'A'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'A'"
     },
     "rust": {
      "outcome": "error",
@@ -45176,8 +45341,83 @@
      "text": "Missing profile relational-fol@0"
     }
    },
-   "signature": "2fe7028deaf61868",
-   "follow_up": "DF-6"
+   "signature": "67f9be29550cf4b5",
+   "follow_up": "DF-13"
+  },
+  {
+   "id": "environment-381919addab7eb62",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "tests/test_speech_acts.environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "open_required",
+      "arguments",
+      0
+     ],
+     "cr"
+    ],
+    [
+     "unicode",
+     [
+      "profiles",
+      2
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "speech_acts": {},
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "reviewed": {
+       "arguments": [
+        "s"
+       ],
+       "description": "r"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 's'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 's'"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected exactly fields [\"language\", \"profiles\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "381919addab7eb62",
+   "follow_up": "DF-13"
   }
  ]
 }

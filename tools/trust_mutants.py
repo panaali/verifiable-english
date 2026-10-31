@@ -98,14 +98,23 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   the record (`record`) with `shard: {k, n, owned}` added; each mutant another part owns is listed in plan order
   with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
-  writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" (their sum)
-  and `shards: [{k, n, jobs, seconds}]`, by k; it prints that run's lines and exits with its code. It refuses (exit
-  2) parts that are no part as this tool writes one (`unread`: a field or row not of its type, a status not one
-  it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
-  file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or with no verdict, or
-  hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER SHARD or NOT RUN;
+  writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
+  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
+  code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs,
+  the plan or --rescore's file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or
+  with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER
+  SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
+
+Every --json records where the time went (`steps`, eff-tm-control; a run fact, like "seconds", that no verdict
+reads): `wall`, the seconds of each phase of the run in turn (`WALL`: the plan, the scratch copies, the control
+build, the probe's install, the checks' probes without a mutant, the mutants, the reads); `lake`, the seconds Lake
+ran in each step summed over the jobs (`LAKE`: those control phases, then in the mutants' builds the mutated
+module's stage, the check modules' stage and the outside --test files, the stage controls, and the mutants' probes),
+and `runs`, how many Lake runs each took. One line prints them. --merge writes each part's in its `shards` entry
+and their sums as the record's.
 """
 from __future__ import annotations
 
@@ -126,6 +135,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from types import UnionType
 from typing import get_args, get_origin, get_type_hints
@@ -921,6 +931,78 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
     return bool(found)
 
 
+# `main`'s phases, in turn
+WALL = ("plan", "scratch", "control_build", "probe_install", "control_probes", "mutants", "cleanup", "reads")
+LAKE = ("control_build", "probe_install", "control_probes", "mutant_builds", "mutant_checks", "outside_checks",
+        "stage_controls", "mutant_probes", "other")  # the steps a Lake run counts under (`Steps.step`)
+
+
+class Steps:
+    """Where a run's time goes (`--json`'s `steps`): `wall` seconds by phase, and Lake's seconds and runs by step,
+    summed over the jobs: `Scratch.lake` counts each run under its thread's current `step` ("other" outside one)."""
+
+    def __init__(self):
+        self.lock, self.local = threading.Lock(), threading.local()
+        self.reset()
+
+    def reset(self) -> None:
+        self.wall, self.lake, self.runs = dict.fromkeys(WALL, 0.0), dict.fromkeys(LAKE, 0.0), dict.fromkeys(LAKE, 0)
+
+    def step(self, name: str):
+        """A context in which this thread's Lake runs count under `name`."""
+        steps = self
+
+        class Step:
+            def __enter__(self):
+                self.before, steps.local.name = getattr(steps.local, "name", None), name
+
+            def __exit__(self, *_):
+                steps.local.name = self.before
+        return Step()
+
+    def ran(self, seconds: float) -> None:
+        name = getattr(self.local, "name", None) or "other"
+        with self.lock:
+            self.lake[name] += seconds
+            self.runs[name] += 1
+
+    def phase(self, name: str, since: float) -> float:
+        """Adds the seconds since `since` to the phase `name`; now."""
+        now = time.monotonic()
+        self.wall[name] += now - since
+        return now
+
+    def record(self) -> dict:
+        return {"wall": {k: round(v, 1) for k, v in self.wall.items()},
+                "lake": {k: round(v, 1) for k, v in self.lake.items()}, "runs": dict(self.runs)}
+
+
+STEPS = Steps()
+
+
+def steps_line(steps: dict) -> str:
+    """The printed line of a `steps` record: each phase and step that took any time."""
+    def each(d: dict, runs: dict | None = None) -> str:
+        return ", ".join(f"{k} {v:g} s" + (f" ({runs[k]})" if runs else "") for k, v in d.items()
+                         if v or runs and runs[k])
+    return f"trust_mutants: steps: wall {each(steps['wall'])}; lake {each(steps['lake'], steps['runs'])}"
+
+
+def summed(each: list[dict]) -> dict:
+    """The `steps` of the parts `each` added up, key by key."""
+    return {"wall": {k: round(sum(s["wall"][k] for s in each), 1) for k in WALL},
+            "lake": {k: round(sum(s["lake"][k] for s in each), 1) for k in LAKE},
+            "runs": {k: sum(s["runs"][k] for s in each) for k in LAKE}}
+
+
+def timed(d) -> bool:
+    """Whether d is a `steps` record as `Steps.record` writes it: `WALL` and `LAKE` seconds (non-negative numbers)
+    and `LAKE` runs (non-negative ints)."""
+    return type(d) is dict and set(d) == {"wall", "lake", "runs"} and all(
+        type(d[p]) is dict and list(d[p]) == list(keys) and all(type(v) in types and v >= 0 for v in d[p].values())
+        for p, keys, types in (("wall", WALL, (int, float)), ("lake", LAKE, (int, float)), ("runs", LAKE, (int,))))
+
+
 class Scratch:
     """A private copy of lean/, sources and build, that mutants are built in; the checkout is only read."""
 
@@ -945,7 +1027,8 @@ class Scratch:
 
     def lake(self, env: dict, *args: str, timeout: float | None = None) -> tuple[int, str]:
         """Lake's exit code and output; past `timeout` seconds the whole process group is killed and the code is
-        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7)."""
+        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7). Its seconds count in `STEPS`."""
+        started = time.monotonic()
         child = subprocess.Popen([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
         try:
@@ -954,6 +1037,8 @@ class Scratch:
             os.killpg(child.pid, signal.SIGKILL)
             child.communicate()
             return TIMED_OUT, f"lake {args[0]} did not finish in {timeout:g} s (--build-timeout)"
+        finally:
+            STEPS.ran(time.monotonic() - started)
         return child.returncode, out + err
 
 
@@ -995,9 +1080,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 current["mutant"] = True
             text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
                 read(f), tree.roles.get(f, ()))
-            probed[f] = probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
-                                             "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
-                              beside(scratch.lean, f), outside_file is not None)
+            with STEPS.step("mutant_probes"):
+                probed[f] = probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
+                                                 "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
+                                  beside(scratch.lean, f), outside_file is not None)
         entry, control = probed[f].get(span), hashes.get(key)
         if entry is None or control is None:
             return "Lean could not elaborate it in the probe"
@@ -1027,9 +1113,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
 
     columns: dict[tuple[str, int, str], int] = {}  # each error's column, which `in_tactic` reads
 
-    def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
+    def build(stage: list[str], step: str | None = None) -> tuple[int, list[tuple[str, int, str]]]:
         for attempt in range(3):  # again: Lake can fail with no located error under load
-            code, output = lake(env, "build", *(f"+{x}" for x in stage))
+            with STEPS.step(step or ("mutant_builds" if stage == built[:1] else "mutant_checks")):
+                code, output = lake(env, "build", *(f"+{x}" for x in stage))
             if code == TIMED_OUT:
                 return code, [("", 0, output)]
             found = located(output)
@@ -1103,7 +1190,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 key = (tuple(stage), state())
                 if (control := controls.get(key)) is None:  # the same build without the mutant
                     write(m.file, False)
-                    control = build(stage)[1]
+                    control = build(stage, "stage_controls")[1]
                     write(m.file, True)
                     current["mutant"] = False  # the stage's build is the control's until it is built again
                     if control[:1] and not control[0][0]:  # no located error: not kept for others
@@ -1122,7 +1209,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                               lambda now: rebuild(stage, now), reading)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
-        failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
+        with STEPS.step("outside_checks"):
+            failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
         if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
             return "UNKNOWN", f"{late}: {failing[late][1]}"
         if not failing:  # review sc-1ae F1: the proofs it broke, each cut, which an --allow reason cites
@@ -1131,8 +1219,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         key = ("outside", tuple(built), state())
         if key not in controls:
             write(m.file, False)
-            ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
-            controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
+            ok = all(build(stage, "stage_controls")[0] == 0 for stage in (built[:1], built[1:]) if stage)
+            with STEPS.step("stage_controls"):
+                controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
             write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
@@ -1141,7 +1230,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             copy = scratch.lean.parent / "outside" / t.name
             copy.parent.mkdir(exist_ok=True)
             copy.write_text(now[str(t)])
-            code, output = lake(env, "env", "lean", str(copy))
+            with STEPS.step("outside_checks"):
+                code, output = lake(env, "env", "lean", str(copy))
             found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
             return None if not built_mutant() or code and not found else found
 
@@ -1409,11 +1499,12 @@ def exit_code(counts: dict[str, int]) -> int:
 
 def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: int, deep: bool, tests: list[str],
            seconds: int, classes: list[str], digests: dict, rescore: dict | None, shard: dict | None = None,
-           shards: list[dict] | None = None) -> dict:
-    """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`)."""
+           shards: list[dict] | None = None, steps: dict | None = None) -> dict:
+    """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`); `steps`, where its time
+    went (`Steps`)."""
     counts, by_class = tally(found, shard is not None)
     return {"base": base, "head": head, "jobs": jobs, "max_mutants": max_mutants, "deep": deep, "tests": tests,
-            "seconds": seconds, "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
+            "seconds": seconds, **({"steps": steps} if steps else {}), "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
             **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
@@ -1490,11 +1581,13 @@ def unread(d) -> str | None:
             "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run",)) and d["rescore"]["mode"] in (
                 "full", "identical", "checks"))):
         return "a field is missing or not of its type"
+    if "steps" in d and not timed(d["steps"]):
+        return "its steps are not a record of seconds by step"
     if why := unwritten(d.get("mutants")):
         return why
     found = [row_mutant(r) for r in d["mutants"]]
     again = record(found, d["base"], d["head"], d["jobs"], d["max_mutants"], d["deep"], d["tests"], d["seconds"],
-                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"])
+                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"], steps=d.get("steps"))
     if bad := sorted(k for k in again.keys() | d.keys() if canon(again.get(k)) != canon(d.get(k))):
         return f"its {', '.join(bad)} are not what its rows give"
     return None
@@ -1580,16 +1673,20 @@ def merge(out: Path, paths: list[Path]) -> int:
         found = [row_mutant(rows.get(r["id"], (r,))[0]) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
-        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d, _ in parts]
+        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+                   **({"steps": d["steps"]} if "steps" in d else {})} for d, _ in parts]
+        steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
         data = record(found, first["base"], first["head"], sum(s["jobs"] for s in shards), first["max_mutants"],
                       first["deep"], first["tests"], max(s["seconds"] for s in shards), first["classes"],
-                      first["inputs"], rescore, shards=shards)
+                      first["inputs"], rescore, shards=shards, steps=steps)
     except (KeyError, TypeError, AttributeError, ValueError) as error:
         return refuse(f"a part cannot be read ({type(error).__name__}: {error})")
     for m in found:
         if m.status in ("SURVIVOR", "UNKNOWN", "NOT RUN"):
             print(line(m))
     counts = summary(found, False, data["seconds"], rescore)
+    if steps:
+        print(steps_line(steps))
     out.write_text(evidence(data))
     return exit_code(counts)
 
@@ -1647,6 +1744,7 @@ def main(argv: list[str] | None = None) -> int:
     if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
     started = time.monotonic()
+    STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
     for t in outside:
         try:
@@ -1708,29 +1806,39 @@ def main(argv: list[str] | None = None) -> int:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
         hashes: dict = {}  # `probe`'s hash of each check without a mutant
+        since = STEPS.phase("plan", started)
         if todo:  # the control build, and each check's elaboration, only for the mutants that run
             first = Scratch(root / "lean", Path(scratch_dir))
-            code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(tree, m, tests,
-                                                                                                args.deep)}))
-            failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
+            since = STEPS.phase("scratch", since)
+            with STEPS.step("control_build"):
+                code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(
+                    tree, m, tests, args.deep)}))
+                failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
+            since = STEPS.phase("control_build", since)
             if code or failing:
                 return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
             files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in todo for x in targets(
                 tree, m, tests, args.deep)}) if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
             files.update({str(t): (t, file_roles(t)) for t in outside})
-            if not install(lambda *a: first.lake(env, *a), first.lean):
-                return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
+            with STEPS.step("probe_install"):
+                if not install(lambda *a: first.lake(env, *a), first.lean):
+                    return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
+            since = STEPS.phase("probe_install", since)
 
             def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
                 i, (key, (path, roles)) = item
-                got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key), Path(key).is_absolute())
+                with STEPS.step("control_probes"):
+                    got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key),
+                                Path(key).is_absolute())
                 return {(key, span): said for span, said in got.items()}
             with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
                 hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
                                part.items()})
+            since = STEPS.phase("control_probes", since)
             pool.put(first)
             for _ in range(min(jobs, len(todo)) - 1):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
+            since = STEPS.phase("scratch", since)
 
         def one(m: Mutant) -> None:
             scratch = pool.get()
@@ -1743,6 +1851,8 @@ def main(argv: list[str] | None = None) -> int:
 
         with ThreadPoolExecutor(max_workers=jobs) as executor:
             list(executor.map(one, todo))
+        since = STEPS.phase("mutants", since)
+    since = STEPS.phase("cleanup", since)  # the scratch copies removed
     for m in not_run:
         print(line(m))
     seconds = round(time.monotonic() - started)
@@ -1753,10 +1863,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
+        STEPS.phase("reads", since)
+    print(steps_line(steps := STEPS.record()), flush=True)
+    if args.json:
         args.json.write_text(evidence(record(
             found, digests["base"], git(root, "rev-parse", "HEAD").stdout.strip(), jobs, args.max_mutants, args.deep,
             args.test, seconds, list(classes), digests, rescore,
-            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None)))
+            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None, steps=steps)))
     return exit_code(counts)
 
 
