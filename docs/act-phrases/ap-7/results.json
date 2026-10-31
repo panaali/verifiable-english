@@ -1,0 +1,541 @@
+{
+ "recall": [
+  23,
+  105
+ ],
+ "bar_recall": false,
+ "not_a_reading": [
+  1,
+  26
+ ],
+ "bar_not_a_reading": true,
+ "skipped_middle": [],
+ "bar_skipped": true,
+ "with_reading": [
+  20,
+  46
+ ],
+ "parsed_no_meaning": [
+  "u037",
+  "u045a",
+  "u059",
+  "u101",
+  "u0062.s01",
+  "u0156.s03",
+  "u0283.s04"
+ ],
+ "rejected": [
+  "u0038.s06 L1"
+ ],
+ "calls": 144,
+ "cw": 2227754,
+ "failed": [],
+ "phrases": [
+  {
+   "id": "u020",
+   "status": "none",
+   "lean": 0,
+   "A": 1,
+   "B": 2,
+   "agreed": 1,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u027",
+   "status": "ok",
+   "lean": 1,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u037",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u045a",
+   "status": "none",
+   "lean": 0,
+   "A": 1,
+   "B": 1,
+   "agreed": 1,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u051",
+   "status": "ok",
+   "lean": 2,
+   "A": 4,
+   "B": 4,
+   "agreed": 4,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u055",
+   "status": "ok",
+   "lean": 2,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u059",
+   "status": "none",
+   "lean": 0,
+   "A": 3,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u076",
+   "status": "ok",
+   "lean": 2,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u079b",
+   "status": "ok",
+   "lean": 1,
+   "A": 3,
+   "B": 2,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u087",
+   "status": "ok",
+   "lean": 2,
+   "A": 2,
+   "B": 4,
+   "agreed": 2,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u092",
+   "status": "ok",
+   "lean": 2,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u101",
+   "status": "none",
+   "lean": 0,
+   "A": 6,
+   "B": 5,
+   "agreed": 5,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u105",
+   "status": "ok",
+   "lean": 2,
+   "A": 3,
+   "B": 2,
+   "agreed": 2,
+   "matched": 2,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u106",
+   "status": "ok",
+   "lean": 1,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0062.s01",
+   "status": "none",
+   "lean": 0,
+   "A": 3,
+   "B": 5,
+   "agreed": 3,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0156.s03",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0199.s03",
+   "status": "refused",
+   "lean": 0,
+   "A": 2,
+   "B": 5,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0056.s01",
+   "status": "refused",
+   "lean": 0,
+   "A": 3,
+   "B": 4,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0142.s01",
+   "status": "refused",
+   "lean": 0,
+   "A": 4,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0291.s05",
+   "status": "refused",
+   "lean": 0,
+   "A": 2,
+   "B": 3,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0267.s02",
+   "status": "none",
+   "lean": 0,
+   "A": 1,
+   "B": 1,
+   "agreed": 1,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0065.s02",
+   "status": "ok",
+   "lean": 1,
+   "A": 3,
+   "B": 3,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0019.s07",
+   "status": "ok",
+   "lean": 1,
+   "A": 1,
+   "B": 1,
+   "agreed": 1,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0263.s03",
+   "status": "ok",
+   "lean": 1,
+   "A": 1,
+   "B": 1,
+   "agreed": 1,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0183",
+   "status": "refused",
+   "lean": 0,
+   "A": 4,
+   "B": 5,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0223.s03",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0193.s04",
+   "status": "none",
+   "lean": 0,
+   "A": 3,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0211.s03",
+   "status": "refused",
+   "lean": 0,
+   "A": 5,
+   "B": 7,
+   "agreed": 5,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0038.s06",
+   "status": "ok",
+   "lean": 1,
+   "A": 4,
+   "B": 3,
+   "agreed": 3,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0203.s03",
+   "status": "ok",
+   "lean": 1,
+   "A": 9,
+   "B": 5,
+   "agreed": 4,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0241.s01",
+   "status": "ok",
+   "lean": 1,
+   "A": 2,
+   "B": 3,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0194.s01",
+   "status": "none",
+   "lean": 0,
+   "A": 9,
+   "B": 8,
+   "agreed": 4,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0215.s03",
+   "status": "ok",
+   "lean": 1,
+   "A": 3,
+   "B": 3,
+   "agreed": 3,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0067.s07",
+   "status": "ok",
+   "lean": 1,
+   "A": 3,
+   "B": 3,
+   "agreed": 3,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0191.s04",
+   "status": "ok",
+   "lean": 1,
+   "A": 1,
+   "B": 2,
+   "agreed": 1,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0054.s03",
+   "status": "refused",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0209.s07",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 3,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0253.s04",
+   "status": "refused",
+   "lean": 0,
+   "A": 4,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0137.s03",
+   "status": "none",
+   "lean": 0,
+   "A": 6,
+   "B": 11,
+   "agreed": 4,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0099.s03",
+   "status": "none",
+   "lean": 0,
+   "A": 6,
+   "B": 5,
+   "agreed": 4,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0007.s03",
+   "status": "ok",
+   "lean": 1,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 1,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0187.s03",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0155.s03",
+   "status": "refused",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 1,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0114.s03",
+   "status": "refused",
+   "lean": 0,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0141.s05",
+   "status": "ok",
+   "lean": 1,
+   "A": 2,
+   "B": 2,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  },
+  {
+   "id": "u0283.s04",
+   "status": "none",
+   "lean": 0,
+   "A": 2,
+   "B": 3,
+   "agreed": 2,
+   "matched": 0,
+   "matcher_failed": false,
+   "skipped": []
+  }
+ ]
+}
