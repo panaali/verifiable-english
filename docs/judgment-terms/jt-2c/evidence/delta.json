@@ -1,0 +1,619 @@
+{
+ "base_service": "24fc7ab977b9b62fbdab1250d38d8fc0111951b4d7737be4a8175abcaa319a96",
+ "head_service": "47f840cfad5e8c5547d21b4838c0df1b1bfbaa91ad7592ae88582226ad90dbd3",
+ "pairs": [
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "check/case"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "check/case/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "check/case/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "check/case/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "path": "/vocabulary",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "english.read",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "english.read",
+    "status": "error"
+   },
+   "probe": "english.read/block"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "path": "/vocabulary",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "probe": "english.read/block/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "path": "/vocabulary",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "probe": "english.read/block/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "path": "/vocabulary",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "english.read",
+    "status": "error"
+   },
+   "probe": "english.read/block/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "environment/case"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "environment/case/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "environment/case/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "environment/case/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "metered/evaluate-budgeted"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "metered/evaluate-budgeted/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "metered/evaluate-budgeted/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "metered/evaluate-budgeted/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "model/case"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "model/case/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "model/case/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "model/case/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norm-defaults/norm-defaults-elaborate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norm-defaults/norm-defaults-elaborate/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norm-defaults/norm-defaults-elaborate/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norm-defaults/norm-defaults-elaborate/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/background"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/background/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/background/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/background/trailing"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/norms-elaborate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/norms-elaborate/duplicate"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/norms-elaborate/leading"
+  },
+  {
+   "authority": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "base": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: profiles must be sorted and unique",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/norms-elaborate/trailing"
+  }
+ ],
+ "ruling": "R1"
+}
