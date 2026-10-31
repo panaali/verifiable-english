@@ -1,0 +1,172 @@
+shard 3/6: 64 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/1036] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/1036] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/1036] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (2001 lines cut; full output in shard-full.txt)
+           Option.some.injEq, reduceCtorEq] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Readings/VerdictsWire.lean:946:90: This simp argument is unused:
+  Option.some.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵] at hl
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [517/689] Replayed VE.Defaults.Premises
+warning: VE/Defaults/Premises.lean:301:36: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Defaults/Premises.lean:301:77: unused variable `hU`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Defaults/Premises.lean:311:5: unused variable `valid`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [526/689] Replayed VE.Readings.SupExtra
+warning: VE/Readings/SupExtra.lean:70:47: unused variable `hA`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [684/689] Built EnglishLeanBenchMain (719ms)
+✔ [686/689] Built ScopeBenchMain (745ms)
+✔ [687/689] Built ScopeBenchMain:c.o (147ms)
+✔ [688/689] Built ve_english_lean_bench:exe (363ms)
+✔ [689/689] Built ve_scope_bench:exe (380ms)
+Build completed successfully (689 jobs).
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded crypto-common v0.1.7
+  Downloaded zmij v1.0.23
+  Downloaded version_check v0.9.5
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded digest v0.10.7
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded memchr v2.8.3
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.34s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.35s
+order: failed last time []; changed ['tests/test_cardinality_service.py']; then the rest; --maxfail 5
+recording 64 units with 4 jobs in /tmp/ve-select-run-sjikoxew
+  tests/test_cardinality_exercised.py: exit 1 in 0.9 s, 260 functions
+FAILED tests/test_cardinality_exercised.py (exit 1): tests/test_cardinality_exercised.py::test_a_definition_no_theorem_uses_is_reported, tests/test_cardinality_exercised.py::test_every_trusted_cardinality_definition_is_used_by_a_theorem; log /tmp/ve-select-run-sjikoxew/tests__test_cardinality_exercised.py.log
+E               'VE/Cardinality/Semantics.lean: VE.Cardinality.Body.holds',
+E           ]
+
+tests/test_cardinality_exercised.py:65: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_cardinality_exercised.py::test_every_trusted_cardinality_definition_is_used_by_a_theorem - AssertionError: assert ['VE/Cardinal...un.sizesJson'] == []
+  
+  Left contains one more item: 'VE/Cardinality/Run.lean: VE.Cardinality.Run.sizesJson'
+  
+  Full diff:
+  - []
+  + [
+  +     'VE/Cardinality/Run.lean: VE.Cardinality.Run.sizesJson',
+  + ]
+FAILED tests/test_cardinality_exercised.py::test_a_definition_no_theorem_uses_is_reported - AssertionError: assert ['VE/Cardinal...y.Body.holds'] == ['VE/Cardinal...y.Body.holds']
+  
+  At index 0 diff: 'VE/Cardinality/Run.lean: VE.Cardinality.Run.sizesJson' != 'VE/Cardinality/Semantics.lean: VE.Cardinality.Body.holds'
+  Left contains one more item: 'VE/Cardinality/Semantics.lean: VE.Cardinality.Body.holds'
+  
+  Full diff:
+    [
+  +     'VE/Cardinality/Run.lean: VE.Cardinality.Run.sizesJson',
+        'VE/Cardinality/Semantics.lean: VE.Cardinality.Body.holds',
+    ]
+2 failed, 3 passed in 0.48s
+recorded 64 units for tree 7b046476a9; 0 others left to the static graph until they run; 1 failed
+SHARD 3/6: exit 1 in 1331.6 s; 64 units, 63 passed
