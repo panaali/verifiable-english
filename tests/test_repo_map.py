@@ -37,6 +37,7 @@ import pytest
 
 from tools import repo_map, test_map
 from ve.backends.service_schema import MODES
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS = ROOT / "AGENTS.md"
@@ -154,7 +155,7 @@ def test_every_lean_name_in_agents_md_is_declared(document):
     if document == RECIPE:
         assert names
     declared = {line.split()[2].rpartition("@")[0] for line in
-                (ROOT / "lean/declarations.txt").read_text(encoding="utf-8").splitlines()
+                inventory_path("lean/declarations.txt").read_text(encoding="utf-8").splitlines()
                 if not line.startswith("--") and len(line.split()) >= 3}
     assert not [n for n in names if n not in declared]
 
