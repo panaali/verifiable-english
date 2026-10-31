@@ -61,7 +61,7 @@ Why no byte moves:
 
 | Probe | Document | VE's answer |
 |---|---|---|
-| DF-a | RS4holistic's part document (s135-holistic with its force set, strict or default, as D1 writes it) | flag refused: `--assume-no-exception applies to a soft-norms@0 document without open reading sets`; the unit stays **OPEN** |
+| DF-a | RS4holistic's part document (s135-holistic with its force set, strict or default, as D1 writes it) | flag refused: `--assume-no-exception applies to readings on the enumerated route` (since df-3, 97e36e510, DELTA D2: the flag reaches a content-bearing set on the enumerated route only, and this document's route is superposed; on 6d0a10526 the text was `... applies to a soft-norms@0 document without open reading sets`); the unit stays **OPEN** |
 | DF-b | s135-holistic with only the default reading as its content, no set. This collapses RS4holistic, which a translation of someone else's text never does, so it is a probe only | flag refused: `UnsupportedProfile: case kind defaults-elaborate is not available on the norms route` (the environment lists no `norm-defaults@0`); `ve document check` gives the unit **CHECKED** |
 | DF-c | DF-b with `norm-defaults@0` and `documents@1` listed, as df-1bb's probe documents are | flag answers the default question **UNKNOWN** ("no certificate"); `ve document check` refuses: `Unsupported profile norm-defaults@0` |
 

@@ -1,0 +1,14 @@
+{
+  "contract":"keys@0","revision":1,"format":1,"status":"shadow","input":["doc"],"uses":[],
+  "codes":{
+    "KEYS_SHAPE":{"class":"InvalidInput","summary":"Invalid document shape"},
+    "KEYS_INVALID_INPUT":{"class":"InvalidInput","summary":"Unexplained rejection"}
+  },
+  "residual":"KEYS_INVALID_INPUT",
+  "phases":[
+    {"name":"shape","checks":[
+      {"id":"1.1","kind":"keys","at":"/doc","required":["😀","ｚ"],"optional":["𝔞","b","a"],"code":"KEYS_SHAPE","text":"Shape: document"},
+      {"id":"1.2","kind":"exact_keys","at":"/doc/ｚ","keys":["😀","ｚ","c"],"args":{"y":"/doc/a","x":"/doc/b"},"code":"KEYS_SHAPE","text":"Shape: {x:json} and {y} in {{z}}"}
+    ]}
+  ]
+}

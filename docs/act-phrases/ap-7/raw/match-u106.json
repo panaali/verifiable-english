@@ -1,0 +1,110 @@
+{
+ "key": "match-u106",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: 2. Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author.\nDEMAND: Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author\nIn list L, {0} stands for everyone; {1} stands for a scientific, literary or artistic production of which they are the author.\nA1. Everyone has the right to have both their moral interests and their material interests protected, each on its own, wherever those interests come from any scientific, literary or artistic work they wrote.\nA2. Everyone has the right to protection of their moral and material interests taken together, as one combined set of interests, that come from any scientific, literary or artistic work they wrote.\nB1. Everyone has the right to have their moral interests protected, and separately their material interests protected, where those interests come from any scientific, literary or artistic work they wrote or made. Each type of work is covered on its own.\nB2. Everyone has the right to protection of their moral and material interests taken together as one combined set, where those interests come from any scientific, literary or artistic work they wrote or made.\nL1. {0} has the right to the protection of the moral and material interests resulting from {1}.\n",
+ "cli": {
+  "duration_api_ms": 5818,
+  "stop_reason": "end_turn",
+  "session_id": "a56ac76b-c11e-4c20-9e90-253b6d1e2385",
+  "total_cost_usd": 0.046764799999999995,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4422,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 462,
+   "output_tokens_details": {
+    "thinking_tokens": 423
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4422,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 462,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4422,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4422
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 462,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4422,
+    "webSearchRequests": 0,
+    "costUSD": 0.046764799999999995,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 423,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4422,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE",
+  "ttft_ms": 5782,
+  "type": "result",
+  "duration_ms": 6046,
+  "uuid": "6fdd902b-22be-4d2b-ae5f-12b7d9ce136b",
+  "ttft_stream_ms": 1056,
+  "time_to_request_ms": 230,
+  "first_content_frame_ms": 1056,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15590,
+ "answer": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE"
+}

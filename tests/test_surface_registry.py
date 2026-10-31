@@ -2,6 +2,7 @@ import re
 
 import pytest
 
+import ve.english  # noqa: F401 -- registers the natural clause's keywords before KEYWORDS is read
 from ve.surface.registry import KEYWORDS, SurfaceRecord, dispatch, keywords, register
 
 
