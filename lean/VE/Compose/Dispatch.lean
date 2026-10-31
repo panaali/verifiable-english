@@ -739,11 +739,18 @@ requirement reads `Missing profile q` for a mandatory profile, the frozen classi
 without q` on a checker row, and `p requires q` otherwise. The route is the first head of `heads` with a listed
 row; `gate_legacy` shows that on the legacy profiles this is `dispatch`, text and fault order included. -/
 
+/-- How a profile takes part in a composed document (profile-composition 1.2). A rewriter's rank is its place in
+the stack (1.1); the stack order is read from it (1.3). -/
+inductive Interface
+  | checker | base | layer | rewrite (rank : Nat) | chain | pack (id : String) | outside
+  deriving DecidableEq, Repr
+
 structure ProfileRow where
-  profile  : String
-  requires : List String              -- profiles that must be present
-  refuses  : List (String × String)   -- a profile that must be absent, and its refusal text
-  slot     : String                   -- the route head or wrapper position it sits on
+  profile   : String
+  requires  : List String              -- profiles that must be present
+  refuses   : List (String × String)   -- a profile that must be absent, and its refusal text
+  slot      : String                   -- the route head or wrapper position it sits on (`pack`: a pack provider)
+  interface : Interface                -- the value of profile-composition 1.1's Interface column
   deriving Repr
 
 /-- A row's refusal of each listed profile, with `p with q`. -/
@@ -769,48 +776,67 @@ def cardinalityOthers : List String :=
    "ve.discourse@1"]
 
 def baseRows : List ProfileRow := [
-  ⟨"alternatives@0", ["norms@0"], refusing "alternatives@0" ["soft-norms@0"], "alternatives"⟩,
-  ⟨"risk@0", ["alternatives@0"], [("norm-defaults@0", "risk@0 with norm-defaults@0 is not implemented")], "risk"⟩,
-  ⟨"speech-acts@0", ["norms@0"], refusing "speech-acts@0" speechOthers, "speechActs"⟩,
-  ⟨"relational-fol@0", ["relational-fol@0"], [], "checker"⟩,
+  ⟨"alternatives@0", ["norms@0"], refusing "alternatives@0" ["soft-norms@0"], "alternatives", .outside⟩,
+  ⟨"risk@0", ["alternatives@0"], [("norm-defaults@0", "risk@0 with norm-defaults@0 is not implemented")], "risk",
+    .outside⟩,
+  ⟨"speech-acts@0", ["norms@0"], refusing "speech-acts@0" speechOthers, "speechActs", .outside⟩,
+  ⟨"relational-fol@0", ["relational-fol@0"], [], "checker", .checker⟩,
   ⟨"reports@0", [], [("norms@0", "reports@0 with norms@0 layers"),
     ("definitions@0", "reports@0 with definitions@0 layers"), ("data@0", "reports@0 with data@0 layers"),
     ("closure@0", "reports@0 requires the fol checker, not closure@0"),
     ("nary@0", "reports@0 requires the fol checker, not nary@0"),
-    ("order@0", "reports@0 requires the fol checker, not order@0")], "reports"⟩,
+    ("order@0", "reports@0 requires the fol checker, not order@0")], "reports", .outside⟩,
   ⟨"order@0", [], [("closure@0", "Unsupported profile combination closure@0 x order@0"),
-    ("nary@0", "Unsupported profile combination nary@0 x order@0")], "checker"⟩,
-  ⟨"nary@0", ["closure@0"], [], "checker"⟩,
+    ("nary@0", "Unsupported profile combination nary@0 x order@0")], "checker", .checker⟩,
+  ⟨"nary@0", ["closure@0"], [], "checker", .checker⟩,
   ⟨"risk@0", [], ["closure@0", "nary@0", "order@0"].map (·, "the risk norms route admits FOL documents only"),
-    "risk"⟩,
-  ⟨"rights@0", ["soft-norms@0"], [], "rights"⟩,
-  ⟨"soft-norms@0", ["norms@0"], [], "soft"⟩,
-  ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults"⟩,
-  ⟨"norms@0", [], [], "norms"⟩,
-  ⟨"acts@0", ["norms@0"], actsRefuses, "layer"⟩,
-  ⟨"closure@0", [], [], "checker"⟩,
-  ⟨"data@0", [], [], "layer"⟩,
-  ⟨"definitions@0", [], [], "layer"⟩,
-  ⟨"documents@1", [], [], "layer"⟩,
-  ⟨"time@0", [], [], "layer"⟩,
-  ⟨"judgments@0", ["documents@1"], [], "layer"⟩,
+    "risk", .outside⟩,
+  ⟨"rights@0", ["soft-norms@0"], [], "rights", .chain⟩,
+  ⟨"soft-norms@0", ["norms@0"], [], "soft", .chain⟩,
+  ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults", .chain⟩,
+  ⟨"norms@0", [], [], "norms", .chain⟩,
+  ⟨"acts@0", ["norms@0"], actsRefuses, "layer", .rewrite 11⟩,
+  ⟨"closure@0", [], [], "checker", .checker⟩,
+  ⟨"data@0", [], [], "layer", .base⟩,
+  ⟨"definitions@0", [], [], "layer", .base⟩,
+  ⟨"documents@1", [], [], "layer", .layer⟩,
+  ⟨"time@0", [], [], "layer", .base⟩,
+  ⟨"judgments@0", ["documents@1"], [], "layer", .layer⟩,
   -- cardinality@0 (QT-A3): beside W6a's lists only, as its own decoder's E2 (`VE.Cardinality.gate_cardinality`)
-  ⟨"cardinality@0", ["order@0", "relational-fol@0", "time@0"], refusing "cardinality@0" cardinalityOthers, "layer"⟩]
+  ⟨"cardinality@0", ["order@0", "relational-fol@0", "time@0"], refusing "cardinality@0" cardinalityOthers, "layer",
+    .layer⟩]
 
 /-- The routes outside the chain, which no wrapper sits on, as `outside` names them. -/
 def outsideProfiles : List String := ["risk@0", "alternatives@0", "speech-acts@0", "reports@0"]
 
 /-- The stack's wrappers in stack order. -/
 def wrapperRows : List ProfileRow := [
-  ⟨"ve.discourse@1", [], refusing "ve.discourse@1" outsideProfiles, "discourse"⟩,
-  ⟨"right-clauses@0", [], refusing "right-clauses@0" outsideProfiles, "clauses"⟩,
-  ⟨"right-clauses@0", ["rights@0"], [], "clauses"⟩,
-  ⟨"readings@1", [], refusing "readings@1" outsideProfiles, "readings"⟩,
-  ⟨"readings@1", ["norms@0"], [], "readings"⟩,
+  ⟨"ve.discourse@1", [], refusing "ve.discourse@1" outsideProfiles, "discourse", .rewrite 10⟩,
+  ⟨"right-clauses@0", [], refusing "right-clauses@0" outsideProfiles, "clauses", .rewrite 20⟩,
+  ⟨"right-clauses@0", ["rights@0"], [], "clauses", .rewrite 20⟩,
+  ⟨"readings@1", [], refusing "readings@1" outsideProfiles, "readings", .rewrite 30⟩,
+  ⟨"readings@1", ["norms@0"], [], "readings", .rewrite 30⟩,
   -- scope@0 (SC-1b): a wrapper at step 1b over the chain's routes, which the document mode runs (`gate_scope`)
-  ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern"⟩]
+  ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern", .rewrite 12⟩]
 
 def profileTable : List ProfileRow := baseRows ++ wrapperRows
+
+/-- The slots each interface may sit on. -/
+def slotAgrees (slot : String) : Interface → Bool
+  | .checker => slot == "checker"
+  | .base => slot == "layer"
+  | .layer => slot == "layer"
+  | .rewrite _ => slot == "layer" || ["discourse", "clauses", "readings", "govern"].contains slot
+  | .chain => ["norms", "normDefaults", "soft", "rights"].contains slot
+  | .pack _ => slot == "pack"
+  | .outside => ["alternatives", "risk", "speechActs", "reports", "commitments"].contains slot
+
+/-- C1. The slot and the interface of every row agree. -/
+theorem interface_slot : ∀ r ∈ profileTable, slotAgrees r.slot r.interface = true := by decide
+
+/-- C2. A profile with several rows (`risk@0`, `right-clauses@0`, `readings@1`) has one interface. -/
+theorem interface_functional :
+    ∀ r ∈ profileTable, ∀ s ∈ profileTable, r.profile = s.profile → r.interface = s.interface := by decide
 
 /-- The profiles whose records are the document's (`judgments@0`, JT-2): no environment decoder reads them. Each
 decoder reads the environment without them; the gate and the identities read the list as written. -/
@@ -1128,11 +1154,11 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
     have hrows := (checks_none baseRows ps).mp hA
     have row : ∀ r ∈ baseRows, r.profile ∈ ps → ∀ q ∈ r.requires, q ∈ ps := fun r hr hp => (hrows r hr (.inl hp)).1
     have hsoft : "soft-norms@0" ∈ ps → "norms@0" ∈ ps := fun hp =>
-      row ⟨"soft-norms@0", ["norms@0"], [], "soft"⟩ (by simp [baseRows]) hp _ (by simp)
+      row ⟨"soft-norms@0", ["norms@0"], [], "soft", .chain⟩ (by simp [baseRows]) hp _ (by simp)
     have hnd : "norm-defaults@0" ∈ ps → "norms@0" ∈ ps := fun hp =>
-      row ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults"⟩ (by simp [baseRows]) hp _ (by simp)
+      row ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults", .chain⟩ (by simp [baseRows]) hp _ (by simp)
     have hri : "rights@0" ∈ ps → "soft-norms@0" ∈ ps := fun hp =>
-      row ⟨"rights@0", ["soft-norms@0"], [], "rights"⟩ (by simp [baseRows]) hp _ (by simp)
+      row ⟨"rights@0", ["soft-norms@0"], [], "rights", .chain⟩ (by simp [baseRows]) hp _ (by simp)
     have hsc : "scope@0" ∉ ps := fun hp => by simpa [legacyProfiles, registered, wrapperProfiles] using h _ hp
     simp only [Option.none_or, faultOf_none, Except.map]
     clear hrows row hA hk h
@@ -1189,15 +1215,16 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
     rw [hn.mem_erase_iff]; exact ⟨And.right, fun hp => ⟨hx, hp⟩⟩
   have hreq : ∀ r ∈ profileTable, "acts@0" ∉ r.requires := by decide
   have row := fun (r : ProfileRow) (hr : r ∈ profileTable) (hp : r.profile ∈ ps) => hrows r hr (.inl hp)
-  have hacts := row ⟨"acts@0", ["norms@0"], actsRefuses, "layer"⟩ (by simp [profileTable, baseRows]) h
+  have hacts := row ⟨"acts@0", ["norms@0"], actsRefuses, "layer", .rewrite 11⟩ (by simp [profileTable, baseRows]) h
   simp only [actsRefuses, List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.mem_cons,
     List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, toString, String.reduceAppend] at hacts
   obtain ⟨hno, hso, hri, hal, hsp, hcl, hor, hdi⟩ := hacts
   have hrc : "right-clauses@0" ∉ ps := fun hp =>
-    hri ((row ⟨"right-clauses@0", ["rights@0"], [], "clauses"⟩ (by simp [profileTable, wrapperRows]) hp).1 _ (by simp))
+    hri ((row ⟨"right-clauses@0", ["rights@0"], [], "clauses", .rewrite 20⟩ (by simp [profileTable, wrapperRows])
+      hp).1 _ (by simp))
   have hrk : "risk@0" ∉ ps := fun hp =>
     hal ((row ⟨"risk@0", ["alternatives@0"], [("norm-defaults@0", "risk@0 with norm-defaults@0 is not implemented")],
-      "risk"⟩ (by simp [profileTable, baseRows]) hp).1 _ (by simp))
+      "risk", .outside⟩ (by simp [profileTable, baseRows]) hp).1 _ (by simp))
   have hre : "reports@0" ∉ ps := fun hp =>
     (row (baseRows[4]'(by decide)) (by simp [profileTable]) hp).2 ("norms@0", "reports@0 with norms@0 layers")
       (by simp [baseRows]) hno
@@ -1238,7 +1265,8 @@ theorem gate_scope (ps : List String) (h : "scope@0" ∈ ps) (r : Route)
   have hmem : ∀ x, x ≠ "scope@0" → (x ∈ ps.erase "scope@0" ↔ x ∈ ps) := fun x hx => by
     rw [hn.mem_erase_iff]; exact ⟨And.right, fun hp => ⟨hx, hp⟩⟩
   have hreq : ∀ r ∈ profileTable, "scope@0" ∉ r.requires := by decide
-  have hsc := hrows ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern"⟩
+  have hsc := hrows ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern",
+      .rewrite 12⟩
     (by simp [profileTable, wrapperRows]) (.inl h)
   simp only [refusing, outsideProfiles, List.map_cons, List.map_nil, List.cons_append, List.nil_append,
     List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hsc
