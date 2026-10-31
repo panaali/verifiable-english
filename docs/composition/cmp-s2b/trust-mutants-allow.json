@@ -39,6 +39,31 @@
    "definition": "VE.Readings.owners",
    "operator": "list-empty",
    "reason": "the cut of the whole match to [] fails RightsFixtures.lean's `(choiceLabelled F21)` guard, but Lean shares the matcher of `owners` with `keyLabel` (one match on GenKey's six constructors), so the tool sees `keyLabel` drift and reports UNKNOWN; every other list-empty cut of `owners` is KILLED"
+  },
+  {
+   "definition": "VE.Readings.rightCopies",
+   "operator": "list-first",
+   "reason": "equivalent: a set's interface names a right only when every candidate is a right content of that name (interfaceOf), and a right content declares its right first, so the first interface name of that set is that right; the other list cuts of rightCopies are KILLED by RightsFixtures.lean's rsOne guards"
+  },
+  {
+   "definition": "VE.Readings.limOwners",
+   "operator": "list-first",
+   "reason": "equivalent for the cut of `X.limits.filter (·.name == L)` only: the limitation names of sup D are distinct (fixed ones by distinctAcrossSets, candidate ones qualified by position), so the filter has at most one element; the cuts of the result, of the flatMap and of linesOf are KILLED by F7m's guard"
+  },
+  {
+   "definition": "VE.Readings.limOwners",
+   "operator": "list-last",
+   "reason": "equivalent for the cut of `X.limits.filter (·.name == L)` only, as for list-first; the other list-last cuts are KILLED by F7m's guard"
+  },
+  {
+   "definition": "VE.Readings.qLim",
+   "operator": "list-first",
+   "reason": "equivalent for the cut of `x.declared` only: a content declares a limitation name only as a limitation content, which declares exactly that one name; the cut of `declaredBy R` is KILLED by the mixDoc guards"
+  },
+  {
+   "definition": "VE.Readings.qLim",
+   "operator": "list-last",
+   "reason": "equivalent for the cut of `x.declared` only, as for list-first; the cut of `declaredBy R` is KILLED by the mixDoc guards"
   }
  ]
 }
