@@ -13289,6 +13289,7 @@
         "VE.Layout.Unit"
       ]
     },
+    "VE/Scope/EffectLemmas.lean": {},
     "VE/Scope/Examples.lean": {
       "T": [
         "VE.Scope.Examples.a29",
