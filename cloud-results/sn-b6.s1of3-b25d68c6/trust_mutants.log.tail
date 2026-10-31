@@ -1,0 +1,71 @@
+trust_mutants: 11 definitions, 268 mutants (90 to run), 4 jobs, base 598358e43282
+SURVIVOR lean/VE/Senses/Run.lean:297 VE.Senses.Run.runCaseReported (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-empty: [("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).toA... -> []
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) not-drop: ! -> 
+UNKNOWN lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: lines -> [] (lean/VE/Senses/Run.lean:219: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Senses/Run.lean:118 VE.Senses.Run.outcomeJson (G[V], trusted) append-left: ++ admitted -> 
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-empty: ["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"] -> []
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) append-right: [("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length)... -> 
+UNKNOWN lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-empty: fences -> [] (lean/VE/Senses/Run.lean:115: Application type mismatch: The argument)
+UNKNOWN lean/ResponseShape/Schemas.lean:49 ResponseShape.Schemas.files (G[V], trusted) list-empty: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> [] (lean/ResponseShape/Schemas.lean:49: Function expected at)
+SURVIVOR lean/VE/Senses/Run.lean:284 VE.Senses.Run.readCase (G[V], trusted) list-empty: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> []
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-empty: u.candidates.map (candidateJson ids) -> []
+UNKNOWN lean/VE/Senses/Run.lean:225 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: sents -> [] (lean/VE/Senses/Run.lean:225: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: (ids.map fun f => ("identities", f c.lines)).toList -> []
+UNKNOWN lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: ids -> [] (lean/VE/Senses/Run.lean:21: Invalid field `toList`: The environment does not contain `List.toList`)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used.eraseDups.length -> [] (lean/VE/Senses/Run.lean:322: Type mismatch)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-empty: D.words -> []
+UNKNOWN lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-empty: c.E.sorts -> [] (lean/VE/Senses/Run.lean:325: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-empty: ids -> []
+SURVIVOR lean/VE/Senses/Run.lean:335 VE.Senses.Run.projectCase (G[V], trusted) list-empty: [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection",... -> []
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-first: [("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).toA... -> ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).to...
+SURVIVOR lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-first: lines -> (lines.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-first: ["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"] -> (["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"].take 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-last: [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.for... -> ([("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.fo...
+SURVIVOR lean/VE/Senses/Run.lean:300 VE.Senses.Run.runCaseReported (G[V], trusted) list-drop-last: [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)] -> ([("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)].dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-first: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-last: c.choice -> (c.choice.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: ["overlay"] -> (["overlay"].dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-first: used -> (used.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:292 VE.Senses.Run.readCase (G[V], trusted) list-drop-last: [("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),... -> ([("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D))...
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-first: units -> (units.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-first: D.words -> (D.words.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: used -> (used.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:118 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-last: admitted -> (admitted.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: used -> (used.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-first: used -> (used.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: used -> (used.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:332 VE.Senses.Run.projectCase (G[V], trusted) list-first: [("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon), ("identities", Json.mkO... -> ([("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon), ("identities", Json.mk...
+SURVIVOR lean/VE/Senses/Run.lean:332 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: [("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon), ("identities", Json.mkO... -> ([("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon), ("identities", Json.mk...
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: [("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)] -> ([("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)].dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:284 VE.Senses.Run.readCase (G[V], trusted) list-last: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-last: [("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length)... -> ([("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length...
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-drop-first: [("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).toA... -> ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).to...
+SURVIVOR lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-drop-first: lines -> (lines.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: ["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"] -> (["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"].drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-middle: ("lines", .str c.lines), -> 
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-drop-middle: "environment", -> 
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-last: c.choice -> (c.choice.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-last: ["overlay"].filter (has j) -> ((["overlay"].filter (has j)).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-drop-first: u.candidates -> (u.candidates.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-middle: ("formula", c.formula.encode), -> 
+SURVIVOR lean/VE/Senses/Run.lean:284 VE.Senses.Run.readCase (G[V], trusted) list-drop-middle: ("senses_version", .str sensesVersion), -> 
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-last: c.choice.map pairJson -> ((c.choice.map pairJson).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-first: c.choice.map pairJson -> ((c.choice.map pairJson).drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: ["overlay"].filter (has j) -> ((["overlay"].filter (has j)).drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-drop-middle: "packs", -> 
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-last: units -> (units.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-last: D.words -> (D.words.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: used -> (used.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-drop-middle: "own", -> 
+SURVIVOR lean/VE/Senses/Run.lean:118 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-first: admitted -> (admitted.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: used.eraseDups -> (used.eraseDups.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: used -> (used.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: c.E.sorts -> (c.E.sorts.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-last: ids -> (ids.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: ids -> (ids.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:335 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection",... -> ([("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection"...
+trust_mutants: 14 KILLED, 59 SURVIVOR, 7 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 178 OTHER SHARD in 433 s
+trust_mutants: D[V], trusted: 8 KILLED, 4 INVALID, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 59 SURVIVOR, 7 UNKNOWN, 6 INVALID, 159 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 3.2 s, control_build 0.3 s, probe_install 1.4 s, control_probes 105.2 s, mutants 311 s, cleanup 2.6 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.3 s (1), control_probes 252.3 s (7), mutant_builds 250.3 s (92), mutant_checks 230.8 s (73), stage_controls 52.3 s (3), mutant_probes 247.1 s (14)
