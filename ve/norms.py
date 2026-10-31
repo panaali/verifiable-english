@@ -15,6 +15,8 @@ from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
+from .backends.dispatch import owned
+from .backends.validation import family_in_scope
 from .environment import NORM_DEFAULTS_PROFILE, UNSAID_PREFIX
 from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, VEError
 from .search import _used_predicates
@@ -146,7 +148,6 @@ def _lean_route(document) -> bool:
     if type(document) is not NormDocument or env.language != "ve.core@0.2":
         return False
     if env.closure or env.order:
-        from .backends.validation import family_in_scope
         return family_in_scope(env)
     return (env.alternatives is None and getattr(env, "unit_schema", None) is None
             and not STATEMENT_LAYERS & set(env.profiles))
@@ -385,7 +386,6 @@ class NormDocument:
     def elaborate(self, predicate):
         """The generated layer premise of `predicate`, from Lean."""
         self._require_completion()
-        from .backends.dispatch import owned
         if not _lean_route(self):
             return self._elaborate_python(predicate)
 
@@ -411,7 +411,6 @@ class NormDocument:
     def premises(self):
         """The labelled layer premises in layer order, from Lean."""
         self._require_completion()
-        from .backends.dispatch import owned
         if not _lean_route(self):
             return self._premises_python()
 
@@ -558,7 +557,6 @@ def check_norm_entailment_certificate(document: NormDocument, premises, conclusi
     """Replay the same ordered premise list used by `norms-certificate`."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
-    from .backends.dispatch import owned
     if not _lean_route(document):
         return _norm_certificate_python(document, premises, conclusion, certificate)
     return owned("norms_certificate", lambda: _norm_certificate_lean(document, premises, conclusion, certificate))
@@ -674,7 +672,6 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
         raise VEError("UnsupportedProfile: soft rules require the soft route")
     document._require_completion()
     _reject_filling(document, model)
-    from .backends.dispatch import owned
     options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
                "prove": prove, "tableau_steps": tableau_steps}
     if not _lean_route(document):
