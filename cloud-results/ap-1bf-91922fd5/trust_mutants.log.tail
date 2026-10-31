@@ -1,0 +1,4 @@
+VE/WireContract/Diagnose.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/WireContract/Hooks/Acts.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/WireContract/Diagnose.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/WireContract/Hooks/Acts.lean; rerun tools/lean_statements.py
