@@ -352,6 +352,26 @@ def test_the_plan_lists_chunks_only_with_the_option(tmp_path, monkeypatch, capsy
         key: value for key, value in plan.items() if key != "selected"}
 
 
+def test_with_defer_heavy_the_plan_defers_whole_files_then_chunks_the_rest(tmp_path, monkeypatch, capsys):
+    path = tmp_path / "deferring-map.json.gz"
+    test_map.write_map(test_map.build_map({unit: chunk_result(0, {("ve/a.py", "f")}, seconds) for unit, seconds in [
+        ("tests/test_big.py", 2000.0), ("tests/test_weak.py", 2000.0), ("tests/test_small.py", 10.0)]}, "c" * 40), path)
+    plan = {**fixed_plan(tmp_path), "selected": ["tests/test_big.py", "tests/test_small.py", "tests/test_weak.py"],
+            "map": {"commit": "c" * 40, "path": str(path)}, "selected_count": 3,
+            "reasons": {"tests/test_big.py": ["ve/a.py:f"], "tests/test_small.py": ["ve/a.py:f"],
+                        "tests/test_weak.py": ["imports ve/a.py (static)"]}}
+    monkeypatch.setattr(select_tests, "select", lambda *a, **k: json.loads(json.dumps(plan)))
+    monkeypatch.setattr(select_tests.run_order, "last_failed", lambda **_: {})
+    monkeypatch.setattr(select_tests, "chunk_decisions", lambda path=None: {
+        unit: {"wall_seconds": 100.0, "setup_seconds": 20.0} for unit in ("tests/test_big.py", "tests/test_weak.py")})
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "x", "--static", "--json",
+                                      "--chunk-heavy", "--defer-heavy"])
+    assert select_tests.main() == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert list(printed["deferred"]) == ["tests/test_weak.py"]  # a deferred file is never chunked
+    assert printed["selected"] == [*chunked("tests/test_big.py", 4), "tests/test_small.py"]
+
+
 @pytest.mark.parametrize("other", ["--full", "--impacted", "--no-record", "--tier=light"])
 def test_the_chunk_option_is_for_a_recorded_selected_run(monkeypatch, capsys, other):
     monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "x", "--chunk-heavy", other])
