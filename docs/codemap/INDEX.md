@@ -6,7 +6,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 63 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 25 modules — -
-- [docs/arch/](docs__arch.md) — 26 modules — -
+- [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 10 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
@@ -119,15 +119,15 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
 - [tests/ part 4](tests--part-4.md) — 89 modules — -
 - [tests/ part 5](tests--part-5.md) — 83 modules — -
-- [tests/ part 6](tests--part-6.md) — 90 modules — -
-- [tests/ part 7](tests--part-7.md) — 1 modules — -
+- [tests/ part 6](tests--part-6.md) — 89 modules — -
+- [tests/ part 7](tests--part-7.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 101 modules — -
 - [tools/ part 2](tools--part-2.md) — 2 modules — -
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 59 modules — -
+- [usecases/](usecases.md) — 61 modules — -
 - [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
