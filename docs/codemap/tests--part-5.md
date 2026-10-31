@@ -1,3 +1,4 @@
+- `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
 - `tests/test_readings_defaults_rd3_report.py` — RD-3's report against committed evidence, with no read of the current git graph.
 - `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
 - `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
@@ -79,5 +80,4 @@
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
 - `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
-- `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
+- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c).

@@ -1,3 +1,4 @@
+- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
 - `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
@@ -86,4 +87,3 @@
 - `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
 - `tests/test_readings_defaults_names.py` — The `<reading>` slot (docs/spec/readings-defaults.md 2.3, review A4) names readings by what they say, and two readings that say different things never share a …
 - `tests/test_readings_defaults_rd2a_report.py` — RD-2a's report against its saved evidence (build checklist 20).
-- `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
