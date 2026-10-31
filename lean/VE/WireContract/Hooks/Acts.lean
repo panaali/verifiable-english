@@ -123,6 +123,7 @@ def around : List String := ["anna", "zora"]
 #guard memberOf (envOf ["equal pay", phraseOf (maxPhraseBytes + 1), "fair hearing"] (actOf 20)) == some "1.1b"
 #guard memberOf (envOf (phrasesOf maxPhrases) (actOf 20)) == none
 #guard memberOf (envOf (phrasesOf (maxPhrases + 1)) (actOf 20)) == some "1.1a"
+#guard memberOf (envOf (phrasesOf maxPhrases) (actOf (maxActBytes + 1))) == some "1.1c"
 -- around: the count before a long phrase, the act's shape before its size, an earlier phrase before a long act,
 -- a limit that is none of the three, and `definitions@0`
 #guard memberOf (envOf (phrasesOf maxPhrases ++ [phraseOf (maxPhraseBytes + 1)]) (actOf 20)) == some "1.1a"

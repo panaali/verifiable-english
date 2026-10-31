@@ -1,0 +1,67 @@
+{
+ "mutants": [
+  {
+   "id": "lean-limit-member",
+   "file": "lean/VE/WireContract/Hooks/Acts.lean",
+   "definition": "member",
+   "bug": "the act limit named as 1.1d",
+   "test": "lean/VE/WireContract/Hooks/Acts.lean:119 (#guard)",
+   "killed": true,
+   "first_failure": "error: VE/WireContract/Hooks/Acts.lean:119:0: Expression"
+  },
+  {
+   "id": "lean-decoder-without-acts",
+   "file": "lean/VE/WireContract/Hooks/Acts.lean",
+   "definition": "decoded",
+   "bug": "the decoder run without acts := true",
+   "test": "lean/VE/WireContract/Hooks/Acts.lean:118 (#guard)",
+   "killed": true,
+   "first_failure": "error: VE/WireContract/Hooks/Acts.lean:118:0: Expression"
+  },
+  {
+   "id": "lean-count-off-by-one",
+   "file": "lean/VE/WireContract/Hooks/Acts.lean",
+   "definition": "member",
+   "bug": "the count limit one phrase early",
+   "test": "lean/VE/WireContract/Hooks/Acts.lean:126 (#guard)",
+   "killed": true,
+   "first_failure": "error: VE/WireContract/Hooks/Acts.lean:126:0: Expression"
+  },
+  {
+   "id": "py-limit-text",
+   "file": "conformance/acts_contract.py",
+   "definition": "acts_environment",
+   "bug": "1.1c's tail misread",
+   "test": "tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text",
+   "killed": true,
+   "first_failure": "E           AssertionError: act-bytes-over"
+  },
+  {
+   "id": "py-domain-open",
+   "file": "conformance/acts_contract.py",
+   "definition": "in_domain",
+   "bug": "every acts@0 source in the domain",
+   "test": "tests/test_acts_contract.py::test_the_adapters_read_acts_sources_of_the_norms_route_only",
+   "killed": true,
+   "first_failure": "E           Failed: DID NOT RAISE UnsupportedProfile"
+  },
+  {
+   "id": "py-limit-oracle",
+   "file": "conformance/wire_contract_faults_acts.py",
+   "definition": "_largest",
+   "bug": "the limit found one too high",
+   "test": "tests/test_acts_contract.py::test_the_sources_at_each_limit_are_accepted_and_clean_in_python",
+   "killed": true,
+   "first_failure": "E           AssertionError: assert ResourceLimit('ResourceLimit: more than 128 fixed phrases') is None"
+  },
+  {
+   "id": "py-limit-copied",
+   "file": "conformance/acts_contract.py",
+   "definition": "LIMIT_TEXTS",
+   "bug": "a limit's value written in the registry",
+   "test": "tests/test_acts_contract.py::test_the_limits_are_leans_and_never_copied",
+   "killed": true,
+   "first_failure": "E           AssertionError: conformance/acts_contract.py"
+  }
+ ]
+}
