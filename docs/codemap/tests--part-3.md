@@ -35,6 +35,7 @@
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
+- `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
 - `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
 - `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
 - `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
@@ -86,4 +87,3 @@
 - `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
-- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
