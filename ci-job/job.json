@@ -1,0 +1,12 @@
+{
+ "job": "testmap-86b6ad63-t476249-s0",
+ "head": "9ec5e7dc4fc89df91be264419e99e61ef58d378b",
+ "argv": [
+  "testmap-86b6ad63-t476249-s0",
+  "9ec5e7dc4fc89df91be264419e99e61ef58d378b",
+  "9ec5e7dc4fc89df91be264419e99e61ef58d378b",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-4869ada6061b.tar.zst",
+  "1bfce0dc1c8fddbbc8de1dea9af0feb91ef9bf55810320f3565006eff0c9681b",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_speech_polar_lean.py tests/test_relay_mutation_gate.py tests/test_b16e_rights_document.py tests/test_english.py tests/test_model_environment.py tests/test_data_surface.py tests/test_relay_binding_inventory.py tests/test_since_pass.py tests/test_discourse_answer.py tests/test_premise_scale.py tests/test_calc_units.py tests/test_lean_first_diff.py tests/test_agent_policy.py tests/test_jt_e1r.py tests/test_readings_route_fuzz.py tests/test_readings_lean_sharing.py tests/test_mutants.py tests/test_ask_null_free.py tests/test_defaults_readings.py tests/test_lean_first_b13b.py tests/test_cpu_bounds.py tests/test_stage2_readings.py tests/test_risk_diagnostics.py tests/test_question_reverse.py tests/test_rd9_statements.py tests/test_numbers_phrases.py tests/test_entailment.py tests/test_lean_budget_types.py tests/test_soft_norms_lean.py tests/test_judgments_document.py tests/test_readings_rd5_plain_probe.py tests/test_readings_defaults_rd8_report.py tests/test_units_relay_w6a.py tests/test_lean_decided_share.py tests/test_norms.py tests/test_et_e1_probe.py tests/test_readings_defaults_rd6a_report.py tests/test_b16b_evidence.py tests/test_llm.py tests/test_ar6_report.py tests/test_lean_build.py tests/test_time_surface_w6a.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
