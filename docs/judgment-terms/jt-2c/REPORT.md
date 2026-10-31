@@ -154,7 +154,9 @@ mode, which delegates to the route on the environment without it.
   the VM: no Mac slot within 600 s): 505 units, exit 1 for one failure not this item's, the same as F1's round:
   `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes`, whose only changed record is `DF-a`'s
   diagnostic (main's `ve/document/cli.py` wording, `cdec72996`; rerun of `measure_r2.probes` diffed against the saved
-  file). `tests/test_judgments_compose.py` "67 passed"; `tests/test_jt_2c_delta.py` "4 passed".
+  file). `tests/test_judgments_compose.py` "67 passed"; `tests/test_jt_2c_delta.py` "4 passed". The docs-only commit
+  after it (`d56585543`): `zsh mac-pytest.sh --select -- --base 0c8fff670 --run`, on GitHub Actions: "7 units, 7
+  passed", exit 0. `regen_generated.py --check` "checked 34 entries"; `python3 lean/audit.py` "PASS: 675 source files".
 - Trust (review F1, final HEAD): `uv run python tools/trust_map.py --check` against `432763b06d8d`: "K +0, S +0, D +2,
   G +31, ..., trusted +35" (Dispatch +24: `layersApart`, `layerGate`; the rest as below), exit 0 with the second R16
   allowance (+12). Trust mutants over the fix (`--max-mutants 1000 --test lean/VE/Defaults/RouteExamples.lean --allow
