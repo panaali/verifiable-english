@@ -1391,6 +1391,9 @@ _SCHEMA_SEEDS = {
     "scope": ({"id": "c", "document": "---\n{}\n---\nA"},
               {"id": "c", "status": "ok", "governed": [{"id": "g", "units": ["u"]}], "rows": [{"unit": "u", "governors": [
                   {"id": "g", "unit": "v", "effect": "frame", "reach": ["u"], "provenance": "p"}]}]}),
+    "senses.project": ({"id": "c", "lines": "", "used": []},
+                       {"id": "c", "status": "ok", "result": {"dictionary_id": "a" * 64, "senses_version": "1",
+                        "projection": {"status": "rejected", "code": "MalformedPreamble", "details": {"line": 0}}}}),
     "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
                       {"id": "c", "status": "ok", "valid": True, "premises": 0}),
     "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),

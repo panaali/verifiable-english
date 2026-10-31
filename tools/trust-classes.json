@@ -991,7 +991,8 @@
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
-        "ResponseShape.Skeletons.scope"
+        "ResponseShape.Skeletons.scope",
+        "ResponseShape.Skeletons.sensesProject"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -9514,7 +9515,8 @@
       "D[V]": [
         "VE.Senses.Run.decodeDefaults",
         "VE.Senses.Run.decodeDictionary",
-        "VE.Senses.Run.has"
+        "VE.Senses.Run.has",
+        "VE.Senses.Run.lexiconJson"
       ],
       "G[V]": [
         "VE.Senses.Run.candidateJson",
@@ -9529,13 +9531,22 @@
         "VE.Senses.Run.runCaseReported",
         "VE.Senses.Run.s2Fields",
         "VE.Senses.Run.uncoveredFence",
-        "VE.Senses.Run.unitJson"
+        "VE.Senses.Run.unitJson",
+        "VE.Senses.Run.linesProjection",
+        "VE.Senses.Run.projectCase",
+        "VE.Senses.Run.projectCaseReported"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
         "VE.Senses.Run.fenceReject",
         "VE.Senses.Run.refusalSource",
-        "VE.Senses.Run.shiftReject"
+        "VE.Senses.Run.shiftReject",
+        "VE.Senses.Run.faultJson"
+      ],
+      "G[I]": [
+        "VE.Senses.Run.projectionIds",
+        "VE.Senses.Run.admittedIds",
+        "VE.Senses.Run.usedOf"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -12682,6 +12693,11 @@
         "main",
         "phraseJson",
         "relName"
+      ]
+    },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
       ]
     },
     "VE/Acts/Syntax.lean": {
@@ -15924,6 +15940,36 @@
         "VE.Acts.MeaningExamples.toks"
       ]
     },
+    "VE/Acts/RenderExamples.lean": {
+      "T": [
+        "VE.Acts.RenderExamples.V2s",
+        "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vo",
+        "VE.Acts.RenderExamples.Vs",
+        "VE.Acts.RenderExamples.atMod",
+        "VE.Acts.RenderExamples.back",
+        "VE.Acts.RenderExamples.c2",
+        "VE.Acts.RenderExamples.fr3",
+        "VE.Acts.RenderExamples.fr4",
+        "VE.Acts.RenderExamples.fr5",
+        "VE.Acts.RenderExamples.give",
+        "VE.Acts.RenderExamples.held2",
+        "VE.Acts.RenderExamples.heldBy1",
+        "VE.Acts.RenderExamples.help",
+        "VE.Acts.RenderExamples.joinedObj",
+        "VE.Acts.RenderExamples.mixed",
+        "VE.Acts.RenderExamples.n1",
+        "VE.Acts.RenderExamples.noTo",
+        "VE.Acts.RenderExamples.obj",
+        "VE.Acts.RenderExamples.ordered",
+        "VE.Acts.RenderExamples.participate",
+        "VE.Acts.RenderExamples.roundTrip",
+        "VE.Acts.RenderExamples.seek",
+        "VE.Acts.RenderExamples.send",
+        "VE.Acts.RenderExamples.text",
+        "VE.Acts.RenderExamples.toBoth"
+      ]
+    },
     "VE/Readings/DefaultVerdicts.lean": {
       "S": [
         "VE.Readings.choiceSoft",
@@ -16324,11 +16370,6 @@
         "ResponseShape.Schemas.Scope.file"
       ]
     },
-    "VE/Numbers/Bits.lean": {
-      "C": [
-        "VE.Numbers.bits"
-      ]
-    },
     "VE/Calc/WorkExamples.lean": {
       "T": [
         "VE.Calc.WorkExamples.C",
@@ -16424,62 +16465,36 @@
         "VE.Cardinality.Document.Entries"
       ]
     },
-    "VE/Compose/Stack.lean": {
-      "G[V]": [
-        "VE.Compose.rewriters",
-        "VE.Compose.stackOf",
-        "VE.Compose.Contract.listedStacks"
+    "VE/Senses/Version.lean": {
+      "G[I]": [
+        "VE.Senses.sensesVersion"
       ]
     },
-    "VE/Compose/Contract.lean": {
-      "S": [
-        "VE.Compose.Contract.Rewriter",
-        "VE.Compose.Contract.Rewriter.Laws",
-        "VE.Compose.Contract.ScopeRunsOf",
-        "VE.Compose.Contract.ScopeRuns",
-        "VE.Compose.Contract.ScopeFaithful",
-        "VE.Compose.Contract.ScopePreserves",
-        "VE.Compose.Contract.ScopeSetsFaithful",
-        "VE.Compose.Contract.RouteFacts"
-      ],
-      "G[V]": [
-        "VE.Compose.Contract.pipeline",
-        "VE.Compose.Contract.pipelineOf",
-        "VE.Compose.Contract.scopeRewriter",
-        "VE.Compose.Contract.docRewriters"
-      ]
-    },
-    "VE/Compose/ContractExamples.lean": {
-      "T": [
-        "VE.Compose.ContractExamples.plannedRows",
-        "VE.Compose.ContractExamples.ungoverned",
-        "VE.Compose.ContractExamples.governedSet",
-        "VE.Compose.ContractExamples.tagRewriter"
-      ]
-    },
-    "VE/Readings/Stage.lean": {
+    "ResponseShape/Schemas/SensesProject.lean": {
       "G[R]": [
-        "VE.Readings.Stage.around",
-        "VE.Readings.Stage.marker",
-        "VE.Readings.Stage.part",
-        "VE.Readings.Stage.stage"
+        "ResponseShape.Schemas.SensesProject.pair",
+        "ResponseShape.Schemas.SensesProject.lexicon",
+        "ResponseShape.Schemas.SensesProject.identities",
+        "ResponseShape.Schemas.SensesProject.fault",
+        "ResponseShape.Schemas.SensesProject.projection",
+        "ResponseShape.Schemas.SensesProject.row",
+        "ResponseShape.Schemas.SensesProject.file"
       ]
     },
-    "VE/Service/MemoExamples.lean": {
+    "VE/Senses/RunExamples.lean": {
       "T": [
-        "memoCase"
-      ]
-    },
-    "VE/Service/StageTimes.lean": {
-      "G[R]": [
-        "VE.Service.StageTimes.Mode",
-        "VE.Service.StageTimes.Open",
-        "VE.Service.StageTimes.cpuTicks",
-        "VE.Service.StageTimes.mode",
-        "VE.Service.StageTimes.parse",
-        "VE.Service.StageTimes.row",
-        "VE.Service.StageTimes.step",
-        "VE.Service.StageTimes.stream"
+        "VE.Senses.RunExamples.caseJ",
+        "VE.Senses.RunExamples.lineFunny2",
+        "VE.Senses.RunExamples.LA",
+        "VE.Senses.RunExamples.sameAs",
+        "VE.Senses.RunExamples.idsOf",
+        "VE.Senses.RunExamples.overlayJ",
+        "VE.Senses.RunExamples.lexJ",
+        "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.pin",
+        "VE.Senses.RunExamples.projectReq",
+        "VE.Senses.RunExamples.src",
+        "VE.Senses.RunExamples.fenced"
       ]
     },
     "VE/Acts/Wire.lean": {
@@ -16518,36 +16533,6 @@
         "VE.Acts.DecodeExamples.view"
       ]
     },
-    "VE/Acts/RenderExamples.lean": {
-      "T": [
-        "VE.Acts.RenderExamples.V2s",
-        "VE.Acts.RenderExamples.Vk",
-        "VE.Acts.RenderExamples.Vo",
-        "VE.Acts.RenderExamples.Vs",
-        "VE.Acts.RenderExamples.atMod",
-        "VE.Acts.RenderExamples.back",
-        "VE.Acts.RenderExamples.c2",
-        "VE.Acts.RenderExamples.fr3",
-        "VE.Acts.RenderExamples.fr4",
-        "VE.Acts.RenderExamples.fr5",
-        "VE.Acts.RenderExamples.give",
-        "VE.Acts.RenderExamples.held2",
-        "VE.Acts.RenderExamples.heldBy1",
-        "VE.Acts.RenderExamples.help",
-        "VE.Acts.RenderExamples.joinedObj",
-        "VE.Acts.RenderExamples.mixed",
-        "VE.Acts.RenderExamples.n1",
-        "VE.Acts.RenderExamples.noTo",
-        "VE.Acts.RenderExamples.obj",
-        "VE.Acts.RenderExamples.ordered",
-        "VE.Acts.RenderExamples.participate",
-        "VE.Acts.RenderExamples.roundTrip",
-        "VE.Acts.RenderExamples.seek",
-        "VE.Acts.RenderExamples.send",
-        "VE.Acts.RenderExamples.text",
-        "VE.Acts.RenderExamples.toBoth"
-      ]
-    },
     "VE/Scope/EffectLemmas.lean": {},
     "VE/Closure/CoreEquiv.lean": {
       "P": [
@@ -16579,6 +16564,31 @@
       ]
     },
     "VE/Scope/ReadingsLemmas.lean": {},
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
+    "VE/Service/MemoExamples.lean": {
+      "T": [
+        "memoCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
+      ]
+    },
     "VE/WireContract/Hooks/Acts.lean": {
       "G[V]": [
         "VE.WireContract.Hooks.Acts.actsOf",
@@ -16606,6 +16616,39 @@
     "VE/WireContract/Tables/Acts.lean": {
       "G[V]": [
         "VE.WireContract.Tables.Acts.table"
+      ]
+    },
+    "VE/Compose/Stack.lean": {
+      "G[V]": [
+        "VE.Compose.rewriters",
+        "VE.Compose.stackOf",
+        "VE.Compose.Contract.listedStacks"
+      ]
+    },
+    "VE/Compose/Contract.lean": {
+      "S": [
+        "VE.Compose.Contract.Rewriter",
+        "VE.Compose.Contract.Rewriter.Laws",
+        "VE.Compose.Contract.ScopeRunsOf",
+        "VE.Compose.Contract.ScopeRuns",
+        "VE.Compose.Contract.ScopeFaithful",
+        "VE.Compose.Contract.ScopePreserves",
+        "VE.Compose.Contract.ScopeSetsFaithful",
+        "VE.Compose.Contract.RouteFacts"
+      ],
+      "G[V]": [
+        "VE.Compose.Contract.pipeline",
+        "VE.Compose.Contract.pipelineOf",
+        "VE.Compose.Contract.scopeRewriter",
+        "VE.Compose.Contract.docRewriters"
+      ]
+    },
+    "VE/Compose/ContractExamples.lean": {
+      "T": [
+        "VE.Compose.ContractExamples.plannedRows",
+        "VE.Compose.ContractExamples.ungoverned",
+        "VE.Compose.ContractExamples.governedSet",
+        "VE.Compose.ContractExamples.tagRewriter"
       ]
     }
   }
