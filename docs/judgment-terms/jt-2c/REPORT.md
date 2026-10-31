@@ -1,9 +1,9 @@
 # jt-2c report: the composing modes under `judgments@0`
 
-Status: built; review F1 (B) fixed; no DRI signature reserved. DELTA row 1 is the DRI's
-(reviews/dri-decisions-20261028-jt-2c.md item 2), row 2 R16 (+35 untied V, K +0, S +0), row 3 R1 (F1's refusal text).
+Status: built; review F1 (B) and recheck F5 (B) fixed; no DRI signature reserved. DELTA row 1 is the DRI's
+(reviews/dri-decisions-20261028-jt-2c.md item 2), row 2 R16 (+35 untied V, K +0, S +0), row 3 R1 (F1's refusal text; F5 adds none).
 `ve document` answers a `judgments@0` document; every composing mode decides without the layer through
-`VE.Compose.decidingEnvironment`, after the layer's own gate row over the list as written, and names the list as written.
+`VE.Compose.decidingEnvironment`, after the table's whole gate over the list as written, and names the list as written.
 Cut to jt-2d: the norm-defaults replay kinds under the layer (refused by name now). The chain runs the full gate on the final HEAD.
 
 Plan: docs/spec/judgment-terms-PLAN.md JT-2 (row at line 68), spec docs/spec/judgment-terms.md 8.1-8.3, jt-2b's REPORT
@@ -71,6 +71,30 @@ mode, which delegates to the route on the environment without it.
   `::test_the_english_route_checks_the_layer_s_own_requirement` (the `environmentId` block branch, `:287`, and the reader),
   `::test_the_document_mode_keeps_jt_2_s_fault_order`. The refusal text against the merge base is DELTA row 3 (R1,
   `evidence/delta.json`).
+- F5 (B, jt-2c-looprecheck1.final.md; reviews/dri-decisions-20261031-jt-2c.md item 1), the same class as F1 ("an
+  answer where the authority refuses"): `layerGate` checked only the layer's own rows, so the order and uniqueness of
+  the list as written were checked only after the layer was stripped, and the check, metered, norms (plain kinds,
+  `norms-elaborate`), `norm-defaults-elaborate` and English modes answered `ok` for `judgments@0` duplicated, first or
+  last, which the environment and model modes (and the merge base, in every mode) refuse. Fixed in the one shared
+  function by the class, not the check: `decidingEnvironment` runs the table's whole gate, `gateOf profileTable`, over
+  the list as written (after `layersApart`), in place of `layerGate`, which is deleted; a list without a document layer
+  is read as before (the same guard as `validatedComposedEnvironment`). `gate_judgments` shows that on a sorted list
+  with `documents@1` this is the table's gate over the list without the layer, so it adds only the order, the uniqueness
+  and the layer's own row. New theorem `VE.Compose.decidingEnvironment_admits`: a list with a document layer that
+  `decidingEnvironment` decides is one `TableAdmits profileTable` as written, and the mode decides over it without the
+  layers. `#guard`s: the layer duplicated, first and last (and two short lists); every other profile of the table
+  beside the layer, refused exactly as the table refuses the list without it; every D-all list with the layer decided
+  iff `layersApart` and `gateOf profileTable` admit it, with their text otherwise. PROBE F5 failed before the fix (the
+  check mode: `ok`, `well_typed`, a `meaning_id`) and passes now; PROBE F1 still passes. Regression tests:
+  `tests/test_judgments_compose.py::test_the_layer_out_of_order_is_refused_by_every_composing_mode` (7 modes x
+  duplicate, leading, trailing: each refusal equals the environment mode's answer to the same environment, and the
+  sorted list is answered), `::test_the_english_route_refuses_the_layer_out_of_order` (3 shapes); F1's fixtures are
+  kept. Seeded S5 (the post-strip-only order check restored) fails 18 of them, three `#guard`s, the theorem and PROBE
+  F5; S3 re-seeded on the new code fails 24. Against the merge base the F5 lists answer byte for byte as before
+  (`profiles must be sorted and unique`), so no refusal text changes: `delta.py` now also probes them, records the
+  environment mode's answer beside every probe and checks every head refusal against it ("32 probes, 6 changed, 0
+  failing"), and `tests/test_jt_2c_delta.py` reads the saved delta (R1's evidence, which the F1 round lacked).
+  `delta.py --compare` without `--out` is a usage error now (the recheck's FOLLOW-UP).
 - F2-F4 (C) and the jt-2d FOLLOW-UP: not in this fix round (FOLLOW-UP lines). The English route now has a test with
   `judgments@0` (part of F3).
 
@@ -92,7 +116,14 @@ mode, which delegates to the route on the environment without it.
 - S3 (Lean, `lean/VE/Compose/Dispatch.lean`, review F1): `layerGate listed` deleted from `decidingEnvironment`. Fails
   `test_the_layer_s_own_requirement_is_checked_by_every_composing_mode` (5 of 7: check, metered, both norms kinds,
   norm-defaults; environment and model gate the list themselves) and `test_the_english_route_checks_the_layer_s_own_requirement`;
-  PROBE F1 fails.
+  PROBE F1 fails. Re-seeded on F5's code (`let _ ← gateOf profileTable listed` deleted, the new theorem's proof
+  `sorry` so the service builds): 24 of `tests/test_judgments_compose.py` fail (F1's 5 and the English one, F5's 15
+  and 3).
+- S5 (Lean, `lean/VE/Compose/Dispatch.lean`, review F5, the DRI's condition): the post-strip-only order check restored
+  (`gateOf profileTable listed` replaced by F1's `layerGate` body). `decidingEnvironment_admits` does not compile; with
+  its proof `sorry`, `test_the_layer_out_of_order_is_refused_by_every_composing_mode` fails 15 of 21 (environment and
+  model gate the list themselves) and `test_the_english_route_refuses_the_layer_out_of_order` 3 of 3; three `#guard`s
+  of `lean/VE/Compose/Examples.lean` fail; PROBE F5 fails; F1's tests pass.
 - S4 (Lean, `lean/VE/Service/Document.lean`, review F1): the document mode calls `decidingEnvironment` in place of
   `layersApart`. Fails `test_the_document_mode_keeps_jt_2_s_fault_order` (it survived every test before that one).
 - M1-M4, one per new trusted definition (`decidingEnvironment` twice, `documentLayersApart`, `pendingDocumentLayer`):
@@ -109,6 +140,21 @@ mode, which delegates to the route on the environment without it.
 
 ## Trust, size and evidence
 
+- Review F5 (final HEAD's Lean, `0c8fff670`): `uv run python tools/trust_map.py --check` against `432763b06d8d`: "K +0,
+  S +0, D +2, G +44, tied +0, unclassified +0, trusted +35", PASS within the two R16 allowances (Dispatch +24:
+  `listedProfiles` replaced `layerGate` at the same total; `tools/trust-classes.json` names it G[V]). Trust mutants
+  (`MAC_PYTEST=0 CLOUD_POOL=0 zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --test
+  lean/VE/Defaults/RouteExamples.lean --allow ... --json ...`, on the VM after the cloud job was abandoned): "66 KILLED,
+  2 SURVIVOR, 1 UNKNOWN, 5 INVALID, 17 ALLOWED" in 12316 s; the three new allow entries (`decidingEnvironment`'s
+  `.take 1` and `.reverse.take 1` of the one-element `documentLayers`; `listedProfiles`' `[]` that does not elaborate)
+  and layerGate's five removed, then `--rescore`: "66 KILLED, 0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 20 ALLOWED, 0 NOT RUN",
+  exit 0. `lake build` "Build completed successfully (1167 jobs)"; PROBE F5 and PROBE F1 exit 0;
+  `review-ready.py --delta-dri-needed` "No DELTA row reserved for the DRI", rc 0.
+- Review F5, selected tests (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `0c8fff670`, on
+  the VM: no Mac slot within 600 s): 505 units, exit 1 for one failure not this item's, the same as F1's round:
+  `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes`, whose only changed record is `DF-a`'s
+  diagnostic (main's `ve/document/cli.py` wording, `cdec72996`; rerun of `measure_r2.probes` diffed against the saved
+  file). `tests/test_judgments_compose.py` "67 passed"; `tests/test_jt_2c_delta.py` "4 passed".
 - Trust (review F1, final HEAD): `uv run python tools/trust_map.py --check` against `432763b06d8d`: "K +0, S +0, D +2,
   G +31, ..., trusted +35" (Dispatch +24: `layersApart`, `layerGate`; the rest as below), exit 0 with the second R16
   allowance (+12). Trust mutants over the fix (`--max-mutants 1000 --test lean/VE/Defaults/RouteExamples.lean --allow
