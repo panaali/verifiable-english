@@ -212,6 +212,7 @@ import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
 import VE.Acts.MeaningExamples
+import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples

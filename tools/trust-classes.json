@@ -13289,7 +13289,6 @@
         "VE.Layout.Unit"
       ]
     },
-    "VE/Scope/EffectLemmas.lean": {},
     "VE/Scope/Examples.lean": {
       "T": [
         "VE.Scope.Examples.a29",
@@ -15501,12 +15500,16 @@
     },
     "VE/Acts/Grammar.lean": {
       "S": [
+        "VE.Acts.Attach",
         "VE.Acts.Core",
         "VE.Acts.FNT",
+        "VE.Acts.Kind",
         "VE.Acts.NT",
         "VE.Acts.RSym",
         "VE.Acts.RuleS",
+        "VE.Acts.attachOf",
         "VE.Acts.closed",
+        "VE.Acts.edgeLhs",
         "VE.Acts.fillExcl",
         "VE.Acts.frameRules",
         "VE.Acts.globalRules",
@@ -15851,6 +15854,12 @@
           ]
         },
         "VE.Acts.analyse",
+        {
+          "name": "VE.Acts.phraseReadings",
+          "tied": [
+            "VE.Acts.phraseReadings_exact"
+          ]
+        },
         "VE.Acts.read",
         "VE.Acts.readings"
       ]
@@ -16403,6 +16412,20 @@
         "VE.Cardinality.Document.Entries"
       ]
     },
+    "VE/Acts/ReadingsExamples.lean": {
+      "T": [
+        "VE.Acts.ReadingsExamples.atoms",
+        "VE.Acts.ReadingsExamples.edgeSides",
+        "VE.Acts.ReadingsExamples.fx9",
+        "VE.Acts.ReadingsExamples.g10s",
+        "VE.Acts.ReadingsExamples.g11s",
+        "VE.Acts.ReadingsExamples.g12s",
+        "VE.Acts.ReadingsExamples.g9s",
+        "VE.Acts.ReadingsExamples.np",
+        "VE.Acts.ReadingsExamples.pr",
+        "VE.Acts.ReadingsExamples.rsC"
+      ]
+    },
     "VE/Closure/CoreEquiv.lean": {
       "P": [
         "VE.Closure.CoreEquiv.embedAtom",
@@ -16417,6 +16440,7 @@
         "VE.Closure.CoreEquiv.embedTrace",
         "VE.Closure.CoreEquiv.embedTraces"
       ]
-    }
+    },
+    "VE/Scope/EffectLemmas.lean": {}
   }
 }
