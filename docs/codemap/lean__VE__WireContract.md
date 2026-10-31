@@ -1,5 +1,6 @@
 - `lean/VE/WireContract/Diagnose.lean` — The diagnose runner (docs/spec/wire-contract.md 4.2), the `ve_service` mode `diagnose` (`VE.Service.Diagnose`; formerly the one-shot `ve_diagnose`): the regist…
 - `lean/VE/WireContract/Engine.lean` — The wire contract engine (docs/spec/wire-contract.md 2 and 5.2).
+- `lean/VE/WireContract/Hooks/Acts.lean` — The hand-written classifier and adapter of the contract `acts@0`, in shadow (ap-1bf; act-phrases-PLAN.md 2.8, edit 2 of plan synthesis round 2): it reports and…
 - `lean/VE/WireContract/Hooks/Corpus.lean` — The hand-written hooks, classifier and view of the engine corpus (docs/spec/wire-contract.md 8.1).
 - `lean/VE/WireContract/Hooks/NormDefaults.lean` — The hand-written hooks and adapter of the contract `norm-defaults@0` (docs/spec/wire-contract-s5.md 2.4 and 2.5).
 - `lean/VE/WireContract/Hooks/Norms.lean` — The hand-written hooks, classifiers and adapter of the contract `norms@0` (docs/spec/wire-contract-s5.md 2.3 and 2.5).
@@ -7,6 +8,7 @@
 - `lean/VE/WireContract/Limits.lean` — (no module docstring)
 - `lean/VE/WireContract/Names.lean` — (no module docstring)
 - `lean/VE/WireContract/Table.lean` — Wire contract tables (docs/spec/wire-contract.md 5.1).
+- `lean/VE/WireContract/Tables/Acts.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/Corpus.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/NormDefaults.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/Norms.lean` — (no module docstring)

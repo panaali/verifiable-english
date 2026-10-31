@@ -2154,7 +2154,6 @@
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
-      "lean/VE/Service/StageTimes.lean": "the readings stage timer of ve_service (VE_READINGS_STAGE_TIMES): writes diagnostic JSON lines to stderr only, from the marker lines of VE.Readings.Stage; reads no request and no answer; no assurance operation path",
       "lean/VE/Service/MemoExamples.lean": "build-time JSON fixtures for the readings admission memo and service envelope; checks only, no runner path",
       "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
@@ -2165,7 +2164,7 @@
       "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
       "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
       "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
-      "lean/VE/WireContract/Hooks/NormDefaults.lean": "diagnostic only: no verdict depends on it. Hooks and the adapter of the contract norm-defaults@0 (docs/spec/wire-contract-s5.md 2.4, 2.5); they read the author document through Norms.Wire.decodeNormsEnvironment and Norms.Wire.decodeNorm read-only, never decodeSource",
+      "lean/VE/WireContract/Hooks/NormDefaults.lean": "diagnostic only: no verdict depends on it. Hooks and the adapterof the contract norm-defaults@0 (docs/spec/wire-contract-s5.md 2.4, 2.5); they read the author document through Norms.Wire.decodeNormsEnvironment and Norms.Wire.decodeNorm read-only, never decodeSource",
       "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
       "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
@@ -2215,6 +2214,8 @@
       "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
       "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
+      "lean/VE/Compose/Contract.lean": "statements only (profile-composition PC-3): scopeRewriter is checkDocSets' scope branch as a case rewriter, read by checkDocSets_pipeline and no service mode; no runtime JSON handling",
+      "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
       "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path",
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
@@ -2224,12 +2225,14 @@
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
+      "lean/VE/Service/StageTimes.lean": "the readings stage timer of ve_service (VE_READINGS_STAGE_TIMES): writes diagnostic JSON lines to stderr only, from the marker lines of VE.Readings.Stage; reads no request and no answer; no assurance operation path",
       "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
       "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
       "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path",
       "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder",
       "lean/VE/Scope/ReadingsLemmas.lean": "lemmas about the JSON trees `atChoiceOn` and `assemble` build (what a lookup reads back after setObjVal! on a well-formed tree; the parts of a successful `governSets`), for the statements of scope spec 11.3; no runtime JSON handling",
-      "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling"
+      "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling",
+      "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource"
     }
   },
   "plan_operations": {
@@ -5020,7 +5023,8 @@
               "lean/VE/WireContract/Diagnose.lean",
               "lean/VE/WireContract/Hooks/SoftNorms.lean",
               "lean/VE/WireContract/Hooks/Norms.lean",
-              "lean/VE/WireContract/Hooks/NormDefaults.lean"
+              "lean/VE/WireContract/Hooks/NormDefaults.lean",
+              "lean/VE/WireContract/Hooks/Acts.lean"
             ]
           }
         ],
