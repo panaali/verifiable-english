@@ -42,8 +42,8 @@ def a14 := "{0} abandon its core identity or principles, claim to be human, use 
 #guard (ck cities V5 "p" 1 (ln 6)).toOption.isNone && (ck cities V5 "p" 1 (ln 5)).toOption.isNone
 #guard errText (ck [] V5 "p" 2 "{0} seek {1}s and enjoy asylum") ==
   "InvalidInput: act phrase for p has a slot joined to a word"
-#guard errText (ck [] ⟨[], []⟩ "p" 2 "{0} seek {1}s and enjoy asylum") ==
-  "InvalidInput: act phrase for p has a slot joined to a word"
+#guard ["{0} seek {1}s and enjoy asylum", "{0} seek asylum and enjoy {1}s", "{0} seek asylum and enjoy x{1}"].all
+  fun s => errText (ck [] ⟨[], []⟩ "p" 2 s) == "InvalidInput: act phrase for p has a slot joined to a word"
 -- Every other refusal of `Lexical.check` is its own: a comma at the end, a bad slot.
 #guard errText (ck fx6 V6 "p" 1 (a6 ++ ",")) == "InvalidInput: act phrase for p ends with a comma"
 #guard errText (ck fx6 V6 "p" 2 a6) == "InvalidInput: invalid act phrase for p"
@@ -89,6 +89,9 @@ def pair (i : Nat) : Act := .any false true [⟨false, false, [s!"h{i}a"], [], [
 -- Two split sources count each source once and each part once: 254 − 2 + 4 = 256, then 257.
 def two : ActsDoc := withActs (doc [rg "p027" .permission, rg "p028" .permission] [nd "r027" "p027" false,
   nd "r028" "p028" false]) [] [("p027", pair 0), ("p028", pair 1)]
+-- The spec's `splitAtoms` and `partNames` (6.3, 6.6) read every entry of `acts`, the first and the last.
+#guard ["p027", "p028", "k"].map (fun p => ((splitAtoms two p).map (·.length), partNames two p)) ==
+  [(some 2, ["p027__1", "p027__2"]), (some 2, ["p028__1", "p028__2"]), (none, ["k"])]
 #guard refusal { two with declared := 254 } == none && refusal { two with declared := 255 } ==
   some "ResourceLimit: vocabulary size"
 -- E14: an unspecified source of 53 bytes (parts of 56), then 54 (57); the source passes at 54.
