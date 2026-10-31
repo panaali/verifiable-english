@@ -19650,7 +19650,7 @@ module VE.Scope.English 5dffb7496b2af33fb81857b9b28e294aabcab877fdf66c63c35681c8
 25:0-31:95 def VE.Scope.whereOf@VE.Scope.English
 33:0-37:51 def VE.Scope.coverOf@VE.Scope.English
 39:0-53:60 def VE.Scope.sentence@VE.Scope.English
-module VE.Scope.Examples 8044d97f1281d54928029668ffd2163e6b08d3bf6828507bc7833abe638802a1
+module VE.Scope.Examples 4ae030cb3d382a16bcb1d8b0aabb9e698fb37785e206835a74df0ed4791a6519
 15:0-18:14 def VE.Scope.Examples.mk@VE.Scope.Examples
 20:0-20:111 def VE.Scope.Examples.layoutOf@VE.Scope.Examples
 22:0-32:71 def VE.Scope.Examples.hcPieces@VE.Scope.Examples
@@ -19787,10 +19787,10 @@ module VE.Scope.Examples 8044d97f1281d54928029668ffd2163e6b08d3bf6828507bc7833ab
 1117:0-1121:81 theorem VE.Scope.Examples.short_order@VE.Scope.Examples
 1143:0-1144:111 def VE.Scope.Examples.ownModel@VE.Scope.Examples
 1145:0-1146:91 def VE.Scope.Examples.ownVal@VE.Scope.Examples
-1164:0-1172:13 def VE.Scope.Examples.effectAsStated@VE.Scope.Examples
-1173:0-1174:82 def VE.Scope.Examples.twiceG@VE.Scope.Examples
-1175:0-1176:74 def VE.Scope.Examples.twiceU@VE.Scope.Examples
-1177:0-1178:43 def VE.Scope.Examples.onceRule@VE.Scope.Examples
+1165:0-1173:13 def VE.Scope.Examples.effectAsStated@VE.Scope.Examples
+1174:0-1175:82 def VE.Scope.Examples.twiceG@VE.Scope.Examples
+1176:0-1177:74 def VE.Scope.Examples.twiceU@VE.Scope.Examples
+1178:0-1179:56 def VE.Scope.Examples.onceRule@VE.Scope.Examples
 module VE.Scope.Govern 45776ab8c3814d39f237dc888a95c208bca0850c195a84b863f2dce043c55868
 15:0-22:31 inductive VE.Scope.Reach@VE.Scope.Govern
 24:0-29:21 structure VE.Scope.Governor@VE.Scope.Govern
