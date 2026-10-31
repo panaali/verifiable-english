@@ -326,14 +326,8 @@ class LeanReading:
     def rejection(self) -> Exception:
         """Lean's outcome other than `one` as the exception of the class Lean names, with Lean's text and span;
         the answer rides along as `lean_reading` for the shadow record."""
-        cls = ERROR_CLASSES[self.response["class"]]
-        if issubclass(cls, CheckerUnavailable):
-            error = cls(self.message(), operation="english.admission", backend="lean")
-        else:
-            span = self.response.get("span")  # an overlay refusal reads no text, so it has none
-            where = None if span is None else Span(span[0], span[1], self.source.count("\n", 0, span[0]) + 1,
-                                                    span[0] - self.source.rfind("\n", 0, span[0]))
-            error = cls(self.message(), span=where)
+        # an overlay refusal reads no text, so it has no span
+        error = _refusal(self.response, self.message(), self.source, "english.admission")
         error.lean_reading = self
         return error
 
@@ -526,21 +520,25 @@ def read_question(env, question: str, words, options: dict, *, caller: str | Non
             # returned or shown, as `LeanReading.document` raises the same refusal on the english.read path.
             raise refusal
         return response
-    cls = ERROR_CLASSES[response["class"]]
-    text = "\n".join(question_lines(response))
-    if issubclass(cls, CheckerUnavailable):
-        error = cls(text, operation="question.read", backend="lean")
-    else:
-        span = response.get("span")
-        where = None if span is None else Span(span[0], span[1], question.count("\n", 0, span[0]) + 1,
-                                               span[0] - question.rfind("\n", 0, span[0]))
-        error = cls(text, span=where)
-        # Lean's lines verbatim (`question_lines`): a code-worded class writes `Code: text` for Python's own checkers
-        # (`errors._CodeWorded`), and the question reader's texts carry no code, so the speech caller's refusal would
-        # differ from what `ve ask` prints (q1-4b loop recheck, DRI 2026-10-28 b item 1 (c)).
-        error.message, error.args = text, (text,)
+    error = _refusal(response, "\n".join(question_lines(response)), question, "question.read")
     error.lean_question = response
     raise error
+
+
+def _refusal(response: dict, text: str, source: str, operation: str) -> Exception:
+    """A checked answer other than `one` as the exception of the class Lean names, with `text` (Lean's, as the
+    caller shows it) verbatim and Lean's span over `source`. A code-worded class writes `Code: text` for Python's
+    own checkers (`errors._CodeWorded`); Lean's reader texts carry no code, and a relay adds no wording, so the
+    message is Lean's as it stands (q1-4b fix round 6 for questions, q1-4bd for `english.read`)."""
+    cls = ERROR_CLASSES[response["class"]]
+    if issubclass(cls, CheckerUnavailable):
+        return cls(text, operation=operation, backend="lean")
+    span = response.get("span")
+    where = None if span is None else Span(span[0], span[1], source.count("\n", 0, span[0]) + 1,
+                                           span[0] - source.rfind("\n", 0, span[0]))
+    error = cls(text, span=where)
+    error.message, error.args = text, (text,)
+    return error
 
 
 def check(env, words, options: dict, formulas: list, marks: list[bool], candidates: list[str]) -> int | None:
