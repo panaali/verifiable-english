@@ -1,0 +1,12 @@
+trust_mutants: 2 definitions, 35 mutants (35 to run), 4 jobs, base 2d87a0b16014
+UNKNOWN lean/VE/Cardinality/Run.lean:235 VE.Cardinality.Run.sizesJson (D[V], trusted) list-empty: sizes -> [] (lean/VE/Cardinality/Run.lean:235: Invalid projection: Type of)
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) list-empty: answer -> []
+UNKNOWN lean/VE/Cardinality/Run.lean:235 VE.Cardinality.Run.sizesJson (D[V], trusted) list-empty: sizes.map -> [] (lean/VE/Cardinality/Run.lean:235: Function expected at)
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) append-right: answer ++ -> 
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) list-first: answer -> (answer.take 1)
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) list-drop-last: answer -> (answer.dropLast)
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) list-last: answer -> (answer.reverse.take 1)
+SURVIVOR lean/VE/Cardinality/Run.lean:274 VE.Cardinality.Run.runCase (G[V], trusted) list-drop-first: answer -> (answer.drop 1)
+trust_mutants: 23 KILLED, 6 SURVIVOR, 2 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN in 1567 s
+trust_mutants: D[V], trusted: 9 KILLED, 2 UNKNOWN, 4 INVALID
+trust_mutants: G[V], trusted: 14 KILLED, 6 SURVIVOR
