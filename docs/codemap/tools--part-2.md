@@ -1,2 +1,3 @@
 - `tools/wire_contract_lean.py` — Render format-1 contracts as data-only Lean table modules.
+- `tools/wire_contract_rust.py` — Render format-1 contracts as data-only Rust table modules (docs/spec/wire-contract-s4-2.md 4).
 - `tools/words_ab.py` — The A/B of Q2.4 (docs/spec/question-answering-PLAN.md, Q2.4): Lean's situation and point wording (`VE.Words`, through `ve/words.py`) against the Python produce…
