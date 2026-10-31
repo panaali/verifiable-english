@@ -2189,7 +2189,8 @@
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
-      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path"
+      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path",
+      "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling"
     }
   },
   "plan_operations": {

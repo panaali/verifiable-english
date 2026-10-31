@@ -13326,6 +13326,7 @@
         "VE.Scope.Examples.contentStr",
         "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
+        "VE.Scope.Examples.effectAsStated",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
         "VE.Scope.Examples.exporting",
@@ -13375,9 +13376,16 @@
         "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.normP",
         "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.oA",
+        "VE.Scope.Examples.oB",
+        "VE.Scope.Examples.oC",
+        "VE.Scope.Examples.oN",
+        "VE.Scope.Examples.onceRule",
         "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.ownEnv",
+        "VE.Scope.Examples.ownModel",
+        "VE.Scope.Examples.ownVal",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
@@ -13409,6 +13417,8 @@
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.titleCarveA",
         "VE.Scope.Examples.titleCarveB",
+        "VE.Scope.Examples.twiceG",
+        "VE.Scope.Examples.twiceU",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -15516,12 +15526,16 @@
     },
     "VE/Acts/Grammar.lean": {
       "S": [
+        "VE.Acts.Attach",
         "VE.Acts.Core",
         "VE.Acts.FNT",
+        "VE.Acts.Kind",
         "VE.Acts.NT",
         "VE.Acts.RSym",
         "VE.Acts.RuleS",
+        "VE.Acts.attachOf",
         "VE.Acts.closed",
+        "VE.Acts.edgeLhs",
         "VE.Acts.fillExcl",
         "VE.Acts.frameRules",
         "VE.Acts.globalRules",
@@ -15873,6 +15887,12 @@
           ]
         },
         "VE.Acts.analyse",
+        {
+          "name": "VE.Acts.phraseReadings",
+          "tied": [
+            "VE.Acts.phraseReadings_exact"
+          ]
+        },
         "VE.Acts.read",
         "VE.Acts.readings"
       ]
@@ -16413,6 +16433,21 @@
         "VE.Closure.CoreEquiv.embedTrace",
         "VE.Closure.CoreEquiv.embedTraces"
       ]
-    }
+    },
+    "VE/Acts/ReadingsExamples.lean": {
+      "T": [
+        "VE.Acts.ReadingsExamples.atoms",
+        "VE.Acts.ReadingsExamples.edgeSides",
+        "VE.Acts.ReadingsExamples.fx9",
+        "VE.Acts.ReadingsExamples.g10s",
+        "VE.Acts.ReadingsExamples.g11s",
+        "VE.Acts.ReadingsExamples.g12s",
+        "VE.Acts.ReadingsExamples.g9s",
+        "VE.Acts.ReadingsExamples.np",
+        "VE.Acts.ReadingsExamples.pr",
+        "VE.Acts.ReadingsExamples.rsC"
+      ]
+    },
+    "VE/Scope/EffectLemmas.lean": {}
   }
 }
