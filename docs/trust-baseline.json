@@ -1594,6 +1594,13 @@
    "reason": "ap-4a: lean/VE/Acts/Grammar.lean S +31 (Attach, Kind, the rule kind field and the edge kinds the table writes, attachOf, edgeLhs; modifier_edges); K +0; phraseReadings G[V] tied to phraseReadings_exact",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4a, 2026-10-18",
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
   }
  ]
 }
