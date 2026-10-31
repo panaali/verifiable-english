@@ -1527,8 +1527,8 @@
   },
   {
    "class": "S",
-   "lines": 30,
-   "reason": "ap-2bb: VE/Acts/Linearize.lean S +27 (Atom.canon, Filler.parts, normalOk), VE/Acts/Meaning.lean S +3 (longEnd); K +0",
+   "lines": 29,
+   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   }
