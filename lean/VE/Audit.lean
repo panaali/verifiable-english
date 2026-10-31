@@ -85,6 +85,7 @@ import VE.CertificateWire
 import VE.ClaimGraph
 import VE.Closure.Congruence
 import VE.Closure.Consequence
+import VE.Closure.CoreEquiv
 import VE.Closure.Finite
 import VE.Closure.Induction
 import VE.Closure.Order
@@ -1443,6 +1444,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.countedSorts_eq_H
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
+#print axioms VE.Cardinality.countermodel_sound
 #print axioms VE.Cardinality.counts_iff
 #print axioms VE.Cardinality.cterm_erase
 #print axioms VE.Cardinality.cterm_typed
@@ -1452,6 +1454,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.erase_iff
 #print axioms VE.Cardinality.erase_iff_of
 #print axioms VE.Cardinality.erasedProblem_admitted
+#print axioms VE.Cardinality.evalBy_eq
 #print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
 #print axioms VE.Cardinality.firstUseH_eq
@@ -1496,6 +1499,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.regionSize_eq
 #print axioms VE.Cardinality.regionSize_filter
 #print axioms VE.Cardinality.regionSize_sum
+#print axioms VE.Cardinality.regionSizes_eq
 #print axioms VE.Cardinality.regionSum_denote
 #print axioms VE.Cardinality.regionSum_typed
 #print axioms VE.Cardinality.regions_nodup
@@ -1503,6 +1507,9 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.roundingQ_iff
 #print axioms VE.Cardinality.roundsTo_holds_iff
 #print axioms VE.Cardinality.roundsTo_ratio_agree
+#print axioms VE.Cardinality.sizeIndex_get
+#print axioms VE.Cardinality.sizesJson_regionSizes
+#print axioms VE.Cardinality.sortDomains_valid
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data
 #print axioms VE.Cardinality.sublist_of_sorted
@@ -1520,8 +1527,81 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.withRegions_admissible
 #print axioms VE.Cardinality.withRegions_const
 #print axioms VE.Cardinality.withRegions_declared
+#print axioms VE.Cardinality.withSizes_eq
 #print axioms VE.CertificateWire.ClosureQuery.accepts_sound
 #print axioms VE.CertificateWire.Query.accepts_sound
+#print axioms VE.Closure.CoreEquiv.add_embed
+#print axioms VE.Closure.CoreEquiv.at_embed
+#print axioms VE.Closure.CoreEquiv.atomMatches_embed
+#print axioms VE.Closure.CoreEquiv.checkCertificate_eq_core_replay
+#print axioms VE.Closure.CoreEquiv.checkCertificate_other_version
+#print axioms VE.Closure.CoreEquiv.checkCertificate_v0
+#print axioms VE.Closure.CoreEquiv.checkCertificate_v1
+#print axioms VE.Closure.CoreEquiv.checkChildren_embed
+#print axioms VE.Closure.CoreEquiv.closed_embed
+#print axioms VE.Closure.CoreEquiv.closes_embed
+#print axioms VE.Closure.CoreEquiv.complementary_embed
+#print axioms VE.Closure.CoreEquiv.composeKind_embed
+#print axioms VE.Closure.CoreEquiv.composeStep_embed
+#print axioms VE.Closure.CoreEquiv.decodeTrace_ne_embed
+#print axioms VE.Closure.CoreEquiv.dedup_embed
+#print axioms VE.Closure.CoreEquiv.deriveExtra_embed
+#print axioms VE.Closure.CoreEquiv.edgeCheck_embed
+#print axioms VE.Closure.CoreEquiv.edgeStep_embed
+#print axioms VE.Closure.CoreEquiv.embedBranch_expanded
+#print axioms VE.Closure.CoreEquiv.embedBranch_instantiated
+#print axioms VE.Closure.CoreEquiv.embedClosure_inj
+#print axioms VE.Closure.CoreEquiv.embedEdge_inj
+#print axioms VE.Closure.CoreEquiv.embedKind_inj
+#print axioms VE.Closure.CoreEquiv.embedSigned_bindings
+#print axioms VE.Closure.CoreEquiv.embedToken_inj
+#print axioms VE.Closure.CoreEquiv.endEdge_embed
+#print axioms VE.Closure.CoreEquiv.endStep_embed
+#print axioms VE.Closure.CoreEquiv.equalities_embed
+#print axioms VE.Closure.CoreEquiv.equivalent_embed
+#print axioms VE.Closure.CoreEquiv.extraRule_eq
+#print axioms VE.Closure.CoreEquiv.extra_embed
+#print axioms VE.Closure.CoreEquiv.getElem?_embed
+#print axioms VE.Closure.CoreEquiv.groundMatch_embed
+#print axioms VE.Closure.CoreEquiv.ground_embed
+#print axioms VE.Closure.CoreEquiv.grow_embed
+#print axioms VE.Closure.CoreEquiv.induct_embed
+#print axioms VE.Closure.CoreEquiv.inductionStep_embed
+#print axioms VE.Closure.CoreEquiv.initial_embed
+#print axioms VE.Closure.CoreEquiv.invariantAt_embed
+#print axioms VE.Closure.CoreEquiv.isReach_embed
+#print axioms VE.Closure.CoreEquiv.known_embed
+#print axioms VE.Closure.CoreEquiv.liftMatch_eq
+#print axioms VE.Closure.CoreEquiv.liftSub_eq
+#print axioms VE.Closure.CoreEquiv.liftTerm_eq
+#print axioms VE.Closure.CoreEquiv.literals_embed
+#print axioms VE.Closure.CoreEquiv.map_embedToken_inj
+#print axioms VE.Closure.CoreEquiv.matches_embed
+#print axioms VE.Closure.CoreEquiv.mem_instantiated
+#print axioms VE.Closure.CoreEquiv.mem_map_embedToken
+#print axioms VE.Closure.CoreEquiv.namedStep_embed
+#print axioms VE.Closure.CoreEquiv.next_embed
+#print axioms VE.Closure.CoreEquiv.parse_embed
+#print axioms VE.Closure.CoreEquiv.reachClosed_embed
+#print axioms VE.Closure.CoreEquiv.reach_embed
+#print axioms VE.Closure.CoreEquiv.reachable_embed
+#print axioms VE.Closure.CoreEquiv.replay_certificate_embed
+#print axioms VE.Closure.CoreEquiv.replay_embed
+#print axioms VE.Closure.CoreEquiv.rule_embed
+#print axioms VE.Closure.CoreEquiv.scoped_embed
+#print axioms VE.Closure.CoreEquiv.shift_embed
+#print axioms VE.Closure.CoreEquiv.sortOf_embed
+#print axioms VE.Closure.CoreEquiv.sortsOf_embed
+#print axioms VE.Closure.CoreEquiv.step_embed
+#print axioms VE.Closure.CoreEquiv.stepsList_embed
+#print axioms VE.Closure.CoreEquiv.steps_embed
+#print axioms VE.Closure.CoreEquiv.substTerm_eq
+#print axioms VE.Closure.CoreEquiv.subst_embed
+#print axioms VE.Closure.CoreEquiv.tag_embed
+#print axioms VE.Closure.CoreEquiv.termToken_embed
+#print axioms VE.Closure.CoreEquiv.unfoldAt_embed
+#print axioms VE.Closure.CoreEquiv.unfold_embed
+#print axioms VE.Closure.CoreEquiv.unlift_eq
 #print axioms VE.Closure.Path.first
 #print axioms VE.Closure.Path.last
 #print axioms VE.Closure.Path.least

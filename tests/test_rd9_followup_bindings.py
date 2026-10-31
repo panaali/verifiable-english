@@ -21,6 +21,7 @@ import pytest
 from ve import rights_route, soft_route
 from ve.backends.service_schema import Invalid, check_row
 from ve.errors import CheckerUnavailable
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROW_38 = "CONFLICT-FREE among rules on the same act, conditional on 9 coherence premises and 0 limitation premises"
 CONFLICT_UNBOUND = "CheckerUnavailable: Lean rights conflict is not bound to the request: unbound conflict status text"
@@ -132,7 +133,7 @@ def _statements():
     """lean/statements.txt as {theorem: its `-- uses` constants} (tools/lean_statements.py writes one block per
     theorem: `theorem <name>`, the statement, `  -- uses <constants>`)."""
     blocks, name = {}, None
-    for line in (ROOT / "lean/statements.txt").read_text().splitlines():
+    for line in inventory_path("lean/statements.txt").read_text().splitlines():
         if line.startswith("theorem "):
             name = line.removeprefix("theorem ")
         elif name is not None and line.startswith("  -- uses "):
@@ -142,7 +143,7 @@ def _statements():
 
 def test_the_report_id_guarantee_is_a_stated_audited_theorem():
     statements = _statements()
-    audited = (ROOT / "lean/VE/Audit.lean").read_text().splitlines()
+    audited = inventory_path("lean/VE/Audit.lean").read_text().splitlines()
     for theorem, uses in REPORT_ID_THEOREMS.items():
         assert set(uses) <= statements.get(theorem, set()), theorem
         assert f"#print axioms {theorem}" in audited, theorem

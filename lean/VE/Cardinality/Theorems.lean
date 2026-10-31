@@ -1027,4 +1027,48 @@ theorem refutesC_sound {α : Type} [DecidableEq α] (E : CEnv) (hE : E.WellForme
   exact hn ((key c List.mem_cons_self).mp (hent α T hT fun a ha => (key a (List.mem_cons_of_mem c ha)).mpr
     (hp _ (List.mem_map.mpr ⟨_, List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩), rfl⟩))))
 
+/-! ## The region sizes computed once per model (`withSizes_eq`) -/
+
+theorem evalBy_eq {α : Type} [DecidableEq α] {M : VE.Order.FiniteModel α}
+    {mem : String → List (VE.Order.Value α) → Bool} (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p)
+    (x : α) : ∀ b : Body, b.evalBy mem x = b.evalFin M x
+  | .atom p => Bool.eq_iff_iff.mpr (by simp [Body.evalBy, Body.evalFin, hmem])
+  | .any => rfl
+  | .not b => by simp [Body.evalBy, Body.evalFin, evalBy_eq hmem x b]
+  | .and a b | .or a b => by simp [Body.evalBy, Body.evalFin, evalBy_eq hmem x a, evalBy_eq hmem x b]
+
+theorem sizeIndex_get (sizes : List (String × Nat)) (c : String) :
+    (sizeIndex sizes)[c]? = (sizes.find? (·.1 == c)).map (·.2) := by
+  induction sizes with
+  | nil => simp [sizeIndex]
+  | cons e es ih =>
+    simp only [sizeIndex, List.foldr_cons] at ih ⊢
+    rw [Std.HashMap.getElem?_insert, ih]
+    by_cases h : e.1 = c <;> simp [h]
+
+/-- The sizes are each region constant of the table with `countFin` of its region's body. -/
+theorem regionSizes_eq {α : Type} [DecidableEq α] [Hashable α] {M : VE.Order.FiniteModel α}
+    {mem : String → List (VE.Order.Value α) → Bool} (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p)
+    (R : RegionData) :
+    regionSizes mem M R = R.table.map fun e => (e.1, countFin M e.2.1 (regionBody (R.predsOn e.2.1) e.2.2)) := by
+  simp only [regionSizes, RegionData.table, tableOf, List.map_flatMap, List.map_map, countFin, firstUseH_eq]
+  congr 1
+  funext s
+  congr 1
+  funext r
+  simp [evalBy_eq hmem]
+
+/-- **The runner's model is `withRegionsFinite`**: the region constants of the problem's region structure, each read
+through the index of its size computed once, are `withRegionsFinite`'s, read at every constant. -/
+theorem withSizes_eq {α : Type} [DecidableEq α] [Hashable α] (E : CEnv) (fs : List CFormula)
+    {M : VE.Order.FiniteModel α} {mem : String → List (VE.Order.Value α) → Bool}
+    (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p) :
+    withSizes M (sizeIndex (regionSizes mem M (regionData E fs))) = withRegionsFinite E fs M := by
+  simp only [withSizes, withRegionsFinite]
+  congr 1
+  funext c
+  rw [sizeIndex_get, regionSizes_eq hmem, regionData_table, regionData_predsOn, List.find?_map]
+  simp only [Function.comp_def, Option.map_map]
+  cases (regionTable E fs).find? (·.1 == c) <;> rfl
+
 end VE.Cardinality
