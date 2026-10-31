@@ -11,11 +11,12 @@ from pathlib import Path
 import re
 
 import pytest
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / 'docs/spec/english-lean-s2.md'
 LEAN = ROOT / 'lean/VE/EnglishGrammar'
-AXIOMS = ROOT / 'lean/axioms.txt'
+AXIOMS = inventory_path('lean/axioms.txt')
 STANDARD = {'propext', 'Classical.choice', 'Quot.sound'}
 
 

@@ -1,0 +1,6 @@
+{"item": "eff-tm-control", "code": "b13852342", "mutants": [
+{"id": "S1", "file": "tools/trust_mutants.py", "bug": "Steps.ran counts every Lake run as \"other\"", "test": "tests/test_trust_mutants.py::test_steps_count_each_lake_run_under_its_own_threads_step", "result": "1 failed"},
+{"id": "S2", "file": "tools/trust_mutants.py", "bug": "run's stage control build is not labelled stage_controls", "test": "tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes", "result": "1 failed"},
+{"id": "S3", "file": "tools/trust_mutants.py", "bug": "--merge drops each part's steps from its shards entry", "test": "tests/test_trust_mutants.py::test_the_parts_merged_are_the_one_runs_record", "result": "1 failed"},
+{"id": "S4", "file": "tools/trust_mutants.py", "bug": "unread accepts a part whose steps are not Steps.record's", "test": "tests/test_trust_mutants.py::test_merge_refuses_a_part_this_tool_does_not_write", "result": "1 failed"}
+]}

@@ -81,6 +81,35 @@ def read_junit(report: Path, unit: str | None = None) -> tuple[set[str], list[st
     return files, sorted(failed)
 
 
+def junit_cases(report: Path, unit: str) -> list[tuple[str, str]] | None:
+    """(node ID, outcome) of every test case of the test file `unit` in a JUnit (xunit1) report, once per case in
+    the report's order (a node ID twice: the report holds it twice); the outcome is "failed" (a failure or an
+    error), "skipped" or "passed". None when there is no readable report. The ID is rebuilt from the case's class
+    name, which pytest derives from the node ID, never from its `file`, which names where the test function is
+    defined. A case of the module itself (it failed to collect, or was skipped whole) names no test; a case of
+    another file is kept as `<class name>::<name>`, so it shows as extra."""
+    try:
+        tree = ElementTree.parse(report)
+    except (OSError, ElementTree.ParseError):
+        return None
+    module = unit.removesuffix(".py").replace("/", ".")
+    cases = []
+    for case in tree.iter("testcase"):
+        name, classname = case.get("name") or "", case.get("classname") or ""
+        if not classname and name == module:
+            continue
+        if classname == module:
+            nodeid = f"{unit}::{name}"
+        elif classname.startswith(module + "."):
+            nodeid = "::".join([unit, *classname.removeprefix(module + ".").split("."), name])
+        else:
+            nodeid = f"{classname}::{name}"
+        outcome = ("failed" if case.find("failure") is not None or case.find("error") is not None
+                   else "skipped" if case.find("skipped") is not None else "passed")
+        cases.append((nodeid, outcome))
+    return cases
+
+
 def git_dir(root: Path | None = None) -> Path:
     found = subprocess.run(["git", "rev-parse", "--absolute-git-dir"], cwd=root or ROOT, text=True,
                            capture_output=True, check=True).stdout.strip()
