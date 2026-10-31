@@ -16384,7 +16384,7 @@
         "ResponseShape.Schemas.SensesProject.pair",
         "ResponseShape.Schemas.SensesProject.lexicon",
         "ResponseShape.Schemas.SensesProject.identities",
-        "ResponseShape.Schemas.SensesProject.details",
+        "ResponseShape.Schemas.SensesProject.fault",
         "ResponseShape.Schemas.SensesProject.projection",
         "ResponseShape.Schemas.SensesProject.row",
         "ResponseShape.Schemas.SensesProject.file"

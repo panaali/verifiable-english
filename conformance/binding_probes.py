@@ -174,6 +174,12 @@ def _senses():
     return request(_python(env), "Alice tells the riddle.", [bundled_pack("fixtures@1").decode("utf-8")])
 
 
+def _senses_project():
+    case = _senses()
+    del case["source"]
+    return dict(case, id="senses.project", lines="In this document, tells means says aloud.", used=["tells"])
+
+
 def _english_case(mode):
     from conformance.english_lean_s3_fixtures import F
     from ve.english import EnglishVocabulary
@@ -255,6 +261,7 @@ BUILDERS = {
     ("graph.compose", C, "check-certificate", None): lambda: _certificate_case(_legacy(), "edge"),
     ("bundle.check", C, "route", "bundle"): _bundle,
     ("senses.read", "ve_senses_route", "", None): _senses,
+    ("senses.project", "ve_service", "senses.project", None): _senses_project,
 }
 
 
