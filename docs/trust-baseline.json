@@ -1608,6 +1608,13 @@
    "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   }
  ]
 }
