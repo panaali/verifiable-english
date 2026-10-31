@@ -1444,6 +1444,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.countedSorts_eq_H
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
+#print axioms VE.Cardinality.countermodel_sound
 #print axioms VE.Cardinality.counts_iff
 #print axioms VE.Cardinality.cterm_erase
 #print axioms VE.Cardinality.cterm_typed
@@ -1453,6 +1454,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.erase_iff
 #print axioms VE.Cardinality.erase_iff_of
 #print axioms VE.Cardinality.erasedProblem_admitted
+#print axioms VE.Cardinality.evalBy_eq
 #print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
 #print axioms VE.Cardinality.firstUseH_eq
@@ -1497,6 +1499,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.regionSize_eq
 #print axioms VE.Cardinality.regionSize_filter
 #print axioms VE.Cardinality.regionSize_sum
+#print axioms VE.Cardinality.regionSizes_eq
 #print axioms VE.Cardinality.regionSum_denote
 #print axioms VE.Cardinality.regionSum_typed
 #print axioms VE.Cardinality.regions_nodup
@@ -1504,6 +1507,9 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.roundingQ_iff
 #print axioms VE.Cardinality.roundsTo_holds_iff
 #print axioms VE.Cardinality.roundsTo_ratio_agree
+#print axioms VE.Cardinality.sizeIndex_get
+#print axioms VE.Cardinality.sizesJson_regionSizes
+#print axioms VE.Cardinality.sortDomains_valid
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data
 #print axioms VE.Cardinality.sublist_of_sorted
@@ -1521,6 +1527,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.withRegions_admissible
 #print axioms VE.Cardinality.withRegions_const
 #print axioms VE.Cardinality.withRegions_declared
+#print axioms VE.Cardinality.withSizes_eq
 #print axioms VE.CertificateWire.ClosureQuery.accepts_sound
 #print axioms VE.CertificateWire.Query.accepts_sound
 #print axioms VE.Closure.CoreEquiv.add_embed
