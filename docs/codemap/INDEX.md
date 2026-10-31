@@ -4,8 +4,8 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 64 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 29 modules — -
+- [conformance/](conformance.md) — 63 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [docs/act-phrases/](docs__act-phrases.md) — 32 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 10 modules — -
@@ -55,7 +55,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/question-answering/](docs__question-answering.md) — 3 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
-- [docs/scope/](docs__scope.md) — 7 modules — -
+- [docs/scope/](docs__scope.md) — 6 modules — -
 - [docs/spec/](docs__spec.md) — 7 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
@@ -102,7 +102,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
-- [lean/VE/Scope/](lean__VE__Scope.md) — 14 modules — -
+- [lean/VE/Scope/](lean__VE__Scope.md) — 13 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 12 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 22 modules — -
@@ -115,11 +115,11 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 36 modules — -
 - [tests/ part 1](tests--part-1.md) — 95 modules — -
-- [tests/ part 2](tests--part-2.md) — 91 modules — -
-- [tests/ part 3](tests--part-3.md) — 89 modules — -
-- [tests/ part 4](tests--part-4.md) — 89 modules — -
+- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 3](tests--part-3.md) — 90 modules — -
+- [tests/ part 4](tests--part-4.md) — 90 modules — -
 - [tests/ part 5](tests--part-5.md) — 83 modules — -
-- [tests/ part 6](tests--part-6.md) — 89 modules — -
+- [tests/ part 6](tests--part-6.md) — 88 modules — -
 - [tests/ part 7](tests--part-7.md) — 9 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -

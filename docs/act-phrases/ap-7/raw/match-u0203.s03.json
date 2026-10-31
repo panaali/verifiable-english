@@ -1,0 +1,110 @@
+{
+ "key": "match-u0203.s03",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: If deviating from what operators or users want seems warranted, it should err on the side of the most cautious action available, such as raising concerns or declining to continue, rather than engaging in more drastic unilateral actions.\nDEMAND: it should err on the side of the most cautious action available\nIn list L, {0} stands for it (Claude).\nA1. If deviating from what operators or users want seems warranted, Claude is required to take the single most cautious action available to it, and not any more drastic unilateral action.\nA2. If deviating seems warranted, Claude is required to lean toward cautious actions when in doubt; this is a strong preference for caution, so a somewhat less cautious action is not strictly forbidden when caution is clearly not needed.\nA3. If deviating seems warranted, Claude is required to choose a cautious action, and it may pick either raising concerns or declining to continue, as it sees fit, since both count as the most cautious kind of action.\nA4. If deviating seems warranted, Claude is required to choose a cautious action, and raising concerns and declining to continue are only examples; any other equally cautious action available also meets the requirement.\nA5. If deviating seems warranted, Claude is required to deviate only in the most cautious way available, such as raising concerns or declining to continue. Here \"most cautious action\" means the mildest form of deviation.\nA6. If deviating seems warranted, Claude is required to take the most cautious action of all those available, which could include not deviating at all and going along with the operator or user, rather than only the mildest form of deviation.\nA7. If deviating seems warranted, Claude is forbidden from taking more drastic unilateral actions.\nA8. If deviating seems warranted, more drastic unilateral actions are disfavored and should be passed over in favor of cautious ones, but they are not absolutely forbidden.\nA9. The requirement applies only when deviating seems warranted; it requires nothing when deviating does not seem warranted.\nB1. When deviating from what operators or users want seems warranted, Claude should lean toward the most cautious action available over more drastic unilateral actions. This is a default preference, so Claude could still take a less cautious action if there is a strong enough reason.\nB2. When deviating seems warranted, Claude is required to take the single most cautious action available, whichever that turns out to be in the situation, and no less cautious option is acceptable.\nB3. When deviating seems warranted, Claude may choose either to raise concerns or to decline to continue, since both count as the most cautious kind of action. Either one satisfies the demand.\nB4. When deviating seems warranted, Claude should first raise concerns, because that is the more cautious example. It should decline to continue only if raising concerns is not available or not enough.\nB5. When deviating seems warranted, Claude must not engage in drastic unilateral actions. It is limited to cautious responses such as raising concerns or declining to continue.\nL1. {0} must err on the side of the most cautious action available.\n",
+ "cli": {
+  "duration_api_ms": 8875,
+  "stop_reason": "end_turn",
+  "session_id": "27bcde9c-4a9e-43e7-92b4-42a8974420cf",
+  "total_cost_usd": 0.056352799999999995,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4978,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 719,
+   "output_tokens_details": {
+    "thinking_tokens": 652
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4978,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 719,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4978,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4978
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 719,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4978,
+    "webSearchRequests": 0,
+    "costUSD": 0.056352799999999995,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 652,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4978,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B2 NONE\nPAIR A2 B1 L1\nPAIR A3 B3 NONE\nPAIR A7 B5 NONE\nSKIPPED: NONE",
+  "ttft_ms": 8605,
+  "type": "result",
+  "duration_ms": 9082,
+  "uuid": "21336b7b-fd25-48dd-8421-64a467304e2e",
+  "ttft_stream_ms": 2041,
+  "time_to_request_ms": 204,
+  "first_content_frame_ms": 2042,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 16403,
+ "answer": "PAIR A1 B2 NONE\nPAIR A2 B1 L1\nPAIR A3 B3 NONE\nPAIR A7 B5 NONE\nSKIPPED: NONE"
+}
