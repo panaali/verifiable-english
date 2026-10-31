@@ -821,6 +821,15 @@ def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
   | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter fun p => !documentLayers.any (.str · == p)))
   | _ => environment
 
+/-- What a document layer does not compose with yet (JT-2): their contents are no `Judgments.Content`. -/
+def documentLayersApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
+
+/-- The refusal by name of a list that has a document layer beside a profile it does not compose with yet. -/
+def layersApart (listed : List String) : Except String Unit := do
+  if let some l := documentLayers.find? listed.contains then
+    if let some p := documentLayersApart.find? listed.contains then
+      throw s!"CheckerUnavailable: {l} with {p} needs its composed Lean route"
+
 /-- The profiles only their own service mode reads (`cardinality`, QT-A3): Python models no environment with them
 until their document hook (QT-A4). -/
 def modeProfiles : List String := ["cardinality@0"]
@@ -863,6 +872,24 @@ def gateOf (t : List ProfileRow) (ps : List String) : Except String Route :=
   | none => match (t.flatMap (rowChecks ps)).find? (·.1) with
     | some c => .error (unsupported c.2)
     | none => .ok (routeOf t ps)
+
+/-- The profile names an environment lists, as written. -/
+def listedProfiles (environment : Lean.Json) : List String :=
+  match environment.getObjVal? "profiles" with
+  | .ok (.arr ps) => ps.toList.filterMap fun (p : Lean.Json) => p.getStr?.toOption
+  | _ => []
+
+/-- The environment a mode that composes with the document layers decides over (jt-2c,
+reviews/dri-decisions-20261028-jt-2c.md item 1): `withoutDocumentLayers`, after `layersApart` and the table's whole gate
+over the list as written (review F1, F5: `gateOf profileTable`, so its order, uniqueness and every row's checks, not the
+list without the layers only). A list without a document layer is read as before. The mode's identities read the
+environment as written. -/
+def decidingEnvironment (environment : Lean.Json) : Except String Lean.Json := do
+  let listed := listedProfiles environment
+  unless listed.any documentLayers.contains do return environment
+  layersApart listed
+  let _ ← gateOf profileTable listed
+  pure (withoutDocumentLayers environment)
 
 /-- What the table admits, read row by row. -/
 def TableAdmits (t : List ProfileRow) (ps : List String) : Prop :=
@@ -952,6 +979,23 @@ theorem gate_judgments (ps : List String) (hs : ps.Pairwise (· < ·)) (hd : "do
     simp [hn.mem_erase_iff]
   unfold gateOf
   rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr]
+
+/-- Review F5 of jt-2c: a list with a document layer that a composing mode decides is one the table admits as
+written, sorted and unique included, and the mode decides over it without the layers. -/
+theorem decidingEnvironment_admits (environment j : Lean.Json)
+    (hl : (listedProfiles environment).any documentLayers.contains = true)
+    (h : decidingEnvironment environment = .ok j) :
+    TableAdmits profileTable (listedProfiles environment) ∧ j = withoutDocumentLayers environment := by
+  unfold decidingEnvironment at h
+  simp only [hl] at h
+  cases ha : layersApart (listedProfiles environment) with
+  | error e => simp [ha] at h; cases h
+  | ok u =>
+    cases hg : gateOf profileTable (listedProfiles environment) with
+    | error e => simp [ha, hg] at h; cases h
+    | ok r =>
+      simp only [hg, ha, if_true] at h
+      exact ⟨((gateOf_iff _ _ _).mp hg).1, (Except.ok.inj h).symm⟩
 
 /-! ### `gate_legacy`: on the legacy profiles the table is `dispatch` -/
 

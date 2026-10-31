@@ -176,9 +176,10 @@ soft block, `instruction_of`), `rights@0` (the rights block) and
 vocabulary or constrains a model. Identities keep the submitted environment. -/
 def statementLayers : List String := ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0"]
 
+/-- A statement layer or a document layer (`VE.Compose.documentLayers`, jt-2c): `run` decides without either. -/
 def layered (environment : Json) : Bool :=
   match environment.getObjValD "profiles" with
-  | .arr ps => ps.any (fun p => statementLayers.any (p.getStr?.toOption == some ·))
+  | .arr ps => ps.any (fun p => (statementLayers ++ VE.Compose.documentLayers).any (p.getStr?.toOption == some ·))
   | _ => false
 
 def reduced (environment : Json) : Except String Json := do
@@ -215,7 +216,9 @@ def run (j : Json) : Except String Json := do
   -- route reads the environment without the profile and its block
   if profiles.contains "acts@0" then
     let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
-  let environment ← if layered submitted then reduced submitted else pure submitted
+  -- The route reads the environment without the document layers (jt-2c); `certificate` binds it as written.
+  let deciding ← VE.Compose.decidingEnvironment submitted
+  let environment ← if layered deciding then reduced deciding else pure deciding
   let ps := Wire.actsProfiles true environment
   let fx ← Wire.actsFixed ps environment
   let environment := if ps.isEmpty then environment else Wire.actsView environment ps

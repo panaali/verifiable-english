@@ -1761,6 +1761,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.checks_none
 #print axioms VE.Compose.conflictFreeP_append
 #print axioms VE.Compose.contains_eq
+#print axioms VE.Compose.decidingEnvironment_admits
 #print axioms VE.Compose.dispatch_chain
 #print axioms VE.Compose.dispatch_descends
 #print axioms VE.Compose.dispatch_discourse_frozen
