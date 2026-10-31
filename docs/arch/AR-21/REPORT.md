@@ -13,32 +13,30 @@ before the proof work).
 
 ## Measured outcome
 
-All numbers are against the merge base `e73ded83` and come from the tool outputs named here.
+All numbers are against the merge base `0c4ea31d` (main, merged into this branch at `914ffcd8`) and come from the tool
+outputs named here. Before that merge, the same measurements against `e73ded83` gave the same results, except main's S
+12,152 and an A/B in which eight whole-UDHR records needed a rerun under load.
 
 - **Lean.** One new proof module, `lean/VE/Closure/CoreEquiv.lean`, 676 lines. `tools/trust_map.py --files` classes it
   P 644 and o 32 (`evidence/trust.json`, `changed_files`). It is imported from `lean/VE.lean`. No existing definition
-  or statement changed: `git diff e73ded834 HEAD --stat -- lean/VE` lists only `VE/Audit.lean` (generated) and the
+  or statement changed: `git diff 0c4ea31d2 HEAD --stat -- lean/VE` lists only `VE/Audit.lean` (generated) and the
   new file.
 - **Statements.** `uv run python tools/lean_statements.py --diff` gives `statements.txt` 7,063 → 7,135 entries: 72
   added, 0 removed, 0 changed. The head file with the added entries deleted equals the base byte for byte
   (`evidence/statements.json`, `kept_byte_identical: true`). All 72 are `VE.Closure.CoreEquiv.*`. `predicates.txt`
   gains only the line `module VE.Closure.CoreEquiv` (the module declares no predicate).
-- **Trust (D3).** `uv run python tools/trust_map.py --check`: "against e73ded83483a: K +0, S +0, D +0, G +0, tied +0,
-  unclassified +0, trusted +0 ... PASS". K 994 → 994, S 12,152 → 12,152, untied V 43,904 → 43,904, trusted 57,050 →
-  57,050. No allowance was added. P 94,817 → 95,461 (`evidence/trust.json`). Plan 4.1 item 3 asks Phase C for a
+- **Trust (D3).** `uv run python tools/trust_map.py --check`: "against 0c4ea31d21fb: K +0, S +0, D +0, G +0, tied +0,
+  unclassified +0, trusted +0 ... PASS". K 994 → 994, S 12,181 → 12,181, untied V 43,904 → 43,904, trusted 57,079 →
+  57,079. No allowance was added. P 94,817 → 95,461 (`evidence/trust.json`). Plan 4.1 item 3 asks Phase C for a
   reduction; this row is "none (theorem only)", and the reduction is AR-22's.
-- **Behaviour (4.1 item 2).** `tools/lean_first_diff.py` over all nine corpora (base `e73ded83` from its own worktree,
-  head `703f4156` from this checkout), compared by `python -m tools.evidence ab ... --delta evidence/ab-delta.json`:
-  "ab PASS". The result: 100,504 records the same, 18 unavailable on both sides with identical outputs (R7), 0 unlisted.
-  The two recordings are byte-identical (SHA-256 `3803e4f2…` for both, `evidence/ab.json`). In the full recording,
-  8 whole-UDHR pilot records answered on the base and hit the recorder's 600 s time-out on the head (load average
-  about 60). `docs/arch/AR-20/pilot_rerun.py` re-ran each of them on both sides at once, with the recorder's 600 s limit.
-  All 8 came out the same: 5 answered identically and 3 timed out on both sides. Matching cases took about the same
-  time on each side: 578 s against 585 s, and 505 s against 505 s (`evidence/pilot-rerun.json`). Those 8 outcomes
-  replace the full recording's for both sides.
-  `lean/checkers.lock` is byte-identical to the base's, so every checker binary is unchanged.
-- **Build and audit.** `lake build`: "Build completed successfully (1180 jobs)". `python3 lean/audit.py`: "PASS: 683
-  source files; 7702 named theorem declarations audited ...; only the declared standard axiom allowlist". The new
+- **Behaviour (4.1 item 2).** `tools/lean_first_diff.py` over all nine corpora (base `0c4ea31d` from its own worktree,
+  head `95f46422` from this checkout, recorded at the same time), compared by `python -m tools.evidence ab ...
+  --delta evidence/ab-delta.json`: "ab PASS". The result: 100,507 records the same, 15 unavailable on both sides with
+  identical outputs (R7), 0 unlisted, no time-out on either side. The two recordings are byte-identical (SHA-256
+  `27526e43…` for both, `evidence/ab.json`). `lean/checkers.lock` is byte-identical to the base's, so every checker
+  binary is unchanged.
+- **Build and audit.** On the merged tree, `lake build`: "Build completed successfully (1181 jobs)", and
+  `python3 lean/audit.py`: "PASS: 684 source files; 7702 named theorem declarations audited ...; only the declared standard axiom allowlist". The new
   theorems use only `propext`, `Quot.sound` and `Classical.choice` (`lean/axioms.txt`). No `sorry` (grep of the module
   for the audit's forbidden words is empty).
 
@@ -104,7 +102,7 @@ From plan row 3b: `VE/TableauExtended*` (6 files) and `Closure/{PathRules,Induct
 | No user-visible change; no Python or Rust change | all | A/B 0 unlisted. The one `ve/` edit is a classification row in `ve/assurance-manifest.json`'s `other_json` (`1faafe1a`), which only `tests/test_assurance_manifest.py` reads (grep of `other_json` in `ve/` and `tools/` is empty) |
 | Trust (D3): K, S, untied V each unchanged, no allowance | `d2573757` | `trust_map.py --check` PASS, +0 each |
 | Seeded bugs (Lean): at least two in the closure copy, the new theorem no longer builds | `703f4156` | 7/7 killed (below) |
-| Evidence in `docs/arch/AR-21/` with `evidence.toml`, each file under 1 MB, `batch_evidence.py --check` | `e447656c` and the after-gate commit | largest file `evidence/pilot-rerun.json`, 924,408 bytes |
+| Evidence in `docs/arch/AR-21/` with `evidence.toml`, each file under 1 MB, `batch_evidence.py --check` | `e447656c`, the evidence commits after the merge, and the after-gate commit | `ls -l docs/arch/AR-21/evidence`: largest file under 20 KB |
 | Coordination: files against every branch in flight | start | below |
 
 Coordination. At the start, `git diff --name-only main...<branch>` for every `lean-first/*`, `feature/*`, `infra/*`
@@ -137,13 +135,14 @@ matched.
 
 ## Tests
 
-- Selected tests, once, on the finished code: `zsh .../mac-pytest.sh --select -- --base e73ded83 --run`. It ran
+- Selected tests, once, on the finished code before the merge of main: `zsh .../mac-pytest.sh --select -- --base
+  e73ded83 --run`. It ran
   81 units on 4 GitHub Actions shards. 80 passed and 1 failed:
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`. The new module builds JSON
   (its counterexample), and the manifest had not classified it. Fixed in `1faafe1a`. The file then passed:
   `uv run pytest -q tests/test_assurance_manifest.py`, "138 passed". No main-known-red test was selected.
-- `uv run python tools/gate_collection.py --check --prebuilt`: "30735 collected, 30735 at e73ded83...; 0 added, 0
-  removed by a trailer, 0 refused, 0 stale and 0 malformed trailers". No test was removed or renamed.
+- `uv run python tools/gate_collection.py --check --prebuilt`: "30811 collected, 30811 at 0c4ea31d...; 0 added, 0
+  removed by a trailer, 0 refused, 0 stale and 0 malformed trailers" (after the merge of main). No test was removed or renamed.
 - `uv run python tools/check_lean_imports.py`: "Lean layer graph kept (683 modules, 22 reviewed legacy edges)". The
   new module is layer 2 (`tools/layer_policy.py`, the `VE.*` default), and every module it imports is layer 1 or 2.
 - Not run by me: the full gate (`tools/gate.py`). The chain runs it on the final HEAD.
@@ -155,15 +154,14 @@ commit that changes only `docs/arch/AR-21/`:
 
     cp gate-result.json docs/arch/AR-21/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-21/evidence/scope.json
-    uv run python -m tools.evidence ab ~/.cache/ve-ar21-ab/base-rerun.jsonl ~/.cache/ve-ar21-ab/head-rerun.jsonl \
-        --base-commit e73ded83483ad43164d596e1fe910e9bc60c2b2e --head-commit <G> \
+    uv run python -m tools.evidence ab ~/.cache/ve-ar21-ab/base2.jsonl ~/.cache/ve-ar21-ab/head2.jsonl \
+        --base-commit 0c4ea31d21fb9e055e34a455dee6d3b3afb47947 --head-commit <G> \
         --out docs/arch/AR-21/evidence/ab.json --delta docs/arch/AR-21/evidence/ab-delta.json \
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-21 --report-commit HEAD
 
-The head recording was made at `703f4156`. From there to `<G>`, `lean/` and `rust/` are unchanged, and `ve/` changes
-only by the one `other_json` row of `ve/assurance-manifest.json`, which no operation reads. Every other commit after it
-changes only `docs/arch/AR-21/`.
+The head recording was made at `95f46422`. From there to `<G>`, every commit changes only `docs/arch/AR-21/`
+(`git diff --stat 95f46422 <G> -- ve lean rust tools` is empty).
 
 ## Spec re-read
 
@@ -194,9 +192,10 @@ changes only `docs/arch/AR-21/`.
 4. Python, Lean and Rust agree; valid inputs pass: PASS. The corpus A/B over the nine corpora has 0 unlisted records,
    and the recordings are byte-identical (`evidence/ab.json`).
 5. R8 binding: N.A. No field read from a Lean answer changed.
-6. Gate evidence matches the final HEAD: PASS for the parts this batch can do. The scope base is
-   `git merge-base HEAD main` (`e73ded83`), and the after-gate steps above re-save the scope, the A/B and the gate
-   for `<G>`. Main has not moved since the start (`git log -1 main`: `e73ded83`).
+6. Gate evidence matches the final HEAD: PASS for the parts this batch can do. Main moved during the build, and it
+   was merged (`914ffcd8`); the generated files were regenerated (`95f46422`). The scope base is
+   `git merge-base HEAD main` (`0c4ea31d`), and the A/B, trust and statements evidence were measured again against it.
+   The after-gate steps above re-save the scope, the A/B and the gate for `<G>`.
 7. No unsigned item: PASS. `DELTA.md` has R7 rows only, and the trust budget is +0. The decoder question is not a
    DELTA row; it is listed first.
 8. Every user-visible change in DELTA: PASS. The A/B diff is empty apart from the R7 pairs, all listed in
@@ -206,8 +205,9 @@ changes only `docs/arch/AR-21/`.
 10. Lean statements say what is claimed: PASS. Mutants M1–M7 break the build of the theorem each guards. No hypothesis
     was added to a false statement; the false one has a mechanised counterexample. `lean_statements.py --check` PASS.
 11. Budgets fail closed: N.A. No budget, limit or deadline changed.
-12. No CPU or memory regression: PASS. The checker binaries are unchanged (`checkers.lock`). The whole-UDHR rerun
-    took about the same time on each side: 578 s against 585 s, and 556 s against 524 s (`evidence/pilot-rerun.json`).
+12. No CPU or memory regression: PASS. The checker binaries are unchanged (`checkers.lock` byte-identical to the
+    base's). In the concurrent A/B recording no record timed out on either side (`grep -c '"timeout":600'` is 0 in
+    both), and the outputs are byte-identical.
 13. Removed tests have trailers: PASS. `gate_collection.py --check --prebuilt` reports 0 removed, 0 refused, 0 stale
     and 0 malformed.
 14. Both directions, cited evidence, spec re-read: PASS. Each equality is checked both ways by a mutant on either

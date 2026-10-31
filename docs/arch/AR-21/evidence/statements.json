@@ -1,5 +1,6 @@
 {
- "base": "e73ded83483ad43164d596e1fe910e9bc60c2b2e",
+ "base": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947",
+ "head": "95f464227c24f4e05e649194f82fe8feff227f0c",
  "tool": "uv run python tools/lean_statements.py --diff BASE HEAD (added/removed/changed); kept_byte_identical: the head's statements.txt with the added entries deleted equals the base's byte for byte",
  "statements": {
   "base_sha256": "003757743f9e33896998cb0e6399480aa704941cfb3b47faca0f08b49c622c0c",
@@ -85,8 +86,8 @@
   "kept_byte_identical": true
  },
  "predicates": {
-  "base_sha256": "b07ecb07cd264e4ddfc0c0160aff802bf9091519692d67427dc25a0d3377cd56",
-  "head_sha256": "7184791a9e13be75bad731465773ef5e2b418d83de661cdc864c2fba6c8ccc35",
+  "base_sha256": "92be788e79113098c92194c46517ce443d2cde99eb1b9094900b87ceef111169",
+  "head_sha256": "20d098968f8d82486e3fd3fdad12d23734f81702b761b4ca47652453d6fb2f9e",
   "lines_added": [
    "module VE.Closure.CoreEquiv"
   ],
