@@ -2,38 +2,38 @@
  "d1_bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 7052,
-  "UNFORMALISED": 54869
+  "OPEN": 9073,
+  "UNFORMALISED": 52848
  },
  "features": {
   "AP": {
-   "bytes": 21831,
-   "sole_bytes": 20766,
-   "sole_units": 116,
+   "bytes": 21554,
+   "sole_bytes": 19678,
+   "sole_units": 111,
    "statuses": {
-    "OPEN": 880,
-    "UNFORMALISED": 20951
+    "OPEN": 1691,
+    "UNFORMALISED": 19863
    },
-   "units": 120
+   "units": 119
   },
   "AT": {
-   "bytes": 12973,
-   "sole_bytes": 12193,
-   "sole_units": 55,
+   "bytes": 12623,
+   "sole_bytes": 11750,
+   "sole_units": 53,
    "statuses": {
-    "OPEN": 780,
-    "UNFORMALISED": 12193
+    "OPEN": 873,
+    "UNFORMALISED": 11750
    },
-   "units": 58
+   "units": 57
   },
   "DF": {
-   "bytes": 1185,
+   "bytes": 2098,
    "sole_bytes": 0,
    "sole_units": 0,
    "statuses": {
-    "OPEN": 1185
+    "OPEN": 2098
    },
-   "units": 7
+   "units": 12
   },
   "ET": {
    "bytes": 8086,
@@ -46,14 +46,14 @@
    "units": 28
   },
   "JT": {
-   "bytes": 4685,
-   "sole_bytes": 1613,
-   "sole_units": 10,
+   "bytes": 6282,
+   "sole_bytes": 1966,
+   "sole_units": 11,
    "statuses": {
-    "OPEN": 4157,
+    "OPEN": 5754,
     "UNFORMALISED": 528
    },
-   "units": 26
+   "units": 34
   },
   "QT": {
    "bytes": 702,
@@ -102,28 +102,28 @@
    "units": 48
   },
   "readings": {
-   "bytes": 13583,
-   "sole_bytes": 11178,
-   "sole_units": 84,
+   "bytes": 14325,
+   "sole_bytes": 11019,
+   "sole_units": 82,
    "statuses": {
-    "OPEN": 2885,
-    "UNFORMALISED": 10698
+    "OPEN": 4117,
+    "UNFORMALISED": 10208
    },
-   "units": 92
+   "units": 95
   }
  },
  "master_bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 7052,
-  "UNFORMALISED": 54869
+  "OPEN": 9073,
+  "UNFORMALISED": 52848
  },
  "source_bytes": 67418,
  "status_bytes_recomputed": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 7052,
-  "UNFORMALISED": 54869
+  "OPEN": 9073,
+  "UNFORMALISED": 52848
  },
  "units": 389
 }
