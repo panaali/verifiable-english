@@ -1,0 +1,200 @@
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-empty: S.recognition -> []
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-empty: S.recognition -> []
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-empty: (VE.Rights.linesOf X) -> []
+NOT RUN lean/VE/Readings/Choice.lean:635 VE.Readings.qLim (G[V], trusted) list-empty: x.declared -> []
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-empty: S.recognition.map (copyOver D) -> []
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-empty: S.recognition.map (gateNorm D m i) -> []
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-empty: (VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineA... -> []
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-first: match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.ran... -> ((match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.r...
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-first: S.norm -> (S.norm.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-first: L.scope -> (L.scope.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-first: R.lines -> (R.lines.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-first: N.exception -> (N.exception.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-first: S.norm -> (S.norm.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-first: R.lines -> (R.lines.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:477 VE.Readings.limOwners (G[V], trusted) list-first: let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rig... -> ((let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.R...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-first: VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind R... -> ((VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind...
+NOT RUN lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-first: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> ((match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | ....
+NOT RUN lean/VE/Readings/Choice.lean:632 VE.Readings.qLim (G[V], trusted) list-first: (declaredBy R) -> ((declaredBy R).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-drop-last: match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.ran... -> ((match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.r...
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.norm -> (S.norm.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-last: L.scope -> (L.scope.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-drop-last: R.lines -> (R.lines.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-drop-last: N.exception -> (N.exception.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.norm -> (S.norm.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-drop-last: R.lines -> (R.lines.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:477 VE.Readings.limOwners (G[V], trusted) list-drop-last: let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rig... -> ((let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.R...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-last: VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind R... -> ((VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind...
+NOT RUN lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-drop-last: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> ((match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | ....
+NOT RUN lean/VE/Readings/Choice.lean:632 VE.Readings.qLim (G[V], trusted) list-drop-last: (declaredBy R) -> ((declaredBy R).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-first: (interfaceOf R) -> ((interfaceOf R).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-first: S.norm.map (copyOver D) -> ((S.norm.map (copyOver D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-first: L.scope.map (·.flatMap (rightCopies D)) -> ((L.scope.map (·.flatMap (rightCopies D))).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-first: R.lines.map (copyLine D) -> ((R.lines.map (copyLine D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-first: N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + ... -> ((N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m ...
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-first: S.norm.map (gateNorm D m i) -> ((S.norm.map (gateNorm D m i)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-first: R.lines.map (gateLine D m i) -> ((R.lines.map (gateLine D m i)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-first: (X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => if ... -> (((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => i...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-first: (VE.Rights.linesOf (sup D).1) -> ((VE.Rights.linesOf (sup D).1).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-first: ? -> (?.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-drop-last: (interfaceOf R) -> ((interfaceOf R).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.norm.map (copyOver D) -> ((S.norm.map (copyOver D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-last: L.scope.map (·.flatMap (rightCopies D)) -> ((L.scope.map (·.flatMap (rightCopies D))).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-drop-last: R.lines.map (copyLine D) -> ((R.lines.map (copyLine D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-drop-last: N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + ... -> ((N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m ...
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.norm.map (gateNorm D m i) -> ((S.norm.map (gateNorm D m i)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-drop-last: R.lines.map (gateLine D m i) -> ((R.lines.map (gateLine D m i)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-last: (X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => if ... -> (((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => i...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-last: (VE.Rights.linesOf (sup D).1) -> ((VE.Rights.linesOf (sup D).1).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-drop-last: ? -> (?.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-first: (List.range (setSize D m)) -> ((List.range (setSize D m)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-first: S.liberty -> (S.liberty.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-first: (· -> (fun x_tm => (x_tm.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-first: ls -> (ls.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-first: e.sufficient -> (e.sufficient.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-first: S.liberty -> (S.liberty.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-first: ls -> (ls.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-first: X.limits -> (X.limits.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-first: (VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.pre... -> (((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.p...
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-first: ?.map (·.id) -> ((?.map (·.id)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-drop-last: (List.range (setSize D m)) -> ((List.range (setSize D m)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.liberty -> (S.liberty.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-last: (· -> (fun x_tm => (x_tm.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-drop-last: ls -> (ls.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-drop-last: e.sufficient -> (e.sufficient.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.liberty -> (S.liberty.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-drop-last: ls -> (ls.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-last: X.limits -> (X.limits.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-last: (VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.pre... -> (((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.p...
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-drop-last: ?.map (·.id) -> ((?.map (·.id)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-first: (List.range (setSize D m)).map (fun i => qualify (position D m i) n) -> (((List.range (setSize D m)).map (fun i => qualify (position D m i) n)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-first: S.liberty.map (copyOver D) -> ((S.liberty.map (copyOver D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-first: (·.flatMap (rightCopies D) -> (fun x_tm => ((x_tm.flatMap (rightCopies D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-first: ls.map (copyLine D) -> ((ls.map (copyLine D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-first: e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) -> ((e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i))).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-first: S.liberty.map (gateNorm D m i) -> ((S.liberty.map (gateNorm D m i)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-first: ls.map (gateLine D m i) -> ((ls.map (gateLine D m i)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-first: X.limits.filter (·.name == L) -> ((X.limits.filter (·.name == L)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) list-first: (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)) -> ((((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-drop-last: (List.range (setSize D m)).map (fun i => qualify (position D m i) n) -> (((List.range (setSize D m)).map (fun i => qualify (position D m i) n)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.liberty.map (copyOver D) -> ((S.liberty.map (copyOver D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-last: (·.flatMap (rightCopies D) -> (fun x_tm => ((x_tm.flatMap (rightCopies D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-drop-last: ls.map (copyLine D) -> ((ls.map (copyLine D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-drop-last: e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) -> ((e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i))).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.liberty.map (gateNorm D m i) -> ((S.liberty.map (gateNorm D m i)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-drop-last: ls.map (gateLine D m i) -> ((ls.map (gateLine D m i)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-last: X.limits.filter (·.name == L) -> ((X.limits.filter (·.name == L)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) list-drop-last: (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)) -> ((((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-first: S.recognition -> (S.recognition.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-first: S.recognition -> (S.recognition.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-first: (VE.Rights.linesOf X) -> ((VE.Rights.linesOf X).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:635 VE.Readings.qLim (G[V], trusted) list-first: x.declared -> (x.declared.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:417 VE.Readings.rightCopies (G[V], trusted) list-drop-last: [n] -> ([n].dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.recognition -> (S.recognition.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.recognition -> (S.recognition.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-last: (VE.Rights.linesOf X) -> ((VE.Rights.linesOf X).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:635 VE.Readings.qLim (G[V], trusted) list-drop-last: x.declared -> (x.declared.dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-first: S.recognition.map (copyOver D) -> ((S.recognition.map (copyOver D)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-first: S.recognition.map (gateNorm D m i) -> ((S.recognition.map (gateNorm D m i)).take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-first: (VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineA... -> (((VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lin...
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-drop-last: S.recognition.map (copyOver D) -> ((S.recognition.map (copyOver D)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-drop-last: S.recognition.map (gateNorm D m i) -> ((S.recognition.map (gateNorm D m i)).dropLast)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-last: (VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineA... -> (((VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lin...
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-last: match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.ran... -> ((match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.r...
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-last: S.norm -> (S.norm.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-last: L.scope -> (L.scope.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-last: R.lines -> (R.lines.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-last: N.exception -> (N.exception.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-last: S.norm -> (S.norm.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-last: R.lines -> (R.lines.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:477 VE.Readings.limOwners (G[V], trusted) list-last: let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rig... -> ((let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.R...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-last: VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind R... -> ((VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind...
+NOT RUN lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-last: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> ((match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | ....
+NOT RUN lean/VE/Readings/Choice.lean:632 VE.Readings.qLim (G[V], trusted) list-last: (declaredBy R) -> ((declaredBy R).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-drop-first: match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.ran... -> ((match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with | some m => (List.r...
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.norm -> (S.norm.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-first: L.scope -> (L.scope.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-drop-first: R.lines -> (R.lines.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-drop-first: N.exception -> (N.exception.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.norm -> (S.norm.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-drop-first: R.lines -> (R.lines.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:477 VE.Readings.limOwners (G[V], trusted) list-drop-first: let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rig... -> ((let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.R...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-first: VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind R... -> ((VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind...
+NOT RUN lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-drop-first: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> ((match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | ....
+NOT RUN lean/VE/Readings/Choice.lean:632 VE.Readings.qLim (G[V], trusted) list-drop-first: (declaredBy R) -> ((declaredBy R).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-last: (interfaceOf R) -> ((interfaceOf R).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-last: S.norm.map (copyOver D) -> ((S.norm.map (copyOver D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-last: L.scope.map (·.flatMap (rightCopies D)) -> ((L.scope.map (·.flatMap (rightCopies D))).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-last: R.lines.map (copyLine D) -> ((R.lines.map (copyLine D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-last: N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + ... -> ((N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m ...
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-last: S.norm.map (gateNorm D m i) -> ((S.norm.map (gateNorm D m i)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-last: R.lines.map (gateLine D m i) -> ((R.lines.map (gateLine D m i)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-last: (X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => if ... -> (((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => i...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-last: (VE.Rights.linesOf (sup D).1) -> ((VE.Rights.linesOf (sup D).1).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-last: ? -> (?.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-drop-first: (interfaceOf R) -> ((interfaceOf R).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.norm.map (copyOver D) -> ((S.norm.map (copyOver D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-first: L.scope.map (·.flatMap (rightCopies D)) -> ((L.scope.map (·.flatMap (rightCopies D))).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:432 VE.Readings.copyContent (G[V], trusted) list-drop-first: R.lines.map (copyLine D) -> ((R.lines.map (copyLine D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-drop-first: N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + ... -> ((N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m ...
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.norm.map (gateNorm D m i) -> ((S.norm.map (gateNorm D m i)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-drop-first: R.lines.map (gateLine D m i) -> ((R.lines.map (gateLine D m i)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-first: (X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => if ... -> (((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN => i...
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-first: (VE.Rights.linesOf (sup D).1) -> ((VE.Rights.linesOf (sup D).1).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-drop-first: ? -> (?.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-last: (List.range (setSize D m)) -> ((List.range (setSize D m)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-last: S.liberty -> (S.liberty.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-last: (· -> (fun x_tm => (x_tm.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-last: ls -> (ls.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-last: e.sufficient -> (e.sufficient.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-last: S.liberty -> (S.liberty.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-last: ls -> (ls.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-last: X.limits -> (X.limits.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-last: (VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.pre... -> (((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.p...
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-last: ?.map (·.id) -> ((?.map (·.id)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-drop-first: (List.range (setSize D m)) -> ((List.range (setSize D m)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.liberty -> (S.liberty.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-first: (· -> (fun x_tm => (x_tm.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-drop-first: ls -> (ls.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-drop-first: e.sufficient -> (e.sufficient.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.liberty -> (S.liberty.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-drop-first: ls -> (ls.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-first: X.limits -> (X.limits.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-drop-first: (VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.pre... -> (((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind RN.2 && RN.2.node.p...
+NOT RUN lean/VE/Readings/Choice.lean:633 VE.Readings.qLim (G[V], trusted) list-drop-first: ?.map (·.id) -> ((?.map (·.id)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-last: (List.range (setSize D m)).map (fun i => qualify (position D m i) n) -> (((List.range (setSize D m)).map (fun i => qualify (position D m i) n)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-last: S.liberty.map (copyOver D) -> ((S.liberty.map (copyOver D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-last: (·.flatMap (rightCopies D) -> (fun x_tm => ((x_tm.flatMap (rightCopies D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-last: ls.map (copyLine D) -> ((ls.map (copyLine D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-last: e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) -> ((e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i))).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-last: S.liberty.map (gateNorm D m i) -> ((S.liberty.map (gateNorm D m i)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-last: ls.map (gateLine D m i) -> ((ls.map (gateLine D m i)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-last: X.limits.filter (·.name == L) -> ((X.limits.filter (·.name == L)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) list-last: (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)) -> ((((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:416 VE.Readings.rightCopies (G[V], trusted) list-drop-first: (List.range (setSize D m)).map (fun i => qualify (position D m i) n) -> (((List.range (setSize D m)).map (fun i => qualify (position D m i) n)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.liberty.map (copyOver D) -> ((S.liberty.map (copyOver D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-drop-first: (·.flatMap (rightCopies D) -> (fun x_tm => ((x_tm.flatMap (rightCopies D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-drop-first: ls.map (copyLine D) -> ((ls.map (copyLine D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) list-drop-first: e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) -> ((e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i))).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.liberty.map (gateNorm D m i) -> ((S.liberty.map (gateNorm D m i)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-drop-first: ls.map (gateLine D m i) -> ((ls.map (gateLine D m i)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-first: X.limits.filter (·.name == L) -> ((X.limits.filter (·.name == L)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) list-drop-first: (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)) -> ((((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-last: S.recognition -> (S.recognition.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-last: S.recognition -> (S.recognition.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-last: (VE.Rights.linesOf X) -> ((VE.Rights.linesOf X).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:635 VE.Readings.qLim (G[V], trusted) list-last: x.declared -> (x.declared.reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:417 VE.Readings.rightCopies (G[V], trusted) list-drop-first: [n] -> ([n].drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.recognition -> (S.recognition.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.recognition -> (S.recognition.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-first: (VE.Rights.linesOf X) -> ((VE.Rights.linesOf X).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:635 VE.Readings.qLim (G[V], trusted) list-drop-first: x.declared -> (x.declared.drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-last: S.recognition.map (copyOver D) -> ((S.recognition.map (copyOver D)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-last: S.recognition.map (gateNorm D m i) -> ((S.recognition.map (gateNorm D m i)).reverse.take 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-last: (VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineA... -> (((VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lin...
+NOT RUN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-drop-first: S.recognition.map (copyOver D) -> ((S.recognition.map (copyOver D)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-drop-first: S.recognition.map (gateNorm D m i) -> ((S.recognition.map (gateNorm D m i)).drop 1)
+NOT RUN lean/VE/Readings/Choice.lean:478 VE.Readings.limOwners (G[V], trusted) list-drop-first: (VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineA... -> (((VE.Rights.linesOf X).filterMap (fun RN => if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lin...
+trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 245 NOT RUN in 1629 s
+trust_mutants: G[V], trusted: 3 KILLED, 245 NOT RUN
+trust_mutants: steps: wall plan 9.2 s, scratch 2.4 s, control_build 0.2 s, probe_install 1.3 s, control_probes 147.2 s, mutants 1466.6 s, cleanup 2.1 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 480 s (14), mutant_builds 9.6 s (3), mutant_checks 2898.1 s (7), stage_controls 1464.4 s (3), mutant_probes 20.1 s (3)
