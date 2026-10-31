@@ -1,0 +1,6 @@
+job=role-budget-lead-requests-1a0232db-t436150-s2 job_commit=346814545d770aa42cb33bd33c1ab0de8796d54e session=cse_012rcAu4zrhjnjAkB7raWFR2 nproc=4
+mem_total_mb=16091 mem_avail_mb=15563
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+job_rc=0 job_s=294
