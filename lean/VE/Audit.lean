@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Decode
 import VE.Acts.Elaborate
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
@@ -10,6 +11,7 @@ import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Acts.Readings
 import VE.Acts.Table
+import VE.Acts.Wire
 import VE.Alternatives.Admission
 import VE.Alternatives.Background
 import VE.Alternatives.Decl
@@ -461,6 +463,12 @@ import VE.WireContract.Engine
 #print axioms Iceberg.root_witness
 #print axioms Iceberg.stage_within_capacity
 #print axioms Iceberg.water_unchanged
+#print axioms VE.Acts.Decode.ElaboratedU.hE
+#print axioms VE.Acts.Decode.ElaboratedU.hU
+#print axioms VE.Acts.Decode.decodeElaboratedU_lexical
+#print axioms VE.Acts.Decode.decodeElaboratedU_source
+#print axioms VE.Acts.Decode.decodeElaboratedU_wellFormed
+#print axioms VE.Acts.Decode.elaborateSource_s
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
 #print axioms VE.Acts.Lexical.actWord_chars
@@ -539,6 +547,10 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.Wire.checkAct_joined
+#print axioms VE.Acts.Wire.checkAct_lexical
+#print axioms VE.Acts.Wire.checkWith_lex
+#print axioms VE.Acts.Wire.joinedAct_read
 #print axioms VE.Acts.analyse_one
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.closed_cl
@@ -547,6 +559,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.elaborateMap_fst
 #print axioms VE.Acts.elaborateMap_ok
+#print axioms VE.Acts.elaborate_identity
 #print axioms VE.Acts.elaborate_ok
 #print axioms VE.Acts.elaborate_one_reading
 #print axioms VE.Acts.elaborate_unspec
@@ -561,6 +574,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
+#print axioms VE.Acts.lookup_mem
+#print axioms VE.Acts.lookup_splitsOf
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.modifier_edges
@@ -585,6 +600,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
+#print axioms VE.Acts.splitDoc_none
+#print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_shared
 #print axioms VE.Acts.table_free_all_split
@@ -3037,6 +3054,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Wire.WitnessDataU.valid
 #print axioms VE.NormDefaults.Wire.admissibleX_of_fill
 #print axioms VE.NormDefaults.Wire.baseModelU_valid
+#print axioms VE.NormDefaults.Wire.checkAuthorN_split
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckU_sound
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckX_nil
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckX_sound

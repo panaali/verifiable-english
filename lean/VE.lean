@@ -206,6 +206,9 @@ import VE.Acts.Table
 import VE.Acts.TableExamples
 import VE.Acts.Elaborate
 import VE.Acts.ElaborateExamples
+import VE.Acts.Wire
+import VE.Acts.Decode
+import VE.Acts.DecodeExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
