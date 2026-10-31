@@ -137,6 +137,7 @@ import VE.Arith.CompleteExamples
 import VE.Arith.Deciding
 import VE.Arith.DecidingExamples
 import VE.Calc.Lower
+import VE.Calc.WorkExamples
 import VE.Calc.LowerExamples
 import VE.Calc.Data
 import VE.Calc.TableExamples
