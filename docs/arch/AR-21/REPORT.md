@@ -4,7 +4,7 @@
 false.** Core's decoder reads an n-ary `atom` invariant that closure's refuses; `decodeTrace_ne_embed` is the
 kernel-checked counterexample. That part stopped there. No hypothesis was added to it. Replay, step counts and the
 per-version checker corollaries are proved. Trust is K, S and untied V +0. DELTA has R7 rows only.
-`batch_evidence.py --check` passes every section except `[gate]`, which is saved after the chain's gate (see "After the gate").
+`batch_evidence.py --check` stops only at the missing `[gate]`, which is saved after the chain's gate (see "After the gate").
 
 Plan: architecture review 2026-10 (`design/arch-review` 6ae55ebb8), section 4.5, row AR-21 ("3a, theorem only"),
 gate 4.1, coordination 4.2; `docs/CONSOLIDATION-PLAN.md` step 3, row 3a (line 334), with row 3b (line 335) for
@@ -145,6 +145,10 @@ matched.
   removed by a trailer, 0 refused, 0 stale and 0 malformed trailers" (after the merge of main). No test was removed or renamed.
 - `uv run python tools/check_lean_imports.py`: "Lean layer graph kept (683 modules, 22 reviewed legacy edges)". The
   new module is layer 2 (`tools/layer_policy.py`, the `VE.*` default), and every module it imports is layer 1 or 2.
+- `uv run python tools/batch_evidence.py --check docs/arch/AR-21 --report-commit HEAD` at `2b3481e6`:
+  "evidence/gate.json: no such evidence file". It reads the gate before the other sections, so its own functions were
+  run on the saved files: `scope_problems` + `scope_history_problems`, `mutant_problems` + `mutant_source_problems`
+  and `tools.evidence.ab.problems` (nine corpora, base `0c4ea31d`). Each returned `[]`.
 - Not run by me: the full gate (`tools/gate.py`). The chain runs it on the final HEAD.
 
 ## After the gate
@@ -160,8 +164,10 @@ commit that changes only `docs/arch/AR-21/`:
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-21 --report-commit HEAD
 
-The head recording was made at `95f46422`. From there to `<G>`, every commit changes only `docs/arch/AR-21/`
-(`git diff --stat 95f46422 <G> -- ve lean rust tools` is empty).
+The head recording was made at `95f46422`. From there to `<G>`, `ve/`, `lean/` and `rust/` are unchanged
+(`git diff --stat 95f46422 <G> -- ve lean rust` is empty). Outside `docs/arch/AR-21/`, the only later change restores
+main's key order in `tools/trust-classes.json`, which the merge driver had reordered. Its content is unchanged, and
+the recorder does not read it.
 
 ## Spec re-read
 
