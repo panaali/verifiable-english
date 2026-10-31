@@ -551,6 +551,19 @@ class LayerSelectionTests(unittest.TestCase):
                 graph.build()
                 self.assertIn("experiments/p1.py", graph.closure("tests/test_p1.py")[0])
 
+    def test_lazy_facade_names_select_like_from_imports(self):
+        # Test selection follows `from ve import parse` to the module that defines it, for both facade forms.
+        files = ["ve/__init__.py", "ve/core.py", "tests/test_facade.py"]
+        for facade in ("from .core import parse\n", '_EXPORTS = {"core": ("parse",)}\n'):
+            graph = source_graph.Graph(layer_policy.ROOT, files, {
+                "ve/__init__.py": source_graph.summarize(facade, "ve", package=True),
+                "ve/core.py": source_graph.summarize("def parse():\n    pass\n", "ve.core"),
+                "tests/test_facade.py": source_graph.summarize("from ve import parse\n", "tests.test_facade")})
+            graph.prepare_names()
+            graph.build()
+            self.assertEqual(graph.exports, {"parse": "ve/core.py"}, facade)
+            self.assertIn("ve/core.py", graph.closure("tests/test_facade.py")[0], facade)
+
     def test_rust_crate_graph_kept(self):
         output = io.StringIO()
         with redirect_stdout(output):
