@@ -1,0 +1,138 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/backends/relay.py",
+   "claim": "seeded bug (a): `from ve.document import cli` inside a layer-1 module (the relay) is an outward import; the layer check fails naming the edge",
+   "find": "def pool_size() -> int:\n",
+   "replace": "def pool_size() -> int:\n    from ve.document import cli  # noqa: F401\n",
+   "command": [
+    "bash",
+    "-c",
+    "out=$(uv run python tools/check_python_layers.py 2>&1); printf '%s\\n' \"$out\" | tail -n 12; ! printf '%s\\n' \"$out\" | grep -qF 've.backends.relay -> ve.document.cli'"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "tools/layer-exceptions.json",
+   "claim": "seeded bug (b): dropping a remaining exception (ve.wire -> ve.ast) makes the layer check fail naming that edge (the contract regenerated, then restored)",
+   "find": ",\n  \"ve.wire -> ve.ast\": \"The wire's formula tag table is the AST's (ast.WIRE_ARITY, read by wire.formula_tag_arity); move the tag table into the wire layer (AR-14 follow-up).\"",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "keep=$(mktemp); cp .importlinter \"$keep\"; trap 'cp \"$keep\" .importlinter; rm -f \"$keep\"' EXIT; out=$(uv run python tools/check_python_layers.py --write 2>&1); printf '%s\\n' \"$out\" | tail -n 12; ! printf '%s\\n' \"$out\" | grep -qF 've.wire -> ve.ast'"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "ve/__init__.py",
+   "claim": "seeded bug (c): the facade's __getattr__ returns the wrong object for one name (canonicalize gets parse)",
+   "find": "value = getattr(importlib.import_module(f\".{_MODULE[name]}\", __name__), name)",
+   "replace": "value = getattr(importlib.import_module(f\".{_MODULE[name]}\", __name__), \"parse\" if name == \"canonicalize\" else name)",
+   "tests": [
+    "tests/test_package_facade.py::test_every_public_name_is_its_modules_object[canonicalize]"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "ve/__init__.py",
+   "claim": "import ve loads no submodule (not the English parser): an eager import in the facade is caught",
+   "find": "__version__ = \"0.1.0\"\n",
+   "replace": "__version__ = \"0.1.0\"\nfrom . import english_vocabulary  # noqa: F401\n",
+   "tests": [
+    "tests/test_package_facade.py::test_import_ve_loads_no_submodule"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "ve/__init__.py",
+   "claim": "ve.check and ve.evaluate stay the functions after their modules are imported",
+   "find": "    setattr(_Package, _name, _shadowed(_name))\n",
+   "replace": "    pass\n",
+   "tests": [
+    "tests/test_package_facade.py::test_names_shared_with_their_modules_stay_functions"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "tools/layer_policy.py",
+   "claim": "no default layer: a module no row places is unmapped and fails the check",
+   "find": "return max(matches)[1] if matches else None",
+   "replace": "return max(matches)[1] if matches else 4",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_seeded_module_with_no_layer_fails_the_check"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "tools/check_python_layers.py",
+   "claim": "a module below layer 4 may not import the lazy ve facade (import-linter sees only `ve`)",
+   "find": "< facade]",
+   "replace": "< 0]",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_facade_import_below_its_layer_fails"
+   ]
+  },
+  {
+   "id": "M8",
+   "file": "tools/check_python_layers.py",
+   "claim": "the init of a package split across layers (in no import-linter layer) is checked",
+   "find": "> python_layer(package)]",
+   "replace": "> 5]",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_split_package_init_import_is_checked"
+   ]
+  },
+  {
+   "id": "M9",
+   "file": "tools/check_python_layers.py",
+   "claim": "a ledger edge that is no longer outward is stale",
+   "find": "if not (python_layer(importer) or 0) < (python_layer(imported) or 0):",
+   "replace": "if False:",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ]
+  },
+  {
+   "id": "M10",
+   "file": "tools/check_python_layers.py",
+   "claim": "a ledger edge that no longer exists fails import-linter (unmatched ignore)",
+   "find": "\"unmatched_ignore_imports_alerting = error\"",
+   "replace": "\"unmatched_ignore_imports_alerting = none\"",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ]
+  },
+  {
+   "id": "M11",
+   "file": "tools/check_python_layers.py",
+   "claim": "a directory of modules without __init__.py (invisible to import-linter) fails the check",
+   "find": "not (folder / \"__init__.py\").exists()]",
+   "replace": "False]",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_namespace_directory_fails_the_check"
+   ]
+  },
+  {
+   "id": "M12",
+   "file": "tools/change_units.py",
+   "claim": "test selection follows the lazy facade's names to their modules, as it followed the from-imports",
+   "find": "for name, owner in lazy_exports(tree).items():",
+   "replace": "for name, owner in {}.items():",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_lazy_facade_names_select_like_from_imports"
+   ]
+  },
+  {
+   "id": "M13",
+   "file": "ve/argument.py",
+   "claim": "the checker build covers the English reader's surface record whatever was imported first (import ve no longer loads it)",
+   "find": "    from . import english  # noqa: F401 -- its natural_clause record is part of the build, as when `import ve`\n",
+   "replace": "",
+   "tests": [
+    "tests/test_package_facade.py::test_checker_build_does_not_depend_on_what_was_imported"
+   ]
+  }
+ ]
+}

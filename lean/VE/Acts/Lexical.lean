@@ -116,8 +116,10 @@ def lex (fx : List String) (s : String) : Except String (List Tok) := do
   let ts ← rawLex (normal s)
   pure (group ps ts.length ts)
 
-/-- 1.3: AP-1 acceptance; the canonical act, or the diagnostic of 10 (D-1 to D-6, or `decodeFixed`'s). -/
-def check (fx : List String) (name : String) (arity : Nat) (raw : Lean.Json) : Except String String := do
+/-- 1.3 conditions 1 to 5 and the lexing (D-1 to D-3, D-6, or `decodeFixed`'s), then `last` on the canonical act and
+its tokens. -/
+def checkWith {α : Type} (last : String → List Tok → Except String α) (fx : List String) (name : String)
+    (arity : Nat) (raw : Lean.Json) : Except String α := do
   let act := normal ((raw.getStr?).toOption.getD "")
   let (slots, replaced) := scanSlots act.toList
   let ws := words (String.mk replaced)
@@ -130,10 +132,18 @@ def check (fx : List String) (name : String) (arity : Nat) (raw : Lean.Json) : E
   let ts ← match lex fx act with
     | .ok ts => pure ts
     | .error e => if e == "comma" then throw s!"InvalidInput: act phrase for {name} ends with a comma" else throw e
+  last act ts
+
+/-- 1.3 condition 6: no join word and no comma outside a fixed phrase (D-4, D-5). -/
+def joinCheck (name act : String) (ts : List Tok) : Except String String :=
   match ts.find? (fun t => match t with | .word w => joinWords.contains w.toLower | .comma => true | _ => false) with
   | some (.word w) => throw s!"InvalidInput: act phrase for {name} joins acts with '{w}' outside a fixed phrase"
   | some _ => throw s!"InvalidInput: act phrase for {name} has a comma outside a fixed phrase"
   | none => pure act
+
+/-- 1.3: AP-1 acceptance; the canonical act, or the diagnostic of 10 (D-1 to D-6, or `decodeFixed`'s). -/
+def check (fx : List String) (name : String) (arity : Nat) (raw : Lean.Json) : Except String String :=
+  checkWith (joinCheck name) fx name arity raw
 
 /-- The form of a plain predicate's act (2.1). -/
 inductive Form | right | entitled
@@ -156,7 +166,7 @@ def wording (f : Form) (act : String) : String := "{0} " ++ f.text ++ " " ++ act
 theorem check_no_join {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String}
     (hc : check fx name k raw = .ok a) {ts : List Tok} (hl : lex fx a = .ok ts) :
     ∀ t ∈ ts, (∀ w, t = .word w → joinWords.contains w.toLower = false) ∧ t ≠ .comma := by
-  unfold check at hc
+  unfold check checkWith joinCheck at hc
   simp only [bind, Except.bind, pure, Except.pure] at hc
   split at hc
   next =>

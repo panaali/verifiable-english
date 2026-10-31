@@ -31,7 +31,8 @@ LEAN_REPLAY_TIMEOUT = 60
 
 
 def _checker_build():
-    from .surface.registry import records
+    from . import english  # noqa: F401 -- its natural_clause record is part of the build, as when `import ve`
+    from .surface.registry import records  # loaded the English reader eagerly
     root = Path(__file__).parent
     modules = sorted(path.relative_to(root).as_posix() for path in root.rglob("*.py"))
     payload = {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in modules}

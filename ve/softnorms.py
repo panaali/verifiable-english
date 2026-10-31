@@ -7,6 +7,7 @@ import hashlib
 import json
 
 from .ast import _Decoder
+from .backends.soft_relay import wire
 from .environment import Environment
 from .errors import CheckerUnavailable, UnsupportedProfile
 from .norms import Norm, NormDocument
@@ -76,7 +77,6 @@ class SoftEnvironment(Environment):
     LAYERS = frozenset()
 
     def __init__(self, data, *, generated=False):
-        from .backends.soft_relay import wire
         data = wire(data)
         profiles = data.get("profiles") if type(data) is dict else None
         layers = set(self.LAYERS)
@@ -490,7 +490,6 @@ class SoftNormDocument:
     raises its diagnostic; nothing Lean supplies is ever read without Lean's answer. Readers that
     need only the rules no longer cost one whole-document Lean request per candidate."""
     def __init__(self, env: SoftEnvironment, units, *, deferred=False):
-        from .backends.soft_relay import wire
         units = wire(units)
         self._source = (env, units)
         self._extended = {}
