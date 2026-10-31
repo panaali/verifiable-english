@@ -1,0 +1,16 @@
+{
+ "allow": [
+  {"definition": "VE.Service.modes", "operator": "list-drop-first",
+   "reason": "killed by the proof VE.Service.modes_complete (by cases and decide: a mode missing from modes fails lake build), which the tool does not count as a check; the precedent of me-2b and qt-a3c; mutants.json registry-drop-scope shows the build failure (Registry.lean:79, decide)"},
+  {"definition": "VE.Service.modes", "operator": "list-drop-last",
+   "reason": "killed by the proof VE.Service.modes_complete, as list-drop-first (the dropped mode is scope: mutants.json registry-drop-scope)"},
+  {"definition": "VE.Service.modes", "operator": "list-drop-middle",
+   "reason": "killed by the proof VE.Service.modes_complete, as list-drop-first (the dropped mode is calc or cardinality)"},
+  {"definition": "VE.Service.Mode", "operator": "ctor-drop",
+   "reason": "not a program: Mode.name and modes name the dropped constructor (Unknown constant VE.Service.Mode.cardinality), so the module does not elaborate"},
+  {"definition": "ResponseShape.Schemas.files", "operator": "list-empty",
+   "reason": "not a program: Function expected at the list, so the module does not elaborate (me-2b's allowance)"},
+  {"definition": "ResponseShape.Schemas.files", "operator": "list-drop-first",
+   "reason": "refused by the build: skel% cannot resolve the skeletons without common.json (unresolved $ref), so ResponseShape.Skeletons does not elaborate (me-2b's allowance)"}
+ ]
+}

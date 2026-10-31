@@ -417,9 +417,275 @@ def nonlinearAt (t : Inlined) (path : String) (e : Expr) : Option String :=
     if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path
     else none
 
+/-- What the decoder judges of a side as written: its inlining, within `maxPolyTerms` nodes and without a fault. -/
+def judged (t : Inlined) (e : Expr) : Option Expr :=
+  match e.subst t with
+  | .ok e' => if (e'.nodesWithin maxPolyTerms).isSome then some e' else none
+  | .error _ => none
+
+end Wire
+
+namespace Work
+
+/-- A side's lowering, with its path when it is not linear. -/
+def markC (path : String) (l : Lowered) (w : Nat) : Option ((Option String × Option Lowered) × Nat) :=
+  some ((match l with | .nonlinear => some path | _ => none, some l), w)
+
+/-- A node's lowering from its parts'; one not judged, or a part not judged, gives nothing. -/
+def nodeC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (parts : List (Option Lowered)) (w : Nat) :
+    Option ((Option String × Option Lowered) × Nat) :=
+  match Wire.judged t e, parts.mapM id with
+  | some e', some ls => ((stepNode e' ls).run limit w).bind fun (l, w) => markC path l w
+  | _, _ => some ((none, none), w)
+
+/-- The decoder's linearity check (3.1's `NonlinearPremise`), charged: each side lowered once, bottom-up over the side
+as written, each node's lowering built from its parts' (a name's from its inlined definition), so a side costs its
+`linearC` and never more. It names 5's innermost part that is not linear (`Wire.nonlinearAt`'s path); a part whose
+inlining has a fault or more than `maxPolyTerms` nodes is not judged, and neither is any node above it. -/
+def nonlinearAtC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) :
+    Option ((Option String × Option Lowered) × Nat) :=
+  match e with
+  | .lit _ | .val _ => match Wire.judged t e with
+    | some e' => (Expr.linearC limit e' w).bind fun (l, w) => markC path l w
+    | none => some ((none, none), w)
+  | .add a b | .sub a b | .mul a b | .div a b =>
+    match nonlinearAtC limit t s!"{path}.1" a w with
+    | none => none
+    | some ((some p, _), w) => some ((some p, none), w)
+    | some ((none, la), w) => match nonlinearAtC limit t s!"{path}.2" b w with
+      | none => none
+      | some ((some p, _), w) => some ((some p, none), w)
+      | some ((none, lb), w) => visitC limit w (nodeC limit t path e [la, lb])
+  | .pow a _ => match nonlinearAtC limit t s!"{path}.1" a w with
+    | none => none
+    | some ((some p, _), w) => some ((some p, none), w)
+    | some ((none, la), w) => visitC limit w (nodeC limit t path e [la])
+
+/-- The first side that is not linear, each side lowered once, on one count; the side's units stop at the first. -/
+def firstNonlinearC (limit : Nat) (t : Inlined) : List (String × Expr) → Nat → Option (Option String × Nat)
+  | [], w => some (none, w)
+  | (p, e) :: rest, w => (nonlinearAtC limit t p e w).bind fun (r, w) => match r.1 with
+    | some p => some (some p, w)
+    | none => firstNonlinearC limit t rest w
+
+/-- The value table, then each side, on the case's one count (3.2's order). -/
+def loweredC (limit : Nat) (ds : List Decl) (t : Inlined) (sides : List (String × Expr)) : Option (Option String × Nat) :=
+  (valueTableC limit ds [] 0).bind fun (_, w) => firstNonlinearC limit t sides w
+
+theorem nodesWithin_add (e : Expr) (n d r : Nat) (h : e.nodesWithin n = some r) :
+    e.nodesWithin (n + d) = some (r + d) ∧ r < n := by
+  induction e generalizing n d r with
+  | lit q | val q =>
+    cases n with
+    | zero => simp [Expr.nodesWithin] at h
+    | succ n =>
+      simp only [Expr.nodesWithin, Option.some.injEq] at h
+      subst h
+      simp [Expr.nodesWithin, Nat.add_right_comm n 1 d]
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+    cases n with
+    | zero => simp [Expr.nodesWithin] at h
+    | succ n =>
+      obtain ⟨r1, h1, h2⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨h3, h4⟩ := iha n d r1 h1
+      obtain ⟨h5, h6⟩ := ihb r1 d r h2
+      refine ⟨?_, by omega⟩
+      rw [Nat.add_right_comm n 1 d]
+      simp only [Expr.nodesWithin, h3, Option.bind_some, h5]
+  | pow a k iha =>
+    cases n with
+    | zero => simp [Expr.nodesWithin] at h
+    | succ n =>
+      obtain ⟨h3, h4⟩ := iha n d r h
+      refine ⟨?_, by omega⟩
+      rw [Nat.add_right_comm n 1 d]
+      simpa only [Expr.nodesWithin] using h3
+
+theorem nodesWithin_of_le {e : Expr} {n m r : Nat} (h : e.nodesWithin n = some r) (hm : n ≤ m) :
+    (e.nodesWithin m).isSome := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hm
+  simp [(nodesWithin_add e n d r h).1]
+
+theorem judged_bin {t : Inlined} {e a b e' : Expr} (he : e = .add a b ∨ e = .sub a b ∨ e = .mul a b ∨ e = .div a b)
+    (h : Wire.judged t e = some e') : ∃ a' b', Wire.judged t a = some a' ∧ Wire.judged t b = some b' ∧
+      (e' = .add a' b' ∨ e' = .sub a' b' ∨ e' = .mul a' b' ∨ e' = .div a' b') := by
+  have parts : ∀ a' b' (f : Expr → Expr → Expr), (∀ n, (f a' b').nodesWithin (n + 1) =
+      (a'.nodesWithin n).bind (b'.nodesWithin ·)) → ((f a' b').nodesWithin maxPolyTerms).isSome →
+      (a'.nodesWithin maxPolyTerms).isSome ∧ (b'.nodesWithin maxPolyTerms).isSome := by
+    intro a' b' f hf hs
+    obtain ⟨n, hn⟩ : ∃ n, maxPolyTerms = n + 1 := ⟨_, rfl⟩
+    rw [hn, hf] at hs
+    obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp hs
+    obtain ⟨r1, h1, h2⟩ := Option.bind_eq_some_iff.mp hr
+    have hlt := (nodesWithin_add a' n 0 r1 h1).2
+    rw [hn]
+    exact ⟨nodesWithin_of_le h1 (by omega), nodesWithin_of_le h2 (by omega)⟩
+  have ok : ∀ x x', x.subst t = .ok x' → (x'.nodesWithin maxPolyTerms).isSome → Wire.judged t x = some x' := by
+    intro x x' h1 h2; simp [Wire.judged, h1, h2]
+  unfold Wire.judged at h
+  rcases he with rfl | rfl | rfl | rfl <;>
+    cases ha : a.subst t <;> cases hb : b.subst t <;> simp [Expr.subst, Expr.bin2, ha, hb] at h
+  all_goals
+    obtain ⟨hw, rfl⟩ := h
+    obtain ⟨h1, h2⟩ := parts _ _ _ (fun _ => rfl) (by simpa using hw)
+    exact ⟨_, _, ok _ _ ha h1, ok _ _ hb h2, by simp⟩
+
+theorem judged_pow {t : Inlined} {a e' : Expr} {k : Nat} (h : Wire.judged t (.pow a k) = some e') :
+    ∃ a', Wire.judged t a = some a' ∧ e' = .pow a' k := by
+  unfold Wire.judged at h
+  simp only [Expr.subst] at h
+  cases ha : a.subst t <;> simp [ha, Except.map] at h
+  obtain ⟨hw, rfl⟩ := h
+  obtain ⟨n, hn⟩ : ∃ n, maxPolyTerms = n + 1 := ⟨_, rfl⟩
+  rw [hn] at hw
+  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp hw
+  refine ⟨_, ?_, rfl⟩
+  have hr' : Expr.nodesWithin n _ = some r := hr
+  simp only [Wire.judged, ha, hn, nodesWithin_of_le hr' (Nat.le_succ n), if_true]
+
+theorem check_eq (t : Inlined) (e : Expr) (path : String) :
+    (if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path else none) =
+      match Wire.judged t e with
+      | some e' => if e'.linear.isNone then some path else none
+      | none => none := by
+  unfold Wire.judged
+  cases h : e.subst t with
+  | error v => simp [Except.toOption]
+  | ok e' => by_cases hn : (e'.nodesWithin maxPolyTerms).isSome <;> simp [Except.toOption, hn]
+
+theorem markC_spec {e' : Expr} {l0 : Lowered} {path : String} {w w' : Nat} {r : Option String} {o : Option Lowered}
+    (hs : Lowered.Sound e'.linear l0) (h : markC path l0 w = some ((r, o), w')) :
+    r = (if e'.linear.isNone then some path else none) ∧ (r = none → ∃ l', o = some l' ∧ Lowered.Sound e'.linear l') := by
+  simp only [markC, Option.some.injEq, Prod.mk.injEq] at h
+  obtain ⟨⟨rfl, rfl⟩, rfl⟩ := h
+  cases l0 with
+  | form L => simp [show e'.linear = some L from hs, Lowered.Sound]
+  | nonlinear => simp [show e'.linear = none from hs]
+  | tooLarge s => obtain ⟨L, hL, hS⟩ := id hs; simp [hL]; exact ⟨L, rfl, hS⟩
+
+theorem nodeC_spec {limit : Nat} {t : Inlined} {path : String} {e : Expr} {parts : List (Option Lowered)} {w w' : Nat}
+    {r : Option String} {l : Option Lowered} (h : nodeC limit t path e parts w = some ((r, l), w'))
+    (hp : ∀ e', Wire.judged t e = some e' →
+      ∃ ls', parts.mapM id = some ls' ∧ Lowered.Sound e'.linear ((stepNode e' ls').result ())) :
+    r = (match Wire.judged t e with
+      | some e' => if e'.linear.isNone then some path else none
+      | none => none) ∧ (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l') := by
+  unfold nodeC at h
+  cases hj : Wire.judged t e with
+  | none => rw [hj] at h; cases h; simp
+  | some e' =>
+    obtain ⟨ls, hm, hs⟩ := hp e' hj
+    rw [hj, hm] at h
+    obtain ⟨⟨l0, w1⟩, h1, h2⟩ := Option.bind_eq_some_iff.mp h
+    have h0 := Node.run_some h1
+    simp only at h0
+    subst h0
+    obtain ⟨h3, h4⟩ := markC_spec hs h2
+    exact ⟨h3, fun hr e'' he => by cases he; exact h4 hr⟩
+
+/-- `nonlinearAtC`'s statement for `e`, the induction's hypothesis. -/
+abbrev AtSpec (limit : Nat) (t : Inlined) (e : Expr) : Prop :=
+  ∀ path w r l w', nonlinearAtC limit t path e w = some ((r, l), w') →
+    r = Wire.nonlinearAt t path e ∧
+      (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l')
+
+theorem bin_spec {limit : Nat} {t : Inlined} {path : String} {e a b : Expr} {w w' : Nat} {r : Option String}
+    {l : Option Lowered} (he : e = .add a b ∨ e = .sub a b ∨ e = .mul a b ∨ e = .div a b)
+    (hN : Wire.nonlinearAt t path e = ((Wire.nonlinearAt t s!"{path}.1" a).orElse
+      fun _ => Wire.nonlinearAt t s!"{path}.2" b).orElse fun _ => match Wire.judged t e with
+        | some e' => if e'.linear.isNone then some path else none
+        | none => none)
+    (iha : AtSpec limit t a) (ihb : AtSpec limit t b)
+    (h : (match nonlinearAtC limit t s!"{path}.1" a w with
+      | none => none
+      | some ((some p, _), w) => some ((some p, none), w)
+      | some ((none, la), w) => match nonlinearAtC limit t s!"{path}.2" b w with
+        | none => none
+        | some ((some p, _), w) => some ((some p, none), w)
+        | some ((none, lb), w) => visitC limit w (nodeC limit t path e [la, lb])) = some ((r, l), w')) :
+    r = Wire.nonlinearAt t path e ∧
+      (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l') := by
+  split at h
+  · cases h
+  · cases h
+    rename_i ha
+    exact ⟨by rw [hN, ← (iha _ _ _ _ _ ha).1]; rfl, by simp⟩
+  · rename_i la w1 ha
+    obtain ⟨ra, sa⟩ := iha _ _ _ _ _ ha
+    split at h
+    · cases h
+    · cases h
+      rename_i hb
+      exact ⟨by rw [hN, ← ra, ← (ihb _ _ _ _ _ hb).1]; rfl, by simp⟩
+    · rename_i lb w2 hb
+      obtain ⟨rb, sb⟩ := ihb _ _ _ _ _ hb
+      obtain ⟨_, h⟩ := visitC_some h
+      have := nodeC_spec h fun e' hj => by
+        obtain ⟨a', b', ja, jb, he'⟩ := judged_bin he hj
+        obtain ⟨la', rfl, sla⟩ := sa rfl a' ja
+        obtain ⟨lb', rfl, slb⟩ := sb rfl b' jb
+        exact ⟨[la', lb'], rfl, step_sound_bin he' sla slb⟩
+      exact ⟨by rw [hN, ← ra, ← rb]; exact this.1, this.2⟩
+
+theorem leaf_spec {limit : Nat} {t : Inlined} {e : Expr}
+    (hN : ∀ path, Wire.nonlinearAt t path e = match Wire.judged t e with
+      | some e' => if e'.linear.isNone then some path else none
+      | none => none)
+    (hC : ∀ path w, nonlinearAtC limit t path e w = match Wire.judged t e with
+      | some e' => (Expr.linearC limit e' w).bind fun (l, w) => markC path l w
+      | none => some ((none, none), w)) : AtSpec limit t e := by
+  intro path w r l w' h
+  rw [hN]
+  rw [hC] at h
+  cases hj : Wire.judged t e with
+  | none => rw [hj] at h; cases h; simp
+  | some e' =>
+    rw [hj] at h
+    obtain ⟨⟨l0, w1⟩, h1, h2⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨h3, h4⟩ := markC_spec (linearC_sound limit e' w l0 w1 h1) h2
+    exact ⟨h3, fun hr e'' he => by cases he; exact h4 hr⟩
+
+theorem nonlinearAtC_spec (limit : Nat) (t : Inlined) (e : Expr) : AtSpec limit t e := by
+  induction e with
+  | lit q => exact leaf_spec (fun path => by rw [Wire.nonlinearAt]; exact check_eq t (.lit q) path) fun _ _ => by rw [nonlinearAtC]
+  | val q => exact leaf_spec (fun path => by rw [Wire.nonlinearAt]; exact check_eq t (.val q) path) fun _ _ => by rw [nonlinearAtC]
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+    intro path w r l w' h
+    refine bin_spec (by simp) ?_ iha ihb (by rw [nonlinearAtC] at h; exact h)
+    rw [Wire.nonlinearAt, check_eq]
+  | pow a k iha =>
+    intro path w r l w' h
+    rw [nonlinearAtC] at h
+    have hN : Wire.nonlinearAt t path (.pow a k) = (Wire.nonlinearAt t s!"{path}.1" a).orElse fun _ =>
+        match Wire.judged t (.pow a k) with
+        | some e' => if e'.linear.isNone then some path else none
+        | none => none := by rw [Wire.nonlinearAt, check_eq]
+    split at h
+    · cases h
+    · cases h
+      rename_i ha
+      exact ⟨by rw [hN, ← (iha _ _ _ _ _ ha).1]; rfl, by simp⟩
+    · rename_i la w1 ha
+      obtain ⟨ra, sa⟩ := iha _ _ _ _ _ ha
+      obtain ⟨_, h⟩ := visitC_some h
+      have := nodeC_spec h fun e' hj => by
+        obtain ⟨a', ja, rfl⟩ := judged_pow hj
+        obtain ⟨la', rfl, sla⟩ := sa rfl a' ja
+        exact ⟨[la'], rfl, step_sound_pow sla⟩
+      exact ⟨by rw [hN, ← ra]; exact this.1, this.2⟩
+
+theorem nonlinearAtC_eq (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) (r : Option String)
+    (l : Option Lowered) (w' : Nat) (h : nonlinearAtC limit t path e w = some ((r, l), w')) :
+    r = Wire.nonlinearAt t path e := (nonlinearAtC_spec limit t e path w r l w' h).1
+
+end Work
+
+namespace Wire
+
 /-- Square links name free values (`UnknownLink`); then every premise and each derivation's conclusion is linear in
-the free values once inlined (`NonlinearPremise`, naming the innermost part that is not). A part whose inlining meets
-a fault, or whose inlined form is beyond `maxPolyTerms` nodes, is not judged here: its row says why. -/
+the free values once inlined (`NonlinearPremise`, naming the innermost part that is not), each side lowered once on
+the case's count, after the value table (3.2's order; limit 10). A part whose inlining meets a fault, or whose inlined
+form is beyond `maxPolyTerms` nodes, is not judged here: its row says why, and so does a value beyond the digit limit. -/
 def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) :
     Except String Unit := do
   let free := freeNames ds
@@ -427,14 +693,17 @@ def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : L
     | .follows _ ls _ => ls.flatMap fun l => [l.1, l.2]
     | _ => []
   if let some n := links.find? (!free.contains ·) then throw s!"UnknownLink: {n}"
-  let t := inlineTable ds free
   let lowered := premises.zipIdx.map (fun ((_, c), i) => (s!"premises.{i}.claim", c)) ++
     claims.zipIdx.filterMap fun ((_, k), i) => match k with
       | .follows _ _ C => some (s!"claims.{i}.claim.1", C)
       | _ => none
-  if let some p := lowered.findSome? fun (path, c) =>
-      c.exprs.zipIdx.findSome? fun (e, i) => nonlinearAt t s!"{path}.{i + 1}" e then
-    throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
+  match lowered.flatMap fun (path, c) => c.exprs.zipIdx.map fun (e, i) => (s!"{path}.{i + 1}", e) with
+  | [] => pure ()
+  | sides =>
+    match Work.loweredC Work.maxWork ds (inlineTable ds free) sides with
+    | none => throw workLimit
+    | some (some p, _) => throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
+    | some (none, _) => pure ()
 
 /-- Names are unique, each name read is declared (before its use in a definition), claim and premise ids are unique,
 and derivations are linear in the free values, in that order. -/
