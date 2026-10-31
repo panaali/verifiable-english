@@ -183,7 +183,7 @@ def shipped_copy(tmp_path, monkeypatch):
     shipped = [str(path.relative_to(ROOT)) for pattern in ("docs/spec/*-wire-table.md",
                                                            "conformance/wire-contract/*-catalogue.json")
                for path in sorted(ROOT.glob(pattern))]
-    for relative in ("conformance/wire-contract/engine-golden.json", *shipped):
+    for relative in ("conformance/wire-contract/engine-golden.json", *shipped, *(t for t, _ in wire_tool.RUST.values()), *wire_tool.KEYS):
         (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / relative, tmp_path / relative)
     monkeypatch.setattr(wire_tool, "ROOT", tmp_path)
@@ -197,6 +197,19 @@ def test_l11_hand_edited_generated_module(shipped_copy):
     module.write_text(module.read_text().replace('"Inner: x is "', '"Inner: x was "'))
     findings = process(wire_tool.DATA)
     assert any("Tables/Corpus.lean: WC11: " in f for f in findings), findings
+
+
+def test_l11_swapped_rust_rows(shipped_copy):
+    """Two rows of a generated Rust table swapped, in the shipped module and in the corpus module (4)."""
+    for directory, (relative, _) in zip((wire_tool.DATA, shipped_copy / "conformance/wire-contract/contracts"),
+                                        wire_tool.RUST.values()):
+        assert process(directory) == []
+        module = shipped_copy / relative
+        lines = module.read_text().split("\n")
+        first = next(i for i, line in enumerate(lines) if line.startswith("    Entry::Check("))
+        lines[first], lines[first + 1] = lines[first + 1], lines[first]
+        module.write_text("\n".join(lines))
+        assert any(f"{relative}: WC11: " in f for f in process(directory)), relative
 
 
 def test_l12_clean_tree_prints_nothing():
@@ -216,8 +229,10 @@ def test_l13_write_after_a_revision_changes_only_generated_files(shipped_copy):
     assert process(wire_tool.DATA, write=True) == []
     after = snapshot()
     changed = {name for name in after if before.get(name) != after[name]}
-    # The frozen inventory lists no generated module (AR-2, decision D2): nothing else changes.
-    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean"}
+    # The frozen inventory lists no generated module (AR-2, decision D2): nothing else changes. The Rust
+    # tables name the contract's revision and hash (wire-contract-s4-2.md 4).
+    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean",
+                       "rust/ve-kernel/src/contract_tables.rs"}
     lock = loads_json(after["ve/wire_contract/contracts.lock"])
     assert lock["soft-norms@0.json"]["revision"] == value["revision"]
     assert process(wire_tool.DATA) == []
