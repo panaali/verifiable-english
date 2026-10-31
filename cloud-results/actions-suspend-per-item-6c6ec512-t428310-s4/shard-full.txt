@@ -1,0 +1,138 @@
+shard 5/6: 21 units; commands: []
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded unicode-ident v1.0.26
+  Downloaded cfg-if v1.0.5
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded crypto-common v0.1.7
+  Downloaded itoa v1.0.18
+  Downloaded serde_core v1.0.229
+  Downloaded block-buffer v0.10.4
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded digest v0.10.7
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded serde_derive v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling serde_json v1.0.151
+   Compiling digest v0.10.7
+   Compiling syn v3.0.6
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.62s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.27s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 21 units with 4 jobs in /var/tmp/cct/ve-select-run-8m55qhk4
+  tests/test_b15b_evidence.py: exit 0 in 8.9 s, 507 functions
+  tests/test_stage2_standalone.py: exit 0 in 16.0 s, 592 functions
+  tests/test_single_owner.py: exit 0 in 8.1 s, 692 functions
+  tests/test_wire_contract_faults.py: exit 0 in 24.6 s, 799 functions
+  tests/test_b15a_evidence.py: exit 0 in 3.2 s, 243 functions
+  tests/test_english_grammar_gen.py: exit 0 in 8.7 s, 530 functions
+  tests/test_nested_pytest.py: exit 0 in 38.4 s, 742 functions
+  tests/test_lean_import_reader.py: exit 0 in 34.6 s, 260 functions
+  tests/test_p1_native_counter.py: exit 0 in 5.1 s, 293 functions
+  tests/test_architecture_docs.py: exit 0 in 1.2 s, 285 functions
+  tests/test_wire_contract_three_way.py: exit 0 in 1.6 s, 705 functions
+  tests/test_b16d_evidence.py: exit 0 in 0.8 s, 248 functions
+  tests/test_calc_derive.py: exit 0 in 1.3 s, 369 functions
+  tests/test_batch_scope.py: exit 0 in 2.5 s, 263 functions
+  tests/test_answer_store.py: exit 0 in 20.1 s, 458 functions
+  tests/test_cardinality_exercised.py: exit 0 in 1.4 s, 262 functions
+  tests/test_merge_tooling_evidence.py: exit 0 in 0.8 s, 249 functions
+  tests/test_lean_statements_parts.py: exit 0 in 1.5 s, 256 functions
+  tests/test_test_schedule.py: exit 0 in 17.2 s, 347 functions
+  tests/test_scope_lean.py: exit 0 in 2.7 s, 264 functions
+  tests/test_history_tests.py: exit 0 in 63.1 s, 406 functions
+recorded 21 units for tree eb230c29ad; 0 others left to the static graph until they run; 0 failed
+UNITLOG tests__test_answer_store.py.log: 36 passed in 19.18s
+UNITLOG tests__test_architecture_docs.py.log: 32 passed in 0.42s
+UNITLOG tests__test_b15a_evidence.py.log: 5 passed in 2.30s
+UNITLOG tests__test_b15b_evidence.py.log: 8 passed in 6.36s
+UNITLOG tests__test_b16d_evidence.py.log: 3 passed in 0.12s
+UNITLOG tests__test_batch_scope.py.log: 4 passed in 1.76s
+UNITLOG tests__test_calc_derive.py.log: 12 passed in 0.27s
+UNITLOG tests__test_cardinality_exercised.py.log: 5 passed in 0.62s
+UNITLOG tests__test_english_grammar_gen.py.log: 92 passed in 7.75s
+UNITLOG tests__test_history_tests.py.log: 27 passed in 62.37s (0:01:02)
+UNITLOG tests__test_lean_import_reader.py.log: 10 passed in 33.85s
+UNITLOG tests__test_lean_statements_parts.py.log: 5 passed in 0.74s
+UNITLOG tests__test_merge_tooling_evidence.py.log: 5 passed in 0.11s
+UNITLOG tests__test_nested_pytest.py.log: 36 passed in 35.84s
+UNITLOG tests__test_p1_native_counter.py.log: 13 passed, 2 skipped in 3.85s
+UNITLOG tests__test_scope_lean.py.log: 18 passed in 1.99s
+UNITLOG tests__test_single_owner.py.log: 106 passed in 6.06s
+UNITLOG tests__test_stage2_standalone.py.log: 118 passed, 1 deselected in 13.36s
+UNITLOG tests__test_test_schedule.py.log: 25 passed in 16.37s
+UNITLOG tests__test_wire_contract_faults.py.log: 184 passed in 21.83s
+UNITLOG tests__test_wire_contract_three_way.py.log: 9 passed in 0.77s
