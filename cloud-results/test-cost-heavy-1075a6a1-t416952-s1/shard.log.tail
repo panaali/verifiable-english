@@ -1,0 +1,127 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 2/4: 48 units; commands: []
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded num-integer v0.1.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded sha2 v0.10.9
+  Downloaded block-buffer v0.10.4
+  Downloaded quote v1.0.47
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded zmij v1.0.23
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.09s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.14s
+order: failed last time []; changed ['tests/test_discourse_lean.py']; then the rest; --maxfail 5
+recording 48 units with 4 jobs in /tmp/ve-select-run-h99dlo7a
+  tests/test_norm_defaults_contract.py: exit 1 in 1.3 s, 446 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_norm_defaults_contract.py (exit 1): tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D1-empty], tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D10], tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D11], tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D12], tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D1]; log /tmp/ve-select-run-h99dlo7a/tests__test_norm_defaults_contract.py.log
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '2b9dda5603d4263be4c5eba7feac07714a5ab321:ve/norm_defaults.py']' returned non-zero exit status 128.
+
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 've/norm_defaults.py' exists on disk, but not in '2b9dda5603d4263be4c5eba7feac07714a5ab321'
+=========================== short test summary info ============================
+FAILED tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D1] - subpro...
+FAILED tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D1-empty] - ...
+FAILED tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D10] - subpr...
+FAILED tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D11] - subpr...
+FAILED tests/test_norm_defaults_contract.py::test_fixture_of_8_2[D12] - subpr...
+!!!!!! stopping after 5 failed tests outside the quarantine (--maxfail 5) !!!!!!
+5 failed, 1 passed in 0.64s
+recorded 9 units for tree 0ec3f8e271; 39 others left to the static graph until they run; 1 failed
+STOPPED EARLY (--maxfail 5): 39 selected units did not run: tests/test_relay_mutation_gate.py, tests/test_difffuzz.py, tools/test_layer_policy.py, tests/test_regen_generated.py, tests/test_gate_quarantine.py, tests/test_gate.py, tests/test_scope_document.py, tests/test_since_pass.py, tests/test_frozen_sources.py, tests/test_b16f_senses_document.py, tests/test_trust_ratchet.py, tests/test_scope_readings_document.py, tests/test_scope_answer.py, tests/test_gate_integrity.py, tests/test_softnorms_contract.py, tests/test_stage2_validation.py, tests/test_english_e26_ab.py, tests/test_lean_first_diff_cache.py, tests/test_gate_trust.py, tests/test_evidence_toolkit.py, tests/test_evidence_tools.py, tests/test_english_e2_responses.py, tests/test_p1_infrastructure.py, tests/test_wire_contract_lean.py, tests/test_english_e2_integer_marks.py, tests/test_wire_contract_s4_lean.py, tests/test_batch_scope.py, tests/test_lean_service_audit.py, tests/test_ar6_report.py, tests/test_gate_durations.py, tests/test_gate_rerun.py, tests/test_cardinality_exercised.py, tests/test_runner.py, tests/test_question_answering_q2_report.py, tests/test_architecture_docs.py, tests/test_et_e1_probe.py, tests/test_wire_contract_corpus.py, tests/test_b16c_evidence.py, tests/test_readings_defaults_rd6a_report.py
+SHARD 2/4: exit 1 in 348.2 s; 48 units, 8 passed
