@@ -25,17 +25,21 @@ def value(v):
     return f".str {q(v)}"
 
 
-def pattern(source):
+def parse_pattern(source):
+    """A pattern's base, `None` for the root or the group level `n` of `@n`, and its unescaped steps, `*` for
+    the wildcard (base spec 2.1). The Lean and Rust emitters both read patterns through it."""
     if source.startswith("@"):
         head, _, tail = source.partition("/")
-        base = f".item {int(head[1:] or 0)}"
-        steps = tail.split("/") if tail else []
+        level, steps = int(head[1:] or 0), tail.split("/") if tail else []
     else:
-        base = ".root"
-        steps = source[1:].split("/") if source else []
-    def step(s):
-        return ".star" if s == "*" else f".tok {q(s.replace('~1', '/').replace('~0', '~'))}"
-    return f"⟨{base}, {seq(map(step, steps))}⟩"
+        level, steps = None, source[1:].split("/") if source else []
+    return level, [s if s == "*" else s.replace("~1", "/").replace("~0", "~") for s in steps]
+
+
+def pattern(source):
+    level, steps = parse_pattern(source)
+    base = ".root" if level is None else f".item {level}"
+    return f"⟨{base}, {seq('.star' if s == '*' else f'.tok {q(s)}' for s in steps)}⟩"
 
 
 def atom(a):
@@ -68,19 +72,25 @@ def guard(literals):
     return seq(rendered)
 
 
-def ranges(spec):
+def parse_ranges(spec):
+    """A character set of a name class as inclusive code point ranges (`a-z0-9_`), or `None` when absent."""
     if spec is None:
-        return "none"
+        return None
     out = []
     index = 0
     while index < len(spec):
         if index + 2 < len(spec) and spec[index + 1] == "-":
-            out.append(f"({ord(spec[index])}, {ord(spec[index + 2])})")
+            out.append((ord(spec[index]), ord(spec[index + 2])))
             index += 3
         else:
-            out.append(f"({ord(spec[index])}, {ord(spec[index])})")
+            out.append((ord(spec[index]), ord(spec[index])))
             index += 1
-    return f"some {seq(out)}"
+    return out
+
+
+def ranges(spec):
+    found = parse_ranges(spec)
+    return "none" if found is None else f"some {seq(f'({a}, {b})' for a, b in found)}"
 
 
 def name_class(cls):
