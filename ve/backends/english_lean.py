@@ -326,7 +326,6 @@ class LeanReading:
     def rejection(self) -> Exception:
         """Lean's outcome other than `one` as the exception of the class Lean names, with Lean's text and span;
         the answer rides along as `lean_reading` for the shadow record."""
-        # an overlay refusal reads no text, so it has no span
         error = _refusal(self.response, self.message(), self.source, "english.admission")
         error.lean_reading = self
         return error
@@ -533,7 +532,7 @@ def _refusal(response: dict, text: str, source: str, operation: str) -> Exceptio
     cls = ERROR_CLASSES[response["class"]]
     if issubclass(cls, CheckerUnavailable):
         return cls(text, operation=operation, backend="lean")
-    span = response.get("span")
+    span = response.get("span")  # an overlay refusal reads no text, so it has none
     where = None if span is None else Span(span[0], span[1], source.count("\n", 0, span[0]) + 1,
                                            span[0] - source.rfind("\n", 0, span[0]))
     error = cls(text, span=where)
