@@ -37,6 +37,12 @@ def quiet21 : VE.Formula := .all "person" (.implies (.unary "rights__bar__1" (.v
 -- the liberty choice's document has the bar node and aimed under the same name; the claim choice's has neither
 #guard nameMap F21 c1 "rights__bar__1" == "rights__bar__1" && (genKeys (choiceDoc F21 c0).1).isEmpty
 
+-- a claim on m is no liberty: only the liberty candidate owns aimed_m
+def rs48m : ReadingSet := ⟨"rs48", "u048", 1, [⟨"claim", some (.right ⟨"r13", "person", .top,
+  [line .claim (strictNode "no-move" "move_permitted" false)]⟩), [], []⟩,
+  ⟨"liberty", some (.right ⟨"r13", "person", .top, [liberty21]⟩), [], []⟩]⟩
+#guard aimedOwners ⟨.rights, frame21, [.set rs48m, .bar "u114" barRule], [], []⟩ "move_permitted" == [[(0, 1)]]
+
 theorem perm21 : VE.Rights.permPreds (sup F21).1 = ["move_permitted"] := by decide
 theorem bar21 : VE.Rights.barPreds (sup F21).1 = ["move_permitted"] := by
   rw [VE.Rights.barPreds, perm21]; simp [VE.SoftNorms.dedup, VE.Route.sortStrings]
@@ -162,6 +168,15 @@ def F7 : Doc := ⟨.rights, frame21, [.set rs48, .fixed "u111" (.limitation l29)
   == [[[(0, 0)]], [[(0, 1)]]]
 #guard (choiceLabelled F7).map (·.1) == ["readings:rs48@1:0:quiet", "readings:rs48@1:1:quiet"]
 #guard nameMap F7 c1 "rights__lim__1" == "rights__lim__2"
+-- a fixed limitation's scope naming the set-declared right r13 names both copies
+def F7r : Doc := ⟨.rights, frame21, [.set rs48, .fixed "u111" (.limitation { l29 with scope := some ["r13"] }) []], [], []⟩
+#guard (sup F7r).1.limits.map (·.scope) == [some ["rd-1-r13", "rd-2-r13"]]
+-- a fixed right's line rule over an interface rule is over every copy of it
+def rsNorm : ReadingSet := ⟨"rsn", "u2", 1, [⟨"a", some (.norm (strictNode "base" "expel_permitted" true)), [], []⟩,
+  ⟨"b", some (.norm (strictNode "base" "expel_permitted" false)), [], []⟩]⟩
+def F7o : Doc := ⟨.rights, frame21, [.set rsNorm, .fixed "u3" (.right ⟨"r3", "person", .top,
+  [line .claim (strictNode "over-base" "expel_permitted" false .top [] ["base"])]⟩) []], [], []⟩
+#guard ((sup F7o).1.rs.flatMap (·.lines)).filterMap (·.norm.map (·.over)) == [["rd-1-base", "rd-2-base"]]
 
 /-! ## F10: limitation candidates {on the liberties, on every line} over fixed lines -/
 

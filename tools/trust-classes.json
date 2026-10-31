@@ -6486,6 +6486,8 @@
         "VE.Readings.RightsExamples.F10",
         "VE.Readings.RightsExamples.F21",
         "VE.Readings.RightsExamples.F7",
+        "VE.Readings.RightsExamples.F7o",
+        "VE.Readings.RightsExamples.F7r",
         "VE.Readings.RightsExamples.M21",
         "VE.Readings.RightsExamples.N2",
         "VE.Readings.RightsExamples.N3",
@@ -6500,7 +6502,9 @@
         "VE.Readings.RightsExamples.quiet21",
         "VE.Readings.RightsExamples.rM",
         "VE.Readings.RightsExamples.rs112",
-        "VE.Readings.RightsExamples.rs48"
+        "VE.Readings.RightsExamples.rs48",
+        "VE.Readings.RightsExamples.rs48m",
+        "VE.Readings.RightsExamples.rsNorm"
       ]
     },
     "VE/Readings/Route.lean": {
