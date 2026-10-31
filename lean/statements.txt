@@ -35240,9 +35240,9 @@ theorem VE.Readings.relaxTo_of_eq
     M.name = Nd.name →
       VE.Readings.relaxTo Nd M =
         { toNode := M.toNode, mode := VE.SoftNorms.Mode.default, rank := M.rank, alterable := M.alterable,
-          exception := Nd.exception, hard := Nd.hard }
-  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
-  -- expr 2761899990
+          exception := Nd.exception, hard := Nd.hard, splitFrom := M.splitFrom }
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3828959240
 theorem VE.Readings.relaxTo_of_ne
   ∀ {Nd M : VE.SoftNorms.SoftNode}, M.name ≠ Nd.name → VE.Readings.relaxTo Nd M = M
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
@@ -39985,11 +39985,11 @@ theorem VE.Rights.correlate_identity
                   { name := __src.name, pred := __src.pred, sign := __src.sign,
                     guard := VE.Rights.holderConj D RN.snd RN.snd.node.guard, carveOuts := __src.carveOuts,
                     over := __src.over, mode := __src.mode, rank := __src.rank, alterable := __src.alterable,
-                    exception := __src.exception, hard := __src.hard })
+                    exception := __src.exception, hard := __src.hard, splitFrom := __src.splitFrom })
                 (VE.Rights.linesOf D) ++
               D.soft.T.nodes
-  -- uses VE.Environment@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Rights.Bar@VE.Rights.Tree VE.Rights.Kind.power@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Right.lines@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.holderConj@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
-  -- expr 894855343
+  -- uses VE.Environment@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Rights.Bar@VE.Rights.Tree VE.Rights.Kind.power@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Right.lines@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.holderConj@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 3484769219
 theorem VE.Rights.correlate_identity_top
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -49639,6 +49639,10 @@ theorem VE.SoftNorms.decisionNames_eq
         List.map (fun x => x.fst) (VE.SoftNorms.outweighsDecisions D)
   -- uses VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.exceptedDecisions@VE.SoftNorms.Tree VE.SoftNorms.offName@VE.SoftNorms.Tree VE.SoftNorms.outweighsDecisions@VE.SoftNorms.Tree
   -- expr 2994476063
+theorem VE.SoftNorms.decisionRule_unsplit
+  ∀ (N : VE.SoftNorms.SoftNode), N.splitFrom = Option.none → VE.SoftNorms.decisionRule N = N.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.decisionRule@VE.SoftNorms.Tree
+  -- expr 1350559411
 theorem VE.SoftNorms.defaultDecides_denote
   ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S) (p : String) (sign : Bool),
     VE.Formula.denote S ρ (VE.SoftNorms.defaultDecidesF D p sign) ↔ VE.SoftNorms.DefaultDecidesD D S ρ p sign
