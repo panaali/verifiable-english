@@ -14,6 +14,7 @@ import re
 import sys
 
 from tools.wire_contract_lean import module as lean_module, name_class as lean_name_class, table as lean_table
+from tools.wire_contract_rust import module as rust_module
 
 from lean.audit import FORBIDDEN
 from ve.wire import canonical_json, loads_json
@@ -21,6 +22,14 @@ from conformance.wire_contract_engine import CLEAN, Registry, pieces as split_te
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "ve/wire_contract"
+# The generated Rust table module of each directory (wire-contract-s4-2.md 4 and 5): the shipped units in the
+# kernel crate, the engine corpus with the kernel's integration tests. Each is written from its own lock.
+RUST = {"ve/wire_contract": ("rust/ve-kernel/src/contract_tables.rs", "crate"),
+        "conformance/wire-contract/contracts": ("rust/ve-kernel/tests/corpus_tables/mod.rs", "ve_kernel")}
+# Generator-test data outside the engine corpus (dri-decisions-20261031-wc-s4-2.md): a contract whose key lists
+# put a key outside the BMP beside one above U+E000, written with the corpus module; its hash is checked by
+# recomputing it, not against a lock.
+KEYS = ("rust/ve-kernel/tests/data/keys@0.json", "rust/ve-kernel/tests/keys_table/mod.rs")
 # The engine corpus (wire-contract.md 8.1) and its Lean namespaces: the three contracts of 8.1, then `mid@0`
 # and `forms@0`, which cover the literal forms, the tuple type form and a view over a nested include.
 CORPUS = (("inner@0", "Corpus.Inner"), ("demo@0", "Corpus.Demo"), ("defer@0", "Corpus.Defer"),
@@ -133,6 +142,67 @@ def generated_lean(contracts, limits, names):
         f"   sha256 {_hash(list(corpus.values()))}; limits {_hash(corpus_limits)}; names {_hash(corpus_names)}. Do not edit. -/\n"
         "import VE.WireContract.Table\n\n" + "\n".join(sections))
     return rendered
+
+
+def generated_rust(directory, contracts, limits, names, lock):
+    """The Rust table module of `directory` (wire-contract-s4-2.md 4), or `{}` for a directory without one.
+    `SOURCES` names every file of the lock that the module reads, with the lock's revision and hash."""
+    try:
+        relative = directory.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return {}
+    if relative not in RUST:
+        return {}
+    target, use = RUST[relative]
+    units = [unit for unit in contracts if unit in UNITS] if relative == "ve/wire_contract" else list(contracts)
+    files = ["limits.json", "names.json", *(f"{unit}.json" for unit in contracts)]
+    sources = [(file, lock[file]["revision"], lock[file]["sha256"]) for file in files]
+    rendered = {target: rust_module(relative + "/", use, sources, {unit: contracts[unit] for unit in units},
+                                    contracts, limits, names)}
+    if relative == "conformance/wire-contract/contracts":
+        keys = loads_json((ROOT / KEYS[0]).read_bytes())
+        rendered[KEYS[1]] = rust_module(KEYS[0], use, [("keys@0.json", keys["revision"], _hash(keys))],
+                                        {"keys@0": keys}, {"keys@0": keys}, {}, {})
+    return rendered
+
+
+def table_rows(contract, known, limits):
+    """The rows of a contract's generated table, read from the contract JSON for the Rust dump test
+    (wire-contract-s4-2.md 9, F3): every entry in table order, includes inlined, classifier members after
+    their classifier. Set-like key lists and `args` names are in code point order (base spec 2.1)."""
+    rows = []
+    def text(template):
+        return [list(piece) for piece in split_template(template)]
+    def walk(entries, owner, phase):
+        for entry in entries:
+            row = {"contract": contract["contract"], "position": len(rows), "phase": phase, "id": entry["id"],
+                   "kind": None, "code": None, "class": None, "text": None, "limit": None, "keys": None, "args": []}
+            rows.append(row)
+            if "each" in entry:
+                row["kind"] = "each"
+                walk(entry["checks"], owner, phase)
+            elif entry["kind"] == "include":
+                row["kind"] = "include"
+                if "as" in entry:
+                    row["code"], row["class"] = entry["as"], owner["codes"][entry["as"]]["class"]
+                target = known[entry["contract"]]
+                walk([e for p in target["phases"] if p["name"] in entry["phases"] for e in p["checks"]], target, phase)
+            else:
+                code = entry.get("code", owner["residual"])
+                limit = entry.get("limit")
+                row.update(kind=entry["kind"], code=code, **{"class": owner["codes"][code]["class"]},
+                           text=text(entry.get("text", "")), args=sorted(entry.get("args", {})),
+                           limit=limits.get(limit, limit) if type(limit) is str else limit)
+                if entry["kind"] in ("keys", "exact_keys"):
+                    row["keys"] = ([sorted(entry["keys"])] if entry["kind"] == "exact_keys" else
+                                   [sorted(entry["required"]), sorted(entry["optional"])])
+                for member in entry.get("emits", []):
+                    rows.append({**row, "position": len(rows), "id": member["id"], "kind": "member",
+                                 "code": member["code"], "class": owner["codes"][member["code"]]["class"],
+                                 "text": text(member["text"]), "args": []})
+    for phase in contract["phases"]:
+        walk(phase["checks"], contract, phase["name"])
+    return rows
 
 
 def _id_key(value):
@@ -709,15 +779,17 @@ def process(directory=DATA, *, write=False, catalogue=None, generated_only=False
     for unit in shipped:
         _check_unit(unit, contracts, directory, limits, names, write, findings, issue,
                     generated_only=generated_only)
-    if shipped and not findings:
-        rendered = generated_lean(contracts, limits, names)
+    if not findings:
+        rendered = {**(generated_lean(contracts, limits, names) if shipped else {}),
+                    **generated_rust(directory, {unit: contracts[unit] for unit in sorted(contracts)},
+                                     limits, names, lock)}
         for relative, source in rendered.items():
             target = ROOT / relative
             if write:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(source)
             elif not target.exists() or target.read_text() != source:
-                issue(target, "WC11", "generated Lean module differs")
+                issue(target, "WC11", "generated module differs")
     if write and not findings:
         lock_path.write_bytes(canonical_json(lock) + b"\n")
     return findings

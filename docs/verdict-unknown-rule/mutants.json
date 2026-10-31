@@ -1,0 +1,52 @@
+{
+ "item": "verdict-unknown-rule",
+ "note": "cloud-verdict-compare.py is in manage-agents (not a git repository); each mutant ran on a scratch copy in /tmp (mktemp) via the harness's CVC override and was never written to the installed file. Each run: 32 passed, 1 failed (the named test), except the reads mutant: 31 passed, 2 failed (that test and its reversed-direction twin). Unmutated: 33 passed, 0 failed (test-output.txt). The pre-change comparator fails the 4 new UNDECIDED tests and 2 output-format tests (27 passed, 6 failed).",
+ "harness": "/home/seyran/code/manage-agents/test-harness/comparators/test-comparators.zsh",
+ "mutants": [
+  {
+   "name": "UNKNOWN vs INVALID counted as undecided",
+   "change": "undecided(): pairs + {\"UNKNOWN\", \"INVALID\"}",
+   "file": "/home/seyran/code/manage-agents/cloud-verdict-compare.py",
+   "test": "UNKNOWN vs INVALID still trips",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "counts not checked when a mutant is undecided",
+   "change": "same = cv == cc or bool(und) or (...)",
+   "file": "/home/seyran/code/manage-agents/cloud-verdict-compare.py",
+   "test": "UNKNOWN vs KILLED whose counts differ by more than that mutant still trips",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "identity fields ignored for an undecided mutant",
+   "change": "drop `and not [k for k in diff if k not in verdict + VERDICT_OF]`",
+   "file": "/home/seyran/code/manage-agents/cloud-verdict-compare.py",
+   "test": "UNKNOWN vs KILLED of another mutant text (identity field after) still trips",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "KILLED vs SURVIVOR counted as undecided",
+   "change": "undecided(): pairs + {\"KILLED\", \"SURVIVOR\"}",
+   "file": "/home/seyran/code/manage-agents/cloud-verdict-compare.py",
+   "test": "KILLED vs SURVIVOR still trips (VERDICTS DIFFER, exit 1, 0 undecided)",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "reads compared for an undecided mutant (the M010 shape still trips)",
+   "change": "VERDICT_OF = ()",
+   "file": "/home/seyran/code/manage-agents/cloud-verdict-compare.py",
+   "test": "UNKNOWN on the VM, KILLED in the cloud (jt-2c M010): not a mismatch, exit 0, counted as 1 undecided",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  }
+ ]
+}

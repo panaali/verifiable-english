@@ -1,4 +1,5 @@
 import VE.Scope.Govern
+import VE.Scope.EffectLemmas
 import VE.NormDefaults.Check
 import VE.Readings.Strings
 
@@ -1864,5 +1865,174 @@ theorem listName_run (D : SDoc) (h₀ : admitBlock D = .ok ()) (n : VE.Discourse
         cases hc
         exact ⟨rfl, hmatch⟩
       · simp [hrun, hmatch, bind, Except.bind] at hc
+
+/-! ## SC-2's `own` and order check (spec 5.4, sc-2c). The five effect statements of 5.4 fail on a raw rule tree (the
+    soft chain's decoder reads members by traversal; F-raw-effect, `Examples.lean`); sc-2d proves them with the premise
+    `JsonWF o` (reviews/dri-decisions-20261031-sc-2c.md item 1). -/
+
+section Own
+open VE.Norms.Wire (budgetFormula budgetTerm)
+open VE.NormDefaults (forIn_unit_ok)
+
+/-- `own_congr` over any fuel and node counts: the two substituted conditions differ only where `own` sat, outside
+    every binder, and there the two guards are read at the same valuation. -/
+theorem own_congr_le {g₁ g₂ : Json} (hg : ∃ a, g₁ = .arr a) (ht : ∀ t, VE.Bridge.decodeTerm g₁ ≠ .ok t)
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S)
+    (hG : ∀ n k n' k' G G' r r', budgetFormula n k g₁ = .ok (G, r) → budgetFormula n' k' g₂ = .ok (G', r') →
+      (G.denote S ρ ↔ G'.denote S ρ)) :
+    ∀ (m n n' k k' : Nat) (c : Json) (C₁ C₂ : VE.Formula) (r r' : Nat), ownSafe m c = true →
+      budgetFormula n k (substOwn g₁ m c) = .ok (C₁, r) → budgetFormula n' k' (substOwn g₂ m c) = .ok (C₂, r') →
+      (C₁.denote S ρ ↔ C₂.denote S ρ)
+  | 0, n, n', k, k', c, C₁, C₂, r, r', _, h, h' => by
+    rw [budgetFormula_val n n' k k' c C₁ C₂ r r' h h']
+  | m + 1, n, n', k, k', c, C₁, C₂, r, r', hs, h, h' => by
+    have same : substOwn g₂ (m + 1) c = substOwn g₁ (m + 1) c → (C₁.denote S ρ ↔ C₂.denote S ρ) := fun he => by
+      rw [he] at h'; rw [budgetFormula_val _ _ _ _ _ _ _ _ _ h h']
+    cases c with
+    | str s =>
+      by_cases hs' : s = "own"
+      · subst hs'; simp only [substOwn, beq_self_eq_true, ite_true] at h h'; exact hG _ _ _ _ _ _ _ _ h h'
+      · exact same (by simp [substOwn, hs'])
+    | obj kvs => obtain ⟨_, he⟩ := budgetFormula_arr h; simp [substOwn] at he
+    | arr xs =>
+      rcases xs with ⟨l⟩
+      cases n with
+      | zero => simp [budgetFormula, throw, throwThe, MonadExceptOf.throw] at h
+      | succ n =>
+      cases n' with
+      | zero => simp [budgetFormula, throw, throwThe, MonadExceptOf.throw] at h'
+      | succ n' =>
+      have ih := own_congr_le hg ht S ρ hG m
+      unfold budgetFormula at h h'
+      simp only [substOwn, List.map_toArray, Json.getArr?, bind, Except.bind, pure, Except.pure, throw, throwThe,
+        MonadExceptOf.throw] at h h' same
+      split at h; · simp at h
+      split at h'; · simp at h'
+      rcases l with _ | ⟨y0, _ | ⟨y1, _ | ⟨y2, _ | ⟨y3, _ | ⟨y4, l⟩⟩⟩⟩⟩ <;>
+        simp only [List.map_cons, List.map_nil] at h h' same <;> (try (simp at h; done)) <;> split at h <;>
+        (try (simp at h; done))
+      all_goals (rename_i heq; simp only [List.cons.injEq, reduceCtorEq, and_true, and_false] at heq)
+      all_goals (repeat' (obtain ⟨_, heq⟩ := heq)); all_goals subst_vars
+      all_goals (repeat' split at h) <;> (try (simp at h; done))
+      all_goals first
+        | (apply same; congr 2; (try simp only [List.cons.injEq, and_true])
+           (repeat' (apply And.intro)) <;>
+           first | (apply elt_str g₂ hg; assumption) | (apply elt_term g₂ hg ht; assumption)); done
+        | skip
+      all_goals
+        have y0e := substOwn_str hg _ _ _ (by assumption : substOwn g₁ m y0 = .str _)
+        subst y0e
+        simp (disch := decide) only [substOwn_str_self] at h'
+        simp [ownSafe] at hs
+      all_goals (split at h' <;> (try (rename_i heq'; simp at heq'; done)) <;> (try (simp at h'; done)))
+      all_goals try
+        rename_i heq'
+        simp only [List.cons.injEq, true_and, and_true] at heq'
+        obtain ⟨_, _⟩ := heq'
+        subst_vars
+      all_goals (repeat' split at h') <;> (try (simp at h'; done))
+      all_goals (simp only [Except.ok.injEq, Prod.mk.injEq] at h h'; obtain ⟨rfl, -⟩ := h; obtain ⟨rfl, -⟩ := h')
+      · exact not_congr (ih _ _ _ _ _ _ _ _ _ hs.2 (by assumption) (by assumption))
+      · exact and_congr (ih _ _ _ _ _ _ _ _ _ hs.2.1 (by assumption) (by assumption))
+          (ih _ _ _ _ _ _ _ _ _ hs.2.2 (by assumption) (by assumption))
+      · exact or_congr (ih _ _ _ _ _ _ _ _ _ hs.2.1 (by assumption) (by assumption))
+          (ih _ _ _ _ _ _ _ _ _ hs.2.2 (by assumption) (by assumption))
+      · exact imp_congr (ih _ _ _ _ _ _ _ _ _ hs.2.1 (by assumption) (by assumption))
+          (ih _ _ _ _ _ _ _ _ _ hs.2.2 (by assumption) (by assumption))
+      all_goals
+        have b1 := ‹budgetFormula n (k + 1) (substOwn g₁ m y2) = _›
+        have b2 := ‹budgetFormula n' (k' + 1) (substOwn g₂ m y2) = _›
+        rw [substOwn_id_le g₁ m y2 hs] at b1
+        rw [substOwn_id_le g₂ m y2 hs] at b2
+        have s1 := ‹substOwn g₁ m y1 = .str _›
+        have s2 := ‹substOwn g₂ m y1 = .str _›
+        rw [elt_str g₂ hg s1, s1] at s2
+        injection s2 with s2
+        rw [s2, budgetFormula_val _ _ _ _ _ _ _ _ _ b1 b2]
+    | _ => exact same rfl
+
+/-- `own` is read at the rule's own valuation: it never sits under a binder, so it captures no variable. -/
+theorem own_congr (c g₁ g₂ : Json) (hs : ownSafe depthLimit c = true) (G₁ G₂ C₁ C₂ : VE.Formula)
+    (h₁ : VE.Norms.Wire.decodeBudgeted g₁ = .ok G₁) (h₂ : VE.Norms.Wire.decodeBudgeted g₂ = .ok G₂)
+    (hc₁ : VE.Norms.Wire.decodeBudgeted (substOwn g₁ depthLimit c) = .ok C₁)
+    (hc₂ : VE.Norms.Wire.decodeBudgeted (substOwn g₂ depthLimit c) = .ok C₂)
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S) (hG : G₁.denote S ρ ↔ G₂.denote S ρ) :
+    C₁.denote S ρ ↔ C₂.denote S ρ := by
+  obtain ⟨_, b₁⟩ := decodeBudgeted_ok h₁
+  obtain ⟨_, b₂⟩ := decodeBudgeted_ok h₂
+  obtain ⟨_, d₁⟩ := decodeBudgeted_ok hc₁
+  obtain ⟨_, d₂⟩ := decodeBudgeted_ok hc₂
+  refine own_congr_le (budgetFormula_arr b₁) (budgetFormula_not_term b₁) S ρ ?_ _ _ _ _ _ c C₁ C₂ _ _ hs d₁ d₂
+  intro n k n' k' G G' r r' e e'
+  rw [budgetFormula_val _ _ _ _ _ _ _ _ _ e b₁, budgetFormula_val _ _ _ _ _ _ _ _ _ e' b₂]
+  exact hG
+/-- The order check fails only with `ScopeOrder`. -/
+theorem orderCheck_error (D : SDoc) (e : String) (h : orderCheck D = .error e) : e.startsWith "ScopeOrder" = true := by
+  unfold orderCheck at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h
+  · rename_i e' he; cases h
+    refine forIn_error (fun e => e.startsWith "ScopeOrder" = true) _ ?_ _ _ he
+    intro u e₁ h₁
+    split at h₁
+    · rename_i e₂ he₂; cases h₁
+      refine forIn_error (fun e => e.startsWith "ScopeOrder" = true) _ ?_ _ _ he₂
+      intro g₁ e₃ h₃
+      split at h₃
+      · rename_i e₄ he₄; cases h₃
+        refine forIn_error (fun e => e.startsWith "ScopeOrder" = true) _ ?_ _ _ he₄
+        intro g₂ e₅ h₅
+        split at h₅
+        · cases h₅; exact scopeOrder_prefix _ _ _
+        · cases h₅
+      · cases h₃
+    · cases h₁
+  · cases h
+
+/-- An admitted order check leaves no two distinct governors of one unit that do not commute. -/
+theorem orderCheck_ok (D : SDoc) (h : orderCheck D = .ok ()) (u : String) (hu : u ∈ unitIds D.doc)
+    (g₁ g₂ : Governor) (h₁ : g₁ ∈ governorsOf D u) (h₂ : g₂ ∈ governorsOf D u) (hne : g₁.id ≠ g₂.id) :
+    Commutes g₁.effect g₂.effect = true := by
+  unfold orderCheck at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h
+  · cases h
+  rename_i r hr
+  cases r
+  have hu' := (forIn_unit_ok _ ?_ _).mp hr u hu
+  · split at hu'
+    · cases hu'
+    rename_i r₁ hr₁
+    cases r₁
+    have hg₁ := (forIn_unit_ok _ ?_ _).mp hr₁ g₁ h₁
+    · split at hg₁
+      · cases hg₁
+      rename_i r₂ hr₂
+      cases r₂
+      have hg₂ := (forIn_unit_ok _ ?_ _).mp hr₂ g₂ h₂
+      · split at hg₂
+        · simp at hg₂
+        · rename_i hc
+          simpa [hne] using hc
+      · intro x r hx; split at hx <;> simp_all
+    · intro x r hx; split at hx <;> simp_all
+  · intro x r hx; split at hx <;> simp_all
+
+theorem order_refused (D : SDoc) (h₀ : admitBlock D = .ok ()) (u : String) (hu : u ∈ unitIds D.doc)
+    (g₁ g₂ : Governor) (h₁ : g₁ ∈ governorsOf D u) (h₂ : g₂ ∈ governorsOf D u) (hne : g₁.id ≠ g₂.id)
+    (hc : Commutes g₁.effect g₂.effect = false) :
+    ∃ e, govern D = .error e ∧ e.startsWith "ScopeOrder" = true := by
+  have hg : D.governors.isEmpty = false := by
+    have := ((governorsOf_iff D u g₁).mp h₁).1
+    cases h : D.governors with
+    | nil => rw [h] at this; cases this
+    | cons => rfl
+  cases ho : orderCheck D with
+  | ok r => rw [orderCheck_ok D ho u hu g₁ g₂ h₁ h₂ hne] at hc; cases hc
+  | error e =>
+    refine ⟨e, ?_, orderCheck_error D e ho⟩
+    simp [govern, h₀, hg, ho, bind, Except.bind]
+
+end Own
 
 end VE.Scope
