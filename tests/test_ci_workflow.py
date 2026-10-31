@@ -7,6 +7,13 @@ reads a secret or an event field (template injection). ve-job.yml must also keep
 read-only `run` job that keeps no credentials and runs only in this repository, and a `publish` job, the
 only one that writes, that pushes nothing but `ci-result/$JOB`, never forced.
 
+gha-wf2: the publish job may also upload the run's branch Lean build to the existing release
+`lean-branch-cache`. The token for that (`github.token`) reaches only that one step, which never fails the
+result; its `gh` calls are `release view` and `release upload` of that release, never `--clobber`. The step's
+own script is run here against a fake `gh`: a pack that is not exactly the head's lean tree, has a member
+outside `pins.json` and `lake/build/` or that is not a plain file or directory, is over a cap, carries a
+secret or a seal for another tree, platform or toolchain is refused and never uploaded.
+
 The files are read as text by a small reader of the YAML they use (PyYAML is not in the environment).
 It fails closed: tabs, anchors, aliases, tags, merge keys, quoted or duplicate keys and lines it cannot
 place are refused, so a rule cannot be dodged by writing the same thing another way.
@@ -15,10 +22,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import hashlib
+import io
+import json
+import os
 import re
 import shlex
+import subprocess
+import tarfile
+import textwrap
 
 import pytest
+
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
@@ -35,6 +51,11 @@ EXPRESSION = re.compile(r"\$\{\{(.*?)\}\}", re.S)
 UNTRUSTED = re.compile(r"\bgithub\s*\.\s*(event|head_ref)\b")
 GIT_PUSH = re.compile(r"\bgit\b(?:\s+-c\s+\S+)*\s+push\b([^;&|\n]*)")
 PUBLISH_PUSH = ["origin", "HEAD:refs/heads/ci-result/$JOB"]
+ASSET_STEP = "lean-build asset"
+ASSET_RELEASE = "lean-branch-cache"
+TOKEN = "${{ github.token }}"
+GH_CALL = re.compile(r"(?<![\w-])gh\s+([^\n|;&)]*)")
+GH_ALLOWED = re.compile(r'release (view|upload) "\$REL" [^\n]*')
 KEY = re.compile(r"([A-Za-z0-9_-]+):(?:\s+(.*))?")
 BLOCK_SCALAR = re.compile(r"[|>][-+]?")
 
@@ -279,14 +300,36 @@ def check_ve_job(text: str) -> None:
     assert checkouts, "run has no checkout"
     for step in checkouts:
         assert (step.get("with") or {}).get("persist-credentials") == "false", "run keeps its credentials"
+    publish_pushes = []
     for name, block in run_blocks(document):
         pushes = [shlex.split(args) for args in GIT_PUSH.findall(block)]
         if name != "publish":
             assert not pushes, f"{name} pushes"
+            assert not GH_CALL.findall(block), f"{name} calls gh"
             continue
-        assert pushes, "publish pushes nothing"
-        for args in pushes:
-            assert [arg for arg in args if arg != "-q"] == PUBLISH_PUSH, f"publish pushes {args}"
+        publish_pushes += pushes
+        for args in GH_CALL.findall(block):
+            assert GH_ALLOWED.fullmatch(args.strip()) and "--clobber" not in args, f"publish calls gh {args.strip()}"
+        assert "api.github.com" not in block and "uploads.github.com" not in block, "publish calls the GitHub API"
+    assert publish_pushes, "publish pushes nothing"
+    for args in publish_pushes:
+        assert [arg for arg in args if arg != "-q"] == PUBLISH_PUSH, f"publish pushes {args}"
+    check_asset_step(text, publish)
+
+
+def check_asset_step(text: str, publish: dict) -> None:
+    """The write token reaches one step only: the lean-build upload, which never fails the result and
+    writes only to the existing release lean-branch-cache."""
+    tokens = [e for e in EXPRESSION.findall(text) if "token" in e.lower()]
+    assert len(tokens) == 1 and text.count(TOKEN) == 1, f"github.token is used {len(tokens)} times"
+    named = [step for step in steps(publish) if step.get("name") == ASSET_STEP]
+    assert len(named) == 1, f"publish has {len(named)} {ASSET_STEP!r} steps"
+    step = named[0]
+    assert step.get("env") == {"GH_TOKEN": TOKEN}, f"github.token is not only the {ASSET_STEP} step's GH_TOKEN"
+    for other in steps(publish):
+        if "lean-build" in str(other.get("with", {}).get("name", "")) or other is step:
+            assert other.get("continue-on-error") == "true", f"{ASSET_STEP}: may fail the result (no continue-on-error)"
+    assert f"REL={ASSET_RELEASE};" in step["run"], f"{ASSET_STEP} does not write to {ASSET_RELEASE}"
 
 
 def workflow_files() -> list[Path]:
@@ -335,6 +378,24 @@ SEEDED = [
     ("+refspec", '"HEAD:refs/heads/ci-result/$JOB" ||', '"+HEAD:refs/heads/ci-result/$JOB" ||', "publish pushes"),
     ("main", '"HEAD:refs/heads/ci-result/$JOB" ||', '"HEAD:refs/heads/main" ||', "publish pushes"),
     ("alias", "\n  run:\n", "\n  run: &job\n", "anchor"),
+    ("token in run", "          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}\n",
+     "          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}\n          T: ${{ github.token }}\n", "github.token is used 2"),
+    ("token in a run block", "          set -uo pipefail\n          O=$RUNNER_TEMP/out;",
+     "          set -uo pipefail\n          echo ${{ github.token }}\n          O=$RUNNER_TEMP/out;", "github.token is used 2"),
+    ("token moved", "          GH_TOKEN: ${{ github.token }}\n", "          TOKEN: ${{ github.token }}\n", "only the lean-build"),
+    ("clobber", 'gh release upload "$REL" "$A/$name"', 'gh release upload "$REL" "$A/$name" --clobber', "publish calls gh"),
+    ("create", '          up=$(gh release', '          gh release create "$REL" --repo x\n          up=$(gh release', "publish calls gh"),
+    ("delete", '          up=$(gh release', '          gh release delete-asset "$REL" "$name" -y\n          up=$(gh release',
+     "publish calls gh"),
+    ("gh api", '          up=$(gh release', '          gh api -X DELETE repos/x/releases/assets/1\n          up=$(gh release',
+     "publish calls gh"),
+    ("curl api", '          up=$(gh release', '          curl -X DELETE https://api.github.com/repos/x\n          up=$(gh release',
+     "calls the GitHub API"),
+    ("gh in run", '          [ "$LEAN_ASSET" != 1 ]', '          gh release list\n          [ "$LEAN_ASSET" != 1 ]', "run calls gh"),
+    ("other release", "REL=lean-branch-cache;", "REL=lean-cache;", "does not write to lean-branch-cache"),
+    ("may fail", "        continue-on-error: true\n        env:\n", "        env:\n", "may fail the result"),
+    ("download may fail", "        continue-on-error: true\n        uses: actions/download-artifact",
+     "        uses: actions/download-artifact", "may fail the result"),
 ]
 
 
@@ -356,3 +417,189 @@ def test_a_new_workflow_file_keeps_the_common_rules():
     check_workflow(reader)
     with pytest.raises(AssertionError, match="forbidden triggers"):
         check_workflow(reader.replace("on:\n  push:\n", "on:\n  schedule:\n  push:\n"))
+
+
+# --- the lean-build asset step's own script, run against a fake `gh` (gha-wf2)
+LEAN_VERSION = "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 0123abcd, Release)"
+FAKE_GH = """#!/bin/bash
+printf '%s\\n' "$*" >> "$FAKE_GH_LOG"
+case $1-$2 in
+  release-view) [ "${FAKE_GH_VIEW:-ok}" = ok ] || { echo "$FAKE_GH_VIEW" >&2; exit 1; }; printf '%s\\n' $FAKE_GH_ASSETS;;
+  release-upload) [ "${FAKE_GH_UPLOAD:-ok}" = ok ] || { echo "$FAKE_GH_UPLOAD" >&2; exit 1; };;
+  *) exit 2;;
+esac
+"""
+
+
+def asset_script() -> str:
+    publish = parse(VE_JOB.read_text())["jobs"]["publish"]
+    # The reader keeps a block scalar's indentation; bash needs the heredoc's PY at column 0, as YAML gives it.
+    return textwrap.dedent(next(step["run"] for step in steps(publish) if step.get("name") == ASSET_STEP))
+
+
+def git(cwd: Path, *args: str) -> str:
+    return subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=True,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT).stdout.strip()
+
+
+def head_checkout(tmp_path: Path) -> tuple[Path, str]:
+    repo = tmp_path / "head"
+    (repo / "lean").mkdir(parents=True)
+    (repo / "lean/lean-toolchain").write_text("leanprover/lean4:v4.24.0\n")
+    (repo / "lean/VE.lean").write_text("def x := 1\n")
+    git(repo, "init", "-q")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "head")
+    return repo, git(repo, "rev-parse", "HEAD:lean")
+
+
+def seal(tree: str, **changes) -> bytes:
+    key = {"git_lean_tree": tree, "platform": {"system": "Linux", "machine": "x86_64"},
+           "toolchain": {"lean": LEAN_VERSION}}
+    key.update(changes)
+    return json.dumps({"format": 1, "key": key}).encode()
+
+
+def pack(path: Path, members: list[tuple[str, object]]) -> None:
+    """members: (name, bytes) a file, (name, "dir"), (name, "symlink"), (name, "hardlink")."""
+    raw = io.BytesIO()
+    with tarfile.open(fileobj=raw, mode="w") as tar:
+        for name, body in members:
+            info = tarfile.TarInfo(name)
+            if body == "dir":
+                info.type = tarfile.DIRTYPE
+                tar.addfile(info)
+            elif body in ("symlink", "hardlink"):
+                info.type = tarfile.SYMTYPE if body == "symlink" else tarfile.LNKTYPE
+                info.linkname = "lake/build/lib/a.olean"
+                tar.addfile(info)
+            else:
+                info.size = len(body)
+                tar.addfile(info, io.BytesIO(body))
+    subprocess.run(["zstd", "-q", "-o", str(path)], input=raw.getvalue(), check=True, timeout=HANG_TIMEOUT)
+
+
+def good_members(tree: str) -> list[tuple[str, object]]:
+    return [("pins.json", seal(tree)), ("lake", "dir"), ("lake/build", "dir"), ("lake/build/lib", "dir"),
+            ("lake/build/lib/a.olean", b"olean" * 100), ("lake/build/bin/ve_service", b"\x7fELF" + b"0" * 64)]
+
+
+def run_asset_step(tmp_path: Path, members=None, *, name=None, extra=(), script=None, raw=None, **gh) -> dict:
+    repo, tree = head_checkout(tmp_path)
+    rt = tmp_path / "rt"
+    (rt / "out").mkdir(parents=True)
+    (rt / "lean-build").mkdir()
+    target = rt / "lean-build" / (name or f"lean-build-{tree[:12]}.tar.zst")
+    if raw is not None:
+        target.write_bytes(raw)
+    else:
+        pack(target, good_members(tree) if members is None else members(tree))
+    for extra_name in extra:
+        (rt / "lean-build" / extra_name).write_bytes(b"x")
+    fake = tmp_path / "bin"
+    fake.mkdir()
+    (fake / "gh").write_text(FAKE_GH)
+    (fake / "gh").chmod(0o755)
+    log = tmp_path / "gh.log"
+    env = {**{k: v for k, v in os.environ.items() if not k.startswith(("GH_", "GITHUB_", "FAKE_GH"))},
+           "PATH": f"{fake}{os.pathsep}{os.environ['PATH']}", "RUNNER_TEMP": str(rt), "GH_TOKEN": "not-a-token",
+           "GITHUB_REPOSITORY": REPOSITORY, "FAKE_GH_LOG": str(log),
+           **{f"FAKE_GH_{k.upper()}": v for k, v in gh.items()}}
+    done = subprocess.run(["bash", "-c", script or asset_script()], cwd=repo, env=env, capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, f"the step failed the result: {done.stdout}{done.stderr}"
+    record = json.loads((rt / "out/lean-build-asset.json").read_text())
+    record["calls"] = log.read_text().splitlines() if log.exists() else []
+    record["pack"] = target
+    record["tree"] = tree
+    return record
+
+
+def test_the_publish_job_uploads_a_checked_branch_build(tmp_path):
+    record = run_asset_step(tmp_path)
+    assert record["status"] == "uploaded", record
+    assert record["key"] == record["tree"] and record["name"] == f"lean-build-{record['tree'][:12]}.tar.zst"
+    assert record["sha256"] == hashlib.sha256(record["pack"].read_bytes()).hexdigest()
+    assert record["bytes"] == str(record["pack"].stat().st_size) and record["release"] == ASSET_RELEASE
+    assert [call.split()[:3] for call in record["calls"]] == [["release", "view", ASSET_RELEASE],
+                                                              ["release", "upload", ASSET_RELEASE]]
+    assert record["calls"][1].split()[3] == str(record["pack"]) and "--clobber" not in record["calls"][1]
+
+
+def test_an_asset_already_on_the_release_is_kept(tmp_path):
+    record = run_asset_step(tmp_path, assets=f"other.tar.zst lean-build-{head_checkout(tmp_path / 'x')[1][:12]}.tar.zst")
+    assert record["status"] == "exists", record
+    assert [call.split()[1] for call in record["calls"]] == ["view"], "an existing asset was uploaded again"
+
+
+@pytest.mark.parametrize("view, upload, status", [
+    ("release not found", "ok", "no-release"),
+    ("HTTP 502: Bad Gateway", "ok", "failed"),
+    ("ok", "HTTP 422: already_exists", "failed"),
+])
+def test_a_github_failure_is_recorded_and_never_fails_the_result(tmp_path, view, upload, status):
+    record = run_asset_step(tmp_path, view=view, upload=upload)
+    assert record["status"] == status, record
+    assert all(call.split()[1] in ("view", "upload") for call in record["calls"])
+
+
+def replace_member(tree, name, body):
+    return [(n, body if n == name else b) for n, b in good_members(tree)]
+
+
+REFUSED = {
+    "another tree's name": (dict(name="lean-build-0123456789ab.tar.zst"), "not exactly one file"),
+    "a second file": (dict(extra=["notes.txt"]), "not exactly one file"),
+    "a symlink": (dict(members=lambda t: good_members(t) + [("lake/build/lib/l.olean", "symlink")]),
+                  "not a regular file or directory"),
+    "a hardlink": (dict(members=lambda t: good_members(t) + [("lake/build/lib/h.olean", "hardlink")]),
+                   "not a regular file or directory"),
+    "a .. member": (dict(members=lambda t: good_members(t) + [("lake/build/../../x", b"x")]), "outside pins.json"),
+    "an absolute member": (dict(members=lambda t: good_members(t) + [("/etc/x", b"x")]), "outside pins.json"),
+    "a member outside lake/build": (dict(members=lambda t: good_members(t) + [("lake/packages/x", b"x")]),
+                                    "outside pins.json"),
+    "a secret": (dict(members=lambda t: good_members(t) + [("lake/build/lib/s.olean", b"a ghp_" + b"A1" * 18 + b" z")]),
+                 "matches a secret pattern"),
+    "a private key": (dict(members=lambda t: good_members(t) + [("lake/build/k", b"-----BEGIN RSA PRIVATE KEY-----")]),
+                      "matches a secret pattern"),
+    "another tree's seal": (dict(members=lambda t: replace_member(t, "pins.json", seal("f" * 40))), "this lean tree"),
+    "another platform": (dict(members=lambda t: replace_member(
+        t, "pins.json", seal(t, platform={"system": "Linux", "machine": "aarch64"}))), "Linux-x86_64"),
+    "another lean": (dict(members=lambda t: replace_member(
+        t, "pins.json", seal(t, toolchain={"lean": LEAN_VERSION.replace("4.24.0", "4.25.0")}))), "seal's lean"),
+    "no seal": (dict(members=lambda t: [m for m in good_members(t) if m[0] != "pins.json"]), "no pins.json"),
+    "no build": (dict(members=lambda t: [("pins.json", seal(t))]), "nothing under lake/build"),
+    "not zstd": (dict(raw=b"plain bytes, not a zstd frame"), "not a readable tar.zst"),
+    "over the size cap": (dict(script="cap"), "over the cap 100"),
+    "over the uncompressed cap": (dict(script="ucap"), "over 600 bytes uncompressed"),
+}
+
+
+@pytest.mark.parametrize("case", REFUSED, ids=list(REFUSED))
+def test_a_bad_pack_is_refused_and_never_uploaded(tmp_path, case):
+    kwargs, reason = REFUSED[case]
+    if kwargs.get("script") == "cap":
+        kwargs = {**kwargs, "script": asset_script().replace("CAP=2000000000;", "CAP=100;", 1)}
+    elif kwargs.get("script") == "ucap":
+        kwargs = {**kwargs, "script": asset_script().replace("UCAP=8000000000", "UCAP=600", 1)}
+    record = run_asset_step(tmp_path, **kwargs)
+    assert record["status"] == "refused" and reason in record["reason"], record
+    assert not record["calls"], f"a refused pack reached gh: {record['calls']}"
+    assert "A1A1A1" not in json.dumps(record, default=str), "the record repeats the secret"
+
+
+def test_the_caps_the_refusal_tests_lower_are_the_real_ones():
+    script = asset_script()
+    assert "; CAP=2000000000; UCAP=8000000000\n" in script, "the size caps moved: update the cap tests"
+
+
+def test_the_run_job_packs_only_when_job_json_asks():
+    """job.json's "lean_asset" must be the JSON value true; only then is VE_LEAN_ASSET_DIR set for job.sh,
+    and only one file there is sent, as the separate short-lived artifact lean-build."""
+    run = parse(VE_JOB.read_text())["jobs"]["run"]
+    blocks = "\n".join(step.get("run", "") for step in steps(run))
+    assert '.get("lean_asset") is True' in blocks
+    assert '[ "$LEAN_ASSET" != 1 ] || export VE_LEAN_ASSET_DIR="$RUNNER_TEMP/lean-build"' in blocks
+    sent = [step for step in steps(run) if (step.get("with") or {}).get("name") == "lean-build"]
+    assert len(sent) == 1 and sent[0]["if"] == "always() && steps.pack.outputs.ready == 'true'"
+    assert int(sent[0]["with"]["retention-days"]) <= 3 and run["outputs"]["lean_asset"] == "${{ steps.pack.outputs.ready }}"

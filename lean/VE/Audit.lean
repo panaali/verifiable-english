@@ -363,6 +363,7 @@ import VE.Scales.Theorems
 import VE.Scope.EffectLemmas
 import VE.Scope.Examples
 import VE.Scope.Govern
+import VE.Scope.ReadingsLemmas
 import VE.Scope.ReadingsTheorems
 import VE.Scope.Run
 import VE.Scope.Theorems
@@ -6575,7 +6576,11 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.anchor_reach_iff
 #print axioms VE.Scope.any_drop_title
 #print axioms VE.Scope.applyEffect_src
+#print axioms VE.Scope.arrAt_mem
 #print axioms VE.Scope.ascending_sound
+#print axioms VE.Scope.assemble_ok
+#print axioms VE.Scope.atChoiceOn_sets
+#print axioms VE.Scope.atChoiceOn_units
 #print axioms VE.Scope.balanceL_id
 #print axioms VE.Scope.balanceR_id
 #print axioms VE.Scope.balanced?_sound
@@ -6597,17 +6602,24 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.composedF_slow
 #print axioms VE.Scope.composed_drop
 #print axioms VE.Scope.composed_src
+#print axioms VE.Scope.contentOf_atChoiceOn
 #print axioms VE.Scope.contentOf_src
 #print axioms VE.Scope.coveredBy_slow
+#print axioms VE.Scope.covered_atChoice
 #print axioms VE.Scope.covered_drop
 #print axioms VE.Scope.coversU_drop
 #print axioms VE.Scope.coversU_iff
 #print axioms VE.Scope.decodeBlock_jsonWF
 #print axioms VE.Scope.decodeBlock_layout
 #print axioms VE.Scope.decodeBlock_ok
+#print axioms VE.Scope.decodeBlock_payloads
+#print axioms VE.Scope.decodeBlock_sets
 #print axioms VE.Scope.decodeBudgeted_ok
+#print axioms VE.Scope.decodeEffect_wf
+#print axioms VE.Scope.decodeGovernor_wf
 #print axioms VE.Scope.decodeNorm_name
 #print axioms VE.Scope.decodeNorm_name_top
+#print axioms VE.Scope.decodeParts_wf
 #print axioms VE.Scope.decodeScope_layout
 #print axioms VE.Scope.edgesFor_ok
 #print axioms VE.Scope.edgesInto_drop
@@ -6627,6 +6639,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.faultOf_some
 #print axioms VE.Scope.filter_drop_title
 #print axioms VE.Scope.filter_mergeSort
+#print axioms VE.Scope.find?_congr_mem
 #print axioms VE.Scope.find_map_id
 #print axioms VE.Scope.firstDup_none_iff
 #print axioms VE.Scope.firstDup_none_nodup
@@ -6641,6 +6654,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.frameOn_drop
 #print axioms VE.Scope.fresh_mem
 #print axioms VE.Scope.frontier_graph_refused
+#print axioms VE.Scope.getD_set2
 #print axioms VE.Scope.getObjValD_str
 #print axioms VE.Scope.getObjVal_map
 #print axioms VE.Scope.getObjVal_obj
@@ -6650,6 +6664,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.governSets_choice_refused
 #print axioms VE.Scope.governSets_limit
 #print axioms VE.Scope.governSets_no_sets
+#print axioms VE.Scope.governSets_ok
+#print axioms VE.Scope.governSets_preserves
+#print axioms VE.Scope.governSets_readings_refused
+#print axioms VE.Scope.governSets_strings
 #print axioms VE.Scope.govern_admits
 #print axioms VE.Scope.govern_drop_nonempty
 #print axioms VE.Scope.govern_identity
@@ -6666,6 +6684,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.governorsOf_drop
 #print axioms VE.Scope.governorsOf_iff
 #print axioms VE.Scope.hasOwn_mono
+#print axioms VE.Scope.hasStr_atChoiceOn
 #print axioms VE.Scope.hasStr_getD
 #print axioms VE.Scope.hasStr_inv
 #print axioms VE.Scope.hasStr_mkObj
@@ -6685,10 +6704,13 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.ite_bind_ok
 #print axioms VE.Scope.itemRule_decoder
 #print axioms VE.Scope.jsonWF?_sound
+#print axioms VE.Scope.jsonWF_atChoiceOn
 #print axioms VE.Scope.jsonWF_getD
 #print axioms VE.Scope.jsonWF_mkObj
+#print axioms VE.Scope.jsonWF_set
 #print axioms VE.Scope.jsonWF_top
 #print axioms VE.Scope.label_reach_iff
+#print axioms VE.Scope.listMember_wf
 #print axioms VE.Scope.listName_run
 #print axioms VE.Scope.listWF?_sound
 #print axioms VE.Scope.list_singleton_of_drop_empty
@@ -6697,15 +6719,19 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.mapM_ok_idx
 #print axioms VE.Scope.mapM_ok_mem
 #print axioms VE.Scope.mapM_ok_of_mem
 #print axioms VE.Scope.mapM_some_mem
 #print axioms VE.Scope.map_filter_id
 #print axioms VE.Scope.mem_ordered
+#print axioms VE.Scope.memberOf_wf
+#print axioms VE.Scope.membersIn_eq
 #print axioms VE.Scope.members_get
 #print axioms VE.Scope.members_ne_obj
 #print axioms VE.Scope.members_nodup
 #print axioms VE.Scope.members_obj
+#print axioms VE.Scope.members_wf
 #print axioms VE.Scope.memo_map
 #print axioms VE.Scope.mergeParts_conflict
 #print axioms VE.Scope.mergeParts_keys
@@ -6734,10 +6760,13 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.patch_src
 #print axioms VE.Scope.raw_insert_same
 #print axioms VE.Scope.reach_beq
+#print axioms VE.Scope.readingAt_src
+#print axioms VE.Scope.readingsJson_set
 #print axioms VE.Scope.readings_refused
 #print axioms VE.Scope.ruleFields_name
 #print axioms VE.Scope.ruleTable_decoder
 #print axioms VE.Scope.ruleTable_drop
+#print axioms VE.Scope.rule_atChoice
 #print axioms VE.Scope.scopeOrder_prefix
 #print axioms VE.Scope.scope_absent_unchanged
 #print axioms VE.Scope.scope_admission
@@ -6747,6 +6776,9 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.setObjVal_ne
 #print axioms VE.Scope.setObjVal_null
 #print axioms VE.Scope.setObjVal_self
+#print axioms VE.Scope.setUnits_eq
+#print axioms VE.Scope.setsJson_of_get
+#print axioms VE.Scope.su_obj
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
@@ -6758,6 +6790,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.title_identity
 #print axioms VE.Scope.title_only_out
 #print axioms VE.Scope.top_set
+#print axioms VE.Scope.unitIds_atChoiceOn
+#print axioms VE.Scope.unitsOf_atChoiceOn
 #print axioms VE.Scope.unitsOf_mem
 #print axioms VE.Scope.unitsOf_patch
 #print axioms VE.Scope.units_array_of_mem
