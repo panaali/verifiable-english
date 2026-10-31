@@ -2058,7 +2058,8 @@
         "VE.Compose.stackHead",
         "VE.Compose.unsupported",
         "VE.Compose.wrapperHead",
-        "VE.Compose.wrapperProfiles"
+        "VE.Compose.wrapperProfiles",
+        "VE.Compose.Interface"
       ],
       "G[V]": [
         "VE.Compose.Route",
@@ -2103,6 +2104,7 @@
         "VE.Compose.actsRefuses",
         "VE.Compose.cardinalityOthers",
         "VE.Compose.modeProfiles",
+        "VE.Compose.slotAgrees",
         "VE.Compose.decidingEnvironment",
         "VE.Compose.layersApart",
         "VE.Compose.listedProfiles"
@@ -6770,14 +6772,6 @@
         "VE.Readings.Sim"
       ]
     },
-    "VE/Readings/Stage.lean": {
-      "G[R]": [
-        "VE.Readings.Stage.around",
-        "VE.Readings.Stage.marker",
-        "VE.Readings.Stage.part",
-        "VE.Readings.Stage.stage"
-      ]
-    },
     "VE/Readings/Strings.lean": {
       "S": [
         "VE.Readings.AsciiL"
@@ -9942,11 +9936,6 @@
         "VE.Service.Graph.topological"
       ]
     },
-    "VE/Service/MemoExamples.lean": {
-      "T": [
-        "memoCase"
-      ]
-    },
     "VE/Service/ParseDiagnostic.lean": {
       "G[V]": [
         "VE.Service.ParseDiagnostic.Cursor",
@@ -10074,18 +10063,6 @@
       ],
       "G[V]": [
         "VE.Service.Readings.readingsCase"
-      ]
-    },
-    "VE/Service/StageTimes.lean": {
-      "G[R]": [
-        "VE.Service.StageTimes.Mode",
-        "VE.Service.StageTimes.Open",
-        "VE.Service.StageTimes.cpuTicks",
-        "VE.Service.StageTimes.mode",
-        "VE.Service.StageTimes.parse",
-        "VE.Service.StageTimes.row",
-        "VE.Service.StageTimes.step",
-        "VE.Service.StageTimes.stream"
       ]
     },
     "VE/Service/Standalone.lean": {
@@ -12705,11 +12682,6 @@
         "main",
         "phraseJson",
         "relName"
-      ]
-    },
-    "VE/Numbers/Bits.lean": {
-      "C": [
-        "VE.Numbers.bits"
       ]
     },
     "VE/Acts/Syntax.lean": {
@@ -15679,42 +15651,6 @@
         "VE.Acts.ElaborateExamples.withActs"
       ]
     },
-    "VE/Acts/Wire.lean": {
-      "D[V]": [
-        "VE.Acts.Wire.checkAct",
-        "VE.Acts.Wire.joinedAct"
-      ]
-    },
-    "VE/Acts/Decode.lean": {
-      "D[V]": [
-        "VE.Acts.Decode.ElaboratedU",
-        "VE.Acts.Decode.actsOf",
-        "VE.Acts.Decode.decodeElaboratedU",
-        "VE.Acts.Decode.elaborateSource"
-      ]
-    },
-    "VE/Acts/DecodeExamples.lean": {
-      "T": [
-        "VE.Acts.DecodeExamples.U1",
-        "VE.Acts.DecodeExamples.a14",
-        "VE.Acts.DecodeExamples.a6",
-        "VE.Acts.DecodeExamples.a7",
-        "VE.Acts.DecodeExamples.big",
-        "VE.Acts.DecodeExamples.ck",
-        "VE.Acts.DecodeExamples.dec",
-        "VE.Acts.DecodeExamples.e14",
-        "VE.Acts.DecodeExamples.e15",
-        "VE.Acts.DecodeExamples.errText",
-        "VE.Acts.DecodeExamples.fx14",
-        "VE.Acts.DecodeExamples.jenv",
-        "VE.Acts.DecodeExamples.jrule",
-        "VE.Acts.DecodeExamples.lexical",
-        "VE.Acts.DecodeExamples.pair",
-        "VE.Acts.DecodeExamples.run",
-        "VE.Acts.DecodeExamples.two",
-        "VE.Acts.DecodeExamples.view"
-      ]
-    },
     "VE/Cardinality/Run.lean": {
       "D[V]": [
         "VE.Cardinality.CardCertificate",
@@ -15986,36 +15922,6 @@
         "VE.Acts.MeaningExamples.rd1",
         "VE.Acts.MeaningExamples.sub",
         "VE.Acts.MeaningExamples.toks"
-      ]
-    },
-    "VE/Acts/RenderExamples.lean": {
-      "T": [
-        "VE.Acts.RenderExamples.V2s",
-        "VE.Acts.RenderExamples.Vk",
-        "VE.Acts.RenderExamples.Vo",
-        "VE.Acts.RenderExamples.Vs",
-        "VE.Acts.RenderExamples.atMod",
-        "VE.Acts.RenderExamples.back",
-        "VE.Acts.RenderExamples.c2",
-        "VE.Acts.RenderExamples.fr3",
-        "VE.Acts.RenderExamples.fr4",
-        "VE.Acts.RenderExamples.fr5",
-        "VE.Acts.RenderExamples.give",
-        "VE.Acts.RenderExamples.held2",
-        "VE.Acts.RenderExamples.heldBy1",
-        "VE.Acts.RenderExamples.help",
-        "VE.Acts.RenderExamples.joinedObj",
-        "VE.Acts.RenderExamples.mixed",
-        "VE.Acts.RenderExamples.n1",
-        "VE.Acts.RenderExamples.noTo",
-        "VE.Acts.RenderExamples.obj",
-        "VE.Acts.RenderExamples.ordered",
-        "VE.Acts.RenderExamples.participate",
-        "VE.Acts.RenderExamples.roundTrip",
-        "VE.Acts.RenderExamples.seek",
-        "VE.Acts.RenderExamples.send",
-        "VE.Acts.RenderExamples.text",
-        "VE.Acts.RenderExamples.toBoth"
       ]
     },
     "VE/Readings/DefaultVerdicts.lean": {
@@ -16418,6 +16324,11 @@
         "ResponseShape.Schemas.Scope.file"
       ]
     },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
+      ]
+    },
     "VE/Calc/WorkExamples.lean": {
       "T": [
         "VE.Calc.WorkExamples.C",
@@ -16513,6 +16424,130 @@
         "VE.Cardinality.Document.Entries"
       ]
     },
+    "VE/Compose/Stack.lean": {
+      "G[V]": [
+        "VE.Compose.rewriters",
+        "VE.Compose.stackOf",
+        "VE.Compose.Contract.listedStacks"
+      ]
+    },
+    "VE/Compose/Contract.lean": {
+      "S": [
+        "VE.Compose.Contract.Rewriter",
+        "VE.Compose.Contract.Rewriter.Laws",
+        "VE.Compose.Contract.ScopeRunsOf",
+        "VE.Compose.Contract.ScopeRuns",
+        "VE.Compose.Contract.ScopeFaithful",
+        "VE.Compose.Contract.ScopePreserves",
+        "VE.Compose.Contract.ScopeSetsFaithful",
+        "VE.Compose.Contract.RouteFacts"
+      ],
+      "G[V]": [
+        "VE.Compose.Contract.pipeline",
+        "VE.Compose.Contract.pipelineOf",
+        "VE.Compose.Contract.scopeRewriter",
+        "VE.Compose.Contract.docRewriters"
+      ]
+    },
+    "VE/Compose/ContractExamples.lean": {
+      "T": [
+        "VE.Compose.ContractExamples.plannedRows",
+        "VE.Compose.ContractExamples.ungoverned",
+        "VE.Compose.ContractExamples.governedSet",
+        "VE.Compose.ContractExamples.tagRewriter"
+      ]
+    },
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
+    "VE/Service/MemoExamples.lean": {
+      "T": [
+        "memoCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
+      ]
+    },
+    "VE/Acts/Wire.lean": {
+      "D[V]": [
+        "VE.Acts.Wire.checkAct",
+        "VE.Acts.Wire.joinedAct"
+      ]
+    },
+    "VE/Acts/Decode.lean": {
+      "D[V]": [
+        "VE.Acts.Decode.ElaboratedU",
+        "VE.Acts.Decode.actsOf",
+        "VE.Acts.Decode.decodeElaboratedU",
+        "VE.Acts.Decode.elaborateSource"
+      ]
+    },
+    "VE/Acts/DecodeExamples.lean": {
+      "T": [
+        "VE.Acts.DecodeExamples.U1",
+        "VE.Acts.DecodeExamples.a14",
+        "VE.Acts.DecodeExamples.a6",
+        "VE.Acts.DecodeExamples.a7",
+        "VE.Acts.DecodeExamples.big",
+        "VE.Acts.DecodeExamples.ck",
+        "VE.Acts.DecodeExamples.dec",
+        "VE.Acts.DecodeExamples.e14",
+        "VE.Acts.DecodeExamples.e15",
+        "VE.Acts.DecodeExamples.errText",
+        "VE.Acts.DecodeExamples.fx14",
+        "VE.Acts.DecodeExamples.jenv",
+        "VE.Acts.DecodeExamples.jrule",
+        "VE.Acts.DecodeExamples.lexical",
+        "VE.Acts.DecodeExamples.pair",
+        "VE.Acts.DecodeExamples.run",
+        "VE.Acts.DecodeExamples.two",
+        "VE.Acts.DecodeExamples.view"
+      ]
+    },
+    "VE/Acts/RenderExamples.lean": {
+      "T": [
+        "VE.Acts.RenderExamples.V2s",
+        "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vo",
+        "VE.Acts.RenderExamples.Vs",
+        "VE.Acts.RenderExamples.atMod",
+        "VE.Acts.RenderExamples.back",
+        "VE.Acts.RenderExamples.c2",
+        "VE.Acts.RenderExamples.fr3",
+        "VE.Acts.RenderExamples.fr4",
+        "VE.Acts.RenderExamples.fr5",
+        "VE.Acts.RenderExamples.give",
+        "VE.Acts.RenderExamples.held2",
+        "VE.Acts.RenderExamples.heldBy1",
+        "VE.Acts.RenderExamples.help",
+        "VE.Acts.RenderExamples.joinedObj",
+        "VE.Acts.RenderExamples.mixed",
+        "VE.Acts.RenderExamples.n1",
+        "VE.Acts.RenderExamples.noTo",
+        "VE.Acts.RenderExamples.obj",
+        "VE.Acts.RenderExamples.ordered",
+        "VE.Acts.RenderExamples.participate",
+        "VE.Acts.RenderExamples.roundTrip",
+        "VE.Acts.RenderExamples.seek",
+        "VE.Acts.RenderExamples.send",
+        "VE.Acts.RenderExamples.text",
+        "VE.Acts.RenderExamples.toBoth"
+      ]
+    },
     "VE/Scope/EffectLemmas.lean": {},
     "VE/Closure/CoreEquiv.lean": {
       "P": [
@@ -16543,6 +16578,35 @@
         "VE.Acts.ReadingsExamples.rsC"
       ]
     },
-    "VE/Scope/ReadingsLemmas.lean": {}
+    "VE/Scope/ReadingsLemmas.lean": {},
+    "VE/WireContract/Hooks/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Hooks.Acts.actsOf",
+        "VE.WireContract.Hooks.Acts.adapter",
+        "VE.WireContract.Hooks.Acts.classifier",
+        "VE.WireContract.Hooks.Acts.decoded",
+        "VE.WireContract.Hooks.Acts.fixedOf",
+        "VE.WireContract.Hooks.Acts.hooks",
+        "VE.WireContract.Hooks.Acts.inDomain",
+        "VE.WireContract.Hooks.Acts.member",
+        "VE.WireContract.Hooks.Acts.refusedWith",
+        "VE.WireContract.Hooks.Acts.registered"
+      ],
+      "T": [
+        "VE.WireContract.Hooks.Acts.actOf",
+        "VE.WireContract.Hooks.Acts.around",
+        "VE.WireContract.Hooks.Acts.caseOf",
+        "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.memberOf",
+        "VE.WireContract.Hooks.Acts.phraseOf",
+        "VE.WireContract.Hooks.Acts.phrasesOf",
+        "VE.WireContract.Hooks.Acts.recordOf"
+      ]
+    },
+    "VE/WireContract/Tables/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Tables.Acts.table"
+      ]
+    }
   }
 }
