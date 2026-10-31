@@ -496,6 +496,7 @@ module VE.Readings.SoftSeparate
 module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftVerdicts
 module VE.Readings.SoftWire
+module VE.Readings.Stage
 module VE.Readings.Strings
 module VE.Readings.SupAll
 module VE.Readings.SupConflict
@@ -637,6 +638,7 @@ module VE.Service.RegistryExamples
 module VE.Service.ScopeAdmission
 module VE.Service.ScopeExamples
 module VE.Service.SoftSourceExamples
+module VE.Service.StageTimes
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
@@ -682,6 +684,7 @@ module VE.Time.Wire
 module VE.Typing
 module VE.WireContract.Diagnose
 module VE.WireContract.Engine
+module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
@@ -689,6 +692,7 @@ module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
 module VE.WireContract.Table
+module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
