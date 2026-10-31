@@ -13300,6 +13300,7 @@
         "VE.Scope.Examples.contentStr",
         "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
+        "VE.Scope.Examples.effectAsStated",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
         "VE.Scope.Examples.exporting",
@@ -13349,9 +13350,16 @@
         "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.normP",
         "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.oA",
+        "VE.Scope.Examples.oB",
+        "VE.Scope.Examples.oC",
+        "VE.Scope.Examples.oN",
+        "VE.Scope.Examples.onceRule",
         "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.ownEnv",
+        "VE.Scope.Examples.ownModel",
+        "VE.Scope.Examples.ownVal",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
@@ -13383,6 +13391,8 @@
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.titleCarveA",
         "VE.Scope.Examples.titleCarveB",
+        "VE.Scope.Examples.twiceG",
+        "VE.Scope.Examples.twiceU",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -16430,6 +16440,7 @@
         "VE.Closure.CoreEquiv.embedTrace",
         "VE.Closure.CoreEquiv.embedTraces"
       ]
-    }
+    },
+    "VE/Scope/EffectLemmas.lean": {}
   }
 }
