@@ -1,0 +1,30 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Every member is registered.
+Checked reading: Every member is registered.
+Every member who is registered is eligible.
+Checked reading: Every member that is registered is eligible.
+Ann is verified.
+Checked reading: Ann is verified.
+
+=== A QUESTION SOMEONE ASKED VE ABOUT THE TEXT ===
+Is every member eligible?
+
+=== VE'S ANSWER ===
+You asked whether every member is eligible.
+Yes.
+Sentence 1 says: "Every member is registered."
+Sentence 2 says: "Every member who is registered is eligible."
+
+=== QUESTION ===
+What does VE's answer tell you?
+A. Yes: the text guarantees it.
+B. No: the text rules it out.
+C. It depends on how a sentence of the text is read.
+D. It is not guaranteed: the text allows a situation where it fails.
+E. The text does not settle it, or VE could not decide.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>
