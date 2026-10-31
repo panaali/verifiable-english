@@ -25,7 +25,8 @@
 - `lean/VE/Readings/Lines.lean` — The line order of a candidate's document and the uniqueness of source keys (docs/spec/composition-s1.md 4.4, 8.3; DRI ruling 1 of 2026-10-02).
 - `lean/VE/Readings/Live.lean` — Liveness corresponds, through the name map (docs/spec/composition-s2.md 1.7; the `live`, `dead` and `outweighs` conditions of `Sim`).
 - `lean/VE/Readings/Names.lean` — Facts about the names of the superposed document (docs/spec/composition-s2.md 1.4, 1.7).
-- `lean/VE/Readings/RightsExamples.lean` — S2b's fixtures on rights documents (docs/spec/composition-PLAN.md section 5), as build-time checks.
+- `lean/VE/Readings/RightsExamples.lean` — S2b's theorems on the rights fixtures of `RightsFixtures.lean`.
+- `lean/VE/Readings/RightsFixtures.lean` — S2b's rights fixtures (docs/spec/composition-PLAN.md section 5) as build-time `#guard`s on `sup D`, `Choice_D`, the owners and the name map.
 - `lean/VE/Readings/Route.lean` — The route of a `readings@1` document and the regenerated elaboration (docs/spec/composition-s2.md 1.1, 1.8, 3, 4.1, 4.6).
 - `lean/VE/Readings/Run.lean` — The `ve_service` mode `readings-route` (docs/spec/composition-s1.md 8.4), formerly the one-shot `ve_readings_route`.
 - `lean/VE/Readings/RunExamples.lean` — How much of the other reading's side the route's pair check evaluates, as build-time checks (`#guard`), with no timing (batch 3d review B).

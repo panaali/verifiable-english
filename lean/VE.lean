@@ -74,6 +74,7 @@ import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
 import VE.Readings.BarQuiet
+import VE.Readings.RightsFixtures
 import VE.Readings.RightsExamples
 import VE.Readings.SupFree
 import VE.Readings.SupAll
