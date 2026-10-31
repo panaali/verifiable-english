@@ -74,7 +74,7 @@ The installed file was never changed.
 3. Tests can fail: PASS. 5 seeded bugs are each caught (`mutants.json`), and the old script fails 6 of 6.
 4. Python/Lean/Rust agree: N.A., this is a manage-agents Python tool only.
 5. R8 binding: N.A., no binding.
-6. Gate evidence matches final HEAD: PASS. The chain runs the gate on the final HEAD. The selected-test run is cited below.
+6. Gate evidence matches final HEAD: PASS. The chain runs the gate on the final HEAD. Selected tests ran once on 1d3713da7: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` rc 0, 4 shards with 38+29+27+27 = 121 units, all passed (GitHub Actions run burndown-exclude-exp-1d3713da-t403301, 1602 s).
 7. No unsigned item: PASS, no DELTA rows and no reserved signature.
 8. User-visible change in DELTA: N.A., VE's user-visible behaviour is unchanged.
 9. Test selection: N.A., no VE code changed. `test_burndown.py` runs directly, like the other tools-local tests.
