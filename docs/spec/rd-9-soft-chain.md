@@ -1669,6 +1669,11 @@ Build (SC-4), pending the bounded re-check of 11 item 11:
 > **Computed.** Each value marked *computed* in 13.5 was evaluated there with `#eval` on the merged fixtures of
 > `Readings/SoftSeparateExamples.lean`, with the expression given beside it. *Derived* values were worked out by
 > reading the sources and were not run.
+>
+> **Review round 1** (`manage-agents/debates/spec-rd9-sc10/`, two Opus seats, 2026-10-31): FIX. Its edits are
+> applied: `hl : localFree` in `sd_superpose_countermodel` (E1); the CONFLICT-FREE fixture moved to `NSD4c`/`NSD4a`
+> (E2, F2); necessary-condition premises read no bit (E3, F1, S-4′ *computed*); true/false fixtures (E4, F3); the
+> `fill_sim_author` paraphrase (F4). The changed statement was elaborated again.
 
 ### 13.1 Definitions
 
@@ -1682,9 +1687,10 @@ Build (SC-4), pending the bounded re-check of 11 item 11:
   on the superposed document, never on the readings document (D1).
 - **Its extra base premises** are `supX N = softX N (sup N.D).1` (new). They are soft's `Exc_T` of the superposed
   document, then its `Coh_T` with each selection read on the filled tree, by the layered branch's one definition
-  (`softLabelledU`, D2). Every premise of `supX N` that comes from a candidate is gated by that candidate's choice bit
-  (`ve__bit__<m>__<i>`), as S2a's own soft premises are (*computed*, 13.5 S-4). So at a base that encodes `c`, the
-  premises of candidates not in `c` hold whatever the decision tables say.
+  (`softLabelledU`, D2). A candidate's sufficient-condition and coherence premises read its bit (S-4); its
+  necessary-condition premises do not (S-4′). At a slot-admissible base encoding `c`, a premise of a candidate not in
+  `c` holds by its bit or, if it is a necessary condition, because the slot's `quietOwn` premise empties that
+  candidate's `excepted` table.
 - **The superposed base under `A`.** A structure `B` is admissible for the superposed document under `A` when
   `BaseAdmissibleX (supU N) (slotUnder N.D A ++ supX N) B` (merged definition). That means four things:
   - `B` is admissible for the base vocabulary of `fill (supU N)`, which holds the choice vocabulary and every
@@ -1723,8 +1729,9 @@ Build (SC-4), pending the bounded re-check of 11 item 11:
   `q` of the frame and either sign, the filled superposed tree decides `q` with that sign on its canonical
   interpretation of `B` exactly when the filled tree of `c`'s document decides it on its canonical interpretation of
   `pullF N c B`.
-- **`fill_sim_author`.** The same, with "decides" restricted to the author rules: the rules of `soften` of each
-  document, without the `F_p` rules that `fill` adds. The gap formula of `Fill_T` (`gapF`) reads this restriction.
+- **`fill_sim_author`.** The same, with "decides" asked only of the author rules (each document's `soften` rules,
+  not `fill`'s `F_p` rules), which still read lower layers on the filled tree's canonical interpretation. The gap
+  formula of `Fill_T` (`gapF`) reads this restriction.
 - **`fillPremisesSD_pull`.** At an encoded filled base `B` of `c`, `B` satisfies `Fill_T` of the superposed document
   exactly when `pullF N c B` satisfies `Fill_T` of `c`'s document.
 - **`supX_pull`.** At an encoded filled base `B` of `c`, `B` satisfies `supX N` exactly when `pullF N c B` satisfies
@@ -1739,7 +1746,7 @@ Build (SC-4), pending the bounded re-check of 11 item 11:
   where its admissible base satisfies `choiceX N c` and the expansion satisfies the choice's assertions and `Γ`.
 - **`sd_superpose_countermodel`.** Suppose a finite model `M` with a filling `F` passes the superposed model check
   under `A` (its admissibility, `Fill_T`, slot, atoms, `supX N`, the superposed assertions and `Γ` hold) and `φ` is
-  false there. Then the model's bits name a compatible choice `c` that takes `A`, and that choice has a countermodel:
+  false there, and no conflict formula of the filled superposed tree holds at any of its tuples (`localFree`). Then the model's bits name a compatible choice `c` that takes `A`, and that choice has a countermodel:
   some structure meets the choice's admissibility with `choiceX N c`, expands the choice's filled document, satisfies
   its assertions and `Γ`, and falsifies `φ`.
 
@@ -1798,7 +1805,8 @@ theorem fillPremisesSD_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superp
     (he : Encodes N.D c B) :
     Sat B (VE.NormDefaults.fillPremises (supU N)) ↔ Sat (pullF N c B) (VE.NormDefaults.fillPremises (choiceU N c))
 
-/-- `supX` transfers at an encoded filled base: a non-chosen candidate's premise is gated off by its bit. -/
+/-- `supX` transfers at an encoded filled base: a non-chosen candidate's premise holds by its bit or, for a necessary
+    condition, by the slot's quiet premise. -/
 theorem supX_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
     (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
     (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (hsl : Sat B (slotP N.D))
@@ -1833,7 +1841,8 @@ theorem sd_superpose_countermodel (N : NDoc) (hN : WellFormedSD N = true) (hs : 
     (hφ : φ.WellFormed (sharedEnvSD N) []) (M : VE.FiniteModel VE.Bridge.Entity)
     (valid : M.Valid (envAt (supU N).D 0)) (F : VE.NormDefaults.FiniteFill (supU N) VE.Bridge.Entity)
     (hm : (VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) M F ((sup N.D).2 ++ Γ) φ).1 = true)
-    (hn : (VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) M F ((sup N.D).2 ++ Γ) φ).2 = false) :
+    (hn : (VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) M F ((sup N.D).2 ++ Γ) φ).2 = false)
+    (hl : VE.Readings.Wire.localFree (supU N) M F = true) :
     ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧
       Encodes N.D c (VE.NormDefaults.withFill (supU N) M.asStructure (VE.NormDefaults.finFill M F)) ∧
       CounterX (choiceU N c) (choiceX N c) ((choiceDoc N.D c).2 ++ Γ) φ
@@ -1846,8 +1855,8 @@ What the proofs need, as guidance (not statements to freeze; helpers are the bui
   document. It satisfies `Fill_T` (`fillPremisesSD_pull`) and `choiceX N c` (`supX_pull`), and its conflict formulas
   agree with the superposed ones (`fill_sim`, as `superpose_conflict_iff` does on the unfilled trees).
 - Upward is S2a's lift `upB`. Its third disjunct (`upRel`) keeps every relation that is not a choice decision, so
-  the `unsaid__` tables cross unchanged. The non-chosen candidates' decision tables are empty, and their premises are
-  gated off.
+  the `unsaid__` tables cross unchanged. The non-chosen candidates' decision tables are empty, so their premises hold by
+  their bits or, for a necessary condition, because the table is empty.
 - `fill_sim` needs `fill` to read only the author roots' yields and the `unsaid__` tables. `SupFill.lean`'s
   `decidesBy_pull_canon`, `sim_decidesBy` and the `AuthorLite` lemmas are the norms-chain pieces.
   `fill (supU N)` is not `soften` of any superposed document, so RD-6b's `fill_supU` has no soft-chain counterpart.
@@ -1866,12 +1875,14 @@ What the proofs need, as guidance (not statements to freeze; helpers are the bui
    predicates in the frame.
 4. **`fill_sim` is stated twice:** for the filled trees, and for the author rules that `Fill_T`'s gap formula reads.
    These are RD-6b's `decides_fill_pull` and `decides_author_pull` moved to the soft chain. The supX transfer the
-   sketch described in prose is the iff `supX_pull`. It is an iff because every candidate premise is gated by its bit
-   (*computed* S-4).
+   sketch described in prose is the iff `supX_pull`. It is an iff because a premise of a candidate not chosen holds at every
+   encoded base (by its bit, S-4; by the quiet premise, S-4′).
 5. **`sd_superpose_all` and `sd_superpose_countermodel` are written out.** The sketch only named them. Their
    per-choice conclusions are `sdSem`'s `entails` and `counter` (SC-5), so the soft fold can consume them unchanged.
    They are not S2a's named-structure form. The countermodel names the choice by the filled model's bits (`Encodes`),
-   as S2a's does. `hcf` in `sd_superpose_all` is kept as S2a and RD-6b have it.
+   as S2a's does. `hcf` in `sd_superpose_all` is kept as S2a and RD-6b have it. `hl` is added: `CounterX` needs an
+   expansion, which exists only at a conflict-free base; the per-choice route's `xModelOk` checks `localFree` for the
+   same reason.
 6. **Queries are typed over `sharedEnvSD N`** (OPEN-SC10-1).
 7. **`superposable N.D` is the S2a check on the unfilled soft document, plus `WellFormedU (supU N)`.** This is the
    pair plan 6 names for SC-11's route. It is not `superposable (fillDoc N)` (RD-6b), since `fillDoc N` is not well
@@ -1891,6 +1902,7 @@ What the proofs need, as guidance (not statements to freeze; helpers are the bui
 | S-2′ | `facts NC9` (C9′, three sufficient conditions); `facts NSD2` (K2, a necessary condition); `facts NSDq` | `(true, true, true, 2, [0, 3], ["soft:exception:rd-2-comply:sufficient:0", "…:1", "…:2"])`; `(true, true, true, 2, [0, 1], ["soft:exception:rd-2-no-deception:necessary:0"])`; `(true, true, true, 2, [0, 0], [])` |
 | S-3 (D3) | on `NSD4`, whether each premise of `softXL NSD4 (sup NSD4.D).1` mentions `unsaid__y_permitted`; the same for S2a's own `cohPremises (correlate (sup NSD4.D).1)` | `[false, true]`; `[false]`: the superposed coherence premise on the filled tree reads the gap, and S2a's does not |
 | S-4 (gating) | `predsOf` of each premise of `supX NSD4` | `[["c", "ve__bit__1__0", "soft__excepted__rd_2_must_x"], ["soft__excepted__need_not_x", "unsaid__y_permitted", "ve__bit__1__0", "unsaid__y_permitted", "ve__bit__1__0", "soft__excepted__rd_2_must_x", "unsaid__y_permitted", "ve__bit__1__0"]]`: each premise reads the candidate's bit |
+| S-4′ (necessary) | `predsOf` of each premise of `supX NSD2`; whether it names a `ve__bit__` predicate | `[["soft__excepted__rd_2_no_deception"]]`; `[false]`: the necessary-condition premise reads no bit |
 | S-5 (`pullF`) | for each choice `c` of `NSD1`: `((choiceEnvFull NSD1.D c).predicates "unsaid__avoid_required").isSome`, the same on `envAt (fill (choiceU NSD1 c)) (size …)`, `nameMap NSD1.D c "unsaid__avoid_required"`; and on `envAt (fill (supU NSD1)) 0` | `[(false, true, "unsaid__avoid_required"), (false, true, "unsaid__avoid_required")]`; `true` |
 | S-6 (`Fill_T`) | `(fillPremises (supU N)).length` and each choice's, on `NSDq` and on `NSD1` | `(1, [1, 1])`; `(0, [0, 0])` |
 | S-7 (pairs) | colliding pairs of `correlate (sup NSD4.D).1` and of each choice's document; the choices' `softXL` labels on `NSD4` and on `NC9` | `[("need-not-x", "rd-2-must-x")]` and `[[], [("must-x", "need-not-x")]]`; `[[], ["soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]]`; `[[], ["soft:exception:comply:sufficient:0", "…:1", "…:2"]]` |
@@ -1899,11 +1911,16 @@ Each iff with a fixture per direction (the 8.2 rule):
 
 | Claim | One direction | The other |
 |---|---|---|
-| `sd_superpose_conflict_free` | CONFLICT-FREE on both sides: `NSD4` under `A = []` (choice `(rs1,0)`: the strict `must-x` blocks the default `need-not-x`; choice `(rs1,1)`: the colliding default pair is settled by its coherence premise), *derived* | CONFLICT on both sides: `NSD4c`, which is `D4` with the fixed unit `need-not-x` made strict (`strictNode "need-not-x" "x_required" false`). Under `A = []`, choice `(rs1,0)` (strict `must-x`, guard `y_permitted`) conflicts with it wherever the filling says `y_permitted`, so the superposed side is not CONFLICT-FREE; under `A = [(rs1,1)]` the strict rule blocks the default and both sides are CONFLICT-FREE (*derived*) |
+| `sd_superpose_conflict_free` | CONFLICT-FREE on both sides: `NSD4c` under `A = [(rs1,1)]`: the strict `need-not-x` blocks the default `must-x`, so neither `x_required` nor `x_required→x_permitted` is reached (*derived*). `NSD4a` (`NSD4` with `x_permitted` allowed by default, as the merged F-SD4 test sets it) under `A = [(rs1,1)]`: CONFLICT-FREE on both sides, resting on `supX`'s coherence premise; the same document with `[]` for `supX N` is CONFLICT (*derived*) | CONFLICT on both sides: `NSD4c`, which is `NSD4a` with the fixed unit `need-not-x` made strict (`strictNode "need-not-x" "x_required" false`). Under `A = []`, choice `(rs1,0)` (strict `must-x`, guard `y_permitted`) conflicts with it wherever the filling says `y_permitted`, so the superposed side is not CONFLICT-FREE (*derived*); `NSD4` under `A = []`: a pair conflict wherever the filling says `y_permitted` (*derived*) |
 | `supX_pull` | `NSD4`, choice `(rs1,1)`: two premises on each side (S-2, S-7, *computed*) | choice `(rs1,0)`: two superposed premises, gated off by the bit, against zero choice premises (S-2, S-4, *computed*) |
+| `supX_pull`, both sides false | `NSD4`, `(rs1,1)`, `c = {a}`, `soft__excepted__rd_2_must_x = ∅`: the sufficient-condition premise fails on both sides (*derived*) | — |
+| `supX_pull`, `hsl` needed | `NSD2`, bits naming `(rs1,0)`, `soft__excepted__rd_2_no_deception = {(a,u)}`: the slot is broken, `supX` is false while `choiceX = []` holds (*derived*; S-4′) | — |
 | `fillPremisesSD_pull` | `NSDq`: one `Fill_T` premise on each side (S-6, *computed*) | `NSD1`: none on either side (S-6, *computed*) |
+| `fillPremisesSD_pull`, both sides false | `NSDq` at `base1 []` (`!fillHoldsS … (base1 [])`, `SoftSeparateExamples.lean`) (*derived*) | — |
 | `fill_sim` (with `pullF`, not `pull`) | `F_p` reads `unsaid__p`, which the filled choice vocabulary declares (S-5, *computed*) | with S2a's `pull` the table is dropped (S-5 `false`), so `F_p` would never apply on the choice side: the statement would be false at any filling that says yes (*derived*) |
-| `sd_superpose_all`, `sd_superpose_countermodel` | `NSD1` under `A = [(rs1,0)]`, query `∀ agent ∀ user. avoid_required`: a certificate exists and the choice's row is `proved` (F-SD1.verdicts, *derived*) | under `A = []`: no certificate (choice `(rs1,1)` is `refuted`), and a filled model with `excepted no-deception = {(a,u)}` and the filling no, with the `rs1` bit on 1, is a countermodel whose bits name `(rs1,1)` (*derived*) |
+| `fill_sim`, a pair of truth values | `NSD1`, bits naming `(rs1,1)`, `soft__excepted__rd_2_no_deception = {(a,u)}`. With the filling yes, both filled trees decide `avoid_required (a,u)` positively, and on both sides the author rules decide it neither way (*derived*) | With the filling empty, neither filled tree decides it positively (*derived*) |
+| `fill_sim_author`, both sides true | `NSD1`, `(rs1,0)`, empty tables: the strict `no-deception` decides `avoid_required (a,u)` positively on both sides (*derived*) | — |
+| `sd_superpose_all`, `sd_superpose_countermodel` | `NSD1` under `A = [(rs1,0)]`, query `∀ agent ∀ user. avoid_required`: a certificate exists and the choice's row is `proved` (F-SD1.verdicts, *derived*) | under `A = []`: no certificate (choice `(rs1,1)` is `refuted`), and a filled model with `soft__excepted__rd_2_no_deception = {(a,u)}` and the filling no, with the `rs1` bit on 1, is a countermodel whose bits name `(rs1,1)` (*derived*); `localFree` true. Without `hl`: `NSD4`, `A = [(rs1,0)]`, `Γ = [∃a. y_permitted a]`, `φ = ⊥`, one assistant `a`, bits naming `(rs1,0)`, `unsaid__y_permitted = {a}`, every `excepted` table empty: the model passes `modelCheckX`, and no `CounterX` exists (*derived*) |
 
 The *derived* rows are checked through the existing per-choice soft route (`readings-choice`, `readings-verdicts`) in
 SC-10's build. SC-11's 200-document differential then compares the routes. No superposed route answer exists before
@@ -1934,7 +1951,8 @@ SC-11.
 ### 13.8 Review checklist (SC-10's statement review)
 
 1. Each statement of 13.3 is true under its hypotheses, not only well typed. In particular:
-   - `supX_pull` is an iff because every candidate premise is gated (S-4);
+   - `supX_pull` is an iff because a premise of a candidate not chosen holds at every encoded base (by its bit, S-4;
+     by the quiet premise, S-4′);
    - `fill_sim` needs `pullF`, not `pull` (S-5);
    - the upward direction of `sd_superpose_conflict_free` goes through `upB`, which keeps the `unsaid__` tables.
 2. The per-choice sides are `sdSem`'s `free`, `entails` and `counter` (SC-5), and universes match: `ConflictFreeX.{u}`
