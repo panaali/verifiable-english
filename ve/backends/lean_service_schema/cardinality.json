@@ -10,6 +10,7 @@
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
           {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}},
+          {"then": {"$ref": "#/$defs/countermodel"}, "when": {"$ref": "#/$defs/kind/countermodel"}},
           {"then": {"$ref": "#/$defs/document"}, "when": {"$ref": "#/$defs/kind/document"}}
         ]
       }
@@ -89,6 +90,36 @@
       },
       "required": ["name", "meaning_id", "formula"],
       "type": "object"
+    },
+    "countermodel": {
+      "$comment": "Cardinality.Run.runCase countermodel: W6a's countermodel verdict on the erased problem beside the statements, the region table and each region's size in the model.",
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {"$ref": "#/$defs/statement"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "premises": {"items": {"$ref": "#/$defs/statement"}, "type": "array", "x-length": "/premises"},
+        "refutes": {"type": "boolean"},
+        "regions": {"$ref": "#/$defs/regions"},
+        "sizes": {"$ref": "#/$defs/sizes"},
+        "status": {"const": "ok"},
+        "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": [
+        "refutes",
+        "id",
+        "status",
+        "environment_id",
+        "w6_environment_id",
+        "w6_target_environment_id",
+        "premises",
+        "conclusion",
+        "regions",
+        "sizes"
+      ],
+      "type": "object",
+      "x-references": {"array": "/regions/constants", "field": "sort", "in": "/environment/cardinality/finite_sorts"}
     },
     "document": {
       "$comment": "Cardinality.Run.runCase document: the admitted graph's report, its root and the leaves it rests on, and the report's identity (Cardinality.Run.reportId: the ve-report digest of the three environment identities, the document as sent and the report).",
@@ -189,6 +220,7 @@
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"},
+      "countermodel": {"properties": {"kind": {"const": "countermodel"}}, "required": ["kind"], "type": "object"},
       "document": {"properties": {"kind": {"const": "document"}}, "required": ["kind"], "type": "object"}
     },
     "operand": {
@@ -240,6 +272,20 @@
       "type": "object"
     },
     "rule": {"enum": ["ties_up", "half_even", "down", "up"]},
+    "sizes": {
+      "$comment": "Cardinality.Run.sizesJson: each region constant with its size in the model, in the region table's order.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "constant": {"pattern": "cardinality__[ -~]*", "type": "string"},
+          "size": {"$ref": "common.json#/$defs/nat"}
+        },
+        "required": ["constant", "size"],
+        "type": "object"
+      },
+      "maxItems": 512,
+      "type": "array"
+    },
     "statement": {
       "$comment": "Cardinality.Run.statementJson: a statement's cardinality meaning id and canonical formula.",
       "additionalProperties": false,
