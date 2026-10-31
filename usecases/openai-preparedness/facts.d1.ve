@@ -10,3 +10,7 @@
 "ai_self_improvement_high" concerns "ai_self_improvement". "ai_self_improvement_high" is high.
 ## ais-critical | always | Table 1: “AI Self-improvement” [Critical]
 "ai_self_improvement_critical" concerns "ai_self_improvement". "ai_self_improvement_critical" is critical.
+## rs2-nest | RS2=nest | 4.2: “Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development.” (“also” presupposes the High rule applies; RS2=nest: a Critical level reached is the High level of its category reached)
+For every situation, for every category, if there is a level such that all of the following hold: (a) that situation has reached that level; (b) both that level is critical and that level concerns that category, then there is a level such that all of the following hold: (a) that situation has reached that level; (b) both that level is high and that level concerns that category.
+## no-critical-models | always | 4.4: “We do not currently possess any models that have Critical levels of capability, and we expect to further update this Preparedness Framework before reaching such a level with any model.” (dated 2025-04-15; the “we expect” clause is not translated)
+For every situation, if that situation is classified as "existing_at_publication", then it is not the case that there is a level such that both that situation has reached that level and that level is critical.

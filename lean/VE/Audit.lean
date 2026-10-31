@@ -58,6 +58,7 @@ import VE.Calc.Decls
 import VE.Calc.Derive
 import VE.Calc.Dimension
 import VE.Calc.Eval
+import VE.Calc.FourierMotzkin
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
 import VE.Calc.Inline
@@ -69,6 +70,7 @@ import VE.Calc.Run
 import VE.Calc.Table
 import VE.Calc.Units
 import VE.Calc.Wire
+import VE.Cardinality.Document
 import VE.Cardinality.Examples
 import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
@@ -1055,7 +1057,25 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Expr.subst_agrees
 #print axioms VE.Calc.Expr.subst_faults
 #print axioms VE.Calc.Expr.zeroDivisor_sound
+#print axioms VE.Calc.FM.boundsOf_parts
+#print axioms VE.Calc.FM.entries_all
+#print axioms VE.Calc.FM.eval_update
 #print axioms VE.Calc.FM.firstAppearance_spec
+#print axioms VE.Calc.FM.high_all
+#print axioms VE.Calc.FM.high_min
+#print axioms VE.Calc.FM.high_step
+#print axioms VE.Calc.FM.low_all
+#print axioms VE.Calc.FM.low_max
+#print axioms VE.Calc.FM.low_step
+#print axioms VE.Calc.FM.mem_firstAppearance
+#print axioms VE.Calc.FM.neg_bound
+#print axioms VE.Calc.FM.pickOnce_eq
+#print axioms VE.Calc.FM.pos_bound
+#print axioms VE.Calc.FM.row_holds
+#print axioms VE.Calc.FM.scaled
+#print axioms VE.Calc.FM.tightest_all
+#print axioms VE.Calc.FM.tightest_first
+#print axioms VE.Calc.Farkas.checkOnce_eq
 #print axioms VE.Calc.Farkas.check_sound
 #print axioms VE.Calc.Farkas.combination_eval
 #print axioms VE.Calc.Filter.bool_atoms
@@ -1113,11 +1133,17 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Poly.pow?_within
 #print axioms VE.Calc.QFact.negate_holds
 #print axioms VE.Calc.QLin.eval_add
+#print axioms VE.Calc.QLin.eval_coeffOf
 #print axioms VE.Calc.QLin.eval_foldl
 #print axioms VE.Calc.QLin.eval_isConst
 #print axioms VE.Calc.QLin.eval_norm
 #print axioms VE.Calc.QLin.eval_of_cancel
 #print axioms VE.Calc.QLin.eval_scale
+#print axioms VE.Calc.QLin.foldl_add
+#print axioms VE.Calc.QLin.isConstOnce_eq
+#print axioms VE.Calc.QLin.isConst_iff
+#print axioms VE.Calc.QLin.normOnce_eq
+#print axioms VE.Calc.QLin.norm_coeffs_isEmpty
 #print axioms VE.Calc.Rescale.factor_ne
 #print axioms VE.Calc.Rescale.of_cons
 #print axioms VE.Calc.Rescale.of_insertExp
@@ -1165,19 +1191,58 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Work.Expr.evalC_some
 #print axioms VE.Calc.Work.Expr.evalsC_mono
 #print axioms VE.Calc.Work.Expr.evalsC_some
+#print axioms VE.Calc.Work.Expr.linearC_form
+#print axioms VE.Calc.Work.Expr.linearC_nonlinear
+#print axioms VE.Calc.Work.Expr.linearC_tooLarge
+#print axioms VE.Calc.Work.Lowered.shape_sound
+#print axioms VE.Calc.Work.Node.run_some
+#print axioms VE.Calc.Work.Shape.Sound.congr
+#print axioms VE.Calc.Work.addS_sound
+#print axioms VE.Calc.Work.add_comm_shape
 #print axioms VE.Calc.Work.binC_mono
 #print axioms VE.Calc.Work.binC_some
+#print axioms VE.Calc.Work.binL_sound
+#print axioms VE.Calc.Work.bin_sound
+#print axioms VE.Calc.Work.bin_spec
+#print axioms VE.Calc.Work.bne_nonzero
+#print axioms VE.Calc.Work.chargeL_sound
 #print axioms VE.Calc.Work.chargeQ_mono
 #print axioms VE.Calc.Work.chargeQ_some
+#print axioms VE.Calc.Work.check_eq
+#print axioms VE.Calc.Work.const_norm_add
+#print axioms VE.Calc.Work.const_scale
+#print axioms VE.Calc.Work.decided_sound
+#print axioms VE.Calc.Work.divS_sound
 #print axioms VE.Calc.Work.firstFault_none
+#print axioms VE.Calc.Work.isConst_add
+#print axioms VE.Calc.Work.judged_bin
+#print axioms VE.Calc.Work.judged_pow
+#print axioms VE.Calc.Work.leaf_spec
+#print axioms VE.Calc.Work.linearC_sound
+#print axioms VE.Calc.Work.markC_spec
+#print axioms VE.Calc.Work.mulS_sound
+#print axioms VE.Calc.Work.neg_shape
+#print axioms VE.Calc.Work.nodeC_spec
+#print axioms VE.Calc.Work.nodesWithin_add
+#print axioms VE.Calc.Work.nodesWithin_of_le
+#print axioms VE.Calc.Work.nonconst_add
+#print axioms VE.Calc.Work.nonlinearAtC_eq
+#print axioms VE.Calc.Work.nonlinearAtC_spec
 #print axioms VE.Calc.Work.powTooLarge_sound
 #print axioms VE.Calc.Work.pow_beyond
+#print axioms VE.Calc.Work.pow_ne
+#print axioms VE.Calc.Work.pow_nonzero
+#print axioms VE.Calc.Work.scale_shape
+#print axioms VE.Calc.Work.shapeOf_sound
+#print axioms VE.Calc.Work.step_sound_bin
+#print axioms VE.Calc.Work.step_sound_pow
 #print axioms VE.Calc.Work.valueTableC_eq
 #print axioms VE.Calc.Work.valueTableC_mono
 #print axioms VE.Calc.Work.valueTableC_some
 #print axioms VE.Calc.Work.valueTable_read
 #print axioms VE.Calc.Work.visitC_mono
 #print axioms VE.Calc.Work.visitC_some
+#print axioms VE.Calc.Work.zero_add_shape
 #print axioms VE.Calc.assign_wellFormed
 #print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
@@ -1193,6 +1258,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.differsAt_sound
 #print axioms VE.Calc.digitCount_le_iff
 #print axioms VE.Calc.findingKind_source_iff
+#print axioms VE.Calc.firstAppearance_snoc
 #print axioms VE.Calc.firstFault_mem
 #print axioms VE.Calc.firstFault_not_ok
 #print axioms VE.Calc.fold_valuesL_agrees
@@ -1221,7 +1287,9 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.legacy_nominal
 #print axioms VE.Calc.lt_of_sq_lt
 #print axioms VE.Calc.mapM_facts
+#print axioms VE.Calc.mem_firstAppearance_of
 #print axioms VE.Calc.mul_pow_nat
+#print axioms VE.Calc.normOnce_fold
 #print axioms VE.Calc.notIdentity_of_differsAt
 #print axioms VE.Calc.not_follows_of_counterexample
 #print axioms VE.Calc.not_isIdentity
@@ -1239,6 +1307,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.runC_work
 #print axioms VE.Calc.runCounted_reads
 #print axioms VE.Calc.sidesAtB_eq
+#print axioms VE.Calc.sumOf_snoc
 #print axioms VE.Calc.sum_by_names
 #print axioms VE.Calc.sum_nonzero
 #print axioms VE.Calc.sum_split
@@ -1263,6 +1332,12 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
 #print axioms VE.Cardinality.CardEnv.wf
+#print axioms VE.Cardinality.Document.admitGraph_sound
+#print axioms VE.Cardinality.Document.checkGraph_sound
+#print axioms VE.Cardinality.Document.decodeNode_statement
+#print axioms VE.Cardinality.Document.lookup_mem
+#print axioms VE.Cardinality.Document.mapM_lookup_mem
+#print axioms VE.Cardinality.Document.union_testBit
 #print axioms VE.Cardinality.Examples.admissible_cases
 #print axioms VE.Cardinality.Examples.admittedRules_cases
 #print axioms VE.Cardinality.Examples.admitted_cases
@@ -1309,6 +1384,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Run.charge_fst
 #print axioms VE.Cardinality.Run.charge_over
 #print axioms VE.Cardinality.Run.charge_snd
+#print axioms VE.Cardinality.Run.checkDeduction_sound
 #print axioms VE.Cardinality.Run.checkErased_eq
 #print axioms VE.Cardinality.Run.checkedProblem_eq
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
@@ -1320,6 +1396,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Run.foldl_capped_gt
 #print axioms VE.Cardinality.Run.problemChecks_eq
 #print axioms VE.Cardinality.Run.regionsJson_constants
+#print axioms VE.Cardinality.Run.reportJson_report
 #print axioms VE.Cardinality.Run.runCaseReported_error
 #print axioms VE.Cardinality.Run.runCaseReported_ok
 #print axioms VE.Cardinality.Wire.cmpNames_spelled
@@ -1330,6 +1407,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Wire.elabName_mem
 #print axioms VE.Cardinality.Wire.elabOperand_cases
 #print axioms VE.Cardinality.Wire.elabRatio_sound
+#print axioms VE.Cardinality.Wire.encBody_cases
+#print axioms VE.Cardinality.Wire.encOperand_cases
+#print axioms VE.Cardinality.Wire.encPrinted_eq
+#print axioms VE.Cardinality.Wire.encode_cases
 #print axioms VE.Cardinality.Wire.finiteSorts_length
 #print axioms VE.Cardinality.Wire.items_ok
 #print axioms VE.Cardinality.Wire.printed_eq
@@ -1338,6 +1419,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Wire.ruleNames_spelled
 #print axioms VE.Cardinality.Wire.sourceFits_iff
 #print axioms VE.Cardinality.Wire.wellFormed_of
+#print axioms VE.Cardinality.admit_cardinality_report_sound
 #print axioms VE.Cardinality.admits_complete
 #print axioms VE.Cardinality.admits_iff
 #print axioms VE.Cardinality.admits_sound

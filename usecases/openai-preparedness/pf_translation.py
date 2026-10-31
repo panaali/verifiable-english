@@ -16,7 +16,21 @@ import pf_vocabulary as vocabulary  # noqa: E402
 READING_SETS = {"RS1": ("strict", "default"), "RS3": ("ext", "any"), "RS5": ("within", "exception"),
                 "RS9": ("strict", "default"), "RS18": ("inuse", "devonly"), "RS0": ("commitment", "prediction"),
                 "RS8": ("rel", "pred"), "RS4": ("N", "P"), "RS12": ("suff", "iff"),
-                "RS13": ("permission", "might"), "RS15": ("explanation", "rule")}
+                "RS13": ("permission", "might"), "RS15": ("explanation", "rule"),
+                "RS2": ("nest", "sep"), "RS4s": ("scoped", "unscoped"), "RS6": ("req", "desc"),
+                "RS7": ("noinput", "nodelib"), "RS10": ("publication", "unstated"), "RS11": ("final", "process"),
+                "RS14": ("appointment", "unstated"), "RS16": ("coupled", "option"), "RS17": ("bperm", "bmight")}
+# Rule priority the text states (PLAN 3.1): F11's adjustment is an exception to the High deployment rule, and N2
+# gives the "For the avoidance of doubt" clause priority over the requirement it qualifies.
+PRECEDENCE = {"f11-exception": ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"),
+              "f16-without-noinput": ("f16-informed",)}
+N2_PRECEDENCE = ("f16-without-noinput", "f16-informed")
+# RS0 (PLAN 3.1): process statements in the future or present tense ("we will", "we compile", "we do not
+# deploy", "every covered model undergoes"). N1 narrows each to a commitment; without N1 they are predictions.
+RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluations", "f7-report", "f8-start",
+                  "f9-report", "f9-risk-paths", "f9-specific", "f9-efficacy", "f9-threshold", "f10-validate",
+                  "f10-review", "f13-review", "f13-results", "f14-document", "f14-investigate", "f14-corrective",
+                  "f15-disclose", "f15-safeguards", "f15-third-party", "f16-ssc-visibility", "f16-year")
 
 
 @dataclass(frozen=True)
