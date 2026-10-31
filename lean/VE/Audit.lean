@@ -360,6 +360,7 @@ import VE.Scales.Theorems
 import VE.Scope.Examples
 import VE.Scope.Govern
 import VE.Scope.ReadingsTheorems
+import VE.Scope.Run
 import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
@@ -6454,11 +6455,14 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.Run.explainWithin_effect
+#print axioms VE.Scope.Run.readSplit_scope
 #print axioms VE.Scope.addOver_nil
 #print axioms VE.Scope.addOver_src
 #print axioms VE.Scope.admitBlock_drop
 #print axioms VE.Scope.admit_governor
 #print axioms VE.Scope.admit_governor_unit
+#print axioms VE.Scope.admit_unit
 #print axioms VE.Scope.admitted_ids_nodup
 #print axioms VE.Scope.admitted_list_names_nodup
 #print axioms VE.Scope.affected_drop
@@ -6501,6 +6505,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.edgesOf_drop
 #print axioms VE.Scope.edgesOf_graph
 #print axioms VE.Scope.edgesOf_name
+#print axioms VE.Scope.explainFast_eq
+#print axioms VE.Scope.explainRows_effect
+#print axioms VE.Scope.explain_bound
+#print axioms VE.Scope.explain_rows_iff
 #print axioms VE.Scope.fastReads_eq
 #print axioms VE.Scope.faultOf_every
 #print axioms VE.Scope.faultOf_some
@@ -6826,6 +6834,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_risk
 #print axioms VE.Service.runMode_riskEval
 #print axioms VE.Service.runMode_route
+#print axioms VE.Service.runMode_scope
 #print axioms VE.Service.runMode_searchBudget
 #print axioms VE.Service.runMode_softNorms
 #print axioms VE.Service.runMode_speechActs
