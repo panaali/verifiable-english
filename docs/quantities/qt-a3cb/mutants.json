@@ -1,0 +1,162 @@
+{
+ "item": "qt-a3cb",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3cb/mutants.json --no-baseline --evidence docs/quantities/qt-a3cb/evidence/mutants-run.json, after a passing build. Each mutant is applied alone; its command rebuilds the module whose #guard must fail, or rebuilds ve_service (and the schema), re-pins checkers.lock and runs the service test, restoring the lock and the schema on exit; the four erasure mutants first cut the section of withSizes_eq from Theorems.lean, whose proofs they break, so the #guard is what kills them; the harness restores the mutated file's exact bytes. Lean only: no Python or Rust product code changed. Service mutants run pytest with VE_NATIVE_PREBUILT=1, so the session build (which builds RunExamples, whose three-sort #guard also kills charge-dropped and regionCost-predicates) does not stand in for the named test.",
+ "mutants": [
+  {
+   "id": "charge-dropped",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the region sizes are charged against W6a's budget before they are computed (deliverable 2; the task's seeded bug: the region size left uncharged)",
+   "find": "  let cost := regionCost M R\n",
+   "replace": "  let cost := 0\n",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "test": "tests/test_cardinality_service.py::test_region_sizes_are_charged_before_they_are_computed (the chain's third sort is answered, not refused)"
+  },
+  {
+   "id": "charge-not-shared",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "W6a's countermodel check runs on the rest of the charged budget",
+   "find": "      ep.2.erase cost with\n",
+   "replace": "      ep.2.erase 0 with\n",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k share_one_budget"
+   ],
+   "test": "tests/test_cardinality_service.py::test_the_charge_and_the_check_share_one_budget"
+  },
+  {
+   "id": "premises-unread",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a countermodel that does not refute is not accepted (the task's seeded bug): the premises are checked on the model",
+   "find": "VE.Limits.maxEvaluations (ep.1.map QFormula.erase)",
+   "replace": "VE.Limits.maxEvaluations []",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: #guard (refute fa1Premises fa1bModel).getObjValD \"refutes\" == .bool false"
+  },
+  {
+   "id": "evalBy-not",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "Body.evalBy reads a negated body as its negation",
+   "find": "  | .not b => !(b.evalBy mem x)",
+   "replace": "  | .not b => b.evalBy mem x",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: FA1b's sizes guard (the equality proofs withSizes_eq and its lemmas, which the mutant breaks first, are bypassed: the section is cut for the run and restored)"
+  },
+  {
+   "id": "regionSizes-whole-sort",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionSizes counts the objects in each region, not the whole sort",
+   "find": "(xs.filter fun x => (regionBody ps r).evalBy mem x).length",
+   "replace": "xs.length",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: FA1b's sizes guard (the equality proofs withSizes_eq and its lemmas, which the mutant breaks first, are bypassed: the section is cut for the run and restored)"
+  },
+  {
+   "id": "regionCost-predicates",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionCost charges each region's body by its predicates",
+   "find": "(M.domains s).length * ((R.predsOn s).length + 1)) 0",
+   "replace": "(M.domains s).length * 1) 0",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "test": "tests/test_cardinality_service.py::test_region_sizes_are_charged_before_they_are_computed (three sorts cost 192,000: answered)"
+  },
+  {
+   "id": "sizeIndex-zero",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "sizeIndex keeps each constant's size",
+   "find": "  sizes.foldr (fun e m => m.insert e.1 e.2) {}",
+   "replace": "  sizes.foldr (fun e m => m.insert e.1 0) {}",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: #guard (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == .bool true (the equality proofs withSizes_eq and its lemmas, which the mutant breaks first, are bypassed: the section is cut for the run and restored)"
+  },
+  {
+   "id": "withSizes-off-by-one",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "withSizes reads a region constant as its size",
+   "find": "      | some n => some (.inr n)\n      | none => M.constants c }",
+   "replace": "      | some n => some (.inr (n + 1))\n      | none => M.constants c }",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: #guard (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == .bool true (the equality proofs withSizes_eq and its lemmas, which the mutant breaks first, are bypassed: the section is cut for the run and restored)"
+  },
+  {
+   "id": "sizesJson-size",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "sizesJson writes each constant's size",
+   "find": "(\"size\", toJson e.2)",
+   "replace": "(\"size\", toJson (e.2 + 1))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: FA1b's sizes guards"
+  },
+  {
+   "id": "runCase-countermodel-kind",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCase answers the kind countermodel",
+   "find": "kind == \"document\" || kind == \"countermodel\" do",
+   "replace": "kind == \"document\" do",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean: the countermodel guards (unknown case kind countermodel)"
+  },
+  {
+   "id": "schema-refutes-typed",
+   "file": "lean/ResponseShape/Schemas/Cardinality.lean",
+   "claim": "the countermodel row's verdict is a boolean",
+   "find": "closed ((\"refutes\", .type [\"boolean\"]) :: answer ++",
+   "replace": "closed ((\"refutes\", .type [\"boolean\", \"integer\"]) :: answer ++",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && S=$(mktemp) && cp lean/checkers.lock \"$L\" && cp ve/backends/lean_service_schema/cardinality.json \"$S\" && trap 'cp \"$L\" lean/checkers.lock; cp \"$S\" ve/backends/lean_service_schema/cardinality.json' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_response_decode ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only response-schemas >/dev/null && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k countermodel_rows"
+   ],
+   "test": "tests/test_cardinality_service.py::test_countermodel_rows_are_typed_and_bound (refutes retyped as 7)"
+  },
+  {
+   "id": "schema-sizes-typed",
+   "file": "lean/ResponseShape/Schemas/Cardinality.lean",
+   "claim": "a size is a natural number",
+   "find": "(\"size\", ref \"common.json#/$defs/nat\")",
+   "replace": "(\"size\", .type [\"integer\"])",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && S=$(mktemp) && cp lean/checkers.lock \"$L\" && cp ve/backends/lean_service_schema/cardinality.json \"$S\" && trap 'cp \"$L\" lean/checkers.lock; cp \"$S\" ve/backends/lean_service_schema/cardinality.json' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_response_decode ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only response-schemas >/dev/null && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && VE_NATIVE_PREBUILT=1 uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k countermodel_rows"
+   ],
+   "test": "tests/test_cardinality_service.py::test_countermodel_rows_are_typed_and_bound (a negative size)"
+  }
+ ]
+}
