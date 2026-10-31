@@ -169,4 +169,5 @@
   "definitions@0",
   "documents@1",
   "time@0",
-  "readings@1"]}
+  "readings@1"],
+ "document_layers": ["judgments@0"]}

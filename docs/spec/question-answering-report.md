@@ -23,6 +23,44 @@ The recorded answer fixtures were replayed through Lean's `ask` mode by `tests/t
 | U6 | readings | yes | 6 | 10.9 |
 | U7 | readings | by_reading | 6 | 4.7 |
 
+## Fixtures, expected against got
+
+The spec's derived lead (docs/spec/question-answering.md 7.2, 7.4, 7.5; saved in `docs/question-answering/q2-6/evidence/expected.json`) against the lead Lean returned on the recorded evidence; a lead that differs names the row of `docs/spec/question-answering-q2/DELTA.md` that explains it.
+
+| Fixture | Spec lead | Spec line | Lean lead | DELTA |
+|---|---|---:|---|---|
+| G1 | yes | 1290 | yes | — |
+| G2 | yes | 1291 | yes | — |
+| G3 | notNecessarily | 1292 | notNecessarily | — |
+| G4 | no | 1293 | no | — |
+| G10 | yes | 1299 | yes | — |
+| U2 | yes | 1370 | yes | — |
+| U3 | by_reading | 1371 | by_reading | — |
+| U5 | by_reading | 1373 | by_reading | — |
+| U6 | yes | 1374 | yes | — |
+| U7 | notSettled | 1375 | by_reading | D6 |
+| A1 | notSettled | 1347 | notSettled | — |
+| A1d | no | 1348 | refused | D6 |
+| A2 | yes | 1349 | unknown | D6 |
+| A3 | no | 1350 | notNecessarily | D6 |
+| A4 | yes | 1351 | unknown | D6 |
+| A5 | unknown | 1352 | unknown | — |
+| A7 | notNecessarily | 1354 | notSettled | D6 |
+| A8 | notSettled | 1355 | notSettled | — |
+
+## Wording counts
+
+each clause of each S1, S2, S2p and S3 line of the saved answers (tests/fixtures/ask/*.json result.lines), with a full stop, read by Lean's English reader (ve.backends.english_lean.read) in the document's environment with its lexicon; status `one` is one reading.
+
+Answers that show a quoted fallback wording (a line containing `classified as "`): 3 of 17 answers (U3, U5, U7), on 9 lines.
+
+| Frame | Lines shown | Clauses | Read back with one reading | Not one reading |
+|---|---:|---:|---:|---:|
+| S1 | 2 | 55 | 27 | 28 |
+| S2 | 8 | 127 | 49 | 78 |
+| S2p | 11 | 11 | 6 | 5 |
+| S3 | 0 | 0 | 0 | 0 |
+
 ## Timed requests
 
 warm persistent ve_service; child CPU delta for second request; cold ve ask wall.
@@ -82,4 +120,4 @@ Queries not compared, by reason:
 
 ## Scope
 
-The evaluation made no model calls. Reader and writer accuracy, including the comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured.
+Reading and writing evaluation: sealed and bars registered (docs/question-answering/q2-6/readability/); not run, no model call.

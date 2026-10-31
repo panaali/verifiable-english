@@ -18,7 +18,7 @@ import pytest
 from tests import b15b_model_cases as model_cases
 from ve.background import background
 from ve.environment import Environment
-from ve.profiles import BY_NAME, DISPLAY_FIELDS, MODEL_REDUCTIONS, model_environment
+from ve.profiles import BY_NAME, DISPLAY_FIELDS, DOCUMENT_LAYERS, MODEL_REDUCTIONS, model_environment
 
 ORACLE = json.loads(gzip.decompress(
     (Path(__file__).parent / "data/b15b-model-oracle.json.gz").read_bytes()))
@@ -27,7 +27,7 @@ GROUPS = sorted({name.split("#")[0] for name, _ in ENVIRONMENTS})
 
 
 def test_every_registered_profile_has_one_model_reduction():
-    assert set(MODEL_REDUCTIONS) == set(BY_NAME)
+    assert set(MODEL_REDUCTIONS) == set(BY_NAME) | set(DOCUMENT_LAYERS)
     with pytest.raises(Exception, match="Unsupported profile unknown@0"):
         model_environment({"language": "ve.core@0.2", "profiles": ["relational-fol@0", "unknown@0"],
                            "vocabulary": {}})
