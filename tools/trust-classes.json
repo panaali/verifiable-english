@@ -2104,7 +2104,7 @@
         "VE.Compose.modeProfiles",
         "VE.Compose.decidingEnvironment",
         "VE.Compose.layersApart",
-        "VE.Compose.layerGate"
+        "VE.Compose.listedProfiles"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults",
