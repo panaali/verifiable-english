@@ -145,7 +145,7 @@ matched.
   removed by a trailer, 0 refused, 0 stale and 0 malformed trailers" (after the merge of main). No test was removed or renamed.
 - `uv run python tools/check_lean_imports.py`: "Lean layer graph kept (683 modules, 22 reviewed legacy edges)". The
   new module is layer 2 (`tools/layer_policy.py`, the `VE.*` default), and every module it imports is layer 1 or 2.
-- `uv run python tools/batch_evidence.py --check docs/arch/AR-21 --report-commit HEAD` at `2b3481e6`:
+- `uv run python tools/batch_evidence.py --check docs/arch/AR-21 --report-commit HEAD` at the commit after the evidence commit:
   "evidence/gate.json: no such evidence file". It reads the gate before the other sections, so its own functions were
   run on the saved files: `scope_problems` + `scope_history_problems`, `mutant_problems` + `mutant_source_problems`
   and `tools.evidence.ab.problems` (nine corpora, base `0c4ea31d`). Each returned `[]`.
