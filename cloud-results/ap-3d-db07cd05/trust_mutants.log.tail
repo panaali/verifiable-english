@@ -1,0 +1,2 @@
+VE/Acts/DecodeExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Acts/DecodeExamples.lean; rerun tools/lean_statements.py
