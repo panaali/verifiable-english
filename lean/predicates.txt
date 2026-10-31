@@ -92,6 +92,8 @@ module SensesMain
 module Serve
 module SpeechActsMain
 module VE.Acts.Compat
+module VE.Acts.Decode
+module VE.Acts.DecodeExamples
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
 module VE.Acts.Grammar
@@ -105,12 +107,14 @@ module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
 module VE.Acts.Read
 module VE.Acts.Readings
+module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
 module VE.Acts.TableExamples
 module VE.Acts.Tree
+module VE.Acts.Wire
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -579,6 +583,7 @@ module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
 module VE.Scope.Examples
