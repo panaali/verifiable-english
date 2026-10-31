@@ -16,6 +16,14 @@
 # creates, edits or deletes a release or asset and never replaces one (--clobber). Its record, lean-build-asset.json
 # (status uploaded|exists|refused|no-release|failed, sha256, bytes), goes in the result; the VM lists uploaded assets for
 # its dispatcher's exact-tree pin and prunes the release to its newest N (lean-branch-cache.sh). Never fails the result.
+# 2026-10-31 actions-gate-x86 (manage-agents gha-arm-shard.sh --arch x86): the Lean build ONCE per sharded gate. The
+# dispatcher first runs one build job ("lean_asset": true, as above), then N gate shards whose job.json says
+# "lean_from": {"run_id": <that build job's run>, "sha256": <its pack's sha256, from the publish job's
+# lean-build-asset.json>}. A shard's run job downloads the artifact lean-build of exactly that run (the read-only
+# `actions: read` token, in that one step only; never the release, whose assets other branches built) and hands it to
+# job.sh as $VE_LEAN_FROM only when it is one regular file named lean-build-<HEAD:lean, 12>.tar.zst with that sha256.
+# Anything else (no lean_from, a malformed one, no artifact, another name or sha256) is said in lean-from.txt and the
+# shard builds cold; it never fails the run. job.sh checks the pack again (seal: this lean tree) before its lake build.
 # Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
 name: ve-job
 on:
@@ -32,6 +40,7 @@ jobs:
     timeout-minutes: 120
     permissions:
       contents: read
+      actions: read
     outputs:
       job: ${{ steps.job.outputs.job }}
       head: ${{ steps.job.outputs.head }}
@@ -50,13 +59,16 @@ jobs:
           head=$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["head"])')
           [ "$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["job"])')" = "$job" ] || { echo "job.json is not $job"; exit 1; }
           lean_asset=$(python3 -I -c 'import json; print("1" if json.load(open("ci-job/job.json")).get("lean_asset") is True else "")')
+          lean_from=$(python3 -I -c 'import json, re; d = json.load(open("ci-job/job.json")).get("lean_from"); ok = isinstance(d, dict) and set(d) == {"run_id", "sha256"} and isinstance(d["run_id"], str) and isinstance(d["sha256"], str) and re.fullmatch("[0-9]{1,20}", d["run_id"]) and re.fullmatch("[0-9a-f]{64}", d["sha256"]); print(d["run_id"] + " " + d["sha256"] if ok else ("malformed" if d is not None else ""))')
           [ "$(git rev-parse HEAD~1)" = "$head" ] && [ -z "$(git rev-parse -q --verify HEAD^2 || true)" ] || { echo "the job commit's parent is not $head"; exit 1; }
           extra=$(git diff --name-only HEAD~1 HEAD | grep -v -x -E 'ci-job/job\.json|ci-job/job\.sh|\.github/workflows/ve-job\.yml' || true)
           [ -z "$extra" ] || { echo "the job commit changes other files: $extra"; exit 1; }
           mkdir -p "$RUNNER_TEMP/ci-job" "$RUNNER_TEMP/out"
           cp ci-job/job.json ci-job/job.sh "$RUNNER_TEMP/ci-job/"
+          [ "$lean_from" != malformed ] || { echo "lean-from: job.json's lean_from is malformed: cold build" > "$RUNNER_TEMP/out/lean-from.txt"; lean_from=""; }
           git checkout -q --detach "$head"
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"; echo "lean_asset=$lean_asset" >> "$GITHUB_OUTPUT"
+          echo "lean_run=${lean_from% *}" >> "$GITHUB_OUTPUT"; echo "lean_sha=${lean_from#* }" >> "$GITHUB_OUTPUT"
       - name: tools
         run: |
           set -euo pipefail
@@ -74,12 +86,43 @@ jobs:
           sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
           printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
           { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
+      - name: lean-from download
+        if: steps.job.outputs.lean_run != ''
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        continue-on-error: true
+        with:
+          name: lean-build
+          path: ${{ runner.temp }}/lean-from
+          run-id: ${{ steps.job.outputs.lean_run }}
+          github-token: ${{ github.token }}
+      - id: leanfrom
+        name: lean-from check
+        if: steps.job.outputs.lean_run != ''
+        env:
+          LEAN_RUN: ${{ steps.job.outputs.lean_run }}
+          LEAN_SHA: ${{ steps.job.outputs.lean_sha }}
+        run: |
+          set -uo pipefail
+          O=$RUNNER_TEMP/out/lean-from.txt; tree=$(git rev-parse HEAD:lean); want=lean-build-${tree:0:12}.tar.zst
+          no(){ echo "lean-from: run $LEAN_RUN: $1: cold build" > "$O"; exit 0; }
+          [[ $tree =~ ^[0-9a-f]{40}$ ]] || no "no lean tree at HEAD"
+          shopt -s nullglob dotglob; files=("$RUNNER_TEMP"/lean-from/*)
+          [ ${#files[@]} = 1 ] || no "${#files[@]} files in the artifact lean-build, not 1"
+          f=${files[0]}
+          [ -f "$f" ] && [ ! -L "$f" ] || no "the artifact is not a regular file"
+          [ "$(basename "$f")" = "$want" ] || no "the artifact is $(basename "$f" | head -c 80), not $want"
+          got=$(sha256sum "$f" | cut -d' ' -f1)
+          [ "$got" = "$LEAN_SHA" ] || no "sha256 ${got:0:12} is not ${LEAN_SHA:0:12}"
+          echo "file=$f" >> "$GITHUB_OUTPUT"; echo "lean-from: run $LEAN_RUN: $want sha256 ${got:0:12} ok" > "$O"
       - name: job
         env:
           LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}
+          LEAN_FROM: ${{ steps.leanfrom.outputs.file }}
+          LEAN_SHA: ${{ steps.job.outputs.lean_sha }}
         run: |
           set -uo pipefail
           [ "$LEAN_ASSET" != 1 ] || export VE_LEAN_ASSET_DIR="$RUNNER_TEMP/lean-build"
+          [ -z "$LEAN_FROM" ] || export VE_LEAN_FROM="$LEAN_FROM" VE_LEAN_FROM_SHA256="$LEAN_SHA"
           mapfile -t argv < <(python3 -I -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["argv"]))' "$RUNNER_TEMP/ci-job/job.json")
           bash "$RUNNER_TEMP/ci-job/job.sh" run "$GITHUB_WORKSPACE" "$RUNNER_TEMP/out" "${argv[@]}"
       - if: always() && steps.job.outputs.job != ''

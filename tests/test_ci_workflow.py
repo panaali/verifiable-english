@@ -14,6 +14,12 @@ own script is run here against a fake `gh`: a pack that is not exactly the head'
 outside `pins.json` and `lake/build/` or that is not a plain file or directory, is over a cap, carries a
 secret or a seal for another tree, platform or toolchain is refused and never uploaded.
 
+actions-gate-x86: a sharded gate builds Lean once. A shard's `run` job may download the artifact `lean-build`
+of exactly the run its job.json names (`lean_from`), with a second, read-only token (`actions: read`) that
+reaches that one download step only; the download never fails the run. Its check step hands the pack to
+job.sh only when it is one regular file named for the head's lean tree with the sha256 job.json names; any
+other case is said and the shard builds cold.
+
 The files are read as text by a small reader of the YAML they use (PyYAML is not in the environment).
 It fails closed: tabs, anchors, aliases, tags, merge keys, quoted or duplicate keys and lines it cannot
 place are refused, so a rule cannot be dodged by writing the same thing another way.
@@ -53,6 +59,8 @@ GIT_PUSH = re.compile(r"\bgit\b(?:\s+-c\s+\S+)*\s+push\b([^;&|\n]*)")
 PUBLISH_PUSH = ["origin", "HEAD:refs/heads/ci-result/$JOB"]
 ASSET_STEP = "lean-build asset"
 ASSET_RELEASE = "lean-branch-cache"
+LEAN_FROM_STEP = "lean-from download"
+LEAN_FROM_CHECK = "lean-from check"
 TOKEN = "${{ github.token }}"
 GH_CALL = re.compile(r"(?<![\w-])gh\s+([^\n|;&)]*)")
 GH_ALLOWED = re.compile(r'release (view|upload) "\$REL" [^\n]*')
@@ -293,7 +301,7 @@ def check_ve_job(text: str) -> None:
     jobs = document["jobs"]
     assert {"run", "publish"} <= set(jobs), sorted(jobs)
     run, publish = jobs["run"], jobs["publish"]
-    assert permissions(run.get("permissions"), "run") == {"contents": "read"}, run.get("permissions")
+    assert permissions(run.get("permissions"), "run") == {"contents": "read", "actions": "read"}, run.get("permissions")
     assert permissions(publish.get("permissions"), "publish") == {"contents": "write"}
     assert run.get("if") == f"github.repository == '{REPOSITORY}'", f"run is not guarded: {run.get('if')!r}"
     checkouts = [step for step in steps(run) if step.get("uses", "").startswith("actions/checkout@")]
@@ -314,14 +322,36 @@ def check_ve_job(text: str) -> None:
     assert publish_pushes, "publish pushes nothing"
     for args in publish_pushes:
         assert [arg for arg in args if arg != "-q"] == PUBLISH_PUSH, f"publish pushes {args}"
-    check_asset_step(text, publish)
+    check_tokens(text)
+    check_asset_step(publish)
+    check_lean_from_step(run)
 
 
-def check_asset_step(text: str, publish: dict) -> None:
+def check_tokens(text: str) -> None:
+    """github.token appears twice: the publish job's lean-build upload and the run job's lean-from download."""
+    tokens = [e for e in EXPRESSION.findall(text) if "token" in e.lower()]
+    assert len(tokens) == 2 and text.count(TOKEN) == 2, f"github.token is used {len(tokens)} times"
+
+
+def check_lean_from_step(run: dict) -> None:
+    """The run job's token (read-only) reaches one step only: the download of the artifact lean-build of the
+    run job.json names, in this repository, which never fails the run."""
+    holders = [step for step in steps(run) if TOKEN in json.dumps(step)]
+    assert len(holders) == 1, f"github.token reaches {len(holders)} steps of run"
+    step = holders[0]
+    assert step.get("name") == LEAN_FROM_STEP and step.get("uses", "").startswith("actions/download-artifact@"), \
+        f"the run job's github.token is not only the {LEAN_FROM_STEP} step's"
+    assert step.get("with") == {"name": "lean-build", "path": "${{ runner.temp }}/lean-from",
+                                "run-id": "${{ steps.job.outputs.lean_run }}", "github-token": TOKEN}, \
+        f"{LEAN_FROM_STEP}: downloads something else: {step.get('with')!r}"
+    assert step.get("if") == "steps.job.outputs.lean_run != ''", f"{LEAN_FROM_STEP}: runs without lean_from"
+    assert step.get("continue-on-error") == "true", f"{LEAN_FROM_STEP}: may fail the run (no continue-on-error)"
+    assert "env" not in step, f"{LEAN_FROM_STEP}: has an env"
+
+
+def check_asset_step(publish: dict) -> None:
     """The write token reaches one step only: the lean-build upload, which never fails the result and
     writes only to the existing release lean-branch-cache."""
-    tokens = [e for e in EXPRESSION.findall(text) if "token" in e.lower()]
-    assert len(tokens) == 1 and text.count(TOKEN) == 1, f"github.token is used {len(tokens)} times"
     named = [step for step in steps(publish) if step.get("name") == ASSET_STEP]
     assert len(named) == 1, f"publish has {len(named)} {ASSET_STEP!r} steps"
     step = named[0]
@@ -359,7 +389,7 @@ SEEDED = [
     ("other branch", "branches: ['ci-job/**']", "branches: ['ci-job/**', 'main']", "ci-job/**"),
     ("quoted on", "\non:\n", "\n'on':\n", "not a plain"),
     ("top write-all", "permissions: {}\nconcurrency", "permissions: write-all\nconcurrency", "permissions must be a mapping"),
-    ("actions write", "      contents: read\n", "      contents: read\n      actions: write\n", "run may not write actions"),
+    ("actions write", "      actions: read\n", "      actions: write\n", "run may not write actions"),
     ("run writes", "      contents: read\n", "      contents: write\n", "run may not write contents"),
     ("publish packages", "      contents: write\n", "      contents: write\n      packages: write\n",
      "publish may not write packages"),
@@ -379,9 +409,9 @@ SEEDED = [
     ("main", '"HEAD:refs/heads/ci-result/$JOB" ||', '"HEAD:refs/heads/main" ||', "publish pushes"),
     ("alias", "\n  run:\n", "\n  run: &job\n", "anchor"),
     ("token in run", "          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}\n",
-     "          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}\n          T: ${{ github.token }}\n", "github.token is used 2"),
+     "          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}\n          T: ${{ github.token }}\n", "github.token is used 3"),
     ("token in a run block", "          set -uo pipefail\n          O=$RUNNER_TEMP/out;",
-     "          set -uo pipefail\n          echo ${{ github.token }}\n          O=$RUNNER_TEMP/out;", "github.token is used 2"),
+     "          set -uo pipefail\n          echo ${{ github.token }}\n          O=$RUNNER_TEMP/out;", "github.token is used 3"),
     ("token moved", "          GH_TOKEN: ${{ github.token }}\n", "          TOKEN: ${{ github.token }}\n", "only the lean-build"),
     ("clobber", 'gh release upload "$REL" "$A/$name"', 'gh release upload "$REL" "$A/$name" --clobber', "publish calls gh"),
     ("create", '          up=$(gh release', '          gh release create "$REL" --repo x\n          up=$(gh release', "publish calls gh"),
@@ -394,6 +424,20 @@ SEEDED = [
     ("gh in run", '          [ "$LEAN_ASSET" != 1 ]', '          gh release list\n          [ "$LEAN_ASSET" != 1 ]', "run calls gh"),
     ("other release", "REL=lean-branch-cache;", "REL=lean-cache;", "does not write to lean-branch-cache"),
     ("may fail", "        continue-on-error: true\n        env:\n", "        env:\n", "may fail the result"),
+    ("lean-from repository", "          run-id: ${{ steps.job.outputs.lean_run }}\n",
+     "          run-id: ${{ steps.job.outputs.lean_run }}\n          repository: someone/else\n", "downloads something else"),
+    ("lean-from another artifact", "          name: lean-build\n          path: ${{ runner.temp }}/lean-from\n",
+     "          name: out\n          path: ${{ runner.temp }}/lean-from\n", "downloads something else"),
+    ("lean-from may fail", "        continue-on-error: true\n        with:\n          name: lean-build\n          path: ${{ runner.temp }}/lean-from",
+     "        with:\n          name: lean-build\n          path: ${{ runner.temp }}/lean-from", "may fail the run"),
+    ("lean-from always", "        if: steps.job.outputs.lean_run != ''\n        uses:", "        uses:", "runs without lean_from"),
+    ("token moved in run", "          github-token: ${{ github.token }}\n", "",
+     "github.token is used 1"),
+    ("token to the check step",
+     "          github-token: ${{ github.token }}\n      - id: leanfrom\n        name: lean-from check\n"
+     "        if: steps.job.outputs.lean_run != ''\n        env:\n",
+     "      - id: leanfrom\n        name: lean-from check\n        if: steps.job.outputs.lean_run != ''\n        env:\n"
+     "          T: ${{ github.token }}\n", "not only the lean-from download step's"),
     ("download may fail", "        continue-on-error: true\n        uses: actions/download-artifact",
      "        uses: actions/download-artifact", "may fail the result"),
 ]
@@ -600,6 +644,146 @@ def test_the_run_job_packs_only_when_job_json_asks():
     blocks = "\n".join(step.get("run", "") for step in steps(run))
     assert '.get("lean_asset") is True' in blocks
     assert '[ "$LEAN_ASSET" != 1 ] || export VE_LEAN_ASSET_DIR="$RUNNER_TEMP/lean-build"' in blocks
-    sent = [step for step in steps(run) if (step.get("with") or {}).get("name") == "lean-build"]
+    sent = [step for step in steps(run) if (step.get("with") or {}).get("name") == "lean-build"
+            and step.get("uses", "").startswith("actions/upload-artifact@")]
     assert len(sent) == 1 and sent[0]["if"] == "always() && steps.pack.outputs.ready == 'true'"
     assert int(sent[0]["with"]["retention-days"]) <= 3 and run["outputs"]["lean_asset"] == "${{ steps.pack.outputs.ready }}"
+
+
+# --- the lean-from steps (actions-gate-x86): a gate shard takes a Lean build only from the run its job.json names
+def run_step_script(name: str) -> str:
+    run = parse(VE_JOB.read_text())["jobs"]["run"]
+    return textwrap.dedent(next(step["run"] for step in steps(run) if step.get("name") == name))
+
+
+def clean_env(**extra: str) -> dict:
+    dropped = ("VE_LEAN_FROM", "VE_LEAN_FROM_SHA256", "VE_LEAN_ASSET_DIR")
+    return {**{k: v for k, v in os.environ.items() if not k.startswith(("GH_", "GITHUB_", "LEAN_")) and k not in dropped},
+            **extra}
+
+
+def run_lean_from_check(tmp_path: Path, files=None, *, sha=None) -> tuple[str, str, Path]:
+    """files: (name, bytes | "symlink") in the downloaded artifact dir; None = the right pack; "none" = no dir."""
+    repo, tree = head_checkout(tmp_path)
+    rt = tmp_path / "rt"
+    (rt / "out").mkdir(parents=True)
+    body = b"the pack of this lean tree"
+    good = f"lean-build-{tree[:12]}.tar.zst"
+    if files != "none":
+        (rt / "lean-from").mkdir()
+        for name, content in ([(good, body)] if files is None else files(good)):
+            if content == "symlink":
+                (rt / "lean-from" / name).symlink_to(tmp_path / "elsewhere")
+            else:
+                (rt / "lean-from" / name).write_bytes(content)
+    output = tmp_path / "github-output"
+    output.touch()
+    env = clean_env(RUNNER_TEMP=str(rt), GITHUB_OUTPUT=str(output), LEAN_RUN="4242",
+                    LEAN_SHA=sha or hashlib.sha256(body).hexdigest())
+    done = subprocess.run(["bash", "-c", run_step_script(LEAN_FROM_CHECK)], cwd=repo, env=env, capture_output=True,
+                          text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, f"the check failed the run: {done.stdout}{done.stderr}"
+    return output.read_text(), (rt / "out/lean-from.txt").read_text(), rt / "lean-from" / good
+
+
+def test_the_lean_from_check_hands_over_the_named_pack(tmp_path):
+    output, said, pack_path = run_lean_from_check(tmp_path)
+    assert output == f"file={pack_path}\n", output
+    assert said.startswith(f"lean-from: run 4242: {pack_path.name} sha256 ") and said.rstrip().endswith(" ok"), said
+
+
+LEAN_FROM_REFUSED = {
+    "another sha256": (dict(sha="0" * 64), "sha256 "),
+    "another tree's name": (dict(files=lambda good: [("lean-build-0123456789ab.tar.zst", b"x")]), "not lean-build-"),
+    "a second file": (dict(files=lambda good: [(good, b"x"), ("notes.txt", b"y")]), "2 files"),
+    "a hidden second file": (dict(files=lambda good: [(good, b"x"), (".x", b"y")]), "2 files"),
+    "an empty artifact": (dict(files=lambda good: []), "0 files"),
+    "no download": (dict(files="none"), "0 files"),
+    "a symlink": (dict(files=lambda good: [(good, "symlink")]), "not a regular file"),
+}
+
+
+@pytest.mark.parametrize("case", LEAN_FROM_REFUSED, ids=list(LEAN_FROM_REFUSED))
+def test_the_lean_from_check_refuses_anything_else_and_the_shard_builds_cold(tmp_path, case):
+    kwargs, reason = LEAN_FROM_REFUSED[case]
+    output, said, _ = run_lean_from_check(tmp_path, **kwargs)
+    assert "file=" not in output, f"{case}: handed over: {output}"
+    assert said.startswith("lean-from: run 4242: ") and reason in said and said.rstrip().endswith("cold build"), said
+
+
+def run_job_commit_step(tmp_path: Path, job_json: dict) -> tuple[dict, str | None]:
+    """The run job's `job commit` step on a job commit whose job.json is `job_json` (+ job, head)."""
+    repo, _ = head_checkout(tmp_path)
+    head = git(repo, "rev-parse", "HEAD")
+    (repo / "ci-job").mkdir()
+    (repo / "ci-job/job.json").write_text(json.dumps({"job": "j1", "head": head, "argv": [], **job_json}))
+    (repo / "ci-job/job.sh").write_text("exit 0\n")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "ci-job j1")
+    rt = tmp_path / "rt"
+    rt.mkdir()
+    output = tmp_path / "github-output"
+    output.touch()
+    done = subprocess.run(["bash", "-c", run_step_script("job commit")], cwd=repo, capture_output=True, text=True,
+                          env=clean_env(RUNNER_TEMP=str(rt), GITHUB_OUTPUT=str(output), GITHUB_REF_NAME="ci-job/j1"),
+                          timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, f"{done.stdout}{done.stderr}"
+    said = rt / "out/lean-from.txt"
+    return dict(line.split("=", 1) for line in output.read_text().splitlines()), \
+        said.read_text() if said.exists() else None
+
+
+SHA = "ab" * 32
+
+
+def test_job_json_names_the_build_run_and_its_sha256(tmp_path):
+    outputs, said = run_job_commit_step(tmp_path, {"lean_from": {"run_id": "4242", "sha256": SHA}})
+    assert (outputs["lean_run"], outputs["lean_sha"]) == ("4242", SHA) and said is None, (outputs, said)
+
+
+def test_no_lean_from_downloads_nothing(tmp_path):
+    outputs, said = run_job_commit_step(tmp_path / "a", {})
+    assert (outputs["lean_run"], outputs["lean_sha"], said) == ("", "", None), outputs
+    outputs, said = run_job_commit_step(tmp_path / "b", {"lean_from": None})
+    assert (outputs["lean_run"], outputs["lean_sha"], said) == ("", "", None), outputs
+
+
+@pytest.mark.parametrize("lean_from", [
+    {"run_id": 4242, "sha256": SHA},
+    {"run_id": "42 42", "sha256": SHA},
+    {"run_id": "4242; x", "sha256": SHA},
+    {"run_id": "4242", "sha256": SHA.upper()},
+    {"run_id": "4242", "sha256": SHA[:-1]},
+    {"run_id": "4242", "sha256": SHA, "repository": "someone/else"},
+    {"run_id": "4242"},
+    ["4242", SHA],
+    "4242",
+], ids=["int run", "space", "injection", "upper sha", "short sha", "extra key", "no sha", "a list", "a string"])
+def test_a_malformed_lean_from_is_said_and_downloads_nothing(tmp_path, lean_from):
+    outputs, said = run_job_commit_step(tmp_path, {"lean_from": lean_from})
+    assert (outputs["lean_run"], outputs["lean_sha"]) == ("", ""), outputs
+    assert said == "lean-from: job.json's lean_from is malformed: cold build\n", said
+
+
+def run_job_step(tmp_path: Path, **env: str) -> dict:
+    """The run job's `job` step with a job.sh that prints the lean variables it was given."""
+    rt = tmp_path / "rt"
+    (rt / "ci-job").mkdir(parents=True)
+    (rt / "ci-job/job.json").write_text(json.dumps({"argv": []}))
+    (rt / "ci-job/job.sh").write_text('for v in VE_LEAN_FROM VE_LEAN_FROM_SHA256 VE_LEAN_ASSET_DIR; do '
+                                      'echo "$v=${!v-unset}"; done > "$3/env.txt"\n')
+    (rt / "out").mkdir()
+    done = subprocess.run(["bash", "-c", run_step_script("job")], cwd=tmp_path, capture_output=True, text=True,
+                          env=clean_env(RUNNER_TEMP=str(rt), GITHUB_WORKSPACE=str(tmp_path), LEAN_ASSET="", **env),
+                          timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, f"{done.stdout}{done.stderr}"
+    return dict(line.split("=", 1) for line in (rt / "out/env.txt").read_text().splitlines())
+
+
+def test_job_sh_gets_the_pack_only_when_the_check_passed(tmp_path):
+    given = run_job_step(tmp_path / "a", LEAN_FROM="/rt/lean-from/p.tar.zst", LEAN_SHA=SHA)
+    assert (given["VE_LEAN_FROM"], given["VE_LEAN_FROM_SHA256"]) == ("/rt/lean-from/p.tar.zst", SHA), given
+    refused = run_job_step(tmp_path / "b", LEAN_FROM="", LEAN_SHA=SHA)
+    assert (refused["VE_LEAN_FROM"], refused["VE_LEAN_FROM_SHA256"]) == ("unset", "unset"), refused
+    job = next(step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if step.get("name") == "job")
+    assert job["env"]["LEAN_FROM"] == "${{ steps.leanfrom.outputs.file }}", "job.sh's pack is not the check's output"
