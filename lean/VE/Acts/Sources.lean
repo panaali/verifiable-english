@@ -70,6 +70,14 @@ def choiceRules (D : VE.Readings.Doc) (s : Source) (c : List (String × Nat)) : 
 
 def choiceViews (D : VE.Readings.Doc) (unspec : List String) (s : Source) : List (List (Option View)) :=
   (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))
+/-- `choiceViews` on a choice list already computed, so `sourceCheck` lists the choices once, bounds them, then
+    compares; `viewsOn_choices` ties it to `choiceViews` by definition. -/
+def viewsOn (D : VE.Readings.Doc) (unspec : List String) (s : Source) (cs : List VE.Readings.Choice) :
+    List (List (Option View)) :=
+  (firsts (cs.map (fun c => c.filter (fun x => s.sets.contains x.1)))).map
+    (fun c => (choiceRules D s c).map (ruleView D unspec))
+theorem viewsOn_choices (D unspec s) : viewsOn D unspec s (VE.Readings.choices D) = choiceViews D unspec s := rfl
+
 def readingViews (fx : List String) (s : Source) (Rs : List (List Simple)) : List (List (Option View)) :=
   Rs.map (fun R => R.map (fun x => some (expected fx s x)))
 
@@ -101,10 +109,12 @@ def compareViews (ps : List String) (cs rs : List (List (Option View))) : Except
     | some σ => if decide (σ.Perm cs) then .ok ()
       else .error (d29 s!"the reading sets give {cs.length} choices for a phrase with {rs.length} readings")
 
-/-- Lex the phrase, list its readings under the template's op once, their paraphrases (D-32), then compare (D-29).
-    Each value is computed once, and the comparison is bounded before it starts: at most `maxReadings` readings
-    (`phraseReadings_length`) and `VE.Readings.maxChoices + 1` choices (`VE.Readings.choices` is cut there), so each
-    of its steps makes at most 65 × 64 permutation tests. -/
+/-- Lex the phrase, list its readings under the template's op once, their paraphrases (D-32), the document's choices
+    once, then compare (D-29). `VE.Readings.choices` stops after `maxChoices + 1` choices, and a cut list is not every
+    choice, so a document with more than `maxChoices` is refused with `ResourceLimit` before the comparison
+    (`sourceCheck_choices_le`), never judged on the part listed. The comparison is bounded before it starts: at most
+    `maxReadings` readings (`phraseReadings_length`) and `maxChoices` choices, so each of its steps makes at most
+    64 × 64 permutation tests. -/
 def sourceCheck (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : List String) (N b : Nat) (s : Source) :
     Except String Unit :=
   match Lexical.lex fx s.phrase, opOfSource s with
@@ -114,7 +124,12 @@ def sourceCheck (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : L
     | .limit => .error "ResourceLimit: the source phrase has too many readings to list; split the sentence"
     | .ok Rs => match paraphrases fx op s.form "the source phrase" Rs with
       | .error e => .error e
-      | .ok ps => compareViews ps (choiceViews D unspec s) (readingViews fx s Rs)
+      | .ok ps =>
+        let cs := VE.Readings.choices D
+        if VE.Readings.maxChoices < cs.length then
+          .error (s!"ResourceLimit: the document has more than {VE.Readings.maxChoices} choices, too many to " ++
+            "compare with the source phrase's readings")
+        else compareViews ps (viewsOn D unspec s cs) (readingViews fx s Rs)
 
 /-- The outer bijection is kept; each choice's rules are compared with its reading's simple acts up to order (SR14):
     `σ` lists the choices' views reordered so that the k-th is a permutation of reading k's. -/
@@ -171,9 +186,29 @@ theorem sourceCheck_exact (D unspec V fx N b s) (h : framesOk V = true)
   split at hc
   · cases hc
   rename_i ps hps
+  simp only [] at hc
+  split at hc
+  · cases hc
+  rw [viewsOn_choices] at hc
   obtain ⟨-, hn⟩ := paraphrases_nodup hps
   obtain ⟨hpw, σ, hσ, hf⟩ := compareViews_ok hc
   refine ⟨ts, op, Rs, hl, ho, hR, fun R => ?_, (paraphrases_nodup hps).1 ▸ hn, hpw, σ, hσ, hf⟩
   simpa using phraseReadings_exact V h hR R
+
+/-- A passing check saw every choice: the list it compared was not cut (`VE.Readings.choices_spec` applies). -/
+theorem sourceCheck_choices_le (D unspec V fx N b s) (hc : sourceCheck D unspec V fx N b s = .ok ()) :
+    (VE.Readings.choices D).length ≤ VE.Readings.maxChoices := by
+  unfold sourceCheck at hc
+  split at hc
+  · cases hc
+  · cases hc
+  split at hc
+  · cases hc
+  split at hc
+  · cases hc
+  simp only [] at hc
+  split at hc
+  · cases hc
+  · omega
 
 end VE.Acts

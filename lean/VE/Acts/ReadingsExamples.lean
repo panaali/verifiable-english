@@ -207,13 +207,35 @@ def s055u : Source := { s055 with completion := .unspecified }
 #guard sc (mkDoc (e055 false "deny") (u055)) V9 fx9 { s055 with sign := true } == notReading
 #guard sc (mkDoc (e055 false "deny") (u055)) V9 fx9 { s055 with role := .plain } ==
   "InvalidInput: the source has no modal word for its act"
--- the largest sizes end within the limits: L6's 64 readings against seven uncoupled sets of two (128 choices, cut
--- at 65)
+-- the choice limit: `VE.Readings.choices` stops after 65, so a document with more than 64 choices is refused with
+-- `ResourceLimit`, never compared on the part listed (ap-4b F1). L6's 64 readings against seven uncoupled sets of two
+-- (128 choices, cut at 65) end there
+def choiceLimit : String := "ResourceLimit: the document has more than 64 choices, too many to compare with the " ++
+  "source phrase's readings"
 def wide : List Item := (List.range 7).map fun k =>
   .set ⟨s!"rs_{k}", s!"u_{k}", 1, [cand "x" (rl s!"w{k}-x" "enjoy") "x", cand "y" (rl s!"w{k}-y" "share") "y"]⟩
 #guard (mkDoc e105 wide).map (fun (D, _) => (choicesOn D ((List.range 7).map (s!"rs_{·}"))).length) == some 65 &&
   sc (mkDoc e105 wide) V5 cities { s105 with phrase := ln 6, units := [], sets := (List.range 7).map (s!"rs_{·}") } ==
-    notReading
+    choiceLimit
+-- F1's probe: S5's flipped candidate as rs_u055's third, beside n unrelated sets of two. With six (192 choices, cut at
+-- 65) the cut projection lists the first two candidates only and never sees the flipped one: refused at the limit, not
+-- passed. With none (3 choices) S5's refusal stands; with four (48) the projection is complete and it still stands
+def u055f (n : Nat) : List Item := (u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2,
+    [⟨"deprivation_only", some (.norm (rl "u055-d" "denied" false)), [], []⟩,
+     ⟨"both_acts", some (.norm (rl "u055-b" "denied_arbitrarily" false)), [], []⟩,
+     ⟨"flipped", some (.norm (rl "u055-f" "denied_arbitrarily" true)), [], []⟩]⟩] ++
+  (List.range n).map fun k => .set ⟨s!"rs_d{k}", s!"ud{k}", 1,
+    [⟨"x", some (.norm (rl s!"dx{k}" "depr" false)), [], []⟩, ⟨"y", some (.norm (rl s!"dy{k}" "denied" false)), [], []⟩]⟩
+#guard [0, 4, 6].map (fun n => sc (mkDoc (e055 false "deny") (u055f n)) V9 fx9 s055) ==
+  [notReading, notReading, choiceLimit]
+#guard (mkDoc (e055 false "deny") (u055f 6)).map (fun (D, _) => choicesOn D ["rs_u055"]) ==
+  some [[("rs_u055", 0)], [("rs_u055", 1)]]
+-- the boundary: S4 beside five sets of two is 64 choices and passes; beside six, 128, refused at the limit
+def u055w (n : Nat) : List Item := u055 ++ (List.range n).map fun k => .set ⟨s!"rs_d{k}", s!"ud{k}", 1,
+    [⟨"x", some (.norm (rl s!"dx{k}" "depr" false)), [], []⟩, ⟨"y", some (.norm (rl s!"dy{k}" "denied" false)), [], []⟩]⟩
+#guard [5, 6].map (fun n => sc (mkDoc (e055 false "deny") (u055w n)) V9 fx9 s055) == ["ok", choiceLimit]
+#guard [5, 6].map (fun n => (mkDoc (e055 false "deny") (u055w n)).map (fun (D, _) => (choices D).length)) ==
+  [some 64, some 65]
 -- the step budget: none left is a refusal
 def sc0 (x : Option (Doc × List String)) : String :=
   match x with

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 LEAN = ROOT / "lean"
 S, T, G = "lean/VE/Acts/Sources.lean", "lean/VE/Acts/Situation.lean", "lean/VE/Acts/Grammar.lean"
 UPSTREAM = ["lean/VE/Acts/RuleExamples.lean", "lean/VE/Acts/MeaningExamples.lean"]
-OKV = "| .ok ps => compareViews ps (choiceViews D unspec s) (readingViews fx s Rs)"
+OKV = "else compareViews ps (viewsOn D unspec s cs) (readingViews fx s Rs)"
 # (file, id, definition, behaviour, before, after, isolate)
 BUGS = [
     (G, "e1x-all-dropped", "globalRules", "the plan's seeded bug: the pre-modifier's `all` reading is dropped, so "
@@ -46,7 +46,15 @@ BUGS = [
      "      | some (.norm M) => [M]\n      | _ => []\n    | _ => []", "      | some (.norm _) => []\n      | _ => []\n    | _ => []",
      False),
     (S, "choiceViews-unspec", "choiceViews", "the choices are viewed with no `unspecified` names",
-     "(choiceRules D s c).map (ruleView D unspec)", "(choiceRules D s c).map (ruleView D [])", False),
+     "(choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))",
+     "(choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D []))", False),
+    (S, "viewsOn-no-dedup", "viewsOn", "the compared choices that coincide on the listed sets are counted twice",
+     "  (firsts (cs.map", "  ((cs.map", False),
+    (S, "viewsOn-no-projection", "viewsOn", "the compared choices keep sets the source does not list",
+     "(firsts (cs.map (fun c => c.filter (fun x => s.sets.contains x.1))))", "(firsts (cs.map (fun c => c)))", False),
+    (S, "viewsOn-unspec", "viewsOn", "the compared choices are viewed with no `unspecified` names",
+     "    (fun c => (choiceRules D s c).map (ruleView D unspec))", "    (fun c => (choiceRules D s c).map (ruleView D []))",
+     False),
     (S, "readingViews-first", "readingViews", "a reading is viewed by its first simple act only",
      "Rs.map (fun R => R.map (fun x", "Rs.map (fun R => (R.take 1).map (fun x", False),
     (S, "opOfSource-sign", "opOfSource", "the template's sign is negated",
@@ -55,7 +63,12 @@ BUGS = [
     (S, "sourceExact-ordered", "SourceExact", "the statement claims the choices in the readings' order",
      "∃ σ, σ.Perm (choiceViews D unspec s) ∧ List.Forall₂ List.Perm σ (readingViews fx s Rs)\n\ntheorem pick",
      "∃ σ, σ = (choiceViews D unspec s) ∧ List.Forall₂ List.Perm σ (readingViews fx s Rs)\n\ntheorem pick", False),
-    (S, "sourceCheck-no-compare", "sourceCheck", "the choices are not compared", OKV, "| .ok _ => .ok ()", False),
+    (S, "sourceCheck-no-compare", "sourceCheck", "the choices are not compared", OKV, "else .ok ()", False),
+    (S, "sourceCheck-no-choice-limit", "sourceCheck", "a cut choice list (over 64 choices) is compared as if whole "
+     "(ap-4b F1)", "if VE.Readings.maxChoices < cs.length then", "if false && VE.Readings.maxChoices < cs.length then",
+     False),
+    (S, "sourceCheck-choice-limit-at-64", "sourceCheck", "a document with exactly 64 choices is refused at the limit",
+     "if VE.Readings.maxChoices < cs.length then", "if VE.Readings.maxChoices ≤ cs.length then", False),
     (S, "sourceCheck-no-paraphrases", "sourceCheck", "equal paraphrases are not refused (D-32)",
      "match paraphrases fx op s.form \"the source phrase\" Rs with", "match Except.ok (ε := String) "
      "(Rs.map (paraphrase fx op s.form)) with", False),
