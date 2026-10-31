@@ -1,0 +1,6 @@
+job=x86sh-val1-c470b627-t467036-s2 shard=2/8 nproc=4 arch=x86_64 host=runnervm48cm3 date=2026-10-31T17:18:12Z ulimit_s=16384
+Mem:              15           1          10           0           4          13
+/dev/root       145G   62G   83G  43% /
+ 17:18:12 up 1 min,  0 user,  load average: 0.94, 0.26, 0.08
+pilot/codex branches: 98
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
