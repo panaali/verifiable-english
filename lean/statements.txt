@@ -6675,6 +6675,17 @@ theorem VE.Cardinality.counted_of_mem
       s ∈ VE.Cardinality.countedSorts fs ∧ ∀ (p : String), p ∈ b.atoms → p ∈ VE.Cardinality.predsOn E fs s
   -- uses VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions
   -- expr 2714576557
+theorem VE.Cardinality.countermodel_sound
+  ∀ {w : VE.Cardinality.CardEnv},
+    w.env.q = w.w6.vocab.env →
+      ∀ (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w) {R : VE.Cardinality.RegionData}
+        {table : List (String × String × VE.Cardinality.Region)} {ep : List VE.Time.QFormula × VE.Time.QFormula},
+        VE.Cardinality.Run.checkedProblem w.env (List.map (fun x => x.formula) ps) c.formula = Except.ok (R, table, ep) →
+          ∀ {m : Lean.Json} {sizes : List (String × Nat)},
+            VE.Cardinality.Run.countermodel w R ep m = Except.ok (Bool.true, sizes) →
+              ¬VE.Cardinality.CEntails w.env (List.map (fun x => x.formula) ps) c.formula
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.checkedProblem@VE.Cardinality.Run VE.Cardinality.Run.countermodel@VE.Cardinality.Run VE.Time.QEnv@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire
+  -- expr 1626896379
 theorem VE.Cardinality.counts_iff
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
@@ -6774,6 +6785,12 @@ theorem VE.Cardinality.erasedProblem_admitted
                 VE.Time.Admitted (E.elab (c :: ps)) [] a
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 1243922253
+theorem VE.Cardinality.evalBy_eq
+  ∀ {α : Type} [inst : DecidableEq α] {M : VE.Order.FiniteModel α} {mem : String → List (VE.Order.Value α) → Bool},
+    (∀ (p : String) (row : List (VE.Order.Value α)), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (x : α) (b : VE.Cardinality.Body), VE.Cardinality.Body.evalBy mem x b = VE.Cardinality.Body.evalFin M x b
+  -- uses VE.Cardinality.Body.evalBy@VE.Cardinality.Erase VE.Cardinality.Body.evalFin@VE.Cardinality.Erase VE.Cardinality.Body@VE.Cardinality.Syntax VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Value@VE.Order.Semantics
+  -- expr 2687758986
 theorem VE.Cardinality.evalFin_iff
   ∀ {α : Type} [inst : DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α},
     M.Valid E.erase →
@@ -7065,6 +7082,18 @@ theorem VE.Cardinality.regionSize_sum
                 ↑(VE.Cardinality.regionSize T s b)
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body.inRegion@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Cardinality.regions@VE.Cardinality.Regions VE.Time.TStructure@VE.Time.Semantics
   -- expr 1976871886
+theorem VE.Cardinality.regionSizes_eq
+  ∀ {α : Type} [inst : DecidableEq α] [inst_1 : Hashable α] {M : VE.Order.FiniteModel α}
+    {mem : String → List (VE.Order.Value α) → Bool},
+    (∀ (p : String) (row : List (VE.Order.Value α)), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (R : VE.Cardinality.RegionData),
+        VE.Cardinality.regionSizes mem M R =
+          List.map
+            (fun e =>
+              (e.fst, VE.Cardinality.countFin M e.snd.fst (VE.Cardinality.regionBody (R.predsOn e.snd.fst) e.snd.snd)))
+            R.table
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData.predsOn@VE.Cardinality.Regions VE.Cardinality.RegionData.table@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.countFin@VE.Cardinality.Erase VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Cardinality.regionSizes@VE.Cardinality.Erase VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Value@VE.Order.Semantics
+  -- expr 1748883647
 theorem VE.Cardinality.regionSum_denote
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
@@ -7119,6 +7148,16 @@ theorem VE.Cardinality.roundsTo_ratio_agree
     0 < b → (VE.Cardinality.erasedRounding r a b D k ↔ VE.Numbers.RoundsTo r { digits := D, places := ↑k } (↑a / ↑b))
   -- uses VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Printed.mk@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
   -- expr 1981240952
+theorem VE.Cardinality.sizeIndex_get
+  ∀ (sizes : List (String × Nat)) (c : String),
+    (VE.Cardinality.sizeIndex sizes)[c]? = Option.map (fun x => x.snd) (List.find? (fun x => x.fst == c) sizes)
+  -- uses VE.Cardinality.sizeIndex@VE.Cardinality.Erase
+  -- expr 2273198910
+theorem VE.Cardinality.sortDomains_valid
+  ∀ {v : VE.Order.Vocabulary} {m : Lean.Json} {d : VE.Order.ModelData VE.Order.Wire.Entity},
+    VE.Route.Decode.decodeOrderModel v m = Except.ok d → (VE.Time.Wire.sortDomains d).toModel.Valid v.environment
+  -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Wire.sortDomains@VE.Time.Wire
+  -- expr 4106521603
 theorem VE.Cardinality.split_underscore
   ∀ (u v x y : List Char), ¬'_' ∈ u → ¬'_' ∈ v → u ++ '_' :: x = v ++ '_' :: y → u = v ∧ x = y
   -- uses
@@ -7241,6 +7280,15 @@ theorem VE.Cardinality.withRegions_declared
         E.q.constants c = Option.some τ → (VE.Cardinality.withRegions E fs T).constant c = T.constant c
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.TStructure.constant@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
   -- expr 1707514129
+theorem VE.Cardinality.withSizes_eq
+  ∀ {α : Type} [inst : DecidableEq α] [inst_1 : Hashable α] (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula)
+    {M : VE.Order.FiniteModel α} {mem : String → List (VE.Order.Value α) → Bool},
+    (∀ (p : String) (row : List (VE.Order.Value α)), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      VE.Cardinality.withSizes M
+          (VE.Cardinality.sizeIndex (VE.Cardinality.regionSizes mem M (VE.Cardinality.regionData E fs))) =
+        VE.Cardinality.withRegionsFinite E fs M
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.regionData@VE.Cardinality.Regions VE.Cardinality.regionSizes@VE.Cardinality.Erase VE.Cardinality.sizeIndex@VE.Cardinality.Erase VE.Cardinality.withRegionsFinite@VE.Cardinality.Erase VE.Cardinality.withSizes@VE.Cardinality.Erase VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Value@VE.Order.Semantics
+  -- expr 1410607945
 theorem VE.CertificateWire.ClosureQuery.accepts_sound
   ∀ {E : VE.Environment} (q : VE.CertificateWire.ClosureQuery E),
     q.accepts = Bool.true → VE.Closure.Entails E q.premises q.conclusion
