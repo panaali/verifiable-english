@@ -1,0 +1,12 @@
+inputs.base equal
+inputs.files: 713 vm, 713 cloud, 0 differ
+inputs.lean equal
+inputs.options equal
+inputs.tests equal
+inputs.tool equal
+UNDECIDED (UNKNOWN on one side, KILLED or SURVIVOR on the other; not a mismatch): M010 (vm UNKNOWN, cloud KILLED)
+mutants: 80 vm, 80 cloud, 0 with a differing identity or verdict field, 1 undecided (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status, raw_status, detail, killed_at; not compared: -)
+counts: vm {'KILLED': 28, 'SURVIVOR': 44, 'UNKNOWN': 3, 'INVALID': 5, 'ALLOWED': 0, 'NOT RUN': 0} cloud {'KILLED': 29, 'SURVIVOR': 44, 'UNKNOWN': 2, 'INVALID': 5, 'ALLOWED': 0, 'NOT RUN': 0} differ by the undecided mutants only
+definitions: equal (7 vm, 7 cloud)
+seconds: vm 4492 cloud 3868; jobs vm 6 cloud 4
+VERDICTS EQUAL (1 undecided, not compared)
