@@ -1,6 +1,6 @@
 # scale-stage-timers: readings admission stages timed at their production call sites
 
-Status: built; selected tests and the chain's gate on the final HEAD are recorded in the build report.
+Status: built, synced with main (`09fca5013`); selected tests pass (below); the chain runs the full gate on the final HEAD.
 What changed: the five admission stages time themselves (no mirror); `VE_READINGS_STAGE_TIMES=1` writes one JSON line per production call.
 Truth table: 144 request shapes, each run with the timer, with the raw markers and silent; timed lines equal the production markers, answers unchanged; F1-F9 kept as regression tests.
 Trust: K +0, S +0, V +2 (`Serve.lean`), R16; trust mutants 8 KILLED, 2 ALLOWED, exit 0.
@@ -59,3 +59,25 @@ A fifth, an off-by-one in `step`'s name parsing, fails the build at `StageTimes.
 process CPU unset 0.931/1.035/1.012 s, `=1` 1.053/1.077/1.071 s; rows `admitS2` 1 (11 ticks) and `admitNDFull` 1 (73 ticks).
 No base-versus-head timing was run (no base `ve_service` build on this machine). When the variable is unset, the
 added work is two marker writes per stage call and per component (4 on this case).
+
+## Selected tests
+
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `392f6680a` (the synced tree):
+- shards 2 and 3 passed (125 and 129 units);
+- shard 4 passed 128 of 129 units; the one failure was `tests/test_hang_guards.py::test_no_short_wait_outside_the_reviewed_allowlist`
+  (a `nanos >= 0` bound in the new test);
+- shard 1 stopped early (`--maxfail 5`) after 2 failing files, with 100 units not run:
+  - `tests/test_assurance_manifest.py`: the four wrapped wire files needed new pins, and `StageTimes.lean` needed an
+    `other_json` reason;
+  - `tests/test_readings_lean_sharing.py`: the IR call graph now shows the stage closures `admitS2._lam_0` and
+    `admitNDFull._lam_1`.
+
+`288aebbb3` fixes the three. `zsh mac-pytest.sh -- <the 4 fixed or new files> <the 100 units not run>` then ran on `288aebbb3`
+(the Mac had no free slot, so it ran on the VM): "3683 passed, 2 warnings in 3643.11s". No failure of
+`main-known-red.txt` was hit.
+
+After the main merge, `tools/trust-classes.json` and `docs/trust-baseline.json` are back in main's text order with
+only this item's entries added: the merge driver had reordered them, with the same content. `lean/checkers.lock` keeps
+only the final build's pin. `tools/regen_generated.py --check`: "checked 34 entries", exit 0.
+`tests/test_trust_budget.py tests/test_trust_ratchet.py`: "112 passed".
+
