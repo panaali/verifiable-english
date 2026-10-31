@@ -72,8 +72,9 @@ was restored (`git diff --stat` empty after each). P3 first survived; `used = [f
 ties pass. Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
 docs/senses/sn-b6/trust-mutants-allow.json --json docs/senses/sn-b6/trust-mutants.json`, exit 0): 213
 killed, 0 survivors, 0 unknown, 28 invalid, 27 allowed (22 that do not type-check; 5 equivalent: `take 1` of an
-`Option.toList` or of a one-element list, `(lines.take 1).isEmpty`); per definition in mutants.json. The run
-was on `1a68858a4`; later commits changed no trusted definition (the shape and encoder are G[R] and P).
+`Option.toList` or of a one-element list, `(lines.take 1).isEmpty`); per definition in mutants.json. The last
+run is a full one on the clean `388f6b4a4` ("ran on ve-mac-1 … HEAD 388f6b4a (clean) … exit=0"); the commits
+after it change docs and evidence only.
 
 ## Gates run
 
@@ -81,8 +82,17 @@ was on `1a68858a4`; later commits changed no trusted definition (the shape and e
 - `uv run python tools/regen_generated.py --write`: exit 0.
 - `uv run python tools/relay_mutation_gate.py --route service:senses.project --route ve_senses_route::senses.read`:
   "2 routes, 1641 mutants, 0 failures".
-- Selected tests: see "Selected tests" below.
-- Not run: the full gate (the chain runs it on the final HEAD).
+- `uv run python tools/trust_map.py --check`: exit 0 after the allowance.
+- `uv run python tools/gate_collection.py --check --prebuilt`: "18 added, 0 removed by a trailer, 0 refused, 0
+  stale and 0 malformed trailers".
+- `uv run python tools/relay_lint.py`: PASS.
+- Selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: run 1 (`1a68858a4`)
+  failed on the runner-fixture layer, the identity site, the senses.project seed, census answers and open
+  object; fixed in `53cb75dfc`. Run 2 (`53cb75dfc`, 508 units on ve-mac-1): 4 failed, all in
+  `tests/test_assurance_manifest.py` (budget class, fixture classification, literal operation, probe); fixed in
+  `388f6b4a4`; the 4 ids with `tests/test_senses_project.py`, `test_senses_route.py`, `test_senses_document.py`
+  rerun through `mac-pytest.sh -- <ids>`: "181 passed" (ran on the VM: no Mac slot).
+- Not run: the full gate (the chain runs it on the final HEAD). No test of main-known-red.txt failed.
 
 ## Size
 
@@ -109,5 +119,31 @@ None expected: no pilot document uses senses yet (B8 measures the use cases).
 ## Next
 
 sn-b7 (display) can call `ve.backends.senses.project` for a candidate's lines; sn-b6b first.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. PASS: fully typed and contained: `senses.project.json` closed per fault code (the environment listed open, F7,
+   sn-b6b); `test_projection_answer_mutations_are_rejected` (drop, retype, 1.5, rebind) and
+   `test_the_lean_decoder_refuses_each_retyped_member`; `relay_mutation_gate.py` 0 failures.
+2. PASS: every plan row in the table above with its commit, test or the item that takes it (sn-b6b); no Python
+   copy of a Lean decision (`relay_lint.py` PASS); in-flight files (`Standalone.lean`, `Document.lean`) untouched.
+3. PASS: seeded bugs P1-P3, L1-L3; trust mutants 0 survivors (`docs/senses/sn-b6/trust-mutants.json`).
+4. PASS: one implementation (Lean); Python and the Lean guards agree on the same requests
+   (`test_i7_candidate_projection_identities`, `RunExamples.lean` pins); legitimately empty lines and used words
+   (`test_a_fault_of_the_lines_is_leans`, `idsOf ""` guard).
+5. PASS: `test_reading_identity_rebinding_is_refused` (undeclared word, duplicate, empty, extra member),
+   `test_lean_refuses_a_request_with_its_text` (undeclared used word, duplicate).
+6. PASS: evidence from the committed HEAD's runs above; the chain runs the full gate.
+7. PASS: DELTA rows cite R3 and R16; no signature reserved.
+8. PASS: DELTA.md (the senses.read members); the document mode's answer pinned unchanged.
+9. PASS: the selection ran `tests/test_senses_project.py` and `test_senses_route.py` (run 2 log); seeded P1-P3
+   fail in them.
+10. PASS: L3 (a `BOGUS` status breaks `projectCase_fits`); no approved statement changed.
+11. PASS: `test_budget_zero_never_projects`; `tests/test_senses_route.py::test_zero_budget_never_admits`.
+12. PASS: one projection per distinct candidate lines (`admittedIds`); the document mode's call does no
+    identity work (`identified`); large request `test_a_large_request_is_read_once_within_the_predicate_limit`.
+13. N.A.: no test removed or renamed (`gate_collection.py --check`: 0 removed).
+14. PASS: opposite directions (accepted genuine answers and refused mutants in every fuzz test; the large
+    request answered and the one past the limit refused); spec re-read list above; each claim cites its command.
 
 FOLLOW-UP: sn-b6b senses lock and hook rule (D17), `ve senses project`, i3 (DRI), i4, i5, flip models, typed projected environment
