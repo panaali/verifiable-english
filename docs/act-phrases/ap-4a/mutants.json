@@ -1,0 +1,140 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "e1x-all-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the pre-modifier's `all` reading is dropped (the plan's seeded bug)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:44, lean/VE/Acts/RuleExamples.lean:45, lean/VE/Acts/RuleExamples.lean:164"
+  },
+  {
+   "id": "e1x-all-dropped-isolated",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "as e1x-all-dropped, upstream guards off: A8 fails on its own",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:35, lean/VE/Acts/ReadingsExamples.lean:37, lean/VE/Acts/ReadingsExamples.lean:46, lean/VE/Acts/ReadingsExamples.lean:83"
+  },
+  {
+   "id": "e1x-all-as-first",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the pre-modifier's second rule reads over the first item too",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:44, lean/VE/Acts/MeaningExamples.lean:45, lean/VE/Acts/MeaningExamples.lean:48, lean/VE/Acts/MeaningExamples.lean:184, lean/VE/Acts/MeaningExamples.lean:186"
+  },
+  {
+   "id": "trailing-all-as-last",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.frameRules",
+   "behaviour": "a trailing edge's second rule reads over the last item too",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33, lean/VE/Acts/MeaningExamples.lean:35, lean/VE/Acts/MeaningExamples.lean:51, lean/VE/Acts/MeaningExamples.lean:55, lean/VE/Acts/MeaningExamples.lean:63, lean/VE/Acts/MeaningExamples.lean:64, lean/VE/Acts/MeaningExamples.lean:133, lean/VE/Acts/MeaningExamples.lean:184, lean/VE/Acts/MeaningExamples.lean:186"
+  },
+  {
+   "id": "trailing-all-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.frameRules",
+   "behaviour": "a trailing edge's `all` rule is dropped",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36, lean/VE/Acts/RuleExamples.lean:47, lean/VE/Acts/RuleExamples.lean:51, lean/VE/Acts/RuleExamples.lean:62, lean/VE/Acts/RuleExamples.lean:68, lean/VE/Acts/RuleExamples.lean:164, lean/VE/Acts/RuleExamples.lean:174, lean/VE/Acts/RuleExamples.lean:182"
+  },
+  {
+   "id": "middle-edge",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "a later item's adverb attaches over all (AP-2's middle-item bug)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Grammar.lean:349"
+  },
+  {
+   "id": "attachOf-shape-all",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.attachOf",
+   "behaviour": "a rule of no edge kind attaches over all",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Grammar.lean:346, lean/VE/Acts/Grammar.lean:349"
+  },
+  {
+   "id": "edgeLhs-first-anywhere",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.edgeLhs",
+   "behaviour": "`first` is allowed at any left side",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:88, lean/VE/Acts/ReadingsExamples.lean:90"
+  },
+  {
+   "id": "edgeLhs-all-trailing-only",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.edgeLhs",
+   "behaviour": "`all` only at trailing edges (the spec docstring's reading)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Grammar.lean:349"
+  },
+  {
+   "id": "phrase-limit-65",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.phraseReadings",
+   "behaviour": "65 lists are listed",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Readings.lean:118"
+  },
+  {
+   "id": "phrase-limit-64",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.phraseReadings",
+   "behaviour": "64 lists are refused",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:73, lean/VE/Acts/ReadingsExamples.lean:74"
+  },
+  {
+   "id": "phrase-no-dedup",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.phraseReadings",
+   "behaviour": "equal lists are listed twice",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Readings.lean:103"
+  },
+  {
+   "id": "phrase-limit-passed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.phraseReadings",
+   "behaviour": "the readings' limit outcome is listed as no reading",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Readings.lean:84, lean/VE/Acts/Readings.lean:99, lean/VE/Acts/Readings.lean:114"
+  },
+  {
+   "id": "phrase-table-ignored",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.phraseReadings",
+   "behaviour": "the modal is ignored: every meaning reads as its atoms",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Readings.lean:91, lean/VE/Acts/Readings.lean:92"
+  },
+  {
+   "id": "applyRule-own",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "the meaning ignores the kind: every element reads over its own item",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33, lean/VE/Acts/MeaningExamples.lean:35, lean/VE/Acts/MeaningExamples.lean:44, lean/VE/Acts/MeaningExamples.lean:45, lean/VE/Acts/MeaningExamples.lean:48, lean/VE/Acts/MeaningExamples.lean:51, lean/VE/Acts/MeaningExamples.lean:55, lean/VE/Acts/MeaningExamples.lean:63, lean/VE/Acts/MeaningExamples.lean:64, lean/VE/Acts/MeaningExamples.lean:133"
+  }
+ ]
+}
