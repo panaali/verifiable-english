@@ -59,7 +59,7 @@
  "trust_mutants": {
   "evidence": "docs/senses/sn-b6/trust-mutants.json",
   "allow": "docs/senses/sn-b6/trust-mutants-allow.json",
-  "head": "1a68858a4dc72a0b120278bad1680fceb267568b",
+  "head": "388f6b4a456e8d930de7c78d6908944b4e1f2798",
   "counts": {
    "KILLED": 213,
    "SURVIVOR": 0,
