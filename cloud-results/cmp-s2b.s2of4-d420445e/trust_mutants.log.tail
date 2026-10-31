@@ -1,0 +1,2 @@
+trust_mutants: 11 definitions, 248 mutants (62 to run), 4 jobs, base 9e33c741bef4
+SURVIVOR lean/VE/Readings/Choice.lean:477 VE.Readings.limOwners (G[V], trusted) list-first: let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rig... -> ((let X := (sup D).1 VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.R... (the proofs it breaks: lean/VE/Readings/SupSlot.lean:176)
