@@ -290,6 +290,8 @@ listed in `VE/Route/frozen-sources.sha256`).
 | `SupWireSound.lean` | `readings_wire_all_sound`, `readings_wire_model_sound`, `readings_wire_satisfiable`, `readings_wire_assumed_taken`, `readings_wire_choice_wellFormed` |
 | `SupRun.lean` | the case kinds of section 3 (`Run.lean` dispatches to them) |
 | `Examples.lean` | `#guard`s and theorems on M1, M16, M19 (KH, KB), M20; `MU` (two narrowings keeping no choice, review A1) and `MB` (past `maxChoiceChecks`) |
+| `BarQuiet.lean` | S2b (cmp-s2b): `quiet_holds` (`Choice_D` gives every quiescence premise of a key the fixed units alone do not generate), `bar_dead` (F21's fixed bar node is dead at well-sorted tuples), `adjoin_baseAdmissibleR` (the lifting lemma on a rights document) |
+| `RightsExamples.lean` | S2b's fixtures: F21 (`f21_bar_dead`; `f21_needs_typed`, the counterexample behind `superpose_faithful`'s `ht`), F7, F10 and the copy rules as `#guard`s |
 
 ## The statements of 8.4 and 8.5
 
@@ -678,3 +680,18 @@ line. `ResponseShape.Encoders.ReadingsRoute` proves that each superposed answer 
 * `readings_wire_sup_dead`: a checked dead-reading certificate rules that candidate out of every compatible choice.
 * `readings_wire_sup_nd_all` and `readings_wire_sup_nd_counter`: the same certificate and countermodel guarantees
   hold under the unspecified completion, with `Fill_T` carried through the superposed slot.
+
+## S2b, first part (cmp-s2b)
+
+`sup D` on a rights document (composition-PLAN.md 2.3, 2.6; composition-s2.md 12): `gateContent` gates a candidate
+right's lines (`gateLine`, both units of a power; `gateNorm` is the one gated rule) and a candidate `right_lines`
+unit's lines, and qualifies a candidate limitation, whose scope names every copy of a set-declared right
+(`copyScope`, `rightCopies`, also on a fixed limitation); `copyContent` maps a fixed right's line rules' `over` lists
+(`copyLine`). Owners (edit 1): `limOwners` for `lim` and `cond` (the limitation's origin with each in-scope line's,
+`jointOwner`, none for two candidates of one set) and `aimedOwners` for `aimed` (the liberty instances on `m`; the
+fixed bar's node is correlate's, unchanged); `qualifyKey` qualifies a `lim` or `cond` key's limitation name (`qLim`).
+`superpose_faithful` carries `ht : VE.TupleTyped S r.sorts vs` (DRI decision reviews/dri-decisions-20261031-cmp-s2b.md
+item 1; `RightsExamples.f21_needs_typed`). Not yet: the rights case of `superpose_faithful` and the corollaries
+without `hch`, a fixed `right_lines` unit on a set-declared right copied per candidate (F8), candidate fan-out
+lines' outweighs owners, and the switch of the rights chain to the superposed route (cmp-s2bb). The rights chain
+still takes the enumerated route (`routeOf`, `notSuperposable`), so no answer changes.
