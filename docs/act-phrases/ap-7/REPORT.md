@@ -62,6 +62,8 @@ is refused (clause word *is*), so neither tests its cell.
 - `uv run python tools/trust_map.py --check`: K +0, S +0, D +0, G +0, trusted +0, PASS. No allowance, no FOLLOW-UPS row.
 - `tools/regen_generated.py --write` once (the new runner's `git show` enters `tests/history-dependent.json`; the
   codemap gains this directory and ap-4a's missing ReadingsExamples line); committed.
+- Selected tests on the finished code (`mac-pytest.sh --select -- --base <merge-base> --run`, run
+  ap-7-870b9fe5-t458301 on GitHub Actions): 4 shards, 183 units passed, exit 0. The full gate is the chain's.
 - No in-flight branch touches `docs/act-phrases/ap-7/` or `tests/test_ap7.py` (`git diff --name-only main...<b>`).
 
 Spec re-read: the three bars and the zero-reading rule against the plan at `80f056f9e`, lines
