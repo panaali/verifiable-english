@@ -1,0 +1,14 @@
+trust_mutants: 2 definitions, 10 mutants (10 to run), 4 jobs, base 5e9de36f84f7
+UNKNOWN lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-empty: cases -> [] (lean/VE/Readings/ComponentsWire.lean:603: Invalid projection: Type of)
+UNKNOWN lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-empty: parts -> [] (lean/VE/Readings/Run.lean:654: Invalid projection: Type of)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-first: parts -> (parts.take 1)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-first: cases -> (cases.take 1)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-drop-last: parts -> (parts.dropLast)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-drop-last: cases -> (cases.dropLast)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-last: cases -> (cases.reverse.take 1)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-last: parts -> (parts.reverse.take 1)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-drop-first: cases -> (cases.drop 1)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-drop-first: parts -> (parts.drop 1)
+trust_mutants: 0 KILLED, 8 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 83 s
+trust_mutants: G[V], trusted: 8 SURVIVOR, 2 UNKNOWN
+trust_mutants: steps: wall plan 10 s, scratch 2.8 s, control_build 0.2 s, probe_install 1.4 s, control_probes 33.7 s, mutants 32.4 s, cleanup 2.2 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 35.3 s (2), mutant_builds 68.6 s (10), mutant_checks 50.7 s (8)
