@@ -18,11 +18,12 @@ import subprocess
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / 'docs/spec/senses.md'
 LEAN = ROOT / 'lean/VE/Senses'
-AXIOMS = ROOT / 'lean/axioms.txt'
+AXIOMS = inventory_path('lean/axioms.txt')
 STANDARD = {'propext', 'Classical.choice', 'Quot.sound'}
 DEFERRED = {'glossed_negative', 'lines_read', 'project_total', 'senseMap_ids'}
 

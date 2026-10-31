@@ -16,13 +16,14 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tools import trust_map
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="module")
 def live():
-    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", ROOT / "lean/statements.txt")
+    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", inventory_path("lean/statements.txt"))
     assert problems == []
     baseline, bad = trust_map.parse_baseline(json.loads((ROOT / "docs/trust-baseline.json").read_text()))
     assert bad == []
