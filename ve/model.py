@@ -6,6 +6,9 @@ from types import MappingProxyType
 from typing import Any, Mapping
 from itertools import product
 
+from .backends.validation import validated_model
+from .background import _validate_background_python
+from .definitions import compile_definitions
 from .assurance import semantic_entry
 from .errors import InvalidModel, ResourceLimit
 from .limits import MAX_TUPLES
@@ -63,7 +66,6 @@ class FiniteModel:
                 if _claimed["model_id"] != model_id:
                     raise InvalidModel("model identity does not match its contents")
             return replace(built, model_id=model_id)
-        from .backends.validation import validated_model
         return validated_model(env, wire, python, claimed=_claimed)
 
     @classmethod
@@ -92,7 +94,6 @@ class FiniteModel:
         tuple_count = sum(map(len, relations.values()))
 
         if defined_names:
-            from .definitions import compile_definitions
             from .evaluate import _Evaluator, _Exhausted
             from .limits import MAX_EVALUATIONS
             work_remaining = MAX_EVALUATIONS
@@ -117,7 +118,6 @@ class FiniteModel:
         model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations),
                     env.environment_id, "", tuple(sorted(defined_names)))
         if _defer_model_id:
-            from .background import _validate_background_python
             _validate_background_python(env, model)
         return model
 
