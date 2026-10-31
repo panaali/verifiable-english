@@ -1,0 +1,17 @@
+trust_mutants: 11 definitions, 248 mutants (83 to run), 4 jobs, base 9e33c741bef4
+SURVIVOR lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) any-all: any -> all
+UNKNOWN lean/VE/Readings/Choice.lean:424 VE.Readings.copyLine (G[V], trusted) list-empty: S.norm.map (copyOver D) -> [] (lean/VE/Readings/Choice.lean:424: Type mismatch)
+UNKNOWN lean/VE/Readings/Choice.lean:439 VE.Readings.gateNorm (G[V], trusted) list-empty: N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + ... -> [] (lean/VE/Readings/Choice.lean:439: Type mismatch)
+SURVIVOR lean/VE/Readings/Choice.lean:440 VE.Readings.gateNorm (G[V], trusted) lit-plus: 1 -> 2 (the proofs it breaks: lean/VE/Readings/BaseDown.lean:232, lean/VE/Readings/UpPremises.lean:83, le...)
+SURVIVOR lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-empty: ls -> [] (the proofs it breaks: lean/VE/Readings/Shape.lean:46, lean/VE/Readings/SupSlot.lean:58)
+SURVIVOR lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-empty: ls -> [] (the proofs it breaks: lean/VE/Readings/Shape.lean:48)
+UNKNOWN lean/VE/Readings/Choice.lean:443 VE.Readings.gateLine (G[V], trusted) list-empty: S.liberty.map (gateNorm D m i) -> [] (lean/VE/Readings/Choice.lean:443: Type mismatch)
+UNKNOWN lean/VE/Readings/Choice.lean:634 VE.Readings.qLim (G[V], trusted) list-empty: (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)) -> [] (lean/VE/Readings/Choice.lean:635: Invalid field notation: Type of)
+UNKNOWN lean/VE/Readings/Choice.lean:444 VE.Readings.gateLine (G[V], trusted) list-empty: S.recognition -> [] (lean/VE/Readings/Choice.lean:444: Type mismatch)
+UNKNOWN lean/VE/Readings/Choice.lean:425 VE.Readings.copyLine (G[V], trusted) list-empty: S.recognition.map (copyOver D) -> [] (lean/VE/Readings/Choice.lean:425: Type mismatch)
+UNKNOWN lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-empty: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> [] (lean/VE/Readings/RightsExamples.lean:36: Expression (VE.Readings.keyLabel, which it reads, is not...)
+SURVIVOR lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-first: R.lines -> (R.lines.take 1) (the proofs it breaks: lean/VE/Readings/Shape.lean:48)
+SURVIVOR lean/VE/Readings/Choice.lean:488 VE.Readings.owners (G[V], trusted) list-first: match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .ou... -> ((match k with | .excepted r _ => [(origin D r).toList] | .off r _ _ => [(origin D r).toList] | .... (the proofs it breaks: lean/VE/Readings/SupSlot.lean:176, lean/VE/Readings/UpSlot.lean:280, lean/V...)
+SURVIVOR lean/VE/Readings/Choice.lean:632 VE.Readings.qLim (G[V], trusted) list-drop-last: (declaredBy R) -> ((declaredBy R).dropLast)
+SURVIVOR lean/VE/Readings/Choice.lean:433 VE.Readings.copyContent (G[V], trusted) list-first: ls -> (ls.take 1) (the proofs it breaks: lean/VE/Readings/Shape.lean:46, lean/VE/Readings/SupSlot.lean:58)
+SURVIVOR lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-first: ls -> (ls.take 1) (the proofs it breaks: lean/VE/Readings/Shape.lean:48)
