@@ -91,6 +91,17 @@ theorem phraseReadings_exact (V : Vocab) (h : framesOk V = true) {op : Op} {N b 
       exact ⟨fun ⟨A, hA, hR⟩ => ⟨A, (readings_exact V h hr A).mp hA, hR⟩,
         fun ⟨A, hA, hR⟩ => ⟨A, (readings_exact V h hr A).mpr hA, hR⟩⟩
 
+/-- Equal lists once (1.6): the listed readings are distinct. -/
+theorem phraseReadings_nodup {V : Vocab} {op : Op} {N b : Nat} {ts : Array Tok} {Rs : List (List Simple)}
+    (hp : phraseReadings V op N b ts = .ok Rs) : Rs.Nodup := by
+  unfold phraseReadings at hp
+  split at hp
+  · cases hp
+  · dsimp only at hp
+    split at hp
+    · cases hp
+    · cases hp; exact nodup_firsts _
+
 /-- The table gives a meaning at most two readings, so the lists `phraseReadings` compares are at most 128. -/
 theorem table_length (op : Op) (A : Act) : (table op A).length ≤ 2 := by
   cases op <;> cases A <;> simp only [table, freeTable] <;> (try split) <;> simp

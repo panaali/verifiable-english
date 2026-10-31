@@ -84,5 +84,11 @@ def edgeSides (V : Vocab) : List (NT × Attach) :=
   (.F 0 .RE, .all), (.F 0 .REt, .last), (.F 0 .REt, .all), (.F 0 .PX, .last), (.F 0 .PX, .all), (.F 1 .TE, .last),
   (.F 1 .TE, .all), (.F 1 .RE, .last), (.F 1 .RE, .all), (.F 1 .REt, .last), (.F 1 .REt, .all), (.F 1 .PX, .last),
   (.F 1 .PX, .all)]
+-- `edgeLhs` both ways: each attachment where 2.4 puts it, and none at a middle item's or an own element's left side
+#guard edgeLhs .E1X .first && edgeLhs .E1X .all && !edgeLhs .E1X .last &&
+  [NT.F 0 .TE, .F 0 .RE, .F 1 .REt, .F 1 .PX].all (fun x => edgeLhs x .last && edgeLhs x .all && !edgeLhs x .first)
+#guard [NT.L false .bare, .L true .own, .F1 false .bare, .ADVO, .F 0 .EE, .F 0 .MEL, .F 0 (.AR "in")].all
+  (fun x => [Attach.first, .last, .all].all (!edgeLhs x ·))
+#guard attachOf .shape == none && [Attach.first, .last, .all].all (fun a => attachOf (.edge a) == some a)
 
 end VE.Acts.ReadingsExamples

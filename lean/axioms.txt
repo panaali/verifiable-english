@@ -140,6 +140,7 @@
 'VE.Acts.paraphrases_nodup' depends on axioms: [propext]
 'VE.Acts.phraseReadings_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.phraseReadings_length' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.phraseReadings_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_many' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_none' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
