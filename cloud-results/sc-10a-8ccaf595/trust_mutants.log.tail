@@ -1,0 +1,24 @@
+trust_mutants: 2 definitions, 31 mutants (31 to run), 4 jobs, base 7a8a0f74344d
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-empty: A -> []
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) append-left: ++ supX N -> 
+UNKNOWN lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) append-right: A ++ ->  (lean/VE/Readings/SoftSup.lean:31: Application type mismatch: The argument)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-empty: supX N -> []
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) append-right: (sup N.D).2 ++ -> 
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-empty: (sup N.D).2 -> []
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-first: A -> (A.take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-first: supX N -> ((supX N).take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-last: A -> (A.dropLast)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-last: supX N -> ((supX N).dropLast)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-last: (sup N.D).2 -> (((sup N.D).2).dropLast)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-first: (sup N.D).2 -> (((sup N.D).2).take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-first: Γ -> (Γ.take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-last: A -> (A.reverse.take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-first: A -> (A.drop 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-first: supX N -> ((supX N).drop 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-last: supX N -> ((supX N).reverse.take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-last: (sup N.D).2 -> (((sup N.D).2).reverse.take 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-drop-first: (sup N.D).2 -> (((sup N.D).2).drop 1)
+SURVIVOR lean/VE/Readings/SoftSup.lean:31 VE.Readings.supCertificateCheckSD (G[V], trusted) list-last: Γ -> (Γ.reverse.take 1)
+trust_mutants: 11 KILLED, 19 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 391 s
+trust_mutants: G[V], trusted: 11 KILLED, 19 SURVIVOR, 1 UNKNOWN
+trust_mutants: steps: wall plan 8 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 7.1 s, mutants 368 s, cleanup 4.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 7 s (1), mutant_builds 894.4 s (31), mutant_checks 195.3 s (33), stage_controls 99.9 s (3), mutant_probes 240.9 s (11)
