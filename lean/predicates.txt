@@ -577,6 +577,7 @@ module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
 module VE.Scope.Examples
