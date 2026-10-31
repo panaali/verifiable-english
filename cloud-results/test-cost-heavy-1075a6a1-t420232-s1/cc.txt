@@ -1,0 +1,6 @@
+job=test-cost-heavy-1075a6a1-t420232-s1 job_commit=d30823bd19fd0787451524531969e328528bc1a0 session=cse_012rcAu4jN2yhhPneNCFixq9 nproc=4
+mem_total_mb=16091 mem_avail_mb=15589
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+job_rc=0 job_s=962
