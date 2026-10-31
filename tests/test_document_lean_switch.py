@@ -522,8 +522,9 @@ def test_a_narrowed_document_is_decided_by_lean(tmp_path, no_python_loader):
 
 def _structural_mutants(node, at=()):
     """Every one-fault structural mutant of a genuine answer (build checklist line 4): each member dropped, an
-    extra member added to each object, each element of a list dropped or duplicated, and each value replaced by
-    one of another JSON type (a boolean for a count included). Yields (path, mutate) with `mutate(copy)`."""
+    extra member added to each object, each element of a list dropped or duplicated, each non-empty string, list
+    or object emptied, and each value replaced by one of another JSON type (a boolean for a count included).
+    Yields (path, mutate) with `mutate(copy)`."""
     def at_path(root, path):
         for key in path:
             root = root[key]
@@ -538,6 +539,9 @@ def _structural_mutants(node, at=()):
             yield at + (i, "x2"), lambda r, i=i: at_path(r, at).insert(i, deepcopy(at_path(r, at)[i]))
     children = node.items() if type(node) is dict else enumerate(node) if type(node) is list else ()
     for key, child in children:
+        if type(child) in (str, list, dict) and child:
+            yield at + (key, "=empty"), lambda r, key=key, empty=type(child)(): \
+                at_path(r, at).__setitem__(key, deepcopy(empty))
         for value in RETYPES:
             if type(value) is not type(child):
                 yield at + (key, f"={value!r}"), lambda r, key=key, value=value: \
@@ -598,6 +602,38 @@ def test_alternatives_coverage_is_bound_to_units_and_counts(tmp_path, no_python_
             lambda r: r["coverage"]["alternatives"]["alternatives_declared"][0].update(support="none")):
         mutant = deepcopy(row)
         change(mutant)
+        monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
+        with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
+            D.load_document(path)
+
+
+@pytest.mark.parametrize("decided_by", ["case annotator", "the panel", None])
+def test_alternatives_cells_name_the_requests_constants_and_deciders(tmp_path, no_python_loader, monkeypatch,
+                                                                     decided_by):
+    """sc-1c review F1 sweep (emptied mutants): a cell's action, chooser and harm are constants of the request and its
+    decider the block's `decided_by` (`unstated` when absent) or, assumed, its `complete_by`; an emptied or foreign
+    name is refused. A genuine answer is bound with `decided_by` as `complete_by`, another, or absent."""
+    doc = deepcopy(GENERATED["alternatives-cells"])
+    block = doc["front"]["environment"]["alternatives"]
+    block.pop("decided_by")
+    if decided_by is not None:
+        block["decided_by"] = decided_by
+    path = write(tmp_path, dw.text_of(doc))
+    row = D._lean_answer(path.read_bytes(), False)
+    cells = row["coverage"]["alternatives"]
+    assert {c["decider"] for c in cells["counterfactual_leaves"]} == {decided_by or "unstated"}
+    assert D.load_document(path)["lean"]["coverage"] == row["coverage"]
+    forged = [(line, 0, key, value) for line in ("alternatives_declared", "counterfactual_leaves", "assumed_harm_free")
+              for key in ("action", "chooser", "harm") if key in cells[line][0] for value in ("", "absent")]
+    forged += [(line, 0, "decider", value) for line in ("counterfactual_leaves", "assumed_harm_free")
+               for value in {"", "unstated", "case annotator", "the panel"} - {cells[line][0]["decider"]}]
+    forged += [("table_complete", "decider", value) for value in ("", "the panel")]
+    for *at, key, value in forged:
+        mutant = deepcopy(row)
+        node = mutant["coverage"]["alternatives"]
+        for step in at:
+            node = node[step]
+        node[key] = value
         monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
         with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
             D.load_document(path)
