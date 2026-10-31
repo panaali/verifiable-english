@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 4/4: 32 units; commands: []
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded proc-macro2 v1.0.107
+  Downloaded crypto-common v0.1.7
+  Downloaded num-traits v0.2.19
+  Downloaded autocfg v1.5.1
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+... (60 lines cut; full output in shard-full.txt)
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.50s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 32 units with 4 jobs in /tmp/ve-select-run-exzrrwms
+  tests/test_wire_contract_s5_lean.py: exit 2 in 0.7 s, 231 functions
+  tests/test_repo_map.py: exit 1 in 56.5 s, 456 functions
+  tests/test_readings_defaults_rd6b_report.py: exit 1 in 2.7 s, 260 functions
+  tests/test_wire_contract_s5_admission.py: exit 2 in 0.9 s, 443 functions
+  tests/test_question_answering_measure_report.py: exit 1 in 1.0 s, 322 functions
+stopping after 7 failed tests (--maxfail 5)
+FAILED tests/test_repo_map.py (exit 1): tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer; log /tmp/ve-select-run-exzrrwms/tests__test_repo_map.py.log
+    def test_a_map_from_before_the_relay_changed_gives_the_static_answer(built, cache_env, tmp_path, monkeypatch):
+        """Review F1 on the real tree: the map was recorded at an ancestor commit, and `english.question`'s relay
+        file changed after it (`read_question` was added after c24aeab2). The one test file the map recorded only
+        imported that file, so the map named no test for the relay function; its run may have changed, so the
+        static graph answers for it and for every other test file, not the map's empty list."""
+        static = next(r for r in built[0] if r.mode == "english.question")
+        relay = "ve/backends/english_lean.py"
+        assert static.relays.get(relay) and static.tests, (static.relays, static.tests)
+        # The commit the review case names (it added `read_question`), fixed: the file's latest commit moves with
+        # every branch that edits it, and an edit with no import-time effect (lean-first batch 18's) leaves a map
+        # that only imported the file valid.
+        # Resolve the commit with this tree in HEAD's history before asking for its parent: `--all` also lists other
+        # lineages' copies of the commit (the GitHub export's), and which one came first was a tie in log order.
+        last_tree = "f7a4922cef63100f62b77313705fda7d6d1b575e"
+        history = subprocess.run(["git", "log", "HEAD", "--format=%H", "--", relay], cwd=ROOT,
+                                 capture_output=True, text=True, check=True).stdout.splitlines()
+>       last = next(commit for commit in history if subprocess.run(
+            ["git", "rev-parse", f"{commit}^{{tree}}"], cwd=ROOT, capture_output=True, text=True,
+            check=True).stdout.strip() == last_tree)
+E       StopIteration
+
+tests/test_repo_map.py:319: StopIteration
+=========================== short test summary info ============================
+FAILED tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer
+1 failed, 32 passed in 54.59s
+FAILED tests/test_wire_contract_s5_lean.py (exit 2): tests/test_wire_contract_s5_lean.py; log /tmp/ve-select-run-exzrrwms/tests__test_wire_contract_s5_lean.py.log
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-rg5j2vcw)
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_wire_contract_s5_lean.py _____________
+tests/test_wire_contract_s5_lean.py:31: in <module>
+    from conformance.frozen_norm_defaults import UnspecifiedDocument
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '2b9dda5603d4263be4c5eba7feac07714a5ab321:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: path 've/norm_defaults.py' exists on disk, but not in '2b9dda5603d4263be4c5eba7feac07714a5ab321'
+=========================== short test summary info ============================
+ERROR tests/test_wire_contract_s5_lean.py - subprocess.CalledProcessError: Co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.19s
+FAILED tests/test_readings_defaults_rd6b_report.py (exit 1): tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature; log /tmp/ve-select-run-exzrrwms/tests__test_readings_defaults_rd6b_report.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', 'fa9d91739f275e25e145a51e3d5c7a2c6959ee21:docs/trust-baseline.json']' returned non-zero exit status 128.
+
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 'docs/trust-baseline.json' exists on disk, but not in 'fa9d91739f275e25e145a51e3d5c7a2c6959ee21'
+=========================== short test summary info ============================
+FAILED tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature
+1 failed, 6 passed in 1.83s
+FAILED tests/test_question_answering_measure_report.py (exit 1): tests/test_question_answering_measure_report.py::test_q2_f11_conflict_only_evidence_is_checked_by_lean, tests/test_question_answering_measure_report.py::test_q2_f11_generated_scope_stops_at_the_requested_tree, tests/test_question_answering_measure_report.py::test_the_budgets_are_met_and_the_corpus_agreement_is_recorded; log /tmp/ve-select-run-exzrrwms/tests__test_question_answering_measure_report.py.log
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '2b9dda5603d4263be4c5eba7feac07714a5ab321:ve/norm_defaults.py']' returned non-zero exit status 128.
+
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 've/norm_defaults.py' exists on disk, but not in '2b9dda5603d4263be4c5eba7feac07714a5ab321'
+=========================== short test summary info ============================
+FAILED tests/test_question_answering_measure_report.py::test_the_budgets_are_met_and_the_corpus_agreement_is_recorded
+FAILED tests/test_question_answering_measure_report.py::test_q2_f11_conflict_only_evidence_is_checked_by_lean
+FAILED tests/test_question_answering_measure_report.py::test_q2_f11_generated_scope_stops_at_the_requested_tree
+3 failed, 10 passed in 0.46s
+FAILED tests/test_wire_contract_s5_admission.py (exit 2): tests/test_wire_contract_s5_admission.py; log /tmp/ve-select-run-exzrrwms/tests__test_wire_contract_s5_admission.py.log
+    from tests.test_wire_contract_s5_lean import document, s1, s16
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_wire_contract_s5_lean.py:31: in <module>
+    from conformance.frozen_norm_defaults import UnspecifiedDocument
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+/root/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '2b9dda5603d4263be4c5eba7feac07714a5ab321:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: path 've/norm_defaults.py' exists on disk, but not in '2b9dda5603d4263be4c5eba7feac07714a5ab321'
+=========================== short test summary info ============================
+ERROR tests/test_wire_contract_s5_admission.py - subprocess.CalledProcessErro...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.39s
+recorded 25 units for tree 0ec3f8e271; 7 others left to the static graph until they run; 5 failed
+STOPPED EARLY (--maxfail 5): 7 selected units did not run: tests/test_english_evidence.py, tests/test_consolidation_tools.py, tests/test_lean_dump_cache.py, tests/test_trust_budget.py, tests/test_question_reverse.py, tests/test_select_defer.py, tests/test_surface_registry.py
+SHARD 4/4: exit 1 in 187.4 s; 32 units, 20 passed
