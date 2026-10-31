@@ -1566,6 +1566,13 @@
    "reason": "qt-a3d review F1, F2, F4: VE/Cardinality/Wire.lean +30 D[V] (encode, encBody, encOperand, encPrinted: formula encoders filed D[I], qt-a3a/b's, reclassified as the answers' formulas), VE/Cardinality/Run.lean +14 (statementJson, claimJson, reportJson D[I] to D[V]; runCase's report_id), VE/Cardinality/Document.lean +24 G[V] (CNode, Entry, Graph G[I] to G[V]; Entries); K +0, S +0 over the qt-a3d allowance; R16 ties pass in FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-30",
    "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+  },
+  {
+   "class": "V",
+   "lines": 61,
+   "reason": "ap-1bf: V +61 (VE/WireContract/Hooks/Acts.lean +57, VE/WireContract/Diagnose.lean +2, VE/WireContract/Tables/Acts.lean +2), K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bf, 2026-10-18",
+   "commit": "11de39bd88e07d7d1cf75e16ae956e3179b324c3"
   }
  ]
 }
