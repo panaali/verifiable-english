@@ -97,3 +97,14 @@ def test_saved_records_reproduce_the_gate_line():
     for record in runner.base.existing().values():
         assert set(record["cli"]["modelUsage"]) == {runner.base.MODEL}
         assert record["cli"]["usage"]["fallback_credit"] is None
+
+
+def test_commit_check_accepts_the_committed_frame_and_refuses_an_edit(tmp_path, monkeypatch):
+    for name in runner.FROZEN:
+        (tmp_path / name).parent.mkdir(exist_ok=True)
+        (tmp_path / name).write_bytes((DOCS / name).read_bytes())
+    monkeypatch.setattr(runner, "HERE", tmp_path / "jt-e1s")
+    runner.committed()
+    (tmp_path / "jt-e1r/runner.py").write_text("edited\n")
+    with pytest.raises(RuntimeError, match="commit jt-e1r/runner.py"):
+        runner.committed()
