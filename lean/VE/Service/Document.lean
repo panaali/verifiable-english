@@ -1718,6 +1718,14 @@ def usageJson (m : List (String × List String) × List String) : Json :=
       Json.mkObj [("term", .str t), ("units", Json.arr (us.map Json.str).toArray)]).toArray),
     ("unused", Json.arr (m.2.map Json.str).toArray)]
 
+/-- Every predicate of the base environment `baseEnv E defs` (W3-defined names excluded, regulated ones included), in
+the vocabulary's order, with its words (`Judgments.predicateWords`: its name, then its `verbalisation`). -/
+def Env.basePredicates (E : Env) : List (String × List String) :=
+  let defs := VE.Definitions.names E.rv.definitions
+  let entries := (E.json.getObjValD "vocabulary").getObjValD "predicates"
+  (E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map fun (p, _) =>
+    (p, VE.Judgments.predicateWords p ((entries.getObjValD p).getObjValD "verbalisation").getStr?.toOption)
+
 /-! ## The case -/
 
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
@@ -1731,6 +1739,9 @@ structure Checked where
   block : Option BlockCoverage
   /-- Under `judgments@0`, the usage map (spec 8.3). -/
   judgments : Option (List (String × List String) × List String) := none
+  /-- Under `judgments@0`, the base predicates whose words match english-lean's catalogue and that are not bound
+  (spec 7 and 8.4): "these words match the catalogue; review them". -/
+  undeclared : List String := []
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
@@ -1830,14 +1841,16 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if withGraph then admitGraph E front graph units all active openNames narrowings
   pure ⟨← documentId doc, Loader.sourceIdOf E.version doc.source,
     doc.source, units, ← units.mapM rowOf, front, block,
-    if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none⟩
+    if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
+    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else []⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
     match c.judgments with
-    | some m => [("judgments", usageJson m)]
+    | some m => [("judgments", usageJson m),
+        ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
     | none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch

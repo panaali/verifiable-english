@@ -359,6 +359,7 @@ module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
 module VE.Judgments.Status
+module VE.Judgments.Undeclared
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse

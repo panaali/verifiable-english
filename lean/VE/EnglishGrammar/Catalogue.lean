@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Token
 import VE.EnglishGrammar.Syntax
+import VE.Judgments.Undeclared
 
 /-! The types of the nonterminal catalogue of the base profile and the names of the fixed actions
 (docs/spec/english-lean-s2.md 2.4, 2.5 and 2.7).
@@ -14,6 +15,9 @@ S3 (docs/spec/english-lean-s3.md 2.4) appends fourteen fixed nonterminals, 37 to
 `order@0` and the guard phrases of `alternatives@0`; per environment, one property nonterminal per value sort
 follows from 51 (`ty` in `Rules.lean`). `Fixed/Staged.lean` generates the fourteen names and the rank
 certificate of every profile list that names a staged profile (spec D3).
+
+The evaluative words of judgment-terms (`evaluativeRows`, docs/spec/judgment-terms-PLAN.md 2.4, O15) are a row list
+of this catalogue too: the one list `judgments@0`'s report `undeclared_evaluative` reads (spec 7).
 -/
 
 namespace VE.EnglishGrammar
@@ -126,5 +130,15 @@ structure FixedRow where
   rhs : List (Sym Terminal)
   act : FixedAct
   deriving DecidableEq, Repr
+
+/-- The evaluative words (judgment-terms-PLAN.md 2.4's catalogue row): in translation each is a bound judgment,
+never a definition the checker chooses. Each row keeps the phrases in which its word has another sense, so "due
+date", "due to", "just as", "necessary condition" and "effective date" match no row. A row is one word (spec 7), so
+the phrase "good judgment" is not a row here. -/
+def evaluativeRows : List VE.Judgments.EvaluativeRow :=
+  (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", "genuine",
+    "genuinely", "adequate", "overly"].map fun w => ⟨w, []⟩) ++
+  [⟨"just", [["just", "as"]]⟩, ⟨"effective", [["effective", "date"]]⟩,
+   ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩]
 
 end VE.EnglishGrammar
