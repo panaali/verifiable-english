@@ -13556,11 +13556,18 @@
         "VE.Cardinality.CTerm.eraseBy",
         "VE.Cardinality.CFormula.eraseBy",
         "VE.Cardinality.nonnegOf",
-        "VE.Cardinality.bridgeBy"
+        "VE.Cardinality.bridgeBy",
+        "VE.Cardinality.Body.evalBy",
+        "VE.Cardinality.regionSizes",
+        "VE.Cardinality.sizeIndex",
+        "VE.Cardinality.withSizes"
       ],
       "P": [
         "VE.Cardinality.regionSize",
         "VE.Cardinality.withRegions"
+      ],
+      "G[R]": [
+        "VE.Cardinality.regionCost"
       ]
     },
     "VE/Cardinality/Theorems.lean": {
@@ -15585,7 +15592,8 @@
         },
         "VE.Cardinality.Run.statementJson",
         "VE.Cardinality.Run.claimJson",
-        "VE.Cardinality.Run.reportJson"
+        "VE.Cardinality.Run.reportJson",
+        "VE.Cardinality.Run.sizesJson"
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
@@ -15609,7 +15617,13 @@
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",
-        "VE.Cardinality.Run.runCaseReported"
+        "VE.Cardinality.Run.runCaseReported",
+        {
+          "name": "VE.Cardinality.Run.countermodel",
+          "tied": [
+            "VE.Cardinality.countermodel_sound"
+          ]
+        }
       ],
       "C": [
         "VE.Cardinality.checkDeduction",
@@ -15678,7 +15692,19 @@
         "VE.Cardinality.RunExamples.fa1Report",
         "VE.Cardinality.RunExamples.fa1LeafRows",
         "VE.Cardinality.RunExamples.withLeaves",
-        "VE.Cardinality.RunExamples.closes"
+        "VE.Cardinality.RunExamples.closes",
+        "VE.Cardinality.RunExamples.model",
+        "VE.Cardinality.RunExamples.fa1bModel",
+        "VE.Cardinality.RunExamples.refute",
+        "VE.Cardinality.RunExamples.sizes",
+        "VE.Cardinality.RunExamples.refusal",
+        "VE.Cardinality.RunExamples.sized",
+        "VE.Cardinality.RunExamples.chainSorts",
+        "VE.Cardinality.RunExamples.chainPreds",
+        "VE.Cardinality.RunExamples.chainEnv",
+        "VE.Cardinality.RunExamples.chainPremise",
+        "VE.Cardinality.RunExamples.chainModel",
+        "VE.Cardinality.RunExamples.chain"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -15902,7 +15928,9 @@
         "ResponseShape.Schemas.Cardinality.statement",
         "ResponseShape.Schemas.Cardinality.envIds",
         "ResponseShape.Schemas.Cardinality.claim",
-        "ResponseShape.Schemas.Cardinality.document"
+        "ResponseShape.Schemas.Cardinality.document",
+        "ResponseShape.Schemas.Cardinality.sizes",
+        "ResponseShape.Schemas.Cardinality.countermodel"
       ]
     },
     "ResponseShape/Encoders/Cardinality.lean": {

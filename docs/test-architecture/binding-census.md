@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 257 |
+| leaves:bound | 258 |
 | leaves:closed domain | 286 |
-| leaves:none | 1423 |
+| leaves:none | 1425 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1022 |
-| today:shape | 543 |
+| today:not probed | 1024 |
+| today:shape | 544 |
 | today:unbound | 137 |
-| answers | 574 |
+| answers | 575 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3412,43 +3412,46 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 ## cardinality
 
-13 recorded answers.
+14 recorded answers.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
-| `/conclusion/meaning_id` | string | none |  | pattern | 5 | not probed |
-| `/environment_id` | string | none |  | pattern | 5 | not probed |
+| `/conclusion/meaning_id` | string | none |  | pattern | 6 | not probed |
+| `/environment_id` | string | none |  | pattern | 6 | not probed |
 | `/erased/conclusion/core_meaning_id` | string | none |  | pattern | 3 | not probed |
 | `/erased/conclusion/meaning_id` | string | none |  | pattern | 3 | not probed |
 | `/erased/premises/*/core_meaning_id` | string | none |  | pattern | 28 | not probed |
 | `/erased/premises/*/meaning_id` | string | none |  | pattern | 28 | not probed |
 | `/error` | string | none |  | minLength | 8 | not probed |
-| `/id` | any | bound | x-echo |  | 9 | shape |
-| `/id` | string | bound | x-equals |  | 9 | shape |
-| `/premises/*/meaning_id` | string | none |  | pattern | 18 | not probed |
-| `/regions/constants/*/bits` | string | none |  | pattern | 12 | not probed |
-| `/regions/constants/*/constant` | string | none |  | pattern | 12 | not probed |
-| `/regions/constants/*/sort` | string | bound | x-references |  | 12 | shape |
-| `/regions/predicates/@key` | key | none |  |  | 3 | not probed |
-| `/regions/predicates/{}/*` | string | none |  |  | 6 | not probed |
+| `/id` | any | bound | x-echo |  | 10 | shape |
+| `/id` | string | bound | x-equals |  | 10 | shape |
+| `/premises/*/meaning_id` | string | none |  | pattern | 21 | not probed |
+| `/regions/constants/*/bits` | string | none |  | pattern | 16 | not probed |
+| `/regions/constants/*/constant` | string | none |  | pattern | 16 | not probed |
+| `/regions/constants/*/sort` | string | bound | x-references |  | 16 | shape |
+| `/regions/constants/*/sort` | string | bound | x-references |  | 16 | shape |
+| `/regions/predicates/@key` | key | none |  |  | 4 | not probed |
+| `/regions/predicates/{}/*` | string | none |  |  | 8 | not probed |
 | `/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/report/leaves/*/name` | string | bound | x-references |  | 0 | shape |
 | `/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/report/root/name` | string | bound | x-equals |  | 0 | shape |
 | `/report_id` | string | none |  | pattern | 0 | not probed |
-| `/status` | string | closed domain | const |  | 13 | shape |
-| `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
-| `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
+| `/sizes/*/constant` | string | none |  | pattern | 4 | not probed |
+| `/sizes/*/size` | integer | none |  | minimum | 4 | not probed |
+| `/status` | string | closed domain | const |  | 14 | shape |
+| `/w6_environment_id` | string | none |  | pattern | 6 | not probed |
+| `/w6_target_environment_id` | string | none |  | pattern | 6 | not probed |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
-| `/conclusion/formula` | formula |  | 60 |
+| `/conclusion/formula` | formula |  | 72 |
 | `/erased/conclusion/Q` | q_formula |  | 33 |
 | `/erased/conclusion/core` | core_formula |  | 33 |
 | `/erased/premises/*/Q` | q_formula |  | 472 |
 | `/erased/premises/*/core` | core_formula |  | 371 |
-| `/premises/*/formula` | formula |  | 139 |
+| `/premises/*/formula` | formula |  | 159 |
 | `/report/leaves/*/formula` | formula |  | 0 |
 | `/report/root/formula` | formula |  | 0 |
 
@@ -3459,6 +3462,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/regions/constants` |  |  |  |  |
 | `/regions/predicates/{}` |  |  |  |  |
 | `/report/leaves` |  |  |  |  |
+| `/sizes` |  |  |  |  |
 
 ## Grammars
 

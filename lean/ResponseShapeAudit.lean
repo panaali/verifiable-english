@@ -105,11 +105,13 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Calc.stepJson_fits
 #print axioms ResponseShape.Encoders.Calc.tie_fits
 #print axioms ResponseShape.Encoders.Cardinality.certificate_kind
+#print axioms ResponseShape.Encoders.Cardinality.countermodel_kind
 #print axioms ResponseShape.Encoders.Cardinality.erasedJson_fits
 #print axioms ResponseShape.Encoders.Cardinality.problemJson_fits
 #print axioms ResponseShape.Encoders.Cardinality.regionsJson_fits
 #print axioms ResponseShape.Encoders.Cardinality.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Cardinality.runCase_fits
+#print axioms ResponseShape.Encoders.Cardinality.sizesJson_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits

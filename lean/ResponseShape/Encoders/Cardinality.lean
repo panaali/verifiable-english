@@ -29,7 +29,6 @@ theorem erasedJson_fits (w : CardEnv) (ps : List CFormula) (c : CFormula) :
 theorem sizesJson_fits (sizes : List (String × Nat)) :
     Fits req (skel% "cardinality.json#/$defs/sizes") (Run.sizesJson sizes) := by
   unfold Run.sizesJson
-  simp only [toJson, List.toJson, Array.toJson, List.map_toArray, List.map_map]
   fits
 
 /-- The runner answers a certificate row only for the kind `certificate`. -/
