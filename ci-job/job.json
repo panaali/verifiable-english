@@ -1,0 +1,19 @@
+{
+ "job": "ap-2bb.s2of3-2de6a75d",
+ "head": "875cc162a2da84e2b63d6ad9df327b35b9e5e15c",
+ "argv": [
+  "ap-2bb.s2of3-2de6a75d",
+  "875cc162a2da84e2b63d6ad9df327b35b9e5e15c",
+  "6949746bf2916aad8ccd632a5fa953351701921a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-24dfe81065d2.tar.zst",
+  "af515e9efc1eede152b51b99011e853be60249e593b75bc8ada038f85054aee1",
+  "--jobs",
+  "4",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/act-phrases/ap-2bb/trust-mutants-allow.json",
+  "--shard",
+  "2/3"
+ ]
+}
