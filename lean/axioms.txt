@@ -135,8 +135,12 @@
 'VE.Acts.listing_ok' depends on axioms: [propext, Quot.sound]
 'VE.Acts.mapM_ok' depends on axioms: [propext, Quot.sound]
 'VE.Acts.mem_firsts' depends on axioms: [propext]
+'VE.Acts.modifier_edges' depends on axioms: [propext, Quot.sound]
 'VE.Acts.nodup_firsts' depends on axioms: [propext, Quot.sound]
 'VE.Acts.paraphrases_nodup' depends on axioms: [propext]
+'VE.Acts.phraseReadings_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.phraseReadings_length' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.phraseReadings_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_many' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_none' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readIn_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -159,6 +163,7 @@
 'VE.Acts.table_free_any' does not depend on any axioms
 'VE.Acts.table_free_any_split' does not depend on any axioms
 'VE.Acts.table_free_nor' does not depend on any axioms
+'VE.Acts.table_length' depends on axioms: [propext]
 'VE.Acts.table_mustNot_all' does not depend on any axioms
 'VE.Acts.table_mustNot_all_split' does not depend on any axioms
 'VE.Acts.table_mustNot_any' does not depend on any axioms
