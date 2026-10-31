@@ -247,6 +247,7 @@ import VE.Scope.Examples
 import VE.Scope.Wire
 import VE.Scope.WireExamples
 import VE.Scope.Readings
+import VE.Scope.ReadingsLemmas
 import VE.Scope.ReadingsTheorems
 import VE.Scope.ReadingsExamples
 import VE.Scope.English
