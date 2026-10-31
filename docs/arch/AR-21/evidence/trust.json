@@ -1,0 +1,163 @@
+{
+ "base": "e73ded83483ad43164d596e1fe910e9bc60c2b2e",
+ "head": "703f4156c and later (later commits change only docs/arch/AR-21/)",
+ "tool": "uv run python tools/trust_map.py --files <a path outside the tree> at base (its own worktree) and head; --check at head",
+ "totals": {
+  "before": {
+   "K": 994,
+   "S": 12152,
+   "D": 17147,
+   "G": 33885,
+   "C": 12255,
+   "P": 94817,
+   "T": 27837,
+   "o": 16955,
+   "D[V]": 14885,
+   "G[V]": 29959,
+   "D[I]": 748,
+   "tied": 1084,
+   "unclassified": 0,
+   "trusted": 57050,
+   "lines": 216042
+  },
+  "after": {
+   "K": 994,
+   "S": 12152,
+   "D": 17147,
+   "G": 33885,
+   "C": 12255,
+   "P": 95461,
+   "T": 27909,
+   "o": 16989,
+   "D[V]": 14885,
+   "G[V]": 29959,
+   "D[I]": 748,
+   "tied": 1084,
+   "unclassified": 0,
+   "trusted": 57050,
+   "lines": 216792
+  }
+ },
+ "budget": {
+  "before": {
+   "K": 994,
+   "S": 12152,
+   "V": 43904
+  },
+  "after": {
+   "K": 994,
+   "S": 12152,
+   "V": 43904
+  }
+ },
+ "changed_files": {
+  "VE.lean": {
+   "before": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 0,
+    "C": 0,
+    "P": 0,
+    "T": 0,
+    "o": 262,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 0,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 0,
+    "lines": 262
+   },
+   "after": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 0,
+    "C": 0,
+    "P": 0,
+    "T": 0,
+    "o": 263,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 0,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 0,
+    "lines": 263
+   }
+  },
+  "VE/Audit.lean": {
+   "before": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 0,
+    "C": 0,
+    "P": 0,
+    "T": 7063,
+    "o": 426,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 0,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 0,
+    "lines": 7489
+   },
+   "after": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 0,
+    "C": 0,
+    "P": 0,
+    "T": 7135,
+    "o": 427,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 0,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 0,
+    "lines": 7562
+   }
+  },
+  "VE/Closure/CoreEquiv.lean": {
+   "before": null,
+   "after": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 0,
+    "C": 0,
+    "P": 644,
+    "T": 0,
+    "o": 32,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 0,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 0,
+    "lines": 676
+   }
+  }
+ },
+ "check": "PASS: K, S and untied [V] within e73ded83483a and the allowances introduced since (against e73ded83483a: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0)"
+}
