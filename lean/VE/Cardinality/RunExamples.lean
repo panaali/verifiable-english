@@ -460,8 +460,12 @@ def sized (xs : List (String × Nat)) : Json :=
 -- admission's region table.
 #guard (refute fa1Premises.dropLast fa1bModel).getObjValD "refutes" == .bool true
 #guard sizes (refute fa1Premises.dropLast fa1bModel) == sized [("00", 1), ("01", 1), ("10", 15), ("11", 1)]
-#guard (refute fa1Premises.dropLast fa1bModel).getObjValD "regions" ==
-  (answer (case "admission" env fa1Premises.dropLast fa1Conclusion)).getObjValD "regions"
+-- The whole answer: the verdict, the admission's identities, statements and region table, and the sizes.
+#guard (refute fa1Premises.dropLast fa1bModel).compress ==
+  let a := answer (case "admission" env fa1Premises.dropLast fa1Conclusion)
+  (Json.mkObj ((["id", "status", "environment_id", "w6_environment_id", "w6_target_environment_id", "premises",
+    "conclusion", "regions"].map fun k => (k, a.getObjValD k)) ++ [("refutes", .bool true),
+    ("sizes", sized [("00", 1), ("01", 1), ("10", 15), ("11", 1)])])).compress
 -- A countermodel that does not refute is not accepted: with FA1's exclusion premise the same model breaks a premise,
 -- and FA1's own model (2 stay, 16 increase, none both) satisfies the conclusion.
 #guard (refute fa1Premises fa1bModel).getObjValD "refutes" == .bool false
