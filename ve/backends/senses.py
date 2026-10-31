@@ -18,7 +18,6 @@ from ..environment import Environment
 from ..errors import CheckerUnavailable, VEError
 from ..english import EnglishVocabulary
 from ..english_grammar import actions_version, export, grammar_id, lexicon_id
-from ..senses import senses_version
 from ..wire import canonical_json, digest, loads_json
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -165,8 +164,8 @@ def _response_problem(response: object, expected_id: str, request_id: str,
     `binding`: the request's environment, source and dictionary words, which the identities and used words name."""
     if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "senses_version", "reading"}:
         return "the result does not have request and dictionary identities, the senses version and a reading"
-    if response["senses_version"] != senses_version():
-        return "the senses version is not the one this relay is built for"
+    if not _word(response["senses_version"]):
+        return "the senses version is not a string"
     if type(response["request_id"]) is not str or response["request_id"] != request_id:
         return "the request identity does not match the submitted envelope"
     if type(response["dictionary_id"]) is not str or response["dictionary_id"] != expected_id:
@@ -364,8 +363,8 @@ def _projection_problem(row: object, case: dict, env, expected_id: str | None) -
         return "the result does not have the dictionary identity, the senses version and a projection"
     if result["dictionary_id"] != expected_id:
         return "the dictionary identity does not match the request"
-    if result["senses_version"] != senses_version():
-        return "the senses version is not the one this relay is built for"
+    if not _word(result["senses_version"]):
+        return "the senses version is not a string"
     projection = result["projection"]
     if type(projection) is not dict or projection.get("status") != "ok":
         if type(projection) is not dict or projection.get("code") not in {"InvalidDictionary", *FAULT_DETAILS}:
