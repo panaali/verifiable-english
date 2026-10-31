@@ -1,7 +1,7 @@
 # Composition stage S3: structured right lines (`right-clauses@0`)
 
-> Status: item-1 specification, draft 2 (2026-10-31; draft 2 applies the FIX edits of the statement review, change
-> log), written from [composition-PLAN.md](composition-PLAN.md) draft 2
+> Status: item-1 specification, draft 3 (2026-10-31; drafts 2 and 3 apply the FIX edits of the statement review,
+> which converged on draft 3's edits with "the build may start once these edits are in"; change log), written from [composition-PLAN.md](composition-PLAN.md) draft 2
 > (sections 2.1, 2.3 `Rel_D, gated`, 2.7, 3, S3, 5 F11 to F14, 6, 7 questions 11 and 15, 9) and from the frozen
 > contracts it cites: [composition.md](composition.md) (S0: the stack, the slot, `gate`, labels, `Content`, `dispatch`,
 > the English frames E9 and G8, the report contract), [rights.md](rights.md) (W2 units `right` and `right_lines`, line
@@ -130,13 +130,14 @@ write as content, except that RC1 and RC2 are how a structured line is written a
 | RC1 | `<rights 2.1 line sentence up to and including its act and holder>[, where <relation instance>][, if C[ and <clause>]*][, unless U].` with `C` the line's own guard (omitted when `⊤`, in which case the list begins `if <clause>`) | The line exactly as rights 2.1 reads it, applying only where the relation holds between the two named parties and every listed condition holds. | the plain guard (1.2); `plain_guard` |
 | RC2 | `<relation instance>` := `that <noun of slot a> <phrase of pred> that <noun of slot b>` | The two parties of the line in the relation the predicate declares, in its argument order. The plan's instance: "where that state is the country of that person". | the relation atom `pred(x_a, x_b)` |
 | RC3 | `For every <holder>[ that H] there is at least one <noun of slot o> such that <relation instance>.` | The totality premise: every holder satisfying the holder guard stands in the relation to at least one party of the other slot's sort. VE does not say it is true; it is a proviso (E3). The plan's short form "Every person has at least one country" needs a relational noun no declaration provides, so it is not produced. | `ρ_n`, label `rights:relation:<n>:total`; RC3 is composition.md's `<totality sentence>` in E9 |
-| RC4 | `This line leaves out: "<elided text>"[; "<elided text>"]*.` / `This line leaves out nothing.`; a span whose text contains "may not" or a G6 substring (`ve__`, `rd-`, `soft__`, `rights__`) takes the form `bytes <a> to <b>` in place of its quotation | The quoted source bytes are part of the unit and are not formalised by this line. Nothing is claimed about them. | `elided`; `elided_bytes` (6) |
+| RC4 | `This line leaves out: "<elided text>"[; "<elided text>"]*.` / `This line leaves out nothing.`; a span whose text contains "may not", a double quote (`"`) or a G6 substring (`ve__`, `rd-`, `soft__`, `rights__`) takes the form `bytes [<a>, <b>)` in place of its quotation | The quoted source bytes are part of the unit and are not formalised by this line. Nothing is claimed about them. | `elided`; `elided_bytes` (6) |
 | RC5 | `These two readings differ here: <situation>. Under <assertion reading>, sentence <n> is true there, and so is every other asserted sentence checked: <citation>. Under <other reading>, this situation is ruled out, whatever is decided.` (the citation part is omitted when no fixed assertion was checked) | Used only for a mixed pair (one assertion candidate, one that is not) recorded with a `holds` probe whose witnessing side is the assertion candidate, with recorded value `true`, when the other reading has no admissible completion on the shown base. The assertion candidate's sentence and every fixed assertion the probe evaluated are true in the shown situation; under the other reading the situation is impossible. No truth value is stated for the other reading. | composition.md 2.1 "What E19 to E21 may state", case 1; `Observes … .holds` (S1) |
 
 Slots: `<noun of slot a>` is the sort noun of the line's slot as rights 2.1 renders it (`<bearer>`, `<holder>`, or an
 object's sort noun); `<phrase of pred>` is the binary predicate's registered English in the environment (the same
 production a guard atom on it renders with), placed between its two arguments; when `s_a = s_b` the two nouns follow rights 2.1's guard renderer for a repeated
-sort ("that person" … "the second person", rights fixture μ); `<clause>` is the clause formula
+sort ("that person" … "the second person", rights fixture μ); in RC3, which introduces the holder first, the nouns
+are `the first <sort>` for the holder slot and `the second <sort>` for slot o, whatever their slot order; `<clause>` is the clause formula
 rendered by the guard renderer of rights 2.1 in the line's context ("that person", "that state"); `<elided text>` is
 the elided span's source text (or, for such a span, that form); `<citation>`, `<n>`, `<situation>`, `<reading>` are
 composition.md 2.1's. Order in RC1 is fixed: relation first, then the guard, then the clauses in wire order;
@@ -278,20 +279,24 @@ Raised by the head, in the order of 4.1; each text is shared by Python and Lean.
 | Text | When | Kind |
 |---|---|---|
 | `InvalidInput: elided missing on rule <n>` | a line under the profile without `elided` | error |
+| `InvalidInput: invalid elided of rule <n>` | `elided` not a list of two-natural spans | error |
+| `InvalidInput: invalid clauses of rule <n>` | `clauses` is `[]` or not a list | error |
 | `InvalidInput: invalid clause <i> of rule <n>` | a clause object without its three keys, a role outside the three, a span not two naturals | error |
+| `InvalidInput: invalid relation of rule <n>` | a key missing or extra, `slots` not two naturals, `total` neither null nor a natural, or `cites` not a list of strings | error |
 | `ClauseLineShape: <n>` | `clauses` or `relation` on a power line or a fan-out line (OPEN-3) | error |
 | `InvalidInput: ill-typed clause <i> of rule <n>` | a clause formula not a base formula of the line's context | error |
 | `ClauseSpan: <n>: [<a>, <b>)` | a clause or elided span empty, outside the unit's span, or overlapping another span of the line | error |
 | `RelationShape: <n>` | slots equal or out of range; `pred` not a declared binary base predicate of sorts `(s_a, s_b)`; `total` set and not the line's holder slot, or not one of the two slots; `total` set and `H_R` not typed over `baseEnv D` | error |
 | `UnknownSymbol: unit <u>` | a relation `cites` entry that names no source unit | error |
-| `InvalidInput: invalid relation of rule <n>` | a key missing or extra, `slots` not two naturals, `total` neither null nor a natural, or `cites` not a list of strings | error |
-| `InvalidInput: invalid elided of rule <n>` | `elided` not a list of two-natural spans | error |
-| `InvalidInput: invalid clauses of rule <n>` | `clauses` is `[]` or not a list | error |
 | `RelationOnCandidate: <set>:<i>: <n>` | a reading candidate's line with a total relation, until OPEN-1 is lifted | error (abstention: nothing in the document is checked) |
 | `fragment: no (rights:relation:<n>:total)` | 4.5 | report line |
 
 Spans are checked clauses first, then elided, in wire order; the first that is empty, outside the unit, or overlaps an
-earlier span is reported (K6). `<n>` of a power line is its liberty unit's name (K11).
+earlier span is reported (K6). `<n>` of a power line is its liberty unit's name (K11). Decoding (4.1 step 2) takes
+line objects in document order. Within one, it first runs `decodeLine` on the object without the three keys (this
+yields `<n>`), whose text is then the answer; then it checks `elided`, then `clauses` and each clause in order, then
+`relation`; the first failure is the answer. `<n>` is the decoded line's `lineName`. A line whose `lineName` is
+`none` gets none of the head's checks; rights' `IncidentShape` rejects it in step 6.
 
 Unchanged and not the head's: `dispatch`'s texts (`UnsupportedProfile: right-clauses@0 requires rights@0`, `… with
 <b>`), every rights, soft and W1 text on `plain D`, every readings text.
@@ -398,11 +403,11 @@ def holderGuardOf (D : ClauseDoc) (R : String) : VE.Formula :=
     and, for a total relation, `(holderGuardOf D R).check (baseEnv D) [holder]`. -/
 def checkClauses (D : ClauseDoc) : Except String Unit
 def WellFormedClauses (D : ClauseDoc) : Bool := match checkClauses D with | .ok () => true | .error _ => false
-/-- 4.1 steps 3 and 4 over the candidates (set, index, content, entries), in order. First, the checks of 1.1, 1.3 and
-    7 on each candidate's entries against its content's lines, each span against its own `unitSpan`, types over
-    `VE.Norms.envAt E.base 0`. Then `RelationOnCandidate` for the first total relation. -/
-def checkCandidates (E : VE.SoftNorms.SoftDoc)
-    (cs : List (String × Nat × VE.Compose.Content × List (String × String × CLine))) : Except String Unit
+/-- 4.1 steps 3 and 4 over `D.cands`, in order. First the checks of 1.1, 1.3 and 7 on each candidate's entries
+    against its content's lines, each span against its own `unitSpan`, types over `baseEnv D`. The right (holder
+    sort, `H_R`) is the candidate's own when its content is `.right`, else `D.doc`'s; unit ids are `D.doc`'s. Then
+    `RelationOnCandidate` for the first total relation. -/
+def checkCandidates (D : ClauseDoc) : Except String Unit
 
 /-- Identity when unused (composition.md 4.1 rule 5). No well-formedness hypothesis: `plainSource` keeps the
     source line's own norm. -/
@@ -576,6 +581,7 @@ predicates `country_of(state, person)` and `charged(person)`; right `r21`, holde
 | K12 | K3's line as candidate 1 of a reading set beside an unstructured candidate 0, `readings@1` on | `RelationOnCandidate: <set>:1: equal-access` (OPEN-1); with total null instead, the head plains the candidate and readings receives `plainContent` of it |
 | K13 | K3, `Lim_D` of `gamma` (limitation 29) added to the document | `clauseSlotLabelled = limPremisesLabelled (plain D) ++ relPremisesLabelled D`, the limitation labels first; `plain_limPremises` holds by `#guard` on the formula lists |
 | K14 | K3 with the right's guard an atom on an added regulated `person` predicate | `RelationShape: equal-access` |
+| K15 | K9 with `clauses: []` | `InvalidInput: elided missing on rule equal-access` |
 
 ### 9.2 The plan's fixtures (composition.md 10.5: F11 to F14 are this specification's)
 
@@ -591,11 +597,11 @@ predicates `country_of(state, person)` and `charged(person)`; right `r21`, holde
 
 - Rights' seventeen fixture shapes with the profile on and `elided: []` on every line: elaboration, verdicts and
   statuses equal the profile-off ones (`plain_identity`); with the profile off, byte-identical (F20).
-- `clauses-elaborate` differential: Python and Lean outputs equal on K1 to K14, F11, F12, F14 (K12 also by `#guard`
+- `clauses-elaborate` differential: Python and Lean outputs equal on K1 to K15, F11, F12, F14 (K12 also by `#guard`
   on `checkCandidates` and `plainContent`, F14 by `#guard` on `plainContent`).
 - UDHR rerun: every unit under the profile reports `elided_bytes`; the audit's seven units (`u035`, `u039`, `u041`,
   `u046`, `u054`, `u077`, `u033b`) are re-audited; `u076` and `u108` are re-attempted with clauses (plan section 6).
-- English: RC1 to RC5 each with one instance through W7; G6 and G9 of composition.md for every rendered sentence
+- English: RC1 to RC5 each with one instance (RC3 also with `s_a = s_b` and slot o before the holder slot) through W7; G6 and G9 of composition.md for every rendered sentence
   (both unconditional, composition.md 13.20).
 
 ## 10. Limits, regeneration, Python, Rust
@@ -655,3 +661,4 @@ stack layer (plan question 12).
 |---|---|---|
 | 2026-10-31 | Draft 1 | First statement specification of S3 from plan draft 2 and S0 (composition.md draft 3): the structured line, `plain`, `Rel_D` and its slot, the head, wire and identity, five wordings, diagnostics, `VE.RightClauses` with eleven theorem statements, fixtures K1 to K13 and the plan's F11 to F14 and G8, six OPEN lines. No code, Lean or frozen contract changes. |
 | 2026-10-31 | Draft 2 | The statement review's FIX edits (`manage-agents/debates/spec-right-clauses/`, rounds 1 and 2, union of both seats' lists): E1 `H_R` checked over `baseEnv D` for a total relation (1.3, 7 `RelationShape`, `checkClauses`, K14); a power line's rule name is its liberty unit's (`lineName`, 1.1); candidates: `ClauseDoc.cands`, `checkCandidates`, `elaborateJson` through `plainContent`, `elaborate_plain` under `NoReadingSets`, 4.1 steps 3 and 4, 9.3; E3 RC4's byte-range form for "may not" and G6 substrings, OPEN-5 deleted (decided by composition.md 13.20); E4 three `InvalidInput` rows and the span order; E5 the u039 RC1 example dropped; E6 the 8.4 note; RC2's nouns for two slots of one sort (rights fixture μ; the Astra seat's round 2, in place of an OPEN-7). |
+| 2026-10-31 | Draft 3 | The recheck's converged FIX edits (`manage-agents/debates/spec-right-clauses/`, recheck rounds 1 and 2, both seats CONVERGED): A `checkCandidates (D : ClauseDoc)` with the right from the content or `D.doc` and unit ids from `D.doc`; B RC4's byte form also for a double quote, written `bytes [<a>, <b>)`; C the decode order within a line object (`decodeLine` first, then `elided`, `clauses`, `relation`), `<n>` as the decoded `lineName`, section 7's rows reordered to 4.1's order, K15; RC3 names two same-sort slots `the first <sort>` (holder) and `the second <sort>` (slot o), with its 9.3 instance. |
