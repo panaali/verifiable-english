@@ -1,0 +1,62 @@
+{
+ "item": "fp-onedoc-per-source",
+ "note": "tools-local is in manage-agents (not a git repository); each mutant ran on a scratch copy and was never written to the installed file; tests: python3 -I tools-local/test_fidelity_pilot_onedoc.py",
+ "mutants": [
+  {
+   "name": "S1 one header for all: docs() puts every unit in one document",
+   "file": "/home/seyran/code/manage-agents/tools-local/const-paper-pilot.py",
+   "test": "test_two_sources_give_two_documents_family (kept as test_seeded_one_header_for_all_fails)",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "S2 audit topic not made per-document",
+   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot.sh",
+   "test": "test_two_sources_give_two_documents_whole",
+   "killed": true,
+   "result": "FAILED",
+   "language": "zsh"
+  },
+  {
+   "name": "S3 diff() ignores the per-document DOC lines",
+   "file": "/home/seyran/code/manage-agents/tools-local/const-paper-pilot.py",
+   "test": "test_diff_needs_every_document_from_both_seats",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "S4 docs() ignores an existing WRITTEN.md",
+   "file": "/home/seyran/code/manage-agents/tools-local/const-paper-pilot.py",
+   "test": "test_written_before_the_change_keeps_one_document",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "S5 prompts rewritten for a single-source draw too",
+   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot.sh",
+   "test": "test_one_source_is_byte_identical_to_the_old_runner",
+   "killed": true,
+   "result": "FAILED",
+   "language": "zsh"
+  },
+  {
+   "name": "S6 RESULT.md without the document count",
+   "file": "/home/seyran/code/manage-agents/tools-local/const-paper-pilot.py",
+   "test": "test_two_sources_give_two_documents_family",
+   "killed": true,
+   "result": "FAILED",
+   "language": "python"
+  },
+  {
+   "name": "S7 round-2 relay still asks for one DOC line",
+   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot.sh",
+   "test": "test_two_sources_give_two_documents_family",
+   "killed": true,
+   "result": "FAILED",
+   "language": "zsh"
+  }
+ ]
+}

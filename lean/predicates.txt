@@ -33,6 +33,7 @@ module ResponseShape.Encoders.Rights
 module ResponseShape.Encoders.Risk
 module ResponseShape.Encoders.RiskEval
 module ResponseShape.Encoders.Route
+module ResponseShape.Encoders.Scope
 module ResponseShape.Encoders.SearchBudget
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
@@ -76,6 +77,7 @@ module ResponseShape.Schemas.Rights
 module ResponseShape.Schemas.Risk
 module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
+module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
@@ -103,6 +105,7 @@ module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
 module VE.Acts.Read
 module VE.Acts.Readings
+module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
@@ -189,6 +192,8 @@ module VE.Calc.TableExamples
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
+module VE.Calc.WorkExamples
+module VE.Cardinality.Document
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Gate
@@ -210,6 +215,7 @@ module VE.Closure.Bridge
 module VE.Closure.Checks
 module VE.Closure.Congruence
 module VE.Closure.Consequence
+module VE.Closure.CoreEquiv
 module VE.Closure.Finite
 module VE.Closure.Induction
 module VE.Closure.Order
@@ -573,11 +579,14 @@ module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
 module VE.Scope.Effects
+module VE.Scope.English
 module VE.Scope.Examples
 module VE.Scope.Govern
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsTheorems
+module VE.Scope.Run
+module VE.Scope.RunExamples
 module VE.Scope.Theorems
 module VE.Scope.Wire
 module VE.Scope.WireExamples
@@ -774,6 +783,10 @@ VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
+VE.Calc.Work.AtSpec@VE.Calc.Wire
+VE.Calc.Work.Linearity.Sound@VE.Calc.Lower
+VE.Calc.Work.Lowered.Sound@VE.Calc.Lower
+VE.Calc.Work.Shape.Sound@VE.Calc.Lower
 VE.Cardinality.Admissible@VE.Cardinality.Semantics
 VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
 VE.Cardinality.Admitted@VE.Cardinality.Syntax
@@ -784,9 +797,12 @@ VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax
 VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics
 VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics
 VE.Cardinality.CTermTyped@VE.Cardinality.Syntax
+VE.Cardinality.CardReport.Sound@VE.Cardinality.Document
 VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics
 VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics
 VE.Cardinality.Counts@VE.Cardinality.Semantics
+VE.Cardinality.Document.Checks@VE.Cardinality.Document
+VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document
 VE.Cardinality.HasCount@VE.Cardinality.Semantics
 VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics
 VE.Cardinality.Rel.holds@VE.Cardinality.Semantics

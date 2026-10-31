@@ -8,6 +8,7 @@ report test, a branch re-pointed it at a saved commit, and S +17 went through th
 
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -15,13 +16,14 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tools import trust_map
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="module")
 def live():
-    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", ROOT / "lean/statements.txt")
+    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", inventory_path("lean/statements.txt"))
     assert problems == []
     baseline, bad = trust_map.parse_baseline(json.loads((ROOT / "docs/trust-baseline.json").read_text()))
     assert bad == []
@@ -34,6 +36,25 @@ def test_trust_map_check_passes_on_the_live_tree():
                          text=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
     assert "PASS: K, S and untied [V] within " in run.stdout
+
+
+# A formula, statement, claim or report encoder writes what an answer means (its formula, root and leaves).
+ENCODER = re.compile(r"(claimJson|reportJson|statementJson|encode|enc[A-Z]\w*)$")
+
+
+def test_formula_and_report_encoders_are_verdict_bearing():
+    """Review F4 of qt-a3d (its PROBE F4): the cardinality encoders `reportJson`, `claimJson`, `statementJson` and
+    `encode` (with `encBody`, `encOperand`, `encPrinted`) were filed D[I], identity, so the trusted count left them
+    out; every other such encoder of the tree is [V] or S. No encoder of the table is [I] or [R], and the claim
+    graph's node, entry and graph types, which carry the statements and leaves the report is read from, are G[V]."""
+    classes = trust_map.load_table(ROOT / "tools/trust-classes.json")
+    encoders = {(file, name): cls for file, names in classes.items() for name, cls in names.items()
+                if ENCODER.match(name.rsplit(".", 1)[-1])}
+    assert ("VE/Cardinality/Run.lean", "VE.Cardinality.Run.reportJson") in encoders
+    assert sorted(f"{file}: {name} is {cls}" for (file, name), cls in encoders.items()
+                  if cls.endswith(("[I]", "[R]"))) == []
+    document = classes["VE/Cardinality/Document.lean"]
+    assert {document[f"VE.Cardinality.Document.{name}"] for name in ("CNode", "Entry", "Graph", "Entries")} == {"G[V]"}
 
 
 def test_arith_lookup_and_fixture_helpers_are_classified(live):

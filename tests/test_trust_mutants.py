@@ -255,6 +255,47 @@ def test_a_check_wrapped_in_guard_msgs_kills(default_run):
         "lean/Demo/Examples.lean:18", "lean/Demo/Examples.lean:19", "lean/Demo/Examples.lean:21") for m in twice), twice
 
 
+def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
+    """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
+    time, the phases add up to the run's seconds, and the one line prints them."""
+    import trust_mutants as tm
+    done, mutants, _, _ = default_run
+    data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
+    steps, built = data["steps"], [m for m in mutants if "moves this line" not in m["detail"]]
+    assert tm.timed(steps) and tm.steps_line(steps) in done.stdout.splitlines()
+    runs, lake = steps["runs"], steps["lake"]
+    assert (runs["control_build"], runs["probe_install"], runs["other"], runs["outside_checks"]) == (1, 1, 0, 0)
+    assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
+        "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
+    assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+    # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
+    assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
+
+
+def test_steps_count_each_lake_run_under_its_own_threads_step(tmp_path, monkeypatch):
+    """`Scratch.lake` counts a run under the step its thread is in: another thread's step, an inner step that ends,
+    and a run outside any step ("other") do not leak into it."""
+    import shutil
+    import threading
+    import trust_mutants as tm
+    monkeypatch.setattr(tm.lake_outputs, "lean_executable", lambda env, name: shutil.which("true"))
+    monkeypatch.setattr(tm, "STEPS", tm.Steps())
+    scratch = object.__new__(tm.Scratch)
+    scratch.lean = tmp_path
+    with tm.STEPS.step("control_build"):
+        other = threading.Thread(target=lambda: scratch.lake({}, "build"))
+        other.start()
+        other.join(HANG_TIMEOUT)
+        scratch.lake({}, "build")
+        with tm.STEPS.step("control_probes"):
+            scratch.lake({}, "lean")
+        scratch.lake({}, "build")
+    assert tm.STEPS.runs == {**dict.fromkeys(tm.LAKE, 0), "control_build": 2, "control_probes": 1, "other": 1}
+    assert all(v >= 0 for v in tm.STEPS.lake.values()) and tm.timed(tm.STEPS.record())
+    assert tm.STEPS.wall == dict.fromkeys(tm.WALL, 0.0)
+
+
 def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
     """Review F6: trust_map.scan opens a command at the `#guard_msgs … in` line before it, as at `set_option … in`,
     so the role of the line Lean reports is the wrapped command's."""
@@ -1015,7 +1056,7 @@ def test_the_generator_drops_each_constructor_of_json_wf():
     """Review sc-1ae F1's own declaration: each of `JsonWF`'s six constructors, `bool` and `num` among them."""
     import trust_mutants
     text = (ROOT / "lean/VE/Scope/Govern.lean").read_text()
-    declared, _ = trust_mutants.declaration_list(ROOT / "lean/declarations.txt")
+    declared, _ = trust_mutants.declaration_list(lean_statements.inventory_path("lean/declarations.txt"))
     (r,) = [d for d in declared["VE.Scope.Govern"] if d.name == "VE.Scope.JsonWF"]
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
     lo, hi = starts[r.start[0] - 1] + r.start[1], starts[r.end[0] - 1] + r.end[1]
@@ -2236,7 +2277,7 @@ SHARDED = [("Demo.small", "C", True), ("Demo.evens", "D tied", False)]
 VERDICTS = {"M001": ("KILLED", "lean/Demo/Examples.lean:4: refuted"), "M002": ("SURVIVOR", ""),
             "M003": ("UNKNOWN", "past its time limit"), "M004": ("INVALID", "unknown identifier"),
             "M005": ("SURVIVOR", ""), "M006": ("KILLED", "lean/Demo/Examples.lean:7: refuted")}
-RUN_FACTS = ("seconds", "jobs", "shards")
+RUN_FACTS = ("seconds", "jobs", "shards", "steps")
 
 
 @pytest.fixture
@@ -2349,9 +2390,9 @@ def test_a_shard_that_is_not_k_of_n_stops_the_run(sharded, capsys, text):
 
 
 def printed(out: str) -> list[str]:
-    """A run's lines but the header and --rescore's, without the seconds."""
+    """A run's lines but the header, --rescore's and the steps', without the seconds."""
     return [re.sub(r" in \d+ s", "", x) for x in out.splitlines()
-            if not re.match(r"trust_mutants: (\d+ definitions|--rescore)", x)]
+            if not re.match(r"trust_mutants: (\d+ definitions|--rescore|steps:)", x)]
 
 
 @pytest.mark.parametrize(("n", "limit"), [(1, 6), (2, 6), (3, 6), (9, 6), (2, 1), (3, 0)])
@@ -2363,14 +2404,22 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     paths = parts(sharded, n, "--max-mutants", limit)
     for k, p in enumerate(paths, 1):  # run facts of their own, each part's different
         p.write_text(p.read_text().replace('"seconds": 0,', f'"seconds": {k * 37 % 101},', 1))
+        d = json.loads(p.read_text())
+        d["steps"]["wall"]["mutants"], d["steps"]["lake"]["mutant_builds"] = k * 1.25, k * 10.05
+        d["steps"]["runs"]["mutant_builds"] = k
+        p.write_text(sharded.tm.evidence(d))
     capsys.readouterr()
     merged = sharded.tmp / "merged.json"
     assert sharded.tm.main(["--merge", str(merged), *map(str, reversed(paths))]) == code
     assert printed(capsys.readouterr().out) == printed(out)
     assert bare(merged) == bare(one)
     data, each = json.loads(merged.read_text()), [json.loads(p.read_text()) for p in paths]
-    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d in each]
+    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+                               "steps": d["steps"]} for d in each]
     assert (data["jobs"], data["seconds"]) == (sum(d["jobs"] for d in each), max(d["seconds"] for d in each))
+    assert data["steps"] == {p: {k: (sum(d["steps"][p][k] for d in each) if p == "runs" else
+                                     round(sum(d["steps"][p][k] for d in each), 1)) for k in each[0]["steps"][p]}
+                             for p in ("wall", "lake", "runs")}
     assert len({d["seconds"] for d in each}) == n and data["seconds"] > 0
 
 
@@ -2447,6 +2496,7 @@ def corrupt(field, value, row=0):
 
 
 NOT_WRITTEN = "is not a part this tool writes"
+UNTIMED = "its steps are not a record of seconds by step"
 # tm-shard fix1 F1: a part whose fields are not of their types, or whose rows are not rows `record` writes, is refused
 # before a verdict of it is counted or printed (the counts made again from its rows, so only the change refuses it)
 UNREAD_PARTS = [
@@ -2485,6 +2535,17 @@ UNREAD_PARTS = [
       for f in ("counts", "class_counts", "definitions")),
     ("derived-status-uncounted", lambda ps: ps[0]["mutants"][1].update(status="KILLED", raw_status="KILLED"),
      "its class_counts, counts are not"),
+    # eff-tm-control: a part's steps are retyped, given a key too many or too few, or a negative time
+    *((f"steps-{p}-{k}-{v!r}", lambda ps, p=p, k=k, v=v: ps[0]["steps"][p].update({k: v}), UNTIMED) for p, k, v in (
+        ("wall", "plan", True), ("wall", "plan", "1"), ("wall", "plan", None), ("wall", "plan", -0.1),
+        ("lake", "mutant_builds", False), ("lake", "mutant_builds", [1.0]), ("runs", "mutant_builds", 1.5),
+        ("runs", "mutant_builds", True), ("runs", "mutant_builds", -1), ("wall", "x", 1.0), ("runs", "x", 1))),
+    *((f"steps-missing-{p}-{k}", lambda ps, p=p, k=k: ps[0]["steps"][p].pop(k), UNTIMED) for p, k in (
+        ("wall", "mutants"), ("lake", "control_probes"), ("runs", "other"))),
+    *((f"steps-{name}", lambda ps, f=f: ps[0].update(steps=f(ps[0]["steps"])), UNTIMED) for name, f in (
+        ("not-a-dict", lambda s: [s]), ("no-runs", lambda s: {"wall": s["wall"], "lake": s["lake"]}),
+        ("extra", lambda s: {**s, "x": {}}), ("reordered", lambda s: {**s, "wall": dict(reversed(s["wall"].items()))}),
+        ("empty", lambda s: {}))),
 ]
 
 

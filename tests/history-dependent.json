@@ -645,14 +645,21 @@
   },
   {
    "test": "tests/test_history_tests.py",
-   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; reads .git in tests/read_recorder.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git add, git cat-file, git config, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git write-tree) in tools/cache_store.py, tools/regen_generated.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; reads .git in tests/read_recorder.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tests/read_recorder.py:<module>: .git",
     "tests/read_recorder.py:_hook: .git",
+    "tools/cache_store.py:git_common_directory: git rev-parse",
     "tools/nested_pytest.py:command: pytest",
+    "tools/regen_generated.py:RegenLog.__init__: git rev-parse",
+    "tools/regen_generated.py:_git: git",
+    "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:install_driver: git config",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/regen_generated.py:resolve: git rev-parse",
     "tools/select_tests.py:blobs: git cat-file",
     "tools/select_tests.py:git_lines: git",
     "tools/source_graph.py:tracked: git ls-files",
@@ -674,6 +681,17 @@
     "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
     "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
     "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_inventory_path.py",
+   "why": "starts git (git check-ignore, git ls-files) in tests/test_inventory_path.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_inventory_path.py:test_no_train_only_path_is_read_outside_the_accessor: git ls-files",
+    "tests/test_inventory_path.py:test_the_overlay_is_git_ignored_and_the_committed_copies_are_not.<locals>.<lambda>: git check-ignore"
    ]
   },
   {
@@ -1541,6 +1559,26 @@
    ]
   },
   {
+   "test": "tests/test_select_defer.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
    "test": "tests/test_select_tests.py",
    "why": "starts git (git add, git cat-file, git ls-files, git ls-tree, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tests/test_select_tests.py, tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/select_tests_evidence.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
@@ -1665,6 +1703,26 @@
    "via": [
     "tools/bench/suite_tail.py:summarise: git rev-parse",
     "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_test_chunks.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
    ]
   },
   {
