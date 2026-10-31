@@ -2186,7 +2186,8 @@
       "lean/VE/EnglishGrammar/SourceWords.lean": "source-word catalogue JSON encoder only; it exports the checked Lean table to the generated read-only Python view and decodes no request",
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
-      "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file"
+      "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
+      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path"
     }
   },
   "plan_operations": {
