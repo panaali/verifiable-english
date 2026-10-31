@@ -1,6 +1,7 @@
 """Render format-1 contracts as data-only Rust table modules (docs/spec/wire-contract-s4-2.md 4)."""
 
 from conformance.wire_contract_engine import pieces as split_template
+from tools.wire_contract_lean import parse_pattern, parse_ranges
 
 
 def q(value):
@@ -31,16 +32,9 @@ def value(v):
 
 
 def pattern(source):
-    if source.startswith("@"):
-        head, _, tail = source.partition("/")
-        base = f"Base::Item({int(head[1:] or 0)})"
-        steps = tail.split("/") if tail else []
-    else:
-        base = "Base::Root"
-        steps = source[1:].split("/") if source else []
-    def step(s):
-        return "Step::Star" if s == "*" else f"Step::Tok({q(s.replace('~1', '/').replace('~0', '~'))})"
-    return f"Pattern {{ base: {base}, steps: {seq(map(step, steps))} }}"
+    level, steps = parse_pattern(source)
+    base = "Base::Root" if level is None else f"Base::Item({level})"
+    return f"Pattern {{ base: {base}, steps: {seq('Step::Star' if s == '*' else f'Step::Tok({q(s)})' for s in steps)} }}"
 
 
 def atom(a):
@@ -74,18 +68,8 @@ def guard(literals):
 
 
 def ranges(spec):
-    if spec is None:
-        return "None"
-    out = []
-    index = 0
-    while index < len(spec):
-        if index + 2 < len(spec) and spec[index + 1] == "-":
-            out.append(f"({ord(spec[index])}, {ord(spec[index + 2])})")
-            index += 3
-        else:
-            out.append(f"({ord(spec[index])}, {ord(spec[index])})")
-            index += 1
-    return f"Some({seq(out)})"
+    found = parse_ranges(spec)
+    return "None" if found is None else f"Some({seq(f'({a}, {b})' for a, b in found)})"
 
 
 def name_class(cls):

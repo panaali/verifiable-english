@@ -62,8 +62,8 @@ else:
    generated from and each file of `SOURCES` with its revision and SHA-256, and ends `Do not edit.`;
 2. one `use` of the table types: `use crate::contract::*;` in the kernel, `use ve_kernel::contract::*;` in the
    corpus tables;
-3. `pub static SOURCES: &[Source] = &[…];`: `limits.json`, `names.json`, then every contract of the module, in
-   code point order of the file name;
+3. `pub static SOURCES: &[Source] = &[…];`: `limits.json`, `names.json` and every contract file of the
+   directory, in code point order of the file name;
 4. one `pub static <UNIT>: Table = Table { … };` per contract, in code point order of the unit; `<UNIT>` is
    the unit's name before `@`, upper case, with `-` written `_` (`soft-norms@0` is `SOFT_NORMS`);
 5. `pub static TABLES: &[&Table] = &[&<UNIT>, …];` in the same order.
@@ -132,7 +132,7 @@ Lean, or reports the deferred record (base spec 2.8).
 | F1 | `--check` fails (`WC11`) on a hand-edited `contract_tables.rs` and on the corpus tables | wc-s4-2 |
 | F2 | the cargo hash test fails when a contract and its lock move and the tables do not | wc-s4-2 |
 | F3 | the rows of every generated table (position, id, phase, kind, code, class, text, limit, keys, args) dumped by a cargo test equal the rows `tools/wire_contract.py` reads from the contract JSON, for the three units and every corpus contract, `keys@0` included | wc-s4-2 |
-| F4 | `tools/mutation_check.py` swaps two rows of `contract_tables.rs` and `--check` catches it | wc-s4-2 |
+| F4 | `tools/mutation_check.py` swaps two rows of `contract_tables.rs` and `--check` catches it | wc-s4-2b (moved at the size line) |
 | F5 | the engine corpus run in Rust gives records byte-identical to `engine-golden.json` | wc-s4-2b |
 | F6 | a large well-formed input ends within its stated limit (the DRI's rule of 2026-10-27) | wc-s4-2b |
 | F7 | `diagnostic` is absent from an error that has none, and typed by the jsonl schema where set | wc-s4-2b |
