@@ -1,2 +1,3 @@
+- `tools/wire_contract.py` — Lint format-1 wire tables and generate their single English reading.
 - `tools/wire_contract_lean.py` — Render format-1 contracts as data-only Lean table modules.
 - `tools/words_ab.py` — The A/B of Q2.4 (docs/spec/question-answering-PLAN.md, Q2.4): Lean's situation and point wording (`VE.Words`, through `ve/words.py`) against the Python produce…

@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 258 |
-| leaves:closed domain | 286 |
-| leaves:none | 1425 |
-| modes | 39 |
+| leaves:bound | 261 |
+| leaves:closed domain | 288 |
+| leaves:none | 1433 |
+| modes | 40 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1024 |
-| today:shape | 544 |
+| today:not probed | 1032 |
+| today:shape | 549 |
 | today:unbound | 137 |
-| answers | 575 |
+| answers | 579 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3463,6 +3463,34 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/regions/predicates/{}` |  |  |  |  |
 | `/report/leaves` |  |  |  |  |
 | `/sizes` |  |  |  |  |
+
+## scope
+
+4 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/error` | string | none |  | minLength | 1 | not probed |
+| `/governed/*/id` | string | none |  |  | 3 | not probed |
+| `/governed/*/units/*` | string | none |  |  | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 4 | shape |
+| `/id` | string | bound | x-equals |  | 4 | shape |
+| `/rows/*/governors/*/effect` | string | closed domain | enum |  | 2 | shape |
+| `/rows/*/governors/*/id` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/provenance` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/reach/*` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/unit` | string | none |  |  | 2 | not probed |
+| `/rows/*/unit` | string | none |  |  | 2 | not probed |
+| `/status` | string | closed domain | const |  | 4 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/governed` |  |  |  |  |
+| `/governed/*/units` |  |  |  |  |
+| `/rows` |  |  |  |  |
+| `/rows/*/governors` |  |  |  |  |
+| `/rows/*/governors/*/reach` |  |  |  |  |
 
 ## Grammars
 

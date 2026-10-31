@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40308,
+    "total_lines": 40577,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1842,12 +1842,12 @@
       },
       {
         "file": "lean/VE/Calc/Wire.lean",
-        "lines": 580,
-        "sha256": "5020183caff9494242b547a784c0c88886da0fb51338f92c6384b2d64246b918",
+        "lines": 849,
+        "sha256": "944d524215cc4dbb45470ba7316ba0dfcf1b942fc5fb025482e67c1496d461e1",
         "ranges": [
           [
             1,
-            580
+            849
           ]
         ],
         "declarations": [
@@ -1869,7 +1869,12 @@
           "decode",
           "decodeCase",
           "Case.sidesC",
-          "workLimit"
+          "workLimit",
+          "judged",
+          "derivations",
+          "nonlinearAtC",
+          "firstNonlinearC",
+          "loweredC"
         ],
         "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids), and the premises and derivations of me-5c with their refusals (UnknownPremise, UnknownLink, NonlinearPremise), and the value words checks of me-2d (W6's verbalisation rule, ValueWordsForm, ReservedWord, VerbalisationCollision), and limit 10 (me-2nb: decodeCase refuses a case whose claims' work, Case.sidesC over the value table, passes maxWork, with workLimit's text); the full file is pinned"
       },
@@ -2054,6 +2059,7 @@
       "lean/VE/Events/Wire.lean": "the events block decoder (ET-4, spec 4 items 2-7); no service mode, route or runner path reaches it until et-4b hooks it into the layered route and pins it here",
       "lean/VE/Events/WireExamples.lean": "fixtures only: #guard checks of decodeEvents on JSON environments built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
+      "lean/VE/Scope/Run.lean": "lean:runner-glue: the `scope` mode (SC-1c) reads the case's `id` and `document` (the document mode's `split` and scope's `decodeBlock`, unchanged) and writes its answer rows (govJson, rowJson, governedJson); no decoder of its own",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",

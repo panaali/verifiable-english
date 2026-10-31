@@ -25,6 +25,7 @@ import ResponseShape.Encoders.Rights
 import ResponseShape.Encoders.Risk
 import ResponseShape.Encoders.RiskEval
 import ResponseShape.Encoders.Route
+import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
@@ -468,6 +469,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Route.runFol_fits
 #print axioms ResponseShape.Encoders.Route.runOrder_fits
 #print axioms ResponseShape.Encoders.Route.tagged_generators
+#print axioms ResponseShape.Encoders.Scope.explainCase_fits
+#print axioms ResponseShape.Encoders.Scope.runCaseReported_fits
 #print axioms ResponseShape.Encoders.SearchBudget.runCaseReported_fits
 #print axioms ResponseShape.Encoders.SearchBudget.runCase_fits
 #print axioms ResponseShape.Encoders.SoftNorms.admission_fits
