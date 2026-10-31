@@ -219,6 +219,21 @@
    "definition": "VE.Compose.wrapperRows",
    "operator": "list-drop-last",
    "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  },
+  {
+   "definition": "VE.Compose.Contract.scopeRewriter",
+   "operator": "list-last",
+   "reason": "equivalent: (l.reverse.take 1).isEmpty = l.isEmpty for every list l, so the branch taken is the same"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "list-last",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "list-drop-first",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
   }
  ]
 }
