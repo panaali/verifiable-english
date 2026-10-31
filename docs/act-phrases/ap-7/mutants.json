@@ -1,0 +1,48 @@
+{
+ "language": "python",
+ "plants": [
+  {
+   "plant": "draw-seed",
+   "file": "docs/act-phrases/ap-7/draw.py",
+   "test": "tests/test_ap7.py::test_draw_is_reproducible_and_feeds_the_sample",
+   "killed": true
+  },
+  {
+   "plant": "eligible-any-join",
+   "file": "docs/act-phrases/ap-7/draw.py",
+   "test": "tests/test_ap7.py::test_draw_is_reproducible_and_feeds_the_sample",
+   "killed": true
+  },
+  {
+   "plant": "failed-match-agrees-none",
+   "file": "docs/act-phrases/ap-7/runner.py",
+   "test": "tests/test_ap7.py::test_failed_calls_score_as_no_reading",
+   "killed": true
+  },
+  {
+   "plant": "failed-judge-says-yes",
+   "file": "docs/act-phrases/ap-7/runner.py",
+   "test": "tests/test_ap7.py::test_failed_calls_score_as_no_reading",
+   "killed": true
+  },
+  {
+   "plant": "lean-index-unbound",
+   "file": "docs/act-phrases/ap-7/runner.py",
+   "test": "tests/test_ap7.py::test_answers_are_typed_and_bound",
+   "killed": true
+  },
+  {
+   "plant": "list-prompt-shows-lean",
+   "file": "docs/act-phrases/ap-7/runner.py",
+   "test": "tests/test_ap7.py::test_seats_are_blind_and_within_the_call_limit",
+   "killed": true
+  },
+  {
+   "plant": "recall-bar-moved",
+   "file": "docs/act-phrases/ap-7/runner.py",
+   "test": "tests/test_ap7.py::test_score_recomputes_from_the_saved_records",
+   "killed": true
+  }
+ ],
+ "restored_returncode": 0
+}

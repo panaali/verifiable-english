@@ -4,17 +4,52 @@ from __future__ import annotations
 import json
 import gzip
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/spec/question-answering-q2/evidence"
 DESTINATION = ROOT / "docs/spec/question-answering-report.md"
+Q26 = ROOT / "docs/question-answering/q2-6/evidence"
+DELTA = ROOT / "docs/spec/question-answering-q2/DELTA.md"
+
+
+def expected_rows(fixtures: list[dict]) -> list[tuple[dict, str]]:
+    """Each fixture's spec lead (evidence/expected.json) with the lead Lean returned; a lead that differs needs the
+    DELTA.md row its `delta` names, and that row must name the fixture; a lead that agrees names no row."""
+    got = {item["id"]: item.get("lead", "refused") for item in fixtures}
+    expected = json.loads((Q26 / "expected.json").read_text())["fixtures"]
+    if sorted(row["id"] for row in expected) != sorted(got):
+        raise ValueError("the expected leads and the replayed fixtures name different fixtures")
+    deltas = {line.split("|")[1].strip(): line.split("|")[2] for line in DELTA.read_text().splitlines()
+              if line.startswith("| D")}
+    for row in expected:
+        named = set(re.findall(r"\b[AGU][0-9]+d?\b", deltas.get(row.get("delta"), "")))
+        if (row["lead"] != got[row["id"]]) != ("delta" in row) or ("delta" in row and row["id"] not in named):
+            raise ValueError(f"{row['id']}: spec lead {row['lead']}, Lean lead {got[row['id']]}, "
+                             f"DELTA row {row.get('delta')} does not explain it")
+    return [(row, got[row["id"]]) for row in expected]
+
+
+def wording_counts(wording: dict) -> list[str]:
+    fallback = [row for row in wording["fallback"] if row["lines"]]
+    lines = [f"Answers that show a quoted fallback wording (a line containing `classified as \"`): {len(fallback)} "
+             f"of {len(wording['fallback'])} answers ({', '.join(row['fixture'] for row in fallback)}), on "
+             f"{sum(len(row['lines']) for row in fallback)} lines.", "",
+             "| Frame | Lines shown | Clauses | Read back with one reading | Not one reading |", "|---|---:|---:|---:|---:|"]
+    for frame in wording["frames"]:
+        shown = [row for row in wording["situation_lines"] if row["frame"] == frame]
+        clauses = [c for row in shown for c in row["clauses"]]
+        lines.append(f"| {frame} | {len(shown)} | {len(clauses)} | {sum(c['status'] == 'one' for c in clauses)} | "
+                     f"{sum(c['status'] != 'one' for c in clauses)} |")
+    return lines
 
 
 def render() -> str:
     fixtures = json.loads((EVIDENCE / "fixtures.json").read_text())["fixtures"]
     measurements = json.loads((EVIDENCE / "measurements.json").read_text())
     agreement = json.loads(gzip.decompress((EVIDENCE / "agreement.json.gz").read_bytes()))
+    wording = json.loads((Q26 / "wording.json").read_text())
     lines = ["# Question answering: Q2 non-model evidence", "",
              "The recorded answer fixtures were replayed through Lean's `ask` mode by "
              "`tests/test_ask_fixtures.py`. The table records those saved results; it does not infer a "
@@ -26,6 +61,14 @@ def render() -> str:
         else:
             lines.append(f"| {item['id']} | {item['route']} | {item['lead']} | {item['rows']} | "
                          f"{item['lean_seconds']} |")
+    lines += ["", "## Fixtures, expected against got", "",
+              "The spec's derived lead (docs/spec/question-answering.md 7.2, 7.4, 7.5; saved in "
+              "`docs/question-answering/q2-6/evidence/expected.json`) against the lead Lean returned on the recorded "
+              "evidence; a lead that differs names the row of `docs/spec/question-answering-q2/DELTA.md` that "
+              "explains it.", "", "| Fixture | Spec lead | Spec line | Lean lead | DELTA |", "|---|---|---:|---|---|"]
+    for row, got in expected_rows(fixtures):
+        lines.append(f"| {row['id']} | {row['lead']} | {row['line']} | {got} | {row.get('delta', '—')} |")
+    lines += ["", "## Wording counts", "", wording["method"] + ".", ""] + wording_counts(wording)
     lines += ["", "## Timed requests", "", measurements["method"] + ".", "",
               "| Fixture | `english.question` Lean CPU s | `ask` Lean CPU s | `ve ask` wall s |",
               "|---|---:|---:|---:|"]
@@ -76,8 +119,8 @@ def render() -> str:
         if refused:
             lines += ["", "Queries not compared, by reason:", ""]
             lines += [f"- {key} ({count})" for key, count in sorted(refused.items())]
-    lines += ["", "## Scope", "", "The evaluation made no model calls. Reader and writer accuracy, including the "
-              "comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured.", ""]
+    lines += ["", "## Scope", "", "Reading and writing evaluation: sealed and bars registered "
+              "(docs/question-answering/q2-6/readability/); not run, no model call.", ""]
     return "\n".join(lines)
 
 
