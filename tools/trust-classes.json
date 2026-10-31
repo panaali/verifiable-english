@@ -11484,10 +11484,13 @@
       ],
       "T": [
         "VE.WireContract.Hooks.Acts.actOf",
+        "VE.WireContract.Hooks.Acts.around",
+        "VE.WireContract.Hooks.Acts.caseOf",
         "VE.WireContract.Hooks.Acts.envOf",
         "VE.WireContract.Hooks.Acts.memberOf",
         "VE.WireContract.Hooks.Acts.phraseOf",
-        "VE.WireContract.Hooks.Acts.phrasesOf"
+        "VE.WireContract.Hooks.Acts.phrasesOf",
+        "VE.WireContract.Hooks.Acts.recordOf"
       ]
     },
     "VE/WireContract/Hooks/Corpus.lean": {
