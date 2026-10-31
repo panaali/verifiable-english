@@ -74,6 +74,9 @@ def view (r : Except String (UDoc × SplitMap)) :
   some ["p123__1", "p123__2", "p123__3", "p123__4", "p123__5", "k"]
 -- Acts read on a predicate with no act, and a lexical act, give no entry; the first refusal is raised.
 #guard (actsOf fx6 V6 (U1 "p" .permission "{0} be subjected to torture" [])).toOption == some []
+-- Each act is checked at its predicate's arity (two slots on a binary predicate).
+#guard (actsOf [] ⟨[], []⟩ (doc [rg "t" .permission (some "{0} meet {1}") (sorts := ["person", "person"])] []).U).toOption
+  == some []
 #guard errText (actsOf fx6 ⟨[], []⟩ ((doc [rg "q" .permission (some "{0} q"), rg "p" .permission (some a6),
   rg "z" .permission (some (a6 ++ ","))] []).U)) ==
   "InvalidInput: act phrase for p has no reading under the declared frames"
