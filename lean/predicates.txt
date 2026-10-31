@@ -226,10 +226,13 @@ module VE.Closure.Surface
 module VE.Closure.Syntax
 module VE.Compose.Adjoin
 module VE.Compose.Content
+module VE.Compose.Contract
+module VE.Compose.ContractExamples
 module VE.Compose.Dispatch
 module VE.Compose.Examples
 module VE.Compose.ProfilesMain
 module VE.Compose.Slot
+module VE.Compose.Stack
 module VE.Consequence
 module VE.Core.Bridge
 module VE.Core.Checks
@@ -822,6 +825,13 @@ VE.Closure.Tableau.Signed.Holds@VE.TableauExtended
 VE.Compose.BaseAdmissibleP@VE.Compose.Slot
 VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
+VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract
+VE.Compose.Contract.RouteFacts@VE.Compose.Contract
+VE.Compose.Contract.ScopeFaithful@VE.Compose.Contract
+VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
+VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
+VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
+VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch

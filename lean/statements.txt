@@ -8530,6 +8530,83 @@ theorem VE.Closure.warshall_sound
       ∀ (a b : α), (a, b) ∈ VE.Closure.warshall vs es → VE.Closure.Path R a b
   -- uses VE.Closure.Path@VE.Closure.Paths VE.Closure.warshall@VE.Closure.Paths
   -- expr 1372944705
+theorem VE.Compose.Contract.Rewriter.Laws.fresh
+  ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
+    VE.Compose.Contract.Rewriter.Laws WF names r →
+      ∀ (D D' : σ),
+        r.run D = Except.ok D' →
+          ∀ (n : String), n ∈ names D' → n ∈ names D ∨ ∃ p, p ∈ r.writes ∧ n.startsWith p = Bool.true
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter.run@VE.Compose.Contract VE.Compose.Contract.Rewriter.writes@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract
+  -- expr 1441024318
+theorem VE.Compose.Contract.Rewriter.Laws.off
+  ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
+    VE.Compose.Contract.Rewriter.Laws WF names r → ∀ (D : σ), r.on D = Bool.false → r.run D = Except.ok D
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter.on@VE.Compose.Contract VE.Compose.Contract.Rewriter.run@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract
+  -- expr 3311246296
+theorem VE.Compose.Contract.Rewriter.Laws.preserves
+  ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
+    VE.Compose.Contract.Rewriter.Laws WF names r → ∀ (D D' : σ), WF D → r.run D = Except.ok D' → WF D'
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter.run@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract
+  -- expr 1203112131
+theorem VE.Compose.Contract.checkDocSets_pipeline
+  VE.Compose.Contract.ScopeRuns
+  -- uses VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
+  -- expr 3766867411
+theorem VE.Compose.Contract.filterMap_docRewriters
+  ∀ (l : List String),
+    List.filterMap VE.Compose.Contract.docRewriters l =
+      List.replicate (List.count "scope@0" l) VE.Compose.Contract.scopeRewriter
+  -- uses VE.Compose.Contract.Rewriter@VE.Compose.Contract VE.Compose.Contract.docRewriters@VE.Compose.Contract VE.Compose.Contract.scopeRewriter@VE.Compose.Contract
+  -- expr 682618735
+theorem VE.Compose.Contract.listed_evidence
+  ∀ (s : List String), s ∈ VE.Compose.Contract.listedStacks → VE.Compose.Contract.RouteFacts s
+  -- uses VE.Compose.Contract.RouteFacts@VE.Compose.Contract VE.Compose.Contract.listedStacks@VE.Compose.Stack
+  -- expr 534248401
+theorem VE.Compose.Contract.pipelineOf_scope
+  ∀ (ps : List String),
+    "scope@0" ∈ ps →
+      VE.Compose.Contract.pipelineOf VE.Compose.profileTable ps VE.Compose.Contract.docRewriters =
+        [VE.Compose.Contract.scopeRewriter]
+  -- uses VE.Compose.Contract.Rewriter@VE.Compose.Contract VE.Compose.Contract.docRewriters@VE.Compose.Contract VE.Compose.Contract.pipelineOf@VE.Compose.Contract VE.Compose.Contract.scopeRewriter@VE.Compose.Contract VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 468200182
+theorem VE.Compose.Contract.pipeline_names
+  ∀ {σ : Type} (WF : σ → Prop) (names : σ → List String) (rs : List (VE.Compose.Contract.Rewriter σ)),
+    (∀ (r : VE.Compose.Contract.Rewriter σ), r ∈ rs → VE.Compose.Contract.Rewriter.Laws WF names r) →
+      ∀ (D D' : σ),
+        VE.Compose.Contract.pipeline rs D = Except.ok D' →
+          ∀ (n : String), n ∈ names D' → n ∈ names D ∨ ∃ r, r ∈ rs ∧ ∃ p, p ∈ r.writes ∧ n.startsWith p = Bool.true
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter.writes@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract VE.Compose.Contract.pipeline@VE.Compose.Contract
+  -- expr 562258968
+theorem VE.Compose.Contract.pipeline_off
+  ∀ {σ : Type} (WF : σ → Prop) (names : σ → List String) (rs : List (VE.Compose.Contract.Rewriter σ)),
+    (∀ (r : VE.Compose.Contract.Rewriter σ), r ∈ rs → VE.Compose.Contract.Rewriter.Laws WF names r) →
+      ∀ (D : σ),
+        (∀ (r : VE.Compose.Contract.Rewriter σ), r ∈ rs → r.on D = Bool.false) →
+          VE.Compose.Contract.pipeline rs D = Except.ok D
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter.on@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract VE.Compose.Contract.pipeline@VE.Compose.Contract
+  -- expr 5189214
+theorem VE.Compose.Contract.pipeline_preserves
+  ∀ {σ : Type} (WF : σ → Prop) (names : σ → List String) (rs : List (VE.Compose.Contract.Rewriter σ)),
+    (∀ (r : VE.Compose.Contract.Rewriter σ), r ∈ rs → VE.Compose.Contract.Rewriter.Laws WF names r) →
+      ∀ (D D' : σ), WF D → VE.Compose.Contract.pipeline rs D = Except.ok D' → WF D'
+  -- uses VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract VE.Compose.Contract.Rewriter@VE.Compose.Contract VE.Compose.Contract.pipeline@VE.Compose.Contract
+  -- expr 2933891873
+theorem VE.Compose.Contract.refuseAll_runs
+  VE.Compose.Contract.ScopeRunsOf fun x => Except.error "refused"
+  -- uses VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
+  -- expr 2093700227
+theorem VE.Compose.Contract.scopeFaithful
+  VE.Compose.Contract.ScopeFaithful
+  -- uses VE.Compose.Contract.ScopeFaithful@VE.Compose.Contract
+  -- expr 1505113454
+theorem VE.Compose.Contract.scopePreserves
+  VE.Compose.Contract.ScopePreserves
+  -- uses VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
+  -- expr 743689030
+theorem VE.Compose.Contract.scopeSetsFaithful
+  VE.Compose.Contract.ScopeSetsFaithful
+  -- uses VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
+  -- expr 1334727881
 theorem VE.Compose.SlotChain.A_in
   ∀ {X : VE.SoftNorms.SoftDoc} {P : List VE.Formula} {k : Nat} (self : VE.Compose.SlotChain X P k)
     (S : VE.Route.fol.Model), self.R.Admissible_in S ↔ VE.Compose.PrefixAdmissibleP X P 0 S
@@ -8794,6 +8871,16 @@ theorem VE.Compose.gate_wellFormed
       VE.Compose.SlotWellFormed X P → VE.Compose.SlotWellFormed X (VE.Compose.gate χ P)
   -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.gate@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2779446222
+theorem VE.Compose.interface_functional
+  ∀ (r : VE.Compose.ProfileRow),
+    r ∈ VE.Compose.profileTable →
+      ∀ (s : VE.Compose.ProfileRow), s ∈ VE.Compose.profileTable → r.profile = s.profile → r.interface = s.interface
+  -- uses VE.Compose.Interface@VE.Compose.Dispatch VE.Compose.ProfileRow.interface@VE.Compose.Dispatch VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3553551462
+theorem VE.Compose.interface_slot
+  ∀ (r : VE.Compose.ProfileRow), r ∈ VE.Compose.profileTable → VE.Compose.slotAgrees r.slot r.interface = Bool.true
+  -- uses VE.Compose.ProfileRow.interface@VE.Compose.Dispatch VE.Compose.ProfileRow.slot@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.slotAgrees@VE.Compose.Dispatch
+  -- expr 2331842986
 theorem VE.Compose.ite_and3
   ∀ (a b c d : Bool) (e r : Except String Unit),
     (if (a && b) = Bool.true then e else if (a && c) = Bool.true then e else if (a && d) = Bool.true then e else r) =
@@ -8842,6 +8929,10 @@ theorem VE.Compose.refusal_names
               ∃ b, ¬b ∈ ps ∧ VE.Compose.refusal w r = VE.Compose.unsupported (w ++ " requires " ++ b)
   -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.base@VE.Compose.Dispatch VE.Compose.refusal@VE.Compose.Dispatch VE.Compose.sitsOn@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
   -- expr 1625547935
+theorem VE.Compose.rewriter_ranks_distinct
+  (List.map (fun x => x.fst) (VE.Compose.rewriters VE.Compose.profileTable)).Nodup
+  -- uses VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.rewriters@VE.Compose.Stack
+  -- expr 653717975
 theorem VE.Compose.rights_acceptance_from_slot
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
