@@ -1,0 +1,15 @@
+{
+ "job": "scale-stage-timers-eb04014b",
+ "head": "b6bf926e3210dcb268cb7b231ff4d09efd948f4e",
+ "argv": [
+  "scale-stage-timers-eb04014b",
+  "b6bf926e3210dcb268cb7b231ff4d09efd948f4e",
+  "5e9de36f84f78b46efd582a8d76cb2910180334d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8a83911e2642.tar.zst",
+  "891ba2e70460604163ec712e9b6593056360b40f440442102942cf4a928cb528",
+  "--max-mutants",
+  "1000",
+  "--jobs",
+  "4"
+ ]
+}
