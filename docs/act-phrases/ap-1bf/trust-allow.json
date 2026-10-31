@@ -1,0 +1,6 @@
+{"allow": [
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-first", "reason": "equivalent: isEmpty of a list and of its first element agree"},
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-last", "reason": "equivalent: isEmpty of a list and of its last element agree"},
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-drop-first", "reason": "equivalent: the decoded profiles are sorted and read acts@0, so their first is acts@0, never definitions@0"},
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-drop-last", "reason": "equivalent: the decoded profiles are sorted and hold norms@0, so their last is never definitions@0"}
+]}

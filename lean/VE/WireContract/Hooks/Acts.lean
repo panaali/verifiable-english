@@ -85,13 +85,13 @@ def envOf (fixed : List String) (act : String) (profiles := ["acts@0", "norms@0"
   let pred := fun (args : List String) (reg : List (String × Json)) => Json.mkObj [("arguments", toJson args),
     ("description", "d"), ("regulated", Json.mkObj reg)]
   let permission := pred ["person"] [("role", "permission"), ("default", "allow"), ("act", "{0} seek protection")]
-  let c := Json.mkObj ([("arguments", toJson ["person"]), ("description", "c")] ++
+  let c := Json.mkObj ([("arguments", toJson ["person"]), ("description", "w")] ++
     if defined then [("defined", Json.mkObj [("arguments", toJson ["person"]), ("body", toJson ["top"])])] else [])
   Json.mkObj [("language", "ve.core@0.2"), ("profiles", toJson profiles),
     ("spec_revision", "ve-v0.2-expand2-2026-09-25"),
     ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj [("description", "person")])]),
       ("predicates", Json.mkObj ([("paid", pred args [("role", "plain"), ("default", "deny"), ("act", .str act),
-        ("form", "has the right")]), ("c", c)] ++ others.map (·, permission))), ("constants", Json.mkObj []),
+        ("form", "has the right")]), ("w", c)] ++ others.map (·, permission))), ("constants", Json.mkObj []),
       ("acts", Json.mkObj [("fixed", toJson fixed)])])]
 
 def memberOf (environment : Json) : Option String :=
@@ -143,10 +143,12 @@ def around : List String := ["anna", "zora"]
 def caseOf (kind : String) (ps : List String) : Json :=
   Json.mkObj [("kind", kind), ("environment", envOf [] (actOf 20) ps), ("norms", Json.arr #[])]
 #guard ["norms-elaborate", "norms-conflict", "norms-certificate"].all fun k =>
-  (adapter (caseOf k ["norms@0", "relational-fol@0", "acts@0"])).isOk
+  [["norms@0", "relational-fol@0", "acts@0"], ["acts@0", "norms@0"], ["norms@0", "acts@0", "relational-fol@0"]].all
+    fun ps => (adapter (caseOf k ps)).isOk
 #guard !(adapter (caseOf "norm-defaults-elaborate" ["acts@0", "norms@0", "relational-fol@0"])).isOk
 #guard [["norms@0", "relational-fol@0"], ["acts@0", "norms@0", "relational-fol@0", "norm-defaults@0"],
-    ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"]].all fun ps =>
+    ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"], ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+    ["soft-norms@0", "acts@0", "norms@0"], ["acts@0", "soft-norms@0", "norms@0"]].all fun ps =>
   !(adapter (caseOf "norms-elaborate" ps)).isOk
 #guard !(adapter (Json.mkObj [("kind", "norms-elaborate"), ("environment", Json.mkObj []), ("norms", Json.arr #[])])).isOk
 #guard !refusedWith "a" (.error "b" : Except String Unit) && !refusedWith "a" (.ok () : Except String Unit)
