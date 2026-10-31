@@ -237,6 +237,7 @@ import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
 import VE.Scope.Govern
+import VE.Scope.EffectLemmas
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Scope.Wire
