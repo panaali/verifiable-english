@@ -72,6 +72,15 @@ def q3 : VE.Formula := .all "agent" (.all "user"
 -- not close without it
 def closeCert : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", "", [], "", .close⟩
 #guard supCertificateCheckSD NSD1 [] [q3] q3 closeCert && !supCertificateCheckSD NSD1 [] [] q3 closeCert
+-- each list of the premises is read whole: every atom of `A`, premise of `supX`, superposed assertion and member of `Γ`
+-- closes a goal equal to it
+def q4 : VE.Formula := .all "agent" (.all "user" (.not (.binary "avoid_required" (.var 1) (.var 0))))
+def NSDa : NDoc := ⟨docK [.fixed "u0" (.assertion VE.Readings.Examples.asksAll) [], .fixed "u1" (.assertion q4) [],
+  .set VE.Readings.Examples.rs1], ["avoid_required"]⟩
+#guard [0, 1].all (fun i => supCertificateCheckSD NSD1 [("rs1", 0), ("rs1", 1)] [] (choiceAtom NSD1.D "rs1" i) closeCert)
+#guard (supX NSD4).all (fun a => supCertificateCheckSD NSD4 [] [] a closeCert)
+#guard (sup NSDa.D).2.length == 2 && (sup NSDa.D).2.all (fun a => supCertificateCheckSD NSDa [] [] a closeCert)
+#guard [q3, q4].all (fun a => supCertificateCheckSD NSD1 [] [q3, q4] a closeCert)
 
 /-! ## `NSD4a` (`x_permitted` allowed by default) and `NSD4c` (`need-not-x` strict): facts -/
 
