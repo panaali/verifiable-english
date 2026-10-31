@@ -1,0 +1,88 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 1 (replay_embed, through next_embed): closure's expansion rule has Core's side conditions; seeded: closure's reach-unfolding step also refuses index 7 (its own soundness proof still builds), and the equality no longer builds",
+   "find": "    if parameter.isSome || index ∈ b.expanded then none else\n      let f ← unfoldAt E b a.bindings k e t r",
+   "replace": "    if parameter.isSome || index ∈ b.expanded || index == 7 then none else\n      let f ← unfoldAt E b a.bindings k e t r",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/TableauExtendedRules.lean",
+   "claim": "claim 1 (replay_embed, through reachClosed_embed): closure's reach-closure rule applies to the same formulas as Core's; seeded: isReach no longer accepts a body reach, and the equality no longer builds",
+   "find": "  | .reachNamed .. | .reachBody .. => true",
+   "replace": "  | .reachNamed .. => true",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 1, both flags explicit: replay agrees for each value of the induction flag; seeded: closure's replay ignores its induction flag (closure soundness still builds), and replay_embed no longer builds",
+   "find": "        induction && match induct E b index s P with",
+   "replace": "        true && match induct E b index s P with",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "claim 2 (steps_embed): Steps.closure counts what Steps.core counts on the embedding; seeded: an induction node counts 2, and steps_embed no longer builds",
+   "find": "  | .induct _ _ _ cs => 1 + closureStepsList cs",
+   "replace": "  | .induct _ _ _ cs => 2 + closureStepsList cs",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 3 (checkCertificate_eq_core_replay and the per-version corollaries): closure's version gate is @0 or @1; seeded: the gate accepts @2 instead of @0, and the corollary no longer builds",
+   "find": "  (c.checker_version == \"ve-tableau-closure-checker@0\" ||",
+   "replace": "  (c.checker_version == \"ve-tableau-closure-checker@2\" ||",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/Closure/CoreEquiv.lean",
+   "claim": "claim 1 in the new module: the embedding keeps every trace field; seeded: embedTrace drops an expansion's parameter, and replay_embed no longer builds",
+   "find": "  | .expand rule index parameter children => .expand rule index parameter (embedTraces children)",
+   "replace": "  | .expand rule index parameter children => .expand rule index none (embedTraces children)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "lean/VE/Core/Bridge.lean",
+   "claim": "claim 2b (decodeTrace_ne_embed): the counterexample rests on Core's atom case; seeded: Core's formula decoder no longer reads an atom, the two decoders agree on the witness, and the kernel-checked counterexample no longer builds",
+   "find": "    | [.str \"atom\", .str p, ts] =>",
+   "replace": "    | [.str \"atom@x\", .str p, ts] =>",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ]
+  }
+ ]
+}

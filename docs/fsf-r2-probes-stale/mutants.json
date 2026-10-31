@@ -1,0 +1,5 @@
+[
+ {"id": "S1", "file": "docs/usecases/safety-framework/fsf-r2/probes.json", "mutation": "DF-a diagnostic set back to the df-1b text", "test": "tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes", "result": "failed: probes.json is out of date"},
+ {"id": "S2", "file": "ve/document/cli.py", "mutation": "enumerated-route refusal reworded (routes)", "test": "tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes", "result": "failed: probes.json is out of date"},
+ {"id": "S3", "file": "ve/document/cli.py", "mutation": "content-bearing redirect to _readings_without_exception disabled", "test": "tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes", "result": "failed: probes.json is out of date"}
+]

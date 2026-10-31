@@ -15,6 +15,8 @@ import copy
 import hashlib
 from dataclasses import dataclass, field
 
+from layer_policy import lazy_exports
+
 # Decorators that only wrap or describe the function they decorate. Any other
 # decorator may register the function somewhere, which is an import-time effect.
 BENIGN_DECORATORS = frozenset({
@@ -300,6 +302,14 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
         elif isinstance(node, ast.Constant) and isinstance(node.value, str) and len(node.value) < 300 \
                 and not (node.value.strip() in ROOT_SPELLINGS and id(node) in text):
             constants.add(node.value)
+    if package:
+        # A lazy facade (`_EXPORTS`, resolved by `__getattr__`) imports each module for its names on first use;
+        # record it as the `from .module import name` lines it replaces.
+        owners: dict[str, list[str]] = {}
+        for name, owner in lazy_exports(tree).items():
+            owners.setdefault(owner, []).append(name)
+        summary.imports.extend(ImportEdge(f"{module}.{owner}", tuple((name, name) for name in names), None)
+                               for owner, names in owners.items())
     summary.constants = frozenset(constants)
     summary.identifiers = _references(tree)
     summary.attributes = frozenset(node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute))

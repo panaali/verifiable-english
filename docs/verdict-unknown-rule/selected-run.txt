@@ -1,0 +1,14 @@
+$ zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run   (HEAD 51d02fe6)
+114:FAILED tests/test_lean_share.py (exit 1): tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites; log /var/tmp/cct/ve-select-run-_74fk02c/tests__test_lean_share.py.log
+138:FAILED tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites
+141:SHARD 4/6: exit 1 in 165.5 s; 21 units, 20 passed
+240:SHARD 3/6: exit 0 in 188.7 s; 27 units, 27 passed
+339:SHARD 2/6: exit 0 in 204.8 s; 22 units, 22 passed
+438:SHARD 6/6: exit 0 in 218.1 s; 22 units, 22 passed
+542:SHARD 1/6: exit 0 in 255.0 s; 25 units, 25 passed
+641:SHARD 5/6: exit 0 in 241.6 s; 21 units, 21 passed
+642:[gha-select 06:41:08Z] summary: selected tests ran on the Claude cloud (6 shards, run verdict-unknown-rule-51d02fe6-t428391); exit=1; 477s
+
+$ zsh mac-pytest.sh -- -q tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites
+12:1 passed in 2.15s
+13:[mac-pytest 06:46:15Z] summary: ran on ve-mac-1 (aarch64), pytest with 4 args, workers 6; HEAD 51d02fe6 (clean); 299s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

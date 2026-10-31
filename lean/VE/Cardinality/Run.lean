@@ -8,9 +8,10 @@ A problem (premises and conclusion) is decoded statement by statement, then chec
 W6a. A certificate is bound twice: to the cardinality identities of the statements, and, as a W6a certificate, to
 the regenerated problem's W6a identities in the projection's environment (`CardEnv.w6`); its order trace is replayed
 by the frozen checker on that problem (`checkCertificate_sound`). A claimed region table or erased problem must be
-the regenerated one. The runner answers the case kinds `admission`, `certificate`, `document` (the claim graph of
-`Document.lean`, each deduction's problem built once, `checkDeduction`); W6a owns the identities
-(`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
+the regenerated one. The runner answers the case kinds `admission`, `certificate`, `countermodel` (spec 3.9, W6a's
+budgeted countermodel check on the erased problem, the region sizes computed once and charged: `countermodel`),
+`document` (the claim graph of `Document.lean`, each deduction's problem built once, `checkDeduction`); W6a owns the
+identities (`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
 namespace VE.Cardinality
 
 structure CardCertificate where
@@ -80,6 +81,23 @@ def erasedIds (w : CardEnv) (ps : List CFormula) (c : CFormula) :
   idsOf w (erasedProblem w.env ps c)
 
 def stale : String := "cardinality certificate is stale or bound to different statements"
+
+/-- The countermodel case (spec 3.9) on the problem's region structure `R` and erased problem `ep`, the model decoded
+in the original vocabulary: each region's size is computed once and its work charged first against W6a's evaluation
+budget, whose rest bounds W6a's countermodel check of `ep` (past it, UNKNOWN: `budgetExhausted`). The verdict and the
+sizes, in the region table's order (`countermodel_sound`). -/
+def countermodel (w : CardEnv) (R : RegionData) (ep : List QFormula × QFormula) (m : Json) :
+    Except String (Bool × List (String × Nat)) := do
+  let d ← VE.Route.Decode.decodeOrderModel w.w6.vocab.core m
+  let M := (VE.Time.Wire.sortDomains d).toModel
+  let cost := regionCost M R
+  if cost > VE.Limits.maxEvaluations then throw VE.Time.Wire.budgetExhausted
+  let mem := VE.Route.Budget.orderMem M (VE.Time.Wire.tableIndex (VE.Time.Wire.predicateNames w.w6) d)
+  let sizes := regionSizes mem M R
+  match VE.Time.refutesB mem (withSizes M (sizeIndex sizes)) VE.Limits.maxEvaluations (ep.1.map QFormula.erase)
+      ep.2.erase cost with
+  | some refutes => pure (refutes, sizes)
+  | none => throw VE.Time.Wire.budgetExhausted
 
 def decodeCertificate (j : Json) : Except String CardCertificate :=
   match (do
@@ -212,6 +230,10 @@ def problemJson (ep : List QFormula × QFormula) (ids : List (String × String) 
 def erasedJson (w : CardEnv) (ps : List CFormula) (c : CFormula) : Except String Json := do
   pure (problemJson (erasedProblem w.env ps c) (← erasedIds w ps c))
 
+/-- Each region constant with its size in a countermodel, in the region table's order. -/
+def sizesJson (sizes : List (String × Nat)) : Json :=
+  Json.arr (sizes.map fun e => Json.mkObj [("constant", .str e.1), ("size", toJson e.2)]).toArray
+
 /-- A claimed region table or erased problem must be the regenerated one (spec 4.1). -/
 def claimed (j : Json) (field : String) (regenerated : Json) (text : String) : Except String Unit := do
   if let .ok claim := j.getObjVal? field then
@@ -225,7 +247,7 @@ def runCase (j : Json) : Except String Json := do
   let kind ← match j.getObjVal? "kind" with
     | .ok k => k.getStr?
     | .error _ => pure "admission"
-  unless kind == "admission" || kind == "certificate" || kind == "document" do
+  unless kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel" do
     throw s!"unknown case kind {kind}"
   let w ← decodeEnvironment (← j.getObjVal? "environment")
   let envIds := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
@@ -246,6 +268,10 @@ def runCase (j : Json) : Except String Json := do
   let answer := envIds ++ [("premises", Json.arr (ps.map statementJson).toArray), ("conclusion", statementJson c)]
   if kind == "admission" then
     return VE.Time.Wire.ok id (answer ++ [("regions", regions), ("erased", erased)])
+  if kind == "countermodel" then
+    let (refutes, sizes) ← countermodel w R ep (← j.getObjVal? "model")
+    return VE.Time.Wire.ok id
+      (("refutes", .bool refutes) :: answer ++ [("regions", regions), ("sizes", sizesJson sizes)])
   let valid ← checkErased ps c table ep ids (← decodeCertificate (← j.getObjVal? "certificate"))
   pure (VE.Time.Wire.ok id (("valid", .bool valid) :: answer))
 

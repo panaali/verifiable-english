@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import re
 from typing import TypeAlias
 
+from .backends.dispatch import owned
 from .assurance import semantic_entry
 from .environment import Environment
 from .errors import ResourceLimit, SyntaxError, TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError
@@ -384,7 +385,6 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
     """Check a closed formula. Open formulas are never accepted as claims.
 
     Lean's `check` mode decides under every authority (lean-first batch 13b)."""
-    from .backends.dispatch import owned
     from .backends.relay import decide
     from .environment_wire import encoded_environment
     core_gate(env)
@@ -407,7 +407,6 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
 def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")
-    from .backends.dispatch import owned
     from .backends.relay import decide
     from .environment_wire import encoded_environment
     core_gate(env)

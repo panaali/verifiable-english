@@ -64,6 +64,7 @@
 - `ve/rights.py` — Rights environment and Python views of Lean's rights elaboration.
 - `ve/rights_route.py` — Relay rights decisions and reports from the Lean rights route.
 - `ve/risk.py` — Lean risk route transport.
+- `ve/scope.py` — Lean's explanation of a `scope@0` document (docs/spec/scope.md 1.6, 2.3 and 5.3, SC-1c): the relay of the `scope` service mode (`lean/VE/Scope/Run.lean`).
 - `ve/search.py` — Bounded finite countermodel search (an untrusted convenience).
 - `ve/senses_document.py` — Senses in `ve document` (readings-defaults plan, section 6; batch RD-8): transport and display only.
 - `ve/soft_route.py` — Python entry point for the proved soft-norm admission route.
