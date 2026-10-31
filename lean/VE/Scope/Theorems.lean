@@ -1866,9 +1866,9 @@ theorem listName_run (D : SDoc) (h₀ : admitBlock D = .ok ()) (n : VE.Discourse
         exact ⟨rfl, hmatch⟩
       · simp [hrun, hmatch, bind, Except.bind] at hc
 
-/-! ## SC-2's `own` and order check (spec 5.4, sc-2c). The five effect statements of 5.4 are not stated here: the soft
-    chain's decoder reads a raw rule tree by traversal, so they fail without a well-formedness premise
-    (docs/scope/sc-2c/REPORT.md). -/
+/-! ## SC-2's `own` and order check (spec 5.4, sc-2c). The five effect statements of 5.4 fail on a raw rule tree (the
+    soft chain's decoder reads members by traversal; F-raw-effect, `Examples.lean`); sc-2d proves them with the premise
+    `JsonWF o` (reviews/dri-decisions-20261031-sc-2c.md item 1). -/
 
 section Own
 open VE.Norms.Wire (budgetFormula budgetTerm)
