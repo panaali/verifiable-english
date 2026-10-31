@@ -1,0 +1,3 @@
+trust_mutants: 8 definitions, 91 mutants (91 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Compose/Dispatch.lean:879 VE.Compose.listedProfiles (G[V], trusted) list-empty: ps.toList.filterMap -> [] (lean/VE/Compose/Dispatch.lean:879: Function expected at)
+SURVIVOR lean/VE/Compose/Dispatch.lean:889 VE.Compose.decidingEnvironment (G[V], trusted) list-first: documentLayers -> (documentLayers.take 1) (the proofs it breaks: lean/VE/Compose/Dispatch.lean:983)
