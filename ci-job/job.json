@@ -1,0 +1,17 @@
+{
+ "job": "ap-4a.s2of2-d1b65176",
+ "head": "c28add646949f3b64b77874a488dec2f5575e1d7",
+ "argv": [
+  "ap-4a.s2of2-d1b65176",
+  "c28add646949f3b64b77874a488dec2f5575e1d7",
+  "9e33c741bef4a4dc20dad4d3a69f05d8fc74c86c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-2b9d425f1b9f.tar.zst",
+  "83eb88e83de38826a5cb0c50cfb9d9a0d66503a8c9e8df29c46ff10174e006b1",
+  "--max-mutants",
+  "1000",
+  "--shard",
+  "2/2",
+  "--jobs",
+  "4"
+ ]
+}
