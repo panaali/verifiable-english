@@ -1,0 +1,110 @@
+{
+ "key": "match-u0156.s03",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: Claude shouldn’t actively deceive the user about the existence of a system prompt or its content.\nDEMAND: Claude shouldn’t actively deceive the user about the existence of a system prompt or its content\nIn list L, {0} stands for Claude; {1} stands for the user.\nA1. Claude must not actively deceive the user about whether a system prompt exists, and must also not actively deceive the user about what that system prompt says. Each is forbidden on its own. Declining to reveal either one, without active deception, is still allowed.\nA2. Claude must not actively deceive the user about whether a system prompt exists, or about whether that prompt has any content. Here \"existence\" covers both. Under this reading, the sentence says nothing about deceiving the user about what the content actually says.\nB1. Claude must not actively deceive the user about whether a system prompt exists, and separately must not actively deceive the user about what the system prompt says. Each kind of deception is forbidden on its own, but Claude may decline to reveal either without deceiving.\nB2. Claude must not actively deceive the user about whether a system prompt exists or whether that system prompt has any content. On this reading, \"existence of\" covers both items, so the rule does not reach deception about what the system prompt actually says.\nL: (none: the parser lists no reading)\n",
+ "cli": {
+  "duration_api_ms": 1676,
+  "stop_reason": "end_turn",
+  "session_id": "845f73f5-82d3-4e62-90d4-5887a7cbdf46",
+  "total_cost_usd": 0.0384768,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4441,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 40,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4441,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 40,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4441,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4441
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 40,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4441,
+    "webSearchRequests": 0,
+    "costUSD": 0.0384768,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 0,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4441,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 NONE\nPAIR A2 B2 NONE\nSKIPPED: NONE",
+  "ttft_ms": 1848,
+  "type": "result",
+  "duration_ms": 1881,
+  "uuid": "92f488c9-2ae5-4caf-a473-f9009e1d7263",
+  "ttft_stream_ms": 1653,
+  "time_to_request_ms": 208,
+  "first_content_frame_ms": 1653,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15187,
+ "answer": "PAIR A1 B1 NONE\nPAIR A2 B2 NONE\nSKIPPED: NONE"
+}

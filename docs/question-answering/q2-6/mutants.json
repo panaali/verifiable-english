@@ -1,0 +1,62 @@
+[
+ {
+  "bug": "a reading key taken from the wrong lead (the first row's, not the answer's)",
+  "file": "conformance/question_answering_readability.py",
+  "test": "tests/test_question_answering_readability.py::test_every_reading_key_is_the_saved_lean_lead",
+  "failed": true,
+  "evidence": [
+   "E           AssertionError: R-U3",
+   "E           assert 'OPEN' == 'BY-READING'"
+  ]
+ },
+ {
+  "bug": "a context that leaks its key",
+  "file": "conformance/question_answering_readability.py",
+  "test": "tests/test_question_answering_readability.py::test_a_context_is_what_a_human_gets_and_leaks_nothing",
+  "failed": true,
+  "evidence": [
+   "E           AssertionError: contexts/R-G1.txt",
+   "E           assert not ({'ALLOWS-FAIL', 'BY-READING', 'OPEN', 'RULES-OUT', 'YES', 'by_reading', ...} & {'A', 'ABOUT', 'ANSWER', 'ASKED', 'Ann', 'Answer', ...})"
+  ]
+ },
+ {
+  "bug": "a \"No.\" variant that also changes another line",
+  "file": "conformance/question_answering_readability.py",
+  "test": "tests/test_question_answering_readability.py::test_each_no_variant_differs_from_its_source_in_the_lead_line_only",
+  "failed": true,
+  "evidence": [
+   "E           AssertionError: assert [('Not necess...ied.', 'No.')] == [('Not necessarily.', 'No.')]",
+   "E             "
+  ]
+ },
+ {
+  "bug": "a sealed file edited after the manifest",
+  "file": "docs/question-answering/q2-6/readability/contexts/R-G1.txt",
+  "test": "tests/test_question_answering_readability.py::test_the_builder_is_deterministic_and_the_manifest_verifies",
+  "failed": true,
+  "evidence": [
+   "E       AssertionError: assert ({'MANIFEST.sh... ]\\n}\\n', ...} == {'MANIFEST.sh... ]\\n}\\n', ...}",
+   "E         "
+  ]
+ },
+ {
+  "bug": "the expected table that drops D6's row for A3",
+  "file": "docs/question-answering/q2-6/evidence/expected.json",
+  "test": "tests/test_question_answering_measure_report.py::test_q26_each_fixture_lead_against_the_spec_names_the_delta_row_that_explains_it",
+  "failed": true,
+  "evidence": [
+   "E               ValueError: A3: spec lead no, Lean lead notNecessarily, DELTA row None does not explain it",
+   "FAILED tests/test_question_answering_measure_report.py::test_q26_each_fixture_lead_against_the_spec_names_the_delta_row_that_explains_it"
+  ]
+ },
+ {
+  "bug": "a wording count that skips one fixture",
+  "file": "tools/question_answering_report.py",
+  "test": "tests/test_question_answering_measure_report.py::test_q26_wording_counts_cover_every_saved_answer_line",
+  "failed": true,
+  "evidence": [
+   "E           assert '| S1 | 2 | 55 | 27 |' in \"# Question answering: Q2 non-model evidence\\n\\nThe recorded answer fixtures were replayed through Lean's `ask` mode b... writing evaluation: sealed and bars registered (docs/question-answering/q2-6/readability/); not run, no model call.\\n\"",
+   "FAILED tests/test_question_answering_measure_report.py::test_q26_wording_counts_cover_every_saved_answer_line"
+  ]
+ }
+]
