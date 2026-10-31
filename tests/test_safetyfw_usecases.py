@@ -501,7 +501,7 @@ def test_rsp_each_narrowing_reruns_a_ve_answer(rsp_modules, narrowing, item_id):
 
 PF = USECASES / "openai-preparedness"
 PF_EVIDENCE = REPO / "docs/usecases/safetyfw/openai-preparedness"
-PF_NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "measure")
+PF_NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "measure", "run", "reference")
 
 
 def _load_pf():
@@ -521,6 +521,7 @@ def _load_pf():
 PF_MODULES = _load_pf()
 pf_vocab, pf_translation, pf_build = (PF_MODULES[n] for n in ("pf_vocabulary", "pf_translation", "build_document"))
 pf_stage0, pf_measure = (PF_MODULES[n] for n in ("stage0", "measure"))
+pf_run, pf_reference = PF_MODULES["run"], PF_MODULES["reference"]
 
 
 @pytest.fixture
@@ -540,7 +541,10 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
     assert audit["thresholds_without_premise"] == audit["order_or_causal_predicates"] == []
     for block in pf_translation.rule_blocks():
         assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
-    assert all(len(fs) == 2 for _, fs in pf_translation.facts())
+    facts = {block.id: formulas for block, formulas in pf_translation.facts()}
+    assert all(len(facts[block]) == 2 for block in pf_build.FACT_ANCHORS if block in facts)
+    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models"}
+    assert all(len(facts[block]) == 1 for block in ("rs2-nest", "no-critical-models"))
 
 
 def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
@@ -553,12 +557,13 @@ def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
     assert set(blocks) <= placements | choices
     assert all(block.source.strip() for block in blocks.values())
 
+    reading_blocks = {**blocks, **{b.id: b for b in pf_translation.read_blocks("facts.d1.ve")}}
     for set_id, (harness, readings) in pf_build.READINGS.items():
         assert set(readings) == set(pf_translation.READING_SETS[harness])
         for choice, names in readings.items():
             for name in names:
-                assert name in blocks
-                assert not blocks[name].when or (harness, choice) in blocks[name].when
+                assert name in reading_blocks
+                assert not reading_blocks[name].when or (harness, choice) in reading_blocks[name].when
 
     assert [name for name in pf_build.READINGS["rs8-distilled"][1]["rel"]] == ["f6-rel"]
     assert pf_build.READINGS["rs8-distilled"][1]["pred"] == []
@@ -578,11 +583,15 @@ def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
     rows = {"lra": "lra_found", "sandbagging": "sandbagging_found", "ara": "ara_found",
             "undermining": "undermining_found", "nuclear": "nuclear_found"}
     for row, predicate in rows.items():
-        assert pf_build.READINGS[f"rs4-{row}"][1] == {"N": [f"f12-{row}"], "P": []}
+        assert pf_build.READINGS[f"rs4-{row}"][1] == {"N": [f"f12-{row}", f"f12-{row}-unscoped"], "P": []}
         guard = json.dumps(json.loads(pf_translation.parsed_rule(f"f12-{row}"))["guard"])
-        assert predicate in guard
+        unscoped = json.dumps(json.loads(pf_translation.parsed_rule(f"f12-{row}-unscoped"))["guard"])
+        assert predicate in guard and predicate not in unscoped
         if row in ("lra", "undermining"):
-            assert "high_capability" in guard and "critical_capability" in guard
+            for text in (guard, unscoped):
+                assert '"reached"' in text and '"high"' in text and '"critical"' in text
+        else:
+            assert unscoped == '["top"]'
 
     f17 = pf_build.READINGS["rs12-category"][1]
     assert f17 == {"suff": ["f17-suff"], "iff": ["f17-iff", "f17-iff-only"]}
@@ -705,7 +714,7 @@ def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
         "rs15-persuasion", "rs15-threat-models"}
     assert pf_build.PLACEMENTS["Going forward we will handle risks related to persuasion"][0] == "readings"
     assert pf_build.PLACEMENTS["For these areas, in collaboration with external experts, we commit"][0] == "readings"
-    assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "rule"
+    assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "readings"
     assert pf_build.PLACEMENTS["Systems that reach Critical capability also require sufficient safeguards"][0] == "rule"
     for unit_id in ("p15-u249", "p15-u252", "p17-u296", "p17-u297"):
         assert units[unit_id]["status"] == "OPEN"
@@ -719,7 +728,10 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
     summary = next(r for r in records if r.get("reading_set") == "rs13-employee-summary")
     assert summary["status"] == "OPEN"
     assert summary["waits"] == ["AT", "AP"]
-    assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": [], "might": []})
+    assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": ["f14-summary"], "might": []})
+    summary_rule = json.loads(pf_translation.parsed_rule("f14-summary"))
+    assert summary_rule["predicate"] == "summary_access" and summary_rule["sign"] is True
+    assert "highly_sensitive" in json.dumps(summary_rule["unless"])
     assert pf_translation.READING_SETS["RS13"] == ("permission", "might")
     exposition, _ = pf_build._fallback(1, 0, b"Contents")
     claim, _ = pf_build._fallback(1, 0, b"Employees may request a summary")
@@ -830,3 +842,211 @@ def test_pf_stage0_and_gaps(pf_modules):
         assert set(unit["blockers"]) <= set(pf_measure.FAMILIES)
     if pf_build.DEFAULT_SOURCE.exists():
         assert pf_stage0.main(["--check"]) == 0
+
+
+# --- openai-preparedness answers (usecase-pf-run: PLAN 9 to 11) ---------------------------------------------------
+
+PF_STATUSES = {"agree", "disagree", "UNDECIDED-faithful", "resource-limit"}
+
+
+@pytest.fixture
+def pf_clean(pf_modules):
+    """Each test starts and ends with no mutant, no narrowing removed and empty caches."""
+    def reset():
+        pf_run.MUTANT = pf_run.WITHOUT_NARROWING = None
+        pf_run.document.cache_clear()
+        pf_run._conflict.cache_clear()
+        pf_run.opposite_pairs.cache_clear()
+        pf_run._MODELS.clear()
+        pf_run._PREMISES.clear()
+    reset()
+    yield
+    reset()
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_run_recomputes_every_key_item_and_records_causes(pf_clean):
+    """Every saved answer comes from a fresh VE route; every row that does not agree names its cause."""
+    saved = json.loads((PF / "results.json").read_text())
+    fresh = pf_run.run()
+    assert fresh == {k: saved[k] for k in ("items", "comparison", "cost")}
+    rows = saved["comparison"]
+    assert [r["id"] for r in rows] == [k["id"] for k in items("openai-preparedness")]
+    assert {r["status"] for r in rows} <= PF_STATUSES
+    for row in rows:
+        assert set(row) >= {"id", "key", "ve", "agree", "status", "cause", "route"} and row["route"]
+        assert row["agree"] == (row["status"] == "agree")
+        assert row["agree"] or (row["cause"]["kind"] and row["cause"]["feature_family"] and row["cause"]["reason"])
+    assert saved["metrics"]["M1"] == pf_run.metrics(saved)["M1"]
+    useful = saved["metrics"]["useful_answers"]
+    assert (useful["correct"], useful["key"]) == (sum(r["agree"] for r in rows), 239)
+    assert saved["metrics"]["M7"]["sensitive_exactly_where_silent"]
+    # The only disagreements are the six truncated key cells; VE's answer equals PLAN 6.2's cell.
+    disagree = [r for r in rows if r["status"] == "disagree"]
+    assert [r["id"] for r in disagree] == [f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")]
+    assert all(r["cause"]["kind"] == "key finding" and r["cause"]["reason"].endswith("True") for r in disagree)
+
+
+def test_pf_independent_reference_and_comparator_catch_wrong_answers(pf_clean):
+    rows = pf_reference.compare()
+    assert len(rows) == 199
+    assert sorted(r["id"] for r in rows if not r["agrees"]) == sorted(
+        f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C"))
+    item = next(k for k in items("openai-preparedness") if k["id"] == "B-BIO-H/MREP")
+    assert item["key"] == "SOME(N"  # the transcription truncated PLAN 6.2's "SOME(N ∧ unscoped)"
+    assert pf_reference.matches("SOME(N ∧ unscoped)", *pf_reference.case_answer(item))
+    assert pf_run.key_terms("SOME(N") is None
+    assert pf_run.key_terms("SOME(inuse | (nest & any))") == [{"RS18": "inuse"}, {"RS2": "nest", "RS3": "any"}]
+    assert not pf_reference.matches("ALL", ("RS2",), lambda c: c["RS2"] == "nest")
+    one = lambda holds, choice=None: {"route": "test", "cone": list(choice or ()),
+                                      "choices": [{"choice": choice or {}, "holds": holds}]}
+    assert not pf_run.same_set("ALL", one(False))
+    assert not pf_run.same_set("ALL", {"route": "test", "cone": [], "choices": []})
+    assert not pf_run.same_set("SOME(nest)", one(True))
+    assert not pf_run.same_set("NONE", one(None))
+    assert pf_run.same_set("SOME(nest)", {"route": "test", "cone": ["RS2"], "choices": [
+        {"choice": {"RS2": "nest"}, "holds": True}, {"choice": {"RS2": "sep"}, "holds": False}]})
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("mutant", ("m1", "m2", "m3", "m4", "m5", "m6"))
+def test_pf_six_mutants_change_exactly_the_named_results(pf_clean, mutant):
+    """PLAN 11: each seeded mutant changes exactly the results the plan names, recomputed over all 239 items."""
+    saved = json.loads((PF / "results.json").read_text())
+    base = {row["id"]: row["ve"] for row in saved["comparison"]}
+    pf_run.MUTANT = mutant
+    mutated = pf_run.run()
+    changed = sorted(row["id"] for row in mutated["comparison"] if row["ve"] != base[row["id"]])
+    assert changed == sorted(pf_run.EXPECTED_MUTANTS[mutant]) == saved["mutants"][mutant]["changed"]
+    assert pf_run.invention_audit_for(mutated)["untraced"] == (["m2-invented-permission"] if mutant == "m2" else [])
+    assert saved["mutants"][mutant]["exact"]
+
+
+def test_pf_mutant_expectations_are_plan_section_11(pf_clean):
+    plan = section("openai-preparedness", 11)
+    for name, expected in pf_run.EXPECTED_MUTANTS.items():
+        row = next(line for line in plan.splitlines() if line.startswith(f"| {name} |"))
+        for item_id in expected:
+            family = item_id.split("/")[0].rsplit("-", 1)[0] if "/" in item_id else item_id
+            assert family in row or item_id.split("/")[-1] in row, (name, item_id)
+
+
+@pytest.mark.parametrize("id_", ("C1", "C2", "C6", "C-doc"))
+def test_pf_unknown_w1_is_undecided_not_false(pf_clean, monkeypatch, id_):
+    from types import SimpleNamespace
+    saved = json.loads((PF / "results.json").read_text())["items"][id_]
+    assert all("UNKNOWN" not in row["w1"] for row in saved["choices"])
+    monkeypatch.setattr(pf_run, "check_conflict", lambda *a, **k: SimpleNamespace(status="UNKNOWN"))
+    unresolved = pf_run.conflict(id_)
+    assert unresolved["undecided"].startswith("resource limit")
+    assert all(row["holds"] is None for row in unresolved["choices"])
+    assert pf_run.verdict(unresolved) == "UNDECIDED" and not pf_run.same_set("NONE", unresolved)
+
+
+@pytest.mark.parametrize("id_", ("T1", "T2", "S1", "S4", "S5", "D1", "D2", "D3", "D4"))
+def test_pf_missing_quantity_certificate_is_undecided(pf_clean, monkeypatch, id_):
+    monkeypatch.setattr(pf_run, "certified", lambda *args: None)
+    item = next(k for k in items("openai-preparedness") if k["id"] == id_)
+    result = pf_run.answer(item)
+    assert result["undecided"].startswith("resource limit") and not pf_run.same_set(item["key"], result)
+    assert pf_run.verdict(result) == "UNDECIDED"
+
+
+def test_pf_an_unset_negated_open_term_is_undecided(pf_clean, monkeypatch):
+    """K2's rule tests "not already implemented and assessed": the case must state it, or the answer is open."""
+    item = {"id": "K2", "case": "K2", "item": "REQUIRED:SAG_RECOMMENDS_SAFEGUARDS"}
+    assert pf_run.verdict(pf_run.answer(item)).startswith("SOME(")
+    monkeypatch.setitem(pf_run.STATED_FALSE, "K2", ())
+    result = pf_run.answer(item)
+    assert "safeguards_already_assessed" in result["undecided"] and pf_run.verdict(result) == "UNDECIDED"
+
+
+def test_pf_case_model_must_satisfy_the_selected_premises(pf_clean, monkeypatch):
+    """Under RS2 = nest a Critical case model without its category's High level breaks rs2-nest."""
+    case = pf_run.CASES["A-BIO-C-DEV"]
+    choice = {**pf_run.BASE, "RS2": "nest"}
+    doc = pf_run.document(tuple(sorted(choice.items())), "deny")
+    found = pf_run.atoms(case, choice) - {("reached", "s", "biological_and_chemical_high")}
+    with pytest.raises(AssertionError, match="rs2-nest"):
+        pf_run.check_premises(doc, found, choice)
+    sep = {**pf_run.BASE, "RS2": "sep"}
+    assert ("reached", "s", "biological_and_chemical_high") not in pf_run.atoms(case, sep)
+
+
+def pf_item(item_id):
+    entry = next(k for k in items("openai-preparedness") if k["id"] == item_id)
+    return {name: entry[name] for name in ("id", "case", "item")}
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("item_id", ("A-BIO-H-EXT/SUF", "G6", "N2", "C1"))
+def test_pf_invention_audit_reads_every_document_a_route_builds(pf_clean, monkeypatch, item_id):
+    """M6 reads the rules each answer's documents were built from, on every route that builds one (selection,
+    silence against a baseline, the N2 probe, a W1 cluster), also when the documents come from the cache."""
+    assert pf_run.invention_audit_for({"items": {item_id: pf_run.answer(pf_item(item_id))}})["untraced"] == []
+    pf_run.document.cache_clear()
+    pf_run._conflict.cache_clear()
+    rule_data = pf_run.rule_data
+    monkeypatch.setattr(pf_run, "rule_data", lambda block: {**rule_data(block), "name": "invented-" + block.id})
+    for _ in range(2):  # the second answer reads cached documents and conflicts
+        untraced = pf_run.invention_audit_for({"items": {item_id: pf_run.answer(pf_item(item_id))}})["untraced"]
+        assert untraced and all(name.startswith("invented-") for name in untraced)
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_m2_opposite_pairs_come_from_the_parsed_invented_rule(pf_clean, monkeypatch):
+    pf_run.MUTANT = "m2"
+    invented = pf_run.invented_rules()
+    assert [r["name"] for r in invented] == ["m2-invented-permission"]
+    pairs = [p for p in pf_run.opposite_pairs("m2") if "m2-invented-permission" in p]
+    assert pairs
+    flipped = ({**invented[0], "sign": not invented[0]["sign"]},)
+    monkeypatch.setattr(pf_run, "_invented", lambda mutant: flipped if mutant == "m2" else ())
+    pf_run.opposite_pairs.cache_clear()
+    assert [p for p in pf_run.opposite_pairs("m2") if "m2-invented-permission" in p] != pairs
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_n3_counts_only_rules_ve_selected(pf_clean, monkeypatch):
+    """W1 cluster rows and N1's guard rows name rules VE never selected; only a selection is a scored witness."""
+    monkeypatch.setattr(pf_run, "witness_for", lambda block: "own model")
+    listed = {"C1": pf_run.answer(pf_item("C1")), "N1": pf_run.answer(pf_item("N1"))}
+    assert listed["C1"]["selected_rules"] == listed["N1"]["selected_rules"] == []
+    witnesses = pf_run.dead_rules(listed)["witnesses"]
+    for name in set(pf_run.CLUSTERS["C1"]) | set(pf_run.N1_RULES):
+        assert witnesses[name] == "own model", name
+    k3 = pf_run.answer(pf_item("K3"))
+    assert "f6-rel" in k3["selected_rules"]
+    assert pf_run.dead_rules({"K3": k3})["witnesses"]["f6-rel"] == "a scored case"
+
+
+def test_pf_a_scored_witness_needs_both_completion_defaults(pf_modules):
+    def selecting(*defaults):
+        key = ("f6-rel", (("RS1", "x"),), frozenset())
+        return lambda: pf_run._merge({"built": set(), "selected": {key: set(defaults)}}) or {}
+    assert pf_run.recorded(selecting("deny"))["selected_rules"] == []
+    assert pf_run.recorded(selecting("allow", None))["selected_rules"] == []
+    assert pf_run.recorded(selecting("deny", "allow"))["selected_rules"] == ["f6-rel"]
+    outer = pf_run.recorded(lambda: pf_run.recorded(selecting("deny", "allow")))
+    assert outer["selected_rules"] == ["f6-rel"] and pf_run._OPEN == []
+
+
+def test_pf_saved_n3_witnesses_are_saved_selections():
+    saved = json.loads((PF / "results.json").read_text())["items"]
+    selected = {name for id_, item in saved.items() if id_ != "N3" for name in item["selected_rules"]}
+    witnesses = saved["N3"]["witnesses"]
+    assert {n for n, w in witnesses.items() if w == "a scored case"} == selected & set(witnesses)
+    assert all(isinstance(w, list) and w for w in witnesses.values() if w != "a scored case")
+    assert all(item["audit_input"] == {"rules": []} for item in saved.values())
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_each_narrowing_has_an_unscored_counterfactual(pf_clean):
+    saved = json.loads((PF / "results.json").read_text())
+    assert set(saved["without_narrowings"]) == {"N1", "N2"}
+    assert all(v["unscored"] and v["changed"] for v in saved["without_narrowings"].values())
+    assert sorted(saved["without_narrowings"]["N2"]["changed"]) == ["C-doc", "C2"]
+    n1 = saved["without_narrowings"]["N1"]["changed"]
+    assert n1["K12"]["without"] == "NONE" and n1["B-L0/CAPREP"]["without"] == "NONE"
+    assert "A-BIO-H-EXT/SUF" not in n1  # F2 ("are required to") is no RS0 statement
+    assert pf_run.without_narrowings({"comparison": saved["comparison"]}) == saved["without_narrowings"]

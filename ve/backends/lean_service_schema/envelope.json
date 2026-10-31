@@ -108,7 +108,8 @@
           "words",
           "metered",
           "calc",
-          "cardinality"
+          "cardinality",
+          "scope"
         ]
       },
       "protocol": {"const": 2},

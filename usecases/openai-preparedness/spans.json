@@ -387,14 +387,16 @@
     5881,
     6014
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
-   "residual": "unmapped_duty-p4-u27-bbccd0511232",
-   "waits": [
-    "AP"
+   "kind": "norm",
+   "reading_set": "rs3-no-deploy",
+   "open_terms": [
+    "ot1",
+    "ot2"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p4-u28",
@@ -869,7 +871,7 @@
     12261
    ],
    "kind": "norm",
-   "rule": "f2-deploy",
+   "reading_set": "rs3-deploy",
    "open_terms": [
     "ot1",
     "ot2"
@@ -1114,14 +1116,15 @@
     15162,
     15376
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
-   "residual": "unmapped_claim-p6-u75-67719ef1b4d7",
-   "waits": [
-    "readings"
+   "kind": "norm",
+   "reading_set": "rs1-contrib-bio",
+   "open_terms": [
+    "ot1"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "AP"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p6-u76",
@@ -1238,14 +1241,15 @@
     16389,
     16543
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
-   "residual": "unmapped_duty-p6-u83-d4b8073c579d",
+   "kind": "norm",
+   "reading_set": "rs1-contrib-cyb",
+   "open_terms": [
+    "ot1"
+   ],
    "waits": [
     "AP"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p6-u84",
@@ -2307,14 +2311,15 @@
     30858,
     31056
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
-   "residual": "unmapped_claim-p10-u155-128447b02d74",
+   "kind": "norm",
+   "reading_set": "rs16-recommend",
+   "open_terms": [
+    "ot1"
+   ],
    "waits": [
     "readings"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p10-u156",
@@ -2598,14 +2603,15 @@
     34041,
     34119
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
-   "residual": "unmapped_claim-p11-u174-04f6e6e7b71b",
-   "waits": [
-    "readings"
+   "kind": "norm",
+   "reading_set": "rs9-residual",
+   "open_terms": [
+    "ot2"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p11-u175",
@@ -3158,7 +3164,7 @@
     39840
    ],
    "kind": "norm",
-   "rule": "f3-develop",
+   "reading_set": "rs18-develop",
    "open_terms": [
     "ot1",
     "ot10"
@@ -3176,9 +3182,9 @@
     40025
    ],
    "kind": "unformalised",
-   "reason": "hedged_claim",
-   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
-   "residual": "hedged_claim-p13-u212-f22b325864d9",
+   "blocked_rule": "no-critical-models",
+   "reason": "attitude",
+   "detail": "AT: D1's draft does not preserve the source attitude in marginal risk and governance",
    "waits": [
     "AT"
    ],
@@ -3434,14 +3440,15 @@
     42277,
     42630
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
-   "residual": "unmapped_duty-p14-u229-b82902abe171",
-   "waits": [
-    "AP"
+   "kind": "norm",
+   "rule": "f15-third-party",
+   "open_terms": [
+    "ot14"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p14-u230",
@@ -4105,14 +4112,12 @@
     49519,
     49850
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
-   "residual": "unmapped_duty-p16-u274-3b3150b60160",
+   "kind": "norm",
+   "reading_set": "rs7-without-sag",
    "waits": [
-    "AP"
+    "readings"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p16-u275",
@@ -4211,7 +4216,7 @@
     50556
    ],
    "kind": "norm",
-   "reading_set": "rs0-informed",
+   "reading_set": "rs6-informed",
    "waits": [
     "readings"
    ],
@@ -4264,14 +4269,13 @@
     50945,
     51038
    ],
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in SAG and Board governance",
-   "residual": "hedged_claim-p16-u285-cf7190dd2010",
+   "kind": "norm",
+   "reading_set": "rs17-board",
    "waits": [
-    "AT"
+    "AT",
+    "AP"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p16-u286",
@@ -4367,14 +4371,17 @@
     51657,
     51774
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
-   "residual": "unmapped_duty-p16-u292-79953a9e11f6",
-   "waits": [
-    "AP"
+   "kind": "norm",
+   "reading_set": "rs9-chair",
+   "open_terms": [
+    "ot18",
+    "ot21"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT",
+    "DF"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p17-u293",
@@ -4428,7 +4435,7 @@
     52444
    ],
    "kind": "norm",
-   "rule": "f2-reminder",
+   "reading_set": "rs3-reminder",
    "open_terms": [
     "ot1",
     "ot2"
@@ -4448,8 +4455,7 @@
    "kind": "norm",
    "rule": "f3-reminder",
    "open_terms": [
-    "ot1",
-    "ot10"
+    "ot1"
    ],
    "waits": [
     "JT",
@@ -5467,14 +5473,16 @@
     64652,
     65002
    ],
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.3 security controls",
-   "residual": "hedged_claim-p21-u380-0eb899909db4",
-   "waits": [
-    "AT"
+   "kind": "norm",
+   "reading_set": "rs9-access",
+   "open_terms": [
+    "ot3"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT",
+    "AP"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p21-u381",
