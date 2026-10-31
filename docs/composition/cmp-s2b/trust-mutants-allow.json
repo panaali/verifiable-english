@@ -1,0 +1,44 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Readings.copyLine",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.gateLine",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.copyScope",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.gateNorm",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.aimedOwners",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.limOwners",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.qLim",
+   "operator": "list-empty",
+   "reason": "ill-typed: the cut puts [] where an Option or a lambda's element is (`S.norm`, `N.exception`, `L.scope`, a bind on `·.content`, `linesOf ...` whose elements are projected), which Lean refuses (Type mismatch, Invalid field notation or projection), with a message the tool does not class as a refusal; the well-typed mutants of this operator are KILLED by RightsFixtures.lean's guards"
+  },
+  {
+   "definition": "VE.Readings.owners",
+   "operator": "list-empty",
+   "reason": "the cut of the whole match to [] fails RightsFixtures.lean's `(choiceLabelled F21)` guard, but Lean shares the matcher of `owners` with `keyLabel` (one match on GenKey's six constructors), so the tool sees `keyLabel` drift and reports UNKNOWN; every other list-empty cut of `owners` is KILLED"
+  }
+ ]
+}

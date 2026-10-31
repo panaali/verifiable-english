@@ -25295,34 +25295,34 @@ theorem VE.Readings.PlanItem.label_text
   -- expr 1408798495
 theorem VE.Readings.RightsExamples.aimedOwners21
   VE.Readings.aimedOwners VE.Readings.RightsExamples.F21 "move_permitted" = [[(0, 1)]]
-  -- uses VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.aimedOwners@VE.Readings.Choice
+  -- uses VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.aimedOwners@VE.Readings.Choice
   -- expr 1052514957
 theorem VE.Readings.RightsExamples.bar21
   VE.Rights.barPreds (VE.Readings.sup VE.Readings.RightsExamples.F21).fst = ["move_permitted"]
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barPreds@VE.Rights.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barPreds@VE.Rights.Tree
   -- expr 2914905543
 theorem VE.Readings.RightsExamples.bar21_c0
   VE.Rights.barPreds (VE.Readings.choiceDoc VE.Readings.RightsExamples.F21 VE.Readings.RightsExamples.c0).fst = []
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barPreds@VE.Rights.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.c0@VE.Readings.RightsFixtures VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barPreds@VE.Rights.Tree
   -- expr 1032301165
 theorem VE.Readings.RightsExamples.barIndex21
   VE.Rights.barIndex (VE.Readings.sup VE.Readings.RightsExamples.F21).fst "move_permitted" = 1
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barIndex@VE.Rights.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barIndex@VE.Rights.Tree
   -- expr 196310959
 theorem VE.Readings.RightsExamples.children21
   VE.SoftNorms.children (VE.Rights.correlate (VE.Readings.sup VE.Readings.RightsExamples.F21).fst)
       VE.Readings.RightsExamples.N3 =
     []
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.N3@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.children@VE.SoftNorms.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.N3@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.children@VE.SoftNorms.Tree
   -- expr 2667546381
 theorem VE.Readings.RightsExamples.choicePremises21
   VE.Readings.choicePremises VE.Readings.RightsExamples.F21 = [VE.Readings.RightsExamples.quiet21]
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.quiet21@VE.Readings.RightsExamples VE.Readings.choicePremises@VE.Readings.Choice
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.quiet21@VE.Readings.RightsFixtures VE.Readings.choicePremises@VE.Readings.Choice
   -- expr 2491170181
 theorem VE.Readings.RightsExamples.encodes21
   VE.Readings.Encodes VE.Readings.RightsExamples.F21 VE.Readings.RightsExamples.c0
     VE.Readings.RightsExamples.M21.asStructure
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsExamples
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsFixtures
   -- expr 2567720742
 theorem VE.Readings.RightsExamples.f21_bar_dead
   ∀ {S : VE.Structure},
@@ -25333,7 +25333,7 @@ theorem VE.Readings.RightsExamples.f21_bar_dead
             ¬VE.SoftNorms.LiveD (VE.Rights.correlate (VE.Readings.sup VE.Readings.RightsExamples.F21).fst) S
                 (VE.Norms.tupleVal vs)
                 (VE.Rights.barNode (VE.Readings.sup VE.Readings.RightsExamples.F21).fst "move_permitted")
-  -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsExamples VE.Readings.choicePremises@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barNode@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.LiveD@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.c0@VE.Readings.RightsFixtures VE.Readings.choicePremises@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barNode@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.LiveD@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1737214666
 theorem VE.Readings.RightsExamples.f21_needs_typed
   VE.Readings.WellFormedDoc VE.Readings.RightsExamples.F21 = Bool.true →
@@ -25352,36 +25352,36 @@ theorem VE.Readings.RightsExamples.f21_needs_typed
                               VE.SoftNorms.ValueSoft (VE.Rights.correlate (VE.Readings.sup D).fst) r S vs =
                                 VE.SoftNorms.ValueSoft (VE.Rights.correlate (VE.Readings.choiceDoc D c).fst) r
                                   (VE.Readings.pull D c S) vs
-  -- uses VE.Formula@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choicePremises@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- uses VE.Formula@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choicePremises@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4081897837
 theorem VE.Readings.RightsExamples.genKeys21
   VE.Readings.genKeys (VE.Readings.sup VE.Readings.RightsExamples.F21).fst =
     [(VE.Readings.GenKey.aimed "move_permitted", "rights__bar__1", ["person"])]
-  -- uses VE.Formula@VE.Syntax VE.Readings.GenKey.aimed@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.genKeys@VE.Readings.Separate VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.GenKey.aimed@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.genKeys@VE.Readings.Separate VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 4182401849
 theorem VE.Readings.RightsExamples.perm21
   VE.Rights.permPreds (VE.Readings.sup VE.Readings.RightsExamples.F21).fst = ["move_permitted"]
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.permPreds@VE.Rights.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.permPreds@VE.Rights.Tree
   -- expr 2279948087
 theorem VE.Readings.RightsExamples.quiet21_sat
   VE.Norms.Sat VE.Readings.RightsExamples.M21.asStructure (VE.Readings.choicePremises VE.Readings.RightsExamples.F21)
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Norms.Sat@VE.Norms.Prefix VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.choicePremises@VE.Readings.Choice
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Norms.Sat@VE.Norms.Prefix VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.choicePremises@VE.Readings.Choice
   -- expr 3520154617
 theorem VE.Readings.RightsExamples.rules21
   VE.SoftNorms.rulesOn (VE.Rights.correlate (VE.Readings.sup VE.Readings.RightsExamples.F21).fst) "move_permitted" =
     [VE.Readings.RightsExamples.N2, VE.Readings.RightsExamples.N3]
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.N2@VE.Readings.RightsExamples VE.Readings.RightsExamples.N3@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.rulesOn@VE.SoftNorms.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.N2@VE.Readings.RightsExamples VE.Readings.RightsExamples.N3@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.rulesOn@VE.SoftNorms.Tree
   -- expr 1674999813
 theorem VE.Readings.RightsExamples.rules21_c0
   VE.SoftNorms.rulesOn
       (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.RightsExamples.F21 VE.Readings.RightsExamples.c0).fst)
       "move_permitted" =
     []
-  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.rulesOn@VE.SoftNorms.Tree
+  -- uses VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.c0@VE.Readings.RightsFixtures VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.rulesOn@VE.SoftNorms.Tree
   -- expr 1567348538
 theorem VE.Readings.RightsExamples.untyped21
   ¬VE.TupleTyped VE.Readings.RightsExamples.M21.asStructure VE.Readings.RightsExamples.rM.sorts ["e"]
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.rM@VE.Readings.RightsExamples VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.rM@VE.Readings.RightsFixtures VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2576333202
 theorem VE.Readings.RightsExamples.value21_choice
   VE.SoftNorms.ValueSoft
@@ -25391,13 +25391,13 @@ theorem VE.Readings.RightsExamples.value21_choice
         VE.Readings.RightsExamples.M21.asStructure)
       ["e"] =
     Option.some Bool.true
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsExamples VE.Readings.RightsExamples.rM@VE.Readings.RightsExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.c0@VE.Readings.RightsFixtures VE.Readings.RightsExamples.rM@VE.Readings.RightsFixtures VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
   -- expr 3579926092
 theorem VE.Readings.RightsExamples.value21_sup
   VE.SoftNorms.ValueSoft (VE.Rights.correlate (VE.Readings.sup VE.Readings.RightsExamples.F21).fst)
       VE.Readings.RightsExamples.rM VE.Readings.RightsExamples.M21.asStructure ["e"] =
     Option.some Bool.false
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsExamples VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.rM@VE.Readings.RightsExamples VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Readings.RightsExamples.F21@VE.Readings.RightsFixtures VE.Readings.RightsExamples.M21@VE.Readings.RightsExamples VE.Readings.RightsExamples.rM@VE.Readings.RightsFixtures VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
   -- expr 3488539505
 theorem VE.Readings.RightsNames.conds
   ∀ {X : VE.Rights.RightsDoc},

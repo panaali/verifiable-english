@@ -473,6 +473,7 @@ module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names
 module VE.Readings.RightsExamples
+module VE.Readings.RightsFixtures
 module VE.Readings.Route
 module VE.Readings.Run
 module VE.Readings.RunExamples
