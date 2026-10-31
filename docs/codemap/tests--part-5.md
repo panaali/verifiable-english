@@ -1,3 +1,9 @@
+- `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
+- `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
+- `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
+- `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
+- `tests/test_readings_defaults_names.py` — The `<reading>` slot (docs/spec/readings-defaults.md 2.3, review A4) names readings by what they say, and two readings that say different things never share a …
+- `tests/test_readings_defaults_rd2a_report.py` — RD-2a's report against its saved evidence (build checklist 20).
 - `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
 - `tests/test_readings_defaults_rd3_report.py` — RD-3's report against committed evidence, with no read of the current git graph.
 - `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
@@ -32,7 +38,6 @@
 - `tests/test_readings_sd_document.py` — Readings under the soft completion through `ve document` (docs/spec/rd-9-soft-chain.md 3.8 and 8.3; plan SC-8).
 - `tests/test_readings_sd_lean.py` — Readings under the soft completion through the Lean service (docs/spec/rd-9-soft-chain.md 8.3; plan SC-4).
 - `tests/test_readings_sd_relay.py` — The relay of Lean's soft-completion rows (rd-9-soft-chain.md 3; plan SC-4, SC-8): Python checks the row's schema and its binding to the request (DRI ruling R8)…
-- `tests/test_readings_stage_trace.py` — The readings admission stage timer of `ve_service` (lean/VE/Readings/Stage.lean, lean/VE/Service/StageTimes.lean).
 - `tests/test_readings_sup_verdicts.py` — RD-7: the superposed service owns verdicts, dependency replay and the complete English plan.
 - `tests/test_readings_verdicts_lean.py` — `readings-verdicts` through the service (docs/spec/readings-defaults.md 3, 4.4, 2.4 and 8.2; plan RD-3).
 - `tests/test_readings_verdicts_split.py` — AR-16b split `ve/readings_verdicts.py` into the package `ve/readings_verdicts/`; these pin what the split must keep.
@@ -75,9 +80,3 @@
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
-- `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
-- `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
-- `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
-- `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
-- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
