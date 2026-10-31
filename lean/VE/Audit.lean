@@ -358,6 +358,7 @@ import VE.Scales.Degrees
 import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
+import VE.Scope.EffectLemmas
 import VE.Scope.Examples
 import VE.Scope.Govern
 import VE.Scope.ReadingsLemmas
@@ -563,8 +564,12 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_ok
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
+#print axioms VE.Acts.modifier_edges
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
+#print axioms VE.Acts.phraseReadings_exact
+#print axioms VE.Acts.phraseReadings_length
+#print axioms VE.Acts.phraseReadings_nodup
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
@@ -587,6 +592,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.table_free_any
 #print axioms VE.Acts.table_free_any_split
 #print axioms VE.Acts.table_free_nor
+#print axioms VE.Acts.table_length
 #print axioms VE.Acts.table_mustNot_all
 #print axioms VE.Acts.table_mustNot_all_split
 #print axioms VE.Acts.table_mustNot_any
@@ -6533,6 +6539,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.short_govern
 #print axioms VE.Scope.Examples.short_items
 #print axioms VE.Scope.Examples.short_layout
+#print axioms VE.Scope.Examples.short_order
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
@@ -6564,6 +6571,11 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.baseObj_drop
 #print axioms VE.Scope.baseObj_src
 #print axioms VE.Scope.bind_ok
+#print axioms VE.Scope.budgetFormula_arr
+#print axioms VE.Scope.budgetFormula_not_term
+#print axioms VE.Scope.budgetFormula_val
+#print axioms VE.Scope.budgetTerm_ok
+#print axioms VE.Scope.budgetTerm_val
 #print axioms VE.Scope.checkDocSets_absent_unchanged
 #print axioms VE.Scope.checkDocSets_no_sets
 #print axioms VE.Scope.choiceFault_limit
@@ -6584,6 +6596,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.decodeBlock_ok
 #print axioms VE.Scope.decodeBlock_payloads
 #print axioms VE.Scope.decodeBlock_sets
+#print axioms VE.Scope.decodeBudgeted_ok
 #print axioms VE.Scope.decodeEffect_wf
 #print axioms VE.Scope.decodeGovernor_wf
 #print axioms VE.Scope.decodeNorm_name
@@ -6597,6 +6610,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.edgesOf_drop
 #print axioms VE.Scope.edgesOf_graph
 #print axioms VE.Scope.edgesOf_name
+#print axioms VE.Scope.elt_str
+#print axioms VE.Scope.elt_term
 #print axioms VE.Scope.explainFast_eq
 #print axioms VE.Scope.explainRows_effect
 #print axioms VE.Scope.explain_bound
@@ -6615,6 +6630,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.foldStatus_mem
 #print axioms VE.Scope.fold_src
 #print axioms VE.Scope.foldl_meet_mem
+#print axioms VE.Scope.forIn_error
 #print axioms VE.Scope.forIn_filter_ok
 #print axioms VE.Scope.frameOnF_slow
 #print axioms VE.Scope.frameOn_drop
@@ -6713,9 +6729,14 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.normFields_name
 #print axioms VE.Scope.normOf_newContent
 #print axioms VE.Scope.orderCheck_drop
+#print axioms VE.Scope.orderCheck_error
+#print axioms VE.Scope.orderCheck_ok
+#print axioms VE.Scope.order_refused
 #print axioms VE.Scope.ordered_drop_active
 #print axioms VE.Scope.ordered_filter
 #print axioms VE.Scope.ordered_sorted
+#print axioms VE.Scope.own_congr
+#print axioms VE.Scope.own_congr_le
 #print axioms VE.Scope.partUnits_nil_title_success
 #print axioms VE.Scope.patch_nil_of_units
 #print axioms VE.Scope.patch_src
@@ -6728,6 +6749,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.ruleTable_decoder
 #print axioms VE.Scope.ruleTable_drop
 #print axioms VE.Scope.rule_atChoice
+#print axioms VE.Scope.scopeOrder_prefix
 #print axioms VE.Scope.scope_absent_unchanged
 #print axioms VE.Scope.scope_admission
 #print axioms VE.Scope.scope_admission_sets
@@ -6743,6 +6765,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
 #print axioms VE.Scope.substOwn_no_own_le
+#print axioms VE.Scope.substOwn_scalar
+#print axioms VE.Scope.substOwn_str
+#print axioms VE.Scope.substOwn_str_self
+#print axioms VE.Scope.substOwn_term
 #print axioms VE.Scope.title_identity
 #print axioms VE.Scope.title_only_out
 #print axioms VE.Scope.top_set
