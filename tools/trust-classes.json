@@ -16509,6 +16509,7 @@
         "VE.Acts.ReadingsExamples.s055u",
         "VE.Acts.ReadingsExamples.s076",
         "VE.Acts.ReadingsExamples.s105",
+        "VE.Acts.ReadingsExamples.same",
         "VE.Acts.ReadingsExamples.sc",
         "VE.Acts.ReadingsExamples.sc0",
         "VE.Acts.ReadingsExamples.sep",
@@ -16517,7 +16518,8 @@
         "VE.Acts.ReadingsExamples.tmpl",
         "VE.Acts.ReadingsExamples.u055",
         "VE.Acts.ReadingsExamples.u105a",
-        "VE.Acts.ReadingsExamples.vw"
+        "VE.Acts.ReadingsExamples.vw",
+        "VE.Acts.ReadingsExamples.wide"
       ]
     },
     "VE/Acts/Sources.lean": {

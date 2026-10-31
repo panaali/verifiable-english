@@ -180,6 +180,9 @@ def other : Item := .set ⟨"rs_other", "u_other", 1, [cand "x" (rl "o-x" "enjoy
   { s105 with template := { tmpl with over := ["r"] } }, { s105 with completion := .allow },
   { s105 with completion := .unspecified }, { s105 with role := .obligation }].map (sc S1 V8 fx8) ==
   List.replicate 6 notReading
+-- and so is each rule's: a candidate under another guard is no reading
+#guard sc (d105 [u105a, setB [bFirst, cand "all" { rl "u105b-all" "enjoy_freely" with guard := .bottom } "all"],
+  setC [cFirst, cAll]]) V8 fx8 s105 == notReading
 
 -- u055 (A9): *must not* (a permission, sign false); the deprivation (u055a) is shared, rs_u055 reads the denial
 def e055 (nd : Bool) (dflt : String) (dA := dflt) : Json := envJ fx9 nd [
@@ -204,6 +207,13 @@ def s055u : Source := { s055 with completion := .unspecified }
 #guard sc (mkDoc (e055 false "deny") (u055)) V9 fx9 { s055 with sign := true } == notReading
 #guard sc (mkDoc (e055 false "deny") (u055)) V9 fx9 { s055 with role := .plain } ==
   "InvalidInput: the source has no modal word for its act"
+-- the largest sizes end within the limits: L6's 64 readings against seven uncoupled sets of two (128 choices, cut
+-- at 65)
+def wide : List Item := (List.range 7).map fun k =>
+  .set ⟨s!"rs_{k}", s!"u_{k}", 1, [cand "x" (rl s!"w{k}-x" "enjoy") "x", cand "y" (rl s!"w{k}-y" "share") "y"]⟩
+#guard (mkDoc e105 wide).map (fun (D, _) => (choicesOn D ((List.range 7).map (s!"rs_{·}"))).length) == some 65 &&
+  sc (mkDoc e105 wide) V5 cities { s105 with phrase := ln 6, units := [], sets := (List.range 7).map (s!"rs_{·}") } ==
+    notReading
 -- the step budget: none left is a refusal
 def sc0 (x : Option (Doc × List String)) : String :=
   match x with
@@ -246,9 +256,9 @@ def sep (x : Option (Doc × List String)) (s : String) (i j : Nat) : Bool :=
   sep (mkDoc (e055 false "deny") (u055)) "rs_u055" 0 1, sep (mkDoc (e055 false "deny") (u055)) "rs_u055" 1 0] ==
   [true, true, true, true, true]
 #guard (S1.map fun (D, _) => (atomSituation D "rs_u105b" 1 0).probe) == some (.selects "norm" "enjoy_freely" [0])
--- two candidates on one act: no act tells them apart, and `separates` refuses the situation
-#guard !sep (d105 [u105a, setB [bFirst, cand "same" (rl "u105b-same" "enjoy" false) "all"], setC [cFirst, cAll]])
-  "rs_u105b" 1 0
+-- two candidates on one act: no act tells them apart, the probe is `holds`, and `separates` refuses the situation
+def same := d105 [u105a, setB [bFirst, cand "same" (rl "u105b-same" "enjoy" false) "all"], setC [cFirst, cAll]]
+#guard !sep same "rs_u105b" 1 0 && (same.map fun (D, _) => (atomSituation D "rs_u105b" 1 0).probe) == some .holds
 
 end Sources
 
