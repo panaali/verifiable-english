@@ -448,6 +448,7 @@ module VE.Question.Texts
 module VE.Readings.ActsExamples
 module VE.Readings.Asserted
 module VE.Readings.Assertions
+module VE.Readings.BarQuiet
 module VE.Readings.BaseDown
 module VE.Readings.BaseUp
 module VE.Readings.Children
@@ -471,6 +472,7 @@ module VE.Readings.Labels
 module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names
+module VE.Readings.RightsExamples
 module VE.Readings.Route
 module VE.Readings.Run
 module VE.Readings.RunExamples

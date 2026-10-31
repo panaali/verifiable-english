@@ -73,6 +73,8 @@ import VE.Readings.SupWitness
 import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
+import VE.Readings.BarQuiet
+import VE.Readings.RightsExamples
 import VE.Readings.SupFree
 import VE.Readings.SupAll
 import VE.Readings.SupWireSound
