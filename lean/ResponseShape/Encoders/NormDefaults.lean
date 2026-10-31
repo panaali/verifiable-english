@@ -237,7 +237,9 @@ theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
   unfold runGated
   split
   · exact OkP.error
-  · exact runCase_fits j hp
+  · split
+    · exact OkP.error
+    · exact runCase_fits j hp
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
