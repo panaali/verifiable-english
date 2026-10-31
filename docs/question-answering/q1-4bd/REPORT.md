@@ -65,7 +65,9 @@ No allowance and no FOLLOW-UPS row (neither R6 nor R16 applies).
 - `tools/regen_generated.py --check`: 34 entries checked, none stale.
 - `tools/select_tests.py --base <merge-base>` selects 165 of 511 units, among them `tests/test_english_e2_responses.py`
   and `tests/test_speech_polar_lean.py`.
-- Selected tests on the Mac runner: see the build report.
+- Selected tests (`mac-pytest.sh --select -- --base <merge-base> --run`, at `1c3259a47`, clean tree): 151 of 511
+  units ran on GitHub Actions in 2 shards (79 + 72 passed, 0 failed, exit 0). The runner deferred 14 slow files,
+  selected only for weak reasons, to the chain gate. No test from `main-known-red.txt` came up.
 - Not run here: the full gate (the chain runs it), `lake build` and `lean/audit.py` (no Lean change), and trust
   mutants (no trusted Lean).
 
