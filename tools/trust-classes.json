@@ -16359,7 +16359,9 @@
     "VE/Compose/ContractExamples.lean": {
       "T": [
         "VE.Compose.ContractExamples.plannedRows",
-        "VE.Compose.ContractExamples.ungoverned"
+        "VE.Compose.ContractExamples.ungoverned",
+        "VE.Compose.ContractExamples.governedSet",
+        "VE.Compose.ContractExamples.tagRewriter"
       ]
     }
   }

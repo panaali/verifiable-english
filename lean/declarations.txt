@@ -6487,9 +6487,11 @@ module VE.Compose.Contract b427f7abd3d290dd7d787a2e99bd95a4903a7f4d653b69fe01b03
 172:0-173:66 theorem VE.Compose.Contract.scopeSetsFaithful@VE.Compose.Contract
 175:0-182:14 def VE.Compose.Contract.RouteFacts@VE.Compose.Contract
 184:0-190:83 theorem VE.Compose.Contract.listed_evidence@VE.Compose.Contract
-module VE.Compose.ContractExamples d75323fc82f33267b6bc0b955a495ef06448ca29beeb5489f8385283f34cb2ef
-36:0-36:80 def VE.Compose.ContractExamples.ungoverned@VE.Compose.ContractExamples
-51:0-57:99 def VE.Compose.ContractExamples.plannedRows@VE.Compose.ContractExamples
+module VE.Compose.ContractExamples c5f4f88541eaf56fcdcf88bcf97ea89ee0414e4d247e638d40acdeadd9ca91cc
+27:0-34:34 def VE.Compose.ContractExamples.governedSet@VE.Compose.ContractExamples
+45:0-46:118 def VE.Compose.ContractExamples.tagRewriter@VE.Compose.ContractExamples
+62:0-62:80 def VE.Compose.ContractExamples.ungoverned@VE.Compose.ContractExamples
+77:0-83:99 def VE.Compose.ContractExamples.plannedRows@VE.Compose.ContractExamples
 module VE.Compose.Dispatch 81ce170e8f858065c8d1c820323bb6e4ee3296c932371c7c6683430fa2b58963
 14:0-14:80 def VE.Compose.unsupported@VE.Compose.Dispatch
 16:0-19:12 def VE.Compose.registered@VE.Compose.Dispatch
