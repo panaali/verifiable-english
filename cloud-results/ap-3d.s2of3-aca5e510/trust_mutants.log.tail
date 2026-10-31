@@ -1,0 +1,23 @@
+trust_mutants: 19 definitions, 260 mutants (87 to run), 4 jobs, base 5e56ca85b7ba
+UNKNOWN lean/VE/Acts/Decode.lean:23 VE.Acts.Decode.ElaboratedU (D[V], trusted) eq-le: = -> ≤ (lean/VE/Acts/Decode.lean:23: failed to synthesize)
+UNKNOWN lean/VE/Acts/Decode.lean:32 VE.Acts.Decode.actsOf (D[V], trusted) list-empty: r.sorts -> [] (lean/VE/Acts/Decode.lean:32: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Acts/Elaborate.lean:92 VE.Acts.partNames (S, trusted) list-empty: partNamesIn (splitMap D (splitAtoms D)) p -> [] (the proofs it breaks: lean/VE/Acts/Elaborate.lean:319)
+UNKNOWN lean/VE/Acts/Elaborate.lean:148 VE.Acts.partsDistinct (G[V], trusted) list-empty: D.U.D.T.regulated -> [] (lean/VE/Acts/Elaborate.lean:148: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:165 VE.Acts.elaborateMap (S, trusted) list-empty: D.acts -> [] (lean/VE/Acts/Elaborate.lean:165: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Decode.lean:26 VE.Acts.Decode.ElaboratedU (D[V], trusted) eq-le: = -> ≤ (lean/VE/Acts/Decode.lean:26: failed to synthesize)
+UNKNOWN lean/VE/Acts/Decode.lean:43 VE.Acts.Decode.elaborateSource (D[V], trusted) list-empty: (VE.NormDefaults.Wire.declaredNames environment) -> [] (lean/VE/Acts/Decode.lean:43: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Acts/Elaborate.lean:154 VE.Acts.declaredAfter (G[V], trusted) list-empty: D.U.D.T.regulated -> [] (lean/VE/Acts/Elaborate.lean:154: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:82 VE.Acts.splitMap (G[V], trusted) list-empty: (partsOf sa r.name) -> [] (lean/VE/Acts/Elaborate.lean:82: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:134 VE.Acts.namesOk (G[V], trusted) list-empty: M.rules -> [] (lean/VE/Acts/Elaborate.lean:134: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:158 VE.Acts.splitsOf (G[V], trusted) list-empty: acts -> [] (lean/VE/Acts/Elaborate.lean:158: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:158 VE.Acts.splitsOf (G[V], trusted) list-empty: acts.zip Rs -> [] (lean/VE/Acts/Elaborate.lean:158: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:83 VE.Acts.splitMap (G[V], trusted) list-empty: D.U.D.T.nodes.flatMap -> [] (lean/VE/Acts/Elaborate.lean:83: Function expected at)
+UNKNOWN lean/VE/Acts/Elaborate.lean:83 VE.Acts.splitMap (G[V], trusted) list-empty: (partsOf sa N.pred).map -> [] (lean/VE/Acts/Elaborate.lean:83: Function expected at)
+SURVIVOR lean/VE/Acts/Elaborate.lean:76 VE.Acts.splitAtoms (S, trusted) list-first: D.acts -> (D.acts.take 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:224, lean/VE/Acts/Elaborate.lean:343)
+SURVIVOR lean/VE/Acts/Elaborate.lean:76 VE.Acts.splitAtoms (S, trusted) list-drop-last: D.acts -> (D.acts.dropLast) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:224, lean/VE/Acts/Elaborate.lean:343)
+SURVIVOR lean/VE/Acts/Elaborate.lean:76 VE.Acts.splitAtoms (S, trusted) list-last: D.acts -> (D.acts.reverse.take 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:224, lean/VE/Acts/Elaborate.lean:343)
+SURVIVOR lean/VE/Acts/Elaborate.lean:76 VE.Acts.splitAtoms (S, trusted) list-drop-first: D.acts -> (D.acts.drop 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:224, lean/VE/Acts/Elaborate.lean:343)
+trust_mutants: 37 KILLED, 5 SURVIVOR, 13 UNKNOWN, 32 INVALID, 0 ALLOWED, 0 NOT RUN, 173 OTHER SHARD in 749 s
+trust_mutants: D[V], trusted: 2 KILLED, 4 UNKNOWN, 10 INVALID, 39 OTHER SHARD
+trust_mutants: G[V], trusted: 35 KILLED, 8 UNKNOWN, 22 INVALID, 120 OTHER SHARD
+trust_mutants: S, trusted: 5 SURVIVOR, 1 UNKNOWN, 14 OTHER SHARD
