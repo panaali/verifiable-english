@@ -1,0 +1,110 @@
+{
+ "key": "match-u027",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.\nDEMAND: No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment\nIn list L, {0} stands for no one (any person).\nA1. No person may be subjected to torture, to treatment that is cruel, inhuman or degrading, or to punishment that is cruel, inhuman or degrading. Each of these is forbidden on its own, and any one of the three qualities is enough to make a treatment or punishment forbidden.\nA2. No person may be subjected to torture, to treatment that is cruel, inhuman or degrading, or to any punishment at all. On this reading \"cruel, inhuman or degrading\" describes only \"treatment,\" so every punishment is forbidden whatever its nature.\nB1. No person may be subjected to torture, and no person may be subjected to any treatment or punishment that is cruel, inhuman or degrading. Any one of those three qualities is enough for the treatment or punishment to be forbidden.\nB2. No person may be subjected to torture or to cruel, inhuman or degrading treatment, and no person may be subjected to any punishment at all. On this reading, \"cruel, inhuman or degrading\" applies only to \"treatment.\"\nL1. {0} must not be subjected to torture, and {0} must not be subjected to cruel, inhuman or degrading treatment or punishment.\n",
+ "cli": {
+  "duration_api_ms": 3036,
+  "stop_reason": "end_turn",
+  "session_id": "fc3ea1a1-da54-48e9-b07f-862fda013850",
+  "total_cost_usd": 0.0421968,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4491,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 206,
+   "output_tokens_details": {
+    "thinking_tokens": 167
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4491,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 206,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4491,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4491
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 206,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4491,
+    "webSearchRequests": 0,
+    "costUSD": 0.0421968,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 167,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4491,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE",
+  "ttft_ms": 3088,
+  "type": "result",
+  "duration_ms": 3371,
+  "uuid": "a8a75ce6-1f0a-450e-a4de-c96c3e5b498a",
+  "ttft_stream_ms": 1625,
+  "time_to_request_ms": 343,
+  "first_content_frame_ms": 1626,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15403,
+ "answer": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE"
+}

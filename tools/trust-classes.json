@@ -15863,14 +15863,20 @@
         "VE.Scope.Examples.narrowG2",
         "VE.Scope.Examples.narrowNorm",
         "VE.Scope.Examples.notN",
+        "VE.Scope.Examples.optEq",
         "VE.Scope.Examples.perChoice",
+        "VE.Scope.Examples.preserved",
+        "VE.Scope.Examples.preservesOn",
         "VE.Scope.Examples.r9",
         "VE.Scope.Examples.reading",
         "VE.Scope.Examples.readingContents",
+        "VE.Scope.Examples.refusedOn",
         "VE.Scope.Examples.rset",
         "VE.Scope.Examples.s03",
         "VE.Scope.Examples.s03set",
         "VE.Scope.Examples.s05set",
+        "VE.Scope.Examples.sameBut",
+        "VE.Scope.Examples.setAt",
         "VE.Scope.Examples.setDoc",
         "VE.Scope.Examples.sets",
         "VE.Scope.Examples.twoSets",
@@ -16502,6 +16508,7 @@
         "VE.Acts.ReadingsExamples.pr",
         "VE.Acts.ReadingsExamples.rsC"
       ]
-    }
+    },
+    "VE/Scope/ReadingsLemmas.lean": {}
   }
 }
