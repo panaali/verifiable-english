@@ -1,0 +1,12 @@
+{
+ "job": "testmap-56cc350e-t450620-s5",
+ "head": "0a4bf1243f0ff28a429105cd8cd03fc1cf564297",
+ "argv": [
+  "testmap-56cc350e-t450620-s5",
+  "0a4bf1243f0ff28a429105cd8cd03fc1cf564297",
+  "0a4bf1243f0ff28a429105cd8cd03fc1cf564297",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-5d6eb282fd00.tar.zst",
+  "172c03fae7d098bfce6401fbf581b40ef9911234f5bfb33f9fc19c9cffade8bc",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s5.json.gz\" tests/test_acts_vocab_mutants.py tests/test_precommit_hook.py tests/test_lean_conformance.py tests/test_regen_generated.py tests/test_acts_lexical_mutants.py tests/test_speech_source_lean.py tests/test_identity_lint.py tests/test_lean_share.py tests/test_readings_defaults_rd6b_report.py tests/test_readings_lazy_pairs.py tests/test_question_statements.py tests/test_english_e2_statements.py tests/test_lean_limits.py tests/test_english_lean_s2.py tests/test_premise_packs_stub.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
