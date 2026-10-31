@@ -12,7 +12,9 @@ from __future__ import annotations
 
 import copy
 import json
+from pathlib import Path
 import re
+import sys
 
 import pytest
 
@@ -22,7 +24,11 @@ from ve import english as EN
 from ve.backends import english_lean as L
 from ve.backends import relay
 from ve.english_grammar import codes, export
-from ve.errors import CheckerUnavailable, VEError
+from ve.errors import CheckerUnavailable, TypeMismatch, VEError
+
+DELTA = Path(__file__).resolve().parents[1] / "docs/question-answering/q1-4bd/evidence"
+sys.path.insert(0, str(DELTA))
+import english_read_delta  # noqa: E402  (q1-4bd's saved delta and its check)
 
 
 def _env(raw: dict, **changes) -> Environment:
@@ -303,14 +309,76 @@ def test_ill_typed_names_the_sentence_whose_formula_fails():
     """Review B3: `IllTyped` points at the faulty formula's sentence, not sentence 1. A reach formula reads
     under the base grammar and fails the typed check of a family without `closure@0`."""
     env = Environment(fixtures.F())
-    reach = ("Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a "
-             "second service satisfies this condition: that service is deployed.")
+    reach = english_read_delta.REACH
     source = "Legacy is deployed. " + reach
     words = EN.EnglishVocabulary(env)
     response = relay.decide_once("english.read", L.request(env, source, words, {}))["result"]
     assert response["code"] == "IllTyped" and response["class"] == "TypeMismatch", response
     assert response["sentence"] == 1 and response["text"].startswith("Sentence 2 "), response
     assert source[slice(*response["span"])] == reach
+
+
+def test_an_ill_typed_document_is_refused_with_leans_text_verbatim():
+    """q1-4bd: the relay adds no code to Lean's text (R8). A code-worded class (`errors._CodeWorded`) prefixed
+    `TypeMismatch: ` to `Sentence 2 was read, ...`; the refusal is now Lean's line as it stands."""
+    with pytest.raises(TypeMismatch) as caught:
+        EN.parse_english(Environment(fixtures.F()), "Legacy is deployed. " + english_read_delta.REACH)
+    reading = caught.value.lean_reading
+    assert str(caught.value) == caught.value.message == reading.message() == reading.response["text"]
+    assert caught.value.to_dict()["message"] == "Sentence 2 was read, and its formula does not pass the type check."
+    # Python's own checkers still write the code (`errors._CodeWorded`), and a refusal of another class is Lean's too.
+    assert TypeMismatch("x").message == "TypeMismatch: x"
+    with pytest.raises(VEError) as other:
+        EN.parse_english(Environment(fixtures.FA()), "Legacy is deployed.")
+    assert other.value.code == "SyntaxError" and other.value.message == other.value.lean_reading.message()
+
+
+def _saved(name: str):
+    return json.loads((DELTA / name).read_text())
+
+
+def test_the_saved_delta_moved_only_the_dropped_code():
+    """q1-4bd's delta (R1): every moved record is a `TypeMismatch` that lost only the `TypeMismatch: ` Python
+    added, with the base's span and quoted names; the other records of the corpus did not move."""
+    base, head, delta = _saved("base.json"), _saved("head.json"), _saved("delta.json")
+    assert english_read_delta.problems(base, head, delta) == []
+    assert len(delta["rows"]) == 24 and len(base) - len(delta["rows"]) == 181
+
+
+@pytest.mark.parametrize("planted", ["prefix kept", "span moved", "true for 1", "other record moved", "row missing",
+                                     "head against head", "empty"])
+def test_the_delta_check_finds_a_planted_change(planted):
+    base, head, delta = _saved("base.json"), copy.deepcopy(_saved("head.json")), copy.deepcopy(_saved("delta.json"))
+    moved = next(i for i, r in enumerate(head) if r["id"] == delta["rows"][0]["id"])
+    if planted == "prefix kept":
+        head[moved]["outcome"]["message"] = english_read_delta.PREFIX + head[moved]["outcome"]["message"]
+    elif planted == "span moved":
+        head[moved]["outcome"]["span"]["start"] += 1
+    elif planted == "true for 1":
+        assert head[moved]["outcome"]["span"]["column"] == 1
+        head[moved]["outcome"]["span"]["column"] = True
+    elif planted == "head against head":
+        base = head
+    elif planted == "empty":
+        base, head = [], []
+    elif planted == "other record moved":
+        head[next(i for i, r in enumerate(head) if r["outcome"]["class"] == "SyntaxError")]["outcome"]["message"] += "."
+    else:
+        delta["rows"].pop()
+    if planted != "row missing":
+        delta["rows"] = english_read_delta.delta_rows(base, head)
+    assert english_read_delta.problems(base, head, delta)
+
+
+@pytest.mark.parametrize("row", _saved("delta.json")["rows"], ids=lambda row: row["id"])
+def test_a_delta_record_is_refused_live_with_leans_text(row):
+    """Each moved record, read again: the class and span the head recorded, and Lean's own text as the message."""
+    case = next(r for r in _saved("head.json") if r["id"] == row["id"])
+    from conformance.english_lean_s3_python import environment_json
+    with pytest.raises(TypeMismatch) as caught:
+        EN.parse_english(Environment(environment_json(row["env"])), case["text"])
+    out = caught.value.to_dict()
+    assert out["message"] == caught.value.lean_reading.message() and out["span"] == row["head"]["span"], out
 
 
 def test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal():
