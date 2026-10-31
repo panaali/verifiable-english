@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import re
 from types import MappingProxyType
 
+from .backends.validation import validated_environment
 from .assurance import semantic_entry
 from .errors import ResourceLimit, VEError
 from .limits import MAX_IDENTIFIER_BYTES
@@ -185,7 +186,6 @@ class Environment:
         if _generated_reports or _validated_projection:
             python()
             return
-        from .backends.validation import validated_environment
         validated_environment(self, data, python)
 
     def _decode(self, data, acts=None, *, _generated_reports=False):
