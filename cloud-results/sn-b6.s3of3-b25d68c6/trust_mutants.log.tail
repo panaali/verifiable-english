@@ -1,0 +1,68 @@
+trust_mutants: 11 definitions, 268 mutants (89 to run), 4 jobs, base 598358e43282
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.for... -> []
+SURVIVOR lean/VE/Senses/Run.lean:253 VE.Senses.Run.readCase (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Senses/Run.lean:300 VE.Senses.Run.runCaseReported (G[V], trusted) list-empty: [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)] -> []
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) append-left: ++ (ids.map fun f => ("identities", f c.lines)).toList -> 
+UNKNOWN lean/VE/Service/Registry.lean:17 VE.Service.Mode (G[V], trusted) ctor-drop: | cardinality | scope | sensesProject ->  (lean/VE/Service/Registry.lean:59: Unknown constant `VE.Service.Mode.cardinality`)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) append-right: [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.for... -> 
+UNKNOWN lean/VE/Senses/Run.lean:220 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: s.toList -> [] (lean/VE/Senses/Run.lean:220: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-empty: u.candidates -> []
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: c.choice.map pairJson -> []
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-empty: ["overlay"].filter (has j) -> []
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used -> []
+UNKNOWN lean/VE/Senses/Run.lean:201 VE.Senses.Run.lexiconJson (D[V], trusted) list-empty: L.aliases.map -> [] (lean/VE/Senses/Run.lean:201: Function expected at)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used -> [] (lean/VE/Senses/Run.lean:322: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used -> [] (lean/VE/Senses/Run.lean:322: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Senses/Run.lean:332 VE.Senses.Run.projectCase (G[V], trusted) list-empty: [("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon), ("identities", Json.mkO... -> []
+SURVIVOR lean/VE/Senses/Run.lean:334 VE.Senses.Run.projectCase (G[V], trusted) list-empty: [("result", Json.mkObj [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesV... -> []
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-first: [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.for... -> ([("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.fo...
+SURVIVOR lean/VE/Senses/Run.lean:300 VE.Senses.Run.runCaseReported (G[V], trusted) list-first: [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)] -> ([("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)].take 1)
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-last: [("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length)... -> ([("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length...
+SURVIVOR lean/VE/Senses/Run.lean:283 VE.Senses.Run.readCase (G[V], trusted) list-drop-last: [("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),... -> ([("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D))...
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-first: u.candidates -> (u.candidates.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:284 VE.Senses.Run.readCase (G[V], trusted) list-drop-last: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-first: u.candidates.map (candidateJson ids) -> ((u.candidates.map (candidateJson ids)).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-drop-last: u.candidates.map (candidateJson ids) -> ((u.candidates.map (candidateJson ids)).dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-first: (ids.map fun f => ("identities", f c.lines)).toList -> (((ids.map fun f => ("identities", f c.lines)).toList).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-last: units -> (units.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-drop-last: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:118 VE.Senses.Run.outcomeJson (G[V], trusted) list-first: admitted -> (admitted.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: D.words -> (D.words.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-first: c.E.sorts -> (c.E.sorts.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: c.E.sorts -> (c.E.sorts.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-first: ids -> (ids.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:333 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: ids -> (ids.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:335 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection",... -> ([("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection"...
+SURVIVOR lean/VE/Senses/Run.lean:28 VE.Senses.Run.unitJson (G[V], trusted) list-last: [("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).toA... -> ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).to...
+UNKNOWN lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-last: lines -> (lines.reverse.take 1) (lean/VE/Senses/Run.lean:220: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:313 VE.Senses.Run.projectCase (G[V], trusted) list-last: ["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"] -> (["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"].reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-first: [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.for... -> ([("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines), ("formula", c.fo...
+SURVIVOR lean/VE/Senses/Run.lean:300 VE.Senses.Run.runCaseReported (G[V], trusted) list-drop-first: [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)] -> ([("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)].drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-middle: ("sense_map", Json.arr (senses.map occurrenceJson).toArray), -> 
+SURVIVOR lean/VE/Service/Registry.lean:63 VE.Service.modes (G[V], trusted) list-drop-last: [.evaluate, .checkCertificate, .order, .route, .norms, .english, .englishRead, .englishGrammar, .... -> ([.evaluate, .checkCertificate, .order, .route, .norms, .english, .englishRead, .englishGrammar, ... (the proofs it breaks: lean/VE/Service/Registry.lean:80)
+SURVIVOR lean/VE/Senses/Run.lean:300 VE.Senses.Run.runCaseReported (G[V], trusted) list-drop-middle: ("status", .str "error"), -> 
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-last: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-drop-first: c.choice -> (c.choice.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: ["overlay"] -> (["overlay"].drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-last: used -> (used.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:292 VE.Senses.Run.readCase (G[V], trusted) list-drop-first: [("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),... -> ([("result", Json.mkObj [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D))...
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-drop-middle: ("dictionary_id", .str (dictionaryId D)), -> 
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-last: (ids.map fun f => ("identities", f c.lines)).toList -> (((ids.map fun f => ("identities", f c.lines)).toList).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-drop-first: units -> (units.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-drop-first: [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .st... -> ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("senses_version", .s...
+SURVIVOR lean/VE/Senses/Run.lean:293 VE.Senses.Run.readCase (G[V], trusted) list-drop-middle: ("senses_version", .str sensesVersion), -> 
+SURVIVOR lean/VE/Senses/Run.lean:118 VE.Senses.Run.outcomeJson (G[V], trusted) list-last: admitted -> (admitted.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: D.words -> (D.words.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: used -> (used.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-last: used.eraseDups -> (used.eraseDups.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-last: used -> (used.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-last: c.E.sorts -> (c.E.sorts.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-last: c.E.sorts.map (·.name) -> ((c.E.sorts.map (·.name)).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: c.E.sorts.map (·.name) -> ((c.E.sorts.map (·.name)).drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:335 VE.Senses.Run.projectCase (G[V], trusted) list-last: [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection",... -> ([("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection"...
+SURVIVOR lean/VE/Senses/Run.lean:334 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: [("result", Json.mkObj [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesV... -> ([("result", Json.mkObj [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str senses...
+SURVIVOR lean/VE/Service/Registry.lean:68 VE.Service.modes (G[V], trusted) list-drop-middle: .cardinality, ->  (the proofs it breaks: lean/VE/Service/Registry.lean:80)
+trust_mutants: 16 KILLED, 57 SURVIVOR, 6 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 179 OTHER SHARD in 239 s
+trust_mutants: D[V], trusted: 6 KILLED, 1 UNKNOWN, 1 INVALID, 23 OTHER SHARD
+trust_mutants: G[V], trusted: 10 KILLED, 57 SURVIVOR, 5 UNKNOWN, 9 INVALID, 156 OTHER SHARD
+trust_mutants: steps: wall plan 7.2 s, scratch 1.7 s, control_build 0.3 s, probe_install 1.2 s, control_probes 80.1 s, mutants 143.9 s, cleanup 4.3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.1 s (1), control_probes 192.2 s (7), mutant_builds 216.8 s (92), mutant_checks 202.7 s (71), stage_controls 7.4 s (4), mutant_probes 111.6 s (16)
