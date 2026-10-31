@@ -6836,6 +6836,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_route
 #print axioms VE.Service.runMode_scope
 #print axioms VE.Service.runMode_searchBudget
+#print axioms VE.Service.runMode_sensesProject
 #print axioms VE.Service.runMode_softNorms
 #print axioms VE.Service.runMode_speechActs
 #print axioms VE.Service.runMode_words
