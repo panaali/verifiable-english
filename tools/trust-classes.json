@@ -16362,6 +16362,21 @@
         "VE.Cardinality.Document.Graph",
         "VE.Cardinality.Document.Entries"
       ]
+    },
+    "VE/Closure/CoreEquiv.lean": {
+      "P": [
+        "VE.Closure.CoreEquiv.embedAtom",
+        "VE.Closure.CoreEquiv.embedBranch",
+        "VE.Closure.CoreEquiv.embedCert",
+        "VE.Closure.CoreEquiv.embedEdge",
+        "VE.Closure.CoreEquiv.embedLiteral",
+        "VE.Closure.CoreEquiv.embedPair",
+        "VE.Closure.CoreEquiv.embedRule",
+        "VE.Closure.CoreEquiv.embedSigned",
+        "VE.Closure.CoreEquiv.embedToken",
+        "VE.Closure.CoreEquiv.embedTrace",
+        "VE.Closure.CoreEquiv.embedTraces"
+      ]
     }
   }
 }
