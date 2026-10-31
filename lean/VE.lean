@@ -137,6 +137,7 @@ import VE.Arith.CompleteExamples
 import VE.Arith.Deciding
 import VE.Arith.DecidingExamples
 import VE.Calc.Lower
+import VE.Calc.WorkExamples
 import VE.Calc.LowerExamples
 import VE.Calc.Data
 import VE.Calc.TableExamples
@@ -210,6 +211,7 @@ import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
 import VE.Acts.MeaningExamples
+import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples
@@ -241,12 +243,16 @@ import VE.Scope.WireExamples
 import VE.Scope.Readings
 import VE.Scope.ReadingsTheorems
 import VE.Scope.ReadingsExamples
+import VE.Scope.English
+import VE.Scope.Run
+import VE.Scope.RunExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
+import VE.Service.MemoExamples
 import VE.Defaults.Wire
 import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples

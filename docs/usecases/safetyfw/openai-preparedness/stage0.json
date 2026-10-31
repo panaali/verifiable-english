@@ -14,12 +14,12 @@
  "P1": {
   "admitted": true,
   "input": "F2 High deployment rule with its open sufficiency judgment",
-  "premises": "model",
+  "premises": "UNKNOWN",
   "route": null,
   "units": {
    "p5-u59": "OPEN"
   },
-  "unresolved_reading_sets": 0
+  "unresolved_reading_sets": 1
  },
  "P2": {
   "admitted": true,
@@ -89,8 +89,8 @@
   "bytes_by_status": {
    "CHECKED": 170,
    "LABELLED": 5327,
-   "OPEN": 7052,
-   "UNFORMALISED": 54869
+   "OPEN": 9073,
+   "UNFORMALISED": 52848
   },
   "total": 67418,
   "units": 389
@@ -100,7 +100,7 @@
   "master_total": 67418
  },
  "P7": {
-  "regulated_predicates": 44,
+  "regulated_predicates": 58,
   "violations": []
  },
  "P8": {

@@ -1,0 +1,188 @@
+{
+ "item": "eff-tm-control",
+ "machine": "VM (32 cores, 1-min load 8-20; runs niced, two at a time)",
+ "runs": [
+  {
+   "run": "jt-2c unsharded, up-front probes",
+   "commit": "73e809748",
+   "tool": "b13852342",
+   "args": "--max-mutants 1000 --allow <item>/trust-mutants-allow.json --jobs 4",
+   "head": "73e809748130e2b58762e41366547aebb4811789",
+   "seconds": 4327,
+   "jobs": 4,
+   "counts": {
+    "KILLED": 29,
+    "SURVIVOR": 14,
+    "INVALID": 5,
+    "ALLOWED": 27
+   },
+   "steps": {
+    "wall": {
+     "plan": 12.9,
+     "scratch": 12.2,
+     "control_build": 0.5,
+     "probe_install": 3.0,
+     "control_probes": 1263.8,
+     "mutants": 3033.0,
+     "cleanup": 1.3,
+     "reads": 0.1
+    },
+    "lake": {
+     "control_build": 0.4,
+     "probe_install": 2.9,
+     "control_probes": 1801.1,
+     "mutant_builds": 1662.0,
+     "mutant_checks": 1942.5,
+     "outside_checks": 0.0,
+     "stage_controls": 192.2,
+     "mutant_probes": 7809.7,
+     "other": 0.0
+    },
+    "runs": {
+     "control_build": 1,
+     "probe_install": 1,
+     "control_probes": 7,
+     "mutant_builds": 75,
+     "mutant_checks": 39,
+     "outside_checks": 0,
+     "stage_controls": 3,
+     "mutant_probes": 29,
+     "other": 0
+    }
+   }
+  },
+  {
+   "run": "jt-2c --shard 2/4, lazy probes (reverted)",
+   "commit": "73e809748",
+   "tool": "8831a1b28",
+   "args": "--max-mutants 1000 --allow <item>/trust-mutants-allow.json --jobs 4 --shard 2/4",
+   "head": "73e809748130e2b58762e41366547aebb4811789",
+   "seconds": 2485,
+   "jobs": 4,
+   "counts": {
+    "KILLED": 11,
+    "SURVIVOR": 1,
+    "INVALID": 2,
+    "ALLOWED": 5,
+    "OTHER SHARD": 56
+   },
+   "steps": {
+    "wall": {
+     "plan": 9.7,
+     "scratch": 20.4,
+     "control_build": 0.4,
+     "probe_install": 1.9,
+     "mutants": 2450.5,
+     "cleanup": 2.1,
+     "reads": 0.2
+    },
+    "lake": {
+     "control_build": 0.4,
+     "probe_install": 1.9,
+     "control_probes": 1586.1,
+     "mutant_builds": 347.1,
+     "mutant_checks": 662.7,
+     "outside_checks": 0.0,
+     "stage_controls": 149.4,
+     "mutant_probes": 1845.3,
+     "other": 0.0
+    },
+    "runs": {
+     "control_build": 1,
+     "probe_install": 1,
+     "control_probes": 3,
+     "mutant_builds": 19,
+     "mutant_checks": 17,
+     "outside_checks": 0,
+     "stage_controls": 4,
+     "mutant_probes": 11,
+     "other": 0
+    }
+   },
+   "shard": {
+    "k": 2,
+    "n": 4,
+    "owned": 19
+   }
+  },
+  {
+   "run": "qt-a3d unsharded, up-front probes",
+   "commit": "493da762",
+   "tool": "b13852342",
+   "args": "--max-mutants 1000 --allow <item>/trust-mutants-allow.json --jobs 4",
+   "head": "493da762e5a1afd008d6486e987822319521cd42",
+   "seconds": 5446,
+   "jobs": 4,
+   "counts": {
+    "KILLED": 60,
+    "INVALID": 4,
+    "ALLOWED": 5
+   },
+   "steps": {
+    "wall": {
+     "plan": 12.8,
+     "scratch": 7.4,
+     "control_build": 0.2,
+     "probe_install": 2.8,
+     "control_probes": 109.2,
+     "mutants": 5311.9,
+     "cleanup": 1.9,
+     "reads": 0.1
+    },
+    "lake": {
+     "control_build": 0.2,
+     "probe_install": 2.7,
+     "control_probes": 107.7,
+     "mutant_builds": 247.0,
+     "mutant_checks": 9716.2,
+     "outside_checks": 0.0,
+     "stage_controls": 2.4,
+     "mutant_probes": 10816.3,
+     "other": 0.0
+    },
+    "runs": {
+     "control_build": 1,
+     "probe_install": 1,
+     "control_probes": 1,
+     "mutant_builds": 71,
+     "mutant_checks": 61,
+     "outside_checks": 0,
+     "stage_controls": 1,
+     "mutant_probes": 60,
+     "other": 0
+    }
+   }
+  }
+ ],
+ "verdicts": {
+  "compared": "jt-2c --shard 2/4 lazy vs unsharded, every owned mutant's status and raw_status",
+  "owned": 19,
+  "differ": []
+ },
+ "actions": {
+  "jt-2c-73e80974": {
+   "tm_s": 2513.3,
+   "mutants": 75
+  },
+  "rsv3-jt-2c-73e80974": {
+   "parts_s": [
+    1904,
+    2156,
+    1113,
+    2077
+   ]
+  },
+  "qt-a3d-23061807": {
+   "tm_s": 4177.4,
+   "mutants": 69
+  },
+  "qt-a3d-493da762": {
+   "parts_s": [
+    1374,
+    1087,
+    919,
+    529
+   ]
+  }
+ }
+}

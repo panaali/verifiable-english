@@ -188,10 +188,12 @@ def decodeCaller (j : Json) : Except String Caller :=
   | .ok (.str "speech-acts") => pure .speechActs
   | .ok _ => throw "InvalidInput: caller is \"speech-acts\" when present"
 
-/-- The beginnings of the speech-acts wordings the caller sends to this mode: F1's `caseFrame`, then each word of
-    `modalWords` followed by a space. Exported, so the speech parser keeps no list of its own. F2's fronted `Is` joins
-    them in Q1.4b, once its A/B rows are decided (docs/question-answering/q1-4/REPORT.md). -/
-def speechPrefixes : List String := caseFrame :: modalWords.map (· ++ " ")
+/-- The beginnings of the speech-acts wordings the caller sends to this mode: F1's `caseFrame`, each word of
+    `modalWords` followed by a space, then F2's fronted words (`speechAuxiliaries`, capitalised, followed by a space).
+    Exported in the contract's `callers`, the one list the speech parser routes by (it keeps none of its own); this
+    mode reads every wording so routed, a fronted `Is` with the caller's auxiliaries (plan Q1.4, q1-4bb). -/
+def speechPrefixes : List String :=
+  caseFrame :: modalWords.map (· ++ " ") ++ speechAuxiliaries.map (capitalise · ++ " ")
 
 /-- The speech-acts caller's refusal of a wording whose first word is a word of `modalWords`, without a span, as speech
     acts have always given it; `none` otherwise. -/
