@@ -1056,7 +1056,7 @@ def test_the_generator_drops_each_constructor_of_json_wf():
     """Review sc-1ae F1's own declaration: each of `JsonWF`'s six constructors, `bool` and `num` among them."""
     import trust_mutants
     text = (ROOT / "lean/VE/Scope/Govern.lean").read_text()
-    declared, _ = trust_mutants.declaration_list(ROOT / "lean/declarations.txt")
+    declared, _ = trust_mutants.declaration_list(lean_statements.inventory_path("lean/declarations.txt"))
     (r,) = [d for d in declared["VE.Scope.Govern"] if d.name == "VE.Scope.JsonWF"]
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
     lo, hi = starts[r.start[0] - 1] + r.start[1], starts[r.end[0] - 1] + r.end[1]

@@ -708,14 +708,13 @@ def _service_tree(tmp_path, monkeypatch, *, source: str, built: str | None, pins
             entries.append(R.Generated(R.BUILD, (), (run(lake),), (run(lake),), cwd="lean"))
         elif name == "PINS":
             entries.append(R.Generated(R.PINS, ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",),
-                                       merge="json"))
+                                       merge="json", writer="train"))
         else:
             write = run(user, name, *([change] if change else []))
             entries.append(R.Generated(name, (f"out/{name}", "lean/Source.lean") if change else (f"out/{name}",),
                                        (write,), (run(user, name),), service=mark))
     monkeypatch.setattr(R, "GENERATED", tuple(entries))
     monkeypatch.setattr(R, "ROOT", tmp_path)
-    monkeypatch.setattr(R, "LOCK", tmp_path / "lean/checkers.lock")
     monkeypatch.setattr(R, "owned_files", lambda entry, root=tmp_path: sorted(
         {path for pattern in entry.paths for path in root.glob(pattern) if path.is_file()}))
     exe = tmp_path / "bin/ve_service"
@@ -930,8 +929,15 @@ def graph(tmp_path_factory):
 
 
 def _service_importers(entries, graph) -> dict[str, list[str]]:
-    """{entry: its commands' files whose imports reach the service client}."""
-    reaching = graph.importers(SERVICE_CLIENT)
+    """{entry: its commands' files whose imports reach the service client}. A path through this runner does not
+    count: its functions reach the client only as the steps that name them (`_function_imports`), and a script
+    that imports it for the registry (`inventory_path`'s entries) runs none of them."""
+    reaching, stack = {SERVICE_CLIENT}, [SERVICE_CLIENT]
+    while stack:
+        for importer in graph.reverse.get(stack.pop(), ()):
+            if importer not in reaching and importer != "tools/regen_generated.py":
+                reaching.add(importer)
+                stack.append(importer)
     found = {}
     for entry in entries:
         files = set(_referenced(entry))
@@ -1026,9 +1032,11 @@ def test_the_frozen_inventory_writer_reproduces_the_committed_inventory():
 def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
     import assurance_manifest
     assert assurance_manifest.main(["--check"]) == 0
-    stale = tmp_path / "assurance-manifest.md"
-    stale.write_text(assurance_manifest.DOC.read_text().replace("<!-- END GENERATED -->", "stale\n<!-- END GENERATED -->", 1))
-    monkeypatch.setattr(assurance_manifest, "DOC", stale)
+    stale = tmp_path / assurance_manifest.DOC
+    stale.parent.mkdir(parents=True)
+    stale.write_text(assurance_manifest.inventory_path(assurance_manifest.DOC).read_text().replace(
+        "<!-- END GENERATED -->", "stale\n<!-- END GENERATED -->", 1))
+    monkeypatch.setattr(assurance_manifest, "ROOT", tmp_path)
     assert assurance_manifest.main(["--check"]) == 1
     assert "stale" in stale.read_text()  # --check writes nothing
 

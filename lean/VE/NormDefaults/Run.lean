@@ -221,7 +221,8 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     return ← Wire.runLayered id kind j
   if kind == "norm-defaults-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let s ← Wire.decodeSourceU environment (j.getObjValD "norms")
+    -- Decided without the document layers (jt-2c); every identity below reads the environment as written.
+    let s ← Wire.decodeSourceU (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms")
     let filled ← Admission.fillJson environment s.U
     let filledId ← VE.Route.Wire.environmentId (Wire.profilesOf filled) filled
     let sourceId ← VE.Route.Wire.environmentId (Wire.profilesOf environment)
@@ -350,11 +351,23 @@ theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answ
   rw [he', hd']
   exact ⟨id, hid, Admission.runAdmissionX_sound id environment document answer ha⟩
 
-/-- `runCase` behind `Compose.pendingWithDefaults`: a composed block this route does not read is refused by name. -/
+/-- jt-2c: of this route's own kinds only `norm-defaults-elaborate` decides without a document layer yet; the replay
+kinds bind their certificates and models to the environment they decode (jt-2d). -/
+def pendingDocumentLayer (j : Json) : Option String := do
+  let l ← VE.Compose.documentLayers.find? (Wire.profilesOf (j.getObjValD "environment")).contains
+  let kind ← (VE.Route.Run.caseKind j).toOption
+  if (kind.startsWith "norm-defaults-" && kind != "norm-defaults-elaborate") || Wire.defaultsKinds.contains kind then
+    some s!"CheckerUnavailable: {l} with {kind} needs its composed Lean route"
+  else none
+
+/-- `runCase` behind `Compose.pendingWithDefaults` and `pendingDocumentLayer`: a composed block this route does not
+read is refused by name. -/
 def runGated (j : Json) : Except String Json :=
   match VE.Compose.pendingWithDefaults (Wire.profilesOf (j.getObjValD "environment")) with
   | some refusal => .error refusal
-  | none => runCase j
+  | none => match pendingDocumentLayer j with
+    | some refusal => .error refusal
+    | none => runCase j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then

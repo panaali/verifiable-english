@@ -1,0 +1,110 @@
+{
+ "key": "match-u0007.s03",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: Perhaps the simplest summary is that we want Claude to be exceptionally helpful while also being honest, thoughtful, and caring about the world.\nDEMAND: we want Claude to be exceptionally helpful\nIn list L, {0} stands for Claude.\nA1. Claude must be exceptionally helpful. This is a requirement of its own, separate from the requirements to be honest, thoughtful and caring about the world.\nA2. Claude must be exceptionally helpful only in ways that are also honest, thoughtful and caring about the world. Helpfulness that lacks those qualities does not meet the requirement.\nB1. Claude is required to be exceptionally helpful, as a goal of its own regardless of the other qualities named in the sentence.\nB2. Claude is required to be exceptionally helpful only in ways that stay honest, thoughtful and caring about the world at the same time, so helpfulness that would give up those qualities is not what is asked for.\nL1. {0} must be exceptionally helpful.\n",
+ "cli": {
+  "duration_api_ms": 6999,
+  "stop_reason": "end_turn",
+  "session_id": "c3aeba11-4ee5-498e-90de-95e9cdfc84ca",
+  "total_cost_usd": 0.039160799999999996,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4349,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 111,
+   "output_tokens_details": {
+    "thinking_tokens": 72
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4349,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 111,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4349,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4349
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 111,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4349,
+    "webSearchRequests": 0,
+    "costUSD": 0.039160799999999996,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 72,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4349,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE",
+  "ttft_ms": 6911,
+  "type": "result",
+  "duration_ms": 7227,
+  "uuid": "91048167-1410-4cc9-b817-c711d7c9cd3c",
+  "ttft_stream_ms": 6340,
+  "time_to_request_ms": 224,
+  "first_content_frame_ms": 6341,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15166,
+ "answer": "PAIR A1 B1 L1\nPAIR A2 B2 NONE\nSKIPPED: NONE"
+}

@@ -79,7 +79,7 @@ def test_audit_rejects_nonpositive_job_budget(monkeypatch):
 def test_record_names_every_theorem_once():
     theorems = audit.declared_theorems(audit.ROOT, audit.scan_sources(audit.ROOT))
     actual = {name for names in theorems.values() for name in names}
-    names = audit.recorded_names(audit.RECORD.read_text())
+    names = audit.recorded_names(lean_statements.inventory_path(audit.record_name()).read_text())
     assert len(names) == len(set(names))
     assert set(names) == actual, {'unrecorded': sorted(actual - set(names))[:10],
                                   'obsolete': sorted(set(names) - actual)[:10]}
@@ -90,7 +90,8 @@ def test_committed_manifests_are_the_generated_ones():
     theorem is in one of them: a Prop-class instance that Lean compiles as a theorem included."""
     theorems = audit.declared_theorems(audit.ROOT, audit.scan_sources(audit.ROOT))
     for manifest in audit.MANIFESTS:
-        assert (audit.ROOT / manifest).read_text() == audit.manifest_text(manifest, theorems[manifest]), manifest
+        assert lean_statements.inventory_path(f'lean/{manifest}').read_text() == \
+            audit.manifest_text(manifest, theorems[manifest]), manifest
     declared, _ = lean_statements.declaration_list()
     compiled = {d.name for constants in declared.values() for d in constants if d.kind == 'theorem' and d.start}
     assert compiled == {name for names in theorems.values() for name in names}
@@ -102,7 +103,7 @@ def test_committed_manifests_are_the_generated_ones():
 @pytest.fixture
 def fake_lean(monkeypatch, tmp_path):
     """The audit with the committed record as Lean's output, entirely in a scratch tree."""
-    output = audit.RECORD.read_text()
+    output = lean_statements.inventory_path(audit.record_name()).read_text()
     lean = tmp_path / 'lean'
     shutil.copytree(ROOT / 'lean', lean, ignore=shutil.ignore_patterns('.lake', '__pycache__'))
     monkeypatch.setattr(audit, 'ROOT', lean)
@@ -117,9 +118,7 @@ def fake_lean(monkeypatch, tmp_path):
         stdout=''.join(printed[name] for name in re.findall(r'^#print axioms (\S+)', Path(command[-1]).read_text(),
                                                              re.M)) if command[:3] == ['lake', 'env', 'lean'] else '',
         returncode=0))
-    record = lean / 'axioms.txt'
-    monkeypatch.setattr(audit, 'RECORD', record)
-    return output, record
+    return output, lean / 'axioms.txt'
 
 
 def test_audit_refuses_a_stale_record_and_write_regenerates_it(fake_lean, capsys):
@@ -132,7 +131,7 @@ def test_audit_refuses_a_stale_record_and_write_regenerates_it(fake_lean, capsys
     audit.main(['--write'])
     assert record.read_text() == output
     for manifest in audit.MANIFESTS:
-        assert (audit.ROOT / manifest).read_text() == (ROOT / 'lean' / manifest).read_text()
+        assert (audit.ROOT / manifest).read_text() == lean_statements.inventory_path(f'lean/{manifest}').read_text()
     assert [path.stat().st_mtime_ns for path in committed_manifests] == before
     audit.main([])
     capsys.readouterr()
@@ -213,7 +212,6 @@ def scratch(tmp_path, monkeypatch):
         (lean / name).write_text(text)
     shutil.copy(ROOT / 'lean/lean-toolchain', lean / 'lean-toolchain')
     monkeypatch.setattr(audit, 'ROOT', lean)
-    monkeypatch.setattr(audit, 'RECORD', lean / 'axioms.txt')
 
     def dump():
         statements, _, declarations = lean_statements.dump_all(tmp_path)

@@ -2,6 +2,7 @@
 - `lean/VE/Closure/Checks.lean` — (no module docstring)
 - `lean/VE/Closure/Congruence.lean` — (no module docstring)
 - `lean/VE/Closure/Consequence.lean` — (no module docstring)
+- `lean/VE/Closure/CoreEquiv.lean` — Closure's tableau checker is Core's on the embedding (consolidation step 3a).
 - `lean/VE/Closure/Finite.lean` — (no module docstring)
 - `lean/VE/Closure/Induction.lean` — (no module docstring)
 - `lean/VE/Closure/Order.lean` — (no module docstring)
