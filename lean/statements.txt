@@ -8033,6 +8033,14 @@ theorem VE.Compose.contains_eq
   ∀ (ps : List String) (x : String), ps.contains x = Decidable.decide (x ∈ ps)
   -- uses
   -- expr 149971844
+theorem VE.Compose.decidingEnvironment_admits
+  ∀ (environment j : Lean.Json),
+    (VE.Compose.listedProfiles environment).any VE.Compose.documentLayers.contains = Bool.true →
+      VE.Compose.decidingEnvironment environment = Except.ok j →
+        VE.Compose.TableAdmits VE.Compose.profileTable (VE.Compose.listedProfiles environment) ∧
+          j = VE.Compose.withoutDocumentLayers environment
+  -- uses VE.Compose.TableAdmits@VE.Compose.Dispatch VE.Compose.decidingEnvironment@VE.Compose.Dispatch VE.Compose.documentLayers@VE.Compose.Dispatch VE.Compose.listedProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.withoutDocumentLayers@VE.Compose.Dispatch
+  -- expr 1945750828
 theorem VE.Compose.dispatch_chain
   ∀ (ps : List String), VE.Compose.ChainList ps → VE.Compose.dispatch ps = Except.ok (VE.Compose.stackHead ps)
   -- uses VE.Compose.ChainList@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.stackHead@VE.Compose.Dispatch

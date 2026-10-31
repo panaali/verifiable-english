@@ -1151,6 +1151,7 @@
 'VE.Compose.checks_none' depends on axioms: [propext, Quot.sound]
 'VE.Compose.conflictFreeP_append' depends on axioms: [propext, Quot.sound]
 'VE.Compose.contains_eq' depends on axioms: [propext]
+'VE.Compose.decidingEnvironment_admits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.dispatch_chain' depends on axioms: [propext, Quot.sound]
 'VE.Compose.dispatch_descends' depends on axioms: [propext, Quot.sound]
 'VE.Compose.dispatch_discourse_frozen' depends on axioms: [propext, Classical.choice, Quot.sound]
