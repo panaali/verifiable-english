@@ -136,6 +136,15 @@ mode, which delegates to the route on the environment without it.
   measured ties, 464 to 466, from `trust_map.py --ledger`) were fixed; those three files and the 31 units then ran
   with `zsh mac-pytest.sh -- <ids>`: "1056 passed". `regen_generated.py --check`: "checked 34 entries", exit 0.
   `gate_collection.py --check --prebuilt`: "35 added, 1 removed by a trailer, 0 refused, 0 stale and 0 malformed".
+- Review F1, selected tests (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, at `f807cc35f`,
+  run on the VM: the Mac runner could not take the coverage maps): 504 of 504 units, 503 exit 0, exit 1 for one
+  failure not this item's: `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes`, whose only
+  changed record is `DF-a`'s diagnostic (saved "... applies to a soft-norms@0 document without open reading sets", now
+  df-3's "... applies to readings on the enumerated route", `ve/document/cli.py:156`, main's `cdec72996`, a file this
+  branch does not change); FOLLOW-UPS "scale-lean-memo round 1" F4 records it as main's hidden red (not in
+  main-known-red.txt). The `judgments@0` probe `JT-a` is unchanged. Also: `lake build` "Build completed successfully
+  (1167 jobs)", `python3 lean/audit.py` "PASS: 675 source files", `regen_generated.py --check` "checked 34 entries",
+  `trust_map.py --check` exit 0, PROBE F1 passes.
 - Not run: whole-document pilots (L70), base/head timing (one extra list filter per case).
 - Pilot bytes expected to move: none from this item (no pilot lists `judgments@0`). After JT-5r, JT-5a expects Lean
   statuses on 13 constitution units and JT-5b on 18 UDHR units; the pilots list `norm-defaults@0`, so their
