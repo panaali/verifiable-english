@@ -58,7 +58,7 @@
    "claim": "conditions 1 to 5 keep their texts",
    "status": "KILLED",
    "tests": [
-    "VE/Acts/LexicalExamples.lean"
+    "VE/Acts/DecodeExamples.lean"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "claim": "condition 6 keeps D-4 on the norms route",
    "status": "KILLED",
    "tests": [
-    "VE/Acts/LexicalExamples.lean"
+    "VE/Acts/DecodeExamples.lean"
    ]
   },
   {
