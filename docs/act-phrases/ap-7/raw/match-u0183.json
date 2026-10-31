@@ -1,0 +1,110 @@
+{
+ "key": "match-u0183",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: In the weighing the harms at stake, Claude should also consider the scale of power in play (e.g., is it a small business or a multinational conglomerate, a city council or a national government), the reversibility of the harms in question (e.g., the probability of quasi-permanent entrenchment), and the extent to which the action in question is broadly beneficial, positive-sum, and likely to be endorsed by most relevant stakeholders.\nDEMAND: Claude should also consider the scale of power in play (e.g., is it a small business or a multinational conglomerate, a city council or a national government), the reversibility of the harms in question (e.g., the probability of quasi-permanent entrenchment), and the extent to which the action in question is broadly beneficial, positive-sum, and likely to be endorsed by most relevant stakeholders\nIn list L, {0} stands for Claude.\nA1. Claude should consider all three factors when weighing the harms: the scale of power involved, how reversible the harms are, and how far the action is broadly beneficial, positive-sum and likely to be endorsed. For the third factor, Claude should assess each of those three properties on its own.\nA2. Claude should consider all three factors: the scale of power involved, how reversible the harms are, and a single combined measure of how far the action is all at once broadly beneficial, positive-sum and likely to be endorsed.\nA3. Claude should consider all three factors, and \"likely to be endorsed\" means whether a majority of the relevant stakeholders would endorse the action.\nA4. Claude should consider all three factors, and \"likely to be endorsed\" means whether the stakeholders who matter most would endorse the action, not whether a majority would.\nB1. Claude should consider all three factors, each in its own right, in addition to whatever else it weighs: the scale of power involved, how reversible the harms are, and how far the action is broadly beneficial, positive-sum and likely to be endorsed by stakeholders. The parenthetical cases are only examples, not a complete list of what Claude must look at.\nB2. Claude should consider the scale of power and the reversibility of the harms, and should judge three things about the action separately: how broadly beneficial it is, how positive-sum it is, and how likely stakeholders are to endorse it.\nB3. Claude should consider the scale of power and the reversibility of the harms, and should judge as one combined question how far the action is at once broadly beneficial, positive-sum and likely to be endorsed by stakeholders.\nB4. Claude should consider whether the action is likely to be endorsed by most of the relevant stakeholders, meaning a majority of all the stakeholders who are relevant.\nB5. Claude should consider whether the action is likely to be endorsed by the most relevant stakeholders, meaning the stakeholders who matter most, even if they are not a majority.\nL: (none: the parser lists no reading)\n",
+ "cli": {
+  "duration_api_ms": 7572,
+  "stop_reason": "end_turn",
+  "session_id": "3868119f-c84a-4905-a020-21350e22aa2e",
+  "total_cost_usd": 0.0525808,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4949,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 542,
+   "output_tokens_details": {
+    "thinking_tokens": 502
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4949,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 542,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4949,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4949
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 542,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4949,
+    "webSearchRequests": 0,
+    "costUSD": 0.0525808,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 502,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4949,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B2 NONE\nPAIR A2 B3 NONE\nSKIPPED: NONE",
+  "ttft_ms": 7762,
+  "type": "result",
+  "duration_ms": 7800,
+  "uuid": "837c1fa3-d4cf-4506-8ec2-01844690dc46",
+  "ttft_stream_ms": 2345,
+  "time_to_request_ms": 233,
+  "first_content_frame_ms": 2346,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 16197,
+ "answer": "PAIR A1 B2 NONE\nPAIR A2 B3 NONE\nSKIPPED: NONE"
+}

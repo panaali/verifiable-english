@@ -1,0 +1,6 @@
+Every member is registered.
+Checked reading: Every member is registered.
+Every member who is registered is eligible.
+Checked reading: Every member that is registered is eligible.
+Ann is verified.
+Checked reading: Ann is verified.
