@@ -467,3 +467,87 @@ def test_a_full_run_never_chunks(tmp_path, monkeypatch):
     assert seen == [["tests/test_big.py"], chunked("tests/test_big.py", select_tests.MAX_CHUNKS)]
     with pytest.raises(ValueError, match="a full run never chunks"):
         select_tests.run({**plan, "selected": chunked("tests/test_big.py", 2)}, full=True, jobs=1)
+
+
+# --- the failed-unit line keeps the format the orchestrator's parsers read ---
+
+# The orchestrator's parsers of select_tests' unit lines (outside this repository; review eff-20261030-1 F1):
+# chain-gate.sh and review-ready.py match this and split the node ids on ", "; mac-pytest.sh greps the head and
+# strips "; log .*".
+CHAIN_GATE_LINE = r"^FAILED \S+ \(exit [^)]*\): (.*); log \S+$"
+MAC_PYTEST_HEAD = r"^FAILED [^ ]+ \(exit [^)]*\): "
+
+
+def parsed_ids(output: str) -> dict[str, set[str]]:
+    """The node ids each parser takes from a run's output: chain-gate/review-ready, then mac-pytest."""
+    import re
+    lines = output.splitlines()
+    chain = {x.strip() for line in lines if (m := re.match(CHAIN_GATE_LINE, line))
+             for x in m.group(1).split(", ") if x.strip()}
+    mac = {x.strip() for line in lines if re.match(MAC_PYTEST_HEAD, line)
+           for x in re.sub(r"; log .*", "", re.sub(MAC_PYTEST_HEAD, "", line)).split(",") if x.strip()}
+    return {"chain": chain, "mac": mac}
+
+
+def run_failing(tmp_path, monkeypatch, capsys, results: dict, failures: dict, logs: list[str],
+                held: set[str] = frozenset()) -> str:
+    def record(ordered, work, *rest):
+        for label in logs:
+            (work / (label.replace("/", "__") + ".log")).write_text(f"tail of {label}\n")
+        return results, failures
+    monkeypatch.setattr(select_tests, "record_ordered", record)
+    monkeypatch.setattr(test_map, "working_tree_id", lambda: "t" * 40)
+    monkeypatch.setattr(test_map, "build_natives", lambda: None)
+    monkeypatch.setattr(test_map, "write_map", lambda data, path: None)
+    monkeypatch.setattr(run_order, "state_path", lambda: tmp_path / "state.json")
+    (tmp_path / "work").mkdir()
+    monkeypatch.setattr(select_tests.tempfile, "mkdtemp", lambda prefix: str(tmp_path / "work"))
+    selected = sorted({label.split("::")[0] for label in logs} | set(results) | set(failures))
+    select_tests.run_recorded({"selected": selected, "changed": [], "map": None}, 1, 0, set(held), chunked=False)
+    return capsys.readouterr().out
+
+
+def test_a_failed_unit_line_ends_in_its_log(tmp_path, monkeypatch, capsys):
+    unit = "tests/test_select_tests.py"
+    out = run_failing(tmp_path, monkeypatch, capsys, {unit: chunk_result(1, set(), 1.0)},
+                      {unit: [f"{unit}::test_a", f"{unit}::test_b"]}, [unit])
+    assert parsed_ids(out) == {"chain": {f"{unit}::test_a", f"{unit}::test_b"}} | {
+        "mac": {f"{unit}::test_a", f"{unit}::test_b"}}
+    line = next(line for line in out.splitlines() if line.startswith("FAILED "))
+    assert line.endswith(f"; log {tmp_path / 'work' / 'tests__test_select_tests.py.log'}")
+    assert f"tail of {unit}" in out
+
+
+def test_a_chunked_unit_line_names_its_first_chunk_log_and_prints_every_tail(tmp_path, monkeypatch, capsys):
+    unit, labels = "tests/test_many.py", chunked("tests/test_many.py", 3)
+    out = run_failing(tmp_path, monkeypatch, capsys, {unit: chunk_result(1, set(), 1.0)},
+                      {unit: [f"{unit}::test_n[1]"]}, labels)
+    assert parsed_ids(out) == {"chain": {f"{unit}::test_n[1]"}, "mac": {f"{unit}::test_n[1]"}}
+    line = next(line for line in out.splitlines() if line.startswith("FAILED "))
+    assert line.rsplit("; log ", 1)[1].endswith(labels[0].replace("/", "__") + ".log")
+    assert all(f"tail of {label}" in out for label in labels)
+
+
+def test_a_stopped_chunked_unit_line_keeps_the_format(tmp_path, monkeypatch, capsys):
+    # The run stopped before the file's other chunks ended: no folded result, but the failures of the chunks that
+    # ended still reach every parser, and the note sits in the exit, not among the node ids.
+    unit, labels = "tests/test_many.py", chunked("tests/test_many.py", 2)
+    out = run_failing(tmp_path, monkeypatch, capsys, {}, {unit: [f"{unit}::test_a"]}, labels[:1])
+    assert parsed_ids(out) == {"chain": {f"{unit}::test_a"}, "mac": {f"{unit}::test_a"}}
+    assert f"(exit {select_tests.STOPPED_EXIT}): " in out
+
+
+def test_a_quarantined_unit_line_is_no_failure_to_the_parsers(tmp_path, monkeypatch, capsys):
+    unit = "tests/test_select_tests.py"
+    out = run_failing(tmp_path, monkeypatch, capsys, {unit: chunk_result(1, set(), 1.0)},
+                      {unit: [f"{unit}::test_a"]}, [unit], held={f"{unit}::test_a"})
+    assert parsed_ids(out) == {"chain": set(), "mac": set()}
+    assert "QUARANTINED (fails under load; not counted) tests/test_select_tests.py (exit 1): " in out
+
+
+@given(st.lists(st.from_regex(r"tests/test_[a-z]{1,8}\.py::test_[a-z0-9_\[\]-]{1,12}", fullmatch=True),
+                min_size=1, max_size=5, unique=True),
+       st.sampled_from([0, 1, 2, "timeout", select_tests.STOPPED_EXIT]))
+def test_every_unit_line_round_trips_through_the_parsers(nodeids, exit):
+    line = select_tests.unit_line("FAILED", "tests/test_x.py", exit, nodeids, Path("/w/tests__test_x.py.log"))
+    assert parsed_ids(line) == {"chain": set(nodeids), "mac": set(nodeids)}

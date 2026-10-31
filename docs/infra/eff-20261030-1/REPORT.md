@@ -156,7 +156,7 @@ The longest chunk is 788. The floor therefore falls from ~1,373 s to ~1,006 s (e
 
 ## Seeded bugs (Python; the only language changed)
 
-`uv run python docs/infra/eff-20261030-1/seeded_bugs.py --json docs/infra/eff-20261030-1/seeded-bugs.json` plants each bug, runs the one test, restores the file byte for byte, and exits 0 only if every bug is caught. Result: 12 of 12 caught, as recorded in `seeded-bugs.json` (file and test keys).
+`uv run python docs/infra/eff-20261030-1/seeded_bugs.py --json docs/infra/eff-20261030-1/seeded-bugs.json` plants each bug, runs the one test, restores the file byte for byte, and exits 0 only if every bug is caught. Result: 16 of 16 caught (the last 4 added for review F1), as recorded in `seeded-bugs.json` (file and test keys).
 
 | bug | file | failing test (tests/test_test_chunks.py::) |
 |---|---|---|
@@ -172,12 +172,20 @@ The longest chunk is 788. The floor therefore falls from ~1,373 s to ~1,006 s (e
 | a nested run inherits the chunk | tools/nested_pytest.py | test_a_nested_run_never_inherits_the_chunk |
 | the hook keeps the chunk before -m deselects | tools/test_chunks.py | test_the_chunk_applies_after_marker_deselection |
 | JUnit node IDs drop the class | tools/run_order.py | test_junit_cases_are_the_node_ids_of_the_file |
+| the log path moves before the node ids (F1) | tools/select_tests.py | test_a_failed_unit_line_ends_in_its_log |
+| the stopped note leaves the exit field (F1) | tools/select_tests.py | test_a_stopped_chunked_unit_line_keeps_the_format |
+| only the first chunk's log tail is printed (F1) | tools/select_tests.py | test_a_chunked_unit_line_names_its_first_chunk_log_and_prints_every_tail |
+| a quarantined unit is labelled FAILED (F1) | tools/select_tests.py | test_a_quarantined_unit_line_is_no_failure_to_the_parsers |
+
+## Review fix F1: the failed-unit line
+
+The review of 28e25046c found that the line printed for each failed unit no longer ended in `; log <path>` (the log went on the next line), and that a stopped chunked file got `FAILED <file> (stopped before its other chunks ended) (exit stopped): ...`. The orchestrator's parsers (`chain-gate.sh`, `review-ready.py`: `^FAILED \S+ \(exit [^)]*\): (.*); log \S+$`; `mac-pytest.sh`: `^FAILED [^ ]+ \(exit [^)]*\): `) then read no node IDs. The fix is one formatter, `select_tests.unit_line`, that prints every such line as `<label> <unit> (exit <exit>): <node id>, ...; log <first log>`. The stopped note is now the exit (`select_tests.STOPPED_EXIT`), so it never lands among the node IDs. The tail of every chunk's log follows the line. The tests in `tests/test_test_chunks.py` (section "the failed-unit line") run all three parsers on a plain failure, a chunked failure, a stopped chunked file and a quarantined unit, and a property test round-trips `unit_line` through the parsers. The review's probe fails (rc=1) on 28e25046c and passes (rc=0) after the fix.
 
 ## DELTA, trust, constraints
 
 - **No user-visible delta.** Only test execution of selected runs changed: no verdict, diagnostic, CLI output of `ve`, or schema changed. There is no DELTA.md, and no row reserves a DRI signature.
 - **No Lean, Rust or product code changed. Trust +0.** No lake build or audit was needed, and none was run.
-- **No test removed, renamed or skipped.** One test file was added (`tests/test_test_chunks.py`, 53 tests). The selected run collected the same IDs plus those.
+- **No test removed, renamed or skipped.** One test file was added (`tests/test_test_chunks.py`, 58 tests: 53, plus 5 for review F1). The selected run collected the same IDs plus those.
 - **Generated files** were regenerated with `tools/regen_generated.py --write` (code map, tests/history-dependent.json), never edited by hand.
 - **Hermetic tests:** tmp_path plus synthetic trees, waits only through `HANG_TIMEOUT`, no sleeps. `tests/test_hang_guards.py` passed: 69 passed.
 - **Selection** (checklist item 9): a seeded change to `tools/test_chunks.py` selects `tests/test_test_chunks.py`. It selects all 504 units because the module sits in the conftest's import closure and the map (432763b06d) predates it, the same case as `tools/test_schedule.py`. Once a map records it, a change to `partition` selects only the units that ran it.
@@ -188,7 +196,7 @@ The longest chunk is 788. The floor therefore falls from ~1,373 s to ~1,006 s (e
 
 1. N.A.: no relayed Lean answer is added or changed.
 2. PASS: task items 1-4 and steps 1 and 5 are mapped to commits and tests in the tables above. The only deviation is the stricter "measured rows only", with its reason. No new report test (D4); the evidence is saved files.
-3. PASS: 12 seeded bugs, each caught by a named test (`seeded-bugs.json`), and 3 or more per claimed behaviour.
+3. PASS: 16 seeded bugs, each caught by a named test (`seeded-bugs.json`), and 3 or more per claimed behaviour.
 4. N.A.: no Python/Lean/Rust checker path changed. Outcomes of the same tests are identical whole vs chunked: `step5/mac-table.json` `identical_outcomes` is true for all 5 files, and on Actions the counts are in `step5/actions-select-run.txt`.
 5. N.A.: no Lean answer is read. The analogous binding (every collected node in exactly one chunk) is tested both ways: `test_chunks_that_run_their_parts_pass_the_check`, `test_a_test_no_chunk_ran_fails_the_check`, `test_a_test_two_chunks_ran_fails_the_check`, `test_a_missing_report_a_failed_listing_or_an_extra_test_fails_the_check`.
 6. PASS for the evidence: the selected run is on the final code but for the docs-only fix 8c9b39058, whose failed test was rerun alone (passed). The gate runs on the final HEAD in the chain.
