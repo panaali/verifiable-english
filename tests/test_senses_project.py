@@ -117,7 +117,7 @@ def test_projection_answer_mutations_are_rejected(joke, lines):
         # Lean's version constant is typed, not bound: its lock is sn-b6b's.
         rebound = [original + "0"] if type(original) is str and path[-1] != "senses_version" \
             and genuine["result"]["projection"]["status"] == "ok" else []
-        for value in ["delete", *_retyped(original), *rebound]:
+        for value in ["delete", *_retyped(original), 1.5, *rebound]:
             mutant = deepcopy(genuine)
             parent = mutant
             for part in path[:-1]:
@@ -150,12 +150,42 @@ def test_reading_identity_rebinding_is_refused(joke):
         mutant = deepcopy(genuine)
         mutant["reading"][key[0]][key[1]] = "0" * 64
         assert problem(mutant), key
-    for change in (lambda r: r["reading"].update(used=["giggle"]),
+    for change in (lambda r: r["reading"].update(used=["giggle"]), lambda r: r["reading"].update(used=["funny", "giggle"]),
+                   lambda r: r["reading"].update(used=["funny"] * 2),
+                   lambda r: r["reading"].update(used=[]),
                    lambda r: r["reading"]["units"][0]["candidates"][0]["identities"].update(grammar_id="0" * 64),
                    lambda r: r["reading"]["units"][0]["candidates"][0]["identities"].update(extra="x")):
         mutant = deepcopy(genuine)
         change(mutant)
         assert problem(mutant)
+
+
+def test_budget_zero_never_projects(joke):
+    """A line read with no budget is Lean's PreambleBudget, never a projection; with no line there is no work."""
+    env, overlay = joke
+    assert route.project(env, [PACK], LINE2, ["funny"], overlay=overlay, budget=0)["projection"] == {
+        "status": "budget", "code": "PreambleBudget", "details": {"line": 0}}
+    assert route.project(env, [PACK], LINE2, ["funny"], overlay=overlay)["projection"]["status"] == "ok"
+
+
+def test_the_lean_decoder_refuses_each_retyped_member(joke):
+    """Each member of a genuine `senses.project` case, retyped or dropped, and an extra one, is refused: Lean's error
+    row, or the service's refusal of a value its restricted reader does not take."""
+    from ve.backends.relay import rows
+    env, overlay = joke
+    case = route.request(env, None, [PACK.decode()], overlay=overlay)
+    del case["source"]
+    case.update(id=route.PROJECT, lines=LINE2, used=["funny"])
+    assert rows(route.PROJECT, [case])[0]["status"] == "ok"
+    mutants = [dict(case, extra=True)] + [{k: v for k, v in case.items() if k != key} for key in case if key != "id"]
+    mutants += [dict(case, **{key: value}) for key in case if key != "id"
+                for value in _retyped(case[key]) if value is not None and not (key == "overlay" and value == {})]
+    for mutant in mutants:
+        try:
+            [row] = rows(route.PROJECT, [mutant])
+        except VEError:  # the service's restricted reader refuses the value before the decoder
+            continue
+        assert row["status"] == "error" and row["error"], mutant.keys()
 
 
 def test_i6_both_operations_are_lean_only():
