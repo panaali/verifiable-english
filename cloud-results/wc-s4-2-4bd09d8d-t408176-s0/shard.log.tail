@@ -1,0 +1,172 @@
+shard 1/3: 146 units; commands: ['python3 tools/check_rust_deps.py', 'python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Ca', 'python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_rust_deps.py
+Rust crate graph kept (4 crates; ve-core re-exports only)
++ python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded generic-array v0.14.7
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded digest v0.10.7
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded proc-macro2 v1.0.107
+  Downloaded itoa v1.0.18
+  Downloaded quote v1.0.47
+  Downloaded num-integer v0.1.47
+  Downloaded zmij v1.0.23
+  Downloaded sha2 v0.10.9
+... (174 lines cut; full output in shard-full.txt)
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_profile-39d349572b160587)
+
+running 3 tests
+test search::domain_size_tests::lazy_sizes_are_the_eager_order ... ok
+test search::domain_size_tests::many_sorts_hold_one_vector ... ok
+test search::domain_size_tests::per_sort_maxima_are_the_eager_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ve_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.18s
+b56b8d2c9734babb3cc6358b6cb359b2eb30409565ac09f5ac894de52070298f  /home/runner/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in /home/runner/work/verifiable-english/verifiable-english/lean/checkers.lock
++ python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.91s
+    Finished `release` profile [optimized] target(s) in 0.01s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+order: failed last time []; changed ['tests/test_wire_contract_lint.py']; then the rest; --maxfail 5
+recording 146 units with 4 jobs in /tmp/ve-select-run-0gdb476q
+  tests/test_wire_contract_lint.py: exit 1 in 5.7 s, 818 functions
+  tests/test_precommit_hook.py: exit 1 in 83.8 s, 350 functions
+  tests/test_wire_contract_s4_lean.py: exit 1 in 1.5 s, 770 functions
+FAILED tests/test_precommit_hook.py (exit 1): tests/test_precommit_hook.py::test_large_staged_change_passes, tests/test_precommit_hook.py::test_wire_contract_accepts_staged_equivalent_json; log /tmp/ve-select-run-0gdb476q/tests__test_precommit_hook.py.log
+=========================== short test summary info ============================
+FAILED tests/test_precommit_hook.py::test_wire_contract_accepts_staged_equivalent_json - AssertionError: pre-commit: wire contract check failed:
+    /tmp/ve-precommit-1r0u1yqy/rust/ve-kernel/src/contract_tables.rs: WC11: generated module differs
+  pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/tools/hooks/pre-commit'], returncode=1...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\n').returncode
+FAILED tests/test_precommit_hook.py::test_large_staged_change_passes - AssertionError: pre-commit: secrets: 0.473 s
+  pre-commit: layer imports: 18.185 s
+  pre-commit: Lean forbidden tokens: 2.647 s
+  pre-commit: frozen files: 0.011 s
+  pre-commit: wire contract: 0.369 s
+  pre-commit: wire contract check failed:
+    Traceback (most recent call last):
+      File "/tmp/ve-precommit-1ngpjb4c/tools/wire_contract.py", line 17, in <module>
+        from tools.wire_contract_rust import module as rust_module
+    ImportError: cannot import name 'module' from 'tools.wire_contract_rust' (/tmp/ve-precommit-1ngpjb4c/tools/wire_contract_rust.py)
+  pre-commit: English grammar: 0.017 s
+  pre-commit: lean --deps confirmed or refuted 577 of 577 staged Lean headers
+  pre-commit: total 21.819 s (2233 staged paths)
+  pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/tools/hooks/pre-commit', '--timings'],...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\n').returncode
+2 failed, 60 passed in 83.18s (0:01:23)
+FAILED tests/test_wire_contract_s4_lean.py (exit 1): tests/test_wire_contract_s4_lean.py::test_t3_the_switch_edit_changes_only_the_generated_revision; log /tmp/ve-select-run-0gdb476q/tests__test_wire_contract_s4_lean.py.log
+E         'rust/ve-kernel/src/contract_tables.rs'
+E         
+E         Full diff:
+E           {
+E               'lean/VE/WireContract/Tables/SoftNorms.lean',
+E         +     'rust/ve-kernel/src/contract_tables.rs',
+E               've/wire_contract/contracts.lock',
+E               've/wire_contract/soft-norms@0.json',
+E           }
+
+tests/test_wire_contract_s4_lean.py:102: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_wire_contract_s4_lean.py::test_t3_the_switch_edit_changes_only_the_generated_revision - AssertionError: assert {'lean/VE/Wir...norms@0.json'} == {'lean/VE/Wir...norms@0.json'}
+  
+  Extra items in the left set:
+  'rust/ve-kernel/src/contract_tables.rs'
+  
+  Full diff:
+    {
+        'lean/VE/WireContract/Tables/SoftNorms.lean',
+  +     'rust/ve-kernel/src/contract_tables.rs',
+        've/wire_contract/contracts.lock',
+        've/wire_contract/soft-norms@0.json',
+    }
+1 failed, 3 passed in 0.87s
+FAILED tests/test_wire_contract_lint.py (exit 1): tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files; log /tmp/ve-select-run-0gdb476q/tests__test_wire_contract_lint.py.log
+E         
+E         Extra items in the left set:
+E         'rust/ve-kernel/src/contract_tables.rs'
+E         
+E         Full diff:
+E           {
+E               'lean/VE/WireContract/Tables/SoftNorms.lean',
+E         +     'rust/ve-kernel/src/contract_tables.rs',
+E               've/wire_contract/contracts.lock',
+E           }
+
+tests/test_wire_contract_lint.py:233: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files - AssertionError: assert {'lean/VE/Wir...ntracts.lock'} == {'lean/VE/Wir...ntracts.lock'}
+  
+  Extra items in the left set:
+  'rust/ve-kernel/src/contract_tables.rs'
+  
+  Full diff:
+    {
+        'lean/VE/WireContract/Tables/SoftNorms.lean',
+  +     'rust/ve-kernel/src/contract_tables.rs',
+        've/wire_contract/contracts.lock',
+    }
+1 failed, 20 passed in 2.08s
+recorded 146 units for tree 4073b548d7; 0 others left to the static graph until they run; 3 failed
+SHARD 1/3: exit 1 in 2487.8 s; 146 units, 143 passed
