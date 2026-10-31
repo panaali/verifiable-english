@@ -6,6 +6,8 @@ It does not select a sense or turn an unavailable checker into a verdict.
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
+import re
 import time
 
 from .. import ast
@@ -15,15 +17,20 @@ from ..backends.lean import ROUTE_TIMEOUT, configured_timeout
 from ..environment import Environment
 from ..errors import CheckerUnavailable, VEError
 from ..english import EnglishVocabulary
-from ..english_grammar import export
+from ..english_grammar import actions_version, export, grammar_id, lexicon_id
+from ..senses import senses_version
 from ..wire import canonical_json, digest, loads_json
 
 ROOT = Path(__file__).resolve().parents[2]
 EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_senses_route"
 OPERATION = "senses.read"
+PROJECT = "senses.project"
 WORK_BUDGET = 2_100_000  # VE.EnglishGrammar.workBudget; checked against compiled Lean in tests.
 CANDIDATE_CAP = 8  # VE.Senses.candidateCap; checked against compiled Lean in tests.
 STATUSES = {"one", "open", "none", "many", "rejected", "budget", "invalidGrammar"}
+HEX64 = re.compile("[0-9a-f]{64}")
+# The identities of a projection (`VE.Senses.Run.projectionIds`); an answer adds S2's actions version.
+PROJECTION_IDS = ("environment_id", "lexicon_id", "grammar_id")
 
 
 def _nat(value) -> bool:
@@ -131,14 +138,35 @@ def _refusal_source(source: str | None, fences: list[str] | None, defaults) -> s
     return source if fences is None else "\n".join(fences)
 
 
+def _identities_problem(ids: object, keys: tuple, binding: dict | None, projected=None) -> str | None:
+    """Identities with exactly `keys`, each a digest but the actions version; bound, when the request is known
+    (`binding`), to its environment's grammar, S2's actions version, its source and the returned environment."""
+    if type(ids) is not dict or set(ids) != set(keys) or not all(type(ids[key]) is str for key in keys) \
+            or not all(HEX64.fullmatch(ids[key]) for key in keys if key != "actions_version"):
+        return "identities are missing, unknown or not digests"
+    if binding is None:
+        return None
+    if ids["grammar_id"] != grammar_id(binding["env"].profiles) \
+            or ids.get("actions_version", actions_version()) != actions_version():
+        return "the grammar identities do not match the request"
+    if "source_sha256" in ids and ids["source_sha256"] != hashlib.sha256(binding["source"].encode()).hexdigest():
+        return "the source identity does not match the request"
+    if projected is not None and ids["environment_id"] != projected.environment_id:
+        return "the environment identity is not the returned environment's"
+    return None
+
+
 def _response_problem(response: object, expected_id: str, request_id: str,
                       fences: int | None = None, *, source: str | None = "", defaults_count: int = 0,
                       fence_ids: list[str] | None = None,
-                      reading_set_units: list[str] | None = None) -> str | None:
+                      reading_set_units: list[str] | None = None, binding: dict | None = None) -> str | None:
     """`fences`: the number of fences a fence request sent (Lean's `fenceUnits` map is then required on an
-    admitted reading), or None for a source. `source`: the text a refusal's span is over (`_refusal_source`)."""
-    if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "reading"}:
-        return "the result does not have request and dictionary identities and a reading"
+    admitted reading), or None for a source. `source`: the text a refusal's span is over (`_refusal_source`).
+    `binding`: the request's environment, source and dictionary words, which the identities and used words name."""
+    if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "senses_version", "reading"}:
+        return "the result does not have request and dictionary identities, the senses version and a reading"
+    if response["senses_version"] != senses_version():
+        return "the senses version is not the one this relay is built for"
     if type(response["request_id"]) is not str or response["request_id"] != request_id:
         return "the request identity does not match the submitted envelope"
     if type(response["dictionary_id"]) is not str or response["dictionary_id"] != expected_id:
@@ -148,7 +176,7 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             or reading["status"] not in STATUSES:
         return "the reading has no known status"
     if reading["status"] in {"one", "open"}:
-        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment"} | (
+        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used"} | (
             set() if fences is None else {"fences"})
         if reading.keys() != admitted | {"code"} and reading.keys() != admitted:
             return "an admitted reading has missing or unknown fields"
@@ -162,6 +190,13 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             projected = Environment(reading["environment"])
         except VEError:
             return "the projected environment is invalid"
+        problem = _identities_problem(reading["identities"], (*PROJECTION_IDS, "actions_version") + (
+            ("source_sha256",) if fences is None else ()), binding, projected)
+        if problem:
+            return "the reading's " + problem
+        if not _words(reading["used"]) and reading["used"] != [] \
+                or binding is not None and not set(reading["used"]) <= binding["words"]:
+            return "the used words are malformed or not words of the request's dictionary"
         for unit in reading["units"]:
             state = {"sentence", "candidates", "unresolved", "referents", "binder_seen"}
             if type(unit) is not dict or unit.keys() not in (state, state | {"text"},
@@ -192,15 +227,19 @@ def _response_problem(response: object, expected_id: str, request_id: str,
                     return "a resolved formula is invalid under the projected environment"
             choices = []
             for candidate in unit["candidates"]:
-                if type(candidate) is not dict or candidate.keys() != {"choice", "lines", "formula", "mark"} \
+                if type(candidate) is not dict or candidate.keys() != {"choice", "lines", "formula", "mark", "identities"} \
                         or type(candidate["choice"]) is not list or not candidate["choice"] \
                         or type(candidate["lines"]) is not str or type(candidate["mark"]) is not bool:
                     return "a candidate is malformed"
                 if not all(type(pair) is list and len(pair) == 2 and type(pair[0]) is str
                            and _nat(pair[1]) and pair[1] > 0 for pair in candidate["choice"]):
                     return "a candidate choice is malformed"
-                if [pair[0] for pair in candidate["choice"]] != unit["unresolved"]:
+                if [pair[0] for pair in candidate["choice"]] != unit["unresolved"] \
+                        or not set(unit["unresolved"]) <= set(reading["used"]):
                     return "a candidate choice does not name the unresolved words"
+                problem = _identities_problem(candidate["identities"], PROJECTION_IDS, binding)
+                if problem:
+                    return "a candidate's " + problem
                 choices.append(tuple(map(tuple, candidate["choice"])))
                 try:
                     ast.formula_from_data(projected, candidate["formula"])
@@ -301,6 +340,81 @@ def read_fences(env, fences: list[str], packs: list[bytes], *, own: list[dict] |
                  executable=executable, fence_ids=fence_ids, reading_set_units=reading_set_units)
 
 
+def _dictionary(packs: list[bytes], own: list) -> tuple[str | None, set]:
+    """The dictionary identity Lean must answer with, over the packs' canonical decoded content, and the words the
+    packs and own senses name. The producer remains Lean: a malformed pack still goes to its restricted decoder,
+    which owns the diagnostic, and has no expected identity here."""
+    try:
+        parsed = [loads_json(pack) for pack in packs]
+        return (digest("ve-senses-dictionary-v1\n", {"packs": [[p["name"], p] for p in parsed], "own": own}),
+                {sense["word"] for p in parsed for sense in p["senses"]} | {sense["word"] for sense in own})
+    except (VEError, KeyError, TypeError, ValueError, RecursionError, OverflowError):
+        return None, set()
+
+
+def _projection_problem(row: object, case: dict, env, expected_id: str | None) -> str | None:
+    """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, this relay's
+    senses version, and a projection whose identities are those of the environment and lexicon it returns
+    (Python's own over the returned JSON), or a sense fault with its arguments."""
+    if type(row) is not dict or row.keys() != {"id", "status", "result"} or row["id"] != case["id"] \
+            or row["status"] != "ok":
+        return "the row is not the answer to the request"
+    result = row["result"]
+    if type(result) is not dict or result.keys() != {"dictionary_id", "senses_version", "projection"}:
+        return "the result does not have the dictionary identity, the senses version and a projection"
+    if result["dictionary_id"] != expected_id:
+        return "the dictionary identity does not match the request"
+    if result["senses_version"] != senses_version():
+        return "the senses version is not the one this relay is built for"
+    projection = result["projection"]
+    if type(projection) is not dict or projection.get("status") != "ok":
+        if type(projection) is not dict or projection.get("code") not in {"InvalidDictionary", *FAULT_DETAILS}:
+            return "the projection is neither a projection nor a sense fault"
+        return _refusal_problem(projection, None)
+    if projection.keys() != {"status", "environment", "lexicon", "identities"}:
+        return "the projection has missing or unknown fields"
+    try:
+        projected = Environment(projection["environment"])
+    except VEError:
+        return "the projected environment is invalid"
+    lexicon = projection["lexicon"]
+    if type(lexicon) is not dict or lexicon.get("environment_id") != projected.environment_id:
+        return "the projected lexicon does not name the projected environment"
+    problem = _identities_problem(projection["identities"], (*PROJECTION_IDS, "actions_version"),
+                                  {"env": env, "source": None, "words": set()}, projected)
+    if problem:
+        return "the projection's " + problem
+    if projection["identities"]["lexicon_id"] != lexicon_id(lexicon):
+        return "the lexicon identity is not the returned lexicon's"
+    return None
+
+
+def project(env, packs: list[bytes], lines: str, used: list[str], *, own: list[dict] | None = None,
+            overlay: dict | None = None, budget: int = WORK_BUDGET) -> dict:
+    """Lean's projection (`senses.project`, plan 2.6): the packs and own senses under the preamble `lines` over the
+    `used` words, as the environment and lexicon a candidate is rendered and re-read under, with their
+    identities; or Lean's fault. A request Lean refuses raises Lean's text."""
+    if type(lines) is not str or type(used) is not list or not all(type(word) is str for word in used) \
+            or type(packs) is not list or type(budget) is not int or budget < 0 \
+            or type(own) not in (list, type(None)):
+        raise VEError("Invalid senses request")
+    own = [] if own is None else own
+    case = request(env, None, [_text(pack) for pack in packs], own=own, overlay=overlay, budget=budget)
+    del case["source"]
+    case.update(id=PROJECT, lines=lines, used=list(used))
+    try:
+        canonical_json([case])
+    except (TypeError, ValueError, RecursionError, OverflowError) as exc:
+        raise VEError("Invalid senses request JSON") from exc
+    # The manifest's binding of `senses.project` fixes the service mode; an answer out of its schema is
+    # CheckerUnavailable there, and Lean's refusal raises its own diagnostic.
+    [row] = lean_backend.run(PROJECT, None, [case], runner="ve_service", mode=PROJECT)
+    problem = _projection_problem(row, case, env, _dictionary(packs, own)[0])
+    if problem:
+        raise CheckerUnavailable("CheckerUnavailable: malformed senses projection: " + problem)
+    return row["result"]
+
+
 def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executable,
           fence_ids=None, reading_set_units=None) -> dict:
     deadline = time.monotonic() + configured_timeout(ROUTE_TIMEOUT)
@@ -310,14 +424,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
         raise VEError("Invalid senses request")
     own = [] if own is None else own
     texts = [_text(pack) for pack in packs]
-    # The expected identity is over canonical decoded content. The producer remains Lean:
-    # malformed packs still go to its restricted decoder, which owns their diagnostic.
-    try:
-        parsed = [loads_json(pack) for pack in packs]
-        expected_id = digest("ve-senses-dictionary-v1\n",
-                             {"packs": [[p["name"], p] for p in parsed], "own": own})
-    except (VEError, KeyError, TypeError, ValueError, RecursionError, OverflowError):
-        expected_id = None
+    expected_id, words = _dictionary(packs, own)
     case = request(env, source, texts, own=own, overlay=overlay, budget=budget, fences=fences, defaults=defaults,
                    fence_ids=fence_ids, reading_set_units=reading_set_units)
     try:
@@ -336,7 +443,8 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
     problem = _response_problem(row["result"], expected_id, request_id, None if fences is None else len(fences),
                                 source=_refusal_source(source, fences, defaults),
                                 defaults_count=len(defaults) if type(defaults) is dict else 0,
-                                fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"))
+                                fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
+                                binding={"env": env, "source": source, "words": words})
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses response: " + problem)
     if time.monotonic() > deadline:

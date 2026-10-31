@@ -1,0 +1,133 @@
+{
+  "$id": "senses.project.json",
+  "$comment": "Mode senses.project: VE.Senses.Run.projectCaseReported. A projection with its identities, or its fault.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {
+            "additionalProperties": false,
+            "properties": {
+              "dictionary_id": {"$ref": "common.json#/$defs/hex64"},
+              "projection": {"$ref": "#/$defs/projection"},
+              "senses_version": {"type": "string"}
+            },
+            "required": ["dictionary_id", "senses_version", "projection"],
+            "type": "object"
+          },
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "details": {
+      "$comment": "VE.Senses.Run.faultFields: a fault's arguments, under the names of SenseFault's fields.",
+      "additionalProperties": false,
+      "properties": {
+        "gloss": {"type": "string"},
+        "kind": {"type": "string"},
+        "line": {"$ref": "common.json#/$defs/nat"},
+        "name": {"type": "string"},
+        "sense": {"type": "string"},
+        "sentence": {"$ref": "common.json#/$defs/nat"},
+        "what": {"type": "string"},
+        "why": {
+          "anyOf": [
+            {"const": "binder"},
+            {
+              "additionalProperties": false,
+              "properties": {"referent": {"type": "string"}},
+              "required": ["referent"],
+              "type": "object"
+            }
+          ]
+        },
+        "word": {"type": "string"},
+        "words": {"$ref": "common.json#/$defs/strings"}
+      },
+      "type": "object"
+    },
+    "identities": {
+      "$comment": "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar.",
+      "additionalProperties": false,
+      "properties": {
+        "actions_version": {"type": "string"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "grammar_id": {"$ref": "common.json#/$defs/hex64"},
+        "lexicon_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": ["environment_id", "lexicon_id", "grammar_id", "actions_version"],
+      "type": "object"
+    },
+    "lexicon": {
+      "$comment": "VE.Senses.Run.lexiconJson: the projected lexicon as english.read receives one, naming the projected environment.",
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "items": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [{"type": "string"}, {"type": "string"}, {"type": "boolean"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "format": {"const": "ve.english-lexicon@1"},
+        "letters": {"items": {"$ref": "#/$defs/pair"}, "type": "array"},
+        "negatives": {"items": {"$ref": "#/$defs/pair"}, "type": "array"},
+        "nouns": {"items": {"$ref": "#/$defs/pair"}, "type": "array"},
+        "spellings": {"items": {"$ref": "#/$defs/pair"}, "type": "array"},
+        "wordings": {"items": {"$ref": "#/$defs/pair"}, "type": "array"}
+      },
+      "required": ["format", "environment_id", "nouns", "letters", "wordings", "negatives", "aliases", "spellings"],
+      "type": "object"
+    },
+    "pair": {"maxItems": 2, "minItems": 2, "prefixItems": [{"type": "string"}, {"type": "string"}], "type": "array"},
+    "projection": {
+      "anyOf": [
+        {
+          "$comment": "The projection: its environment, its lexicon and their identities.",
+          "additionalProperties": false,
+          "properties": {
+            "environment": {"type": "object"},
+            "identities": {"$ref": "#/$defs/identities"},
+            "lexicon": {"$ref": "#/$defs/lexicon"},
+            "status": {"const": "ok"}
+          },
+          "required": ["status", "environment", "lexicon", "identities"],
+          "type": "object"
+        },
+        {
+          "$comment": "VE.Senses.Run.faultJson: the fault's status and code as senses.read gives them, and its arguments.",
+          "additionalProperties": false,
+          "properties": {
+            "code": {"type": "string"},
+            "details": {"$ref": "#/$defs/details"},
+            "failure": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [{"type": "string"}, {"type": "string"}, {"type": "string"}],
+              "type": "array"
+            },
+            "status": {"enum": ["budget", "rejected"]}
+          },
+          "required": ["status", "code"],
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

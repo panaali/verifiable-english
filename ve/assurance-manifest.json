@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40551,
+    "total_lines": 40661,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1079,12 +1079,12 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 252,
-        "sha256": "3f2d07fc6aed58af7591dbf3861fc28411dae0843b620f3565d8b57a925175ad",
+        "lines": 362,
+        "sha256": "12ed6e66153866fdabb3e6729ffce83b14078dd6142337b7d3ed173848fed257",
         "ranges": [
           [
             1,
-            252
+            362
           ]
         ],
         "declarations": [
@@ -1096,9 +1096,16 @@
           "readCase",
           "runCaseReported",
           "uncoveredFence",
-          "fenceIdsProblem"
+          "fenceIdsProblem",
+          "lexiconJson",
+          "projectionIds",
+          "linesProjection",
+          "admittedIds",
+          "faultJson",
+          "projectCase",
+          "projectCaseReported"
         ],
-        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; RD-8: source or fenced documents with defaults. Fence identities and reading-set units enter Lean, which refuses a bad one by its fault (`fenceIdsProblem`) and decides open-fence admission; only fence units carry unresolved English, preserving source-mode output. The full file is pinned conservatively"
+        "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; RD-8: source or fenced documents with defaults. Fence identities and reading-set units enter Lean, which refuses a bad one by its fault (`fenceIdsProblem`) and decides open-fence admission; only fence units carry unresolved English, preserving source-mode output. B6: the senses.project case (exact fields, used words of the dictionary, lines read as a preamble) and the identities of a projection. The full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Document.lean",
@@ -4494,7 +4501,89 @@
       "notes": [
         "The relay in ve.backends.senses:_read (behind read and read_fences) only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
         "Rust has no senses implementation: the conformance of this operation is spec fixtures against Lean, not three-way.",
-        "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence)."
+        "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence).",
+        "B6: an admitted reading carries S2's identities of its projection (no overlay_digest), source_sha256 for a source, the used words and each candidate's projection identities (VE.Senses.Run.admittedIds, the projections of senses.project); the relay binds the environment, grammar, actions and source identities and the used words to the request."
+      ]
+    },
+    {
+      "id": "senses.project",
+      "summary": "The projection of a dictionary and preamble lines over the used words (docs/spec/senses-PLAN.md 2.6, B6): the projected environment and lexicon with their identities, which a candidate is rendered and re-read under",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean computes the projection (VE.Senses.project over the lines read by readPreamble, VE.Senses.Run.linesProjection) and its identities; the response encoder is proved against senses.project.json (ResponseShape.Encoders.SensesProject.projectCaseReported_fits); no intent check"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "ok"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidDictionary",
+          "UnknownWord",
+          "UnknownGloss",
+          "MalformedPreamble",
+          "RepeatedDefault",
+          "PreambleLate",
+          "Collision",
+          "VocabularyLimit"
+        ],
+        "budget": [
+          "PreambleBudget"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "senses.project",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Senses/Run.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Senses.project_valid",
+          "VE.Senses.project_extends",
+          "ResponseShape.Encoders.SensesProject.projectCaseReported_fits"
+        ],
+        "planned_theorems": [],
+        "decoders": [
+          "lean/VE/Senses/Decode.lean",
+          "lean/VE/Senses/Run.lean"
+        ]
+      },
+      "rust": null,
+      "lean_call_sites": [
+        "ve.backends.senses:project"
+      ],
+      "tests": [
+        "tests/test_senses_project.py::test_i7_candidate_projection_identities",
+        "tests/test_senses_project.py::test_projection_answer_mutations_are_rejected"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay in ve.backends.senses:project only transports the request and binds the answer: the dictionary identity, the senses version, and identities equal to Python's over the returned environment and lexicon; no Python function computes a projection."
       ]
     },
     {

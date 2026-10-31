@@ -148,6 +148,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "calc": (60.0, 60.0),
     # The `cardinality` mode (quantities QT-A3): W6a's `quantity` deadline, whose problems it erases into.
     "cardinality": (60.0, 60.0),
+    # The `senses.project` mode (senses B6): one projection and the identities of its environment and lexicon.
+    "senses.project": _CORE,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
 }

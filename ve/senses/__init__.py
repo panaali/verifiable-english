@@ -50,3 +50,12 @@ def review_status(name: str, dictionary_id: str) -> str:
     except (OSError, VEError):
         pass
     return "unreviewed"
+
+
+def senses_version() -> str:
+    """The senses version this relay is built for: `ve/senses/LOCK.json`'s, which `tools/senses_lock.py` writes
+    into Lean's `sensesVersion` (plan 2.7, D17)."""
+    try:
+        return loads_json(files("ve.senses").joinpath("LOCK.json").read_bytes())["senses_version"]
+    except (OSError, VEError, KeyError, TypeError) as exc:
+        raise VEError(f"Cannot read the senses lock: {exc}") from exc
