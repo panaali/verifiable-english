@@ -7,6 +7,7 @@ from typing import Any
 
 from .assurance import semantic_entry
 from . import ast
+from .backends.dispatch import owned
 from .errors import (CheckerUnavailable, ResourceLimit, ShadowedVariable, Span, SyntaxError, VEError,
                      UnboundVariable, UnknownSymbol)
 from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_SOURCE_BYTES
@@ -370,7 +371,6 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
     Lean's `parse` scope (statement layers and W6 units) keep the retained
     Python reader, a recorded scope gap.
     """
-    from .backends.dispatch import owned
 
     def python():
         return _parse_python(env, source)
