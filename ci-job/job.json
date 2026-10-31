@@ -1,0 +1,19 @@
+{
+ "job": "cmp-s2b.s5of5-6d778622",
+ "head": "bbf7269aa49eb5b4bb7843b26eb313ef919f4de1",
+ "argv": [
+  "cmp-s2b.s5of5-6d778622",
+  "bbf7269aa49eb5b4bb7843b26eb313ef919f4de1",
+  "9e33c741bef4a4dc20dad4d3a69f05d8fc74c86c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-846d61c27203.tar.zst",
+  "ba4576b010d8ccd6824bd5b590ebb9d03d9c8ea54dcc6e76c2e6a916ebf5472c",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/composition/cmp-s2b/trust-mutants-allow.json",
+  "--shard",
+  "5/5",
+  "--jobs",
+  "4"
+ ]
+}
