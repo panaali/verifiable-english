@@ -135,9 +135,13 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     # completion, `admitUnsaid` on the document's items over the filled author vocabulary (rd-9-soft-chain.md 4.2),
     # each with its own table.
     assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitDecoded"}
-    assert {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
-            if not named_under(caller, "VE.Readings.Wire.admitDecoded")} == \
-        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull", "VE.Readings.Wire.admitUnsaid"}
+    # (A caller may be a compiled piece of one: `admitNDFull`'s body is the closure its stage timer runs,
+    # lean/VE/Readings/Stage.lean.)
+    admitting = {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
+                 if not named_under(caller, "VE.Readings.Wire.admitDecoded")}
+    owners = ("VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull", "VE.Readings.Wire.admitUnsaid")
+    assert {owner for owner in owners for caller in admitting if named_under(caller, owner)} == set(owners)
+    assert all(any(named_under(caller, owner) for owner in owners) for caller in admitting), sorted(admitting)
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
@@ -170,7 +174,9 @@ def test_the_route_admits_the_case_document_once(walks):
                                                      "admitPart", "admitChecked"))}
     assert not any(named_under(n, "VE.Readings.Run.runCase") for n in set().union(*calling.values()))
     assert calling[ADMIT[1]] and calling[ADMIT[1]] <= in_run_case, sorted(calling[ADMIT[1]])
-    assert calling[ADMIT[0]] and calling[ADMIT[0]] <= in_run_case | {ADMIT[1]}, sorted(calling[ADMIT[0]])
+    # `admitS2` continues S1's admission in its body, the closure its stage timer runs (`admitS2._lam_0`).
+    in_admit_s2 = {n for n in edges if named_under(n, ADMIT[1])}
+    assert calling[ADMIT[0]] and calling[ADMIT[0]] <= in_run_case | in_admit_s2, sorted(calling[ADMIT[0]])
     assert not {n for n, callees in edges.items() if named_under(n, "VE.Readings.Run.runAdmitted")
                 and set(callees) & set(ADMIT)}
     assert [n for n in edges if any(named_under(n, f) for f in JSON_ADMISSIONS)] == []
