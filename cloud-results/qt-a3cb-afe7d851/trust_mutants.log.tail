@@ -1,0 +1,2 @@
+VE/Cardinality/RunExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Cardinality/RunExamples.lean; rerun tools/lean_statements.py
