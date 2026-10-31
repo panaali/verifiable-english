@@ -193,7 +193,7 @@ def records() -> dict:
 
 def call(key: str, body: str) -> dict:
     picked = subprocess.run(["zsh", PICKER], capture_output=True, text=True,
-                            env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1"})
+                            env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1", "PICK_LIGHT": "1"})
     cfg = picked.stdout.strip()
     if picked.returncode or not cfg.startswith("/home/seyran/.agent-accounts/claude-"):
         raise RuntimeError(f"account picker unavailable: {picked.stderr.strip()}")
