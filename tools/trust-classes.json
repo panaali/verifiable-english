@@ -6064,6 +6064,7 @@
       "G[V]": [
         "VE.Readings.Choice",
         "VE.Readings.Choice.index",
+        "VE.Readings.aimedOwners",
         "VE.Readings.allFrom",
         "VE.Readings.atomAt",
         "VE.Readings.atoms",
@@ -6087,7 +6088,9 @@
         "VE.Readings.copies",
         "VE.Readings.copyCites",
         "VE.Readings.copyContent",
+        "VE.Readings.copyLine",
         "VE.Readings.copyOver",
+        "VE.Readings.copyScope",
         "VE.Readings.couplingHolds",
         "VE.Readings.couplingPremises",
         "VE.Readings.couplingShape",
@@ -6096,13 +6099,17 @@
         "VE.Readings.entryKept",
         "VE.Readings.fixedGenerated",
         "VE.Readings.gateContent",
+        "VE.Readings.gateLine",
+        "VE.Readings.gateNorm",
         "VE.Readings.gatedRel",
         "VE.Readings.here",
         "VE.Readings.inForce",
         "VE.Readings.itemUnit",
+        "VE.Readings.jointOwner",
         "VE.Readings.keyLabel",
         "VE.Readings.label",
         "VE.Readings.labelOf",
+        "VE.Readings.limOwners",
         "VE.Readings.lit",
         "VE.Readings.nameMap",
         "VE.Readings.narrowingHolds",
@@ -6115,12 +6122,14 @@
         "VE.Readings.pattern",
         "VE.Readings.position",
         "VE.Readings.pull",
+        "VE.Readings.qLim",
         "VE.Readings.qName",
         "VE.Readings.qualify",
         "VE.Readings.qualifyKey",
         "VE.Readings.quietFormula",
         "VE.Readings.quietOwn",
         "VE.Readings.quietShared",
+        "VE.Readings.rightCopies",
         "VE.Readings.ruleNamed",
         "VE.Readings.sameMembers",
         "VE.Readings.search",
@@ -6152,7 +6161,6 @@
       "G[V]": [
         "VE.Readings.chosenAt",
         "VE.Readings.fmap",
-        "VE.Readings.gateNorm",
         "VE.Readings.pickC",
         "VE.Readings.setOf"
       ]
@@ -6471,6 +6479,28 @@
         "VE.Readings.keyChar",
         "VE.Readings.substrEqLoopName",
         "VE.Readings.tacticUnfold_substrEq_loop"
+      ]
+    },
+    "VE/Readings/RightsExamples.lean": {
+      "T": [
+        "VE.Readings.RightsExamples.F10",
+        "VE.Readings.RightsExamples.F21",
+        "VE.Readings.RightsExamples.F7",
+        "VE.Readings.RightsExamples.M21",
+        "VE.Readings.RightsExamples.N2",
+        "VE.Readings.RightsExamples.N3",
+        "VE.Readings.RightsExamples.c0",
+        "VE.Readings.RightsExamples.c1",
+        "VE.Readings.RightsExamples.chi1",
+        "VE.Readings.RightsExamples.claim21",
+        "VE.Readings.RightsExamples.frame21",
+        "VE.Readings.RightsExamples.liberty21",
+        "VE.Readings.RightsExamples.onEvery",
+        "VE.Readings.RightsExamples.onLiberties",
+        "VE.Readings.RightsExamples.quiet21",
+        "VE.Readings.RightsExamples.rM",
+        "VE.Readings.RightsExamples.rs112",
+        "VE.Readings.RightsExamples.rs48"
       ]
     },
     "VE/Readings/Route.lean": {
