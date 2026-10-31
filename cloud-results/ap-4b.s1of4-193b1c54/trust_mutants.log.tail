@@ -1,0 +1,15 @@
+trust_mutants: 11 definitions, 179 mutants (45 to run), 4 jobs, base c66a6e25795a
+SURVIVOR lean/VE/Acts/Sources.lean:123 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:123 VE.Acts.SourceExact (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:123 VE.Acts.SourceExact (S, trusted) body-true: ∃ ts op Rs, Lexical.lex fx s.phrase = .ok ts ∧ opOfSource s = some op ∧ phraseReadings V op N b t... -> True (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:20 List.Forall₂ (S, trusted) ctor-drop: | nil : List.Forall₂ R [] [] ->  (the proofs it breaks: lean/VE/Acts/Sources.lean:130)
+UNKNOWN lean/VE/Acts/Sources.lean:59 VE.Acts.choicesOn (S, trusted) list-empty: (VE.Readings.choices D) -> [] (lean/VE/Acts/Sources.lean:59: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-empty: Rs.map (paraphrase fx op s.form) -> [] (lean/VE/Acts/Sources.lean:126: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Acts/Sources.lean:124 VE.Acts.SourceExact (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:125 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Situation.lean:24 VE.Acts.atomSituation (G[V], trusted) list-first: (rulePreds D s i) -> ((rulePreds D s i).take 1)
+SURVIVOR lean/VE/Acts/Situation.lean:24 VE.Acts.atomSituation (G[V], trusted) list-last: (rulePreds D s i) -> ((rulePreds D s i).reverse.take 1)
+trust_mutants: 31 KILLED, 8 SURVIVOR, 2 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 1032 s
+trust_mutants: G[V], trusted: 6 KILLED, 2 SURVIVOR, 28 OTHER SHARD
+trust_mutants: S, trusted: 25 KILLED, 6 SURVIVOR, 2 UNKNOWN, 4 INVALID, 106 OTHER SHARD
+trust_mutants: steps: wall plan 10 s, scratch 3.1 s, control_build 0.2 s, probe_install 1.3 s, control_probes 22.5 s, mutants 992.6 s, cleanup 2.4 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 22.1 s (1), mutant_builds 90.1 s (51), mutant_checks 2329.2 s (40), stage_controls 0.8 s (1), mutant_probes 1456.8 s (31)
