@@ -478,6 +478,13 @@ def sized (xs : List (String × Nat)) : Json :=
 #guard (refusal (refute fa1Premises (obj fa1bModel [("constants", obj (fa1bModel.getObjValD "constants")
   [("cardinality__fomc_policymaker__00", .str "1")])]))).startsWith "fields do not match"
 #guard refusal (refute fa1Premises (.str "x")) == "object expected"
+def rel (rows : String) : Json :=
+  obj fa1bModel [("relations", obj (fa1bModel.getObjValD "relations") [("expects_rates_to_stay", p rows)])]
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p16", "p17"]]"#)) == "wrong relation arity"
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p99"]]"#)) == "dangling or wrong-sort value"
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p16"], ["p16"]]"#)) == "duplicate relation tuple"
+-- A claimed region table equal to the regenerated one is read past.
+#guard (refute fa1Premises fa1bModel [("regions", regions)]).getObjValD "refutes" == .bool false
 #guard refusal (refute fa1Premises (.str "x")
   [("regions", regions.setObjVal! "constants" (toJson ([] : List Json)))]) ==
   "region table differs from the regenerated one"

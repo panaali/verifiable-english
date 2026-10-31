@@ -15704,7 +15704,8 @@
         "VE.Cardinality.RunExamples.chainEnv",
         "VE.Cardinality.RunExamples.chainPremise",
         "VE.Cardinality.RunExamples.chainModel",
-        "VE.Cardinality.RunExamples.chain"
+        "VE.Cardinality.RunExamples.chain",
+        "VE.Cardinality.RunExamples.rel"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
