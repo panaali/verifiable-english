@@ -1,0 +1,21 @@
+trust_mutants: 11 definitions, 179 mutants (45 to run), 4 jobs, base c66a6e25795a
+UNKNOWN lean/VE/Acts/Sources.lean:48 VE.Acts.ruleView (S, trusted) list-empty: D.frame.soft.T.regulated -> [] (lean/VE/Acts/Sources.lean:48: Invalid field notation: Type of)
+SURVIVOR lean/VE/Acts/Sources.lean:78 VE.Acts.opOfSource (S, trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Acts/Sources.lean:123 VE.Acts.SourceExact (S, trusted) eq-le: = -> ≤ (lean/VE/Acts/Sources.lean:123: failed to synthesize)
+UNKNOWN lean/VE/Acts/Situation.lean:25 VE.Acts.atomSituation (G[V], trusted) list-empty: (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p) -> [] (lean/VE/Acts/Situation.lean:25: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Acts/Sources.lean:124 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:125 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:128 VE.Acts.SourceExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-first: Rs -> (Rs.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-drop-last: Rs -> (Rs.dropLast) (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Situation.lean:25 VE.Acts.atomSituation (G[V], trusted) list-first: (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p) -> ((VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).take 1)
+SURVIVOR lean/VE/Acts/Situation.lean:25 VE.Acts.atomSituation (G[V], trusted) list-first: (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).map (fun _ => 0) -> (((VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).map (fun _ => 0)).take 1)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-last: Rs -> (Rs.reverse.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-drop-first: Rs -> (Rs.drop 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Situation.lean:25 VE.Acts.atomSituation (G[V], trusted) list-last: (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p) -> ((VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).reverse.take 1)
+SURVIVOR lean/VE/Acts/Situation.lean:25 VE.Acts.atomSituation (G[V], trusted) list-last: (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).map (fun _ => 0) -> (((VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).map (fun _ => 0)).reverse.take 1)
+trust_mutants: 29 KILLED, 13 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 784 s
+trust_mutants: G[V], trusted: 4 KILLED, 4 SURVIVOR, 1 UNKNOWN, 27 OTHER SHARD
+trust_mutants: S, trusted: 25 KILLED, 9 SURVIVOR, 2 UNKNOWN, 107 OTHER SHARD
+trust_mutants: steps: wall plan 7.7 s, scratch 2.2 s, control_build 0.1 s, probe_install 1.1 s, control_probes 16 s, mutants 753.5 s, cleanup 3.8 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 15.6 s (1), mutant_builds 73.3 s (53), mutant_checks 2032.8 s (43), stage_controls 0.7 s (1), mutant_probes 826.1 s (29)
