@@ -109,7 +109,8 @@
           "metered",
           "calc",
           "cardinality",
-          "scope"
+          "scope",
+          "senses.project"
         ]
       },
       "protocol": {"const": 2},

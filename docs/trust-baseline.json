@@ -1345,17 +1345,17 @@
   },
   {
    "class": "S",
-   "lines": 54,
-   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
-   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+   "lines": 12,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
-   "lines": 94,
-   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
-   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+   "lines": 126,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
@@ -1363,13 +1363,6 @@
    "reason": "me-2d: VE/Calc/Render.lean +6 (G[V] English.leadingPhrase, reservedIn), VE/Calc/Wire.lean +2 (D[V] the calls in value and decode); checkWords and checkVerbalisations are D[R] (+16), RunExamples helpers T (V +8, K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
    "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
-  },
-  {
-   "class": "V",
-   "lines": 2,
-   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
-   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
   },
   {
    "class": "V",
@@ -1386,32 +1379,25 @@
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
   },
   {
-   "class": "V",
-   "lines": 143,
-   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
-   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
-  },
-  {
-   "class": "V",
-   "lines": 3,
-   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
-   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
-  },
-  {
    "class": "S",
-   "lines": 12,
-   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
-   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+   "lines": 54,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
   },
   {
    "class": "V",
-   "lines": 126,
-   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
-   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+   "lines": 94,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
+   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
   },
   {
    "class": "V",
@@ -1426,13 +1412,6 @@
    "reason": "sc-1ae: lean/VE/Scope/Govern.lean S +27 (JsonWF 9, HasStr 5, payload 6, BlockBound 3 by their source ranges in lean/declarations.txt, and the 4 lines between them): spec 4.2's HasStr, payload, BlockBound and spec 11.3's JsonWF (the DRI's fix (a), 2026-10-27), the meaning of 5.1's statements; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ae, 2026-10-18",
    "commit": "c2a0ee9776ea790a0d54b05af000dfe39f36d984"
-  },
-  {
-   "class": "V",
-   "lines": 2,
-   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
-   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   },
   {
    "class": "S",
@@ -1464,6 +1443,13 @@
   },
   {
    "class": "V",
+   "lines": 1,
+   "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
+   "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
+  },
+  {
+   "class": "V",
    "lines": 48,
    "reason": "sc-5rc: VE/Service/Document.lean +31 D[V]; ResponseShape/Schemas/Document.lean +17 G[V]; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
@@ -1485,10 +1471,10 @@
   },
   {
    "class": "V",
-   "lines": 1,
-   "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
-   "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
+   "lines": 2,
+   "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
+   "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
   },
   {
    "class": "S",
@@ -1507,9 +1493,30 @@
   {
    "class": "V",
    "lines": 2,
-   "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
-   "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
+   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
+   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
+  },
+  {
+   "class": "V",
+   "lines": 143,
+   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   },
   {
    "class": "V",
@@ -1519,18 +1526,18 @@
    "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
   },
   {
+   "class": "S",
+   "lines": 29,
+   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
+  },
+  {
    "class": "V",
    "lines": 4,
    "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
    "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
-  },
-  {
-   "class": "V",
-   "lines": 2,
-   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
-   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
-   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
   },
   {
    "class": "S",
@@ -1561,31 +1568,24 @@
    "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
   },
   {
-   "class": "S",
-   "lines": 62,
-   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
-   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+   "class": "V",
+   "lines": 73,
+   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
+   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
   },
   {
    "class": "V",
-   "lines": 52,
-   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
-   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+   "lines": 23,
+   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
+   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
   },
   {
    "class": "V",
-   "lines": 104,
-   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
-   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
-  },
-  {
-   "class": "S",
-   "lines": 29,
-   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
+   "lines": 12,
+   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   },
   {
@@ -1604,6 +1604,13 @@
   },
   {
    "class": "V",
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
+  },
+  {
+   "class": "V",
    "lines": 2,
    "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
@@ -1611,24 +1618,24 @@
   },
   {
    "class": "V",
-   "lines": 23,
-   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
-   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
-  },
-  {
-   "class": "V",
-   "lines": 12,
-   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
-   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
-  },
-  {
-   "class": "V",
    "lines": 61,
    "reason": "ap-1bf: V +61 (VE/WireContract/Hooks/Acts.lean +57, VE/WireContract/Diagnose.lean +2, VE/WireContract/Tables/Acts.lean +2), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bf, 2026-10-18",
    "commit": "11de39bd88e07d7d1cf75e16ae956e3179b324c3"
+  },
+  {
+   "class": "S",
+   "lines": 62,
+   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
+   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+  },
+  {
+   "class": "V",
+   "lines": 52,
+   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
+   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
   }
  ]
 }

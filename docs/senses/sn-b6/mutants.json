@@ -1,0 +1,127 @@
+{
+ "item": "sn-b6",
+ "seeded": [
+  {
+   "id": "P1",
+   "language": "python",
+   "file": "ve/backends/senses.py",
+   "behaviour": "the reading's environment_id is bound to the returned environment (_identities_problem)",
+   "mutation": "the environment_id comparison disabled",
+   "test": "tests/test_senses_project.py::test_reading_identity_rebinding_is_refused",
+   "result": "FAILED: AssertionError ('identities', 'environment_id')"
+  },
+  {
+   "id": "P2",
+   "language": "python",
+   "file": "ve/backends/senses.py",
+   "behaviour": "a projection's lexicon_id is bound to the returned lexicon (_projection_problem)",
+   "mutation": "the lexicon_id comparison disabled",
+   "test": "tests/test_senses_project.py::test_projection_answer_mutations_are_rejected",
+   "result": "FAILED: a rebound lexicon alias accepted"
+  },
+  {
+   "id": "P3",
+   "language": "python",
+   "file": "ve/backends/senses.py",
+   "behaviour": "the used words are words of the request's dictionary (_response_problem)",
+   "mutation": "the used-words binding disabled",
+   "test": "tests/test_senses_project.py::test_reading_identity_rebinding_is_refused",
+   "result": "FAILED: used [funny, giggle] accepted"
+  },
+  {
+   "id": "L1",
+   "language": "lean",
+   "file": "lean/VE/Senses/Run.lean",
+   "behaviour": "each candidate carries its own projection's identities (admittedIds)",
+   "mutation": "candidates given the reading's projection identities",
+   "test": "lean/VE/Senses/RunExamples.lean #guard pins (lines 98, 106)",
+   "result": "lake build VE.Senses.RunExamples: error Expression"
+  },
+  {
+   "id": "L2",
+   "language": "lean",
+   "file": "lean/VE/Senses/Run.lean",
+   "behaviour": "senses.project refuses lines that are not all preamble lines (linesProjection)",
+   "mutation": "the not-a-preamble-line refusal dropped",
+   "test": "lean/VE/Senses/RunExamples.lean #guard (lines 36, 136)",
+   "result": "lake build VE.Senses.RunExamples: error Expression"
+  },
+  {
+   "id": "L3",
+   "language": "lean",
+   "file": "lean/VE/Senses/Run.lean",
+   "behaviour": "the senses.project row fits senses.project.json (encoder theorem)",
+   "mutation": "a projection's status written BOGUS",
+   "test": "ResponseShape.Encoders.SensesProject.projectCase_fits",
+   "result": "lake build ResponseShape.Encoders.SensesProject: unsolved goals"
+  },
+  {
+   "id": "P4",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "behaviour": "senses.project has the document mode's CPU deadline, never below senses.read's route timeout (review F1)",
+   "mutation": "\"senses.project\": _CORE (the 6.4 s the review found too tight)",
+   "test": "tests/test_senses_project.py::test_a_projection_is_as_available_as_the_reading_it_serves, ::test_the_large_request_is_answered_within_half_its_deadline",
+   "result": "FAILED: both; the second with CheckerUnavailable: the Lean service mode senses.project used more than its deadline of 3.18421 s of CPU"
+  }
+ ],
+ "trust_mutants": {
+  "evidence": "docs/senses/sn-b6/trust-mutants.json",
+  "allow": "docs/senses/sn-b6/trust-mutants-allow.json",
+  "head": "388f6b4a456e8d930de7c78d6908944b4e1f2798",
+  "counts": {
+   "KILLED": 213,
+   "SURVIVOR": 0,
+   "UNKNOWN": 0,
+   "INVALID": 28,
+   "ALLOWED": 27,
+   "NOT RUN": 0
+  },
+  "per_definition": {
+   "ResponseShape.Schemas.files": {
+    "KILLED": 8,
+    "ALLOWED": 3
+   },
+   "VE.Senses.Run.candidateJson": {
+    "KILLED": 22,
+    "ALLOWED": 4,
+    "INVALID": 8
+   },
+   "VE.Senses.Run.lexiconJson": {
+    "KILLED": 21,
+    "ALLOWED": 2,
+    "INVALID": 8
+   },
+   "VE.Senses.Run.linesProjection": {
+    "KILLED": 16,
+    "ALLOWED": 6
+   },
+   "VE.Senses.Run.outcomeJson": {
+    "KILLED": 17,
+    "ALLOWED": 3,
+    "INVALID": 8
+   },
+   "VE.Senses.Run.projectCase": {
+    "KILLED": 77,
+    "ALLOWED": 7,
+    "INVALID": 4
+   },
+   "VE.Senses.Run.readCase": {
+    "ALLOWED": 1,
+    "KILLED": 20
+   },
+   "VE.Senses.Run.runCaseReported": {
+    "KILLED": 7
+   },
+   "VE.Senses.Run.unitJson": {
+    "KILLED": 17
+   },
+   "VE.Service.Mode": {
+    "ALLOWED": 1
+   },
+   "VE.Service.modes": {
+    "KILLED": 8
+   }
+  }
+ }
+}
