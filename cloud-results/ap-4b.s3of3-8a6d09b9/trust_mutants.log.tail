@@ -1,0 +1,11 @@
+trust_mutants: 10 definitions, 161 mutants (53 to run), 4 jobs, base c66a6e25795a
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-first: (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec)) -> (((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))).take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-last: (choicesOn D s.sets) -> ((choicesOn D s.sets).dropLast) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-first: (choiceRules D s c) -> ((choiceRules D s c).take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-last: (choiceRules D s c) -> ((choiceRules D s c).dropLast) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-first: (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec)) -> (((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))).drop 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-last: (choiceRules D s c).map (ruleView D unspec) -> (((choiceRules D s c).map (ruleView D unspec)).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+trust_mutants: 33 KILLED, 6 SURVIVOR, 0 UNKNOWN, 3 INVALID, 11 ALLOWED, 0 NOT RUN, 108 OTHER SHARD in 979 s
+trust_mutants: G[V], trusted: 6 KILLED, 12 OTHER SHARD
+trust_mutants: S, trusted: 27 KILLED, 6 SURVIVOR, 3 INVALID, 11 ALLOWED, 96 OTHER SHARD
+trust_mutants: steps: wall plan 8.6 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 18.3 s, mutants 944.3 s, cleanup 4.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 18 s (1), mutant_builds 127.2 s (78), mutant_checks 2437 s (50), stage_controls 52.5 s (2), mutant_probes 1052 s (33)
