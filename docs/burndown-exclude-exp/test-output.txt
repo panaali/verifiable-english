@@ -1,0 +1,11 @@
+test_outside_experiment_merges_are_not_sprint_merges (__main__.Burndown.test_outside_experiment_merges_are_not_sprint_merges) ... ok
+test_projection_ignores_outside_experiments (__main__.Burndown.test_projection_ignores_outside_experiments) ... ok
+test_scope_keeps_only_the_gating_experiments (__main__.Burndown.test_scope_keeps_only_the_gating_experiments) ... ok
+test_separate_line (__main__.Burndown.test_separate_line) ... ok
+test_total_excludes_outside_experiments (__main__.Burndown.test_total_excludes_outside_experiments) ... ok
+test_write_records_outside_count (__main__.Burndown.test_write_records_outside_count) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.026s
+
+OK
