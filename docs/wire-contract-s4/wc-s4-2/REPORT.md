@@ -49,6 +49,8 @@ test (161), pytest (51). No further coherent cut was left.
 
 ## Seeded bugs (each shown failing, then restored with `git checkout`)
 
+The same rows, with file and test keys: `seeded-bugs.json` beside this report. S1 and S4 were shown failing again on 7eb0684b.
+
 | # | Language, file | Bug | Failing check |
 |---|---|---|---|
 | S1 | Rust, `rust/ve-kernel/src/contract_tables.rs` | soft-norms rows 1.1 and 1.2 swapped (line 86) | `tools.wire_contract --check`: "contract_tables.rs: WC11: generated module differs", exit 1; `tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows` failed on `id` |
