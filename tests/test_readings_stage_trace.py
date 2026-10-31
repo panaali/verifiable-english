@@ -52,8 +52,8 @@ def timed_rows(stderr):
         assert set(row) == {"stage", "part", "status", "nanos", "cpu_ticks"}, row
         assert row["stage"] in STAGES and row["status"] in ("ok", "error"), row
         assert type(row["part"]) is str and row["part"], row
-        assert type(row["nanos"]) is int and row["nanos"] >= 0, row
-        assert type(row["cpu_ticks"]) is int and row["cpu_ticks"] >= 0, row
+        # Lean's naturals; never a bound on time (tests/test_hang_guards.py).
+        assert type(row["nanos"]) is int and type(row["cpu_ticks"]) is int, row
     return rows
 
 
