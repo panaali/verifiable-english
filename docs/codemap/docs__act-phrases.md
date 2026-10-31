@@ -26,3 +26,5 @@
 - `docs/act-phrases/ap-3c/seed_bugs.py` — ap-3c seeded bugs: plant each one in Elaborate.lean, show that a fixture fails, restore the file.
 - `docs/act-phrases/ap-3d/check_statements.py` — ap-3d statement gate: each theorem this item proves equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-3d/seed_bugs.py` — ap-3d seeded bugs: plant each one, show that a fixture fails, restore the files.
+- `docs/act-phrases/ap-4a/seed_bugs.py` — ap-4a's seeded bugs: plant each bug in the Lean file this item changed, build VE.Acts.ReadingsExamples, record the failing `#guard` or theorem lines (KILLED), …
+- `docs/act-phrases/ap-4b/check_statements.py` — ap-4b statement gate: each declaration below equals the specification's text, whitespace normalised.

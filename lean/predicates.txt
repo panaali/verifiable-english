@@ -110,6 +110,8 @@ module VE.Acts.Readings
 module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
+module VE.Acts.Situation
+module VE.Acts.Sources
 module VE.Acts.Syntax
 module VE.Acts.Table
 module VE.Acts.TableExamples
@@ -691,6 +693,8 @@ module VE.Words.Run
 module VE.Words.Situation
 module VE
 Iceberg.Within@Iceberg
+List.Forall₂.below@VE.Acts.Sources
+List.Forall₂@VE.Acts.Sources
 ResponseShape.CaseWF@ResponseShape.Skeleton
 ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
 ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
@@ -711,6 +715,7 @@ VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
+VE.Acts.SourceExact@VE.Acts.Sources
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline

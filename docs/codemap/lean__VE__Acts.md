@@ -14,8 +14,11 @@
 - `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
 - `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
 - `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.
+- `lean/VE/Acts/ReadingsExamples.lean` — Fixtures of `phraseReadings` and the edge rule (docs/spec/act-phrases.md 7, 11.4; plan 2.4, AP-4, G5).
 - `lean/VE/Acts/RenderExamples.lean` — Fixtures of the rendering round trip (docs/spec/act-phrases.md 5.5, 5.6 `read_normal`, 11.2, 11.2a).
 - `lean/VE/Acts/RuleExamples.lean` — Fixtures of the act grammar's rule table (docs/spec/act-phrases.md 5.2, 5.6, 11.2, 11.2a, 11.2b).
+- `lean/VE/Acts/Situation.lean` — A separating situation built from simple acts (docs/spec/act-phrases.md 7; plan AP-4).
+- `lean/VE/Acts/Sources.lean` — Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
 - `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).
 - `lean/VE/Acts/Table.lean` — The modal × connective table and the paraphrases of readings (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).
 - `lean/VE/Acts/TableExamples.lean` — Fixtures of the ops, the table, the renderings and the paraphrases (docs/spec/act-phrases.md 5.5, 6.1, 6.2 and 11.3: T1 to T10 on the act trees of 11.2, the pa…
