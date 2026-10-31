@@ -33,7 +33,7 @@ Open: G1 with G4 (`composed_superpose_all`) is the next item, pc-3b. G1b and F3.
 | (4) `Rewriter`, `Rewriter.Laws`, `pipeline`, `pipelineOf`, G2 (`pipeline_preserves`, `pipeline_off`, `pipeline_names`) by induction | `lean/VE/Compose/Contract.lean` | seed 1 |
 | (5) `scopeRewriter`, `docRewriters`, `ScopeRunsOf`, `ScopeRuns`, `checkDocSets_pipeline` (from `scope_admission_sets` and `governSetsFast_eq`), `refuseAll_runs` | Contract.lean | F3.1, F3.7; seeds 8, 9, 10 |
 | (6) `ScopeFaithful`, `ScopePreserves`, `ScopeSetsFaithful`, each proved from main's theorems (`scopeFaithful`, `scopePreserves`, `scopeSetsFaithful`); `RouteFacts` with its two PC-3 entries; `listed_evidence` | Contract.lean | seeds 11, 12, 13 |
-| (7) `ContractExamples.lean`: F3.1, F3.1b, F3.4, F3.4b, F3.4c, F3.5, F3.6, F3.7; `lean/VE.lean` imports | `lean/VE/Compose/ContractExamples.lean` | `lake build VE.Compose.ContractExamples` |
+| (7) `ContractExamples.lean`: F3.1, F3.1b, F3.4, F3.4b, F3.4c, F3.5, F3.6, F3.7; `lean/VE.lean` imports | `lean/VE/Compose/ContractExamples.lean` | `lake build VE.Compose.ContractExamples`. F3.1 also runs on a document with one governed reading set (`governedSet`), and a recording rewriter (`tagRewriter`) pins the order `pipelineOf` and `pipeline` give on four rewriters |
 | Regenerated `lean/statements.txt`, `lean/axioms.txt` (and declarations, predicates, Audit.lean, codemap, checker pins) | `uv run python tools/regen_generated.py --write` (5e3e98fb1, 73a0da680) | `python3 lean/audit.py`: "PASS: 685 source files; 7647 named theorem declarations audited" |
 
 Not delivered here: G1 with G4 (`composed_superpose_all`, spec 1.6), which the task assigns to **pc-3b**. G1b and
@@ -109,7 +109,39 @@ and restored (`git diff` clean):
 13. `ScopeSetsFaithful` drops `K.constraints = [] → cs' = cs`, and the proof still holds: the checker reports
     "ScopeSetsFaithful: def differs".
 
-TRUST-MUTANTS-PLACEHOLDER
+Trust mutants (checklist 13a): the final evidence is `docs/profile-composition/pc-3/trust-mutants.json`, an
+allow-only `--rescore` of `trust-mutants-run2.json`. Command: `mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
+docs/profile-composition/pc-3/trust-mutants-allow.json --rescore …/trust-mutants-run2.json --json …/trust-mutants.json`.
+It ran at db95e866c; later commits change no file under `lean/`. Result: exit 0, 16 definitions, 253 mutants.
+
+| Verdict | Count |
+|---|---|
+| KILLED | 122 |
+| ALLOWED | 117 |
+| INVALID | 14 |
+| SURVIVOR, UNKNOWN, NOT RUN | 0 |
+
+Killed, by definition: `slotAgrees` 34, `wrapperRows` 29, `stackOf` 20, `rewriters` 13, `listedStacks` 13,
+`pipelineOf` 10, `scopeRewriter` 2, `docRewriters` 1.
+
+The 117 allowed, by reason (47 entries in `trust-mutants-allow.json`, one line each):
+- 88 are mutants of the S propositions (`ScopeSetsFaithful` 20, `ScopeFaithful` 16, `ScopeRunsOf` 15,
+  `Rewriter.Laws` 13, `RouteFacts` 12, `ScopePreserves` 10, `ScopeRuns` 2). A `Prop` has no decidable check, so the
+  tool cannot count a kill. Each mutant breaks a named proof or does not elaborate, and `tests/test_pc3_statements.py`
+  fails on any change to their text (seeds 12, 13).
+- 11 are `wrapperRows` mutants of AR-10's existing data, whose lines change only by the new component. ScopeExamples'
+  and Scope/Examples' `#guard`s refute them, but the tool's probe cannot elaborate those guards.
+- 16 do not elaborate: `slotAgrees` 8, `rewriters` 3, `stackOf` 3, `scopeRewriter`'s list-empty 1, `Interface`'s
+  `ctor-drop` 1.
+- 2 `scopeRewriter` mutants are equivalent: `(l.take 1).isEmpty` and `(l.reverse.take 1).isEmpty` both equal
+  `l.isEmpty`.
+
+Run 1 (VM, stopped part-way and replaced by run 2) found three live mutants that needed checks, not allowances:
+- `pipelineOf` `.take 1`: killed by the `tagRewriter` guards;
+- `scopeRewriter` `.dropLast`: killed by the `governedSet` guards;
+- `stackOf` `≤ → <`: killed by the tie-table guard.
+
+These checks are in e57002047.
 
 ## Trust
 
@@ -124,7 +156,21 @@ standing ruling R16. The FOLLOW-UPS.md row "## pc-3" asks for the ties pass.
 
 ## Tests
 
-SELECTED-PLACEHOLDER
+- Selected tests, once on the finished code: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run` ran on GitHub Actions (6 shards, run pc-3-69e3b5eb-t421436): 407 units, 406
+  passed. The one failure was mine: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
+  needed `Contract.lean` and `ContractExamples.lean` under `other_json`. Fixed in bf8b76bf, and the rerun of that id
+  passed (`mac-pytest.sh -- <id>`: "ran on ve-mac-1 … HEAD bf8b76bf (clean) … exit=0"). No failure is listed in
+  main-known-red.txt.
+- After that run, Lean changed only in `ContractExamples.lean` (the checks that kill trust-mutant survivors), plus
+  `tools/trust-classes.json` and the allow file. `lake build` (full) and `python3 lean/audit.py` passed again, and
+  `uv run pytest -q tests/test_assurance_manifest.py tests/test_pc3_statements.py tests/test_trust_budget.py`
+  reports 147 passed.
+- Main has moved 214 commits since the base e73ded834. jt-2c has not landed, and `Dispatch.lean` is unchanged on
+  main. Every statement PC-3 uses is unchanged on main: a `git grep` hash of `governFast_eq`, `governSetsFast_eq`,
+  `governorsOf_iff`, `govern_identity`, `scope_set_choices`, `governSets_choice_refused`, `scope_admission_sets`,
+  `withGoverned` and `checkDocSets` is equal at the base and at main. `git merge-tree --write-tree HEAD main` exits 0
+  with no conflict, so the merge train's sync merges cleanly.
 
 - `uv run pytest -q tests/test_pc3_statements.py`: 2 passed.
 - `uv run python tools/gate_collection.py --check --prebuilt`: "30737 collected, 30735 at e73ded834…; 2 added,
@@ -145,4 +191,43 @@ pc-3b: G1 with G4, `composed_superpose_all` in `Contract.lean` (spec 1.6), by `s
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELF-REVIEW-PLACEHOLDER
+1. Lean answers typed and contained: N.A. No relayed route, response field or schema is added or changed, and no
+   Python reads a new Lean answer.
+2. Every deliverable built, no rule broken: PASS. See the plan-rows table above, each row with its commit and
+   check. G1 with G4 moves to pc-3b on the task's own instruction. The diff has no Python or Rust product code
+   (`git diff --stat e73ded834 -- ve/ rust/` is empty), and no Python copy of a Lean decision. Its one new test,
+   `tests/test_pc3_statements.py`, checks statement fidelity (checklist 17), not a report. In-flight overlap was
+   checked (jt-2c only).
+3. Tests and gates can fail: PASS. `mutants.json` lists 13 hand mutants, each with its failing theorem, `#guard` or
+   test. `trust-mutants.json`: exit 0 (122 killed, 117 allowed with reasons, 0 survivors). `tests/test_pc3_statements.py::test_a_changed_statement_or_a_later_declaration_fails` shows that
+   the statement check fails.
+4. Python, Lean and Rust agree: N.A. No Python or Rust product code changed, and no answer changes. `ve/` and
+   `lean/VE/Route/examples/` are unchanged, and `ve/profile_table.json` stays byte-identical after the regen.
+5. R8 binding: N.A. Python reads no new field.
+6. Gate evidence matches the final HEAD: PASS for this builder's part. The full gate is the chain's, run on the final
+   HEAD. The base comes from `git merge-base`. A sync with main is not merged here (jt-2c has not landed), but
+   `git merge-tree` shows that it merges cleanly and that every statement PC-3 uses is unchanged on main (Tests).
+7. No unsigned item: PASS. DELTA row 1 cites R16, with its evidence (per-file counts, mutants, the ties-pass row).
+   No DRI signature is needed.
+8. Every user-visible change in DELTA: PASS. No answer changes: the gate proofs still hold, `ve/` and the route
+   cases are unchanged, and the profile table JSON is byte-identical. DELTA says so, and its only row is the trust
+   growth.
+9. Test selection finds the tests: PASS. `uv run python tools/select_tests.py --base $(git merge-base HEAD main)`
+   includes `tests/test_pc3_statements.py`, which fails on a seeded statement change (seeds 12, 13).
+10. Lean statements say what is claimed: PASS. `tools/check_pc3_statements.py` reports "27 declarations equal the
+    approved text". Each new proof breaks under a wrong output (seeds 1, 7, 8, 9, 10, 11), and no hypothesis was
+    added.
+11. Budgets, limits and deadlines: N.A. PC-3 adds no budget, limit or deadline, and no service mode.
+12. CPU or memory: N.A. No runtime path changed (`checkDocSets` and `gateOf` are untouched). C1 and C2 are `decide`
+    proofs, checked at build time only. Their build time was not measured.
+13. Test-removed trailers: PASS. `uv run python tools/gate_collection.py --check --prebuilt`: "2 added, 0 removed by
+    a trailer, 0 refused, 0 stale and 0 malformed".
+14. Both directions, cited evidence, spec re-read: PASS.
+    - `slotAgrees`: accepts every planned row (F3.4b) and refuses eight other pairs.
+    - `stackOf`: keeps the listed rewriters and drops the rest (F3.6, including `[]`).
+    - `ScopeRunsOf` holds for the document mode and for a refuse-all entry (F3.7).
+    - `RouteFacts` holds on the listed stacks (`listed_evidence`) and is false on an unlisted one
+      (`¬ RouteFacts ["acts@0", "scope@0"]`).
+    - The statement check passes on the tree and fails on three mutations.
+    - F3.1 is identity-free on `doc` and the identity on a case without scope (`full`).
+    - The spec re-read list is above.
