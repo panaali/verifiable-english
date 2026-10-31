@@ -7,7 +7,12 @@ and 7): finite fillings, the UNDECIDED and latent-CONFLICT witnesses, `table3`
 A finite filling `F : FiniteFill U α` lists, per unsaid predicate, the tuples filled
 "yes"; `M.withFill F` keeps only its typed tuples, so its structure is
 `withFill U M.asStructure (finFill F)` (`withFill_finite`). Every certificate is
-checked here: the search that proposes it is untrusted. -/
+checked here: the search that proposes it is untrusted.
+
+The open predicate names (`opens`, JT-R1) and the ground atoms enumerated (`atoms`, DF1) are
+parameters (`table3O`, `coneAtomsO`, `enumerateSettledO`), sound over every completion of `M`
+that agrees with it off `opens`; today's functions are the instances `opens = unsaidNames U`
+with the cone as `atoms` (`*_eq_open`, by `rfl`). -/
 namespace VE.NormDefaults
 open VE.Norms VE.Route
 universe u
@@ -467,7 +472,7 @@ theorem notreq_of_notpermR {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req �
   simp only [VE.Formula.denote, pairConflict, not_and] at this
   exact fun hreq => this ⟨hreq, hperm⟩ (Or.inl hgap)
 
-/-- A Kleene-true gap body is the gap at the filled base. -/
+/-- A Kleene-true gap body, the atoms on `opens` unknown, is the gap at the completed base. -/
 theorem gap_of_kleeneO (tab : String → List α → Option Bool)
     (hA : ∀ p vs b, atomVO U M opens tab p vs = some b →
       ((canon (fill U) MR).relation p vs ↔ b = true))
@@ -488,12 +493,13 @@ theorem gap_of_kleeneO (tab : String → List α → Option Bool)
   exact this.mpr ((kleene_sound M _ _ hA _ _ true hk).mpr rfl)
 
 omit [DecidableEq α] hu hF in
-/-- The relation of a regulated predicate at `canon` is its outcome at the filled base. -/
+/-- The relation of a regulated predicate at `canon` is its outcome at the completed base. -/
 theorem canonOR {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) :
     (canon (fill U) MR).relation r.name vs ↔ (outcomeBase (fill U) r.name).denote MR (tupleVal vs) :=
   canon_regulated (valid_of_wellFormed _ (fill_wellFormed U h)) MR
     (show r ∈ (fill U).T.regulated from hr) vs
 
+/-- A definite `tabKO` entry is `canon`'s relation under every admissible completion of `M` off `opens`. -/
 theorem tabKO_sound (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p) :
     ∀ k n vs b, tabKO U M opens k n vs = some b →
     ((canon (fill U) MR).relation n vs ↔ b = true) := by
@@ -677,7 +683,7 @@ theorem tabKO_sound (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.r
             · cases ht
     · exact ih n vs b ht
 
-/-- The value `table3` gives is the outcome at the base in every admissible filling. -/
+/-- The value `table3O` gives is the outcome at the base in every admissible completion of `M` off `opens`. -/
 theorem table3O_outcome (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p) {r : Regulated}
     (hr : r ∈ U.D.T.regulated) (vs : List α) (b : Bool)
     (ht : table3O U M opens r.name vs = some b) :
@@ -840,8 +846,8 @@ theorem mem_unsaidAtoms {α : Type u} {U : UDoc} {M : VE.FiniteModel α} {p : St
 
 /-! ### The cone of a point
 
-The atoms that `enumerateSettled` enumerates are untrusted for soundness: any list
-gives a sound answer (`settled_of_enumeration`). They are computed as Python's
+The atoms that `enumerateSettledO` enumerates (`atoms`, DF1) are untrusted for soundness:
+any list gives a sound answer (`enumerateSettledO_sound`). Today's, the cone, are computed as Python's
 `UnspecifiedDocument.cone` computes them, so that both sides enumerate the same atoms
 under the same budget: the unsaid atoms on which the Kleene value of the point
 depends, closed under the `Fill_T` instances that mention one of them. -/
