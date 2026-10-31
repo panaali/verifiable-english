@@ -853,7 +853,8 @@ under the same budget: the unsaid atoms on which the Kleene value of the point
 depends, closed under the `Fill_T` instances that mention one of them. -/
 
 /-- An atom with nothing filled: an atom on an open name is unknown and is its own cone. -/
-def coneAtomO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String) (p : String) (vs : List α) : Option Bool × List (String × List α) :=
+def coneAtomO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String) (p : String) (vs : List α) :
+    Option Bool × List (String × List α) :=
   if p ∈ opens then (none, [(p, vs)]) else (some (decide (vs ∈ M.relations p)), [])
 
 /-- A binary junction: `stop` is the value that decides it (true for `or`). -/
