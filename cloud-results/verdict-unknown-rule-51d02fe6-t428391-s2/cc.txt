@@ -1,0 +1,6 @@
+job=verdict-unknown-rule-51d02fe6-t428391-s2 job_commit=9018f59c320b68a58f9c64c0eace829826570f14 session=cse_012rcAu9FytoDaFSdSSvCYBe nproc=4
+mem_total_mb=16091 mem_avail_mb=15570
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+job_rc=0 job_s=291
