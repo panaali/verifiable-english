@@ -94,7 +94,7 @@ exists. The script keeps only what import-linter does not check, each with a fix
   import-linter sees an import of `ve`, not the module behind the name.
 
 Kept, with reason: `layer_policy.python_imports`, the per-file resolver. The pre-commit hook
-(`tools/hooks/precommit.py`, edited by wc-s4-2 and left alone here) checks each staged file without the rest of the
+(`tools/hooks/precommit.py`, left alone here) checks each staged file without the rest of the
 tree, which import-linter cannot do; the hook's tests pass unchanged except `ve.ast`'s new layer number
 (`tests/test_precommit_hook.py`). `python_exports` stays too: `tools/select_tests.py` (not to be edited) imports it.
 The one layer table stays in `tools/layer_policy.py`; the one reader of the facade's table is
@@ -212,6 +212,11 @@ flight. Overlaps found and avoided: `ve/profiles.py` and `ve/backends/lean_runne
 `tools/run_order.py`, `tools/test_chunks.py`, `tests/conftest.py`, `lean/audit.py` and `tools/regen_generated.py`
 are untouched. Shared generated files (`docs/codemap/*`, `.importlinter`) are not overlaps (R12).
 
+Missed at the start (review F6): `feature/pc-3` also edits `tools/layer_policy.py`, in its `lean_layer` function
+(about line 133), a hunk apart from this batch's edits to the Python table and resolver; the merge train merges the
+two. wc-s4-2, which edited `tools/hooks/precommit.py`, has since merged; the hook is still left alone because the
+per-file check it runs is the case import-linter cannot do (section 2).
+
 ## Plan rows and directives
 
 | Row | Delivered by |
@@ -233,6 +238,17 @@ Spec re-read: T5 against `ARCHITECTURE-REVIEW-2026-10.md:531-541` (layer 1 lists
 `environment_wire`, `limits`, `backends.*`; layer 2 `ast`, `environment`, `model`, profile containers); AR-14 against
 `:1053-1061` ("import-linter contracts replace `check_python_layers.py` and the custom resolver": partly, see 2);
 D5 against `arch-dri-decisions.md:7`; the task's items 1 to 5 and its seeded bugs (a) to (c), one by one above.
+
+## Independent review (round 1, at `28bbcc4a`)
+
+| Finding | Class | What was done |
+|---|---|---|
+| F1 | B | `docs/ARCHITECTURE.md` sweep rows 5 and 6 say `corrected` again (the status `corrected (AR-14)` broke `tests/test_architecture_docs.py::test_the_sweep_has_the_eleven_statements_of_the_review`, the one failure of the chain's gate of `28bbcc4a`); that test is the regression test and passes. |
+| F2 | C | FOLLOW-UP: move `relay.slots_bound` (`ve/norms.py:198`), `soft_relay.check_rule` and `check_rules` (`ve/softnorms.py:164`, `:175`) and softnorms' `_norm_defaults_placeholder` to module level and drop the `wire as _wire` re-imports. Done and tested in a scratch round (1417 tests of the norms, soft, rights and layer files passed), then withdrawn: it changes `ve/` after the A/B recording, which this batch states is unchanged to the evidence commit, and a fresh recording of the nine corpora takes about an hour. |
+| F3 | C | Left as disclosed in section 1, for the DRI: the five `ve.backends` modules placed outside layer 1 by row; FOLLOW-UP to move them out of `ve/backends/`. |
+| F4 | C | FOLLOW-UP: the full check does not see `import ve; ve.<submodule>` attribute imports through the facade; the pre-commit hook's `python_imports` still does. The only module exposed is the layer-5 `ve.argument_fixtures`. |
+| F5 | C | `docs/ARCHITECTURE.md` section 2 prose now describes the T5 map, the generated `.importlinter`, package rules and what the remaining Python exceptions are. The table's count stays a snapshot, refreshed after merge. |
+| F6 | C | Coordination section names the pc-3 overlap in `tools/layer_policy.py` and drops wc-s4-2 as the hook's reason. |
 
 ## After the gate
 
