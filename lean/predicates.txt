@@ -107,6 +107,7 @@ module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
 module VE.Acts.Read
 module VE.Acts.Readings
+module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Syntax
@@ -218,6 +219,7 @@ module VE.Closure.Bridge
 module VE.Closure.Checks
 module VE.Closure.Congruence
 module VE.Closure.Consequence
+module VE.Closure.CoreEquiv
 module VE.Closure.Finite
 module VE.Closure.Induction
 module VE.Closure.Order
@@ -580,6 +582,7 @@ module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
 module VE.Scope.Examples
