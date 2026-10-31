@@ -1286,7 +1286,7 @@ def test_plan_declarations_of_a_done_step_exist():
     ledger = json.loads((ROOT / "tools/consolidation-ledger.json").read_text())
     done = done_substeps(ledger)
     assert "2a" in done
-    declared = {m[1] for m in re.finditer(r" (\S+)@\S+$", lean_statements.DECLARATIONS.read_text(), re.M)}
+    declared = {m[1] for m in re.finditer(r" (\S+)@\S+$", lean_statements.inventory_path(lean_statements.DECLARATIONS).read_text(), re.M)}
     missing = {s: unresolved(plan_declarations(plan, s), declared) for s in done}
     assert plan_declarations(plan, "2a")[:1] == ["fullLayer"]
     assert {s: m for s, m in missing.items() if m} == {}
@@ -1303,7 +1303,7 @@ def test_plan_declaration_check_can_fail():
 def test_route_runners_go_through_the_composed_layer():
     """consolidate-b2 review B: the runner theorems read the definitions layer composed over the
     flags and literals (`fullLayer`, with its BackgroundSound), not an identity layer of `Intended`."""
-    entries = lean_statements.parse(lean_statements.OUTPUT.read_text())
+    entries = lean_statements.parse(lean_statements.inventory_path(lean_statements.STATEMENTS).read_text())
     sound = entries["VE.Route.WireSound.fullLayer_background_sound"]
     assert "VE.Route.BackgroundSound (VE.Route.WireSound.fullLayer rv hd)" in sound
     assert "(List.map Prod.fst (VE.Route.Wire.fullBackground rv))" in sound
@@ -1331,7 +1331,7 @@ def test_statement_dump_difference():
 
 
 def test_statement_dump_lists_every_audited_theorem():
-    entries = lean_statements.parse(lean_statements.OUTPUT.read_text())
+    entries = lean_statements.parse(lean_statements.inventory_path(lean_statements.STATEMENTS).read_text())
     assert sorted(entries) == lean_statements.audited_names()
     assert all(body.rstrip().splitlines()[-1].startswith("  -- expr ") for body in entries.values())
 
@@ -1339,11 +1339,11 @@ def test_statement_dump_lists_every_audited_theorem():
 @pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
 def test_statement_dump_is_current():
     statements, predicates, declarations = lean_statements.dump_all()
-    assert declarations == lean_statements.DECLARATIONS.read_text(), \
+    assert declarations == lean_statements.inventory_path(lean_statements.DECLARATIONS).read_text(), \
         "lean/declarations.txt is stale: run python3 tools/lean_statements.py"
-    assert statements == lean_statements.OUTPUT.read_text(), \
+    assert statements == lean_statements.inventory_path(lean_statements.STATEMENTS).read_text(), \
         "lean/statements.txt is stale: run python3 tools/lean_statements.py"
-    assert predicates == lean_statements.PREDICATES.read_text(), \
+    assert predicates == lean_statements.inventory_path(lean_statements.PREDICATES).read_text(), \
         "lean/predicates.txt is stale: run python3 tools/lean_statements.py"
 
 

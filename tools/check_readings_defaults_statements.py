@@ -91,7 +91,9 @@ AMENDED_6A: dict[str, Amendment] = {
 }
 REFUTATIONS_6A = ROOT / "lean/VE/Readings/SupExtraExamples.lean"
 REFUTATIONS_NAMESPACE_6A = "VE.Readings.SupExtraExamples"
-AUDIT = ROOT / "lean/VE/Audit.lean"
+sys.path.insert(0, str(ROOT / "tools"))
+from lean_statements import inventory_path  # noqa: E402
+AUDIT = inventory_path("lean/VE/Audit.lean")
 # 6.7's RD-6b declarations, built by RD-6b in the same file.
 LATER_6A = set()
 RD6B_NAMES = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
