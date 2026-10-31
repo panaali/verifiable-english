@@ -236,6 +236,13 @@ def u055w (n : Nat) : List Item := u055 ++ (List.range n).map fun k => .set ⟨s
 #guard [5, 6].map (fun n => sc (mkDoc (e055 false "deny") (u055w n)) V9 fx9 s055) == ["ok", choiceLimit]
 #guard [5, 6].map (fun n => (mkDoc (e055 false "deny") (u055w n)).map (fun (D, _) => (choices D).length)) ==
   [some 64, some 65]
+-- `sourceCheck` compares `viewsOn` of the choices it bounded; spec 7's `choiceViews` is the same views (`viewsOn_choices`),
+-- checked here on documents with several choices and rules, choices that coincide once projected, and `unspecified`
+#guard [(S1, s105), (d105 [u105a, setB [bFirst, bAll], setC [cFirst, cAll], other], s105),
+    (mkDoc e105 [setC [cFirst, cAll], u105a, setB [bFirst, bAll]], s105), (mkDoc (e055 false "deny") (u055f 0), s055),
+    (mkDoc (e055 true "unspecified") (u055), s055u)].all fun
+  | (some (D, u), s) => choiceViews D u s == viewsOn D u s (choices D) && (choiceViews D u s).length ≥ 2
+  | (none, _) => false
 -- the step budget: none left is a refusal
 def sc0 (x : Option (Doc × List String)) : String :=
   match x with
