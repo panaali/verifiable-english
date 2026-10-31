@@ -1,0 +1,12 @@
+{
+ "job": "testmap-8c28fe28-t485513-s1",
+ "head": "7a8a0f74344d1741f2e2bc0e92e3a0676bcdf0cc",
+ "argv": [
+  "testmap-8c28fe28-t485513-s1",
+  "7a8a0f74344d1741f2e2bc0e92e3a0676bcdf0cc",
+  "7a8a0f74344d1741f2e2bc0e92e3a0676bcdf0cc",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-503c91f5fe0f.tar.zst",
+  "19ed9a0ebabfe526f4cc10c75cc9393a53ba2165ec09c33d62c8ddb31393ac60",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_readings_rd6b_differential.py tests/test_defaults_checks.py tests/test_select_tests.py tests/test_p1_amendment12.py tests/test_norm_defaults_three_way.py tests/test_eligibility_wfp.py tests/test_nary_differential.py tests/test_reports_lean.py tests/test_discourse_answer.py tests/test_et8_completion.py tests/test_ask_relay.py tests/test_defaults_english.py tests/test_run_order.py tests/test_w6a2_looprecheck1.py tests/test_t1c.py tests/test_readings_lean_sharing.py tests/test_readings_budget_zero.py tests/test_acts_profile.py tests/test_stage2_norms.py tests/test_readings_s1_document.py tests/test_soft_norms_conformance.py tests/test_report_english.py tests/test_risk_english.py tests/test_reports.py tests/test_numbers_phrases.py tests/test_alternatives_fill.py tests/test_readings_s2_lean.py tests/test_english_e2_overlay.py tests/test_readings_rd5_plain_probe.py tests/test_count_w6a.py tests/test_lean_default_build.py tests/test_readings_s1_pilot_rebuild.py tests/test_readings_constant_display.py tests/test_readings_defaults_rd4a_report.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
