@@ -1,0 +1,34 @@
+{
+  "item": "wc-s4-2",
+  "note": "Each bug was planted, shown failing, then restored with git checkout (REPORT.md, Seeded bugs). S1 and S4 were shown again on 7eb0684b.",
+  "seeded": [
+    {
+      "id": "S1",
+      "language": "Rust",
+      "file": "rust/ve-kernel/src/contract_tables.rs",
+      "bug": "soft-norms rows 1.1 and 1.2 (lines 86 and 87) swapped",
+      "test": "uv run python tools/wire_contract.py --check (WC11: generated module differs, exit 1); tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows (failed on id, kind and code)"
+    },
+    {
+      "id": "S2",
+      "language": "Python",
+      "file": "tools/wire_contract_rust.py",
+      "bug": "ordered() sorts keys by UTF-16 code units; corpus tables regenerated",
+      "test": "tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows (keys of keys@0 differ on the key outside the BMP)"
+    },
+    {
+      "id": "S3",
+      "language": "data",
+      "file": "ve/wire_contract/norms@0.json",
+      "bug": "revision 1 to 2 and contracts.lock updated, tables not regenerated",
+      "test": "cargo test --test contract_tables embedded_hashes_equal_their_lock_entries (panicked: norms@0.json in contracts.lock)"
+    },
+    {
+      "id": "S4",
+      "language": "Python",
+      "file": "tools/wire_contract_rust.py",
+      "bug": "pieces() writes every renderer as Renderer::Raw; corpus tables regenerated",
+      "test": "tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows (demo@0 1.4: ['arg', 'value', 'raw'] != ['arg', 'value', 'json'])"
+    }
+  ]
+}
