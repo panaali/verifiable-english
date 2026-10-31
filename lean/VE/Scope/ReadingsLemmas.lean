@@ -42,10 +42,10 @@ theorem getD_set2 (t : Std.TreeMap.Raw String Json) (ht : t.WF) (k₁ k₂ : Str
   · rw [Json.getObjValD, setObjVal_ne _ (fun _ h => by cases h; exact ht.insert) _ _ _ (Ne.symm hk), ← e,
       setObjVal_self t ht]; rfl
 
-theorem find?_congr' {α : Type} (p q : α → Bool) : ∀ (l : List α), (∀ x ∈ l, p x = q x) → l.find? p = l.find? q
+theorem find?_congr_mem {α : Type} (p q : α → Bool) : ∀ (l : List α), (∀ x ∈ l, p x = q x) → l.find? p = l.find? q
   | [], _ => rfl
   | x :: l, h => by
-    simp only [List.find?_cons, h x List.mem_cons_self, find?_congr' p q l fun y hy => h y (List.mem_cons_of_mem _ hy)]
+    simp only [List.find?_cons, h x List.mem_cons_self, find?_congr_mem p q l fun y hy => h y (List.mem_cons_of_mem _ hy)]
 
 theorem readingAt_src (s : Json) (i : Nat) :
     (∀ t, HasStr t (readingAt s i) → HasStr t s) ∧ (JsonWF s → JsonWF (readingAt s i)) := by
@@ -115,7 +115,7 @@ theorem contentOf_atChoiceOn (su : List String) (doc : Json) (ch : VE.Discourse.
     (hv : v ∉ su) : contentOf (atChoiceOn su doc ch) v = contentOf doc v := by
   obtain ⟨F, -, hF, hp⟩ := atChoiceOn_units su doc ch hw
   unfold contentOf
-  rw [hF, List.find?_map, find?_congr' _ (idOf · == v) _ fun y hy => by simp only [Function.comp, (hp y hy).1]]
+  rw [hF, List.find?_map, find?_congr_mem _ (idOf · == v) _ fun y hy => by simp only [Function.comp, (hp y hy).1]]
   cases hf : (unitsOf doc).find? (idOf · == v) with
   | none => rfl
   | some y =>

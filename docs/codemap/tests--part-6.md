@@ -84,6 +84,6 @@
 - `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
 - `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…
 - `tests/test_wire_contract_precondition.py` — Ground the S3-pre inherited-profile discrepancy with a reachable case.
+- `tests/test_wire_contract_rust.py` — The generated Rust contract tables (docs/spec/wire-contract-s4-2.md 9, F3): the rows a cargo test dumps from every generated table equal the rows `tools/wire_c…
 - `tests/test_wire_contract_s4_lean.py` — Stage S4 item 1, the Lean and tooling fixtures (docs/spec/wire-contract-s4.md section 8.4).
 - `tests/test_wire_contract_s5_admission.py` — Admission boundary checks for the two S5 units in shadow (wire-contract-s5.md 2.6, 7.2, 8.3).
-- `tests/test_wire_contract_s5_lean.py` — Stage S5 item 1, the Lean side (docs/spec/wire-contract-s5.md 2.5, 5.2 and the fixtures of 8.1, 8.2, 8.6).
