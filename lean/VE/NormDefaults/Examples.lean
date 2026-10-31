@@ -163,6 +163,39 @@ def rowGuards : List VE.Formula := [someX, .unary "x_permitted" (.const "a")]
   table3 (uRows someX) m "x_required" ["b"] == some true &&
   table3 (uRows someX) m "x_required" ["a"] == none
 
+/-! ## nd-atoms: an explicit atom list and open-name list
+
+Today's answers are the instances `opens = unsaidNames U` with the cone as `atoms`; each list
+below differs from today's, beside today's answer on the same point. -/
+
+-- a strict subset of the cone (u12, cone `y_permitted(a)`): `[]` leaves Kleene's unknown
+#guard enumerateSettledO u12 m5 (unsaidNames u12) (coneAtoms u12 m5 "x_required" ["a"]) "x_required" ["a"] ==
+  enumerateSettled u12 m5 "x_required" ["a"]
+#guard enumerateSettledO u12 m5 (unsaidNames u12) [] "x_required" ["a"] == none
+-- an atom today's enumeration never enumerates (`y_permitted(a1)`, outside the cone): alone it
+-- settles nothing; beside the cone it is enumerated (4 assignments, not 2) and the answer stays
+def y1 : String × List String := (unsaidName "y_permitted", ["a1"])
+#guard !(coneAtoms u12 m13 "x_required" ["a"]).contains y1
+#guard enumerateSettledO u12 m13 (unsaidNames u12) [y1] "x_required" ["a"] == none
+#guard (coneValuesO u12 m13 (unsaidNames u12) (coneAtoms u12 m13 "x_required" ["a"] ++ [y1]) "x_required"
+  ["a"]).length == 4
+#guard enumerateSettledO u12 m13 (unsaidNames u12) (coneAtoms u12 m13 "x_required" ["a"] ++ [y1]) "x_required"
+  ["a"] == some true
+-- `opens` with the base predicate `c` (uBetween): `c(a)` is unknown, so "must X if c" no longer
+-- settles `x_required(a)`; the cone over these names gains `c(a)`, which today's never holds
+def openC : List String := unsaidNames uBetween ++ ["c"]
+#guard table3O uBetween mc (unsaidNames uBetween) "x_required" ["a"] == table3 uBetween mc "x_required" ["a"]
+#guard table3 uBetween mc "x_required" ["a"] == some true && table3O uBetween mc openC "x_required" ["a"] == none
+#guard coneAtoms uBetween mc "x_required" ["a"] == [] &&
+  coneAtomsO uBetween mc openC "x_required" ["a"] == [("c", ["a"]), (unsaidName "x_permitted", ["a"])]
+#guard enumerateSettled uBetween mc "x_required" ["a"] == some true &&
+  enumerateSettledO uBetween mc openC (coneAtomsO uBetween mc openC "x_required" ["a"]) "x_required" ["a"] == none
+-- the size is charged against `MAX_UNSAID_ATOMS`: 12 atoms of a 13-atom situation are enumerated
+-- (4,096 assignments) and settle; all 13 are over the limit, UNKNOWN
+#guard (coneValuesO u12 m13 (unsaidNames u12) ((unsaidAtoms u12 m13).take 12) "x_required" ["a"]).length == 4096
+#guard enumerateSettledO u12 m13 (unsaidNames u12) ((unsaidAtoms u12 m13).take 12) "x_required" ["a"] == some true
+#guard enumerateSettledO u12 m13 (unsaidNames u12) (unsaidAtoms u12 m13) "x_required" ["a"] == none
+
 /-! ## u16: limits -/
 
 def longName (n : Nat) : String := "p" ++ String.mk (List.replicate (n - 1) 'q')
