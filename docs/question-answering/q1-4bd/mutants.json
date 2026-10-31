@@ -1,0 +1,42 @@
+{
+ "item": "q1-4bd",
+ "note": "Each seeded bug was planted alone in the named file, then the test was run and the file restored (git checkout). The working tree was clean afterwards. Python is the only language whose product code this item changes.",
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "Python",
+   "file": "ve/backends/english_lean.py",
+   "behaviour": "the relay shows Lean's text verbatim (no code prefix)",
+   "mutation": "_refusal: `error.message, error.args = text, (text,)` replaced by `pass` (the prefix restored)",
+   "test": "tests/test_english_e2_responses.py::test_a_delta_record_is_refused_live_with_leans_text",
+   "result": "25 failed (24 delta records, and test_an_ill_typed_document_is_refused_with_leans_text_verbatim); also tests/test_speech_polar_lean.py -k code_worded: 2 failed"
+  },
+  {
+   "id": "M2",
+   "language": "Python",
+   "file": "ve/backends/english_lean.py",
+   "behaviour": "the refusal keeps Lean's span, located in the source (R1 (b))",
+   "mutation": "_refusal: the column `span[0] - source.rfind(\"\\n\", 0, span[0])` replaced by `span[0] + 1`",
+   "test": "tests/test_english_e2_responses.py::test_a_delta_record_is_refused_live_with_leans_text",
+   "result": "8 failed ([it3-*], [it4-*]: the sentence on line 2 or 3)"
+  },
+  {
+   "id": "M3",
+   "language": "Python",
+   "file": "docs/question-answering/q1-4bd/evidence/english_read_delta.py",
+   "behaviour": "the delta check finds a moved record the saved delta leaves out",
+   "mutation": "problems: `if not same(delta.get(\"rows\"), delta_rows(base, head)):` replaced by `if False:`",
+   "test": "tests/test_english_e2_responses.py::test_the_delta_check_finds_a_planted_change",
+   "result": "1 failed ([row missing])"
+  },
+  {
+   "id": "M4",
+   "language": "Python",
+   "file": "docs/question-answering/q1-4bd/evidence/english_read_delta.py",
+   "behaviour": "the delta check compares as JSON, so a head `true` is not the base's `1`",
+   "mutation": "same: `json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)` replaced by `a == b`",
+   "test": "tests/test_english_e2_responses.py::test_the_delta_check_finds_a_planted_change",
+   "result": "1 failed ([true for 1])"
+  }
+ ]
+}
