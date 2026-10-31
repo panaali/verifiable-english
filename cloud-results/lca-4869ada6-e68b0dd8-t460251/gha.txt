@@ -1,0 +1,6 @@
+run_id=41214702585 attempt=1 runner=GitHub Actions 1000001544 image=ubuntu24-arm64-20261026.166.1 arch=aarch64 nproc=4
+Lean (version 4.24.0, aarch64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (aarch64-unknown-linux-gnu)
+/home/runner/.cargo/bin/rustup
+/dev/root       145G   41G  104G  29% /
+run_url=https://github.com/panaali/verifiable-english/actions/runs/41214702585 run_result=success
