@@ -563,8 +563,12 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_ok
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
+#print axioms VE.Acts.modifier_edges
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
+#print axioms VE.Acts.phraseReadings_exact
+#print axioms VE.Acts.phraseReadings_length
+#print axioms VE.Acts.phraseReadings_nodup
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
@@ -587,6 +591,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.table_free_any
 #print axioms VE.Acts.table_free_any_split
 #print axioms VE.Acts.table_free_nor
+#print axioms VE.Acts.table_length
 #print axioms VE.Acts.table_mustNot_all
 #print axioms VE.Acts.table_mustNot_all_split
 #print axioms VE.Acts.table_mustNot_any
