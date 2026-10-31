@@ -1,0 +1,12 @@
+{
+ "job": "testmap-09fca501-t458281-s1",
+ "head": "c66a6e25795afe63d8b00f25750e8b0e672cecc0",
+ "argv": [
+  "testmap-09fca501-t458281-s1",
+  "c66a6e25795afe63d8b00f25750e8b0e672cecc0",
+  "c66a6e25795afe63d8b00f25750e8b0e672cecc0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-846d61c27203.tar.zst",
+  "ba4576b010d8ccd6824bd5b590ebb9d03d9c8ea54dcc6e76c2e6a916ebf5472c",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_trust_mutants.py tests/test_enum_domains.py tests/test_b16e_rights_document.py tests/test_ask_cli.py tools/test_layer_policy.py tests/test_encoder_shapes.py tests/test_wire_contract_s5_lean.py tests/test_views.py tests/test_since_pass.py tests/test_rights.py tests/test_norm_defaults_report.py tests/test_wire_contract_soft_lean.py tests/test_ask_relay.py tests/test_platform_contract.py tests/test_p1_reconcile.py tests/test_scope_readings_document.py tests/test_ask_fixtures.py tests/test_stage2_parse.py tests/test_evidence_bounds.py tests/test_readings_sd_lean.py tests/test_ask_null_free.py tests/test_acts_profile.py tests/test_norms_contract.py tests/test_risk_lean_route.py tests/test_units_lean_w6a.py tests/test_alternatives_three_way.py tests/test_batch_evidence.py tests/test_risk_english.py tests/test_batch_scope.py tests/test_profile_table.py tests/test_argument.py tests/test_lean_limits.py tests/test_soft_norms_lean.py tests/test_rd9_chain_relay.py tests/test_wire_contract_s4_lean.py tests/test_cardinality_exercised.py tests/test_compose_integration.py tests/test_english_lean_tokens.py tests/test_readings_defaults_rd8_report.py tests/test_readings_s1_pilot_rebuild.py tests/test_defeasible_baseline_evidence.py tests/test_lean_first_b5_delta.py tests/test_readings_s2_python.py tests/test_b16b_evidence.py tests/test_filling_search.py tests/test_scope_sc5r_stub.py tests/test_english_e2_report.py tests/test_oom_mutation_evidence.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
