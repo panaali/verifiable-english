@@ -1,0 +1,123 @@
+--- cloud-verdict-compare.py.bak-20261030-verdict-unknown-rule	2026-10-29 10:45:58.241561311 +0000
++++ cloud-verdict-compare.py	2026-10-31 06:26:17.947126352 +0000
+@@ -9,6 +9,11 @@
+ the caller reruns the reference or flags it for investigation). Exit 4 = the comparison itself failed (unreadable JSON).
+ 2026-10-29 comparator-audit (reviews/comparator-audit-20261029.md): "tests" is compared as a set in one canonical form
+ (test_name), and a detail's absolute path of an outside --test file as its checkout-relative name (path_normaliser).
++2026-10-31 verdict-unknown-rule (backlog row; jt-2c M010 2026-10-30 13:15Z): a mutant UNKNOWN on one side and KILLED or
++SURVIVOR on the other (raw_status: before --allow) is UNDECIDED, not a difference (UNKNOWN = not decided, e.g. a Lean
++failure under load): its verdict fields and reads (set for a KILLED or INVALID verdict only) are not compared, its
++identity fields still are, and counts may differ by exactly those mutants' statuses. Printed as its own count
++(`mutants: ..., N undecided`, the UNDECIDED line). KILLED vs SURVIVOR, INVALID vs anything and every other difference trip.
+ """
+ import json
+ import posixpath
+@@ -51,6 +56,17 @@
+     return lambda v: rx.sub(r"\1", v) if isinstance(v, str) else v
+ 
+ 
++VERDICT_OF = ("reads",)  # trust_mutants `verdict`: set only for a KILLED or INVALID verdict
++
++
++def undecided(a, b):
++    """verdict-unknown-rule: one side's verdict before --allow is UNKNOWN, the other's KILLED or SURVIVOR, and each
++    side's status is that verdict or ALLOWED (an allowed SURVIVOR or UNKNOWN)."""
++    ra, rb = a.get("raw_status"), b.get("raw_status")
++    return ({ra, rb} in ({"UNKNOWN", "KILLED"}, {"UNKNOWN", "SURVIVOR"})
++            and all(m.get("status") in (m.get("raw_status"), "ALLOWED") for m in (a, b)))
++
++
+ def main():
+     vm, cl = (json.load(open(p)) for p in sys.argv[1:3])
+     inv = []
+@@ -89,25 +105,34 @@
+     ident = ("file", "line", "definition", "operator", "lines", "before", "after", "trust_class", "trusted", "reads")
+     verdict = ("status", "raw_status", "detail", "killed_at")
+     rel = path_normaliser(outside_tests(vm, cl))
+-    nd = 0
++    nd, und, shift = 0, [], {}
+     for i in sorted(set(vmm) & set(clm)):
+         a, b = vmm[i], clm[i]
+         diff = [k for k in ident + verdict if (rel(a.get(k)) if k == "detail" else a.get(k)) != (rel(b.get(k)) if k == "detail" else b.get(k))]
+-        if diff:
++        if diff and undecided(a, b) and not [k for k in diff if k not in verdict + VERDICT_OF]:
++            und.append(f"{i} (vm {a.get('raw_status')}, cloud {b.get('raw_status')})")
++            shift[a.get("status")] = shift.get(a.get("status"), 0) + 1
++            shift[b.get("status")] = shift.get(b.get("status"), 0) - 1
++        elif diff:
+             bad = 1
+             nd += 1
+             if nd <= 20:
+                 print(f"{i}: " + "; ".join(f"{k}: vm {a.get(k)!r:.60} cloud {b.get(k)!r:.60}" for k in diff))
++    if und:
++        print(f"UNDECIDED (UNKNOWN on one side, KILLED or SURVIVOR on the other; not a mismatch): {', '.join(und[:20])}")
+     other = sorted({k for m in list(vmm.values()) + list(clm.values()) for k in m} - set(ident + verdict + ("id",)))
+-    print(f"mutants: {len(vmm)} vm, {len(clm)} cloud, {nd} with a differing identity or verdict field "
++    print(f"mutants: {len(vmm)} vm, {len(clm)} cloud, {nd} with a differing identity or verdict field, {len(und)} undecided "
+           f"(compared: {', '.join(ident + verdict)}; not compared: {', '.join(other) or '-'})")
+-    print(f"counts: vm {vm.get('counts')} cloud {cl.get('counts')}{'' if vm.get('counts') == cl.get('counts') else ' DIFFER'}")
+-    if vm.get("counts") != cl.get("counts"):
++    cv, cc = vm.get("counts"), cl.get("counts")
++    same = cv == cc or (bool(und) and isinstance(cv, dict) and isinstance(cc, dict)
++                        and all(cv.get(k, 0) - cc.get(k, 0) == shift.get(k, 0) for k in set(cv) | set(cc) | set(shift)))
++    print(f"counts: vm {cv} cloud {cc}{'' if cv == cc else ' differ by the undecided mutants only' if same else ' DIFFER'}")
++    if not same:
+         bad = 1
+     dv, dc = vm.get("definitions"), cl.get("definitions")
+     print(f"definitions: {'equal' if dv == dc else 'DIFFER'} ({len(dv or [])} vm, {len(dc or [])} cloud)")
+     print(f"seconds: vm {vm.get('seconds')} cloud {cl.get('seconds')}; jobs vm {vm.get('jobs')} cloud {cl.get('jobs')}")
+-    print("VERDICTS EQUAL" if not bad else "VERDICTS DIFFER")
++    print(("VERDICTS EQUAL" + (f" ({len(und)} undecided, not compared)" if und else "")) if not bad else "VERDICTS DIFFER")
+     sys.exit(bad)
+ 
+ 
+--- test-harness/comparators/test-comparators.zsh.bak-20261030-verdict-unknown-rule	2026-10-29 10:49:06.075892779 +0000
++++ test-harness/comparators/test-comparators.zsh	2026-10-31 06:27:06.682756857 +0000
+@@ -134,6 +134,47 @@
+ ok "detail: a kill in an outside --test file named at each checkout's absolute path: VERDICTS EQUAL" 'cvc vmd cld && grep -q "VERDICTS EQUAL" $out'
+ ok "detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)" 'cvc vmd cld4; [ $? = 1 ] && grep -q "VERDICTS DIFFER" $out'
+ 
++print "== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): $CVC"
++# mku <name> <raw_status> [status] [after] [counts json]: m1 with that verdict (reads/killed_at as trust_mutants writes
++# them: KILLED and INVALID only), m2 KILLED on both sides; counts from the statuses unless given
++mku(){ python3 -I - $S/$1.json "$2" "${3:-$2}" "${4:-2}" "${5:-}" <<'PY'
++import json, sys
++path, raw, st, after, counts = sys.argv[1:6]
++def mut(i, raw, st, after):
++    m = {"id": i, "file": "VE/A.lean", "line": 1, "definition": "a", "operator": "lit", "lines": [1, 1], "before": "1",
++         "after": after, "trust_class": "trusted", "trusted": True, "status": st, "raw_status": raw,
++         "detail": {"KILLED": "lean/VE/T.lean:9: type mismatch", "UNKNOWN": "lean/VE/T.lean:9: Lean could not finish",
++                    "INVALID": "VE/A.lean:1: unknown identifier"}.get(raw, "")}
++    if raw in ("KILLED", "INVALID"):
++        m["reads"] = "digest-" + raw
++    if raw == "KILLED":
++        m["killed_at"] = [9, 9]
++    return m
++ms = [mut("m1", raw, st, after), mut("m2", "KILLED", "KILLED", "3")]
++c = {k: 0 for k in ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")}
++for m in ms:
++    c[m["status"]] += 1
++json.dump({"head": "h", "base": "b", "max_mutants": 10, "deep": False, "tests": ["VE/T.lean"],
++           "inputs": {"options": json.dumps({"deep": False, "test": ["VE/T.lean"]}), "files": {"x": "1"}},
++           "counts": json.loads(counts) if counts else c, "definitions": [], "mutants": ms}, open(path, "w"))
++PY
++}
++mku uU UNKNOWN; mku uK KILLED; mku uS SURVIVOR; mku uI INVALID; mku uUA UNKNOWN ALLOWED; mku uSA SURVIVOR ALLOWED
++mku uKa KILLED KILLED 7                                                       # KILLED, another mutant text
++mku uKc KILLED KILLED 2 '{"KILLED": 2, "SURVIVOR": 0, "UNKNOWN": 0, "INVALID": 0, "ALLOWED": 0, "NOT RUN": 0, "OTHER": 1}'
++und(){ cvc $1 $2 && grep -q "^VERDICTS EQUAL (1 undecided" $out && grep -q "^mutants: 2 vm, 2 cloud, 0 with a differing identity or verdict field, 1 undecided " $out \
++  && grep -q "^UNDECIDED .*: m1 (vm $3, cloud $4)$" $out && grep -q "^counts: " $out && ! grep -q "^counts: .* DIFFER$" $out; }
++ok "UNKNOWN on the VM, KILLED in the cloud (jt-2c M010): not a mismatch, exit 0, counted as 1 undecided" 'und uU uK UNKNOWN KILLED && grep -q " differ by the undecided mutants only$" $out'
++ok "KILLED on the VM, UNKNOWN in the cloud: not a mismatch, 1 undecided" 'und uK uU KILLED UNKNOWN'
++ok "UNKNOWN vs SURVIVOR: not a mismatch, 1 undecided" 'und uU uS UNKNOWN SURVIVOR'
++ok "an allowed UNKNOWN vs an allowed SURVIVOR (raw_status differs): not a mismatch, 1 undecided" 'und uUA uSA UNKNOWN SURVIVOR'
++ok "KILLED vs SURVIVOR still trips (VERDICTS DIFFER, exit 1, 0 undecided)" 'cvc uK uS; [ $? = 1 ] && grep -q "^VERDICTS DIFFER" $out && grep -q " 1 with a differing identity or verdict field, 0 undecided " $out'
++ok "INVALID vs KILLED still trips" 'cvc uI uK; [ $? = 1 ] && grep -q "^VERDICTS DIFFER" $out && grep -q "^m1: .*status: vm .INVALID. cloud .KILLED." $out'
++ok "UNKNOWN vs INVALID still trips" 'cvc uU uI; [ $? = 1 ] && grep -q "^VERDICTS DIFFER" $out && ! grep -q "^UNDECIDED" $out'
++ok "UNKNOWN vs KILLED of another mutant text (identity field after) still trips" 'cvc uU uKa; [ $? = 1 ] && grep -q "^m1: after: " $out && ! grep -q "^UNDECIDED" $out'
++ok "UNKNOWN vs KILLED whose counts differ by more than that mutant still trips" 'cvc uU uKc; [ $? = 1 ] && grep -q "^counts: .* DIFFER$" $out'
++ok "equal records print 0 undecided and plain VERDICTS EQUAL" 'cvc uK uK && grep -q "^VERDICTS EQUAL$" $out && grep -q " 0 undecided " $out'
++
+ print "== actions-health.py (ACTIONS_SUSPENDED streak; findref): $AH"
+ J=$S/jobs; mkdir -p $J; export ACTIONS_SUSPENDED_FLAG=$S/ACTIONS_SUSPENDED
+ mkj(){ mkdir -p $J/$1; print -r -- '{"job": "'$1'", "pool": "actions"'${2:-}'}' > $J/$1/job.json; }
