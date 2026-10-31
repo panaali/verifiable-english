@@ -41,6 +41,7 @@
 - `conformance/norm_defaults_three_way.py` — Three-way conformance for norm-defaults@0 on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
 - `conformance/order.py` — order@0 differential conformance: Python search and replay vs the Lean checker.
 - `conformance/p0.py` — P0 route fixtures shared by Python, Rust and the Lean `route` subcommand.
+- `conformance/question_reverse.py` — Q1.3: the reverse question corpus, read by Lean's question reader (docs/spec/question-answering-PLAN.md Q1.3).
 - `conformance/replay_baseline.py` — Freeze the full v0 corpus using only the pinned pre-closure integration code.
 - `conformance/rights.py` — Deterministic rights-to-soft regeneration checks against the Lean soft route.
 - `conformance/rights_differential.py` — Deterministic rights relay corpus on 1,000 generated documents (rights.md 10).
