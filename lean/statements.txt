@@ -19107,6 +19107,12 @@ theorem VE.NormDefaults.astLoop_ok
         (L ≠ [] → n + (List.map VE.Bridge.formulaNodes L).sum ≤ 10000) ∧ n' = n + (List.map VE.Bridge.formulaNodes L).sum
   -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.astBody@VE.NormDefaults.Check VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.typeDiagnostic@VE.Norms.Tree
   -- expr 3839067766
+theorem VE.NormDefaults.atomV_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α)
+    (tab : String → List α → Option Bool),
+    VE.NormDefaults.atomV U M tab = VE.NormDefaults.atomVO U M (VE.NormDefaults.unsaidNames U) tab
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.atomV@VE.NormDefaults.Evidence VE.NormDefaults.atomVO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 2864149439
 theorem VE.NormDefaults.atom_typed
   ∀ {E : VE.Environment} {p : String} {ss : List String},
     E.predicates p = Option.some ss →
@@ -19165,6 +19171,23 @@ theorem VE.NormDefaults.canonO
               VE.NormDefaults.OutB M F r.name vs
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.OutB@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.relation@VE.Semantics
   -- expr 2132698019
+theorem VE.NormDefaults.canonOR
+  ∀ {α : Type u} {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (M : VE.FiniteModel α) (R : String → List α → Prop) {r : VE.Norms.Regulated},
+        r ∈ U.D.T.regulated →
+          ∀ (vs : List α),
+            (VE.SoftNorms.canon (VE.NormDefaults.fill U)
+                    (let __src := M.asStructure;
+                    { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant,
+                      relation := R })).relation
+                r.name vs ↔
+              VE.Formula.denote
+                (let __src := M.asStructure;
+                { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) r.name)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4213736127
 theorem VE.NormDefaults.canonTyped_expansion
   ∀ {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -19278,6 +19301,36 @@ theorem VE.NormDefaults.completionOf_unspec
     r.name ∈ U.unspec → VE.NormDefaults.completionOf U r = VE.NormDefaults.Completion.unspecified
   -- uses VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 2629386051
+theorem VE.NormDefaults.coneAtomV_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneAtomV U M = VE.NormDefaults.coneAtomVO M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtomV@VE.NormDefaults.Evidence VE.NormDefaults.coneAtomVO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 2620288330
+theorem VE.NormDefaults.coneAtoms_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneAtoms U M = VE.NormDefaults.coneAtomsO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtoms@VE.NormDefaults.Evidence VE.NormDefaults.coneAtomsO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1838839074
+theorem VE.NormDefaults.coneEval_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneEval U M = VE.NormDefaults.coneEvalO M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneEval@VE.NormDefaults.Evidence VE.NormDefaults.coneEvalO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 24134350
+theorem VE.NormDefaults.coneOf_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneOf U M = VE.NormDefaults.coneOfO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneOf@VE.NormDefaults.Evidence VE.NormDefaults.coneOfO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 824652751
+theorem VE.NormDefaults.coneValuesAt_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneValuesAt U M = VE.NormDefaults.coneValuesAtO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAt@VE.NormDefaults.Evidence VE.NormDefaults.coneValuesAtO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 3485467959
+theorem VE.NormDefaults.coneValues_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.coneValues U M = VE.NormDefaults.coneValuesO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValues@VE.NormDefaults.Evidence VE.NormDefaults.coneValuesO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 816318245
 theorem VE.NormDefaults.conflictFreeU_consistent
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -19423,6 +19476,23 @@ theorem VE.NormDefaults.denote_of_coneValuesAt
           (VE.Formula.denote (VE.NormDefaults.withFill U M.asStructure F) ρ φ ↔ b = Bool.true)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAt@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix
   -- expr 1406298269
+theorem VE.NormDefaults.denote_of_coneValuesAtO
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool),
+    (∀ (x : Option Bool), x ∈ VE.NormDefaults.coneValuesAtO U M opens C ρ φ → x = Option.some b) →
+      ∀ (R : String → List α → Prop),
+        (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+          VE.Norms.Sat
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              (VE.NormDefaults.fillPremises U) →
+            (VE.Formula.denote
+                (let __src := M.asStructure;
+                { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                ρ φ ↔
+              b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAtO@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2638112787
 theorem VE.NormDefaults.denote_rel_iff
   ∀ (X : VE.Structure) (R₁ R₂ : String → List X.Carrier → Prop),
     (∀ (n : String) (vs : List X.Carrier), R₁ n vs ↔ R₂ n vs) →
@@ -19458,6 +19528,36 @@ theorem VE.NormDefaults.entailsX_nil
     VE.NormDefaults.EntailsX U [] Γ φ ↔ VE.NormDefaults.EntailsU U Γ φ
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsU@VE.NormDefaults.Wire VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree
   -- expr 2718507646
+theorem VE.NormDefaults.enumerateO_all
+  ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel α} {opens : List String}
+    {atoms : List (String × List α)} {n : String} {vs : List α} {b : Bool},
+    VE.NormDefaults.enumerateSettledO U M opens atoms n vs = Option.some b →
+      ∀ (x : Option Bool), x ∈ VE.NormDefaults.coneValuesO U M opens atoms n vs → x = Option.some b
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesO@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence
+  -- expr 2074310828
+theorem VE.NormDefaults.enumerateSettledO_sound
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (atoms : List (String × List α)) (n : String) (vs : List α) (b : Bool),
+    VE.NormDefaults.enumerateSettledO U M opens atoms n vs = Option.some b →
+      ∀ (R : String → List α → Prop),
+        (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+          VE.Norms.Sat
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+              (VE.NormDefaults.fillPremises U) →
+            (VE.Formula.denote
+                (let __src := M.asStructure;
+                { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) n) ↔
+              b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1771738081
+theorem VE.NormDefaults.enumerateSettled_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α),
+    VE.NormDefaults.enumerateSettled U M n vs =
+      VE.NormDefaults.enumerateSettledO U M (VE.NormDefaults.unsaidNames U) (VE.NormDefaults.coneAtoms U M n vs) n vs
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtoms@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettled@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1029778395
 theorem VE.NormDefaults.enumerate_all
   ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
     {b : Bool},
@@ -20093,6 +20193,42 @@ theorem VE.NormDefaults.gap_of_kleene
                               (VE.NormDefaults.gapF U r.name)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.atomV@VE.NormDefaults.Evidence VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.gapBody@VE.NormDefaults.Evidence VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3687437847
+theorem VE.NormDefaults.gap_of_kleeneO
+  ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.UValid U →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        ∀ (M : VE.FiniteModel α) (opens : List String) (R : String → List α → Prop),
+          VE.NormDefaults.BaseAdmissibleU U
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R }) →
+            ∀ (tab : String → List α → Option Bool),
+              (∀ (p : String) (vs : List α) (b : Bool),
+                  VE.NormDefaults.atomVO U M opens tab p vs = Option.some b →
+                    ((VE.SoftNorms.canon (VE.NormDefaults.fill U)
+                            (let __src := M.asStructure;
+                            { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant,
+                              relation := R })).relation
+                        p vs ↔
+                      b = Bool.true)) →
+                ∀ {r : VE.Norms.Regulated},
+                  r ∈ U.D.T.regulated →
+                    r.name ∈ U.unspec →
+                      ∀ (vs : List α),
+                        VE.TupleTyped
+                            (let __src := M.asStructure;
+                            { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant,
+                              relation := R })
+                            r.sorts vs →
+                          VE.NormDefaults.kleene M (VE.NormDefaults.atomVO U M opens tab) (VE.Norms.tupleVal vs)
+                                (VE.NormDefaults.gapBody U r.name) =
+                              Option.some Bool.true →
+                            VE.Formula.denote
+                              (let __src := M.asStructure;
+                              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant,
+                                relation := R })
+                              (VE.Norms.tupleVal vs) (VE.NormDefaults.gapF U r.name)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.atomVO@VE.NormDefaults.Evidence VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.gapBody@VE.NormDefaults.Evidence VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3728274549
 theorem VE.NormDefaults.height_fillRoot
   ∀ (U : VE.NormDefaults.UDoc) (T : VE.Norms.Tree) (f : Nat) (N : VE.Norms.Node),
     VE.Norms.height T f (VE.NormDefaults.fillRoot U N) = VE.Norms.height T f N
@@ -20365,6 +20501,38 @@ theorem VE.NormDefaults.notreq_of_notperm
                   ¬VE.NormDefaults.OutB M F pr.perm vs → ¬VE.NormDefaults.OutB M F pr.req vs
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.OutB@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Pair.perm@VE.Norms.Tree VE.Norms.Pair.req@VE.Norms.Tree VE.Norms.Pair.sorts@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.pairs@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2690787976
+theorem VE.NormDefaults.notreq_of_notpermR
+  ∀ {α : Type u} {U : VE.NormDefaults.UDoc} (M : VE.FiniteModel α) (R : String → List α → Prop),
+    VE.NormDefaults.BaseAdmissibleU U
+        (let __src := M.asStructure;
+        { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R }) →
+      ∀ {pr : VE.Norms.Pair},
+        pr ∈ VE.Norms.pairs U.D.T →
+          pr.req ∈ U.unspec →
+            ∀ (vs : List α),
+              VE.TupleTyped
+                  (let __src := M.asStructure;
+                  { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                  pr.sorts vs →
+                VE.Formula.denote
+                    (let __src := M.asStructure;
+                    { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                    (VE.Norms.tupleVal vs) (VE.NormDefaults.gapF U pr.req) →
+                  ¬VE.Formula.denote
+                        (let __src := M.asStructure;
+                        { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                        (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) pr.perm) →
+                    ¬VE.Formula.denote
+                        (let __src := M.asStructure;
+                        { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                        (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) pr.req)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Pair.perm@VE.Norms.Tree VE.Norms.Pair.req@VE.Norms.Tree VE.Norms.Pair.sorts@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.pairs@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2335799039
+theorem VE.NormDefaults.openInstances_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.openInstances U M = VE.NormDefaults.openInstancesO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.openInstances@VE.NormDefaults.Evidence VE.NormDefaults.openInstancesO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.Pair@VE.Norms.Tree
+  -- expr 2260282622
 theorem VE.NormDefaults.order_fill
   ∀ {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.UValid U → VE.Norms.order (VE.NormDefaults.fill U).T = VE.Norms.order U.D.T
@@ -20474,6 +20642,33 @@ theorem VE.NormDefaults.perm_of_req
                   VE.NormDefaults.OutB M F pr.req vs → VE.NormDefaults.OutB M F pr.perm vs
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.OutB@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Pair.perm@VE.Norms.Tree VE.Norms.Pair.req@VE.Norms.Tree VE.Norms.Pair.sorts@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.pairs@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 124426115
+theorem VE.NormDefaults.perm_of_reqR
+  ∀ {α : Type u} {U : VE.NormDefaults.UDoc} (M : VE.FiniteModel α) (R : String → List α → Prop),
+    VE.NormDefaults.BaseAdmissibleU U
+        (let __src := M.asStructure;
+        { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R }) →
+      ∀ {pr : VE.Norms.Pair},
+        pr ∈ VE.Norms.pairs U.D.T →
+          pr.perm ∈ U.unspec →
+            ∀ (vs : List α),
+              VE.TupleTyped
+                  (let __src := M.asStructure;
+                  { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                  pr.sorts vs →
+                VE.Formula.denote
+                    (let __src := M.asStructure;
+                    { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                    (VE.Norms.tupleVal vs) (VE.NormDefaults.gapF U pr.perm) →
+                  VE.Formula.denote
+                      (let __src := M.asStructure;
+                      { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                      (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) pr.req) →
+                    VE.Formula.denote
+                      (let __src := M.asStructure;
+                      { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                      (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) pr.perm)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.gapF@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Pair.perm@VE.Norms.Tree VE.Norms.Pair.req@VE.Norms.Tree VE.Norms.Pair.sorts@VE.Norms.Tree VE.Norms.Pair@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.pairs@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3580134388
 theorem VE.NormDefaults.preds_anyF
   ∀ (l : List VE.Formula) (q : String), q ∈ VE.Norms.preds (VE.Norms.anyF l) → ∃ a, a ∈ l ∧ q ∈ VE.Norms.preds a
   -- uses VE.Formula@VE.Syntax VE.Norms.anyF@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
@@ -20861,6 +21056,30 @@ theorem VE.NormDefaults.syms_switch
     VE.Norms.syms (U.switch p).D.T = List.map (VE.NormDefaults.swSym p) (VE.Norms.syms U.D.T)
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.switch@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.swSym@VE.NormDefaults.Status VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sym@VE.Norms.Tree VE.Norms.syms@VE.Norms.Tree
   -- expr 2517618413
+theorem VE.NormDefaults.tabKO_sound
+  ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.UValid U →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        ∀ (M : VE.FiniteModel α) (opens : List String) (R : String → List α → Prop),
+          VE.NormDefaults.BaseAdmissibleU U
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R }) →
+            (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+              ∀ (k : Nat) (n : String) (vs : List α) (b : Bool),
+                VE.NormDefaults.tabKO U M opens k n vs = Option.some b →
+                  ((VE.SoftNorms.canon (VE.NormDefaults.fill U)
+                          (let __src := M.asStructure;
+                          { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant,
+                            relation := R })).relation
+                      n vs ↔
+                    b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.tabKO@VE.NormDefaults.Evidence VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 734915063
+theorem VE.NormDefaults.tabK_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.tabK U M = VE.NormDefaults.tabKO U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.tabK@VE.NormDefaults.Evidence VE.NormDefaults.tabKO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1378265848
 theorem VE.NormDefaults.tabK_sound
   ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.UValid U →
@@ -20874,6 +21093,31 @@ theorem VE.NormDefaults.tabK_sound
                   b = Bool.true)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.tabK@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.relation@VE.Semantics
   -- expr 3306562438
+theorem VE.NormDefaults.table3O_outcome
+  ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.UValid U →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        ∀ (M : VE.FiniteModel α) (opens : List String) (R : String → List α → Prop),
+          VE.NormDefaults.BaseAdmissibleU U
+              (let __src := M.asStructure;
+              { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R }) →
+            (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+              ∀ {r : VE.Norms.Regulated},
+                r ∈ U.D.T.regulated →
+                  ∀ (vs : List α) (b : Bool),
+                    VE.NormDefaults.table3O U M opens r.name vs = Option.some b →
+                      (VE.Formula.denote
+                          (let __src := M.asStructure;
+                          { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                          (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) r.name) ↔
+                        b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.table3O@VE.NormDefaults.Evidence VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 248618155
+theorem VE.NormDefaults.table3_eq_open
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
+    VE.NormDefaults.table3 U M = VE.NormDefaults.table3O U M (VE.NormDefaults.unsaidNames U)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.table3@VE.NormDefaults.Evidence VE.NormDefaults.table3O@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 3618406461
 theorem VE.NormDefaults.table3_outcome
   ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.UValid U →
@@ -21071,6 +21315,14 @@ theorem VE.NormDefaults.withFill_off
       ∀ (vs : List B.Carrier), (VE.NormDefaults.withFill U B F).relation n vs ↔ B.relation n vs
   -- uses VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 348299209
+theorem VE.NormDefaults.withFill_off_unsaid
+  ∀ {α : Type u} {U : VE.NormDefaults.UDoc} (M : VE.FiniteModel α) (F : VE.NormDefaults.FillTables U M.asStructure)
+    (p : String),
+    ¬p ∈ VE.NormDefaults.unsaidNames U →
+      ∀ (ws : List (VE.NormDefaults.withFill U M.asStructure F).Carrier),
+        (VE.NormDefaults.withFill U M.asStructure F).relation p ws ↔ ws ∈ M.relations p
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
+  -- expr 1621550845
 theorem VE.NormDefaults.withFill_unsaid
   ∀ (U : VE.NormDefaults.UDoc) (B : VE.Structure) (F : VE.NormDefaults.FillTables U B) {p : String},
     p ∈ U.unspec →

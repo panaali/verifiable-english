@@ -3100,6 +3100,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.appliesD_fillRoot
 #print axioms VE.NormDefaults.astBody_ok
 #print axioms VE.NormDefaults.astLoop_ok
+#print axioms VE.NormDefaults.atomV_eq_open
 #print axioms VE.NormDefaults.atom_typed
 #print axioms VE.NormDefaults.background_declared
 #print axioms VE.NormDefaults.background_fill
@@ -3109,6 +3110,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.belowCount_child
 #print axioms VE.NormDefaults.belowCount_lt
 #print axioms VE.NormDefaults.canonO
+#print axioms VE.NormDefaults.canonOR
 #print axioms VE.NormDefaults.canonTyped_expansion
 #print axioms VE.NormDefaults.canonTyped_regulated
 #print axioms VE.NormDefaults.canon_regulated
@@ -3124,6 +3126,12 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.children_fill_author
 #print axioms VE.NormDefaults.completionOf_other
 #print axioms VE.NormDefaults.completionOf_unspec
+#print axioms VE.NormDefaults.coneAtomV_eq_open
+#print axioms VE.NormDefaults.coneAtoms_eq_open
+#print axioms VE.NormDefaults.coneEval_eq_open
+#print axioms VE.NormDefaults.coneOf_eq_open
+#print axioms VE.NormDefaults.coneValuesAt_eq_open
+#print axioms VE.NormDefaults.coneValues_eq_open
 #print axioms VE.NormDefaults.conflictFreeU_consistent
 #print axioms VE.NormDefaults.conflictFreeU_iff
 #print axioms VE.NormDefaults.conflictFreeX_nil
@@ -3141,12 +3149,16 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.defBody_ok
 #print axioms VE.NormDefaults.denote_congr_preds
 #print axioms VE.NormDefaults.denote_of_coneValuesAt
+#print axioms VE.NormDefaults.denote_of_coneValuesAtO
 #print axioms VE.NormDefaults.denote_rel_iff
 #print axioms VE.NormDefaults.denote_withFill_finite
 #print axioms VE.NormDefaults.dependencyOrder_congr
 #print axioms VE.NormDefaults.dependencyOrder_ok
 #print axioms VE.NormDefaults.ebind_ok
 #print axioms VE.NormDefaults.entailsX_nil
+#print axioms VE.NormDefaults.enumerateO_all
+#print axioms VE.NormDefaults.enumerateSettledO_sound
+#print axioms VE.NormDefaults.enumerateSettled_eq_open
 #print axioms VE.NormDefaults.enumerate_all
 #print axioms VE.NormDefaults.envAt_fill_mono
 #print axioms VE.NormDefaults.envAt_fill_unsaid
@@ -3229,6 +3241,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.fuel_fill
 #print axioms VE.NormDefaults.gapF_fill
 #print axioms VE.NormDefaults.gap_of_kleene
+#print axioms VE.NormDefaults.gap_of_kleeneO
 #print axioms VE.NormDefaults.height_fillRoot
 #print axioms VE.NormDefaults.height_fill_author
 #print axioms VE.NormDefaults.height_stable
@@ -3269,6 +3282,8 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.nodup_of_count
 #print axioms VE.NormDefaults.nodup_of_dupNameOf
 #print axioms VE.NormDefaults.notreq_of_notperm
+#print axioms VE.NormDefaults.notreq_of_notpermR
+#print axioms VE.NormDefaults.openInstances_eq_open
 #print axioms VE.NormDefaults.order_fill
 #print axioms VE.NormDefaults.ordered_snoc
 #print axioms VE.NormDefaults.outcomeBase_fill
@@ -3281,6 +3296,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.pair_roles
 #print axioms VE.NormDefaults.pairs_switch
 #print axioms VE.NormDefaults.perm_of_req
+#print axioms VE.NormDefaults.perm_of_reqR
 #print axioms VE.NormDefaults.preds_anyF
 #print axioms VE.NormDefaults.preds_anyF_of
 #print axioms VE.NormDefaults.preds_atom_sub
@@ -3336,7 +3352,11 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.switch_regulated
 #print axioms VE.NormDefaults.syms_fill
 #print axioms VE.NormDefaults.syms_switch
+#print axioms VE.NormDefaults.tabKO_sound
+#print axioms VE.NormDefaults.tabK_eq_open
 #print axioms VE.NormDefaults.tabK_sound
+#print axioms VE.NormDefaults.table3O_outcome
+#print axioms VE.NormDefaults.table3_eq_open
 #print axioms VE.NormDefaults.table3_outcome
 #print axioms VE.NormDefaults.table3_sound
 #print axioms VE.NormDefaults.tailSteps_ok
@@ -3358,6 +3378,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.withFill_baseAdmissible
 #print axioms VE.NormDefaults.withFill_finite_rel
 #print axioms VE.NormDefaults.withFill_off
+#print axioms VE.NormDefaults.withFill_off_unsaid
 #print axioms VE.NormDefaults.withFill_unsaid
 #print axioms VE.NormDefaults.yieldsD_fillRoot
 #print axioms VE.NormDefaults.yields_fill_author
