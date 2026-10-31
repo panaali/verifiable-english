@@ -12,7 +12,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
-- [docs/infra/](docs__infra.md) — 13 modules — -
+- [docs/infra/](docs__infra.md) — 14 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 5 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
