@@ -42,7 +42,7 @@ BUGS = [
     ("atoms-of-one", E, "atomsOf", "if 2 ≤ atoms.length", "if 1 ≤ atoms.length", "A7 stays one obligation"),
     ("splits-of-none", E, "splitsOf", "(x.1, atomsOf R)", "(x.1, none)", "A6 splits from step 1's readings"),
     ("part-names-in-kept-dropped", E, "partNamesIn", "  | [] => [p]", "  | [] => []", "E5: unsplit unspecified kept"),
-    ("declared-after-no-parts", E, "declaredAfter", "|>.isSome)).length + M.preds.length", "|>.isSome)).length",
+    ("declared-after-no-parts", E, "declaredAfter", ".isSome).length + M.preds.length", ".isSome).length",
      "E13: the parts counted"),
     ("declared-after-sources-kept", E, "declaredAfter", "  D.declared - (D.U", "  D.declared + 0 * (D.U",
      "E13: the split sources not counted"),
