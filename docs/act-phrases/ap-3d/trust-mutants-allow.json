@@ -93,7 +93,7 @@
   {
    "definition": "VE.Acts.splitReg",
    "operator": "list-empty",
-   "reason": "equivalent kill the tool cannot certify: the whole body of splitReg cut to `[]` fails ElaborateExamples.lean's E1 guard (its detail); the seeded bug part-names-in-kept-dropped and ap-3c's split-reg-kept-dropped plant the same loss"
+   "reason": "equivalent kill the tool cannot certify: the whole body of splitReg cut to `[]` fails ElaborateExamples.lean:36's guard (E1's regulated list), as its detail shows; ap-3c's seeded bug split-reg-kept-dropped planted the same loss on this body, whose only change here is `partsOf sa`"
   },
   {
    "definition": "VE.Acts.splitsOf",
