@@ -26,3 +26,7 @@
 - `docs/act-phrases/ap-3c/seed_bugs.py` — ap-3c seeded bugs: plant each one in Elaborate.lean, show that a fixture fails, restore the file.
 - `docs/act-phrases/ap-3d/check_statements.py` — ap-3d statement gate: each theorem this item proves equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-3d/seed_bugs.py` — ap-3d seeded bugs: plant each one, show that a fixture fails, restore the files.
+- `docs/act-phrases/ap-4a/seed_bugs.py` — ap-4a's seeded bugs: plant each bug in the Lean file this item changed, build VE.Acts.ReadingsExamples, record the failing `#guard` or theorem lines (KILLED), …
+- `docs/act-phrases/ap-7/draw.py` — AP-7's constitution draw: 30 norm sentences with *and*, *or* or *nor* inside the verb phrase (PRE-REGISTRATION.md).
+- `docs/act-phrases/ap-7/dump.py` — Lean's side of AP-7: `phraseReadings` over every sample phrase under its declared vocabulary, modal included.
+- `docs/act-phrases/ap-7/runner.py` — AP-7 blind calls and scoring (PRE-REGISTRATION.md); the call and record handling is jt-e1r's runner's, for Opus.
