@@ -1,0 +1,19 @@
+{
+ "job": "pc-3.s3of8-e5700204",
+ "head": "95ea8320123289a41b5a46653020fc0b5777df51",
+ "argv": [
+  "pc-3.s3of8-e5700204",
+  "95ea8320123289a41b5a46653020fc0b5777df51",
+  "1db6f2c8e4238a32facfdb95cb8d009d22a9d756",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-846d61c27203.tar.zst",
+  "ba4576b010d8ccd6824bd5b590ebb9d03d9c8ea54dcc6e76c2e6a916ebf5472c",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/profile-composition/pc-3/trust-mutants-allow.json",
+  "--shard",
+  "3/8",
+  "--jobs",
+  "4"
+ ]
+}
