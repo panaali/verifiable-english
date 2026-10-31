@@ -14,7 +14,7 @@ import time
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import rust_build, test_schedule
+from tools import rust_build, test_chunks, test_schedule
 from ve.surface import unambiguity
 
 # R1's Lean answer store (`--answer-store`; off unless asked, refused under tools/gate.py).
@@ -31,6 +31,8 @@ def pytest_collection_modifyitems(items):
         elif item.get_closest_marker("heavy"):
             raise pytest.UsageError(f"{item.nodeid} is marked heavy but absent from tests/heavy.json; "
                                     "regenerate the measured inventory")
+    # A chunk of a selected run (VE_TEST_CHUNK) is kept by the hook `pytest_configure` registers, which runs after
+    # this one and after `-m`, so the heavy marker selects first.
 
 # A virtualenv copied from another checkout keeps that checkout's interpreter in its entry-point
 # shebangs (`.venv/bin/pytest`), and with it that checkout's editable install: `ve` would then be
@@ -195,6 +197,9 @@ def refuse_child_without_checker_settings(event, args):
 
 
 def pytest_configure(config):
+    # A selected run's chunk of a heavy test file (VE_TEST_CHUNK=<i>/<k>; tools/test_chunks.py): keeps that part
+    # of the collected tests, after every other deselection. Unset, nothing is registered.
+    test_chunks.register(config, test_schedule.read_durations)
     for variable in CHECKER_TIMEOUTS:
         os.environ[variable] = str(HANG_TIMEOUT)
     sys.addaudithook(refuse_child_without_checker_settings)

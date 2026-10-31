@@ -4,6 +4,8 @@
 //! through `Document::check` (or the surface crate's `parse`). `internal` serves the profile and
 //! surface crates only; the `ve-core` facade does not re-export it.
 mod ast;
+pub mod contract;
+pub mod contract_tables;
 mod environment;
 mod graph;
 #[doc(hidden)]
