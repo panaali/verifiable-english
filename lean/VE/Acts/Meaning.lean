@@ -8,7 +8,8 @@ last column) is read from the rule itself, `closed (schema V)` at the node's ind
 numbered there: its left side, the shape of its right side, and, for the five edges whose two rules are alike, which
 of the two it is (the first reads over the near end, the second over all). So the rule table stays the one owner of
 the rules, and no kind is written twice. A derivation has no meaning when a joined filler whose marker is written once
-has a first or last part of two or more words (D9 (i)), or when an atom does not fit its frame (`atomOk`).
+has a first or last part of two or more words (D9 (i)), or when an atom does not fit its frame (`atomOk`). `normalOk`
+is `atomOk` with the conditions under which an atom's normal form reads back (5.5, `read_normal`).
 -/
 
 namespace VE.Acts
@@ -72,6 +73,10 @@ def itemOf (cs : List Piece) : Option (Option (Bool × Bool) × List String × L
   match cs.filterMap (fun | .head h => some h | _ => none) with
   | [h] => some (cs.findSome? (fun | .fw t b => some (t, b) | _ => none), h, cs)
   | _ => none
+/-- D9 (i): a list whose marker is written once has no meaning when its first or last part is two or more words. -/
+def longEnd (ps : List Part) : Bool :=
+  let long : Option Part → Bool := fun | some (.words (_ :: _ :: _)) => true | _ => false
+  long ps.head? || long ps.getLast?
 /-- A node's pieces from its children's and its rule `r`. `second` says the rule equals the one before it: only an
 edge's two rules are written alike (5.2), and the second reads over all. -/
 def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
@@ -93,8 +98,7 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
     let (j, ms) ← listOf cs
     let ps ← ms.mapM part
     -- D9 (i): a marker written once (`PL`) refuses a first or last part of two or more words
-    let long : Option Part → Bool := fun | some (.words (_ :: _ :: _)) => true | _ => false
-    if r.lhs matches .F _ .PL && (long ps.head? || long ps.getLast?) then none else some [.list j ps]
+    if r.lhs matches .F _ .PL && longEnd ps then none else some [.list j ps]
   | .F _ (.LST m true), _, [.list j ps] => some [.split j true (ps.map (.arg m ∘ .one))]
   | .F _ (.LST m false), _, [.list j ps] => some [.elt (.arg m (.joined j ps)) .own]
   | .F _ .O, _, [.part p] => some [.elt (.arg "" (.one p)) .own]
@@ -132,6 +136,25 @@ def atomOk (V : Vocab) (a : Atom) : Bool :=
     (a.args.filter (·.1 == "")).length == (if f.markers.contains "" then 1 else 0) &&
     a.args.all (f.markers.contains ·.1) &&
     a.mods.all (fun | .adv w => V.adverbs.contains w | .prep m _ => f.mods.contains m)
+/-- A filler's parts: its one part, or each part of a joined filler. -/
+def Filler.parts : Filler → List Part
+  | .one p => [p]
+  | .joined _ ps => ps
+/-- An atom whose normal form reads back (5.5): it fits its frame (`atomOk`); every part of an argument or a modifier
+is a non-empty run of the frame's filler words, a slot other than the subject `{0}`, or a fixed phrase; no argument
+marker occurs twice; and every joined filler has two or more parts, does not sit under a split marker (the object's
+`""` included) and, by D9 (i), has no first or last part of two or more words (`longEnd`; DRI 2026-10-30, ap-2bb). -/
+def normalOk (V : Vocab) (a : Atom) : Bool :=
+  match V.frames.find? (·.head == a.head) with
+  | none => false
+  | some f =>
+    atomOk V a &&
+    (a.args.flatMap (·.2.parts) ++ a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none)).all (fun
+      | .words ws => !ws.isEmpty && ws.all (fun w => !(fillExcl V f).contains w.toLower)
+      | .slot i => i != 0
+      | .fixed _ => true) &&
+    decide (a.args.map (·.1)).Nodup &&
+    a.args.all (fun | (m, .joined _ ps) => !f.split.contains m && 2 ≤ ps.length && !longEnd ps | (_, .one _) => true)
 /-- Every atom fits its frame, and a join has at least two. -/
 def actOk (V : Vocab) : Act → Bool
   | .one a => atomOk V a
