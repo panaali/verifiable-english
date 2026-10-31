@@ -38,7 +38,7 @@ def main(base: str, branch: str, base_rev: str, branch_rev: str) -> int:
     OUT.write_text(json.dumps({"mode": "norm-defaults", "base": base_rev, "branch": branch_rev, "cases": len(rows),
                                "identical": same, "rows": rows}, indent=1) + "\n")
     print(f"{same} of {len(rows)} answers identical")
-    return 0 if same == len(rows) == len(cases) else 1
+    return 0 if cases and same == len(rows) == len(cases) else 1
 
 
 if __name__ == "__main__":
