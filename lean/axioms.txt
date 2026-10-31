@@ -6680,6 +6680,7 @@
 'VE.SoftNorms.decidesD_soften' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.decides_split' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.decisionNames_eq' depends on axioms: [propext, Quot.sound]
+'VE.SoftNorms.decisionRule_unsplit' depends on axioms: [propext]
 'VE.SoftNorms.defaultDecides_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.default_not_blocked' depends on axioms: [propext]
 'VE.SoftNorms.denote_congr_preds' depends on axioms: [propext, Quot.sound]

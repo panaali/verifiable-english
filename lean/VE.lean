@@ -105,6 +105,7 @@ import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
+import VE.SoftNorms.TreeExamples
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
