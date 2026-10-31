@@ -15180,12 +15180,10 @@
         "VE.Acts.Atom.normal",
         "VE.Acts.Atom.text",
         "VE.Acts.Atom.withTo",
-        "VE.Acts.Filler.parts",
         "VE.Acts.Filler.toks",
         "VE.Acts.Part.toks",
         "VE.Acts.joinWord",
         "VE.Acts.listToks",
-        "VE.Acts.normalOk",
         "VE.Acts.partAct",
         "VE.Acts.tokStr",
         "VE.Acts.tokText"
@@ -15690,6 +15688,7 @@
       "S": [
         "VE.Acts.Att",
         "VE.Acts.Elt",
+        "VE.Acts.Filler.parts",
         "VE.Acts.Piece",
         "VE.Acts.actOk",
         "VE.Acts.addPiece",
@@ -15699,6 +15698,7 @@
         "VE.Acts.joinAct",
         "VE.Acts.longEnd",
         "VE.Acts.meaning",
+        "VE.Acts.normalOk",
         "VE.Acts.piecesOf",
         "VE.Acts.singleAct"
       ],
