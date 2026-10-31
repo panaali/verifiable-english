@@ -873,22 +873,22 @@ def gateOf (t : List ProfileRow) (ps : List String) : Except String Route :=
     | some c => .error (unsupported c.2)
     | none => .ok (routeOf t ps)
 
-/-- The document layers' own rows of `profileTable` over the list as written, with `gateOf`'s text: what the table's
-gate adds to the list without the layers (`gate_judgments`), which a mode that gates only that list never checks. -/
-def layerGate (ps : List String) : Except String Unit :=
-  match ((profileTable.filter (documentLayers.contains ·.profile)).flatMap (rowChecks ps)).find? (·.1) with
-  | some c => .error (unsupported c.2)
-  | none => .ok ()
+/-- The profile names an environment lists, as written. -/
+def listedProfiles (environment : Lean.Json) : List String :=
+  match environment.getObjVal? "profiles" with
+  | .ok (.arr ps) => ps.toList.filterMap fun (p : Lean.Json) => p.getStr?.toOption
+  | _ => []
 
 /-- The environment a mode that composes with the document layers decides over (jt-2c,
-reviews/dri-decisions-20261028-jt-2c.md item 1): `withoutDocumentLayers`, after `layersApart` and `layerGate` over the
-list as written. The mode's identities read the environment as written. -/
+reviews/dri-decisions-20261028-jt-2c.md item 1): `withoutDocumentLayers`, after `layersApart` and the table's whole gate
+over the list as written (review F1, F5: `gateOf profileTable`, so its order, uniqueness and every row's checks, not the
+list without the layers only). A list without a document layer is read as before. The mode's identities read the
+environment as written. -/
 def decidingEnvironment (environment : Lean.Json) : Except String Lean.Json := do
-  let listed := match environment.getObjVal? "profiles" with
-    | .ok (.arr ps) => ps.toList.filterMap fun (p : Lean.Json) => p.getStr?.toOption
-    | _ => []
+  let listed := listedProfiles environment
+  unless listed.any documentLayers.contains do return environment
   layersApart listed
-  layerGate listed
+  let _ ← gateOf profileTable listed
   pure (withoutDocumentLayers environment)
 
 /-- What the table admits, read row by row. -/
@@ -979,6 +979,23 @@ theorem gate_judgments (ps : List String) (hs : ps.Pairwise (· < ·)) (hd : "do
     simp [hn.mem_erase_iff]
   unfold gateOf
   rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr]
+
+/-- Review F5 of jt-2c: a list with a document layer that a composing mode decides is one the table admits as
+written, sorted and unique included, and the mode decides over it without the layers. -/
+theorem decidingEnvironment_admits (environment j : Lean.Json)
+    (hl : (listedProfiles environment).any documentLayers.contains = true)
+    (h : decidingEnvironment environment = .ok j) :
+    TableAdmits profileTable (listedProfiles environment) ∧ j = withoutDocumentLayers environment := by
+  unfold decidingEnvironment at h
+  simp only [hl] at h
+  cases ha : layersApart (listedProfiles environment) with
+  | error e => simp [ha] at h; cases h
+  | ok u =>
+    cases hg : gateOf profileTable (listedProfiles environment) with
+    | error e => simp [ha, hg] at h; cases h
+    | ok r =>
+      simp only [hg, ha, if_true] at h
+      exact ⟨((gateOf_iff _ _ _).mp hg).1, (Except.ok.inj h).symm⟩
 
 /-! ### `gate_legacy`: on the legacy profiles the table is `dispatch` -/
 

@@ -712,28 +712,38 @@ def layerDecided (ps : List String) : String :=
 #guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
     !["alternatives@0", "rights@0", "risk@0", "soft-norms@0"].contains p).all fun p =>
   !(layerDecided ["judgments@0", p]).startsWith "CheckerUnavailable"
--- The layer's own requirement over the list as written (F1 of jt-2c's review): refused without `documents@1` with the
--- environment mode's text, decided with it; beside every other profile of the table, on either side of the boundary.
+-- The table's whole gate over the list as written (F1, F5 of jt-2c's review): refused without `documents@1` with the
+-- environment mode's text, decided with it; beside every other profile of the table, on either side of the boundary,
+-- refused exactly as the table refuses the list without the layer (`gate_judgments`).
 #guard layerDecided ["definitions@0", "judgments@0", "norms@0", "relational-fol@0"] ==
   "UnsupportedProfile: judgments@0 requires documents@1"
 #guard layerDecided ["definitions@0", "documents@1", "judgments@0", "norms@0", "relational-fol@0"] ==
   (layerListing ["definitions@0", "documents@1", "norms@0", "relational-fol@0"]).compress
 #guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
     !(["documents@1", "judgments@0"] ++ documentLayersApart).contains p).all fun p =>
-  layerDecided ([p, "judgments@0", "relational-fol@0"].mergeSort (· ≤ ·)) ==
-    "UnsupportedProfile: judgments@0 requires documents@1" &&
+  let twin := [p, "documents@1", "relational-fol@0"].mergeSort (· ≤ ·)
+  !(layerDecided ([p, "judgments@0", "relational-fol@0"].mergeSort (· ≤ ·))).startsWith "{" &&
   layerDecided ([p, "documents@1", "judgments@0", "relational-fol@0"].mergeSort (· ≤ ·)) ==
-    (layerListing ([p, "documents@1", "relational-fol@0"].mergeSort (· ≤ ·))).compress &&
+    (match gateOf profileTable twin with | .ok _ => (layerListing twin).compress | .error e => e) &&
   layerDecided ([p, "relational-fol@0"].mergeSort (· ≤ ·)) ==
     (layerListing ([p, "relational-fol@0"].mergeSort (· ≤ ·))).compress
--- On every list of D-all with the layer, `layerGate` refuses exactly the lists without `documents@1`, so never one
--- the table's gate admits (`gate_judgments`), and nothing without the layer.
+-- The layer duplicated, first or last (F5): the table's order and uniqueness over the list as written, as the
+-- environment mode refuses it; the list without the layer is the twin's.
+#guard [["definitions@0", "documents@1", "judgments@0", "judgments@0", "norms@0", "relational-fol@0"],
+    ["judgments@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0"],
+    ["definitions@0", "documents@1", "norms@0", "relational-fol@0", "judgments@0"],
+    ["documents@1", "judgments@0", "documents@1"], ["judgments@0", "documents@1"]].all fun ps =>
+  layerDecided ps == "UnsupportedProfile: profiles must be sorted and unique"
+-- On every list of D-all with the layer, the composing modes decide exactly the lists the table admits as written,
+-- refuse the others with the table's text unless `layersApart` names a profile first, and read every list without the
+-- layer as written.
 #guard (List.range (2 ^ registrySorted.length)).all fun m =>
   let ps := (maskList m ++ ["judgments@0"]).mergeSort (· ≤ ·)
-  (layerGate (maskList m) matches .ok ()) &&
-    (if ps.contains "documents@1" then layerGate ps matches .ok ()
-     else layerGate ps matches .error "UnsupportedProfile: judgments@0 requires documents@1") &&
-    ((gateOf profileTable ps).isOk <= (layerGate ps).isOk)
+  layerDecided (maskList m) == (layerListing (maskList m)).compress &&
+    layerDecided ps == (match layersApart ps, gateOf profileTable ps with
+      | .error e, _ => e
+      | .ok _, .error e => e
+      | .ok _, .ok _ => (layerListing (maskList m)).compress)
 #guard (decidingEnvironment (Lean.Json.mkObj [("profile", "relational-fol@0")])).toOption.map (·.compress) ==
   some (Lean.Json.mkObj [("profile", "relational-fol@0")]).compress
 
