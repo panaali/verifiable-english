@@ -23,7 +23,7 @@ PYTHON = {
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument ask attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults").split(),
     5: ["argument_fixtures"],
@@ -122,9 +122,9 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
-                  "VE.Cardinality.RunExamples"}:
+                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run or Cardinality.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run or Scope.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
