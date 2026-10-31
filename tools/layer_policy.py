@@ -53,9 +53,9 @@ PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for nam
 
 
 def lazy_exports(tree: ast.Module) -> dict[str, str]:
-    """A package `__init__`'s lazy table, `_EXPORTS = {"module": ("name", ...)}`, which `ve/__init__.py`'s
+    """A package `__init__`'s lazy table, `_EXPORTS = {"module": ("name", ...)}`, which the `ve` package's
     `__getattr__` resolves (PEP 562), as {name: module}. The one reader of that table: the layer check, the
-    pre-commit hook, test selection (`tools/change_units.py`) and the semantic inventory reach it through here."""
+    pre-commit hook, test selection's change units and the semantic inventory reach it through here."""
     for node in tree.body:
         if isinstance(node, ast.Assign) and [getattr(t, "id", None) for t in node.targets] == ["_EXPORTS"]:
             return {name: module for module, names in ast.literal_eval(node.value).items() for name in names}
@@ -81,8 +81,8 @@ def python_imports(module: str, source: str, exports: dict[str, str],
                    *, root: Path, package: bool = False) -> set[str]:
     """Resolve local imports, including names reexported by the ve facade.
 
-    The pre-commit hook (tools/hooks/precommit.py) resolves each staged file with this, one file at a time and
-    without the rest of the tree; tools/check_python_layers.py leaves the whole tree to import-linter.
+    The pre-commit hook resolves each staged file with this, one file at a time and without the rest of the tree;
+    the full Python layer check leaves the whole tree to import-linter.
     """
     tree = ast.parse(source)
     imported = set()

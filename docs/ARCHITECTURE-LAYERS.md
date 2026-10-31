@@ -80,8 +80,9 @@ fix it, or add it to `conformance/difffuzz-baseline.json` with a follow-up id
 ## Current exceptions
 
 The exact imported edges and reasons are tracked in
-[`tools/layer-exceptions.json`](../tools/layer-exceptions.json) (8 Python
-edges plus the assist CLI app edge; architecture batch AR-14 deleted the 33 that T5's layers make inward) and [`tools/lean-layer-exceptions.json`](../tools/lean-layer-exceptions.json)
+[`tools/layer-exceptions.json`](../tools/layer-exceptions.json) (the count is in
+[ARCHITECTURE.md](ARCHITECTURE.md) section 1; architecture batch AR-14 deleted the edges that T5's layers make
+inward) and [`tools/lean-layer-exceptions.json`](../tools/lean-layer-exceptions.json)
 (16 Lean edges). The checkers reject a new edge and reject a stale exception.
 The Python edges are containers that still call search's walkers or the rights route, AST
 traversal that uses surface registrations, the wire and the relay reading the AST's tables, and legacy Lean
