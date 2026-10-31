@@ -260,13 +260,14 @@
   },
   {
    "blockers": [
-    "AP"
+    "JT",
+    "readings"
    ],
    "bytes": 133,
    "id": "p4-u27",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs3-no-deploy",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -582,11 +583,13 @@
   {
    "blockers": [
     "JT",
-    "ET"
+    "ET",
+    "readings"
    ],
    "bytes": 250,
    "id": "p5-u59",
    "kind": "norm",
+   "reading_set": "rs3-deploy",
    "status": "OPEN"
   },
   {
@@ -740,13 +743,15 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP",
+    "JT",
+    "DF"
    ],
    "bytes": 214,
    "id": "p6-u75",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs1-contrib-bio",
+   "status": "OPEN"
   },
   {
    "blockers": [],
@@ -821,13 +826,15 @@
   },
   {
    "blockers": [
-    "AP"
+    "AP",
+    "JT",
+    "DF"
    ],
    "bytes": 154,
    "id": "p6-u83",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs1-contrib-cyb",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -1538,13 +1545,14 @@
   },
   {
    "blockers": [
-    "readings"
+    "readings",
+    "JT"
    ],
    "bytes": 198,
    "id": "p10-u155",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs16-recommend",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -1727,13 +1735,14 @@
   },
   {
    "blockers": [
-    "readings"
+    "JT",
+    "DF"
    ],
    "bytes": 78,
    "id": "p11-u174",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs9-residual",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -2098,11 +2107,13 @@
   {
    "blockers": [
     "JT",
-    "ET"
+    "ET",
+    "readings"
    ],
    "bytes": 153,
    "id": "p13-u211",
    "kind": "norm",
+   "reading_set": "rs18-develop",
    "status": "OPEN"
   },
   {
@@ -2112,7 +2123,7 @@
    "bytes": 185,
    "id": "p13-u212",
    "kind": "unformalised",
-   "reason": "hedged_claim",
+   "reason": "attitude",
    "status": "UNFORMALISED"
   },
   {
@@ -2274,13 +2285,12 @@
   },
   {
    "blockers": [
-    "AP"
+    "JT"
    ],
    "bytes": 353,
    "id": "p14-u229",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -2726,13 +2736,13 @@
   },
   {
    "blockers": [
-    "AP"
+    "readings"
    ],
    "bytes": 331,
    "id": "p16-u274",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs7-without-sag",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -2801,7 +2811,7 @@
    "bytes": 150,
    "id": "p16-u281",
    "kind": "norm",
-   "reading_set": "rs0-informed",
+   "reading_set": "rs6-informed",
    "status": "OPEN"
   },
   {
@@ -2833,13 +2843,14 @@
   },
   {
    "blockers": [
-    "AT"
+    "AT",
+    "AP"
    ],
    "bytes": 93,
    "id": "p16-u285",
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs17-board",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -2904,13 +2915,14 @@
   },
   {
    "blockers": [
-    "AP"
+    "JT",
+    "DF"
    ],
    "bytes": 117,
    "id": "p16-u292",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs9-chair",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -2945,11 +2957,13 @@
   {
    "blockers": [
     "JT",
-    "ET"
+    "ET",
+    "readings"
    ],
    "bytes": 167,
    "id": "p17-u296",
    "kind": "norm",
+   "reading_set": "rs3-reminder",
    "status": "OPEN"
   },
   {
@@ -3738,13 +3752,15 @@
   },
   {
    "blockers": [
-    "AT"
+    "JT",
+    "AP",
+    "DF"
    ],
    "bytes": 350,
    "id": "p21-u380",
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs9-access",
+   "status": "OPEN"
   },
   {
    "blockers": [
