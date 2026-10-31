@@ -1,0 +1,21 @@
+trust_mutants: 9 definitions, 432 mutants (216 to run), 4 jobs, base 9e33c741bef4
+UNKNOWN lean/VE/Acts/Grammar.lean:127 VE.Acts.frameRules (S, trusted) all-any: all -> any (lean/VE/Acts/Grammar.lean:127: Unknown constant `VE.Acts.Attach.any`)
+UNKNOWN lean/VE/Acts/Meaning.lean:78 VE.Acts.applyRule (S, trusted) all-any: all -> any (lean/VE/Acts/Meaning.lean:78: Unknown constant `VE.Acts.Attach.any`)
+SURVIVOR lean/VE/Acts/Grammar.lean:340 VE.Acts.edgeLhs (S, trusted) arm-false: (x matches .E1X) -> false (the proofs it breaks: lean/VE/Acts/Grammar.lean:344)
+UNKNOWN lean/VE/Acts/Meaning.lean:123 VE.Acts.piecesOf (S, trusted) list-empty: kids.attach -> [] (lean/VE/Acts/Meaning.lean:123: Invalid `⟨...⟩` notation: The expected type of this term could not...)
+UNKNOWN lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) append-left: ++ ((firsts (rs.flatMap (·.rhs.filterMap RSym.nt?))).filter (fun x => !rs.any (·.lhs == x))).map ->  (lean/VE/Acts/Grammar.lean:172: Function expected at)
+SURVIVOR lean/VE/Acts/Grammar.lean:341 VE.Acts.edgeLhs (S, trusted) arm-false: (x matches .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX) -> false (the proofs it breaks: lean/VE/Acts/Grammar.lean:344)
+SURVIVOR lean/VE/Acts/Grammar.lean:342 VE.Acts.edgeLhs (S, trusted) arm-false: x matches .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX -> false (the proofs it breaks: lean/VE/Acts/Grammar.lean:344)
+UNKNOWN lean/VE/Acts/Grammar.lean:84 VE.Acts.items (S, trusted) list-empty: (·.map -> (fun x_tm => [] (lean/VE/Acts/Grammar.lean:84: Function expected at)
+UNKNOWN lean/VE/Acts/Grammar.lean:106 VE.Acts.globalRules (S, trusted) list-empty: (firsts ((V.frames.flatMap (fun f => f.markers ++ f.mods)).filter (· ≠ ""))).map -> [] (lean/VE/Acts/Grammar.lean:106: Function expected at)
+UNKNOWN lean/VE/Acts/Grammar.lean:106 VE.Acts.globalRules (S, trusted) list-empty: V.frames -> [] (lean/VE/Acts/Grammar.lean:106: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Grammar.lean:78 VE.Acts.tail (S, trusted) list-drop-last: (fun x => ⟨X, [.n .J, x], .shape⟩) -> ((fun x => ⟨X, [.n .J, x], .shape⟩).dropLast) (lean/VE/Acts/Grammar.lean:78: Invalid `⟨...⟩` notation: The expected type of this term could not ...)
+SURVIVOR lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) list-drop-last: (firsts (rs.flatMap (·.rhs.filterMap RSym.nt?))) -> ((firsts (rs.flatMap (·.rhs.filterMap RSym.nt?))).dropLast) (the proofs it breaks: lean/VE/Acts/Grammar.lean:306)
+SURVIVOR lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) list-drop-last: rs -> (rs.dropLast) (the proofs it breaks: lean/VE/Acts/Grammar.lean:306)
+SURVIVOR lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) list-drop-last: rs.flatMap (·.rhs.filterMap RSym.nt?) -> ((rs.flatMap (·.rhs.filterMap RSym.nt?)).dropLast) (the proofs it breaks: lean/VE/Acts/Grammar.lean:306)
+UNKNOWN lean/VE/Acts/Grammar.lean:78 VE.Acts.tail (S, trusted) list-last: (fun x => ⟨X, [.n .J, x], .shape⟩) -> ((fun x => ⟨X, [.n .J, x], .shape⟩).reverse.take 1) (lean/VE/Acts/Grammar.lean:78: Invalid `⟨...⟩` notation: The expected type of this term could not ...)
+SURVIVOR lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) list-last: (·.rhs -> (fun x_tm => (x_tm.rhs.reverse.take 1) (the proofs it breaks: lean/VE/Acts/Grammar.lean:306)
+SURVIVOR lean/VE/Acts/Grammar.lean:172 VE.Acts.closed (S, trusted) list-last: (·.rhs.filterMap RSym.nt? -> (fun x_tm => ((x_tm.rhs.filterMap RSym.nt?).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Grammar.lean:306)
+trust_mutants: 187 KILLED, 8 SURVIVOR, 9 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 216 OTHER SHARD in 2688 s
+trust_mutants: S, trusted: 187 KILLED, 8 SURVIVOR, 9 UNKNOWN, 12 INVALID, 216 OTHER SHARD
+trust_mutants: steps: wall plan 5 s, scratch 1.9 s, control_build 0.2 s, probe_install 0.9 s, control_probes 9.1 s, mutants 2666.9 s, cleanup 3.9 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 17.7 s (3), mutant_builds 4893.3 s (310), mutant_checks 3545.8 s (207), stage_controls 935.2 s (12), mutant_probes 1227.9 s (187)
