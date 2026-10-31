@@ -24,6 +24,7 @@ from ve.surface.count import at_least, exactly, n_of_m
 from ve.surface.time import parse_quantity_sentence, render_quantity_sentence
 from ve.units import (SPACES, decimal_exact, elaborate_quantity, erased_environment, iso_date,
                       quantity_countermodel, render_coordinate)
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
@@ -304,7 +305,7 @@ def test_countermodels_share_the_budget_relay_and_lean():
 
 
 def test_lean_budget_theorems_are_audited():
-    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
     for name in ("evalB_sound", "refutesB_sound", "quantB_sound"):
         assert f"#print axioms VE.Time.{name}\n" in audit
 
@@ -315,7 +316,7 @@ def test_calendar_inverse_statement_is_unconditional():
     source = (ROOT / "lean" / "VE" / "Time" / "Calendar.lean").read_text()
     assert "theorem civilOf_num {D : Civil} (hD : D.Valid) : civilOf D.num = some D" in source
     assert "theorem civilOf_complete {n : Nat} (hn : n ≤ dateMax) :" in source
-    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
     for name in ("civilOf_num", "civilOf_complete", "civilCandidate_spec", "civilOf_isSome_iff"):
         assert f"#print axioms VE.Time.{name}\n" in audit
 

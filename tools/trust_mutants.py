@@ -144,7 +144,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "tools"), str(ROOT / "lean")]
 from audit import code_only  # noqa: E402
 from check_lean_imports import imports  # noqa: E402
-from lean_statements import declaration_list, module_name, source_hash, sources  # noqa: E402
+from lean_statements import DECLARATIONS, declaration_list, module_name, source_hash, sources  # noqa: E402
 from tools import lake_outputs, lean_share, trust_map  # noqa: E402
 
 OPEN, CLOSE = "([{⟨", ")]}⟩"
@@ -665,8 +665,8 @@ def chosen(c: trust_map.Classified, classes: tuple[str, ...]) -> bool:
 def plan(root: Path, base: str, classes: tuple[str, ...] = TRUSTED) -> tuple[list[Mutant], Tree, list[str]]:
     """The mutants in run order of the declarations --classes picks (`chosen`), the tree's checks and imports, and the
     problems that stop the run."""
-    classified, _, problems = trust_map.walk(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
-    declared, hashes = declaration_list(root / "lean/declarations.txt")
+    classified, _, problems = trust_map.walk(root, root / "tools/trust-classes.json")
+    declared, hashes = declaration_list(trust_map.inventory(DECLARATIONS, root))
     changed = changed_lines(root, base)
     fatal = [p for p in problems if "not compiled from this source" in p or "missing" in p]
     fatal += [f"lean/declarations.txt was not compiled from lean/{f}; rerun tools/lean_statements.py"
@@ -714,7 +714,7 @@ def plan(root: Path, base: str, classes: tuple[str, ...] = TRUSTED) -> tuple[lis
                 importers.setdefault(imported, set()).add(module_name(key))
         except ValueError as error:
             fatal.append(f"lean/{key}: {error}")
-    return out, Tree(roles, trust_map.statements(root / "lean/statements.txt"), files, importers), fatal
+    return out, Tree(roles, trust_map.statements(trust_map.inventory(trust_map.STATEMENTS, root)), files, importers), fatal
 
 
 def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:

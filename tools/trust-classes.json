@@ -13289,6 +13289,7 @@
         "VE.Layout.Unit"
       ]
     },
+    "VE/Scope/EffectLemmas.lean": {},
     "VE/Scope/Examples.lean": {
       "T": [
         "VE.Scope.Examples.a29",
@@ -13300,6 +13301,7 @@
         "VE.Scope.Examples.contentStr",
         "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
+        "VE.Scope.Examples.effectAsStated",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
         "VE.Scope.Examples.exporting",
@@ -13349,9 +13351,16 @@
         "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.normP",
         "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.oA",
+        "VE.Scope.Examples.oB",
+        "VE.Scope.Examples.oC",
+        "VE.Scope.Examples.oN",
+        "VE.Scope.Examples.onceRule",
         "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.ownEnv",
+        "VE.Scope.Examples.ownModel",
+        "VE.Scope.Examples.ownVal",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
@@ -13383,6 +13392,8 @@
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.titleCarveA",
         "VE.Scope.Examples.titleCarveB",
+        "VE.Scope.Examples.twiceG",
+        "VE.Scope.Examples.twiceU",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -13531,11 +13542,18 @@
         "VE.Cardinality.CTerm.eraseBy",
         "VE.Cardinality.CFormula.eraseBy",
         "VE.Cardinality.nonnegOf",
-        "VE.Cardinality.bridgeBy"
+        "VE.Cardinality.bridgeBy",
+        "VE.Cardinality.Body.evalBy",
+        "VE.Cardinality.regionSizes",
+        "VE.Cardinality.sizeIndex",
+        "VE.Cardinality.withSizes"
       ],
       "P": [
         "VE.Cardinality.regionSize",
         "VE.Cardinality.withRegions"
+      ],
+      "G[R]": [
+        "VE.Cardinality.regionCost"
       ]
     },
     "VE/Cardinality/Theorems.lean": {
@@ -15625,7 +15643,8 @@
         },
         "VE.Cardinality.Run.statementJson",
         "VE.Cardinality.Run.claimJson",
-        "VE.Cardinality.Run.reportJson"
+        "VE.Cardinality.Run.reportJson",
+        "VE.Cardinality.Run.sizesJson"
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
@@ -15649,7 +15668,13 @@
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",
-        "VE.Cardinality.Run.runCaseReported"
+        "VE.Cardinality.Run.runCaseReported",
+        {
+          "name": "VE.Cardinality.Run.countermodel",
+          "tied": [
+            "VE.Cardinality.countermodel_sound"
+          ]
+        }
       ],
       "C": [
         "VE.Cardinality.checkDeduction",
@@ -15718,7 +15743,20 @@
         "VE.Cardinality.RunExamples.fa1Report",
         "VE.Cardinality.RunExamples.fa1LeafRows",
         "VE.Cardinality.RunExamples.withLeaves",
-        "VE.Cardinality.RunExamples.closes"
+        "VE.Cardinality.RunExamples.closes",
+        "VE.Cardinality.RunExamples.model",
+        "VE.Cardinality.RunExamples.fa1bModel",
+        "VE.Cardinality.RunExamples.refute",
+        "VE.Cardinality.RunExamples.sizes",
+        "VE.Cardinality.RunExamples.refusal",
+        "VE.Cardinality.RunExamples.sized",
+        "VE.Cardinality.RunExamples.chainSorts",
+        "VE.Cardinality.RunExamples.chainPreds",
+        "VE.Cardinality.RunExamples.chainEnv",
+        "VE.Cardinality.RunExamples.chainPremise",
+        "VE.Cardinality.RunExamples.chainModel",
+        "VE.Cardinality.RunExamples.chain",
+        "VE.Cardinality.RunExamples.rel"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -15975,7 +16013,9 @@
         "ResponseShape.Schemas.Cardinality.statement",
         "ResponseShape.Schemas.Cardinality.envIds",
         "ResponseShape.Schemas.Cardinality.claim",
-        "ResponseShape.Schemas.Cardinality.document"
+        "ResponseShape.Schemas.Cardinality.document",
+        "ResponseShape.Schemas.Cardinality.sizes",
+        "ResponseShape.Schemas.Cardinality.countermodel"
       ]
     },
     "ResponseShape/Encoders/Cardinality.lean": {
@@ -16361,6 +16401,21 @@
         "VE.Cardinality.Document.Entry",
         "VE.Cardinality.Document.Graph",
         "VE.Cardinality.Document.Entries"
+      ]
+    },
+    "VE/Closure/CoreEquiv.lean": {
+      "P": [
+        "VE.Closure.CoreEquiv.embedAtom",
+        "VE.Closure.CoreEquiv.embedBranch",
+        "VE.Closure.CoreEquiv.embedCert",
+        "VE.Closure.CoreEquiv.embedEdge",
+        "VE.Closure.CoreEquiv.embedLiteral",
+        "VE.Closure.CoreEquiv.embedPair",
+        "VE.Closure.CoreEquiv.embedRule",
+        "VE.Closure.CoreEquiv.embedSigned",
+        "VE.Closure.CoreEquiv.embedToken",
+        "VE.Closure.CoreEquiv.embedTrace",
+        "VE.Closure.CoreEquiv.embedTraces"
       ]
     }
   }
