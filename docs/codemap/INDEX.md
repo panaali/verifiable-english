@@ -67,9 +67,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 77 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
-- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 29 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 40 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 75 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -102,7 +100,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
-- [lean/VE/Scope/](lean__VE__Scope.md) — 12 modules — -
+- [lean/VE/Scope/](lean__VE__Scope.md) — 9 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 12 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 22 modules — -
@@ -127,8 +125,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 59 modules — -
-- [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [usecases/](usecases.md) — 61 modules — -
+- [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).

@@ -21,6 +21,10 @@ uv run --frozen python tools/select_tests.py --tier light --base "$(git merge-ba
 
 The heavy stage names the selected files with `-m heavy`, never saved node IDs, so a renamed or split heavy test runs as light; a stage whose heavy tests are all gone is skipped. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
 
+### Deferring heavy files selected for weak reasons
+
+`--defer-heavy` is for builder runs only. It drops a test file from the plan when the coverage map records the file at over 120 s (whole-process seconds, `DEFER_SECONDS`) and every reason that selects it is weak: the static graph (`(static)`), a listed directory, or `smoke`. Any coverage-map reason keeps the file: it reads, runs or imports what changed. A full plan defers nothing. A changed test, `SMOKE`, the history lint and a file that failed last time (`run_order.last_failed`, the gate record too) always run. The run prints `deferred to the chain gate: ...`. Its map records each deferred file with exit `deferred`, so the file is never counted as passed and the static graph answers for it until it runs again. `tools/gate.py`, `--full`, the chain's own selected run and the merge train never pass the option, so the chain gate runs every deferred file.
+
 `tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it, and `--check` refuses an inventory that is stale against that report. A test measured at 10 seconds or more enters the heavy list. After a nightly `pytest --durations=0 --durations-min=0` run (without `--durations-min=0` pytest leaves out tests under 0.005 s), `tools/heavy_tests.py --check --report /path/to/pytest-output.txt` lists the tests that would enter, leave or drop out of the heavy list and exits 0: no test fails because a test became slow. The DRI decides whether to update both files with `--write --report /path/to/pytest-output.txt`. The nightly full, live, no-reuse run and branch verify still run all tests.
 
 A test file is selected when one of these changed:
