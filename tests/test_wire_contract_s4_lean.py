@@ -97,9 +97,9 @@ def test_t3_the_switch_edit_changes_only_the_generated_revision(shipped_copy):  
     after = snapshot()
     assert process(wire_tool.DATA) == []
     # 2.6: the lock and the generated module; the English table does not change, and the frozen inventory lists
-    # no generated module (AR-2, decision D2).
+    # no generated module (AR-2, decision D2). The Rust tables name the revision (wire-contract-s4-2.md 4).
     changed = {name for name in after if before.get(name) != after[name]}
-    assert changed == {CONTRACT, LOCK, MODULE}
+    assert changed == {CONTRACT, LOCK, MODULE, "rust/ve-kernel/src/contract_tables.rs"}
     assert loads_json(after[LOCK])["soft-norms@0.json"]["revision"] == new["revision"]
     # T3: the header comment (revision and hash) and the numeral of the table's `revision`, nothing else.
     head_old, body_old = before[MODULE].decode().split(" -/\n", 1)
