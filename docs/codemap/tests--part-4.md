@@ -51,6 +51,7 @@
 - `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
+- `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
 - `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
 - `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
@@ -87,4 +88,3 @@
 - `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
 - `tests/test_readings_defaults_rd3_report.py` — RD-3's report against committed evidence, with no read of the current git graph.
 - `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
-- `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
