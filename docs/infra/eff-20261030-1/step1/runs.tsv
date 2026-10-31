@@ -1,0 +1,8 @@
+tests/test_consolidation_tools.py	0	939
+tests/test_acts_vocab_mutants.py	0	136
+tests/test_readings_rd6b_differential.py	0	350
+tests/test_english_evidence.py	0	517
+tests/test_trust_mutants.py	0	521
+tests/test_defaults_checks.py	0	107
+tests/test_speech_polar_lean.py	0	620
+tests/test_lean_conformance.py	0	115
