@@ -1,4 +1,5 @@
 import VE.Acts.Meaning
+import VE.Acts.Table
 
 /-! The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's
 theorems about them.
@@ -6,6 +7,11 @@ theorems about them.
 `readings V` is ap-2's generic listing `readingsIn` at the act grammar and its meaning, which is spec 5.4's
 `listing N maxReadings (parse (grammar V) N b ts) …` exactly; `read V` is `readIn`. Spec 5.6's statements are proved
 from ap-2's generic theorems (`readingsIn_exact`, `readIn_unique`, ...) and ap-2b's `grammar_wf`.
+
+`phraseReadings` (spec 7, AP-4) is a phrase's readings under a modal: each meaning through the table, equal lists once.
+It parses once, through `readings`, so the raw cap `N`, the step budget `b` and the 64-reading limit bound it before
+the table runs: at most 64 meanings, each giving at most two lists (`table_length`), and the result is charged
+against the same limit (`phraseReadings_length`). No route reads it yet: AP-7 runs on it first (plan G17).
 -/
 
 namespace VE.Acts
@@ -59,6 +65,46 @@ theorem readings_limit (V : Vocab) (N b : Nat) (ts : Array Tok) :
   have hv : valueOf (meaning V) = fun t => match meaning V () t with | .ok (A, _, _) => some A | .error _ => none := by
     funext t; unfold valueOf; cases meaning V () t <;> rfl
   rw [← hv]; exact readingsIn_limit
+
+/-- Every reading of a phrase under a modal: each meaning through the table, equal lists once; `limit` when the
+readings are, or when more than 64 lists result (spec 7). -/
+def phraseReadings (V : Vocab) (op : Op) (N b : Nat) (ts : Array Tok) : Listing (List Simple) :=
+  match readings V N b ts with
+  | .limit => .limit
+  | .ok As =>
+    let Rs := firsts (As.flatMap (table op))
+    if maxReadings < Rs.length then .limit else .ok Rs
+
+/-- Characterised by the grammar's derivations, not by a possibly truncated list. -/
+theorem phraseReadings_exact (V : Vocab) (h : framesOk V = true) {op : Op} {N b : Nat} {ts : Array Tok}
+    {Rs : List (List Simple)} (hp : phraseReadings V op N b ts = .ok Rs) (R : List Simple) :
+    R ∈ Rs ↔ ∃ A, Derived V ts.toList A ∧ R ∈ table op A := by
+  unfold phraseReadings at hp
+  split at hp
+  · cases hp
+  next As hr =>
+    dsimp only at hp
+    split at hp
+    · cases hp
+    · cases hp
+      simp only [mem_firsts, List.mem_flatMap]
+      exact ⟨fun ⟨A, hA, hR⟩ => ⟨A, (readings_exact V h hr A).mp hA, hR⟩,
+        fun ⟨A, hA, hR⟩ => ⟨A, (readings_exact V h hr A).mpr hA, hR⟩⟩
+
+/-- The table gives a meaning at most two readings, so the lists `phraseReadings` compares are at most 128. -/
+theorem table_length (op : Op) (A : Act) : (table op A).length ≤ 2 := by
+  cases op <;> cases A <;> simp only [table, freeTable] <;> (try split) <;> simp
+
+/-- The listed readings are charged against the 64-reading limit. -/
+theorem phraseReadings_length {V : Vocab} {op : Op} {N b : Nat} {ts : Array Tok} {Rs : List (List Simple)}
+    (hp : phraseReadings V op N b ts = .ok Rs) : Rs.length ≤ maxReadings := by
+  unfold phraseReadings at hp
+  split at hp
+  · cases hp
+  · dsimp only at hp
+    split at hp
+    · cases hp
+    · cases hp; omega
 
 theorem analyse_one (V : Vocab) {N b ts a} (h : analyse V N b ts = some a) : read V N b ts = .ok (.one a) := by
   unfold analyse at h

@@ -52,43 +52,59 @@ def NT.rank : NT → Nat
 inductive RSym | t (a : Term) | n (x : NT)
   deriving DecidableEq, Repr
 
-/-- A rule over named nonterminals. -/
+/-- Where an edge rule reads its modifier (2.4): over the first item, the last item (or part), or all of them; there
+is no middle. -/
+inductive Attach | first | last | all
+  deriving DecidableEq, Repr
+/-- A rule's kind as the table writes it: an edge's attachment (5.2's two derivations), or `shape`, whose action the
+meaning reads from the rule's sides (5.3). -/
+inductive Kind | shape | edge (a : Attach)
+  deriving DecidableEq, Repr
+
+/-- A rule over named nonterminals, with its kind. -/
 structure RuleS where
   lhs : NT
   rhs : List RSym
+  kind : Kind
   deriving DecidableEq, Repr
 
 /-- The words `ws`, each as a `kw` terminal. -/
 def kwSyms (ws : List String) : List RSym := ws.map (fun w => .t (.kw w))
 /-- `X → x | x X`: one or more `x`. -/
-def many1 (X : NT) (x : RSym) : List RuleS := [⟨X, [x]⟩, ⟨X, [x, .n X]⟩]
+def many1 (X : NT) (x : RSym) : List RuleS := [⟨X, [x], .shape⟩, ⟨X, [x, .n X], .shape⟩]
 /-- A list's tail (`TM:B`, `PTh`, `RTh:m`, `MGTh`): a join word and a last member, with a comma before the join word
 or not, or a comma, a middle member and the rest. -/
 def tail (X : NT) (lasts : List RSym) (mid : RSym) : List RuleS :=
-  lasts.map (fun x => ⟨X, [.n .J, x]⟩) ++ lasts.map (fun x => ⟨X, [.t .comma, .n .J, x]⟩) ++ [⟨X, [.t .comma, mid, .n X]⟩]
+  lasts.map (fun x => ⟨X, [.n .J, x], .shape⟩) ++ lasts.map (fun x => ⟨X, [.t .comma, .n .J, x], .shape⟩) ++
+    [⟨X, [.t .comma, mid, .n X], .shape⟩]
 /-- Function words and adverbs before a core `c` (5.2's `SINGLE`, `F1S:c`, `F1O:c`, `LO:c`): adverbs `a` may stand
 before the first function word, and after it `a` when the function words are shared, `ADVSO` when they are `own`. -/
 def items (X a c : NT) (own : Bool) : List RuleS :=
   ((if own then [[.FW, c], [a, .FW, c], [.FW, .ADVSO, c], [a, .FW, .ADVSO, c]]
-    else [[c], [a, c], [.FW, c], [a, .FW, c], [.FW, a, c], [a, .FW, a, c]]).map (·.map .n)).map (⟨X, ·⟩)
+    else [[c], [a, c], [.FW, c], [a, .FW, c], [.FW, a, c], [a, .FW, a, c]]).map (·.map .n)).map (⟨X, ·, .shape⟩)
 
 /-- Start, items and coordinations (5.2), with one `MK m` per marker of any frame. -/
 def globalRules (V : Vocab) : List RuleS :=
   let adv : RSym := .t (.adv V.adverbs)
-  [⟨.S, [.t .subj, .n .SINGLE]⟩, ⟨.S, [.t .subj, .n .COORD]⟩, ⟨.J, kwSyms ["and"]⟩, ⟨.J, kwSyms ["or"]⟩,
-    ⟨.J, kwSyms ["nor"]⟩, ⟨.FW, kwSyms ["to"]⟩, ⟨.FW, kwSyms ["be"]⟩, ⟨.FW, kwSyms ["to", "be"]⟩,
-    ⟨.TOK, [.t .slot]⟩, ⟨.TOK, [.t .fixed]⟩, ⟨.ADVO, [adv]⟩, ⟨.E1X, [adv]⟩, ⟨.E1X, [adv]⟩] ++
+  [⟨.S, [.t .subj, .n .SINGLE], .shape⟩, ⟨.S, [.t .subj, .n .COORD], .shape⟩, ⟨.J, kwSyms ["and"], .shape⟩,
+    ⟨.J, kwSyms ["or"], .shape⟩, ⟨.J, kwSyms ["nor"], .shape⟩, ⟨.FW, kwSyms ["to"], .shape⟩,
+    ⟨.FW, kwSyms ["be"], .shape⟩, ⟨.FW, kwSyms ["to", "be"], .shape⟩, ⟨.TOK, [.t .slot], .shape⟩,
+    ⟨.TOK, [.t .fixed], .shape⟩, ⟨.ADVO, [adv], .shape⟩] ++
+  -- the first item's prefix edge: over the first item, or over all
+  [⟨.E1X, [adv], .edge .first⟩, ⟨.E1X, [adv], .edge .all⟩] ++
   many1 .ADVSO (.n .ADVO) ++ many1 .E1S (.n .E1X) ++ items .SINGLE .ADVSO .SC false ++
   [true, false].flatMap (fun own =>
     [Core.bare, .own].flatMap (fun c => items (.F1 own c) .E1S (.C c) own) ++
     [Core.bare, .own, .last, .rnr].flatMap (fun c =>
-      if own then items (.L true c) .ADVSO (.C c) true else [⟨.L false c, [.n (.C c)]⟩, ⟨.L false c, [.n .ADVSO, .n (.C c)]⟩]) ++
-    [⟨.COORD, [.n (.F1 own .bare), .n (.T own .bare)]⟩, ⟨.COORD, [.n (.F1 own .bare), .n (.T own .rnr)]⟩,
-      ⟨.COORD, [.n (.F1 own .own), .n (.T own .own)]⟩] ++
+      if own then items (.L true c) .ADVSO (.C c) true
+      else [⟨.L false c, [.n (.C c)], .shape⟩, ⟨.L false c, [.n .ADVSO, .n (.C c)], .shape⟩]) ++
+    [⟨.COORD, [.n (.F1 own .bare), .n (.T own .bare)], .shape⟩, ⟨.COORD, [.n (.F1 own .bare), .n (.T own .rnr)], .shape⟩,
+      ⟨.COORD, [.n (.F1 own .own), .n (.T own .own)], .shape⟩] ++
     tail (.T own .bare) [.n (.L own .bare)] (.n (.L own .bare)) ++
     tail (.T own .rnr) [.n (.L own .rnr)] (.n (.L own .bare)) ++
     tail (.T own .own) [.n (.L own .last), .n (.L own .bare)] (.n (.L own .own))) ++
-  (firsts ((V.frames.flatMap (fun f => f.markers ++ f.mods)).filter (· ≠ ""))).map (fun m => ⟨.MK m, kwSyms (wordsOf m)⟩)
+  (firsts ((V.frames.flatMap (fun f => f.markers ++ f.mods)).filter (· ≠ ""))).map
+    (fun m => ⟨.MK m, kwSyms (wordsOf m), .shape⟩)
 
 /-- The filler words' exclusions for frame `f` (1.4): the join and function words, the adverbs, the first words of
 `f`'s markers and modifier markers, and the first words of all heads. -/
@@ -99,18 +115,20 @@ def fillExcl (V : Vocab) (f : Frame) : List String :=
 /-- The rules of frame `f`, numbered `h` (5.2, "Per frame h"). -/
 def frameRules (V : Vocab) (h : Nat) (f : Frame) : List RuleS :=
   let x (y : FNT) : RSym := .n (.F h y)
-  let r (y : FNT) (rhs : List RSym) : RuleS := ⟨.F h y, rhs⟩
+  let r (y : FNT) (rhs : List RSym) : RuleS := ⟨.F h y, rhs, .shape⟩
   let adv : RSym := .t (.adv V.adverbs)
   let obj := f.markers.contains ""
   let objSplit := obj && f.split.contains ""
   let ms := f.markers.filter (· ≠ "")
   let plain := ms.filter (!f.split.contains ·)
-  -- the arguments and not-split lists of `y`; an edge of `y` (an adverb or a modifier, each read two ways)
+  -- the arguments and not-split lists of `y`; a trailing edge of `y` (an adverb or a modifier, each over the last
+  -- item or part, or over all)
   let args (y : FNT) : List RuleS := ms.map (fun m => r y [x (.AR m)]) ++ plain.map (fun m => r y [x (.LST m false)])
-  let edge (y : FNT) (fl : RSym) : List RuleS :=
-    [r y [adv], r y [adv]] ++ f.mods.flatMap (fun m => [r y [.n (.MK m), fl], r y [.n (.MK m), fl]])
-  [r .HD (kwSyms f.head), ⟨.C .bare, [x .HD]⟩, ⟨.C .own, [x .HD, x .OWNM]⟩, ⟨.C .last, [x .HD, x .LFM]⟩,
-    ⟨.C .rnr, [x .HD, x .RM]⟩, ⟨.SC, [x .HD]⟩, ⟨.SC, [x .HD, x .SM]⟩] ++
+  let two (y : FNT) (rhs : List RSym) : List RuleS := [⟨.F h y, rhs, .edge .last⟩, ⟨.F h y, rhs, .edge .all⟩]
+  let edge (y : FNT) (fl : RSym) : List RuleS := two y [adv] ++ f.mods.flatMap (fun m => two y [.n (.MK m), fl])
+  [r .HD (kwSyms f.head), ⟨.C .bare, [x .HD], .shape⟩, ⟨.C .own, [x .HD, x .OWNM], .shape⟩,
+    ⟨.C .last, [x .HD, x .LFM], .shape⟩, ⟨.C .rnr, [x .HD, x .RM], .shape⟩, ⟨.SC, [x .HD], .shape⟩,
+    ⟨.SC, [x .HD, x .SM], .shape⟩] ++
   many1 (.F h .WR) (.t (.fill (fillExcl V f))) ++ [r .FL [x .WR], r .FL [.n .TOK], r .PL [x .FL, x .PT]] ++
   tail (.F h .PT) [x .FL] (x .FL) ++
   ms.flatMap (fun m => [r (.AR m) [.n (.MK m), x .FL], r (.RL m) [x (.AR m), x (.RT m)]] ++
@@ -151,7 +169,8 @@ def RSym.nt? : RSym → Option NT
 
 /-- `rs` with `X → never` for each nonterminal of a right side that has no rule (5.2, last paragraph). -/
 def closed (rs : List RuleS) : List RuleS :=
-  rs ++ ((firsts (rs.flatMap (·.rhs.filterMap RSym.nt?))).filter (fun x => !rs.any (·.lhs == x))).map (⟨·, [.t .never]⟩)
+  rs ++ ((firsts (rs.flatMap (·.rhs.filterMap RSym.nt?))).filter (fun x => !rs.any (·.lhs == x))).map
+    (⟨·, [.t .never], .shape⟩)
 
 /-- Numbers the nonterminals of `rs` in order of first occurrence as a left side; each has its constructor's rank. -/
 def build (rs : List RuleS) : VE.Grammar.Grammar Term :=
@@ -203,7 +222,7 @@ def RuleS.ok (r : RuleS) : Bool :=
   | .n B :: _ => decide (B.rank < r.lhs.rank)
   | .t _ :: _ => true
 
-theorem kwSyms_ok {X : NT} {ws : List String} (h : ws ≠ []) : RuleS.ok ⟨X, kwSyms ws⟩ = true := by
+theorem kwSyms_ok {X : NT} {ws : List String} {k : Kind} (h : ws ≠ []) : RuleS.ok ⟨X, kwSyms ws, k⟩ = true := by
   cases ws with
   | nil => exact absurd rfl h
   | cons w ws => rfl
@@ -291,7 +310,7 @@ theorem closed_cl (rs : List RuleS) : ∀ r ∈ closed rs, ∀ x, .n x ∈ r.rhs
   · by_cases hd : rs.any (·.lhs == x) = true
     · obtain ⟨r', hr', he⟩ := List.any_eq_true.mp hd
       exact List.mem_map.mpr ⟨r', by simp [closed, hr'], by simpa using he⟩
-    · refine List.mem_map.mpr ⟨⟨x, [.t .never]⟩, ?_, rfl⟩
+    · refine List.mem_map.mpr ⟨⟨x, [.t .never], .shape⟩, ?_, rfl⟩
       simp only [closed, List.mem_append, List.mem_map, List.mem_filter, mem_firsts, List.mem_flatMap,
         List.mem_filterMap]
       exact .inr ⟨x, ⟨⟨r, hr, .n x, hx, rfl⟩, by simpa using hd⟩, rfl⟩
@@ -307,5 +326,32 @@ theorem schema_ranked (V : Vocab) (h : framesOk V = true) :
 
 theorem grammar_wf (V : Vocab) (h : framesOk V = true) : (grammar V).wf = true :=
   build_wf (closed_ok (schema_ok h)) (closed_cl _) (by simp [closed, schema, globalRules])
+
+/-! ### The edge rule (plan 2.4, spec 7) -/
+
+/-- 2.4: a rule that attaches a modifier beyond its own item does so at an edge: `first` only in the first item's
+prefix (`E1X`), `last` only in trailing positions (`TE`, `RE`, `REt`, `PX`), `all` in either (5.2's `E1X` reads over
+the first item or all). -/
+def attachOf : Kind → Option Attach
+  | .shape => none
+  | .edge a => some a
+/-- The left sides where an attachment may stand; no middle item's nonterminal is one. -/
+def edgeLhs (x : NT) : Attach → Bool
+  | .first => (x matches .E1X)
+  | .last => (x matches .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX)
+  | .all => x matches .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX
+
+theorem modifier_edges (V : Vocab) : ∀ r ∈ schema V, ∀ a, attachOf r.kind = some a → edgeLhs r.lhs a = true := by
+  let ok (r : RuleS) : Bool := match attachOf r.kind with | some a => edgeLhs r.lhs a | none => true
+  have hf (h : Nat) (f : Frame) : (frameRules V h f).all ok = true := by
+    by_cases ho : "" ∈ f.markers <;> by_cases hs : "" ∈ f.split <;>
+      simp [ok, frameRules, many1, tail, kwSyms, ho, hs, attachOf, edgeLhs]
+  have hg : (globalRules V).all ok = true := by
+    simp [ok, globalRules, items, many1, tail, kwSyms, attachOf, edgeLhs]
+  intro r hr a ha
+  have hs : (schema V).all ok = true := by
+    simp only [schema, List.all_append, List.all_flatMap, hg, Bool.true_and, List.all_eq_true]
+    exact fun ⟨f, h⟩ _ => List.all_eq_true.mp (hf h f)
+  simpa [ok, ha] using List.all_eq_true.mp hs r hr
 
 end VE.Acts
