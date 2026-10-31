@@ -1,0 +1,13 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): tools/trust-classes.json is no module of lean/, --test file or generated inventory
+trust_mutants: 2 definitions, 10 mutants (10 to run), 4 jobs, base 5e9de36f84f7
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-first: parts -> (parts.take 1)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-first: cases -> (cases.take 1)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-drop-last: cases -> (cases.dropLast)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-drop-last: parts -> (parts.dropLast)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-last: cases -> (cases.reverse.take 1)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-drop-first: parts -> (parts.drop 1)
+SURVIVOR lean/VE/Readings/Run.lean:654 VE.Readings.Run.admitComponents (G[V], trusted) list-last: parts -> (parts.reverse.take 1)
+SURVIVOR lean/VE/Readings/ComponentsWire.lean:603 VE.Readings.Run.runProduct (G[V], trusted) list-drop-first: cases -> (cases.drop 1)
+trust_mutants: 0 KILLED, 8 SURVIVOR, 0 UNKNOWN, 0 INVALID, 2 ALLOWED, 0 NOT RUN in 91 s
+trust_mutants: G[V], trusted: 8 SURVIVOR, 2 ALLOWED
+trust_mutants: steps: wall plan 10 s, scratch 3.2 s, control_build 0.2 s, probe_install 1.4 s, control_probes 39.2 s, mutants 34.7 s, cleanup 2.5 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 40.8 s (2), mutant_builds 75.4 s (10), mutant_checks 56.4 s (8)
