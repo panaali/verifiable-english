@@ -336,6 +336,7 @@ def test_assurance_manifest_check_refuses_another_layout_and_the_writer_restores
     assert R.check_assurance_layout() == 1
     assert R._run(R.entry_named("assurance-manifest"), R.entry_named("assurance-manifest").write, tmp_path) == 0
     assert file.read_text(encoding="utf-8") == R.manifest_text(manifest)
+    assert R.check_assurance_layout() == 0  # and accepts its own layout
 
 
 TRUST_MERGES = json.loads((ROOT / "tests/data/regen_trust_merges.json").read_text())
