@@ -107,15 +107,16 @@ trusted +31 against `0c4ea31d2` (and the same against `327bf922a` before the mer
 pass. `phraseReadings` is G[V] tied to `phraseReadings_exact`.
 
 `tools/trust_mutants.py` (checklist 13a, through `mac-pytest.sh --trustmut`; cloud pool), final evidence
-[trust-mutants.json](trust-mutants.json) at head `b118f331c`, base `0c4ea31d2`: 432 mutants of the 9 trusted
+[trust-mutants.json](trust-mutants.json) at head `2db884c89`, base `0c4ea31d2`: 432 mutants of the 9 trusted
 definitions whose lines this item changes (`globalRules`, `frameRules`, `many1`, `tail`, `items`, `closed`,
-`edgeLhs`, `applyRule`, `piecesOf`): KILLED 378, SURVIVOR 0, UNKNOWN 0, INVALID 16, ALLOWED 38, exit 0. Every
-ALLOWED verdict's `raw_status` is UNKNOWN; [trust-mutants-allow.json](trust-mutants-allow.json) gives each a one-line
-reason: 34 are ill-typed cuts (an unknown constructor such as `Attach.any`, anonymous-constructor notation with no
-expected type), and 4 (`closed`: M160, M180, M364, M376) fail the `closed rsC` guard but the tool's probe could not
-re-read that check for them. History: the first run (`d1b651763`) left 17 survivors: 6 in `edgeLhs` (no guard read
-it then; ReadingsExamples 88-92 added) and 11 in `closed`, whose never rules nothing checked (the `closed rsC` guard
-added, then reordered once more for M190, which an allow entry had hidden in the second run). The tool's operators
+`edgeLhs`, `applyRule`, `piecesOf`): KILLED 382, SURVIVOR 0, UNKNOWN 0, INVALID 16, ALLOWED 34, exit 0. Every
+ALLOWED verdict's `raw_status` is UNKNOWN, an ill-typed cut (an unknown constructor such as `Attach.any`,
+anonymous-constructor notation with no expected type), with its one-line reason in
+[trust-mutants-allow.json](trust-mutants-allow.json). History: the first run (`d1b651763`) left 17 survivors: 6 in
+`edgeLhs` (no guard read it then; ReadingsExamples 88-92 added) and 11 in `closed`, whose never rules nothing checked
+(the `closed rsC` guard added, and reordered once more for M190, which an allow entry had hidden in the second run;
+one intermediate run rated four killed `closed` cuts UNKNOWN because its probe could not re-read the guard, and the
+final full run rates them KILLED). The tool's operators
 find no site in `Attach` and `Kind` (one-line inductives: its `ctor-drop` reads constructors at line starts) or in
 `attachOf` (a two-arm match with no Boolean arm), so they have no mechanical mutants; `attachOf-shape-all` in the
 seeded-bug table plants one in `attachOf`, ReadingsExamples 92 checks it both ways, and every guard of the readings
@@ -130,8 +131,9 @@ reads the kinds.
   this worktree) and this item changes no route.
 - Selected tests, once, on the finished code before the merge (`153bbe624` plus the untracked report draft):
   `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: 84 of 504 units, ran on ve-mac-1, exit 0,
-  0 failed or errored ids (log summary line: "1133s; exit=0; failed/error ids=0"). After it, the merge of main and the
-  reorder of `rsC` (one guard's rule list) changed the tree; the full gate the chain runs on the final HEAD covers both.
+  0 failed or errored ids (log summary line: "1133s; exit=0; failed/error ids=0"). After it, the merge of main, the
+  reorder of `rsC` (one guard's rule list) and Grammar.lean's module docstring changed the tree (`lake build` and
+  `lean/audit.py` pass on it); the full gate the chain runs on the final HEAD covers both.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 30712 collected, 0 added, 0 removed, 0 refused, 0 stale,
   0 malformed (no test removed, so no `Test-removed` trailer).
 - Pre-existing failures on main (`main-known-red.txt`): the two `test_lean_service.py` sub-tick deadline ids and
@@ -151,11 +153,12 @@ ap-4b (`Source`, `sourceCheck`, `atomSituation`, Lean only), then AP-7 on `phras
 
 ## Commits
 
-`git log --oneline main..HEAD --no-merges` at the time of writing: 7 commits and one merge of main (cb9c9dd1d): 83ca3931f (the
+`git log --oneline main..HEAD --no-merges` at the time of writing: the item's commits and one merge of main (cb9c9dd1d): 83ca3931f (the
 kinds, `modifier_edges`, `phraseReadings`, fixtures), 434f84a03 (registration and generated lists), d1b651763 (trust
 classes, R16 allowance), e1e55742d (`phraseReadings_nodup`, both-way guards, seeded bugs), 153bbe624 (`closed rsC`,
-first evidence, allow file, DELTA), 93a2eef3a (`rsC` reordered for M190), b118f331c (final evidence, allow reasons);
-this report is committed after them.
+first evidence, allow file, DELTA), 93a2eef3a (`rsC` reordered for M190), b118f331c (evidence, allow reasons), the
+REPORT, the trust tables re-based on main's after the merge, 99444722c (Grammar.lean's module docstring) and
+2db884c89 (final allow reasons); this report is committed after them.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -170,7 +173,7 @@ this report is committed after them.
    MeaningExamples guard passes, `lake build` 1181 jobs); N.A. for the first (Lean only, nothing to compare).
 5. R8 binding: N.A., no relay (ap-4 binds `act-readings`).
 6. Gate evidence matches the final HEAD: PASS for the sync (merge of main at cb9c9dd1d, merge base `0c4ea31d2`) and
-   the saved evidence (trust mutants at b118f331c); the full gate is the chain's, on the final HEAD.
+   the saved evidence (trust mutants at 2db884c89); the full gate is the chain's, on the final HEAD.
 7. No unsigned item: PASS, DELTA row 1 cites R16 with `trust_map.py --check` and the mutants; no signature reserved.
 8. Every user-visible change in DELTA: PASS, no public output changes (no route reads the new definitions), so the only
    row is the trust growth.
