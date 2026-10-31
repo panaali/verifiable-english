@@ -1545,6 +1545,13 @@
    "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
    "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
   }
  ]
 }
