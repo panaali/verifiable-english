@@ -5608,7 +5608,7 @@ module VE.Cardinality.Run 7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0
 237:0-243:29 def VE.Cardinality.Run.claimed@VE.Cardinality.Run
 245:0-276:62 def VE.Cardinality.Run.runCase@VE.Cardinality.Run
 278:0-282:110 def VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run
-module VE.Cardinality.RunExamples cf3241f21ccb0cb9b473d6fd7765e359e4f1f6517fb30fe501e084866fcceb03
+module VE.Cardinality.RunExamples 9a6d7d2e39db5902a7c915537f9b7d55823387136c9ecb46705774afb5dffe97
 14:0-17:81 def VE.Cardinality.RunExamples.case@VE.Cardinality.RunExamples
 19:0-19:49 def VE.Cardinality.RunExamples.answer@VE.Cardinality.RunExamples
 20:0-20:87 def VE.Cardinality.RunExamples.err@VE.Cardinality.RunExamples
@@ -5676,12 +5676,12 @@ module VE.Cardinality.RunExamples cf3241f21ccb0cb9b473d6fd7765e359e4f1f6517fb30f
 453:0-453:51 def VE.Cardinality.RunExamples.sizes@VE.Cardinality.RunExamples
 454:0-454:82 def VE.Cardinality.RunExamples.refusal@VE.Cardinality.RunExamples
 455:0-457:99 def VE.Cardinality.RunExamples.sized@VE.Cardinality.RunExamples
-487:0-487:71 def VE.Cardinality.RunExamples.chainSorts@VE.Cardinality.RunExamples
-488:0-488:78 def VE.Cardinality.RunExamples.chainPreds@VE.Cardinality.RunExamples
-490:0-496:74 def VE.Cardinality.RunExamples.chainEnv@VE.Cardinality.RunExamples
-498:0-503:24 def VE.Cardinality.RunExamples.chainPremise@VE.Cardinality.RunExamples
-505:0-513:57 def VE.Cardinality.RunExamples.chainModel@VE.Cardinality.RunExamples
-515:0-518:88 def VE.Cardinality.RunExamples.chain@VE.Cardinality.RunExamples
+491:0-491:71 def VE.Cardinality.RunExamples.chainSorts@VE.Cardinality.RunExamples
+492:0-492:78 def VE.Cardinality.RunExamples.chainPreds@VE.Cardinality.RunExamples
+494:0-500:74 def VE.Cardinality.RunExamples.chainEnv@VE.Cardinality.RunExamples
+502:0-507:24 def VE.Cardinality.RunExamples.chainPremise@VE.Cardinality.RunExamples
+509:0-517:57 def VE.Cardinality.RunExamples.chainModel@VE.Cardinality.RunExamples
+519:0-522:88 def VE.Cardinality.RunExamples.chain@VE.Cardinality.RunExamples
 module VE.Cardinality.RunTheorems f8e9f395eebd31366abae3b68c37fb72a927ed74ef91193f9e689971f6ec2aee
 9:0-25:11 theorem VE.Cardinality.Run.decodeCertificate_sound@VE.Cardinality.RunTheorems
 27:0-31:5 theorem VE.Cardinality.Run.regionsJson_constants@VE.Cardinality.RunTheorems
