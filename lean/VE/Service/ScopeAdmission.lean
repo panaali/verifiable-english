@@ -12,6 +12,7 @@ namespace VE.Scope
 open Lean
 open VE.Reports (Status)
 open VE.Service.Document (checkDoc checkCore profilesOf withUnits)
+open VE.NormDefaults (ebind_ok)
 
 theorem mapM_some_mem {st : String → Option Status} {us : List String} {ts : List Status}
     (h : us.mapM st = some ts) : (∀ u ∈ us, ∃ t ∈ ts, st u = some t) ∧ ∀ t ∈ ts, ∃ u ∈ us, st u = some t := by
@@ -115,6 +116,133 @@ theorem decodeBlock_jsonWF (front : Json) (source : String) (re : VE.Readings.Wi
   obtain ⟨hw, _, hd, hb⟩ := decodeBlock_ok front source re D h
   have hf := jsonWF?_sound hw
   exact ⟨hd ▸ hf, hb ▸ jsonWF_getD front hf "scope"⟩
+
+/-! The payloads' `JsonWF` (spec 11.3: `governSets_strings` takes it of every governor's payload): each payload is a
+    part of the scope block as decoded (`decodeParts`), and the block passes the boundary (`decodeBlock_jsonWF`). -/
+
+theorem members_wf (j : Json) (hw : JsonWF j) : ∀ p ∈ members j, JsonWF p.2 := by
+  cases hw with
+  | obj kvs _ hall => exact hall
+  | _ => intro p hp; cases hp
+
+theorem membersIn_eq (path : String) (known : List String) (j : Json) (ms : List (String × Json))
+    (h : membersIn path known j = .ok ms) : ms = members j := by
+  unfold membersIn at h
+  cases hf : VE.Bridge.fields j with
+  | error => rw [hf] at h; cases h
+  | ok ms' =>
+    rw [hf] at h
+    simp only [Except.mapError, bind, Except.bind, pure, Except.pure] at h
+    split at h
+    · cases h
+    · split at h
+      · cases h
+      · cases h; simp [members, hf, Except.toOption]
+
+theorem memberOf_wf (path : String) (j : Json) (hw : JsonWF j) (ms : List (String × Json)) (hm : ms = members j)
+    (k : String) (v : Json) (h : memberOf path ms k = .ok v) : JsonWF v := by
+  unfold memberOf at h
+  split at h
+  · next v' hl => cases h; exact members_wf j hw _ (hm ▸ lookup_mem k _ ms hl)
+  · cases h
+
+theorem decodeEffect_wf (path : String) (e : Json) (hw : JsonWF e) (eff : Effect) (h : decodeEffect path e = .ok eff) :
+    JsonWF (payload eff) := by
+  unfold decodeEffect at h
+  split at h
+  · cases h; exact .null
+  · cases h; exact .null
+  · cases h; exact .null
+  · split at h <;> cases h
+    all_goals first
+      | exact members_wf e hw _ (by rename_i hm; rw [hm]; exact List.mem_singleton_self _)
+
+theorem decodeGovernor_wf (j : Json) (hw : JsonWF j) (g : Governor) (h : decodeGovernor j = .ok g) :
+    JsonWF (payload g.effect) := by
+  unfold decodeGovernor at h
+  obtain ⟨ms, hms, h⟩ := (ebind_ok _ _ _).mp h
+  have hm := membersIn_eq _ _ _ _ hms
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  dsimp only at h
+  split at h
+  all_goals
+    obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨v, hv, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨e, he, h⟩ := (ebind_ok _ _ _).mp h
+    cases h
+    exact decodeEffect_wf _ v (memberOf_wf _ j hw ms hm _ v hv) e he
+
+theorem listMember_wf (j : Json) (hw : JsonWF j) (ms : List (String × Json)) (hm : ms = members j) (k : String)
+    (xs : List Json) (h : listMember ms k = .ok xs) : ∀ x ∈ xs, JsonWF x := by
+  unfold listMember at h
+  split at h
+  · next a hl =>
+    cases h
+    have := members_wf j hw _ (hm ▸ lookup_mem k _ ms hl)
+    cases this with | arr _ hall => exact fun x hx => hall x (Array.mem_toList_iff.mp hx)
+  · cases h
+  · cases h; exact fun x hx => by cases hx
+
+/-- The decoded governors' payloads are parts of the block (`decodeParts`), so well formed when it is. -/
+theorem decodeParts_wf (block : Json) (hw : JsonWF block) (p) (h : decodeParts block = .ok p) :
+    ∀ g ∈ p.1, JsonWF (payload g.effect) := by
+  unfold decodeParts at h
+  obtain ⟨ms, hms, h⟩ := (ebind_ok _ _ _).mp h
+  dsimp only at h
+  split at h
+  case isFalse => cases h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨xs, hxs, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨gs, hgs, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  cases h
+  intro g hg
+  obtain ⟨x, hx, hd⟩ := mapM_ok_mem _ xs gs hgs g hg
+  exact decodeGovernor_wf x (listMember_wf block hw ms (membersIn_eq _ _ _ _ hms) _ xs hxs x hx) g hd
+
+theorem decodeBlock_payloads (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
+    (h : decodeBlock front source re = .ok D) : ∀ g ∈ D.governors, JsonWF (payload g.effect) := by
+  have hb := (decodeBlock_jsonWF front source re D h).2
+  unfold decodeBlock at h
+  split at h
+  · cases h
+  · cases hp : decodeParts (front.getObjValD "scope") with
+    | error e => rw [hp] at h; cases h
+    | ok p =>
+      rw [hp] at h; cases h
+      exact decodeParts_wf _ hb p hp
+
+/-- Spec 11.3's statements on the route (sc-5rd): where the boundary admits a document (sc-1af's `jsonWF?`, proved
+    sound), `governSets_preserves`, `governSets_strings` and `governSets_readings_refused` hold for the decoded
+    document, the payloads' `JsonWF` included, so no caller takes `JsonWF` as a hypothesis. -/
+theorem decodeBlock_sets (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
+    (h : decodeBlock front source re = .ok D) :
+    (∀ out, governSets D = .ok out →
+      ((∀ k, k ≠ "units" → k ≠ "reading_sets" → out.getObjVal? k = D.doc.getObjVal? k) ∧
+        (unitsOf out).map idOf = (unitsOf D.doc).map idOf ∧
+        (∀ (i : Nat) (x y : Json), (unitsOf out)[i]? = some x → (unitsOf D.doc)[i]? = some y →
+          (∀ k, k ≠ "content" → x.getObjVal? k = y.getObjVal? k) ∧ (idOf y ∈ governedSetUnits D → x = y)) ∧
+        (setsJson out).length = (setsJson D.doc).length ∧
+        ∀ (i : Nat) (x y : Json), (setsJson out)[i]? = some x → (setsJson D.doc)[i]? = some y →
+          (setUnit y ∉ governedSetUnits D → x = y) ∧ (∀ k, k ≠ "readings" → x.getObjVal? k = y.getObjVal? k) ∧
+          (readingsJson x).length = (readingsJson y).length ∧
+          ∀ (n : Nat) (r r' : Json), (readingsJson x)[n]? = some r → (readingsJson y)[n]? = some r' →
+            ∀ k, k ≠ "content" → r.getObjVal? k = r'.getObjVal? k) ∧
+      ∀ s, HasStr s out → HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect)) ∧
+    ∀ g ∈ D.governors, ∀ us, covered D g.reach = .ok us → ∀ u, (u = g.unit ∨ u ∈ us) → u ∈ setUnits D.doc →
+      u ∉ governedSetUnits D → (governSets D).isOk = false := by
+  have hw := (decodeBlock_jsonWF front source re D h).1
+  exact ⟨fun out ho => ⟨governSets_preserves D hw out ho,
+      governSets_strings D hw (decodeBlock_payloads front source re D h) out ho⟩,
+    fun g hg us hc u hu hs hn => governSets_readings_refused D hw g hg us hc u hu hs hn⟩
 
 /-- SC-1b's decoder reads the layout of exactly the document's units, in order. -/
 theorem decodeScope_layout (front : Json) (D : SDoc) (h : decodeScope front = .ok D) :

@@ -1,0 +1,110 @@
+{
+ "key": "list-A-u045a",
+ "account": "claude-panaali2",
+ "prompt": "You are auditing how an English sentence can be read. Below are a SENTENCE and, inside it, one DEMAND: a modal word (shall, should, must, may, can, has the right to, or their negations) and the acts it applies to; BEARER names who or what the demand is on. List every reading of the DEMAND that a careful reader of this English could take. Readings differ when they require, forbid or permit different things: for example each joined act on its own, or only the acts done together, or any one of several ways at the bearer's choice; or a modifier or phrase applying to one of the joined acts, or to all of them. Count readings that differ only in wording as one. Do not list a reading this English does not support. Use only the text below; do not use tools or outside knowledge. Answer only with the readings, one per line, numbered `1.`, `2.`, ..., each a plain-English sentence saying what is required, forbidden or permitted.\n\nSENTENCE: No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence\nDEMAND: No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence\nBEARER: no one (any person)\n",
+ "cli": {
+  "duration_api_ms": 11141,
+  "stop_reason": "end_turn",
+  "session_id": "9f0e8d4a-34c5-400f-9e92-99599e2e9c5c",
+  "total_cost_usd": 0.0480808,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4064,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 671,
+   "output_tokens_details": {
+    "thinking_tokens": 597
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4064,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 671,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4064,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4064
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 671,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4064,
+    "webSearchRequests": 0,
+    "costUSD": 0.0480808,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 597,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4064,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "1. No person may be subjected to arbitrary interference with any of the four: their privacy, their family, their home or their correspondence. Arbitrary interference with just one of them is already forbidden; it does not have to affect all four at once.",
+  "ttft_ms": 10849,
+  "type": "result",
+  "duration_ms": 11559,
+  "uuid": "c8de5dd0-5e8f-46b6-9d33-9cc891c2c207",
+  "ttft_stream_ms": 3704,
+  "time_to_request_ms": 462,
+  "first_content_frame_ms": 3704,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15441,
+ "answer": "1. No person may be subjected to arbitrary interference with any of the four: their privacy, their family, their home or their correspondence. Arbitrary interference with just one of them is already forbidden; it does not have to affect all four at once."
+}

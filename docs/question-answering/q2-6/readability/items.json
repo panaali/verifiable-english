@@ -1,0 +1,788 @@
+{
+ "critical": [
+  [
+   "ALLOWS-FAIL",
+   "RULES-OUT"
+  ],
+  [
+   "RULES-OUT",
+   "ALLOWS-FAIL"
+  ]
+ ],
+ "items": [
+  {
+   "context": "contexts/R-G1.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G1",
+   "id": "R-G1",
+   "key": "A",
+   "key_label": "YES",
+   "lead": "yes",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "B",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "D",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is every member eligible?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-G2.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G2",
+   "id": "R-G2",
+   "key": "A",
+   "key_label": "YES",
+   "lead": "yes",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "B",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "C",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is it the case that every member is eligible?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-G3.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G3",
+   "id": "R-G3",
+   "key": "D",
+   "key_label": "ALLOWS-FAIL",
+   "lead": "notNecessarily",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "B",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "C",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "D",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is every member verified?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-G3-no.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G3",
+   "id": "R-G3-no",
+   "key": "D",
+   "key_label": "ALLOWS-FAIL",
+   "lead": "notNecessarily",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "B",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "C",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "D",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is every member verified?",
+   "variant": "no"
+  },
+  {
+   "context": "contexts/R-G4.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G4",
+   "id": "R-G4",
+   "key": "D",
+   "key_label": "RULES-OUT",
+   "lead": "no",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "D",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is it the case that no member is eligible?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-G10.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "fixture": "G10",
+   "id": "R-G10",
+   "key": "C",
+   "key_label": "YES",
+   "lead": "yes",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "BY-READING",
+     "letter": "A",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "YES",
+     "letter": "C",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "D",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Is Ann eligible?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-U2.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "fixture": "U2",
+   "id": "R-U2",
+   "key": "B",
+   "key_label": "YES",
+   "lead": "yes",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "C",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must every person be given equal access to higher education on the basis of merit?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-U3.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "fixture": "U3",
+   "id": "R-U3",
+   "key": "C",
+   "key_label": "BY-READING",
+   "lead": "by_reading",
+   "lead_lines": [],
+   "options": [
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "A",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "D",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must every person be spared exclusion from education?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-U5.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "fixture": "U5",
+   "id": "R-U5",
+   "key": "A",
+   "key_label": "BY-READING",
+   "lead": "by_reading",
+   "lead_lines": [],
+   "options": [
+    {
+     "label": "BY-READING",
+     "letter": "A",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "C",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "D",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May every person form as well as join trade unions to protect their interests?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-U6.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "fixture": "U6",
+   "id": "R-U6",
+   "key": "C",
+   "key_label": "YES",
+   "lead": "yes",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "YES",
+     "letter": "C",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must every person receive elementary education?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-U7.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "fixture": "U7",
+   "id": "R-U7",
+   "key": "D",
+   "key_label": "BY-READING",
+   "lead": "by_reading",
+   "lead_lines": [],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "B",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "C",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must every education kind be made generally available?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A1.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A1",
+   "id": "R-A1",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "notSettled",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "YES",
+     "letter": "D",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May \"a27\" be performed?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A2.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A2",
+   "id": "R-A2",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "unknown",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "C",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May \"a25\" be performed?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A3.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A3",
+   "id": "R-A3",
+   "key": "B",
+   "key_label": "ALLOWS-FAIL",
+   "lead": "notNecessarily",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "YES",
+     "letter": "D",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May \"a26\" be performed?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A3-no.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A3",
+   "id": "R-A3-no",
+   "key": "B",
+   "key_label": "ALLOWS-FAIL",
+   "lead": "notNecessarily",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "RULES-OUT",
+     "letter": "A",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "YES",
+     "letter": "D",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May \"a26\" be performed?",
+   "variant": "no"
+  },
+  {
+   "context": "contexts/R-A4.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A4",
+   "id": "R-A4",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "unknown",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "A",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "C",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must \"a13\" be reported to the user?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A5.txt",
+   "document": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "fixture": "A5",
+   "id": "R-A5",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "unknown",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "A",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "YES",
+     "letter": "B",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "C",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "D",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May \"a10\" be performed?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A7.txt",
+   "document": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "fixture": "A7",
+   "id": "R-A7",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "notSettled",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "BY-READING",
+     "letter": "A",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "C",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "YES",
+     "letter": "D",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "May every action be performed?",
+   "variant": "shown"
+  },
+  {
+   "context": "contexts/R-A8.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "fixture": "A8",
+   "id": "R-A8",
+   "key": "E",
+   "key_label": "OPEN",
+   "lead": "notSettled",
+   "lead_lines": [
+    1
+   ],
+   "options": [
+    {
+     "label": "YES",
+     "letter": "A",
+     "text": "Yes: the text guarantees it."
+    },
+    {
+     "label": "ALLOWS-FAIL",
+     "letter": "B",
+     "text": "It is not guaranteed: the text allows a situation where it fails."
+    },
+    {
+     "label": "BY-READING",
+     "letter": "C",
+     "text": "It depends on how a sentence of the text is read."
+    },
+    {
+     "label": "RULES-OUT",
+     "letter": "D",
+     "text": "No: the text rules it out."
+    },
+    {
+     "label": "OPEN",
+     "letter": "E",
+     "text": "The text does not settle it, or VE could not decide."
+    }
+   ],
+   "question": "Must every action be reported to the user?",
+   "variant": "shown"
+  }
+ ],
+ "question": "What does VE's answer tell you?"
+}

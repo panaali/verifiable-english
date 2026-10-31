@@ -16,6 +16,7 @@ its merge strategy:
 | Entry | Files | Merge |
 |---|---|---|
 | gitattributes | `.gitattributes` (generated from this list) | regenerate |
+| acts-fault-catalogue | `conformance/wire-contract/acts@0-catalogue.json` | regenerate |
 | wire-contract | `lean/VE/WireContract/{Limits,Names}.lean`, `Tables/*.lean`, both `contracts.lock`, `docs/spec/*-wire-table.md` | regenerate |
 | english-grammar | `lean/VE/EnglishGrammar/Fixed/*.lean`, `ve/english_grammar/LOCK.json` | regenerate |
 | english-lexicon-fixtures | `lean/VE/EnglishGrammar/LexiconFixtures.lean` | regenerate |

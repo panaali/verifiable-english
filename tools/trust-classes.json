@@ -2102,10 +2102,14 @@
         "VE.Compose.wrapperRows",
         "VE.Compose.actsRefuses",
         "VE.Compose.cardinalityOthers",
-        "VE.Compose.modeProfiles"
+        "VE.Compose.modeProfiles",
+        "VE.Compose.decidingEnvironment",
+        "VE.Compose.layersApart",
+        "VE.Compose.listedProfiles"
       ],
       "G[R]": [
-        "VE.Compose.pendingWithDefaults"
+        "VE.Compose.pendingWithDefaults",
+        "VE.Compose.documentLayersApart"
       ],
       "P": [
         "VE.Compose.faultOf",
@@ -2128,7 +2132,9 @@
         "VE.Compose.Examples.todayCodes",
         "VE.Compose.Examples.todayText",
         "VE.Compose.Examples.todayTexts",
-        "VE.Compose.Examples.unsortedLists"
+        "VE.Compose.Examples.unsortedLists",
+        "VE.Compose.Examples.layerListing",
+        "VE.Compose.Examples.layerDecided"
       ]
     },
     "VE/Compose/Slot.lean": {
@@ -4664,6 +4670,9 @@
       ]
     },
     "VE/NormDefaults/Evidence.lean": {
+      "P": [
+        "VE.NormDefaults.termMR"
+      ],
       "S": [
         "VE.NormDefaults.OutB",
         "VE.NormDefaults.UniversalQF",
@@ -4677,18 +4686,26 @@
         "VE.NormDefaults.agreed",
         "VE.NormDefaults.allTuples",
         "VE.NormDefaults.atomV",
+        "VE.NormDefaults.atomVO",
         "VE.NormDefaults.closeCone",
-        "VE.NormDefaults.closeRule",
-        "VE.NormDefaults.coneAtom",
+        "VE.NormDefaults.closeRuleO",
+        "VE.NormDefaults.coneAtomO",
         "VE.NormDefaults.coneAtomV",
+        "VE.NormDefaults.coneAtomVO",
         "VE.NormDefaults.coneAtoms",
+        "VE.NormDefaults.coneAtomsO",
         "VE.NormDefaults.coneEval",
+        "VE.NormDefaults.coneEvalO",
         "VE.NormDefaults.coneJoin",
         "VE.NormDefaults.coneList",
         "VE.NormDefaults.coneOf",
+        "VE.NormDefaults.coneOfO",
         "VE.NormDefaults.coneValues",
         "VE.NormDefaults.coneValuesAt",
+        "VE.NormDefaults.coneValuesAtO",
+        "VE.NormDefaults.coneValuesO",
         "VE.NormDefaults.enumerateSettled",
+        "VE.NormDefaults.enumerateSettledO",
         "VE.NormDefaults.fillBody",
         "VE.NormDefaults.fillOfAtoms",
         "VE.NormDefaults.fillValid",
@@ -4698,11 +4715,14 @@
         "VE.NormDefaults.kneg",
         "VE.NormDefaults.kor",
         "VE.NormDefaults.openInstances",
-        "VE.NormDefaults.pairRule",
-        "VE.NormDefaults.stepEntry",
+        "VE.NormDefaults.openInstancesO",
+        "VE.NormDefaults.pairRuleO",
+        "VE.NormDefaults.stepEntryO",
         "VE.NormDefaults.subsets",
         "VE.NormDefaults.tabK",
+        "VE.NormDefaults.tabKO",
         "VE.NormDefaults.table3",
+        "VE.NormDefaults.table3O",
         "VE.NormDefaults.tupleTypedB",
         "VE.NormDefaults.unsaidAtoms"
       ],
@@ -4723,6 +4743,7 @@
         "VE.NormDefaults.Examples.m6",
         "VE.NormDefaults.Examples.mc",
         "VE.NormDefaults.Examples.modelOf",
+        "VE.NormDefaults.Examples.openC",
         "VE.NormDefaults.Examples.pairDoc",
         "VE.NormDefaults.Examples.perm",
         "VE.NormDefaults.Examples.req",
@@ -4741,6 +4762,7 @@
         "VE.NormDefaults.Examples.u6",
         "VE.NormDefaults.Examples.uBetween",
         "VE.NormDefaults.Examples.uRows",
+        "VE.NormDefaults.Examples.y1",
         "VE.NormDefaults.Examples.yperm"
       ]
     },
@@ -5001,6 +5023,9 @@
         },
         "VE.NormDefaults.Admission.softCase",
         "VE.NormDefaults.Run.softAdmissionWitness"
+      ],
+      "G[R]": [
+        "VE.NormDefaults.Run.pendingDocumentLayer"
       ]
     },
     "VE/NormDefaults/Semantics.lean": {
@@ -9694,7 +9719,6 @@
         "VE.Service.Document.checkNormDefaults",
         "VE.Service.Document.checkNorms",
         "VE.Service.Document.environmentFault",
-        "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.locatedFence",
         "VE.Service.Document.locatedModel",
         "VE.Service.Document.locatedOf",
@@ -15378,7 +15402,8 @@
         "VE.Defaults.RouteFixtures.refused",
         "VE.Defaults.RouteFixtures.run",
         "VE.Defaults.RouteFixtures.shown",
-        "VE.Defaults.RouteFixtures.βTwo"
+        "VE.Defaults.RouteFixtures.βTwo",
+        "VE.Defaults.RouteFixtures.layerCase"
       ]
     },
     "ResponseShape/DefaultsExamples.lean": {
@@ -15847,14 +15872,20 @@
         "VE.Scope.Examples.narrowG2",
         "VE.Scope.Examples.narrowNorm",
         "VE.Scope.Examples.notN",
+        "VE.Scope.Examples.optEq",
         "VE.Scope.Examples.perChoice",
+        "VE.Scope.Examples.preserved",
+        "VE.Scope.Examples.preservesOn",
         "VE.Scope.Examples.r9",
         "VE.Scope.Examples.reading",
         "VE.Scope.Examples.readingContents",
+        "VE.Scope.Examples.refusedOn",
         "VE.Scope.Examples.rset",
         "VE.Scope.Examples.s03",
         "VE.Scope.Examples.s03set",
         "VE.Scope.Examples.s05set",
+        "VE.Scope.Examples.sameBut",
+        "VE.Scope.Examples.setAt",
         "VE.Scope.Examples.setDoc",
         "VE.Scope.Examples.sets",
         "VE.Scope.Examples.twoSets",
@@ -16577,6 +16608,61 @@
       "G[V]": [
         "VE.Acts.atomSituation",
         "VE.Acts.rulePred"
+      ]
+    },
+    "VE/Scope/ReadingsLemmas.lean": {},
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
+    "VE/Service/MemoExamples.lean": {
+      "T": [
+        "memoCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
+      ]
+    },
+    "VE/WireContract/Hooks/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Hooks.Acts.actsOf",
+        "VE.WireContract.Hooks.Acts.adapter",
+        "VE.WireContract.Hooks.Acts.classifier",
+        "VE.WireContract.Hooks.Acts.decoded",
+        "VE.WireContract.Hooks.Acts.fixedOf",
+        "VE.WireContract.Hooks.Acts.hooks",
+        "VE.WireContract.Hooks.Acts.inDomain",
+        "VE.WireContract.Hooks.Acts.member",
+        "VE.WireContract.Hooks.Acts.refusedWith",
+        "VE.WireContract.Hooks.Acts.registered"
+      ],
+      "T": [
+        "VE.WireContract.Hooks.Acts.actOf",
+        "VE.WireContract.Hooks.Acts.around",
+        "VE.WireContract.Hooks.Acts.caseOf",
+        "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.memberOf",
+        "VE.WireContract.Hooks.Acts.phraseOf",
+        "VE.WireContract.Hooks.Acts.phrasesOf",
+        "VE.WireContract.Hooks.Acts.recordOf"
+      ]
+    },
+    "VE/WireContract/Tables/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Tables.Acts.table"
       ]
     }
   }

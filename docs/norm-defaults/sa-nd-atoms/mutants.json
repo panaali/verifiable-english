@@ -1,0 +1,56 @@
+{
+ "item": "sa-nd-atoms",
+ "language": "Lean",
+ "command": "cd lean && lake build VE.NormDefaults.Examples",
+ "mutants": [
+  {
+   "definition": "VE.NormDefaults.atomVO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "opens ignored by the table: `p ∈ opens` read as `p ∈ unsaidNames U`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Evidence.lean:527 (tabKO_sound)"
+  },
+  {
+   "definition": "VE.NormDefaults.enumerateSettledO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "atoms ignored: the cone over `opens` enumerated whatever list is passed",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Evidence.lean:1048 (enumerateO_all)"
+  },
+  {
+   "definition": "VE.NormDefaults.enumerateSettledO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the limit not charged on the atom list (`> MAX_UNSAID_ATOMS + 1`)",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:197 (#guard: all 13 atoms are over the limit)"
+  },
+  {
+   "definition": "VE.NormDefaults.coneAtomO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the cone reads only the first open name (`opens.take 1`)",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:189 (#guard: coneAtomsO over openC gains c(a))"
+  },
+  {
+   "definition": "VE.NormDefaults.coneValuesAtO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "assignments that Fill_T refutes are kept (`if false then none`)",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:65 (#guard: u5a enumeration)"
+  },
+  {
+   "definition": "VE.NormDefaults.coneAtomVO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "an assigned atom read off the assignment negated",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Evidence.lean:1077 (denote_of_coneValuesAtO)"
+  },
+  {
+   "definition": "VE.NormDefaults.table3O",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the table stops one symbol short (`size (fill U) - 1`)",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:37 (#guard: u1 table3)"
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "key": "match-u087",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: 4. Everyone has the right to form and to join trade unions for the protection of his interests.\nDEMAND: Everyone has the right to form and to join trade unions for the protection of his interests\nIn list L, {0} stands for everyone.\nA1. Everyone is permitted to form trade unions and is separately permitted to join trade unions, each for the protection of his interests.\nA2. Everyone is permitted to form trade unions without any stated purpose limit, and is separately permitted to join trade unions for the protection of his interests.\nB1. Everyone is permitted to form trade unions, and separately is permitted to join trade unions, in each case for the protection of his interests. Each right stands on its own, so a person may do either one without the other.\nB2. Everyone is permitted to form trade unions and to join trade unions without any condition. \"For the protection of his interests\" only explains why the right exists and does not limit when it applies.\nB3. Everyone is permitted to form trade unions without condition, and is permitted to join trade unions for the protection of his interests. The purpose phrase limits only the right to join.\nB4. Everyone is permitted to form or join only those trade unions that exist to protect workers' interests. The phrase describes the kind of union, not the person's reason for acting.\nL1. {0} has the right to form trade unions, and {0} has the right to join trade unions for the protection of their interests.\nL2. {0} has the right to form trade unions for the protection of their interests, and {0} has the right to join trade unions for the protection of their interests.\n",
+ "cli": {
+  "duration_api_ms": 4872,
+  "stop_reason": "end_turn",
+  "session_id": "39a283d2-2c40-4cf5-9258-6966cb4bcc1c",
+  "total_cost_usd": 0.0409968,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4511,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 138,
+   "output_tokens_details": {
+    "thinking_tokens": 100
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4511,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 138,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4511,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4511
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 138,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4511,
+    "webSearchRequests": 0,
+    "costUSD": 0.0409968,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 100,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4511,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 L2\nPAIR A2 B3 L1\nSKIPPED: NONE",
+  "ttft_ms": 5074,
+  "type": "result",
+  "duration_ms": 5116,
+  "uuid": "68dd688f-26ca-4869-8d00-f97e96a85818",
+  "ttft_stream_ms": 3610,
+  "time_to_request_ms": 243,
+  "first_content_frame_ms": 3610,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15355,
+ "answer": "PAIR A1 B1 L2\nPAIR A2 B3 L1\nSKIPPED: NONE"
+}

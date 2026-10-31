@@ -1,0 +1,4 @@
+{"allow": [
+  {"definition": "VE.Readings.Run.runProduct", "operator": "list-empty", "reason": "the mutant does not elaborate: `[].mapM (fun c => ... c.1 ...)` gives `c` no type to project from (Invalid projection), as it did before this change; no program results, so no check can read it"},
+  {"definition": "VE.Readings.Run.admitComponents", "operator": "list-empty", "reason": "the mutant does not elaborate: `[].mapM (fun p => ... p.1 ...)` gives `p` no type to project from (Invalid projection), as it did before this change; no program results, so no check can read it"}
+]}

@@ -55,9 +55,6 @@ def ownedProfiles : List String :=
   ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
    "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
-/-- What `judgments@0` does not compose with in this mode yet: their contents are no `Judgments.Content`. -/
-def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
-
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
 kind of its own (Python's `load_document` skips `_check_kind` for them) and the key of the rights block the unit
 holds. The one table of these names in the mode. -/
@@ -418,8 +415,8 @@ def Env.rights (E : Env) : Bool := E.profiles.contains "rights@0"
 /-- A `soft-norms@0` document without `rights@0` (batch 16f): the soft route composes it (`SoftLayer`). -/
 def Env.soft (E : Env) : Bool := E.profiles.contains "soft-norms@0" && !E.rights
 
-/-- The environment a case of another mode (`parse`, `model`, the English reader) reads: without the document layers,
-which no other mode composes with yet (JT-2). Its identities stay the list's as written (`E.envId`). -/
+/-- The environment a case of another mode (`parse`, `model`, the English reader) reads: without the document layers
+(JT-2; since jt-2c those modes also decide without them). Its identities stay the list's as written (`E.envId`). -/
 def Env.forModes (E : Env) : Json := VE.Compose.withoutDocumentLayers E.json
 
 /-- The environment the rights and soft routes read: without the head profile `readings@1`, as Python's relays
@@ -708,8 +705,8 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   if listed.contains "judgments@0" then
-    if let some p := judgmentsApart.find? listed.contains then
-      throw (unavailable s!"judgments@0 with {p} needs its composed Lean route")
+    -- Refused by name, as by every composing mode; the layer's requirement is the gate's over the list, below.
+    VE.Compose.layersApart listed
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then

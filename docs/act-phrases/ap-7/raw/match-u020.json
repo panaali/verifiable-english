@@ -1,0 +1,110 @@
+{
+ "key": "match-u020",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: Furthermore, no distinction shall be made on the basis of the political, jurisdictional or international status of the country or territory to which a person belongs, whether it be independent, trust, non-self-governing or under any other limitation of sovereignty.\nDEMAND: no distinction shall be made on the basis of the political, jurisdictional or international status of the country or territory to which a person belongs\nIn list L, {0} stands for a distinction.\nA1. No distinction may be made between people because of the political status, the jurisdictional status or the international status of the country or territory they belong to. Each of the three kinds of status is a forbidden basis on its own, and so is any combination of them. The rule applies whether the person belongs to a country or to a territory.\nB1. No distinction may be made on the basis of any one of these statuses (political, jurisdictional or international) of the country or territory a person belongs to. A distinction based on any single one of them, whether it concerns the person's country or their territory, is forbidden.\nB2. No distinction may be made on the basis of the overall status of the person's country or territory, meaning that status taken as a whole across its political, jurisdictional and international sides. On this reading, only a distinction based on that combined status is forbidden.\nL: (none: the parser lists no reading)\n",
+ "cli": {
+  "duration_api_ms": 5201,
+  "stop_reason": "end_turn",
+  "session_id": "635383e5-2910-4fab-805c-98393ba0cd24",
+  "total_cost_usd": 0.040396800000000004,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4426,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 142,
+   "output_tokens_details": {
+    "thinking_tokens": 116
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4426,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 142,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4426,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4426
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 142,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4426,
+    "webSearchRequests": 0,
+    "costUSD": 0.040396800000000004,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 116,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4426,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 NONE\nSKIPPED: NONE",
+  "ttft_ms": 5274,
+  "type": "result",
+  "duration_ms": 5433,
+  "uuid": "cab73215-b3a7-46d0-bd91-c97d28e1f22b",
+  "ttft_stream_ms": 3995,
+  "time_to_request_ms": 228,
+  "first_content_frame_ms": 3995,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15274,
+ "answer": "PAIR A1 B1 NONE\nSKIPPED: NONE"
+}
