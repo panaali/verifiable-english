@@ -57,10 +57,15 @@ def record() -> list[dict]:
     return [{"id": fid, "env": env, "text": text, "outcome": outcome(env, text)} for fid, env, text in cases()]
 
 
+def same(a, b) -> bool:
+    """Equal as JSON, so `true` is not `1`."""
+    return json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+
+
 def delta_rows(base: list[dict], head: list[dict]) -> list[dict]:
     """Every record whose outcome moved, with both outcomes."""
     return [{"id": b["id"], "env": b["env"], "base": b["outcome"], "head": h["outcome"]}
-            for b, h in zip(base, head) if b["outcome"] != h["outcome"]]
+            for b, h in zip(base, head) if not same(b["outcome"], h["outcome"])]
 
 
 def quoted(text: str) -> list[str]:
@@ -73,14 +78,14 @@ def problems(base: list[dict], head: list[dict], delta: dict) -> list[str]:
     out = []
     if [(r["id"], r["env"], r["text"]) for r in base] != [(r["id"], r["env"], r["text"]) for r in head]:
         out.append("base and head record different documents")
-    if delta.get("rows") != delta_rows(base, head):
+    if not same(delta.get("rows"), delta_rows(base, head)):
         out.append("delta.json is not the difference of base and head")
     if not delta.get("rows"):
         out.append("the delta is empty")
     for row in delta.get("rows", ()):
         b, h = row["base"], row["head"]
         if not (b["class"] == "TypeMismatch" and b["message"].startswith(PREFIX)
-                and h == {**b, "message": b["message"].removeprefix(PREFIX)}):
+                and same(h, {**b, "message": b["message"].removeprefix(PREFIX)})):
             out.append(f"{row['id']}: moved by more than the dropped prefix")
         if "span" not in h or not all(name in h["message"] for name in quoted(b["message"])):
             out.append(f"{row['id']}: the head lost the base's span or a quoted name")
