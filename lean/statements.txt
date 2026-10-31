@@ -745,9 +745,10 @@ theorem VE.Acts.grammar_wf
   -- uses VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Grammar.Grammar.wf@VE.Grammar.Basic
   -- expr 3559248769
 theorem VE.Acts.kwSyms_ok
-  ∀ {X : VE.Acts.NT} {ws : List String}, ws ≠ [] → { lhs := X, rhs := VE.Acts.kwSyms ws }.ok = Bool.true
-  -- uses VE.Acts.NT@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.kwSyms@VE.Acts.Grammar
-  -- expr 2344482936
+  ∀ {X : VE.Acts.NT} {ws : List String} {k : VE.Acts.Kind},
+    ws ≠ [] → { lhs := X, rhs := VE.Acts.kwSyms ws, kind := k }.ok = Bool.true
+  -- uses VE.Acts.Kind@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 2777211161
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),
@@ -778,6 +779,12 @@ theorem VE.Acts.mem_firsts
   ∀ {α : Type} [inst : DecidableEq α] {x : α} {l : List α}, x ∈ VE.Acts.firsts l ↔ x ∈ l
   -- uses VE.Acts.firsts@VE.Acts.Read
   -- expr 3013831312
+theorem VE.Acts.modifier_edges
+  ∀ (V : VE.Acts.Vocab) (r : VE.Acts.RuleS),
+    r ∈ VE.Acts.schema V →
+      ∀ (a : VE.Acts.Attach), VE.Acts.attachOf r.kind = Option.some a → VE.Acts.edgeLhs r.lhs a = Bool.true
+  -- uses VE.Acts.Attach@VE.Acts.Grammar VE.Acts.RuleS.kind@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.attachOf@VE.Acts.Grammar VE.Acts.edgeLhs@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
+  -- expr 366501910
 theorem VE.Acts.nodup_firsts
   ∀ {α : Type} [inst : DecidableEq α] (l : List α), (VE.Acts.firsts l).Nodup
   -- uses VE.Acts.firsts@VE.Acts.Read
@@ -788,6 +795,19 @@ theorem VE.Acts.paraphrases_nodup
     VE.Acts.paraphrases fx op f what Rs = Except.ok ps → ps = List.map (VE.Acts.paraphrase fx op f) Rs ∧ ps.Nodup
   -- uses VE.Acts.Lexical.Form@VE.Acts.Lexical VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.paraphrase@VE.Acts.Table VE.Acts.paraphrases@VE.Acts.Table
   -- expr 1377960836
+theorem VE.Acts.phraseReadings_exact
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ {op : VE.Acts.Op} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {Rs : List (List VE.Acts.Simple)},
+        VE.Acts.phraseReadings V op N b ts = VE.Acts.Listing.ok Rs →
+          ∀ (R : List VE.Acts.Simple), R ∈ Rs ↔ ∃ A, VE.Acts.Derived V ts.toList A ∧ R ∈ VE.Acts.table op A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.phraseReadings@VE.Acts.Readings VE.Acts.table@VE.Acts.Table
+  -- expr 2154349624
+theorem VE.Acts.phraseReadings_length
+  ∀ {V : VE.Acts.Vocab} {op : VE.Acts.Op} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {Rs : List (List VE.Acts.Simple)},
+    VE.Acts.phraseReadings V op N b ts = VE.Acts.Listing.ok Rs → Rs.length ≤ VE.Acts.maxReadings
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.maxReadings@VE.Acts.Read VE.Acts.phraseReadings@VE.Acts.Readings
+  -- expr 3775337609
 theorem VE.Acts.readIn_many
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
@@ -964,6 +984,10 @@ theorem VE.Acts.table_free_nor
       ∀ (sp : Bool) (ps : List VE.Acts.Atom), VE.Acts.table op (VE.Acts.Act.any Bool.true sp ps) = []
   -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
   -- expr 1856086696
+theorem VE.Acts.table_length
+  ∀ (op : VE.Acts.Op) (A : VE.Acts.Act), (VE.Acts.table op A).length ≤ 2
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 348174116
 theorem VE.Acts.table_mustNot_all
   ∀ (s : Bool) (ps : List VE.Acts.Atom),
     VE.Acts.table VE.Acts.Op.mustNot (VE.Acts.Act.all s Bool.false ps) =

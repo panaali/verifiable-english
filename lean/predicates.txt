@@ -103,6 +103,7 @@ module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
 module VE.Acts.Read
 module VE.Acts.Readings
+module VE.Acts.ReadingsExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
