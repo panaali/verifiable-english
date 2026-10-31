@@ -1,6 +1,20 @@
-"""Check import-linter's Python contract and its reviewed legacy-edge ledger."""
+"""Check Python's layers: import-linter over tools/layer_policy.py's table, and its reviewed exception ledger.
+
+import-linter (`lint-imports` on the generated `.importlinter`) finds every outward import, direct or through
+other modules and at any depth in a function, and fails on a ledger edge that no longer exists (an unmatched
+`ignore_imports`). This script checks what it does not:
+- every module has a layer (`layer_policy.python_layer`): there is no default layer;
+- no directory under a root package lacks `__init__.py` (import-linter would not see its modules);
+- every ledger edge still points outward under the table, or it is stale;
+- no module below the facade's highest layer imports the `ve` facade itself: its names resolve lazily
+  (`ve/__init__.py`), so import-linter sees an import of `ve`, never the module behind the name;
+- the imports of a package split across layers (`ve.backends`): import-linter cannot nest a layer in another,
+  so the contract lists the package's other modules one by one, and its `__init__` is in no layer;
+- `.importlinter` is the file this script generates from the table and the ledger.
+"""
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 import subprocess
@@ -8,52 +22,66 @@ import sys
 
 import grimp
 
-from layer_policy import PYTHON, ROOT, python_exports, python_imports, python_layer
+from layer_policy import PYTHON, PYTHON_MODULES, ROOT, python_exports, python_layer
 
-LEDGER = ROOT / "tools/layer-exceptions.json"
-CONTRACT = ROOT / ".importlinter"
-
-
-def layer(module: str) -> int | None:
-    return 5 if module == "ve_experiments" or module.startswith("ve_experiments.") else python_layer(module)
+LEDGER = "tools/layer-exceptions.json"
+CONTRACT = ".importlinter"
+PACKAGES = ("ve", "ve_experiments")
 
 
-def violations() -> set[str]:
-    graph = grimp.build_graph("ve", "ve_experiments", include_external_packages=False)
-    missing = sorted(module for module in graph.modules
-                     if module not in {"ve", "ve_experiments"}
-                     and module.startswith("ve.") and python_layer(module) is None)
-    if missing:
-        raise ValueError(f"unmapped Python modules: {missing}")
-    exports = python_exports(ROOT)
-    edges = {(importer, imported)
-             for importer in graph.modules
-             for imported in graph.find_modules_directly_imported_by(importer)}
-    for importer in graph.modules:
-        if importer in {"ve", "ve_experiments"}:
-            continue
-        source = ROOT.joinpath(*importer.split("."))
-        package = source.is_dir()
-        source = source / "__init__.py" if package else source.with_suffix(".py")
-        if source.exists():
-            edges.update((importer, imported) for imported in
-                         python_imports(importer, source.read_text(), exports,
-                                        root=ROOT, package=package))
-    return {
-        f"{importer} -> {imported}"
-        for importer, imported in edges
-        if (layer(importer) is not None and layer(imported) is not None
-            and layer(importer) < layer(imported))
-    }
+def split_packages() -> list[str]:
+    """Rows holding a longer row: packages whose modules are not all in one layer."""
+    return sorted(row for row in PYTHON_MODULES if any(other.startswith(row + ".") for other in PYTHON_MODULES))
 
 
-def contract_text(exceptions: dict[str, str]) -> str:
+def children(package: str, root: Path) -> list[str]:
+    folder = root.joinpath(*package.split("."))
+    return sorted(f"{package}.{path.stem if path.suffix else path.name}" for path in folder.iterdir()
+                  if (path.suffix == ".py" and path.name != "__init__.py") or (path / "__init__.py").exists())
+
+
+def layer_modules(row: str, root: Path) -> list[str]:
+    """The contract's modules for a row: the row, or a split package's children that no longer row places."""
+    if row not in split_packages():
+        return [row]
+    return [module for child in children(row, root) if child not in PYTHON_MODULES
+            for module in layer_modules(child, root)]
+
+
+def problems(root: Path) -> list[str]:
+    """What import-linter does not check, as messages; empty when the tree passes. `root`'s packages must be the
+    ones `import ve` finds (`main` puts `root` first on the path)."""
+    errors = []
+    graph = grimp.build_graph(*PACKAGES, include_external_packages=False)
+    errors += [f"unmapped Python module {module} (add it to tools/layer_policy.py)"
+               for module in sorted(graph.modules) if python_layer(module) is None and module not in PACKAGES]
+    for package in PACKAGES:
+        errors += [f"{folder.relative_to(root)} has Python modules and no __init__.py"
+                   for folder in sorted({path.parent for path in (root / package).rglob("*.py")})
+                   if "__pycache__" not in folder.parts and not (folder / "__init__.py").exists()]
+    for edge in sorted(json.loads((root / LEDGER).read_text())):
+        importer, imported = edge.split(" -> ")
+        if not (python_layer(importer) or 0) < (python_layer(imported) or 0):
+            errors.append(f"stale exception (remove it): {edge} is not outward")
+    for package in split_packages():
+        errors += [f"new outward import {package} -> {imported} (its __init__ is in no import-linter layer)"
+                   for imported in sorted(graph.find_modules_directly_imported_by(package))
+                   if (python_layer(imported) or 0) > python_layer(package)]
+    facade = max(python_layer(module) for module in python_exports(root).values())
+    errors += [f"{importer} imports the ve facade below layer {facade}; import the defining module"
+               for importer in sorted(graph.find_modules_that_directly_import("ve"))
+               if (python_layer(importer) or 0) < facade]
+    return errors
+
+
+def contract_text(exceptions: dict[str, str], root: Path) -> str:
     lines = ["# Generated by tools/check_python_layers.py --write; review the ledger first.",
-             "[importlinter]", "root_packages =", "    ve", "    ve_experiments", "", "[importlinter:contract:layers]",
+             "[importlinter]", "root_packages =", *(f"    {package}" for package in PACKAGES), "",
+             "[importlinter:contract:layers]",
              "name = VE inward-only imports (reviewed legacy edges)", "type = layers",
-             "layers ="]
+             "unmatched_ignore_imports_alerting = error", "layers ="]
     for layer in range(5, 0, -1):
-        modules = [f"ve.{name}" for name in PYTHON[layer]]
+        modules = [module for name in PYTHON[layer] for module in layer_modules(f"ve.{name}", root)]
         if layer == 5:
             modules.append("ve_experiments")
         lines.append("    " + ":".join(modules))
@@ -61,26 +89,29 @@ def contract_text(exceptions: dict[str, str]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    exceptions = json.loads(LEDGER.read_text())
-    actual = violations()
-    stale = exceptions.keys() - actual
-    new = actual - exceptions.keys()
-    if stale or new:
-        for edge in sorted(stale):
-            print(f"stale exception (remove it): {edge}", file=sys.stderr)
-        for edge in sorted(new):
-            print(f"new outward import: {edge}", file=sys.stderr)
-        return 1
-    generated = contract_text(exceptions)
-    if "--write" in sys.argv:
-        CONTRACT.write_text(generated)
-    elif CONTRACT.read_text() != generated:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--write", action="store_true", help="regenerate .importlinter from the table and ledger")
+    parser.add_argument("--root", type=Path, default=ROOT, help="the checkout to check (default: this one)")
+    args = parser.parse_args(argv)
+    root = args.root.resolve()
+    sys.path.insert(0, str(root))  # grimp and lint-imports must find root's packages
+    exceptions = json.loads((root / LEDGER).read_text())
+    found = problems(root)
+    for message in found:
+        print(message, file=sys.stderr)
+    generated = contract_text(exceptions, root)
+    if args.write:
+        (root / CONTRACT).write_text(generated)
+    elif (root / CONTRACT).read_text() != generated:
         print(".importlinter is out of sync; run --write", file=sys.stderr)
         return 1
     result = subprocess.run([str(Path(sys.executable).with_name("lint-imports")), "--no-cache",
-                             "--config", str(CONTRACT)], cwd=ROOT, check=False)
-    return result.returncode
+                             "--config", str(root / CONTRACT)], cwd=root, check=False,
+                            capture_output=True, text=True)
+    print(result.stdout, end="")
+    print(result.stderr, end="", file=sys.stderr)
+    return 1 if found else result.returncode
 
 
 if __name__ == "__main__":
