@@ -1,0 +1,6 @@
+trust_mutants: 16 definitions, 253 mutants (32 to run), 4 jobs, base 1db6f2c8e423
+UNKNOWN lean/VE/Compose/Dispatch.lean:820 VE.Compose.wrapperRows (G[V], trusted) list-drop-first: ["norms@0"] -> (["norms@0"].drop 1) (lean/VE/Service/ScopeExamples.lean:104: Expression (Lean could not elaborate it in the probe))
+trust_mutants: 17 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 14 ALLOWED, 0 NOT RUN, 221 OTHER SHARD in 5563 s
+trust_mutants: G[V], trusted: 17 KILLED, 1 UNKNOWN, 6 ALLOWED, 134 OTHER SHARD
+trust_mutants: S, trusted: 8 ALLOWED, 87 OTHER SHARD
+trust_mutants: steps: wall plan 7.3 s, scratch 2.3 s, control_build 0.3 s, probe_install 1.2 s, control_probes 122.2 s, mutants 5425.6 s, cleanup 4.2 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 173.9 s (4), mutant_builds 1591.8 s (52), mutant_checks 7927.2 s (38), stage_controls 2809.1 s (8), mutant_probes 7790.6 s (25)
