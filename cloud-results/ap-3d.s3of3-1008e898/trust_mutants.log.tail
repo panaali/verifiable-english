@@ -1,0 +1,8 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): tools/trust-classes.json is no module of lean/, --test file or generated inventory
+trust_mutants: 19 definitions, 260 mutants (86 to run), 4 jobs, base 5e56ca85b7ba
+SURVIVOR lean/VE/Acts/Decode.lean:32 VE.Acts.Decode.actsOf (D[V], trusted) list-first: r.sorts -> (r.sorts.take 1)
+SURVIVOR lean/VE/Acts/Decode.lean:32 VE.Acts.Decode.actsOf (D[V], trusted) list-last: r.sorts -> (r.sorts.reverse.take 1)
+trust_mutants: 60 KILLED, 2 SURVIVOR, 0 UNKNOWN, 10 INVALID, 14 ALLOWED, 0 NOT RUN, 174 OTHER SHARD in 1027 s
+trust_mutants: D[V], trusted: 3 KILLED, 2 SURVIVOR, 6 INVALID, 6 ALLOWED, 38 OTHER SHARD
+trust_mutants: G[V], trusted: 45 KILLED, 4 INVALID, 8 ALLOWED, 128 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 8 OTHER SHARD
