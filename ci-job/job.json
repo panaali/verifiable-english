@@ -1,0 +1,12 @@
+{
+ "job": "testmap-5ba916d1-t469743-s0",
+ "head": "4f763bddf36f01e27d4fdf9f603d9e867ae4d636",
+ "argv": [
+  "testmap-5ba916d1-t469743-s0",
+  "4f763bddf36f01e27d4fdf9f603d9e867ae4d636",
+  "4f763bddf36f01e27d4fdf9f603d9e867ae4d636",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-4869ada6061b.tar.zst",
+  "1bfce0dc1c8fddbbc8de1dea9af0feb91ef9bf55810320f3565006eff0c9681b",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_difffuzz.py tests/test_repo_map.py tests/test_relay_binding_inventory.py tests/test_inventory_path.py tests/test_gate_quarantine.py tests/test_hang_guards.py tests/test_gate.py tests/test_stage0_inventory.py tests/test_run_order.py tests/test_judgments_answer.py tests/test_readings_verdicts_split.py tests/test_code_map.py tests/test_lean_first_b13b.py tests/test_question_answering_measure_report.py tests/test_evidence_tools.py tests/test_select_defer.py tests/test_test_speed_b2.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
