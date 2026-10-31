@@ -39,6 +39,11 @@ the tag because it lives in the prompt file.
 
 These also pass on the installed files: `test_pick_mgmt.py`, `test_pick_longroom.py` and `test_endgame.py` (all OK).
 
+VE selected tests (`mac-pytest.sh --select`, HEAD 1a0232db, which ran on 6 Claude cloud shards): 124 of 125 units passed.
+One failed: `tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites`
+(`assert not os.access(service, os.W_OK)`). That shard ran as root (`pytest-of-root`), and root can write a file whatever its
+mode. The rerun of that id alone on ve-mac-1 passed (`1 passed`, exit 0). This branch changes no code that test reads.
+
 ## Seeded bugs (shell: pick-claude-account.sh, dri-delegate.sh, tools-local/lead-request.sh; each was run on a temp copy and the installed files were left unchanged)
 
 | Mutant (file) | Failing test |
