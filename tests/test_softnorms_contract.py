@@ -254,7 +254,8 @@ def test_admission_adapter_selects_active_norm_units():
 # wire-contract-s5.md 2.8: the contract modules, which may import the engine and each other; no other module
 # of `ve/` imports one of them, or `ve.wire_contract`, except the one call site of each public unit.
 CONTRACT_MODULES = {"softnorms_contract.py", "norms_contract.py", "norm_defaults_contract.py"}
-DIAGNOSTIC_MODULES = ("conformance.softnorms_contract", "ve.norms_contract", "ve.norm_defaults_contract", "ve.wire_contract")
+DIAGNOSTIC_MODULES = ("conformance.softnorms_contract", "conformance.acts_contract", "ve.norms_contract",
+                      "ve.norm_defaults_contract", "ve.wire_contract")
 # The call site of each unit after the pilot (2.8). It is added by the unit's switch commit (7.2): while the
 # unit's contract is in shadow, its route imports no diagnostic module.
 UNIT_CALL_SITES = {"norms@0": ("norm_admission.py", "norms_contract", "admit_norm_document"),
