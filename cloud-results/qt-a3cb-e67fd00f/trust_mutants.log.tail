@@ -1,0 +1,4 @@
+trust_mutants: 2 definitions, 35 mutants (23 to run), 4 jobs, base 2d87a0b16014
+trust_mutants: 29 KILLED, 0 SURVIVOR, 0 UNKNOWN, 4 INVALID, 2 ALLOWED, 0 NOT RUN in 2020 s; 12 carried from 5f1d1616d749 (check-only change: lean/VE/Cardinality/RunExamples.lean, lean/declarations.txt)
+trust_mutants: D[V], trusted: 9 KILLED, 4 INVALID, 2 ALLOWED
+trust_mutants: G[V], trusted: 20 KILLED
