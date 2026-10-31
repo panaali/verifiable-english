@@ -94,6 +94,7 @@ import VE.Readings.CompanionsExamples
 import VE.Readings.ComponentsExamples
 import VE.Checks
 import VE.Closure.Checks
+import VE.Closure.CoreEquiv
 import VE.Order.Checks
 import VE.Order.TableauChecks
 import VE.Order.Surface

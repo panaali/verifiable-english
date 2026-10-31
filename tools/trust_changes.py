@@ -141,7 +141,7 @@ def main(argv: list[str]) -> int:
     except RuntimeError as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
-    paths = (root / trust_map.TABLE.relative_to(ROOT), root / trust_map.STATEMENTS.relative_to(ROOT))
+    paths = (root / trust_map.TABLE.relative_to(ROOT), trust_map.inventory(trust_map.STATEMENTS, root))
     files, problems = trust_map.measure(root, *paths)
     for problem in problems:
         print(problem, file=sys.stderr)
