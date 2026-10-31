@@ -247,6 +247,16 @@
    ]
   },
   {
+   "test": "tests/test_ci_workflow.py",
+   "why": "starts git in tests/test_ci_workflow.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_ci_workflow.py:git: git"
+   ]
+  },
+  {
    "test": "tests/test_closure_witnesses.py",
    "why": "starts git (git cat-file) in experiments/E0/closure_witnesses/validate.py",
    "recorded": [
