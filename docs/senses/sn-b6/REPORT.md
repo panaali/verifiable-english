@@ -130,7 +130,9 @@ document mode's and at least the route timeout at sizes 0 to 8 MiB) and
 `::test_the_large_request_is_answered_within_half_its_deadline` (the review's probe: the large request under half
 the deadline). The probe failed before the fix ("used more than its deadline of 3.18421 s of CPU", load 63) and
 passes after it; seeded bug P4. The quadratic cost of the pack decode itself is not changed here (it is shared
-with `senses.read` on main).
+with `senses.read` on main). Run on `b5a1c261d`: the selection (`mac-pytest.sh --select`, 508 units on ve-mac-1,
+exit 0, 0 failed), `lake build`, `python3 lean/audit.py` (PASS: 688 source files), `regen_generated.py --check`,
+`gate_collection.py --check --prebuilt` (20 added, 0 removed) and `repo_map.py --check`. Not run: the full gate.
 
 ## Next
 
