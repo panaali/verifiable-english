@@ -1,0 +1,25 @@
+trust_mutants: 19 definitions, 260 mutants (87 to run), 4 jobs, base 5e56ca85b7ba
+SURVIVOR lean/VE/Acts/Elaborate.lean:76 VE.Acts.splitAtoms (S, trusted) list-empty: D.acts -> [] (the proofs it breaks: lean/VE/Acts/Elaborate.lean:224)
+UNKNOWN lean/VE/Acts/Elaborate.lean:133 VE.Acts.namesOk (G[V], trusted) list-empty: M.preds -> [] (lean/VE/Acts/Elaborate.lean:133: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Wire.lean:42 VE.Acts.Wire.checkAct (D[V], trusted) list-empty: (joinedAct fx V name ts) -> [] (lean/VE/Acts/Wire.lean:42: Type mismatch)
+UNKNOWN lean/VE/Acts/Decode.lean:33 VE.Acts.Decode.actsOf (D[V], trusted) list-empty: A -> [] (lean/VE/Acts/Decode.lean:33: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Elaborate.lean:87 VE.Acts.partNamesIn (G[V], trusted) list-empty: M.preds -> [] (lean/VE/Acts/Elaborate.lean:87: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:148 VE.Acts.partsDistinct (G[V], trusted) list-empty: (partsOf sa r.name) -> [] (lean/VE/Acts/Elaborate.lean:148: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Decode.lean:33 VE.Acts.Decode.actsOf (D[V], trusted) list-empty: A.map (r.name, ·) -> [] (lean/VE/Acts/Decode.lean:33: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Elaborate.lean:154 VE.Acts.declaredAfter (G[V], trusted) list-empty: D.U.D.T.regulated.filter -> [] (lean/VE/Acts/Elaborate.lean:154: Function expected at)
+UNKNOWN lean/VE/Acts/Elaborate.lean:82 VE.Acts.splitMap (G[V], trusted) list-empty: (partsOf sa r.name).map -> [] (lean/VE/Acts/Elaborate.lean:82: Function expected at)
+UNKNOWN lean/VE/Acts/Elaborate.lean:154 VE.Acts.declaredAfter (G[V], trusted) list-empty: M.preds -> [] (lean/VE/Acts/Elaborate.lean:154: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Acts/Elaborate.lean:83 VE.Acts.splitMap (G[V], trusted) list-empty: (partsOf sa N.pred) -> [] (lean/VE/Acts/Elaborate.lean:83: Invalid projection: Type of)
+SURVIVOR lean/VE/Acts/Decode.lean:42 VE.Acts.Decode.elaborateSource (D[V], trusted) list-first: s.src.ne.profiles -> (s.src.ne.profiles.take 1)
+SURVIVOR lean/VE/Acts/Decode.lean:42 VE.Acts.Decode.elaborateSource (D[V], trusted) list-drop-last: s.src.ne.profiles -> (s.src.ne.profiles.dropLast)
+SURVIVOR lean/VE/Acts/Wire.lean:22 VE.Acts.Wire.joinedAct (D[V], trusted) list-drop-last: ts -> (ts.dropLast)
+SURVIVOR lean/VE/Acts/Wire.lean:22 VE.Acts.Wire.joinedAct (D[V], trusted) list-first: w -> (w.take 1)
+UNKNOWN lean/VE/Acts/Wire.lean:25 VE.Acts.Wire.joinedAct (D[V], trusted) list-drop-last: [A] -> ([A].dropLast) (lean/VE/Acts/Wire.lean:25: unsupported pattern in syntax match)
+SURVIVOR lean/VE/Acts/Decode.lean:42 VE.Acts.Decode.elaborateSource (D[V], trusted) list-last: s.src.ne.profiles -> (s.src.ne.profiles.reverse.take 1)
+SURVIVOR lean/VE/Acts/Decode.lean:42 VE.Acts.Decode.elaborateSource (D[V], trusted) list-drop-first: s.src.ne.profiles -> (s.src.ne.profiles.drop 1)
+SURVIVOR lean/VE/Acts/Wire.lean:22 VE.Acts.Wire.joinedAct (D[V], trusted) list-drop-first: ts -> (ts.drop 1)
+UNKNOWN lean/VE/Acts/Wire.lean:25 VE.Acts.Wire.joinedAct (D[V], trusted) list-drop-first: [A] -> ([A].drop 1) (lean/VE/Acts/Wire.lean:25: unsupported pattern in syntax match)
+trust_mutants: 55 KILLED, 8 SURVIVOR, 12 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 173 OTHER SHARD in 1210 s
+trust_mutants: D[V], trusted: 8 KILLED, 7 SURVIVOR, 5 UNKNOWN, 2 INVALID, 33 OTHER SHARD
+trust_mutants: G[V], trusted: 46 KILLED, 7 UNKNOWN, 10 INVALID, 122 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 18 OTHER SHARD
