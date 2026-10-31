@@ -1695,6 +1695,26 @@
    ]
   },
   {
+   "test": "tests/test_test_chunks.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
    "test": "tests/test_test_schedule.py",
    "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
