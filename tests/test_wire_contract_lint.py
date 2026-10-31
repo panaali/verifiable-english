@@ -229,8 +229,10 @@ def test_l13_write_after_a_revision_changes_only_generated_files(shipped_copy):
     assert process(wire_tool.DATA, write=True) == []
     after = snapshot()
     changed = {name for name in after if before.get(name) != after[name]}
-    # The frozen inventory lists no generated module (AR-2, decision D2): nothing else changes.
-    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean"}
+    # The frozen inventory lists no generated module (AR-2, decision D2): nothing else changes. The Rust
+    # tables name the contract's revision and hash (wire-contract-s4-2.md 4).
+    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean",
+                       "rust/ve-kernel/src/contract_tables.rs"}
     lock = loads_json(after["ve/wire_contract/contracts.lock"])
     assert lock["soft-norms@0.json"]["revision"] == value["revision"]
     assert process(wire_tool.DATA) == []
