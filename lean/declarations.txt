@@ -21395,7 +21395,8 @@ module VE.Service.Graph e27c762fff7a13689df799082ee369d1f93ed8597f0e307202202b2a
 238:0-244:54 theorem VE.Service.Graph.graph_sound@VE.Service.Graph
 246:0-249:56 theorem VE.Service.Graph.graph_entails@VE.Service.Graph
 251:0-254:56 theorem VE.Service.Graph.graph_unfolds@VE.Service.Graph
-module VE.Service.MemoExamples e8a54b43d92b00c91ad63d858e4debed13559635887301c29708f87851e5159b
+module VE.Service.MemoExamples b888ce8c45e458fb26a203dd68158e08123c9e31c94f23fa34182d06a73a6c24
+8:0-10:7012 def memoCase@VE.Service.MemoExamples
 module VE.Service.ParseDiagnostic 7e27424725f2b15a76a6c438bfa5b4b27c714bf8cfa08b960a7a09cd522305a0
 11:0-15:12 structure VE.Service.ParseDiagnostic.Error@VE.Service.ParseDiagnostic
 12:2-12:6 def VE.Service.ParseDiagnostic.Error.code@VE.Service.ParseDiagnostic

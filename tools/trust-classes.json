@@ -9947,6 +9947,11 @@
         "VE.Service.Graph.topological"
       ]
     },
+    "VE/Service/MemoExamples.lean": {
+      "T": [
+        "memoCase"
+      ]
+    },
     "VE/Service/ParseDiagnostic.lean": {
       "G[V]": [
         "VE.Service.ParseDiagnostic.Cursor",
