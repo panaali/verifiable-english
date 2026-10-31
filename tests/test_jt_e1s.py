@@ -85,3 +85,15 @@ def test_runner_is_bound_to_this_frame(monkeypatch):
     monkeypatch.setattr(runner.base, "existing", lambda: dict(list(records.items())[:-1]))
     with pytest.raises(RuntimeError, match="79 of 80"):
         runner.results()
+
+
+def test_saved_records_reproduce_the_gate_line():
+    result = runner.results()
+    assert result["counts"] == {"identifier": 20, "english": 25}
+    assert (result["bar_a"], result["bar_b"], result["critical"], result["errors"]) == (False, True, [], [])
+    assert (result["calls"], result["cw"], result["fallback"]) == (80, 1_185_742, FALLBACK)
+    gate = (ROOT / "RESULTS.md").read_text().splitlines()[2]
+    assert gate.startswith("**JT-3 wording gate FAIL") and "25/40" in gate and "20/40" in gate
+    for record in runner.base.existing().values():
+        assert set(record["cli"]["modelUsage"]) == {runner.base.MODEL}
+        assert record["cli"]["usage"]["fallback_credit"] is None
