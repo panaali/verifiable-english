@@ -179,6 +179,36 @@ theorem Iceberg.water_unchanged
   ∀ (t : Iceberg.Tub) (p : Iceberg.Process t), t.rho * p.finalInclusionVolume = t.inclusionMass → p.finalHeight = t.rim
   -- uses Iceberg.Process.finalHeight@Iceberg Iceberg.Process.finalInclusionVolume@Iceberg Iceberg.Process@Iceberg Iceberg.Q@Iceberg Iceberg.Tub.inclusionMass@Iceberg Iceberg.Tub.rho@Iceberg Iceberg.Tub.rim@Iceberg Iceberg.Tub@Iceberg
   -- expr 1320852752
+theorem VE.Acts.Decode.ElaboratedU.hE
+  ∀ (self : VE.Acts.Decode.ElaboratedU), VE.Acts.elaborateMap self.D = Except.ok (self.U', self.M)
+  -- uses VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.M@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 126280179
+theorem VE.Acts.Decode.ElaboratedU.hU
+  ∀ (self : VE.Acts.Decode.ElaboratedU), self.D.U = self.s.U
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire
+  -- expr 1992473826
+theorem VE.Acts.Decode.decodeElaboratedU_lexical
+  ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
+    VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e →
+      e.D.acts = [] → e.U' = e.s.U ∧ e.M = { preds := [], rules := [] }
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.M@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedU@VE.Acts.Decode VE.Acts.SplitMap.mk@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire
+  -- expr 1045792100
+theorem VE.Acts.Decode.decodeElaboratedU_source
+  ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
+    VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e →
+      VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok e.s
+  -- uses VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedU@VE.Acts.Decode VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire
+  -- expr 794278773
+theorem VE.Acts.Decode.decodeElaboratedU_wellFormed
+  ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
+    VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e → VE.NormDefaults.WellFormedU e.U' = Bool.true
+  -- uses VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedU@VE.Acts.Decode VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
+  -- expr 778283718
+theorem VE.Acts.Decode.elaborateSource_s
+  ∀ {environment : Lean.Json} {s : VE.NormDefaults.Wire.SourceU} {e : VE.Acts.Decode.ElaboratedU},
+    VE.Acts.Decode.elaborateSource environment s = Except.ok e → e.s = s
+  -- uses VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.elaborateSource@VE.Acts.Decode VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
+  -- expr 1705047986
 theorem VE.Acts.Examples.acceptsTable_terms
   ∀ (t : VE.Acts.Term), (VE.Acts.Examples.acceptsTable.any fun x => x.fst.ctorIdx == t.ctorIdx) = Bool.true
   -- uses VE.Acts.Examples.acceptsTable@VE.Acts.GrammarExamples VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Term.ctorIdx@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax
@@ -632,6 +662,31 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.Wire.checkAct_joined
+  ∀ (fx : List String) (V : VE.Acts.Vocab) (name : String) (k : Nat) (raw : Lean.Json) (a : String) (A : VE.Acts.Act),
+    VE.Acts.Wire.checkAct fx V name k raw = Except.ok (a, Option.some A) →
+      ∃ ts,
+        VE.Acts.Lexical.lex fx a = Except.ok ts ∧
+          VE.Acts.read V VE.Acts.rawCap VE.Acts.stepBudget ts.toArray = VE.Acts.ReadOutcome.ok A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.Wire.checkAct@VE.Acts.Wire VE.Acts.rawCap@VE.Acts.Read VE.Acts.read@VE.Acts.Readings VE.Acts.stepBudget@VE.Acts.Read
+  -- expr 1798842854
+theorem VE.Acts.Wire.checkAct_lexical
+  ∀ (fx : List String) (V : VE.Acts.Vocab) (name : String) (k : Nat) (raw : Lean.Json) (a : String),
+    VE.Acts.Lexical.check fx name k raw = Except.ok a → VE.Acts.Wire.checkAct fx V name k raw = Except.ok (a, Option.none)
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.Wire.checkAct@VE.Acts.Wire
+  -- expr 2276402200
+theorem VE.Acts.Wire.checkWith_lex
+  ∀ {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {act : String} {ts : List VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.checkWith (fun a ts => Pure.pure (a, ts)) fx name k raw = Except.ok (act, ts) →
+      VE.Acts.Lexical.lex fx act = Except.ok ts
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.checkWith@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical
+  -- expr 1400995925
+theorem VE.Acts.Wire.joinedAct_read
+  ∀ {fx : List String} {V : VE.Acts.Vocab} {name : String} {ts : List VE.Acts.Lexical.Tok} {A : VE.Acts.Act},
+    VE.Acts.Wire.joinedAct fx V name ts = Except.ok A →
+      VE.Acts.read V VE.Acts.rawCap VE.Acts.stepBudget ts.toArray = VE.Acts.ReadOutcome.ok A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.Wire.joinedAct@VE.Acts.Wire VE.Acts.rawCap@VE.Acts.Read VE.Acts.read@VE.Acts.Readings VE.Acts.stepBudget@VE.Acts.Read
+  -- expr 3676081127
 theorem VE.Acts.analyse_one
   ∀ (V : VE.Acts.Vocab) {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {a : VE.Acts.Atom},
     VE.Acts.analyse V N b ts = Option.some a → VE.Acts.read V N b ts = VE.Acts.ReadOutcome.ok (VE.Acts.Act.one a)
@@ -675,13 +730,21 @@ theorem VE.Acts.elaborateMap_ok
   ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
     VE.Acts.elaborateMap D = Except.ok (U', M) →
       (∃ Rs, List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) D.acts = Except.ok Rs) ∧
-        VE.Acts.namesOk D = Except.ok () ∧
-          U' = VE.Acts.splitDoc D ∧
-            M = VE.Acts.splitMap D ∧
+        VE.Acts.namesOk D (VE.Acts.splitMap D (VE.Acts.splitAtoms D)) = Except.ok () ∧
+          U' = VE.Acts.splitDoc D (VE.Acts.splitAtoms D) (VE.Acts.splitMap D (VE.Acts.splitAtoms D)) ∧
+            M = VE.Acts.splitMap D (VE.Acts.splitAtoms D) ∧
               VE.NormDefaults.WellFormedU U' = Bool.true ∧
                 (M.rules.all fun x => !U'.D.T.nodes.any fun x_1 => x_1.name == x.snd.fst) = Bool.true
-  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Simple@VE.Acts.Table VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
-  -- expr 1152826092
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Simple@VE.Acts.Table VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 1430785145
+theorem VE.Acts.elaborate_identity
+  ∀ (D : VE.Acts.ActsDoc),
+    (∀ (p : String) (A : VE.Acts.Act), (p, A) ∈ D.acts → ∃ a, A = VE.Acts.Act.one a) →
+      VE.NormDefaults.WellFormedU D.U = Bool.true →
+        VE.Norms.validate D.U.D = Except.ok () →
+          VE.NormDefaults.Wire.authorLimits D.declared D.U = Except.ok () → VE.Acts.elaborate D = Except.ok D.U
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc.declared@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.authorLimits@VE.NormDefaults.Wire VE.Norms.validate@VE.Norms.Tree
+  -- expr 1179275184
 theorem VE.Acts.elaborate_ok
   ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc},
     VE.Acts.elaborate D = Except.ok U' → ∃ M, VE.Acts.elaborateMap D = Except.ok (U', M)
@@ -770,6 +833,19 @@ theorem VE.Acts.listing_ok
       ∃ ts, parsed = Option.some ts ∧ ts.length < N ∧ xs = VE.Acts.firsts (List.filterMap μ ts) ∧ xs.length ≤ L
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.firsts@VE.Acts.Read VE.Acts.listing@VE.Acts.Read VE.Grammar.Tree@VE.Grammar.Derives
   -- expr 4241073090
+theorem VE.Acts.lookup_mem
+  ∀ {α β : Type} [inst : BEq α] [LawfulBEq α] {p : α} {b : β} {l : List (α × β)},
+    List.lookup p l = Option.some b → (p, b) ∈ l
+  -- uses
+  -- expr 3122011733
+theorem VE.Acts.lookup_splitsOf
+  ∀ (D : VE.Acts.ActsDoc) {l : List (String × VE.Acts.Act)} {Rs : List (List VE.Acts.Simple)},
+    List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) l = Except.ok Rs →
+      ∀ (p : String),
+        (List.lookup p (VE.Acts.splitsOf l Rs)).join =
+          ((List.lookup p l).bind fun A => (VE.Acts.readingOf D p A).toOption).bind VE.Acts.atomsOf
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Simple@VE.Acts.Table VE.Acts.atomsOf@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitsOf@VE.Acts.Elaborate
+  -- expr 3751350295
 theorem VE.Acts.mapM_ok
   ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {ys : List β},
     List.mapM f l = Except.ok ys → ∀ (x : α), x ∈ l → ∃ y, y ∈ ys ∧ f x = Except.ok y
@@ -946,6 +1022,16 @@ theorem VE.Acts.schema_ranked
             ∀ (B : VE.Acts.NT) (rest : List VE.Acts.RSym), r.rhs = VE.Acts.RSym.n B :: rest → B.rank < r.lhs.rank
   -- uses VE.Acts.NT.rank@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
   -- expr 272239481
+theorem VE.Acts.splitDoc_none
+  ∀ (D : VE.Acts.ActsDoc), VE.Acts.splitDoc D (fun x => Option.none) (VE.Acts.splitMap D fun x => Option.none) = D.U
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3012397504
+theorem VE.Acts.splits_eq
+  ∀ {D : VE.Acts.ActsDoc} {Rs : List (List VE.Acts.Simple)},
+    List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) D.acts = Except.ok Rs →
+      (fun p => (List.lookup p (VE.Acts.splitsOf D.acts Rs)).join) = VE.Acts.splitAtoms D
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Simple@VE.Acts.Table VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Acts.splitsOf@VE.Acts.Elaborate
+  -- expr 2239440513
 theorem VE.Acts.table_free_all_own
   ∀ (op : VE.Acts.Op),
     op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
@@ -18624,6 +18710,13 @@ theorem VE.NormDefaults.Wire.baseModelU_valid
           M.Valid (VE.Norms.envAt (VE.NormDefaults.fill s.U) 0)
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.profiled@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.baseModelVocabularyU@VE.NormDefaults.Replay VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
   -- expr 1708138649
+theorem VE.NormDefaults.Wire.checkAuthorN_split
+  ∀ (environment : Lean.Json) (g : Nat) (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.Wire.checkAuthorN environment g U =
+      VE.NormDefaults.Wire.reservedNamesOk environment U *>
+        VE.NormDefaults.Wire.authorLimits ((VE.NormDefaults.Wire.declaredNames environment).length + g) U
+  -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.authorLimits@VE.NormDefaults.Wire VE.NormDefaults.Wire.checkAuthorN@VE.NormDefaults.Wire VE.NormDefaults.Wire.declaredNames@VE.NormDefaults.Wire VE.NormDefaults.Wire.reservedNamesOk@VE.NormDefaults.Wire
+  -- expr 4138228305
 theorem VE.NormDefaults.Wire.conflictFreeCheckU_sound
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
