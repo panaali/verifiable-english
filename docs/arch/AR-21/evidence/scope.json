@@ -7,8 +7,8 @@
    "path": "docs/arch/AR-21/DELTA.md"
   },
   {
-   "added": 246,
-   "deleted": 31,
+   "added": 255,
+   "deleted": 34,
    "path": "docs/arch/AR-21/REPORT.md"
   },
   {
@@ -27,8 +27,8 @@
    "path": "docs/arch/AR-21/evidence/ab-delta.json"
   },
   {
-   "added": 542,
-   "deleted": 49,
+   "added": 543,
+   "deleted": 50,
    "path": "docs/arch/AR-21/evidence/ab.json"
   },
   {
@@ -40,6 +40,11 @@
    "added": 42062,
    "deleted": 42062,
    "path": "docs/arch/AR-21/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 174,
+   "deleted": 0,
+   "path": "docs/arch/AR-21/evidence/scope.json"
   },
   {
    "added": 100,
@@ -122,8 +127,8 @@
    "path": "lean/statements.txt"
   },
   {
-   "added": 15,
-   "deleted": 0,
+   "added": 50,
+   "deleted": 35,
    "path": "tools/trust-classes.json"
   },
   {
@@ -133,6 +138,14 @@
   }
  ],
  "commits": [
+  {
+   "hash": "3b7120b22b364a5f7c8f3f83cca6cb68b142ff41",
+   "subject": "AR-21: keep main's key order in tools/trust-classes.json"
+  },
+  {
+   "hash": "2b3481e6daf7d615994bcb460b08e45339f6462f",
+   "subject": "AR-21: scope and A/B saved for 3786c98e"
+  },
   {
    "hash": "3786c98e163271c74c9a215641f85c1fa911150e",
    "subject": "AR-21: evidence measured again against the new merge base 0c4ea31d2"
@@ -170,5 +183,5 @@
    "subject": "AR-21: the Lean statements for review (consolidation step 3a)"
   }
  ],
- "head": "3786c98e163271c74c9a215641f85c1fa911150e"
+ "head": "3b7120b22b364a5f7c8f3f83cca6cb68b142ff41"
 }
