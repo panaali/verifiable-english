@@ -217,7 +217,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/FillWire.lean` | 564 | 564 | 1–564 | `5b736870014d…` |
 | `lean/VE/Calc/Units.lean` | 224 | 224 | 1–224 | `bfcd9e42c95c…` |
 | `lean/VE/Defaults/Wire.lean` | 801 | 801 | 1–801 | `65c1110e5084…` |
-| `lean/VE/Calc/Wire.lean` | 580 | 580 | 1–580 | `5020183caff9…` |
+| `lean/VE/Calc/Wire.lean` | 849 | 849 | 1–849 | `944d524215cc…` |
 | `lean/VE/Calc/Run.lean` | 527 | 527 | 1–527 | `576ba58b428b…` |
 | `lean/VE/Scope/Wire.lean` | 164 | 164 | 1–164 | `3b4a6dd0e503…` |
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
@@ -226,7 +226,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
 | `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
-| **total** | | **40,308** | | |
+| **total** | | **40,577** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
