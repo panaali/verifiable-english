@@ -1,13 +1,13 @@
 # ap-4a delta: the edge rule's kinds, `modifier_edges` and `phraseReadings` (`VE.Acts.Grammar`, `VE.Acts.Readings`)
 
-Base: `git merge-base HEAD main` (`327bf922a`). ap-4a is part 1 of 3 of batch AP-4 of the act-phrases plan
+Base: `git merge-base HEAD main` (`0c4ea31d2`, main with ap-2bb merged). ap-4a is part 1 of 3 of batch AP-4 of the act-phrases plan
 (`docs/spec/act-phrases-PLAN.md` at `80f056f9e`, section 4, "AP-4"; [REPORT.md](REPORT.md)).
 
 **Public output: none.** ap-4a gives each rule of the act grammar's table a kind (`RuleS.kind`: `shape`, or an edge's
 attachment `first`, `last` or `all`), proves where the table writes them (`modifier_edges`), and has the meaning read
 an edge's `all` from its kind instead of from the rule's position. The rules' sides and order are unchanged, so every
 derivation and meaning AP-2 gave is unchanged: every `RuleExamples` and `MeaningExamples` guard passes (`lake build`,
-1171 jobs, exit 0). It adds `phraseReadings`, `phraseReadings_exact`, `_nodup`, `_length` and `table_length` to
+1181 jobs on the merged tree, exit 0). It adds `phraseReadings`, `phraseReadings_exact`, `_nodup`, `_length` and `table_length` to
 `lean/VE/Acts/Readings.lean`, and the fixtures in `lean/VE/Acts/ReadingsExamples.lean`. No service mode, route, relay,
 decoder, command or diagnostic reaches `phraseReadings` or the kinds (plan G17: AP-7 runs on `phraseReadings` first).
 No Python or Rust product code changes. No verdict, diagnostic, fault order, English line or CPU figure changes, so
