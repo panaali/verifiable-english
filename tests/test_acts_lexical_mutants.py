@@ -35,7 +35,10 @@ GUARD_FAILED = "did not evaluate to `true`"
 THEOREMS = "/-! ### Theorems (4.3) -/"
 INLINED = {"import VE.Acts.Lexical", "import VE.Norms.Wire"}
 # The definitions the mutants change, by file: AP-1's act check and the decoder that calls it.
-SCOPE = {"lexical": ("check",), "wire": ("canonicalActIn", "decodeRegulatedWith", "decodeRegulatedIn")}
+SCOPE = {"lexical": ("checkWith", "joinCheck"), "wire": ("canonicalActIn", "decodeRegulatedWith", "decodeRegulatedIn")}
+# `check` is `checkWith (joinCheck name)` (ap-3d: conditions 1 to 5, then 6, in the order of its old body): its two
+# parts keep `check`'s mutant names, numbered across both in source order.
+LABEL = {"checkWith": "check", "joinCheck": "check"}
 ROLES = ("permission", "obligation", "plain")
 
 
@@ -136,6 +139,7 @@ def _generated() -> dict:
 
     def add(kind: str, name: str, where: str, start: int, end: int, new: str) -> None:
         """A mutant, unless an earlier one makes the same source (`acts-true` of `acts && c` is a dropped conjunct)."""
+        name = LABEL.get(name, name)
         mutate = _at(where, start, end, new)
         source = mutate(sources)[where]
         if source in made:
