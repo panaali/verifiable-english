@@ -1,0 +1,15 @@
+trust_mutants: 11 definitions, 268 mutants (67 to run), 4 jobs, base 598358e43282
+UNKNOWN lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: lines -> [] (lean/VE/Senses/Run.lean:219: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Run.lean:197 VE.Senses.Run.lexiconJson (D[V], trusted) list-empty: l.map -> [] (lean/VE/Senses/Run.lean:197: Function expected at)
+UNKNOWN lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-empty: units -> [] (lean/VE/Senses/Run.lean:115: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used.eraseDups -> [] (lean/VE/Senses/Run.lean:322: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-drop-last: lines -> (lines.dropLast) (lean/VE/Senses/Run.lean:220: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-first: ["overlay"].filter (has j) -> ((["overlay"].filter (has j)).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: D.words -> (D.words.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: c.E.sorts -> (c.E.sorts.dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-last: c.choice -> (c.choice.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: c.E.sorts.map (·.name) -> ((c.E.sorts.map (·.name)).drop 1)
+trust_mutants: 50 KILLED, 5 SURVIVOR, 5 UNKNOWN, 5 INVALID, 2 ALLOWED, 0 NOT RUN, 201 OTHER SHARD in 1730 s
+trust_mutants: D[V], trusted: 6 KILLED, 1 UNKNOWN, 24 OTHER SHARD
+trust_mutants: G[V], trusted: 44 KILLED, 5 SURVIVOR, 4 UNKNOWN, 5 INVALID, 2 ALLOWED, 177 OTHER SHARD
+trust_mutants: steps: wall plan 7.3 s, scratch 2.3 s, control_build 0.3 s, probe_install 1.1 s, control_probes 91.7 s, mutants 1622.5 s, cleanup 4.9 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 300.8 s (8), mutant_builds 136.5 s (70), mutant_checks 754.9 s (60), stage_controls 60.1 s (5), mutant_probes 5414.4 s (51)
