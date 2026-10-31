@@ -174,14 +174,15 @@ def Vk : Vocab := ⟨[fr "give" ["to", ""] [] ["at", "in", "on"], fr "deceive" [
 
 /-! ### The edges' second rules -/
 
-/-- The rule table writes two rules alike only for the five edges (5.2), so the meaning reads a rule equal to the one
-before it as an edge's second, read over all. -/
+/-- The rule table writes two rules with the same sides only for the five edges (5.2), the near end's kind first and
+`all`'s second, and writes an edge kind on no other rule (`modifier_edges` says where). -/
 def edgeOnly (V : Vocab) : Bool :=
   let rs := closed (schema V)
-  (rs.zip rs.tail).all (fun (a, b) => a != b || match b.lhs with
-    | .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX => true | _ => false)
+  (rs.zip rs.tail).all (fun (a, b) => (a.lhs, a.rhs) != (b.lhs, b.rhs) ||
+    a.kind != .shape && a.kind != .edge .all && b.kind == .edge .all) &&
+  rs.countP (·.kind == .edge .all) == (rs.zip rs.tail).countP (fun (a, b) => (a.lhs, a.rhs) == (b.lhs, b.rhs))
 #guard ([V5, V6, V7, V8, V9, V10, V11, V12, V14, V5k, Vs, Vm, Va, V6b, V3, Vk] ++ ap0).all edgeOnly
 -- V5: `E1X`'s pair, and per frame `TE`, `RE`, `REt` and `PX` each a pair for the adverb and one for *in*: 1 + 2 · 8
-#guard ((closed (schema V5)).zip (closed (schema V5)).tail).countP (fun (a, b) => a == b) == 17
+#guard (closed (schema V5)).countP (·.kind == .edge .all) == 17
 
 end VE.Acts.MeaningExamples

@@ -5,8 +5,8 @@ import VE.Acts.Tree
 
 The meaning is computed bottom-up: each node's **pieces** come from its children's and its rule. A rule's kind (5.2's
 last column) is read from the rule itself, `closed (schema V)` at the node's index, which is the rule the grammar
-numbered there: its left side, the shape of its right side, and, for the five edges whose two rules are alike, which
-of the two it is (the first reads over the near end, the second over all). So the rule table stays the one owner of
+numbered there: its left side, the shape of its right side, and, for the five edges, the attachment its kind writes
+(`first` or `last` reads over the near end, `all` over all). So the rule table stays the one owner of
 the rules, and no kind is written twice. A derivation has no meaning when a joined filler whose marker is written once
 has a first or last part of two or more words (D9 (i)), or when an atom does not fit its frame (`atomOk`).
 -/
@@ -72,10 +72,10 @@ def itemOf (cs : List Piece) : Option (Option (Bool × Bool) × List String × L
   match cs.filterMap (fun | .head h => some h | _ => none) with
   | [h] => some (cs.findSome? (fun | .fw t b => some (t, b) | _ => none), h, cs)
   | _ => none
-/-- A node's pieces from its children's and its rule `r`. `second` says the rule equals the one before it: only an
-edge's two rules are written alike (5.2), and the second reads over all. -/
-def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
-  let att := if second then Att.all else .own
+/-- A node's pieces from its children's and its rule `r`: an element of a rule whose kind attaches it to all (2.4)
+reads over all, any other over its own item's. -/
+def applyRule (r : RuleS) (cs : List Piece) : Option (List Piece) :=
+  let att := if attachOf r.kind == some .all then Att.all else .own
   let words := cs.filterMap (fun | .w s => some s | _ => none)
   let lw := words.map (·.toLower)
   let part : Piece → Option Part := fun | .part p | .elt (.arg _ (.one p)) _ => some p | _ => none
@@ -120,7 +120,7 @@ def piecesOf (rs : Array RuleS) : Tree Tok → Option (List Piece)
   | .leaf .comma => some []
   | .node i kids => do
     let r ← rs[i]?
-    applyRule r (rs.extract (i - 1) i == #[r]) (← kids.attach.mapM (fun ⟨k, _⟩ => piecesOf rs k)).flatten
+    applyRule r (← kids.attach.mapM (fun ⟨k, _⟩ => piecesOf rs k)).flatten
 termination_by t => sizeOf t
 decreasing_by have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 /-- An atom fits its frame (5.3): its head is declared; it has an object exactly when the frame lists `""`; every
