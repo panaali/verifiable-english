@@ -1,0 +1,12 @@
+{
+ "job": "testmap-61a41ded-t446361-s0",
+ "head": "e6824df94986d8a8d91e52df0d2f175279c09bd8",
+ "argv": [
+  "testmap-61a41ded-t446361-s0",
+  "e6824df94986d8a8d91e52df0d2f175279c09bd8",
+  "e6824df94986d8a8d91e52df0d2f175279c09bd8",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8a83911e2642.tar.zst",
+  "891ba2e70460604163ec712e9b6593056360b40f440442102942cf4a928cb528",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_speech_polar_lean.py tests/test_wire_gate_corpus.py tests/test_lean_conformance.py tests/test_english.py tests/test_encoder_shapes.py tests/test_eligibility_wfp.py tests/test_views.py tests/test_p1.py tests/test_readings_verdicts_lean.py tests/test_inventory_path.py tests/test_rights_three_way.py tests/test_defaults_english.py tests/test_readings_sd_ce4.py tests/test_p1_reconcile.py tests/test_english_lean_s3.py tests/test_equivalence_properties.py tests/test_norm_defaults_contract.py tests/test_stage0_probe_matrix.py tests/test_softnorms_contract.py tests/test_acts_profile.py tests/test_question_statements.py tests/test_readings_s1_document.py tests/test_lean_authority_values.py tests/test_lexicon.py tests/test_readings_s1_lean.py tests/test_readings_defaults_statements.py tests/test_question_answering_measure_report.py tests/test_numbers_phrases.py tests/test_lean_limits.py tests/test_nary.py tests/test_rd9_chain_relay.py tests/test_norm_english.py tests/test_discourse_constitution.py tests/test_english_lean_tokens.py tests/test_english_e26_diagnosis.py tests/test_lean_first_rule3_measurement.py tests/test_fol_names.py tests/test_wire_contract_precondition.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
