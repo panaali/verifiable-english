@@ -285,6 +285,7 @@ import VE.Readings.SoftFacts
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftVerdicts
 import VE.Readings.SoftWire
+import VE.Readings.Stage
 import VE.Readings.Strings
 import VE.Readings.SupAll
 import VE.Readings.SupConflict
@@ -4122,6 +4123,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Sim.sibling
 #print axioms VE.Readings.Sim.sign
 #print axioms VE.Readings.Sim.soft
+#print axioms VE.Readings.Stage.part_eq
+#print axioms VE.Readings.Stage.stage_eq
 #print axioms VE.Readings.SupExtraExamples.bare_admissible
 #print axioms VE.Readings.SupExtraExamples.k1_compatible
 #print axioms VE.Readings.SupExtraExamples.k1_hyps

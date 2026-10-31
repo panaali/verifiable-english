@@ -3695,6 +3695,8 @@
 'VE.Readings.Sim.sibling' depends on axioms: [propext]
 'VE.Readings.Sim.sign' depends on axioms: [propext]
 'VE.Readings.Sim.soft' depends on axioms: [propext]
+'VE.Readings.Stage.part_eq' does not depend on any axioms
+'VE.Readings.Stage.stage_eq' does not depend on any axioms
 'VE.Readings.SupExtraExamples.bare_admissible' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.SupExtraExamples.k1_compatible' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.SupExtraExamples.k1_hyps' depends on axioms: [propext, Quot.sound]

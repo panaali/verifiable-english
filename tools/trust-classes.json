@@ -6774,6 +6774,14 @@
         "VE.Readings.Sim"
       ]
     },
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
     "VE/Readings/Strings.lean": {
       "S": [
         "VE.Readings.AsciiL"
@@ -10066,6 +10074,18 @@
       ],
       "G[V]": [
         "VE.Service.Readings.readingsCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
       ]
     },
     "VE/Service/Standalone.lean": {
