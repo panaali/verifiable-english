@@ -15838,6 +15838,7 @@
       ]
     },
     "VE/Scope/ReadingsTheorems.lean": {},
+    "VE/Scope/ReadingsLemmas.lean": {},
     "VE/Acts/Meaning.lean": {
       "S": [
         "VE.Acts.Att",
