@@ -1,3 +1,5 @@
+- `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
+- `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
 - `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
 - `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
@@ -87,4 +89,3 @@
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
 - `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
-- `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
