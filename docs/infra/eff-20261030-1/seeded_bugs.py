@@ -66,6 +66,22 @@ BUGS = [
      "old": "            nodeid = \"::\".join([unit, *classname.removeprefix(module + \".\").split(\".\"), name])\n",
      "new": "            nodeid = f\"{unit}::{name}\"\n",
      "test": f"{TESTS}::test_junit_cases_are_the_node_ids_of_the_file"},
+    # review F1: the failed-unit line the orchestrator's parsers read
+    {"bug": "the log path moves before the node ids", "file": "tools/select_tests.py",
+     "old": "    return f\"{label} {unit} (exit {exit}): {', '.join(nodeids)}; log {log}\"\n",
+     "new": "    return f\"{label} {unit} (exit {exit}); log {log}: {', '.join(nodeids)}\"\n",
+     "test": f"{TESTS}::test_a_failed_unit_line_ends_in_its_log"},
+    {"bug": "the stopped note leaves the exit field", "file": "tools/select_tests.py",
+     "old": "STOPPED_EXIT = \"stopped before its other chunks ended\"\n",
+     "new": "STOPPED_EXIT = \"stopped) (before its other chunks ended\"\n",
+     "test": f"{TESTS}::test_a_stopped_chunked_unit_line_keeps_the_format"},
+    {"bug": "only the first chunk's log tail is printed", "file": "tools/select_tests.py",
+     "old": "        for index, log in enumerate(logs):\n", "new": "        for index, log in enumerate(logs[:1]):\n",
+     "test": f"{TESTS}::test_a_chunked_unit_line_names_its_first_chunk_log_and_prints_every_tail"},
+    {"bug": "a quarantined unit is labelled FAILED", "file": "tools/select_tests.py",
+     "old": "        print(unit_line(\"FAILED\" if set(failures[unit]) - held else",
+     "new": "        print(unit_line(\"FAILED\" if set(failures[unit]) | held else",
+     "test": f"{TESTS}::test_a_quarantined_unit_line_is_no_failure_to_the_parsers"},
 ]
 
 

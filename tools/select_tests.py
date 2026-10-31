@@ -1546,6 +1546,20 @@ def record_ordered(ordered: list[str], work: Path, jobs: int, maxfail: int,
     return results, failures
 
 
+# The exit of a chunked file the run stopped before all of its chunks ended (it has no folded exit code).
+STOPPED_EXIT = "stopped before its other chunks ended"
+
+
+def unit_line(label: str, unit: str, exit: object, nodeids: list[str], log: Path) -> str:
+    """The line a failed unit of a recorded run gets: "<label> <unit> (exit <exit>): <node id>, ...; log <path>".
+
+    Tools outside this repository parse it (the orchestrator's chain gate, review-ready and mac-pytest match
+    `^FAILED \\S+ \\(exit [^)]*\\): (.*); log \\S+$` and split the node ids on ", "), so the log path stays last and
+    every note goes in the label or the exit, never among the node ids.
+    """
+    return f"{label} {unit} (exit {exit}): {', '.join(nodeids)}; log {log}"
+
+
 def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None = None,
                  chunked: bool = True) -> int:
     """Run the selected units one process each under the recorder, then save a map for this tree.
@@ -1596,13 +1610,15 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
     run_order.write_state(state, run_order.updated(previous, completed=selected, failed=failures))
     failed = [unit for unit in selected if set(failures[unit]) - held]
     for unit in [unit for unit in selected if failures[unit]] + [unit for unit in not_run if failures.get(unit)]:
-        label = ("FAILED" if set(failures[unit]) - held else "QUARANTINED (fails under load; not counted)") + (
-            "" if unit in results else " (stopped before its other chunks ended)")
-        print(f"{label} {unit} (exit {results[unit]['exit'] if unit in results else 'stopped'}): "
-              f"{', '.join(failures[unit])}", flush=True)
-        for log in sorted(path for path in work.glob("*.log") if path.name == unit.replace("/", "__") + ".log"
-                          or path.name.startswith(unit.replace("/", "__") + "::chunk(")):
-            print(f"log {log}\n" + "\n".join(log.read_text(errors="replace").splitlines()[-25:]), flush=True)
+        logs = sorted(path for path in work.glob("*.log") if path.name == unit.replace("/", "__") + ".log"
+                      or path.name.startswith(unit.replace("/", "__") + "::chunk(")) \
+            or [work / (unit.replace("/", "__") + ".log")]
+        print(unit_line("FAILED" if set(failures[unit]) - held else "QUARANTINED (fails under load; not counted)",
+                        unit, results[unit]["exit"] if unit in results else STOPPED_EXIT, failures[unit], logs[0]),
+              flush=True)
+        for index, log in enumerate(logs):
+            tail = log.read_text(errors="replace").splitlines()[-25:] if log.is_file() else []
+            print("\n".join(([f"log {log}"] if index else []) + tail), flush=True)
     # A file only some of whose chunks ran here (the rest on other Actions shards) has part of its edges: the map
     # leaves it to the static graph, as one the run stopped.
     partial = [unit for unit in selected if results[unit].get("partial")]
