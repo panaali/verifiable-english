@@ -25,7 +25,7 @@ Next: qt-a4 (relay and document hook). Open: FOLLOW-UPS "## qt-a3cb" (ties pass;
 |---|---|---|
 | (1) `countermodel` case, budgeted as W6a's `refutesB`, through `refutesC_sound` | yes. `Run.countermodel`: W6a's model decoder on the projection's vocabulary, the charge, then `refutesB` on the sorted presentation with the hash index, as W6a's `countermodel` case. `countermodel_sound`: on the problem `checkedProblem` built, `countermodel … = .ok (true, _)` gives `¬ CEntails.{0}` (via `refutesB_sound`, `withSizes_eq`, `sortDomains_valid`, `refutesC_sound`; `hq : w.env.q = w.w6.vocab.env` is `decodeEnvironment_sound`'s) | RunExamples countermodel guards (FA1b refuted, sizes 1, 1, 15, 1; FA1 not refuted; a model satisfying the conclusion not refuted; the whole answer); route cases `fa1b-countermodel`, `fa1-countermodel` |
 | (2) Region sizes computed once per model, charged against a stated limit | yes. `regionSizes` reads each sort's objects (`firstUseH`) and predicates once and computes each region's size once; `sizeIndex` is built once; `withSizes` reads a constant through it (`withSizes_eq`: it is `withRegionsFinite`, which no service path evaluates any more). `regionCost` (2^k × objects × (k + 1) per sort) is charged against W6a's `maxEvaluations` (1,000,000) before any size is computed, and `refutesB` starts from it | growing chain: `test_region_sizes_are_charged_before_they_are_computed` (1 and 2 sorts of 1,000 objects refuted, 3 refused, UNKNOWN); `test_the_charge_and_the_check_share_one_budget`; `#guard err (chain 3 1000 0) == budgetExhausted`. Probe (`uv run python`, ve_service): the chain's three cases in 0.22 s |
-| (3) Row shape, encoder, `runCaseReported_fits`, route cases | yes. `cardinality.json`: `countermodel` (`refutes`, the admission's statements and identities, `regions`, `sizes`) and `sizes` (each constant with a natural size, at most 512); `runCase_fits` extended (`sizesJson_fits`, `countermodel_kind`) | `test_countermodel_rows_are_typed_and_bound` (49 mutants); relay gate `service:cardinality`: 4,807 mutants, 0 failures ([evidence/relay-gate.json](evidence/relay-gate.json)) |
+| (3) Row shape, encoder, `runCaseReported_fits`, route cases | yes. `cardinality.json`: `countermodel` (`refutes`, the admission's statements and identities, `regions`, `sizes`) and `sizes` (each constant with a natural size, at most 512); `runCase_fits` extended (`sizesJson_fits`, `countermodel_kind`) | `test_countermodel_rows_are_typed_and_bound` (63 mutants); relay gate `service:cardinality`: 4,807 mutants, 0 failures ([evidence/relay-gate.json](evidence/relay-gate.json)) |
 | (4) Seeded bugs | 12/12 killed, below | `mutants.json` |
 | DELTA | rows 1 (SYNTHESIS 2.2, as qt-a3c's rows 1-2), 2 (R2), 3 (R16) | [DELTA.md](DELTA.md); review-ready's `uncited_ruling_rows`: [] |
 
@@ -60,8 +60,10 @@ the whole answer. The two ALLOWED `sizesJson` mutants do not elaborate ([trust-m
 - Trust (`tools/trust_map.py --check`: "PASS: K, S and untied [V] within 96c5d418d98e and the allowances"): untied
   V +8, all `Run.lean` (`sizesJson` 4, `runCase` +4); `countermodel` G[V] tied by `countermodel_sound`; the C and
   G[R] declarations as in DELTA row 3. Allowance recorded under R16; FOLLOW-UPS "## qt-a3cb".
-- Size (`git diff --numstat` against the merge base, generated files and evidence JSON excluded): about 600 lines
-  with this report: Lean 340 (guards 103, theorems 112), tests and data 107, side tables 60, docs about 130.
+- Size (`git diff --numstat` against the merge base, added plus removed, generated files and evidence JSON
+  excluded): 649 lines with this report, about 50 over the ~600 guide: Lean 338 (guards 105, theorems 112), tests
+  and data 109, side tables 62 (trust classes 39, manifest 14), docs 143. Nothing was left to cut that the
+  deliverables do not name: the guards and theorems are each deliverable's fixtures and proofs.
 - Selected tests (`mac-pytest.sh --select`, tree 7b046476a9, 6 shards): 403 units, 401 passed; failed
   `test_cardinality_exercised.py` (`sizesJson` was stated about by no theorem: `sizesJson_regionSizes` added) and
   `test_consolidation_tools.py::test_committed_ledger_names_real_declarations` (step 7's measured figures, as qt-a3d
