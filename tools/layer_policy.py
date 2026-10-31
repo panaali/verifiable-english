@@ -122,9 +122,9 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
-                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples"}:
+                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run or Scope.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):

@@ -377,7 +377,10 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 _SPLIT_CASE = "readings-route.json#/$defs/elaborate_components/properties/components/items/properties/"
 OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
                 "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties",
-                *(_SPLIT_CASE + name for name in ("environment", "document", "checked"))}
+                *(_SPLIT_CASE + name for name in ("environment", "document", "checked")),
+                # The projected environment (VE.Senses.projectedJson): the relay reads it whole as an Environment and
+                # binds its environment_id and the lexicon's to it (ve.backends.senses); its typed shape is sn-b6b's.
+                "senses.project.json#/$defs/projection/anyOf/0/properties/environment"}
 
 
 def open_objects(directory=DIRECTORY):

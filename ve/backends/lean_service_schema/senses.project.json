@@ -19,7 +19,7 @@
             "properties": {
               "dictionary_id": {"$ref": "common.json#/$defs/hex64"},
               "projection": {"$ref": "#/$defs/projection"},
-              "senses_version": {"type": "string"}
+              "senses_version": {"$ref": "common.json#/$defs/text"}
             },
             "required": ["dictionary_id", "senses_version", "projection"],
             "type": "object"
@@ -32,38 +32,11 @@
     ]
   },
   "$defs": {
-    "details": {
-      "$comment": "VE.Senses.Run.faultFields: a fault's arguments, under the names of SenseFault's fields.",
-      "additionalProperties": false,
-      "properties": {
-        "gloss": {"type": "string"},
-        "kind": {"type": "string"},
-        "line": {"$ref": "common.json#/$defs/nat"},
-        "name": {"type": "string"},
-        "sense": {"type": "string"},
-        "sentence": {"$ref": "common.json#/$defs/nat"},
-        "what": {"type": "string"},
-        "why": {
-          "anyOf": [
-            {"const": "binder"},
-            {
-              "additionalProperties": false,
-              "properties": {"referent": {"type": "string"}},
-              "required": ["referent"],
-              "type": "object"
-            }
-          ]
-        },
-        "word": {"type": "string"},
-        "words": {"$ref": "common.json#/$defs/strings"}
-      },
-      "type": "object"
-    },
     "identities": {
       "$comment": "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar.",
       "additionalProperties": false,
       "properties": {
-        "actions_version": {"type": "string"},
+        "actions_version": {"$ref": "common.json#/$defs/text"},
         "environment_id": {"$ref": "common.json#/$defs/hex64"},
         "grammar_id": {"$ref": "common.json#/$defs/hex64"},
         "lexicon_id": {"$ref": "common.json#/$defs/hex64"}
@@ -111,20 +84,202 @@
           "type": "object"
         },
         {
-          "$comment": "VE.Senses.Run.faultJson: the fault's status and code as senses.read gives them, and its arguments.",
+          "$comment": "VE.Senses.Run.faultJson of a dictionary failure: its check, name and reason.",
           "additionalProperties": false,
           "properties": {
-            "code": {"type": "string"},
-            "details": {"$ref": "#/$defs/details"},
+            "code": {"const": "InvalidDictionary"},
             "failure": {
               "maxItems": 3,
               "minItems": 3,
               "prefixItems": [{"type": "string"}, {"type": "string"}, {"type": "string"}],
               "type": "array"
             },
-            "status": {"enum": ["budget", "rejected"]}
+            "status": {"const": "rejected"}
           },
-          "required": ["status", "code"],
+          "required": ["status", "code", "failure"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "UnknownWord"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"line": {"$ref": "common.json#/$defs/nat"}, "word": {"type": "string"}},
+              "required": ["line", "word"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "UnknownGloss"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {
+                "gloss": {"type": "string"},
+                "line": {"$ref": "common.json#/$defs/nat"},
+                "word": {"type": "string"}
+              },
+              "required": ["line", "word", "gloss"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "MalformedPreamble"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"line": {"$ref": "common.json#/$defs/nat"}},
+              "required": ["line"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "PreambleBudget"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"line": {"$ref": "common.json#/$defs/nat"}},
+              "required": ["line"],
+              "type": "object"
+            },
+            "status": {"const": "budget"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "RepeatedDefault"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"line": {"$ref": "common.json#/$defs/nat"}, "word": {"type": "string"}},
+              "required": ["line", "word"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "PreambleLate"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"sentence": {"$ref": "common.json#/$defs/nat"}},
+              "required": ["sentence"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "Collision"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"kind": {"type": "string"}, "name": {"type": "string"}, "sense": {"type": "string"}},
+              "required": ["kind", "name", "sense"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "VocabularyLimit"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"what": {"type": "string"}},
+              "required": ["what"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "TooManyCandidates"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"sentence": {"$ref": "common.json#/$defs/nat"}, "words": {"$ref": "common.json#/$defs/strings"}},
+              "required": ["sentence", "words"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "CandidatesDiverge"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {
+                "sentence": {"$ref": "common.json#/$defs/nat"},
+                "why": {
+                  "anyOf": [
+                    {"const": "binder"},
+                    {
+                      "additionalProperties": false,
+                      "properties": {"referent": {"type": "string"}},
+                      "required": ["referent"],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "words": {"$ref": "common.json#/$defs/strings"}
+              },
+              "required": ["sentence", "words", "why"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "code": {"const": "QuotedSense"},
+            "details": {
+              "additionalProperties": false,
+              "properties": {"sentence": {"$ref": "common.json#/$defs/nat"}, "word": {"type": "string"}},
+              "required": ["sentence", "word"],
+              "type": "object"
+            },
+            "status": {"const": "rejected"}
+          },
+          "required": ["status", "code", "details"],
           "type": "object"
         }
       ]

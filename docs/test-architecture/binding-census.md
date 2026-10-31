@@ -8,14 +8,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 263 |
 | leaves:closed domain | 293 |
-| leaves:none | 1465 |
+| leaves:none | 1464 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1064 |
+| today:not probed | 1063 |
 | today:shape | 556 |
 | today:unbound | 137 |
-| answers | 578 |
+| answers | 580 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3490,52 +3490,51 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 ## senses.project
 
-0 recorded answers.
+2 recorded answers.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 0 | not probed |
-| `/id` | any | bound | x-echo |  | 0 | shape |
-| `/id` | string | bound | x-equals |  | 0 | shape |
-| `/result/dictionary_id` | string | none |  | pattern | 0 | not probed |
-| `/result/projection/code` | string | none |  |  | 0 | not probed |
-| `/result/projection/details/gloss` | string | none |  |  | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 2 | shape |
+| `/id` | string | bound | x-equals |  | 2 | shape |
+| `/result/dictionary_id` | string | none |  | pattern | 2 | not probed |
+| `/result/projection/code` | string | closed domain | const |  | 1 | shape |
+| `/result/projection/details/gloss` | string | none |  |  | 1 | not probed |
 | `/result/projection/details/kind` | string | none |  |  | 0 | not probed |
-| `/result/projection/details/line` | integer | none |  | minimum | 0 | not probed |
+| `/result/projection/details/line` | integer | none |  | minimum | 1 | not probed |
 | `/result/projection/details/name` | string | none |  |  | 0 | not probed |
 | `/result/projection/details/sense` | string | none |  |  | 0 | not probed |
 | `/result/projection/details/sentence` | integer | none |  | minimum | 0 | not probed |
 | `/result/projection/details/what` | string | none |  |  | 0 | not probed |
 | `/result/projection/details/why` | string | closed domain | const |  | 0 | shape |
 | `/result/projection/details/why/referent` | string | none |  |  | 0 | not probed |
-| `/result/projection/details/word` | string | none |  |  | 0 | not probed |
+| `/result/projection/details/word` | string | none |  |  | 1 | not probed |
 | `/result/projection/details/words/*` | string | none |  |  | 0 | not probed |
 | `/result/projection/failure/0` | string | none |  |  | 0 | not probed |
 | `/result/projection/failure/1` | string | none |  |  | 0 | not probed |
 | `/result/projection/failure/2` | string | none |  |  | 0 | not probed |
-| `/result/projection/identities/actions_version` | string | none |  |  | 0 | not probed |
-| `/result/projection/identities/environment_id` | string | none |  | pattern | 0 | not probed |
-| `/result/projection/identities/grammar_id` | string | none |  | pattern | 0 | not probed |
-| `/result/projection/identities/lexicon_id` | string | none |  | pattern | 0 | not probed |
-| `/result/projection/lexicon/aliases/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/aliases/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/environment_id` | string | none |  | pattern | 0 | not probed |
-| `/result/projection/lexicon/format` | string | closed domain | const |  | 0 | shape |
-| `/result/projection/lexicon/letters/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/letters/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/negatives/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/negatives/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/nouns/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/nouns/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/spellings/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/spellings/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/wordings/*/0` | string | none |  |  | 0 | not probed |
-| `/result/projection/lexicon/wordings/*/1` | string | none |  |  | 0 | not probed |
-| `/result/projection/status` | string | closed domain | const |  | 0 | shape |
-| `/result/projection/status` | string | closed domain | enum |  | 0 | shape |
-| `/result/senses_version` | string | none |  |  | 0 | not probed |
-| `/status` | string | closed domain | const |  | 0 | shape |
+| `/result/projection/identities/actions_version` | string | none |  | minLength | 1 | not probed |
+| `/result/projection/identities/environment_id` | string | none |  | pattern | 1 | not probed |
+| `/result/projection/identities/grammar_id` | string | none |  | pattern | 1 | not probed |
+| `/result/projection/identities/lexicon_id` | string | none |  | pattern | 1 | not probed |
+| `/result/projection/lexicon/aliases/*/0` | string | none |  |  | 10 | not probed |
+| `/result/projection/lexicon/aliases/*/1` | string | none |  |  | 10 | not probed |
+| `/result/projection/lexicon/environment_id` | string | none |  | pattern | 1 | not probed |
+| `/result/projection/lexicon/format` | string | closed domain | const |  | 1 | shape |
+| `/result/projection/lexicon/letters/*/0` | string | none |  |  | 6 | not probed |
+| `/result/projection/lexicon/letters/*/1` | string | none |  |  | 6 | not probed |
+| `/result/projection/lexicon/negatives/*/0` | string | none |  |  | 2 | not probed |
+| `/result/projection/lexicon/negatives/*/1` | string | none |  |  | 2 | not probed |
+| `/result/projection/lexicon/nouns/*/0` | string | none |  |  | 6 | not probed |
+| `/result/projection/lexicon/nouns/*/1` | string | none |  |  | 6 | not probed |
+| `/result/projection/lexicon/spellings/*/0` | string | none |  |  | 2 | not probed |
+| `/result/projection/lexicon/spellings/*/1` | string | none |  |  | 2 | not probed |
+| `/result/projection/lexicon/wordings/*/0` | string | none |  |  | 2 | not probed |
+| `/result/projection/lexicon/wordings/*/1` | string | none |  |  | 2 | not probed |
+| `/result/projection/status` | string | closed domain | const |  | 2 | shape |
+| `/result/senses_version` | string | none |  | minLength | 2 | not probed |
+| `/status` | string | closed domain | const |  | 2 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
