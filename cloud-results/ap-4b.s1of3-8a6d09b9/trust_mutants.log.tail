@@ -1,0 +1,10 @@
+trust_mutants: 10 definitions, 161 mutants (54 to run), 4 jobs, base c66a6e25795a
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-empty: (choiceRules D s c).map (ruleView D unspec) -> [] (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-last: (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec)) -> (((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))).dropLast) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-first: (choiceRules D s c).map (ruleView D unspec) -> (((choiceRules D s c).map (ruleView D unspec)).take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-last: (choicesOn D s.sets) -> ((choicesOn D s.sets).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-first: (choiceRules D s c).map (ruleView D unspec) -> (((choiceRules D s c).map (ruleView D unspec)).drop 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+trust_mutants: 32 KILLED, 5 SURVIVOR, 0 UNKNOWN, 3 INVALID, 14 ALLOWED, 0 NOT RUN, 107 OTHER SHARD in 641 s
+trust_mutants: G[V], trusted: 7 KILLED, 1 ALLOWED, 10 OTHER SHARD
+trust_mutants: S, trusted: 25 KILLED, 5 SURVIVOR, 3 INVALID, 13 ALLOWED, 97 OTHER SHARD
+trust_mutants: steps: wall plan 5.3 s, scratch 1.9 s, control_build 0.1 s, probe_install 0.8 s, control_probes 11.3 s, mutants 618.5 s, cleanup 3.4 s; lake control_build 0.1 s (1), probe_install 0.8 s (1), control_probes 11.1 s (1), mutant_builds 98 s (79), mutant_checks 1550 s (49), stage_controls 102.7 s (4), mutant_probes 649.1 s (32)
