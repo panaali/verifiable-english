@@ -256,6 +256,15 @@ def sep (x : Option (Doc × List String)) (s : String) (i j : Nat) : Bool :=
   sep (mkDoc (e055 false "deny") (u055)) "rs_u055" 0 1, sep (mkDoc (e055 false "deny") (u055)) "rs_u055" 1 0] ==
   [true, true, true, true, true]
 #guard (S1.map fun (D, _) => (atomSituation D "rs_u105b" 1 0).probe) == some (.selects "norm" "enjoy_freely" [0])
+-- on acts of two arguments the probe's tuple has two elements; every constant names the base's one element
+def d076 := mkDoc (e076 [("dir", "{0} to directly take part in {1}"),
+  ("thr", "{0} to take part in {1} through freely chosen representatives")])
+  [.set ⟨"rs_u076", "u076", 1, [cand "dir" (rl "u076-dir" "dir") "x", cand "thr" (rl "u076-thr" "thr") "y"]⟩]
+#guard [sep d076 "rs_u076" 0 1, sep d076 "rs_u076" 1 0] == [true, true] &&
+  (d076.map fun (D, _) => (atomSituation D "rs_u076" 1 0).probe) == some (.selects "norm" "thr" [0, 0])
+#guard (S1.map fun (D, _) => let M := (atomSituation D "rs_u105b" 1 0).base
+  ["c", "d"].all (fun c => (M.constants c).any (fun v => ["person", "country"].all (fun t => (M.domains t).contains v)))) ==
+  some true
 -- two candidates on one act: no act tells them apart, the probe is `holds`, and `separates` refuses the situation
 def same := d105 [u105a, setB [bFirst, cand "same" (rl "u105b-same" "enjoy" false) "all"], setC [cFirst, cAll]]
 #guard !sep same "rs_u105b" 1 0 && (same.map fun (D, _) => (atomSituation D "rs_u105b" 1 0).probe) == some .holds
