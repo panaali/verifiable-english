@@ -10,6 +10,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "docs/readings-defaults/rd3"
@@ -147,7 +148,7 @@ def test_round3_mutants_were_rejected_and_reported():
     failed tests that exist; the report's table rows are the saved ones."""
     mutants = json.loads((HERE / "evidence/round3-mutants.json").read_text())
     report = (HERE / "DELTA.md").read_text()
-    statements = (ROOT / "lean/statements.txt").read_text()
+    statements = inventory_path("lean/statements.txt").read_text()
     assert {m["id"] for m in mutants} == {"L4", "L5", "L6", "L7", "L8", "L9", "P1", "P2", "P3"}
     for mutant in mutants:
         assert mutant["exit_code"] != 0 and (ROOT / MOVED.get(mutant["file"], mutant["file"])).exists()

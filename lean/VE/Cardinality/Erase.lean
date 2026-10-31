@@ -138,4 +138,39 @@ def refutesC {α : Type} [DecidableEq α] (E : CEnv) (ps : List CFormula) (c : C
   VE.Order.countermodelCheck (withRegionsFinite E (c :: ps) M)
     ((erasedProblem E ps c).1.map QFormula.erase) (erasedProblem E ps c).2.erase
 
+/-! The runner's form of `withRegionsFinite` (`withSizes_eq`): each region's size is computed once per model, from
+the region structure computed once per problem, and a constant is read through a hash index of the sizes. -/
+
+/-- `Body.evalFin` with the relation tables read through `mem` (`evalBy_eq`). -/
+def Body.evalBy {α : Type} (mem : String → List (VE.Order.Value α) → Bool) (x : α) : Body → Bool
+  | .atom p => mem p [.inl x]
+  | .any => true
+  | .not b => !(b.evalBy mem x)
+  | .and a b => a.evalBy mem x && b.evalBy mem x
+  | .or a b => a.evalBy mem x || b.evalBy mem x
+
+/-- Each region constant of `R`, in its table's order, with the number of distinct listed objects of its sort in its
+region; each sort's objects and predicates are read once. -/
+def regionSizes {α : Type} [DecidableEq α] [Hashable α] (mem : String → List (VE.Order.Value α) → Bool)
+    (M : VE.Order.FiniteModel α) (R : RegionData) : List (String × Nat) :=
+  R.sorts.flatMap fun s =>
+    let xs := firstUseH (M.domains s)
+    let ps := R.predsOn s
+    (regions ps.length).map fun r => (regionConst s r, (xs.filter fun x => (regionBody ps r).evalBy mem x).length)
+
+/-- The work of `regionSizes`, charged before it runs: each region's body (its predicates and their conjunction)
+on each listed object of its sort. -/
+def regionCost {α : Type} (M : VE.Order.FiniteModel α) (R : RegionData) : Nat :=
+  R.sorts.foldl (fun n s => n + 2 ^ (R.predsOn s).length * (M.domains s).length * ((R.predsOn s).length + 1)) 0
+
+/-- A hash index of `sizes`; a constant's first entry wins (`sizeIndex_get`). -/
+def sizeIndex (sizes : List (String × Nat)) : Std.HashMap String Nat :=
+  sizes.foldr (fun e m => m.insert e.1 e.2) {}
+
+/-- `M` with each constant of `idx` read as its size. -/
+def withSizes {α : Type} (M : VE.Order.FiniteModel α) (idx : Std.HashMap String Nat) : VE.Order.FiniteModel α :=
+  { M with constants := fun c => match idx[c]? with
+      | some n => some (.inr n)
+      | none => M.constants c }
+
 end VE.Cardinality
