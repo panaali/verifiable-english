@@ -53,6 +53,46 @@ def select(paths, **kwargs):
     """The selector on the static graph alone, so these checks do not depend on a cached map."""
     return select_tests.select(paths, coverage=None, **kwargs)
 
+def python_tree(root: Path, files: dict[str, str]) -> Path:
+    """A tree of empty modules, one per row of the real layer table (a split package and `ve.document` as packages,
+    with `ve.document.cli`), an empty ledger, a one-name facade and `files` on top."""
+    rows = layer_policy.PYTHON_MODULES
+    for row in rows:
+        path = root.joinpath(*row.split("."))
+        for parent in path.relative_to(root).parents:
+            if parent.parts:
+                (root / parent).mkdir(exist_ok=True)
+                (root / parent / "__init__.py").touch()
+        if row == "ve.document" or any(other.startswith(row + ".") for other in rows):
+            path.mkdir(exist_ok=True)
+            (path / "__init__.py").touch()
+        else:
+            path.with_suffix(".py").touch()
+    (root / "ve/document/cli.py").touch()
+    (root / "ve/__init__.py").write_text('_EXPORTS = {"argument": ("check_argument",)}\n')
+    (root / "ve_experiments").mkdir()
+    (root / "ve_experiments/__init__.py").touch()
+    (root / "tools").mkdir()
+    (root / check_python_layers.LEDGER).write_text("{}")
+    for name, text in files.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text)
+    return root
+
+
+def python_check(root: Path) -> tuple[int, str]:
+    """tools/check_python_layers.py on the tree at `root` with the contract generated for it, in a fresh interpreter
+    (grimp and import-linter must find root's `ve`, not this checkout's): its exit code and its output."""
+    sys.path.insert(0, str(layer_policy.ROOT))
+    from tests.subprocesses import HANG_TIMEOUT
+    ledger = json.loads((root / check_python_layers.LEDGER).read_text())
+    (root / check_python_layers.CONTRACT).write_text(check_python_layers.contract_text(ledger, root))
+    result = subprocess.run([sys.executable, str(layer_policy.ROOT / "tools/check_python_layers.py"),
+                             "--root", str(root)], capture_output=True, text=True, timeout=HANG_TIMEOUT,
+                            check=False)
+    return result.returncode, result.stdout + result.stderr
+
+
 # The inward crate graph of rust/Cargo.toml: each crate and the workspace crates it uses.
 RUST_CRATES = {"ve-kernel": [], "ve-profile": ["ve-kernel"], "ve-core": ["ve-kernel", "ve-profile"],
                "ve": ["ve-core"]}
@@ -201,37 +241,119 @@ class LayerSelectionTests(unittest.TestCase):
             ):
                 self.assertTrue(select(["ve/backends/lean_service.py"])["lean_build"])
 
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
     def test_python_app_package_outward_import_is_detected(self):
-        class Graph:
-            modules = {"ve.errors", "ve_experiments", "ve_experiments.runner"}
-
-            def find_modules_directly_imported_by(self, importer):
-                return {"ve_experiments", "ve_experiments.runner"} if importer == "ve.errors" else set()
-
-        with patch.object(check_python_layers.grimp, "build_graph", return_value=Graph()):
-            self.assertIn("ve.errors -> ve_experiments.runner",
-                          check_python_layers.violations())
-            self.assertIn("ve.errors -> ve_experiments", check_python_layers.violations())
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/errors.py": "import ve_experiments.runner\n",
+                                                 "ve_experiments/runner.py": ""})
+            code, output = python_check(root)
+        self.assertEqual(code, 1, output)
+        self.assertIn("ve.errors -> ve_experiments.runner", output)
 
     def test_facade_imports_resolve_to_export_owner(self):
-        class Graph:
-            modules = {"ve", "ve.errors", "ve.argument"}
-
-            def find_modules_directly_imported_by(self, importer):
-                return {"ve"} if importer == "ve.errors" else set()
-
         with TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "ve").mkdir()
-            (root / "ve/__init__.py").write_text("from .argument import check_argument\n")
             (root / "ve/argument.py").write_text("")
-            for source in ("from . import check_argument\n",
-                           "from ve import check_argument as check\n",
-                           "import ve as facade\nfacade.check_argument\n"):
-                (root / "ve/errors.py").write_text(source)
-                with (patch.object(check_python_layers, "ROOT", root),
-                      patch.object(check_python_layers.grimp, "build_graph", return_value=Graph())):
-                    self.assertIn("ve.errors -> ve.argument", check_python_layers.violations())
+            for facade in ("from .argument import check_argument\n",
+                           '_EXPORTS = {"argument": ("check_argument",)}\n'):
+                (root / "ve/__init__.py").write_text(facade)
+                exports = layer_policy.python_exports(root)
+                self.assertEqual(exports, {"check_argument": "ve.argument"})
+                for source in ("from . import check_argument\n",
+                               "from ve import check_argument as check\n",
+                               "import ve as facade\nfacade.check_argument\n"):
+                    with self.subTest(facade=facade, source=source):
+                        self.assertIn("ve.argument", layer_policy.python_imports(
+                            "ve.errors", source, exports, root=root))
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_facade_import_below_its_layer_fails(self):
+        # The facade's names resolve lazily, so import-linter sees only `ve`; the check refuses the import.
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/errors.py": "from ve import check_argument\n"})
+            code, output = python_check(root)
+        self.assertEqual(code, 1, output)
+        self.assertIn("ve.errors imports the ve facade below layer 4", output)
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/check.py": "from ve import check_argument\n"})
+            code, output = python_check(root)
+        self.assertEqual(code, 0, output)
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_seeded_outward_import_fails_the_check(self):
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {})
+            code, output = python_check(root)
+            self.assertEqual(code, 0, output)
+            for module in ("ve/errors.py", "ve/backends/relay.py", "ve/ast.py"):
+                with self.subTest(module=module):
+                    (root / module).write_text("def late():\n    from ve.document import cli\n")
+                    code, output = python_check(root)
+                    self.assertEqual(code, 1, output)
+                    self.assertIn(f"{module[:-3].replace('/', '.')} -> ve.document.cli", output)
+                    (root / module).write_text("")
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_seeded_module_with_no_layer_fails_the_check(self):
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/planted.py": "from ve import errors\n"})
+            code, output = python_check(root)
+        self.assertEqual(code, 1, output)
+        self.assertIn("unmapped Python module ve.planted", output)
+        self.assertIsNone(layer_policy.python_layer("ve.planted"))
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_new_module_in_a_placed_package_needs_no_row(self):
+        self.assertEqual(layer_policy.python_layer("ve.backends.planted"), 1)
+        self.assertEqual(layer_policy.python_layer("ve.backends.lean_runner"), 2)
+        self.assertEqual(layer_policy.python_layer("ve.backends.senses.planted"), 4)
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/backends/planted.py": "from ve.backends import relay\n"})
+            code, output = python_check(root)
+            self.assertEqual(code, 0, output)
+            self.assertIn("ve.backends.planted", (root / ".importlinter").read_text())
+            (root / "ve/backends/planted.py").write_text("from ve.backends import lean_runner\n")
+            code, output = python_check(root)
+        self.assertEqual(code, 1, output)
+        self.assertIn("ve.backends.planted -> ve.backends.lean_runner", output)
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_split_package_init_import_is_checked(self):
+        # `ve.backends` is split across layers, so its own __init__ is in no import-linter layer.
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/backends/__init__.py": "from ve.backends import senses\n"})
+            code, output = python_check(root)
+            self.assertEqual(code, 1, output)
+            self.assertIn("new outward import ve.backends -> ve.backends.senses", output)
+            (root / "ve/backends/__init__.py").write_text("from ve.backends import relay\n")
+            code, output = python_check(root)
+        self.assertEqual(code, 0, output)
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_ledger_edges_must_exist_and_point_outward(self):
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/errors.py": "from ve import wire\n"})
+            ledger = root / check_python_layers.LEDGER
+            ledger.write_text(json.dumps({"ve.errors -> ve.wire": "same layer"}))
+            code, output = python_check(root)
+            self.assertEqual(code, 1, output)
+            self.assertIn("stale exception (remove it): ve.errors -> ve.wire is not outward", output)
+            ledger.write_text(json.dumps({"ve.errors -> ve.ast": "no such import"}))
+            code, output = python_check(root)
+            self.assertEqual(code, 1, output)
+            self.assertIn("No matches for ignored import ve.errors -> ve.ast", output)
+            (root / "ve/errors.py").write_text("from ve import ast\n")
+            code, output = python_check(root)
+        self.assertEqual(code, 0, output)
+
+    @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
+    def test_namespace_directory_fails_the_check(self):
+        with TemporaryDirectory() as directory:
+            root = python_tree(Path(directory), {"ve/document/extra/hidden.py": ""})
+            code, output = python_check(root)
+        self.assertEqual(code, 1, output)
+        self.assertIn("ve/document/extra has Python modules and no __init__.py", output)
 
     def test_plain_lean_headers_with_comments(self):
         source = "/- a comment -/\n-- import VE.Fake\n\nimport VE.Route.Run\n"
@@ -433,6 +555,19 @@ class LayerSelectionTests(unittest.TestCase):
                 graph.prepare_names()
                 graph.build()
                 self.assertIn("experiments/p1.py", graph.closure("tests/test_p1.py")[0])
+
+    def test_lazy_facade_names_select_like_from_imports(self):
+        # Test selection follows `from ve import parse` to the module that defines it, for both facade forms.
+        files = ["ve/__init__.py", "ve/core.py", "tests/test_facade.py"]
+        for facade in ("from .core import parse\n", '_EXPORTS = {"core": ("parse",)}\n'):
+            graph = source_graph.Graph(layer_policy.ROOT, files, {
+                "ve/__init__.py": source_graph.summarize(facade, "ve", package=True),
+                "ve/core.py": source_graph.summarize("def parse():\n    pass\n", "ve.core"),
+                "tests/test_facade.py": source_graph.summarize("from ve import parse\n", "tests.test_facade")})
+            graph.prepare_names()
+            graph.build()
+            self.assertEqual(graph.exports, {"parse": "ve/core.py"}, facade)
+            self.assertIn("ve/core.py", graph.closure("tests/test_facade.py")[0], facade)
 
     def test_rust_crate_graph_kept(self):
         output = io.StringIO()

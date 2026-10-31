@@ -1,0 +1,139 @@
+{
+ "commit": "b521e9f2ba486077b56968cf835cb6e6d83b0561",
+ "cycles": {
+  "largest": [
+   [
+    "ve.admission",
+    "ve.alternatives",
+    "ve.argument",
+    "ve.ast",
+    "ve.backends.diagnostics",
+    "ve.backends.english_lean",
+    "ve.backends.lean",
+    "ve.backends.lean_runner",
+    "ve.backends.lean_service",
+    "ve.backends.relay",
+    "ve.backends.rust_jsonl",
+    "ve.backends.soft_relay",
+    "ve.backends.validation",
+    "ve.background",
+    "ve.closure",
+    "ve.definitions",
+    "ve.english",
+    "ve.english_grammar",
+    "ve.english_vocabulary",
+    "ve.entailment",
+    "ve.environment",
+    "ve.environment_wire",
+    "ve.evaluate",
+    "ve.fluent",
+    "ve.fol",
+    "ve.identity",
+    "ve.model",
+    "ve.natural",
+    "ve.norm_defaults_route",
+    "ve.norms",
+    "ve.order",
+    "ve.parser",
+    "ve.printer",
+    "ve.search",
+    "ve.soft_route",
+    "ve.softnorms",
+    "ve.surface.nary",
+    "ve.surface.registry",
+    "ve.surface.unambiguity",
+    "ve.units",
+    "ve.vacuity",
+    "ve.wire"
+   ],
+   [
+    "ve.defaults",
+    "ve.defaults_english",
+    "ve.discourse",
+    "ve.document",
+    "ve.document.cli",
+    "ve.document.containers",
+    "ve.document.lean",
+    "ve.document.load",
+    "ve.document.render",
+    "ve.document.report",
+    "ve.document.source",
+    "ve.norm_defaults",
+    "ve.readings",
+    "ve.readings_components",
+    "ve.readings_route",
+    "ve.readings_s1",
+    "ve.readings_s2_wording",
+    "ve.readings_sup",
+    "ve.readings_verdicts",
+    "ve.readings_verdicts.binding",
+    "ve.readings_verdicts.choice",
+    "ve.readings_verdicts.enumerated",
+    "ve.readings_verdicts.route",
+    "ve.readings_verdicts.superposed"
+   ]
+  ],
+  "output": "151 modules; SCC sizes: [42, 24, 2]",
+  "sizes": [
+   42,
+   24,
+   2
+  ]
+ },
+ "exceptions": {
+  "count": 9,
+  "edges": [
+   "ve.assist.cli -> ve_experiments.assist_haiku",
+   "ve.ast -> ve.surface.nary",
+   "ve.backends.relay -> ve.ast",
+   "ve.closure -> ve.surface.registry",
+   "ve.english -> ve.argument",
+   "ve.norms -> ve.search",
+   "ve.rights -> ve.rights_route",
+   "ve.units -> ve.search",
+   "ve.wire -> ve.ast"
+  ]
+ },
+ "import_ve": {
+  "cumulative_us_median": 1215,
+  "cumulative_us_runs": [
+   1834,
+   1221,
+   1212,
+   1196,
+   1215,
+   1233,
+   1167,
+   1164,
+   1296,
+   1315,
+   1080,
+   971,
+   1244,
+   1185,
+   1287
+  ],
+  "loads_english": false,
+  "loads_parser": false,
+  "module_names": [
+   "ve"
+  ],
+  "modules": 1
+ },
+ "indented_imports": {
+  "files_with_indented_relative": 89,
+  "indented": 772,
+  "indented_relative": 752
+ },
+ "layer_rows": {
+  "per_layer": {
+   "1": 8,
+   "2": 19,
+   "3": 19,
+   "4": 46,
+   "5": 1
+  },
+  "total": 93
+ },
+ "python": "3.14.7"
+}

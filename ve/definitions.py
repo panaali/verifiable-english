@@ -10,6 +10,9 @@ from dataclasses import dataclass
 from .assurance import semantic_entry
 from . import ast
 from .background import dependency_order
+from .backends.dispatch import owned
+from .backends.lean_runner import route_mode
+from .backends.validation import model_in_scope
 from .environment import Environment
 from .errors import UnsupportedProfile, VEError
 from .wire import digest, validate_json
@@ -99,8 +102,6 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     Lean validates and orders them under every authority (`_compile_lean`,
     lean-first batch 13b).
     """
-    from .backends.dispatch import owned
-    from .backends.validation import model_in_scope
 
     def python():
         return _compile_python(env, entries, version=version)
@@ -159,7 +160,6 @@ def _compile_lean(env: Environment, entries, version, python) -> tuple[Definitio
     definitions are read back from its regenerated premises. Entries that
     cannot be embedded in the environment (only a direct caller passes them)
     keep the retained Python."""
-    from .backends.lean_runner import route_mode
     from .backends.relay import decide_once
     raw = _wire_entries(env, entries)
     if raw is None or type(version) is not str or not version:
