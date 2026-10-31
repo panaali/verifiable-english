@@ -1,0 +1,12 @@
+{
+ "job": "ccdiag-0410",
+ "head": "caa1c5cb2d112cada8808e5fe505a80905d3a2f2",
+ "argv": [
+  "ccdiag-0410",
+  "caa1c5cb2d112cada8808e5fe505a80905d3a2f2",
+  "caa1c5cb2d112cada8808e5fe505a80905d3a2f2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8051a45a50ea.tar.zst",
+  "e54dfda741455b10b9c3ac24c08797f408122740956923c8f5f9c9ea951add92",
+  "diag=id; echo PWD=$PWD; echo TMPDIR=${TMPDIR:-}; for d in / /tmp /tmp/cc-wt /root; do for f in pytest.ini pyproject.toml tox.ini setup.cfg setup.py conftest.py; do [ -e $d/$f ] && echo FOUND $d/$f; done; done; ls -la /tmp | head -30; cd /tmp && mkdir -p /tmp/pdiag && printf 'def test_x(): pass\\n' > /tmp/pdiag/test_p.py && cd /tmp/cc-wt && uv run --frozen --group dev python -m pytest --collect-only -q -o addopts= /tmp/pdiag/test_p.py::test_x 2>&1 | head -12; uv run --frozen --group dev python -m pytest --collect-only -o addopts= /tmp/pdiag/test_p.py 2>&1 | grep -i rootdir"
+ ]
+}
