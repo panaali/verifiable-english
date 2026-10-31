@@ -45,6 +45,8 @@ Where it applies (manage-agents):
 
 Live probe on this branch: `uv run python tools/select_tests.py --base $(git merge-base HEAD main) --defer-heavy` printed `115/505 test units` (127 without the option) and `deferred to the chain gate: 12 test files over 120 s selected only for weak reasons (7072.3 s)`, including test_english_evidence, test_trust_mutants and test_relay_mutation_gate.
 
+This branch's own selected run, through the wiring with the flag on, was `zsh mac-pytest.sh --select -- --base 327bf922a --run` on tree 71f50a010. Its log printed `116/505 test units`, then `deferred to the chain gate: 14 test files over 120 s selected only for weak reasons (7732.3 s)`. It ran on GitHub Actions in 3 shards: 39 + 40 + 37 units, all passed, exit 0, 863 s (`[gha-select 01:08:15Z] summary`).
+
 ## 4. Measured saving
 
 Command: `python3 -I tools-local/defer-heavy-measure.py --repo <this worktree> --jobs 6 --json measure-jobs6.json`, and the same with `--jobs 8`.
