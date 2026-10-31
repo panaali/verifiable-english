@@ -96,4 +96,46 @@ def F10n : Doc := ⟨.rights, frame21, [.fixed "u048" (.right ⟨"r13", "person"
 #guard qualifyKey F10n [("rs112", 2)] (.lim "l29c" "move_permitted") == .lim "l29c" "move_permitted" &&
   qualifyKey F10n [("rs112", 0)] (.lim "l29c" "move_permitted") == .lim "rd-1-l29c" "move_permitted"
 
+/-! ## Lists with two entries, so that every entry and its order count -/
+
+-- a candidate right with two lines: both gated, in order; a right_lines unit with two lines likewise
+def gClaim : VE.Rights.SourceLine :=
+  line .claim { strictNode "rd-2-no-expel" "expel_permitted" false with guard := .and .top chi1 }
+def gLiberty : VE.Rights.SourceLine :=
+  line .liberty { strictNode "rd-2-may-move" "move_permitted" true with guard := .and .top chi1 }
+#guard gateContent F21 0 1 (.right ⟨"r13", "person", .top, [claim21, liberty21]⟩) ==
+  .right ⟨"rd-2-r13", "person", .top, [gClaim, gLiberty]⟩
+#guard gateContent F21 0 1 (.rightLines "r13" [claim21, liberty21]) == .rightLines "r13" [gClaim, gLiberty]
+-- two sufficient conditions, each gated
+#guard (gateNorm F21 0 1 { excNode with exception := some ⟨some "unstated", [.top, .bottom], [], []⟩ }).exception.map
+  (·.sufficient) == some [.and .top chi1, .and .bottom chi1]
+-- a fixed right_lines unit with two lines: both copied, in order
+def overLine (n : String) (over : List String) : VE.Rights.SourceLine :=
+  line .claim (strictNode n "expel_permitted" false .top [] over)
+#guard copyContent F7o (.rightLines "r3" [overLine "x" ["base"], overLine "y" []]) ==
+  .rightLines "r3" [overLine "x" ["rd-1-base", "rd-2-base"], overLine "y" []]
+#guard copyContent F7o (.right ⟨"r4", "person", .top, [overLine "x" [], overLine "y" ["base"]]⟩) ==
+  .right ⟨"r4", "person", .top, [overLine "x" [], overLine "y" ["rd-1-base", "rd-2-base"]]⟩
+-- a scope naming a set-declared right and then a fixed one: every name kept, the first one copied
+#guard copyScope F7r { l29 with scope := some ["r13", "r3"] } == { l29 with scope := some ["rd-1-r13", "rd-2-r13", "r3"] }
+-- one-candidate sets: the right is the first of the set's interface names (its rule follows), or the only one
+def rsOne (ls : List VE.Rights.SourceLine) : ReadingSet := ⟨"rs1", "u1", 1, [⟨"only", some (.right ⟨"r13", "person", .top, ls⟩), [], []⟩]⟩
+#guard rightCopies ⟨.rights, frame21, [.set (rsOne [liberty21])], [], []⟩ "r13" == ["rd-1-r13"]
+#guard rightCopies ⟨.rights, frame21, [.set (rsOne [])], [], []⟩ "r13" == ["rd-1-r13"]
+-- two candidates with lines on one act under a fixed limitation: lim_{l29,move} has two owners, in candidate order
+def F7m : Doc := ⟨.rights, frame21, [.set rs48m, .fixed "u111" (.limitation l29) []], [], []⟩
+#guard owners F7m (.lim "l29" "move_permitted") == [[(0, 0)], [(0, 1)]] &&
+  owners F7m (.cond "l29" "move_permitted" "determined_by_law") == [[(0, 0)], [(0, 1)]]
+-- two liberty candidates on m: aimed_m has two owners, in candidate order
+def rsLL : ReadingSet := ⟨"rs48", "u048", 1, [⟨"a", some (.right ⟨"r13", "person", .top, [liberty21]⟩), [], []⟩,
+  ⟨"b", some (.right ⟨"r13", "person", .top, [line .liberty (strictNode "may-move-b" "move_permitted" true)]⟩), [], []⟩]⟩
+#guard owners ⟨.rights, frame21, [.set rsLL, .bar "u114" barRule], [], []⟩ (.aimed "move_permitted") == [[(0, 0)], [(0, 1)]]
+-- a limitation declared after, and before, a rule in its set's names: found either way
+def lmix : VE.Rights.Limitation := { l29 with name := "lmix" }
+def mixDoc (cs : List Candidate) : Doc := ⟨.rights, frame21, [.set ⟨"rsm", "u5", 1, cs⟩], [], []⟩
+def cNorm : Candidate := ⟨"n", some (.norm (strictNode "xr" "expel_permitted" true)), [], []⟩
+def cLim : Candidate := ⟨"l", some (.limitation lmix), [], []⟩
+#guard qualifyKey (mixDoc [cNorm, cLim]) [("rsm", 1)] (.lim "lmix" "move_permitted") == .lim "rd-2-lmix" "move_permitted" &&
+  qualifyKey (mixDoc [cLim, cNorm]) [("rsm", 0)] (.lim "lmix" "move_permitted") == .lim "rd-1-lmix" "move_permitted"
+
 end VE.Readings.RightsExamples

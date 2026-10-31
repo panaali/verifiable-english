@@ -14915,7 +14915,7 @@ module VE.Readings.RightsExamples e3790df3a95132f8f2804e5bce0231bd1816979ce815cd
 89:0-106:25 theorem VE.Readings.RightsExamples.value21_sup@VE.Readings.RightsExamples
 108:0-116:20 theorem VE.Readings.RightsExamples.value21_choice@VE.Readings.RightsExamples
 118:0-131:12 theorem VE.Readings.RightsExamples.f21_needs_typed@VE.Readings.RightsExamples
-module VE.Readings.RightsFixtures 432e628448fce74ac9eede47897f189a023742dd7c50093d0d7898973f098ee2
+module VE.Readings.RightsFixtures b6465ab394c69f8d96b6f16d766f0f8d0835dee050dbc151fe7d325a6b6a860e
 17:0-20:33 def VE.Readings.RightsExamples.frame21@VE.Readings.RightsFixtures
 21:0-21:97 def VE.Readings.RightsExamples.claim21@VE.Readings.RightsFixtures
 22:0-22:99 def VE.Readings.RightsExamples.liberty21@VE.Readings.RightsFixtures
@@ -14938,6 +14938,16 @@ module VE.Readings.RightsFixtures 432e628448fce74ac9eede47897f189a023742dd7c5009
 82:0-82:126 def VE.Readings.RightsExamples.excNode@VE.Readings.RightsFixtures
 93:0-93:100 def VE.Readings.RightsExamples.rs112n@VE.Readings.RightsFixtures
 94:0-95:23 def VE.Readings.RightsExamples.F10n@VE.Readings.RightsFixtures
+102:0-103:97 def VE.Readings.RightsExamples.gClaim@VE.Readings.RightsFixtures
+104:0-105:97 def VE.Readings.RightsExamples.gLiberty@VE.Readings.RightsFixtures
+113:0-114:65 def VE.Readings.RightsExamples.overLine@VE.Readings.RightsFixtures
+122:0-122:138 def VE.Readings.RightsExamples.rsOne@VE.Readings.RightsFixtures
+126:0-126:93 def VE.Readings.RightsExamples.F7m@VE.Readings.RightsFixtures
+130:0-131:121 def VE.Readings.RightsExamples.rsLL@VE.Readings.RightsFixtures
+134:0-134:62 def VE.Readings.RightsExamples.lmix@VE.Readings.RightsFixtures
+135:0-135:97 def VE.Readings.RightsExamples.mixDoc@VE.Readings.RightsFixtures
+136:0-136:93 def VE.Readings.RightsExamples.cNorm@VE.Readings.RightsFixtures
+137:0-137:62 def VE.Readings.RightsExamples.cLim@VE.Readings.RightsFixtures
 module VE.Readings.Route 419c251fa9040747738602e1f46d55122560e2ac516fc091411dd2940f5c5988
 20:0-22:28 inductive VE.Readings.Route@VE.Readings.Route
 22:11-22:22 instance VE.Readings.instDecidableEqRoute@VE.Readings.Route

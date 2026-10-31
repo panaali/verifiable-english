@@ -12,10 +12,10 @@ reviews/dri-decisions-20261031-cmp-s2b.md signed the statement change).
 | Row | Delivered | Where | Evidence |
 |---|---|---|---|
 | (1) rights case of `superpose_faithful`, F21's fixed-bar case first | partly: the F21 bar step, the construction it needs, the statement fixed | `Choice.lean` (`gateContent`, `copyContent`, `owners`, `qualifyKey`), `BarQuiet.lean` (`quiet_holds`, `bar_dead`), `Faithful.lean` (`ht`) | `RightsExamples.f21_bar_dead`, `rules21`, `choicePremises21`, `f21_needs_typed` |
-| (1) owner-based quiescence for `lim`, `cond`, `aimed` (edit 1) | yes | `limOwners`, `aimedOwners`, `jointOwner` | F7, F10 and F21 `#guard`s in `RightsExamples.lean` |
+| (1) owner-based quiescence for `lim`, `cond`, `aimed` (edit 1) | yes | `limOwners`, `aimedOwners`, `jointOwner` | F7, F10 and F21 `#guard`s in `RightsFixtures.lean` |
 | (1) the other rights cases (line nodes, limitation carve-outs, the simulation) | no: cmp-s2bb | | |
 | (2) lifting lemma for `superpose_all` on rights documents | the lemma: `adjoin_baseAdmissibleR`; `superpose_all` without `hch` needs (1): cmp-s2bb | `BarQuiet.lean` | builds; audit PASS |
-| (3) the switch, fixtures F6 to F10 and F21, differential and shadow test | F7, F10 and F21 as Lean fixtures; F6, F8, F9, the switch and the differential: cmp-s2bb | `RightsExamples.lean` | `lake build` |
+| (3) the switch, fixtures F6 to F10 and F21, differential and shadow test | F7, F10 and F21 as Lean fixtures; F6, F8, F9, the switch and the differential: cmp-s2bb | `RightsFixtures.lean` (`#guard`s), `RightsExamples.lean` (theorems) | `lake build` |
 | (4) load time against 85 s on a part document | no: cmp-s2bb (nothing to time before the switch) | | |
 
 Synthesis edits (debates/plan-synthesis-2/edits-composition.md): this item implements none of edits 1 to 8 (they edit
@@ -34,8 +34,8 @@ nothing else in the spec). Its conditions: (a) `RightsExamples.f21_needs_typed` 
 `superpose_all` and `superpose_countermodel` keep their statements (`git diff main -- lean/VE/Readings/BaseDown.lean
 lean/VE/Readings/BaseUp.lean lean/VE/Readings/SupFree.lean lean/VE/Readings/SupAll.lean
 lean/VE/Readings/SupWitness.lean` is empty; the plan's S2 block differs from main only in the two `ht` lines); (d)
-S2a's proofs build (`lake build`: "Build completed successfully (1172 jobs)"). No `sorry`, no new axiom
-(`python3 lean/audit.py`: "PASS: 679 source files; 7647 named theorem declarations audited").
+S2a's proofs build (`lake build`: "Build completed successfully (1173 jobs)"). No `sorry`, no new axiom
+(`python3 lean/audit.py`: "PASS: 680 source files; 7647 named theorem declarations audited").
 
 Other notes for cmp-s2bb, found while building: Python's `ve/readings_sup.superposed_contents` still refuses a
 rights document ("rights superposition is S2b"); `pairOwner` reads `origin` on node names, so a candidate fan-out
@@ -50,7 +50,7 @@ All in lean/VE/Readings/Choice.lean, each planted, `lake build VE.Readings.Right
 
 | Definition | Bug | Caught by |
 |---|---|---|
-| `gateLine` | a candidate line's rule left ungated | `#guard (choiceLabelled F21)…`, `rules21`, `aimedOwners21`, `choicePremises21` |
+| `gateLine` | a candidate line's rule left ungated | `#guard (choiceLabelled F21)…`, `rules21`, `aimedOwners21`, `choicePremises21` (lines of the file before the split into `RightsFixtures.lean`) |
 | `aimedOwners` | every line on `m`, not only liberties | `#guard aimedOwners …rs48m…` |
 | `limOwners` | the limitation's origin dropped | F10's lim-owners `#guard` |
 | `qualifyKey` (`qLim`) | a lim key's limitation name not qualified | F10's `qualifyKey` and `nameMap` `#guard`s |
@@ -69,10 +69,14 @@ R16; FOLLOW-UPS.md row "## cmp-s2b (2026-10-31)" asks for the ties pass.
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)` without generated files: +703 -67 (Lean +505 -67, of which
-`RightsExamples.lean` 208 and `BarQuiet.lean` 104; docs and evidence +163; `tools/trust-classes.json` +35). Over
-the ~600 line by about 100 lines of report, evidence and the DRI question; no further feature was started after
-the measurement.
+`git diff --numstat $(git merge-base HEAD main)` without generated files: +913 -67. Lean +536 -63: definitions
+`Choice.lean` +64 -12; S2a proofs adjusted +128 -50 (`SupSlot`, `Labels`, `Unspecified`, `Assertions`, `Shape`,
+`UpSlot`, `ChoiceFacts`, `Faithful`); `BarQuiet.lean` 104; fixtures and the DRI's counterexample
+`RightsFixtures.lean` 99 and `RightsExamples.lean` 133; `VE.lean` 3. Docs and evidence +335 (this report 125,
+mutants.json 76, trust-mutants-allow.json 44, the DRI question 59, DELTA 12, READINGS.md 17, the plan 2);
+`tools/trust-classes.json` +42. Over the ~600 line: at the first measurement (+615 -67 with the code complete)
+no further feature was started; what came after is the DRI's condition (a) (the counterexample), the fixture
+module the trust mutants needed, and the evidence and report.
 
 ## Pilot bytes
 
@@ -81,13 +85,17 @@ until cmp-s2bb.
 
 ## Runs
 
-- `lake build` (full): "Build completed successfully (1172 jobs)"; `python3 lean/audit.py`: PASS.
+- `lake build` (full): "Build completed successfully (1173 jobs)"; `python3 lean/audit.py`: "PASS: 680 source files; 7647 named theorem declarations audited".
 - `uv run python tools/regen_generated.py --write`: "wrote 34 entries" (after `python3 tools/rust_build.py`, which
   the route-cases generator needs); `tools/lean_statements.py` again after the `VE.lean` import edit.
 - Selected tests (`mac-pytest.sh --select -- --base 327bf922a --run`, Actions then ve-mac-1): 394 of 397 units
   `exit 0`, none failed; the run was stopped by the session's time limit before
   `tests/test_safetyfw_usecases.py`, `tests/test_speech_polar_lean.py` and `tests/test_trust_mutants.py` reported.
-  Their rerun: RERUN_RESULT.
+  Their rerun (`mac-pytest.sh -- -q` on the three files; ran on the VM: no Mac slot): "10167 passed in 5855.82s",
+  exit 0. After the fixture split (d420445e) the tests that read the changed side files
+  (`test_trust_budget`, `test_trust_ratchet`, `test_code_map`, `test_lean_default_build`, `test_frozen_sources`,
+  `test_lean_statements_parts`, `test_lean_audit_record`, `test_repo_map`, `test_regen_generated`,
+  `test_lean_import_reader`; ve-mac-1): "268 passed in 124.68s", exit 0.
 - Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json …`): TRUSTMUT_RESULT.
 - Not run: the full gate (the chain runs it); no pilot or UDHR run (L70).
 
