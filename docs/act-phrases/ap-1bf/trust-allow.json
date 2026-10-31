@@ -2,5 +2,19 @@
   {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-first", "reason": "equivalent: isEmpty of a list and of its first element agree"},
   {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-last", "reason": "equivalent: isEmpty of a list and of its last element agree"},
   {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-drop-first", "reason": "equivalent: the decoded profiles are sorted and read acts@0, so their first is acts@0, never definitions@0"},
-  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-drop-last", "reason": "equivalent: the decoded profiles are sorted and hold norms@0, so their last is never definitions@0"}
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-drop-last", "reason": "equivalent: the decoded profiles are sorted and hold norms@0, so their last is never definitions@0"},
+  {"definition": "VE.WireContract.Hooks.Acts.decoded", "operator": "list-empty", "reason": "does not elaborate: the element type of [] is not determined"},
+  {"definition": "VE.WireContract.Hooks.Acts.member", "operator": "list-empty", "reason": "does not elaborate: the element type of [] is not determined"},
+  {"definition": "VE.WireContract.Hooks.Acts.inDomain", "operator": "list-empty", "reason": "does not elaborate: [] for a Json array, or .str without an expected type"},
+  {"definition": "VE.WireContract.Hooks.Acts.actsOf", "operator": "list-empty", "reason": "does not elaborate: [] where an array, a function or a typed list is expected"},
+  {"definition": "VE.WireContract.Hooks.Acts.actsOf", "operator": "list-first", "reason": "does not elaborate on the whole match (.ok has no expected type); the cut on its lists is killed"},
+  {"definition": "VE.WireContract.Hooks.Acts.actsOf", "operator": "list-last", "reason": "does not elaborate on the whole match (.ok has no expected type); the cut on its lists is killed"},
+  {"definition": "VE.WireContract.Hooks.Acts.actsOf", "operator": "list-drop-first", "reason": "does not elaborate on the whole match (.ok has no expected type); the cut on its lists is killed"},
+  {"definition": "VE.WireContract.Hooks.Acts.actsOf", "operator": "list-drop-last", "reason": "does not elaborate on the whole match (.ok has no expected type); the cut on its lists is killed"},
+  {"definition": "VE.WireContract.Hooks.Acts.classifier", "operator": "arm-default", "reason": "does not elaborate: the default arm has one pattern where the match has three"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-first", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-last", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-drop-first", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-drop-last", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Tables.Acts.table", "operator": "bool-flip", "reason": "equivalent: the only Bools of the table are inherited flags, which no Lean engine function reads (VE.WireContract.Table)"}
 ]}

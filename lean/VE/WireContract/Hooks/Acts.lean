@@ -81,7 +81,7 @@ def registered : List String := ["acts_environment"]
 /-! Fixtures at and around each limit, on both sides; the limits are Lexical's. -/
 
 def envOf (fixed : List String) (act : String) (profiles := ["acts@0", "norms@0", "relational-fol@0"])
-    (args := ["person"]) (others : List String := []) (defined := false) : Json :=
+    (args := ["person"]) (others : List String := []) (defined := false) (plain := "paid") : Json :=
   let pred := fun (args : List String) (reg : List (String × Json)) => Json.mkObj [("arguments", toJson args),
     ("description", "d"), ("regulated", Json.mkObj reg)]
   let permission := pred ["person"] [("role", "permission"), ("default", "allow"), ("act", "{0} seek protection")]
@@ -90,7 +90,7 @@ def envOf (fixed : List String) (act : String) (profiles := ["acts@0", "norms@0"
   Json.mkObj [("language", "ve.core@0.2"), ("profiles", toJson profiles),
     ("spec_revision", "ve-v0.2-expand2-2026-09-25"),
     ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj [("description", "person")])]),
-      ("predicates", Json.mkObj ([("paid", pred args [("role", "plain"), ("default", "deny"), ("act", .str act),
+      ("predicates", Json.mkObj ([(plain, pred args [("role", "plain"), ("default", "deny"), ("act", .str act),
         ("form", "has the right")]), ("w", c)] ++ others.map (·, permission))), ("constants", Json.mkObj []),
       ("acts", Json.mkObj [("fixed", toJson fixed)])])]
 
@@ -118,6 +118,7 @@ def around : List String := ["anna", "zora"]
 #guard memberOf (envOf [] (actOf maxActBytes)) == none
 #guard memberOf (envOf [] (actOf (maxActBytes + 1)) (others := around)) == some "1.1c"
 #guard memberOf (envOf [] (actOf (maxActBytes - 3) ++ " {1}") (args := ["person", "person"])) == some "1.1c"
+#guard memberOf (envOf [] (actOf (maxActBytes + 1)) (plain := "zz")) == some "1.1c"
 #guard memberOf (envOf [phraseOf maxPhraseBytes] (actOf 20)) == none
 #guard memberOf (envOf ["equal pay", phraseOf (maxPhraseBytes + 1), "fair hearing"] (actOf 20)) == some "1.1b"
 #guard memberOf (envOf (phrasesOf maxPhrases) (actOf 20)) == none
@@ -133,6 +134,7 @@ def around : List String := ["anna", "zora"]
 #guard memberOf (envOf [] (actOf 20) ["acts@0", "definitions@0", "norms@0", "relational-fol@0"] (defined := true)) == none
 -- the records through the generated table
 #guard recordOf (envOf [] (actOf maxActBytes)) == none
+#guard Tables.Acts.table.revision == 1  -- acts@0.json's revision: a new revision updates this pin
 #guard [(envOf (phrasesOf (maxPhrases + 1)) (actOf 20), "1.1a", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [phraseOf (maxPhraseBytes + 1)] (actOf 20), "1.1b", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [] (actOf (maxActBytes + 1)), "1.1c", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
