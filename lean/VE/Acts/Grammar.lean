@@ -6,8 +6,8 @@ import VE.Acts.LexicalProofs
 `schema V` writes the rules of 5.2 over named nonterminals, and `build` numbers them and closes each nonterminal that
 has no rule with `X → never`. The nonterminals are structured (`NT`, with frame `h`'s in `FNT`), and each constructor
 has a rank (`NT.rank`), so condition W3 holds by construction: a rule's first nonterminal has a lower rank than its
-left side. A rule's kind, the meaning's action (5.3), comes with the meaning (ap-2c); until then the two rules of each
-edge (5.2's "two derivations") are written twice, alike, and the meaning tells them apart by their order.
+left side. Each rule has a kind: the two rules of each edge (5.2's "two derivations") are alike but for theirs, the
+near end's then `all` (2.4), and `modifier_edges` says where they stand; every other rule is `shape`.
 -/
 
 namespace VE.Acts
