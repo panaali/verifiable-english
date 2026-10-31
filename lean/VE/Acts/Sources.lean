@@ -58,16 +58,14 @@ def expected (fx : List String) (s : Source) (x : Simple) : View :=
 def choicesOn (D : VE.Readings.Doc) (sets : List String) : List (List (String × Nat)) :=
   firsts ((VE.Readings.choices D).map (fun c => c.filter (fun x => sets.contains x.1)))
 
-/-- The rules of a choice in the document's item order: each listed fixed unit's rule and each listed set's chosen
-    candidate's rule. -/
+/-- The rules of a choice in the document's item order: each listed fixed unit's rule and the rule of the candidate
+    `c` chooses in each set it names (`choicesOn` names the listed sets only). -/
 def choiceRules (D : VE.Readings.Doc) (s : Source) (c : List (String × Nat)) : List VE.SoftNorms.SoftNode :=
   D.items.flatMap fun
     | .fixed u (.norm M) _ => if s.units.contains u then [M] else []
-    | .set R => if s.sets.contains R.id then
-        match ((VE.Readings.Choice.index c R.id).bind (R.candidates[·]?)).bind (·.content) with
-        | some (.norm M) => [M]
-        | _ => []
-      else []
+    | .set R => match ((VE.Readings.Choice.index c R.id).bind (R.candidates[·]?)).bind (·.content) with
+      | some (.norm M) => [M]
+      | _ => []
     | _ => []
 
 def choiceViews (D : VE.Readings.Doc) (unspec : List String) (s : Source) : List (List (Option View)) :=
@@ -103,7 +101,10 @@ def compareViews (ps : List String) (cs rs : List (List (Option View))) : Except
     | some σ => if decide (σ.Perm cs) then .ok ()
       else .error (d29 s!"the reading sets give {cs.length} choices for a phrase with {rs.length} readings")
 
-/-- Lex the phrase, list its readings under the template's op once, their paraphrases (D-32), then compare (D-29). -/
+/-- Lex the phrase, list its readings under the template's op once, their paraphrases (D-32), then compare (D-29).
+    Each value is computed once, and the comparison is bounded before it starts: at most `maxReadings` readings
+    (`phraseReadings_length`) and `VE.Readings.maxChoices + 1` choices (`VE.Readings.choices` is cut there), so each
+    of its steps makes at most 65 × 64 permutation tests. -/
 def sourceCheck (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : List String) (N b : Nat) (s : Source) :
     Except String Unit :=
   match Lexical.lex fx s.phrase, opOfSource s with
