@@ -2,6 +2,7 @@
 # Generated files merge by their strategy, then tools/regen_generated.py rebuilds them
 # (docs/merge-tooling.md). Install the driver once: python3 tools/regen_generated.py --install-driver
 .gitattributes merge=ve-generated
+conformance/wire-contract/acts@0-catalogue.json merge=ve-generated
 lean/VE/WireContract/Limits.lean merge=ve-generated
 lean/VE/WireContract/Names.lean merge=ve-generated
 lean/VE/WireContract/Tables/*.lean merge=ve-generated
