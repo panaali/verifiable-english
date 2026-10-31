@@ -53,12 +53,12 @@ for _path in (str(ROOT), str(ROOT / "tools")):
 
 from ve.backends.service_schema import MODES  # noqa: E402
 import layer_policy  # noqa: E402
+from lean_statements import STATEMENTS, inventory_path  # noqa: E402
 import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
 
 SCHEMA_DIRECTORY = "ve/backends/lean_service_schema"
-STATEMENTS = "lean/statements.txt"
 MANIFEST = "ve/assurance-manifest.json"
 SERVICE_CLIENT = "ve/backends/lean_service.py"
 REGEN = "tools/regen_generated.py"
@@ -109,9 +109,9 @@ def statement_uses(text: str) -> dict[str, list[tuple[str, str]]]:
 
 def lean_dispatch(root: Path, graph) -> dict[str, tuple[str, list[tuple[str, str]]]]:
     """{mode: (theorem, [(file or module, constant)])} from the dispatch equations."""
-    path = root / STATEMENTS
-    if not path.exists():
+    if not (root / STATEMENTS).exists():
         return {}
+    path = inventory_path(STATEMENTS, root)
     uses = statement_uses(path.read_text(encoding="utf-8"))
     by_norm: dict[str, list[str]] = {}
     for mode in MODES:
