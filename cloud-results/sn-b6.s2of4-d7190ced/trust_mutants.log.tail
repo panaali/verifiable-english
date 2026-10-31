@@ -1,0 +1,16 @@
+trust_mutants: 11 definitions, 268 mutants (67 to run), 4 jobs, base 598358e43282
+SURVIVOR lean/VE/Senses/Run.lean:323 VE.Senses.Run.projectCase (G[V], trusted) and-or: && -> ||
+UNKNOWN lean/VE/Senses/Run.lean:253 VE.Senses.Run.readCase (G[V], trusted) bool-flip: false -> true (lean/VE/Senses/RunExamples.lean:120: Expression (Lean elaborates it otherwise than without the mu...)
+UNKNOWN lean/VE/Senses/Run.lean:220 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: s.toList -> [] (lean/VE/Senses/Run.lean:220: Invalid field notation: Type of)
+UNKNOWN lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: ids -> [] (lean/VE/Senses/Run.lean:21: Invalid field `toList`: The environment does not contain `List.toList`)
+UNKNOWN lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-empty: ids.map -> [] (lean/VE/Senses/Run.lean:21: Function expected at)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used -> [] (lean/VE/Senses/Run.lean:322: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-first: c.choice.map pairJson -> ((c.choice.map pairJson).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-first: c.E.sorts -> (c.E.sorts.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-drop-first: lines -> (lines.drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-last: c.choice.map pairJson -> ((c.choice.map pairJson).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-last: c.E.sorts.map (·.name) -> ((c.E.sorts.map (·.name)).reverse.take 1)
+trust_mutants: 48 KILLED, 6 SURVIVOR, 5 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN, 201 OTHER SHARD in 2504 s
+trust_mutants: D[V], trusted: 6 KILLED, 2 INVALID, 23 OTHER SHARD
+trust_mutants: G[V], trusted: 42 KILLED, 6 SURVIVOR, 5 UNKNOWN, 6 INVALID, 178 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 3.1 s, control_build 0.3 s, probe_install 1.4 s, control_probes 135.9 s, mutants 2351.7 s, cleanup 2.5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 423.3 s (8), mutant_builds 178.7 s (70), mutant_checks 863.7 s (56), stage_controls 70.6 s (5), mutant_probes 8049.2 s (49)
