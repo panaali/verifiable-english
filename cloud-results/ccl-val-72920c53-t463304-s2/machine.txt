@@ -1,0 +1,5 @@
+job=ccl-val-72920c53-t463304-s2 nproc=4 host=vm date=2026-10-31T16:17:20Z
+Mem:              15           0          13           0           1          15
+/dev/vda        252G   14G   26G  35% /
+ 16:17:20 up 1 min,  0 user,  load average: 0.87, 0.28, 0.10
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
