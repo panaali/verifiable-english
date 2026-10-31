@@ -162,6 +162,9 @@ def notReading : String := "InvalidInput: a choice is not a reading of the sourc
 -- S1 passes; S8 (rs_u105c before u105a: each choice's rules in another order) passes
 #guard sc S1 V8 fx8 s105 == "ok"
 #guard sc (d105 [setC [cFirst, cAll], u105a, setB [bFirst, bAll]]) V8 fx8 s105 == "ok"
+-- a set the source does not list is projected away, and the choices that then coincide are one choice
+def other : Item := .set ⟨"rs_other", "u_other", 1, [cand "x" (rl "o-x" "enjoy") "x", cand "y" (rl "o-y" "share") "y"]⟩
+#guard sc (d105 [u105a, setB [bFirst, bAll], setC [cFirst, cAll], other]) V8 fx8 s105 == "ok"
 -- S2: the "all" candidate removed from both sets: the "all" reading has no choice
 #guard sc (d105 [u105a, setB [bFirst], setC [cFirst]]) V8 fx8 s105 == noChoice ++ "{0} has the right to freely " ++
   "participate in the cultural life of the community; {0} has the right to freely enjoy the arts; and {0} has the " ++
