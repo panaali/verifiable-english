@@ -1,0 +1,19 @@
+{
+ "job": "ap-4b.s3of3-8a6d09b9",
+ "head": "08f5ac73a6765572aa446fb654bdf2907ec999f4",
+ "argv": [
+  "ap-4b.s3of3-8a6d09b9",
+  "08f5ac73a6765572aa446fb654bdf2907ec999f4",
+  "c66a6e25795afe63d8b00f25750e8b0e672cecc0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-846d61c27203.tar.zst",
+  "ba4576b010d8ccd6824bd5b590ebb9d03d9c8ea54dcc6e76c2e6a916ebf5472c",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/act-phrases/ap-4b/trust-mutants-allow.json",
+  "--shard",
+  "3/3",
+  "--jobs",
+  "4"
+ ]
+}
