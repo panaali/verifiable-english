@@ -1156,6 +1156,35 @@ def ownVal (c g : Json) (ρ : List String) : Option Bool :=
   !ownSafe depthLimit bound && [ownVal bound gP ["a"], ownVal bound gT ["a"]] == [some true, some false] &&
   ownSafe depthLimit term && [ownVal term gP ["a"], ownVal term gT ["a"]] == [none, none]
 
+/-! F-raw-effect (a counterfixture to spec 5.4's effect statements as written): on the soft chain, a raw rule tree with
+    `guard` (or `unless`) twice, once where lookup finds it and once later in traversal, meets every premise of
+    `reguard_applies`, `restrict_applies` and `carveOut_applies`, and their first conjunct fails: `applyEffect` rewrites
+    the member lookup finds, and the soft decoder keeps the last. The norms chain's decoder refuses the tree, and on the
+    well-formed rule both effects are as stated. `none`: a premise fails. -/
+def effectAsStated (re : VE.Readings.Wire.ReadingsEnvironment) (e : Effect) (o : Json) : Option Bool := do
+  let o' ← (applyEffect "u" e o).toOption
+  let N ← (VE.Readings.Wire.decodeNorm re o).toOption
+  let N' ← (VE.Readings.Wire.decodeNorm re o').toOption
+  let read := fun c => (VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c)).toOption
+  match e with
+  | .reguard c => do pure (N' == { N with guard := ← read c })
+  | .carveOut c => do pure (N' == { N with carveOuts := N.carveOuts ++ [← read c] })
+  | _ => none
+def twiceG : Json := rawJ (nd "guard" (j "[\"top\"]") (nd "name" "r" (nd "over" (.arr #[])) (nd "predicate" "p"))
+  (nd "sign" (.bool false) (nd "guard" (j "[\"top\"]")) (nd "unless" (.arr #[]))))
+def twiceU : Json := rawJ (nd "unless" (.arr #[]) (nd "guard" (j "[\"top\"]") (nd "name" "r") (nd "over" (.arr #[])))
+  (nd "sign" (.bool false) (nd "predicate" "p") (nd "unless" (.arr #[]))))
+def onceRule : Json := Json.mkObj [("name", "r"), ("predicate", "p"), ("sign", false), ("guard", j "[\"top\"]"),
+  ("unless", .arr #[]), ("over", .arr #[])]
+#guard let effects := [(Effect.reguard (j "[\"not\",\"own\"]"), twiceG), (.reguard (j "[\"and\",\"own\",[\"bottom\"]]"), twiceG),
+    (.carveOut (j "[\"bottom\"]"), twiceU)]
+  let on := fun (env : Json) (rule : Option Json) => (VE.Readings.Wire.decodeEnvironment env).toOption.map fun re =>
+    effects.map fun (e, o) => effectAsStated re e (rule.getD o)
+  [jsonWF? twiceG, jsonWF? twiceU, jsonWF? onceRule] == [false, false, true] &&
+  on softEnv none == some [some false, some false, some false] && on envJ none == some [none, none, none] &&
+  on softEnv (some onceRule) == some [some true, some true, some true] &&
+  on envJ (some onceRule) == some [some true, some true, some true]
+
 end SC2c
 
 end VE.Scope.Examples
