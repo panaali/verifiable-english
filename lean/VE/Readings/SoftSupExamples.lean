@@ -68,6 +68,10 @@ def facts (N : NDoc) : Bool × Bool × Bool × Nat × List Nat × List String :=
 def q3 : VE.Formula := .all "agent" (.all "user"
   (.implies (.binary "unsaid__avoid_required" (.var 1) (.var 0)) (.binary "avoid_required" (.var 1) (.var 0))))
 #guard q3.check (sharedEnvSD NSD1) [] && !q3.check (sharedEnv NSD1.D) []
+-- the superposed certificate check reads the filled vocabulary: a query naming the gap closes from itself, and does
+-- not close without it
+def closeCert : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", "", [], "", .close⟩
+#guard supCertificateCheckSD NSD1 [] [q3] q3 closeCert && !supCertificateCheckSD NSD1 [] [] q3 closeCert
 
 /-! ## `NSD4a` (`x_permitted` allowed by default) and `NSD4c` (`need-not-x` strict): facts -/
 
