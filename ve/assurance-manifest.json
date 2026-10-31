@@ -327,12 +327,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 735,
-        "sha256": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
+        "lines": 738,
+        "sha256": "a614aab8eeff8f4106268b364502dca3de0d107aa7a258c269e631cb6ddb58f2",
         "ranges": [
           [
             1,
-            735
+            738
           ]
         ],
         "declarations": [
@@ -347,7 +347,7 @@
           "readCase",
           "grammarCase"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written"
       },
       {
         "file": "lean/VE/Question/Run.lean",
@@ -605,39 +605,6 @@
           "wording"
         ],
         "reason": "act-phrases AP-1: the act check under acts@0 (Lexical.check reads the raw act JSON), its fixed phrases' decoder and the tokens; the definitions are pinned in full; ap-3d: check is checkWith (conditions 1 to 5) then joinCheck (condition 6)"
-      },
-      {
-        "file": "lean/VE/Acts/Wire.lean",
-        "lines": 95,
-        "sha256": "f2cd5a339373c98c359929e0d1683fc8b35856677eac63196e5d5bb69ce1d880",
-        "ranges": [
-          [
-            1,
-            95
-          ]
-        ],
-        "declarations": [
-          "joinedAct",
-          "checkAct"
-        ],
-        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
-      },
-      {
-        "file": "lean/VE/Acts/Decode.lean",
-        "lines": 84,
-        "sha256": "9dbe700ec640146da5e9a359963e5348b56d83af769faecf655d92131e8ed131",
-        "ranges": [
-          [
-            1,
-            84
-          ]
-        ],
-        "declarations": [
-          "actsOf",
-          "elaborateSource",
-          "decodeElaboratedU"
-        ],
-        "reason": "act-phrases ap-3d: decodeElaboratedU (decodeSourceU, then the acts read by checkAct and elaborateMap); no route calls it until ap-3db; the file is pinned whole"
       },
       {
         "file": "lean/VE/Order/Wire.lean",
@@ -1138,12 +1105,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2083,
-        "sha256": "4a9295192a75cae303df841930faf00737b3f1987cd81484cf5f803de56d212d",
+        "lines": 2080,
+        "sha256": "7cf8bd3f1f92978fe66d561056fba981b8c662a42a97ee47664741cf9a908145",
         "ranges": [
           [
             1,
-            2083
+            2080
           ]
         ],
         "declarations": [
@@ -1199,7 +1166,7 @@
           "composedReadings",
           "checkDocSetsAnswered"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`)"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -2081,6 +2048,39 @@
           "admitGraph"
         ],
         "reason": "the cardinality claim graph (qt-a3d): node decoder (decodeStatement on each node, premises with their certificate), graph check and its charges; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Acts/Wire.lean",
+        "lines": 95,
+        "sha256": "f2cd5a339373c98c359929e0d1683fc8b35856677eac63196e5d5bb69ce1d880",
+        "ranges": [
+          [
+            1,
+            95
+          ]
+        ],
+        "declarations": [
+          "joinedAct",
+          "checkAct"
+        ],
+        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
+      },
+      {
+        "file": "lean/VE/Acts/Decode.lean",
+        "lines": 84,
+        "sha256": "9dbe700ec640146da5e9a359963e5348b56d83af769faecf655d92131e8ed131",
+        "ranges": [
+          [
+            1,
+            84
+          ]
+        ],
+        "declarations": [
+          "actsOf",
+          "elaborateSource",
+          "decodeElaboratedU"
+        ],
+        "reason": "act-phrases ap-3d: decodeElaboratedU (decodeSourceU, then the acts read by checkAct and elaborateMap); no route calls it until ap-3db; the file is pinned whole"
       }
     ],
     "other_json": {
@@ -2226,7 +2226,10 @@
       "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
       "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
       "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
-      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path"
+      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path",
+      "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder",
+      "lean/VE/Scope/ReadingsLemmas.lean": "lemmas about the JSON trees `atChoiceOn` and `assemble` build (what a lookup reads back after setObjVal! on a well-formed tree; the parts of a successful `governSets`), for the statements of scope spec 11.3; no runtime JSON handling",
+      "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling"
     }
   },
   "plan_operations": {

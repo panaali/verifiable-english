@@ -10,5 +10,5 @@ private def rowJson (r : ProfileRow) : Json :=
     ("refuses", toJson (r.refuses.map fun (q, text) => [q, text])), ("slot", toJson r.slot)]
 
 def main : IO Unit :=
-  IO.println <| (Json.mkObj [("environment", toJson environmentProfiles),
+  IO.println <| (Json.mkObj [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers),
     ("rows", toJson (profileTable.map rowJson))]).pretty
