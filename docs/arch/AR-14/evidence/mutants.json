@@ -1,0 +1,204 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/backends/relay.py",
+   "claim": "seeded bug (a): `from ve.document import cli` inside a layer-1 module (the relay) is an outward import; the layer check fails naming the edge",
+   "source_sha256": "68f49cf7a1191f540c3301839e86d27bbd4bb14190616d23fc164970fa53b6af",
+   "command": [
+    "bash",
+    "-c",
+    "out=$(uv run python tools/check_python_layers.py 2>&1); printf '%s\\n' \"$out\" | tail -n 12; ! printf '%s\\n' \"$out\" | grep -qF 've.backends.relay -> ve.document.cli'"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.7,
+   "output_tail": "\n\n----------------\nBroken contracts\n----------------\n\nVE inward-only imports (reviewed legacy edges)\n----------------------------------------------\n\nve.backends.relay is not allowed to import ve.document:\n\n- ve.backends.relay -> ve.document.cli (l.54)\n"
+  },
+  {
+   "id": "M2",
+   "file": "tools/layer-exceptions.json",
+   "claim": "seeded bug (b): dropping a remaining exception (ve.wire -> ve.ast) makes the layer check fail naming that edge (the contract regenerated, then restored)",
+   "source_sha256": "0ce0040c44710110d8ea5c86e0e19f125ebac9889d3b458ecf277d9c7134fbf7",
+   "command": [
+    "bash",
+    "-c",
+    "keep=$(mktemp); cp .importlinter \"$keep\"; trap 'cp \"$keep\" .importlinter; rm -f \"$keep\"' EXIT; out=$(uv run python tools/check_python_layers.py --write 2>&1); printf '%s\\n' \"$out\" | tail -n 12; ! printf '%s\\n' \"$out\" | grep -qF 've.wire -> ve.ast'"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.9,
+   "output_tail": "\n\n----------------\nBroken contracts\n----------------\n\nVE inward-only imports (reviewed legacy edges)\n----------------------------------------------\n\nve.wire is not allowed to import ve.ast:\n\n- ve.wire -> ve.ast (l.123)\n"
+  },
+  {
+   "id": "M3",
+   "file": "ve/__init__.py",
+   "claim": "seeded bug (c): the facade's __getattr__ returns the wrong object for one name (canonicalize gets parse)",
+   "source_sha256": "495469672e005fe3b74143e8455ac28a3c3f338d2b443909892fc81d93e8a37a",
+   "tests": [
+    "tests/test_package_facade.py::test_every_public_name_is_its_modules_object[canonicalize]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_package_facade.py::test_every_public_name_is_its_modules_object[canonicalize]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_every_public_name_is_its_modules_object[canonicalize] __________\n\nname = 'canonicalize'\n\n    @pytest.mark.parametrize(\"name\", ve.__all__)\n    def test_every_public_name_is_its_modules_object(name):\n        module = importlib.import_module(f\"ve.{ve._MODULE[name]}\")\n>       assert getattr(ve, name) is getattr(module, name)\nE       AssertionError: assert <function parse at 0x77fbc2e48930> is <function canonicalize at 0x77fbc2e48b40>\nE        +  where <function parse at 0x77fbc2e48930> = getattr(ve, 'canonicalize')\nE        +  and   <function canonicalize at 0x77fbc2e48b40> = getattr(<module 've.parser' from '/home/seyran/code/ve-arch-20261030-2/ve/parser.py'>, 'canonicalize')\n\ntests/test_package_facade.py:28: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_package_facade.py::test_every_public_name_is_its_modules_object[canonicalize]\n1 failed in 0.19s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-13pzbzx5)\n"
+  },
+  {
+   "id": "M4",
+   "file": "ve/__init__.py",
+   "claim": "import ve loads no submodule (not the English parser): an eager import in the facade is caught",
+   "source_sha256": "495469672e005fe3b74143e8455ac28a3c3f338d2b443909892fc81d93e8a37a",
+   "tests": [
+    "tests/test_package_facade.py::test_import_ve_loads_no_submodule"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_package_facade.py::test_import_ve_loads_no_submodule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.4,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________________ test_import_ve_loads_no_submodule _______________________\n\n    def test_import_ve_loads_no_submodule():\n        loaded = fresh(\"import sys, ve; print(' '.join(sorted(m for m in sys.modules if m.split('.')[0] == 've')))\")\n>       assert loaded.split() == [\"ve\"]\nE       AssertionError: assert ['ve', 've.as...ronment', ...] == ['ve']\nE         \nE         Left contains 9 more items, first extra item: 've.assurance'\nE         Use -v to get more diff\n\ntests/test_package_facade.py:22: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_package_facade.py::test_import_ve_loads_no_submodule - Asse...\n1 failed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3woy8dal)\n"
+  },
+  {
+   "id": "M5",
+   "file": "ve/__init__.py",
+   "claim": "ve.check and ve.evaluate stay the functions after their modules are imported",
+   "source_sha256": "495469672e005fe3b74143e8455ac28a3c3f338d2b443909892fc81d93e8a37a",
+   "tests": [
+    "tests/test_package_facade.py::test_names_shared_with_their_modules_stay_functions"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [],
+   "killed": false,
+   "mutant_exit": 4,
+   "seconds": 2.2,
+   "output_tail": "ImportError while loading conftest '/home/seyran/code/ve-arch-20261030-2/tests/conftest.py'.\ntests/conftest.py:18: in <module>\n    from ve.surface import unambiguity\nve/__init__.py:90: in <module>\n    del _name\n        ^^^^^\nE   NameError: name '_name' is not defined\n",
+   "problem": "the mutant survives"
+  },
+  {
+   "id": "M6",
+   "file": "tools/layer_policy.py",
+   "claim": "no default layer: a module no row places is unmapped and fails the check",
+   "source_sha256": "2caadce146e72a1fb58c22693cdd502c83e867cc76643c6b6d8b79fe321e4b4f",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_seeded_module_with_no_layer_fails_the_check"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_seeded_module_with_no_layer_fails_the_check"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "================\n_____ LayerSelectionTests.test_seeded_module_with_no_layer_fails_the_check _____\n\nself = <test_layer_policy.LayerSelectionTests testMethod=test_seeded_module_with_no_layer_fails_the_check>\n\n    @unittest.skipIf(grimp.build_graph is None, \"the Python layer check needs grimp and import-linter\")\n    def test_seeded_module_with_no_layer_fails_the_check(self):\n        with TemporaryDirectory() as directory:\n            root = python_tree(Path(directory), {\"ve/planted.py\": \"from ve import errors\\n\"})\n            code, output = python_check(root)\n>       self.assertEqual(code, 1, output)\nE       AssertionError: 0 != 1 : \nE       \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE       \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE        \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE        \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE       \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE       \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE         \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE             \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE       \nE       \nE       ---------\nE       Contracts\nE       ---------\nE       \nE       Analyzed 97 files, 1 dependencies.\nE       ----------------------------------\nE       \nE       VE inward-only imports (reviewed legacy edges) KEPT\nE       \nE       Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:300: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_seeded_module_with_no_layer_fails_the_check\n1 failed in 0.91s\n"
+  },
+  {
+   "id": "M7",
+   "file": "tools/check_python_layers.py",
+   "claim": "a module below layer 4 may not import the lazy ve facade (import-linter sees only `ve`)",
+   "source_sha256": "610f79d51e52a6458264bbf6b6e98608658f75a7285446c2247175781b1bf0c0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_facade_import_below_its_layer_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_facade_import_below_its_layer_fails"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.6,
+   "output_tail": "______\n\nself = <test_layer_policy.LayerSelectionTests testMethod=test_facade_import_below_its_layer_fails>\n\n    @unittest.skipIf(grimp.build_graph is None, \"the Python layer check needs grimp and import-linter\")\n    def test_facade_import_below_its_layer_fails(self):\n        # The facade's names resolve lazily, so import-linter sees only `ve`; the check refuses the import.\n        with TemporaryDirectory() as directory:\n            root = python_tree(Path(directory), {\"ve/errors.py\": \"from ve import check_argument\\n\"})\n            code, output = python_check(root)\n>       self.assertEqual(code, 1, output)\nE       AssertionError: 0 != 1 : \nE       \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE       \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE        \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE        \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE       \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE       \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE         \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE             \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE       \nE       \nE       ---------\nE       Contracts\nE       ---------\nE       \nE       Analyzed 96 files, 1 dependencies.\nE       ----------------------------------\nE       \nE       VE inward-only imports (reviewed legacy edges) KEPT\nE       \nE       Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:274: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_facade_import_below_its_layer_fails\n1 failed in 0.76s\n"
+  },
+  {
+   "id": "M8",
+   "file": "tools/check_python_layers.py",
+   "claim": "the init of a package split across layers (in no import-linter layer) is checked",
+   "source_sha256": "610f79d51e52a6458264bbf6b6e98608658f75a7285446c2247175781b1bf0c0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_split_package_init_import_is_checked"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_split_package_init_import_is_checked"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "_\n\nself = <test_layer_policy.LayerSelectionTests testMethod=test_split_package_init_import_is_checked>\n\n    @unittest.skipIf(grimp.build_graph is None, \"the Python layer check needs grimp and import-linter\")\n    def test_split_package_init_import_is_checked(self):\n        # `ve.backends` is split across layers, so its own __init__ is in no import-linter layer.\n        with TemporaryDirectory() as directory:\n            root = python_tree(Path(directory), {\"ve/backends/__init__.py\": \"from ve.backends import senses\\n\"})\n            code, output = python_check(root)\n>       self.assertEqual(code, 1, output)\nE       AssertionError: 0 != 1 : \nE       \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE       \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE        \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE        \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE       \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE       \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE         \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE             \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE       \nE       \nE       ---------\nE       Contracts\nE       ---------\nE       \nE       Analyzed 96 files, 1 dependencies.\nE       ----------------------------------\nE       \nE       VE inward-only imports (reviewed legacy edges) KEPT\nE       \nE       Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:325: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_split_package_init_import_is_checked\n1 failed in 0.75s\n"
+  },
+  {
+   "id": "M9",
+   "file": "tools/check_python_layers.py",
+   "claim": "a ledger edge that is no longer outward is stale",
+   "source_sha256": "610f79d51e52a6458264bbf6b6e98608658f75a7285446c2247175781b1bf0c0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "ld_graph is None, \"the Python layer check needs grimp and import-linter\")\n    def test_ledger_edges_must_exist_and_point_outward(self):\n        with TemporaryDirectory() as directory:\n            root = python_tree(Path(directory), {\"ve/errors.py\": \"from ve import wire\\n\"})\n            ledger = root / check_python_layers.LEDGER\n            ledger.write_text(json.dumps({\"ve.errors -> ve.wire\": \"same layer\"}))\n            code, output = python_check(root)\n>           self.assertEqual(code, 1, output)\nE           AssertionError: 0 != 1 : \nE           \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE           \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE            \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE            \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE           \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE           \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE             \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE                 \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE           \nE           \nE           ---------\nE           Contracts\nE           ---------\nE           \nE           Analyzed 96 files, 1 dependencies.\nE           ----------------------------------\nE           \nE           VE inward-only imports (reviewed legacy edges) KEPT (1 ignored import)\nE           \nE           Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:335: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward\n1 failed in 0.69s\n"
+  },
+  {
+   "id": "M10",
+   "file": "tools/check_python_layers.py",
+   "claim": "a ledger edge that no longer exists fails import-linter (unmatched ignore)",
+   "source_sha256": "610f79d51e52a6458264bbf6b6e98608658f75a7285446c2247175781b1bf0c0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.4,
+   "output_tail": "port wire\\n\"})\n            ledger = root / check_python_layers.LEDGER\n            ledger.write_text(json.dumps({\"ve.errors -> ve.wire\": \"same layer\"}))\n            code, output = python_check(root)\n            self.assertEqual(code, 1, output)\n            self.assertIn(\"stale exception (remove it): ve.errors -> ve.wire is not outward\", output)\n            ledger.write_text(json.dumps({\"ve.errors -> ve.ast\": \"no such import\"}))\n            code, output = python_check(root)\n>           self.assertEqual(code, 1, output)\nE           AssertionError: 0 != 1 : \nE           \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE           \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE            \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE            \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE           \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE           \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE             \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE                 \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE           \nE           \nE           ---------\nE           Contracts\nE           ---------\nE           \nE           Analyzed 96 files, 1 dependencies.\nE           ----------------------------------\nE           \nE           VE inward-only imports (reviewed legacy edges) KEPT\nE           \nE           Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:339: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_ledger_edges_must_exist_and_point_outward\n1 failed in 1.66s\n"
+  },
+  {
+   "id": "M11",
+   "file": "tools/check_python_layers.py",
+   "claim": "a directory of modules without __init__.py (invisible to import-linter) fails the check",
+   "source_sha256": "610f79d51e52a6458264bbf6b6e98608658f75a7285446c2247175781b1bf0c0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_namespace_directory_fails_the_check"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_namespace_directory_fails_the_check"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "==== FAILURES ===================================\n_________ LayerSelectionTests.test_namespace_directory_fails_the_check _________\n\nself = <test_layer_policy.LayerSelectionTests testMethod=test_namespace_directory_fails_the_check>\n\n    @unittest.skipIf(grimp.build_graph is None, \"the Python layer check needs grimp and import-linter\")\n    def test_namespace_directory_fails_the_check(self):\n        with TemporaryDirectory() as directory:\n            root = python_tree(Path(directory), {\"ve/document/extra/hidden.py\": \"\"})\n            code, output = python_check(root)\n>       self.assertEqual(code, 1, output)\nE       AssertionError: 0 != 1 : \nE       \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE       \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE        \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE        \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE       \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE       \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE         \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE             \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE       \nE       \nE       ---------\nE       Contracts\nE       ---------\nE       \nE       Analyzed 96 files, 0 dependencies.\nE       ----------------------------------\nE       \nE       VE inward-only imports (reviewed legacy edges) KEPT\nE       \nE       Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:350: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerSelectionTests::test_namespace_directory_fails_the_check\n1 failed in 0.94s\n"
+  },
+  {
+   "id": "M12",
+   "file": "tools/change_units.py",
+   "claim": "test selection follows the lazy facade's names to their modules, as it followed the from-imports",
+   "source_sha256": "82405ac98a0b0274db744b78435b272d750196d7ef2f4969d875cb1c5a798740",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_lazy_facade_names_select_like_from_imports"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [],
+   "killed": false,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "ade='_EXPORTS = {\"core\": (\"parse\",)}\\n') _\n\nself = <test_layer_policy.LayerSelectionTests testMethod=test_lazy_facade_names_select_like_from_imports>\n\n    def test_lazy_facade_names_select_like_from_imports(self):\n        # Test selection follows `from ve import parse` to the module that defines it, for both facade forms.\n        files = [\"ve/__init__.py\", \"ve/core.py\", \"tests/test_facade.py\"]\n        for facade in (\"from .core import parse\\n\", '_EXPORTS = {\"core\": (\"parse\",)}\\n'):\n            with self.subTest(facade=facade):\n                graph = source_graph.Graph(layer_policy.ROOT, files, {\n                    \"ve/__init__.py\": source_graph.summarize(facade, \"ve\", package=True),\n                    \"ve/core.py\": source_graph.summarize(\"def parse():\\n    pass\\n\", \"ve.core\"),\n                    \"tests/test_facade.py\": source_graph.summarize(\"from ve import parse\\n\", \"tests.test_facade\")})\n                graph.prepare_names()\n                graph.build()\n>               self.assertEqual(graph.exports, {\"parse\": \"ve/core.py\"})\nE               AssertionError: {} != {'parse': 've/core.py'}\nE               - {}\nE               + {'parse': 've/core.py'}\n\ntools/test_layer_policy.py:565: AssertionError\n=========================== short test summary info ============================\nSUBFAILED(facade='_EXPORTS = {\"core\": (\"parse\",)}\\n') tools/test_layer_policy.py::LayerSelectionTests::test_lazy_facade_names_select_like_from_imports\n1 failed, 1 passed, 1 subtests passed in 0.21s\n",
+   "problem": "the mutant survives"
+  }
+ ]
+}
