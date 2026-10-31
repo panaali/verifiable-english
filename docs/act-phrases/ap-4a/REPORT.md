@@ -64,7 +64,9 @@ At the start, `feature/ap-2bb` was the only in-flight branch touching a file of 
 `infra/*`, `foundation/*`). ap-2bb merged into main during the build; the merge cb9c9dd1d resolved the one conflict
 (ap-2bb's `longEnd` and this branch's `applyRule` sit side by side; both kept), and `lake build` (1181 jobs, exit 0)
 and `python3 lean/audit.py` (PASS: 684 source files, 7635 named theorem declarations) pass on the merged tree. The
-`applyRule-own` plant was rerun there (KILLED, same guards).
+`applyRule-own` plant was rerun there (KILLED, same guards). Main then moved to `32b03d5c0` (gi-2a, qt-a3cb); none of
+this item's hand-written files is among its changes, and `git merge-tree --write-tree HEAD main` merges cleanly
+(exit 0, no conflict), so the merge train's sync (R12) regenerates the inventories.
 
 ## Seeded bugs (Lean; no Python or Rust product code changed)
 
