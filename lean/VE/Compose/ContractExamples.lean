@@ -24,6 +24,32 @@ open Lean VE.Compose VE.Compose.Contract VE.Service.Document VE.Service.ScopeExa
   (fun u => ((u.getObjValD "content").getObjValD "norm").getObjValD "name") == some (.str "r1")
 #guard (pipeline [scopeRewriter] doc).toOption != some doc
 
+/-- F3.1 per choice (`readings@1` beside scope): GOVERN governs one reading set, on `i1`. -/
+def governedSet : Json :=
+  let reading := Json.mkObj [("id", .str "a"), ("kind", .str "norm"), ("meaning_id", .str "m"),
+    ("content", part "r1"), ("admission", Json.mkObj [("who", .str "translator"), ("why", .str "open")])]
+  let set := Json.mkObj [("id", .str "s"), ("unit", .str "i1"), ("version", toJson (1 : Nat)),
+    ("status", .str "open"), ("readings", toJson [reading])]
+  case ((front (units none (some (part "r2"))) ["norms@0", "readings@1", "relational-fol@0", "scope@0"]).setObjVal!
+    "reading_sets" (toJson [set]))
+
+#guard (VE.Scope.decodeScope governedSet).toOption.map VE.Scope.governedSetUnits == some ["i1"]
+#guard (checkDocSets governedSet).isOk
+#guard (checkDocSets governedSet).toOption == (do
+  let D ← VE.Scope.decodeScope governedSet
+  let a ← checkCore (← pipeline [scopeRewriter] governedSet)
+  pure (VE.Scope.foldGovernors D a)).toOption
+-- The pipeline hands the chain the governed sets (`withSets`), not the units alone.
+#guard (pipeline [scopeRewriter] governedSet).toOption.map (·.getObjValD "reading_sets") != some .null
+
+/-- A rewriter for every profile that records its run, to read the order `pipelineOf` and `pipeline` give. -/
+def tagRewriter (p : String) : Option (Rewriter (List String)) := some ⟨p, fun l => .ok (l ++ [p]), fun _ => true, []⟩
+
+#guard (pipelineOf profileTable ["acts@0", "norms@0", "readings@1", "scope@0", "ve.discourse@1"] tagRewriter).map
+  (·.profile) == ["ve.discourse@1", "acts@0", "scope@0", "readings@1"]
+#guard (pipeline (pipelineOf profileTable ["acts@0", "norms@0", "readings@1", "scope@0", "ve.discourse@1"]
+  tagRewriter) ["source"]).toOption == some ["source", "ve.discourse@1", "acts@0", "scope@0", "readings@1"]
+
 /-! `pipeline_off`'s example: on a case that does not list `scope@0` GOVERN is off and the pipeline is the
 identity. -/
 
@@ -91,6 +117,9 @@ def plannedRows : List ProfileRow :=
 #guard stackOf profileTable ["norms@0", "relational-fol@0"] == []
 #guard stackOf profileTable ["readings@1", "right-clauses@0", "scope@0", "ve.discourse@1"] ==
   ["ve.discourse@1", "scope@0", "right-clauses@0", "readings@1"]
+-- The sort is stable: on a table where two ranks tie (C3 excludes it on `profileTable`) table order decides.
+#guard stackOf [⟨"a@0", [], [], "layer", .rewrite 1⟩, ⟨"b@0", [], [], "layer", .rewrite 1⟩] ["a@0", "b@0"] ==
+  ["a@0", "b@0"]
 
 /-! F3.7: a run statement alone is not evidence. An entry that refuses every case satisfies `ScopeRunsOf`; the
 route facts add GOVERN's own faithfulness and preservation, and a stack no batch has listed has none. -/

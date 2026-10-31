@@ -1,0 +1,224 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Compose.Contract.RouteFacts",
+   "operator": "arm-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.slotAgrees",
+   "operator": "arm-true",
+   "reason": "the mutant does not elaborate (Lean reports the error the log names at the mutated line), so no build carries it"
+  },
+  {
+   "definition": "VE.Compose.Contract.RouteFacts",
+   "operator": "arm-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.slotAgrees",
+   "operator": "arm-false",
+   "reason": "the mutant does not elaborate (Lean reports the error the log names at the mutated line), so no build carries it"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRunsOf",
+   "operator": "body-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRuns",
+   "operator": "body-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "body-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopePreserves",
+   "operator": "body-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "body-true",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRunsOf",
+   "operator": "body-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRuns",
+   "operator": "body-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "body-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopePreserves",
+   "operator": "body-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "body-false",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRunsOf",
+   "operator": "and-or",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "and-or",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "and-or",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.RouteFacts",
+   "operator": "and-or",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.Rewriter.Laws",
+   "operator": "or-and",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.Rewriter.Laws",
+   "operator": "eq-le",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRunsOf",
+   "operator": "eq-le",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "eq-le",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopePreserves",
+   "operator": "eq-le",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "eq-le",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.Rewriter.Laws",
+   "operator": "eq-ne",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeRunsOf",
+   "operator": "eq-ne",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "eq-ne",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopePreserves",
+   "operator": "eq-ne",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "eq-ne",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "ne-eq",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.Rewriter.Laws",
+   "operator": "bool-flip",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeFaithful",
+   "operator": "bool-flip",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.ScopeSetsFaithful",
+   "operator": "bool-flip",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.RouteFacts",
+   "operator": "bool-flip",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.Contract.scopeRewriter",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean reports the error the log names at the mutated line), so no build carries it"
+  },
+  {
+   "definition": "VE.Compose.Contract.RouteFacts",
+   "operator": "list-empty",
+   "reason": "S statement of profile-composition 1.4/1.5 (approved text), a Prop no decidable check can refute: the mutant breaks the proofs named or does not elaborate, and tests/test_pc3_statements.py (tools/check_pc3_statements.py) fails on any change to its text (mutants.json seeds 12, 13)"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "list-empty",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "append-right",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  },
+  {
+   "definition": "VE.Compose.Interface",
+   "operator": "ctor-drop",
+   "reason": "the mutant does not elaborate (Lean reports the error the log names at the mutated line), so no build carries it"
+  },
+  {
+   "definition": "VE.Compose.rewriters",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (the list literal is not a function), so no build carries it; F3.5 and F3.6's #guards and C3 pin the value"
+  },
+  {
+   "definition": "VE.Compose.stackOf",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (the list literal is not a function), so no build carries it; F3.5 and F3.6's #guards and C3 pin the value"
+  },
+  {
+   "definition": "VE.Compose.Contract.scopeRewriter",
+   "operator": "list-first",
+   "reason": "equivalent: (l.take 1).isEmpty = l.isEmpty for every list l, so the branch taken is the same"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "list-first",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  },
+  {
+   "definition": "VE.Compose.wrapperRows",
+   "operator": "list-drop-last",
+   "reason": "AR-10's rows, touched only by the new interface component: the #guards the log names (ScopeExamples, Scope/Examples) refute the mutant, and the tool reports UNKNOWN only because its probe cannot elaborate them; gate_scope breaks too"
+  }
+ ]
+}
