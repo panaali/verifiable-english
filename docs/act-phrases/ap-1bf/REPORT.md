@@ -38,8 +38,8 @@ Scope: ap-1be's REPORT section 5 (the ap-1bf paragraph) and ap-1bc's section 5 p
 
 ## 3. Seeded bugs
 
-[mutants.json](mutants.json): **8, all killed** (Lean 4, Python 4; no Rust product code changed, only the generated
-`contract_tables.rs`). Each was planted, run and restored by a scratch driver; the file records the first failure.
+[mutants.json](mutants.json): **9, all killed** (Lean 4, Python 4, Rust 1 in the generated `contract_tables.rs`, the
+one Rust file changed). Each was planted, run and restored; the file records the first failure.
 
 | Id | File (definition) | Bug | Killed by |
 |---|---|---|---|
@@ -51,6 +51,7 @@ Scope: ap-1be's REPORT section 5 (the ap-1bf paragraph) and ap-1bc's section 5 p
 | `py-domain-open` | `conformance/acts_contract.py` (`in_domain`) | domain open | `test_the_adapters_read_acts_sources_of_the_norms_route_only` |
 | `py-limit-oracle` | `conformance/wire_contract_faults_acts.py` (`_largest`) | limit one too high | `test_the_sources_at_each_limit_are_accepted_and_clean_in_python` |
 | `py-limit-copied` | `conformance/acts_contract.py` | `400` in a comment | `test_the_limits_are_leans_and_never_copied` |
+| `rust-table-code` | `rust/ve-kernel/src/contract_tables.rs` (`ACTS`) | 1.1c's code | `tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows` |
 
 ## 4. Trust, size, evidence and tests
 
@@ -85,7 +86,7 @@ that reads `acts@0` (a new `typingEnvironment` beside `Hooks.Norms`'), their fau
 
 1. N.A.: no relayed answer is added; no product path reads the `acts@0` diagnose row (DELTA preface).
 2. PASS: section 1, each row with its file and test; generated files only through regen (`acts-fault-catalogue`).
-3. PASS: [mutants.json](mutants.json) 8 killed; [trust-mutants.json](trust-mutants.json) exit 0.
+3. PASS: [mutants.json](mutants.json) 9 killed; [trust-mutants.json](trust-mutants.json) exit 0.
 4. PASS: `test_every_fault_gives_its_record_in_lean_and_the_sources_at_each_limit_are_clean` compares Lean's record
    with the oracle and its text with Python's legacy text; deviation 3 names the one text match.
 5. N.A.: no Python reader of a Lean answer is added.
