@@ -36,6 +36,9 @@ import VE.Compose.Dispatch
 import VE.Compose.Content
 import VE.Compose.Adjoin
 import VE.Compose.Examples
+import VE.Compose.Stack
+import VE.Compose.Contract
+import VE.Compose.ContractExamples
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Norms.Once
