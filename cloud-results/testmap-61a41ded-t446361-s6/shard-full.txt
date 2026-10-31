@@ -1,0 +1,161 @@
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded typenum v1.20.1
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded num-traits v0.2.19
+  Downloaded serde_derive v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded version_check v0.9.5
+  Downloaded zmij v1.0.23
+  Downloaded itoa v1.0.18
+  Downloaded memchr v2.8.3
+  Downloaded quote v1.0.47
+  Downloaded digest v0.10.7
+  Downloaded serde_json v1.0.151
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_core v1.0.229
+  Downloaded syn v3.0.6
+  Downloaded serde v1.0.229
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.54s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.18s
+recording 69 units with 4 jobs in /tmp/ve-testmap-e6824df94986d8a8d91e52df0d2f175279c09bd8
+  tests/test_argument_fixtures.py: exit 0 in 10.5 s, 676 functions
+  tests/test_answer_store.py: exit 0 in 31.0 s, 474 functions
+  tests/test_ask_relay.py: exit 0 in 43.8 s, 886 functions
+  tests/test_calc_lean.py: exit 0 in 5.1 s, 427 functions
+  tests/test_calc_service.py: exit 0 in 12.7 s, 392 functions
+  tests/test_assurance_manifest.py: exit 0 in 63.5 s, 1491 functions
+  tests/test_closure.py: exit 0 in 29.5 s, 740 functions
+  tests/test_closure_certificates.py: exit 0 in 7.9 s, 669 functions
+  tests/test_constitution_w6a_controls.py: exit 0 in 1.8 s, 472 functions
+  tests/test_closure_induction.py: exit 0 in 7.8 s, 659 functions
+  tests/test_agent_policy_unspecified.py: exit 0 in 113.0 s, 738 functions
+  tests/test_data_three_way.py: exit 0 in 5.9 s, 535 functions
+  tests/test_discourse.py: exit 0 in 7.2 s, 1019 functions
+  tests/test_english_e2_integer_marks.py: exit 0 in 2.7 s, 689 functions
+  tests/test_english_e2_overlay.py: exit 0 in 1.2 s, 614 functions
+  tests/test_english_lean_s0.py: exit 0 in 0.9 s, 602 functions
+  tests/test_entailment_properties.py: exit 0 in 3.4 s, 476 functions
+  tests/test_grammar_backends.py: exit 0 in 0.8 s, 403 functions
+  tests/test_document_lean_switch.py: exit 0 in 15.0 s, 1074 functions
+  tests/test_lean_certificates.py: exit 0 in 20.3 s, 694 functions
+  tests/test_lean_decided_share.py: exit 0 in 0.9 s, 519 functions
+  tests/test_lean_first_b12_report.py: exit 0 in 4.7 s, 323 functions
+  tests/test_data_surface.py: exit 0 in 64.6 s, 579 functions
+  tests/test_norm_admission.py: exit 0 in 1.1 s, 577 functions
+  tests/test_norm_defaults_differential.py: exit 0 in 10.0 s, 543 functions
+  tests/test_norm_defaults_layered.py: exit 0 in 1.9 s, 782 functions
+  tests/test_norm_defaults_soft_kinds.py: exit 0 in 1.3 s, 679 functions
+  tests/test_norm_defaults_switch.py: exit 0 in 1.4 s, 774 functions
+  tests/test_norms.py: exit 0 in 0.9 s, 605 functions
+  tests/test_norms_contract.py: exit 0 in 4.7 s, 944 functions
+  tests/test_history_tests.py: exit 0 in 64.4 s, 400 functions
+  tests/test_p1_amendment11.py: exit 0 in 4.1 s, 753 functions
+  tests/test_agent_policy_rerun.py: exit 0 in 196.6 s, 894 functions
+  tests/test_question_lean_relay.py: exit 0 in 0.8 s, 475 functions
+  tests/test_question_fixture_sources.py: exit 0 in 14.1 s, 755 functions
+  tests/test_rd9_followup_bindings.py: exit 0 in 1.8 s, 696 functions
+  tests/test_rd9_soft_split.py: exit 0 in 1.3 s, 516 functions
+  tests/test_readings_budget_zero.py: exit 0 in 8.2 s, 1447 functions
+  tests/test_readings_companions_lean.py: exit 0 in 1.3 s, 530 functions
+  tests/test_natural.py: exit 0 in 65.9 s, 1027 functions
+  tests/test_question_reading.py: exit 0 in 26.9 s, 883 functions
+  tests/test_p1_preflight.py: exit 0 in 31.8 s, 759 functions
+  tests/test_readings_rd5_plain_probe.py: exit 0 in 1.3 s, 1117 functions
+  tests/test_readings_defaults_names.py: exit 0 in 7.1 s, 1342 functions
+  tests/test_readings_s1_python.py: exit 0 in 0.8 s, 541 functions
+  tests/test_readings_defaults_rd6b_report.py: exit 0 in 13.9 s, 318 functions
+  tests/test_readings_s2_answer.py: exit 0 in 9.3 s, 575 functions
+  tests/test_readings_components_document.py: exit 0 in 29.9 s, 1449 functions
+  tests/test_readings_s1_differential.py: exit 0 in 26.4 s, 763 functions
+  tests/test_readings_s2_document.py: exit 0 in 197.0 s, 1714 functions
+  tests/test_scope_document.py: exit 0 in 8.9 s, 1042 functions
+  tests/test_scope_readings_document.py: exit 0 in 12.7 s, 1239 functions
+  tests/test_senses_lean.py: exit 0 in 1.9 s, 425 functions
+  tests/test_soft_decision_keys.py: exit 0 in 2.1 s, 667 functions
+  tests/test_soft_norms_conformance.py: exit 0 in 3.7 s, 914 functions
+  tests/test_soft_norms_lean.py: exit 0 in 1.5 s, 633 functions
+  tests/test_softnorms_public_contract.py: exit 0 in 1.4 s, 704 functions
+  tests/test_stage2_bundle.py: exit 0 in 1.8 s, 766 functions
+  tests/test_stage2_dispatch.py: exit 0 in 0.8 s, 646 functions
+  tests/test_stage2_norms.py: exit 0 in 5.1 s, 794 functions
+  tests/test_time_w6a.py: exit 0 in 0.8 s, 465 functions
+  tests/test_units_relay_w6a.py: exit 0 in 1.0 s, 499 functions
+  tests/test_w6a_citations.py: exit 0 in 1.9 s, 616 functions
+  tests/test_wire_contract_lint.py: exit 0 in 2.5 s, 834 functions
+  tests/test_repo_map.py: exit 0 in 238.9 s, 504 functions
+  tests/test_wire_contract_three_way.py: exit 0 in 1.3 s, 721 functions
+  tests/test_wire_contract_soft_lean.py: exit 0 in 27.9 s, 635 functions
+  tests/test_risk_margins.py: exit 0 in 311.3 s, 429 functions
+  tests/test_relay_mutation_gate.py: exit 0 in 501.3 s, 1139 functions
+wrote /home/runner/work/_temp/out/map-s6.json.gz (73 KiB); recorded 69 units; 0 failed and are left to the static graph: []
