@@ -146,7 +146,7 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
+    let src ← Wire.decodeSource (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms") (flags := true)
     return VE.Route.Wire.ok id (Flagged.regenerated src ++ [("wordings", wordingsJson src.ne)])
   if kind == "norms-certificate" then
     let r ← Flagged.replayEntailment j

@@ -1,0 +1,110 @@
+{
+ "key": "judge-B-1",
+ "account": "claude-panaali2",
+ "prompt": "You are auditing how English sentences can be read. For each PHRASE below you get a SENTENCE, the DEMAND inside it, what {0} (and any {1}) stands for, and numbered candidate readings L1, L2, ... For every candidate, decide whether it is a reading of the DEMAND that a careful reader of this English could take (YES) or not a reading of this English (NO). Judge each candidate on its own. Use only the text below; do not use tools or outside knowledge. Answer with exactly one line per candidate and nothing else, in the form `<phrase id> L<n>: YES` or `<phrase id> L<n>: NO`.\n\nPHRASE u027\nSENTENCE: No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.\nDEMAND: No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment\n{0} stands for no one (any person).\nL1. {0} must not be subjected to torture, and {0} must not be subjected to cruel, inhuman or degrading treatment or punishment.\n\n\nPHRASE u051\nSENTENCE: 1. Everyone has the right to seek and to enjoy in other countries asylum from persecution.\nDEMAND: Everyone has the right to seek and to enjoy in other countries asylum from persecution\n{0} stands for everyone.\nL1. {0} has the right to seek asylum from persecution, and {0} has the right to enjoy asylum from persecution in other countries.\nL2. {0} has the right to seek asylum from persecution in other countries, and {0} has the right to enjoy asylum from persecution in other countries.\n\n\nPHRASE u055\nSENTENCE: 2. No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality.\nDEMAND: No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality\n{0} stands for no one (any person).\nL1. {0} must not be arbitrarily deprived of their nationality, and {0} must not be denied the right to change their nationality.\nL2. {0} must not be arbitrarily deprived of their nationality, and {0} must not be arbitrarily denied the right to change their nationality.\n\n\nPHRASE u076\nSENTENCE: 1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.\nDEMAND: Everyone has the right to take part in the government of his country, directly or through freely chosen representatives\n{0} stands for everyone; {1} stands for the government of their country.\nL1. {0} has the right to directly take part in {1}, and {0} has the right to take part in {1} through freely chosen representatives.\nL2. {0} has the right to directly take part in {1} or to take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own).\n\n\nPHRASE u079b\nSENTENCE: and shall be held by secret vote or by equivalent free voting procedures.\nDEMAND: shall be held by secret vote or by equivalent free voting procedures\n{0} stands for the periodic and genuine elections that express the will of the people.\nL1. {0} must be held by secret vote or equivalent free voting procedures.\n\n\nPHRASE u087\nSENTENCE: 4. Everyone has the right to form and to join trade unions for the protection of his interests.\nDEMAND: Everyone has the right to form and to join trade unions for the protection of his interests\n{0} stands for everyone.\nL1. {0} has the right to form trade unions, and {0} has the right to join trade unions for the protection of their interests.\nL2. {0} has the right to form trade unions for the protection of their interests, and {0} has the right to join trade unions for the protection of their interests.\n\n\nPHRASE u092\nSENTENCE: and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.\nDEMAND: the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control\n{0} stands for everyone.\nL1. {0} has the right to security in the event of unemployment; {0} has the right to security in the event of sickness; {0} has the right to security in the event of disability; {0} has the right to security in the event of widowhood; {0} has the right to security in the event of old age; and {0} has the right to security in the event of other lack of livelihood in circumstances beyond their control.\nL2. {0} has the right to security in the event of unemployment in circumstances beyond their control; {0} has the right to security in the event of sickness in circumstances beyond their control; {0} has the right to security in the event of disability in circumstances beyond their control; {0} has the right to security in the event of widowhood in circumstances beyond their control; {0} has the right to security in the event of old age in circumstances beyond their control; and {0} has the right to security in the event of other lack of livelihood in circumstances beyond their control.\n\n\nPHRASE u105\nSENTENCE: 1. Everyone has the right freely to participate in the cultural life of the community, to enjoy the arts and to share in scientific advancement and its benefits.\nDEMAND: Everyone has the right freely to participate in the cultural life of the community, to enjoy the arts and to share in scientific advancement and its benefits\n{0} stands for everyone.\nL1. {0} has the right to freely participate in the cultural life of the community; {0} has the right to enjoy the arts; and {0} has the right to share in scientific advancement and its benefits.\nL2. {0} has the right to freely participate in the cultural life of the community; {0} has the right to freely enjoy the arts; and {0} has the right to freely share in scientific advancement and its benefits.\n",
+ "cli": {
+  "duration_api_ms": 9111,
+  "stop_reason": "end_turn",
+  "session_id": "5564b94a-4c8e-4e84-8054-0de1f9d63286",
+  "total_cost_usd": 0.015007199999999998,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 16296,
+   "output_tokens": 587,
+   "output_tokens_details": {
+    "thinking_tokens": 460
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 0,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 587,
+     "cache_read_input_tokens": 16296,
+     "cache_creation_input_tokens": 0,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 587,
+    "cacheReadInputTokens": 16296,
+    "cacheCreationInputTokens": 0,
+    "webSearchRequests": 0,
+    "costUSD": 0.015007199999999998,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 460,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 0,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "u027 L1: YES\nu051 L1: YES\nu051 L2: YES\nu055 L1: YES\nu055 L2: YES\nu076 L1: YES\nu076 L2: YES\nu079b L1: YES\nu087 L1: YES\nu087 L2: YES\nu092 L1: YES\nu092 L2: YES\nu105 L1: YES\nu105 L2: YES",
+  "ttft_ms": 8620,
+  "type": "result",
+  "duration_ms": 9444,
+  "uuid": "286888be-1e8a-4a36-8957-3d844e5c67ba",
+  "ttft_stream_ms": 4257,
+  "time_to_request_ms": 332,
+  "first_content_frame_ms": 4257,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 16885,
+ "answer": "u027 L1: YES\nu051 L1: YES\nu051 L2: YES\nu055 L1: YES\nu055 L2: YES\nu076 L1: YES\nu076 L2: YES\nu079b L1: YES\nu087 L1: YES\nu087 L2: YES\nu092 L1: YES\nu092 L2: YES\nu105 L1: YES\nu105 L2: YES"
+}

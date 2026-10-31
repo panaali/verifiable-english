@@ -1,0 +1,32 @@
+1:[gha-select 22:35:15Z] queue pressure: room 5 (cap 20 - busy 11 - reserve 4 for 7 arrivals/h): 6 -> 5 shards
+15:gha-select: 517 units in 5 shards (weights 432763b06d8d4d50d06fdae218c5c53f2f267cec.json.gz + runner seconds for 498 units (ratio 1.00): total 20050 s, longest 1091 s; shard loads [995, 996, 996, 1044, 1091])
+16:[gha-select 22:35:37Z] eff-20261030-1-ddc954b9-t399713: 5 shards dispatched to GitHub Actions in 24 s (push 15 s, workflow from VE main); waiting (Mac path after 23:35Z)
+183:chunks: ; from the plan: tests/test_english_evidence.py::chunk(4/4), tests/test_speech_polar_lean.py::chunk(3/4), tests/test_trust_mutants.py::chunk(1/4)
+185:chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 358.4 s in all, longest chunk 358.4 s; 20 passed, 0 skipped, 0 failed; each of its 20 tests ran in exactly one chunk
+186:chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 373.7 s in all, longest chunk 373.7 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+187:chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 367.6 s in all, longest chunk 367.6 s; 127 passed, 0 skipped, 0 failed; each of its 127 tests ran in exactly one chunk
+189:SHARD 1/5: exit 0 in 1354.0 s; 112 units, 112 passed
+328:chunks: ; from the plan: tests/test_english_evidence.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(2/4), tests/test_trust_mutants.py::chunk(3/4)
+331:chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 338.0 s in all, longest chunk 338.0 s; 20 passed, 0 skipped, 0 failed; each of its 20 tests ran in exactly one chunk
+332:chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 335.7 s in all, longest chunk 335.7 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+333:chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 531.1 s in all, longest chunk 531.1 s; 126 passed, 0 skipped, 0 failed; each of its 126 tests ran in exactly one chunk
+334:FAILED tests/test_nested_pytest.py (exit 1): tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder
+340:FAILED tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder - AssertionError: {'docs/infra/eff-20261030-1/seeded_bugs.py': [81], 'docs/lean-first/b16c/seed_faults.py': [94], 'docs/lean-first/b16d/seed_faults.py': [87], 'docs/lean-first/b16e/seed_faults.py': [112], ...}
+362:SHARD 2/5: exit 1 in 1364.5 s; 114 units, 113 passed
+528:chunks: ; from the plan: tests/test_english_evidence.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(1/4), tests/test_speech_polar_lean.py::chunk(1/4), tests/test_trust_mutants.py::chunk(2/4), tests/test_trust_mutants.py::chunk(4/4)
+530:chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 307.1 s in all, longest chunk 307.1 s; 19 passed, 0 skipped, 0 failed; each of its 19 tests ran in exactly one chunk
+531:chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 313.3 s in all, longest chunk 313.3 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+532:chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 643.4 s in all, longest chunk 643.4 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+533:chunked tests/test_trust_mutants.py: 2 of 4 chunks, exit 0, 1289.2 s in all, longest chunk 648.4 s; 252 passed, 0 skipped, 0 failed; each of its 252 tests ran in exactly one chunk
+535:SHARD 3/5: exit 0 in 1509.0 s; 113 units, 113 passed
+702:chunks: ; from the plan: tests/test_acts_vocab_mutants.py::chunk(1/2), tests/test_english_evidence.py::chunk(1/4), tests/test_readings_rd6b_differential.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(4/4)
+704:chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 569.8 s in all, longest chunk 569.8 s; 18 passed, 0 skipped, 0 failed; each of its 18 tests ran in exactly one chunk
+705:chunked tests/test_readings_rd6b_differential.py: 2 of 4 chunks, exit 0, 896.1 s in all, longest chunk 491.3 s; 8 passed, 0 skipped, 0 failed; each of its 8 tests ran in exactly one chunk
+706:chunked tests/test_acts_vocab_mutants.py: 1 of 2 chunks, exit 0, 779.8 s in all, longest chunk 779.8 s; 322 passed, 0 skipped, 0 failed; each of its 322 tests ran in exactly one chunk
+708:SHARD 4/5: exit 0 in 1979.5 s; 89 units, 89 passed
+875:chunks: ; from the plan: tests/test_acts_vocab_mutants.py::chunk(2/2), tests/test_readings_rd6b_differential.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(4/4)
+877:chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 277.3 s in all, longest chunk 277.3 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+878:chunked tests/test_acts_vocab_mutants.py: 1 of 2 chunks, exit 0, 787.9 s in all, longest chunk 787.9 s; 321 passed, 0 skipped, 0 failed; each of its 321 tests ran in exactly one chunk
+879:chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 470.8 s in all, longest chunk 470.8 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+881:SHARD 5/5: exit 0 in 2025.2 s; 89 units, 89 passed
+882:[gha-select 23:10:55Z] summary: selected tests ran on GitHub Actions (5 shards, run eff-20261030-1-ddc954b9-t399713); exit=1; 2142s

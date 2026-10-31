@@ -22,6 +22,7 @@ from ve.admission import AdmissionError
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.units import prove_quantity, quantity_meaning_id
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
@@ -158,7 +159,7 @@ def test_relabelling_the_whole_citation_to_money_fails():
 
 
 def test_citation_soundness_is_audited():
-    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
     for name in ("cites_discharged", "isCite_parse", "admitDecoded_sound", "admit_quantity_report_sound"):
         assert f"#print axioms VE.Time.Document.{name}\n" in audit
     source = (ROOT / "lean" / "VE" / "Time" / "Document.lean").read_text()

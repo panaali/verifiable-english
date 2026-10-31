@@ -47,6 +47,7 @@
 - `tests/test_answer_cutoff.py` — The answer-level cutoff (tools/answer_cutoff.py, tools/answer_replay.py) and the request records of tools/test_map_recorder.py: an R1 experiment that tools/gat…
 - `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
 - `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
+- `tests/test_ap7.py` — AP-7: the draw, the sample's binding, and the score recomputed from the saved records.
 - `tests/test_ar3_report.py` — AR-3's report and DELTA against their saved evidence (docs/arch/AR-3/evidence), never the live tree or history.
 - `tests/test_ar6_report.py` — The AR-6 report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_ar8_evidence.py` — AR-8's report agrees with its SAVED evidence (fixed base and head commits, never the live tree).
@@ -92,4 +93,3 @@
 - `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
 - `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
 - `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
-- `tests/test_bundle.py` — Citation replay and transitive provenance checks.

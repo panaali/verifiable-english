@@ -1,0 +1,95 @@
+{
+ "files": {
+  "tests/test_acts_vocab_mutants.py": {
+   "best_cut": 0.746,
+   "best_k": 4,
+   "largest_node_seconds": 0.2,
+   "max_chunks": 4,
+   "never": false,
+   "reason": null,
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 0.5,
+   "wall_seconds": 129.8
+  },
+  "tests/test_consolidation_tools.py": {
+   "best_cut": 0.167,
+   "best_k": 2,
+   "largest_node_seconds": 290.0,
+   "max_chunks": 2,
+   "never": true,
+   "reason": "one node is 290.0 of its 357.7 s (tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected): no split ends before it",
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 7.9,
+   "wall_seconds": 357.7
+  },
+  "tests/test_defaults_checks.py": {
+   "best_cut": 0.009,
+   "best_k": 2,
+   "largest_node_seconds": 98.1,
+   "max_chunks": 2,
+   "never": true,
+   "reason": "one node is 98.1 of its 99.2 s (tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test): no split ends before it",
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 0.1,
+   "wall_seconds": 99.2
+  },
+  "tests/test_english_evidence.py": {
+   "best_cut": 0.749,
+   "best_k": 4,
+   "largest_node_seconds": 26.7,
+   "max_chunks": 4,
+   "never": false,
+   "reason": null,
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 0.5,
+   "wall_seconds": 510.3
+  },
+  "tests/test_lean_conformance.py": {
+   "best_cut": 0.151,
+   "best_k": 2,
+   "largest_node_seconds": 91.6,
+   "max_chunks": 2,
+   "never": true,
+   "reason": "one node is 91.6 of its 108.4 s (tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist): no split ends before it",
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 0.4,
+   "wall_seconds": 108.4
+  },
+  "tests/test_readings_rd6b_differential.py": {
+   "best_cut": 0.741,
+   "best_k": 4,
+   "largest_node_seconds": 43.7,
+   "max_chunks": 4,
+   "never": false,
+   "reason": null,
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 0.2,
+   "wall_seconds": 344.1
+  },
+  "tests/test_speech_polar_lean.py": {
+   "best_cut": 0.71,
+   "best_k": 4,
+   "largest_node_seconds": 22.3,
+   "max_chunks": 4,
+   "never": false,
+   "reason": null,
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 32.3,
+   "wall_seconds": 608.1
+  },
+  "tests/test_trust_mutants.py": {
+   "best_cut": 0.491,
+   "best_k": 4,
+   "largest_node_seconds": 23.9,
+   "max_chunks": 4,
+   "never": false,
+   "reason": null,
+   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "setup_seconds": 178.4,
+   "wall_seconds": 515.9
+  }
+ },
+ "format": "ve-test-chunks@1",
+ "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+ "source": "docs/infra/eff-20261030-1/chunk_table.py over docs/infra/eff-20261030-1/measure.sh logs; never = best cut below 20%; max_chunks = the best k of 2-4"
+}

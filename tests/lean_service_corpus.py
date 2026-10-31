@@ -442,7 +442,8 @@ def corpus():
                                  {**choice_plan, "limit": 1}, choice_verdict],
             "search-budget": [*search_budget_cases(), *ADVERSARIAL],
             "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL],
-            "cardinality": [*cardinality_cases(), *ADVERSARIAL]}
+            "cardinality": [*cardinality_cases(), *ADVERSARIAL],
+            "scope": [*recorded("scope"), *ADVERSARIAL]}
 
 
 def recorded(mode):

@@ -151,6 +151,10 @@ def paraphrases (fx : List String) (op : Op) (f : Option Lexical.Form) (what : S
     Except String (List String) :=
   distinctTexts what (Rs.map (paraphrase fx op f))
 
+/-- The texts of a listing of meanings, with no modal (D-15). -/
+def meaningTexts (fx : List String) (what : String) (As : List Act) : Except String (List String) :=
+  distinctTexts what (As.map (fun A => (Act.text fx none A).drop 4 ++ "."))
+
 theorem firstEqualPair_none : ∀ (k : Nat) (ts : List String), firstEqualPair k ts = none ↔ ts.Nodup
   | _, [] => by simp [firstEqualPair]
   | k, t :: ts => by

@@ -27,6 +27,7 @@ from ve.errors import VEError
 from ve.identity import meaning_id
 from tests.frozen_speech.speech_acts import SpeechDocument
 from tests.frozen_speech.speech_document import SpeechSource
+from tools.lean_statements import inventory_path  # noqa: E402
 
 NON_ASCII = "InvalidInput: non-ASCII speech wording"
 
@@ -872,7 +873,7 @@ def test_every_spec_8_5_name_has_a_lean_owner():
     section = spec[spec.index("### 8.5 Theorems: wire and report"):spec.index("### 8.6 ")]
     names = re.findall(r"^(?:theorem|structure|def) ([A-Za-z_.]+)", section, re.M)
     assert {"SpeechAdmitted", "bindings_withheld", "speech_wire_acceptance", "active_commands"} <= set(names)
-    declared = (ROOT / "lean/declarations.txt").read_text()
+    declared = inventory_path("lean/declarations.txt").read_text()
     missing = []
     for name in names:
         owner = SPEC_8_5_STAND_INS.get(name)

@@ -3,8 +3,8 @@
 Every switched relay reads a Lean row that the service schema types (`service_schema.ROWS`, applied by
 `run_bound`) and that the relay binds to its request. These tests take each relay's genuine row and every
 one-fault structural mutant of it (each member dropped, a member added, each list element dropped or
-duplicated, each value retyped, a boolean for a count included), plus an empty and an extra row: none may
-reach a caller as an answer (build checklist line 4).
+duplicated, each non-empty value emptied, each value retyped, a boolean for a count included), plus an empty
+and an extra row: none may reach a caller as an answer (build checklist line 4).
 """
 from __future__ import annotations
 
@@ -19,34 +19,10 @@ from ve.backends.service_schema import ROWS, Context, Invalid
 from ve.errors import CheckerUnavailable, VEError
 
 from tests.probe_matrix import raw_environment
+from tests.test_document_lean_switch import _structural_mutants
 
 # The service's schema check on genuine rows: never answered from the answer store (tests/answer_store.py).
 pytestmark = pytest.mark.live_service
-
-RETYPES = (7, True, None, [], {}, "x")
-
-
-def _structural_mutants(node, at=()):
-    """(path, mutate) for every one-fault structural mutant of `node` (as in test_document_lean_switch)."""
-    def at_path(root, path):
-        for key in path:
-            root = root[key]
-        return root
-    if type(node) is dict:
-        yield at + ("+forged",), lambda r: at_path(r, at).update(forged_line=7)
-        for key in node:
-            yield at + (key, "-"), lambda r, key=key: at_path(r, at).pop(key)
-    if type(node) is list:
-        for i in range(len(node)):
-            yield at + (i, "-"), lambda r, i=i: at_path(r, at).pop(i)
-            yield at + (i, "x2"), lambda r, i=i: at_path(r, at).insert(i, deepcopy(at_path(r, at)[i]))
-    children = node.items() if type(node) is dict else enumerate(node) if type(node) is list else ()
-    for key, child in children:
-        for value in RETYPES:
-            if type(value) is not type(child):
-                yield at + (key, f"={value!r}"), lambda r, key=key, value=value: \
-                    at_path(r, at).__setitem__(key, deepcopy(value))
-        yield from _structural_mutants(child, at + (key,))
 
 
 def _env(profiles=(), **predicates):

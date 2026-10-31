@@ -144,6 +144,10 @@
     "route": [
       "VE.Route.Run"
     ],
+    "scope": [
+      "VE.Scope.Run",
+      "VE.Route.Run"
+    ],
     "search-budget": [
       "VE.SearchBudget.Run",
       "VE.Route.Run"
@@ -162,8 +166,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "c8fd3390dc0719395094244a8b2d2170a92a1e74c6f18750170c9f17972ecf06",
-    "lean/VE/Service/Registry.lean": "fba2ab9dc2ec1946693e4c240c047d7bae3e2eb995b62ca11e53814bb46e2706",
+    "lean/VE/Service/Protocol.lean": "4f87e51288c1e65581c8a04bda5ce7111c17cc5ca7785a4a17bedbb3ba1812b0",
+    "lean/VE/Service/Registry.lean": "c74d083176c693e65cf3db22500b295047812574454fb74edd312a151d5c548c",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

@@ -1,0 +1,78 @@
+{
+ "item": "test-cost-heavy",
+ "method": "each mutant applied alone to the file, the named test run alone (uv run pytest -q <id>, or python3 -I tools-local/test_defer_heavy.py with DEFER_HEAVY_ZSH=<mutant copy>), then the file restored",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "defer_heavy: all(map(weak_reason, ...)) -> any(...)",
+   "test": "tests/test_select_defer.py::test_a_heavy_file_selected_only_for_weak_reasons_is_deferred",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S2",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "defer_heavy: seconds > threshold -> >=",
+   "test": "tests/test_select_defer.py::test_only_a_file_over_the_threshold_is_heavy",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S3",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "defer_heavy: drop *keep from the stay set",
+   "test": "tests/test_select_defer.py::test_these_heavy_weak_units_always_stay[tests/test_failed.py-failed last time]",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S4",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "defer_heavy: keep a pytest command with no test file (continue -> pass)",
+   "test": "tests/test_select_defer.py::test_deferring_every_file_drops_the_pytest_command",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S5",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "run_recorded: do not mark deferred units (exit stays the base map's 0)",
+   "test": "tests/test_select_defer.py::test_a_deferred_unit_is_never_recorded_as_passed",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S6",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "main: keep=set() instead of run_order.last_failed()",
+   "test": "tests/test_select_defer.py::test_the_option_defers_and_keeps_what_failed_last_time",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S7",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "weak_reason: reason == 'smoke' -> reason.startswith('runs ')",
+   "test": "tests/test_select_defer.py::test_the_weak_reasons_are_the_static_graph_a_listed_directory_and_smoke",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S8",
+   "language": "zsh (manage-agents)",
+   "file": "/home/seyran/code/manage-agents/defer-heavy.zsh",
+   "mutation": "drop the MAC_PYTEST_NO_DEFER opt-out",
+   "test": "tools-local/test_defer_heavy.py Decision.test_the_chains_own_runs_opt_out",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "S9",
+   "language": "zsh (manage-agents)",
+   "file": "/home/seyran/code/manage-agents/defer-heavy.zsh",
+   "mutation": "drop the worktree option check (the first installed copy)",
+   "test": "tools-local/test_defer_heavy.py Decision.test_a_worktree_whose_selector_lacks_the_option_never_gets_it",
+   "result": "caught (rc 1, the test FAILED)"
+  }
+ ]
+}

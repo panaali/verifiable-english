@@ -400,8 +400,13 @@ def _calc_reader(case):
     return lambda response: read_answer(response["results"][0]["result"], case)
 
 
+def _scope_reader(case):
+    from ve.scope import read_answer
+    return lambda response: read_answer(response["results"][0]["result"], case)
+
+
 SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader,
-                   "metered": _metered_reader, "calc": _calc_reader}
+                   "metered": _metered_reader, "calc": _calc_reader, "scope": _scope_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:

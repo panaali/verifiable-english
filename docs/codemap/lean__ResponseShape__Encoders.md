@@ -1,0 +1,29 @@
+- `lean/ResponseShape/Encoders/Alternatives.lean` — The `alternatives` mode (`Alternatives.Run.runCaseReported`) against `alternatives.json#/row`.
+- `lean/ResponseShape/Encoders/Ask.lean` — The `ask` mode (`VE.Ask.Run.caseReported`) against `ask.json#/row`: every field of an answered question and of a refused one, typed.
+- `lean/ResponseShape/Encoders/Calc.lean` — The `calc` mode (`VE.Calc.Run.runCaseReported`) against `calc.json#/row` (math-evidence spec 3.4).
+- `lean/ResponseShape/Encoders/Cardinality.lean` — The `cardinality` mode (`VE.Cardinality.Run.runCaseReported`) against `cardinality.json#/row` (docs/spec/quantities.md 4.3).
+- `lean/ResponseShape/Encoders/Common.lean` — Encoders several modes share: the claims and reports of an admission (`Route.Run.claimJson`, `Norms.Run.reportJson`).
+- `lean/ResponseShape/Encoders/Conformance.lean` — The `ve_conformance` modes: `evaluate` (`Order.runEvaluationCaseReported`), `check-certificate` (the service's metered `CertificateWire.runCaseReportedSteps`) …
+- `lean/ResponseShape/Encoders/Discourse.lean` — The `discourse` mode (`Discourse.Run.runCaseReported`) against `discourse.json#/row`.
+- `lean/ResponseShape/Encoders/Document.lean` — scope@0 (SC-1b): the fold of a governor unit's status keeps the row's shape.
+- `lean/ResponseShape/Encoders/English.lean` — The `english` mode (`Service.englishReported`, the English runner) against `english.json#/row`, and the `diagnose` mode (`Service.Diagnose.diagnoseCase`) again…
+- `lean/ResponseShape/Encoders/EnglishLean.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/Envelope.lean` — The service's own lines against `envelope.json`: each result bound to its position and case digest (`Service.Protocol.bound`), the response (`response`) and a …
+- `lean/ResponseShape/Encoders/Family.lean` — The family modes `graph` and `readings` (`Service.Family`), `bundle` (`Service.FamilyBundle`) and `family-norms` (`Service.FamilyNorms`) against their row shap…
+- `lean/ResponseShape/Encoders/Metered.lean` — The `metered` mode (`Route.MeteredRun.runCaseReported`) against `metered.json#/row`: a document result has one of the three statuses, every explanation row is …
+- `lean/ResponseShape/Encoders/NormDefaults.lean` — The `norm-defaults` mode (`NormDefaults.Run.runCaseReported`) against `norm-defaults.json#/row`.
+- `lean/ResponseShape/Encoders/Norms.lean` — The `norms` mode (`Norms.Run.runCaseReported`) against `norms.json#/row`.
+- `lean/ResponseShape/Encoders/Quantity.lean` — The `quantity` mode (`Time.Wire.runCaseReported` with `Time.Document.extension`) against `quantity.json#/row`.
+- `lean/ResponseShape/Encoders/Question.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/ReadingsRoute.lean` — The `readings-route` mode (`Readings.Run.runCaseReported`) against `readings-route.json#/row`.
+- `lean/ResponseShape/Encoders/Reports.lean` — The `reports` mode (`Reports.Run.runCaseReported`) against `reports.json#/row`.
+- `lean/ResponseShape/Encoders/Rights.lean` — The `rights` mode (`Rights.Run.runCaseReported`) against `rights.json#/row`.
+- `lean/ResponseShape/Encoders/Risk.lean` — The `risk` mode (`Risk.Run.runCaseReported`) against `risk.json#/row`.
+- `lean/ResponseShape/Encoders/RiskEval.lean` — The `risk-eval` mode (`Risk.Eval.runCaseReported`) against `risk-eval.json#/row`.
+- `lean/ResponseShape/Encoders/Route.lean` — The `route` mode (`Route.Run.runCaseReported`) against `route.json#/row`.
+- `lean/ResponseShape/Encoders/Scope.lean` — The `scope` mode (`VE.Scope.Run.runCaseReported`) against `scope.json#/row` (docs/spec/scope.md 5.3).
+- `lean/ResponseShape/Encoders/SearchBudget.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/SoftNorms.lean` — The `soft-norms` mode (`SoftNorms.Run.runCaseReported`) against `soft-norms.json#/row`.
+- `lean/ResponseShape/Encoders/SpeechActs.lean` — The `speech-acts` mode (`SpeechActs.Run.runCaseReported`) against `speech-acts.json#/row`.
+- `lean/ResponseShape/Encoders/Standalone.lean` — The standalone modes (`Service.Standalone.reported` of `environmentCase`, `modelCase`, `checkCase`, `identityCase`, `parseCase`) against their row shapes.
+- `lean/ResponseShape/Encoders/Words.lean` — The `words` mode (`VE.Words.Run.caseReported`) against `words.json#/row`.

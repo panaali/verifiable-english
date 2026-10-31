@@ -26,6 +26,7 @@ from ve import ask
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "docs/spec/question-answering.md"
@@ -183,7 +184,7 @@ def test_every_approved_statement_is_proved_as_written():
     assert done.returncode == 0, done.stdout
     assert "15 of 15 implemented; 0 missing" in done.stdout
     assert "Q1 predicates: 5 of 5 equal to the approved text" in done.stdout
-    audited = (ROOT / "lean/VE/Audit.lean").read_text()
+    audited = inventory_path("lean/VE/Audit.lean").read_text()
     for name in re.findall(r"^theorem (\w+)", SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2", 1)[0],
                            re.M):
         assert f"#print axioms VE.Question.{name}\n" in audited, name

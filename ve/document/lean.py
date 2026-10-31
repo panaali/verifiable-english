@@ -405,6 +405,27 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
             for cell in cells[line]:
                 require(type(cell) is dict and cell.get("unit") in by_id and
                         cell.get("support") == by_id[cell["unit"]]["support"])
+        # The names a cell holds are the request's: its action, chooser and harm are constants of the vocabulary, and
+        # its decider is the block's `decided_by` (`unstated` when absent) or, for an assumed cell, its `complete_by`
+        # (docs/spec/alternatives.md 1.4). Which constants a cell pairs is Lean's.
+        environment = meta["environment"]
+        block = environment.get("alternatives") if type(environment.get("alternatives")) is dict else {}
+        vocabulary = environment.get("vocabulary")
+        constants = vocabulary.get("constants") if type(vocabulary) is dict else None
+        names = set(constants) if type(constants) is dict else set()
+        outcomes = block.get("outcomes")
+        completed = outcomes.get("complete_by") if type(outcomes) is dict else None
+        decided = block["decided_by"] if type(block.get("decided_by")) is str else "unstated"
+        for line, roles, decider in (("alternatives_declared", ("action", "chooser"), None),
+                                     ("counterfactual_leaves", ("action", "harm"), decided),
+                                     ("proximate_judgments", ("action", "harm"), decided),
+                                     ("assumed_harm_free", ("action", "harm"), completed)):
+            for cell in cells[line]:
+                require(type(cell) is dict and all(type(cell.get(r)) is str and cell[r] in names for r in roles) and
+                        (line == "alternatives_declared" or cell.get("decider") == decider))
+        table = cells["table_complete"]
+        require(table is None if type(outcomes) is not dict else
+                type(table) is dict and table.get("decider") == completed)
         require(same(cells["narrowings"], meta.get("narrowings", [])))
         residual.update({line: len(cells[line]) for line in _BLOCK_LINES})
         residual["table_complete"] = int(cells["table_complete"] is not None)
