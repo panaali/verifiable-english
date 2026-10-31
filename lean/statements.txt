@@ -710,6 +710,12 @@ theorem VE.Acts.closed_ok
     rs.all VE.Acts.RuleS.ok = Bool.true → ∀ (r : VE.Acts.RuleS), r ∈ VE.Acts.closed rs → r.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.closed@VE.Acts.Grammar
   -- expr 3933089701
+theorem VE.Acts.compareViews_ok
+  ∀ {ps : List String} {cs rs : List (List (Option VE.Acts.View))},
+    VE.Acts.compareViews ps cs rs = Except.ok () →
+      List.Pairwise (fun v w => ¬v.Perm w) cs ∧ ∃ σ, σ.Perm cs ∧ List.Forall₂ List.Perm σ rs
+  -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources
+  -- expr 3436129502
 theorem VE.Acts.derived_iff
   ∀ (V : VE.Acts.Vocab) (ts : List VE.Acts.Lexical.Tok) (A : VE.Acts.Act),
     VE.Acts.Derived V ts A ↔
@@ -889,6 +895,10 @@ theorem VE.Acts.phraseReadings_nodup
     VE.Acts.phraseReadings V op N b ts = VE.Acts.Listing.ok Rs → Rs.Nodup
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.phraseReadings@VE.Acts.Readings
   -- expr 4158150698
+theorem VE.Acts.pick_forall₂
+  ∀ {cs rs σ : List (List (Option VE.Acts.View))}, VE.Acts.pick cs rs = Option.some σ → List.Forall₂ List.Perm σ rs
+  -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.pick@VE.Acts.Sources
+  -- expr 1719054101
 theorem VE.Acts.readIn_many
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
@@ -1022,6 +1032,12 @@ theorem VE.Acts.schema_ranked
             ∀ (B : VE.Acts.NT) (rest : List VE.Acts.RSym), r.rhs = VE.Acts.RSym.n B :: rest → B.rank < r.lhs.rank
   -- uses VE.Acts.NT.rank@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
   -- expr 272239481
+theorem VE.Acts.sourceCheck_exact
+  ∀ (D : VE.Readings.Doc) (unspec : List String) (V : VE.Acts.Vocab) (fx : List String) (N b : Nat) (s : VE.Acts.Source),
+    VE.Acts.framesOk V = Bool.true →
+      VE.Acts.sourceCheck D unspec V fx N b s = Except.ok () → VE.Acts.SourceExact D unspec V fx N b s
+  -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Doc@VE.Readings.Doc
+  -- expr 3181368861
 theorem VE.Acts.splitDoc_none
   ∀ (D : VE.Acts.ActsDoc), VE.Acts.splitDoc D (fun x => Option.none) (VE.Acts.splitMap D fun x => Option.none) = D.U
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
