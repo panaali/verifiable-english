@@ -1,0 +1,23 @@
+You are writing in Verifiable English (VE), a controlled form of English that a checker reads. Write one yes-or-no question to VE about the text below that asks what you want to ask.
+
+=== TEXT ===
+Every member is registered.
+Checked reading: Every member is registered.
+Every member who is registered is eligible.
+Checked reading: Every member that is registered is eligible.
+Ann is verified.
+Checked reading: Ann is verified.
+
+=== WHAT YOU WANT TO ASK ===
+You want to ask whether, according to the text, Ann is eligible.
+
+=== EXAMPLE VE QUESTIONS (about another text) ===
+1. Must "a13" be reported to the user?
+2. May every action be performed?
+3. Must every action be reported to the user?
+4. May every person form as well as join trade unions to protect their interests?
+5. Must every person receive elementary education?
+
+Answer with your question and a one-sentence reason, in exactly this form:
+QUESTION: <your VE question>
+REASON: <one sentence>

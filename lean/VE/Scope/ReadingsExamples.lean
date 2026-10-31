@@ -172,4 +172,49 @@ def depAt (u : String) : List (String × Json) := (depParts.filter (·.1 != "u01
       (cyberPart "cyberweapon_creation_permitted" guardNarrow [("sign", .bool false)])])]]) [g1]) ==
   "ScopeChoice: u0165.s03 scope-u0165-s03@0:narrow: ScopeConflict: u0165.s03: sign"
 
+/-! sc-5rd: the proved statements (`ReadingsTheorems.lean`) on spec 11.6's instances. -/
+
+def optEq : Option Json → Option Json → Bool
+  | some a, some b => VE.Readings.Wire.jeq a b
+  | none, none => true
+  | _, _ => false
+/-- `x` and `y` agree on every member outside `ks` (the members `getObjVal?` finds). -/
+def sameBut (ks : List String) (x y : Json) : Bool :=
+  (keysOf x ++ keysOf y).all fun k => ks.contains k || optEq (x.getObjVal? k).toOption (y.getObjVal? k).toOption
+/-- `governSets_preserves`' conclusion, computed for an answer `out` of the document `doc` with governed units `su`. -/
+def preserved (su : List String) (out doc : Json) : Bool :=
+  sameBut ["units", "reading_sets"] out doc && (unitsOf out).map idOf == (unitsOf doc).map idOf &&
+  ((unitsOf out).zip (unitsOf doc)).all (fun (x, y) => sameBut ["content"] x y && (!su.contains (idOf y) ||
+    VE.Readings.Wire.jeq x y)) && (setsJson out).length == (setsJson doc).length &&
+  ((setsJson out).zip (setsJson doc)).all fun (x, y) => (su.contains (setUnit y) || VE.Readings.Wire.jeq x y) &&
+    sameBut ["readings"] x y && (readingsJson x).length == (readingsJson y).length &&
+    ((readingsJson x).zip (readingsJson y)).all fun (r, r') => sameBut ["content"] r r'
+/-- `preserved` on `governSets`' answer, and on the document with one member it must keep changed (`bad`). -/
+def preservesOn (doc : Json) (gs : List Governor) (bad : Json → Json) : Except String (Bool × Bool) := do
+  let D := sdoc doc gs [] (← VE.Readings.Wire.decodeEnvironment envJ)
+  let out ← governSets D
+  pure (preserved (governedSetUnits D) out D.doc, preserved (governedSetUnits D) out (bad D.doc))
+-- SR-1 and SR-u: kept, and the check fails once a member outside `units` and `reading_sets`, a governed set unit,
+-- a set's `id` or a reading's `id` differs
+def setAt (k : String) (f : Json → Json) (doc : Json) : Json := match doc.getObjValD k with
+  | .arr xs => doc.setObjVal! k (.arr (xs.modify 0 f))
+  | _ => doc
+#guard (preservesOn (setDoc [s03]) [g1] (·.setObjVal! "title" "x")).toOption == some (true, false)
+#guard (preservesOn (setDoc [s03, u0166set]) [g1] (·.setObjVal! "title" "x")).toOption == some (true, false)
+#guard (preservesOn (setDoc [s03]) [g1] (setAt "units" (·.setObjVal! "kind" "x"))).toOption == some (true, false)
+#guard (preservesOn (setDoc [s03]) [g1] (setAt "reading_sets" (·.setObjVal! "id" "x"))).toOption == some (true, false)
+#guard (preservesOn (setDoc [s03]) [g1] (setAt "reading_sets" (setAt "readings" (·.setObjVal! "id" "x")))).toOption ==
+  some (true, false)
+-- `governSets_readings_refused` (SR-g's case): u0165.s03's part is written, so its set, which g1 reaches, is not
+-- governed per choice and the document is refused; with the unit unwritten (SR-1) the set is governed and admitted
+def refusedOn (doc : Json) (g : Governor) (u : String) : Except String (Bool × Bool × Bool × Bool) := do
+  let D := sdoc doc [g] [] (← VE.Readings.Wire.decodeEnvironment envJ)
+  let us ← covered D g.reach
+  pure (us.contains u, (setUnits D.doc).contains u, (governedSetUnits D).contains u, (governSets D).isOk)
+#guard (refusedOn (hcDoc parts [("reading_sets", .arr #[s03])]) g1 "u0165.s03").toOption == some (true, true, false, false)
+#guard (refusedOn (setDoc [s03]) g1 "u0165.s03").toOption == some (true, true, true, true)
+-- on the governor's own unit (`u = g.unit`): refused, though the set holds a reading
+#guard (refusedOn (setDoc [s03, rset "lead" "u0164.s02" [reading "a" .null]]) g1 "u0164.s02").toOption ==
+  some (false, true, false, false)
+
 end VE.Scope.Examples

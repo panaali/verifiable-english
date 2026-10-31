@@ -31,6 +31,7 @@
 - `tests/route_case_recorder.py` — A pytest plugin that records every case the tests send to a statement-layer route mode.
 - `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
 - `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
+- `tests/test_acts_contract.py` — The `acts@0` wire table in shadow (ap-1bf): the legacy validator still owns the verdict; the engines name the member of 1.1 at and around each limit of `VE.Act…
 - `tests/test_acts_lexical.py` — act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
 - `tests/test_acts_lexical_mutants.py` — Seeded mutants of the act-phrase decoder each fail a fixture (ap-1a review F1).
 - `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
@@ -47,6 +48,7 @@
 - `tests/test_answer_cutoff.py` — The answer-level cutoff (tools/answer_cutoff.py, tools/answer_replay.py) and the request records of tools/test_map_recorder.py: an R1 experiment that tools/gat…
 - `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
 - `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
+- `tests/test_ap7.py` — AP-7: the draw, the sample's binding, and the score recomputed from the saved records.
 - `tests/test_ar3_report.py` — AR-3's report and DELTA against their saved evidence (docs/arch/AR-3/evidence), never the live tree or history.
 - `tests/test_ar6_report.py` — The AR-6 report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_ar8_evidence.py` — AR-8's report agrees with its SAVED evidence (fixed base and head commits, never the live tree).
@@ -90,6 +92,3 @@
 - `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
 - `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
 - `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
-- `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
-- `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
-- `tests/test_bundle.py` — Citation replay and transitive provenance checks.

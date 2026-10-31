@@ -1,0 +1,2737 @@
+[
+ {
+  "id": "or1",
+  "env": "FO",
+  "text": "Legacy costs 5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs 5.\n"
+  }
+ },
+ {
+  "id": "or2",
+  "env": "FO",
+  "text": "Legacy costs -5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs -5.\n"
+  }
+ },
+ {
+  "id": "or3",
+  "env": "FO",
+  "text": "Legacy costs -0.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs 0.\n"
+  }
+ },
+ {
+  "id": "or4",
+  "env": "FO",
+  "text": "Legacy costs [budget + 1].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [@budget + 1].\n"
+  }
+ },
+ {
+  "id": "or5",
+  "env": "FO",
+  "text": "Legacy costs [budget - limit].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [@budget - @limit].\n"
+  }
+ },
+ {
+  "id": "or6a",
+  "env": "FO",
+  "text": "Legacy costs [3 * budget].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [3 * @budget].\n"
+  }
+ },
+ {
+  "id": "or6b",
+  "env": "FO",
+  "text": "Legacy costs [-3 * budget].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [-3 * @budget].\n"
+  }
+ },
+ {
+  "id": "or7",
+  "env": "FO",
+  "text": "Legacy costs [budget * limit].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 multiplies by something that is not a number.",
+   "span": {
+    "start": 0,
+    "end": 30,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or8",
+  "env": "FO",
+  "text": "Legacy costs [[budget + 1] * limit].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 multiplies by something that is not a number.",
+   "span": {
+    "start": 0,
+    "end": 36,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or9",
+  "env": "FO",
+  "text": "Legacy costs twice the budget.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [2 * @budget].\n"
+  }
+ },
+ {
+  "id": "or10a",
+  "env": "FO",
+  "text": "Legacy costs -budget.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs -@budget.\n"
+  }
+ },
+ {
+  "id": "or10b",
+  "env": "FO",
+  "text": "Legacy costs --budget.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs --@budget.\n"
+  }
+ },
+ {
+  "id": "or11",
+  "env": "FO",
+  "text": "Legacy costs -[budget + 1].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs -[@budget + 1].\n"
+  }
+ },
+ {
+  "id": "or12",
+  "env": "FO",
+  "text": "Legacy costs [budget - -5].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [@budget - -5].\n"
+  }
+ },
+ {
+  "id": "or13",
+  "env": "FO",
+  "text": "Legacy costs [[budget + 1] + [2 * limit]].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs [[@budget + 1] + [2 * @limit]].\n"
+  }
+ },
+ {
+  "id": "or14",
+  "env": "FO",
+  "text": "Legacy costs [[budget + 1] + [limit * 2]].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 multiplies by something that is not a number.",
+   "span": {
+    "start": 0,
+    "end": 42,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or15a",
+  "env": "FO",
+  "text": "Budget is at most 5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget <= 5.\n"
+  }
+ },
+ {
+  "id": "or15b",
+  "env": "FO",
+  "text": "Budget IS AT MOST 5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget <= 5.\n"
+  }
+ },
+ {
+  "id": "or16a",
+  "env": "FO",
+  "text": "Budget is less than limit.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget < @limit.\n"
+  }
+ },
+ {
+  "id": "or16b",
+  "env": "FO",
+  "text": "Budget is more than limit.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@limit < @budget.\n"
+  }
+ },
+ {
+  "id": "or17",
+  "env": "FO",
+  "text": "Budget is at least [limit + 1].",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "[@limit + 1] <= @budget.\n"
+  }
+ },
+ {
+  "id": "or18a",
+  "env": "FO",
+  "text": "Budget is the same as limit.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget equals @limit.\n"
+  }
+ },
+ {
+  "id": "or18b",
+  "env": "FO",
+  "text": "Budget exceeds limit.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget exceeds @limit.\n"
+  }
+ },
+ {
+  "id": "or19a",
+  "env": "FO",
+  "text": "Every service that costs 5 is reviewed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every service x0, (if (x0 costs 5), then (x0 is reviewed)).\n"
+  }
+ },
+ {
+  "id": "or19b",
+  "env": "FO",
+  "text": "Every service costs twice the budget.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every service x0, (x0 costs [2 * @budget]).\n"
+  }
+ },
+ {
+  "id": "or20",
+  "env": "FO",
+  "text": "Legacy costs --5.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase '5'. Nearest declared wordings: 'owns {1}'; 'alice'; 'costs {1}'.",
+   "span": {
+    "start": 15,
+    "end": 16,
+    "line": 1,
+    "column": 16
+   }
+  }
+ },
+ {
+  "id": "or21",
+  "env": "FO",
+  "text": "Legacy costs -twice the budget.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'twice the budget'. Nearest declared wordings: 'budget'; 'exceeds {1}'; 'alice'.",
+   "span": {
+    "start": 14,
+    "end": 30,
+    "line": 1,
+    "column": 15
+   }
+  }
+ },
+ {
+  "id": "or22",
+  "env": "FO",
+  "text": "Legacy costs - budget.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'costs - budget'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'.",
+   "span": {
+    "start": 6,
+    "end": 21,
+    "line": 1,
+    "column": 7
+   }
+  }
+ },
+ {
+  "id": "or23a",
+  "env": "FO",
+  "text": "Legacy costs [budget+1].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '+', '-' or '*' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 20,
+    "end": 21,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "or23b",
+  "env": "FO",
+  "text": "Legacy costs [budget +1].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '+', '-' or '*' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 20,
+    "end": 22,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "or24a",
+  "env": "FO",
+  "text": "Legacy costs [ budget + 1].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'costs [ budget + 1]'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'.",
+   "span": {
+    "start": 6,
+    "end": 26,
+    "line": 1,
+    "column": 7
+   }
+  }
+ },
+ {
+  "id": "or24b",
+  "env": "FO",
+  "text": "Legacy costs [budget + 1 ].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected ']' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 24,
+    "end": 26,
+    "line": 1,
+    "column": 25
+   }
+  }
+ },
+ {
+  "id": "or25",
+  "env": "FO",
+  "text": "Legacy costs 007.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "The number at position 13 is not written in canonical form.",
+   "span": {
+    "start": 13,
+    "end": 14,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "or26a",
+  "env": "FO",
+  "text": "Legacy costs legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'costs legacy'. Nearest declared wordings: 'legacy'; 'costs {1}'; 'alice'.",
+   "span": {
+    "start": 6,
+    "end": 19,
+    "line": 1,
+    "column": 7
+   }
+  }
+ },
+ {
+  "id": "or26b",
+  "env": "FO",
+  "text": "Legacy is the same as budget.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'budget'. Nearest declared wordings: 'budget'; 'alice'; 'limit'.",
+   "span": {
+    "start": 21,
+    "end": 28,
+    "line": 1,
+    "column": 22
+   }
+  }
+ },
+ {
+  "id": "or26c",
+  "env": "FO",
+  "text": "Budget is the same as legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'legacy'; 'alice'; 'limit'.",
+   "span": {
+    "start": 21,
+    "end": 28,
+    "line": 1,
+    "column": 22
+   }
+  }
+ },
+ {
+  "id": "or26d",
+  "env": "FO",
+  "text": "Legacy costs twice the 5.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase '5'. Nearest declared wordings: 'owns {1}'; 'alice'; 'costs {1}'.",
+   "span": {
+    "start": 22,
+    "end": 24,
+    "line": 1,
+    "column": 23
+   }
+  }
+ },
+ {
+  "id": "or27",
+  "env": "FO",
+  "text": "Legacy is deployed. It costs 5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy is deployed.\n@legacy costs 5.\n"
+  }
+ },
+ {
+  "id": "or28a",
+  "env": "FO",
+  "text": "It costs 5.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "start": 0,
+    "end": 11,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or28b",
+  "env": "FO",
+  "text": "That service costs 5.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 21,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or29",
+  "env": "FO",
+  "text": "Legacy costs ---------------------------------------------------------------budget.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs ---------------------------------------------------------------@budget.\n"
+  }
+ },
+ {
+  "id": "or30",
+  "env": "FO",
+  "text": "Legacy costs ----------------------------------------------------------------budget.",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 is nested more than 64 levels deep.",
+   "span": {
+    "start": 0,
+    "end": 84,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or31",
+  "env": "FO",
+  "text": "Legacy costs [[budget * limit] + ----------------------------------------------------------------budget].",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 is nested more than 64 levels deep.",
+   "span": {
+    "start": 0,
+    "end": 105,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or32",
+  "env": "FO",
+  "text": "That service costs ----------------------------------------------------------------budget.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 90,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or33a",
+  "env": "FO",
+  "text": "Budget is at most ----------------------------------------------------------------budget.",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 is nested more than 64 levels deep.",
+   "span": {
+    "start": 0,
+    "end": 89,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or33b",
+  "env": "FO",
+  "text": "[budget * limit] is at most ----------------------------------------------------------------budget.",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 is nested more than 64 levels deep.",
+   "span": {
+    "start": 0,
+    "end": 99,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or34a",
+  "env": "FO",
+  "text": "Legacy costs 9999999999999999999999999999999999999999.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs 9999999999999999999999999999999999999999.\n"
+  }
+ },
+ {
+  "id": "or34b",
+  "env": "FO",
+  "text": "Legacy costs 99999999999999999999999999999999999999999.",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 contains a number that is too long.",
+   "span": {
+    "start": 0,
+    "end": 55,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or35a",
+  "env": "FO",
+  "text": "Legacy costs -999999999999999999999999999999999999999.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs -999999999999999999999999999999999999999.\n"
+  }
+ },
+ {
+  "id": "or35b",
+  "env": "FO",
+  "text": "Legacy costs -9999999999999999999999999999999999999999.",
+  "outcome": {
+   "class": "ResourceLimit",
+   "code": "ResourceLimit",
+   "message": "Sentence 1 contains a number that is too long.",
+   "span": {
+    "start": 0,
+    "end": 55,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "or36a",
+  "env": "FO",
+  "text": "Every service is reviewed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every service x0, (x0 is reviewed).\n"
+  }
+ },
+ {
+  "id": "or36b",
+  "env": "FO",
+  "text": "For every service that is deployed, there is a person who owns that service.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n"
+  }
+ },
+ {
+  "id": "or38a",
+  "env": "FO",
+  "text": "----------------------------------------------------------------budget exceeds [ limit + 1].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'exceeds [ limit + 1]'. Nearest declared wordings: 'exceeds {1}'; 'limit'; 'alice'.",
+   "span": {
+    "start": 70,
+    "end": 91,
+    "line": 1,
+    "column": 71
+   }
+  }
+ },
+ {
+  "id": "or38b",
+  "env": "FO",
+  "text": "Legacy costs ----------------------------------------------------------------[ limit + 1].",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase '[ limit + 1]'. Nearest declared wordings: 'limit'; 'alice'; 'budget'.",
+   "span": {
+    "start": 77,
+    "end": 89,
+    "line": 1,
+    "column": 78
+   }
+  }
+ },
+ {
+  "id": "or37a",
+  "env": "FO+cap",
+  "text": "\"budget_cap\" is at most 5.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@budget_cap <= 5.\n"
+  }
+ },
+ {
+  "id": "or37b",
+  "env": "FO+cap",
+  "text": "Legacy costs \"budget_cap\".",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy costs @budget_cap.\n"
+  }
+ },
+ {
+  "id": "or37c",
+  "env": "FO+cap",
+  "text": "Legacy costs twice the \"budget_cap\".",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase '\"budget_cap\"'. Nearest declared wordings: '\"budget_cap\"'; 'budget'; 'legacy'.",
+   "span": {
+    "start": 22,
+    "end": 35,
+    "line": 1,
+    "column": 23
+   }
+  }
+ },
+ {
+  "id": "da1",
+  "env": "FD",
+  "text": "The owner_of of legacy is alice.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy owner_of @alice.\n"
+  }
+ },
+ {
+  "id": "da2",
+  "env": "FD",
+  "text": "Legacy has the recorded relation \"owner_of\" to alice.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy owner_of @alice.\n"
+  }
+ },
+ {
+  "id": "da3",
+  "env": "FD",
+  "text": "The owner_of of legacy is senior.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "there exists person x0, ((@legacy owner_of x0) and (x0 is senior)).\n"
+  }
+ },
+ {
+  "id": "da4",
+  "env": "FD",
+  "text": "The owner_of of legacy is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is deployed'. Nearest declared wordings: 'is deployed'; 'is reviewed'; 'alice'.",
+   "span": {
+    "start": 22,
+    "end": 34,
+    "line": 1,
+    "column": 23
+   }
+  }
+ },
+ {
+  "id": "da5",
+  "env": "FD",
+  "text": "The backup_of of legacy is deployed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "there exists service x0, ((@legacy backup_of x0) and (x0 is deployed)).\n"
+  }
+ },
+ {
+  "id": "da6",
+  "env": "FD",
+  "text": "For every service, the owner_of of that service is senior.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every service x0, (there exists person x1, ((x0 owner_of x1) and (x1 is senior))).\n"
+  }
+ },
+ {
+  "id": "da7",
+  "env": "FD",
+  "text": "The owns of alice is legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'The owns of alice'. Nearest declared wordings: 'alice'; 'has the recorded relation \"owner_of\" to {1}'; 'owns {1}'.",
+   "span": {
+    "start": 0,
+    "end": 17,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "da8",
+  "env": "FD",
+  "text": "The Owner_of of legacy is alice.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'The Owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'.",
+   "span": {
+    "start": 0,
+    "end": 22,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "da9",
+  "env": "FD",
+  "text": "If legacy is deployed, then The owner_of of legacy is alice.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected 'first ', 'second ', 'third ', 'fourth ', 'fifth ', 'sixth ', 'seventh ' or 'eighth ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 31,
+    "end": 40,
+    "line": 1,
+    "column": 32
+   }
+  }
+ },
+ {
+  "id": "da10",
+  "env": "FD",
+  "text": "Every service that the owner_of of that service is alice is reviewed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'the owner_of of'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'has the recorded relation \"backup_of\" to {1}'; 'owns {1}'.",
+   "span": {
+    "start": 18,
+    "end": 34,
+    "line": 1,
+    "column": 19
+   }
+  }
+ },
+ {
+  "id": "da11",
+  "env": "FD",
+  "text": "If legacy is deployed, then the owner_of of legacy is alice.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "if (@legacy is deployed), then (@legacy owner_of @alice).\n"
+  }
+ },
+ {
+  "id": "da12",
+  "env": "FD",
+  "text": "Legacy is deployed. The backup_of of it is legacy.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy is deployed.\n@legacy backup_of @legacy.\n"
+  }
+ },
+ {
+  "id": "da13",
+  "env": "FD",
+  "text": "Legacy is deployed. The backup_of of legacy is it.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy is deployed.\n@legacy backup_of @legacy.\n"
+  }
+ },
+ {
+  "id": "da14",
+  "env": "FD",
+  "text": "Legacy is deployed. The backup_of of it is deployed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@legacy is deployed.\nthere exists service x0, ((@legacy backup_of x0) and (x0 is deployed)).\n"
+  }
+ },
+ {
+  "id": "da15",
+  "env": "FD",
+  "text": "Legacy is deployed. If legacy is deployed, then the backup_of of it is legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 2 uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "start": 20,
+    "end": 78,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "da16",
+  "env": "FD",
+  "text": "The backup_of of it is legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "start": 0,
+    "end": 30,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "da17.owner_of.senior",
+  "env": "FD",
+  "text": "The owner_of of legacy is senior.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "there exists person x0, ((@legacy owner_of x0) and (x0 is senior)).\n"
+  }
+ },
+ {
+  "id": "da17.owner_of.deployed",
+  "env": "FD",
+  "text": "The owner_of of legacy is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is deployed'. Nearest declared wordings: 'is deployed'; 'is reviewed'; 'alice'.",
+   "span": {
+    "start": 22,
+    "end": 34,
+    "line": 1,
+    "column": 23
+   }
+  }
+ },
+ {
+  "id": "da17.owner_of.reviewed",
+  "env": "FD",
+  "text": "The owner_of of legacy is reviewed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is reviewed'; 'is deployed'; 'service'.",
+   "span": {
+    "start": 22,
+    "end": 34,
+    "line": 1,
+    "column": 23
+   }
+  }
+ },
+ {
+  "id": "da17.backup_of.senior",
+  "env": "FD",
+  "text": "The backup_of of legacy is senior.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is senior'. Nearest declared wordings: 'is senior'; 'person'; 'service'.",
+   "span": {
+    "start": 23,
+    "end": 33,
+    "line": 1,
+    "column": 24
+   }
+  }
+ },
+ {
+  "id": "da17.backup_of.deployed",
+  "env": "FD",
+  "text": "The backup_of of legacy is deployed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "there exists service x0, ((@legacy backup_of x0) and (x0 is deployed)).\n"
+  }
+ },
+ {
+  "id": "da17.backup_of.reviewed",
+  "env": "FD",
+  "text": "The backup_of of legacy is reviewed.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "there exists service x0, ((@legacy backup_of x0) and (x0 is reviewed)).\n"
+  }
+ },
+ {
+  "id": "al1",
+  "env": "FA",
+  "text": "Every action available to robot is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (if (x0 available @robot), then (x0 is safe)).\n"
+  }
+ },
+ {
+  "id": "al2",
+  "env": "FA",
+  "text": "For every action, every other action available to robot is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (for every action x1, (if ((x1 available @robot) and (not (x1 equals x0))), then (x1 is safe))).\n"
+  }
+ },
+ {
+  "id": "al3",
+  "env": "FA",
+  "text": "For every action, another action available to robot is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and (x1 is safe))).\n"
+  }
+ },
+ {
+  "id": "al4a",
+  "env": "FA",
+  "text": "Every other action available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 46,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al4b",
+  "env": "FA",
+  "text": "Another action available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it. Another action needs a rule on an action as its reference.",
+   "span": {
+    "start": 0,
+    "end": 42,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al5",
+  "env": "FA",
+  "text": "For every action named A1, for every action named A2, every other action available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary.",
+   "span": {
+    "start": 0,
+    "end": 100,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al6",
+  "env": "FA",
+  "text": "For every action named A1, for every action named A2, every other action available to robot excluding A1 is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary.",
+   "span": {
+    "start": 0,
+    "end": 113,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al7",
+  "env": "FA",
+  "text": "For every action named A1, for every action named A2, another action available to robot excluding A1 is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Another action needs a rule on an action as its reference.",
+   "span": {
+    "start": 0,
+    "end": 109,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al8",
+  "env": "FA",
+  "text": "For every action, every other action available to robot excluding robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 relates two things of different kinds where the same kind is required.",
+   "span": {
+    "start": 0,
+    "end": 80,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al9",
+  "env": "FA",
+  "text": "For every agent, for every action, every other action available to robot excluding that agent is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 relates two things of different kinds where the same kind is required.",
+   "span": {
+    "start": 0,
+    "end": 102,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al10",
+  "env": "FA",
+  "text": "Every action available to robot excluding robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'.",
+   "span": {
+    "start": 31,
+    "end": 47,
+    "line": 1,
+    "column": 32
+   }
+  }
+ },
+ {
+  "id": "al11",
+  "env": "FA",
+  "text": "For every action, every other action available to robot that other action leads to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (for every action x1, (if ((x1 available @robot) and (not (x1 equals x0))), then (x1 leads_to @injury))).\n"
+  }
+ },
+ {
+  "id": "al12",
+  "env": "FA",
+  "text": "For every action, another action available to robot either is safe or leads to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and ((x1 is safe) or (x1 leads_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "al13",
+  "env": "FA",
+  "text": "For every action, another action available to robot either is safe or leads to injury, or both.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and ((x1 is safe) or (x1 leads_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "al14",
+  "env": "FA",
+  "text": "For every action, another action available to robot both is safe and leads to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and ((x1 is safe) and (x1 leads_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "al15",
+  "env": "FA",
+  "text": "For every action, every other action available to robot either that other action is safe or leads to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (for every action x1, (if ((x1 available @robot) and (not (x1 equals x0))), then ((x1 is safe) or (x1 leads_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "al16",
+  "env": "FA",
+  "text": "For every action, another action available to robot that other action is the same as wait.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and (x1 equals @wait))).\n"
+  }
+ },
+ {
+  "id": "al17",
+  "env": "FA",
+  "text": "For every action, every other action available to robot is the same as wait.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'wait'; 'leads to {1}'; 'agent'.",
+   "span": {
+    "start": 55,
+    "end": 75,
+    "line": 1,
+    "column": 56
+   }
+  }
+ },
+ {
+  "id": "al18",
+  "env": "FA",
+  "text": "Every action available to robot that action is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (if (x0 available @robot), then (x0 is safe)).\n"
+  }
+ },
+ {
+  "id": "al19",
+  "env": "FA",
+  "text": "Every action available to robot that other action is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 58,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al20",
+  "env": "FA",
+  "text": "For every action, every other action available to robot that action is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 76,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al21",
+  "env": "FA",
+  "text": "For every action, that other action is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 44,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al22a",
+  "env": "FA",
+  "text": "Every action available to it is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "start": 0,
+    "end": 37,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al22b",
+  "env": "FA",
+  "text": "Every action available to that agent is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 uses a name before introducing it.",
+   "span": {
+    "start": 0,
+    "end": 45,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al23",
+  "env": "FA",
+  "text": "For every agent, every action available to that agent is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every agent x0, (for every action x1, (if (x1 available x0), then (x1 is safe))).\n"
+  }
+ },
+ {
+  "id": "al24",
+  "env": "FA",
+  "text": "For every action, every other action available to robot That other action is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'That'. Nearest declared wordings: 'harm'; 'wait'; 'agent'.",
+   "span": {
+    "start": 55,
+    "end": 60,
+    "line": 1,
+    "column": 56
+   }
+  }
+ },
+ {
+  "id": "al25",
+  "env": "FA",
+  "text": "Every Action available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'.",
+   "span": {
+    "start": 12,
+    "end": 31,
+    "line": 1,
+    "column": 13
+   }
+  }
+ },
+ {
+  "id": "al26",
+  "env": "FA",
+  "text": "Every action Available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Every action Available'. Nearest declared wordings: 'is available to {1}'; 'is unavoidable by {1}'; 'is avoidable by {1}'.",
+   "span": {
+    "start": 0,
+    "end": 22,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al27",
+  "env": "FA",
+  "text": "Every action available to robot wait is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is safe'.",
+   "span": {
+    "start": 31,
+    "end": 36,
+    "line": 1,
+    "column": 32
+   }
+  }
+ },
+ {
+  "id": "al28",
+  "env": "FA",
+  "text": "Every action available to robot this holds in all cases.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'allows {1} to happen'; 'is avoidable by {1}'; 'is unavoidable by {1}'.",
+   "span": {
+    "start": 31,
+    "end": 55,
+    "line": 1,
+    "column": 32
+   }
+  }
+ },
+ {
+  "id": "al29",
+  "env": "FA",
+  "text": "For every action, every other action available to robot is the same as that other action.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is safe'.",
+   "span": {
+    "start": 55,
+    "end": 70,
+    "line": 1,
+    "column": 56
+   }
+  }
+ },
+ {
+  "id": "al30",
+  "env": "FA",
+  "text": "For every action, another action available to robot that other action is the same as That Other Action.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and (x1 equals x1))).\n"
+  }
+ },
+ {
+  "id": "al31a",
+  "env": "FA",
+  "text": "Injury is preventable by robot.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@injury avoidable @robot.\n"
+  }
+ },
+ {
+  "id": "al31b",
+  "env": "FA",
+  "text": "Injury is avoidable by robot.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@injury avoidable @robot.\n"
+  }
+ },
+ {
+  "id": "al32a",
+  "env": "FA",
+  "text": "Wait lets injury happen.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait allows @injury.\n"
+  }
+ },
+ {
+  "id": "al32b",
+  "env": "FA",
+  "text": "Wait does not lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "not (@wait leads_to @injury).\n"
+  }
+ },
+ {
+  "id": "al32c",
+  "env": "FA",
+  "text": "Wait prevents injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait prevents @injury.\n"
+  }
+ },
+ {
+  "id": "al33",
+  "env": "FA",
+  "text": "Wait is safe. Therefore every action available to robot is safe.",
+  "outcome": {
+   "class": "CheckerUnavailable",
+   "code": "CheckerUnavailable",
+   "message": "alternatives@0 requires the Lean checker"
+  }
+ },
+ {
+  "id": "al34",
+  "env": "FA",
+  "text": "For every action, every action available to robot is safe.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (for every action x1, (if (x1 available @robot), then (x1 is safe))).\n"
+  }
+ },
+ {
+  "id": "al35",
+  "env": "FA",
+  "text": "Wait cannot lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'cannot lead to injury'. Nearest declared wordings: 'injury'; 'allows {1} to happen'; 'leads to {1}'.",
+   "span": {
+    "start": 4,
+    "end": 26,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "al36",
+  "env": "FA2",
+  "text": "Every entity of sort \"action\" available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'.",
+   "span": {
+    "start": 48,
+    "end": 56,
+    "line": 1,
+    "column": 49
+   }
+  }
+ },
+ {
+  "id": "al37",
+  "env": "FA2",
+  "text": "For every entity of sort \"action\", every other entity of sort \"action\" available to robot that other entity of sort \"action\" is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'.",
+   "span": {
+    "start": 124,
+    "end": 132,
+    "line": 1,
+    "column": 125
+   }
+  }
+ },
+ {
+  "id": "al38a",
+  "env": "FA2",
+  "text": "Every entity of sort \"Action\" available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Every entity of sort \"Action\"'. Nearest declared wordings: 'entity of sort \"action\"'; 'allows {1} to happen'; 'is available to {1}'.",
+   "span": {
+    "start": 0,
+    "end": 29,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "al38b",
+  "env": "FA2",
+  "text": "Every Entity of sort \"action\" available to robot is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'.",
+   "span": {
+    "start": 29,
+    "end": 48,
+    "line": 1,
+    "column": 30
+   }
+  }
+ },
+ {
+  "id": "ri1",
+  "env": "FR",
+  "text": "Wait might lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait risk__might_lead_to @injury.\n"
+  }
+ },
+ {
+  "id": "ri2",
+  "env": "FR",
+  "text": "Wait cannot lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "not (@wait risk__might_lead_to @injury).\n"
+  }
+ },
+ {
+  "id": "ri3a",
+  "env": "FR",
+  "text": "Wait might not lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "not (@wait leads_to @injury).\n"
+  }
+ },
+ {
+  "id": "ri3b",
+  "env": "FR",
+  "text": "Wait leads to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait leads_to @injury.\n"
+  }
+ },
+ {
+  "id": "ri4",
+  "env": "FR",
+  "text": "Injury is catastrophic.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@injury risk__class @catastrophic.\n"
+  }
+ },
+ {
+  "id": "ri5",
+  "env": "FR",
+  "text": "Injury is minor or worse.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@injury risk__or_worse @minor.\n"
+  }
+ },
+ {
+  "id": "ri6",
+  "env": "FR",
+  "text": "Wait has a less severe worst case than wait.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait risk__less_worst @wait.\n"
+  }
+ },
+ {
+  "id": "ri7",
+  "env": "FR",
+  "text": "Catastrophic is more severe than minor.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@catastrophic risk__more_severe @minor.\n"
+  }
+ },
+ {
+  "id": "ri8",
+  "env": "FR",
+  "text": "Wait might prevent injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@wait prevents @injury.\n"
+  }
+ },
+ {
+  "id": "ri9",
+  "env": "FR",
+  "text": "For every harm that is catastrophic, wait cannot lead to that harm.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every harm x0, (if (x0 risk__class @catastrophic), then (not (@wait risk__might_lead_to x0))).\n"
+  }
+ },
+ {
+  "id": "ri10",
+  "env": "FR",
+  "text": "Every action available to robot cannot lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has two readings. Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'.",
+   "span": {
+    "start": 0,
+    "end": 54,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "ri11a",
+  "env": "FR",
+  "text": "Every action available to robot either is safe or cannot lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has two readings. Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot either is safe or and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot either is safe or and that action cannot lead to injury'.",
+   "span": {
+    "start": 0,
+    "end": 72,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "ri11b",
+  "env": "FR",
+  "text": "Every action available to robot both cannot lead to injury and is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has two readings. Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot both and that action might lead to injury and is safe'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot both and that action cannot lead to injury and is safe'.",
+   "span": {
+    "start": 0,
+    "end": 71,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "ri12",
+  "env": "FR",
+  "text": "For every action, every other action available to robot cannot lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (for every action x1, (if ((x1 available @robot) and (not (x1 equals x0))), then (not (x1 risk__might_lead_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "ri13",
+  "env": "FR",
+  "text": "For every action, another action available to robot cannot lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (there exists action x1, (((x1 available @robot) and (not (x1 equals x0))) and (not (x1 risk__might_lead_to @injury)))).\n"
+  }
+ },
+ {
+  "id": "ri14",
+  "env": "FR",
+  "text": "Every action available to robot might not lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (if (x0 available @robot), then (not (x0 leads_to @injury))).\n"
+  }
+ },
+ {
+  "id": "ri15",
+  "env": "FR",
+  "text": "Every action available to robot might lead to injury.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every action x0, (if (x0 available @robot), then (x0 risk__might_lead_to @injury)).\n"
+  }
+ },
+ {
+  "id": "ri17.1",
+  "env": "FR",
+  "text": "Wait may lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'may lead to injury'. Nearest declared wordings: 'might lead to {1}'; 'injury'; 'allows {1} to happen'. Use 'might lead to': 'may' is permission.",
+   "span": {
+    "start": 4,
+    "end": 23,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.2",
+  "env": "FR",
+  "text": "Wait does not lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'does'. Nearest declared wordings: 'agent'; 'allows {1} to happen'; 'harm'. Choose 'cannot lead to' or 'might not lead to'.",
+   "span": {
+    "start": 4,
+    "end": 9,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.3",
+  "env": "FR",
+  "text": "Wait could lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'could lead to injury'. Nearest declared wordings: 'might lead to {1}'; 'injury'; 'allows {1} to happen'. Use 'might lead to' for possibility under the declared record.",
+   "span": {
+    "start": 4,
+    "end": 25,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.4",
+  "env": "FR",
+  "text": "Wait risks injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'risks injury'. Nearest declared wordings: 'injury'; 'is {1}'; 'is {1} or worse'. Use 'might lead to' for possibility under the declared record.",
+   "span": {
+    "start": 4,
+    "end": 17,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.5",
+  "env": "FR",
+  "text": "Wait is likely to lead to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is likely to lead to injury'. Nearest declared wordings: 'might lead to {1}'; 'injury'; 'allows {1} to happen'. Use 'might lead to' for possibility under the declared record.",
+   "span": {
+    "start": 4,
+    "end": 32,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.6",
+  "env": "FR",
+  "text": "Wait increases the risk of injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'increases the risk of injury'. Nearest declared wordings: 'is more severe than {1}'; 'catastrophic'; 'is {1} or worse'. Use 'might lead to' for possibility under the declared record.",
+   "span": {
+    "start": 4,
+    "end": 33,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.7",
+  "env": "FR",
+  "text": "Wait certainly leads to injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'certainly leads to injury'. Nearest declared wordings: 'might lead to {1}'; 'allows {1} to happen'; 'is available to {1}'. Use 'leads to' for certainty under the declared record.",
+   "span": {
+    "start": 4,
+    "end": 30,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.8",
+  "env": "FR",
+  "text": "Wait prevents injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'prevents injury'. Nearest declared wordings: 'might prevent {1}'; 'injury'; 'severity'. Use 'might prevent' in a risk environment.",
+   "span": {
+    "start": 4,
+    "end": 20,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.9",
+  "env": "FR",
+  "text": "Wait is safer than wait.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is safer than wait'. Nearest declared wordings: 'wait'; 'agent'; 'is safe'. Use 'has a less severe worst case than'.",
+   "span": {
+    "start": 4,
+    "end": 23,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.10",
+  "env": "FR",
+  "text": "Wait leads to injury unless wait is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' here. Use the English paraphrase as a writing example. A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record.",
+   "span": {
+    "start": 20,
+    "end": 27,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "ri17.11",
+  "env": "FR",
+  "text": "Wait cannot lead to injury exactly when wait is safe.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' here. Use the English paraphrase as a writing example. A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record.",
+   "span": {
+    "start": 26,
+    "end": 34,
+    "line": 1,
+    "column": 27
+   }
+  }
+ },
+ {
+  "id": "ri17.12",
+  "env": "FR",
+  "text": "Wait causes injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'causes injury'. Nearest declared wordings: 'injury'; 'agent'; 'catastrophic'. The proximate cause wording needs a declared proximate role; declare it or write 'leads to'.",
+   "span": {
+    "start": 4,
+    "end": 18,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "ri17.13",
+  "env": "FR",
+  "text": "Wait results in injury.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'results in injury'. Nearest declared wordings: 'injury'; 'has a less severe worst case than {1}'; 'is more severe than {1}'. Use the declared Boolean wording 'leads to' for this outcome.",
+   "span": {
+    "start": 4,
+    "end": 22,
+    "line": 1,
+    "column": 5
+   }
+  }
+ },
+ {
+  "id": "mo1a",
+  "env": "FM",
+  "text": "Alice may access legacy.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@alice access @legacy.\n"
+  }
+ },
+ {
+  "id": "mo1b",
+  "env": "FM",
+  "text": "Alice must review legacy.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "@alice review @legacy.\n"
+  }
+ },
+ {
+  "id": "mo2",
+  "env": "FM",
+  "text": "Every person who may access legacy owns legacy.",
+  "outcome": {
+   "class": "accepted",
+   "canonical": "for every person x0, (if (x0 access @legacy), then (x0 owns @legacy)).\n"
+  }
+ },
+ {
+  "id": "mo3a",
+  "env": "FM",
+  "text": "Alice may not access legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'may not'. Nearest declared wordings: 'legacy'; 'owns {1}'; 'alice'.",
+   "span": {
+    "start": 5,
+    "end": 13,
+    "line": 1,
+    "column": 6
+   }
+  }
+ },
+ {
+  "id": "mo3b",
+  "env": "FM",
+  "text": "Alice access legacy.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'access legacy'. Nearest declared wordings: 'legacy'; 'may access {1}'; 'alice'.",
+   "span": {
+    "start": 5,
+    "end": 19,
+    "line": 1,
+    "column": 6
+   }
+  }
+ },
+ {
+  "id": "rg1.FO",
+  "env": "FO",
+  "text": "Every service is deployed or reviewed, or both.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 25,
+    "end": 28,
+    "line": 1,
+    "column": 26
+   }
+  }
+ },
+ {
+  "id": "rg1.FD",
+  "env": "FD",
+  "text": "Every service is deployed or reviewed, or both.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 25,
+    "end": 28,
+    "line": 1,
+    "column": 26
+   }
+  }
+ },
+ {
+  "id": "rg2.FO",
+  "env": "FO",
+  "text": "For every person, if that person is deployed and that person is reviewed, then that person is reviewed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "start": 44,
+    "end": 48,
+    "line": 1,
+    "column": 45
+   }
+  }
+ },
+ {
+  "id": "rg3.FO",
+  "env": "FO",
+  "text": "No service that is deployed is not reviewed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'that'. Nearest declared wordings: 'costs {1}'; 'limit'; 'owns {1}'. A sentence that begins with \"no\" cannot use \"that\" or \"who\" after the noun. Write \"it is not the case that there is ... such that ...\" instead.",
+   "span": {
+    "start": 10,
+    "end": 15,
+    "line": 1,
+    "column": 11
+   }
+  }
+ },
+ {
+  "id": "rg3.FD",
+  "env": "FD",
+  "text": "No service that is deployed is not reviewed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'that'. Nearest declared wordings: 'owns {1}'; 'alice'; 'legacy'. A sentence that begins with \"no\" cannot use \"that\" or \"who\" after the noun. Write \"it is not the case that there is ... such that ...\" instead.",
+   "span": {
+    "start": 10,
+    "end": 15,
+    "line": 1,
+    "column": 11
+   }
+  }
+ },
+ {
+  "id": "it1-F",
+  "env": "F",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it2-F",
+  "env": "F",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "it3-F",
+  "env": "F",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 2,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-F",
+  "env": "F",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 21,
+    "end": 185,
+    "line": 3,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-F",
+  "env": "F",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it6-F",
+  "env": "F",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 40,
+    "end": 204,
+    "line": 1,
+    "column": 41
+   }
+  }
+ },
+ {
+  "id": "it1-FO",
+  "env": "FO",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it2-FO",
+  "env": "FO",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "it3-FO",
+  "env": "FO",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 2,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FO",
+  "env": "FO",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 21,
+    "end": 185,
+    "line": 3,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FO",
+  "env": "FO",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it6-FO",
+  "env": "FO",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 40,
+    "end": 204,
+    "line": 1,
+    "column": 41
+   }
+  }
+ },
+ {
+  "id": "it1-FD",
+  "env": "FD",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it2-FD",
+  "env": "FD",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "it3-FD",
+  "env": "FD",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 2,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FD",
+  "env": "FD",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 21,
+    "end": 185,
+    "line": 3,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FD",
+  "env": "FD",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it6-FD",
+  "env": "FD",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 40,
+    "end": 204,
+    "line": 1,
+    "column": 41
+   }
+  }
+ },
+ {
+  "id": "it1-FA",
+  "env": "FA",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it2-FA",
+  "env": "FA",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it3-FA",
+  "env": "FA",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FA",
+  "env": "FA",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FA",
+  "env": "FA",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it6-FA",
+  "env": "FA",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it1-FR",
+  "env": "FR",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it2-FR",
+  "env": "FR",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it3-FR",
+  "env": "FR",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FR",
+  "env": "FR",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FR",
+  "env": "FR",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it6-FR",
+  "env": "FR",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it1-FM",
+  "env": "FM",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it2-FM",
+  "env": "FM",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 1,
+    "column": 21
+   }
+  }
+ },
+ {
+  "id": "it3-FM",
+  "env": "FM",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 20,
+    "end": 184,
+    "line": 2,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FM",
+  "env": "FM",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 21,
+    "end": 185,
+    "line": 3,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FM",
+  "env": "FM",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 0,
+    "end": 164,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it6-FM",
+  "env": "FM",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "TypeMismatch",
+   "code": "TypeMismatch",
+   "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+   "span": {
+    "start": 40,
+    "end": 204,
+    "line": 1,
+    "column": 41
+   }
+  }
+ },
+ {
+  "id": "it1-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it2-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it3-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Legacy is deployed.\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it4-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Legacy is deployed.\n\nStarting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Legacy is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ },
+ {
+  "id": "it5-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 13,
+    "end": 20,
+    "line": 1,
+    "column": 14
+   }
+  }
+ },
+ {
+  "id": "it6-FR_UNITS",
+  "env": "FR_UNITS",
+  "text": "Legacy is deployed. Legacy is deployed. Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.",
+  "outcome": {
+   "class": "SyntaxError",
+   "code": "SyntaxError",
+   "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Legacy'. Nearest declared wordings: 'agent'; 'harm'; 'injury'.",
+   "span": {
+    "start": 0,
+    "end": 6,
+    "line": 1,
+    "column": 1
+   }
+  }
+ }
+]

@@ -1,4 +1,5 @@
 import VE.Service.Protocol
+import VE.Service.StageTimes
 
 def readingsMemoStatsEnabled (value : Option String) : Bool := value == some "1"
 #guard readingsMemoStatsEnabled (some "1") && !readingsMemoStatsEnabled (some "0")
@@ -12,6 +13,8 @@ def main (args : List String) : IO UInt32 := do
   unless args.isEmpty do
     (← IO.getStderr).putStrLn "usage: ve_service  (JSON lines on stdin and stdout)"
     return 2
+  let _ ← IO.setStderr (← VE.Service.StageTimes.stream
+    (VE.Service.StageTimes.mode (← IO.getEnv "VE_READINGS_STAGE_TIMES")) (← IO.getStderr))
   let stdin ← IO.getStdin
   let stdout ← IO.getStdout
   stdout.putStrLn VE.Service.handshake.compress

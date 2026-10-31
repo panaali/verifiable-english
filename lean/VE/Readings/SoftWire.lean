@@ -38,7 +38,7 @@ structure AdmittedSD where
   side : ∀ s i, b.a.side s i = one N.D s i
 
 /-- Continue S2 admission using the common fill checks and the soft shape. -/
-def admitSDOf (b : Admitted2) : Except String AdmittedSD :=
+def admitSDOf (b : Admitted2) : Except String AdmittedSD := Stage.stage "admitSDOf" fun _ =>
   let re := b.a.re
   let N : NDoc := ⟨b.D, unspecOf re b.D⟩
   if hsd : b.D.chain = b.a.D.chain ∧ b.D.items = b.a.D.items then
