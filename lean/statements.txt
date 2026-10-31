@@ -808,6 +808,11 @@ theorem VE.Acts.phraseReadings_length
     VE.Acts.phraseReadings V op N b ts = VE.Acts.Listing.ok Rs → Rs.length ≤ VE.Acts.maxReadings
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.maxReadings@VE.Acts.Read VE.Acts.phraseReadings@VE.Acts.Readings
   -- expr 3775337609
+theorem VE.Acts.phraseReadings_nodup
+  ∀ {V : VE.Acts.Vocab} {op : VE.Acts.Op} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {Rs : List (List VE.Acts.Simple)},
+    VE.Acts.phraseReadings V op N b ts = VE.Acts.Listing.ok Rs → Rs.Nodup
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.phraseReadings@VE.Acts.Readings
+  -- expr 4158150698
 theorem VE.Acts.readIn_many
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
