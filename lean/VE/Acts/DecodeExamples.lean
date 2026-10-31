@@ -1,7 +1,6 @@
 import VE.Acts.Decode
 import VE.Acts.ElaborateExamples
 import VE.Acts.MeaningExamples
-import VE.Service.ActsExamples
 
 /-! Fixtures of `checkAct`, step 6 and `decodeElaboratedU` (docs/spec/act-phrases.md 6.3, 6.4; D-15 to D-18; 11.3:
 A6, A7, A14 from the act text, E13 to E15). Each check on both sides; the act trees come from the parse. -/
@@ -121,23 +120,33 @@ def big : ActsDoc := withActs (doc ((List.range 32).map fun i => rg ("p" ++ toSt
 
 /-! ### `decodeElaboratedU` over the wire -/
 
-open VE.Service.ActsExamples (envA rule fxs actsP pred perm block err) in
-section
+/-- An environment as a request carries it: `profiles`, permissions `(name, act)` on `person`, and with `acts` the
+    `acts` block holding G6's fixed phrase. -/
+def jenv (profiles : List String) (preds : List (String × String)) (acts : Bool := true) : Json :=
+  Json.mkObj [("language", .str "ve.core@0.2"), ("profiles", toJson profiles),
+    ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
+    ("vocabulary", Json.mkObj ([("sorts", Json.mkObj [("person", Json.mkObj [("description", .str "person")])]),
+      ("predicates", Json.mkObj (preds.map fun (p, act) => (p, Json.mkObj [("arguments", toJson ["person"]),
+        ("description", .str "d"), ("regulated", Json.mkObj [("role", .str "permission"), ("default", .str "allow"),
+          ("act", .str act)])]))), ("constants", Json.mkObj [])] ++
+      if acts then [("acts", Json.mkObj [("fixed", toJson fx6)])] else []))]
+def jrule (p : String) : Json := Json.mkObj [("norm", Json.mkObj [("name", .str "m"), ("predicate", .str p),
+  ("sign", .bool true), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
 def dec (j : Json) (ns : List Json) := (decodeElaboratedU j (Json.arr ns.toArray)).toOption.map fun e =>
   (e.U'.D.T.regulated == e.s.U.D.T.regulated && e.U'.D.T.nodes == e.s.U.D.T.nodes && e.U'.unspec == e.s.U.unspec,
    e.U'.D.T.nodes.length, e.M, e.D.acts.length, e.D.fixed, e.D.declared)
--- All acts lexical: the source itself, an empty map, the block's fixed phrases, three declared predicates.
-#guard dec envA [rule "protected"] == some (true, 1, ⟨[], []⟩, 0, fxs, 3)
-#guard dec (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) [rule "protected"] ==
-  some (true, 1, ⟨[], []⟩, 0, fxs, 3)
+def lexical : List (String × String) :=
+  [("p", "{0} be subjected to cruel, inhuman or degrading treatment or punishment"), ("q", "{0} seek asylum")]
+-- All acts lexical: the source itself, an empty map, the block's fixed phrases, two declared predicates.
+#guard dec (jenv ["acts@0", "norms@0", "relational-fol@0"] lexical) [jrule "p"] == some (true, 1, ⟨[], []⟩, 0, fx6, 2)
+#guard dec (jenv ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"] lexical) [jrule "p"] ==
+  some (true, 1, ⟨[], []⟩, 0, fx6, 2)
+#guard dec (jenv ["norms@0", "relational-fol@0"] lexical) [] == none
 -- Without `acts@0` no act is read: today's act check admits *nor*, which `checkAct` would send to the grammar.
-#guard dec (VE.Service.ActsExamples.env ["norms@0", "relational-fol@0"]
-  [("p", pred ["person"] (perm "{0} seek nor enjoy asylum"))]) [rule "p"] == some (true, 1, ⟨[], []⟩, 0, [], 1)
-#guard dec (envA ["norms@0", "relational-fol@0"]) [] == none
+#guard dec (jenv ["norms@0", "relational-fol@0"] [("p", "{0} seek nor enjoy asylum")] false) [jrule "p"] ==
+  some (true, 1, ⟨[], []⟩, 0, [], 1)
 -- The norms decoder still refuses a joined act (its hook is `Lexical.check` until ap-3db), with its own text.
-#guard err (decodeElaboratedU (VE.Service.ActsExamples.env actsP [("p027", pred ["person"] (perm a6))]
-  (some (block fx6))) (Json.arr #[rule "p027"])) ==
-  "InvalidInput: act phrase for p027 joins acts with 'or' outside a fixed phrase"
-end
+#guard errText (decodeElaboratedU (jenv ["acts@0", "norms@0", "relational-fol@0"] [("p027", a6)])
+  (Json.arr #[jrule "p027"])) == "InvalidInput: act phrase for p027 joins acts with 'or' outside a fixed phrase"
 
 end VE.Acts.DecodeExamples
