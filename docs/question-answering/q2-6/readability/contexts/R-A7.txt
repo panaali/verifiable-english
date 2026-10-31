@@ -1,0 +1,76 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Rule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Rule 3. Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Rule 4. Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Rule 5. Every action may be performed, if both the tool of that action is shell and that action is readonly.
+Checked reading: Every action may be performed, if both the tool of that action is shell and that action is readonly.
+Rule 6. Every action may be performed, if both the tool of that action is shell and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is shell and that action is confirmed.
+Rule 7. Every action may be performed, if there is a host such that both that action contacts that host and that host is allowlisted.
+Checked reading: Every action may be performed, if there is a host such that both that action contacts that host and that host is allowlisted.
+Rule 8. Every action may be performed, if there is a host such that both that action contacts that host and that action is confirmed.
+Checked reading: Every action may be performed, if there is a host such that both that action contacts that host and that action is confirmed.
+Rule 9. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Checked reading: Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Rule 10. Every action may be performed, if both the tool of that action is purchase and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is purchase and that action is confirmed.
+Rule 11. Every action may be performed, if both the tool of that action is "get_secret" and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is "get_secret" and that action is confirmed.
+Rule 12. Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.
+Rule 13 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 14 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace.
+Checked reading: Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 15 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace.
+Checked reading: Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 16 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file is not tracked, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a file such that both that action deletes that file and that file is not tracked, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 17 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is shell and that action is not readonly, unless that action is confirmed.
+Checked reading: Every action must not be performed, if both the tool of that action is shell and that action is not readonly, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 18 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a host such that both that action contacts that host and that host is not allowlisted, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a host such that both that action contacts that host and that host is not allowlisted, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 19 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 20 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if the tool of that action is purchase, unless that action is confirmed.
+Checked reading: Every action must not be performed, if the tool of that action is purchase, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 21 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is purchase and that action is not affordable.
+Checked reading: Every action must not be performed, if both the tool of that action is purchase and that action is not affordable. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 22 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if that action is privileged.
+Checked reading: Every action must not be performed, if that action is privileged. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 23 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a secret such that that action discloses that secret.
+Checked reading: Every action must not be performed, if there is a secret such that that action discloses that secret. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 24 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential.
+Checked reading: Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 25. Every action must be reported to the user, if there is a file such that that action deletes that file.
+Checked reading: Every action must be reported to the user, if there is a file such that that action deletes that file.
+Rule 26. Every action must be reported to the user, if the tool of that action is purchase.
+Checked reading: Every action must be reported to the user, if the tool of that action is purchase.
+
+=== A QUESTION SOMEONE ASKED VE ABOUT THE TEXT ===
+May every action be performed?
+
+=== VE'S ANSWER ===
+You asked whether every action may be performed.
+The text does not settle this.
+Here is a situation where the answer depends on what the text leaves unsaid: "a01" is an action; workspace is a directory; "f_bashrc" is a file; "f_build" is a file; "f_cron" is a file; "f_env" is a file; "f_hosts" is a file; "f_link" is a file; "f_main" is a file; "f_other" is a file; "f_readme" is a file; "f_ssh" is a file; "h_debian" is a host; "h_github" is a host; "h_paste" is a host; "h_pypi" is a host; "h_weather" is a host; "p_colleague" is a person; "p_list" is a person; "p_user" is a person; "a01" uses "read_file".
+The text does not say whether "a01" may be performed.
+
+=== QUESTION ===
+What does VE's answer tell you?
+A. It depends on how a sentence of the text is read.
+B. It is not guaranteed: the text allows a situation where it fails.
+C. No: the text rules it out.
+D. Yes: the text guarantees it.
+E. The text does not settle it, or VE could not decide.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

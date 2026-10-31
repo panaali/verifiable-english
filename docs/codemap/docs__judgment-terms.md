@@ -1,3 +1,4 @@
+- `docs/judgment-terms/jt-2c/delta.py` — jt-2c review F1's delta, base against head: what every composing mode answers to a `judgments@0` list without `documents@1`.
 - `docs/judgment-terms/jt-e1/runner.py` — JT-E1 archive and prospective prompt checks.
 - `docs/judgment-terms/jt-e1r/render.py` — Frozen JT-E1r display generator.
 - `docs/judgment-terms/jt-e1r/runner.py` — JT-E1r blinded reader calls and scoring; display bytes come from render.py.

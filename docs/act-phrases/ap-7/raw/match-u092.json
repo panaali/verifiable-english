@@ -1,0 +1,110 @@
+{
+ "key": "match-u092",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.\nDEMAND: the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control\nIn list L, {0} stands for everyone.\nA1. Everyone has the right to security if they lose their livelihood through any one of these: unemployment, sickness, disability, widowhood, old age or some other cause. In every case, the loss must come about in circumstances beyond their control.\nA2. Everyone has the right to security in the event of unemployment, sickness, disability, widowhood or old age, whether or not it is within their control. For any other lack of livelihood, they have the right only when it arises in circumstances beyond their control.\nB1. Everyone has the right to security if any one of these happens to them: unemployment, sickness, disability, widowhood or old age, whatever the cause. They also have that right for any other lack of livelihood, but only if it arises in circumstances beyond their control.\nB2. Everyone has the right to security if any one of these happens to them: unemployment, sickness, disability, widowhood, old age or any other lack of livelihood. In every case, the right applies only if it arises in circumstances beyond their control.\nL1. {0} has the right to security in the event of unemployment; {0} has the right to security in the event of sickness; {0} has the right to security in the event of disability; {0} has the right to security in the event of widowhood; {0} has the right to security in the event of old age; and {0} has the right to security in the event of other lack of livelihood in circumstances beyond their control.\nL2. {0} has the right to security in the event of unemployment in circumstances beyond their control; {0} has the right to security in the event of sickness in circumstances beyond their control; {0} has the right to security in the event of disability in circumstances beyond their control; {0} has the right to security in the event of widowhood in circumstances beyond their control; {0} has the right to security in the event of old age in circumstances beyond their control; and {0} has the right to security in the event of other lack of livelihood in circumstances beyond their control.\n",
+ "cli": {
+  "duration_api_ms": 1776,
+  "stop_reason": "end_turn",
+  "session_id": "2b6be3b1-1728-4ff9-a88d-29760046246e",
+  "total_cost_usd": 0.0422728,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4733,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 113,
+   "output_tokens_details": {
+    "thinking_tokens": 75
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4733,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 113,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4733,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4733
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 113,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4733,
+    "webSearchRequests": 0,
+    "costUSD": 0.0422728,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 75,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4733,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B2 L2\nPAIR A2 B1 L1\nSKIPPED: NONE",
+  "ttft_ms": 1751,
+  "type": "result",
+  "duration_ms": 1991,
+  "uuid": "f44b677d-299e-4107-8a7b-0b51980d65a8",
+  "ttft_stream_ms": 1082,
+  "time_to_request_ms": 213,
+  "first_content_frame_ms": 1083,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15552,
+ "answer": "PAIR A1 B2 L2\nPAIR A2 B1 L1\nSKIPPED: NONE"
+}
