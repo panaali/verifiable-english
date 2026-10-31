@@ -1,11 +1,10 @@
 # cmp-s2b: S2b, first part (superposed verdicts for rights documents)
 
-Status: first coherent part delivered, cut at the size line; the switch is not in. HEAD: see `git log main..HEAD`.
-Changed: `sup D` gates rights contents; owners and quiescence for `lim`, `cond` and `aimed` (edit 1); `qualifyKey`
-over limitation names; F21's fixed-bar case at well-sorted tuples (`bar_dead`); the rights lifting lemma; the
-signed hypothesis `ht` on `superpose_faithful`, with its counterexample. Open: the rest of the rights case, the
-switch, the differential and shadow test, the load time (cmp-s2bb). DRI signature needed: none (item 1 of
-reviews/dri-decisions-20261031-cmp-s2b.md signed the statement change).
+Status: first coherent part, cut at the size line; no switch. HEAD: the last commit on feature/cmp-s2b (Lean at 6d778622).
+Changed: `sup D` gates rights contents; owners and quiescence for `lim`, `cond`, `aimed` (edit 1); `qualifyKey` over
+limitation names; F21's fixed-bar case at sorted tuples (`bar_dead`); the rights lifting lemma; `ht` on `superpose_faithful`.
+Open: the rest of the rights case, the switch, the differential and shadow test, the load time (cmp-s2bb).
+DRI signature needed: none (reviews/dri-decisions-20261031-cmp-s2b.md item 1 signed the statement change).
 
 ## Plan rows (task "Deliver, in this order")
 
