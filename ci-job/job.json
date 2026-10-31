@@ -1,0 +1,17 @@
+{
+ "job": "sn-b6-de6e3733",
+ "head": "b15b35425546b4f81111c84ddc6edf22942e42d4",
+ "argv": [
+  "sn-b6-de6e3733",
+  "b15b35425546b4f81111c84ddc6edf22942e42d4",
+  "598358e432820c71d0be821eb361ddfb711e58a0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-29aa04ac3853.tar.zst",
+  "dcd99917bd64a45d4fcef530e76f65cb2c0c3231808d2e89573cf7a06cf602c6",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/senses/sn-b6/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
