@@ -170,6 +170,7 @@ import VE.Rights.Run
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
+import VE.Judgments.Undeclared
 import VE.Judgments.Examples
 import VE.Question.Properties
 import VE.Question.Examples

@@ -1,10 +1,10 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "35",
+ "actions_version": "36",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "725c0a5982dc28db36837afc26ff600ab9e5c570ba7e68b9dbcf20a9dabe7edf",
   "lean/VE/EnglishGrammar/Advice.lean": "a5b8fbf8dfc23f8d689b10b8c1053365385335955078d04148c62140ac9ff79f",
-  "lean/VE/EnglishGrammar/Catalogue.lean": "1a2ee6f5dd19d990936dc6bd8ede723931b41be14e0e5ac0b39edf075aa338b6",
+  "lean/VE/EnglishGrammar/Catalogue.lean": "251617db8edebfcceaa08064d0b13a3bd4dc8eea22690e42ea3dd64c2f9a5170",
   "lean/VE/EnglishGrammar/Diagnose.lean": "43bd2820caf60652bc0a03497e1d52591a79c01ee6575e8ef88960ac3c8701b9",
   "lean/VE/EnglishGrammar/Encode.lean": "c68b8627d4e6edc12b8bb270ff52fb96382966403c22df38bbda8b99865d131f",
   "lean/VE/EnglishGrammar/Fixed/Alternatives.lean": "e892f23e98920ee2d01d75ed7891d3096487f394f28610e4ad444edd007edfb1",

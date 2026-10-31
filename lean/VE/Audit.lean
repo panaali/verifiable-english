@@ -181,6 +181,7 @@ import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
 import VE.Judgments.Status
+import VE.Judgments.Undeclared
 import VE.Kit.Except
 import VE.Layout.Anchors
 import VE.Layout.Discourse
@@ -2870,6 +2871,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.find_congr_mem
 #print axioms VE.Judgments.foldlM_ok_length
 #print axioms VE.Judgments.foldlM_ok_mono
+#print axioms VE.Judgments.hasPhrase_iff
 #print axioms VE.Judgments.mem_defEdges
 #print axioms VE.Judgments.openTermNames_length
 #print axioms VE.Judgments.openTermNames_sorts
@@ -2884,6 +2886,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.status_never_checked
 #print axioms VE.Judgments.status_ok_iff
 #print axioms VE.Judgments.status_remove_unused
+#print axioms VE.Judgments.undeclaredEvaluative_iff
 #print axioms VE.Judgments.usageMap_complete
 #print axioms VE.Judgments.usageMap_rows
 #print axioms VE.Judgments.usageMap_sound
