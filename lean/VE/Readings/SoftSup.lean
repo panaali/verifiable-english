@@ -1,6 +1,7 @@
 import VE.Readings.SoftVerdicts
 import VE.Readings.SupExtra
 import VE.Readings.BarQuiet
+import VE.Defaults.Meaning
 
 /-! SC-10's first part (docs/spec/rd-9-soft-chain.md 13.1, 13.3): superposition under the soft completion.
 
@@ -852,5 +853,180 @@ theorem exc_pullF {B : VE.Structure.{u}} (he : Encodes N.D c B) (hsl : Sat B (sl
         exact hoff _ h1
 
 end X
+
+theorem selects_fillRoot (U : UDoc) (T : Tree) (f : Nat) (M : Node) :
+    VE.Norms.selects T f (fillRoot U M) = VE.Norms.selects T f M := by
+  unfold fillRoot; split <;> rfl
+
+/-- A rule's selection on the filled tree, as `cohPremiseU` reads it, is its soft selection on the canonical
+    interpretation of `fill U`. -/
+theorem selU_canon {U : UDoc} {Z : SoftDoc} (hU : U.D = soften Z) (hu : FillLite U) (hv : Valid (fill U))
+    {B : VE.Structure.{u}} (hc : VE.Norms.ConstantsTyped (fill U) B) {K : SoftNode} (hK : K ∈ Z.T.nodes)
+    (hreg : K.pred ∈ Z.T.regulated.map (·.name)) (vs : List B.Carrier)
+    (hvs : VE.TupleTyped B (VE.SoftNorms.sortsOf Z K.pred) vs) :
+    (VE.Defaults.selU U Z K).denote B (VE.Norms.tupleVal vs) ↔
+      VE.SoftNorms.SelectsSoftD Z (canon (fill U) B) (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel Z) K := by
+  obtain ⟨r, hr, hrn⟩ := List.mem_map.mp hreg
+  have e : (fill U).T.regulated = Z.T.regulated := by show U.D.T.regulated = _; rw [hU]; rfl
+  have hk := VE.Norms.index_before hv (show r ∈ (fill U).T.regulated by rw [e]; exact hr)
+  have hs : VE.SoftNorms.sortsOf Z K.pred = r.sorts := by
+    unfold VE.SoftNorms.sortsOf VE.SoftNorms.sortsIn; rw [← hrn, ← e, VE.Norms.find_regulated hv hk]; rfl
+  rw [hs] at hvs
+  have hK0 : VE.SoftNorms.primeNode Z K ∈ U.D.T.nodes := by rw [hU]; exact List.mem_map_of_mem hK
+  have hsel := VE.Norms.selects_wellFormed (VE.Norms.rulesTyped_of_valid hv hk) (fuel (fill U).T) _
+    (VE.NormDefaults.mem_fill_nodes.mpr (Or.inl ⟨_, hK0, rfl⟩)) (by rw [VE.NormDefaults.fillRoot_pred]; exact hrn.symm)
+  rw [selects_fillRoot] at hsel
+  have hw : (VE.Norms.selects (fill U).T (fuel (fill U).T) (VE.SoftNorms.primeNode Z K)).WellFormed
+      (envAt (fill U) (size (fill U))) r.sorts.reverse :=
+    VE.Norms.envAt_mono (Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1) _ _ hsel
+  unfold VE.Defaults.selU
+  rw [VE.SoftNorms.canon_subst hv B hc _ _ _ hw _ (VE.Norms.tupleVal_typed B _ vs hvs), VE.Norms.selects_denote,
+    selects_fill_fuel_lite hu.author _ _ hK0, ← VE.Norms.selects_denote]
+  revert hK0; rw [hU]; intro _
+  exact VE.SoftNorms.selectsPrime_denote Z _ _ K
+
+section Coh
+variable {N : NDoc} (hh : Hyps N.D) {c : Choice} (hc : Compatible N.D c) (hN : WellFormedSD N = true)
+  (hsu : VE.NormDefaults.WellFormedU (supU N) = true) {B : VE.Structure.{u}}
+  (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (he : Encodes N.D c B)
+include hh hc hN hsu hB he
+
+/-- The coherence premises on the filled trees transfer: an image pair as S2a's `coh_down`, through `fill_sim`'s
+    pieces; a pair with an unchosen member never selects both. -/
+theorem coh_pullF :
+    Sat B ((VE.SoftNorms.collidingPairs (sup N.D).1.soft).map
+        (fun x => VE.NormDefaults.Wire.cohPremiseU (supU N) (sup N.D).1.soft x.1 x.2)) ↔
+      Sat (pullF N c B) ((VE.SoftNorms.collidingPairs (choiceDoc N.D c).1.soft).map
+        (fun x => VE.NormDefaults.Wire.cohPremiseU (choiceU N c) (choiceDoc N.D c).1.soft x.1 x.2)) := by
+  have hX := fillLite_of_uvalid (VE.NormDefaults.uvalid hsu)
+  have hY := fillLite_choiceSD hh hc hN hsu
+  have hvX := valid_fill_supU hsu
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  have hsv := sup_softValid hh
+  have hcX : VE.Norms.ConstantsTyped (fill (supU N)) B := hB.1.1
+  have hcB : ∀ x s, (fill (supU N)).E.constants x = some s → ∃ v, B.constant x = some v :=
+    fun x s hx => (hcX x s hx).imp fun _ h => h.1
+  have hcY : VE.Norms.ConstantsTyped (fill (choiceU N c)) (pullF N c B) := fun x s hx =>
+    hcX x s (constants_choiceSD hh x s hx)
+  have tp : ∀ ss (vs : List B.Carrier), VE.TupleTyped (pullF N c B) ss vs ↔ VE.TupleTyped B ss vs :=
+    fun ss vs => VE.Norms.tupleTyped_relation B _ _ vs
+  have hS := encodes_canon_fill hh hsu B he
+  let selX := fun (K : SoftNode) (vs : List B.Carrier) => VE.SoftNorms.SelectsSoftD (sup N.D).1.soft
+    (canon (fill (supU N)) B) (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel (sup N.D).1.soft) K
+  let selY := fun (K : SoftNode) (vs : List B.Carrier) => VE.SoftNorms.SelectsSoftD (choiceDoc N.D c).1.soft
+    (canon (fill (choiceU N c)) (pullF N c B)) (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel (choiceDoc N.D c).1.soft) K
+  have F1 : ∀ K ∈ (sup N.D).1.soft.T.nodes, ∀ vs, VE.TupleTyped B (VE.SoftNorms.sortsOf (sup N.D).1.soft K.pred) vs →
+      ((VE.Defaults.selU (supU N) (sup N.D).1.soft K).denote B (VE.Norms.tupleVal vs) ↔ selX K vs) :=
+    fun K hK vs hvs => selU_canon (supU_D hh) hX hvX hcX hK (hsv.predReg K hK) vs hvs
+  have F2 : ∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes, ∀ vs,
+      VE.TupleTyped B (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M.pred) vs →
+      ((VE.Defaults.selU (choiceU N c) (choiceDoc N.D c).1.soft M).denote (pullF N c B) (VE.Norms.tupleVal vs) ↔
+        selY M vs) := by
+    intro M hM vs hvs
+    have hreg := hsv.predReg _ (fmap_mem hh c hM)
+    rw [(fmap_fields hh c hM).1, sup_reg, ← choice_reg c] at hreg
+    exact selU_canon (choiceU_D hh c) hY hvY hcY hM hreg vs ((tp _ vs).mpr hvs)
+  have F3 : ∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes, ∀ vs, selX (fmap N.D c M) vs ↔ selY M vs := by
+    intro M hM vs
+    refine (sim_selects_fuel (faithful_sim hh hc _ hS (VE.Norms.tupleVal vs)) M hM).trans ?_
+    show _ ↔ VE.SoftNorms.SelectsSoftD (choiceDoc N.D c).1.soft (canon (fill (choiceU N c)) (pullF N c B))
+      (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel (choiceDoc N.D c).1.soft) M
+    rw [← VE.SoftNorms.selectsPrime_denote, ← VE.SoftNorms.selectsPrime_denote]
+    refine denote_relation_congr _ (pull N.D c (canon (fill (supU N)) B)) (canon (fill (choiceU N c)) (pullF N c B)).relation
+      (fun p ss hp ws hws => ?_) _ _ _ ((VE.check_iff_wellFormed _ _ _).mpr (choice_selTyped hh hc hM))
+    have hp' := envAt_sub hp
+    refine (pull_pullF hh (c := c) (canon (fill (supU N)) B) hp' ws).trans (pullF_canon hh hc hN hsu B hcB he ?_ ws hws)
+    rw [← choiceU_D hh] at hp'
+    rw [VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_off _ (not_unsaid_lite hY hp')]; exact hp'
+  have F4 : ∀ K ∈ (sup N.D).1.soft.T.nodes, (∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes, fmap N.D c M ≠ K) →
+      ∀ vs, ¬ selX K vs := by
+    intro K hK hext vs hsel
+    have hdead := dead_extra hh hc _ hS (VE.Norms.tupleVal vs) hK hext
+    have ha := hsel.1
+    unfold VE.SoftNorms.AppliesSoftD at ha
+    split at ha
+    · exact hdead ha
+    · exact hdead (effD_eligible ha).2.1
+  have hinc : ∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes, ∀ M' ∈ (choiceDoc N.D c).1.soft.T.nodes,
+      VE.SoftNorms.Incompatible (sup N.D).1.soft (fmap N.D c M) (fmap N.D c M') =
+        VE.SoftNorms.Incompatible (choiceDoc N.D c).1.soft M M' :=
+    fun M hM M' hM' => sim_incompatible (faithful_sim hh hc _ hS []) M M' hM hM'
+  have hss : ∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes, VE.SoftNorms.sortsOf (sup N.D).1.soft (fmap N.D c M).pred =
+      VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M.pred := fun M hM => by rw [(fmap_fields hh c hM).1, sortsOf_eq c]
+  simp only [Sat, List.forall_mem_map, VE.Defaults.cohPremiseU_selU, VE.Norms.bindAll_denote_nil, VE.SoftNorms.actSorts]
+  constructor
+  · rintro hXc ⟨M, M'⟩ hMM' vs hvs ⟨h1, h2⟩
+    obtain ⟨hM, hM', hMd, hM'd, hlt, hi⟩ := VE.SoftNorms.mem_collidingPairs.mp hMM'
+    have hvs' := (tp _ vs).mp hvs
+    have hne : (fmap N.D c M).name ≠ (fmap N.D c M').name := fun h => by
+      have := fmap_inj hh c hM hM' (sup_name_inj hh (fmap_mem hh c hM) (fmap_mem hh c hM') h)
+      subst this; exact absurd hlt (String.lt_irrefl _)
+    have hdM : (fmap N.D c M).mode = .default := by rw [(fmap_fields hh c hM).2.2.1]; exact hMd
+    have hdM' : (fmap N.D c M').mode = .default := by rw [(fmap_fields hh c hM').2.2.1]; exact hM'd
+    have s1 := (F3 M hM vs).mpr ((F2 M hM vs hvs').mp h1)
+    rcases VE.SoftNorms.str_lt_or_gt _ _ hne with hl | hl
+    · have hp := VE.SoftNorms.mem_collidingPairs.mpr ⟨fmap_mem hh c hM, fmap_mem hh c hM', hdM, hdM', hl,
+        by rw [hinc M hM M' hM']; exact hi⟩
+      have hsrt := hsv.cpSorts _ hp
+      have hv1 : VE.TupleTyped B (VE.SoftNorms.sortsOf (sup N.D).1.soft (fmap N.D c M).pred) vs := by
+        rw [hss M hM]; exact hvs'
+      have hv2 : VE.TupleTyped B (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M'.pred) vs := by
+        rw [← hss M' hM', ← hsrt]; exact hv1
+      exact hXc _ hp vs hv1 ⟨(F1 _ (fmap_mem hh c hM) vs hv1).mpr s1,
+        (F1 _ (fmap_mem hh c hM') vs (hsrt ▸ hv1)).mpr ((F3 M' hM' vs).mpr ((F2 M' hM' vs hv2).mp h2))⟩
+    · have hp := VE.SoftNorms.mem_collidingPairs.mpr ⟨fmap_mem hh c hM', fmap_mem hh c hM, hdM', hdM, hl,
+        by rw [hinc M' hM' M hM, VE.SoftNorms.incompatible_symm]; exact hi⟩
+      have hsrt := hsv.cpSorts _ hp
+      have hv1 : VE.TupleTyped B (VE.SoftNorms.sortsOf (sup N.D).1.soft (fmap N.D c M).pred) vs := by
+        rw [hss M hM]; exact hvs'
+      have hv2 : VE.TupleTyped B (VE.SoftNorms.sortsOf (sup N.D).1.soft (fmap N.D c M').pred) vs := by
+        rw [hsrt]; exact hv1
+      exact hXc _ hp vs hv2 ⟨(F1 _ (fmap_mem hh c hM') vs hv2).mpr ((F3 M' hM' vs).mpr ((F2 M' hM' vs
+        (by rw [← hss M' hM']; exact hv2)).mp h2)), (F1 _ (fmap_mem hh c hM) vs hv1).mpr s1⟩
+  · rintro hYc ⟨P, Q⟩ hPQ vs hvs ⟨h1, h2⟩
+    obtain ⟨hP, hQ, hPd, hQd, hlt, hi⟩ := VE.SoftNorms.mem_collidingPairs.mp hPQ
+    have hsrt := hsv.cpSorts _ hPQ
+    have s1 := (F1 P hP vs hvs).mp h1
+    have s2 := (F1 Q hQ vs (by rw [← hsrt]; exact hvs)).mp h2
+    have im : ∀ K ∈ (sup N.D).1.soft.T.nodes, selX K vs → ∃ M ∈ (choiceDoc N.D c).1.soft.T.nodes, fmap N.D c M = K :=
+      fun K hK hs => Classical.byContradiction fun hn =>
+        F4 K hK (fun M hM h => hn ⟨M, hM, h⟩) vs hs
+    obtain ⟨M, hM, rfl⟩ := im P hP s1
+    obtain ⟨M', hM', rfl⟩ := im Q hQ s2
+    have hvY : VE.TupleTyped B (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M.pred) vs := by
+      rw [← hss M hM]; exact hvs
+    have hvY' : VE.TupleTyped B (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M'.pred) vs := by
+      rw [← hss M' hM', ← hsrt]; exact hvs
+    have t1 := (F2 M hM vs hvY).mpr ((F3 M hM vs).mp s1)
+    have t2 := (F2 M' hM' vs hvY').mpr ((F3 M' hM' vs).mp s2)
+    have hMd : M.mode = .default := by rw [← (fmap_fields hh c hM).2.2.1]; exact hPd
+    have hM'd : M'.mode = .default := by rw [← (fmap_fields hh c hM').2.2.1]; exact hQd
+    have hne : M.name ≠ M'.name := fun h => by
+      have : M = M' := choice_name_inj hh c hM hM' h
+      subst this; exact absurd hlt (String.lt_irrefl _)
+    rcases VE.SoftNorms.str_lt_or_gt _ _ hne with hl | hl
+    · exact hYc _ (VE.SoftNorms.mem_collidingPairs.mpr ⟨hM, hM', hMd, hM'd, hl, by rw [← hinc M hM M' hM']; exact hi⟩)
+        vs ((tp _ vs).mpr hvY) ⟨t1, t2⟩
+    · exact hYc _ (VE.SoftNorms.mem_collidingPairs.mpr ⟨hM', hM, hM'd, hMd, hl,
+        by rw [← hinc M' hM' M hM, VE.SoftNorms.incompatible_symm]; exact hi⟩) vs ((tp _ vs).mpr hvY') ⟨t2, t1⟩
+
+end Coh
+
+/-- `supX` transfers at an encoded filled base: a non-chosen candidate's premise holds by its bit or, for a necessary
+    condition, by the slot's quiet premise. -/
+theorem supX_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) :
+    Sat B (supX N) ↔ Sat (pullF N c B) (choiceX N c) := by
+  have hh := hyps_sd hN hs
+  have e1 : supX N = VE.Defaults.softX (supU N) (correlate (sup N.D).1) [] := by
+    simp [supX, softX, softXL, VE.Defaults.softX, supU]
+  have e2 : choiceX N c = VE.Defaults.softX (choiceU N c) (correlate (choiceDoc N.D c).1) [] := by
+    simp [choiceX, softX, softXL, VE.Defaults.softX, choiceU]
+  rw [e1, e2, VE.Defaults.softX_eq, VE.Defaults.softX_eq, sup_correlate hh, choice_correlate hh,
+    List.append_nil, List.append_nil]
+  simp only [Sat, List.forall_mem_append]
+  exact and_congr (exc_pullF hh hc he hsl) (coh_pullF hh hc hN hsu hB he)
 
 end VE.Readings
