@@ -14292,9 +14292,12 @@
         "VE.Scope.conditions",
         "VE.Scope.defSpans",
         "VE.Scope.firstDup",
+        "VE.Scope.forwardCheck",
+        "VE.Scope.forwardsOk",
         "VE.Scope.implWF?",
         "VE.Scope.jsonWF?",
         "VE.Scope.kindOf",
+        "VE.Scope.laterUnitsIn",
         "VE.Scope.listWF?",
         "VE.Scope.orderCheck",
         "VE.Scope.orderCheckF",
@@ -15299,6 +15302,7 @@
         "VE.Scope.WireExamples.foldDoc",
         "VE.Scope.WireExamples.foldEnv",
         "VE.Scope.WireExamples.foldGov",
+        "VE.Scope.WireExamples.fwd",
         "VE.Scope.WireExamples.gov",
         "VE.Scope.WireExamples.listName",
         "VE.Scope.WireExamples.st",
@@ -15340,6 +15344,7 @@
     },
     "VE/Scope/Wire.lean": {
       "D[R]": [
+        "VE.Scope.decodeForward",
         "VE.Scope.illFormed",
         "VE.Scope.memberOf",
         "VE.Scope.membersIn",
@@ -16879,6 +16884,36 @@
         "VE.Readings.SoftSupExamples.q4",
         "VE.Readings.SoftSupExamples.NSDa"
       ]
-    }
+    },
+    "VE/Scope/FarExamples.lean": {
+      "T": [
+        "VE.Scope.FarExamples.checkF",
+        "VE.Scope.FarExamples.cyclic",
+        "VE.Scope.FarExamples.edgePremises",
+        "VE.Scope.FarExamples.far",
+        "VE.Scope.FarExamples.farAnchors",
+        "VE.Scope.FarExamples.farEnv",
+        "VE.Scope.FarExamples.farPieces",
+        "VE.Scope.FarExamples.farRules",
+        "VE.Scope.FarExamples.fwd",
+        "VE.Scope.FarExamples.g11",
+        "VE.Scope.FarExamples.g11a",
+        "VE.Scope.FarExamples.g11n",
+        "VE.Scope.FarExamples.gE",
+        "VE.Scope.FarExamples.govW",
+        "VE.Scope.FarExamples.hAnchors",
+        "VE.Scope.FarExamples.hD",
+        "VE.Scope.FarExamples.hDoc",
+        "VE.Scope.FarExamples.hPieces",
+        "VE.Scope.FarExamples.overs",
+        "VE.Scope.FarExamples.rawAt",
+        "VE.Scope.FarExamples.rule",
+        "VE.Scope.FarExamples.u0047",
+        "VE.Scope.FarExamples.u0047Anchors",
+        "VE.Scope.FarExamples.u0047Doc",
+        "VE.Scope.FarExamples.w1Order"
+      ]
+    },
+    "VE/Scope/FarTheorems.lean": {}
   }
 }
