@@ -9700,6 +9700,7 @@
             "VE.Service.Document.checkCore_eq_fast"
           ]
         },
+        "VE.Service.Document.checkDocSetsFast",
         {
           "name": "VE.Service.Document.checkDoc",
           "tied": [
