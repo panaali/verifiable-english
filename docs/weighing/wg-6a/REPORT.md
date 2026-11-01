@@ -117,7 +117,13 @@ No NormDefaults, SoftNorms, Norms or Defaults file is edited.
 
 ## 6. Selected tests
 
-PENDING
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (one run, at commit 34b41a43b, tree
+6cfa5357cc = the tested tree): `tools/select_tests.py` selected 404 of 519 units, because Lean inventories and
+`lean/VE.lean` changed. It ran on the cloud in 5 shards (run wg-6a-34b41a43-t500733): "SHARD 1/5: … 80 units, 80
+passed", "2/5: 79 passed", "3/5: 77 passed", "4/5: 70 passed", "5/5: 53 passed"; summary "exit=0; 1645s". No
+failure, so none is listed in main-known-red.txt. `uv run python tools/gate_collection.py --check --prebuilt`:
+"31418 collected …; 0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers". The full gate is
+left to the chain, as instructed.
 
 ## 7. Next
 
@@ -126,4 +132,37 @@ sa-nd-atomsb. Per the DRI's decision of 2026-11-01, wg-6 and df-5 spell the laye
 
 ## Self-review against BUILDER-CHECKLIST
 
-PENDING
+1. Lean answers typed and contained: N.A.: no route, relay or response shape reads the new definitions (DELTA.md:
+   only `lean/VE.lean` and `lean/VE/Audit.lean` import them).
+2. Every deliverable built, no rule broken: PASS. Section 1 maps each task and DRI line to a commit and fixture.
+   There is no Python copy of a Lean decision, no permanent report test, and no NormDefaults/SoftNorms/Norms/Defaults
+   edit. Overlap checked (section 5).
+3. Tests can fail: PASS. Six seeded bugs, one per definition, each fails a named fixture ([mutants.json](mutants.json),
+   `seed_bugs.py`). Trust mutants exit 0: 31 KILLED, 0 SURVIVOR, 0 UNKNOWN, 20 ALLOWED with reasons
+   ([trust-mutants.json](trust-mutants.json), [trust-mutants-allow.json](trust-mutants-allow.json)).
+4. Python, Lean and Rust agree: N.A.: no Python or Rust product code changed and no answer changes. The selected
+   suite (three-way and differential tests included) passed, section 6.
+5. R8 binding: N.A.: nothing is relayed, and Python reads no field of these definitions.
+6. Gate evidence matches the final HEAD: PASS for what I ran: the selected tests ran on tree 6cfa5357cc = HEAD
+   34b41a43b's, and the trust mutants on HEAD c0f99b6b2's tree (Lean unchanged since). The full gate is the chain's,
+   on the final HEAD.
+7. No unsigned item: PASS. DELTA.md's one row cites R16 (`tools/trust_map.py --check` PASS, FOLLOW-UPS row). The two
+   spelling deviations are signed in reviews/dri-decisions-20261101-wg-6a.md.
+8. Every user-visible change in DELTA: PASS. None changes: no route reads `VE.Weighing.*`
+   (`grep -rn "VE.Weighing" lean --include=*.lean -l` lists only the two new files, `VE.lean` and `Audit.lean`).
+9. Test selection: PASS. `tools/select_tests.py` selected 404/519 units (not all), because of the Lean inventory
+   change. The seeded bugs' fixtures are Lean `#guard`s/proofs, and the selection's `lake build` step builds them.
+10. Lean statements say what is claimed: PASS. Each definition is checked against the plan line (spec re-read,
+   section 1). Each seeded bug breaks the fixture that states its meaning, e.g. `outcome_x`'s `decide` refutes the
+   mutated outcome. Audit PASS, axioms `[propext, Quot.sound]`.
+11. Budgets, limits, deadlines: N.A.: no evaluator, runner or budget is added (`ZoneUnknown.budget` is a constructor
+   only; WG-6's `zoneOf` charges it).
+12. No CPU or memory regression: N.A.: no runtime code path changes. The new modules build in seconds
+   (`lake build VE.Weighing.ZoneExamples`).
+13. Test-removed trailers: PASS. No test is removed; `gate_collection.py --check --prebuilt` reports 0 refused,
+   0 stale, 0 malformed.
+14. Both directions, cited evidence, spec re-read: PASS. Each definition has a fixture where it holds and one where it
+   fails: `admissible0`/`notAdmissible1`, `outcome_x`/`not_outcome_y`, `settled_x`/`not_settled_x_false`/
+   `not_settled_vacuous`, and both `ZoneUnknown` constructors. The `decisionAtoms`/`openNames` guards compare exact
+   lists, so they catch both a missing and an extra element. Each claim cites its command. Spec re-read lines are in
+   section 1.
