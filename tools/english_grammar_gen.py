@@ -91,7 +91,6 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/SensesRequest.lean",
     "lean/VE/EnglishGrammar/Fixed/Order.lean",
     "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
-    "lean/VE/EnglishGrammar/Norm/Value.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
@@ -110,6 +109,8 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/PolicyReference.lean": "spec 5.2's policy text, the reference E2Examples compares with",
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
+    "lean/VE/EnglishGrammar/Norm/Value.lean": "the norm values and their assembly: no reading reads them until "
+                                              "the reader joins them to the lock (en-s6b, spec english-lean-s6 5)",
     "lean/VE/EnglishGrammar/Norm/Examples.lean": "the norm block fixtures",
 }
 CLASSIFIED_DIRS = ("lean/VE/Grammar/", "lean/VE/EnglishGrammar/")
