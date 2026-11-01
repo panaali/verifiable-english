@@ -2872,12 +2872,14 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.foldlM_ok_length
 #print axioms VE.Judgments.foldlM_ok_mono
 #print axioms VE.Judgments.hasPhrase_iff
+#print axioms VE.Judgments.matches_iff
 #print axioms VE.Judgments.mem_defEdges
 #print axioms VE.Judgments.openTermNames_length
 #print axioms VE.Judgments.openTermNames_sorts
 #print axioms VE.Judgments.opensIn_iff
 #print axioms VE.Judgments.opensIn_isEmpty
 #print axioms VE.Judgments.path_last
+#print axioms VE.Judgments.predicateWords_name
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
 #print axioms VE.Judgments.status_checked

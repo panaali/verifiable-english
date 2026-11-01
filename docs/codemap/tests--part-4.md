@@ -1,3 +1,5 @@
+- `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
+- `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
 - `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
 - `tests/test_lf14a_response_shape.py` — Typed parse ASTs and source-bound diagnostics in the shared response schema.
 - `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
@@ -88,4 +90,3 @@
 - `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
 - `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
 - `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
-- `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).

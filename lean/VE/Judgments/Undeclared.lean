@@ -46,6 +46,17 @@ theorem hasPhrase_iff (ph ws : List String) : hasPhrase ph ws = true ↔ ph <:+:
     refine ⟨s.length, by simp; omega, ?_⟩
     simp [List.append_assoc]
 
+/-- A row matches a predicate's words exactly when its word is one of them and no phrase of its other senses is. -/
+theorem matches_iff (row : EvaluativeRow) (ws : List String) :
+    row.matches ws = true ↔ row.word ∈ ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
+  simp [EvaluativeRow.matches, hasPhrase_iff]
+
+/-- A predicate's words begin with its name's, and are its name's alone when it has no template. -/
+theorem predicateWords_name (name : String) (template : Option String) :
+    name.toLower.splitOn "_" <+: predicateWords name template ∧
+      predicateWords name none = name.toLower.splitOn "_" := by
+  simp [predicateWords]
+
 theorem undeclaredEvaluative_iff (rows preds J p) :
     p ∈ undeclaredEvaluative rows preds J ↔
       ∃ ws, (p, ws) ∈ preds ∧ p ∉ J ∧ ∃ row ∈ rows, row.word ∈ ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
