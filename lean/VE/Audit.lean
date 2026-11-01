@@ -202,6 +202,7 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.LayeredEntail
 import VE.NormDefaults.Packs
+import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLegacyExamples
@@ -2978,6 +2979,10 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Admission.softLeafX_formula
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Admission.wire_report_consequenceX
+#print axioms VE.NormDefaults.Packs.Fixtures.assemble_conditions
+#print axioms VE.NormDefaults.Packs.Fixtures.decodeLayered_conditions
+#print axioms VE.NormDefaults.Packs.Fixtures.rightsPack_conditions
+#print axioms VE.NormDefaults.Packs.Fixtures.softPack_conditions
 #print axioms VE.NormDefaults.Packs.X_legacy
 #print axioms VE.NormDefaults.Packs.X_single
 #print axioms VE.NormDefaults.Packs.X_soft_first
