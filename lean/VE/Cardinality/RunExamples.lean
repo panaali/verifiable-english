@@ -547,6 +547,9 @@ def line (formula : String) (environment := paraEnv) : Json := (para formula env
     "The document assumes there are finitely many users."]
 #guard (para r#"["quantity", ["top"]]"# env).getObjValD "assumptions" ==
   toJson ["The document assumes there are finitely many FOMC policymakers."]
+#guard (match para r#"["quantity", ["top"]]"# with | .obj kvs => kvs.toArray.map (·.1) | _ => #[]) ==
+  #["assumptions", "environment_id", "id", "paraphrase", "statement", "status", "w6_environment_id",
+    "w6_target_environment_id"]
 #guard (para r#"["quantity", ["top"]]"#).getObjValD "statement" == Json.mkObj
   [("meaning_id", .str (WireExamples.meaningId (p r#"["quantity", ["top"]]"#) paraEnv)), ("formula", p r#"["quantity", ["top"]]"#)]
 -- "More than half of the users are curious." and "At least 1 in 1,000 of the users …": at least one user.
@@ -593,6 +596,10 @@ def estimates (op rule : String) (printed : String) : String :=
 -- Counts, coefficients, connectives (each operand in parentheses, a capital after the opening ones) and W6a parts.
 #guard line r#"["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]"# ==
   .str "The number of FOMC policymakers is exactly 18."
+#guard line (r#"["count", "fomc_policymaker", [["1", ["any"]], ["2", ["is", "expects_further_increase"]], "# ++
+    r#"["3", ["is", "expects_rates_to_stay"]]], "le", "7"]"#) == .str ("The number of FOMC policymakers plus 2 times " ++
+  "the number of FOMC policymakers x such that x expects a further increase plus 3 times the number of FOMC " ++
+  "policymakers x such that x expects rates to stay is at most 7.")
 #guard line r#"["count", "fomc_policymaker", [["1", ["is", "expects_rates_to_stay"]]], "lt", "3"]"# ==
   .str "The number of FOMC policymakers x such that x expects rates to stay is less than 3."
 #guard line (r#"["implies", ["count", "fomc_policymaker", [["2", ["and", ["is", "expects_further_increase"], "# ++

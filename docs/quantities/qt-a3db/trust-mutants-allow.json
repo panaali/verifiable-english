@@ -1,0 +1,19 @@
+{
+  "allow": [
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "body-true", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:17 emit_charges, paraphrase_within)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "body-false", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:17 emit_charges, :28 pure_charges)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "and-or", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:32 bind_charges, paraphrase_within)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "le-lt", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:17 emit_charges, :32 bind_charges)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "le-eq", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:17 emit_charges, :32 bind_charges)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "eq-ne", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:17 emit_charges, :32 bind_charges)"},
+    {"definition": "VE.Cardinality.Render.Charges", "operator": "eq-le", "reason": "a Prop no check evaluates: exercised by the proofs it breaks (RenderTheorems.lean:85 piece_charges); on line 14 the mutant does not elaborate (no LE on the state)"},
+    {"definition": "VE.Cardinality.Render.body", "operator": "any-all", "reason": "does not compile: Body has no constructor all"},
+    {"definition": "VE.Cardinality.Render.members", "operator": "any-all", "reason": "does not compile: Body has no constructor all"},
+    {"definition": "VE.Cardinality.Render.atLeastOne", "operator": "any-all", "reason": "does not compile: Body has no constructor all"},
+    {"definition": "VE.Cardinality.Render.formula", "operator": "any-all", "reason": "does not compile: Body has no constructor all"},
+    {"definition": "VE.Cardinality.Render.place", "operator": "lit-plus", "reason": "does not compile: the changed literal repeats a match alternative, which Lean refuses as redundant"},
+    {"definition": "VE.Cardinality.Render.place", "operator": "lit-minus", "reason": "does not compile: the changed literal repeats a match alternative, which Lean refuses as redundant"},
+    {"definition": "VE.Cardinality.Render.emit", "operator": "list-empty", "reason": "does not compile: out and s are Strings, not lists"},
+    {"definition": "VE.Cardinality.Run.runCase", "operator": "eq-ne", "reason": "killed in substance: with kind != \"paraphrase\" every other case kind takes the paraphrase branch and RunExamples.lean's guards fail past Lean's 100-error cap, which the tool reads as an error outside a check"}
+  ]
+}
