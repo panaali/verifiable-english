@@ -1,0 +1,8 @@
+job=x86sh-cand-pk-1-conditions-33114d12-t544699-s3 shard=3/4 nproc=4 arch=x86_64 host=runnervm48cm3 date=2026-11-01T15:11:12Z ulimit_s=16384
+Mem:              15           1           9           0           4          13
+/dev/root       145G   63G   82G  44% /
+ 15:11:12 up 5 min,  0 user,  load average: 0.96, 0.33, 0.13
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key 6091dd5d259d asset lean-build-6091dd5d259d.tar.zst sha256 8059739accaf ok, seal ok, from download, 8.7 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
