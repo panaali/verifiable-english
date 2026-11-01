@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40889,
+    "total_lines": 41045,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1981,12 +1981,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 284,
-        "sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+        "lines": 292,
+        "sha256": "e55af97085152a98c7f2c0a23d87d2830d344aed9ac16380535cef474e6ef81d",
         "ranges": [
           [
             1,
-            284
+            292
           ]
         ],
         "declarations": [
@@ -2002,7 +2002,23 @@
           "countermodel",
           "sizesJson"
         ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction), report and report identity (reportId), the countermodel case (countermodel: W6a's model decoder in the original vocabulary, the region sizes' charge and W6a's budgeted check; sizesJson), and the case runner; the full file is pinned conservatively"
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction), report and report identity (reportId), the countermodel case (countermodel: W6a's model decoder in the original vocabulary, the region sizes' charge and W6a's budgeted check; sizesJson), the paraphrase case (the statement decoded once, Render.paraphrase), and the case runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Render.lean",
+        "lines": 148,
+        "sha256": "b648cc5cc71e18d4e3284df22d4fe658ec692bb7cc65b0b89247baaa02b0a5ac",
+        "ranges": [
+          [
+            1,
+            148
+          ]
+        ],
+        "declarations": [
+          "describe",
+          "paraphrase"
+        ],
+        "reason": "the paraphrase renderer (qt-a3db): reads each vocabulary description from the decoded target environment (describe) and shows W6a parts in W6a's canonical encoding, every piece charged against one 65,536-byte limit before it is appended (paraphrase); the full file is pinned"
       },
       {
         "file": "lean/VE/Calc/Jsonl.lean",
@@ -2137,6 +2153,7 @@
       "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path",
       "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Cardinality/RunTheorems.lean": "statements about the cardinality certificate decoder and runner (decodeCertificate_sound over Json.getObjVal?, the regionsJson and erasedJson answer fields, the runCaseReported rows); no runtime JSON handling",
+      "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling",
       "lean/VE/Cardinality/WireExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.2 and 9.1 decode cardinality environments and statements built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Cardinality/WireTheorems.lean": "statements about the ve-cardinality@1 decoders and their parts (items_ok over Json.getArr?, the elaborators' cases on JSON arrays, decodeStatement_fits); no runtime JSON handling",
       "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
