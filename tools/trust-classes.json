@@ -9695,6 +9695,12 @@
         "VE.Service.Document.unitJson",
         "VE.Service.Document.checkCore",
         {
+          "name": "VE.Service.Document.checkCoreFast",
+          "tied": [
+            "VE.Service.Document.checkCore_eq_fast"
+          ]
+        },
+        {
           "name": "VE.Service.Document.checkDoc",
           "tied": [
             "VE.Scope.scope_admission",
@@ -9735,21 +9741,37 @@
         "VE.Service.Document.swap",
         "VE.Service.Document.plainProfiles",
         "VE.Service.Document.layerProfiles",
+        "VE.Service.Document.readingSetsIn",
         "VE.Service.Document.readingSetsOf",
         "VE.Service.Document.setModels",
         "VE.Service.Document.setReferences",
+        "VE.Service.Document.sizedIn",
+        "VE.Service.Document.sizedSets",
+        "VE.Service.Document.statedIdsIn",
         "VE.Service.Document.statedIds",
+        "VE.Service.Document.statedPairsIn",
         "VE.Service.Document.statedPairs",
         "VE.Service.Document.exchangeOf",
         "VE.Service.Document.exchange",
         "VE.Service.Document.swapInjectiveOf",
         "VE.Service.Document.swapInjective",
-        "VE.Service.Document.swapInjectiveOnce",
+        "VE.Service.Document.pairIndex",
+        "VE.Service.Document.exchangeIn",
+        "VE.Service.Document.injStep",
+        "VE.Service.Document.injectiveH",
+        "VE.Service.Document.swapInjectiveH",
+        "VE.Service.Document.swapInjectiveIn",
+        "VE.Service.Document.swapInjectiveFast",
         "VE.Service.Document.exchangeSet",
+        "VE.Service.Document.withoutJudgmentsIn",
+        "VE.Service.Document.withoutJudgmentsOf",
         "VE.Service.Document.withoutJudgments",
         "VE.Service.Document.swapClash",
         "VE.Service.Document.clashRefusalOf",
-        "VE.Service.Document.clashRefusal"
+        "VE.Service.Document.clashRefusal",
+        "VE.Service.Document.clashRefusalIn",
+        "VE.Service.Document.clashRefusalFast",
+        "VE.Service.Document.exceptionConditioned"
       ],
       "G[I]": [
         "VE.Service.Document.layeredIds"
@@ -13015,7 +13037,9 @@
         "VE.Judgments.ChainExamples.clashBothSides",
         "VE.Judgments.ChainExamples.f13l",
         "VE.Judgments.ChainExamples.f13o",
-        "VE.Judgments.ChainExamples.bothRules"
+        "VE.Judgments.ChainExamples.bothRules",
+        "VE.Judgments.ChainExamples.withCondition",
+        "VE.Judgments.ChainExamples.f13lWith"
       ]
     },
     "VE/Judgments/Scan.lean": {
