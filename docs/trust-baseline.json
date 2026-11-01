@@ -1610,10 +1610,24 @@
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   },
   {
+   "class": "S",
+   "lines": 36,
+   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Evaluative.lean S +9, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-11-01",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+  },
+  {
    "class": "V",
-   "lines": 12,
-   "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
+   "lines": 21,
+   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Evaluative.lean S +9, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-11-01",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   },
   {
@@ -1666,24 +1680,10 @@
    "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
   },
   {
-   "class": "S",
-   "lines": 1,
-   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
-   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
-  },
-  {
    "class": "V",
-   "lines": 1,
-   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
-   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
-  },
-  {
-   "class": "S",
-   "lines": 5,
-   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
+   "lines": 12,
+   "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   },
   {
@@ -1692,6 +1692,20 @@
    "reason": "pk-1-conditions: VE/NormDefaults/Packs.lean +2 (the Pack.conditions field and its doc comment); Serve.lean +2 is main's (scale-stage-timers, after 2f1318f4d), not this item's",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1-conditions, 2026-10-18",
    "commit": "2f1318f4ddfd8706290b441538f3767cb6ce8552"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
   }
  ]
 }

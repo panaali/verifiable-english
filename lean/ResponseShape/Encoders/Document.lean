@@ -61,6 +61,11 @@ theorem usage_fits (j : Json) (m : List (String × List String) × List String) 
   unfold VE.Service.Document.usageJson
   fits
 
+/-- The report field `undeclared_evaluative` (judgment-terms.md 8.4) fits its shape: a list of tokens. -/
+theorem undeclared_fits (j : Json) (ns : List String) :
+    Fits j (skel% "document.json#/$defs/undeclared_evaluative") (Json.arr (ns.map Json.str).toArray) := by
+  fits
+
 theorem composedNode_fits (j : Json) (id : String) (n : VE.Norms.Node) :
     Fits j (skel% "document.json#/$defs/composed_reading")
       (Json.mkObj [("id", .str id), ("content", VE.Reports.encodeNode n)]) := by
@@ -100,7 +105,7 @@ theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Docum
   okfits
   all_goals split
   all_goals (try simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append, List.append_nil])
-  all_goals (try fits using coverage_fits, usage_fits)
+  all_goals (try fits using coverage_fits, usage_fits, undeclared_fits)
   all_goals
     apply Fits.arrOf
     intro x hx
