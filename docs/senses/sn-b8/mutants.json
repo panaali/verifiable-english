@@ -1,0 +1,20 @@
+{
+  "item": "sn-b8",
+  "note": "Data and Python only (row 2 changes no Lean or Rust). Each mutant was planted, the named test run alone (uv run pytest -q <test>), and the file restored.",
+  "mutants": [
+    {"id": "B1", "file": "ve/senses/packs/policies@1.json", "behaviour": "each pack passes Lean's wf (plan B8 seeded bug: a wording that drops its word)",
+     "mutation": "\"wording\": \"{0} reads {1}\" -> \"{0} sees {1}\"",
+     "test": "tests/test_senses_packs.py::test_each_pack_decodes_by_leans_wf[policies@1]",
+     "result": "1 failed: Lean's ['W3', 'reads', 'the wording {0} sees {1} of reads does not contain reads exactly once']"},
+    {"id": "B2", "file": "ve/senses/reviewed-packs.json", "behaviour": "a pin is Lean's identity of the pack bytes (plan B8 seeded bug)",
+     "mutation": "first hex digit of policies@1's dictionary_id changed",
+     "test": "tests/test_senses_packs.py::test_each_pin_is_leans_identity_of_the_pack_bytes[policies@1]", "result": "1 failed"},
+    {"id": "B3", "file": "conformance/senses_usecases.py", "behaviour": "a renamed formula counts as the same (plan B8 seeded bug)",
+     "mutation": "a covered predicate renamed to a sense id returns False",
+     "test": "tests/test_senses_packs.py::test_a_sentence_that_reads_the_same_under_the_pack", "result": "1 failed: 'no_longer_reads' == 'same'"},
+    {"id": "B4", "file": "conformance/senses_usecases.py", "behaviour": "an open reading whose candidate is the base formula needs that candidate's line",
+     "mutation": "`if ok and lines:` -> `if False:`",
+     "test": "tests/test_senses_packs.py::test_a_sentence_that_needs_a_line", "result": "1 failed"}
+  ],
+  "not_planted": "the plan's fourth seeded bug (tools/senses_propose.py imported from a ve/ module): the tool is cut to sn-b8b"
+}
