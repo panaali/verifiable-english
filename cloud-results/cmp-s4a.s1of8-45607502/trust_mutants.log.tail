@@ -1,0 +1,16 @@
+trust_mutants: 14 definitions, 260 mutants (33 to run), 4 jobs, base 4ccceb183c4c
+UNKNOWN lean/VE/Discourse/Positions.lean:249 VE.Discourse.slotMeaning (S, trusted) eq-le: = -> ≤ (lean/VE/Discourse/Positions.lean:249: failed to synthesize)
+SURVIVOR lean/VE/Discourse/Positions.lean:248 VE.Discourse.slotMeaning (S, trusted) arm-true: A.denote S ρ -> True (the proofs it breaks: lean/VE/Discourse/Positions.lean:485, lean/VE/Discourse/Positions.lean:629)
+SURVIVOR lean/VE/Discourse/Positions.lean:31 VE.Discourse.linePositions (S, trusted) append-right: l.norm.toList ++ ->  (the proofs it breaks: lean/VE/Discourse/Positions.lean:327, lean/VE/Discourse/Positions.lean:357)
+SURVIVOR lean/VE/Discourse/Positions.lean:250 VE.Discourse.slotMeaning (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+UNKNOWN lean/VE/Discourse/Positions.lean:125 VE.Discourse.Row (S, trusted) ctor-drop: | binder (j : Nat) ->  (lean/VE/Discourse/Positions.lean:134: Unknown constant `VE.Discourse.Row.binder`)
+SURVIVOR lean/VE/Discourse/Positions.lean:251 VE.Discourse.slotMeaning (S, trusted) arm-false: ∃ a, S.domain σ a ∧ Dr.denote S [a] ∧ (∀ b, S.domain σ b → Dr.denote S [b] → b = a) ∧ slotMeaning... -> False (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+UNKNOWN lean/VE/Discourse/Positions.lean:161 VE.Discourse.rowOf (S, trusted) list-empty: ctx -> [] (lean/VE/Discourse/Positions.lean:161: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Discourse/Positions.lean:129 VE.Discourse.Row (S, trusted) ctor-drop: | pred (p : String) ->  (lean/VE/Discourse/Positions.lean:138: Unknown constant `VE.Discourse.Row.pred`)
+SURVIVOR lean/VE/Discourse/Positions.lean:24 VE.Discourse.nodePositions (S, trusted) list-first: N.carveOuts -> (N.carveOuts.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:289, lean/VE/Discourse/Positions.lean:311)
+SURVIVOR lean/VE/Discourse/Positions.lean:253 VE.Discourse.slotMeaning (S, trusted) list-drop-last: [a] -> ([a].dropLast) (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:38 VE.Discourse.positions (S, trusted) list-last: ls -> (ls.reverse.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:381)
+SURVIVOR lean/VE/Discourse/Positions.lean:31 VE.Discourse.linePositions (S, trusted) list-last: l.recognition.toList -> (l.recognition.toList.reverse.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:327, lean/VE/Discourse/Positions.lean:357)
+trust_mutants: 17 KILLED, 8 SURVIVOR, 4 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 227 OTHER SHARD in 191 s
+trust_mutants: S, trusted: 17 KILLED, 8 SURVIVOR, 4 UNKNOWN, 4 INVALID, 227 OTHER SHARD
+trust_mutants: steps: wall plan 10.5 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 4.9 s, mutants 168.7 s, cleanup 2.6 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 4.7 s (1), mutant_builds 302.2 s (48), mutant_checks 77.1 s (29), stage_controls 37.8 s (5), mutant_probes 225.7 s (17)
