@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-eff-branch-lean-cache-e63bae65-t552260-s2",
+ "head": "9dad38dc1aaf8d6ec99143093c2d7bd92b00ca12",
+ "argv": [
+  "armsh-cand-eff-branch-lean-cache-e63bae65-t552260-s2",
+  "9dad38dc1aaf8d6ec99143093c2d7bd92b00ca12",
+  "a9b2983289f754fbd816a94b898eee2ee079065e",
+  "-",
+  "-",
+  "4",
+  "2/3"
+ ]
+}
