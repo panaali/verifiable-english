@@ -9,7 +9,8 @@ The superposed soft document is read as norm-defaults reads a soft document (`su
 `soften`, on the superposed document (D1). `fill (supU N)` is not `soften` of any superposed document, so S2a's
 simulation is applied to the author rules and `fill` is added on each side: a filled tree decides as its author rules
 do, or by `F_p` where the gap says yes and the author rules are silent (`decidesD_fill`). The filled pull `pullF` is
-S2a's `pull` onto the filled choice's vocabulary, which keeps the `unsaid__` tables (13.4 item 3). -/
+S2a's `pull` onto the filled choice's vocabulary, which keeps the `unsaid__` tables (13.4 item 3). `Fill_T` and `supX`
+transfer through it at an encoded filled base (`fillPremisesSD_pull`, `supX_pull`, sc-10). -/
 namespace VE.Readings
 open VE.Norms (Regulated Sat envAt size)
 open VE.NormDefaults (fill)
