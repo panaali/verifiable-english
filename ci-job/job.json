@@ -1,0 +1,12 @@
+{
+ "job": "testmap-e1f06cf3-t550572-s2",
+ "head": "34b799ea899457cb608d6a3729b7fce1d2e0f129",
+ "argv": [
+  "testmap-e1f06cf3-t550572-s2",
+  "34b799ea899457cb608d6a3729b7fce1d2e0f129",
+  "34b799ea899457cb608d6a3729b7fce1d2e0f129",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-eec324490c07.tar.zst",
+  "7a2353e69b0ce0f7aa72cffe14fb87ffce17962bd3badeb531c63c57f8e0d793",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s2.json.gz\" tests/test_english_evidence.py tests/test_repo_map.py tests/test_lean_audit_record.py tests/test_inventory_path.py tests/test_readings_verdicts_lean.py tests/test_events_wire_mutants.py tests/test_lean_share.py tests/test_english_grammar_gen.py tests/test_trust_budget.py tests/test_question_statements.py tests/test_arith_uncharged_costs.py tests/test_gate_integrity.py tests/test_w6a_looprecheck2.py tests/test_w6a_citations.py tests/test_norm_defaults_switch.py tests/test_scales_exercised.py tests/test_readings_defaults_rd3_report.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
