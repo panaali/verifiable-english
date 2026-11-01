@@ -33,13 +33,14 @@ PYTHON = {
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses backends.english_lean").split(),
     # 4 CLI, documents, assist, adapters and route modules; `backends.senses` and `backends.speech_source` are
-    # the senses and speech-source routes (they read the English parser and build environments).
+    # the senses and speech-source routes (they read the English parser and build environments); `senses.display`
+    # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
-        "backends.senses backends.speech_source").split(),
+        "backends.senses backends.speech_source senses.display").split(),
     # 5 apps: fixtures and the experiments (every module of the APP_AREAS trees below).
     5: ["argument_fixtures"],
 }
