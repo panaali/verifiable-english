@@ -55,6 +55,12 @@ Draft 4, from the phase-1 results (each change cites the report's section; secti
     u0123.s01.p1), and the NORTH-STAR-style score split into the language's part (0.09 to 0.13) and AP-0's pilot
     repair (0.24).
 11. **No Lean statement changed** (section 3 is draft 3's); the specification's draft 3 records the same results.
+12. **D3 revised in one cell after AP-7 FAIL** (2026-11-01, `ap-3r-spec`; DRI decision
+    `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1, SIGNED): under *may* and *has the right to*,
+    "A and B" always has two readings, each (split) or both together (one act); the exception "one reading, split, when
+    every item has its own *to*" is removed (2.3). Every other cell is unchanged, *must not* with *and* included, and a
+    split marker's *and* under *may* or *has the right to* still has one reading. Fixtures A5 and A12 now count the
+    together readings (5). The specification's AP-3 table statement and fixtures change with it (its change log).
 
 ## 0. Summary
 
@@ -242,7 +248,7 @@ A single reading is applied by AP-3. Two readings make the sentence ambiguous; A
 |---|---|---|
 | *must* | one reading, split: must A; must B (obligation distributes over *and*) | one reading, **one act** "A or B": the bearer chooses the way (obligation does not distribute over *or*) |
 | *must not* | two readings: each is forbidden (split), or only doing both (one act "A and B") | one reading, split: must not A; must not B (prohibition distributes over *or*) |
-| *may*, *has the right to* | one reading, split, when every item has its own *to* ("to form and to join"); otherwise ("to seek and enjoy", "may form and join") two readings: each (split), or both together (one act) | two readings: each way (free choice, split), or one act "A or B" |
+| *may*, *has the right to* | two readings: each (split), or both together (one act), whether every item has its own *to* ("to form and to join", "to seek and to enjoy") or not ("to seek and enjoy", "may form and join"); a split marker's *and* has one reading, each (below) | two readings: each way (free choice, split), or one act "A or B" |
 | *need not* | no reading: refused (no pilot case; rewrite) | no reading: refused |
 
 **Nor** reads only under *must not*, where prohibition distributes over it. Under *must*, *may* and *has the right
@@ -1085,14 +1091,14 @@ declarations, its derivation and reading counts and its diagnostics, and adds th
 | A2 | u085 | `{0} to [equal pay for equal work] without any discrimination`, form "has the right"; open terms `discrimination`, `equal_pay_for_equal_work` | AP-1 | accepted |
 | A3 | u106 | `{0} to the protection of [the moral and material interests] resulting from {1}`, sorts person and production; guard: the person is the author of the production, and the production is scientific, literary or artistic | AP-1 | accepted |
 | A4 | u051 (today's wording) | `{0} to seek as well as enjoy in other countries asylum from persecution` | AP-1 | accepted; it never enters the grammar: its identity and meaning are its canonical string (2.5) |
-| A5 | u051 (source) | `{0} to seek and to enjoy in other countries asylum from persecution` | AP-1; AP-4 | AP-1: refused, *and* outside a fixed phrase. AP-4: 2 readings ("in other countries" on *enjoy* or on both) |
+| A5 | u051 (source) | `{0} to seek and to enjoy in other countries asylum from persecution` | AP-1; AP-4 | AP-1: refused, *and* outside a fixed phrase. AP-4: 4 readings ("in other countries" on *enjoy* or on both; each place read as each (split) or both together (one act), D3) |
 | A6 | u027 | `{0} be subjected to torture or to [cruel, inhuman or degrading treatment or punishment]`, permission, sign false; frame `be subjected` with `split: ["to"]` | AP-1; AP-3 | AP-1: refused. AP-3: two prohibitions |
 | A7 | u079b | `{0} be held by secret vote or by [equivalent free voting procedures]`, obligation | AP-1; AP-3 | AP-1: refused (or accepted with the two ways as one fixed phrase). AP-3: one obligation on the whole act; "by" is not a split marker |
 | A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | exactly 2 readings (*freely* on the first act, or on all); the pilot's coupled rs_u105b/rs_u105c pass `sourceCheck` |
 | A9 | u055 | `{0} be arbitrarily deprived of their nationality nor denied [the right to change their nationality]`, permission, sign false | AP-4 | exactly 2 readings = rs_u055's `deprivation_only` and `both_acts` |
 | A10 | u092 | `{0} to security in the event of unemployment, sickness, disability, widowhood, old age or [other lack of livelihood] in circumstances beyond their control`, frame *security* with `split: ["in the event of"]` | AP-4 | 2 readings ("in circumstances beyond their control" on the last cause, or on all) |
 | A11 | u076 | `{0} to take part in {1} directly or through [freely chosen representatives]`, form "has the right"; the country slot as u077 | AP-4 | 2 act readings (each way, or one of the ways) × u077's 2 country readings; its reading set passes `sourceCheck` only after the readings elaboration (spec F11) |
-| A12 | u087 | `{0} to form and to join trade unions for the protection of their interests` | AP-4 | 2 readings ("for the protection …" on *join* or on both); the split itself (*to … and to …*) is AP-3's |
+| A12 | u087 | `{0} to form and to join trade unions for the protection of their interests` | AP-4 | 4 readings ("for the protection …" on *join* or on both; each place read as each (split) or both together (one act), D3); AP-3 does not split it under *may* or *has the right to* (two readings, D3) |
 | A13 | u0156.s03 | `{0} actively deceive {1} about [the existence of a system prompt or its content]` | AP-1 | accepted; replaces "existence-or-content" |
 | A14 | u0123.s03 | the six acts after "cannot instruct Claude to", joined by *or*, permission, sign false; *while* and *when* clauses move to guards | AP-3 | five prohibitions plus one explicit residual: "provide false information that could deceive the user" holds the clause word *false*, refused even in a fixed phrase, and the statement review kept that rule (spec F10, G14v); "instruct" stays `speech-acts@0`'s |
 | A15 | u024, u037 | two **permission** predicates with act `{0} take place` and different sorts | AP-1 | accepted (act identity includes sorts, and `actChecks` checks permissions); the specification decides whether wording distinctness may also use sorts (open question 8.3). Draft 2 left the role open; as plain predicates `actChecks` would skip them and the wording would read "has the right take place" |

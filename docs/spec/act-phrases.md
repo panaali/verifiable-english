@@ -258,7 +258,7 @@ narrows an act.
 |---|---|---|
 | plain, with an act and a form (AP-1) | `Lexical.wording`: `{0} has the right` or `{0} is entitled`, then the act after its `{0} ` | `{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}` (A1) |
 | permission or obligation | unchanged: `{0} may`, `must`, `must not`, `need not`, then the act after its `{0} ` | `{0} must not be subjected to torture` |
-| a part `p__i` (AP-3) | as its source's role gives, over the part's act: its atom's text in normal order, with *to* exactly when the role is plain (`partAct`, 5.5), so a permission part of "to form and to join" is `{0} form trade unions` and reads "{0} may form trade unions" | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
+| a part `p__i` (AP-3) | as its source's role gives, over the part's act: its atom's text in normal order, with *to* exactly when the role is plain (`partAct`, 5.5), so an obligation part of "to form and to join" is `{0} form trade unions` and reads "{0} must form trade unions" (under *may* the phrase has two readings and does not split, 6.2) | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
 
 A reader never sees "classified as …" for a plain predicate with an act under `acts@0`. Lexicon V4 (wording
 distinctness) is not changed: two predicates whose wordings are equal stay a V4 duplicate (A15; 14, C24).
@@ -298,11 +298,15 @@ as for every rule today.
 
 For u051 (A5), under *has the right*:
 
-> This sentence has two readings.
+> This sentence has four readings.
 > 1. Everyone has the right to seek asylum from persecution, and everyone has the right to enjoy asylum from
 >    persecution in other countries.
-> 2. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
+> 2. Everyone has the right to seek asylum from persecution and to enjoy asylum from persecution in other countries,
+>    as one act done together (not each on its own).
+> 3. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
 >    asylum from persecution in other countries.
+> 4. Everyone has the right to seek asylum from persecution in other countries and to enjoy asylum from persecution in
+>    other countries, as one act done together (not each on its own).
 
 For u076 (A11):
 
@@ -940,7 +944,8 @@ inductive Simple | atom (a : Atom) | whole (A : Act)  deriving DecidableEq, Repr
 /-- *may* and *has the right to*. -/
 def freeTable : Act → List (List Simple)
   | .one a => [[.atom a]]
-  | .all false _ ps => [ps.map Simple.atom]                                  -- own "to": split
+  | .all false true ps => [ps.map Simple.atom]                               -- own "to", split marker: each
+  | .all false false ps => [ps.map Simple.atom, [.whole (.all false false ps)]] -- own "to": each, or both together
   | .all true true ps => [ps.map Simple.atom]                                -- split marker: each
   | .all true false ps => [ps.map Simple.atom, [.whole (.all true false ps)]]  -- each, or both together
   | .any true _ _ => []                                                      -- nor: refused
@@ -1006,8 +1011,10 @@ theorem table_mustNot_any (n sp : Bool) (ps : List Atom) : table .mustNot (.any 
 theorem table_mustNot_all (s : Bool) (ps : List Atom) :
     table .mustNot (.all s false ps) = [ps.map Simple.atom, [.whole (.all s false ps)]]
 theorem table_mustNot_all_split (s : Bool) (ps : List Atom) : table .mustNot (.all s true ps) = [ps.map Simple.atom]
-theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (sp : Bool) (ps : List Atom) :
-    table op (.all false sp ps) = [ps.map Simple.atom]
+theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false false ps) = [ps.map Simple.atom, [.whole (.all false false ps)]]
+theorem table_free_all_own_split (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false true ps) = [ps.map Simple.atom]
 theorem table_free_all_shared (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
     table op (.all true false ps) = [ps.map Simple.atom, [.whole (.all true false ps)]]
 theorem table_free_all_split (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
@@ -1020,6 +1027,12 @@ theorem table_free_nor (op : Op) (hop : op = .may ∨ op = .right) (sp : Bool) (
     table op (.any true sp ps) = []
 theorem table_needNot (A : Act) (h : ∀ a, A ≠ .one a) : table .needNot A = []
 ```
+
+`table_free_all_own` is the one changed equation (D3 revised after AP-7, DRI decision
+`manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1): it was `table op (.all false sp ps) = [ps.map
+Simple.atom]` for every `sp`, the own-*to* exception. Its `sp = false` case gains the together reading;
+its `sp = true` case (a split marker's *and*) keeps its one reading as `table_free_all_own_split`. No other equation
+changes.
 
 They stay provisional until AP-7 passes (D3).
 
@@ -1705,7 +1718,8 @@ The table, per cell (`table` on the act trees of 11.2):
 | T3 | *must not*, G9's trees (`any true false`) | 1 each: two atoms |
 | T4 | *may*, G9's trees | 0 each (*nor* under *may*: D-22) |
 | T5 | *has the right to*, G11 (`any false false`) | 2: two atoms (each way), or `whole` (one act) |
-| T6 | *has the right to*, G12's trees (`all false false`) | 1 each: two atoms |
+| T6 | *has the right to* and *may*, G12's trees (`all false false`: "to form and to join") | 2 each: two atoms (each), or `whole` (both together). D3 revised (ap-7 FAIL ruling item 1); a seeded bug that restores the own-*to* exception (one split reading for `all false _`) makes it 1 each, so T6 and P5 fail under it |
+| T6s | *may* and *has the right to*, a split marker's *and* (`all false true`, `all true true`) | 1 each: the atoms (each); the split marker declares the argument distributive |
 | T7 | *has the right to*, G10's trees (`any false true`) | 1 each: six atoms |
 | T8 | *must*, G6 (`any false true`) | 0 (a split marker's *or* under *must*: D-22). The plan's *must*/*or* seeded bug makes it 1, so this fixture fails under that bug (SR15: draft 1 seeded it on A7, a `one` act the table never splits) |
 | T9 | *must not*, `all false false` (G12's first tree read as a prohibition) | 2: two atoms, or `whole` (only doing both); P12n lists G12's four readings under *must not* with four distinct paraphrases |
@@ -1731,7 +1745,8 @@ Elaboration (on `UDoc`s built in `ElaborateExamples.lean`; sorts `person`, guard
 | E13 | E1 in an environment declaring 255 predicates (256 after); the same with 256 (257 after) | accepted; refused, `ResourceLimit: vocabulary size` (SR7; *hand, not yet run*) |
 | E14 | E5 with `p027` renamed to a 53-byte name (parts 56 B); to a 54-byte name (parts 57 B) | accepted; refused, `ResourceLimit: unspecified name length` (the source name passes at 54 B; SR7; *hand, not yet run*) |
 | E15 | E5 in a document with 253 rules (after the split: 254 rules and 2 unspecified, 256); with 254 rules (257) | accepted; refused, `ResourceLimit: rules` (SR7; *hand, not yet run*) |
-| E16 | plain predicate `p` with act `{0} to seek asylum and to seek asylum` (V5: one meaning, `all false false` of two equal atoms), rule sign true (*has the right to*: split) | refused, D-27: `InvalidInput: two parts of p are the same act`. Draft 1 accepted it: `actChecks` skips plain predicates (SR4; *hand, not yet run*) |
+| E16 | plain predicate `p` with act `{0} to security in the event of sickness or sickness` (V10: one meaning, `any false true` of two equal atoms, the split marker *in the event of*), rule sign true (*has the right to*: split) | refused, D-27: `InvalidInput: two parts of p are the same act`. Draft 1 accepted it: `actChecks` skips plain predicates (SR4; *hand, not yet run*). Until D3's revision E16 used `{0} to seek asylum and to seek asylum` (`all false false`), which now has two readings under *has the right to* and is refused by D-23 before step 4 |
+| E17 | plain predicate `p051` with u051's shape, act `{0} to seek and to enjoy asylum from persecution` (V5: one meaning, `all false false [seek+obj, enjoy+obj]`), rule `r051` sign true (*has the right to*) | refused, D-23, exactly: `InvalidInput: rule r051 has more than one reading: 1. {0} has the right to seek asylum from persecution, and {0} has the right to enjoy asylum from persecution. 2. {0} has the right to seek asylum from persecution and to enjoy asylum from persecution, as one act done together (not each on its own).`; no part is generated (before D3's revision it split into `p051__1`, `p051__2`; ap-7 FAIL ruling item 1; *hand, not yet run*) |
 
 `splitMap_exact` in both directions on E1: every generated name is in the map with its source and index, and
 `p027` (a source name) and `r027` are not generated names and not in the map. `elaborate_parts` on E1 and E4: part 1's
@@ -1745,15 +1760,15 @@ both hold makes both sides true.
 
 | # | Phrase, op | Phrase readings (*hand*) |
 |---|---|---|
-| P5 | G5, *has the right to* | 2 (split in each, with `in other countries` on `enjoy` or on both) |
+| P5 | G5, *has the right to* | 4, in derivation order: split, then "seek and enjoy" as one act done together, with `in other countries` on `enjoy`; the same two with it on both (2.2; D3 revised, ap-7 FAIL ruling item 1: the together readings are new) |
 | P8 | G8, *has the right to* | 2 |
 | P9 | G9, *must not* | 2 = `deprivation_only`, `both_acts` |
 | P9m | G9, *may* | 0 (refused, D-22) |
 | P10 | G10, *has the right to* | 2 |
 | P11 | G11, *has the right to* | 2 (each way; or one act). The one-act reading renders as a joined act, so a reading set for it cannot pass `sourceCheck` on the readings route until the readings elaboration exists (F11) |
-| P12 | G12, *has the right to* | 2 |
+| P12 | G12, *has the right to* | 4 (each, or both together, for each place of *for the protection …*; D3 revised); *may* gives the same count |
 | P12n | G12, *must not* | 4, with 4 distinct paraphrases (SR2; draft 1 gave the two whole readings one text). In derivation order, as the stub's re-run confirms: 1. `{0} must not form trade unions, and {0} must not join trade unions for the protection of their interests.` 2. `{0} must not form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own).` 3. `{0} must not form trade unions for the protection of their interests, and {0} must not join trade unions for the protection of their interests.` 4. `{0} must not form trade unions for the protection of their interests and join trade unions for the protection of their interests, as one act done together (not each on its own).` *(hand, not yet run)* |
-| P64 | L6, *has the right to* | 64 (listed) |
+| P64 | L6, *must* (one reading per tree) | 64 (listed). Until D3's revision P64 used *has the right to*, which now gives 2 readings per tree, 128: `limit` as P65 |
 | P65 | L6, *must not* with the join read as *and* (each tree gives 2 readings) | `limit` (128 > 64) |
 
 `phraseReadings_exact` in both directions: P11's two readings are listed and derived; the reading "only through freely
@@ -1990,3 +2005,11 @@ touches no stub file.
   comments, 12); the display bound (2.1, 12); the interim checklist item 7 (2.4); the joined-filler note in 5.2; the
   phase-1 corpus rows (11.2b); the re-check's part (f) (13); findings F13 to F17 (14.2); the stub's sha256 and phase
   1's run (15). No statement, definition, diagnostic or existing fixture changed.
+- D3 revision (2026-11-01, `ap-3r-spec`; DRI decision `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md`
+  item 1, SIGNED; the plan's 2.3 and its change item 12): under *may* and *has the right to*, "A and B" with an own
+  *to* on every item has two readings, each or both together. Changed: `freeTable`'s `.all false _` line (6.2) and
+  the equation `table_free_all_own`, whose `sp = true` case is kept as the new `table_free_all_own_split`; the 2.1
+  example (now an obligation part) and u051's paraphrases (2.2, now four); fixtures T6, P5, P12 (the together
+  readings), E16 and P64 (moved off the changed cell so they test what they tested before). New fixtures T6s (a split
+  marker's *and* keeps one reading) and E17 (the u051-shaped document is refused by D-23, no longer split). No other
+  statement, definition, diagnostic or fixture changed. The build item `ap-3r` proves the changed statements.
