@@ -1,0 +1,12 @@
+{
+ "job": "testmap-ad26a141-t496018-s0",
+ "head": "9159fabb20b7adeb4ce841bd63e66afaba17a2a2",
+ "argv": [
+  "testmap-ad26a141-t496018-s0",
+  "9159fabb20b7adeb4ce841bd63e66afaba17a2a2",
+  "9159fabb20b7adeb4ce841bd63e66afaba17a2a2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-3e443143afdd.tar.zst",
+  "f8b726604f12d906371f54f842196d2188b2a4bb5873479b6009429bf28aee5c",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_speech_polar_lean.py tests/test_relay_mutation_gate.py tests/test_select_tests.py tests/test_p1_amendment12.py tests/test_b16d_document.py tests/test_data_surface.py tests/test_w6a_limit_generator.py tests/test_acts_lexical_mutants.py tests/test_risk_fixtures.py tests/test_lean_service.py tests/test_rust_reproducible.py tests/test_platform_contract.py tests/test_agent_policy.py tests/test_jt_e1r.py tests/test_readings_route_fuzz.py tests/test_norm_defaults_differential.py tests/test_stage0_probe_matrix.py tests/test_b16f_document.py tests/test_bluedot_grant.py tests/test_lean_first_b13b.py tests/test_cpu_bounds.py tests/test_p1_amendment11.py tests/test_report_english.py tests/test_grammar_cli.py tests/test_soft_decision_keys.py tests/test_rd9_followup_bindings.py tests/test_entailment.py tests/test_english_e2_selection.py tests/test_cedar_norms.py tests/test_readings_companions_lean.py tests/test_softnorms_public_contract.py tests/test_stats.py tests/test_english_lean_s2.py tests/test_lean_default_build.py tests/test_norms.py tests/test_english_e2_boundary.py tests/test_lf14a_response_shape.py tests/test_units_w6a.py tests/test_nary_folio.py tests/test_b16c_evidence.py tests/test_english_e26_report.py tests/test_question_answering_readability.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
