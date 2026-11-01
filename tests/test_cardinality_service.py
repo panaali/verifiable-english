@@ -11,11 +11,15 @@ import pytest
 from tests.lean_build import lean_build
 from tests.lean_service_corpus import cardinality_cases as route_cases
 from tests.subprocesses import HANG_TIMEOUT
-from ve.backends.lean_service import LeanService, case_digest, case_texts
+from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
 from ve.backends.service_schema import MODES, Invalid, check_response
 
 STALE = "cardinality certificate is stale or bound to different statements"
-# Each route case's answer, in the file's order: `ok` with its certificate verdict, or the refusal.
+POLICYMAKER_SHARE = ("The number of FOMC policymakers x such that x expects a further increase, divided by the number "
+                     "of FOMC policymakers, rounds to 0.296, rounded to the nearest thousandth; there is at least one "
+                     "FOMC policymaker")
+TOO_LONG = "ResourceLimit: At most 65536 bytes in a paraphrase"
+# Each route case's answer, in the file's order: `ok` with its certificate verdict, a paraphrase's line, or the refusal.
 EXPECTED = {
     "fa1": "ok", "fa1-certificate": "ok valid", "fa1b": "ok", "fa1b-certificate": "ok invalid", "fa1-claimed": "ok",
     "forged-regions": "region table differs from the regenerated one",
@@ -37,6 +41,31 @@ EXPECTED = {
     "document-fa1": "ok", "document-leaf-dropped": STALE,
     "document-unproved": "graph rejected: cycle, duplicate name, dangling premise or invalid certificate",
     "document-no-profile": "UnsupportedProfile: cardinality documents require documents@1",
+    # qt-a3db: Lean's line for each statement form, then the hostile set at the case's boundaries.
+    "paraphrase-quantity": 'The W6a statement ["top"] holds.',
+    "paraphrase-count": "The number of FOMC policymakers is exactly 18.",
+    "paraphrase-half": "There is at least one user, and of the users x, more than 1 in 2 are such that x is curious.",
+    "paraphrase-ties-up": f"{POLICYMAKER_SHARE}; a value exactly halfway rounds up, to the larger number.",
+    "paraphrase-half-even": f"{POLICYMAKER_SHARE}; a value exactly halfway rounds to the even digit.",
+    "paraphrase-percent-of": "The September estimate is exactly 105 percent of the June estimate; the June estimate "
+                             "is more than zero.",
+    "paraphrase-percent-rounds-to": "The September estimate is 105 percent of the June estimate, to the nearest "
+                                    "percent; the June estimate is more than zero; a value exactly halfway rounds up, "
+                                    "to the larger number.",
+    "paraphrase-not": "It is not the case that (the number of FOMC policymakers x such that x expects rates to stay is "
+                      "less than 3).",
+    "paraphrase-and": '(The W6a statement ["top"] holds) and (2 times the number of FOMC policymakers x such that (x '
+                      "expects a further increase) and (it is not the case that (x expects rates to stay)) is at most "
+                      "7).",
+    "paraphrase-or": "(The number of FOMC policymakers x such that (x expects a further increase) or (x expects rates "
+                     'to stay) is at most 18) or (the W6a statement ["bottom"] holds).',
+    "paraphrase-implies": "If (the number of FOMC policymakers x such that x expects a further increase is exactly 16), "
+                          "then (-1 times the number of FOMC policymakers x such that x expects rates to stay is at "
+                          "most -2).",
+    "paraphrase-not-finite": "CardinalityNotFinite(user)",
+    "paraphrase-unknown-form": "Unknown cardinality operator most",
+    "paraphrase-non-canonical": "non-canonical integer",
+    "paraphrase-over-limit": TOO_LONG,
 }
 
 
@@ -58,6 +87,8 @@ def exchange(service, cases):
 def says(result: dict) -> str:
     if result["status"] != "ok":
         return result["error"]
+    if "paraphrase" in result:
+        return result["paraphrase"]
     if "refutes" in result:
         return "ok " + ("refutes" if result["refutes"] else "does not refute")
     return "ok" + {None: "", True: " valid", False: " invalid"}[result.get("valid")]
@@ -67,7 +98,8 @@ def test_route_cases_answer_as_recorded(service):
     """FA1 and FA1b admitted and certified (FA1b's trace does not close its problem), forged claims and FA11's
     stale certificate refused, FA1b's countermodel (one policymaker expects both, one neither) refuting FA1b and not
     FA1, and one case per diagnostic class of the hostile set, in spec 4.2's order; FA1 as a claim graph, with a leaf
-    dropped, unproved and without `documents@1`."""
+    dropped, unproved and without `documents@1`; a paraphrase of each statement form, and refused when a sort is not
+    finite, the form unknown, a number not canonical or the text over its limit."""
     cases = route_cases()
     assert "cardinality" in MODES and [case["id"] for case in cases] == list(EXPECTED)
     answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
@@ -323,3 +355,73 @@ def test_the_charge_and_the_check_share_one_budget(service):
     cases = [chain(k, 1000, 400, (users,)) for k in (1, 2)]
     answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
     assert answers == ["ok refutes", EXHAUSTED]
+
+
+def paraphrase(case_id: str, **changes) -> dict:
+    """The route case `case_id` with `changes` to its environment's vocabulary (`(group, name)` -> description) or
+    its statement's formula (`formula`)."""
+    case = deepcopy(next(case for case in route_cases() if case["id"] == case_id))
+    for (group, name), text in changes.pop("described", {}).items():
+        case["environment"]["vocabulary"][group][name]["description"] = text
+    if "formula" in changes:
+        case["statement"]["formula"] = changes["formula"]
+    return case
+
+
+def test_paraphrase_rows_are_typed_and_bound(service):
+    """qt-a3db, R8: a paraphrase has one assumption per request finite sort, in their order, a nonempty line and the
+    statement; each dropped, retyped, duplicated or extra member is refused, as the reply's bytes arrive (a lone
+    surrogate is no text: the decoder refuses it before the schema)."""
+    request, response = exchange(service, [paraphrase("paraphrase-half")])
+    row = response["results"][0]["result"]
+    assert row["assumptions"] == ["The document assumes there are finitely many FOMC policymakers.",
+                                  "The document assumes there are finitely many users."]
+    statement = row["statement"]
+    mutants = [{**row, "assumptions": row["assumptions"][:1]}, {**row, "assumptions": []},
+               {**row, "assumptions": [*row["assumptions"], row["assumptions"][0]]},
+               {**row, "paraphrase": ""}, {**row, "statement": {**statement, "formula": ["most"]}},
+               {**row, "statement": {**statement, "extra": 1}}, {**row, "valid": True}, {**row, "report": {}},
+               *({k: v for k, v in row.items() if k != key} for key in row),
+               *({**row, key: bad} for key in row for bad in BAD),
+               *({**row, "statement": {**statement, key: bad}} for key in statement for bad in BAD),
+               *({**row, "assumptions": [bad, row["assumptions"][1]]} for bad in BAD)]
+    for mutant in mutants:
+        mutated = deepcopy(response)
+        mutated["results"][0]["result"] = mutant
+        with pytest.raises((Invalid, ValueError)):
+            check_response("cardinality", _decode_json(json.dumps(mutated)), request)
+    assert len(mutants) > 80
+
+
+def text_bytes(row: dict) -> int:
+    return sum(len(text.encode()) for text in [row["paraphrase"], *row["assumptions"]])
+
+
+def test_the_reply_text_is_charged_against_one_limit(service):
+    """The DRI's rule of 2026-10-27: the paraphrase's text, its assumptions and line together, is charged against
+    65,536 bytes as it is built. A description that brings the text to exactly the limit is answered, one byte more
+    is refused; a sort name that fits each piece alone but not the reply is refused."""
+    curious = ("predicates", "curious")
+    small = exchange(service, [paraphrase("paraphrase-half", described={curious: "is a"})])[1]["results"][0]["result"]
+    room = 65536 - text_bytes(small)
+    cases = [paraphrase("paraphrase-half", described={curious: "is a" + "a" * extra}) for extra in (room, room + 1)]
+    cases += [paraphrase("paraphrase-half", described={("sorts", "user"): "u" * width}) for width in (20000, 30000)]
+    rows = [bound["result"] for bound in exchange(service, cases)[1]["results"]]
+    assert text_bytes(rows[0]) == 65536 and rows[1]["error"] == TOO_LONG
+    assert text_bytes(rows[2]) < 65536 and rows[3]["error"] == TOO_LONG
+
+
+def either(depth: int) -> list:
+    """A balanced disjunction of 2^depth atoms on the counted user."""
+    return ["is", "curious"] if depth == 0 else ["or", either(depth - 1), either(depth - 1)]
+
+
+def test_a_large_statement_ends_within_the_limit(service):
+    """The DRI's rule of 2026-10-27: a well-formed count over 2,048 disjoined atoms (4,099 nodes) is rendered within
+    the limit, and over 4,096 atoms (8,195 nodes, within the decoder's 10,000) is refused as it reaches the limit,
+    both within the deadline."""
+    cases = [paraphrase("paraphrase-over-limit", described={("predicates", "curious"): "is curious"},
+                        formula=["count", "user", [["1", either(depth)]], "eq", "2"]) for depth in (11, 12)]
+    rows = [bound["result"] for bound in exchange(service, cases)[1]["results"]]
+    assert rows[0]["status"] == "ok" and 40000 < text_bytes(rows[0]) <= 65536
+    assert rows[0]["paraphrase"].count("(x is curious)") == 2048 and rows[1]["error"] == TOO_LONG
