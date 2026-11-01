@@ -13014,7 +13014,8 @@
         "VE.Judgments.ChainExamples.refusal",
         "VE.Judgments.ChainExamples.clashBothSides",
         "VE.Judgments.ChainExamples.f13l",
-        "VE.Judgments.ChainExamples.f13o"
+        "VE.Judgments.ChainExamples.f13o",
+        "VE.Judgments.ChainExamples.bothRules"
       ]
     },
     "VE/Judgments/Scan.lean": {
