@@ -162,6 +162,8 @@ def mq (bit : Bool) (permitted : List (List String)) : VE.FiniteModel String whe
   !satAll (pullFM NSDq [("rs_1", 0)] (mq false [])) (fillPremises (choiceU NSDq [("rs_1", 0)]))
 #guard satAll (mq false [["a", "u"]]) (fillPremises (supU NSDq)) &&
   satAll (pullFM NSDq [("rs_1", 0)] (mq false [["a", "u"]])) (fillPremises (choiceU NSDq [("rs_1", 0)]))
+-- with S2a's `pull` in place of `pullF` the choice's `Fill_T` fails there: the gap's table is dropped (S-5)
+#guard !satAll (pullM NSDq [("rs_1", 0)] (mq false [["a", "u"]])) (fillPremises (choiceU NSDq [("rs_1", 0)]))
 
 /-- Both sides of `fill_sim` (`author = false`) or `fill_sim_author` (`true`) on NSD1 at `avoid_required (a,u)`; `pl`
     chooses `pullF` (true) or S2a's `pull`. -/
