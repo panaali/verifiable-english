@@ -688,11 +688,22 @@ theorem copies_fillDoc (N : NDoc) : copies (fillDoc N) = copies N.D := by
 theorem copyCites_fillDoc (N : NDoc) : copyCites (fillDoc N) = copyCites N.D := by
   funext cs; simp only [copyCites, copies_fillDoc]
 
+theorem rightCopies_fillDoc (N : NDoc) : rightCopies (fillDoc N) = rightCopies N.D := by
+  funext n
+  simp only [rightCopies, sets_fillDoc, List.findIdx?_map, Function.comp_def, interfaceOf_fillSet, setSize_fillDoc,
+    position_fillDoc]
+
 theorem copyContent_fillDoc (N : NDoc) : copyContent (fillDoc N) = copyContent N.D := by
-  funext c; cases c <;> simp only [copyContent, copyOver, copies_fillDoc]
+  have ho : copyOver (fillDoc N) = copyOver N.D := by funext M; simp only [copyOver, copies_fillDoc]
+  have hl : copyLine (fillDoc N) = copyLine N.D := by funext S; simp only [copyLine, ho]
+  funext c; cases c <;> simp only [copyContent, ho, hl, copyScope, rightCopies_fillDoc]
 
 theorem gateContent_fillDoc (N : NDoc) : gateContent (fillDoc N) = gateContent N.D := by
-  funext m i c; cases c <;> simp only [gateContent, setSize_fillDoc, position_fillDoc]
+  have hn : gateNorm (fillDoc N) = gateNorm N.D := by
+    funext m i M; simp only [gateNorm, setSize_fillDoc, position_fillDoc]
+  have hl : gateLine (fillDoc N) = gateLine N.D := by funext m i S; simp only [gateLine, hn]
+  funext m i c; cases c <;> simp only [gateContent, hn, hl, copyScope, position_fillDoc, setSize_fillDoc,
+    rightCopies_fillDoc]
 
 theorem bitDecls_fillDoc (N : NDoc) : bitDecls (fillDoc N) = bitDecls N.D := by
   simp only [bitDecls, sets_fillDoc, List.length_map, setSize_fillDoc]
@@ -751,7 +762,7 @@ theorem gateContent_fill (N : NDoc) (D : Doc) (m i : Nat) (c : Content) :
     gateContent D m i (fillContent N c) = fillContent N (gateContent D m i c) := by
   cases c with
   | norm M =>
-    simp only [gateContent, fillContent, fillSoftNode]
+    simp only [gateContent, gateNorm, fillContent, fillSoftNode]
     by_cases h : M.pred ∈ N.unspec ∧ M.over = [] <;> simp [h]
   | _ => rfl
 
@@ -843,7 +854,7 @@ theorem contentStrict_copy (D : Doc) (c : Content) : contentStrict (copyContent 
 
 theorem contentStrict_gate (D : Doc) (m i : Nat) (c : Content) : contentStrict (gateContent D m i c) = contentStrict c := by
   cases c with
-  | norm M => simp [gateContent, contentStrict, strictRule]
+  | norm M => simp [gateContent, gateNorm, contentStrict, strictRule]
   | _ => rfl
 
 theorem sup_strict (D : Doc) (hs : Shaped D) : StrictDoc (sup D).1 := by
