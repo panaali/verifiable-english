@@ -95,7 +95,13 @@ is no product language that needs its own seeded bug.
 
 ## Selected tests
 
-SELECTED-PLACEHOLDER
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the tree at commit "REPORT and seeded bug
+S1" gave **exit 0**: `27/523 test units (map db9abd91d1)`, spread over 3 shards (30 units with the chunks) on the
+Claude cloud runner. Results: `SHARD 1/3: ... 10 units, 10 passed`, `SHARD 2/3: ... 9 units, 9 passed` and
+`SHARD 3/3: ... 11 units, 11 passed`; the summary line was `exit=0; 1017s`. The cheap units ran first and passed
+(`the cheap units passed after 140 s`). tests/test_trust_mutants.py ran in 4 chunks: 141 + 282 + 141 = 564 passed,
+0 skipped, 0 failed, and `each of its ... tests ran in exactly one chunk`. No test in the selection is on
+main-known-red. `uv run python tools/regen_generated.py --check` printed `checked 35 entries` and no stale file.
 
 ## Notes
 
