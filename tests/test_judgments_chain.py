@@ -86,6 +86,16 @@ def test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open(ser
     assert row["units"][0]["meaning_id"] != plain["units"][0]["meaning_id"]
 
 
+def test_a_unit_may_list_its_rule_s_soft_decision_predicate_with_the_layer(service):
+    """An `open` meaning cites the soft route's decision predicates as without the layer (found by the trust mutants:
+    `judgedViews` read the records' names alone, so the layer refused what its twin admits)."""
+    fm = front("u0052.s01", listed=["good_judgment"])
+    fm["units"][0]["meaning"]["open"].append("soft__excepted__good_judgment")
+    rows = [answer(service, "u0052.s01", side) for side in (fm, twin(fm))]
+    assert [r["status"] for r in rows] == ["ok", "ok"], rows
+    assert [[u["status"] for u in r["units"]] for r in rows] == [["OPEN"], ["OPEN"]]
+
+
 @pytest.mark.parametrize("where", ["guard", "unless"])
 def test_f1_2_the_reader_scans_the_guard_and_the_author_carve_outs(service, where):
     """F1.2 and F1.2b: the judgment in the guard, or only in the `unless` clause, is found (`softContent_formulas`)."""
@@ -102,13 +112,14 @@ def test_f1_2_the_reader_scans_the_guard_and_the_author_carve_outs(service, wher
     ("F1.3", "JudgmentListedUnused: u0036.s05 reasonable"),
     ("F1.3d", "UnsupportedProfile: judgments@0 requires documents@1"),
     ("F1.5", "CheckerUnavailable: judgments@0 with alternatives@0 needs its composed Lean route"),
-    ("rights", "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route")])
+    ("rights", "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route"),
+    ("risk", "CheckerUnavailable: judgments@0 with risk@0 needs its composed Lean route")])
 def test_the_layer_s_own_refusals_and_the_profiles_it_stays_apart_from(service, case, expected):
     """F1.3 (a listed judgment the unit does not use, today's text and order), F1.3d (the gate) and F1.5 (kept), each
     a refusal with the layer whose twin is admitted; `rights@0` stays apart until pc-1g's reader."""
-    uid = "u0052.s01" if case in ("F1.3d", "F1.5", "rights") else "u0036.s05"
+    uid = "u0036.s05" if case == "F1.3" else "u0052.s01"
     profiles = {"F1.3d": [p for p in LAYER if p != "documents@1"], "F1.5": sorted(LAYER + ["alternatives@0"]),
-                "rights": sorted(LAYER + ["rights@0"])}.get(case, LAYER)
+                "rights": sorted(LAYER + ["rights@0"]), "risk": sorted(LAYER + ["risk@0"])}.get(case, LAYER)
     fm = front(uid, profiles, listed=["genuinely_ambiguous", "reasonable"] if case == "F1.3" else None)
     assert answer(service, uid, fm).get("error") == expected
     if case in ("F1.3", "F1.3d"):
