@@ -1,4 +1,3 @@
-- `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
 - `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
 - `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
 - `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
@@ -80,3 +79,4 @@
 - `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
+- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
