@@ -91,17 +91,20 @@ def rowsF (D : SDoc) (os : List Governor) (lv cv : Reach → List String) (bn : 
       governors := gs.map (fun g => ⟨g.id, g.unit, effectWord g.effect, cv g.reach⟩),
       provenance := gs.map fun g => sentence D bn u (cv g.reach).length g }
 
-/-- The run path: `governFast`'s tables, then the rows on them, each governor unit's base name read once. -/
-def explainFast (D : SDoc) : Except String (List Row) := do
+/-- The run path: `governFast`'s tables, then `governFast`'s answer and the rows on them, each governor unit's base name
+    read once (the answer is what a choice's rows are gated on, sc-1cb). -/
+def explainOut (D : SDoc) : Except String (Json × List Row) := do
   admitBlock D
   let os := ordered D
   let (lv, cv) := fastReads D
-  let _ ← governBody D os lv cv
+  let out ← governBody D os lv cv
   let name := fun u => ((baseObjF D lv u).toOption.bind fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption).map (·.name)
-  pure (rowsF D os lv cv (memo (D.governors.map fun g => (g.unit, name g.unit)) name))
+  pure (out, rowsF D os lv cv (memo (D.governors.map fun g => (g.unit, name g.unit)) name))
+
+def explainFast (D : SDoc) : Except String (List Row) := (·.2) <$> explainOut D
 
 theorem explainFast_eq (D : SDoc) : explainFast D = explainRows D := by
-  unfold explainFast explainRows
+  unfold explainFast explainOut explainRows
   rw [fastReads_eq, governBody_slow]
   cases admitBlock D with
   | error => rfl
@@ -111,7 +114,7 @@ theorem explainFast_eq (D : SDoc) : explainFast D = explainRows D := by
       (fun r => (covered D r).toOption.getD []) with
     | error => rfl
     | ok _ =>
-      simp only [rowsF, baseObjF_slow]
+      simp only [rowsF, baseObjF_slow, Functor.map, Except.map]
       have hn := memo_map D.governors (·.unit) (baseName D)
       unfold baseName at hn ⊢
       simp only [hn]
@@ -153,6 +156,17 @@ theorem explainRows_effect (D : SDoc) (rows : List Row) (h : explainRows D = .ok
     obtain ⟨u, _, rfl⟩ := List.mem_map.mp hr
     obtain ⟨g, _, rfl⟩ := List.mem_map.mp hx
     cases g.effect <;> simp [effectWords, effectWord]
+
+theorem explainOut_effect {D : SDoc} {o : Json} {rows : List Row} (h : explainOut D = .ok (o, rows)) (r : Row)
+    (hr : r ∈ rows) (x : GovRow) (hx : x ∈ r.governors) : x.effect ∈ effectWords := by
+  unfold explainOut at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h; · cases h
+  split at h; · cases h
+  cases h
+  obtain ⟨u, _, rfl⟩ := List.mem_map.mp hr
+  obtain ⟨g, _, rfl⟩ := List.mem_map.mp hx
+  cases g.effect <;> simp [effectWords, effectWord]
 
 theorem explain_rows_iff (D : SDoc) (rows : List Row) (h : explainRows D = .ok rows) (u : String) :
     (∃ r ∈ rows, r.unit = u) ↔ u ∈ affected D := by
@@ -216,12 +230,35 @@ def governedJson (D : SDoc) (rows : List Row) : Json :=
   .arr (D.governors.map fun g => Json.mkObj [("id", .str g.id), ("units", .arr (rows.filterMap fun r =>
     if r.governors.any (·.id == g.id) then some (Json.str r.unit) else none).toArray)]).toArray
 
+/-- A joint choice as 11.5's `choiceText` names it, typed: each governed set of `sets` (`governedSets`, read once) with
+    its unit, id, version and chosen reading. -/
+def choiceJson (sets : List Json) (ch : VE.Discourse.Choice) : Json :=
+  .arr (sets.filterMap fun s => (pickOf ch s).map fun i => Json.mkObj [("unit", .str (setUnit s)), ("set", .str (idOf s)),
+    ("version", toJson (setVersion s)), ("reading", .str ((((readingsJson s)[i]?).map idOf).getD ""))]).toArray
+
 /-- The rows of `D` over the source `source`, refused past `limit` cells. -/
 def explainWithin (limit : Nat) (D : SDoc) (source : String) : Except String (List Row) := do
   let qs := quotesOf D source.toUTF8
   let rows ← @explainFast ⟨fun u => (qs.lookup u).getD ""⟩ D
   if cellBound D rows.length > limit then throw "ResourceLimit: scope explain answer cells"
   pure rows
+
+/-- The rows of `D` under each joint choice of its governed sets (scope 11, sc-1cb), in lf-14d's order: each choice's
+    document (`atChoice`) is explained once by `explainOut`, and its answer gates the document as `governSetsWith
+    governFast` gates it (`faultOf`, `assemble`, 11.5's texts); refused past `limit` cells summed over the choices. -/
+def explainSetsWithin (limit : Nat) (D : SDoc) (source : String) :
+    Except String (List (VE.Discourse.Choice × List Row)) := do
+  let qs := quotesOf D source.toUTF8
+  let su := governedSetUnits D
+  let rs := (← setChoices D).map fun ch =>
+    (ch, @explainOut ⟨fun u => (qs.lookup u).getD ""⟩ { D with doc := atChoiceOn su D.doc ch })
+  if let some e := faultOf D (rs.map fun (ch, r) => (ch, (·.1) <$> r)) then throw e
+  let outs := rs.filterMap fun (ch, r) => r.toOption.map (ch, ·)
+  let some (ch₀, o₀, _) := outs.head? | throw "ResourceLimit: scope choices"   -- never: every governed set holds a reading
+  let _ ← assemble D ch₀ o₀ (outs.map fun (ch, o, _) => (ch, o))
+  if cellBound D (outs.foldl (fun n (_, _, rows) => n + rows.length) 0) > limit then
+    throw "ResourceLimit: scope explain answer cells"
+  pure (outs.map fun (ch, _, rows) => (ch, rows))
 
 theorem explainWithin_effect {limit : Nat} {D : SDoc} {source : String} {rows : List Row}
     (h : explainWithin limit D source = .ok rows) (r : Row) (hr : r ∈ rows) (x : GovRow) (hx : x ∈ r.governors) :
@@ -236,15 +273,39 @@ theorem explainWithin_effect {limit : Nat} {D : SDoc} {source : String} {rows : 
     · cases h
     · cases h; exact @explainRows_effect ⟨fun u => ((quotesOf D source.toUTF8).lookup u).getD ""⟩ D _ hrs r hr x hx
 
+theorem explainSetsWithin_effect {limit : Nat} {D : SDoc} {source : String} {gs : List (VE.Discourse.Choice × List Row)}
+    (h : explainSetsWithin limit D source = .ok gs) (g) (hg : g ∈ gs) (r : Row) (hr : r ∈ g.2) (x : GovRow)
+    (hx : x ∈ r.governors) : x.effect ∈ effectWords := by
+  unfold explainSetsWithin at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  repeat' (split at h <;> try cases h)
+  obtain ⟨⟨ch, o, rows⟩, hm, rfl⟩ := List.mem_map.mp hg
+  simp only [List.mem_filterMap, List.mem_map, Option.map_eq_some_iff] at hm
+  obtain ⟨_, ⟨c, _, rfl⟩, ⟨o', rows'⟩, ho, he⟩ := hm
+  cases he
+  have hE : ∀ {α} (e : Except String α) a, e.toOption = some a → e = .ok a := by
+    intro _ e a; cases e <;> simp [Except.toOption]
+  exact @explainOut_effect ⟨fun u => ((quotesOf D source.toUTF8).lookup u).getD ""⟩ _ _ _ (hE _ _ ho) r hr x hx
+
+/-- The answer `id` about `D` over `source`: its rows and their index (SC-1c), or, when a reading set is governed per
+    choice (11.1), the rows and index under each joint choice, labelled by it (sc-1cb). -/
+def answerOf (id : String) (D : SDoc) (source : String) : Except String Json :=
+  if (governedSetUnits D).isEmpty then do
+    let rows ← explainWithin cellLimit D source
+    pure (VE.Route.Wire.ok id [("rows", .arr (rows.map rowJson).toArray), ("governed", governedJson D rows)])
+  else do
+    let sets := governedSets D
+    let groups ← explainSetsWithin cellLimit D source
+    pure (VE.Route.Wire.ok id [("choices", .arr (groups.map fun (ch, rows) => Json.mkObj [("choice", choiceJson sets ch),
+      ("rows", .arr (rows.map rowJson).toArray), ("governed", governedJson D rows)]).toArray)])
+
 def explainCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let doc ← VE.Service.Document.split (← VE.Bridge.stringField j "document") (senses := true)
   let ps := VE.Service.Document.listedProfiles (doc.front.getObjValD "environment")
   unless ps.contains "scope@0" do throw "UnsupportedProfile: the scope mode explains a document that lists scope@0"
   let _ ← VE.Compose.gateOf VE.Compose.profileTable ps
-  let D ← readSplit doc
-  let rows ← explainWithin cellLimit D doc.source
-  pure (VE.Route.Wire.ok id [("rows", .arr (rows.map rowJson).toArray), ("governed", governedJson D rows)])
+  answerOf id (← readSplit doc) doc.source
 
 def runCaseReported (j : Json) : Json :=
   match explainCase j with
