@@ -1,1 +1,2 @@
 - `ve/senses/__init__.py` — Sense pack transport and review provenance.
+- `ve/senses/display.py` — The senses display: each candidate of an open unit as English, rendered and re-read under its own projection.
