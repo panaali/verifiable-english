@@ -49,6 +49,8 @@ runs. That row should also count runs where `say` logged "seeded from <item>'s p
 - `zsh test-harness/branchcache/test-branchcache.zsh` (installed files): 54 passed, 0 failed (it was 38/0 before; 16
   tests added).
 - `zsh test-harness/maclast/test-maclast.zsh`: 29 passed, 0 failed (it stubs gha-select.sh; run as a neighbour check).
+- VE selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at 9cdb60e8: "ran on ve-mac-1
+  (aarch64) ... 724s; exit=0; failed/error ids=0".
 
 ## Seeded bugs (each on a temporary copy, run through test-branchcache.zsh, then discarded)
 
