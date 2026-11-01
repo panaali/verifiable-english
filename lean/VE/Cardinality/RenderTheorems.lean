@@ -1,5 +1,5 @@
 import VE.Cardinality.Render
-import VE.Question.Strings
+import VE.Readings.Names
 
 /-! What the paraphrase's renderer guarantees (`Render.lean`): the DRI's rule of 2026-10-27 as a theorem. Every
 rendering action charges exactly the bytes it appends and never ends past `maxBytes` (`Charges`), so the reply's
@@ -14,12 +14,15 @@ def Charges (m : M Unit) : Prop :=
   ∀ n out n' out', m (n, out) = .ok ((), n', out') → n ≤ maxBytes →
     n' ≤ maxBytes ∧ out'.utf8ByteSize + n = out.utf8ByteSize + n'
 
+theorem size_append (a b : String) : (a ++ b).utf8ByteSize = a.utf8ByteSize + b.utf8ByteSize :=
+  VE.Readings.utf8ByteSize_go_append a.data b.data
+
 theorem emit_charges (s : String) : Charges (emit s) := by
   intro n out n' out' h _
   simp only [emit] at h
   split at h
   · cases h
-  · cases h; rw [VE.Question.Str.utf8ByteSize_append]; omega
+  · cases h; rw [size_append]; omega
 
 theorem emit_over {s : String} {n : Nat} (out : String) (h : maxBytes < n + s.utf8ByteSize) :
     emit s (n, out) = .error tooLong := by

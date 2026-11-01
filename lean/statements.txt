@@ -6862,6 +6862,10 @@ theorem VE.Cardinality.Render.pure_charges
   VE.Cardinality.Render.Charges (Pure.pure ())
   -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render
   -- expr 742251224
+theorem VE.Cardinality.Render.size_append
+  ∀ (a b : String), (a ++ b).utf8ByteSize = a.utf8ByteSize + b.utf8ByteSize
+  -- uses
+  -- expr 4246812807
 theorem VE.Cardinality.Render.term_charges
   ∀ (w : VE.Cardinality.CardEnv) (t : VE.Time.QTerm), VE.Cardinality.Render.Charges (VE.Cardinality.Render.term w t)
   -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.term@VE.Cardinality.Render VE.Time.QTerm@VE.Time.Syntax
