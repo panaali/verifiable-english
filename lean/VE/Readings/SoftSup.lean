@@ -1,5 +1,6 @@
 import VE.Readings.SoftVerdicts
 import VE.Readings.SupExtra
+import VE.Readings.BarQuiet
 
 /-! SC-10's first part (docs/spec/rd-9-soft-chain.md 13.1, 13.3): superposition under the soft completion.
 
@@ -688,5 +689,168 @@ theorem fillPremisesSD_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superp
   refine imp_congr_right fun hvs => ?_
   simp only [VE.Formula.denote, VE.Norms.pairConflict]
   rw [← hrn, ← hmn, hO r hr vs (hrs ▸ hvs), hO m hm vs (hms ▸ hvs), hG r hr vs (hrs ▸ hvs), hG m hm vs (hms ▸ hvs)]
+
+/-! ## `supX` at an encoded base
+
+An image's premises read the base as the choice's read its filled pull. A premise of a candidate not chosen holds:
+a sufficient condition and a coherence premise by the candidate's bit, a necessary condition because the slot's quiet
+premise empties the candidate's `excepted` table (S-4, S-4′). -/
+
+section X
+variable {N : NDoc} (hh : Hyps N.D) {c : Choice} (hc : Compatible N.D c)
+include hh
+
+theorem pullF_pull (S : VE.Structure.{u}) {p : String} (hp : (choiceEnvFull N.D c).predicates p ≠ none)
+    (vs : List S.Carrier) : (pullF N c S).relation p vs ↔ (pull N.D c S).relation p vs := by
+  have h2 : (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))).predicates p ≠ none := by
+    unfold choiceEnvFull at hp
+    rw [envAt_size_pred, choice_correlate hh] at hp
+    rw [envAt_size_pred, VE.NormDefaults.fill_E]
+    exact fillEnv_ne_none _ (by rw [choiceU_D hh]; exact hp)
+  exact ⟨fun h => ⟨hp, h.2⟩, fun h => ⟨h2, h.2⟩⟩
+
+theorem pullF_denote_frame (S : VE.Structure.{u}) (φ : VE.Formula) (Γ : List String)
+    (hφ : φ.WellFormed N.D.frame.soft.E Γ) (ρ : VE.Valuation S) : φ.denote S ρ ↔ φ.denote (pullF N c S) ρ :=
+  denote_relation_congr N.D.frame.soft.E S _ (fun p ss hp vs _ =>
+    ((pullF_pull hh S (choiceEnvFull_frame hh c (by simp [hp])) vs).trans (pull_frame hh c S (by simp [hp]) vs)).symm)
+    φ Γ ρ ((VE.check_iff_wellFormed _ _ _).mpr hφ)
+
+theorem exceptedF_pullF (S : VE.Structure.{u}) {M : SoftNode} (hM : M ∈ (choiceDoc N.D c).1.soft.T.nodes)
+    (hd : M.mode = .default) (ρ : VE.Valuation S) :
+    (VE.SoftNorms.exceptedF (sup N.D).1.soft (fmap N.D c M)).denote S ρ ↔
+      (VE.SoftNorms.exceptedF (choiceDoc N.D c).1.soft M).denote (pullF N c S) ρ := by
+  refine (excepted_pull hh c S hM hd ρ).trans
+    (atom_congr (pull N.D c S) (pullF N c S).relation _ _ _ (fun vs => (pullF_pull hh S ?_ vs).symm) ρ)
+  apply choiceEnvFull_decision hh c
+  simp only [VE.SoftNorms.decisionNames, VE.SoftNorms.decisions, VE.SoftNorms.exceptedDecisions, List.map_append,
+    List.mem_append, List.mem_map, List.mem_filter]
+  exact Or.inl (Or.inl ⟨_, ⟨M, ⟨hM, by simp [hd]⟩, rfl⟩, rfl⟩)
+
+include hc in
+/-- An unchosen candidate's gate is false where the bits encode `c`. -/
+theorem pattern_off {S : VE.Structure.{u}} (he : Encodes N.D c S) {m i : Nat} (hm : m < N.D.sets.length)
+    (hi : i < N.D.sets[m].candidates.length) (hno : c.index N.D.sets[m].id ≠ some i) (ρ : VE.Valuation S) :
+    ¬ (pattern (m + 1) (setSize N.D m) i).denote S ρ := by
+  intro hχ
+  have hilt : i < setSize N.D m := by rw [setSize_eq hm]; exact hi
+  rw [pattern_rho, ← choiceAtom_eq (findIdx_of_nodup hh.nodup hm) hilt] at hχ
+  have hmem := (he _ (List.getElem_mem hm) i (by rw [← setSize_eq hm]; exact hilt)).mp hχ
+  have hcm : complete N.D c = true := by
+    simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  have := index_of_mem ((complete_map hcm) ▸ hh.nodup) hmem
+  exact hno this
+
+/-- An image's exception is the rule's own, each sufficient condition gated by a formula true at an encoded base. -/
+theorem fmap_exception_eq {S : VE.Structure.{u}} (he : Encodes N.D c S) {M : SoftNode}
+    (hM : M ∈ (choiceDoc N.D c).1.soft.T.nodes) :
+    ∃ g : VE.Formula → VE.Formula, (∀ C ρ, (g C).denote S ρ ↔ C.denote S ρ) ∧
+      (fmap N.D c M).exception = M.exception.map (fun e => { e with sufficient := e.sufficient.map g }) := by
+  rcases (mem_choiceNodes N.D c M).mp hM with hf | ⟨u, cs, hu⟩ | ⟨m, hm, i, a, hi, ha, hcc⟩
+  · exact ⟨id, fun _ _ => Iff.rfl, by rw [fmap_frame hh c hf]; cases M.exception <;> simp⟩
+  · exact ⟨id, fun _ _ => Iff.rfl, by rw [fmap_fixed hh c hu]; cases h : M.exception <;> simp [copyOver, h]⟩
+  · rw [fmap_chosen hh c hm hi ha hcc]
+    have hilt : i < N.D.sets[m].candidates.length := (List.getElem?_eq_some_iff.mp ha).1
+    have hχ : ∀ ρ, (pattern (m + 1) (setSize N.D m) i).denote S ρ := fun ρ => by
+      rw [pattern_rho, ← choiceAtom_eq (findIdx_of_nodup hh.nodup hm) (by rw [setSize_eq hm]; exact hilt)]
+      exact (he _ (List.getElem_mem hm) i hilt).mpr (mem_of_index hi)
+    exact ⟨fun C => .and C (pattern (m + 1) (setSize N.D m) i),
+      fun C ρ => ⟨fun h => h.1, fun h => ⟨h, hχ ρ⟩⟩, rfl⟩
+
+include hc in
+theorem exc_pullF {B : VE.Structure.{u}} (he : Encodes N.D c B) (hsl : Sat B (slotP N.D)) :
+    Sat B (VE.SoftNorms.excPremises (sup N.D).1.soft) ↔
+      Sat (pullF N c B) (VE.SoftNorms.excPremises (choiceDoc N.D c).1.soft) := by
+  have img : ∀ M ∈ (choiceDoc N.D c).1.soft.T.nodes,
+      (∀ a ∈ VE.SoftNorms.excPremisesOf (sup N.D).1.soft (fmap N.D c M), a.denote B []) ↔
+        ∀ a ∈ VE.SoftNorms.excPremisesOf (choiceDoc N.D c).1.soft M, a.denote (pullF N c B) [] := by
+    intro M hM
+    obtain ⟨g, hg, hex⟩ := fmap_exception_eq hh he hM
+    obtain ⟨hpred, _, hmode, _, _, _⟩ := fmap_fields hh c hM
+    have hss : VE.SoftNorms.sortsOf (sup N.D).1.soft (fmap N.D c M).pred =
+        VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft M.pred := by rw [hpred, sortsOf_eq c]
+    unfold VE.SoftNorms.excPremisesOf
+    rw [hmode, hex]
+    cases hm : M.mode with
+    | strict => simp
+    | default =>
+      cases hE : M.exception with
+      | none => simp
+      | some e =>
+        have hC : ∀ C ∈ e.sufficient ++ e.necessary, ∀ ρ, C.denote B ρ ↔ C.denote (pullF N c B) ρ :=
+          fun C hC ρ => by obtain ⟨Γ, hw⟩ := choice_exc_typed hh c hM hE C hC; exact pullF_denote_frame hh B C Γ hw ρ
+        simp only [Option.map_some, List.forall_mem_append, List.forall_mem_map, List.map_map, Function.comp,
+          VE.Norms.bindAll_denote_nil, hss]
+        refine and_congr (forall₂_congr fun C hCm => forall_congr' fun vs => ?_)
+          (forall₂_congr fun C hCm => forall_congr' fun vs => ?_) <;>
+        rw [← VE.Norms.tupleTyped_relation B (pullF N c B).relation] <;>
+        refine imp_congr_right fun _ => ?_ <;>
+        simp only [VE.Formula.denote] <;>
+        rw [exceptedF_pullF hh B hM hm]
+        · rw [hg, hC C (List.mem_append_left _ hCm)]
+        · rw [hC C (List.mem_append_right _ hCm)]
+  have hq : Sat B (choicePremises N.D) := fun a ha => hsl a (by
+    simp only [slotP, slotLabelled, choicePremises, VE.Compose.Labelled.formulas, List.map_append,
+      List.mem_append] at ha ⊢
+    exact Or.inl (Or.inr ha))
+  simp only [Sat, VE.SoftNorms.excPremises, List.forall_mem_flatMap]
+  constructor
+  · intro hX M hM
+    exact (img M hM).mp (hX _ (fmap_mem hh c hM))
+  · intro hY M' hM'
+    by_cases hi : ∃ M ∈ (choiceDoc N.D c).1.soft.T.nodes, fmap N.D c M = M'
+    · obtain ⟨M, hM, rfl⟩ := hi
+      exact (img M hM).mpr (hY M hM)
+    simp only [not_exists, not_and] at hi
+    rcases (mem_supNodes N.D M').mp hM' with hf | ⟨u, F, cs, hu, rfl⟩ | ⟨m, hm, i', a, K, ha, hac, rfl⟩
+    · exact absurd (fmap_frame hh c hf) (hi M' ((mem_choiceNodes N.D c M').mpr (Or.inl hf)))
+    · exact absurd (fmap_fixed hh c hu) (hi F ((mem_choiceNodes N.D c F).mpr (Or.inr (Or.inl ⟨u, cs, hu⟩))))
+    obtain ⟨i, hci, _⟩ := choice_index hh hc hm
+    have hii : c.index N.D.sets[m].id ≠ some i' := fun h => by
+      rw [hci] at h; cases h
+      exact hi K ((mem_choiceNodes N.D c K).mpr (Or.inr (Or.inr ⟨m, hm, i', a, hci, ha, hac⟩)))
+        (fmap_chosen hh c hm hci ha hac)
+    have hilt : i' < N.D.sets[m].candidates.length := (List.getElem?_eq_some_iff.mp ha).1
+    have hoff := pattern_off hh hc he hm hilt hii
+    unfold VE.SoftNorms.excPremisesOf
+    cases hmK : (gateNorm N.D m i' K).mode with
+    | strict => simp
+    | default =>
+      cases hE : K.exception with
+      | none => simp [gateNorm, hE]
+      | some e =>
+        simp only [gateNorm, hE, Option.map_some, List.forall_mem_append, List.forall_mem_map,
+          VE.Norms.bindAll_denote_nil]
+        refine ⟨fun C _ vs _ h => absurd h.2 (hoff _), fun C _ vs hvs hx => absurd hx ?_⟩
+        -- the slot's quiet premise empties the unchosen candidate's `excepted` table
+        let M' := gateNorm N.D m i' K
+        have hd : M'.mode = .default := hmK
+        have hg : (GenKey.excepted M'.name none, VE.SoftNorms.exceptedName M',
+            VE.SoftNorms.sortsOf (correlate (sup N.D).1) M'.pred) ∈ genKeys (sup N.D).1 := by
+          obtain ⟨_, _, hb, hs⟩ := noRights_parts hh.noRights
+          have hlines : VE.Rights.linesOf (sup N.D).1 = [] := by simp [VE.Rights.linesOf, hs, VE.Rights.linesAux]
+          have hk : keyedNodes (sup N.D).1 = (sup N.D).1.soft.T.nodes.map (fun N => (N, N.name, none)) := by
+            simp [keyedNodes, hlines, VE.Rights.barNodes_nil _ hb]
+          simp only [genKeys, hk, List.mem_append]
+          refine Or.inl (Or.inl (Or.inl (Or.inl (Or.inl ?_))))
+          exact List.mem_map.mpr ⟨(M', M'.name, none), List.mem_filter.mpr ⟨List.mem_map.mpr ⟨M', hM', rfl⟩,
+            by simp [hd]⟩, rfl⟩
+        have ho : origin N.D M'.name = some (m, i') :=
+          origin_qualify hm hilt ha hac (d := ("rule", K.name)) (by simp [VE.Compose.Content.declared])
+        have hown : owners N.D (GenKey.excepted M'.name none) = [[(m, i')]] := by simp [owners, ho]
+        have hQ := quiet_holds hq hg (by simp [fixedGenerated, hown]) (by
+          simp only [hown, List.mem_singleton]; rintro o rfl x hx
+          simp only [List.mem_singleton] at hx; subst hx; exact ⟨hm, by rw [setSize_eq hm]; exact hilt⟩)
+        simp only [quietFormula, hown, VE.Norms.bindAll_denote_nil, sup_correlate hh] at hQ
+        intro hx'
+        have h1 := hQ vs hvs hx'
+        simp only [List.map_cons, List.map_nil, disj_denote, conj_denote, List.mem_singleton, forall_eq,
+          exists_eq_left] at h1
+        unfold atomAt at h1
+        rw [List.getElem?_eq_getElem hm, choiceAtom_rho] at h1
+        simp only [Option.map_some, Option.getD_some] at h1
+        rw [choiceAtom_eq (findIdx_of_nodup hh.nodup hm) (by rw [setSize_eq hm]; exact hilt)] at h1
+        exact hoff _ h1
+
+end X
 
 end VE.Readings
