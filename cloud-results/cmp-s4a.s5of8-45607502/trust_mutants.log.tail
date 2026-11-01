@@ -1,0 +1,16 @@
+trust_mutants: 14 definitions, 260 mutants (32 to run), 4 jobs, base 4ccceb183c4c
+SURVIVOR lean/VE/Discourse/Positions.lean:179 VE.Discourse.slotsIn (S, trusted) lt-eq: < -> =
+SURVIVOR lean/VE/Discourse/Positions.lean:241 VE.Structure.withConstant (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Discourse/Positions.lean:415)
+SURVIVOR lean/VE/Discourse/Positions.lean:249 VE.Discourse.slotMeaning (S, trusted) arm-false: ∃ a, S.constant c = some a ∧ slotMeaning A xs (S.withConstant (slotName m.id) a) ρ -> False (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+UNKNOWN lean/VE/Discourse/Positions.lean:184 VE.Discourse.rowsAt (S, trusted) list-empty: (rowOf E ctx m) -> [] (lean/VE/Discourse/Positions.lean:184: Type mismatch)
+UNKNOWN lean/VE/Discourse/Positions.lean:252 VE.Discourse.slotMeaning (S, trusted) eq-le: = -> ≤ (lean/VE/Discourse/Positions.lean:252: failed to synthesize)
+UNKNOWN lean/VE/Discourse/Positions.lean:184 VE.Discourse.rowsAt (S, trusted) list-empty: (rowOf E ctx m).map (m, ·) -> [] (lean/VE/Discourse/Positions.lean:184: Type mismatch)
+SURVIVOR lean/VE/Discourse/Positions.lean:252 VE.Discourse.slotMeaning (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:255 VE.Discourse.slotMeaning (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:38 VE.Discourse.positions (S, trusted) list-first: ls -> (ls.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:381)
+SURVIVOR lean/VE/Discourse/Positions.lean:31 VE.Discourse.linePositions (S, trusted) list-first: l.recognition.toList -> (l.recognition.toList.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:327, lean/VE/Discourse/Positions.lean:357)
+SURVIVOR lean/VE/Discourse/Positions.lean:24 VE.Discourse.nodePositions (S, trusted) list-last: N.carveOuts -> (N.carveOuts.reverse.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:289, lean/VE/Discourse/Positions.lean:311)
+SURVIVOR lean/VE/Discourse/Positions.lean:253 VE.Discourse.slotMeaning (S, trusted) list-drop-first: [a] -> ([a].drop 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+trust_mutants: 17 KILLED, 9 SURVIVOR, 3 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 228 OTHER SHARD in 187 s
+trust_mutants: S, trusted: 17 KILLED, 9 SURVIVOR, 3 UNKNOWN, 3 INVALID, 228 OTHER SHARD
+trust_mutants: steps: wall plan 10.4 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 5 s, mutants 164.8 s, cleanup 2.5 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 4.9 s (1), mutant_builds 306.2 s (47), mutant_checks 72.8 s (30), stage_controls 32.5 s (4), mutant_probes 217.9 s (17)
