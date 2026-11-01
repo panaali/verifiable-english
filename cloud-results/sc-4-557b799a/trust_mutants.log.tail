@@ -1,0 +1,4 @@
+VE/Scope/FarExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/Scope/Theorems.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Scope/FarExamples.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Scope/Theorems.lean; rerun tools/lean_statements.py
