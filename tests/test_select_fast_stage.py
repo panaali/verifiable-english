@@ -98,6 +98,7 @@ def test_the_lean_build_is_done_only_when_every_lake_command_needs_no_build(monk
 
 def stage(monkeypatch, cov, plan, *, fresh, code=1):
     ran = []
+    monkeypatch.delenv("VE_LEAN_PREBUILT", raising=False)  # a selected run that built Lean exports it to its units
     monkeypatch.setattr(select_tests, "resolve_map", lambda base, path: cov)
     monkeypatch.setattr(select_tests, "lean_built", lambda plan, env: fresh)
     monkeypatch.setattr(select_tests, "run_plain",
