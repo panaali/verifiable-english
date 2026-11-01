@@ -54446,6 +54446,42 @@ theorem VE.Time.yearStart_succ
   ∀ (y : Nat), VE.Time.yearStart (y + 1) = VE.Time.yearStart y + VE.Time.yearLen y
   -- uses VE.Time.yearLen@VE.Time.Calendar VE.Time.yearStart@VE.Time.Calendar
   -- expr 4111558053
+theorem VE.Weighing.ZoneFixtures.admissible0
+  VE.Weighing.AdmissibleCompletion VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"]
+    VE.Weighing.ZoneFixtures.rec0 VE.Weighing.ZoneFixtures.R0
+  -- uses VE.Formula@VE.Syntax VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rec0@VE.Weighing.ZoneExamples
+  -- expr 1847459517
+theorem VE.Weighing.ZoneFixtures.notAdmissible1
+  ¬VE.Weighing.AdmissibleCompletion VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"]
+      [(("q", [1]), Bool.true)] VE.Weighing.ZoneFixtures.R0
+  -- uses VE.Formula@VE.Syntax VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples
+  -- expr 1964855677
+theorem VE.Weighing.ZoneFixtures.not_outcome_y
+  ¬VE.Weighing.OutcomeIn VE.Weighing.ZoneFixtures.U0 VE.Weighing.ZoneFixtures.M0 VE.Weighing.ZoneFixtures.R0
+      VE.Weighing.ZoneFixtures.ry [0]
+  -- uses VE.Weighing.OutcomeIn@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.ry@VE.Weighing.ZoneExamples
+  -- expr 2699856340
+theorem VE.Weighing.ZoneFixtures.not_settled_vacuous
+  ∀ (b : Bool),
+    ¬VE.Weighing.SettledZ VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"]
+        [(("q", [0]), Bool.true), (("q", [0]), Bool.false)] VE.Weighing.ZoneFixtures.rx [0] b
+  -- uses VE.Formula@VE.Syntax VE.Weighing.SettledZ@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rx@VE.Weighing.ZoneExamples
+  -- expr 2046324761
+theorem VE.Weighing.ZoneFixtures.not_settled_x_false
+  ¬VE.Weighing.SettledZ VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"] VE.Weighing.ZoneFixtures.rec0
+      VE.Weighing.ZoneFixtures.rx [0] Bool.false
+  -- uses VE.Formula@VE.Syntax VE.Weighing.SettledZ@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rec0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rx@VE.Weighing.ZoneExamples
+  -- expr 4076060093
+theorem VE.Weighing.ZoneFixtures.outcome_x
+  VE.Weighing.OutcomeIn VE.Weighing.ZoneFixtures.U0 VE.Weighing.ZoneFixtures.M0 VE.Weighing.ZoneFixtures.R0
+    VE.Weighing.ZoneFixtures.rx [0]
+  -- uses VE.Weighing.OutcomeIn@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rx@VE.Weighing.ZoneExamples
+  -- expr 447395517
+theorem VE.Weighing.ZoneFixtures.settled_x
+  VE.Weighing.SettledZ VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"] VE.Weighing.ZoneFixtures.rec0
+    VE.Weighing.ZoneFixtures.rx [0] Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Weighing.SettledZ@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rec0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rx@VE.Weighing.ZoneExamples
+  -- expr 2850788321
 theorem VE.WireContract.expandAll_views
   ∀ (h g : VE.WireContract.Hooks),
     h.view = g.view →
