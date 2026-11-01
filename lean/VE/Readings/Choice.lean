@@ -409,22 +409,47 @@ def copies (D : Doc) (n : String) : List String :=
   match D.sets.findIdx? (fun R => (interfaceOf R).contains ("rule", n)) with
   | some m => (List.range (setSize D m)).map (fun i => qualify (position D m i) n)
   | none => [n]
+/-- The qualified copies of an interface right name, in candidate order; [n] for a fixed name (plan 2.3: a
+    limitation scope naming a set-declared right names all its copies). -/
+def rightCopies (D : Doc) (n : String) : List String :=
+  match D.sets.findIdx? (fun R => (interfaceOf R).contains ("right", n)) with
+  | some m => (List.range (setSize D m)).map (fun i => qualify (position D m i) n)
+  | none => [n]
 def copyOver (D : Doc) (N : SoftNode) : SoftNode := { N with over := N.over.flatMap (copies D) }
 def copyCites (D : Doc) (cs : List (String × List String)) : List (String × List String) :=
   cs.flatMap (fun kv => if kv.1.startsWith "over:" then (copies D (kv.1.drop 5)).map (fun n => ("over:" ++ n, kv.2))
                         else [kv])
-/-- A fixed content in sup D: its over and cites entries on interface names name every copy (S2a: norms). -/
+/-- A fixed source line: the over lists of its rules name every copy. -/
+def copyLine (D : Doc) (S : VE.Rights.SourceLine) : VE.Rights.SourceLine :=
+  { S with norm := S.norm.map (copyOver D), liberty := S.liberty.map (copyOver D),
+           recognition := S.recognition.map (copyOver D) }
+def copyScope (D : Doc) (L : VE.Rights.Limitation) : VE.Rights.Limitation :=
+  { L with scope := L.scope.map (·.flatMap (rightCopies D)) }
+/-- A fixed content in sup D: its over and cites entries and its limitation scope on interface names name every
+    copy. A fixed right_lines unit on a set-declared right, copied once per candidate, is cmp-s2bb's (F8). -/
 def copyContent (D : Doc) : Content → Content
   | .norm N => .norm (copyOver D N)
+  | .right R => .right { R with lines := R.lines.map (copyLine D) }
+  | .rightLines r ls => .rightLines r (ls.map (copyLine D))
+  | .limitation L => .limitation (copyScope D L)
   | c => c
-/-- Candidate i of the m-th set: gated and qualified (S2a: assertions and norms; the other contents are S2b's). -/
+/-- A candidate's rule: its name qualified, its guard and every sufficient exception condition gated. -/
+def gateNorm (D : Doc) (m i : Nat) (N : SoftNode) : SoftNode :=
+  { N with name := qualify (position D m i) N.name, guard := .and N.guard (pattern (m + 1) (setSize D m) i),
+           exception := N.exception.map (fun e =>
+             { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) }) }
+/-- A candidate's source line: each of its rules gated, both units of a power. -/
+def gateLine (D : Doc) (m i : Nat) (S : VE.Rights.SourceLine) : VE.Rights.SourceLine :=
+  { S with norm := S.norm.map (gateNorm D m i), liberty := S.liberty.map (gateNorm D m i),
+           recognition := S.recognition.map (gateNorm D m i) }
+/-- Candidate i of the m-th set: gated and qualified (plan 2.3). A right keeps its holder guard; a right_lines
+    unit keeps its target; a limitation's scope names every copy of a set-declared right. -/
 def gateContent (D : Doc) (m i : Nat) : Content → Content
   | .assertion φ => .assertion (.implies (pattern (m + 1) (setSize D m) i) φ)
-  | .norm N =>
-    let χ := pattern (m + 1) (setSize D m) i
-    .norm { N with name := qualify (position D m i) N.name, guard := .and N.guard χ,
-                   exception := N.exception.map (fun e => { e with sufficient := e.sufficient.map (fun C => .and C χ) }) }
-  | c => c
+  | .norm N => .norm (gateNorm D m i N)
+  | .right R => .right { R with name := qualify (position D m i) R.name, lines := R.lines.map (gateLine D m i) }
+  | .rightLines r ls => .rightLines r (ls.map (gateLine D m i))
+  | .limitation L => .limitation { copyScope D L with name := qualify (position D m i) L.name }
 def supFrame (D : Doc) : RightsDoc := { D.frame with soft := { D.frame.soft with E := choiceEnv D D.frame.soft.E } }
 def sup (D : Doc) : RightsDoc × List VE.Formula :=
   (D.items.foldl (fun acc it => match it with
@@ -441,10 +466,23 @@ def sup (D : Doc) : RightsDoc × List VE.Formula :=
 
 /-- The owner contributed by one comparable colliding pair of sup D: the origins of its two rules; none when they
     are different candidates of one set (never chosen together). -/
-def pairOwner (D : Doc) (M N : SoftNode) : Option (List (Nat × Nat)) :=
-  match origin D M.name, origin D N.name with
+def jointOwner (o o' : Option (Nat × Nat)) : Option (List (Nat × Nat)) :=
+  match o, o' with
   | some o, some o' => if o.1 == o'.1 && o.2 != o'.2 then none else some (VE.SoftNorms.dedup [o, o'])
   | o, o' => some (o.toList ++ o'.toList)
+def pairOwner (D : Doc) (M N : SoftNode) : Option (List (Nat × Nat)) := jointOwner (origin D M.name) (origin D N.name)
+/-- The owners of lim_{L,a} and of its cond predicates (edit 1): per line instance of sup D in scope of a limitation
+    named L with act a, the limitation's origin and the line rule's origin together. -/
+def limOwners (D : Doc) (L a : String) : List (List (Nat × Nat)) :=
+  let X := (sup D).1
+  VE.SoftNorms.dedup ((X.limits.filter (·.name == L)).flatMap (fun L' => (VE.Rights.linesOf X).filterMap (fun RN =>
+    if VE.Rights.inScope X L' RN.1 RN.2 && VE.Rights.lineAct X RN.2 == a
+    then jointOwner (origin D L) (origin D (ruleOf RN.2)) else none)))
+/-- The owners of aimed_m (edit 1, F21): the origins of the liberty instances of sup D on m; the fixed bar's node
+    itself is correlate's, unchanged. -/
+def aimedOwners (D : Doc) (m : String) : List (List (Nat × Nat)) :=
+  VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN =>
+    if VE.Rights.libertyKind RN.2 && RN.2.node.pred == m then some (origin D (ruleOf RN.2)).toList else none))
 /-- The owners of a generated key of sup D (1.5); [] among them means the fixed units alone generate it. -/
 def owners (D : Doc) (k : GenKey) : List (List (Nat × Nat)) :=
   match k with
@@ -455,7 +493,9 @@ def owners (D : Doc) (k : GenKey) : List (List (Nat × Nat)) :=
     VE.SoftNorms.dedup ((VE.SoftNorms.collidingPairs X).filterMap (fun (M, N) =>
       if VE.SoftNorms.Comparable X M N && VE.SoftNorms.pairTriple X M N == (a, L, H) then pairOwner D M N
       else none))
-  | _ => [[]]                                                                -- lim, cond, aimed: S2b
+  | .lim L a => limOwners D L a
+  | .cond L a _ => limOwners D L a
+  | .aimed m => aimedOwners D m
 def fixedGenerated (D : Doc) (k : GenKey) : Bool := (owners D k).contains []
 def atomAt (D : Doc) (o : Nat × Nat) : VE.Formula := choiceAtom D ((D.sets[o.1]?.map (·.id)).getD "") o.2
 def quietFormula (D : Doc) (g : GenKey × String × List String) : VE.Formula :=
@@ -475,7 +515,7 @@ def quietOwn (D : Doc) : Labelled :=
       let mine := (genKeys (sup D).1).filter (fun g => owners D g.1 == [[(m, i)]])
       if mine.isEmpty then none
       else some ("readings:" ++ label R ++ ":" ++ toString i ++ ":quiet", conj (mine.map (quietFormula D))))))
-/-- The source key in colon form (1.6); only the outweighs form is reachable in S2a. -/
+/-- The source key in colon form (1.6). -/
 def keyLabel : GenKey → String
   | .excepted r b => "excepted:" ++ r ++ (b.map (":" ++ ·)).getD ""
   | .off r b π => "off:" ++ r ++ (b.map (":" ++ ·)).getD "" ++ ":" ++ π
@@ -587,10 +627,22 @@ def qName (D : Doc) (c : Choice) (n : String) : String :=
     | some i => if declaresRule D m i n then qualify (position D m i) n else n
     | none => n
   | none => n
+/-- qName for a limitation name: the set that declares it, qualified by the candidate c takes there. -/
+def qLim (D : Doc) (c : Choice) (n : String) : String :=
+  match D.sets.findIdx? (fun R => (declaredBy R).contains ("limitation", n)) with
+  | some m => match c.index ((D.sets[m]?.map (·.id)).getD "") with
+    | some i => if (((D.sets[m]?).bind (·.candidates[i]?)).bind (·.content)).any
+        (fun x => x.declared.contains ("limitation", n)) then qualify (position D m i) n else n
+    | none => n
+  | none => n
+/-- A key of c's document as sup D names it: rule and limitation names qualified; act keys, condition names and
+    the bar's permission predicates are the author's and stay. -/
 def qualifyKey (D : Doc) (c : Choice) : GenKey → GenKey
   | .excepted r b => .excepted (qName D c r) b
   | .off r b π => .off (qName D c r) b π
-  | k => k                                                                   -- outweighs; lim, cond, aimed: S2b
+  | .lim L a => .lim (qLim D c L) a
+  | .cond L a k => .cond (qLim D c L) a k
+  | k => k                                                                   -- outweighs, aimed
 def nameMap (D : Doc) (c : Choice) (p : String) : String :=
   match (genKeys (choiceDoc D c).1).find? (·.2.1 == p) with
   | some g => (((genKeys (sup D).1).find? (·.1 == qualifyKey D c g.1)).map (·.2.1)).getD p
