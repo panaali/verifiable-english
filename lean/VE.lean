@@ -223,6 +223,8 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Sources
+import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
