@@ -165,21 +165,21 @@ pub struct Source {
     pub sha256: &'static str,
 }
 
-// The engine (wire-contract.md 2.1 to 2.8, as `lean/VE/WireContract/Engine.lean`). Rust has no hook,
-// classifier or view, so the instance that needs one defers (2.8). Every unit of work is charged against
-// a stated limit (the DRI's rule of 2026-10-27): one unit for each node of the root (read once, by the
-// domain pass), each instance and guard literal, each value a pattern step reaches, each node a
-// comparison, a type form or a rendering reads. A run that would spend more is refused with
-// `ResourceLimit`, never cut short into an outcome.
+// The engine (wire-contract.md 2.1 to 2.8), as `lean/VE/WireContract/Engine.lean` runs a table. Rust has no
+// hook, classifier or view: the instance that needs one defers (2.8), so Rust never enters a view and a
+// record has no `inner_path`. Every unit of work is charged against a stated limit (the DRI's rule of
+// 2026-10-27): one unit for each node of the root, read once by the domain pass; each instance and guard
+// literal; each value a pattern step reaches; each node a comparison or a type form reads. A run that would
+// spend more is refused with `ResourceLimit`, never cut short into an outcome. The record is built once per
+// run, from values the domain pass has charged.
 
 use crate::{Error, Result};
 use serde_json::{Map, Value as Json, json};
 
 /// The units one run may spend.
 pub const MAX_ENGINE_UNITS: u64 = 1_000_000;
-const MAX_SAFE: u64 = (1 << 53) - 1;
 
-/// 2.8: the outcome of one run. A fault holds its record (2.7).
+/// 2.8: the outcome of one run; a fault holds its record (2.7).
 #[derive(Clone, Debug, PartialEq)]
 pub enum Outcome {
     Fault(Json),
@@ -189,11 +189,21 @@ pub enum Outcome {
 
 type Pointer = Vec<String>;
 
+/// Under resolved includes (2.7): their ids, outermost first, their sites concatenated and the outermost `as`.
 struct Frame {
     ids: Vec<&'static str>,
     site: Pointer,
-    view_site: Option<Pointer>,
     recode: Option<(&'static str, &'static str)>,
+}
+
+/// Where an instance is read (2.6): its phase, root, enclosing items (innermost first), the earlier items
+/// of the innermost group, and its frame.
+struct At<'a> {
+    phase: &'static str,
+    root: &'a Json,
+    items: &'a [Pointer],
+    earlier: &'a [Pointer],
+    frame: &'a Frame,
 }
 
 struct Run<'t> {
@@ -202,50 +212,34 @@ struct Run<'t> {
     limit: u64,
 }
 
-/// 2.1, 2.6 to 2.8 within `MAX_ENGINE_UNITS`.
+/// The outcome within `MAX_ENGINE_UNITS`.
 pub fn run(table: &Table, root: &Json) -> Result<Outcome> {
     run_within(table, root, MAX_ENGINE_UNITS).map(|(outcome, _)| outcome)
 }
 
-/// The outcome and the units spent, within `limit` units. The root is the one the unit's adapter
-/// built (2.1); a root outside the domain of 2.1 is evaluated no further and is `clean`, as in Python.
+/// The outcome and the units spent, within `limit`. The root is the one the unit's adapter built (2.1);
+/// a root outside the domain of 2.1 is evaluated no further and is `clean`, as in Python.
 pub fn run_within(table: &Table, root: &Json, limit: u64) -> Result<(Outcome, u64)> {
     let mut r = Run { table, left: limit, limit };
-    if !r.domain(root, 0)? {
-        return Ok((Outcome::Clean, limit - r.left));
-    }
-    let top = Frame { ids: vec![], site: vec![], view_site: None, recode: None };
-    for phase in table.phases {
-        let outcome = r.entries(phase.name, root, &[], &[], &top, phase.entries)?;
-        if outcome != Outcome::Clean {
-            return Ok((outcome, limit - r.left));
+    let mut outcome = Outcome::Clean;
+    if r.domain(root, 0)? {
+        let top = Frame { ids: vec![], site: vec![], recode: None };
+        for phase in table.phases {
+            let at = At { phase: phase.name, root, items: &[], earlier: &[], frame: &top };
+            outcome = r.entries(&at, phase.entries)?;
+            if outcome != Outcome::Clean {
+                break;
+            }
         }
     }
-    Ok((Outcome::Clean, limit - r.left))
-}
-
-/// 2.8, the overlay without Lean: the legacy rejection with `diagnostic` set to the fault record, the
-/// residual record when the run is clean, or the deferred record. `code`, `message` and `span` are kept.
-pub fn overlay(table: &Table, legacy: Error, outcome: &Outcome) -> Error {
-    let diagnostic = match outcome {
-        Outcome::Fault(record) => record.clone(),
-        Outcome::Clean => json!({"contract": table.contract, "revision": table.revision, "check": "residual",
-            "phase": "residual", "code": table.residual.0, "class": table.residual.1, "path": "",
-            "text": legacy.message, "args": {}}),
-        Outcome::Deferred(id) => json!({"contract": table.contract, "revision": table.revision,
-            "deferred": id, "text": legacy.message}),
-    };
-    Error { diagnostic: Some(diagnostic), ..legacy }
+    Ok((outcome, limit - r.left))
 }
 
 fn step<'r>(v: &'r Json, token: &str) -> Option<&'r Json> {
     match v {
         Json::Object(m) => m.get(token),
-        Json::Array(a) => {
-            let index = !token.is_empty()
-                && token.bytes().all(|b| b.is_ascii_digit())
-                && (token.len() == 1 || !token.starts_with('0'));
-            if index { token.parse::<usize>().ok().and_then(|n| a.get(n)) } else { None }
+        Json::Array(a) if token == "0" || !token.starts_with('0') && token.bytes().all(|b| b.is_ascii_digit()) => {
+            token.parse::<usize>().ok().and_then(|n| a.get(n))
         }
         _ => None,
     }
@@ -264,6 +258,7 @@ fn children(v: &Json) -> Vec<(String, &Json)> {
     }
 }
 
+/// 2.1: the pointer formed from the base and the tokens, without looking at the value.
 fn concrete(items: &[Pointer], p: &Pattern) -> Pointer {
     let mut out = match p.base {
         Base::Root => vec![],
@@ -280,6 +275,7 @@ fn pointer_text(p: &[String]) -> String {
     p.iter().map(|s| format!("/{}", s.replace('~', "~0").replace('/', "~1"))).collect()
 }
 
+/// A contract literal equals a value of the same JSON type and content (2.1).
 fn scalar(v: &Json, x: &Value) -> bool {
     match (v, x) {
         (Json::Bool(a), Value::Bool(b)) => a == b,
@@ -295,25 +291,19 @@ fn admits(atom: Atom, v: &Json) -> bool {
 }
 
 fn strings(v: &Json) -> Option<Vec<&str>> {
-    match v {
-        Json::Array(xs) => xs.iter().map(Json::as_str).collect(),
-        _ => None,
-    }
+    v.as_array().and_then(|xs| xs.iter().map(Json::as_str).collect())
 }
 
 fn keys(v: &Json) -> Option<Vec<&str>> {
     v.as_object().map(|m| m.keys().map(String::as_str).collect())
 }
 
-fn in_ranges(ranges: &[(u32, u32)], c: char) -> bool {
-    ranges.iter().any(|&(lo, hi)| lo <= c as u32 && c as u32 <= hi)
-}
-
 /// 2.4: a string is in a lexical class when every member present is satisfied.
 fn name_admits(k: &NameClass, s: &str) -> bool {
+    let within = |rs: &[(u32, u32)], c: char| rs.iter().any(|&(lo, hi)| lo <= c as u32 && c as u32 <= hi);
     let size = s.len() as u64;
-    k.first.is_none_or(|rs| s.chars().next().is_some_and(|c| in_ranges(rs, c)))
-        && k.rest.is_none_or(|rs| s.chars().skip(1).all(|c| in_ranges(rs, c)))
+    k.first.is_none_or(|rs| s.chars().next().is_some_and(|c| within(rs, c)))
+        && k.rest.is_none_or(|rs| s.chars().skip(1).all(|c| within(rs, c)))
         && k.min_bytes.is_none_or(|n| n <= size)
         && k.max_bytes.is_none_or(|n| size <= n)
         && k.forbid_prefix.iter().all(|x| !s.starts_with(x))
@@ -321,19 +311,47 @@ fn name_admits(k: &NameClass, s: &str) -> bool {
         && k.one_of.is_none_or(|xs| xs.contains(&s))
 }
 
-/// The longest prefix of whole characters within 80 bytes in UTF-8, with `...` added, for a longer string.
-fn cut(s: String) -> String {
-    if s.len() <= 80 {
-        return s;
-    }
-    let mut end = 0;
-    for (i, c) in s.char_indices() {
-        if i + c.len_utf8() > 80 {
-            break;
+/// The `json` renderer (2.7): compact, keys in code point order, every character below U+0020 written
+/// `\u00xx` in lower case; longer than 80 bytes in UTF-8, the longest prefix of whole characters within
+/// 80 bytes and `...`.
+fn render_json(v: &Json) -> String {
+    let compact = v.to_string();
+    let mut out = String::new();
+    let mut chars = compact.chars();
+    while let Some(c) = chars.next() {
+        out.push(c);
+        if c == '\\' {
+            let next = chars.next().unwrap_or_default();
+            match "btnfr".find(next) {
+                Some(n) => out.push_str(["u0008", "u0009", "u000a", "u000c", "u000d"][n]),
+                None => out.push(next),
+            }
         }
-        end = i + c.len_utf8();
     }
-    format!("{}...", &s[..end])
+    if out.len() <= 80 {
+        return out;
+    }
+    let end = out.char_indices().map(|(i, c)| i + c.len_utf8()).take_while(|&e| e <= 80).last().unwrap_or(0);
+    format!("{}...", &out[..end])
+}
+
+/// 2.7: the closed renderer set; each is total, and an absent value renders as `""`.
+fn render(r: Renderer, v: Option<&Json>) -> String {
+    match (r, v) {
+        (_, None) => String::new(),
+        (Renderer::Raw, Some(Json::String(s))) => s.clone(),
+        (Renderer::List, Some(v)) if strings(v).is_some() => {
+            let mut ss = strings(v).unwrap_or_default();
+            ss.sort();
+            ss.join(", ")
+        }
+        (_, Some(v)) => render_json(v),
+    }
+}
+
+/// 2.7: each include id and a `/`, outermost first, then the id.
+fn check_id(frame: &Frame, id: &str) -> String {
+    frame.ids.iter().copied().chain([id]).collect::<Vec<_>>().join("/")
 }
 
 impl Run<'_> {
@@ -345,52 +363,36 @@ impl Run<'_> {
         Ok(())
     }
 
-    /// 2.1: the restricted values, each node charged once.
+    /// 2.1: the restricted values (nesting within 256, integers from 0 to 2^53 - 1), each node charged once.
     fn domain(&mut self, v: &Json, depth: usize) -> Result<bool> {
         self.charge(1)?;
-        if depth > 256 {
-            return Ok(false);
+        let inner: Vec<&Json> = match v {
+            Json::Number(n) => return Ok(n.as_u64().is_some_and(|n| n < 1 << 53)),
+            Json::Array(xs) => xs.iter().collect(),
+            Json::Object(m) => m.values().collect(),
+            _ => vec![],
+        };
+        for x in inner {
+            if depth >= 256 || !self.domain(x, depth + 1)? {
+                return Ok(false);
+            }
         }
-        Ok(match v {
-            Json::Null | Json::Bool(_) => true,
-            Json::Number(n) => n.as_u64().is_some_and(|n| n <= MAX_SAFE),
-            Json::String(_) => true,
-            Json::Array(xs) => {
-                for x in xs {
-                    if !self.domain(x, depth + 1)? {
-                        return Ok(false);
-                    }
-                }
-                true
-            }
-            Json::Object(m) => {
-                for x in m.values() {
-                    if !self.domain(x, depth + 1)? {
-                        return Ok(false);
-                    }
-                }
-                true
-            }
-        })
+        Ok(true)
     }
 
     /// 2.1: every match of a pattern with its pointer, in order.
     fn collect<'r>(&mut self, root: &'r Json, items: &[Pointer], p: &Pattern) -> Result<Vec<(Pointer, &'r Json)>> {
-        let start = match p.base {
-            Base::Root => Some((vec![], root)),
+        let mut found: Vec<(Pointer, &'r Json)> = match p.base {
+            Base::Root => vec![(vec![], root)],
             Base::Item(n) => match items.get(n as usize) {
-                None => None,
+                None => vec![],
                 Some(at) => {
-                    let mut v = Some(root);
-                    for token in at {
-                        self.charge(1)?;
-                        v = v.and_then(|v| step(v, token));
-                    }
-                    v.map(|v| (at.clone(), v))
+                    self.charge(at.len() as u64)?;
+                    let v = at.iter().try_fold(root, |v, token| step(v, token));
+                    v.map(|v| (at.clone(), v)).into_iter().collect()
                 }
             },
         };
-        let mut found: Vec<(Pointer, &'r Json)> = start.into_iter().collect();
         for s in p.steps {
             let mut next = Vec::new();
             for (at, v) in found {
@@ -399,11 +401,7 @@ impl Run<'_> {
                     Step::Star => children(v),
                 };
                 self.charge(reached.len() as u64)?;
-                for (token, w) in reached {
-                    let mut p = at.clone();
-                    p.push(token);
-                    next.push((p, w));
-                }
+                next.extend(reached.into_iter().map(|(token, w)| ([at.as_slice(), &[token]].concat(), w)));
             }
             found = next;
         }
@@ -417,33 +415,23 @@ impl Run<'_> {
     /// 2.1: the same JSON type and content, one unit per node read.
     fn same(&mut self, a: &Json, b: &Json) -> Result<bool> {
         self.charge(1)?;
-        Ok(match (a, b) {
-            (Json::Array(x), Json::Array(y)) => {
-                if x.len() != y.len() {
-                    return Ok(false);
+        let pairs: Vec<(&Json, &Json)> = match (a, b) {
+            (Json::Array(x), Json::Array(y)) if x.len() == y.len() => x.iter().zip(y).collect(),
+            (Json::Object(x), Json::Object(y)) if x.len() == y.len() => {
+                match x.iter().map(|(k, v)| y.get(k).map(|w| (v, w))).collect() {
+                    Some(pairs) => pairs,
+                    None => return Ok(false),
                 }
-                for (v, w) in x.iter().zip(y) {
-                    if !self.same(v, w)? {
-                        return Ok(false);
-                    }
-                }
-                true
             }
-            (Json::Object(x), Json::Object(y)) => {
-                if x.len() != y.len() {
-                    return Ok(false);
-                }
-                for (k, v) in x {
-                    match y.get(k) {
-                        Some(w) if self.same(v, w)? => {}
-                        _ => return Ok(false),
-                    }
-                }
-                true
+            (Json::Array(_) | Json::Object(_), _) | (_, Json::Array(_) | Json::Object(_)) => return Ok(false),
+            _ => return Ok(a == b),
+        };
+        for (v, w) in pairs {
+            if !self.same(v, w)? {
+                return Ok(false);
             }
-            (Json::Array(_) | Json::Object(_), _) | (_, Json::Array(_) | Json::Object(_)) => false,
-            _ => a == b,
-        })
+        }
+        Ok(true)
     }
 
     /// 2.3: a value of one of the forms.
@@ -466,12 +454,12 @@ impl Run<'_> {
     }
 
     /// 2.3: every literal of the guard holds.
-    fn guard(&mut self, root: &Json, items: &[Pointer], literals: &[Lit]) -> Result<bool> {
+    fn guard(&mut self, at: &At, literals: &[Lit]) -> Result<bool> {
         for lit in literals {
             self.charge(1)?;
             let (Lit::Present(p) | Lit::Absent(p) | Lit::Equals(p, _) | Lit::Differs(p, _) | Lit::IsType(p, _)
                 | Lit::NotType(p, _)) = lit;
-            let found = self.resolve(root, items, p)?.map(|(_, v)| v);
+            let found = self.resolve(at.root, at.items, p)?.map(|(_, v)| v);
             let holds = match (lit, found) {
                 (Lit::Present(_), w) => w.is_some(),
                 (Lit::Absent(_), w) => w.is_none(),
@@ -489,10 +477,10 @@ impl Run<'_> {
         Ok(true)
     }
 
-    fn entries(&mut self, phase: &'static str, root: &Json, items: &[Pointer], earlier: &[Pointer], frame: &Frame,
-               list: &'static [Entry]) -> Result<Outcome> {
+    /// 2.6: the instances of each entry, in list order; the first that does not hold is the outcome.
+    fn entries(&mut self, at: &At, list: &'static [Entry]) -> Result<Outcome> {
         for entry in list {
-            let outcome = self.entry(phase, root, items, earlier, frame, entry)?;
+            let outcome = self.entry(at, entry)?;
             if outcome != Outcome::Clean {
                 return Ok(outcome);
             }
@@ -500,113 +488,91 @@ impl Run<'_> {
         Ok(Outcome::Clean)
     }
 
-    /// 2.6: the instances of one entry, evaluated in order; the first that does not hold is the outcome.
-    fn entry(&mut self, phase: &'static str, root: &Json, items: &[Pointer], earlier: &[Pointer], frame: &Frame,
-             entry: &'static Entry) -> Result<Outcome> {
+    fn entry(&mut self, at: &At, entry: &'static Entry) -> Result<Outcome> {
         match entry {
             Entry::Check(c) => {
                 self.charge(1)?;
-                if !self.guard(root, items, c.guard)? {
+                if !self.guard(at, c.guard)? {
                     return Ok(Outcome::Clean);
                 }
-                self.eval(phase, root, items, earlier, frame, c)
+                self.eval(at, c)
             }
+            // Item-major: every instance of one item before the next item's.
             Entry::Each(_, over, guard, inner) => {
-                if !self.guard(root, items, guard)? {
+                if !self.guard(at, guard)? {
                     return Ok(Outcome::Clean);
                 }
-                let group: Vec<Pointer> = self.collect(root, items, over)?.into_iter().map(|(p, _)| p).collect();
+                let group: Vec<Pointer> = self.collect(at.root, at.items, over)?.into_iter().map(|(p, _)| p).collect();
                 for (n, p) in group.iter().enumerate() {
-                    let mut within = vec![p.clone()];
-                    within.extend_from_slice(items);
-                    let outcome = self.entries(phase, root, &within, &group[..n], frame, inner)?;
+                    let items = [std::slice::from_ref(p), at.items].concat();
+                    let outcome = self.entries(&At { items: &items, earlier: &group[..n], ..*at }, inner)?;
                     if outcome != Outcome::Clean {
                         return Ok(outcome);
                     }
                 }
                 Ok(Outcome::Clean)
             }
-            Entry::Scope(id, at, view, recode, inner) => {
-                let Some((p, v)) = self.resolve(root, items, at)? else {
-                    return Ok(Outcome::Clean);
-                };
-                if view.is_some() {
-                    return Ok(Outcome::Deferred(check_id(frame, id)));
+            // A scope whose view Rust lacks contributes one instance, which defers (2.8).
+            Entry::Scope(id, loc, view, recode, inner) => match self.resolve(at.root, at.items, loc)? {
+                None => Ok(Outcome::Clean),
+                Some(_) if view.is_some() => Ok(Outcome::Deferred(check_id(at.frame, id))),
+                Some((p, v)) => {
+                    let frame = Frame {
+                        ids: [at.frame.ids.as_slice(), &[*id]].concat(),
+                        site: [at.frame.site.as_slice(), &p].concat(),
+                        recode: at.frame.recode.or(*recode),
+                    };
+                    self.entries(&At { root: v, items: &[], earlier: &[], frame: &frame, ..*at }, inner)
                 }
-                let mut site = frame.site.clone();
-                site.extend(p);
-                let inside = Frame {
-                    ids: frame.ids.iter().copied().chain([*id]).collect(),
-                    site,
-                    view_site: frame.view_site.clone(),
-                    recode: frame.recode.or(*recode),
-                };
-                self.entries(phase, v, &[], &[], &inside, inner)
-            }
+            },
         }
     }
 
-    /// 2.4, 2.5: one instance. A hook or classifier defers.
-    fn eval(&mut self, phase: &'static str, root: &Json, items: &[Pointer], earlier: &[Pointer], frame: &Frame,
-            c: &'static Check) -> Result<Outcome> {
-        let target = self.resolve(root, items, &c.loc)?;
-        let extra = match c.kind {
-            Kind::Hook(_) | Kind::Classifier(..) => return Ok(Outcome::Deferred(check_id(frame, c.id))),
-            Kind::MaxCount(of, limit) => {
-                let n = self.collect(root, items, &of)?.len() as u64;
+    /// 2.4, 2.5: one instance; a hook or classifier defers.
+    fn eval(&mut self, at: &At, c: &'static Check) -> Result<Outcome> {
+        let target = self.resolve(at.root, at.items, &c.loc)?;
+        let (p, extra) = match (c.kind, &target) {
+            (Kind::Hook(_) | Kind::Classifier(..), _) => return Ok(Outcome::Deferred(check_id(at.frame, c.id))),
+            (Kind::MaxCount(of, limit), _) => {
+                let n = self.collect(at.root, at.items, &of)?.len() as u64;
                 if n <= limit {
                     return Ok(Outcome::Clean);
                 }
-                let place = Instance { phase, root, items, earlier, frame, check: c };
-                let found = target.map(|(_, v)| v);
-                return self.finding(&place, &concrete(items, &c.loc), found, &[("count", json!(n)), ("limit", json!(limit))]);
+                (concrete(at.items, &c.loc), vec![("count", json!(n)), ("limit", json!(limit))])
             }
-            _ => match target {
+            (_, None) => return Ok(Outcome::Clean),
+            (_, Some((p, v))) => match self.fails_on(at, c, p, v)? {
                 None => return Ok(Outcome::Clean),
-                Some((ref p, v)) => match self.fails_on(root, items, earlier, c, p, v)? {
-                    None => return Ok(Outcome::Clean),
-                    Some(extra) => extra,
-                },
+                Some(extra) => (p.clone(), extra),
             },
         };
-        let (p, v) = target.expect("a failing declarative check has a target");
-        let place = Instance { phase, root, items, earlier, frame, check: c };
-        self.finding(&place, &p, Some(v), &extra)
+        self.finding(at, c, &p, target.map(|(_, v)| v), &extra)
     }
 
     /// 2.4: the extra arguments of a failing declarative check on its present target `v` at `p`, or `None`.
-    fn fails_on(&mut self, root: &Json, items: &[Pointer], earlier: &[Pointer], c: &Check, p: &Pointer, v: &Json)
-                -> Result<Option<Vec<(&'static str, Json)>>> {
+    fn fails_on(&mut self, at: &At, c: &Check, p: &Pointer, v: &Json) -> Result<Option<Vec<(&'static str, Json)>>> {
         let bad = |b: bool| if b { Some(vec![]) } else { None };
+        let over = |n: u64, m: Option<u64>| m.filter(|m| n < *m).map(|m| vec![("count", json!(m)), ("limit", json!(n))]);
         Ok(match c.kind {
             Kind::HasType(t) => bad(!self.has_type(t, v)?),
-            Kind::ExactKeys(ks) => bad(keys(v).is_none_or(|a| !(a.iter().all(|x| ks.contains(x))
-                && ks.iter().all(|x| a.contains(x))))),
-            Kind::Keys(req, opt) => bad(keys(v).is_none_or(|a| !(req.iter().all(|x| a.contains(x))
-                && a.iter().all(|x| req.contains(x) || opt.contains(x))))),
+            Kind::ExactKeys(ks) => {
+                bad(keys(v).is_none_or(|a| !(a.iter().all(|x| ks.contains(x)) && ks.iter().all(|x| a.contains(x)))))
+            }
+            Kind::Keys(req, opt) => bad(keys(v).is_none_or(|a| {
+                !(req.iter().all(|x| a.contains(x)) && a.iter().all(|x| req.contains(x) || opt.contains(x)))
+            })),
             Kind::Const(x) => bad(!scalar(v, &x)),
             Kind::OneOf(xs) => bad(!xs.iter().any(|x| scalar(v, x))),
-            Kind::MaxItems(n) => {
-                let m = match v {
-                    Json::Array(xs) => Some(xs.len() as u64),
-                    Json::Object(m) => Some(m.len() as u64),
-                    _ => None,
-                };
-                m.filter(|m| n < *m).map(|m| vec![("count", json!(m)), ("limit", json!(n))])
-            }
-            Kind::MaxBytes(n) => match v {
-                Json::String(s) if n < s.len() as u64 => Some(vec![("count", json!(s.len())), ("limit", json!(n))]),
-                _ => None,
-            },
+            Kind::MaxItems(n) => over(n, v.as_array().map(Vec::len).or(v.as_object().map(Map::len)).map(|m| m as u64)),
+            Kind::MaxBytes(n) => over(n, v.as_str().map(|s| s.len() as u64)),
             Kind::Name(k, false) => bad(v.as_str().is_none_or(|s| !name_admits(&k, s))),
             Kind::Name(k, true) => bad(!name_admits(&k, p.last().map_or("", String::as_str))),
             Kind::SortedUnique => bad(strings(v).is_some_and(|ss| ss.windows(2).any(|w| w[0] >= w[1]))),
             Kind::UniqueSoFar => {
                 let mut seen = false;
-                for e in earlier {
-                    let mut at = vec![e.clone()];
-                    at.extend_from_slice(&items[1.min(items.len())..]);
-                    if let Some((_, w)) = self.resolve(root, &at, &c.loc)?
+                for e in at.earlier {
+                    let items = [std::slice::from_ref(e), &at.items[1.min(at.items.len())..]].concat();
+                    if let Some((_, w)) = self.resolve(at.root, &items, &c.loc)?
                         && self.same(w, v)?
                     {
                         seen = true;
@@ -617,7 +583,7 @@ impl Run<'_> {
             }
             Kind::DeclaredIn(set) => {
                 let mut declared = false;
-                for (_, w) in self.collect(root, items, &set)? {
+                for (_, w) in self.collect(at.root, at.items, &set)? {
                     if self.same(v, w)? {
                         declared = true;
                         break;
@@ -630,8 +596,7 @@ impl Run<'_> {
             Kind::RequiresItem(x) | Kind::ExcludesItem(x) => match v {
                 Json::Array(xs) => {
                     self.charge(xs.len() as u64)?;
-                    let present = xs.iter().any(|w| scalar(w, &x));
-                    bad(present == matches!(c.kind, Kind::ExcludesItem(_)))
+                    bad(xs.iter().any(|w| scalar(w, &x)) == matches!(c.kind, Kind::ExcludesItem(_)))
                 }
                 _ => None,
             },
@@ -640,141 +605,34 @@ impl Run<'_> {
     }
 
     /// 2.7: the record of an instance that does not hold, at the local pointer `p`.
-    fn finding(&mut self, i: &Instance, p: &Pointer, target: Option<&Json>, extra: &[(&'static str, Json)])
+    fn finding(&mut self, at: &At, c: &Check, p: &Pointer, target: Option<&Json>, extra: &[(&str, Json)])
                -> Result<Outcome> {
-        let c = i.check;
-        let mut text = String::new();
-        let mut args = Map::new();
+        let (mut text, mut args) = (String::new(), Map::new());
         for piece in c.text {
-            match piece {
-                Piece::Lit(s) => text.push_str(s),
-                Piece::Arg(name, renderer) => {
-                    let rendered = match *name {
-                        "value" => self.render(*renderer, target)?,
-                        "key" => {
-                            let key = i.items.first().and_then(|p| p.last()).cloned().unwrap_or_default();
-                            self.render(*renderer, Some(&Json::String(key)))?
-                        }
-                        "index" => self.render(*renderer, Some(&json!(i.earlier.len())))?,
-                        _ => match extra.iter().find(|(n, _)| n == name) {
-                            Some((_, v)) => self.render(*renderer, Some(v))?,
-                            None => match c.args.iter().find(|(n, _)| n == name) {
-                                Some((_, at)) => {
-                                    let found = self.resolve(i.root, i.items, at)?;
-                                    self.render(*renderer, found.map(|(_, v)| v))?
-                                }
-                                None => String::new(),
-                            },
-                        },
-                    };
-                    text.push_str(&rendered);
-                    args.entry(name.to_string()).or_insert(Json::String(rendered));
+            let (name, renderer) = match piece {
+                Piece::Lit(s) => {
+                    text.push_str(s);
+                    continue;
                 }
-            }
+                Piece::Arg(name, renderer) => (*name, *renderer),
+            };
+            let key = at.items.first().and_then(|p| p.last()).cloned().unwrap_or_default();
+            let named = extra.iter().find(|(n, _)| *n == name).map(|(_, v)| v.clone());
+            let value = match (name, named, c.args.iter().find(|(n, _)| *n == name)) {
+                ("value", ..) => target.cloned(),
+                ("key", ..) => Some(Json::String(key)),
+                ("index", ..) => Some(json!(at.earlier.len())),
+                (_, Some(v), _) => Some(v),
+                (_, None, Some((_, loc))) => self.resolve(at.root, at.items, loc)?.map(|(_, v)| v.clone()),
+                (_, None, None) => None,
+            };
+            let rendered = render(renderer, value.as_ref());
+            text.push_str(&rendered);
+            args.entry(name).or_insert(Json::String(rendered));
         }
-        let (code, cls) = i.frame.recode.unwrap_or((c.code, c.cls));
-        let mut local = i.frame.site.clone();
-        local.extend(p.iter().cloned());
-        let path = match &i.frame.view_site {
-            Some(site) => {
-                args.insert("inner_path".into(), Json::String(pointer_text(&local)));
-                pointer_text(site)
-            }
-            None => pointer_text(&local),
-        };
+        let (code, cls) = at.frame.recode.unwrap_or((c.code, c.cls));
         Ok(Outcome::Fault(json!({"contract": self.table.contract, "revision": self.table.revision,
-            "check": check_id(i.frame, c.id), "phase": i.phase, "code": code, "class": cls, "path": path,
-            "text": text, "args": args})))
+            "check": check_id(at.frame, c.id), "phase": at.phase, "code": code, "class": cls,
+            "path": pointer_text(&[at.frame.site.as_slice(), p].concat()), "text": text, "args": args})))
     }
-
-    /// 2.7: the closed renderer set; every renderer is total and an absent value renders as `""`.
-    fn render(&mut self, r: Renderer, v: Option<&Json>) -> Result<String> {
-        let Some(v) = v else { return Ok(String::new()) };
-        match (r, v) {
-            (Renderer::Raw, Json::String(s)) => Ok(s.clone()),
-            (Renderer::List, _) if strings(v).is_some() => {
-                let mut ss = strings(v).unwrap_or_default();
-                self.charge(ss.len() as u64)?;
-                ss.sort();
-                Ok(ss.join(", "))
-            }
-            _ => {
-                let mut out = String::new();
-                self.encode(v, &mut out)?;
-                Ok(cut(out))
-            }
-        }
-    }
-
-    /// Compact JSON, keys in code point order, `"`, `\` and characters below U+0020 escaped (`\u00xx`);
-    /// it stops once past 80 bytes, which is all `cut` reads.
-    fn encode(&mut self, v: &Json, out: &mut String) -> Result<()> {
-        self.charge(1)?;
-        if out.len() > 80 {
-            return Ok(());
-        }
-        match v {
-            Json::Null => out.push_str("null"),
-            Json::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
-            Json::Number(n) => out.push_str(&n.to_string()),
-            Json::String(s) => {
-                out.push('"');
-                for c in s.chars() {
-                    if out.len() > 80 {
-                        return Ok(());
-                    }
-                    match c {
-                        '"' => out.push_str("\\\""),
-                        '\\' => out.push_str("\\\\"),
-                        c if (c as u32) < 0x20 => out.push_str(&format!("\\u{:04x}", c as u32)),
-                        c => out.push(c),
-                    }
-                }
-                out.push('"');
-            }
-            Json::Array(xs) => {
-                out.push('[');
-                for (n, x) in xs.iter().enumerate() {
-                    if n > 0 {
-                        out.push(',');
-                    }
-                    self.encode(x, out)?;
-                    if out.len() > 80 {
-                        return Ok(());
-                    }
-                }
-                out.push(']');
-            }
-            Json::Object(_) => {
-                out.push('{');
-                for (n, (k, x)) in children(v).into_iter().enumerate() {
-                    if n > 0 {
-                        out.push(',');
-                    }
-                    self.encode(&Json::String(k), out)?;
-                    out.push(':');
-                    self.encode(x, out)?;
-                    if out.len() > 80 {
-                        return Ok(());
-                    }
-                }
-                out.push('}');
-            }
-        }
-        Ok(())
-    }
-}
-
-struct Instance<'a> {
-    phase: &'static str,
-    root: &'a Json,
-    items: &'a [Pointer],
-    earlier: &'a [Pointer],
-    frame: &'a Frame,
-    check: &'static Check,
-}
-
-/// 2.7: each include id and a `/`, outermost first, then the check's or the include's id.
-fn check_id(frame: &Frame, id: &str) -> String {
-    frame.ids.iter().copied().chain([id]).collect::<Vec<_>>().join("/")
 }

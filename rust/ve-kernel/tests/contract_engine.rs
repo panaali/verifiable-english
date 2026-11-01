@@ -1,4 +1,4 @@
-//! The Rust engine on the engine corpus (docs/spec/wire-contract-s4-2.md 7 and 9, F5 to F7): every fault
+//! The Rust engine on the engine corpus (docs/spec/wire-contract-s4-2.md 7 and 9, F5 and F6): every fault
 //! and `clean` record is byte-identical (canonical JSON) to `conformance/wire-contract/engine-golden.json`;
 //! every deferred outcome is counted under Rust's deferred share and never compared.
 #[allow(dead_code)]
@@ -7,7 +7,7 @@ mod corpus_tables;
 use serde_json::{Value as Json, json};
 use std::path::Path;
 use ve_kernel::contract::*;
-use ve_kernel::{Error, canonical_json};
+use ve_kernel::canonical_json;
 
 fn read(relative: &str) -> Json {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").join(relative);
@@ -57,15 +57,10 @@ fn engine_corpus_equals_the_golden() {
     let (mut golden, mut expected, mut deferred, mut lines) = (0, 0, Vec::new(), String::new());
     for (unit, id, case, hand) in cases() {
         let outcome = run(table(&unit), &root(&unit, &case)).unwrap();
-        // Spec 6: the error the overlay gives for a legacy rejection, as `ve jsonl` would serialise it.
-        let error = overlay(table(&unit), Error::new("InvalidInput", "legacy rejection"), &outcome);
-        if let Outcome::Fault(record) = &outcome {
-            assert_eq!(error.diagnostic.as_ref(), Some(record), "{id}");
-        }
         let row = match &outcome {
-            Outcome::Fault(_) => json!({"id": id, "outcome": "fault", "error": error}),
-            Outcome::Clean => json!({"id": id, "outcome": "clean", "error": error}),
-            Outcome::Deferred(at) => json!({"id": id, "outcome": "deferred", "deferred": at, "error": error}),
+            Outcome::Fault(record) => json!({"id": id, "outcome": "fault", "record": record}),
+            Outcome::Clean => json!({"id": id, "outcome": "clean"}),
+            Outcome::Deferred(at) => json!({"id": id, "outcome": "deferred", "deferred": at}),
         };
         lines.push_str(&format!("{row}\n"));
         let rust = match outcome {
@@ -125,21 +120,16 @@ fn every_deferred_outcome_names_what_rust_lacks() {
     }
 }
 
-/// 2.8 and spec 6 (F7): the overlay sets `diagnostic`; an error without one serialises without the member.
+/// `inner@0` has no hook: Rust gives Lean's outcomes on it (tests/test_wire_contract_lean.py
+/// `test_inner_contract_alone`), `clean` included.
 #[test]
-fn the_overlay_sets_the_diagnostic_and_an_error_without_one_has_none() {
-    let legacy = Error::new("InvalidInput", "legacy says no");
-    assert_eq!(serde_json::to_value(&legacy).unwrap(), json!({"code": "InvalidInput", "message": "legacy says no"}));
-    let defer = table("defer@0");
-    let deferred = overlay(defer, legacy.clone(), &Outcome::Deferred("d2".into()));
-    assert_eq!(serde_json::to_value(&deferred).unwrap(), json!({"code": "InvalidInput", "message": "legacy says no",
-        "diagnostic": {"contract": "defer@0", "revision": 1, "deferred": "d2", "text": "legacy says no"}}));
-    let residual = overlay(defer, legacy.clone(), &Outcome::Clean).diagnostic.unwrap();
-    assert_eq!(residual, json!({"contract": "defer@0", "revision": 1, "check": "residual", "phase": "residual",
-        "code": "DEFER_INVALID_INPUT", "class": "InvalidInput", "path": "", "text": "legacy says no", "args": {}}));
-    let fault = run(defer, &json!({"v": "x", "w": "x", "note": null})).unwrap();
-    let Outcome::Fault(record) = &fault else { panic!("E33 is a fault") };
-    assert_eq!(overlay(defer, legacy, &fault).diagnostic.as_ref(), Some(record));
+fn a_unit_without_hooks_is_clean_or_gives_lean_s_record() {
+    let inner = table("inner@0");
+    assert_eq!(run(inner, &json!({"x": 1, "ys": ["u"]})).unwrap(), Outcome::Clean);
+    let Outcome::Fault(record) = run(inner, &json!({"x": true, "ys": null})).unwrap() else { panic!("b1 fails") };
+    assert_eq!(canonical(&record), canonical(&json!({"contract": "inner@0", "revision": 1, "check": "b1",
+        "phase": "body", "code": "INNER_BAD", "class": "InvalidInput", "path": "/x", "text": "Inner: x is true",
+        "args": {"value": "true"}})));
 }
 
 /// A well-formed `demo@0` document whose table has `n` entries; the run defers at `3.4`.
