@@ -58,20 +58,21 @@ theorem admissible0 : AdmissibleCompletion U0 [] M0 ["q"] rec0 R0 := by
 theorem notAdmissible1 : ¬ AdmissibleCompletion U0 [] M0 ["q"] [(("q", [1]), true)] R0 :=
   fun ⟨_, h, _⟩ => by simpa [R0] using (h ("q", [1]) true (List.mem_singleton_self _)).mpr rfl
 
+-- Each outcome is computed through `OutcomeIn` by `decide`: `x` is allowed by default, `y` is not regulated.
 theorem outcome_x : OutcomeIn U0 M0 R0 rx [0] := by
-  show (VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "x").denote _ _
-  rw [show VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "x" = .not .bottom by decide]
+  unfold OutcomeIn; generalize hφ : VE.Norms.outcomeBase _ _ = φ
+  obtain rfl : φ = .not .bottom := by rw [← hφ]; decide
   simp [VE.Formula.denote]
 
 theorem not_outcome_y : ¬ OutcomeIn U0 M0 R0 ry [0] := by
-  show ¬ (VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "y").denote _ _
-  rw [show VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "y" = .bottom by decide]
+  unfold OutcomeIn; generalize hφ : VE.Norms.outcomeBase _ _ = φ
+  obtain rfl : φ = .bottom := by rw [← hφ]; decide
   simp [VE.Formula.denote]
 
 theorem settled_x : SettledZ U0 [] M0 ["q"] rec0 rx [0] true := by
   refine ⟨⟨R0, admissible0⟩, fun R _ => ?_⟩
-  show (VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "x").denote _ _ ↔ _
-  rw [show VE.Norms.outcomeBase (VE.NormDefaults.fill U0) "x" = .not .bottom by decide]
+  unfold OutcomeIn; generalize hφ : VE.Norms.outcomeBase _ _ = φ
+  obtain rfl : φ = .not .bottom := by rw [← hφ]; decide
   simp [VE.Formula.denote]
 
 theorem not_settled_x_false : ¬ SettledZ U0 [] M0 ["q"] rec0 rx [0] false :=

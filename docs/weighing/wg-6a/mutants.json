@@ -1,0 +1,92 @@
+[
+ {
+  "id": "decisionAtoms-skips-last-tuple",
+  "definition": "decisionAtoms",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "(allTuples M ss).map (p, ·)",
+   "(allTuples M ss).dropLast.map (p, ·)"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:20: Expression",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:20: Expression"
+  ],
+  "killed": true
+ },
+ {
+  "id": "openNames-drops-unsaidNames",
+  "definition": "openNames",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "decisionNames L.D ++ unsaidNames L.U",
+   "decisionNames L.D"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:23: Expression",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:23: Expression"
+  ],
+  "killed": true
+ },
+ {
+  "id": "AdmissibleCompletion-record-flipped",
+  "definition": "AdmissibleCompletion",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "(R a.1 a.2 ↔ b = true)",
+   "(R a.1 a.2 ↔ b = false)"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:47: unsolved goals",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:47: unsolved goals",
+   "lean/VE/Weighing/ZoneExamples.lean:59: Application type mismatch: The argument",
+   "lean/VE/Weighing/ZoneExamples.lean:86: Function expected at"
+  ],
+  "killed": true
+ },
+ {
+  "id": "OutcomeIn-wrong-name",
+  "definition": "OutcomeIn",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "(outcomeBase (fill U) r.name)",
+   "(outcomeBase (fill U) \"\")"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:64: Tactic `decide` proved that the proposition",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:64: Tactic `decide` proved that the proposition",
+   "lean/VE/Weighing/ZoneExamples.lean:75: Tactic `decide` proved that the proposition"
+  ],
+  "killed": true
+ },
+ {
+  "id": "SettledZ-existence-ignores-record",
+  "definition": "SettledZ",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "(∃ R, AdmissibleCompletion U X M opens record R) ∧",
+   "(∃ R, AdmissibleCompletion U X M opens [] R) ∧"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:73: Application type mismatch: The argument",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:73: Application type mismatch: The argument",
+   "lean/VE/Weighing/ZoneExamples.lean:85: unsolved goals",
+   "lean/VE/Weighing/ZoneExamples.lean:85: unsolved goals"
+  ],
+  "killed": true
+ },
+ {
+  "id": "ZoneUnknown-no-branch",
+  "definition": "ZoneUnknown",
+  "file": "lean/VE/Weighing/Zone.lean",
+  "mutation": [
+   "  | branch (assignment",
+   "  -- | branch (assignment"
+  ],
+  "test": "lean/VE/Weighing/ZoneExamples.lean:91: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
+  "tests": [
+   "lean/VE/Weighing/ZoneExamples.lean:91: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
+   "lean/VE/Weighing/ZoneExamples.lean:92: Unknown constant `VE.Weighing.ZoneUnknown.branch`"
+  ],
+  "killed": true
+ }
+]
