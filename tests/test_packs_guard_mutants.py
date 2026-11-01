@@ -76,8 +76,8 @@ MUTANTS = [
     ("coherenceLabels", "(VE.SoftNorms.collidingPairs D).map (fun (M, N) => VE.SoftNorms.Wire.cohLabel M N)",
      "((VE.SoftNorms.collidingPairs D).map (fun (M, N) => VE.SoftNorms.Wire.cohLabel M N)).take 0"),
     ("xWithout", "(fun a => !drop.contains a.1)", "(fun a => drop.contains a.1)"),
-    ("softPack", "softLabelledU U D, []⟩", "[], []⟩"),
-    ("rightsPack", "VE.Rights.limPremisesLabelled R, []⟩", "[], []⟩"),
+    ("softPack", "softLabelledU U D, [], []⟩", "[], [], []⟩"),
+    ("rightsPack", "VE.Rights.limPremisesLabelled R, [], []⟩", "[], [], []⟩"),
     # pk-1b: the kind table. The first is the spec's seeded bug (a row runs although its pack is absent).
     ("dispatch", "if ids.contains i then", "if true then"),
     ("dispatch", "| none => pure none", "| none => throw \"no row\""),
