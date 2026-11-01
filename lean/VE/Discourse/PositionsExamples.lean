@@ -2,10 +2,10 @@ import VE.Discourse.Positions
 
 /-! # Fixtures of 14.8 that need no composed admission (docs/spec/discourse.md 14.8)
 
-Over 10's α: sorts `service`, `person`; `web_api : service`, `alice : person` (and `bob : person` for a plural); `review_required`, `deployed`, `api :
-service`, `owns : person × service`, `notify_required : person`. Each content is the one the fence compiler yields
-with its slots (14.3 step 2); the fence compiler and the steps around it (S4-5, S4-6, S4-8, S4-11's header option,
-S4-12, S4-13, S4-19) are cmp-s4ab's. -/
+Over 10's α: sorts `service`, `person`; `web_api : service`, `alice : person` (and `bob : person` for a plural);
+`review_required`, `deployed`, `api : service`, `owns : person × service`, `notify_required : person`. Each content
+is the one the fence compiler yields with its slots (14.3 step 2); the fence compiler and the steps around it (S4-5,
+S4-6, S4-8, S4-11's header option, S4-12, S4-13, S4-19) are cmp-s4ab's. -/
 namespace VE.Discourse.PositionsExamples
 open VE.Discourse
 open VE.Compose (Content)
@@ -160,5 +160,13 @@ def twoDescriptions : VE.Formula :=
 #guard errIs (resolveContent E (manifest [mention "m1" .demonstrative (namedTarget .claim "c1")]) "u1"
   (.assertion (.unary "deployed" (slot "m1")))) "UnsupportedTarget: m1: claim"
 #guard errIs (resolveContent E (manifest [{ m7 with reading := none }]) "u1" s4_7) "IllTypedTarget: m1: binder:0"
+
+-- A large well-formed content: a rule with 120 carve-outs, each holding the slot of its own mention, resolves (each
+-- position's slots and symbols are computed once).
+def manyMentions : List Mention :=
+  (List.range 120).map fun i => mention s!"m{i}" .pronoun (entityTarget "web_api") (span := (3 * i, 3 * i + 2))
+def manyNode (t : String → VE.Term) : Content := .norm { (node "many" "review_required" .top) with
+  carveOuts := (List.range 120).map fun i => .eq (.var 0) (t s!"m{i}") }
+#guard okIs (resolveContent E (manifest manyMentions) "u1" (manyNode slot)) (manyNode fun _ => .const "web_api")
 
 end VE.Discourse.PositionsExamples

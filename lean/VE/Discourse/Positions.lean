@@ -175,7 +175,8 @@ def Row.typed (E : VE.Environment) (ctx : List String) : Row → Bool
 
 /-- The mentions whose slot occurs in `A`, in span order (the slots of a position have disjoint spans). -/
 def slotsIn (ms : List Mention) (A : VE.Formula) : List Mention :=
-  (ms.filter fun m => (symbolsOf A).contains (slotName m.id)).mergeSort fun a b => a.span.1 ≤ b.span.1
+  let syms := symbolsOf A
+  (ms.filter fun m => syms.contains (slotName m.id)).mergeSort fun a b => a.span.1 ≤ b.span.1
 
 /-- The rows of a position's slots, in span order. -/
 def rowsAt (E : VE.Environment) (ms : List Mention) (ctx : List String) (A : VE.Formula) :
@@ -193,8 +194,8 @@ def nested (ms : List Mention) (m : Mention) : Bool :=
   ms.any fun o => o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2
 
 /-- Resolution step 2: each (outermost) mention has a slot in `c`, and each slot of `c` is a mention. -/
-def slotCheck (E : VE.Environment) (ms : List Mention) (c : Content) : Except String Unit :=
-  let syms := (positions E c).flatMap fun x => symbolsOf x.2
+def slotCheck (ms : List Mention) (ps : List (List String × VE.Formula)) : Except String Unit :=
+  let syms := ps.flatMap fun x => symbolsOf x.2
   match ms.find? (fun m => !nested ms m && !syms.contains (slotName m.id)),
       syms.find? (fun q => slotPrefix.isPrefixOf q && !ms.any (slotName ·.id == q)) with
   | some m, _ => .error ("MentionNotSlot: " ++ m.id)
@@ -226,9 +227,10 @@ def resolveContent (E : VE.Environment) (K : Manifest) (unit : String) (c : VE.C
   match formulaMentions K unit with
   | [] => .ok c
   | ms => do
-    slotCheck E ms c
-    let rs ← resolveAll E ms (positions E c)
-    checkAll E unit 0 (positions E c) rs
+    let ps := positions E c
+    slotCheck ms ps
+    let rs ← resolveAll E ms ps
+    checkAll E unit 0 ps rs
     match withPositions E c (rs.map (·.2)) with
     | some c' => .ok c'
     | none => .error ("InvalidInput: " ++ unit ++ ": positions")
@@ -236,10 +238,9 @@ def resolveContent (E : VE.Environment) (K : Manifest) (unit : String) (c : VE.C
 /-! ## The intended meaning (4.4 at a position) -/
 
 /-- `S` with constant `n` interpreted as `a`, and with relation `n` interpreted as `R`; nothing else changed. -/
-def _root_.VE.Structure.withConstant (S : VE.Structure.{u}) (n : String) (a : S.Carrier) : VE.Structure.{u} :=
+def _root_.VE.Structure.withConstant (S : VE.Structure) (n : String) (a : S.Carrier) : VE.Structure :=
   { S with constant := fun c => if c = n then some a else S.constant c }
-def _root_.VE.Structure.withRelation (S : VE.Structure.{u}) (n : String) (R : List S.Carrier → Prop) :
-    VE.Structure.{u} :=
+def _root_.VE.Structure.withRelation (S : VE.Structure) (n : String) (R : List S.Carrier → Prop) : VE.Structure :=
   { S with relation := fun q => if q = n then R else S.relation q }
 
 /-- The position `A` with its slots interpreted directly, the first row outermost (4.4's table, row by row). -/
@@ -574,7 +575,7 @@ theorem resolve_ok (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.C
   | cons m ms =>
     refine .inr ⟨by simp, ?_⟩
     simp only [resolveContent, hm, bind, Except.bind] at h
-    cases hs : slotCheck E (m :: ms) c with
+    cases hs : slotCheck (m :: ms) (positions E c) with
     | error e => simp [hs] at h
     | ok _ =>
       cases hr : resolveAll E (m :: ms) (positions E c) with
@@ -643,8 +644,7 @@ theorem resolve_position_faithful (E : VE.Environment) (K : Manifest) (u : Strin
     · obtain ⟨v, hv, -⟩ := hρ j ctx[j] (by simp [hj])
       exact ⟨v, hv⟩
 
-/-- No new symbols: every symbol of a resolved position is declared in `E` or was already a symbol of the
-    content as written other than a slot name; no witness constant, no choice function, no fresh predicate. -/
+/-- A resolution that rewrote something yields closed, well-typed positions. -/
 theorem resolve_typed (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
     (h : resolveContent E K u c = .ok c') (hm : formulaMentions K u ≠ []) :
     ∀ x ∈ positions E c', x.2.check E x.1 = true := by
@@ -655,6 +655,8 @@ theorem resolve_typed (E : VE.Environment) (K : Manifest) (u : String) (c c' : V
     obtain ⟨_, _, -, -, -, hch, -⟩ := resolved_at E u _ c rs hr hc hl k ctx A hk
     exact hch
 
+/-- No new symbols: every symbol of a resolved position is declared in `E` or was already a symbol of the
+    content as written other than a slot name; no witness constant, no choice function, no fresh predicate. -/
 theorem resolve_no_new_symbols (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
     (h : resolveContent E K u c = .ok c') :
     ∀ x ∈ positions E c', ∀ q ∈ symbolsOf x.2,

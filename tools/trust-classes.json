@@ -3192,6 +3192,8 @@
         "VE.Discourse.PositionsExamples.m11",
         "VE.Discourse.PositionsExamples.m7",
         "VE.Discourse.PositionsExamples.manifest",
+        "VE.Discourse.PositionsExamples.manyMentions",
+        "VE.Discourse.PositionsExamples.manyNode",
         "VE.Discourse.PositionsExamples.mb",
         "VE.Discourse.PositionsExamples.mention",
         "VE.Discourse.PositionsExamples.node",
