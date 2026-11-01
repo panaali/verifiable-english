@@ -20,4 +20,5 @@
 - `lean/VE/Service/StageTimes.lean` — The env-gated stage timer of `ve_service` (reviews/dri-decisions-20261029-scale-admission-profile.md item 2).
 - `lean/VE/Service/Standalone.lean` — Standalone service validation and identity endpoints.
 - `lean/VE/Service/TypingDiagnostic.lean` — Python-compatible typing diagnostics for the standalone `check` mode.
+- `lean/VE/Service/UndeclaredExamples.lean` — The document mode's `undeclared_evaluative` member (docs/spec/judgment-terms.md 7 and 8.4; jt-3a), on spec 11.7's predicates: `Env.basePredicates` reads every …
 - `lean/VE/Service/english_copy.py` — Generate or check VE/Service/EnglishRun.lean, the service's copy of the English runner.

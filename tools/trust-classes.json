@@ -3595,7 +3595,9 @@
         "VE.EnglishGrammar.ntRelative",
         "VE.EnglishGrammar.ntTerm",
         "VE.EnglishGrammar.ntTy"
-      ],
+      ]
+    },
+    "VE/EnglishGrammar/Evaluative.lean": {
       "S": [
         "VE.EnglishGrammar.evaluativeRows"
       ]
@@ -9739,6 +9741,15 @@
         "VE.Service.Document.partsPrefix",
         "VE.Service.Document.undecided",
         "VE.Service.Document.yieldedParts"
+      ]
+    },
+    "VE/Service/UndeclaredExamples.lean": {
+      "T": [
+        "VE.Service.UndeclaredExamples.act",
+        "VE.Service.UndeclaredExamples.judged",
+        "VE.Service.UndeclaredExamples.member",
+        "VE.Service.UndeclaredExamples.text",
+        "VE.Service.UndeclaredExamples.vocabulary"
       ]
     },
     "VE/Service/EnglishRun.lean": {

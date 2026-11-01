@@ -10,6 +10,7 @@ import VE.Attribution.Preflight
 import VE.Rights.Run
 import VE.Limits
 import VE.Judgments.Status
+import VE.EnglishGrammar.Evaluative
 import VE.Scope.Wire
 import VE.Scope.Readings
 

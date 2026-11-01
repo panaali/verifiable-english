@@ -1,14 +1,15 @@
 import VE.Judgments.Status
 import VE.Norms.Checks
 import VE.Route.Typed
-import VE.EnglishGrammar.Catalogue
+import VE.Judgments.Undeclared
 
 /-! The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the
 built definitions. Each value is the one the spec's stub computed by `#eval`. Every rule fixture that JT-2 replays
 through the service is also a document the norms route's own check accepts (`VE.Norms.validate`), and every formula
-fixture type-checks in its environment (11.9). The undeclared-word rows of 11.7 (JT-3) close the file; the zone,
-criteria and deciders rows (11.4 to 11.7) belong to JT-3 and JT-4. A difference between this file and a row of section 11 is a finding against the spec or the
-build, decided before the row is changed. -/
+fixture type-checks in its environment (11.9). The undeclared-word rows of 11.7 (JT-3) close the file, and
+english-lean's own rows are checked in `VE.EnglishGrammar.Examples`; the zone, criteria and deciders rows (11.4 to
+11.7) belong to JT-3 and JT-4. A difference between this file and a row of section 11 is a finding against the spec
+or the build, decided before the row is changed. -/
 
 namespace VE.Judgments.Examples
 open Lean VE.Judgments
@@ -376,14 +377,5 @@ def regulated117 : List (String × List String) :=
 #guard predicateWords "Reasonable_grounds" (some "{0} has REASONABLE, grounds.") ==
   ["reasonable", "grounds", "0", "has", "reasonable", "grounds"]
 #guard predicateWords "arrest" (some "{0} is arbitrary") == ["arrest", "0", "is", "arbitrary"]
--- english-lean's catalogue: every row 11.7 names, with its other senses; `due_date` and the rest stay unlisted.
-#guard rows117.all VE.EnglishGrammar.evaluativeRows.contains
-#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows regulated117 ["arbitrary"] ==
-  ["reasonable_grounds", "just_requirement", "make_reasonable_efforts"]
-#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows
-  ([("fair_hearing", ["fair", "hearing"]), ("adequate_standard", ["adequate", "standard"]),
-    ("overly_cautious", ["overly", "cautious"]), ("acts_arbitrarily", ["acts", "arbitrarily"]),
-    ("effective_date", ["effective", "date"]), ("due_to_illness", ["due", "to", "illness"])]) [] ==
-  ["fair_hearing", "adequate_standard", "overly_cautious", "acts_arbitrarily"]
 
 end VE.Judgments.Examples
