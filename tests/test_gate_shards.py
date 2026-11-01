@@ -557,3 +557,8 @@ def test_real_pytest_shards_merge_into_the_unsharded_record(tmp_path, monkeypatc
     assert merged["collection"]["collected_zlib"] == baseline["collection"]["collected_zlib"]
     assert [failure.get("nodeid") for failure in merged["failures"] if failure["stage"] == "pytest"] == (
         [FAILING] if fails else [])
+
+
+def test_seeded_arm_shard_fault():
+    """Seeded fault (dri-improve actions-gate-arm rerun 2026-11-01): must FAIL the sharded arm64 leg; never merged."""
+    assert False, "seeded fault for the sharded arm64 Actions leg"
