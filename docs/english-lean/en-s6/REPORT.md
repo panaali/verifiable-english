@@ -68,3 +68,46 @@ checking only the last statement's references) is killed by `Examples.lean:46-47
 en-s6b: `Norm/Rules.lean`, `norms@0.json`, `Fixed/Norms.lean`, `Norm/Read.lean`, Elab.lean (from 37c5fcb2f), the
 `Ty`/`Sem` hunks, the section 4 statements, fixtures f1-f24 and the 120-block comparison, which replaces this item's
 baseline test. After it: en-e3 and en-s7.
+
+## Commands and their outputs (final code)
+
+- `lake build` (all 1216 jobs) succeeded. `python3 lean/audit.py` gave "PASS: 712 source files; 7917 named theorem
+  declarations audited". `tools/lean_statements.py --check` gave "removed: 0, changed: 0".
+- `tools/trust_map.py --check` gave "PASS: K, S and untied [V] within 3148e87c47dc and the allowances introduced
+  since" (S +142).
+- `tools/regen_generated.py --check` gave rc 0, "checked 35 entries".
+- `tools/gate_collection.py --check --prebuilt` gave "4 added, 0 removed by a trailer, 0 refused, 0 stale and 0
+  malformed".
+- `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` exited 0: 6 shards, 393 units, all passed
+  (run en-s6-65597613-t538240), `test_english_statement_blocks.py` included.
+- `mac-pytest.sh --trustmut … --allow … --rescore …` exited 0, with the counts above (`trust-mutants.json`).
+- Spec re-read: each declaration of spec 2.2-2.4 appears in `Value.lean` word for word after whitespace
+  normalisation (a script over the spec's first three Lean blocks found no difference). Each section 4 statement
+  elaborates word for word in `Stub.lean`.
+- Pre-existing failures on main (`main-known-red.txt`): none met in the selection.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no Lean answer is relayed (no mode, no relay).
+2. PASS: each task line, and where it is delivered or which DRI ruling moved it, is in the table above. The diff has
+   no Python copy of a Lean decision: the pinned-block test asks Lean's `decodeNorm`.
+3. PASS: six Lean seeds and one Python seed were KILLED (`mutants.json`). `trust_mutants` reported 0 SURVIVOR and 0
+   UNKNOWN (`trust-mutants.json`). The pinned-block comparator refuses a retyped node
+   (`test_every_recorded_node_decodes_in_lean`).
+4. N.A.: no Python or Rust path computes these values yet, and `Examples.lean` pins Python's recorded statement
+   shapes. The comparison with Lean's reading is en-s6b's.
+5. N.A.: there is no relayed field to bind. Inside Lean, `assemble` refuses an undeclared rule reference
+   (`Examples.lean:31-47`).
+6. PASS: the evidence is on this HEAD's tree. The chain's gate runs on the final HEAD.
+7. PASS: the one DELTA row cites R16, the allowance is recorded, and FOLLOW-UPS.md has its row under "## en-s6".
+8. PASS: no user-visible change. `actions_version` and the lock are unchanged (`english_grammar_gen.py --check`), and
+   nothing reads the new module.
+9. PASS: `repo_map.py file lean/VE/EnglishGrammar/Norm/Value.lean` lists `tests/test_english_statement_blocks.py`,
+   whose `lake build VE` fixture fails on a Lean seed.
+10. PASS: the plants of `mutants.json` with `proofs_cut: true` are refuted by `assemble_numbered`'s proofs first.
+    Those proofs are about `assemble`'s returned list.
+11. PASS: assembly has no budget. The `long 5000` fixture ends, and the tests use `HANG_TIMEOUT` only.
+12. N.A.: no pilot path changes.
+13. PASS: no test was removed (`gate_collection.py --check --prebuilt`: 0 stale, 0 malformed).
+14. PASS: every fault fixture in `Examples.lean` has its accepting side next to it. Every claim here cites a command
+    above. The spec was re-read as stated above.
