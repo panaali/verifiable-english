@@ -1,10 +1,11 @@
+- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
 - `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c).
+- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
 - `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
@@ -85,4 +86,3 @@
 - `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
 - `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
 - `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
-- `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
