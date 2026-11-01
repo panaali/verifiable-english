@@ -455,6 +455,30 @@ warning. R3, if accepted, changes a locked S2 file, so S2's `actions_version` mo
 `english.read` response: that is S2's own versioning and the one exception to D10 this specification asks for
 (6.2).
 
+### 2.7.1 The display's JSON contract (web app)
+
+The web app (its own branch, Z4) reads the object `ve render --view ve_english --senses PACK … FILE` prints. As
+built (sn-b7; reviews/dri-decisions-20261101-sn-b7b8.md and its `-reread` follow-up), it has these members:
+
+| Member | Meaning |
+|---|---|
+| `operation`, `assurance`, `intent`, `proof`, `conclusions` | as `ve senses check`: `senses.read`, its manifest assurance, `unconfirmed`, `not_checked`, `not_checked` |
+| `dictionary_id`, `request_id`, `senses_version`, `reading` | Lean's `senses.read` answer as `ve/backends/senses.py` relays it, typed and bound to the request there: the status, the units with their candidates (`choice`, `formula`, `mark`, `lines`, `identities`), the sense map (`sentence`, `symbol`, `is_default`, `token_start`, `token_stop`, and `candidate` for a candidate's occurrence), `mixed`, `unused`, `used`, the projected environment and its identities; or Lean's refusal |
+| `renderings` | one row per candidate of each open unit, in unit order, then candidate order: `sentence` (the unit's, from 0, preamble lines included), `candidate` (its position in the unit), `lines` (its resolving lines, Lean's text verbatim) and `text`. Empty when no unit is open |
+
+A row's `text` is Python's rendering of the candidate's formula in the environment `senses.project` returns for
+its `lines`. It is printed only after Lean's senses reader has read the `lines`, a newline and the `text` to one
+reading of exactly the candidate's formula and mark, under a projection with the identities the reading lists for
+the candidate. Exit codes: 0 for a reading with status `one`, 3 for any other reading, 2 for invalid input, 4 when
+the reading has more than 64 candidates, and 5 (`CheckerUnavailable`) when a rendering does not read back, a
+projection is not the candidate's, or the document's other sentences use words this sentence does not (the
+projections then differ).
+
+Still to come (sn-b7b, after sn-b6b and sn-b6c), and not specified ahead of Lean: the preamble lines of the
+answer; byte spans in the sense map, cut at `lexSpans` boundaries, for hover; the texts of 3.2 on a source
+request; the flip models; the gloss of each used sense; Lean's line for a requested word and gloss. These carry
+the rendered body, `--glossary`, the hover data, `ve senses resolve` and `ve senses propose-readings`.
+
 ### 2.8 What is trusted, proved and tested
 
 | Layer | Items |

@@ -1,0 +1,30 @@
+{
+  "format": "ve.sense-pack@1",
+  "name": "policies@1",
+  "sorts": [
+    {"name": "action", "noun": "action", "plural": "actions", "description": "an action in the agent's log", "letter": "C"},
+    {"name": "directory", "noun": "directory", "plural": "directorys", "description": "a directory, such as the agent's workspace", "letter": "D"},
+    {"name": "file", "noun": "file", "plural": "files", "description": "a file path, as resolved by the path resolver", "letter": "F"},
+    {"name": "host", "noun": "host", "plural": "hosts", "description": "a network host", "letter": "H"},
+    {"name": "person", "noun": "person", "plural": "people", "description": "a message recipient", "letter": "P"},
+    {"name": "secret", "noun": "secret", "plural": "secrets", "description": "a secret value found by the data-loss scanner", "letter": "S"}
+  ],
+  "senses": [
+    {"word": "reads", "index": 1, "gloss": "file tools", "description": "{0} reads {1}, as recorded by the file tools and the shell tracer", "kinds": ["action", "file"], "wording": "{0} reads {1}"},
+    {"word": "writes", "index": 1, "gloss": "file tools", "description": "{0} writes {1}, as recorded by the file tools and the shell tracer", "kinds": ["action", "file"], "wording": "{0} writes {1}"},
+    {"word": "deletes", "index": 1, "gloss": "file tools", "description": "{0} deletes {1}, as recorded by the file tools and the shell tracer", "kinds": ["action", "file"], "wording": "{0} deletes {1}"},
+    {"word": "contacts", "index": 1, "gloss": "network layer", "description": "{0} contacts {1}, as recorded by the network layer", "kinds": ["action", "host"], "wording": "{0} contacts {1}"},
+    {"word": "messages", "index": 1, "gloss": "mail chat tools", "description": "{0} messages {1}, as recorded by the mail and chat tools", "kinds": ["action", "person"], "wording": "{0} messages {1}"},
+    {"word": "discloses", "index": 1, "gloss": "scanner", "description": "{0} discloses {1}, as recorded by the data-loss scanner", "kinds": ["action", "secret"], "wording": "{0} discloses {1}"},
+    {"word": "resides", "index": 1, "gloss": "path resolver", "description": "{0} resides in {1}, as resolved by the path resolver", "kinds": ["file", "directory"], "wording": "{0} resides in {1}"},
+    {"word": "confidential", "index": 1, "gloss": "credential path list", "description": "{0} is confidential, as recorded by the path resolver: the file is on the credential path list", "kinds": ["file"], "wording": "{0} is confidential"},
+    {"word": "tracked", "index": 1, "gloss": "version control", "description": "{0} is tracked, as recorded by git: the file is under version control", "kinds": ["file"], "wording": "{0} is tracked"},
+    {"word": "allowlisted", "index": 1, "gloss": "network allowlist", "description": "{0} is allowlisted, as recorded by the network layer: the host is on the network allowlist", "kinds": ["host"], "wording": "{0} is allowlisted"},
+    {"word": "principal", "index": 1, "gloss": "user", "description": "{0} is principal, as recorded by the harness: the person is the user the agent works for", "kinds": ["person"], "wording": "{0} is principal"},
+    {"word": "confirmed", "index": 1, "gloss": "dialog", "description": "{0} is confirmed, as recorded by the harness: the user confirmed the action in a dialog", "kinds": ["action"], "wording": "{0} is confirmed"},
+    {"word": "readonly", "index": 1, "gloss": "shell classifier", "description": "{0} is readonly, as recorded by the shell classifier: the command changes nothing", "kinds": ["action"], "wording": "{0} is readonly"},
+    {"word": "privileged", "index": 1, "gloss": "elevated privileges", "description": "{0} is privileged, as recorded by the shell: the action runs with elevated privileges", "kinds": ["action"], "wording": "{0} is privileged"},
+    {"word": "affordable", "index": 1, "gloss": "spending limit", "description": "{0} is affordable, as recorded by the payment tool: the amount is within the spending limit", "kinds": ["action"], "wording": "{0} is affordable"},
+    {"word": "reported", "index": 1, "gloss": "harness", "description": "{0} is reported, as recorded by the harness: the action was reported to the user", "kinds": ["action"], "wording": "{0} is reported"}
+  ]
+}
