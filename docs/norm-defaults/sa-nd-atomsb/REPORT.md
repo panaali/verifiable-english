@@ -64,7 +64,9 @@ and replaced definition. Pilot bytes expected to move: 0 (no route reads the new
 ## Tests
 
 - `lake build` (all of `lean/`): "Build completed successfully (1211 jobs)".
-- Selected tests: RESULT-PENDING.
+- Selected tests, once on the finished code (`zsh mac-pytest.sh --select -- --base e63bae651 --run`, tree of
+  `d4fa31a79`): "summary: selected tests ran on the Claude cloud (6 shards, run sa-nd-atomsb-d4fa31a7-t504814);
+  exit=0"; shards 1-6: 74, 73, 74, 67, 65 and 51 units, all passed (404 units, 0 failed).
 - Pre-existing failures on main (main-known-red.txt) are not touched here.
 
 ## Self-review against BUILDER-CHECKLIST
