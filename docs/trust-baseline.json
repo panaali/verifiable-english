@@ -1720,6 +1720,20 @@
    "reason": "wg-6a: lean/VE/Weighing/Zone.lean S +31 (decisionAtoms, openNames, AdmissibleCompletion, OutcomeIn, SettledZ, ZoneUnknown); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-6a, 2026-10-18",
    "commit": "1d9ad881def53fc7ecab390b0e2db1ff2cf3cbbb"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "qt-a3db: VE/Cardinality/Render.lean V +129 (the paraphrase renderer), VE/Cardinality/Run.lean V +6 (runCase's paraphrase case), VE/Cardinality/RenderTheorems.lean S +6 (Charges); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18",
+   "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
+  },
+  {
+   "class": "V",
+   "lines": 135,
+   "reason": "qt-a3db: VE/Cardinality/Render.lean V +129 (the paraphrase renderer), VE/Cardinality/Run.lean V +6 (runCase's paraphrase case), VE/Cardinality/RenderTheorems.lean S +6 (Charges); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18",
+   "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
   }
  ]
 }
