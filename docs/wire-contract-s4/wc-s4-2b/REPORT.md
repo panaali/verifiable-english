@@ -87,7 +87,10 @@ trusted definition and no mutants.json. `git diff main -- conformance/wire-contr
   nothing in the files changed here.
 - `tools/select_tests.py --base $(git merge-base HEAD main)` selects 438 of 523 units, `tests/test_wire_contract_rust.py`
   among them (a kernel change and the release pin reach every Rust user, as in wc-s4-2).
-- Selected set, once: see the section "Selected run" appended below.
+- Selected set, once, on the committed tree (recorded as tree `6aed8d83a3`):
+  `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` gave six shards, "exit 0" each: 88, 66, 67,
+  86, 67 and 67 units, all passed (441 units; log `/tmp/wc-s4-2b-select.log`, "summary: … exit=0; 2099s").
+  No test of `main-known-red.txt` failed; none needed a rerun.
 
 ## Pilot bytes
 
