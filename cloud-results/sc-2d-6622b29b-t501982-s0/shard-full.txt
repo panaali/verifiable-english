@@ -1,0 +1,3 @@
+shard 1/4: 117 units; commands: ['python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_lean_imports.py
+new outward Lean import: VE.Scope.WireExamples -> VE.Service.ScopeAdmission
