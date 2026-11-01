@@ -173,6 +173,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Compose.Contract", "VE.Compose.ContractExamples"}:
         return 4  # states theorems on Service.Document.checkDocSets (profile-composition 1.5, PC-3)
+    if module == "VE.Judgments.ChainExamples":
+        return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):

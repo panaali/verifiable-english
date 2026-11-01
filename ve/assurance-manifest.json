@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40779,
+    "total_lines": 40999,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1138,12 +1138,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2080,
-        "sha256": "7cf8bd3f1f92978fe66d561056fba981b8c662a42a97ee47664741cf9a908145",
+        "lines": 2300,
+        "sha256": "d2ea0648daa5fc3d3ea41eb67a17f9990436bc6374c932f0c6a8c71c1034ee2d",
         "ranges": [
           [
             1,
-            2080
+            2300
           ]
         ],
         "declarations": [
@@ -2232,7 +2232,8 @@
       "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder",
       "lean/VE/Scope/ReadingsLemmas.lean": "lemmas about the JSON trees `atChoiceOn` and `assemble` build (what a lookup reads back after setObjVal! on a well-formed tree; the parts of a successful `governSets`), for the statements of scope spec 11.3; no runtime JSON handling",
       "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling",
-      "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource"
+      "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource",
+      "lean/VE/Judgments/ChainExamples.lean": "examples only: PC-1's fixtures (profile-composition 5.1) are built as JSON documents and sent to `checkDocSets` and the clash validation in `#guard`s; no admission path, service mode or record reads it"
     }
   },
   "plan_operations": {
