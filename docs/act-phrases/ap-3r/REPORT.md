@@ -47,10 +47,16 @@ fixture moves from L6 to L5, since L6 under *has the right to* now hits the read
 
 ## Trust
 
-`uv run python tools/trust_map.py --check`: K +0, S +1 (Table.lean), unclassified +22 (ReadingsExamples +16,
-ElaborateExamples +6), trusted +23; allowances S 1, V 22 recorded with `--allow` (SIGNED by standing ruling R16);
-FOLLOW-UPS.md "## ap-3r" row added. The removed exception did not shrink the count (one wildcard line became two).
-Trust mutants: see "Tests run".
+`uv run python tools/trust_map.py --check` on the final code: K +0, S +1 (`lean/VE/Acts/Table.lean`, `freeTable`),
+unclassified +0, trusted +1: "PASS: K, S and untied [V] within 3148e87c47dc and the allowances introduced since".
+The first measurement counted the new fixture definitions as unclassified (+22); they are class T in
+`tools/trust-classes.json`, as every other definition of those two files is. Allowance S 1 recorded with `--allow`
+(SIGNED by standing ruling R16); FOLLOW-UPS.md "## ap-3r" row added. The removed exception did not shrink the count.
+Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/act-phrases/ap-3r/trust-mutants-allow.json
+--json docs/act-phrases/ap-3r/trust-mutants.json`, cloud pool): "34 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 6
+ALLOWED", exit 0. The 6 allowed are `freeTable` pattern mutants (a flag or `all` -> `any` in a pattern) that leave a
+case uncovered, which Lean refuses (`Missing cases`). The first run (before the T classification) had 14 survivors and
+12 UNKNOWN, all on fixture definitions or those pattern mutants.
 
 ## Pilot bytes
 
@@ -62,7 +68,11 @@ AP-4's and later. Nothing is claimed before a pilot audit.
 - `lake build` (1214 jobs) and `python3 lean/audit.py`: "PASS: 710 source files; 7915 named theorem declarations".
 - `uv run python tools/regen_generated.py --write --skip route-cases` (route-cases needs the Rust release binary;
   none of its inputs changed) and `--check --skip route-cases`: only `trust-tables` failed before the allowance.
-- Trust mutants and selected tests: RESULTS-PENDING
+- Selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (ran on the VM: "ve-mac-1
+  unreachable"): "recorded 85 units …; 0 failed", exit 0, 5877 s. Its snapshot predates the T classification; the
+  trust tests that read it were rerun after: `uv run pytest -q tests/test_trust_budget.py tests/test_trust_ratchet.py`:
+  "112 passed".
+- Known red on main (`main-known-red.txt`): none of its three tests is in this selection.
 
 ## Spec re-read
 
@@ -79,7 +89,7 @@ ap-4 (the act-readings mode, relay and admission hook; prerequisites gain ap-3r)
 
 1. N.A.: no route, relay or response schema changes (no file under `ve/`, `lean/VE/Service/`, `rust/`).
 2. PASS: the deliverables table above, each with its commit/guard; no Python copy of a Lean decision; no report test; overlap check against every in-flight `feature/*`, `infra/*`, `lean-first/*`, `foundation/*` branch found none.
-3. PASS: `mutants.json` (16 of 16 killed by named guards or theorems); trust mutants: see "Tests run".
+3. PASS: `mutants.json` (16 of 16 killed by named guards or theorems); `trust-mutants.json` (34 killed, 6 allowed, exit 0).
 4. N.A.: no Python or Rust path changes; the Lean answer is the only one.
 5. N.A.: no relayed field added or changed.
 6. PASS: no gate run by me (the chain runs it on the final HEAD); the base is `git merge-base HEAD main`.
