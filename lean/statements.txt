@@ -17584,6 +17584,16 @@ theorem VE.Judgments.openTermNames_sorts
       VE.Discourse.Loader.openTermNames rv j python data formula Bool.true = Except.ok ns
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 2195587411
+theorem VE.Judgments.opensIn_generated
+  ∀ (J : List String) (fs gs : List VE.Formula),
+    (∀ (j : String), j ∈ J → VE.NormDefaults.Packs.reserved j = Bool.false) →
+      (∀ (g : VE.Formula),
+          g ∈ gs →
+            ∀ (p : String),
+              p ∈ VE.Norms.preds g → VE.NormDefaults.Packs.reserved p = Bool.true ∨ ∃ f, f ∈ fs ∧ p ∈ VE.Norms.preds f) →
+        VE.Judgments.opensIn J (fs ++ gs) = VE.Judgments.opensIn J fs
+  -- uses VE.Formula@VE.Syntax VE.Judgments.opensIn@VE.Judgments.Scan VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs VE.Norms.preds@VE.Norms.Tree
+  -- expr 2766003736
 theorem VE.Judgments.opensIn_iff
   ∀ (J : List String) (fs : List VE.Formula) (j : String),
     j ∈ VE.Judgments.opensIn J fs ↔ j ∈ J ∧ ∃ φ, φ ∈ fs ∧ j ∈ VE.Norms.preds φ
@@ -17613,6 +17623,10 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Judgments.softContent_formulas
+  ∀ (N : VE.SoftNorms.SoftNode), (VE.Judgments.softContent N).formulas = N.guard :: N.carveOuts
+  -- uses VE.Formula@VE.Syntax VE.Judgments.Content.formulas@VE.Judgments.Status VE.Judgments.softContent@VE.Judgments.Chain VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 534557852
 theorem VE.Judgments.status_checked
   ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView),
     VE.Judgments.status defs J u = Except.ok "CHECKED" → VE.Judgments.dependsOnC defs J u.reads = []
@@ -48066,11 +48080,46 @@ theorem VE.Service.Diagnose.diagnoseCase_registered
         VE.Service.Diagnose.diagnoseCase j = VE.WireContract.Diagnose.diagnoseCase registered j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose VE.WireContract.Diagnose.diagnoseCase@VE.WireContract.Diagnose VE.WireContract.Diagnose.units@VE.WireContract.Diagnose
   -- expr 1136295329
+theorem VE.Service.Document.checkDocSets_clashFirst
+  ∀ (j : Lean.Json),
+    VE.Service.Document.swapInjective j = Bool.false ∨
+        "judgments@0" ∈ VE.Service.Document.profilesOf j ∧
+          VE.Service.Document.swapInjective (VE.Service.Document.withoutJudgments j) = Bool.false →
+      VE.Service.Document.checkDocSets j = Except.error VE.Service.Document.swapClash ∧
+        VE.Service.Document.checkDoc j = Except.error VE.Service.Document.swapClash
+  -- uses VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.swapClash@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.withoutJudgments@VE.Service.Document
+  -- expr 3936838208
+theorem VE.Service.Document.clashRefusal_some
+  ∀ (j : Lean.Json),
+    VE.Service.Document.clashRefusal j = Option.some VE.Service.Document.swapClash ↔
+      VE.Service.Document.swapInjective j = Bool.false ∨
+        "judgments@0" ∈ VE.Service.Document.profilesOf j ∧
+          VE.Service.Document.swapInjective (VE.Service.Document.withoutJudgments j) = Bool.false
+  -- uses VE.Service.Document.clashRefusal@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.swapClash@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.withoutJudgments@VE.Service.Document
+  -- expr 3810480232
 theorem VE.Service.Document.decodeRowKind_json
   ∀ (rights : Bool) (j : Lean.Json) (k : VE.Service.Document.RowKind),
     VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
   -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
   -- expr 2427365272
+theorem VE.Service.Document.judgedIn_legacy
+  ∀ (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option VE.Service.Document.RightsDoc)
+    (c : VE.Service.Document.UnitContent),
+    c.judged.isSome = Bool.true → VE.Service.Document.UnitContent.judgedIn S R c = Except.ok c.judged
+  -- uses VE.Judgments.Content@VE.Judgments.Status VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.UnitContent.judged@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent@VE.Service.Document VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1955985568
+theorem VE.Service.Document.judgedIn_soft
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (R : Option VE.Service.Document.RightsDoc) (rule : Lean.Json)
+    (N : VE.SoftNorms.SoftNode),
+    VE.SoftNorms.Wire.decodeSoftNorm se rule = Except.ok N →
+      VE.Service.Document.UnitContent.judgedIn (Option.some se) R (VE.Service.Document.UnitContent.soft rule) =
+        Except.ok (Option.some (VE.Judgments.softContent N))
+  -- uses VE.Judgments.Content@VE.Judgments.Status VE.Judgments.softContent@VE.Judgments.Chain VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent.soft@VE.Service.Document VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftNorm@VE.SoftNorms.Wire
+  -- expr 2880642263
+theorem VE.Service.Document.swapInjective_eq_once
+  VE.Service.Document.swapInjective = VE.Service.Document.swapInjectiveOnce
+  -- uses VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveOnce@VE.Service.Document
+  -- expr 4022877896
 theorem VE.Service.Entry.prepared_eq
   ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol

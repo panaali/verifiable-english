@@ -179,6 +179,7 @@ import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.GraphChecks
+import VE.Judgments.Chain
 import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
@@ -2892,11 +2893,13 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.mem_defEdges
 #print axioms VE.Judgments.openTermNames_length
 #print axioms VE.Judgments.openTermNames_sorts
+#print axioms VE.Judgments.opensIn_generated
 #print axioms VE.Judgments.opensIn_iff
 #print axioms VE.Judgments.opensIn_isEmpty
 #print axioms VE.Judgments.path_last
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.softContent_formulas
 #print axioms VE.Judgments.status_checked
 #print axioms VE.Judgments.status_eq
 #print axioms VE.Judgments.status_legacy
@@ -6903,7 +6906,12 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.tryChoice_some
 #print axioms VE.Senses.wf_iff_no_failure
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
+#print axioms VE.Service.Document.checkDocSets_clashFirst
+#print axioms VE.Service.Document.clashRefusal_some
 #print axioms VE.Service.Document.decodeRowKind_json
+#print axioms VE.Service.Document.judgedIn_legacy
+#print axioms VE.Service.Document.judgedIn_soft
+#print axioms VE.Service.Document.swapInjective_eq_once
 #print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
