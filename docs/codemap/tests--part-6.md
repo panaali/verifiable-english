@@ -1,3 +1,5 @@
+- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
+- `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
@@ -83,6 +85,3 @@
 - `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
 - `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
 - `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
-- `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
-- `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
-- `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
