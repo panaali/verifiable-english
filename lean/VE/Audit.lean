@@ -4744,6 +4744,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.chosen_spec
 #print axioms VE.Readings.coh_canonY
 #print axioms VE.Readings.coh_down
+#print axioms VE.Readings.coh_pullF
 #print axioms VE.Readings.collides_conflict
 #print axioms VE.Readings.compatible_fillDoc
 #print axioms VE.Readings.compatible_fillDoc_eq
@@ -4884,6 +4885,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.eq_relaxDoc
 #print axioms VE.Readings.excLabels_length
 #print axioms VE.Readings.exc_down
+#print axioms VE.Readings.exc_pullF
+#print axioms VE.Readings.exceptedF_pullF
 #print axioms VE.Readings.exceptedName_inj
 #print axioms VE.Readings.exceptedName_ne_offName
 #print axioms VE.Readings.exceptedName_ne_outweighsName
@@ -4919,6 +4922,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.fillLite_of_uvalid
 #print axioms VE.Readings.fillName_unsaid
 #print axioms VE.Readings.fillNodes_choiceU
+#print axioms VE.Readings.fillPremisesSD_pull
 #print axioms VE.Readings.fillPremises_pull
 #print axioms VE.Readings.fillPremises_wf_v
 #print axioms VE.Readings.fillSelects_typed
@@ -4965,6 +4969,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.flatMap_congr_mem
 #print axioms VE.Readings.fmap_chosen
 #print axioms VE.Readings.fmap_exception
+#print axioms VE.Readings.fmap_exception_eq
 #print axioms VE.Readings.fmap_exception_none
 #print axioms VE.Readings.fmap_exception_up
 #print axioms VE.Readings.fmap_fields
@@ -5289,6 +5294,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.pathTo_suffix
 #print axioms VE.Readings.pattern_denote
 #print axioms VE.Readings.pattern_exists
+#print axioms VE.Readings.pattern_off
 #print axioms VE.Readings.pattern_rho
 #print axioms VE.Readings.pattern_unique
 #print axioms VE.Readings.pattern_wf
@@ -5334,6 +5340,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.pullF_canon
 #print axioms VE.Readings.pullF_canon_layer
 #print axioms VE.Readings.pullF_canon_off
+#print axioms VE.Readings.pullF_denote_frame
+#print axioms VE.Readings.pullF_pull
 #print axioms VE.Readings.pullF_unsaid
 #print axioms VE.Readings.pull_admissible
 #print axioms VE.Readings.pull_canon
@@ -5401,9 +5409,11 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.scanOthers_eq
 #print axioms VE.Readings.search_eq
 #print axioms VE.Readings.search_spec
+#print axioms VE.Readings.selU_canon
 #print axioms VE.Readings.selectable_mem
 #print axioms VE.Readings.selects_canon
 #print axioms VE.Readings.selects_fillNode_lite
+#print axioms VE.Readings.selects_fillRoot
 #print axioms VE.Readings.selects_fill_fuel_lite
 #print axioms VE.Readings.selects_iff
 #print axioms VE.Readings.separatesS_other
@@ -5529,6 +5539,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.supReady_nodup
 #print axioms VE.Readings.supStep_set
 #print axioms VE.Readings.supU_D
+#print axioms VE.Readings.supX_pull
 #print axioms VE.Readings.sup_E
 #print axioms VE.Readings.sup_E_frame
 #print axioms VE.Readings.sup_alterable_valid
