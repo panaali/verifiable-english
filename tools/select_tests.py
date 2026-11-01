@@ -49,6 +49,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import cache
@@ -87,9 +88,10 @@ HISTORY_TEST = "tests/test_history_tests.py"
 HISTORY_REASON = "history inventory"
 # `--run` stops after this many failed tests outside the quarantine (`--maxfail`; 0 runs everything).
 MAXFAIL = 5
-# `--fast-stage` runs the selected test files the map recorded at no more than FAST_UNIT_SECONDS each, cheapest
-# first, until FAST_BUDGET_SECONDS in all (`fast_units`): a host that sends the selection to sharded runners runs
-# them meanwhile, so a failing pin (a 39-s file) is heard in minutes, not after the shards' ~45-min wall.
+# `--fast-stage` runs the selected test files the map recorded at no more than FAST_UNIT_SECONDS each (`fast_units`):
+# every one that is or reads the change, then others, closest reasons and cheapest first, until FAST_BUDGET_SECONDS
+# in all. A host that sends the selection to sharded runners runs them meanwhile, so a failing pin (a 39-s file)
+# is heard in minutes, not after the shards' ~45-min wall.
 FAST_UNIT_SECONDS = 60.0
 FAST_BUDGET_SECONDS = 240.0
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
@@ -1043,55 +1045,115 @@ def rust_program(name: str) -> bool:
     return name.startswith("rust/") or name == "cargo"
 
 
-def lean_built(plan: dict, env: dict[str, str]) -> bool:
-    """Whether every Lean build the plan names is already done in this checkout (`lake build --no-build`)."""
-    return all(subprocess.run([*command, "--no-build"], cwd=ROOT / "lean", env=env, check=False,
-                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
-               for command in plan["commands"] if command[:2] == ["lake", "build"])
+LEAN_BIN = "lean/.lake/build/bin/"
+# What `lean_pending` calls the targets of a plain `lake build` (lean/lakefile.toml's defaultTargets).
+DEFAULT_LEAN_BUILD = "defaultTargets"
 
 
-def fast_units(plan: dict, coverage: Coverage | None, *, lean_fresh: bool,
+def lean_pending(plan: dict, env: dict[str, str]) -> list[str]:
+    """The Lean builds of the plan not yet done in this checkout: DEFAULT_LEAN_BUILD for a plain `lake build`, and
+    each target a `lake build <targets>` names, checked on its own (`lake build [target] --no-build` exits 0 only
+    when that build is done), so one pending bench never stands for the service."""
+    pending, checked = [], set()
+    for command in plan["commands"]:
+        if command[:2] != ["lake", "build"]:
+            continue
+        for targets in [[target] for target in command[2:]] or [[]]:
+            name = targets[0] if targets else DEFAULT_LEAN_BUILD
+            if name in checked:
+                continue
+            checked.add(name)
+            if subprocess.run(["lake", "build", *targets, "--no-build"], cwd=ROOT / "lean", env=env, check=False,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0:
+                pending.append(name)
+    return pending
+
+
+def lean_fresh_program(pending) -> Callable[[str], bool]:
+    """Whether a recorded Lean program runs the build the plan makes while the builds `pending` (`lean_pending`)
+    are not done: none while the default build is pending (without VE_LEAN_PREBUILT a unit builds Lean
+    itself); otherwise an executable unless its own target is pending, and lake, lean, elan or another Lean
+    program, which may build or read any target, only when none is."""
+    def fresh(name: str) -> bool:
+        if not pending or not lean_program(name):
+            return True
+        if DEFAULT_LEAN_BUILD in pending or not name.startswith(LEAN_BIN):
+            return False
+        return name[len(LEAN_BIN):] not in pending
+    return fresh
+
+
+def rust_stale(plan: dict) -> Callable[[str], bool]:
+    """Whether a recorded program is one a cargo command of the plan remakes (the fast stage runs before any
+    build): a binary of a profile a command writes (rust/target/release/ for --release, rust/target/debug/
+    otherwise, `cargo test` too), and cargo or any other Rust program while the plan runs cargo at all."""
+    cargo = [command for command in plan["commands"] if command[:len(CARGO)] == CARGO]
+    remade = tuple({f"rust/target/{'release' if '--release' in command else 'debug'}/" for command in cargo})
+    kept = tuple(profile for profile in ("rust/target/release/", "rust/target/debug/") if profile not in remade)
+
+    def stale(name: str) -> bool:
+        return bool(cargo) and rust_program(name) and not name.startswith(kept)
+    return stale
+
+
+def fast_rank(reasons) -> int:
+    """How closely the plan ties a unit to the change: 0 when it is a changed test or reads what changed (a pin
+    or ledger of a changed file), 2 when only weak reasons select it (`weak_reason`), 1 otherwise (any other
+    reason, or none on record)."""
+    if any(reason == "changed test" or reason.startswith("reads ") and not weak_reason(reason)
+           for reason in reasons or ()):
+        return 0
+    return 2 if reasons and all(map(weak_reason, reasons)) else 1
+
+
+def fast_units(plan: dict, coverage: Coverage | None, *, lean_fresh: bool | Callable[[str], bool],
                unit_seconds: float = FAST_UNIT_SECONDS, budget: float = FAST_BUDGET_SECONDS) -> list[str]:
     """The fast-first stage of a selected run: the selected test files the map recorded (passed, not opaque) at
-    no more than `unit_seconds` each, cheapest first (then name order), while their sum stays within `budget`.
-    A file that ran a program a build of the plan would remake is left out (it would test the old build): the
-    Lean ones unless `lean_fresh`, the Rust ones when the plan runs cargo. Without a map, none."""
+    no more than `unit_seconds` each, closest to the change first (`fast_rank`), then cheapest (then name). Every
+    one that is or reads the change is in, whatever the budget, so a cheap pin is never crowded out; the others
+    follow while the sum stays within `budget`. A file that ran a program a build of the plan would remake is
+    left out (it would test the old build): a Lean one unless `lean_fresh` (True: every Lean build of the plan
+    is done; False: none is; or per recorded program, `lean_fresh_program`), a Rust one per `rust_stale`.
+    Without a map, none."""
     if coverage is None:
         return []
-    stale: set[str] = set()
-    if plan["lean_build"] and not lean_fresh:
-        stale |= coverage.runners(lean_program)
-    if any(command[:len(CARGO)] == CARGO for command in plan["commands"]):
-        stale |= coverage.runners(rust_program)
+    fresh = lean_fresh if callable(lean_fresh) else lean_fresh_program([] if lean_fresh else [DEFAULT_LEAN_BUILD])
+    rust_old = rust_stale(plan)
+    stale = coverage.runners(lambda name: plan["lean_build"] and not fresh(name) or rust_old(name))
     seconds = {unit: float(coverage.status[unit].get("seconds") or 0.0) for unit in plan["selected"]
                if unit.startswith("tests/") and file_of(unit) == unit and unit in coverage.recorded
                and unit not in stale}
+    rank = {unit: fast_rank(plan.get("reasons", {}).get(unit)) for unit in seconds}
     chosen, total = [], 0.0
     for unit in sorted((unit for unit in seconds if seconds[unit] <= unit_seconds),
-                       key=lambda unit: (seconds[unit], unit)):
-        if total + seconds[unit] > budget:
+                       key=lambda unit: (rank[unit], seconds[unit], unit)):
+        if rank[unit] and total + seconds[unit] > budget:
             break
         chosen.append(unit)
         total += seconds[unit]
     return chosen
 
 
-def fast_stage(plan: dict, maxfail: int, *, lean_fresh: bool | None = None) -> int:
-    """Run the plan's fast-first units (`fast_units`) as one pytest process, with no build and no check: the
-    exit is pytest's (0 passed, 1 failed, 5 no unit). The full run, elsewhere, still runs every unit."""
+def fast_stage(plan: dict, maxfail: int, *, jobs: int = 1) -> int:
+    """Run the plan's fast-first units (`fast_units`) as one pytest process on up to `jobs` workers, with no
+    build and no check: the exit is pytest's (0 passed, 1 failed, 5 no unit). The full run, elsewhere, still
+    runs every unit."""
     env = run_environment(plan)
-    fresh = lean_built(plan, env) if lean_fresh is None else lean_fresh
-    if plan["lean_build"] and fresh:
+    pending = lean_pending(plan, env) if plan["lean_build"] else []
+    if plan["lean_build"] and DEFAULT_LEAN_BUILD not in pending:
         env["VE_LEAN_PREBUILT"] = "1"
     coverage = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
-    units = fast_units(plan, coverage, lean_fresh=fresh)
+    units = fast_units(plan, coverage, lean_fresh=lean_fresh_program(pending))
     total = sum(float(coverage.status[unit].get("seconds") or 0.0) for unit in units) if units else 0.0
-    print(f"fast stage: {len(units)} of {len(plan['selected'])} units, {round(total, 1)} s in the map (each <= "
-          f"{FAST_UNIT_SECONDS:g} s, <= {FAST_BUDGET_SECONDS:g} s in all; Lean build "
-          f"{'done' if fresh else 'pending'}): {', '.join(units) or 'none'}", flush=True)
+    workers = max(1, min(jobs, len(units)))
+    lean = ("none in the plan" if not plan["lean_build"] else
+            f"pending: {', '.join(pending)}" if pending else "done")
+    print(f"fast stage: {len(units)} of {len(plan['selected'])} units, {round(total, 1)} s in the map on {workers} "
+          f"worker{'s' * (workers > 1)} (each <= {FAST_UNIT_SECONDS:g} s; the readers of the change, then others "
+          f"to {FAST_BUDGET_SECONDS:g} s in all; Lean build {lean}): {', '.join(units) or 'none'}", flush=True)
     if not units:
         return NO_TESTS_COLLECTED
-    return run_plain(nested_pytest.command(["-q", *units], python=UV_PYTHON), plan, maxfail, env)
+    return run_plain(nested_pytest.command(["-q", *units], workers=workers, python=UV_PYTHON), plan, maxfail, env)
 
 
 def weak_reason(reason: str) -> bool:
@@ -1874,10 +1936,11 @@ def main() -> int:
                              "builder runs only, never the gate")
     parser.add_argument("--fast-stage", action="store_true",
                         help=f"with --run: run only the fast-first units (the selected test files the map recorded "
-                             f"at <= {FAST_UNIT_SECONDS:g} s each, cheapest first, <= {FAST_BUDGET_SECONDS:g} s in all, "
-                             "none that runs a program the plan would rebuild) as one pytest process, with no build "
-                             "and no check; exit pytest's. For a host that runs the full selection elsewhere "
-                             "(sharded runners) meanwhile; never the gate")
+                             f"at <= {FAST_UNIT_SECONDS:g} s each: every one that is or reads the change, then others "
+                             f"to <= {FAST_BUDGET_SECONDS:g} s in all, none that runs a program the plan would rebuild) "
+                             "as one pytest process on up to --jobs workers, with no build and no check; exit "
+                             "pytest's. For a host that runs the full selection elsewhere (sharded runners) "
+                             "meanwhile; never the gate")
     args = parser.parse_args()
     if args.fast_stage and (not args.run or args.full or args.impacted or args.no_record or args.tier
                             or args.chunk_heavy):
@@ -1976,7 +2039,7 @@ def main() -> int:
     if not args.run:
         return 0
     if args.fast_stage:
-        return fast_stage(plan, args.maxfail)
+        return fast_stage(plan, args.maxfail, jobs=args.jobs)
     return run(plan, record=not args.no_record and args.tier is None,
                jobs=args.jobs, maxfail=args.maxfail, full=args.full)
 
