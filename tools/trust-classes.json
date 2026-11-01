@@ -16928,6 +16928,30 @@
         "VE.Judgments.predicateWords",
         "VE.Judgments.undeclaredEvaluative"
       ]
+    },
+    "VE/Weighing/Zone.lean": {
+      "S": [
+        "VE.Weighing.AdmissibleCompletion",
+        "VE.Weighing.OutcomeIn",
+        "VE.Weighing.SettledZ",
+        "VE.Weighing.ZoneUnknown",
+        "VE.Weighing.decisionAtoms",
+        "VE.Weighing.openNames"
+      ]
+    },
+    "VE/Weighing/ZoneExamples.lean": {
+      "T": [
+        "VE.Weighing.ZoneFixtures.M0",
+        "VE.Weighing.ZoneFixtures.M2",
+        "VE.Weighing.ZoneFixtures.R0",
+        "VE.Weighing.ZoneFixtures.U0",
+        "VE.Weighing.ZoneFixtures.a1",
+        "VE.Weighing.ZoneFixtures.a2",
+        "VE.Weighing.ZoneFixtures.dTwo",
+        "VE.Weighing.ZoneFixtures.rec0",
+        "VE.Weighing.ZoneFixtures.rx",
+        "VE.Weighing.ZoneFixtures.ry"
+      ]
     }
   }
 }
