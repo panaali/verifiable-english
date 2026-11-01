@@ -38,9 +38,14 @@ Measured with `uv run python tools/trust_map.py --check` on the merged tree: K +
 ## Validation
 
 - **Lean.** `lake build` on the merged tree: 1211 jobs. `python3 lean/audit.py`: PASS, 707 files, 7903 declarations.
-- **Generated files.** `regen_generated.py --write`: 35 entries, written after the merge of main.
+- **Generated files.** `regen_generated.py --write`: 35 entries, written again after the merge of main and after the example moved.
 - **Statement test.** `uv run pytest -q tests/test_scope_5_4_statements.py`: 14 passed.
-- **Selected tests.** SELECTED_RESULT
+- **Selected tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+  - Run 1, at `6622b29b`: shard 1 stopped at `tools/check_lean_imports.py`. The cause was the boundary example's import of `ScopeAdmission` in `VE/Scope/WireExamples.lean`; `tests/test_precommit_hook.py::test_large_staged_change_passes` failed for the same reason.
+  - Fixed in `12982ecda` (the example moved to `VE/Service/ScopeExamples.lean`).
+  - Run 2, at `12982ecda`: 411 of 411 units passed, exit 0. It ran on the VM fallback (ve-mac-1 unreachable, 18,937 s); the log line is "recorded 411 units ... 0 failed".
+- **Trust mutants.** Rescored on `12982ecda`: 9 ALLOWED, exit 0.
+- **Trust ledger.** The merge of main dropped sc-10a's allowance from `docs/trust-baseline.json`. It was rebuilt as main's file plus sc-2d's one allowance (`git diff --numstat main`: +7). `trust_map --check`: PASS. `tests/test_trust_budget.py`: 7 passed.
 - **Not run here.** The full gate; the chain runs it on the final HEAD.
 - **Overlap.** No in-flight `lean-first/`, `feature/`, `infra/` or `foundation/` branch touches these files.
 
