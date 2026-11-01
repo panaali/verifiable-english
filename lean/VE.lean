@@ -287,3 +287,5 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.Weighing.Zone
+import VE.Weighing.ZoneExamples

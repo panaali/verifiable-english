@@ -2403,8 +2403,8 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     code, out, _, _, _ = sharded("--json", one, "--max-mutants", limit, capsys=capsys)
     paths = parts(sharded, n, "--max-mutants", limit)
     for k, p in enumerate(paths, 1):  # run facts of their own, each part's different
-        p.write_text(p.read_text().replace('"seconds": 0,', f'"seconds": {k * 37 % 101},', 1))
         d = json.loads(p.read_text())
+        d["seconds"] = k * 37 % 101  # set, not replaced: a part on a loaded runner records its real seconds, not 0
         d["steps"]["wall"]["mutants"], d["steps"]["lake"]["mutant_builds"] = k * 1.25, k * 10.05
         d["steps"]["runs"]["mutant_builds"] = k
         p.write_text(sharded.tm.evidence(d))

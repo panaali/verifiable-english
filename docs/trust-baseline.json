@@ -1720,6 +1720,13 @@
    "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Evaluative.lean S +9, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-11-01",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+  },
+  {
+   "class": "S",
+   "lines": 31,
+   "reason": "wg-6a: lean/VE/Weighing/Zone.lean S +31 (decisionAtoms, openNames, AdmissibleCompletion, OutcomeIn, SettledZ, ZoneUnknown); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-6a, 2026-10-18",
+   "commit": "1d9ad881def53fc7ecab390b0e2db1ff2cf3cbbb"
   }
  ]
 }
