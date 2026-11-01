@@ -19,6 +19,7 @@
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
+- `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
 - `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
@@ -84,5 +85,3 @@
 - `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
 - `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
 - `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
-- `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
-- `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
