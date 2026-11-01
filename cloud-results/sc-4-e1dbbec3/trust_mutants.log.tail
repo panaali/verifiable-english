@@ -1,0 +1,6 @@
+trust_mutants: 2 definitions, 28 mutants (28 to run), 4 jobs, base 78640038dca4
+UNKNOWN lean/VE/Scope/Wire.lean:124 VE.Scope.decodeBlock (D[V], trusted) list-empty: (decodeParts (front.getObjValD "scope")) -> [] (lean/VE/Scope/Wire.lean:124: Type mismatch)
+UNKNOWN lean/VE/Scope/Wire.lean:124 VE.Scope.decodeBlock (D[V], trusted) list-empty: (decodeParts (front.getObjValD "scope")).map -> [] (lean/VE/Scope/Wire.lean:124: Function expected at)
+trust_mutants: 18 KILLED, 0 SURVIVOR, 2 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN in 244 s
+trust_mutants: D[V], trusted: 18 KILLED, 2 UNKNOWN, 8 INVALID
+trust_mutants: steps: wall plan 10.2 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.4 s, control_probes 8.1 s, mutants 218.3 s, cleanup 2.7 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 13.2 s (2), mutant_builds 55.4 s (28), mutant_checks 507.2 s (22), stage_controls 93.9 s (4), mutant_probes 172.1 s (18)
