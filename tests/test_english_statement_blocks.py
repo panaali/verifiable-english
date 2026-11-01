@@ -3,9 +3,9 @@
 `tests/data/norm-blocks/rsp.jsonl` (76) and `fsf.jsonl` (44) hold each block's id and text, the commit it was read
 at and Python's `norm` object (`docs/english-lean/en-s6/capture_blocks.py`). Every block is present, still the
 text of its use case's `rules.d1.ve`, and its node's W1 fields decode with Lean's one decoder,
-`VE.Norms.Wire.decodeNorm`. Lean reads none of the blocks yet: en-s6 adds the values and their assembly, and
-the node path and the reader are en-s6b (DRI decision reviews/dri-decisions-20261101-en-s6.md). Each block is listed with
-that reason, and the baseline is 0 of 120; en-s6b replaces it by the comparison of Lean's node with Python's.
+`VE.Norms.Wire.decodeNorm`. Lean reads none of the blocks yet: en-s6 adds the values and their assembly, and the
+node path and the reader are en-s6b (DRI decision reviews/dri-decisions-20261101-en-s6.md). Each block is listed
+with that reason, and the baseline is 0 of 120; en-s6b replaces it by the comparison of Lean's node with Python's.
 """
 from __future__ import annotations
 
