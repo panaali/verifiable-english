@@ -2512,6 +2512,10 @@
 'VE.NormDefaults.Admission.softLeafX_formula' depends on axioms: [propext, Quot.sound]
 'VE.NormDefaults.Admission.wire_report_consequence' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.wire_report_consequenceX' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.NormDefaults.Packs.Fixtures.assemble_conditions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.NormDefaults.Packs.Fixtures.decodeLayered_conditions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.NormDefaults.Packs.Fixtures.rightsPack_conditions' does not depend on any axioms
+'VE.NormDefaults.Packs.Fixtures.softPack_conditions' depends on axioms: [propext, Quot.sound]
 'VE.NormDefaults.Packs.X_legacy' depends on axioms: [propext]
 'VE.NormDefaults.Packs.X_single' depends on axioms: [propext]
 'VE.NormDefaults.Packs.X_soft_first' depends on axioms: [propext, Classical.choice, Quot.sound]

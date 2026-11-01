@@ -17971,6 +17971,27 @@ theorem VE.NormDefaults.Admission.wire_report_consequenceX
                 VE.Formula.denote S [] res.report.root.formula
   -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.NormDefaults.Admission.AdmittedX.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.doc@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.report@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.admitDocumentX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.otherAssumptionsX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 1523594539
+theorem VE.NormDefaults.Packs.Fixtures.assemble_conditions
+  ∀ {U : VE.NormDefaults.UDoc} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assemble U used ps = Except.ok qs →
+      (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ ps → p.conditions = []) →
+        ∀ (q : VE.NormDefaults.Packs.Pack), q ∈ qs → q.conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 975857114
+theorem VE.NormDefaults.Packs.Fixtures.decodeLayered_conditions
+  ∀ {j : Lean.Json} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeLayered j = Except.ok L →
+      ∀ (p : VE.NormDefaults.Packs.Pack), p ∈ L.packs → p.conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 2517399582
+theorem VE.NormDefaults.Packs.Fixtures.rightsPack_conditions
+  ∀ (R : VE.Rights.RightsDoc), (VE.NormDefaults.Wire.rightsPack R).conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 854575461
+theorem VE.NormDefaults.Packs.Fixtures.softPack_conditions
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc), (VE.NormDefaults.Wire.softPack U D).conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2993755142
 theorem VE.NormDefaults.Packs.X_legacy
   ∀ (s r : VE.NormDefaults.Packs.Pack),
     VE.NormDefaults.Packs.X [s, r] = List.map (fun x => x.snd) (s.labelled ++ r.labelled)
