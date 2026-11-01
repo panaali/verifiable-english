@@ -1,0 +1,13 @@
+{
+  "item": "eff-20261101-1",
+  "seeded": [
+    {
+      "id": "S1",
+      "file": "tests/test_trust_mutants.py",
+      "change": "d[\"seconds\"] = 37 (every part the same) in place of d[\"seconds\"] = k * 37 % 101",
+      "test": "tests/test_trust_mutants.py::test_the_parts_merged_are_the_one_runs_record[2-1]",
+      "failed_at": "assert len({d[\"seconds\"] for d in each}) == n and data[\"seconds\"] > 0: assert (1 == 2), where 1 = len({37})",
+      "restored": true
+    }
+  ]
+}
