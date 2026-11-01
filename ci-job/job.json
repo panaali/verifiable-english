@@ -1,0 +1,12 @@
+{
+ "job": "arm-cand-sn-b7b8-6793180c-t529727",
+ "head": "d2b57590f7836186b251c3bccb287c802aa008ec",
+ "argv": [
+  "arm-cand-sn-b7b8-6793180c-t529727",
+  "d2b57590f7836186b251c3bccb287c802aa008ec",
+  "484f3bc11b030089c5d4bb5f38d1f281fd7229aa",
+  "-",
+  "-",
+  "4"
+ ]
+}
