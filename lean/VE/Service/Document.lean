@@ -400,11 +400,17 @@ unique profiles (as the envelope requires, `Route/Gate.lean:72`), its own. A req
 `plainProfiles`, so the same two environments. -/
 def layerProfiles (j : Json) : List String := ("judgments@0" :: plainProfiles j).mergeSort fun a b => decide (a ≤ b)
 
+/-- A front matter's reading sets, as written. -/
+def readingSetsIn (front : Json) : List Json :=
+  match front.getObjValD "reading_sets" with
+  | .arr xs => xs.toList
+  | _ => []
+
 /-- The front matter's reading sets, as written. -/
 def readingSetsOf (j : Json) : List Json :=
-  match (frontOf j).map (·.1.getObjValD "reading_sets") with
-  | some (Json.arr xs) => xs.toList
-  | _ => []
+  match frontOf j with
+  | some (front, _) => readingSetsIn front
+  | none => []
 
 /-- A reading set's stated models, under their keys. -/
 def setModels (s : Json) : List (String × Json) :=
@@ -420,25 +426,35 @@ def setReferences (s : Json) : List String :=
     | _ => []
   | _ => []
 
-/-- The stated values the exchange reads, over every reading set of the case: each model key and each
-`admission.distinguishing_models` reference, dangling references included (the G3 amendment). A reference that is a
-key of its set is listed once, as that key. -/
-def statedIds (j : Json) : List String :=
-  (readingSetsOf j).flatMap fun s =>
-    let keys := (setModels s).map (·.1)
-    keys ++ ((setReferences s).filter (!keys.contains ·)).eraseDups
+/-- The reading sets row 16 reads: the case's, when each holds 1 to 64 readings; none otherwise, so the chain's own
+check (`compileSets`, `reading sets hold 1 to 64 readings`, in its order) answers such a case before any work that
+grows with its stated values (pc-1 review F2). A request and its twin hold the same readings. -/
+def sizedIn (sets : List Json) : List Json :=
+  if sets.all fun s => match s.getObjValD "readings" with
+    | .arr rs => 1 ≤ rs.size && rs.size ≤ 64
+    | _ => false
+  then sets else []
+
+/-- The reading sets row 16 reads (`sizedIn`), of the case. -/
+def sizedSets (j : Json) : List Json := sizedIn (readingSetsOf j)
+
+/-- The values the given sets state (`statedIds`). -/
+def statedIdsIn (sets : List Json) : List String :=
+  sets.flatMap fun s => (setModels s).map (·.1) ++ setReferences s
+
+/-- The stated values the exchange reads, over every reading set of the case (`sizedSets`): each model key and each
+`admission.distinguishing_models` reference, dangling references included (the G3 amendment). A value stated twice is
+listed twice; the check reads the values as a set. -/
+def statedIds (j : Json) : List String := statedIdsIn (sizedSets j)
 
 /-- The triples `(x, v₁, v₂)` of 2a: each stated value `x` whose content decodes (a reference's content is the
 model it names), with the identity Lean computes for that content under `layerProfiles j` (`v₁`; on a request with
 `judgments@0`, its own environment) and under `plainProfiles j` (`v₂`; the twin's). A reference names a model of its
 own set, so its triple is that model key's. -/
-def statedPairs (j : Json) : List (String × String × String) :=
-  let sets := readingSetsOf j
+def statedPairsIn (front : Json) (ps : List String) (sets : List Json) : List (String × String × String) :=
   if sets.all (setModels · |>.isEmpty) then [] else
-  match frontOf j with
-  | none => []
-  | some (front, _) =>
-    let (layer, plain) := (layerProfiles j, plainProfiles j)
+    let plain := ps.filter (· != "judgments@0")
+    let layer := ("judgments@0" :: plain).mergeSort fun a b => decide (a ≤ b)
     let idOf := fun (ps : List String) =>
       (Standalone.environmentIdOf ps ((front.getObjValD "environment").setObjVal! "profiles" (toJson ps))).toOption
     match idOf layer, idOf plain with
@@ -447,6 +463,13 @@ def statedPairs (j : Json) : List (String × String × String) :=
         | .ok v₁, .ok v₂ => some (k, v₁, v₂)
         | _, _ => none
     | _, _ => []
+
+/-- The triples `(x, v₁, v₂)` of 2a, of the case (`statedPairsIn` on its front matter, its profiles, so `v₁` under
+`layerProfiles j` and `v₂` under `plainProfiles j`, and `sizedSets j`). -/
+def statedPairs (j : Json) : List (String × String × String) :=
+  match frontOf j with
+  | none => []
+  | some (front, _) => statedPairsIn front (profilesOf j) (sizedSets j)
 
 /-- The exchange of 2a on given pairs: `swap v₁ v₂` for a value's pair, every other value kept. -/
 def exchangeOf (pairs : List (String × String × String)) (x : String) : String :=
@@ -466,17 +489,185 @@ def swapInjectiveOf (ids : List String) (pairs : List (String × String × Strin
 /-- The G3 amendment, on a request: decided before the transformation, on every request, plain ones included. -/
 def swapInjective (j : Json) : Bool := swapInjectiveOf (statedIds j) (statedPairs j) (exchange j)
 
-/-- `swapInjective` as it runs: the values, the pairs and each value's image computed once. -/
-def swapInjectiveOnce (j : Json) : Bool :=
-  let ids := statedIds j
-  let pairs := statedPairs j
-  let images := ids.map fun x => (x, exchangeOf pairs x)
-  images.all (fun (x, a) => images.all fun (y, b) => x == y || a != b) &&
-    pairs.all fun (y, _, v₂) => ids.all fun x => x == y || x != v₂
+/-- Each stated value's first pair, by value (`exchangeOf` reads the first). -/
+def pairIndex (pairs : List (String × String × String)) : Std.HashMap String (String × String) :=
+  pairs.foldr (fun p m => m.insert p.1 p.2) ∅
 
-@[csimp] theorem swapInjective_eq_once : @swapInjective = @swapInjectiveOnce := by
+/-- `exchangeOf` over `pairIndex` (`exchangeIn_pairIndex`): one lookup per value. -/
+def exchangeIn (idx : Std.HashMap String (String × String)) (x : String) : String :=
+  match idx[x]? with
+  | some (v₁, v₂) => swap v₁ v₂ x
+  | none => x
+
+theorem pairIndex_get (pairs : List (String × String × String)) (x : String) :
+    (pairIndex pairs)[x]? = (pairs.find? (·.1 == x)).map (·.2) := by
+  induction pairs with
+  | nil => simp [pairIndex]
+  | cons p ps ih =>
+    simp only [pairIndex, List.foldr_cons] at ih ⊢
+    rw [Std.HashMap.getElem?_insert, ih, List.find?_cons]
+    by_cases h : p.1 = x
+    · simp [h]
+    · have hb : (p.1 == x) = false := by simpa using h
+      simp [hb]
+
+theorem exchangeIn_pairIndex (pairs : List (String × String × String)) (x : String) :
+    exchangeIn (pairIndex pairs) x = exchangeOf pairs x := by
+  unfold exchangeIn exchangeOf
+  rw [pairIndex_get]
+  cases pairs.find? (·.1 == x) with
+  | none => rfl
+  | some p => rfl
+
+/-- One step of `injectiveH`: each image read so far under its first value; `none` once two values share one. -/
+def injStep (ex : String → String) : Option (Std.HashMap String String) → String → Option (Std.HashMap String String)
+  | none, _ => none
+  | some m, x =>
+    let a := ex x
+    match m[a]? with
+    | some y => if y == x then some m else none
+    | none => some (m.insert a x)
+
+/-- Whether `ex` is one to one on `ids`, each value hashed once (`injectiveH_eq`). -/
+def injectiveH (ex : String → String) (ids : List String) : Bool := (ids.foldl (injStep ex) (some ∅)).isSome
+
+theorem injStep_none (ex : String → String) (xs : List String) : xs.foldl (injStep ex) none = none := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simpa [List.foldl_cons, injStep] using ih
+
+theorem injectiveH_foldl (ex : String → String) : ∀ (xs : List String) (m : Std.HashMap String String)
+    (l : List String), (∀ a y, m[a]? = some y → y ∈ l ∧ ex y = a) → (∀ y ∈ l, (m[ex y]?).isSome) →
+    (∀ x ∈ l, ∀ y ∈ l, x = y ∨ ex x ≠ ex y) →
+    ((xs.foldl (injStep ex) (some m)).isSome = true ↔ ∀ x ∈ l ++ xs, ∀ y ∈ l ++ xs, x = y ∨ ex x ≠ ex y)
+  | [], _, l, _, _, hP => by simpa using hP
+  | x :: xs, m, l, h1, h2, hP => by
+    rw [List.foldl_cons]
+    cases hm : m[ex x]? with
+    | some y =>
+      obtain ⟨hy, hxy⟩ := h1 _ _ hm
+      by_cases hyx : y = x
+      · subst hyx
+        have := injectiveH_foldl ex xs m (l ++ [y]) (fun a z h => by
+            obtain ⟨hz, he⟩ := h1 a z h; exact ⟨by simp [hz], he⟩)
+          (fun z hz => by
+            simp only [List.mem_append, List.mem_singleton] at hz
+            rcases hz with hz | rfl
+            · exact h2 z hz
+            · simp [hm])
+          (fun a ha b hb => by
+            simp only [List.mem_append, List.mem_singleton] at ha hb
+            rcases ha with ha | rfl <;> rcases hb with hb | rfl
+            all_goals first | exact hP _ ‹_› _ ‹_› | exact Or.inl rfl)
+        simp only [injStep, hm, beq_self_eq_true, if_true] at this ⊢
+        simpa using this
+      · simp only [injStep, hm, beq_iff_eq, hyx, if_false, injStep_none, Option.isSome_none,
+          Bool.false_eq_true, false_iff]
+        intro h
+        rcases h y (by simp [hy]) x (by simp) with h | h
+        · exact hyx h
+        · exact h hxy
+    | none =>
+      have hne : ∀ z ∈ l, ex z ≠ ex x := fun z hz he => by
+        have := h2 z hz; rw [he, hm] at this; simp at this
+      have := injectiveH_foldl ex xs (m.insert (ex x) x) (l ++ [x])
+        (fun a z h => by
+          rw [Std.HashMap.getElem?_insert] at h
+          by_cases ha : ex x = a
+          · simp [ha] at h; subst h; exact ⟨by simp, ha⟩
+          · simp [ha] at h; obtain ⟨hz, he⟩ := h1 a z h; exact ⟨by simp [hz], he⟩)
+        (fun z hz => by
+          rw [Std.HashMap.getElem?_insert]
+          simp only [List.mem_append, List.mem_singleton] at hz
+          by_cases hz' : ex x = ex z
+          · simp [hz']
+          · simp only [beq_iff_eq, hz', if_false]
+            rcases hz with hz | rfl
+            · exact h2 z hz
+            · exact absurd rfl hz')
+        (fun a ha b hb => by
+          simp only [List.mem_append, List.mem_singleton] at ha hb
+          rcases ha with ha | rfl <;> rcases hb with hb | rfl
+          · exact hP _ ha _ hb
+          · exact Or.inr (hne _ ha)
+          · exact Or.inr (fun h => hne _ hb h.symm)
+          · exact Or.inl rfl)
+      simp only [injStep, hm] at this ⊢
+      simpa using this
+
+theorem injectiveH_eq (ex : String → String) (ids : List String) :
+    injectiveH ex ids = ids.all (fun x => ids.all fun y => x == y || ex x != ex y) := by
+  apply Bool.eq_iff_iff.mpr
+  rw [injectiveH, injectiveH_foldl ex ids ∅ [] (by simp) (by simp) (by simp)]
+  simp [List.all_eq_true]
+
+/-- `swapInjectiveOf` with the exchange `exchangeOf pairs`, each value hashed once (`swapInjectiveH_eq`). -/
+def swapInjectiveH (ids : List String) (pairs : List (String × String × String)) : Bool :=
+  -- The index and the set are values, computed once (the compiler eta-expands an exchange applied to its pairs).
+  let idx := pairIndex pairs
+  let known := Std.HashSet.ofList ids
+  injectiveH (exchangeIn idx) ids && pairs.all fun (y, _, v₂) => !known.contains v₂ || v₂ == y
+
+theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String × String)) :
+    swapInjectiveH ids pairs = swapInjectiveOf ids pairs (exchangeOf pairs) := by
+  have hex : exchangeIn (pairIndex pairs) = exchangeOf pairs := funext (exchangeIn_pairIndex pairs)
+  simp only [swapInjectiveH, swapInjectiveOf, hex, injectiveH_eq]
+  congr 1
+  congr 1
+  funext ⟨y, _, v₂⟩
+  simp only [Std.HashSet.contains_ofList]
+  apply Bool.eq_iff_iff.mpr
+  simp only [List.all_eq_true, Bool.or_eq_true, beq_iff_eq, bne_iff_ne, ne_eq]
+  cases hv : ids.contains v₂ with
+  | false =>
+    have hv' : v₂ ∉ ids := by simpa using hv
+    simp only [Bool.not_false, true_or, true_iff]
+    exact fun x hx => Or.inr (fun e => hv' (e ▸ hx))
+  | true =>
+    have hv' : v₂ ∈ ids := by simpa using hv
+    simp only [Bool.not_true, Bool.false_eq_true, false_or]
+    constructor
+    · rintro rfl
+      exact fun x _ => Classical.em _
+    · intro h
+      rcases h v₂ hv' with e | e
+      · exact e
+      · exact absurd rfl e
+
+/-- `profilesOf` reads the front matter `frontOf` reads. -/
+theorem profilesOf_frontOf (j : Json) : profilesOf j = match frontOf j with
+    | some (front, _) => listedProfiles (front.getObjValD "environment")
+    | none => [] := by
+  unfold profilesOf frontOf
+  cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
+  rename_i text
+  cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
+  rename_i x
+  cases frontJson x.1 <;> rfl
+
+/-- `swapInjective` on a front matter `frontOf` read: its sets, values and pairs computed once. -/
+def swapInjectiveIn (front : Json) : Bool :=
+  let sets := sizedIn (readingSetsIn front)
+  swapInjectiveH (statedIdsIn sets) (statedPairsIn front (listedProfiles (front.getObjValD "environment")) sets)
+
+/-- `swapInjective` as it runs (pc-1 review F2): the front matter read once, the values and the pairs computed once,
+each value hashed once, so no pass compares every stated value with every other. -/
+def swapInjectiveFast (j : Json) : Bool :=
+  match frontOf j with
+  | none => true
+  | some (front, _) => swapInjectiveIn front
+
+theorem swapInjective_frontOf (j : Json) : swapInjective j = swapInjectiveH (statedIds j) (statedPairs j) := by
+  simp only [swapInjective, swapInjectiveH_eq]; rfl
+
+@[csimp] theorem swapInjective_eq_fast : @swapInjective = @swapInjectiveFast := by
   funext j
-  simp [swapInjective, swapInjectiveOnce, swapInjectiveOf, exchange, List.all_map, Function.comp_def]
+  rw [swapInjective_frontOf]
+  unfold swapInjectiveFast statedIds statedPairs sizedSets readingSetsOf
+  rw [profilesOf_frontOf]
+  cases frontOf j with
+  | none => rfl
+  | some p => rfl
 
 /-- One reading set with each model key and reference sent through `ex`. -/
 def exchangeSet (ex : String → String) (s : Json) : Json :=
@@ -495,20 +686,29 @@ def exchangeSet (ex : String → String) (s : Json) : Json :=
   | _ => s
 
 /-- The case with `judgments@0` taken out of its document's environment, each stated model key and reference
-exchanged by `swap v₁ v₂` (2a) when `swapInjective j`, every other value as written; the front matter is written
-again compactly (`Json.compress`), the body as written. (The unit and reading `meaning_id` exchange is pc-1g's.) -/
-def withoutJudgments (j : Json) : Json :=
+exchanged by the given pairs' exchange (`exchangeOf pairs`, run as `exchangeIn`), every other value as written; the
+front matter is written again compactly (`Json.compress`), the body as written. -/
+def withoutJudgmentsIn (pairs : List (String × String × String)) (j front : Json) (body : String) : Json :=
+  -- The index is a value, so it is computed once (an exchange with no pairs keeps every value).
+  let idx := pairIndex pairs
+  let ex := exchangeIn idx
+  let front := front.setObjVal! "environment" (VE.Compose.withoutDocumentLayers (front.getObjValD "environment"))
+  let front := match front.getObjValD "reading_sets" with
+    | .arr ss => front.setObjVal! "reading_sets" (.arr (ss.map (exchangeSet ex)))
+    | _ => front
+  j.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+
+/-- `withoutJudgmentsIn` on the case's front matter and body (`frontOf`); a case whose front matter does not read is
+kept. -/
+def withoutJudgmentsOf (pairs : List (String × String × String)) (j : Json) : Json :=
   match frontOf j with
   | none => j
-  | some (front, body) =>
-    -- The pairs are a value, so they are computed once (an exchange with no pairs keeps every value).
-    let pairs := if swapInjective j then statedPairs j else []
-    let ex := exchangeOf pairs
-    let front := front.setObjVal! "environment" (VE.Compose.withoutDocumentLayers (front.getObjValD "environment"))
-    let front := match front.getObjValD "reading_sets" with
-      | .arr ss => front.setObjVal! "reading_sets" (.arr (ss.map (exchangeSet ex)))
-      | _ => front
-    j.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+  | some (front, body) => withoutJudgmentsIn pairs j front body
+
+/-- The case with `judgments@0` taken out of its document's environment, each stated model key and reference
+exchanged by `swap v₁ v₂` (2a) when `swapInjective j`, every other value as written; the front matter is written
+again compactly (`Json.compress`), the body as written. (The unit and reading `meaning_id` exchange is pc-1g's.) -/
+def withoutJudgments (j : Json) : Json := withoutJudgmentsOf (if swapInjective j then statedPairs j else []) j
 
 /-- The validation text of a request whose exchange is not one-to-one (the G3 amendment; row 16 of 4). -/
 def swapClash : String :=
@@ -535,6 +735,39 @@ theorem clashRefusal_some (j : Json) :
   unfold clashRefusal clashRefusalOf
   by_cases hj : "judgments@0" ∈ profilesOf j <;>
     cases swapInjective j <;> cases swapInjective (withoutJudgments j) <;> simp [hj]
+
+/-- Row 16 on a request's front matter and body (`frontOf`) and its profiles `ps` (pc-1 review F2): the values and
+pairs computed once and its exchange decided once, the twin built from those pairs, and the twin read only when the
+request's own exchange is one-to-one (`clashRefusalOf` refuses otherwise, whatever the twin's). -/
+def clashRefusalIn (j front : Json) (body : String) (ps : List String) : Option String :=
+  let sets := sizedIn (readingSetsIn front)
+  let pairs := statedPairsIn front ps sets
+  if swapInjectiveH (statedIdsIn sets) pairs then
+    if "judgments@0" ∈ ps then clashRefusalOf true (some (swapInjective (withoutJudgmentsIn pairs j front body)))
+    else none
+  else some swapClash
+
+/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`). -/
+def clashRefusalFast (j : Json) : Option String :=
+  match frontOf j with
+  | none => none
+  | some (front, body) => clashRefusalIn j front body (listedProfiles (front.getObjValD "environment"))
+
+@[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
+  funext j
+  unfold clashRefusal clashRefusalFast withoutJudgments withoutJudgmentsOf
+  rw [swapInjective_frontOf, profilesOf_frontOf]
+  unfold statedIds statedPairs sizedSets readingSetsOf
+  rw [profilesOf_frontOf]
+  cases frontOf j with
+  | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    simp only [clashRefusalIn]
+    by_cases hj : "judgments@0" ∈ listedProfiles (front.getObjValD "environment") <;>
+      cases swapInjectiveH (statedIdsIn (sizedIn (readingSetsIn front)))
+        (statedPairsIn front (listedProfiles (front.getObjValD "environment")) (sizedIn (readingSetsIn front))) <;>
+      simp [hj, clashRefusalOf]
 
 /-! ## The environment -/
 
@@ -856,6 +1089,23 @@ def frozenEnv (json : Json) : Except String Env :=
 the rights chain's reader is pc-1g's. Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
 def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0"]
 
+/-- Whether a front matter's units, each unit and its parts as written, hold a norm with exception conditions
+(`exception.sufficient` or `exception.necessary` present and not `[]`). The soft route makes those conditions rules of
+its theory (`SoftNorms.excPremisesOf`), which `Judgments.softContent` does not read, so the document mode keeps
+`judgments@0` apart from `soft-norms@0` on such a document (pc-1 review F1; their reader is pc-1x's). -/
+def exceptionConditioned (units : Json) : Bool :=
+  let us := match units with
+    | .arr xs => xs.toList
+    | _ => []
+  (us.flatMap fun u => u :: match u.getObjValD "parts" with
+    | .arr ps => ps.toList
+    | _ => []).any fun u =>
+      let e := ((u.getObjValD "content").getObjValD "norm").getObjValD "exception"
+      ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
+        | .ok (.arr xs) => !xs.isEmpty
+        | .ok _ => true
+        | .error _ => false
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
@@ -875,6 +1125,8 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "judgments@0" then
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed judgmentsApart
+    -- Main's refusal, in its place, for a soft document whose exception conditions the layer does not read yet.
+    if exceptionConditioned units then VE.Compose.layersApart listed ["soft-norms@0"]
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
@@ -2058,11 +2310,33 @@ def checkBody (j : Json) : Except String Json := do
     (j.getObjVal? "reading_sets").toOption))
 
 /-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
-every request. -/
+every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls
+this on GOVERN's case (the same document), so it runs once per request (pc-1 review F2). -/
 def checkCore (j : Json) : Except String Json :=
+  if "scope@0" ∈ profilesOf j then checkBody j else
   match clashRefusal j with
   | some e => .error e
   | none => checkBody j
+
+/-- `checkCore` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16. -/
+def checkCoreFast (j : Json) : Except String Json :=
+  match frontOf j with
+  | none => checkBody j
+  | some (front, body) =>
+    let ps := listedProfiles (front.getObjValD "environment")
+    if "scope@0" ∈ ps then checkBody j else
+    match clashRefusalIn j front body ps with
+    | some e => .error e
+    | none => checkBody j
+
+@[csimp] theorem checkCore_eq_fast : @checkCore = @checkCoreFast := by
+  funext j
+  unfold checkCore checkCoreFast
+  rw [clashRefusal_eq_fast, profilesOf_frontOf]
+  unfold clashRefusalFast
+  cases frontOf j with
+  | none => simp
+  | some p => rfl
 
 /-! ## `scope@0` (docs/spec/scope.md 1.1, 1.6, 5.2 and 8.1; SC-1b)
 
@@ -2185,9 +2459,11 @@ theorem checkDocSets_clashFirst (j : Json)
       ("judgments@0" ∈ profilesOf j ∧ swapInjective (withoutJudgments j) = false)) :
     checkDocSets j = .error swapClash ∧ checkDoc j = .error swapClash := by
   have h := (clashRefusal_some j).mpr hk
-  have hc : checkCore j = .error swapClash := by unfold checkCore; rw [h]
   unfold checkDocSets checkDoc
-  split <;> simp [h, hc] <;> exact ⟨rfl, rfl⟩
+  by_cases hs : "scope@0" ∈ profilesOf j
+  · simp [hs, h]; exact ⟨rfl, rfl⟩
+  · have hc : checkCore j = .error swapClash := by unfold checkCore; rw [if_neg hs, h]
+    simp [hs, hc]
 
 /-- Extend the established document answer with the governed sets' composed rules. -/
 def checkDocSetsAnswered (j : Json) : Except String Json := do
