@@ -1,0 +1,75 @@
+{
+ "item": "dr-sc-readingset-ids",
+ "language": "Python",
+ "command": "uv run --frozen pytest -q tests/test_readings_s1_pilot_rebuild.py with each mutant applied to tools/readings_s1_pilot.py, then restored",
+ "mutants": [
+  {
+   "id": "M1-ids-on-written-environment",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "rebuild_reading_ids",
+   "mutation": "ids computed on meta['environment'] as written instead of chain_environment",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
+    "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts"
+   ]
+  },
+  {
+   "id": "M2-bases-over-model-environment",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "_reidentified",
+   "mutation": "situation bases completed over the models' environment (main's padding: regulated predicates added)",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
+    "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts",
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one",
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame"
+   ]
+  },
+  {
+   "id": "M3-bases-not-completed",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "_reidentified",
+   "mutation": "situation bases not completed at all",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one"
+   ]
+  },
+  {
+   "id": "M4-no-scope-gate",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "rebuild_reading_ids",
+   "mutation": "Lean's scope mode (ve.scope.explain) not asked before a scope@0 rebuild",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-discourse]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-risk]"
+   ]
+  },
+  {
+   "id": "M5-padding-before-existing-keys",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "_reidentified.extended",
+   "mutation": "added relations placed before the base's own (key order changed)",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one"
+   ]
+  },
+  {
+   "id": "M6-filled-frame-not-asked",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "base_vocabulary",
+   "mutation": "under norm-defaults@0 Lean's filled frame not asked (Python's lower environment as the frame)",
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
+    "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts",
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one",
+    "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame"
+   ]
+  }
+ ]
+}
