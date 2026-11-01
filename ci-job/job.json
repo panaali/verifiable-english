@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-eff-20261101-1-9794fc57-t561179-s5",
+ "head": "c6c61d60afac86d27c846c1bf716ef0f4dfa3ea9",
+ "argv": [
+  "x86sh-cand-eff-20261101-1-9794fc57-t561179-s5",
+  "c6c61d60afac86d27c846c1bf716ef0f4dfa3ea9",
+  "43e11dea614659e84d91f71222bf06b29d913b8e",
+  "-",
+  "-",
+  "4",
+  "5/5"
+ ],
+ "lean_from": {
+  "run_id": "41341759033",
+  "sha256": "f6b181721195556068627d6edd57d210101184f878be225b0228d108d223bab1"
+ }
+}
