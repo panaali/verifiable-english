@@ -91,15 +91,25 @@ def m11 (r : String) := mention "m2" .sectionRef (namedTarget .rule r)
 and the order of the slots. -/
 def g (p : String) : VE.Formula := .unary p (.var 0)
 def nodeX : VE.SoftNorms.SoftNode := { (node "r" "review_required" (g "api")) with
-  carveOuts := [g "deployed"], mode := .default, exception := some ⟨none, [g "review_required"], [.top], []⟩ }
-#guard (positions E (.norm nodeX)).map (·.2) = [g "api", g "deployed", g "review_required", .top]
-#guard withPositions E (.norm nodeX) [.top, .bottom, g "api", g "deployed"] == some (.norm { nodeX with
-  guard := .top, carveOuts := [.bottom], exception := some ⟨none, [g "api"], [g "deployed"], []⟩ })
+  carveOuts := [g "deployed", .bottom], mode := .default,
+  exception := some ⟨none, [g "review_required", .top], [.top, g "api"], []⟩ }
+#guard (positions E (.norm nodeX)).map (·.2) =
+  [g "api", g "deployed", .bottom, g "review_required", .top, .top, g "api"]
+#guard withPositions E (.norm nodeX) [.top, .bottom, .top, g "api", .bottom, g "deployed", .top] == some (.norm
+  { nodeX with guard := .top, carveOuts := [.bottom, .top], exception := some ⟨none, [g "api", .bottom],
+    [g "deployed", .top], []⟩ })
 def lineX : VE.Rights.SourceLine :=
   ⟨.power, none, some (node "lib" "deployed" (g "api")), some (node "rec" "owns" .top), [], none, []⟩
 def rightX : Content := .right ⟨"rt", "person", g "notify_required", [lineX, { lineX with liberty := none }]⟩
 #guard positions E rightX = [(["person"], g "notify_required"), (["service"], g "api"), (["service", "person"], .top),
   (["service", "person"], .top)]
+-- A claim line's norm node, then a power line's liberty and recognition nodes, each line in order.
+def claimX : VE.Rights.SourceLine := ⟨.claim, some (node "cl" "notify_required" .bottom), none, none, [], none, []⟩
+#guard positions E (.rightLines "rt" [claimX, lineX]) =
+  [(["person"], .bottom), (["service"], g "api"), (["service", "person"], .top)]
+#guard withPositions E (.rightLines "rt" [claimX, lineX]) [.top, .bottom, .top] == some (.rightLines "rt"
+  [{ claimX with norm := some (node "cl" "notify_required" .top) },
+   { lineX with liberty := some (node "lib" "deployed" .bottom) }])
 #guard withPositions E rightX [.bottom, .top, g "deployed", .bottom] == some (.right ⟨"rt", "person", .bottom,
   [{ lineX with liberty := some (node "lib" "deployed" .top), recognition := some (node "rec" "owns" (g "deployed")) },
    { lineX with liberty := none, recognition := some (node "rec" "owns" .bottom) }]⟩)
@@ -125,12 +135,18 @@ def mb (i : Nat) (id : String) (span : Nat × Nat) := mention id .pronoun (binde
   (.norm (node "o" "owns" (.and (.binary "owns" (.var 1) (.var 0)) (.ex "service" (.binary "owns" (.var 2) (.var 0))))))
 #guard errIs (resolveContent E (manifest [mb 2 "m1" (0, 2)]) "u1"
   (.norm (node "o" "owns" (.binary "owns" (slot "m1") (.var 0))))) "WitnessEscape: m1"
+#guard errIs (resolveContent E (manifest [mb 10 "m1" (0, 2)]) "u1"
+  (.norm (node "o" "owns" (.binary "owns" (slot "m1") (.var 0))))) "WitnessEscape: m1"
 -- Two descriptions in one position: the one written first (`m1`, a person) takes the wider scope, whatever the
 -- manifest order.
 def dPerson := mention "m1" .definite (binderTarget 0) (some (g "notify_required")) (some .assertive)
 def dService := mention "m2" .definite (binderTarget 0) (some (g "api")) (some .assertive) (span := (3, 5))
+def twoDescriptions : VE.Formula :=
+  assertive "person" (g "notify_required") (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))
 #guard okIs (resolveContent E (manifest [dService, dPerson]) "u1" (.assertion (.binary "owns" (slot "m1") (slot "m2"))))
-  (.assertion (assertive "person" (g "notify_required") (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))))
+  (.assertion twoDescriptions)
+#guard okIs (resolveContent E (manifest [dPerson, dService]) "u1" (.assertion (.binary "owns" (slot "m1") (slot "m2"))))
+  (.assertion twoDescriptions)
 -- A mention nested in a description's span (its possessive) is no separate slot; one outside the span needs one.
 #guard okIs (resolveContent E (manifest [m7, mention "m3" .possessive (entityTarget "alice") (span := (0, 1))]) "u1" s4_7)
   (.norm (node "notify" "notify_required" (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))))

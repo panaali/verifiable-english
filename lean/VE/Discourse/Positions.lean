@@ -173,10 +173,9 @@ def Row.typed (E : VE.Environment) (ctx : List String) : Row → Bool
   | .plural cs => cs.all fun c => (E.constants c).isSome
   | .pred _ => true
 
-/-- The mentions whose slot occurs in `A`, in span order. -/
+/-- The mentions whose slot occurs in `A`, in span order (the slots of a position have disjoint spans). -/
 def slotsIn (ms : List Mention) (A : VE.Formula) : List Mention :=
-  (ms.filter fun m => (symbolsOf A).contains (slotName m.id)).mergeSort
-    fun a b => a.span.1 < b.span.1 || (a.span.1 == b.span.1 && a.span.2 ≤ b.span.2)
+  (ms.filter fun m => (symbolsOf A).contains (slotName m.id)).mergeSort fun a b => a.span.1 ≤ b.span.1
 
 /-- The rows of a position's slots, in span order. -/
 def rowsAt (E : VE.Environment) (ms : List Mention) (ctx : List String) (A : VE.Formula) :

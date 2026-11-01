@@ -3182,6 +3182,7 @@
     "VE/Discourse/PositionsExamples.lean": {
       "T": [
         "VE.Discourse.PositionsExamples.E",
+        "VE.Discourse.PositionsExamples.claimX",
         "VE.Discourse.PositionsExamples.dPerson",
         "VE.Discourse.PositionsExamples.dService",
         "VE.Discourse.PositionsExamples.errIs",
@@ -3200,6 +3201,7 @@
         "VE.Discourse.PositionsExamples.s4_4",
         "VE.Discourse.PositionsExamples.s4_7",
         "VE.Discourse.PositionsExamples.slot",
+        "VE.Discourse.PositionsExamples.twoDescriptions",
         "VE.Discourse.PositionsExamples.written4"
       ]
     },
