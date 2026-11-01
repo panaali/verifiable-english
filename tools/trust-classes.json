@@ -6794,14 +6794,6 @@
         "VE.Readings.Sim"
       ]
     },
-    "VE/Readings/Stage.lean": {
-      "G[R]": [
-        "VE.Readings.Stage.around",
-        "VE.Readings.Stage.marker",
-        "VE.Readings.Stage.part",
-        "VE.Readings.Stage.stage"
-      ]
-    },
     "VE/Readings/Strings.lean": {
       "S": [
         "VE.Readings.AsciiL"
@@ -9976,11 +9968,6 @@
         "VE.Service.Graph.topological"
       ]
     },
-    "VE/Service/MemoExamples.lean": {
-      "T": [
-        "memoCase"
-      ]
-    },
     "VE/Service/ParseDiagnostic.lean": {
       "G[V]": [
         "VE.Service.ParseDiagnostic.Cursor",
@@ -10108,18 +10095,6 @@
       ],
       "G[V]": [
         "VE.Service.Readings.readingsCase"
-      ]
-    },
-    "VE/Service/StageTimes.lean": {
-      "G[R]": [
-        "VE.Service.StageTimes.Mode",
-        "VE.Service.StageTimes.Open",
-        "VE.Service.StageTimes.cpuTicks",
-        "VE.Service.StageTimes.mode",
-        "VE.Service.StageTimes.parse",
-        "VE.Service.StageTimes.row",
-        "VE.Service.StageTimes.step",
-        "VE.Service.StageTimes.stream"
       ]
     },
     "VE/Service/Standalone.lean": {
@@ -10594,12 +10569,6 @@
             "VE.SoftNorms.keyedDecisions_names"
           ]
         }
-      ]
-    },
-    "VE/SoftNorms/TreeExamples.lean": {
-      "T": [
-        "VE.SoftNorms.TreeFixtures.layeredDocs",
-        "VE.SoftNorms.TreeFixtures.unsplitKeys"
       ]
     },
     "VE/SoftNorms/Wire.lean": {
@@ -14270,9 +14239,12 @@
         "VE.Scope.conditions",
         "VE.Scope.defSpans",
         "VE.Scope.firstDup",
+        "VE.Scope.forwardCheck",
+        "VE.Scope.forwardsOk",
         "VE.Scope.implWF?",
         "VE.Scope.jsonWF?",
         "VE.Scope.kindOf",
+        "VE.Scope.laterUnitsIn",
         "VE.Scope.listWF?",
         "VE.Scope.orderCheck",
         "VE.Scope.orderCheckF",
@@ -15277,6 +15249,7 @@
         "VE.Scope.WireExamples.foldDoc",
         "VE.Scope.WireExamples.foldEnv",
         "VE.Scope.WireExamples.foldGov",
+        "VE.Scope.WireExamples.fwd",
         "VE.Scope.WireExamples.gov",
         "VE.Scope.WireExamples.listName",
         "VE.Scope.WireExamples.st",
@@ -15318,6 +15291,7 @@
     },
     "VE/Scope/Wire.lean": {
       "D[R]": [
+        "VE.Scope.decodeForward",
         "VE.Scope.illFormed",
         "VE.Scope.memberOf",
         "VE.Scope.membersIn",
@@ -16623,37 +16597,83 @@
         "VE.Acts.ReadingsExamples.wide"
       ]
     },
-    "VE/Scope/ReadingsLemmas.lean": {},
-    "VE/Senses/Version.lean": {
-      "G[I]": [
-        "VE.Senses.sensesVersion"
-      ]
-    },
-    "ResponseShape/Schemas/SensesProject.lean": {
+    "VE/Acts/Sources.lean": {
+      "S": [
+        "List.Forall₂",
+        "VE.Acts.Source",
+        "VE.Acts.SourceExact",
+        "VE.Acts.View",
+        "VE.Acts.choiceRules",
+        "VE.Acts.choiceViews",
+        "VE.Acts.choicesOn",
+        "VE.Acts.expected",
+        "VE.Acts.opOfSource",
+        "VE.Acts.readingViews",
+        "VE.Acts.ruleView"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Acts.compareViews",
+          "tied": [
+            "VE.Acts.compareViews_ok"
+          ]
+        },
+        {
+          "name": "VE.Acts.pick",
+          "tied": [
+            "VE.Acts.pick_forall₂"
+          ]
+        },
+        {
+          "name": "VE.Acts.sourceCheck",
+          "tied": [
+            "VE.Acts.sourceCheck_exact"
+          ]
+        },
+        {
+          "name": "VE.Acts.viewsOn",
+          "tied": [
+            "VE.Acts.viewsOn_choices"
+          ]
+        }
+      ],
       "G[R]": [
-        "ResponseShape.Schemas.SensesProject.pair",
-        "ResponseShape.Schemas.SensesProject.lexicon",
-        "ResponseShape.Schemas.SensesProject.identities",
-        "ResponseShape.Schemas.SensesProject.fault",
-        "ResponseShape.Schemas.SensesProject.projection",
-        "ResponseShape.Schemas.SensesProject.row",
-        "ResponseShape.Schemas.SensesProject.file"
+        "VE.Acts.d29"
+      ],
+      "P": [
+        "VE.Acts.instDecidableEqView"
       ]
     },
-    "VE/Senses/RunExamples.lean": {
+    "VE/Acts/Situation.lean": {
+      "G[V]": [
+        "VE.Acts.atomSituation",
+        "VE.Acts.rulePred"
+      ]
+    },
+    "VE/Scope/ReadingsLemmas.lean": {},
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
+    "VE/Service/MemoExamples.lean": {
       "T": [
-        "VE.Senses.RunExamples.caseJ",
-        "VE.Senses.RunExamples.lineFunny2",
-        "VE.Senses.RunExamples.LA",
-        "VE.Senses.RunExamples.sameAs",
-        "VE.Senses.RunExamples.idsOf",
-        "VE.Senses.RunExamples.overlayJ",
-        "VE.Senses.RunExamples.lexJ",
-        "VE.Senses.RunExamples.req",
-        "VE.Senses.RunExamples.pin",
-        "VE.Senses.RunExamples.projectReq",
-        "VE.Senses.RunExamples.src",
-        "VE.Senses.RunExamples.fenced"
+        "memoCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
       ]
     },
     "VE/WireContract/Hooks/Acts.lean": {
@@ -16718,6 +16738,38 @@
         "VE.Compose.ContractExamples.tagRewriter"
       ]
     },
+    "VE/Senses/Version.lean": {
+      "G[I]": [
+        "VE.Senses.sensesVersion"
+      ]
+    },
+    "ResponseShape/Schemas/SensesProject.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.SensesProject.pair",
+        "ResponseShape.Schemas.SensesProject.lexicon",
+        "ResponseShape.Schemas.SensesProject.identities",
+        "ResponseShape.Schemas.SensesProject.fault",
+        "ResponseShape.Schemas.SensesProject.projection",
+        "ResponseShape.Schemas.SensesProject.row",
+        "ResponseShape.Schemas.SensesProject.file"
+      ]
+    },
+    "VE/Senses/RunExamples.lean": {
+      "T": [
+        "VE.Senses.RunExamples.caseJ",
+        "VE.Senses.RunExamples.lineFunny2",
+        "VE.Senses.RunExamples.LA",
+        "VE.Senses.RunExamples.sameAs",
+        "VE.Senses.RunExamples.idsOf",
+        "VE.Senses.RunExamples.overlayJ",
+        "VE.Senses.RunExamples.lexJ",
+        "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.pin",
+        "VE.Senses.RunExamples.projectReq",
+        "VE.Senses.RunExamples.src",
+        "VE.Senses.RunExamples.fenced"
+      ]
+    },
     "VE/Readings/RightsExamples.lean": {
       "T": [
         "VE.Readings.RightsExamples.M21",
@@ -16761,59 +16813,6 @@
         "VE.Readings.RightsExamples.rsOne"
       ]
     },
-    "VE/Acts/Sources.lean": {
-      "S": [
-        "List.Forall₂",
-        "VE.Acts.Source",
-        "VE.Acts.SourceExact",
-        "VE.Acts.View",
-        "VE.Acts.choiceRules",
-        "VE.Acts.choiceViews",
-        "VE.Acts.choicesOn",
-        "VE.Acts.expected",
-        "VE.Acts.opOfSource",
-        "VE.Acts.readingViews",
-        "VE.Acts.ruleView"
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Acts.compareViews",
-          "tied": [
-            "VE.Acts.compareViews_ok"
-          ]
-        },
-        {
-          "name": "VE.Acts.pick",
-          "tied": [
-            "VE.Acts.pick_forall₂"
-          ]
-        },
-        {
-          "name": "VE.Acts.sourceCheck",
-          "tied": [
-            "VE.Acts.sourceCheck_exact"
-          ]
-        },
-        {
-          "name": "VE.Acts.viewsOn",
-          "tied": [
-            "VE.Acts.viewsOn_choices"
-          ]
-        }
-      ],
-      "G[R]": [
-        "VE.Acts.d29"
-      ],
-      "P": [
-        "VE.Acts.instDecidableEqView"
-      ]
-    },
-    "VE/Acts/Situation.lean": {
-      "G[V]": [
-        "VE.Acts.atomSituation",
-        "VE.Acts.rulePred"
-      ]
-    },
     "VE/Readings/SoftSup.lean": {
       "G[V]": [
         "VE.Readings.supX",
@@ -16850,6 +16849,42 @@
         "VE.Readings.SoftSupExamples.closeCert",
         "VE.Readings.SoftSupExamples.q4",
         "VE.Readings.SoftSupExamples.NSDa"
+      ]
+    },
+    "VE/Scope/FarExamples.lean": {
+      "T": [
+        "VE.Scope.FarExamples.checkF",
+        "VE.Scope.FarExamples.cyclic",
+        "VE.Scope.FarExamples.edgePremises",
+        "VE.Scope.FarExamples.far",
+        "VE.Scope.FarExamples.farAnchors",
+        "VE.Scope.FarExamples.farEnv",
+        "VE.Scope.FarExamples.farPieces",
+        "VE.Scope.FarExamples.farRules",
+        "VE.Scope.FarExamples.fwd",
+        "VE.Scope.FarExamples.g11",
+        "VE.Scope.FarExamples.g11a",
+        "VE.Scope.FarExamples.g11n",
+        "VE.Scope.FarExamples.gE",
+        "VE.Scope.FarExamples.govW",
+        "VE.Scope.FarExamples.hAnchors",
+        "VE.Scope.FarExamples.hD",
+        "VE.Scope.FarExamples.hDoc",
+        "VE.Scope.FarExamples.hPieces",
+        "VE.Scope.FarExamples.overs",
+        "VE.Scope.FarExamples.rawAt",
+        "VE.Scope.FarExamples.rule",
+        "VE.Scope.FarExamples.u0047",
+        "VE.Scope.FarExamples.u0047Anchors",
+        "VE.Scope.FarExamples.u0047Doc",
+        "VE.Scope.FarExamples.w1Order"
+      ]
+    },
+    "VE/Scope/FarTheorems.lean": {},
+    "VE/SoftNorms/TreeExamples.lean": {
+      "T": [
+        "VE.SoftNorms.TreeFixtures.layeredDocs",
+        "VE.SoftNorms.TreeFixtures.unsplitKeys"
       ]
     }
   }

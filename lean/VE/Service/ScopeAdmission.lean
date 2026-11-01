@@ -203,6 +203,8 @@ theorem decodeParts_wf (block : Json) (hw : JsonWF block) (p) (h : decodeParts b
   obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
   obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
   obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
   cases h
   intro g hg
   obtain ⟨x, hx, hd⟩ := mapM_ok_mem _ xs gs hgs g hg
