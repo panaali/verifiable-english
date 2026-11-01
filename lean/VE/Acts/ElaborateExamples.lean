@@ -188,6 +188,7 @@ def hideEnv (D : ActsDoc) (ps : List (String × List String)) : ActsDoc :=
     *has the right to*: refused. (Until D3's revision it used "to seek asylum and to seek asylum", now D-23's.) -/
 def seek : Atom := ⟨true, false, ["seek"], [("", .one (w "asylum"))], []⟩
 def sick : Atom := ⟨true, false, ["security"], [("in the event of", .one (w "sickness"))], []⟩
+#guard partAct [] .plain sick == "{0} to security in the event of sickness"
 #guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .any false true [sick, sick])]) ==
   some "InvalidInput: two parts of p are the same act"
 #guard refusal (withActs (doc [rg "p" .permission] [nd "r" "p" false]) fx6 [("p", .any false true [torture, torture])]) ==

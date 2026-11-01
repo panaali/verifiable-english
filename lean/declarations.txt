@@ -1777,7 +1777,7 @@ module VE.Acts.Elaborate bbd965ab9388dac1c44f294c70beb088be7ad3430a116df3b58598a
 325:0-333:33 theorem VE.Acts.splitDoc_none@VE.Acts.Elaborate
 335:0-341:107 theorem VE.Acts.lookup_mem@VE.Acts.Elaborate
 343:0-383:59 theorem VE.Acts.elaborate_identity@VE.Acts.Elaborate
-module VE.Acts.ElaborateExamples 72c42856d4373cb41478fdcb018ec943fcf397f8550f85c618932c2d050d6c8f
+module VE.Acts.ElaborateExamples c3a360138edd613d805563fd9480b1cbdbea1ed54128f70d1196290fa1554eac
 13:0-14:89 def VE.Acts.ElaborateExamples.env@VE.Acts.ElaborateExamples
 15:0-16:89 def VE.Acts.ElaborateExamples.rg@VE.Acts.ElaborateExamples
 17:0-18:86 def VE.Acts.ElaborateExamples.nd@VE.Acts.ElaborateExamples
@@ -1803,12 +1803,12 @@ module VE.Acts.ElaborateExamples 72c42856d4373cb41478fdcb018ec943fcf397f8550f85c
 169:0-170:62 def VE.Acts.ElaborateExamples.hideEnv@VE.Acts.ElaborateExamples
 187:0-189:73 def VE.Acts.ElaborateExamples.seek@VE.Acts.ElaborateExamples
 190:0-190:94 def VE.Acts.ElaborateExamples.sick@VE.Acts.ElaborateExamples
-201:0-201:101 def VE.Acts.ElaborateExamples.many@VE.Acts.ElaborateExamples
-235:0-235:63 def VE.Acts.ElaborateExamples.good@VE.Acts.ElaborateExamples
-236:0-236:66 def VE.Acts.ElaborateExamples.bad@VE.Acts.ElaborateExamples
-249:0-250:97 def VE.Acts.ElaborateExamples.dual@VE.Acts.ElaborateExamples
-251:0-251:68 def VE.Acts.ElaborateExamples.q@VE.Acts.ElaborateExamples
-252:0-252:58 def VE.Acts.ElaborateExamples.qm@VE.Acts.ElaborateExamples
+202:0-202:101 def VE.Acts.ElaborateExamples.many@VE.Acts.ElaborateExamples
+236:0-236:63 def VE.Acts.ElaborateExamples.good@VE.Acts.ElaborateExamples
+237:0-237:66 def VE.Acts.ElaborateExamples.bad@VE.Acts.ElaborateExamples
+250:0-251:97 def VE.Acts.ElaborateExamples.dual@VE.Acts.ElaborateExamples
+252:0-252:68 def VE.Acts.ElaborateExamples.q@VE.Acts.ElaborateExamples
+253:0-253:58 def VE.Acts.ElaborateExamples.qm@VE.Acts.ElaborateExamples
 module VE.Acts.Grammar df0165c3a886115a019e6a5077e946aff0b6bde89522d0d73dbf905b25590c98
 16:0-20:28 inductive VE.Acts.Core@VE.Acts.Grammar
 20:11-20:22 instance VE.Acts.instDecidableEqCore@VE.Acts.Grammar
