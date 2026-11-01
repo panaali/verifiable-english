@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 5/6: 66 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/929] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/929] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/929] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4780 lines cut; full output in shard-full.txt)
+Build completed successfully (693 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded digest v0.10.7
+  Downloaded crypto-common v0.1.7
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded memchr v2.8.3
+  Downloaded zmij v1.0.23
+  Downloaded block-buffer v0.10.4
+  Downloaded num-bigint v0.4.8
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded serde_json v1.0.151
+  Downloaded version_check v0.9.5
+  Downloaded num-integer v0.1.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded syn v3.0.6
+  Downloaded quote v1.0.47
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.71s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.75s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 66 units with 4 jobs in /var/tmp/cct/ve-select-run-x5uzgct4
+  tests/test_assurance_manifest.py: exit 1 in 42.7 s, 1503 functions
+  tests/test_precommit_hook.py: exit 1 in 327.3 s, 262 functions
+FAILED tests/test_precommit_hook.py (exit 1): tests/test_precommit_hook.py::test_large_staged_change_passes; log /var/tmp/cct/ve-select-run-x5uzgct4/tests__test_precommit_hook.py.log
+        """Its cost in CPU seconds is a benchmark (tools/bench/test_perf.py), not a test criterion."""
+        stage_large_change(staging)
+        # The hook's waits stay the suite's hang guard: a real child never runs against their
+        # defaults (30 s, 3 s, 2 s), which tests/test_hang_guards.py checks by instrumentation.
+        result = staging.run("--timings")
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: pre-commit: secrets: 0.459 s
+E         pre-commit: layer imports: 25.155 s
+E         pre-commit: layer imports check failed:
+E           lean/VE/Judgments/Examples.lean: new outward Lean import VE.Judgments.Examples -> VE.EnglishGrammar.Catalogue (layer 2 -> 3)
+E         pre-commit: Lean forbidden tokens: 1.990 s
+E         pre-commit: frozen files: 0.015 s
+E         pre-commit: wire contract: 0.365 s
+E         pre-commit: English grammar: 0.019 s
+E         pre-commit: lean --deps confirmed or refuted 591 of 591 staged Lean headers
+E         pre-commit: total 28.594 s (2248 staged paths)
+E         pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/tmp/cc-wt/tools/hooks/pre-commit', '--timings'], returncode=1, stdout='', stderr='pre-commit:...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\n').returncode
+
+tests/test_precommit_hook.py:600: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_precommit_hook.py::test_large_staged_change_passes - Assert...
+1 failed, 61 passed in 326.54s (0:05:26)
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole, tests/test_assurance_manifest.py::test_full_file_decoder_pins_cover_the_current_file, tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned; log /var/tmp/cct/ve-select-run-x5uzgct4/tests__test_assurance_manifest.py.log
+E       AssertionError: lean/VE/Service/Document.lean: review the ranges, then pin "lines": 2093, "sha256": "1109bc3ce76ecebbdd6f98b78238f4b5902f36f89f5ab60275e4d5195347da03"
+E       assert not ['lean/VE/Service/Document.lean: review the ranges, then pin "lines": 2093, "sha256": "1109bc3ce76ecebbdd6f98b78238f4b5902f36f89f5ab60275e4d5195347da03"']
+
+tests/test_assurance_manifest.py:595: AssertionError
+______________ test_full_file_decoder_pins_cover_the_current_file ______________
+
+    def test_full_file_decoder_pins_cover_the_current_file():
+        """A refreshed hash must not leave newly added decoder lines outside a claimed full-file range."""
+        for entry in MANIFEST["lean_decoders"]["files"]:
+            if "full file" in entry.get("reason", ""):
+                data = (ROOT / entry["file"]).read_bytes()
+                lines = data.count(b"\n") + (0 if data.endswith(b"\n") or not data else 1)
+>               assert entry["ranges"] == [[1, lines]], entry["file"]
+E               AssertionError: lean/VE/Service/Document.lean
+E               assert [[1, 2080]] == [[1, 2093]]
+E                 
+E                 At index 0 diff: [1, 2080] != [1, 2093]
+E                 Use -v to get more diff
+
+tests/test_assurance_manifest.py:604: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned
+FAILED tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole
+FAILED tests/test_assurance_manifest.py::test_full_file_decoder_pins_cover_the_current_file
+3 failed, 135 passed in 41.88s
+recorded 66 units for tree 857c3df5d2; 0 others left to the static graph until they run; 2 failed
+SHARD 5/6: exit 1 in 1549.5 s; 66 units, 64 passed
