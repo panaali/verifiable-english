@@ -1,0 +1,13 @@
+trust_mutants: 10 definitions, 265 mutants (66 to run), 4 jobs, base 7a8a0f74344d
+SURVIVOR lean/VE/Judgments/Undeclared.lean:20 VE.Judgments.hasPhrase (S, trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/Judgments/Undeclared.lean:31 VE.Judgments.undeclaredEvaluative (S, trusted) list-empty: (preds.filter fun (p, ws) => !J.contains p && rows.any (·.matches ws)) -> [] (lean/VE/Judgments/Undeclared.lean:31: Invalid projection: Type of)
+UNKNOWN lean/VE/Judgments/Undeclared.lean:37 VE.Judgments.predicateWords (S, trusted) list-empty: template.map -> [] (lean/VE/Judgments/Undeclared.lean:37: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-empty: E.rv.vocabulary.predicates.filter -> [] (lean/VE/Service/Document.lean:1727: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-drop-last: (E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map -> (((E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map).dropLast) (lean/VE/Service/Document.lean:1727: Invalid match expression: The type of pattern variable 'snd✝'...)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:14 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:15: Invalid `⟨...⟩` notation: The expected type of this te...)
+SURVIVOR lean/VE/Service/Document.lean:1853 VE.Service.Document.encode (G[V], trusted) list-drop-first: [("judgments", usageJson m), ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArr... -> ([("judgments", usageJson m), ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toAr...
+SURVIVOR lean/VE/Judgments/Undeclared.lean:31 VE.Judgments.undeclaredEvaluative (S, trusted) list-last: J -> (J.reverse.take 1) (the proofs it breaks: lean/VE/Judgments/Undeclared.lean:60)
+trust_mutants: 53 KILLED, 3 SURVIVOR, 5 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 199 OTHER SHARD in 2262 s
+trust_mutants: G[V], trusted: 20 KILLED, 1 SURVIVOR, 2 UNKNOWN, 1 INVALID, 60 OTHER SHARD
+trust_mutants: S, trusted: 33 KILLED, 2 SURVIVOR, 3 UNKNOWN, 4 INVALID, 139 OTHER SHARD
+trust_mutants: steps: wall plan 10.2 s, scratch 3.2 s, control_build 0.3 s, probe_install 1.3 s, control_probes 612.2 s, mutants 1631.8 s, cleanup 2.5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 928.8 s (9), mutant_builds 664.2 s (88), mutant_checks 1222.2 s (46), stage_controls 187.3 s (7), mutant_probes 4173.2 s (92)
