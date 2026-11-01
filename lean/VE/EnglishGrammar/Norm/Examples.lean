@@ -43,6 +43,8 @@ def statements (ps : List Piece) : Option (List NormStatement) := (assemble ps).
 #guard faultOf [hd 1 [0], may] == some (.unknownRule 0)
 #guard faultOf [hd 1 [2], may] == some (.unknownRule 2)
 #guard faultOf [hd 1, may, hd 2 [1], may] == none
+#guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)
+#guard faultOf [hd 1 [5], may, .precedence 1 7] == some (.unknownRule 5)
 -- a block's faults come before an unknown reference
 #guard faultOf [hd 1, may, .precedence 1 5, hd 3, may] == some (.expectedRule 3 2)
 -- a clause sentence outside a block, or a second one in a block
