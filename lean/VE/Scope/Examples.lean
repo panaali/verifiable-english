@@ -1188,4 +1188,76 @@ def onceRule : Json := Json.mkObj [("name", "r"), ("predicate", "p"), ("sign", f
 
 end SC2c
 
+section SC2d
+open Lean
+open VE.SoftNorms (SoftNode)
+
+/-! sc-2d: spec 5.4's five effect theorems, which take `(hw : JsonWF o)` (F-raw-effect above is why), on a well-formed
+    rule: guard `p(x₀)`, one carve-out `⊥`. Accepting: every premise holds and both conjuncts hold at each valuation of
+    `ownModel`. Refusing: a premise fails (`none`), or the rule a wrong effect would write is told apart. -/
+def pRule : Json := Json.mkObj [("name", "r"), ("predicate", "p"), ("sign", false),
+  ("guard", j "[\"unary\",\"p\",[\"var\",0]]"), ("unless", .arr #[j "[\"bottom\"]"]), ("over", .arr #[])]
+def atAB (φ : VE.Formula) : List Bool := [["a"], ["b"]].map (φ.eval ownModel ·)
+/-- The rule before and after one effect, and the effect's condition as the theorems decode it. -/
+def applied (re : VE.Readings.Wire.ReadingsEnvironment) (e : Effect) (o : Json) : Option (SoftNode × SoftNode × VE.Formula) := do
+  let o' ← (applyEffect "u" e o).toOption
+  pure (← (VE.Readings.Wire.decodeNorm re o).toOption, ← (VE.Readings.Wire.decodeNorm re o').toOption,
+    ← (VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit ((conditions e).headD .null))).toOption)
+def notOwn : Json := j "[\"not\",\"own\"]"
+def notP : Json := j "[\"not\",[\"unary\",\"p\",[\"var\",0]]]"
+def narrowNotP : Effect := .reguard (.arr #[.str "and", .str "own", notP])
+def carveP : Effect := .carveOut (j "[\"unary\",\"p\",[\"var\",0]]")
+def onBoth (f : VE.Readings.Wire.ReadingsEnvironment → Bool) : Bool :=
+  [softEnv, envJ].all fun env => ((VE.Readings.Wire.decodeEnvironment env).toOption.map f).getD false
+-- reguard_applies, restrict_applies, carveOut_applies: accepting, on both chains
+#guard jsonWF? pRule && onBoth fun re =>
+  (match applied re (.reguard notOwn) pRule with
+    | some (N, N', G') => N' == { N with guard := G' } && N' != N &&
+        atAB (VE.Norms.applies N'.toNode) == atAB (.and G' (.not (VE.Norms.anyF N.carveOuts))) &&
+        atAB (VE.Norms.applies N'.toNode) == [false, true]
+    | none => false) &&
+  (match applied re narrowNotP pRule, (VE.Norms.Wire.decodeBudgeted notP).toOption with
+    | some (N, N', _), some C' => !hasOwn depthLimit notP && N' == { N with guard := .and N.guard C' } &&
+        atAB (VE.Norms.applies N'.toNode) == atAB (.and (VE.Norms.applies N.toNode) C')
+    | _, _ => false) &&
+  (match applied re carveP pRule with
+    | some (N, N', C) => N' == { N with carveOuts := N.carveOuts ++ [C] } && N'.carveOuts != C :: N.carveOuts &&
+        atAB (VE.Norms.applies N'.toNode) == atAB (.and (VE.Norms.applies N.toNode) (.not C))
+    | none => false)
+-- refusing: a rule with no guard is no rule, a condition with `own` at a term position does not decode, and a
+-- condition with `own` is no narrowing; each leaves a premise false
+#guard onBoth fun re =>
+  [applied re (.reguard notOwn) (Json.mkObj [("name", "r")]), applied re carveP (Json.mkObj [("name", "r")]),
+    applied re (.reguard (j "[\"unary\",\"p\",\"own\"]")) pRule].all (·.isNone) && hasOwn depthLimit notOwn
+
+-- applyEffect_typed: `p` is a predicate of `person`, `q` is none; a condition that type-checks keeps the rule typed
+def envP : VE.Environment := ⟨["person"], fun p => if p == "p" then some ["person"] else none, fun _ => none⟩
+instance (N : SoftNode) : Decidable (Typed envP ["person"] N) := inferInstanceAs (Decidable (_ ∧ _))
+#guard onBoth fun re => match applied re (.reguard notOwn) pRule with
+  | some (N, N', G') => decide (Typed envP ["person"] N) && G'.check envP ["person"] && decide (Typed envP ["person"] N')
+  | none => false
+-- refusing: `p(x₁)` is outside the rule's context; the norms chain decodes it and the rule is no longer typed, the soft
+-- chain refuses the rule
+#guard [softEnv, envJ].map (fun env => (VE.Readings.Wire.decodeEnvironment env).toOption.bind fun re =>
+    (applied re (.carveOut (j "[\"unary\",\"p\",[\"var\",1]]")) pRule).map fun (N, N', C) =>
+      (decide (Typed envP ["person"] N), C.check envP ["person"], decide (Typed envP ["person"] N'))) ==
+  [none, some (true, false, false)]
+
+-- commute_applies: a narrowing and an own-free carve-out commute; a reguard that is no narrowing and a narrowing do
+-- not, and their two orders write rules that apply differently (at `a`)
+def bothOrders (re : VE.Readings.Wire.ReadingsEnvironment) (e₁ e₂ : Effect) (o : Json) : Option (SoftNode × SoftNode) := do
+  let o₁ ← ((applyEffect "u" e₁ o).bind (applyEffect "u" e₂)).toOption
+  let o₂ ← ((applyEffect "u" e₂ o).bind (applyEffect "u" e₁)).toOption
+  pure (← (VE.Readings.Wire.decodeNorm re o₁).toOption, ← (VE.Readings.Wire.decodeNorm re o₂).toOption)
+#guard Commutes narrowNotP carveP && !Commutes (.reguard notOwn) narrowNotP && onBoth fun re =>
+  (match bothOrders re narrowNotP carveP pRule with
+    | some (N₁, N₂) => { N₁ with guard := .top, carveOuts := [] } == { N₂ with guard := .top, carveOuts := [] } &&
+        atAB (VE.Norms.applies N₁.toNode) == atAB (VE.Norms.applies N₂.toNode)
+    | none => false) &&
+  (match bothOrders re (.reguard notOwn) narrowNotP pRule with
+    | some (N₁, N₂) => atAB (VE.Norms.applies N₁.toNode) == [false, true] && atAB (VE.Norms.applies N₂.toNode) == [true, true]
+    | none => false)
+
+end SC2d
+
 end VE.Scope.Examples
