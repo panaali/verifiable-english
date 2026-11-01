@@ -1230,18 +1230,21 @@ def onBoth (f : VE.Readings.Wire.ReadingsEnvironment → Bool) : Bool :=
   [applied re (.reguard notOwn) (Json.mkObj [("name", "r")]), applied re carveP (Json.mkObj [("name", "r")]),
     applied re (.reguard (j "[\"unary\",\"p\",\"own\"]")) pRule].all (·.isNone) && hasOwn depthLimit notOwn
 
--- applyEffect_typed: `p` is a predicate of `person`, `q` is none; a condition that type-checks keeps the rule typed
+-- applyEffect_typed: `p` is a predicate of `person`; a condition that type-checks keeps the rule typed. `Typed` is
+-- decided in each `#guard` itself, so a changed `Typed` changes the value the `#guard` checks.
 def envP : VE.Environment := ⟨["person"], fun p => if p == "p" then some ["person"] else none, fun _ => none⟩
-instance (N : SoftNode) : Decidable (Typed envP ["person"] N) := inferInstanceAs (Decidable (_ ∧ _))
-#guard onBoth fun re => match applied re (.reguard notOwn) pRule with
-  | some (N, N', G') => decide (Typed envP ["person"] N) && G'.check envP ["person"] && decide (Typed envP ["person"] N')
-  | none => false
--- refusing: `p(x₁)` is outside the rule's context; the norms chain decodes it and the rule is no longer typed, the soft
--- chain refuses the rule
-#guard [softEnv, envJ].map (fun env => (VE.Readings.Wire.decodeEnvironment env).toOption.bind fun re =>
-    (applied re (.carveOut (j "[\"unary\",\"p\",[\"var\",1]]")) pRule).map fun (N, N', C) =>
-      (decide (Typed envP ["person"] N), C.check envP ["person"], decide (Typed envP ["person"] N'))) ==
-  [none, some (true, false, false)]
+def pX1 : Json := j "[\"unary\",\"p\",[\"var\",1]]"
+#guard let typed := fun (N : SoftNode) => @decide (Typed envP ["person"] N) (by unfold Typed; infer_instance)
+  onBoth fun re => match applied re (.reguard notOwn) pRule with
+    | some (N, N', G') => typed N && G'.check envP ["person"] && typed N'
+    | none => false
+-- refusing: `p(x₁)` is outside the rule's context, as the new guard or a new carve-out; the norms chain decodes it and
+-- the rule is no longer typed, the soft chain refuses the rule
+#guard let typed := fun (N : SoftNode) => @decide (Typed envP ["person"] N) (by unfold Typed; infer_instance)
+  [Effect.reguard pX1, .carveOut pX1].map (fun e => [softEnv, envJ].map fun env =>
+    (VE.Readings.Wire.decodeEnvironment env).toOption.bind fun re =>
+      (applied re e pRule).map fun (N, N', C) => (typed N, C.check envP ["person"], typed N')) ==
+  [[none, some (true, false, false)], [none, some (true, false, false)]]
 
 -- commute_applies: a narrowing and an own-free carve-out commute; a reguard that is no narrowing and a narrowing do
 -- not, and their two orders write rules that apply differently (at `a`)
