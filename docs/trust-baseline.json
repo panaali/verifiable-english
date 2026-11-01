@@ -1611,16 +1611,16 @@
   },
   {
    "class": "S",
-   "lines": 37,
-   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Catalogue.lean S +10, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-10-31",
+   "lines": 36,
+   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Evaluative.lean S +9, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-11-01",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   },
   {
    "class": "V",
    "lines": 21,
-   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Catalogue.lean S +10, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-10-31",
+   "reason": "jt-3a: VE/Judgments/Undeclared.lean S +27, VE/EnglishGrammar/Evaluative.lean S +9, VE/Service/Document.lean G[V] +13, ResponseShape/Schemas/Document.lean G[V] +8 (K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3a, 2026-11-01",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   }
  ]

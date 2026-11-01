@@ -1,6 +1,6 @@
 {
  "item": "jt-3a",
- "note": "Each mutant was applied to the committed file, the named test or #guard run (lake build VE.Judgments.Examples for S1-S5; for S1-S3 also once with the iff theorems' proofs replaced by sorry, so the #guard and not only the proof is shown to fail), and the file restored from a saved copy; S6 rebuilt ve_service and pinned its build in lean/checkers.lock for the run, both restored and rebuilt after. Mechanical mutants of every new trusted definition: trust-mutants.json.",
+ "note": "Each mutant was applied to the committed file, the named test or #guard run (lake build VE.Judgments.Examples VE.EnglishGrammar.Examples for S1-S5; for S1-S3 also once with the iff theorems' proofs replaced by sorry, so the #guard and not only the proof is shown to fail), and the file restored from a saved copy; S6 rebuilt ve_service and pinned its build in lean/checkers.lock for the run, both restored and rebuilt after. Mechanical mutants of every new trusted definition: trust-mutants.json.",
  "mutants": [
   {
    "id": "S1",
@@ -9,9 +9,9 @@
    "definition": "VE.Judgments.EvaluativeRow.matches",
    "behaviour": "the report ignores a row's other senses (the task's seeded bug)",
    "mutation": "`matches` is `ws.contains row.word` (the `otherSenses` exclusion dropped)",
-   "test": "lean/VE/Judgments/Examples.lean:359 (#guard undeclaredEvaluative rows117 preds117 [\"arbitrary\"]: `due_date`, `just_as_real`, `necessary_condition` listed)",
+   "test": "lean/VE/Judgments/Examples.lean:360 (#guard undeclaredEvaluative rows117 preds117 [\"arbitrary\"]: `due_date`, `just_as_real`, `necessary_condition` listed)",
    "also": [
-    "lean/VE/Judgments/Examples.lean:360",
+    "lean/VE/Judgments/Examples.lean:361",
     "lean/VE/Judgments/Undeclared.lean undeclaredEvaluative_iff (the proof breaks without the theorem's sorry)",
     "tests/test_judgments_undeclared.py: conftest's lake build fails at the same #guard (pytest exit 3)"
    ]
@@ -23,9 +23,9 @@
    "definition": "VE.Judgments.undeclaredEvaluative",
    "behaviour": "a bound judgment is not listed",
    "mutation": "the filter drops `!J.contains p`",
-   "test": "lean/VE/Judgments/Examples.lean:359 (`arbitrary` listed with J = [arbitrary])",
+   "test": "lean/VE/Judgments/Examples.lean:360 (`arbitrary` listed with J = [arbitrary])",
    "also": [
-    "lean/VE/Judgments/Examples.lean:363",
+    "lean/VE/Judgments/Examples.lean:364",
     "lean/VE/Judgments/Undeclared.lean undeclaredEvaluative_iff"
    ]
   },
@@ -36,7 +36,7 @@
    "definition": "VE.Judgments.hasPhrase",
    "behaviour": "a phrase is found at every position, the last included",
    "mutation": "`List.range ws.length` in place of `List.range (ws.length + 1)`",
-   "test": "lean/VE/Judgments/Examples.lean:373 (#guard hasPhrase ... hasPhrase [] [])",
+   "test": "lean/VE/Judgments/Examples.lean:374 (#guard hasPhrase ... hasPhrase [] [])",
    "also": [
     "lean/VE/Judgments/Undeclared.lean hasPhrase_iff"
    ]
@@ -48,18 +48,18 @@
    "definition": "VE.Judgments.predicateWords",
    "behaviour": "a predicate's template words are read in lower case",
    "mutation": "`t.split` in place of `t.toLower.split`",
-   "test": "lean/VE/Judgments/Examples.lean:376 (#guard predicateWords \"Reasonable_grounds\" (some \"{0} has REASONABLE, grounds.\"))"
+   "test": "lean/VE/Judgments/Examples.lean:377 (#guard predicateWords \"Reasonable_grounds\" (some \"{0} has REASONABLE, grounds.\"))"
   },
   {
    "id": "S5",
    "language": "Lean",
-   "file": "lean/VE/EnglishGrammar/Catalogue.lean",
+   "file": "lean/VE/EnglishGrammar/Evaluative.lean",
    "definition": "VE.EnglishGrammar.evaluativeRows",
    "behaviour": "each catalogue row keeps the phrases of its other senses",
    "mutation": "the `due` row loses `[\"due\", \"to\"]`",
-   "test": "lean/VE/Judgments/Examples.lean:380 (#guard rows117.all evaluativeRows.contains)",
+   "test": "lean/VE/EnglishGrammar/Examples.lean:200 (#guard: every row 11.7 names is in evaluativeRows, with its other senses)",
    "also": [
-    "lean/VE/Judgments/Examples.lean:383 (`due_to_illness` listed)"
+    "lean/VE/EnglishGrammar/Examples.lean:210 (`due_to_illness` listed)"
    ]
   },
   {
