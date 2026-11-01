@@ -152,7 +152,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Question/Run.lean` | 259 | 259 | 1–259 | `75de40527c88…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 344 | 344 | 1–344 | `ab4fe1851cdc…` |
-| `lean/VE/NormDefaults/Layered.lean` | 463 | 463 | 1–463 | `c77f2d9e3b5b…` |
+| `lean/VE/NormDefaults/Layered.lean` | 463 | 463 | 1–463 | `9e7ad2086269…` |
 | `lean/VE/NormDefaults/Replay.lean` | 411 | 411 | 1–411 | `8a6191d5e0bc…` |
 | `lean/VE/NormDefaults/Report.lean` | 519 | 519 | 1–519 | `b4e17dd5611c…` |
 | `lean/VE/NormDefaults/Wire.lean` | 462 | 462 | 1–462 | `e12b65ac71be…` |
