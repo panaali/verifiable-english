@@ -36,6 +36,25 @@ def _emit(value):
 EXIT_CHECKER_UNAVAILABLE = 5
 
 
+def _render_senses(args, env):
+    """`ve render --view ve_english --senses PACK`: Lean's senses reading of the text, with each candidate of an open
+    unit rendered and re-read under its own projection (senses plan 2.8). Exit codes as `ve senses check`."""
+    if args.view not in (None, "ve_english") or args.with_legend or args.surface == "strict":
+        raise VEError("--senses renders English text in the ve_english view only")
+    from .assurance import operation
+    from .backends.senses import OPERATION, read
+    from .senses import load_pack
+    from .senses.display import candidates
+    packs = [load_pack(path) for path in args.senses]
+    overlay = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
+    result = read(env, _read(args.source, MAX_SOURCE_BYTES).decode("utf-8"), packs, overlay=overlay)
+    renderings = candidates(env, packs, result["reading"], overlay=overlay)
+    _emit({"operation": OPERATION, "assurance": operation(OPERATION)["assurance"]["current"],
+           "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result,
+           "renderings": renderings})
+    return 0 if result["reading"]["status"] == "one" else 3
+
+
 def main(argv=None):
     """Exit codes: 0 success, 1 violated, 2 invalid input, 3 not found,
     4 resource limit, 5 checker unavailable (operational, never a verdict)."""
@@ -240,6 +259,9 @@ def _main(argv=None):
             sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",
                              help="vocabulary legend format (used with --with-legend)")
             sub.add_argument("--naming", choices=NAMING_POLICIES, default="per_statement")
+        if command == "render":
+            sub.add_argument("--senses", action="append", metavar="PACK",
+                             help="sense pack JSON file: show each candidate of an open unit as English")
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
             sub.add_argument("--candidate-ast", help="document AST JSON to check against source")
@@ -254,6 +276,8 @@ def _main(argv=None):
             _emit(adopt(loads_json(_read(args.proposal)), args.output, acknowledge=args.acknowledge))
             return 0
         env = Environment.from_json(_read(args.env))
+        if getattr(args, "senses", None):
+            return _render_senses(args, env)
         if args.command == "propose":
             from .propose import adopt, propose, write_proposal
             vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
