@@ -27,6 +27,7 @@ import ResponseShape.Encoders.RiskEval
 import ResponseShape.Encoders.Route
 import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SearchBudget
+import ResponseShape.Encoders.SensesProject
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
 import ResponseShape.Encoders.Standalone
@@ -474,6 +475,10 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Scope.runCaseReported_fits
 #print axioms ResponseShape.Encoders.SearchBudget.runCaseReported_fits
 #print axioms ResponseShape.Encoders.SearchBudget.runCase_fits
+#print axioms ResponseShape.Encoders.SensesProject.faultJson_fits
+#print axioms ResponseShape.Encoders.SensesProject.projectCaseReported_fits
+#print axioms ResponseShape.Encoders.SensesProject.projectCase_fits
+#print axioms ResponseShape.Encoders.SensesProject.projectionIds_ok
 #print axioms ResponseShape.Encoders.SoftNorms.admission_fits
 #print axioms ResponseShape.Encoders.SoftNorms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.SoftNorms.checkSource_ok
