@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-jt-3a-01b8cb4c-t562319-lean",
+ "head": "43e11dea614659e84d91f71222bf06b29d913b8e",
+ "argv": [
+  "x86sh-cand-jt-3a-01b8cb4c-t562319-lean",
+  "43e11dea614659e84d91f71222bf06b29d913b8e",
+  "a7da88a91e213ddd95a108cef1f70b7487179a4c",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
