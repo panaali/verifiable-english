@@ -1,0 +1,7 @@
+job=arm-cand-sc-10a-81e2155f-t503187 shard=- nproc=4 arch=aarch64 host=runnervm9u1px date=2026-11-01T03:20:36Z ulimit_s=16384
+Mem:              15           1           9           0           4          13
+/dev/root       145G   41G  104G  29% /
+ 03:20:36 up 0 min,  0 user,  load average: 1.50, 0.38, 0.13
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+[gate] passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 31331 passed, 94 skipped, 0 failures
