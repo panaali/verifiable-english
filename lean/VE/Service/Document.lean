@@ -2464,6 +2464,43 @@ theorem checkDocSets_clashFirst (j : Json)
   · have hc : checkCore j = .error swapClash := by unfold checkCore; rw [if_neg hs, h]
     simp [hs, hc]
 
+/-- `checkDocSets` as it runs (pc-1 review F2): without `scope@0`, the front matter read once for the scope test,
+row 16 and the chain's entry; a `scope@0` request is `checkDocSets`' own branch. -/
+def checkDocSetsFast (j : Json) : Except String Json :=
+  match frontOf j with
+  | none => checkBody j
+  | some (front, body) =>
+    let ps := listedProfiles (front.getObjValD "environment")
+    if "scope@0" ∈ ps then checkDocSets j else
+    match clashRefusalIn j front body ps with
+    | some e => .error e
+    | none => checkBody j
+
+@[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
+  funext j
+  have hp := profilesOf_frontOf j
+  have hc := congrFun checkCore_eq_fast j
+  unfold checkDocSetsFast
+  cases hf : frontOf j with
+  | none =>
+    rw [hf] at hp
+    unfold checkDocSets
+    rw [if_neg (by simp [hp]), hc]
+    unfold checkCoreFast
+    rw [hf]
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    rw [hf] at hp
+    simp only
+    split
+    · rfl
+    · rename_i h
+      unfold checkDocSets
+      rw [if_neg (by simpa [hp] using h), hc]
+      unfold checkCoreFast
+      rw [hf]
+      simp only [if_neg h]
+
 /-- Extend the established document answer with the governed sets' composed rules. -/
 def checkDocSetsAnswered (j : Json) : Except String Json := do
   let answer ← checkDocSets j

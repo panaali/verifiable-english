@@ -6908,6 +6908,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.Document.checkCore_eq_fast
 #print axioms VE.Service.Document.checkDocSets_clashFirst
+#print axioms VE.Service.Document.checkDocSets_eq_fast
 #print axioms VE.Service.Document.clashRefusal_eq_fast
 #print axioms VE.Service.Document.clashRefusal_some
 #print axioms VE.Service.Document.decodeRowKind_json

@@ -48093,6 +48093,10 @@ theorem VE.Service.Document.checkDocSets_clashFirst
         VE.Service.Document.checkDoc j = Except.error VE.Service.Document.swapClash
   -- uses VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.swapClash@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.withoutJudgments@VE.Service.Document
   -- expr 3936838208
+theorem VE.Service.Document.checkDocSets_eq_fast
+  VE.Service.Document.checkDocSets = VE.Service.Document.checkDocSetsFast
+  -- uses VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.checkDocSetsFast@VE.Service.Document
+  -- expr 2166268249
 theorem VE.Service.Document.clashRefusal_eq_fast
   VE.Service.Document.clashRefusal = VE.Service.Document.clashRefusalFast
   -- uses VE.Service.Document.clashRefusal@VE.Service.Document VE.Service.Document.clashRefusalFast@VE.Service.Document

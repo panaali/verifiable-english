@@ -6473,6 +6473,7 @@
 'VE.Service.Diagnose.diagnoseCase_registered' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.checkCore_eq_fast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.checkDocSets_clashFirst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Document.checkDocSets_eq_fast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.clashRefusal_eq_fast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.clashRefusal_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.decodeRowKind_json' depends on axioms: [propext]
