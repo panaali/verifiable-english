@@ -1629,6 +1629,20 @@
    "reason": "ap-1bf: V +61 (VE/WireContract/Hooks/Acts.lean +57, VE/WireContract/Diagnose.lean +2, VE/WireContract/Tables/Acts.lean +2), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bf, 2026-10-18",
    "commit": "11de39bd88e07d7d1cf75e16ae956e3179b324c3"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 29,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
   }
  ]
 }
