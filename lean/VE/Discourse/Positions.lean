@@ -274,8 +274,6 @@ def resolveFormula (E : VE.Environment) (K : Manifest) (unit : String) (φ : VE.
 
 /-! ## Writing back what `positions` reads -/
 
-theorem take_app {α} {n : Nat} {l r : List α} (h : n = l.length) : (l ++ r).take n = l := by
-  subst h; simp
 theorem drop_app {α} {n : Nat} {l r : List α} (h : n = l.length) : (l ++ r).drop n = r := by
   subst h; simp
 theorem split2 {α} (fs : List α) (a b : Nat) (h : fs.length = a + b) :
