@@ -1527,20 +1527,6 @@
   },
   {
    "class": "S",
-   "lines": 29,
-   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
-   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
-  },
-  {
-   "class": "V",
-   "lines": 4,
-   "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
-   "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
-  },
-  {
-   "class": "S",
    "lines": 6,
    "reason": "me-2nc: VE/Calc/Lower.lean S +6 (Shape.Sound, spec 3.2's reading of a side beyond the digit limit); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2nc, 2026-10-18",
@@ -1569,24 +1555,31 @@
   },
   {
    "class": "V",
-   "lines": 73,
-   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
-   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
+   "lines": 46,
+   "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
+   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
   },
   {
    "class": "V",
-   "lines": 23,
-   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
-   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
   },
   {
-   "class": "V",
-   "lines": 12,
-   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
+   "class": "S",
+   "lines": 29,
+   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
+   "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
   },
   {
    "class": "V",
@@ -1604,17 +1597,24 @@
   },
   {
    "class": "V",
-   "lines": 104,
-   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
-   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
-  },
-  {
-   "class": "V",
    "lines": 2,
    "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
    "commit": "fc70208186d5017304f4798636ae24282f9fc8fa"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
+   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   },
   {
    "class": "V",
@@ -1636,6 +1636,13 @@
    "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
    "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+  },
+  {
+   "class": "V",
+   "lines": 73,
+   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
+   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
   }
  ]
 }
