@@ -1,0 +1,22 @@
+{
+  "item": "sn-b7",
+  "note": "Python only (row 1 changes no Lean or Rust). Each mutant was planted in the file, the named test run alone (uv run pytest -q <test>), and the file restored (cmp with the saved copy).",
+  "mutants": [
+    {"id": "S1", "file": "ve/senses/display.py", "behaviour": "a candidate rendered under the base projection (plan B7 seeded bug)",
+     "mutation": "_rendered(projection, ...) -> _rendered({\"environment\": reading[\"environment\"]}, ...)",
+     "test": "tests/test_senses_display.py::test_two_candidates_each_reread_under_its_own_projection",
+     "result": "1 failed: CheckerUnavailable: a candidate's rendering does not re-read under its projection"},
+    {"id": "S2", "file": "ve/senses/display.py", "behaviour": "the projection is bound to the candidate's identities (i7)",
+     "mutation": "identity comparison of the senses.project answer disabled",
+     "test": "tests/test_senses_display.py::test_a_base_projection_is_not_the_candidates", "result": "1 failed"},
+    {"id": "S3", "file": "ve/senses/display.py", "behaviour": "the re-read's mark is bound to the candidate's",
+     "mutation": "the `unit[\"mark\"] is candidate[\"mark\"]` conjunct removed",
+     "test": "tests/test_senses_display.py::test_a_reread_bound_to_another_formula_or_projection_is_refused[mark-True]", "result": "1 failed"},
+    {"id": "S4", "file": "ve/senses/display.py", "behaviour": "the re-read is under the candidate's projection (its identities)",
+     "mutation": "the re-read identities conjunct removed",
+     "test": "tests/test_senses_display.py::test_a_reread_under_another_projection_is_refused", "result": "1 failed"},
+    {"id": "S5", "file": "ve/senses/display.py", "behaviour": "the stated limit on candidates is charged before any service call",
+     "mutation": "> MAX_CANDIDATES -> > MAX_CANDIDATES + 1",
+     "test": "tests/test_senses_display.py::test_each_lines_is_projected_once_within_the_limit", "result": "1 failed"}
+  ]
+}
