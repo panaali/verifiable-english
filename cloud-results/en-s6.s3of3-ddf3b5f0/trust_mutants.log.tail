@@ -1,0 +1,13 @@
+trust_mutants: 16 definitions, 109 mutants (36 to run), 4 jobs, base 484f3bc11b03
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:21 VE.EnglishGrammar.Norm.Force.sign (S, trusted) arm-false: true | .needNot => false | .may => true | .mustNot => false -> false (lean/VE/EnglishGrammar/Norm/Value.lean:21: Missing cases:)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:35 VE.EnglishGrammar.Norm.Mode (S, trusted) ctor-drop: | strict ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:12: Unknown constant `VE.EnglishGrammar.Norm.Mode.strict`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:79 VE.EnglishGrammar.Norm.NormStatement (S, trusted) ctor-drop: | rule (h : Header) (c : Clause) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:85: Unknown constant `VE.EnglishGrammar.Norm.NormStatement...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:42 VE.EnglishGrammar.Norm.Bearer (S, trusted) ctor-drop: | named (const : String) ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:74: Unknown constant `VE.EnglishGrammar.Norm.Bearer.named`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:113 VE.EnglishGrammar.Norm.BlockFault (S, trusted) ctor-drop: | noConsequence (index : Nat) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:126: Unknown constant `VE.EnglishGrammar.Norm.BlockFault.n...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:43 VE.EnglishGrammar.Norm.Bearer (S, trusted) ctor-drop: | author ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:74: Unknown constant `VE.EnglishGrammar.Norm.Bearer.aut...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:114 VE.EnglishGrammar.Norm.BlockFault (S, trusted) ctor-drop: | strayConsequence (index : Nat) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:136: Unknown constant `VE.EnglishGrammar.Norm.BlockFault.s...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:101 VE.EnglishGrammar.Norm.Piece (S, trusted) ctor-drop: | precedence (n m : Nat) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:140: Unknown constant `VE.EnglishGrammar.Norm.Piece.preced...)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Value.lean:134 VE.EnglishGrammar.Norm.assembleFrom (S, trusted) list-last: a -> (a.reverse.take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Value.lean:162)
+trust_mutants: 27 KILLED, 1 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 73 OTHER SHARD in 124 s
+trust_mutants: S, trusted: 27 KILLED, 1 SURVIVOR, 8 UNKNOWN, 73 OTHER SHARD
+trust_mutants: steps: wall plan 10.3 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.4 s, control_probes 2.4 s, mutants 103.9 s, cleanup 2.7 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 2.4 s (1), mutant_builds 176.3 s (54), mutant_checks 60.9 s (36), stage_controls 28.9 s (8), mutant_probes 141.7 s (27)
