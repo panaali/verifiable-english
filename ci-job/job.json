@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-sn-b7b8-6793180c-t529727-lean",
+ "head": "d2b57590f7836186b251c3bccb287c802aa008ec",
+ "argv": [
+  "x86sh-cand-sn-b7b8-6793180c-t529727-lean",
+  "d2b57590f7836186b251c3bccb287c802aa008ec",
+  "484f3bc11b030089c5d4bb5f38d1f281fd7229aa",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
