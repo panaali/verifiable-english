@@ -71,7 +71,7 @@ All five were KILLED (`mutants.json`). Task bug 2 (the countermodel's bits) move
 - `cd lean && lake build`: "Build completed successfully (1213 jobs)". `python3 lean/audit.py`: "PASS: 709 source files; 7924 named theorem declarations audited".
 - `uv run python tools/regen_generated.py --write --skip route-cases`, then `--write --only lean-statements --only lean-audit-manifests` after the last Lean edit, then `--check` of the same two: "checked 2 entries". `route-cases` needs a Rust release binary that this worktree does not have; none of its inputs changed. The codemap's branch staleness is advisory and regenerated on merge, so the codemap files it rewrote, which come from other merges, were not committed.
 - `uv run python tools/gate_collection.py --check --prebuilt`: "0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
-- Selected tests: see the addendum below.
+- Selected tests at `efbe30665` (the code is unchanged after it): `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on the Claude cloud runner (run `sc-10-efbe3066-t528892`). 6 shards: 69, 67, 65, 60, 54 and 45 units, 360 in all, each shard "exit 0 … N passed"; summary "exit=0; 2094s".
 - Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Self-review against BUILDER-CHECKLIST
@@ -81,7 +81,7 @@ All five were KILLED (`mutants.json`). Task bug 2 (the countermodel's bits) move
 3. Tests can fail: PASS, `mutants.json` M1-M5 all KILLED, each by a proof or `#guard` (M1, M5 also by named guards).
 4. Py/Lean/Rust agree: N.A., no Python or Rust change and no answer changes (bytes 0).
 5. R8 binding: N.A., no relayed field.
-6. Gate evidence: PASS for what this item runs (selected tests on the final code, addendum); the full gate is the chain's.
+6. Gate evidence: PASS for what this item runs (selected tests on the final code, 360 units passed, Tests run); the full gate is the chain's.
 7. Unsigned items: PASS, none. Trusted +0 (`trust_map.py --check`), no DELTA row.
 8. User-visible changes: PASS, none. No route reads these theorems, so there is no DELTA.md.
 9. Selection: PASS, `tools/select_tests.py --base $(git merge-base HEAD main)` selects `lake build` and `python3 lean/audit.py`, which fail on every seeded bug above.
