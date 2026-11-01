@@ -1678,6 +1678,13 @@
    "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "pk-1-conditions: VE/NormDefaults/Packs.lean +2 (the Pack.conditions field and its doc comment); Serve.lean +2 is main's (scale-stage-timers, after 2f1318f4d), not this item's",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1-conditions, 2026-10-18",
+   "commit": "2f1318f4ddfd8706290b441538f3767cb6ce8552"
   }
  ]
 }
