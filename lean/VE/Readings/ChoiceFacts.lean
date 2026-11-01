@@ -40,12 +40,6 @@ theorem qName_chosenAt (D : Doc) (c : Choice) (n : String) :
       · simp [h3]
       · simp [h3]
 
-/-- A candidate's rule as `gateContent` writes it. -/
-def gateNorm (D : Doc) (m i : Nat) (N : SoftNode) : SoftNode :=
-  { N with name := qualify (position D m i) N.name, guard := .and N.guard (pattern (m + 1) (setSize D m) i),
-           exception := N.exception.map (fun e =>
-             { e with sufficient := e.sufficient.map (fun C => .and C (pattern (m + 1) (setSize D m) i)) }) }
-
 theorem gateContent_norm (D : Doc) (m i : Nat) (N : SoftNode) :
     gateContent D m i (.norm N) = .norm (gateNorm D m i N) := rfl
 
