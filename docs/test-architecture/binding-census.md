@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 264 |
 | leaves:closed domain | 293 |
-| leaves:none | 1466 |
+| leaves:none | 1467 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1065 |
+| today:not probed | 1066 |
 | today:shape | 557 |
 | today:unbound | 137 |
 | answers | 583 |
@@ -2991,6 +2991,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/span/line` | integer | none |  | minimum | 1 | not probed |
 | `/span/start` | integer | none |  | minimum | 1 | not probed |
 | `/status` | string | closed domain | const |  | 10 | shape |
+| `/undeclared_evaluative/*` | string | none |  | pattern | 0 | not probed |
 | `/units/*/content/bar/decided_by` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/name` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/reading` | string | closed domain | enum |  | 0 | shape |
@@ -3145,6 +3146,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/judgments/unused` |  |  |  |  |
 | `/judgments/used` |  |  |  |  |
 | `/judgments/used/*/units` |  |  |  |  |
+| `/undeclared_evaluative` |  |  |  |  |
 | `/units` |  |  |  | drop: accept/accepted, accept/ve/document/lean.py:require; duplicate: accept/accepted, accept/ve/document/lean.py:require; replace: accept/accepted, accept/ve/document/lean.py:require; reverse: accept/accepted, accept/ve/document/lean.py:require |
 | `/units/*/content/cites/{}` |  |  |  |  |
 | `/units/*/content/limitation/conditions` |  |  |  |  |
