@@ -82,6 +82,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Diagnose.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
+    "lean/VE/EnglishGrammar/Evaluative.lean",
     SOURCE_WORDS_SOURCE,
     "lean/VE/EnglishGrammar/Rules.lean",
     "lean/VE/EnglishGrammar/Actions.lean",
