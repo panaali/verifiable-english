@@ -35,6 +35,7 @@ module ResponseShape.Encoders.RiskEval
 module ResponseShape.Encoders.Route
 module ResponseShape.Encoders.Scope
 module ResponseShape.Encoders.SearchBudget
+module ResponseShape.Encoders.SensesProject
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
@@ -79,6 +80,7 @@ module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
 module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
+module ResponseShape.Schemas.SensesProject
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
@@ -232,10 +234,13 @@ module VE.Closure.Surface
 module VE.Closure.Syntax
 module VE.Compose.Adjoin
 module VE.Compose.Content
+module VE.Compose.Contract
+module VE.Compose.ContractExamples
 module VE.Compose.Dispatch
 module VE.Compose.Examples
 module VE.Compose.ProfilesMain
 module VE.Compose.Slot
+module VE.Compose.Stack
 module VE.Consequence
 module VE.Core.Bridge
 module VE.Core.Checks
@@ -456,6 +461,7 @@ module VE.Question.Texts
 module VE.Readings.ActsExamples
 module VE.Readings.Asserted
 module VE.Readings.Assertions
+module VE.Readings.BarQuiet
 module VE.Readings.BaseDown
 module VE.Readings.BaseUp
 module VE.Readings.Children
@@ -479,6 +485,8 @@ module VE.Readings.Labels
 module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names
+module VE.Readings.RightsExamples
+module VE.Readings.RightsFixtures
 module VE.Readings.Route
 module VE.Readings.Run
 module VE.Readings.RunExamples
@@ -616,6 +624,8 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Senses.RunExamples
+module VE.Senses.Version
 module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
@@ -632,6 +642,7 @@ module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
 module VE.Service.Registry
+module VE.Service.RegistryExamples
 module VE.Service.ScopeAdmission
 module VE.Service.ScopeExamples
 module VE.Service.SoftSourceExamples
@@ -681,6 +692,7 @@ module VE.Time.Wire
 module VE.Typing
 module VE.WireContract.Diagnose
 module VE.WireContract.Engine
+module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
@@ -688,6 +700,7 @@ module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
 module VE.WireContract.Table
+module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
@@ -834,6 +847,13 @@ VE.Closure.Tableau.Signed.Holds@VE.TableauExtended
 VE.Compose.BaseAdmissibleP@VE.Compose.Slot
 VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
+VE.Compose.Contract.Rewriter.Laws@VE.Compose.Contract
+VE.Compose.Contract.RouteFacts@VE.Compose.Contract
+VE.Compose.Contract.ScopeFaithful@VE.Compose.Contract
+VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
+VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
+VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
+VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch
