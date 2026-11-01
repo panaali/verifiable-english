@@ -10,6 +10,7 @@ import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Acts.Readings
+import VE.Acts.Sources
 import VE.Acts.Table
 import VE.Acts.Wire
 import VE.Alternatives.Admission
@@ -561,6 +562,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
+#print axioms VE.Acts.compareViews_ok
 #print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.elaborateMap_fst
@@ -590,6 +592,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.phraseReadings_exact
 #print axioms VE.Acts.phraseReadings_length
 #print axioms VE.Acts.phraseReadings_nodup
+#print axioms VE.Acts.pick_forall₂
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
@@ -606,6 +609,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
+#print axioms VE.Acts.sourceCheck_choices_le
+#print axioms VE.Acts.sourceCheck_exact
 #print axioms VE.Acts.splitDoc_none
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
@@ -624,6 +629,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.table_needNot
 #print axioms VE.Acts.table_one
 #print axioms VE.Acts.valueOf_eq_some
+#print axioms VE.Acts.viewsOn_choices
 #print axioms VE.Alternatives.Admission.Admitted.sound
 #print axioms VE.Alternatives.Admission.report_consequence
 #print axioms VE.Alternatives.AltChain.A_in
