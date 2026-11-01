@@ -1,0 +1,15 @@
+trust_mutants: 6 definitions, 59 mutants (30 to run), 4 jobs, base a9bf475954c1
+SURVIVOR lean/VE/Weighing/Zone.lean:28 VE.Weighing.AdmissibleCompletion (S, trusted) body-true: (∀ n vs, n ∉ opens → (R n vs ↔ vs ∈ M.relations n)) ∧ (∀ a b, (a, b) ∈ record → (R a.1 a.2 ↔ b = ... -> True (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+SURVIVOR lean/VE/Weighing/Zone.lean:28 VE.Weighing.AdmissibleCompletion (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+SURVIVOR lean/VE/Weighing/Zone.lean:33 VE.Weighing.OutcomeIn (S, trusted) body-false: (outcomeBase (fill U) r.name).denote { M.asStructure with relation := R } (tupleVal vs) -> False (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:62, lean/VE/Weighing/ZoneExamples.lean:6...)
+SURVIVOR lean/VE/Weighing/Zone.lean:38 VE.Weighing.SettledZ (S, trusted) body-true: (∃ R, AdmissibleCompletion U X M opens record R) ∧ ∀ R, AdmissibleCompletion U X M opens record R... -> True (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:72, lean/VE/Weighing/ZoneExamples.lean:7...)
+SURVIVOR lean/VE/Weighing/Zone.lean:29 VE.Weighing.AdmissibleCompletion (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:58, lean/VE/Weighing/ZoneExamples.lean:82)
+SURVIVOR lean/VE/Weighing/Zone.lean:29 VE.Weighing.AdmissibleCompletion (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+SURVIVOR lean/VE/Weighing/Zone.lean:29 VE.Weighing.AdmissibleCompletion (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+UNKNOWN lean/VE/Weighing/Zone.lean:43 VE.Weighing.ZoneUnknown (S, trusted) ctor-drop: | budget (opens limit : Nat) ->  (lean/VE/Weighing/ZoneExamples.lean:92: the failing proof cannot be cut: Unknown constant `VE.Weig...)
+UNKNOWN lean/VE/Weighing/Zone.lean:44 VE.Weighing.ZoneUnknown (S, trusted) ctor-drop: -- the enumeration was not completed: the cone has `opens` open atoms not fixed by the record, ov... ->  (lean/VE/Weighing/ZoneExamples.lean:92: the failing proof cannot be cut: Unknown constant `VE.Weig...)
+SURVIVOR lean/VE/Weighing/Zone.lean:22 VE.Weighing.openNames (S, trusted) list-first: unsaidNames L.U -> ((unsaidNames L.U).take 1)
+SURVIVOR lean/VE/Weighing/Zone.lean:22 VE.Weighing.openNames (S, trusted) list-last: unsaidNames L.U -> ((unsaidNames L.U).reverse.take 1)
+trust_mutants: 15 KILLED, 9 SURVIVOR, 2 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 47 s
+trust_mutants: S, trusted: 15 KILLED, 9 SURVIVOR, 2 UNKNOWN, 4 INVALID, 29 OTHER SHARD
+trust_mutants: steps: wall plan 6 s, scratch 2.2 s, control_build 0.1 s, probe_install 1 s, control_probes 1.7 s, mutants 31.6 s, cleanup 4.2 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 1.7 s (1), mutant_builds 24.3 s (30), mutant_checks 56 s (36), stage_controls 2.6 s (1), mutant_probes 35.2 s (15)
