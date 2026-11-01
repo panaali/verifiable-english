@@ -410,7 +410,7 @@
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
         "lines": 463,
-        "sha256": "c77f2d9e3b5bb5f660001049aeedfc197280cde0cce3285815b1cb3e192502e7",
+        "sha256": "9e7ad2086269aa2eab6f8a99f32b927b688420ef0c6547f2e57b6ae02408c450",
         "ranges": [
           [
             1,
@@ -605,6 +605,39 @@
           "wording"
         ],
         "reason": "act-phrases AP-1: the act check under acts@0 (Lexical.check reads the raw act JSON), its fixed phrases' decoder and the tokens; the definitions are pinned in full; ap-3d: check is checkWith (conditions 1 to 5) then joinCheck (condition 6)"
+      },
+      {
+        "file": "lean/VE/Acts/Wire.lean",
+        "lines": 95,
+        "sha256": "f2cd5a339373c98c359929e0d1683fc8b35856677eac63196e5d5bb69ce1d880",
+        "ranges": [
+          [
+            1,
+            95
+          ]
+        ],
+        "declarations": [
+          "joinedAct",
+          "checkAct"
+        ],
+        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
+      },
+      {
+        "file": "lean/VE/Acts/Decode.lean",
+        "lines": 84,
+        "sha256": "9dbe700ec640146da5e9a359963e5348b56d83af769faecf655d92131e8ed131",
+        "ranges": [
+          [
+            1,
+            84
+          ]
+        ],
+        "declarations": [
+          "actsOf",
+          "elaborateSource",
+          "decodeElaboratedU"
+        ],
+        "reason": "act-phrases ap-3d: decodeElaboratedU (decodeSourceU, then the acts read by checkAct and elaborateMap); no route calls it until ap-3db; the file is pinned whole"
       },
       {
         "file": "lean/VE/Order/Wire.lean",
@@ -2055,39 +2088,6 @@
           "admitGraph"
         ],
         "reason": "the cardinality claim graph (qt-a3d): node decoder (decodeStatement on each node, premises with their certificate), graph check and its charges; the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Acts/Wire.lean",
-        "lines": 95,
-        "sha256": "f2cd5a339373c98c359929e0d1683fc8b35856677eac63196e5d5bb69ce1d880",
-        "ranges": [
-          [
-            1,
-            95
-          ]
-        ],
-        "declarations": [
-          "joinedAct",
-          "checkAct"
-        ],
-        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
-      },
-      {
-        "file": "lean/VE/Acts/Decode.lean",
-        "lines": 84,
-        "sha256": "9dbe700ec640146da5e9a359963e5348b56d83af769faecf655d92131e8ed131",
-        "ranges": [
-          [
-            1,
-            84
-          ]
-        ],
-        "declarations": [
-          "actsOf",
-          "elaborateSource",
-          "decodeElaboratedU"
-        ],
-        "reason": "act-phrases ap-3d: decodeElaboratedU (decodeSourceU, then the acts read by checkAct and elaborateMap); no route calls it until ap-3db; the file is pinned whole"
       }
     ],
     "other_json": {

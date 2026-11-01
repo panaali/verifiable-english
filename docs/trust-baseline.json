@@ -1610,18 +1610,18 @@
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   },
   {
-   "class": "S",
-   "lines": 5,
-   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
-   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+   "class": "V",
+   "lines": 2,
+   "reason": "pk-1-conditions: VE/NormDefaults/Packs.lean +2 (the Pack.conditions field and its doc comment); Serve.lean +2 is main's (scale-stage-timers, after 2f1318f4d), not this item's",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1-conditions, 2026-10-18",
+   "commit": "2f1318f4ddfd8706290b441538f3767cb6ce8552"
   },
   {
    "class": "V",
-   "lines": 73,
-   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
-   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
+   "lines": 46,
+   "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
+   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
   },
   {
    "class": "V",
@@ -1646,10 +1646,10 @@
   },
   {
    "class": "V",
-   "lines": 46,
-   "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
-   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+   "lines": 73,
+   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
+   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
   },
   {
    "class": "S",
@@ -1670,6 +1670,13 @@
    "lines": 12,
    "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   }
  ]
