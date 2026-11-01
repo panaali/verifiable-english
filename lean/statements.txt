@@ -17591,6 +17591,15 @@ theorem VE.Judgments.foldlM_ok_mono
       ∀ (L : List α) (b s : β), List.foldlM F b L = Except.ok s → List.foldlM G b L = Except.ok s
   -- uses
   -- expr 868318478
+theorem VE.Judgments.hasPhrase_iff
+  ∀ (ph ws : List String), VE.Judgments.hasPhrase ph ws = Bool.true ↔ ph <:+: ws
+  -- uses VE.Judgments.hasPhrase@VE.Judgments.Undeclared
+  -- expr 2123165226
+theorem VE.Judgments.matches_iff
+  ∀ (row : VE.Judgments.EvaluativeRow) (ws : List String),
+    row.matches ws = Bool.true ↔ row.word ∈ ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
+  -- uses VE.Judgments.EvaluativeRow.matches@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared
+  -- expr 2452877981
 theorem VE.Judgments.mem_defEdges
   ∀ (defs : List VE.Definitions.Def) (a b : String),
     (a, b) ∈ VE.Judgments.defEdges defs ↔ ∃ d, d ∈ defs ∧ d.name = a ∧ b ∈ VE.Norms.preds d.body
@@ -17624,6 +17633,12 @@ theorem VE.Judgments.path_last
   ∀ {α : Type} {R : α → α → Prop} {a c : α}, VE.Closure.Path R a c → R a c ∨ ∃ b, VE.Closure.Path R a b ∧ R b c
   -- uses VE.Closure.Path@VE.Closure.Paths
   -- expr 3997880015
+theorem VE.Judgments.predicateWords_name
+  ∀ (name : String) (template : Option String),
+    name.toLower.splitOn "_" <+: VE.Judgments.predicateWords name template ∧
+      VE.Judgments.predicateWords name Option.none = name.toLower.splitOn "_"
+  -- uses VE.Judgments.predicateWords@VE.Judgments.Undeclared
+  -- expr 4215424577
 theorem VE.Judgments.records_names
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (data : Bool) (formula : Option (Lean.Json → Except String Unit))
     (rs : List VE.Judgments.Rec),
@@ -17674,6 +17689,14 @@ theorem VE.Judgments.status_remove_unused
       ¬j ∈ u.listed → VE.Judgments.status defs (List.filter (fun x => x != j) J) u = VE.Judgments.status defs J u
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.listed@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
   -- expr 621595315
+theorem VE.Judgments.undeclaredEvaluative_iff
+  ∀ (rows : List VE.Judgments.EvaluativeRow) (preds : List (String × List String)) (J : List String) (p : String),
+    p ∈ VE.Judgments.undeclaredEvaluative rows preds J ↔
+      ∃ ws,
+        (p, ws) ∈ preds ∧
+          ¬p ∈ J ∧ ∃ row, row ∈ rows ∧ row.word ∈ ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
+  -- uses VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared VE.Judgments.undeclaredEvaluative@VE.Judgments.Undeclared
+  -- expr 3989329691
 theorem VE.Judgments.usageMap_complete
   ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (u : VE.Judgments.UnitView)
     (j : String),
