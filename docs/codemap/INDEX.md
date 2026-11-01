@@ -98,7 +98,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
-- [lean/VE/Readings/](lean__VE__Readings.md) — 71 modules — -
+- [lean/VE/Readings/](lean__VE__Readings.md) — 74 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 12 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
