@@ -15280,6 +15280,34 @@ theorem VE.EnglishGrammar.LexRow.rename_inj
               r1 = r2
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow.rename@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.propRename@VE.EnglishGrammar.Extends
   -- expr 1764199857
+theorem VE.EnglishGrammar.Norm.assembleFrom_numbered
+  ∀ (ps : List VE.EnglishGrammar.Norm.Piece) (i k : Nat) (o : VE.EnglishGrammar.Norm.Open)
+    (rs : List VE.EnglishGrammar.Norm.NormStatement),
+    (∀ (j : Nat) (h : VE.EnglishGrammar.Norm.Header) (c : Option VE.EnglishGrammar.Norm.Clause),
+        o = Option.some (j, h, c) → h.number = k) →
+      VE.EnglishGrammar.Norm.assembleFrom i k o ps = Except.ok rs →
+        List.filterMap VE.EnglishGrammar.Norm.NormStatement.number? rs =
+          List.range' (if Option.isSome o = Bool.true then k else k + 1)
+            (List.filterMap VE.EnglishGrammar.Norm.NormStatement.number? rs).length
+  -- uses VE.EnglishGrammar.Norm.BlockFault@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header.number@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.number?@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Open@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Piece@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.assembleFrom@VE.EnglishGrammar.Norm.Value
+  -- expr 3555718773
+theorem VE.EnglishGrammar.Norm.assemble_numbered
+  ∀ (ps : List VE.EnglishGrammar.Norm.Piece) (rs : List VE.EnglishGrammar.Norm.NormStatement),
+    VE.EnglishGrammar.Norm.assemble ps = Except.ok rs →
+      List.filterMap VE.EnglishGrammar.Norm.NormStatement.number? rs =
+          List.range' 1 (VE.EnglishGrammar.Norm.ruleCount rs) ∧
+        ∀ (n : Nat),
+          n ∈ List.flatMap VE.EnglishGrammar.Norm.NormStatement.refs rs → 1 ≤ n ∧ n ≤ VE.EnglishGrammar.Norm.ruleCount rs
+  -- uses VE.EnglishGrammar.Norm.BlockFault@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.number?@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.refs@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Piece@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.assemble@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.ruleCount@VE.EnglishGrammar.Norm.Value
+  -- expr 2542230882
+theorem VE.EnglishGrammar.Norm.close_numbered
+  ∀ {o : VE.EnglishGrammar.Norm.Open} {k : Nat} {a : List VE.EnglishGrammar.Norm.NormStatement},
+    (∀ (j : Nat) (h : VE.EnglishGrammar.Norm.Header) (c : Option VE.EnglishGrammar.Norm.Clause),
+        o = Option.some (j, h, c) → h.number = k) →
+      VE.EnglishGrammar.Norm.close o = Except.ok a →
+        List.filterMap VE.EnglishGrammar.Norm.NormStatement.number? a = if Option.isSome o = Bool.true then [k] else []
+  -- uses VE.EnglishGrammar.Norm.BlockFault@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header.number@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.number?@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Open@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.close@VE.EnglishGrammar.Norm.Value
+  -- expr 3156690401
 theorem VE.EnglishGrammar.Run.alternativesView_eq
   VE.EnglishGrammar.alternativesView = VE.Service.Standalone.alternativesReduced
   -- uses VE.EnglishGrammar.alternativesView@VE.EnglishGrammar.Encode VE.Service.Standalone.alternativesReduced@VE.Service.Standalone
