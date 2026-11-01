@@ -698,6 +698,8 @@ module VE.Time.Semantics
 module VE.Time.Syntax
 module VE.Time.Wire
 module VE.Typing
+module VE.Weighing.Zone
+module VE.Weighing.ZoneExamples
 module VE.WireContract.Diagnose
 module VE.WireContract.Engine
 module VE.WireContract.Hooks.Acts
@@ -1465,4 +1467,8 @@ VE.Time.TValue.Typed@VE.Time.Semantics
 VE.Time.Typed@VE.Time.Semantics
 VE.TupleTyped@VE.Semantics
 VE.Valuation.Typed@VE.Semantics
+VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone
+VE.Weighing.OutcomeIn@VE.Weighing.Zone
+VE.Weighing.SettledZ@VE.Weighing.Zone
+VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples
 VE.WireContract.Holds@VE.WireContract.Engine
