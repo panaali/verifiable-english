@@ -1643,6 +1643,13 @@
    "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
    "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+  },
+  {
+   "class": "V",
+   "lines": 46,
+   "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
+   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
   }
  ]
 }
