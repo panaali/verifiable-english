@@ -501,6 +501,7 @@
         "ResponseShape.Schemas.Document.soft_content",
         "ResponseShape.Schemas.Document.soft_exception",
         "ResponseShape.Schemas.Document.soft_norm",
+        "ResponseShape.Schemas.Document.undeclaredEvaluative",
         "ResponseShape.Schemas.Document.unit"
       ],
       "G[R]": [
@@ -3597,6 +3598,11 @@
         "VE.EnglishGrammar.ntRelative",
         "VE.EnglishGrammar.ntTerm",
         "VE.EnglishGrammar.ntTy"
+      ]
+    },
+    "VE/EnglishGrammar/Evaluative.lean": {
+      "S": [
+        "VE.EnglishGrammar.evaluativeRows"
       ]
     },
     "VE/EnglishGrammar/Diagnose.lean": {
@@ -6794,6 +6800,14 @@
         "VE.Readings.Sim"
       ]
     },
+    "VE/Readings/Stage.lean": {
+      "G[R]": [
+        "VE.Readings.Stage.around",
+        "VE.Readings.Stage.marker",
+        "VE.Readings.Stage.part",
+        "VE.Readings.Stage.stage"
+      ]
+    },
     "VE/Readings/Strings.lean": {
       "S": [
         "VE.Readings.AsciiL"
@@ -9684,6 +9698,7 @@
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
+        "VE.Service.Document.Env.basePredicates",
         "VE.Service.Document.Env.regulated",
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
@@ -9760,6 +9775,15 @@
         "VE.Service.Document.partsPrefix",
         "VE.Service.Document.undecided",
         "VE.Service.Document.yieldedParts"
+      ]
+    },
+    "VE/Service/UndeclaredExamples.lean": {
+      "T": [
+        "VE.Service.UndeclaredExamples.act",
+        "VE.Service.UndeclaredExamples.judged",
+        "VE.Service.UndeclaredExamples.member",
+        "VE.Service.UndeclaredExamples.text",
+        "VE.Service.UndeclaredExamples.vocabulary"
       ]
     },
     "VE/Service/EnglishRun.lean": {
@@ -9968,6 +9992,11 @@
         "VE.Service.Graph.topological"
       ]
     },
+    "VE/Service/MemoExamples.lean": {
+      "T": [
+        "memoCase"
+      ]
+    },
     "VE/Service/ParseDiagnostic.lean": {
       "G[V]": [
         "VE.Service.ParseDiagnostic.Cursor",
@@ -10095,6 +10124,18 @@
       ],
       "G[V]": [
         "VE.Service.Readings.readingsCase"
+      ]
+    },
+    "VE/Service/StageTimes.lean": {
+      "G[R]": [
+        "VE.Service.StageTimes.Mode",
+        "VE.Service.StageTimes.Open",
+        "VE.Service.StageTimes.cpuTicks",
+        "VE.Service.StageTimes.mode",
+        "VE.Service.StageTimes.parse",
+        "VE.Service.StageTimes.row",
+        "VE.Service.StageTimes.step",
+        "VE.Service.StageTimes.stream"
       ]
     },
     "VE/Service/Standalone.lean": {
@@ -12977,8 +13018,11 @@
         "VE.Judgments.Examples.judgment",
         "VE.Judgments.Examples.mξ",
         "VE.Judgments.Examples.okVal",
+        "VE.Judgments.Examples.preds117",
         "VE.Judgments.Examples.regulated",
+        "VE.Judgments.Examples.regulated117",
         "VE.Judgments.Examples.regulatedω",
+        "VE.Judgments.Examples.rows117",
         "VE.Judgments.Examples.rule",
         "VE.Judgments.Examples.rulesOf",
         "VE.Judgments.Examples.ruleγ'",
@@ -13728,6 +13772,15 @@
         "VE.Judgments.reachedBodies",
         "VE.Judgments.status",
         "VE.Judgments.usageMap"
+      ]
+    },
+    "VE/Judgments/Undeclared.lean": {
+      "S": [
+        "VE.Judgments.EvaluativeRow",
+        "VE.Judgments.EvaluativeRow.matches",
+        "VE.Judgments.hasPhrase",
+        "VE.Judgments.predicateWords",
+        "VE.Judgments.undeclaredEvaluative"
       ]
     },
     "ResponseShape/Encoders/Metered.lean": {
@@ -16597,83 +16650,43 @@
         "VE.Acts.ReadingsExamples.wide"
       ]
     },
-    "VE/Acts/Sources.lean": {
-      "S": [
-        "List.Forall₂",
-        "VE.Acts.Source",
-        "VE.Acts.SourceExact",
-        "VE.Acts.View",
-        "VE.Acts.choiceRules",
-        "VE.Acts.choiceViews",
-        "VE.Acts.choicesOn",
-        "VE.Acts.expected",
-        "VE.Acts.opOfSource",
-        "VE.Acts.readingViews",
-        "VE.Acts.ruleView"
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Acts.compareViews",
-          "tied": [
-            "VE.Acts.compareViews_ok"
-          ]
-        },
-        {
-          "name": "VE.Acts.pick",
-          "tied": [
-            "VE.Acts.pick_forall₂"
-          ]
-        },
-        {
-          "name": "VE.Acts.sourceCheck",
-          "tied": [
-            "VE.Acts.sourceCheck_exact"
-          ]
-        },
-        {
-          "name": "VE.Acts.viewsOn",
-          "tied": [
-            "VE.Acts.viewsOn_choices"
-          ]
-        }
-      ],
-      "G[R]": [
-        "VE.Acts.d29"
-      ],
-      "P": [
-        "VE.Acts.instDecidableEqView"
-      ]
-    },
-    "VE/Acts/Situation.lean": {
-      "G[V]": [
-        "VE.Acts.atomSituation",
-        "VE.Acts.rulePred"
-      ]
-    },
     "VE/Scope/ReadingsLemmas.lean": {},
-    "VE/Readings/Stage.lean": {
-      "G[R]": [
-        "VE.Readings.Stage.around",
-        "VE.Readings.Stage.marker",
-        "VE.Readings.Stage.part",
-        "VE.Readings.Stage.stage"
-      ]
-    },
-    "VE/Service/MemoExamples.lean": {
+    "VE/SoftNorms/TreeExamples.lean": {
       "T": [
-        "memoCase"
+        "VE.SoftNorms.TreeFixtures.layeredDocs",
+        "VE.SoftNorms.TreeFixtures.unsplitKeys"
       ]
     },
-    "VE/Service/StageTimes.lean": {
+    "VE/Senses/Version.lean": {
+      "G[I]": [
+        "VE.Senses.sensesVersion"
+      ]
+    },
+    "ResponseShape/Schemas/SensesProject.lean": {
       "G[R]": [
-        "VE.Service.StageTimes.Mode",
-        "VE.Service.StageTimes.Open",
-        "VE.Service.StageTimes.cpuTicks",
-        "VE.Service.StageTimes.mode",
-        "VE.Service.StageTimes.parse",
-        "VE.Service.StageTimes.row",
-        "VE.Service.StageTimes.step",
-        "VE.Service.StageTimes.stream"
+        "ResponseShape.Schemas.SensesProject.pair",
+        "ResponseShape.Schemas.SensesProject.lexicon",
+        "ResponseShape.Schemas.SensesProject.identities",
+        "ResponseShape.Schemas.SensesProject.fault",
+        "ResponseShape.Schemas.SensesProject.projection",
+        "ResponseShape.Schemas.SensesProject.row",
+        "ResponseShape.Schemas.SensesProject.file"
+      ]
+    },
+    "VE/Senses/RunExamples.lean": {
+      "T": [
+        "VE.Senses.RunExamples.caseJ",
+        "VE.Senses.RunExamples.lineFunny2",
+        "VE.Senses.RunExamples.LA",
+        "VE.Senses.RunExamples.sameAs",
+        "VE.Senses.RunExamples.idsOf",
+        "VE.Senses.RunExamples.overlayJ",
+        "VE.Senses.RunExamples.lexJ",
+        "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.pin",
+        "VE.Senses.RunExamples.projectReq",
+        "VE.Senses.RunExamples.src",
+        "VE.Senses.RunExamples.fenced"
       ]
     },
     "VE/WireContract/Hooks/Acts.lean": {
@@ -16738,38 +16751,6 @@
         "VE.Compose.ContractExamples.tagRewriter"
       ]
     },
-    "VE/Senses/Version.lean": {
-      "G[I]": [
-        "VE.Senses.sensesVersion"
-      ]
-    },
-    "ResponseShape/Schemas/SensesProject.lean": {
-      "G[R]": [
-        "ResponseShape.Schemas.SensesProject.pair",
-        "ResponseShape.Schemas.SensesProject.lexicon",
-        "ResponseShape.Schemas.SensesProject.identities",
-        "ResponseShape.Schemas.SensesProject.fault",
-        "ResponseShape.Schemas.SensesProject.projection",
-        "ResponseShape.Schemas.SensesProject.row",
-        "ResponseShape.Schemas.SensesProject.file"
-      ]
-    },
-    "VE/Senses/RunExamples.lean": {
-      "T": [
-        "VE.Senses.RunExamples.caseJ",
-        "VE.Senses.RunExamples.lineFunny2",
-        "VE.Senses.RunExamples.LA",
-        "VE.Senses.RunExamples.sameAs",
-        "VE.Senses.RunExamples.idsOf",
-        "VE.Senses.RunExamples.overlayJ",
-        "VE.Senses.RunExamples.lexJ",
-        "VE.Senses.RunExamples.req",
-        "VE.Senses.RunExamples.pin",
-        "VE.Senses.RunExamples.projectReq",
-        "VE.Senses.RunExamples.src",
-        "VE.Senses.RunExamples.fenced"
-      ]
-    },
     "VE/Readings/RightsExamples.lean": {
       "T": [
         "VE.Readings.RightsExamples.M21",
@@ -16811,6 +16792,59 @@
         "VE.Readings.RightsExamples.rsLL",
         "VE.Readings.RightsExamples.rsNorm",
         "VE.Readings.RightsExamples.rsOne"
+      ]
+    },
+    "VE/Acts/Sources.lean": {
+      "S": [
+        "List.Forall₂",
+        "VE.Acts.Source",
+        "VE.Acts.SourceExact",
+        "VE.Acts.View",
+        "VE.Acts.choiceRules",
+        "VE.Acts.choiceViews",
+        "VE.Acts.choicesOn",
+        "VE.Acts.expected",
+        "VE.Acts.opOfSource",
+        "VE.Acts.readingViews",
+        "VE.Acts.ruleView"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Acts.compareViews",
+          "tied": [
+            "VE.Acts.compareViews_ok"
+          ]
+        },
+        {
+          "name": "VE.Acts.pick",
+          "tied": [
+            "VE.Acts.pick_forall₂"
+          ]
+        },
+        {
+          "name": "VE.Acts.sourceCheck",
+          "tied": [
+            "VE.Acts.sourceCheck_exact"
+          ]
+        },
+        {
+          "name": "VE.Acts.viewsOn",
+          "tied": [
+            "VE.Acts.viewsOn_choices"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Acts.d29"
+      ],
+      "P": [
+        "VE.Acts.instDecidableEqView"
+      ]
+    },
+    "VE/Acts/Situation.lean": {
+      "G[V]": [
+        "VE.Acts.atomSituation",
+        "VE.Acts.rulePred"
       ]
     },
     "VE/Readings/SoftSup.lean": {
@@ -16880,12 +16914,6 @@
         "VE.Scope.FarExamples.w1Order"
       ]
     },
-    "VE/Scope/FarTheorems.lean": {},
-    "VE/SoftNorms/TreeExamples.lean": {
-      "T": [
-        "VE.SoftNorms.TreeFixtures.layeredDocs",
-        "VE.SoftNorms.TreeFixtures.unsplitKeys"
-      ]
-    }
+    "VE/Scope/FarTheorems.lean": {}
   }
 }

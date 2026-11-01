@@ -18,6 +18,7 @@
           "source": {"type": "string"},
           "source_id": {"$ref": "common.json#/$defs/hex64"},
           "status": {"const": "ok"},
+          "undeclared_evaluative": {"$ref": "#/$defs/undeclared_evaluative"},
           "units": {"items": {"$ref": "#/$defs/unit"}, "type": "array"}
         },
         "required": ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
@@ -447,6 +448,11 @@
       },
       "required": ["name", "sign", "guard", "unless", "over"],
       "type": "object"
+    },
+    "undeclared_evaluative": {
+      "$comment": "Service.Document.encode: the base predicates whose words match the evaluative catalogue, not bound.",
+      "items": {"$ref": "common.json#/$defs/token"},
+      "type": "array"
     },
     "unit": {
       "additionalProperties": false,
