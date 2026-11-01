@@ -2030,8 +2030,8 @@ theorem decodeNorm_soft (re : VE.Readings.Wire.ReadingsEnvironment) (o₁ o₂ :
       · contradiction
       · rfl
     rw [hs'] at h₁ h₂
-    obtain ⟨-, m₁, r₁, a₁, d₁, e₁⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₁)
-    obtain ⟨-, m₂, r₂, a₂, d₂, e₂⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₂)
+    obtain ⟨-, m₁, r₁, a₁, d₁, e₁, f₁⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₁)
+    obtain ⟨-, m₂, r₂, a₂, d₂, e₂, f₂⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₂)
     simp only [mkObj_one] at m₁ r₁ a₁ d₁ e₁ m₂ r₂ a₂ d₂ e₂
     rw [← hs "mode" (by decide)] at m₂
     rw [← hs "rank" (by decide)] at r₂

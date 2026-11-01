@@ -502,6 +502,8 @@ module VE.Readings.SoftExamples
 module VE.Readings.SoftFacts
 module VE.Readings.SoftSeparate
 module VE.Readings.SoftSeparateExamples
+module VE.Readings.SoftSup
+module VE.Readings.SoftSupExamples
 module VE.Readings.SoftVerdicts
 module VE.Readings.SoftWire
 module VE.Readings.Stage
@@ -659,6 +661,7 @@ module VE.SoftNorms.Semantics
 module VE.SoftNorms.Soften
 module VE.SoftNorms.Status
 module VE.SoftNorms.Tree
+module VE.SoftNorms.TreeExamples
 module VE.SoftNorms.Wire
 module VE.SpeechActs.Answer
 module VE.SpeechActs.Consequence
@@ -1135,6 +1138,7 @@ VE.Readings.CoversG@VE.Readings.Verdicts
 VE.Readings.DecidesByD@VE.Readings.SupFill
 VE.Readings.DecidesBySoftD@VE.Readings.SupFill
 VE.Readings.Encodes@VE.Readings.Choice
+VE.Readings.FillLite@VE.Readings.SoftSup
 VE.Readings.Fits@VE.Readings.Choice
 VE.Readings.FixedNorm@VE.Readings.ChoiceFacts
 VE.Readings.Grows@VE.Readings.Shape
