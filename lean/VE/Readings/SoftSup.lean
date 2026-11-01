@@ -635,4 +635,58 @@ theorem fill_sim_author (N : NDoc) (hN : WellFormedSD N = true) (hs : superposab
     (fun p ss hp vs hvs => pullF_canon hh hc hN hsu B hcB he (envAt_sub hp) vs hvs)
     _ _ ρ ((VE.check_iff_wellFormed _ _ _).mpr (VE.Norms.decides_wellFormed hT sign))
 
+/-- `Fill_T` transfers at an encoded filled base. -/
+theorem fillPremisesSD_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) :
+    Sat B (VE.NormDefaults.fillPremises (supU N)) ↔ Sat (pullF N c B) (VE.NormDefaults.fillPremises (choiceU N c)) := by
+  have hh := hyps_sd hN hs
+  have hu := VE.NormDefaults.uvalid hsu
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  have hcX : VE.Norms.ConstantsTyped (fill (supU N)) B := hB.1.1
+  have hcY : VE.Norms.ConstantsTyped (fill (choiceU N c)) (pullF N c B) := fun x s hx =>
+    hcX x s (constants_choiceSD hh x s hx)
+  have hregX : (supU N).D.T.regulated = N.D.frame.soft.T.regulated := by rw [supU_D hh]; exact sup_reg
+  have hregY : (choiceU N c).D.T.regulated = N.D.frame.soft.T.regulated := by rw [choiceU_D hh]; exact choice_reg c
+  have tp : ∀ ss (vs : List B.Carrier), VE.TupleTyped B ss vs ↔ VE.TupleTyped (pullF N c B) ss vs :=
+    fun ss vs => (VE.Norms.tupleTyped_relation B _ _ vs).symm
+  have hO : ∀ q ∈ (supU N).D.T.regulated, ∀ vs : List B.Carrier, VE.TupleTyped B q.sorts vs →
+      ((VE.Norms.outcomeBase (fill (supU N)) q.name).denote B (VE.Norms.tupleVal vs) ↔
+        (VE.Norms.outcomeBase (fill (choiceU N c)) q.name).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
+    intro q hq vs hvs
+    have hqf : q ∈ N.D.frame.soft.T.regulated := hregX ▸ hq
+    rw [VE.NormDefaults.outcomeBase_fill hsu hcX hq vs hvs,
+      outcomeBase_fill_v hvY hcY (hregY ▸ hqf) vs ((tp _ vs).mp hvs)]
+    split
+    · exact not_congr (fill_sim N hN hs hsu c hc B hB hsl he q hqf _ false)
+    · exact fill_sim N hN hs hsu c hc B hB hsl he q hqf _ true
+  have hG : ∀ q ∈ (supU N).D.T.regulated, ∀ vs : List B.Carrier, VE.TupleTyped B q.sorts vs →
+      ((VE.NormDefaults.gapF (supU N) q.name).denote B (VE.Norms.tupleVal vs) ↔
+        (VE.NormDefaults.gapF (choiceU N c) q.name).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
+    intro q hq vs hvs
+    have hqf : q ∈ N.D.frame.soft.T.regulated := hregX ▸ hq
+    by_cases hp : q.name ∈ N.unspec
+    · rw [VE.NormDefaults.gapF_fill hu hsu hcX hq hp vs hvs,
+        gapF_fill_v hvY hcY (hregY ▸ hqf) hp vs ((tp _ vs).mp hvs),
+        fill_sim_author N hN hs hsu c hc B hB hsl he q hqf _ true,
+        fill_sim_author N hN hs hsu c hc B hB hsl he q hqf _ false]
+    · simp only [VE.NormDefaults.gapF, show (supU N).unspec = N.unspec from rfl,
+        show (choiceU N c).unspec = N.unspec from rfl, if_neg hp]; exact Iff.rfl
+  have hpairs : VE.Norms.pairs (choiceU N c).D.T = VE.Norms.pairs (supU N).D.T := by
+    unfold VE.Norms.pairs; rw [hregX, hregY]
+  unfold VE.NormDefaults.fillPremises
+  rw [show (choiceU N c).unspec = N.unspec from rfl, show (supU N).unspec = N.unspec from rfl, hpairs]
+  simp only [Sat, List.forall_mem_map]
+  refine forall₂_congr fun pr hpr => ?_
+  have hpr' := (List.mem_filter.mp hpr).1
+  obtain ⟨r, hr, hrn, _, _, hrs⟩ := VE.NormDefaults.pair_req hpr'
+  obtain ⟨m, hm, hmn, _, hms⟩ := VE.NormDefaults.pair_perm hu hpr'
+  rw [VE.Norms.bindAll_denote_nil, VE.Norms.bindAll_denote_nil]
+  refine forall_congr' fun vs => ?_
+  rw [← tp]
+  refine imp_congr_right fun hvs => ?_
+  simp only [VE.Formula.denote, VE.Norms.pairConflict]
+  rw [← hrn, ← hmn, hO r hr vs (hrs ▸ hvs), hO m hm vs (hms ▸ hvs), hG r hr vs (hrs ▸ hvs), hG m hm vs (hms ▸ hvs)]
+
 end VE.Readings
