@@ -1,0 +1,23 @@
+{
+ "job": "jt-3a.s1of4-4c2ea7ca",
+ "head": "9a8af8cbafc62ec23e52508ab7cd457c6a47bcee",
+ "argv": [
+  "jt-3a.s1of4-4c2ea7ca",
+  "9a8af8cbafc62ec23e52508ab7cd457c6a47bcee",
+  "7a8a0f74344d1741f2e2bc0e92e3a0676bcdf0cc",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-aacd4ae9947e.tar.zst",
+  "d33d4bbd2c633a8ee3f3efac2a68750d3297d48f0f13b386f4f0e60117c70382",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Judgments/Examples.lean",
+  "--test",
+  "lean/VE/EnglishGrammar/Examples.lean",
+  "--test",
+  "lean/VE/Service/UndeclaredExamples.lean",
+  "--shard",
+  "1/4",
+  "--jobs",
+  "4"
+ ]
+}
