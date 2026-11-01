@@ -16,7 +16,7 @@
 - `tools/check_english_s3_statements.py` — Compare the ten added S3 theorem statements with the approved section 5.5 text.
 - `tools/check_lean_imports.py` — Reject new outward Lean imports and stale, exact legacy exceptions.
 - `tools/check_pc3_statements.py` — Compare PC-3's Lean declarations with the approved Lean blocks of docs/spec/profile-composition.md 1.2 to 1.5 (build checklist 17).
-- `tools/check_python_layers.py` — Check import-linter's Python contract and its reviewed legacy-edge ledger.
+- `tools/check_python_layers.py` — Check Python's layers: import-linter over tools/layer_policy.py's table, and its reviewed exception ledger.
 - `tools/check_rd9_sc1_statements.py` — Compare the implemented RD-9 declarations against the approved Lean blocks of docs/spec/rd-9-soft-chain.md 6.
 - `tools/check_readings_defaults_statements.py` — Compare the RD-1, RD-2a, RD-4a, RD-4b and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2, 6.3, 6.6 and 6.7.
 - `tools/check_rust_deps.py` — Check the Rust workspace's crate graph against the inward-only rule, as cargo reads it.
@@ -91,10 +91,10 @@
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
 - `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
+- `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
 - `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
 - `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
 - `tools/test_map_recorder.py` — Record what one process of a test-map run executes, reads and starts.
 - `tools/test_profile_report.py` — Summarise the JSON-lines files `tools/pytest_profile.py` writes.
 - `tools/test_schedule.py` — The order an xdist run starts its tests in: the slowest first, so no long test starts last.
 - `tools/trust_changes.py` — The trust report's changed files (architecture decision D2, AR-2): each Lean file changed since a base commit, with the lines it holds in each trusted class.
-- `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
