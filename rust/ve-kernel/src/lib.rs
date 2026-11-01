@@ -43,6 +43,10 @@ pub struct Error {
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
+    /// The reported record of wire-contract.md 2.8 (fault, residual or deferred), set by
+    /// `contract::overlay` only (wire-contract-s4-2.md 6).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub diagnostic: Option<serde_json::Value>,
 }
 impl Error {
     pub fn new(code: &str, message: impl Into<String>) -> Self {
@@ -50,6 +54,7 @@ impl Error {
             code: code.into(),
             message: message.into(),
             span: None,
+            diagnostic: None,
         }
     }
 }
