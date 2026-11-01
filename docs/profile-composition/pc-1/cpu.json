@@ -1,0 +1,52 @@
+{
+ "runs": 5,
+ "budget": {
+  "cpu_seconds": 1.0,
+  "wall_seconds": 2.0
+ },
+ "base": {
+  "probe-f2-256-plain": {
+   "bytes": 1459854,
+   "cpu_seconds": 1.13,
+   "wall_seconds": 1.252,
+   "answer": "reading sets hold 1 to 64 readings"
+  },
+  "f6-64-plain": {
+   "bytes": 91053,
+   "cpu_seconds": 0.19,
+   "wall_seconds": 0.19,
+   "answer": "distinguishing models must be supplied by id"
+  },
+  "f6-64-layer": {
+   "bytes": 91068,
+   "cpu_seconds": 0.07,
+   "wall_seconds": 0.078,
+   "answer": "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+  }
+ },
+ "head": {
+  "probe-f2-256-plain": {
+   "bytes": 1459854,
+   "cpu_seconds": 1.47,
+   "wall_seconds": 1.701,
+   "answer": "reading sets hold 1 to 64 readings"
+  },
+  "f6-64-plain": {
+   "bytes": 91053,
+   "cpu_seconds": 0.28,
+   "wall_seconds": 0.295,
+   "answer": "distinguishing models must be supplied by id"
+  },
+  "f6-64-layer": {
+   "bytes": 91068,
+   "cpu_seconds": 0.31,
+   "wall_seconds": 0.318,
+   "answer": "distinguishing models must be supplied by id"
+  }
+ },
+ "within_budget": false,
+ "services": {
+  "base": "6a28d53960c0d99a939564ed1e17919ca8939acfb7b090de9c3d49293d02dede",
+  "head": "34de669e2dfb8989bb09f316c4f6d07589fe6ae7da8c801a4ea16d410745b807"
+ }
+}
