@@ -48080,6 +48080,10 @@ theorem VE.Service.Diagnose.diagnoseCase_registered
         VE.Service.Diagnose.diagnoseCase j = VE.WireContract.Diagnose.diagnoseCase registered j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose VE.WireContract.Diagnose.diagnoseCase@VE.WireContract.Diagnose VE.WireContract.Diagnose.units@VE.WireContract.Diagnose
   -- expr 1136295329
+theorem VE.Service.Document.checkCore_eq_fast
+  VE.Service.Document.checkCore = VE.Service.Document.checkCoreFast
+  -- uses VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkCoreFast@VE.Service.Document
+  -- expr 595332831
 theorem VE.Service.Document.checkDocSets_clashFirst
   ∀ (j : Lean.Json),
     VE.Service.Document.swapInjective j = Bool.false ∨
@@ -48089,6 +48093,10 @@ theorem VE.Service.Document.checkDocSets_clashFirst
         VE.Service.Document.checkDoc j = Except.error VE.Service.Document.swapClash
   -- uses VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.swapClash@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.withoutJudgments@VE.Service.Document
   -- expr 3936838208
+theorem VE.Service.Document.clashRefusal_eq_fast
+  VE.Service.Document.clashRefusal = VE.Service.Document.clashRefusalFast
+  -- uses VE.Service.Document.clashRefusal@VE.Service.Document VE.Service.Document.clashRefusalFast@VE.Service.Document
+  -- expr 1584523734
 theorem VE.Service.Document.clashRefusal_some
   ∀ (j : Lean.Json),
     VE.Service.Document.clashRefusal j = Option.some VE.Service.Document.swapClash ↔
@@ -48102,6 +48110,29 @@ theorem VE.Service.Document.decodeRowKind_json
     VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
   -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
   -- expr 2427365272
+theorem VE.Service.Document.exchangeIn_pairIndex
+  ∀ (pairs : List (String × String × String)) (x : String),
+    VE.Service.Document.exchangeIn (VE.Service.Document.pairIndex pairs) x = VE.Service.Document.exchangeOf pairs x
+  -- uses VE.Service.Document.exchangeIn@VE.Service.Document VE.Service.Document.exchangeOf@VE.Service.Document VE.Service.Document.pairIndex@VE.Service.Document
+  -- expr 369824410
+theorem VE.Service.Document.injStep_none
+  ∀ (ex : String → String) (xs : List String), List.foldl (VE.Service.Document.injStep ex) Option.none xs = Option.none
+  -- uses VE.Service.Document.injStep@VE.Service.Document
+  -- expr 2860985673
+theorem VE.Service.Document.injectiveH_eq
+  ∀ (ex : String → String) (ids : List String),
+    VE.Service.Document.injectiveH ex ids = ids.all fun x => ids.all fun y => x == y || ex x != ex y
+  -- uses VE.Service.Document.injectiveH@VE.Service.Document
+  -- expr 579586567
+theorem VE.Service.Document.injectiveH_foldl
+  ∀ (ex : String → String) (xs : List String) (m : Std.HashMap String String) (l : List String),
+    (∀ (a y : String), m[a]? = Option.some y → y ∈ l ∧ ex y = a) →
+      (∀ (y : String), y ∈ l → m[ex y]?.isSome = Bool.true) →
+        (∀ (x : String), x ∈ l → ∀ (y : String), y ∈ l → x = y ∨ ex x ≠ ex y) →
+          ((List.foldl (VE.Service.Document.injStep ex) (Option.some m) xs).isSome = Bool.true ↔
+            ∀ (x : String), x ∈ l ++ xs → ∀ (y : String), y ∈ l ++ xs → x = y ∨ ex x ≠ ex y)
+  -- uses VE.Service.Document.injStep@VE.Service.Document
+  -- expr 4131056322
 theorem VE.Service.Document.judgedIn_legacy
   ∀ (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option VE.Service.Document.RightsDoc)
     (c : VE.Service.Document.UnitContent),
@@ -48116,10 +48147,35 @@ theorem VE.Service.Document.judgedIn_soft
         Except.ok (Option.some (VE.Judgments.softContent N))
   -- uses VE.Judgments.Content@VE.Judgments.Status VE.Judgments.softContent@VE.Judgments.Chain VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent.soft@VE.Service.Document VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftNorm@VE.SoftNorms.Wire
   -- expr 2880642263
-theorem VE.Service.Document.swapInjective_eq_once
-  VE.Service.Document.swapInjective = VE.Service.Document.swapInjectiveOnce
-  -- uses VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveOnce@VE.Service.Document
-  -- expr 4022877896
+theorem VE.Service.Document.pairIndex_get
+  ∀ (pairs : List (String × String × String)) (x : String),
+    (VE.Service.Document.pairIndex pairs)[x]? = Option.map (fun x => x.snd) (List.find? (fun x_1 => x_1.fst == x) pairs)
+  -- uses VE.Service.Document.pairIndex@VE.Service.Document
+  -- expr 2896768923
+theorem VE.Service.Document.profilesOf_frontOf
+  ∀ (j : Lean.Json),
+    VE.Service.Document.profilesOf j =
+      match VE.Service.Document.frontOf j with
+      | Option.some (front, snd) => VE.Service.Document.listedProfiles (front.getObjValD "environment")
+      | Option.none => []
+  -- uses VE.Service.Document.frontOf@VE.Service.Document VE.Service.Document.listedProfiles@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.readingSetsOf.match_1@VE.Service.Document
+  -- expr 2027331592
+theorem VE.Service.Document.swapInjectiveH_eq
+  ∀ (ids : List String) (pairs : List (String × String × String)),
+    VE.Service.Document.swapInjectiveH ids pairs =
+      VE.Service.Document.swapInjectiveOf ids pairs (VE.Service.Document.exchangeOf pairs)
+  -- uses VE.Service.Document.exchangeOf@VE.Service.Document VE.Service.Document.swapInjectiveH@VE.Service.Document VE.Service.Document.swapInjectiveOf@VE.Service.Document
+  -- expr 1783340337
+theorem VE.Service.Document.swapInjective_eq_fast
+  VE.Service.Document.swapInjective = VE.Service.Document.swapInjectiveFast
+  -- uses VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveFast@VE.Service.Document
+  -- expr 1893943047
+theorem VE.Service.Document.swapInjective_frontOf
+  ∀ (j : Lean.Json),
+    VE.Service.Document.swapInjective j =
+      VE.Service.Document.swapInjectiveH (VE.Service.Document.statedIds j) (VE.Service.Document.statedPairs j)
+  -- uses VE.Service.Document.statedIds@VE.Service.Document VE.Service.Document.statedPairs@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveH@VE.Service.Document
+  -- expr 168316616
 theorem VE.Service.Entry.prepared_eq
   ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
