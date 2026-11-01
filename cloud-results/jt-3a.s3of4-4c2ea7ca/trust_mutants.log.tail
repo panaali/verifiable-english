@@ -1,0 +1,9 @@
+trust_mutants: 10 definitions, 265 mutants (66 to run), 4 jobs, base 7a8a0f74344d
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-empty: E.rv.vocabulary.predicates -> [] (lean/VE/Service/Document.lean:1727: Invalid match expression: The type of pattern variable 'snd✝'...)
+UNKNOWN lean/VE/Judgments/Undeclared.lean:31 VE.Judgments.undeclaredEvaluative (S, trusted) list-empty: rows -> [] (lean/VE/Judgments/Undeclared.lean:31: Invalid field notation: Type of)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:14 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:15: Invalid `⟨...⟩` notation: The expected type of this te...)
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-last: (E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map -> (((E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map).reverse.take 1) (lean/VE/Service/Document.lean:1727: Invalid match expression: The type of pattern variable 'snd✝'...)
+trust_mutants: 59 KILLED, 0 SURVIVOR, 4 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 199 OTHER SHARD in 1575 s
+trust_mutants: G[V], trusted: 16 KILLED, 2 UNKNOWN, 1 INVALID, 65 OTHER SHARD
+trust_mutants: S, trusted: 43 KILLED, 2 UNKNOWN, 2 INVALID, 134 OTHER SHARD
+trust_mutants: steps: wall plan 5.7 s, scratch 2.1 s, control_build 0.2 s, probe_install 1 s, control_probes 319.1 s, mutants 1243.4 s, cleanup 3.8 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 512.2 s (9), mutant_builds 334.6 s (91), mutant_checks 1290.6 s (62), stage_controls 213.2 s (9), mutant_probes 3074.8 s (104)
