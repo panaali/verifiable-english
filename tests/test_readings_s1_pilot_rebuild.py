@@ -4,8 +4,14 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+from tests.test_readings_nd_document import as_document
+from tests.test_readings_nd_lean import ASKS, doc1, env1
+from tests.test_readings_s1_lean import norm
 from tools import readings_s1_pilot as pilot
 from ve.ast import formula_from_data
+from ve.document import check_document
+from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.model import FiniteModel
 from ve.readings import _reading_evaluation
@@ -14,6 +20,95 @@ from ve.readings_s1 import S1Environment
 
 FIXTURE = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
 UDHR = Path(__file__).resolve().parents[1] / "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"
+TEXTS = {"u0": "Every agent may help each user.\n", "u1": "Every agent must help each user.\n",
+         "u2": "Every agent may help each user who asks.\n"}
+SCOPE = {"version": "scope@0", "governors": [{"id": "g1", "unit": "u0", "reach": {"rules": ["may-help-asked"]},
+                                              "units": ["u2"], "effect": {"reguard": ["and", "own", ["top"]]}}]}
+
+
+@pytest.fixture
+def lean():
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
+
+
+def nd_part(tmp_path, *, scoped=False, name="part"):
+    """F-ND1 as a part document: its reading set under `norm-defaults@0`, whose situation's base is over the filled
+    frame (the `unsaid__` tables, no regulated predicate), as the UDHR parts' are, between two rules of its own.
+    `scoped` lists `scope@0` with one governor (u0 re-guards u2's rule)."""
+    raw = env1()
+    document, _ = doc1(raw)
+    document["units"] = [{"id": "u0", "content": norm("may-help", "help_permitted", True)}, *document["units"],
+                         {"id": "u2", "content": norm("may-help-asked", "help_permitted", True, guard=ASKS)}]
+    (tmp_path / name).mkdir()
+    path = as_document(tmp_path / name, raw, document, TEXTS)
+    meta, source = pilot.read(path)
+    if scoped:
+        meta["environment"]["profiles"] = sorted([*meta["environment"]["profiles"], "scope@0"])
+        meta["scope"] = SCOPE
+    pilot.write(path, meta, source)
+    return path
+
+
+def rebuilt(path, tmp_path):
+    out = tmp_path / f"{path.parent.name}-rebuilt.ve.md"
+    assert pilot.main(["--rebuild-reading-ids", str(path), "--out", str(out)]) == 0
+    return out
+
+
+def is_noop(path):
+    try:
+        return pilot.main(["--rebuild-reading-ids", str(path), "--check-noop"]) == 0
+    except SystemExit as exc:
+        assert exc.code == 2
+        return False
+
+
+def test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits(lean, tmp_path):
+    path = nd_part(tmp_path, scoped=True)
+    assert is_noop(path)
+    assert rebuilt(path, tmp_path).read_bytes() == path.read_bytes()
+    report = check_document(path)
+    assert [s["set"] for s in report["readings"]["sets"]] == ["rs_1"]
+    # The ids are those of the environment the chain reads, without `scope@0`: the part's own without it.
+    plain, _ = pilot.read(nd_part(tmp_path, name="plain"))
+    assert pilot.read(path)[0]["reading_sets"] == plain["reading_sets"]
+
+
+def test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts(lean, tmp_path):
+    edited = []
+    for scoped, name in ((True, "scoped"), (False, "plain")):
+        path = nd_part(tmp_path, scoped=scoped, name=name)
+        meta, source = pilot.read(path)
+        meta["environment"]["vocabulary"]["sorts"]["agent"]["description"] += " after edit"
+        pilot.write(path, meta, source)
+        assert not is_noop(path)
+        out = rebuilt(path, tmp_path)
+        assert is_noop(out)
+        assert [s["set"] for s in check_document(out)["readings"]["sets"]] == ["rs_1"]
+        edited.append(pilot.read(out)[0]["reading_sets"])
+    assert edited[0] == edited[1] and edited[0] != pilot.read(nd_part(tmp_path, name="base"))[0]["reading_sets"]
+
+
+def test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame(lean, tmp_path):
+    path = nd_part(tmp_path)
+    assert is_noop(path)
+    assert rebuilt(path, tmp_path).read_bytes() == path.read_bytes()
+
+
+def test_rebuild_adds_a_new_base_predicate_and_no_regulated_one(lean, tmp_path):
+    path = nd_part(tmp_path)
+    meta, source = pilot.read(path)
+    meta["environment"]["vocabulary"]["predicates"]["trusts"] = {"arguments": ["user", "agent"],
+                                                                 "description": "{0} trusts {1}"}
+    pilot.write(path, meta, source)
+    with pytest.raises(VEError):
+        check_document(path)
+    out = rebuilt(path, tmp_path)
+    [entry] = pilot.read(out)[0]["reading_sets"][0]["situations"].values()
+    assert list(entry["base"]["relations"]) == ["asks", "unsaid__help_permitted", "unsaid__help_required", "trusts"]
+    assert entry["base"]["relations"]["trusts"] == []
+    assert [s["set"] for s in check_document(out)["readings"]["sets"]] == ["rs_1"]
 
 
 def test_rebuild_command_is_noop_on_unchanged_environment(tmp_path, capsys):
