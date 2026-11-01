@@ -288,3 +288,5 @@ import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
+import VE.Weighing.Zone
+import VE.Weighing.ZoneExamples
