@@ -9,7 +9,8 @@
   ],
   "test": "lean/VE/Weighing/ZoneExamples.lean:20: Expression",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:20: Expression"
+   "lean/VE/Weighing/ZoneExamples.lean:20: Expression",
+   "lean/VE/Weighing/ZoneExamples.lean:37: Expression"
   ],
   "killed": true
  },
@@ -23,7 +24,8 @@
   ],
   "test": "lean/VE/Weighing/ZoneExamples.lean:23: Expression",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:23: Expression"
+   "lean/VE/Weighing/ZoneExamples.lean:23: Expression",
+   "lean/VE/Weighing/ZoneExamples.lean:37: Expression"
   ],
   "killed": true
  },
@@ -35,11 +37,11 @@
    "(R a.1 a.2 ↔ b = true)",
    "(R a.1 a.2 ↔ b = false)"
   ],
-  "test": "lean/VE/Weighing/ZoneExamples.lean:47: unsolved goals",
+  "test": "lean/VE/Weighing/ZoneExamples.lean:60: unsolved goals",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:47: unsolved goals",
-   "lean/VE/Weighing/ZoneExamples.lean:59: Application type mismatch: The argument",
-   "lean/VE/Weighing/ZoneExamples.lean:86: Function expected at"
+   "lean/VE/Weighing/ZoneExamples.lean:60: unsolved goals",
+   "lean/VE/Weighing/ZoneExamples.lean:72: Application type mismatch: The argument",
+   "lean/VE/Weighing/ZoneExamples.lean:99: Function expected at"
   ],
   "killed": true
  },
@@ -51,10 +53,10 @@
    "(outcomeBase (fill U) r.name)",
    "(outcomeBase (fill U) \"\")"
   ],
-  "test": "lean/VE/Weighing/ZoneExamples.lean:64: Tactic `decide` proved that the proposition",
+  "test": "lean/VE/Weighing/ZoneExamples.lean:77: Tactic `decide` proved that the proposition",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:64: Tactic `decide` proved that the proposition",
-   "lean/VE/Weighing/ZoneExamples.lean:75: Tactic `decide` proved that the proposition"
+   "lean/VE/Weighing/ZoneExamples.lean:77: Tactic `decide` proved that the proposition",
+   "lean/VE/Weighing/ZoneExamples.lean:88: Tactic `decide` proved that the proposition"
   ],
   "killed": true
  },
@@ -66,11 +68,11 @@
    "(∃ R, AdmissibleCompletion U X M opens record R) ∧",
    "(∃ R, AdmissibleCompletion U X M opens [] R) ∧"
   ],
-  "test": "lean/VE/Weighing/ZoneExamples.lean:73: Application type mismatch: The argument",
+  "test": "lean/VE/Weighing/ZoneExamples.lean:86: Application type mismatch: The argument",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:73: Application type mismatch: The argument",
-   "lean/VE/Weighing/ZoneExamples.lean:85: unsolved goals",
-   "lean/VE/Weighing/ZoneExamples.lean:85: unsolved goals"
+   "lean/VE/Weighing/ZoneExamples.lean:86: Application type mismatch: The argument",
+   "lean/VE/Weighing/ZoneExamples.lean:98: unsolved goals",
+   "lean/VE/Weighing/ZoneExamples.lean:98: unsolved goals"
   ],
   "killed": true
  },
@@ -82,10 +84,10 @@
    "  | branch (assignment",
    "  -- | branch (assignment"
   ],
-  "test": "lean/VE/Weighing/ZoneExamples.lean:91: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
+  "test": "lean/VE/Weighing/ZoneExamples.lean:104: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
   "tests": [
-   "lean/VE/Weighing/ZoneExamples.lean:91: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
-   "lean/VE/Weighing/ZoneExamples.lean:92: Unknown constant `VE.Weighing.ZoneUnknown.branch`"
+   "lean/VE/Weighing/ZoneExamples.lean:104: Unknown constant `VE.Weighing.ZoneUnknown.branch`",
+   "lean/VE/Weighing/ZoneExamples.lean:105: Unknown constant `VE.Weighing.ZoneUnknown.branch`"
   ],
   "killed": true
  }
