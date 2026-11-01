@@ -1,0 +1,59 @@
+{
+  "allow": [
+    {
+      "definition": "VE.EnglishGrammar.Norm.BlockFault",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Bearer",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Force",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Mode",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.NormStatement",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Piece",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Place",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.Polarity",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the definitions, fixtures or derived instances that name it ill-typed (Unknown constant); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.ruleCount",
+      "operator": "list-empty",
+      "reason": "`[]` has no element type there, so Lean refuses the text (implicit argument); no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.assembleFrom",
+      "operator": "list-first",
+      "reason": "Equivalent: `a` is `close o`'s result, which has at most one statement, so `a.take 1 = a`."
+    },
+    {
+      "definition": "VE.EnglishGrammar.Norm.assembleFrom",
+      "operator": "list-last",
+      "reason": "Equivalent: `a` is `close o`'s result, which has at most one statement, so `a.reverse.take 1 = a`."
+    }
+  ]
+}

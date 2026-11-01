@@ -18,7 +18,10 @@ inductive Force where
 /-- W1's stored sign: obligation `must` true, `need not` false; permission `may` true, `must not` false
 (`ve/norm_english.py:97-100`). -/
 def Force.sign : Force → Bool
-  | .must => true | .needNot => false | .may => true | .mustNot => false
+  | .must => true
+  | .needNot => false
+  | .may => true
+  | .mustNot => false
 
 /-- R2: a consequence's force, either a modal word or a plain wording with its sign. -/
 inductive Polarity where
