@@ -16864,6 +16864,44 @@
         "VE.Readings.RightsExamples.rsNorm",
         "VE.Readings.RightsExamples.rsOne"
       ]
+    },
+    "VE/Readings/SoftSup.lean": {
+      "G[V]": [
+        "VE.Readings.supX",
+        {
+          "name": "VE.Readings.pullF",
+          "tied": [
+            "VE.Readings.fill_sim",
+            "VE.Readings.fill_sim_author"
+          ]
+        },
+        "VE.Readings.sharedEnvSD",
+        "VE.Readings.supCertificateCheckSD"
+      ],
+      "P": [
+        "VE.Readings.FillLite"
+      ]
+    },
+    "VE/Readings/SoftSupExamples.lean": {
+      "T": [
+        "VE.Readings.SoftSupExamples.facts",
+        "VE.Readings.SoftSupExamples.q3",
+        "VE.Readings.SoftSupExamples.frame4a",
+        "VE.Readings.SoftSupExamples.rs4",
+        "VE.Readings.SoftSupExamples.NSD4a",
+        "VE.Readings.SoftSupExamples.NSD4c",
+        "VE.Readings.SoftSupExamples.pullFM",
+        "VE.Readings.SoftSupExamples.pullM",
+        "VE.Readings.SoftSupExamples.satAll",
+        "VE.Readings.SoftSupExamples.decF",
+        "VE.Readings.SoftSupExamples.m4",
+        "VE.Readings.SoftSupExamples.m1",
+        "VE.Readings.SoftSupExamples.mq",
+        "VE.Readings.SoftSupExamples.sides",
+        "VE.Readings.SoftSupExamples.closeCert",
+        "VE.Readings.SoftSupExamples.q4",
+        "VE.Readings.SoftSupExamples.NSDa"
+      ]
     }
   }
 }
