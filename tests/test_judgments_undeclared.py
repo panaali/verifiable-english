@@ -76,9 +76,12 @@ def test_a_regulated_predicate_is_listed_and_still_not_admitted(service, genuine
 def mutants(names):
     """Each retyping of the field and of one member, each duplication, and each name that is no base predicate of the
     request or is a bound judgment."""
+    deep = []
+    for _ in range(10_000):
+        deep = [deep]
     for value in (7, True, None, {}, "reasonable_grounds", 1.5, [[]], [7], [None], [True], ["\ud800"], [""],
-                  [["reasonable_grounds"]]):
-        yield f"retyped {value!r}", value
+                  [["reasonable_grounds"]], deep):
+        yield f"retyped {repr(value)[:40]}", value
     for i, name in enumerate(names):
         yield f"member {i} retyped", [*names[:i], 7, *names[i + 1:]]
         yield f"member {i} doubled", [*names[:i + 1], name, *names[i + 1:]]
