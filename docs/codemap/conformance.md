@@ -49,7 +49,6 @@
 - `conformance/rights_differential.py` — Deterministic rights relay corpus on 1,000 generated documents (rights.md 10).
 - `conformance/rights_three_way.py` — Rights fixtures and the independently checked soft embedding (rights.md 10).
 - `conformance/risk.py` — Executable forms of the risk@0 fixtures (docs/spec/risk.md 8.1) for the Lean route.
-- `conformance/senses_usecases.py` — Pack coverage of the use cases (senses plan 7.2, B8): each English sentence re-read with the pack in place of its declarations.
 - `conformance/soft_norms.py` — Deterministic Python/Lean regeneration comparison for 1,000 soft trees.
 - `conformance/soft_norms_wire_report.py` — Deterministic Python shadow delta over the generic multi-fault selection.
 - `conformance/soft_oracle.py` — Frozen Python regeneration comparison for the pre-deletion soft oracle.

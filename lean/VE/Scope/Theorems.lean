@@ -1538,6 +1538,10 @@ theorem map_filter_id (gs : List Governor) (id : String) :
   | nil => rfl
   | cons x xs ih => cases hx : (x.id != id) <;> simp [hx, ih]
 set_option maxHeartbeats 1200000 in
+theorem forwardsOk_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) :
+    forwardsOk {D with governors := D.governors.filter (·.id != g.id)} = forwardsOk D := by
+  simp only [forwardsOk, forwardCheck, laterUnitsIn, baseObj_drop D g hg ht hd]
 theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
     (hd : (D.governors.map (·.id)).Nodup) (ha : admitBlock D = .ok ()) :
     admitBlock {D with governors := D.governors.filter (·.id != g.id)} = .ok () := by
@@ -1568,9 +1572,10 @@ theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht :
     rw [map_filter_id]
     exact hd.filter _
   have hnameslen : ¬ 256 < D.listNames.length := by assumption
+  have hfwlen := ‹¬ _ < D.forwards.length›
   unfold admitBlock
-  simp only [covered_drop D g hg ht hd]
-  simp [hlen', hnameslen, hdup', hAf, hBf]
+  simp only [covered_drop D g hg ht hd, forwardsOk_drop D g hg ht hd, ha]
+  simp [hlen', hnameslen, hfwlen, hdup', hAf, hBf]
   simp only [List.contains_iff_mem, bind, Except.bind, pure, Except.pure] at hAf
   simp only [bind, Except.bind, pure, Except.pure, Functor.map] at ⊢
   simp only [Except.map, throw, throwThe, MonadExceptOf.throw] at ⊢
@@ -1598,7 +1603,8 @@ theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht :
   simp only [Except.bind] at ⊢
   simp only [List.forIn_cons] at hBf
   simp only [bind_assoc] at hBf
-  simpa only [bind, Except.bind, pure, Except.pure, Except.map, throw, throwThe, MonadExceptOf.throw, beq_iff_eq, List.contains_iff_mem, decide_eq_true_eq, Bool.or_eq_true] using hBf
+  simp only [bind, Except.bind, pure, Except.pure, Except.map, throw, throwThe, MonadExceptOf.throw, beq_iff_eq, List.contains_iff_mem, decide_eq_true_eq, Bool.or_eq_true] at hBf ⊢
+  rw [hBf]
 set_option maxHeartbeats 1200000 in
 theorem govern_drop_nonempty (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
     (ht : g.effect = .title) (hd : (D.governors.map (·.id)).Nodup)

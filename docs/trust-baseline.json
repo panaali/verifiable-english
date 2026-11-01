@@ -1685,6 +1685,20 @@
    "reason": "pk-1-conditions: VE/NormDefaults/Packs.lean +2 (the Pack.conditions field and its doc comment); Serve.lean +2 is main's (scale-stage-timers, after 2f1318f4d), not this item's",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1-conditions, 2026-10-18",
    "commit": "2f1318f4ddfd8706290b441538f3767cb6ce8552"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
   }
  ]
 }
