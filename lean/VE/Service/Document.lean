@@ -1241,6 +1241,15 @@ def extendedEnv (json : Json) : Except String Env :=
            generated := true }
   built.mapError fun m => unavailable s!"the soft route's extended environment is outside this mode: {m}"
 
+/-- `X` (an environment the soft route generated from `E` without its document layers) with its identities over the
+list as written (jt-2c, reviews/dri-decisions-20261028-jt-2c.md item 1(b); PC-1): the document layers `E` lists join
+its profiles and identity; its decoders read `X` as generated. -/
+def layeredIds (E : Env) (X : Env) : Except String Env := do
+  let layers := E.profiles.filter VE.Compose.documentLayers.contains
+  if layers.isEmpty then return X
+  let profiles := (X.profiles ++ layers).mergeSort fun a b => decide (a ≤ b)
+  pure { X with profiles, envId := ← Standalone.environmentIdOf profiles (X.json.setObjVal! "profiles" (toJson profiles)) }
+
 /-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
 the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`
 over the norm content `_parts` yields before its first fault (`partsPrefix`). -/
@@ -1248,7 +1257,8 @@ def softLayer (E : Env) (declared : List String) (raw : List Json) : Except Stri
   let lower := wireJson 257 E.lower
   let src ← softSource E.lower (softSourceNorms (Json.arr raw.toArray))
   let prime ← VE.SoftNorms.Wire.primeJson src.D lower
-  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime (partsPrefix raw)⟩
+  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← layeredIds E (← extendedEnv prime),
+    ← softRules prime (partsPrefix raw)⟩
 
 /-- `_content` for the owned profiles: the unit's checked formula and `meaning_id`, or the reason it has none
 here. -/
