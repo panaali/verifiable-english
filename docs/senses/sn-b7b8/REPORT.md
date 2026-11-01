@@ -1,10 +1,10 @@
 # sn-b7b8 REPORT: senses B7 (the display) and B8 (starter packs and the measurement), one stack
 
 Status: both rows built and cut at their size lines; sn-b7 as the DRI cut it (reviews/dri-decisions-20261101-sn-b7b8.md
-and `-reread`). HEAD: see `git log -1`. What changed: `ve render --senses` shows each open unit's candidates,
-rendered and re-read by Lean under their own projections; two starter packs, pinned, and the 7.2 coverage table.
-Open: sn-b7b, sn-b7c (needs the R3 decision), sn-b8b (rights@1, risk@1, the propose tool). No DRI signature is
-reserved; DELTA.md has no row; trust +0 in both rows (`tools/trust_map.py --check`).
+and `-reread`); review F1 (B) fixed ("Fix round" at the end). HEAD: see `git log -1`. What changed: `ve render --senses`
+shows each open unit's candidates, rendered and re-read by Lean under their own projections; two starter packs, pinned,
+and the 7.2 coverage table. Open: sn-b7b, sn-b7c (needs the R3 decision), sn-b8b (rights@1, risk@1, the propose tool).
+No DRI signature is reserved; DELTA.md has no row; trust +0 in both rows (`tools/trust_map.py --check`).
 
 ## sn-b7
 
@@ -115,7 +115,7 @@ The edits of debates/plan-synthesis-2/edits-senses.md: this row implements none 
 | (2) each pack pinned in `ve/senses/reviewed-packs.json` (digest, reviewer, date, file, scope) | yes; the digest is Lean's `dictionary_id` of the pack alone (Q9); the reviewer is `sn-b7b8 chain review (sn-b7b8-review.final.md)`, which reads every entry against SOURCES.md; a pack the review changes is re-pinned in the fix round | | `::test_each_pin_is_leans_identity_of_the_pack_bytes` (reviewed, and one changed byte unreviewed), `::test_every_starter_pack_is_pinned_and_the_fixture_pack_is_not` |
 | i4's unreviewed path unchanged | yes (`ve.senses.review_status` untouched) | | `tests/test_senses_pack.py::test_fixture_pack_is_unreviewed` |
 | (3) `conformance/senses_usecases.py` and its table | yes, for the two packs' use cases | `docs/senses/sn-b8/coverage.json` | `::test_a_sentence_that_reads_the_same_under_the_pack`, `::test_a_sentence_that_needs_a_line`, `::test_a_sentence_that_no_longer_reads_keeps_leans_reason`, `::test_a_sentence_the_base_does_not_read_is_counted_apart`, `::test_same_formula_up_to_renaming`, `::test_a_renaming_is_one_sense_id_per_predicate_over_the_use_case` |
-| declaration lines and negatives (7.2) on the same inputs | yes | `coverage.json` `declaration_lines`, `negatives_removed` | |
+| declaration lines and negatives (7.2) on the same inputs | yes (after: the pack lines, F1) | `coverage.json` `declaration_lines`, `negatives_removed` | `::test_after_counts_the_pack_lines_the_covered_predicates_need`, `::test_the_saved_table_counts_the_pack_lines_after`, `::test_a_covered_word_that_is_not_one_sense_line_stops_the_measure`, `::test_declaration_lines_and_negatives_count_the_covered_entries` |
 | read per sentence, every value once, within the existing limits | yes: each sentence once on each side, through the relays' limits (work budget 2,100,000; `MAX_SOURCE_BYTES`); the largest input, agent-policy's 533 sentences, ended in 4 min 59 s | | the `--write` run below |
 | Q3 | counted: 0 in the two packs' sources (SOURCES.md, Q3) | | |
 | (4) `tools/senses_propose.py` | **sn-b8b** (the cut order puts it first); and the repository's OEWN file has lemmas, classes and sense keys but no glosses (`ve/lexicon/oewn-2025.json` columns), so its gloss drafts need another source | | |
@@ -128,10 +128,10 @@ Run: `uv run python conformance/senses_usecases.py --write` (4 min 59 s), output
 
 | Use case (pack) | Sentences | Same up to renaming | Need a line | Switched | No longer read | Base does not read | Declaration lines before / after | Negatives removed |
 |---|---|---|---|---|---|---|---|---|
-| agent-policy (policies@1) | 533 | 459 | 0 | 0 | 0 | 74 | 74 / 0 | 9 |
+| agent-policy (policies@1) | 533 | 459 | 0 | 0 | 0 | 74 | 74 / 22 | 9 |
 | cedar-attributes (policies@1) | 1 | 1 | 0 | 0 | 0 | 0 | 0 / 0 | 0 |
-| fluent (software-services@1) | 6 | 6 | 0 | 0 | 0 | 0 | 14 / 0 | 1 |
-| assist (software-services@1) | 5 | 2 | 0 | 0 | 0 | 3 | 9 / 0 | 0 |
+| fluent (software-services@1) | 6 | 6 | 0 | 0 | 0 | 0 | 14 / 5 | 1 |
+| assist (software-services@1) | 5 | 2 | 0 | 0 | 0 | 3 | 9 / 4 | 0 |
 
 Every sentence the base reads also reads with the pack, with the same formula up to renaming each covered
 predicate to its sense id (the renamings are in `coverage.json`). No sentence needs a line or a switch, because no
@@ -139,8 +139,11 @@ word of the two packs has two senses (Q3: 0). The base's own refusals are kept w
 policy rules are norm sentences ("may be performed") that S2's relational reader does not read; in assist, "the web
 front end" is refused by S2's spelling policy, and the claim read alone has no premise (`ConclusionWithoutPremise`).
 cedar's one predicate is not packable (a `$string` kind), so its sentence reads unchanged with no renaming.
-Declaration lines: one per declared field of each covered predicate (environment and overlay) before, and the
-preamble lines the sentences need after. What this does not measure: the rights and risk use cases (sn-b8b);
+Declaration lines (plan 7.2's use-case measure, fixed in the review round, F1): before, one per declared field of
+each covered predicate (environment and overlay); after, the pack lines those predicates need, each one's sense line
+(its word tied to its sense id by Lean's `senses.project`) and the sort lines those senses name: agent-policy 16 + 6,
+fluent 3 + 2, assist 3 + 1, cedar none (`pack_senses`, `pack_sorts` in `coverage.json`). The preamble lines the
+sentences need are counted apart (`preamble_lines`: 0 in every use case). What this does not measure: the rights and risk use cases (sn-b8b);
 readability or comprehension (plan L1).
 
 ### Seeded bugs (docs/senses/sn-b8/mutants.json; data and Python only)
@@ -151,6 +154,11 @@ readability or comprehension (plan L1).
 | B2 | `ve/senses/reviewed-packs.json` | a pin digest that is not the pack's (the plan's) | `::test_each_pin_is_leans_identity_of_the_pack_bytes[policies@1]` |
 | B3 | `conformance/senses_usecases.py` | a renamed formula counted as different (the plan's) | `::test_a_sentence_that_reads_the_same_under_the_pack` |
 | B4 | `conformance/senses_usecases.py` | an open reading's candidates ignored | `::test_a_sentence_that_needs_a_line` |
+| B5 | `conformance/senses_usecases.py` | the sort lines left out of "after" (review F1) | `::test_after_counts_the_pack_lines_the_covered_predicates_need[agent-policy]`, `[fluent]`, `[assist]` |
+| B6 | `conformance/senses_usecases.py` | the sense lines left out of "after" (review F1) | the same three |
+| B7 | `conformance/senses_usecases.py` | a renaming to another sense accepted as the predicate's line | `::test_a_covered_word_that_is_not_one_sense_line_stops_the_measure` |
+| B8 | `docs/senses/sn-b8/coverage.json` | the table before the fix (after = preamble lines, 0) | `::test_the_saved_table_counts_the_pack_lines_after` (PROBE F1) |
+| B9 | `conformance/senses_usecases.py` | the overlay's fields left out of "before" (review F4) | `::test_declaration_lines_and_negatives_count_the_covered_entries` |
 
 The plan's fourth seeded bug (the propose tool imported from `ve/`) goes to sn-b8b with the tool.
 
@@ -205,7 +213,7 @@ sn-b8b: `rights@1` and `risk@1` with their table rows, `tools/senses_propose.py`
 2. PASS: every plan row and fixture is in the row tables, delivered or cut to a named item by the DRI's decisions
    (sn-b7) or the size line and the task's cut order (sn-b8); `relay_lint.py` PASS; no in-flight branch touches
    these files (checked at the start).
-3. PASS: seeded bugs S1-S5 (`docs/senses/sn-b7/mutants.json`) and B1-B4 (`docs/senses/sn-b8/mutants.json`), each
+3. PASS: seeded bugs S1-S5 (`docs/senses/sn-b7/mutants.json`) and B1-B9 (`docs/senses/sn-b8/mutants.json`), each
    failing a named test; no trusted Lean, so no trust mutants.
 4. PASS: one implementation (Lean); existing `ve render` paths are unchanged (the branch runs only with
    `--senses`; `tests/test_cli.py` exit 0 in row 1's selection); `::test_render_senses_cli_refuses_another_view`.
@@ -229,3 +237,20 @@ sn-b8b: `rights@1` and `risk@1` with their table rows, `tools/senses_propose.py`
 14. PASS: both directions for every check (two and one candidate against tampered, unreadable, base and other
     projections; packs that decode against malformed copies; pins reviewed against one changed byte; same, needs a
     line, no longer reads, base unread); claims cite their commands; spec re-read above.
+
+## Fix round (sn-b7b8-review.final.md)
+
+| Finding | Fix | Regression tests | Commit |
+|---|---|---|---|
+| F1 (B): 7.2's "after" on a use case counted the preamble lines (the joke's measure) | `pack_lines` counts the pack lines the covered predicates need: each predicate names its pack word in `USECASES` (SOURCES.md's last column), Lean's `senses.project` over that word alone gives its one sense id, a renaming the sentences gave must be that id, and the sort lines those senses name are added; a word that is not one sense line stops the measure. The preamble lines are kept apart (`preamble_lines`). Table re-measured: 74 / 22, 0 / 0, 14 / 5, 9 / 4 | `tests/test_senses_packs.py::test_the_saved_table_counts_the_pack_lines_after` (PROBE F1), `::test_after_counts_the_pack_lines_the_covered_predicates_need[agent-policy]`, `[cedar-attributes]`, `[fluent]`, `[assist]`, `::test_a_covered_word_that_is_not_one_sense_line_stops_the_measure` | `dda65fae6` |
+| F4 (C, same class: the measure's counts had no test) | tests only | `::test_declaration_lines_and_negatives_count_the_covered_entries` | `dda65fae6` |
+
+- PROBE F1: before the fix `AssertionError: 0`; after it, exit 0 (it is the first test above, over all four rows).
+- Seeded bugs B5-B9 (table above, `docs/senses/sn-b8/mutants.json`): each planted, its tests run, the file restored.
+  Python and data only; no Lean or Rust changed, so no Lean or Rust mutants.
+- DELTA: no row (a batch measurement and its evidence; no user-visible output changes).
+- Runs: `--write` 4 min 16 s; `lake build` "Build completed successfully (1211 jobs)"; `python3 lean/audit.py` PASS;
+  `regen_generated.py --check` "checked 35 entries"; selected tests (`mac-pytest.sh --select -- --base <merge base>
+  --run`, Claude cloud, 4 shards): 241 of 241 units passed. Not run: the full gate (the chain runs it).
+- Known red on main (main-known-red.txt): not touched.
+- Not fixed here (C, FOLLOW-UP): F2, F3, F5, F6, F7.
