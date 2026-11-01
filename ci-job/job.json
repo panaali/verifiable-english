@@ -1,0 +1,13 @@
+{
+ "job": "armsh-seed-fault-9e332e34-t557247-s1",
+ "head": "8c882d6d41e8e13cfafcfc8b46844a4c1a66ff0f",
+ "argv": [
+  "armsh-seed-fault-9e332e34-t557247-s1",
+  "8c882d6d41e8e13cfafcfc8b46844a4c1a66ff0f",
+  "4ccceb183c4c1f876067792b344a5a70504aa0b1",
+  "-",
+  "-",
+  "4",
+  "1/2"
+ ]
+}
