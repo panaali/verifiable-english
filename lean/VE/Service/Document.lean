@@ -2007,7 +2007,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
   -- Under `judgments@0`, each unit's status is `Judgments.status` of its view, in unit order (spec 8.1).
   let rules := (S.bind (·.rules)) <|> (R.bind (·.rules))
-  let views ← if judged then judgedViews E front openNames active units rules R else pure []
+  let views ← if judged then judgedViews E front names active units rules R else pure []
   let units ← if judged then (units.zip views).mapM fun (u, v) => do
       pure { u with status := ← VE.Judgments.status E.rv.definitions J v }
     else pure units

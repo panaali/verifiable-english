@@ -38,6 +38,9 @@ def environment (profiles : List String) : Json := Json.mkObj [("language", "ve.
     ("predicates", Json.mkObj [("evaluating_inputs", Json.mkObj [("arguments", Lean.toJson ["situation"]),
         ("description", "evaluating")]),
       ("good_judgment", Json.mkObj [("arguments", Lean.toJson ["situation"]), ("description", "good")]),
+      ("genuinely_ambiguous", Json.mkObj [("arguments", Lean.toJson ["situation"]), ("description", "ambiguous")]),
+      ("asks_clarification", Json.mkObj [("arguments", Lean.toJson ["situation"]), ("description", "asks"),
+        ("regulated", Json.mkObj [("role", "obligation"), ("default", "deny"), ("act", "{0} clarify")])]),
       ("uses_judgment", Json.mkObj [("arguments", Lean.toJson ["situation"]), ("description", "uses"),
         ("regulated", Json.mkObj [("role", "obligation"), ("default", "deny"), ("act", "{0} use judgment")])])])])]
 
@@ -117,5 +120,38 @@ def f13o (profiles : List String) (key : String) : Json :=
 -- F1.3h's values: two readings referencing one model under its own identity pass the check on both sides.
 #guard clashRefusal (case layer [reading "r0" [("r1", (ids false).1)], reading "r1" [("r0", (ids false).1)]]
   [((ids false).1, model false)]) == none
+
+/-- F1.1 and F1.2 in one soft document: each unit's `open` meaning lists its judgment and its rule's soft decision
+predicate (`softLayer`'s names, declared and generated). -/
+def bothRules (profiles : List String) : Json :=
+  let rule (name pred : String) (guard : Json) := Json.mkObj [("norm", Json.mkObj [("name", .str name),
+    ("predicate", .str pred), ("sign", true), ("mode", "default"), ("guard", guard), ("unless", Json.arr #[]),
+    ("over", Json.arr #[]), ("exception", Json.mkObj [("decided_by", "unstated"), ("sufficient", Json.arr #[]),
+      ("necessary", Json.arr #[]), ("factors", Json.arr #[])])])]
+  let unit (id : String) (span : List Nat) (listed : List String) (content : Json) := Json.mkObj [("id", .str id),
+    ("span", Lean.toJson span), ("kind", "norm"), ("meaning", Json.mkObj [("open", Lean.toJson listed)]),
+    ("support", "assumption"), ("content", content)]
+  let record (name : String) := Json.mkObj [("name", .str name), ("arguments", Lean.toJson ["situation"]),
+    ("decided_by", "unresolved_decider"), ("necessary", Json.arr #[]), ("sufficient", Json.arr #[]),
+    ("factors", Json.arr #[]), ("precedents", Json.arr #[]), ("jurisdiction", "document"), ("version", 1)]
+  let body := "Claude should always use good judgment when evaluating conversational inputs. Claude should ask.\n"
+  let front := Json.mkObj [("format", "ve-document@1"), ("environment", environment profiles),
+    ("units", Json.arr #[unit "u0052.s01" [0, 79] ["good_judgment", "soft__excepted__good_judgment"]
+        (rule "good-judgment" "uses_judgment" (Json.arr #["and", u "evaluating_inputs", u "good_judgment"])),
+      unit "u0036.s05" [79, body.length] ["genuinely_ambiguous", "soft__excepted__ask_clarification"]
+        (rule "ask-clarification" "asks_clarification" (u "genuinely_ambiguous"))]),
+    ("open_terms", Json.arr #[record "good_judgment", record "genuinely_ambiguous"])]
+  Json.mkObj [("id", "c"), ("document", .str ("---\n" ++ front.compress ++ "\n---\n" ++ body))]
+
+-- Admitted with the layer, each unit OPEN through its judgment; the twin is admitted too.
+#guard match checkDocSets (bothRules layer), checkDocSets (bothRules plain) with
+  | .ok a, .ok _ => a.getObjValD "judgments" == Json.mkObj [("used", Json.arr #[
+      Json.mkObj [("term", "good_judgment"), ("units", Lean.toJson ["u0052.s01"])],
+      Json.mkObj [("term", "genuinely_ambiguous"), ("units", Lean.toJson ["u0036.s05"])]]), ("unused", Json.arr #[])]
+  | _, _ => false
+-- What the layer stays apart from in this mode (`judgmentsApart`), each by its own text.
+#guard ["alternatives@0", "rights@0", "risk@0"].all fun p =>
+  refusal (bothRules ((p :: layer).mergeSort fun a b => decide (a ≤ b))) ==
+    some s!"CheckerUnavailable: judgments@0 with {p} needs its composed Lean route"
 
 end VE.Judgments.ChainExamples

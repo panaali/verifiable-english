@@ -1,0 +1,68 @@
+# pc-1 report: `judgments@0` beside the soft chain in the document mode; row 16, the clash validation
+
+Status: built; no DRI signature reserved. Both DELTA rows are SIGNED by the DRI (reviews/dri-decisions-20261101-pc-1.md items 1, 2), trust growth by R16.
+Changed: Lean's document mode admits `judgments@0` beside `soft-norms@0` (a soft rule's unit reads its author rule), and row 16 is the first check of every request.
+Moved to pc-1g (DRI rulings): the proof of `swapInjective_twin` (reviews/dri-decisions-20261031-pc-1.md item 1); the rights reader, row 2's deletion and F1.4 (reviews/dri-decisions-20261101-pc-1.md item 1, by the size line).
+Size: about 754 hand-written lines before this report and DELTA, over the ~600 line (below). The chain runs the full gate on the final HEAD.
+
+Plan: docs/spec/profile-composition-PLAN.md "PC-1" (lines 555-666) and 15.2 rule 12; spec docs/spec/profile-composition.md 1.7, 3.1, section 4 row 16, 5.1. Both files are on main, identical to `938e148cb` (`git show 938e148cb:<file> | diff -q - <file>`: no output). Statement gate: the plan's statement review accepted PC-1; the check is symmetric by reviews/dri-decisions-20261029-pc-d2-r2.md item 1. Synthesis round 2: this item implements edit 2 of debates/plan-synthesis-2/edits-profile-composition.md, the G3 amendment. The exchange applies only when it is one to one, and Lean decides that first (`swapInjective`, `clashRefusal`), before the gate, on every request. A request whose exchange is not one to one is refused by validation (row 16), never as a layer refusal.
+
+## Step (1): what jt-2c left on main, and what this item relaxes
+
+jt-2c moved the document mode's refusal into `VE.Compose.layersApart`, over `documentLayersApart = ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]`, which every composing mode reads (`decidingEnvironment`) and the document mode read at `environmentOf`. PC-1 relaxes the document mode only. `layersApart` takes the list to refuse, defaulting to `documentLayersApart`, so every other mode's call is unchanged. The document mode passes its own `judgmentsApart = ["alternatives@0", "rights@0", "risk@0"]`. Evidence: `tests/test_judgments_compose.py::test_a_composed_profile_is_refused_by_name` (check, model, norms: soft-norms and rights still refused) passed in the selected run.
+
+## Plan rows
+
+| Row | Delivered | Where | Checked by |
+|---|---|---|---|
+| (2) `opensIn_generated`, `softContent`, `softContent_formulas` | yes, proved | lean/VE/Judgments/Chain.lean (40e7802dd) | ChainExamples `carved` guard; seeded bug 1 |
+| (2) `rightsAuthorFormulas`, `correlate_judged`, `blockFormulas`, `andAll`, `preds_andAll` | **no: pc-1g** (DRI 2026-11-01 item 1, size line) | | rights stays refused (`test_the_layer_s_own_refusals_...[rights]`) |
+| (3) `UnitContent.judgedIn`, `judgedIn_legacy`, `judgedIn_soft`; `judgedViews` calls it with the soft layer's `SoftEnvironment` and the `RightsDoc`; `judged` kept as its formula and norm cases; no second reader (`decodeSoftNorm` reused) | yes, proved | Document.lean | F1.1, F1.2, F1.2b; seeded bug 5 |
+| (4) `withoutJudgments`, `plainProfiles`, `layerProfiles`, `statedIds`, `statedPairs`, `exchange`, `swapInjectiveOf`, `swapInjective`, `swapClash`, `clashRefusalOf`, `clashRefusal` (symmetric), `clashRefusal_some`, `checkDocSets_clashFirst` | yes; both theorems proved | Document.lean, "The clash validation" | F1.3l, F1.3m, F1.3o; seeded bugs 2, 3, 7, 8 |
+| (4) `swapInjective_twin` | **proof moved to pc-1g**, statement unchanged (DRI 2026-10-31 item 1; it needs a JSON parse/render round-trip lemma). Not stated here, and no `sorry` | | the DRI's condition: ChainExamples guards and tests for F1.3l, F1.3m, F1.3o |
+| (5) F1.1, F1.2, F1.2b, F1.3, F1.3d, F1.3l, F1.3m, F1.3n, F1.3o, F1.5, F1.6 | yes | tests/test_judgments_chain.py over tests/data/composition/pc1/soft-judgments.json; lean/VE/Judgments/ChainExamples.lean | 18 tests with test_judgments_document.py (below) |
+| F1.4 (UDHR u111) | **no: pc-1g** with the rights reader | | |
+| F1.7 (DeepMind JT-a) | the harness's: expected admitted, OPEN, `reached: [s134-rra]`; **not measured** | | |
+| 15.2 rule 12 (purpose clause) | no new statement: `judgedIn_soft` reads the guard conjunct (`softContent_formulas`) | | F1.2 |
+
+Deviations, each recorded here only:
+- **F1.2's force set.** A soft document has no reading set over norm candidates until PC-2b, because row 4 keeps readings beside soft-norms refused. So F1.2 is the default candidate as the unit's own rule, and "both candidates scanned" waits for PC-2b. F1.2b moves the term into its `unless` clause.
+- **Where row 16 runs.** It is the first line of `checkCore`, which is now `match clashRefusal j with | some e => .error e | none => checkBody j` (`checkBody` is the old body), and of `checkDoc`'s and `checkDocSets`' scope branches. So it is the first check of both entries on every request (`checkDocSets_clashFirst`), and `scope_absent_unchanged` and `checkDocSets_absent_unchanged` keep their statements. Spec 3.4 shows it before the `if` instead. The scope and response-shape proofs take one more case; their statements are unchanged.
+- **`withoutJudgments`.** It writes the front matter again compactly (`Json.compress`), and the body as written. It exchanges model keys and references. The unit and reading `meaning_id` exchange (F1.3e to F1.3h) is pc-1g's.
+- **`statedIds`** lists a reference that is a key of its set once, as that key. **`statedPairs`** lists one triple per decodable model key; a reference's triple is its model's key triple. The membership is the spec's.
+- **The soft route's E″ identities** (`layeredIds`, 22a3b2c86). jt-2c builds E″ from the environment without the document layers, so a soft unit's `meaning_id` was the twin's. That breaks jt-2c's item 1(b) ("never shares an identity with its profile-free twin"). E″'s profiles and identity now add back the layers the document lists; its decoders read E″ as generated. For pc-1g: a soft document's model and reading ids are E″'s, while `statedPairs` computes the written environment's, as the spec says. So the exchange keeps E″ keys (they are neither `v₁` nor `v₂`), and G3's proof must read E″'s identities there.
+- **`judgedIn`'s rights case** reads nothing (`judged`'s value, `none`). Its binder is `_R` (unused until pc-1g); the spec's signature says `R`.
+
+Spec re-read (BUILDER-CHECKLIST 14): every proved statement and given body was compared with the spec after whitespace normalisation (a scratch comparison of `opensIn_generated`, `softContent`, `softContent_formulas`, `judgedIn_legacy`, `judgedIn_soft`, `swap`, `plainProfiles`, `layerProfiles`, `swapInjectiveOf`, `swapInjective`, `swapClash`, `clashRefusalOf`, `clashRefusal`, `clashRefusal_some`, `checkDocSets_clashFirst` against spec 1.7 lines 841-972 and 3.1 lines 1358-1403): all equal. Row 16's text equals section 4 line 2560. F1.3's text equals plan line 621.
+
+## Seeded bugs (`mutants.json`)
+
+All are Lean (the only product language changed; Python and Rust are unchanged). Each was applied to the committed file, the service rebuilt, the named test run (`VE_NATIVE_PREBUILT=1`), and the file restored:
+1. `softContent` reads only the guard (Chain.lean): `test_f1_2_...[unless]` fails (`JudgmentListedUnused: u0036.s05 genuinely_ambiguous`). Task bug.
+2. The clash check after the gate (`checkCore`): `test_f1_3l_...[F1.3m]` fails (the layer side answers the gate's text). Task bug.
+3. The clash check reads the request alone (`clashRefusal`): `test_f1_3o_...` fails (`j₁` passes). Task bug.
+4. `judgmentsApart` drops `alternatives@0`: `test_the_layer_s_own_refusals_...[F1.5]` fails.
+5. `judgedIn` reads no soft rule: `test_f1_1_...` fails (usage empty).
+6. `layersApart` ignores its list (Dispatch.lean): `test_f1_1_...` fails (soft refused).
+7. `swapInjectiveOnce` without its second conjunct: `test_f1_3l_...[F1.3l]` fails.
+8. `withoutJudgments` keeps every value: `test_f1_3o_...` fails (`j₁`'s twin is no longer `t`).
+9. `checkBody` answers under another id: `test_f1_1_...` fails (the relay refuses the row).
+10. `layeredIds` keeps E″ as generated: `test_f1_1_...` fails (equal `meaning_id`).
+
+Trust mutants (checklist 13a): `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/profile-composition/pc-1/trust-mutants.json`, result in `trust-mutants.json` (see "Trust mutants" below).
+
+## Trust, size, evidence and tests
+
+- Trust: `python3 tools/trust_map.py --check` reports PASS ("K, S and untied [V] within a24d66a7cd59 and the allowances introduced since"): K +0, S +3, V +30. Two R16 allowances are recorded, and FOLLOW-UPS.md has a "## pc-1" row for the ties pass. The clash validation is classed G[R] (it can only refuse), `layeredIds` G[I], ChainExamples T.
+- Size: `git diff --numstat $(git merge-base HEAD main)` without generated files gives 754 added lines before REPORT and DELTA. That is Document.lean 234, tests 201, ChainExamples 121, mutants/f13n evidence 61, trust-classes 50, Chain.lean 32, fixture 28, proof patches 18, Dispatch 4, VE.lean 1. The size line was crossed once the DRI's conditions were in (the ChainExamples guards and a test per clash fixture) and the performance fix was made. The rights reader is already cut to pc-1g.
+- Performance: a 64-reading set with 4,032 references ran past the mode's 132 s CPU deadline. The compiler eta-expanded `withoutJudgments`' exchange, so `statedPairs` (a front-matter parse) ran once per reference. The pairs are now values (011d499b7), and `@[csimp] swapInjective_eq_once` computes the values, pairs and images once. `test_a_large_reading_set_is_checked_once_within_the_limits` takes 1.31 s (pytest `--durations`). Plain requests: 64 readings take 0.87 s against the base's 0.21 s (scratch probe, base binary `6a28d539`).
+- F1.3n: `uv run python docs/profile-composition/pc-1/f13n.py <base ve_service> <head ve_service>` gives `"requests": 13, "identical": 13, "differing": []` (f13n.json, head `795c02bc`).
+- Build: `cd lean && lake build && python3 audit.py` reports "PASS: 699 source files; 7834 named theorem declarations audited"; `regen_generated.py --write` wrote 35 entries (exit 0).
+- Tests while iterating: `uv run pytest -q tests/test_judgments_chain.py tests/test_judgments_document.py tests/test_b16f_document.py` gives 139 passed. The selected set is in "Selected tests" below.
+- Not run: whole-UDHR or constitution pilots (L70); F1.7 (the harness's).
+- Pilot bytes expected to move (an estimate; nothing is claimed before a pilot audit): DeepMind at most 1,355 B UNFORMALISED to OPEN through fsf-r3; 0 B to CHECKED (`status_never_checked`); 0 B directly on the pinned constitution and UDHR runs.
+- In-flight overlap: feature/jt-3a edits Document.lean (`usageJson`, `Checked`, the end of `check`). This item's hunks are elsewhere: the clash section near `split`, `judgedIn`, `checkBody`/`checkCore`, and `softLayer`.
+
+## Next item
+
+**pc-1g**, G3 proved: `swapInjective_twin` (with the round-trip lemma, DRI 2026-10-31 item 2), `verdictFields`, `unitStatuses`, `judgmentCodes`, `judgmentGateTexts`, `layerRefusal`, `layerRelaxes`, `swap_correct`, `withoutJudgments_ids` (and the `meaning_id` exchange), `checkDocSets_judgments_transparent`, `checkDocSets_swapClash`, `checkDocSets_withoutStatuses`; fixtures F1.3b, F1.3c, F1.3e to F1.3k, F1.8, and F1.1's and F1.6's equal verdict fields. It also takes the rights reader moved here: `rightsAuthorFormulas`, `correlate_judged`, `blockFormulas`, `andAll`, `preds_andAll`, `judgedIn`'s rights case, the deletion of row 2, and F1.4 (DRI 2026-11-01 item 3). Then pc-2a and pc-5.
