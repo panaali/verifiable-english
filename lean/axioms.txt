@@ -999,6 +999,7 @@
 'VE.Cardinality.Render.pieces_charge' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Render.positive_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Render.pure_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.size_append' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Render.term_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Render.texts' does not depend on any axioms
 'VE.Cardinality.Render.toUpper_size' depends on axioms: [propext, Quot.sound]

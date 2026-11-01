@@ -1436,6 +1436,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Render.pieces_charge
 #print axioms VE.Cardinality.Render.positive_charges
 #print axioms VE.Cardinality.Render.pure_charges
+#print axioms VE.Cardinality.Render.size_append
 #print axioms VE.Cardinality.Render.term_charges
 #print axioms VE.Cardinality.Render.texts
 #print axioms VE.Cardinality.Render.toUpper_size
