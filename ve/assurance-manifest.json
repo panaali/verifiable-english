@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41045,
+    "total_lines": 41053,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1912,12 +1912,12 @@
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
-        "lines": 164,
-        "sha256": "3b4a6dd0e503cd19551fab1d3f25edaa3e028ea8e1dc2da351291469660d165a",
+        "lines": 172,
+        "sha256": "980ec6d8d8c400e9fc1ed6b3b37b5f36579dd881bb8dd0ae4f1e2029edba83bb",
         "ranges": [
           [
             1,
-            164
+            172
           ]
         ],
         "declarations": [
@@ -1932,6 +1932,7 @@
           "decodeGovernor",
           "decodeListName",
           "listMember",
+          "decodeForward",
           "decodeParts",
           "spanIn",
           "layoutOf",
@@ -1942,7 +1943,7 @@
           "byStatus",
           "foldGovernors"
         ],
-        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively; sc-1af: `illFormed`, the boundary that refuses a document `jsonWF?` fails before `decodeBlock` reads the block"
+        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively; sc-1af: `illFormed`, the boundary that refuses a document `jsonWF?` fails before `decodeBlock` reads the block; sc-4: `decodeForward`, the optional `forward` member's declarations `(unit, rule, anchor)` (spec 3, 1.9), each a string, decoded in block order"
       },
       {
         "file": "lean/VE/Cardinality/Wire.lean",
@@ -2258,7 +2259,8 @@
       "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource",
       "lean/VE/Compose/Contract.lean": "statements only (profile-composition PC-3): scopeRewriter is checkDocSets' scope branch as a case rewriter, read by checkDocSets_pipeline and no service mode; no runtime JSON handling",
       "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
-      "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them"
+      "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
+      "lean/VE/Scope/FarExamples.lean": "fixtures only: SC-4's #guard checks (scope spec 7.6) build scope@0 documents, rule contents and one raw unit tree (F-raw-edges) as JSON literals and run `govern` and `forwardCheck` on them; no runtime JSON handling"
     }
   },
   "plan_operations": {
