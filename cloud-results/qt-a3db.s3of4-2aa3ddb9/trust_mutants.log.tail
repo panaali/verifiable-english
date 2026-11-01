@@ -1,0 +1,7 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Cardinality/RenderTheorems.lean is a selected declaration's file or in its import closure
+trust_mutants: 11 definitions, 75 mutants (19 to run), 4 jobs, base a9bf475954c1
+trust_mutants: 11 KILLED, 0 SURVIVOR, 0 UNKNOWN, 2 INVALID, 6 ALLOWED, 0 NOT RUN, 56 OTHER SHARD in 979 s
+trust_mutants: D[V], trusted: 3 KILLED, 2 ALLOWED, 24 OTHER SHARD
+trust_mutants: G[V], trusted: 8 KILLED, 2 INVALID, 25 OTHER SHARD
+trust_mutants: S, trusted: 4 ALLOWED, 7 OTHER SHARD
+trust_mutants: steps: wall plan 8.7 s, scratch 1.7 s, control_build 0.2 s, probe_install 1.1 s, control_probes 78.7 s, mutants 883.5 s, cleanup 4.9 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 77 s (1), mutant_builds 42.9 s (22), mutant_checks 1777.6 s (12), stage_controls 2.2 s (1), mutant_probes 1354.2 s (11)
