@@ -1,6 +1,7 @@
 - `lean/VE/Readings/ActsExamples.lean` — act-phrases AP-1 (ap-1bd): the readings route's frame decoder reads `acts@0` single acts and refuses a joined act with D-33 (spec 6.4, 10); a rule on a plain a…
 - `lean/VE/Readings/Asserted.lean` — The assertions in force of a choice's document are typed over the shared vocabulary (docs/spec/composition-s2.md 1.7 and 8.4, `asserted_shared`).
 - `lean/VE/Readings/Assertions.lean` — Formula-only documents: superposition is W2's shortcut (docs/spec/composition-s2.md 4.7, 8.4 `superpose_assertions`).
+- `lean/VE/Readings/BarQuiet.lean` — S2b's first steps toward the rights case of `superpose_faithful` (docs/spec/composition-PLAN.md 2.3, 2.6, F21; composition-S2-PLAN.md edit 1).
 - `lean/VE/Readings/BaseDown.lean` — Bases correspond, downward (docs/spec/composition-s2.md 8.4 `base_down`).
 - `lean/VE/Readings/BaseUp.lean` — Bases correspond, upward (docs/spec/composition-s2.md 8.4 `base_up`).
 - `lean/VE/Readings/Children.lean` — The children of a rule in a choice's document and in the superposed document correspond (the `childFwd`, `childBack` and `sibling` conditions of `Sim`; docs/sp…
@@ -24,6 +25,8 @@
 - `lean/VE/Readings/Lines.lean` — The line order of a candidate's document and the uniqueness of source keys (docs/spec/composition-s1.md 4.4, 8.3; DRI ruling 1 of 2026-10-02).
 - `lean/VE/Readings/Live.lean` — Liveness corresponds, through the name map (docs/spec/composition-s2.md 1.7; the `live`, `dead` and `outweighs` conditions of `Sim`).
 - `lean/VE/Readings/Names.lean` — Facts about the names of the superposed document (docs/spec/composition-s2.md 1.4, 1.7).
+- `lean/VE/Readings/RightsExamples.lean` — S2b's theorems on the rights fixtures of `RightsFixtures.lean`.
+- `lean/VE/Readings/RightsFixtures.lean` — S2b's rights fixtures (docs/spec/composition-PLAN.md section 5) as build-time `#guard`s on `sup D`, `Choice_D`, the owners and the name map.
 - `lean/VE/Readings/Route.lean` — The route of a `readings@1` document and the regenerated elaboration (docs/spec/composition-s2.md 1.1, 1.8, 3, 4.1, 4.6).
 - `lean/VE/Readings/Run.lean` — The `ve_service` mode `readings-route` (docs/spec/composition-s1.md 8.4), formerly the one-shot `ve_readings_route`.
 - `lean/VE/Readings/RunExamples.lean` — How much of the other reading's side the route's pair check evaluates, as build-time checks (`#guard`), with no timing (batch 3d review B).
@@ -68,6 +71,3 @@
 - `lean/VE/Readings/UpPremises.lean` — The lifted base satisfies `sup D`'s exception and coherence premises (docs/spec/composition-s2.md 8.4 `base_up`).
 - `lean/VE/Readings/UpSlot.lean` — The lifted base satisfies the slot of `sup D` (docs/spec/composition-s2.md 1.6, 8.4 `base_up`): the one, coupling and narrowing premises because the bits spell…
 - `lean/VE/Readings/Verdicts.lean` — Verdicts across readings in Lean, on the enumerated route (docs/spec/readings-defaults.md 1.6 to 1.8, 2.3 to 2.5, 4.4, 6.4 and 6.5; plan RD-3).
-- `lean/VE/Readings/VerdictsExamples.lean` — The fixtures of RD-3 (docs/spec/readings-defaults.md 8.2), each a `#guard`: the gate of the entailment fold (3.1 to 3.3), each direction of ALL and NONE (3.4 t…
-- `lean/VE/Readings/VerdictsWire.lean` — The kind `readings-verdicts` on the enumerated route (docs/spec/readings-defaults.md 3, 4.4, 2.3 to 2.5, 6.4 and 6.5; plan RD-3).
-- `lean/VE/Readings/Wire.lean` — The wire of `readings@1` part A (docs/spec/composition-s1.md 3, 4.1, 7, 8.4).
