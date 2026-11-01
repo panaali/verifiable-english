@@ -4429,7 +4429,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 5d31600b6b45217b45515b8e44905df33306699d3bf60eee284311b1bbebe496
+module VE.Audit 6ae1a0f6412f4158f8583537f5e97c4018dc7708349aa2ed0055a97775381ecb
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -11077,7 +11077,7 @@ module VE.Judgments.Status 2fc9c5103144a0b9190bf0f9fd2e24e5d5bc5b2d6d03cd13979d4
 321:0-325:29 theorem VE.Judgments.dependsOnC_remove@VE.Judgments.Status
 327:0-330:98 theorem VE.Judgments.find_congr_mem@VE.Judgments.Status
 332:0-342:66 theorem VE.Judgments.status_remove_unused@VE.Judgments.Status
-module VE.Judgments.Undeclared f6f9c58e7daf497e0004512fe8d8f7aa29358a2a491427cac877697981e47a6c
+module VE.Judgments.Undeclared 447b233b1dcd6f4143da032004ec7790f0a6b570b32f223225d9b0342215938d
 12:0-17:28 structure VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared
 15:2-15:6 def VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared
 16:2-16:13 def VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared
@@ -11090,7 +11090,9 @@ module VE.Judgments.Undeclared f6f9c58e7daf497e0004512fe8d8f7aa29358a2a491427cac
 25:0-31:82 def VE.Judgments.undeclaredEvaluative@VE.Judgments.Undeclared
 33:0-37:94 def VE.Judgments.predicateWords@VE.Judgments.Undeclared
 39:0-47:28 theorem VE.Judgments.hasPhrase_iff@VE.Judgments.Undeclared
-49:0-59:94 theorem VE.Judgments.undeclaredEvaluative_iff@VE.Judgments.Undeclared
+49:0-52:45 theorem VE.Judgments.matches_iff@VE.Judgments.Undeclared
+54:0-58:23 theorem VE.Judgments.predicateWords_name@VE.Judgments.Undeclared
+60:0-70:94 theorem VE.Judgments.undeclaredEvaluative_iff@VE.Judgments.Undeclared
 module VE.Kit.Except 191eaa7c5f51a708ed94eca4c2d0b5f4180d8dc619318a9d1de35cbdc399c101
 4:0-9:29 theorem VE.Kit.Except.bind_ok@VE.Kit.Except
 module VE.Layout.Anchors 510feb53d134208d46e12f1910b41e49c554ff63124b771113e61c2d669f138c
