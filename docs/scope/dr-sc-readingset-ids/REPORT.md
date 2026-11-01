@@ -1,6 +1,6 @@
 # dr-sc-readingset-ids REPORT: the reading-set id rebuild step takes a `scope@0` part
 
-- **Status:** built; selected tests: see "Tests run". No DRI signature outstanding (both DELTA rows signed,
+- **Status:** built; selected tests passed (73 of 526 units, run on caf0c9a2be). No DRI signature outstanding (both DELTA rows signed,
   `reviews/dri-decisions-20261101-dr-sc-readingset-ids.md`). Full gate not run by the builder (the chain runs it).
 - **HEAD:** the branch's last commit (feature/dr-sc-readingset-ids, base main 1edb74de2).
 - **What changed:** `tools/readings_s1_pilot.py --rebuild-reading-ids` computes ids on the environment Lean's chain
@@ -89,10 +89,52 @@ pass (`git show main:tools/readings_s1_pilot.py` swapped in and then restored: "
 
 - While iterating: `uv run --frozen pytest -q tests/test_readings_s1_pilot_rebuild.py` gave "12 passed in 5.50s" on the
   final test file; `uv run python tools/history_tests.py --check` gave "every test that reads history is listed".
-- Selected tests: see the section added after the run.
+- Selected tests, once, on the finished code: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run` gave exit 0, "73/526 test units"; shards "29 units, 29 passed", "22 units, 22
+  passed", "22 units, 22 passed" (tree caf0c9a2be; run dr-sc-readingset-ids-a23441e7-t575817). After it only the code map
+  was regenerated and the REPORT edited.
+- `uv run python tools/gate_collection.py --check --prebuilt` gave "7 added, 0 removed by a trailer, 0 refused, 0 stale and
+  0 malformed trailers".
+- `uv run python tools/regen_generated.py --check` gave exit 0. It was then run once with `--write` (the code map only).
 - Not run: the full gate (the chain runs it) and trust_mutants (no trusted Lean changed). Following L70, no
   whole-UDHR check was run.
 
 ## Next item
 
 SC-6 (the UDHR rights reach) and PC-5b (a governor's own reading set beside readings).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: PASS. No new relay: the rebuild calls the existing typed and bound relays
+   (`ve.scope.explain` and its `answer_problem`; `ve.readings_route.elaborate` with `_completion_elaborate` and its
+   mutation tests in `tests/test_readings_nd_document.py::test_a_mutated_elaborate_row_is_unavailable`). An unbound
+   row is `CheckerUnavailable` before the rebuild uses it.
+2. Deliverables and rules: PASS. The plan rows table above. No Python copy of a Lean decision: the frame is Lean's
+   `filled`, the gate is Lean's `scope` mode, and the lowering is the existing `chain_environment`. No report test
+   was added.
+3. Tests can fail: PASS. `mutants.json` (6 killed); on main's tool the 4 new tests fail.
+4. Agreement and valid inputs: PASS. Main against head on UDHR parts 1-4 (`evidence/parts-noop.json`); documents
+   without `scope@0` as on main (`test_rebuild_command_is_noop_on_unchanged_environment`,
+   `test_rebuild_preserves_companion_identities_on_unchanged_udhr`).
+5. R8 binding, undeclared names refused: N.A. No field of a Lean answer is newly read. The `filled` environment is
+   bound by the existing `_bind_completion` (`test_filled_environment_is_typed_by_the_schema_and_bound_to_the_request`).
+6. Gate evidence on the final HEAD: N.A. for the builder (the chain runs the gate). The evidence names its commands
+   and the base 1edb74de2.
+7. No unsigned item: PASS. `DELTA.md` rows 1-2 are SIGNED by the DRI (decision file cited). Trust +0
+   (`tools/trust_map.py --check` PASS).
+8. Every user-visible change in DELTA: PASS. Rows 1-2 cover the tool's newly accepted input and its changed ids. No
+   checker answer changes (`evidence/part01-scope-check.json`).
+9. Test selection: PASS. The selection ran `tests/test_readings_s1_pilot_rebuild.py` first ("changed [...]"), the
+   file that kills every seeded bug. 73 of 526 units, not everything.
+10. Lean statements: N.A. No Lean changed and no statement was added (statement gate: nothing to ask).
+11. Budgets and deadlines: N.A. No new evaluator or budget. The one `readings-elaborate` call keeps the route's own
+    limits, and a refusal or `ResourceLimit` there is raised, never a rebuilt id.
+12. CPU and memory: PASS. One extra Lean call per rebuild, and only under `norm-defaults@0` with situations (0.4 s on
+    part01, probe). Nothing on the check or render path changes.
+13. Test-removed trailers: PASS. None removed (`gate_collection.py --check --prebuilt`: 0 removed, 0 stale, 0
+    malformed).
+14. Both directions, cited evidence, spec re-read: PASS. Admit and refuse
+    (`test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits` and
+    `test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text`); keep and add
+    (`test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame` and
+    `test_rebuild_adds_a_new_base_predicate_and_no_regulated_one`); "Spec re-read" above.
