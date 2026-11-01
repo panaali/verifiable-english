@@ -991,7 +991,8 @@
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
-        "ResponseShape.Skeletons.scope"
+        "ResponseShape.Skeletons.scope",
+        "ResponseShape.Skeletons.sensesProject"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -2058,7 +2059,8 @@
         "VE.Compose.stackHead",
         "VE.Compose.unsupported",
         "VE.Compose.wrapperHead",
-        "VE.Compose.wrapperProfiles"
+        "VE.Compose.wrapperProfiles",
+        "VE.Compose.Interface"
       ],
       "G[V]": [
         "VE.Compose.Route",
@@ -2103,6 +2105,7 @@
         "VE.Compose.actsRefuses",
         "VE.Compose.cardinalityOthers",
         "VE.Compose.modeProfiles",
+        "VE.Compose.slotAgrees",
         "VE.Compose.decidingEnvironment",
         "VE.Compose.layersApart",
         "VE.Compose.listedProfiles"
@@ -9520,7 +9523,8 @@
       "D[V]": [
         "VE.Senses.Run.decodeDefaults",
         "VE.Senses.Run.decodeDictionary",
-        "VE.Senses.Run.has"
+        "VE.Senses.Run.has",
+        "VE.Senses.Run.lexiconJson"
       ],
       "G[V]": [
         "VE.Senses.Run.candidateJson",
@@ -9535,13 +9539,22 @@
         "VE.Senses.Run.runCaseReported",
         "VE.Senses.Run.s2Fields",
         "VE.Senses.Run.uncoveredFence",
-        "VE.Senses.Run.unitJson"
+        "VE.Senses.Run.unitJson",
+        "VE.Senses.Run.linesProjection",
+        "VE.Senses.Run.projectCase",
+        "VE.Senses.Run.projectCaseReported"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
         "VE.Senses.Run.fenceReject",
         "VE.Senses.Run.refusalSource",
-        "VE.Senses.Run.shiftReject"
+        "VE.Senses.Run.shiftReject",
+        "VE.Senses.Run.faultJson"
+      ],
+      "G[I]": [
+        "VE.Senses.Run.projectionIds",
+        "VE.Senses.Run.admittedIds",
+        "VE.Senses.Run.usedOf"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -16550,6 +16563,100 @@
         "VE.Acts.ReadingsExamples.rsC"
       ]
     },
-    "VE/Scope/ReadingsLemmas.lean": {}
+    "VE/Scope/ReadingsLemmas.lean": {},
+    "VE/Senses/Version.lean": {
+      "G[I]": [
+        "VE.Senses.sensesVersion"
+      ]
+    },
+    "ResponseShape/Schemas/SensesProject.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.SensesProject.pair",
+        "ResponseShape.Schemas.SensesProject.lexicon",
+        "ResponseShape.Schemas.SensesProject.identities",
+        "ResponseShape.Schemas.SensesProject.fault",
+        "ResponseShape.Schemas.SensesProject.projection",
+        "ResponseShape.Schemas.SensesProject.row",
+        "ResponseShape.Schemas.SensesProject.file"
+      ]
+    },
+    "VE/Senses/RunExamples.lean": {
+      "T": [
+        "VE.Senses.RunExamples.caseJ",
+        "VE.Senses.RunExamples.lineFunny2",
+        "VE.Senses.RunExamples.LA",
+        "VE.Senses.RunExamples.sameAs",
+        "VE.Senses.RunExamples.idsOf",
+        "VE.Senses.RunExamples.overlayJ",
+        "VE.Senses.RunExamples.lexJ",
+        "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.pin",
+        "VE.Senses.RunExamples.projectReq",
+        "VE.Senses.RunExamples.src",
+        "VE.Senses.RunExamples.fenced"
+      ]
+    },
+    "VE/WireContract/Hooks/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Hooks.Acts.actsOf",
+        "VE.WireContract.Hooks.Acts.adapter",
+        "VE.WireContract.Hooks.Acts.classifier",
+        "VE.WireContract.Hooks.Acts.decoded",
+        "VE.WireContract.Hooks.Acts.fixedOf",
+        "VE.WireContract.Hooks.Acts.hooks",
+        "VE.WireContract.Hooks.Acts.inDomain",
+        "VE.WireContract.Hooks.Acts.member",
+        "VE.WireContract.Hooks.Acts.refusedWith",
+        "VE.WireContract.Hooks.Acts.registered"
+      ],
+      "T": [
+        "VE.WireContract.Hooks.Acts.actOf",
+        "VE.WireContract.Hooks.Acts.around",
+        "VE.WireContract.Hooks.Acts.caseOf",
+        "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.memberOf",
+        "VE.WireContract.Hooks.Acts.phraseOf",
+        "VE.WireContract.Hooks.Acts.phrasesOf",
+        "VE.WireContract.Hooks.Acts.recordOf"
+      ]
+    },
+    "VE/WireContract/Tables/Acts.lean": {
+      "G[V]": [
+        "VE.WireContract.Tables.Acts.table"
+      ]
+    },
+    "VE/Compose/Stack.lean": {
+      "G[V]": [
+        "VE.Compose.rewriters",
+        "VE.Compose.stackOf",
+        "VE.Compose.Contract.listedStacks"
+      ]
+    },
+    "VE/Compose/Contract.lean": {
+      "S": [
+        "VE.Compose.Contract.Rewriter",
+        "VE.Compose.Contract.Rewriter.Laws",
+        "VE.Compose.Contract.ScopeRunsOf",
+        "VE.Compose.Contract.ScopeRuns",
+        "VE.Compose.Contract.ScopeFaithful",
+        "VE.Compose.Contract.ScopePreserves",
+        "VE.Compose.Contract.ScopeSetsFaithful",
+        "VE.Compose.Contract.RouteFacts"
+      ],
+      "G[V]": [
+        "VE.Compose.Contract.pipeline",
+        "VE.Compose.Contract.pipelineOf",
+        "VE.Compose.Contract.scopeRewriter",
+        "VE.Compose.Contract.docRewriters"
+      ]
+    },
+    "VE/Compose/ContractExamples.lean": {
+      "T": [
+        "VE.Compose.ContractExamples.plannedRows",
+        "VE.Compose.ContractExamples.ungoverned",
+        "VE.Compose.ContractExamples.governedSet",
+        "VE.Compose.ContractExamples.tagRewriter"
+      ]
+    }
   }
 }
