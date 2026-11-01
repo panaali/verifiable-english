@@ -1,0 +1,3 @@
+Whether this pay is favourable is a judgment for wage commission.
+These rules conflict where this pay is favourable.
+Conflict-free, given these sentences: No pay above the sector cap is favourable.
