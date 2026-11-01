@@ -38,7 +38,7 @@
  },
  "JT-a": {
   "admitted": false,
-  "diagnostic": "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route",
+  "diagnostic": "CheckerUnavailable: soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route",
   "what": "s134-rra in D1's environment with judgments@0"
  },
  "JT-b": {
