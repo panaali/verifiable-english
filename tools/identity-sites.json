@@ -9,7 +9,7 @@
 {"path": "ve/argument.py", "scope": "deduction_identity", "domain": "ve-deduction-v1\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/argument.py", "scope": "ArgumentResult.to_dict", "domain": "ve-argument-diagnostic-record-v1\n", "owner": "python", "record": "argument package"},
 {"path": "ve/argument.py", "scope": "_check_argument_python", "domain": "ve-composition-v1\n", "owner": "python", "record": "argument package"},
-{"path": "ve/backends/senses.py", "scope": "_read", "domain": "ve-senses-dictionary-v1\n", "owner": "lean", "removed_by": "AR-15"},
+{"path": "ve/backends/senses.py", "scope": "_dictionary", "domain": "ve-senses-dictionary-v1\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/backends/senses.py", "scope": "_read", "domain": "ve-senses-request-v1\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/backends/speech_source.py", "scope": "decide_source", "domain": "ve-document@2\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/backends/speech_source.py", "scope": "decide_source", "domain": "ve-source-{}\n", "owner": "lean", "removed_by": "AR-15"},

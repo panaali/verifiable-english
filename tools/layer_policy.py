@@ -160,9 +160,9 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
-                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples"}:
+                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run or Scope.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -171,6 +171,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
+    if module in {"VE.Compose.Contract", "VE.Compose.ContractExamples"}:
+        return 4  # states theorems on Service.Document.checkDocSets (profile-composition 1.5, PC-3)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):

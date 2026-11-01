@@ -98,8 +98,10 @@ import VE.Closure.Substitution
 import VE.Closure.Syntax
 import VE.Compose.Adjoin
 import VE.Compose.Content
+import VE.Compose.Contract
 import VE.Compose.Dispatch
 import VE.Compose.Slot
+import VE.Compose.Stack
 import VE.Consequence
 import VE.Core.Congruence
 import VE.Core.Consequence
@@ -1738,6 +1740,20 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
+#print axioms VE.Compose.Contract.Rewriter.Laws.fresh
+#print axioms VE.Compose.Contract.Rewriter.Laws.off
+#print axioms VE.Compose.Contract.Rewriter.Laws.preserves
+#print axioms VE.Compose.Contract.checkDocSets_pipeline
+#print axioms VE.Compose.Contract.filterMap_docRewriters
+#print axioms VE.Compose.Contract.listed_evidence
+#print axioms VE.Compose.Contract.pipelineOf_scope
+#print axioms VE.Compose.Contract.pipeline_names
+#print axioms VE.Compose.Contract.pipeline_off
+#print axioms VE.Compose.Contract.pipeline_preserves
+#print axioms VE.Compose.Contract.refuseAll_runs
+#print axioms VE.Compose.Contract.scopeFaithful
+#print axioms VE.Compose.Contract.scopePreserves
+#print axioms VE.Compose.Contract.scopeSetsFaithful
 #print axioms VE.Compose.SlotChain.A_in
 #print axioms VE.Compose.SlotChain.A_out
 #print axioms VE.Compose.SlotChain.E_in
@@ -1784,6 +1800,8 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_scope
 #print axioms VE.Compose.gate_wellFormed
+#print axioms VE.Compose.interface_functional
+#print axioms VE.Compose.interface_slot
 #print axioms VE.Compose.ite_and3
 #print axioms VE.Compose.ite_error_ok
 #print axioms VE.Compose.ite_ok_of
@@ -1793,6 +1811,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.needs_chain
 #print axioms VE.Compose.prefixAdmissibleP_zero
 #print axioms VE.Compose.refusal_names
+#print axioms VE.Compose.rewriter_ranks_distinct
 #print axioms VE.Compose.rights_acceptance_from_slot
 #print axioms VE.Compose.rights_background_is_slot
 #print axioms VE.Compose.rights_check_is_slot
@@ -7019,6 +7038,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_route
 #print axioms VE.Service.runMode_scope
 #print axioms VE.Service.runMode_searchBudget
+#print axioms VE.Service.runMode_sensesProject
 #print axioms VE.Service.runMode_softNorms
 #print axioms VE.Service.runMode_speechActs
 #print axioms VE.Service.runMode_words
