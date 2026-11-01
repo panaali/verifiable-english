@@ -2257,7 +2257,8 @@
       "lean/VE/Service/StageTimes.lean": "the readings stage timer of ve_service (VE_READINGS_STAGE_TIMES): writes diagnostic JSON lines to stderr only, from the marker lines of VE.Readings.Stage; reads no request and no answer; no assurance operation path",
       "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource",
       "lean/VE/Compose/Contract.lean": "statements only (profile-composition PC-3): scopeRewriter is checkDocSets' scope branch as a case rewriter, read by checkDocSets_pipeline and no service mode; no runtime JSON handling",
-      "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode"
+      "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
+      "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them"
     }
   },
   "plan_operations": {
