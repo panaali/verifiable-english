@@ -152,7 +152,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Question/Run.lean` | 259 | 259 | 1–259 | `75de40527c88…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 344 | 344 | 1–344 | `ab4fe1851cdc…` |
-| `lean/VE/NormDefaults/Layered.lean` | 463 | 463 | 1–463 | `c77f2d9e3b5b…` |
+| `lean/VE/NormDefaults/Layered.lean` | 463 | 463 | 1–463 | `9e7ad2086269…` |
 | `lean/VE/NormDefaults/Replay.lean` | 411 | 411 | 1–411 | `8a6191d5e0bc…` |
 | `lean/VE/NormDefaults/Report.lean` | 519 | 519 | 1–519 | `b4e17dd5611c…` |
 | `lean/VE/NormDefaults/Wire.lean` | 462 | 462 | 1–462 | `e12b65ac71be…` |
@@ -161,6 +161,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Norms/Replay.lean` | 406 | 71 | 103–153, 285–304 | `1540ad633e87…` |
 | `lean/VE/Norms/Wire.lean` | 412 | 383 | 28–410 | `f983fdee5a5c…` |
 | `lean/VE/Acts/Lexical.lean` | 194 | 146 | 16–161 | `052efba0ed5e…` |
+| `lean/VE/Acts/Wire.lean` | 95 | 95 | 1–95 | `f2cd5a339373…` |
+| `lean/VE/Acts/Decode.lean` | 84 | 84 | 1–84 | `9dbe700ec640…` |
 | `lean/VE/Order/Wire.lean` | 301 | 220 | 25–238, 253–258 | `0f2b4ab4442d…` |
 | `lean/VE/Readings/Companions.lean` | 923 | 923 | 1–923 | `69a9b55c501a…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |
@@ -226,8 +228,6 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
-| `lean/VE/Acts/Wire.lean` | 95 | 95 | 1–95 | `f2cd5a339373…` |
-| `lean/VE/Acts/Decode.lean` | 84 | 84 | 1–84 | `9dbe700ec640…` |
 | **total** | | **40,889** | | |
 <!-- END GENERATED -->
 
