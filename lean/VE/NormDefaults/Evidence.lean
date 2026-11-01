@@ -966,19 +966,47 @@ def coneAtomVO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : L
   if p ∈ opens then (if (p, vs) ∈ C then some (decide ((p, vs) ∈ A)) else none)
   else some (decide (vs ∈ M.relations p))
 
-/-- The value of `φ` at `ρ` under each assignment of the atoms `C` that no `Fill_T`
-formula refutes in Kleene evaluation (`none` where it stays unknown); `C = []` is plain
-Kleene evaluation. -/
+/-- `coneAtomVO` with a record `fixed` of atoms with given values, which it reads first. -/
+def coneAtomVX {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String)
+    (fixed : List ((String × List α) × Bool)) (C A : List (String × List α)) (p : String) (vs : List α) :
+    Option Bool :=
+  match fixed.find? (fun e => decide (e.1 = (p, vs))) with
+  | some e => some e.2
+  | none => coneAtomVO M opens C A p vs
+
+/-- The value of `φ` at `ρ` under each assignment of the atoms `C` (the atoms of `fixed` at
+their values) that no formula of `X ++ Fill_T` refutes in Kleene evaluation (`none` where it
+stays unknown); `C = []` is plain Kleene evaluation. The premises are computed once. -/
+def coneValuesAtX {α : Type u} [DecidableEq α] (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (opens : List String) (fixed : List ((String × List α) × Bool)) (C : List (String × List α)) (ρ : List α)
+    (φ : VE.Formula) : List (Option Bool) :=
+  let P := X ++ fillPremises U
+  (subsets C).filterMap (fun A =>
+    if P.any (fun ψ => kleene M (coneAtomVX M opens fixed C A) [] ψ == some false) then none
+    else some (kleene M (coneAtomVX M opens fixed C A) ρ φ))
+
+/-- `coneValuesAtX` of the outcome of `n` at `vs`. -/
+def coneValuesX {α : Type u} [DecidableEq α] (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (opens : List String) (fixed : List ((String × List α) × Bool)) (C : List (String × List α)) (n : String)
+    (vs : List α) : List (Option Bool) :=
+  coneValuesAtX U X M opens fixed C (tupleVal vs) (outcomeBase (fill U) n)
+
+/-- `coneValuesAtX` with no extra premise and nothing fixed. -/
 def coneValuesAtO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
     (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) : List (Option Bool) :=
-  (subsets C).filterMap (fun A =>
-    if (fillPremises U).any (fun ψ => kleene M (coneAtomVO M opens C A) [] ψ == some false) then none
-    else some (kleene M (coneAtomVO M opens C A) ρ φ))
+  coneValuesAtX U [] M opens [] C ρ φ
 
 /-- `coneValuesAtO` of the outcome of `n` at `vs`. -/
 def coneValuesO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
     (C : List (String × List α)) (n : String) (vs : List α) : List (Option Bool) :=
   coneValuesAtO U M opens C (tupleVal vs) (outcomeBase (fill U) n)
+
+/-- The instance is sa-nd-atoms' definition, unfolded: legacy values are unchanged. -/
+theorem coneValuesAtO_eq_legacy {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (opens : List String) (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) :
+    coneValuesAtO U M opens C ρ φ = (subsets C).filterMap (fun A =>
+      if (fillPremises U).any (fun ψ => kleene M (coneAtomVO M opens C A) [] ψ == some false) then none
+      else some (kleene M (coneAtomVO M opens C A) ρ φ)) := rfl
 
 /-- `coneAtomVO` at the unsaid names. -/
 def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C A : List (String × List α))
@@ -1023,12 +1051,35 @@ theorem agreed_all {l : List (Option Bool)} {b : Bool} (h : agreed l = some b) :
     · cases h
   · cases h
 
-/-- `enumerateSettledO`: every assignment of the ground atoms `atoms` (DF1; at most
-`MAX_UNSAID_ATOMS` of them), the other atoms on `opens` unknown, that `Fill_T` does not
-refute gives `b`, and at least one assignment is left. -/
+/-- The atoms of `atoms` that `fixed` does not fix (`atoms` itself when nothing is fixed). -/
+def freeAtoms {β : Type u} [DecidableEq β] : List (β × Bool) → List β → List β
+  | [], atoms => atoms
+  | e :: fs, atoms => freeAtoms fs (atoms.filter (fun a => decide (a ≠ e.1)))
+
+/-- `enumerateSettledX` (weighing plan 3.4's `enumerateSettledO` with `X`, `budget` and
+`fixed`): every assignment of the atoms of `atoms` not fixed by `fixed` (the atoms of `fixed`
+at their values, the other atoms on `opens` unknown) that `X ++ Fill_T` does not refute gives
+`b`, and at least one assignment is left. Over `budget` atoms not fixed by `fixed`, `none`:
+the free atoms are computed once and their number is charged against `budget` before any
+of the `2 ^ budget` assignments is built. -/
+def enumerateSettledX {α : Type u} [DecidableEq α] (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (opens : List String) (atoms : List (String × List α)) (budget : Nat) (fixed : List ((String × List α) × Bool))
+    (n : String) (vs : List α) : Option Bool :=
+  let C := freeAtoms fixed atoms
+  if C.length > budget then none else agreed (coneValuesX U X M opens fixed C n vs)
+
+/-- `enumerateSettledO`: `enumerateSettledX` with no extra premise, the budget
+`MAX_UNSAID_ATOMS` and nothing fixed: every assignment of the ground atoms `atoms` (DF1), the
+other atoms on `opens` unknown, that `Fill_T` does not refute gives `b`. -/
 def enumerateSettledO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
     (atoms : List (String × List α)) (n : String) (vs : List α) : Option Bool :=
-  if atoms.length > MAX_UNSAID_ATOMS then none else agreed (coneValuesO U M opens atoms n vs)
+  enumerateSettledX U [] M opens atoms MAX_UNSAID_ATOMS [] n vs
+
+/-- The instance is sa-nd-atoms' definition, unfolded: legacy values are unchanged. -/
+theorem enumerateSettledO_eq_legacy {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (opens : List String) (atoms : List (String × List α)) (n : String) (vs : List α) :
+    enumerateSettledO U M opens atoms n vs =
+      if atoms.length > MAX_UNSAID_ATOMS then none else agreed (coneValuesO U M opens atoms n vs) := rfl
 
 /-- `enumerateSettled`: `enumerateSettledO` at the unsaid names over the cone's unsaid atoms. -/
 def enumerateSettled {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
@@ -1039,59 +1090,94 @@ theorem enumerateSettled_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : 
     (vs : List α) : enumerateSettled U M n vs = enumerateSettledO U M (unsaidNames U) (coneAtoms U M n vs) n vs :=
   rfl
 
-theorem enumerateO_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {opens : List String}
-    {atoms : List (String × List α)} {n : String} {vs : List α} {b : Bool}
-    (he : enumerateSettledO U M opens atoms n vs = some b) : ∀ x ∈ coneValuesO U M opens atoms n vs, x = some b := by
-  unfold enumerateSettledO at he
+/-- Weighing plan 3.4's shape: today's enumeration at `X = []`, `budget = 12`, `fixed = []`. -/
+theorem enumerateSettled_eq_X {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String)
+    (vs : List α) : enumerateSettled U M n vs = enumerateSettledX U [] M (unsaidNames U) (coneAtoms U M n vs) 12 [] n vs :=
+  rfl
+
+theorem enumerateX_all {α : Type u} [DecidableEq α] {U : UDoc} {X : List VE.Formula} {M : VE.FiniteModel α}
+    {opens : List String} {atoms : List (String × List α)} {budget : Nat} {fixed : List ((String × List α) × Bool)}
+    {n : String} {vs : List α} {b : Bool} (he : enumerateSettledX U X M opens atoms budget fixed n vs = some b) :
+    ∀ x ∈ coneValuesX U X M opens fixed (freeAtoms fixed atoms) n vs, x = some b := by
+  unfold enumerateSettledX at he
+  simp only at he
   split at he
   · cases he
   · exact agreed_all he
+
+theorem enumerateO_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {opens : List String}
+    {atoms : List (String × List α)} {n : String} {vs : List α} {b : Bool}
+    (he : enumerateSettledO U M opens atoms n vs = some b) : ∀ x ∈ coneValuesO U M opens atoms n vs, x = some b :=
+  enumerateX_all he
 
 theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
     {b : Bool} (he : enumerateSettled U M n vs = some b) :
     ∀ x ∈ coneValues U M (coneAtoms U M n vs) n vs, x = some b :=
   enumerateO_all he
 
-/-- Agreement of every assignment of `C` that `Fill_T` does not refute is the value of `φ`
-under every completion `R` of `M` that agrees with `M` off `opens` and satisfies `Fill_T`.
-Any atom list is sound here: such a completion agrees with the assignment of its own values
-on the list, which no `Fill_T` formula refutes (each is true under it), and a definite Kleene
-value is the completion's value. -/
-theorem denote_of_coneValuesAtO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
-    (opens : List String) (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
-    (hall : ∀ x ∈ coneValuesAtO U M opens C ρ φ, x = some b) (R : String → List α → Prop)
+/-- Agreement of every assignment of `C` that `X ++ Fill_T` does not refute is the value of
+`φ` under every completion `R` of `M` that agrees with `M` off `opens`, with `fixed` on its
+atoms, and satisfies `X ++ Fill_T`. Any atom list is sound here: such a completion agrees with
+the assignment of its own values on the list (and with `fixed`), which no premise refutes (each
+is true under it), and a definite Kleene value is the completion's value. -/
+theorem denote_of_coneValuesAtX {α : Type u} [DecidableEq α] (U : UDoc) (X : List VE.Formula)
+    (M : VE.FiniteModel α) (opens : List String) (fixed : List ((String × List α) × Bool))
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
+    (hall : ∀ x ∈ coneValuesAtX U X M opens fixed C ρ φ, x = some b) (R : String → List α → Prop)
     (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
-    (hR : Sat { M.asStructure with relation := R } (fillPremises U)) :
+    (hfix : ∀ a c, (a, c) ∈ fixed → (R a.1 a.2 ↔ c = true))
+    (hR : Sat { M.asStructure with relation := R } (X ++ fillPremises U)) :
     φ.denote { M.asStructure with relation := R } ρ ↔ b = true := by
   classical
   let A := C.filter (fun a => decide (R a.1 a.2))
-  have hA : ∀ p ws c, coneAtomVO M opens C A p ws = some c → (R p ws ↔ c = true) := by
+  have hA : ∀ p ws c, coneAtomVX M opens fixed C A p ws = some c → (R p ws ↔ c = true) := by
     intro p ws c hc
+    unfold coneAtomVX at hc
+    split at hc
+    · rename_i e he
+      simp only [Option.some.injEq] at hc
+      subst hc
+      have hp : e.1 = (p, ws) := by simpa using List.find?_some he
+      have := hfix e.1 e.2 (by simpa using List.mem_of_find?_eq_some he)
+      rw [hp] at this
+      exact this
     unfold coneAtomVO at hc
     split at hc
     · split at hc
-      · rename_i _ hC
+      · rename_i _ _ hC
         simp only [Option.some.injEq] at hc
         subst hc
         simp only [A, List.mem_filter, decide_eq_true_eq]
         exact ⟨fun hs => ⟨hC, hs⟩, fun hs => hs.2⟩
       · cases hc
-    · rename_i hun
+    · rename_i _ hun
       simp only [Option.some.injEq] at hc
       subst hc
       simpa using hoff p hun ws
-  have hK : ∀ ψ σ c, kleene M (coneAtomVO M opens C A) σ ψ = some c →
+  have hK : ∀ ψ σ c, kleene M (coneAtomVX M opens fixed C A) σ ψ = some c →
       (ψ.denote { M.asStructure with relation := R } σ ↔ c = true) :=
     kleene_sound M _ R hA
-  have hnot : (fillPremises U).any (fun ψ => kleene M (coneAtomVO M opens C A) [] ψ == some false) = false := by
+  have hnot : (X ++ fillPremises U).any
+      (fun ψ => kleene M (coneAtomVX M opens fixed C A) [] ψ == some false) = false := by
     rw [Bool.eq_false_iff]
     intro hany
     obtain ⟨ψ, hψ, hk⟩ := List.any_eq_true.mp hany
     have := (hK ψ [] false (by simpa using hk)).mp (hR ψ hψ)
     cases this
-  have hmem : kleene M (coneAtomVO M opens C A) ρ φ ∈ coneValuesAtO U M opens C ρ φ :=
+  have hmem : kleene M (coneAtomVX M opens fixed C A) ρ φ ∈ coneValuesAtX U X M opens fixed C ρ φ :=
     List.mem_filterMap.mpr ⟨A, filter_mem_subsets _ C, by simp [hnot]⟩
   exact hK _ _ b (hall _ hmem)
+
+/-- Agreement of every assignment of `C` that `Fill_T` does not refute is the value of `φ`
+under every completion `R` of `M` that agrees with `M` off `opens` and satisfies `Fill_T`
+(`denote_of_coneValuesAtX` with no extra premise and nothing fixed). -/
+theorem denote_of_coneValuesAtO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (opens : List String) (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
+    (hall : ∀ x ∈ coneValuesAtO U M opens C ρ φ, x = some b) (R : String → List α → Prop)
+    (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
+    (hR : Sat { M.asStructure with relation := R } (fillPremises U)) :
+    φ.denote { M.asStructure with relation := R } ρ ↔ b = true :=
+  denote_of_coneValuesAtX U [] M opens [] C ρ φ b hall R hoff (by simp) hR
 
 /-- `denote_of_coneValuesAtO` at the unsaid names, over the fillings of the unsaid tables. -/
 theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
@@ -1101,16 +1187,31 @@ theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE
     φ.denote (withFill U M.asStructure F) ρ ↔ b = true :=
   denote_of_coneValuesAtO U M (unsaidNames U) C ρ φ b hall _ (withFill_off_unsaid M F) hF
 
+/-- `enumerateSettledX_sound`: agreement of every assignment of the free atoms that `X ++ Fill_T`
+does not refute is the outcome of `n` at `vs` under every completion of `M` off `opens` that
+agrees with `fixed` and satisfies `X ++ Fill_T` (`denote_of_coneValuesAtX`), whatever the atom
+list and the budget. -/
+theorem enumerateSettledX_sound {α : Type u} [DecidableEq α] (U : UDoc) (X : List VE.Formula)
+    (M : VE.FiniteModel α) (opens : List String) (atoms : List (String × List α)) (budget : Nat)
+    (fixed : List ((String × List α) × Bool)) (n : String) (vs : List α) (b : Bool)
+    (he : enumerateSettledX U X M opens atoms budget fixed n vs = some b) (R : String → List α → Prop)
+    (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
+    (hfix : ∀ a c, (a, c) ∈ fixed → (R a.1 a.2 ↔ c = true))
+    (hR : Sat { M.asStructure with relation := R } (X ++ fillPremises U)) :
+    (outcomeBase (fill U) n).denote { M.asStructure with relation := R } (tupleVal vs) ↔ b = true :=
+  denote_of_coneValuesAtX U X M opens fixed _ (tupleVal vs) (outcomeBase (fill U) n) b (enumerateX_all he) R hoff
+    hfix hR
+
 /-- `enumerateSettledO_sound`: agreement of every assignment of `atoms` that `Fill_T` does not
 refute is the outcome of `n` at `vs` under every completion of `M` off `opens` that satisfies
-`Fill_T` (`denote_of_coneValuesAtO`), whatever the atom list. -/
+`Fill_T`, whatever the atom list (`enumerateSettledX_sound` at `X = []`, `fixed = []`). -/
 theorem enumerateSettledO_sound {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
     (opens : List String) (atoms : List (String × List α)) (n : String) (vs : List α) (b : Bool)
     (he : enumerateSettledO U M opens atoms n vs = some b) (R : String → List α → Prop)
     (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
     (hR : Sat { M.asStructure with relation := R } (fillPremises U)) :
     (outcomeBase (fill U) n).denote { M.asStructure with relation := R } (tupleVal vs) ↔ b = true :=
-  denote_of_coneValuesAtO U M opens atoms (tupleVal vs) (outcomeBase (fill U) n) b (enumerateO_all he) R hoff hR
+  enumerateSettledX_sound U [] M opens atoms MAX_UNSAID_ATOMS [] n vs b he R hoff (by simp) hR
 
 /-- `settled_of_enumeration`: agreement of every assignment of the cone that `Fill_T`
 does not refute is SETTLED (`enumerateSettledO_sound` at the unsaid names). -/
