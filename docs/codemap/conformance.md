@@ -1,3 +1,4 @@
+- `conformance/acts_contract.py` — Python hook and adapter of the `acts@0` wire table, in shadow (ap-1bf; act-phrases-PLAN.md 2.8, edit 2 of plan synthesis round 2): it reports and refuses nothi…
 - `conformance/alternatives.py` — Executable forms of the alternatives spec's finite scenario fixtures.
 - `conformance/binding_probes.py` — One accepted case per declared Lean binding of the assurance manifest.
 - `conformance/certificates.py` — Seeded Python search -> independent Lean replay, with all denominators retained.
@@ -41,6 +42,7 @@
 - `conformance/norm_defaults_three_way.py` — Three-way conformance for norm-defaults@0 on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
 - `conformance/order.py` — order@0 differential conformance: Python search and replay vs the Lean checker.
 - `conformance/p0.py` — P0 route fixtures shared by Python, Rust and the Lean `route` subcommand.
+- `conformance/question_answering_readability.py` — Q2.6: the zero-training reading and writing evaluation of `ve ask`, sealed and not run, and its wording counts.
 - `conformance/question_reverse.py` — Q1.3: the reverse question corpus, read by Lean's question reader (docs/spec/question-answering-PLAN.md Q1.3).
 - `conformance/replay_baseline.py` — Freeze the full v0 corpus using only the pinned pre-closure integration code.
 - `conformance/rights.py` — Deterministic rights-to-soft regeneration checks against the Lean soft route.
@@ -57,6 +59,7 @@
 - `conformance/wire_contract_delta.py` — Collect every prospective public diagnostic delta on the gate corpus.
 - `conformance/wire_contract_engine.py` — Ordered, diagnostic-only interpreter for wire contracts (format 1).
 - `conformance/wire_contract_faults.py` — The fault catalogue of the pilot `soft-norms@0` (wire-contract.md 8.3) and the oracle it feeds.
+- `conformance/wire_contract_faults_acts.py` — The fault catalogue of `acts@0` (ap-1bf), at and around each limit of `VE.Acts.Lexical`.
 - `conformance/wire_contract_faults_norm_defaults.py` — The fault catalogue and the gate corpus of `norm-defaults@0` (wire-contract-s5.md 2.4, 8.2, 8.4).
 - `conformance/wire_contract_faults_norms.py` — The fault catalogue and the gate corpus of `norms@0` (wire-contract-s5.md 2.3, 8.1, 8.4).
 - `conformance/wire_contract_gate.py` — Replay the soft-norms shadow gate (wire-contract.md 8.3 and 9) through Python, Lean and the legacy routes.
