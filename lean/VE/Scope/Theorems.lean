@@ -1642,7 +1642,7 @@ theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht :
     rw [map_filter_id]
     exact hd.filter _
   have hnameslen : ¬ 256 < D.listNames.length := by assumption
-  have hfwlen : ¬ 256 < D.forwards.length := by assumption
+  have hfwlen := ‹¬ _ < D.forwards.length›
   unfold admitBlock
   simp only [covered_drop D g hg ht hd, forwardsOk_drop D g hg ht hd, ha]
   simp [hlen', hnameslen, hfwlen, hdup', hAf, hBf]
