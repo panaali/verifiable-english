@@ -372,10 +372,13 @@ def regulated117 : List (String × List String) :=
   fun p => !(undeclaredEvaluative rows117 regulated117 ["arbitrary"]).contains p
 -- A phrase of another sense excludes the word only where the phrase is written, and in order.
 #guard hasPhrase ["due", "date"] ["the", "due", "date"] && !hasPhrase ["due", "date"] ["date", "due"] &&
-  !hasPhrase ["due", "date"] ["due"] && hasPhrase [] []
+  !hasPhrase ["due", "date"] ["due"] && hasPhrase [] [] && hasPhrase ["due", "date"] ["x", "y", "due", "date"]
+-- `J` with two names: each bound name is left out, whichever position it has in `J`.
+#guard undeclaredEvaluative rows117 preds117 ["arbitrary", "reasonable_grounds"] == ["just_requirement"]
 -- A predicate's words: its name split at `_`, then its template's words, lower case; punctuation splits a word.
 #guard predicateWords "Reasonable_grounds" (some "{0} has REASONABLE, grounds.") ==
   ["reasonable", "grounds", "0", "has", "reasonable", "grounds"]
 #guard predicateWords "arrest" (some "{0} is arbitrary") == ["arrest", "0", "is", "arbitrary"]
+#guard predicateWords "arrest" (some "arbitrary {0}") == ["arrest", "arbitrary", "0"]
 
 end VE.Judgments.Examples

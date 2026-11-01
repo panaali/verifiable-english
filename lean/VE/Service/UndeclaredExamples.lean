@@ -18,6 +18,8 @@ def vocabulary : Json := Json.mkObj [
     ("reasonable_detention", act.setObjVal! "defined" (Json.mkObj [("arguments", toJson ["act"]),
       ("body", toJson [toJson "and", toJson [toJson "unary", toJson "arrest", toJson [toJson "var", toJson 0]],
         toJson [toJson "unary", toJson "arbitrary", toJson [toJson "var", toJson 0]]])])),
+    ("fair_detention", act.setObjVal! "defined" (Json.mkObj [("arguments", toJson ["act"]),
+      ("body", toJson [toJson "unary", toJson "arrest", toJson [toJson "var", toJson 0]])])),
     ("make_reasonable_efforts", Json.mkObj [("arguments", toJson ["person", "act"]), ("description", .str "regulated"),
       ("regulated", Json.mkObj [("role", .str "permission"), ("default", .str "deny"),
         ("act", .str "{0} do y to {1}")])])]),
@@ -43,9 +45,12 @@ def member (profiles : List String) (key : String) : Except String Json := do
   | .error _ => throw s!"no {key}: {row.compress}"
 
 -- Spec 11.7 on the wire, in Lean's order: `due_date` has the word in another sense, `arrest` matches no row,
--- `reasonable_detention` is W3-defined; `trial` matches through its template; the regulated predicate is kept (F3′).
+-- `reasonable_detention` and `fair_detention` are W3-defined; `trial` matches through its template; the regulated predicate is kept (F3′).
 #guard (member judged "undeclared_evaluative").toOption ==
   some (toJson ["arbitrary", "make_reasonable_efforts", "reasonable_grounds", "trial"])
+-- The usage map stays beside it.
+#guard (member judged "judgments").toOption == some (Json.mkObj [("used", toJson ([] : List Json)),
+  ("unused", toJson ([] : List Json))])
 -- Without the profile the answer has no such member.
 #guard (member (judged.erase "judgments@0") "undeclared_evaluative").toOption == none
 #guard (member (judged.erase "judgments@0") "units").toOption.isSome
