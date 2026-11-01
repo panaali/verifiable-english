@@ -1,0 +1,19 @@
+{
+ "job": "cmp-s4a.s2of8-d082fead",
+ "head": "606f7876238e709c6fba90639d2e4e5185b5a8b4",
+ "argv": [
+  "cmp-s4a.s2of8-d082fead",
+  "606f7876238e709c6fba90639d2e4e5185b5a8b4",
+  "4ccceb183c4c1f876067792b344a5a70504aa0b1",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-aacd4ae9947e.tar.zst",
+  "d33d4bbd2c633a8ee3f3efac2a68750d3297d48f0f13b386f4f0e60117c70382",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/composition/cmp-s4a/trust-mutants-allow.json",
+  "--shard",
+  "2/8",
+  "--jobs",
+  "4"
+ ]
+}
