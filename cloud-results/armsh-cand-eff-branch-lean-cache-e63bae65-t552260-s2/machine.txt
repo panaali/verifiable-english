@@ -1,0 +1,6 @@
+job=armsh-cand-eff-branch-lean-cache-e63bae65-t552260-s2 shard=2/3 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-11-01T16:58:36Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   42G  104G  29% /
+ 16:58:37 up 0 min,  0 user,  load average: 1.35, 0.38, 0.13
+pilot/codex branches: 98
+ve-cache: lean-build exact key aacd4ae9947e asset lean-build-aacd4ae9947e-linux-aarch64.tar.zst sha256 dd8e0457c2b8 ok, seal ok, from download, 11.9 s
