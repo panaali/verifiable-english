@@ -10982,7 +10982,7 @@ module VE.Judgments.Chain ad5a9a520d63456d7fa4762a9bbb6799e5cee5a280d6d91b50b25f
 12:0-25:22 theorem VE.Judgments.opensIn_generated@VE.Judgments.Chain
 27:0-28:71 def VE.Judgments.softContent@VE.Judgments.Chain
 30:0-30:115 theorem VE.Judgments.softContent_formulas@VE.Judgments.Chain
-module VE.Judgments.ChainExamples 73a2ebfba14a042f187d3ec0d9935fb83ad0c0f9788582232e2b4876a062f2e7
+module VE.Judgments.ChainExamples 950a3018ec6cbfbcb971c26a4740e08d9d0c6e3eb66418305873a912d6b94cac
 12:0-16:87 def VE.Judgments.ChainExamples.carved@VE.Judgments.ChainExamples
 32:0-32:78 def VE.Judgments.ChainExamples.u@VE.Judgments.ChainExamples
 34:0-45:115 def VE.Judgments.ChainExamples.environment@VE.Judgments.ChainExamples
@@ -10998,8 +10998,8 @@ module VE.Judgments.ChainExamples 73a2ebfba14a042f187d3ec0d9935fb83ad0c0f9788582
 98:0-102:82 def VE.Judgments.ChainExamples.f13l@VE.Judgments.ChainExamples
 109:0-111:111 def VE.Judgments.ChainExamples.f13o@VE.Judgments.ChainExamples
 124:0-145:95 def VE.Judgments.ChainExamples.bothRules@VE.Judgments.ChainExamples
-162:0-165:113 def VE.Judgments.ChainExamples.withCondition@VE.Judgments.ChainExamples
-178:0-181:23 def VE.Judgments.ChainExamples.f13lWith@VE.Judgments.ChainExamples
+166:0-169:113 def VE.Judgments.ChainExamples.withCondition@VE.Judgments.ChainExamples
+182:0-185:23 def VE.Judgments.ChainExamples.f13lWith@VE.Judgments.ChainExamples
 module VE.Judgments.Decl 6380e1cda31818feefcbd44795a1204e53679f7a628f0d61a6ba57165b926aa6
 12:0-18:28 structure VE.Judgments.Judgment@VE.Judgments.Decl
 14:2-14:6 def VE.Judgments.Judgment.name@VE.Judgments.Decl

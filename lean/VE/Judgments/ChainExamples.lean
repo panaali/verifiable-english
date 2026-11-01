@@ -144,6 +144,10 @@ def bothRules (profiles : List String) (conditions : List (String × Json) := []
     ("open_terms", Json.arr #[record "good_judgment", record "genuinely_ambiguous"])]
   Json.mkObj [("id", "c"), ("document", .str ("---\n" ++ front.compress ++ "\n---\n" ++ body))]
 
+-- The profiles every check reads (`profilesOf`, row 16's environments and the scope test), read directly.
+#guard profilesOf (bothRules layer) == layer && profilesOf (bothRules plain) == plain &&
+  profilesOf (Json.mkObj [("id", "c"), ("document", "no front matter")]) == []
+
 -- Admitted with the layer, each unit OPEN through its judgment; the twin is admitted too.
 #guard match checkDocSets (bothRules layer), checkDocSets (bothRules plain) with
   | .ok a, .ok _ => a.getObjValD "judgments" == Json.mkObj [("used", Json.arr #[
