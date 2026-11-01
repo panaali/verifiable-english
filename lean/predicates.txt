@@ -601,6 +601,8 @@ module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
 module VE.Scope.Examples
+module VE.Scope.FarExamples
+module VE.Scope.FarTheorems
 module VE.Scope.Govern
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
