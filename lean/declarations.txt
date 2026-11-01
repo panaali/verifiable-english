@@ -24242,7 +24242,7 @@ module VE.Weighing.Zone ea24aad5f3ab1fe99bacd0731df57bbf81d387bff275bfe798be952d
 32:0-33:89 def VE.Weighing.OutcomeIn@VE.Weighing.Zone
 35:0-39:84 def VE.Weighing.SettledZ@VE.Weighing.Zone
 41:0-46:72 inductive VE.Weighing.ZoneUnknown@VE.Weighing.Zone
-module VE.Weighing.ZoneExamples 08b24cb1f9580ae3cc1ebc9629fc0441d3a50487aec7a954c4c3c6057d922b1c
+module VE.Weighing.ZoneExamples c4dc24bf2abb13d2eea2d39a5682422e7f53414c6487cefdaef70d1534acd761
 14:0-14:40 def VE.Weighing.ZoneFixtures.a1@VE.Weighing.ZoneExamples
 15:0-15:40 def VE.Weighing.ZoneFixtures.a2@VE.Weighing.ZoneExamples
 16:0-17:114 def VE.Weighing.ZoneFixtures.M2@VE.Weighing.ZoneExamples
@@ -24254,11 +24254,11 @@ module VE.Weighing.ZoneExamples 08b24cb1f9580ae3cc1ebc9629fc0441d3a50487aec7a954
 42:0-42:68 def VE.Weighing.ZoneFixtures.rec0@VE.Weighing.ZoneExamples
 44:0-55:26 theorem VE.Weighing.ZoneFixtures.admissible0@VE.Weighing.ZoneExamples
 58:0-59:94 theorem VE.Weighing.ZoneFixtures.notAdmissible1@VE.Weighing.ZoneExamples
-61:0-64:26 theorem VE.Weighing.ZoneFixtures.outcome_x@VE.Weighing.ZoneExamples
-66:0-69:26 theorem VE.Weighing.ZoneFixtures.not_outcome_y@VE.Weighing.ZoneExamples
-71:0-75:26 theorem VE.Weighing.ZoneFixtures.settled_x@VE.Weighing.ZoneExamples
-77:0-78:62 theorem VE.Weighing.ZoneFixtures.not_settled_x_false@VE.Weighing.ZoneExamples
-81:0-85:30 theorem VE.Weighing.ZoneFixtures.not_settled_vacuous@VE.Weighing.ZoneExamples
+62:0-65:26 theorem VE.Weighing.ZoneFixtures.outcome_x@VE.Weighing.ZoneExamples
+67:0-70:26 theorem VE.Weighing.ZoneFixtures.not_outcome_y@VE.Weighing.ZoneExamples
+72:0-76:26 theorem VE.Weighing.ZoneFixtures.settled_x@VE.Weighing.ZoneExamples
+78:0-79:62 theorem VE.Weighing.ZoneFixtures.not_settled_x_false@VE.Weighing.ZoneExamples
+82:0-86:30 theorem VE.Weighing.ZoneFixtures.not_settled_vacuous@VE.Weighing.ZoneExamples
 module VE.WireContract.Diagnose 5501947fc93984f9b741d053e1b8f74edd0d995ec02051903ef62516dfbc18d4
 26:0-30:37 structure VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose
 28:2-28:7 def VE.WireContract.Diagnose.Registered.table@VE.WireContract.Diagnose
