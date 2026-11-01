@@ -1,0 +1,5 @@
+job=eff-20261101-1-c5bec42f-t559999-s3 nproc=4 host=ip-10-0-141-175 date=2026-11-01T19:07:42Z
+Mem:              15           1           9           0           5          13
+/dev/mapper/cow-root   72G   62G   10G  87% /
+ 19:07:42 up 1 min,  0 user,  load average: 1.62, 0.53, 0.19
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
