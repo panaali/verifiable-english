@@ -1643,6 +1643,13 @@
    "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
    "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1 (E″'s identities over the written list): VE/Service/Document.lean softLayer +1 (K +0, S +0, V +1)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
   }
  ]
 }

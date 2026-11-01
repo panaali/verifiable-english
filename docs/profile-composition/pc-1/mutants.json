@@ -97,5 +97,16 @@
   "test": "tests/test_judgments_chain.py::test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open",
   "result": "1 failed in 0.57s",
   "failure": "E           ve.errors.CheckerUnavailable: CheckerUnavailable: malformed response (no alternative is valid (results: result 0: result: no alternative is valid (m"
+ },
+ {
+  "id": 10,
+  "language": "Lean",
+  "file": "lean/VE/Service/Document.lean",
+  "definition": "VE.Service.Document.layeredIds",
+  "behaviour": "identities over the list as written, E″ included (F1.6)",
+  "bug": "layeredIds keeps E″ as generated",
+  "test": "tests/test_judgments_chain.py::test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open",
+  "result": "1 failed in 0.54s",
+  "failure": "E       AssertionError: assert '765974d0b50f6058f9f197bfe2e1c7ab6dd0fe74ab9005c93b01748ef95549b4' != '765974d0b50f6058f9f197bfe2e1c7ab6dd0fe74ab9005c93b01748ef9"
  }
 ]
