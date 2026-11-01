@@ -56,11 +56,26 @@ def anchor (id : String) (e : Nat) : Json := Json.mkObj [("id", .str id), ("kind
     (fun (_, ls, _) => ls.map fun (cn, l, u) => (cn.name, cn.units, cn.scope, l, u)) ==
   some [("the list", ["b"], "doc", "a", "z"), ("other", ["b"], "doc", "c", "z")]
 #guard (decodeParts (blockWith [] [("anchors", toJson [anchor "doc" 5, anchor "doc2" 7])])).toOption.map
-    (fun (_, _, as) => as.map (·.span)) == some [(0, 5), (0, 7)]
+    (fun (_, _, as, _) => as.map (·.span)) == some [(0, 5), (0, 7)]
+-- SC-4: a forward declaration is `(unit w, rule r, anchor a)` (3, 1.9), in block order; an absent member is none.
+def fwd (w r a : String) : Json := Json.mkObj [("unit", .str w), ("rule", .str r), ("anchor", .str a)]
+#guard (decodeParts (blockWith [] [("forward", toJson [fwd "h.s02" "r1" "sec", fwd "h.s05" "r2" "doc"])])).toOption.map
+    (·.2.2.2) == some [("h.s02", "r1", "sec"), ("h.s05", "r2", "doc")]
+#guard (decodeParts (blockWith [])).toOption.map (·.2.2.2) == some []
 -- The block's faults, each with its path (3, 6.1).
 #guard errorOf (decodeParts .null) == "InvalidInput: scope@0 scope must be an object"
-#guard errorOf (decodeParts (blockWith [] [("forward", toJson ([] : List Json))])) ==
-  "InvalidInput: scope@0 unknown member scope.forward"
+#guard errorOf (decodeParts (blockWith [] [("forwards", toJson ([] : List Json))])) ==
+  "InvalidInput: scope@0 unknown member scope.forwards"
+#guard [errorOf (decodeParts (blockWith [] [("forward", .str "h.s02")])),
+  errorOf (decodeParts (blockWith [] [("forward", toJson [(fwd "h.s02" "r1" "sec").setObjVal! "why" (.str "x")])])),
+  errorOf (decodeParts (blockWith [] [("forward", toJson [Json.mkObj [("rule", .str "r1"), ("anchor", .str "sec")]])])),
+  errorOf (decodeParts (blockWith [] [("forward", toJson [(fwd "h.s02" "r1" "sec").setObjVal! "rule" (toJson [1])])])),
+  errorOf (decodeParts (blockWith [] [("forward", toJson [Json.mkObj [("unit", .str "h.s02"), ("rule", .str "r1")]])])),
+  errorOf (decodeParts (blockWith [] [("forward", toJson [(fwd "h.s02" "r1" "sec").setObjVal! "anchor" .null])]))] ==
+  ["InvalidInput: scope@0 forward must be an array", "InvalidInput: scope@0 unknown member forward.why",
+   "InvalidInput: scope@0 forward.unit must be present", "InvalidInput: scope@0 forward.h.s02.rule must be a string",
+   "InvalidInput: scope@0 forward.h.s02.anchor must be present",
+   "InvalidInput: scope@0 forward.anchor must be absent, not null"]
 #guard errorOf (decodeParts (blockWith [] [("anchors", .null)])) == "InvalidInput: scope@0 scope.anchors must be absent, not null"
 #guard errorOf (decodeParts (Json.mkObj [("version", .str "scope@1")])) == "InvalidInput: scope@0 version must be \"scope@0\""
 #guard errorOf (decodeParts (Json.mkObj [("governors", toJson ([] : List Json))])) ==
