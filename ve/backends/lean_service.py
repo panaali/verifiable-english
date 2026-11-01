@@ -131,6 +131,10 @@ _PLACEHOLDER = "store-" + "0" * 32  # a store-mode nonce's place while it is der
 # route's share is the exception: the UDHR document needs about 2,300 s per MiB (3.5), and
 # its deadline (120 s plus 240 s per MiB) keeps it unavailable until F5 is built.
 _CORE = (5.0, 30.0)
+# The document mode's, which reads senses, and the `senses.project` mode's: a projection decodes and checks the
+# same dictionary packs as the reading it serves (about 3.7 s of CPU for 260 senses, roughly the square of the
+# pack's size), so it is never less available than that reading (`senses.read`: the 120 s route timeout).
+_SENSES = (120.0, 120.0)
 DEADLINES: dict[str, tuple[float, float]] = {
     **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
                                 "english.read", "english.grammar", "english.check", "english.question", "words",
@@ -141,7 +145,7 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
     "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
-    "document": (120.0, 120.0), "ask": (120.0, 240.0),
+    "document": _SENSES, "ask": (120.0, 240.0),
     # The metered evaluator and the non-vacuity check (lean-first batch 18): the one-shot `ve_metered`'s
     # route limit before, a share per MiB like the core modes'.
     "metered": (120.0, 30.0),
@@ -150,6 +154,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "calc": (60.0, 60.0),
     # The `cardinality` mode (quantities QT-A3): W6a's `quantity` deadline, whose problems it erases into.
     "cardinality": (60.0, 60.0),
+    # The `senses.project` mode (senses B6): one projection and the identities of its environment and lexicon.
+    "senses.project": _SENSES,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
 }

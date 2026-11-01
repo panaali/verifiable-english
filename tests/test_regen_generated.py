@@ -310,6 +310,35 @@ def test_assurance_manifest_merge_recomputes_the_decoder_total(monkeypatch):
     assert json.loads(text)["lean_decoders"]["total_lines"] == manifest["lean_decoders"]["total_lines"] + 12
 
 
+def _escaped(manifest: dict) -> str:
+    """The manifest as a hand re-pin wrote it on the rd9-docroute sync (json.dumps' default ensure_ascii)."""
+    return json.dumps(manifest, indent=2) + "\n"
+
+
+def test_assurance_manifest_merge_keeps_its_layout_whatever_layout_a_side_has():
+    manifest = json.loads((ROOT / R.ASSURANCE_MANIFEST).read_text(encoding="utf-8"))
+    theirs = json.loads(json.dumps(manifest))
+    theirs["lean_decoders"]["files"][0]["reason"] += " over E‴"
+    for ours in (_escaped(manifest), json.dumps(manifest) + "\n", R.manifest_text(manifest)):
+        text, clean = R.merge_text(R.ASSURANCE_MANIFEST, R.manifest_text(manifest), ours, R.manifest_text(theirs))
+        assert clean and text == R.manifest_text(theirs)
+        assert "E‴" in text and "\\u" not in text
+
+
+def test_assurance_manifest_check_refuses_another_layout_and_the_writer_restores_it(tmp_path, monkeypatch):
+    manifest = json.loads((ROOT / R.ASSURANCE_MANIFEST).read_text(encoding="utf-8"))
+    (tmp_path / "ve").mkdir()
+    file = tmp_path / R.ASSURANCE_MANIFEST
+    file.write_text(_escaped(manifest), encoding="utf-8")
+    monkeypatch.setattr(R, "ROOT", tmp_path)
+    assert "\\u2034" in file.read_text(encoding="utf-8")
+    assert R.entry_named("assurance-manifest").check[0] == "check_assurance_layout"  # before the pin tests
+    assert R.check_assurance_layout() == 1
+    assert R._run(R.entry_named("assurance-manifest"), R.entry_named("assurance-manifest").write, tmp_path) == 0
+    assert file.read_text(encoding="utf-8") == R.manifest_text(manifest)
+    assert R.check_assurance_layout() == 0  # and accepts its own layout
+
+
 TRUST_MERGES = json.loads((ROOT / "tests/data/regen_trust_merges.json").read_text())
 
 

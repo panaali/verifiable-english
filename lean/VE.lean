@@ -33,11 +33,16 @@ import VE.EnglishGrammar.SourceWords
 import VE.EnglishGrammar.SourceWordsExamples
 import VE.Senses.Examples
 import VE.Senses.DocumentExamples
+import VE.Senses.RunExamples
+import VE.Service.RegistryExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
 import VE.Compose.Adjoin
 import VE.Compose.Examples
+import VE.Compose.Stack
+import VE.Compose.Contract
+import VE.Compose.ContractExamples
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Norms.Once
