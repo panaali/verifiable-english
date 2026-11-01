@@ -1,0 +1,1 @@
+{"shard": 2, "shards": 4, "units": ["tests/test_wire_gate_corpus.py", "tests/test_trust_mutants.py::chunk(2/4)", "tools/test_layer_policy.py", "tests/test_relay_binding_inventory.py", "tests/test_test_chunks.py", "tests/test_definitions.py"], "rc": 0, "seconds": 697.2, "passed": 6}
