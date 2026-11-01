@@ -3166,6 +3166,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.coneAtoms_eq_open
 #print axioms VE.NormDefaults.coneEval_eq_open
 #print axioms VE.NormDefaults.coneOf_eq_open
+#print axioms VE.NormDefaults.coneValuesAtO_eq_legacy
 #print axioms VE.NormDefaults.coneValuesAt_eq_open
 #print axioms VE.NormDefaults.coneValues_eq_open
 #print axioms VE.NormDefaults.conflictFreeU_consistent
@@ -3186,6 +3187,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.denote_congr_preds
 #print axioms VE.NormDefaults.denote_of_coneValuesAt
 #print axioms VE.NormDefaults.denote_of_coneValuesAtO
+#print axioms VE.NormDefaults.denote_of_coneValuesAtX
 #print axioms VE.NormDefaults.denote_rel_iff
 #print axioms VE.NormDefaults.denote_withFill_finite
 #print axioms VE.NormDefaults.dependencyOrder_congr
@@ -3193,8 +3195,12 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.ebind_ok
 #print axioms VE.NormDefaults.entailsX_nil
 #print axioms VE.NormDefaults.enumerateO_all
+#print axioms VE.NormDefaults.enumerateSettledO_eq_legacy
 #print axioms VE.NormDefaults.enumerateSettledO_sound
+#print axioms VE.NormDefaults.enumerateSettledX_sound
+#print axioms VE.NormDefaults.enumerateSettled_eq_X
 #print axioms VE.NormDefaults.enumerateSettled_eq_open
+#print axioms VE.NormDefaults.enumerateX_all
 #print axioms VE.NormDefaults.enumerate_all
 #print axioms VE.NormDefaults.envAt_fill_mono
 #print axioms VE.NormDefaults.envAt_fill_unsaid
