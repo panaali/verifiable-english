@@ -1,3 +1,7 @@
+- `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
+- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
+- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
+- `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
@@ -15,6 +19,7 @@
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
 - `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_defer.py` — `select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select to the chain gate, and never records them as passed.
+- `tests/test_select_fast_stage.py` — `select_tests --fast-stage`: the cheap units of a selection, run first on the host that sends the rest to sharded runners, so a failing pin is heard in minutes…
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
@@ -79,9 +84,3 @@
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
 - `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
 - `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
-- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
-- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
-- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
-- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
-- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
-- `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
