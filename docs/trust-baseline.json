@@ -1657,6 +1657,13 @@
    "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "S",
+   "lines": 110,
+   "reason": "cmp-s4a: VE/Discourse/Positions.lean S +110 (positions, formulaMentions, slotName, rowOf, rowsAt, slotsIn, withConstant, withRelation, slotMeaning, IntendedAt: 14.2/14.3's meaning; every one killed by a mutant in docs/composition/cmp-s4a/mutants.json); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4a, 2026-10-18",
+   "commit": "a73c2f53b88e2fb57f2b3db256ceac4fe2845e64"
   }
  ]
 }
