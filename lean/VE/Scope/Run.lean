@@ -6,8 +6,9 @@ import VE.Service.Document
     every governed unit, the governors that contribute to its rule (id, unit, effect word and reach) and one provenance
     sentence per governor (`VE/Scope/English.lean`). `explainRows` is spec 5.3's definition, read with `govern`'s own
     reaches, and the statements are over it; the runner computes it by `explainFast`, which reads the order, the
-    reaches and the base names from tables computed once (`explainFast_eq`). Not here (sc-1cb): the rules an owner
-    generates from a unit (`generated`, `explain_generated`) and the rows of a reading set governed per choice. -/
+    reaches and the base names from tables computed once (`explainFast_eq`). A document with a reading set governed per
+    choice (11.1) is answered per joint choice, gated as `governSets` gates it (`explainSetsWithin`, sc-1cb). Not here
+    (sc-1cc): the rules an owner generates from a unit (`generated`, `explain_generated`) and the rule in full. -/
 
 namespace VE.Scope
 open Lean
