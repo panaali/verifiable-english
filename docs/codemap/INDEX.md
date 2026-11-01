@@ -53,7 +53,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/profile-composition/](docs__profile-composition.md) — 1 modules — -
+- [docs/profile-composition/](docs__profile-composition.md) — 2 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 4 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -

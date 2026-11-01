@@ -635,9 +635,8 @@ theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String ×
       · exact absurd rfl e
 
 /-- `profilesOf` reads the front matter `frontOf` reads. -/
-theorem profilesOf_frontOf (j : Json) : profilesOf j = match frontOf j with
-    | some (front, _) => listedProfiles (front.getObjValD "environment")
-    | none => [] := by
+theorem profilesOf_frontOf (j : Json) :
+    profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
   unfold profilesOf frontOf
   cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
   rename_i text
@@ -763,7 +762,7 @@ def clashRefusalFast (j : Json) : Option String :=
   | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
   | some p =>
     obtain ⟨front, body⟩ := p
-    simp only [clashRefusalIn]
+    simp only [clashRefusalIn, Option.map_some, Option.getD_some]
     by_cases hj : "judgments@0" ∈ listedProfiles (front.getObjValD "environment") <;>
       cases swapInjectiveH (statedIdsIn (sizedIn (readingSetsIn front)))
         (statedPairsIn front (listedProfiles (front.getObjValD "environment")) (sizedIn (readingSetsIn front))) <;>
