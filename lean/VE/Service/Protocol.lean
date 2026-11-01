@@ -34,6 +34,7 @@ import VE.SearchBudget.Run
 import VE.Calc.Run
 import VE.Cardinality.Run
 import VE.Scope.Run
+import VE.Senses.Run
 import Std.Data.HashMap
 import Std.Data.TreeMap.Raw.Lemmas
 import VE.Limits
@@ -133,6 +134,7 @@ def runMode : Mode → Json → Json
   | .calc, j => VE.Calc.Run.runCaseReported j
   | .cardinality, j => VE.Cardinality.Run.runCaseReported j
   | .scope, j => VE.Scope.Run.runCaseReported j
+  | .sensesProject, j => VE.Senses.Run.projectCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -941,6 +943,9 @@ theorem runMode_cardinality (j : Json) :
     runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := rfl
 
 theorem runMode_scope (j : Json) : runMode .scope j = VE.Scope.Run.runCaseReported j := rfl
+
+theorem runMode_sensesProject (j : Json) :
+    runMode .sensesProject j = VE.Senses.Run.projectCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
