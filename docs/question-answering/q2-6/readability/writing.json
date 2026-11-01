@@ -1,0 +1,449 @@
+{
+ "retry": "contexts/retry.txt",
+ "tasks": [
+  {
+   "context": "contexts/W-G1.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "examples": [
+    "A4",
+    "A7",
+    "A8",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "G1",
+    "G2"
+   ],
+   "gold": [
+    "forall",
+    "member",
+    [
+     "unary",
+     "eligible",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every member is eligible.",
+   "id": "W-G1",
+   "intention": "whether, according to the text, each and every member of the group is eligible"
+  },
+  {
+   "context": "contexts/W-G3.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "examples": [
+    "A4",
+    "A7",
+    "A8",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "G3"
+   ],
+   "gold": [
+    "forall",
+    "member",
+    [
+     "unary",
+     "verified",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every member is verified.",
+   "id": "W-G3",
+   "intention": "whether, according to the text, all members are verified"
+  },
+  {
+   "context": "contexts/W-G4.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "examples": [
+    "A4",
+    "A7",
+    "A8",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "G4"
+   ],
+   "gold": [
+    "not",
+    [
+     "exists",
+     "member",
+     [
+      "unary",
+      "eligible",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ],
+   "gold_sentence": "no member is eligible.",
+   "id": "W-G4",
+   "intention": "whether it is true, according to the text, that not a single member is eligible"
+  },
+  {
+   "context": "contexts/W-G10.txt",
+   "document": "usecases/question-answering/group.ve.md",
+   "examples": [
+    "A4",
+    "A7",
+    "A8",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "G10"
+   ],
+   "gold": [
+    "unary",
+    "eligible",
+    [
+     "const",
+     "ann"
+    ]
+   ],
+   "gold_sentence": "Ann is eligible.",
+   "id": "W-G10",
+   "intention": "whether, according to the text, Ann is eligible"
+  },
+  {
+   "context": "contexts/W-U2.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "A1",
+    "A4"
+   ],
+   "fixtures": [
+    "U2"
+   ],
+   "gold": [
+    "forall",
+    "person",
+    [
+     "unary",
+     "equal_access_to_higher_education_required",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every person must be given equal access to higher education on the basis of merit.",
+   "id": "W-U2",
+   "intention": "whether the text requires that each person be given equal access to higher education, based on merit"
+  },
+  {
+   "context": "contexts/W-U3.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "A1",
+    "A4"
+   ],
+   "fixtures": [
+    "U3"
+   ],
+   "gold": [
+    "forall",
+    "person",
+    [
+     "unary",
+     "education_spared_required",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every person must be spared exclusion from education.",
+   "id": "W-U3",
+   "intention": "whether the text requires that each person be kept from exclusion from education"
+  },
+  {
+   "context": "contexts/W-U5.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "A1",
+    "A4"
+   ],
+   "fixtures": [
+    "U5"
+   ],
+   "gold": [
+    "forall",
+    "person",
+    [
+     "unary",
+     "person_may_form_and_join_trade_unions",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every person may form as well as join trade unions to protect their interests.",
+   "id": "W-U5",
+   "intention": "whether the text allows each person to form and to join trade unions to protect their interests"
+  },
+  {
+   "context": "contexts/W-U6.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "A1",
+    "A4"
+   ],
+   "fixtures": [
+    "U6"
+   ],
+   "gold": [
+    "forall",
+    "person",
+    [
+     "unary",
+     "elementary_education_received_required",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every person must receive elementary education.",
+   "id": "W-U6",
+   "intention": "whether the text requires that each person receive elementary education"
+  },
+  {
+   "context": "contexts/W-U7.txt",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "A1",
+    "A4"
+   ],
+   "fixtures": [
+    "U7"
+   ],
+   "gold": [
+    "forall",
+    "education_kind",
+    [
+     "unary",
+     "education_generally_available_required",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every education kind must be made generally available.",
+   "id": "W-U7",
+   "intention": "whether the text requires that each kind of education be made generally available"
+  },
+  {
+   "context": "contexts/W-A1.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A1"
+   ],
+   "gold": [
+    "unary",
+    "permitted",
+    [
+     "const",
+     "a27"
+    ]
+   ],
+   "gold_sentence": "\"a27\" may be performed.",
+   "id": "W-A1",
+   "intention": "whether the text allows the action \"a27\" to be performed"
+  },
+  {
+   "context": "contexts/W-A2.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A2"
+   ],
+   "gold": [
+    "unary",
+    "permitted",
+    [
+     "const",
+     "a25"
+    ]
+   ],
+   "gold_sentence": "\"a25\" may be performed.",
+   "id": "W-A2",
+   "intention": "whether the text allows the action \"a25\" to be performed"
+  },
+  {
+   "context": "contexts/W-A3.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A3"
+   ],
+   "gold": [
+    "unary",
+    "permitted",
+    [
+     "const",
+     "a26"
+    ]
+   ],
+   "gold_sentence": "\"a26\" may be performed.",
+   "id": "W-A3",
+   "intention": "whether the text allows the action \"a26\" to be performed"
+  },
+  {
+   "context": "contexts/W-A4.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A4"
+   ],
+   "gold": [
+    "unary",
+    "report_required",
+    [
+     "const",
+     "a13"
+    ]
+   ],
+   "gold_sentence": "\"a13\" must be reported to the user.",
+   "id": "W-A4",
+   "intention": "whether the text requires that the action \"a13\" be reported to the user"
+  },
+  {
+   "context": "contexts/W-A5.txt",
+   "document": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A5"
+   ],
+   "gold": [
+    "unary",
+    "permitted",
+    [
+     "const",
+     "a10"
+    ]
+   ],
+   "gold_sentence": "\"a10\" may be performed.",
+   "id": "W-A5",
+   "intention": "whether the text allows the action \"a10\" to be performed"
+  },
+  {
+   "context": "contexts/W-A7.txt",
+   "document": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A7"
+   ],
+   "gold": [
+    "forall",
+    "action",
+    [
+     "unary",
+     "permitted",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every action may be performed.",
+   "id": "W-A7",
+   "intention": "whether the text allows every action to be performed"
+  },
+  {
+   "context": "contexts/W-A8.txt",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "examples": [
+    "G1",
+    "G4",
+    "G10",
+    "U5",
+    "U6"
+   ],
+   "fixtures": [
+    "A8"
+   ],
+   "gold": [
+    "forall",
+    "action",
+    [
+     "unary",
+     "report_required",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "gold_sentence": "every action must be reported to the user.",
+   "id": "W-A8",
+   "intention": "whether the text requires that every action be reported to the user"
+  }
+ ]
+}

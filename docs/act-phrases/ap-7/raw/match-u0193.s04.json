@@ -1,0 +1,110 @@
+{
+ "key": "match-u0193.s04",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: In some cases, operators may wish to alter these default behaviors, however, and we think Claude should generally accommodate this within the constraints laid out elsewhere in this document.\nDEMAND: operators may wish to alter these default behaviors, however\nIn list L, {0} stands for operators.\nA1. No duty or permission is created here: the sentence only says that operators might, in some cases, want to change these default behaviors. Nothing is required, forbidden or permitted.\nA2. Operators are allowed to choose to change these default behaviors, but only in some cases.\nA3. Operators are generally allowed to change these default behaviors. \"In some cases\" only describes when they might want to, and does not limit the permission.\nB1. This sets no rule for operators: it only says that in some cases operators might want to change these default behaviors, without requiring, forbidding or permitting anything.\nB2. Operators are permitted to change these default behaviors in some cases, though they are not required to.\nL: (none: the parser lists no reading)\n",
+ "cli": {
+  "duration_api_ms": 1511,
+  "stop_reason": "end_turn",
+  "session_id": "76cd7bd3-30e3-4138-85a1-acd3111d5280",
+  "total_cost_usd": 0.0389448,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4342,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 103,
+   "output_tokens_details": {
+    "thinking_tokens": 63
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4342,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 103,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4342,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4342
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 103,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4342,
+    "webSearchRequests": 0,
+    "costUSD": 0.0389448,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 63,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4342,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A1 B1 NONE\nPAIR A2 B2 NONE\nSKIPPED: NONE",
+  "ttft_ms": 1402,
+  "type": "result",
+  "duration_ms": 1694,
+  "uuid": "be0e2cbf-cef5-4ace-82d3-841fa7052b43",
+  "ttft_stream_ms": 972,
+  "time_to_request_ms": 178,
+  "first_content_frame_ms": 973,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 15151,
+ "answer": "PAIR A1 B1 NONE\nPAIR A2 B2 NONE\nSKIPPED: NONE"
+}

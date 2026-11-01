@@ -1,0 +1,1 @@
+- `docs/norm-defaults/sa-nd-atoms/byte_identity.py` — sa-nd-atoms evidence: the norm-defaults route cases answer byte-identically before and after.

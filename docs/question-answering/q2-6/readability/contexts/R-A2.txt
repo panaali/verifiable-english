@@ -1,0 +1,261 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Rule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Rule 3. Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Rule 4. Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Checked reading: Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Rule 5. Every action may be performed, if both the tool of that action is shell and that action is readonly.
+Checked reading: Every action may be performed, if both the tool of that action is shell and that action is readonly.
+Rule 6. Every action may be performed, if both the tool of that action is shell and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is shell and that action is confirmed.
+Rule 7. Every action may be performed, if there is a host such that both that action contacts that host and that host is allowlisted.
+Checked reading: Every action may be performed, if there is a host such that both that action contacts that host and that host is allowlisted.
+Rule 8. Every action may be performed, if there is a host such that both that action contacts that host and that action is confirmed.
+Checked reading: Every action may be performed, if there is a host such that both that action contacts that host and that action is confirmed.
+Rule 9. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Checked reading: Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Rule 10. Every action may be performed, if both the tool of that action is purchase and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is purchase and that action is confirmed.
+Rule 11. Every action may be performed, if both the tool of that action is "get_secret" and that action is confirmed.
+Checked reading: Every action may be performed, if both the tool of that action is "get_secret" and that action is confirmed.
+Rule 12. Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.
+Checked reading: Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.
+Rule 13 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 14 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace.
+Checked reading: Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 15 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace.
+Checked reading: Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 16 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file is not tracked, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a file such that both that action deletes that file and that file is not tracked, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 17 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is shell and that action is not readonly, unless that action is confirmed.
+Checked reading: Every action must not be performed, if both the tool of that action is shell and that action is not readonly, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 18 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a host such that both that action contacts that host and that host is not allowlisted, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a host such that both that action contacts that host and that host is not allowlisted, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 19 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.
+Checked reading: Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 20 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if the tool of that action is purchase, unless that action is confirmed.
+Checked reading: Every action must not be performed, if the tool of that action is purchase, unless that action is confirmed. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 21 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is purchase and that action is not affordable.
+Checked reading: Every action must not be performed, if both the tool of that action is purchase and that action is not affordable. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 22 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if that action is privileged.
+Checked reading: Every action must not be performed, if that action is privileged. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 23 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a secret such that that action discloses that secret.
+Checked reading: Every action must not be performed, if there is a secret such that that action discloses that secret. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 24 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential.
+Checked reading: Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential. Exception to read-workspace, read-confirmed, write-workspace, delete-workspace, shell-read-only, shell-confirmed, network-allowlisted, network-confirmed, message-user, purchase-confirmed, secret-fetch-confirmed, credential-read-confirmed.
+Rule 25. Every action must be reported to the user, if there is a file such that that action deletes that file.
+Checked reading: Every action must be reported to the user, if there is a file such that that action deletes that file.
+Rule 26. Every action must be reported to the user, if the tool of that action is purchase.
+Checked reading: Every action must be reported to the user, if the tool of that action is purchase.
+"f_main" resides in workspace.
+Checked reading: "f_main" resides in workspace.
+"f_main" is not confidential.
+Checked reading: "f_main" is not confidential.
+"f_main" is tracked.
+Checked reading: "f_main" is tracked.
+"f_readme" resides in workspace.
+Checked reading: "f_readme" resides in workspace.
+"f_readme" is not confidential.
+Checked reading: "f_readme" is not confidential.
+"f_readme" is tracked.
+Checked reading: "f_readme" is tracked.
+"f_build" resides in workspace.
+Checked reading: "f_build" resides in workspace.
+"f_build" is not confidential.
+Checked reading: "f_build" is not confidential.
+"f_build" is not tracked.
+Checked reading: "f_build" is not tracked.
+"f_env" resides in workspace.
+Checked reading: "f_env" resides in workspace.
+"f_env" is confidential.
+Checked reading: "f_env" is confidential.
+"f_env" is not tracked.
+Checked reading: "f_env" is not tracked.
+"f_hosts" does not reside in workspace.
+Checked reading: "f_hosts" does not reside in workspace.
+"f_hosts" is not confidential.
+Checked reading: "f_hosts" is not confidential.
+"f_hosts" is not tracked.
+Checked reading: "f_hosts" is not tracked.
+"f_bashrc" does not reside in workspace.
+Checked reading: "f_bashrc" does not reside in workspace.
+"f_bashrc" is not confidential.
+Checked reading: "f_bashrc" is not confidential.
+"f_bashrc" is not tracked.
+Checked reading: "f_bashrc" is not tracked.
+"f_ssh" does not reside in workspace.
+Checked reading: "f_ssh" does not reside in workspace.
+"f_ssh" is confidential.
+Checked reading: "f_ssh" is confidential.
+"f_ssh" is not tracked.
+Checked reading: "f_ssh" is not tracked.
+"f_other" does not reside in workspace.
+Checked reading: "f_other" does not reside in workspace.
+"f_other" is not confidential.
+Checked reading: "f_other" is not confidential.
+"f_other" is tracked.
+Checked reading: "f_other" is tracked.
+"f_cron" does not reside in workspace.
+Checked reading: "f_cron" does not reside in workspace.
+"f_cron" is not confidential.
+Checked reading: "f_cron" is not confidential.
+"f_cron" is not tracked.
+Checked reading: "f_cron" is not tracked.
+"f_link" is not confidential.
+Checked reading: "f_link" is not confidential.
+"f_link" is not tracked.
+Checked reading: "f_link" is not tracked.
+"h_pypi" is allowlisted.
+Checked reading: "h_pypi" is allowlisted.
+"h_github" is allowlisted.
+Checked reading: "h_github" is allowlisted.
+"h_paste" is not allowlisted.
+Checked reading: "h_paste" is not allowlisted.
+"h_weather" is not allowlisted.
+Checked reading: "h_weather" is not allowlisted.
+"h_debian" is not allowlisted.
+Checked reading: "h_debian" is not allowlisted.
+"p_user" is principal.
+Checked reading: "p_user" is principal.
+"p_colleague" is not principal.
+Checked reading: "p_colleague" is not principal.
+"p_list" is not principal.
+Checked reading: "p_list" is not principal.
+The tool of "a10" is "write_file".
+Checked reading: The tool of "a10" is "write_file".
+It is not the case that there is a file such that "a10" reads that file.
+Checked reading: It is not the case that there is a file such that "a10" reads that file.
+"a10" writes "f_main".
+Checked reading: "a10" writes "f_main".
+"a10" writes "f_bashrc".
+Checked reading: "a10" writes "f_bashrc".
+For every file that "a10" writes, either that file is the same as "f_main" or that file is the same as "f_bashrc", or both.
+Checked reading: For every file that "a10" writes, either that file is the same as "f_main" or that file is the same as "f_bashrc", or both.
+It is not the case that there is a file such that "a10" deletes that file.
+Checked reading: It is not the case that there is a file such that "a10" deletes that file.
+It is not the case that there is a host such that "a10" contacts that host.
+Checked reading: It is not the case that there is a host such that "a10" contacts that host.
+It is not the case that there is a person such that "a10" messages that person.
+Checked reading: It is not the case that there is a person such that "a10" messages that person.
+It is not the case that there is a secret such that "a10" discloses that secret.
+Checked reading: It is not the case that there is a secret such that "a10" discloses that secret.
+"a10" is not confirmed.
+Checked reading: "a10" is not confirmed.
+"a10" is not privileged.
+Checked reading: "a10" is not privileged.
+"a10" is not reported.
+Checked reading: "a10" is not reported.
+The tool of "a13" is "delete_file".
+Checked reading: The tool of "a13" is "delete_file".
+It is not the case that there is a file such that "a13" reads that file.
+Checked reading: It is not the case that there is a file such that "a13" reads that file.
+It is not the case that there is a file such that "a13" writes that file.
+Checked reading: It is not the case that there is a file such that "a13" writes that file.
+"a13" deletes "f_readme".
+Checked reading: "a13" deletes "f_readme".
+For every file that "a13" deletes, that file is the same as "f_readme".
+Checked reading: For every file that "a13" deletes, that file is the same as "f_readme".
+It is not the case that there is a host such that "a13" contacts that host.
+Checked reading: It is not the case that there is a host such that "a13" contacts that host.
+It is not the case that there is a person such that "a13" messages that person.
+Checked reading: It is not the case that there is a person such that "a13" messages that person.
+It is not the case that there is a secret such that "a13" discloses that secret.
+Checked reading: It is not the case that there is a secret such that "a13" discloses that secret.
+"a13" is not confirmed.
+Checked reading: "a13" is not confirmed.
+"a13" is not privileged.
+Checked reading: "a13" is not privileged.
+"a13" is not reported.
+Checked reading: "a13" is not reported.
+The tool of "a25" is "send_email".
+Checked reading: The tool of "a25" is "send_email".
+It is not the case that there is a file such that "a25" reads that file.
+Checked reading: It is not the case that there is a file such that "a25" reads that file.
+It is not the case that there is a file such that "a25" writes that file.
+Checked reading: It is not the case that there is a file such that "a25" writes that file.
+It is not the case that there is a file such that "a25" deletes that file.
+Checked reading: It is not the case that there is a file such that "a25" deletes that file.
+It is not the case that there is a host such that "a25" contacts that host.
+Checked reading: It is not the case that there is a host such that "a25" contacts that host.
+"a25" messages "p_user".
+Checked reading: "a25" messages "p_user".
+For every person that "a25" messages, that person is the same as "p_user".
+Checked reading: For every person who "a25" messages, that person is the same as "p_user".
+It is not the case that there is a secret such that "a25" discloses that secret.
+Checked reading: It is not the case that there is a secret such that "a25" discloses that secret.
+"a25" is not confirmed.
+Checked reading: "a25" is not confirmed.
+"a25" is not privileged.
+Checked reading: "a25" is not privileged.
+"a25" is not reported.
+Checked reading: "a25" is not reported.
+The tool of "a26" is "send_email".
+Checked reading: The tool of "a26" is "send_email".
+It is not the case that there is a file such that "a26" reads that file.
+Checked reading: It is not the case that there is a file such that "a26" reads that file.
+It is not the case that there is a file such that "a26" writes that file.
+Checked reading: It is not the case that there is a file such that "a26" writes that file.
+It is not the case that there is a file such that "a26" deletes that file.
+Checked reading: It is not the case that there is a file such that "a26" deletes that file.
+It is not the case that there is a host such that "a26" contacts that host.
+Checked reading: It is not the case that there is a host such that "a26" contacts that host.
+"a26" messages "p_colleague".
+Checked reading: "a26" messages "p_colleague".
+For every person that "a26" messages, that person is the same as "p_colleague".
+Checked reading: For every person who "a26" messages, that person is the same as "p_colleague".
+It is not the case that there is a secret such that "a26" discloses that secret.
+Checked reading: It is not the case that there is a secret such that "a26" discloses that secret.
+"a26" is not confirmed.
+Checked reading: "a26" is not confirmed.
+"a26" is not privileged.
+Checked reading: "a26" is not privileged.
+"a26" is not reported.
+Checked reading: "a26" is not reported.
+The tool of "a27" is "send_email".
+Checked reading: The tool of "a27" is "send_email".
+It is not the case that there is a file such that "a27" reads that file.
+Checked reading: It is not the case that there is a file such that "a27" reads that file.
+It is not the case that there is a file such that "a27" writes that file.
+Checked reading: It is not the case that there is a file such that "a27" writes that file.
+It is not the case that there is a file such that "a27" deletes that file.
+Checked reading: It is not the case that there is a file such that "a27" deletes that file.
+It is not the case that there is a host such that "a27" contacts that host.
+Checked reading: It is not the case that there is a host such that "a27" contacts that host.
+"a27" messages "p_colleague".
+Checked reading: "a27" messages "p_colleague".
+For every person that "a27" messages, that person is the same as "p_colleague".
+Checked reading: For every person who "a27" messages, that person is the same as "p_colleague".
+It is not the case that there is a secret such that "a27" discloses that secret.
+Checked reading: It is not the case that there is a secret such that "a27" discloses that secret.
+"a27" is confirmed.
+Checked reading: "a27" is confirmed.
+"a27" is not privileged.
+Checked reading: "a27" is not privileged.
+"a27" is not reported.
+Checked reading: "a27" is not reported.
+
+=== A QUESTION SOMEONE ASKED VE ABOUT THE TEXT ===
+May "a25" be performed?
+
+=== VE'S ANSWER ===
+You asked whether "a25" may be performed.
+VE could not decide this.
+VE found neither a proof nor a situation where it fails, within its limits.
+
+=== QUESTION ===
+What does VE's answer tell you?
+A. No: the text rules it out.
+B. Yes: the text guarantees it.
+C. It is not guaranteed: the text allows a situation where it fails.
+D. It depends on how a sentence of the text is read.
+E. The text does not settle it, or VE could not decide.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

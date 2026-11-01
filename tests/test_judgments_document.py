@@ -387,20 +387,20 @@ def test_scope_does_not_compose_with_judgments_yet(service):
         "CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route", None)
 
 
-def test_the_answer_fits_its_schema_and_models_refuse_the_profile(service):
-    """The genuine answer passes the generated `document.json`. No model mode composes with the layer yet (jt-2b),
-    and Python's model projection refuses it as they do."""
+def test_the_answer_fits_its_schema_and_models_keep_the_profile_as_written(service):
+    """The genuine answer passes the generated `document.json`. Python's model projection keeps the layer as written
+    (jt-2c): the modes it is sent to decide without it (`VE.Compose.decidingEnvironment`), and Python never filters
+    the list."""
     from ve.backends.service_schema import check_row
     from ve.profiles import model_environment
     case = {"id": "d", "document": document(service, [unit("u1", opened("arbitrary"), ALPHA)], J1), "admit": False}
     check_row("document", service.run("document", [case])[0], case, 0)
-    with pytest.raises(Exception, match="Unsupported profile judgments@0"):
-        model_environment(environment())
+    assert model_environment(environment())["profiles"] == PROFILES
 
 
 def test_python_never_decides_a_judgments_document(service, tmp_path):
-    """Python's own loader refuses the profile, and a document is not built from the Lean answer before jt-2c (the
-    composing modes' identities, reviews/dri-decisions-20261028-jt-2c.md); jt-2b binds its `judgments` field."""
+    """Python's own loader refuses the profile; the document `ve document` builds is the Lean answer's (jt-2c, the
+    composing modes' identities, reviews/dri-decisions-20261028-jt-2c.md), with its `judgments` field bound (jt-2b)."""
     from ve.document import load_document
     from ve.document.load import _load_document
     from ve.errors import CheckerUnavailable
@@ -408,8 +408,7 @@ def test_python_never_decides_a_judgments_document(service, tmp_path):
     path.write_text(document(service, [unit("u1", opened("arbitrary"), ALPHA)], J1))
     with pytest.raises(CheckerUnavailable, match="judgments@0 documents are checked by Lean's document mode"):
         _load_document(path.read_bytes(), path, None)
-    with pytest.raises(CheckerUnavailable):
-        load_document(path)
+    assert [u["status"] for u in load_document(path)["units"]] == ["OPEN"]
 
 
 @pytest.mark.parametrize("name", ["J-alpha", "J-gamma-second"])
@@ -504,7 +503,7 @@ def test_a_distinguishing_model_is_located_as_without_the_profile(service, fault
 
 def test_ve_document_relays_lean_s_refusal_of_a_judgments_document(service, tmp_path, fence_text):
     """`ve document` (`load_document`) raises the Lean mode's refusal of a `judgments@0` document as its diagnostic,
-    as for any document; only a document Lean accepts is `CheckerUnavailable` (the relay of `judgments` is jt-2b)."""
+    as for any document; a document Lean accepts is answered (jt-2c, `tests/test_judgments_compose.py`)."""
     from ve.document import load_document
     from ve.errors import CheckerUnavailable
     records, units, sets, refusal, _ = STATUS["J-beta"]

@@ -67,10 +67,11 @@ def test_spec_keeps_scope_admission_text_by_the_document_level_statement():
     assert "`checkDocSets_no_sets`" in bullet
 
 
-# sc-5rb's statement gate: each statement the build proves is the stub's after whitespace normalisation, and the
-# statements it leaves are exactly the four that take `Pinned.JsonWF` (sc-1ae's parser lemma; sc-5rc).
+# sc-5rb's statement gate: each statement the build proves is the stub's after whitespace normalisation. sc-5rd proves
+# three of the four that take `Pinned.JsonWF`; the one it leaves is false as written (two units with one id,
+# docs/scope/sc-5rd/every-choice-counterexample.md) and carried by sc-5rdb (reviews/dri-decisions-20261031-sc-5rd.md).
 PROVED = [ROOT / "lean/VE/Scope/ReadingsTheorems.lean", ROOT / "lean/VE/Service/ScopeAdmission.lean"]
-LEFT = {"governSets_preserves", "governSets_every_choice", "governSets_strings", "governSets_readings_refused"}
+LEFT = {"governSets_every_choice"}
 
 
 def by_name(text: str) -> dict[str, str]:
