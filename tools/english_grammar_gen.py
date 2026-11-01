@@ -92,7 +92,6 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Fixed/Order.lean",
     "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
     "lean/VE/EnglishGrammar/Norm/Value.lean",
-    "lean/VE/EnglishGrammar/Norm/Elab.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {

@@ -282,5 +282,4 @@ import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
 import VE.EnglishGrammar.Norm.Value
-import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
