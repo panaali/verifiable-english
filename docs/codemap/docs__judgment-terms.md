@@ -2,5 +2,7 @@
 - `docs/judgment-terms/jt-e1/runner.py` — JT-E1 archive and prospective prompt checks.
 - `docs/judgment-terms/jt-e1r/render.py` — Frozen JT-E1r display generator.
 - `docs/judgment-terms/jt-e1r/runner.py` — JT-E1r blinded reader calls and scoring; display bytes come from render.py.
+- `docs/judgment-terms/jt-e1s/render.py` — Frozen JT-E1s display generator: JT-E1r's generator with section 2.4's one revision.
+- `docs/judgment-terms/jt-e1s/runner.py` — JT-E1s blinded reader calls and scoring: JT-E1r's frozen runner, bound to this frame and its displays.
 - `docs/judgment-terms/jt-e3/analyze.py` — JT-E3 agreement and instrument sensitivity; no model calls.
 - `docs/judgment-terms/jt-e3/runner.py` — Run the two preregistered blind subscription raters, one call each.
