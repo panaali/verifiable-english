@@ -1,0 +1,19 @@
+{
+ "job": "jt-3a.s1of2-38ef9fd6",
+ "head": "c069417cd814b84e91ec18ee1e6f2d7836e6ed96",
+ "argv": [
+  "jt-3a.s1of2-38ef9fd6",
+  "c069417cd814b84e91ec18ee1e6f2d7836e6ed96",
+  "7a8a0f74344d1741f2e2bc0e92e3a0676bcdf0cc",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-503c91f5fe0f.tar.zst",
+  "19ed9a0ebabfe526f4cc10c75cc9393a53ba2165ec09c33d62c8ddb31393ac60",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Judgments/Examples.lean",
+  "--shard",
+  "1/2",
+  "--jobs",
+  "4"
+ ]
+}
