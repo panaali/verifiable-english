@@ -1,0 +1,3 @@
+Whether this reply is helpful is a judgment for product reviewer.
+These rules conflict where this reply is helpful.
+Conflict-free, given these sentences: No reply with a broken link is helpful.
