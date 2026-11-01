@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-jt-3a-01b8cb4c-t562319-s1",
+ "head": "43e11dea614659e84d91f71222bf06b29d913b8e",
+ "argv": [
+  "x86sh-cand-jt-3a-01b8cb4c-t562319-s1",
+  "43e11dea614659e84d91f71222bf06b29d913b8e",
+  "a7da88a91e213ddd95a108cef1f70b7487179a4c",
+  "-",
+  "-",
+  "4",
+  "1/5"
+ ],
+ "lean_from": {
+  "run_id": "41343350755",
+  "sha256": "c0a22562b2d40eb8116799da5f70c292e342c3232d3994afa832a177a7ebf93f"
+ }
+}
