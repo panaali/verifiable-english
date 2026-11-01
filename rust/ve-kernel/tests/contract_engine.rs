@@ -147,9 +147,11 @@ fn a_large_input_ends_within_the_limit_and_one_step_over_is_refused() {
     let demo = table("demo@0");
     let spent = |n| run_within(demo, &large(n), u64::MAX).unwrap().1;
     let (base, step) = (spent(0), spent(1) - spent(0));
+    // Each entry: one node for the domain pass, and the checks of the table entries (2.3a, 2.3b) reading it.
+    assert_eq!((base, step), (129, 11));
     assert_eq!(spent(1000), base + 1000 * step);
     let n = ((MAX_ENGINE_UNITS - base) / step) as usize;
-    assert!(n > 50_000, "{n} entries");
+    assert_eq!(n, 90_897);
     let (outcome, used) = run_within(demo, &large(n), MAX_ENGINE_UNITS).unwrap();
     assert_eq!((outcome, used), (Outcome::Deferred("3.4".into()), base + n as u64 * step));
     assert_eq!(run(demo, &large(n)).unwrap(), Outcome::Deferred("3.4".into()));
