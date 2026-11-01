@@ -1,5 +1,6 @@
 """The pilot's shared reading-set rebuild command after an environment edit."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -10,7 +11,7 @@ from tests.test_readings_nd_lean import ASKS, doc1, env1
 from tests.test_readings_s1_lean import norm
 from tools import readings_s1_pilot as pilot
 from ve.ast import formula_from_data
-from ve.document import check_document
+from ve.document import check_document, load_document
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.model import FiniteModel
@@ -20,6 +21,7 @@ from ve.readings_s1 import S1Environment
 
 FIXTURE = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
 UDHR = Path(__file__).resolve().parents[1] / "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"
+TABLE = Path(__file__).resolve().parents[1] / "ve/profile_table.json"
 TEXTS = {"u0": "Every agent may help each user.\n", "u1": "Every agent must help each user.\n",
          "u2": "Every agent may help each user who asks.\n"}
 SCOPE = {"version": "scope@0", "governors": [{"id": "g1", "unit": "u0", "reach": {"rules": ["may-help-asked"]},
@@ -90,10 +92,34 @@ def test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts(lean, tmp_path):
     assert edited[0] == edited[1] and edited[0] != pilot.read(nd_part(tmp_path, name="base"))[0]["reading_sets"]
 
 
+@pytest.mark.parametrize("profiles", [
+    ["readings@1", "relational-fol@0", "scope@0"],
+    ["alternatives@0", "norms@0", "readings@1", "relational-fol@0", "risk@0", "scope@0"],
+    ["norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "scope@0", "ve.discourse@1"]],
+    ids=["without-norms", "with-risk", "with-discourse"])
+def test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text(lean, tmp_path, profiles):
+    path = nd_part(tmp_path, scoped=True)
+    meta, source = pilot.read(path)
+    meta["environment"]["profiles"] = profiles
+    pilot.write(path, meta, source)
+    with pytest.raises(VEError) as document_mode:
+        load_document(path)
+    with pytest.raises(VEError) as rebuild:
+        pilot.rebuild_reading_ids(meta, source)
+    assert str(rebuild.value) == str(document_mode.value)
+    assert str(rebuild.value).startswith("UnsupportedProfile: ")
+    if "ve.discourse@1" in profiles:
+        # scope@0's own row of Lean's profile table (`ve/profile_table.json`, generated from `VE.Compose.profileTable`).
+        [row] = [r for r in json.loads(TABLE.read_text())["rows"] if r["profile"] == "scope@0"]
+        assert str(rebuild.value) == "UnsupportedProfile: " + dict(row["refuses"])["ve.discourse@1"]
+
+
 def test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame(lean, tmp_path):
     path = nd_part(tmp_path)
     assert is_noop(path)
-    assert rebuilt(path, tmp_path).read_bytes() == path.read_bytes()
+    out = rebuilt(path, tmp_path)
+    assert out.read_bytes() == path.read_bytes()
+    assert check_document(out) == check_document(path)
 
 
 def test_rebuild_adds_a_new_base_predicate_and_no_regulated_one(lean, tmp_path):
@@ -115,7 +141,7 @@ def test_rebuild_command_is_noop_on_unchanged_environment(tmp_path, capsys):
     assert pilot.main(["--rebuild-reading-ids", str(FIXTURE), "--check-noop"]) == 0
     assert '"no_op": true' in capsys.readouterr().out
     original, source = pilot.read(FIXTURE)
-    changed = pilot.rebuild_reading_ids(original)
+    changed = pilot.rebuild_reading_ids(original, source)
     assert changed["reading_sets"] == original["reading_sets"]
     destination = tmp_path / "same.ve.md"
     assert pilot.main(["--rebuild-reading-ids", str(FIXTURE), "--out", str(destination)]) == 0
@@ -174,7 +200,7 @@ def test_rebuild_updates_situation_keys_and_admission_references():
 
 def test_rebuild_preserves_companion_identities_on_unchanged_udhr(tmp_path):
     meta, source = pilot.read(UDHR)
-    assert pilot.rebuild_reading_ids(meta)["reading_sets"] == meta["reading_sets"]
+    assert pilot.rebuild_reading_ids(meta, source)["reading_sets"] == meta["reading_sets"]
     out = tmp_path / "same.ve.md"
     assert pilot.main(["--rebuild-reading-ids", str(UDHR), "--check-noop", "--out", str(out)]) == 0
     assert pilot.read(out) == (meta, source)
