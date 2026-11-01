@@ -1,0 +1,17 @@
+trust_mutants: 6 definitions, 59 mutants (29 to run), 4 jobs, base a9bf475954c1
+SURVIVOR lean/VE/Weighing/Zone.lean:38 VE.Weighing.SettledZ (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:72, lean/VE/Weighing/ZoneExamples.lean:7...)
+SURVIVOR lean/VE/Weighing/Zone.lean:33 VE.Weighing.OutcomeIn (S, trusted) body-true: (outcomeBase (fill U) r.name).denote { M.asStructure with relation := R } (tupleVal vs) -> True (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:62, lean/VE/Weighing/ZoneExamples.lean:6...)
+SURVIVOR lean/VE/Weighing/Zone.lean:28 VE.Weighing.AdmissibleCompletion (S, trusted) body-false: (∀ n vs, n ∉ opens → (R n vs ↔ vs ∈ M.relations n)) ∧ (∀ a b, (a, b) ∈ record → (R a.1 a.2 ↔ b = ... -> False (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+SURVIVOR lean/VE/Weighing/Zone.lean:38 VE.Weighing.SettledZ (S, trusted) body-false: (∃ R, AdmissibleCompletion U X M opens record R) ∧ ∀ R, AdmissibleCompletion U X M opens record R... -> False (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:72, lean/VE/Weighing/ZoneExamples.lean:7...)
+SURVIVOR lean/VE/Weighing/Zone.lean:39 VE.Weighing.SettledZ (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:78)
+SURVIVOR lean/VE/Weighing/Zone.lean:39 VE.Weighing.SettledZ (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:72, lean/VE/Weighing/ZoneExamples.lean:78)
+SURVIVOR lean/VE/Weighing/Zone.lean:39 VE.Weighing.SettledZ (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:72, lean/VE/Weighing/ZoneExamples.lean:78)
+UNKNOWN lean/VE/Weighing/Zone.lean:22 VE.Weighing.openNames (S, trusted) append-right: L.D ++ ->  (lean/VE/Weighing/Zone.lean:22: Application type mismatch: The argument)
+UNKNOWN lean/VE/Weighing/Zone.lean:22 VE.Weighing.openNames (S, trusted) list-empty: L.D -> [] (lean/VE/Weighing/Zone.lean:22: Application type mismatch: The argument)
+UNKNOWN lean/VE/Weighing/Zone.lean:21 VE.Weighing.decisionAtoms (S, trusted) list-empty: (decisions D).flatMap -> [] (lean/VE/Weighing/Zone.lean:21: Function expected at)
+SURVIVOR lean/VE/Weighing/Zone.lean:29 VE.Weighing.AdmissibleCompletion (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Weighing/ZoneExamples.lean:44, lean/VE/Weighing/ZoneExamples.lean:5...)
+SURVIVOR lean/VE/Weighing/Zone.lean:21 VE.Weighing.decisionAtoms (S, trusted) list-first: (decisions D) -> ((decisions D).take 1)
+SURVIVOR lean/VE/Weighing/Zone.lean:21 VE.Weighing.decisionAtoms (S, trusted) list-last: (decisions D) -> ((decisions D).reverse.take 1)
+trust_mutants: 12 KILLED, 10 SURVIVOR, 3 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 30 OTHER SHARD in 46 s
+trust_mutants: S, trusted: 12 KILLED, 10 SURVIVOR, 3 UNKNOWN, 4 INVALID, 30 OTHER SHARD
+trust_mutants: steps: wall plan 8.2 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 1.8 s, mutants 29.7 s, cleanup 2.3 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 1.7 s (1), mutant_builds 22.5 s (29), mutant_checks 52.5 s (31), stage_controls 2.3 s (1), mutant_probes 34.5 s (12)
