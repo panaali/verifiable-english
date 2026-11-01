@@ -258,6 +258,7 @@ NOT_REGENERATED = {
     "conformance/wire_contract_faults.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
     "conformance/wire_contract_delta.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
     "conformance/wire_contract_gate.py": "unit conformance artifact and recorded test inputs; needs the Lean gate run",
+    "conformance/senses_usecases.py": "sn-b8 batch evidence (7.2 coverage table), measured once per batch and saved",
     "conformance/soft_norms_wire_report.py": "unit conformance report",
     "conformance/english_lean_e2_report.py": "batch report",
     "conformance/english_lean_e2_6_report.py": "batch report",

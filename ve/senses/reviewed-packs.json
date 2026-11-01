@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "name": "policies@1",
+    "dictionary_id": "acef429c7d33c0ab89a0167583b5be2aa7af6b7d692831ad36438f090421a0e7",
+    "reviewer": "sn-b7b8 chain review (sn-b7b8-review.final.md)",
+    "date": "2026-11-01",
+    "pack": "ve/senses/packs/policies@1.json",
+    "scope": "Every entry read against its cited source declaration in docs/senses/sn-b8/SOURCES.md; well-formedness is Lean's (Dictionary.wf)."
+  },
+  {
+    "name": "software-services@1",
+    "dictionary_id": "0ca7d84166570f0cbc633fa3b9a8dd26d5a60da9ce66b30539932e37b453438d",
+    "reviewer": "sn-b7b8 chain review (sn-b7b8-review.final.md)",
+    "date": "2026-11-01",
+    "pack": "ve/senses/packs/software-services@1.json",
+    "scope": "Every entry read against its cited source declaration in docs/senses/sn-b8/SOURCES.md; well-formedness is Lean's (Dictionary.wf)."
+  }
+]
