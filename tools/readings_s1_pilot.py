@@ -30,10 +30,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from ve.document import _environment, check_document, load_document  # noqa: E402
+from ve.document.source import chain_environment  # noqa: E402
+from ve.environment import listed_profiles  # noqa: E402
 from ve.errors import VEError  # noqa: E402
 from ve.readings import s1_content_meaning_id  # noqa: E402
-from ve.readings_route import document_wire  # noqa: E402
-from ve.readings_s1 import Decoded, S1Environment, guard_base, record_situations, search  # noqa: E402
+from ve.readings_route import document_wire, elaborate  # noqa: E402
+from ve.readings_s1 import NORM_DEFAULTS, Decoded, S1Environment, guard_base, record_situations, search  # noqa: E402
 
 
 def read(path):
@@ -166,23 +168,29 @@ def _identity(env, set_id, reading):
     return s1_content_meaning_id(env, set_id, reading) or reading["meaning_id"]
 
 
-def _reidentified(env, item):
-    """Rebuild a set's meaning, model and situation ids over its new environment."""
+def _reidentified(env, item, author=None):
+    """Rebuild a set's meaning, model and situation ids over its new environment. A situation's base is completed
+    over `author`, the vocabulary Lean decodes it over (`base_vocabulary`); without it, over the models' environment
+    (the pilot reruns)."""
     from ve.model import FiniteModel
     from ve.readings import _reading_evaluation
     model_env, _ = _reading_evaluation(env)
 
-    def extended(data):
-        return {**data, "domains": {**{sort: [] for sort in model_env.model_sorts}, **data["domains"]},
-                "relations": {**{p: [] for p in model_env.predicates if p not in model_env.definition_entries},
-                              **data["relations"]}}
+    def extended(data, vocabulary):
+        # Each sort and predicate the data lacks is added empty, after the ones it has, so a complete base is kept
+        # byte for byte.
+        return {**data, "domains": {**data["domains"], **{sort: [] for sort in vocabulary.model_sorts
+                                                          if sort not in data["domains"]}},
+                "relations": {**data["relations"], **{p: [] for p in vocabulary.predicates
+                                                      if p not in vocabulary.definition_entries
+                                                      and p not in data["relations"]}}}
 
     models = {}
     for old, data in item.get("models", {}).items():
         # Sorts and predicates merged from the companions are empty in today's models.
-        models[old] = extended(data)
+        models[old] = extended(data, model_env)
     renamed = {old: FiniteModel.from_dict(model_env, data).model_id for old, data in models.items()}
-    situations = {old: {**entry, "base": extended(entry["base"])}
+    situations = {old: {**entry, "base": extended(entry["base"], author or model_env)}
                   for old, entry in item.get("situations", {}).items()}
     renamed.update({old: S1Environment.situation_id_for(env, entry)
                     for old, entry in situations.items()})
@@ -197,12 +205,29 @@ def _reidentified(env, item):
                if "situations" in item else {})}
 
 
+def base_vocabulary(meta, data):
+    """The vocabulary Lean decodes a situation's base over: the frame's author vocabulary (composition-s1 4.5 step
+    1). Under `norm-defaults@0` the frame is the filled document Lean's readings route answers (readings-defaults 3),
+    asked of the document without its situations, whose ids are what is rebuilt."""
+    filled = None
+    if NORM_DEFAULTS in listed_profiles(data):
+        units = [{"id": u["id"], "kind": u["kind"], "content": u.get("content")} for u in _flat(meta["units"])]
+        sets = [{k: v for k, v in item.items() if k != "situations"} for item in meta.get("reading_sets", [])]
+        filled = elaborate(data, units, sets)["filled"]
+    return S1Environment(data, filled).author_environment()
+
+
 def rebuild_reading_ids(meta):
-    """Apply after editing the document's environment; rebuild every set, not only changed units."""
-    env = _environment(meta["environment"])
-    return {**meta, "reading_sets": [
-        item if any("companion" in r for r in item["readings"]) else _reidentified(env, item)
-        for item in meta.get("reading_sets", [])]}
+    """Apply after editing the document's environment; rebuild every set, not only changed units. The ids are those
+    of the environment Lean's chain reads them in (`chain_environment`: under `scope@0`, the environment without it)."""
+    data = chain_environment(meta["environment"])
+    env = _environment(data)
+    sets = meta.get("reading_sets", [])
+    kept = [any("companion" in r for r in item["readings"]) for item in sets]
+    rekeyed = [item for item, keep in zip(sets, kept) if not keep]
+    author = base_vocabulary(meta, data) if any("situations" in item for item in rekeyed) else None
+    return {**meta, "reading_sets": [item if keep else _reidentified(env, item, author)
+                                     for item, keep in zip(sets, kept)]}
 
 
 def find_situations(meta):
