@@ -1,124 +1,15 @@
 {
   "item": "en-s6",
+  "note": "Each plant alone, restored after. task seed 1 (`unless` read as `if`) is the reader's (en-s6b): en-s6 has no grammar rows. Mechanical mutants per trusted definition: trust-mutants.json.",
   "lean": [
-    {
-      "behaviour": "need not given a true sign (task seed 3; `need not` already shares `must not`'s false sign, so the plant flips it)",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": ".needNot => false",
-        "after": ".needNot => true"
-      },
-      "proofs_cut": false,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:73 #guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [true, false, true, fa"
-      ],
-      "status": "KILLED"
-    },
-    {
-      "behaviour": "an exception's rule list loses its last number (task seed 2)",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": "return a ++ (← assembleFrom (i + 1) (k + 1) (some (i, h, none)) ps)",
-        "after": "return a ++ (← assembleFrom (i + 1) (k + 1) (some (i, { h with exceptionTo := h.exceptionTo.dropLast }, none)) ps)"
-      },
-      "proofs_cut": false,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:43 #guard faultOf [hd 1 [0], may] == some (.unknownRule 0)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:44 #guard faultOf [hd 1 [2], may] == some (.unknownRule 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:47 #guard faultOf [hd 1 [5], may, .precedence 1 7] == some (.unknownRule 5)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:59 #guard statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may] ==",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:61 #guard (statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may]).map (·.flatMap NormStatement.re"
-      ],
-      "status": "KILLED"
-    },
-    {
-      "behaviour": "the rule number not carried to the next block (task seed 4: the count k is not raised)",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": "assembleFrom (i + 1) (k + 1) (some (i, h, none)) ps",
-        "after": "assembleFrom (i + 1) k (some (i, h, none)) ps"
-      },
-      "proofs_cut": true,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:29 #guard faultOf [hd 1, may, hd 3, may] == some (.expectedRule 2 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:35 #guard (statements [hd 1, may, hd 2, may]).map ruleCount == some 2",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:36 #guard faultOf [hd 1, may, hd 2] == some (.noConsequence 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:45 #guard faultOf [hd 1, may, hd 2 [1], may] == none",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:49 #guard faultOf [hd 1, may, .precedence 1 5, hd 3, may] == some (.expectedRule 3 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:56 #guard statements [hd 1, mustNot, hd 2, may, .precedence 2 1] ==",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:59 #guard statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may] ==",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:61 #guard (statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may]).map (·.flatMap NormStatement.re",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:92 #guard faultOf (long 5000 ++ [hd 2]) == some (.noConsequence 5002)"
-      ],
-      "status": "KILLED"
-    },
-    {
-      "behaviour": "the number check skipped in assemble (spec 6 seed 3)",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": "if h.number ≠ k + 1 then throw",
-        "after": "if false then throw"
-      },
-      "proofs_cut": true,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:27 #guard faultOf [hd 2, may] == some (.expectedRule 0 1)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:29 #guard faultOf [hd 1, may, hd 3, may] == some (.expectedRule 2 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:49 #guard faultOf [hd 1, may, .precedence 1 5, hd 3, may] == some (.expectedRule 3 2)"
-      ],
-      "status": "KILLED"
-    },
-    {
-      "behaviour": "an except-when sentence drops its carve-out (spec 6 seed 2's assembly half)",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": "carveOuts := c.carveOuts ++ [φ]",
-        "after": "carveOuts := c.carveOuts"
-      },
-      "proofs_cut": false,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:39 #guard statements [hd 1, may, .exceptWhen .top] == some [.rule ⟨1, []⟩ (cl .may [.top])]",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:67 #guard statements [hd 1, .clause (cl .may [a]), .exceptWhen b] == some [.rule ⟨1, []⟩ (cl .may [a, b",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:68 #guard statements [hd 1, may, .exceptWhen a, .exceptWhen b] == some [.rule ⟨1, []⟩ (cl .may [a, b])]",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:91 #guard (statements (long 5000)).map (·.flatMap (·.clauses.map (·.carveOuts.length))) == some [5000]"
-      ],
-      "status": "KILLED"
-    },
-    {
-      "behaviour": "the unknown-reference check skipped",
-      "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
-      "plant": {
-        "before": "| some n => throw (.unknownRule n)",
-        "after": "| some _ => return rs"
-      },
-      "proofs_cut": true,
-      "test": [
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:31 #guard faultOf [hd 1, may, .precedence 1 3] == some (.unknownRule 3)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:41 #guard faultOf [.precedence 9 1] == some (.unknownRule 9)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:42 #guard faultOf [hd 1, may, .precedence 1 0] == some (.unknownRule 0)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:43 #guard faultOf [hd 1 [0], may] == some (.unknownRule 0)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:44 #guard faultOf [hd 1 [2], may] == some (.unknownRule 2)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)",
-        "lean/VE/EnglishGrammar/Norm/Examples.lean:47 #guard faultOf [hd 1 [5], may, .precedence 1 7] == some (.unknownRule 5)"
-      ],
-      "status": "KILLED"
-    }
+    {"behaviour": "need not given a true sign (task seed 3; `need not` already shares `must not`'s false sign, so the plant flips it)", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": ".needNot => false", "after": ".needNot => true"}, "proofs_cut": false, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:73 #guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [true, false, true, fa"], "status": "KILLED"},
+    {"behaviour": "an exception's rule list loses its last number (task seed 2)", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": "return a ++ (← assembleFrom (i + 1) (k + 1) (some (i, h, none)) ps)", "after": "return a ++ (← assembleFrom (i + 1) (k + 1) (some (i, { h with exceptionTo := h.exceptionTo.dropLast }, none)) ps)"}, "proofs_cut": false, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:43 #guard faultOf [hd 1 [0], may] == some (.unknownRule 0)", "lean/VE/EnglishGrammar/Norm/Examples.lean:44 #guard faultOf [hd 1 [2], may] == some (.unknownRule 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)", "lean/VE/EnglishGrammar/Norm/Examples.lean:47 #guard faultOf [hd 1 [5], may, .precedence 1 7] == some (.unknownRule 5)", "lean/VE/EnglishGrammar/Norm/Examples.lean:59 #guard statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may] ==", "lean/VE/EnglishGrammar/Norm/Examples.lean:61 #guard (statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may]).map (·.flatMap NormStatement.re"], "status": "KILLED"},
+    {"behaviour": "the rule number not carried to the next block (task seed 4: the count k is not raised)", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": "assembleFrom (i + 1) (k + 1) (some (i, h, none)) ps", "after": "assembleFrom (i + 1) k (some (i, h, none)) ps"}, "proofs_cut": true, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:29 #guard faultOf [hd 1, may, hd 3, may] == some (.expectedRule 2 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:35 #guard (statements [hd 1, may, hd 2, may]).map ruleCount == some 2", "lean/VE/EnglishGrammar/Norm/Examples.lean:36 #guard faultOf [hd 1, may, hd 2] == some (.noConsequence 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:45 #guard faultOf [hd 1, may, hd 2 [1], may] == none", "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)", "lean/VE/EnglishGrammar/Norm/Examples.lean:49 #guard faultOf [hd 1, may, .precedence 1 5, hd 3, may] == some (.expectedRule 3 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:56 #guard statements [hd 1, mustNot, hd 2, may, .precedence 2 1] ==", "lean/VE/EnglishGrammar/Norm/Examples.lean:59 #guard statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may] ==", "lean/VE/EnglishGrammar/Norm/Examples.lean:61 #guard (statements [hd 1, mustNot, hd 2, mustNot, hd 3 [1, 2], may]).map (·.flatMap NormStatement.re", "lean/VE/EnglishGrammar/Norm/Examples.lean:92 #guard faultOf (long 5000 ++ [hd 2]) == some (.noConsequence 5002)"], "status": "KILLED"},
+    {"behaviour": "the number check skipped in assemble (spec 6 seed 3)", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": "if h.number ≠ k + 1 then throw", "after": "if false then throw"}, "proofs_cut": true, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:27 #guard faultOf [hd 2, may] == some (.expectedRule 0 1)", "lean/VE/EnglishGrammar/Norm/Examples.lean:29 #guard faultOf [hd 1, may, hd 3, may] == some (.expectedRule 2 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:49 #guard faultOf [hd 1, may, .precedence 1 5, hd 3, may] == some (.expectedRule 3 2)"], "status": "KILLED"},
+    {"behaviour": "an except-when sentence drops its carve-out (spec 6 seed 2's assembly half)", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": "carveOuts := c.carveOuts ++ [φ]", "after": "carveOuts := c.carveOuts"}, "proofs_cut": false, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:39 #guard statements [hd 1, may, .exceptWhen .top] == some [.rule ⟨1, []⟩ (cl .may [.top])]", "lean/VE/EnglishGrammar/Norm/Examples.lean:67 #guard statements [hd 1, .clause (cl .may [a]), .exceptWhen b] == some [.rule ⟨1, []⟩ (cl .may [a, b", "lean/VE/EnglishGrammar/Norm/Examples.lean:68 #guard statements [hd 1, may, .exceptWhen a, .exceptWhen b] == some [.rule ⟨1, []⟩ (cl .may [a, b])]", "lean/VE/EnglishGrammar/Norm/Examples.lean:91 #guard (statements (long 5000)).map (·.flatMap (·.clauses.map (·.carveOuts.length))) == some [5000]"], "status": "KILLED"},
+    {"behaviour": "the unknown-reference check skipped", "file": "lean/VE/EnglishGrammar/Norm/Value.lean", "plant": {"before": "| some n => throw (.unknownRule n)", "after": "| some _ => return rs"}, "proofs_cut": true, "test": ["lean/VE/EnglishGrammar/Norm/Examples.lean:31 #guard faultOf [hd 1, may, .precedence 1 3] == some (.unknownRule 3)", "lean/VE/EnglishGrammar/Norm/Examples.lean:41 #guard faultOf [.precedence 9 1] == some (.unknownRule 9)", "lean/VE/EnglishGrammar/Norm/Examples.lean:42 #guard faultOf [hd 1, may, .precedence 1 0] == some (.unknownRule 0)", "lean/VE/EnglishGrammar/Norm/Examples.lean:43 #guard faultOf [hd 1 [0], may] == some (.unknownRule 0)", "lean/VE/EnglishGrammar/Norm/Examples.lean:44 #guard faultOf [hd 1 [2], may] == some (.unknownRule 2)", "lean/VE/EnglishGrammar/Norm/Examples.lean:46 #guard faultOf [hd 1 [5], may, hd 2, may] == some (.unknownRule 5)", "lean/VE/EnglishGrammar/Norm/Examples.lean:47 #guard faultOf [hd 1 [5], may, .precedence 1 7] == some (.unknownRule 5)"], "status": "KILLED"}
   ],
   "python": [
-    {
-      "behaviour": "a Norm Lean file left unclassified in the generator's lock lists",
-      "file": "tools/english_grammar_gen.py",
-      "plant": {
-        "before": "the `Norm/Value.lean` entry of UNTRUSTED",
-        "after": "deleted"
-      },
-      "proofs_cut": false,
-      "test": [
-        "tests/test_english_grammar_gen.py::test_every_lean_file_of_the_two_directories_is_classified"
-      ],
-      "status": "KILLED"
-    }
-  ],
-  "note": "Each plant alone, restored after. task seed 1 (`unless` read as `if`) is the reader's (en-s6b): en-s6 has no grammar rows. Mechanical mutants per trusted definition: trust-mutants.json."
+    {"behaviour": "a Norm Lean file left unclassified in the generator's lock lists", "file": "tools/english_grammar_gen.py", "plant": {"before": "the `Norm/Value.lean` entry of UNTRUSTED", "after": "deleted"}, "proofs_cut": false, "test": ["tests/test_english_grammar_gen.py::test_every_lean_file_of_the_two_directories_is_classified"], "status": "KILLED"}
+  ]
 }
