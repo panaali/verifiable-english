@@ -67,6 +67,21 @@ def b : EFormula := .pred "noteworthy" [.var 0]
 #guard statements [hd 1, may, .exceptWhen a, .exceptWhen b] != some [.rule ⟨1, []⟩ (cl .may [b, a])]
 #guard faultOf [hd 1, may, .precedence 1 1, .exceptWhen a] == some (.strayCarveOut 3)
 
+-- W1's stored signs (`norm_english.py:97-100`), and a plain wording's own sign (R2).
+#guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [true, false, true, false]
+#guard [true, false].map (Polarity.sign ∘ .plain) == [true, false]
+-- The values later layers produce (EN-4, EN-5, EN-7) are distinct; authoring produces none of them.
+#guard [Bearer.every "act", .named "the company", .author, .unstated].eraseDups.length == 4
+#guard [Place.act, .guard, .carveOut, .bearer].eraseDups.length == 4
+#guard Mode.default "decider" != .strict
+#guard cl .may != { cl .may with residuals := [⟨0, 4, "word|frame|profile", "EN-7", .act⟩] }
+#guard NState.init.scope == none
+-- A translation-mode statement has its clauses, no number and no reference.
+#guard (NormStatement.source [cl .may, cl .mustNot]).clauses == [cl .may, cl .mustNot]
+#guard (NormStatement.source [cl .may]).refs == [] && (NormStatement.source [cl .may]).number? == none
+#guard ruleCount [.source [cl .may], .rule ⟨1, []⟩ (cl .may), .precedence 1 1] == 1
+#guard (statements [hd 1, may, .precedence 1 1]).map (·.flatMap NormStatement.clauses) == some [cl .may]
+
 /-- A long well-formed block: a header, its clause and `k` except-when sentences. `assemble` reads each piece
 once, by structural recursion on the list. -/
 def long (k : Nat) : List Piece := hd 1 :: may :: List.replicate k (.exceptWhen a)
