@@ -315,6 +315,7 @@ module VE.EnglishGrammar.Diagnose
 module VE.EnglishGrammar.E2Examples
 module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
+module VE.EnglishGrammar.Evaluative
 module VE.EnglishGrammar.Examples
 module VE.EnglishGrammar.Extends
 module VE.EnglishGrammar.Fixed.Alternatives
@@ -368,6 +369,7 @@ module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
 module VE.Judgments.Status
+module VE.Judgments.Undeclared
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse
@@ -655,6 +657,7 @@ module VE.Service.SoftSourceExamples
 module VE.Service.StageTimes
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
+module VE.Service.UndeclaredExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
 module VE.SoftNorms.Once
