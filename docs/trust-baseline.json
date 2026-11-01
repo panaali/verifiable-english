@@ -1664,6 +1664,20 @@
    "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
    "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
+   "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
   }
  ]
 }
