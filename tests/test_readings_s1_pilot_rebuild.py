@@ -6,16 +6,16 @@ from pathlib import Path
 import pytest
 
 from tests import lean_routes
-from tests.test_readings_nd_document import as_document
-from tests.test_readings_nd_lean import ASKS, doc1, env1
-from tests.test_readings_s1_lean import norm
+from tests.test_document import unit, write_doc
+from tests.test_readings_s1_lean import entry, norm, reading, reading_set, situation_id
 from tools import readings_s1_pilot as pilot
 from ve.ast import formula_from_data
 from ve.document import check_document, load_document
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.model import FiniteModel
-from ve.readings import _reading_evaluation
+from ve.profiles import LANGUAGE, SPEC_REVISION
+from ve.readings import _reading_evaluation, s1_content_meaning_id
 from ve.readings_s1 import S1Environment
 
 
@@ -34,16 +34,42 @@ def lean():
         pytest.skip("the Lean service has not been built")
 
 
+ASKS = ["binary", "asks", ["var", 0], ["var", 1]]
+
+
 def nd_part(tmp_path, *, scoped=False, name="part"):
-    """F-ND1 as a part document: its reading set under `norm-defaults@0`, whose situation's base is over the filled
-    frame (the `unsaid__` tables, no regulated predicate), as the UDHR parts' are, between two rules of its own.
-    `scoped` lists `scope@0` with one governor (u0 re-guards u2's rule)."""
-    raw = env1()
-    document, _ = doc1(raw)
-    document["units"] = [{"id": "u0", "content": norm("may-help", "help_permitted", True)}, *document["units"],
-                         {"id": "u2", "content": norm("may-help-asked", "help_permitted", True, guard=ASKS)}]
+    """F-ND1 (tests/test_readings_nd_lean.py) as a part document: its reading set under `norm-defaults@0`, whose
+    situation's base is over the filled frame (the `unsaid__` tables, no regulated predicate), as the UDHR parts' are,
+    between two rules of its own. `scoped` lists `scope@0` with one governor (u0 re-guards u2's rule)."""
+    def regulated(role, **extra):
+        return {"role": role, "default": "unspecified", "act": "{0} help {1}", **extra}
+    raw = {"language": LANGUAGE, "profiles": ["norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"],
+           "spec_revision": SPEC_REVISION, "vocabulary": {
+               "sorts": {"agent": {"description": "agent"}, "user": {"description": "user"}}, "constants": {},
+               "predicates": {
+                   "asks": {"arguments": ["user", "agent"], "description": "{0} asks {1}"},
+                   "help_required": {"arguments": ["agent", "user"], "description": "obligation",
+                                     "regulated": regulated("obligation", permission="help_permitted")},
+                   "help_permitted": {"arguments": ["agent", "user"], "description": "permission",
+                                      "regulated": regulated("permission")}}}}
+    sigma = entry({"domains": {"agent": ["a"], "user": ["u"]}, "constants": {},
+                   "relations": {"asks": [], "unsaid__help_permitted": [["a", "u"]], "unsaid__help_required": []}},
+                  "every", {"outcome": {"predicate": "help_required", "tuple": ["a", "u"]}}, True)
+    sid = situation_id(raw, sigma)
+    rs = reading_set("rs_1", "u1", [reading("every", norm("must-help", "help_required", True), {"asks": sid}),
+                                    reading("asks", norm("must-help", "help_required", True, guard=ASKS),
+                                            {"every": sid})], {sid: sigma})
+    env = pilot._environment(raw)
+    for r in rs["readings"]:
+        r["meaning_id"] = s1_content_meaning_id(env, rs["id"], r)
+    contents = {"u0": norm("may-help", "help_permitted", True), "u1": None,
+                "u2": norm("may-help-asked", "help_permitted", True, guard=ASKS)}
+    units, text = [], b""
+    for uid, content in contents.items():
+        units.append(unit(uid, len(text), len(text) + len(TEXTS[uid].encode()), "norm", "specified", content))
+        text += TEXTS[uid].encode()
     (tmp_path / name).mkdir()
-    path = as_document(tmp_path / name, raw, document, TEXTS)
+    path = write_doc(tmp_path / name, text, units, environment_json=raw, reading_sets=[rs])
     meta, source = pilot.read(path)
     if scoped:
         meta["environment"]["profiles"] = sorted([*meta["environment"]["profiles"], "scope@0"])
