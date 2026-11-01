@@ -615,6 +615,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.splitDoc_none
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
+#print axioms VE.Acts.table_free_all_own_split
 #print axioms VE.Acts.table_free_all_shared
 #print axioms VE.Acts.table_free_all_split
 #print axioms VE.Acts.table_free_any

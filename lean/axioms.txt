@@ -177,6 +177,7 @@
 'VE.Acts.splitDoc_none' depends on axioms: [propext, Quot.sound]
 'VE.Acts.splits_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.table_free_all_own' does not depend on any axioms
+'VE.Acts.table_free_all_own_split' does not depend on any axioms
 'VE.Acts.table_free_all_shared' does not depend on any axioms
 'VE.Acts.table_free_all_split' does not depend on any axioms
 'VE.Acts.table_free_any' does not depend on any axioms
