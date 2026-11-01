@@ -181,3 +181,51 @@ sn-b8b: `rights@1` and `risk@1` with their table rows, `tools/senses_propose.py`
 - Known red on main (main-known-red.txt): their files ran in row 1's selection and exited 0
   (`tests/test_lean_service.py`, `tests/test_readings_defaults_rd8_report.py`); none is touched here.
 - Follow-ups: sn-b7b (filed by the DRI), sn-b7c (filed by the DRI as part of the R3 path), sn-b8b (below).
+
+## Spec re-read
+
+- senses-PLAN.md:408-412 ("the base projection is never used to render a candidate"): `display.candidates` renders in
+  the environment `senses.project` returns for the candidate's `lines`, and binds its identities to the candidate's.
+- senses-PLAN.md:356-361 (each candidate's projection is `project D (A.extend choice) E L used`, through
+  `senses.project` with its resolving lines): the projection is called with the reading's `used` and the candidate's
+  `lines`; the re-read's identities must equal the candidate's.
+- senses-PLAN.md:1076-1085 (g1 to g10): each row's state is in the sn-b7 table; no Lean text is printed that Lean did
+  not return.
+- senses-PLAN.md:838 and 7.2 ("same formula up to the renaming of predicate names to sense ids", "need a preamble
+  line", "need a switch", "no longer read, with the reasons"): the four classes of `classify`, plus the base's own
+  refusals counted apart.
+- senses.md 2.2 W2, W5: the glosses and the dropped negative follow Lean's refusals, quoted in SOURCES.md.
+- ve/reviewed-overlays.json's record (digest, reviewer, date, file, scope): each pin has `dictionary_id` (Lean's
+  digest, the key `review_status` reads), `reviewer`, `date`, `pack` and `scope`, plus `name`.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. PASS: the display reads only answers the B6 relays have already typed and bound; what it reads from the re-read
+   is bound: `tests/test_senses_display.py::test_a_reread_bound_to_another_formula_or_projection_is_refused`.
+2. PASS: every plan row and fixture is in the row tables, delivered or cut to a named item by the DRI's decisions
+   (sn-b7) or the size line and the task's cut order (sn-b8); `relay_lint.py` PASS; no in-flight branch touches
+   these files (checked at the start).
+3. PASS: seeded bugs S1-S5 (`docs/senses/sn-b7/mutants.json`) and B1-B4 (`docs/senses/sn-b8/mutants.json`), each
+   failing a named test; no trusted Lean, so no trust mutants.
+4. PASS: one implementation (Lean); existing `ve render` paths are unchanged (the branch runs only with
+   `--senses`; `tests/test_cli.py` exit 0 in row 1's selection); `::test_render_senses_cli_refuses_another_view`.
+5. PASS: rebound formula, mark (`True`, `0`), status, extra unit and each identity refused
+   (`::test_a_reread_bound_to_another_formula_or_projection_is_refused`); another projection refused
+   (`::test_a_base_projection_is_not_the_candidates`, `::test_a_reread_under_another_projection_is_refused`).
+6. PASS: synced with main (`d018243cc`, main's jt-e1s docs and test only); regen `--check`: "checked 35 entries"; the
+   chain gate runs on the final HEAD.
+7. PASS: DELTA.md has no row; trust +0 (`tools/trust_map.py --check`); no signature reserved.
+8. PASS: no existing output changes (new option, new files); `ve render` without `--senses` takes its old path.
+9. PASS: row 1's selection held `tests/test_senses_display.py` and caught `tools/test_layer_policy.py`; row 2's held
+   `tests/test_senses_packs.py` and caught `tests/test_regen_generated.py`.
+10. N.A.: no Lean statement or proof changed.
+11. PASS: the display charges `MAX_CANDIDATES` before any service call (`::test_each_lines_is_projected_once_within_the_limit`,
+    limit and limit+1); budget 0 is the relay's (`tests/test_senses_route.py::test_zero_budget_never_admits`); no
+    sleeps or literal timeouts.
+12. PASS: one `senses.project` per distinct resolving lines, counted (`::test_each_lines_is_projected_once_within_the_limit`);
+    no existing path changed.
+13. PASS: no test removed; `tools/gate_collection.py --check --prebuilt`: "38 added, 0 removed by a trailer, 0
+    refused, 0 stale and 0 malformed trailers".
+14. PASS: both directions for every check (two and one candidate against tampered, unreadable, base and other
+    projections; packs that decode against malformed copies; pins reviewed against one changed byte; same, needs a
+    line, no longer reads, base unread); claims cite their commands; spec re-read above.
