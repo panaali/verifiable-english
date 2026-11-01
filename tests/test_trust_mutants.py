@@ -2704,3 +2704,257 @@ def test_plan_prints_the_counts_and_builds_nothing(sharded, capsys):
                                             capsys=capsys)
         assert code == 0 and not ran and not builds and not (sharded.tmp / "p.json").exists()
         assert out.splitlines() == [json.dumps({**counts, **({"owned": owned} if owned is not None else {})})]
+
+
+# eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume at the same HEAD judges only
+# what it left; another HEAD's record, and a partial record at --merge or --rescore, are never a sweep. The clock is
+# injected (`tm.clock`): each mutant `run` takes STEP seconds of it, so no test waits.
+START, STEP = 1000, 100
+
+
+def clocked(go, monkeypatch, abandon: tuple[str, ...] = ()) -> list[int]:
+    """`go` with an injected clock that each mutant run advances by STEP; a mutant in `abandon` raises
+    `Abandoned` as a Lake run the deadline killed does."""
+    now, real = [START], go.tm.run
+
+    def run(m, *args):
+        if m.id in abandon:
+            go.ran_abandoned.append(m.id)
+            raise go.tm.Abandoned("lake build killed at the deadline")
+        verdict = real(m, *args)
+        now[0] += STEP
+        return verdict
+    go.ran_abandoned = []
+    monkeypatch.setattr(go.tm, "clock", lambda: now[0])
+    monkeypatch.setattr(go.tm, "run", run)
+    return now
+
+
+def without(path: Path, *keys: str) -> str:
+    """`bare` of a record without `keys` too."""
+    import trust_mutants as tm
+    return tm.evidence({k: v for k, v in json.loads(path.read_text()).items() if k not in (*RUN_FACTS, *keys)})
+
+
+def test_a_deadline_stops_new_mutants_and_lists_the_rest_unjudged(sharded, monkeypatch, capsys):
+    """No mutant starts once fewer seconds are left than the median the judged ones took: with 250 s left and 100 s
+    per mutant, M001 (250 left) and M002 (150 left) run, M003 (50 left) does not. The rest the run owns are NOT RUN
+    with the not-started detail, listed in `partial.unjudged` (not M007/M008, past --max-mutants), and it exits 4."""
+    clocked(sharded, monkeypatch)
+    out = sharded.tmp / "partial.json"
+    code, printed_, _, ran, _ = sharded("--json", out, "--max-mutants", 6, "--deadline", START + 250, capsys=capsys)
+    data = json.loads(out.read_text())
+    assert code == sharded.tm.PARTIAL == 4 and ran == ["M001", "M002"]
+    assert data["partial"] == {"deadline": START + 250, "unjudged": ["M003", "M004", "M005", "M006"]}
+    rows = {r["id"]: r for r in data["mutants"]}
+    assert all((rows[i]["status"], rows[i]["raw_status"], rows[i]["detail"]) == (
+        "NOT RUN", "NOT RUN", sharded.tm.NOT_STARTED) for i in data["partial"]["unjudged"])
+    assert [rows[i]["status"] for i in ("M001", "M002", "M007", "M008")] == ["KILLED", "SURVIVOR", "NOT RUN", "NOT RUN"]
+    assert rows["M007"]["detail"] == "" and "PARTIAL: the deadline stopped the run with 4 of its 6" in printed_
+    assert data["tree"] == sharded.tm.git(sharded.root, "rev-parse", "HEAD^{tree}").stdout.strip()
+
+
+def test_a_budget_counts_from_the_start_and_a_past_deadline_judges_nothing(sharded, monkeypatch):
+    """--budget S is --deadline start + S (both: the earlier); a deadline already past starts no build at all."""
+    clocked(sharded, monkeypatch)
+    out = sharded.tmp / "partial.json"
+    assert sharded("--json", out, "--max-mutants", 6, "--budget", 150)[3] == ["M001"]
+    assert json.loads(out.read_text())["partial"]["deadline"] == START + 150
+    assert sharded("--json", out, "--max-mutants", 6, "--budget", 999, "--deadline", START + 150)[3] == ["M001"]
+    code, _, _, ran, _ = sharded("--json", out, "--max-mutants", 6, "--budget", 0)
+    assert code == 4 and not ran
+    assert json.loads(out.read_text())["partial"]["unjudged"] == [f"M00{i}" for i in range(1, 7)]
+
+
+@pytest.mark.parametrize("text", ["nan", "-1", "inf", "1e13"])
+def test_a_deadline_that_is_no_time_stops_the_run(sharded, capsys, text):
+    for flag in ("--deadline", "--budget"):
+        code, _, err, ran, builds = sharded(flag, text, capsys=capsys)
+        assert code == 2 and flag in err and not ran and not builds
+
+
+def test_a_mutant_abandoned_at_the_deadline_is_unjudged_never_unknown(sharded, monkeypatch):
+    """A Lake run the deadline kills (`Abandoned`) leaves its mutant unjudged (NOT RUN, the abandoned detail), not
+    UNKNOWN; the deadline also stopping the control phase leaves every mutant unjudged and runs none."""
+    clocked(sharded, monkeypatch, abandon=("M002",))
+    out = sharded.tmp / "partial.json"
+    code, _, _, ran, _ = sharded("--json", out, "--max-mutants", 6, "--deadline", START + 10 ** 6)
+    data = json.loads(out.read_text())
+    assert code == 4 and sharded.ran_abandoned == ["M002"] and "M002" not in ran
+    assert data["partial"]["unjudged"] == ["M002"] and data["mutants"][1]["detail"] == sharded.tm.ABANDONED
+    assert data["mutants"][2]["raw_status"] == "UNKNOWN"  # M003's own verdict, judged
+
+    def control(self, env, *args, timeout=None):
+        raise sharded.tm.Abandoned("lake build killed at the deadline")
+    monkeypatch.setattr(sharded.tm.Scratch, "lake", control)
+    code, _, _, ran, _ = sharded("--json", out, "--max-mutants", 6, "--deadline", START + 10 ** 6)
+    assert code == 4 and not ran
+    assert json.loads(out.read_text())["partial"]["unjudged"] == [f"M00{i}" for i in range(1, 7)]
+
+
+def test_a_lake_run_past_the_deadline_is_killed_or_never_started(tmp_path, monkeypatch):
+    """`Scratch.lake` past the deadline starts no process; one still going at the deadline is waited for only the
+    seconds left and then killed (`Abandoned`); a --build-timeout shorter than those seconds is TIMED_OUT as before."""
+    import trust_mutants as tm
+    now, waits, killed = [START], [], []
+
+    class Child:
+        pid = 7
+
+        def communicate(self, timeout=None):
+            waits.append(timeout)
+            if timeout is not None:
+                raise subprocess.TimeoutExpired("lake", timeout)
+            return "", ""
+    started = []
+    monkeypatch.setattr(tm, "clock", lambda: now[0])
+    monkeypatch.setattr(tm.subprocess, "Popen", lambda *a, **k: started.append(a) or Child())
+    monkeypatch.setattr(tm.os, "killpg", lambda pid, sig: killed.append(pid))
+    monkeypatch.setattr(tm.lake_outputs, "lean_executable", lambda env, name: name)
+    scratch = object.__new__(tm.Scratch)
+    scratch.lean = tmp_path
+    tm.DEADLINE.reset(START)
+    try:
+        with pytest.raises(tm.Abandoned):
+            scratch.lake({}, "build")
+        assert not started
+        tm.DEADLINE.reset(START + 30)
+        with pytest.raises(tm.Abandoned):
+            scratch.lake({}, "build", timeout=HANG_TIMEOUT)
+        assert waits == [30, None] and killed == [7]
+        tm.DEADLINE.reset(START + 2 * HANG_TIMEOUT)
+        assert scratch.lake({}, "build", timeout=HANG_TIMEOUT)[0] == tm.TIMED_OUT and waits[-2] == HANG_TIMEOUT
+    finally:
+        tm.DEADLINE.reset(None)
+
+
+def test_a_resume_at_the_same_head_judges_only_the_unjudged_and_gives_the_one_runs_record(sharded, monkeypatch):
+    """--resume of a partial record at its HEAD runs only `partial.unjudged`, keeps every other verdict as PREV
+    judged it, and writes the record one uninterrupted run writes (but its `resumed`), with its exit code."""
+    now = clocked(sharded, monkeypatch)
+    one, prev, again = (sharded.tmp / f"{n}.json" for n in ("one", "prev", "again"))
+    code = sharded("--json", one, "--max-mutants", 6)[0]
+    now[0] = START
+    assert sharded("--json", prev, "--max-mutants", 6, "--deadline", START + 250)[0] == 4
+    got = sharded("--json", again, "--max-mutants", 6, "--resume", prev)
+    data = json.loads(again.read_text())
+    assert got[0] == code == 1 and got[3] == ["M003", "M004", "M005", "M006"]
+    assert data["resumed"] == {"file": str(prev), "head": data["head"], "kept": 2, "rerun": 4}
+    assert "partial" not in data and without(again, "resumed") == bare(one)
+    assert sharded("--json", again, "--max-mutants", 6, "--resume", one)[3] == []  # a whole record: nothing left
+
+
+def test_a_resumed_part_merges_with_the_others_into_the_one_runs_record(sharded, monkeypatch, capsys):
+    """The coordination path: part 2 of 3 stops at its deadline, its --merge is refused, its --resume at the same
+    HEAD runs only its unjudged mutants, and the merge then gives the unsharded record, `resumed` kept in its
+    `shards` entry."""
+    now = clocked(sharded, monkeypatch)
+    one, merged = sharded.tmp / "one.json", sharded.tmp / "merged.json"
+    code = sharded("--json", one, "--max-mutants", 6)[0]
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    now[0] = START
+    assert sharded("--shard", "2/3", "--json", paths[1], "--max-mutants", 6, "--deadline", START + 50)[3] == ["M002"]
+    assert json.loads(paths[1].read_text())["partial"]["unjudged"] == ["M005"]
+    capsys.readouterr()
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) == 2 and not merged.exists()
+    assert "is a partial record" in capsys.readouterr().err
+    prev = sharded.tmp / "part-2.partial.json"
+    prev.write_text(paths[1].read_text())
+    assert sharded("--shard", "2/3", "--json", paths[1], "--max-mutants", 6, "--resume", prev)[3] == ["M005"]
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) == code
+    assert bare(merged) == bare(one)
+    assert json.loads(merged.read_text())["shards"][1]["resumed"] == {
+        "file": str(prev), "head": json.loads(one.read_text())["head"], "kept": 1, "rerun": 1}
+
+
+def test_merge_refuses_a_partial_part_as_complete(sharded, monkeypatch, capsys):
+    """The DRI's condition (dri-decisions-20261031-eff-tm-partial item 1): a part with `partial` is never merged as
+    a complete one, nor is it once `partial` is cut out (its unjudged rows have no verdict), resealed or not."""
+    now = clocked(sharded, monkeypatch)
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    now[0] = START
+    sharded("--shard", "1/3", "--json", paths[0], "--max-mutants", 6, "--deadline", START + 50)
+    merged = sharded.tmp / "merged.json"
+    for change in (lambda d: d, lambda d: d.pop("partial") and d, lambda d: resealed(d.pop("partial") and d)):
+        d = change(json.loads(paths[0].read_text()))
+        bad = sharded.tmp / "bad-part-1.json"
+        bad.write_text(sharded.tm.evidence(d))
+        capsys.readouterr()
+        assert sharded.tm.main(["--merge", str(merged), str(bad), *map(str, paths[1:])]) == 2
+        err = capsys.readouterr().err
+        assert not merged.exists() and ("is a partial record" in err if "partial" in d else "has no verdict" in err)
+
+
+def test_rescore_of_a_partial_record_is_a_full_run(sharded, monkeypatch, capsys):
+    """--rescore reads no partial record: its verdicts are --resume's, at its HEAD only."""
+    clocked(sharded, monkeypatch)
+    prev = sharded.tmp / "prev.json"
+    sharded("--json", prev, "--max-mutants", 6, "--deadline", START + 250)
+    _, out, _, ran, _ = sharded("--json", sharded.tmp / "r.json", "--max-mutants", 6, "--rescore", prev,
+                                capsys=capsys)
+    assert len(ran) == 6 and "a full run, since it is a partial record" in out
+
+
+def commit_again(go):
+    git(go.root, "commit", "-q", "--allow-empty", "-m", "moved")
+
+
+IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says)
+    ("another-head", lambda go, p: commit_again(go), "not at this HEAD"),
+    ("another-tree", lambda go, p: p.update(tree="0" * 40), "not at this HEAD"),
+    ("another-commit-same-tree", lambda go, p: p.update(head="0" * 40), "not at this HEAD"),
+    ("no-tree", lambda go, p: p.pop("tree"), "records no tree"),
+    ("tree-retyped", lambda go, p: p.update(tree=1), "records no tree"),
+    ("inputs", lambda go, p: p["inputs"].update(lean="other"), "its inputs differ"),
+    ("max-mutants", lambda go, p: p.update(max_mutants=5), "--max-mutants or --shard"),
+    ("shard", lambda go, p: p.update(shard={"k": 1, "n": 1, "owned": []}), "--max-mutants or --shard"),
+    ("rescore", lambda go, p: p.update(rescore={"file": "p", "head": None, "mode": "full", "changed": [],
+                                                "reused": 0, "rerun": 6, "full_run": "x"}), "--rescore"),
+    ("plan", lambda go, p: p["mutants"][0].update(after="other"), "not this tree's"),
+    ("unjudged-forged", lambda go, p: p["partial"].update(unjudged=["M003"]), "cannot be read"),
+    ("unjudged-detail", lambda go, p: p["mutants"][3].update(detail="x"), "cannot be read"),
+    ("row-retyped", lambda go, p: p["mutants"][0].update(status=1), "cannot be read"),
+    ("not-json", lambda go, p: p.clear(), "records no tree"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), IGNORED_RESUMES, ids=[r[0] for r in IGNORED_RESUMES])
+def test_a_resume_of_another_heads_or_unbound_record_is_ignored(sharded, monkeypatch, capsys, name, change, says):
+    """--resume reuses no verdict of a PREV of another commit or tree, other inputs, plan, part or --rescore, or one
+    whose rows or `partial` are not what this tool writes: one line says why and every mutant runs again."""
+    clocked(sharded, monkeypatch)
+    prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
+    sharded("--json", prev, "--max-mutants", 6, "--deadline", START + 250)
+    data = json.loads(prev.read_text())
+    change(sharded, data)
+    prev.write_text(json.dumps(data))
+    _, out, _, ran, _ = sharded("--json", again, "--max-mutants", 6, "--resume", prev, capsys=capsys)
+    resumed = json.loads(again.read_text())["resumed"]
+    assert len(ran) == 6 and f"--resume {prev}: its verdicts are not reused" in out and says in out, out
+    assert resumed["head"] is None and resumed["kept"] == 0 and says in resumed["ignored"]
+    assert not any("reused_from" in r for r in json.loads(again.read_text())["mutants"])
+
+
+RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too few: no part this tool writes
+    *((f"resumed-{f}-{v!r}", lambda ps, f=f, v=v: ps[0].update(resumed={
+        "file": "p", "head": "h", "kept": 1, "rerun": 1, f: v}), NOT_WRITTEN)
+      for f, v in (("kept", True), ("rerun", "1"), ("head", 1), ("file", None), ("ignored", None), ("x", 1))),
+    ("resumed-missing-kept", lambda ps: ps[0].update(resumed={"file": "p", "head": "h", "rerun": 1}), NOT_WRITTEN),
+    ("resumed-not-a-dict", lambda ps: ps[0].update(resumed=[1]), NOT_WRITTEN),
+    ("tree-retyped", lambda ps: ps[0].update(tree=1), NOT_WRITTEN),
+    ("tree-missing", lambda ps: ps[0].pop("tree"), NOT_WRITTEN),
+    ("tree", lambda ps: ps[1].update(tree=shifted(ps[1]["tree"])), "disagree on tree:"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), RESUMED_PARTS, ids=[r[0] for r in RESUMED_PARTS])
+def test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool(sharded, capsys, name, change, says):
+    test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
+
+
+def test_a_runs_deadline_ends_with_the_run(sharded, monkeypatch):
+    """`DEADLINE` is one run's: after main returns (or stops), no later Lake run in the process reads it."""
+    clocked(sharded, monkeypatch)
+    sharded("--json", sharded.tmp / "p.json", "--max-mutants", 6, "--deadline", START + 250)
+    assert sharded.tm.DEADLINE.at is None and sharded.tm.DEADLINE.left() is None
+    assert sharded("--shard", "0/3", "--deadline", START)[0] == 2 and sharded.tm.DEADLINE.at is None

@@ -38,6 +38,7 @@ import ResponseShape.Schemas.SearchBudget
 import ResponseShape.Schemas.Calc
 import ResponseShape.Schemas.Cardinality
 import ResponseShape.Schemas.Scope
+import ResponseShape.Schemas.SensesProject
 
 /-! The client's response schemas (`ve/backends/lean_service_schema/`), one module per file. -/
 
@@ -87,7 +88,8 @@ def files : List File := [
   SearchBudget.file,
   Calc.file,
   Cardinality.file,
-  Scope.file].map File.qualified
+  Scope.file,
+  SensesProject.file].map File.qualified
 
 /-- `{file name: document}`: what `tools/response_schemas.py` writes. -/
 def rendered : Except String Json := do

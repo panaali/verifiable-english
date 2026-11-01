@@ -14,6 +14,8 @@ import VE.Readings.SoftVerdicts
 import VE.Readings.SoftExamples
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
+import VE.Readings.SoftSup
+import VE.Readings.SoftSupExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -31,11 +33,16 @@ import VE.EnglishGrammar.SourceWords
 import VE.EnglishGrammar.SourceWordsExamples
 import VE.Senses.Examples
 import VE.Senses.DocumentExamples
+import VE.Senses.RunExamples
+import VE.Service.RegistryExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
 import VE.Compose.Adjoin
 import VE.Compose.Examples
+import VE.Compose.Stack
+import VE.Compose.Contract
+import VE.Compose.ContractExamples
 import VE.Readings.Doc
 import VE.SoftNorms.Once
 import VE.Norms.Once
@@ -73,6 +80,9 @@ import VE.Readings.SupWitness
 import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
+import VE.Readings.BarQuiet
+import VE.Readings.RightsFixtures
+import VE.Readings.RightsExamples
 import VE.Readings.SupFree
 import VE.Readings.SupAll
 import VE.Readings.SupWireSound
@@ -105,6 +115,7 @@ import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
+import VE.SoftNorms.TreeExamples
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
@@ -216,6 +227,8 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Sources
+import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
