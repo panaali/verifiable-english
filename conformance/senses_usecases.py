@@ -8,7 +8,9 @@ formulas are equal up to renaming each covered predicate to one sense id (consis
 line when the senses reading is open and a candidate of each open unit is that formula (Lean's resolving lines are
 kept); it is switched when it reads the same with a non-default occurrence in Lean's sense map; anything else no
 longer reads, with Lean's code and text. A sentence the base does not read is counted apart, with the base's code.
-Sentences are read one at a time, never as a whole document (L70).
+Sentences are read one at a time, never as a whole document (L70). Declaration lines (7.2): before, the environment
+and overlay lines the covered predicates take; after, the pack lines they need (their sense lines and the sort lines
+those senses name). The preamble lines the sentences need are counted apart.
 
 Usage: `uv run python conformance/senses_usecases.py --write` (writes docs/senses/sn-b8/coverage.json) or `--check`.
 """
@@ -61,25 +63,30 @@ def _tagged(path: str) -> list[str]:
             for sentence in re.split(r"(?<=\.)\s+", re.sub(r"^\[[a-z]+\]\s*", "", part.strip()))]
 
 
-# Each use case: its pack, environment, overlay, the predicates the pack covers (docs/senses/sn-b8/SOURCES.md)
-# and its English sentences.
+def _same(*names: str) -> dict:
+    return {name: name for name in names}
+
+
+# Each use case: its pack, environment, overlay, the predicates the pack covers, each with the pack word that takes
+# its place (docs/senses/sn-b8/SOURCES.md), and its English sentences.
 USECASES = {
     "agent-policy": dict(pack="policies@1", env=_agent_policy, overlay=None,
-                         covered=("reads", "writes", "deletes", "contacts", "messages", "discloses", "resides_in",
-                                  "confidential", "tracked", "allowlisted", "principal", "confirmed", "readonly",
-                                  "privileged", "affordable", "reported"),
+                         covered={**_same("reads", "writes", "deletes", "contacts", "messages", "discloses"),
+                                  "resides_in": "resides",
+                                  **_same("confidential", "tracked", "allowlisted", "principal", "confirmed",
+                                          "readonly", "privileged", "affordable", "reported")},
                          sentences=lambda: (_lines("usecases/agent-policy/policy.ve", r"^Rule \d+\. ")
                                             + _lines("usecases/agent-policy/log-schema.ve")
                                             + _lines("usecases/agent-policy/log.ve"))),
     "cedar-attributes": dict(pack="policies@1", env=lambda: _json("usecases/cedar-attributes/environment.json"),
-                             overlay=None, covered=(),
+                             overlay=None, covered={},
                              sentences=lambda: _rendered(_json("usecases/cedar-attributes/environment.json"),
                                                          "usecases/cedar-attributes/claim.ve")),
     "fluent": dict(pack="software-services@1", env=lambda: _json("examples/fluent/environment.json"), overlay=None,
-                   covered=("deployed", "reviewed", "owns"),
+                   covered=_same("deployed", "reviewed", "owns"),
                    sentences=lambda: _rendered(_json("examples/fluent/environment.json"), "examples/fluent/examples.ve")),
     "assist": dict(pack="software-services@1", env=lambda: _json("examples/assist/environment.json"),
-                   overlay="examples/assist/environment.english.json", covered=("deployed", "reviewed", "safe"),
+                   overlay="examples/assist/environment.english.json", covered=_same("deployed", "reviewed", "safe"),
                    sentences=lambda: _tagged("examples/assist/argument.txt")),
 }
 
@@ -159,6 +166,26 @@ def declaration_lines(env_raw: dict, overlay: dict | None, covered) -> int:
     return sum(1 + len(predicates[name]) + len(entries.get(name, {})) for name in covered)
 
 
+def pack_lines(senses_env: Environment, senses_overlay, pack: bytes, covered: dict, renaming: dict) -> dict:
+    """The pack lines the covered predicates need (plan 7.2's "after" on a use case): the sense line of each one's
+    word and the sort lines those senses' kinds name. Lean ties each word to its sense ids (`senses.project` over
+    that word alone); a predicate the sentences read must be renamed to that id. A word that is not one sense line
+    Lean reads it to stops the measure: the count would have no line to pick."""
+    data = json.loads(pack)
+    senses = set()
+    for name, word in covered.items():
+        entries = [i for i, sense in enumerate(data["senses"]) if sense["word"] == word]
+        symbols = set()
+        if len(entries) == 1:
+            projected = route.project(senses_env, [pack], "", [word], overlay=senses_overlay)["projection"]
+            symbols = set(projected["environment"]["vocabulary"]["predicates"]) - set(senses_env.predicates)
+        if len(symbols) != 1 or name in renaming and renaming[name] not in symbols:
+            raise ValueError(f"the pack sense of {name!r} ({word!r}) is not one line Lean reads it to")
+        senses |= set(entries)
+    kinds = {kind for i in senses for kind in data["senses"][i]["kinds"]}
+    return {"senses": len(senses), "sorts": sum(1 for sort in data["sorts"] if sort["name"] in kinds)}
+
+
 def negatives_removed(env_raw: dict, overlay: dict | None, covered) -> int:
     """Hand-written negatives of covered predicates whose wording is a simple adjective (`{0} is not w`)."""
     entries = [env_raw["vocabulary"]["predicates"][name] for name in covered]
@@ -182,9 +209,12 @@ def measure(names=None) -> dict:
         counts = {}
         for row in rows:
             counts[row["class"]] = counts.get(row["class"], 0) + 1
+        needed = pack_lines(senses_env, senses_overlay, pack, case["covered"], renaming)
         out[name] = {"pack": case["pack"], "sentences": len(rows), "counts": counts, "renaming": renaming,
                      "declaration_lines": {"before": declaration_lines(env_raw, overlay, case["covered"]),
-                                           "after": len({line for row in rows for line in row.get("lines", [])})},
+                                           "after": needed["senses"] + needed["sorts"],
+                                           "pack_senses": needed["senses"], "pack_sorts": needed["sorts"]},
+                     "preamble_lines": len({line for row in rows for line in row.get("lines", [])}),
                      "negatives_removed": negatives_removed(env_raw, overlay, case["covered"]),
                      "rows": [row for row in rows if row["class"] not in ("same",)]}
     return out
