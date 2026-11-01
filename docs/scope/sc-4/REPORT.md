@@ -70,11 +70,14 @@ docs/trust-baseline.json and the FOLLOW-UPS.md row under `## sc-4`. The trust mu
 
 ## Tests
 
-- `lake build`: Build completed successfully (1215 jobs). `python3 lean/audit.py` runs in the regen's audit
-  entries; the new theorems use only `propext`, `Classical.choice` and `Quot.sound` (lean/axioms.txt).
-- Selected tests (`mac-pytest.sh --select`, the cloud pool's fast stage at ae3628d9f): 4 failed, 9792 passed,
-  6 skipped. All 4 were `test_assurance_manifest.py` (Wire.lean's decoder pin and FarExamples' classification). I
-  fixed them in 482c94133; rerunning the 4 ids gave 4 passed. None is in main-known-red.txt.
+- `lake build`: Build completed successfully (1215 jobs). `python3 lean/audit.py`: "PASS: 711 source files; 7919
+  named theorem declarations audited"; the new theorems use only `propext`, `Classical.choice` and `Quot.sound`
+  (lean/axioms.txt).
+- Selected tests (`mac-pytest.sh --select` at ae3628d9f; 432 units): the fast stage gave 4 failed, 9792 passed and
+  6 skipped. The six cloud shards' results are on `claude/cc-result-sc-4-ae3628d9-t535106-s0`..`s5` (`shard.json`):
+  431 units passed. The one failed unit is `test_assurance_manifest.py`, with the same 4 tests (Wire.lean's decoder
+  pin and FarExamples' classification). I fixed them in 482c94133, and rerunning the 4 ids gave 4 passed. None is in
+  main-known-red.txt.
 - Pilot bytes expected to move: 0 (SC-M0: no unit says "notwithstanding", and none is a forward declaration).
 
 ## Overlaps with branches in flight
