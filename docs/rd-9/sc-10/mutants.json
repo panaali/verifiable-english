@@ -1,0 +1,26 @@
+{
+  "comment": "sc-10 seeded bugs (Lean, the only language this item changes). Each was planted alone in the final lean/VE/Readings/SoftSup.lean, `lake build VE.Readings.SoftSupExamples` was run, the failing proof or #guard is recorded, and the file was restored (the build after the run completed). M1 and M5 were run twice: as planted (supX_pull's proof fails), and again with supX_pull's proof stubbed for that run only, so that the examples file elaborates and the #guards it breaks are listed. Line numbers are of the files at the commit that adds this file.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Readings.supX", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "supX N := [] (the task's seeded bug 3)",
+     "test": "lean/VE/Readings/SoftSup.lean:1018 supX_pull (proof fails); with the proof stubbed: lean/VE/Readings/SoftSupExamples.lean:39 (S-4), :43, :44 (S-4'), :145, :146, :154 (the supX_pull fixtures)",
+     "result": "KILLED"},
+    {"id": "M2", "definition": "VE.Readings.supCertificateCheckSD", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "slotUnder N.D [] in place of slotUnder N.D A: the check ignores A (the task's seeded bug 1)",
+     "test": "lean/VE/Readings/SoftSupExamples.lean:80 #guard: each atom of A closes from itself",
+     "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Readings.fillPremisesSD_pull", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "S2a's `pull N.D c B` in place of `pullF N c B` on the choice's side of the statement",
+     "test": "lean/VE/Readings/SoftSup.lean:642 fillPremisesSD_pull (proof fails at :690, the first step that reads the choice's side as pullF); the statement with pull is false by lean/VE/Readings/SoftSupExamples.lean:166 (NSDq at base1 [(a,u)]: the superposed Fill_T holds, :162, the pulled one fails)",
+     "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Readings.exc_pullF", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "the slot hypothesis weakened to the choice's atoms: hsl : Sat B (atoms N.D c), so no quiet premise",
+     "test": "lean/VE/Readings/SoftSup.lean:762 exc_pullF (proof fails at :796, the quiet premise of an unchosen necessary condition) and :1018 supX_pull; the statement without the slot is false by lean/VE/Readings/SoftSupExamples.lean:154 (NSD2: slot broken, supX false, choiceX true)",
+     "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Readings.supX", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "supX with S2a's coherence premises on the unfilled tree: VE.SoftNorms.softPremises (sup N.D).1.soft (D3)",
+     "test": "lean/VE/Readings/SoftSup.lean:1018 supX_pull (proof fails); with the proof stubbed: lean/VE/Readings/SoftSupExamples.lean:39 (S-4: the coherence premise no longer reads unsaid__y_permitted)",
+     "result": "KILLED"}
+  ],
+  "not_run": "The task's seeded bug 2 (the countermodel's bits naming the other choice) needs sd_superpose_countermodel's fixture, which moves to sc-10b with the theorem."
+}
