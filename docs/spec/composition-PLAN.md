@@ -693,7 +693,8 @@ theorem encodes_unique (D) (h) (hs) (B : VE.Structure) (hB : BaseAdmissibleP (co
     without a liberty on m, the bar's node in sup D has an empty guard and c's document has no such node (F21). -/
 theorem superpose_faithful (D : Doc) (h : WellFormedDoc D = true) (hs : superposable D = true) (c : Choice)
     (hc : Compatible D c) (S : VE.Structure) (he : Encodes D c S) (hq : Sat S (choicePremises D))
-    (r : Regulated) (hr : r ∈ (correlate (choiceDoc D c).1).T.regulated) (vs : List S.Carrier) :
+    (r : Regulated) (hr : r ∈ (correlate (choiceDoc D c).1).T.regulated) (vs : List S.Carrier)
+    (ht : VE.TupleTyped S r.sorts vs) :   -- added by DRI decision reviews/dri-decisions-20261031-cmp-s2b.md item 1
   ValueSoft (correlate (sup D).1) r S vs = ValueSoft (correlate (choiceDoc D c).1) r (pull (nameMap D c) S) vs
 
 /-- Bases correspond in both directions. -/
