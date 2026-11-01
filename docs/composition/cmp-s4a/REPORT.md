@@ -1,6 +1,6 @@
 # cmp-s4a: formula positions, slots and their resolution (discourse 14.2, 14.3)
 
-- **Status:** done, no DRI signature needed. Lean code at `708693a28`; this report and the last test record follow it.
+- **Status:** done, no DRI signature needed. Lean code at `708693a28`; the selected tests pass on `2de762fc9` (164 of 164).
 - **What changed:** `lean/VE/Discourse/Positions.lean` holds 14.2 and 14.3's resolution and intended meaning, with the eight theorems proved (no `sorry`, no new axiom). `lean/VE/Discourse/PositionsExamples.lean` holds the 14.8 fixtures that need no fence compiler.
 - **Cut to `cmp-s4ab`:** 14.3 steps 1 and 3 to 7, the checks the composed path runs around the fence compiler, with fixtures S4-5, S4-6, S4-8, S4-11 (header option), S4-12, S4-13 and S4-19 and the task's four named seeded bugs. Reason: size, see "Size".
 - **Trust:** S +109, K +0, V +0. SIGNED by standing ruling R16. The trust mutants exit 0.
@@ -123,9 +123,9 @@ FOLLOW-UP below.
 - `cd lean && lake build` passes. `python3 lean/audit.py` passes (above).
 - `uv run python tools/regen_generated.py --check --skip route-cases` is clean except trust-tables, which passed after
   `--allow`. route-cases needs the Rust release binary, and its inputs did not change.
-- Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` gave exit 0, 164 units in 4
-  shards, all passed. That run was on tree `e66be6e13b` (HEAD `9b4b5b79d`). The later rerun on the final tree is
-  recorded in the build report.
+- Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the final tree
+  `dc6900469e` (HEAD `2de762fc9`) gave exit 0, 164 units in 5 shards, all passed. An earlier run on `9b4b5b79d` also
+  passed (164 units).
 - No test in `main-known-red.txt` was hit.
 - Not run: the full gate (the chain runs it on the final HEAD).
 
