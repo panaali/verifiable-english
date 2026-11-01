@@ -15909,7 +15909,17 @@
         "VE.Cardinality.RunExamples.chainPremise",
         "VE.Cardinality.RunExamples.chainModel",
         "VE.Cardinality.RunExamples.chain",
-        "VE.Cardinality.RunExamples.rel"
+        "VE.Cardinality.RunExamples.rel",
+        "VE.Cardinality.RunExamples.paraEnv",
+        "VE.Cardinality.RunExamples.para",
+        "VE.Cardinality.RunExamples.line",
+        "VE.Cardinality.RunExamples.share",
+        "VE.Cardinality.RunExamples.estimates",
+        "VE.Cardinality.RunExamples.described",
+        "VE.Cardinality.RunExamples.curiousCount",
+        "VE.Cardinality.RunExamples.fixed",
+        "VE.Cardinality.RunExamples.aaa",
+        "VE.Cardinality.RunExamples.halfPolicymakers"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -16180,7 +16190,8 @@
         "ResponseShape.Schemas.Cardinality.claim",
         "ResponseShape.Schemas.Cardinality.document",
         "ResponseShape.Schemas.Cardinality.sizes",
-        "ResponseShape.Schemas.Cardinality.countermodel"
+        "ResponseShape.Schemas.Cardinality.countermodel",
+        "ResponseShape.Schemas.Cardinality.paraphrase"
       ]
     },
     "ResponseShape/Encoders/Cardinality.lean": {
@@ -16945,6 +16956,44 @@
         "VE.Weighing.ZoneFixtures.rec0",
         "VE.Weighing.ZoneFixtures.rx",
         "VE.Weighing.ZoneFixtures.ry"
+      ]
+    },
+    "VE/Cardinality/Render.lean": {
+      "D[V]": [
+        "VE.Cardinality.Render.describe",
+        "VE.Cardinality.Render.inParens",
+        "VE.Cardinality.Render.body",
+        "VE.Cardinality.Render.members",
+        "VE.Cardinality.Render.atLeastOne",
+        "VE.Cardinality.Render.term",
+        "VE.Cardinality.Render.operand",
+        "VE.Cardinality.Render.positive",
+        "VE.Cardinality.Render.tie",
+        "VE.Cardinality.Render.place",
+        "VE.Cardinality.Render.relText",
+        "VE.Cardinality.Render.cmpText",
+        "VE.Cardinality.Render.countTerm",
+        "VE.Cardinality.Render.count",
+        "VE.Cardinality.Render.formula",
+        "VE.Cardinality.Render.initial",
+        "VE.Cardinality.Render.paraphrase"
+      ],
+      "G[V]": [
+        "VE.Cardinality.Render.M",
+        "VE.Cardinality.Render.emit",
+        "VE.Cardinality.Render.piece"
+      ],
+      "G[R]": [
+        "VE.Cardinality.Render.maxBytes",
+        "VE.Cardinality.Render.tooLong"
+      ]
+    },
+    "VE/Cardinality/RenderTheorems.lean": {
+      "S": [
+        "VE.Cardinality.Render.Charges"
+      ],
+      "P": [
+        "VE.Cardinality.Render.tacticCharges"
       ]
     }
   }
