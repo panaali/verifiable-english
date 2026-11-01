@@ -4,7 +4,7 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 66 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 34 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
@@ -13,7 +13,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 14 modules — -
-- [docs/judgment-terms/](docs__judgment-terms.md) — 6 modules — -
+- [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -49,7 +49,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/math-evidence/](docs__math-evidence.md) — 3 modules — -
 - [docs/math-evidence-me-1c/](docs__math-evidence-me-1c.md) — 2 modules — -
 - [docs/merge-tooling/](docs__merge-tooling.md) — 1 modules — -
-- [docs/norm-defaults/](docs__norm-defaults.md) — 1 modules — -
+- [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
@@ -98,7 +98,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
-- [lean/VE/Readings/](lean__VE__Readings.md) — 74 modules — -
+- [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
+- [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 12 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
@@ -107,21 +108,21 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 14 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 24 modules — -
-- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 11 modules — -
+- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 12 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
-- [rust/](rust.md) — 36 modules — -
+- [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 94 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 87 modules — -
 - [tests/ part 4](tests--part-4.md) — 93 modules — -
-- [tests/ part 5](tests--part-5.md) — 82 modules — -
-- [tests/ part 6](tests--part-6.md) — 87 modules — -
-- [tests/ part 7](tests--part-7.md) — 18 modules — -
+- [tests/ part 5](tests--part-5.md) — 81 modules — -
+- [tests/ part 6](tests--part-6.md) — 86 modules — -
+- [tests/ part 7](tests--part-7.md) — 24 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -
 - [tools/ part 2](tools--part-2.md) — 6 modules — -
@@ -137,7 +138,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [ve/english_grammar/](ve__english_grammar.md) — 1 modules — The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).
 - [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
-- [ve/senses/](ve__senses.md) — 1 modules — Sense pack transport and review provenance.
+- [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
 - [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.
 - [ve/wire_contract/](ve__wire_contract.md) — 2 modules — Diagnostic wire tables.
 - [ve_experiments/](ve_experiments.md) — 34 modules — -

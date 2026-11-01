@@ -328,7 +328,8 @@ theorem ruleFields_spec (x : Option String) (j : Json) (R : SoftNode)
     R.hard = (match raw.getObjVal? "hard" with | .ok (.bool b) => b | _ => false) ∧
     R.exception = (match raw.getObjVal? "exception" with
       | .ok .null | .error _ => none
-      | .ok e => (VE.SoftNorms.Phases.exceptionFields x R.name e).toOption) := by
+      | .ok e => (VE.SoftNorms.Phases.exceptionFields x R.name e).toOption) ∧
+    R.splitFrom = none := by
   unfold VE.SoftNorms.Phases.ruleFields at h
   extract_lets raw seen given k₁ at h
   split at h
@@ -406,7 +407,7 @@ theorem ruleFields_spec (x : Option String) (j : Json) (R : SoftNode)
       simp -zeta only [je] at h
       cases h
       subst hmd hrk hal hhd hex
-      exact ⟨⟨obj, by assumption, by assumption⟩, rfl, rfl, rfl, rfl, rfl⟩
+      exact ⟨⟨obj, by assumption, by assumption⟩, rfl, rfl, rfl, rfl, rfl, rfl⟩
     · obtain ⟨_, h', -⟩ := (ebind_ok _ _ _).mp h; cases h'
   · obtain ⟨_, h', -⟩ := (ebind_ok _ _ _).mp h; cases h'
 
