@@ -106,13 +106,17 @@ def test_rust_engine_records_equal_lean_python_and_the_golden(rust_rows):
 
 
 def test_the_deferred_share_is_counted_and_never_compared(rust_rows):
-    """A deferred row passes `share` whatever its record says; a fault row with a wrong record does not."""
+    """A deferred row passes `share` whatever its record says; no rows, a missing row or a fault row with a
+    wrong record does not."""
     rows = [dict(row) for row in rust_rows]
     for row in rows:
         if row["outcome"] == "deferred":
             row["record"] = {"wrong": True}
     assert share(rows) == share(rust_rows)
     fault = next(row for row in rows if row["outcome"] == "fault")
+    for missing in ([], rows[:-1]):
+        with pytest.raises(ValueError):
+            share(missing)
     fault["record"] = {**fault["record"], "text": "other"}
     with pytest.raises(AssertionError):
         share(rows)

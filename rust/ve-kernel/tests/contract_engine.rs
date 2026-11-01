@@ -155,6 +155,7 @@ fn a_large_input_ends_within_the_limit_and_one_step_over_is_refused() {
     let (outcome, used) = run_within(demo, &large(n), MAX_ENGINE_UNITS).unwrap();
     assert_eq!((outcome, used), (Outcome::Deferred("3.4".into()), base + n as u64 * step));
     assert_eq!(run(demo, &large(n)).unwrap(), Outcome::Deferred("3.4".into()));
+    assert_eq!(run_within(demo, &large(0), 0).unwrap_err().code, "ResourceLimit");
     let over = run(demo, &large(n + 1)).unwrap_err();
     assert_eq!((over.code.as_str(), over.message.as_str()), ("ResourceLimit", "wire contract engine exceeds 1000000 units"));
 }
