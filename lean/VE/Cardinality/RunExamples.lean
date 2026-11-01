@@ -533,4 +533,113 @@ def chain (k n u : Nat) (extra : List Json := []) : Json :=
 #guard err (chain 3 1000 0) == VE.Time.Wire.budgetExhausted
 #guard (answer (chain 3 10 0)).getObjValD "refutes" == .bool true
 
+/-! ## qt-a3db: the `paraphrase` case, the plan's rows (quantities-PLAN.md 2.1) -/
+
+def paraEnv : Json := env.setObjVal! "cardinality" (p r#"{"finite_sorts": ["fomc_policymaker", "user"]}"#)
+def para (formula : String) (environment := paraEnv) : Json :=
+  answer (Json.mkObj [("id", .str "p"), ("kind", .str "paraphrase"), ("environment", environment),
+    ("statement", st formula)])
+def line (formula : String) (environment := paraEnv) : Json := (para formula environment).getObjValD "paraphrase"
+
+-- "There are finitely many FOMC policymakers." is shown as the document's assumption, one per finite sort.
+#guard (para r#"["quantity", ["top"]]"#).getObjValD "assumptions" ==
+  toJson ["The document assumes there are finitely many FOMC policymakers.",
+    "The document assumes there are finitely many users."]
+#guard (para r#"["quantity", ["top"]]"# env).getObjValD "assumptions" ==
+  toJson ["The document assumes there are finitely many FOMC policymakers."]
+#guard (para r#"["quantity", ["top"]]"#).getObjValD "statement" == Json.mkObj
+  [("meaning_id", .str (WireExamples.meaningId (p r#"["quantity", ["top"]]"#) paraEnv)), ("formula", p r#"["quantity", ["top"]]"#)]
+-- "More than half of the users are curious." and "At least 1 in 1,000 of the users …": at least one user.
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "gt", "1", "2"]"# ==
+  .str "There is at least one user, and of the users x, more than 1 in 2 are such that x is curious."
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "ge", "1", "1000"]"# ==
+  .str "There is at least one user, and of the users x, at least 1 in 1000 are such that x is curious."
+#guard line r#"["proportion", "user", ["is", "curious"], ["not", ["is", "curious"]], "eq", "0", "1"]"# ==
+  .str ("There is at least one user x such that x is curious, and of the users x such that x is curious, exactly 0 " ++
+    "in 1 are such that it is not the case that (x is curious).")
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "lt", "1", "2"]"# ==
+  .str "There is at least one user, and of the users x, fewer than 1 in 2 are such that x is curious."
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "le", "1", "2"]"# ==
+  .str "There is at least one user, and of the users x, at most 1 in 2 are such that x is curious."
+-- The rounding texts: ties up rounds up, to the larger number; half even to the even digit.
+def share (rule : String) (printed := "0.296") : String := s!"[\"rounds_to\", \"{rule}\", [\"count\", " ++
+  s!"\"fomc_policymaker\", [\"is\", \"expects_further_increase\"]], [\"count\", \"fomc_policymaker\", [\"any\"]], \"{printed}\"]"
+#guard line (share "ties_up") == .str ("The number of FOMC policymakers x such that x expects a further increase, " ++
+  "divided by the number of FOMC policymakers, rounds to 0.296, rounded to the nearest thousandth; there is at least " ++
+  "one FOMC policymaker; a value exactly halfway rounds up, to the larger number.")
+#guard line (share "half_even") == .str ("The number of FOMC policymakers x such that x expects a further increase, " ++
+  "divided by the number of FOMC policymakers, rounds to 0.296, rounded to the nearest thousandth; there is at least " ++
+  "one FOMC policymaker; a value exactly halfway rounds to the even digit.")
+#guard line (share "ties_up" "0.25") == .str ("The number of FOMC policymakers x such that x expects a further " ++
+  "increase, divided by the number of FOMC policymakers, rounds to 0.25, rounded to the nearest hundredth; there is " ++
+  "at least one FOMC policymaker; a value exactly halfway rounds up, to the larger number.")
+#guard line (share "ties_up" "0.2965") == .str ("The number of FOMC policymakers x such that x expects a further " ++
+  "increase, divided by the number of FOMC policymakers, rounds to 0.2965, rounded to the nearest 4th decimal place; " ++
+  "there is at least one FOMC policymaker; a value exactly halfway rounds up, to the larger number.")
+def estimates (op rule : String) (printed : String) : String :=
+  s!"[\"{op}\", {rule}[\"quantity\", [\"const\", \"bp\", \"sept\"]], [\"quantity\", [\"const\", \"bp\", \"june\"]], " ++
+    s!"\"{printed}\"]"
+#guard line (estimates "percent_rounds_to" "\"ties_up\", " "105") == .str ("The September estimate is 105 percent of " ++
+  "the June estimate, to the nearest percent; the June estimate is more than zero; a value exactly halfway rounds up, " ++
+  "to the larger number.")
+#guard line (estimates "percent_rounds_to" "\"half_even\", " "105.5") == .str ("The September estimate is 105.5 " ++
+  "percent of the June estimate, to the nearest tenth of a percent; the June estimate is more than zero; a value " ++
+  "exactly halfway rounds to the even digit.")
+#guard line (estimates "percent_of" "" "105") == .str ("The September estimate is exactly 105 percent of the June " ++
+  "estimate; the June estimate is more than zero.")
+#guard line (estimates "rounds_to" "\"ties_up\", " "1") == .str ("The September estimate, divided by the June " ++
+  "estimate, rounds to 1, rounded to the nearest whole number; the June estimate is more than zero; a value exactly " ++
+  "halfway rounds up, to the larger number.")
+-- Counts, coefficients, connectives (each operand in parentheses, a capital after the opening ones) and W6a parts.
+#guard line r#"["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]"# ==
+  .str "The number of FOMC policymakers is exactly 18."
+#guard line r#"["count", "fomc_policymaker", [["1", ["is", "expects_rates_to_stay"]]], "lt", "3"]"# ==
+  .str "The number of FOMC policymakers x such that x expects rates to stay is less than 3."
+#guard line (r#"["implies", ["count", "fomc_policymaker", [["2", ["and", ["is", "expects_further_increase"], "# ++
+    r#"["not", ["is", "expects_rates_to_stay"]]]], ["-1", ["or", ["any"], ["is", "expects_rates_to_stay"]]]], "le", "7"], "# ++
+    r#"["not", ["quantity", ["top"]]]]"#) ==
+  .str ("If (2 times the number of FOMC policymakers x such that (x expects a further increase) and (it is not the " ++
+    "case that (x expects rates to stay)) plus -1 times the number of FOMC policymakers x such that (x is any object) " ++
+    "or (x expects rates to stay) is at most 7), then (it is not the case that (the W6a statement [\"top\"] holds)).")
+#guard line r#"["and", ["quantity", ["top"]], ["or", ["quantity", ["top"]], ["quantity", ["bottom"]]]]"# ==
+  .str ("(The W6a statement [\"top\"] holds) and ((the W6a statement [\"top\"] holds) or (the W6a statement " ++
+    "[\"bottom\"] holds)).")
+#guard line r#"["not", ["quantity", ["top"]]]"# == .str "It is not the case that (the W6a statement [\"top\"] holds)."
+-- An empty count, a quantity operand that is not a constant (W6a's encoding), and the rules no statement admits.
+#guard line r#"["count", "user", [], "le", "2"]"# == .str "0 is at most 2."
+#guard line r#"["percent_of", ["quantity", ["num", "bp", "3"]], ["quantity", ["const", "bp", "june"]], "105"]"# ==
+  .str "[\"num\",\"bp\",\"3\"] is exactly 105 percent of the June estimate; the June estimate is more than zero."
+#guard [Render.tie .down, Render.tie .up] == ["every value rounds down", "every value rounds up"]
+#guard Render.initial "((it" == "((It" && Render.initial "" == ""
+-- A statement's fault is its text; the reply's text is at most 65,536 bytes, the assumptions and the line together,
+-- each piece charged before it is appended.
+#guard (para r#"["count", "user", [["1", ["any"]]], "le", "2"]"# env).getObjValD "error" ==
+  .str "CardinalityNotFinite(user)"
+def described (group name : String) (text : String) : Json :=
+  let v := paraEnv.getObjValD "vocabulary"
+  let g := v.getObjValD group
+  paraEnv.setObjVal! "vocabulary" (v.setObjVal! group (g.setObjVal! name ((g.getObjValD name).setObjVal!
+    "description" (.str text))))
+def curiousCount : String := r#"["count", "user", [["1", ["is", "curious"]]], "eq", "2"]"#
+def fixed : Nat := ("The document assumes there are finitely many FOMC policymakers." ++
+  "The document assumes there are finitely many users." ++ "The number of users x such that x " ++
+  " is exactly 2.").utf8ByteSize
+def aaa (n : Nat) : String := String.mk (List.replicate n 'a')
+#guard ((line curiousCount (described "predicates" "curious" (aaa (65536 - fixed)))).getStr?
+  |>.toOption.map (·.utf8ByteSize)) == some (65536 - fixed + 34 + 14)
+#guard (para curiousCount (described "predicates" "curious" (aaa (65537 - fixed)))).getObjValD "error" ==
+  .str Render.tooLong
+#guard (para r#"["quantity", ["top"]]"# (described "sorts" "user" (aaa 65536))).getObjValD "error" ==
+  .str Render.tooLong
+-- One limit for the reply: an assumption and a line of 30,000-byte sort names each fit alone, not together.
+def halfPolicymakers : String := r#"["proportion", "fomc_policymaker", ["any"], ["any"], "gt", "1", "2"]"#
+#guard (para halfPolicymakers (described "sorts" "fomc_policymaker" (aaa 30000))).getObjValD "error" ==
+  .str Render.tooLong
+#guard ((line halfPolicymakers (described "sorts" "fomc_policymaker" (aaa 20000))).getStr?.toOption.map
+  (·.utf8ByteSize)) == some 40087
+-- The hostile set: an unknown kind (before the environment is read), an unknown form, a non-canonical number.
+#guard (para r#"["most", "user", ["is", "curious"]]"#).getObjValD "error" == .str "Unknown cardinality operator most"
+#guard (para r#"["count", "user", [["01", ["any"]]], "le", "2"]"#).getObjValD "error" == .str "non-canonical integer"
+#guard err (Json.mkObj [("id", .str "p"), ("kind", .str "paraphrases")]) == "unknown case kind paraphrases"
+
 end VE.Cardinality.RunExamples
