@@ -95,23 +95,23 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- an open unit: two candidates with their identities
-#guard pin (runCaseReported (src "The riddle is funny.")) == "9f64a8a5899cd6a359a87085dc9b6069cb4ae88a0875fadf3d26c055fe91f46e"
+#guard pin (runCaseReported (src "The riddle is funny.")) == "a1e20db5ae3cf8418bfd6dfa31a8f0d5fefb088543009ddfc2e57d5516090105"
 -- resolved by its line
-#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "a0e3cd25e8184c6a03b328a7f3d7cd554261a9c73aa78a1125bdf68159623ef2"
+#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "0c4c374c8b18a10458879e9d40ac0d3bd1327411ad91464a0d82c17e503ceaba"
 -- a sense fault
 #guard pin (runCaseReported (src "In this document, funny means purple. The riddle is funny.")) == "95f53c1f0395ccf75fc3c669473b6ef312fdad77607b8900c047a4a4ef4a85d2"
 -- S2's outcome
 #guard pin (runCaseReported (src "Every joke that is funny (meaning strange) is not funny.")) == "feec3bb464919db664bec1018709bb45b5722ab78ea43711ecc19c365abe3c66"
 -- an open unit beside a glossed one
-#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "3da13dfcdf8454b6b7fa702277876882a6ac8877b3d979d28f65bf9ff43c0ac9"
+#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "a21813713535244a7ec6ebb0446c861356d1e1e06c43b2551a8b626e0b1ae28d"
 -- an open fence without a reading set
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [])) == "1b6b6d44dcc4b67a043c3acd17db11d58f3191b8dc529039fa04c3e54bd3a3bd"
 -- an open fence with its reading set
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "cf08c4889d8edae40c0cd17c99f25d733ae3e29d81648aeb86d938ceb507e7e8"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "c6d455cca2fa920dd25ad35bd46ca2297ea7bcbcc4de0a32d4af93c81f9efe07"
 -- a fence that is a line
-#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "b4b10de5f3e1300995997b9fd37bfb26a8243a5a207a2e760fb588d910fb525d"
+#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "ea11e58ab2997fe6a74ad0fdcced3f3ac3fbaa310df56f2cce2435a6796f715d"
 -- front-matter defaults
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "9765f5d3e58ffb7632d0ad4651d47128a59b87ffc91685c23e3f10c09b212789"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "559c50ea54e011add7f96ca1fc7ea84e193387cc836ac69d89046f4a94c1e6f5"
 -- fence identities refused
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1", "u2"] [])) == "2047a621e3c95f46bbf587bd22854141989afcd335200861aa63d0748985cb0b"
 -- an unknown member refused
@@ -121,9 +121,9 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 -- budget 0
 #guard pin (runCaseReported ((src "The riddle is funny.").setObjVal! "budget" (toJson 0))) == "3b520a3ca8a86a3df1a98ab6df2acc3b8b5a509e4edb8fcfe9337b2a41330a39"
 -- a projection
-#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "243b5780ef71c06c02a8b654600941833eea188edf5fe75aa0e9f1d23ed17a6b"
+#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "01adb3555ade77f5def310ac6b80d4a121127663271cd01b1256157b2931d1c7"
 -- no lines
-#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "3a4d8c1001f5909f7b29ed762aaa76f8cf771b462efc4f645070aabc7a36cd79"
+#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "949946b11d145cf68c4c37e11473fa925657de141927fccb2bd8adced44b5288"
 -- a fault of the lines
 #guard pin (projectCaseReported (projectReq "In this document, funny means purple." ["funny"])) == "8f22518a9d293069fa4adb2a75cf1c72d0d6721a468e11037fda2f32aac69f18"
 -- a repeated default
@@ -146,17 +146,17 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- two unresolved words: choices of two senses
-#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "fca2245f33b708c9c19b6a5bb39e8c4c7bfe3b44429bb9c3732ca2bfe37e0e07"
+#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "187ee652ad113601e78ed95eba32b783d3e57bfbccb76bac0c5ca6079b5680b1"
 -- two units
-#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "b25cd62066f0e5abcc48fa1ef608009edc6466fe0a7e3d14294c89d950537ac3"
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "a0b6868e58d076c1a9290647b294e214868f893aec743964d627a6eb0dae6512"
 -- own senses whose kinds are the document's sorts
-#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "1fbb715fbb7d2a66a47e7bbc369aa8c7379c3df24178307e23ac83e9cea3c9d0"
+#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "68b976a7428f70ffb6c3859985e81a2123d7d7ea7c5e6f38319c145d08a7f92f"
 -- a second used word outside the dictionary
 #guard pin (projectCaseReported (projectReq lineFunny2 ["funny", "giggle"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- the used word outside the dictionary first
 #guard pin (projectCaseReported (projectReq lineFunny2 ["giggle", "funny"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- every word of the dictionary
-#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "7021bfea7953f20fbab75ac58db3d3749209c3f6879da8c16dd1224ceabc264b"
+#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "9ded386a0f345c224c3dd774a4b3233bec394891172f5b4004fe240b0cbf746b"
 -- a one-character line
 #guard pin (projectCaseReported (projectReq "x" ["funny"])) == "50c8b279ed22fc5d46e876ac027ba3d93f52cbdb0cfc8dbdc1fab42c05488de3"
 -- a lexicon english.read refuses
