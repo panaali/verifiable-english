@@ -6765,6 +6765,149 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Render.ascii_size
+  ∀ {c : Char}, c.toNat ≤ 127 → c.utf8Size = 1
+  -- uses
+  -- expr 2154449355
+theorem VE.Cardinality.Render.atLeastOne_charges
+  ∀ (w : VE.Cardinality.CardEnv) (s : String) (b : VE.Cardinality.Body),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.atLeastOne w s b)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.atLeastOne@VE.Cardinality.Render
+  -- expr 203040357
+theorem VE.Cardinality.Render.bind_charges
+  ∀ {a b : VE.Cardinality.Render.M Unit},
+    VE.Cardinality.Render.Charges a →
+      VE.Cardinality.Render.Charges b →
+        VE.Cardinality.Render.Charges do
+          a
+          b
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render
+  -- expr 2028548539
+theorem VE.Cardinality.Render.bind_ok
+  ∀ {α β : Type} {x : VE.Cardinality.Render.M α} {f : α → VE.Cardinality.Render.M β} {s : Nat × String}
+    {r : β × Nat × String}, (x >>= f) s = Except.ok r → ∃ a s', x s = Except.ok (a, s') ∧ f a s' = Except.ok r
+  -- uses VE.Cardinality.Render.M@VE.Cardinality.Render
+  -- expr 1205612315
+theorem VE.Cardinality.Render.body_charges
+  ∀ (w : VE.Cardinality.CardEnv) (b : VE.Cardinality.Body), VE.Cardinality.Render.Charges (VE.Cardinality.Render.body w b)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.body@VE.Cardinality.Render
+  -- expr 1033327850
+theorem VE.Cardinality.Render.countTerm_charges
+  ∀ (w : VE.Cardinality.CardEnv) (s : String) (kb : Int × VE.Cardinality.Body),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.countTerm w s kb)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.countTerm@VE.Cardinality.Render
+  -- expr 1982700203
+theorem VE.Cardinality.Render.count_charges
+  ∀ (w : VE.Cardinality.CardEnv) (c : VE.Cardinality.CountAtom),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.count w c)
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.count@VE.Cardinality.Render
+  -- expr 2233485690
+theorem VE.Cardinality.Render.describe_of
+  ∀ {w : VE.Cardinality.CardEnv} {g n d : String},
+    (((w.w6.target.getObjValD "vocabulary").getObjValD g).getObjValD n).getObjValD "description" = Lean.Json.str d →
+      VE.Cardinality.Render.describe w g n = d
+  -- uses VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.describe@VE.Cardinality.Render VE.Time.Wire.W6Env.target@VE.Time.Wire
+  -- expr 3432043588
+theorem VE.Cardinality.Render.emit_charges
+  ∀ (s : String), VE.Cardinality.Render.Charges (VE.Cardinality.Render.emit s)
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.emit@VE.Cardinality.Render
+  -- expr 2735090764
+theorem VE.Cardinality.Render.emit_over
+  ∀ {s : String} {n : Nat} (out : String),
+    VE.Cardinality.Render.maxBytes < n + s.utf8ByteSize →
+      VE.Cardinality.Render.emit s (n, out) = Except.error VE.Cardinality.Render.tooLong
+  -- uses VE.Cardinality.Render.emit@VE.Cardinality.Render VE.Cardinality.Render.maxBytes@VE.Cardinality.Render VE.Cardinality.Render.tooLong@VE.Cardinality.Render
+  -- expr 3561842575
+theorem VE.Cardinality.Render.forM_charges
+  ∀ {α : Type} (f : α → VE.Cardinality.Render.M Unit),
+    (∀ (x : α), VE.Cardinality.Render.Charges (f x)) → ∀ (xs : List α), VE.Cardinality.Render.Charges (xs.forM f)
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render
+  -- expr 941919427
+theorem VE.Cardinality.Render.formula_charges
+  ∀ (w : VE.Cardinality.CardEnv) (f : VE.Cardinality.CFormula),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.formula w f)
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.formula@VE.Cardinality.Render
+  -- expr 3080319046
+theorem VE.Cardinality.Render.go_size
+  ∀ (l : List Char), String.utf8ByteSize.go (VE.Cardinality.Render.initial.go l) = String.utf8ByteSize.go l
+  -- uses VE.Cardinality.Render.initial.go@VE.Cardinality.Render
+  -- expr 1478358098
+theorem VE.Cardinality.Render.inParens_charges
+  ∀ {m : VE.Cardinality.Render.M Unit},
+    VE.Cardinality.Render.Charges m → VE.Cardinality.Render.Charges (VE.Cardinality.Render.inParens m)
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render VE.Cardinality.Render.inParens@VE.Cardinality.Render
+  -- expr 3637183092
+theorem VE.Cardinality.Render.initial_size
+  ∀ (s : String), (VE.Cardinality.Render.initial s).utf8ByteSize = s.utf8ByteSize
+  -- uses VE.Cardinality.Render.initial@VE.Cardinality.Render
+  -- expr 1539324773
+theorem VE.Cardinality.Render.ite_charges
+  ∀ {c : Prop} [inst : Decidable c] {a b : VE.Cardinality.Render.M Unit},
+    VE.Cardinality.Render.Charges a → VE.Cardinality.Render.Charges b → VE.Cardinality.Render.Charges (if c then a else b)
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render
+  -- expr 522749344
+theorem VE.Cardinality.Render.members_charges
+  ∀ (w : VE.Cardinality.CardEnv) (s : String) (b : VE.Cardinality.Body),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.members w s b)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.members@VE.Cardinality.Render
+  -- expr 1881616284
+theorem VE.Cardinality.Render.operand_charges
+  ∀ (w : VE.Cardinality.CardEnv) (t : VE.Cardinality.CTerm),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.operand w t)
+  -- uses VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.operand@VE.Cardinality.Render
+  -- expr 1782293721
+theorem VE.Cardinality.Render.paraphrase_within
+  ∀ {w : VE.Cardinality.CardEnv} {f : VE.Cardinality.CFormula} {r : String × List String},
+    VE.Cardinality.Render.paraphrase w f = Except.ok r →
+      r.fst.utf8ByteSize + (List.map String.utf8ByteSize r.snd).sum ≤ VE.Cardinality.Render.maxBytes
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.maxBytes@VE.Cardinality.Render VE.Cardinality.Render.paraphrase@VE.Cardinality.Render
+  -- expr 1439877364
+theorem VE.Cardinality.Render.piece_charges
+  ∀ {m : VE.Cardinality.Render.M Unit},
+    VE.Cardinality.Render.Charges m →
+      ∀ {n n' : Nat} {out out' r : String},
+        VE.Cardinality.Render.piece m (n, out) = Except.ok (r, n', out') →
+          n ≤ VE.Cardinality.Render.maxBytes → n' ≤ VE.Cardinality.Render.maxBytes ∧ r.utf8ByteSize + n = n'
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render VE.Cardinality.Render.maxBytes@VE.Cardinality.Render VE.Cardinality.Render.piece@VE.Cardinality.Render
+  -- expr 3763008856
+theorem VE.Cardinality.Render.pieces_charge
+  ∀ {α : Type} {A : α → VE.Cardinality.Render.M Unit},
+    (∀ (a : α), VE.Cardinality.Render.Charges (A a)) →
+      ∀ (as : List α) {n n' : Nat} {out out' : String} {rs : List String},
+        List.mapM (fun a => VE.Cardinality.Render.piece (A a)) as (n, out) = Except.ok (rs, n', out') →
+          n ≤ VE.Cardinality.Render.maxBytes →
+            n' ≤ VE.Cardinality.Render.maxBytes ∧ (List.map String.utf8ByteSize rs).sum + n = n'
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render VE.Cardinality.Render.maxBytes@VE.Cardinality.Render VE.Cardinality.Render.piece@VE.Cardinality.Render
+  -- expr 988760436
+theorem VE.Cardinality.Render.positive_charges
+  ∀ (w : VE.Cardinality.CardEnv) (t : VE.Cardinality.CTerm),
+    VE.Cardinality.Render.Charges (VE.Cardinality.Render.positive w t)
+  -- uses VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.positive@VE.Cardinality.Render
+  -- expr 2959702513
+theorem VE.Cardinality.Render.pure_charges
+  VE.Cardinality.Render.Charges (Pure.pure ())
+  -- uses VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.M@VE.Cardinality.Render
+  -- expr 742251224
+theorem VE.Cardinality.Render.size_append
+  ∀ (a b : String), (a ++ b).utf8ByteSize = a.utf8ByteSize + b.utf8ByteSize
+  -- uses
+  -- expr 4246812807
+theorem VE.Cardinality.Render.term_charges
+  ∀ (w : VE.Cardinality.CardEnv) (t : VE.Time.QTerm), VE.Cardinality.Render.Charges (VE.Cardinality.Render.term w t)
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems VE.Cardinality.Render.term@VE.Cardinality.Render VE.Time.QTerm@VE.Time.Syntax
+  -- expr 3686914921
+theorem VE.Cardinality.Render.texts
+  VE.Cardinality.Render.tie VE.Numbers.Rounding.tiesUp = "a value exactly halfway rounds up, to the larger number" ∧
+    VE.Cardinality.Render.tie VE.Numbers.Rounding.halfEven = "a value exactly halfway rounds to the even digit" ∧
+      VE.Cardinality.Render.place 3 = "thousandth" ∧
+        VE.Cardinality.Render.relText VE.Cardinality.Rel.le = "is at most" ∧
+          VE.Cardinality.Render.cmpText VE.Cardinality.Cmp.gt = "more than" ∧ VE.Cardinality.Render.maxBytes = 65536
+  -- uses VE.Cardinality.Cmp.gt@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.Render.cmpText@VE.Cardinality.Render VE.Cardinality.Render.maxBytes@VE.Cardinality.Render VE.Cardinality.Render.place@VE.Cardinality.Render VE.Cardinality.Render.relText@VE.Cardinality.Render VE.Cardinality.Render.tie@VE.Cardinality.Render VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round
+  -- expr 1826543765
+theorem VE.Cardinality.Render.toUpper_size
+  ∀ (c : Char), c.toUpper.utf8Size = c.utf8Size
+  -- uses
+  -- expr 2843373213
 theorem VE.Cardinality.Run.charge_fst
   ∀ (qs : List (Unit → VE.Time.QFormula)) (acc : Nat × List VE.Time.QFormula),
     (List.foldl VE.Cardinality.Run.charge acc qs).fst =
