@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-pk-1-conditions-33114d12-t544699-lean",
+ "head": "69f1370e29937cbc274bb53b60730aaeff38f01b",
+ "argv": [
+  "x86sh-cand-pk-1-conditions-33114d12-t544699-lean",
+  "69f1370e29937cbc274bb53b60730aaeff38f01b",
+  "34b799ea899457cb608d6a3729b7fce1d2e0f129",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
