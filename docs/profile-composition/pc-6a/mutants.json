@@ -1,0 +1,35 @@
+[
+ {
+  "id": "decisionRule-empty-unsplit",
+  "definition": "decisionRule",
+  "file": "lean/VE/SoftNorms/Tree.lean",
+  "mutation": [
+   "N.splitFrom.getD N.name",
+   "N.splitFrom.getD \"\""
+  ],
+  "test": "lean/VE/SoftNorms/Tree.lean:53: unsolved goals (decisionRule_unsplit); with that proof replaced by sorry: lean/VE/SoftNorms/TreeExamples.lean:26, :27, :28, :33: Expression (F6.1b)",
+  "killed": true
+ },
+ {
+  "id": "decisionRule-ignores-splitFrom",
+  "definition": "decisionRule",
+  "file": "lean/VE/SoftNorms/Tree.lean",
+  "mutation": [
+   "N.splitFrom.getD N.name",
+   "N.name"
+  ],
+  "test": "lean/VE/SoftNorms/TreeExamples.lean:36: Expression (a part split from r0 reads r0)",
+  "killed": true
+ },
+ {
+  "id": "splitFrom-default-set",
+  "definition": "SoftNode",
+  "file": "lean/VE/SoftNorms/Tree.lean",
+  "mutation": [
+   "splitFrom : Option String := none",
+   "splitFrom : Option String := some \"\""
+  ],
+  "test": "lean/VE/Defaults/MeaningExamples.lean:116: Expression (the decoded DF-pi equals its literal)",
+  "killed": true
+ }
+]
