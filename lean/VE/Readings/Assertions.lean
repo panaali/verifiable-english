@@ -282,22 +282,6 @@ theorem origin_assertions {D : Doc} (hk : ∀ R ∈ D.sets, ∀ a ∈ R.candidat
   obtain ⟨φ, hφ⟩ := hk _ (List.getElem_mem hm) _ (List.getElem_mem hi)
   simp [hφ, Content.declared]
 
-theorem fixedGenerated_of_origin {D : Doc} (ho : ∀ n, origin D n = none) {g : GenKey × String × List String}
-    (hg : g ∈ genKeys (sup D).1) : fixedGenerated D g.1 = true := by
-  unfold fixedGenerated
-  cases hk : g.1 with
-  | excepted r b => simp [owners, ho]
-  | off r b π => simp [owners, ho]
-  | outweighs a L H =>
-    obtain ⟨_, M, N, hp, hcmp, ht⟩ := mem_outweighsTriples.mp (mem_genKeys_outweighs hg hk)
-    simp only [owners, List.contains_iff_mem, VE.SoftNorms.mem_dedup, List.mem_filterMap]
-    refine ⟨(M, N), hp, ?_⟩
-    simp only [hcmp, ht, beq_self_eq_true, Bool.and_self, if_true, pairOwner, ho]
-    rfl
-  | lim L a => simp [owners]
-  | cond L a c => simp [owners]
-  | aimed m => simp [owners]
-
 theorem choicePremises_assertions {D : Doc} (hk : ∀ R ∈ D.sets, ∀ a ∈ R.candidates, ∃ φ, a.content = some (.assertion φ))
     (hn : D.couplings = [] ∧ D.narrowings = []) : choicePremises D = (onePremises D).formulas := by
   have ho := origin_assertions hk
