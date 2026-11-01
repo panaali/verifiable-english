@@ -285,22 +285,26 @@ theorem outweighs_ranks {X : RightsDoc} (hw : VE.SoftNorms.WellFormedSoft (corre
     obtain ⟨_, rfl, rfl⟩ := hpt
     exact ⟨(hr hcmp).2, (hr hcmp).1⟩
 
-/-- A key of `quietShared D` is an outweighs key: an exception or switch key has one owner, a single candidate or
-    none, and a key of a fixed limitation or bar is fixed-generated. -/
-theorem shared_outweighs {D : Doc} {k : GenKey}
-    (hf : (!fixedGenerated D k && ((owners D k).length != 1 || (owners D k).any (·.length != 1))) = true) :
-    ∃ a L H, k = .outweighs a L H := by
-  cases k with
+/-- Off the rights chain a key of `quietShared D` is an outweighs key: an exception or switch key has one owner, a
+    single candidate or none, and there is no limitation or bar key. -/
+theorem shared_outweighs {D : Doc} (hnr : noRights (sup D).1 = true) {g : GenKey × String × List String}
+    (hg : g ∈ genKeys (sup D).1)
+    (hf : (!fixedGenerated D g.1 && ((owners D g.1).length != 1 || (owners D g.1).any (·.length != 1))) = true) :
+    ∃ a L H, g.1 = .outweighs a L H := by
+  cases hk : g.1 with
   | outweighs a L H => exact ⟨a, L, H, rfl⟩
   | excepted r b =>
-    exfalso
+    exfalso; rw [hk] at hf
     cases ho : origin D r <;> simp [owners, fixedGenerated, ho] at hf
   | off r b π =>
-    exfalso
+    exfalso; rw [hk] at hf
     cases ho : origin D r <;> simp [owners, fixedGenerated, ho] at hf
-  | lim L a => simp [owners, fixedGenerated] at hf
-  | cond L a c => simp [owners, fixedGenerated] at hf
-  | aimed m => simp [owners, fixedGenerated] at hf
+  | _ =>
+    exfalso
+    obtain ⟨_, hl, hb, hs⟩ := noRights_parts hnr
+    simp only [genKeys, VE.Rights.limKeys_nil _ hl, VE.Rights.condKeys_nil _ hl, hb, List.mem_append, List.mem_map,
+      List.mem_filter, List.mem_flatMap, List.map_nil, List.not_mem_nil, if_true, or_false] at hg
+    rcases hg with ((⟨e, _, rfl⟩ | ⟨e, _, π, _, rfl⟩) | ⟨x, _, rfl⟩) <;> cases hk
 
 theorem readings_head (A B : String) : (("readings:" ++ A) ++ B).data.head? = some 'r' := by
   simp [String.data_append]
@@ -363,7 +367,7 @@ theorem slot_wellLabelled (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain 
     intro x hx
     simp only [quietShared, List.map_map, List.mem_map, List.mem_filter, Function.comp] at hx
     obtain ⟨g, ⟨hg, hf⟩, rfl⟩ := hx
-    obtain ⟨a, L, H, hk⟩ := shared_outweighs hf
+    obtain ⟨a, L, H, hk⟩ := shared_outweighs hh.noRights hg hf
     have hv := outweighs_ranks hwX (mem_genKeys_outweighs hg hk)
     exact ⟨g, hg, a, L, H, hk, hv.1, hv.2, by rw [hk]⟩
   have hcp : ∀ x ∈ (couplingPremises D).map (·.1), ∃ K ∈ D.couplings, x = "coupling:" ++ K.id := by
@@ -440,8 +444,8 @@ theorem slot_wellLabelled (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain 
     intro g hg g' hg' he
     obtain ⟨hgm, hf⟩ := List.mem_filter.mp hg
     obtain ⟨hgm', hf'⟩ := List.mem_filter.mp hg'
-    obtain ⟨a, L, H, hk1⟩ := shared_outweighs hf
-    obtain ⟨a', L', H', hk1'⟩ := shared_outweighs hf'
+    obtain ⟨a, L, H, hk1⟩ := shared_outweighs hh.noRights hgm hf
+    obtain ⟨a', L', H', hk1'⟩ := shared_outweighs hh.noRights hgm' hf'
     have hv := outweighs_ranks hwX (mem_genKeys_outweighs hgm hk1)
     have hv' := outweighs_ranks hwX (mem_genKeys_outweighs hgm' hk1')
     simp only [Function.comp] at he
