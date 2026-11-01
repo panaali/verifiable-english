@@ -1643,6 +1643,13 @@
    "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
    "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
+  },
+  {
+   "class": "S",
+   "lines": 31,
+   "reason": "wg-6a: lean/VE/Weighing/Zone.lean S +31 (decisionAtoms, openNames, AdmissibleCompletion, OutcomeIn, SettledZ, ZoneUnknown); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-6a, 2026-10-18",
+   "commit": "1d9ad881def53fc7ecab390b0e2db1ff2cf3cbbb"
   }
  ]
 }
