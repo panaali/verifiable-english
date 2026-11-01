@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.Lexicon
+import VE.EnglishGrammar.Evaluative
 
 /-! Fixtures of the English instance: the lexer (docs/spec/english-lean.md 8.4,
 `conformance/english-lean/lexer.json`), the `glued` flags of the DRI's ruling on O1, the matching of
@@ -192,5 +193,31 @@ def clsA : String := "{0} is classified as \"audited\""
 #guard wordingKey "  a \"b" == "a \"b"
 #guard jsonQuote "has_owner" == "\"has_owner\""
 #guard jsonQuote "café\"" == "\"caf\\u00e9\\\"\""
+
+/-! The evaluative rows (`evaluativeRows`, judgment-terms.md 7 and 11.7): every row 11.7 names, with its other
+senses, and the words of the plan's catalogue row matched where they are evaluative and not in their other sense. -/
+
+#guard [(⟨"reasonable", []⟩ : VE.Judgments.EvaluativeRow), ⟨"arbitrary", []⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩,
+  ⟨"just", [["just", "as"]]⟩, ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"effective", [["effective", "date"]]⟩].all
+  evaluativeRows.contains
+#guard evaluativeRows.length == 15 && (evaluativeRows.map (·.word)).eraseDups.length == 15
+#guard VE.Judgments.undeclaredEvaluative evaluativeRows
+  ([("reasonable_grounds", ["reasonable", "grounds"]), ("due_date", ["due", "date"]), ("arbitrary", ["arbitrary"]),
+    ("just_as_real", ["just", "as", "real"]), ("just_requirement", ["just", "requirement"]),
+    ("necessary_condition", ["necessary", "condition"]), ("arrest", ["arrest"]),
+    ("make_reasonable_efforts", ["make", "reasonable", "efforts"])]) ["arbitrary"] ==
+  ["reasonable_grounds", "just_requirement", "make_reasonable_efforts"]
+#guard VE.Judgments.undeclaredEvaluative evaluativeRows
+  ([("fair_hearing", ["fair", "hearing"]), ("adequate_standard", ["adequate", "standard"]),
+    ("overly_cautious", ["overly", "cautious"]), ("acts_arbitrarily", ["acts", "arbitrarily"]),
+    ("appropriate_care", ["appropriate", "care"]), ("acts_appropriately", ["acts", "appropriately"]),
+    ("legitimate_aim", ["legitimate", "aim"]), ("genuine_need", ["genuine", "need"]),
+    ("genuinely_arising", ["genuinely", "arising"]), ("effective_remedy", ["effective", "remedy"]),
+    ("necessary_measure", ["necessary", "measure"]), ("due_process", ["due", "process"]),
+    ("effective_date", ["effective", "date"]), ("due_to_illness", ["due", "to", "illness"]),
+    ("good_judgment", ["good", "judgment"])]) [] ==
+  ["fair_hearing", "adequate_standard", "overly_cautious", "acts_arbitrarily", "appropriate_care",
+    "acts_appropriately", "legitimate_aim", "genuine_need", "genuinely_arising", "effective_remedy",
+    "necessary_measure", "due_process"]
 
 end VE.EnglishGrammar.Examples

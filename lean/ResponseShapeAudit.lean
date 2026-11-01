@@ -182,6 +182,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
 #print axioms ResponseShape.Encoders.Document.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Document.statusOf_ne
+#print axioms ResponseShape.Encoders.Document.undeclared_fits
 #print axioms ResponseShape.Encoders.Document.unit_fits
 #print axioms ResponseShape.Encoders.Document.unit_status_fits
 #print axioms ResponseShape.Encoders.Document.units_mem
