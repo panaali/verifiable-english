@@ -1,0 +1,13 @@
+trust_mutants: 14 definitions, 260 mutants (32 to run), 4 jobs, base 4ccceb183c4c
+UNKNOWN lean/VE/Discourse/Positions.lean:85 VE.Discourse.slotName (S, trusted) list-empty: slotPrefix -> [] (lean/VE/Discourse/Positions.lean:85: failed to synthesize)
+SURVIVOR lean/VE/Discourse/Positions.lean:179 VE.Discourse.slotsIn (S, trusted) or-and: || -> &&
+SURVIVOR lean/VE/Discourse/Positions.lean:265 VE.Discourse.IntendedAt (S, trusted) bool-flip: False -> True
+SURVIVOR lean/VE/Discourse/Positions.lean:244 VE.Structure.withRelation (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Discourse/Positions.lean:466)
+UNKNOWN lean/VE/Discourse/Positions.lean:160 VE.Discourse.rowOf (S, trusted) list-empty: c.drop 7 -> [] (lean/VE/Discourse/Positions.lean:160: Invalid field `toNat?`: The environment does not contain `L...)
+SURVIVOR lean/VE/Discourse/Positions.lean:31 VE.Discourse.linePositions (S, trusted) list-empty: l.norm.toList -> [] (the proofs it breaks: lean/VE/Discourse/Positions.lean:327, lean/VE/Discourse/Positions.lean:357)
+SURVIVOR lean/VE/Discourse/Positions.lean:251 VE.Discourse.slotMeaning (S, trusted) arm-true: ∃ a, S.domain σ a ∧ Dr.denote S [a] ∧ (∀ b, S.domain σ b → Dr.denote S [b] → b = a) ∧ slotMeaning... -> True (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+UNKNOWN lean/VE/Discourse/Positions.lean:161 VE.Discourse.rowOf (S, trusted) list-empty: ctx -> [] (lean/VE/Discourse/Positions.lean:161: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Discourse/Positions.lean:31 VE.Discourse.linePositions (S, trusted) list-last: l.norm.toList -> (l.norm.toList.reverse.take 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:327, lean/VE/Discourse/Positions.lean:357)
+trust_mutants: 20 KILLED, 6 SURVIVOR, 3 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 228 OTHER SHARD in 203 s
+trust_mutants: S, trusted: 20 KILLED, 6 SURVIVOR, 3 UNKNOWN, 3 INVALID, 228 OTHER SHARD
+trust_mutants: steps: wall plan 10.4 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 4.8 s, mutants 180.9 s, cleanup 2.6 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 4.6 s (1), mutant_builds 319.9 s (48), mutant_checks 91.1 s (32), stage_controls 48.8 s (6), mutant_probes 250.6 s (20)
