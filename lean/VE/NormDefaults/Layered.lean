@@ -55,11 +55,11 @@ def softLabelledU (U : UDoc) (D : SoftDoc) : List (String × VE.Formula) :=
     (VE.SoftNorms.collidingPairs D).map (fun (M, N) => (VE.SoftNorms.Wire.cohLabel M N, cohPremiseU U D M N))
 
 /-- Soft's `Exc_T ++ Coh_T` on `fill U` as a premise pack; its names are declared in `U` by `soften`. -/
-def softPack (U : UDoc) (D : SoftDoc) : Packs.Pack := ⟨"soft", .constraint, [], [], softLabelledU U D, []⟩
+def softPack (U : UDoc) (D : SoftDoc) : Packs.Pack := ⟨"soft", .constraint, [], [], softLabelledU U D, [], []⟩
 
 /-- The rights limitation premises as a premise pack; its names are declared in `U` by `correlate`. -/
 def rightsPack (R : VE.Rights.RightsDoc) : Packs.Pack :=
-  ⟨"rights", .constraint, [], [], VE.Rights.limPremisesLabelled R, []⟩
+  ⟨"rights", .constraint, [], [], VE.Rights.limPremisesLabelled R, [], []⟩
 
 /-! ## The decoded source -/
 

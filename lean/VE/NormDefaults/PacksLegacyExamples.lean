@@ -28,7 +28,7 @@ def legacyU (R : VE.Rights.RightsDoc) : UDoc := ⟨VE.SoftNorms.soften (VE.Right
 def legacyPacks (R : VE.Rights.RightsDoc) : List Pack :=
   [VE.NormDefaults.Wire.softPack (legacyU R) (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R]
 def legacyLabels (R : VE.Rights.RightsDoc) : List String := (labelledX (legacyPacks R)).map (·.1)
-def gen (n : String) : Pack := ⟨"soft", .vocabulary, [(n, [])], [], [], []⟩
+def gen (n : String) : Pack := ⟨"soft", .vocabulary, [(n, [])], [], [], [], []⟩
 
 -- The sources reach every guard below: μ has soft labels of both kinds, decision names and layer symbols.
 #guard legacyLabels muX ==
