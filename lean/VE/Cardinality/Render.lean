@@ -99,9 +99,7 @@ def count (w : CardEnv) (c : CountAtom) : M Unit := do
   | [] => emit "0"
   | t :: ts => do
     countTerm w c.sort t
-    for x in ts do
-      emit " plus "
-      countTerm w c.sort x
+    ts.forM fun x => do emit " plus "; countTerm w c.sort x
   emit s!" {relText c.rel} {c.bound}"
 
 def formula (w : CardEnv) : CFormula → M Unit
@@ -131,9 +129,12 @@ def formula (w : CardEnv) : CFormula → M Unit
   | .implies a b => do emit "if "; inParens (formula w a); emit ", then "; inParens (formula w b)
 
 /-- A line's sentence-initial spelling: its first character after any opening parentheses ASCII-uppercased. -/
-def initial (s : String) : String :=
-  let (opens, rest) := s.toList.span (· == '(')
-  String.mk (opens ++ (VE.Time.Wire.sentenceInitial (String.mk rest)).toList)
+def initial (s : String) : String := ⟨go s.data⟩
+where
+  go : List Char → List Char
+    | '(' :: cs => '(' :: go cs
+    | c :: cs => c.toUpper :: cs
+    | [] => []
 
 /-- The reply's text: each declared finite sort shown as the document's assumption, then the statement's line, one
 sentence; at most `maxBytes` bytes together. -/
