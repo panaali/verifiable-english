@@ -1,0 +1,9 @@
+{
+ "status": "checked",
+ "reason": "checked, not published (job.json lean_publish: false)",
+ "name": "lean-build-ee4356824caa.tar.zst",
+ "key": "ee4356824caa4aca87767e83670f83c0e6e4a077",
+ "sha256": "56778b1265c047d043b48fb97e6ef3f71fec25fd86da5931d7c71d7f4b19be16",
+ "bytes": "626822946",
+ "release": "lean-branch-cache"
+}
