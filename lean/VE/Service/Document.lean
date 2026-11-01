@@ -438,11 +438,12 @@ def statedPairs (j : Json) : List (String × String × String) :=
   match frontOf j with
   | none => []
   | some (front, _) =>
+    let (layer, plain) := (layerProfiles j, plainProfiles j)
     let idOf := fun (ps : List String) =>
       (Standalone.environmentIdOf ps ((front.getObjValD "environment").setObjVal! "profiles" (toJson ps))).toOption
-    match idOf (layerProfiles j), idOf (plainProfiles j) with
+    match idOf layer, idOf plain with
     | some e₁, some e₂ => sets.flatMap fun s => (setModels s).filterMap fun (k, m) =>
-        match Loader.modelId (layerProfiles j) e₁ m, Loader.modelId (plainProfiles j) e₂ m with
+        match Loader.modelId layer e₁ m, Loader.modelId plain e₂ m with
         | .ok v₁, .ok v₂ => some (k, v₁, v₂)
         | _, _ => none
     | _, _ => []
@@ -500,7 +501,9 @@ def withoutJudgments (j : Json) : Json :=
   match frontOf j with
   | none => j
   | some (front, body) =>
-    let ex := if swapInjective j then exchangeOf (statedPairs j) else id
+    -- The pairs are a value, so they are computed once (an exchange with no pairs keeps every value).
+    let pairs := if swapInjective j then statedPairs j else []
+    let ex := exchangeOf pairs
     let front := front.setObjVal! "environment" (VE.Compose.withoutDocumentLayers (front.getObjValD "environment"))
     let front := match front.getObjValD "reading_sets" with
       | .arr ss => front.setObjVal! "reading_sets" (.arr (ss.map (exchangeSet ex)))

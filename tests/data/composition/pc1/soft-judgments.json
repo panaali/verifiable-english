@@ -10,7 +10,7 @@
    "genuinely_ambiguous": {"arguments": ["situation"], "description": "the request is genuinely ambiguous"},
    "reasonable": {"arguments": ["situation"], "description": "asking would be reasonable"},
    "asks_clarification": {"arguments": ["situation"], "description": "Claude asks for clarification",
-                          "regulated": {"role": "obligation", "default": "deny", "act": "{0} ask for clarification"}}},
+                          "regulated": {"role": "obligation", "default": "deny", "act": "{0} clarify"}}},
   "constants": {}},
  "units": {
   "u0052.s01": {"body": "Claude should always use good judgment when evaluating conversational inputs.\n",
