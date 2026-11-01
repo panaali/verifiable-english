@@ -1,11 +1,10 @@
 # en-s6 build report: S6's first layer, part a (the EN-0 remainder, the norm values and their assembly)
 
-- **Status:** part a of EN-1 is delivered, cut under R16 at the seam the DRI signed (reviews/dri-decisions-20261101-en-s6.md
-  item 1). No DRI signature is reserved, and DELTA has one row, signed by R16.
-- **What changed:** `lean/VE/EnglishGrammar/Norm/Value.lean` (spec 2.2-2.4 and `assemble_numbered`), `Norm/Examples.lean`,
-  Python's node for each of the 120 pinned blocks, `tests/test_english_statement_blocks.py`, and the EN-0 stub.
-- **Open:** en-s6b, which is the grammar, the reader, Elab, ten of the eleven section 4 statements and the reading
-  fixtures. The full gate has not been run by me; the chain runs it on the final HEAD.
+Status: EN-1 part a, cut under R16 at the DRI's seam (reviews/dri-decisions-20261101-en-s6.md); no DRI signature reserved.
+Changed: `Norm/Value.lean` (spec 2.2-2.4, `assemble_numbered`), `Norm/Examples.lean`, the 120 pinned Python nodes,
+`tests/test_english_statement_blocks.py` and the EN-0 stub. DELTA: one row (trust growth, R16).
+Open: en-s6b (the grammar, the reader, Elab, ten section 4 statements, the reading fixtures).
+The full gate has not been run by me; the chain runs it on the final HEAD.
 
 ## Rows delivered, and not
 
