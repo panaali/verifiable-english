@@ -161,6 +161,7 @@ import VE.Cardinality.Gate
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
 import VE.Cardinality.RunTheorems
+import VE.Cardinality.RenderTheorems
 import VE.Cardinality.WireExamples
 import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
