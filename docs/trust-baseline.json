@@ -1678,6 +1678,13 @@
    "reason": "sc-4: VE/Scope/Govern.lean S +1 (SDoc.forwards), VE/Scope/Wire.lean V +1 (decodeParts reads scope.forward); forwardCheck, forwardsOk, laterUnitsIn G[R] and decodeForward D[R] are reject-only",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-4, 2026-11-01",
    "commit": "9635574ebf2b15ccd8c0ade5b3ea212e5ce02022"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   }
  ]
 }

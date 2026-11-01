@@ -10522,6 +10522,7 @@
         "VE.SoftNorms.closureOf",
         "VE.SoftNorms.collidingPairs",
         "VE.SoftNorms.decisionNames",
+        "VE.SoftNorms.decisionRule",
         "VE.SoftNorms.decisions",
         "VE.SoftNorms.dedup",
         "VE.SoftNorms.directBelow",
@@ -16879,6 +16880,12 @@
         "VE.Scope.FarExamples.w1Order"
       ]
     },
-    "VE/Scope/FarTheorems.lean": {}
+    "VE/Scope/FarTheorems.lean": {},
+    "VE/SoftNorms/TreeExamples.lean": {
+      "T": [
+        "VE.SoftNorms.TreeFixtures.layeredDocs",
+        "VE.SoftNorms.TreeFixtures.unsplitKeys"
+      ]
+    }
   }
 }
