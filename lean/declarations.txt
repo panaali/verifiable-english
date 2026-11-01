@@ -10956,7 +10956,7 @@ module VE.Judgments.Decl 6380e1cda31818feefcbd44795a1204e53679f7a628f0d61a6ba571
 146:0-167:18 theorem VE.Judgments.faultOf_none_iff@VE.Judgments.Decl
 169:0-182:26 theorem VE.Judgments.admit_ok_iff@VE.Judgments.Decl
 184:0-195:39 theorem VE.Judgments.admit_first_fault@VE.Judgments.Decl
-module VE.Judgments.Examples 7bb06395182e779b27a77dc4fb2ae1ad27def0e1596688428f19414b9f5692a9
+module VE.Judgments.Examples 6efe47bb16400cc8ac56d8dd0e698c6e56f9de05527b8fabdd602f075cd28288
 17:0-20:17 def VE.Judgments.Examples.errText@VE.Judgments.Examples
 22:0-25:20 def VE.Judgments.Examples.okVal@VE.Judgments.Examples
 29:0-34:106 def VE.Judgments.Examples.envText@VE.Judgments.Examples
@@ -22045,12 +22045,12 @@ module VE.Service.TypingDiagnostic 0e2dbed38401dd0a6e7eb3b6c1217ea3cafe56ac9b5b6
 145:0-234:16 def VE.Service.TypingDiagnostic.formula@VE.Service.TypingDiagnostic
 236:0-249:19 def VE.Service.TypingDiagnostic.diagnose@VE.Service.TypingDiagnostic
 242:12-246:15 def VE.Service.TypingDiagnostic.diagnose.go@VE.Service.TypingDiagnostic
-module VE.Service.UndeclaredExamples 12c897d3e420e7a5fce931066b200051ae5b25ffb488edc641c1bf17c4ee42aa
+module VE.Service.UndeclaredExamples cd581293ef82a94e1c52ecfeb2668b6484c34a5bcca6e36988bc6a0bcdb783c1
 11:0-11:92 def VE.Service.UndeclaredExamples.act@VE.Service.UndeclaredExamples
-13:0-24:31 def VE.Service.UndeclaredExamples.vocabulary@VE.Service.UndeclaredExamples
-26:0-34:50 def VE.Service.UndeclaredExamples.text@VE.Service.UndeclaredExamples
-36:0-36:106 def VE.Service.UndeclaredExamples.judged@VE.Service.UndeclaredExamples
-38:0-43:50 def VE.Service.UndeclaredExamples.member@VE.Service.UndeclaredExamples
+13:0-26:31 def VE.Service.UndeclaredExamples.vocabulary@VE.Service.UndeclaredExamples
+28:0-36:50 def VE.Service.UndeclaredExamples.text@VE.Service.UndeclaredExamples
+38:0-38:106 def VE.Service.UndeclaredExamples.judged@VE.Service.UndeclaredExamples
+40:0-45:50 def VE.Service.UndeclaredExamples.member@VE.Service.UndeclaredExamples
 module VE.SoftNorms.Admission b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc
 23:0-28:20 def VE.SoftNorms.Admission.checkQuoted@VE.SoftNorms.Admission
 30:0-34:66 def VE.SoftNorms.Admission.LayerLeaf@VE.SoftNorms.Admission
