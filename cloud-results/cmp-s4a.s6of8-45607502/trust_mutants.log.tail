@@ -1,0 +1,12 @@
+trust_mutants: 14 definitions, 260 mutants (32 to run), 4 jobs, base 4ccceb183c4c
+SURVIVOR lean/VE/Discourse/Positions.lean:179 VE.Discourse.slotsIn (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Discourse/Positions.lean:179 VE.Discourse.slotsIn (S, trusted) and-or: && -> ||
+SURVIVOR lean/VE/Discourse/Positions.lean:244 VE.Structure.withRelation (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Discourse/Positions.lean:466)
+SURVIVOR lean/VE/Discourse/Positions.lean:250 VE.Discourse.slotMeaning (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:252 VE.Discourse.slotMeaning (S, trusted) list-empty: [b] -> [] (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:252 VE.Discourse.slotMeaning (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:253 VE.Discourse.slotMeaning (S, trusted) list-empty: [a] -> [] (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+SURVIVOR lean/VE/Discourse/Positions.lean:252 VE.Discourse.slotMeaning (S, trusted) list-drop-first: [b] -> ([b].drop 1) (the proofs it breaks: lean/VE/Discourse/Positions.lean:485)
+trust_mutants: 20 KILLED, 8 SURVIVOR, 0 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 228 OTHER SHARD in 122 s
+trust_mutants: S, trusted: 20 KILLED, 8 SURVIVOR, 4 INVALID, 228 OTHER SHARD
+trust_mutants: steps: wall plan 5.9 s, scratch 2.1 s, control_build 0.1 s, probe_install 0.9 s, control_probes 2.6 s, mutants 106.3 s, cleanup 3.8 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2.4 s (1), mutant_builds 205 s (49), mutant_checks 66.9 s (34), stage_controls 33.1 s (6), mutant_probes 109.2 s (20)
