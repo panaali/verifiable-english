@@ -19916,7 +19916,7 @@ module VE.Scope.English 5dffb7496b2af33fb81857b9b28e294aabcab877fdf66c63c35681c8
 25:0-31:95 def VE.Scope.whereOf@VE.Scope.English
 33:0-37:51 def VE.Scope.coverOf@VE.Scope.English
 39:0-53:60 def VE.Scope.sentence@VE.Scope.English
-module VE.Scope.Examples 46ce7e884d325661667f4119934e37eecc8b81b8eed47536d941ae988820a81b
+module VE.Scope.Examples 6e3f9f255bd30560fa44586aeff30790f8517416254bff4f2b13a373953398f2
 15:0-18:14 def VE.Scope.Examples.mk@VE.Scope.Examples
 20:0-20:111 def VE.Scope.Examples.layoutOf@VE.Scope.Examples
 22:0-32:71 def VE.Scope.Examples.hcPieces@VE.Scope.Examples
@@ -20065,9 +20065,9 @@ module VE.Scope.Examples 46ce7e884d325661667f4119934e37eecc8b81b8eed47536d941ae9
 1208:0-1208:74 def VE.Scope.Examples.narrowNotP@VE.Scope.Examples
 1209:0-1209:68 def VE.Scope.Examples.carveP@VE.Scope.Examples
 1210:0-1211:101 def VE.Scope.Examples.onBoth@VE.Scope.Examples
-1234:0-1234:109 def VE.Scope.Examples.envP@VE.Scope.Examples
-1235:0-1235:100 instance VE.Scope.Examples.instDecidableTypedEnvPConsStringNil@VE.Scope.Examples
-1248:0-1251:103 def VE.Scope.Examples.bothOrders@VE.Scope.Examples
+1235:0-1235:109 def VE.Scope.Examples.envP@VE.Scope.Examples
+1236:0-1236:51 def VE.Scope.Examples.pX1@VE.Scope.Examples
+1251:0-1254:103 def VE.Scope.Examples.bothOrders@VE.Scope.Examples
 module VE.Scope.Govern 45776ab8c3814d39f237dc888a95c208bca0850c195a84b863f2dce043c55868
 15:0-22:31 inductive VE.Scope.Reach@VE.Scope.Govern
 24:0-29:21 structure VE.Scope.Governor@VE.Scope.Govern
