@@ -885,7 +885,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
     throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
     if let .arr _ := units then
-      let _ ← softSource environment (softSourceNorms units)
+      let _ ← softSource (VE.Compose.withoutDocumentLayers environment) (softSourceNorms units)
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
