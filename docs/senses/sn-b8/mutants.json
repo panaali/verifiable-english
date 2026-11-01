@@ -14,7 +14,22 @@
      "test": "tests/test_senses_packs.py::test_a_sentence_that_reads_the_same_under_the_pack", "result": "1 failed: 'no_longer_reads' == 'same'"},
     {"id": "B4", "file": "conformance/senses_usecases.py", "behaviour": "an open reading whose candidate is the base formula needs that candidate's line",
      "mutation": "`if ok and lines:` -> `if False:`",
-     "test": "tests/test_senses_packs.py::test_a_sentence_that_needs_a_line", "result": "1 failed"}
+     "test": "tests/test_senses_packs.py::test_a_sentence_that_needs_a_line", "result": "1 failed"},
+    {"id": "B5", "file": "conformance/senses_usecases.py", "behaviour": "after counts the sort lines the covered predicates' senses name (review F1)",
+     "mutation": "`pack_lines` returns `\"sorts\": 0`",
+     "test": "tests/test_senses_packs.py::test_after_counts_the_pack_lines_the_covered_predicates_need", "result": "3 failed: [agent-policy], [fluent], [assist]"},
+    {"id": "B6", "file": "conformance/senses_usecases.py", "behaviour": "after counts each covered predicate's sense line (review F1)",
+     "mutation": "`senses |= set(entries)` -> `pass`",
+     "test": "tests/test_senses_packs.py::test_after_counts_the_pack_lines_the_covered_predicates_need", "result": "3 failed: [agent-policy], [fluent], [assist]"},
+    {"id": "B7", "file": "conformance/senses_usecases.py", "behaviour": "a predicate Lean renamed to another sense has no line to count (review F1)",
+     "mutation": "the `name in renaming and renaming[name] not in symbols` clause removed",
+     "test": "tests/test_senses_packs.py::test_a_covered_word_that_is_not_one_sense_line_stops_the_measure", "result": "1 failed"},
+    {"id": "B8", "file": "docs/senses/sn-b8/coverage.json", "behaviour": "the saved table's after is the pack lines (PROBE F1)",
+     "mutation": "the table before the fix restored (after = preamble lines: 0, 0, 0, 0)",
+     "test": "tests/test_senses_packs.py::test_the_saved_table_counts_the_pack_lines_after", "result": "1 failed"},
+    {"id": "B9", "file": "conformance/senses_usecases.py", "behaviour": "before counts the overlay's fields of each covered predicate (review F4)",
+     "mutation": "` + len(entries.get(name, {}))` removed",
+     "test": "tests/test_senses_packs.py::test_declaration_lines_and_negatives_count_the_covered_entries", "result": "1 failed"}
   ],
   "not_planted": "the plan's fourth seeded bug (tools/senses_propose.py imported from a ve/ module): the tool is cut to sn-b8b"
 }
