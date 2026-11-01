@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-wc-s4-2b-db9abd91-t545254-s1",
+ "head": "7ca0be8ef0f52015e9a4419b3919bcba95dd61b7",
+ "argv": [
+  "x86sh-cand-wc-s4-2b-db9abd91-t545254-s1",
+  "7ca0be8ef0f52015e9a4419b3919bcba95dd61b7",
+  "69f1370e29937cbc274bb53b60730aaeff38f01b",
+  "-",
+  "-",
+  "4",
+  "1/4"
+ ],
+ "lean_from": {
+  "run_id": "41319057849",
+  "sha256": "c1ba67837442f20bdddf7f31d0a9b21b8f653a4f41d68359da87ec2d57ad0635"
+ }
+}
