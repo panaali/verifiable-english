@@ -1,0 +1,134 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "arm-true",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "arm-false",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.IntendedAt",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate; exercised by resolve_position_faithful (Positions.lean), whose proof this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.IntendedAt",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate; exercised by resolve_position_faithful (Positions.lean), whose proof this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Structure.withConstant",
+   "operator": "eq-le",
+   "reason": "a structure whose relations are Props, no check can evaluate it; exercised by placeT_denote and place_denote, whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Structure.withRelation",
+   "operator": "eq-le",
+   "reason": "a structure whose relations are Props, no check can evaluate it; exercised by renameP_denote, whose proof this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "eq-le",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Structure.withConstant",
+   "operator": "eq-ne",
+   "reason": "a structure whose relations are Props, no check can evaluate it; exercised by placeT_denote and place_denote, whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Structure.withRelation",
+   "operator": "eq-ne",
+   "reason": "a structure whose relations are Props, no check can evaluate it; exercised by renameP_denote, whose proof this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.IntendedAt",
+   "operator": "bool-flip",
+   "reason": "a Prop no check can evaluate; exercised by resolve_position_faithful (Positions.lean), whose proof this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.nodePositions",
+   "operator": "list-empty",
+   "reason": "the body emptied to []: refuted by the #guards at PositionsExamples.lean:38-39 (S4-4); the tool reads the check at :38 as reading a changed optCount and marks it UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.slotName",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "list-empty",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.Row",
+   "operator": "ctor-drop",
+   "reason": "each constructor is matched by Row.apply, Row.typed, rowOf and slotMeaning, so dropping one leaves them ill-formed (Unknown constant: UNKNOWN); each is exercised by a #guard (const S4-4, binder S4-9, assertive S4-7, presupposed S4-7's twin, plural and pred in the coverage section)"
+  },
+  {
+   "definition": "VE.Discourse.rowOf",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.rowsAt",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.formulaMentions",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.slotsIn",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "list-drop-last",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.rowOf",
+   "operator": "list-drop-last",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.linePositions",
+   "operator": "list-first",
+   "reason": "equivalent: on an Option.toList (at most one element) take 1 and reverse.take 1 are the identity; the norm-present mutants are killed by the claim-line #guard"
+  },
+  {
+   "definition": "VE.Discourse.slotMeaning",
+   "operator": "list-drop-first",
+   "reason": "a Prop no check can evaluate; exercised by rewrite_denote and resolve_position_faithful (Positions.lean), whose proofs this mutant breaks"
+  },
+  {
+   "definition": "VE.Discourse.rowOf",
+   "operator": "list-drop-first",
+   "reason": "the mutant does not type-check (a list put where a String, an Except or a function stands); Lean refuses it with a type error the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Discourse.linePositions",
+   "operator": "list-last",
+   "reason": "equivalent: on an Option.toList (at most one element) take 1 and reverse.take 1 are the identity; the norm-present mutants are killed by the claim-line #guard"
+  }
+ ]
+}

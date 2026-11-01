@@ -1,6 +1,6 @@
 {
  "item": "cmp-s4a",
- "command": "python3 /tmp/s4a/mutants.py (each mutant planted alone in lean/VE/Discourse/Positions.lean, then lake build VE.Discourse.PositionsExamples, then restored)",
+ "command": "python3 mutants.py: each mutant planted alone in lean/VE/Discourse/Positions.lean, then lake build VE.Discourse.PositionsExamples, then restored",
  "mutants": [
   {
    "definition": "nodeContext",
@@ -8,8 +8,8 @@
    "from": "((E.predicates N.pred).getD []).reverse",
    "to": "((E.predicates N.pred).getD [])",
    "killed": true,
-   "test": "#guard (Coverage (no 14.8 row): positions and their write-back over every content kind, each row o)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:101"
+   "test": "#guard under: Coverage (no 14.8 row): positions and their write-back over every content kind, each row o",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:104"
   },
   {
    "definition": "nodePositions",
@@ -17,8 +17,8 @@
    "from": "| some x => (x.sufficient ++ x.necessary).map (ctx, ·)",
    "to": "| some x => (x.necessary ++ x.sufficient).map (ctx, ·)",
    "killed": true,
-   "test": "theorem fills_node",
-   "fails_at": "lean/VE/Discourse/Positions.lean:304"
+   "test": "proof of theorem fills_node",
+   "fails_at": "lean/VE/Discourse/Positions.lean:301"
   },
   {
    "definition": "linePositions",
@@ -26,8 +26,8 @@
    "from": "(l.norm.toList ++ l.liberty.toList ++ l.recognition.toList).flatMap",
    "to": "(l.norm.toList ++ l.recognition.toList ++ l.liberty.toList).flatMap",
    "killed": true,
-   "test": "theorem fills_line",
-   "fails_at": "lean/VE/Discourse/Positions.lean:337"
+   "test": "proof of theorem fills_line",
+   "fails_at": "lean/VE/Discourse/Positions.lean:334"
   },
   {
    "definition": "positions",
@@ -35,8 +35,8 @@
    "from": "| .right R => ([R.holder], R.guard) :: R.lines.flatMap (linePositions E)",
    "to": "| .right R => R.lines.flatMap (linePositions E)",
    "killed": true,
-   "test": "theorem fills_content",
-   "fails_at": "lean/VE/Discourse/Positions.lean:394"
+   "test": "proof of theorem fills_content",
+   "fails_at": "lean/VE/Discourse/Positions.lean:391"
   },
   {
    "definition": "excSet",
@@ -44,8 +44,8 @@
    "from": "necessary := (fs.drop x.sufficient.length).take x.necessary.length",
    "to": "necessary := fs.take x.necessary.length",
    "killed": true,
-   "test": "theorem fills_node",
-   "fails_at": "lean/VE/Discourse/Positions.lean:304"
+   "test": "proof of theorem fills_node",
+   "fails_at": "lean/VE/Discourse/Positions.lean:301"
   },
   {
    "definition": "nodeSet",
@@ -53,8 +53,8 @@
    "from": "carveOuts := (fs.drop 1).take N.carveOuts.length",
    "to": "carveOuts := N.carveOuts",
    "killed": true,
-   "test": "theorem fills_node",
-   "fails_at": "lean/VE/Discourse/Positions.lean:297"
+   "test": "proof of theorem fills_node",
+   "fails_at": "lean/VE/Discourse/Positions.lean:294"
   },
   {
    "definition": "optCount",
@@ -62,8 +62,8 @@
    "from": "| some N => N.carveOuts.length + 1 + (match",
    "to": "| some N => N.carveOuts.length + (match",
    "killed": true,
-   "test": "theorem optCount_eq",
-   "fails_at": "lean/VE/Discourse/Positions.lean:317"
+   "test": "proof of theorem optCount_eq",
+   "fails_at": "lean/VE/Discourse/Positions.lean:314"
   },
   {
    "definition": "lineSet",
@@ -71,8 +71,8 @@
    "from": "liberty := l.liberty.map (nodeSet · (fs.drop (optCount l.norm)))",
    "to": "liberty := l.liberty.map (nodeSet · fs)",
    "killed": true,
-   "test": "theorem fills_line",
-   "fails_at": "lean/VE/Discourse/Positions.lean:338"
+   "test": "proof of theorem fills_line",
+   "fails_at": "lean/VE/Discourse/Positions.lean:335"
   },
   {
    "definition": "linesSet",
@@ -80,8 +80,8 @@
    "from": ".drop\n      (optCount l.recognition))",
    "to": ".drop\n      0)",
    "killed": true,
-   "test": "theorem fills_lines",
-   "fails_at": "lean/VE/Discourse/Positions.lean:374"
+   "test": "proof of theorem fills_lines",
+   "fails_at": "lean/VE/Discourse/Positions.lean:371"
   },
   {
    "definition": "contentSet",
@@ -89,8 +89,8 @@
    "from": "lines := linesSet R.lines (fs.drop 1) }",
    "to": "lines := linesSet R.lines fs }",
    "killed": true,
-   "test": "theorem fills_content",
-   "fails_at": "lean/VE/Discourse/Positions.lean:394"
+   "test": "proof of theorem fills_content",
+   "fails_at": "lean/VE/Discourse/Positions.lean:391"
   },
   {
    "definition": "withPositions",
@@ -98,7 +98,7 @@
    "from": "if fs.length = (positions E c).length then",
    "to": "if true then",
    "killed": true,
-   "test": "#guard (S4-4: `rule review-it: for every service x0, (x0 review_required) if (x0 equals it).`, `it)",
+   "test": "#guard under: S4-4: `rule review-it: for every service x0, (x0 review_required) if (x0 equals it).`, `it",
    "fails_at": "lean/VE/Discourse/PositionsExamples.lean:41"
   },
   {
@@ -107,7 +107,7 @@
    "from": "K.mentions.filter fun m => m.unit == unit && producing m",
    "to": "K.mentions.filter fun m => m.unit == unit",
    "killed": true,
-   "test": "#guard (S4-11, `resolve_identity`'s half: the rule target of \"exception to the rule above\" (`secti)",
+   "test": "#guard under: S4-11, `resolve_identity`'s half: the rule target of \"exception to the rule above\" (`secti",
    "fails_at": "lean/VE/Discourse/PositionsExamples.lean:66"
   },
   {
@@ -116,8 +116,8 @@
    "from": "def slotPrefix : String := \"ve__slot__\"",
    "to": "def slotPrefix : String := \"ve__slot_\"",
    "killed": true,
-   "test": "#guard (Coverage (no 14.8 row): positions and their write-back over every content kind, each row o)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:108"
+   "test": "#guard under: A claim line's norm node, then a power line's liberty and recognition nodes, each line in ",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:118"
   },
   {
    "definition": "slotName",
@@ -125,7 +125,7 @@
    "from": "def slotName (m : String) : String := slotPrefix ++ m",
    "to": "def slotName (m : String) : String := m",
    "killed": true,
-   "test": "#guard (Resolution steps 2 and 4: a mention without a slot, a slot without a mention, an ill-typed)",
+   "test": "#guard under: Resolution steps 2 and 4: a mention without a slot, a slot without a mention, an ill-typed",
    "fails_at": "lean/VE/Discourse/PositionsExamples.lean:85"
   },
   {
@@ -134,8 +134,8 @@
    "from": "| .var i => if i < d then .var i else .var (i + k)",
    "to": "| .var i => if i < d then .var i else .var i",
    "killed": true,
-   "test": "theorem placeT_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:426"
+   "test": "proof of theorem placeT_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:423"
   },
   {
    "definition": "place",
@@ -143,8 +143,8 @@
    "from": "| d, .ex s a => .ex s (place n t k (d + 1) a)",
    "to": "| d, .ex s a => .ex s (place n t k d a)",
    "killed": true,
-   "test": "theorem place_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:450"
+   "test": "proof of theorem place_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:447"
   },
   {
    "definition": "renameP",
@@ -152,8 +152,8 @@
    "from": "| .binary q x y => .binary (if q = n then p else q) x y",
    "to": "| .binary q x y => .binary q x y",
    "killed": true,
-   "test": "theorem renameP_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:474"
+   "test": "proof of theorem renameP_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:471"
   },
   {
    "definition": "Row.apply",
@@ -161,8 +161,8 @@
    "from": "| .binder j, A => place n (fun d => .var (j + d)) 0 0 A",
    "to": "| .binder j, A => place n (fun _ => .var j) 0 0 A",
    "killed": true,
-   "test": "theorem rewrite_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:503"
+   "test": "proof of theorem rewrite_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:500"
   },
   {
    "definition": "rowOf",
@@ -170,8 +170,8 @@
    "from": ".ok (.binder (ctx.length - 1 - i))",
    "to": ".ok (.binder i)",
    "killed": true,
-   "test": "#guard (each lifted under the quantifiers of the position; `binder:2` escapes.)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:123"
+   "test": "#guard under: each lifted under the quantifiers of the position; `binder:2` escapes.",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:133"
   },
   {
    "definition": "Row.typed",
@@ -179,17 +179,17 @@
    "from": "| .const c => (E.constants c).isSome",
    "to": "| .const _ => true",
    "killed": true,
-   "test": "theorem rewrite_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:501"
+   "test": "proof of theorem rewrite_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:498"
   },
   {
    "definition": "slotsIn",
    "file": "lean/VE/Discourse/Positions.lean",
-   "from": "fun a b => a.span.1 < b.span.1 ||",
-   "to": "fun a b => b.span.1 < a.span.1 ||",
+   "from": "fun a b => a.span.1 ≤ b.span.1",
+   "to": "fun a b => b.span.1 ≤ a.span.1",
    "killed": true,
-   "test": "#guard (manifest order.)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:132"
+   "test": "#guard under: manifest order.",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:146"
   },
   {
    "definition": "rowsAt",
@@ -197,8 +197,8 @@
    "from": "(slotsIn ms A).mapM fun m",
    "to": "((slotsIn ms A).take 1).mapM fun m",
    "killed": true,
-   "test": "#guard (each lifted under the quantifiers of the position; `binder:2` escapes.)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:123"
+   "test": "#guard under: each lifted under the quantifiers of the position; `binder:2` escapes.",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:133"
   },
   {
    "definition": "rewrite",
@@ -206,8 +206,8 @@
    "from": "xs.foldr (fun x B => x.2.apply (slotName x.1.id) B) A",
    "to": "xs.foldl (fun B x => x.2.apply (slotName x.1.id) B) A",
    "killed": true,
-   "test": "theorem rewrite_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:498"
+   "test": "proof of theorem rewrite_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:495"
   },
   {
    "definition": "nested",
@@ -215,8 +215,8 @@
    "from": "o.span != m.span && o.span.1 ≤ m.span.1",
    "to": "o.span != m.span && o.span.1 < m.span.1",
    "killed": true,
-   "test": "#guard (A mention nested in a description's span (its possessive) is no separate slot; one outside)",
-   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:135"
+   "test": "#guard under: A mention nested in a description's span (its possessive) is no separate slot; one outside",
+   "fails_at": "lean/VE/Discourse/PositionsExamples.lean:151"
   },
   {
    "definition": "slotCheck",
@@ -224,7 +224,7 @@
    "from": "match ms.find? (fun m => !nested ms m && !syms.contains (slotName m.id)),",
    "to": "match ms.find? (fun _ => false),",
    "killed": true,
-   "test": "#guard (Resolution steps 2 and 4: a mention without a slot, a slot without a mention, an ill-typed)",
+   "test": "#guard under: Resolution steps 2 and 4: a mention without a slot, a slot without a mention, an ill-typed",
    "fails_at": "lean/VE/Discourse/PositionsExamples.lean:84"
   },
   {
@@ -233,8 +233,8 @@
    "from": "pure ((xs, rewrite xs A) :: rs)",
    "to": "pure ((xs, A) :: rs)",
    "killed": true,
-   "test": "theorem resolveAll_ok",
-   "fails_at": "lean/VE/Discourse/Positions.lean:547"
+   "test": "proof of theorem resolveAll_ok",
+   "fails_at": "lean/VE/Discourse/Positions.lean:544"
   },
   {
    "definition": "checkAll",
@@ -242,8 +242,8 @@
    "from": "if A.check E ctx && xs.all (·.2.typed E ctx) then",
    "to": "if xs.all (·.2.typed E ctx) then",
    "killed": true,
-   "test": "theorem checkAll_ok",
-   "fails_at": "lean/VE/Discourse/Positions.lean:562"
+   "test": "proof of theorem checkAll_ok",
+   "fails_at": "lean/VE/Discourse/Positions.lean:559"
   },
   {
    "definition": "resolveContent",
@@ -251,8 +251,8 @@
    "from": "    slotCheck E ms c\n",
    "to": "    pure ()\n",
    "killed": true,
-   "test": "theorem resolve_ok",
-   "fails_at": "lean/VE/Discourse/Positions.lean:581"
+   "test": "proof of theorem resolve_ok",
+   "fails_at": "lean/VE/Discourse/Positions.lean:578"
   },
   {
    "definition": "VE.Structure.withConstant",
@@ -260,8 +260,8 @@
    "from": "constant := fun c => if c = n then some a else S.constant c",
    "to": "constant := fun c => S.constant c",
    "killed": true,
-   "test": "theorem placeT_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:431"
+   "test": "proof of theorem placeT_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:428"
   },
   {
    "definition": "VE.Structure.withRelation",
@@ -269,8 +269,8 @@
    "from": "relation := fun q => if q = n then R else S.relation q",
    "to": "relation := fun q => S.relation q",
    "killed": true,
-   "test": "theorem renameP_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:472"
+   "test": "proof of theorem renameP_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:469"
   },
   {
    "definition": "slotMeaning",
@@ -278,8 +278,8 @@
    "from": "      (∀ b, S.domain σ b → Dr.denote S [b] → b = a) ∧ slotMeaning A xs",
    "to": "      slotMeaning A xs",
    "killed": true,
-   "test": "theorem rewrite_denote",
-   "fails_at": "lean/VE/Discourse/Positions.lean:512"
+   "test": "proof of theorem rewrite_denote",
+   "fails_at": "lean/VE/Discourse/Positions.lean:509"
   },
   {
    "definition": "IntendedAt",
@@ -287,8 +287,8 @@
    "from": "| some (ctx, A) => match rowsAt E (formulaMentions K unit) ctx A with",
    "to": "| some (ctx, A) => match rowsAt E [] ctx A with",
    "killed": true,
-   "test": "theorem resolve_position_faithful",
-   "fails_at": "lean/VE/Discourse/Positions.lean:642"
+   "test": "proof of theorem resolve_position_faithful",
+   "fails_at": "lean/VE/Discourse/Positions.lean:639"
   },
   {
    "definition": "resolveFormula",
@@ -296,8 +296,8 @@
    "from": "| .ok (.assertion ψ) => .ok ψ",
    "to": "| .ok (.assertion _) => .ok φ",
    "killed": true,
-   "test": "theorem resolveFormula_assertion",
-   "fails_at": "lean/VE/Discourse/Positions.lean:691"
+   "test": "proof of theorem resolveFormula_assertion",
+   "fails_at": "lean/VE/Discourse/Positions.lean:688"
   },
   {
    "definition": "Fills",
@@ -305,8 +305,8 @@
    "from": "∀ x, (∀ r, set x ((pos x).map (·.2) ++ r) = x) ∧",
    "to": "∀ x, True ∧",
    "killed": true,
-   "test": "theorem fills_node",
-   "fails_at": "lean/VE/Discourse/Positions.lean:295"
+   "test": "proof of theorem fills_node",
+   "fails_at": "lean/VE/Discourse/Positions.lean:292"
   }
  ],
  "survivors": []
