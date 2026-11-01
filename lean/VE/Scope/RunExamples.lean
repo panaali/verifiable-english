@@ -119,8 +119,9 @@ def outcome {α} (r : Except String α) : String := match r with | .ok _ => "ok"
     (cyberPart "cyberweapon_creation_permitted" guardNarrow [("sign", .bool false)])])) ==
   "ScopeChoice: u0165.s03 scope-u0165-s03@1:narrow: ScopeConflict: u0165.s03: sign"
 -- the cells are summed over the choices: SR-1's two groups hold 2 × 7 × (7 + 1); at 112 it answers, at 111 (above one
--- group's 56) it is UNKNOWN
-#guard (groups (setDoc [s03]) [g1] 112).isOk && outcome (groups (setDoc [s03]) [g1] 111) == "ResourceLimit: scope explain answer cells"
+-- group's 56) and at 0 it is UNKNOWN
+#guard (groups (setDoc [s03]) [g1] 112).isOk && outcome (groups (setDoc [s03]) [g1] 111) == "ResourceLimit: scope explain answer cells" &&
+  outcome (groups (setDoc [s03]) [g1] 0) == "ResourceLimit: scope explain answer cells"
 -- 64 joint choices (8 by 8) are answered within the route's limit (64 × 7 × 8 cells); 65 (5 by 13) are UNKNOWN
 #guard (groups (setDoc [wideSet "s3" "u0165.s03" 8, wideSet "s5" "u0165.s05" 8] twoSets)).toOption.map (·.length) == some 64 &&
   (do pure (decide (Run.cellBound (← sd [g1]) (64 * 7) ≤ Run.cellLimit))).toOption == some true
