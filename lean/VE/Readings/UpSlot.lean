@@ -112,7 +112,7 @@ theorem origin_fmap {D : Doc} (hh : Hyps D) (c : Choice) {N : SoftNode} (hN : N 
 theorem pairOwner_chosen {D : Doc} {c : Choice} {P Q : SoftNode}
     (hP : ∀ x ∈ (origin D P.name).toList, ChosenAt D c x) (hQ : ∀ x ∈ (origin D Q.name).toList, ChosenAt D c x) :
     ∃ o, pairOwner D P Q = some o ∧ ∀ x ∈ o, ChosenAt D c x := by
-  unfold pairOwner
+  unfold pairOwner jointOwner
   cases ho : origin D P.name with
   | none =>
     cases ho' : origin D Q.name with
