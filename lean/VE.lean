@@ -14,6 +14,8 @@ import VE.Readings.SoftVerdicts
 import VE.Readings.SoftExamples
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
+import VE.Readings.SoftSup
+import VE.Readings.SoftSupExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -113,6 +115,7 @@ import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
+import VE.SoftNorms.TreeExamples
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access

@@ -4695,6 +4695,7 @@
         "VE.NormDefaults.coneAtomO",
         "VE.NormDefaults.coneAtomV",
         "VE.NormDefaults.coneAtomVO",
+        "VE.NormDefaults.coneAtomVX",
         "VE.NormDefaults.coneAtoms",
         "VE.NormDefaults.coneAtomsO",
         "VE.NormDefaults.coneEval",
@@ -4706,12 +4707,16 @@
         "VE.NormDefaults.coneValues",
         "VE.NormDefaults.coneValuesAt",
         "VE.NormDefaults.coneValuesAtO",
+        "VE.NormDefaults.coneValuesAtX",
         "VE.NormDefaults.coneValuesO",
+        "VE.NormDefaults.coneValuesX",
         "VE.NormDefaults.enumerateSettled",
         "VE.NormDefaults.enumerateSettledO",
+        "VE.NormDefaults.enumerateSettledX",
         "VE.NormDefaults.fillBody",
         "VE.NormDefaults.fillOfAtoms",
         "VE.NormDefaults.fillValid",
+        "VE.NormDefaults.freeAtoms",
         "VE.NormDefaults.kall",
         "VE.NormDefaults.kand",
         "VE.NormDefaults.kleene",
@@ -4735,13 +4740,17 @@
     },
     "VE/NormDefaults/Examples.lean": {
       "T": [
+        "VE.NormDefaults.Examples.a1",
         "VE.NormDefaults.Examples.act",
         "VE.NormDefaults.Examples.aperm",
         "VE.NormDefaults.Examples.csam",
         "VE.NormDefaults.Examples.envOf",
+        "VE.NormDefaults.Examples.fixed88",
         "VE.NormDefaults.Examples.longName",
         "VE.NormDefaults.Examples.m1",
+        "VE.NormDefaults.Examples.m100",
         "VE.NormDefaults.Examples.m13",
+        "VE.NormDefaults.Examples.m2",
         "VE.NormDefaults.Examples.m5",
         "VE.NormDefaults.Examples.m6",
         "VE.NormDefaults.Examples.mc",
@@ -4763,9 +4772,13 @@
         "VE.NormDefaults.Examples.u5cBad",
         "VE.NormDefaults.Examples.u5cBoth",
         "VE.NormDefaults.Examples.u6",
+        "VE.NormDefaults.Examples.u6y",
         "VE.NormDefaults.Examples.uBetween",
         "VE.NormDefaults.Examples.uRows",
+        "VE.NormDefaults.Examples.x4",
         "VE.NormDefaults.Examples.y1",
+        "VE.NormDefaults.Examples.yA",
+        "VE.NormDefaults.Examples.yAtom",
         "VE.NormDefaults.Examples.yperm"
       ]
     },
@@ -10509,6 +10522,7 @@
         "VE.SoftNorms.closureOf",
         "VE.SoftNorms.collidingPairs",
         "VE.SoftNorms.decisionNames",
+        "VE.SoftNorms.decisionRule",
         "VE.SoftNorms.decisions",
         "VE.SoftNorms.dedup",
         "VE.SoftNorms.directBelow",
@@ -16806,6 +16820,50 @@
         "VE.Readings.RightsExamples.rsLL",
         "VE.Readings.RightsExamples.rsNorm",
         "VE.Readings.RightsExamples.rsOne"
+      ]
+    },
+    "VE/SoftNorms/TreeExamples.lean": {
+      "T": [
+        "VE.SoftNorms.TreeFixtures.layeredDocs",
+        "VE.SoftNorms.TreeFixtures.unsplitKeys"
+      ]
+    },
+    "VE/Readings/SoftSup.lean": {
+      "G[V]": [
+        "VE.Readings.supX",
+        {
+          "name": "VE.Readings.pullF",
+          "tied": [
+            "VE.Readings.fill_sim",
+            "VE.Readings.fill_sim_author"
+          ]
+        },
+        "VE.Readings.sharedEnvSD",
+        "VE.Readings.supCertificateCheckSD"
+      ],
+      "P": [
+        "VE.Readings.FillLite"
+      ]
+    },
+    "VE/Readings/SoftSupExamples.lean": {
+      "T": [
+        "VE.Readings.SoftSupExamples.facts",
+        "VE.Readings.SoftSupExamples.q3",
+        "VE.Readings.SoftSupExamples.frame4a",
+        "VE.Readings.SoftSupExamples.rs4",
+        "VE.Readings.SoftSupExamples.NSD4a",
+        "VE.Readings.SoftSupExamples.NSD4c",
+        "VE.Readings.SoftSupExamples.pullFM",
+        "VE.Readings.SoftSupExamples.pullM",
+        "VE.Readings.SoftSupExamples.satAll",
+        "VE.Readings.SoftSupExamples.decF",
+        "VE.Readings.SoftSupExamples.m4",
+        "VE.Readings.SoftSupExamples.m1",
+        "VE.Readings.SoftSupExamples.mq",
+        "VE.Readings.SoftSupExamples.sides",
+        "VE.Readings.SoftSupExamples.closeCert",
+        "VE.Readings.SoftSupExamples.q4",
+        "VE.Readings.SoftSupExamples.NSDa"
       ]
     }
   }
