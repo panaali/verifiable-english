@@ -74,7 +74,7 @@ def verdict(row):
 
 def test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open(service):
     """F1.1 and F1.6: admitted, the unit OPEN, `good_judgment: [u0052.s01]`; the twin has the same verdict fields and
-    another document identity."""
+    other identities."""
     fm = front("u0052.s01")
     row, plain = answer(service, "u0052.s01", fm), answer(service, "u0052.s01", twin(fm))
     assert row["status"] == plain["status"] == "ok", (row, plain)
@@ -82,6 +82,8 @@ def test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open(ser
     assert row["judgments"] == {"used": [{"term": "good_judgment", "units": ["u0052.s01"]}], "unused": []}
     assert "judgments" not in plain
     assert verdict(row) == verdict(plain) and row["document_id"] != plain["document_id"]
+    # Identities over the list as written (jt-2c item 1(b)), the soft route's E″ included.
+    assert row["units"][0]["meaning_id"] != plain["units"][0]["meaning_id"]
 
 
 @pytest.mark.parametrize("where", ["guard", "unless"])
