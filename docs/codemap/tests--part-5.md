@@ -1,6 +1,3 @@
-- `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
-- `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
-- `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
 - `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
 - `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
 - `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
@@ -79,3 +76,7 @@
 - `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
+- `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
+- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
+- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
+- `tests/test_runner.py` — (no module docstring)
