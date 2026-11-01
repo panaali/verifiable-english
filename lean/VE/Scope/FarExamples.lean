@@ -1,4 +1,3 @@
-import VE.Scope.FarTheorems
 import VE.Scope.Examples
 
 /-! SC-4's fixtures (docs/spec/scope.md 7.6): far precedence (F11, F11-a, F11-y, F11′, F11-u, F11″) through `govern`,
