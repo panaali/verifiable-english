@@ -3,7 +3,7 @@
 Status: complete. All four deliverables are in: `Render.lean`, the `paraphrase` case and its shape, the route cases, and the seeded bugs.
 Changed: Lean's English line for each canonical cardinality statement, plus one assumption per finite sort. The reply's text is charged against one 65,536-byte limit, and that limit is proved (`paraphrase_within`).
 Open: the lines are display-only until QT-A6. Spec 7's paraphrase column, a W6a part's English and irregular plurals belong to QT-A6 ("Three choices", "Spec re-read").
-Size: about 790 hand-written lines against ~600, accepted by the DRI (`reviews/dri-decisions-20261101-qt-a3db.md`). DELTA: none. DRI signature needed: none (trust growth is SIGNED by standing ruling R16). Next: qt-a4, then QT-A6.
+Size: about 790 hand-written lines (771 added, 22 changed, the REPORT included) against ~600, accepted by the DRI (`reviews/dri-decisions-20261101-qt-a3db.md`). DELTA: none. DRI signature needed: none (trust growth is SIGNED by standing ruling R16). Next: qt-a4, then QT-A6.
 
 ## Plan rows (docs/spec/quantities-PLAN.md :174-181, :724; spec 4, 4.3)
 
@@ -52,7 +52,7 @@ The quantities statement review accepted QT-A3 (`docs/quantities/qt-a3/REPORT.md
 
 `maxBytes` and `tooLong` are G[R] (as `Wire.maxFiniteSorts`), the shape is G[R], and the guard helpers are T. These are recorded in `docs/trust-baseline.json` as "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18". The ties-pass row is in manage-agents `FOLLOW-UPS.md` under "## qt-a3db". Every trusted definition is stated about by a theorem (`tests/test_cardinality_exercised.py`: 5 passed).
 
-Trust mutants: `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/quantities/qt-a3db/trust-mutants.json` (`trust-mutants-run1.json`: 18 survivors and 12 unknowns, at d79a060a). Two kinds of survivor got new guards: the paraphrase row's exact keys (`envIds` mutants) and a three-term count (`count`'s further terms). The rest are allowed in `trust-mutants-allow.json`: `Charges` is a proposition exercised by the proofs it breaks, and the other 8 do not compile. Rescored at 84930ae4: 49 KILLED, 0 SURVIVOR, 0 UNKNOWN, 22 ALLOWED, 4 INVALID, exit 0.
+Trust mutants: `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/quantities/qt-a3db/trust-mutants.json` (`trust-mutants-run1.json`: 18 survivors and 12 unknowns, at d79a060a). Two kinds of survivor got new guards: the paraphrase row's exact keys (`envIds` mutants) and a three-term count (`count`'s further terms). The rest are allowed in `trust-mutants-allow.json`: `Charges` is a proposition exercised by the proofs it breaks, and the other 8 do not compile. Rescored at 84930ae4, then at 2aa3ddb9 after the import fix (`--rescore trust-mutants-run1.json`): 49 KILLED, 0 SURVIVOR, 0 UNKNOWN, 22 ALLOWED, 4 INVALID, exit 0.
 
 ## Seeded bugs (Lean; no Python or Rust product code changed)
 
@@ -72,7 +72,8 @@ One more bug each in `describe`, `inParens`, `body`, `members`, `atLeastOne`, `t
 ## Tests
 
 - While iterating: `uv run pytest -q tests/test_cardinality_service.py` (11 passed), `tests/test_cardinality_exercised.py` (5 passed), and `tests/test_route_row_schemas.py` (32 passed, run with the exercised file before the trust classes were added).
-- Selected tests: see "Selected run" below.
+- Selected run 1 (`mac-pytest.sh --select`, Claude cloud, b5b90ade, 412 units in 6 shards) had three failures, all from this item. Shard 1 stopped at `tools/check_lean_imports.py`: RenderTheorems imported `VE.Question.Strings` (layer 2 -> 3), and no default target built it. `test_precommit_hook.py::test_large_staged_change_passes` failed for the same import. `test_consolidation_tools.py::test_committed_ledger_names_real_declarations` failed because step 7 of `docs/CONSOLIDATION-PLAN.md` counts every `Run.runCase` and now measures 727 (`trust_map.py --ledger`). All three fixed in 2aa3ddb9b (import from `VE.Readings.Names`, a root in `lean/VE.lean`, the step-7 row re-measured).
+- Selected run 2 (a8018ddf, 412 units): 5 of 6 shards passed (411 units). `test_assurance_manifest.py` failed three tests: Run.lean's pin and the two new files' classification. Fixed in 507a7c17d (Run.lean re-pinned, Render.lean pinned whole, RenderTheorems.lean under `other_json`). Rerun of that file alone: `uv run pytest -q tests/test_assurance_manifest.py`, 139 passed.
 - Pre-existing red (main-known-red.txt): two `test_lean_service.py` sub-tick deadline tests and `test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target` belong to lf-14d.
 - Not run by me: the full gate (the chain runs it on the final HEAD).
 
@@ -82,19 +83,19 @@ One more bug each in `describe`, `inParens`, `body`, `members`, `atLeastOne`, `t
 
 ## Evidence
 
-Commits (`git log --oneline --no-merges main..HEAD`): f0d020267, 7463e05be, 1f521a4ba, d79a060ac, 0fb6e8386, 84930ae45, da67568a4, 789a0ac03, and this report's commit. Main was merged once (8abff0f63, at 1d9ad881d). Overlap: no in-flight branch (`feature/pc-3` included) touches these files; feature/qt-a4a has not started.
+Commits (`git log --oneline --no-merges main..HEAD`): f0d020267, 7463e05be, 1f521a4ba, d79a060ac, 0fb6e8386, 84930ae45, da67568a4, 789a0ac03, b5b90adec, 2aa3ddb9b, a8018ddf4, 507a7c17d, and this report's update. Main was merged once (8abff0f63, at 1d9ad881d). Overlap: no in-flight branch (`feature/pc-3` included) touches these files; feature/qt-a4a has not started.
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained: PASS. `test_paraphrase_rows_are_typed_and_bound` (each member set to 7, true, null, [], {}, 1.5, "\ud800" and a deep list, all through `_decode_json`); the request side is `paraphrase-unknown-form`, `paraphrase-non-canonical` and the unknown-kind guard.
-2. Deliverables and rules: PASS. See "Plan rows". No Python copy of a Lean decision (`git diff main...HEAD -- ve/` is empty); no permanent report test.
+2. Deliverables and rules: PASS. See "Plan rows". No Python copy of a Lean decision: under `ve/` the diff is only the hand-reviewed decoder pins (`ve/assurance-manifest.json`) and the generated `cardinality.json` (`git diff --stat <merge base> HEAD -- ve/ rust/`). No permanent report test.
 3. Tests can fail: PASS. 17 seeded bugs (`mutants.json`); trust mutants exit 0 (`trust-mutants.json`).
 4. Agreement, and valid input still passes: PASS. Every form row is answered (`test_route_cases_answer_as_recorded`); Rust has no paraphrase.
 5. R8 binding: PASS. `assumptions` is bound by `x-length` to the request's finite sorts (seeded bug "assumptions-unbound"); the row's ids are W6a's environment identities, typed hex64.
 6. Gate evidence: PASS. Synced with main at 1d9ad881d. Evidence: commits from `main..HEAD --no-merges`, trust and statement base from the merge base. The gate runs on the final HEAD in the chain.
 7. Nothing unsigned: PASS. Trust growth cites R16 with its conditions met; there is no DELTA row.
 8. DELTA: N.A. A new case kind; no existing answer changes (every pre-existing `EXPECTED` row is unchanged in `test_route_cases_answer_as_recorded`).
-9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` picks the cardinality tests (see "Selected run").
+9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` picks 412 of 519 units, including the cardinality tests, the assurance manifest and the layer checks. Its failures in run 1 were the ones this item caused (see "Tests").
 10. Statements say what is claimed: PASS. `paraphrase_within` is about `paraphrase`'s returned pair; the seeded bugs break `texts` and `piece_charges`; statement diff 26/0/0.
 11. Budgets fail closed: PASS. Over the limit the answer is `ResourceLimit` (guards `:637`, `:643`; route case `paraphrase-over-limit`). The large request ends at the limit without a deadline (`test_a_large_statement_ends_within_the_limit`).
 12. CPU and memory: PASS. Each byte is charged before it is appended, so work is bounded by 65,536 bytes plus the decoder's 10,000 nodes. The step check is `test_a_large_statement_ends_within_the_limit` (8,195 nodes refused, no timing).
