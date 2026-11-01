@@ -129,6 +129,11 @@
    "definition": "VE.Discourse.linePositions",
    "operator": "list-last",
    "reason": "equivalent: on an Option.toList (at most one element) take 1 and reverse.take 1 are the identity; the norm-present mutants are killed by the claim-line #guard"
+  },
+  {
+   "definition": "VE.Discourse.slotsIn",
+   "operator": "le-lt",
+   "reason": "equivalent: the slots of one position have disjoint spans (14.3 step 2 replaces each outermost span), so no two starts tie and < orders them as <= does; the two-description #guards kill the swapped order"
   }
  ]
 }
