@@ -1678,6 +1678,13 @@
    "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "pk-1-conditions: VE/NormDefaults/Packs.lean +2 (the Pack.conditions field and its doc comment); Serve.lean +2 is main's (scale-stage-timers, after 2f1318f4d), not this item's",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1-conditions, 2026-10-18",
+   "commit": "2f1318f4ddfd8706290b441538f3767cb6ce8552"
   }
  ]
 }
