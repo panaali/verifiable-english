@@ -25,6 +25,19 @@ def M2 : VE.FiniteModel Entity := ⟨fun s => if s == "assistant" then [a1, a2] 
   openNames L == VE.SoftNorms.decisionNames L.D ++ VE.NormDefaults.unsaidNames L.U &&
   openNames L == ["soft__excepted__r1", "unsaid__x_required"]
 
+/-- Two default rules, and both regulated predicates unspecified: two decision names and two unsaid names. -/
+def dTwo : Except String VE.NormDefaults.Wire.LayeredU :=
+  VE.Defaults.Fixtures.layered (VE.Defaults.Fixtures.envJ [VE.Defaults.Fixtures.xReq,
+      VE.Defaults.Fixtures.regJ "x_permitted" "[\"assistant\"]" "permission" "unspecified" ",\"act\":\"{0} do x\""]
+    VE.Defaults.Fixtures.strictSoft)
+  [VE.Defaults.Fixtures.ruleJ "r1" "x_required" true VE.Defaults.Fixtures.dfltJ,
+   VE.Defaults.Fixtures.ruleJ "r2" "x_permitted" true VE.Defaults.Fixtures.dfltJ]
+
+-- Every decision predicate at every tuple, predicate by predicate; every decision name, then every unsaid name.
+#guard holds dTwo fun L => decisionAtoms L.D M2 == [("soft__excepted__r1", [a1]), ("soft__excepted__r1", [a2]),
+    ("soft__excepted__r2", [a1]), ("soft__excepted__r2", [a2])] &&
+  openNames L == ["soft__excepted__r1", "soft__excepted__r2", "unsaid__x_permitted", "unsaid__x_required"]
+
 /-! ## Completions, outcomes and settledness on `U0` -/
 
 def rx : VE.Norms.Regulated := ⟨"x", ["s"], true, .permission, some "{0} do x", none⟩
