@@ -1675,14 +1675,7 @@
   {
    "class": "S",
    "lines": 1,
-   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's revised own-to 'and' cell), V +22 (lean/VE/Acts/ReadingsExamples.lean +16: eachOrTogether, together105, e055x, u055x, other; lean/VE/Acts/ElaborateExamples.lean +6: seekP, enjoyP, e17, sick); trusted +23; every new or changed definition killed by a seeded bug (docs/act-phrases/ap-3r/mutants.json)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
-   "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
-  },
-  {
-   "class": "V",
-   "lines": 22,
-   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's revised own-to 'and' cell), V +22 (lean/VE/Acts/ReadingsExamples.lean +16: eachOrTogether, together105, e055x, u055x, other; lean/VE/Acts/ElaborateExamples.lean +6: seekP, enjoyP, e17, sick); trusted +23; every new or changed definition killed by a seeded bug (docs/act-phrases/ap-3r/mutants.json)",
+   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
   }
