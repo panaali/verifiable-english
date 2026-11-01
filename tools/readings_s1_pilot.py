@@ -36,6 +36,7 @@ from ve.errors import VEError  # noqa: E402
 from ve.readings import s1_content_meaning_id  # noqa: E402
 from ve.readings_route import document_wire, elaborate  # noqa: E402
 from ve.readings_s1 import NORM_DEFAULTS, Decoded, S1Environment, guard_base, record_situations, search  # noqa: E402
+from ve.scope import explain  # noqa: E402
 
 
 def read(path):
@@ -44,8 +45,12 @@ def read(path):
     return json.loads(front), source
 
 
+def text(meta, source):
+    return b"---\n" + json.dumps(meta, ensure_ascii=False).encode() + b"\n---\n" + source
+
+
 def write(path, meta, source):
-    Path(path).write_bytes(b"---\n" + json.dumps(meta, ensure_ascii=False).encode() + b"\n---\n" + source)
+    Path(path).write_bytes(text(meta, source))
 
 
 def with_readings(environment):
@@ -217,9 +222,13 @@ def base_vocabulary(meta, data):
     return S1Environment(data, filled).author_environment()
 
 
-def rebuild_reading_ids(meta):
+def rebuild_reading_ids(meta, source):
     """Apply after editing the document's environment; rebuild every set, not only changed units. The ids are those
-    of the environment Lean's chain reads them in (`chain_environment`: under `scope@0`, the environment without it)."""
+    of the environment Lean's chain reads them in (`chain_environment`: under `scope@0`, the environment without it).
+    A `scope@0` document is first admitted by Lean's `scope` mode, its profile gate and its block (`ve.scope.explain`
+    raises Lean's refusal), so the rebuild takes no list the document mode refuses."""
+    if "scope@0" in listed_profiles(meta["environment"]):
+        explain(text(meta, source))
     data = chain_environment(meta["environment"])
     env = _environment(data)
     sets = meta.get("reading_sets", [])
@@ -321,7 +330,7 @@ def main(argv=None):
         if args.constitution or args.udhr or (not args.check_noop and not args.out):
             parser.error("rebuild requires --out unless --check-noop; do not combine pilot reruns")
         meta, source = read(args.rebuild_reading_ids)
-        rebuilt = rebuild_reading_ids(meta)
+        rebuilt = rebuild_reading_ids(meta, source)
         if args.check_noop and rebuilt["reading_sets"] != meta.get("reading_sets", []):
             parser.error("reading-set ids changed: rebuild is not a no-op")
         if args.out:
