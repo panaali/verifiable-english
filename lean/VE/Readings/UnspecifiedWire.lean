@@ -284,7 +284,7 @@ theorem separates_links {α : Type u} [DecidableEq α] (D : Doc) (cs : List Coup
 /-- 4.1 after S1's and S2a's admission, each reading's document read from the request's table: `ndText` (steps 2
     and 3); S1's admission of the filled document (step 4: `admissionText`'s checks on `fillDoc N`, staged, its own
     table built once); step 5 on the at most 64 compatible choices. -/
-def admitNDFull (b : Admitted2) : Except String AdmittedNDFull :=
+def admitNDFull (b : Admitted2) : Except String AdmittedNDFull := Stage.stage "admitNDFull" fun _ =>
   let re := b.a.re
   let N : NDoc := ⟨b.D, unspecOf re b.D⟩
   if hsd : b.D.chain = b.a.D.chain ∧ b.D.items = b.a.D.items then

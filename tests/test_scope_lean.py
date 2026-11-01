@@ -32,20 +32,19 @@ def test_the_scope_files_are_classified():
 
 
 # The document mode's block decoder and fold helpers (sc-1b), named one by one: no theorem states them yet (the
-# spec's statement over the decoder, `decodeScope_bound`, waits for sc-1ae); R16's condition for them is met by
+# spec's statement over the decoder, `decodeScope_bound`, waits for sc-1ae; sc-5rd's payload lemmas state
+# `decodeParts`, `decodeGovernor`, `decodeEffect` and `listMember`); R16's condition for them is met by
 # `lean/VE/Scope/WireExamples.lean`'s #guards and docs/scope/sc-1b/trust-mutants.json.
 WIRE = [f"VE/Scope/Wire.lean: VE.Scope.{name}" for name in (
-    "byStatus", "changers", "decodeEffect", "decodeGovernor", "decodeListName", "decodeParts", "decodeReach",
-    "listMember", "spanIn", "statusOf")]
+    "byStatus", "changers", "decodeListName", "decodeReach", "spanIn", "statusOf")]
 
 
-# The per-choice GOVERN's helpers (sc-5rb, scope spec 11.2), named one by one: the statements naming the trees they
-# build (`governSets_preserves`, `governSets_every_choice`, `governSets_strings`, `governSets_readings_refused`) take
-# `Pinned.JsonWF` and wait for sc-1ae (sc-5rc); R16's condition for them is met by
-# `lean/VE/Scope/ReadingsExamples.lean`'s #guards and docs/scope/sc-5rb/trust-mutants.json.
+# The per-choice GOVERN's helpers (sc-5rb, scope spec 11.2), named one by one: sc-5rd's lemmas for
+# `governSets_preserves`, `governSets_strings` and `governSets_readings_refused` state the trees `atChoiceOn` and
+# `assemble` build; these remain, and R16's condition for them is met by `lean/VE/Scope/ReadingsExamples.lean`'s
+# #guards and docs/scope/sc-5rb/trust-mutants.json.
 READINGS = [f"VE/Scope/Readings.lean: VE.Scope.{name}" for name in (
-    "assemble", "atChoice", "atChoiceOn", "choiceText", "governedSets", "layoutReach", "pickOf", "readingAt",
-    "readingsJson", "setUnit", "setVersion", "setsJson", "shapeOf")]
+    "choiceText", "governedSets", "layoutReach", "setVersion", "shapeOf")]
 
 
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
