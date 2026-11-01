@@ -2,7 +2,7 @@ import VE.Discourse.Positions
 
 /-! # Fixtures of 14.8 that need no composed admission (docs/spec/discourse.md 14.8)
 
-Over 10's α: sorts `service`, `person`; `web_api : service`, `alice : person`; `review_required`, `deployed`, `api :
+Over 10's α: sorts `service`, `person`; `web_api : service`, `alice : person` (and `bob : person` for a plural); `review_required`, `deployed`, `api :
 service`, `owns : person × service`, `notify_required : person`. Each content is the one the fence compiler yields
 with its slots (14.3 step 2); the fence compiler and the steps around it (S4-5, S4-6, S4-8, S4-11's header option,
 S4-12, S4-13, S4-19) are cmp-s4ab's. -/
@@ -14,7 +14,7 @@ def E : VE.Environment where
   sorts := ["service", "person"]
   predicates p := [("review_required", ["service"]), ("deployed", ["service"]), ("api", ["service"]),
     ("owns", ["person", "service"]), ("notify_required", ["person"])].lookup p
-  constants c := [("web_api", "service"), ("alice", "person")].lookup c
+  constants c := [("web_api", "service"), ("alice", "person"), ("bob", "person")].lookup c  -- `bob`: the plural
 
 def manifest (ms : List Mention) : Manifest :=
   ⟨"", "", [], [], [], ms, [], [], [], [], [], [], []⟩
@@ -86,5 +86,63 @@ def m11 (r : String) := mention "m2" .sectionRef (namedTarget .rule r)
   "MentionNotSlot: m9"
 #guard errIs (resolveContent E (manifest [mention "m1" .pronoun (entityTarget "alice")]) "u1" s4_4)
   "IllTypedTarget: m1: alice"
+
+/-! Coverage (no 14.8 row): positions and their write-back over every content kind, each row of resolution step 3,
+and the order of the slots. -/
+def g (p : String) : VE.Formula := .unary p (.var 0)
+def nodeX : VE.SoftNorms.SoftNode := { (node "r" "review_required" (g "api")) with
+  carveOuts := [g "deployed"], mode := .default, exception := some ⟨none, [g "review_required"], [.top], []⟩ }
+#guard (positions E (.norm nodeX)).map (·.2) = [g "api", g "deployed", g "review_required", .top]
+#guard withPositions E (.norm nodeX) [.top, .bottom, g "api", g "deployed"] == some (.norm { nodeX with
+  guard := .top, carveOuts := [.bottom], exception := some ⟨none, [g "api"], [g "deployed"], []⟩ })
+def lineX : VE.Rights.SourceLine :=
+  ⟨.power, none, some (node "lib" "deployed" (g "api")), some (node "rec" "owns" .top), [], none, []⟩
+def rightX : Content := .right ⟨"rt", "person", g "notify_required", [lineX, { lineX with liberty := none }]⟩
+#guard positions E rightX = [(["person"], g "notify_required"), (["service"], g "api"), (["service", "person"], .top),
+  (["service", "person"], .top)]
+#guard withPositions E rightX [.bottom, .top, g "deployed", .bottom] == some (.right ⟨"rt", "person", .bottom,
+  [{ lineX with liberty := some (node "lib" "deployed" .top), recognition := some (node "rec" "owns" (g "deployed")) },
+   { lineX with liberty := none, recognition := some (node "rec" "owns" .bottom) }]⟩)
+#guard positions E (.rightLines "rt" [lineX]) = ((positions E rightX).drop 1).take 2
+#guard positions E (.limitation ⟨"l", none, none, none, [], []⟩) = []
+#guard slotName "m1" = "ve__slot__m1"
+
+-- A predicate slot (`such`): the slot predicate symbol becomes the target's, in a unary and a binary atom.
+#guard okIs (resolveContent E (manifest [mention "m1" .such (predTarget "deployed")]) "u1"
+  (.assertion (.unary (slotName "m1") (.const "web_api")))) (.assertion (.unary "deployed" (.const "web_api")))
+#guard okIs (resolveContent E (manifest [mention "m1" .such (predTarget "owns")]) "u1"
+  (.assertion (.binary (slotName "m1") (.const "alice") (.const "web_api"))))
+  (.assertion (.binary "owns" (.const "alice") (.const "web_api")))
+-- A distributive plural: one conjunct per member.
+#guard okIs (resolveContent E (manifest [mention "m1" .plural (listTarget ["alice", "bob"]) (rd := some .distributive)])
+  "u1" (.assertion (.unary "notify_required" (slot "m1"))))
+  (.assertion (.and (.unary "notify_required" (.const "alice")) (.unary "notify_required" (.const "bob"))))
+-- `binder:<i>` over `owns`: the context is `[service, person]`, so `binder:0` is variable 1 and `binder:1` variable 0,
+-- each lifted under the quantifiers of the position; `binder:2` escapes.
+def mb (i : Nat) (id : String) (span : Nat × Nat) := mention id .pronoun (binderTarget i) (span := span)
+#guard okIs (resolveContent E (manifest [mb 0 "m1" (0, 2), mb 1 "m2" (3, 5)]) "u1" (.norm (node "o" "owns"
+    (.and (.binary "owns" (slot "m1") (slot "m2")) (.ex "service" (.binary "owns" (slot "m1") (.var 0)))))))
+  (.norm (node "o" "owns" (.and (.binary "owns" (.var 1) (.var 0)) (.ex "service" (.binary "owns" (.var 2) (.var 0))))))
+#guard errIs (resolveContent E (manifest [mb 2 "m1" (0, 2)]) "u1"
+  (.norm (node "o" "owns" (.binary "owns" (slot "m1") (.var 0))))) "WitnessEscape: m1"
+-- Two descriptions in one position: the one written first (`m1`, a person) takes the wider scope, whatever the
+-- manifest order.
+def dPerson := mention "m1" .definite (binderTarget 0) (some (g "notify_required")) (some .assertive)
+def dService := mention "m2" .definite (binderTarget 0) (some (g "api")) (some .assertive) (span := (3, 5))
+#guard okIs (resolveContent E (manifest [dService, dPerson]) "u1" (.assertion (.binary "owns" (slot "m1") (slot "m2"))))
+  (.assertion (assertive "person" (g "notify_required") (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))))
+-- A mention nested in a description's span (its possessive) is no separate slot; one outside the span needs one.
+#guard okIs (resolveContent E (manifest [m7, mention "m3" .possessive (entityTarget "alice") (span := (0, 1))]) "u1" s4_7)
+  (.norm (node "notify" "notify_required" (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))))
+#guard errIs (resolveContent E (manifest [m7, mention "m3" .possessive (entityTarget "alice") (span := (3, 4))]) "u1" s4_7)
+  "MentionNotSlot: m3"
+-- Step 4's position without a slot, and step 3's other kinds.
+#guard errIs (resolveContent E k4 "u1" (.norm { (node "review-it" "review_required" (.eq (.var 0) (slot "m1"))) with
+  carveOuts := [.unary "owns" (.var 0)] })) "InvalidInput: u1: position 1"
+#guard errIs (resolveContent E (manifest [mention "m1" .pronoun (namedTarget .rule "review-it")]) "u1"
+  (.assertion (.unary "deployed" (slot "m1")))) "TargetKindMismatch: m1: pronoun, rule"
+#guard errIs (resolveContent E (manifest [mention "m1" .demonstrative (namedTarget .claim "c1")]) "u1"
+  (.assertion (.unary "deployed" (slot "m1")))) "UnsupportedTarget: m1: claim"
+#guard errIs (resolveContent E (manifest [{ m7 with reading := none }]) "u1" s4_7) "IllTypedTarget: m1: binder:0"
 
 end VE.Discourse.PositionsExamples
