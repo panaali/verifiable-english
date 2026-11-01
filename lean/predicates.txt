@@ -207,6 +207,8 @@ module VE.Cardinality.Examples
 module VE.Cardinality.Gate
 module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
+module VE.Cardinality.Render
+module VE.Cardinality.RenderTheorems
 module VE.Cardinality.Run
 module VE.Cardinality.RunExamples
 module VE.Cardinality.RunTheorems
@@ -844,6 +846,7 @@ VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document
 VE.Cardinality.HasCount@VE.Cardinality.Semantics
 VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics
 VE.Cardinality.Rel.holds@VE.Cardinality.Semantics
+VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems
 VE.Cardinality.erasedRounding@VE.Cardinality.Ratio
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
