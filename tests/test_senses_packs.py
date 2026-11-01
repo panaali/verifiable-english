@@ -147,3 +147,56 @@ def test_a_sentence_the_base_does_not_read_is_counted_apart():
     row = classify(FLUENT, None, bundled_pack("software-services@1"), "The inventory was exported on Monday.",
                    ("deployed",))
     assert row["class"] == "base_unread" and row["code"] == "NoDerivation"
+
+
+@pytest.mark.parametrize("usecase", coverage.USECASES)
+def test_after_counts_the_pack_lines_the_covered_predicates_need(usecase):
+    """Plan 7.2 on a use case (review F1): "after" is the pack lines its predicates need, each covered predicate's
+    sense line and the sort lines those senses name, never the preamble lines its sentences need."""
+    case = coverage.USECASES[usecase]
+    pack = json.loads(bundled_pack(case["pack"]))
+    words = set(case["covered"].values())
+    kinds = {kind for sense in pack["senses"] if sense["word"] in words for kind in sense["kinds"]}
+    env, overlay = senses_env(usecase)
+    assert coverage.pack_lines(env, overlay, bundled_pack(case["pack"]), case["covered"], {}) == {
+        "senses": len(words), "sorts": sum(1 for sort in pack["sorts"] if sort["name"] in kinds)}
+
+
+def test_the_saved_table_counts_the_pack_lines_after():
+    """PROBE F1: the saved table's "after" is the pack lines, so policies@1's 16 sense lines are among them."""
+    table = coverage._json("docs/senses/sn-b8/coverage.json")
+    for usecase, case in coverage.USECASES.items():
+        lines = table[usecase]["summary"]["declaration_lines"]
+        assert lines["after"] == lines["pack_senses"] + lines["pack_sorts"]
+        assert lines["pack_senses"] == len(set(case["covered"].values()))
+    after = table["agent-policy"]["summary"]["declaration_lines"]["after"]
+    assert after >= len(json.loads(bundled_pack("policies@1"))["senses"])
+
+
+def test_a_covered_word_that_is_not_one_sense_line_stops_the_measure():
+    """No word, two senses, or a renaming to another sense: the count has no line to pick, so it refuses."""
+    env, overlay = senses_env("fluent")
+    pack = bundled_pack("software-services@1")
+    for covered, renaming in (({"deployed": "absent"}, {}),
+                              ({"deployed": "deployed"}, {"deployed": "sense__reviewed_1"})):
+        with pytest.raises(ValueError, match="not one line"):
+            coverage.pack_lines(env, overlay, pack, covered, renaming)
+    own, own_overlay = WORLDS["own-funny"]()
+    funny, funny_overlay = coverage.reduced(own.to_dict(), own_overlay, {"funny": "funny"})
+    with pytest.raises(ValueError, match="not one line"):
+        coverage.pack_lines(funny, funny_overlay, FIXTURES, {"funny": "funny"}, {})
+
+
+def test_declaration_lines_and_negatives_count_the_covered_entries():
+    """Before: one line per covered predicate and per field it declares, overlay included; a negative is removed
+    when its wording is a simple adjective (review F4)."""
+    raw = {"vocabulary": {"predicates": {
+        "deployed": {"arguments": ["service"], "description": "d", "negative_verbalisation": "{0} is not deployed"},
+        "owns": {"arguments": ["person", "service"], "verbalisation": "{0} owns {1}",
+                 "negative_verbalisation": "{0} does not own {1}"},
+        "safe": {"arguments": ["service"], "negative_verbalisation": "{0} is not safe"}}}}
+    overlay = {"predicates": {"deployed": {"verbalisation": "{0} is deployed"}}}
+    covered = {"deployed": "deployed", "owns": "owns"}
+    assert coverage.declaration_lines(raw, overlay, covered) == (1 + 3 + 1) + (1 + 3)
+    assert coverage.negatives_removed(raw, overlay, covered) == 1
+    assert coverage.negatives_removed(raw, None, {**covered, "safe": "safe"}) == 2
