@@ -1,0 +1,9 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Scope.decodeBlock",
+   "operator": "list-empty",
+   "reason": "does not elaborate: both list-empty mutants put `[]` where `decodeParts ...` (an Except) or its `.map` stands (Wire.lean:124, Type mismatch / Function expected), so no build reads them; decodeBlock's own fields are killed by the other mutants of this run (WireExamples, ScopeAdmission)"
+  }
+ ]
+}
