@@ -1,0 +1,13 @@
+trust_mutants: 16 definitions, 109 mutants (36 to run), 4 jobs, base 484f3bc11b03
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:25 VE.EnglishGrammar.Norm.Polarity (S, trusted) ctor-drop: | modal (f : Force) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:30: Unknown constant `VE.EnglishGrammar.Norm.Polarity.modal`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:112 VE.EnglishGrammar.Norm.BlockFault (S, trusted) ctor-drop: | expectedRule (index number : Nat) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:133: Unknown constant `VE.EnglishGrammar.Norm.BlockFault.e...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:48 VE.EnglishGrammar.Norm.Place (S, trusted) ctor-drop: | act | guard | carveOut | bearer ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:75: Unknown constant `VE.EnglishGrammar.Norm.Place.act`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:94 VE.EnglishGrammar.Norm.ruleCount (S, trusted) list-empty: rs.filterMap NormStatement.number? -> [] (lean/VE/EnglishGrammar/Norm/Value.lean:94: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:36 VE.EnglishGrammar.Norm.Mode (S, trusted) ctor-drop: | default (decider : String) ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:76: Unknown constant `VE.EnglishGrammar.Norm.Mode.default`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:99 VE.EnglishGrammar.Norm.Piece (S, trusted) ctor-drop: | clause (c : Clause) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:135: Unknown constant `VE.EnglishGrammar.Norm.Piece.clause`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:100 VE.EnglishGrammar.Norm.Piece (S, trusted) ctor-drop: | exceptWhen (φ : EFormula) ->  (lean/VE/EnglishGrammar/Norm/Value.lean:137: Unknown constant `VE.EnglishGrammar.Norm.Piece.except...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Value.lean:44 VE.EnglishGrammar.Norm.Bearer (S, trusted) ctor-drop: | unstated ->  (lean/VE/EnglishGrammar/Norm/Examples.lean:74: Unknown constant `VE.EnglishGrammar.Norm.Bearer.uns...)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Value.lean:134 VE.EnglishGrammar.Norm.assembleFrom (S, trusted) list-first: a -> (a.take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Value.lean:162)
+trust_mutants: 27 KILLED, 1 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 73 OTHER SHARD in 121 s
+trust_mutants: S, trusted: 27 KILLED, 1 SURVIVOR, 8 UNKNOWN, 73 OTHER SHARD
+trust_mutants: steps: wall plan 10.3 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 2.4 s, mutants 100.7 s, cleanup 2.5 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 2.3 s (1), mutant_builds 164.5 s (52), mutant_checks 58.9 s (36), stage_controls 27.3 s (7), mutant_probes 139.3 s (27)
