@@ -19446,6 +19446,21 @@ theorem VE.NormDefaults.coneOf_eq_open
     VE.NormDefaults.coneOf U M = VE.NormDefaults.coneOfO U M (VE.NormDefaults.unsaidNames U)
   -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneOf@VE.NormDefaults.Evidence VE.NormDefaults.coneOfO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
   -- expr 824652751
+theorem VE.NormDefaults.coneValuesAtO_eq_legacy
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula),
+    VE.NormDefaults.coneValuesAtO U M opens C ρ φ =
+      List.filterMap
+        (fun A =>
+          if
+              ((VE.NormDefaults.fillPremises U).any fun ψ =>
+                  VE.NormDefaults.kleene M (VE.NormDefaults.coneAtomVO M opens C A) [] ψ == Option.some Bool.false) =
+                Bool.true then
+            Option.none
+          else Option.some (VE.NormDefaults.kleene M (VE.NormDefaults.coneAtomVO M opens C A) ρ φ))
+        (VE.NormDefaults.subsets C)
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtomVO@VE.NormDefaults.Evidence VE.NormDefaults.coneValuesAtO@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.subsets@VE.NormDefaults.Evidence
+  -- expr 3411331528
 theorem VE.NormDefaults.coneValuesAt_eq_open
   ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α),
     VE.NormDefaults.coneValuesAt U M = VE.NormDefaults.coneValuesAtO U M (VE.NormDefaults.unsaidNames U)
@@ -19618,6 +19633,25 @@ theorem VE.NormDefaults.denote_of_coneValuesAtO
               b = Bool.true)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAtO@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2638112787
+theorem VE.NormDefaults.denote_of_coneValuesAtX
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (opens : List String) (fixed : List ((String × List α) × Bool)) (C : List (String × List α)) (ρ : List α)
+    (φ : VE.Formula) (b : Bool),
+    (∀ (x : Option Bool), x ∈ VE.NormDefaults.coneValuesAtX U X M opens fixed C ρ φ → x = Option.some b) →
+      ∀ (R : String → List α → Prop),
+        (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+          (∀ (a : String × List α) (c : Bool), (a, c) ∈ fixed → (R a.fst a.snd ↔ c = Bool.true)) →
+            VE.Norms.Sat
+                (let __src := M.asStructure;
+                { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                (X ++ VE.NormDefaults.fillPremises U) →
+              (VE.Formula.denote
+                  (let __src := M.asStructure;
+                  { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                  ρ φ ↔
+                b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAtX@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1642094926
 theorem VE.NormDefaults.denote_rel_iff
   ∀ (X : VE.Structure) (R₁ R₂ : String → List X.Carrier → Prop),
     (∀ (n : String) (vs : List X.Carrier), R₁ n vs ↔ R₂ n vs) →
@@ -19660,6 +19694,14 @@ theorem VE.NormDefaults.enumerateO_all
       ∀ (x : Option Bool), x ∈ VE.NormDefaults.coneValuesO U M opens atoms n vs → x = Option.some b
   -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesO@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence
   -- expr 2074310828
+theorem VE.NormDefaults.enumerateSettledO_eq_legacy
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (atoms : List (String × List α)) (n : String) (vs : List α),
+    VE.NormDefaults.enumerateSettledO U M opens atoms n vs =
+      if atoms.length > VE.NormDefaults.MAX_UNSAID_ATOMS then Option.none
+      else VE.NormDefaults.agreed (VE.NormDefaults.coneValuesO U M opens atoms n vs)
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.MAX_UNSAID_ATOMS@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.agreed@VE.NormDefaults.Evidence VE.NormDefaults.coneValuesO@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence
+  -- expr 3374536707
 theorem VE.NormDefaults.enumerateSettledO_sound
   ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (opens : List String)
     (atoms : List (String × List α)) (n : String) (vs : List α) (b : Bool),
@@ -19677,12 +19719,47 @@ theorem VE.NormDefaults.enumerateSettledO_sound
               b = Bool.true)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 1771738081
+theorem VE.NormDefaults.enumerateSettledX_sound
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (opens : List String) (atoms : List (String × List α)) (budget : Nat) (fixed : List ((String × List α) × Bool))
+    (n : String) (vs : List α) (b : Bool),
+    VE.NormDefaults.enumerateSettledX U X M opens atoms budget fixed n vs = Option.some b →
+      ∀ (R : String → List α → Prop),
+        (∀ (p : String), ¬p ∈ opens → ∀ (ws : List α), R p ws ↔ ws ∈ M.relations p) →
+          (∀ (a : String × List α) (c : Bool), (a, c) ∈ fixed → (R a.fst a.snd ↔ c = Bool.true)) →
+            VE.Norms.Sat
+                (let __src := M.asStructure;
+                { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                (X ++ VE.NormDefaults.fillPremises U) →
+              (VE.Formula.denote
+                  (let __src := M.asStructure;
+                  { Carrier := __src.Carrier, domain := __src.domain, constant := __src.constant, relation := R })
+                  (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase (VE.NormDefaults.fill U) n) ↔
+                b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.enumerateSettledX@VE.NormDefaults.Evidence VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3900628798
+theorem VE.NormDefaults.enumerateSettled_eq_X
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α),
+    VE.NormDefaults.enumerateSettled U M n vs =
+      VE.NormDefaults.enumerateSettledX U [] M (VE.NormDefaults.unsaidNames U) (VE.NormDefaults.coneAtoms U M n vs) 12 []
+        n vs
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtoms@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettled@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledX@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1849112207
 theorem VE.NormDefaults.enumerateSettled_eq_open
   ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α),
     VE.NormDefaults.enumerateSettled U M n vs =
       VE.NormDefaults.enumerateSettledO U M (VE.NormDefaults.unsaidNames U) (VE.NormDefaults.coneAtoms U M n vs) n vs
   -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneAtoms@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettled@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledO@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
   -- expr 1029778395
+theorem VE.NormDefaults.enumerateX_all
+  ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc} {X : List VE.Formula} {M : VE.FiniteModel α}
+    {opens : List String} {atoms : List (String × List α)} {budget : Nat} {fixed : List ((String × List α) × Bool)}
+    {n : String} {vs : List α} {b : Bool},
+    VE.NormDefaults.enumerateSettledX U X M opens atoms budget fixed n vs = Option.some b →
+      ∀ (x : Option Bool),
+        x ∈ VE.NormDefaults.coneValuesX U X M opens fixed (VE.NormDefaults.freeAtoms fixed atoms) n vs → x = Option.some b
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesX@VE.NormDefaults.Evidence VE.NormDefaults.enumerateSettledX@VE.NormDefaults.Evidence VE.NormDefaults.freeAtoms@VE.NormDefaults.Evidence
+  -- expr 461807247
 theorem VE.NormDefaults.enumerate_all
   ∀ {α : Type u} [inst : DecidableEq α] {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
     {b : Bool},
