@@ -444,7 +444,7 @@ def g2 : Governor := ⟨"g2", "u0173.s01", .reguard u0173, .listName "the hard c
 
 def sdoc (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := [])
     (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc :=
-  ⟨layoutOf govPieces, doc, .null, gs, ln, [], re⟩
+  ⟨layoutOf govPieces, doc, .null, gs, ln, [], re, []⟩
 /-- `govern` on the document, with the norms chain's environment. -/
 def gov (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := []) :
     Except String Json := do
@@ -654,7 +654,7 @@ def shortDoc : Json := Json.mkObj [
   ("reading_sets", .arr #[Json.mkObj [("unit", "z")]])]
 def shortLead : Json := Json.mkObj [("sign", false)]
 def gt : Governor := ⟨"t", "l", .frame shortLead, .list "l", ["a", "b"]⟩
-def short (gs : List Governor) (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc := ⟨shortLayout, shortDoc, .null, gs, [], [], re⟩
+def short (gs : List Governor) (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc := ⟨shortLayout, shortDoc, .null, gs, [], [], re, []⟩
 /-- `o` joined after the lead-in's part, as `mergeParts` builds it. -/
 def led (o : Json) : Json := Json.mkObj ([("sign", Json.bool false)] ++ VE.Scope.members o)
 
@@ -722,7 +722,7 @@ theorem governor_fields (g : Governor) :
     g = { id := g.id, unit := g.unit, effect := g.effect, reach := g.reach, units := g.units } := rfl
 theorem sdoc_fields (D : SDoc) : D = { layout := D.layout, doc := D.doc, block := D.block,
                                        governors := D.governors, listNames := D.listNames, anchors := D.anchors,
-                                       re := D.re } := rfl
+                                       re := D.re, forwards := D.forwards } := rfl
 
 /-! F-raw (sc-1ad's statement gate, a counterfixture): a `Json.obj` is any `Std.TreeMap.Raw`. On a tree no JSON parser
     builds (unbalanced or unordered), `setObjVal!` rebalances: a member is dropped, a hidden one appears, a unit loses
@@ -977,14 +977,14 @@ example : JsonWF (Json.mkObj [("k", .arr #["a"])]) := .obj _ Std.TreeMap.Raw.WF.
 
 -- F-meta's anchor case: two roots, with no governor, are refused with discourse's text
 #guard (do govern ⟨layoutOf govPieces, hcDoc [], .null, [], [], [anc "doc" none "" (0, 1), anc "b" none "" (0, 1)],
-  ← VE.Readings.Wire.decodeEnvironment envJ⟩) matches .error "InvalidInput: anchors must form one tree"
+  ← VE.Readings.Wire.decodeEnvironment envJ, []⟩) matches .error "InvalidInput: anchors must form one tree"
 
 /-- The document of `pieces`: every unit of kind `rule` (`definition` for `defs`), its content from `cs` or `null`. -/
 def lDoc (pieces : List (String × String)) (cs : List (String × Json) := []) (defs : List String := []) : Json :=
   Json.mkObj [("units", .arr ((layoutOf pieces).map fun x => Json.mkObj [("id", x.id),
     ("kind", if defs.contains x.id then "definition" else "rule"), ("content", (cs.lookup x.id).getD .null)]).toArray)]
 def sdocL (pieces : List (String × String)) (anchors : List VE.Discourse.Anchor) (doc : Json) (gs : List Governor)
-    (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc := ⟨layoutOf pieces, doc, .null, gs, [], anchors, re⟩
+    (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc := ⟨layoutOf pieces, doc, .null, gs, [], anchors, re, []⟩
 /-- `govern` (or the run path) on the layout of `pieces`, with the soft chain's environment (a unary `p`). -/
 def govL (pieces : List (String × String)) (anchors : List VE.Discourse.Anchor) (doc : Json) (gs : List Governor)
     (fast := false) : Except String Json := do
