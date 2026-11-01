@@ -2217,6 +2217,16 @@
    "reason": "A located rejection (batch 16f: a distinguishing model's `path`, `Service.Document.locatedModel`; a strict fence's `span`, `locatedFence`) without its location is a plain error row, a shape the owning modes also write; a location is information the owning mode adds (R3). A location the row carries is bound by the client (`ve/document.py` `_names_a_model_member`, `_spans_a_strict_fence`; tests/test_b16f_document.py::test_a_located_row_without_its_location_is_a_plain_rejection)."
   },
   {
+   "route": "service:document",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/undeclared_evaluative"
+   ],
+   "kind": "by-design",
+   "id": "JT3A1",
+   "reason": "`undeclared_evaluative` (judgment-terms.md 8.4) lists the base predicates whose words match english-lean's catalogue; which ones match is Lean's (R8), so a shorter bound list, the empty one included, is relayed as it is. Each name the list holds is bound by the client (`ve/document/lean.py` `_undeclared_bound`; tests/test_judgments_undeclared.py::test_which_predicates_match_is_lean_s)."
+  },
+  {
    "route": "service:metered",
    "mutation": "empty",
    "path": [
