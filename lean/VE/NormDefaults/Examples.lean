@@ -218,6 +218,10 @@ def yAtom : VE.Formula := .unary yA.1 (.const "a")
     "y_permitted" ["a"] == some false &&
   enumerateSettledX u6y [] m5 (unsaidNames u6y) (coneAtoms u6y m5 "y_permitted" ["a"]) 12 [(yA, true)]
     "y_permitted" ["a"] == some true
+-- each fixed atom is read at its own tuple: `y_permitted(b)` fixed yes leaves `y_permitted(a)` no
+def m2 : VE.FiniteModel String := modelOf "act" ["a", "b"] []
+#guard enumerateSettledX u6y [] m2 (unsaidNames u6y) (coneAtoms u6y m2 "y_permitted" ["a"]) 12
+  [((yA.1, ["b"]), true), (yA, false)] "y_permitted" ["a"] == some false
 -- the budget boundary: the cone of u12 has one atom; budget 1 settles it, budget 0 is UNKNOWN
 #guard enumerateSettledX u12 [] m5 (unsaidNames u12) (coneAtoms u12 m5 "x_required" ["a"]) 1 [] "x_required"
   ["a"] == some true
@@ -234,8 +238,9 @@ def a1 : String × List String := (unsaidName "y_permitted", ["a1"])
 def m100 : VE.FiniteModel String := modelOf "act" ((List.range 100).map (fun i => if i = 0 then "a" else s!"a{i}")) []
 def fixed88 : List ((String × List String) × Bool) := ((unsaidAtoms u12 m100).drop 12).map (·, false)
 def x4 : List VE.Formula := (fixed88.take 4).map (fun e => .not (.unary e.1.1 (.const (e.1.2.headD ""))))
-#guard (coneValuesX u12 x4 m100 (unsaidNames u12) fixed88 (freeAtoms fixed88 (unsaidAtoms u12 m100)) "x_required"
-  ["a"]).length == 4096
+#guard (freeAtoms fixed88 (unsaidAtoms u12 m100)).length == 12 &&
+  (coneValuesX u12 x4 m100 (unsaidNames u12) fixed88 (freeAtoms fixed88 (unsaidAtoms u12 m100)) "x_required"
+    ["a"]).length == 4096
 #guard enumerateSettledX u12 x4 m100 (unsaidNames u12) (unsaidAtoms u12 m100) 12 fixed88 "x_required" ["a"] ==
   some true
 #guard enumerateSettledX u12 x4 m100 (unsaidNames u12) (unsaidAtoms u12 m100) 12 (fixed88.drop 1) "x_required"

@@ -1,0 +1,70 @@
+{
+ "item": "sa-nd-atomsb",
+ "language": "Lean",
+ "command": "cd lean && lake build VE.NormDefaults.Examples",
+ "method": "each mutant planted alone in a clean tree; where a proof fails first (`proof`), it is planted again with the affected proofs replaced by `sorry` for that run only, so that the `#guard` (`test`) is shown failing as well; the file is restored after each run",
+ "mutants": [
+  {
+   "definition": "VE.NormDefaults.enumerateSettledX",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "fixed atoms counted against the budget: `C.length > budget` read as `atoms.length > budget`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:233 (all 13 atoms of m13, `a1` fixed, budget 12: some true); also :244 (the 100-atom request)"
+  },
+  {
+   "definition": "VE.NormDefaults.coneValuesAtX",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "X ignored in pruning: `X ++ fillPremises U` read as `fillPremises U`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:211 (u6 `y_permitted(a)` with X = [y(a)]: some true)",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1168 (denote_of_coneValuesAtX)"
+  },
+  {
+   "definition": "VE.NormDefaults.enumerateSettledX",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the budget comparison off by one: `C.length > budget` read as `C.length ≥ budget`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:226 (u12 cone of one atom at budget 1: some true); also :196, :233",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1078 (enumerateSettledO_eq_legacy)"
+  },
+  {
+   "definition": "VE.NormDefaults.coneAtomVX",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "a fixed atom looked up by predicate name only: `e.1 = (p, vs)` read as `e.1.1 = p`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:223 (m2, `y_permitted(b)` fixed yes and `y_permitted(a)` fixed no: some false)",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1140 (denote_of_coneValuesAtX)"
+  },
+  {
+   "definition": "VE.NormDefaults.freeAtoms",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "fixed atoms not removed: `freeAtoms fs (atoms.filter …)` read as `freeAtoms fs atoms`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:232 (freeAtoms of m13 with `a1` fixed); also :233, :241"
+  },
+  {
+   "definition": "VE.NormDefaults.coneValuesX",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the fixed record dropped: `coneValuesAtX U X M opens fixed …` read as `… opens [] …`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:217 (u6 `y_permitted(a)` fixed no: some false); also :223",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1202 (enumerateSettledX_sound)"
+  },
+  {
+   "definition": "VE.NormDefaults.enumerateSettledO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the instance's budget one higher: `MAX_UNSAID_ATOMS` read as `MAX_UNSAID_ATOMS + 1`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:197 (all 13 atoms of m13 at today's budget: none)",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1078 (enumerateSettledO_eq_legacy)"
+  },
+  {
+   "definition": "VE.NormDefaults.coneValuesAtO",
+   "file": "lean/VE/NormDefaults/Evidence.lean",
+   "mutation": "the instance with an extra premise: `X = []` read as `X = [.bottom]`",
+   "killed": true,
+   "test": "lean/VE/NormDefaults/Examples.lean:180 (4 assignments beside the cone); also :195",
+   "proof": "lean/VE/NormDefaults/Evidence.lean:1004 (coneValuesAtO_eq_legacy)"
+  }
+ ]
+}
