@@ -437,6 +437,7 @@ import VE.Time.Semantics
 import VE.Time.Syntax
 import VE.Time.Wire
 import VE.Typing
+import VE.Weighing.ZoneExamples
 import VE.WireContract.Engine
 
 #print axioms Iceberg.Process.final_contents
@@ -7785,6 +7786,13 @@ import VE.WireContract.Engine
 #print axioms VE.Time.yearLen_val
 #print axioms VE.Time.yearStart_mono
 #print axioms VE.Time.yearStart_succ
+#print axioms VE.Weighing.ZoneFixtures.admissible0
+#print axioms VE.Weighing.ZoneFixtures.notAdmissible1
+#print axioms VE.Weighing.ZoneFixtures.not_outcome_y
+#print axioms VE.Weighing.ZoneFixtures.not_settled_vacuous
+#print axioms VE.Weighing.ZoneFixtures.not_settled_x_false
+#print axioms VE.Weighing.ZoneFixtures.outcome_x
+#print axioms VE.Weighing.ZoneFixtures.settled_x
 #print axioms VE.WireContract.expandAll_views
 #print axioms VE.WireContract.expand_views
 #print axioms VE.WireContract.findSome_congr_reached
