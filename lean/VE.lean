@@ -78,6 +78,9 @@ import VE.Readings.SupWitness
 import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
+import VE.Readings.BarQuiet
+import VE.Readings.RightsFixtures
+import VE.Readings.RightsExamples
 import VE.Readings.SupFree
 import VE.Readings.SupAll
 import VE.Readings.SupWireSound
@@ -219,6 +222,8 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Sources
+import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
