@@ -1,3 +1,5 @@
+- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
+- `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
@@ -82,6 +84,3 @@
 - `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
 - `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
 - `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
-- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
-- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
-- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
