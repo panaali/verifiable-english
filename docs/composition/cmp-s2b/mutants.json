@@ -1,0 +1,76 @@
+{
+ "item": "cmp-s2b",
+ "language": "Lean",
+ "runner": "lake build VE.Readings.RightsExamples per mutant, file restored after each (script outside the tree)",
+ "note": "Hand-seeded bugs, one per claimed behaviour; every new trusted definition is also mutated by tools/trust_mutants.py (trust-mutants.json in this directory). A first aimedOwners mutant (origins replaced by []) broke a proof in BarQuiet.lean and was replaced by one that breaks only a fixture.",
+ "mutants": [
+  {
+   "definition": "VE.Readings.gateLine",
+   "mutant": "gateLine leaves a candidate line's rule ungated",
+   "file": "lean/VE/Readings/Choice.lean",
+   "test": [
+    "#guard (choiceLabelled F21).map (·.1) == [\"readings:rs48@1:1:quiet\"] (RightsExamples.lean:36)",
+    "VE.Readings.RightsExamples.rules21",
+    "VE.Readings.RightsExamples.aimedOwners21",
+    "VE.Readings.RightsExamples.choicePremises21"
+   ],
+   "result": "killed (lake build VE.Readings.RightsExamples fails)",
+   "first_errors": [
+    "error: VE/Readings/RightsExamples.lean:36:0: Expression",
+    "error: VE/Readings/RightsExamples.lean:57:2: Tactic `decide` proved that the proposition",
+    "error: VE/Readings/RightsExamples.lean:68:76: Tactic `decide` proved that the proposition",
+    "error: VE/Readings/RightsExamples.lean:71:2: Tactic `decide` proved that the proposition"
+   ]
+  },
+  {
+   "definition": "VE.Readings.limOwners",
+   "mutant": "limOwners: the limitation's origin dropped (only the line's)",
+   "file": "lean/VE/Readings/Choice.lean",
+   "test": [
+    "#guard F10 lim keys with their owners (RightsExamples.lean:192)"
+   ],
+   "result": "killed (lake build VE.Readings.RightsExamples fails)",
+   "first_errors": [
+    "error: VE/Readings/RightsExamples.lean:186:0: Expression"
+   ]
+  },
+  {
+   "definition": "VE.Readings.qualifyKey (qLim)",
+   "mutant": "qualifyKey: a lim key's limitation name not qualified",
+   "file": "lean/VE/Readings/Choice.lean",
+   "test": [
+    "#guard qualifyKey F10 (RightsExamples.lean:195)",
+    "#guard nameMap F10 (RightsExamples.lean:196)"
+   ],
+   "result": "killed (lake build VE.Readings.RightsExamples fails)",
+   "first_errors": [
+    "error: VE/Readings/RightsExamples.lean:189:0: Expression",
+    "error: VE/Readings/RightsExamples.lean:190:0: Expression"
+   ]
+  },
+  {
+   "definition": "VE.Readings.copyScope",
+   "mutant": "copyScope: a fixed limitation's scope keeps the author right name",
+   "file": "lean/VE/Readings/Choice.lean",
+   "test": [
+    "#guard (sup F7r).1.limits scope (RightsExamples.lean:173)"
+   ],
+   "result": "killed (lake build VE.Readings.RightsExamples fails)",
+   "first_errors": [
+    "error: VE/Readings/RightsExamples.lean:167:0: Expression"
+   ]
+  },
+  {
+   "definition": "VE.Readings.aimedOwners",
+   "mutant": "aimedOwners: every line instance on m, not only liberties",
+   "file": "lean/VE/Readings/Choice.lean",
+   "test": [
+    "#guard aimedOwners on a claim candidate on m (RightsExamples.lean:44)"
+   ],
+   "result": "killed (lake build VE.Readings.RightsExamples fails)",
+   "first_errors": [
+    "error: VE/Readings/RightsExamples.lean:44:0: Expression"
+   ]
+  }
+ ]
+}
