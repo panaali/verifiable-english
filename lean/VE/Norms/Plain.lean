@@ -1,5 +1,4 @@
 import VE.Norms.Wire
-import VE.Compose.Dispatch
 import VE.Route.Run
 import VE.Order.Conservativity
 import VE.Limits
@@ -26,10 +25,8 @@ namespace VE.Norms.Plain
 open Lean
 open VE.Bridge (fields strings)
 
-/-- Every `regulated` declaration, checked as the norms decoder checks it under the profiles `ps` and the fixed
-phrases `fx` (act-phrases 4.1). -/
-def decodeRegulatedAllIn (ps fx : List String) (predicates : List (String × Json)) :
-    Except String (List Regulated) := do
+/-- Every `regulated` declaration, checked as the norms decoder checks it. -/
+def decodeRegulatedAll (predicates : List (String × Json)) : Except String (List Regulated) := do
   let regs ← predicates.filterMapM fun (p, entry) => do
     match entry.getObjVal? "regulated" with
     | .error _ => pure none
@@ -39,13 +36,10 @@ def decodeRegulatedAllIn (ps fx : List String) (predicates : List (String × Jso
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> Wire.decodeRegulatedIn ps fx p args raw
+      some <$> Wire.decodeRegulated p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
   pure regs
-
-/-- Every `regulated` declaration without `acts@0`. -/
-def decodeRegulatedAll : List (String × Json) → Except String (List Regulated) := decodeRegulatedAllIn [] []
 
 /-- The environment without the `regulated` field of any predicate. -/
 def strip (environment : Json) (predicates : List (String × Json)) : Except String Json := do
@@ -176,10 +170,9 @@ soft block, `instruction_of`), `rights@0` (the rights block) and
 vocabulary or constrains a model. Identities keep the submitted environment. -/
 def statementLayers : List String := ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0"]
 
-/-- A statement layer or a document layer (`VE.Compose.documentLayers`, jt-2c): `run` decides without either. -/
 def layered (environment : Json) : Bool :=
   match environment.getObjValD "profiles" with
-  | .arr ps => ps.any (fun p => (statementLayers ++ VE.Compose.documentLayers).any (p.getStr?.toOption == some ·))
+  | .arr ps => ps.any (fun p => statementLayers.any (p.getStr?.toOption == some ·))
   | _ => false
 
 def reduced (environment : Json) : Except String Json := do
@@ -212,19 +205,10 @@ def run (j : Json) : Except String Json := do
   let kind ← VE.Route.Run.caseKind j
   let submitted ← j.getObjVal? "environment"
   let profiles ← VE.Route.Gate.profilesOf submitted
-  -- `acts@0` (act-phrases 2.8, 4.4): the submitted list is gated by its row before the layers are set aside; the
-  -- route reads the environment without the profile and its block
-  if profiles.contains "acts@0" then
-    let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
-  -- The route reads the environment without the document layers (jt-2c); `certificate` binds it as written.
-  let deciding ← VE.Compose.decidingEnvironment submitted
-  let environment ← if layered deciding then reduced deciding else pure deciding
-  let ps := Wire.actsProfiles true environment
-  let fx ← Wire.actsFixed ps environment
-  let environment := if ps.isEmpty then environment else Wire.actsView environment ps
+  let environment ← if layered submitted then reduced submitted else pure submitted
   let e ← VE.Route.Gate.decodeEnvelope environment
   let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
-  let T : Tree := ⟨← decodeRegulatedAllIn ps fx predicates, [], []⟩
+  let T : Tree := ⟨← decodeRegulatedAll predicates, [], []⟩
   let stripped ← strip environment predicates
   if kind == "certificate" then
     let extra ← if !(j.getObjVal? "soft_premises").isOk then pure []

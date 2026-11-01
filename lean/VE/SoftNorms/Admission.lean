@@ -90,8 +90,31 @@ structure Admitted where
 
 /-- W2's ordinary document decoder with the regenerated decision predicates in
 scope. This lets asserted units and reading sets state decision findings. -/
-def decodeSoftDoc (src : SoftSource) (j : Json) : Except String VE.Route.Admission.Doc :=
-  VE.Route.Admission.decodeDoc src.se.ne.rv (src.se.profiles.contains "data@0") j (envPrime src.D)
+def decodeSoftDoc (src : SoftSource) (j : Json) : Except String VE.Route.Admission.Doc := do
+  let E := envPrime src.D
+  let data := src.se.profiles.contains "data@0"
+  let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM
+    (VE.Route.Admission.decodeUnit E data)
+  VE.Route.Admission.require (units.length ≤ 10000) "ResourceLimit: unit count"
+  VE.Route.Admission.require ((units.map DocUnit.id).eraseDups.length == units.length)
+    "duplicate unit id"
+  VE.Route.Admission.require (VE.Route.Admission.sortedSpans units)
+    "unit spans must be sorted and non-overlapping"
+  let optional := fun (key : String) => match j.getObjVal? key with
+    | .ok v => v.getArr?.map Array.toList
+    | .error _ => pure []
+  let lemmas ← (← optional "lemmas").mapM (VE.Route.Admission.decodeLemma E data)
+  VE.Route.Admission.require ((lemmas.map Lemma.name).eraseDups.length == lemmas.length)
+    "duplicate lemma"
+  let openTerms ← VE.Route.Admission.tokens (Json.arr (← optional "open_terms").toArray)
+  let readingSets ← (← optional "reading_sets").mapM
+    (VE.Route.Admission.decodeReadingSet E data)
+  VE.Route.Admission.require
+    ((readingSets.map (fun r => (r.id, r.version))).eraseDups.length == readingSets.length)
+    "duplicate reading set version"
+  let narrowings ← VE.Route.Admission.tokens (Json.arr (← optional "narrowings").toArray)
+  pure ⟨src.se.ne.rv.literals, src.se.ne.rv.flags, units, lemmas, openTerms, readingSets,
+    narrowings⟩
 
 def admitDocument (environment document : Json) : Except String Admitted := do
   VE.Bridge.displayFields document ["units", "graph"]

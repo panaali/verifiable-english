@@ -4,7 +4,6 @@ import VE.WireContract.Hooks.Corpus
 import VE.WireContract.Hooks.SoftNorms
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Hooks.NormDefaults
-import VE.WireContract.Hooks.Acts
 import VE.WireContract.Limits
 import VE.WireContract.Names
 
@@ -42,16 +41,7 @@ def units : List (String × Registered) :=
    ("forms@0", ⟨Tables.Corpus.Forms.table, Hooks.Corpus.hooks, caseRoot ["doc", "nothing"]⟩),
    ("soft-norms@0", ⟨Tables.SoftNorms.table, Hooks.SoftNorms.hooks, Hooks.SoftNorms.adapter⟩)]
   ++ [("norms@0", ⟨Tables.Norms.table, Hooks.Norms.hooks, Hooks.Norms.adapter⟩),
-      ("norm-defaults@0", ⟨Tables.NormDefaults.table, Hooks.NormDefaults.hooks, Hooks.NormDefaults.adapter⟩),
-      ("acts@0", ⟨Tables.Acts.table, Hooks.Acts.hooks, Hooks.Acts.adapter⟩)]
-
--- every unit once, in order; `acts@0`'s row reads its own table, hooks and adapter
-#guard units.map (·.1) == ["inner@0", "demo@0", "defer@0", "mid@0", "forms@0", "soft-norms@0", "norms@0",
-  "norm-defaults@0", "acts@0"]
-#guard match units.lookup "acts@0" with
-  | some r => r.table.contract == "acts@0" && (r.adapter (Hooks.Acts.caseOf "norms-elaborate" ["acts@0", "norms@0"])).isOk &&
-      (run r.table r.hooks (Json.mkObj [("environment", Hooks.Acts.envOf [] "{0} seek and enjoy asylum")])).isSome
-  | none => false
+      ("norm-defaults@0", ⟨Tables.NormDefaults.table, Hooks.NormDefaults.hooks, Hooks.NormDefaults.adapter⟩)]
 
 /-- One row: `fault` with the record of the first instance that does not hold, or `clean`. -/
 def diagnoseCase (u : Registered) (case : Json) : Json :=

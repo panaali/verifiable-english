@@ -1,5 +1,4 @@
 import VE.Order.Gate
-import VE.Kit.Except
 
 /-! A general profile gate for every JSON entry point. `Gate.lean` checks two
 exact envelopes; here every envelope is covered. Decoding an environment
@@ -35,10 +34,11 @@ def runEvaluationCaseReported (j : Json) : Json :=
 
 namespace ProfileGate
 
-/-- `VE.Kit.Except.bind_ok`, under the name the route proofs use. -/
 theorem bind_ok {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β}
-    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b :=
-  VE.Kit.Except.bind_ok h
+    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b := by
+  cases x with
+  | error e => cases h
+  | ok a => exact ⟨a, rfl, h⟩
 
 /-- A duplicate-free list contained in another is no longer than it. -/
 theorem nodup_length_le {a l : List String} (hn : a.Nodup) (hs : ∀ x ∈ a, x ∈ l) :

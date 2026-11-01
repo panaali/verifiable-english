@@ -63,10 +63,6 @@ abbrev searchBudget : Skel := skel% "search-budget.json#/row"
 abbrev ask : Skel := skel% "ask.json#/row"
 abbrev words : Skel := skel% "words.json#/row"
 abbrev metered : Skel := skel% "metered.json#/row"
-abbrev «calc» : Skel := skel% "calc.json#/row"
-abbrev cardinality : Skel := skel% "cardinality.json#/row"
-abbrev scope : Skel := skel% "scope.json#/row"
-abbrev sensesProject : Skel := skel% "senses.project.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -106,10 +102,6 @@ def row : VE.Service.Mode → Skel
   | .ask => ask
   | .words => words
   | .metered => metered
-  | .calc => «calc»
-  | .cardinality => cardinality
-  | .scope => scope
-  | .sensesProject => sensesProject
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])

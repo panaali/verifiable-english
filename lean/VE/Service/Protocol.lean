@@ -31,10 +31,6 @@ import VE.Readings.Run
 import VE.Service.Diagnose
 import VE.Service.Document
 import VE.SearchBudget.Run
-import VE.Calc.Run
-import VE.Cardinality.Run
-import VE.Scope.Run
-import VE.Senses.Run
 import Std.Data.HashMap
 import Std.Data.TreeMap.Raw.Lemmas
 import VE.Limits
@@ -55,8 +51,7 @@ request error `{"digests", "error", "id", "mode", "status": "error"}`, bound lik
 response: its nonce, its mode and the digests of its cases (`null` when its cases text
 does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
 line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
-batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder;
-`calc` uses both (`calcCases`).
+batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder.
 
 Budgets are deterministic functions of the request: its size in bytes and its number
 of cases, each capped by the service limits; exceeding one is `ResourceLimit`. Work
@@ -131,10 +126,6 @@ def runMode : Mode → Json → Json
   | .ask, j => VE.Ask.Run.caseReported j
   | .words, j => VE.Words.Run.caseReported j
   | .metered, j => VE.Route.MeteredRun.runCaseReported j
-  | .calc, j => VE.Calc.Run.runCaseReported j
-  | .cardinality, j => VE.Cardinality.Run.runCaseReported j
-  | .scope, j => VE.Scope.Run.runCaseReported j
-  | .sensesProject, j => VE.Senses.Run.projectCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -568,44 +559,10 @@ private def sameCases (text : String) (allowNull : Bool := false) : Bool :=
   "[" ++ String.mk (List.replicate 300 '[') ++ String.mk (List.replicate 300 ']') ++ ",1]"].all sameCases
 #guard sameCases "[null,{\"a\":null}]" true
 
-/-- The text with every `-` outside strings read as a space: one byte for one, so the case cuts
-are the same. In JSON a `-` outside strings is only a number's sign or an exponent's. -/
-def unsigned (text : String) : String :=
-  (text.foldl (fun (out, quoted, escaped) c =>
-    if quoted then (out.push c, !(c == '"' && !escaped), !escaped && c == '\\')
-    else (out.push (if c == '-' then ' ' else c), c == '"', false)) ("", false, false)).1
-
-/-- The `calc` batch (math-evidence spec 3.1): `sci` exponents may be negative, which the restricted
-decoder refuses. Its cases are those of `restrictedCases` on the `unsigned` text, which refuses
-what it refuses in every mode (duplicate keys, fractions, exponents, `null`), each case it admits
-read again with its signs by `Lean.Json.parse`. -/
-def calcCases (text : String) : Except String (Array (Except String Json)) := do
-  let checked ← restrictedCases (unsigned text) false
-  let bounds ← caseBounds text.toUTF8
-  unless bounds.size == checked.size do throw "batch split mismatch"
-  (checked.zip bounds).mapM fun
-    | (.ok _, (a, b)) => .ok <$> Json.parse (text.extract ⟨a⟩ ⟨b⟩)
-    | (.error m, _) => pure (.error m)
-
-#guard match calcCases "[{\"e\": [\"sci\", \"-5.89\", -7]}, [-0, \"a-b\\\"-\"]]" with
-  | .ok #[.ok a, .ok b] => a.compress == "{\"e\":[\"sci\",\"-5.89\",-7]}" && b.compress == "[0,\"a-b\\\"-\"]"
-  | _ => false
-#guard ["[{\"a\": 1, \"a\": 2}]", "[{\"a\": -1, \"a\": 2}]", "[6.4e1]", "[65.0]", "[1e-5]", "[- 7]", "[--7]",
-  "[null]", "[-99999999999999999999]"].all fun t => (calcCases t).isOk == false
--- A string ends at its first unescaped quote: a sign after an empty string, an escaped quote or an escaped
--- backslash is still a sign, and a sign inside a key stays a character.
-#guard ["[\"\", -1]", "[\"\\\"\", -1]", "[\"a\\\\\", -1]", "[{\"a-b\": -1, \"a b\": 2}]"].all fun t =>
-  (calcCases t).isOk
-
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
   else if r.mode == .riskEval || r.mode == .document then parseLeanCases r.cases
-  else if r.mode == .calc then calcCases r.cases
   else restrictedCases r.cases (r.mode == .model)
-
--- Only the `calc` mode reads a sign.
-#guard [(Mode.calc, true), (.quantity, false), (.route, false)].all fun (m, ok) =>
-  (decodeCases { id := "r", mode := m, cases := "[[-1]]" }).isOk == ok
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
 
@@ -789,74 +746,6 @@ def handleLine (h : Handles) (line : String) : Option Json × Handles :=
     let (answer, h') := respond h line
     (some answer, h')
 
-/-! The service keeps a readings admission memo beside its environment handles. This path
-shares the request decoder, budget checks, binding, coding and response envelope above. -/
-
-def readingsResults (cases : Array (Except String Json)) (memo : VE.Readings.Run.AdmissionMemo) :
-    Array Json × VE.Readings.Run.AdmissionMemo := Id.run do
-  let mut rows := #[]
-  let mut state := memo
-  for i in [:cases.size] do
-    let (row, next) := match cases[i]! with
-      | .ok j => VE.Readings.Run.runCaseReportedMemo state j
-      | .error message => (caseError .readingsRoute i message, state)
-    state := next
-    rows := rows.push row
-  return (rows, state)
-
-def readingsResponse (r : Request) (cases : Array (Except String Json)) (digests : Array String)
-    (memo : VE.Readings.Run.AdmissionMemo) : Json × VE.Readings.Run.AdmissionMemo :=
-  let (rs, next) := readingsResults cases memo
-  (Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
-    ("results", .arr (bindResults rs digests)),
-    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
-      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])], next)
-
-def runReadingsRequest (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (r : Request) :
-    Except String (Json × VE.Readings.Run.AdmissionMemo) := do
-  let budget ← r.budget
-  let bytes := r.cases.utf8ByteSize
-  if bytes > budget.bytes then
-    throw s!"ResourceLimit: cases are {bytes} bytes; budget is {budget.bytes}"
-  unless r.cases.trim.startsWith "[" do throw "request field cases must be an array"
-  let cases ← decodeCases r
-  if cases.size > budget.cases then
-    throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
-  let digests ← caseDigests r.cases
-  unless digests.size == cases.size do throw "batch split mismatch"
-  pure (readingsResponse r (← expandCases h r.mode cases) digests memo)
-
-def respondMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
-    Json × Handles × VE.Readings.Run.AdmissionMemo :=
-  match objectMembers line with
-  | .error message => (lineError none message, h, memo)
-  | .ok members =>
-    match decodeRequest members with
-    | .error message => (lineError (requestId? members) message, h, memo)
-    | .ok r =>
-      match register h r with
-      | .error message => (requestError r message, h, memo)
-      | .ok h' =>
-        if r.mode == .readingsRoute then
-          match runReadingsRequest h' memo r with
-          | .ok (answer, next) => (answer, h', next)
-          | .error message => (requestError r message, h', memo)
-        else
-          match runRequest h' r with
-          | .ok answer => (answer, h', memo)
-          | .error message => (requestError r message, h', memo)
-
-def memoLineTooLong (bytes : Nat) : Bool := bytes > maxLineBytes + 1
-
-def handleLineMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
-    Option Json × Handles × VE.Readings.Run.AdmissionMemo :=
-  if memoLineTooLong line.utf8ByteSize then
-    (some (lineError none s!"ResourceLimit: request line exceeds {maxLineBytes} bytes"), h, memo)
-  else if line.trim.isEmpty then (none, h, memo)
-  else
-    let (answer, h', next) := respondMemo h memo line
-    (some answer, h', next)
-
 /-- The first line the service prints. The build hash is computed by the supervisor,
 which hashes the executable it starts. `modes` are the registry's (`VE.Service.registry`). `handles` states the handle table's member and bounds,
 which the client mirrors (`Handles.insert`). -/
@@ -936,16 +825,6 @@ theorem runMode_words (j : Json) :
 
 theorem runMode_metered (j : Json) :
     runMode .metered j = VE.Route.MeteredRun.runCaseReported j := rfl
-
-theorem runMode_calc (j : Lean.Json) : runMode .calc j = VE.Calc.Run.runCaseReported j := rfl
-
-theorem runMode_cardinality (j : Json) :
-    runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := rfl
-
-theorem runMode_scope (j : Json) : runMode .scope j = VE.Scope.Run.runCaseReported j := rfl
-
-theorem runMode_sensesProject (j : Json) :
-    runMode .sensesProject j = VE.Senses.Run.projectCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl

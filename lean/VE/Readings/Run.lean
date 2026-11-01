@@ -3,7 +3,7 @@ import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
 import VE.Readings.SupVerdictsSound
-import VE.Readings.DefaultVerdicts
+import VE.Readings.SoftVerdicts
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
@@ -322,7 +322,7 @@ def validateResultBy (pairs : ReadingSet → SetJ → Except String (List Json))
   for R in sets do
     let some RJ := setJ a.doc R.id | throw invalidSet
     let cands ← (List.range R.candidates.length).mapM (candidateJson a R)
-    let pairs ← Stage.stage "distinguishingModels" fun _ => pairs R RJ
+    let pairs ← pairs R RJ
     rows := rows ++ [Json.mkObj [("set", .str R.id), ("version", toJson R.version),
       ("candidates", Json.arr cands.toArray), ("pairs", Json.arr pairs.toArray),
       ("findings", toJson (setFindings a R))]]
@@ -498,7 +498,7 @@ def runSDKind (id kind : String) (r : AdmittedSD) (j : Json) : Except String Jso
     (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
   if underSoftCompletion b.a.re b.D then
-    if kind == "readings-verdicts" then return ← runVerdictsD id b j
+    if kind == "readings-verdicts" then return ← runVerdictsSD id b j
     return ← runSDKind id kind (← admitSDOf b) j
   if kind == "readings-verdicts" then
     if underCompletion b.a.re b.D then
@@ -651,56 +651,9 @@ def admitChecked (kind : String) (environment document : Json) :
     (its checked part) and its admission. -/
 def admitComponents (kind : String) (parts : List (String × Json × Json)) :
     Except String (List (String × Json × Json × Json × ComponentAdmission)) :=
-  parts.mapM (fun p => Stage.part p.1 fun _ => do
+  parts.mapM (fun p => do
     let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
     pure (p.1, p.2.1, p.2.2, d, a))
-
-/-- Process-local admission memo. Equality checks the decoded environment, document and kind themselves;
-the compressed tuple is used only to charge input bytes, never as a possibly colliding identity. The
-newest entry is first. At most four admissions and 2 MiB of input are retained; an oversized
-admission is answered but not kept. Restarting `ve_service` starts with an empty memo. -/
-structure AdmissionMemoEntry where
-  kind : String
-  environment : Json
-  document : Json
-  bytes : Nat
-  ready : List (String × Json × Json × Json × ComponentAdmission)
-
-structure AdmissionMemo where
-  entries : List AdmissionMemoEntry := []
-  admissions : Nat := 0
-  hits : Nat := 0
-
-def admissionMemoMaxEntries : Nat := 4
-def admissionMemoMaxBytes : Nat := 2097152
-
-def AdmissionMemoEntry.matches (e : AdmissionMemoEntry) (kind : String) (environment document : Json) : Bool :=
-  e.kind == kind && e.environment == environment && e.document == document
-
-/-- Retain the most recently used prefix within both bounds. -/
-def admissionMemoTrim (entries : List AdmissionMemoEntry) : List AdmissionMemoEntry := Id.run do
-  let mut kept := []
-  let mut bytes := 0
-  for e in entries do
-    if kept.length >= admissionMemoMaxEntries || bytes + e.bytes > admissionMemoMaxBytes then break
-    kept := kept ++ [e]
-    bytes := bytes + e.bytes
-  return kept
-
-/-- A hit returns the stored entry; only a miss runs `onMiss`, which counts its runs in `admissions`. The identity is
-the full decoded triple, so no hash collision or separator ambiguity can alias cases. -/
-def admitComponentsMemo (kind : String) (environment document : Json)
-    (onMiss : Unit → ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission))) :
-    ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission)) := do
-  if let some e := (← get).entries.find? (·.matches kind environment document) then
-    modify fun m =>
-      { m with entries := e :: m.entries.filter (!·.matches kind environment document), hits := m.hits + 1 }
-    return e.ready
-  let ready ← onMiss ()
-  let bytes := (Json.arr #[.str kind, environment, document]).compress.utf8ByteSize
-  let entry := { kind, environment, document, bytes, ready : AdmissionMemoEntry }
-  unless bytes > admissionMemoMaxBytes do modify fun m => { m with entries := admissionMemoTrim (entry :: m.entries) }
-  return ready
 
 /-- A JSON object as itself, anything else as the empty object: a case's environment and documents are objects once
     admitted, and the row says so in its type (`elaborate_components`), so the client never reads another value. -/
@@ -720,7 +673,7 @@ def componentRowOf (kind name : String) (environment document checked answer : J
 def runAdmittedComponents (j : Json) (id kind : String)
     (parts : List (String × Json × Json × Json × ComponentAdmission)) : Except String Json := do
   let rows ← parts.mapM (fun p =>
-    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← Stage.part p.1 fun _ => runAdmitted j id kind p.2.2.2.2)))
+    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
@@ -751,11 +704,11 @@ def runCase (j : Json) : Except String Json := do
       return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return ← Stage.part c fun _ => runAdmitted j id kind p.2.2.2.2
+    | some p => return ← runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
   let c := named.getD "main"
   match parts.find? (·.1 == c) with
-  | some p => Stage.part c fun _ => runOne j id kind p.2.1 p.2.2
+  | some p => runOne j id kind p.2.1 p.2.2
   | none => throw (unknownComponent c)
 
 def runCaseReported (j : Json) : Json :=
@@ -767,35 +720,5 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
     else runLower j
   | _ => runLower j
-
-/-- Service-only stateful path. All answers still use `runAdmitted` and every miss uses `admitComponents`; the
-pure `runCaseReported` remains the reference runner. An error answer keeps the memo's admissions and hits. -/
-def runCaseReportedMemo (memo : AdmissionMemo) (j : Json) : Json × AdmissionMemo :=
-  let run : ExceptT String (StateM AdmissionMemo) Json := do
-    let kind ← VE.Route.Run.caseKind j
-    unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do
-      return runLower j
-    let id ← stringField j "id"
-    let environment ← j.getObjVal? "environment"
-    let document ← j.getObjVal? "document"
-    let parts ← splitCase environment document
-    if parts.length <= 1 then return runCaseReported j
-    let named ← componentOfCase j
-    if kind == "readings-verdicts" && named.isNone then return runCaseReported j
-    let ready ← admitComponentsMemo kind environment document fun _ => do
-      modify fun m => { m with admissions := m.admissions + 1 }; admitComponents kind parts
-    if named.isNone && (kind == "readings-validate" || kind == "readings-elaborate") then
-      return ← runAdmittedComponents j id kind ready
-    let c := named.getD "main"
-    match ready.find? (·.1 == c) with
-    | some p => return ← Stage.part c fun _ => runAdmitted j id kind p.2.2.2.2
-    | none => throw (unknownComponent c)
-  match run.run.run memo with
-  | (.ok answer, next) => (answer, next)
-  | (.error message, next) =>
-    match VE.Route.Run.caseKind j with
-    | .error _ => (runLower j, next)
-    | .ok _ =>
-      (Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)], next)
 
 end VE.Readings.Run

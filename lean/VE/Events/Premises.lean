@@ -229,7 +229,7 @@ theorem regen_typed (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E
     exact this.1.1.1.1
   · have := List.all_eq_true.1 h10 D hD
     simp only [Bool.and_eq_true] at this
-    simp only [regenEnv, this.1.1, this.1.2, Bool.true_and, beq_iff_eq]
+    simp only [regenEnv, this.1.1, Bool.true_and, beq_iff_eq]
     rw [if_pos (List.any_eq_true.2 ⟨D, hD, by simp⟩)]
 
 /-- The role a sort starts with is one of the block's roles, of that sort and the day sort. -/

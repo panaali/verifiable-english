@@ -283,10 +283,8 @@ def validateDeclarations (environment : Json) (generated : Bool := false) : Exce
 the three parts of the boundary (S3 spec 2.3). -/
 def environmentId (environment : Json) (generated : Bool := false) : Except String String := do
   if declaresBlock environment then
-    -- Validated without the document layers (jt-2c); the identity reads the environment as written.
-    let deciding ← VE.Compose.decidingEnvironment environment
-    validateDeclarations deciding generated
-    let _ ← VE.Service.Standalone.validated (← typingView deciding)
+    validateDeclarations environment generated
+    let _ ← VE.Service.Standalone.validated (← typingView environment)
     VE.Service.Standalone.environmentIdOf (← VE.Route.Gate.profilesOf environment) environment
   else
     let row ← VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", environment)])
@@ -321,8 +319,7 @@ def decodeCase (j : Json) : Except String Case := do
   let lexicon ← j.getObjVal? "lexicon"
   let lexiconEnvId ← environmentId (displayJson environment overlay) generated
   let L ← decodeLexicon lexiconEnvId lexicon
-  -- The reader decides without the document layers (jt-2c); every identity reads the environment as written.
-  let E ← Env.decode (← VE.Compose.decidingEnvironment environment) overlay
+  let E ← Env.decode environment overlay
   let O ← Overlay.decode overlay
   let overlayFailure := overlayCheck E O
   let overlayDigest ← match j.getObjVal? "overlay" with

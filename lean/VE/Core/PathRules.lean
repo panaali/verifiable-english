@@ -37,7 +37,7 @@ theorem edge_inclusion (S : Structure) (ρ : Valuation S) (p : String) (t r : Te
     (h : (Formula.binary p t r).denote S ρ) :
     (Formula.reachNamed .plus p t r).denote S ρ := by
   obtain ⟨x,y,hx,hy,h⟩ := h
-  exact ⟨x,y,hx,hy,.edge h⟩
+  exact ⟨x,y,hx,hy,Path.edge h⟩
 
 theorem Path.first {α : Type u} {R : α → α → Prop} {x y : α} (h : Path R x y) :
     ∃ z, R x z := by
@@ -64,7 +64,7 @@ theorem endEdge_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
     cases e <;> simp_all [Edge.Typed, Edge.shift]
   cases last with
   | false =>
-    obtain ⟨z,hz⟩ := Path.first hp
+    obtain ⟨z,hz⟩ := hp.first
     have hd := edge_typed hS ρ e s he x z hz
     refine ⟨z,hd.2,?_⟩
     apply (edge_at_denote S (z :: ρ) e.shift (liftTerm t) (.var 0) x z
@@ -72,7 +72,7 @@ theorem endEdge_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
         intro q a h; rw [hs q a h]; exact hd)).mpr
     rw [edge_shift_denote]; exact hz
   | true =>
-    obtain ⟨z,hz⟩ := Path.last hp
+    obtain ⟨z,hz⟩ := hp.last
     have hd := edge_typed hS ρ e s he z y hz
     refine ⟨z,hd.1,?_⟩
     apply (edge_at_denote S (z :: ρ) e.shift (.var 0) (liftTerm r) z y

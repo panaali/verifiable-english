@@ -67,13 +67,6 @@ structure ReadingsEnvironment where
   json : Json
   lowerJson : Json
 
-/-- D-33 (act-phrases 6.4, 10): the readings route reads single acts only. The norms decoder's refusal of a joined
-    act of a predicate `p` among `predicates` (`Acts.Lexical.check`'s D-4) is given as the route's own refusal, since
-    nothing elaborates a reading set's candidates; every other refusal is the decoder's. -/
-def singleActsOnly (predicates : List String) (message : String) : String :=
-  (predicates.find? (fun p => message.startsWith s!"InvalidInput: act phrase for {p} joins acts with '")).elim message
-    fun p => s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
-
 def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment := do
   let profiles ← match environment.getObjVal? "profiles" >>= strings with
     | .ok ps => pure ps
@@ -83,8 +76,8 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .ok .readings => pure ()
   | .ok _ => throw "UnsupportedProfile: readings@1 is not the head of this profile list"
   | .error e => throw e
-  let lowerJson ← stripReadings (VE.Compose.withoutDocumentLayers environment)
-  let lower := profiles.filter fun p => p != readingsProfile && !VE.Compose.documentLayers.contains p
+  let lowerJson ← stripReadings environment
+  let lower := profiles.filter (· != readingsProfile)
   -- The frame is decoded without `norm-defaults@0`, its `unspecified` completions read as the placeholder `deny`
   -- (DRI ruling 4): content beside it is S1's named abstention off the norms chain (1.1), and on the norms chain
   -- the completion's admission reads `unspecified` from `lowerJson` (`UnspecifiedWire.unspecOf`).
@@ -101,9 +94,7 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     pure ⟨.soft, profiles, lower, ⟨checked.ne, checked.soft, checked.profiles, frameJson⟩, emptyRights,
       environment, lowerJson⟩
   | .norms =>
-    let names := ((frameJson.getObjValD "vocabulary").getObjValD "predicates" |> fields).toOption.getD []
-    let ne ← (VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false) (acts := true)).mapError
-      (singleActsOnly (names.map Prod.fst))
+    let ne ← VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false)
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
 
 /-- The frame (1.2): the environment and no unit. -/
@@ -274,9 +265,6 @@ def decodeDocument (re : ReadingsEnvironment) (document : Json) : Except String 
     | .arr ss => ss.toList.mapM decodeSet
     | .null => pure []
     | _ => throw "reading_sets must be a list"
-  -- a reading set over `acts@0` reaches Python's superposed route, whose soft frame does not read the profile yet
-  -- (ap-1bg): such a document keeps the base's refusal
-  if re.profiles.contains "acts@0" && !sets.isEmpty then throw "UnsupportedProfile: Unsupported profile acts@0"
   let act := active sets
   let unitIds := units.map (·.1)
   let mut items : List Item := []

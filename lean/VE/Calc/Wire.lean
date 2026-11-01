@@ -1,102 +1,25 @@
-import VE.Calc.Lower
-import VE.Calc.Poly
-import VE.Calc.Render
-import VE.Time.Wire
+import VE.Calc.Decls
 import VE.Route.Wire
 
 /-! The case `ve-calc@0` (math-evidence spec 3.1 to 3.3, ME-2): its limits in order, its decoder and its identity.
-It decodes claims over stated, defined and free values, and derivations (`follows`) over the case's `premises`
-(ME-5). The fields and checks of later batches (`counted` values, `unit`, `environment`, `source`, `data`, `budget`;
-`consistent`, `identity` and `sqrt-rounds`) are refused, as unknown fields or as no claim, until their batch adds
-them. -/
+This batch decodes claims over stated and defined values. The fields and checks of later batches (`premises`,
+`free` and `counted` values, `unit`, `environment`, `source`, `data`, `budget`; `follows`, `consistent`,
+`identity` and `sqrt-rounds`) are refused, as unknown fields or as no claim, until their batch adds them. -/
 
 namespace VE.Calc
 open Lean VE.Numbers
 
-/-- Every question a `calc@0` case asks (spec 3.4): a claim or a derivation; ME-8 and ME-9 add their constructors.
-The decoder resolves premise ids to their claims. -/
+/-- Every question a `calc@0` case asks (spec 3.4): ME-5, ME-8 and ME-9 add their constructors. -/
 inductive Check where
   | claim (c : Claim)
-  | follows (P : List Claim) (links : List (String × String)) (C : Claim)
 
-def Check.exprs : Check → List Expr
-  | .claim c => c.exprs
-  | .follows P _ C => (C :: P).flatMap Claim.exprs
-
-def Check.names (k : Check) : List String := k.exprs.flatMap Expr.names
+def Check.names : Check → List String
+  | .claim c => c.exprs.flatMap Expr.names
 
 structure Case where
   decls : List Decl
   claims : List (String × Check)
   software : Option String
-
-/-- A check's sides under the values `τ`: a claim's expressions' values; a derivation has none here. -/
-def Check.sides (τ : String → Val) : Check → List Val
-  | .claim c => c.exprs.map (Expr.evalL τ)
-  | .follows .. => []
-
-/-- The checks' sides over the table, charged (3.2 (a), (b)): each claim's expressions once, in claim order. A
-derivation is charged nothing here: its lowering and search are 5's (me-2nc charges them). -/
-def Check.sidesC (limit : Nat) (t : Work.Table) : List Check → Nat → Option (List (List Val) × Nat)
-  | [], w => some ([], w)
-  | .claim c :: ks, w => (Work.Expr.evalsC limit t c.exprs w).bind fun (vs, w) =>
-      (Check.sidesC limit t ks w).map fun r => (vs :: r.1, r.2)
-  | .follows .. :: ks, w => (Check.sidesC limit t ks w).map fun r => ([] :: r.1, r.2)
-
-/-- The case's work within `limit` units (limit 10): the value table, then each check's sides. -/
-def Case.sidesC (limit : Nat) (c : Case) : Option (List (List Val) × Nat) :=
-  (Work.valueTableC limit c.decls [] 0).bind fun (t, w) => Check.sidesC limit t (c.claims.map (·.2)) w
-
-theorem Check.sidesC_some (limit : Nat) (t : Work.Table) (ks : List Check) (w : Nat) (vss : List (List Val)) (w' : Nat)
-    (hw : w ≤ limit) (h : Check.sidesC limit t ks w = some (vss, w')) :
-    vss = ks.map (Check.sides t.read) ∧ w ≤ w' ∧ w' ≤ limit := by
-  induction ks generalizing w vss with
-  | nil => cases h; exact ⟨rfl, by omega, hw⟩
-  | cons k ks ih =>
-    cases k with
-    | claim c =>
-      obtain ⟨⟨vs, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨⟨vss', w2⟩, hr, h⟩ := Option.map_eq_some_iff.mp h
-      cases h
-      obtain ⟨rfl, h1, h2⟩ := Work.Expr.evalsC_some _ _ _ _ _ _ hw hv
-      obtain ⟨rfl, h3, h4⟩ := ih _ _ h2 hr
-      exact ⟨rfl, by omega, h4⟩
-    | follows =>
-      obtain ⟨⟨vss', w2⟩, hr, h⟩ := Option.map_eq_some_iff.mp h
-      cases h
-      obtain ⟨rfl, h3, h4⟩ := ih _ _ hw hr
-      exact ⟨rfl, h3, h4⟩
-
-theorem Check.sidesC_mono {limit limit' : Nat} (t : Work.Table) (ks : List Check) (w : Nat)
-    (r : List (List Val) × Nat) (hl : limit ≤ limit') (h : Check.sidesC limit t ks w = some r) :
-    Check.sidesC limit' t ks w = some r := by
-  induction ks generalizing w r with
-  | nil => exact h
-  | cons k ks ih =>
-    cases k with
-    | claim c =>
-      obtain ⟨⟨vs, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨r', hr, rfl⟩ := Option.map_eq_some_iff.mp h
-      simp only [Check.sidesC, Work.Expr.evalsC_mono _ _ _ _ hl hv, Option.bind_some, ih _ _ hr, Option.map_some]
-    | follows =>
-      obtain ⟨r', hr, rfl⟩ := Option.map_eq_some_iff.mp h
-      simp only [Check.sidesC, ih _ _ hr, Option.map_some]
-
-/-- Within its limit, the case's sides are 2.4's values, read from the table. -/
-theorem Case.sidesC_some (limit : Nat) (c : Case) (vss : List (List Val)) (w : Nat)
-    (h : c.sidesC limit = some (vss, w)) : vss = c.claims.map (·.2.sides (valuesL c.decls)) ∧ w ≤ limit := by
-  obtain ⟨⟨t, w1⟩, ht, h⟩ := Option.bind_eq_some_iff.mp h
-  obtain ⟨ht', _, h1⟩ := Work.valueTableC_some _ _ _ _ _ _ (Nat.zero_le _) ht
-  obtain ⟨rfl, _, h2⟩ := Check.sidesC_some _ _ _ _ _ _ h1 h
-  refine ⟨?_, h2⟩
-  have : t = Work.valueTable c.decls := ht'
-  rw [this, Work.valueTable_read, List.map_map]; rfl
-
-theorem Case.sidesC_mono {limit limit' : Nat} (c : Case) (r : List (List Val) × Nat) (hl : limit ≤ limit')
-    (h : c.sidesC limit = some r) : c.sidesC limit' = some r := by
-  obtain ⟨⟨t, w1⟩, ht, h⟩ := Option.bind_eq_some_iff.mp h
-  simp only [Case.sidesC, Work.valueTableC_mono _ _ _ _ hl ht, Option.bind_some]
-  exact Check.sidesC_mono _ _ _ _ hl h
 
 namespace Wire
 open VE.Bridge (fields identifier)
@@ -121,16 +44,13 @@ def children (j : Json) : List Json := match j with
   | .obj _ => ((fields j).toOption.getD []).map (·.2)
   | _ => []
 
-/-- The number of JSON values in `js` and below (objects, arrays and scalars alike), up to `fuel`: one at a time
-from a worklist, so no nesting hides a value from limit 1 and none deepens the stack. -/
-def count (fuel : Nat) (js : List Json) (n : Nat := 0) : Nat := match fuel, js with
-  | 0, _ | _, [] => n
-  | f + 1, j :: js => count f (children j ++ js) (n + 1)
-
-/-- The nesting of arrays and objects in `j`, up to `fuel`. -/
-def depth : Nat → Json → Nat
-  | 0, _ => 0
-  | n + 1, j => if j matches .arr _ | .obj _ then 1 + (children j).foldl (fun d c => max d (depth n c)) 0 else 0
+/-- The number of JSON values in `j` (objects, arrays and scalars alike) and its nesting of arrays and
+objects. -/
+def size : Nat → Json → Nat × Nat
+  | 0, _ => (0, 0)
+  | n + 1, j =>
+    let ms := (children j).map (size n)
+    (1 + (ms.map (·.1)).sum, if j matches .arr _ | .obj _ then 1 + (ms.map (·.2)).foldl max 0 else 0)
 
 /-- The first value of `j`, in document order, that `p` refuses. -/
 def scan (p : Json → Option String) : Nat → Json → Option String
@@ -162,39 +82,32 @@ def literalFault (j : Json) : Option String :=
     | _ => none
   | _ => none
 
-/-- Limit 7 (2.6): a string or object key of more than 64 bytes. Names, claim ids, `software` and every string a
-later batch decodes are capped alike, as no field is listed. -/
-def stringFault (j : Json) : Option String :=
-  let long (s : String) : Bool := s.utf8ByteSize > VE.Limits.maxIdentifierBytes
-  if (match j with
-    | .str s => long s
-    | .obj _ => ((fields j).toOption.getD []).any (long ·.1)
-    | _ => false) then some (limit "a string" VE.Limits.maxIdentifierBytes) else none
-
-/-- The case as limit 7 reads it: a value record's `words` string, the one string it does not cap, as `null`. -/
-def unworded (j : Json) : Json := match j.getObjVal? "values" with
-  | .ok (.arr vs) => j.setObjVal! "values" (.arr (vs.map fun v =>
-    if v.getObjVal? "words" matches .ok (.str _) then v.setObjVal! "words" .null else v))
-  | _ => j
+/-- Limit 7: a name or claim id of more than 64 bytes. -/
+def nameFault (j : Json) : Option String :=
+  let long (s : String) : Option String :=
+    if s.utf8ByteSize > VE.Limits.maxIdentifierBytes then some (limit "a name" VE.Limits.maxIdentifierBytes) else none
+  match j with
+  | .arr xs => match xs.toList with
+    | [.str "val", .str n] => long n
+    | _ => none
+  | .obj _ => ["name", "id"].findSome? fun k => match j.getObjVal? k with
+    | .ok (.str n) => long n
+    | _ => none
+  | _ => none
 
 def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
   | .ok (.arr xs) => xs.size
   | _ => 0
 
-/-- Limit 10's refusal (3.2): the work of computing the case passes `maxWork` units. -/
-def workLimit : String := limit "the work of the calculation" Work.maxWork
-
 /-- The first limit of 3.2 the case exceeds: 10,000 JSON values, depth 64, 512 values, 512 claims, then
-exponents, literals and strings, each anywhere in the case, then 512 premises. -/
+exponents, literals and names, each anywhere in the case. -/
 def limitFault (j : Json) : Option String :=
-  if count (VE.Limits.maxNodes + 1) [j] > VE.Limits.maxNodes then
-    some (limit "the number of JSON values" VE.Limits.maxNodes)
-  else if depth (VE.Limits.maxDepth + 1) j > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
+  let (values, depth) := size (VE.Limits.maxJsonDepth + 1) j
+  if values > VE.Limits.maxNodes then some (limit "the number of JSON values" VE.Limits.maxNodes)
+  else if depth > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
-  else ([(exponentFault, j), (literalFault, j), (stringFault, unworded j)].findSome? fun (p, j) =>
-    scan p (VE.Limits.maxDepth + 1) j).orElse fun _ =>
-      if entries j "premises" > 512 then some (limit "the number of premises" 512) else none
+  else [exponentFault, literalFault, nameFault].findSome? (scan · 65 j)
 
 /-! ## Literals, expressions and claims (3.1), each with its canonical form (3.3) -/
 
@@ -299,99 +212,40 @@ def recordJson (path : String) (j : Json) (fields : List (String × Json)) : Exc
       | _ => throw (invalid s!"{path}.span" "must be two natural numbers")
   pure (Json.mkObj (fields ++ support ++ span))
 
-/-- 11.2's rules for a value's words, after W6's (`VE.Time.Wire.displayString`): they begin with "the" and not with
-a phrase word (`ValueWordsForm`, naming the phrase word, else the first word), and contain no reserved word
-(`ReservedWord`). -/
-def checkWords (name w : String) : Except String Unit := do
-  VE.Time.Wire.displayString w false "Verbalisation"
-  let first := ((English.leadingPhrase w).getD ((w.splitOn " ").headD ""))
-  unless w.startsWith "the " && (English.leadingPhrase w).isNone do
-    throw s!"ValueWordsForm: the words of {name} must begin with \"the\" and not with \"{first}\""
-  if let some r := English.reservedIn w then throw s!"ReservedWord: \"{r}\" in the words of {name}"
-
-/-- W6a's check over the values' words (`VerbalisationCollision`), each value's words as a constant's
-verbalisation. -/
-def checkVerbalisations (vs : List Json) : Except String Unit :=
-  VE.Time.Wire.checkVerbalisations <| vs.map fun v =>
-    ((v.getObjValD "name").getStr?.toOption.getD "", Json.mkObj [("verbalisation", v.getObjValD "words")])
-
-/-- A value record: its name and its source (stated, defined, or free as `none`), and the record as hashed, without
-`words`. -/
-def value (i : Nat) (j : Json) : Except String ((String × Option (Rat ⊕ Expr)) × Json) := do
+/-- A value record: its name and its source (stated or defined), and the record as hashed, without `words`. -/
+def value (i : Nat) (j : Json) : Except String ((String × (Rat ⊕ Expr)) × Json) := do
   let path := s!"values.{i}"
-  checkFields path j ["name", "words"] ["stated", "defined", "free", "support", "span"]
+  checkFields path j ["name", "words"] ["stated", "defined", "support", "span"]
   let .ok (.str name) := j.getObjVal? "name" | throw (invalid s!"{path}.name" "must be a string")
   unless identifier name do throw (invalid s!"{path}.name" "must be a name")
-  let .ok (.str words) := j.getObjVal? "words" | throw (invalid s!"{path}.words" "must be a string")
-  checkWords name words
-  let (src, cs) ← match j.getObjVal? "stated", j.getObjVal? "defined", j.getObjVal? "free" with
-    | .ok l, .error _, .error _ => do
+  let .ok (.str _) := j.getObjVal? "words" | throw (invalid s!"{path}.words" "must be a string")
+  let (src, cs) ← match j.getObjVal? "stated", j.getObjVal? "defined" with
+    | .ok l, .error _ => do
       let p ← literal s!"{path}.stated" l
-      pure (some (Sum.inl p.value), ("stated", Json.str (plain p)))
-    | .error _, .ok x, .error _ => do
+      pure (Sum.inl p.value, ("stated", Json.str (plain p)))
+    | .error _, .ok x => do
       let (x, cx) ← expr s!"{path}.defined" VE.Limits.maxDepth x
-      pure (some (Sum.inr x), ("defined", cx))
-    | .error _, .error _, .ok f => do
-      unless f == .bool true do throw (invalid s!"{path}.free" "must be true")
-      pure (none, ("free", Json.bool true))
-    | _, _, _ => throw (invalid path "must have one of stated, defined and free")
+      pure (Sum.inr x, ("defined", cx))
+    | _, _ => throw (invalid path "must have one of stated and defined")
   pure ((name, src), ← recordJson path j [("name", .str name), cs])
 
 def claimIdChar (c : Char) : Bool := VE.Surface.identChar c || c == '-'
 
-def claimId (path : String) (j : Json) : Except String String := do
-  let .ok (.str id) := j.getObjVal? "id" | throw (invalid s!"{path}.id" "must be a string")
-  unless id != "" && id.all claimIdChar do throw (invalid s!"{path}.id" "must be a claim id")
-  pure id
-
-/-- A `premises` entry (ME-5): its id and claim, an `eq`, `lt`, `le`, `gt`, `ge` or `within` claim, and the entry as
-hashed, with its support. -/
-def premise (rule : String × Rounding) (i : Nat) (j : Json) : Except String ((String × Claim) × Json) := do
-  let path := s!"premises.{i}"
-  checkFields path j ["id", "claim", "support"] ["span"]
-  let id ← claimId path j
-  let (c, cc) ← claim rule s!"{path}.claim" (j.getObjValD "claim")
-  if c matches .rounds .. then throw (invalid s!"{path}.claim" "must be a comparison or a range")
-  pure ((id, c), ← recordJson path j [("id", .str id), ("claim", cc)])
-
-/-- A check and its canonical form: a claim, or `["follows", conclusion, [premise ids], [[square, root], …]]` with
-an `lt`, `le`, `gt` or `ge` conclusion and each id resolved to its premise's claim. -/
-def check (rule : String × Rounding) (premises : List (String × Claim)) (path : String) (j : Json) :
-    Except String (Check × Json) := do
-  match (j.getArr?.toOption.map (·.toList) : Option (List Json)) with
-  | some [.str "follows", c, .arr ids, .arr links] => do
-    let (C, cc) ← claim rule s!"{path}.1" c
-    unless C matches .compare ⟨.lt, _⟩ _ _ | .compare ⟨.le, _⟩ _ _ do
-      throw (invalid s!"{path}.1" "must be an lt, le, gt or ge claim")
-    let P ← ids.toList.zipIdx.mapM fun (id, i) => match id with
-      | .str id => match premises.lookup id with
-        | some p => pure p
-        | none => throw s!"UnknownPremise: {id}"
-      | _ => throw (invalid s!"{path}.2.{i}" "must be a premise id")
-    let ls ← links.toList.zipIdx.mapM fun (l, i) => match (l.getArr?.toOption.map (·.toList) : Option (List Json)) with
-      | some [.str s, .str r] => pure (s, r)
-      | _ => throw (invalid s!"{path}.3.{i}" "must be two names")
-    pure (.follows P ls C, Json.arr #[.str "follows", cc, .arr ids, .arr links])
-  | _ => do
-    let (c, cc) ← claim rule path j
-    pure (.claim c, cc)
-
 /-- A `claims` entry: its id and check, the claim as hashed and the entry as hashed. -/
-def entry (rule : String × Rounding) (premises : List (String × Claim)) (i : Nat) (j : Json) :
-    Except String ((String × Check) × Json × Json) := do
+def entry (rule : String × Rounding) (i : Nat) (j : Json) : Except String ((String × Check) × Json × Json) := do
   let path := s!"claims.{i}"
   checkFields path j ["id", "claim"] ["span"]
-  let id ← claimId path j
-  let (k, cc) ← check rule premises s!"{path}.claim" (j.getObjValD "claim")
-  pure ((id, k), cc, ← recordJson path j [("id", .str id), ("claim", cc)])
+  let .ok (.str id) := j.getObjVal? "id" | throw (invalid s!"{path}.id" "must be a string")
+  unless id != "" && id.all claimIdChar do throw (invalid s!"{path}.id" "must be a claim id")
+  let (c, cc) ← claim rule s!"{path}.claim" (j.getObjValD "claim")
+  pure ((id, .claim c), cc, ← recordJson path j [("id", .str id), ("claim", cc)])
 
 /-! ## Names and definition order -/
 
-def decl (v : String × Option (Rat ⊕ Expr)) : Decl :=
+def decl (v : String × (Rat ⊕ Expr)) : Decl :=
   ⟨v.1, match v.2 with
-    | some (.inl q) => .stated q
-    | some (.inr e) => .defined e
-    | none => .free⟩
+    | .inl q => .stated q
+    | .inr e => .defined e⟩
 
 /-- The first name that occurs again later in the list. -/
 def firstDup : List String → Option String
@@ -405,324 +259,23 @@ def firstUnknown (known : List String) : List Decl → Option String
       | .defined e => e.names.find? (!known.contains ·)
       | _ => none).or (firstUnknown (known ++ [d.name]) ds)
 
-/-- The path of the innermost part of `e` that, inlined by `t` within `maxPolyTerms` nodes, is not linear in the kept
-names (`Expr.linear`). -/
-def nonlinearAt (t : Inlined) (path : String) (e : Expr) : Option String :=
-  let inner : Option String := match e with
-    | .add a b | .sub a b | .mul a b | .div a b =>
-      (nonlinearAt t s!"{path}.1" a).orElse fun _ => nonlinearAt t s!"{path}.2" b
-    | .pow a _ => nonlinearAt t s!"{path}.1" a
-    | .lit _ | .val _ => none
-  inner.orElse fun _ =>
-    if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path
-    else none
-
-/-- What the decoder judges of a side as written: its inlining, within `maxPolyTerms` nodes and without a fault. -/
-def judged (t : Inlined) (e : Expr) : Option Expr :=
-  match e.subst t with
-  | .ok e' => if (e'.nodesWithin maxPolyTerms).isSome then some e' else none
-  | .error _ => none
-
-end Wire
-
-namespace Work
-
-/-- A side's lowering, with its path when it is not linear. -/
-def markC (path : String) (l : Lowered) (w : Nat) : Option ((Option String × Option Lowered) × Nat) :=
-  some ((match l with | .nonlinear => some path | _ => none, some l), w)
-
-/-- A node's lowering from its parts'; one not judged, or a part not judged, gives nothing. -/
-def nodeC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (parts : List (Option Lowered)) (w : Nat) :
-    Option ((Option String × Option Lowered) × Nat) :=
-  match Wire.judged t e, parts.mapM id with
-  | some e', some ls => ((stepNode e' ls).run limit w).bind fun (l, w) => markC path l w
-  | _, _ => some ((none, none), w)
-
-/-- The decoder's linearity check (3.1's `NonlinearPremise`), charged: each side lowered once, bottom-up over the side
-as written, each node's lowering built from its parts' (a name's from its inlined definition), so a side costs its
-`linearC` and never more. It names 5's innermost part that is not linear (`Wire.nonlinearAt`'s path); a part whose
-inlining has a fault or more than `maxPolyTerms` nodes is not judged, and neither is any node above it. -/
-def nonlinearAtC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) :
-    Option ((Option String × Option Lowered) × Nat) :=
-  match e with
-  | .lit _ | .val _ => match Wire.judged t e with
-    | some e' => (Expr.linearC limit e' w).bind fun (l, w) => markC path l w
-    | none => some ((none, none), w)
-  | .add a b | .sub a b | .mul a b | .div a b =>
-    match nonlinearAtC limit t s!"{path}.1" a w with
-    | none => none
-    | some ((some p, _), w) => some ((some p, none), w)
-    | some ((none, la), w) => match nonlinearAtC limit t s!"{path}.2" b w with
-      | none => none
-      | some ((some p, _), w) => some ((some p, none), w)
-      | some ((none, lb), w) => visitC limit w (nodeC limit t path e [la, lb])
-  | .pow a _ => match nonlinearAtC limit t s!"{path}.1" a w with
-    | none => none
-    | some ((some p, _), w) => some ((some p, none), w)
-    | some ((none, la), w) => visitC limit w (nodeC limit t path e [la])
-
-/-- The first side that is not linear, each side lowered once, on one count; the side's units stop at the first. -/
-def firstNonlinearC (limit : Nat) (t : Inlined) : List (String × Expr) → Nat → Option (Option String × Nat)
-  | [], w => some (none, w)
-  | (p, e) :: rest, w => (nonlinearAtC limit t p e w).bind fun (r, w) => match r.1 with
-    | some p => some (some p, w)
-    | none => firstNonlinearC limit t rest w
-
-/-- The value table, then each side, on the case's one count (3.2's order). -/
-def loweredC (limit : Nat) (ds : List Decl) (t : Inlined) (sides : List (String × Expr)) : Option (Option String × Nat) :=
-  (valueTableC limit ds [] 0).bind fun (_, w) => firstNonlinearC limit t sides w
-
-theorem nodesWithin_add (e : Expr) (n d r : Nat) (h : e.nodesWithin n = some r) :
-    e.nodesWithin (n + d) = some (r + d) ∧ r < n := by
-  induction e generalizing n d r with
-  | lit q | val q =>
-    cases n with
-    | zero => simp [Expr.nodesWithin] at h
-    | succ n =>
-      simp only [Expr.nodesWithin, Option.some.injEq] at h
-      subst h
-      simp [Expr.nodesWithin, Nat.add_right_comm n 1 d]
-  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
-    cases n with
-    | zero => simp [Expr.nodesWithin] at h
-    | succ n =>
-      obtain ⟨r1, h1, h2⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨h3, h4⟩ := iha n d r1 h1
-      obtain ⟨h5, h6⟩ := ihb r1 d r h2
-      refine ⟨?_, by omega⟩
-      rw [Nat.add_right_comm n 1 d]
-      simp only [Expr.nodesWithin, h3, Option.bind_some, h5]
-  | pow a k iha =>
-    cases n with
-    | zero => simp [Expr.nodesWithin] at h
-    | succ n =>
-      obtain ⟨h3, h4⟩ := iha n d r h
-      refine ⟨?_, by omega⟩
-      rw [Nat.add_right_comm n 1 d]
-      simpa only [Expr.nodesWithin] using h3
-
-theorem nodesWithin_of_le {e : Expr} {n m r : Nat} (h : e.nodesWithin n = some r) (hm : n ≤ m) :
-    (e.nodesWithin m).isSome := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hm
-  simp [(nodesWithin_add e n d r h).1]
-
-theorem judged_bin {t : Inlined} {e a b e' : Expr} (he : e = .add a b ∨ e = .sub a b ∨ e = .mul a b ∨ e = .div a b)
-    (h : Wire.judged t e = some e') : ∃ a' b', Wire.judged t a = some a' ∧ Wire.judged t b = some b' ∧
-      (e' = .add a' b' ∨ e' = .sub a' b' ∨ e' = .mul a' b' ∨ e' = .div a' b') := by
-  have parts : ∀ a' b' (f : Expr → Expr → Expr), (∀ n, (f a' b').nodesWithin (n + 1) =
-      (a'.nodesWithin n).bind (b'.nodesWithin ·)) → ((f a' b').nodesWithin maxPolyTerms).isSome →
-      (a'.nodesWithin maxPolyTerms).isSome ∧ (b'.nodesWithin maxPolyTerms).isSome := by
-    intro a' b' f hf hs
-    obtain ⟨n, hn⟩ : ∃ n, maxPolyTerms = n + 1 := ⟨_, rfl⟩
-    rw [hn, hf] at hs
-    obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp hs
-    obtain ⟨r1, h1, h2⟩ := Option.bind_eq_some_iff.mp hr
-    have hlt := (nodesWithin_add a' n 0 r1 h1).2
-    rw [hn]
-    exact ⟨nodesWithin_of_le h1 (by omega), nodesWithin_of_le h2 (by omega)⟩
-  have ok : ∀ x x', x.subst t = .ok x' → (x'.nodesWithin maxPolyTerms).isSome → Wire.judged t x = some x' := by
-    intro x x' h1 h2; simp [Wire.judged, h1, h2]
-  unfold Wire.judged at h
-  rcases he with rfl | rfl | rfl | rfl <;>
-    cases ha : a.subst t <;> cases hb : b.subst t <;> simp [Expr.subst, Expr.bin2, ha, hb] at h
-  all_goals
-    obtain ⟨hw, rfl⟩ := h
-    obtain ⟨h1, h2⟩ := parts _ _ _ (fun _ => rfl) (by simpa using hw)
-    exact ⟨_, _, ok _ _ ha h1, ok _ _ hb h2, by simp⟩
-
-theorem judged_pow {t : Inlined} {a e' : Expr} {k : Nat} (h : Wire.judged t (.pow a k) = some e') :
-    ∃ a', Wire.judged t a = some a' ∧ e' = .pow a' k := by
-  unfold Wire.judged at h
-  simp only [Expr.subst] at h
-  cases ha : a.subst t <;> simp [ha, Except.map] at h
-  obtain ⟨hw, rfl⟩ := h
-  obtain ⟨n, hn⟩ : ∃ n, maxPolyTerms = n + 1 := ⟨_, rfl⟩
-  rw [hn] at hw
-  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp hw
-  refine ⟨_, ?_, rfl⟩
-  have hr' : Expr.nodesWithin n _ = some r := hr
-  simp only [Wire.judged, ha, hn, nodesWithin_of_le hr' (Nat.le_succ n), if_true]
-
-theorem check_eq (t : Inlined) (e : Expr) (path : String) :
-    (if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path else none) =
-      match Wire.judged t e with
-      | some e' => if e'.linear.isNone then some path else none
-      | none => none := by
-  unfold Wire.judged
-  cases h : e.subst t with
-  | error v => simp [Except.toOption]
-  | ok e' => by_cases hn : (e'.nodesWithin maxPolyTerms).isSome <;> simp [Except.toOption, hn]
-
-theorem markC_spec {e' : Expr} {l0 : Lowered} {path : String} {w w' : Nat} {r : Option String} {o : Option Lowered}
-    (hs : Lowered.Sound e'.linear l0) (h : markC path l0 w = some ((r, o), w')) :
-    r = (if e'.linear.isNone then some path else none) ∧ (r = none → ∃ l', o = some l' ∧ Lowered.Sound e'.linear l') := by
-  simp only [markC, Option.some.injEq, Prod.mk.injEq] at h
-  obtain ⟨⟨rfl, rfl⟩, rfl⟩ := h
-  cases l0 with
-  | form L => simp [show e'.linear = some L from hs, Lowered.Sound]
-  | nonlinear => simp [show e'.linear = none from hs]
-  | tooLarge s => obtain ⟨L, hL, hS⟩ := id hs; simp [hL]; exact ⟨L, rfl, hS⟩
-
-theorem nodeC_spec {limit : Nat} {t : Inlined} {path : String} {e : Expr} {parts : List (Option Lowered)} {w w' : Nat}
-    {r : Option String} {l : Option Lowered} (h : nodeC limit t path e parts w = some ((r, l), w'))
-    (hp : ∀ e', Wire.judged t e = some e' →
-      ∃ ls', parts.mapM id = some ls' ∧ Lowered.Sound e'.linear ((stepNode e' ls').result ())) :
-    r = (match Wire.judged t e with
-      | some e' => if e'.linear.isNone then some path else none
-      | none => none) ∧ (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l') := by
-  unfold nodeC at h
-  cases hj : Wire.judged t e with
-  | none => rw [hj] at h; cases h; simp
-  | some e' =>
-    obtain ⟨ls, hm, hs⟩ := hp e' hj
-    rw [hj, hm] at h
-    obtain ⟨⟨l0, w1⟩, h1, h2⟩ := Option.bind_eq_some_iff.mp h
-    have h0 := Node.run_some h1
-    simp only at h0
-    subst h0
-    obtain ⟨h3, h4⟩ := markC_spec hs h2
-    exact ⟨h3, fun hr e'' he => by cases he; exact h4 hr⟩
-
-/-- `nonlinearAtC`'s statement for `e`, the induction's hypothesis. -/
-abbrev AtSpec (limit : Nat) (t : Inlined) (e : Expr) : Prop :=
-  ∀ path w r l w', nonlinearAtC limit t path e w = some ((r, l), w') →
-    r = Wire.nonlinearAt t path e ∧
-      (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l')
-
-theorem bin_spec {limit : Nat} {t : Inlined} {path : String} {e a b : Expr} {w w' : Nat} {r : Option String}
-    {l : Option Lowered} (he : e = .add a b ∨ e = .sub a b ∨ e = .mul a b ∨ e = .div a b)
-    (hN : Wire.nonlinearAt t path e = ((Wire.nonlinearAt t s!"{path}.1" a).orElse
-      fun _ => Wire.nonlinearAt t s!"{path}.2" b).orElse fun _ => match Wire.judged t e with
-        | some e' => if e'.linear.isNone then some path else none
-        | none => none)
-    (iha : AtSpec limit t a) (ihb : AtSpec limit t b)
-    (h : (match nonlinearAtC limit t s!"{path}.1" a w with
-      | none => none
-      | some ((some p, _), w) => some ((some p, none), w)
-      | some ((none, la), w) => match nonlinearAtC limit t s!"{path}.2" b w with
-        | none => none
-        | some ((some p, _), w) => some ((some p, none), w)
-        | some ((none, lb), w) => visitC limit w (nodeC limit t path e [la, lb])) = some ((r, l), w')) :
-    r = Wire.nonlinearAt t path e ∧
-      (r = none → ∀ e', Wire.judged t e = some e' → ∃ l', l = some l' ∧ Lowered.Sound e'.linear l') := by
-  split at h
-  · cases h
-  · cases h
-    rename_i ha
-    exact ⟨by rw [hN, ← (iha _ _ _ _ _ ha).1]; rfl, by simp⟩
-  · rename_i la w1 ha
-    obtain ⟨ra, sa⟩ := iha _ _ _ _ _ ha
-    split at h
-    · cases h
-    · cases h
-      rename_i hb
-      exact ⟨by rw [hN, ← ra, ← (ihb _ _ _ _ _ hb).1]; rfl, by simp⟩
-    · rename_i lb w2 hb
-      obtain ⟨rb, sb⟩ := ihb _ _ _ _ _ hb
-      obtain ⟨_, h⟩ := visitC_some h
-      have := nodeC_spec h fun e' hj => by
-        obtain ⟨a', b', ja, jb, he'⟩ := judged_bin he hj
-        obtain ⟨la', rfl, sla⟩ := sa rfl a' ja
-        obtain ⟨lb', rfl, slb⟩ := sb rfl b' jb
-        exact ⟨[la', lb'], rfl, step_sound_bin he' sla slb⟩
-      exact ⟨by rw [hN, ← ra, ← rb]; exact this.1, this.2⟩
-
-theorem leaf_spec {limit : Nat} {t : Inlined} {e : Expr}
-    (hN : ∀ path, Wire.nonlinearAt t path e = match Wire.judged t e with
-      | some e' => if e'.linear.isNone then some path else none
-      | none => none)
-    (hC : ∀ path w, nonlinearAtC limit t path e w = match Wire.judged t e with
-      | some e' => (Expr.linearC limit e' w).bind fun (l, w) => markC path l w
-      | none => some ((none, none), w)) : AtSpec limit t e := by
-  intro path w r l w' h
-  rw [hN]
-  rw [hC] at h
-  cases hj : Wire.judged t e with
-  | none => rw [hj] at h; cases h; simp
-  | some e' =>
-    rw [hj] at h
-    obtain ⟨⟨l0, w1⟩, h1, h2⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨h3, h4⟩ := markC_spec (linearC_sound limit e' w l0 w1 h1) h2
-    exact ⟨h3, fun hr e'' he => by cases he; exact h4 hr⟩
-
-theorem nonlinearAtC_spec (limit : Nat) (t : Inlined) (e : Expr) : AtSpec limit t e := by
-  induction e with
-  | lit q => exact leaf_spec (fun path => by rw [Wire.nonlinearAt]; exact check_eq t (.lit q) path) fun _ _ => by rw [nonlinearAtC]
-  | val q => exact leaf_spec (fun path => by rw [Wire.nonlinearAt]; exact check_eq t (.val q) path) fun _ _ => by rw [nonlinearAtC]
-  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
-    intro path w r l w' h
-    refine bin_spec (by simp) ?_ iha ihb (by rw [nonlinearAtC] at h; exact h)
-    rw [Wire.nonlinearAt, check_eq]
-  | pow a k iha =>
-    intro path w r l w' h
-    rw [nonlinearAtC] at h
-    have hN : Wire.nonlinearAt t path (.pow a k) = (Wire.nonlinearAt t s!"{path}.1" a).orElse fun _ =>
-        match Wire.judged t (.pow a k) with
-        | some e' => if e'.linear.isNone then some path else none
-        | none => none := by rw [Wire.nonlinearAt, check_eq]
-    split at h
-    · cases h
-    · cases h
-      rename_i ha
-      exact ⟨by rw [hN, ← (iha _ _ _ _ _ ha).1]; rfl, by simp⟩
-    · rename_i la w1 ha
-      obtain ⟨ra, sa⟩ := iha _ _ _ _ _ ha
-      obtain ⟨_, h⟩ := visitC_some h
-      have := nodeC_spec h fun e' hj => by
-        obtain ⟨a', ja, rfl⟩ := judged_pow hj
-        obtain ⟨la', rfl, sla⟩ := sa rfl a' ja
-        exact ⟨[la'], rfl, step_sound_pow sla⟩
-      exact ⟨by rw [hN, ← ra]; exact this.1, this.2⟩
-
-theorem nonlinearAtC_eq (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) (r : Option String)
-    (l : Option Lowered) (w' : Nat) (h : nonlinearAtC limit t path e w = some ((r, l), w')) :
-    r = Wire.nonlinearAt t path e := (nonlinearAtC_spec limit t e path w r l w' h).1
-
-end Work
-
-namespace Wire
-
-/-- Square links name free values (`UnknownLink`); then every premise and each derivation's conclusion is linear in
-the free values once inlined (`NonlinearPremise`, naming the innermost part that is not), each side lowered once on
-the case's count, after the value table (3.2's order; limit 10). A part whose inlining meets a fault, or whose inlined
-form is beyond `maxPolyTerms` nodes, is not judged here: its row says why, and so does a value beyond the digit limit. -/
-def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) :
-    Except String Unit := do
-  let free := freeNames ds
-  let links := claims.flatMap fun (_, k) => match k with
-    | .follows _ ls _ => ls.flatMap fun l => [l.1, l.2]
-    | _ => []
-  if let some n := links.find? (!free.contains ·) then throw s!"UnknownLink: {n}"
-  let lowered := premises.zipIdx.map (fun ((_, c), i) => (s!"premises.{i}.claim", c)) ++
-    claims.zipIdx.filterMap fun ((_, k), i) => match k with
-      | .follows _ _ C => some (s!"claims.{i}.claim.1", C)
-      | _ => none
-  match lowered.flatMap fun (path, c) => c.exprs.zipIdx.map fun (e, i) => (s!"{path}.{i + 1}", e) with
-  | [] => pure ()
-  | sides =>
-    match Work.loweredC Work.maxWork ds (inlineTable ds free) sides with
-    | none => throw workLimit
-    | some (some p, _) => throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
-    | some (none, _) => pure ()
-
-/-- Names are unique, each name read is declared (before its use in a definition), claim and premise ids are unique,
-and derivations are linear in the free values, in that order. -/
-def admit (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) : Except String Unit :=
+/-- Names are unique, each name read is declared (before its use in a definition), and claim ids are unique, in
+that order. -/
+def admit (ds : List Decl) (claims : List (String × Check)) : Except String Unit :=
   let names := ds.map Decl.name
-  let read := premises.flatMap (·.2.exprs.flatMap Expr.names) ++ claims.flatMap (·.2.names)
-  match firstDup names, (firstUnknown [] ds).or (read.find? (!names.contains ·)),
-      firstDup (premises.map (·.1) ++ claims.map (·.1)) with
+  match firstDup names, (firstUnknown [] ds).or ((claims.flatMap (·.2.names)).find? (!names.contains ·)),
+      firstDup (claims.map (·.1)) with
   | some n, _, _ => .error s!"DuplicateName: {n}"
   | none, some n, _ => .error s!"UnknownName: {n} (declare it before the value that uses it)"
   | none, none, some n => .error s!"DuplicateClaimId: {n}"
-  | none, none, none => derivations ds premises claims
+  | none, none, none => .ok ()
 
 /-! ## The decoder and the identity (3.3) -/
 
 /-- The case's limits, fields and format, before anything else is read. -/
 def checkCase (j : Json) : Except String Unit := do
   if let some e := limitFault j then throw e
-  checkFields "case" j ["format", "values", "claims"] ["premises", "rounding", "software"]
+  checkFields "case" j ["format", "values", "claims"] ["rounding", "software"]
   unless j.getObjValD "format" == .str "ve-calc@0" do throw (invalid "case.format" "must be \"ve-calc@0\"")
 
 /-- The case's `meaning_id` and each claim's id: the case as hashed, its environment `{}` until ME-6. -/
@@ -747,43 +300,18 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     | .ok _ => throw (invalid "case.software" "must be a string")
   let .ok (.arr vs) := j.getObjVal? "values" | throw (invalid "case.values" "must be a list")
   let .ok (.arr cs) := j.getObjVal? "claims" | throw (invalid "case.claims" "must be a list")
-  let ps ← match j.getObjVal? "premises" with
-    | .error _ => pure #[]
-    | .ok (.arr ps) => pure ps
-    | .ok _ => throw (invalid "case.premises" "must be a list")
   if cs.size == 0 then throw "NoClaims: a calculation needs at least one claim"
   let (vals, cvals) := (← vs.toList.zipIdx.mapM fun (v, i) => value i v).unzip
-  checkVerbalisations vs.toList
-  let (premises, cprems) := (← ps.toList.zipIdx.mapM fun (p, i) => premise rule i p).unzip
-  let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule premises i c).unzip
+  let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule i c).unzip
   let (claimJson, entryJson) := hashed.unzip
   let ds := vals.map decl
-  admit ds premises checks
+  admit ds checks
   let (mid, ids) ← identify (Json.mkObj ([("format", .str "ve-calc@0"), ("values", .arr cvals.toArray),
-    ("claims", .arr entryJson.toArray)] ++ (if cprems.isEmpty then [] else [("premises", .arr cprems.toArray)]) ++
-    (software.elim [] fun s => [("software", .str s)]))) claimJson
+    ("claims", .arr entryJson.toArray)] ++ (software.elim [] fun s => [("software", .str s)]))) claimJson
   pure (⟨ds, checks, software⟩, mid, ids)
 
-/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, words, names, definition order and literals, then
-limit 10 (the case's work within `maxWork`). -/
-def decodeCase (j : Json) : Except String Case := do
-  let (c, _) ← decode j
-  if (c.sidesC Work.maxWork).isNone then throw workLimit
-  pure c
-
-theorem decodeCase_decode (j : Json) (c : Case) (h : decodeCase j = .ok c) :
-    (∃ m, decode j = .ok (c, m)) ∧ ∃ r, c.sidesC Work.maxWork = some r := by
-  unfold decodeCase at h
-  cases hd : decode j with
-  | error e => rw [hd] at h; cases h
-  | ok d =>
-    rw [hd] at h
-    simp only [bind, Except.bind] at h
-    split at h
-    · cases h
-    · rename_i hs
-      cases h
-      exact ⟨⟨d.2, rfl⟩, Option.isSome_iff_exists.mp (Option.isSome_iff_ne_none.mpr (by simpa using hs))⟩
+/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
+def decodeCase (j : Json) : Except String Case := (decode j).map (·.1)
 
 end Wire
 
@@ -820,16 +348,19 @@ theorem Wire.firstUnknown_order (known : List String) (ds : List Decl) (h : Wire
 
 theorem Wire.decodeCase_wellFormed (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) :
     WellFormed c.decls := by
-  obtain ⟨⟨m, hd⟩, _⟩ := Wire.decodeCase_decode j c h
-  show WellFormed (c, m).1.decls
-  generalize (c, m) = d at hd ⊢
-  · obtain ⟨vals, ps, hds, hadm⟩ : ∃ (vals : List (String × Option (Rat ⊕ Expr))) (ps : List (String × Claim)),
-        d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls ps d.1.claims = .ok () := by
+  unfold Wire.decodeCase at h
+  cases hd : Wire.decode j with
+  | error e => rw [hd] at h; cases h
+  | ok d =>
+    rw [hd] at h
+    cases h
+    obtain ⟨vals, hds, hadm⟩ : ∃ vals : List (String × (Rat ⊕ Expr)),
+        d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls d.1.claims = .ok () := by
       unfold Wire.decode at hd
       simp only [bind, Except.bind, pure, Except.pure] at hd
       repeat' split at hd
       all_goals (try cases hd)
-      all_goals exact ⟨_, _, rfl, ‹Wire.admit _ _ _ = .ok _›⟩
+      all_goals exact ⟨_, rfl, ‹Wire.admit _ _ = .ok _›⟩
     unfold Wire.admit at hadm
     dsimp only at hadm
     split at hadm

@@ -124,8 +124,7 @@ def regulatedView (environment : Json) : Except String Json := do
   let vocabulary ← environment.getObjVal? "vocabulary"
   let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
   if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    let ps := VE.Norms.Wire.actsProfiles true environment
-    let _ ← VE.Norms.Plain.decodeRegulatedAllIn ps (← VE.Norms.Wire.actsFixed ps environment) predicates
+    let _ ← VE.Norms.Plain.decodeRegulatedAll predicates
     let stripped := predicates.map fun (p, entry) => (p, VE.Risk.Wire.dropField "regulated" entry)
     pure (environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj stripped)))
   else pure environment
@@ -177,9 +176,6 @@ def typingView (environment : Json) : Except String Json := do
   let env ← if ps.contains "norm-defaults@0" then normDefaultsView env else pure env
   let env ← if (environment.getObjVal? "units").isOk && !ps.contains "risk@0" then unitsView env else pure env
   let env ← if ps.contains "norms@0" then regulatedView env else pure env
-  -- `acts@0` is read from the submitted `ps` and erased from the list the stages above reduced (recheck F3)
-  let env := if VE.Norms.Wire.readsActs ps then
-    VE.Norms.Wire.actsView env ((VE.Route.Gate.profilesOf env).toOption.getD []) else env
   let env ← if ps.contains "reports@0" then do
     let vocabulary ← env.getObjVal? "vocabulary"
     let constants ← (← VE.Bridge.fields (← vocabulary.getObjVal? "constants")).mapM fun (c, entry) => do
@@ -251,19 +247,16 @@ def decodeAltBlock (environment : Json) (profiles : List String) : Except String
   | _, false => throw "UnsupportedProfile: an alternatives block requires alternatives@0"
 
 /-- The modal form of a regulated predicate (S3 spec 2.3, F6): the canonical act with `{0} ` replaced once by
-`{0} may ` or `{0} must `; none for a predicate that is not a permission or an obligation. Under `acts@0` (`ps`
-lists it, with the fixed phrases `fx`) a plain predicate with an act has the wording `Lexical.wording` of its form
-(act-phrases 2.1), which is not modal: the second component. -/
-def modalForm (name : String) (args : List String) (entry : Json) (ps fx : List String := []) :
-    Except String (Option String × Option String) := do
+`{0} may ` or `{0} must `; none for a predicate that is not a permission or an obligation. -/
+def modalForm (name : String) (args : List String) (entry : Json) : Except String (Option String) := do
   match entry.getObjVal? "regulated" with
-  | .error _ => pure (none, none)
+  | .error _ => pure none
   | .ok raw =>
-    let r ← VE.Norms.Wire.decodeRegulatedIn ps fx name args raw
+    let r ← VE.Norms.Wire.decodeRegulated name args raw
     match r.role, r.act with
-    | .permission, some act => pure (some (replaceFirst act "{0} " "{0} may "), none)
-    | .obligation, some act => pure (some (replaceFirst act "{0} " "{0} must "), none)
-    | _, _ => pure (none, VE.Norms.Wire.plainWording r raw)
+    | .permission, some act => pure (some (replaceFirst act "{0} " "{0} may "))
+    | .obligation, some act => pure (some (replaceFirst act "{0} " "{0} must "))
+    | _, _ => pure none
 
 /-- The modal reader's placeholder for an unspecified norm default. -/
 def placeholderEntry (entry : Json) : Json :=
@@ -328,22 +321,20 @@ def Env.decode (environment overlay : Json) : Except String Env := do
       | none => (entry.getObjValD "verbalisation").getObjValD "singular" |>.getStr?.toOption
     let plural := optString (selected.getObjValD "verbalisation") "plural"
     pure ({ name, noun, plural } : SortDecl)
-  let acts := VE.Norms.Wire.actsProfiles true environment
-  let fx ← VE.Norms.Wire.actsFixed acts environment
   let decoded ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (name, entry) => do
     let args ← VE.Bridge.strings (← entry.getObjVal? "arguments")
     let (wording, negative) := match VE.Bridge.lookup oPreds name with
       | some o => (optString o "verbalisation", optString o "negative_verbalisation")
       | none => (optString entry "verbalisation", optString entry "negative_verbalisation")
-    let (modal, entitled) ← if profiles.contains "norms@0" then
-      modalForm name args (if profiles.contains "norm-defaults@0" then placeholderEntry entry else entry) acts fx
-      else pure (none, none)
+    let modal ← if profiles.contains "norms@0" then
+      modalForm name args (if profiles.contains "norm-defaults@0" then placeholderEntry entry else entry)
+      else pure none
     pure (({ name, arity := args.length, wording, negative, args, functional := ← optBool entry "functional",
              total := ← optBool entry "total", modal := modal.isSome,
              description := (optString entry "description").getD "",
              suggested := (VE.Bridge.lookup oPreds name).isSome &&
                ((VE.Bridge.lookup oPreds name).map (fun o => (o.getObjValD "suggested") == .bool true)).getD false
-             } : PredDecl), modal <|> entitled)
+             } : PredDecl), modal)
   let predicates := decoded.map (·.1)
   let modalForms := decoded.filterMap fun (d, m) => m.map (d.name, ·)
   let alternatives ← decodeAltBlock environment profiles

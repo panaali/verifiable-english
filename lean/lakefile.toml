@@ -39,11 +39,6 @@ root = "ResponseDecode"
 name = "ve_english_lean_bench"
 root = "EnglishLeanBenchMain"
 
-# B1's measurement of the scope layout and the run path `governFast` (tools/bench/test_perf.py); built on demand.
-[[lean_exe]]
-name = "ve_scope_bench"
-root = "ScopeBenchMain"
-
 [[lean_exe]]
 name = "ve_english_route"
 root = "EnglishMain"
