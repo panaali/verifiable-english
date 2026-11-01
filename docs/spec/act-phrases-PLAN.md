@@ -59,8 +59,9 @@ Draft 4, from the phase-1 results (each change cites the report's section; secti
     `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1, SIGNED): under *may* and *has the right to*,
     "A and B" always has two readings, each (split) or both together (one act); the exception "one reading, split, when
     every item has its own *to*" is removed (2.3). Every other cell is unchanged, *must not* with *and* included, and a
-    split marker's *and* under *may* or *has the right to* still has one reading. Fixtures A5 and A12 now count the
-    together readings (5). The specification's AP-3 table statement and fixtures change with it (its change log).
+    split marker's *and* under *may* or *has the right to* still has one reading. Fixtures A5, A8 and A12 now count the
+    together readings (5). Section 3's `table_may_all_own` changes the same way, with `table_may_all_own_split` for a
+    split marker's *and*. AP-4's Tests line follows A5, A8 and A12. The specification's AP-3 table statement and fixtures change with it (its change log).
 
 ## 0. Summary
 
@@ -552,8 +553,10 @@ theorem table_mustNot_any (fs n sp xs as) (h : simple xs = some as) : table fs .
 theorem table_mustNot_all (fs s xs as) (h : simple xs = some as) (h2 : 2 ≤ xs.length) :
     table fs .mustNot (.all s false xs) = [as, [Atom.joined fs (.all s false xs)]]
 theorem table_mustNot_all_split (fs s xs as) (h : simple xs = some as) : table fs .mustNot (.all s true xs) = [as]
-theorem table_may_all_own (fs sp xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
-    table fs op (.all false sp xs) = [as]
+theorem table_may_all_own (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as)
+    (h2 : 2 ≤ xs.length) : table fs op (.all false false xs) = [as, [Atom.joined fs (.all false false xs)]]
+theorem table_may_all_own_split (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
+    table fs op (.all false true xs) = [as]
 theorem table_may_all_shared (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as)
     (h2 : 2 ≤ xs.length) : table fs op (.all true false xs) = [as, [Atom.joined fs (.all true false xs)]]
 theorem table_may_all_split (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
@@ -967,8 +970,8 @@ row, and AP-5b before any integration of AP-5.
   roots, `VE/Audit.lean`, `ResponseShape/Audit.lean`, axioms, statements, pins, assurance manifest, gate collection.
 - **Statements:** `modifier_edges`, `phraseReadings_exact`, `sourceCheck_exact`.
 - **Tests:**
-  - A5 (u051), A8 (u105), A9 (u055), A10 (u092) and A11 (u076) give exactly 2 readings each.
-  - A12 (u087) gives 2.
+  - A9 (u055), A10 (u092) and A11 (u076) give exactly 2 readings each.
+  - A5 (u051), A8 (u105) and A12 (u087) give 4 (D3 revised).
   - The pilot's rs_u055 and rs_u105b/rs_u105c with their coupling pass `sourceCheck`.
   - A set with a skipped-middle candidate is refused. A set missing a reading is refused. A set whose choice turns a
     permission into a prohibition is refused. A set whose choice changes only `unspecified` to `deny` is refused (spec
@@ -1094,7 +1097,7 @@ declarations, its derivation and reading counts and its diagnostics, and adds th
 | A5 | u051 (source) | `{0} to seek and to enjoy in other countries asylum from persecution` | AP-1; AP-4 | AP-1: refused, *and* outside a fixed phrase. AP-4: 4 readings ("in other countries" on *enjoy* or on both; each place read as each (split) or both together (one act), D3) |
 | A6 | u027 | `{0} be subjected to torture or to [cruel, inhuman or degrading treatment or punishment]`, permission, sign false; frame `be subjected` with `split: ["to"]` | AP-1; AP-3 | AP-1: refused. AP-3: two prohibitions |
 | A7 | u079b | `{0} be held by secret vote or by [equivalent free voting procedures]`, obligation | AP-1; AP-3 | AP-1: refused (or accepted with the two ways as one fixed phrase). AP-3: one obligation on the whole act; "by" is not a split marker |
-| A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | exactly 2 readings (*freely* on the first act, or on all); the pilot's coupled rs_u105b/rs_u105c pass `sourceCheck` |
+| A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | 4 readings (*freely* on the first act, or on all; each place read as each (split) or all together (one act), D3); `sourceCheck` on rs_u105b/rs_u105c: OPEN |
 | A9 | u055 | `{0} be arbitrarily deprived of their nationality nor denied [the right to change their nationality]`, permission, sign false | AP-4 | exactly 2 readings = rs_u055's `deprivation_only` and `both_acts` |
 | A10 | u092 | `{0} to security in the event of unemployment, sickness, disability, widowhood, old age or [other lack of livelihood] in circumstances beyond their control`, frame *security* with `split: ["in the event of"]` | AP-4 | 2 readings ("in circumstances beyond their control" on the last cause, or on all) |
 | A11 | u076 | `{0} to take part in {1} directly or through [freely chosen representatives]`, form "has the right"; the country slot as u077 | AP-4 | 2 act readings (each way, or one of the ways) × u077's 2 country readings; its reading set passes `sourceCheck` only after the readings elaboration (spec F11) |
