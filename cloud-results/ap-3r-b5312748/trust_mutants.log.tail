@@ -1,0 +1,31 @@
+trust_mutants: 8 definitions, 141 mutants (141 to run), 4 jobs, base 484f3bc11b03
+UNKNOWN lean/VE/Acts/Table.lean:33 VE.Acts.freeTable (S, trusted) all-any: all -> any (lean/VE/Acts/Table.lean:32: Missing cases:)
+SURVIVOR lean/VE/Acts/ElaborateExamples.lean:139 VE.Acts.ElaborateExamples.enjoyP (?, trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Acts/ElaborateExamples.lean:138 VE.Acts.ElaborateExamples.seekP (?, trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Acts/Table.lean:33 VE.Acts.freeTable (S, trusted) bool-flip: false -> true (lean/VE/Acts/Table.lean:32: Missing cases:)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:225 VE.Acts.ReadingsExamples.e055x (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Acts/ElaborateExamples.lean:190 VE.Acts.ElaborateExamples.sick (?, trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Acts/Table.lean:34 VE.Acts.freeTable (S, trusted) all-any: all -> any (lean/VE/Acts/Table.lean:32: Missing cases:)
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) append-right: 1 ++ ->  (lean/VE/Acts/ReadingsExamples.lean:229: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Table.lean:33 VE.Acts.freeTable (S, trusted) bool-flip: true -> false (lean/VE/Acts/Table.lean:32: Missing cases:)
+SURVIVOR lean/VE/Acts/ElaborateExamples.lean:140 VE.Acts.ElaborateExamples.e17 (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) lit-plus: 2 -> 3
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) lit-minus: 2 -> 1
+UNKNOWN lean/VE/Acts/Table.lean:34 VE.Acts.freeTable (S, trusted) bool-flip: false -> true (lean/VE/Acts/Table.lean:32: Missing cases:)
+UNKNOWN lean/VE/Acts/Table.lean:34 VE.Acts.freeTable (S, trusted) bool-flip: false -> true (lean/VE/Acts/Table.lean:32: Missing cases:)
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-empty: 1 -> [] (lean/VE/Acts/ReadingsExamples.lean:229: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-first: (u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "de... -> (((u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "... (lean/VE/Acts/ReadingsExamples.lean:229: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:225 VE.Acts.ReadingsExamples.e055x (?, trusted) list-drop-last: [("depr", "permission", "deny", "{0} be arbitrarily deprived of their nationality"), ("denied", "... -> ([("depr", "permission", "deny", "{0} be arbitrarily deprived of their nationality"), ("denied", ...
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-drop-last: (u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "de... -> (((u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "... (lean/VE/Acts/ReadingsExamples.lean:229: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-first: (u055) -> ((u055).take 1)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-drop-last: (u055) -> ((u055).dropLast)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-first: (u055).take 1 -> (((u055).take 1).take 1)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:231 VE.Acts.ReadingsExamples.u055x (?, trusted) list-first: extra -> (extra.take 1)
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-last: (u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "de... -> (((u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "... (lean/VE/Acts/ReadingsExamples.lean:229: Invalid dotted identifier notation: The expected type of ...)
+UNKNOWN lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-drop-first: (u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "de... -> (((u055).take 1 ++ [.set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "... (lean/VE/Acts/ReadingsExamples.lean:229: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:229 VE.Acts.ReadingsExamples.u055x (?, trusted) list-last: (u055).take 1 -> (((u055).take 1).reverse.take 1)
+SURVIVOR lean/VE/Acts/ReadingsExamples.lean:231 VE.Acts.ReadingsExamples.u055x (?, trusted) list-last: extra -> (extra.reverse.take 1)
+trust_mutants: 111 KILLED, 14 SURVIVOR, 12 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN in 2578 s
+trust_mutants: ?, trusted: 77 KILLED, 14 SURVIVOR, 6 UNKNOWN, 4 INVALID
+trust_mutants: S, trusted: 34 KILLED, 6 UNKNOWN
+trust_mutants: steps: wall plan 10.3 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.5 s, control_probes 65.8 s, mutants 2494.3 s, cleanup 2.6 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 211.2 s (6), mutant_builds 4739.5 s (177), mutant_checks 600.7 s (41), stage_controls 422.3 s (5), mutant_probes 3955.4 s (111)
