@@ -1,0 +1,182 @@
+shard 3/6: 33 units; commands: []
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded itoa v1.0.18
+  Downloaded block-buffer v0.10.4
+  Downloaded proc-macro2 v1.0.107
+  Downloaded cpufeatures v0.2.17
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded cfg-if v1.0.5
+  Downloaded num-integer v0.1.47
+  Downloaded autocfg v1.5.1
+  Downloaded digest v0.10.7
+  Downloaded num-traits v0.2.19
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded zmij v1.0.23
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.43s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.33s
+order: failed last time []; changed ['tests/test_senses_packs.py']; then the rest; --maxfail 5
+recording 33 units with 4 jobs in /var/tmp/cct/ve-select-run-sob7my79
+  tests/test_senses_packs.py: exit 0 in 4.7 s, 540 functions
+  tests/test_stage2_graph.py: exit 0 in 6.1 s, 813 functions
+  tests/test_nested_pytest.py: exit 0 in 29.4 s, 733 functions
+  tests/test_p1_preflight.py: exit 0 in 36.4 s, 771 functions
+  tests/test_run_cache.py: exit 0 in 31.3 s, 301 functions
+  tests/test_norm_defaults_contract.py: exit 0 in 7.7 s, 631 functions
+  tests/test_run_order.py: exit 0 in 14.5 s, 543 functions, OPAQUE
+  tests/test_lean_certificates.py: exit 0 in 22.1 s, 691 functions
+  tests/test_senses_route.py: exit 0 in 13.5 s, 541 functions
+  tests/test_lean_import_reader.py: exit 0 in 34.5 s, 198 functions
+  tests/test_soft_candidate_economy.py: exit 0 in 8.5 s, 1229 functions
+  tests/test_order_round2.py: exit 0 in 4.2 s, 520 functions
+  tests/test_heavy_tests.py: exit 0 in 3.2 s, 328 functions
+  tests/test_background.py: exit 0 in 1.1 s, 709 functions
+  tests/test_batch_scope.py: exit 0 in 1.7 s, 201 functions
+  tests/test_lean_audit_record.py: exit 0 in 90.3 s, 266 functions
+  tests/test_calc_derive.py: exit 0 in 1.1 s, 330 functions
+  tests/test_cedar_attributes.py: exit 0 in 1.0 s, 567 functions
+  tests/test_rights_licence_relay.py: exit 0 in 10.9 s, 552 functions
+  tests/test_lean_first_b3b_report.py: exit 0 in 0.7 s, 192 functions
+  tests/test_judgments_exercised.py: exit 0 in 1.1 s, 223 functions
+  tests/test_order_gate.py: exit 0 in 1.6 s, 444 functions
+  tests/test_lean_statements_parts.py: exit 0 in 1.9 s, 203 functions
+  tests/test_package_facade.py: exit 0 in 1.5 s, 270 functions
+  tests/test_rd9_gap_relay.py: exit 0 in 1.6 s, 587 functions
+  tests/test_readings_defaults_rd3_report.py: exit 0 in 0.9 s, 220 functions
+  tests/test_lean_first_diff_cache.py: exit 0 in 4.9 s, 331 functions
+  tests/test_senses_pack.py: exit 0 in 0.7 s, 195 functions
+  tests/test_select_defer.py: exit 0 in 0.9 s, 251 functions
+  tests/test_vacuity.py: exit 0 in 1.0 s, 668 functions
+  tests/test_regen_generated.py: exit 1 in 55.3 s, 800 functions
+  tests/test_scope_readings_document.py: exit 0 in 12.9 s, 1234 functions
+  tests/test_test_chunks.py: exit 0 in 21.3 s, 371 functions, OPAQUE
+FAILED tests/test_regen_generated.py (exit 1): tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason; log /var/tmp/cct/ve-select-run-sob7my79/tests__test_regen_generated.py.log
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+F.............................................................           [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/var/tmp/cct/ve-english-comparator-ypondkkf)
+
+=================================== FAILURES ===================================
+_ test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason _
+
+    def test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason():
+        registered = set().union(*(_referenced(entry) for entry in R.GENERATED)) | {"tools/regen_generated.py"}
+        unlisted = sorted(name for name in _write_mode_scripts() - registered
+                          if not any(fnmatch.fnmatchcase(name, pattern) for pattern in R.NOT_REGENERATED))
+>       assert not unlisted, f"register these writers in GENERATED or NOT_REGENERATED: {unlisted}"
+E       AssertionError: register these writers in GENERATED or NOT_REGENERATED: ['conformance/senses_usecases.py']
+E       assert not ['conformance/senses_usecases.py']
+
+tests/test_regen_generated.py:88: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason
+1 failed, 61 passed in 53.91s
+recorded 33 units for tree 40c68a9ea0; 0 others left to the static graph until they run; 1 failed
+UNITLOG tests__test_background.py.log: 6 passed in 0.36s
+UNITLOG tests__test_batch_scope.py.log: 4 passed in 1.19s
+UNITLOG tests__test_calc_derive.py.log: 12 passed in 0.27s
+UNITLOG tests__test_cedar_attributes.py.log: 3 passed in 0.38s
+UNITLOG tests__test_heavy_tests.py.log: 10 passed in 2.48s
+UNITLOG tests__test_judgments_exercised.py.log: 4 passed in 0.59s
+UNITLOG tests__test_lean_audit_record.py.log: 23 passed in 88.09s (0:01:28)
+UNITLOG tests__test_lean_certificates.py.log: 15 passed in 20.98s
+UNITLOG tests__test_lean_first_b3b_report.py.log: 3 passed in 0.08s
+UNITLOG tests__test_lean_first_diff_cache.py.log: 48 passed in 4.36s
+UNITLOG tests__test_lean_import_reader.py.log: 10 passed in 33.84s
+UNITLOG tests__test_lean_statements_parts.py.log: 5 passed in 1.29s
+UNITLOG tests__test_nested_pytest.py.log: 36 passed in 28.66s
+UNITLOG tests__test_norm_defaults_contract.py.log: 21 passed in 6.83s
+UNITLOG tests__test_order_gate.py.log: 2 passed in 0.70s
+UNITLOG tests__test_order_round2.py.log: 5 passed in 3.29s
+UNITLOG tests__test_p1_preflight.py.log: 7 passed in 34.02s
+UNITLOG tests__test_package_facade.py.log: 89 passed in 0.85s
+UNITLOG tests__test_rd9_gap_relay.py.log: 8 passed in 0.91s
+UNITLOG tests__test_readings_defaults_rd3_report.py.log: 10 passed in 0.32s
+UNITLOG tests__test_regen_generated.py.log: 1 failed, 61 passed in 53.91s
+UNITLOG tests__test_rights_licence_relay.py.log: 153 passed in 10.17s
+UNITLOG tests__test_run_cache.py.log: 33 passed in 30.71s
+UNITLOG tests__test_run_order.py.log: 33 passed in 13.61s
+UNITLOG tests__test_scope_readings_document.py.log: 37 passed in 12.19s
+UNITLOG tests__test_select_defer.py.log: 17 passed in 0.33s
+UNITLOG tests__test_senses_pack.py.log: 15 passed in 0.15s
+UNITLOG tests__test_senses_packs.py.log: 18 passed in 2.55s
+UNITLOG tests__test_senses_route.py.log: 68 passed in 12.75s
+UNITLOG tests__test_soft_candidate_economy.py.log: 19 passed in 7.62s
+UNITLOG tests__test_stage2_graph.py.log: 25 passed in 3.94s
+UNITLOG tests__test_test_chunks.py.log: 59 passed in 20.58s
+UNITLOG tests__test_vacuity.py.log: 2 passed in 0.30s
