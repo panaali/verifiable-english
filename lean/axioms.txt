@@ -976,6 +976,32 @@
 'VE.Cardinality.Examples.two_some' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Examples.weighted_two' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.wellFormed_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.ascii_size' does not depend on any axioms
+'VE.Cardinality.Render.atLeastOne_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.bind_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.bind_ok' does not depend on any axioms
+'VE.Cardinality.Render.body_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.countTerm_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.count_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.describe_of' depends on axioms: [propext]
+'VE.Cardinality.Render.emit_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.emit_over' depends on axioms: [propext]
+'VE.Cardinality.Render.forM_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.formula_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.go_size' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Render.inParens_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.initial_size' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Render.ite_charges' does not depend on any axioms
+'VE.Cardinality.Render.members_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.operand_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.paraphrase_within' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.piece_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.pieces_charge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.positive_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.pure_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.term_charges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Render.texts' does not depend on any axioms
+'VE.Cardinality.Render.toUpper_size' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Run.charge_fst' does not depend on any axioms
 'VE.Cardinality.Run.charge_over' does not depend on any axioms
 'VE.Cardinality.Run.charge_snd' depends on axioms: [propext, Quot.sound]
