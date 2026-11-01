@@ -1589,18 +1589,11 @@
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
   },
   {
-   "class": "S",
-   "lines": 68,
-   "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
-   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
-  },
-  {
    "class": "V",
-   "lines": 15,
-   "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
-   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
+   "lines": 2,
+   "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
+   "commit": "fc70208186d5017304f4798636ae24282f9fc8fa"
   },
   {
    "class": "V",
@@ -1618,10 +1611,17 @@
   },
   {
    "class": "V",
-   "lines": 2,
-   "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
-   "commit": "fc70208186d5017304f4798636ae24282f9fc8fa"
+   "lines": 12,
+   "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
+  },
+  {
+   "class": "V",
+   "lines": 73,
+   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
+   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
   },
   {
    "class": "V",
@@ -1646,17 +1646,24 @@
   },
   {
    "class": "V",
-   "lines": 73,
-   "reason": "sn-b6 (senses B6, senses.project and the identities of a projection): V +73 = lean/VE/Senses/Run.lean +69 (G[V] linesProjection, projectCase, projectCaseReported; D[V] lexiconJson; the changed G[V] candidateJson, unitJson, outcomeJson, readCase, runCaseReported), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1; K +0, S +0; identities (projectionIds, admittedIds, usedOf, sensesVersion) G[I], faultJson G[R], the senses.project shape G[R]; trust mutants docs/senses/sn-b6/trust-mutants.json (0 survivors)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6, 2026-10-31",
-   "commit": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947"
-  },
-  {
-   "class": "V",
    "lines": 46,
    "reason": "cmp-s2b: VE/Readings/Choice.lean V +52 (rights cases of gateContent and copyContent, rightCopies, copyLine, copyScope, gateLine, gateNorm moved in, jointOwner, limOwners, aimedOwners, qLim), VE/Readings/ChoiceFacts.lean V -6 (gateNorm moved out); net V +46, K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s2b, 2026-10-31",
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "S",
+   "lines": 68,
+   "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
+   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
+  },
+  {
+   "class": "V",
+   "lines": 15,
+   "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
+   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
   }
  ]
 }
