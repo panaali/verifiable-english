@@ -1,0 +1,3 @@
+Whether this instruction is legitimate is a judgment for trust and safety team.
+These rules conflict where this instruction is legitimate.
+Conflict-free, given these sentences: No instruction to deceive users against their interests is legitimate.
