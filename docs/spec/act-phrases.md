@@ -1034,7 +1034,7 @@ Simple.atom]` for every `sp`, the own-*to* exception. Its `sp = false` case gain
 its `sp = true` case (a split marker's *and*) keeps its one reading as `table_free_all_own_split`. No other equation
 changes.
 
-They stay provisional until AP-7 passes (D3).
+They freeze when ap-3r merges (D3 as revised; AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 ### 6.3 Elaboration
 
@@ -1778,16 +1778,17 @@ form, finding F3; these need a readings document and are AP-4's, not in the stub
 
 | # | Sets | Expected |
 |---|---|---|
-| S1 | rs_u105b and rs_u105c coupled, u105a fixed, source G8 under *has the right to* | passes |
+| S1 | rs_u105b and rs_u105c coupled, u105a fixed, source G8 under *has the right to* | refused: a reading is a whole join and has no candidate (F11) |
 | S2 | S1 with the "all" candidate removed from both sets | refused: a reading has no choice (D-29) |
 | S3 | S1 plus a candidate putting *freely* on `enjoy` only | refused: a choice is not a reading (the skipped middle) |
 | S4 | rs_u055 re-written, source G9 under *must not* | passes |
 | S5 | S4 with one candidate's sign flipped to *may* | refused: the choice changes the source rule's modal |
 | S6 | S4 under `norm-defaults@0`, every candidate's predicate `unspecified`, the source's completion `unspecified` | passes |
 | S7 | S6 with one candidate predicate's `default` changed from `unspecified` to `deny`, nothing else | refused: the choice changes the source rule's completion (D-29). Under draft 1's Boolean completion both read as the placeholder `deny` and S7 passed (SR3) |
-| S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | passes: rules are compared up to order (SR14) |
+| S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | refused: a reading is a whole join and has no candidate (F11) |
 
-`sourceCheck_complete` is S1, S4, S6 and S8 read from right to left: their sets are exact, so the check passes.
+`sourceCheck_complete` is S4 and S6 read from right to left: their sets are exact, so the check passes. S2 and S3 stay
+refused; since S1's source has whole-join readings (D3 revised), their first diagnostic may be F11's.
 
 The `act-readings` binding (Python, `tests/test_acts_readings_answer.py`; SR5, SR12):
 
@@ -2013,3 +2014,11 @@ touches no stub file.
   readings), and F11's list of affected units; E16 and P64 (moved off the changed cell so they test what they tested before). New fixtures T6s (a split
   marker's *and* keeps one reading) and E17 (the u051-shaped document is refused by D-23, no longer split). No other
   statement, definition, diagnostic or fixture changed. The build item `ap-3r` proves the changed statements.
+- u105's reading sets under F11 (2026-11-01, `ap-3r-spec`; DRI decision
+  `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md` item 2, SIGNED): G8 now has whole-join readings, which have no candidate on the readings route (F11), so S1 and
+  S8 change from "passes" to "refused: a reading is a whole join and has no candidate (F11)"; S2 and S3 stay refused; `sourceCheck_complete` is S4 and S6 (11.4).
+  The build item `ap-3r` moves the guards.
+- Freeze wording (2026-11-01, `ap-3r-spec`; DRI decision
+  `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md` item 4, recording item 2 of
+  `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md`): 6.2's "provisional until AP-7 passes" becomes: the
+  equations freeze when ap-3r merges (D3 as revised); AP-7 ran (FAIL 2026-10-31) and is not re-run.
