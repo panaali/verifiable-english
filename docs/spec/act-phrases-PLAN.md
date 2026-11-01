@@ -77,7 +77,9 @@ Draft 4, from the phase-1 results (each change cites the report's section; secti
     2.4 and the specification's 6.2, "stay(s) provisional until D9 is decided" becomes "frozen at <merge> under D9 (i);
     a later D9 ruling reopens only the cells it names" (item 3; D2's N clause is not touched); the D7 row says that a
     unit whose reading set cannot pass `sourceCheck` (F11: u051, u076, u105) is refused until the readings elaboration
-    (item 1); the specification's S-table gains S3b and S8b on rs_u055 (item 2).
+    (item 1); the specification's S-table gains S3b and S8b on rs_u055 (item 2; S3b as worded in
+    `manage-agents/reviews/dri-decisions-20261101-ap-3r.md` item 1, since *arbitrarily* on `denied` only cannot be
+    written while u055a is shared).
 
 ## 0. Summary
 

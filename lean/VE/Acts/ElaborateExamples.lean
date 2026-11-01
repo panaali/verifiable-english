@@ -1,7 +1,7 @@
 import VE.Acts.Elaborate
 import VE.Acts.TableExamples
 
-/-! Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16; sorts `person`, guards `top`).
+/-! Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
 
 Each check of `elaborateMap` is fixed on its refusing side and its accepting side, at its boundary where it has one.
 The act trees are 11.2's, written by hand in `TableExamples.lean` (no parse yet).
@@ -116,11 +116,30 @@ def e7 (A : Act) (first : String) : ActsDoc :=
 #guard refusal ({ e7 (.all false true [useA, provideA]) "q" with acts := [("q", .all false true [useA, provideA])] }) ==
   some "MissingPermissionDual: q__1, qm__1"
 
--- A join of one atom reads as one atom and does not split; two atoms split.
-#guard (shown (elaborateMap (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false false [join])]))).toOption ==
+-- A split marker's join of one atom reads as one atom and does not split; two atoms split.
+#guard (shown (elaborateMap (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false true [join])]))).toOption ==
   some ([rg "p" .plain none], [nd "r" "p" true], [], ⟨[], []⟩)
-#guard (shown (elaborateMap (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", g12 false)]))).toOption.map
+#guard (shown (elaborateMap (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false true [form false, join])]))).toOption.map
   (·.2.2.2.preds.length) == some 2
+-- An own-"to" and under *has the right to* (D3 revised): two readings, D-23, of one atom or of two; not split.
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false false [join])]) ==
+  some "InvalidInput: rule r has more than one reading: 1. {0} has the right to join trade unions for the protection of their interests. 2. {0} has the right to join trade unions for the protection of their interests, as one act done together (not each on its own)."
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", g12 false)]) ==
+  some "InvalidInput: rule r has more than one reading: 1. {0} has the right to form trade unions, and {0} has the right to join trade unions for the protection of their interests. 2. {0} has the right to form trade unions and to join trade unions for the protection of their interests, as one act done together (not each on its own)."
+-- The same under *may*.
+#guard refusal (withActs (doc [rg "p" .permission] [nd "r" "p" true]) [] [("p", g12 false)]) ==
+  some "InvalidInput: rule r has more than one reading: 1. {0} may form trade unions, and {0} may join trade unions for the protection of their interests. 2. {0} may form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own)."
+-- Under *must not* the cell is unchanged: two readings, D-23, as before.
+#guard refusal (withActs (doc [rg "p" .permission] [nd "r" "p" false]) [] [("p", g12 false)]) ==
+  some "InvalidInput: rule r has more than one reading: 1. {0} must not form trade unions, and {0} must not join trade unions for the protection of their interests. 2. {0} must not form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own)."
+
+/-- E17: plain `p051` with u051's shape ("to seek and to enjoy asylum from persecution"), *has the right to*: two
+    readings (D3 revised), refused by D-23; no part is generated. -/
+def seekP : Atom := ⟨true, false, ["seek"], [("", .one (w "asylum from persecution"))], []⟩
+def enjoyP : Atom := ⟨true, false, ["enjoy"], [("", .one (w "asylum from persecution"))], []⟩
+def e17 : ActsDoc := withActs (doc [rg "p051" .plain none] [nd "r051" "p051" true]) [] [("p051", .all false false [seekP, enjoyP])]
+#guard refusal e17 == some "InvalidInput: rule r051 has more than one reading: 1. {0} has the right to seek asylum from persecution, and {0} has the right to enjoy asylum from persecution. 2. {0} has the right to seek asylum from persecution and to enjoy asylum from persecution, as one act done together (not each on its own)."
+#guard partNames e17 "p051" == ["p051"]
 
 /-! ### Step 2: a formula naming a split predicate (D-25) -/
 
@@ -165,13 +184,17 @@ def hideEnv (D : ActsDoc) (ps : List (String × List String)) : ActsDoc :=
 
 /-! ### Step 4: two parts with one act (D-27) -/
 
-/-- E16: plain `p`, "{0} to seek asylum and to seek asylum" (two equal atoms), *has the right to*: refused. -/
+/-- E16: plain `p`, "{0} to security in the event of sickness or sickness" (two equal atoms, a split marker),
+    *has the right to*: refused. (Until D3's revision it used "to seek asylum and to seek asylum", now D-23's.) -/
 def seek : Atom := ⟨true, false, ["seek"], [("", .one (w "asylum"))], []⟩
-#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false false [seek, seek])]) ==
+def sick : Atom := ⟨true, false, ["security"], [("in the event of", .one (w "sickness"))], []⟩
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .any false true [sick, sick])]) ==
   some "InvalidInput: two parts of p are the same act"
 #guard refusal (withActs (doc [rg "p" .permission] [nd "r" "p" false]) fx6 [("p", .any false true [torture, torture])]) ==
   some "InvalidInput: two parts of p are the same act"
-#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false false [seek, join])]) == none
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false true [seek, join])]) == none
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true]) [] [("p", .all false false [seek, join])]) ==
+  some "InvalidInput: rule r has more than one reading: 1. {0} has the right to seek asylum, and {0} has the right to join trade unions for the protection of their interests. 2. {0} has the right to seek asylum and to join trade unions for the protection of their interests, as one act done together (not each on its own)."
 
 /-! ### Step 5: `validate` on the result (E12's boundary) and step 7, the backstop -/
 
@@ -193,9 +216,9 @@ def many (n : Nat) : List Regulated := (List.range n).map fun i => rg ("b" ++ to
   nd "rs" "s" true [] (.unary "p027" (.var 0))] (extra := ["p027__1"])) fx6 [("p027", g6)]) ==
   some "InvalidInput: rule rs names a predicate that is split into parts; name one of its parts"
 #guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true] (extra := ["p__1"])) []
-  [("p", .all false false [seek, seek])]) == some "InvalidInput: the part name p__1 is already declared"
+  [("p", .any false true [sick, sick])]) == some "InvalidInput: the part name p__1 is already declared"
 #guard refusal (withActs (doc (many 63 ++ [rg "p" .plain none]) [nd "r" "p" true]) []
-  [("p", .all false false [seek, seek])]) == some "InvalidInput: two parts of p are the same act"
+  [("p", .any false true [sick, sick])]) == some "InvalidInput: two parts of p are the same act"
 #guard refusal (withActs (doc (many 63 ++ [rg "p027" .permission]) [nd "r027" "p027" false] ["zzz"]) fx6
   [("p027", g6)]) == some "ResourceLimit: regulated predicates"
 
@@ -245,6 +268,6 @@ def qm : Regulated := rg "qm" .permission (some "{0} use")
   fx6 [("p027", g6)]) == some "InvalidInput: the part rule name r027-a2 is already used"
 -- D-27: the predicate with equal parts before another.
 #guard refusal (withActs (doc [rg "p" .plain none, rg "k" .plain none] [nd "r" "p" true]) []
-  [("p", .all false false [seek, seek])]) == some "InvalidInput: two parts of p are the same act"
+  [("p", .any false true [sick, sick])]) == some "InvalidInput: two parts of p are the same act"
 
 end VE.Acts.ElaborateExamples

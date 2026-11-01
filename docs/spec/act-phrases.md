@@ -1787,7 +1787,7 @@ form, finding F3; these need a readings document and are AP-4's, not in the stub
 | S6 | S4 under `norm-defaults@0`, every candidate's predicate `unspecified`, the source's completion `unspecified` | passes |
 | S7 | S6 with one candidate predicate's `default` changed from `unspecified` to `deny`, nothing else | refused: the choice changes the source rule's completion (D-29). Under draft 1's Boolean completion both read as the placeholder `deny` and S7 passed (SR3) |
 | S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | refused: a reading is a whole join and has no candidate (F11) |
-| S3b | S4 plus a candidate putting *arbitrarily* on `denied` only (not a reading of G9) | refused: a choice is not a reading. The isolated guard for the rule S3 exercised; G9 has two items, so the skipped middle itself stays guarded by G8's `phraseReadings_exact` |
+| S3b | S4 plus a third candidate whose rule is the deprivation without *arbitrarily* (`depr_plain`); with the shared u055a its choice is no reading of G9 | refused: a choice is not a reading. (*Arbitrarily* on `denied` only cannot be written while u055a is shared; the skipped middle stays guarded by S3 and G8's `phraseReadings_exact`.) DRI decision `manage-agents/reviews/dri-decisions-20261101-ap-3r.md` item 1 |
 | S8b | S4 with the document's items reordered, so that `both_acts`'s rules come in another order | passes: rules are compared up to order (SR14) |
 
 `sourceCheck_complete` is S4 and S6 read from right to left: their sets are exact, so the check passes. S2 and S3 stay
