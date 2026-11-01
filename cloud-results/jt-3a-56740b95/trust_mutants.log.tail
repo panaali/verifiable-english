@@ -1,0 +1,4 @@
+VE/Judgments/Examples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/Service/UndeclaredExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Judgments/Examples.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Service/UndeclaredExamples.lean; rerun tools/lean_statements.py
