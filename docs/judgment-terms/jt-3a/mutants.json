@@ -1,0 +1,123 @@
+{
+ "item": "jt-3a",
+ "note": "Each mutant was applied to the committed file, the named test or #guard run (lake build VE.Judgments.Examples for S1-S5; for S1-S3 also once with the iff theorems' proofs replaced by sorry, so the #guard and not only the proof is shown to fail), and the file restored from a saved copy; S6 rebuilt ve_service and pinned its build in lean/checkers.lock for the run, both restored and rebuilt after. Mechanical mutants of every new trusted definition: trust-mutants.json.",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/Judgments/Undeclared.lean",
+   "definition": "VE.Judgments.EvaluativeRow.matches",
+   "behaviour": "the report ignores a row's other senses (the task's seeded bug)",
+   "mutation": "`matches` is `ws.contains row.word` (the `otherSenses` exclusion dropped)",
+   "test": "lean/VE/Judgments/Examples.lean:359 (#guard undeclaredEvaluative rows117 preds117 [\"arbitrary\"]: `due_date`, `just_as_real`, `necessary_condition` listed)",
+   "also": [
+    "lean/VE/Judgments/Examples.lean:360",
+    "lean/VE/Judgments/Undeclared.lean undeclaredEvaluative_iff (the proof breaks without the theorem's sorry)",
+    "tests/test_judgments_undeclared.py: conftest's lake build fails at the same #guard (pytest exit 3)"
+   ]
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Judgments/Undeclared.lean",
+   "definition": "VE.Judgments.undeclaredEvaluative",
+   "behaviour": "a bound judgment is not listed",
+   "mutation": "the filter drops `!J.contains p`",
+   "test": "lean/VE/Judgments/Examples.lean:359 (`arbitrary` listed with J = [arbitrary])",
+   "also": [
+    "lean/VE/Judgments/Examples.lean:363",
+    "lean/VE/Judgments/Undeclared.lean undeclaredEvaluative_iff"
+   ]
+  },
+  {
+   "id": "S3",
+   "language": "Lean",
+   "file": "lean/VE/Judgments/Undeclared.lean",
+   "definition": "VE.Judgments.hasPhrase",
+   "behaviour": "a phrase is found at every position, the last included",
+   "mutation": "`List.range ws.length` in place of `List.range (ws.length + 1)`",
+   "test": "lean/VE/Judgments/Examples.lean:373 (#guard hasPhrase ... hasPhrase [] [])",
+   "also": [
+    "lean/VE/Judgments/Undeclared.lean hasPhrase_iff"
+   ]
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/Judgments/Undeclared.lean",
+   "definition": "VE.Judgments.predicateWords",
+   "behaviour": "a predicate's template words are read in lower case",
+   "mutation": "`t.split` in place of `t.toLower.split`",
+   "test": "lean/VE/Judgments/Examples.lean:376 (#guard predicateWords \"Reasonable_grounds\" (some \"{0} has REASONABLE, grounds.\"))"
+  },
+  {
+   "id": "S5",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Catalogue.lean",
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "behaviour": "each catalogue row keeps the phrases of its other senses",
+   "mutation": "the `due` row loses `[\"due\", \"to\"]`",
+   "test": "lean/VE/Judgments/Examples.lean:380 (#guard rows117.all evaluativeRows.contains)",
+   "also": [
+    "lean/VE/Judgments/Examples.lean:383 (`due_to_illness` listed)"
+   ]
+  },
+  {
+   "id": "S6",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.Env.basePredicates",
+   "behaviour": "W3-defined predicates are not base predicates (spec 7)",
+   "mutation": "the filter keeps the defined names (`!defs.contains p || true`); ve_service rebuilt and its build pinned for the run, then restored",
+   "test": "tests/test_judgments_undeclared.py::test_lean_lists_the_catalogue_matches_that_are_not_bound[bound]",
+   "failing_tests": 4,
+   "also": [
+    "tests/test_judgments_undeclared.py::test_lean_lists_the_catalogue_matches_that_are_not_bound[unbound]",
+    "tests/test_judgments_undeclared.py::test_a_regulated_predicate_is_listed_and_still_not_admitted",
+    "tests/test_judgments_undeclared.py::test_a_bound_judgment_listed_is_refused_and_unbound_it_is_relayed"
+   ]
+  },
+  {
+   "id": "P1",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "_undeclared_bound",
+   "behaviour": "the relay refuses a listed name that is a bound judgment (the task's seeded bug)",
+   "mutation": "the check `n not in declared` dropped",
+   "test": "tests/test_judgments_undeclared.py::test_every_mutant_of_the_field_is_refused[bound]",
+   "failing_tests": 2,
+   "also": [
+    "tests/test_judgments_undeclared.py::test_a_bound_judgment_listed_is_refused_and_unbound_it_is_relayed"
+   ]
+  },
+  {
+   "id": "P2",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "_undeclared_bound",
+   "behaviour": "the relay accepts a regulated predicate (the task's seeded bug: the relay refuses one)",
+   "mutation": "the base predicates exclude entries with `regulated`",
+   "test": "tests/test_judgments_undeclared.py::test_a_regulated_predicate_is_listed_and_still_not_admitted",
+   "failing_tests": 5,
+   "also": [
+    "tests/test_judgments_undeclared.py::test_lean_lists_the_catalogue_matches_that_are_not_bound[bound]",
+    "tests/test_judgments_undeclared.py::test_lean_lists_the_catalogue_matches_that_are_not_bound[unbound]",
+    "tests/test_judgments_undeclared.py::test_which_predicates_match_is_lean_s[other base predicates]"
+   ]
+  },
+  {
+   "id": "P3",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "_undeclared_bound",
+   "behaviour": "the list is in Lean's order",
+   "mutation": "the order check replaced by a no-repeat check",
+   "test": "tests/test_judgments_undeclared.py::test_which_predicates_match_is_lean_s[out of order]",
+   "failing_tests": 3,
+   "also": [
+    "tests/test_judgments_undeclared.py::test_every_mutant_of_the_field_is_refused[bound]",
+    "tests/test_judgments_undeclared.py::test_every_mutant_of_the_field_is_refused[unbound]"
+   ]
+  }
+ ]
+}
