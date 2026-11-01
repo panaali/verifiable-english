@@ -31,6 +31,7 @@ import time
 
 from layer_policy import ROOT
 import nested_pytest
+from regen_generated import manifest_text  # the manifest's own layout, so a seed changes only the edited field
 import select_tests
 import test_map
 
@@ -39,11 +40,6 @@ MANIFEST = select_tests.MANIFEST
 SEED_MODULE = "lean/VE/SeedProbe.lean"
 SEED_ROOT = "lean/SensesMain.lean"
 SEED_EXECUTABLE = "ve_senses_route"
-
-
-def manifest_text(manifest: dict) -> str:
-    """The manifest file's own layout, so a seed changes only the edited field."""
-    return json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
 
 
 def _operation(manifest: dict, op_id: str) -> dict:

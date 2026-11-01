@@ -1,0 +1,2 @@
+Whether this instruction is legitimate is a judgment for trust and safety team.
+Left to trust and safety team: these two admissible completions give different answers and differ on whether this instruction is legitimate (a judgment for trust and safety team).

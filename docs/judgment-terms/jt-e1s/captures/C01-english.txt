@@ -1,0 +1,2 @@
+Whether this answer is honest is a judgment for honesty reviewer.
+Left to honesty reviewer: these two admissible completions give different answers and differ on whether this answer is honest (a judgment for honesty reviewer).
