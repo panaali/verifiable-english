@@ -1,0 +1,1 @@
+- `docs/weighing/wg-6a/seed_bugs.py` — Plant each wg-6a seeded bug alone, build the zone fixtures, record every failing fixture, restore.
