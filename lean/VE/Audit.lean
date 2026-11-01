@@ -371,6 +371,7 @@ import VE.Scales.Intended
 import VE.Scales.Theorems
 import VE.Scope.EffectLemmas
 import VE.Scope.Examples
+import VE.Scope.FarTheorems
 import VE.Scope.Govern
 import VE.Scope.ReadingsLemmas
 import VE.Scope.ReadingsTheorems
@@ -6801,6 +6802,9 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.foldl_meet_mem
 #print axioms VE.Scope.forIn_error
 #print axioms VE.Scope.forIn_filter_ok
+#print axioms VE.Scope.forward_exception_complete
+#print axioms VE.Scope.forward_exception_sound
+#print axioms VE.Scope.forwardsOk_drop
 #print axioms VE.Scope.frameOnF_slow
 #print axioms VE.Scope.frameOn_drop
 #print axioms VE.Scope.fresh_mem
@@ -6870,6 +6874,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.mapM_ok_all
 #print axioms VE.Scope.mapM_ok_idx
 #print axioms VE.Scope.mapM_ok_mem
 #print axioms VE.Scope.mapM_ok_of_mem
@@ -6893,6 +6898,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.mkObj_get_mem
 #print axioms VE.Scope.mkObj_one
 #print axioms VE.Scope.newContent_src
+#print axioms VE.Scope.noEffect_prefix
+#print axioms VE.Scope.no_effect_refused
 #print axioms VE.Scope.nodup_map_unique
 #print axioms VE.Scope.nonrule_refused
 #print axioms VE.Scope.normFields_name
