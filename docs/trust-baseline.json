@@ -1610,10 +1610,10 @@
    "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   },
   {
-   "class": "V",
-   "lines": 12,
-   "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
+   "class": "S",
+   "lines": 5,
+   "reason": "pc-6a: VE/SoftNorms/Tree.lean S +5 (SoftNode.splitFrom field and its doc comment +2, decisionRule and its doc comment +3); K +0; VE/SoftNorms/TreeExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-6a, 2026-10-18",
    "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   },
   {
@@ -1664,6 +1664,13 @@
    "reason": "ap-4b: VE/Acts/Sources.lean S +68 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +15 (atomSituation, rulePred, untied); sourceCheck, compareViews, pick tied (+35); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
    "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "sc-10a: VE/Readings/SoftSup.lean +12 (supX, sharedEnvSD, supCertificateCheckSD: untied G[V], each exercised by a #guard of SoftSupExamples.lean; pullF tied to fill_sim and fill_sim_author)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-10a, 2026-10-31",
+   "commit": "8c28fe28635a78d77286ac0b1ff127999ac185b3"
   }
  ]
 }

@@ -661,6 +661,7 @@ module VE.SoftNorms.Semantics
 module VE.SoftNorms.Soften
 module VE.SoftNorms.Status
 module VE.SoftNorms.Tree
+module VE.SoftNorms.TreeExamples
 module VE.SoftNorms.Wire
 module VE.SpeechActs.Answer
 module VE.SpeechActs.Consequence

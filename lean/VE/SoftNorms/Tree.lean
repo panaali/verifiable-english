@@ -42,7 +42,16 @@ structure SoftNode extends Node where
   /-- `some` iff `mode = default`. -/
   exception : Option Exception
   hard : Bool
+  /-- The source rule of a part acts generated; `none` for an authored rule. -/
+  splitFrom : Option String := none
   deriving DecidableEq, Repr
+
+/-- The rule whose decisions a rule reads. -/
+def decisionRule (N : SoftNode) : String := N.splitFrom.getD N.name
+
+/-- With nothing split, the key is today's: the rule's own name. -/
+theorem decisionRule_unsplit (N : SoftNode) (h : N.splitFrom = none) : decisionRule N = N.name := by
+  simp [decisionRule, h]
 
 structure SoftEnv where
   parties : List String
