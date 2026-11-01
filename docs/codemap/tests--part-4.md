@@ -1,3 +1,4 @@
+- `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
 - `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
 - `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
 - `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
@@ -90,4 +91,3 @@
 - `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).
 - `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
 - `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
-- `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
