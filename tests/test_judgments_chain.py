@@ -126,6 +126,28 @@ def test_the_layer_s_own_refusals_and_the_profiles_it_stays_apart_from(service, 
         assert answer(service, uid, twin(fm))["status"] == "ok"
 
 
+APART = "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+
+
+@pytest.mark.parametrize("term", ["good_judgment", "evaluating_inputs"])
+@pytest.mark.parametrize("listed", [True, False], ids=["listed", "not listed"])
+@pytest.mark.parametrize("where", ["sufficient", "necessary"])
+def test_a_rule_with_exception_conditions_keeps_main_s_refusal_of_the_pairing(service, where, listed, term):
+    """pc-1 review F1 (PROBE F1): the soft route makes `exception.sufficient` and `exception.necessary` rules of its
+    theory, which `softContent` does not read, so a document with one keeps main's refusal of `judgments@0` beside
+    `soft-norms@0` (`exceptionConditioned`), whether the condition is a judgment and whether the term is listed. It
+    was CHECKED with the judgment reported unused, or refused `JudgmentListedUnused`. The twin is answered."""
+    fm = front("u0052.s01", listed=["good_judgment"] if listed else [])
+    norm = fm["units"][0]["content"]["norm"]
+    norm["guard"] = ["unary", "evaluating_inputs", ["var", 0]]
+    norm["exception"] = {**EXCEPTION, where: [["unary", term, ["var", 0]]]}
+    if not listed:
+        fm["units"][0]["meaning"] = "specified"
+    assert answer(service, "u0052.s01", fm).get("error") == APART
+    plain = answer(service, "u0052.s01", twin(fm))
+    assert plain["status"] == "ok" and [u["status"] for u in plain["units"]] == ["OPEN" if listed else "CHECKED"]
+
+
 def model_id(service, profiles, model):
     env = {"language": LANGUAGE, "profiles": profiles, "spec_revision": SPEC_REVISION, "vocabulary": DATA["vocabulary"]}
     eid = service.run("environment", [{"id": "e", "environment": env}])[0]["environment_id"]
@@ -204,9 +226,36 @@ def test_f1_3n_no_plain_request_of_tests_data_meets_the_clash_check(service):
 
 def test_a_large_reading_set_is_checked_once_within_the_limits(service):
     """64 readings (the most a set holds), each with 63 distinct dangling references: the check's values and pairs
-    are computed once per request (`swapInjective_eq_once`), and the case is answered by the later checks."""
+    are computed once per request (`swapInjective_eq_fast`), and the case is answered by the later checks."""
     ids = [f"r{i}" for i in range(64)]
     readings = [reading(r, {o: f"m-{r}-{o}" for o in ids if o != r}) for r in ids]
     fm = front("u0052.s01", sets=reading_set(readings, {"d": DATA["model"]}))
     row = answer(service, "u0052.s01", fm)
     assert row["status"] == "error" and row["error"] != CLASH, row
+
+
+@pytest.mark.parametrize("extra, expected", [(61, CLASH), (62, "reading sets hold 1 to 64 readings")],
+                         ids=["64 readings", "65 readings"])
+def test_row_16_reads_reading_sets_of_at_most_64_readings(service, extra, expected):
+    """pc-1 review F2: F1.3l's clash with readings added. At 64 readings row 16 refuses it; at 65 the chain's own
+    size check does, in its order, as at the merge base (`sizedSets`), on both sides."""
+    v2 = model_id(service, PLAIN, DATA["model"])
+    sets = reading_set([reading("r0", {"r1": "d", "r2": "d"}), reading("r1", {"r0": "d", "r2": "d"}),
+                        reading("r2", {"r0": v2, "r1": "d"})] + [reading(f"x{i}", {}) for i in range(extra)],
+                       {"d": DATA["model"]})
+    fm = front("u0052.s01", sets=sets)
+    assert [answer(service, "u0052.s01", side).get("error") for side in (fm, twin(fm))] == [expected, expected]
+
+
+def test_a_plain_request_over_the_readings_limit_is_refused_within_its_budget(service, monkeypatch):
+    """pc-1 review F2 (PROBE F2): 256 readings with 255 distinct references each (1.46 MB). Row 16 compared every
+    stated value with every other before the chain's size check (75 to 99 s of CPU); it now reads no set over 64
+    readings and hashes each value once. The service's own budget for the request is lowered to 5 s of CPU, so a
+    request that needs more raises `CheckerUnavailable` (lean_service.DEADLINES)."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "document", (5.0, 0.0))
+    ids = [f"r{i}" for i in range(256)]
+    fm = front("u0052.s01", PLAIN, sets=reading_set([reading(r, {o: f"m-{r}-{o}" for o in ids if o != r})
+                                                     for r in ids], {}))
+    assert answer(service, "u0052.s01", fm) == {"id": "c", "status": "error",
+                                                 "error": "reading sets hold 1 to 64 readings"}

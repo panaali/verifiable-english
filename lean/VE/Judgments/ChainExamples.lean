@@ -78,7 +78,7 @@ def plain : List String := layer.erase "judgments@0"
 
 /-- The model's identities with and without `judgments@0` (`v₁`, `v₂`), read off a case stating it under `k`. -/
 def ids (inputs : Bool) (profiles : List String := layer) : String × String :=
-  match statedPairs (case profiles [] [("k", model inputs)]) with
+  match statedPairs (case profiles [reading "r0" []] [("k", model inputs)]) with
   | [(_, v₁, v₂)] => (v₁, v₂)
   | _ => ("", "")
 
@@ -123,11 +123,12 @@ def f13o (profiles : List String) (key : String) : Json :=
 
 /-- F1.1 and F1.2 in one soft document: each unit's `open` meaning lists its judgment and its rule's soft decision
 predicate (`softLayer`'s names, declared and generated). -/
-def bothRules (profiles : List String) : Json :=
+def bothRules (profiles : List String) (conditions : List (String × Json) := []) : Json :=
+  let given (k : String) := Json.arr (conditions.filterMap fun (k', f) => if k' == k then some f else none).toArray
   let rule (name pred : String) (guard : Json) := Json.mkObj [("norm", Json.mkObj [("name", .str name),
     ("predicate", .str pred), ("sign", true), ("mode", "default"), ("guard", guard), ("unless", Json.arr #[]),
-    ("over", Json.arr #[]), ("exception", Json.mkObj [("decided_by", "unstated"), ("sufficient", Json.arr #[]),
-      ("necessary", Json.arr #[]), ("factors", Json.arr #[])])])]
+    ("over", Json.arr #[]), ("exception", Json.mkObj [("decided_by", "unstated"), ("sufficient", given "sufficient"),
+      ("necessary", given "necessary"), ("factors", Json.arr #[])])])]
   let unit (id : String) (span : List Nat) (listed : List String) (content : Json) := Json.mkObj [("id", .str id),
     ("span", Lean.toJson span), ("kind", "norm"), ("meaning", Json.mkObj [("open", Lean.toJson listed)]),
     ("support", "assumption"), ("content", content)]
@@ -153,5 +154,46 @@ def bothRules (profiles : List String) : Json :=
 #guard ["alternatives@0", "rights@0", "risk@0"].all fun p =>
   refusal (bothRules ((p :: layer).mergeSort fun a b => decide (a ≤ b))) ==
     some s!"CheckerUnavailable: judgments@0 with {p} needs its composed Lean route"
+
+/-! pc-1 review F1: a rule's exception conditions are rules of the soft theory that `softContent` does not read, so
+a document with one keeps main's refusal of the pairing (`exceptionConditioned`), in a unit or in a `MIXED` part, the
+condition a judgment or not; empty or absent conditions do not. -/
+
+def withCondition (k : String) (inPart : Bool) : Json :=
+  let unit := Json.mkObj [("id", "u"), ("content", Json.mkObj [("norm", Json.mkObj [("mode", "default"),
+    ("exception", Json.mkObj [(k, Json.arr #[u "good_judgment"])])])])]
+  Json.arr #[if inPart then Json.mkObj [("id", "m"), ("status", "MIXED"), ("parts", Json.arr #[unit])] else unit]
+
+#guard [("sufficient", false), ("necessary", false), ("sufficient", true), ("necessary", true)].all fun (k, p) =>
+  exceptionConditioned (withCondition k p)
+#guard !exceptionConditioned (withCondition "factors" false) && !exceptionConditioned (bothRules layer) &&
+  !exceptionConditioned (Json.arr #[Json.mkObj [("content", Json.mkObj [("norm", Json.mkObj [("mode", "strict")])])]])
+#guard ["sufficient", "necessary"].all fun k => [u "good_judgment", u "evaluating_inputs"].all fun f =>
+  refusal (bothRules layer [(k, f)]) == some "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+
+/-! pc-1 review F2: row 16 reads reading sets of 1 to 64 readings; a case with a set of more is answered by the
+chain's own check, in its order, before any work over its stated values. F1.3l's clash with readings added: at 64 it
+is row 16's, at 65 the chain's. -/
+
+def f13lWith (n : Nat) : Json :=
+  case layer ([reading "r0" [("r1", "d"), ("r2", "d")], reading "r1" [("r0", "d"), ("r2", "d")],
+    reading "r2" [("r0", (ids true layer).2), ("r1", "d")]] ++ (List.range n).map fun i => reading s!"x{i}" [])
+    [("d", model true)]
+
+#guard refusal (f13lWith 61) == some swapClash
+#guard refusal (f13lWith 62) == some "reading sets hold 1 to 64 readings" && statedIds (f13lWith 62) == [] &&
+  statedPairs (f13lWith 62) == []
+
+-- Row 16 runs once on a `scope@0` request: first in the scope branch, and `checkCore`, which that branch calls on
+-- GOVERN's case, does not run it again.
+#guard let j := f13l (("scope@0" :: noDocuments).mergeSort fun a b => decide (a ≤ b))
+  refusal j == some swapClash && (match checkCore j with
+    | .error e => e != swapClash
+    | .ok _ => true)
+
+-- The run's check is the spec's on values a set states twice and on the stub's values (`swapInjectiveH_eq`).
+#guard [(["k1", "k1"], [("k1", "k1", "k2")]), (["a2", "w"], [("a2", "a1", "a2"), ("w", "a1", "a2")]),
+    (["a1", "w", "a1"], [("a1", "a1", "a2"), ("w", "a1", "a2")])].all fun (ids, pairs) =>
+  swapInjectiveH ids pairs == swapInjectiveOf ids pairs (exchangeOf pairs)
 
 end VE.Judgments.ChainExamples

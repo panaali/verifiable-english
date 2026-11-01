@@ -113,6 +113,8 @@ theorem body_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.
 theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
   unfold VE.Service.Document.checkCore
   split
+  · exact body_fits j
+  split
   · intro _ h; cases h
   · exact body_fits j
 
@@ -222,9 +224,13 @@ theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
 /-- The entry without scope's branch answers an encoded row. -/
 theorem checkCore_encode {j a : Json} (h : VE.Service.Document.checkCore j = .ok a) :
     ∃ id c, a = VE.Service.Document.encode id c := by
-  unfold VE.Service.Document.checkCore at h
-  split at h
-  · cases h
+  replace h : VE.Service.Document.checkBody j = .ok a := by
+    unfold VE.Service.Document.checkCore at h
+    split at h
+    · exact h
+    split at h
+    · cases h
+    · exact h
   unfold VE.Service.Document.checkBody at h
   obtain ⟨id, _, h⟩ := VE.Scope.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Scope.bind_ok h
