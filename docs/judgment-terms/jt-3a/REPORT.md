@@ -61,7 +61,7 @@ Each one was planted in a file this item changed, run against the named check, a
 | S1 | Lean, `lean/VE/Judgments/Undeclared.lean` | `matches` ignores `otherSenses` | `Judgments/Examples.lean:360` (`due_date` listed), `:361`; `undeclaredEvaluative_iff`'s proof |
 | S2 | Lean, same | the filter drops `!J.contains p` | `:360`, `:364` |
 | S3 | Lean, same | `hasPhrase` skips the last position | `:374`; `hasPhrase_iff` |
-| S4 | Lean, same | template words not lower-cased | `:377` |
+| S4 | Lean, same | template words not lower-cased | `:379` |
 | S5 | Lean, `lean/VE/EnglishGrammar/Evaluative.lean` | `due` loses "due to" | `EnglishGrammar/Examples.lean:200`, `:210` |
 | S6 | Lean, `lean/VE/Service/Document.lean` | W3-defined names kept | 4 tests of `tests/test_judgments_undeclared.py` (service rebuilt, build pinned for the run) |
 | P1 | Python, `ve/document/lean.py` | a bound judgment accepted | `::test_every_mutant_of_the_field_is_refused[bound]`, `::test_a_bound_judgment_listed_is_refused_and_unbound_it_is_relayed` |
@@ -76,19 +76,32 @@ S1 to S3 break their iff proofs first. They were run again with those proofs rep
 `uv run python tools/trust_map.py --check`: "K +0, S +36, D +1, G +20, tied +0, unclassified +0, trusted +57" against
 `8c28fe28635a`; "PASS". Per file: Undeclared.lean S +27, Evaluative.lean S +9, Document.lean G[V] +13,
 Schemas/Document.lean G[V] +8. The allowance is recorded with `--signed "SIGNED by standing ruling R16 (DRI-RULINGS.md),
-jt-3a, 2026-11-01"`. The FOLLOW-UPS.md row "## jt-3a" asks for the ties pass. Trust mutants: TRUST-MUTANTS.
+jt-3a, 2026-11-01"`. The FOLLOW-UPS.md row "## jt-3a" asks for the ties pass. Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test
+lean/VE/Judgments/Examples.lean --test lean/VE/EnglishGrammar/Examples.lean --test lean/VE/Service/UndeclaredExamples.lean
+--allow docs/judgment-terms/jt-3a/trust-mutants-allow.json --rescore ...`, `trust-mutants.json` at head `8f302d6d5`,
+exit 0): "KILLED 221, SURVIVOR 0, UNKNOWN 0, INVALID 20, ALLOWED 24, NOT RUN 0" over 10 definitions (265 mutants; the
+rescore reused 198 verdicts from the full run at `4c2ea7caa` and reran 67). The full run's 12 survivors were fixed by
+new checks: a phrase at position 2, `J` with two names, a second W3-defined name, the `judgments` member beside the
+new one, and a template that starts with a letter. The rest are allowed in `trust-mutants-allow.json`, one reason
+each: three equivalent `hasPhrase` length mutants, and 13 operator cuts that do not elaborate.
 
 ## Checks run
 
 - `lake build` (full): "Build completed successfully (1197 jobs)". `python3 lean/audit.py`: "PASS: 693 source files"
-  (before the restructure; AUDIT-FINAL).
+  on the final Lean: "PASS: 695 source files; 7814 named theorem declarations audited".
 - `uv run python tools/regen_generated.py --write`: "wrote 34 entries". `python3 tools/check_lean_imports.py`:
   "Lean layer graph kept". `uv run python tools/english_grammar_gen.py --check`: no finding. `tools/ask_fixtures.py
   --check`: "18 of 18 recorded answers replayed".
 - Local: `tests/test_judgments_undeclared.py tests/test_judgments_exercised.py tests/test_judgments_answer.py
   tests/test_english_lean_s3_compare.py` "47 passed"; `tests/test_judgments_answer.py tests/test_judgments_document.py
   tests/test_response_schemas.py` "92 passed"; `tests/test_assurance_manifest.py` "138 passed".
-- Selected tests (`mac-pytest.sh --select`): SELECTED.
+- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on `b50349522`): "424/517
+  test units", six shards, "424 passed" (shard lines "72 units, 72 passed", "78", "79", "63", "70", "62"),
+  "exit=0". A first selected run on `76149b73e` (before the restructure) failed 4 files: the import rule (shard 1,
+  which stopped its 79 units), `test_assurance_manifest.py` (the `Document.lean` pin), `test_english_lean_s3_compare.py`
+  (re-recorded) and `test_judgments_exercised.py` (the two theorems); each is fixed above, and the second run covers them.
+- `uv run python tools/gate_collection.py --check --prebuilt`: "13 added, 0 removed by a trailer, 0 refused, 0 stale and 0
+  malformed trailers". `tools/relay_mutation_gate.py --route service:document`: "0 failures".
 
 Spec re-read: `undeclaredEvaluative`, `EvaluativeRow`, `hasPhrase`, `matches` and `_iff` against judgment-terms.md 7
 (lines 689-716, word for word). The relay binding ("base predicate of the request's environment, not W3-defined, a
@@ -98,8 +111,10 @@ regulated one included; not a declared open term; no repeat") against 8.4 (lines
 line displays it, against D15 and the task ("no reader-facing wording").
 
 Not covered: whether a listed word is a judgment in its context. That is a named open residual, and it is never counted
-as semantic coverage. Size: 601 hand-written lines changed outside generated files (`git diff --numstat` against the
-merge base; tests 153, evidence 129, Lean 255), plus this report.
+as semantic coverage. Size: 642 hand-written lines changed (added plus removed; 629 added) outside generated files, the saved trust mutant
+evidence and this report (`git diff --numstat` against the merge base): Lean 131, Lean fixtures and examples 140,
+tests 153, side tables, docs and evidence 218. That is just over the ~600 line. The checks added to kill the trust survivors (+28) and the
+service-level fixture file (+61) are what push it over; no deliverable was added.
 
 Pilot bytes: 0 expected (no unit changes status; the field is review information).
 
@@ -107,4 +122,49 @@ Next: jt-3 (the declaration, legend and status lines and 9.5's text, after jt-e1
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELFREVIEW
+1. Typed and contained: PASS. `tests/test_judgments_undeclared.py::test_every_mutant_of_the_field_is_refused` retypes the field and each member
+   (7, true, null, {}, 1.5, "\ud800", "", [[]], a 10k-deep list), and `relay_mutation_gate.py --route service:document`
+   drops, empties, duplicates and retypes every field ("0 failures"). A bad byte on stdout belongs to the transport,
+   which this item does not change (`tests/test_lean_service.py`, selected and passed).
+2. Deliverables and rule breaks: PASS. See the plan rows above. Not delivered, each by DRI ruling: "good judgment"
+   (jt-3p) and 9.5's text (jt-3). No Python copy of a Lean decision: `_undeclared_bound` checks membership, order and
+   repeats only, never a match. No new permanent report test. In-flight overlap (`git diff --name-only main...<branch>` over every `lean-first/*`, `feature/*`,
+   `infra/*` and `foundation/*` branch, for every file touched here):
+   - feature/pc-1 edits `lean/VE/Service/Document.lean` (near `check` and `encode`) and
+     `lean/ResponseShape/Encoders/Document.lean` (`document_fits` becomes `body_fits`). SYNTHESIS 4.2 (line 337) queues
+     the document mode "in landing order", so whichever lands second merges; both edits are additive.
+   - The shared ledgers `tools/trust-classes.json`, `ve/assurance-manifest.json` and the import list `lean/VE.lean`
+     are also edited by feature/cmp-s4a, pc-6a, qt-a3db, sc-2d, wg-6a, pk-1-conditions and foundation/me-1.
+   - The generated files are not an overlap (R12).
+3. Tests can fail: PASS. `mutants.json` (S1-S6, P1-P3); `trust-mutants.json` (0 survivors, 0 unknown).
+4. Lean and Python agree, valid inputs pass: PASS. `tests/test_judgments_undeclared.py::test_lean_lists_the_catalogue_matches_that_are_not_bound` (the
+   genuine answers are relayed; the vocabulary written out of key order comes back in Lean's order), and
+   `::test_a_vocabulary_at_the_predicate_limit_is_reported_whole`. Rust is untouched (N.A.).
+5. R8 binding: PASS. `tests/test_judgments_undeclared.py::test_every_mutant_of_the_field_is_refused` covers `absent`, a sort, a unit id, a W3-defined
+   name, a bound judgment, a doubled member and a case-shifted name. `::test_which_predicates_match_is_lean_s` covers
+   the empty list (accepted: Lean's decision), out of order and repeated. `::test_the_field_is_there_exactly_under_the_profile`
+   covers an extra member.
+6. Gate evidence on the final HEAD: PASS for this item's evidence. `trust-mutants.json` is at `8f302d6d5`, and later
+   commits change no Lean file except the evidence; the selected run is on `b50349522`. Not synced with main: the
+   chain's gate and the merge train run on the merge candidate.
+7. No unsigned item: PASS. DELTA rows cite R3 and R16; no signature is reserved.
+8. Every user-visible change in DELTA: PASS. The one changed answer is the new member. The English `actions_version`
+   36 is the lock's version rule for a new trusted grammar file, as in jt-2c (35). The ask fixtures and the S3
+   comparison were re-recorded with field diffs (above).
+9. Selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` selects `tests/test_judgments_undeclared.py`,
+   `tests/test_judgments_answer.py`, `tests/test_judgments_exercised.py` and `tests/test_assurance_manifest.py`; seeded
+   S6 and P1-P3 fail `tests/test_judgments_undeclared.py`.
+10. Lean statements: PASS. `undeclaredEvaluative_iff` is spec 7's text. The encoder theorem `undeclared_fits` is
+    about the encoded member, and `document_fits` covers `encode`. S1-S3 break the iff proofs. The schema's fingerprint
+    #guard changes with the shape. No statement checker exists for this spec (`tools/check_*_statements.py` has none
+    for judgment terms).
+11. Budgets: N.A. The report has no budget of its own. Its size is the vocabulary's, under `max_predicates`:
+    `tests/test_judgments_undeclared.py::test_a_vocabulary_at_the_predicate_limit_is_reported_whole` (256 answered whole; 257 `ResourceLimit`).
+12. CPU: PASS by construction, not timed. One pass over the base predicates, each word list computed once, times 15
+    rows. The 256-predicate fixture answers. No pilot was timed.
+13. Test-removed trailers: PASS. `tools/gate_collection.py --check --prebuilt`: "0 removed by a trailer, 0 refused, 0 stale
+    and 0 malformed".
+14. Both directions, cited evidence, spec re-read: PASS. `::test_a_bound_judgment_listed_is_refused_and_unbound_it_is_relayed`,
+    `::test_a_regulated_predicate_is_listed_and_still_not_admitted` (listed, yet `JudgmentRegulated`),
+    `::test_the_field_is_there_exactly_under_the_profile`. Each claim above names its command; the spec re-read is
+    listed under "Checks run".

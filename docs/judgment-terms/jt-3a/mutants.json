@@ -48,7 +48,7 @@
    "definition": "VE.Judgments.predicateWords",
    "behaviour": "a predicate's template words are read in lower case",
    "mutation": "`t.split` in place of `t.toLower.split`",
-   "test": "lean/VE/Judgments/Examples.lean:377 (#guard predicateWords \"Reasonable_grounds\" (some \"{0} has REASONABLE, grounds.\"))"
+   "test": "lean/VE/Judgments/Examples.lean:379 (#guard predicateWords \"Reasonable_grounds\" (some \"{0} has REASONABLE, grounds.\"))"
   },
   {
    "id": "S5",
