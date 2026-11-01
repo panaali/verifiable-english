@@ -1310,6 +1310,7 @@ VE.Scope.HasStr.below@VE.Scope.Govern
 VE.Scope.HasStr@VE.Scope.Govern
 VE.Scope.JsonWF.below@VE.Scope.Govern
 VE.Scope.JsonWF@VE.Scope.Govern
+VE.Scope.Typed@VE.Scope.Theorems
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
