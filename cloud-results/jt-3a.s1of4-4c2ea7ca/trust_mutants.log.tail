@@ -1,0 +1,14 @@
+trust_mutants: 10 definitions, 265 mutants (67 to run), 4 jobs, base 7a8a0f74344d
+UNKNOWN lean/VE/Judgments/Undeclared.lean:37 VE.Judgments.predicateWords (S, trusted) list-empty: template -> [] (lean/VE/Judgments/Undeclared.lean:37: Application type mismatch: The argument)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:14 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> [] (lean/VE/EnglishGrammar/Evaluative.lean:14: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:14 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> [] (lean/VE/EnglishGrammar/Evaluative.lean:14: Function expected at)
+UNKNOWN lean/VE/Judgments/Undeclared.lean:31 VE.Judgments.undeclaredEvaluative (S, trusted) list-empty: preds.filter -> [] (lean/VE/Judgments/Undeclared.lean:31: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-empty: (E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map -> [] (lean/VE/Service/Document.lean:1727: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:14 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:15: Invalid `⟨...⟩` notation: The expected type of this te...)
+UNKNOWN lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-first: (E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map -> (((E.rv.vocabulary.predicates.filter fun (p, _) => !defs.contains p).map).take 1) (lean/VE/Service/Document.lean:1727: Invalid match expression: The type of pattern variable 'snd✝'...)
+SURVIVOR lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-first: defs -> (defs.take 1)
+SURVIVOR lean/VE/Service/Document.lean:1727 VE.Service.Document.Env.basePredicates (G[V], trusted) list-last: defs -> (defs.reverse.take 1)
+trust_mutants: 49 KILLED, 2 SURVIVOR, 7 UNKNOWN, 9 INVALID, 0 ALLOWED, 0 NOT RUN, 198 OTHER SHARD in 1705 s
+trust_mutants: G[V], trusted: 11 KILLED, 2 SURVIVOR, 2 UNKNOWN, 1 INVALID, 68 OTHER SHARD
+trust_mutants: S, trusted: 38 KILLED, 5 UNKNOWN, 8 INVALID, 130 OTHER SHARD
+trust_mutants: steps: wall plan 8 s, scratch 2.3 s, control_build 0.2 s, probe_install 1.1 s, control_probes 431.4 s, mutants 1258.5 s, cleanup 3.9 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 676.9 s (9), mutant_builds 258.5 s (83), mutant_checks 1173.9 s (53), stage_controls 192 s (9), mutant_probes 3199.8 s (83)
