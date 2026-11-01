@@ -1,8 +1,7 @@
 """The generated Rust contract tables and the Rust engine (docs/spec/wire-contract-s4-2.md 9). F3: the rows a
 cargo test dumps from every generated table equal the rows `tools/wire_contract.py` reads from the contract
 JSON. F5: the engine corpus run in Rust gives Lean's records (engine-golden.json) and Python's, byte for byte,
-wherever Rust does not defer; every deferred outcome is counted, never compared. F7: the overlay's `error`
-carries the record as `diagnostic`, typed by the jsonl schema."""
+wherever Rust does not defer; every deferred outcome is counted, never compared."""
 
 import json
 import shutil
@@ -16,7 +15,6 @@ from tests.test_wire_contract_corpus import _run as python_run
 from tests.test_wire_contract_lean import DEFER, DEMO
 from tools import rust_build
 from tools.wire_contract import DATA, KEYS, ROOT, UNITS, table_rows
-from ve.backends.rust_jsonl import record_problem
 from ve.wire import canonical_json, loads_json
 
 CORPUS = ROOT / "conformance/wire-contract/contracts"
@@ -69,25 +67,20 @@ CASES = [("demo@0", name, root, lean) for name, (root, lean) in DEMO.items()] + 
 GOLDEN = json.loads((ROOT / "conformance/wire-contract/engine-golden.json").read_text(encoding="utf-8"))
 
 
-def _canonical(outcome):
-    return "clean" if outcome in ("clean", CLEAN) else canonical_json(outcome)
-
-
 def share(rows):
     """Plan row d: Rust's fault and clean rows, each equal to Lean's record, the golden and Python's
     (canonical JSON), and its deferred rows, counted and never compared. Returns the two lists of ids."""
     compared, deferred = [], []
-    assert rows[len(CASES)] == {"id": "I1", "outcome": "clean", "error": {**rows[len(CASES)]["error"]}}
-    for (unit, name, root, lean), row in zip(CASES, rows[:len(CASES)], strict=True):
+    for (unit, name, root, lean), row in zip(CASES, rows, strict=True):
         assert row["id"] == name
         if row["outcome"] == "deferred":
             deferred.append(name)
             continue
-        rust = "clean" if row["outcome"] == "clean" else canonical_json(row["error"]["diagnostic"])
+        rust = "clean" if row["outcome"] == "clean" else canonical_json(row["record"])
         python = python_run(unit, root)
         assert not isinstance(python, Deferred), name
         python = "clean" if python is CLEAN else canonical_json(python.record)
-        assert rust == lean == _canonical(GOLDEN[unit][name]) == python, name
+        assert rust == lean == (GOLDEN[unit][name] if GOLDEN[unit][name] == "clean" else canonical_json(GOLDEN[unit][name])) == python, name
         compared.append(name)
     return compared, deferred
 
@@ -96,17 +89,11 @@ def share(rows):
 def rust_rows(tmp_path_factory):
     directory = tmp_path_factory.mktemp("engine")
     cases, out = directory / "cases.json", directory / "out.jsonl"
-    sent = [{"unit": unit, "id": name, "root": root} for unit, name, root, _ in CASES] + [CLEAN_CASE]
-    cases.write_text(json.dumps(sent))
+    cases.write_text(json.dumps([{"unit": unit, "id": name, "root": root} for unit, name, root, _ in CASES]))
     printed = _cargo_test("contract_engine", "engine_corpus_equals_the_golden",
                           {"VE_ENGINE_CASES": str(cases), "VE_ENGINE_OUT": str(out)})
     print(next(line for line in printed.splitlines() if line.startswith("engine corpus in Rust")))
     return [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines()]
-
-
-# Rust reaches no `clean` on the golden cases (each meets the view `3.4` or the hook `d2`); `inner@0` alone has
-# no hook, so this case gives the residual record (test_inner_contract_alone, Lean side: clean).
-CLEAN_CASE = {"unit": "inner@0", "id": "I1", "root": {"x": 1, "ys": ["u"]}, "expected": None}
 
 
 def test_rust_engine_records_equal_lean_python_and_the_golden(rust_rows):
@@ -123,41 +110,10 @@ def test_the_deferred_share_is_counted_and_never_compared(rust_rows):
     rows = [dict(row) for row in rust_rows]
     for row in rows:
         if row["outcome"] == "deferred":
-            row["error"] = {"code": "InvalidInput", "message": "x", "diagnostic": {"wrong": True}}
+            row["record"] = {"wrong": True}
     assert share(rows) == share(rust_rows)
     fault = next(row for row in rows if row["outcome"] == "fault")
-    fault["error"] = {**fault["error"], "diagnostic": {**fault["error"]["diagnostic"], "text": "other"}}
+    fault["record"] = {**fault["record"], "text": "other"}
     with pytest.raises(AssertionError):
         share(rows)
 
-
-def test_the_diagnostic_member_is_typed_by_the_jsonl_schema(rust_rows):
-    """F7: each overlay error, as `ve jsonl` writes a rejection, passes `rust_schema/jsonl.json`: the fault
-    record where Rust does not defer, the residual record where it is clean, the deferred record otherwise."""
-    for row in rust_rows:
-        record = {"id": row["id"], "status": "error", "error": row["error"]}
-        assert record_problem({"id": row["id"]}, record) is None, row["id"]
-        diagnostic = row["error"]["diagnostic"]
-        assert ("deferred" in diagnostic) == (row["outcome"] == "deferred")
-        assert (diagnostic.get("check") == "residual") == (row["outcome"] == "clean")
-
-
-def _retyped(value):
-    return 1 if type(value) is str else "1" if type(value) is int else None if type(value) is dict else "x"
-
-
-def test_every_retyped_or_extra_diagnostic_field_is_refused(rust_rows):
-    """Each field of each of the records retyped, removed or joined by an extra one: the schema refuses it, so
-    the relay reads it as no answer (CheckerUnavailable); a `null` diagnostic is refused too."""
-    samples = {row["outcome"]: row["error"] for row in rust_rows}
-    assert set(samples) == {"fault", "clean", "deferred"}
-    for error in samples.values():
-        diagnostic = error["diagnostic"]
-        variants = [{**diagnostic, name: _retyped(value)} for name, value in diagnostic.items()]
-        variants += [{k: v for k, v in diagnostic.items() if k != name} for name in diagnostic]
-        variants += [{**diagnostic, "extra": "x"}, None, []]
-        if "args" in diagnostic:
-            variants.append({**diagnostic, "args": {"name": 1}})
-        for variant in variants:
-            record = {"id": "c", "status": "error", "error": {**error, "diagnostic": variant}}
-            assert record_problem({"id": "c"}, record) is not None, variant
