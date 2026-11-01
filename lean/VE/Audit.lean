@@ -7229,6 +7229,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.decidesD_soften
 #print axioms VE.SoftNorms.decides_split
 #print axioms VE.SoftNorms.decisionNames_eq
+#print axioms VE.SoftNorms.decisionRule_unsplit
 #print axioms VE.SoftNorms.defaultDecides_denote
 #print axioms VE.SoftNorms.default_not_blocked
 #print axioms VE.SoftNorms.denote_congr_preds
