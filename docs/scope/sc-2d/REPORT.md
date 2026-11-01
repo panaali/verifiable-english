@@ -9,7 +9,7 @@ Open: none. Pilot: 0 bytes (proofs only); nothing claimed. Next: sc-3b, once its
 | Row | Result |
 |---|---|
 | (1) The five theorems, with `hw` | `Theorems.lean` section `Effects`. On a well-formed rule object, lookup and traversal see the same single member, so the decoder reads the member `applyEffect` rewrote. `decodeNorm_view` (:1998): W1's view of the rule has the rule's own W1 members. `decodeNorm_same` (:2060): two rules that differ only in `guard` and `unless` differ only in guard and carve-outs. `decodeNorm_effect` (:2048): the guard and each carve-out are their members' `decodeBudgeted` values. The decoder lemmas are in `EffectLemmas.lean`: `normFields_spec` (:262), `w1_spec` (:291), `ruleFields_spec` (:319), `forIn_carve` (:240), `budgetFormula_mono` (:156; a shared node count only lowers a carve-out's budget), and `narrowing_some` (:425). |
-| (2) Condition (ii) | `baseObj_jsonWF` (Theorems.lean:2382), proved: a rule object of a `JsonWF` document, framed by `JsonWF` payloads, is `JsonWF`. The `example` at `WireExamples.lean:181` discharges `hw` in `reguard_applies` for a rule of any decoded document, through `decodeBlock_jsonWF` and `decodeBlock_payloads` (sc-1af's `jsonWF?_sound`). Its file is not Examples.lean: there, importing `ScopeAdmission` makes Wire's `spanIn` shadow the `VE.Discourse.spanIn` the sc-1a fixtures use. |
+| (2) Condition (ii) | `baseObj_jsonWF` (Theorems.lean:2382), proved: a rule object of a `JsonWF` document, framed by `JsonWF` payloads, is `JsonWF`. The `example` at `lean/VE/Service/ScopeExamples.lean:180` discharges `hw` in `reguard_applies` for a rule of any decoded document, through `decodeBlock_jsonWF` and `decodeBlock_payloads` (sc-1af's `jsonWF?_sound`). It is in the Service layer, not in Examples.lean, because it needs `ScopeAdmission`, and `tools/check_lean_imports.py` refuses a Scope module importing a Service one. |
 | (3) Condition (iii) | `tests/test_scope_5_4_statements.py`: the five equal spec 5.4's text. Each statement's binders are pinned, so a statement without `hw`, or with any other premise, fails even if the spec text were changed with it. The check also fails on a changed statement. |
 | (4) Condition (i) and fixtures | F-raw-effect (`Examples.lean:1180`) is unchanged. Section `SC2d` (`Examples.lean:1191`) checks each theorem on both chains. Accepting, on the well-formed `pRule`: every premise holds, and both conjuncts hold at each valuation of `ownModel` (:1213, :1237, :1255). Refusing (:1229, :1243, :1255): a rule with no guard, a condition with `own` at a term position, a condition with `own` that is no narrowing, and `p(x₁)` as the new guard or carve-out (the norms chain leaves the rule untyped; the soft chain refuses it). For commute, the non-commuting pair (`¬own`, then a narrowing) writes rules that apply differently at `a`. |
 | (5) Inventories | `lean/statements.txt` lists the five. `lean/axioms.txt` gains 40 lines, all within `propext`, `Classical.choice` and `Quot.sound` (`git diff main -- lean/axioms.txt`). |
@@ -48,7 +48,7 @@ Measured with `uv run python tools/trust_map.py --check` on the merged tree: K +
 - `Theorems.lean`: +446 −77
 - `EffectLemmas.lean`: +320
 - `Examples.lean`: +75
-- `WireExamples.lean`: +14
+- `Service/ScopeExamples.lean`: +14
 - test: +39 −18
 - spec: +6 −5
 - DELTA, mutants and allow file: +99

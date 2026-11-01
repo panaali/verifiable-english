@@ -1,6 +1,5 @@
 import VE.Scope.Wire
 import VE.Scope.Examples
-import VE.Service.ScopeAdmission
 
 /-! SC-1b's fixtures for the governor status (F1-doc, F1-bad, F1-none of docs/spec/scope.md 7.2), the block decoder
 (wire 3: every reach and effect, and each fault) and the layout of the document's units. -/
@@ -173,18 +172,5 @@ open Examples in
 #guard [boundary (withScope (hcDoc parts)), boundary (withScope ((hcDoc parts).setObjVal! "n" (toJson [0, 7]))),
   boundary (withScope (withUnit (Json.mkObj [("id", "u0165.s01"), ("content", Json.mkObj [("norm", leadPart)])]))),
   boundary (hcDoc parts)] == ["ok", "ok", "ok", "InvalidInput: scope@0 scope must be an object"]
-
-/-! sc-2d, condition (ii) of the DRI's decision of 2026-10-31 (item 1): for a rule of a decoded document, spec 5.4's
-    premise `JsonWF o` comes from the boundary check (`decodeBlock_jsonWF`, `decodeBlock_payloads`, `baseObj_jsonWF`),
-    not from a hypothesis. -/
-open VE.SoftNorms (SoftNode) in
-example (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
-    (hD : decodeBlock front source re = .ok D) (u : String) (c o o' : Json) (N N' : SoftNode) (G' : VE.Formula)
-    (ho : baseObj D u = .ok o) (h : applyEffect u (.reguard c) o = .ok o')
-    (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
-    (hG : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok G')
-    (S : VE.Structure.{0}) (ρ : VE.Valuation S) : N' = { N with guard := G' } :=
-  (reguard_applies D u c o o' N N' G' h hN (baseObj_jsonWF D (decodeBlock_jsonWF front source re D hD).1
-    (decodeBlock_payloads front source re D hD) u o ho) hN' hG S ρ).1
 
 end VE.Scope.WireExamples
