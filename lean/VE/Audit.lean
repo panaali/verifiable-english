@@ -78,6 +78,7 @@ import VE.Cardinality.Examples
 import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
 import VE.Cardinality.Regions
+import VE.Cardinality.RenderTheorems
 import VE.Cardinality.Run
 import VE.Cardinality.RunTheorems
 import VE.Cardinality.Syntax
@@ -1424,6 +1425,33 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
+#print axioms VE.Cardinality.Render.ascii_size
+#print axioms VE.Cardinality.Render.atLeastOne_charges
+#print axioms VE.Cardinality.Render.bind_charges
+#print axioms VE.Cardinality.Render.bind_ok
+#print axioms VE.Cardinality.Render.body_charges
+#print axioms VE.Cardinality.Render.countTerm_charges
+#print axioms VE.Cardinality.Render.count_charges
+#print axioms VE.Cardinality.Render.describe_of
+#print axioms VE.Cardinality.Render.emit_charges
+#print axioms VE.Cardinality.Render.emit_over
+#print axioms VE.Cardinality.Render.forM_charges
+#print axioms VE.Cardinality.Render.formula_charges
+#print axioms VE.Cardinality.Render.go_size
+#print axioms VE.Cardinality.Render.inParens_charges
+#print axioms VE.Cardinality.Render.initial_size
+#print axioms VE.Cardinality.Render.ite_charges
+#print axioms VE.Cardinality.Render.members_charges
+#print axioms VE.Cardinality.Render.operand_charges
+#print axioms VE.Cardinality.Render.paraphrase_within
+#print axioms VE.Cardinality.Render.piece_charges
+#print axioms VE.Cardinality.Render.pieces_charge
+#print axioms VE.Cardinality.Render.positive_charges
+#print axioms VE.Cardinality.Render.pure_charges
+#print axioms VE.Cardinality.Render.size_append
+#print axioms VE.Cardinality.Render.term_charges
+#print axioms VE.Cardinality.Render.texts
+#print axioms VE.Cardinality.Render.toUpper_size
 #print axioms VE.Cardinality.Run.charge_fst
 #print axioms VE.Cardinality.Run.charge_over
 #print axioms VE.Cardinality.Run.charge_snd
