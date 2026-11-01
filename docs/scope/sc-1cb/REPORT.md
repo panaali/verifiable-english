@@ -3,6 +3,7 @@
 - **Status:** built; no DRI signature is reserved. DELTA row 1 is SIGNED by the DRI (reviews/dri-decisions-20261101-sc-1cb.md item 1), row 2 cites R16 (K +0, S +0, trusted +0).
 - **What changed:** for a document with a reading set governed per choice (scope 11.1) the `scope` mode answers one row group per joint choice, labelled, gated as `governSets` gates it; `ve scope explain` prints each group under its label. Every other answer is main's, byte for byte.
 - **Open:** deliverable (4) (spec 2.3's generated-rule row, `explain_generated`, the rule written in full, plan 1.6) is cut to **sc-1cc**, by the size line.
+- **Size:** 530 hand-written lines added, 69 deleted (`git diff --numstat $(git merge-base HEAD main)`, generated files and `trust-mutants.json` excluded), under the ~600 line.
 - HEAD: the last commit of `feature/sc-1cb` (base main `3148e87c4`); the full gate is the chain's (not run here).
 
 Branch `feature/sc-1cb`, worktree `/home/seyran/code/ve-sc-1cb`. Read: plan SC-1c (`docs/spec/scope-PLAN.md:725-`), spec 2.3, 5.3, 11;
