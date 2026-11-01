@@ -72,6 +72,12 @@ Draft 4, from the phase-1 results (each change cites the report's section; secti
     passes" becomes: D3 as revised freezes when ap-3r merges; D4 as written freezes when AP-4 merges; AP-7 ran (FAIL
     2026-10-31) and is not re-run. Section 1's rows D3 and D4, 2.3, 2.4, section 4 step 5, 8.6, G10 and the AP-7 experiment
     row; every "and D9 is decided" clause stays.
+15. **Freeze under D9 (i), and D7's refused units** (2026-11-01, `ap-3r`; DRI decision
+    `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec-o5-o7.md` items 1-3, SIGNED): in the D3 and D4 rows, 2.3,
+    2.4 and the specification's 6.2, "stay(s) provisional until D9 is decided" becomes "frozen at <merge> under D9 (i);
+    a later D9 ruling reopens only the cells it names" (item 3; D2's N clause is not touched); the D7 row says that a
+    unit whose reading set cannot pass `sourceCheck` (F11: u051, u076, u105) is refused until the readings elaboration
+    (item 1); the specification's S-table gains S3b and S8b on rs_u055 (item 2).
 
 ## 0. Summary
 
@@ -155,11 +161,11 @@ Pilot metrics (run `20261012T1800Z`; "after AP-0" measured in phase 1, report se
 |---|---|---|---|
 | D1 | How `acts@0` enters | A decoding extension of `norms@0`: the act check and the elaboration are chosen by the document's profiles inside the existing decoders. It is not a composition wrapper: no new route head. The only new responses are AP-3's mandatory `acts-elaborate` relay and AP-4's `act-readings` proposal mode, each through the relayed-route recipe. | AP-1 |
 | D2 | Budgets | Act phrase ≤ 400 bytes; fixed phrase ≤ 300 bytes; ≤ 128 fixed phrases and ≤ 128 frames per document. Two separate parse limits: a **raw derivation budget N** (the parser's cap; AP-0 measures the largest raw count over the pilots' act phrases and N is fixed above it) and a **public limit of 64 distinct readings** (= the `readings@1` limit), beside the engine's step budget. `read` (one reading required) and `readings` (listing) use the same limits. A reading is certified only from a complete enumeration: fewer than N raw derivations, within the step budget. Raw-cap saturation, an exhausted step budget, or more than 64 readings is an explicit **limit** outcome: a refusal, never a choice. Exactly 64 readings are accepted when the enumeration is complete. **Measured (AP-0 item 4, PASS):** R = 2 and S = 14,440 on the registered 22-phrase corpus, so N = 256 and the step budget 2,100,000 stand for draft 2's rule table. They stay **provisional** until D9 is decided, then R and S are re-measured on the same corpus plus the M1 act phrases it left out (section 11, item 4). | AP-1 |
-| D3 | The modal × connective table (2.3) | as written; its equations stay provisional until D9 is decided; D3 as revised (`manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1) freezes when ap-3r merges; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-3 |
-| D4 | The edge rule for modifiers (2.4) | as written; provisional until D9 is decided; D4 as written freezes when AP-4 merges; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-4 |
+| D3 | The modal × connective table (2.3) | as written; D3 as revised (`manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1): its equations are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only the cells it names; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-3 |
+| D4 | The edge rule for modifiers (2.4) | as written; D4 as written: frozen at the AP-4 merge under D9 (i); a later D9 ruling reopens only the cells it names; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-4 |
 | D5 | Specialisation premises | permission and obligation only, licensed by standard deontic logic, and only through markers and modifiers the `acts` block declares restrictive (visible semantic assumptions); entitlements stay UNKNOWN between related acts. The premises take effect only under the opt-in profile `act-specialise@0`, after AP-5b | AP-5 (definitions); AP-5b (use) |
 | D6 | n-ary route | decided by AP-6's pre-registered bar; route (a) reifies over `events@0`'s event sorts | after AP-6 |
-| D7 | Reading-set sources | optional under `acts@0`; mandatory in the UDHR and constitution pilots once AP-4 merges | AP-4 |
+| D7 | Reading-set sources | optional under `acts@0`; mandatory in the UDHR and constitution pilots once AP-4 merges; a unit whose reading set cannot pass `sourceCheck` (F11: u051, u076, u105) is refused until the readings elaboration | AP-4 |
 | D8 | Trust budget | AP-1 to AP-5 add proved Lean only; if `trust_map.py` reports growth beyond the signed budget, the DRI signs a reason (`trust_map.py --write --reason`) | each batch |
 | D9 | Words shared inside a joined filler (phase 1, report 7.6c; 2.3 below) | **(i): refuse** a joined filler whose marker is written once (a direct object, or a marker before the whole list) when its first or last member is a run of two or more words; the translator declares a fixed phrase, which the audit checks, or rewords. Why: it keeps section 0's rule (a known ambiguity the grammar does not model is refused), only narrows what is accepted, so (ii) can still be added later on AP-7's evidence (the argument the statement review used for F10), and leaves R, the fixtures G5 to G14v and their raw counts unchanged (none has such a filler). Against it: more declared fixed phrases ("their religion or belief", u067; "any individual or group", u0165.s06), each a declaration to audit. The alternatives: (ii) an edge rule for joined fillers (more faithful, but raises raw counts, needs a new rule-table review and makes the corpus's R obsolete); (iii) exactness relative to the declared fixed phrases with an audit item naming the case (cheapest; it reads a known ambiguity one way, against section 0) | the bounded re-check (before AP-2 merges) |
 
@@ -268,7 +274,8 @@ A single reading is applied by AP-3. Two readings make the sentence ambiguous; A
 
 **Nor** reads only under *must not*, where prohibition distributes over it. Under *must*, *may* and *has the right
 to* it has no reading, and the writer rewrites. The table's theorems take the split-marker and *nor* flags of the act
-tree as conditions (section 3). Its equations freeze when ap-3r merges (D3 as revised; AP-7 ran, FAIL 2026-10-31, and is not re-run).
+tree as conditions (section 3). Its equations are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only
+the cells it names (D3 as revised; AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 The table holds the deontic distribution equations for the five modals of `VE.Acts.Op`. It is never reused for
 `intends` or `believes`, and a joined act under an attitude verb is not split by it.
@@ -327,7 +334,8 @@ So u105's *freely* has two readings, which is what its 2026-10-10 audit required
 the pilot's `both_acts` and `deprivation_only`. u051's "in other countries" has two. Several edge modifiers multiply
 their readings, up to the 64-reading limit. Beyond it, or when the enumeration reaches the raw derivation budget N or
 the step budget, the phrase is refused ("too many readings to list; split the sentence"), never read one way. The
-edge rule freezes when AP-4 merges (D4 as written; AP-7 ran, FAIL 2026-10-31, and is not re-run).
+edge rule is frozen at the AP-4 merge under D9 (i); a later D9 ruling reopens only the cells it names (D4 as written;
+AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 ### 2.5 Nothing accepted earlier changes meaning
 

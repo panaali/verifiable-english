@@ -1034,7 +1034,8 @@ Simple.atom]` for every `sp`, the own-*to* exception. Its `sp = false` case gain
 its `sp = true` case (a split marker's *and*) keeps its one reading as `table_free_all_own_split`. No other equation
 changes.
 
-They freeze when ap-3r merges (D3 as revised; AP-7 ran, FAIL 2026-10-31, and is not re-run).
+They are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only the cells it names (D3 as revised;
+AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 ### 6.3 Elaboration
 
@@ -1786,6 +1787,8 @@ form, finding F3; these need a readings document and are AP-4's, not in the stub
 | S6 | S4 under `norm-defaults@0`, every candidate's predicate `unspecified`, the source's completion `unspecified` | passes |
 | S7 | S6 with one candidate predicate's `default` changed from `unspecified` to `deny`, nothing else | refused: the choice changes the source rule's completion (D-29). Under draft 1's Boolean completion both read as the placeholder `deny` and S7 passed (SR3) |
 | S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | refused: a reading is a whole join and has no candidate (F11) |
+| S3b | S4 plus a candidate putting *arbitrarily* on `denied` only (not a reading of G9) | refused: a choice is not a reading. The isolated guard for the rule S3 exercised; G9 has two items, so the skipped middle itself stays guarded by G8's `phraseReadings_exact` |
+| S8b | S4 with the document's items reordered, so that `both_acts`'s rules come in another order | passes: rules are compared up to order (SR14) |
 
 `sourceCheck_complete` is S4 and S6 read from right to left: their sets are exact, so the check passes. S2 and S3 stay
 refused; since S1's source has whole-join readings (D3 revised), their first diagnostic may be F11's.
