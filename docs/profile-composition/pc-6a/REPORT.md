@@ -108,7 +108,7 @@ names and the table) sets `splitFrom` and switches `exceptedName`/`offName` to t
 3. Tests can fail: PASS, mutants.json (3 killed) and trust-mutants.json (exit 0).
 4. Py/Lean/Rust agree: N.A., Lean only and no answer changes; selected tests (404 units) pass.
 5. R8 binding: N.A., no field read from a Lean answer added.
-6. Gate evidence: PASS (on its way), synced at the merge base `8c28fe286` = main; the chain gates the final HEAD.
+6. Gate evidence: PASS, built and tested at the merge base `8c28fe286`; main has since gained two merges (pc-3 `a24d66a7c`, ap-1bf `4d9a0eeb0`), which touch no file of this item and add no `SoftNode` construction (`git diff 8c28fe286 main -- 'lean/*.lean' | grep -c '^+.*SoftNorms'` = 0); not merged here, the merge train syncs; the chain gates the final HEAD.
 7. No unsigned item: PASS, DELTA row 1 cites R16; `trust_map.py --check` PASS.
 8. Every user-visible change in DELTA: PASS, none (no decoder sets the field; F6.1b `TreeExamples.lean:26-28`; selected tests pass).
 9. Test selection: PASS, `select_tests.py` selects 416/516 (a structure under most of Lean), not every unit; mutant 3 is caught by `MeaningExamples.lean:116`, inside the built tree.
