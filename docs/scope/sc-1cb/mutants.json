@@ -1,0 +1,137 @@
+{
+ "item": "sc-1cb",
+ "base": "3148e87c4",
+ "how": "each planted alone on the committed tree, the named check run, restored (Lean: lake build of the check's module; L8: the decoder rebuilt, scope.json regenerated, the test run; Python: pytest)",
+ "mutants": [
+  {
+   "id": "L1",
+   "behaviour": "one choice's rows dropped",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.explainSetsWithin",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:86 (SR-1's two labels)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:86:0: Expression"
+  },
+  {
+   "id": "L2",
+   "behaviour": "two choices' labels swapped",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.explainSetsWithin",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:86 (SR-1's two labels)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:86:0: Expression"
+  },
+  {
+   "id": "L3",
+   "behaviour": "cells of one choice, not the sum",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.explainSetsWithin",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:123 (the cells summed: 111 is UNKNOWN)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:123:0: Expression"
+  },
+  {
+   "id": "L4",
+   "behaviour": "no-set path through the choice loop",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.answerOf",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:130 (no governed set: today's bytes; line 129 when planted)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:129:0: Expression"
+  },
+  {
+   "id": "L5",
+   "behaviour": "the gate reads the document, not govern's answer",
+   "language": "Lean",
+   "definition": "VE.Scope.explainOut",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:107 (the gate is governSets': SR-dep differs)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:107:0: Expression"
+  },
+  {
+   "id": "L6",
+   "behaviour": "a fault under one choice skipped",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.explainSetsWithin",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:107 (the gate is governSets': SR-c)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:107:0: Expression"
+  },
+  {
+   "id": "L7",
+   "behaviour": "the label names the next reading",
+   "language": "Lean",
+   "definition": "VE.Scope.Run.choiceJson",
+   "file": "lean/VE/Scope/Run.lean",
+   "test": "lean/VE/Scope/RunExamples.lean:98 (choiceJson is choiceText's picks)",
+   "killed": true,
+   "evidence": "error: VE/Scope/RunExamples.lean:98:0: Expression"
+  },
+  {
+   "id": "L8",
+   "behaviour": "the label's version typed as text (through the generated scope.json)",
+   "language": "Lean",
+   "definition": "ResponseShape.Schemas.Scope.pick",
+   "file": "lean/ResponseShape/Schemas/Scope.lean",
+   "test": "tests/test_scope_answer.py::test_a_set_governed_per_choice_is_explained_per_choice_and_every_other_answer_is_mains",
+   "killed": true,
+   "evidence": "CheckerUnavailable: malformed response (... choices: [0]: choice: [0]: version: expected string)"
+  },
+  {
+   "id": "L9",
+   "behaviour": "a choice group without its index",
+   "language": "Lean",
+   "definition": "ResponseShape.Schemas.Scope.choiceGroup",
+   "file": "lean/ResponseShape/Schemas/Scope.lean",
+   "test": "lean/ResponseShape/Encoders/Scope.lean runCaseReported_fits (the build breaks)",
+   "killed": true,
+   "evidence": "error: ResponseShape/Encoders/Scope.lean:20:38: Application type mismatch: The argument"
+  },
+  {
+   "id": "P1",
+   "behaviour": "a label's unit not bound",
+   "language": "Python",
+   "definition": "ve.scope.choices_problem",
+   "file": "ve/scope.py",
+   "test": "tests/test_scope_answer.py::test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown[sets]",
+   "killed": true,
+   "evidence": "E       AssertionError: [('choices', 0, 'choice', 0, 'unit', '=empty'), (('choices', 0, 'choice', 0, 'unit', '=empty'), 'governed kept'), ('ch...=empty'), 'governed kept'), 'choices[0] pick 0 unit reb"
+  },
+  {
+   "id": "P2",
+   "behaviour": "the groups shown in reverse",
+   "language": "Python",
+   "definition": "ve.scope.lines",
+   "file": "ve/scope.py",
+   "test": "tests/test_scope_answer.py::test_each_choices_rows_are_shown_under_its_label",
+   "killed": true,
+   "evidence": "E       AssertionError: assert ['Under the c...-s03@1:wide:'] == ['Under the c...03@1:narrow:'] | E          | E         At index 0 diff: 'Under the choice u0165.s03 scope-u0165-s03@1:narrow:' != 'Und"
+  },
+  {
+   "id": "P3",
+   "behaviour": "the groups not checked to be every choice once, in order",
+   "language": "Python",
+   "definition": "ve.scope.choices_problem",
+   "file": "ve/scope.py",
+   "test": "tests/test_scope_answer.py::test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown[coupled]",
+   "killed": true,
+   "evidence": "E       AssertionError: [('choices', 0, '-'), (('choices', 0, '-'), 'governed kept'), ('choices', 0, 'x2'), (('choices', 0, 'x2'), 'governed kept'), ('choices', 1, '-'), (('choices', 1, '-'), 'governe"
+  },
+  {
+   "id": "P4",
+   "behaviour": "a group's rows not bound",
+   "language": "Python",
+   "definition": "ve.scope.choices_problem",
+   "file": "ve/scope.py",
+   "test": "tests/test_scope_answer.py::test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown[sets]",
+   "killed": true,
+   "evidence": "E   KeyError: '' | FAILED tests/test_scope_answer.py::test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown[sets] | 1 failed in 0.63s"
+  }
+ ]
+}
