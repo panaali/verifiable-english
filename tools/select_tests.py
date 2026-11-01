@@ -87,6 +87,11 @@ HISTORY_TEST = "tests/test_history_tests.py"
 HISTORY_REASON = "history inventory"
 # `--run` stops after this many failed tests outside the quarantine (`--maxfail`; 0 runs everything).
 MAXFAIL = 5
+# `--fast-stage` runs the selected test files the map recorded at no more than FAST_UNIT_SECONDS each, cheapest
+# first, until FAST_BUDGET_SECONDS in all (`fast_units`): a host that sends the selection to sharded runners runs
+# them meanwhile, so a failing pin (a 39-s file) is heard in minutes, not after the shards' ~45-min wall.
+FAST_UNIT_SECONDS = 60.0
+FAST_BUDGET_SECONDS = 240.0
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
 # Every pytest run the plan prints starts with this (tools/nested_pytest.py).
 PYTEST = nested_pytest.command([], python=UV_PYTHON)
@@ -1028,6 +1033,67 @@ def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", job
 DEFER_SECONDS = 120.0
 
 
+def lean_program(name: str) -> bool:
+    """A program the Lean build makes or a Lean tool that reads its outputs."""
+    return name.startswith("lean/") or name in ("lake", "lean", "elan")
+
+
+def rust_program(name: str) -> bool:
+    """A program the Rust build makes, or cargo."""
+    return name.startswith("rust/") or name == "cargo"
+
+
+def lean_built(plan: dict, env: dict[str, str]) -> bool:
+    """Whether every Lean build the plan names is already done in this checkout (`lake build --no-build`)."""
+    return all(subprocess.run([*command, "--no-build"], cwd=ROOT / "lean", env=env, check=False,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+               for command in plan["commands"] if command[:2] == ["lake", "build"])
+
+
+def fast_units(plan: dict, coverage: Coverage | None, *, lean_fresh: bool,
+               unit_seconds: float = FAST_UNIT_SECONDS, budget: float = FAST_BUDGET_SECONDS) -> list[str]:
+    """The fast-first stage of a selected run: the selected test files the map recorded (passed, not opaque) at
+    no more than `unit_seconds` each, cheapest first (then name order), while their sum stays within `budget`.
+    A file that ran a program a build of the plan would remake is left out (it would test the old build): the
+    Lean ones unless `lean_fresh`, the Rust ones when the plan runs cargo. Without a map, none."""
+    if coverage is None:
+        return []
+    stale: set[str] = set()
+    if plan["lean_build"] and not lean_fresh:
+        stale |= coverage.runners(lean_program)
+    if any(command[:len(CARGO)] == CARGO for command in plan["commands"]):
+        stale |= coverage.runners(rust_program)
+    seconds = {unit: float(coverage.status[unit].get("seconds") or 0.0) for unit in plan["selected"]
+               if unit.startswith("tests/") and file_of(unit) == unit and unit in coverage.recorded
+               and unit not in stale}
+    chosen, total = [], 0.0
+    for unit in sorted((unit for unit in seconds if seconds[unit] <= unit_seconds),
+                       key=lambda unit: (seconds[unit], unit)):
+        if total + seconds[unit] > budget:
+            break
+        chosen.append(unit)
+        total += seconds[unit]
+    return chosen
+
+
+def fast_stage(plan: dict, maxfail: int, *, lean_fresh: bool | None = None) -> int:
+    """Run the plan's fast-first units (`fast_units`) as one pytest process, with no build and no check: the
+    exit is pytest's (0 passed, 1 failed, 5 no unit). The full run, elsewhere, still runs every unit."""
+    env = run_environment(plan)
+    fresh = lean_built(plan, env) if lean_fresh is None else lean_fresh
+    if plan["lean_build"] and fresh:
+        env["VE_LEAN_PREBUILT"] = "1"
+    coverage = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
+    units = fast_units(plan, coverage, lean_fresh=fresh)
+    total = sum(float(coverage.status[unit].get("seconds") or 0.0) for unit in units) if units else 0.0
+    print(f"fast stage: {len(units)} of {len(plan['selected'])} units, {round(total, 1)} s in the map (each <= "
+          f"{FAST_UNIT_SECONDS:g} s, <= {FAST_BUDGET_SECONDS:g} s in all; Lean build "
+          f"{'done' if fresh else 'pending'}): {', '.join(units) or 'none'}", flush=True)
+    if not units:
+        return NO_TESTS_COLLECTED
+    return run_plain(nested_pytest.command(["-q", *units], python=UV_PYTHON), plan, maxfail, env)
+
+
 def weak_reason(reason: str) -> bool:
     """A reason that names no recorded use of the change: the static graph, a listed directory, or SMOKE."""
     return reason.endswith(" (static)") or reason.startswith("lists the directory of ") or reason == "smoke"
@@ -1722,16 +1788,22 @@ def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str],
     return code
 
 
+def run_environment(plan: dict) -> dict[str, str]:
+    """The environment the plan's commands run in: the selected tests run as the gate runs them, whatever
+    pytest settings the shell has."""
+    env = nested_pytest.environment(os.environ)
+    env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
+    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
+    return env
+
+
 def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, full: bool = False) -> int:
     """Run the plan. A `full` run is the whole suite before a green tag: every test runs (no `maxfail`)
     and every failure counts, a quarantined one too."""
     if full and maxfail:
         raise ValueError("a full run never stops early")
     held = set() if full else quarantined()
-    # The selected tests run as the gate runs them, whatever pytest settings the shell has.
-    env = nested_pytest.environment(os.environ)
-    env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
-    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
+    env = run_environment(plan)
     if plan["lean_build"]:
         env["VE_LEAN_PREBUILT"] = "1"
     for command in plan["commands"]:
@@ -1800,7 +1872,17 @@ def main() -> int:
                         help=f"leave out the test files over {DEFER_SECONDS:g} s in the map that only weak reasons "
                              "(static graph, a listed directory, smoke) select; the chain gate runs them. For "
                              "builder runs only, never the gate")
+    parser.add_argument("--fast-stage", action="store_true",
+                        help=f"with --run: run only the fast-first units (the selected test files the map recorded "
+                             f"at <= {FAST_UNIT_SECONDS:g} s each, cheapest first, <= {FAST_BUDGET_SECONDS:g} s in all, "
+                             "none that runs a program the plan would rebuild) as one pytest process, with no build "
+                             "and no check; exit pytest's. For a host that runs the full selection elsewhere "
+                             "(sharded runners) meanwhile; never the gate")
     args = parser.parse_args()
+    if args.fast_stage and (not args.run or args.full or args.impacted or args.no_record or args.tier
+                            or args.chunk_heavy):
+        parser.error("--fast-stage takes --run and a mapped selection: not --full, --impacted, --no-record, --tier "
+                     "or --chunk-heavy")
     if args.chunk_heavy and (args.full or args.impacted or args.no_record or args.tier):
         parser.error("--chunk-heavy is for a recorded selected run: not with --full, --impacted, --no-record or --tier")
     if args.maxfail is not None and args.maxfail < 0:
@@ -1855,7 +1937,8 @@ def main() -> int:
                       assume_fresh=args.assume_fresh)
 
     plan = plan_now()
-    if args.run and not plan["full"] and (plan["lean_cutoff"] or {}).get("state") == "no record of the head build":
+    if args.run and not args.fast_stage and not plan["full"] \
+            and (plan["lean_cutoff"] or {}).get("state") == "no record of the head build":
         # The base build is on record: build this tree's executables now, which the run needs anyway,
         # so the plan can leave out the runners of executables the change did not alter.
         print("building the Lean executables for the binary cutoff", flush=True)
@@ -1888,10 +1971,12 @@ def main() -> int:
         if args.explain:
             for test, reasons in plan["reasons"].items():
                 print(f"  {test}: {'; '.join(reasons[:3])}{' ...' if len(reasons) > 3 else ''}")
-        for command in plan["commands"]:
+        for command in [] if args.fast_stage else plan["commands"]:
             print("+", " ".join(command))
     if not args.run:
         return 0
+    if args.fast_stage:
+        return fast_stage(plan, args.maxfail)
     return run(plan, record=not args.no_record and args.tier is None,
                jobs=args.jobs, maxfail=args.maxfail, full=args.full)
 
