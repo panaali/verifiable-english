@@ -891,6 +891,7 @@ VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
 VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
 VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
 VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
+VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch
