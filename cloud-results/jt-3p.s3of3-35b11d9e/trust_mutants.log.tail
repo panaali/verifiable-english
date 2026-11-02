@@ -1,0 +1,22 @@
+trust_mutants: 6 definitions, 197 mutants (65 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> [] (lean/VE/EnglishGrammar/Evaluative.lean:16: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> [] (lean/VE/EnglishGrammar/Evaluative.lean:16: Function expected at)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-empty: ["effective", "date"] -> []
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:17: Invalid `⟨...⟩` notation: The expected type of this te...)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-first: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].dropLast)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-first: ["due", "date"] -> (["due", "date"].take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: ["due", "date"] -> (["due", "date"].dropLast)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-first: ["due", "to"] -> (["due", "to"].take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: ["due", "to"] -> (["due", "to"].dropLast)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-first: ["necessary", "condition"] -> (["necessary", "condition"].take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-first: ["effective", "date"] -> (["effective", "date"].take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:398 VE.Judgments.Examples.jt3aList (?, trusted) list-first: o -> (o.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: [["effective", "date"]] -> ([["effective", "date"]].dropLast)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: ["effective", "date"] -> (["effective", "date"].dropLast)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-last: ["just", "as"] -> (["just", "as"].reverse.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: ["necessary", "condition"] -> (["necessary", "condition"].drop 1)
+trust_mutants: 46 KILLED, 14 SURVIVOR, 3 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 132 OTHER SHARD in 111 s
+trust_mutants: ?, trusted: 13 KILLED, 14 SURVIVOR, 75 OTHER SHARD
+trust_mutants: S, trusted: 33 KILLED, 3 UNKNOWN, 2 INVALID, 57 OTHER SHARD
+trust_mutants: steps: wall plan 6.2 s, scratch 2.3 s, control_build 0.2 s, probe_install 1.1 s, control_probes 3.9 s, mutants 92.9 s, cleanup 4.3 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 5.6 s (2), mutant_builds 79.4 s (70), mutant_checks 53.6 s (36), stage_controls 5.7 s (5), mutant_probes 203.9 s (46)
