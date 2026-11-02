@@ -9821,6 +9821,197 @@ theorem VE.Closure.warshall_sound
       ∀ (a b : α), (a, b) ∈ VE.Closure.warshall vs es → VE.Closure.Path R a b
   -- uses VE.Closure.Path@VE.Closure.Paths VE.Closure.warshall@VE.Closure.Paths
   -- expr 1372944705
+theorem VE.Commands.candidate_reads_back
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    r ∈ VE.Commands.candidates se sc E L b s →
+      ∃ p g a t,
+        VE.Commands.parts s = Option.some p ∧
+          p.force = r.force ∧
+            g ∈ se.ne.regulated ∧
+              g.name = r.act ∧
+                g.role = VE.Commands.roleOf r.force ∧
+                  g.act = Option.some a ∧
+                    (VE.SpeechActs.Wire.actVerb a).isSome = Bool.true ∧
+                      VE.Commands.filled a r.fills = Option.some t ∧ VE.Commands.fold t = VE.Commands.fold p.body
+  -- uses VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts.force@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading.act@VE.Commands.Read VE.Commands.Reading.fills@VE.Commands.Read VE.Commands.Reading.force@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.filled@VE.Commands.Read VE.Commands.fold@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.roleOf@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.SpeechActs.Force@VE.SpeechActs.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.actVerb@VE.SpeechActs.Wire
+  -- expr 3589236825
+theorem VE.Commands.checked_many
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (r : VE.Commands.Reading)
+    (rs : List VE.Commands.Reading), VE.Commands.checkedAddressee se sc r ≠ VE.Commands.Outcome.many rs
+  -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.checkedAddressee@VE.Commands.Read VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1270766476
+theorem VE.Commands.checked_one
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (r r' : VE.Commands.Reading),
+    VE.Commands.checkedAddressee se sc r = VE.Commands.Outcome.one r' ↔ r = r' ∧ VE.Commands.addressed se sc r = Bool.true
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.checkedAddressee@VE.Commands.Read VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1943089036
+theorem VE.Commands.decodeClosedField_check
+  ∀ {T : VE.Environment} {j : Lean.Json} {φ : VE.Formula},
+    VE.SpeechActs.Wire.decodeClosedField T j = Except.ok φ → VE.Formula.check T [] φ = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.SpeechActs.Wire.decodeClosedField@VE.SpeechActs.Wire
+  -- expr 54966758
+theorem VE.Commands.dedup_sub
+  ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → ∀ (a : α), a ∈ l.eraseDups → a ∈ l
+  -- uses
+  -- expr 2914230514
+theorem VE.Commands.manyOf_iff
+  ∀ (l rs : List VE.Commands.Reading),
+    VE.Commands.manyOf l = VE.Commands.Outcome.many rs ↔ l = rs ∧ l.length ≤ VE.SpeechActs.Wire.readingsBound
+  -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.manyOf@VE.Commands.Read VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 1507207245
+theorem VE.Commands.manyOf_one
+  ∀ (l : List VE.Commands.Reading) (r : VE.Commands.Reading), VE.Commands.manyOf l ≠ VE.Commands.Outcome.one r
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.manyOf@VE.Commands.Read
+  -- expr 2346121978
+theorem VE.Commands.mem_dedup
+  ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (n : Nat) (l : List α), l.length ≤ n → ∀ (a : α), a ∈ l.eraseDups ↔ a ∈ l
+  -- uses
+  -- expr 3134540188
+theorem VE.Commands.mem_firstMatch
+  ∀ (l : List (VE.Norms.Regulated × List VE.Commands.Fill)) (acc : List (String × List VE.Commands.Fill)) {a : String}
+    {fs : List VE.Commands.Fill},
+    (a, fs) ∈ List.foldl VE.Commands.firstMatch acc l → (a, fs) ∈ acc ∨ ∃ g, (g, fs) ∈ l ∧ g.name = a
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.firstMatch@VE.Commands.Read VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 3895518251
+theorem VE.Commands.mem_mapM
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {t : List β},
+    List.mapM f l = Except.ok t → ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ f x = Except.ok y
+  -- uses
+  -- expr 4262899139
+theorem VE.Commands.mem_ofForce
+  ∀ {f : VE.SpeechActs.Force} {pm : List (VE.Norms.Regulated × List VE.Commands.Fill)} {a : String}
+    {fs : List VE.Commands.Fill},
+    (a, fs) ∈ VE.Commands.ofForce f pm → ∃ g, (g, fs) ∈ pm ∧ g.name = a ∧ g.role = VE.Commands.roleOf f
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.ofForce@VE.Commands.Read VE.Commands.roleOf@VE.Commands.Read VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.SpeechActs.Force@VE.SpeechActs.Tree
+  -- expr 3740346038
+theorem VE.Commands.mem_phraseMatches
+  ∀ {se : VE.SpeechActs.Wire.SpeechEnvironment} {sc : VE.SpeechActs.Scope} {body : String} {g : VE.Norms.Regulated}
+    {fs : List VE.Commands.Fill},
+    (g, fs) ∈ VE.Commands.phraseMatches se sc body →
+      g ∈ se.ne.regulated ∧
+        VE.Commands.commandable g = Bool.true ∧
+          fs ∈ VE.Commands.tuples (List.map (VE.Commands.slotFills se sc) (List.drop 1 g.sorts)) ∧
+            ∃ t, VE.Commands.filled (g.act.getD "") fs = Option.some t ∧ VE.Commands.fold t = VE.Commands.fold body
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.commandable@VE.Commands.Read VE.Commands.filled@VE.Commands.Read VE.Commands.fold@VE.Commands.Read VE.Commands.phraseMatches@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 561684783
+theorem VE.Commands.mem_slotFills
+  ∀ {se : VE.SpeechActs.Wire.SpeechEnvironment} {sc : VE.SpeechActs.Scope} {srt : String} {f : VE.Commands.Fill},
+    f ∈ VE.Commands.slotFills se sc srt →
+      (f.const, srt) ∈ se.ne.rv.vocabulary.constants ∧ (f.words = f.const ∨ (f.words, f.const) ∈ sc.definites)
+  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill.words@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope.definites@VE.SpeechActs.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 547825848
+theorem VE.Commands.outcome_checked
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c : String}
+    {o : VE.EnglishGrammar.TranslateOutcome} {g : VE.Formula},
+    g ∈ VE.Commands.guardList (VE.Commands.guardOfOutcome se E L c o) →
+      VE.Formula.check se.ne.rv.environment [] g = Bool.true
+  -- uses VE.Commands.guardList@VE.Commands.Read VE.Commands.guardOfOutcome@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 4042231074
+theorem VE.Commands.parts_of_candidate
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.Commands.candidates se sc E L b s ≠ [] → ∃ p, VE.Commands.parts s = Option.some p
+  -- uses VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1954813359
+theorem VE.Commands.parts_prefix
+  ∀ {s : String} {p : VE.Commands.Parts}, VE.Commands.parts s = Option.some p → VE.Commands.prefixRefusal s = Option.none
+  -- uses VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.prefixRefusal@VE.Commands.Read
+  -- expr 2612302666
+theorem VE.Commands.readCommand_bound
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.Commands.prefixRefusal s = Option.none →
+      VE.Commands.withinLimits se sc s = Bool.true →
+        VE.SpeechActs.Wire.readingsBound < (VE.Commands.candidates se sc E L b s).eraseDups.length →
+          VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.limit
+  -- uses VE.Commands.Outcome.limit@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.prefixRefusal@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 787036595
+theorem VE.Commands.readCommand_complete
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    VE.Commands.withinLimits se sc s = Bool.true →
+      r ∈ VE.Commands.candidates se sc E L b s →
+        VE.Commands.addressed se sc r = Bool.true →
+          (VE.Commands.candidates se sc E L b s).eraseDups.length ≤ VE.SpeechActs.Wire.readingsBound →
+            VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r ∨
+              ∃ rs, VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.many rs ∧ r ∈ rs
+  -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 2703244285
+theorem VE.Commands.readCommand_empty
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.Commands.candidates se sc E L b s = [] →
+      (∀ (r : VE.Commands.Reading), VE.Commands.readCommand se sc E L b s ≠ VE.Commands.Outcome.one r) ∧
+        ∀ (rs : List VE.Commands.Reading), VE.Commands.readCommand se sc E L b s ≠ VE.Commands.Outcome.many rs
+  -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2594479699
+theorem VE.Commands.readCommand_many
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (rs : List VE.Commands.Reading),
+    VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.many rs ↔
+      VE.Commands.withinLimits se sc s = Bool.true ∧
+        rs = (VE.Commands.candidates se sc E L b s).eraseDups ∧
+          2 ≤ rs.length ∧ rs.length ≤ VE.SpeechActs.Wire.readingsBound
+  -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 2425908090
+theorem VE.Commands.readCommand_one_iff
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r ↔
+      VE.Commands.withinLimits se sc s = Bool.true ∧
+        (VE.Commands.candidates se sc E L b s).eraseDups = [r] ∧ VE.Commands.addressed se sc r = Bool.true
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2442129861
+theorem VE.Commands.readCommand_prefix
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s code text : String),
+    VE.Commands.prefixRefusal s = Option.some (code, text) →
+      VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.refused code text
+  -- uses VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.prefixRefusal@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1042077649
+theorem VE.Commands.readCommand_read
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) {p : VE.Commands.Parts},
+    VE.Commands.parts s = Option.some p →
+      VE.Commands.withinLimits se sc s = Bool.true →
+        VE.Commands.readCommand se sc E L b s =
+          match (VE.Commands.candidates se sc E L b s).eraseDups with
+          | [r] => VE.Commands.checkedAddressee se sc r
+          | [] =>
+            VE.Commands.refusalOf s p (VE.Commands.phraseMatches se sc p.body) (VE.Commands.actMatches se sc s)
+              (VE.Commands.conditionOf se E L b p (VE.Commands.actMatches se sc s))
+          | rs => VE.Commands.manyOf rs
+  -- uses VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.checkedAddressee@VE.Commands.Read VE.Commands.conditionOf@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.manyOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.phraseMatches@VE.Commands.Read VE.Commands.readCommand.match_1@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.refusalOf@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1818908793
+theorem VE.Commands.readCommand_typed_of_facts
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading) (D : VE.SpeechActs.SpeechDoc)
+    (u : String),
+    VE.Commands.declared se = Bool.true →
+      VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+        D.E = se.ne.rv.environment →
+          D.scope = sc →
+            D.regulated = se.ne.regulated →
+              VE.SpeechActs.scopeOk D = Bool.true →
+                VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
+  -- expr 2284583582
+theorem VE.Commands.refusalOf_refused
+  ∀ (s : String) (p : VE.Commands.Parts) (pm : List (VE.Norms.Regulated × List VE.Commands.Fill))
+    (ms : List (String × List VE.Commands.Fill)) (gr : Except VE.Commands.GuardFault VE.Formula),
+    (∀ (r : VE.Commands.Reading), VE.Commands.refusalOf s p pm ms gr ≠ VE.Commands.Outcome.one r) ∧
+      ∀ (rs : List VE.Commands.Reading), VE.Commands.refusalOf s p pm ms gr ≠ VE.Commands.Outcome.many rs
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.refusalOf@VE.Commands.Read VE.Formula@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1083155752
+theorem VE.Commands.tuples_typed
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope),
+    (∀ (c srt : String), (c, srt) ∈ se.ne.rv.vocabulary.constants → se.ne.rv.environment.constants c = Option.some srt) →
+      ∀ (ss : List String) {fs : List VE.Commands.Fill},
+        fs ∈ VE.Commands.tuples (List.map (VE.Commands.slotFills se sc) ss) →
+          VE.SpeechActs.constsTyped se.ne.rv.environment (List.map (fun x => x.const) fs) ss = Bool.true
+  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read VE.Environment.constants@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.constsTyped@VE.SpeechActs.Tree
+  -- expr 3987018052
 theorem VE.Compose.Contract.Rewriter.Laws.fresh
   ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
     VE.Compose.Contract.Rewriter.Laws WF names r →

@@ -269,6 +269,13 @@ def readCommand (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lexicon) (b
         | [] => refusalOf s p pm ms gr
         | rs => manyOf rs
 
+/-- What a read command's typing needs of an environment: each regulated predicate is declared with its sorts and is
+the one of its name, and each listed constant has its sort. -/
+def declared (se : SpeechEnvironment) : Bool :=
+  se.ne.regulated.all (fun g => se.ne.rv.environment.predicates g.name == some g.sorts &&
+    se.ne.regulated.find? (·.name == g.name) == some g) &&
+  se.ne.rv.vocabulary.constants.all fun (c, srt) => se.ne.rv.environment.constants c == some srt
+
 /-- Local command codes first; english-lean owns the condition's codes. -/
 def Texts.classOf (code : String) : Option String :=
   (Texts.codeClasses.lookup code).orElse fun _ => VE.EnglishGrammar.Run.codeClasses.lookup code
@@ -285,11 +292,34 @@ theorem mem_dedup {α : Type} [BEq α] [LawfulBEq α] : ∀ (n : Nat) (l : List 
       mem_dedup n _ (by simp at h; omega), List.mem_filter]
     by_cases hx : a = x <;> simp [hx]
 
+theorem dedup_sub {α : Type} [BEq α] : ∀ (n : Nat) (l : List α), l.length ≤ n → ∀ a, a ∈ l.eraseDups → a ∈ l
+  | _, [], _, _, h => by simp at h
+  | 0, _ :: _, h, _, _ => by simp at h
+  | n + 1, x :: xs, h, a, hm => by
+    have hf := List.length_filter_le (fun b => !b == x) xs
+    rw [List.eraseDups_cons, List.mem_cons] at hm
+    rcases hm with rfl | hm
+    · simp
+    · exact List.mem_cons_of_mem _ (List.mem_filter.mp (dedup_sub n _ (by simp at h; omega) a hm)).1
+
 theorem parts_prefix {s : String} {p : Parts} (h : parts s = some p) : prefixRefusal s = none := by
   unfold parts at h
   cases hp : prefixRefusal s with
   | none => rfl
   | some x => simp [hp] at h
+
+theorem mem_mapM {α β ε : Type} {f : α → Except ε β} : ∀ {l : List α} {t : List β},
+    l.mapM f = .ok t → ∀ y ∈ t, ∃ x ∈ l, f x = .ok y
+  | [], t, h, y, hy => by cases h; cases hy
+  | x :: l, t, h, y, hy => by
+    simp only [List.mapM_cons] at h
+    obtain ⟨z, hz, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨ys, hys, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    rcases List.mem_cons.mp hy with rfl | hy
+    · exact ⟨x, List.mem_cons_self, hz⟩
+    · obtain ⟨w, hw, hf⟩ := mem_mapM hys y hy
+      exact ⟨w, List.mem_cons_of_mem _ hw, hf⟩
 
 theorem mem_firstMatch : ∀ (l : List (VE.Norms.Regulated × List Fill)) (acc : List (String × List Fill))
     {a : String} {fs : List Fill},
@@ -330,6 +360,36 @@ theorem mem_phraseMatches {se : SpeechEnvironment} {sc : Scope} {body : String} 
       obtain ⟨rfl, rfl⟩ := h
       exact ⟨hg.1, hg.2, hfs, t, ht, by simpa using he⟩
     · simp [ht, he] at h
+
+theorem mem_slotFills {se : SpeechEnvironment} {sc : Scope} {srt : String} {f : Fill} (h : f ∈ slotFills se sc srt) :
+    (f.const, srt) ∈ se.ne.rv.vocabulary.constants ∧ (f.words = f.const ∨ (f.words, f.const) ∈ sc.definites) := by
+  obtain ⟨⟨c, s0⟩, hc, hf⟩ := List.mem_flatMap.mp h
+  have hc := List.mem_filter.mp hc
+  have hs : s0 = srt := by simpa using hc.2
+  subst hs
+  change f ∈ ⟨c, c⟩ :: _ at hf
+  rcases List.mem_cons.mp hf with rfl | hf
+  · exact ⟨hc.1, .inl rfl⟩
+  · obtain ⟨⟨p, c'⟩, hp, rfl⟩ := List.mem_map.mp hf
+    have hp := List.mem_filter.mp hp
+    have hc' : c' = c := by simpa using hp.2
+    subst hc'
+    exact ⟨hc.1, .inr hp.1⟩
+
+theorem decodeClosedField_check {T : VE.Environment} {j : Lean.Json} {φ : VE.Formula}
+    (h : decodeClosedField T j = .ok φ) : φ.check T [] = true := by
+  unfold decodeClosedField at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  unfold VE.Route.Wire.decodeClosed at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨a, _, h⟩ := VE.Kit.Except.bind_ok h
+  simp only [Bool.false_and, Bool.false_eq_true, ↓reduceIte, pure, Except.pure, bind, Except.bind] at h
+  split at h
+  · cases h
+    rename_i hc
+    simpa using hc
+  · cases h
 
 section Statements
 
@@ -503,6 +563,96 @@ theorem candidate_reads_back (r : Reading) (hr : r ∈ candidates se sc E L b s)
     | some a' =>
       simp only [hact, Option.bind_some, Option.getD_some] at hv ht
       exact ⟨p, g', a', t, rfl, rfl, hreg, hn, hrole, hact, hv, ht, hf⟩
+
+/-- A guard of a condition is closed and typed: `decodeClosedField` checked it. -/
+theorem outcome_checked {c : String} {o : TranslateOutcome} {g : VE.Formula}
+    (h : g ∈ guardList (guardOfOutcome se E L c o)) : g.check se.ne.rv.environment [] = true := by
+  cases o with
+  | readings rs complete =>
+    simp only [guardOfOutcome] at h
+    split at h
+    · cases h
+    split at h
+    · cases h
+    split at h
+    · cases h
+    rename_i ys hy
+    have hm : ∀ x ∈ ys.eraseDups, x.check se.ne.rv.environment [] = true := fun x hx => by
+      obtain ⟨_, _, hd⟩ := mem_mapM hy x (dedup_sub _ _ (Nat.le_refl _) x hx)
+      exact decodeClosedField_check hd
+    cases he : ys.eraseDups with
+    | nil => simp [he, unreadOf, guardList] at h
+    | cons x xs =>
+      rw [he] at hm
+      cases xs with
+      | nil =>
+        simp only [he, guardList, List.mem_singleton] at h
+        rw [h]
+        exact hm x (by simp)
+      | cons y zs => exact hm g (by simpa [he, guardList] using h)
+  | invalidGrammar _ | lexical _ | notOneSentence => simp [guardOfOutcome, unreadOf, guardList] at h
+  | budget => simp [guardOfOutcome, guardList] at h
+
+/-- Every fill of a tuple has its slot's sort. -/
+theorem tuples_typed (hc : ∀ c srt, (c, srt) ∈ se.ne.rv.vocabulary.constants →
+    se.ne.rv.environment.constants c = some srt) : ∀ (ss : List String) {fs : List Fill},
+    fs ∈ tuples (ss.map (slotFills se sc)) →
+    VE.SpeechActs.constsTyped se.ne.rv.environment (fs.map (·.const)) ss = true
+  | [], fs, h => by simp [tuples] at h; simp [h, VE.SpeechActs.constsTyped]
+  | srt :: ss, fs, h => by
+    simp only [List.map_cons, tuples, List.mem_flatMap, List.mem_map] at h
+    obtain ⟨x, hx, ys, hys, rfl⟩ := h
+    simp [VE.SpeechActs.constsTyped, hc _ _ (mem_slotFills hx).1, tuples_typed hc ss hys]
+
+/-- A read command passes the semantic core's own check, given the `declared` facts of its environment. ci-1b proves
+those facts of a decoded `JsonWF` environment, which is the spec's `readCommand_typed`. -/
+theorem readCommand_typed_of_facts (r : Reading) (D : VE.SpeechActs.SpeechDoc) (u : String)
+    (hf : declared se = true) (h : readCommand se sc E L b s = .one r)
+    (hE : D.E = se.ne.rv.environment) (hS : D.scope = sc) (hR : D.regulated = se.ne.regulated)
+    (hk : VE.SpeechActs.scopeOk D = true) :
+    VE.SpeechActs.commandOk D (r.command u) = true := by
+  simp only [declared, Bool.and_eq_true, List.all_eq_true, beq_iff_eq] at hf
+  obtain ⟨hreg, hcon⟩ := hf
+  obtain ⟨_, hc, ha⟩ := (readCommand_one_iff se sc E L b s r).mp h
+  have hr : r ∈ candidates se sc E L b s := (mem_dedup _ _ (Nat.le_refl _) r).mp (by simp [hc])
+  unfold candidates at hr
+  cases hp : parts s with
+  | none => simp [hp] at hr
+  | some p =>
+    simp only [hp, readingsOf, List.mem_flatMap, List.mem_map] at hr
+    obtain ⟨⟨a, fs⟩, hm, g, hg, rfl⟩ := hr
+    obtain ⟨g0, hgm, rfl, hrole⟩ := mem_ofForce (by simpa only [actMatches, hp] using hm)
+    obtain ⟨hmem, _, ht, _⟩ := mem_phraseMatches hgm
+    have hguard : g.check se.ne.rv.environment [] = true := by
+      cases hms : actMatches se sc s with
+      | nil => simp [hms] at hm
+      | cons x xs =>
+        rw [hms] at hg
+        unfold conditionOf at hg
+        split at hg
+        · exact outcome_checked se E L hg
+        · have : g = .top := by simpa [guardList] using hg
+          rw [this]; rfl
+    have hfind := (hreg g0 hmem).2
+    simp only [addressed, hfind] at ha
+    cases hadr : sc.addressee with
+    | none => simp [hadr] at ha
+    | some x =>
+      obtain ⟨srt, you⟩ := x
+      simp only [hadr, beq_iff_eq] at ha
+      cases hs : g0.sorts with
+      | nil => simp [hs] at ha
+      | cons s0 rest =>
+        have h0 : s0 = srt := by simpa [hs] using ha
+        subst h0
+        have hyou : D.E.constants you = some s0 := by
+          simp only [VE.SpeechActs.scopeOk, hS, hadr, Bool.and_eq_true, beq_iff_eq] at hk
+          exact hk.1.1.1.2.2
+        have htyped := tuples_typed se sc (fun c srt hm => hcon _ hm) rest (fs := fs) (by simpa [hs] using ht)
+        simp only [VE.SpeechActs.commandOk, VE.SpeechActs.regOf, hR, Reading.command, hfind, hS, hadr]
+        subst hS
+        simp [hE ▸ hyou, hE, (hreg g0 hmem).1, hs, hguard, htyped, VE.SpeechActs.constsTyped, hrole]
+        cases p.force <;> simp [roleOf]
 
 end Statements
 
