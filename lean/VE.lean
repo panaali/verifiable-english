@@ -126,6 +126,11 @@ import VE.Discourse.Run
 import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Discourse.Positions
+import VE.Discourse.PositionsExamples
+import VE.RightClauses.Tree
+import VE.RightClauses.Plain
+import VE.RightClauses.Examples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
@@ -140,6 +145,7 @@ import VE.Calc.UnitsExamples
 import VE.Calc.Wire
 import VE.Calc.Run
 import VE.Calc.RunExamples
+import VE.Calc.Ties
 import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
@@ -154,6 +160,8 @@ import VE.Calc.WorkExamples
 import VE.Calc.LowerExamples
 import VE.Calc.Data
 import VE.Calc.TableExamples
+import VE.Calc.Stats
+import VE.Calc.StatsExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -224,6 +232,8 @@ import VE.Acts.ElaborateExamples
 import VE.Acts.Wire
 import VE.Acts.Decode
 import VE.Acts.DecodeExamples
+import VE.Acts.Faithful
+import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
@@ -292,3 +302,5 @@ import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Defaults.Zone
+import VE.Defaults.ZoneExamples

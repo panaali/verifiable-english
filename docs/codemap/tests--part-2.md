@@ -7,6 +7,7 @@
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
 - `tests/test_calc_service.py` — The `calc` service mode (math-evidence ME-2, me-2b): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, and the m…
+- `tests/test_calc_stats.py` — ME-7: exact statistics (math-evidence spec 7; fixtures V-6, V-6r and S-5 of 13.2 and 13.3).
 - `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
 - `tests/test_calendar_regression_w6b.py` — Independent Art.
 - `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
@@ -88,4 +89,3 @@
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
 - `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
-- `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.

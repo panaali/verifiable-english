@@ -1,0 +1,34 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "body-true",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); True breaks applyEffect_typed (Theorems.lean:2214) and fails the refusing typing #guard (Examples.lean:1243: the rule with p(x1) would be typed)"
+    },
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "body-false",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); False breaks applyEffect_typed (Theorems.lean:2214) and fails both typing #guards (Examples.lean:1237, 1243: the typed rule pRule would not be typed)"
+    },
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "and-or",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); a disjunction breaks applyEffect_typed (Theorems.lean:2214) and fails the refusing typing #guard (Examples.lean:1243: a rule whose guard alone types would be typed)"
+    },
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "eq-le",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); b <= true holds of every Bool, which breaks applyEffect_typed (Theorems.lean:2214) and fails the refusing typing #guard (Examples.lean:1243: the ill-typed new guard or carve-out p(x1) would type)"
+    },
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "eq-ne",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); a negated conjunct breaks applyEffect_typed (Theorems.lean:2214) and fails both typing #guards (Examples.lean:1237, 1243)"
+    },
+    {
+      "definition": "VE.Scope.Typed",
+      "operator": "bool-flip",
+      "reason": "Typed is a Prop no check can evaluate (a Decidable instance reads through it); = false breaks applyEffect_typed (Theorems.lean:2214) and fails both typing #guards (Examples.lean:1237, 1243)"
+    }
+  ]
+}
