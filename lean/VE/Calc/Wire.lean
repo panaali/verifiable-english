@@ -300,10 +300,11 @@ def recordJson (path : String) (j : Json) (fields : List (String × Json)) : Exc
   pure (Json.mkObj (fields ++ support ++ span))
 
 /-- 11.2's rules for a value's words, after W6's (`VE.Time.Wire.displayString`): they begin with "the" and not with
-a phrase word (`ValueWordsForm`, naming the phrase word, else the first word), and contain no reserved word
-(`ReservedWord`). -/
+a phrase word (`ValueWordsForm`, naming the phrase word, else the first word; "the" alone has its own text), and
+contain no reserved word (`ReservedWord`). -/
 def checkWords (name w : String) : Except String Unit := do
   VE.Time.Wire.displayString w false "Verbalisation"
+  if w == "the" then throw s!"ValueWordsForm: the words of {name} must not be \"the\" alone"
   let first := ((English.leadingPhrase w).getD ((w.splitOn " ").headD ""))
   unless w.startsWith "the " && (English.leadingPhrase w).isNone do
     throw s!"ValueWordsForm: the words of {name} must begin with \"the\" and not with \"{first}\""

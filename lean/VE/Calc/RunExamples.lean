@@ -950,14 +950,14 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
     "the sum", "the product", "the square", "the cube", "the half", "the twice-told tale", "the x divided",
     "the x to the", "the x times ten", "the x when", "the band", "the isle", "the bequest", "the equalsign",
     "the theory", "the the", "the x-and-y", "the X", "the café", s!"the {ones 252}", "the sum offset",
-    "the square often"].all fun w =>
+    "the square often", "the Andes", "the Summit"].all fun w =>
   says (wx w) == ["c1 holds"] && meaning (wx w) == meaning (req x1 ok1)
 #guard expect [
   -- ValueWordsForm: "the" first, and no phrase word first (naming the phrase word, else the first word)
   ("no-the", says (wx "baseline"), form "baseline"),
   ("the-glued", says (wx "theory"), form "theory"),
   ("capital-the", says (wx "The x"), form "The"),
-  ("the-alone", says (wx "the"), form "the"),
+  ("the-alone", says (wx "the"), [r#"ValueWordsForm: the words of x must not be "the" alone"#]),
   ("sum", says (wx "the sum of the a"), form "the sum of"),
   ("product", says (wx "the product of the a"), form "the product of"),
   ("square", says (wx "the square of the a"), form "the square of"),
@@ -965,6 +965,9 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
   ("twice", says (wx "twice the a"), form "twice"),
   ("half", says (wx "half of the a"), form "half of"),
   ("the-phrase-alone", says (wx "the sum of"), form "the sum of"),
+  -- reserved and phrase words match whatever their capital letters, quoted as the writer wrote them
+  ("capital-phrase", says (wx "the Sum of x"), form "the Sum of"),
+  ("capital-twice", says (wx "Twice the x"), form "Twice"),
   ("form-first", says (wx "baseline and rate"), form "baseline"),
   -- ReservedWord: each reserved word as whole words, at the end and in the middle; the first in 11.2's order
   ("and", says (wx "the x and y"), reserved "and"),
@@ -978,6 +981,8 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
   ("when rounded", says (wx "the x when rounded"), reserved "when rounded"),
   ("through", says (wx "the x through y"), reserved "through"),
   ("first-in-order", says (wx "the x is y and z"), reserved "and"),
+  ("capital-and", says (wx "the x And y"), reserved "And"),
+  ("capital-minus", says (wx "the x MINUS y"), reserved "MINUS"),
   -- W6's verbalisation rule, first: nonempty, at most 256 characters, whitespace-normalised
   ("empty", says (wx ""), ["Verbalisation must be nonempty"]),
   ("long", says (wx s!"the {ones 253}"), ["ResourceLimit: Verbalisation exceeds 256 characters"]),
