@@ -1,7 +1,7 @@
 import VE.Numbers.Round
 
 /-! Exact statistics (math-evidence spec 7, ME-7): the mean, the sample and population variances, a square root
-rounded by squared bounds, the exact sign-flip p value, the binomial tail and Cohen's kappa. Each statistic of a list
+rounded by squared bounds, the exact sign-flip p value, the Stats.binomial tail and Cohen's kappa. Each statistic of a list
 is undefined outside its domain (statement review J5); `signFlipC` charges the 2ⁿ sign vectors against a limit. -/
 
 namespace VE.Calc
@@ -47,7 +47,7 @@ def SqrtRoundsTo (r : Rounding) (p : Printed) (v : Rat) : Prop :=
 instance (r : Rounding) (p : Printed) (v : Rat) : Decidable (SqrtRoundsTo r p v) := by
   unfold SqrtRoundsTo; cases r <;> exact inferInstance
 
-private theorem sq_le_sq {a b : Rat} (ha : 0 ≤ a) (hb : 0 ≤ b) : a * a ≤ b * b ↔ a ≤ b := by
+theorem Stats.sq_le_sq {a b : Rat} (ha : 0 ≤ a) (hb : 0 ≤ b) : a * a ≤ b * b ↔ a ≤ b := by
   constructor
   · intro h
     apply Classical.byContradiction; intro hn
@@ -57,34 +57,34 @@ private theorem sq_le_sq {a b : Rat} (ha : 0 ≤ a) (hb : 0 ≤ b) : a * a ≤ b
     have := Rat.mul_nonneg (show 0 ≤ b - a by grind) (show 0 ≤ b + a by grind)
     grind
 
-private theorem sq_lt_sq {a b : Rat} (ha : 0 ≤ a) (hb : 0 ≤ b) : a * a < b * b ↔ a < b := by
-  have h1 := sq_le_sq hb ha
+theorem Stats.sq_lt_sq {a b : Rat} (ha : 0 ≤ a) (hb : 0 ≤ b) : a * a < b * b ↔ a < b := by
+  have h1 := Stats.sq_le_sq hb ha
   constructor
   · intro h; apply Classical.byContradiction; intro hn; grind
   · intro h; apply Classical.byContradiction; intro hn; grind
 
 /-- Over a root `s ≥ 0` of `v`, each squared bound is the comparison with `s`. -/
-private theorem root_iff {s v : Rat} (hs : 0 ≤ s) (hv : s * s = v) (c : Rat) :
+theorem Stats.root_iff {s v : Rat} (hs : 0 ≤ s) (hv : s * s = v) (c : Rat) :
     (rootGe v c ↔ c ≤ s) ∧ (rootGt v c ↔ c < s) ∧ (rootLe v c ↔ s ≤ c) ∧ (rootLt v c ↔ s < c) ∧
       (rootEq v c ↔ c = s) := by
   subst hv
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · by_cases hc : c ≤ 0 <;> simp only [rootGe, hc, true_or, false_or] <;> grind [sq_le_sq]
-  · by_cases hc : c < 0 <;> simp only [rootGt, hc, true_or, false_or] <;> grind [sq_lt_sq]
-  · by_cases hc : 0 ≤ c <;> simp only [rootLe, hc, true_and, false_and] <;> grind [sq_le_sq]
-  · by_cases hc : 0 < c <;> simp only [rootLt, hc, true_and, false_and] <;> grind [sq_lt_sq]
+  · by_cases hc : c ≤ 0 <;> simp only [rootGe, hc, true_or, false_or] <;> grind [Stats.sq_le_sq]
+  · by_cases hc : c < 0 <;> simp only [rootGt, hc, true_or, false_or] <;> grind [Stats.sq_lt_sq]
+  · by_cases hc : 0 ≤ c <;> simp only [rootLe, hc, true_and, false_and] <;> grind [Stats.sq_le_sq]
+  · by_cases hc : 0 < c <;> simp only [rootLt, hc, true_and, false_and] <;> grind [Stats.sq_lt_sq]
   · by_cases hc : 0 ≤ c <;> simp only [rootEq, hc, true_and, false_and]
     · constructor
-      · intro h; have := (sq_le_sq hc hs).mp (by grind); have := (sq_le_sq hs hc).mp (by grind); grind
+      · intro h; have := (Stats.sq_le_sq hc hs).mp (by grind); have := (Stats.sq_le_sq hs hc).mp (by grind); grind
       · intro h; subst h; rfl
     · grind
 
-private theorem div_le_iff' {a s w : Rat} (hw : 0 < w) : a / w ≤ s ↔ a ≤ s * w := by
+theorem Stats.div_le_iff' {a s w : Rat} (hw : 0 < w) : a / w ≤ s ↔ a ≤ s * w := by
   have := Rat.lt_div_iff (b := a) (a := s) hw; grind
-private theorem le_div_iff' {a s w : Rat} (hw : 0 < w) : s ≤ a / w ↔ s * w ≤ a := by
+theorem Stats.le_div_iff' {a s w : Rat} (hw : 0 < w) : s ≤ a / w ↔ s * w ≤ a := by
   have := Rat.div_lt_iff (a := a) (c := s) hw; grind
-private theorem div_eq_iff' {a s w : Rat} (hw : 0 < w) : a / w = s ↔ a = s * w := by
-  have := @div_le_iff' a s w hw; have := @le_div_iff' a s w hw; grind
+theorem Stats.div_eq_iff' {a s w : Rat} (hw : 0 < w) : a / w = s ↔ a = s * w := by
+  have := @Stats.div_le_iff' a s w hw; have := @Stats.le_div_iff' a s w hw; grind
 
 /-- Agreement with rounding the root whenever the root is rational. -/
 theorem sqrtRoundsTo_of_square (r : Rounding) (p : Printed) (s v : Rat) (hs : 0 ≤ s) (hv : s * s = v) :
@@ -92,11 +92,11 @@ theorem sqrtRoundsTo_of_square (r : Rounding) (p : Printed) (s v : Rat) (hs : 0 
   have hu := tenPow_pos p.places
   have h2u : 0 < 2 * tenPow p.places := by grind
   have hv0 : 0 ≤ v := hv ▸ Rat.mul_nonneg hs hs
-  have R := root_iff hs hv
+  have R := Stats.root_iff hs hv
   cases r <;>
     simp only [SqrtRoundsTo, RoundsTo, hv0, true_and, (R _).1, (R _).2.1, (R _).2.2.1, (R _).2.2.2.1,
-      (R _).2.2.2.2, div_le_iff' hu, div_le_iff' h2u, Rat.div_lt_iff hu, Rat.div_lt_iff h2u, le_div_iff' hu,
-      Rat.lt_div_iff hu, Rat.lt_div_iff h2u, div_eq_iff' h2u] <;> grind
+      (R _).2.2.2.2, Stats.div_le_iff' hu, Stats.div_le_iff' h2u, Rat.div_lt_iff hu, Rat.div_lt_iff h2u, Stats.le_div_iff' hu,
+      Rat.lt_div_iff hu, Rat.lt_div_iff h2u, Stats.div_eq_iff' h2u] <;> grind
 
 def signs : Nat → List (List Int)
   | 0 => [[]]
@@ -165,45 +165,45 @@ def choose : Nat → Nat → Nat
 
 theorem choose_succ_succ (n k : Nat) : choose (n + 1) (k + 1) = choose n k + choose n (k + 1) := rfl
 
-/-- P(X ≥ k) for X binomial with n trials and success probability p. -/
+/-- P(X ≥ k) for X Stats.binomial with n trials and success probability p. -/
 def binomialTail (n k : Nat) (p : Rat) : Rat :=
   ((List.range (n + 1)).filter (k ≤ ·)).foldl
     (fun acc i => acc + (choose n i : Rat) * p ^ i * (1 - p) ^ (n - i)) 0
 
-private theorem choose_eq_zero : ∀ {n k : Nat}, n < k → choose n k = 0
+theorem Stats.choose_eq_zero : ∀ {n k : Nat}, n < k → choose n k = 0
   | 0, _ + 1, _ => rfl
   | n + 1, k + 1, h => by
-      rw [choose_succ_succ, choose_eq_zero (by omega : n < k), choose_eq_zero (by omega : n < k + 1)]
+      rw [choose_succ_succ, Stats.choose_eq_zero (by omega : n < k), Stats.choose_eq_zero (by omega : n < k + 1)]
 
-private theorem foldl_add (g : Nat → Rat) (l : List Nat) (c : Rat) :
+theorem Stats.foldl_add (g : Nat → Rat) (l : List Nat) (c : Rat) :
     l.foldl (fun acc i => acc + g i) c = c + (l.map g).sum := by
   induction l generalizing c with
   | nil => simp only [List.foldl_nil, List.map_nil, List.sum_nil]; grind
   | cons i l ih => simp only [List.foldl_cons, ih, List.map_cons, List.sum_cons]; grind
 
-private theorem sum_map_add (f g : Nat → Rat) (l : List Nat) :
+theorem Stats.sum_map_add (f g : Nat → Rat) (l : List Nat) :
     (l.map fun i => f i + g i).sum = (l.map f).sum + (l.map g).sum := by
   induction l with
   | nil => simp only [List.map_nil, List.sum_nil]; grind
   | cons i l ih => simp only [List.map_cons, List.sum_cons, ih]; grind
 
-private theorem sum_map_mul (a : Rat) (f : Nat → Rat) (l : List Nat) :
+theorem Stats.sum_map_mul (a : Rat) (f : Nat → Rat) (l : List Nat) :
     (l.map fun i => a * f i).sum = a * (l.map f).sum := by
   induction l with
   | nil => simp
   | cons i l ih => simp only [List.map_cons, List.sum_cons, ih]; grind
 
-private theorem sum_append (l l' : List Rat) : (l ++ l').sum = l.sum + l'.sum := by
+theorem Stats.sum_append (l l' : List Rat) : (l ++ l').sum = l.sum + l'.sum := by
   induction l with
   | nil => simp only [List.nil_append, List.sum_nil]; grind
   | cons x l ih => simp only [List.cons_append, List.sum_cons, ih]; grind
 
-private theorem sum_congr {f g : Nat → Rat} {l : List Nat} (h : ∀ i ∈ l, f i = g i) :
+theorem Stats.sum_congr {f g : Nat → Rat} {l : List Nat} (h : ∀ i ∈ l, f i = g i) :
     (l.map f).sum = (l.map g).sum := by
   rw [List.map_congr_left h]
 
-/-- The binomial theorem over `choose`. -/
-private theorem binomial (a b : Rat) (n : Nat) :
+/-- The Stats.binomial theorem over `choose`. -/
+theorem Stats.binomial (a b : Rat) (n : Nat) :
     ((List.range (n + 1)).map fun i => (choose n i : Rat) * a ^ i * b ^ (n - i)).sum = (a + b) ^ n := by
   induction n with
   | zero => simp [choose]; grind
@@ -216,31 +216,31 @@ private theorem binomial (a b : Rat) (n : Nat) :
         simp only [Function.comp, Nat.succ_eq_add_one, choose_succ_succ, Rat.natCast_add, Nat.add_sub_add_right,
           Rat.pow_succ]
         grind
-      rw [sum_congr hs, sum_map_add, sum_map_mul, ih]
+      rw [Stats.sum_congr hs, Stats.sum_map_add, Stats.sum_map_mul, ih]
       -- b · Σ C(n, i) aⁱ bⁿ⁻ⁱ, split at i = 0, is bⁿ⁺¹ plus the shifted sum without its last term C(n, n + 1) = 0.
       have hb : b * (a + b) ^ n = b ^ (n + 1) +
           ((List.range n).map fun i => (choose n (i + 1) : Rat) * a ^ (i + 1) * b ^ (n - i)).sum := by
-        rw [← ih, ← sum_map_mul, List.range_succ_eq_map, List.map_cons, List.sum_cons, List.map_map]
+        rw [← ih, ← Stats.sum_map_mul, List.range_succ_eq_map, List.map_cons, List.sum_cons, List.map_map]
         have ht : ∀ i ∈ List.range n, ((fun i => b * ((choose n i : Rat) * a ^ i * b ^ (n - i))) ∘ Nat.succ) i =
             (choose n (i + 1) : Rat) * a ^ (i + 1) * b ^ (n - i) := by
           intro i hi
           have : n - i = n - (i + 1) + 1 := by simp at hi; omega
           simp only [Function.comp, Nat.succ_eq_add_one, this, Rat.pow_succ]
           grind
-        rw [sum_congr ht]
+        rw [Stats.sum_congr ht]
         simp [choose, Rat.pow_succ]
         grind
-      rw [List.range_succ, List.map_append, sum_append]
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, choose_eq_zero (Nat.lt_succ_self n),
+      rw [List.range_succ, List.map_append, Stats.sum_append]
+      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Stats.choose_eq_zero (Nat.lt_succ_self n),
         Nat.sub_zero, Rat.pow_zero, Rat.pow_succ (a + b)]
       simp only [choose]
       grind
 
 theorem binomialTail_zero (n : Nat) (p : Rat) : binomialTail n 0 p = (p + (1 - p)) ^ n := by
-  rw [binomialTail, foldl_add, ← binomial]
+  rw [binomialTail, Stats.foldl_add, ← Stats.binomial]
   rw [List.filter_eq_self.mpr (by simp)]; grind
 
-private theorem sum_filter_le (g : Nat → Rat) (P : Nat → Bool) (l : List Nat) (hg : ∀ i ∈ l, 0 ≤ g i) :
+theorem Stats.sum_filter_le (g : Nat → Rat) (P : Nat → Bool) (l : List Nat) (hg : ∀ i ∈ l, 0 ≤ g i) :
     0 ≤ ((l.filter P).map g).sum ∧ ((l.filter P).map g).sum ≤ (l.map g).sum := by
   induction l with
   | nil => simp only [List.filter_nil, List.map_nil, List.sum_nil]; grind
@@ -249,17 +249,17 @@ private theorem sum_filter_le (g : Nat → Rat) (P : Nat → Bool) (l : List Nat
       have ih := ih fun j hj => hg j (by simp [hj])
       cases h : P i <;> simp [h] <;> grind
 
-/-- On its domain a binomial tail is a probability. -/
+/-- On its domain a Stats.binomial tail is a probability. -/
 theorem binomialTail_unit (n k : Nat) (p : Rat) (h0 : 0 ≤ p) (h1 : p ≤ 1) :
     0 ≤ binomialTail n k p ∧ binomialTail n k p ≤ 1 := by
   have one : ∀ m : Nat, (1 : Rat) ^ m = 1 := fun m => by
     induction m with
     | zero => exact Rat.pow_zero 1
     | succ m ih => rw [Rat.pow_succ, ih]; grind
-  have hall := binomial p (1 - p) n
+  have hall := Stats.binomial p (1 - p) n
   rw [show p + (1 - p) = 1 by grind, one] at hall
-  rw [binomialTail, foldl_add]
-  have := sum_filter_le (fun i => (choose n i : Rat) * p ^ i * (1 - p) ^ (n - i)) (k ≤ ·) (List.range (n + 1))
+  rw [binomialTail, Stats.foldl_add]
+  have := Stats.sum_filter_le (fun i => (choose n i : Rat) * p ^ i * (1 - p) ^ (n - i)) (k ≤ ·) (List.range (n + 1))
     fun i _ => Rat.mul_nonneg (Rat.mul_nonneg Rat.natCast_nonneg (Rat.pow_nonneg h0)) (Rat.pow_nonneg (by grind))
   grind
 
