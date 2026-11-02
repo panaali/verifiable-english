@@ -322,13 +322,10 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
     except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
         raise cardinality.unbound("its row") from exc
     ids = cardinality.identities(meta["environment"])
-    cardinality.bind_units(ids, row["units"], declared)
-    source, graph, report = row["source"].encode("utf-8"), meta.get("graph"), row.get("cardinality")
-    if (row["source_id"] != source_id(source, ids) or row["document_id"] != _document_id(meta, source, fences)
-            or (report is not None) != (admitted and graph is not None)):
-        raise cardinality.unbound("its identities or report")
-    if report is not None:
-        cardinality.bind_report(ids, graph, report)
+    cardinality.bind_document(ids, row, declared, meta.get("graph"), admitted)
+    source = row["source"].encode("utf-8")
+    if row["source_id"] != source_id(source, ids) or row["document_id"] != _document_id(meta, source, fences):
+        raise cardinality.unbound("its identities")
     units = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"], "support": u["support"],
               "source": source[u["span"][0]:u["span"][1]].decode("utf-8"), "content": u.get("content"),
               "meaning_id": u.get("meaning_id"), "status": u["status"],
@@ -337,7 +334,7 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
             "document_id": row["document_id"], "directory": path.parent, "units": units, "norms": None,
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
             "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
-            "cardinality": report, "lean": {"coverage": row["coverage"], "admitted": admitted}}
+            "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
 # The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
