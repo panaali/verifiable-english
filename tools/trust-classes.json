@@ -984,7 +984,8 @@
         "ResponseShape.Skeletons.searchBudget",
         "ResponseShape.Skeletons.skelTerm",
         "ResponseShape.Skeletons.softNorms",
-        "ResponseShape.Skeletons.speechActs"
+        "ResponseShape.Skeletons.speechActs",
+        "ResponseShape.Skeletons.judgmentLine"
       ],
       "G[R]": [
         "ResponseShape.Skeletons.calc",
@@ -4384,7 +4385,8 @@
         "VE.EnglishGrammar.Run.rejectionText",
         "VE.EnglishGrammar.Run.riskEveryCannotText",
         "VE.EnglishGrammar.Run.statusCodes",
-        "VE.EnglishGrammar.Run.unsentencedCodes"
+        "VE.EnglishGrammar.Run.unsentencedCodes",
+        "VE.EnglishGrammar.Run.judgmentsField"
       ],
       "G[I]": [
         "VE.EnglishGrammar.Run.environmentId",
@@ -17434,6 +17436,86 @@
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
         "VE.RightClauses.Examples.verdict"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLines.lean": {
+      "S": [
+        "VE.EnglishGrammar.JudgmentLines.articled",
+        "VE.EnglishGrammar.JudgmentLines.slotNouns",
+        "VE.EnglishGrammar.JudgmentLines.atom",
+        "VE.EnglishGrammar.JudgmentLines.noDeciderTail",
+        "VE.EnglishGrammar.JudgmentLines.declarationLine",
+        "VE.EnglishGrammar.JudgmentLines.factorsLine",
+        "VE.EnglishGrammar.JudgmentLines.legendLines",
+        "VE.EnglishGrammar.JudgmentLines.statusLine"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.parseLine",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.parseLine_renders"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.renderingTo",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.renderingTo_renders"
+          ]
+        }
+      ],
+      "D[I]": [
+        "VE.EnglishGrammar.JudgmentLines.recordJson"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.JudgmentLines.lineCase",
+        "VE.EnglishGrammar.JudgmentLines.preds",
+        "VE.EnglishGrammar.JudgmentLines.definedNames",
+        "VE.EnglishGrammar.JudgmentLines.readingPreds",
+        "VE.EnglishGrammar.JudgmentLines.refusal"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.JudgmentLines.lineFault",
+        "VE.EnglishGrammar.JudgmentLines.atomParts",
+        "VE.EnglishGrammar.JudgmentLines.noVocabulary",
+        "VE.EnglishGrammar.JudgmentLines.maxLineChars",
+        "VE.EnglishGrammar.JudgmentLines.maxJudgments",
+        "VE.EnglishGrammar.JudgmentLines.wordAfter",
+        "VE.EnglishGrammar.JudgmentLines.refusalText"
+      ],
+      "G[I]": [
+        "VE.EnglishGrammar.JudgmentLines.runCaseReported"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLinesExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitrary",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governed",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfair",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighs",
+        "VE.EnglishGrammar.JudgmentLinesExamples.noWording",
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitraryLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governedLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfairLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighsLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.lineRequest",
+        "VE.EnglishGrammar.JudgmentLinesExamples.errorOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.longLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.spare",
+        "VE.EnglishGrammar.JudgmentLinesExamples.rowOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.text",
+        "VE.EnglishGrammar.JudgmentLinesExamples.quoted",
+        "VE.EnglishGrammar.JudgmentLinesExamples.pred",
+        "VE.EnglishGrammar.JudgmentLinesExamples.env",
+        "VE.EnglishGrammar.JudgmentLinesExamples.holds",
+        "VE.EnglishGrammar.JudgmentLinesExamples.firstNamed"
+      ]
+    },
+    "ResponseShape/Schemas/JudgmentLine.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.JudgmentLine.record",
+        "ResponseShape.Schemas.JudgmentLine.predicate",
+        "ResponseShape.Schemas.JudgmentLine.row",
+        "ResponseShape.Schemas.JudgmentLine.file"
       ]
     }
   }
