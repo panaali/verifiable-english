@@ -2940,6 +2940,7 @@
         "VE.Discourse.ComposeExamples.composed",
         "VE.Discourse.ComposeExamples.doc",
         "VE.Discourse.ComposeExamples.env",
+        "VE.Discourse.ComposeExamples.envCase",
         "VE.Discourse.ComposeExamples.front",
         "VE.Discourse.ComposeExamples.graph",
         "VE.Discourse.ComposeExamples.large",
