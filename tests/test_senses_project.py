@@ -3,6 +3,7 @@ projection and each candidate's (docs/spec/senses-PLAN.md 2.6, 2.7; fixtures i1,
 from __future__ import annotations
 
 import hashlib
+import json
 from copy import deepcopy
 
 import pytest
@@ -14,7 +15,8 @@ from ve.backends.lean import ROUTE_TIMEOUT
 from ve.backends.service_schema import Invalid, check_row
 from ve.english_grammar import actions_version, grammar_id
 from ve.environment import Environment
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
+from ve.senses import bundled_pack
 from ve.wire import canonical_json
 
 FUNNY = "The riddle is funny."
@@ -257,3 +259,77 @@ def test_i6_both_operations_are_lean_only():
         entry = operation(name)
         assert (entry["authority"], entry["target"], entry["python"]) == ("lean-only", "lean", [])
 
+
+
+# sn-b6b: `ve senses project` relays Lean's answer verbatim; i4: the review status of a one-pack request.
+def cli(tmp_path, capsys, command, env, pack: bytes, *extra):
+    from ve.__main__ import main
+    (tmp_path / "env.json").write_text(json.dumps(env.to_dict()))
+    (tmp_path / "pack.json").write_bytes(pack)
+    code = main(["senses", command, "--env", str(tmp_path / "env.json"), "--pack", str(tmp_path / "pack.json"),
+                 *extra])
+    return code, json.loads(capsys.readouterr().out)
+
+
+def test_senses_project_cli_relays_leans_answer(tmp_path, capsys):
+    """The CLI's answer is the relay's, member for member, with the operation and its assurance; a fault of the
+    lines is exit 3 with Lean's fault, a refused request exit 2 with Lean's text."""
+    env, _ = world()
+    (tmp_path / "lines.txt").write_text(LINE2)
+    code, out = cli(tmp_path, capsys, "project", env, PACK, "--used", "funny", "--lines", str(tmp_path / "lines.txt"))
+    assert code == 0 and out == {"operation": "senses.project", "assurance": operation("senses.project")["assurance"][
+        "current"], **route.project(env, [PACK], LINE2, ["funny"]), "review_status": {"fixtures@1": "unreviewed"}}
+    assert out["projection"]["environment"]["vocabulary"]["predicates"]["sense__funny_2"]["verbalisation"] \
+        == "{0} is funny"
+    (tmp_path / "lines.txt").write_text("In this document, funny means purple.")
+    code, out = cli(tmp_path, capsys, "project", env, PACK, "--used", "funny", "--lines", str(tmp_path / "lines.txt"))
+    assert code == 3 and out["projection"]["code"] == "UnknownGloss"
+    code, out = cli(tmp_path, capsys, "project", env, PACK, "--used", "giggle")
+    assert code == 2 and out == {"status": "InvalidInput",
+                                 "error": "InvalidInput: used word giggle is not a word of the dictionary"}
+
+
+def test_i4_a_changed_pack_is_unreviewed_and_reads_the_same(tmp_path, capsys):
+    """i4: a reviewed pack shows `reviewed` (Lean's dictionary_id is its pin); one changed byte of a description
+    gives `unreviewed` from `ve.senses.review_status`, and the reading's status and formulas are unchanged."""
+    from test_senses_packs import PACKS, senses_env
+    usecase, source, _ = PACKS["policies@1"]
+    env, _ = senses_env(usecase)
+    pack = bundled_pack("policies@1")
+    changed = pack.replace(b'"description": "', b'"description": "A', 1)
+    (tmp_path / "text.txt").write_text(source)
+    seen = []
+    for bytes_, status in ((pack, "reviewed"), (changed, "unreviewed")):
+        code, out = cli(tmp_path, capsys, "check", env, bytes_, str(tmp_path / "text.txt"))
+        assert out["review_status"] == {"policies@1": status}
+        seen.append((code, out["reading"]["status"], [u.get("formula") for u in out["reading"]["units"]]))
+        code, out = cli(tmp_path, capsys, "project", env, bytes_, "--used", "resides")
+        assert code == 0 and out["review_status"] == {"policies@1": status}
+    assert seen[0] == seen[1] and seen[0][1] == "one"
+
+
+def test_i5_a_service_killed_mid_request_is_unavailable(joke, monkeypatch):
+    """i5: the `ve_service` process killed during every attempt at a `senses.project` request is CheckerUnavailable
+    from the relay after its one retry, never an answer; so is the `ve_senses_route` runner killed mid-answer."""
+    import os
+    kills = []
+    write = lean_service.LeanService._write_all
+    def kill_then_write(service, line, deadline):
+        kills.append(service.pid)
+        os.kill(service.pid, 9)
+        return write(service, line, deadline)
+    with monkeypatch.context() as patch:
+        patch.setattr(lean_service.LeanService, "_write_all", kill_then_write)
+        with pytest.raises(CheckerUnavailable):
+            project(joke)
+    assert len(kills) == 2 and kills[0] != kills[1]
+    assert project(joke)["projection"]["status"] == "ok"
+    from ve.backends import lean as lean_backend
+    real = lean_backend.run_limited
+    def killed(*args, **kwargs):
+        answer = real(*args, **kwargs)
+        answer.returncode, answer.stdout = -9, answer.stdout[: len(answer.stdout) // 2]
+        return answer
+    monkeypatch.setattr(lean_backend, "run_limited", killed)
+    with pytest.raises(CheckerUnavailable):
+        read_in(joke, FUNNY)
