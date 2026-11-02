@@ -1674,9 +1674,9 @@
   },
   {
    "class": "S",
-   "lines": 142,
-   "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
+   "lines": 1,
+   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
   },
   {
@@ -1734,6 +1734,13 @@
    "reason": "qt-a3db: VE/Cardinality/Render.lean V +129 (the paraphrase renderer), VE/Cardinality/Run.lean V +6 (runCase's paraphrase case), VE/Cardinality/RenderTheorems.lean S +6 (Charges); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18",
    "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
+  },
+  {
+   "class": "S",
+   "lines": 142,
+   "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
+   "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
   }
  ]
 }
