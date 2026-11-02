@@ -1,6 +1,6 @@
 {
  "item": "jt-3p",
- "note": "Each mutant was applied to the committed file, the named #guards run (lake build VE.Judgments.Examples VE.EnglishGrammar.Examples), and the file restored from a saved copy (driver scripts outside the tree). For S1-S3 the proofs of matches_iff and undeclaredEvaluative_iff, and for S4 the proof of faultOf_none_iff, were replaced by sorry during the run, so the #guards and not only the proofs are shown to fail (without the stub the proofs fail first). Mechanical mutants of every new or changed trusted definition: trust-mutants.json (191 killed, 0 survivors, 12 allowed as ill-typed).",
+ "note": "Each mutant was applied to the committed file, the named #guards run (lake build VE.Judgments.Examples VE.EnglishGrammar.Examples), and the file restored from a saved copy (driver scripts outside the tree). For S1-S3 the proofs of matches_iff and undeclaredEvaluative_iff, and for S4 the proof of faultOf_none_iff, were replaced by sorry during the run, so the #guards and not only the proofs are shown to fail (without the stub the proofs fail first). Mechanical mutants of every new or changed trusted definition: trust-mutants.json (85 killed, 0 survivors, 6 allowed as ill-typed).",
  "mutants": [
   {
    "id": "S1",
@@ -9,7 +9,7 @@
    "definition": "VE.Judgments.EvaluativeRow.matches",
    "behaviour": "a phrase row matches only where the whole phrase is written (the DRI's seeded bug, jt-3a decision item 3)",
    "mutation": "`matches` reads the phrase's first word only: `ws.contains (row.word.headD \"\")`",
-   "test": "lean/VE/Judgments/Examples.lean:425, lean/VE/Judgments/Examples.lean:427, lean/VE/Judgments/Examples.lean:428 (good_conduct listed), lean/VE/EnglishGrammar/Examples.lean:212",
+   "test": "lean/VE/Judgments/Examples.lean:425, lean/VE/Judgments/Examples.lean:426, lean/VE/Judgments/Examples.lean:427 (good_conduct listed); the catalogue's row: lean/VE/EnglishGrammar/Examples.lean:212, lean/VE/EnglishGrammar/Examples.lean:227",
    "result": "fails"
   },
   {
@@ -19,7 +19,7 @@
    "definition": "VE.Judgments.EvaluativeRow.matches",
    "behaviour": "a row's other senses still exclude its word (jt-3a's seeded bug, kept)",
    "mutation": "`matches` is `hasPhrase row.word ws` (the otherSenses exclusion dropped)",
-   "test": "lean/VE/Judgments/Examples.lean:362, lean/VE/Judgments/Examples.lean:363, lean/VE/Judgments/Examples.lean:366, lean/VE/Judgments/Examples.lean:373, lean/VE/Judgments/Examples.lean:379, lean/VE/Judgments/Examples.lean:407, lean/VE/Judgments/Examples.lean:410, lean/VE/EnglishGrammar/Examples.lean:206, lean/VE/EnglishGrammar/Examples.lean:212",
+   "test": "lean/VE/Judgments/Examples.lean:361, lean/VE/Judgments/Examples.lean:362, lean/VE/Judgments/Examples.lean:365, lean/VE/Judgments/Examples.lean:372, lean/VE/Judgments/Examples.lean:378, lean/VE/Judgments/Examples.lean:406, lean/VE/Judgments/Examples.lean:409, lean/VE/EnglishGrammar/Examples.lean:206, lean/VE/EnglishGrammar/Examples.lean:212",
    "result": "fails"
   },
   {
@@ -29,7 +29,7 @@
    "definition": "VE.Judgments.EvaluativeRow.matches",
    "behaviour": "a phrase matches in its order only",
    "mutation": "`matches` checks each word of the phrase anywhere: `row.word.all (ws.contains ·)`",
-   "test": "lean/VE/Judgments/Examples.lean:425, lean/VE/Judgments/Examples.lean:427 (judgment_good listed), lean/VE/EnglishGrammar/Examples.lean:212",
+   "test": "lean/VE/Judgments/Examples.lean:425, lean/VE/Judgments/Examples.lean:426 (judgment_good listed), lean/VE/EnglishGrammar/Examples.lean:212, lean/VE/EnglishGrammar/Examples.lean:227",
    "result": "fails"
   },
   {
@@ -39,7 +39,7 @@
    "definition": "VE.Judgments.faultOf",
    "behaviour": "JudgmentDecider refuses the retired spelling unresolved_decider and admits unstated (the rename)",
    "mutation": "check 5 refuses `unstated` again (main's spelling)",
-   "test": "lean/VE/Judgments/Examples.lean:132 (J-η), lean/VE/Judgments/Examples.lean:134 (unstated admitted), and every admitted fixture using the default decider (lean/VE/Judgments/Examples.lean:118, 135, 137, 139)",
+   "test": "lean/VE/Judgments/Examples.lean:131 (J-η), lean/VE/Judgments/Examples.lean:133 (unstated admitted), and the admitted fixtures that use the default decider (lean/VE/Judgments/Examples.lean:117, 134, 136, 138)",
    "result": "fails"
   },
   {
@@ -49,7 +49,7 @@
    "definition": "VE.EnglishGrammar.evaluativeRows",
    "behaviour": "the catalogue has the \"good judgment\" row",
    "mutation": "the row `⟨[\"good\", \"judgment\"], []⟩` removed",
-   "test": "lean/VE/EnglishGrammar/Examples.lean:200, lean/VE/EnglishGrammar/Examples.lean:204, lean/VE/EnglishGrammar/Examples.lean:212, lean/VE/Judgments/Examples.lean:425, lean/VE/Judgments/Examples.lean:427",
+   "test": "lean/VE/EnglishGrammar/Examples.lean:200, lean/VE/EnglishGrammar/Examples.lean:204, lean/VE/EnglishGrammar/Examples.lean:212, lean/VE/EnglishGrammar/Examples.lean:227",
    "result": "fails"
   }
  ]
