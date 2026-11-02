@@ -16823,7 +16823,18 @@
         "VE.Compose.ContractExamples.plannedRows",
         "VE.Compose.ContractExamples.ungoverned",
         "VE.Compose.ContractExamples.governedSet",
-        "VE.Compose.ContractExamples.tagRewriter"
+        "VE.Compose.ContractExamples.tagRewriter",
+        "VE.Compose.ContractExamples.G1.noAsks",
+        "VE.Compose.ContractExamples.G1.noAsksUser",
+        "VE.Compose.ContractExamples.G1.askPack",
+        "VE.Compose.ContractExamples.G1.qs",
+        "VE.Compose.ContractExamples.G1.Qc",
+        "VE.Compose.ContractExamples.G1.A",
+        "VE.Compose.ContractExamples.G1.cert",
+        "VE.Compose.ContractExamples.G1.conflictCertA",
+        "VE.Compose.ContractExamples.G1.acceptedOn",
+        "VE.Compose.ContractExamples.G1.G1Checks",
+        "VE.Compose.ContractExamples.G1.instDecidableG1Checks"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
