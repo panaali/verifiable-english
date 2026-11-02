@@ -27,7 +27,7 @@ def Filter.columns : Filter → List String
 
 def Agg.columns : Agg → List String
   | .count => []
-  | .sum c | .mean c | .min c | .max c => [c]
+  | .sum c | .mean c | .min c | .max c | .variance c | .populationVariance c => [c]
 
 /-- The operational counted result of a declaration over the registered handles, within the budget `limit` (J2); an
 error is a refusal (`UnknownHandle`, `DigestMismatch`, `TableFormat`, `UnknownColumn`). -/
