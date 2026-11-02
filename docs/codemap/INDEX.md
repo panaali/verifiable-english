@@ -5,7 +5,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 35 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 37 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 10 modules — -
@@ -74,7 +74,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 30 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 41 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 26 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 28 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
@@ -87,7 +87,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
 - [lean/VE/Defaults/](lean__VE__Defaults.md) — 8 modules — -
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
-- [lean/VE/Discourse/](lean__VE__Discourse.md) — 19 modules — -
+- [lean/VE/Discourse/](lean__VE__Discourse.md) — 17 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
 - [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 34 modules — -
 - [lean/VE/Events/](lean__VE__Events.md) — 9 modules — -
@@ -102,7 +102,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
-- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 3 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 12 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -

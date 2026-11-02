@@ -187,6 +187,12 @@ theorem VE.Acts.Decode.ElaboratedU.hU
   ∀ (self : VE.Acts.Decode.ElaboratedU), self.D.U = self.s.U
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire
   -- expr 1992473826
+theorem VE.Acts.Decode.decodeElaboratedU_faithful
+  ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
+    VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e →
+      ∀ (S : VE.Structure), VE.Norms.holdsCatala e.U'.D.T S ↔ VE.Acts.IntendedActs e.D S
+  -- uses VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedU@VE.Acts.Decode VE.Acts.IntendedActs@VE.Acts.Faithful VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Structure@VE.Semantics
+  -- expr 3046728930
 theorem VE.Acts.Decode.decodeElaboratedU_lexical
   ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
     VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e →
@@ -217,6 +223,65 @@ theorem VE.Acts.Examples.tableToks_kinds
   ∀ (k : VE.Acts.Lexical.Tok), (VE.Acts.Examples.tableToks.any fun x => x.ctorIdx == k.ctorIdx) = Bool.true
   -- uses VE.Acts.Examples.tableToks@VE.Acts.GrammarExamples VE.Acts.Lexical.Tok.ctorIdx@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical
   -- expr 1677402360
+theorem VE.Acts.FaithfulExamples.appliesB_iff
+  ∀ (M : VE.Acts.FaithfulExamples.Model) (ρ : List Nat) (N : VE.Norms.Node),
+    VE.Acts.FaithfulExamples.appliesB M ρ N = Bool.true ↔ VE.Norms.AppliesD (VE.FiniteModel.asStructure M) ρ N
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.appliesB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node@VE.Norms.Tree
+  -- expr 633791903
+theorem VE.Acts.FaithfulExamples.decidesB_iff
+  ∀ (T : VE.Norms.Tree) (M : VE.Acts.FaithfulExamples.Model) (ρ : List Nat) (p : String) (sign : Bool),
+    VE.Acts.FaithfulExamples.decidesB T M ρ p sign = Bool.true ↔
+      VE.Norms.DecidesD T (VE.FiniteModel.asStructure M) ρ p sign
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.decidesB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Tree@VE.Norms.Tree
+  -- expr 2866024426
+theorem VE.Acts.FaithfulExamples.holdsB_iff
+  ∀ (T : VE.Norms.Tree) (M : VE.Acts.FaithfulExamples.Model),
+    VE.Acts.FaithfulExamples.holdsB T M = Bool.true ↔ VE.Norms.holdsCatala T (VE.FiniteModel.asStructure M)
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.holdsB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Tree@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate
+  -- expr 997844059
+theorem VE.Acts.FaithfulExamples.intendedActsB_iff
+  ∀ (D : VE.Acts.ActsDoc) (M : VE.Acts.FaithfulExamples.Model),
+    VE.Acts.FaithfulExamples.intendedActsB D M = Bool.true ↔ VE.Acts.IntendedActs D (VE.FiniteModel.asStructure M)
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.intendedActsB@VE.Acts.FaithfulExamples VE.Acts.IntendedActs@VE.Acts.Faithful VE.FiniteModel.asStructure@VE.Finite
+  -- expr 402125273
+theorem VE.Acts.FaithfulExamples.intendedB_iff
+  ∀ (T : VE.Norms.Tree) (r : VE.Norms.Regulated) (M : VE.Acts.FaithfulExamples.Model),
+    VE.Acts.FaithfulExamples.intendedB T r M = Bool.true ↔ VE.Norms.IntendedAt T r (VE.FiniteModel.asStructure M)
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.intendedB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.IntendedAt@VE.Norms.Elaborate VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree
+  -- expr 4169604517
+theorem VE.Acts.FaithfulExamples.mem_tuples
+  ∀ (M : VE.Acts.FaithfulExamples.Model) (ss : List String) (vs : List Nat),
+    vs ∈ VE.Acts.FaithfulExamples.tuples M ss ↔ VE.TupleTyped (VE.FiniteModel.asStructure M) ss vs
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.tuples@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.TupleTyped@VE.Semantics
+  -- expr 991320229
+theorem VE.Acts.FaithfulExamples.readAs_asStructure
+  ∀ (p q : String) (M : VE.Acts.FaithfulExamples.Model),
+    VE.Acts.readAs p q (VE.FiniteModel.asStructure M) = VE.FiniteModel.asStructure (VE.Acts.FaithfulExamples.readM p q M)
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.readM@VE.Acts.FaithfulExamples VE.Acts.readAs@VE.Acts.Faithful VE.FiniteModel.asStructure@VE.Finite VE.Structure@VE.Semantics
+  -- expr 1764440601
+theorem VE.Acts.FaithfulExamples.selectsB_iff
+  ∀ (T : VE.Norms.Tree) (M : VE.Acts.FaithfulExamples.Model) (ρ : List Nat) (f : Nat) (N : VE.Norms.Node),
+    VE.Acts.FaithfulExamples.selectsB T M ρ f N = Bool.true ↔ VE.Norms.SelectsD T (VE.FiniteModel.asStructure M) ρ f N
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.selectsB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Node@VE.Norms.Tree VE.Norms.SelectsD@VE.Norms.Elaborate VE.Norms.Tree@VE.Norms.Tree
+  -- expr 1976437204
+theorem VE.Acts.FaithfulExamples.value_eq
+  ∀ (T : VE.Norms.Tree) (r : VE.Norms.Regulated) (M : VE.Acts.FaithfulExamples.Model) (vs : List Nat),
+    VE.Norms.Value T r (VE.FiniteModel.asStructure M) vs =
+      VE.Acts.FaithfulExamples.valueB (VE.Acts.FaithfulExamples.decidesB T M (VE.Norms.tupleVal vs) r.name Bool.true)
+        (VE.Acts.FaithfulExamples.decidesB T M (VE.Norms.tupleVal vs) r.name Bool.false) r.allowByDefault
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.decidesB@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.valueB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.Value@VE.Norms.Elaborate VE.Norms.tupleVal@VE.Norms.Basic
+  -- expr 498068849
+theorem VE.Acts.FaithfulExamples.value_forget
+  ∀ (T : VE.Norms.Tree) (r : VE.Norms.Regulated) (ns : List String) (M : VE.Acts.FaithfulExamples.Model) (vs : List Nat),
+    VE.Norms.Value T r (VE.Norms.forget ns (VE.FiniteModel.asStructure M)) vs =
+      VE.Norms.Value T r (VE.FiniteModel.asStructure (VE.Acts.FaithfulExamples.dropM ns M)) vs
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.dropM@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.Value@VE.Norms.Elaborate VE.Norms.forget@VE.Norms.Basic
+  -- expr 4174092685
+theorem VE.Acts.FaithfulExamples.yieldsB_iff
+  ∀ (T : VE.Norms.Tree) (M : VE.Acts.FaithfulExamples.Model) (ρ : List Nat) (f : Nat) (N : VE.Norms.Node),
+    VE.Acts.FaithfulExamples.yieldsB T M ρ f N = Bool.true ↔ VE.Norms.YieldsD T (VE.FiniteModel.asStructure M) ρ f N
+  -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.yieldsB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate
+  -- expr 22504897
 theorem VE.Acts.Lexical.actWord_chars
   ∀ {w : String},
     VE.Norms.Wire.actWord w = Bool.true →
@@ -692,6 +757,14 @@ theorem VE.Acts.analyse_one
     VE.Acts.analyse V N b ts = Option.some a → VE.Acts.read V N b ts = VE.Acts.ReadOutcome.ok (VE.Acts.Act.one a)
   -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.analyse@VE.Acts.Readings VE.Acts.read@VE.Acts.Readings
   -- expr 3010629314
+theorem VE.Acts.applies_agree
+  ∀ {S₁ S₂ : VE.Structure} {ρ₁ : VE.Valuation S₁} {ρ₂ : VE.Valuation S₂} {N K : VE.Norms.Node},
+    K.guard = N.guard →
+      K.carveOuts = N.carveOuts →
+        (∀ (φ : VE.Formula), φ ∈ N.guard :: N.carveOuts → (VE.Formula.denote S₁ ρ₁ φ ↔ VE.Formula.denote S₂ ρ₂ φ)) →
+          (VE.Norms.AppliesD S₁ ρ₁ N ↔ VE.Norms.AppliesD S₂ ρ₂ K)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2486149005
 theorem VE.Acts.build_wf
   ∀ {rs : List VE.Acts.RuleS},
     (∀ (r : VE.Acts.RuleS), r ∈ rs → r.ok = Bool.true) →
@@ -699,6 +772,10 @@ theorem VE.Acts.build_wf
         VE.Acts.NT.S ∈ List.map (fun x => x.lhs) rs → (VE.Acts.build rs).wf = Bool.true
   -- uses VE.Acts.NT.S@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term@VE.Acts.Syntax VE.Acts.build@VE.Acts.Grammar VE.Grammar.Grammar.wf@VE.Grammar.Basic
   -- expr 1035516647
+theorem VE.Acts.catalaValue_congr
+  ∀ {P Q P' Q' : Prop}, (P ↔ P') → (Q ↔ Q') → ∀ (d : Bool), VE.Norms.catalaValue P Q d = VE.Norms.catalaValue P' Q' d
+  -- uses VE.Norms.catalaValue@VE.Norms.Elaborate
+  -- expr 1045454174
 theorem VE.Acts.closed_cl
   ∀ (rs : List VE.Acts.RuleS) (r : VE.Acts.RuleS),
     r ∈ VE.Acts.closed rs →
@@ -716,6 +793,28 @@ theorem VE.Acts.compareViews_ok
       List.Pairwise (fun v w => ¬v.Perm w) cs ∧ ∃ σ, σ.Perm cs ∧ List.Forall₂ List.Perm σ rs
   -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources
   -- expr 3436129502
+theorem VE.Acts.decides_tracks
+  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node} {S₁ S₂ : VE.Structure}
+    {ρ₁ : VE.Valuation S₁} {ρ₂ : VE.Valuation S₂},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          (∀ (N : VE.Norms.Node),
+              N ∈ T.nodes → N.pred = p → (VE.Norms.AppliesD S₁ ρ₁ N ↔ VE.Norms.AppliesD S₂ ρ₂ (f N))) →
+            VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →
+              VE.Route.DagAcyclic (VE.Norms.precedenceNodes T') →
+                ∀ (sign : Bool), VE.Norms.DecidesD T S₁ ρ₁ p sign ↔ VE.Norms.DecidesD T' S₂ ρ₂ q sign
+  -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DagAcyclic@VE.Route.Route VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 4243355742
+theorem VE.Acts.denote_preds_congr
+  ∀ (S : VE.Structure) (R R' : String → List S.Carrier → Prop) {E : VE.Environment} (a : VE.Formula) (Γ : List String)
+    (ρ : List S.Carrier),
+    VE.Formula.WellFormed E Γ a →
+      (∀ (r : String), r ∈ VE.Norms.preds a → E.predicates r ≠ Option.none → ∀ (vs : List S.Carrier), R r vs ↔ R' r vs) →
+        (VE.Formula.denote { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := R } ρ a ↔
+          VE.Formula.denote { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := R' } ρ a)
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2840391327
 theorem VE.Acts.derived_iff
   ∀ (V : VE.Acts.Vocab) (ts : List VE.Acts.Lexical.Tok) (A : VE.Acts.Act),
     VE.Acts.Derived V ts A ↔
@@ -743,6 +842,17 @@ theorem VE.Acts.elaborateMap_ok
                 (M.rules.all fun x => !U'.D.T.nodes.any fun x_1 => x_1.name == x.snd.fst) = Bool.true
   -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Simple@VE.Acts.Table VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
   -- expr 1430785145
+theorem VE.Acts.elaborateMap_refsOk
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) → VE.Acts.refsOk D (VE.Acts.splitAtoms D) = Except.ok ()
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.refsOk@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 4099550193
+theorem VE.Acts.elaborate_faithful
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Norms.WellFormed D.U.D = Bool.true →
+      VE.Acts.elaborate D = Except.ok U' → ∀ (S : VE.Structure), VE.Norms.holdsCatala U'.D.T S ↔ VE.Acts.IntendedActs D S
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.IntendedActs@VE.Acts.Faithful VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Structure@VE.Semantics
+  -- expr 700384286
 theorem VE.Acts.elaborate_identity
   ∀ (D : VE.Acts.ActsDoc),
     (∀ (p : String) (A : VE.Acts.Act), (p, A) ∈ D.acts → ∃ a, A = VE.Acts.Act.one a) →
@@ -782,6 +892,19 @@ theorem VE.Acts.elaborate_wellFormed
     VE.Acts.elaborate D = Except.ok U' → VE.NormDefaults.WellFormedU U' = Bool.true
   -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
   -- expr 3613047864
+theorem VE.Acts.exists_child_tracks
+  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          ∀ {N : VE.Norms.Node},
+            N ∈ T.nodes →
+              N.pred = p →
+                ∀ {P Q : VE.Norms.Node → Prop},
+                  (∀ (C : VE.Norms.Node), C ∈ T.nodes → C.pred = p → (P C ↔ Q (f C))) →
+                    ((∃ C, C ∈ VE.Norms.children T N ∧ P C) ↔ ∃ C, C ∈ VE.Norms.children T' (f N) ∧ Q C)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.children@VE.Norms.Tree
+  -- expr 237624178
 theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table
@@ -813,6 +936,27 @@ theorem VE.Acts.grammar_wf
   ∀ (V : VE.Acts.Vocab), VE.Acts.framesOk V = Bool.true → (VE.Acts.grammar V).wf = Bool.true
   -- uses VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Grammar.Grammar.wf@VE.Grammar.Basic
   -- expr 3559248769
+theorem VE.Acts.inj_of_nodup_map
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
+  -- uses
+  -- expr 2912099309
+theorem VE.Acts.intended_tracks
+  ∀ {T T' : VE.Norms.Tree} {f : VE.Norms.Node → VE.Norms.Node} (S : VE.Structure) {r r' : VE.Norms.Regulated},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = r.name → f N ∈ T'.nodes ∧ (f N).pred = r'.name ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = r'.name → ∃ N, N ∈ T.nodes ∧ N.pred = r.name ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          (∀ (ρ : List S.Carrier) (N : VE.Norms.Node),
+              N ∈ T.nodes →
+                N.pred = r.name →
+                  (VE.Norms.AppliesD (VE.Norms.forget [r.name] (VE.Acts.readAs r.name r'.name S)) ρ N ↔
+                    VE.Norms.AppliesD (VE.Norms.forget [r'.name] S) ρ (f N))) →
+            VE.Route.DagAcyclic (VE.Norms.precedenceNodes T) →
+              VE.Route.DagAcyclic (VE.Norms.precedenceNodes T') →
+                r'.sorts = r.sorts →
+                  r'.allowByDefault = r.allowByDefault →
+                    (VE.Norms.IntendedAt T r (VE.Acts.readAs r.name r'.name S) ↔ VE.Norms.IntendedAt T' r' S)
+  -- uses VE.Acts.readAs@VE.Acts.Faithful VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.IntendedAt@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.forget@VE.Norms.Basic VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DagAcyclic@VE.Route.Route VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3024907914
 theorem VE.Acts.kwSyms_ok
   ∀ {X : VE.Acts.NT} {ws : List String} {k : VE.Acts.Kind},
     ws ≠ [] → { lhs := X, rhs := VE.Acts.kwSyms ws, kind := k }.ok = Bool.true
@@ -861,12 +1005,65 @@ theorem VE.Acts.mem_firsts
   ∀ {α : Type} [inst : DecidableEq α] {x : α} {l : List α}, x ∈ VE.Acts.firsts l ↔ x ∈ l
   -- uses VE.Acts.firsts@VE.Acts.Read
   -- expr 3013831312
+theorem VE.Acts.mem_partNamesIn
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)} {p q : String},
+    (∃ r, r ∈ D.U.D.T.regulated ∧ r.name = p) →
+      (q ∈ VE.Acts.partNamesIn (VE.Acts.splitMap D sa) p ↔
+        VE.Acts.partsOf sa p = [] ∧ q = p ∨ ∃ x, x ∈ VE.Acts.partsOf sa p ∧ q = VE.Acts.partPred p x.snd)
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partNamesIn@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 4162673854
+theorem VE.Acts.mem_splitNode
+  ∀ {sa : String → Option (List VE.Acts.Atom)} {N K : VE.Norms.Node},
+    K ∈ VE.Acts.splitNode sa N ↔
+      VE.Acts.partsOf sa N.pred = [] ∧ K = N ∨
+        ∃ x,
+          x ∈ VE.Acts.partsOf sa N.pred ∧
+            K =
+              { name := VE.Acts.partRule N.name x.snd, pred := VE.Acts.partPred N.pred x.snd, sign := N.sign,
+                guard := N.guard, carveOuts := N.carveOuts,
+                over := List.map (fun x_1 => VE.Acts.partRule x_1 x.snd) N.over }
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitNode@VE.Acts.Elaborate VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
+  -- expr 100304794
+theorem VE.Acts.mem_splitReg
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)} {r s : VE.Norms.Regulated},
+    s ∈ VE.Acts.splitReg D sa r ↔
+      VE.Acts.partsOf sa r.name = [] ∧ s = r ∨
+        ∃ x,
+          x ∈ VE.Acts.partsOf sa r.name ∧
+            s =
+              { name := VE.Acts.partPred r.name x.snd, sorts := r.sorts, allowByDefault := r.allowByDefault,
+                role := r.role, act := Option.some (VE.Acts.partAct D.fixed r.role x.fst),
+                permission := Option.map (fun x_1 => VE.Acts.partPred x_1 x.snd) r.permission }
+  -- uses VE.Acts.ActsDoc.fixed@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partAct@VE.Acts.Linearize VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitReg@VE.Acts.Elaborate VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.mk@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.permission@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 3195448854
 theorem VE.Acts.modifier_edges
   ∀ (V : VE.Acts.Vocab) (r : VE.Acts.RuleS),
     r ∈ VE.Acts.schema V →
       ∀ (a : VE.Acts.Attach), VE.Acts.attachOf r.kind = Option.some a → VE.Acts.edgeLhs r.lhs a = Bool.true
   -- uses VE.Acts.Attach@VE.Acts.Grammar VE.Acts.RuleS.kind@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.attachOf@VE.Acts.Grammar VE.Acts.edgeLhs@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
   -- expr 366501910
+theorem VE.Acts.namesOk_preds
+  ∀ {D : VE.Acts.ActsDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.namesOk D M = Except.ok () →
+      (∀ (q : String),
+          q ∈ List.map (fun x => x.fst) M.preds →
+            D.U.D.E.predicates q = Option.none ∧ ∀ (r : VE.Norms.Regulated), r ∈ D.U.D.T.regulated → r.name ≠ q) ∧
+        (List.map (fun x => x.fst) M.preds).Nodup
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 78498010
+theorem VE.Acts.node_regulated
+  ∀ {D : VE.Acts.ActsDoc},
+    VE.Norms.WellFormed D.U.D = Bool.true →
+      ∀ {N : VE.Norms.Node}, N ∈ D.U.D.T.nodes → ∃ r, r ∈ D.U.D.T.regulated ∧ r.name = N.pred
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
+  -- expr 1396381173
+theorem VE.Acts.node_typed
+  ∀ {D : VE.Acts.ActsDoc},
+    VE.Norms.WellFormed D.U.D = Bool.true →
+      ∀ {N : VE.Norms.Node},
+        N ∈ D.U.D.T.nodes → ∀ {φ : VE.Formula}, φ ∈ N.guard :: N.carveOuts → ∃ Γ, VE.Formula.WellFormed D.U.D.E Γ φ
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
+  -- expr 4085286715
 theorem VE.Acts.nodup_firsts
   ∀ {α : Type} [inst : DecidableEq α] (l : List α), (VE.Acts.firsts l).Nodup
   -- uses VE.Acts.firsts@VE.Acts.Read
@@ -877,6 +1074,17 @@ theorem VE.Acts.paraphrases_nodup
     VE.Acts.paraphrases fx op f what Rs = Except.ok ps → ps = List.map (VE.Acts.paraphrase fx op f) Rs ∧ ps.Nodup
   -- uses VE.Acts.Lexical.Form@VE.Acts.Lexical VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.paraphrase@VE.Acts.Table VE.Acts.paraphrases@VE.Acts.Table
   -- expr 1377960836
+theorem VE.Acts.partRule_inj
+  ∀ {m n : String} {i : Nat}, VE.Acts.partRule m i = VE.Acts.partRule n i → m = n
+  -- uses VE.Acts.partRule@VE.Acts.Elaborate
+  -- expr 647368978
+theorem VE.Acts.part_mem_preds
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)} {p : String},
+    (∃ r, r ∈ D.U.D.T.regulated ∧ r.name = p) →
+      ∀ {x : VE.Acts.Atom × Nat},
+        x ∈ VE.Acts.partsOf sa p → (VE.Acts.partPred p x.snd, p, x.snd) ∈ (VE.Acts.splitMap D sa).preds
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 2750418663
 theorem VE.Acts.phraseReadings_exact
   ∀ (V : VE.Acts.Vocab),
     VE.Acts.framesOk V = Bool.true →
@@ -1011,6 +1219,14 @@ theorem VE.Acts.readings_nodup
     VE.Acts.readings V N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.readings@VE.Acts.Readings
   -- expr 3252955071
+theorem VE.Acts.refsOk_preds
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)},
+    VE.Acts.refsOk D sa = Except.ok () →
+      ∀ {N : VE.Norms.Node},
+        N ∈ D.U.D.T.nodes →
+          ∀ {φ : VE.Formula}, φ ∈ N.guard :: N.carveOuts → ∀ {q : String}, q ∈ VE.Norms.preds φ → sa q = Option.none
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.refsOk@VE.Acts.Elaborate VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree
+  -- expr 1685259287
 theorem VE.Acts.ruleReading_ok
   ∀ {D : VE.Acts.ActsDoc} {A : VE.Acts.Act} {N : VE.Norms.Node} {R : List VE.Acts.Simple},
     VE.Acts.ruleReading D A N = Except.ok R →
@@ -1032,6 +1248,18 @@ theorem VE.Acts.schema_ranked
             ∀ (B : VE.Acts.NT) (rest : List VE.Acts.RSym), r.rhs = VE.Acts.RSym.n B :: rest → B.rank < r.lhs.rank
   -- uses VE.Acts.NT.rank@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
   -- expr 272239481
+theorem VE.Acts.selects_tracks
+  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node} {S₁ S₂ : VE.Structure}
+    {ρ₁ : VE.Valuation S₁} {ρ₂ : VE.Valuation S₂},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          (∀ (N : VE.Norms.Node),
+              N ∈ T.nodes → N.pred = p → (VE.Norms.AppliesD S₁ ρ₁ N ↔ VE.Norms.AppliesD S₂ ρ₂ (f N))) →
+            ∀ (g : Nat) {N : VE.Norms.Node},
+              N ∈ T.nodes → N.pred = p → (VE.Norms.SelectsD T S₁ ρ₁ g N ↔ VE.Norms.SelectsD T' S₂ ρ₂ g (f N))
+  -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.SelectsD@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1462017822
 theorem VE.Acts.sourceCheck_choices_le
   ∀ (D : VE.Readings.Doc) (unspec : List String) (V : VE.Acts.Vocab) (fx : List String) (N b : Nat) (s : VE.Acts.Source),
     VE.Acts.sourceCheck D unspec V fx N b s = Except.ok () → (VE.Readings.choices D).length ≤ VE.Readings.maxChoices
@@ -1148,6 +1376,11 @@ theorem VE.Acts.table_one
   ∀ (op : VE.Acts.Op) (a : VE.Acts.Atom), VE.Acts.table op (VE.Acts.Act.one a) = [[VE.Acts.Simple.atom a]]
   -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
   -- expr 1361667219
+theorem VE.Acts.tupleTyped_readAs
+  ∀ (p q : String) (S : VE.Structure) (ss : List String) (vs : List S.Carrier),
+    VE.TupleTyped (VE.Acts.readAs p q S) ss vs ↔ VE.TupleTyped S ss vs
+  -- uses VE.Acts.readAs@VE.Acts.Faithful VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2665179036
 theorem VE.Acts.valueOf_eq_some
   ∀ {α : Type} {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {t : VE.Grammar.Tree VE.Acts.Lexical.Tok}
     {A : α}, VE.Acts.valueOf μ t = Option.some A ↔ ∃ c, μ () t = Except.ok (A, c, ())
@@ -1158,6 +1391,18 @@ theorem VE.Acts.viewsOn_choices
     VE.Acts.viewsOn D unspec s (VE.Readings.choices D) = VE.Acts.choiceViews D unspec s
   -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.choiceViews@VE.Acts.Sources VE.Acts.viewsOn@VE.Acts.Sources VE.Readings.Doc@VE.Readings.Doc VE.Readings.choices@VE.Readings.Choice
   -- expr 1544594959
+theorem VE.Acts.yields_tracks
+  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node} {S₁ S₂ : VE.Structure}
+    {ρ₁ : VE.Valuation S₁} {ρ₂ : VE.Valuation S₂},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          (∀ (N : VE.Norms.Node),
+              N ∈ T.nodes → N.pred = p → (VE.Norms.AppliesD S₁ ρ₁ N ↔ VE.Norms.AppliesD S₂ ρ₂ (f N))) →
+            ∀ (g : Nat) (N : VE.Norms.Node),
+              N ∈ T.nodes → N.pred = p → (VE.Norms.YieldsD T S₁ ρ₁ g N ↔ VE.Norms.YieldsD T' S₂ ρ₂ g (f N))
+  -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 782549418
 theorem VE.Alternatives.Admission.Admitted.sound
   ∀ (self : VE.Alternatives.Admission.Admitted),
     VE.Graph.SoundReport (VE.Alternatives.extEnv self.src.A) self.graph self.report

@@ -98,6 +98,8 @@ module VE.Acts.Decode
 module VE.Acts.DecodeExamples
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.Faithful
+module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
@@ -751,6 +753,7 @@ ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.IntendedActs@VE.Acts.Faithful
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Acts.SourceExact@VE.Acts.Sources
