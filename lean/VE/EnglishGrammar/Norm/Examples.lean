@@ -96,10 +96,10 @@ selects (`ve.english_grammar.export`). Python's nodes are `parse_english`'s, rec
 the RSP, FSF and constitution environments, too large for this file: `tests/test_english_statement_blocks.py`. -/
 
 /-- An environment with `norms@0`, from the JSON of its sorts and predicates. -/
-def envOf (sorts preds : String) : Env :=
-  match (Json.parse ("{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"relational-fol@0\"], " ++
-      "\"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"constants\": {}, \"sorts\": " ++
-      sorts ++ ", \"predicates\": " ++ preds ++ "}}")).bind (Env.decode · .null) with
+def envOf (sorts preds : String) (profiles := "") (soft := "") : Env :=
+  match (Json.parse ("{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"relational-fol@0\"" ++ profiles ++
+      "], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"constants\": {}, \"sorts\": " ++
+      sorts ++ ", \"predicates\": " ++ preds ++ soft ++ "}}")).bind (Env.decode · .null) with
   | .ok E => E
   | .error _ => { sorts := [], predicates := [], constants := [] }
 
@@ -258,6 +258,12 @@ def negative := "\"negative_verbalisation\": \"{0} is not admitted\", "
 #guard outcome (rd fd LD "Rule 1. Every service may be used, if every deployed service is reviewed.") == "stopped 1 ambiguous true"
 #guard clauses (rd fd LD "Rule 1. Every service may be used, if that service is reviewed.") ==
   some [⟨.every "service", .modal .may, .strict, "used", [], .pred "reviewed" [.var 0], [], []⟩]
+-- R7 (DRI decision 20261102-en-s6b item 2): the soft constructs are stripped only when `soft-norms@0` is named.
+def softAct (profiles : String) : Env := envOf actSorts permitted profiles ", \"soft\": {}"
+#guard (softAct "").predicates.length == 1 && (regulatedOf (softAct "")).isEmpty
+#guard outcome (rd (softAct "") LA "Rule 1. Every act may be done.") == "stopped 1 noDerivation"
+#guard (regulatedOf (softAct ", \"soft-norms@0\"")).map (·.name) == ["permitted"]
+#guard clauses (rd (softAct ", \"soft-norms@0\"") LA "Rule 1. Every act may be done.") == some [cl .may]
 -- f19 and a zero budget: nothing is read.
 #guard outcome (rd act LA "") == "lexical VE.EnglishGrammar.Reject.emptyDocument"
 #guard outcome (readNorm act {} LA 0 "Rule 1. Every act may be done.") == "stopped 0 budget"
