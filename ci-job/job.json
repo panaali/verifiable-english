@@ -1,0 +1,17 @@
+{
+ "job": "df-5a.s4of4-420ff4eb",
+ "head": "8a403f82a9d8270b80bd74f532c23825595a457e",
+ "argv": [
+  "df-5a.s4of4-420ff4eb",
+  "8a403f82a9d8270b80bd74f532c23825595a457e",
+  "bbff495a66b298370768de48c4e87301a6f7de0d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-88888d7c69a7.tar.zst",
+  "ee584867f215e768ddb5022092aba15497601b623753105cf2cef1b434e98bcb",
+  "--max-mutants",
+  "1000",
+  "--shard",
+  "4/4",
+  "--jobs",
+  "4"
+ ]
+}
