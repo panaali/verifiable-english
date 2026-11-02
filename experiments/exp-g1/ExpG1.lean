@@ -184,20 +184,17 @@ theorem g1b_order_free (hA : AcceptanceXV.{u}) (U : UDoc) (hU : WellFormedU U = 
 def attBelieves : String := "attitudes__believes__1"
 def attKnows : String := "attitudes__knows__2"
 def guardName : String := "weighing__outweighs__answer__helpfulness__caution"
-
 /-- The condition under test, in context `[user, agent]`. Its one definition: the REPORT's mutants edit this line. -/
 def mixedCondition : VE.Formula := .unary attBelieves (.var 0)
 def mixedGuard : VE.Formula := .binary guardName (.var 1) (.var 0)
 def mixedPremise : VE.Formula := .all "agent" (.all "user" (.implies mixedCondition mixedGuard))
 def bridgePremise : VE.Formula := .all "user" (.implies (.unary attKnows (.var 0)) (.unary attBelieves (.var 0)))
-
 def weighingV : Pack := ⟨"weighing", .vocabulary, [(guardName, ["agent", "user"])], [],
   [("weighing:condition:1", mixedPremise)], [], [(.outweighs "answer" "helpfulness" "caution", mixedCondition)]⟩
 def attitudesV : Pack := ⟨"attitudes", .vocabulary, [(attBelieves, ["user"]), (attKnows, ["user"])], [],
   [("attitudes:bridge:1", bridgePremise)], [], []⟩
 def weighingC : Pack := { weighingV with kind := .constraint, decls := [] }
 def attitudesC : Pack := { attitudesV with kind := .constraint, decls := [] }
-
 /-- `packOrder`'s order: weighing's premise mentions a name of the later pack. -/
 def mixedV : List Pack := [weighingV, attitudesV]
 def mixedC : List Pack := [weighingC, attitudesC]
@@ -207,7 +204,6 @@ def namesG : List (String × List String) := [(attBelieves, ["user"]), (attKnows
 def uV : UDoc := ⟨⟨envG [], [], ⟨[], [], []⟩⟩, []⟩
 /-- `C`: `U` declares the names, as `envAtt` does. -/
 def uC : UDoc := ⟨⟨envG namesG, [], ⟨[], [], []⟩⟩, []⟩
-
 /-- The predicate names a formula mentions. -/
 def preds : VE.Formula → List String
   | .unary p _ | .binary p _ _ => [p]
@@ -217,7 +213,6 @@ def preds : VE.Formula → List String
 
 /-- A prefix table with `V`'s two rows: main's has none for weighing or attitudes (AT-2 adds attitudes'). -/
 def prefixesG : List (String × String) := reservedPrefixes ++ [("weighing", "weighing__"), ("attitudes", "attitudes__")]
-
 def idsOf : Except String (List Pack) → List String
   | .ok qs => qs.map (·.id)
   | .error e => [e]
@@ -307,7 +302,6 @@ def traceAt (iw ia : Nat) : VE.Tableau.Trace :=
   .expand 2 none [.expand 3 none [.expand 4 none [.expand ia (some "w:1") [.expand iw (some "w:0") [
     .expand 8 (some "w:1") [.expand 7 none [.close, .expand 9 none [.close, .close]]]]]]]]
 def certAt (iw ia : Nat) : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", "", [], "", traceAt iw ia⟩
-
 def certOK (U : UDoc) (E : VE.Environment) (qs : List Pack) (c : VE.Tableau.Certificate) : Bool :=
   VE.Tableau.checkCertificate E (Wire.premisesX U (X qs) []) mixedφ c
 
@@ -426,7 +420,6 @@ def frameG : VE.Rights.RightsDoc :=
   let s := frameK.soft
   { frameK with soft := { s with E := envKG } }
 def kG : Doc := docK [.set rs1] .soft frameG
-
 def KGChecks : Prop := WellFormedDoc kG = true ∧ superposable kG = true
 instance : Decidable KGChecks := inferInstanceAs (Decidable (_ ∧ _))
 #guard KGChecks
@@ -521,7 +514,6 @@ theorem undeclared_empty_at_transfers_bases {D : Doc} {P : List VE.Formula} {B :
 #guard (choices VE.Readings.Examples.K1).all (fun c => !mixedPremise.check (choiceEnvFull VE.Readings.Examples.K1 c) [])
 
 end ExpG1
-
 #print axioms ExpG1.sat_X_perm
 #print axioms ExpG1.transfers_X_perm
 #print axioms ExpG1.entailsX_perm
