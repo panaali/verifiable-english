@@ -2,6 +2,7 @@ import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Fixed.Norms
 import VE.Norms.Wire
 import VE.Grammar.Extension
+import VE.SoftNorms.Wire
 
 /-! The norm grammar, its actions and types (docs/spec/english-lean-s6.md 2.5): `grammar E L` first and unchanged,
 then the norm table (`Fixed/Norms.lean`, generated from `ve/english_grammar/norms@0.json`), then one consequence row
@@ -22,9 +23,11 @@ def Polarity.fits : Polarity → VE.Norms.Role → Bool
   | .plain _, .plain => true
   | _, _ => false
 
-/-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). -/
+/-- R6: the regulated declarations, as the norms routes decode them (`decodeSource`, `Wire.lean:371`): a soft-norms
+environment without its soft constructs, as the soft route strips them (`VE.SoftNorms.Wire.stripSoft`), since W1's decoder
+refuses the profile and Python's `_consequence` reads `regulated` under either. -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
-  match VE.Norms.Wire.decodeNormsEnvironment E.source (acts := true) with
+  match VE.SoftNorms.Wire.stripSoft E.source >>= (VE.Norms.Wire.decodeNormsEnvironment · (acts := true)) with
   | .ok ne => ne.regulated
   | .error _ => []
 
@@ -90,9 +93,12 @@ def normGrammar (E : Env) (L : Lexicon) : VE.Grammar.Grammar Terminal :=
     start := n
     rank := (grammar E L).rank ++ normRanks }
 
+/-- `(grammar E L).rank.size` (`baseSize_eq`), without building the rules: `normTy` reads it on every call. -/
+def baseSize (E : Env) : Nat := (ranksFor E.profiles).size + (valueSorts E).length
+
 /-- `ty E L` below `(grammar E L).rank.size`; the norm types above. -/
 def normTy (E : Env) (L : Lexicon) : Nat → Ty :=
-  fun i => if i < (grammar E L).rank.size then ty E L i else normTys.getD (i - (grammar E L).rank.size) .tok
+  fun i => if i < baseSize E then ty E L i else normTys.getD (i - baseSize E) .tok
 
 /-- What a norm action reads from an argument: a numeral, a rule list, a consequence or a condition. -/
 inductive Arg where | num (n : Nat) | refs (ns : List Nat) | cons (c : Clause) (σ : Scope) | cond (f : Sem .formula)
@@ -132,8 +138,10 @@ def NormAct.action (τs : List Ty) : NormAct → Action sig
 
 /-- `acts E L` first and unchanged, then the norm actions. -/
 def normActs (E : Env) (L : Lexicon) : Array (VE.Grammar.Action sig) :=
-  acts E L ++ normRows.map (fun r => r.act.action (rhsTys (normTy E L) (r.rhs.map (·.sym (grammar E L).rank.size)))) ++
-    (consequences E L).toArray.map fun (syms, c, σ) => constant .consequence (c, σ) (rhsTys (normTy E L) syms)
+  let τ := normTy E L
+  let n := (grammar E L).rank.size
+  acts E L ++ normRows.map (fun r => r.act.action (rhsTys τ (r.rhs.map (·.sym n)))) ++
+    (consequences E L).toArray.map fun (syms, c, σ) => constant .consequence (c, σ) (rhsTys τ syms)
 
 def prefixMap : VE.Grammar.RuleMap := ⟨id, id⟩
 
@@ -171,9 +179,12 @@ theorem prefixMap_ok : ∀ (E : Env) (L : Lexicon),
     exact List.map_congr_left fun x _ => by cases x <;> rfl
   · simp only [normActs, Array.append_assoc, Array.getElem?_append_left (base_act E L h)]
 
+theorem baseSize_eq (E : Env) (L : Lexicon) : (grammar E L).rank.size = baseSize E := by
+  simp [grammar, baseSize]
+
 theorem start_norm : ∀ (E : Env) (L : Lexicon), normTy E L (normGrammar E L).start = .norm := by
   intro E L
-  simp [normTy, normGrammar, normTys]
+  simp [normTy, normGrammar, normTys, baseSize_eq]
 
 mutual
 theorem tree_id : ∀ t : Tree Tok, prefixMap.tree t = t

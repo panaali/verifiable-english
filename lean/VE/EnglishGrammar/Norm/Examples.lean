@@ -138,7 +138,7 @@ def LD := lexOf [("dservice", "deployed service"), ("person", "person"), ("servi
   [("dservice", "D"), ("person", "P"), ("service", "S")] [("deployed", "{0} is deployed"), ("reviewed", "{0} is reviewed"),
     ("used", "{0} may be used")]
 
-def rd (E : Env) (L : Lexicon) (s : String) : NormOutcome := readNorm E {} L 100000 s
+def rd (E : Env) (L : Lexicon) (s : String) : NormOutcome := readNorm E {} L workBudget s
 
 /-- An outcome without its values: where and why the reader stopped. -/
 def outcome : NormOutcome → String

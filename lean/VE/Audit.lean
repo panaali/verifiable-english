@@ -161,6 +161,9 @@ import VE.English.Statements
 import VE.EnglishGrammar.Encode
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.Norm.Elab
+import VE.EnglishGrammar.Norm.Read
+import VE.EnglishGrammar.Norm.Rules
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Read
@@ -2616,9 +2619,38 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Norm.action_mark
+#print axioms VE.EnglishGrammar.Norm.acts_ne
 #print axioms VE.EnglishGrammar.Norm.assembleFrom_numbered
 #print axioms VE.EnglishGrammar.Norm.assemble_numbered
+#print axioms VE.EnglishGrammar.Norm.base_act
 #print axioms VE.EnglishGrammar.Norm.close_numbered
+#print axioms VE.EnglishGrammar.Norm.condition_same
+#print axioms VE.EnglishGrammar.Norm.derivesAll_start
+#print axioms VE.EnglishGrammar.Norm.derives_start
+#print axioms VE.EnglishGrammar.Norm.doc_unmarked
+#print axioms VE.EnglishGrammar.Norm.fields_wire
+#print axioms VE.EnglishGrammar.Norm.fixed_ne
+#print axioms VE.EnglishGrammar.Norm.forIn_length
+#print axioms VE.EnglishGrammar.Norm.lex_ne
+#print axioms VE.EnglishGrammar.Norm.normActs_mark
+#print axioms VE.EnglishGrammar.Norm.normMeaning_unmarked
+#print axioms VE.EnglishGrammar.Norm.ntTy_ne
+#print axioms VE.EnglishGrammar.Norm.prefixMap_ok
+#print axioms VE.EnglishGrammar.Norm.readNorm_checks
+#print axioms VE.EnglishGrammar.Norm.readNorm_complete
+#print axioms VE.EnglishGrammar.Norm.readNorm_eq
+#print axioms VE.EnglishGrammar.Norm.readNorm_numbered
+#print axioms VE.EnglishGrammar.Norm.readNorm_sound
+#print axioms VE.EnglishGrammar.Norm.readNorm_unique
+#print axioms VE.EnglishGrammar.Norm.semAll_start
+#print axioms VE.EnglishGrammar.Norm.sem_start
+#print axioms VE.EnglishGrammar.Norm.start_norm
+#print axioms VE.EnglishGrammar.Norm.strings_map
+#print axioms VE.EnglishGrammar.Norm.toNode_fields
+#print axioms VE.EnglishGrammar.Norm.tree_id
+#print axioms VE.EnglishGrammar.Norm.trees_id
+#print axioms VE.EnglishGrammar.Norm.ty_ne
 #print axioms VE.EnglishGrammar.Run.alternativesView_eq
 #print axioms VE.EnglishGrammar.Run.codeClasses_total
 #print axioms VE.EnglishGrammar.Run.rejectCodes_total
