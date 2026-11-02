@@ -2262,7 +2262,8 @@
       "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
       "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
       "lean/VE/Scope/FarExamples.lean": "fixtures only: SC-4's #guard checks (scope spec 7.6) build scope@0 documents, rule contents and one raw unit tree (F-raw-edges) as JSON literals and run `govern` and `forwardCheck` on them; no runtime JSON handling",
-      "lean/VE/Service/UndeclaredExamples.lean": "fixtures only: jt-3a's #guard checks build one judgments@0 document as request JSON and read the document mode's `undeclared_evaluative` member and `Env.basePredicates` (judgment-terms.md 8.4); no service mode reads this file"
+      "lean/VE/Service/UndeclaredExamples.lean": "fixtures only: jt-3a's #guard checks build one judgments@0 document as request JSON and read the document mode's `undeclared_evaluative` member and `Env.basePredicates` (judgment-terms.md 8.4); no service mode reads this file",
+      "lean/VE/Scope/RunExamples.lean": "fixtures only: the explain route's #guard checks (SC-1c, sc-1cb) build hard-constraint documents and reading sets as JSON literals, run the explain runner on them and read a choice label's picks back; no service mode reads this file"
     }
   },
   "plan_operations": {
