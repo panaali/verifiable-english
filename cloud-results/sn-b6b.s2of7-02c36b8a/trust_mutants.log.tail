@@ -1,0 +1,17 @@
+trust_mutants: 11 definitions, 248 mutants (36 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/Senses/Flip.lean:85 VE.Senses.flipsOf (S, trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/Senses/Flip.lean:24 VE.Senses.formulaCore (G[V], trusted) arm-default: some .top -> none
+UNKNOWN lean/VE/Senses/Flip.lean:33 VE.Senses.formulaCore (G[V], trusted) all-any: all -> any (lean/VE/Senses/Flip.lean:33: Unknown constant `VE.Formula.any`)
+SURVIVOR lean/VE/Senses/Flip.lean:27 VE.Senses.formulaCore (G[V], trusted) arm-default: return .binary p (← termCore t) (← termCore u) -> none
+SURVIVOR lean/VE/Senses/Flip.lean:28 VE.Senses.formulaCore (G[V], trusted) arm-default: return .eq (← termCore t) (← termCore u) -> none
+SURVIVOR lean/VE/Senses/Flip.lean:65 VE.Senses.flipPair (S, trusted) list-first: on -> (on.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:251 VE.Senses.Run.flipJson (G[V], trusted) list-drop-last: [("status", .str "unknown")] -> ([("status", .str "unknown")].dropLast)
+SURVIVOR lean/VE/Senses/Flip.lean:64 VE.Senses.flipPair (S, trusted) list-last: on -> (on.reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:44 VE.Senses.flipModelOf (S, trusted) list-drop-first: fs -> (fs.drop 1)
+SURVIVOR lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-last: P.env.constants -> (P.env.constants.reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-last: d.choice -> (d.choice.reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:47 VE.Senses.flipModelOf (S, trusted) list-last: consts -> (consts.reverse.take 1)
+trust_mutants: 18 KILLED, 11 SURVIVOR, 1 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 212 OTHER SHARD in 1670 s
+trust_mutants: G[V], trusted: 4 KILLED, 4 SURVIVOR, 1 UNKNOWN, 2 INVALID, 68 OTHER SHARD
+trust_mutants: S, trusted: 14 KILLED, 7 SURVIVOR, 4 INVALID, 144 OTHER SHARD
+trust_mutants: steps: wall plan 10.6 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.4 s, control_probes 139.8 s, mutants 1512 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 139.4 s (1), mutant_builds 58.1 s (36), mutant_checks 957.5 s (30), stage_controls 3.7 s (1), mutant_probes 4828.6 s (18)
