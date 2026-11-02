@@ -718,7 +718,7 @@ def check(read: Read, listing: Callable[[], Iterable[str]], base_lock: bytes | N
             errors.append(f"{path}: SHA-256 {recorded} in {LOCK}, {now[path]} now; raise actions_version "
                           "and run --write")
     classified = (set(TRUSTED) | set(UNTRUSTED) | {target for _, target, _ in PROFILES.values()}
-                  | set(generated_extras()))
+                  | {STAGED_TARGET, TABLES_TARGET, NORMS_TARGET})
     for path in sorted(listing()):
         if path.startswith(CLASSIFIED_DIRS) and path.endswith(".lean") and path not in classified:
             errors.append(f"{path}: neither a trusted file of {LOCK} nor listed as untrusted in "
