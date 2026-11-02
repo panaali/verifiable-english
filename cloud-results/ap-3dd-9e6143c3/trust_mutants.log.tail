@@ -1,0 +1,8 @@
+trust_mutants: 2 definitions, 4 mutants (4 to run), 4 jobs, base dee6a925845f
+SURVIVOR lean/VE/Acts/Faithful.lean:23 VE.Acts.IntendedActs (S, trusted) body-false: ∀ r ∈ D.U.D.T.regulated, ∀ q ∈ partNames D r.name, VE.Norms.IntendedAt D.U.D.T r (readAs r.name q S) -> False (the proofs it breaks: lean/VE/Acts/Faithful.lean:322, lean/VE/Acts/FaithfulExamples.lean:119)
+SURVIVOR lean/VE/Acts/Faithful.lean:23 VE.Acts.IntendedActs (S, trusted) body-true: ∀ r ∈ D.U.D.T.regulated, ∀ q ∈ partNames D r.name, VE.Norms.IntendedAt D.U.D.T r (readAs r.name q S) -> True (the proofs it breaks: lean/VE/Acts/Faithful.lean:322, lean/VE/Acts/FaithfulExamples.lean:119)
+SURVIVOR lean/VE/Acts/Faithful.lean:19 VE.Acts.readAs (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Acts/Faithful.lean:322, lean/VE/Acts/FaithfulExamples.lean:27)
+SURVIVOR lean/VE/Acts/Faithful.lean:19 VE.Acts.readAs (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Faithful.lean:280, lean/VE/Acts/Faithful.lean:322, lean/VE/Act...)
+trust_mutants: 0 KILLED, 4 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 33 s
+trust_mutants: S, trusted: 4 SURVIVOR
+trust_mutants: steps: wall plan 8.2 s, scratch 2.5 s, control_build 0.1 s, probe_install 1.1 s, control_probes 8.3 s, mutants 11.1 s, cleanup 2.2 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 8.1 s (1), mutant_builds 22.3 s (8), mutant_checks 20.9 s (8)
