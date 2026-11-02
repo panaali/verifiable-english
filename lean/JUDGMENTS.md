@@ -58,12 +58,12 @@ open-term arguments"). Every existing caller passes nothing, so what it accepts,
   3. `JudgmentRegulated: <term>`: a rule regulates the predicate (one atom has one role);
   4. `JudgmentCriterionAsUnit: <term>`: `necessary` or `sufficient` is not empty (a criterion the text states is a
      sentence of its own);
-  5. `JudgmentDecider: <term>`: `decided_by` is `unstated` (the one spelling for "no one named" is
-     `unresolved_decider`).
+  5. `JudgmentDecider: <term>`: `decided_by` is `unresolved_decider` (the one spelling for "no one named" is
+     `unstated`, W2's default; synthesis round 2, PLANS-INDEX C2).
 - `admit`: the first fault in record order, or the judgments.
 - `names`: the judgments' names.
 - `faultOf_none_iff`: a record is admitted exactly when its name is a base predicate with its sorts, no rule regulates
-  it, it lists no criteria, and its decider is not `unstated`.
+  it, it lists no criteria, and its decider is not `unresolved_decider`.
 - `admit_ok_iff`: admission succeeds exactly when no record has a fault, and then it returns the records' judgments in
   order.
 - `admit_first_fault`: when admission fails, the fault is the first faulty record's first failing check, and every

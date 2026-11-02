@@ -1,0 +1,83 @@
+{
+ "item": "pc-3b",
+ "note": "Hand-planted seeded bugs, each applied alone, built or tested, shown to fail, and restored (git status clean). Lean ids 1-9 were run by a script that edits the file, runs `lake build VE.Compose.ContractExamples` and restores it; every one exited 1, and `result` is the first error lines of that build. Ids 10-11 are in the one changed Python tool. No trusted definition is new (tools/trust_map.py --check: K +0, S +0, V +0), so there are no per-definition mutants and no trust-mutants run.",
+ "mutants": [
+  {
+   "id": 1,
+   "file": "lean/VE/Compose/Contract.lean",
+   "mutation": "drop hQw from the statement",
+   "test": "lake build VE.Compose.Contract: composed_superpose_all stops closing (superpose_all_extra needs hQw); X1, lean/VE/Readings/SupExtraExamples.lean, says why",
+   "result": "VE/Compose/Contract.lean:226:29: Application type mismatch: The argument"
+  },
+  {
+   "id": 2,
+   "file": "lean/VE/Compose/Contract.lean",
+   "mutation": "swap the premise list in the statement's hcf",
+   "test": "lake build VE.Compose.Contract: composed_superpose_all, hcf has the wrong list",
+   "result": "VE/Compose/Contract.lean:227:33: Application type mismatch: The argument"
+  },
+  {
+   "id": 3,
+   "file": "lean/VE/Compose/Contract.lean",
+   "mutation": "hB without the packs' carried family",
+   "test": "lake build VE.Compose.Contract: composed_superpose_all, hB has the wrong list",
+   "result": "VE/Compose/Contract.lean:227:72: Application type mismatch: The argument"
+  },
+  {
+   "id": 4,
+   "file": "lean/VE/Compose/Contract.lean",
+   "mutation": "an unused binder A = [] added (the proof still closes; the instance must break)",
+   "test": "lake build VE.Compose.ContractExamples: G1.composed_instance (the binder needs A = [], and A is the strict reading)",
+   "result": "VE/Compose/ContractExamples.lean:229:89: Application type mismatch: The argument; VE/Compose/ContractExamples.lean:231:16: Missing cases:; VE/Compose/ContractExamples.lean:229:81: Tactic `decide` proved that the proposition"
+  },
+  {
+   "id": 5,
+   "file": "lean/VE/Compose/ContractExamples.lean",
+   "mutation": "swap the premise list in the instance's hcf",
+   "test": "lake build VE.Compose.ContractExamples: G1.conflict_free_ask and G1.composed_instance",
+   "result": "VE/Compose/ContractExamples.lean:224:80: Application type mismatch: The argument; VE/Compose/ContractExamples.lean:230:4: Application type mismatch: The argument"
+  },
+  {
+   "id": 6,
+   "file": "lean/VE/Compose/ContractExamples.lean",
+   "mutation": "swap the premise list in the accepted guard",
+   "test": "lake build VE.Compose.ContractExamples: #guard acceptedOn (the certificate names the pack's premise by position)",
+   "result": "VE/Compose/ContractExamples.lean:173:0: Expression"
+  },
+  {
+   "id": 7,
+   "file": "lean/VE/Compose/ContractExamples.lean",
+   "mutation": "the pack carries nothing",
+   "test": "lake build VE.Compose.ContractExamples: #guard X qs == [noAsks] and the accepted guards",
+   "result": "VE/Compose/ContractExamples.lean:171:0: Expression; VE/Compose/ContractExamples.lean:172:0: Expression; VE/Compose/ContractExamples.lean:173:0: Expression"
+  },
+  {
+   "id": 8,
+   "file": "lean/VE/Compose/ContractExamples.lean",
+   "mutation": "the instance's Qc is empty",
+   "test": "lake build VE.Compose.ContractExamples: #guard !backgroundValidP on the asking base (it becomes admissible) and transfers_ask's use in G1.composed_instance",
+   "result": "VE/Compose/ContractExamples.lean:184:0: Expression; VE/Compose/ContractExamples.lean:237:4: Type mismatch"
+  },
+  {
+   "id": 9,
+   "file": "lean/VE/Compose/ContractExamples.lean",
+   "mutation": "the guard refusing the swapped list inverted",
+   "test": "lake build VE.Compose.ContractExamples: #guard !acceptedOn (X qs ++ slotUnder K1 A)",
+   "result": "VE/Compose/ContractExamples.lean:174:0: Expression"
+  },
+  {
+   "id": 10,
+   "file": "tools/check_pc3_statements.py",
+   "mutation": "the approved section ends at 1.6 again (`### 1.7 ` -> `### 1.6 `)",
+   "test": "tests/test_pc3_statements.py::test_pc3_statements_equal_the_approved_text and ::test_a_changed_statement_or_a_later_declaration_fails",
+   "result": "2 failed"
+  },
+  {
+   "id": 11,
+   "file": "tools/check_pc3_statements.py",
+   "mutation": "`countermodelXV` dropped from LATER",
+   "test": "tests/test_pc3_statements.py::test_pc3_statements_equal_the_approved_text",
+   "result": "1 failed, 1 passed"
+  }
+ ]
+}

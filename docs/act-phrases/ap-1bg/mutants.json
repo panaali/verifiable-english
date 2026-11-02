@@ -1,0 +1,18 @@
+{
+ "item": "ap-1bg", "planted_by": "/tmp seed.py: plant one edit, run the one check, restore (git status clean after)",
+ "killed": 11, "survived": 0,
+ "mutants": [
+  {"id": "lean-actsFrame-false", "file": "lean/VE/SoftNorms/Phases.lean", "definition": "actsFrame", "test": "PATH=~/.elan/bin:$PATH lake build VE.Readings.ActsExamples", "killed": true, "first_failure": "error: VE/Readings/ActsExamples.lean:101:0: Expression ... did not evaluate to `true`"},
+  {"id": "lean-frameView-identity", "file": "lean/VE/SoftNorms/Phases.lean", "definition": "frameView", "test": "PATH=~/.elan/bin:$PATH lake build VE.Service.ActsExamples", "killed": true, "first_failure": "error: VE/Service/ActsExamples.lean:471:0: Expression ... did not evaluate to `true`"},
+  {"id": "lean-modelActs-no-eraseDups", "file": "lean/VE/Service/Standalone.lean", "definition": "modelActs", "test": "PATH=~/.elan/bin:$PATH lake build VE.Service.ActsExamples", "killed": true, "first_failure": "error: VE/Service/ActsExamples.lean:182:0: Expression ... did not evaluate to `true`"},
+  {"id": "lean-letterName-base-25", "file": "lean/VE/Service/Standalone.lean", "definition": "letterName", "test": "PATH=~/.elan/bin:$PATH lake build VE.Service.ActsExamples", "killed": true, "first_failure": "error: VE/Service/ActsExamples.lean:188:0: Expression ... did not evaluate to `true`"},
+  {"id": "lean-modelAct-slot-dropped", "file": "lean/VE/Service/Standalone.lean", "definition": "modelAct", "test": "PATH=~/.elan/bin:$PATH lake build VE.Service.ActsExamples", "killed": true, "first_failure": "error: VE/Service/ActsExamples.lean:180:0: Expression ... did not evaluate to `true`"},
+  {"id": "lean-decodeDocument-set-refused-again", "file": "lean/VE/Readings/Wire.lean", "definition": "decodeDocument", "test": "PATH=~/.elan/bin:$PATH lake build VE.Readings.ActsExamples", "killed": true, "first_failure": "error: VE/Readings/ActsExamples.lean:53:0: Expression ... did not evaluate to `true`"},
+  {"id": "py-filled-binding-removed", "file": "ve/readings_route.py", "definition": "_bind_completion", "test": "uv run pytest -q tests/test_acts_profile.py::test_a_filled_act_not_bound_to_the_request_is_unavailable[form-changed]", "killed": true, "first_failure": "Failed: DID NOT RAISE CheckerUnavailable"},
+  {"id": "py-model-acts-classes-unchecked", "file": "ve/backends/validation.py", "definition": "bound_model_acts", "test": "uv run pytest -q tests/test_acts_profile.py::test_model_acts_not_bound_to_the_request_are_unavailable[split]", "killed": true, "first_failure": "Failed: DID NOT RAISE CheckerUnavailable"},
+  {"id": "py-model-view-keeps-acts", "file": "ve/profiles.py", "definition": "model_view", "test": "uv run pytest -q tests/test_acts_profile.py::test_rust_searches_leans_model_view_of_an_acts_environment", "killed": true, "first_failure": "Left contains one more item: 'relational-fol@0'"},
+  {"id": "py-soft-base-without-base-data", "file": "ve/softnorms.py", "definition": "SoftNormDocument.base_environment", "test": "uv run pytest -q tests/test_acts_profile.py::test_a_reading_set_over_acts_takes_the_superposed_and_enumerated_routes", "killed": true, "first_failure": "CheckerUnavailable: ReadingsConstruction: ... UnsupportedProfile"},
+  {"id": "py-soft-frame-without-wording-frame", "file": "ve/readings_s1.py", "definition": "S1Environment.soft_frame", "test": "uv run pytest -q tests/test_acts_profile.py::test_a_reading_set_over_acts_takes_the_superposed_and_enumerated_routes", "killed": true, "first_failure": "CheckerUnavailable: ReadingsConstruction: ... UnsupportedProfile"}
+ ],
+ "not_planted": {"emptyBlock": "its 11 trust mutants are killed (trust-mutants.json), by VE.SoftNorms.ActsFrameExamples"}
+}
