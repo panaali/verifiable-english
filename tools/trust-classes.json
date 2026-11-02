@@ -7512,6 +7512,64 @@
         "VE.Readings.Wire.invalidSet"
       ]
     },
+    "VE/RightClauses/Tree.lean": {
+      "S": [
+        "VE.RightClauses.CLine",
+        "VE.RightClauses.Clause",
+        "VE.RightClauses.ClauseDoc",
+        "VE.RightClauses.Relation",
+        "VE.RightClauses.Role",
+        "VE.RightClauses.baseEnv",
+        "VE.RightClauses.lineName",
+        "VE.RightClauses.lineSorts"
+      ]
+    },
+    "VE/RightClauses/Plain.lean": {
+      "S": [
+        "VE.RightClauses.WellFormedClauses",
+        "VE.RightClauses.candSource",
+        "VE.RightClauses.checkBody",
+        "VE.RightClauses.checkCandidates",
+        "VE.RightClauses.checkClauses",
+        "VE.RightClauses.checkEntry",
+        "VE.RightClauses.checkSpans",
+        "VE.RightClauses.entryOk",
+        "VE.RightClauses.guardOf",
+        "VE.RightClauses.holderGuardOf",
+        "VE.RightClauses.plain",
+        "VE.RightClauses.plainContent",
+        "VE.RightClauses.plainGuard",
+        "VE.RightClauses.plainSource",
+        "VE.RightClauses.relAtom",
+        "VE.RightClauses.relationOk",
+        "VE.RightClauses.shapeOk"
+      ],
+      "P": [
+        "VE.RightClauses.lineKey"
+      ]
+    },
+    "VE/RightClauses/Examples.lean": {
+      "T": [
+        "VE.RightClauses.Examples.accessLine",
+        "VE.RightClauses.Examples.candDoc",
+        "VE.RightClauses.Examples.cdoc",
+        "VE.RightClauses.Examples.charged",
+        "VE.RightClauses.Examples.check",
+        "VE.RightClauses.Examples.cline",
+        "VE.RightClauses.Examples.guardAfter",
+        "VE.RightClauses.Examples.k1",
+        "VE.RightClauses.Examples.k2",
+        "VE.RightClauses.Examples.k3",
+        "VE.RightClauses.Examples.k4",
+        "VE.RightClauses.Examples.marryLine",
+        "VE.RightClauses.Examples.onPower",
+        "VE.RightClauses.Examples.r21",
+        "VE.RightClauses.Examples.r21Doc",
+        "VE.RightClauses.Examples.rel",
+        "VE.RightClauses.Examples.trig",
+        "VE.RightClauses.Examples.verdict"
+      ]
+    },
     "VE/Rights/Admission.lean": {
       "C": [
         "VE.Rights.Admission.checkCites"

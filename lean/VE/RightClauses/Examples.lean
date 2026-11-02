@@ -65,6 +65,11 @@ def k2 : CLine := cline [] (some (rel (0, 1))) []
 #guard selectsAt (plain (cdoc k2)) "equal-access" (model [("country_of", [["Texas", "Ann"]])]) ["Texas", "Ann"]
 #guard !selectsAt (plain (cdoc k2)) "equal-access" (model [("country_of", [["Texas", "Ann"]])]) ["Texas", "Bob"]
 
+-- a decoded document's source order is plained too; an unknown rule's guard is `⊤`
+#guard guardAfter k2 { r21Doc with sourceOrder := some [("r21", accessLine)] } ==
+  .and .top (.binary "country_of" (.var 1) (.var 0))
+#guard guardOf (plain (cdoc k2)) "other" == .top
+
 /-! ## K3 accepted: total on the holder slot 1, `H_R = ⊤` typed -/
 
 def k3 : CLine := cline [] (some (rel (0, 1) (some 1))) []
@@ -149,6 +154,9 @@ def k4 : CLine := cline [trig (charged 0) 10 20] none [(30, 40)]
 #guard check k3 (r21Doc (.unary "vulnerable" (.var 0))) == "RelationShape: equal-access"
 #guard check k2 (r21Doc (.unary "vulnerable" (.var 0))) == "ok"
 #guard check k3 (r21Doc (charged 0)) == "ok"
+
+#guard holderGuardOf (cdoc k3 (r21Doc (charged 0))) "r21" == charged 0 && holderGuardOf (cdoc k3) "r9" == .top
+#guard WellFormedClauses (cdoc k4) && !WellFormedClauses (cdoc (cline [trig (charged 0) 90 110] none []))
 
 /-! ## K11: clauses or a relation on a power or a fan-out line -/
 

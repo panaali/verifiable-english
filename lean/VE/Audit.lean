@@ -324,6 +324,7 @@ import VE.Readings.UpSlot
 import VE.Readings.Verdicts
 import VE.Readings.VerdictsWire
 import VE.Readings.Wire
+import VE.RightClauses.Plain
 import VE.Rights.Admission
 import VE.Rights.Bar
 import VE.Rights.Correlate
@@ -5970,6 +5971,27 @@ import VE.WireContract.Engine
 #print axioms VE.Reports.unit_shape
 #print axioms VE.Reports.unreported_key_free
 #print axioms VE.Reports.wf_of
+#print axioms VE.RightClauses.checkEntry_ok
+#print axioms VE.RightClauses.fanCount_plain
+#print axioms VE.RightClauses.filterMap_key
+#print axioms VE.RightClauses.findSome_unique
+#print axioms VE.RightClauses.foldl_and_denote
+#print axioms VE.RightClauses.forM_ok
+#print axioms VE.RightClauses.instancesOf_key
+#print axioms VE.RightClauses.limActs_plain
+#print axioms VE.RightClauses.lineRuleNames_plain
+#print axioms VE.RightClauses.linesAux_key
+#print axioms VE.RightClauses.linesOf_plain_key
+#print axioms VE.RightClauses.plainContent_declared
+#print axioms VE.RightClauses.plainContent_identity
+#print axioms VE.RightClauses.plainSource_eq
+#print axioms VE.RightClauses.plainSource_nil
+#print axioms VE.RightClauses.plain_guard
+#print axioms VE.RightClauses.plain_identity
+#print axioms VE.RightClauses.plain_limPremises
+#print axioms VE.RightClauses.plain_shape
+#print axioms VE.RightClauses.rightOf_plain
+#print axioms VE.RightClauses.sourceLines_plain
 #print axioms VE.Rights.Admission.admitDocument_spec
 #print axioms VE.Rights.Admission.admitNodes_ok
 #print axioms VE.Rights.Admission.layerLeaf_formula
