@@ -9898,6 +9898,37 @@ theorem VE.Compose.Contract.scopeSetsFaithful
   VE.Compose.Contract.ScopeSetsFaithful
   -- uses VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
   -- expr 1334727881
+theorem VE.Compose.ContractExamples.G1.bare_admissible_ask
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Compose.BaseAdmissibleP
+      (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.Examples.K1 VE.Compose.ContractExamples.G1.A).fst)
+      (VE.Rights.limPremises (VE.Readings.choiceDoc VE.Readings.Examples.K1 VE.Compose.ContractExamples.G1.A).fst ++
+        List.flatMap (fun p => VE.Compose.ContractExamples.G1.Qc p VE.Compose.ContractExamples.G1.A)
+          VE.Compose.ContractExamples.G1.qs)
+      VE.Readings.SupExtraExamples.bare.asStructure
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ContractExamples.G1.A@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.Qc@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.qs@VE.Compose.ContractExamples VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.SupExtraExamples.bare@VE.Readings.SupExtraExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 542582673
+theorem VE.Compose.ContractExamples.G1.composed_instance
+  VE.Compose.ContractExamples.G1.G1Checks →
+    VE.Formula.denote
+      (VE.Readings.expand (VE.Readings.choiceDoc VE.Readings.Examples.K1 VE.Compose.ContractExamples.G1.A).fst
+        VE.Readings.SupExtraExamples.bare.asStructure)
+      [] VE.Compose.ContractExamples.G1.noAsksUser
+  -- uses VE.Compose.ContractExamples.G1.A@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.noAsksUser@VE.Compose.ContractExamples VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.bare@VE.Readings.SupExtraExamples VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics
+  -- expr 3900097793
+theorem VE.Compose.ContractExamples.G1.conflict_free_ask
+  VE.Compose.ContractExamples.G1.G1Checks →
+    VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup VE.Readings.Examples.K1).fst)
+      (VE.Readings.slotUnder VE.Readings.Examples.K1 VE.Compose.ContractExamples.G1.A ++
+        VE.NormDefaults.Packs.X VE.Compose.ContractExamples.G1.qs)
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.ContractExamples.G1.A@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples VE.Compose.ContractExamples.G1.qs@VE.Compose.ContractExamples VE.Formula@VE.Syntax VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 838837879
+theorem VE.Compose.ContractExamples.G1.transfers_ask
+  VE.Readings.SupExtraExamples.X1Checks →
+    VE.Readings.Transfers VE.Readings.Examples.K1 [VE.Compose.ContractExamples.G1.noAsks] fun x =>
+      [VE.Compose.ContractExamples.G1.noAsks]
+  -- uses VE.Compose.ContractExamples.G1.noAsks@VE.Compose.ContractExamples VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Examples.K1@VE.Readings.Examples VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 1387901103
 theorem VE.Compose.SlotChain.A_in
   ∀ {X : VE.SoftNorms.SoftDoc} {P : List VE.Formula} {k : Nat} (self : VE.Compose.SlotChain X P k)
     (S : VE.Route.fol.Model), self.R.Admissible_in S ↔ VE.Compose.PrefixAdmissibleP X P 0 S
@@ -32401,6 +32432,38 @@ theorem VE.Readings.complete_setAt
         (VE.Readings.candidate D s i).isSome = Bool.true → VE.Readings.complete D (VE.Readings.setAt c s i) = Bool.true
   -- uses VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.complete@VE.Readings.Choice VE.Readings.setAt@VE.Readings.Verdicts
   -- expr 248685601
+theorem VE.Readings.composed_superpose_all
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate D x.fst x.snd).isSome = Bool.true) →
+              ∀ (qs : List VE.NormDefaults.Packs.Pack)
+                (Qc : VE.NormDefaults.Packs.Pack → VE.Readings.Choice → List VE.Formula),
+                (∀ (p : VE.NormDefaults.Packs.Pack),
+                    p ∈ qs → VE.Readings.Transfers D (List.map (fun x => x.snd) p.labelled) (Qc p)) →
+                  VE.Compose.SlotWellFormed (VE.Rights.correlate (VE.Readings.sup D).fst) (VE.NormDefaults.Packs.X qs) →
+                    VE.Compose.ConflictFreeP (VE.Rights.correlate (VE.Readings.sup D).fst)
+                        (VE.Readings.slotUnder D A ++ VE.NormDefaults.Packs.X qs) →
+                      ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                        (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] a) →
+                          VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] φ →
+                            ∀ (cert : VE.Tableau.Certificate),
+                              VE.Readings.supCertificateCheckExtra D A (VE.NormDefaults.Packs.X qs) Γ φ cert = Bool.true →
+                                ∀ (c : VE.Readings.Choice),
+                                  VE.Readings.Compatible D c →
+                                    (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                                      ∀ (B : VE.Structure),
+                                        VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc D c).fst)
+                                            (VE.Rights.limPremises (VE.Readings.choiceDoc D c).fst ++
+                                              List.flatMap (fun p => Qc p c) qs)
+                                            B →
+                                          VE.Norms.Sat (VE.Readings.expand (VE.Readings.choiceDoc D c).fst B)
+                                              ((VE.Readings.choiceDoc D c).snd ++ Γ) →
+                                            VE.Formula.denote (VE.Readings.expand (VE.Readings.choiceDoc D c).fst B) [] φ
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 1469591053
 theorem VE.Readings.conditionItems_label
   ∀ (D : VE.Readings.Doc) (l : String) (it : VE.Readings.PlanItem),
     it ∈ VE.Readings.conditionItems D l → it.label? = Option.some l
