@@ -22606,7 +22606,7 @@ module VE.Service.UndeclaredExamples cd581293ef82a94e1c52ecfeb2668b6484c34a5bcca
 28:0-36:50 def VE.Service.UndeclaredExamples.text@VE.Service.UndeclaredExamples
 38:0-38:106 def VE.Service.UndeclaredExamples.judged@VE.Service.UndeclaredExamples
 40:0-45:50 def VE.Service.UndeclaredExamples.member@VE.Service.UndeclaredExamples
-module VE.SoftNorms.ActsFrameExamples a67b8eae2559c95c3c13fbb186934e4b6b773241c4dc0d014694d1627dab6b71
+module VE.SoftNorms.ActsFrameExamples 591e558fcd23492430b4d35379a6166c7def13c37c03507d53ff7498d4140e22
 11:0-11:67 def VE.SoftNorms.ActsFrameExamples.parse@VE.SoftNorms.ActsFrameExamples
 12:0-13:122 def VE.SoftNorms.ActsFrameExamples.block@VE.SoftNorms.ActsFrameExamples
 14:0-14:72 def VE.SoftNorms.ActsFrameExamples.paid@VE.SoftNorms.ActsFrameExamples
@@ -22618,6 +22618,7 @@ module VE.SoftNorms.ActsFrameExamples a67b8eae2559c95c3c13fbb186934e4b6b773241c4
 35:0-36:97 def VE.SoftNorms.ActsFrameExamples.err@VE.SoftNorms.ActsFrameExamples
 37:0-38:107 def VE.SoftNorms.ActsFrameExamples.actsOf@VE.SoftNorms.ActsFrameExamples
 39:0-39:92 def VE.SoftNorms.ActsFrameExamples.frame@VE.SoftNorms.ActsFrameExamples
+50:0-51:27 def VE.SoftNorms.ActsFrameExamples.inhP@VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc
 23:0-28:20 def VE.SoftNorms.Admission.checkQuoted@VE.SoftNorms.Admission
 30:0-34:66 def VE.SoftNorms.Admission.LayerLeaf@VE.SoftNorms.Admission

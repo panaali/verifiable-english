@@ -41,6 +41,23 @@ def frame (j : Json) : Bool := VE.SoftNorms.Phases.actsFrame sfP (j.getObjValD "
 -- the view is read with its acts, each as written, its profiles as listed
 #guard actsOf (env sfP (some block)) == some [("heard", some heard), ("paid", some paid)]
 #guard (VE.SoftNorms.Phases.checkSource (env sfP (some block)) (.arr #[])).toOption.map (·.profiles) == some sfP
+-- the decoder reads every predicate, a constant's display, and the inherited profiles beside `acts@0`
+#guard (VE.SoftNorms.Phases.checkSource (env sfP (some block)) (.arr #[])).toOption.map
+  (·.ne.rv.modelVocabulary.predicates.map (·.1)) == some ["base", "heard", "paid"]
+#guard err ((env sfP (some block)).setObjVal! "vocabulary" (((env sfP (some block)).getObjValD "vocabulary").setObjVal!
+  "constants" (Json.mkObj [("ann", Json.mkObj [("sort", .str "person"), ("description", .str "d"),
+    ("verbalisation", .str "Ann")])]))) == "ok"
+def inhP : List String := ["acts@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0",
+  "soft-norms@0", "time@0"]
+#guard (VE.SoftNorms.Phases.checkSource (env inhP (some block)) (.arr #[])).toOption.map (·.ne.profiles) ==
+  some (inhP.erase "soft-norms@0")
+-- `acts@0` anywhere in an unsorted list is the view's, refused by the profile check, not by the vocabulary's
+#guard [["norms@0", "acts@0", "relational-fol@0", "soft-norms@0"], ["norms@0", "relational-fol@0", "soft-norms@0",
+  "acts@0"]].map (fun ps => err (env ps (some block))) ==
+  List.replicate 2 "UnsupportedProfile: profiles must be sorted and unique"
+-- every vocabulary key is checked, the last one too
+#guard err ((env sfP (some block)).setObjVal! "vocabulary" (((env sfP (some block)).getObjValD "vocabulary").setObjVal!
+  "zzz" (Json.mkObj []))) == "InvalidInput: invalid vocabulary"
 -- the block is exactly the empty strict one, in any key order; any other block, or none, is not the view
 #guard VE.SoftNorms.Phases.emptyBlock == block && frame (env sfP (some block))
 #guard ![block.setObjVal! "parties" (toJson ["x"]), block.setObjVal! "ties" (toJson [["a", "b"]]),
