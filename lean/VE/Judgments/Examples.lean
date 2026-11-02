@@ -35,7 +35,7 @@ def envText : String :=
   "\"arbitrary\": {\"arguments\": [\"act\"], \"description\": \"{0} is arbitrary\"}}, \"constants\": {}}}"
 
 def termText (name args : String) : String :=
-  "[{\"name\": \"" ++ name ++ "\", \"arguments\": " ++ args ++ ", \"decided_by\": \"unresolved_decider\", " ++
+  "[{\"name\": \"" ++ name ++ "\", \"arguments\": " ++ args ++ ", \"decided_by\": \"unstated\", " ++
   "\"necessary\": [], \"sufficient\": [], \"factors\": [\"the Declaration gives no test for arbitrariness\"], " ++
   "\"precedents\": [], \"jurisdiction\": \"udhr\", \"version\": 1}]"
 
@@ -58,13 +58,13 @@ def factor : String := "the Declaration gives no test for arbitrariness"
 #guard match w2Probe "treats_unfairly" "[\"person\", \"person\"]" with
   | .ok (a, b, c, d) => errText a == some "invalid open-term arguments" &&
       errText b == some "invalid open-term arguments" && okVal c == some ["treats_unfairly"] &&
-      okVal d == some [(⟨"treats_unfairly", ["person", "person"], "unresolved_decider", [factor]⟩, 0, 0)]
+      okVal d == some [(⟨"treats_unfairly", ["person", "person"], "unstated", [factor]⟩, 0, 0)]
   | .error _ => false
 -- J-α (wire): the same answer all three ways; `records` keeps the factor
 #guard match w2Probe "arbitrary" "[\"act\"]" with
   | .ok (a, b, c, d) => okVal a == some ["arbitrary"] && okVal b == some ["arbitrary"] &&
       okVal c == some ["arbitrary"] &&
-      okVal d == some [(⟨"arbitrary", ["act"], "unresolved_decider", [factor]⟩, 0, 0)]
+      okVal d == some [(⟨"arbitrary", ["act"], "unstated", [factor]⟩, 0, 0)]
   | .error _ => false
 
 /-! ## The environment of 11.2 to 11.7 -/
@@ -93,7 +93,7 @@ def defs : List VE.Definitions.Def :=
 
 def regulated : List String := ["subjects", "reports", "make_reasonable_efforts"]
 
-def jrec (name : String) (args : List String) (decider : String := "unresolved_decider")
+def jrec (name : String) (args : List String) (decider : String := "unstated")
     (nec suf : Nat := 0) : Rec :=
   (⟨name, args, decider, []⟩, nec, suf)
 
@@ -111,7 +111,7 @@ def J2 : List String := ["arbitrary", "unreasonable"]
 def guardα : VE.Formula := .and (u "arrest") (u "arbitrary")
 def uα (meaning : String) (listed : List String := ["arbitrary"]) : UnitView :=
   view "u1" meaning listed (some (.rule (rule "no-arbitrary-arrest" guardα)))
-def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "unresolved_decider", []⟩
+def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "unstated", []⟩
 
 /-! ## 11.2 Admission -/
 
@@ -129,8 +129,9 @@ def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "
   some "JudgmentCriterionAsUnit: arbitrary"
 #guard errText (admit E defs regulated [jrec "arbitrary" ["act"] (suf := 2)]) ==                         -- J-ζ′
   some "JudgmentCriterionAsUnit: arbitrary"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unstated"]) ==                         -- J-η
+#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unresolved_decider"]) ==               -- J-η (the retired spelling)
   some "JudgmentDecider: arbitrary"
+#guard okVal (admit E defs regulated [jrec "arbitrary" ["act"] "unstated"]) == some [judgment "arbitrary" ["act"]]
 #guard okVal (admit E defs regulated [jrec "treats_unfairly" ["person", "person"]]) ==                   -- J-ο
   some [judgment "treats_unfairly" ["person", "person"]]
 #guard okVal (admit E defs regulated [jrec "gives_serious_uplift" ["act"]]) ==                           -- J-ν
@@ -141,15 +142,15 @@ def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "
 #guard errText (admit E defs regulated
   [jrec "arbitrary" ["act"], jrec "reasonable_limitation" ["act"], jrec "unreasonable" ["person"]]) ==
   some "JudgmentUnbound: reasonable_limitation"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["person"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "arbitrary" ["person"] "unresolved_decider" 1 0]) ==
   some "JudgmentArguments: arbitrary"
 -- each later check of order 2 under the next one's fault: arguments before regulated, regulated before the
 -- criteria, the criteria before the decider
 #guard errText (admit E defs regulated [jrec "subjects" ["act"]]) ==
   some "JudgmentArguments: subjects"
-#guard errText (admit E defs regulated [jrec "subjects" ["person", "act"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "subjects" ["person", "act"] "unresolved_decider" 1 0]) ==
   some "JudgmentRegulated: subjects"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unresolved_decider" 1 0]) ==
   some "JudgmentCriterionAsUnit: arbitrary"
 
 /-! ## 11.3 Status and usage -/
