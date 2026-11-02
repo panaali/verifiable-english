@@ -1,0 +1,11 @@
+trust_mutants: 24 definitions, 246 mutants (123 to run), 4 jobs, base fbc19d49110d
+SURVIVOR lean/VE/Service/Document.lean:704 VE.Service.Document.cardinalityEnv (?, trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Service/CardinalityExamples.lean:27 VE.Service.CardinalityExamples.run (?, trusted) bool-flip: true -> false (lean/VE/Service/CardinalityExamples.lean:54: Expression (VE.Service.CardinalityExamples.reported,...)
+UNKNOWN lean/VE/Service/CardinalityExamples.lean:16 VE.Service.CardinalityExamples.top (?, trusted) list-empty: [toJson "quantity", toJson ["top"]] -> [] (lean/VE/Service/CardinalityExamples.lean:16: typeclass instance problem is stuck, it is often due...)
+UNKNOWN lean/VE/Service/Document.lean:807 VE.Service.Document.UnitContent (G[V], trusted) ctor-drop: /-- A cardinality statement the unit's content decoded to: its meaning id and canonical formula (... ->  (lean/VE/Service/Document.lean:816: Unknown constant `VE.Service.Document.UnitContent.cardinality`)
+trust_mutants: 13 KILLED, 1 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 106 NOT RUN, 123 OTHER SHARD in 5378 s
+trust_mutants: ?, trusted: 8 KILLED, 1 SURVIVOR, 2 UNKNOWN, 71 NOT RUN, 89 OTHER SHARD
+trust_mutants: D[V], trusted: 3 KILLED, 9 NOT RUN, 2 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 1 UNKNOWN, 26 NOT RUN, 32 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 106 of its 123 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.2 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.3 s, control_probes 945.7 s, mutants 4413.3 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 2011.6 s (8), mutant_builds 197 s (19), mutant_checks 509.8 s (5), stage_controls 112.5 s (4), mutant_probes 16377.8 s (14)
