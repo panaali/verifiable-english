@@ -13,57 +13,57 @@
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "and-or",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "or-and",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "eq-ne",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "eq-le",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "append-left",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "append-right",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "list-empty",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "list-first",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "list-last",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "list-drop-first",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.leastUniform",
 "operator": "list-drop-last",
-"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:107, :114 and :120 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
+"reason": "refuted by the decide checks of lean/VE/Defaults/UniformExamples.lean:111, :118 and :124 (DRI decision 2026-11-02 pc-9 item 2: the table holds where a stated condition holds, not where none does, not at another name; two conditions in either order); UNKNOWN only because those checks read the Decidable instance leastUDec, which must unfold the mutated Prop to decide it; the excepted branch's sufficient conditions are also read by leastUniform_legacy"
 },
 {
 "definition": "VE.Defaults.ConditionsExact",
