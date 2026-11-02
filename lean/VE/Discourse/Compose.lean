@@ -211,7 +211,6 @@ def chainUnit (u : Json) : Json :=
     | .ok c => [("content", (c.getObjVal? "ast").toOption.getD c)]
     | .error _ => [])
 
-set_option linter.unusedVariables false in
 /-- The W2 admission object of a resolved payload, each unit's content in its route's wire form: norm, rights and
     resolved fence contents passed through, built without `baseVocabulary` or `loadPayload` (the loader's
     `admissionObject` holds formulas only, `Loader.lean`). -/
@@ -255,17 +254,12 @@ def conditionalOnList : List Json → List Json
   | x :: xs => conditionalOnOf x ++ conditionalOnList xs
 end
 
-/-- A non-empty array. -/
-def nonEmpty : Json → Bool
-  | .arr xs => !xs.isEmpty
-  | _ => false
-
 /-- 14.5 step 1's named abstentions: groups, compatibility constraints, validity claims and reading sets. -/
 def chainAbstentions (front : Json) : Except String Unit := do
   let d := front.getObjValD "discourse"
   for (key, name) in [("groups", "groups"), ("constraints", "constraints"), ("validity", "validity claims")] do
-    if nonEmpty (d.getObjValD key) then throw (Loader.notImplemented (name ++ " on the chain"))
-  if nonEmpty (front.getObjValD "reading_sets") then throw (Loader.notImplemented "reading sets on the chain")
+    if (d.getObjValD key).getArr?.toOption.any (!·.isEmpty) then throw (Loader.notImplemented (name ++ " on the chain"))
+  if (front.getObjValD "reading_sets").getArr?.toOption.any (!·.isEmpty) then throw (Loader.notImplemented "reading sets on the chain")
 
 /-- The reference lines of a front matter (7.1), refused if one carries a `conditional_on` list (regenerated,
 never trusted: the mention decoder admits no such key). -/

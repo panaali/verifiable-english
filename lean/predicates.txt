@@ -284,6 +284,8 @@ module VE.Definitions.Layer
 module VE.Definitions.Route
 module VE.Discourse.Access
 module VE.Discourse.Admission
+module VE.Discourse.Compose
+module VE.Discourse.ComposeExamples
 module VE.Discourse.Descriptions
 module VE.Discourse.Documents
 module VE.Discourse.Elaborate
@@ -936,6 +938,7 @@ VE.Discourse.PostFacts@VE.Discourse.Theorems
 VE.Discourse.PredTyped@VE.Discourse.WellFormed
 VE.Discourse.PrepareFacts@VE.Discourse.Theorems
 VE.Discourse.RestrTyped@VE.Discourse.WellFormed
+VE.Discourse.Run.ComposedAdmissionAnswer@VE.Discourse.Run
 VE.Discourse.Run.DiscourseAdmissionAnswer@VE.Discourse.Run
 VE.Discourse.Satisfies@VE.Discourse.Joint
 VE.Discourse.SlotMeaning@VE.Discourse.Elaborate

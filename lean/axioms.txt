@@ -1802,6 +1802,7 @@
 'VE.Discourse.admission_projects' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.admit2_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.admitAt_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.admitChain_of' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.admit_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.admit_facts2' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.aligned_refl' depends on axioms: [propext, Quot.sound]
@@ -1819,14 +1820,29 @@
 'VE.Discourse.bound_mem' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.canon_kind' does not depend on any axioms
 'VE.Discourse.carrier_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.chainReferences_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.checkAll_ok' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.citation_choices_retained' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.citation_extends_joint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.cmp_i_d' does not depend on any axioms
+'VE.Discourse.cmp_ir_d' does not depend on any axioms
+'VE.Discourse.cmp_ir_i' does not depend on any axioms
+'VE.Discourse.cmp_rf_i' does not depend on any axioms
+'VE.Discourse.cmp_rf_ir' does not depend on any axioms
+'VE.Discourse.cmp_rp_i' does not depend on any axioms
+'VE.Discourse.cmp_rp_ir' does not depend on any axioms
+'VE.Discourse.cmp_rp_rf' does not depend on any axioms
 'VE.Discourse.compatibleChoices_unconstrained' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.compatible_budget' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.compatible_empty_error' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.compatible_no_sets' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.compatible_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_admission' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_base_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_path' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_unchanged_error' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.conditions_retained' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.conjOn_denote' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.conjOn_wf' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.conj_denote' depends on axioms: [propext, Quot.sound]
@@ -1974,6 +1990,9 @@
 'VE.Discourse.report_extends_joint' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.req_ok' depends on axioms: [propext]
 'VE.Discourse.resolveAll_ok' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.resolveCase_keeps' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolveCase_off' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolveDocument_keeps' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.resolveFormula_assertion' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.resolve_identity' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.resolve_keeps_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
