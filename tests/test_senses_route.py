@@ -13,6 +13,7 @@ from types import SimpleNamespace
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from ve import ast
 from ve.backends import lean as lean_backend  # its one-shot runners start through run_limited
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
@@ -637,7 +638,31 @@ def flip(sentence, first, second, status, true=None, values=None):
                            flip(1, 0, 1, "distinguished", ["sense__funny_1"], [True, False])]),
 ], ids=["positive", "negated", "universal", "undistinguished", "resolved", "one-candidate", "two-units"])
 def test_flip_models_are_leans(joke, source, flips):
-    assert read_in(joke, source)["reading"]["flips"] == flips
+    reading = read_in(joke, source)["reading"]
+    assert [{k: v for k, v in row.items() if k != "model"} for row in reading["flips"]] == flips
+    assert all(("model" in row) == (row["status"] == "distinguished") for row in reading["flips"])
+
+
+@pytest.mark.parametrize("source", [FUNNY, "The riddle is not funny.", "Every joke is funny.", FUNNY + " " + FUNNY])
+def test_a_flip_model_is_a_model_of_the_projection_that_separates_the_pair(joke, source):
+    """F3 (sn-b6b review): a distinguishing row writes its model in the existing model wire form, so W2 can name it
+    by `model_id`: Lean's model mode reads it as a `FiniteModel` of the projected environment, and the two
+    candidates' formulas take the row's two values in it (read back here with Lean's metered evaluator)."""
+    from ve.evaluate import evaluate
+    from ve.model import FiniteModel
+    reading = read_in(joke, source)["reading"]
+    projected = Environment(reading["environment"])
+    units = {unit["sentence"]: unit for unit in reading["units"]}
+    rows = [row for row in reading["flips"] if row["status"] == "distinguished"]
+    assert rows
+    for row in rows:
+        model = FiniteModel.from_dict(projected, row["model"])
+        assert type(model.model_id) is str and model.to_dict() == row["model"]
+        assert {name for name, tuples in row["model"]["relations"].items() if tuples} == set(row["true"])
+        candidates = units[row["sentence"]]["candidates"]
+        values = [evaluate(projected, ast.formula_from_data(projected, candidates[k]["formula"]), model,
+                           trace=False).value for k in (row["first"], row["second"])]
+        assert values == row["values"] and values[0] != values[1]
 
 
 @pytest.mark.parametrize("change", [
@@ -655,8 +680,23 @@ def test_flip_models_are_leans(joke, source, flips):
     lambda flips: flips[0].update(status="unknown"),                   # a status without its members' shape
     lambda flips: flips[0].pop("values"),                              # a member dropped
     lambda flips: flips.clear(),                                       # emptied
+    lambda flips: flips[0].pop("model"),                               # the model dropped
+    lambda flips: flips[0].update(model=[]),                           # a list for the model
+    lambda flips: flips[0]["model"].update(complete=False),            # not complete
+    lambda flips: flips[0]["model"].pop("relations"),                  # a table dropped
+    lambda flips: flips[0]["model"]["domains"].update(absent=["x"]),   # a sort the projection lacks
+    lambda flips: flips[0]["model"]["domains"].update(joke=[]),        # an empty domain
+    lambda flips: flips[0]["model"]["domains"].update(joke=["joke", "joke"]),  # an entity repeated
+    lambda flips: flips[0]["model"]["domains"].update(joke=["joke", 7]),       # a number for an entity
+    lambda flips: flips[0]["model"]["constants"].update(absent="joke"),        # a constant the projection lacks
+    lambda flips: flips[0]["model"]["constants"].update(riddle="person"),      # outside its sort's domain
+    lambda flips: flips[0]["model"]["relations"].update(absent=[]),            # a predicate the projection lacks
+    lambda flips: flips[0]["model"]["relations"].update(sense__funny_2=[["joke", "joke"]]),  # a wrong arity
+    lambda flips: flips[0]["model"]["relations"].update(sense__funny_2=[["alice"]]),  # an entity of another sort
 ], ids=["dropped", "repeated", "shifted", "reversed", "absent-candidate", "bool", "absent-predicate", "no-true",
-        "three-values", "int-values", "bogus-status", "status-shape", "no-values", "empty"])
+        "three-values", "int-values", "bogus-status", "status-shape", "no-values", "empty", "no-model", "model-list",
+        "incomplete", "no-relations", "absent-sort", "empty-domain", "repeated-entity", "int-entity",
+        "absent-constant", "constant-outside", "absent-relation", "arity", "wrong-sort"])
 def test_flip_rebinding_is_refused(joke, change):
     source = FUNNY + " " + FUNNY
     genuine = read_in(joke, source)
