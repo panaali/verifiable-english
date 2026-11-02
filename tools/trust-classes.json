@@ -17189,6 +17189,12 @@
         "VE.Calc.maxSignFlip"
       ],
       "C": [
+        "VE.Calc.instDecidableRootEq",
+        "VE.Calc.instDecidableRootGe",
+        "VE.Calc.instDecidableRootGt",
+        "VE.Calc.instDecidableRootLe",
+        "VE.Calc.instDecidableRootLt",
+        "VE.Calc.instDecidableSqrtRoundsTo",
         "VE.Calc.signFlipC",
         "VE.Calc.signFlipWork"
       ]
