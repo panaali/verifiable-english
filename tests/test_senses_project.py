@@ -325,6 +325,27 @@ def test_a_readings_environment_is_bound_to_the_request(joke, change):
     assert problem(mutant).startswith("the projected environment is not the request's")
 
 
+# The base's texts (3b4e471f8, ve/backends/senses.py:150-154), each read after a possessive: "the reading's the
+# grammar identities ...".
+BASE_IDENTITY_PROBLEMS = {"grammar_id": "the grammar identities do not match the request",
+                          "source_sha256": "the source identity does not match the request",
+                          "environment_id": "the environment identity is not the returned environment's"}
+
+
+@pytest.mark.parametrize("key", BASE_IDENTITY_PROBLEMS)
+def test_an_identity_problem_names_its_identity_once(joke, key):
+    """F8 (sn-b6b review), R1: an identity problem reads after its possessive with one article, and keeps the
+    base text's words: the base's text, its leading `the` dropped."""
+    env, overlay = joke
+    genuine = read_in(joke, FUNNY)
+    binding = {"env": env, "source": FUNNY, "words": route._dictionary([PACK], [])[1],
+               "case": route.request(env, FUNNY, [PACK.decode()], overlay=overlay)}
+    mutant = deepcopy(genuine)
+    mutant["reading"]["identities"][key] = "0" * 64
+    assert route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=FUNNY,
+                                   binding=binding) == "the reading's " + BASE_IDENTITY_PROBLEMS[key][len("the "):]
+
+
 def test_reading_identity_rebinding_is_refused(joke):
     """The identities a reading names are bound to the request: its grammar, S2's actions version, its source, the
     returned environment and the dictionary's words."""
