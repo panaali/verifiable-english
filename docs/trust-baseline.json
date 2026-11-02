@@ -1776,6 +1776,48 @@
    "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
    "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 8,
+   "reason": "ap-3dd: lean/VE/Acts/Faithful.lean +8 (S: readAs, IntendedActs, the definitions spec 6.6 states elaborate_faithful with)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dd, 2026-11-02",
+   "commit": "fe6bf09b8aad4cd4468c80df38bf8b7b4ed498a1"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
+   "commit": "01e3b48c54d9e07276183b018baec2d462990103"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
+   "commit": "01e3b48c54d9e07276183b018baec2d462990103"
+  },
+  {
+   "class": "S",
+   "lines": 139,
+   "reason": "cmp-s3a: VE/RightClauses/Plain.lean S +103, VE/RightClauses/Tree.lean S +36 (K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 84,
+   "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
   }
  ]
 }

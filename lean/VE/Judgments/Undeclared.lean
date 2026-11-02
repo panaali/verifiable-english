@@ -1,6 +1,6 @@
 /-! Undeclared evaluative words (`judgments@0`, docs/spec/judgment-terms.md 7; plan D15, JT-3).
 
-A catalogue row names an evaluative word and the phrases in which the word has another sense. The rows themselves
+A catalogue row names an evaluative word or phrase and the phrases in which the word has another sense. The rows themselves
 are english-lean's (`VE.EnglishGrammar.evaluativeRows`, its single catalogue); senses owns the numbered senses and
 their `sense__<word>_<n>` projection (synthesis round 2, edit 3), so a row carries no sense of its own.
 `undeclaredEvaluative` lists the base predicates whose words match a row and that are not bound. It says only "these
@@ -9,10 +9,11 @@ judgment. -/
 
 namespace VE.Judgments
 
-/-- One catalogue row for an evaluative word, tied to its evaluative sense: the word, and the phrases in which it
-    has another sense. JT-3 reads the rows from english-lean's single catalogue; there is no second list. -/
+/-- One catalogue row for an evaluative word, tied to its evaluative sense: the word (a phrase, such as "good
+    judgment", in jt-3p), and the phrases in which it has another sense. JT-3 reads the rows from english-lean's single
+    catalogue; there is no second list. -/
 structure EvaluativeRow where
-  word        : String
+  word        : List String
   otherSenses : List (List String)
   deriving DecidableEq, Repr
 
@@ -20,7 +21,7 @@ def hasPhrase (ph ws : List String) : Bool :=
   (List.range (ws.length + 1)).any fun i => (ws.drop i).take ph.length == ph
 
 def EvaluativeRow.matches (row : EvaluativeRow) (ws : List String) : Bool :=
-  ws.contains row.word && !row.otherSenses.any (hasPhrase · ws)
+  hasPhrase row.word ws && !row.otherSenses.any (hasPhrase · ws)
 
 /-- The base predicates whose words match a row and that are not bound, in declaration order. `preds` is every
     predicate of the base environment `baseEnv E defs` (W3-defined names excluded, regulated predicates included),
@@ -46,9 +47,10 @@ theorem hasPhrase_iff (ph ws : List String) : hasPhrase ph ws = true ↔ ph <:+:
     refine ⟨s.length, by simp; omega, ?_⟩
     simp [List.append_assoc]
 
-/-- A row matches a predicate's words exactly when its word is one of them and no phrase of its other senses is. -/
+/-- A row matches a predicate's words exactly when its phrase is written in them and no phrase of its other senses
+    is. -/
 theorem matches_iff (row : EvaluativeRow) (ws : List String) :
-    row.matches ws = true ↔ row.word ∈ ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
+    row.matches ws = true ↔ row.word <:+: ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
   simp [EvaluativeRow.matches, hasPhrase_iff]
 
 /-- A predicate's words begin with its name's, and are its name's alone when it has no template. -/
@@ -57,11 +59,19 @@ theorem predicateWords_name (name : String) (template : Option String) :
       predicateWords name none = name.toLower.splitOn "_" := by
   simp [predicateWords]
 
+/-- A one-word row matches as jt-3a's word rows did: `[w]` is written in `ws` exactly when `w` is one of them. -/
+theorem singleton_infix_iff (w : String) (ws : List String) : [w] <:+: ws ↔ w ∈ ws := by
+  constructor
+  · rintro ⟨s, t, rfl⟩; simp
+  · intro h
+    obtain ⟨s, t, rfl⟩ := List.append_of_mem h
+    exact ⟨s, t, by simp⟩
+
 theorem undeclaredEvaluative_iff (rows preds J p) :
     p ∈ undeclaredEvaluative rows preds J ↔
-      ∃ ws, (p, ws) ∈ preds ∧ p ∉ J ∧ ∃ row ∈ rows, row.word ∈ ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
+      ∃ ws, (p, ws) ∈ preds ∧ p ∉ J ∧ ∃ row ∈ rows, row.word <:+: ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws := by
   simp only [undeclaredEvaluative, List.mem_map, List.mem_filter, Bool.and_eq_true, Bool.not_eq_true',
-    List.any_eq_true, EvaluativeRow.matches, List.contains_iff_mem, List.any_eq_false, hasPhrase_iff]
+    List.any_eq_true, EvaluativeRow.matches, List.any_eq_false, hasPhrase_iff]
   have hc : ∀ q, J.contains q = false ↔ q ∉ J := fun q => by simp
   constructor
   · rintro ⟨⟨q, ws⟩, ⟨hm, hJ, row, hr, hw, ho⟩, rfl⟩
