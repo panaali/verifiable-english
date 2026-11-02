@@ -1,0 +1,14 @@
+# sn-b6b DELTA (senses B6 carry-overs)
+
+Base: the merge base with main, `3b4e471f8`. New: the command `ve senses project` (a new entry, no row). The
+`senses.project` schema now types the projected environment; every genuine answer on the fixtures still passes
+(`tests/test_senses_project.py::test_projection_answer_mutations_are_rejected`, the genuine side) and the
+envelope's members are bound to the request (`::test_the_typed_environment_is_bound_to_the_request`), so no
+answer changes. i3 keeps main's behaviour (status `none`), so it has no row. The document mode's call of the
+reader is unchanged: the new members are written only for the `senses.read` runner (`identified`).
+
+| # | Delta | Evidence | Ruling |
+|---|---|---|---|
+| 1 | `senses.read` answers (`ve senses check`, `ve_senses_route`) gain members, none removed or renamed: on an admitted source reading `preamble` (the source's preamble lines as written, Lean's `writtenLines`); on every admitted reading `flips` (one row per pair of each open unit's candidates: `sentence`, `first`, `second`, `status`, and for a distinguishing model `true` and `values`, Lean's `flipsOf`) | Values equal Lean's: `tests/test_senses_route.py::test_the_preamble_lines_are_the_sources_leading_sentences`, `::test_flip_models_are_leans` (7 cases), and the `#guard`s of `lean/VE/Senses/RunExamples.lean`; bound to the request: `::test_preamble_rebinding_is_refused` (8), `::test_flip_rebinding_is_refused` (14), `::test_a_preamble_line_lean_did_not_read_is_unavailable`, `::test_genuine_response_field_mutations_are_rejected`; `tools/relay_mutation_gate.py --route ve_senses_route::senses.read` 0 failures; goldens: the runner pins in RunExamples re-taken | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 2 | `ve senses check` output gains `review_status` (the one pack's name and `reviewed`/`unreviewed` from `ve.senses.review_status` with Lean's `dictionary_id`; empty for several packs) | `tests/test_senses_project.py::test_i4_a_changed_pack_is_unreviewed_and_reads_the_same` (equals the pin file's verdict for Lean's identity; a changed byte is `unreviewed` with the same reading) | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 3 | Trusted Lean growth S +50, V +42 (K +0) over `3b4e471f8`: `lean/VE/Senses/Flip.lean` +72 (S +50: `flipOn`, `flipModelOf`, `Flip`, `flipPair`, `candidatePairs`, `flipsOf`; G[V] +22: `termCore`, `formulaCore`), `lean/VE/Senses/Run.lean` +20 (G[V]: `writtenLines`, `flipJson`) | `uv run python tools/trust_map.py --check` (exit 0; allowance S +50, V +43 in `docs/trust-baseline.json`); every new trusted definition killed by a check: `docs/senses/sn-b6b/trust-mutants.json` (166 killed, 0 survivors, 0 unknown; the 20 allowed are listed with reasons in `trust-mutants-allow.json`); ties pass requested in FOLLOW-UPS.md "## sn-b6b" | SIGNED by standing ruling R16 (DRI-RULINGS.md) |
