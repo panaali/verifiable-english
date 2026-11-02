@@ -49,16 +49,20 @@ it is not false as written; it is not built here (ap-1bh). Overlap: of the in-fl
   rendered digests, `VE.SoftNorms.ActsFrameExamples` (new) and a third distinct model act.
 - Oracle: `uv run python -I tests/b15b_model_cases.py record tests/data/b15b-model-oracle.json.gz --profile acts@0`;
   48 answers changed, every one on a `ve.core@0.2:acts@0,…` environment (a comparison of the old and new archives).
-- `lake build` (1,228 jobs) and `python3 lean/audit.py` (PASS, 721 files) after the last Lean change;
+- `lake build` (1,229 jobs) and `python3 lean/audit.py` (PASS, 722 files) on the final Lean;
   `regen_generated.py --check`: 35 entries.
-- Selected tests (`mac-pytest.sh --select`, 433 units at `40cbf7b3`): 4 failed, all field tables of the new members;
-  fixed in `3d892ae73` and rerun by id (section 6).
+- Selected tests (`mac-pytest.sh --select`, 433 units at `40cbf7b3`): 4 failed, all of them field tables of the new
+  members. They were fixed in `3d892ae73` and rerun by id with `mac-pytest.sh -- <ids>` at `747ab468`: 68 passed, exit 0.
 
 ## 4. Size and bytes
 
-`git diff --numstat $(git merge-base HEAD main)`, generated files excluded: about 520 lines of code, tests and side
-tables before these docs. Bytes: the UDHR's act-phrase units with reading sets (M7) can now be checked; no pilot byte
-is claimed (estimate only, not measured).
+`git diff --numstat $(git merge-base HEAD main)`, generated files and the trust mutants' evidence JSON excluded:
+788 lines added, 97 removed. Of the added lines: tests 273, Lean guards 146, product code (Lean, Python, schema shapes)
+about 170, side tables about 45, these docs and evidence 154. That is over the ~600-line size line. (c) was cut when the
+code and tests reached about 520 lines; the rest came after, from what the checklist requires: the field-table fixes
+the selected tests asked for, and the checks and allow file the trust mutants asked for (about 90 lines of guards and
+30 of allow entries). Bytes: the UDHR's act-phrase units with reading sets (M7) can now be checked; no pilot byte is
+claimed (estimate only, not measured).
 
 ## 5. Next items
 

@@ -1,154 +1,34 @@
 {
  "allow": [
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "or-and",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `||` -> `&&` on line 93 refuses every vocabulary key, which VE.SoftNorms.ActsFrameExamples's view guard refutes"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "eq-ne",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `k == \"soft\"` -> `!=` admits every key; planted by hand, refuted at ActsFrameExamples.lean:42 (the view guard) and by its `zzz` key guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "list-empty",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `required` emptied refuses every key; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "list-first",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key, a cut of `ks` leaves the last key unchecked; refuted by ActsFrameExamples's view guard and its `zzz` key guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "list-drop-last",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key, a cut of `ks` leaves the last key unchecked; refuted by ActsFrameExamples's view guard and its `zzz` key guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "list-last",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.envelope",
-   "operator": "list-drop-first",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.profileChecks",
-   "operator": "or-and",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `||` -> `&&` on line 222 refuses every profile; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.profileChecks",
-   "operator": "eq-ne",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `p == softProfile` -> `!=` refuses `soft-norms@0`; planted by hand, refuted at ActsFrameExamples.lean:42"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.profileChecks",
-   "operator": "list-first",
-   "reason": "equivalent: `ne.profiles` is the decoder's base list, sorted by `sortStrings`, in which `acts@0` (no registered profile sorts before it) is first whenever present"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.profileChecks",
-   "operator": "list-drop-last",
-   "reason": "equivalent: in `ne.profiles` (sorted, holding `norms@0` and the base profile) `acts@0` is never last"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "bool-flip",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `displayConstants := false` refuses a constant's `verbalisation`; refuted by ActsFrameExamples's constant-display guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-empty",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited profiles, the base profiles, the stripped vocabulary or its predicates; refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "append-left",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; the base profiles dropped from `base`: no source decodes; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "append-right",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; the inherited profiles dropped from `base`; refuted by ActsFrameExamples's `ne.profiles` guard (inhP)"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-first",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary, refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards; on line 176 `(vocab.getObjVal? \"acts\").toOption.toList` has at most one element, so its cut is equivalent"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-drop-last",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary; refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-last",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary, refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards; on line 176 the at-most-one-element `acts` entry list is equivalent under `.reverse.take 1`"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-drop-first",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary (the `base` predicate among them); refuted by ActsFrameExamples's `ne.profiles` and predicate-name guards"
-  },
-  {
-   "definition": "VE.SoftNorms.Phases.declarations",
-   "operator": "list-drop-middle",
-   "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `constants` dropped from the stripped vocabulary: no source decodes; refuted by ActsFrameExamples's view guard"
-  },
-  {
-   "definition": "VE.Service.Standalone.letterName",
-   "operator": "lt-eq",
-   "reason": "does not elaborate: `decreasing_by omega` cannot prove the recursion decreases once `i < 26` becomes `i = 26`"
-  },
-  {
-   "definition": "VE.Service.Standalone.letterName",
-   "operator": "list-empty",
-   "reason": "does not elaborate: a list where a String is expected (failed to synthesize)"
-  },
-  {
-   "definition": "VE.Service.Standalone.letterName",
-   "operator": "list-first",
-   "reason": "equivalent: `.take 1` of the one-character string `(Char.ofNat (97 + i % 26)).toString`"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelAct",
-   "operator": "list-empty",
-   "reason": "does not elaborate: `[]` in place of `List.range k` (or its `drop`/`map`) leaves a stuck typeclass or a non-function"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelActs",
-   "operator": "list-empty",
-   "reason": "does not elaborate: `[]` in place of `predicates`, `rs` or their maps leaves a field or projection on an unknown type"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelActs",
-   "operator": "list-first",
-   "reason": "`profiles.take 1` is equivalent: the environment mode's profiles are sorted and unique, and `acts@0` sorts first; `predicates.filterMap.take 1` does not elaborate"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelActs",
-   "operator": "list-drop-last",
-   "reason": "equivalent: `profiles.dropLast` keeps `acts@0` (never last); a `dropLast` in `distinct` drops only the last distinct act, and `idxOf` of a missing element is the list's length, that act's own index; `predicates.filterMap.dropLast` does not elaborate"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelActs",
-   "operator": "list-last",
-   "reason": "does not elaborate: `predicates.filterMap.reverse.take 1` (field notation on an unapplied function)"
-  },
-  {
-   "definition": "VE.Service.Standalone.modelActs",
-   "operator": "list-drop-first",
-   "reason": "does not elaborate: `predicates.filterMap.drop 1` (field notation on an unapplied function)"
-  },
-  {
-   "definition": "VE.Service.Standalone.environmentCase",
-   "operator": "list-empty",
-   "reason": "does not elaborate: `[]` in place of `acts.map` or `model.map` (function expected)"
-  }
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "or-and", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `||` -> `&&` on line 93 refuses every vocabulary key, which VE.SoftNorms.ActsFrameExamples's view guard refutes"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "eq-ne", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `k == \"soft\"` -> `!=` admits every key; planted by hand, refuted at ActsFrameExamples.lean:42 (the view guard) and by its `zzz` key guard"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "list-empty", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `required` emptied refuses every key; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "list-first", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key, a cut of `ks` leaves the last key unchecked; refuted by ActsFrameExamples's view guard and its `zzz` key guard"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "list-drop-last", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key, a cut of `ks` leaves the last key unchecked; refuted by ActsFrameExamples's view guard and its `zzz` key guard"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "list-last", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.SoftNorms.Phases.envelope", "operator": "list-drop-first", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of `required` refuses a required key; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.SoftNorms.Phases.profileChecks", "operator": "or-and", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `||` -> `&&` on line 222 refuses every profile; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.SoftNorms.Phases.profileChecks", "operator": "eq-ne", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `p == softProfile` -> `!=` refuses `soft-norms@0`; planted by hand, refuted at ActsFrameExamples.lean:42"},
+  {"definition": "VE.SoftNorms.Phases.profileChecks", "operator": "list-first", "reason": "equivalent: `ne.profiles` is the decoder's base list, sorted by `sortStrings`, in which `acts@0` (no registered profile sorts before it) is first whenever present"},
+  {"definition": "VE.SoftNorms.Phases.profileChecks", "operator": "list-drop-last", "reason": "equivalent: in `ne.profiles` (sorted, holding `norms@0` and the base profile) `acts@0` is never last"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "bool-flip", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `displayConstants := false` refuses a constant's `verbalisation`; refuted by ActsFrameExamples's constant-display guard"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-empty", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited profiles, the base profiles, the stripped vocabulary or its predicates; refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "append-left", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; the base profiles dropped from `base`: no source decodes; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "append-right", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; the inherited profiles dropped from `base`; refuted by ActsFrameExamples's `ne.profiles` guard (inhP)"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-first", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary, refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards; on line 176 `(vocab.getObjVal? \"acts\").toOption.toList` has at most one element, so its cut is equivalent"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-drop-last", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary; refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-last", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary, refuted by ActsFrameExamples's `ne.profiles`, predicate-name and view guards; on line 176 the at-most-one-element `acts` entry list is equivalent under `.reverse.take 1`"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-drop-first", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; a cut of the inherited or base profiles or of the stripped vocabulary (the `base` predicate among them); refuted by ActsFrameExamples's `ne.profiles` and predicate-name guards"},
+  {"definition": "VE.SoftNorms.Phases.declarations", "operator": "list-drop-middle", "reason": "UNKNOWN only through lean/VE/Defaults/Examples.lean:175, a check the probe cannot re-elaborate; `constants` dropped from the stripped vocabulary: no source decodes; refuted by ActsFrameExamples's view guard"},
+  {"definition": "VE.Service.Standalone.letterName", "operator": "lt-eq", "reason": "does not elaborate: `decreasing_by omega` cannot prove the recursion decreases once `i < 26` becomes `i = 26`"},
+  {"definition": "VE.Service.Standalone.letterName", "operator": "list-empty", "reason": "does not elaborate: a list where a String is expected (failed to synthesize)"},
+  {"definition": "VE.Service.Standalone.letterName", "operator": "list-first", "reason": "equivalent: `.take 1` of the one-character string `(Char.ofNat (97 + i % 26)).toString`"},
+  {"definition": "VE.Service.Standalone.modelAct", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `List.range k` (or its `drop`/`map`) leaves a stuck typeclass or a non-function"},
+  {"definition": "VE.Service.Standalone.modelActs", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `predicates`, `rs` or their maps leaves a field or projection on an unknown type"},
+  {"definition": "VE.Service.Standalone.modelActs", "operator": "list-first", "reason": "`profiles.take 1` is equivalent: the environment mode's profiles are sorted and unique, and `acts@0` sorts first; `predicates.filterMap.take 1` does not elaborate"},
+  {"definition": "VE.Service.Standalone.modelActs", "operator": "list-drop-last", "reason": "equivalent: `profiles.dropLast` keeps `acts@0` (never last); a `dropLast` in `distinct` drops only the last distinct act, and `idxOf` of a missing element is the list's length, that act's own index; `predicates.filterMap.dropLast` does not elaborate"},
+  {"definition": "VE.Service.Standalone.modelActs", "operator": "list-last", "reason": "does not elaborate: `predicates.filterMap.reverse.take 1` (field notation on an unapplied function)"},
+  {"definition": "VE.Service.Standalone.modelActs", "operator": "list-drop-first", "reason": "does not elaborate: `predicates.filterMap.drop 1` (field notation on an unapplied function)"},
+  {"definition": "VE.Service.Standalone.environmentCase", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `acts.map` or `model.map` (function expected)"}
  ]
 }
