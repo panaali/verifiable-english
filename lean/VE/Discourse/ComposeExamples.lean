@@ -103,6 +103,19 @@ def large : String :=
   "error: UnsupportedProfile: Unsupported profile speech-acts@0"
 #guard composed (doc (profiles := r#""norms@0", "relational-fol@0", "soft-norms@0", "ve.discourse@1""#)) ==
   today (doc (profiles := r#""norms@0", "relational-fol@0", "soft-norms@0", "ve.discourse@1""#))
+-- S4-16 and S4-17 at `dispatchAdmission` itself (the list `dispatch` reads, base profiles)
+#guard (match dispatchAdmission ["norms@0", "readings@1", "relational-fol@0"] .null .null with
+  | .error e => e | .ok _ => "") == "UnsupportedProfile: ve.discourse@1 with readings@1"
+#guard (match dispatchAdmission ["norms@0", "relational-fol@0", "speech-acts@0"] .null .null with
+  | .error e => e | .ok _ => "") == "UnsupportedProfile: ve.discourse@1 with speech-acts@0"
+-- `encodeComposed`: the wrapper with the case id
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => match admitComposed ["norms@0", "relational-fol@0", "ve.discourse@1"] env d with
+    | .ok (.chain c) => (VE.Discourse.Run.encodeComposed "s4" c).compress ==
+        ((composedJson c).setObjVal! "id" (.str "s4") |>.setObjVal! "status" (.str "ok")).compress &&
+        (VE.Discourse.Run.encodeComposed "s4" c).getObjValD "id" == .str "s4"
+    | _ => false
+  | .error _ => false
 -- S4-20: a `groups` entry (14.5 step 1, named abstention)
 #guard composed (doc (discourse := r#", "discourse": {"version": "ve.discourse@1", "anchors": [], "groups": [{}]}"#)) ==
   "error: NotImplemented: groups on the chain"
@@ -117,6 +130,9 @@ def large : String :=
 def mention (unit : String) : String :=
   s!", \"discourse\": \{\"version\": \"ve.discourse@1\", \"anchors\": [], \"mentions\": [\{\"id\": \"m1\", " ++
   s!"\"unit\": \"{unit}\", \"span\": [0, 3], \"form\": \"pronoun\", \"target\": \{\"kind\": \"entity\", \"name\": \"web_api\"}}]}"
+-- `caseManifest`: the case's recorded mentions, under the base pair
+#guard ((caseManifest (caseOf (doc (discourse := mention "u2")))).toOption.map (·.2.mentions.map (·.id))) ==
+  some ["m1"]
 #guard composed (doc (discourse := mention "u2")) == "error: MentionNotSlot: m1"
 -- item cmp-s4's abstentions: a bound prose unit and a fenced unit (14.3's slot steps are item cmp-s4ab)
 #guard composed (doc (discourse := mention "u1")) == "error: NotImplemented: a bound prose unit on the chain"

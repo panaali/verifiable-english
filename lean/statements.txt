@@ -12735,9 +12735,12 @@ theorem VE.Discourse.Run.discourse_wire_acceptance
     VE.Discourse.Run.runCase j = Except.ok answer →
       VE.Route.Run.caseKind j = Except.ok "admission" →
         VE.Discourse.Run.usesDiscoursePath j = Bool.true →
-          ∃ id, VE.Bridge.stringField j "id" = Except.ok id ∧ VE.Discourse.Run.DiscourseAdmissionAnswer id j answer
-  -- uses VE.Bridge.stringField@VE.Bridge VE.Discourse.Run.DiscourseAdmissionAnswer@VE.Discourse.Run VE.Discourse.Run.runCase@VE.Discourse.Run VE.Discourse.Run.usesDiscoursePath@VE.Discourse.Run VE.Route.Run.caseKind@VE.Route.Run
-  -- expr 3007799898
+          ∃ id,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (VE.Discourse.Run.DiscourseAdmissionAnswer id j answer ∨
+                VE.Discourse.Run.ComposedAdmissionAnswer id j answer)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Discourse.Run.ComposedAdmissionAnswer@VE.Discourse.Run VE.Discourse.Run.DiscourseAdmissionAnswer@VE.Discourse.Run VE.Discourse.Run.runCase@VE.Discourse.Run VE.Discourse.Run.usesDiscoursePath@VE.Discourse.Run VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 768331860
 theorem VE.Discourse.ValidOk.budget
   ∀ {D : VE.Discourse.DDoc} {u : String} {A : VE.Formula},
     VE.Discourse.ValidOk D u A → D.K.mentions.length ≤ VE.Discourse.mentionLimit
@@ -12880,6 +12883,13 @@ theorem VE.Discourse.admitAt_cases
                   check = Option.some c ∧ VE.Discourse.admit2 profiles environment rv j c = Except.ok res
   -- uses VE.Discourse.Admitted@VE.Discourse.Admission VE.Discourse.DocName@VE.Discourse.Manifest VE.Discourse.Import@VE.Discourse.Manifest VE.Discourse.ImportOutcome@VE.Discourse.Documents VE.Discourse.Loader.filesOf@VE.Discourse.Loader VE.Discourse.Loader.isPayload@VE.Discourse.Loader VE.Discourse.Loader.metaOf@VE.Discourse.Loader VE.Discourse.Wire.decodeTables@VE.Discourse.Wire VE.Discourse.admit2@VE.Discourse.Admission VE.Discourse.admitAt@VE.Discourse.Admission VE.Discourse.formatOf@VE.Discourse.Admission VE.Discourse.integrityOk@VE.Discourse.Admission VE.Discourse.lift1@VE.Discourse.Admission VE.Route.Admission.Admitted@VE.Route.Admission VE.Route.Admission.admitDocument@VE.Route.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 1096494248
+theorem VE.Discourse.admitChain_of
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      ("norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ VE.Discourse.chainConstructs environment j = Bool.true) ∧
+        VE.Discourse.admitChain profiles environment j = Except.ok c
+  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitChain@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.chainConstructs@VE.Discourse.Compose
+  -- expr 3144568647
 theorem VE.Discourse.admit_cases
   ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (fuel : Nat)
     (res : VE.Discourse.Admitted),
@@ -13035,6 +13045,10 @@ theorem VE.Discourse.carrier_cases
               VE.Discourse.carrierIn D wires doc premises m = Option.none
   -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Mention.presuppositionUnit@VE.Discourse.Manifest VE.Discourse.Mention.restriction@VE.Discourse.Manifest VE.Discourse.Mention@VE.Discourse.Manifest VE.Discourse.PresuppositionCarrier.assumed@VE.Discourse.Descriptions VE.Discourse.PresuppositionCarrier.proved@VE.Discourse.Descriptions VE.Discourse.PresuppositionCarrier@VE.Discourse.Descriptions VE.Discourse.carrierIn@VE.Discourse.Admission VE.Discourse.restrictionSort@VE.Discourse.WellFormed VE.Discourse.uniqueD@VE.Discourse.Descriptions VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim.label@VE.ClaimGraph VE.Graph.Claim.name@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Route.Admission.AssertedUnit@VE.Route.Admission VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode.unit@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Tableau.Certificate@VE.Tableau
   -- expr 2767842193
+theorem VE.Discourse.chainReferences_ok
+  ∀ (front r : Lean.Json), VE.Discourse.chainReferences front = Except.ok r → VE.Discourse.conditionalOnOf r = []
+  -- uses VE.Discourse.chainReferences@VE.Discourse.Compose VE.Discourse.conditionalOnOf@VE.Discourse.Compose
+  -- expr 482775617
 theorem VE.Discourse.checkAll_ok
   ∀ (E : VE.Environment) (u : String) (k : Nat) (ps : List (List String × VE.Formula))
     (rs : List (List (VE.Discourse.Mention × VE.Discourse.Row) × VE.Formula)),
@@ -13072,6 +13086,38 @@ theorem VE.Discourse.citation_extends_joint
                   ∃ c, c ∈ cs ∧ VE.Discourse.ExtendsTo ch (c ++ VE.Discourse.authoredChoice res.doc)
   -- uses VE.Definitions.Bundle.leafChoices@VE.Definitions.Bundle VE.Discourse.Admitted.base@VE.Discourse.Admission VE.Discourse.Admitted.doc@VE.Discourse.Admission VE.Discourse.Admitted.joint@VE.Discourse.Admission VE.Discourse.Admitted@VE.Discourse.Admission VE.Discourse.Choice@VE.Discourse.Joint VE.Discourse.ExtendsTo@VE.Discourse.Joint VE.Discourse.admitDiscourse@VE.Discourse.Admission VE.Discourse.authoredChoice@VE.Discourse.Admission VE.Discourse.leafList@VE.Discourse.Admission VE.Route.Admission.Admitted.doc@VE.Route.Admission VE.Route.Admission.Doc.lemmas@VE.Route.Admission VE.Route.Admission.Lemma@VE.Route.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 1486829950
+theorem VE.Discourse.cmp_i_d
+  Ord.compare "inner" "document_id" = Ordering.gt
+  -- uses
+  -- expr 1636154517
+theorem VE.Discourse.cmp_ir_d
+  Ord.compare "inner_report_id" "document_id" = Ordering.gt
+  -- uses
+  -- expr 486089976
+theorem VE.Discourse.cmp_ir_i
+  Ord.compare "inner_report_id" "inner" = Ordering.gt
+  -- uses
+  -- expr 1694007784
+theorem VE.Discourse.cmp_rf_i
+  Ord.compare "references" "inner" = Ordering.gt
+  -- uses
+  -- expr 3107190225
+theorem VE.Discourse.cmp_rf_ir
+  Ord.compare "references" "inner_report_id" = Ordering.gt
+  -- uses
+  -- expr 790514485
+theorem VE.Discourse.cmp_rp_i
+  Ord.compare "report_id" "inner" = Ordering.gt
+  -- uses
+  -- expr 2186935920
+theorem VE.Discourse.cmp_rp_ir
+  Ord.compare "report_id" "inner_report_id" = Ordering.gt
+  -- uses
+  -- expr 838909201
+theorem VE.Discourse.cmp_rp_rf
+  Ord.compare "report_id" "references" = Ordering.gt
+  -- uses
+  -- expr 1089489922
 theorem VE.Discourse.compatibleChoices_unconstrained
   ∀ (K : VE.Discourse.Manifest),
     K.constraints = [] →
@@ -13103,6 +13149,55 @@ theorem VE.Discourse.compatible_sound
       (∀ (c : VE.Discourse.Choice), c ∈ cs ↔ VE.Discourse.Compatible K sets c) ∧ cs ≠ [] ∧ cs.length ≤ n
   -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Discourse.Compatible@VE.Discourse.Joint VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.compatibleChoices@VE.Discourse.Joint VE.Route.Admission.ReadingSet@VE.Route.Admission
   -- expr 1660818832
+theorem VE.Discourse.composed_admission
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      VE.Discourse.resolveDocument environment j = Except.ok c.resolved ∧
+        VE.Compose.dispatch (VE.Discourse.baseProfiles profiles) = Except.ok c.route ∧
+          ∃ d,
+            VE.Discourse.chainDocument (VE.Discourse.baseEnvironment environment) c.resolved = Except.ok d ∧
+              VE.Discourse.dispatchAdmission (VE.Discourse.baseProfiles profiles)
+                  (VE.Discourse.baseEnvironment environment) d =
+                Except.ok c.inner
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Discourse.ChainAdmitted.inner@VE.Discourse.Compose VE.Discourse.ChainAdmitted.resolved@VE.Discourse.Compose VE.Discourse.ChainAdmitted.route@VE.Discourse.Compose VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.baseEnvironment@VE.Discourse.Admission VE.Discourse.baseProfiles@VE.Discourse.Admission VE.Discourse.chainDocument@VE.Discourse.Compose VE.Discourse.dispatchAdmission@VE.Discourse.Compose VE.Discourse.resolveDocument@VE.Discourse.Compose
+  -- expr 3297024422
+theorem VE.Discourse.composed_base_unchanged
+  ∀ (profiles : List String) (environment j : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Discourse.baseVocabulary environment = Except.ok rv →
+      ¬"norms@0" ∈ profiles →
+        VE.Discourse.admitComposed profiles environment j =
+          Except.map VE.Discourse.Composed.today
+            (VE.Discourse.admitDiscourse profiles environment rv j VE.Discourse.fuelBudget)
+  -- uses VE.Discourse.Admitted@VE.Discourse.Admission VE.Discourse.Composed.today@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.admitDiscourse@VE.Discourse.Admission VE.Discourse.baseVocabulary@VE.Discourse.Admission VE.Discourse.fuelBudget@VE.Discourse.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3680322971
+theorem VE.Discourse.composed_path
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      "norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ VE.Discourse.chainConstructs environment j = Bool.true
+  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.chainConstructs@VE.Discourse.Compose
+  -- expr 960794131
+theorem VE.Discourse.composed_unchanged
+  ∀ (profiles : List String) (environment j : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Discourse.baseVocabulary environment = Except.ok rv →
+      ¬"norms@0" ∈ profiles ∨ ¬"ve.discourse@1" ∈ profiles ∨ VE.Discourse.chainConstructs environment j = Bool.false →
+        VE.Discourse.admitComposed profiles environment j =
+          Except.map VE.Discourse.Composed.today
+            (VE.Discourse.admitDiscourse profiles environment rv j VE.Discourse.fuelBudget)
+  -- uses VE.Discourse.Admitted@VE.Discourse.Admission VE.Discourse.Composed.today@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.admitDiscourse@VE.Discourse.Admission VE.Discourse.baseVocabulary@VE.Discourse.Admission VE.Discourse.chainConstructs@VE.Discourse.Compose VE.Discourse.fuelBudget@VE.Discourse.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 2464515062
+theorem VE.Discourse.composed_unchanged_error
+  ∀ (profiles : List String) (environment j : Lean.Json) (e : String),
+    VE.Discourse.baseVocabulary environment = Except.error e →
+      ¬"norms@0" ∈ profiles ∨ ¬"ve.discourse@1" ∈ profiles ∨ VE.Discourse.chainConstructs environment j = Bool.false →
+        VE.Discourse.admitComposed profiles environment j = Except.error e
+  -- uses VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.baseVocabulary@VE.Discourse.Admission VE.Discourse.chainConstructs@VE.Discourse.Compose VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 1924001445
+theorem VE.Discourse.conditions_retained
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      VE.Discourse.conditionalOnOf (VE.Discourse.composedJson c) = VE.Discourse.conditionalOnOf c.inner
+  -- uses VE.Discourse.ChainAdmitted.inner@VE.Discourse.Compose VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.composedJson@VE.Discourse.Compose VE.Discourse.conditionalOnOf@VE.Discourse.Compose
+  -- expr 3052178991
 theorem VE.Discourse.conjOn_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (p : String) (cs : List String),
     VE.Formula.denote S ρ (VE.Discourse.conjOn p cs) ↔ ∀ (c : String), c ∈ cs → VE.Discourse.constHolds S p c
@@ -14204,6 +14299,19 @@ theorem VE.Discourse.resolveAll_ok
             ∃ xs, VE.Discourse.rowsAt E ms ctx A = Except.ok xs ∧ rs[k]? = Option.some (xs, VE.Discourse.rewrite xs A)
   -- uses VE.Discourse.Mention@VE.Discourse.Manifest VE.Discourse.Row@VE.Discourse.Positions VE.Discourse.resolveAll@VE.Discourse.Positions VE.Discourse.rewrite@VE.Discourse.Positions VE.Discourse.rowsAt@VE.Discourse.Positions VE.Environment@VE.Syntax VE.Formula@VE.Syntax
   -- expr 1299689859
+theorem VE.Discourse.resolveCase_keeps
+  ∀ (j j' : Lean.Json), VE.Discourse.resolveCase j = Except.ok j' → VE.Discourse.caseShape j' = VE.Discourse.caseShape j
+  -- uses VE.Discourse.caseShape@VE.Discourse.Compose VE.Discourse.resolveCase@VE.Discourse.Compose
+  -- expr 1941008876
+theorem VE.Discourse.resolveCase_off
+  ∀ (j : Lean.Json), ¬"ve.discourse@1" ∈ VE.Service.Document.profilesOf j → VE.Discourse.resolveCase j = Except.ok j
+  -- uses VE.Discourse.resolveCase@VE.Discourse.Compose VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 2950743759
+theorem VE.Discourse.resolveDocument_keeps
+  ∀ (environment j r : Lean.Json),
+    VE.Discourse.resolveDocument environment j = Except.ok r → VE.Discourse.contentFree r = VE.Discourse.contentFree j
+  -- uses VE.Discourse.contentFree@VE.Discourse.Compose VE.Discourse.resolveDocument@VE.Discourse.Compose
+  -- expr 2159999390
 theorem VE.Discourse.resolveFormula_assertion
   ∀ (E : VE.Environment) (K : VE.Discourse.Manifest) (unit : String) (φ ψ : VE.Formula),
     VE.Discourse.resolveFormula E K unit φ = Except.ok ψ ↔

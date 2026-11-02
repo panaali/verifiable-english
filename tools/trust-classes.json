@@ -2859,11 +2859,102 @@
         "VE.Discourse.validityPostOk",
         "VE.Discourse.verdictFor",
         "VE.Discourse.withoutContent",
-        "VE.Discourse.wrapperOk"
+        "VE.Discourse.wrapperOk",
+        {
+          "name": "VE.Discourse.fuelBudget",
+          "tied": [
+            "VE.Discourse.composed_unchanged"
+          ]
+        }
       ],
       "G[I]": [
         "VE.Discourse.bindingsOk",
         "VE.Discourse.wrapperReportId"
+      ]
+    },
+    "VE/Discourse/Compose.lean": {
+      "S": [
+        "VE.Discourse.ChainAdmitted",
+        "VE.Discourse.Composed",
+        "VE.Discourse.caseParts",
+        "VE.Discourse.caseShape",
+        "VE.Discourse.chainAbstentions",
+        "VE.Discourse.chainConstructs",
+        "VE.Discourse.chainKeys",
+        "VE.Discourse.chainUnit",
+        "VE.Discourse.conditionalOnList",
+        "VE.Discourse.conditionalOnOf",
+        "VE.Discourse.conditionalOnTree",
+        "VE.Discourse.contentFree",
+        "VE.Discourse.contentKey",
+        "VE.Discourse.contentOk",
+        "VE.Discourse.editArr",
+        "VE.Discourse.editObj",
+        "VE.Discourse.frontShape",
+        "VE.Discourse.textShape",
+        "VE.Discourse.unitFree",
+        "VE.Discourse.unitsAndParts"
+      ],
+      "C": [
+        "VE.Discourse.admitChain",
+        "VE.Discourse.admitComposed",
+        "VE.Discourse.resolveCase",
+        "VE.Discourse.resolveDocument",
+        "VE.Discourse.resolveOn",
+        "VE.Discourse.resolveWith",
+        "VE.Discourse.writtenText"
+      ],
+      "D[V]": [
+        "VE.Discourse.caseManifest",
+        "VE.Discourse.chainBase",
+        {
+          "name": "VE.Discourse.chainDocument",
+          "tied": [
+            "VE.Discourse.composed_admission"
+          ]
+        },
+        {
+          "name": "VE.Discourse.composedJson",
+          "tied": [
+            "VE.Discourse.conditions_retained"
+          ]
+        }
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Discourse.dispatchAdmission",
+          "tied": [
+            "VE.Discourse.composed_admission"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Discourse.chainReferences"
+      ]
+    },
+    "VE/Discourse/ComposeExamples.lean": {
+      "T": [
+        "VE.Discourse.ComposeExamples.alpha",
+        "VE.Discourse.ComposeExamples.caseOf",
+        "VE.Discourse.ComposeExamples.chainField",
+        "VE.Discourse.ComposeExamples.composed",
+        "VE.Discourse.ComposeExamples.doc",
+        "VE.Discourse.ComposeExamples.env",
+        "VE.Discourse.ComposeExamples.front",
+        "VE.Discourse.ComposeExamples.graph",
+        "VE.Discourse.ComposeExamples.large",
+        "VE.Discourse.ComposeExamples.mention",
+        "VE.Discourse.ComposeExamples.normUnit",
+        "VE.Discourse.ComposeExamples.payload",
+        "VE.Discourse.ComposeExamples.resolved",
+        "VE.Discourse.ComposeExamples.s425",
+        "VE.Discourse.ComposeExamples.s428",
+        "VE.Discourse.ComposeExamples.src1",
+        "VE.Discourse.ComposeExamples.src2",
+        "VE.Discourse.ComposeExamples.today",
+        "VE.Discourse.ComposeExamples.u1",
+        "VE.Discourse.ComposeExamples.units",
+        "VE.Discourse.ComposeExamples.vocabulary"
       ]
     },
     "VE/Discourse/Descriptions.lean": {
@@ -3268,19 +3359,25 @@
         "VE.Discourse.Run.carrierText",
         "VE.Discourse.Run.choicesJson",
         "VE.Discourse.Run.encodeAdmission",
+        "VE.Discourse.Run.encodeComposed",
         "VE.Discourse.Run.jointFields",
         "VE.Discourse.Run.targetJson"
       ],
       "G[V]": [
         "VE.Discourse.Run.DiscourseAdmissionAnswer",
-        "VE.Discourse.Run.fuelBudget",
         "VE.Discourse.Run.jointJson",
         "VE.Discourse.Run.loadCase",
         "VE.Discourse.Run.runCase",
         "VE.Discourse.Run.runCaseReported",
         "VE.Discourse.Run.runJoint",
         "VE.Discourse.Run.runResolve",
-        "VE.Discourse.Run.usesDiscoursePath"
+        "VE.Discourse.Run.usesDiscoursePath",
+        {
+          "name": "VE.Discourse.Run.ComposedAdmissionAnswer",
+          "tied": [
+            "VE.Discourse.Run.discourse_wire_acceptance"
+          ]
+        }
       ]
     },
     "VE/Discourse/Theorems.lean": {
