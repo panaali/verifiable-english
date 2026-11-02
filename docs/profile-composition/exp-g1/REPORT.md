@@ -3,7 +3,7 @@
 - **Result: PASS.** The order of `X` does not matter for `Sat`, `Transfers` or G1b. No pack-order rule is needed; `packOrder` is unchanged.
 - **The reading PASS rests on (for the reviewer to judge):** the plan says "declared by *some* pack". G1b needs "by *one* pack", which `assemble` already enforces. Finding 1 has the counterexample for a name declared twice.
 - **G1b is against a copy** of spec 1.6, marked in the file; `acceptanceXV` stays unproved here (PK-1's owner builds it).
-- **HEAD:** the commit adding this report. Lean and evidence final at `1a1c351f9`. Bytes 0; no DRI signature needed; no DELTA row.
+- **HEAD:** the commit adding this report. Lean and evidence final at `89248e360` (review F1: "needs both packs" is now a theorem, `single_pack_refuted`). Bytes 0; no DRI signature needed; no DELTA row.
 - **Open:** finding 2, a vocabulary pack on the readings route (no planned pack is one). Next items: AT-2 and WG-3, then PC-11.
 
 ## What compiled
@@ -26,7 +26,8 @@ Command, from `lean/`: `PATH=~/.elan/bin:$PATH lake env lean ../experiments/exp-
 | The mention is real: weighing's premise names a name only the later pack declares; it types over the whole list at both orders, not over the base or weighing's names alone | `#guard`s after "The mention is real" | compiled |
 | Non-vacuous: atom off, guard off holds; flip only the atom, `X` breaks; guard on, `X` holds | `nonVacuous` on all four lists; `mixedV_decides` at G1b's bases | `#guard`; kernel (`decide`) |
 | Non-vacuous at `Transfers`' own bases (`C`, document `kG`) | `#guard`s after `baseG` | compiled |
-| Acceptance needing both packs (knows → believes → guard), both orders | `mixedC_accepted` (main's `acceptanceX`, no copy), `mixedV_accepted` | theorem; certificate replay is its hypothesis `hv`, shown by `#guard` |
+| Acceptance from both packs (knows → believes → guard), both orders | `mixedC_accepted` (main's `acceptanceX`, no copy), `mixedV_accepted` | theorem; certificate replay is its hypothesis `hv`, shown by `#guard` |
+| Neither pack alone entails the conclusion (`C`): weighing alone has a model with knows on, believes and guard off; attitudes alone, knows and believes on, guard off | `single_pack_refuted` (`¬ EntailsX` for each, via `not_entailsX_uC`) | theorem; kernel (`decide`) on the models |
 | `transfers_X` at the fixture, both orders | `mixedC_transfers` | theorem; `hx : KGChecks` shown by `#guard` |
 
 `hv` and `hx` follow the repo's `X1Checks` pattern: `by decide` got stuck on `V`'s `hv` and on `hx` (not tried separately on `C`'s `hv`, the same replay), so the `#guard` is compiled evaluation, not a kernel proof.
@@ -48,14 +49,19 @@ Command, from `lean/`: `PATH=~/.elan/bin:$PATH lake env lean ../experiments/exp-
 
 ## Seeded bugs
 
-No product code changed, so no language needs one; the plan's mutant is the first two rows. All eight are in `experiments/exp-g1/ExpG1.lean`, each rc=1 with the named declaration among the failures. Saved in `mutants.json` (`run.py` asserts `caught`).
+No product code changed, so no language needs one; the plan's mutant is the first two rows. All eleven are in `experiments/exp-g1/ExpG1.lean`, each rc=1 with the named declaration among the failures. Saved in `mutants.json` (`run.py` asserts `caught`); `tests/test_exp_g1_mutants.py` elaborates each again and checks the saved rows against `run.py`'s table.
+
+Review F1: the first draft backed "needs both packs" with `!certOK … [weighingC] (certAt 0 0)` and the same for attitudes. With one pack the trace's index 2 is out of range, so those guards refused whatever the packs said, and the old `one-pack-suffices` mutant (now `bridge-silent`) was caught by the two-pack guard, not by them. With those guards restored, `review-probe-F1` and both `*-alone-entails` mutants survive.
 
 | Mutant | Plants | Fails |
 |---|---|---|
 | `vacuous-never` | condition `atom ∧ ⊥` | `#guard nonVacuous`, `mixedV_decides` |
 | `vacuous-always` | condition `atom ∨ ¬atom` | `#guard nonVacuous`, `mixedV_decides` |
 | `same-pack-mention` | weighing declares the atom itself | `#guard (preds mixedPremise)…` |
-| `one-pack-suffices` | bridge premise `⊤` | `#guard certOK uV …` |
+| `bridge-silent` | bridge premise `⊤`: the two packs no longer entail the conclusion | `#guard certOK uV …` |
+| `attitudes-alone-entails` | bridge premise gives the guard from knows | `single_pack_refuted` |
+| `weighing-alone-entails` | weighing's premise also gives the guard from knows | `single_pack_refuted` |
+| `review-probe-F1` | the review's probe: weighing's premise is the conclusion | `single_pack_refuted` |
 | `trace-index` | trace expands the wrong premise | `#guard certOK uV …` |
 | `dup-same-arity` | duplicate name has one signature | `dup_order_matters` |
 | `frame-undeclared` | readings frame lacks the names | `mixedC_packs_transfer` |
@@ -63,26 +69,26 @@ No product code changed, so no language needs one; the plan's mutant is the firs
 
 ## Tests, trust, scope
 
-- Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit=0, 0 failed, at `1ffef3bf`, before this report. It deferred 22 slow files to the chain gate. The full gate was not run here, as instructed.
+- Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit=0, 24 units, 0 failed, at `94d814f9c` plus this report's edit (F1 fix); `tests/test_exp_g1_mutants.py` among them (15 passed alone). It deferred 7 slow files to the chain gate. `lake build` rc=0 and `lean/audit.py` PASS on that tree. The full gate was not run here, as instructed.
 - `lake build` and `lean/audit.py` were not run on the final tree: nothing under `lean/` changed (`git diff --stat <merge base> -- lean` is empty). The imports were built once with `lake build`.
 - Trust: `tools/trust_map.py --check` PASS; no trusted line changes. No `trust_mutants`, no R16 row.
 - **Deviation from "Files":** `docs/codemap/` is generated and indexes `experiments/`, so `regen_generated.py --only codemap --write` changed three files. It also picked up rows other merges had left stale.
 - `regen_generated.py --write` stopped at `route-cases` (no Rust binary in this worktree), hence `--only codemap`. A `--skip route-cases --check` ended `failed: checker-pins`; `--only checker-pins --check` alone passed. Cause of the difference not established; the chain gate checks it.
-- **Size:** 528 Lean + 59 `run.py` + 89 this report = 676 hand-written lines (`git diff --numstat`), 76 over the ~600 cap, plus 24 lines of `run.py` output and the generated code map. Not cut further: every part backs a claim above, and nothing enters `lean/`.
+- **Size:** after review F1, 564 Lean + 77 `run.py` + 109 test + 95 this report = 845 hand-written lines (`git diff --numstat`), over the ~600 cap (it was 676 before F1; follow-up exp-g1-size), plus `run.py`'s output and the generated code map. Not cut further: every part backs a claim above, and nothing enters `lean/`.
 - Overlap: no in-flight branch touches `experiments/exp-g1` or `docs/profile-composition/exp-g1`. Pilot bytes expected to move: 0.
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed answer.
 2. PASS: every deliverable above; `lean-run.txt`, `mutants.json`.
-3. PASS: `mutants.json`, 8 of 8 caught.
+3. PASS: `mutants.json`, 11 of 11 caught.
 4. N.A.: no Python, Lean or Rust product path.
 5. N.A.: no binding.
 6. PASS: `lean-run.txt` regenerated at `1a1c351f9`; gate left to the chain.
 7. N.A.: nothing to sign.
 8. N.A.: no user-visible change; `git diff --name-only` lists only the files above.
 9. PASS: the selected run recorded 138 units, not every unit (`mac-pytest.sh --select`). No test covers the scratch file, so no seeded selection check.
-10. PASS: `dup-same-arity`, `one-pack-suffices` and `frame-undeclared` break their proofs; the four definitions printed IDENTICAL against the spec. No `check_*_statements` applies.
+10. PASS: `dup-same-arity`, the three single-pack mutants and `frame-undeclared` break their proofs; the four definitions printed IDENTICAL against the spec. No `check_*_statements` applies.
 11. N.A.: no budget or deadline.
 12. N.A.: no product code.
 13. N.A.: no test removed (`git log main..HEAD --format=%B | grep -c Test-removed` is 0).
