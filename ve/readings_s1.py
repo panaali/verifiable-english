@@ -100,7 +100,10 @@ class S1Environment:
                                       "outranking": {"mode": "strict"}}
         # This is an internal soft view of a norms-only source. The source has no soft
         # layer, so an author's ordinary predicate with the soft layer's prefix remains legal here.
-        return SoftEnvironment(data, generated=True)
+        view = SoftEnvironment(data, generated=True)
+        # Its plain acts are the frame's, which the norms route words (`norms.plain_wordings`, ap-1bg).
+        object.__setattr__(view, "wording_frame", self.frame)
+        return view
 
     def author_environment(self):
         """The author's base vocabulary: the frame without regulated predicates (4.5 step 1)."""

@@ -111,8 +111,10 @@ def bound_model_acts(row: dict, data: dict) -> dict:
     canonical acts are equal; without `acts@0`, none. Anything else is `CheckerUnavailable`."""
     try:
         acts, model = row.get("acts", {}), row.get("model_acts", {})
-        expected = {p for p, decl in data["vocabulary"]["predicates"].items()
-                    if decl.get("regulated", {}).get("role", "plain") != "plain"} if "acts@0" in data["profiles"] else set()
+        expected = set()
+        if "acts@0" in (data.get("profiles") or ()):
+            expected = {p for p, decl in data["vocabulary"]["predicates"].items()
+                        if decl.get("regulated", {}).get("role", "plain") != "plain"}
         if set(model) == expected and all((acts[p] == acts[q]) == (model[p] == model[q]) for p in model for q in model):
             return model
     except (KeyError, TypeError, AttributeError):
