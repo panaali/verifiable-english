@@ -16,7 +16,7 @@ DRI signature needed: none.
 | Row | Delivered | Evidence |
 |---|---|---|
 | (1) the survey | yes | above |
-| (2) `Pinned.rightNames`, `Pinned.withReach`, `limitation_scope_of_reach` | yes: rights' files only read (rights@0's `Limitation`/`Bar` and decoders); the scope is written once, by `withReach` | `test_limitation_scope_of_reach_is_spec_5_8s_text`; `lake build` |
+| (2) `Pinned.rightNames`, `Pinned.withReach`, `limitation_scope_of_reach` | yes: rights' files only read (rights@0's `Limitation`/`Bar` and decoders); the scope is written once, by `withReach` | `test_limitation_scope_of_reach_is_spec_5_8s_text` (the whole statement, both conjuncts: review F1); `lake build` |
 | (3) the stand-in removed from what the UDHR route produces | empty in sc-6: no code produces it; the frozen pilot data stays as recorded (DRI item 1). This item's part documents name a reach instead | `ReachExamples.lean:63`; `test_the_part_documents_name_no_stand_in_term` |
 | (4) F14, F14′, F14″ | as Lean fixtures on a UDHR part document (Art. 3, 13, 29, 30, the pilot's ids and words); the document-route side is sc-6b (DRI items 1-2) | F14 `ReachExamples.lean:79-85`; F14′ `:89-97`; F14″ `:120-122` (two choices through `setChoices`/`atChoice`, SC-5's parts on main); `test_each_fixture_of_7_8_is_a_lean_section_with_guards` |
 | (5) syn2code-scope-dec16: u0218.s18 | yes: lead-in guard over one unsplit act, 2 × 1 choices, blocker `embedded act frame: modality MD-6`. u0218.s17 has no colon, so it is no label (1.2): it heads s18 as an anchor's heading | `ReachExamples.lean:154-158`; `test_u0218_s18_records_its_blocker_and_two_by_one_choices` |
@@ -61,10 +61,20 @@ The u0218.s18 regression guards main's code, not code this item adds, so it has 
 7. PASS: DELTA.md's one row cites R16; the move is SIGNED by DRI item 1.
 8. PASS: no answer changes (byte-identity test); DELTA says so.
 9. PASS: `select_tests.py --base $(git merge-base HEAD main)` selects `tests/test_scope_rights_reach.py`, `tests/test_scope_lean.py` and `tests/test_assurance_manifest.py`, the last of which caught the unclassified files.
-10. PASS: `test_limitation_scope_of_reach_is_spec_5_8s_text`; the `withReach` and `withBarReach` mutants break the two proofs.
+10. PASS: `test_limitation_scope_of_reach_is_spec_5_8s_text`, which compares the whole statement since the F1 fix below; the `withReach` and `withBarReach` mutants break the two proofs.
 11. N.A.: no budget, limit or deadline is added.
 12. N.A.: no route change. `withReach` reads `covered` once and computes the reached rights once (`wholeRights`); sc-6b measures the route.
 13. PASS: `gate_collection.py --check --prebuilt`: "6 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 14. PASS, both directions. `withReach` accepts (`:80`) and refuses (`:85`); `withBarReach` accepts (`:89`) and refuses (`:96`, `:97`); the spec re-read is listed above.
+
+## Review fixes (`sc-6-review.final.md`)
+
+- **F1 (B): the statement gate stopped at the first `:=`.** That `:=` was the one inside `{ L' with scope := L.scope }`, so the second conjunct of `limitation_scope_of_reach` was never compared. The same truncation affected main's `reguard_applies`, `restrict_applies`, `carveOut_applies` and `commute_applies`. `title_identity` is not in any statement gate.
+  - **The class.** Every statement gate that cut a theorem at its first `:=`. The fix is one function, `proof_cut` in `tools/check_readings_defaults_statements.py`, which finds the `:=` outside every bracket.
+  - **Who reads it.** That checker's `declarations` (RD and RD-9), `tools/check_pc3_statements.py`, and the scope helper `statement()` in `tests/test_scope_5_4_statements.py`. `tests/test_scope_answer.py` used a copy of that helper; it now imports the helper instead.
+  - **Today's statements.** Compared whole, they still equal the spec's text: the four 5.4 effects, 5.3, 5.8, and the RD, RD-9 and PC-3 blocks. None of the 116 theorems in those blocks has a `:=` inside its statement today.
+  - **Regression tests.** `tests/test_scope_rights_reach.py::test_the_statement_gate_compares_the_conjunct_after_the_record_update` (the review's probe), `tests/test_scope_5_4_statements.py::test_the_statement_runs_past_a_record_update` (4 cases), and `test_a_theorem_is_cut_at_its_proofs_assignment_not_one_inside_the_statement` in `tests/test_readings_defaults_statements.py` and `tests/test_pc3_statements.py`.
+  - **Seeded bug.** `proof_cut` was planted cutting at the first `:=` at any depth; all 7 of these tests failed, then it was restored.
+- **F2 to F7 (C)** are follow-ups, filed in FOLLOW-UPS.md under `## sc-6`.
 
 Next item: sc-6b, then sc-7 (authoring wordings).

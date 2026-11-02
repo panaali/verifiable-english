@@ -29,8 +29,18 @@ def spec_5_8() -> str:
 
 
 def test_limitation_scope_of_reach_is_spec_5_8s_text():
+    assert statement(spec_5_8(), "limitation_scope_of_reach") is not None
     assert statement(REACH.read_text(), "limitation_scope_of_reach") == statement(spec_5_8(),
                                                                                 "limitation_scope_of_reach")
+
+
+def test_the_statement_gate_compares_the_conjunct_after_the_record_update():
+    """Review F1: the `:=` of `{ L' with scope := L.scope }` is inside the statement, so a changed second conjunct
+    (the limitation otherwise unchanged) differs from the spec's text."""
+    text = REACH.read_text()
+    assert "scope := L.scope } = L :=" in text
+    changed = text.replace("scope := L.scope } = L :=", "scope := none } = L :=", 1)
+    assert statement(changed, "limitation_scope_of_reach") != statement(spec_5_8(), "limitation_scope_of_reach")
 
 
 def _claim(name: str) -> dict:
