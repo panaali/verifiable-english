@@ -38,6 +38,7 @@
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
+- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9 and E1d, plan PC-9).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
@@ -87,5 +88,3 @@
 - `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
-- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
-- `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
