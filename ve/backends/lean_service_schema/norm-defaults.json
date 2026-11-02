@@ -365,6 +365,7 @@
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "document_hash": {"type": "string"},
         "environment_id": {"type": "string"},
+        "events_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "fill": {
           "items": {
             "additionalProperties": false,

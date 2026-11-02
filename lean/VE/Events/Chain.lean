@@ -153,7 +153,7 @@ theorem events_wire_acceptance (j : Lean.Json) (r : EventsEntailmentReplay) (h :
     subst hqL
     refine ⟨by rw [hj, eventsHook_block hH hd]; rfl, ?_⟩
     rw [← hooked_X hL hd]
-    exact VE.NormDefaults.Wire.layered_wire_acceptance' q hv
+    exact VE.NormDefaults.Wire.layered_entailment_of_valid q hv
   · cases h
 
 end VE.Events

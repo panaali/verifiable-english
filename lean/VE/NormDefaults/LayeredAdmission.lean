@@ -102,14 +102,14 @@ theorem replayLayeredOn_L {L : LayeredU} {hX : ∀ a ∈ L.X, a.WellFormed (envA
   cases h
   rfl
 
-theorem layered_wire_acceptance' (r : LayeredEntailment) (hv : r.valid = true) :
+theorem layered_entailment_of_valid (r : LayeredEntailment) (hv : r.valid = true) :
     VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
   VE.NormDefaults.acceptanceX r.L.U r.L.wfU r.L.X r.hX r.premises r.conclusion r.cert (r.hvalid ▸ hv)
 
 theorem layered_wire_acceptance (j : Json) (r : LayeredEntailment) (h : replayLayeredEntailment j = .ok r)
     (hv : r.valid = true) : VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
   have _ := h
-  layered_wire_acceptance' r hv
+  layered_entailment_of_valid r hv
 
 end VE.NormDefaults.Wire
 
