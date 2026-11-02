@@ -73,6 +73,8 @@ def k2 : CLine := cline [] (some (rel (0, 1))) []
 -- slots (1, 0): slot 1 is variable 0
 #guard guardAfter (cline [] (some (rel (1, 0) (pred := "resident_of"))) [])
     (r21Doc (base := [("resident_of", ["person", "state"])])) == .and .top (.binary "resident_of" (.var 0) (.var 1))
+#guard check (cline [] (some (rel (1, 0) (pred := "resident_of"))) []) (r21Doc (base := [("resident_of", ["person", "state"])])) ==
+  "ok"
 
 /-! ## K3 accepted: total on the holder slot 1, `H_R = ⊤` typed -/
 
@@ -209,6 +211,10 @@ def onPower (L : CLine) : ClauseDoc := ⟨epsilon, [("r16", "may-marry", L)], []
 /-! ## Entries (never shown for a decoded document) -/
 
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", k1), ("r21", "equal-access", k2)], []⟩) ==
+  "InvalidInput: invalid clauses of rule equal-access"
+#guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", k2), ("r21", "equal-access", k2)], []⟩) ==
+  "InvalidInput: invalid clauses of rule equal-access"
+#guard check k2 { r21Doc with rs := [⟨"r21", "person", .top, [accessLine, accessLine]⟩] } ==
   "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r9", "equal-access", k1)], []⟩) == "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "other", k1)], []⟩) == "InvalidInput: invalid clauses of rule other"

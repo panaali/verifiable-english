@@ -1,134 +1,28 @@
-{
- "allow": [
-  {
-   "definition": "VE.RightClauses.checkBody",
-   "operator": "append-right",
-   "reason": "ill-typed as generated: the mutant does not elaborate (the clause spans list replaced by a list of functions), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.checkBody",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] where a field, a function or an instance list is projected), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.checkCandidates",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for the candidate entries cannot be destructured in the for pattern), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.checkSpans",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for `earlier` leaves its element type unknown), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.entryOk",
-   "operator": "eq-le",
-   "reason": "ill-typed as generated: the mutant does not elaborate (lists of entries and source lines have no ≤ instance), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.guardOf",
-   "operator": "list-drop-first",
-   "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.guardOf",
-   "operator": "list-drop-last",
-   "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.guardOf",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.guardOf",
-   "operator": "list-first",
-   "reason": "ill-typed as generated: the mutant does not elaborate (`take 1` applied to an Option (`RS.2.norm`); the typed mutant on the source lines is killed by the many-rights #guard of Examples.lean), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.guardOf",
-   "operator": "list-last",
-   "reason": "ill-typed as generated: the mutant does not elaborate (`reverse.take 1` applied to an Option (`RS.2.norm`); the typed mutant on the source lines is killed by the many-rights #guard of Examples.lean), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.holderGuardOf",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] where the right is an Option, so `.top` resolves to Nat.top), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.lineName",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] where the rule name is an Option), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.lineSorts",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] where the norm is an Option), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.plain",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for the rights or the source order (an Option) leaves the structure update untyped), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.plainGuard",
-   "operator": "append-right",
-   "reason": "ill-typed as generated: the mutant does not elaborate (the clause formulas replaced by a list of functions), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.plainGuard",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] where the relation is an Option or the clause list is projected; the typed mutant drops the clauses and is killed by K4's #guard), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.plainGuard",
-   "operator": "list-first",
-   "reason": "equivalent: `take 1` on an Option's toList, which has at most one element"
-  },
-  {
-   "definition": "VE.RightClauses.plainGuard",
-   "operator": "list-last",
-   "reason": "equivalent: `reverse.take 1` on an Option's toList, which has at most one element"
-  },
-  {
-   "definition": "VE.RightClauses.plainSource",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for the entries or the norm (an Option) leaves the element type unknown; the typed `([] : List String)` sorts mutant makes K2's atom read var 0 and is killed by K2's #guard), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.relationOk",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for the sorts leaves the element type unknown; the typed mutant refuses every relation and is killed by K2's accepting #guard), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.shapeOk",
-   "operator": "list-empty",
-   "reason": "ill-typed as generated: the mutant does not elaborate ([] for the clauses or the fan-out leaves the element type unknown; the typed mutants accept a clause on a power line or a relation on a fan-out line and are killed by K11's #guards), so no program has this behaviour"
-  },
-  {
-   "definition": "VE.RightClauses.shapeOk",
-   "operator": "list-first",
-   "reason": "equivalent: `(xs.take 1).isEmpty = xs.isEmpty` for the clauses and the fan-out map"
-  },
-  {
-   "definition": "VE.RightClauses.shapeOk",
-   "operator": "list-last",
-   "reason": "equivalent: `(xs.reverse.take 1).isEmpty = xs.isEmpty` for the clauses and the fan-out map"
-  },
-  {
-   "definition": "VE.RightClauses.checkBody",
-   "operator": "list-first",
-   "reason": "equivalent: `take 1` on the relation's toList (at most one element) and on instancesOf of a line with a relation, which shapeOk makes a claim, liberty or immunity line with a norm and no fan-out: exactly one instance, read with head?"
-  },
-  {
-   "definition": "VE.RightClauses.checkBody",
-   "operator": "list-last",
-   "reason": "equivalent: `reverse.take 1` on the relation's toList and on that one-instance list; on the cites it is killed by the [u9, u1] #guard of Examples.lean"
-  },
-  {
-   "definition": "VE.RightClauses.checkBody",
-   "operator": "lit-plus",
-   "reason": "equivalent: instancesOf's count only names fan-out instances, and a line with a relation has no fan-out (shapeOk)"
-  }
- ]
-}
+{"allow": [
+{"definition": "VE.RightClauses.checkBody", "operator": "append-right", "reason": "ill-typed as generated: the mutant does not elaborate (the clause spans list replaced by a list of functions), so no program has this behaviour"},
+{"definition": "VE.RightClauses.checkBody", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] where a field, a function or an instance list is projected), so no program has this behaviour"},
+{"definition": "VE.RightClauses.checkCandidates", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for the candidate entries cannot be destructured in the for pattern), so no program has this behaviour"},
+{"definition": "VE.RightClauses.checkSpans", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for `earlier` leaves its element type unknown), so no program has this behaviour"},
+{"definition": "VE.RightClauses.entryOk", "operator": "eq-le", "reason": "ill-typed as generated: the mutant does not elaborate (lists of entries and source lines have no ≤ instance), so no program has this behaviour"},
+{"definition": "VE.RightClauses.guardOf", "operator": "list-drop-first", "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"},
+{"definition": "VE.RightClauses.guardOf", "operator": "list-drop-last", "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"},
+{"definition": "VE.RightClauses.guardOf", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate (a list operation applied to an Option (`RS.2.norm`), or [] for the source lines leaves the pair projection untyped), so no program has this behaviour"},
+{"definition": "VE.RightClauses.guardOf", "operator": "list-first", "reason": "ill-typed as generated: the mutant does not elaborate (`take 1` applied to an Option (`RS.2.norm`); the typed mutant on the source lines is killed by the many-rights #guard of Examples.lean), so no program has this behaviour"},
+{"definition": "VE.RightClauses.guardOf", "operator": "list-last", "reason": "ill-typed as generated: the mutant does not elaborate (`reverse.take 1` applied to an Option (`RS.2.norm`); the typed mutant on the source lines is killed by the many-rights #guard of Examples.lean), so no program has this behaviour"},
+{"definition": "VE.RightClauses.holderGuardOf", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] where the right is an Option, so `.top` resolves to Nat.top), so no program has this behaviour"},
+{"definition": "VE.RightClauses.lineName", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] where the rule name is an Option), so no program has this behaviour"},
+{"definition": "VE.RightClauses.lineSorts", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] where the norm is an Option), so no program has this behaviour"},
+{"definition": "VE.RightClauses.plain", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for the rights or the source order (an Option) leaves the structure update untyped), so no program has this behaviour"},
+{"definition": "VE.RightClauses.plainGuard", "operator": "append-right", "reason": "ill-typed as generated: the mutant does not elaborate (the clause formulas replaced by a list of functions), so no program has this behaviour"},
+{"definition": "VE.RightClauses.plainGuard", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] where the relation is an Option or the clause list is projected; the typed mutant drops the clauses and is killed by K4's #guard), so no program has this behaviour"},
+{"definition": "VE.RightClauses.plainGuard", "operator": "list-first", "reason": "equivalent: `take 1` on an Option's toList, which has at most one element"},
+{"definition": "VE.RightClauses.plainGuard", "operator": "list-last", "reason": "equivalent: `reverse.take 1` on an Option's toList, which has at most one element"},
+{"definition": "VE.RightClauses.plainSource", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for the entries or the norm (an Option) leaves the element type unknown; the typed `([] : List String)` sorts mutant makes K2's atom read var 0 and is killed by K2's #guard), so no program has this behaviour"},
+{"definition": "VE.RightClauses.relationOk", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for the sorts leaves the element type unknown; the typed mutant refuses every relation and is killed by K2's accepting #guard), so no program has this behaviour"},
+{"definition": "VE.RightClauses.shapeOk", "operator": "list-empty", "reason": "ill-typed as generated: the mutant does not elaborate ([] for the clauses or the fan-out leaves the element type unknown; the typed mutants accept a clause on a power line or a relation on a fan-out line and are killed by K11's #guards), so no program has this behaviour"},
+{"definition": "VE.RightClauses.shapeOk", "operator": "list-first", "reason": "equivalent: `(xs.take 1).isEmpty = xs.isEmpty` for the clauses and the fan-out map"},
+{"definition": "VE.RightClauses.shapeOk", "operator": "list-last", "reason": "equivalent: `(xs.reverse.take 1).isEmpty = xs.isEmpty` for the clauses and the fan-out map"},
+{"definition": "VE.RightClauses.checkBody", "operator": "list-first", "reason": "equivalent: `take 1` on the relation's toList (at most one element) and on instancesOf of a line with a relation, which shapeOk makes a claim, liberty or immunity line with a norm and no fan-out: exactly one instance, read with head?"},
+{"definition": "VE.RightClauses.checkBody", "operator": "list-last", "reason": "equivalent: `reverse.take 1` on the relation's toList and on that one-instance list; on the cites it is killed by the [u9, u1] #guard of Examples.lean"},
+{"definition": "VE.RightClauses.checkBody", "operator": "lit-plus", "reason": "equivalent: instancesOf's count only names fan-out instances, and a line with a relation has no fan-out (shapeOk)"}
+]}
