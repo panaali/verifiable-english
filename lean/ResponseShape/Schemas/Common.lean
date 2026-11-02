@@ -441,7 +441,8 @@ def request_block : Def :=
       obj,
       .required ["environment"],
       props [
-        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["acts"]])]])]])]
+        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["acts"]])]])]]),
+    ("events", n [obj, .required ["environment"], props [("environment", n [obj, .required ["events"]])]])]
 
 def file : File where
   name := "common.json"
@@ -500,11 +501,12 @@ def file : File where
     ("request_block", request_block)]
 
 /- `environment` and `request_block` as `tools/response_schemas.py` renders them, pinned by their digests (ap-1bg:
-the `acts` block equal to the request's, required exactly when the request has one). -/
+the `acts` block equal to the request's, required exactly when the request has one; et-4b: the `events` selector). -/
 #guard (render "common.json" 64 environment).toOption.map (hash ·.compress) == some 57628893804780194
 #guard ((match request_block with | .group _ es => es.map fun (e : String × Shape) => e.2 | .schema s => [s]).map
   fun (s : Shape) =>
   (render "common.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
-  ([some 3083592046191586682, some 13337872115853545753, some 16337170350225756421] : List (Option UInt64))
+  ([some 3083592046191586682, some 13337872115853545753, some 16337170350225756421, some 9409246114071786548] :
+    List (Option UInt64))
 
 end ResponseShape.Schemas.Common

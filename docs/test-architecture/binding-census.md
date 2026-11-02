@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 266 |
 | leaves:closed domain | 296 |
-| leaves:none | 1486 |
+| leaves:none | 1489 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1085 |
+| today:not probed | 1088 |
 | today:shape | 562 |
 | today:unbound | 137 |
 | answers | 583 |
@@ -1641,6 +1641,9 @@ Delegates: `/` to norms.
 | `/base_environment/profiles/*` | string | none |  |  | 2 | not probed |
 | `/base_environment/spec_revision` | string | bound | x-equals |  | 2 | shape |
 | `/base_environment/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
+| `/base_environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
 | `/base_environment/vocabulary/predicates/@key` | key | none |  |  | 6 | not probed |
 | `/base_environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 10 | not probed |
 | `/base_environment/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |

@@ -16,9 +16,8 @@ from conformance import norm_defaults_layered as layered
 from tests.test_norm_defaults_three_way import lean_executable  # noqa: F401  (the route fixture)
 from ve import norm_defaults_route as route
 from ve.ast import Binary, Const, formula_from_data, formula_to_data
-from ve.backends.service_schema import check_row
+from ve.backends.service_schema import Invalid, check_row
 from ve.entailment import prove_entailment
-from ve.errors import CheckerUnavailable
 from ve.wire import digest
 
 DAYS = ("2026-09-21", "2026-09-27")
@@ -91,6 +90,12 @@ def _proved():
     return case, meaning, asts
 
 
+def _swapped(ast):
+    """`before(b, a)` for `before(a, b)`: the anchor is not before the first date."""
+    tag, predicate, left, right = ast
+    return [tag, predicate, right, left]
+
+
 def test_a_certificate_over_the_block_replays_and_a_changed_block_is_stale(lean_executable):
     """`replayEventsEntailment` accepts the prover's certificate. Every premise of the pack is bound, so a certificate
     without one, for another conclusion or against a changed block, is stale; nothing else about it changes."""
@@ -100,23 +105,27 @@ def test_a_certificate_over_the_block_replays_and_a_changed_block_is_stale(lean_
     assert row["premises"] == len(asts)
 
     stale = "certificate is stale or bound to different inputs"
-    moved = deepcopy(case)
-    moved["environment"]["events"]["anchor"] = "2026-10-13"
+    dated = deepcopy(case)
+    dated["environment"]["events"]["dates"].append("2026-09-30")
     missing = deepcopy(case)
     missing["certificate"]["premise_meaning_ids"].pop(0)
     other = deepcopy(case)
-    other["conclusion"] = {**case["conclusion"], "right": case["conclusion"]["left"]}
-    for bad in (moved, missing, other):
+    other["conclusion"] = _swapped(case["conclusion"])
+    for bad in (dated, missing, other):
         (row,) = route.run_cases([bad])
         assert row == {"id": "norm-defaults-certificate", "status": "error", "error": stale}, row
+
+    moved = deepcopy(case)
+    moved["environment"]["events"]["anchor"] = "2026-10-13"
+    (row,) = route.run_cases([moved])
+    assert row["error"] == "ill-typed or unbound conclusion", row  # the old anchor's constant is gone with the block
 
 
 def test_a_certificate_rebound_to_a_false_conclusion_does_not_close(lean_executable):
     """The opposite side of the replay: bound to the swapped conclusion the proof does not close, so `valid` is false."""
     case, meaning, _ = _proved()
     flipped = deepcopy(case)
-    conclusion = case["conclusion"]
-    flipped["conclusion"] = {**conclusion, "left": conclusion["right"], "right": conclusion["left"]}
+    flipped["conclusion"] = _swapped(case["conclusion"])
     flipped["certificate"]["conclusion_meaning_id"] = meaning(flipped["conclusion"])
     (row,) = route.run_cases([flipped])
     assert row["status"] == "ok" and row["valid"] is False, row
@@ -151,5 +160,5 @@ def test_a_retyped_events_premises_row_is_refused(lean_executable, value):
     case = layered.case(kind, _dated(env), source, "norm-defaults-elaborate")
     (row,) = route.run_cases([case])
     check_row("norm-defaults", row, case, 0)
-    with pytest.raises(CheckerUnavailable):
+    with pytest.raises(Invalid):
         check_row("norm-defaults", {**row, "events_premises": value}, case, 0)
