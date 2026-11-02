@@ -6919,7 +6919,6 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Document.judgedIn_legacy
 #print axioms VE.Service.Document.judgedIn_soft
 #print axioms VE.Service.Document.pairIndex_get
-#print axioms VE.Service.Document.profilesOf_frontOf
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
