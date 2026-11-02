@@ -13,7 +13,7 @@
   both `soft-norms@0` and `norm-defaults@0`, a pair `english.read` and `english.question` refuse though each alone
   reads (C6 `pair`, `soft_only`, `defaults_only`; follow-up below), so `whole_streams` is false (C4
   `coverage.whole_streams`, `coverage.unavailable_reads`).
-  Hand-written size is about 1,670 lines, ~1,070 over the guide.
+  Hand-written size is about 1,940 lines, ~1,340 over the guide.
 
 The numbers are in [question-answering-q1-report.md](../../spec/question-answering-q1-report.md), section "q1-3b",
 and each cites its command (C4, C5). **Statement gate:** no theorem statement is added or changed, and Q1.2's reader is
@@ -61,8 +61,8 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 ## Evidence
 
-- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 13 in [claims.py](claims.py);
-  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 49, every one
+- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 23 in [claims.py](claims.py);
+  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 59, every one
   killed. The three the task names are:
   - F2 fronting only the first auxiliary, caught by `test_frontings_front_every_is_must_or_may_in_turn`;
   - a stream dropped from the counts, caught by `test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial`;
@@ -73,20 +73,27 @@ rendered English, not its text. This run does not measure rendered English. The 
   limited share with `any`, a statement without its period, a mixed paragraph counted as a sentence, and a put-back
   that keeps an opener's capital. The 24 added after review give every headline zero a mutant (`other`, `many`,
   `several_same`, `inconsistent`, each `whole_streams` key), and cover the `read` filters and the fence, `MIXED`, span
-  and unavailable counts. The last 13 make the claims check able to fail. No Lean or Rust code changed.
-- **Claims:** [claims.py](claims.py) checks both reports against C4, C5, C6 and q1-3's C1 (79 units): each summary,
+  and unavailable counts. The next 13 make the claims check able to fail, and the last 10 its population, universal
+  claim and `Compared with` checks (recheck F13, F14). No Lean or Rust code changed.
+- **Claims:** [claims.py](claims.py) checks both reports against C4, C5, C6 and q1-3's C1 (81 units): each summary,
   headline and conclusion sentence cites its key or is listed as no claim with its reason, each bullet and row of the
   q1-3b section cites one, each key exists, each number is its key's value, each headline claim without a number holds
-  of the evidence (`TRUTHS`), and no wording of a refuted premise stays.
+  of the evidence (`TRUTHS`), and no wording of a refuted premise stays. Each universal claim ("none", "never", "no
+  ... reads") sits inside the words of a `TRUTHS` row, whose check counts every unit of its population with no answer
+  and not asked as unknown, never as "does not read" (recheck F13). Each cell of the table's `Compared with` column is
+  a comparison the evidence shows, or says `not compared` (recheck F14: the norm documents' values are 14 git blob ids
+  and one SHA-256, which the run records and nothing compares).
   Its logic is tested on fixtures (`test_a_claim_must_cite_a_key_that_holds_its_numbers`,
-  `test_the_old_premises_sentence_fails_the_claims_check`, `test_a_headline_claim_must_hold_of_the_evidence`); the run over the saved evidence stays a batch probe (D4).
+  `test_the_old_premises_sentence_fails_the_claims_check`, `test_a_headline_claim_must_hold_of_the_evidence`,
+  `test_none_of_a_population_reads_only_when_each_has_an_answer`, `test_a_universal_claim_needs_a_truths_row`,
+  `test_each_compared_with_cell_names_a_comparison_the_evidence_holds`); the run over the saved evidence stays a batch probe (D4).
 - **Samples:** [samples.py](samples.py) saves C5 and C6 to `evidence/samples.json`. C6 reads under changed profile
   lists, so its outcomes name the cause of `soft-chain`'s refusal and are never C4's answers.
 - **Trust:** `tools/trust_map.py --check` gives K +0, S +0 and trusted +0 (PASS). There is no allowance and no
   FOLLOW-UPS row.
-- **Tests:** The selected tests (137 units, 3 shards, run `q1-3b-9c600a54-t631791`) gave 0 failed at `9c600a54e`; the
-  commit after it changes only this report and DELTA. `lake build` and `lean/audit.py` pass. `gate_collection.py --check
-  --prebuilt` reports 49 added, 0 refused, 0 stale and 0 malformed. The full gate is left to the chain. `test_the_q1_3b_evidence_stays_in_the_tree` is removed:
+- **Tests:** The selected tests (137 units, 2 shards, run `q1-3b-11ae4f0e-t636672`) gave 0 failed at `4bde58fec`; the
+  commit after it changes only this report. `lake build` and `lean/audit.py` pass. `gate_collection.py --check
+  --prebuilt` reports 52 added, 0 refused, 0 stale and 0 malformed. The full gate is left to the chain. `test_the_q1_3b_evidence_stays_in_the_tree` is removed:
   it was a permanent test over batch evidence, which DRI decision D4 rules out, so the saved numbers are checked by
   this batch's review probes, and the regression tests run on fixtures.
 - **Corpus run:** C4, 13,694 s with 12 workers, at `5c56edcec`. It replaces the run at `5728eb968`. The code under
@@ -95,9 +102,9 @@ rendered English, not its text. This run does not measure rendered English. The 
   adds an `unavailable` count, 0 in each of these.
 - **One unanswered fronting:** C4 has 1 `unavailable` in `usecase-surface`, and `coverage.whole_streams` reads sentence
   reads only, so it would not have noticed this one alone. The count is in `streams.usecase-surface.f2_unavailable`.
-- **Size and pilot bytes:** About 1,670 hand-written lines (`git diff --numstat` over the merge base, without the
-  evidence JSON and `mutants.json`). That is ~1,070 over the ~600 guide: the stream reproductions, the norm-document
-  reader, the tests, and this round's `claims.py` (271) and `samples.py` (85) are what grew. Pilot bytes expected to move: 0, since this is a measurement.
+- **Size and pilot bytes:** About 1,940 hand-written lines (`git diff --numstat` over the merge base, without the
+  evidence JSON and `mutants.json`). That is ~1,340 over the ~600 guide: the stream reproductions, the norm-document
+  reader, the tests, and `claims.py` (427) and `samples.py` (85) are what grew. Pilot bytes expected to move: 0, since this is a measurement.
 - **Not run:** a whole UDHR or constitution document (L70). The English rendering of the 104 norm and AST contents.
   The `soft-chain` part's 1,005 sentences have no answer (`UnsupportedProfile`, for the profile pair above), and they
   are counted as unavailable, not as `none`.
@@ -120,7 +127,7 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 1. N.A.: no relayed route is added. Every answer is checked by the relay's `question_problem` or `response_problem` (`ask`, `read_sentences`); a failed service is `unavailable` (`test_a_failed_service_is_unavailable_not_a_crash`).
 2. PASS: the five rows above. No in-flight branch shares a file. There is no Python copy of a Lean decision (each fronting is Lean's to decide; the closest is Lean's, checked against the leftmost tie).
-3. PASS: [mutants.json](mutants.json), 49 of 49 killed, the three the task names among them.
+3. PASS: [mutants.json](mutants.json), 59 of 59 killed, the three the task names among them.
 4. N.A.: no reader changes; Lean's closest agrees with the leftmost tie of its own reads in 5,183 of 5,183 (1,442 with a choice).
 5. N.A.: no new relayed field.
 6. PASS: the evidence commit and the HEAD difference are stated above; the chain runs the gate on the final HEAD.
