@@ -69,7 +69,8 @@ pre-review gate reports `[mutants] no product code changed`.
    committed final HEAD, and only docs changed after the selected run recorded below.
 7. No unsigned item: PASS. There are no DELTA rows and no trust growth (`git diff main...HEAD --stat`).
 8. Every user-visible change in DELTA: N.A. (no user-visible change).
-9. Test selection: SELECTED_RUN_PLACEHOLDER
+9. Test selection: PASS. `mac-pytest.sh --select -- --base 4e961f0ad --run` on e016c90e9: 3 shards on GitHub
+   Actions, exit 0, 53/53 units passed (shard lines in the run's log). The diff is docs only, so no test depends on it.
 10. Lean statements: N.A. (no Lean change).
 11. Budgets fail closed: N.A. (no budget, limit or deadline code).
 12. No CPU or memory regression: N.A. (no code).
