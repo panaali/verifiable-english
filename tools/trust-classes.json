@@ -16435,10 +16435,12 @@
         "VE.Scope.explainRows",
         "VE.Scope.rowsF",
         "VE.Scope.explainFast",
+        "VE.Scope.explainOut",
         "VE.Scope.Run.quotesOf",
         "VE.Scope.Run.govJson",
         "VE.Scope.Run.rowJson",
-        "VE.Scope.Run.governedJson"
+        "VE.Scope.Run.governedJson",
+        "VE.Scope.Run.choiceJson"
       ],
       "D[V]": [
         {
@@ -16451,9 +16453,11 @@
       "G[R]": [
         "VE.Scope.Run.cellLimit",
         "VE.Scope.Run.cellBound",
-        "VE.Scope.Run.explainWithin"
+        "VE.Scope.Run.explainWithin",
+        "VE.Scope.Run.explainSetsWithin"
       ],
       "G[I]": [
+        "VE.Scope.Run.answerOf",
         "VE.Scope.Run.explainCase",
         "VE.Scope.Run.runCaseReported"
       ]
@@ -16468,7 +16472,13 @@
         "VE.Scope.RunExamples.fr",
         "VE.Scope.RunExamples.g2s",
         "VE.Scope.RunExamples.item2",
-        "VE.Scope.RunExamples.shown"
+        "VE.Scope.RunExamples.shown",
+        "VE.Scope.RunExamples.sdOn",
+        "VE.Scope.RunExamples.groups",
+        "VE.Scope.RunExamples.perChoiceRows",
+        "VE.Scope.RunExamples.twoDoc",
+        "VE.Scope.RunExamples.strOf",
+        "VE.Scope.RunExamples.outcome"
       ]
     },
     "ResponseShape/Schemas/Scope.lean": {
@@ -16476,6 +16486,8 @@
         "ResponseShape.Schemas.Scope.governor",
         "ResponseShape.Schemas.Scope.unitRow",
         "ResponseShape.Schemas.Scope.governed",
+        "ResponseShape.Schemas.Scope.pick",
+        "ResponseShape.Schemas.Scope.choiceGroup",
         "ResponseShape.Schemas.Scope.row",
         "ResponseShape.Schemas.Scope.file"
       ]
@@ -16873,46 +16885,6 @@
         "VE.Readings.SoftSupExamples.NSDa"
       ]
     },
-    "VE/EnglishGrammar/Norm/Examples.lean": {
-      "T": [
-        "VE.EnglishGrammar.Norm.Examples.a",
-        "VE.EnglishGrammar.Norm.Examples.b",
-        "VE.EnglishGrammar.Norm.Examples.cl",
-        "VE.EnglishGrammar.Norm.Examples.faultOf",
-        "VE.EnglishGrammar.Norm.Examples.hd",
-        "VE.EnglishGrammar.Norm.Examples.long",
-        "VE.EnglishGrammar.Norm.Examples.may",
-        "VE.EnglishGrammar.Norm.Examples.mustNot",
-        "VE.EnglishGrammar.Norm.Examples.statements"
-      ]
-    },
-    "VE/EnglishGrammar/Norm/Value.lean": {
-      "S": [
-        "VE.EnglishGrammar.Norm.Bearer",
-        "VE.EnglishGrammar.Norm.BlockFault",
-        "VE.EnglishGrammar.Norm.Clause",
-        "VE.EnglishGrammar.Norm.Force",
-        "VE.EnglishGrammar.Norm.Force.sign",
-        "VE.EnglishGrammar.Norm.Header",
-        "VE.EnglishGrammar.Norm.Mode",
-        "VE.EnglishGrammar.Norm.NState",
-        "VE.EnglishGrammar.Norm.NState.init",
-        "VE.EnglishGrammar.Norm.NormStatement",
-        "VE.EnglishGrammar.Norm.NormStatement.clauses",
-        "VE.EnglishGrammar.Norm.NormStatement.number?",
-        "VE.EnglishGrammar.Norm.NormStatement.refs",
-        "VE.EnglishGrammar.Norm.Open",
-        "VE.EnglishGrammar.Norm.Piece",
-        "VE.EnglishGrammar.Norm.Place",
-        "VE.EnglishGrammar.Norm.Polarity",
-        "VE.EnglishGrammar.Norm.Polarity.sign",
-        "VE.EnglishGrammar.Norm.Residual",
-        "VE.EnglishGrammar.Norm.assemble",
-        "VE.EnglishGrammar.Norm.assembleFrom",
-        "VE.EnglishGrammar.Norm.close",
-        "VE.EnglishGrammar.Norm.ruleCount"
-      ]
-    },
     "VE/Scope/FarExamples.lean": {
       "T": [
         "VE.Scope.FarExamples.checkF",
@@ -17026,6 +16998,46 @@
       ],
       "P": [
         "VE.Cardinality.Render.tacticCharges"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Examples.lean": {
+      "T": [
+        "VE.EnglishGrammar.Norm.Examples.a",
+        "VE.EnglishGrammar.Norm.Examples.b",
+        "VE.EnglishGrammar.Norm.Examples.cl",
+        "VE.EnglishGrammar.Norm.Examples.faultOf",
+        "VE.EnglishGrammar.Norm.Examples.hd",
+        "VE.EnglishGrammar.Norm.Examples.long",
+        "VE.EnglishGrammar.Norm.Examples.may",
+        "VE.EnglishGrammar.Norm.Examples.mustNot",
+        "VE.EnglishGrammar.Norm.Examples.statements"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Value.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.Bearer",
+        "VE.EnglishGrammar.Norm.BlockFault",
+        "VE.EnglishGrammar.Norm.Clause",
+        "VE.EnglishGrammar.Norm.Force",
+        "VE.EnglishGrammar.Norm.Force.sign",
+        "VE.EnglishGrammar.Norm.Header",
+        "VE.EnglishGrammar.Norm.Mode",
+        "VE.EnglishGrammar.Norm.NState",
+        "VE.EnglishGrammar.Norm.NState.init",
+        "VE.EnglishGrammar.Norm.NormStatement",
+        "VE.EnglishGrammar.Norm.NormStatement.clauses",
+        "VE.EnglishGrammar.Norm.NormStatement.number?",
+        "VE.EnglishGrammar.Norm.NormStatement.refs",
+        "VE.EnglishGrammar.Norm.Open",
+        "VE.EnglishGrammar.Norm.Piece",
+        "VE.EnglishGrammar.Norm.Place",
+        "VE.EnglishGrammar.Norm.Polarity",
+        "VE.EnglishGrammar.Norm.Polarity.sign",
+        "VE.EnglishGrammar.Norm.Residual",
+        "VE.EnglishGrammar.Norm.assemble",
+        "VE.EnglishGrammar.Norm.assembleFrom",
+        "VE.EnglishGrammar.Norm.close",
+        "VE.EnglishGrammar.Norm.ruleCount"
       ]
     }
   }
