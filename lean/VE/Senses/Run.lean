@@ -235,9 +235,9 @@ first byte to its terminator's last (`lexSpans`). -/
 def writtenLines (s : String) (k : Nat) : List String :=
   match lexSpans s with
   | .error _ => []
-  | .ok sents => (sents.toList.take k).filterMap fun sent => do
-    let first ← sent.toList.head?
-    let last ← sent.toList.getLast?
+  | .ok sents => (sents.extract 0 k).toList.filterMap fun sent => do
+    let first ← sent[0]?
+    let last ← sent.back?
     pure (s.extract ⟨first.2.1⟩ ⟨last.2.2 + 1⟩)
 
 /-- A flip model on the wire: the unit's sentence, the pair, its status, and for a distinguishing model the senses
@@ -251,13 +251,14 @@ def flipJson (start : Nat) : (Nat × Nat × Nat) × Flip → Json
     | .unknown => [("status", .str "unknown")])
 
 /-- An admitted reading's identities (plan 2.7): S2's of its projection, without `overlay_digest`, with a source
-request's `source_sha256` and the preamble lines it wrote (the sentences before the body, which starts at sentence
-`start`, after `d` rendered defaults); the words its body uses; the flip models of its open units (`flipsOf`); and
-each candidate's identities (`ids`), computed once per distinct resolving lines by `linesProjection`, as
+request's `source_sha256` and the preamble lines it wrote (the sentences before the body, which is the last of the
+`count` sentences read, after `d` rendered defaults); the words its body uses; the flip models of its open units
+(`flipsOf`); and each candidate's identities (`ids`), computed once per distinct resolving lines by `linesProjection`, as
 `senses.project` computes them. -/
-def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b start d : Nat) (text : SenseText) :
+def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b count d : Nat) (text : SenseText) :
     SensesOutcome → Except String (List (String × Json) × (String → Json))
   | .ok units _ _ _ P => do
+    let start := count - units.length
     let used := usedOf P
     let (_, own) ← projectionIds c P
     let (source, preamble) := match text with
@@ -311,8 +312,7 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let out := match out, text with
     | .lexical r, .fences fs => if A.defaults.isEmpty then .lexical (fenceReject r 0 0 fs) else out
     | o, _ => o
-  let start := match out with | .ok units .. => count - units.length | _ => 0
-  let (admitted, ids) ← if identified then do let (a, f) ← admittedIds D c budget start d text out; pure (a, some f)
+  let (admitted, ids) ← if identified then do let (a, f) ← admittedIds D c budget count d text out; pure (a, some f)
     else pure ([], none)
   let result ← outcomeJson c (refusalSource A text) count fences unitText admitted ids out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj

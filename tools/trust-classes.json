@@ -16887,7 +16887,13 @@
         "VE.Senses.RunExamples.s2",
         "VE.Senses.RunExamples.openOf",
         "VE.Senses.RunExamples.deep",
-        "VE.Senses.RunExamples.readingOf"
+        "VE.Senses.RunExamples.readingOf",
+        "VE.Senses.RunExamples.PJ2",
+        "VE.Senses.RunExamples.odd",
+        "VE.Senses.RunExamples.cand2",
+        "VE.Senses.RunExamples.piece",
+        "VE.Senses.RunExamples.chain",
+        "VE.Senses.RunExamples.atLimit"
       ]
     },
     "VE/Readings/RightsExamples.lean": {

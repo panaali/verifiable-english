@@ -181,7 +181,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Typed.lean` | 96 | 96 | 1–96 | `8e0e19fcb271…` |
 | `lean/VE/Route/Wire.lean` | 727 | 727 | 1–727 | `4829a9c7b8ee…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
-| `lean/VE/Senses/Run.lean` | 388 | 388 | 1–388 | `b07303b127da…` |
+| `lean/VE/Senses/Run.lean` | 388 | 388 | 1–388 | `9dceca44d73c…` |
 | `lean/VE/Service/Document.lean` | 2094 | 2094 | 1–2094 | `6255c510947d…` |
 | `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
