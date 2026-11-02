@@ -381,6 +381,76 @@
    "result": "KILLED",
    "test": "python3 tools/check_lean_imports.py (tools/select_tests.py CHECK_LEAN, run when tools/layer_policy.py changes; the gate's import check): exit 1, \"new outward Lean import: VE.Discourse.Compose -> VE.Service.Document\"",
    "check": "lint"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the unbound-fence refusal reads no fence",
+   "from": "Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk []",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean resolveWith_fenceless (unsolved goals, case cons)",
+   "check": "theorem"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the unbound-fence refusal reads no fence, resolveWith_fenceless's proof replaced by sorry",
+   "from": "Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk []",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:102 (PROBE F7), :103, :104 (caseManifest), :106 (resolveCase)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.Loader.fencesOk",
+   "file": "lean/VE/Discourse/Loader.lean",
+   "mutant": "review F7: the refusal's text is not the loader's",
+   "from": "throw (notImplemented \"fenced English or strict content\")",
+   "to": "throw (notImplemented \"fenced content\")",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:103, :104, :106, :108 (the exact text on every entry)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the fence refusal before contentOk, resolveWith_fenceless's proof replaced by sorry",
+   "from": "contentOk K)\n  Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk (Loader.fencesOf j)\n  ... forM (contentOk K)",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:111 (a bound fence keeps its unit's abstention)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: chainDDoc decodes the base environment again",
+   "from": "let bp := ...",
+   "to": "let bp := ...\n  let _ ← VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment environment)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: decodeNormsEnvironment on the path\")",
+   "check": "run_cmd"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: contentOk runs a second time on the path",
+   "from": "let front := Loader.metaOf j",
+   "to": "let front := Loader.metaOf j\n  (unitsAndParts front).forM (contentOk K)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: contentOk on the path\")",
+   "check": "run_cmd"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: admitChain reads tablesOf twice",
+   "from": "let tables := tablesOf j\n  integrityOk j tables.1 tables.2",
+   "to": "integrityOk j (tablesOf j).1 (tablesOf j).2",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: tablesOf in admitChain\")",
+   "check": "run_cmd"
   }
  ]
 }
