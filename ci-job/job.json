@@ -1,0 +1,17 @@
+{
+ "job": "jt-3-5447bb29",
+ "head": "f8d2a83aeed5c102b386420b052ed52a83bb47c3",
+ "argv": [
+  "jt-3-5447bb29",
+  "f8d2a83aeed5c102b386420b052ed52a83bb47c3",
+  "50c6842f84f750ae9b3882025cc847af1cff93cf",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-46a1a28c9f40.tar.zst",
+  "6f80cabd3992817a64c1882e9e82b12aaa26820fa71ce3cc32e7f7be35a86e73",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "tests/test_jt3_english.py",
+  "--jobs",
+  "4"
+ ]
+}
