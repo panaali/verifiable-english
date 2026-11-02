@@ -286,6 +286,7 @@ module VE.Discourse.Access
 module VE.Discourse.Admission
 module VE.Discourse.Compose
 module VE.Discourse.ComposeExamples
+module VE.Discourse.ComposeKeys
 module VE.Discourse.Descriptions
 module VE.Discourse.Documents
 module VE.Discourse.Elaborate

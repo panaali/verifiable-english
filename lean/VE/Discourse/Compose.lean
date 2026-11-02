@@ -1,4 +1,5 @@
 import VE.Discourse.Positions
+import VE.Discourse.ComposeKeys
 import VE.Compose.Dispatch
 import VE.Service.Document
 
@@ -346,15 +347,6 @@ theorem composed_path (profiles : List String) (environment j : Json) (c : Chain
     "norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ chainConstructs environment j = true :=
   (admitChain_of profiles environment j c h).1
 
-/-! The key order of `composedJson`'s object. -/
-theorem cmp_i_d : compare "inner" "document_id" = .gt := rfl
-theorem cmp_ir_d : compare "inner_report_id" "document_id" = .gt := rfl
-theorem cmp_ir_i : compare "inner_report_id" "inner" = .gt := rfl
-theorem cmp_rf_i : compare "references" "inner" = .gt := rfl
-theorem cmp_rf_ir : compare "references" "inner_report_id" = .gt := rfl
-theorem cmp_rp_i : compare "report_id" "inner" = .gt := rfl
-theorem cmp_rp_ir : compare "report_id" "inner_report_id" = .gt := rfl
-theorem cmp_rp_rf : compare "report_id" "references" = .gt := rfl
 
 theorem chainReferences_ok (front r : Json) (h : chainReferences front = .ok r) : conditionalOnOf r = [] := by
   unfold chainReferences at h

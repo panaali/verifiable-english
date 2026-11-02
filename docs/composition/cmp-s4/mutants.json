@@ -9,7 +9,7 @@
    "from": "if \"norms@0\" ∈ profiles ∧ \"ve.discourse@1\" ∈ profiles ∧ chainConstructs",
    "to": "if \"norms@0\" ∈ profiles ∧ chainConstructs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:311",
+   "test": "lean/VE/Discourse/Compose.lean:312",
    "check": "proof"
   },
   {
@@ -29,7 +29,7 @@
    "from": "(\"inner\", c.inner),",
    "to": "(\"inner\", c.inner.setObjVal! \"conditional_on\" (.arr #[])),",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:370",
+   "test": "lean/VE/Discourse/Compose.lean:362",
    "check": "proof"
   },
   {
@@ -259,7 +259,7 @@
    "from": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure j",
    "to": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure (j.setObjVal! \"fences\" (Json.mkObj []))",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:169",
+   "test": "lean/VE/Discourse/Compose.lean:170",
    "check": "proof"
   },
   {
@@ -279,7 +279,7 @@
    "from": "if (VE.Service.Document.profilesOf j).contains \"ve.discourse@1\" then resolveOn j else pure j",
    "to": "resolveOn j",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:173",
+   "test": "lean/VE/Discourse/Compose.lean:174",
    "check": "proof"
   },
   {

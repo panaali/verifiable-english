@@ -137,6 +137,7 @@ import VE.Definitions.Layer
 import VE.Definitions.Route
 import VE.Discourse.Access
 import VE.Discourse.Compose
+import VE.Discourse.ComposeKeys
 import VE.Discourse.Descriptions
 import VE.Discourse.Documents
 import VE.Discourse.Elaborate
