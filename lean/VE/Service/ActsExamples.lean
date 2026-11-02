@@ -524,6 +524,18 @@ def d4 : String := "InvalidInput: act phrase for p027 joins acts with 'or' outsi
 -- The norm-defaults route, on `e.U'`.
 #guard (targetsOf (VE.NormDefaults.Run.runCaseRouted (caseOf "norm-defaults-elaborate" joinedU))).toOption ==
   some ["p027__1", "p027__2"]
+-- A plain act: each part's wording reads its source's `form` (`splitJson`).
+def plainJoined : Json :=
+  let j := envOf plain6 block6 (role := "plain") (default := "deny")
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "predicates" (Json.mkObj [("p027", Json.mkObj [("arguments", toJson ["person"]),
+    ("description", .str "d"), ("regulated", Json.mkObj (plain VE.Acts.DecodeExamples.a6 "has the right"))])]))
+def ruleOn : Json := Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "r027"), ("predicate", .str "p027"),
+  ("sign", .bool true), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]]
+#guard ((VE.Norms.Run.runCaseRouted (Json.mkObj [("id", .str "c"), ("kind", .str "norms-elaborate"),
+    ("environment", plainJoined), ("norms", ruleOn)])).toOption.map fun a => a.getObjValD "wordings") ==
+  some (Json.mkObj [("p027__1", .str "{0} has the right to be subjected to torture"),
+    ("p027__2", .str "{0} has the right to be subjected to cruel, inhuman or degrading treatment or punishment")])
 -- A lexical document answers byte for byte as today, on both routes.
 #guard (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" lexicalE)).toOption ==
   (VE.Norms.Run.runCase (caseOf "norms-elaborate" lexicalE)).toOption

@@ -1733,7 +1733,7 @@ module VE.Acts.Decode 8640c92d49bc5dd06096eadfddb3cddba66d3bf2e2b49b9361fdc26eca
 250:0-256:69 theorem VE.Acts.Decode.decodeElaboratedU_source@VE.Acts.Decode
 258:0-260:34 theorem VE.Acts.Decode.decodeElaboratedU_wellFormed@VE.Acts.Decode
 262:0-265:25 theorem VE.Acts.Decode.decodeElaboratedU_lexical@VE.Acts.Decode
-module VE.Acts.DecodeExamples bc5ca1143b41539a48843732f0fdf592c37c4dd1ca31785be1ab38e111911d60
+module VE.Acts.DecodeExamples 076350fbdec0073c9ad68891a8e1d6d9ea420fb4b6d1327d218142db9b999b6d
 13:0-13:97 def VE.Acts.DecodeExamples.actsOf@VE.Acts.DecodeExamples
 14:0-14:109 def VE.Acts.DecodeExamples.ck@VE.Acts.DecodeExamples
 15:0-15:101 def VE.Acts.DecodeExamples.errText@VE.Acts.DecodeExamples
@@ -1764,10 +1764,11 @@ module VE.Acts.DecodeExamples bc5ca1143b41539a48843732f0fdf592c37c4dd1ca31785be1
 176:0-178:89 def VE.Acts.DecodeExamples.e5j@VE.Acts.DecodeExamples
 188:0-189:68 def VE.Acts.DecodeExamples.vocabText@VE.Acts.DecodeExamples
 211:0-214:26 def VE.Acts.DecodeExamples.viewed@VE.Acts.DecodeExamples
-238:0-239:92 def VE.Acts.DecodeExamples.tag@VE.Acts.DecodeExamples
-240:0-242:96 def VE.Acts.DecodeExamples.manyActs@VE.Acts.DecodeExamples
-243:0-244:101 def VE.Acts.DecodeExamples.manyEnv@VE.Acts.DecodeExamples
-245:0-247:99 def VE.Acts.DecodeExamples.manyRules@VE.Acts.DecodeExamples
+236:0-241:106 def VE.Acts.DecodeExamples.flagged@VE.Acts.DecodeExamples
+252:0-253:92 def VE.Acts.DecodeExamples.tag@VE.Acts.DecodeExamples
+254:0-256:96 def VE.Acts.DecodeExamples.manyActs@VE.Acts.DecodeExamples
+257:0-258:101 def VE.Acts.DecodeExamples.manyEnv@VE.Acts.DecodeExamples
+259:0-261:99 def VE.Acts.DecodeExamples.manyRules@VE.Acts.DecodeExamples
 module VE.Acts.DecodeTwins 0db6b8e7dd488e4d4b31fb3525016058a8f5c730581e9da56360d4b7ab01ffe3
 18:0-21:5 theorem VE.Acts.Decode.elaborated_definitions@VE.Acts.DecodeTwins
 23:0-32:7 theorem VE.Acts.Decode.decodeElaboratedFlagged_source@VE.Acts.DecodeTwins
@@ -22217,7 +22218,7 @@ module VE.Senses.RunExamples 9df3ac383552f83b9ca0e9f7f8fa066c6fa77bd95366b4c4fb5
 90:0-92:107 def VE.Senses.RunExamples.fenced@VE.Senses.RunExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f
 3:0-5:33 def VE.Senses.sensesVersion@VE.Senses.Version
-module VE.Service.ActsExamples 10f07effb6bcc916d019e220d0c7f5b7e5e4a32b894343e47e4636584b9a43b6
+module VE.Service.ActsExamples 8aeae18bcf46c6e95c799ddeba5b00820d06f4afdfa7df153ddf7f901dd9a307
 18:0-18:109 def VE.Service.ActsExamples.a1@VE.Service.ActsExamples
 19:0-19:70 def VE.Service.ActsExamples.a2@VE.Service.ActsExamples
 20:0-20:88 def VE.Service.ActsExamples.a3@VE.Service.ActsExamples
@@ -22284,7 +22285,9 @@ module VE.Service.ActsExamples 10f07effb6bcc916d019e220d0c7f5b7e5e4a32b894343e47
 512:0-513:102 def VE.Service.ActsExamples.caseOf@VE.Service.ActsExamples
 514:0-515:121 def VE.Service.ActsExamples.targetsOf@VE.Service.ActsExamples
 516:0-516:98 def VE.Service.ActsExamples.d4@VE.Service.ActsExamples
-564:0-564:124 def VE.Service.ActsExamples.readingsOf@VE.Service.ActsExamples
+528:0-532:111 def VE.Service.ActsExamples.plainJoined@VE.Service.ActsExamples
+533:0-534:111 def VE.Service.ActsExamples.ruleOn@VE.Service.ActsExamples
+576:0-576:124 def VE.Service.ActsExamples.readingsOf@VE.Service.ActsExamples
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose

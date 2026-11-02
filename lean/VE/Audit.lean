@@ -3754,6 +3754,7 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
 #print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
 #print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
+#print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_joined
 #print axioms VE.Norms.FlaggedSpec.norms_flagged_conflict_free
 #print axioms VE.Norms.FlaggedSpec.norms_flagged_conflict_freeIn
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive

@@ -3302,6 +3302,9 @@
 'VE.Norms.FlaggedSpec.nodup_of_eraseDups_length' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_joined' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 'VE.Norms.FlaggedSpec.norms_flagged_conflict_free' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.norms_flagged_conflict_freeIn' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive' depends on axioms: [propext, Classical.choice, Quot.sound]
