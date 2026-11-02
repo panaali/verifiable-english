@@ -275,6 +275,7 @@ def softAct (profiles : String) : Env := envOf actSorts permitted profiles ", \"
 #guard outcome (rd (softAct "") LA "Rule 1. Every act may be done.") == "stopped 1 noDerivation"
 #guard (regulatedOf (softAct ", \"soft-norms@0\"")).map (·.name) == ["permitted"]
 #guard clauses (rd (softAct ", \"soft-norms@0\"") LA "Rule 1. Every act may be done.") == some [cl .may]
+#guard (regulatedOf (softAct ", \"soft-norms@0\", \"time@0\"")).map (·.name) == ["permitted"]
 -- The trust mutants' fixtures (docs/english-lean/en-s6b/mutants.json). Both bindings in a condition:
 #guard clauses (rd help LH "Rule 1. Every state may help each person, if that state may help that person.") ==
   some [⟨.every "state", .modal .may, .strict, "permitted", [], .pred "permitted" [.var 1, .var 0], [], []⟩]
