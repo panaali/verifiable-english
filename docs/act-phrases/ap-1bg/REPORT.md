@@ -31,13 +31,22 @@ it is not false as written; it is not built here (ap-1bh). Overlap: of the in-fl
    it read `acts@0` needed Lean's soft decoder (and model mode) to accept the frame's soft view, restricted to the
    empty strict block so a soft document with `acts@0` stays refused. Wording through the readings route's
    `runLower` was tried and reverted: `runLower_fits` (encoder theorem) breaks on it.
-2. **Field tables.** `tests/test_difffuzz.py` and `tests/test_relay_binding_inventory.py` list `model_acts` and the
+2. **Guards beside the trusted modules.** The trust mutants build only the checks of the mutated module's directory, so
+   the soft view's guards are also in `lean/VE/SoftNorms/ActsFrameExamples.lean` (new, imported by `VE.lean`).
+3. **Field tables.** `tests/test_difffuzz.py` and `tests/test_relay_binding_inventory.py` list `model_acts` and the
    prime's `acts`; `tests/data/binding-answers.jsonl.gz` re-asked (`tools/binding_census.py --answers`).
 
 ## 3. Evidence
 
-- Seeded bugs: [mutants.json](mutants.json), 11 killed (Lean 6, Python 5), each with its one check.
-- Trust: `trust_map.py --check` K +0, S +2, V +63 (R16 allowance); trust mutants: [trust-mutants.json](trust-mutants.json).
+- Seeded bugs: [mutants.json](mutants.json), 11 killed (Lean 6, Python 5), each with its one check; `emptyBlock`'s
+  11 trust mutants are all killed.
+- Trust: `trust_map.py --check` K +0, S +2, V +63 (R16 allowance). Trust mutants (`mac-pytest.sh --trustmut`, final
+  run at `747ab468`, exit 0): 350 killed, 0 survivors, 0 unknown, 20 invalid, 62 allowed
+  ([trust-mutants.json](trust-mutants.json), [trust-mutants-allow.json](trust-mutants-allow.json): each allowed
+  mutant is equivalent, does not elaborate, or is UNKNOWN only because `VE/Defaults/Examples.lean:175` cannot be
+  re-elaborated by the probe while `VE.SoftNorms.ActsFrameExamples` refutes it, three of them re-planted by hand).
+  The first run's 38 survivors were killed by checks beside the mutated modules: the schema shapes pinned by their
+  rendered digests, `VE.SoftNorms.ActsFrameExamples` (new) and a third distinct model act.
 - Oracle: `uv run python -I tests/b15b_model_cases.py record tests/data/b15b-model-oracle.json.gz --profile acts@0`;
   48 answers changed, every one on a `ve.core@0.2:acts@0,…` environment (a comparison of the old and new archives).
 - `lake build` (1,228 jobs) and `python3 lean/audit.py` (PASS, 721 files) after the last Lean change;
