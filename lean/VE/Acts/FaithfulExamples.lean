@@ -122,6 +122,19 @@ theorem intendedActsB_iff (D : ActsDoc) (M : Model) : intendedActsB D M = true �
 /-- A model of one person with the relations `R` true of them. -/
 def one (R : List String) : Model := ⟨fun _ => [0], fun _ => none, fun r => if r ∈ R then [[0]] else []⟩
 
+/-- `readAs` itself on a finite model, for the checks below (the sides read it through `readM`). -/
+instance readAsDecidable (p q r : String) (M : Model) (vs : List Nat) :
+    Decidable ((readAs p q M.asStructure).relation r vs) := by
+  dsimp only [readAs, VE.FiniteModel.asStructure]
+  exact inferInstance
+-- The source reads as the part, and no longer as itself; every other name, before or after it, reads as itself.
+#guard decide ((readAs "p" "q" (one ["q"]).asStructure).relation "p" [0])
+#guard !decide ((readAs "p" "q" (one ["p"]).asStructure).relation "p" [0])
+#guard decide ((readAs "p" "q" (one ["a"]).asStructure).relation "a" [0])
+#guard !decide ((readAs "p" "q" (one ["q"]).asStructure).relation "a" [0])
+#guard decide ((readAs "p" "q" (one ["s"]).asStructure).relation "s" [0])
+#guard !decide ((readAs "p" "q" (one ["q"]).asStructure).relation "s" [0])
+
 /-- Both sides of the iff on `D`'s elaboration and `M`, or `none` when `D` is refused. -/
 def sides (D : ActsDoc) (M : Model) : Option (Bool × Bool) :=
   (elaborate D).toOption.map fun U => (holdsB U.D.T M, intendedActsB D M)
