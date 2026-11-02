@@ -17902,7 +17902,7 @@ theorem VE.Judgments.Examples.names_omega
             VE.Judgments.Examples.jrec "arbitrary_interference" ["interference"]])) =
     Option.some ["arbitrary_measure", "arbitrary_interference"]
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Examples.Eω@VE.Judgments.Examples VE.Judgments.Examples.jrec@VE.Judgments.Examples VE.Judgments.Examples.okVal@VE.Judgments.Examples VE.Judgments.Examples.regulatedω@VE.Judgments.Examples VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.names@VE.Judgments.Decl
-  -- expr 319133479
+  -- expr 1658245018
 theorem VE.Judgments.Examples.reachedBodies_chain
   VE.Judgments.reachedBodies VE.Judgments.Examples.defsChain [VE.Judgments.Examples.u "prolonged_detention"] =
     [(VE.Judgments.Examples.u "detention").and (VE.Judgments.Examples.u "arbitrary"),
@@ -17968,9 +17968,9 @@ theorem VE.Judgments.faultOf_none_iff
   ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (r : VE.Judgments.Rec),
     VE.Judgments.faultOf E defs regulated r = Option.none ↔
       (VE.Judgments.baseEnv E defs).predicates r.fst.name = Option.some r.fst.arguments ∧
-        ¬r.fst.name ∈ regulated ∧ r.snd.fst = 0 ∧ r.snd.snd = 0 ∧ r.fst.decidedBy ≠ "unstated"
+        ¬r.fst.name ∈ regulated ∧ r.snd.fst = 0 ∧ r.snd.snd = 0 ∧ r.fst.decidedBy ≠ "unresolved_decider"
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Judgments.Judgment.arguments@VE.Judgments.Decl VE.Judgments.Judgment.decidedBy@VE.Judgments.Decl VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.baseEnv@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
-  -- expr 1520884731
+  -- expr 3089297803
 theorem VE.Judgments.filter_remove
   ∀ (J : List String) (P : String → Bool) (j : String),
     ¬j ∈ List.filter P J → List.filter P (List.filter (fun x => x != j) J) = List.filter P J
@@ -17998,9 +17998,9 @@ theorem VE.Judgments.hasPhrase_iff
   -- expr 2123165226
 theorem VE.Judgments.matches_iff
   ∀ (row : VE.Judgments.EvaluativeRow) (ws : List String),
-    row.matches ws = Bool.true ↔ row.word ∈ ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
+    row.matches ws = Bool.true ↔ row.word <:+: ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
   -- uses VE.Judgments.EvaluativeRow.matches@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared
-  -- expr 2452877981
+  -- expr 3309011010
 theorem VE.Judgments.mem_defEdges
   ∀ (defs : List VE.Definitions.Def) (a b : String),
     (a, b) ∈ VE.Judgments.defEdges defs ↔ ∃ d, d ∈ defs ∧ d.name = a ∧ b ∈ VE.Norms.preds d.body
@@ -18055,6 +18055,10 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Judgments.singleton_infix_iff
+  ∀ (w : String) (ws : List String), [w] <:+: ws ↔ w ∈ ws
+  -- uses
+  -- expr 1433124270
 theorem VE.Judgments.status_checked
   ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView),
     VE.Judgments.status defs J u = Except.ok "CHECKED" → VE.Judgments.dependsOnC defs J u.reads = []
@@ -18095,9 +18099,9 @@ theorem VE.Judgments.undeclaredEvaluative_iff
     p ∈ VE.Judgments.undeclaredEvaluative rows preds J ↔
       ∃ ws,
         (p, ws) ∈ preds ∧
-          ¬p ∈ J ∧ ∃ row, row ∈ rows ∧ row.word ∈ ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
+          ¬p ∈ J ∧ ∃ row, row ∈ rows ∧ row.word <:+: ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
   -- uses VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared VE.Judgments.undeclaredEvaluative@VE.Judgments.Undeclared
-  -- expr 3989329691
+  -- expr 4198735931
 theorem VE.Judgments.usageMap_complete
   ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (u : VE.Judgments.UnitView)
     (j : String),
