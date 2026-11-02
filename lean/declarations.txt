@@ -5462,7 +5462,7 @@ module VE.Calc.RunExamples f7b1563f6d15478af97825d1ad0d58065d2f5f418ff3f4a3852cd
 1056:0-1057:75 def VE.Calc.RunExamples.WorkCases.g1@VE.Calc.RunExamples
 1063:0-1065:52 def VE.Calc.RunExamples.WorkCases.v11@VE.Calc.RunExamples
 1070:0-1073:50 def VE.Calc.RunExamples.WorkCases.heavy@VE.Calc.RunExamples
-module VE.Calc.Stats 2c30548bc8345a5acff94dddeb3a4b22d7ccbf560a7d749c20ddd060e192f7fa
+module VE.Calc.Stats 26d8fe4d5ce932cc4a570dd63853a0ba5acffe073a4a22267bff25b4e540271c
 10:0-10:93 def VE.Calc.mean?@VE.Calc.Stats
 12:0-16:74 def VE.Calc.sampleVariance?@VE.Calc.Stats
 18:0-22:62 def VE.Calc.populationVariance?@VE.Calc.Stats
@@ -5471,11 +5471,11 @@ module VE.Calc.Stats 2c30548bc8345a5acff94dddeb3a4b22d7ccbf560a7d749c20ddd060e19
 26:0-26:50 def VE.Calc.rootLe@VE.Calc.Stats
 27:0-27:50 def VE.Calc.rootLt@VE.Calc.Stats
 28:0-28:50 def VE.Calc.rootEq@VE.Calc.Stats
-30:0-30:84 instance VE.Calc.instDecidableRootGe@VE.Calc.Stats
-31:0-31:84 instance VE.Calc.instDecidableRootGt@VE.Calc.Stats
-32:0-32:84 instance VE.Calc.instDecidableRootLe@VE.Calc.Stats
-33:0-33:84 instance VE.Calc.instDecidableRootLt@VE.Calc.Stats
-34:0-34:84 instance VE.Calc.instDecidableRootEq@VE.Calc.Stats
+30:0-30:81 instance VE.Calc.instDecidableRootGe@VE.Calc.Stats
+31:0-31:81 instance VE.Calc.instDecidableRootGt@VE.Calc.Stats
+32:0-32:81 instance VE.Calc.instDecidableRootLe@VE.Calc.Stats
+33:0-33:81 instance VE.Calc.instDecidableRootLt@VE.Calc.Stats
+34:0-34:81 instance VE.Calc.instDecidableRootEq@VE.Calc.Stats
 36:0-45:52 def VE.Calc.SqrtRoundsTo@VE.Calc.Stats
 47:0-48:54 instance VE.Calc.instDecidableSqrtRoundsTo@VE.Calc.Stats
 50:0-58:9 theorem VE.Calc.Stats.sq_le_sq@VE.Calc.Stats
