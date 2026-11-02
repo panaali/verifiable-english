@@ -1,0 +1,47 @@
+$ python3 docs/defeasible/df-1ac/evidence/compare_statements.py lean/VE/Defaults/Zone.lean 7.5
+MISSING decisionAtoms
+MISSING openNames
+MISSING AdmissibleCompletion
+MISSING OutcomeIn
+MISSING SettledZ
+MISSING ZoneUnknown
+OK      DecLe
+OK      Observed
+OK      switchesOffRecord
+OK      DefaultCompletion
+OK      ByDefaultZ
+OK      ByDefaultLeftTo
+OK      DefaultZone
+OK      maxDefaultAtoms
+OK      openAtomsAll
+OK      defaultZoneOf
+MISSING Adm
+MISSING Splice
+MISSING AgreeOn
+MISSING DecLeOn
+MISSING ConeIndependent
+MISSING QueryIn
+MISSING cone_minimal_iff
+OK      defaultZone_byDefault_sound
+OK      defaultZone_leftTo_sound
+OK      defaultZone_notSaid_sound
+OK      defaultZone_noCompletion_sound
+MISSING forcedAllOf
+MISSING forcedAll_sound
+MISSING defaultCompletion_below
+MISSING forced_everywhere
+OK      zoneForm
+OK      defaultZone_budget
+OK      noExceptionRecord
+OK      decisionAtoms_none
+OK      defaultZone_eq_noException
+19 OK, 17 not OK
+
+$ python3 docs/defeasible/df-1ac/evidence/compare_statements.py lean/VE/Weighing/Zone.lean 7.5
+DIFF    decisionAtoms
+OK      openNames
+DIFF    AdmissibleCompletion
+DIFF    OutcomeIn
+DIFF    SettledZ
+DIFF    ZoneUnknown
+MISSING decisionAtoms_none

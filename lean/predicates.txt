@@ -98,6 +98,8 @@ module VE.Acts.Decode
 module VE.Acts.DecodeExamples
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.Faithful
+module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
@@ -194,9 +196,12 @@ module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Run
 module VE.Calc.RunExamples
+module VE.Calc.Stats
+module VE.Calc.StatsExamples
 module VE.Calc.Syntax
 module VE.Calc.Table
 module VE.Calc.TableExamples
+module VE.Calc.Ties
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
@@ -277,6 +282,8 @@ module VE.Defaults.Route
 module VE.Defaults.RouteExamples
 module VE.Defaults.Wire
 module VE.Defaults.WireExamples
+module VE.Defaults.Zone
+module VE.Defaults.ZoneExamples
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -544,6 +551,9 @@ module VE.Readings.Verdicts
 module VE.Readings.VerdictsExamples
 module VE.Readings.VerdictsWire
 module VE.Readings.Wire
+module VE.RightClauses.Examples
+module VE.RightClauses.Plain
+module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
 module VE.Rights.Correlate
@@ -663,6 +673,7 @@ module VE.Service.StageTimes
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.Service.UndeclaredExamples
+module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
 module VE.SoftNorms.Once
@@ -746,6 +757,7 @@ ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.IntendedActs@VE.Acts.Faithful
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Acts.SourceExact@VE.Acts.Sources
@@ -824,12 +836,18 @@ VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
+VE.Calc.SqrtRoundsTo@VE.Calc.Stats
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
 VE.Calc.Work.AtSpec@VE.Calc.Wire
 VE.Calc.Work.Linearity.Sound@VE.Calc.Lower
 VE.Calc.Work.Lowered.Sound@VE.Calc.Lower
 VE.Calc.Work.Shape.Sound@VE.Calc.Lower
+VE.Calc.rootEq@VE.Calc.Stats
+VE.Calc.rootGe@VE.Calc.Stats
+VE.Calc.rootGt@VE.Calc.Stats
+VE.Calc.rootLe@VE.Calc.Stats
+VE.Calc.rootLt@VE.Calc.Stats
 VE.Cardinality.Admissible@VE.Cardinality.Semantics
 VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
 VE.Cardinality.Admitted@VE.Cardinality.Syntax
@@ -875,6 +893,7 @@ VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
 VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
 VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
 VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
+VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch
@@ -898,12 +917,18 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.ByDefaultLeftTo@VE.Defaults.Zone
+VE.Defaults.ByDefaultZ@VE.Defaults.Zone
+VE.Defaults.DecLe@VE.Defaults.Zone
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
+VE.Defaults.DefaultCompletion@VE.Defaults.Zone
 VE.Defaults.MeaningFixtures.DefaultBaseFixed@VE.Defaults.MeaningExamples
+VE.Defaults.Observed@VE.Defaults.Zone
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
 VE.Defaults.SwitchesOff@VE.Defaults.Meaning
 VE.Defaults.leastDecisions@VE.Defaults.Meaning
+VE.Defaults.zReal@VE.Defaults.Zone
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle
@@ -1355,6 +1380,7 @@ VE.Scope.HasStr.below@VE.Scope.Govern
 VE.Scope.HasStr@VE.Scope.Govern
 VE.Scope.JsonWF.below@VE.Scope.Govern
 VE.Scope.JsonWF@VE.Scope.Govern
+VE.Scope.Typed@VE.Scope.Theorems
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary

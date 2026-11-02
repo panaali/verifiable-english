@@ -1,3 +1,8 @@
+- `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
+- `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
+- `tests/test_vacuity.py` — (no module docstring)
+- `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
 - `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
 - `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
