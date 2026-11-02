@@ -1,0 +1,24 @@
+trust_mutants: 9 definitions, 137 mutants (34 to run), 4 jobs, base bbff495a66b2
+SURVIVOR lean/VE/Defaults/Zone.lean:25 VE.Defaults.DecLe (S, trusted) body-false: ∀ a ∈ decisionAtoms D M, R₁ a.1 a.2 → R₂ a.1 a.2 -> False (the proofs it breaks: lean/VE/Defaults/Zone.lean:323, lean/VE/Defaults/Zone.lean:884)
+SURVIVOR lean/VE/Defaults/Zone.lean:54 VE.Defaults.ByDefaultZ (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Defaults/Zone.lean:683, lean/VE/Defaults/Zone.lean:884)
+SURVIVOR lean/VE/Defaults/Zone.lean:30 VE.Defaults.Observed (S, trusted) body-true: ∀ o ∈ obs, (OutcomeIn U M R o.1.1 o.1.2 ↔ o.2 = true) -> True (the proofs it breaks: lean/VE/Defaults/Zone.lean:465, lean/VE/Defaults/Zone.lean:509)
+SURVIVOR lean/VE/Defaults/Zone.lean:61 VE.Defaults.ByDefaultLeftTo (S, trusted) body-false: ∃ R₁ R₂, DefaultCompletion L X M record obs R₁ ∧ DefaultCompletion L X M record obs R₂ ∧ (∀ n ∈ V... -> False (the proofs it breaks: lean/VE/Defaults/Zone.lean:733, lean/VE/Defaults/Zone.lean:789)
+SURVIVOR lean/VE/Defaults/Zone.lean:55 VE.Defaults.ByDefaultZ (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Defaults/Zone.lean:683, lean/VE/Defaults/Zone.lean:884)
+SURVIVOR lean/VE/Defaults/Zone.lean:30 VE.Defaults.Observed (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Defaults/Zone.lean:465, lean/VE/Defaults/Zone.lean:509)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) append-right: record ++ ->  (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:61 VE.Defaults.ByDefaultLeftTo (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Defaults/Zone.lean:733, lean/VE/Defaults/Zone.lean:789)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-empty: switchesOffRecord L.D M record -> [] (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:63 VE.Defaults.ByDefaultLeftTo (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Defaults/Zone.lean:733, lean/VE/Defaults/Zone.lean:789)
+UNKNOWN lean/VE/Defaults/Zone.lean:70 VE.Defaults.DefaultZone (S, trusted) ctor-drop: | noCompletion (labels : List String) ->  (lean/VE/Defaults/Zone.lean:612: the failing proof cannot be cut: Unknown constant `VE.Defaults.De...)
+UNKNOWN lean/VE/Defaults/Zone.lean:36 VE.Defaults.switchesOffRecord (S, trusted) list-empty: record -> [] (lean/VE/Defaults/Zone.lean:36: Invalid projection: Type of)
+SURVIVOR lean/VE/Defaults/Zone.lean:35 VE.Defaults.switchesOffRecord (S, trusted) list-first: (offDecisions D) -> ((offDecisions D).take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:35 VE.Defaults.switchesOffRecord (S, trusted) list-first: (VE.NormDefaults.allTuples M ss) -> ((VE.NormDefaults.allTuples M ss).take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-drop-last: switchesOffRecord L.D M record -> ((switchesOffRecord L.D M record).dropLast) (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-last: record -> (record.reverse.take 1) (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:200 VE.Defaults.noExceptionRecord (S, trusted) list-last: (VE.SoftNorms.exceptedDecisions D) -> ((VE.SoftNorms.exceptedDecisions D).reverse.take 1) (the proofs it breaks: lean/VE/Defaults/Zone.lean:876)
+SURVIVOR lean/VE/Defaults/Zone.lean:35 VE.Defaults.switchesOffRecord (S, trusted) list-last: (VE.NormDefaults.allTuples M ss).filterMap (fun vs => if record.any (fun r => r.1 == (n, vs)) the... -> (((VE.NormDefaults.allTuples M ss).filterMap (fun vs => if record.any (fun r => r.1 == (n, vs)) t...
+SURVIVOR lean/VE/Defaults/Zone.lean:194 VE.Defaults.zoneForm (G[V], trusted) list-drop-first: switchesOffRecord L.D M record -> ((switchesOffRecord L.D M record).drop 1)
+trust_mutants: 11 KILLED, 17 SURVIVOR, 2 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 103 OTHER SHARD in 776 s
+trust_mutants: G[V], trusted: 4 KILLED, 1 SURVIVOR, 1 INVALID, 29 OTHER SHARD
+trust_mutants: S, trusted: 7 KILLED, 16 SURVIVOR, 2 UNKNOWN, 3 INVALID, 74 OTHER SHARD
+trust_mutants: steps: wall plan 10.4 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 11.5 s, mutants 746.3 s, cleanup 3 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 11.4 s (1), mutant_builds 1976 s (52), mutant_checks 316 s (31), stage_controls 144.6 s (3), mutant_probes 490.4 s (11)
