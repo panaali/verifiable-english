@@ -1,0 +1,35 @@
+trust_mutants: 16 definitions, 611 mutants (305 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:36 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:36 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) body-true: L.valid E O = true ∧ ∃ sents ps st2, lex s = .ok sents ∧ VE.Grammar.DocOneReading (normGrammar E ... -> True (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:64 VE.EnglishGrammar.Norm.consequences (S, trusted) and-or: && -> ||
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:36 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) any-all: any -> all
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:36 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:16 VE.EnglishGrammar.Norm.normRanks (G[V], trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-empty: sents.toList -> [] (lean/VE/EnglishGrammar/Norm/Read.lean:39: Invalid field notation: Type of)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Elab.lean:27 VE.EnglishGrammar.Norm.overOf (G[V], trusted) list-empty: (rs.filterMap fun | .rule h _ => if h.number = n then some h.exceptionTo else none | _ => none).f... -> [] (lean/VE/EnglishGrammar/Norm/Examples.lean:207: Expression (VE.EnglishGrammar.Norm.toNodes, which ...)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Elab.lean:32 VE.EnglishGrammar.Norm.toNodes (G[V], trusted) list-empty: rs -> [] (lean/VE/EnglishGrammar/Norm/Elab.lean:32: Invalid dotted identifier notation: The expected type o...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-empty: (VE.Route.Gate.profilesOf E.source).toOption -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:19: Invalid field notation: Type of)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:40 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:16 VE.EnglishGrammar.Norm.normRanks (G[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/EnglishGrammar/Norm/Elab.lean:32 VE.EnglishGrammar.Norm.toNodes (G[V], trusted) list-empty: rs.filterMap -> [] (lean/VE/EnglishGrammar/Norm/Elab.lean:32: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:46 VE.EnglishGrammar.Norm.wording (S, trusted) list-empty: r.act.map -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:46: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:63 VE.EnglishGrammar.Norm.consequences (S, trusted) list-empty: ds -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:63: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:66 VE.EnglishGrammar.Norm.consequences (S, trusted) list-empty: (w :: anyOf ++ noOf).eraseDups.filterMap -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:66: Function expected at)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:53 VE.EnglishGrammar.Norm.wording (S, trusted) list-empty: σ -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:53: Invalid projection: Type of)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-first: sents.toList -> (sents.toList.take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:116 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-first: xs -> (xs.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-drop-last: sents.toList -> (sents.toList.dropLast) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-first: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).take 1) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:45 VE.EnglishGrammar.Norm.wording (S, trusted) list-first: ds.tail.map ("each " ++ ·) -> ((ds.tail.map ("each " ++ ·)).take 1)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-drop-last: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).dropLast) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:45 VE.EnglishGrammar.Norm.wording (S, trusted) list-first: ds.tail -> (ds.tail.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-first: ps.map (·, false) -> ((ps.map (·, false)).take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+trust_mutants: 129 KILLED, 17 SURVIVOR, 11 UNKNOWN, 8 INVALID, 0 ALLOWED, 140 NOT RUN, 306 OTHER SHARD in 5408 s
+trust_mutants: D[V], trusted: 12 KILLED, 1 SURVIVOR, 3 UNKNOWN, 12 NOT RUN, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 64 KILLED, 2 SURVIVOR, 3 UNKNOWN, 4 INVALID, 53 NOT RUN, 120 OTHER SHARD
+trust_mutants: S, trusted: 53 KILLED, 14 SURVIVOR, 5 UNKNOWN, 4 INVALID, 75 NOT RUN, 165 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 140 of its 305 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 10.5 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.4 s, control_probes 55.5 s, mutants 5334.5 s, cleanup 2.6 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 55.4 s (2), mutant_builds 1502.5 s (186), mutant_checks 2811.5 s (145), stage_controls 58.1 s (4), mutant_probes 16618.2 s (130)
