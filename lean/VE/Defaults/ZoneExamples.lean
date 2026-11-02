@@ -7,7 +7,7 @@ document's assembled premise packs (`Packs.labelledX`). Each check has an accept
 namespace VE.Defaults.ZoneFixtures
 open Lean
 open VE.Defaults
-open VE.Defaults.Fixtures (regJ xReq xPerm baseJ ruleJ dfltJ un holds val layered dα dβ dγ dδ dε Entity)
+open VE.Defaults.Fixtures (regJ xReq xPerm baseJ ruleJ dfltJ un holds val layered envJ outw dα dβ dγ dδ dε Entity)
 open VE.Defaults.MeaningFixtures (dπ)
 open VE.NormDefaults.Wire (LayeredU)
 
@@ -147,6 +147,40 @@ def Mu : VE.FiniteModel Entity := sit "assistant" 1 ["urgent"]
   zoneR L M1 [(("zzz", [a0]), true)] [] "x_required" [a0] == "noCompletion" &&
   zoneR L (sit "assistant" 1 ["zzz"]) [(("zzz", [a0]), true)] [] "x_required" [a0] == "noCompletion" &&
   zoneR L M1 [(("soft__excepted__r1", [a0]), true)] [] "x_required" [a0] == "notSaid"
+
+/-! ## The records and the form at two elements (every switch, exception and ranking atom in order) -/
+
+/-- DF-ε with r1 alterable by the operator and by the user. -/
+def dε2 : Except String LayeredU := layered (envJ [xReq, xPerm] r#"{"parties":["operator","user"],"outranking":{"mode":"strict"}}"#)
+  [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"alterable\":[\"operator\",\"user\"]"))]
+/-- DF-δ with a third default rule on `x_permitted` at rank honesty: two ranking decisions. -/
+def dδ3 : Except String LayeredU := layered (envJ [xReq, xPerm]
+    r#"{"ranks":["safety","helpfulness","honesty"],"outranks":[["safety","helpfulness"],["safety","honesty"]],"outranking":{"mode":"holistic","decided_by":"assistant"}}"#)
+  [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"rank\":\"safety\"")),
+   ruleJ "r2" "x_permitted" false (dfltJ (extra := ",\"rank\":\"helpfulness\"")),
+   ruleJ "r3" "x_permitted" false (dfltJ (extra := ",\"rank\":\"honesty\""))]
+def A2 : VE.FiniteModel Entity := sit "assistant" 2 []
+def a1 : Entity := el "assistant" 1
+def off (π : String) (e : Entity) : String × List Entity := ("soft__off__r1__" ++ π, [e])
+def exc (r : String) (e : Entity) : String × List Entity := ("soft__excepted__" ++ r, [e])
+
+-- Every switch at every tuple, off, but the atoms the record fixes; the form stays short (every switch is fixed).
+#guard holds dε2 fun L => switchesOffRecord L.D A2 [] ==
+    [(off "operator" a0, false), (off "operator" a1, false), (off "user" a0, false), (off "user" a1, false)] &&
+  switchesOffRecord L.D A2 [(off "user" a0, true), (off "operator" a1, true)] ==
+    [(off "operator" a0, false), (off "user" a1, false)] && short L A2
+-- Weighing's record: every exception at every tuple, false.
+#guard holds dγ fun L => noExceptionRecord L.D A2 ==
+  [(exc "r1" a0, false), (exc "r1" a1, false), (exc "r2" a0, false), (exc "r2" a1, false)]
+-- The form reads every open atom the record leaves: short only when both ranking atoms are fixed; long when the
+-- ranking atom is the first or the last one open.
+#guard holds dδ fun L => zoneForm L A2 [((outw, [a0]), true), ((outw, [a1]), true)] == .short &&
+  zoneForm L A2 [((outw, [a1]), true)] == .long &&
+  zoneForm L M1 [(exc "r1" a0, false), (exc "r2" a0, false)] == .long &&
+  zoneForm L M1 [(exc "r1" a0, false), (exc "r2" a0, false), (("unsaid__x_required", [a0]), false)] == .long
+-- Every ranking decision is a decision: one left open makes the form long.
+#guard holds dδ3 fun L => zoneForm L M1 [(("soft__outweighs__honesty__safety__x_permitted", [a0]), true)] == .long &&
+  zoneForm L M1 [((outw, [a0]), true), (("soft__outweighs__honesty__safety__x_permitted", [a0]), true)] == .short
 
 /-! ## The budget: every value read once, the open atoms charged against `maxDefaultAtoms` -/
 

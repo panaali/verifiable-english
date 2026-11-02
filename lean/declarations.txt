@@ -7906,7 +7906,7 @@ module VE.Defaults.Zone 7265010c5595ac784e5ecc7ad81680e5e0acf296044f4c93e2ba943f
 857:0-874:26 theorem VE.Defaults.defaultZone_budget@VE.Defaults.Zone
 876:0-882:21 theorem VE.Defaults.decisionAtoms_none@VE.Defaults.Zone
 884:0-920:17 theorem VE.Defaults.defaultZone_eq_noException@VE.Defaults.Zone
-module VE.Defaults.ZoneExamples 6a90d1de50f738a2ef6f8f1622e112afee296b41b6ed79ede9e316793d4c8505
+module VE.Defaults.ZoneExamples 0507cec467e0cf7f1badf8d671a93cb75d8091c5d5598bf20eae3fdf2ffda058
 16:0-20:66 def VE.Defaults.ZoneFixtures.envS@VE.Defaults.ZoneExamples
 21:0-23:76 def VE.Defaults.ZoneFixtures.ruleG@VE.Defaults.ZoneExamples
 25:0-29:59 def VE.Defaults.ZoneFixtures.dlam@VE.Defaults.ZoneExamples
@@ -7927,6 +7927,12 @@ module VE.Defaults.ZoneExamples 6a90d1de50f738a2ef6f8f1622e112afee296b41b6ed79ed
 74:0-74:82 def VE.Defaults.ZoneFixtures.obsμ@VE.Defaults.ZoneExamples
 106:0-109:10 def VE.Defaults.ZoneFixtures.settled@VE.Defaults.ZoneExamples
 121:0-121:62 def VE.Defaults.ZoneFixtures.Mu@VE.Defaults.ZoneExamples
+153:0-155:92 def VE.Defaults.ZoneFixtures.dε2@VE.Defaults.ZoneExamples
+156:0-161:77 def VE.Defaults.ZoneFixtures.dδ3@VE.Defaults.ZoneExamples
+162:0-162:54 def VE.Defaults.ZoneFixtures.A2@VE.Defaults.ZoneExamples
+163:0-163:35 def VE.Defaults.ZoneFixtures.a1@VE.Defaults.ZoneExamples
+164:0-164:89 def VE.Defaults.ZoneFixtures.off@VE.Defaults.ZoneExamples
+165:0-165:90 def VE.Defaults.ZoneFixtures.exc@VE.Defaults.ZoneExamples
 module VE.Definitions.Alias 943947c890da81f3d1205116f12680762a7347f8bb7d918a43fb385f0d049a43
 10:0-11:79 def VE.Definitions.Alias.expand@VE.Definitions.Alias
 13:0-18:50 def VE.Definitions.Alias.aliasLayer@VE.Definitions.Alias
