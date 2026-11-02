@@ -1,0 +1,21 @@
+{
+ "job": "pc-9.s2of2-4bf5b3ae",
+ "head": "23026a2002cdcb6ac0ebaeb5723cdce1d11e6ad1",
+ "argv": [
+  "pc-9.s2of2-4bf5b3ae",
+  "23026a2002cdcb6ac0ebaeb5723cdce1d11e6ad1",
+  "63c3d38cd2f701b82de03157bf6c25655697c347",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-e00f5eef3a88.tar.zst",
+  "d2931b248ada224f5c21db6d447eeeb85ff7789c5637860bb1aa0ee473319728",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/profile-composition/pc-9/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "2/2",
+  "--jobs",
+  "4"
+ ]
+}
