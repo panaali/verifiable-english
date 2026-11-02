@@ -1751,15 +1751,15 @@
   },
   {
    "class": "S",
-   "lines": 124,
-   "reason": "cmp-s4: VE/Discourse/Compose.lean S +124, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "lines": 125,
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
    "class": "V",
    "lines": 19,
-   "reason": "cmp-s4: VE/Discourse/Compose.lean S +124, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
