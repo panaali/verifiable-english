@@ -1273,8 +1273,13 @@ theorem elaborate_one_reading (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : ela
 theorem elaborate_unspec (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U') :
     U'.unspec = D.U.unspec.flatMap (partNames D)
 /-- Faithfulness: the elaborated document's intended reading is the table's reading of the source. -/
-theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U')
-    (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
+theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.Norms.WellFormed D.U.D = true)
+    (h : elaborate D = .ok U') (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
+/-- `decodeElaboratedU` establishes `h0`, so the claim over every decoded document is unconditional
+    (`decodeElaboratedU_faithful`). -/
+theorem VE.Acts.Decode.decodeElaboratedU_faithful {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU}
+    (h : VE.Acts.Decode.decodeElaboratedU environment norms = .ok e) (S : VE.Structure.{u}) :
+    VE.Norms.holdsCatala e.U'.D.T S ↔ IntendedActs e.D S
 ```
 
 `elaborate_parts` closes what `splitMap_exact` leaves open: draft 1's statements held of a result that swapped two

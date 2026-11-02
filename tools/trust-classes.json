@@ -15770,6 +15770,42 @@
         "VE.Acts.DecodeExamples.view"
       ]
     },
+    "VE/Acts/Faithful.lean": {
+      "S": [
+        "VE.Acts.IntendedActs",
+        "VE.Acts.readAs"
+      ]
+    },
+    "VE/Acts/FaithfulExamples.lean": {
+      "T": [
+        "VE.Acts.FaithfulExamples.Model",
+        "VE.Acts.FaithfulExamples.allowed",
+        "VE.Acts.FaithfulExamples.appliesB",
+        "VE.Acts.FaithfulExamples.bx",
+        "VE.Acts.FaithfulExamples.carved",
+        "VE.Acts.FaithfulExamples.ce",
+        "VE.Acts.FaithfulExamples.chain",
+        "VE.Acts.FaithfulExamples.conflict",
+        "VE.Acts.FaithfulExamples.decidesB",
+        "VE.Acts.FaithfulExamples.decodedSides",
+        "VE.Acts.FaithfulExamples.dropM",
+        "VE.Acts.FaithfulExamples.guarded",
+        "VE.Acts.FaithfulExamples.holdsB",
+        "VE.Acts.FaithfulExamples.intendedActsB",
+        "VE.Acts.FaithfulExamples.intendedB",
+        "VE.Acts.FaithfulExamples.jdoc",
+        "VE.Acts.FaithfulExamples.mix",
+        "VE.Acts.FaithfulExamples.one",
+        "VE.Acts.FaithfulExamples.parts027",
+        "VE.Acts.FaithfulExamples.people",
+        "VE.Acts.FaithfulExamples.readM",
+        "VE.Acts.FaithfulExamples.selectsB",
+        "VE.Acts.FaithfulExamples.sides",
+        "VE.Acts.FaithfulExamples.tuples",
+        "VE.Acts.FaithfulExamples.valueB",
+        "VE.Acts.FaithfulExamples.yieldsB"
+      ]
+    },
     "VE/Cardinality/Run.lean": {
       "D[V]": [
         "VE.Cardinality.CardCertificate",
