@@ -11367,6 +11367,13 @@ theorem VE.Defaults.MeaningFixtures.unsaid_π
     [VE.NormDefaults.unsaidName "x_permitted", VE.NormDefaults.unsaidName "x_required"]
   -- uses VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
   -- expr 1460465549
+theorem VE.Defaults.UniformFixtures.decodeLayered_uniform
+  ∀ {j : Lean.Json} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeLayered j = Except.ok L →
+      VE.Defaults.dfltUniform L.D L.packs = VE.Defaults.dfltPremises L.D ∧
+        VE.Defaults.providerConditions L.packs = Bool.false
+  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.dfltUniform@VE.Defaults.Uniform VE.Defaults.providerConditions@VE.Defaults.Uniform VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered
+  -- expr 2650227398
 theorem VE.Defaults.Wire.DefaultsView.hD
   ∀ (self : VE.Defaults.Wire.DefaultsView), VE.SoftNorms.WellFormedSoft self.L.D = Bool.true
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
@@ -11753,6 +11760,18 @@ theorem VE.Defaults.cond_free
                           p ∈ VE.Norms.preds C → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ VE.NormDefaults.unsaidNames U
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4113157061
+theorem VE.Defaults.conditionsExact_legacy
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) {qs : List VE.NormDefaults.Packs.Pack},
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.conditions = []) →
+      (VE.Defaults.ConditionsExact U D qs ↔
+        ∀ (B : VE.Structure),
+          VE.NormDefaults.Wire.BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B →
+            ∃ F,
+              VE.NormDefaults.Wire.BaseAdmissibleX U (VE.NormDefaults.Packs.X qs)
+                  (VE.Defaults.withOpen U D B (VE.Defaults.leastDecisions D B) F) ∧
+                VE.Defaults.SwitchesOff D (VE.Defaults.withOpen U D B (VE.Defaults.leastDecisions D B) F))
+  -- uses VE.Defaults.ConditionsExact@VE.Defaults.Uniform VE.Defaults.SwitchesOff@VE.Defaults.Meaning VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Defaults.withOpen@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2101018357
 theorem VE.Defaults.decisionNames_split
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.decisionNames D =
@@ -11851,6 +11870,26 @@ theorem VE.Defaults.defaults_model_default_base
             VE.Norms.Sat S x.Γ ∧ ¬VE.Formula.denote S [] x.φ
   -- uses VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.ok@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.Formula.denote@VE.Semantics VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 906851217
+theorem VE.Defaults.dfltUniformSound_iff
+  VE.Defaults.DfltUniformSound ↔
+    ∀ (U : VE.NormDefaults.UDoc),
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        ∀ (D : VE.SoftNorms.SoftDoc),
+          U.D = VE.SoftNorms.soften D →
+            VE.SoftNorms.WellFormedSoft D = Bool.true →
+              ∀ (qs : List VE.NormDefaults.Packs.Pack),
+                VE.Defaults.ConditionsExact U D qs →
+                  ∀ (B : VE.Structure),
+                    VE.Defaults.DefaultBase U D (VE.NormDefaults.Packs.X qs) B →
+                      VE.Norms.Sat B (VE.Defaults.dfltUniform D qs)
+  -- uses VE.Defaults.ConditionsExact@VE.Defaults.Uniform VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.DfltUniformSound@VE.Defaults.Uniform VE.Defaults.dfltUniform@VE.Defaults.Uniform VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure@VE.Semantics
+  -- expr 964122711
+theorem VE.Defaults.dfltUniform_legacy
+  ∀ (D : VE.SoftNorms.SoftDoc) (qs : List VE.NormDefaults.Packs.Pack),
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.conditions = []) →
+      VE.Defaults.dfltUniformLabelled D qs = VE.Defaults.dfltLabelled D
+  -- uses VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.dfltUniformLabelled@VE.Defaults.Uniform VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2259161747
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -11902,6 +11941,12 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.leastUniform_legacy
+  ∀ (D : VE.SoftNorms.SoftDoc) {qs : List VE.NormDefaults.Packs.Pack},
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.conditions = []) →
+      ∀ (B : VE.Structure), VE.Defaults.leastUniform D qs B = VE.Defaults.leastDecisions D B
+  -- uses VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Defaults.leastUniform@VE.Defaults.Uniform VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1108938305
 theorem VE.Defaults.least_le
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -11932,6 +11977,12 @@ theorem VE.Defaults.node_arity
       ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.sortsOf D N.pred)
   -- uses VE.Norms.Arity@VE.Norms.Basic VE.Norms.Node.pred@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 898490877
+theorem VE.Defaults.packConditions_nil
+  ∀ {qs : List VE.NormDefaults.Packs.Pack},
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.conditions = []) →
+      ∀ (k : VE.SoftNorms.DecisionKey), VE.Defaults.packConditions qs k = []
+  -- uses VE.Defaults.packConditions@VE.Defaults.Uniform VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 1694830156
 theorem VE.Defaults.pairChecks_sound
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
     (c : Option VE.Tableau.Certificate),
@@ -11941,6 +11992,20 @@ theorem VE.Defaults.pairChecks_sound
           VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D P Q)
   -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.pairChecks@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
   -- expr 2900267181
+theorem VE.Defaults.precedence_apart
+  ∀ (D : VE.SoftNorms.SoftDoc) (o : List (String × String)),
+    VE.Norms.precedenceNodes
+        { E := D.E, lits := D.lits,
+              soft :=
+                have __src := D.soft;
+                { parties := __src.parties, ranks := __src.ranks, outranks := o, ties := __src.ties,
+                  outranking := __src.outranking, outrankingDecider := __src.outrankingDecider,
+                  exceptionDecider := __src.exceptionDecider, instructionOf := __src.instructionOf,
+                  below := __src.below },
+              T := D.T }.base.T =
+      VE.Norms.precedenceNodes D.base.T
+  -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DepNode@VE.Route.Route VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.base@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.lits@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.below@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.exceptionDecider@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.instructionOf@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranking@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outrankingDecider@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.parties@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.ranks@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.ties@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree
+  -- expr 728278157
 theorem VE.Defaults.premisesX_split
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula),
     VE.NormDefaults.Wire.premisesX U (VE.Defaults.defaultX D X) Γ =
