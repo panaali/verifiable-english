@@ -323,6 +323,7 @@ module VE.EnglishGrammar.Evaluative
 module VE.EnglishGrammar.Examples
 module VE.EnglishGrammar.Extends
 module VE.EnglishGrammar.Fixed.Alternatives
+module VE.EnglishGrammar.Fixed.Norms
 module VE.EnglishGrammar.Fixed.Order
 module VE.EnglishGrammar.Fixed.RelationalFol
 module VE.EnglishGrammar.Fixed.Staged
@@ -332,7 +333,10 @@ module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Norm.Elab
 module VE.EnglishGrammar.Norm.Examples
+module VE.EnglishGrammar.Norm.Read
+module VE.EnglishGrammar.Norm.Rules
 module VE.EnglishGrammar.Norm.Value
 module VE.EnglishGrammar.Policy
 module VE.EnglishGrammar.PolicyReference
@@ -971,6 +975,7 @@ VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.Norm.NormOneReading@VE.EnglishGrammar.Norm.Read
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics

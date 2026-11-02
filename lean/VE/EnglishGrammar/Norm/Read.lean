@@ -17,15 +17,15 @@ inductive NormOutcome where
 /-- `read`'s checks, on the norm grammar, in `read`'s order. The start type is `.norm`. Then `lex`, then
 `readDocument` from `NState.init`, then `assemble`. -/
 def readNorm (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) : NormOutcome :=
+  let G := normGrammar E L
+  let A := normActs E L
   if !L.valid E O then .invalidGrammar .lexicon
-  else if !((normGrammar E L).wf && terminatorFree (normGrammar E L)) then .invalidGrammar .notWellFormed
-  else if !((normGrammar E L).typed sig (normTy E L) (normActs E L) &&
-      decide (normTy E L (normGrammar E L).start = .norm)) then .invalidGrammar .notTyped
+  else if !(G.wf && terminatorFree G) then .invalidGrammar .notWellFormed
+  else if !(G.typed sig (normTy E L) A && decide (normTy E L G.start = .norm)) then .invalidGrammar .notTyped
   else match lex s with
     | .error r => .lexical r
     | .ok sents =>
-      match readDocument (normGrammar E L) (normMeaning (normGrammar E L) (normActs E L)) NState.init b
-          sents.toList with
+      match readDocument G (normMeaning G A) NState.init b sents.toList with
       | (.ok ps, _) =>
         match assemble (ps.map (·.1)) with
         | .ok rs => .ok rs
