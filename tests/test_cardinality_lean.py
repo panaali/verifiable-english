@@ -51,6 +51,8 @@ def test_a_found_certificate_is_lean_s_and_an_open_problem_has_none():
     certificate = cardinality.prove(FA1["environment"], FA1["premises"], FA1["conclusion"])
     assert cardinality.check_certificate(FA1["environment"], FA1["premises"], FA1["conclusion"], certificate) is True
     assert cardinality.prove(FA1B["environment"], FA1B["premises"], FA1B["conclusion"]) is None
+    # An empty budget is inconclusive too: no certificate, never a refutation.
+    assert cardinality.prove(FA1["environment"], FA1["premises"], FA1["conclusion"], max_steps=0) is None
     forged = CASES["fa1b-certificate"]
     assert cardinality.check_certificate(forged["environment"], forged["premises"], forged["conclusion"],
                                          forged["certificate"]) is False
@@ -61,11 +63,6 @@ def test_a_found_certificate_is_lean_s_and_an_open_problem_has_none():
     assert cardinality.countermodel(model["environment"], model["premises"], model["conclusion"], model["model"])["refutes"]
     fa1 = CASES["fa1-countermodel"]
     assert not cardinality.countermodel(fa1["environment"], fa1["premises"], fa1["conclusion"], fa1["model"])["refutes"]
-
-
-def test_a_zero_budget_search_finds_nothing_and_claims_nothing():
-    """Exhaustion is inconclusive: no certificate, never a refutation."""
-    assert cardinality.prove(FA1["environment"], FA1["premises"], FA1["conclusion"], max_steps=0) is None
 
 
 def test_lean_s_diagnostics_reach_the_caller_verbatim():
