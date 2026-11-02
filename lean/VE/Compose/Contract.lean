@@ -1,9 +1,11 @@
 import VE.Compose.Stack
+import VE.Readings.SupPacks
 import VE.Service.Document
 import VE.Service.ScopeAdmission
 
-/-! The composition contract (profile-composition 1.4 and 1.5, PC-3): rewriters and their structural laws (G2), the
-document mode's pipeline in the stack order of AR-10's rows, and the typed route evidence of the listed stacks. -/
+/-! The composition contract (profile-composition 1.4 to 1.6, PC-3): rewriters and their structural laws (G2), the
+document mode's pipeline in the stack order of AR-10's rows, the typed route evidence of the listed stacks, and
+packs on the superposed readings route (G1 with G4). -/
 
 namespace VE.Compose.Contract
 open Lean
@@ -190,3 +192,40 @@ theorem listed_evidence : ∀ s ∈ listedStacks, RouteFacts s := by
   · exact ⟨checkDocSets_pipeline, scopeFaithful, scopePreserves, scopeSetsFaithful⟩
 
 end VE.Compose.Contract
+
+/-! ## Packs on the superposed readings route: G1 with G4 (1.6)
+
+G1 and G4 are not restated: `slotUnder D A` and the packs' `X` form one premise list, and the composed statement is
+`superpose_all_extra` at `Q := Packs.X qs`, discharged by `transfers_X`. -/
+
+namespace VE.Readings
+open VE.Norms (Regulated Sat envAt size restrictAll DocumentExpansion ConstantsTyped)
+open VE.SoftNorms (SoftNode SoftDoc soften canon circ)
+open VE.Rights (RightsDoc correlate)
+open VE.Compose (Content adjoinOne)
+open VE.NormDefaults (EntailsU)
+universe u
+
+section Extra
+open VE.Compose (BaseAdmissibleP ConflictFreeP)
+
+theorem composed_superpose_all (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
+    (hs : superposable D = true) (A : Choice) (hA : ∀ x ∈ A, (candidate D x.1 x.2).isSome)
+    (qs : List VE.NormDefaults.Packs.Pack) (Qc : VE.NormDefaults.Packs.Pack → Choice → List VE.Formula)
+    (hq : ∀ p ∈ qs, Transfers.{u} D (p.labelled.map (·.2)) (Qc p))
+    (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) (VE.NormDefaults.Packs.X qs))
+    (hcf : ConflictFreeP.{u} (correlate (sup D).1) (slotUnder D A ++ VE.NormDefaults.Packs.X qs))
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnv D) [])
+    (hφ : φ.WellFormed (sharedEnv D) []) (cert : VE.Tableau.Certificate)
+    (accepted : supCertificateCheckExtra D A (VE.NormDefaults.Packs.X qs) Γ φ cert = true)
+    (c : Choice) (hc : Compatible D c) (hAc : ∀ x ∈ A, x ∈ c) (B : VE.Structure.{u})
+    (hB : BaseAdmissibleP (correlate (choiceDoc D c).1)
+      (VE.Rights.limPremises (choiceDoc D c).1 ++ qs.flatMap (fun p => Qc p c)) B)
+    (hp : Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ)) :
+    φ.denote (expand (choiceDoc D c).1 B) [] :=
+  superpose_all_extra D h hch hs A hA (VE.NormDefaults.Packs.X qs) (fun c => qs.flatMap (fun p => Qc p c))
+    (transfers_X D qs Qc hq) hQw hcf Γ φ hΓ hφ cert accepted c hc hAc B hB hp
+
+end Extra
+
+end VE.Readings
