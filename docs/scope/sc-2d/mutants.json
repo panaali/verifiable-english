@@ -1,0 +1,50 @@
+{
+  "comment": "sc-2d seeded bugs, each planted alone on 4707a74ac, built with `lake build <target>` (or the pytest file) and restored with git checkout. `stubbed`: proofs replaced by sorry for that run only, so the build reaches the fixtures behind them; the unstubbed run is given too.",
+  "mutants": [
+    {
+      "id": "reguard_keeps_old_guard",
+      "claim": "reguard_applies",
+      "file": "lean/VE/Scope/Govern.lean",
+      "change": "applyEffect .reguard: setObjVal! \"guard\" g instead of substOwn g depthLimit c",
+      "test": "unstubbed: lake build VE.Scope.Theorems fails in applyEffect_reguard (Theorems.lean:2107), under reguard_node and reguard_applies; stubbed: sc-2d #guard Examples.lean:1213 (N' != N) and :1252, F-raw-effect :1180",
+      "stubbed": ["applyEffect_src", "applyEffect_reguard"],
+      "result": "exit 1 both runs"
+    },
+    {
+      "id": "carve_out_prepends",
+      "claim": "carveOut_applies",
+      "file": "lean/VE/Scope/Govern.lean",
+      "change": "applyEffect .carveOut: #[substOwn g depthLimit c] ++ xs instead of xs.push",
+      "test": "unstubbed: lake build VE.Scope.Theorems fails in applyEffect_carveOut (Theorems.lean:2115), under carveOut_node and carveOut_applies; stubbed: sc-2d #guard Examples.lean:1213 (carveOuts ++ [C]), F-raw-effect :1180",
+      "stubbed": ["applyEffect_src", "applyEffect_carveOut"],
+      "result": "exit 1 both runs"
+    },
+    {
+      "id": "commutes_reguard_before_restrict",
+      "claim": "commute_applies",
+      "file": "lean/VE/Scope/Effects.lean",
+      "change": "Commutes .reguard c₁, .reguard c₂: (narrowing c₂).isSome only, so any reguard commutes with a narrowing",
+      "test": "unstubbed: lake build VE.Scope.Theorems fails in commute_applies (Theorems.lean:2325-2327) and commutes_symm (:101); stubbed: sc-2d #guard Examples.lean:1252 (!Commutes (.reguard notOwn) narrowNotP), :407",
+      "stubbed": ["commutes_symm", "commute_applies"],
+      "result": "exit 1 both runs"
+    },
+    {
+      "id": "restrict_applies_drops_hw",
+      "claim": "the statement gate (condition iii)",
+      "file": "lean/VE/Scope/Theorems.lean",
+      "change": "restrict_applies without (hw : JsonWF o)",
+      "test": "tests/test_scope_5_4_statements.py: test_the_proved_statements_are_spec_5_4s_text[restrict_applies], test_an_effect_statement_takes_exactly_the_signed_premises[restrict_applies], test_the_check_tells_a_changed_statement",
+      "stubbed": ["restrict_applies"],
+      "result": "3 failed, 11 passed"
+    },
+    {
+      "id": "typed_forgets_carve_outs",
+      "claim": "applyEffect_typed; R16 mutant of the new trusted definition Typed",
+      "file": "lean/VE/Scope/Theorems.lean",
+      "change": "Typed: N.guard.check E Γ = true only",
+      "test": "unstubbed: lake build VE.Scope.Theorems fails in applyEffect_typed (Theorems.lean:2228, 2237); stubbed: Examples.lean:1235 (the fixture's Decidable instance for Typed no longer elaborates), so the typing #guards :1236 and :1241 fail",
+      "stubbed": ["applyEffect_typed"],
+      "result": "exit 1 both runs"
+    }
+  ]
+}

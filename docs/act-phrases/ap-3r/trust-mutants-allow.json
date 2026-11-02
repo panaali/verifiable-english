@@ -1,0 +1,4 @@
+{"allow": [
+ {"definition": "VE.Acts.freeTable", "operator": "bool-flip", "reason": "ill-formed: a flipped flag in a pattern of `freeTable` (Table.lean:33-34) duplicates another line's pattern and leaves its case uncovered, so Lean refuses the match (`Missing cases`); the killed bool-flips on the right-hand sides are the ones a check can read"},
+ {"definition": "VE.Acts.freeTable", "operator": "all-any", "reason": "ill-formed: `all` -> `any` in a pattern of `freeTable` (Table.lean:33-34) duplicates an `any` line and leaves an `all` case uncovered, so Lean refuses the match (`Missing cases`)"}
+]}
