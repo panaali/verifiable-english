@@ -29,7 +29,7 @@ mapping-table file. The edited plan's Q1.3 rows are the same as main's.
 | (2) the seal's `english-mixed` and `natural-view` streams, its random Earley and document streams (F1 and F2, counts per stream) | delivered: 6,757 mixed texts (18 digests), 1,220 natural statements, 17 × 250 random Earley and 17 × 50 documents, each digest equal to its record (`natural-view` has a count only); `whole_streams` false only by `soft-chain`'s `unavailable_reads` (row 3) | `mixed_texts`, `natural_texts`, `earley_stream`, `per_stream`, `coverage_b`; C4 `coverage`, `streams`; `test_the_mixed_stream_is_its_generators_draw`, `test_the_natural_stream_is_each_rendered_statement`, `test_the_random_earley_stream_skips_the_sealed_texts`, `test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial`, `test_every_part_a_run_can_leave_out_stops_it_being_whole` |
 | (3) questions over norm documents, part documents only (L70), the sentences no question form reaches and why | delivered: 15 part documents, 5,859 units, 5 reached, all fences; each unit's kind and `english.read` outcome counted, with examples | `norm_documents`, `document_units`, `norm_units`, `why`, `unit_reach`, `norm_measure`; C4 `norm`; `test_a_norm_documents_units_say_why_no_question_reaches_them`, `test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose` |
 | (4) open point 10.2: leftmost ties, moved word second, ten examples | delivered: 5,243 questions with no reading (1,336 distinct texts); 1,442 measured (364 distinct); tied 1,310, moved second 1,402, not the reader's 1,239 of 1,426; 10 examples | `closeness`, `closest_measure`; C4 `closest`; `test_closeness_names_leans_closest_its_ties_and_the_readers_sentence`, `test_the_closest_shares_count_only_named_f2_questions_with_no_reading`, `test_a_question_with_no_reading_has_leans_closest_among_its_candidates` |
-| (5) the report extended, every number citing its command; tests on a small fixed slice | delivered | question-answering-q1-report.md "q1-3b"; 25 new test functions in `tests/test_question_reverse.py` |
+| (5) the report extended, every number citing its command; tests on a small fixed slice | delivered | question-answering-q1-report.md "q1-3b"; 26 new test functions in `tests/test_question_reverse.py` |
 
 **On the gap row `dr-qa-q1-3-public`:** the reverse method reaches a norm part document only through a unit's own
 English `ve` fence (C4 `norm.reached`). All 5 fences Lean answers for read with one formula, each F1 question reads with
@@ -61,8 +61,8 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 ## Evidence
 
-- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 10 in [claims.py](claims.py);
-  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 46, every one
+- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 13 in [claims.py](claims.py);
+  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 49, every one
   killed. The three the task names are:
   - F2 fronting only the first auxiliary, caught by `test_frontings_front_every_is_must_or_may_in_turn`;
   - a stream dropped from the counts, caught by `test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial`;
@@ -73,12 +73,13 @@ rendered English, not its text. This run does not measure rendered English. The 
   limited share with `any`, a statement without its period, a mixed paragraph counted as a sentence, and a put-back
   that keeps an opener's capital. The 24 added after review give every headline zero a mutant (`other`, `many`,
   `several_same`, `inconsistent`, each `whole_streams` key), and cover the `read` filters and the fence, `MIXED`, span
-  and unavailable counts. The last 10 make the claims check able to fail. No Lean or Rust code changed.
+  and unavailable counts. The last 13 make the claims check able to fail. No Lean or Rust code changed.
 - **Claims:** [claims.py](claims.py) checks both reports against C4, C5, C6 and q1-3's C1 (79 units): each summary,
   headline and conclusion sentence cites its key or is listed as no claim with its reason, each bullet and row of the
-  q1-3b section cites one, each key exists, each number is its key's value, and no wording of a refuted premise stays.
+  q1-3b section cites one, each key exists, each number is its key's value, each headline claim without a number holds
+  of the evidence (`TRUTHS`), and no wording of a refuted premise stays.
   Its logic is tested on fixtures (`test_a_claim_must_cite_a_key_that_holds_its_numbers`,
-  `test_the_old_premises_sentence_fails_the_claims_check`); the run over the saved evidence stays a batch probe (D4).
+  `test_the_old_premises_sentence_fails_the_claims_check`, `test_a_headline_claim_must_hold_of_the_evidence`); the run over the saved evidence stays a batch probe (D4).
 - **Samples:** [samples.py](samples.py) saves C5 and C6 to `evidence/samples.json`. C6 reads under changed profile
   lists, so its outcomes name the cause of `soft-chain`'s refusal and are never C4's answers.
 - **Trust:** `tools/trust_map.py --check` gives K +0, S +0 and trusted +0 (PASS). There is no allowance and no
@@ -119,7 +120,7 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 1. N.A.: no relayed route is added. Every answer is checked by the relay's `question_problem` or `response_problem` (`ask`, `read_sentences`); a failed service is `unavailable` (`test_a_failed_service_is_unavailable_not_a_crash`).
 2. PASS: the five rows above. No in-flight branch shares a file. There is no Python copy of a Lean decision (each fronting is Lean's to decide; the closest is Lean's, checked against the leftmost tie).
-3. PASS: [mutants.json](mutants.json), 46 of 46 killed, the three the task names among them.
+3. PASS: [mutants.json](mutants.json), 49 of 49 killed, the three the task names among them.
 4. N.A.: no reader changes; Lean's closest agrees with the leftmost tie of its own reads in 5,183 of 5,183 (1,442 with a choice).
 5. N.A.: no new relayed field.
 6. PASS: the evidence commit and the HEAD difference are stated above; the chain runs the gate on the final HEAD.

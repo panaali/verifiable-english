@@ -714,25 +714,42 @@ def test_the_old_premises_sentence_fails_the_claims_check():
     # F10: a summary sentence written on the premise that no unit reads, left in place after the rerun reached 5.
     c = claims()
     texts = claim_texts(c)
-    assert c.check(texts, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE) == []
+    run = lambda given, no_claim=NO_CLAIM_FIXTURE: c.check(given, CLAIM_EVIDENCE, frozenset(), no_claim, truths=())  # noqa: E731
+    assert run(texts) == []
 
     old = "No norm unit's text\nis a question's source."
     spec = texts[c.SPEC].replace("5 reached (C4 `norm.reached`).", old, 1)
-    found = c.check({**texts, c.SPEC: spec}, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE)
+    found = run({**texts, c.SPEC: spec})
     assert any("stale wording" in p for p in found) and any("cites no key" in p for p in found)
 
     # Under a heading without a citation a bullet has no key, and under one with a citation it has to hold the number.
-    uncited = texts[c.SPEC].replace("### Coverage (C4 `norm`)", "### Coverage")
-    assert any("cites no key" in p for p in c.check({**texts, c.SPEC: uncited}, CLAIM_EVIDENCE, frozenset(),
-                                                    NO_CLAIM_FIXTURE))
-    wrong = texts[c.SPEC].replace("- A bullet of 5.", "- A bullet of 6.")
-    assert any("6 is not a value" in p for p in c.check({**texts, c.SPEC: wrong}, CLAIM_EVIDENCE, frozenset(),
-                                                        NO_CLAIM_FIXTURE))
-    gone = texts[c.SPEC].replace("- **For the plan:**", "- **Plan:**")
-    assert any("anchor gone" in p for p in c.check({**texts, c.SPEC: gone}, CLAIM_EVIDENCE, frozenset(),
-                                                   NO_CLAIM_FIXTURE))
-    unused = {**NO_CLAIM_FIXTURE, "A sentence no report has": "no reason"}
-    assert any("row unused" in p for p in c.check(texts, CLAIM_EVIDENCE, frozenset(), unused))
+    assert any("cites no key" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("### Coverage (C4 `norm`)", "### Coverage")}))
+    assert any("6 is not a value" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("- A bullet of 5.", "- A bullet of 6.")}))
+    assert any("anchor gone" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("- **For the plan:**", "- **Plan:**")}))
+    assert any("row unused" in p for p in run(texts, {**NO_CLAIM_FIXTURE, "A sentence no report has": "no reason"}))
+
+
+def test_a_headline_claim_must_hold_of_the_evidence():
+    # A small number can match another key and a zero may have no number, so `TRUTHS` asks the evidence itself.
+    c = claims()
+    texts = claim_texts(c)
+    holds = (c.SPEC, "5 reached", lambda e: e["C4"]["norm"]["reached"] == 5)
+    run = lambda ev, words=holds: c.check(texts, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(words,))  # noqa: E731
+    assert run(CLAIM_EVIDENCE) == []
+    refuted = {"C4": {**CLAIM_EVIDENCE["C4"], "norm": {**CLAIM_EVIDENCE["C4"]["norm"], "reached": 0}}}
+    assert any("not so" in p for p in run(refuted))
+    assert any("words gone" in p for p in run(CLAIM_EVIDENCE, (c.SPEC, "not in the report", holds[2])))
+
+    reach = [["asserted", "fence", "reached", 3], ["asserted", "fence", "reached", 2]]
+    fenced = {"C4": {"norm": {"reached": 5, "documents": {"d": {"reach": reach}}}}}
+    assert c.fences_only(fenced)
+    prose = {"C4": {"norm": {"reached": 5, "documents": {"d": {"reach": [["asserted", "fence", "reached", 3],
+                                                                         ["asserted", "-", "reached", 2]]}}}}}
+    assert not c.fences_only(prose)
+    assert not c.fences_only({"C4": {"norm": {**fenced["C4"]["norm"], "reached": 0}}})
 
 
 def test_the_unit_kinds_are_tallied_without_the_attributed_norms():
