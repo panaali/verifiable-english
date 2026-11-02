@@ -776,17 +776,6 @@ theorem VE.Acts.catalaValue_congr
   ∀ {P Q P' Q' : Prop}, (P ↔ P') → (Q ↔ Q') → ∀ (d : Bool), VE.Norms.catalaValue P Q d = VE.Norms.catalaValue P' Q' d
   -- uses VE.Norms.catalaValue@VE.Norms.Elaborate
   -- expr 1045454174
-theorem VE.Acts.children_tracks
-  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node},
-    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
-      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
-        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
-          ∀ {N : VE.Norms.Node},
-            N ∈ T.nodes →
-              N.pred = p →
-                ∀ {C' : VE.Norms.Node}, C' ∈ VE.Norms.children T' (f N) ↔ ∃ C, C ∈ VE.Norms.children T N ∧ C' = f C
-  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.children@VE.Norms.Tree
-  -- expr 800162271
 theorem VE.Acts.closed_cl
   ∀ (rs : List VE.Acts.RuleS) (r : VE.Acts.RuleS),
     r ∈ VE.Acts.closed rs →
@@ -903,6 +892,19 @@ theorem VE.Acts.elaborate_wellFormed
     VE.Acts.elaborate D = Except.ok U' → VE.NormDefaults.WellFormedU U' = Bool.true
   -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
   -- expr 3613047864
+theorem VE.Acts.exists_child_tracks
+  ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node},
+    (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
+      (∀ (K : VE.Norms.Node), K ∈ T'.nodes → K.pred = q → ∃ N, N ∈ T.nodes ∧ N.pred = p ∧ K = f N) →
+        (∀ (N C : VE.Norms.Node), (f N).name ∈ (f C).over ↔ N.name ∈ C.over) →
+          ∀ {N : VE.Norms.Node},
+            N ∈ T.nodes →
+              N.pred = p →
+                ∀ {P Q : VE.Norms.Node → Prop},
+                  (∀ (C : VE.Norms.Node), C ∈ T.nodes → C.pred = p → (P C ↔ Q (f C))) →
+                    ((∃ C, C ∈ VE.Norms.children T N ∧ P C) ↔ ∃ C, C ∈ VE.Norms.children T' (f N) ∧ Q C)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.children@VE.Norms.Tree
+  -- expr 237624178
 theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table

@@ -583,7 +583,6 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.applies_agree
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.catalaValue_congr
-#print axioms VE.Acts.children_tracks
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.compareViews_ok
@@ -600,6 +599,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborate_one_reading
 #print axioms VE.Acts.elaborate_unspec
 #print axioms VE.Acts.elaborate_wellFormed
+#print axioms VE.Acts.exists_child_tracks
 #print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
