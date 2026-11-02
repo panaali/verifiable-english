@@ -159,6 +159,8 @@ import VE.Calc.WorkExamples
 import VE.Calc.LowerExamples
 import VE.Calc.Data
 import VE.Calc.TableExamples
+import VE.Calc.Stats
+import VE.Calc.StatsExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -229,6 +231,8 @@ import VE.Acts.ElaborateExamples
 import VE.Acts.Wire
 import VE.Acts.Decode
 import VE.Acts.DecodeExamples
+import VE.Acts.Faithful
+import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples

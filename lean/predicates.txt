@@ -98,6 +98,8 @@ module VE.Acts.Decode
 module VE.Acts.DecodeExamples
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.Faithful
+module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
@@ -194,6 +196,8 @@ module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Run
 module VE.Calc.RunExamples
+module VE.Calc.Stats
+module VE.Calc.StatsExamples
 module VE.Calc.Syntax
 module VE.Calc.Table
 module VE.Calc.TableExamples
@@ -751,6 +755,7 @@ ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.IntendedActs@VE.Acts.Faithful
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Acts.SourceExact@VE.Acts.Sources
@@ -829,12 +834,18 @@ VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
+VE.Calc.SqrtRoundsTo@VE.Calc.Stats
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
 VE.Calc.Work.AtSpec@VE.Calc.Wire
 VE.Calc.Work.Linearity.Sound@VE.Calc.Lower
 VE.Calc.Work.Lowered.Sound@VE.Calc.Lower
 VE.Calc.Work.Shape.Sound@VE.Calc.Lower
+VE.Calc.rootEq@VE.Calc.Stats
+VE.Calc.rootGe@VE.Calc.Stats
+VE.Calc.rootGt@VE.Calc.Stats
+VE.Calc.rootLe@VE.Calc.Stats
+VE.Calc.rootLt@VE.Calc.Stats
 VE.Cardinality.Admissible@VE.Cardinality.Semantics
 VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
 VE.Cardinality.Admitted@VE.Cardinality.Syntax
