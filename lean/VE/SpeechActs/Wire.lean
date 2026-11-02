@@ -744,6 +744,9 @@ def bindingKey : Binding → String
 
 /-! ## Reading candidates (6) -/
 
+/-- The most readings a reading set holds. -/
+def readingsBound : Nat := 64
+
 /-- Every reading of every reading-set version: its unit, kind and content (`none` while unelaborated), in W2's
 shape (1 to 64 readings, each with its kind and content). -/
 def readingCandidates (document : Json) : Except String (List (String × Json × Option Json)) := do
@@ -758,7 +761,7 @@ def readingCandidates (document : Json) : Except String (List (String × Json ×
         | .str u => u
         | _ => ""
       let cs ← match (r.getObjValD "readings").getArr? with
-        | .ok cs => if 1 ≤ cs.size && cs.size ≤ 64 then pure cs.toList else throw "reading sets hold 1 to 64 readings"
+        | .ok cs => if 1 ≤ cs.size && cs.size ≤ readingsBound then pure cs.toList else throw "reading sets hold 1 to 64 readings"
         | .error _ => throw "reading sets hold 1 to 64 readings"
       cs.mapM fun c => do
         unless (c.getObjVal? "kind").isOk && (c.getObjVal? "content").isOk do throw "invalid reading"
