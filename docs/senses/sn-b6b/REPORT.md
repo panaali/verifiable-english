@@ -1,7 +1,7 @@
 # sn-b6b REPORT (senses B6 carry-overs)
 
-Status: review round 1 fixed (F1-F3 B, F8 C); selected tests and the trust mutants: see Review fixes. No DRI
-signature is reserved. HEAD: the commit that adds this report's last edit. Changed in the fix: the projected
+Status: review round 1 fixed (F1-F3 B, F8 C); selected tests pass on `e990750c4` (429 units, 0 failed); trust
+mutants 0 survivors. No DRI signature is reserved. HEAD: the commit that adds this report's last edit. Changed in the fix: the projected
 environment's members come from one Lean table and are each bound to the request (F1, F2; both routes); a
 distinguishing flip row writes its model in the existing model wire form (F3). Open: the senses lock and the D17
 hook rule (**sn-b6bb**); review C notes F4, F6 (FOLLOW-UPS). Hand-written lines: see Size.
@@ -104,7 +104,11 @@ overrun (F7); this round adds only what F1-F3 and their mutants need.
 
 ## Evidence
 
-- Selected tests: see Review fixes (round 1).
+- Selected tests (review round 1): `zsh mac-pytest.sh --select -- --base 3b4e471f8 --run` on `e990750c4` (clean),
+  ve-mac-1: 429 units recorded, 0 failed, exit 0; its plan ran `lake build` and `python3 lean/audit.py` (PASS). A
+  first run on the fix's code commit failed one test, `tests/test_assurance_manifest.py::
+  test_every_json_handling_lean_file_is_classified` (`Flip.lean` wrote JSON); the model's wire encoder moved to
+  `Run.lean`, a pinned decoder file, and the test passes.
 - `uv run python tools/relay_mutation_gate.py --route service:senses.project --route ve_senses_route::senses.read`
   on the fix: 1,653 mutants, 0 failures.
 - `uv run python tools/gate_collection.py --check --prebuilt` on the fix: 73 added, 0 removed, 0 refused, 0 stale.
