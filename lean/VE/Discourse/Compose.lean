@@ -54,8 +54,7 @@ def chainBase (environment j : Json) : Except String (VE.Environment × Manifest
   let be := baseEnvironment environment
   let bp := baseProfiles ((VE.Route.Gate.profilesOf environment).toOption.getD [])
   let ne ← VE.Norms.Wire.decodeNormsEnvironment be
-  let canonical ← if bp.contains "norm-defaults@0" then VE.NormDefaults.Wire.canonicalEnvironmentJsonU be
-    else VE.Norms.Wire.canonicalEnvironmentJson be
+  let canonical ← VE.Norms.Wire.canonicalEnvironmentJson be
   let envId ← VE.Route.Wire.environmentId bp canonical
   let K ← Wire.decodeManifest [] (Loader.filesOf j) envId ((Loader.metaOf j).getObjValD "discourse")
   pure (ne.rv.environment, K, envId)
