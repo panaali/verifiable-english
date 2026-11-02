@@ -2035,6 +2035,605 @@ Each is a point where the plan or the debate left a reading open; the review may
 24. **Soft composition (review, Astra round 2).** Supported only with the soft route's coherence premises and
     conditional guarantees retained; anything else is explicitly unsupported.
 
+## 14. Amendment S4: discourse on the chain (composition stage S4, item 1)
+
+> Status: amendment draft 3 (2026-10-31; draft 3 applies the second review's agreed edits and the DRI's rulings on 14.11, change log), statements only, under its statement review
+> (`manage-agents/debates/spec-s4-discourse/`). Written from [composition-PLAN.md](composition-PLAN.md) draft 2
+> (2.1, 2.8, 2.9, S4, section 5 F16 and F17, section 7 questions 7, 8 and 14), [composition.md](composition.md)
+> draft 3 (1.6 `Content`, 4 `dispatch`, 5.5, the S4 row of 6, 7, 13.5), and the consumers of S4's names in
+> `profile-composition.md` (branch `design/profile-composition`, specification draft 8, 3.7 and 3.10: PC-7b, PC-7c,
+> PC-11, PC-4b). Read at `main` `09fca501`: `lean/VE/Discourse/{Admission,Elaborate,Resolve,Loader,Wire,WellFormed}.lean`,
+> `lean/VE/Compose/{Content,Dispatch}.lean`, `lean/VE/{Norms,NormDefaults,SoftNorms,Rights}/Run.lean`,
+> `lean/VE/Service/Document.lean`. No new research: the tally of question 14 is not taken here, so question 7 stays
+> open (14.11, OPEN 1). Sections 1 to 13 are unchanged except 9.6's `Run.discourse_wire_acceptance`, restated in 14.6; on every list without `norms@0` or `ve.discourse@1`, and on every document
+> without a chain construct (14.2), nothing an executable answers changes (`composed_unchanged`). Theorem statements
+> and fixtures are implementation obligations, not claims of proofs or tests. Nothing here changes a frozen contract,
+> a `ve-document@1` identity, a canonical byte, a P0/W1/W2/W3 statement or a checker function.
+
+### 14.1 Scope
+
+S4 lets a `ve.discourse@1` document sit on the chain (plan 2.1 rank 1 over rank 4). It builds
+`lean/VE/Discourse/{Positions,Compose}.lean` and changes the discourse route's entry so that a document with a chain
+construct on a list with `norms@0` and `ve.discourse@1` is resolved and handed to the route `dispatch` chooses for the base list, instead
+of the frozen W2 admission. Two of the loader's three abstentions (11) become implementations on that path: norm
+content (and rights content) and fenced content. In item 1:
+
+- **In:** formula positions of every `VE.Compose.Content` (14.2); slots inside fenced content and their resolution
+  (14.3); the composed admission and its dispatch (14.5); the identity cases (14.6); the names PC-7b, PC-7c, PC-11
+  and PC-4b read (`positions`, `resolveContent`, `formulaMentions`, `IntendedAt`, `resolveFormula`,
+  `resolveDocument`, `resolveCase`, `caseManifest`).
+- **Out, named:** provenance mentions (plan 2.8 "Translated units"; OPEN 1); document-name targets in a position
+  (14.3 resolution step 3); fenced content without `norms@0` (today's `NotImplemented`, 14.6); a document without a claim graph (OPEN
+  2: it stays `NotImplemented: a document without a claim graph`); `readings@1` or `right-clauses@0` below
+  discourse (PC-7c; refused, 14.5); `scope@0` and `acts@0` beside discourse (PC-7b; the profile table keeps both
+  refusals); content kinds that are no `Content` (PC-11); groups, compatibility constraints, active reading sets and
+  validity claims on the composed path (14.5 step 1; OPEN 4).
+
+### 14.2 Definitions
+
+**Chain construct.** `chainConstructs (environment j : Json) : Bool` is true iff the environment's `vocabulary` has
+a key `soft` or `rights`, or an entry of its `predicates` has a key `regulated` (Norms/Wire.lean, SoftNorms/Run.lean,
+Rights/Run.lean), or a unit or `MIXED` part of `j`'s front matter has a `content` whose one key is
+`norm`, `right`, `right_lines`, `limitation`, `bar` or `fence`. The **composed path** is taken iff
+`"norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ chainConstructs environment j = true`. Every other input takes today's route
+(`admitDiscourse`), byte for byte (14.6).
+
+**Positions** (plan 2.8). The formula positions of a content, in canonical order, each with its context: the sorts
+of the variables free in it, in de Bruijn order (index 0 is the last situation variable, norms 4.1,
+`Norms/Basic.lean` `tupleVal`). A W1 node's guard, carve-outs and exception conditions are typed in the context
+`(sorts of its predicate).reverse` (`SoftNorms/Tree.lean`, `Exception`); a right's holder guard in `[holder]`
+(`Rights/Tree.lean`, `Right.guard`). A fan-out line's nodes have the context of their decoded predicate, the line's first mapped predicate
+(`Rights/Wire.lean` `decodeLineNorm`); the rights route checks every instance at its own bearer sort. A limitation's conditions are named predicates, not formulas (rights 1.3), so a
+limitation has no position. A bar is no `Content` (composition.md 1.6) and has none either.
+
+```lean
+namespace VE.Discourse
+
+/-- A W1 node's context: its predicate's argument sorts, reversed (de Bruijn order). -/
+def nodeContext (E : VE.Environment) (N : VE.SoftNorms.SoftNode) : List String :=
+  ((E.predicates N.pred).getD []).reverse
+
+/-- A node's positions: its guard, each carve-out, then each sufficient and each necessary exception condition. -/
+def nodePositions (E : VE.Environment) (N : VE.SoftNorms.SoftNode) : List (List String × VE.Formula) :=
+  let ctx := nodeContext E N
+  ((ctx, N.guard) :: N.carveOuts.map (ctx, ·)) ++
+    (match N.exception with
+     | some x => (x.sufficient ++ x.necessary).map (ctx, ·)
+     | none => [])
+
+/-- A right line's positions: those of its norm, liberty and recognition nodes, in that order. -/
+def linePositions (E : VE.Environment) (l : VE.Rights.SourceLine) : List (List String × VE.Formula) :=
+  (l.norm.toList ++ l.liberty.toList ++ l.recognition.toList).flatMap (nodePositions E)
+
+/-- The formula positions of a content with their contexts, in canonical order (plan 2.8). -/
+def positions (E : VE.Environment) : VE.Compose.Content → List (List String × VE.Formula)
+  | .assertion φ => [([], φ)]
+  | .norm N => nodePositions E N
+  | .right R => ([R.holder], R.guard) :: R.lines.flatMap (linePositions E)
+  | .rightLines _ ls => ls.flatMap (linePositions E)
+  | .limitation _ => []
+
+/-- The content with its position formulas replaced, in `positions` order, every other field kept; `none` when the
+    list's length is not the number of positions. -/
+def withPositions (E : VE.Environment) (c : VE.Compose.Content) (fs : List VE.Formula) : Option VE.Compose.Content
+
+/-- The unit's recorded formula-producing mentions (1.4: a formula-producing form and a target that is neither a
+    `unit` nor an `anchor`), in manifest order. -/
+def formulaMentions (K : Manifest) (unit : String) : List Mention :=
+  K.mentions.filter fun m => m.unit == unit && producing m
+
+/-- The reserved name of mention `m`'s slot. -/
+def slotPrefix : String := "ve__slot__"
+def slotName (m : String) : String := slotPrefix ++ m
+```
+
+One reading each:
+
+- `positions E c` lists every place in `c` where a formula stands, and for each the sorts of the variables the
+  formula may use. An assertion has one position with no variables. A rule has its guard, then its "unless"
+  conditions, then its exception's sufficient and necessary conditions, all over the rule's own variables. A right
+  has its holder guard over the holder, then its lines' rules. A limitation has none.
+- `withPositions E c fs` is `c` with the formulas at its positions replaced by `fs`, in the same order, and nothing
+  else changed.
+- `formulaMentions K u` is the list of mentions the manifest records in unit `u` that produce a formula.
+- `slotName m` is a name no author may declare (14.3 step 1). It stands for mention `m` inside a content until the
+  content is resolved.
+
+**Content as written.** The content a unit carries before resolution: for a unit whose content is JSON (`ast`,
+`norm`, a rights kind), the content its decoder yields; for a fenced unit (`{"fence": <unit>}`, surface `english`
+or `strict`), the content the fence compiler yields from the fence text with **slots** (14.3 step 2). Only a fenced
+content has slots in item 1: a JSON content is not parsed, so its prose pronouns are no slots (plan 2.8).
+
+**Slots in a content.** A slot of mention `m` occurs in a position formula as the constant term
+`.const (slotName m.id)` (an entity, pair-member, definite or plural target), or as the predicate
+symbol `slotName m.id` of a `.unary` or `.binary` atom (a predicate target: `such`, `definition_ref`). A `rule` target is no slot (1.4). No other field
+holds a slot.
+
+### 14.3 Slots, resolution and the intended meaning
+
+Steps, at the composed path's trusted site (3.4: regenerated, never trusted):
+(cited as "14.3 step k"; the steps of `resolveContent` below are cited as "14.3 resolution step k")
+
+1. **Reserved names.** An environment that declares a sort, predicate or constant whose name starts with
+   `slotPrefix` is `InvalidInput: reserved name <name>`.
+2. **Wording source and slot discovery** (plan 2.8). For a fenced unit, slot discovery and the wording checks of
+   4.1(4) and 4.1(6) read the **fence text**, and its mentions' spans index the fence text; the unit's span stays
+   its prose span. Each outermost formula-producing mention span of the fence text is replaced by the slot's
+   surface: `@` followed by `slotName m.id` for a term slot, and `slotName m.id` for a predicate slot. The fence
+   compiler of the document mode (`VE.Service.Document.contentOf`, surfaces `english` and `strict`) then compiles the
+   text over `E` extended by one declaration per slot: a term slot as a constant of the sort its recorded target
+   elaborates at (1.4, typed candidates; a plural's members must share one sort, else `IllTypedTarget`), a predicate
+   slot as a predicate with the target predicate's sorts. A nested mention (1.4) is no separate slot of the text:
+   it is resolved inside its definite's restriction first, as 1.4 says. A fence the compiler rejects keeps the
+   compiler's diagnostic.
+3. **Header slots** (plan 2.8, norms 3.3). A slot that is the subject or object noun phrase of a rule header is not
+   a term of the consequence (whose arguments are the binders, `ConsequenceArguments`). The compiler writes the
+   binder `x_i` there and conjoins `x_i equals @ve__slot__<m>` to the guard, the form norms 3.3 prescribes for a rule
+   about a constant. Only a constant target (an `entity` with a declared constant `name`, or a pair member) may fill
+   a header slot; any other target there is `UnsupportedTarget: <mention>: rule header`.
+4. **Rule targets in a header option** ("exception to the rule above"): the fence compiler writes the recorded
+   target's stable rule name into the node's `over` (no slot; plan 2.8). The target must be the stable name of
+   a norm unit of the document, else `UnknownRule: <rule>` (1.4; the route now reads norm content, so 11's "every
+   rule name" no longer holds on the composed path).
+5. **Soft fields** (discourse 5). A mention inside a `rank`, party, decider or `soft` field is
+   `UnsupportedTarget: <mention>: soft`, unchanged.
+6. **JSON contents.** A recorded formula-producing mention whose unit carries a JSON content is
+   `MentionNotSlot: <mention>` (no derivation places it); an unrecorded reference surface of such a unit's prose is
+   `UnrecordedSlot: <unit>: <span>` as today (4.1(6)).
+7. **Accessibility, kind fit and uniqueness** (4.2, 1.4, 4.3) are checked per slot as 4.1(6) checks them for a
+   sentence, the position playing the sentence's part: the recorded target must be accessible (`Acc`), fit the
+   form, and be the only accessible target, modulo aliases, for which the fence compiles with the slot declared at
+   that target's sort and `resolveContent` succeeds with that target in place of the recorded one (`AmbiguousReference: <mention>: <targets>` otherwise).
+
+**Resolution.** `resolveContent E K u c` rewrites every slot of `c` by its mention's recorded target and type-checks
+the result:
+
+```lean
+/-- Resolution of a content's slots by the manifest's recorded targets (14.3). -/
+def resolveContent (E : VE.Environment) (K : Manifest) (unit : String) (c : VE.Compose.Content) :
+    Except String VE.Compose.Content
+```
+
+1. If `formulaMentions K unit = []`, the answer is `.ok c`.
+2. Each mention of `formulaMentions K unit` must have a slot in `c`, and each slot name in `c` must be a mention of
+   `formulaMentions K unit` (`MentionNotSlot: <mention>` otherwise, the first in manifest order).
+3. Each position `(ctx, A)` is rewritten slot by slot, the slots of `A` taken in **reverse span order**, so that of
+   two descriptions in one position the one written first takes the wider scope. Per target (4.4's table, read at a
+   position):
+   - an entity constant `c`, a pair's selected member `c`: the slot term becomes `.const c`;
+   - a `document` target: `UnsupportedTarget: <mention>: document` (the chain decoder's `E` declares no document
+     constant, `Documents.lean` `withDocuments`);
+   - `binder:<i>`: the rule's own `i`-th situation variable (plan 2.8), the de Bruijn variable
+     `ctx.length - 1 - i + d` at an occurrence under `d` quantifiers of `A`; `i ≥ ctx.length` (every binder in an
+     assertion position) is `WitnessEscape: <mention>`;
+   - a definite, assertive, with restriction `Dr` at sort `σ` (4.5, its nested slot already resolved): `A` becomes
+     `assertive σ Dr A₀`, where `A₀` is `A` with the slot term replaced by the variable bound by the description and
+     every other free variable lifted by one; presuppositional: `presupposed σ Dr A₀`, its uniqueness premise
+     carried by the `presupposition_unit` as 4.5 says;
+   - a plural, distributive, with members `c₁ … cₙ`: `A` becomes `A[c₁] ∧ … ∧ A[cₙ]` (`conj`, 4.4);
+   - a predicate `p`: the slot predicate symbol becomes `p`;
+   - any other kind in a position (`unit`, `anchor`, `claim`): the diagnostics of 1.4 (`TargetKindMismatch`,
+     `UnsupportedTarget: <mention>: claim`).
+4. Every position of the result, with or without a slot, must be closed and well-typed in its context
+   (`A'.check E ctx = true`), else, at the first failing position in `positions` order,
+   `IllTypedTarget: <mention>: <target>` for its first slot in span order, or
+   `InvalidInput: <unit>: position <k>` (its index, from 0) for a position without one. The answer is
+   `withPositions E c` of the rewritten formulas.
+
+**Intended meaning** (4.4, position-wise). `IntendedAt E K u c k S ρ` reads position `k` of the content as written,
+in `S` under `ρ`, with each slot interpreted **directly** by its recorded target, without calling `resolveContent`:
+the slots taken in the order of resolution step 3, each step one row of 4.4's table, where interpreting a term slot as an
+element `a` means evaluating in `S.withConstant (slotName m) a` and a predicate slot as `p` means evaluating in
+`S.withRelation (slotName m) (S.relation p)`:
+
+```lean
+/-- `S` with constant `n` interpreted as `a`, and with relation `n` interpreted as `R`; nothing else changed. -/
+def VE.Structure.withConstant (S : VE.Structure) (n : String) (a : S.Carrier) : VE.Structure
+def VE.Structure.withRelation (S : VE.Structure) (n : String) (R : List S.Carrier → Prop) : VE.Structure
+
+/-- The intended meaning of position `k` of the content `c` as written (4.4 at a position, plan 2.8). -/
+def IntendedAt (E : VE.Environment) (K : Manifest) (unit : String) (c : VE.Compose.Content) (k : Nat)
+    (S : VE.Structure) (ρ : VE.Valuation S) : Prop
+```
+
+Row by row: an entity constant `c` interprets the slot as the element `S.constant c` names; `binder:<i>` as `ρ`'s
+value for the rule's `i`-th variable; an assertive definite as "there is an `a` in `S.domain σ` at which `Dr` holds,
+every `b` in `S.domain σ` at which `Dr` holds is `a`, and the rest of the position holds with the slot as `a`"; a
+presuppositional one as "the rest holds with the slot as every `a` in `S.domain σ` at which `Dr` holds"; a plural
+as the conjunction over its members; a predicate slot as the relation `S.relation p`; at the end, `A.denote` in the
+updated structure under `ρ`. A position with no slot means `A.denote S ρ`.
+
+**Theorems** (plan S4, with the signatures this amendment fixes; 14.10 records each departure from the plan's
+sketch):
+
+```lean
+/-- Identity when unused (plan rule 5): a unit with no formula-producing mention keeps its content. -/
+theorem resolve_identity (E : VE.Environment) (K : Manifest) (u : String) (c : VE.Compose.Content)
+    (h : formulaMentions K u = []) : resolveContent E K u c = .ok c
+
+/-- Position-wise faithfulness: discourse 9.3's `elaborate_faithful` under the position's context instead of the
+    empty one. -/
+theorem resolve_position_faithful (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
+    (h : resolveContent E K u c = .ok c') (k : Nat) (ctx : List String) (A : VE.Formula)
+    (hk : (positions E c')[k]? = some (ctx, A)) (S : VE.Structure) (hS : S.Admissible E)
+    (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S ctx ρ) :
+    A.denote S ρ ↔ IntendedAt E K u c k S ρ
+
+/-- No new symbols: every symbol of a resolved position is declared in `E` or was already a symbol of the
+    content as written other than a slot name; no witness constant, no choice function, no fresh predicate. -/
+theorem resolve_no_new_symbols (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
+    (h : resolveContent E K u c = .ok c') :
+    ∀ x ∈ positions E c', ∀ q ∈ symbolsOf x.2,
+      DeclaredSymbol E q ∨
+        ((∃ y ∈ positions E c, q ∈ symbolsOf y.2) ∧ (slotPrefix.isPrefixOf q = true → formulaMentions K u = []))
+
+/-- A resolution that rewrote something yields closed, well-typed positions. -/
+theorem resolve_typed (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
+    (h : resolveContent E K u c = .ok c') (hm : formulaMentions K u ≠ []) :
+    ∀ x ∈ positions E c', x.2.check E x.1 = true
+
+/-- Only positions change: the kind, the declared names and every other field are kept. -/
+theorem resolve_keeps_shape (E : VE.Environment) (K : Manifest) (u : String) (c c' : VE.Compose.Content)
+    (h : resolveContent E K u c = .ok c') :
+    c'.kind = c.kind ∧ c'.declared = c.declared ∧
+      (positions E c').map (·.1) = (positions E c).map (·.1) ∧
+      withPositions E c' ((positions E c).map (·.2)) = some c
+
+/-- `withPositions` writes back what `positions` reads. -/
+theorem positions_withPositions (E : VE.Environment) (c : VE.Compose.Content) (fs : List VE.Formula)
+    (h : fs.length = (positions E c).length) :
+    ∃ c', withPositions E c fs = some c' ∧ (positions E c').map (·.2) = fs ∧
+      (positions E c').map (·.1) = (positions E c).map (·.1)
+theorem withPositions_self (E : VE.Environment) (c : VE.Compose.Content) :
+    withPositions E c ((positions E c).map (·.2)) = some c
+
+/-- (PC-11 reads it) One position's resolution, the position read as an asserted formula of the unit. -/
+def resolveFormula (E : VE.Environment) (K : Manifest) (unit : String) (φ : VE.Formula) : Except String VE.Formula :=
+  match resolveContent E K unit (.assertion φ) with
+  | .ok (.assertion ψ) => .ok ψ
+  | .ok _ => .error "InvalidInput: resolution changed the content kind"
+  | .error e => .error e
+theorem resolveFormula_assertion (E : VE.Environment) (K : Manifest) (unit : String) (φ ψ : VE.Formula) :
+    resolveFormula E K unit φ = .ok ψ ↔ resolveContent E K unit (.assertion φ) = .ok (.assertion ψ)
+end VE.Discourse
+```
+
+`symbolsOf` and `DeclaredSymbol` are `Discourse/WellFormed.lean`'s.
+
+One reading each: `resolve_identity`: a unit in which the manifest records no reference keeps its content exactly.
+`resolve_position_faithful`: after resolution, every position means, in every admissible situation and for every
+typed assignment of the rule's variables, exactly what the content as written says with each reference read as its
+recorded target. `resolve_no_new_symbols`: resolution writes only names the environment declares or the content
+already had, and keeps a slot name the environment does not declare only when the unit records no reference. `resolve_typed`: when the unit records a reference, every position of the resolved content is closed and type-checks. `resolve_keeps_shape`:
+resolution changes a content's position formulas, nothing else. `positions_withPositions`,
+`withPositions_self`: writing positions back and reading them again gives what was written, and writing back what
+was read changes nothing. `resolveFormula_assertion`: resolving one formula is resolving the assertion that holds
+it.
+
+### 14.4 Documents and cases
+
+```lean
+namespace VE.Discourse
+
+/-- The `@2` payload with every formula position closed: each bound prose unit's content is today's projection
+    (`project`, its `validate` formula, a pending unit withheld as today); each content-bearing unit's and part's
+    content is its `resolveContent` answer in its route's wire form; each fenced unit's content replaces its
+    `{"fence": …}` and its fence is removed from `fences`. Every other byte of the payload is kept. -/
+def resolveDocument (environment j : Json) : Except String Json
+
+/-- The environment (`E` before any generated symbol: the declared vocabulary the chain's decoder reads, norms
+    4.1) and the manifest of a case `{"id", "document"}`, from its document's front matter, under the base pair. -/
+def caseManifest (j : Json) : Except String (VE.Environment × Manifest)
+
+/-- RESOLVE on a case: the case with its `document` replaced by the written-out text of `resolveDocument` under the
+    front matter's environment: the front matter's `environment` replaced by `baseEnvironment` of it, `format`
+    `ve-document@1`, the `discourse` key removed, printed as `"---\n" ++ front.compress ++ "\n---\n" ++ body`, the body
+    being the case's body with its fences removed. A case whose profiles lack `ve.discourse@1` is unchanged. -/
+def resolveCase (j : Json) : Except String Json
+
+/-- What resolution may not touch: a payload with every unit's and part's `content` set to `null` and `fences`
+    emptied; for a case, its id, the source, and the front matter with `environment.profiles`, `format` and
+    `discourse` removed and every `content` set to `null`. -/
+def contentFree (j : Json) : Json
+def caseShape (j : Json) : Json
+
+theorem resolveDocument_keeps (environment j r : Json) (h : resolveDocument environment j = .ok r) :
+    contentFree r = contentFree j
+theorem resolveCase_keeps (j j' : Json) (h : resolveCase j = .ok j') : caseShape j' = caseShape j
+theorem resolveCase_off (j : Json) (h : "ve.discourse@1" ∉ VE.Service.Document.profilesOf j) : resolveCase j = .ok j
+end VE.Discourse
+```
+
+One reading each: `resolveDocument` gives the same document with every reference written out where the checker
+reads formulas, and nothing else changed (`resolveDocument_keeps`). `caseManifest` gives the vocabulary and the
+references a case's document records. `resolveCase` gives the same case as a plain `ve-document@1` document with
+the references written out, for the document mode to check (PC-7b's `discourseRewriter`); its layout, unit ids,
+blocks and source are those of the case (`resolveCase_keeps`), and a case that does not list `ve.discourse@1` is
+returned as it is (`resolveCase_off`).
+
+### 14.5 The composed admission
+
+```lean
+namespace VE.Discourse
+
+/-- The route `dispatch` chooses for the base list, run on the base environment and a resolved document. -/
+def dispatchAdmission (ps : List String) (environment document : Json) : Except String Json :=
+  match VE.Compose.dispatch ps with
+  | .ok .norms => VE.Norms.Run.runAdmission "" environment document
+  | .ok .normDefaults => VE.NormDefaults.Run.runAdmission "" environment document
+  | .ok .soft => VE.SoftNorms.Run.runAdmission "" environment document
+  | .ok .rights => VE.Rights.Run.runAdmission "" environment document
+  | .ok .readings => .error "UnsupportedProfile: ve.discourse@1 with readings@1"
+  | .ok .clauses => .error "UnsupportedProfile: ve.discourse@1 with right-clauses@0"
+  | .ok r => .error (VE.Compose.refusal "ve.discourse@1" r)
+  | .error e => .error e
+
+/-- The W2 admission object of a resolved payload, each unit's content in its route's wire form: norm, rights and
+    resolved fence contents passed through, built without `baseVocabulary` or `loadPayload` (the loader's
+    `admissionObject` holds formulas only, `Loader.lean`). -/
+def chainDocument (environment resolved : Json) : Except String Json
+
+/-- The composed path's result. -/
+structure ChainAdmitted where
+  route : VE.Compose.Route         -- `dispatch (baseProfiles profiles)`
+  resolved : Json                  -- `resolveDocument`'s answer
+  inner : Json                     -- the chain route's answer, verbatim
+  documentId : String              -- the `@2` `document_id` (3.3)
+  reportId : String                -- the wrapper report id (3.5 (4)) over `inner`'s report id
+  references : Json                -- the reference lines (7.1)
+
+inductive Composed
+  | today (res : Admitted)         -- today's discourse admission
+  | chain (c : ChainAdmitted)
+
+/-- The discourse route's entry from S4 on (14.2: the composed path, else today's). -/
+def admitComposed (profiles : List String) (environment j : Json) : Except String Composed
+
+/-- Every `conditional_on` list of an answer, in pre-order. -/
+def conditionalOnOf (a : Json) : List Json
+/-- The wire answer of a composed admission: the wrapper fields of 3.5 (4) and 7, and `inner` verbatim. -/
+def composedJson (c : ChainAdmitted) : Json
+end VE.Discourse
+```
+
+`admitComposed profiles environment j`, on the composed path, in order: (1) the wrapper checks of 3.5 (1), with
+today's texts, the FOL-family check made on the chain's decoder of `baseEnvironment environment`; a manifest with
+`groups`, `constraints` or `validity` entries, or a front matter with an active reading set, is
+`NotImplemented: <groups | constraints | validity claims | reading sets> on the chain` (named abstention, 3.4: Python
+reports it as `UnsupportedProfile` with Lean's text, never a verdict); (2) the document table and integrity as
+today (4.1(10)); (3) `definitions_version` must equal the chain route's environment id of the base pair (the id its
+certificates bind; `StaleTarget: definitions@<version>` otherwise); (4) the manifest checks of 4.1, with slot
+discovery and steps 1 to 7 of 14.3 for content-bearing units; (5) `resolveDocument`; (6) `dispatchAdmission
+(baseProfiles profiles) (baseEnvironment environment)` on `chainDocument (baseEnvironment environment)` of the
+resolved payload; (7) the wrapper report id and the
+reference lines as 3.5 (4) and 7.1 say, with `inner`'s report id as the inner report id. Off the composed path:
+`.today` of `admitDiscourse profiles environment rv j fuelBudget`, `rv` the base pair's vocabulary
+(`baseVocabulary`); a vocabulary error is today's error. `fuelBudget` moves unchanged, as `VE.Discourse.fuelBudget`, from `Discourse/Run.lean`
+to `Discourse/Admission.lean`, since `Run.lean` imports `Compose.lean`.
+
+```lean
+namespace VE.Discourse
+
+/-- The composed admission is the chain's admission of the resolved document. -/
+theorem composed_admission (profiles : List String) (environment j : Json) (c : ChainAdmitted)
+    (h : admitComposed profiles environment j = .ok (.chain c)) :
+    resolveDocument environment j = .ok c.resolved ∧
+      VE.Compose.dispatch (baseProfiles profiles) = .ok c.route ∧
+      ∃ d, chainDocument (baseEnvironment environment) c.resolved = .ok d ∧
+        dispatchAdmission (baseProfiles profiles) (baseEnvironment environment) d = .ok c.inner
+
+/-- Only the composed path answers `.chain`. -/
+theorem composed_path (profiles : List String) (environment j : Json) (c : ChainAdmitted)
+    (h : admitComposed profiles environment j = .ok (.chain c)) :
+    "norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ chainConstructs environment j = true
+
+/-- Discourse 5 and composition.md 5.5: no binding discharges, hides or reorders a coherence, limitation or choice
+    premise; every `conditional_on` list of the answer is the chain route's, in its order. -/
+theorem conditions_retained (profiles : List String) (environment j : Json) (c : ChainAdmitted)
+    (h : admitComposed profiles environment j = .ok (.chain c)) :
+    conditionalOnOf (composedJson c) = conditionalOnOf c.inner
+end VE.Discourse
+```
+
+One reading each: `composed_admission`: on the composed path the answer is exactly what the route
+`dispatch` picks for the base list answers on the resolved document. `composed_path`: that happens only on a list
+with `norms@0` and `ve.discourse@1` and a document with a chain construct. `conditions_retained`: the conditions a result is proved under
+are listed exactly as the chain route lists them.
+
+### 14.6 Identity cases
+
+```lean
+namespace VE.Discourse
+
+/-- Existing discourse documents are untouched (plan S4, rule 5; composition.md 13.5): off the composed path the
+    answer is today's. -/
+theorem composed_unchanged (profiles : List String) (environment j : Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hv : baseVocabulary environment = .ok rv)
+    (h : "norms@0" ∉ profiles ∨ "ve.discourse@1" ∉ profiles ∨ chainConstructs environment j = false) :
+    admitComposed profiles environment j = (admitDiscourse profiles environment rv j fuelBudget).map .today
+
+/-- The plan's statement, the case without `norms@0`. -/
+theorem composed_base_unchanged (profiles : List String) (environment j : Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hv : baseVocabulary environment = .ok rv) (h : "norms@0" ∉ profiles) :
+    admitComposed profiles environment j = (admitDiscourse profiles environment rv j fuelBudget).map .today
+
+/-- Off the composed path a vocabulary error is today's error. -/
+theorem composed_unchanged_error (profiles : List String) (environment j : Json) (e : String)
+    (hv : baseVocabulary environment = .error e)
+    (h : "norms@0" ∉ profiles ∨ "ve.discourse@1" ∉ profiles ∨ chainConstructs environment j = false) :
+    admitComposed profiles environment j = .error e
+
+end VE.Discourse
+
+namespace VE.Discourse.Run
+
+/-- The `admission` answer of a composed admission: `composedJson c` with the case id. -/
+def encodeComposed (id : String) (c : ChainAdmitted) : Json
+def ComposedAdmissionAnswer (id : String) (j answer : Json) : Prop :=
+  ∃ document environment profiles c, loadCase j = .ok (document, environment) ∧
+    VE.Route.Gate.profilesOf environment = .ok profiles ∧
+    admitComposed profiles environment document = .ok (.chain c) ∧ encodeComposed id c = answer
+
+/-- The wire entry (9.6, over 9.7's entry), revised in place: a successful `admission` answer on the discourse path is today's
+    checked discourse admission or a composed one. -/
+theorem discourse_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hd : usesDiscoursePath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      (DiscourseAdmissionAnswer id j answer ∨ ComposedAdmissionAnswer id j answer)
+end VE.Discourse.Run
+```
+
+**The wire entry.** `runCase` (`Discourse/Run.lean`) decides the composed path before it calls `baseVocabulary`,
+which rejects every chain environment (`Route/Wire.lean` `decodeVocabulary`: `soft`, `rights`, `regulated`).
+`encodeComposed`, `ComposedAdmissionAnswer` and the restated `discourse_wire_acceptance` are in `Discourse/Run.lean`
+(namespace `VE.Discourse.Run`); the identity theorems are in `Discourse/Compose.lean`. On the
+composed path an `admission` case answers `encodeComposed` of `admitComposed`, and the kinds
+`discourse-validity`, `discourse-resolve` and `discourse-joint` answer `NotImplemented: <kind> on the chain`; any
+other kind keeps today's `UnsupportedProfile: case kind <kind> is not available on the discourse route`. Off it,
+`runCase` is today's. `discourse_wire_acceptance` keeps its name and is restated as above: its present conclusion
+(`DiscourseAdmissionAnswer` alone) is false once a `.chain` answer exists. One reading: every `admission` answer
+the discourse route gives is either today's checked admission of the case's document or the chain route's
+admission of that document resolved.
+
+One reading: a document that lists no `norms@0` or no `ve.discourse@1`, or that has no norm, rights or fenced content and no chain block
+in its environment, gets exactly today's answer, diagnostics included (`composed_unchanged_error`: a vocabulary
+error too). This is composition.md 13.5's obligation for
+the lists with `norms@0` (their route below the wrapper stays today's for every document admitted today, since none
+of them has a chain construct: today's route answers each chain construct `NotImplemented`).
+
+**`norm-defaults@0`** (composition.md 6). S4 adds no slot; with `norm-defaults@0` listed, `dispatch` gives
+`normDefaults` and that route's `fill` and `Fill_T` run as it runs them on the resolved document.
+
+**Three-way agreement** (composition.md 6). Lean is the authority; Python relays Lean's `admission` answer (3.4: no
+port), and `ve/profiles.py`'s `checker_family` is extended so that it equals `dispatch` on every list with
+`ve.discourse@1`, with fixture D-all's differential extended to those lists (D29 to D31, D36, D37, D51). Rust gets
+no new family in item 1: it resolves no reference (11).
+
+**Wordings.** E1 and E2 are S1's (composition-s1.md). S4 registers no sentence in item 1; E18 waits for OPEN 1.
+
+### 14.7 Report
+
+On the composed path the status text is the chain route's line verbatim (composition.md 7), its `conditional_on`
+lists unchanged (`conditions_retained`); the reference lines are 7.1's; the residual line `provenance_mentions` is
+absent (OPEN 1). Unit statuses are the chain route's, with 3.2's discourse statuses (self-truth, pending) on top as
+today.
+
+### 14.8 Fixtures (item 1)
+
+Spans are UTF-8 byte offsets into the pinned constitution (SHA-256 `fa10ed48…50dd`). Synthetic fixtures use the
+environment of 10's α (sorts `service`, `person`; `web_api : service`, `alice : person`) with `norms@0`,
+`relational-fol@0`, `ve.discourse@1`, the regulated predicate `review_required : service` and the base predicates
+`deployed : service`, `api : service`, `owns : person × service`, `notify_required : person` (regulated), and a
+claim graph.
+
+| # | Input | Expected | Statement |
+|---|---|---|---|
+| S4-1 (plan F16) | C `u0214.s01`, `u0214.s02` in the translation with its 15 norm units and fenced `u0248`; profiles `norms@0`, `relational-fol@0`, `soft-norms@0`, `ve.discourse@1` | composed path, route `soft`; admitted; `u0214.s02` `MIXED` with parts LABELLED and UNFORMALISED (2.5); every norm verdict in `inner` equals the soft route's on the same document without the `discourse` block and `ve.discourse@1` | `composed_admission`, `resolve_identity` |
+| S4-2 (plan F20 share) | discourse fixtures α to ω | answers byte-identical to today's | `composed_unchanged` |
+| S4-3 | α's document with `norms@0` added, no norm content, no fence | today's answer, byte for byte (13.5) | `composed_unchanged`, `composed_path` |
+| S4-4 | strict fence `rule review-it: for every service x0, (x0 review_required) if (x0 equals it).`, `it` (pronoun) → `web_api` | resolved guard `x0 equals @web_api`; the node equals the one compiled from the same text with `@web_api` written | `resolve_position_faithful`, `resolve_keeps_shape`, `positions_withPositions`, `resolve_no_new_symbols` |
+| S4-5 | english fence "It must be reviewed." (the header form of S4-4), `It` → `web_api` | header slot: binder `x0`, guard conjunct `x0 equals @web_api`; the node equals S4-4's | 14.3 step 3 |
+| S4-6 | S4-5 with `It` → `binder:0` | `UnsupportedTarget: <m>: rule header` | 14.3 step 3 |
+| S4-7 | strict fence `rule notify: for every person x0, (x0 notify_required) if (x0 owns the API).`, `the API` definite assertive, restriction `api` | guard `∃x:service (api(x) ∧ ∀y:service (api(y) → y = x) ∧ owns(x0, x))`, `x0` lifted under the description | `resolve_position_faithful`, `resolve_no_new_symbols`, `resolve_typed` |
+| S4-8 | S4-7 with a second accessible description of the same sort that also type-checks | `AmbiguousReference: <m>: <targets>` | 14.3 step 7 |
+| S4-9 | strict fence `rule notify-owner: for every person x0, (x0 notify_required) if (she owns @web_api).`, `she` → `binder:0` | guard `x0 owns @web_api`: the slot becomes the variable of `x0` (de Bruijn 0) | 14.3 resolution step 3 (`binder`) |
+| S4-10 | an asserted fenced unit "It is deployed." with `It` → `binder:0` | `WitnessEscape: <m>` | 14.3 resolution step 3 |
+| S4-11 | a rule whose header option is "exception to the rule above", the mention's target the rule `review-it` | `over = ["review-it"]` (no slot); with target `missing-rule`: `UnknownRule: missing-rule` | 14.3 step 4, `resolve_identity` |
+| S4-12 | a mention inside a soft `rank` field | `UnsupportedTarget: <m>: soft` | 14.3 step 5 |
+| S4-13 | a JSON norm unit with a recorded `it` mention in its prose | `MentionNotSlot: <m>`; without the mention: `UnrecordedSlot: <unit>: <span>` | 14.3 step 6 |
+| S4-14 (plan F17, item-1 half) | C `u0078.s01` [48052, 48503), translated norm unit, no fence | without a mention: `UnrecordedSlot` for the surface at [48274, 48278), as today; a mention carrying `binding: "translated"`: the mention decoder's unknown-key diagnostic, unchanged (`displayFields`) | OPEN 1 |
+| S4-15 | a fence unit with no mention, composed path | content as compiled; `resolveContent` the identity (PC F7.3) | `resolve_identity`, `withPositions_self` |
+| S4-16 | S4-4 on a list with `readings@1` beside `norms@0` | `UnsupportedProfile: ve.discourse@1 with readings@1` | `dispatchAdmission` |
+| S4-17 (D36) | `norms@0, relational-fol@0, speech-acts@0, ve.discourse@1` with a norm unit | `UnsupportedProfile: ve.discourse@1 with speech-acts@0` | `dispatchAdmission`, `dispatch_error` |
+| S4-18 | S4-4's document under `soft-norms@0` with a default rule whose exception yields a coherence premise | every `conditional_on` of the answer equals the soft route's, in order (`soft:coherence:<a>,<b>`) | `conditions_retained` |
+| S4-19 | a composed-path document whose environment declares the constant `ve__slot__x` | `InvalidInput: reserved name ve__slot__x` | 14.3 step 1 |
+| S4-20 | a composed-path document with a `groups` entry | `NotImplemented: groups on the chain` (Python: `UnsupportedProfile` with that text) | 14.5 step 1 |
+| S4-21 | a composed-path document without a claim graph | `NotImplemented: a document without a claim graph`, as today | OPEN 2 |
+| S4-22 | S4-4 as a case, `resolveCase` | the case's document is S4-4's text written out (`@web_api`), `format` `ve-document@1`, no `ve.discourse@1`, no `discourse` key; `caseShape` unchanged; `checkCore` on it equals `checkCore` on the hand-written `@1` document | `resolveCase_keeps`, `resolveDocument_keeps` |
+| S4-23 | S4-22's case without `ve.discourse@1` | returned unchanged | `resolveCase_off` |
+| S4-24 | S4-10 with `It` → `web_api` | `resolveFormula` gives `deployed(@web_api)`, the same as `resolveContent` on its assertion | `resolveFormula_assertion` |
+| S4-25 | α without `norms@0`, its vocabulary one `baseVocabulary` rejects | today's error, byte for byte | `composed_unchanged_error` |
+| S4-26 | a fence mention whose target is a document name | `UnsupportedTarget: <m>: document` | 14.3 resolution step 3 |
+| S4-27 | S4-1's document as an `admission` case, and as a `discourse-joint` case | the `admission` answer is `encodeComposed` of the composed admission; `discourse-joint`: `NotImplemented: discourse-joint on the chain` | `discourse_wire_acceptance` |
+| S4-28 | a `ve-document@1` text on `norms@0`, `relational-fol@0` (no `ve.discourse@1`) with a norm unit | today's answer, byte for byte (not the composed path) | `composed_unchanged`, `composed_unchanged_error` |
+
+Acceptance (plan S4): S4-1, S4-2 and S4-14's item-1 half; the constitution translation with the `discourse` block
+checks through the Lean route with its 15 norm units and `u0214.s02`.
+
+### 14.9 What is not claimed
+
+No uniqueness claim about prose behind a JSON content; no resolution inside an act phrase (act phrases' identity is
+the phrase's canonical string; PC-7c); no reference as a reading axis inside a rule (14.10, 6); no change to the
+chain routes, their identities, their texts or `dispatch`; no new symbol in `E`; no coverage number.
+
+### 14.10 Resolved choices in this amendment
+
+Each is a point where the plan's S4 sketch or 2.8 left a reading open; the review may overturn any of them.
+
+1. **`positions` takes `E`, and `IntendedAt` takes the content as written.** The plan's sketch has
+   `positions : Content → …` and `IntendedAt E K u k S ρ`. A node's context is its predicate's sorts, which only `E`
+   holds, and the intended meaning of a position is the meaning of the content as written, which neither `E` nor
+   `K` holds. So: `positions E c` and `IntendedAt E K u c k S ρ` (OPEN 3 lists the consumer edit).
+2. **Slots are reserved symbols inside a content**, produced only by the fence compiler from mention spans
+   (14.3 step 2), never on the wire. This is the one representation the signature `resolveContent E K u c` allows
+   without the source text.
+3. **`binder:<i>` at a position is the rule's own variable** (plan 2.8, literally), so an assertion position has no
+   binder target; a binder of a quantifier inside a fence sentence stays on the prose path.
+4. **Header slots take constant targets only**, the plan's words "with an entity target `c`".
+5. **Scope of two descriptions in one position**: the one written first is outermost (reverse span order).
+6. **Question 8 (a reference as a reading axis inside a rule)**, left to this specification by the plan: one
+   target per slot, as 1.4 records; two antecedents are two reading candidates, each with its referent written
+   out (candidates are resolved contents, plan 2.2), which PC-7c composes.
+7. **The composed path is chosen by content as well as list** (`chainConstructs`): composition.md 13.5 asks that no
+   document admitted today change on a list with `norms@0`; every such document lacks a chain construct.
+8. **`resolve_no_new_symbols`** is stated with `DeclaredSymbol` (`Discourse/WellFormed.lean`), as discourse's own
+   `elaborate_no_new_symbols` is, instead of the sketch's `E.symbols`, which does not exist; it also allows symbols
+   the content as written already had, since `resolve_identity` returns an unchecked content unchanged.
+9. **`composed_base_unchanged`** fixes the fuel (`fuelBudget`) and the vocabulary (`baseVocabulary`) instead of the
+   sketch's free `fuel` and `rvOf j`; the sketch's form would claim equality for every fuel.
+10. **The result type** is `Composed` (today's `Admitted` or a `ChainAdmitted`), because the chain routes answer
+    JSON, not a frozen W2 `Admitted`; `composed_admission` and `conditions_retained` read `ChainAdmitted`'s fields
+    instead of the sketch's `res.inner`, `res.report`.
+11. **The chain routes read `chainDocument`**, which passes norm, rights and resolved fence contents through in
+    wire form; the frozen `admissionObject` holds formulas only. S4-1 checks it on the pinned translation.
+12. **`definitions_version` on the composed path** names the chain route's environment id of the base pair.
+13. **`readings@1` and `right-clauses@0` under discourse are refused in item 1**: plan S4 imports nothing of S1 or
+    S2, and neither head has a `runAdmission` on main.
+14. **The wire entry**: on the composed path the kinds `discourse-validity`, `discourse-resolve` and
+    `discourse-joint` answer `NotImplemented: <kind> on the chain`; any other kind keeps today's
+    `UnsupportedProfile: case kind <kind> is not available on the discourse route`; `baseVocabulary` runs only off
+    the composed path.
+
+### 14.11 OPEN (for the DRI; not decided here)
+
+1. **Question 7, provenance mentions** (plan 2.8, F17, E18). The plan decides it in this specification "after
+   question 14's tally" (reference-bearing sentences among the 668 `norms`-blocked units; bytes of the 80
+   `other:discourse` units). That tally is new measurement, which this task may not take (plans frozen to Nov 12).
+   Item 1 builds without provenance mentions (S4-14); admitting them (attributed, counted apart, never changing a
+   status) or not is the DRI's, with the tally. **DRI ruling 2026-10-31** (`manage-agents/reviews/dri-decisions-20261031-spec-s4-discourse.md`
+   item 2): kept as today. Item 1 builds without provenance mentions, and a mention stays an `UnrecordedSlot`
+   (S4-14). The tally, then admitting or refusing attributed mentions under its own ruling, is follow-up row
+   `s4-provenance-tally` (design, after the sprint).
+2. **A document without a claim graph** (plan 2.8: "admitted with an empty graph"). W2's graph has required fields
+   `root` and `nodes` (`Route/Admission.lean`), so an empty graph has no wire form and no report root; the plan does
+   not say what is admitted or reported. Item 1 keeps today's `NotImplemented` (S4-21). **DRI ruling 2026-10-31**
+   (`manage-agents/reviews/dri-decisions-20261031-spec-s4-discourse.md` item 3): kept as today,
+   `NotImplemented: a document without a claim graph` (S4-21). A wire form and report for an empty graph, or a
+   recorded refusal, is follow-up row `s4-empty-graph` (design, after the sprint).
+3. **Consumer edit in `profile-composition.md`** (branch `design/profile-composition`, 3.7 and 3.10):
+   `DiscourseFaithful` reads `VE.Discourse.positions c'` and `VE.Discourse.IntendedAt E K unit k S ρ`; under 14.10
+   (1) they become `positions E c'` and `IntendedAt E K unit c k S ρ`, and PC-11's `KindPositions` statements that
+   cite S4's positions follow. PC-7c's "`readings@1` included" (3.7) waits for that route (14.10 (13)). The edit is the profile-composition owner's.
+   **DRI ruling 2026-10-31** (`manage-agents/reviews/dri-decisions-20261031-spec-s4-discourse.md` item 4): the
+   profile-composition owner makes this edit after cmp-s4 merges (row `pc-s4-positions`, design, blocked by
+   cmp-s4). The PC task files that cite S4's positions (PC-11, PC-7c) take the edited form.
+4. **Groups, constraints, validity claims and reading sets on the composed path** are named abstentions in item 1
+   (14.5 step 1). The plan's S4 acceptance does not need them; whether S4 or PC-7c covers them is not decided by
+   the plan. **DRI ruling 2026-10-31** (`manage-agents/reviews/dri-decisions-20261031-spec-s4-discourse.md` item 5):
+   a later S4 item covers them, not PC-7c (row `cmp-s4b`, feature, blocked by cmp-s4; its statements need their
+   own statement-spec section and review before its task file). PC-7c's "`readings@1` included" waits for that
+   item.
+
 ## Change log
 
 | Date | Revision | Changes |
@@ -2050,3 +2649,6 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-10-03 | Draft 4, amendment | After `manage-agents/discourse4-looprecheck1.final.md` (3.4): a `@2` text is recognised by its front matter's `format` alone, so a body Python splits differently still reaches Lean; the import collector and every check before Lean's answer read any front matter; Lean's loader splits lines at `\r` and `\r\n` too and strips fence lines as `bytes.strip()` does; a front matter over Lean's JSON depth is `ResourceLimit`, which Python never replaces by its own rejection. |
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse-example-directive.md` (constitution pilot run 20260930T0600Z, u0214.s02 failing four ways): the target, not the form, makes a location binding (1.4): a pronoun or demonstrative naming a `unit` target is a location binding, never a slot and never parsed, so its unit needs no discourse wording (4.1(4)); in a unit with meaning or a group span it is `TargetKindMismatch`; every location target is checked for existence in Lean too. The Lean route reads `MIXED` units as Python does (3.4). 2.5's u0214.s02 is a regression fixture, with the source's curly apostrophe. Fenced content, a document without a claim graph and norm or soft-norm composition remain stated limitations of the route (11), with the pilot as the example. |
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse-example-looprecheck1.final.md` (B): the form/kind table is stated (1.4) and is one table in both checkers, `section_ref` fitting `anchor`, `unit` and `rule` (Python fitted only `anchor`); a location binding's `rule` target is checked for existence in Lean too (`UnknownRule`, every rule name on the route, which reads no norm content), and `Acc`'s `rule r` reads W1 rule names (`ruleNames`), not unit ids; an anchor or rule target without a name is `InvalidInput: mention <m> target`, and a pronoun or demonstrative naming a claim `UnsupportedTarget`, in both. |
+| 2026-10-31 | Amendment S4, draft 1 | Section 14 (new): composition stage S4, discourse on the chain, statements only (composition-PLAN.md S4 and 2.8; composition.md 6 and 13.5; profile-composition.md 3.7 and 3.10 as consumers). Positions of every `Content` with contexts; slots as reserved symbols from fence text; `resolveContent`, `IntendedAt`, `resolveFormula`; `resolveDocument`, `resolveCase`, `caseManifest`; the composed path (`chainConstructs`, `dispatchAdmission`, `admitComposed`); theorems `resolve_identity`, `resolve_position_faithful`, `resolve_no_new_symbols`, `resolve_typed`, `resolve_keeps_shape`, `composed_admission`, `composed_path`, `conditions_retained`, `composed_unchanged`, `composed_base_unchanged`; fixtures S4-1 to S4-22; twelve resolved choices (14.10) and four OPEN lines (14.11: provenance mentions, the empty claim graph, the profile-composition consumer edit, groups and sets on the chain). Sections 1 to 13 unchanged. |
+| 2026-10-31 | Amendment S4, draft 2 | The statement review's FIX applied (`manage-agents/debates/spec-s4-discourse`, rounds 1 and 2, both seats Opus; both proposed FIX with these edits, then PASS): rule targets are no slot (`resolveOver` removed, `resolve_keeps_shape` ends `some c`); `resolve_no_new_symbols` keeps a slot name only when the unit records no reference; step 4 checks every position; document-name targets refused in a position; `chainConstructs` reads `vocabulary`; uniqueness compiles each competitor at its own sort; the fan-out context; `chainDocument` replaces `Loader.admissionObjectOf`; `fuelBudget` moves to `Admission.lean`, namespaces opened; the wire entry (`encodeComposed`, `ComposedAdmissionAnswer`, `discourse_wire_acceptance` restated); `composed_unchanged_error`; fixtures S4-23 to S4-27 and statement columns; 14.10 (11) replaced, (13) and (14) added; OPEN 3 extended. Where the seats offered two equivalent wordings (`resolve_no_new_symbols`; the chain document's name), the one both ended on in round 2 is used. |
+| 2026-10-31 | Amendment S4, draft 3 | The second statement review's agreed edits applied (`manage-agents/debates/spec-s4-discourse/RESIDUE.md`, edits 1 to 6, in the form the DRI chose: `manage-agents/reviews/dri-decisions-20261031-spec-s4-discourse.md` item 1): `encodeComposed`, `ComposedAdmissionAnswer` and the restated `discourse_wire_acceptance` in `namespace VE.Discourse.Run`, with the sentence saying where each declaration lives, and `fuelBudget` as `VE.Discourse.fuelBudget`; "14.3 step k" and "14.3 resolution step k" named apart; `resolve_no_new_symbols` and `resolve_typed` readings; the composed path requires `ve.discourse@1` (14.1, 14.2, `composed_path`, the `h` of `composed_unchanged` and `composed_unchanged_error`, their readings, the header), fixture S4-28; the wire entry and 14.10 (14) list the three refused kinds, any other kind keeps today's `UnsupportedProfile`; step 4's first failing position and 0-based index; the header and 14.6 cite 9.6. 14.11: the DRI's rulings on OPEN 1 to 4 recorded (items 2 to 5 of the same decision file). |
