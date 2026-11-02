@@ -21,6 +21,7 @@
 - `lean/VE/Calc/Syntax.lean` — (no module docstring)
 - `lean/VE/Calc/Table.lean` — Tables, filters and aggregates (spec 4.1 and 4.2, plan 3.3, ME-4).
 - `lean/VE/Calc/TableExamples.lean` — ME-4's fixtures (spec 13.2 to 13.4, plan ME-4), each check on both sides of its boundary.
+- `lean/VE/Calc/Ties.lean` — The R16 ties of me-5e's evidence (ties-me-5e): what `Shown.matches`, `Derive.shown`, `Check.runShown`, `Run.row` and `Run.rowJson` mean, stated in the derivati…
 - `lean/VE/Calc/Units.lean` — `ve-units@2` (math-evidence spec 6.2, ME-6): its only decoder, its identity (3.3, J1) and the dimension of an expression with its diagnostic.
 - `lean/VE/Calc/UnitsExamples.lean` — The `ve-units@2` fixtures (`tests/calc_units_fixtures.py`, math-evidence spec 6.2) as `#guard`s.
 - `lean/VE/Calc/Wire.lean` — The case `ve-calc@0` (math-evidence spec 3.1 to 3.3, ME-2): its limits in order, its decoder and its identity.

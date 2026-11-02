@@ -1,0 +1,5 @@
+mutant L5-row-means: Run.row_means restated over (cl.2.runShown c.decls) instead of (Run.row c cl) in lean/VE/Calc/Ties.lean; statements regenerated
+VE/Calc/Run.lean: VE.Calc.Run.row: the statement of VE.Calc.Run.row_means does not mention VE.Calc.Run.row of VE.Calc.Run
+tied 1194, unclassified 0, trusted 57982 (K + S + untied [V] + unclassified), 225083 lines in 722 files
+exit 1
+1 failed in 10.41s
