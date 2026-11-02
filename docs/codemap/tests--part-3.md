@@ -13,6 +13,7 @@
 - `tests/test_et8_completion.py` — ET-8 (events-time-causation plan 5, fixture R2 and the ET-1 component): Asimov's v2 rules and the ET-1 component re-run with `permitted` completed `unspecified…
 - `tests/test_et_e1_probe.py` — ET-E1's pre-registration and scorer (docs/events-time-causation/et-e1): hermetic, no model calls.
 - `tests/test_evaluate_search.py` — (no module docstring)
+- `tests/test_events_route.py` — et-4b: an `events` document through the service's norm-defaults mode, on both layered branches.
 - `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
@@ -84,4 +85,3 @@
 - `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
 - `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
 - `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
-- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
