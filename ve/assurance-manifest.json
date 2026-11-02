@@ -2225,7 +2225,6 @@
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope; the document mode calls it under scope@0 through `governFast` (SC-1b, `checkDoc`)",
       "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Calc/RunExamples.lean": "fixtures only: #guard route cases of the calc runner (spec 13.2, 13.3, 13.6) read each answer's rows, outcomes and meaning_id; no runner path",
-      "lean/VE/Calc/Ties.lean": "statements about the calc runner's evidence and rows (the R16 ties of me-5e: rowJson_outcome and rowJson_shown read the outcome, reason, certificate and counterexample members with Json.getObjVal?); no runtime JSON handling",
       "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's and df-1ad's `#guard`s build defaults-* case JSON and certificates from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
       "lean/VE/Acts/LexicalProofs.lean": "theorems of act-phrases 4.3 (check_spec against the independent Accepts, check_no_clause) about the act check of a JSON act phrase; JSON access only in Accepts and in statements and proofs (not on any runner path)",
       "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it",
@@ -2249,6 +2248,7 @@
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
+      "lean/VE/Acts/FaithfulExamples.lean": "fixtures only: `#guard`s that compute both sides of elaborate_faithful on small finite models, one case decoding environment and norm JSON (act-phrases ap-3dd); no admission path, service mode or record reads them",
       "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
       "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
       "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
@@ -2263,7 +2263,9 @@
       "lean/VE/Senses/RunExamples.lean": "fixtures only: #guard checks of the senses runner's answers to whole requests (B6), pinned by digest; no runner path",
       "lean/VE/Scope/FarExamples.lean": "fixtures only: SC-4's #guard checks (scope spec 7.6) build scope@0 documents, rule contents and one raw unit tree (F-raw-edges) as JSON literals and run `govern` and `forwardCheck` on them; no runtime JSON handling",
       "lean/VE/Service/UndeclaredExamples.lean": "fixtures only: jt-3a's #guard checks build one judgments@0 document as request JSON and read the document mode's `undeclared_evaluative` member and `Env.basePredicates` (judgment-terms.md 8.4); no service mode reads this file",
-      "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling"
+      "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling",
+      "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file",
+      "lean/VE/Calc/Ties.lean": "statements about the calc runner's evidence and rows (the R16 ties of me-5e: rowJson_outcome and rowJson_shown read the outcome, reason, certificate and counterexample members with Json.getObjVal?); no runtime JSON handling"
     }
   },
   "plan_operations": {
