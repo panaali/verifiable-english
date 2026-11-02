@@ -67,7 +67,8 @@ def answer(service, uid, fm):
 
 def verdict(row):
     """The answer without the fields the layer may change and the environment-dependent identities (spec 2e)."""
-    out = {k: v for k, v in row.items() if k not in ("judgments", "document_id", "source_id", "coverage")}
+    out = {k: v for k, v in row.items()
+           if k not in ("judgments", "undeclared_evaluative", "document_id", "source_id", "coverage")}
     out["units"] = [{k: v for k, v in u.items() if k not in ("status", "meaning_id")} for u in row["units"]]
     return out
 
@@ -81,6 +82,9 @@ def test_f1_1_a_soft_default_rule_with_a_bound_judgment_is_admitted_and_open(ser
     assert [u["status"] for u in row["units"]] == ["OPEN"]
     assert row["judgments"] == {"used": [{"term": "good_judgment", "units": ["u0052.s01"]}], "unused": []}
     assert "judgments" not in plain
+    # judgment-terms 8.4 beside the soft route: the base predicates that match the catalogue and are not bound.
+    assert row["undeclared_evaluative"] == ["genuinely_ambiguous", "reasonable"]
+    assert "undeclared_evaluative" not in plain
     assert verdict(row) == verdict(plain) and row["document_id"] != plain["document_id"]
     # Identities over the list as written (jt-2c item 1(b)), the soft route's E″ included.
     assert row["units"][0]["meaning_id"] != plain["units"][0]["meaning_id"]
