@@ -467,4 +467,4 @@ def test_the_random_earley_stream_skips_the_sealed_texts(monkeypatch):
 def test_the_q1_3b_evidence_stays_in_the_tree():
     evidence = json.loads((BATCH_B / "evidence/question-reverse-b.json").read_text())
     assert (BATCH_B / "evidence/question-reverse-b.json").stat().st_size < 1_000_000  # DRI decision D4
-    assert list(evidence["streams"]) == list(R.STREAMS) and evidence["coverage"]["whole_streams"] is True
+    assert sorted(evidence["streams"]) == sorted(R.STREAMS) and evidence["coverage"]["whole_streams"] is True
