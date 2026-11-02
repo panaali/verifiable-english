@@ -61,8 +61,8 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 ## Evidence
 
-- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 13 in [claims.py](claims.py);
-  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 49, every one
+- **Seeded bugs** (Python: 36 in `conformance/question_reverse.py`, 23 in [claims.py](claims.py);
+  [mutants.json](mutants.json), each planted alone by [seed.py](seed.py), which reuses q1-3's loop): 59, every one
   killed. The three the task names are:
   - F2 fronting only the first auxiliary, caught by `test_frontings_front_every_is_must_or_may_in_turn`;
   - a stream dropped from the counts, caught by `test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial`;
@@ -73,13 +73,20 @@ rendered English, not its text. This run does not measure rendered English. The 
   limited share with `any`, a statement without its period, a mixed paragraph counted as a sentence, and a put-back
   that keeps an opener's capital. The 24 added after review give every headline zero a mutant (`other`, `many`,
   `several_same`, `inconsistent`, each `whole_streams` key), and cover the `read` filters and the fence, `MIXED`, span
-  and unavailable counts. The last 13 make the claims check able to fail. No Lean or Rust code changed.
-- **Claims:** [claims.py](claims.py) checks both reports against C4, C5, C6 and q1-3's C1 (79 units): each summary,
+  and unavailable counts. The next 13 make the claims check able to fail, and the last 10 its population, universal
+  claim and `Compared with` checks (recheck F13, F14). No Lean or Rust code changed.
+- **Claims:** [claims.py](claims.py) checks both reports against C4, C5, C6 and q1-3's C1 (81 units): each summary,
   headline and conclusion sentence cites its key or is listed as no claim with its reason, each bullet and row of the
   q1-3b section cites one, each key exists, each number is its key's value, each headline claim without a number holds
-  of the evidence (`TRUTHS`), and no wording of a refuted premise stays.
+  of the evidence (`TRUTHS`), and no wording of a refuted premise stays. Each universal claim ("none", "never", "no
+  ... reads") sits inside the words of a `TRUTHS` row, whose check counts every unit of its population with no answer
+  and not asked as unknown, never as "does not read" (recheck F13). Each cell of the table's `Compared with` column is
+  a comparison the evidence shows, or says `not compared` (recheck F14: the norm documents' values are 14 git blob ids
+  and one SHA-256, which the run records and nothing compares).
   Its logic is tested on fixtures (`test_a_claim_must_cite_a_key_that_holds_its_numbers`,
-  `test_the_old_premises_sentence_fails_the_claims_check`, `test_a_headline_claim_must_hold_of_the_evidence`); the run over the saved evidence stays a batch probe (D4).
+  `test_the_old_premises_sentence_fails_the_claims_check`, `test_a_headline_claim_must_hold_of_the_evidence`,
+  `test_none_of_a_population_reads_only_when_each_has_an_answer`, `test_a_universal_claim_needs_a_truths_row`,
+  `test_each_compared_with_cell_names_a_comparison_the_evidence_holds`); the run over the saved evidence stays a batch probe (D4).
 - **Samples:** [samples.py](samples.py) saves C5 and C6 to `evidence/samples.json`. C6 reads under changed profile
   lists, so its outcomes name the cause of `soft-chain`'s refusal and are never C4's answers.
 - **Trust:** `tools/trust_map.py --check` gives K +0, S +0 and trusted +0 (PASS). There is no allowance and no
@@ -120,7 +127,7 @@ rendered English, not its text. This run does not measure rendered English. The 
 
 1. N.A.: no relayed route is added. Every answer is checked by the relay's `question_problem` or `response_problem` (`ask`, `read_sentences`); a failed service is `unavailable` (`test_a_failed_service_is_unavailable_not_a_crash`).
 2. PASS: the five rows above. No in-flight branch shares a file. There is no Python copy of a Lean decision (each fronting is Lean's to decide; the closest is Lean's, checked against the leftmost tie).
-3. PASS: [mutants.json](mutants.json), 49 of 49 killed, the three the task names among them.
+3. PASS: [mutants.json](mutants.json), 59 of 59 killed, the three the task names among them.
 4. N.A.: no reader changes; Lean's closest agrees with the leftmost tie of its own reads in 5,183 of 5,183 (1,442 with a choice).
 5. N.A.: no new relayed field.
 6. PASS: the evidence commit and the HEAD difference are stated above; the chain runs the gate on the final HEAD.
