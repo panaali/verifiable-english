@@ -1,0 +1,24 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.IntendedActs",
+   "operator": "body-true",
+   "reason": "a Prop over every structure, which no check can evaluate; the mutant breaks elaborate_faithful and intendedActsB_iff (the proofs the detail names), and docs/act-phrases/ap-3dd/mutants.json plants IntendedActs with its Bool mirror so that named #guards fail"
+  },
+  {
+   "definition": "VE.Acts.IntendedActs",
+   "operator": "body-false",
+   "reason": "a Prop over every structure, which no check can evaluate; the mutant breaks elaborate_faithful and intendedActsB_iff (the proofs the detail names), and docs/act-phrases/ap-3dd/mutants.json plants IntendedActs with its Bool mirror so that named #guards fail"
+  },
+  {
+   "definition": "VE.Acts.readAs",
+   "operator": "eq-le",
+   "reason": "a Prop-valued relation: a check reads it only through a Decidable instance whose term changes with the mutant, which the tool refuses to count. The guards on `reads` in FaithfulExamples.lean do refute this mutant (its detail names one), and it breaks elaborate_faithful and readAs_asStructure"
+  },
+  {
+   "definition": "VE.Acts.readAs",
+   "operator": "eq-ne",
+   "reason": "a Prop-valued relation: a check reads it only through a Decidable instance whose term changes with the mutant, which the tool refuses to count. The guards on `reads` in FaithfulExamples.lean do refute this mutant (its detail names one), and it breaks elaborate_faithful and readAs_asStructure"
+  }
+ ]
+}
