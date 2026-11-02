@@ -88,6 +88,12 @@ Python relay and no authority change. Those are the layer's later steps, each wi
   `modal` flag. The rows therefore read the regulated declarations as the norms route decodes them
   (`regulatedOf`, 2.5). `Env.source`'s comment, 'read by `typedDocument` only' (`Lexicon.lean:356`), is then
   no longer true. A one-line comment hunk in `Lexicon.lean` joins the shared files.
+- **R7. A soft-norms environment is decoded without its soft constructs** (en-s6b; DRI decision
+  reviews/dri-decisions-20261102-en-s6b.md item 2). W1's decoder refuses `soft-norms@0`, and both pinned
+  environments name it, so R6's `regulatedOf` would be `[]` there and no pinned block could read. Python's
+  `_consequence` reads `regulated` under either profile. An environment whose `profiles` name `soft-norms@0` is
+  therefore decoded after `VE.SoftNorms.Wire.stripSoft`, as the soft route decodes it; any other environment is
+  decoded as R6 states.
 
 ## 2. Definitions
 
@@ -269,9 +275,12 @@ def Polarity.fits : Polarity → VE.Norms.Role → Bool
   | .plain _, .plain => true
   | _, _ => false
 
-/-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). -/
+/-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). R7: an
+environment that names `soft-norms@0` is decoded without its soft constructs. -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
-  match VE.Norms.Wire.decodeNormsEnvironment E.source (acts := true) with
+  let soft := (VE.Route.Gate.profilesOf E.source).toOption.any (·.contains VE.SoftNorms.Wire.softProfile)
+  match (if soft then VE.SoftNorms.Wire.stripSoft E.source else .ok E.source) >>=
+      (VE.Norms.Wire.decodeNormsEnvironment · (acts := true)) with
   | .ok ne => ne.regulated
   | .error _ => []
 

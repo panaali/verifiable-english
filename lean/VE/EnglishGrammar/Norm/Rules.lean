@@ -23,11 +23,14 @@ def Polarity.fits : Polarity → VE.Norms.Role → Bool
   | .plain _, .plain => true
   | _, _ => false
 
-/-- R6: the regulated declarations, as the norms routes decode them (`decodeSource`, `Wire.lean:371`): a soft-norms
-environment without its soft constructs, as the soft route strips them (`VE.SoftNorms.Wire.stripSoft`), since W1's decoder
-refuses the profile and Python's `_consequence` reads `regulated` under either. -/
+/-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). R7: an
+environment that names `soft-norms@0` is decoded without its soft constructs, as the soft route strips them
+(`VE.SoftNorms.Wire.stripSoft`): W1's decoder refuses the profile, and Python's `_consequence` reads `regulated` under
+either (DRI decision 20261102-en-s6b item 2). -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
-  match VE.SoftNorms.Wire.stripSoft E.source >>= (VE.Norms.Wire.decodeNormsEnvironment · (acts := true)) with
+  let soft := (VE.Route.Gate.profilesOf E.source).toOption.any (·.contains VE.SoftNorms.Wire.softProfile)
+  match (if soft then VE.SoftNorms.Wire.stripSoft E.source else .ok E.source) >>=
+      (VE.Norms.Wire.decodeNormsEnvironment · (acts := true)) with
   | .ok ne => ne.regulated
   | .error _ => []
 
@@ -139,8 +142,7 @@ def NormAct.action (τs : List Ty) : NormAct → Action sig
 /-- `acts E L` first and unchanged, then the norm actions. -/
 def normActs (E : Env) (L : Lexicon) : Array (VE.Grammar.Action sig) :=
   let τ := normTy E L
-  let n := (grammar E L).rank.size
-  acts E L ++ normRows.map (fun r => r.act.action (rhsTys τ (r.rhs.map (·.sym n)))) ++
+  acts E L ++ normRows.map (fun r => r.act.action (rhsTys τ (r.rhs.map (·.sym (baseSize E))))) ++
     (consequences E L).toArray.map fun (syms, c, σ) => constant .consequence (c, σ) (rhsTys τ syms)
 
 def prefixMap : VE.Grammar.RuleMap := ⟨id, id⟩
