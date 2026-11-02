@@ -6,9 +6,10 @@ import VE.Service.Document
 /-! # Discourse on the chain: documents, cases and the composed admission (docs/spec/discourse.md 14.4 to 14.6)
 
 A `ve.discourse@1` document with a chain construct (14.2, `chainConstructs`) on a list with `norms@0` takes the
-composed path: the wrapper checks of 3.5 (1), the document table and integrity, `definitions_version`, the manifest,
-`resolveDocument`, and the admission of the route `dispatch` chooses for the base list on `chainDocument` of the
-resolved payload. Every other input is today's `admitDiscourse` (`composed_unchanged`).
+composed path: the wrapper checks of 3.5 (1), the document table and integrity, `definitions_version`, the manifest
+checks of 4.1 (`chainChecks`: the `@1` part loaded as the document mode loads it, then today's `wellFormed` on
+`chainDDoc`, `composed_wellFormed`), `resolveDocument`, and the admission of the route `dispatch` chooses for the base
+list on `chainDocument` of the resolved payload. Every other input is today's `admitDiscourse` (`composed_unchanged`).
 
 Item cmp-s4 builds the composed path without the fence compiler's slot steps (14.3 steps 1 and 3 to 7, item
 cmp-s4ab), so three inputs are named abstentions on it, as the loader's are today (11): a fenced unit
@@ -86,12 +87,87 @@ def resolveDocument (environment j : Json) : Except String Json := do
   let (_, K, _) ← chainBase environment j
   resolveWith K j
 
+/-- A resolved payload written out as a `ve-document@1` text over `source`: its front matter with `environment` the
+base environment, `format` `ve-document@1` and no `discourse` key. -/
+def writtenText (environment r : Json) (source : String) : Json :=
+  let front := match ((Loader.metaOf r).setObjVal! "environment" (baseEnvironment environment)).setObjVal! "format"
+      (.str "ve-document@1") with
+    | .obj kvs => Json.obj (kvs.erase "discourse")
+    | f => f
+  .str ("---\n" ++ front.compress ++ "\n---\n" ++ source)
+
+/-- A unit or part as W2 reads it on the composed path: its id, span and kind, and its content only when it is an
+`ast` formula (a chain content is no W2 formula: the chain route reads it, `chainUnit`). -/
+def formulaUnit (u : Json) : Json :=
+  Json.mkObj ([("id", u.getObjValD "id"), ("span", u.getObjValD "span"), ("kind", u.getObjValD "kind")] ++
+    match (u.getObjValD "content").getObjVal? "ast" with
+    | .ok f => [("content", f)]
+    | .error _ => [])
+
+/-- The document `prepare` builds, on the composed path (14.5 step 4): the mentions on tokens, W2's units carrying
+their `ast` formulas, each chain content's unit a unit with meaning (`DDoc.chain`); the document sort checked as
+today. -/
+def chainDDoc (environment j : Json) (K : Manifest) : Except String DDoc := do
+  let bp := baseProfiles ((VE.Route.Gate.profilesOf environment).toOption.getD [])
+  let rv := (← VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment environment)).rv
+  let front := Loader.metaOf j
+  let units := (← (← (front.getObjValD "units").getArr?).toList.mapM Loader.partsOf).flatten
+  let openTerms := ((Loader.optionalList front "open_terms").getArr?.toOption.getD #[]).map (·.getObjValD "name")
+  let base₀ ← VE.Route.Admission.decodeDoc rv (bp.contains "data@0") (Json.mkObj [
+    ("units", .arr (units.map formulaUnit).toArray), ("lemmas", Loader.optionalList front "lemmas"),
+    ("open_terms", .arr openTerms)])
+  let base := { base₀ with literals := rv.literals, flags := rv.flags }
+  let prose := Loader.sourceOf j
+  let src : Wire.Source := ⟨prose⟩
+  let tokK ← Wire.toTokenSpans src base K
+  documentSortOk rv tokK
+  let chain := (units.filter fun u => (contentKey u).any chainKeys.contains).filterMap fun u =>
+    (u.getObjValD "id").getStr?.toOption
+  pure
+    { E := rv.environment, base, K := tokK, sourceId := Loader.sourceId bp prose, text := src.text base, sets := [],
+      status := [], prose, files := j.getObjValD "files", nouns := sortNouns environment, chain }
+
+/-- 14.5 step 4 on a payload: the manifest checks of 4.1 with this item's steps of 14.3. In order: each unit's
+14.3 step 6 and this item's abstentions (`contentOk`); 4.1(1), the `@1` part loaded as the document mode loads it
+(`Document.check` without the claim graph, on the written-out text under the base pair: every unit check, the byte
+partition and each chain content's own checks); then `wellFormed` (4.1(2) to (8)) on `chainDDoc`. These are the
+functions today's admission runs. -/
+def chainChecks (environment j : Json) (K : Manifest) : Except String Unit := do
+  (unitsAndParts (Loader.metaOf j)).forM (contentOk K)
+  let _ ← VE.Service.Document.check (← (writtenText environment j (Loader.sourceOf j)).getStr?) (withGraph := false)
+  wellFormed (← chainDDoc environment j K)
+
+/-- What `chainChecks` passes is a well-formed document (4.1). -/
+theorem chainChecks_wellFormed (environment j : Json) (K : Manifest) (h : chainChecks environment j K = .ok ()) :
+    ∃ D, chainDDoc environment j K = .ok D ∧ wellFormed D = .ok () := by
+  unfold chainChecks at h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨D, hD, h⟩ := VE.Order.ProfileGate.bind_ok h
+  exact ⟨D, hD, h⟩
+
 /-- The environment (`E` before any generated symbol: the declared vocabulary the chain's decoder reads, norms
     4.1) and the manifest of a case `{"id", "document"}`, from its document's front matter, under the base pair. -/
 def caseManifest (j : Json) : Except String (VE.Environment × Manifest) := do
   let s ← Loader.splitText (← VE.Bridge.stringField j "document")
-  let (E, K, _) ← chainBase (s.front.getObjValD "environment") (Loader.payload s (j.getObjValD "files"))
-  pure (E, K)
+  let environment := s.front.getObjValD "environment"
+  let p := Loader.payload s (j.getObjValD "files")
+  let b ← chainBase environment p
+  -- a manifest handed out has passed 14.5 step 4, as the composed path's has
+  chainChecks environment p b.2.1
+  pure (b.1, b.2.1)
+
+/-- A manifest `caseManifest` hands out is the manifest of a well-formed document (14.5 step 4). -/
+theorem caseManifest_wellFormed (j : Json) (E : VE.Environment) (K : Manifest) (h : caseManifest j = .ok (E, K)) :
+    ∃ environment p D, chainDDoc environment p K = .ok D ∧ wellFormed D = .ok () := by
+  unfold caseManifest at h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hc, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  exact ⟨_, _, chainChecks_wellFormed _ _ _ hc⟩
 
 /-- `f` on each field of an object, its key kept; any other value unchanged. -/
 def editObj (f : String → Json → Json) : Json → Json
@@ -135,15 +211,6 @@ def caseShape (j : Json) : Json :=
   let (id, shape) := caseParts j
   Json.mkObj [("id", match id with | some i => .str i | none => .null),
     ("document", match shape with | some (source, front) => Json.arr #[.str source, .str front] | none => .null)]
-
-/-- A resolved payload written out as a `ve-document@1` text over `source`: its front matter with `environment` the
-base environment, `format` `ve-document@1` and no `discourse` key. -/
-def writtenText (environment r : Json) (source : String) : Json :=
-  let front := match ((Loader.metaOf r).setObjVal! "environment" (baseEnvironment environment)).setObjVal! "format"
-      (.str "ve-document@1") with
-    | .obj kvs => Json.obj (kvs.erase "discourse")
-    | f => f
-  .str ("---\n" ++ front.compress ++ "\n---\n" ++ source)
 
 /-- `resolveCase` on a case that lists `ve.discourse@1`. -/
 def resolveOn (j : Json) : Except String Json := do
@@ -220,6 +287,8 @@ def chainDocument (environment resolved : Json) : Except String Json := do
   let graph ← (front.getObjVal? "graph").mapError fun _ => Loader.notImplemented "a document without a claim graph"
   let units ← (← (front.getObjValD "units").getArr?).toList.mapM Loader.partsOf
   let openTerms := ((Loader.optionalList front "open_terms").getArr?.toOption.getD #[]).map (·.getObjValD "name")
+  -- no reading sets and no narrowings: step 1 refuses reading sets, and `chainChecks`'s load refuses a narrowing
+  -- that cites none (`narrowing cites unknown reading set version`)
   pure (Json.mkObj [("units", Json.arr (units.flatten.map chainUnit).toArray), ("graph", graph),
     ("lemmas", Loader.optionalList front "lemmas"), ("open_terms", .arr openTerms),
     ("reading_sets", .arr #[]), ("narrowings", .arr #[])])
@@ -266,7 +335,7 @@ def chainReferences (front : Json) : Except String Json :=
   let r := referencesJson front []
   if (conditionalOnOf r).isEmpty then .ok r else .error "InvalidInput: a reference line carries conditional_on"
 
-/-- The composed path (14.5 steps 1 to 7). The chain document is charged against `Loader.maxDocumentBytes`, the
+/-- The composed path (14.5 steps 1 to 7; step 4 is `chainChecks`). The chain document is charged against `Loader.maxDocumentBytes`, the
 loader's limit on a document text, before the chain route reads it. -/
 def admitChain (profiles : List String) (environment j : Json) : Except String ChainAdmitted := do
   wrapperOk profiles environment j
@@ -274,6 +343,7 @@ def admitChain (profiles : List String) (environment j : Json) : Except String C
   integrityOk j (tablesOf j).1 (tablesOf j).2
   let b ← chainBase environment j
   req (b.2.1.definitionsVersion == b.2.2) ("StaleTarget: definitions@" ++ b.2.1.definitionsVersion)
+  chainChecks environment j b.2.1
   let resolved ← resolveWith b.2.1 j
   let route ← VE.Compose.dispatch (baseProfiles profiles)
   let d ← chainDocument (baseEnvironment environment) resolved
@@ -326,6 +396,7 @@ theorem composed_admission (profiles : List String) (environment j : Json) (c : 
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨resolved, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨route, hroute, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨d, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -345,6 +416,22 @@ theorem composed_path (profiles : List String) (environment j : Json) (c : Chain
   (admitChain_of profiles environment j c h).1
 
 
+/-- 14.5 step 4: the composed path admits only a document that is well-formed (4.1) as `chainDDoc` reads it. -/
+theorem composed_wellFormed (profiles : List String) (environment j : Json) (c : ChainAdmitted)
+    (h : admitComposed profiles environment j = .ok (.chain c)) :
+    ∃ b D, chainBase environment j = .ok b ∧ chainDDoc environment j b.2.1 = .ok D ∧ wellFormed D = .ok () := by
+  have h := (admitChain_of profiles environment j c h).2
+  unfold admitChain at h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hc, _⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨D, hD, hw⟩ := chainChecks_wellFormed _ _ _ hc
+  exact ⟨b, D, hb, hD, hw⟩
+
+
 theorem chainReferences_ok (front r : Json) (h : chainReferences front = .ok r) : conditionalOnOf r = [] := by
   unfold chainReferences at h
   simp only at h
@@ -360,7 +447,7 @@ theorem conditions_retained (profiles : List String) (environment j : Json) (c :
   have h := (admitChain_of profiles environment j c h).2
   unfold admitChain at h
   have hrefs : conditionalOnOf c.references = [] := by
-    iterate 11 obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    iterate 12 obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨r, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     cases h; exact chainReferences_ok _ r hr

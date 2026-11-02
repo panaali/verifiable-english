@@ -97,6 +97,84 @@ def large : String :=
 #guard composed (doc (discourse := mention "u1")) == "error: NotImplemented: a bound prose unit on the chain"
 #guard composed (doc (us := units (some "{\"fence\": \"u2\"}"))) == "error: NotImplemented: fenced content on the chain"
 
+/-! ## 14.5 step 4: the manifest checks of 4.1 on the composed path (review cmp-s4 F1)
+
+Each mutation is applied to the chain document and to its twin without a chain construct (`u2` an `ast` unit,
+no regulated predicate, no `norms@0`), which today's admission reads. The composed path refuses each with today's
+diagnostic: the `@1` part's load (4.1(1)), then `wellFormed` (4.1(2) to (8)), the same functions. -/
+
+-- PROBE F1 (review cmp-s4): a gap in the unit spans, and an unrecorded `It` in a norm unit (S4-14's class)
+#guard (composed (doc (us := "[" ++ u1 ++ ", " ++ normUnit "u2" 21 51 ++ "]"))).startsWith "error: "
+#guard (composed (doc (us := "[" ++ u1 ++ ", " ++ normUnit "u2" 21 56 ++ "]") (body := src1 ++ "It must be reviewed when deployed.\n"))).startsWith "error: "
+
+def astUnit (id : String) (a b : Nat) (support := "assumption") : String :=
+  s!"\{\"id\": \"{id}\", \"span\": [{a}, {b}], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"{support}\", " ++
+  "\"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"web_api\"]]}}"
+
+/-- A mutation of the parts both documents share. -/
+structure Mutation where
+  u1 : String := u1
+  stop : Nat := (src1 ++ src2).utf8ByteSize
+  body : String := src1 ++ src2
+  discourse : String := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": []}"
+  rest : String := ", " ++ graph
+
+def chainOf (m : Mutation) : String :=
+  doc (us := "[" ++ m.u1 ++ ", " ++ normUnit "u2" 21 m.stop ++ "]") (body := m.body) (discourse := m.discourse)
+    (rest := m.rest)
+def twinOf (m : Mutation) : String :=
+  doc (profiles := "\"relational-fol@0\", \"ve.discourse@1\"") (regulated := false)
+    (us := "[" ++ m.u1 ++ ", " ++ astUnit "u2" 21 m.stop ++ "]") (body := m.body) (discourse := m.discourse)
+    (rest := m.rest)
+def block (entries : String) : String := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": []" ++ entries ++ "}"
+def navigations (n : Nat) : String :=
+  ", \"mentions\": [" ++ ", ".intercalate ((List.range n).map fun i => s!"\{\"id\": \"m{i}\", \"unit\": \"u1\", " ++
+    "\"span\": [0, 3], \"form\": \"navigation\", \"target\": {\"kind\": \"unit\", \"units\": [\"u2\"]}}") ++ "]"
+def itBody : String := src1 ++ "It must be reviewed when deployed.\n"
+
+/-- Each mutation and today's diagnostic of it. -/
+def mutations : List (Mutation × String) := [
+  ({ stop := 51 }, "unit spans do not partition all source bytes"),
+  ({ u1 := astUnit "u1" 0 21 "bogus" }, "invalid support"),
+  ({ u1 := "{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", " ++
+      "\"meaning_id\": \"x\", \"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"web_api\"]]}}" },
+    "unit meaning id does not match content"),
+  ({ rest := ", " ++ graph ++ ", \"narrowings\": [{\"id\": \"n1\", \"set\": \"s\", \"version\": 1, \"keeps\": [\"a\"], " ++
+      "\"by\": \"r\", \"reason_spans\": [\"u1\"]}]" }, "narrowing cites unknown reading set version"),
+  ({ discourse := block (", \"mentions\": [{\"id\": \"m1\", \"unit\": \"u9\", \"span\": [0, 3], \"form\": \"pronoun\", " ++
+      "\"target\": {\"kind\": \"entity\", \"name\": \"nobody\"}}]") }, "InvalidInput: mention m1 names an unknown unit"),
+  ({ discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [{\"id\": \"a\", \"kind\": \"section\", " ++
+      "\"label\": \"A\", \"span\": [0, 30]}, {\"id\": \"b\", \"kind\": \"section\", \"label\": \"B\", \"span\": [10, 50]}]}" },
+    "InvalidInput: anchors must form one tree"),
+  ({ discourse := block ", \"names\": [{\"constant\": \"nobody\", \"display\": \"Nobody\", \"scope\": \"root\"}]" },
+    "InvalidInput: name nobody is not a declared constant"),
+  ({ discourse := block (navigations 4097) }, "ResourceLimit: mentions"),
+  ({ discourse := block (navigations 2) }, "InvalidInput: mentions m0, m1 overlap"),
+  ({ stop := 56, body := itBody }, "UnrecordedSlot: u2: [21, 23)"),
+  ({ body := "It is deployed here.\n" ++ src2 }, "UnrecordedSlot: u1: [0, 2)"),
+  ({ stop := 56, body := itBody, discourse := block (", \"mentions\": [{\"id\": \"m1\", \"unit\": \"u2\", \"span\": [21, 23], " ++
+      "\"form\": \"pronoun\", \"target\": {\"kind\": \"unit\", \"units\": [\"u1\"]}}]") }, "TargetKindMismatch: m1: pronoun, unit"),
+  ({ discourse := block ", \"self_truth\": [\"u1\"]" }, "InvalidInput: self-truth unit u1"),
+  ({ discourse := block ", \"document_sort\": \"service\"" }, "InvalidInput: document sort service has other constants")]
+
+-- the unmutated pair is admitted on both paths, so each refusal below is the mutation's
+#guard (composed (chainOf {})).startsWith "chain "
+#guard (today (twinOf {})).startsWith "today "
+-- each mutation: today's diagnostic on the twin, the same on the composed path
+#guard mutations.all fun (m, e) => today (twinOf m) == "error: " ++ e
+#guard mutations.all fun (m, e) => composed (chainOf m) == "error: " ++ e
+-- one navigation mention is no fault: a recorded location binding passes the checks on both paths
+#guard (composed (chainOf { discourse := block (navigations 1) })).startsWith "chain "
+#guard (today (twinOf { discourse := block (navigations 1) })).startsWith "today "
+-- `caseManifest` hands out a manifest only after the same checks
+#guard ((caseManifest (caseOf (chainOf { discourse := block (navigations 1) }))).toOption.map (·.2.mentions.map (·.id))) ==
+  some ["m0"]
+#guard mutations.all fun (m, e) => match caseManifest (caseOf (chainOf m)) with
+  | .error e' => e' == e
+  | .ok _ => false
+#guard (match caseManifest (caseOf (doc (discourse := mention "u2"))) with
+  | .error e => e | .ok _ => "") == "MentionNotSlot: m1"
+
 /-! ## Identity cases (14.6): today's answer, byte for byte -/
 
 def alpha (profiles : String) : String :=
