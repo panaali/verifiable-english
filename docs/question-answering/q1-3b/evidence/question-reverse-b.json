@@ -1,9 +1,11 @@
 {
  "closest": {
   "by_form": {
-   "f1": 3746,
-   "f2": 1506
+   "f1": 3741,
+   "f2": 1502
   },
+  "distinct_measured": 364,
+  "distinct_no_reading": 1336,
   "examples": [
    {
     "bytes": 283,
@@ -117,11 +119,11 @@
    }
   ],
   "inconsistent": [],
-  "leftmost_tie": 1314,
-  "measured": 1446,
-  "moved_second": 1406,
-  "moved_second_tied": 1286,
-  "named": 5252,
+  "leftmost_tie": 1310,
+  "measured": 1442,
+  "moved_second": 1402,
+  "moved_second_tied": 1282,
+  "named": 5243,
   "named_unmatched": [
    {
     "bytes": 165,
@@ -304,678 +306,742 @@
     "status": "none"
    }
   ],
-  "no_reading": 5252,
+  "no_reading": 5243,
   "not_named": 0,
   "not_the_readers": 1239,
-  "one_candidate": 3746,
-  "reader_known": 1430,
-  "share_moved_second": 0.972337,
-  "share_not_the_readers": 0.866434,
-  "share_tied": 0.908714,
-  "tied": 1314,
+  "one_candidate": 3741,
+  "reader_known": 1426,
+  "share_moved_second": 0.972261,
+  "share_not_the_readers": 0.868864,
+  "share_tied": 0.90846,
+  "tied": 1310,
   "unique": 132
  },
- "commit": "5728eb968c2b4ba37c0b5bdf6e5b4c85e097b692",
+ "commit": "5c56edcec67a22caaae325fcde45546bb5b2ea60",
  "configs": {
   "accepted-suggestions": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 1821.215,
+   "max_ms": 7433.527,
    "one_formula": 5000,
-   "p95_ms": 271.933,
+   "p95_ms": 884.129,
    "questions": 22228,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "54d49514d1092952a67eff92d17a48e186f45160a1cf4cdb46dd5b0df4c551c7"
+   "stream_sha256": "54d49514d1092952a67eff92d17a48e186f45160a1cf4cdb46dd5b0df4c551c7",
+   "unavailable": 0
   },
   "adopted-unary": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 12007.252,
+   "max_ms": 6317.82,
    "one_formula": 5000,
-   "p95_ms": 937.651,
+   "p95_ms": 1337.96,
    "questions": 19555,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "5aa822f69995c452af5ac2a279be1fdb134f2acedd06c6987d01e06f20a9932f"
+   "stream_sha256": "5aa822f69995c452af5ac2a279be1fdb134f2acedd06c6987d01e06f20a9932f",
+   "unavailable": 0
   },
   "birthright-citizenship-debate": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 727.016,
+   "max_ms": 7876.56,
    "one_formula": 5000,
-   "p95_ms": 220.907,
+   "p95_ms": 1102.533,
    "questions": 25962,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "9596263af6e37d81f28b1dcbcd09f60c05521566c68f4933b0a73e3755e14745"
+   "stream_sha256": "9596263af6e37d81f28b1dcbcd09f60c05521566c68f4933b0a73e3755e14745",
+   "unavailable": 0
   },
   "birthright-citizenship-debate-reviewed": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 5135.852,
+   "max_ms": 2969.831,
    "one_formula": 5000,
-   "p95_ms": 778.255,
+   "p95_ms": 835.673,
    "questions": 18849,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "b27f0ae0719880b143fe8ccc4a32cbbcc983cf0bb88e3d5c211f49715b97fecc"
+   "stream_sha256": "b27f0ae0719880b143fe8ccc4a32cbbcc983cf0bb88e3d5c211f49715b97fecc",
+   "unavailable": 0
   },
   "claude-constitution-excerpt": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 6600.964,
+   "max_ms": 16764.663,
    "one_formula": 5000,
-   "p95_ms": 797.294,
+   "p95_ms": 3173.166,
    "questions": 19205,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "1826ace287a929fdfa54d0d9863966aca2df07ea267d11f6a9ae3704751b6264"
+   "stream_sha256": "1826ace287a929fdfa54d0d9863966aca2df07ea267d11f6a9ae3704751b6264",
+   "unavailable": 0
   },
   "claude-constitution-excerpt-reviewed": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 20439.937,
+   "max_ms": 51468.123,
    "one_formula": 5000,
-   "p95_ms": 3383.016,
+   "p95_ms": 1854.944,
    "questions": 17929,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "cbdda48ef431b2923d779f37103eff838083ab267802804fa70b836cf891a7fd"
+   "stream_sha256": "cbdda48ef431b2923d779f37103eff838083ab267802804fa70b836cf891a7fd",
+   "unavailable": 0
   },
   "closure": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 1234.188,
+   "max_ms": 2466.341,
    "one_formula": 5000,
-   "p95_ms": 371.389,
+   "p95_ms": 570.207,
    "questions": 20203,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "90a778acbc422a80a3a79419eafe5d52b5c904fd90ddf5d372ce931ae0ffe3d7"
+   "stream_sha256": "90a778acbc422a80a3a79419eafe5d52b5c904fd90ddf5d372ce931ae0ffe3d7",
+   "unavailable": 0
   },
   "colliding_aliases": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 2199.498,
+   "max_ms": 4818.864,
    "one_formula": 5000,
-   "p95_ms": 414.897,
+   "p95_ms": 793.909,
    "questions": 19566,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "fd0c851e92fb64365fb21ccb721c6105dee8df774b76d9a231fede5d578c34f2"
+   "stream_sha256": "fd0c851e92fb64365fb21ccb721c6105dee8df774b76d9a231fede5d578c34f2",
+   "unavailable": 0
   },
   "english-mixed:accepted-suggestions": {
    "asked": 161,
    "drawn": 161,
-   "max_ms": 803.623,
+   "max_ms": 587.542,
    "one_formula": 161,
-   "p95_ms": 345.783,
+   "p95_ms": 249.845,
    "questions": 509,
    "sentences": 161,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:adopted-unary": {
    "asked": 120,
    "drawn": 120,
-   "max_ms": 1916.713,
+   "max_ms": 1066.982,
    "one_formula": 120,
-   "p95_ms": 815.523,
+   "p95_ms": 510.981,
    "questions": 348,
    "sentences": 120,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:birthright-citizenship-debate": {
    "asked": 120,
    "drawn": 120,
-   "max_ms": 846.53,
+   "max_ms": 716.473,
    "one_formula": 120,
-   "p95_ms": 367.818,
+   "p95_ms": 328.914,
    "questions": 404,
    "sentences": 120,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:birthright-citizenship-debate-reviewed": {
    "asked": 121,
    "drawn": 121,
-   "max_ms": 2061.667,
+   "max_ms": 1604.351,
    "one_formula": 121,
-   "p95_ms": 870.873,
+   "p95_ms": 669.992,
    "questions": 356,
    "sentences": 121,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:claude-constitution-excerpt": {
    "asked": 569,
    "drawn": 569,
-   "max_ms": 3843.159,
+   "max_ms": 2785.959,
    "one_formula": 569,
-   "p95_ms": 775.138,
+   "p95_ms": 583.13,
    "questions": 1546,
    "sentences": 569,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:claude-constitution-excerpt-reviewed": {
    "asked": 568,
    "drawn": 568,
-   "max_ms": 6592.928,
+   "max_ms": 5379.807,
    "one_formula": 568,
-   "p95_ms": 1841.506,
+   "p95_ms": 1382.721,
    "questions": 1526,
    "sentences": 568,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:closure": {
    "asked": 161,
    "drawn": 161,
-   "max_ms": 1227.953,
+   "max_ms": 566.783,
    "one_formula": 161,
-   "p95_ms": 424.158,
+   "p95_ms": 268.199,
    "questions": 465,
    "sentences": 161,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:colliding_aliases": {
    "asked": 161,
    "drawn": 161,
-   "max_ms": 1023.588,
+   "max_ms": 835.149,
    "one_formula": 161,
-   "p95_ms": 528.233,
+   "p95_ms": 291.508,
    "questions": 477,
    "sentences": 161,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:function_identifiers": {
    "asked": 209,
    "drawn": 209,
-   "max_ms": 1222.342,
+   "max_ms": 602.925,
    "one_formula": 209,
-   "p95_ms": 374.219,
+   "p95_ms": 270.053,
    "questions": 629,
    "sentences": 209,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:function_words": {
    "asked": 161,
    "drawn": 161,
-   "max_ms": 1225.853,
+   "max_ms": 997.601,
    "one_formula": 161,
-   "p95_ms": 428.22,
+   "p95_ms": 293.645,
    "questions": 460,
    "sentences": 161,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:nary": {
    "asked": 123,
    "drawn": 123,
-   "max_ms": 1067.747,
+   "max_ms": 885.718,
    "one_formula": 123,
-   "p95_ms": 267.33,
+   "p95_ms": 223.582,
    "questions": 325,
    "sentences": 123,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:news-article": {
    "asked": 876,
    "drawn": 876,
-   "max_ms": 3751.097,
+   "max_ms": 2191.772,
    "one_formula": 876,
-   "p95_ms": 947.473,
+   "p95_ms": 741.584,
    "questions": 2090,
    "sentences": 876,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:news-article-reviewed": {
    "asked": 881,
    "drawn": 881,
-   "max_ms": 4592.328,
+   "max_ms": 2927.846,
    "one_formula": 881,
-   "p95_ms": 1863.736,
+   "p95_ms": 1252.153,
    "questions": 2208,
    "sentences": 881,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:order": {
    "asked": 119,
    "drawn": 119,
-   "max_ms": 989.73,
+   "max_ms": 556.455,
    "one_formula": 119,
-   "p95_ms": 396.707,
+   "p95_ms": 224.531,
    "questions": 374,
    "sentences": 119,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:ordinary": {
    "asked": 159,
    "drawn": 159,
-   "max_ms": 1048.441,
+   "max_ms": 756.963,
    "one_formula": 159,
-   "p95_ms": 533.148,
+   "p95_ms": 252.6,
    "questions": 455,
    "sentences": 159,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:precision_templates": {
    "asked": 159,
    "drawn": 159,
-   "max_ms": 846.919,
+   "max_ms": 703.711,
    "one_formula": 159,
-   "p95_ms": 408.459,
+   "p95_ms": 248.267,
    "questions": 452,
    "sentences": 159,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:us-constitution-14th-s1": {
    "asked": 202,
    "drawn": 202,
-   "max_ms": 1712.109,
+   "max_ms": 1325.556,
    "one_formula": 202,
-   "p95_ms": 795.362,
+   "p95_ms": 668.192,
    "questions": 604,
    "sentences": 202,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "english-mixed:us-constitution-14th-s1-reviewed": {
    "asked": 203,
    "drawn": 203,
-   "max_ms": 2692.663,
+   "max_ms": 1717.725,
    "one_formula": 203,
-   "p95_ms": 1381.72,
+   "p95_ms": 1011.892,
    "questions": 597,
    "sentences": 203,
-   "stream": "english-mixed"
+   "stream": "english-mixed",
+   "unavailable": 0
   },
   "function_identifiers": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 1595.559,
+   "max_ms": 27127.351,
    "one_formula": 5000,
-   "p95_ms": 343.414,
+   "p95_ms": 712.024,
    "questions": 21601,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "3833399ff2cd9608241628852217b2526b761c34a05fac860d52444d81eed438"
+   "stream_sha256": "3833399ff2cd9608241628852217b2526b761c34a05fac860d52444d81eed438",
+   "unavailable": 0
   },
   "function_words": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 2532.658,
+   "max_ms": 38876.579,
    "one_formula": 5000,
-   "p95_ms": 584.539,
+   "p95_ms": 729.496,
    "questions": 17370,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "4e25c87b1c16139828d32ad516c5acbfc8f96805f8e971e2d702c40d1fb60f11"
+   "stream_sha256": "4e25c87b1c16139828d32ad516c5acbfc8f96805f8e971e2d702c40d1fb60f11",
+   "unavailable": 0
   },
   "natural-view:docs/fluent-examples.md": {
    "asked": 6,
    "drawn": 6,
-   "max_ms": 342.295,
+   "max_ms": 283.666,
    "one_formula": 6,
-   "p95_ms": 342.295,
+   "p95_ms": 283.666,
    "questions": 17,
    "sentences": 6,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:examples/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 15.275,
+   "max_ms": 9.588,
    "one_formula": 1,
-   "p95_ms": 15.275,
+   "p95_ms": 9.588,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:examples/fluent/examples.ve": {
    "asked": 6,
    "drawn": 6,
-   "max_ms": 187.021,
+   "max_ms": 275.754,
    "one_formula": 6,
-   "p95_ms": 187.021,
+   "p95_ms": 275.754,
    "questions": 17,
    "sentences": 6,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:examples/premise.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 7.035,
+   "max_ms": 8.465,
    "one_formula": 1,
-   "p95_ms": 7.035,
+   "p95_ms": 8.465,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:examples/requirements.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 37.541,
+   "max_ms": 25.531,
    "one_formula": 3,
-   "p95_ms": 37.541,
+   "p95_ms": 25.531,
    "questions": 5,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/birthright-citizenship-debate": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 1861.202,
+   "max_ms": 923.4,
    "one_formula": 100,
-   "p95_ms": 436.766,
+   "p95_ms": 298.581,
    "questions": 468,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/claude-constitution-excerpt": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 4943.989,
+   "max_ms": 2282.05,
    "one_formula": 100,
-   "p95_ms": 1574.476,
+   "p95_ms": 1235.783,
    "questions": 431,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/closure": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 1708.912,
+   "max_ms": 1525.812,
    "one_formula": 100,
-   "p95_ms": 542.058,
+   "p95_ms": 390.828,
    "questions": 461,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/colliding_aliases": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 1280.894,
+   "max_ms": 919.629,
    "one_formula": 100,
-   "p95_ms": 373.415,
+   "p95_ms": 356.203,
    "questions": 400,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/function_identifiers": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 2388.522,
+   "max_ms": 1387.957,
    "one_formula": 100,
-   "p95_ms": 596.238,
+   "p95_ms": 505.208,
    "questions": 477,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/function_words": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 2368.874,
+   "max_ms": 1170.704,
    "one_formula": 100,
-   "p95_ms": 694.056,
+   "p95_ms": 429.661,
    "questions": 357,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/news-article": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 4796.441,
+   "max_ms": 3272.469,
    "one_formula": 100,
-   "p95_ms": 1542.326,
+   "p95_ms": 1534.623,
    "questions": 271,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/order": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 2206.256,
+   "max_ms": 1216.576,
    "one_formula": 100,
-   "p95_ms": 620.82,
+   "p95_ms": 510.262,
    "questions": 349,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/ordinary": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 1271.57,
+   "max_ms": 796.558,
    "one_formula": 100,
-   "p95_ms": 448.385,
+   "p95_ms": 343.074,
    "questions": 391,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/precision_templates": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 1558.213,
+   "max_ms": 996.336,
    "one_formula": 100,
-   "p95_ms": 417.746,
+   "p95_ms": 300.372,
    "questions": 456,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:roundtrip/us-constitution-14th-s1": {
    "asked": 100,
    "drawn": 100,
-   "max_ms": 3065.883,
+   "max_ms": 2401.923,
    "one_formula": 100,
-   "p95_ms": 704.33,
+   "p95_ms": 689.481,
    "questions": 760,
    "sentences": 100,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:tests/data/fluent-items.jsonl": {
    "asked": 6,
    "drawn": 6,
-   "max_ms": 202.911,
+   "max_ms": 244.596,
    "one_formula": 6,
-   "p95_ms": 202.911,
+   "p95_ms": 244.596,
    "questions": 17,
    "sentences": 6,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/claims.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 703.2,
+   "max_ms": 483.372,
    "one_formula": 2,
-   "p95_ms": 703.2,
+   "p95_ms": 483.372,
    "questions": 6,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test1-conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 33.478,
+   "max_ms": 49.348,
    "one_formula": 1,
-   "p95_ms": 33.478,
+   "p95_ms": 49.348,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test1-premises.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 836.202,
+   "max_ms": 442.528,
    "one_formula": 3,
-   "p95_ms": 836.202,
+   "p95_ms": 442.528,
    "questions": 8,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test2-conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 106.181,
+   "max_ms": 42.87,
    "one_formula": 1,
-   "p95_ms": 106.181,
+   "p95_ms": 42.87,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test2-premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 402.447,
+   "max_ms": 474.598,
    "one_formula": 2,
-   "p95_ms": 402.447,
+   "p95_ms": 474.598,
    "questions": 6,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test3-conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 73.21,
+   "max_ms": 45.532,
    "one_formula": 1,
-   "p95_ms": 73.21,
+   "p95_ms": 45.532,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test3-premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 360.101,
+   "max_ms": 175.429,
    "one_formula": 2,
-   "p95_ms": 360.101,
+   "p95_ms": 175.429,
    "questions": 3,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test4-conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 138.599,
+   "max_ms": 69.319,
    "one_formula": 1,
-   "p95_ms": 138.599,
+   "p95_ms": 69.319,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test4-premises.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 205.059,
+   "max_ms": 126.52,
    "one_formula": 3,
-   "p95_ms": 205.059,
+   "p95_ms": 126.52,
    "questions": 5,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test5-conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 227.544,
+   "max_ms": 70.541,
    "one_formula": 1,
-   "p95_ms": 227.544,
+   "p95_ms": 70.541,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/birthright-citizenship-debate/countermodel/test5-premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 540.223,
+   "max_ms": 221.046,
    "one_formula": 2,
-   "p95_ms": 540.223,
+   "p95_ms": 221.046,
    "questions": 4,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/cedar-attributes/claim.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 21.704,
+   "max_ms": 13.292,
    "one_formula": 1,
-   "p95_ms": 21.704,
+   "p95_ms": 13.292,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/claude-constitution-excerpt/claims.ve": {
    "asked": 11,
    "drawn": 11,
-   "max_ms": 1649.02,
+   "max_ms": 1093.722,
    "one_formula": 10,
-   "p95_ms": 1633.892,
+   "p95_ms": 902.023,
    "questions": 23,
    "sentences": 10,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/boundary/euclid-statement.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 397.303,
+   "max_ms": 121.511,
    "one_formula": 1,
-   "p95_ms": 397.303,
+   "p95_ms": 121.511,
    "questions": 4,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/C1/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 27.897,
+   "max_ms": 17.732,
    "one_formula": 1,
-   "p95_ms": 27.897,
+   "p95_ms": 17.732,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/C1/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 38.832,
+   "max_ms": 44.032,
    "one_formula": 2,
-   "p95_ms": 38.832,
+   "p95_ms": 44.032,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/C2/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 28.89,
+   "max_ms": 38.239,
    "one_formula": 1,
-   "p95_ms": 28.89,
+   "p95_ms": 38.239,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/C2/premises.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 259.423,
+   "max_ms": 332.339,
    "one_formula": 3,
-   "p95_ms": 259.423,
+   "p95_ms": 332.339,
    "questions": 4,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T1/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 38.983,
+   "max_ms": 69.17,
    "one_formula": 1,
-   "p95_ms": 38.983,
+   "p95_ms": 69.17,
    "questions": 3,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T1/premises.ve": {
    "asked": 0,
@@ -985,17 +1051,19 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T2/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 58.02,
+   "max_ms": 64.279,
    "one_formula": 1,
-   "p95_ms": 58.02,
+   "p95_ms": 64.279,
    "questions": 5,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T2/premises.ve": {
    "asked": 0,
@@ -1005,217 +1073,239 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T3/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 129.616,
+   "max_ms": 177.635,
    "one_formula": 1,
-   "p95_ms": 129.616,
+   "p95_ms": 177.635,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T3/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 138.795,
+   "max_ms": 100.539,
    "one_formula": 2,
-   "p95_ms": 138.795,
+   "p95_ms": 100.539,
    "questions": 3,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T4/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 69.985,
+   "max_ms": 76.773,
    "one_formula": 1,
-   "p95_ms": 69.985,
+   "p95_ms": 76.773,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T4/premises.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 125.768,
+   "max_ms": 169.407,
    "one_formula": 1,
-   "p95_ms": 125.768,
+   "p95_ms": 169.407,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T5/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 753.597,
+   "max_ms": 380.966,
    "one_formula": 1,
-   "p95_ms": 753.597,
+   "p95_ms": 380.966,
    "questions": 4,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T5/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 449.489,
+   "max_ms": 315.68,
    "one_formula": 2,
-   "p95_ms": 449.489,
+   "p95_ms": 315.68,
    "questions": 5,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T6/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 22.331,
+   "max_ms": 56.245,
    "one_formula": 1,
-   "p95_ms": 22.331,
+   "p95_ms": 56.245,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T6/premises.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 42.657,
+   "max_ms": 22.949,
    "one_formula": 3,
-   "p95_ms": 42.657,
+   "p95_ms": 22.949,
    "questions": 3,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 38.214,
+   "max_ms": 24.933,
    "one_formula": 1,
-   "p95_ms": 38.214,
+   "p95_ms": 24.933,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 39.707,
+   "max_ms": 43.535,
    "one_formula": 2,
-   "p95_ms": 39.707,
+   "p95_ms": 43.535,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7a/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 16.735,
+   "max_ms": 18.296,
    "one_formula": 1,
-   "p95_ms": 16.735,
+   "p95_ms": 18.296,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7a/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 49.649,
+   "max_ms": 23.008,
    "one_formula": 2,
-   "p95_ms": 49.649,
+   "p95_ms": 23.008,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7b/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 15.931,
+   "max_ms": 41.038,
    "one_formula": 1,
-   "p95_ms": 15.931,
+   "p95_ms": 41.038,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7b/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 22.389,
+   "max_ms": 24.049,
    "one_formula": 2,
-   "p95_ms": 22.389,
+   "p95_ms": 24.049,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7mono/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 38.83,
+   "max_ms": 57.431,
    "one_formula": 1,
-   "p95_ms": 38.83,
+   "p95_ms": 57.431,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T7mono/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 21.616,
+   "max_ms": 26.889,
    "one_formula": 2,
-   "p95_ms": 21.616,
+   "p95_ms": 26.889,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T8/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 22.021,
+   "max_ms": 28.097,
    "one_formula": 1,
-   "p95_ms": 22.021,
+   "p95_ms": 28.097,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T8/premises.ve": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 508.552,
+   "max_ms": 351.625,
    "one_formula": 3,
-   "p95_ms": 508.552,
+   "p95_ms": 351.625,
    "questions": 14,
    "sentences": 3,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 78.019,
+   "max_ms": 97.157,
    "one_formula": 1,
-   "p95_ms": 78.019,
+   "p95_ms": 97.157,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9/premises.ve": {
    "asked": 2,
    "drawn": 2,
-   "max_ms": 9.148,
+   "max_ms": 10.913,
    "one_formula": 2,
-   "p95_ms": 9.148,
+   "p95_ms": 10.913,
    "questions": 2,
    "sentences": 2,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9a/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 61.142,
+   "max_ms": 99.21,
    "one_formula": 1,
-   "p95_ms": 61.142,
+   "p95_ms": 99.21,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9a/premises.ve": {
    "asked": 0,
@@ -1225,17 +1315,19 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9b/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 212.331,
+   "max_ms": 173.851,
    "one_formula": 1,
-   "p95_ms": 212.331,
+   "p95_ms": 173.851,
    "questions": 3,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9b/premises.ve": {
    "asked": 0,
@@ -1245,17 +1337,19 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9c/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 65.647,
+   "max_ms": 44.479,
    "one_formula": 1,
-   "p95_ms": 65.647,
+   "p95_ms": 44.479,
    "questions": 2,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9c/premises.ve": {
    "asked": 0,
@@ -1265,17 +1359,19 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9d/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 958.518,
+   "max_ms": 319.573,
    "one_formula": 1,
-   "p95_ms": 958.518,
+   "p95_ms": 319.573,
    "questions": 4,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9d/premises.ve": {
    "asked": 0,
@@ -1285,257 +1381,282 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 0,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9e/conclusion.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 145.843,
+   "max_ms": 249.303,
    "one_formula": 1,
-   "p95_ms": 145.843,
+   "p95_ms": 249.303,
    "questions": 3,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/math-mini-paper/theorems/T9e/premises.ve": {
    "asked": 1,
    "drawn": 1,
-   "max_ms": 9.697,
+   "max_ms": 15.368,
    "one_formula": 1,
-   "p95_ms": 9.697,
+   "p95_ms": 15.368,
    "questions": 1,
    "sentences": 1,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/news-article/claims.ve": {
    "asked": 15,
    "drawn": 15,
-   "max_ms": 1194.171,
+   "max_ms": 1208.841,
    "one_formula": 15,
-   "p95_ms": 911.389,
+   "p95_ms": 685.707,
    "questions": 23,
    "sentences": 15,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "natural-view:usecases/us-constitution-14th-s1/claims.ve": {
    "asked": 4,
    "drawn": 4,
-   "max_ms": 1772.555,
+   "max_ms": 954.46,
    "one_formula": 4,
-   "p95_ms": 1772.555,
+   "p95_ms": 954.46,
    "questions": 10,
    "sentences": 4,
-   "stream": "natural-view"
+   "stream": "natural-view",
+   "unavailable": 0
   },
   "news-article": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 4429.264,
+   "max_ms": 13486.638,
    "one_formula": 5000,
-   "p95_ms": 1023.774,
+   "p95_ms": 2476.948,
    "questions": 12540,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "4432791e3362cdc9d701a6237145127dce662462d4520c005d44e8aa82f201fb"
+   "stream_sha256": "4432791e3362cdc9d701a6237145127dce662462d4520c005d44e8aa82f201fb",
+   "unavailable": 0
   },
   "news-article-reviewed": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 14795.178,
+   "max_ms": 13214.839,
    "one_formula": 5000,
-   "p95_ms": 3265.635,
+   "p95_ms": 2907.733,
    "questions": 13525,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "f4a160f549e8ad1dc52a1b07a711295aa52b3d231294e1c4a8e2a7404b27b866"
+   "stream_sha256": "f4a160f549e8ad1dc52a1b07a711295aa52b3d231294e1c4a8e2a7404b27b866",
+   "unavailable": 0
   },
   "norm-documents:pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md": {
    "asked": 1004,
    "drawn": 1004,
-   "max_ms": 13441.745,
-   "one_formula": 0,
-   "p95_ms": 3048.291,
+   "max_ms": 6278.994,
+   "one_formula": 1,
+   "p95_ms": 1944.511,
    "questions": 1423,
    "sentences": 1003,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/cc-20261008T1800Z:usecases/claude-constitution-pilot/run-20261008T1800Z/readings/nd-s01p1.ve.md": {
    "asked": 1004,
    "drawn": 1004,
-   "max_ms": 16444.847,
-   "one_formula": 0,
-   "p95_ms": 4698.618,
-   "questions": 1423,
+   "max_ms": 10288.429,
+   "one_formula": 2,
+   "p95_ms": 2600.788,
+   "questions": 1425,
    "sentences": 1003,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/cc-20261009T1800Z:usecases/claude-constitution-pilot/run-20261009T1800Z/readings/nd-force.ve.md": {
    "asked": 1004,
    "drawn": 1004,
-   "max_ms": 24135.938,
-   "one_formula": 0,
-   "p95_ms": 4001.614,
+   "max_ms": 6753.464,
+   "one_formula": 1,
+   "p95_ms": 1925.187,
    "questions": 1423,
    "sentences": 1003,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/cc-20261009T1800Z:usecases/claude-constitution-pilot/run-20261009T1800Z/readings/nd-op.ve.md": {
    "asked": 1004,
    "drawn": 1004,
-   "max_ms": 9821.179,
-   "one_formula": 0,
-   "p95_ms": 2741.749,
+   "max_ms": 3775.781,
+   "one_formula": 1,
+   "p95_ms": 1397.602,
    "questions": 1423,
    "sentences": 1003,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/readings/soft-chain.ve.md": {
-   "asked": 1004,
-   "drawn": 1004,
-   "max_ms": 194.87,
+   "asked": 1006,
+   "drawn": 1006,
+   "max_ms": 284.937,
    "one_formula": 0,
-   "p95_ms": 14.574,
-   "questions": 1423,
-   "sentences": 1003,
-   "stream": "norm-documents"
+   "p95_ms": 8.714,
+   "questions": 1427,
+   "sentences": 1005,
+   "stream": "norm-documents",
+   "unavailable": 1005
   },
   "norm-documents:pilot/udhr-20261008T1800Z:usecases/udhr-pilot/run-20261008T1800Z/translation-part08.ve.md": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 187.308,
+   "max_ms": 142.49,
    "one_formula": 0,
-   "p95_ms": 187.308,
+   "p95_ms": 142.49,
    "questions": 5,
    "sentences": 3,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261008T1800Z:usecases/udhr-pilot/run-20261008T1800Z/translation-part09.ve.md": {
    "asked": 4,
    "drawn": 4,
-   "max_ms": 524.159,
+   "max_ms": 236.18,
    "one_formula": 0,
-   "p95_ms": 524.159,
+   "p95_ms": 236.18,
    "questions": 7,
    "sentences": 4,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261009T0600Z:usecases/udhr-pilot/run-20261009T0600Z/translation-part05.ve.md": {
    "asked": 15,
    "drawn": 15,
-   "max_ms": 53.548,
+   "max_ms": 53.439,
    "one_formula": 0,
-   "p95_ms": 53.548,
+   "p95_ms": 53.439,
    "questions": 15,
    "sentences": 15,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261009T0600Z:usecases/udhr-pilot/run-20261009T0600Z/translation-part06.ve.md": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 245.823,
+   "max_ms": 185.58,
    "one_formula": 0,
-   "p95_ms": 245.823,
+   "p95_ms": 185.58,
    "questions": 5,
    "sentences": 3,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261009T0600Z:usecases/udhr-pilot/run-20261009T0600Z/translation-part07.ve.md": {
    "asked": 4,
    "drawn": 4,
-   "max_ms": 278.561,
+   "max_ms": 562.448,
    "one_formula": 0,
-   "p95_ms": 278.561,
+   "p95_ms": 562.448,
    "questions": 7,
    "sentences": 4,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261030T0600Z:usecases/udhr-pilot/run-20261030T0600Z/translation-part02.ve.md": {
    "asked": 14,
    "drawn": 14,
-   "max_ms": 182.771,
+   "max_ms": 99.544,
    "one_formula": 0,
-   "p95_ms": 182.771,
+   "p95_ms": 99.544,
    "questions": 16,
    "sentences": 14,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261030T0600Z:usecases/udhr-pilot/run-20261030T0600Z/translation-part03.ve.md": {
    "asked": 21,
    "drawn": 21,
-   "max_ms": 1349.4,
+   "max_ms": 473.107,
    "one_formula": 0,
-   "p95_ms": 133.999,
+   "p95_ms": 99.773,
    "questions": 23,
    "sentences": 21,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261030T0600Z:usecases/udhr-pilot/run-20261030T0600Z/translation-part04.ve.md": {
    "asked": 7,
    "drawn": 7,
-   "max_ms": 1376.391,
+   "max_ms": 357.241,
    "one_formula": 0,
-   "p95_ms": 1376.391,
+   "p95_ms": 357.241,
    "questions": 12,
    "sentences": 7,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/translation-part01.ve.md": {
    "asked": 19,
    "drawn": 19,
-   "max_ms": 6384.961,
+   "max_ms": 1338.219,
    "one_formula": 0,
-   "p95_ms": 3463.839,
+   "p95_ms": 1240.034,
    "questions": 21,
    "sentences": 19,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "norm-documents:usecases/question-answering/udhr-part07.ve.md": {
    "asked": 12,
    "drawn": 12,
-   "max_ms": 129.275,
+   "max_ms": 47.792,
    "one_formula": 0,
-   "p95_ms": 129.275,
+   "p95_ms": 47.792,
    "questions": 12,
    "sentences": 12,
-   "stream": "norm-documents"
+   "stream": "norm-documents",
+   "unavailable": 0
   },
   "order": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 5076.162,
+   "max_ms": 2344.422,
    "one_formula": 5000,
-   "p95_ms": 966.237,
+   "p95_ms": 521.528,
    "questions": 12366,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "3166dc2dc248dac690a5a7ef01a64b38cd17dba2b534d87c4e93cdb2b2c52d08"
+   "stream_sha256": "3166dc2dc248dac690a5a7ef01a64b38cd17dba2b534d87c4e93cdb2b2c52d08",
+   "unavailable": 0
   },
   "ordinary": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 1218.605,
+   "max_ms": 920.418,
    "one_formula": 5000,
-   "p95_ms": 297.619,
+   "p95_ms": 275.781,
    "questions": 19399,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "37b905fdbdb20d558a8da071b0b15441cf1f44bc812491d355a1716d72a2a5a0"
+   "stream_sha256": "37b905fdbdb20d558a8da071b0b15441cf1f44bc812491d355a1716d72a2a5a0",
+   "unavailable": 0
   },
   "precision_templates": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 992.027,
+   "max_ms": 8872.131,
    "one_formula": 5000,
-   "p95_ms": 321.329,
+   "p95_ms": 1067.727,
    "questions": 19629,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "b7bf58dc6aa60596a9e00b8b9679cd097330ca7be23611eaf64ba872ee676848"
+   "stream_sha256": "b7bf58dc6aa60596a9e00b8b9679cd097330ca7be23611eaf64ba872ee676848",
+   "unavailable": 0
   },
   "random-earley:accepted-suggestions": {
    "asked": 0,
@@ -1543,13 +1664,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 3454.319,
+   "max_ms": 1217.941,
    "one_formula": 250,
-   "p95_ms": 946.192,
+   "p95_ms": 284.67,
    "questions": 2260,
    "random_earley_sha256": "4dffb251e62b17ef6d9281d98ce00995e143da09bb1db1085d9de8d46f70eab6",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:adopted-unary": {
    "asked": 0,
@@ -1557,13 +1679,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 8938.035,
+   "max_ms": 2708.419,
    "one_formula": 250,
-   "p95_ms": 1533.318,
+   "p95_ms": 814.644,
    "questions": 2025,
    "random_earley_sha256": "10ff2320c5ed03957c2db3c5c89edb366f6b053e11c25dc9b522be7c2d8fc4ae",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:birthright-citizenship-debate": {
    "asked": 0,
@@ -1571,13 +1694,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 3990.968,
+   "max_ms": 1939.681,
    "one_formula": 250,
-   "p95_ms": 1157.075,
+   "p95_ms": 508.589,
    "questions": 2560,
    "random_earley_sha256": "cd5dde1bb4768eb789c055a925770c0f348794b2148f15e3c30a9e0d5876f828",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:birthright-citizenship-debate-reviewed": {
    "asked": 0,
@@ -1585,13 +1709,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 6383.237,
+   "max_ms": 2276.27,
    "one_formula": 250,
-   "p95_ms": 1469.395,
+   "p95_ms": 586.321,
    "questions": 1855,
    "random_earley_sha256": "80e5366013ff04d098006b2b6c67a639642695a51f7b03a641145f05f7135bfc",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:claude-constitution-excerpt": {
    "asked": 0,
@@ -1599,13 +1724,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 6012.545,
+   "max_ms": 2321.072,
    "one_formula": 250,
-   "p95_ms": 780.755,
+   "p95_ms": 388.283,
    "questions": 2255,
    "random_earley_sha256": "9c952fb154087b334f900c724d3b0db0e05cb40a44f5f5cd2eedb7365a290c2d",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:claude-constitution-excerpt-reviewed": {
    "asked": 0,
@@ -1613,13 +1739,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 17287.532,
+   "max_ms": 7366.028,
    "one_formula": 250,
-   "p95_ms": 1832.954,
+   "p95_ms": 1010.883,
    "questions": 2223,
    "random_earley_sha256": "46bb9ef9ddd762d653fcd40be09ecfcef3f2010ab3be6dec6ffd3bab475cadf9",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:closure": {
    "asked": 0,
@@ -1627,13 +1754,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 1982.024,
+   "max_ms": 1529.806,
    "one_formula": 250,
-   "p95_ms": 342.353,
+   "p95_ms": 286.523,
    "questions": 2164,
    "random_earley_sha256": "4cc13c274511603418e57fb2c62e69aad30e464f9ba1fb411a0cea3ab57d85b5",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:colliding_aliases": {
    "asked": 0,
@@ -1641,13 +1769,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 4044.234,
+   "max_ms": 1402.601,
    "one_formula": 250,
-   "p95_ms": 249.503,
+   "p95_ms": 287.886,
    "questions": 2086,
    "random_earley_sha256": "7757f22642f00c78032bd30dfbb6d58fdb81935cf150d31b6aec9cbabf994b76",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:function_identifiers": {
    "asked": 0,
@@ -1655,13 +1784,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 2305.745,
+   "max_ms": 1648.18,
    "one_formula": 250,
-   "p95_ms": 642.905,
+   "p95_ms": 391.449,
    "questions": 2150,
    "random_earley_sha256": "475c48709704ad1274d7c1a0edcd815dc5d9b193f4e855bd35b86402b285cc7d",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:function_words": {
    "asked": 0,
@@ -1669,13 +1799,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 2466.653,
+   "max_ms": 2281.676,
    "one_formula": 250,
-   "p95_ms": 549.157,
+   "p95_ms": 350.675,
    "questions": 2177,
    "random_earley_sha256": "d9b142cd2cc48935908dba0283b3b14bd8f51300b167673f73fa3a6cfddbef40",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:news-article": {
    "asked": 0,
@@ -1683,13 +1814,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 10860.614,
+   "max_ms": 6655.75,
    "one_formula": 250,
-   "p95_ms": 2841.305,
+   "p95_ms": 1274.998,
    "questions": 1644,
    "random_earley_sha256": "b503dff3dcd95d1d225e62574df5e5ec5262c59f66e76dc05213ada425373d43",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:news-article-reviewed": {
    "asked": 0,
@@ -1697,13 +1829,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 14120.298,
+   "max_ms": 6281.583,
    "one_formula": 250,
-   "p95_ms": 4450.586,
+   "p95_ms": 2391.456,
    "questions": 1793,
    "random_earley_sha256": "b0e19b922aa4ae259cfd87cb4531f713c6f6a28f16f317a65c8bda068f8c7482",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:order": {
    "asked": 0,
@@ -1711,13 +1844,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 4105.214,
+   "max_ms": 1992.449,
    "one_formula": 250,
-   "p95_ms": 1104.843,
+   "p95_ms": 475.158,
    "questions": 1969,
    "random_earley_sha256": "ed503e6dccd3b6d3ce650819b350092052e2f2655e6bcc71004d79e8c85bd2f2",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:ordinary": {
    "asked": 0,
@@ -1725,13 +1859,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 3627.814,
+   "max_ms": 1534.357,
    "one_formula": 250,
-   "p95_ms": 753.751,
+   "p95_ms": 587.239,
    "questions": 2018,
    "random_earley_sha256": "433c406b238e5736e3232df0cb764af2d2e08217800ef56fa7fce3dab027c621",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:precision_templates": {
    "asked": 0,
@@ -1739,13 +1874,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 4060.393,
+   "max_ms": 1986.008,
    "one_formula": 250,
-   "p95_ms": 1046.314,
+   "p95_ms": 580.79,
    "questions": 2001,
    "random_earley_sha256": "4ddaa8862eb97a378fd0a42325600c8a945e3d35c8f71fb9b621754c30f9c8f3",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:us-constitution-14th-s1": {
    "asked": 0,
@@ -1753,13 +1889,14 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 7410.014,
+   "max_ms": 2888.199,
    "one_formula": 250,
-   "p95_ms": 524.296,
+   "p95_ms": 299.043,
    "questions": 3217,
    "random_earley_sha256": "e8c6e00ce82f349796e62976abd4520fea9ab02d849ef856b4588917f6c51a2b",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "random-earley:us-constitution-14th-s1-reviewed": {
    "asked": 0,
@@ -1767,181 +1904,196 @@
    "documents": 50,
    "documents_not_their_sentences": 0,
    "drawn": 250,
-   "max_ms": 14214.088,
+   "max_ms": 3632.285,
    "one_formula": 250,
-   "p95_ms": 1084.081,
+   "p95_ms": 613.734,
    "questions": 3109,
    "random_earley_sha256": "f0e0a1594fde3893757aa2540762d1b3d32d82cac9ab01e883859d891fb93996",
    "sentences": 250,
-   "stream": "random-earley"
+   "stream": "random-earley",
+   "unavailable": 0
   },
   "us-constitution-14th-s1": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 4879.682,
+   "max_ms": 5079.451,
    "one_formula": 5000,
-   "p95_ms": 672.593,
+   "p95_ms": 746.03,
    "questions": 32667,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "ec5b4345682713be91bfe5b851320c37dafa4e8435bff2d62062a21c97638d77"
+   "stream_sha256": "ec5b4345682713be91bfe5b851320c37dafa4e8435bff2d62062a21c97638d77",
+   "unavailable": 0
   },
   "us-constitution-14th-s1-reviewed": {
    "asked": 5000,
    "drawn": 5000,
-   "max_ms": 10296.173,
+   "max_ms": 13074.382,
    "one_formula": 5000,
-   "p95_ms": 1796.806,
+   "p95_ms": 2226.376,
    "questions": 31383,
    "sentences": 5000,
    "stalled": 0,
    "stream": "english-surface",
-   "stream_sha256": "b9a5646ebcaa5cce5b0e15e7dca41853ae3b86152414e24f597ca0036c74d848"
+   "stream_sha256": "b9a5646ebcaa5cce5b0e15e7dca41853ae3b86152414e24f597ca0036c74d848",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.allow-must.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 4188.411,
+   "max_ms": 6286.15,
    "one_formula": 496,
-   "p95_ms": 1430.585,
+   "p95_ms": 1233.018,
    "questions": 1816,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "ef710c7c4086abc844e5813a69841ea14c7ce2cf4a64fda9cf94398471d712c4"
+   "stream_sha256": "ef710c7c4086abc844e5813a69841ea14c7ce2cf4a64fda9cf94398471d712c4",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.allow-neednot.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 3735.329,
+   "max_ms": 5045.788,
    "one_formula": 499,
-   "p95_ms": 1142.341,
+   "p95_ms": 1281.371,
    "questions": 1867,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "993cd87b32344fdb16b08f9cbd25cb725d798ba9a3f872629aa7297cd4df928c"
+   "stream_sha256": "993cd87b32344fdb16b08f9cbd25cb725d798ba9a3f872629aa7297cd4df928c",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.deny-must.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 5530.102,
+   "max_ms": 4046.012,
    "one_formula": 498,
-   "p95_ms": 1464.361,
+   "p95_ms": 1357.742,
    "questions": 1966,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "82fb7beab302be5383a27841f5c2d4bc773ef6dbf0088ed8f77b133e825097bf"
+   "stream_sha256": "82fb7beab302be5383a27841f5c2d4bc773ef6dbf0088ed8f77b133e825097bf",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.deny-neednot.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 3912.383,
+   "max_ms": 5619.45,
    "one_formula": 499,
-   "p95_ms": 1101.542,
+   "p95_ms": 1280.718,
    "questions": 1855,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "aaa84f314bd32a2d584c1013c19df629fe92b00b37cadf04fb8bb12b6c57e514"
+   "stream_sha256": "aaa84f314bd32a2d584c1013c19df629fe92b00b37cadf04fb8bb12b6c57e514",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.lean.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 4381.321,
+   "max_ms": 6680.259,
    "one_formula": 500,
-   "p95_ms": 1036.563,
+   "p95_ms": 1410.466,
    "questions": 1840,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "0595d1b97d34bcfd67a4d21f53a65e74ceb1432f58c284ded9d4f8fc4884a9b0"
+   "stream_sha256": "0595d1b97d34bcfd67a4d21f53a65e74ceb1432f58c284ded9d4f8fc4884a9b0",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.unspecified.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 3690.331,
+   "max_ms": 5668.209,
    "one_formula": 496,
-   "p95_ms": 1041.709,
+   "p95_ms": 1868.614,
    "questions": 1862,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "5e375c9fa79c4f1d9d22b3deb3777f35b971cd6477971380cdb009ba09b19132"
+   "stream_sha256": "5e375c9fa79c4f1d9d22b3deb3777f35b971cd6477971380cdb009ba09b19132",
+   "unavailable": 0
   },
   "usecases/agent-policy/environment.unspecified.lean.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 3800.833,
+   "max_ms": 6413.063,
    "one_formula": 500,
-   "p95_ms": 1009.752,
+   "p95_ms": 1762.879,
    "questions": 1828,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "342444f6353517fd66e6fa77c3dc8f04465d3d159489f9cf3b80c8dbaf007c00"
+   "stream_sha256": "342444f6353517fd66e6fa77c3dc8f04465d3d159489f9cf3b80c8dbaf007c00",
+   "unavailable": 0
   },
   "usecases/anthropic-rsp/environment.d1.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 16463.153,
+   "max_ms": 17006.78,
    "one_formula": 500,
-   "p95_ms": 6853.542,
+   "p95_ms": 6813.133,
    "questions": 1980,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "7e4f303ef3e9cf41d4039f2e8f82adb082162ff7f733d503b851a43b20810eea"
+   "stream_sha256": "7e4f303ef3e9cf41d4039f2e8f82adb082162ff7f733d503b851a43b20810eea",
+   "unavailable": 0
   },
   "usecases/asimov-extended/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 2206.652,
+   "max_ms": 5668.453,
    "one_formula": 500,
-   "p95_ms": 1091.557,
+   "p95_ms": 3159.553,
    "questions": 1496,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "d7c7618045b663ca1069216634bc0cab06117d6614faa11ae7ba8e8c24e389f4"
+   "stream_sha256": "d7c7618045b663ca1069216634bc0cab06117d6614faa11ae7ba8e8c24e389f4",
+   "unavailable": 0
   },
   "usecases/asimov-laws/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 1999.889,
+   "max_ms": 9945.517,
    "one_formula": 500,
-   "p95_ms": 566.339,
+   "p95_ms": 1921.04,
    "questions": 2367,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "11f8629550a6746e19b87416d3413f07afc5aee1500ed6cb6f0bc0f31f2dc6be"
+   "stream_sha256": "11f8629550a6746e19b87416d3413f07afc5aee1500ed6cb6f0bc0f31f2dc6be",
+   "unavailable": 0
   },
   "usecases/birthright-citizenship-debate/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 601.492,
+   "max_ms": 2886.229,
    "one_formula": 500,
-   "p95_ms": 277.626,
+   "p95_ms": 1023.125,
    "questions": 2238,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "0077e7c72eedc6a13db17549350c92233d8a1e5a6474b0293ca2be55b6275a55"
+   "stream_sha256": "0077e7c72eedc6a13db17549350c92233d8a1e5a6474b0293ca2be55b6275a55",
+   "unavailable": 0
   },
   "usecases/birthright-citizenship-debate/environment.json+overlay": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 1093.998,
+   "max_ms": 3905.659,
    "one_formula": 500,
-   "p95_ms": 440.694,
+   "p95_ms": 1523.52,
    "questions": 1529,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "1c48286bd33d5ae6f57bababf4e34a82e20ec747838e977aecf7f928864b768a"
+   "stream_sha256": "1c48286bd33d5ae6f57bababf4e34a82e20ec747838e977aecf7f928864b768a",
+   "unavailable": 0
   },
   "usecases/bluedot-grant/causal.ve.md": {
    "asked": 1,
@@ -1951,7 +2103,8 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 1,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/bluedot-grant/document.ve.md": {
    "asked": 53,
@@ -1961,103 +2114,112 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 41,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/cedar-attributes/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 569.514,
+   "max_ms": 2313.993,
    "one_formula": 417,
-   "p95_ms": 250.162,
+   "p95_ms": 646.151,
    "questions": 1873,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "862de199479a497b1689f3fcfbf57ab3471039288081d1ed10e3c761a2b5e8c3"
+   "stream_sha256": "862de199479a497b1689f3fcfbf57ab3471039288081d1ed10e3c761a2b5e8c3",
+   "unavailable": 0
   },
   "usecases/claude-constitution-excerpt/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 1470.052,
+   "max_ms": 5930.368,
    "one_formula": 500,
-   "p95_ms": 606.981,
+   "p95_ms": 1394.478,
    "questions": 1419,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "1d1639e066046a3052a0764463829d5e520ffab3193e0dd8b2360519b675acf7"
+   "stream_sha256": "1d1639e066046a3052a0764463829d5e520ffab3193e0dd8b2360519b675acf7",
+   "unavailable": 0
   },
   "usecases/claude-constitution-excerpt/environment.json+overlay": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 2993.745,
+   "max_ms": 4410.027,
    "one_formula": 500,
-   "p95_ms": 1508.775,
+   "p95_ms": 2308.921,
    "questions": 1085,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "b2ae8c20ec6937d6bdbc4a918b0eb91134d28e2204fa6aaa51c0f371deeb87ab"
+   "stream_sha256": "b2ae8c20ec6937d6bdbc4a918b0eb91134d28e2204fa6aaa51c0f371deeb87ab",
+   "unavailable": 0
   },
   "usecases/eligibility/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 3663.954,
+   "max_ms": 4128.243,
    "one_formula": 500,
-   "p95_ms": 1834.13,
+   "p95_ms": 2230.469,
    "questions": 1493,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "48b12fd251e12f221fc539e2f057da35ecead0d3251ce20226d21adb49d63e47"
+   "stream_sha256": "48b12fd251e12f221fc539e2f057da35ecead0d3251ce20226d21adb49d63e47",
+   "unavailable": 0
   },
   "usecases/math-mini-paper/environment-closure.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 732.041,
+   "max_ms": 2029.121,
    "one_formula": 500,
-   "p95_ms": 198.561,
+   "p95_ms": 388.434,
    "questions": 2203,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "a32c06b280cae87815e0063d147db24be5d4e574da2c2ee847df397e76f5e89d"
+   "stream_sha256": "a32c06b280cae87815e0063d147db24be5d4e574da2c2ee847df397e76f5e89d",
+   "unavailable": 0
   },
   "usecases/math-mini-paper/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 1956.51,
+   "max_ms": 3450.217,
    "one_formula": 500,
-   "p95_ms": 449.023,
+   "p95_ms": 884.214,
    "questions": 1608,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "cc6764afebd536591936e7c8cbeeb12a3276768a1192578fb4a493d6273f07be"
+   "stream_sha256": "cc6764afebd536591936e7c8cbeeb12a3276768a1192578fb4a493d6273f07be",
+   "unavailable": 0
   },
   "usecases/news-article/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 2099.855,
+   "max_ms": 3988.347,
    "one_formula": 500,
-   "p95_ms": 887.218,
+   "p95_ms": 1455.998,
    "questions": 768,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "c2a7ae77cf5095177cfa63c7ca0d99d84080516cf62fccf881e90cadf31ff61c"
+   "stream_sha256": "c2a7ae77cf5095177cfa63c7ca0d99d84080516cf62fccf881e90cadf31ff61c",
+   "unavailable": 0
   },
   "usecases/news-article/environment.json+overlay": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 5941.637,
+   "max_ms": 4835.091,
    "one_formula": 500,
-   "p95_ms": 2702.206,
+   "p95_ms": 2272.86,
    "questions": 939,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "a9f11806a551c5801a7701f8ccd8240b574505afb7e18f4d4d3ec724dee07012"
+   "stream_sha256": "a9f11806a551c5801a7701f8ccd8240b574505afb7e18f4d4d3ec724dee07012",
+   "unavailable": 0
   },
   "usecases/news-article/news-w6a.ve.md": {
    "asked": 12,
@@ -2067,63 +2229,69 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 12,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/openai-preparedness/environment.d1.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 17497.156,
+   "max_ms": 9685.14,
    "one_formula": 500,
-   "p95_ms": 8171.014,
+   "p95_ms": 4678.283,
    "questions": 1938,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "ef33dd8ec164fb3eb12e15d44a23f58ba62a52b5d50320cb2936f46311dee2b1"
+   "stream_sha256": "ef33dd8ec164fb3eb12e15d44a23f58ba62a52b5d50320cb2936f46311dee2b1",
+   "unavailable": 0
   },
   "usecases/openai-preparedness/environment.d2.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 5951.654,
+   "max_ms": 3259.896,
    "one_formula": 500,
-   "p95_ms": 1130.548,
+   "p95_ms": 955.555,
    "questions": 2626,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "dc1e36185244ff8753e6f28ca89488b98e347b3f89441cea15842e26d90f2844"
+   "stream_sha256": "dc1e36185244ff8753e6f28ca89488b98e347b3f89441cea15842e26d90f2844",
+   "unavailable": 0
   },
   "usecases/openai-preparedness/environment.d3.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 1251.352,
+   "max_ms": 1140.204,
    "one_formula": 500,
-   "p95_ms": 345.0,
+   "p95_ms": 305.505,
    "questions": 899,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "f5d266bec2336db4ccdd7f78b11eff0f87cd879cff17af31257f41432b6bc435"
+   "stream_sha256": "f5d266bec2336db4ccdd7f78b11eff0f87cd879cff17af31257f41432b6bc435",
+   "unavailable": 0
   },
   "usecases/question-answering/agent-policy/a-conflict.ve.md": {
    "asked": 119,
    "drawn": 119,
-   "max_ms": 3831.552,
+   "max_ms": 1128.37,
    "one_formula": 93,
-   "p95_ms": 1972.787,
+   "p95_ms": 667.934,
    "questions": 104,
    "sentences": 119,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/question-answering/agent-policy/a-deny.ve.md": {
    "asked": 119,
    "drawn": 119,
-   "max_ms": 2507.827,
+   "max_ms": 1279.426,
    "one_formula": 93,
-   "p95_ms": 1746.512,
+   "p95_ms": 877.865,
    "questions": 104,
    "sentences": 119,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/question-answering/agent-policy/a-rules.ve.md": {
    "asked": 26,
@@ -2133,27 +2301,30 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 26,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/question-answering/agent-policy/a-unspecified.ve.md": {
    "asked": 119,
    "drawn": 119,
-   "max_ms": 2949.017,
+   "max_ms": 1291.384,
    "one_formula": 93,
-   "p95_ms": 2485.652,
+   "p95_ms": 719.316,
    "questions": 104,
    "sentences": 119,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/question-answering/group.ve.md": {
    "asked": 3,
    "drawn": 3,
-   "max_ms": 133.076,
+   "max_ms": 129.548,
    "one_formula": 3,
-   "p95_ms": 133.076,
+   "p95_ms": 129.548,
    "questions": 4,
    "sentences": 3,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/question-answering/udhr-part07.ve.md": {
    "asked": 12,
@@ -2163,43 +2334,47 @@
    "p95_ms": null,
    "questions": 0,
    "sentences": 12,
-   "stream": "usecase-documents"
+   "stream": "usecase-documents",
+   "unavailable": 0
   },
   "usecases/safety-framework/environment.d1.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 12992.552,
+   "max_ms": 7805.326,
    "one_formula": 500,
-   "p95_ms": 5722.99,
+   "p95_ms": 2834.75,
    "questions": 1635,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "8f30744c7807a680ebbd655bbcb8095b16a6f1790285f5fb360e069c86888ffc"
+   "stream_sha256": "8f30744c7807a680ebbd655bbcb8095b16a6f1790285f5fb360e069c86888ffc",
+   "unavailable": 0
   },
   "usecases/us-constitution-14th-s1/environment.json": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 4207.843,
+   "max_ms": 2128.977,
    "one_formula": 500,
-   "p95_ms": 1200.891,
+   "p95_ms": 738.113,
    "questions": 2260,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "629f97e60ea3635a459dec3e103f3fffb4669e30f8d776818bc234c30dbef501"
+   "stream_sha256": "629f97e60ea3635a459dec3e103f3fffb4669e30f8d776818bc234c30dbef501",
+   "unavailable": 0
   },
   "usecases/us-constitution-14th-s1/environment.json+overlay": {
    "asked": 500,
    "drawn": 500,
-   "max_ms": 6279.906,
+   "max_ms": 3694.648,
    "one_formula": 500,
-   "p95_ms": 2297.499,
+   "p95_ms": 1508.118,
    "questions": 1594,
    "sentences": 500,
    "stalled": 0,
    "stream": "usecase-surface",
-   "stream_sha256": "800aabbed8b32a3d29a7b6be45a1fbc1afae3376ceeecd07982a6526f8b9b109"
+   "stream_sha256": "800aabbed8b32a3d29a7b6be45a1fbc1afae3376ceeecd07982a6526f8b9b109",
+   "unavailable": 0
   }
  },
  "coverage": {
@@ -2214,10 +2389,13 @@
   },
   "short_streams": {},
   "skipped": [],
+  "unavailable_reads": {
+   "norm-documents:pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/readings/soft-chain.ve.md": 1005
+  },
   "unsealed_documents": [],
   "unsealed_random_earley": [],
   "unsealed_streams": [],
-  "whole_streams": true
+  "whole_streams": false
  },
  "f1": {
   "misses": [
@@ -3054,64 +3232,78 @@
     "status": "budget"
    }
   ],
-  "questions": 10542,
-  "same": 10438
+  "questions": 10547,
+  "same": 10443
  },
  "f2": {
   "by_subject": {
    "other subject": {
     "limited": 24264,
     "reached": 25056,
-    "sentences": 101090,
+    "sentences": 101091,
     "several_same": 0
    },
    "q1-3 subject": {
     "limited": 0,
-    "q1_3_question_same": 1117,
-    "reached": 1117,
-    "sentences": 1117,
+    "q1_3_question_same": 1121,
+    "reached": 1121,
+    "sentences": 1121,
     "several_same": 0
    }
   },
-  "frontings": 435136,
+  "frontings": 435142,
   "limited": 24264,
   "many_causes": [],
   "other_formula": [],
   "outcomes": {
    "budget:QuestionTooLong": 212297,
-   "moved:QuestionWordMoved": 196666,
-   "one": 26173
+   "moved:QuestionWordMoved": 196667,
+   "one": 26177,
+   "unavailable": 1
   },
-  "reached": 26173,
-  "sentences": 102207,
-  "share": 0.256078,
-  "share_within_limits": 0.335797
+  "reached": 26177,
+  "sentences": 102212,
+  "share": 0.256105,
+  "share_within_limits": 0.335826
  },
  "format": "ve.question-reverse-b@1",
  "latency": {
-  "max_ms": 24135.938,
-  "p95_ms": 1226.777,
+  "max_ms": 51468.123,
+  "p95_ms": 1451.282,
   "p95_ms_by_kind": {
-   "f1": 530.764,
-   "f2": 1257.182
+   "f1": 291.245,
+   "f2": 1480.972
   },
-  "questions": 452916,
+  "questions": 452922,
   "recorded_only": "q1-3c"
  },
  "load_average": {
   "cpus": 32,
   "end": [
-   70.4,
-   75.5,
-   74.4
+   46.0,
+   52.0,
+   55.4
   ],
   "start": [
-   34.1,
-   32.9,
-   43.2
+   20.4,
+   24.7,
+   35.8
   ]
  },
  "norm": {
+  "answered_frontings": 1703,
+  "by_why": {
+   "english.read:none:NoDerivation": 3789,
+   "english.read:rejected:BadCharacter": 80,
+   "english.read:rejected:BadNumeral": 8,
+   "english.read:rejected:BadSpacing": 232,
+   "english.read:rejected:OpenQuote": 4,
+   "english.read:unavailable": 1006,
+   "not one sentence": 735,
+   "reached": 5
+  },
+  "distinct_answered_frontings": 433,
+  "distinct_answered_sentences": 1066,
   "documents": {
    "norm-documents:pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md": {
     "examples": {
@@ -3251,8 +3443,8 @@
       "This document is likely to change in important ways in the future.",
       "It represents our current thinking about how to approach a very hard and high-stakes project: namely, the creation of no"
      ],
-     "asserted/fence/english.read:none:NoDerivation": [
-      "Claude is not a human."
+     "asserted/fence/reached": [
+      "Claude is not human."
      ],
      "meta/-/not one sentence": [
       "## Overview",
@@ -3497,7 +3689,7 @@
      [
       "asserted",
       "fence",
-      "english.read:none:NoDerivation",
+      "reached",
       1
      ],
      [
@@ -3666,9 +3858,9 @@
       "This document is likely to change in important ways in the future.",
       "It represents our current thinking about how to approach a very hard and high-stakes project: namely, the creation of no"
      ],
-     "asserted/fence/english.read:none:NoDerivation": [
-      "cannot be unlocked by any operator or user.",
-      "Claude is not a human."
+     "asserted/fence/reached": [
+      "Both of the following hold:\n  (a) for every operator, for every hard constraint, it is not the case that that operator h",
+      "Claude is not human."
      ],
      "meta/-/not one sentence": [
       "## Overview",
@@ -3916,7 +4108,7 @@
      [
       "asserted",
       "fence",
-      "english.read:none:NoDerivation",
+      "reached",
       2
      ],
      [
@@ -4091,8 +4283,8 @@
       "This document is likely to change in important ways in the future.",
       "It represents our current thinking about how to approach a very hard and high-stakes project: namely, the creation of no"
      ],
-     "asserted/fence/english.read:none:NoDerivation": [
-      "Claude is not a human."
+     "asserted/fence/reached": [
+      "Claude is not human."
      ],
      "meta/-/not one sentence": [
       "## Overview",
@@ -4340,7 +4532,7 @@
      [
       "asserted",
       "fence",
-      "english.read:none:NoDerivation",
+      "reached",
       1
      ],
      [
@@ -4515,8 +4707,8 @@
       "This document is likely to change in important ways in the future.",
       "It represents our current thinking about how to approach a very hard and high-stakes project: namely, the creation of no"
      ],
-     "asserted/fence/english.read:none:NoDerivation": [
-      "Claude is not a human."
+     "asserted/fence/reached": [
+      "Claude is not human."
      ],
      "meta/-/not one sentence": [
       "## Overview",
@@ -4764,7 +4956,7 @@
      [
       "asserted",
       "fence",
-      "english.read:none:NoDerivation",
+      "reached",
       1
      ],
      [
@@ -4803,9 +4995,6 @@
    },
    "norm-documents:pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/readings/soft-chain.ve.md": {
     "examples": {
-     "-/-/english.read:unavailable": [
-      "At the moment, Claude’s three types of principals are Anthropic, operators, and users."
-     ],
      "[\"attributed\",\"anthropic\",\"believes\",[\"unformalised\",\"attribution\"]]/-/english.read:unavailable": [
       "We believe that hard constraints also serve Claude’s interests by providing a stable foundation of identity and values t"
      ],
@@ -4894,15 +5083,15 @@
       "This document is likely to change in important ways in the future.",
       "It represents our current thinking about how to approach a very hard and high-stakes project: namely, the creation of no"
      ],
+     "asserted/ast/english.read:unavailable": [
+      "Claude’s three types of principals are Anthropic, operators, and users."
+     ],
      "asserted/ast/not one sentence": [
       "Claude’s three types of principals"
      ],
      "asserted/fence/english.read:unavailable": [
-      "Claude is not a human."
-     ],
-     "asserted/fence/not one sentence": [
-      "Claude as a novel entity",
-      "Acknowledging open problems"
+      "Claude is novel.",
+      "Claude is not human."
      ],
      "meta/-/not one sentence": [
       "## Overview",
@@ -4922,12 +5111,6 @@
      ]
     },
     "reach": [
-     [
-      "-",
-      "-",
-      "english.read:unavailable",
-      1
-     ],
      [
       "[\"attributed\",\"anthropic\",\"believes\",[\"unformalised\",\"attribution\"]]",
       "-",
@@ -5075,6 +5258,12 @@
      [
       "asserted",
       "ast",
+      "english.read:unavailable",
+      1
+     ],
+     [
+      "asserted",
+      "ast",
       "not one sentence",
       1
      ],
@@ -5082,19 +5271,13 @@
       "asserted",
       "fence",
       "english.read:unavailable",
-      1
-     ],
-     [
-      "asserted",
-      "fence",
-      "not one sentence",
-      2
+      3
      ],
      [
       "meta",
       "-",
       "not one sentence",
-      39
+      40
      ],
      [
       "norm",
@@ -5116,7 +5299,7 @@
      ]
     ],
     "sha256": "0a0b833dd4a25dff19e96a5d09817ff540e32f99",
-    "units": 1132
+    "units": 1133
    },
    "norm-documents:pilot/udhr-20261008T1800Z:usecases/udhr-pilot/run-20261008T1800Z/translation-part08.ve.md": {
     "examples": {
@@ -6043,22 +6226,25 @@
   },
   "questions": {
    "configs": 15,
-   "f1": 5117,
+   "f1": 5119,
    "f1_many": 0,
    "f1_other": 0,
-   "f1_same": 0,
-   "f2": 2121,
+   "f1_same": 5,
+   "f1_unavailable": 1005,
+   "f2": 2125,
    "f2_many": 0,
    "f2_other": 0,
-   "f2_same": 0,
-   "one_formula": 0,
-   "questions": 7238,
-   "sentences": 5117
-  }
+   "f2_same": 4,
+   "f2_unavailable": 422,
+   "one_formula": 5,
+   "questions": 7244,
+   "sentences": 5119
+  },
+  "reached": 5
  },
  "per_config": 5000,
  "per_usecase": 500,
- "seconds": 12247.6,
+ "seconds": 13694.3,
  "streams": {
   "english-mixed": {
    "configs": 18,
@@ -6066,10 +6252,12 @@
    "f1_many": 0,
    "f1_other": 0,
    "f1_same": 5073,
+   "f1_unavailable": 0,
    "f2": 8752,
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 1766,
+   "f2_unavailable": 0,
    "one_formula": 5073,
    "questions": 13825,
    "sentences": 5073
@@ -6080,6 +6268,7 @@
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 20347,
+   "f2_unavailable": 0,
    "one_formula": 85000,
    "questions": 343977,
    "sentences": 85000
@@ -6090,27 +6279,31 @@
    "f1_many": 0,
    "f1_other": 0,
    "f1_same": 1202,
+   "f1_unavailable": 0,
    "f2": 3851,
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 372,
+   "f2_unavailable": 0,
    "one_formula": 1219,
    "questions": 5070,
    "sentences": 1219
   },
   "norm-documents": {
    "configs": 15,
-   "f1": 5117,
+   "f1": 5119,
    "f1_many": 0,
    "f1_other": 0,
-   "f1_same": 0,
-   "f2": 2121,
+   "f1_same": 5,
+   "f1_unavailable": 1005,
+   "f2": 2125,
    "f2_many": 0,
    "f2_other": 0,
-   "f2_same": 0,
-   "one_formula": 0,
-   "questions": 7238,
-   "sentences": 5117
+   "f2_same": 4,
+   "f2_unavailable": 422,
+   "one_formula": 5,
+   "questions": 7244,
+   "sentences": 5119
   },
   "random-earley": {
    "configs": 17,
@@ -6118,10 +6311,12 @@
    "f1_many": 0,
    "f1_other": 0,
    "f1_same": 4163,
+   "f1_unavailable": 0,
    "f2": 33256,
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 408,
+   "f2_unavailable": 0,
    "one_formula": 4250,
    "questions": 37506,
    "sentences": 4250
@@ -6132,6 +6327,7 @@
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 222,
+   "f2_unavailable": 0,
    "one_formula": 282,
    "questions": 316,
    "sentences": 452
@@ -6142,6 +6338,7 @@
    "f2_many": 0,
    "f2_other": 0,
    "f2_same": 3058,
+   "f2_unavailable": 1,
    "one_formula": 12905,
    "questions": 44984,
    "sentences": 13000
