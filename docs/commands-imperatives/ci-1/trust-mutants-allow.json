@@ -119,6 +119,11 @@
    "definition": "VE.Commands.guardOfOutcome",
    "operator": "list-empty",
    "reason": "Lean refuses the text: rs as [] has no element type, and the [g] arm binds g"
+  },
+  {
+   "definition": "VE.Commands.splitLastIf",
+   "operator": "list-drop-first",
+   "reason": "this arm has at least two parts (splitOn is never empty and [x] is the first arm), so xs.drop 1 keeps the last part; the mutant on xs.dropLast is killed by the row 'Click Ask, if Click Ask, if draft is approved.'"
   }
  ]
 }

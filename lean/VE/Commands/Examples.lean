@@ -204,9 +204,15 @@ def tuplesOf (j : Json) : Nat :=
   | .ok se => declared se
   | .error _ => false
 
-/-! ## Each value read once, and within its limit: with no act match the condition is not read (budget 0 gives no
-`limit`); with two, section 4's row 11; a very large wording stops at the first limit -/
+/-! ## Each value read once, and within its limit: with no act match the condition is not read; with two, section 4's
+row 11; a very large wording stops at the first limit -/
 
+#guard match se0, lex0 with
+  | some se, .ok (E, L) =>
+    match conditionOf se E L 0 ⟨.require, "x", some "draft is approved"⟩ [] with
+    | .ok .top => true
+    | _ => false
+  | _, _ => false
 #guard web "Click nothing, if draft is approved." 0 == noReadingOutcome
 #guard web "Review the meaning, if draft is approved." 0 == .ofText Texts.actsMatch
 #guard web (String.mk (List.replicate 100000 'a')) == .limit
