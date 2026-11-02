@@ -272,10 +272,10 @@ def routeView (environment : Json) (d : Option EventsDecoded) : Except String Js
 /-- `none` for a list without `events@0`, which every decoder reads as before, a block included. Otherwise the row
 (item 1), the block (items 2 to 7) and the environment the route decodes. -/
 def eventsHook (environment terms : Json) : Except String (Option EventsHook) := do
-  let listed := VE.Compose.listedProfiles environment
-  unless listed.contains "events@0" do return none
-  let _ ← VE.Compose.gateOf VE.Compose.profileTable listed
-  let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment
-  pure (some ⟨← routeView environment d, d⟩)
+  if (VE.Compose.listedProfiles environment).contains "events@0" then
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment)
+    let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment
+    pure (some ⟨← routeView environment d, d⟩)
+  else pure none
 
 end VE.Events

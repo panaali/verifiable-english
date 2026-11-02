@@ -180,7 +180,7 @@ def sourceField (L : LayeredU) : String := if L.route == "rights@0" then "docume
 /-! ## Regenerated outputs -/
 
 def layeredElaborate (L : LayeredU) : List (String × Json) :=
-  regeneratedU L.U ++ Packs.elaborateArrays L.packs ++
+  regeneratedU L.U ++ Packs.elaborateArrays L.packs ++ Packs.eventsArray L.packs ++
   [("environment_id", .str L.envId), ("document_hash", .str L.docHash),
    ("base_environment", L.baseEnv)]
 

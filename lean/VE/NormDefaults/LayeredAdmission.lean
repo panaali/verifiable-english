@@ -74,27 +74,42 @@ structure LayeredEntailment where
   valid : Bool
   hvalid : valid = VE.Tableau.checkCertificate (envAt (fill L.U) (size (fill L.U)))
     (premisesX L.U L.X premises) conclusion cert
-/-- 4.5: `decodeSoftU`, the formulas over `envAt (fill L.U) (size (fill L.U))`, `bindCertX environment L.U L.X []`. -/
+/-- The case's formulas over `envAt (fill L.U) (size (fill L.U))`, `bindCertX environment L.U L.X []`, on a decoded
+    source. -/
+def replayLayeredOn (L : LayeredU) (hX : ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []) (j : Json) :
+    Except String LayeredEntailment := do
+  let environment ← j.getObjVal? "environment"
+  let E := envAt (fill L.U) (size (fill L.U))
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← VE.Route.Wire.decodeFormulas E premisesJson
+  let conclusionJson ← j.getObjVal? "conclusion"
+  let c ← VE.Route.Wire.decodeClosed E conclusionJson
+  let cert ← bindCertX environment L.U L.X [] (← premisesJson.getArr?).toList conclusionJson
+    (← j.getObjVal? "certificate")
+  pure ⟨L, hX, ps, c, cert, VE.Tableau.checkCertificate E (premisesX L.U L.X ps) c cert, rfl⟩
+
+/-- 4.5: `decodeSoftU`, then `replayLayeredOn`. -/
 def replayLayeredEntailment (j : Json) : Except String LayeredEntailment := do
   let environment ← j.getObjVal? "environment"
-  let norms := j.getObjValD "norms"
-  match hL : decodeSoftU environment norms with
+  match hL : decodeSoftU environment (j.getObjValD "norms") with
   | .error e => throw e
-  | .ok L =>
-    let E := envAt (fill L.U) (size (fill L.U))
-    let premisesJson ← j.getObjVal? "premises"
-    let ps ← VE.Route.Wire.decodeFormulas E premisesJson
-    let conclusionJson ← j.getObjVal? "conclusion"
-    let c ← VE.Route.Wire.decodeClosed E conclusionJson
-    let cert ← bindCertX environment L.U L.X [] (← premisesJson.getArr?).toList conclusionJson
-      (← j.getObjVal? "certificate")
-    pure ⟨L, decodeSoftU_X_wellFormed environment norms L hL, ps, c, cert,
-      VE.Tableau.checkCertificate E (premisesX L.U L.X ps) c cert, rfl⟩
+  | .ok L => replayLayeredOn L (decodeSoftU_X_wellFormed environment _ L hL) j
+
+theorem replayLayeredOn_L {L : LayeredU} {hX : ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []} {j : Json}
+    {r : LayeredEntailment} (h : replayLayeredOn L hX j = .ok r) : r.L = L := by
+  unfold replayLayeredOn at h
+  repeat (obtain ⟨_, _, h⟩ := bind_ok h)
+  cases h
+  rfl
+
+theorem layered_wire_acceptance' (r : LayeredEntailment) (hv : r.valid = true) :
+    VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
+  VE.NormDefaults.acceptanceX r.L.U r.L.wfU r.L.X r.hX r.premises r.conclusion r.cert (r.hvalid ▸ hv)
 
 theorem layered_wire_acceptance (j : Json) (r : LayeredEntailment) (h : replayLayeredEntailment j = .ok r)
     (hv : r.valid = true) : VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
   have _ := h
-  VE.NormDefaults.acceptanceX r.L.U r.L.wfU r.L.X r.hX r.premises r.conclusion r.cert (r.hvalid ▸ hv)
+  layered_wire_acceptance' r hv
 
 end VE.NormDefaults.Wire
 
