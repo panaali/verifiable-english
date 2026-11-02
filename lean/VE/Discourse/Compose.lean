@@ -7,15 +7,17 @@ import VE.Service.Document
 
 A `ve.discourse@1` document with a chain construct (14.2, `chainConstructs`) on a list with `norms@0` takes the
 composed path: the wrapper checks of 3.5 (1), the document table and integrity, `definitions_version`, the manifest
-checks of 4.1 (`chainChecks`: the `@1` part loaded as the document mode loads it, then today's `wellFormed` on
-`chainDDoc`, `composed_wellFormed`), `resolveDocument`, and the admission of the route `dispatch` chooses for the base
-list on `chainDocument` of the resolved payload. Every other input is today's `admitDiscourse` (`composed_unchanged`).
+checks of 4.1 with `resolveDocument` (`chainChecks`: `resolveWith`, the `@1` part under the document mode's
+`Document.check` on its front matter and fence-free source, then today's `wellFormed` on `chainDDoc`,
+`composed_wellFormed`), and the admission of the route `dispatch` chooses for the base list on `chainDocument` of the
+resolved payload. Every other input is today's `admitDiscourse` (`composed_unchanged`).
 
 Item cmp-s4 builds the composed path without the fence compiler's slot steps (14.3 steps 1 and 3 to 7, item
-cmp-s4ab), so three inputs are named abstentions on it, as the loader's are today (11): a fenced unit
-(`NotImplemented: fenced content on the chain`), a prose unit with a recorded formula-producing mention
-(`NotImplemented: a bound prose unit on the chain`), and the groups, constraints, validity claims and reading sets
-of 14.5 step 1. A JSON content with such a mention is `MentionNotSlot` (14.3 step 6). Every other content's
+cmp-s4ab), so four inputs are named abstentions on it, as the loader's are today (11): a fenced unit
+(`NotImplemented: fenced content on the chain`), a body fence no unit binds (the loader's own
+`NotImplemented: fenced English or strict content`, `Loader.fencesOk`; so no fence goes unread, `composed_fenceless`),
+a prose unit with a recorded formula-producing mention (`NotImplemented: a bound prose unit on the chain`), and the
+groups, constraints, validity claims and reading sets of 14.5 step 1. A JSON content with such a mention is `MentionNotSlot` (14.3 step 6). Every other content's
 `resolveContent` answer is the content as written (`resolve_identity`: it has no slot), so `resolveDocument`
 answers its input. -/
 namespace VE.Discourse
