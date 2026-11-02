@@ -1277,8 +1277,8 @@ theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.No
     (h : elaborate D = .ok U') (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
 /-- `decodeElaboratedU` establishes `h0`, so the claim over every decoded document is unconditional
     (`decodeElaboratedU_faithful`). -/
-theorem VE.Acts.Decode.decodeElaboratedU_faithful {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU}
-    (h : VE.Acts.Decode.decodeElaboratedU environment norms = .ok e) (S : VE.Structure.{u}) :
+theorem Decode.decodeElaboratedU_faithful {environment norms : Lean.Json} {e : Decode.ElaboratedU}
+    (h : Decode.decodeElaboratedU environment norms = .ok e) (S : VE.Structure.{u}) :
     VE.Norms.holdsCatala e.U'.D.T S ↔ IntendedActs e.D S
 ```
 
