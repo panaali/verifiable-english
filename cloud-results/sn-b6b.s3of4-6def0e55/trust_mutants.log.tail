@@ -1,0 +1,13 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Senses/Run.lean is a selected declaration's file or in its import closure
+trust_mutants: 10 definitions, 229 mutants (57 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Flip.lean:33 VE.Senses.formulaCore (G[V], trusted) all-any: all -> any (lean/VE/Senses/Flip.lean:33: Unknown constant `VE.EnglishGrammar.EFormula.any`)
+UNKNOWN lean/VE/Senses/Flip.lean:52 VE.Senses.Flip (S, trusted) ctor-drop: | distinguished (on : List String) (first second : Bool) ->  (lean/VE/Senses/Flip.lean:70: Unknown constant `VE.Senses.Flip.distinguished`)
+UNKNOWN lean/VE/Senses/Flip.lean:83 VE.Senses.flipsOf (S, trusted) list-empty: (candidatePairs u.candidates.length).filterMap -> [] (lean/VE/Senses/Flip.lean:83: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:83 VE.Senses.flipsOf (S, trusted) list-empty: u.candidates -> [] (lean/VE/Senses/Flip.lean:83: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-empty: (P.env.constants.find? (·.name == c)).map (·.sort) -> [] (lean/VE/Senses/Flip.lean:45: Application type mismatch: The argument)
+SURVIVOR lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) list-drop-last: (List.range n) -> ((List.range n).dropLast)
+SURVIVOR lean/VE/Senses/Flip.lean:65 VE.Senses.flipPair (S, trusted) list-last: on -> (on.reverse.take 1)
+trust_mutants: 40 KILLED, 2 SURVIVOR, 5 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 172 OTHER SHARD in 2374 s
+trust_mutants: G[V], trusted: 11 KILLED, 1 UNKNOWN, 1 INVALID, 47 OTHER SHARD
+trust_mutants: S, trusted: 29 KILLED, 2 SURVIVOR, 4 UNKNOWN, 9 INVALID, 125 OTHER SHARD
+trust_mutants: steps: wall plan 8.6 s, scratch 1.8 s, control_build 0.2 s, probe_install 1.2 s, control_probes 112.4 s, mutants 2245 s, cleanup 4.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 112 s (1), mutant_builds 81.7 s (57), mutant_checks 1688.2 s (44), stage_controls 6.6 s (3), mutant_probes 7036 s (40)
