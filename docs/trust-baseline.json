@@ -1769,6 +1769,13 @@
    "reason": "sc-2d: VE/Scope/Theorems.lean S +3 (VE.Scope.Typed, spec 5.4's typing predicate in applyEffect_typed; exercised by Examples.lean:1236 and :1241, mutant typed_forgets_carve_outs)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-2d, 2026-10-18",
    "commit": "4d9a0eeb043cd2a8a4eb7f1096fde3e610bd88f1"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "me-2d-f2: VE/Calc/Render.lean trusted +7 (G[V] lowerWords new, leadingPhrase and reservedIn ignore ASCII case); VE/Calc/Wire.lean D[R] +1 (checkWords, the words \"the\" alone), not trusted; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d-f2, 2026-11-02",
+   "commit": "f3a4da815e4c01fe574f3f0176e57e65fec142ab"
   }
  ]
 }
