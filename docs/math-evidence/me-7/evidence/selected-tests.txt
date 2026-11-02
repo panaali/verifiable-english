@@ -1,0 +1,5 @@
+[mac-pytest 11:50:00Z] summary: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD 123e24e1 (clean); 1253s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+chunked tests/test_acts_vocab_mutants.py: 4 of 4 chunks, exit 0, 436.4 s in all, longest chunk 116.2 s; 643 passed, 0 skipped, 0 failed; each of its 643 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 4 of 4 chunks, exit 0, 459.1 s in all, longest chunk 126.0 s; 77 passed, 0 skipped, 0 failed; each of its 77 tests ran in exactly one chunk
+chunked tests/test_trust_mutants.py: 4 of 4 chunks, exit 0, 725.3 s in all, longest chunk 259.0 s; 564 passed, 0 skipped, 0 failed; each of its 564 tests ran in exactly one chunk
+recorded 384 units for tree d601dafbfd; 40 others left to the static graph until they run; 0 failed
