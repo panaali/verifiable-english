@@ -1,0 +1,15 @@
+{
+  "item": "me-2d-f2",
+  "how": "each bug planted alone in the checkout, then `lake build VE.Calc.RunExamples VE.Calc.Examples`; the file restored after each. RunExamples.lean:955 is the words guards' `expect` block (rows \"the-alone\", \"capital-phrase\", \"capital-twice\", \"capital-and\", \"capital-minus\"), Examples.lean:497 the refused capital-letter `valueWordsOk` guard",
+  "mutants": [
+    {"id": "M1", "file": "lean/VE/Calc/Wire.lean", "definition": "VE.Calc.Wire.checkWords", "bug": "the words \"the\" alone get main's text again", "verdict": "KILLED", "test": ["VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M2", "file": "lean/VE/Calc/Wire.lean", "definition": "VE.Calc.Wire.checkWords", "bug": "every words beginning \"the\" get the \"the\" alone text", "verdict": "KILLED", "test": ["VE/Calc/RunExamples.lean:92:0", "VE/Calc/RunExamples.lean:949:0", "VE/Calc/RunExamples.lean:955:0", "(and 35 more RunExamples guards)"]},
+    {"id": "M3", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.lowerWords", "bug": "no lowercasing: reserved and phrase words match as written", "verdict": "KILLED", "test": ["VE/Calc/Examples.lean:497:0", "VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M4", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.lowerWords", "bug": "uppercasing instead of lowercasing", "verdict": "KILLED", "test": ["VE/Calc/Examples.lean:488:0", "VE/Calc/Examples.lean:497:0", "VE/Calc/RunExamples.lean:955:0", "(and 3 more RunExamples guards)"]},
+    {"id": "M5", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.leadingPhrase", "bug": "the match compares the words as written", "verdict": "KILLED", "test": ["VE/Calc/Examples.lean:497:0", "VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M6", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.leadingPhrase", "bug": "the refusal quotes the word lowercased, not as written", "verdict": "KILLED", "test": ["VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M7", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.reservedIn", "bug": "the match compares the words as written", "verdict": "KILLED", "test": ["VE/Calc/Examples.lean:497:0", "VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M8", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.reservedIn", "bug": "the refusal quotes the word lowercased, not as written", "verdict": "KILLED", "test": ["VE/Calc/RunExamples.lean:955:0"]},
+    {"id": "M9", "file": "lean/VE/Calc/Render.lean", "definition": "VE.Calc.English.reservedIn", "bug": "the quoted slice starts one character late", "verdict": "KILLED", "test": ["VE/Calc/RunExamples.lean:955:0"]}
+  ]
+}
