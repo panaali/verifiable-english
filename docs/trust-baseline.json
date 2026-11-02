@@ -1818,6 +1818,13 @@
    "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
+   "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
   }
  ]
 }
