@@ -105,14 +105,15 @@ class S1Environment:
     def author_environment(self):
         """The author's base vocabulary: the frame without regulated predicates (4.5 step 1)."""
         from .environment import Environment
+        from .norms import base_data
         from .softnorms import base_predicate_declaration
-        data = json.loads(json.dumps(self.frame_data))
+        # The norms layer, `acts@0` with its block and `readings@1` as the norms projection drops them (one owner).
+        data = base_data(json.loads(json.dumps(self.frame_data)))
         data["vocabulary"].pop("soft", None)
         data["vocabulary"].pop("rights", None)
         data["vocabulary"]["predicates"] = {
-            name: base_predicate_declaration(decl)
-            for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0", "readings@1")]
+            name: base_predicate_declaration(decl) for name, decl in data["vocabulary"]["predicates"].items()}
+        data["profiles"] = [p for p in data["profiles"] if p not in ("soft-norms@0", "rights@0")]
         return Environment(data)
 
     def situation_id(self, entry):

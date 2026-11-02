@@ -10,14 +10,15 @@ def «row» : Shape :=
     ref "common.json#/$defs/error",
     n [
       obj,
-      .required ["id", "status", "environment_id", "profiles", "family", "acts"],
+      .required ["id", "status", "environment_id", "profiles", "family", "acts", "model_acts"],
       closed [
         ("id", n [str, .equals "/id"]),
         ("status", constS "ok"),
         ("environment_id", ref "common.json#/$defs/hex64"),
         ("profiles", n [ref "common.json#/$defs/strings", .equals "/environment/profiles"]),
         ("family", enumS ["fol", "closure", "closure+n-ary", "order"]),
-        ("acts", c "Norms.Wire.canonicalActs: the canonical act of each regulated predicate with an act, by its name, as the identity hashes it; Python stores it and binds the names to the request." [ref "common.json#/$defs/string_map"])]],
+        ("acts", c "Norms.Wire.canonicalActs: the canonical act of each regulated predicate with an act, by its name, as the identity hashes it; Python stores it and binds the names to the request." [ref "common.json#/$defs/string_map"]),
+        ("model_acts", c "Standalone.modelActs: under acts@0 the act Rust's model view gives each permission or obligation, by its name; Python binds the names and the equal acts to the request." [ref "common.json#/$defs/string_map"])]],
     c "The frozen v0 envelope (ve.core@0) names its one profile in `profile`." [
       obj,
       .required ["id", "status", "environment_id", "profile", "family"],
@@ -34,9 +35,9 @@ def file : File where
   top := [("row", «row»)]
   defs := []
 
-/- The row as `tools/response_schemas.py` renders it, pinned (ap-1bb): the `acts` member a `string_map`, required
-beside the others of the route row; the frozen v0 row without it. -/
+/- The row as `tools/response_schemas.py` renders it, pinned (ap-1bb, ap-1bg): the `acts` and `model_acts` members
+`string_map`s, required beside the others of the route row; the frozen v0 row without them. -/
 #guard (ResponseShape.render "environment.json" 64 «row»).toOption.map (·.compress) == some
-  "{\"anyOf\":[{\"$ref\":\"common.json#/$defs/case_error\"},{\"$ref\":\"common.json#/$defs/error\"},{\"additionalProperties\":false,\"properties\":{\"acts\":{\"$comment\":\"Norms.Wire.canonicalActs: the canonical act of each regulated predicate with an act, by its name, as the identity hashes it; Python stores it and binds the names to the request.\",\"$ref\":\"common.json#/$defs/string_map\"},\"environment_id\":{\"$ref\":\"common.json#/$defs/hex64\"},\"family\":{\"enum\":[\"fol\",\"closure\",\"closure+n-ary\",\"order\"]},\"id\":{\"type\":\"string\",\"x-equals\":\"/id\"},\"profiles\":{\"$ref\":\"common.json#/$defs/strings\",\"x-equals\":\"/environment/profiles\"},\"status\":{\"const\":\"ok\"}},\"required\":[\"id\",\"status\",\"environment_id\",\"profiles\",\"family\",\"acts\"],\"type\":\"object\"},{\"$comment\":\"The frozen v0 envelope (ve.core@0) names its one profile in `profile`.\",\"additionalProperties\":false,\"properties\":{\"environment_id\":{\"$ref\":\"common.json#/$defs/hex64\"},\"family\":{\"const\":\"fol\"},\"id\":{\"type\":\"string\",\"x-equals\":\"/id\"},\"profile\":{\"type\":\"string\",\"x-equals\":\"/environment/profile\"},\"status\":{\"const\":\"ok\"}},\"required\":[\"id\",\"status\",\"environment_id\",\"profile\",\"family\"],\"type\":\"object\"}]}"
+  "{\"anyOf\":[{\"$ref\":\"common.json#/$defs/case_error\"},{\"$ref\":\"common.json#/$defs/error\"},{\"additionalProperties\":false,\"properties\":{\"acts\":{\"$comment\":\"Norms.Wire.canonicalActs: the canonical act of each regulated predicate with an act, by its name, as the identity hashes it; Python stores it and binds the names to the request.\",\"$ref\":\"common.json#/$defs/string_map\"},\"environment_id\":{\"$ref\":\"common.json#/$defs/hex64\"},\"family\":{\"enum\":[\"fol\",\"closure\",\"closure+n-ary\",\"order\"]},\"id\":{\"type\":\"string\",\"x-equals\":\"/id\"},\"model_acts\":{\"$comment\":\"Standalone.modelActs: under acts@0 the act Rust's model view gives each permission or obligation, by its name; Python binds the names and the equal acts to the request.\",\"$ref\":\"common.json#/$defs/string_map\"},\"profiles\":{\"$ref\":\"common.json#/$defs/strings\",\"x-equals\":\"/environment/profiles\"},\"status\":{\"const\":\"ok\"}},\"required\":[\"id\",\"status\",\"environment_id\",\"profiles\",\"family\",\"acts\",\"model_acts\"],\"type\":\"object\"},{\"$comment\":\"The frozen v0 envelope (ve.core@0) names its one profile in `profile`.\",\"additionalProperties\":false,\"properties\":{\"environment_id\":{\"$ref\":\"common.json#/$defs/hex64\"},\"family\":{\"const\":\"fol\"},\"id\":{\"type\":\"string\",\"x-equals\":\"/id\"},\"profile\":{\"type\":\"string\",\"x-equals\":\"/environment/profile\"},\"status\":{\"const\":\"ok\"}},\"required\":[\"id\",\"status\",\"environment_id\",\"profile\",\"family\"],\"type\":\"object\"}]}"
 
 end ResponseShape.Schemas.Environment
