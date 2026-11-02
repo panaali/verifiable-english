@@ -12,16 +12,23 @@ def reservedWords : List String :=
 def phraseWords : List String :=
   ["the sum of", "the product of", "the square of", "the cube of", "twice", "half of"]
 
-/-- The phrase word that the words `w` begin with, as whole words. -/
-def leadingPhrase (w : String) : Option String :=
-  phraseWords.find? fun p => (" " ++ w ++ " ").startsWith (" " ++ p ++ " ")
+/-- The words `w` with ASCII capitals lowercased, character for character: reserved and phrase words match whatever
+their capital letters (11.2). -/
+def lowerWords (w : String) : String := w.map Char.toLower
 
-/-- The first reserved word, in 11.2's order, that the words `w` contain as whole words. -/
+/-- The phrase word that the words `w` begin with, as whole words ignoring ASCII case, as the writer wrote it. -/
+def leadingPhrase (w : String) : Option String :=
+  (phraseWords.find? fun p => (" " ++ lowerWords w ++ " ").startsWith (" " ++ p ++ " ")).map (w.take ·.length)
+
+/-- The first reserved word, in 11.2's order, that the words `w` contain as whole words ignoring ASCII case, as the
+writer wrote it. -/
 def reservedIn (w : String) : Option String :=
-  reservedWords.find? fun r => ((" " ++ w ++ " ").splitOn (" " ++ r ++ " ")).length > 1
+  reservedWords.findSome? fun r => match (" " ++ lowerWords w ++ " ").splitOn (" " ++ r ++ " ") with
+    | before :: _ :: _ => some ((w.drop before.length).take r.length)
+    | _ => none
 
 /-- 11.2's form of value words: single-spaced words beginning with "the", not beginning with a phrase
-word and containing no reserved word, so that an atom never reads as a phrase. -/
+word and containing no reserved word, whatever their capital letters, so that an atom never reads as a phrase. -/
 def valueWordsOk (w : String) : Bool :=
   w.startsWith "the " && (w.splitOn " ").all (fun t => !t.isEmpty) &&
     (leadingPhrase w).isNone && (reservedIn w).isNone

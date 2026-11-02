@@ -493,5 +493,9 @@ wording, printed numbers and numerals, and 11.2's form of value words. -/
 -- A reserved or phrase word inside another word is no reserved word.
 #guard ["the island", "the minuses", "the bees", "the throughput", "the sumo of things"].all
   VE.Calc.English.valueWordsOk
+-- Reserved and phrase words match whatever their capital letters; the first word "the" is lowercase.
+#guard ["the x And y", "the x MINUS y", "the Sum of x", "Twice the x", "The x"].all
+  (fun w => !VE.Calc.English.valueWordsOk w)
+#guard ["the Andes", "the Summit"].all VE.Calc.English.valueWordsOk
 
 end VE.Calc.Examples
