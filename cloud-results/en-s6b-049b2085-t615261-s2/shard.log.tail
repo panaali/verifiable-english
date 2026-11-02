@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 3/6: 76 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/246] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/246] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/246] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4849 lines cut; full output in shard-full.txt)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded quote v1.0.47
+  Downloaded num-integer v0.1.47
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded itoa v1.0.18
+  Downloaded digest v0.10.7
+  Downloaded num-bigint v0.4.8
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded autocfg v1.5.1
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.20s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.07s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(4/4), tests/test_trust_mutants.py::chunk(2/4), tests/test_speech_polar_lean.py::chunk(4/4)
+recording 76 units with 4 jobs in /var/tmp/cct/ve-select-run-fpe0o6rv
+  tests/test_ask_cli.py: exit 1 in 145.8 s, 1260 functions
+  tests/test_ask_relay.py: exit 1 in 24.3 s, 879 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_ask_cli.py (exit 1): tests/test_ask_cli.py::test_the_json_is_leans_result_with_the_honesty_fields; log /var/tmp/cct/ve-select-run-fpe0o6rv/tests__test_ask_cli.py.log
+......................F........................                          [100%]
+ve: English comparator: {"records": 10, "excluded": 0, "planted": 0, "classes": {"agree": 10}} (/var/tmp/cct/ve-english-comparator-9793xrc9)
+
+=================================== FAILURES ===================================
+____________ test_the_json_is_leans_result_with_the_honesty_fields _____________
+
+    def test_the_json_is_leans_result_with_the_honesty_fields():
+        entry = AF.load("G1")
+        done = cli(ROOT / entry["path"], entry["question"], "--json")
+        assert done.returncode == 0
+        record = json.loads(done.stdout)
+        assert {k: record[k] for k in ("operation", "intent", "proof", "answer")} == {
+            "operation": "question.answer", "intent": "unconfirmed", "proof": "lean_checked", "answer": "lean"}
+>       assert record["result"] == entry["result"]
+E       AssertionError: assert {'ast': ['for...': 'yes', ...} == {'ast': ['for...': 'yes', ...}
+E         
+E         Omitting 12 identical items, use -vv to show
+E         Differing items:
+E         {'identities': {'actions_version': '37', 'document_id': '770f6ad6de6a226cd100cf046d715f109843d82022e1e5a2d310a457d23a0...92c89d03b4515b52994cc83d75b06', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...}} != {'identities': {'actions_version': '36', 'document_id': '770f6ad6de6a226cd100cf046d715f109843d82022e1e5a2d310a457d23a0...92c89d03b4515b52994cc83d75b06', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...}}
+E         Use -v to get more diff
+
+tests/test_ask_cli.py:112: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ask_cli.py::test_the_json_is_leans_result_with_the_honesty_fields
+1 failed, 46 passed in 145.04s (0:02:25)
+FAILED tests/test_ask_relay.py (exit 1): tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[G1], tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[G3], tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[U3], tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[U5]; log /var/tmp/cct/ve-select-run-fpe0o6rv/tests__test_ask_relay.py.log
+        result, request, expected = answers[ident]
+>       assert not refused(result, request, expected)
+E       assert not True
+E        +  where True = refused({'ast': ['forall', 'person', ['unary', 'education_spared_required', ['var', 0]]], 'form': 'fronted', 'identities': {'a...b8', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...}, 'lead': 'by_reading', ...}, {'id': 'ask', 'document': '---\n{"environment": {"language": "ve.core@0.2", "profiles": ["documents@1", "norm-defaults...', 'B'], ['community', 'M'], ['course_of_education', 'R'], ['education_kind', 'E'], ['exercise', 'X'], ...], ...}, ...}, {'source_sha256': '1db6f7791c1d855ea6c0a818e2dc79137188e94323ccfc41c8ab68690bb9108e', 'environment_id': '1b710ff95398c...69af2d2b53b98bd635741d338965ec', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...})
+
+tests/test_ask_relay.py:96: AssertionError
+____________________ test_a_genuine_answer_is_accepted[U5] _____________________
+
+answers = {'G1': ({'ast': ['forall', 'member', ['unary', 'eligible', ['var', 0]]], 'form': 'fronted', 'identities': {'actions_ve...b53b98bd635741d338965ec', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...}), ...}
+ident = 'U5'
+
+    @pytest.mark.parametrize("ident", ["G1", "G3", "U3", "U5"])
+    def test_a_genuine_answer_is_accepted(answers, ident):
+        result, request, expected = answers[ident]
+>       assert not refused(result, request, expected)
+E       assert not True
+E        +  where True = refused({'ast': ['forall', 'person', ['unary', 'person_may_form_and_join_trade_unions', ['var', 0]]], 'form': 'fronted', 'iden...b8', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...}, 'lead': 'by_reading', ...}, {'id': 'ask', 'document': '---\n{"environment": {"language": "ve.core@0.2", "profiles": ["documents@1", "norm-defaults...', 'B'], ['community', 'M'], ['course_of_education', 'R'], ['education_kind', 'E'], ['exercise', 'X'], ...], ...}, ...}, {'source_sha256': 'd70002f2952c33053fdfd649b8c23dbc4de42a79b6a199a42208e22e85299778', 'environment_id': '1b710ff95398c...69af2d2b53b98bd635741d338965ec', 'grammar_id': 'e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6', ...})
+
+tests/test_ask_relay.py:96: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[G1] - asser...
+FAILED tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[G3] - asser...
+FAILED tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[U3] - asser...
+FAILED tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[U5] - asser...
+4 failed, 39 passed in 23.66s
+recorded 51 units for tree a42cf619b5; 24 others left to the static graph until they run; 2 failed
+STOPPED EARLY (--maxfail 5): 24 selected units did not run: tests/test_trust_mutants.py, tests/test_lean_conformance.py, tests/test_speech_polar_lean.py, tests/test_defaults_checks.py, tools/test_layer_policy.py, tests/test_packs_guard_mutants.py, tests/test_events_wire_mutants.py, tests/test_defaults_lean.py, tests/test_calc_service.py, tests/test_readings_sd_document.py, tests/test_words.py, tests/test_lean_first_b14a.py, tests/test_rd9_followup_bindings.py, tests/test_profile_table.py, tests/test_scales_exercised.py, tests/test_time_w6a.py, tests/test_w6b_gates.py, tests/test_profiles.py, tests/test_rd9_statements.py, tests/test_readings_component_names.py, tests/test_english_lean_s2.py, tests/test_reports_agreement.py, tests/test_metered_handles.py, tests/test_lean_first_triage.py
+SHARD 3/6: exit 1 in 549.8 s; 76 units, 49 passed
