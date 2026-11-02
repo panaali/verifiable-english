@@ -222,5 +222,12 @@ senses, and the words of the plan's catalogue row matched where they are evaluat
   ["fair_hearing", "adequate_standard", "overly_cautious", "acts_arbitrarily", "appropriate_care",
     "acts_appropriately", "legitimate_aim", "genuine_need", "genuinely_arising", "effective_remedy",
     "necessary_measure", "due_process", "good_judgment"]
+-- The "good judgment" row (jt-3p): listed when unbound, in a name or a template, and not when bound; only the phrase
+-- in its order matches.
+#guard [([], ["good_judgment", "judgment_use_required"]), (["good_judgment"], ["judgment_use_required"])].all
+  fun (J, listed) => VE.Judgments.undeclaredEvaluative evaluativeRows
+    [("good_judgment", ["good", "judgment"]), ("good_conduct", ["good", "conduct"]),
+     ("judgment_good", ["judgment", "good"]), ("court_judgment", ["court", "judgment"]),
+     ("judgment_use_required", ["judgment", "use", "required", "0", "uses", "good", "judgment"])] J == listed
 
 end VE.EnglishGrammar.Examples
