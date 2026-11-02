@@ -43,7 +43,7 @@ The u0218.s18 regression guards main's code, not code this item adds, so it has 
 ## Trust, size, bytes, tests
 
 - **Trust.** `trust_map.py --check` against f1c306460476 gives K +0, S +10 and untied V +8, all in `lean/VE/Scope/Reach.lean`: trusted +18, PASS with the R16 allowance (DELTA.md). The ties pass is in FOLLOW-UPS.md under `## sc-6`. `python3 lean/audit.py`: "PASS: 733 source files; 8160 named theorem declarations audited".
-- **Size.** `git diff --numstat $(git merge-base HEAD main)`, generated files excluded: 563 hand-written lines before this report.
+- **Size.** `git diff --numstat $(git merge-base HEAD main)`, generated files, inventories and recorded answers excluded: 637 hand-written lines with this report (563 before it; ~600 is the size line, the fixtures file is 160 of them).
 - **Bytes (estimate, not claimed).** 0 new. The 683 B of u111 (337), u112 (121) and u114 (225) become faithful only when sc-6b routes the reach and the pilot's next translation writes it.
 - **Tests.**
   - The selected tests ran once (`mac-pytest.sh --select`, HEAD 761653cf): 1 failed. That was `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: the new files were not classified. Fixed in 7e7af9723, and the rerun of that test passed ("2 passed").
