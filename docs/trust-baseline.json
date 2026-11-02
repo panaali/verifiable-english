@@ -1797,6 +1797,13 @@
    "reason": "cmp-s3a: VE/RightClauses/Plain.lean S +103, VE/RightClauses/Tree.lean S +36 (K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
+   "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
   }
  ]
 }
