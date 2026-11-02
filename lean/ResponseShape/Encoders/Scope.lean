@@ -8,12 +8,16 @@ open Lean ResponseShape ResponseShape.Skeletons VE.Scope
 variable {req : Json}
 
 theorem explainCase_fits (j : Json) : OkFits j Skeletons.scope (Run.explainCase j) := by
-  unfold Run.explainCase VE.Route.Wire.ok
+  unfold Run.explainCase Run.answerOf VE.Route.Wire.ok
   okfits
   all_goals fits
-  all_goals (rename_i h r hr x hx
-             exact Fits.strIn (by simpa [effectWords, effectWord] using
-               Run.explainWithin_effect h r hr x.1 (List.of_mem_zip hx).1))
+  all_goals first
+    | (rename_i h r hr x hx
+       exact Fits.strIn (by simpa [effectWords, effectWord] using
+         Run.explainWithin_effect h r hr x.1 (List.of_mem_zip hx).1))
+    | (rename_i h g hg r hr x hx
+       exact Fits.strIn (by simpa [effectWords, effectWord] using
+         Run.explainSetsWithin_effect h g hg r hr x.1 (List.of_mem_zip hx).1))
 
 theorem runCaseReported_fits (j : Json) : Fits j Skeletons.scope (VE.Scope.Run.runCaseReported j) := by
   unfold Run.runCaseReported
