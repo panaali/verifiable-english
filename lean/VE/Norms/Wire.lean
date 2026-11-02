@@ -46,6 +46,12 @@ def canonicalActU (profiles fx : List String) (V : VE.Acts.Vocab) (name : String
     Except String String :=
   if profiles.contains "acts@0" then Prod.fst <$> VE.Acts.Wire.checkAct fx V name k raw else canonicalAct name k raw
 
+/-- The canonical act of a document's profiles, without reading it: under `acts@0` the checks and the lexing of 1.3
+that a joined act passes too (`Lexical.checkWith`); `canonicalAct` otherwise. -/
+def canonicalShape (profiles fx : List String) (name : String) (k : Nat) (raw : Json) : Except String String :=
+  if profiles.contains "acts@0" then VE.Acts.Lexical.checkWith (fun act _ => pure act) fx name k raw
+  else canonicalAct name k raw
+
 /-- One `regulated` declaration (3.1), as Python `_regulated` validates it, with the act check `actCheck`. With
 `acts` (act-phrases 3.2) a plain declaration may carry an act and its form, both or neither. -/
 def decodeRegulatedWith (acts : Bool) (actCheck : String → Nat → Json → Except String String) (name : String)
@@ -230,15 +236,14 @@ def decodeNormsEnvironment (environment : Json)
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
 Apply that same canonicalisation before any source environment binding: each act by
-`canonicalActU` with the environment's profiles, fixed phrases and frames (act-phrases 3.3, 6.4); on the readings
-route, which reads no joined act (D-33), by `canonicalActIn`. -/
+`canonicalShape` with the environment's profiles and fixed phrases (act-phrases 3.3, 6.4), which reads no joined act
+and leaves its bytes as `decodeSource` stored them; on the readings route, which admits none (D-33), `canonicalActIn`. -/
 def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   let vocab ← environment.getObjVal? "vocabulary"
   let predicates ← fields (← vocab.getObjVal? "predicates")
   let ps := actsProfiles true environment
   let fx ← actsFixed ps environment
-  let V ← actsVocab ps environment
-  let check := if ps.contains "readings@1" then canonicalActIn ps fx else canonicalActU ps fx V
+  let check := if ps.contains "readings@1" then canonicalActIn ps fx else canonicalShape ps fx
   let canonical ← predicates.mapM fun (name, entry) => do
     let entry ← match entry.getObjVal? "regulated" with
       | .error _ => pure entry
