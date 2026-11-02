@@ -1,0 +1,96 @@
+trust_mutants: 3 definitions, 95 mutants (3 to run), 4 jobs, base eeb2a3b67d20
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) and-or: && -> ||
+NOT RUN lean/VE/Judgments/Decl.lean:134 VE.Judgments.faultOf (S, trusted) eq-ne: == -> !=
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) any-all: any -> all
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> []
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-empty: row.otherSenses -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:17 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [w] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["neces... -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["just"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [["just", "as"]] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["just", "as"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["effective"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [["effective", "date"]] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["effective", "date"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["necessary"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [["necessary", "condition"]] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["necessary", "condition"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["due"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: [["due", "date"], ["due", "to"]] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["due", "date"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["due", "to"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:20 VE.EnglishGrammar.evaluativeRows (S, trusted) list-empty: ["good", "judgment"] -> []
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate...
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-first: row.otherSenses -> (row.otherSenses.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate...
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-drop-last: row.otherSenses -> (row.otherSenses.dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> ((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate"...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> ((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate"...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: [⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["neces... -> ([⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["nece...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:17 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [w] -> ([w].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["just", "as"] -> (["just", "as"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["neces... -> ([⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["nece...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["effective", "date"] -> (["effective", "date"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["just"] -> (["just"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["necessary", "condition"] -> (["necessary", "condition"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [["just", "as"]] -> ([["just", "as"]].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["just", "as"] -> (["just", "as"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["due", "date"] -> (["due", "date"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["effective"] -> (["effective"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["due", "to"] -> (["due", "to"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [["effective", "date"]] -> ([["effective", "date"]].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:20 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: ["good", "judgment"] -> (["good", "judgment"].take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["effective", "date"] -> (["effective", "date"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["necessary"] -> (["necessary"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [["necessary", "condition"]] -> ([["necessary", "condition"]].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["necessary", "condition"] -> (["necessary", "condition"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["due"] -> (["due"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["due", "date"] -> (["due", "date"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["due", "to"] -> (["due", "to"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:20 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-last: ["good", "judgment"] -> (["good", "judgment"].dropLast)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate...
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-last: row.otherSenses -> (row.otherSenses.reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate...
+NOT RUN lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-drop-first: row.otherSenses -> (row.otherSenses.drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-middle: "genuinely", -> 
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:17 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-middle: "adequate", -> 
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> ((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate"...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate", ... -> ((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate"...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-middle: ⟨["effective"], [["effective", "date"]]⟩, -> 
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: [⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["neces... -> ([⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["nece...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:17 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [w] -> ([w].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-middle: ⟨["necessary"], [["necessary", "condition"]]⟩, -> 
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["just", "as"] -> (["just", "as"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["neces... -> ([⟨["just"], [["just", "as"]]⟩, ⟨["effective"], [["effective", "date"]]⟩, ⟨["necessary"], [["nece...
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-middle: ⟨["due"], [["due", "date"], ["due", "to"]]⟩, -> 
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["effective", "date"] -> (["effective", "date"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["just"] -> (["just"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["necessary", "condition"] -> (["necessary", "condition"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [["just", "as"]] -> ([["just", "as"]].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["just", "as"] -> (["just", "as"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["due", "date"] -> (["due", "date"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["effective"] -> (["effective"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["due", "to"] -> (["due", "to"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [["effective", "date"]] -> ([["effective", "date"]].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:20 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: ["good", "judgment"] -> (["good", "judgment"].reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:18 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["effective", "date"] -> (["effective", "date"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["necessary"] -> (["necessary"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [["necessary", "condition"]] -> ([["necessary", "condition"]].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["necessary", "condition"] -> (["necessary", "condition"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["due"] -> (["due"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: [["due", "date"], ["due", "to"]] -> ([["due", "date"], ["due", "to"]].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["due", "date"] -> (["due", "date"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:19 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["due", "to"] -> (["due", "to"].drop 1)
+NOT RUN lean/VE/EnglishGrammar/Evaluative.lean:20 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: ["good", "judgment"] -> (["good", "judgment"].drop 1)
+trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 92 NOT RUN in 24 s
+trust_mutants: S, trusted: 3 KILLED, 92 NOT RUN
+trust_mutants: steps: wall plan 6.5 s, scratch 1.1 s, control_build 0.1 s, probe_install 0.9 s, control_probes 3.2 s, mutants 12 s, cleanup 0.2 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2.7 s (1), mutant_builds 3 s (6), mutant_checks 10.5 s (6), stage_controls 5.9 s (3), mutant_probes 11.5 s (3)
