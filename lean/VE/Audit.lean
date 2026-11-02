@@ -260,6 +260,7 @@ import VE.Order.Wire
 import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
+import VE.Commands.Read
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
