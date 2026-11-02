@@ -2264,7 +2264,9 @@
       "lean/VE/Senses/RunExamples.lean": "fixtures only: #guard checks of the senses runner's answers to whole requests (B6), pinned by digest; no runner path",
       "lean/VE/Scope/FarExamples.lean": "fixtures only: SC-4's #guard checks (scope spec 7.6) build scope@0 documents, rule contents and one raw unit tree (F-raw-edges) as JSON literals and run `govern` and `forwardCheck` on them; no runtime JSON handling",
       "lean/VE/Service/UndeclaredExamples.lean": "fixtures only: jt-3a's #guard checks build one judgments@0 document as request JSON and read the document mode's `undeclared_evaluative` member and `Env.basePredicates` (judgment-terms.md 8.4); no service mode reads this file",
-      "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling"
+      "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling",
+      "lean/VE/Acts/FaithfulExamples.lean": "fixtures only: `#guard`s that compute both sides of elaborate_faithful on small finite models, one case decoding environment and norm JSON (act-phrases ap-3dd); no admission path, service mode or record reads them",
+      "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file"
     }
   },
   "plan_operations": {
