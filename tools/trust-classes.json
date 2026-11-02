@@ -16311,8 +16311,7 @@
         "VE.Calc.Filter.Selects",
         "VE.Calc.Table",
         "VE.Calc.Table.cell",
-        "VE.Calc.Table.numbers",
-        "VE.Calc.mean?"
+        "VE.Calc.Table.numbers"
       ],
       "D[V]": [
         "VE.Calc.ColType",
@@ -17355,6 +17354,54 @@
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
         "VE.RightClauses.Examples.verdict"
+      ]
+    },
+    "VE/Calc/Stats.lean": {
+      "S": [
+        "VE.Calc.SqrtRoundsTo",
+        "VE.Calc.Stat",
+        "VE.Calc.Stat.minLength",
+        "VE.Calc.Stat.run",
+        "VE.Calc.absR",
+        "VE.Calc.binomialTail",
+        "VE.Calc.choose",
+        "VE.Calc.kappa?",
+        "VE.Calc.mean?",
+        "VE.Calc.populationVariance?",
+        "VE.Calc.rootEq",
+        "VE.Calc.rootGe",
+        "VE.Calc.rootGt",
+        "VE.Calc.rootLe",
+        "VE.Calc.rootLt",
+        "VE.Calc.sampleVariance?",
+        "VE.Calc.signFlipP",
+        "VE.Calc.signs"
+      ],
+      "G[R]": [
+        "VE.Calc.maxSignFlip"
+      ],
+      "C": [
+        "VE.Calc.instDecidableRootEq",
+        "VE.Calc.instDecidableRootGe",
+        "VE.Calc.instDecidableRootGt",
+        "VE.Calc.instDecidableRootLe",
+        "VE.Calc.instDecidableRootLt",
+        "VE.Calc.instDecidableSqrtRoundsTo",
+        "VE.Calc.signFlipC",
+        "VE.Calc.signFlipWork"
+      ]
+    },
+    "VE/Calc/StatsExamples.lean": {
+      "T": [
+        "VE.Calc.StatsExamples.d12",
+        "VE.Calc.StatsExamples.d16",
+        "VE.Calc.StatsExamples.grid",
+        "VE.Calc.StatsExamples.milli",
+        "VE.Calc.StatsExamples.pv",
+        "VE.Calc.StatsExamples.rootsAt",
+        "VE.Calc.StatsExamples.sv",
+        "VE.Calc.StatsExamples.tie",
+        "VE.Calc.StatsExamples.v6"
       ]
     }
   }
