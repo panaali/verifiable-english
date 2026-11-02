@@ -1,0 +1,96 @@
+{
+ "sources": "UDHR parts 1-4: git show pilot/udhr-20261101T0600Z:usecases/udhr-pilot/run-20261101T0600Z/translation-part0<n>.ve.md; '+scope@0 (no governor)': scope@0 added to the profiles and scope {version, governors: []}; '(g1 ...)': scope@0 and governor g1 (unit u020, reach rules [u024-prohibited], units [u024], effect reguard ['and','own',['top']])",
+ "command": "python tools/readings_s1_pilot.py --rebuild-reading-ids <doc> --check-noop, main = main's tools/readings_s1_pilot.py at 1edb74de2, head = this branch",
+ "runs": {
+  "part01": {
+   "main": {
+    "exit": 2,
+    "last_line": "_main_pilot_tmp.py: error: reading-set ids changed: rebuild is not a no-op"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 3, \"no_op\": true}"
+   }
+  },
+  "part01+scope@0 (no governor)": {
+   "main": {
+    "exit": 1,
+    "last_line": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile scope@0"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 3, \"no_op\": true}"
+   }
+  },
+  "part02": {
+   "main": {
+    "exit": 2,
+    "last_line": "_main_pilot_tmp.py: error: reading-set ids changed: rebuild is not a no-op"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 4, \"no_op\": true}"
+   }
+  },
+  "part02+scope@0 (no governor)": {
+   "main": {
+    "exit": 1,
+    "last_line": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile scope@0"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 4, \"no_op\": true}"
+   }
+  },
+  "part03": {
+   "main": {
+    "exit": 0,
+    "last_line": "{\"sets\": 4, \"no_op\": true}"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 4, \"no_op\": true}"
+   }
+  },
+  "part03+scope@0 (no governor)": {
+   "main": {
+    "exit": 1,
+    "last_line": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile scope@0"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 4, \"no_op\": true}"
+   }
+  },
+  "part04": {
+   "main": {
+    "exit": 2,
+    "last_line": "_main_pilot_tmp.py: error: reading-set ids changed: rebuild is not a no-op"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 5, \"no_op\": true}"
+   }
+  },
+  "part04+scope@0 (no governor)": {
+   "main": {
+    "exit": 1,
+    "last_line": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile scope@0"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 5, \"no_op\": true}"
+   }
+  },
+  "part01+scope@0 (g1: u020 re-guards u024)": {
+   "main": {
+    "exit": 1,
+    "last_line": "ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile scope@0"
+   },
+   "head": {
+    "exit": 0,
+    "last_line": "{\"sets\": 3, \"no_op\": true}"
+   }
+  }
+ }
+}
