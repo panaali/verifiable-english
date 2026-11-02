@@ -1,3 +1,6 @@
+- `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
+- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
+- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
@@ -82,6 +85,3 @@
 - `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
 - `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
 - `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
-- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
-- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
-- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.

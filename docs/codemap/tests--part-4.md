@@ -1,3 +1,6 @@
+- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
+- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
+- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
 - `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
 - `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 - `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
@@ -87,7 +90,3 @@
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
-- `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
-- `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
-- `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
-- `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
