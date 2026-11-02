@@ -1,5 +1,6 @@
 import VE.Defaults.RouteExamples
 import VE.NormDefaults.PacksExamples
+import VE.Defaults.MeaningExamples
 
 /-! Fixtures F9.1 to F9.7 (docs/spec/profile-composition.md 4, plan PC-9): the two typed priority graphs, each with
 its own check, and the "no exception" statements of `Defaults/Uniform.lean` with the guard of `defaultsRows`. The
@@ -70,6 +71,42 @@ def refusedP : Json := .str ("error: " ++ providerRefusal)
 #guard holds dπ fun L =>
   packConditions [wPack "x" [(.excepted "r1", medical), (.off "r1" "user", .top), (key, .bottom)]] (.excepted "r1") ==
     [medical] && packConditions (with_ L (wPack "weighing" cond)).packs (.excepted "r1") == []
+
+-- `leastUniform`, one branch at a time (DRI decision 2026-11-02, pc-9, item 2): a decision's least table holds at a
+-- one-element situation where its stated provider condition holds, and not where it fails
+open VE.Defaults.MeaningFixtures (sit a1 offOf) in
+instance leastUDec (D : VE.SoftNorms.SoftDoc) (qs : List Pack) (L : LayeredU) (on : List String) (p : String)
+    (vs : List Entity) : Decidable (leastUniform D qs (sit L on) p vs) := by
+  unfold leastUniform; infer_instance
+def dOff : Except String LayeredU := layered (envJ [xReq, xPerm, baseJ "medical"]
+  r#"{"parties":["user"],"outranking":{"mode":"strict"}}"#) [ruleJ "r0" "x_required" true ",\"alterable\":[\"user\"]"]
+open VE.Defaults.MeaningFixtures (sit a1 offOf) in
+#guard holds dπ fun L => let qs := [wPack "w" [(.excepted "r1", medical)]]
+  decide (leastUniform L.D qs (sit L ["medical"]) exc1 a1) && !decide (leastUniform L.D qs (sit L []) exc1 a1)
+open VE.Defaults.MeaningFixtures (sit a1 offOf) in
+#guard holds dOff fun L => let qs := [wPack "w" [(.off "r0" "user", medical)]]
+  decide (leastUniform L.D qs (sit L ["medical"]) (offOf L 0) a1) &&
+    !decide (leastUniform L.D qs (sit L []) (offOf L 0) a1)
+open VE.Defaults.MeaningFixtures (sit a1 offOf) in
+#guard holds dπ fun L => let w := VE.SoftNorms.outweighsName "x_permitted" "privacy" "disclosure"
+  decide (leastUniform L.D [wPack "w" cond] (sit L ["medical"]) w a1) &&
+    !decide (leastUniform L.D [wPack "w" cond] (sit L []) w a1)
+
+-- `dfltUniformOf` reads a rule's conditions by its decision key, `decisionRule N`: a part split from `src` reads the
+-- conditions stated for `src`, not for its own name (the split itself and F6.7 are PC-6's)
+#guard holds dπ fun L => match L.D.T.nodes with
+  | N :: _ => let P := { N with splitFrom := some "src" }
+    let exc (cs : List VE.Formula) := some ("default:exception:r1",
+      VE.Norms.bindAll (VE.SoftNorms.sortsOf L.D N.pred) (.implies (VE.SoftNorms.exceptedF L.D P) (VE.Norms.anyF cs)))
+    (dfltUniformOf L.D [wPack "w" [(.excepted "src", medical)]] P).head? == exc [medical] &&
+      (dfltUniformOf L.D [wPack "w" [(.excepted "r1", medical)]] P).head? == exc []
+  | [] => false
+#guard holds dOff fun L => match L.D.T.nodes with
+  | N :: _ => let P := { N with splitFrom := some "src" }
+    let ss := VE.SoftNorms.sortsOf L.D N.pred
+    dfltUniformOf L.D [wPack "w" [(.off "src" "user", medical)]] P == [("default:switch:r0:user",
+      VE.Norms.bindAll ss (.implies (VE.Norms.atom (VE.SoftNorms.offName P "user") ss) (VE.Norms.anyF [medical])))]
+  | [] => false
 
 -- F9.4: the same pack with `conditions = []` is not refused, and its premises are today's
 #guard holds dπ fun L => VE.NormDefaults.Wire.defaultsKinds.all fun k =>

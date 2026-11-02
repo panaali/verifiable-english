@@ -6,8 +6,9 @@ stated sufficient condition forces it. The conditions are soft's own exceptions 
 `Pack.conditions` (PK-1), looked up by the decision key of `decisionRule N` (PC-6a).
 
 `dfltUniform_legacy`: on packs that state no condition, today's `[soft]` and `[soft, rights]`, the uniform premises
-are today's, label for label. `dfltUniform_sound` is stated here (`DfltUniformSound`) and proved by defeasible's DF-U.
-Until EXP-D3 settles, the defaults kinds refuse a document some of whose packs state a condition
+are today's, label for label. `dfltUniform_sound` is not proved here: its statement is held as the definition
+`DfltUniformSound` (DRI decision 2026-11-02, pc-9, item 1), for defeasible's DF-U to prove in the specification's own
+form; item 3 of that decision is open against it. Until EXP-D3 and DF-U settle, the defaults kinds refuse a document some of whose packs state a condition
 (`providerConditions`, `providerRefusal` and its sentence E1d, read by `defaultsRows` in `Defaults/Route.lean`). -/
 namespace VE.Defaults
 open VE.Norms (bindAll atom anyF Sat)
@@ -100,12 +101,20 @@ theorem conditionsExact_legacy (U : UDoc) (D : SoftDoc) {qs : List Pack} (h : �
         SwitchesOff D (withOpen U D B (leastDecisions D B) F) := by
   simp only [ConditionsExact, leastUniform_legacy D h]
 
-/-- The statement of `dfltUniform_sound` (1.9), binders and conclusion as the specification gives them. Proved by
-defeasible's named batch DF-U (DRI ruling 2(b)), against `DefaultBase`, as `dfltUniform_sound : DfltUniformSound`. -/
+/-- The statement of `dfltUniform_sound` (1.9), binders and conclusion as the specification gives them. It is not
+proved here, and nothing in PC-9 reads it: defeasible's named batch DF-U (DRI ruling 2(b)) proves `dfltUniform_sound`
+in the specification's form and deletes this definition and its lock (DRI decision 2026-11-02, pc-9, item 1; item 3
+is open against the statement). The provider-conditions refusal stands until EXP-D3 and DF-U. -/
 def DfltUniformSound : Prop :=
   ∀ (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
     (hD : WellFormedSoft D = true) (qs : List Pack) (hex : ConditionsExact.{u} U D qs) (B : VE.Structure.{u})
     (hB : DefaultBase U D (VE.NormDefaults.Packs.X qs) B), Sat B (dfltUniform D qs)
+
+/-- The lock (DRI decision 2026-11-02, pc-9, item 1(a)): `DfltUniformSound`'s text, as spec 1.9 states it. -/
+theorem dfltUniformSound_iff : DfltUniformSound.{u} ↔
+    ∀ (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
+      (hD : WellFormedSoft D = true) (qs : List Pack) (hex : ConditionsExact.{u} U D qs) (B : VE.Structure.{u})
+      (hB : DefaultBase U D (VE.NormDefaults.Packs.X qs) B), Sat B (dfltUniform D qs) := Iff.rfl
 
 /-- The guard the defaults kinds read until EXP-D3 settles (one line in `defaultsRows`, `Defaults/Route.lean:17`):
 some provider states a decision condition. Every pack is read, not only `weighing`. -/

@@ -17164,6 +17164,44 @@
         "VE.Discourse.PositionsExamples.twoDescriptions",
         "VE.Discourse.PositionsExamples.written4"
       ]
+    },
+    "VE/Defaults/Uniform.lean": {
+      "G[R]": [
+        "VE.Defaults.providerConditions",
+        "VE.Defaults.providerE1d",
+        "VE.Defaults.providerRefusal"
+      ],
+      "S": [
+        "VE.Defaults.ConditionsExact",
+        "VE.Defaults.DfltUniformSound",
+        "VE.Defaults.dfltUniform",
+        "VE.Defaults.dfltUniformLabelled",
+        "VE.Defaults.dfltUniformOf",
+        "VE.Defaults.leastUniform",
+        "VE.Defaults.noneOr",
+        "VE.Defaults.packConditions"
+      ]
+    },
+    "VE/Defaults/UniformExamples.lean": {
+      "T": [
+        "VE.Defaults.UniformFixtures.abSoft",
+        "VE.Defaults.UniformFixtures.over",
+        "VE.Defaults.UniformFixtures.dAB",
+        "VE.Defaults.UniformFixtures.piSoft",
+        "VE.Defaults.UniformFixtures.piEnv",
+        "VE.Defaults.UniformFixtures.piR",
+        "VE.Defaults.UniformFixtures.dπ",
+        "VE.Defaults.UniformFixtures.medical",
+        "VE.Defaults.UniformFixtures.key",
+        "VE.Defaults.UniformFixtures.cond",
+        "VE.Defaults.UniformFixtures.wPack",
+        "VE.Defaults.UniformFixtures.with_",
+        "VE.Defaults.UniformFixtures.askK",
+        "VE.Defaults.UniformFixtures.refusedP",
+        "VE.Defaults.UniformFixtures.leastUDec",
+        "VE.Defaults.UniformFixtures.dOff",
+        "VE.Defaults.UniformFixtures.otherKinds"
+      ]
     }
   }
 }
