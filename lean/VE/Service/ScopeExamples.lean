@@ -1,5 +1,6 @@
 import VE.Service.Document
 import VE.Scope.ReadingsExamples
+import VE.Service.ScopeAdmission
 
 /-! scope@0 in the document mode (SC-1b; docs/spec/scope.md 1.6, 3, 5.2 and 7.2) on a small part document built as a
 request carries it: a lead-in "Agents must not:" framing two items, and a closing sentence. F1-doc (the governor's
@@ -172,5 +173,18 @@ def fullUnits : Json := toJson (units (some (Json.mkObj [("norm", (item "r1").me
     some 1) &&
   member (checkDocSetsAnswered doc) "composed_readings" == .null &&
   member (checkDocSetsAnswered full) "composed_readings" == .null
+
+/-! sc-2d, condition (ii) of the DRI's decision of 2026-10-31 (item 1): for a rule of a decoded document, spec 5.4's
+    premise `JsonWF o` comes from the boundary check (`decodeBlock_jsonWF`, `decodeBlock_payloads`, `baseObj_jsonWF`),
+    not from a hypothesis. -/
+example (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc)
+    (hD : VE.Scope.decodeBlock front source re = .ok D) (u : String) (c o o' : Json) (N N' : VE.SoftNorms.SoftNode)
+    (G' : VE.Formula) (ho : VE.Scope.baseObj D u = .ok o) (h : VE.Scope.applyEffect u (.reguard c) o = .ok o')
+    (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
+    (hG : VE.Norms.Wire.decodeBudgeted (VE.Scope.substOwn (o.getObjValD "guard") VE.Scope.depthLimit c) = .ok G')
+    (S : VE.Structure.{0}) (ρ : VE.Valuation S) : N' = { N with guard := G' } :=
+  (VE.Scope.reguard_applies D u c o o' N N' G' h hN (VE.Scope.baseObj_jsonWF D
+    (VE.Scope.decodeBlock_jsonWF front source re D hD).1 (VE.Scope.decodeBlock_payloads front source re D hD) u o ho)
+    hN' hG S ρ).1
 
 end VE.Service.ScopeExamples

@@ -1,0 +1,69 @@
+{
+ "base": "f3a4da815 (main)",
+ "files": {
+  "VE/Calc/Run.lean": {
+   "before": {
+    "K": 0,
+    "S": 26,
+    "D[V]": 166,
+    "G[V]": 39,
+    "tied": 63,
+    "trusted": 168,
+    "P": 254,
+    "lines": 527
+   },
+   "after": {
+    "K": 0,
+    "S": 26,
+    "D[V]": 166,
+    "G[V]": 39,
+    "tied": 112,
+    "trusted": 119,
+    "P": 254,
+    "lines": 527
+   }
+  },
+  "VE/Calc/Ties.lean": {
+   "before": {
+    "K": 0,
+    "S": 0,
+    "D[V]": 0,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 0,
+    "P": 0,
+    "lines": 0
+   },
+   "after": {
+    "K": 0,
+    "S": 0,
+    "D[V]": 0,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 0,
+    "P": 183,
+    "lines": 200
+   }
+  }
+ },
+ "totals": {
+  "before": {
+   "K": 994,
+   "S": 12561,
+   "tied": 1150,
+   "trusted": 58026
+  },
+  "after": {
+   "K": 994,
+   "S": 12561,
+   "tied": 1199,
+   "trusted": 57977
+  }
+ },
+ "tied_declarations": {
+  "VE.Calc.Shown.matches": 8,
+  "VE.Calc.Derive.shown": 12,
+  "VE.Calc.Check.runShown": 18,
+  "VE.Calc.Run.rowJson": 11
+ }
+}
