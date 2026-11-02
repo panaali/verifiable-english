@@ -1,0 +1,21 @@
+{
+ "job": "en-s6b.s2of2-2d734898",
+ "head": "861763708c04cd2e23e1bf0df541d057dc7d38d1",
+ "argv": [
+  "en-s6b.s2of2-2d734898",
+  "861763708c04cd2e23e1bf0df541d057dc7d38d1",
+  "eeb2a3b67d20999aba059745287b54ee5a88fab2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1c03ab854617.tar.zst",
+  "9e7403e84e9d6d6c319b8f1a1b68e8ced697e914110900e719a98c6128113d96",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/EnglishGrammar/Norm/Examples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "2/2",
+  "--jobs",
+  "4"
+ ]
+}
