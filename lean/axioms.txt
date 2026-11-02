@@ -1820,6 +1820,8 @@
 'VE.Discourse.bound_mem' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.canon_kind' does not depend on any axioms
 'VE.Discourse.carrier_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.caseManifest_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.chainChecks_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.chainReferences_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.checkAll_ok' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.citation_choices_retained' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1842,6 +1844,7 @@
 'VE.Discourse.composed_path' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.composed_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.composed_unchanged_error' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.composed_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.conditions_retained' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.conjOn_denote' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.conjOn_wf' depends on axioms: [propext, Quot.sound]

@@ -2833,6 +2833,7 @@
         "VE.Discourse.checkImport",
         "VE.Discourse.choicesOk",
         "VE.Discourse.depthOf",
+        "VE.Discourse.documentSortOk",
         "VE.Discourse.gateOk",
         "VE.Discourse.importChain",
         "VE.Discourse.integrityOk",
@@ -2888,6 +2889,7 @@
         "VE.Discourse.contentOk",
         "VE.Discourse.editArr",
         "VE.Discourse.editObj",
+        "VE.Discourse.formulaUnit",
         "VE.Discourse.frontShape",
         "VE.Discourse.textShape",
         "VE.Discourse.unitFree",
@@ -2903,7 +2905,6 @@
         "VE.Discourse.writtenText"
       ],
       "D[V]": [
-        "VE.Discourse.caseManifest",
         "VE.Discourse.chainBase",
         {
           "name": "VE.Discourse.chainDocument",
@@ -2916,6 +2917,12 @@
           "tied": [
             "VE.Discourse.conditions_retained"
           ]
+        },
+        {
+          "name": "VE.Discourse.caseManifest",
+          "tied": [
+            "VE.Discourse.caseManifest_wellFormed"
+          ]
         }
       ],
       "G[V]": [
@@ -2923,6 +2930,18 @@
           "name": "VE.Discourse.dispatchAdmission",
           "tied": [
             "VE.Discourse.composed_admission"
+          ]
+        },
+        {
+          "name": "VE.Discourse.chainChecks",
+          "tied": [
+            "VE.Discourse.chainChecks_wellFormed"
+          ]
+        },
+        {
+          "name": "VE.Discourse.chainDDoc",
+          "tied": [
+            "VE.Discourse.chainChecks_wellFormed"
           ]
         }
       ],
@@ -2958,15 +2977,23 @@
     },
     "VE/Service/ComposedAdmissionExamples.lean": {
       "T": [
+        "VE.Service.ComposedAdmissionExamples.Mutation",
         "VE.Service.ComposedAdmissionExamples.alpha",
+        "VE.Service.ComposedAdmissionExamples.astUnit",
+        "VE.Service.ComposedAdmissionExamples.block",
         "VE.Service.ComposedAdmissionExamples.chainField",
+        "VE.Service.ComposedAdmissionExamples.chainOf",
         "VE.Service.ComposedAdmissionExamples.composed",
         "VE.Service.ComposedAdmissionExamples.front",
+        "VE.Service.ComposedAdmissionExamples.itBody",
         "VE.Service.ComposedAdmissionExamples.large",
+        "VE.Service.ComposedAdmissionExamples.mutations",
+        "VE.Service.ComposedAdmissionExamples.navigations",
         "VE.Service.ComposedAdmissionExamples.resolved",
         "VE.Service.ComposedAdmissionExamples.s425",
         "VE.Service.ComposedAdmissionExamples.s428",
-        "VE.Service.ComposedAdmissionExamples.today"
+        "VE.Service.ComposedAdmissionExamples.today",
+        "VE.Service.ComposedAdmissionExamples.twinOf"
       ]
     },
     "VE/Discourse/Descriptions.lean": {

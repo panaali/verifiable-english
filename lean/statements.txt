@@ -12804,10 +12804,10 @@ theorem VE.Discourse.acc_ignores_manifest_choices
               documents := __src.documents, imports := __src.imports, groups := __src.groups,
               constraints := __src.constraints, validity := __src.validity, selfTruth := __src.selfTruth, choices := ρ },
           sourceId := D.sourceId, text := D.text, sets := D.sets, status := D.status, prose := D.prose, files := D.files,
-          nouns := D.nouns }
+          nouns := D.nouns, chain := D.chain }
         m t
-  -- uses VE.Discourse.Acc@VE.Discourse.Access VE.Discourse.DDoc.E@VE.Discourse.Manifest VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc.base@VE.Discourse.Manifest VE.Discourse.DDoc.files@VE.Discourse.Manifest VE.Discourse.DDoc.mk@VE.Discourse.Manifest VE.Discourse.DDoc.nouns@VE.Discourse.Manifest VE.Discourse.DDoc.prose@VE.Discourse.Manifest VE.Discourse.DDoc.sets@VE.Discourse.Manifest VE.Discourse.DDoc.sourceId@VE.Discourse.Manifest VE.Discourse.DDoc.status@VE.Discourse.Manifest VE.Discourse.DDoc.text@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.constraints@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.Mention@VE.Discourse.Manifest VE.Discourse.Slot@VE.Discourse.Manifest VE.Discourse.Target@VE.Discourse.Manifest
-  -- expr 2873580785
+  -- uses VE.Discourse.Acc@VE.Discourse.Access VE.Discourse.DDoc.E@VE.Discourse.Manifest VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc.base@VE.Discourse.Manifest VE.Discourse.DDoc.chain@VE.Discourse.Manifest VE.Discourse.DDoc.files@VE.Discourse.Manifest VE.Discourse.DDoc.mk@VE.Discourse.Manifest VE.Discourse.DDoc.nouns@VE.Discourse.Manifest VE.Discourse.DDoc.prose@VE.Discourse.Manifest VE.Discourse.DDoc.sets@VE.Discourse.Manifest VE.Discourse.DDoc.sourceId@VE.Discourse.Manifest VE.Discourse.DDoc.status@VE.Discourse.Manifest VE.Discourse.DDoc.text@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.constraints@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.Mention@VE.Discourse.Manifest VE.Discourse.Slot@VE.Discourse.Manifest VE.Discourse.Target@VE.Discourse.Manifest
+  -- expr 3300419949
 theorem VE.Discourse.acc_no_heuristic
   ∀ (D D₂ : VE.Discourse.DDoc) (m : VE.Discourse.Slot) (t : VE.Discourse.Target),
     D.K.names = D₂.K.names ∧
@@ -13045,6 +13045,18 @@ theorem VE.Discourse.carrier_cases
               VE.Discourse.carrierIn D wires doc premises m = Option.none
   -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Mention.presuppositionUnit@VE.Discourse.Manifest VE.Discourse.Mention.restriction@VE.Discourse.Manifest VE.Discourse.Mention@VE.Discourse.Manifest VE.Discourse.PresuppositionCarrier.assumed@VE.Discourse.Descriptions VE.Discourse.PresuppositionCarrier.proved@VE.Discourse.Descriptions VE.Discourse.PresuppositionCarrier@VE.Discourse.Descriptions VE.Discourse.carrierIn@VE.Discourse.Admission VE.Discourse.restrictionSort@VE.Discourse.WellFormed VE.Discourse.uniqueD@VE.Discourse.Descriptions VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim.label@VE.ClaimGraph VE.Graph.Claim.name@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Route.Admission.AssertedUnit@VE.Route.Admission VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode.unit@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Tableau.Certificate@VE.Tableau
   -- expr 2767842193
+theorem VE.Discourse.caseManifest_wellFormed
+  ∀ (j : Lean.Json) (E : VE.Environment) (K : VE.Discourse.Manifest),
+    VE.Discourse.caseManifest j = Except.ok (E, K) →
+      ∃ environment p D, VE.Discourse.chainDDoc environment p K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.caseManifest@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax
+  -- expr 2344815831
+theorem VE.Discourse.chainChecks_wellFormed
+  ∀ (environment j : Lean.Json) (K : VE.Discourse.Manifest),
+    VE.Discourse.chainChecks environment j K = Except.ok () →
+      ∃ D, VE.Discourse.chainDDoc environment j K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.chainChecks@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed
+  -- expr 1914965371
 theorem VE.Discourse.chainReferences_ok
   ∀ (front r : Lean.Json), VE.Discourse.chainReferences front = Except.ok r → VE.Discourse.conditionalOnOf r = []
   -- uses VE.Discourse.chainReferences@VE.Discourse.Compose VE.Discourse.conditionalOnOf@VE.Discourse.Compose
@@ -13192,6 +13204,14 @@ theorem VE.Discourse.composed_unchanged_error
         VE.Discourse.admitComposed profiles environment j = Except.error e
   -- uses VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.baseVocabulary@VE.Discourse.Admission VE.Discourse.chainConstructs@VE.Discourse.Compose VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 1924001445
+theorem VE.Discourse.composed_wellFormed
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      ∃ b D,
+        VE.Discourse.chainBase environment j = Except.ok b ∧
+          VE.Discourse.chainDDoc environment j b.snd.fst = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.chainBase@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax
+  -- expr 1753396855
 theorem VE.Discourse.conditions_retained
   ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
     VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →

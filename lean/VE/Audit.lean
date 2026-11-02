@@ -2267,6 +2267,8 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.bound_mem
 #print axioms VE.Discourse.canon_kind
 #print axioms VE.Discourse.carrier_cases
+#print axioms VE.Discourse.caseManifest_wellFormed
+#print axioms VE.Discourse.chainChecks_wellFormed
 #print axioms VE.Discourse.chainReferences_ok
 #print axioms VE.Discourse.checkAll_ok
 #print axioms VE.Discourse.citation_choices_retained
@@ -2289,6 +2291,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.composed_path
 #print axioms VE.Discourse.composed_unchanged
 #print axioms VE.Discourse.composed_unchanged_error
+#print axioms VE.Discourse.composed_wellFormed
 #print axioms VE.Discourse.conditions_retained
 #print axioms VE.Discourse.conjOn_denote
 #print axioms VE.Discourse.conjOn_wf

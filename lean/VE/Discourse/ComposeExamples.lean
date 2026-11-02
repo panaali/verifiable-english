@@ -121,8 +121,11 @@ def loaded (text : String) : Json × Json :=
   | .error _ => (.null, .null)
 #guard ((chainBase (loaded doc).1 (loaded doc).2).toOption.map fun (_, K, id) =>
   K.definitionsVersion == id && id.length == 64) == some true
--- `caseManifest`: the case's recorded mentions, under the base pair
-#guard ((caseManifest (caseOf (doc (discourse := mention "u2")))).toOption.map (·.2.mentions.map (·.id))) ==
+-- `caseManifest`: the case's recorded mentions, under the base pair, after 14.5 step 4's checks (a navigation
+-- mention passes them; `VE/Service/ComposedAdmissionExamples.lean` has the refusals)
+#guard ((caseManifest (caseOf (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], " ++
+  "\"mentions\": [{\"id\": \"m1\", \"unit\": \"u1\", \"span\": [0, 3], \"form\": \"navigation\", " ++
+  "\"target\": {\"kind\": \"unit\", \"units\": [\"u2\"]}}]}")))).toOption.map (·.2.mentions.map (·.id))) ==
   some ["m1"]
 
 -- `encodeComposed` and `composedJson`: the wrapper fields, `inner` verbatim, the case id
