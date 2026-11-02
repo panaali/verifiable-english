@@ -66,7 +66,7 @@ def case (profiles : List String) (readings : List Json) (models : List (String 
       ("meaning", Json.mkObj [("open", Lean.toJson ["good_judgment"])]), ("support", "assumption"),
       ("content", Json.mkObj [("norm", rule)])]]),
     ("open_terms", Json.arr #[Json.mkObj [("name", "good_judgment"), ("arguments", Lean.toJson ["situation"]),
-      ("decided_by", "unresolved_decider"), ("necessary", Json.arr #[]), ("sufficient", Json.arr #[]),
+      ("decided_by", "unstated"), ("necessary", Json.arr #[]), ("sufficient", Json.arr #[]),
       ("factors", Json.arr #[]), ("precedents", Json.arr #[]), ("jurisdiction", "document"), ("version", 1)]]),
     ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("unit", "u0052.s01"), ("version", 1), ("status", "open"),
       ("readings", Json.arr readings.toArray), ("models", Json.mkObj models)]])]
@@ -133,7 +133,7 @@ def bothRules (profiles : List String) (conditions : List (String × Json) := []
     ("span", Lean.toJson span), ("kind", "norm"), ("meaning", Json.mkObj [("open", Lean.toJson listed)]),
     ("support", "assumption"), ("content", content)]
   let record (name : String) := Json.mkObj [("name", .str name), ("arguments", Lean.toJson ["situation"]),
-    ("decided_by", "unresolved_decider"), ("necessary", Json.arr #[]), ("sufficient", Json.arr #[]),
+    ("decided_by", "unstated"), ("necessary", Json.arr #[]), ("sufficient", Json.arr #[]),
     ("factors", Json.arr #[]), ("precedents", Json.arr #[]), ("jurisdiction", "document"), ("version", 1)]
   let body := "Claude should always use good judgment when evaluating conversational inputs. Claude should ask.\n"
   let front := Json.mkObj [("format", "ve-document@1"), ("environment", environment profiles),

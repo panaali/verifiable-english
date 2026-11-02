@@ -34,7 +34,7 @@ def service():
 
 
 def record(name):
-    return {"name": name, "arguments": ["situation"], "decided_by": "unresolved_decider", "necessary": [],
+    return {"name": name, "arguments": ["situation"], "decided_by": "unstated", "necessary": [],
             "sufficient": [], "factors": [], "precedents": [], "jurisdiction": "document", "version": 1}
 
 

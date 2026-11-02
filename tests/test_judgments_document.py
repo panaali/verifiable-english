@@ -69,7 +69,7 @@ def environment(vocabulary=VOCAB, profiles=PROFILES):
             "vocabulary": deepcopy(vocabulary)}
 
 
-def record(name, *args, decided_by="unresolved_decider", necessary=(), sufficient=(), factors=()):
+def record(name, *args, decided_by="unstated", necessary=(), sufficient=(), factors=()):
     return {"name": name, "arguments": list(args or ("act",)), "decided_by": decided_by,
             "necessary": list(necessary), "sufficient": list(sufficient), "factors": list(factors),
             "precedents": [], "jurisdiction": "document", "version": 1}
@@ -169,13 +169,14 @@ ADMISSION = {
     "J-rho": ([record("subjects", "person", "act")], "JudgmentRegulated: subjects"),
     "J-zeta": ([record("arbitrary", necessary=[UPSILON])], "JudgmentCriterionAsUnit: arbitrary"),
     "J-zeta-prime": ([record("arbitrary", sufficient=[UPSILON, UPSILON])], "JudgmentCriterionAsUnit: arbitrary"),
-    "J-eta": ([record("arbitrary", decided_by="unstated")], "JudgmentDecider: arbitrary"),
+    "J-eta": ([record("arbitrary", decided_by="unresolved_decider")], "JudgmentDecider: arbitrary"),
+    "J-eta-unstated": ([record("arbitrary", decided_by="unstated")], "ok"),
     "J-omicron": ([record("treats_unfairly", "person", "person")], "ok"),
     "J-nu": ([record("gives_serious_uplift")], "ok"),
     "J-theta": ([record("natural_and_fundamental_group_unit", "thing")], "ok"),
     "order-1": ([record("arbitrary"), record("reasonable_limitation"), record("unreasonable", "person")],
                 "JudgmentUnbound: reasonable_limitation"),
-    "order-2": ([record("arbitrary", "person", decided_by="unstated", necessary=[UPSILON])],
+    "order-2": ([record("arbitrary", "person", decided_by="unresolved_decider", necessary=[UPSILON])],
                 "JudgmentArguments: arbitrary"),
 }
 

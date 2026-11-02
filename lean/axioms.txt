@@ -2644,6 +2644,7 @@
 'VE.Judgments.predicateWords_name' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Judgments.singleton_infix_iff' depends on axioms: [propext]
 'VE.Judgments.softContent_formulas' does not depend on any axioms
 'VE.Judgments.status_checked' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.status_eq' depends on axioms: [propext, Quot.sound]
