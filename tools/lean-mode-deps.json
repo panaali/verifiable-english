@@ -82,10 +82,6 @@
       "VE.Service.Standalone",
       "VE.Route.Run"
     ],
-    "judgment-line": [
-      "VE.EnglishGrammar.JudgmentLines",
-      "VE.Route.Run"
-    ],
     "metered": [
       "VE.Route.MeteredRun",
       "VE.Route.Run"
@@ -174,8 +170,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "946b0985a52a32fa43ae226d5e87692fb006a7b25979b5c4d9e26e7db2e2e497",
-    "lean/VE/Service/Registry.lean": "d200ce608ea474603233b2cf80a38795f7875fd3d6aaee2da24e0fa252169a30",
+    "lean/VE/Service/Protocol.lean": "2b565653dbe81752c1f229355af16635b46b32f56041daba0100225e5fa87a7c",
+    "lean/VE/Service/Registry.lean": "d49f017e9c9b032805c177a629e9574cb2d1634bff17dfed78bbb702041b9794",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

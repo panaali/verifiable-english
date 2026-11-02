@@ -110,8 +110,7 @@
           "calc",
           "cardinality",
           "scope",
-          "senses.project",
-          "judgment-line"
+          "senses.project"
         ]
       },
       "protocol": {"const": 2},

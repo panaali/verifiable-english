@@ -22,7 +22,6 @@ module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
-module ResponseShape.Encoders.JudgmentLine
 module ResponseShape.Encoders.Metered
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
@@ -63,7 +62,6 @@ module ResponseShape.Schemas.Evaluate
 module ResponseShape.Schemas.FamilyNorms
 module ResponseShape.Schemas.Graph
 module ResponseShape.Schemas.Identity
-module ResponseShape.Schemas.JudgmentLine
 module ResponseShape.Schemas.Metered
 module ResponseShape.Schemas.Model
 module ResponseShape.Schemas.NormDefaults

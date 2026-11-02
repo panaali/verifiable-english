@@ -1,13 +1,11 @@
-"""JT-3's English rows through the service (docs/spec/judgment-terms.md 9.1 and 9.5; DRI 2026-11-02, jt-3 items 1 to 4).
+"""JT-3's authoring refusal through the service (docs/spec/judgment-terms.md 9.5; DRI 2026-11-02, jt-3 items 1, 3 and 4).
 
-The declaration line reads to a W2 record and its predicate; the refusal is Lean's, in authoring only, with its bound
-names opted in. The lines' other rows are `lean/VE/EnglishGrammar/JudgmentLinesExamples.lean`'s. These are identifier
-wording: JT-E1r and JT-E1s failed, so nothing here measures what a reader understands, and no test compares a line with a
-section 2.4 template (withdrawn by the fallback).
+The refusal is Lean's, in authoring only, with its bound names opted in. The declaration, legend and status rows are
+`lean/VE/EnglishGrammar/JudgmentLinesExamples.lean`'s, in identifier wording: JT-E1r and JT-E1s failed, so nothing here
+measures what a reader understands, and no test compares a line with a section 2.4 template (withdrawn by the fallback).
 """
 from __future__ import annotations
 
-import copy
 import json
 
 import pytest
@@ -16,15 +14,10 @@ from ve import judgment_lines
 from ve.__main__ import main as ve_main
 from ve.backends import english_lean
 from ve.backends.relay import decide
-from ve.backends.service_schema import check_row
 from ve.english import EnglishVocabulary
 from ve.environment import Environment
 from ve.errors import SyntaxError as VESyntaxError, VEError
 
-GOVERNED = 'Whether an act is classified as "arbitrary" is a judgment for the governance function.'
-UNSTATED = 'Whether an act is classified as "arbitrary" is a judgment; the text does not say who makes it.'
-UNFAIR = ('Whether a person has the recorded relation "treats_unfairly" to a person (the same or another) is a judgment; '
-          "the text does not say who makes it.")
 ENV = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"], "spec_revision": "ve-v0.2-expand2-2026-09-25",
        "vocabulary": {
            "constants": {"atlas": {"description": "a limit", "sort": "limit"}},
@@ -50,84 +43,6 @@ def raw(env, source: str, **fields) -> dict:
     """Lean's whole `english.read` row, identities included."""
     case = english_lean.request(env, source, EnglishVocabulary(env, _defer_overlay_refusals=True), {})
     return decide("english.read", [{**case, **fields}])[0]
-
-
-@pytest.mark.parametrize("line, name, sorts, decider", [
-    (GOVERNED, "arbitrary", ["act"], "governance_function"), (UNSTATED, "arbitrary", ["act"], "unstated"),
-    (UNFAIR, "treats_unfairly", ["person", "person"], "unstated")])
-def test_a_line_reads_to_its_w2_record_and_predicate(line, name, sorts, decider):
-    row = judgment_lines.declare(line, "udhr")
-    assert row["predicate"] == {"name": name, "arguments": sorts}
-    assert row["record"] == {"name": name, "arguments": sorts, "decided_by": decider, "necessary": [], "sufficient": [],
-                             "factors": [], "precedents": [], "jurisdiction": "udhr", "version": 1}
-
-
-@pytest.mark.parametrize("line, code", [
-    ("The act is arbitrary.", "JudgmentLine"), (GOVERNED.replace("for the", "for"), "JudgmentLine"),
-    (GOVERNED.replace("an act", "a act"), "JudgmentLine"), (GOVERNED + " ", "JudgmentLine"),
-    (GOVERNED.replace("governance function", "unresolved decider"), "JudgmentDecider"),
-    (GOVERNED.replace("governance function", "unstated"), "JudgmentLine"), ("", "JudgmentLine")])
-def test_any_other_spelling_is_refused_by_lean(line, code):
-    with pytest.raises(VEError, match=f"^{code}: "):
-        judgment_lines.declare(line, "udhr")
-
-
-def mutants(row: dict):
-    deep: list = []
-    for _ in range(10_000):
-        deep = [deep]
-    for path in (("line",), ("record",), ("predicate",), ("record", "name"), ("record", "arguments"),
-                 ("record", "decided_by"), ("record", "necessary"), ("record", "version"), ("record", "jurisdiction"),
-                 ("predicate", "name"), ("predicate", "arguments")):
-        for value in (7, True, None, {}, 1.5, [7], [None], deep, "\ud800"):
-            mutated = copy.deepcopy(row)
-            parent = mutated
-            for key in path[:-1]:
-                parent = parent[key]
-            parent[path[-1]] = value
-            yield mutated
-            del parent[path[-1]]
-            yield mutated
-    yield {**row, "extra": 1}
-
-
-REBOUND = [("record", "name", "absent"), ("predicate", "name", "absent"), ("record", "arguments", ["absent"]),
-           ("predicate", "arguments", ["act", "act"]), ("record", "arguments", []), ("record", "decided_by", "absent"),
-           ("record", "jurisdiction", "other"), ("line", None, UNSTATED)]
-
-
-def relayed(row: dict, case: dict) -> bool:
-    """Whether the relay accepts `row`: the generated schema, then the binding."""
-    try:
-        check_row(judgment_lines.MODE, row, case, 0)
-    except Exception:  # noqa: BLE001 - the relay answers any refusal of the row `CheckerUnavailable`
-        return False
-    return judgment_lines.answer_problem(row, case) is None
-
-
-def test_every_retyped_or_rebound_field_is_refused():
-    case = {"id": judgment_lines.MODE, "line": GOVERNED, "jurisdiction": "udhr"}
-    row = judgment_lines.declare(GOVERNED, "udhr")
-    assert relayed(row, case)
-    for mutated in mutants(row):
-        assert not relayed(mutated, case)
-    for member, key, value in REBOUND:
-        mutated = copy.deepcopy(row)
-        if key is None:
-            mutated[member] = value
-        else:
-            mutated[member][key] = value
-        assert not relayed(mutated, case), (member, key, value)
-    swapped = judgment_lines.declare(UNFAIR, "udhr")
-    assert relayed(swapped, {**case, "line": UNFAIR})
-
-
-def test_which_decider_a_line_names_is_lean_s():
-    """The binding asks only that a decider's words are the line's; `parseLine_renders` carries which ones it means (R8)."""
-    row = judgment_lines.declare(GOVERNED, "udhr")
-    for decider in ("unstated", "governance"):
-        record = {**row["record"], "decided_by": decider}
-        assert judgment_lines.answer_problem({**row, "record": record}, {"line": GOVERNED}) is None
 
 
 def test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read(env):
@@ -191,11 +106,7 @@ def test_the_field_s_size_is_charged_against_its_limit(env):
         raw(env, "Atlas is published.", judgments=[*names, "extra"])
 
 
-def test_the_command_line_shows_lean_s_answer(env, tmp_path, capsys):
-    assert ve_main(["judgments", "declare", GOVERNED, "--jurisdiction", "udhr"]) == 0
-    assert json.loads(capsys.readouterr().out)["record"]["decided_by"] == "governance_function"
-    assert ve_main(["judgments", "declare", "No.", "--jurisdiction", "udhr"]) == 2
-    assert "JudgmentLine:" in capsys.readouterr().out
+def test_the_command_line_shows_lean_s_text(tmp_path, capsys):
     path = tmp_path / "env.json"
     path.write_text(json.dumps(ENV), encoding="utf-8")
     assert ve_main(["judgments", "read", said("reasonable_limit"), "--env", str(path)]) == 2

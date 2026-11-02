@@ -17,7 +17,6 @@
 - `lean/ResponseShape/Schemas/FamilyNorms.lean` — The source of `ve/backends/lean_service_schema/family-norms.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Graph.lean` — The source of `ve/backends/lean_service_schema/graph.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Identity.lean` — The source of `ve/backends/lean_service_schema/identity.json` (`file`; `tools/response_schemas.py` writes it).
-- `lean/ResponseShape/Schemas/JudgmentLine.lean` — The source of `ve/backends/lean_service_schema/judgment-line.json` (`file`; `tools/response_schemas.py` writes it): the `judgment-line` mode's row (`VE.English…
 - `lean/ResponseShape/Schemas/Metered.lean` — The `metered` row (`VE.Route.MeteredRun.runCaseReported`, batch 15a's metered evaluator, a service mode since lean-first batch 18): for an `evaluate-budgeted` …
 - `lean/ResponseShape/Schemas/Model.lean` — The source of `ve/backends/lean_service_schema/model.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/NormDefaults.lean` — The source of `ve/backends/lean_service_schema/norm-defaults.json` (`file`; `tools/response_schemas.py` writes it).

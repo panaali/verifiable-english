@@ -984,8 +984,7 @@
         "ResponseShape.Skeletons.searchBudget",
         "ResponseShape.Skeletons.skelTerm",
         "ResponseShape.Skeletons.softNorms",
-        "ResponseShape.Skeletons.speechActs",
-        "ResponseShape.Skeletons.judgmentLine"
+        "ResponseShape.Skeletons.speechActs"
       ],
       "G[R]": [
         "ResponseShape.Skeletons.calc",
@@ -17467,7 +17466,7 @@
         "VE.EnglishGrammar.JudgmentLines.recordJson"
       ],
       "G[V]": [
-        "VE.EnglishGrammar.JudgmentLines.lineCase",
+        "VE.EnglishGrammar.JudgmentLines.readDeclaration",
         "VE.EnglishGrammar.JudgmentLines.preds",
         "VE.EnglishGrammar.JudgmentLines.definedNames",
         "VE.EnglishGrammar.JudgmentLines.readingPreds",
@@ -17477,13 +17476,9 @@
         "VE.EnglishGrammar.JudgmentLines.lineFault",
         "VE.EnglishGrammar.JudgmentLines.atomParts",
         "VE.EnglishGrammar.JudgmentLines.noVocabulary",
-        "VE.EnglishGrammar.JudgmentLines.maxLineChars",
         "VE.EnglishGrammar.JudgmentLines.maxJudgments",
         "VE.EnglishGrammar.JudgmentLines.wordAfter",
         "VE.EnglishGrammar.JudgmentLines.refusalText"
-      ],
-      "G[I]": [
-        "VE.EnglishGrammar.JudgmentLines.runCaseReported"
       ]
     },
     "VE/EnglishGrammar/JudgmentLinesExamples.lean": {
@@ -17497,10 +17492,7 @@
         "VE.EnglishGrammar.JudgmentLinesExamples.governedLine",
         "VE.EnglishGrammar.JudgmentLinesExamples.unfairLine",
         "VE.EnglishGrammar.JudgmentLinesExamples.weighsLine",
-        "VE.EnglishGrammar.JudgmentLinesExamples.lineRequest",
         "VE.EnglishGrammar.JudgmentLinesExamples.errorOf",
-        "VE.EnglishGrammar.JudgmentLinesExamples.longLine",
-        "VE.EnglishGrammar.JudgmentLinesExamples.spare",
         "VE.EnglishGrammar.JudgmentLinesExamples.rowOf",
         "VE.EnglishGrammar.JudgmentLinesExamples.text",
         "VE.EnglishGrammar.JudgmentLinesExamples.quoted",
@@ -17508,14 +17500,6 @@
         "VE.EnglishGrammar.JudgmentLinesExamples.env",
         "VE.EnglishGrammar.JudgmentLinesExamples.holds",
         "VE.EnglishGrammar.JudgmentLinesExamples.firstNamed"
-      ]
-    },
-    "ResponseShape/Schemas/JudgmentLine.lean": {
-      "G[R]": [
-        "ResponseShape.Schemas.JudgmentLine.record",
-        "ResponseShape.Schemas.JudgmentLine.predicate",
-        "ResponseShape.Schemas.JudgmentLine.row",
-        "ResponseShape.Schemas.JudgmentLine.file"
       ]
     }
   }
