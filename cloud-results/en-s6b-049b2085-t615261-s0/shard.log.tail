@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 1/6: 73 units; commands: ['python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Ca', 'python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_lean_imports.py
+Lean layer graph kept (727 modules, 22 reviewed legacy edges)
++ lake build
+⚠ [95/843] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/843] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/843] Replayed VE.Readings.Superpose
+... (13104 lines cut; full output in shard-full.txt)
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.28s
+
+     Running tests/contract_tables.rs (rust/target/debug/deps/contract_tables-61dff7ecc35830ad)
+
+running 3 tests
+test dump_rows ... ok
+test embedded_hashes_equal_their_lock_entries ... ok
+test the_keys_table_hash_equals_its_file ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/environment_definition_order.rs (rust/target/debug/deps/environment_definition_order-daf7e52f1dde5cdf)
+
+running 7 tests
+test builtin_argument_sort_follows_display_and_definition_faults ... ok
+test builtin_argument_sort_follows_literal_limit_and_regulated_blocks ... ok
+test builtin_argument_sort_probes_take_lean_codes ... ok
+test composed_order_rejects_string_predicate_sort_before_constants ... ok
+test legacy_undeclared_builtin_sorts_are_unknown_symbols ... ok
+test malformed_nested_definition_precedes_unsupported_field ... ok
+test predicate_signature_and_constant_fault_order ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_profile-39d349572b160587)
+
+running 3 tests
+test search::domain_size_tests::lazy_sizes_are_the_eager_order ... ok
+test search::domain_size_tests::many_sorts_hold_one_vector ... ok
+test search::domain_size_tests::per_sort_maxima_are_the_eager_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests ve_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 18.94s
+d55731dfb056f090b7e26705e6ee569ac32c04a462dddbd8da6bf06be8e5f73b  /tmp/cc-wt/rust/target/release/ve: pinned in /tmp/cc-wt/lean/checkers.lock
++ python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.76s
+    Finished `release` profile [optimized] target(s) in 0.03s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_readings_rd6b_differential.py::chunk(1/4), tests/test_english_evidence.py::chunk(3/4)
+recording 73 units with 4 jobs in /var/tmp/cct/ve-select-run-muvmgsi4
+  tests/test_question_differential.py: exit 1 in 103.3 s, 717 functions
+  tests/test_assurance_manifest.py: exit 1 in 37.0 s, 1506 functions
+chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 340.6 s in all, longest chunk 340.6 s; 20 passed, 0 skipped, 0 failed; each of its 20 tests ran in exactly one chunk
+chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 351.2 s in all, longest chunk 351.2 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+FAILED tests/test_question_differential.py (exit 1): tests/test_question_differential.py::test_every_part_of_every_rule_is_a_clause; log /var/tmp/cct/ve-select-run-muvmgsi4/tests__test_question_differential.py.log
+
+row = {'tag': 'norm.clause-if', 'lhs': 'norm_sentence', 'act': 'clause', 'guard': True, ...}
+
+    def write_rule(row) -> tuple[str, list[tuple[int, bool]]]:
+        """The rule written out: its words, each nonterminal filled; and for each `is` its character offset and whether
+        it is inside a nonterminal (a part or a guard) rather than one of the rule's own words."""
+        pieces, parts, markers = [], iter(SENTENCES * 4), iter(FILLS["list_marker"])
+        for x in row["rhs"]:
+            if isinstance(x, str):
+                pieces.append((x, False, False))
+            elif "p" in x:
+                pieces.append((x["p"], x.get("before", False), False))
+            elif x["n"] in PARTS:
+                pieces.append((next(parts), False, True))
+            elif x["n"] == "list_marker":
+                pieces.append((next(markers), False, False))
+            else:
+>               pieces.append((FILLS[x["n"]], False, True))  # a nonterminal this test cannot write fails here
+                               ^^^^^^^^^^^^^
+E               KeyError: 'consequence'
+
+tests/test_question_differential.py:254: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_question_differential.py::test_every_part_of_every_rule_is_a_clause
+1 failed, 5 passed in 102.15s (0:01:42)
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified; log /var/tmp/cct/ve-select-run-muvmgsi4/tests__test_assurance_manifest.py.log
+=================================== FAILURES ===================================
+_______________ test_every_json_handling_lean_file_is_classified _______________
+
+    def test_every_json_handling_lean_file_is_classified():
+        """A Lean file that reads or builds JSON is a pinned decoder or has a recorded reason under other_json."""
+        lean = ROOT / "lean"
+        found = {path.relative_to(ROOT).as_posix() for path in lean.rglob("*.lean")
+                 if ".lake" not in path.parts and JSON_USE.search(path.read_text())}
+        decoders = {entry["file"] for entry in MANIFEST["lean_decoders"]["files"]}
+        other = MANIFEST["lean_decoders"]["other_json"]
+        assert not decoders & set(other)
+>       assert found == decoders | set(other), "\n".join(sorted(found ^ (decoders | set(other))))
+E       AssertionError: lean/VE/EnglishGrammar/Norm/Elab.lean
+E         lean/VE/EnglishGrammar/Norm/Examples.lean
+E       assert {'lean/Englis...es.lean', ...} == {'lean/Englis...es.lean', ...}
+E         
+E         Extra items in the left set:
+E         'lean/VE/EnglishGrammar/Norm/Examples.lean'
+E         'lean/VE/EnglishGrammar/Norm/Elab.lean'
+E         Use -v to get more diff
+
+tests/test_assurance_manifest.py:641: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
+1 failed, 138 passed in 35.93s
+recorded 71 units for tree a42cf619b5; 2 others left to the static graph until they run (2 with only some of their chunks here); 2 failed
+SHARD 1/6: exit 1 in 2348.8 s; 73 units, 71 passed
