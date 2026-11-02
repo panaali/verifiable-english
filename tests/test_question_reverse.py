@@ -4,6 +4,7 @@ and the group document's questions read by Lean, with the candidate limit on bot
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
@@ -292,3 +293,585 @@ def test_a_delivered_row_has_the_whole_corpus_behind_it():
 
 def test_the_saved_evidence_stays_in_the_tree():
     assert (BATCH / "evidence/question-reverse.json").stat().st_size < 1_000_000  # DRI decision D4
+
+
+# ------------------------------------------------------------------ q1-3b
+
+def test_frontings_front_every_is_must_or_may_in_turn():
+    assert R.frontings("Every member who is registered is eligible.") == [
+        (3, "Is every member who registered is eligible?"), (5, "Is every member who is registered eligible?")]
+    assert R.frontings("It is not the case that Ann must be verified.") == [
+        (1, "Is it not the case that Ann must be verified?"), (7, "Must it is not the case that Ann be verified?")]
+    assert R.frontings("Is Ann verified.") == [] and R.frontings("Ann registers.") == []
+    assert R.put_back("Every member is registered.") == "every member is registered."
+
+
+@pytest.mark.parametrize("sentence", ["Every member is registered.", "Every person must be given equal access.",
+                                      "Ann is verified.", "Some member is registered and Ann is verified."])
+def test_frontings_hold_q1_3s_question_and_its_put_back(sentence):
+    question, back = R.f2(sentence)
+    assert question in [q for _, q in R.frontings(sentence)] and back == R.put_back(sentence)
+    assert all(R.put_back(sentence) in R.candidates(q) for _, q in R.frontings(sentence))
+
+
+def _none(text):
+    return {"status": "none", "span": [text.index("X"), len(text)]}
+
+
+def test_closeness_names_leans_closest_its_ties_and_the_readers_sentence():
+    cands = ["a is X b.", "a b is X.", "a X is b."]
+    reads = [_none(cands[0]), _none(cands[1]), {"status": "rejected", "span": [0, 1]}]
+    text = 'No reading. Closest sentence tried: "a is X b.". Unknown.'
+    got = R.closeness(cands, reads, text, "a X is b.")
+    assert got == {"candidates": 3, "named": True, "closest": 0, "ties": 1, "consistent": False, "reader": 2}
+    reads[1] = _none("a is X b.")  # the same diagnosis start: a tie, and Lean's choice is its leftmost
+    assert R.closeness(cands, reads, text, None) | {"reader": None} == {
+        "candidates": 3, "named": True, "closest": 0, "ties": 2, "consistent": True, "reader": None}
+    assert R.closeness(cands, reads, "No reading.", None)["closest"] is None
+    assert R.closeness(["é X.", "ab X."], [_none("é X."), _none("ab X.")], "", None)["ties"] == 2  # bytes, not code points
+    second = 'Closest sentence tried: "a b is X.". '
+    assert R.closeness(cands, reads, second, None)["consistent"] is False  # a tie Lean did not break leftmost
+
+
+def _asked(kind, status, closest=None, stream_config="c", **extra):
+    q = {"config": stream_config, "sentence": "S.", "read": True, "kind": kind, "question": "Is a b c?",
+         "expected": "a is b c.", "ms": 1.0, "same": status == "one", "other": False, "outcome": {"status": status}}
+    if closest is not None:
+        q["outcome"]["text"] = ""
+        q["closest"] = {"candidates": 3, "named": True, "consistent": True, "reader": 1, **closest}
+    return q | extra
+
+
+def test_the_closest_shares_count_only_named_f2_questions_with_no_reading():
+    questions = [_asked("f2", "one"), _asked("f2", "moved"), _asked("f1", "none", {"closest": 0, "ties": 1,
+                                                                                   "candidates": 1}),
+                 _asked("f2", "none", {"closest": 0, "ties": 2}), _asked("f2", "none", {"closest": 1, "ties": 1}),
+                 _asked("f2", "none", {"closest": None, "ties": 0, "named": False})]
+    m = R.closest_measure(questions)
+    assert (m["no_reading"], m["named"], m["not_named"], m["one_candidate"], m["measured"]) == (4, 3, 1, 1, 2)
+    assert (m["tied"], m["leftmost_tie"], m["moved_second"], m["not_the_readers"]) == (1, 1, 1, 1)
+    assert (m["share_tied"], m["share_moved_second"], m["share_not_the_readers"]) == (0.5, 0.5, 0.5)
+    assert len(m["examples"]) == 1 and m["examples"][0]["closest"] == "a is b c."
+
+
+def _whole_run():
+    """(configs, mixed checks) of a run that left nothing out."""
+    seal = json.loads(R.SEAL.read_text())["generated"]
+    mixed = {r["vocabulary"]: (r["corpus_sha256"], r["texts"], 0)
+             for r in json.loads((ROOT / "conformance/english-mixed-report.json").read_text())["vocabularies"]}
+    whole = {}
+    for row in seal:
+        if row["stream"] == "english-surface":
+            whole[row["vocabulary"]] = {"stream": "english-surface", "stream_sha256": row["corpus_sha256"],
+                                        "asked": 5000, "drawn": 5000}
+            whole[f"random-earley:{row['vocabulary']}"] = {
+                "stream": "random-earley", "random_earley_sha256": row["random_earley_corpus_sha256"],
+                "document_sha256": row["document_corpus_sha256"], "documents_not_their_sentences": 0}
+    return whole, mixed
+
+
+def _set(row, **fields):
+    row.update(fields)
+
+
+LEAVING_OUT = {  # each key of `R.LEFT_OUT`, with what a run that leaves that part out looks like
+    "unsealed_streams": lambda whole, _: _set(whole["ordinary"], stream_sha256="x"),
+    "unsealed_random_earley": lambda whole, _: _set(whole["random-earley:ordinary"], random_earley_sha256="x"),
+    "unsealed_documents": lambda whole, _: _set(whole["random-earley:ordinary"], document_sha256="x"),
+    "mixed_unmatched": lambda _, mixed: mixed.update(ordinary=("x", *mixed["ordinary"][1:])),
+    "documents_not_their_sentences": lambda whole, _: _set(whole["random-earley:ordinary"],
+                                                           documents_not_their_sentences=1),
+    "mixed_paragraphs_not_their_sentences": lambda _, mixed: mixed.update(ordinary=(*mixed["ordinary"][:2], 1)),
+    "short_streams": lambda whole, _: _set(whole["ordinary"], drawn=4999),
+    "skipped": lambda whole, _: whole.update(refused={"stream": "usecase-surface", "skipped": "ValueError: x"}),
+    "unavailable_reads": lambda whole, _: _set(whole["ordinary"], unavailable=1),
+}
+
+
+@pytest.mark.parametrize("key", R.LEFT_OUT)
+def test_every_part_a_run_can_leave_out_stops_it_being_whole(key):
+    # Each check of `whole_streams`, on and off: a zero in the report is one that this run could have shown.
+    whole, mixed = _whole_run()
+    assert R.coverage_b(whole, mixed, 1220, 5000, 500)["whole_streams"] is True and not any(
+        R.coverage_b(whole, mixed, 1220, 5000, 500)[k] for k in R.LEFT_OUT)
+    LEAVING_OUT[key](whole, mixed)
+    result = R.coverage_b(whole, mixed, 1220, 5000, 500)
+    assert result[key] and result["whole_streams"] is False
+    assert [k for k in R.LEFT_OUT if result[k]] == [key]
+
+
+def test_every_part_a_run_can_leave_out_has_its_case():
+    assert sorted(LEAVING_OUT) == sorted(R.LEFT_OUT)
+
+
+def test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial():
+    configs = {f"{s}:x": {"stream": s, "sentences": 2, "one_formula": 1, "questions": 1} for s in R.STREAMS}
+    questions = [_asked("f2", "one", stream_config=f"{s}:x") for s in R.STREAMS]
+    counts = R.per_stream(configs, questions)
+    assert list(counts) == list(R.STREAMS)
+    assert all(row == {"configs": 1, "f2": 1, "f2_many": 0, "f2_other": 0, "f2_same": 1, "f2_unavailable": 0,
+                       "one_formula": 1, "questions": 1, "sentences": 2} for row in counts.values())
+    whole, mixed = _whole_run()
+    assert R.coverage_b(whole, mixed, 1220, 5000, 500)["whole_streams"] is True
+    assert R.coverage_b(whole, mixed, 1219, 5000, 500)["whole_streams"] is False          # a statement left out
+    assert R.coverage_b(whole, dict(list(mixed.items())[1:]), 1220, 5000, 500)["mixed_unmatched"] == [next(iter(mixed))]
+    del whole["random-earley:ordinary"]
+    result = R.coverage_b(whole, mixed, 1220, 5000, 500)
+    assert result["whole_streams"] is False and result["unsealed_random_earley"] == ["ordinary"]
+
+
+def test_every_fronting_of_the_group_document_is_read_by_lean(group):
+    path, env, words, texts = group
+    result = R.run_config_b(path, env, words, {}, texts, False, False)
+    by = {(q["sentence"], q["at"]): q for q in result["questions"]}
+    assert sorted(by) == [("Ann is verified.", 1), ("Every member is registered.", 2),
+                          ("Every member who is registered is eligible.", 3),
+                          ("Every member who is registered is eligible.", 5)]
+    clause = texts[1]
+    assert by[(clause, 3)]["outcome"]["code"] == "QuestionWordMoved" and not by[(clause, 3)]["same"]
+    assert by[(clause, 5)]["same"] and all(by[(s, k)]["same"] for s, k in by if s != clause)
+    m = R.fronting_measure(result["questions"])
+    assert (m["frontings"], m["sentences"], m["reached"], m["share"], m["limited"]) == (4, 3, 3, 1.0, 0)
+    assert m["by_subject"]["other subject"] == {"limited": 0, "reached": 1, "sentences": 1, "several_same": 0}
+    assert m["outcomes"] == {"moved:QuestionWordMoved": 1, "one": 3} and m["other_formula"] == []
+    budget = {**by[(clause, 3)], "outcome": {"status": "budget", "code": "QuestionTooLong"}}
+    m = R.fronting_measure([budget, {**budget, "at": 5}, by[("Ann is verified.", 1)]])
+    assert (m["sentences"], m["reached"], m["limited"], m["share"], m["share_within_limits"]) == (2, 1, 1, 0.5, 1.0)
+    assert R.fronting_measure([budget, by[(clause, 5)]])["limited"] == 0  # one fronting within the limits
+
+
+def _answering(monkeypatch, answers):
+    """Lean's own read of each sentence, and `answers` (question text -> answer) in place of `english.question`."""
+    monkeypatch.setattr(R, "ask", lambda _env, _words, _options, question: (answers[question], 1.0))
+
+
+ANOTHER = ["unary", "eligible", ["const", "ann"]]
+
+
+def test_a_fronting_read_with_another_formula_is_counted_and_listed(group, monkeypatch):
+    # Row 1's headline zero: Lean answering `one` with a formula that is not the sentence's.
+    _, env, words, _ = group
+    sentence = "Every member who is registered is eligible."
+    wrong = {"status": "one", "ast": ANOTHER, "sentence": "Ann is eligible.", "form": "f2"}
+    _answering(monkeypatch, {
+        "Is every member who registered is eligible?": wrong,
+        "Is every member who is registered eligible?": {"status": "moved", "code": "QuestionWordMoved"}})
+    questions = R.run_config_b("c", env, words, {}, [sentence], False, False)["questions"]
+    by = {q["at"]: q for q in questions}
+    assert (by[3]["other"], by[3]["same"], by[5]["other"], by[5]["same"]) == (True, False, False, False)
+    configs = {"c": {"stream": "english-surface", "sentences": 1, "one_formula": 1, "questions": 2}}
+    row = R.per_stream(configs, questions)["english-surface"]
+    assert (row["f2"], row["f2_other"], row["f2_same"], row["f2_many"]) == (2, 1, 0, 0)
+    m = R.fronting_measure(questions)
+    assert [(q["question"], q["lean_sentence"]) for q in m["other_formula"]] == [
+        ("Is every member who registered is eligible?", "Ann is eligible.")]
+    assert (m["reached"], m["many_causes"]) == (0, [])
+
+
+def test_a_many_fronting_reaches_its_sentence_and_is_listed(group, monkeypatch):
+    # Row 1's other headline zero: `many` is in the share (`fronting_measure`), never another formula.
+    _, env, words, _ = group
+    sentence = "Every member who is registered is eligible."
+    _answering(monkeypatch, {
+        "Is every member who registered is eligible?": {"status": "moved", "code": "QuestionWordMoved"},
+        "Is every member who is registered eligible?": {"status": "many", "ast": [ANOTHER, ANOTHER]}})
+    questions = R.run_config_b("c", env, words, {}, [sentence], False, False)["questions"]
+    configs = {"c": {"stream": "english-surface", "sentences": 1, "one_formula": 1, "questions": 2}}
+    row = R.per_stream(configs, questions)["english-surface"]
+    assert (row["f2_many"], row["f2_other"], row["f2_same"]) == (1, 0, 0)
+    m = R.fronting_measure(questions)
+    assert (m["sentences"], m["reached"], m["share"], m["other_formula"]) == (1, 1, 1.0, [])
+    assert [q["question"] for q in m["many_causes"]] == ["Is every member who is registered eligible?"]
+
+
+def test_two_frontings_that_read_are_counted():
+    questions = [_asked("f2", "one", at=1), _asked("f2", "one", at=2)]
+    assert R.fronting_measure(questions)["by_subject"]["other subject"]["several_same"] == 1
+    assert R.fronting_measure(questions[:1])["by_subject"]["other subject"]["several_same"] == 0
+
+
+def test_a_sentence_lean_does_not_read_is_outside_the_measures_of_its_questions():
+    # The norm stream asks every unit, so its questions must not enter the shares of sentences with a formula.
+    unread = {"read": False, "same": False, "other": False}
+    read = _asked("f2", "one", sentence="Read.")
+    m = R.fronting_measure([read, _asked("f2", "moved", **unread), _asked("f2", "many", **unread)])
+    assert (m["frontings"], m["sentences"], m["reached"], m["many_causes"]) == (1, 1, 1, [])
+    measured = R.f1_measure([_asked("f1", "one", sentence="Read."), _asked("f1", "none", **unread),
+                             _asked("f1", "budget", same=False)])
+    assert (measured["questions"], measured["same"], len(measured["misses"])) == (2, 1, 1)
+    assert measured["misses"][0]["status"] == "budget"
+
+
+def test_a_sentence_with_no_answer_is_counted_not_a_refusal(group, monkeypatch):
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    _, env, words, texts = group
+
+    def failed(*_args, **_kwargs):
+        raise CheckerUnavailable("UnsupportedProfile: gone")
+    monkeypatch.setattr(relay, "rows", failed)
+    result = R.run_config_b("c", env, words, {}, texts, True, True)
+    assert (result["sentences"], result["one_formula"], result["unavailable"]) == (3, 0, 3)
+    configs = {"c": {"stream": "norm-documents", "sentences": 3, "one_formula": 0, "questions": len(result["questions"])}}
+    row = R.per_stream(configs, result["questions"])["norm-documents"]
+    assert row["f1_unavailable"] == 3 and row["f2_unavailable"] == 4 and row["f1_same"] == 0
+
+
+def test_the_norm_measure_counts_the_reach_and_the_distinct_answered_texts():
+    configs = {"a": {"stream": "norm-documents", "sentences": 1, "one_formula": 0, "questions": 3},
+               "b": {"stream": "norm-documents", "sentences": 1, "one_formula": 0, "questions": 2},
+               "s": {"stream": "english-surface", "sentences": 1, "one_formula": 1, "questions": 1}}
+    twice = {"sentence": "S.", "question": "Is a b?"}
+    questions = [_asked("f2", "none", {"closest": 0, "ties": 1}, "a", **twice),
+                 _asked("f2", "none", {"closest": 0, "ties": 1}, "b", **twice),
+                 _asked("f1", "none", {"closest": 0, "ties": 1, "candidates": 1}, "a", sentence="S.", question="Is it?"),
+                 _asked("f2", "unavailable", None, "a", sentence="T."), _asked("f1", "unavailable", None, "b", sentence="T."),
+                 _asked("f2", "one", None, "s", sentence="U.")]
+    documents = {"a": {"reach": [["asserted", "fence", "reached", 2], ["meta", "-", "not one sentence", 1]]},
+                 "b": {"reach": [["asserted", "fence", "reached", 3]]}}
+    m = R.norm_measure(documents, configs, questions)
+    assert (m["reached"], m["by_why"]) == (5, {"not one sentence": 1, "reached": 5})
+    assert (m["distinct_answered_sentences"], m["distinct_answered_frontings"], m["answered_frontings"]) == (1, 1, 2)
+    assert m["questions"]["f2"] == 3 and m["questions"]["f2_unavailable"] == 1
+    closest = R.closest_measure(questions)
+    assert (closest["no_reading"], closest["distinct_no_reading"], closest["distinct_measured"]) == (3, 2, 1)
+
+
+def test_a_closest_that_is_not_the_leftmost_tie_is_listed():
+    questions = [_asked("f2", "none", {"closest": 1, "ties": 2, "consistent": False}),
+                 _asked("f2", "none", {"closest": 0, "ties": 2})]
+    m = R.closest_measure(questions)
+    assert (m["tied"], m["leftmost_tie"], len(m["inconsistent"])) == (2, 1, 1)
+
+
+def test_a_question_with_no_reading_has_leans_closest_among_its_candidates(group):
+    path, env, words, _ = group
+    sentence = "Every member who registered is eligible."
+    result = R.run_config_b(path, env, words, {}, [sentence], True, True)
+    assert result["reads"][sentence]["one"] is False
+    q = next(q for q in result["questions"] if q["kind"] == "f2")
+    assert q["question"] == "Is every member who registered eligible?" and q["outcome"]["status"] == "none"
+    cands = R.candidates(q["question"])
+    assert q["closest"]["named"] and cands[q["closest"]["closest"]] in q["outcome"]["text"]
+    assert q["closest"]["consistent"] and q["closest"]["reader"] == cands.index(R.put_back(sentence))
+    f1 = next(q for q in result["questions"] if q["kind"] == "f1")
+    assert f1["outcome"]["status"] == "none" and f1["closest"]["candidates"] == 1
+
+
+def test_a_norm_documents_units_say_why_no_question_reaches_them():
+    own = ROOT / "usecases/question-answering/udhr-part07.ve.md"
+    data, units = R.norm_units(own.read_text())
+    env = Environment(data)
+    sentences = [t for _, _, t, asked in units if asked]
+    assert sentences == [t for _, _, t, _ in units if R.one_sentence(t)]  # this document has no fence
+    reads = R.run_config_b("udhr-part07", env, EnglishVocabulary(env), {}, sentences, False, False)["reads"]
+    counts, examples = R.unit_reach(units, reads)
+    assert sum(counts.values()) == len(units) and not any(why == "reached" for _, _, why in counts)
+    assert all(kind == "meta" or why.startswith("english.read:") for kind, _, why in counts if why != "not one sentence")
+    assert all(1 <= len(texts) <= 2 for texts in examples.values()) and set(examples) == {"/".join(k) for k in counts}
+    assert R.why("A b.", {"A b.": {"one": True}}) == "reached" and R.why("A\nb.", {}) == "not one sentence"
+    assert R.why("A b.", {"A b.": {"one": False, "status": "one", "code": None}}) == "english.read:one"  # two formulas
+    _, odd = R.norm_units('---\n{"format": "ve-document@1", "environment": {}, "units": [{"span": [0, 2]}, '
+                          '{"kind": ["a", ["b"]], "span": [2, 4]}]}\n---\nA.B.')
+    assert odd == [("-", None, "A.", True), ('["a",["b"]]', None, "B.", True)]
+
+
+LIST_FENCE = "Both of the following hold:\n  (a) every member is registered;\n  (b) every member is eligible.\n"
+
+
+def _fenced_document(group_data) -> str:
+    """A part document as the pilots write them: prose units whose meaning is an English fence (one line, or a list
+    over several), one of them cut in two by a MIXED unit, a strict fence, and prose after the first fence."""
+    prose = ["Ann has been verified.\n\n", "Every member has registered.\n\n", "Heading\n\n", "Ann, plainly, passed.\n"]
+    spans, at = [], 0
+    for text in prose:
+        spans.append([at, at + len(text)])
+        at += len(text)
+    middle = spans[3][0] + len("Ann, ")
+    units = [
+        {"id": "one", "span": spans[0], "kind": "asserted", "surface": "english", "content": {"fence": "one"}},
+        {"id": "list", "span": spans[1], "kind": "asserted", "surface": "english", "content": {"fence": "list"}},
+        {"id": "plain", "span": spans[2], "kind": "meta"},
+        {"id": "mixed", "span": spans[3], "status": "MIXED", "parts": [
+            {"id": "mixed.a", "span": [spans[3][0], middle], "status": "LABELLED", "kind": "meta"},
+            {"id": "mixed.b", "span": [middle, spans[3][1]], "status": "OPEN", "kind": "asserted", "surface": "strict",
+             "content": {"fence": "mixed.b"}}]}]
+    meta = {"format": "ve-document@1", "environment": group_data, "units": units}
+    return (f"---\n{json.dumps(meta)}\n---\n{prose[0]}```ve one\nAnn is verified.\n```\n{prose[1]}"
+            f"```ve list\n{LIST_FENCE}```\n{prose[2]}{prose[3]}```ve mixed.b\nverified(ann).\n```\n")
+
+
+def test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose(group):
+    # F1 of the review: `Claude is not human.` in the pilots' u0248, whose span says `Claude is not a human.`.
+    path, env, words, _ = group
+    data = json.loads((ROOT / path).read_text().split("---\n", 2)[1])["environment"]
+    found = R.norm_units(_fenced_document(data))[1]
+    assert found == [("asserted", "fence", "Ann is verified.", True),
+                     ("asserted", "fence", LIST_FENCE.strip(), True),   # a list over lines is one sentence
+                     ("meta", None, "Heading", False),
+                     ("meta", None, "Ann,", False),                     # a MIXED unit's parts, not its whole span
+                     ("asserted", "fence", "plainly, passed.", True)]   # a strict fence is not English: its span
+    sentences = [t for _, _, t, asked in found if asked]
+    result = R.run_config_b("doc", env, words, {}, sentences, True, True)
+    assert (result["sentences"], result["one_formula"]) == (3, 2)
+    by = {(q["sentence"], q["kind"]): q for q in result["questions"]}
+    assert by[("Ann is verified.", "f1")]["same"] and by[("Ann is verified.", "f2")]["same"]
+    assert by[(LIST_FENCE.strip(), "f1")]["same"]
+    assert by[(LIST_FENCE.strip(), "f2")]["outcome"]["code"] == "QuestionWordMoved"
+    counts, examples = R.unit_reach(found, result["reads"])
+    assert counts[("asserted", "fence", "reached")] == 2 and sum(counts.values()) == 5
+    assert examples["asserted/fence/reached"] == ["Ann is verified.", LIST_FENCE.strip()[:R.LISTED_HEAD]]
+    assert counts[("meta", "-", "not one sentence")] == 2
+
+
+def test_every_document_is_read_with_its_fences_cut_out_of_its_spans(group):
+    path, _, _, texts = group
+    meta, units = R.document_units((ROOT / path).read_bytes())
+    assert [t for _, t, fenced in units if fenced] == texts
+    assert all(u["content"] == {"fence": u["id"]} for u, _, fenced in units if fenced)
+
+
+def test_the_mixed_stream_is_its_generators_draw():
+    texts, checks = R.mixed_texts(only={0})
+    report = json.loads((ROOT / "conformance/english-mixed-report.json").read_text())["vocabularies"][0]
+    (name, (_, _, sentences)), = texts.items()
+    assert name == report["vocabulary"] and checks[name] == (report["corpus_sha256"], report["texts"], 0)
+    assert sentences and all(s.endswith(".") for s in sentences)  # one formula each; a long one wraps
+
+
+def test_the_natural_stream_is_each_rendered_statement():
+    from conformance import natural_surface as N
+    from ve import ast
+    env = Environment(json.loads((ROOT / "examples/fluent/environment.json").read_text()))
+    formula = ast.Unary("reviewed", ast.Const("legacy"))
+
+    def audit():
+        N._measure("x", [formula, formula], env)
+        N.parse_english_argument(env, "")
+        raise AssertionError("the audit goes on past its statements")
+    texts, statements = R.natural_texts(audit)
+    assert statements == 2 and texts["x"][2] == [N.render_natural_sentence(formula, env).text + "."] * 2
+
+
+def test_the_random_earley_stream_skips_the_sealed_texts(monkeypatch):
+    from conformance.english_surface import vocabularies
+    name, env = next(iter(vocabularies()))
+    monkeypatch.setattr(R, "TARGETS", [(name, env, {}, EnglishVocabulary(env))])
+    texts, info = R.earley_stream(0, [], count=10)
+    assert len(set(texts)) == 10 and info["documents"] == 2 and info["documents_not_their_sentences"] == 0
+    again, _ = R.earley_stream(0, texts[:3], count=10)
+    assert again[:7] == texts[3:] and not set(again) & set(texts[:3])
+
+
+# ------------------------------------------------------------------ the batch's claims check, on fixtures (D4)
+
+def claims():
+    spec = importlib.util.spec_from_file_location("q1_3b_claims", ROOT / "docs/question-answering/q1-3b/claims.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CLAIM_EVIDENCE = {"C4": {"norm": {"reached": 5, "documents": {"a": {"units": 7}, "b": {"units": 9}}},
+                         "closest": {"share_tied": 0.90846, "inconsistent": [], "measured": 1442},
+                         "f2": {"by_subject": {"q1-3 subject": {"reached": 1121}}}}}
+
+
+@pytest.mark.parametrize(("unit", "problem"), [
+    ("5 reached (C4 `norm.reached`).", None),
+    ("A tie in 91%, 0.908 of all (C4 `closest.share_tied`).", None),
+    ("1,442 measured and 0 inconsistent (C4 `closest.measured`, `closest.inconsistent`).", None),
+    ("7 units and 9 units (C4 `norm.documents.*.units`).", None),
+    ('1,121 of them (C4 `f2.by_subject."q1-3 subject".reached`).', None),
+    ("Only `7` in code and a plan's 10.2 (C4 `norm.reached`).", None),
+    ("No fronting reads another formula.", "cites no key"),
+    ("Reached 5 units.", "cites no key"),
+    ("Reached 5 units (C4 `norm.gone`).", "C4 has no key norm.gone"),
+    ("Reached 7 units (C4 `norm.reached`).", "7 is not a value"),
+    ("Reached 5 units, 1,442 measured (C4 `norm.reached`).", "1,442 is not a value"),
+    ("A tie in 12% (C4 `closest.share_tied`).", "12% is not a value"),
+    ("A tie in 0.71 of them (C4 `closest.share_tied`).", "0.71 is not a value"),
+])
+def test_a_claim_must_cite_a_key_that_holds_its_numbers(unit, problem):
+    found = claims().problems(unit, CLAIM_EVIDENCE)
+    assert (found == []) if problem is None else any(problem in p for p in found), found
+
+
+def claim_texts(c):
+    """The two reports cut down to the anchors of `STRICT` and `UNITS`, each sentence citing its key."""
+    good = "5 reached (C4 `norm.reached`)."
+    spec = (f"q1-3b (C4, below) adds things. {good}\n\n## Commands\n\n### Coverage (C4 `norm`)\n\n- A bullet of 5.\n\n"
+            f"- **For the plan:** {good}\n\n### Latency\n\nC4 `closest.measured`: 1,442.\n")
+    report = f"- **Result:** {good}\n\nThe numbers are in\n\n| (1) F2 | 5 | C4 `norm` |\n| (5) the report |\n\n" \
+             f"**On the gap row:** {good}\n\n## How each\n\n## Next\n\n- A row, 5 of them (C4 `norm.reached`).\n"
+    return {c.SPEC: spec, c.REPORT: report}
+
+
+NO_CLAIM_FIXTURE = {"q1-3b (C4, below) adds": "what it adds"}
+
+
+def test_the_old_premises_sentence_fails_the_claims_check():
+    # F10: a summary sentence written on the premise that no unit reads, left in place after the rerun reached 5.
+    c = claims()
+    texts = claim_texts(c)
+    run = lambda given, no_claim=NO_CLAIM_FIXTURE: c.check(  # noqa: E731
+        given, CLAIM_EVIDENCE, frozenset(), no_claim, truths=(), compared=None, not_universal={})
+    assert run(texts) == []
+
+    old = "No norm unit's text\nis a question's source."
+    spec = texts[c.SPEC].replace("5 reached (C4 `norm.reached`).", old, 1)
+    found = run({**texts, c.SPEC: spec})
+    assert any("stale wording" in p for p in found) and any("cites no key" in p for p in found)
+
+    # Under a heading without a citation a bullet has no key, and under one with a citation it has to hold the number.
+    assert any("cites no key" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("### Coverage (C4 `norm`)", "### Coverage")}))
+    assert any("6 is not a value" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("- A bullet of 5.", "- A bullet of 6.")}))
+    assert any("anchor gone" in p for p in run({
+        **texts, c.SPEC: texts[c.SPEC].replace("- **For the plan:**", "- **Plan:**")}))
+    assert any("row unused" in p for p in run(texts, {**NO_CLAIM_FIXTURE, "A sentence no report has": "no reason"}))
+
+
+def test_a_headline_claim_must_hold_of_the_evidence():
+    # A small number can match another key and a zero may have no number, so `TRUTHS` asks the evidence itself.
+    c = claims()
+    texts = claim_texts(c)
+    holds = (c.SPEC, "5 reached", lambda e: e["C4"]["norm"]["reached"] == 5)
+    run = lambda ev, words=holds: c.check(  # noqa: E731
+        texts, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(words,), compared=None, not_universal={})
+    assert run(CLAIM_EVIDENCE) == []
+    refuted = {"C4": {**CLAIM_EVIDENCE["C4"], "norm": {**CLAIM_EVIDENCE["C4"]["norm"], "reached": 0}}}
+    assert any("not so" in p for p in run(refuted))
+    assert any("words gone" in p for p in run(CLAIM_EVIDENCE, (c.SPEC, "not in the report", holds[2])))
+
+    reach = [["asserted", "fence", "reached", 3], ["asserted", "fence", "reached", 2]]
+    fenced = {"C4": {"norm": {"reached": 5, "documents": {"d": {"reach": reach}}}}}
+    assert c.fences_only(fenced)
+    prose = {"C4": {"norm": {"reached": 5, "documents": {"d": {"reach": [["asserted", "fence", "reached", 3],
+                                                                         ["asserted", "-", "reached", 2]]}}}}}
+    assert not c.fences_only(prose)
+    assert not c.fences_only({"C4": {"norm": {**fenced["C4"]["norm"], "reached": 0}}})
+
+
+def test_the_unit_kinds_are_tallied_without_the_attributed_norms():
+    # The report once counted attributed norms and assertions as `unformalised`, and the norms without a `content`
+    # as if each had one.
+    kind = '["unformalised","norms"]'
+    attributed_inner = '["attributed","a","says",["unformalised","norms"]]'
+    x = "english.read:none:NoDerivation"
+    reach = [["norm", "norm", x, 11], ["norm", "-", x, 13], ["asserted", "ast", x, 17], ["asserted", "fence", x, 19],
+             ["meta", "-", x, 23], [kind, "-", x, 100], [attributed_inner, "-", x, 29],
+             ['["attributed","a","says","norm"]', "-", x, 31], ['["attributed","a","says","asserted"]', "-", x, 37]]
+    c4 = {"norm": {"by_why": {}, "reached": 0, "questions": dict.fromkeys(("f1_unavailable", "f2_unavailable", "f1_same",
+                                                                           "f2_same"), 0),
+                   "documents": {"d": {"reach": reach, "examples": {}}}},
+          "closest": {"one_candidate": 0, "measured": 0, "by_form": {"f2": 0}}, "f1": {"misses": []},
+          "streams": {"random-earley": {"configs": 0, "one_formula": 0}, "english-mixed": {"one_formula": 0}},
+          "coverage": {"mixed_texts": 0}, "f2": {"sentences": 0, "limited": 0}}
+    found = claims().derived(c4, {"soft_chain_without_soft": {"sentences": 0, "fences": 0}})
+    # `unformalised` with its attributed units, those units, the attributed others, `norm`, `asserted`; 197 would
+    # count the attributed norms and assertions as `unformalised`.
+    assert {129, 29, 68, 24, 36} <= found and 197 not in found
+
+
+def norm_reach(*rows):
+    """C4 with one document per (name, reach rows)."""
+    return {"C4": {"norm": {"documents": {name: {"reach": reach, "sha256": "0" * 40} for name, reach in rows}}}}
+
+
+def test_none_of_a_population_reads_only_when_each_has_an_answer():
+    # F13: "none of the 143 units of kind `norm` reads" held by a check of the reached rows alone, while 30 were never
+    # asked and 13 had no answer. No answer and not asked are UNKNOWN, so a claim that none reads cannot count them.
+    c = claims()
+    reach = [["norm", "-", "english.read:none:NoDerivation", 97], ["norm", "norm", "english.read:rejected:BadCharacter", 3],
+             ["norm", "-", "not one sentence", 30], ["asserted", "fence", "reached", 5]]
+    soft = [["norm", "-", "english.read:unavailable", 13]]
+    e = norm_reach(("pilot/a", reach), ("pilot/soft-chain", soft))
+    assert c.no_kind_norm_reads(e)  # the old check: no reached row is a norm
+    assert c.kind_outcomes(e, "norm") == {"none": 97, "rejected": 3, "not asked": 30, "unavailable": 13}
+    assert not c.none_reads(c.kind_outcomes(e, "norm"), 143)
+    assert c.none_reads(c.answered(c.kind_outcomes(e, "norm")), 100)
+    assert c.norm_units_answered(e) and c.norm_units_unknown(e)
+    # The 13 out of `soft-chain`, or one of the 100 reached, and the claims are not so.
+    assert not c.norm_units_unknown(norm_reach(("pilot/a", reach), ("pilot/b", soft)))
+    reached = [*reach[1:], ["norm", "-", "english.read:none:NoDerivation", 96], ["norm", "-", "reached", 1]]
+    assert not c.norm_units_answered(norm_reach(("pilot/a", reached), ("pilot/soft-chain", soft)))
+    assert not c.none_reads({"none": 2, "one": 1}, 3) and not c.none_reads({"none": 2}, 3) and c.none_reads({}, 0)
+    with pytest.raises(ValueError, match="unknown outcome"):
+        c.kind_outcomes(norm_reach(("a", [["norm", "-", "english.read:many", 1]])), "norm")
+
+    # `soft-chain` without `soft-norms@0`: none of the others reads only when each of them has an answer.
+    def without_soft(outcomes, errors=()):
+        return {"C6": {"soft_chain_without_soft": {"sentences": 1005, "fences": 3, "errors": list(errors),
+                                                   "outcomes": outcomes, "read": ["a.", "b.", "c."]}}}
+    assert c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "rejected": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "unavailable": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 900, "one": 3, "rejected": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "rejected": 81}, ["refused"]))
+
+    # Every fence, reached or not, is the population of "none is of kind `norm`".
+    fences = [["asserted", "fence", "reached", 5], ["asserted", "fence", "english.read:unavailable", 3]]
+    assert c.fences_are_asserted(norm_reach(("a", fences)))
+    assert not c.fences_are_asserted(norm_reach(("a", [*fences[:1], ["norm", "fence", "english.read:unavailable", 3]])))
+
+
+def test_a_universal_claim_needs_a_truths_row():
+    # F13's class: a universal claim ("none", "never", "no ... reads") that no `TRUTHS` row asks the evidence about.
+    c = claims()
+    texts = claim_texts(c)
+    claim = "None of the 7 units reads (C4 `norm.documents.*.units`)."
+    spec = texts[c.SPEC].replace("- A bullet of 5.", f"- A bullet of 5. {claim}")
+    given = {**texts, c.SPEC: spec}
+    run = lambda truths=(), not_universal={}: c.check(  # noqa: E731
+        given, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE, truths=truths, compared=None, not_universal=not_universal)
+    assert any("universal claim with no TRUTHS row: 'None'" in p for p in run())
+    assert run(((c.SPEC, "None of the 7 units reads", lambda e: True),)) == []
+    assert run(not_universal={"None of the 7 units": "a fixture"}) == []
+    assert any("NOT_UNIVERSAL row unused" in p for p in run(not_universal={"never in the text": "a fixture"}))
+    assert c.uncovered("No fence reads, and `none` is code.", []) == ["No fence reads"]
+    assert c.uncovered("No fence reads.", ["No fence reads"]) == []
+    # The old summary sentence, and the probe's words (F13) and F14's, are stale wording.
+    old = "5 reached; none of the 143 units of kind `norm` reads, compared with the pilot blobs' SHA-256 (C4 `norm.reached`)."
+    found = c.check({**texts, c.SPEC: texts[c.SPEC].replace("5 reached (C4 `norm.reached`).", old, 1)}, CLAIM_EVIDENCE,
+                    frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=None, not_universal={})
+    assert {"none of the 143 units of kind `norm` reads", "the pilot blobs' sha-256"} <= {
+        p.split("stale wording: ")[1].strip("'\"") for p in found if "stale wording" in p}
+    assert any("universal claim with no TRUTHS row: 'none'" in p for p in found)
+
+
+COMPARED_TABLE = "| Stream | Drawn | Compared with | Sentences |\n|---|---|---|---|\n| a | 5 | {} | 5 |\n| b | 5 | {} | 5 |\n"
+
+
+def test_each_compared_with_cell_names_a_comparison_the_evidence_holds():
+    # F14: the table said the norm documents were compared with "the pilot blobs' SHA-256", where 14 of 15 values are
+    # git blob ids that nothing compares. Each cell is either a comparison the evidence shows or says `not compared`.
+    c = claims()
+    texts = claim_texts(c)
+    compared = {"`corpus_sha256`, 17 of 17": lambda e: not e["C4"]["coverage"]["unsealed_streams"],
+                "not compared: recorded": lambda e: True}
+    evidence = {**CLAIM_EVIDENCE, "C4": {**CLAIM_EVIDENCE["C4"], "coverage": {"unsealed_streams": []}}}
+
+    def run(cells, ev=evidence, rows=compared):
+        spec = texts[c.SPEC].replace("## Commands", "## Commands\n\n" + COMPARED_TABLE.format(*cells))
+        return c.check({**texts, c.SPEC: spec}, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=rows,
+                       not_universal={})
+    assert run(["`corpus_sha256`, 17 of 17", "not compared: recorded"]) == []
+    assert c.compared_cells(COMPARED_TABLE.format("x", "y") + "\n| other | table |\n") == ["x", "y"]
+    found = run(["`corpus_sha256`, 17 of 17", "the pilot blobs' SHA-256"])
+    assert any("no COMPARED row backs: \"the pilot blobs' SHA-256\"" in p for p in found)
+    assert any("COMPARED row unused: 'not compared: recorded'" in p for p in found)
+    unsealed = {**evidence, "C4": {**evidence["C4"], "coverage": {"unsealed_streams": ["v"]}}}
+    assert any("not so: compared with '`corpus_sha256`, 17 of 17'" in p
+               for p in run(["`corpus_sha256`, 17 of 17", "not compared: recorded"], unsealed))
+    assert any("anchor gone: 'Compared with'" in p for p in c.check(
+        texts, evidence, frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=compared, not_universal={}))
+
+    # The norm documents' values: 14 git blob ids of `pilot/*` parts and `udhr-part07`'s SHA-256.
+    def ids(blob="5c156c0776667784092a63805081009d9b5e0e57", own="4f4e8c19" * 8):
+        docs = {f"norm-documents:pilot/p{k}:readings/s{k}.ve.md": {"sha256": blob} for k in range(14)}
+        docs["norm-documents:usecases/question-answering/udhr-part07.ve.md"] = {"sha256": own}
+        return {"C4": {"norm": {"documents": docs}}}
+    assert c.blob_ids_recorded(ids())
+    assert not c.blob_ids_recorded(ids(blob="4f4e8c19" * 8)) and not c.blob_ids_recorded(ids(own="5c156c07" * 5))
+    assert not c.blob_ids_recorded(ids(blob="5C156C07" * 5))
