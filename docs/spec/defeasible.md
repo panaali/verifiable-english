@@ -1111,7 +1111,7 @@ theorem cone_minimal_iff {α : Type} [DecidableEq α] (L : LayeredU) (X : List V
         ∀ R', Adm L X M obs R' → DecLeOn L.D M C R' R → DecLeOn L.D M C R R')
 
 theorem defaultZone_byDefault_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula))
-    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (M : VE.FiniteModel α) (valid : M.Valid (VE.Norms.envAt L.U.D 0)) (record : List ((String × List α) × Bool))
     (obs : List ((VE.Norms.Regulated × List α) × Bool)) (r : VE.Norms.Regulated) (hr : r ∈ L.U.D.T.regulated)
     (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
     (proposed : List (List ((String × List α) × Bool))) (b : Bool) (w : List ((String × List α) × Bool))
@@ -1119,7 +1119,7 @@ theorem defaultZone_byDefault_sound {α : Type} [DecidableEq α] (L : LayeredU) 
     ByDefaultZ L (X.map (·.2)) M record obs r vs b
 
 theorem defaultZone_leftTo_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula))
-    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (M : VE.FiniteModel α) (valid : M.Valid (VE.Norms.envAt L.U.D 0)) (record : List ((String × List α) × Bool))
     (obs : List ((VE.Norms.Regulated × List α) × Bool)) (r : VE.Norms.Regulated) (hr : r ∈ L.U.D.T.regulated)
     (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
     (proposed : List (List ((String × List α) × Bool))) (differ : List (String × List α))
@@ -1128,7 +1128,7 @@ theorem defaultZone_leftTo_sound {α : Type} [DecidableEq α] (L : LayeredU) (X 
     ByDefaultLeftTo L (X.map (·.2)) M record obs r vs ∧ ∀ a ∈ differ, a.1 ∈ decisionNames L.D
 
 theorem defaultZone_notSaid_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula))
-    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (M : VE.FiniteModel α) (valid : M.Valid (VE.Norms.envAt L.U.D 0)) (record : List ((String × List α) × Bool))
     (obs : List ((VE.Norms.Regulated × List α) × Bool)) (r : VE.Norms.Regulated) (hr : r ∈ L.U.D.T.regulated)
     (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
     (proposed : List (List ((String × List α) × Bool))) (w₁ w₂ : List ((String × List α) × Bool))
@@ -1152,7 +1152,7 @@ def forcedAllOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String ×
     (proposed : List (List ((String × List α) × Bool))) : Option (List (String × List α))
 
 theorem forcedAll_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula))
-    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (M : VE.FiniteModel α) (valid : M.Valid (VE.Norms.envAt L.U.D 0)) (record : List ((String × List α) × Bool))
     (obs : List ((VE.Norms.Regulated × List α) × Bool)) (proposed : List (List ((String × List α) × Bool)))
     (fs : List (String × List α)) (hf : forcedAllOf L X M record obs proposed = some fs) :
     (∃ R, DefaultCompletion L (X.map (·.2)) M record obs R) ∧
@@ -1216,6 +1216,10 @@ is admissible with the empty record. Every `DefaultCompletion` R has `DecLe R₀
 every decision of R is false, and R meets `noExceptionRecord`. Conversely, a completion that meets `noExceptionRecord`
 has every decision false, so it is minimal. The two sets of completions coincide, which gives the equivalence. DF-ξ′
 (8.6) shows that `hadm` is needed.
+
+`valid` on `defaultZone_byDefault_sound`, `_leftTo_sound`, `_notSaid_sound` and `forcedAll_sound` restores plan 3.6
+(each concludes that a default completion exists, which needs `M` admissible); signed in
+`manage-agents/reviews/dri-decisions-20261102-df-5a.md` (df-5a).
 
 DF-5's soundness theorems (`defaultZone_*_sound`, `forcedAll_sound`) are provisional until WG-6 exposes the
 enumeration over a given atom list (plan section 11, issue 1). `defaultCompletion_below` and `forced_everywhere` do not
