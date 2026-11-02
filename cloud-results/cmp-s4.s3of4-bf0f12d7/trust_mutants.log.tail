@@ -1,0 +1,17 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Discourse/Compose.lean is a selected declaration's file or in its import closure
+trust_mutants: 18 definitions, 186 mutants (46 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Discourse/Compose.lean:32 VE.Discourse.contentKey (S, trusted) list-empty: [(k, _)] -> [] (lean/VE/Discourse/Compose.lean:32: Unknown identifier `k`)
+UNKNOWN lean/VE/Discourse/Compose.lean:98 VE.Discourse.editObj (S, trusted) list-empty: kvs -> [] (lean/VE/Discourse/Compose.lean:98: Application type mismatch: The argument)
+UNKNOWN lean/VE/Discourse/Compose.lean:256 VE.Discourse.conditionalOnList (S, trusted) append-right: x ++ ->  (lean/VE/Discourse/Compose.lean:256: Application type mismatch: The argument)
+UNKNOWN lean/VE/Discourse/Compose.lean:251 VE.Discourse.conditionalOnTree (S, trusted) eq-ne: == -> != (lean/VE/Discourse/ComposeExamples.lean:131: Expression (VE.Discourse.conditionalOnOf, which it re...)
+UNKNOWN lean/VE/Discourse/Compose.lean:73 VE.Discourse.contentOk (S, trusted) list-empty: ms -> [] (lean/VE/Discourse/Compose.lean:73: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Discourse/Compose.lean:38 VE.Discourse.unitsAndParts (S, trusted) list-empty: ((front.getObjValD "units").getArr?.toOption.getD #[]).toList.flatMap -> [] (lean/VE/Discourse/Compose.lean:38: Function expected at)
+UNKNOWN lean/VE/Discourse/Compose.lean:264 VE.Discourse.chainAbstentions (S, trusted) list-empty: (front.getObjValD "reading_sets").getArr?.toOption -> [] (lean/VE/Discourse/Compose.lean:264: Invalid field notation: Type of)
+UNKNOWN lean/VE/Discourse/Compose.lean:251 VE.Discourse.conditionalOnTree (S, trusted) list-empty: [v] -> [] (lean/VE/Discourse/ComposeExamples.lean:131: Expression (VE.Discourse.conditionalOnOf, which it re...)
+UNKNOWN lean/VE/Discourse/Compose.lean:251 VE.Discourse.conditionalOnTree (S, trusted) list-first: conditionalOnOf v -> ((conditionalOnOf v).take 1) (lean/VE/Discourse/ComposeExamples.lean:160: Expression (VE.Discourse.conditionalOnOf, which it re...)
+SURVIVOR lean/VE/Discourse/Compose.lean:251 VE.Discourse.conditionalOnTree (S, trusted) list-last: (if k == "conditional_on" then (match v with | .arr _ => [v] | _ => []) else []) -> ((if k == "conditional_on" then (match v with | .arr _ => [v] | _ => []) else []).reverse.take 1)
+UNKNOWN lean/VE/Discourse/Compose.lean:256 VE.Discourse.conditionalOnList (S, trusted) list-drop-first: conditionalOnList xs -> ((conditionalOnList xs).drop 1) (lean/VE/Discourse/ComposeExamples.lean:160: Expression (VE.Discourse.conditionalOnOf, which it re...)
+trust_mutants: 25 KILLED, 1 SURVIVOR, 10 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 140 OTHER SHARD in 127 s
+trust_mutants: G[V], trusted: 4 KILLED, 5 OTHER SHARD
+trust_mutants: S, trusted: 21 KILLED, 1 SURVIVOR, 10 UNKNOWN, 10 INVALID, 135 OTHER SHARD
+trust_mutants: steps: wall plan 6 s, scratch 2.2 s, control_build 0.1 s, probe_install 1 s, control_probes 4.5 s, mutants 109.1 s, cleanup 4.1 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 4.4 s (1), mutant_builds 129.3 s (49), mutant_checks 90.2 s (32), stage_controls 6.3 s (2), mutant_probes 202.5 s (29)
