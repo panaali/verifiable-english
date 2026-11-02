@@ -125,6 +125,7 @@ import VE.Discourse.Run
 import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Discourse.Compose
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
 import VE.SpeechActs.Run

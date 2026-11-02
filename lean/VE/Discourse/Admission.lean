@@ -711,6 +711,9 @@ def outcomeWith (check : List String → Json → Wire.RouteVocabulary → Json 
     | .error e, _ => .rejected e
     | _, .error e => .rejected e
 
+/-- The nesting budget the discourse route admits a document with (moved from `Discourse/Run.lean`, 14.5). -/
+def fuelBudget : Nat := 5
+
 /-- The discourse admission with a nesting budget: the second phase checks other documents
 one level down, each under its own environment. -/
 def admitDiscourse (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
