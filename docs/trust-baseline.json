@@ -1790,6 +1790,20 @@
    "reason": "cmp-s3a: VE/RightClauses/Plain.lean S +103, VE/RightClauses/Tree.lean S +36 (K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 10,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
   }
  ]
 }
