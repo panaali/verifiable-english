@@ -12,7 +12,7 @@ from __future__ import annotations
 import pytest
 
 from tests.test_judgments_answer import relayed
-from tests.test_judgments_document import ALPHA, J1, conj, defined, document, opened, regulated, u, unit
+from tests.test_judgments_document import ALPHA, J1, conj, defined, document, opened, record, regulated, u, unit
 from ve.backends.lean_service import LeanService
 
 # Spec 11.7's predicates, the regulated `make_reasonable_efforts` (F3′), a W3-defined name whose word matches a row,
@@ -154,3 +154,28 @@ def test_a_vocabulary_at_the_predicate_limit_is_reported_whole(service):
     assert relayed(case(256), row)
     row = service.run("document", [case(257)])[0]
     assert row["status"] == "error" and row["error"] == "ResourceLimit: vocabulary size"
+
+
+# jt-3p (DRI 2026-10-31, reviews/dri-decisions-20261031-jt-3a.md item 3): the catalogue's phrase row "good judgment".
+GOOD_VOCAB = {
+    "sorts": {"act": {"description": "an act"}},
+    "predicates": {**{p: dict(ACT) for p in ("good_judgment", "good_conduct", "judgment_good", "court_judgment",
+                                             "arrest")},
+                   "judgment_use": {**ACT, "verbalisation": "{0} uses good judgment"}},
+    "constants": {}}
+GOOD_ALPHA = {"ast": ["forall", "act", ["implies", conj(u("arrest"), u("good_judgment")), ["bottom"]]]}
+
+
+@pytest.mark.parametrize("records, units, expected", [
+    ([], [unit("u1", content=GOOD_ALPHA)], ["good_judgment", "judgment_use"]),
+    ([record("good_judgment")], [unit("u1", opened("good_judgment"), GOOD_ALPHA)], ["judgment_use"]),
+], ids=["unbound", "bound"])
+def test_the_good_judgment_phrase_row_is_listed_only_where_written_in_order(service, records, units, expected):
+    """A row's word is a phrase: `good_judgment` (and a template that writes "good judgment") is listed while
+    unbound and left out once bound; `good_conduct`, `judgment_good` and `court_judgment` hold only part of the
+    phrase, or both words out of order, and are never listed."""
+    case = {"id": "d", "document": document(service, units, records, vocabulary=GOOD_VOCAB), "admit": False}
+    row = service.run("document", [case])[0]
+    assert row["status"] == "ok", row
+    assert row["undeclared_evaluative"] == expected
+    assert relayed(case, row)
