@@ -14578,10 +14578,33 @@
           ]
         },
         "VE.Calc.Run.reads",
-        "VE.Calc.Run.rowJson",
+        {
+          "name": "VE.Calc.Run.rowJson",
+          "tied": [
+            "VE.Calc.Run.rowJson_outcome",
+            "VE.Calc.Run.rowJson_shown"
+          ]
+        },
         "VE.Calc.Run.shownJson",
-        "VE.Calc.Check.runShown",
-        "VE.Calc.Derive.shown",
+        {
+          "name": "VE.Calc.Check.runShown",
+          "tied": [
+            "VE.Calc.Check.followsShown_matches",
+            "VE.Calc.Check.runShown_fails",
+            "VE.Calc.Check.runShown_holds",
+            "VE.Calc.Check.runShown_nothing",
+            "VE.Calc.Check.runShown_sound"
+          ]
+        },
+        {
+          "name": "VE.Calc.Derive.shown",
+          "tied": [
+            "VE.Calc.Derive.shown_fails",
+            "VE.Calc.Derive.shown_holds",
+            "VE.Calc.Derive.shown_matches",
+            "VE.Calc.Derive.shown_nothing"
+          ]
+        },
         "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
         "VE.Calc.Run.truncated",
@@ -14593,7 +14616,14 @@
         },
         "VE.Calc.Run.wordsIn",
         "VE.Calc.Shown",
-        "VE.Calc.Shown.matches"
+        {
+          "name": "VE.Calc.Shown.matches",
+          "tied": [
+            "VE.Calc.Check.followsShown_matches",
+            "VE.Calc.Derive.shown_matches",
+            "VE.Calc.Shown.matches_iff"
+          ]
+        }
       ],
       "G[V]": [
         {
@@ -14605,6 +14635,7 @@
         {
           "name": "VE.Calc.Run.row",
           "tied": [
+            "VE.Calc.Run.row_means",
             "VE.Calc.Run.row_outcome"
           ]
         },
