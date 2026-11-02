@@ -6746,6 +6746,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.Run.explainSetsWithin_effect
 #print axioms VE.Scope.Run.explainWithin_effect
 #print axioms VE.Scope.Run.readSplit_scope
 #print axioms VE.Scope.addOver_nil
@@ -6835,6 +6836,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.elt_str
 #print axioms VE.Scope.elt_term
 #print axioms VE.Scope.explainFast_eq
+#print axioms VE.Scope.explainOut_effect
 #print axioms VE.Scope.explainRows_effect
 #print axioms VE.Scope.explain_bound
 #print axioms VE.Scope.explain_rows_iff
