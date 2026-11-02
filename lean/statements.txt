@@ -13048,15 +13048,17 @@ theorem VE.Discourse.carrier_cases
 theorem VE.Discourse.caseManifest_wellFormed
   ∀ (j : Lean.Json) (E : VE.Environment) (K : VE.Discourse.Manifest),
     VE.Discourse.caseManifest j = Except.ok (E, K) →
-      ∃ environment p D, VE.Discourse.chainDDoc environment p K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
-  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.caseManifest@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax
-  -- expr 2344815831
+      ∃ rv environment p D,
+        VE.Discourse.chainDDoc rv environment p K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.caseManifest@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3320249793
 theorem VE.Discourse.chainChecks_wellFormed
-  ∀ (environment j : Lean.Json) (K : VE.Discourse.Manifest),
-    VE.Discourse.chainChecks environment j K = Except.ok () →
-      ∃ D, VE.Discourse.chainDDoc environment j K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
-  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.chainChecks@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed
-  -- expr 1914965371
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (environment j r : Lean.Json) (K : VE.Discourse.Manifest),
+    VE.Discourse.chainChecks rv environment j K = Except.ok r →
+      VE.Discourse.resolveWith K j = Except.ok r ∧
+        ∃ D, VE.Discourse.chainDDoc rv environment j K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.chainChecks@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.resolveWith@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 387254047
 theorem VE.Discourse.chainReferences_ok
   ∀ (front r : Lean.Json), VE.Discourse.chainReferences front = Except.ok r → VE.Discourse.conditionalOnOf r = []
   -- uses VE.Discourse.chainReferences@VE.Discourse.Compose VE.Discourse.conditionalOnOf@VE.Discourse.Compose
@@ -13182,6 +13184,12 @@ theorem VE.Discourse.composed_base_unchanged
             (VE.Discourse.admitDiscourse profiles environment rv j VE.Discourse.fuelBudget)
   -- uses VE.Discourse.Admitted@VE.Discourse.Admission VE.Discourse.Composed.today@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.admitDiscourse@VE.Discourse.Admission VE.Discourse.baseVocabulary@VE.Discourse.Admission VE.Discourse.fuelBudget@VE.Discourse.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 3680322971
+theorem VE.Discourse.composed_fenceless
+  ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
+    VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
+      VE.Discourse.Loader.fencesOf j = []
+  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.Loader.fencesOf@VE.Discourse.Loader VE.Discourse.admitComposed@VE.Discourse.Compose
+  -- expr 2800164706
 theorem VE.Discourse.composed_path
   ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
     VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
@@ -13209,9 +13217,9 @@ theorem VE.Discourse.composed_wellFormed
     VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
       ∃ b D,
         VE.Discourse.chainBase environment j = Except.ok b ∧
-          VE.Discourse.chainDDoc environment j b.snd.fst = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
-  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.chainBase@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax
-  -- expr 1753396855
+          VE.Discourse.chainDDoc b.fst environment j b.snd.fst = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
+  -- uses VE.Discourse.ChainAdmitted@VE.Discourse.Compose VE.Discourse.Composed.chain@VE.Discourse.Compose VE.Discourse.Composed@VE.Discourse.Compose VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.admitComposed@VE.Discourse.Compose VE.Discourse.chainBase@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 2827171332
 theorem VE.Discourse.conditions_retained
   ∀ (profiles : List String) (environment j : Lean.Json) (c : VE.Discourse.ChainAdmitted),
     VE.Discourse.admitComposed profiles environment j = Except.ok (VE.Discourse.Composed.chain c) →
@@ -14338,6 +14346,11 @@ theorem VE.Discourse.resolveFormula_assertion
       VE.Discourse.resolveContent E K unit (VE.Compose.Content.assertion φ) = Except.ok (VE.Compose.Content.assertion ψ)
   -- uses VE.Compose.Content.assertion@VE.Compose.Content VE.Compose.Content@VE.Compose.Content VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.resolveContent@VE.Discourse.Positions VE.Discourse.resolveFormula@VE.Discourse.Positions VE.Environment@VE.Syntax VE.Formula@VE.Syntax
   -- expr 2094486603
+theorem VE.Discourse.resolveWith_fenceless
+  ∀ (K : VE.Discourse.Manifest) (j r : Lean.Json),
+    VE.Discourse.resolveWith K j = Except.ok r → VE.Discourse.Loader.fencesOf j = []
+  -- uses VE.Discourse.Loader.fencesOf@VE.Discourse.Loader VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.resolveWith@VE.Discourse.Compose
+  -- expr 3231489125
 theorem VE.Discourse.resolve_identity
   ∀ (E : VE.Environment) (K : VE.Discourse.Manifest) (u : String) (c : VE.Compose.Content),
     VE.Discourse.formulaMentions K u = [] → VE.Discourse.resolveContent E K u c = Except.ok c
