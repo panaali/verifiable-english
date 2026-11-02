@@ -1,0 +1,4 @@
+shard 1/6: 79 units; commands: ['python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_lean_imports.py
+new outward Lean import: VE.Discourse.Compose -> VE.Service.Document
+new outward Lean import: VE.Discourse.ComposeExamples -> VE.Discourse.Run
