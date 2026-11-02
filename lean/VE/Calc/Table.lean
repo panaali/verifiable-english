@@ -1,4 +1,5 @@
 import VE.Calc.Decls
+import VE.Calc.Stats
 import VE.Numbers.Decimal
 
 /-! Tables, filters and aggregates (spec 4.1 and 4.2, plan 3.3, ME-4). A filter has negated atoms, each selecting only a
@@ -99,10 +100,9 @@ def Table.numbers (T : Table) (f : Filter) (col : String) : Option (List Rat) :=
     | .num q => some q
     | _ => none
 
-def mean? (xs : List Rat) : Option Rat := if xs = [] then none else some (xs.sum / xs.length)
-
 inductive Agg where
   | count | sum (col : String) | mean (col : String) | min (col : String) | max (col : String)
+  | variance (col : String) | populationVariance (col : String)   -- ME-7: divisors n − 1 and n (spec 7)
 
 def Agg.run (T : Table) (f : Filter) : Agg → Option Rat
   | .count => some ((T.select f).length : Rat)
@@ -110,6 +110,8 @@ def Agg.run (T : Table) (f : Filter) : Agg → Option Rat
   | .mean c => (T.numbers f c).bind mean?
   | .min c => (T.numbers f c).bind List.min?
   | .max c => (T.numbers f c).bind List.max?
+  | .variance c => (T.numbers f c).bind sampleVariance?
+  | .populationVariance c => (T.numbers f c).bind populationVariance?
 
 theorem Agg.run_count (T : Table) (f : Filter) : Agg.run T f .count = some ((T.select f).length : Rat) := rfl
 
