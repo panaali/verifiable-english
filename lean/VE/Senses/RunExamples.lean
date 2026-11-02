@@ -219,4 +219,55 @@ def deep : Nat → EFormula → EFormula
   [((0, 0, 1), .distinguished ["sense__funny_1"] true false), ((0, 0, 2), .undistinguished),
    ((0, 1, 2), .distinguished ["sense__funny_2"] true false), ((1, 0, 1), .distinguished ["sense__funny_1"] true false)]
 
+-- the pairs of `n` candidates, each once, in order
+#guard candidatePairs 3 == [(0, 1), (0, 2), (1, 2)] && candidatePairs 1 == [] && candidatePairs 0 == []
+-- the evaluator's forms, each arm; a number is outside it
+#guard formulaCore (.and .top (.or (.ex "joke" (.eq (.var 0) riddle)) (.implies .bottom (.not
+    (.all "joke" (.pred "p" [.var 0, riddle])))))) == some (.and .top (.or (.ex "joke" (.eq (.var 0) (.const "riddle")))
+    (.implies .bottom (.not (.all "joke" (.binary "p" (.var 0) (.const "riddle"))))))) &&
+  formulaCore (funny 1 (.num 0)) == none && formulaCore (.pred "p" [riddle, riddle, riddle]) == none
+-- a pair no valuation separates, and one outside the evaluator, on the wire
+#guard flipJson 2 ((1, 0, 1), .unknown) == Json.mkObj [("sentence", toJson 3), ("first", toJson 0),
+    ("second", toJson 1), ("status", .str "unknown")]
+#guard flipJson 0 ((0, 0, 1), .undistinguished) == Json.mkObj [("sentence", toJson 0), ("first", toJson 0),
+    ("second", toJson 1), ("status", .str "undistinguished")]
+
+/-- The joke's projection over two words, with a second joke constant `gag` declared first. -/
+def PJ2 : Projection := match project F ⟨[]⟩ EJ LJ ["funny", "odd"] with
+  | .ok P => { P with env := { P.env with constants := { name := "gag", sort := "joke" } :: P.env.constants } }
+  | .error _ => PJ
+def odd (i : Nat) (t : ETerm) : EFormula := .pred s!"sense__odd_{i}" [t]
+def cand2 (f o : Nat) (φ : EFormula) : Candidate :=
+  { choice := [("funny", f), ("odd", o)], lines := "", formula := φ, mark := true }
+
+-- every sense the first chooses and the second does not is true, in the projection's order
+#guard flipOn PJ2 (cand2 1 1 .top) (cand2 2 2 .top) == ["sense__funny_1", "sense__odd_1"]
+#guard flipOn PJ2 (cand2 1 1 .top) (cand2 1 2 .top) == ["sense__odd_1"]
+#guard (flipPair PJ2 (cand2 1 1 (.and (funny 1 riddle) (odd 1 riddle))) (cand2 2 2 (.and (funny 2 riddle) (odd 2 riddle)))
+  0).1 == .distinguished ["sense__funny_1", "sense__odd_1"] true false
+-- every constant of both formulas is an entity of its sort's domain, each its own
+#guard (flipPair PJ2 (cand 1 (.and (funny 1 (.const "alice")) (funny 1 riddle))) (cand 2 (funny 2 (.const "gag"))) 0).1
+  == .distinguished ["sense__funny_1"] true false
+#guard (flipPair PJ2 (cand 1 (.and (funny 1 riddle) (.and (.ex "joke" (.eq (.var 0) (.const "gag")))
+    (.ex "joke" (.eq (.var 0) riddle))))) (cand 2 (funny 2 riddle)) 0).1 == .distinguished ["sense__funny_1"] true false
+#guard (flipPair PJ2 (cand 1 (.ex "joke" (.not (.eq (.var 0) riddle)))) (cand 2 (.all "joke" (.eq (.var 0) riddle))) 0).1
+  == .distinguished ["sense__funny_1"] true false
+
+/-- `deep i (funny_1 x)`, or `top` for `0`: true under `sense__funny_1`, with work `2 ^ (i + 1) - 1`. -/
+def piece : Nat → EFormula
+  | 0 => .top
+  | i => deep i (funny 1 (.var 0))
+/-- The pieces of `is`, conjoined: one more unit of work per conjunction. -/
+def chain : List Nat → EFormula
+  | [] => .top
+  | [i] => piece i
+  | i :: is => .and (piece i) (chain is)
+/-- A pair whose flip model takes exactly `maxEvaluations` work: `2 + Σ 2 ^ (i + 1)` = 1,000,000. -/
+def atLimit : Candidate × Candidate :=
+  (cand 1 (.and (funny 1 riddle) (chain [0, 1, 2, 3, 4, 8, 13, 15, 16, 17, 18])), cand 2 (funny 2 riddle))
+-- at the limit from no work: the model; one unit of work earlier spent: unknown
+#guard flipsOf PJ [openOf [atLimit.1, atLimit.2]] == [((0, 0, 1), .distinguished ["sense__funny_1"] true false)]
+#guard flipPair PJ atLimit.1 atLimit.2 0 == (.distinguished ["sense__funny_1"] true false, VE.Limits.maxEvaluations)
+#guard flipPair PJ atLimit.1 atLimit.2 1 == (.unknown, VE.Limits.maxEvaluations)
+
 end VE.Senses.RunExamples
