@@ -1,3 +1,7 @@
+- `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
+- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
+- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
+- `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
@@ -6,19 +10,24 @@
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
 - `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
 - `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c).
+- `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
 - `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
+- `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
 - `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
 - `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
 - `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
 - `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_defer.py` — `select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select to the chain gate, and never records them as passed.
+- `tests/test_select_fast_stage.py` — `select_tests --fast-stage`: the cheap units of a selection, run first on the host that sends the rest to sharded runners, so a failing pin is heard in minutes…
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
+- `tests/test_senses_display.py` — The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1): each candidate of an open unit is rendered under th…
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
+- `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
 - `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
@@ -74,14 +83,3 @@
 - `tests/test_vacuity.py` — (no module docstring)
 - `tests/test_ve_iface.py` — (no module docstring)
 - `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
-- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
-- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
-- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
-- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
-- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
-- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
-- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
-- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
-- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
-- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
-- `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.

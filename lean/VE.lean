@@ -289,3 +289,5 @@ import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Defaults.Zone
+import VE.Defaults.ZoneExamples
