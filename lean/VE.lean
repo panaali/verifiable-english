@@ -127,6 +127,9 @@ import VE.Discourse.Theorems
 import VE.Discourse.English
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
+import VE.RightClauses.Tree
+import VE.RightClauses.Plain
+import VE.RightClauses.Examples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
