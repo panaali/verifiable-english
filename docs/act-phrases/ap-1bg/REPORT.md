@@ -1,8 +1,8 @@
 # ap-1bg build report: reading sets over `acts@0`, Lean's model view for Rust
 
 **No DRI signature is reserved; nothing stops the item.** (c) `readings_lexical_only` did not fit the size line and
-is ap-1bh (section 1). DELTA: [DELTA.md](DELTA.md) (R16; ap-1bd's row 2 decision files, continued). A question on
-row 2 (ii), Rust's search, went to the DRI decider (`inbox/dri/20261102T063840Z-ap-1bg-3060106.md`).
+is ap-1bh (section 1). DELTA: [DELTA.md](DELTA.md) (R16; ap-1bd's row 2 decision files, continued). Row 2 (ii), Rust's
+search, is confirmed by the DRI (reviews/dri-decisions-20261102-ap-1bg.md item 1).
 
 Plan and spec on `main`: [act-phrases-PLAN.md](../../spec/act-phrases-PLAN.md) 2.8, 2.9, AP-1 (lines 860-888);
 [act-phrases.md](../../spec/act-phrases.md) 6.4. Synthesis round 2 edits (edits-act-phrases.md): none implemented;
