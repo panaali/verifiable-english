@@ -253,6 +253,17 @@ def wideBoth (n : Nat) : Projection :=
 -- the limit counts every sense made true: two of `2 ^ 16` tuples each are over it, either alone within it
 #guard flipModelOf (wideBoth 16) [funny 1 riddle] ["sense__funny_1", "sense__funny_2"] == none &&
   2 * 2 ^ 16 > VE.Limits.maxTuples && 2 ^ 16 ≤ VE.Limits.maxTuples
+/-- The joke's projection with `sense__funny_1` over five jokes and five persons, and three more jokes. -/
+def atTuples : Projection := { PJ with env := { PJ.env with
+    constants := PJ.env.constants ++ ["j1", "j2", "j3"].map fun c => { name := c, sort := "joke" },
+    predicates := PJ.env.predicates.map fun p => if p.name == "sense__funny_1" then
+      { p with args := List.replicate 5 "joke" ++ List.replicate 5 "person" } else p } }
+/-- A formula naming four jokes and alice: five entities of the joke, two of the person. -/
+def namesFive : EFormula :=
+  .and (.eq (.const "riddle") (.const "j1")) (.and (.eq (.const "j2") (.const "j3")) (.eq (.const "alice") (.const "alice")))
+-- exactly `maxTuples` tuples, `5 ^ 5 * 2 ^ 5`, are within the limit
+#guard 5 ^ 5 * 2 ^ 5 == VE.Limits.maxTuples && ((flipModelOf atTuples [namesFive] ["sense__funny_1"]).map fun m =>
+  ((List.lookup "sense__funny_1" m.relations).getD []).length) == some VE.Limits.maxTuples
 -- a constant of every sort of the projection, the last included, is in the table
 #guard ((flipModelOf { PJ with env := { PJ.env with constants := PJ.env.constants ++ [{ name := "vault", sort := "resource" }] } }
   [funny 1 riddle] ["sense__funny_1"]).map (·.constants)) == some [("alice", "person"), ("riddle", "riddle"), ("vault", "resource")]

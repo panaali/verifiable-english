@@ -23,6 +23,8 @@
   {"definition": "VE.Senses.tuples", "operator": "list-empty",
    "reason": "does not elaborate (Function expected: `d.flatMap` replaced by `[]` and applied to its function); the product's cut is killed by the model guards of RunExamples"},
   {"definition": "VE.Senses.Run.flipModelJson", "operator": "list-empty",
-   "reason": "does not elaborate (Function expected, or a pattern variable whose type holds a metavariable: `m.domains`, `m.relations` or their `.map` replaced by `[]`); the wire form is killed by the flipJson guard of RunExamples"}
+   "reason": "does not elaborate (Function expected, or a pattern variable whose type holds a metavariable: `m.domains`, `m.relations` or their `.map` replaced by `[]`); the wire form is killed by the flipJson guard of RunExamples"},
+  {"definition": "VE.Senses.flipModelOf", "operator": "le-lt",
+   "reason": "equivalent: the domain's comparator sorts distinct entities only (a sort's name and the distinct names of its constants, none a sort's name), on which `<` and `≤` agree"}
  ]
 }

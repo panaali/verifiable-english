@@ -16905,7 +16905,9 @@
         "VE.Senses.RunExamples.dist",
         "VE.Senses.RunExamples.bareRows",
         "VE.Senses.RunExamples.wide",
-        "VE.Senses.RunExamples.wideBoth"
+        "VE.Senses.RunExamples.wideBoth",
+        "VE.Senses.RunExamples.atTuples",
+        "VE.Senses.RunExamples.namesFive"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
