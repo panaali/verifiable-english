@@ -624,9 +624,8 @@ theorem elaborate_one_reading (D : ActsDoc) {U'} (h : elaborate D = .ok U') :
 /-- The source's meaning, per the table: every source rule on an act holds of each simple act of its one reading. -/
 def IntendedActs (D : ActsDoc) (S : VE.Structure.{u}) : Prop
 /-- Faithfulness: the elaborated document's intended reading is the table's reading of the source. -/
-theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U')
-    (hw : WellFormedActs D = true) (S : VE.Structure.{u}) :
-    VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
+theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.Norms.WellFormed D.U.D = true)
+    (h : elaborate D = .ok U') (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
 end VE.Acts
 
 /-! lean/VE/Acts/Readings.lean and Sources.lean (AP-4) -/

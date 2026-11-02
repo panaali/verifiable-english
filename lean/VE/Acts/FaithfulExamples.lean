@@ -1,12 +1,12 @@
 import VE.Acts.Faithful
-import VE.Acts.ElaborateExamples
+import VE.Acts.DecodeExamples
 
 /-! Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small
 finite structures. `holdsB` and `intendedActsB` decide `holdsCatala` and `IntendedActs` there; `holdsB_iff` and
 `intendedActsB_iff` tie them to the definitions, so each `#guard` is a fact about the theorem's two sides. -/
 
 namespace VE.Acts.FaithfulExamples
-open VE.Acts VE.Acts.ElaborateExamples VE.Acts.TableExamples VE.Norms VE.NormDefaults
+open VE.Acts VE.Acts.ElaborateExamples VE.Acts.TableExamples VE.Norms VE.NormDefaults Lean
 
 abbrev Model := VE.FiniteModel Nat
 
@@ -126,12 +126,97 @@ def one (R : List String) : Model := ⟨fun _ => [0], fun _ => none, fun r => if
 def sides (D : ActsDoc) (M : Model) : Option (Bool × Bool) :=
   (elaborate D).toOption.map fun U => (holdsB U.D.T M, intendedActsB D M)
 
-/-! ### Rule on a part's name: the source is not well formed, the elaboration is accepted, and the sides differ -/
+/-- A model of two people, `R` listing whom each relation is true of. -/
+def people (R : List (String × List Nat)) : Model :=
+  ⟨fun _ => [0, 1], fun _ => none, fun r => ((R.lookup r).getD []).map ([·])⟩
+
+def parts027 : List String := ["p027__1", "p027__2"]
+def bx : VE.Formula := .unary "b" (.var 0)
+
+/-! ### E11's check: the two sides agree, each way, on every shape of rule -/
+
+-- Spec 11.3: torture's prohibition holds and cruel treatment's fails: both false; both hold: both true.
+#guard sides e1 (one ["p027__2"]) == some (false, false)
+#guard sides e1 (one ["p027__1"]) == some (false, false)
+#guard sides e1 (one []) == some (true, true)
+-- One person of two breaks one part; a relation on no predicate of the rules, and the source's own name, are not read.
+#guard sides e1 (people [("p027__2", [1])]) == some (false, false)
+#guard sides e1 (people [("p027__1", [0])]) == some (false, false)
+#guard sides e1 (people [("b", [0, 1]), ("p027", [0])]) == some (true, true)
+-- The last of five parts counts as the first does.
+#guard sides e3 (one ["p123__5"]) == some (false, false)
+#guard sides e3 (one ["p123__1"]) == some (false, false)
+#guard sides e3 (one []) == some (true, true)
+
+-- Precedence on each part (E4): the exception decides; without `over` the two rules conflict, on every model.
+#guard sides e4 (one parts027) == some (true, true)
+#guard sides e4 (one ["p027__1"]) == some (false, false)
+#guard sides e4 (one []) == some (false, false)
+def conflict : ActsDoc :=
+  withActs (doc [rg "p027" .permission] [nd "r027" "p027" false, nd "r027b" "p027" true]) fx6 [("p027", g6)]
+#guard sides conflict (one parts027) == some (false, false)
+#guard sides conflict (one []) == some (false, false)
+
+/-- Three rules deep: the source's fuel is 3, the result's 6. -/
+def chain : ActsDoc := withActs (doc [rg "p027" .permission]
+  [nd "a" "p027" false, nd "c" "p027" true ["a"] bx, nd "d" "p027" false ["c"] (.unary "e" (.var 0))]
+  (extra := ["b", "e"])) fx6 [("p027", g6)]
+#guard sides chain (one ("b" :: parts027)) == some (true, true)
+#guard sides chain (one ["b"]) == some (false, false)
+#guard sides chain (one ["b", "e"]) == some (true, true)
+#guard sides chain (one ("b" :: "e" :: parts027)) == some (false, false)
+#guard sides chain (one []) == some (true, true)
+#guard sides chain (one ["e", "p027__1"]) == some (false, false)
+
+/-- Allowed by default; the rule prohibits when `b` holds, or unless `b` holds. -/
+def allowed (N : Node) : ActsDoc :=
+  withActs (doc [{ rg "p027" .permission with allowByDefault := true }] [N] (extra := ["b"])) fx6 [("p027", g6)]
+def guarded : ActsDoc := allowed (nd "r027" "p027" false (guard := bx))
+def carved : ActsDoc := allowed (nd "r027" "p027" false (carveOuts := [bx]))
+#guard sides guarded (one parts027) == some (true, true)
+#guard sides guarded (one ["b"]) == some (true, true)
+#guard sides guarded (one ("b" :: parts027)) == some (false, false)
+#guard sides guarded (one []) == some (false, false)
+#guard sides carved (one ("b" :: parts027)) == some (true, true)
+#guard sides carved (one []) == some (true, true)
+#guard sides carved (one parts027) == some (false, false)
+
+-- A predicate with no parts, beside one that splits, is read as itself.
+def mix : ActsDoc := withActs (doc [rg "p027" .permission, rg "s" .obligation]
+  [nd "r027" "p027" false, nd "rs" "s" true (guard := bx)] (extra := ["b"])) fx6 [("p027", g6)]
+#guard sides mix (one ["s", "b"]) == some (true, true)
+#guard sides mix (one []) == some (true, true)
+#guard sides mix (one ["s"]) == some (false, false)
+#guard sides mix (one ["b"]) == some (false, false)
+#guard sides mix (one ["s", "b", "p027__1"]) == some (false, false)
+-- One atom kept (E2); unspecified predicates, split and kept (E5).
+#guard sides e2 (one ["p079"]) == some (true, true)
+#guard sides e2 (one []) == some (false, false)
+#guard sides e5 (one ["k"]) == some (true, true)
+#guard sides e5 (one []) == some (false, false)
+#guard sides e5 (one ["k", "p027__2"]) == some (false, false)
+-- D3's revised cell: two readings, refused, so the theorem says nothing of it.
+#guard sides e17 (one []) == none
+
+/-! ### The twin: a decoded document (acts are lexical until the hook of ap-3db) -/
+
+def decodedSides (j : Json) (ns : List Json) (M : Model) : Option (Bool × Bool) :=
+  (Decode.decodeElaboratedU j (Json.arr ns.toArray)).toOption.map fun e => (holdsB e.U'.D.T M, intendedActsB e.D M)
+def jdoc := VE.Acts.DecodeExamples.jenv ["acts@0", "norms@0", "relational-fol@0"] VE.Acts.DecodeExamples.lexical
+#guard decodedSides jdoc [VE.Acts.DecodeExamples.jrule "p"] (one ["p", "q"]) == some (true, true)
+#guard decodedSides jdoc [VE.Acts.DecodeExamples.jrule "p"] (one ["p"]) == some (false, false)
+
+/-! ### The hypothesis `h0` is needed: a source that is not well formed, a rule on a part's name
+
+`elaborate` accepts it and the result is well formed, but the two sides differ: `r0` conflicts with `r027-a1` on the
+part, and `IntendedActs` never reads `r0`, which is on no source predicate (reviews/dri-decisions-20261102-ap-3dd.md).
+Every other document in this file is well formed. -/
 
 def ce : ActsDoc :=
   withActs (doc [rg "p027" .permission] [nd "r027" "p027" false, nd "r0" "p027__1" true]) fx6 [("p027", g6)]
 #guard !VE.Norms.WellFormed ce.U.D
 #guard (elaborate ce).toOption.map (fun U => WellFormedU U) == some true
 #guard sides ce (one []) == some (false, true)
+#guard [e1, e3, e4, conflict, chain, guarded, carved, mix, e2, e5].all (VE.Norms.WellFormed ·.U.D)
 
 end VE.Acts.FaithfulExamples
