@@ -181,6 +181,11 @@ def modelActsOf (j : Json) : Json := (environmentRow j).getObjValD "model_acts"
 -- a dual pair shares its act's placeholder; another act has its own, with its arity's slots; a plain act has none
 #guard modelActsOf pairEnv ==
   Json.mkObj [("may_p", .str "{0} acta {1}"), ("must_p", .str "{0} acta {1}"), ("q", .str "{0} actb")]
+-- three distinct acts, the first once: each its own placeholder, in vocabulary order
+def threeEnv : Json := env actsP [("a_p", pred ["person"] (perm "{0} seek asylum")),
+  ("b_p", pred ["person", "case"] (perm a3)), ("c_p", pred ["person"] (perm "{0} keep faith"))] (some (block fxs))
+#guard modelActsOf threeEnv ==
+  Json.mkObj [("a_p", .str "{0} acta"), ("b_p", .str "{0} actb {1}"), ("c_p", .str "{0} actc")]
 #guard [("may_p", 2, "{0} acta {1}"), ("q", 1, "{0} actb")].all fun (p, k, a) =>
   (VE.Norms.Wire.canonicalAct p k (.str a)).toOption == some a
 #guard modelActsOf (pairEnv ["norms@0", "relational-fol@0"] "{0} help {1}") == Json.mkObj [] &&
