@@ -1,0 +1,13 @@
+trust_mutants: 24 definitions, 246 mutants (123 to run), 4 jobs, base fbc19d49110d
+SURVIVOR lean/VE/Service/Document.lean:613 VE.Service.Document.decodedEnvironment (D[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Service/CardinalityExamples.lean:17 VE.Service.CardinalityExamples.low (?, trusted) list-empty: [toJson "quantity", toJson ["bottom"]] -> [] (lean/VE/Service/CardinalityExamples.lean:17: typeclass instance problem is stuck, it is often due...)
+UNKNOWN lean/VE/Service/Document.lean:1765 VE.Service.Document.cardinalityReport (?, trusted) list-empty: units -> [] (lean/VE/Service/Document.lean:1765: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/CardinalityExamples.lean:17 VE.Service.CardinalityExamples.low (?, trusted) list-empty: ["bottom"] -> [] (lean/VE/Service/CardinalityExamples.lean:17: typeclass instance problem is stuck, it is often due...)
+UNKNOWN lean/VE/Service/CardinalityExamples.lean:35 VE.Service.CardinalityExamples.graph (?, trusted) list-empty: nodes -> [] (lean/VE/Service/CardinalityExamples.lean:36: Invalid projection: Type of)
+SURVIVOR lean/VE/Service/Document.lean:1765 VE.Service.Document.cardinalityReport (?, trusted) list-first: units -> (units.take 1)
+trust_mutants: 37 KILLED, 2 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 80 NOT RUN, 123 OTHER SHARD in 5671 s
+trust_mutants: ?, trusted: 27 KILLED, 1 SURVIVOR, 4 UNKNOWN, 57 NOT RUN, 82 OTHER SHARD
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 12 OTHER SHARD
+trust_mutants: G[V], trusted: 9 KILLED, 23 NOT RUN, 29 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 80 of its 123 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 6.7 s, scratch 2.2 s, control_build 0.2 s, probe_install 1 s, control_probes 526.4 s, mutants 5130.9 s, cleanup 3.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 1155.3 s (8), mutant_builds 295.5 s (47), mutant_checks 596.8 s (10), stage_controls 67.3 s (4), mutant_probes 18799.5 s (39)
