@@ -79,12 +79,12 @@ theorem Stats.root_iff {s v : Rat} (hs : 0 ≤ s) (hv : s * s = v) (c : Rat) :
       · intro h; subst h; rfl
     · grind
 
-theorem Stats.div_le_iff' {a s w : Rat} (hw : 0 < w) : a / w ≤ s ↔ a ≤ s * w := by
+theorem Stats.div_le_iff_mul {a s w : Rat} (hw : 0 < w) : a / w ≤ s ↔ a ≤ s * w := by
   have := Rat.lt_div_iff (b := a) (a := s) hw; grind
-theorem Stats.le_div_iff' {a s w : Rat} (hw : 0 < w) : s ≤ a / w ↔ s * w ≤ a := by
+theorem Stats.le_div_iff_mul {a s w : Rat} (hw : 0 < w) : s ≤ a / w ↔ s * w ≤ a := by
   have := Rat.div_lt_iff (a := a) (c := s) hw; grind
-theorem Stats.div_eq_iff' {a s w : Rat} (hw : 0 < w) : a / w = s ↔ a = s * w := by
-  have := @Stats.div_le_iff' a s w hw; have := @Stats.le_div_iff' a s w hw; grind
+theorem Stats.div_eq_iff_mul {a s w : Rat} (hw : 0 < w) : a / w = s ↔ a = s * w := by
+  have := @Stats.div_le_iff_mul a s w hw; have := @Stats.le_div_iff_mul a s w hw; grind
 
 /-- Agreement with rounding the root whenever the root is rational. -/
 theorem sqrtRoundsTo_of_square (r : Rounding) (p : Printed) (s v : Rat) (hs : 0 ≤ s) (hv : s * s = v) :
@@ -95,8 +95,8 @@ theorem sqrtRoundsTo_of_square (r : Rounding) (p : Printed) (s v : Rat) (hs : 0 
   have R := Stats.root_iff hs hv
   cases r <;>
     simp only [SqrtRoundsTo, RoundsTo, hv0, true_and, (R _).1, (R _).2.1, (R _).2.2.1, (R _).2.2.2.1,
-      (R _).2.2.2.2, Stats.div_le_iff' hu, Stats.div_le_iff' h2u, Rat.div_lt_iff hu, Rat.div_lt_iff h2u, Stats.le_div_iff' hu,
-      Rat.lt_div_iff hu, Rat.lt_div_iff h2u, Stats.div_eq_iff' h2u] <;> grind
+      (R _).2.2.2.2, Stats.div_le_iff_mul hu, Stats.div_le_iff_mul h2u, Rat.div_lt_iff hu, Rat.div_lt_iff h2u, Stats.le_div_iff_mul hu,
+      Rat.lt_div_iff hu, Rat.lt_div_iff h2u, Stats.div_eq_iff_mul h2u] <;> grind
 
 def signs : Nat → List (List Int)
   | 0 => [[]]
