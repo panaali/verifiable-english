@@ -16904,7 +16904,8 @@
         "VE.Senses.Flip.bare",
         "VE.Senses.RunExamples.dist",
         "VE.Senses.RunExamples.bareRows",
-        "VE.Senses.RunExamples.wide"
+        "VE.Senses.RunExamples.wide",
+        "VE.Senses.RunExamples.wideBoth"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
