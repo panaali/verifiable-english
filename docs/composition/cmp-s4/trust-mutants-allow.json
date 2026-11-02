@@ -74,6 +74,11 @@
    "definition": "VE.Discourse.conditionalOnOf",
    "operator": "list-last",
    "reason": "equivalent at the one-element list `[v]` and the at-most-one-element `if`; the other sites are killed by the conditionalOnOf guard (ComposeExamples.lean)"
+  },
+  {
+   "definition": "VE.Discourse.documentSortOk",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`K.documents` -> `[]` leaves the element type of `(·.name == c)` unknown), which the tool reads as UNKNOWN, not INVALID; `rv.vocabulary.constants` -> `[]` compiles and is killed by ComposeExamples' `sortOk` guards"
   }
  ]
 }
