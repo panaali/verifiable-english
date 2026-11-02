@@ -1732,14 +1732,14 @@
    "class": "S",
    "lines": 56,
    "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-10-18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
    "commit": "01e3b48c54d9e07276183b018baec2d462990103"
   },
   {
    "class": "V",
    "lines": 8,
    "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-10-18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
    "commit": "01e3b48c54d9e07276183b018baec2d462990103"
   }
  ]

@@ -1,13 +1,12 @@
 # df-5a: the zone at one situation, in Lean (report)
 
-**Status**: built and ready for review. No DRI signature is reserved. The size question is with the DRI
-(`inbox/dri/20261102T031350Z-df-5a-1190982.md`).
+**Status**: built and ready for review. No DRI signature is reserved.
 **What changed**: `lean/VE/Defaults/Zone.lean` holds the zone, `defaultZoneOf` (nd-atoms' enumeration over
 `openAtomsAll`, no cone pruning) and seven theorems with no `sorry`. `ZoneExamples.lean` holds spec 8.6's fixtures as
 `#guard`s.
 **Recorded deviations**: `valid` added to four statements of spec 7.5 (signed:
 `reviews/dri-decisions-20261102-df-5a.md`). The `forcedAll` group is cut to df-5ab. The item is about 1,190 hand-written
-lines, against the 600-line rule ("Size").
+lines, against the 600-line rule; the DRI accepted it as it is (`reviews/dri-decisions-20261102-df-5a-size.md`, "Size").
 **Not run here**: the full gate (the chain runs it), and the 28 selected files over 120 s that were deferred to the
 chain gate (`evidence/selected-tests.txt`).
 **Bytes 0. DELTA**: trust only (T1, R16).
@@ -105,8 +104,10 @@ Measured with `git diff --numstat $(git merge-base HEAD main)`: `Zone.lean` 926,
 this report and DELTA. That makes about 1,190 hand-written lines, against the ~600-line rule. Of `Zone.lean`, about 195
 lines are spec 7.5's definitions and docstrings, and about 730 are the proofs of the seven theorems. The task's fallback
 ("deliver the zone theorems with their fixtures and name the rest df-5ab") is itself about 1,100 lines, so the whole
-`forcedAll` group is cut to df-5ab. Moving the proofs out as well is the only cut that reaches 600; the DRI has been
-asked (`inbox/dri/20261102T031350Z-df-5a-1190982.md`). Generated files (codemap, `Audit.lean`, `lean/*.txt`) and tool
+`forcedAll` group is cut to df-5ab. Moving the proofs out as well is the only cut that reaches 600. The DRI signed keeping
+the item as it is, with the `forcedAll` group as df-5ab and no further growth in this item
+(`manage-agents/reviews/dri-decisions-20261102-df-5a-size.md`). The same decision dated the R16 allowance
+2026-11-02, the day it was recorded. Generated files (codemap, `Audit.lean`, `lean/*.txt`) and tool
 output (`trust-mutants*.json`, `evidence/`) are excluded.
 
 ## Tests
@@ -160,7 +161,7 @@ unsaid tables varied; leftTo only with the same filling; the enumeration never o
 6. Gate evidence on the final HEAD: N.A. here (the chain runs the gate on the final HEAD; `evidence/selected-tests.txt`
    records the selected run).
 7. No unsigned item: PASS (DELTA T1 cites R16 with its conditions; the `valid` change is SIGNED in
-   `reviews/dri-decisions-20261102-df-5a.md`; the size question is asked).
+   `reviews/dri-decisions-20261102-df-5a.md`; the size overrun is SIGNED in `reviews/dri-decisions-20261102-df-5a-size.md`).
 8. Every user-visible change in DELTA: PASS (no route, schema or answer changes: DELTA.md; bytes 0).
 9. Test selection: PASS (the selection picked 387 of 526 units and included `tests/test_assurance_manifest.py`, which
    caught the unclassified JSON file).
