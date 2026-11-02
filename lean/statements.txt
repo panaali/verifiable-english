@@ -5264,6 +5264,75 @@ theorem VE.Calc.Shown.matches_iff
             o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails ∧ s = VE.Calc.Shown.nothing
   -- uses VE.Calc.Shown.certificate@VE.Calc.Run VE.Calc.Shown.counterexample@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown.nothing@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.Step@VE.Calc.Derive VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
   -- expr 618930263
+theorem VE.Calc.Stat.run_isSome
+  ∀ (s : VE.Calc.Stat) (xs : List Rat), (s.run xs).isSome = Bool.true ↔ s.minLength ≤ xs.length
+  -- uses VE.Calc.Stat.minLength@VE.Calc.Stats VE.Calc.Stat.run@VE.Calc.Stats VE.Calc.Stat@VE.Calc.Stats
+  -- expr 1497449915
+theorem VE.Calc.Stats.binomial
+  ∀ (a b : Rat) (n : Nat),
+    (List.map (fun i => ↑(VE.Calc.choose n i) * a ^ i * b ^ (n - i)) (List.range (n + 1))).sum = (a + b) ^ n
+  -- uses VE.Calc.choose@VE.Calc.Stats
+  -- expr 3424476087
+theorem VE.Calc.Stats.choose_eq_zero
+  ∀ {n k : Nat}, n < k → VE.Calc.choose n k = 0
+  -- uses VE.Calc.choose@VE.Calc.Stats
+  -- expr 1551727145
+theorem VE.Calc.Stats.div_eq_iff_mul
+  ∀ {a s w : Rat}, 0 < w → (a / w = s ↔ a = s * w)
+  -- uses
+  -- expr 4052845652
+theorem VE.Calc.Stats.div_le_iff_mul
+  ∀ {a s w : Rat}, 0 < w → (a / w ≤ s ↔ a ≤ s * w)
+  -- uses
+  -- expr 1925596818
+theorem VE.Calc.Stats.foldl_add
+  ∀ (g : Nat → Rat) (l : List Nat) (c : Rat), List.foldl (fun acc i => acc + g i) c l = c + (List.map g l).sum
+  -- uses
+  -- expr 2072750370
+theorem VE.Calc.Stats.le_div_iff_mul
+  ∀ {a s w : Rat}, 0 < w → (s ≤ a / w ↔ s * w ≤ a)
+  -- uses
+  -- expr 942571942
+theorem VE.Calc.Stats.root_iff
+  ∀ {s v : Rat},
+    0 ≤ s →
+      s * s = v →
+        ∀ (c : Rat),
+          (VE.Calc.rootGe v c ↔ c ≤ s) ∧
+            (VE.Calc.rootGt v c ↔ c < s) ∧
+              (VE.Calc.rootLe v c ↔ s ≤ c) ∧ (VE.Calc.rootLt v c ↔ s < c) ∧ (VE.Calc.rootEq v c ↔ c = s)
+  -- uses VE.Calc.rootEq@VE.Calc.Stats VE.Calc.rootGe@VE.Calc.Stats VE.Calc.rootGt@VE.Calc.Stats VE.Calc.rootLe@VE.Calc.Stats VE.Calc.rootLt@VE.Calc.Stats
+  -- expr 2192602965
+theorem VE.Calc.Stats.sq_le_sq
+  ∀ {a b : Rat}, 0 ≤ a → 0 ≤ b → (a * a ≤ b * b ↔ a ≤ b)
+  -- uses
+  -- expr 3962698528
+theorem VE.Calc.Stats.sq_lt_sq
+  ∀ {a b : Rat}, 0 ≤ a → 0 ≤ b → (a * a < b * b ↔ a < b)
+  -- uses
+  -- expr 1847122382
+theorem VE.Calc.Stats.sum_append
+  ∀ (l l' : List Rat), (l ++ l').sum = l.sum + l'.sum
+  -- uses
+  -- expr 1294575389
+theorem VE.Calc.Stats.sum_congr
+  ∀ {f g : Nat → Rat} {l : List Nat}, (∀ (i : Nat), i ∈ l → f i = g i) → (List.map f l).sum = (List.map g l).sum
+  -- uses
+  -- expr 71478720
+theorem VE.Calc.Stats.sum_filter_le
+  ∀ (g : Nat → Rat) (P : Nat → Bool) (l : List Nat),
+    (∀ (i : Nat), i ∈ l → 0 ≤ g i) →
+      0 ≤ (List.map g (List.filter P l)).sum ∧ (List.map g (List.filter P l)).sum ≤ (List.map g l).sum
+  -- uses
+  -- expr 1311440884
+theorem VE.Calc.Stats.sum_map_add
+  ∀ (f g : Nat → Rat) (l : List Nat), (List.map (fun i => f i + g i) l).sum = (List.map f l).sum + (List.map g l).sum
+  -- uses
+  -- expr 899209059
+theorem VE.Calc.Stats.sum_map_mul
+  ∀ (a : Rat) (f : Nat → Rat) (l : List Nat), (List.map (fun i => a * f i) l).sum = a * (List.map f l).sum
+  -- uses
+  -- expr 2448511096
 theorem VE.Calc.Step.derive_sound
   ∀ (links : List (String × String)) (known : List VE.Calc.QFact) (st : VE.Calc.Step) (f : VE.Calc.QFact),
     VE.Calc.Step.derive links known st = Option.some f →
@@ -5773,6 +5842,14 @@ theorem VE.Calc.bind2_some
       ∃ x y, o = Option.some x ∧ p = Option.some y ∧ f x y = Option.some d
   -- uses
   -- expr 972118345
+theorem VE.Calc.binomialTail_unit
+  ∀ (n k : Nat) (p : Rat), 0 ≤ p → p ≤ 1 → 0 ≤ VE.Calc.binomialTail n k p ∧ VE.Calc.binomialTail n k p ≤ 1
+  -- uses VE.Calc.binomialTail@VE.Calc.Stats
+  -- expr 1406175087
+theorem VE.Calc.binomialTail_zero
+  ∀ (n : Nat) (p : Rat), VE.Calc.binomialTail n 0 p = (p + (1 - p)) ^ n
+  -- uses VE.Calc.binomialTail@VE.Calc.Stats
+  -- expr 2544054843
 theorem VE.Calc.causes_accumulate
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -5798,6 +5875,10 @@ theorem VE.Calc.checked_steps
     VE.Calc.Derivation.check P links g d = Bool.true → d.steps ≠ []
   -- uses VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation.steps@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
   -- expr 2412847626
+theorem VE.Calc.choose_succ_succ
+  ∀ (n k : Nat), VE.Calc.choose (n + 1) (k + 1) = VE.Calc.choose n k + VE.Calc.choose n (k + 1)
+  -- uses VE.Calc.choose@VE.Calc.Stats
+  -- expr 3299895693
 theorem VE.Calc.compare_invariant
   ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (c : VE.Numbers.Comparison)
     (a b : VE.Calc.Expr) (d : VE.Calc.PhysDim),
@@ -6084,6 +6165,10 @@ theorem VE.Calc.mem_firstAppearance_of
   ∀ (l acc : List String) (n : String), n ∈ acc → n ∈ List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc l
   -- uses
   -- expr 1315452361
+theorem VE.Calc.mem_signs
+  ∀ (n : Nat) (s : List Int), s ∈ VE.Calc.signs n ↔ s.length = n ∧ ∀ (k : Int), k ∈ s → k = 1 ∨ k = -1
+  -- uses VE.Calc.signs@VE.Calc.Stats
+  -- expr 4001878560
 theorem VE.Calc.mul_pow_nat
   ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
   -- uses
@@ -6221,6 +6306,31 @@ theorem VE.Calc.sidesAtB_eq
         VE.Calc.differsAt a b κ = (Option.map (fun s => s.fst != s.snd) r).getD Bool.false
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly VE.Calc.sidesAtB@VE.Calc.Poly
   -- expr 2994313240
+theorem VE.Calc.signFlipC_complete
+  ∀ (limit : Nat) (d : List Rat),
+    VE.Calc.signFlipWork d.length ≤ limit →
+      VE.Calc.signFlipC limit d = Option.some (VE.Calc.signFlipP d, VE.Calc.signFlipWork d.length)
+  -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
+  -- expr 3751497465
+theorem VE.Calc.signFlipC_sound
+  ∀ (limit : Nat) (d : List Rat) (q : Rat) (w : Nat),
+    VE.Calc.signFlipC limit d = Option.some (q, w) →
+      q = VE.Calc.signFlipP d ∧ w = VE.Calc.signFlipWork d.length ∧ w ≤ limit
+  -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
+  -- expr 1110700147
+theorem VE.Calc.signFlipP_grain
+  ∀ (d : List Rat), ∃ m, m ≤ 2 ^ d.length ∧ VE.Calc.signFlipP d = ↑m / ↑(2 ^ d.length)
+  -- uses VE.Calc.signFlipP@VE.Calc.Stats
+  -- expr 222593266
+theorem VE.Calc.signs_length
+  ∀ (n : Nat), (VE.Calc.signs n).length = 2 ^ n
+  -- uses VE.Calc.signs@VE.Calc.Stats
+  -- expr 1850990774
+theorem VE.Calc.sqrtRoundsTo_of_square
+  ∀ (r : VE.Numbers.Rounding) (p : VE.Numbers.Printed) (s v : Rat),
+    0 ≤ s → s * s = v → (VE.Calc.SqrtRoundsTo r p v ↔ VE.Numbers.RoundsTo r p s)
+  -- uses VE.Calc.SqrtRoundsTo@VE.Calc.Stats VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 2159199551
 theorem VE.Calc.sumOf_snoc
   ∀ (l : List (String × Rat)) (m n : String) (c : Rat),
     VE.Calc.sumOf (l ++ [(m, c)]) n = if n = m then VE.Calc.sumOf l n + c else VE.Calc.sumOf l n
