@@ -1734,6 +1734,20 @@
    "reason": "qt-a3db: VE/Cardinality/Render.lean V +129 (the paraphrase renderer), VE/Cardinality/Run.lean V +6 (runCase's paraphrase case), VE/Cardinality/RenderTheorems.lean S +6 (Charges); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18",
    "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
+  },
+  {
+   "class": "S",
+   "lines": 2,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
+  },
+  {
+   "class": "V",
+   "lines": 63,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
   }
  ]
 }
