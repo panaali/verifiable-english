@@ -46729,6 +46729,14 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
+theorem VE.Scope.Run.explainSetsWithin_effect
+  ∀ {limit : Nat} {D : VE.Scope.SDoc} {source : String} {gs : List (VE.Discourse.Choice × List VE.Scope.Row)},
+    VE.Scope.Run.explainSetsWithin limit D source = Except.ok gs →
+      ∀ (g : VE.Discourse.Choice × List VE.Scope.Row),
+        g ∈ gs →
+          ∀ (r : VE.Scope.Row), r ∈ g.snd → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.Run.explainSetsWithin@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run
+  -- expr 3289445947
 theorem VE.Scope.Run.explainWithin_effect
   ∀ {limit : Nat} {D : VE.Scope.SDoc} {source : String} {rows : List VE.Scope.Row},
     VE.Scope.Run.explainWithin limit D source = Except.ok rows →
@@ -47303,6 +47311,12 @@ theorem VE.Scope.explainFast_eq
   ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc), VE.Scope.explainFast D = VE.Scope.explainRows D
   -- uses VE.Scope.Quotes@VE.Scope.English VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.explainFast@VE.Scope.Run VE.Scope.explainRows@VE.Scope.Run
   -- expr 3036633156
+theorem VE.Scope.explainOut_effect
+  ∀ [inst : VE.Scope.Quotes] {D : VE.Scope.SDoc} {o : Lean.Json} {rows : List VE.Scope.Row},
+    VE.Scope.explainOut D = Except.ok (o, rows) →
+      ∀ (r : VE.Scope.Row), r ∈ rows → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run VE.Scope.explainOut@VE.Scope.Run
+  -- expr 449570618
 theorem VE.Scope.explainRows_effect
   ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
     VE.Scope.explainRows D = Except.ok rows →

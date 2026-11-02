@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 264 |
-| leaves:closed domain | 293 |
-| leaves:none | 1470 |
+| leaves:closed domain | 294 |
+| leaves:none | 1481 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1069 |
-| today:shape | 557 |
+| today:not probed | 1080 |
+| today:shape | 558 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -3478,6 +3478,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/choices/*/choice/*/reading` | string | none |  |  | 0 | not probed |
+| `/choices/*/choice/*/set` | string | none |  |  | 0 | not probed |
+| `/choices/*/choice/*/unit` | string | none |  |  | 0 | not probed |
+| `/choices/*/choice/*/version` | integer | none |  | minimum | 0 | not probed |
+| `/choices/*/governed/*/id` | string | none |  |  | 0 | not probed |
+| `/choices/*/governed/*/units/*` | string | none |  |  | 0 | not probed |
+| `/choices/*/rows/*/governors/*/effect` | string | closed domain | enum |  | 0 | shape |
+| `/choices/*/rows/*/governors/*/id` | string | none |  |  | 0 | not probed |
+| `/choices/*/rows/*/governors/*/provenance` | string | none |  |  | 0 | not probed |
+| `/choices/*/rows/*/governors/*/reach/*` | string | none |  |  | 0 | not probed |
+| `/choices/*/rows/*/governors/*/unit` | string | none |  |  | 0 | not probed |
+| `/choices/*/rows/*/unit` | string | none |  |  | 0 | not probed |
 | `/error` | string | none |  | minLength | 1 | not probed |
 | `/governed/*/id` | string | none |  |  | 3 | not probed |
 | `/governed/*/units/*` | string | none |  |  | 2 | not probed |
@@ -3493,6 +3505,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/choices` |  |  |  |  |
+| `/choices/*/choice` |  |  |  |  |
+| `/choices/*/governed` |  |  |  |  |
+| `/choices/*/governed/*/units` |  |  |  |  |
+| `/choices/*/rows` |  |  |  |  |
+| `/choices/*/rows/*/governors` |  |  |  |  |
+| `/choices/*/rows/*/governors/*/reach` |  |  |  |  |
 | `/governed` |  |  |  |  |
 | `/governed/*/units` |  |  |  |  |
 | `/rows` |  |  |  |  |
