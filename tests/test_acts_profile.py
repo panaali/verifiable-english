@@ -911,7 +911,8 @@ def one_and_two(faults):
     return [(f,) for f in faults] + [(f, g) for i, f in enumerate(faults) for g in faults[i + 1:] if f[0] != g[0]]
 
 
-@pytest.mark.parametrize("faults", one_and_two(FILLED_RETYPED), ids=str)
+@pytest.mark.parametrize("faults", one_and_two(FILLED_RETYPED),
+                         ids=lambda fs: "+".join(f"{f[0]}{FILLED_RETYPED.index(f)}" for f in fs))
 def test_a_retyped_filled_act_field_fails_the_schema(filled_exchange, faults):
     """The filled environment's `form` (one of Lean's two forms) and `acts` block are typed by the generated schema
     (`readings-route.json`): the genuine exchange passes and every retype, alone or with another, is refused."""
@@ -931,7 +932,7 @@ FILLED_REBOUND = [("paid", "form-changed"), ("paid", "form-dropped"), ("help_req
                   ("acts", "acts-dropped"), ("phrase", "phrase-dropped")]
 
 
-@pytest.mark.parametrize("faults", one_and_two(FILLED_REBOUND), ids=str)
+@pytest.mark.parametrize("faults", one_and_two(FILLED_REBOUND), ids=lambda fs: "+".join(f[1] for f in fs))
 def test_a_filled_act_not_bound_to_the_request_is_unavailable(monkeypatch, filled_exchange, faults):
     """The filled environment's `acts` block and every act and form are the request's: each rebinding of a genuine
     answer, alone or with another, is `CheckerUnavailable`, never an answer."""
