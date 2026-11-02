@@ -1,0 +1,4 @@
+VE/Events/WireExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/NormDefaults/Packs.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Events/WireExamples.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/NormDefaults/Packs.lean; rerun tools/lean_statements.py
