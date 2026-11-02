@@ -119,16 +119,6 @@
 "definition": "VE.NormDefaults.Wire.defaultsRows",
 "operator": "list-empty",
 "reason": "refuted by lean/VE/Defaults/RouteExamples.lean:17 (did not evaluate to true: the defaults kinds lose their row); UNKNOWN only because that check reaches defaultsRows through runLayered"
-},
-{
-"definition": "VE.Defaults.dfltUniformOf",
-"operator": "list-first",
-"reason": "equivalent on the exception part only: `(match N.mode, N.exception with ...)` is `[]` or one premise, so its take 1 and reverse.take 1 are itself; every other list-first and list-last mutant of dfltUniformOf is KILLED by UniformExamples.lean:87"
-},
-{
-"definition": "VE.Defaults.dfltUniformOf",
-"operator": "list-last",
-"reason": "equivalent on the exception part only: `(match N.mode, N.exception with ...)` is `[]` or one premise, so its take 1 and reverse.take 1 are itself; every other list-first and list-last mutant of dfltUniformOf is KILLED by UniformExamples.lean:87"
 }
 ]
 }
