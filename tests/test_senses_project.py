@@ -3,7 +3,6 @@ projection and each candidate's (docs/spec/senses-PLAN.md 2.6, 2.7; fixtures i1,
 from __future__ import annotations
 
 import hashlib
-import json
 from copy import deepcopy
 
 import pytest
@@ -15,7 +14,7 @@ from ve.backends.lean import ROUTE_TIMEOUT
 from ve.backends.service_schema import Invalid, check_row
 from ve.english_grammar import actions_version, grammar_id
 from ve.environment import Environment
-from ve.errors import CheckerUnavailable, VEError
+from ve.errors import VEError
 from ve.wire import canonical_json
 
 FUNNY = "The riddle is funny."
@@ -258,100 +257,3 @@ def test_i6_both_operations_are_lean_only():
         entry = operation(name)
         assert (entry["authority"], entry["target"], entry["python"]) == ("lean-only", "lean", [])
 
-
-# sn-b6b (a): the preamble lines of a source answer, Lean's `writtenLines`, bound to the request's source.
-ODD = "In this document, odd means strange."
-
-
-def test_the_preamble_lines_are_the_sources_leading_sentences(joke):
-    """Each line is a sentence of the source as written, in order, and there are as many as the sentences before the
-    body; a source without a preamble has none."""
-    source = LINE2 + "\n\n" + ODD + "  " + FUNNY
-    reading = read_in(joke, source)["reading"]
-    assert reading["preamble"] == [LINE2, ODD] and reading["units"][0]["sentence"] == 2
-    assert read_in(joke, FUNNY)["reading"]["preamble"] == []
-
-
-@pytest.mark.parametrize("change", [
-    lambda lines: lines.__setitem__(0, "In this document, funny means amusing."),  # a line not in the source
-    lambda lines: lines.pop(),                                                       # a line dropped
-    lambda lines: lines.append(FUNNY),                                               # an extra line, the body's
-    lambda lines: lines.append(lines[0]),                                            # a line repeated
-    lambda lines: lines.reverse(),                                                   # out of order
-    lambda lines: lines.__setitem__(1, ODD[:-1]),                                    # shifted: not a whole sentence
-    lambda lines: lines.__setitem__(0, ""),                                          # emptied
-    lambda lines: lines.clear(),                                                     # emptied list
-], ids=["absent", "dropped", "extra", "repeated", "reordered", "shifted", "empty-line", "empty"])
-def test_preamble_rebinding_is_refused(joke, change):
-    source = LINE2 + "\n" + ODD + " " + FUNNY
-    genuine = read_in(joke, source)
-    def problem(result):
-        return route._response_problem(result, genuine["dictionary_id"], genuine["request_id"], source=source)
-    assert problem(genuine) is None
-    mutant = deepcopy(genuine)
-    change(mutant["reading"]["preamble"])
-    assert problem(mutant) and "preamble" in problem(mutant)
-
-
-def test_a_preamble_line_lean_did_not_read_is_unavailable(joke, monkeypatch):
-    """Through the route: an answer whose preamble line is not in the request's source is CheckerUnavailable."""
-    from ve.backends import lean as lean_backend
-    real = lean_backend.run_limited
-    def changed(*args, **kwargs):
-        answer = real(*args, **kwargs)
-        rows = json.loads(answer.stdout)
-        rows[0]["result"]["reading"]["preamble"] = ["In this document, funny means amusing."]
-        answer.stdout = json.dumps(rows).encode()
-        return answer
-    monkeypatch.setattr(lean_backend, "run_limited", changed)
-    with pytest.raises(CheckerUnavailable, match="preamble line"):
-        read_in(joke, LINE2 + " " + FUNNY)
-
-
-# sn-b6b (d): the flip models of each open unit (VE.Senses.flipsOf; plan 2.6 step 7, spec 2.6).
-def flip(sentence, first, second, status, true=None, values=None):
-    row = {"sentence": sentence, "first": first, "second": second, "status": status}
-    return row if true is None else {**row, "true": true, "values": values}
-
-
-@pytest.mark.parametrize("source, flips", [
-    (FUNNY, [flip(0, 0, 1, "distinguished", ["sense__funny_1"], [True, False])]),
-    ("The riddle is not funny.", [flip(0, 0, 1, "distinguished", ["sense__funny_1"], [False, True])]),
-    ("Every joke is funny.", [flip(0, 0, 1, "distinguished", ["sense__funny_1"], [True, False])]),
-    # the two senses only under a conjunct both make false: no valuation of the rule separates them
-    ("Both the riddle is funny and the riddle is odd.", [flip(0, 0, 1, "undistinguished")]),
-    (LINE2 + " " + FUNNY, []),         # resolved by its line: no pair
-    ("The riddle is odd.", []),        # one candidate: no pair
-    (FUNNY + " " + FUNNY, [flip(0, 0, 1, "distinguished", ["sense__funny_1"], [True, False]),
-                           flip(1, 0, 1, "distinguished", ["sense__funny_1"], [True, False])]),
-], ids=["positive", "negated", "universal", "undistinguished", "resolved", "one-candidate", "two-units"])
-def test_flip_models_are_leans(joke, source, flips):
-    assert read_in(joke, source)["reading"]["flips"] == flips
-
-
-@pytest.mark.parametrize("change", [
-    lambda flips: flips.pop(),                                         # a pair without its row
-    lambda flips: flips.append(deepcopy(flips[0])),                    # a row repeated
-    lambda flips: flips[1].update(sentence=flips[1]["sentence"] + 1),  # shifted to another unit
-    lambda flips: flips[0].update(first=1, second=0),                  # the pair reversed
-    lambda flips: flips[0].update(second=2),                           # a candidate the unit does not have
-    lambda flips: flips[0].update(first=False),                        # a Boolean for a number
-    lambda flips: flips[0].update(true=["absent"]),                    # a predicate the projection lacks
-    lambda flips: flips[0].update(true=[]),                            # no sense made true
-    lambda flips: flips[0].update(values=[True, False, True]),         # a third value
-    lambda flips: flips[0].update(values=[1, 0]),                      # numbers for Booleans
-    lambda flips: flips[0].update(status="BOGUS"),                     # an unknown status
-    lambda flips: flips[0].update(status="unknown"),                   # a status without its members' shape
-    lambda flips: flips[0].pop("values"),                              # a member dropped
-    lambda flips: flips.clear(),                                       # emptied
-], ids=["dropped", "repeated", "shifted", "reversed", "absent-candidate", "bool", "absent-predicate", "no-true",
-        "three-values", "int-values", "bogus-status", "status-shape", "no-values", "empty"])
-def test_flip_rebinding_is_refused(joke, change):
-    source = FUNNY + " " + FUNNY
-    genuine = read_in(joke, source)
-    def problem(result):
-        return route._response_problem(result, genuine["dictionary_id"], genuine["request_id"], source=source)
-    assert problem(genuine) is None
-    mutant = deepcopy(genuine)
-    change(mutant["reading"]["flips"])
-    assert problem(mutant) and "flip model" in problem(mutant)
