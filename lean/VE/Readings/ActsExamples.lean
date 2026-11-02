@@ -40,8 +40,8 @@ def rule (sign : Bool) : Json := Json.mkObj [("norm", Json.mkObj [("name", .str 
 def ruleDoc : Json := Json.mkObj [("reading_sets", Json.arr #[]), ("units", Json.arr #[Json.mkObj [("id", .str "u1"),
   ("kind", .str "norm"), ("content", rule true)]])]
 #guard err (VE.Readings.Run.validateOne "v" envA ruleDoc) == "ok"
--- a document with a reading set over `acts@0` keeps the base's refusal (ap-1bg); without `acts@0` the set is admitted
--- as before (here to its own refusal), and with no set the document is read (above)
+-- a document with a reading set over `acts@0` is read as one without it (ap-1bg; ap-1bd refused it): here both reach
+-- the set's own refusal
 def setDoc : Json := Json.mkObj [("units", Json.arr #[Json.mkObj [("id", .str "u1")]]), ("reading_sets", Json.arr #[
   Json.mkObj [("id", .str "rs1"), ("unit", .str "u1"), ("version", toJson 1), ("status", .str "open"), ("situations",
     Json.mkObj []), ("readings", Json.arr #[Json.mkObj [("id", .str "a"), ("kind", .str "norm"), ("content", rule true)],
@@ -51,7 +51,7 @@ def noActs : Json := (Json.parse ("{\"language\":\"ve.core@0.2\",\"profiles\":[\
   "{\"description\":\"p\"}},\"constants\":{},\"predicates\":{\"paid\":{\"arguments\":[\"person\"],\"description\":" ++
   "\"d\",\"regulated\":{\"role\":\"plain\",\"default\":\"deny\"}}}}}")).toOption.getD .null
 #guard [envA, noActs].map (fun e => err (VE.Readings.Run.validateOne "v" e setDoc)) ==
-  ["UnsupportedProfile: Unsupported profile acts@0", "each other reading needs a distinguishing model id"]
+  List.replicate 2 "each other reading needs a distinguishing model id"
 -- D-33 for a joined act (A5's "and", A6's "or" outside the phrases; plain or a permission), the predicate named the
 -- one whose act joins, first or last of several
 #guard [env [("p", "plain", a5)], env [("p", "permission", a5)], env [("p", "plain", a6)]].map decode ==
@@ -86,5 +86,25 @@ def wordings (row : Json) : List String :=
     (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))).getObjValD "wordings"
 #guard wordings (VE.NormDefaults.Run.runCaseReported (elabCase "norm-defaults-elaborate"
     (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))) == ["heard", "paid"]
+
+/-! ap-1bg: the soft view of an `acts@0` norms frame, as Python's superposed route asks `soft-elaborate` for it
+(`readings_s1.soft_frame`: `soft-norms@0` and the empty strict block), is read with its acts as the norms decoder reads
+them; with any other soft block, or without `acts@0`, it is read as before. -/
+def sfP : List String := ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+def softView (profiles : List String) (block : Json) (e : Json := envA) : Json :=
+  (e.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary" ((e.getObjValD "vocabulary").setObjVal! "soft" block)
+def softErr (j : Json) (norms : Array Json := #[]) : String :=
+  match VE.SoftNorms.Phases.checkSource j (.arr norms) with | .ok _ => "ok" | .error f => f.message
+-- Python's key order
+def pyBlock : Json := (Json.parse ("{\"parties\":[],\"ranks\":[],\"outranks\":[],\"ties\":[]," ++
+  "\"outranking\":{\"mode\":\"strict\"}}")).toOption.getD .null
+#guard (VE.SoftNorms.Phases.checkSource (softView sfP pyBlock) (.arr #[rule true])).toOption.map
+  (·.ne.regulated.map (·.act)) == some [some a1, some a2]
+#guard [softView sfP (pyBlock.setObjVal! "parties" (toJson ["x"])), softView (sfP.erase "acts@0") pyBlock,
+  softView sfP (pyBlock.setObjVal! "outranking" (Json.mkObj [("mode", .str "holistic")]))].map softErr ==
+  List.replicate 3 "InvalidInput: invalid vocabulary"
+-- a joined act is the norms decoder's D-4 there (the readings route gives D-33 before Python asks)
+#guard softErr (softView sfP pyBlock (env [("p", "plain", a5)])) ==
+  "InvalidInput: act phrase for p joins acts with 'and' outside a fixed phrase"
 
 end VE.Readings.ActsExamples

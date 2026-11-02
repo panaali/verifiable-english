@@ -1,0 +1,5 @@
+REPLAY qa-q2b: round from 10-14T02:46Z flagged 10-26T15:21Z at 300.6 h (4x the 258-min median of 4 rounds = 17.2 h); still open at 468.3 h, not in flight now: no live flag
+REPLAY rd-9b: round from 10-14T02:48Z flagged 10-26T15:21Z at 300.6 h (4x the 258-min median of 4 rounds = 17.2 h); still open at 468.3 h, not in flight now: no live flag
+REPLAY qa-q2c: round from 10-14T08:45Z flagged 10-26T15:21Z at 294.6 h (4x the 258-min median of 4 rounds = 17.2 h); still open at 462.4 h, not in flight now: no live flag
+REPLAY jt-2c: round from 10-31T01:01Z flagged 10-31T10:36Z at 9.6 h (4x the 140-min median of 12 rounds = 9.3 h); ended by gate-start at 10-31T12:58Z after 11.9 h
+REPLAY pc-1: round from 11-01T17:04Z flagged 11-02T02:36Z at 9.5 h (4x the 143-min median of 13 rounds = 9.5 h); ended by fix-start at 11-02T14:27Z after 21.4 h

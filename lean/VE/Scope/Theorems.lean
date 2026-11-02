@@ -705,28 +705,8 @@ theorem getObjVal_map (f : String → Json → Json) (kvs : Std.TreeMap.Raw Stri
 
 
 theorem normFields_name (j : Json) (r : String × String × Bool × Json × List Json × List String)
-    (h : VE.Norms.Wire.normFields j = .ok r) : (j.getObjValD "norm").getObjValD "name" = .str r.1 := by
-  unfold VE.Norms.Wire.normFields at h
-  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
-  obtain ⟨raw, hr, h⟩ := (ebind_ok _ _ _).mp h
-  obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
-  have hj : j.getObjValD "norm" = raw := by simp [Json.getObjValD, hr, Except.toOption]
-  rw [hj]
-  cases hn : raw.getObjValD "name" with
-  | str s =>
-    simp only [hn] at h
-    cases hp : VE.Bridge.stringField raw "predicate" <;> simp only [hp, bind, Except.bind, pure, Except.pure] at h
-    · cases h
-    split at h <;> try simp only [bind, Except.bind, pure, Except.pure, throw, throwThe, MonadExceptOf.throw] at h
-    · split at h <;> try simp only [bind, Except.bind, pure, Except.pure, throw, throwThe, MonadExceptOf.throw] at h
-      · split at h <;> try simp only [bind, Except.bind, pure, Except.pure, throw, throwThe, MonadExceptOf.throw] at h
-        · revert h; cases VE.Bridge.strings (raw.getObjValD "over") <;> intro h
-          · cases h
-          · cases h; rfl
-        · cases h
-      · cases h
-    · cases h
-  | _ => simp [hn, bind, Except.bind] at h
+    (h : VE.Norms.Wire.normFields j = .ok r) : (j.getObjValD "norm").getObjValD "name" = .str r.1 :=
+  (normFields_spec j r h).1
 
 theorem w1_name (j : Json) (sh : Bool) (N : VE.Norms.Node) (h : VE.Norms.Wire.decodeNorm j sh = .ok N) :
     (j.getObjValD "norm").getObjValD "name" = .str N.name := by
@@ -737,62 +717,12 @@ theorem w1_name (j : Json) (sh : Bool) (N : VE.Norms.Node) (h : VE.Norms.Wire.de
   obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
   cases h; rfl
 
-theorem ite_bind_ok {ε α β : Type} {c : Prop} [Decidable c] (a b : Except ε α) (k : α → Except ε β) (r : β)
-    (h : (if c then a >>= k else b >>= k) = .ok r) : ∃ u, k u = .ok r := by
-  split at h <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-
 theorem ruleFields_name (x : Option String) (j : Json) (R : SoftNode) (h : VE.SoftNorms.Phases.ruleFields x j = .ok R) :
     ∃ obj N, VE.Bridge.fields (j.getObjValD "norm") = .ok obj ∧
       VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj (obj.filter
-        (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.1)))]) false = .ok N ∧ R.name = N.name := by
-  unfold VE.SoftNorms.Phases.ruleFields at h
-  extract_lets raw seen given k₁ at h
-  split at h
-  · obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
-    simp -zeta only [k₁] at h
-    obtain ⟨obj, ho, h⟩ := (ebind_ok _ _ _).mp h
-    extract_lets keys k₂ at h
-    split at h
-    · obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
-      simp -zeta only [k₂] at h
-      obtain ⟨N, hN, h⟩ := (ebind_ok _ _ _).mp h
-      simp only [VE.SoftNorms.Phases.inherited] at ho hN
-      split at ho <;> cases ho
-      split at hN <;> cases hN
-      refine ⟨obj, N, by assumption, by assumption, ?_⟩
-      extract_lets bad j₁ j₂ j₃ at h
-      obtain ⟨_, h⟩ := ite_bind_ok _ _ _ _ h
-      simp -zeta only [j₃] at h
-      obtain ⟨_, h⟩ := ite_bind_ok _ _ _ _ h
-      simp -zeta only [j₂] at h
-      obtain ⟨_, -, h⟩ := (ebind_ok _ _ _).mp h
-      obtain ⟨_, h⟩ : ∃ y, j₁ y = .ok R := by
-        split at h <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-      simp -zeta only [j₁] at h
-      extract_lets jr at h
-      obtain ⟨_, h⟩ : ∃ y, jr y = .ok R := by
-        split at h <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-      simp -zeta only [jr] at h
-      extract_lets ja at h
-      obtain ⟨_, h⟩ : ∃ y, ja y = .ok R := by
-        split at h <;> (try split at h) <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-      simp -zeta only [ja] at h
-      extract_lets jh jb at h
-      obtain ⟨_, h⟩ := ite_bind_ok _ _ _ _ h
-      simp -zeta only [jb] at h
-      obtain ⟨_, h⟩ : ∃ y, jh y = .ok R := by
-        split at h <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-      simp -zeta only [jh] at h
-      extract_lets je jc at h
-      obtain ⟨_, h⟩ := ite_bind_ok _ _ _ _ h
-      simp -zeta only [jc] at h
-      clear_value given
-      obtain ⟨_, h⟩ : ∃ y, je y = .ok R := by
-        split at h <;> obtain ⟨u, -, h⟩ := (ebind_ok _ _ _).mp h <;> exact ⟨u, h⟩
-      simp -zeta only [je] at h
-      cases h; rfl
-    · obtain ⟨_, h', -⟩ := (ebind_ok _ _ _).mp h; cases h'
-  · obtain ⟨_, h', -⟩ := (ebind_ok _ _ _).mp h; cases h'
+        (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.1)))]) false = .ok N ∧ R.name = N.name :=
+  let ⟨⟨obj, ho, hN⟩, _⟩ := ruleFields_spec x j R h
+  ⟨obj, R.toNode, ho, hN, rfl⟩
 
 theorem getObjValD_str (o : Json) (k n : String) (h : o.getObjValD k = .str n) : o.getObjVal? k = .ok (.str n) := by
   unfold Json.getObjValD at h
@@ -1873,8 +1803,8 @@ theorem listName_run (D : SDoc) (h₀ : admitBlock D = .ok ()) (n : VE.Discourse
       · simp [hrun, hmatch, bind, Except.bind] at hc
 
 /-! ## SC-2's `own` and order check (spec 5.4, sc-2c). The five effect statements of 5.4 fail on a raw rule tree (the
-    soft chain's decoder reads members by traversal; F-raw-effect, `Examples.lean`); sc-2d proves them with the premise
-    `JsonWF o` (reviews/dri-decisions-20261031-sc-2c.md item 1). -/
+    soft chain's decoder reads members by traversal; F-raw-effect, `Examples.lean`); section `Effects` below proves
+    them with the premise `JsonWF o` (sc-2d; reviews/dri-decisions-20261031-sc-2c.md item 1). -/
 
 section Own
 open VE.Norms.Wire (budgetFormula budgetTerm)
@@ -2040,5 +1970,444 @@ theorem order_refused (D : SDoc) (h₀ : admitBlock D = .ok ()) (u : String) (hu
     simp [govern, h₀, hg, ho, bind, Except.bind]
 
 end Own
+
+/-! ## SC-2's effects (spec 5.4, sc-2d): the five effect theorems with the premise `JsonWF o` the DRI signed
+    (reviews/dri-decisions-20261031-sc-2c.md item 1). On a well-formed rule object lookup and traversal see the same
+    single member, so the chain's decoder reads the member `applyEffect` rewrote (`decodeNorm_view`, `decodeNorm_same`,
+    `decodeNorm_effect`). `baseObj_jsonWF` is condition (ii): the route discharges the premise from its boundary check. -/
+
+section Effects
+open VE.SoftNorms (SoftNode)
+
+theorem getObjVal_ext (a b : Std.TreeMap.Raw String Json) (k : String)
+    (h : ∀ v, (Json.obj a).getObjVal? k = .ok v ↔ (Json.obj b).getObjVal? k = .ok v) :
+    (Json.obj a).getObjVal? k = (Json.obj b).getObjVal? k := by
+  have : a[k]? = b[k]? := Option.ext fun v => by rw [← getObjVal_obj, ← getObjVal_obj]; exact h v
+  simp only [Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?, this]
+
+/-- On a well-formed object, the object of the members a filter keeps reads each kept member as lookup does. -/
+theorem filter_get (kvs : Std.TreeMap.Raw String Json) (hw : kvs.WF) (p : String × Json → Bool) (k : String)
+    (hp : ∀ v, p (k, v) = true) :
+    (Json.mkObj (kvs.toList.filter p)).getObjVal? k = (Json.obj kvs).getObjVal? k := by
+  have hd : ((kvs.toList.filter p).map (·.1)).Nodup := by
+    have := members_nodup kvs hw
+    rw [members_obj] at this
+    exact List.Nodup.sublist (List.Sublist.map _ List.filter_sublist) this
+  apply getObjVal_ext
+  intro v
+  rw [show Json.obj (Std.TreeMap.Raw.ofList (kvs.toList.filter p) compare) = Json.mkObj (kvs.toList.filter p) from rfl,
+    mkObj_getObjVal _ hd, List.mem_filter, getObjVal_obj,
+    ← Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some hw]
+  exact ⟨fun h => h.1, fun h => ⟨h, hp v⟩⟩
+
+/-- The chain's decoder reads W1's node from an object whose W1 members are the rule's own. -/
+theorem decodeNorm_view (re : VE.Readings.Wire.ReadingsEnvironment) (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF)
+    (N : SoftNode) (h : VE.Readings.Wire.decodeNorm re o = .ok N) :
+    ∃ v sh, (∀ k ∈ VE.SoftNorms.Phases.w1Keys, v.getObjVal? k = o.getObjVal? k) ∧
+      VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", v)]) sh = .ok N.toNode := by
+  unfold VE.Readings.Wire.decodeNorm at h
+  split at h
+  · obtain ⟨M, hM, h⟩ := (VE.NormDefaults.ebind_ok _ _ _).mp h
+    cases h
+    exact ⟨o, true, fun _ _ => rfl, hM⟩
+  · obtain ⟨⟨obj, ho, hN⟩, -⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h)
+    simp only [mkObj_one] at ho
+    cases o with
+    | obj kvs =>
+      simp only [VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure, Except.ok.injEq] at ho
+      subst ho
+      exact ⟨_, false, fun k hk => filter_get kvs (hw kvs rfl) (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.1) k
+        (fun _ => List.contains_iff_mem.mpr hk), hN⟩
+    | _ => simp [VE.Bridge.fields, Json.getObj?, bind, Except.bind, throw, throwThe, MonadExceptOf.throw] at ho
+
+/-- The soft fields are read from the rule's own soft members and its name. -/
+theorem decodeNorm_soft (re : VE.Readings.Wire.ReadingsEnvironment) (o₁ o₂ : Json) (N₁ N₂ : SoftNode)
+    (h₁ : VE.Readings.Wire.decodeNorm re o₁ = .ok N₁) (h₂ : VE.Readings.Wire.decodeNorm re o₂ = .ok N₂)
+    (hs : ∀ k ∈ VE.SoftNorms.Phases.softKeys, o₁.getObjVal? k = o₂.getObjVal? k) (hn : N₁.name = N₂.name) :
+    N₂ = { N₁ with toNode := N₂.toNode } := by
+  by_cases hc : re.chain = .norms
+  · simp only [VE.Readings.Wire.decodeNorm, hc] at h₁ h₂
+    obtain ⟨_, -, h₁⟩ := (VE.NormDefaults.ebind_ok _ _ _).mp h₁
+    obtain ⟨_, -, h₂⟩ := (VE.NormDefaults.ebind_ok _ _ _).mp h₂
+    cases h₁; cases h₂; rfl
+  · have hs' : ∀ o, VE.Readings.Wire.decodeNorm re o =
+        VE.SoftNorms.Wire.decodeSoftNorm re.se (Json.mkObj [("norm", o)]) := by
+      intro o; unfold VE.Readings.Wire.decodeNorm; split
+      · contradiction
+      · rfl
+    rw [hs'] at h₁ h₂
+    obtain ⟨-, m₁, r₁, a₁, d₁, e₁, f₁⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₁)
+    obtain ⟨-, m₂, r₂, a₂, d₂, e₂, f₂⟩ := ruleFields_spec _ _ _ (decodeSoft_rule _ _ _ h₂)
+    simp only [mkObj_one] at m₁ r₁ a₁ d₁ e₁ m₂ r₂ a₂ d₂ e₂
+    rw [← hs "mode" (by decide)] at m₂
+    rw [← hs "rank" (by decide)] at r₂
+    rw [← hs "alterable" (by decide)] at a₂
+    rw [← hs "hard" (by decide)] at d₂
+    rw [← hs "exception" (by decide), ← hn] at e₂
+    cases N₁; cases N₂
+    simp_all
+
+theorem getObjValD_of {a b : Json} {k : String} (h : a.getObjVal? k = b.getObjVal? k) :
+    a.getObjValD k = b.getObjValD k := by simp only [Json.getObjValD, h]
+
+/-- What the chain's decoder makes of a rule's guard and carve-outs: each one's own decoded value. -/
+theorem decodeNorm_effect (re : VE.Readings.Wire.ReadingsEnvironment) (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF)
+    (N : SoftNode) (h : VE.Readings.Wire.decodeNorm re o = .ok N) :
+    VE.Norms.Wire.decodeBudgeted (o.getObjValD "guard") = .ok N.guard ∧
+      ∃ xs, o.getObjValD "unless" = .arr xs ∧ (∀ x ∈ xs.toList, ∃ φ, VE.Norms.Wire.decodeBudgeted x = .ok φ) ∧
+        N.carveOuts = xs.toList.filterMap (fun x => (VE.Norms.Wire.decodeBudgeted x).toOption) := by
+  obtain ⟨v, sh, hv, hN⟩ := decodeNorm_view re o hw N h
+  obtain ⟨-, -, -, -, hg, hu⟩ := w1_spec _ v (mkObj_one _ _) sh _ hN
+  rw [getObjValD_of (hv "guard" (by decide))] at hg
+  rw [getObjValD_of (hv "unless" (by decide))] at hu
+  exact ⟨hg, hu⟩
+
+/-- Two rules whose objects differ only in `guard` and `unless` differ only in their guard and carve-outs. -/
+theorem decodeNorm_same (re : VE.Readings.Wire.ReadingsEnvironment) (o₁ o₂ : Json)
+    (hw₁ : ∀ kvs, o₁ = .obj kvs → kvs.WF) (hw₂ : ∀ kvs, o₂ = .obj kvs → kvs.WF) (N₁ N₂ : SoftNode)
+    (h₁ : VE.Readings.Wire.decodeNorm re o₁ = .ok N₁) (h₂ : VE.Readings.Wire.decodeNorm re o₂ = .ok N₂)
+    (hk : ∀ k, k ≠ "guard" → k ≠ "unless" → o₁.getObjVal? k = o₂.getObjVal? k) :
+    N₂ = { N₁ with guard := N₂.guard, carveOuts := N₂.carveOuts } := by
+  obtain ⟨v₁, sh₁, hv₁, hN₁⟩ := decodeNorm_view re o₁ hw₁ N₁ h₁
+  obtain ⟨v₂, sh₂, hv₂, hN₂⟩ := decodeNorm_view re o₂ hw₂ N₂ h₂
+  have e : ∀ k ∈ ["name", "predicate", "sign", "over"], v₁.getObjVal? k = v₂.getObjVal? k := by
+    intro k hk'
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hk'
+    rcases hk' with rfl | rfl | rfl | rfl <;>
+      (rw [hv₁ _ (by decide), hv₂ _ (by decide)]; exact hk _ (by decide) (by decide))
+  obtain ⟨n₁, p₁, s₁, o₁', -⟩ := w1_spec _ v₁ (mkObj_one _ _) sh₁ _ hN₁
+  obtain ⟨n₂, p₂, s₂, o₂', -⟩ := w1_spec _ v₂ (mkObj_one _ _) sh₂ _ hN₂
+  rw [getObjValD_of (e "name" (by decide))] at n₁
+  rw [VE.Bridge.stringField, e "predicate" (by decide)] at p₁
+  rw [VE.Bridge.stringField] at p₂
+  rw [getObjValD_of (e "sign" (by decide))] at s₁
+  rw [getObjValD_of (e "over" (by decide))] at o₁'
+  have hn : N₁.name = N₂.name := Json.str.inj (n₁.symm.trans n₂)
+  have := decodeNorm_soft re o₁ o₂ N₁ N₂ h₁ h₂ (fun k hk' => by
+    simp only [VE.SoftNorms.Phases.softKeys, List.mem_cons, List.not_mem_nil, or_false] at hk'
+    rcases hk' with rfl | rfl | rfl | rfl | rfl <;> exact hk _ (by decide) (by decide)) hn
+  rw [this]
+  rcases N₁ with ⟨⟨_, _, _, _, _, _⟩, _, _, _, _, _⟩
+  rcases N₂ with ⟨⟨_, _, _, _, _, _⟩, _, _, _, _, _⟩
+  simp_all
+
+theorem obj_of_get {o x : Json} {k : String} (h : o.getObjVal? k = .ok x) : ∃ kvs, o = .obj kvs := by
+  cases o <;> simp [Json.getObjVal?, throw, throwThe, MonadExceptOf.throw] at h ⊢
+
+theorem getD_of_get {o x : Json} {k : String} (h : o.getObjVal? k = .ok x) : o.getObjValD k = x := by
+  simp [Json.getObjValD, h, Except.toOption]
+
+theorem get_set_self (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) {k : String} {x : Json} (hk : o.getObjVal? k = .ok x)
+    (v : Json) : (o.setObjVal! k v).getObjVal? k = .ok v := by
+  obtain ⟨kvs, rfl⟩ := obj_of_get hk
+  exact setObjVal_self kvs (hw kvs rfl) k v
+
+theorem getD_set_ne (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (k k' : String) (v : Json) (hk : k ≠ k') :
+    (o.setObjVal! k v).getObjValD k' = o.getObjValD k' := getObjValD_of (setObjVal_ne o hw k k' v hk)
+
+/-- What `applyEffect` writes: a reguard rewrites the member `guard` lookup finds, a carve-out appends to `unless`. -/
+theorem applyEffect_reguard {u : String} {c o o' : Json} (h : applyEffect u (.reguard c) o = .ok o') :
+    ∃ g, o.getObjVal? "guard" = .ok g ∧ o' = o.setObjVal! "guard" (substOwn g depthLimit c) := by
+  simp only [applyEffect] at h
+  split at h
+  · cases h; exact ⟨_, ‹_›, rfl⟩
+  · cases h
+
+theorem applyEffect_carveOut {u : String} {c o o' : Json} (h : applyEffect u (.carveOut c) o = .ok o') :
+    ∃ g xs, o.getObjVal? "guard" = .ok g ∧ o.getObjVal? "unless" = .ok (.arr xs) ∧
+      o' = o.setObjVal! "unless" (.arr (xs.push (substOwn g depthLimit c))) := by
+  simp only [applyEffect] at h
+  split at h
+  · cases h; exact ⟨_, _, ‹_›, ‹_›, rfl⟩
+  · cases h
+
+theorem reguard_node (re : VE.Readings.Wire.ReadingsEnvironment) (u : String) (c o o' : Json) (N N' : SoftNode)
+    (G' : VE.Formula) (h : applyEffect u (.reguard c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm re o = .ok N)
+    (hw : ∀ kvs, o = .obj kvs → kvs.WF) (hN' : VE.Readings.Wire.decodeNorm re o' = .ok N')
+    (hG : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok G') :
+    N' = { N with guard := G' } := by
+  obtain ⟨g, hg, rfl⟩ := applyEffect_reguard h
+  have hw' := top_set o hw "guard" (substOwn g depthLimit c)
+  have hs := decodeNorm_same re o _ hw hw' N N' hN hN' fun k h₁ _ => (setObjVal_ne o hw _ k _ (Ne.symm h₁)).symm
+  obtain ⟨-, xs, hx, -, hc⟩ := decodeNorm_effect re o hw N hN
+  obtain ⟨hg', xs', hx', -, hc'⟩ := decodeNorm_effect re _ hw' N' hN'
+  rw [getD_of_get (get_set_self o hw hg _)] at hg'
+  rw [getD_set_ne o hw _ _ _ (by decide), hx] at hx'
+  cases hx'
+  rw [getD_of_get hg, hg'] at hG
+  rw [hs, Except.ok.inj hG, hc', ← hc]
+
+theorem carveOut_node (re : VE.Readings.Wire.ReadingsEnvironment) (u : String) (c o o' : Json) (N N' : SoftNode)
+    (C : VE.Formula) (h : applyEffect u (.carveOut c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm re o = .ok N)
+    (hw : ∀ kvs, o = .obj kvs → kvs.WF) (hN' : VE.Readings.Wire.decodeNorm re o' = .ok N')
+    (hC : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok C) :
+    N' = { N with carveOuts := N.carveOuts ++ [C] } := by
+  obtain ⟨g, xs, hg, hu, rfl⟩ := applyEffect_carveOut h
+  have hw' := top_set o hw "unless" (.arr (xs.push (substOwn g depthLimit c)))
+  have hs := decodeNorm_same re o _ hw hw' N N' hN hN' fun k _ h₂ => (setObjVal_ne o hw _ k _ (Ne.symm h₂)).symm
+  obtain ⟨hgN, xs₀, hx, -, hc⟩ := decodeNorm_effect re o hw N hN
+  obtain ⟨hg', xs', hx', -, hc'⟩ := decodeNorm_effect re _ hw' N' hN'
+  rw [getD_set_ne o hw _ _ _ (by decide), hgN] at hg'
+  rw [getD_of_get (get_set_self o hw hu _)] at hx'
+  rw [getD_of_get hu] at hx
+  cases hx; cases hx'
+  rw [getD_of_get hg] at hC
+  rw [hs, ← Except.ok.inj hg', hc', hc, Array.toList_push, List.filterMap_append]
+  simp [hC, Except.toOption]
+
+theorem reguard_applies (D : SDoc) (u : String) (c o o' : Json) (N N' : SoftNode) (G' : VE.Formula)
+    (h : applyEffect u (.reguard c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
+    (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
+    (hG : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok G')
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
+    N' = { N with guard := G' } ∧
+      ((VE.Norms.applies N'.toNode).denote S ρ ↔ G'.denote S ρ ∧ ¬ (VE.Norms.anyF N.carveOuts).denote S ρ) := by
+  have he := reguard_node D.re u c o o' N N' G' h hN (jsonWF_top o hw) hN' hG
+  subst he
+  exact ⟨rfl, Iff.rfl⟩
+
+theorem substOwn_and (g C : Json) (hC : hasOwn depthLimit C = false) :
+    substOwn g depthLimit (.arr #[.str "and", .str "own", C]) = .arr #[.str "and", g, C] := by
+  have h63 : hasOwn 63 C = false := by
+    cases h : hasOwn 63 C
+    · rfl
+    · rw [hasOwn_mono 63 depthLimit C (by decide) h] at hC; cases hC
+  show Json.arr (#[Json.str "and", .str "own", C].map (substOwn g 63)) = _
+  rw [show #[Json.str "and", .str "own", C].map (substOwn g 63) =
+    #[substOwn g 63 (.str "and"), substOwn g 63 (.str "own"), substOwn g 63 C] from rfl,
+    substOwn_id_le g 63 C h63, substOwn_str_self g "and" (by decide)]
+  rfl
+
+/-- Plain narrowing is the special case: one more guard conjunct. -/
+theorem restrict_applies (D : SDoc) (u : String) (C o o' : Json) (C' : VE.Formula) (N N' : SoftNode)
+    (hC : hasOwn depthLimit C = false) (hC' : VE.Norms.Wire.decodeBudgeted C = .ok C')
+    (h : applyEffect u (.reguard (Json.arr #[.str "and", .str "own", C])) o = .ok o')
+    (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
+    (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
+    N' = { N with guard := .and N.guard C' } ∧
+      ((VE.Norms.applies N'.toNode).denote S ρ ↔ (VE.Norms.applies N.toNode).denote S ρ ∧ C'.denote S ρ) := by
+  have hwt := jsonWF_top o hw
+  obtain ⟨g, hg, ho'⟩ := applyEffect_reguard h
+  obtain ⟨hg', -⟩ := decodeNorm_effect D.re o' (ho' ▸ top_set o hwt _ _) N' hN'
+  rw [ho', getD_of_get (get_set_self o hwt hg _), substOwn_and g C hC] at hg'
+  obtain ⟨hgN, -⟩ := decodeNorm_effect D.re o hwt N hN
+  rw [getD_of_get hg] at hgN
+  have hG := narrowed_guard hgN hC' hg'
+  rw [← substOwn_and g C hC, ← getD_of_get hg] at hg'
+  have he := reguard_node D.re u _ o o' N N' _ h hN hwt hN' hg'
+  rw [hG] at he
+  subst he
+  refine ⟨rfl, ?_⟩
+  simp only [VE.Norms.applies, VE.Formula.denote]
+  exact and_right_comm
+
+theorem carveOut_applies (D : SDoc) (u : String) (c o o' : Json) (N N' : SoftNode) (C : VE.Formula)
+    (h : applyEffect u (.carveOut c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
+    (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
+    (hC : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok C)
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
+    N' = { N with carveOuts := N.carveOuts ++ [C] } ∧
+      ((VE.Norms.applies N'.toNode).denote S ρ ↔ (VE.Norms.applies N.toNode).denote S ρ ∧ ¬ C.denote S ρ) := by
+  have he := carveOut_node D.re u c o o' N N' C h hN (jsonWF_top o hw) hN' hC
+  subst he
+  refine ⟨rfl, ?_⟩
+  simp only [VE.Norms.applies, VE.Formula.denote, anyF_snoc, not_or, and_assoc]
+
+def Typed (E : VE.Environment) (Γ : List String) (N : SoftNode) : Prop :=
+  N.guard.check E Γ = true ∧ ∀ C ∈ N.carveOuts, C.check E Γ = true
+
+/-- Typing is kept when the instantiated condition type-checks in the rule's situation context. -/
+theorem applyEffect_typed (D : SDoc) (u : String) (e : Effect) (o o' : Json) (N N' : SoftNode)
+    (E : VE.Environment) (Γ : List String) (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
+    (h : applyEffect u e o = .ok o') (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N') (hT : Typed E Γ N)
+    (hc : ∀ c ∈ conditions e, ∀ C,
+      VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok C → C.check E Γ = true) :
+    Typed E Γ N' := by
+  have hwt := jsonWF_top o hw
+  cases e with
+  | reguard c =>
+    obtain ⟨g, hg, ho'⟩ := applyEffect_reguard h
+    obtain ⟨hg', -⟩ := decodeNorm_effect D.re o' (ho' ▸ top_set o hwt _ _) N' hN'
+    rw [ho', getD_of_get (get_set_self o hwt hg _), ← getD_of_get hg] at hg'
+    rw [reguard_node D.re u c o o' N N' _ h hN hwt hN' hg']
+    exact ⟨hc c (List.mem_singleton_self c) _ hg', hT.2⟩
+  | carveOut c =>
+    obtain ⟨g, xs, hg, hu, ho'⟩ := applyEffect_carveOut h
+    obtain ⟨-, xs', hx', hall, -⟩ := decodeNorm_effect D.re o' (ho' ▸ top_set o hwt _ _) N' hN'
+    rw [ho', getD_of_get (get_set_self o hwt hu _)] at hx'
+    cases hx'
+    obtain ⟨C, hC⟩ := hall (substOwn g depthLimit c) (by simp)
+    rw [← getD_of_get hg] at hC
+    rw [carveOut_node D.re u c o o' N N' C h hN hwt hN' hC]
+    refine ⟨hT.1, fun C' hC' => ?_⟩
+    rcases List.mem_append.mp hC' with h | h
+    · exact hT.2 C' h
+    · rw [List.mem_singleton.mp h]; exact hc c (List.mem_singleton_self c) C hC
+  | _ =>
+    simp only [applyEffect, pure, Except.pure, Except.ok.injEq] at h
+    subst h; rw [hN] at hN'; cases hN'; exact hT
+
+theorem set_comm (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (ho : ∃ kvs, o = .obj kvs) (k₁ k₂ : String)
+    (hk : k₁ ≠ k₂) (v₁ v₂ : Json) (k : String) :
+    ((o.setObjVal! k₁ v₁).setObjVal! k₂ v₂).getObjVal? k = ((o.setObjVal! k₂ v₂).setObjVal! k₁ v₁).getObjVal? k := by
+  obtain ⟨kvs, rfl⟩ := ho
+  have hw := hw kvs rfl
+  simp only [Json.setObjVal!, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
+    Std.TreeMap.Raw.getElem?_insert hw.insert, Std.TreeMap.Raw.getElem?_insert hw, Std.LawfulEqCmp.compare_eq_iff_eq]
+  by_cases h₁ : k₁ = k <;> by_cases h₂ : k₂ = k <;> simp_all
+
+/-- Two well-formed rule objects with the same members decode to the same rule. -/
+theorem decodeNorm_eq (re : VE.Readings.Wire.ReadingsEnvironment) (o₁ o₂ : Json)
+    (hw₁ : ∀ kvs, o₁ = .obj kvs → kvs.WF) (hw₂ : ∀ kvs, o₂ = .obj kvs → kvs.WF) (N₁ N₂ : SoftNode)
+    (h₁ : VE.Readings.Wire.decodeNorm re o₁ = .ok N₁) (h₂ : VE.Readings.Wire.decodeNorm re o₂ = .ok N₂)
+    (hk : ∀ k, o₁.getObjVal? k = o₂.getObjVal? k) : N₁ = N₂ := by
+  have hs := decodeNorm_same re o₁ o₂ hw₁ hw₂ N₁ N₂ h₁ h₂ fun k _ _ => hk k
+  obtain ⟨hg₁, xs₁, hx₁, -, hc₁⟩ := decodeNorm_effect re o₁ hw₁ N₁ h₁
+  obtain ⟨hg₂, xs₂, hx₂, -, hc₂⟩ := decodeNorm_effect re o₂ hw₂ N₂ h₂
+  rw [getObjValD_of (hk "guard"), hg₂] at hg₁
+  rw [getObjValD_of (hk "unless"), hx₂] at hx₁
+  cases hx₁
+  rw [hs, Except.ok.inj hg₁, hc₂, ← hc₁]
+
+/-- A narrowing and an own-free carve-out, in this order or the other, write the same rule object. -/
+theorem commute_rc (re : VE.Readings.Wire.ReadingsEnvironment) (u : String) (c d o o₁ o₂ : Json) (N₁ N₂ : SoftNode)
+    (hc : (narrowing c).isSome = true) (hd : hasOwn depthLimit d = false) (hw : ∀ kvs, o = .obj kvs → kvs.WF)
+    (h₁ : (applyEffect u (.reguard c) o).bind (applyEffect u (.carveOut d)) = .ok o₁)
+    (h₂ : (applyEffect u (.carveOut d) o).bind (applyEffect u (.reguard c)) = .ok o₂)
+    (hN₁ : VE.Readings.Wire.decodeNorm re o₁ = .ok N₁) (hN₂ : VE.Readings.Wire.decodeNorm re o₂ = .ok N₂) : N₁ = N₂ := by
+  obtain ⟨C, hn⟩ := Option.isSome_iff_exists.mp hc
+  obtain ⟨rfl, hC⟩ := narrowing_some hn
+  obtain ⟨oa, ha, h₁⟩ := VE.Kit.Except.bind_ok h₁
+  obtain ⟨ob, hb, h₂⟩ := VE.Kit.Except.bind_ok h₂
+  obtain ⟨g, hg, rfl⟩ := applyEffect_reguard ha
+  obtain ⟨g', xs, hg', hu, rfl⟩ := applyEffect_carveOut h₁
+  obtain ⟨g₂, xs₂, hg₂, hu₂, rfl⟩ := applyEffect_carveOut hb
+  obtain ⟨g₂', hg₂', rfl⟩ := applyEffect_reguard h₂
+  rw [setObjVal_ne o hw _ _ _ (by decide), hu₂] at hu
+  rw [hg₂] at hg
+  cases hu; cases hg
+  rw [setObjVal_ne o hw _ _ _ (by decide), hg₂] at hg₂'
+  cases hg₂'
+  simp only [substOwn_id _ d hd] at hN₁ hN₂
+  apply decodeNorm_eq re _ _ (top_set _ (top_set o hw _ _) _ _) (top_set _ (top_set o hw _ _) _ _) N₁ N₂ hN₁ hN₂
+  exact set_comm o hw (obj_of_get hg₂) _ _ (by decide) _ _
+
+/-- Two effects in a row change no member but `guard` and `unless`, and keep a well-formed top level. -/
+theorem twice_off {u : String} {e₁ e₂ : Effect} {o o₁ : Json} (hw : ∀ kvs, o = .obj kvs → kvs.WF)
+    (h : (applyEffect u e₁ o).bind (applyEffect u e₂) = .ok o₁) :
+    (∀ kvs, o₁ = .obj kvs → kvs.WF) ∧ ∀ k, k ≠ "guard" → k ≠ "unless" → o₁.getObjVal? k = o.getObjVal? k := by
+  have off : ∀ (e : Effect) (o o' : Json), (∀ kvs, o = .obj kvs → kvs.WF) → applyEffect u e o = .ok o' →
+      ∀ k, k ≠ "guard" → k ≠ "unless" → o'.getObjVal? k = o.getObjVal? k := by
+    intro e o o' hw h k hg hu
+    cases e with
+    | reguard c => obtain ⟨_, _, rfl⟩ := applyEffect_reguard h; exact setObjVal_ne o hw _ k _ (Ne.symm hg)
+    | carveOut c => obtain ⟨_, _, _, _, rfl⟩ := applyEffect_carveOut h; exact setObjVal_ne o hw _ k _ (Ne.symm hu)
+    | _ => simp only [applyEffect, pure, Except.pure, Except.ok.injEq] at h; subst h; rfl
+  obtain ⟨oa, ha, h⟩ := VE.Kit.Except.bind_ok h
+  have hwa := (applyEffect_src u e₁ o oa ha hw).1
+  exact ⟨(applyEffect_src u e₂ oa o₁ h hwa).1, fun k hg hu => (off e₂ oa o₁ hwa h k hg hu).trans (off e₁ o oa hw ha k hg hu)⟩
+
+/-- Narrowings and own-free carve-outs commute, so source order is never a hidden choice. -/
+theorem commute_applies (D : SDoc) (u : String) (e₁ e₂ : Effect) (hc : Commutes e₁ e₂ = true)
+    (o o₁ o₂ : Json) (N₁ N₂ : SoftNode) (hw : JsonWF o)
+    (h₁ : (applyEffect u e₁ o).bind (applyEffect u e₂) = .ok o₁)
+    (h₂ : (applyEffect u e₂ o).bind (applyEffect u e₁) = .ok o₂)
+    (hN₁ : VE.Readings.Wire.decodeNorm D.re o₁ = .ok N₁) (hN₂ : VE.Readings.Wire.decodeNorm D.re o₂ = .ok N₂)
+    (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
+    { N₁ with guard := .top, carveOuts := [] } = { N₂ with guard := .top, carveOuts := [] } ∧
+      ((VE.Norms.applies N₁.toNode).denote S ρ ↔ (VE.Norms.applies N₂.toNode).denote S ρ) := by
+  have hwt := jsonWF_top o hw
+  obtain ⟨hw₁, hk₁⟩ := twice_off hwt h₁
+  obtain ⟨hw₂, hk₂⟩ := twice_off hwt h₂
+  have hs := decodeNorm_same D.re o₁ o₂ hw₁ hw₂ N₁ N₂ hN₁ hN₂ fun k a b => (hk₁ k a b).trans (hk₂ k a b).symm
+  refine ⟨by rw [hs], ?_⟩
+  obtain ⟨hg₁, xs₁, hx₁, hall₁, hc₁⟩ := decodeNorm_effect D.re o₁ hw₁ N₁ hN₁
+  obtain ⟨hg₂, xs₂, hx₂, -, hc₂⟩ := decodeNorm_effect D.re o₂ hw₂ N₂ hN₂
+  simp only [VE.Norms.applies, VE.Formula.denote]
+  cases e₁ <;> cases e₂ <;> simp only [Commutes, Bool.false_eq_true, Bool.and_eq_true, Bool.not_eq_eq_eq_not,
+    Bool.not_true] at hc
+  case reguard.reguard c₁ c₂ =>
+    obtain ⟨C₁, hn₁⟩ := Option.isSome_iff_exists.mp hc.1
+    obtain ⟨C₂, hn₂⟩ := Option.isSome_iff_exists.mp hc.2
+    obtain ⟨rfl, hC₁⟩ := narrowing_some hn₁
+    obtain ⟨rfl, hC₂⟩ := narrowing_some hn₂
+    obtain ⟨oa, ha, h₁⟩ := VE.Kit.Except.bind_ok h₁
+    obtain ⟨ob, hb, h₂⟩ := VE.Kit.Except.bind_ok h₂
+    obtain ⟨g, hg, rfl⟩ := applyEffect_reguard ha
+    obtain ⟨ga, hga, rfl⟩ := applyEffect_reguard h₁
+    obtain ⟨g', hg', rfl⟩ := applyEffect_reguard hb
+    obtain ⟨gb, hgb, rfl⟩ := applyEffect_reguard h₂
+    rw [hg] at hg'; cases hg'
+    rw [get_set_self o hwt hg] at hga hgb
+    cases hga; cases hgb
+    rw [getD_of_get (get_set_self _ (top_set o hwt _ _) (get_set_self o hwt hg _) _), substOwn_and _ _ hC₂,
+      substOwn_and _ _ hC₁] at hg₁
+    rw [getD_of_get (get_set_self _ (top_set o hwt _ _) (get_set_self o hwt hg _) _), substOwn_and _ _ hC₁,
+      substOwn_and _ _ hC₂] at hg₂
+    rw [getD_set_ne _ (top_set o hwt _ _) _ _ _ (by decide), getD_set_ne o hwt _ _ _ (by decide)] at hx₁ hx₂
+    rw [hx₁] at hx₂; cases hx₂
+    rw [hc₁, hc₂]
+    exact and_congr_left' (guard_comm hg₁ hg₂ S ρ)
+  case reguard.carveOut c d =>
+    rw [commute_rc D.re u c d o o₁ o₂ N₁ N₂ hc.1 hc.2 hwt h₁ h₂ hN₁ hN₂]
+  case carveOut.reguard d c =>
+    rw [commute_rc D.re u c d o o₂ o₁ N₂ N₁ hc.1 hc.2 hwt h₂ h₁ hN₂ hN₁]
+  case carveOut.carveOut d₁ d₂ =>
+    obtain ⟨oa, ha, h₁⟩ := VE.Kit.Except.bind_ok h₁
+    obtain ⟨ob, hb, h₂⟩ := VE.Kit.Except.bind_ok h₂
+    obtain ⟨g, xs, hg, hu, rfl⟩ := applyEffect_carveOut ha
+    obtain ⟨ga, xsa, hga, hua, rfl⟩ := applyEffect_carveOut h₁
+    obtain ⟨g', xs', hg', hu', rfl⟩ := applyEffect_carveOut hb
+    obtain ⟨gb, xsb, hgb, hub, rfl⟩ := applyEffect_carveOut h₂
+    rw [hg] at hg'; cases hg'
+    rw [hu] at hu'; cases hu'
+    rw [setObjVal_ne o hwt _ _ _ (by decide), hg] at hga hgb
+    cases hga; cases hgb
+    rw [get_set_self o hwt hu] at hua hub
+    cases hua; cases hub
+    rw [getD_set_ne _ (top_set o hwt _ _) _ _ _ (by decide), getD_set_ne o hwt _ _ _ (by decide)] at hg₁ hg₂
+    rw [hg₁] at hg₂
+    rw [getD_of_get (get_set_self _ (top_set o hwt _ _) (get_set_self o hwt hu _) _)] at hx₁ hx₂
+    cases hx₁; cases hx₂
+    simp only [substOwn_id _ _ hc.1, substOwn_id _ _ hc.2] at hc₁ hc₂ hall₁
+    obtain ⟨D₁, hD₁⟩ := hall₁ d₁ (by simp)
+    obtain ⟨D₂, hD₂⟩ := hall₁ d₂ (by simp)
+    simp only [Array.toList_push, List.filterMap_append, hD₁, hD₂, Except.toOption, List.filterMap_cons,
+      List.filterMap_nil] at hc₁ hc₂
+    rw [hc₁, hc₂, anyF_snoc, anyF_snoc, anyF_snoc, anyF_snoc, Except.ok.inj hg₂]
+    simp only [VE.Formula.denote]
+    exact and_congr_right' (not_congr or_right_comm)
+
+theorem jsonWF_get {j x : Json} {k : String} (hw : JsonWF j) (h : j.getObjVal? k = .ok x) : JsonWF x :=
+  getD_of_get h ▸ jsonWF_getD j hw k
+
+/-- The boundary for spec 5.4 (condition (ii) of the DRI's decision of 2026-10-31): a rule object taken from a
+    well-formed document, framed by well-formed parts, is `JsonWF`; `decodeBlock_jsonWF` and `decodeBlock_payloads`
+    give both premises for a decoded document. -/
+theorem baseObj_jsonWF (D : SDoc) (hw : JsonWF D.doc) (hp : ∀ g ∈ D.governors, JsonWF (payload g.effect)) (u : String)
+    (o : Json) (h : baseObj D u = .ok o) : JsonWF o := by
+  have hc : JsonWF (objectOf (contentOf D.doc u)) := by
+    unfold objectOf; split <;> exact jsonWF_getD _ ((contentOf_src D.doc u).2 hw) _
+  unfold baseObj at h
+  dsimp only at h
+  split at h
+  · cases h
+  split at h
+  · split at h <;> cases h; exact hc
+  · rename_i g hf
+    have hgD : g ∈ D.governors := (List.mem_filter.mp (hf ▸ List.mem_singleton_self g : g ∈ frameOn D u)).1
+    split at h
+    · rename_i lead he
+      obtain ⟨l, rfl⟩ := mergeParts_mk _ _ _ _ h
+      refine .obj _ Std.TreeMap.Raw.WF.ofList fun kv hkv => ?_
+      have hk := (getObjVal_obj _ _ _).mpr
+        ((Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mp hkv)
+      rcases (mergeParts_keys u lead _ _ h kv.1 kv.2).mp hk with ⟨hk, _⟩ | ⟨hk, _⟩
+      · exact jsonWF_get (by simpa [he, payload] using hp g hgD) hk
+      · exact jsonWF_get hc hk
+    · cases h; exact hc
+  · cases h
+end Effects
 
 end VE.Scope

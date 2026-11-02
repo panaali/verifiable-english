@@ -1,0 +1,37 @@
+{
+  "note": "me-2d-f2 DELTA row D1 (standing ruling R1): the calc mode's answer to the words \"the\" alone, at the merge base f3a4da815 (its #guard \"the-alone\", lean/VE/Calc/RunExamples.lean:960) and at the head",
+  "request": {
+    "format": "ve-calc@0",
+    "values": [
+      {
+        "name": "x",
+        "words": "the",
+        "stated": "1"
+      }
+    ],
+    "claims": [
+      {
+        "id": "c1",
+        "claim": [
+          "eq",
+          [
+            "val",
+            "x"
+          ],
+          [
+            "lit",
+            "1"
+          ]
+        ]
+      }
+    ]
+  },
+  "base": {
+    "status": "error",
+    "error": "ValueWordsForm: the words of x must begin with \"the\" and not with \"the\""
+  },
+  "head": {
+    "status": "error",
+    "error": "ValueWordsForm: the words of x must not be \"the\" alone"
+  }
+}
