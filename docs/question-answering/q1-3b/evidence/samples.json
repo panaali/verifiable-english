@@ -1,0 +1,141 @@
+{
+ "c5": {
+  "first_words": {
+   "All": 20,
+   "At": 23,
+   "Both": 13,
+   "Either": 1,
+   "For": 18,
+   "If": 30,
+   "It": 2,
+   "There": 4
+  },
+  "outcomes": {
+   "budget": 255,
+   "moved": 290,
+   "one": 37
+  },
+  "reached": 37,
+  "sentences": 148,
+  "stream": "ordinary",
+  "unreached": 111
+ },
+ "c6": {
+  "defaults_only": {
+   "errors": [],
+   "outcomes": {
+    "one": 1
+   },
+   "profiles": [
+    "documents@1",
+    "norm-defaults@0",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0"
+   ],
+   "read": [
+    "Claude is not human."
+   ]
+  },
+  "pair": {
+   "errors": [
+    "UnsupportedProfile: Unsupported profile soft-norms@0"
+   ],
+   "outcomes": {
+    "unavailable": 1
+   },
+   "profiles": [
+    "documents@1",
+    "norm-defaults@0",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "read": []
+  },
+  "pair_on_defaults_part": {
+   "errors": [
+    "UnsupportedProfile: Unsupported profile soft-norms@0"
+   ],
+   "outcomes": {
+    "unavailable": 1
+   },
+   "profiles": [
+    "documents@1",
+    "norm-defaults@0",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "read": []
+  },
+  "pair_on_soft_part": {
+   "errors": [
+    "UnsupportedProfile: Unsupported profile soft-norms@0"
+   ],
+   "outcomes": {
+    "unavailable": 1
+   },
+   "profiles": [
+    "documents@1",
+    "norm-defaults@0",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "read": []
+  },
+  "soft_chain_without_defaults": {
+   "profiles": [
+    "documents@1",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "refused": "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+  },
+  "soft_chain_without_soft": {
+   "errors": [],
+   "fences": 3,
+   "outcomes": {
+    "none": 921,
+    "one": 3,
+    "rejected": 81
+   },
+   "profiles": [
+    "documents@1",
+    "norm-defaults@0",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0"
+   ],
+   "read": [
+    "Claude is not human.",
+    "Claude is novel.",
+    "Some thing is unsolved."
+   ],
+   "sentences": 1005
+  },
+  "soft_only": {
+   "errors": [],
+   "outcomes": {
+    "one": 1
+   },
+   "profiles": [
+    "documents@1",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "read": [
+    "Claude is not human."
+   ]
+  }
+ },
+ "commit": "639a72ebb43f896294c413a1421e1219606eb743"
+}
