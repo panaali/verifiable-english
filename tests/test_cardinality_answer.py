@@ -10,6 +10,7 @@ import pytest
 
 from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, TOP, text
 from ve import cardinality
+from ve.admission import report_identity
 from ve.backends import relay
 from ve.document.lean import _lean_answer, _lean_document
 from ve.errors import CheckerUnavailable
@@ -173,10 +174,8 @@ def test_a_renamed_region_is_refused_by_the_relay_itself(monkeypatch, genuine):
 
 
 def _another_statement(statement):
-    """Another statement under its own, correct meaning id: only the comparison with the request refuses it."""
-    ids = cardinality.identities(FA1["environment"])
-    statement.update(formula=TOP["formula"], meaning_id=cardinality.digest(f"ve-meaning-{ids.identity_version}\n", {
-        "environment_id": ids.environment_id, "ast": TOP}))
+    """Another statement under a well-formed meaning id: only the comparison with the request refuses it."""
+    statement.update(formula=TOP["formula"], meaning_id="0" * 64)
 
 
 @pytest.mark.parametrize("kind, change", [
@@ -212,7 +211,7 @@ def test_a_report_s_rows_are_bound_with_and_without_a_matching_id(monkeypatch, g
     row, _ = genuine("document")
     mutant = copy.deepcopy(row)
     change(mutant)
-    forged = cardinality.digest(f"ve-report-{cardinality.identities(ENV).identity_version}\n", {
+    forged = report_identity(cardinality.identities(ENV).identity_version, {
         **{k: row[k] for k in ("environment_id", "w6_environment_id", "w6_target_environment_id")},
         "document": GRAPH["document"], "report": mutant["report"]})
     for answered in (mutant, {**mutant, "report_id": forged}):
