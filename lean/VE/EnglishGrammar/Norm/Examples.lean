@@ -96,9 +96,9 @@ selects (`ve.english_grammar.export`). Python's nodes are `parse_english`'s, rec
 the RSP, FSF and constitution environments, too large for this file: `tests/test_english_statement_blocks.py`. -/
 
 /-- An environment with `norms@0`, from the JSON of its sorts and predicates. -/
-def envOf (sorts preds : String) (profiles := "") (soft := "") : Env :=
-  match (Json.parse ("{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"relational-fol@0\"" ++ profiles ++
-      "], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"constants\": {}, \"sorts\": " ++
+def envOf (sorts preds : String) (profiles := "") (soft := "") (first := "") : Env :=
+  match (Json.parse ("{\"language\": \"ve.core@0.2\", \"profiles\": [" ++ first ++ "\"norms@0\", \"relational-fol@0\"" ++
+      profiles ++ "], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"constants\": {}, \"sorts\": " ++
       sorts ++ ", \"predicates\": " ++ preds ++ soft ++ "}}")).bind (Env.decode · .null) with
   | .ok E => E
   | .error _ => { sorts := [], predicates := [], constants := [] }
@@ -275,6 +275,58 @@ def softAct (profiles : String) : Env := envOf actSorts permitted profiles ", \"
 #guard outcome (rd (softAct "") LA "Rule 1. Every act may be done.") == "stopped 1 noDerivation"
 #guard (regulatedOf (softAct ", \"soft-norms@0\"")).map (·.name) == ["permitted"]
 #guard clauses (rd (softAct ", \"soft-norms@0\"") LA "Rule 1. Every act may be done.") == some [cl .may]
+-- The trust mutants' fixtures (docs/english-lean/en-s6b/mutants.json). Both bindings in a condition:
+#guard clauses (rd help LH "Rule 1. Every state may help each person, if that state may help that person.") ==
+  some [⟨.every "state", .modal .may, .strict, "permitted", [], .pred "permitted" [.var 1, .var 0], [], []⟩]
+#guard clauses (rd help LH "Rule 1. Every state may help each person, if that person may help that state.") ==
+  some [⟨.every "state", .modal .may, .strict, "permitted", [], .pred "permitted" [.var 0, .var 1], [], []⟩]
+-- a guard and an inline carve-out in one clause, each read once and kept in its place
+#guard clauses (rd act LA "Rule 1. Every act may be done, if that act may be done, unless this holds in all cases.") ==
+  some [⟨.every "act", .modal .may, .strict, "permitted", [], .pred "permitted" [.var 0], [.top], []⟩]
+#guard clauses (rd act LA "Rule 1. Every act may be done, if this holds in all cases, except when that act may be done.") ==
+  some [⟨.every "act", .modal .may, .strict, "permitted", [], .top, [.pred "permitted" [.var 0]], []⟩]
+-- a binary plain role without a negative: the universal form binds both slots, "each" or "any"
+def assigned : Env := envOf "{\"item\": {\"description\": \"item\"}, \"person\": {\"description\": \"person\"}}"
+  ("{\"assigned\": {\"arguments\": [\"item\", \"person\"], \"description\": \"assigned\", \"verbalisation\": " ++
+    "\"{0} is assigned to {1}\", \"regulated\": {\"role\": \"plain\", \"default\": \"deny\"}}}")
+def LAs := lexOf [("item", "item"), ("person", "person")] [("item", "T"), ("person", "P")]
+  [("assigned", "{0} has the recorded relation \"assigned\" to {1}")]
+def binaryNo := "Rule 1. For every item, for each person, it is not the case that that item has the recorded relation \"assigned\" to that person."
+#guard clauses (rd assigned LAs binaryNo) == some [⟨.every "item", .plain false, .strict, "assigned", [], .top, [], []⟩]
+#guard stmts (rd assigned LAs (binaryNo.replace "for each" "for any")) == stmts (rd assigned LAs binaryNo)
+#guard outcome (rd assigned LAs (binaryNo.replace "that person." "that item.")) == "stopped 1 noDerivation"
+-- the plain predicate's wording and negative read among others
+def u (v : String) (more := "") : String := "{\"arguments\": [\"item\"], \"description\": \"" ++ v ++
+  "\", \"verbalisation\": \"{0} is " ++ v ++ "\", \"negative_verbalisation\": \"{0} is not " ++ v ++ "\"" ++ more ++ "}"
+def items : Env := envOf "{\"item\": {\"description\": \"item\"}}" ("{\"accepted\": " ++ u "accepted" ++
+  ", \"admitted\": " ++ u "admitted" ", \"regulated\": {\"role\": \"plain\", \"default\": \"deny\"}" ++
+  ", \"approved\": " ++ u "approved" ++ "}")
+def LIs := lexOf [("item", "item")] [("item", "T")] (["accepted", "admitted", "approved"].map fun v => (v, "{0} is " ++ v))
+  (["accepted", "admitted", "approved"].map fun v => (v, "{0} is not " ++ v))
+#guard clauses (rd items LIs "Rule 1. Every item is not admitted.") == some [⟨.every "item", .plain false, .strict, "admitted", [], .top, [], []⟩]
+#guard clauses (rd items LIs "Rule 1. Every item is admitted.") == some [⟨.every "item", .plain true, .strict, "admitted", [], .top, [], []⟩]
+#guard outcome (rd items LIs "Rule 1. Every item is not approved.") == "stopped 1 noDerivation"
+-- `over`: a rule's own targets, then its precedence lines, wherever they stand in the text
+def overs (o : NormOutcome) : Option (List (List String)) := (nodes o).toOption.map (·.map (·.over))
+#guard overs (rd act LA f8) == some [[], [], ["rule-1", "rule-2"]]
+#guard overs (rd act LA ("Rule 1 takes precedence over rule 2.\nRule 1. Every act must not be done.\nRule 2. Every act must " ++
+  "not be done.\nRule 3 (exception to rule 2). Every act may be done.")) == some [["rule-2"], [], ["rule-2"]]
+#guard overs (rd act LA "Rule 1 (exception to rule 2). Every act may be done.\nRule 2. Every act must not be done.") ==
+  some [["rule-2"], []]
+-- no norm sentence is marked (`normMeaning_unmarked`, on the pieces `readNorm` assembles)
+def marks (E : Env) (L : Lexicon) (s : String) : Option (List Bool) :=
+  match lex s with
+  | .ok ws => match VE.Grammar.readDocument (normGrammar E L) (normMeaning (normGrammar E L) (normActs E L)) NState.init workBudget
+      ws.toList with
+    | (.ok ps, _) => some (ps.map (·.2))
+    | _ => none
+  | .error _ => none
+#guard marks two L2 f11 == some (List.replicate 6 false) && marks two L2 "Rule 1." == some [false]
+#guard marks two L2 "Rule 1. Every act should be done." == none
+-- `acts@0`: the regulated declarations are decoded as the norms route decodes them (`acts := true`)
+def actsAct : Env := envOf actSorts permitted (soft := ", \"acts\": {\"fixed\": []}") (first := "\"acts@0\", ")
+#guard (regulatedOf actsAct).map (·.name) == ["permitted"] && clauses (rd actsAct LA "Rule 1. Every act may be done.") == some [cl .may]
+#guard (regulatedOf (envOf actSorts permitted (soft := ", \"acts\": {\"fixed\": []}"))).isEmpty
 -- f19 and a zero budget: nothing is read.
 #guard outcome (rd act LA "") == "lexical VE.EnglishGrammar.Reject.emptyDocument"
 #guard outcome (readNorm act {} LA 0 "Rule 1. Every act may be done.") == "stopped 0 budget"
