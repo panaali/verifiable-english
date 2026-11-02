@@ -378,14 +378,13 @@ def frontOf (j : Json) : Option (Json × String) :=
   (do let (front, body) ← Loader.frontText (← (j.getObjValD "document").getStr?)
       pure (← frontJson front, body)).toOption
 
-/-- The profiles a front matter lists; none without one. The one reading of a case's profiles: `profilesOf` and the
-row 16 runs below read them here. -/
-def profilesIn : Option Json → List String
-  | some front => listedProfiles (front.getObjValD "environment")
+/-- The profiles a case's document lists; none when its front matter does not read. Inlined, so a run that has read
+the front matter (`frontOf`) reads it once. -/
+@[inline]
+def profilesOf (j : Json) : List String :=
+  match frontOf j with
+  | some (front, _) => listedProfiles (front.getObjValD "environment")
   | none => []
-
-/-- The profiles a case's document lists; none when its front matter does not read. -/
-def profilesOf (j : Json) : List String := profilesIn ((frontOf j).map (·.1))
 
 /-! ## The clash validation (PC-1; docs/spec/profile-composition.md 1.7, the G3 amendment, diagnostics row 16)
 
@@ -638,27 +637,26 @@ theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String ×
       · exact e
       · exact absurd rfl e
 
-/-- `swapInjective` on a front matter `frontOf` read: its sets, values and pairs computed once. -/
-def swapInjectiveIn (front : Json) : Bool :=
+/-- `swapInjective` on a front matter `frontOf` read, with the case's profiles `ps`: its sets, values and pairs
+computed once. -/
+def swapInjectiveIn (front : Json) (ps : List String) : Bool :=
   let sets := sizedIn (readingSetsIn front)
-  swapInjectiveH (statedIdsIn sets) (statedPairsIn front (profilesIn (some front)) sets)
+  swapInjectiveH (statedIdsIn sets) (statedPairsIn front ps sets)
 
 /-- `swapInjective` as it runs (pc-1 review F2): the front matter read once, the values and the pairs computed once,
 each value hashed once, so no pass compares every stated value with every other. -/
 def swapInjectiveFast (j : Json) : Bool :=
   match frontOf j with
   | none => true
-  | some (front, _) => swapInjectiveIn front
+  | some (front, _) => swapInjectiveIn front (profilesOf j)
 
 theorem swapInjective_frontOf (j : Json) : swapInjective j = swapInjectiveH (statedIds j) (statedPairs j) := by
   simp only [swapInjective, swapInjectiveH_eq]; rfl
 
 @[csimp] theorem swapInjective_eq_fast : @swapInjective = @swapInjectiveFast := by
   funext j
-  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   rw [swapInjective_frontOf]
   unfold swapInjectiveFast statedIds statedPairs sizedSets readingSetsOf
-  rw [hp]
   cases frontOf j with
   | none => rfl
   | some p => rfl
@@ -741,27 +739,28 @@ def clashRefusalIn (j front : Json) (body : String) (ps : List String) : Option 
     else none
   else some swapClash
 
-/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`). -/
+/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`); a case whose front matter does not read
+is `clashRefusal`'s. -/
 def clashRefusalFast (j : Json) : Option String :=
   match frontOf j with
-  | none => none
-  | some (front, body) => clashRefusalIn j front body (profilesIn (some front))
+  | none => clashRefusal j
+  | some (front, body) => clashRefusalIn j front body (profilesOf j)
 
 @[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
   funext j
-  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
-  unfold clashRefusal clashRefusalFast withoutJudgments withoutJudgmentsOf
-  rw [swapInjective_frontOf, hp]
-  unfold statedIds statedPairs sizedSets readingSetsOf
-  rw [hp]
-  cases frontOf j with
-  | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf, profilesIn]
+  unfold clashRefusalFast
+  cases hf : frontOf j with
+  | none => rfl
   | some p =>
     obtain ⟨front, body⟩ := p
-    simp only [clashRefusalIn, Option.map_some]
-    by_cases hj : "judgments@0" ∈ profilesIn (some front) <;>
+    unfold clashRefusal withoutJudgments withoutJudgmentsOf
+    rw [swapInjective_frontOf]
+    unfold statedIds statedPairs sizedSets readingSetsOf
+    rw [hf]
+    simp only [clashRefusalIn]
+    by_cases hj : "judgments@0" ∈ profilesOf j <;>
       cases swapInjectiveH (statedIdsIn (sizedIn (readingSetsIn front)))
-        (statedPairsIn front (profilesIn (some front)) (sizedIn (readingSetsIn front))) <;>
+        (statedPairsIn front (profilesOf j) (sizedIn (readingSetsIn front))) <;>
       simp [hj, clashRefusalOf]
 
 /-! ## The environment -/
@@ -2316,9 +2315,9 @@ def checkCore (j : Json) : Except String Json :=
 /-- `checkCore` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16. -/
 def checkCoreFast (j : Json) : Except String Json :=
   match frontOf j with
-  | none => checkBody j
+  | none => checkCore j
   | some (front, body) =>
-    let ps := profilesIn (some front)
+    let ps := profilesOf j
     if "scope@0" ∈ ps then checkBody j else
     match clashRefusalIn j front body ps with
     | some e => .error e
@@ -2326,13 +2325,15 @@ def checkCoreFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkCore_eq_fast : @checkCore = @checkCoreFast := by
   funext j
-  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
-  unfold checkCore checkCoreFast
-  rw [clashRefusal_eq_fast, hp]
-  unfold clashRefusalFast
-  cases frontOf j with
-  | none => simp
-  | some p => rfl
+  unfold checkCoreFast
+  cases hf : frontOf j with
+  | none => rfl
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    unfold checkCore
+    rw [clashRefusal_eq_fast]
+    unfold clashRefusalFast
+    rw [hf]
 
 /-! ## `scope@0` (docs/spec/scope.md 1.1, 1.6, 5.2 and 8.1; SC-1b)
 
@@ -2465,9 +2466,9 @@ theorem checkDocSets_clashFirst (j : Json)
 row 16 and the chain's entry; a `scope@0` request is `checkDocSets`' own branch. -/
 def checkDocSetsFast (j : Json) : Except String Json :=
   match frontOf j with
-  | none => checkBody j
+  | none => checkDocSets j
   | some (front, body) =>
-    let ps := profilesIn (some front)
+    let ps := profilesOf j
     if "scope@0" ∈ ps then checkDocSets j else
     match clashRefusalIn j front body ps with
     | some e => .error e
@@ -2475,25 +2476,18 @@ def checkDocSetsFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
   funext j
-  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   have hc := congrFun checkCore_eq_fast j
   unfold checkDocSetsFast
   cases hf : frontOf j with
-  | none =>
-    rw [hf] at hp
-    unfold checkDocSets
-    rw [if_neg (by simp [hp, profilesIn]), hc]
-    unfold checkCoreFast
-    rw [hf]
+  | none => rfl
   | some p =>
     obtain ⟨front, body⟩ := p
-    rw [hf] at hp
     simp only
     split
     · rfl
     · rename_i h
       unfold checkDocSets
-      rw [if_neg (by simpa [hp] using h), hc]
+      rw [if_neg h, hc]
       unfold checkCoreFast
       rw [hf]
       simp only [if_neg h]
