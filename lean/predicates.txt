@@ -674,6 +674,7 @@ module VE.Service.StageTimes
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.Service.UndeclaredExamples
+module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
 module VE.SoftNorms.Once
