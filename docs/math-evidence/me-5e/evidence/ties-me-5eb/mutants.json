@@ -62,6 +62,14 @@
    "behaviour": "a tying theorem that stops naming its declaration voids the tie",
    "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
    "result": "killed: the statement of VE.Calc.Run.row_means does not mention VE.Calc.Run.row"
+  },
+  {
+   "id": "P1-layer",
+   "file": "tools/layer_policy.py",
+   "change": "drop the VE.Calc.Ties row from lean_layer",
+   "behaviour": "VE.Calc.Ties sits in layer 4 beside the other theorems on a runner, so its import of VE.Calc.Run is not outward",
+   "test": "python3 tools/check_lean_imports.py; tests/test_precommit_hook.py::test_large_staged_change_passes",
+   "result": "killed: new outward Lean import VE.Calc.Ties -> VE.Calc.Run (layer 2 -> 4)"
   }
  ]
 }
