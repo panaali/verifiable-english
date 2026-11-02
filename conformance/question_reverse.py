@@ -643,7 +643,8 @@ def per_stream(configs: dict, questions: list[dict]) -> dict:
 def fronting_measure(questions: list[dict]) -> dict:
     """Plan 4.9's measure on every fronting of a sentence with one formula: each answer's outcome; per sentence,
     whether one of its frontings reads with the formula or is `many` (the share), split by whether q1-3's `f2`
-    builds the sentence's question (no clause in the subject); each `many` and each other formula, listed."""
+    builds the sentence's question (no clause in the subject), and again without the sentences whose every fronting
+    Lean refuses at its limits (`budget`); each `many` and each other formula, listed."""
     f2s = [q for q in questions if q["kind"] == "f2" and q["read"]]
     groups = {}
     for q in f2s:
@@ -654,11 +655,14 @@ def fronting_measure(questions: list[dict]) -> dict:
         row["sentences"] += 1
         row["reached"] += any(q["same"] or q["outcome"]["status"] == "many" for q in qs)
         row["several_same"] += sum(q["same"] for q in qs) > 1
+        row["limited"] += all(q["outcome"]["status"] == "budget" for q in qs)
         if f2(sentence) is not None:
             row["q1_3_question_same"] += any(q["same"] for q in qs if q["question"] == f2(sentence)[0])
     sentences = sum(row["sentences"] for row in split.values())
     reached = sum(row["reached"] for row in split.values())
+    limited = sum(row["limited"] for row in split.values())
     return {"frontings": len(f2s), "sentences": sentences, "reached": reached, "share": share(reached, sentences),
+            "limited": limited, "share_within_limits": share(reached, sentences - limited),
             "outcomes": dict(sorted(Counter(":".join(filter(None, (q["outcome"]["status"], q["outcome"].get("code"))))
                                             for q in f2s).items())),
             "by_subject": {k: dict(sorted(v.items())) for k, v in split.items()},
