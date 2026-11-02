@@ -24,16 +24,6 @@
    "definition": "VE.EnglishGrammar.evaluativeRows",
    "operator": "list-drop-first",
    "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-drop-first` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
-  },
-  {
-   "definition": "VE.Judgments.Examples.jt3aList",
-   "operator": "list-empty",
-   "reason": "ill-typed where it is UNKNOWN: `[]` in place of a list that a `.filter`, `.any` or `.map` on the next line applies to does not elaborate (\"Function expected\" / \"Invalid field notation\" in lean/VE/Judgments/Examples.lean); where it elaborates it is KILLED by the #guards after it"
-  },
-  {
-   "definition": "VE.Judgments.Examples.preds117x",
-   "operator": "list-empty",
-   "reason": "ill-typed where it is UNKNOWN: `[]` in place of a list that a `.filter`, `.any` or `.map` on the next line applies to does not elaborate (\"Function expected\" / \"Invalid field notation\" in lean/VE/Judgments/Examples.lean); where it elaborates it is KILLED by the #guards after it"
   }
  ]
 }
