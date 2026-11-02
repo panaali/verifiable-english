@@ -169,51 +169,33 @@ variable {T T' : Tree} {p q : String} {f : Node → Node} {S₁ S₂ : VE.Struct
   (happ : ∀ N ∈ T.nodes, N.pred = p → (AppliesD S₁ ρ₁ N ↔ AppliesD S₂ ρ₂ (f N)))
 include hon honto hover
 
-theorem children_tracks {N : Node} (hN : N ∈ T.nodes) (hp : N.pred = p) {C' : Node} :
-    C' ∈ children T' (f N) ↔ ∃ C ∈ children T N, C' = f C := by
+/-- A condition on the exceptions of `N` reads the same on the exceptions of `f N`. -/
+theorem exists_child_tracks {N : Node} (hN : N ∈ T.nodes) (hp : N.pred = p) {P Q : Node → Prop}
+    (h : ∀ C ∈ T.nodes, C.pred = p → (P C ↔ Q (f C))) :
+    (∃ C ∈ children T N, P C) ↔ ∃ C ∈ children T' (f N), Q C := by
   have hq := (hon N hN hp).2.1
   constructor
-  · intro hc
+  · rintro ⟨C, hc, hy⟩
+    obtain ⟨hC, hpC, ho⟩ := mem_children_iff.mp hc
+    have hf := hon C hC (hpC.trans hp)
+    exact ⟨f C, mem_children_iff.mpr ⟨hf.1, hf.2.1.trans hq.symm, (hover N C).mpr ho⟩, (h C hC (hpC.trans hp)).mp hy⟩
+  · rintro ⟨C', hc, hy⟩
     obtain ⟨hC', hpq, ho⟩ := mem_children_iff.mp hc
     obtain ⟨C, hC, hpC, rfl⟩ := honto C' hC' (hpq.trans hq)
-    exact ⟨C, mem_children_iff.mpr ⟨hC, hpC.trans hp.symm, (hover N C).mp ho⟩, rfl⟩
-  · rintro ⟨C, hc, rfl⟩
-    obtain ⟨hC, hpC, ho⟩ := mem_children_iff.mp hc
-    have := hon C hC (hpC.trans hp)
-    exact mem_children_iff.mpr ⟨this.1, this.2.1.trans hq.symm, (hover N C).mpr ho⟩
+    exact ⟨C, mem_children_iff.mpr ⟨hC, hpC.trans hp.symm, (hover N C).mp ho⟩, (h C hC hpC).mpr hy⟩
 
 include happ
 
 theorem yields_tracks : ∀ (g : Nat) (N : Node), N ∈ T.nodes → N.pred = p →
     (YieldsD T S₁ ρ₁ g N ↔ YieldsD T' S₂ ρ₂ g (f N))
   | 0, N, hN, hp => happ N hN hp
-  | g + 1, N, hN, hp => by
-    simp only [YieldsD]
-    apply or_congr (happ N hN hp)
-    constructor
-    · rintro ⟨C, hc, hy⟩
-      obtain ⟨hC, hpC, _⟩ := mem_children_iff.mp hc
-      exact ⟨f C, (children_tracks hon honto hover hN hp).mpr ⟨C, hc, rfl⟩,
-        (yields_tracks g C hC (hpC.trans hp)).mp hy⟩
-    · rintro ⟨C', hc, hy⟩
-      obtain ⟨C, hc', rfl⟩ := (children_tracks hon honto hover hN hp).mp hc
-      obtain ⟨hC, hpC, _⟩ := mem_children_iff.mp hc'
-      exact ⟨C, hc', (yields_tracks g C hC (hpC.trans hp)).mpr hy⟩
+  | g + 1, N, hN, hp => or_congr (happ N hN hp)
+    (exists_child_tracks hon honto hover hN hp fun C hC e => yields_tracks g C hC e)
 
 theorem selects_tracks (g : Nat) {N : Node} (hN : N ∈ T.nodes) (hp : N.pred = p) :
-    SelectsD T S₁ ρ₁ g N ↔ SelectsD T' S₂ ρ₂ g (f N) := by
-  simp only [SelectsD]
-  apply and_congr (happ N hN hp)
-  apply not_congr
-  constructor
-  · rintro ⟨C, hc, hy⟩
-    obtain ⟨hC, hpC, _⟩ := mem_children_iff.mp hc
-    exact ⟨f C, (children_tracks hon honto hover hN hp).mpr ⟨C, hc, rfl⟩,
-      (yields_tracks hon honto hover happ g C hC (hpC.trans hp)).mp hy⟩
-  · rintro ⟨C', hc, hy⟩
-    obtain ⟨C, hc', rfl⟩ := (children_tracks hon honto hover hN hp).mp hc
-    obtain ⟨hC, hpC, _⟩ := mem_children_iff.mp hc'
-    exact ⟨C, hc', (yields_tracks hon honto hover happ g C hC (hpC.trans hp)).mpr hy⟩
+    SelectsD T S₁ ρ₁ g N ↔ SelectsD T' S₂ ρ₂ g (f N) :=
+  and_congr (happ N hN hp) (not_congr
+    (exists_child_tracks hon honto hover hN hp fun C hC e => yields_tracks hon honto hover happ g C hC e))
 
 /-- The two trees' fuels differ; both exceed every rule's height, so each rule selects at their sum. -/
 theorem decides_tracks (hac : DagAcyclic (precedenceNodes T)) (hac' : DagAcyclic (precedenceNodes T')) (sign : Bool) :
