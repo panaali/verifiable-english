@@ -23,7 +23,7 @@ The rule, in `fix_rounds`, `fix_median` and `fix_stale`:
 here (82 over the rounds that tool lists). The task's measure, `fix-start` to the next `ready` or `gate-start`, is longer.
 Each row below is the same 7-day window, read from `stage-events.jsonl` at the time shown.
 
-| Pairing | At 08:47Z: n, median, 4x | At 15:00Z: n, median, 4x |
+| Pairing | At 08:47Z: n, median, 4x | At 14:57Z: n, median, 4x |
 |---|---|---|
 | Last fix-start of a round to its ready or gate-start (installed) | 13, 142.9 min, 9.5 h | 12, 136.8 min, 9.1 h |
 | Every fix-start to the next ready or gate-start | 58, 410.2 min, 27.3 h | 50, 343.7 min, 22.9 h |
@@ -33,7 +33,7 @@ The second row fails the acceptance: pc-1's round was 21.4 h, so that limit woul
 the task's measure read with the task's own definition of a round (the last `fix-start`), and it does flag pc-1. Two things
 follow, and neither was changed here:
 
-- pc-1 fired 3.9 h later than a 5.7-h limit would have (round 9.5 h, not 5.7 h).
+- pc-1 fired about 4 h later than a 5.7-h limit would have (round age 9.5 h, not 5.7 h).
 - The median rests on about 12 rounds: 42 of the 54 rounds closed in the window went straight to `train-start`, which the task
   does not measure. One new round can move the limit by tens of minutes, so an item near the limit can alarm twice.
 
