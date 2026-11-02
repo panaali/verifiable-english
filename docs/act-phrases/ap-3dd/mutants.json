@@ -1,0 +1,222 @@
+{
+ "restored_build": 0,
+ "mutants": [
+  {
+   "id": "part-sign-flipped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitNode (elaborateMap)",
+   "claim": "each part keeps its source's sign (deliverable 3)",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:118"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:139",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:139",
+    "VE/Acts/FaithfulExamples.lean:141",
+    "VE/Acts/FaithfulExamples.lean:145",
+    "VE/Acts/FaithfulExamples.lean:149",
+    "VE/Acts/FaithfulExamples.lean:152",
+    "VE/Acts/FaithfulExamples.lean:153",
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:166",
+    "VE/Acts/FaithfulExamples.lean:168",
+    "VE/Acts/FaithfulExamples.lean:177",
+    "VE/Acts/FaithfulExamples.lean:181",
+    "VE/Acts/FaithfulExamples.lean:187",
+    "VE/Acts/FaithfulExamples.lean:188",
+    "VE/Acts/FaithfulExamples.lean:195",
+    "VE/Acts/FaithfulExamples.lean:197"
+   ]
+  },
+  {
+   "id": "part-guard-dropped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitNode (elaborateMap)",
+   "claim": "each part keeps its source's guard",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:118"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:164",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:165",
+    "VE/Acts/FaithfulExamples.lean:176",
+    "VE/Acts/FaithfulExamples.lean:179"
+   ]
+  },
+  {
+   "id": "part-carve-outs-dropped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitNode (elaborateMap)",
+   "claim": "each part keeps its source's carve-outs",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:118"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:180",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:180"
+   ]
+  },
+  {
+   "id": "part-precedence-dropped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitNode (elaborateMap)",
+   "claim": "precedence splits pairwise, read on each part",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:118"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:152",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:152",
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:166"
+   ]
+  },
+  {
+   "id": "part-default-flipped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitReg (elaborateMap)",
+   "claim": "each part keeps its source's default",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:108"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:176",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:176",
+    "VE/Acts/FaithfulExamples.lean:179",
+    "VE/Acts/FaithfulExamples.lean:180",
+    "VE/Acts/FaithfulExamples.lean:195",
+    "VE/Acts/FaithfulExamples.lean:196",
+    "VE/Acts/FaithfulExamples.lean:197"
+   ]
+  },
+  {
+   "id": "read-as-reads-the-source",
+   "file": "lean/VE/Acts/Faithful.lean",
+   "definition": "readAs",
+   "claim": "the source's relation is read as the part",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:292"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:139",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:139",
+    "VE/Acts/FaithfulExamples.lean:140",
+    "VE/Acts/FaithfulExamples.lean:143",
+    "VE/Acts/FaithfulExamples.lean:144",
+    "VE/Acts/FaithfulExamples.lean:145",
+    "VE/Acts/FaithfulExamples.lean:147",
+    "VE/Acts/FaithfulExamples.lean:148",
+    "VE/Acts/FaithfulExamples.lean:152",
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:167",
+    "VE/Acts/FaithfulExamples.lean:169",
+    "VE/Acts/FaithfulExamples.lean:176",
+    "VE/Acts/FaithfulExamples.lean:178",
+    "VE/Acts/FaithfulExamples.lean:180",
+    "VE/Acts/FaithfulExamples.lean:182",
+    "VE/Acts/FaithfulExamples.lean:191",
+    "VE/Acts/FaithfulExamples.lean:197"
+   ]
+  },
+  {
+   "id": "read-as-reads-every-name",
+   "file": "lean/VE/Acts/Faithful.lean",
+   "definition": "readAs",
+   "claim": "only the source's relation is reread",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:343",
+    "VE/Acts/Faithful.lean:373"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:164",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:165",
+    "VE/Acts/FaithfulExamples.lean:176",
+    "VE/Acts/FaithfulExamples.lean:177",
+    "VE/Acts/FaithfulExamples.lean:182",
+    "VE/Acts/FaithfulExamples.lean:189",
+    "VE/Acts/FaithfulExamples.lean:190"
+   ]
+  },
+  {
+   "id": "intended-acts-first-part",
+   "file": "lean/VE/Acts/Faithful.lean",
+   "definition": "IntendedActs",
+   "claim": "every part is read, not the first",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:381",
+    "VE/Acts/Faithful.lean:387",
+    "VE/Acts/Faithful.lean:388"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:139",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:139",
+    "VE/Acts/FaithfulExamples.lean:143",
+    "VE/Acts/FaithfulExamples.lean:147",
+    "VE/Acts/FaithfulExamples.lean:153",
+    "VE/Acts/FaithfulExamples.lean:197"
+   ]
+  },
+  {
+   "id": "intended-acts-last-predicate-only",
+   "file": "lean/VE/Acts/Faithful.lean",
+   "definition": "IntendedActs",
+   "claim": "every source predicate is read",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:381",
+    "VE/Acts/Faithful.lean:387",
+    "VE/Acts/Faithful.lean:388"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:189",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:189",
+    "VE/Acts/FaithfulExamples.lean:190",
+    "VE/Acts/FaithfulExamples.lean:197",
+    "VE/Acts/FaithfulExamples.lean:207"
+   ]
+  },
+  {
+   "id": "intended-acts-without-reading",
+   "file": "lean/VE/Acts/Faithful.lean",
+   "definition": "IntendedActs",
+   "claim": "the source rules are read of the part",
+   "status": "KILLED",
+   "proof_fails_at": [
+    "VE/Acts/Faithful.lean:382",
+    "VE/Acts/Faithful.lean:383",
+    "VE/Acts/Faithful.lean:387",
+    "VE/Acts/Faithful.lean:388"
+   ],
+   "test": "VE/Acts/FaithfulExamples.lean:139",
+   "guards": [
+    "VE/Acts/FaithfulExamples.lean:139",
+    "VE/Acts/FaithfulExamples.lean:140",
+    "VE/Acts/FaithfulExamples.lean:143",
+    "VE/Acts/FaithfulExamples.lean:144",
+    "VE/Acts/FaithfulExamples.lean:145",
+    "VE/Acts/FaithfulExamples.lean:147",
+    "VE/Acts/FaithfulExamples.lean:148",
+    "VE/Acts/FaithfulExamples.lean:152",
+    "VE/Acts/FaithfulExamples.lean:164",
+    "VE/Acts/FaithfulExamples.lean:167",
+    "VE/Acts/FaithfulExamples.lean:169",
+    "VE/Acts/FaithfulExamples.lean:176",
+    "VE/Acts/FaithfulExamples.lean:178",
+    "VE/Acts/FaithfulExamples.lean:180",
+    "VE/Acts/FaithfulExamples.lean:182",
+    "VE/Acts/FaithfulExamples.lean:191",
+    "VE/Acts/FaithfulExamples.lean:197"
+   ]
+  }
+ ]
+}
