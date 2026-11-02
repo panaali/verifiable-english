@@ -9627,7 +9627,9 @@
         "VE.Senses.Run.unitJson",
         "VE.Senses.Run.linesProjection",
         "VE.Senses.Run.projectCase",
-        "VE.Senses.Run.projectCaseReported"
+        "VE.Senses.Run.projectCaseReported",
+        "VE.Senses.Run.writtenLines",
+        "VE.Senses.Run.flipJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -16858,7 +16860,10 @@
         "ResponseShape.Schemas.SensesProject.fault",
         "ResponseShape.Schemas.SensesProject.projection",
         "ResponseShape.Schemas.SensesProject.row",
-        "ResponseShape.Schemas.SensesProject.file"
+        "ResponseShape.Schemas.SensesProject.file",
+        "ResponseShape.Schemas.SensesProject.sort",
+        "ResponseShape.Schemas.SensesProject.environment",
+        "ResponseShape.Schemas.SensesProject.requestProfile"
       ]
     },
     "VE/Senses/RunExamples.lean": {
@@ -16874,7 +16879,15 @@
         "VE.Senses.RunExamples.pin",
         "VE.Senses.RunExamples.projectReq",
         "VE.Senses.RunExamples.src",
-        "VE.Senses.RunExamples.fenced"
+        "VE.Senses.RunExamples.fenced",
+        "VE.Senses.RunExamples.PJ",
+        "VE.Senses.RunExamples.cand",
+        "VE.Senses.RunExamples.funny",
+        "VE.Senses.RunExamples.riddle",
+        "VE.Senses.RunExamples.s2",
+        "VE.Senses.RunExamples.openOf",
+        "VE.Senses.RunExamples.deep",
+        "VE.Senses.RunExamples.readingOf"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
@@ -17117,6 +17130,20 @@
         "VE.EnglishGrammar.Norm.assembleFrom",
         "VE.EnglishGrammar.Norm.close",
         "VE.EnglishGrammar.Norm.ruleCount"
+      ]
+    },
+    "VE/Senses/Flip.lean": {
+      "S": [
+        "VE.Senses.flipOn",
+        "VE.Senses.flipModelOf",
+        "VE.Senses.Flip",
+        "VE.Senses.flipPair",
+        "VE.Senses.candidatePairs",
+        "VE.Senses.flipsOf"
+      ],
+      "G[V]": [
+        "VE.Senses.termCore",
+        "VE.Senses.formulaCore"
       ]
     }
   }
