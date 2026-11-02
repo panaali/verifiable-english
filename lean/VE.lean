@@ -161,6 +161,7 @@ import VE.Cardinality.Gate
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
 import VE.Cardinality.RunTheorems
+import VE.Cardinality.RenderTheorems
 import VE.Cardinality.WireExamples
 import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
@@ -286,5 +287,7 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.EnglishGrammar.Norm.Value
+import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
