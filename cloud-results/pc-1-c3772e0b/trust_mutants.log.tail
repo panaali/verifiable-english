@@ -1,0 +1,2 @@
+trust_mutants: 6 definitions, 37 mutants (37 to run), 4 jobs, base 30671a99b9db
+UNKNOWN lean/VE/Service/Document.lean:385 VE.Service.Document.profilesOf (D[V], trusted) list-empty: match frontOf j with | some (front, _) => listedProfiles (front.getObjValD "environment") | none ... -> [] (lean/VE/Service/ScopeExamples.lean:69: Expression (VE.Service.Document.readingSetsOf, which it re...)
