@@ -13,20 +13,8 @@ consequence and the conditions, each condition in a fresh discourse state under 
 namespace VE.EnglishGrammar.Norm
 open VE.Grammar VE.EnglishGrammar
 
-/-- Whether a polarity is one that the role's consequence rows generate. It is here, not in `Value.lean`, so
-that `Value.lean` imports only `Syntax.lean`. -/
-def Polarity.fits : Polarity → VE.Norms.Role → Bool
-  | .modal .must, .obligation => true
-  | .modal .needNot, .obligation => true
-  | .modal .may, .permission => true
-  | .modal .mustNot, .permission => true
-  | .plain _, .plain => true
-  | _, _ => false
-
 /-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). R7: an
-environment that names `soft-norms@0` is decoded without its soft constructs, as the soft route strips them
-(`VE.SoftNorms.Wire.stripSoft`): W1's decoder refuses the profile, and Python's `_consequence` reads `regulated` under
-either (DRI decision 20261102-en-s6b item 2). -/
+environment that names `soft-norms@0` is decoded without its soft constructs. -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
   let soft := (VE.Route.Gate.profilesOf E.source).toOption.any (·.contains VE.SoftNorms.Wire.softProfile)
   match (if soft then VE.SoftNorms.Wire.stripSoft E.source else .ok E.source) >>=

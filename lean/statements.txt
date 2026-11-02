@@ -15545,6 +15545,11 @@ theorem VE.EnglishGrammar.Norm.assemble_numbered
           n ∈ List.flatMap VE.EnglishGrammar.Norm.NormStatement.refs rs → 1 ≤ n ∧ n ≤ VE.EnglishGrammar.Norm.ruleCount rs
   -- uses VE.EnglishGrammar.Norm.BlockFault@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.number?@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.refs@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Piece@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.assemble@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.ruleCount@VE.EnglishGrammar.Norm.Value
   -- expr 2542230882
+theorem VE.EnglishGrammar.Norm.baseSize_eq
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
+    (VE.EnglishGrammar.grammar E L).rank.size = VE.EnglishGrammar.Norm.baseSize E
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.baseSize@VE.EnglishGrammar.Norm.Rules VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.grammar@VE.EnglishGrammar.Rules VE.Grammar.Grammar.rank@VE.Grammar.Basic
+  -- expr 1373440143
 theorem VE.EnglishGrammar.Norm.base_act
   ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {r : Nat}
     {R : VE.Grammar.Rule VE.EnglishGrammar.Terminal},
