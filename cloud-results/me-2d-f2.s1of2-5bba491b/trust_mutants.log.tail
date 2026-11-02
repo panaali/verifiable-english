@@ -1,0 +1,9 @@
+trust_mutants: 3 definitions, 65 mutants (33 to run), 4 jobs, base ab65968b698a
+UNKNOWN lean/VE/Calc/Render.lean:21 VE.Calc.English.leadingPhrase (G[V], trusted) list-empty: (phraseWords.find? fun p => (" " ++ lowerWords w ++ " ").startsWith (" " ++ p ++ " ")).map (w.tak... -> [] (lean/VE/Calc/Render.lean:21: Type mismatch)
+UNKNOWN lean/VE/Calc/Render.lean:17 VE.Calc.English.lowerWords (G[V], trusted) list-empty: w -> [] (lean/VE/Calc/Render.lean:17: Type mismatch)
+UNKNOWN lean/VE/Calc/Render.lean:21 VE.Calc.English.leadingPhrase (G[V], trusted) list-empty: w -> [] (lean/VE/Calc/Render.lean:21: Type mismatch)
+UNKNOWN lean/VE/Calc/Render.lean:21 VE.Calc.English.leadingPhrase (G[V], trusted) list-empty: w.take ·.length -> [] (lean/VE/Calc/Render.lean:21: Application type mismatch: The argument)
+UNKNOWN lean/VE/Calc/Render.lean:27 VE.Calc.English.reservedIn (G[V], trusted) list-empty: r -> [] (lean/VE/Calc/Render.lean:27: don't know how to synthesize implicit argument `α`)
+trust_mutants: 14 KILLED, 0 SURVIVOR, 5 UNKNOWN, 14 INVALID, 0 ALLOWED, 0 NOT RUN, 32 OTHER SHARD in 272 s
+trust_mutants: G[V], trusted: 14 KILLED, 5 UNKNOWN, 14 INVALID, 32 OTHER SHARD
+trust_mutants: steps: wall plan 5.8 s, scratch 2.1 s, control_build 0.2 s, probe_install 0.9 s, control_probes 13.9 s, mutants 244.7 s, cleanup 4.2 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 25.9 s (5), mutant_builds 41.7 s (33), mutant_checks 500.8 s (18), stage_controls 70.8 s (4), mutant_probes 286.4 s (20)
