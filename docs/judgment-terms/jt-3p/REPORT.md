@@ -4,7 +4,7 @@ Status: built. No DRI signature is reserved: every DELTA row is signed (DRI 2026
 A catalogue row's word is now a phrase, `undeclaredEvaluative_iff` reads `row.word <:+: ws`, and the catalogue has "good judgment".
 The decider token is now `unstated`, and `JudgmentDecider` refuses `unresolved_decider` (syn2code-judgment-terms-1).
 Open: FOLLOW-UP jt-3pb (the rename in pc-1's new chain files, after pc-1 lands). Bytes: 0 (a review list).
-The chain runs the full gate on the final HEAD. Selected tests: see "Tests".
+The chain runs the full gate on the final HEAD. The selected tests pass after the two fixes (see "Tests").
 
 Plan: docs/spec/judgment-terms.md 7 (`EvaluativeRow`, `otherSenses`), 8.4 and 11.7; docs/spec/judgment-terms-PLAN.md
 "JT-3"; docs/judgment-terms/jt-3a/REPORT.md. Plan edits: design/syn2-judgment-terms at 4d1da4e6f (section 12) and
@@ -153,7 +153,7 @@ about 160 in code, fixtures, tests and the spec, plus this report, DELTA and mut
   `tests/test_precommit_hook.py::test_large_staged_change_passes` (the outward import). Shard 1 stopped at
   `check_lean_imports.py` on the same import, before its 79 units ran. Both causes are fixed (bb0adc081).
 - Rerun: shard 1's 79 units, the two failed ids, and `tests/test_judgments_{undeclared,document,exercised}.py`, through
-  `mac-pytest.sh -- <ids>`. Result: RERUN_RESULT.
+  `mac-pytest.sh -- <ids>`. Result: 3155 passed, 6 skipped (missing optional modules `llguidance` and `xgrammar`, the FOLIO corpus not downloaded, three Rust-scope skips), exit 0, at 12a2e263. It ran on the VM because no Mac slot was free (log summary: "ran LOCALLY (VM) … exit=0"). After 12a2e263 only this report changed.
 - Not run: the full gate (the chain runs it on the final HEAD). No whole-UDHR or whole-constitution run (L70).
 
 Known red on main (`main-known-red.txt`): none of the failures above is listed there. Both were caused by this branch
