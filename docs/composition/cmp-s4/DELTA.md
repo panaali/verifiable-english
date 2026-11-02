@@ -12,3 +12,7 @@ The review fix (cmp-s4 review F1) adds no row either: it runs 14.5 step 4 on the
 no route reaches, and the two reads it shares with today's admission answer as before off that path (`DDoc.chain`
 defaults to `[]`, so `coveredOk` and `slotUnit` are unchanged there; `documentSortOk` is `admitCore`'s former line,
 same text, same place). `VE/Service/ComposedAdmissionExamples.lean`'s twin guards pin today's texts.
+
+The loop recheck's fix (F7, F8; DRI note 2026-11-02, "No DELTA row, no signature") adds no row: `loadFront`'s fence
+refusal is now the shared `Loader.fencesOk`, its former line (same text, same place, same condition), and the
+composed path that now refuses an unbound fence and decodes its environment once is still reached by no route.
