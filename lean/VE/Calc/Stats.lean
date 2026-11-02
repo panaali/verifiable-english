@@ -27,11 +27,11 @@ def rootLe (v c : Rat) : Prop := 0 ≤ c ∧ v ≤ c * c     -- √v ≤ c
 def rootLt (v c : Rat) : Prop := 0 < c ∧ v < c * c     -- √v < c
 def rootEq (v c : Rat) : Prop := 0 ≤ c ∧ c * c = v     -- √v = c
 
-instance (v c : Rat) : Decidable (rootGe v c) := inferInstanceAs (Decidable (_ ∨ _))
-instance (v c : Rat) : Decidable (rootGt v c) := inferInstanceAs (Decidable (_ ∨ _))
-instance (v c : Rat) : Decidable (rootLe v c) := inferInstanceAs (Decidable (_ ∧ _))
-instance (v c : Rat) : Decidable (rootLt v c) := inferInstanceAs (Decidable (_ ∧ _))
-instance (v c : Rat) : Decidable (rootEq v c) := inferInstanceAs (Decidable (_ ∧ _))
+instance (v c : Rat) : Decidable (rootGe v c) := by unfold rootGe; infer_instance
+instance (v c : Rat) : Decidable (rootGt v c) := by unfold rootGt; infer_instance
+instance (v c : Rat) : Decidable (rootLe v c) := by unfold rootLe; infer_instance
+instance (v c : Rat) : Decidable (rootLt v c) := by unfold rootLt; infer_instance
+instance (v c : Rat) : Decidable (rootEq v c) := by unfold rootEq; infer_instance
 
 /-- "The square root of v, rounded, is p", by squared bounds; this is the definition. -/
 def SqrtRoundsTo (r : Rounding) (p : Printed) (v : Rat) : Prop :=

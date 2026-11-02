@@ -1,0 +1,324 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "eq-ne",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "le-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "le-lt",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "lit-minus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "or-and",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:21-37, V-6, V-6r, the ties at 0.1085 and 0.1095 and the grid against RoundsTo); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.SqrtRoundsTo",
+   "operator": "eq-le",
+   "reason": "equivalent: `p.digits % 2 ≤ 0` is `p.digits % 2 = 0`, since Int's `%` by 2 is 0 or 1"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "le-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "le-lt",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGe",
+   "operator": "or-and",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:38, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "lt-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "lt-le",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootGt",
+   "operator": "or-and",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:39, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "le-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "le-lt",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLe",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:40, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "lt-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootLt",
+   "operator": "lt-le",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:41, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "eq-le",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "eq-ne",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "le-eq",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "le-lt",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.rootEq",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at the line its UNKNOWN reports refutes each mutant of this operator (StatsExamples.lean:42, both sides of the bound, at c = 0 and v < 0, and through SqrtRoundsTo at :21-37); the tool says UNKNOWN because the Prop is checked only through its Decidable instance, which Lean rebuilds from the mutated body (drift), as in ap-1d, df-2 and sc-2d"
+  },
+  {
+   "definition": "VE.Calc.mean?",
+   "operator": "eq-le",
+   "reason": "equivalent: `xs ≤ []` holds exactly when `xs = []` (the empty list is the least list)"
+  },
+  {
+   "definition": "VE.Calc.populationVariance?",
+   "operator": "eq-le",
+   "reason": "equivalent: `xs ≤ []` holds exactly when `xs = []` (the empty list is the least list)"
+  },
+  {
+   "definition": "VE.Calc.Stat.run",
+   "operator": "eq-le",
+   "reason": "equivalent: `xs ≤ []` holds exactly when `xs = []` (the empty list is the least list)"
+  },
+  {
+   "definition": "VE.Calc.absR",
+   "operator": "lt-le",
+   "reason": "equivalent: at x = 0 both branches give 0 (-0 = 0)"
+  },
+  {
+   "definition": "VE.Calc.kappa?",
+   "operator": "eq-le",
+   "reason": "equivalent: `n` is a natural number cast to Rat, so `n ≤ 0` is `n = 0`"
+  },
+  {
+   "definition": "VE.Calc.binomialTail",
+   "operator": "lit-plus",
+   "reason": "equivalent: `List.range (n + 2)` adds only i = n + 1, whose term is 0 since choose n (n + 1) = 0 (Stats.choose_eq_zero); the proofs it breaks unfold `range (n + 1)`"
+  },
+  {
+   "definition": "VE.Calc.choose",
+   "operator": "lit-minus",
+   "reason": "equivalent for `| 0, _ + 0 => 0` (after `| _, 0 => 1` it matches the same k ≥ 1); the other mutant does not elaborate (`n + 0` in the recursive arm fails the termination check)"
+  },
+  {
+   "definition": "VE.Calc.choose",
+   "operator": "lit-plus",
+   "reason": "does not elaborate: a pattern `_ + 2` or `n + 2` leaves cases uncovered (Missing cases)"
+  },
+  {
+   "definition": "VE.Calc.signs",
+   "operator": "lit-plus",
+   "reason": "does not elaborate: `n + 2` leaves `signs 1` uncovered (Missing cases)"
+  },
+  {
+   "definition": "VE.Calc.signs",
+   "operator": "lit-minus",
+   "reason": "does not elaborate: `n + 0` recurses on itself (termination)"
+  },
+  {
+   "definition": "VE.Calc.signs",
+   "operator": "list-empty",
+   "reason": "does not elaborate: the empty list in place of `[1 :: s, -1 :: s]`'s binder is not a function"
+  },
+  {
+   "definition": "VE.Calc.mean?",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[].sum / [].length` has no element type"
+  },
+  {
+   "definition": "VE.Calc.sampleVariance?",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of `xs` has no element type, or is not a function"
+  },
+  {
+   "definition": "VE.Calc.populationVariance?",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of `xs` has no element type, or is not a function"
+  },
+  {
+   "definition": "VE.Calc.kappa?",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of the table or a row has no element type, or is not a function"
+  },
+  {
+   "definition": "VE.Calc.signFlipP",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of `d` or a sign vector has no element type, or is not a function"
+  },
+  {
+   "definition": "VE.Calc.signFlipP",
+   "operator": "list-first",
+   "reason": "does not elaborate: the operator wraps `(signs d.length).filter`, a function, in a list operation (invalid field notation)"
+  },
+  {
+   "definition": "VE.Calc.signFlipP",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: the operator wraps `(signs d.length).filter`, a function, in a list operation (invalid field notation)"
+  },
+  {
+   "definition": "VE.Calc.signFlipP",
+   "operator": "list-last",
+   "reason": "does not elaborate: the operator wraps `(signs d.length).filter`, a function, in a list operation (invalid field notation)"
+  },
+  {
+   "definition": "VE.Calc.signFlipP",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: the operator wraps `(signs d.length).filter`, a function, in a list operation (invalid field notation)"
+  },
+  {
+   "definition": "VE.Calc.Agg",
+   "operator": "ctor-drop",
+   "reason": "does not elaborate: Agg.run and Agg.columns name the dropped `variance` and `populationVariance` (unknown constant)"
+  },
+  {
+   "definition": "VE.Calc.Stat",
+   "operator": "ctor-drop",
+   "reason": "does not elaborate: Stat.minLength and Stat.run name the dropped constructors (unknown constant)"
+  }
+ ]
+}
