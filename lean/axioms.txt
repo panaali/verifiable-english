@@ -2647,6 +2647,7 @@
 'VE.Judgments.predicateWords_name' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Judgments.singleton_infix_iff' depends on axioms: [propext]
 'VE.Judgments.status_checked' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.status_eq' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.status_legacy' depends on axioms: [propext, Quot.sound]
@@ -8089,7 +8090,7 @@
 'ResponseShape.Encoders.SoftNorms.declarations_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.documentReferences_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.elaborate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ResponseShape.Encoders.SoftNorms.envelope_ok' depends on axioms: [propext]
+'ResponseShape.Encoders.SoftNorms.envelope_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.environmentReferences_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.exceptionFields_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.fail_ok' does not depend on any axioms
