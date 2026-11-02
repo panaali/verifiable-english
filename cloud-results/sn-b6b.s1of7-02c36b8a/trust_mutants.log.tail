@@ -1,0 +1,15 @@
+trust_mutants: 11 definitions, 248 mutants (36 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Run.lean:314 VE.Senses.Run.readCase (G[V], trusted) list-empty: units -> [] (lean/VE/Senses/Run.lean:314: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Flip.lean:54 VE.Senses.Flip (S, trusted) ctor-drop: | unknown ->  (lean/VE/Senses/Flip.lean:68: Unknown constant `VE.Senses.Flip.unknown`)
+SURVIVOR lean/VE/Senses/Run.lean:251 VE.Senses.Run.flipJson (G[V], trusted) list-empty: [("status", .str "unknown")] -> []
+SURVIVOR lean/VE/Senses/Flip.lean:34 VE.Senses.formulaCore (G[V], trusted) arm-default: return .ex s (← formulaCore a) -> none
+SURVIVOR lean/VE/Senses/Flip.lean:64 VE.Senses.flipPair (S, trusted) list-first: on -> (on.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:44 VE.Senses.flipModelOf (S, trusted) list-first: fs.flatMap EFormula.consts -> ((fs.flatMap EFormula.consts).take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:46 VE.Senses.flipModelOf (S, trusted) list-first: consts -> (consts.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:44 VE.Senses.flipModelOf (S, trusted) list-last: fs -> (fs.reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-last: c.choice -> (c.choice.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:240 VE.Senses.Run.writtenLines (G[V], trusted) list-drop-first: sent.toList -> (sent.toList.drop 1)
+trust_mutants: 21 KILLED, 8 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 212 OTHER SHARD in 1941 s
+trust_mutants: G[V], trusted: 4 KILLED, 3 SURVIVOR, 1 UNKNOWN, 2 INVALID, 69 OTHER SHARD
+trust_mutants: S, trusted: 17 KILLED, 5 SURVIVOR, 1 UNKNOWN, 3 INVALID, 143 OTHER SHARD
+trust_mutants: steps: wall plan 10.5 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.4 s, control_probes 132.1 s, mutants 1790.6 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 131.7 s (1), mutant_builds 62.8 s (36), mutant_checks 941.1 s (31), stage_controls 9.3 s (3), mutant_probes 5702.4 s (21)
