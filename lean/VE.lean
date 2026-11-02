@@ -144,6 +144,7 @@ import VE.Calc.UnitsExamples
 import VE.Calc.Wire
 import VE.Calc.Run
 import VE.Calc.RunExamples
+import VE.Calc.Ties
 import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
@@ -296,3 +297,5 @@ import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Defaults.Zone
+import VE.Defaults.ZoneExamples
