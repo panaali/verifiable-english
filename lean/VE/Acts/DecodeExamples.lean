@@ -233,6 +233,20 @@ def viewed (s : VE.NormDefaults.Wire.SourceU) :=
 #guard ((flaggedSource (envOf plain6 (blockJ fx7 V7) (name := "p079") (act := a7) (role := "obligation")
   (default := "deny")) (Json.arr #[jrule "p079"])).toOption.map fun s => s.D.T.regulated.map (·.name)) == some ["p079"]
 
+/-- `envOf` with a `data@0` flag: the norms route admits it, and `decodeSourceU`'s second branch does not (6.4). -/
+def flagged (act : String) : Json :=
+  let j := envOf ["acts@0", "data@0", "norms@0", "relational-fol@0"] block6 (act := act) (default := "deny")
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "dept" (Json.mkObj
+    [("arguments", toJson ["person", "person"]), ("description", .str "d"), ("functional", .bool true)])))
+#guard ((flaggedSource (flagged a6) norms27).toOption.map fun s => (s.D.T.regulated.map (·.name), s.ne.rv.flags.length)) ==
+  some (["p027__1", "p027__2"], 1)
+#guard errText (decodeElaboratedU (flagged a6) norms27) ==
+  "UnsupportedProfile: norms route with data flags is not implemented"
+-- A lexical act with a flag keeps the route's own source.
+#guard ((flaggedSource (flagged "{0} be held") norms27).toOption.map fun s => (s.D.T.regulated.map (·.name), s.ne.rv.flags.length)) ==
+  some (["p027"], 1)
+
 /-! ### Each joined act read once, by the decoder, at the route's limits (`Norms.Wire.actsOf`) -/
 
 /-- Two letters from `i`, so that each act is its own. -/

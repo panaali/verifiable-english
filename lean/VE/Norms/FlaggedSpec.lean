@@ -732,7 +732,7 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
 
 
 /-- `normsEnvironment_flag_not_defined` with or without the decoder's `acts@0` reading. -/
-theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts joined : Bool)
+theorem normsEnvironment_flag_not_defined_joined (environment : Json) (acts joined : Bool)
     (ne : VE.Norms.Wire.NormsEnvironment)
     (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts joined = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name := by
@@ -766,10 +766,16 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts joined :
   obtain rfl := Except.ok.inj h
   exact decodeVocabulary_flag_not_defined _ _ rv hrv
 
+theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
+    (ne : VE.Norms.Wire.NormsEnvironment)
+    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts = .ok ne) :
+    ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
+  normsEnvironment_flag_not_defined_joined environment acts false ne h
+
 theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
     (h : VE.Norms.Wire.decodeNormsEnvironment environment = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
-  normsEnvironment_flag_not_defined_in environment false false ne h
+  normsEnvironment_flag_not_defined_in environment false ne h
 
 /-- Rejection (a) for a decoded norm source: no flag names one of its definitions. -/
 theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) (src : VE.Norms.Wire.Source)
@@ -802,7 +808,7 @@ theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) 
   · cases h
     intro f hf d hd
     obtain ⟨d', hd', rfl⟩ := List.mem_map.mp hd
-    exact normsEnvironment_flag_not_defined_in _ _ _ ne hne f hf d' hd'
+    exact normsEnvironment_flag_not_defined_joined _ _ _ ne hne f hf d' hd'
 
 /-! ## Rejection (b) and the empty-target case -/
 
