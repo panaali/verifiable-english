@@ -11,7 +11,7 @@
    },
    "test": "tests/test_question_reverse.py::test_frontings_front_every_is_must_or_may_in_turn",
    "killed": true,
-   "result": "1 failed in 0.46s"
+   "result": "1 failed in 0.40s"
   },
   {
    "behaviour": "a stream is dropped from the per-stream counts",
@@ -22,7 +22,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial",
    "killed": true,
-   "result": "1 failed in 0.35s"
+   "result": "1 failed in 0.42s"
   },
   {
    "behaviour": "the 10.2 count over the wrong denominator (every named question with no reading)",
@@ -33,7 +33,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_closest_shares_count_only_named_f2_questions_with_no_reading",
    "killed": true,
-   "result": "1 failed in 0.34s"
+   "result": "1 failed in 0.43s"
   },
   {
    "behaviour": "ties compared in code points, not bytes",
@@ -44,7 +44,7 @@
    },
    "test": "tests/test_question_reverse.py::test_closeness_names_leans_closest_its_ties_and_the_readers_sentence",
    "killed": true,
-   "result": "1 failed in 0.36s"
+   "result": "1 failed in 0.43s"
   },
   {
    "behaviour": "Lean's closest not checked against the leftmost tie",
@@ -55,7 +55,7 @@
    },
    "test": "tests/test_question_reverse.py::test_closeness_names_leans_closest_its_ties_and_the_readers_sentence",
    "killed": true,
-   "result": "1 failed in 0.31s"
+   "result": "1 failed in 0.41s"
   },
   {
    "behaviour": "coverage ignores a natural-view statement left out",
@@ -66,7 +66,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial",
    "killed": true,
-   "result": "1 failed in 0.38s"
+   "result": "1 failed in 0.41s"
   },
   {
    "behaviour": "the random Earley stream keeps a sealed text",
@@ -77,7 +77,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_random_earley_stream_skips_the_sealed_texts",
    "killed": true,
-   "result": "1 failed in 1.12s"
+   "result": "1 failed in 1.06s"
   },
   {
    "behaviour": "a norm sentence read with two formulas counted as reached",
@@ -88,7 +88,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_norm_documents_units_say_why_no_question_reaches_them",
    "killed": true,
-   "result": "1 failed in 0.98s"
+   "result": "1 failed in 1.05s"
   },
   {
    "behaviour": "a sentence with one fronting over the limits counted as limited",
@@ -99,7 +99,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_fronting_of_the_group_document_is_read_by_lean",
    "killed": true,
-   "result": "1 failed in 0.83s"
+   "result": "1 failed in 0.94s"
   },
   {
    "behaviour": "a natural-view statement recorded without its period",
@@ -110,7 +110,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_natural_stream_is_each_rendered_statement",
    "killed": true,
-   "result": "1 failed in 0.81s"
+   "result": "1 failed in 1.03s"
   },
   {
    "behaviour": "a mixed paragraph counted as one-sentence text",
@@ -121,7 +121,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_mixed_stream_is_its_generators_draw",
    "killed": true,
-   "result": "1 failed in 8.37s"
+   "result": "1 failed in 8.73s"
   },
   {
    "behaviour": "the put-back sentence keeps the capital of an opener",
@@ -132,7 +132,7 @@
    },
    "test": "tests/test_question_reverse.py::test_frontings_front_every_is_must_or_may_in_turn",
    "killed": true,
-   "result": "1 failed in 0.44s"
+   "result": "1 failed in 0.36s"
   },
   {
    "behaviour": "`other` hard-coded False: a fronting with another formula is not recorded",
@@ -143,7 +143,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
    "killed": true,
-   "result": "1 failed in 0.65s"
+   "result": "1 failed in 0.60s"
   },
   {
    "behaviour": "per_stream's `_other` never counts",
@@ -154,7 +154,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
    "killed": true,
-   "result": "1 failed in 0.56s"
+   "result": "1 failed in 39.92s"
   },
   {
    "behaviour": "`other_formula` lists nothing",
@@ -165,7 +165,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
    "killed": true,
-   "result": "1 failed in 0.60s"
+   "result": "1 failed in 64.74s (0:01:04)"
   },
   {
    "behaviour": "`many` left out of `reached`",
@@ -176,7 +176,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
    "killed": true,
-   "result": "1 failed in 0.58s"
+   "result": "1 failed in 2.21s"
   },
   {
    "behaviour": "`many_causes` lists nothing",
@@ -187,7 +187,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
    "killed": true,
-   "result": "1 failed in 0.64s"
+   "result": "1 failed in 20.68s"
   },
   {
    "behaviour": "per_stream's `_many` never counts",
@@ -198,7 +198,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
    "killed": true,
-   "result": "1 failed in 0.59s"
+   "result": "1 failed in 6.71s"
   },
   {
    "behaviour": "`several_same` never counts",
@@ -209,7 +209,7 @@
    },
    "test": "tests/test_question_reverse.py::test_two_frontings_that_read_are_counted",
    "killed": true,
-   "result": "1 failed in 0.43s"
+   "result": "1 failed in 0.39s"
   },
   {
    "behaviour": "the fronting measure takes sentences with no formula",
@@ -220,7 +220,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_sentence_lean_does_not_read_is_outside_the_measures_of_its_questions",
    "killed": true,
-   "result": "1 failed in 0.41s"
+   "result": "1 failed in 0.35s"
   },
   {
    "behaviour": "the F1 measure takes sentences with no formula",
@@ -231,7 +231,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_sentence_lean_does_not_read_is_outside_the_measures_of_its_questions",
    "killed": true,
-   "result": "1 failed in 0.41s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "`inconsistent` lists nothing",
@@ -242,7 +242,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_closest_that_is_not_the_leftmost_tie_is_listed",
    "killed": true,
-   "result": "1 failed in 0.39s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "a unit's fence is not read: its prose is",
@@ -253,7 +253,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
    "killed": true,
-   "result": "1 failed in 0.56s"
+   "result": "1 failed in 0.60s"
   },
   {
    "behaviour": "a fence over several lines is not asked",
@@ -264,7 +264,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
    "killed": true,
-   "result": "1 failed in 0.62s"
+   "result": "1 failed in 0.70s"
   },
   {
    "behaviour": "a MIXED unit is read whole, not by its parts",
@@ -275,7 +275,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
    "killed": true,
-   "result": "1 failed in 0.56s"
+   "result": "1 failed in 0.53s"
   },
   {
    "behaviour": "spans read over the body with its fences",
@@ -286,7 +286,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
    "killed": true,
-   "result": "1 failed in 0.61s"
+   "result": "1 failed in 0.59s"
   },
   {
    "behaviour": "a reached unit has no example",
@@ -297,7 +297,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
    "killed": true,
-   "result": "1 failed in 0.92s"
+   "result": "1 failed in 0.91s"
   },
   {
    "behaviour": "`unsealed_documents` is always empty",
@@ -319,7 +319,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[documents_not_their_sentences]",
    "killed": true,
-   "result": "1 failed in 0.50s"
+   "result": "1 failed in 0.41s"
   },
   {
    "behaviour": "`mixed_paragraphs_not_their_sentences` is always zero",
@@ -330,7 +330,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[mixed_paragraphs_not_their_sentences]",
    "killed": true,
-   "result": "1 failed in 0.51s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "`unavailable_reads` is always empty",
@@ -341,7 +341,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[unavailable_reads]",
    "killed": true,
-   "result": "1 failed in 0.45s"
+   "result": "1 failed in 0.35s"
   },
   {
    "behaviour": "a `LEFT_OUT` key leaves `whole_streams`",
@@ -352,7 +352,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_has_its_case",
    "killed": true,
-   "result": "1 failed in 0.33s"
+   "result": "1 failed in 0.43s"
   },
   {
    "behaviour": "`unavailable` of a slice is always zero",
@@ -363,7 +363,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_sentence_with_no_answer_is_counted_not_a_refusal",
    "killed": true,
-   "result": "1 failed in 0.64s"
+   "result": "1 failed in 0.62s"
   },
   {
    "behaviour": "per_stream's `_unavailable` never counts",
@@ -374,7 +374,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_sentence_with_no_answer_is_counted_not_a_refusal",
    "killed": true,
-   "result": "1 failed in 0.61s"
+   "result": "1 failed in 0.64s"
   },
   {
    "behaviour": "the norm measure counts unanswered texts",
@@ -385,7 +385,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_norm_measure_counts_the_reach_and_the_distinct_answered_texts",
    "killed": true,
-   "result": "1 failed in 0.36s"
+   "result": "1 failed in 0.29s"
   },
   {
    "behaviour": "`distinct_no_reading` is the plain count",
@@ -396,7 +396,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_norm_measure_counts_the_reach_and_the_distinct_answered_texts",
    "killed": true,
-   "result": "1 failed in 0.46s"
+   "result": "1 failed in 0.34s"
   },
   {
    "behaviour": "a sentence that cites no key passes the claims check",
@@ -407,7 +407,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_claim_must_cite_a_key_that_holds_its_numbers",
    "killed": true,
-   "result": "1 failed, 6 passed in 0.49s"
+   "result": "1 failed, 6 passed in 0.48s"
   },
   {
    "behaviour": "a key the evidence lacks passes the claims check",
@@ -418,7 +418,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_claim_must_cite_a_key_that_holds_its_numbers",
    "killed": true,
-   "result": "1 failed, 8 passed in 0.40s"
+   "result": "1 failed, 8 passed in 0.43s"
   },
   {
    "behaviour": "a number no cited key holds passes the claims check",
@@ -429,7 +429,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_claim_must_cite_a_key_that_holds_its_numbers",
    "killed": true,
-   "result": "1 failed, 9 passed in 0.29s"
+   "result": "1 failed, 9 passed in 0.46s"
   },
   {
    "behaviour": "a share is compared without its percent scale",
@@ -440,7 +440,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_claim_must_cite_a_key_that_holds_its_numbers",
    "killed": true,
-   "result": "1 failed, 1 passed in 0.38s"
+   "result": "1 failed, 1 passed in 0.44s"
   },
   {
    "behaviour": "stale wording passes the claims check",
@@ -451,7 +451,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_old_premises_sentence_fails_the_claims_check",
    "killed": true,
-   "result": "1 failed in 0.42s"
+   "result": "1 failed in 0.39s"
   },
   {
    "behaviour": "a gone anchor passes the claims check",
@@ -462,7 +462,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_old_premises_sentence_fails_the_claims_check",
    "killed": true,
-   "result": "1 failed in 0.32s"
+   "result": "1 failed in 0.40s"
   },
   {
    "behaviour": "the section's bullets are not checked",
@@ -473,7 +473,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_old_premises_sentence_fails_the_claims_check",
    "killed": true,
-   "result": "1 failed in 0.25s"
+   "result": "1 failed in 0.42s"
   },
   {
    "behaviour": "an unused NO_CLAIM row passes the claims check",
@@ -495,7 +495,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_old_premises_sentence_fails_the_claims_check",
    "killed": true,
-   "result": "1 failed in 0.42s"
+   "result": "1 failed in 0.32s"
   },
   {
    "behaviour": "an attributed unit is tallied as its inner kind",
@@ -506,7 +506,40 @@
    },
    "test": "tests/test_question_reverse.py::test_the_unit_kinds_are_tallied_without_the_attributed_norms",
    "killed": true,
-   "result": "1 failed in 0.26s"
+   "result": "1 failed in 0.37s"
+  },
+  {
+   "behaviour": "a headline claim the evidence refutes passes the claims check",
+   "file": "docs/question-answering/q1-3b/claims.py",
+   "mutation": {
+    "from": "if words in flat[path] and not holds(evidence))",
+    "to": "if False)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_headline_claim_must_hold_of_the_evidence",
+   "killed": true,
+   "result": "1 failed in 0.40s"
+  },
+  {
+   "behaviour": "a rewritten headline claim is no longer checked",
+   "file": "docs/question-answering/q1-3b/claims.py",
+   "mutation": {
+    "from": "for path, words, _ in truths if words not in flat[path])",
+    "to": "for path, words, _ in () if words not in flat[path])"
+   },
+   "test": "tests/test_question_reverse.py::test_a_headline_claim_must_hold_of_the_evidence",
+   "killed": true,
+   "result": "1 failed in 0.38s"
+  },
+  {
+   "behaviour": "a reached prose unit passes as a fence",
+   "file": "docs/question-answering/q1-3b/claims.py",
+   "mutation": {
+    "from": "return all(row[1] == \"fence\" for row in reached_rows(e)) and count ==",
+    "to": "return count =="
+   },
+   "test": "tests/test_question_reverse.py::test_a_headline_claim_must_hold_of_the_evidence",
+   "killed": true,
+   "result": "1 failed in 0.40s"
   }
  ]
 }

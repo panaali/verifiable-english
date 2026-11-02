@@ -1,7 +1,8 @@
 """Check the q1-3b claims of the batch's two reports against its saved evidence, so that a claim written on an old
 premise cannot outlive a rerun. Each summary, headline or conclusion sentence must cite its key (`C4 `f2.share``) or be
 listed in `NO_CLAIM`; each bullet and table row elsewhere in the q1-3b section must cite one or sit under a heading that
-does; every key must exist, every number must be a value of a cited key or of `derived`, and no `STALE` wording stays.
+does; every key must exist, every number must be a value of a cited key or of `derived`, every `TRUTHS` row must hold,
+and no `STALE` wording stays.
 A batch's review probe, not a permanent test (DRI decision D4): `tests/test_question_reverse.py` tests it on fixtures.
 
     uv run python docs/question-answering/q1-3b/claims.py [--list]
@@ -44,6 +45,61 @@ NO_CLAIM = {
     "- More seeded bugs": "plan order",
     "A change there would": "says why they wait",
 }
+# A headline claim that a number alone cannot show (a small number can match another key, a zero may have no number):
+# (report, the words as written, what must hold of the evidence). F10's sentence was a claim of this kind.
+
+
+def reached_rows(e: dict) -> list:
+    return [row for d in e["C4"]["norm"]["documents"].values() for row in d["reach"] if row[2] == "reached"]
+
+
+def only_soft_chain(e: dict) -> bool:
+    coverage = e["C4"]["coverage"]
+    left = [k for k in ("unsealed_streams", "unsealed_random_earley", "unsealed_documents", "mixed_unmatched",
+                        "documents_not_their_sentences", "mixed_paragraphs_not_their_sentences", "short_streams",
+                        "skipped", "unavailable_reads") if coverage[k]]
+    return coverage["whole_streams"] is False and left == ["unavailable_reads"] and \
+        all("soft-chain" in k for k in coverage["unavailable_reads"])
+
+
+def pair_is_refused(e: dict) -> bool:
+    c6 = e["C6"]
+    return c6["pair"]["outcomes"] == {"unavailable": 1} and c6["soft_only"]["outcomes"] == {"one": 1} and \
+        c6["defaults_only"]["outcomes"] == {"one": 1}
+
+
+def fences_only(e: dict) -> bool:
+    count = sum(row[3] for row in reached_rows(e))
+    return all(row[1] == "fence" for row in reached_rows(e)) and count == e["C4"]["norm"]["reached"] == 5
+
+
+def only_fences_without_soft(e: dict) -> bool:
+    soft = e["C6"]["soft_chain_without_soft"]
+    return len(soft["read"]) == soft["fences"] == 3 and soft["outcomes"]["one"] == 3
+
+
+def no_kind_norm_reads(e: dict) -> bool:
+    return all(row[0] == "asserted" for row in reached_rows(e))
+
+
+TRUTHS = (
+    (SPEC, "No fronting that Lean answers reads another formula or is `many`",
+     lambda e: not e["C4"]["f2"]["other_formula"] and not e["C4"]["f2"]["many_causes"]),
+    (SPEC, "5 of 5,859 units are reached, all `ve` fences of kind `asserted`", lambda e: fences_only(e) and no_kind_norm_reads(e)),
+    (SPEC, "none of the 143 units of kind `norm` reads", no_kind_norm_reads),
+    (SPEC, "is false for one reason", only_soft_chain),
+    (SPEC, "`english.question` refuse that pair", pair_is_refused),
+    (SPEC, "reads its 3 fences and none of its other 1,002 sentences", only_fences_without_soft),
+    (SPEC, "**Over-generation:** no answered fronting", lambda e: not e["C4"]["f2"]["other_formula"]),
+    (REPORT, "Lean answers all but one", lambda e: e["C4"]["f2"]["outcomes"]["unavailable"] == 1),
+    (REPORT, "reads none with another formula, and none is `many`",
+     lambda e: not e["C4"]["f2"]["other_formula"] and not e["C4"]["f2"]["many_causes"]),
+    (REPORT, "5 of 5,859 units are reached, all `ve` fences", fences_only),
+    (REPORT, "no prose Lean answers for reads", fences_only),
+    (REPORT, "a pair `english.read` and `english.question` refuse though each alone reads", pair_is_refused),
+    (REPORT, "none is of kind `norm`", no_kind_norm_reads),
+    (REPORT, "reads its 3 fences and none of its other 1,002 sentences", only_fences_without_soft),
+)
 # Numbers in the checked text that name a plan section, or a fact of the host that the evidence does not hold.
 OUTSIDE = {"3.6", "4.9", "10.2", "2.5", "32"}
 NUMBER = re.compile(r"(?<![\w.,-])\d[\d,]*(?:\.\d+)?%?(?![\w-])")
@@ -159,10 +215,14 @@ def blocks(text: str) -> list[tuple[str, tuple]]:
 
 
 def check(texts: dict[str, str], evidence: dict[str, dict], extra: frozenset, no_claim: dict = NO_CLAIM,
-          report=None) -> list[str]:
+          report=None, truths: tuple = TRUTHS) -> list[str]:
     """Every problem of both reports; `report` receives each checked unit and whether it claims anything."""
     out = [f"{path}: stale wording: {w!r}" for path, text in texts.items() for w in STALE
            if w in re.sub(r"\s+", " ", text).lower()]
+    flat = {path: re.sub(r"\s+", " ", text) for path, text in texts.items()}
+    out.extend(f"{path}: words gone: {words!r}" for path, words, _ in truths if words not in flat[path])
+    out.extend(f"{path}: not so: {words!r}" for path, words, holds in truths
+               if words in flat[path] and not holds(evidence))
     used = set()
     for path, start, end in STRICT:
         part = cut(texts[path], start, end)
