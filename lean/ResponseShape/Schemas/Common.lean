@@ -417,10 +417,13 @@ def environment : Shape :=
               obj,
               .object [] (some (ref "#/$defs/environment_predicate"))]),
             ("soft", n [obj, .equals "/environment/vocabulary/soft"]),
-            ("rights", n [obj, .equals "/environment/vocabulary/rights"])],
+            ("rights", n [obj, .equals "/environment/vocabulary/rights"]),
+            -- `acts@0`'s block, the request's (the soft view of an `acts@0` norms frame, ap-1bg)
+            ("acts", n [obj, .equals "/environment/vocabulary/acts"])],
           .allOf [
             .ite (.onCase (ref "#/$defs/request_block/soft")) (.required ["soft"]) (.bool true),
-            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true)]])]])
+            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true),
+            .ite (.onCase (ref "#/$defs/request_block/acts")) (.required ["acts"]) (.bool true)]])]])
 
 def request_block : Def :=
   .group (some "Selectors over the request case: its environment's vocabulary declares the block.") [
@@ -433,7 +436,12 @@ def request_block : Def :=
       obj,
       .required ["environment"],
       props [
-        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["rights"]])]])]])]
+        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["rights"]])]])]]),
+    ("acts", n [
+      obj,
+      .required ["environment"],
+      props [
+        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["acts"]])]])]])]
 
 def file : File where
   name := "common.json"
