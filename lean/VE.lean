@@ -141,6 +141,7 @@ import VE.Calc.UnitsExamples
 import VE.Calc.Wire
 import VE.Calc.Run
 import VE.Calc.RunExamples
+import VE.Calc.Ties
 import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
