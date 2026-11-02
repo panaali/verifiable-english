@@ -28,6 +28,7 @@ import ResponseShape.Encoders.Route
 import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.SensesProject
+import ResponseShape.Encoders.JudgmentLine
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
 import ResponseShape.Encoders.Standalone
