@@ -1,0 +1,13 @@
+trust_mutants: 11 definitions, 248 mutants (35 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) lit-minus: 1 -> 0
+UNKNOWN lean/VE/Senses/Flip.lean:27 VE.Senses.formulaCore (G[V], trusted) list-empty: [t, u] -> [] (lean/VE/Senses/Flip.lean:27: Unknown identifier `t`)
+UNKNOWN lean/VE/Senses/Flip.lean:83 VE.Senses.flipsOf (S, trusted) list-empty: (candidatePairs u.candidates.length).filterMap -> [] (lean/VE/Senses/Flip.lean:83: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) list-empty: (List.range (n - i - 1)).map -> [] (lean/VE/Senses/Flip.lean:78: Function expected at)
+UNKNOWN lean/VE/Senses/Run.lean:240 VE.Senses.Run.writtenLines (G[V], trusted) list-empty: sent.toList -> [] (lean/VE/Senses/Run.lean:241: Invalid projection: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:239 VE.Senses.Run.writtenLines (G[V], trusted) list-drop-last: sent.toList -> (sent.toList.dropLast)
+SURVIVOR lean/VE/Senses/Flip.lean:46 VE.Senses.flipModelOf (S, trusted) list-first: consts.filter (sortOf · == s) -> ((consts.filter (sortOf · == s)).take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:62 VE.Senses.flipPair (S, trusted) list-last: [c.formula, d.formula] -> ([c.formula, d.formula].reverse.take 1)
+trust_mutants: 20 KILLED, 4 SURVIVOR, 4 UNKNOWN, 7 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 1750 s
+trust_mutants: G[V], trusted: 9 KILLED, 1 SURVIVOR, 2 UNKNOWN, 2 INVALID, 65 OTHER SHARD
+trust_mutants: S, trusted: 11 KILLED, 3 SURVIVOR, 2 UNKNOWN, 5 INVALID, 148 OTHER SHARD
+trust_mutants: steps: wall plan 10.5 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.4 s, control_probes 131.5 s, mutants 1600.7 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 131.2 s (1), mutant_builds 70 s (35), mutant_checks 771.8 s (26), stage_controls 7.6 s (2), mutant_probes 5492 s (20)
