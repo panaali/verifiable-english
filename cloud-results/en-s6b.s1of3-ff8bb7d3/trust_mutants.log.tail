@@ -1,0 +1,112 @@
+trust_mutants: 16 definitions, 611 mutants (204 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:36 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:26 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:18 VE.EnglishGrammar.Norm.normConsequence (G[V], trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-minus: 2 -> 1
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:25 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.t (.kw "rule"), .t (.cls .numeral)] -> []
+UNKNOWN lean/VE/EnglishGrammar/Norm/Elab.lean:32 VE.EnglishGrammar.Norm.toNodes (G[V], trusted) list-empty: (rs.filterMap fun | .rule h c => some (h, c) | _ => none) -> [] (lean/VE/EnglishGrammar/Norm/Elab.lean:33: Invalid field notation: Type of)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Read.lean:37 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) eq-le: = -> ≤ (lean/VE/EnglishGrammar/Norm/Read.lean:37: failed to synthesize)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:31 VE.EnglishGrammar.Norm.bindings (S, trusted) lit-minus: 2 -> 1 (lean/VE/EnglishGrammar/Norm/Rules.lean:31: Redundant alternative: Any expression matching)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-empty: sents.toList.map (·.toList) -> [] (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:26 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:32 VE.EnglishGrammar.Norm.bindings (S, trusted) lit-minus: 2 -> 1 (lean/VE/EnglishGrammar/Norm/Rules.lean:32: Redundant alternative: Any expression matching)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-empty: ps -> [] (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:117 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-empty: [.num n, .num m] -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:117: Unknown identifier `n`)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:28 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.t (.kw "rule"), .t (.cls .numeral), .t (.kw "takes"), .t (.kw "precedence"), .t (.kw "over"), .... -> []
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:46 VE.EnglishGrammar.Norm.wording (S, trusted) list-empty: r.act -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:48: Type mismatch)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:29 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.own 1] -> []
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:60 VE.EnglishGrammar.Norm.consequences (S, trusted) list-empty: [true, false].flatMap -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:60: Function expected at)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:29 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:63 VE.EnglishGrammar.Norm.consequences (S, trusted) list-empty: ds -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:63: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:29 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:122 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-empty: [x] -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:122: Unknown identifier `x.read`)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-minus: 2 -> 1
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-empty: ds -> []
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:30 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:34 VE.EnglishGrammar.Norm.bindings (S, trusted) list-empty: slots -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:34: Invalid projection: Type of)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:30 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.own 1, .t (.exact (.punct "," true false)), .t (.kw "if"), .base 2, .t (.exact (.punct "," true... -> []
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-minus: 2 -> 1
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:66 VE.EnglishGrammar.Norm.consequences (S, trusted) list-empty: (w :: anyOf ++ noOf).eraseDups.filterMap -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:66: Function expected at)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:31 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:53 VE.EnglishGrammar.Norm.wording (S, trusted) list-empty: σ -> [] (lean/VE/EnglishGrammar/Norm/Rules.lean:53: Invalid projection: Type of)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:31 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:37 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.t (.cls .numeral), .t (.exact (.punct "," true false)), .own 2] -> []
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:31 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:38 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-empty: [.t (.cls .numeral), .t (.kw "and"), .own 2] -> []
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:35 VE.EnglishGrammar.Norm.normRows (G[V], trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:37 VE.EnglishGrammar.Norm.normRows (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:25 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-first: [.t (.kw "rule"), .t (.cls .numeral)] -> ([.t (.kw "rule"), .t (.cls .numeral)].take 1)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:100 VE.EnglishGrammar.Norm.args (S, trusted) list-first: (match t with | .numeral v => [.num v.toNat] | _ => []) -> ((match t with | .numeral v => [.num v.toNat] | _ => []).take 1) (lean/VE/EnglishGrammar/Norm/Rules.lean:100: Invalid dotted identifier notation: The expected type...)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:25 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-last: [.t (.kw "rule"), .t (.cls .numeral)] -> ([.t (.kw "rule"), .t (.cls .numeral)].dropLast)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:100 VE.EnglishGrammar.Norm.args (S, trusted) list-drop-last: (match t with | .numeral v => [.num v.toNat] | _ => []) -> ((match t with | .numeral v => [.num v.toNat] | _ => []).dropLast) (lean/VE/EnglishGrammar/Norm/Rules.lean:100: Invalid dotted identifier notation: The expected type...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-first: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).take 1) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-drop-last: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).dropLast) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Elab.lean:27 VE.EnglishGrammar.Norm.overOf (G[V], trusted) list-drop-last: rs -> (rs.dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-drop-last: ps -> (ps.dropLast) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:119 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-first: xs -> (xs.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:29 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-last: [.own 1] -> ([.own 1].dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:120 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-first: φs.tail -> (φs.tail.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:29 VE.EnglishGrammar.Norm.bindings (S, trusted) list-first: sorts -> (sorts.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:29 VE.EnglishGrammar.Norm.bindings (S, trusted) list-drop-last: sorts -> (sorts.dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:120 VE.EnglishGrammar.Norm.NormAct.step (S, trusted) list-drop-last: φs.tail -> (φs.tail.dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:47 VE.EnglishGrammar.Norm.wording (S, trusted) list-first: L.wordings -> (L.wordings.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-first: [.own 1, .t (.exact (.punct "," true false)), .t (.kw "if"), .base 2, .t (.exact (.punct "," true... -> ([.own 1, .t (.exact (.punct "," true false)), .t (.kw "if"), .base 2, .t (.exact (.punct "," tru...
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-first: ds -> (ds.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-drop-last: ds.tail.map ("for each " ++ ·) -> ((ds.tail.map ("for each " ++ ·)).dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:34 VE.EnglishGrammar.Norm.bindings (S, trusted) list-first: slots.map (·.1) -> ((slots.map (·.1)).take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-last: [.own 1, .t (.exact (.punct "," true false)), .t (.kw "if"), .base 2, .t (.exact (.punct "," true... -> ([.own 1, .t (.exact (.punct "," true false)), .t (.kw "if"), .base 2, .t (.exact (.punct "," tru...
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:53 VE.EnglishGrammar.Norm.wording (S, trusted) list-first: σ -> (σ.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:38 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-first: [.t (.cls .numeral), .t (.kw "and"), .own 2] -> ([.t (.cls .numeral), .t (.kw "and"), .own 2].take 1)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Elab.lean:27 VE.EnglishGrammar.Norm.overOf (G[V], trusted) list-last: (rs.filterMap fun | .rule h _ => if h.number = n then some h.exceptionTo else none | _ => none).f... -> (((rs.filterMap fun | .rule h _ => if h.number = n then some h.exceptionTo else none | _ => none)...
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-last: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).reverse.take 1) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Elab.lean:27 VE.EnglishGrammar.Norm.overOf (G[V], trusted) list-drop-first: rs -> (rs.drop 1)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-drop-first: (VE.Route.Gate.profilesOf E.source).toOption -> (((VE.Route.Gate.profilesOf E.source).toOption).drop 1) (lean/VE/EnglishGrammar/Norm/Rules.lean:20: failed to synthesize)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-last: [.t (.kw "rule"), .t (.cls .numeral), .t (.exact (.punct "(" false true)), .t (.kw "exception"), ... -> ([.t (.kw "rule"), .t (.cls .numeral), .t (.exact (.punct "(" false true)), .t (.kw "exception"),...
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:19 VE.EnglishGrammar.Norm.regulatedOf (D[V], trusted) list-drop-first: (· -> (fun x_tm => (x_tm.drop 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:26 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "exception"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-last: ps.map (·, false) -> ((ps.map (·, false)).reverse.take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Read.lean:39 VE.EnglishGrammar.Norm.NormOneReading (S, trusted) list-drop-first: ps.map (·, false) -> ((ps.map (·, false)).drop 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Read.lean:92, lean/VE/EnglishGrammar/Norm/Read....)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Elab.lean:19 VE.EnglishGrammar.Norm.Clause.wire (D[V], trusted) list-last: over -> (over.reverse.take 1) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Elab.lean:47)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:29 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-first: [.own 1] -> ([.own 1].drop 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:31 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-last: [.own 1, .t (.exact (.punct "," true false)), .t (.kw "unless"), .base 2] -> ([.own 1, .t (.exact (.punct "," true false)), .t (.kw "unless"), .base 2].reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-last: [.own 1, .t (.exact (.punct "," true false)), .t (.kw "except"), .t (.kw "when"), .base 2] -> ([.own 1, .t (.exact (.punct "," true false)), .t (.kw "except"), .t (.kw "when"), .base 2].rever...
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.cls .numeral), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-last: ds -> (ds.reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.exact (.punct "(" false true)), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-last: ds.tail.map ("for each " ++ ·) -> ((ds.tail.map ("for each " ++ ·)).reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "exception"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:52 VE.EnglishGrammar.Norm.wording (S, trusted) list-last: ds.tail -> (ds.tail.reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "to"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:53 VE.EnglishGrammar.Norm.wording (S, trusted) list-last: σ -> (σ.reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "rules"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Norm/Rules.lean:53 VE.EnglishGrammar.Norm.wording (S, trusted) list-last: σ.reverse.map (·.2) -> ((σ.reverse.map (·.2)).reverse.take 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:27 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .own 2, -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:37 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-first: [.t (.cls .numeral), .t (.exact (.punct "," true false)), .own 2] -> ([.t (.cls .numeral), .t (.exact (.punct "," true false)), .own 2].drop 1)
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:28 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.cls .numeral), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:28 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "takes"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:28 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "over"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:30 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "if"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:32 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.exact (.punct "," true false)), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.exact (.punct "," true false)), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:33 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.exact (.punct "," true false)), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "if"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:34 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.kw "except"), -> 
+SURVIVOR lean/VE/EnglishGrammar/Fixed/Norms.lean:37 VE.EnglishGrammar.Norm.normRows (G[V], trusted) list-drop-middle: .t (.exact (.punct "," true false)), -> 
+trust_mutants: 78 KILLED, 88 SURVIVOR, 18 UNKNOWN, 20 INVALID, 0 ALLOWED, 0 NOT RUN, 407 OTHER SHARD in 1844 s
+trust_mutants: D[V], trusted: 9 KILLED, 2 SURVIVOR, 4 UNKNOWN, 2 INVALID, 32 OTHER SHARD
+trust_mutants: G[V], trusted: 14 KILLED, 63 SURVIVOR, 1 UNKNOWN, 5 INVALID, 163 OTHER SHARD
+trust_mutants: S, trusted: 55 KILLED, 23 SURVIVOR, 13 UNKNOWN, 13 INVALID, 212 OTHER SHARD
+trust_mutants: steps: wall plan 8.2 s, scratch 2.3 s, control_build 0.2 s, probe_install 1.1 s, control_probes 34.4 s, mutants 1793.7 s, cleanup 4.2 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 34.7 s (2), mutant_builds 1414 s (221), mutant_checks 1192.2 s (108), stage_controls 41.5 s (5), mutant_probes 4386.7 s (78)
