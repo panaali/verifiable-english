@@ -55,7 +55,7 @@
    "id": 8,
    "file": "lean/VE/Compose/ContractExamples.lean",
    "mutation": "the instance's Qc is empty",
-   "test": "lake build VE.Compose.ContractExamples: #guard backgroundValidP (opposite direction) and G1.transfers_ask's use in composed_instance",
+   "test": "lake build VE.Compose.ContractExamples: #guard !backgroundValidP on the asking base (it becomes admissible) and transfers_ask's use in G1.composed_instance",
    "result": "VE/Compose/ContractExamples.lean:184:0: Expression; VE/Compose/ContractExamples.lean:237:4: Type mismatch"
   },
   {
