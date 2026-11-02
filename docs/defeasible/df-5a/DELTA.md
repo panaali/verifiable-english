@@ -1,0 +1,14 @@
+# df-5a: user-visible delta
+
+Feature item df-5a (the first part of batch DF-5 of `docs/spec/defeasible-PLAN.md`, the zone at one situation; spec
+`docs/spec/defeasible.md` 3.8, 7.5, 8.6 and 8.9; acting DRI dri-featurefeed, 2026-10-18).
+
+**What users see does not change. Bytes 0.** `lean/VE/Defaults/Zone.lean` defines the zone and proves its soundness;
+`lean/VE/Defaults/ZoneExamples.lean` holds `#guard`s. No service mode, executable, response shape, schema, relay, Python
+or Rust product code reads either. The kind `defaults-zone`, its English and its relay are df-5's. The four statements
+of spec 7.5 that gain `valid` are signed by the DRI (`manage-agents/reviews/dri-decisions-20261102-df-5a.md`). That
+decision records it as no user-visible delta. The one delta is the trust budget.
+
+| # | Delta | Ruling | Evidence |
+| --- | --- | --- | --- |
+| T1 | Trust budget: **S +56, V +8** (K +0), measured with `uv run python tools/trust_map.py --check` on the final tree against its merge base with main, 01e3b48c54d9, all in `VE/Defaults/Zone.lean`. S: `DecLe`, `Observed`, `switchesOffRecord`, `DefaultCompletion`, `ByDefaultZ`, `ByDefaultLeftTo`, `DefaultZone`, `noExceptionRecord` (the meaning spec 7.5 states). Untied G[V]: `zoneForm`. C (not counted, checked by the zone soundness theorems): `defaultZoneOf`, `zoneMin`, `zoneRow`, `decSub`, `zoneAtoms`, `zoneDeclOk`, `zoneRecordOk`, `openAtomsAll`, `maxDefaultAtoms`. The proof abbreviations are P; `ZoneExamples.lean`'s declarations are T. | SIGNED by standing ruling R16 (DRI-RULINGS.md): new Lean-owned behaviour, 64 lines, at most 150, none in K. Every new trusted definition is exercised by a test that can fail: `python3 docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-5a/mutants.json` runs 17 mutants, at least one per new trusted definition (`DecLe` T1, `Observed` T2, `switchesOffRecord` T3, `DefaultCompletion` T4, `ByDefaultZ` T5, `ByDefaultLeftTo` T6, `noExceptionRecord` T7, `zoneForm` S5), plus the five seeded bugs of spec 8.9 (S1-S5) and five on the enumeration's checks (C1-C5). Each fails the guards or theorems it names (saved run `evidence/mutants.out`, control 0 failures, "ALL MUTANTS FAIL THEIR GUARDS"). `DefaultZone` T8 was run by hand (`evidence/T8.out`). `tools/trust_mutants.py` (cloud pool, final run at 0a62408a1d08): 77 killed, 15 invalid, 45 allowed with one line each, 0 survivors, 0 unknown, exit 0 (`trust-mutants-final.json`, `trust-mutants-allow.json`). The ties pass is asked for in `manage-agents/FOLLOW-UPS.md` ("## df-5a"). The allowance is recorded with `tools/trust_map.py --allow` (S 56, V 8 in `docs/trust-baseline.json`, signed "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-10-18"). | `uv run python tools/trust_map.py --check` exit 0 ("PASS: K, S and untied [V] within 01e3b48c54d9 and the allowances introduced since") |
