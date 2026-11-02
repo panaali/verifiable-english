@@ -44,8 +44,9 @@ encoder proof `layeredKindCase_fits` (lean/ResponseShape/Encoders/NormDefaults.l
 - `uv run python tools/trust_map.py --check`: "against d8f58bf3be47: K +0, S +56, D +0, G +14, ... trusted +59" and
   "PASS: K, S and untied [V] within d8f58bf3be47 and the allowances introduced since"; allowance recorded with
   `--allow ... --signed "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02"`.
-- `mac-pytest.sh --trustmut -- --max-mutants 1000 --allow ... --rescore ...`: exit 0, trust-mutants.json counts
-  91 KILLED, 52 ALLOWED, 12 INVALID, 0 SURVIVOR, 0 UNKNOWN, 0 NOT RUN (head 70cd8dca5; the first full run is
+- `mac-pytest.sh --trustmut -- --max-mutants 1000 --allow ...` (a full run, no --rescore, after the F1 wording fix):
+  exit 0, trust-mutants.json counts 91 KILLED, 52 ALLOWED, 12 INVALID, 0 SURVIVOR, 0 UNKNOWN, 0 NOT RUN (head
+  4bf5b3ae0; the first full run is
   trust-mutants-run1.json: 41 SURVIVOR and 33 UNKNOWN, fixed by the multi-element fixtures of 0d333d2e4 or allowed
   with one reason each in trust-mutants-allow.json).
 - `mac-pytest.sh --select -- --base d8f58bf3b --run` (HEAD 01d6e725, 426/530 units): 4 failures, all
