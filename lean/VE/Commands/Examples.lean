@@ -221,4 +221,57 @@ def tuplesOf (j : Json) : Nat :=
       guardsOf se E L 0 "draft is approved" == []
   | _, _ => false
 
+/-! ## What a mutant of the reader changes (docs/commands-imperatives/ci-1/trust-mutants.json) -/
+
+/-- Three constants named alike under folding, one of them twice; acts with another slot 0, no role, no verb. -/
+def extraEnv : Json :=
+  envOf ["user", "service", "reading", "token"]
+    [permission "share_permitted" ["user", "token"] "{0} share {1}", obligation "aa_required" ["service"] "{0} aa",
+     obligation "bb_required" ["user"] "{0} bb", obligation "bare_required" ["user", "token"] "{0} {1}",
+     ("seen", Json.mkObj [("arguments", Lean.toJson ["user"]), ("description", .str "seen"),
+       ("regulated", Json.mkObj [("role", .str "plain"), ("default", .str "deny")])]),
+     predEntry "approved" ["reading"] none (some "{0} is approved")]
+    [("reader", "user"), ("atlas", "service"), ("draft", "reading"), ("c1", "token"), ("c2", "token"), ("c3", "token")]
+    "webapp-copy" (some ("user", "reader"))
+    [("the TOKEN", "c1"), ("the Token", "c2"), ("the tOken", "c3"), ("the token", "c3")]
+
+#guard read extraEnv "Do not share the token." == .many
+  [⟨.forbid, "share_permitted", [⟨"c1", "the TOKEN"⟩], .top⟩, ⟨.forbid, "share_permitted", [⟨"c2", "the Token"⟩], .top⟩,
+   ⟨.forbid, "share_permitted", [⟨"c3", "the tOken"⟩], .top⟩]
+#guard read extraEnv "Bb." == .one ⟨.require, "bb_required", [], .top⟩
+#guard read extraEnv "Aa." == .refused "TypeMismatch" "addressee"
+#guard read extraEnv "." == noReadingOutcome
+#guard read extraEnv "C1." == noReadingOutcome
+#guard web "Click Ask, if Click Ask, if draft is approved." == noReadingOutcome
+#guard web "Use assistant." == .one ⟨.require, "use_required", [⟨"assistant", "assistant"⟩], .top⟩
+#guard read (webWith (some ("user", "reader")) [("the key", "token1"), ("the token", "token1")])
+    "Do not share the token." == .one ⟨.forbid, "share_permitted", [⟨"token1", "the token"⟩], .top⟩
+#guard (readingsOf ⟨.require, "x", none⟩ [("a", []), ("b", [])] [.top, .bottom]).length == 4
+
+/-- The outcome of readings of these formulas, each with its mark. -/
+def outcomeOf (rs : List (VE.EnglishGrammar.EFormula × Bool)) : TranslateOutcome :=
+  .readings (rs.map fun (f, m) => (f, m, VE.EnglishGrammar.DState.init)) true
+
+def approvedE : VE.EnglishGrammar.EFormula := .pred "approved" [.const "draft"]
+
+#guard match se0, lex0 with
+  | some se, .ok (E, L) =>
+    let unread (o : TranslateOutcome) : String × String := match guardOfOutcome se E L "c" o with
+      | .error (.unread c t) => (c, t)
+      | _ => ("", "")
+    let marked := ("ConclusionWithoutPremise", "The condition is marked as a conclusion, and no earlier sentence is a premise.")
+    unread (outcomeOf [(approvedE, false), (approvedE, true)]) == marked &&
+      unread (outcomeOf [(approvedE, true), (approvedE, false)]) == marked &&
+      unread (outcomeOf [(.pred "approved" [.const "calls"], false)]) ==
+        ("IllTyped", "The condition was read, and its formula does not pass the type check.")
+  | _, _ => false
+
+/-- A reading set of `n` readings. -/
+def readingSet (n : Nat) : Json :=
+  Json.mkObj [("reading_sets", .arr #[Json.mkObj [("unit", .str "u"), ("readings", .arr
+    (List.replicate n (Json.mkObj [("kind", .str "asserted"), ("content", .null)])).toArray)]])]
+
+#guard [1, 2, readingsBound].all fun n => (VE.SpeechActs.Wire.readingCandidates (readingSet n)).toOption.isSome
+#guard [0, readingsBound + 1].all fun n => (VE.SpeechActs.Wire.readingCandidates (readingSet n)).toOption.isNone
+
 end VE.Commands.Examples

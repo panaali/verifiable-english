@@ -2095,7 +2095,6 @@
         "VE.Commands.checkedAddressee",
         "VE.Commands.commandable",
         "VE.Commands.conditionOf",
-        "VE.Commands.declared",
         {
           "name": "VE.Commands.filled",
           "tied": [
@@ -2149,6 +2148,9 @@
         "VE.Commands.splitLastIf",
         "VE.Commands.trimmed",
         "VE.Commands.tuples"
+      ],
+      "P": [
+        "VE.Commands.declared"
       ]
     },
     "VE/Commands/Texts.lean": {
