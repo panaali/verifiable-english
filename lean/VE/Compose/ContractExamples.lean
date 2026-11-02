@@ -217,10 +217,17 @@ theorem bare_admissible_ask (hx : X1Checks) :
   rw [VE.Norms.envAt_constants, soften_E, envPrime_constants, choice_correlate (k1_hyps hx), choice_E] at hx'
   cases hx'
 
+/-- The hypothesis `hcf`: the one premise list, the slot under `A` and then the pack, is conflict-free. -/
+theorem conflict_free_ask (hx : G1Checks) :
+    VE.Compose.ConflictFreeP.{u} (correlate (sup K1).1) (slotUnder K1 A ++ X qs) :=
+  VE.Compose.conflictFreeP_append _ _ _ (VE.Compose.slot_conflict_free _
+    (by rw [sup_correlate (k1_hyps hx.1)]; exact sup_wfSoft (k1_hyps hx.1)) _ _ hx.2.2)
+
 /-- The instance: under the strict reading, on `bare`, the pack's premise gives the goal on the expansion. -/
 theorem composed_instance (hx : G1Checks) :
     noAsksUser.denote (expand (choiceDoc K1 A).1 bare.asStructure) [] := by
-  refine VE.Readings.composed_superpose_all K1 hx.1.1 (by decide) hx.1.2.1 A (by decide) qs Qc ?_ ?_ ?_ [] noAsksUser
+  refine VE.Readings.composed_superpose_all K1 hx.1.1 (by decide) hx.1.2.1 A (by decide) qs Qc ?_ ?_
+    (conflict_free_ask hx) [] noAsksUser
     (fun _ h => nomatch h) ((VE.check_iff_wellFormed _ _ _).mp (by decide)) cert hx.2.1 A
     (by decide : compatible K1 A = true)
     (fun _ h => h) bare.asStructure (bare_admissible_ask hx.1) ?_
@@ -229,8 +236,6 @@ theorem composed_instance (hx : G1Checks) :
     subst hp
     exact transfers_ask hx.1
   · exact VE.Compose.slotCheck_sound _ _ (by decide)
-  · exact VE.Compose.conflictFreeP_append _ _ _ (VE.Compose.slot_conflict_free _
-      (by rw [sup_correlate (k1_hyps hx.1)]; exact sup_wfSoft (k1_hyps hx.1)) _ _ hx.2.2)
   · rw [show (choiceDoc K1 A).2 = [] by decide]
     exact VE.Compose.sat_nil _
 
