@@ -13054,6 +13054,7 @@
         "VE.Calc.English.exprDepth",
         "VE.Calc.English.fill",
         "VE.Calc.English.leadingPhrase",
+        "VE.Calc.English.lowerWords",
         "VE.Calc.English.natWords",
         "VE.Calc.English.phraseWords",
         "VE.Calc.English.placesPhrase",

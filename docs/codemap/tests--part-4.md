@@ -1,3 +1,4 @@
+- `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 - `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
 - `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
 - `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
@@ -7,6 +8,7 @@
 - `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
+- `tests/test_me_2d_f2_delta.py` — me-2d-f2's saved delta (docs/math-evidence/me-2d-f2/evidence/delta.json, DELTA row D1, standing ruling R1): the calc mode's refusal of the words "the" alone, r…
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
@@ -89,4 +91,3 @@
 - `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
 - `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
 - `tests/test_rd9_statements.py` — RD-9's Lean declarations against the approved blocks of docs/spec/rd-9-soft-chain.md 6 (checklist 17).
-- `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).

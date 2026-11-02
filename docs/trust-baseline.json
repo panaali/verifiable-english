@@ -1734,6 +1734,13 @@
    "reason": "qt-a3db: VE/Cardinality/Render.lean V +129 (the paraphrase renderer), VE/Cardinality/Run.lean V +6 (runCase's paraphrase case), VE/Cardinality/RenderTheorems.lean S +6 (Charges); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3db, 2026-10-18",
    "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "me-2d-f2: VE/Calc/Render.lean trusted +7 (G[V] lowerWords new, leadingPhrase and reservedIn ignore ASCII case); VE/Calc/Wire.lean D[R] +1 (checkWords, the words \"the\" alone), not trusted; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d-f2, 2026-11-02",
+   "commit": "f3a4da815e4c01fe574f3f0176e57e65fec142ab"
   }
  ]
 }
