@@ -1,0 +1,67 @@
+[
+ {
+  "item": "qa-q2b",
+  "start": "2026-10-14T02:46:32Z",
+  "flagged": "2026-10-26T15:21:41Z",
+  "age_h": 300.6,
+  "median_min": 258.0,
+  "rounds": 4,
+  "limit_h": 17.2,
+  "ended": "still open",
+  "ended_t": null,
+  "round_h": 468.3,
+  "in_flight": false
+ },
+ {
+  "item": "rd-9b",
+  "start": "2026-10-14T02:48:31Z",
+  "flagged": "2026-10-26T15:21:41Z",
+  "age_h": 300.6,
+  "median_min": 258.0,
+  "rounds": 4,
+  "limit_h": 17.2,
+  "ended": "still open",
+  "ended_t": null,
+  "round_h": 468.3,
+  "in_flight": false
+ },
+ {
+  "item": "qa-q2c",
+  "start": "2026-10-14T08:45:31Z",
+  "flagged": "2026-10-26T15:21:41Z",
+  "age_h": 294.6,
+  "median_min": 258.0,
+  "rounds": 4,
+  "limit_h": 17.2,
+  "ended": "still open",
+  "ended_t": null,
+  "round_h": 462.4,
+  "in_flight": false
+ },
+ {
+  "item": "jt-2c",
+  "start": "2026-10-31T01:01:31Z",
+  "flagged": "2026-10-31T10:36:41Z",
+  "age_h": 9.6,
+  "median_min": 140.1,
+  "rounds": 12,
+  "limit_h": 9.3,
+  "ended": "gate-start",
+  "ended_t": "2026-10-31T12:58:06Z",
+  "round_h": 11.9,
+  "in_flight": true
+ },
+ {
+  "item": "pc-1",
+  "start": "2026-11-01T17:04:27Z",
+  "flagged": "2026-11-02T02:36:41Z",
+  "age_h": 9.5,
+  "median_min": 142.9,
+  "rounds": 13,
+  "limit_h": 9.5,
+  "ended": "fix-start",
+  "ended_t": "2026-11-02T14:27:29Z",
+  "round_h": 21.4,
+  "in_flight": true
+ }
+]
