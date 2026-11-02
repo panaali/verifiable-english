@@ -6972,7 +6972,7 @@ module VE.Closure.Syntax 37358cae73ccab2120757c6c9778fd7ab389587277485ea9390ce4a
 182:0-183:41 theorem VE.Closure.erase_embed@VE.Closure.Syntax
 185:0-188:17 theorem VE.Closure.embed_of_erase@VE.Closure.Syntax
 190:0-195:28 theorem VE.Closure.conservativity_without_reach@VE.Closure.Syntax
-module VE.Commands.Examples 6c4bcaf0b153bd456dd801c8ccb954455552fdab6e242d3330423cc1b34e750f
+module VE.Commands.Examples 8a7c18460dc2953879e5cdc453b576c45e9b1e2dfc6eff11f24d2d10603ce95a
 13:0-13:87 def VE.Commands.Examples.sortEntry@VE.Commands.Examples
 15:0-16:67 def VE.Commands.Examples.constEntry@VE.Commands.Examples
 18:0-24:114 def VE.Commands.Examples.predEntry@VE.Commands.Examples
@@ -6995,10 +6995,10 @@ module VE.Commands.Examples 6c4bcaf0b153bd456dd801c8ccb954455552fdab6e242d333042
 171:0-172:98 def VE.Commands.Examples.wordingOf@VE.Commands.Examples
 178:0-188:46 def VE.Commands.Examples.envWith@VE.Commands.Examples
 190:0-193:17 def VE.Commands.Examples.tuplesOf@VE.Commands.Examples
-226:0-236:88 def VE.Commands.Examples.extraEnv@VE.Commands.Examples
-251:0-253:77 def VE.Commands.Examples.outcomeOf@VE.Commands.Examples
-255:0-255:79 def VE.Commands.Examples.approvedE@VE.Commands.Examples
-269:0-272:96 def VE.Commands.Examples.readingSet@VE.Commands.Examples
+232:0-242:88 def VE.Commands.Examples.extraEnv@VE.Commands.Examples
+257:0-259:77 def VE.Commands.Examples.outcomeOf@VE.Commands.Examples
+261:0-261:79 def VE.Commands.Examples.approvedE@VE.Commands.Examples
+275:0-278:96 def VE.Commands.Examples.readingSet@VE.Commands.Examples
 module VE.Commands.Read c56a9fc55df93eaac892701fc46c85cf89932a52281c6114c6321a72f7ee3994
 15:0-15:32 def VE.Commands.maxWordingBytes@VE.Commands.Read
 16:0-17:31 def VE.Commands.maxCandidates@VE.Commands.Read
