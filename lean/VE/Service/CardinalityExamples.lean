@@ -24,8 +24,8 @@ def text (e : Json) (units : List Json) (more : List (String × Json) := []) : S
   "---\n" ++ (Json.mkObj ([("format", .str "ve-document@1"), ("environment", e), ("units", toJson units)] ++ more)).compress ++
     "\n---\nA\n"
 
-def run (t : String) (admit := true) : Except String Json :=
-  checkCore (Json.mkObj [("id", .str "d"), ("document", .str t), ("admit", .bool admit)])
+def run (t : String) (claims := true) : Except String Json :=
+  checkCore (Json.mkObj [("id", .str "d"), ("document", .str t), ("admit", .bool claims)])
 
 def said (t : String) : String := match run t with
   | .ok _ => "ok"
@@ -57,7 +57,7 @@ def report : Json := reported.getObjValD "cardinality"
 #guard (decoded.map (Json.str ·.w6.environmentId)) == some (report.getObjValD "w6_environment_id")
 #guard (decoded.map (Json.str ·.w6.targetId)) == some (report.getObjValD "w6_target_environment_id")
 #guard (report.getObjValD "report_id") != .null
-#guard ((run (text environment [unit "u" (card top)] (graph "u" [("u", top)])) (admit := false)).toOption.map
+#guard ((run (text environment [unit "u" (card top)] (graph "u" [("u", top)])) (claims := false)).toOption.map
   fun j => (j.getObjVal? "cardinality").toOption.isNone) == some true
 
 /-! Each node is a unit holding its statement, on both sides. -/
