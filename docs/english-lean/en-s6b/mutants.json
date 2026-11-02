@@ -1,0 +1,163 @@
+{
+ "item": "en-s6b",
+ "note": "Each plant alone, built with `lake build VE.EnglishGrammar.Norm.Examples` (Lean) or run with pytest (Python), then restored. Line numbers are those of the final Norm/Examples.lean. Mechanical mutants per trusted definition: trust-mutants.json. No Rust changed.",
+ "lean": [
+  {
+   "behaviour": "`unless` read as `if` (task seed; spec 6)",
+   "file": [
+    "ve/english_grammar/norms@0.json",
+    "lean/VE/EnglishGrammar/Fixed/Norms.lean (regenerated)"
+   ],
+   "plant": {
+    "file": "ve/english_grammar/norms@0.json",
+    "before": "\"tag\": \"norm.clause-unless\", \"lhs\": \"norm_sentence\", \"act\": \"clause\", \"guard\": false",
+    "after": "\"tag\": \"norm.clause-unless\", \"lhs\": \"norm_sentence\", \"act\": \"clause\", \"guard\": true"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be done.\") =="
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "a consequence row dropping its exception: the clause action keeps no carve-out (task seed; spec 6)",
+   "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+    "before": "else { c with carveOuts := φs }",
+    "after": "else { c with carveOuts := [] }"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:238 #guard clauses (rd act LA \"Rule 1. Every act may be done, except when this holds in all cases.\") == ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be done.\") =="
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "a header dropping its exception list",
+   "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+    "before": ".ok (.header ⟨n, xs.flatMap Arg.nums⟩, ⟨none⟩)",
+    "after": ".ok (.header ⟨n, []⟩, ⟨none⟩)"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:209 #guard !document two (rd two L2 (f1.replace \"rule 1)\" \"rule 4)\")) && !authored two (rd two L2 \"\")",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:234 #guard (stmts (rd act LA f8)).map (·.flatMap NormStatement.refs) == some [1, 2] && document act (rd ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:235 #guard (stmts (rd act LA (f8.replace \"rules 1 and 2\" \"rules 2, 1\"))).map (·.flatMap NormStatement.re",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:311 #guard overs (rd act LA f8) == some [[], [], [\"rule-1\", \"rule-2\"]]",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:312 #guard overs (rd act LA (\"Rule 1 takes precedence over rule 2.\\nRule 1. Every act must not be done.\\",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:314 #guard overs (rd act LA \"Rule 1 (exception to rule 2). Every act may be done.\\nRule 2. Every act mus"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "an except-when condition read with scope [] (spec 6)",
+   "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+    "before": "x.read (st.scope.getD [])",
+    "after": "x.read []"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:246 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11) && authored t",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:249 #guard outcome (rd two L2 \"Rule 1. Every act must be done. Except when that act may be done.\\nRule 2",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:324 #guard marks two L2 f11 == some (List.replicate 6 false) && marks two L2 \"Rule 1.\" == some [false]"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "Elab skipping decodeNorm: each formula decoded alone, without the shared node budget (task seed)",
+   "file": "lean/VE/EnglishGrammar/Norm/Elab.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Elab.lean",
+    "before": "def Clause.toNode (name : String) (over : List String) (c : Clause) : Except String VE.Norms.Node :=\n  VE.Norms.Wire.decodeNorm (c.wire name over)",
+    "after": "def Clause.toNode (name : String) (over : List String) (c : Clause) : Except String VE.Norms.Node := do\n  let (g, _) ← VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 c.guard.encode\n  let cs ← c.carveOuts.mapM fun φ => (·.1) <$> VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 φ.encode\n  pure ⟨name, c.pred, c.force.sign, g, cs, over⟩"
+   },
+   "proofs_cut": true,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:366 #guard match lean (long 5000) with"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "`.mustNot` given a true sign (spec 6)",
+   "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Value.lean",
+    "before": "  | .mustNot => false",
+    "after": "  | .mustNot => true"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:75 #guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [true, false, true, fa",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:212 #guard same (nodes (rd act LA \"Rule 1. No act may be done.\")) (python \"[{\\\"guard\\\": [\\\"top\\\"], \\\"nam",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:354 #guard same (lean (situation \"denial_of_being_claude_permitted\" (.modal .mustNot) (s := \"claude_inst"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "stripSoft applied whatever the profiles (DRI decision 20261102-en-s6b item 2)",
+   "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Rules.lean",
+    "before": "(if soft then VE.SoftNorms.Wire.stripSoft E.source else .ok E.source)",
+    "after": "VE.SoftNorms.Wire.stripSoft E.source"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:274 #guard (softAct \"\").predicates.length == 1 && (regulatedOf (softAct \"\")).isEmpty",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:275 #guard outcome (rd (softAct \"\") LA \"Rule 1. Every act may be done.\") == \"stopped 1 noDerivation\""
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "`fits` refusing `.modal .must` on an obligation (DRI decision 20261102-en-s6b item 4)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "  | .modal .must, .obligation => true",
+    "after": "  | .modal .must, .obligation => false"
+   },
+   "proofs_cut": false,
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:246 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11) && authored t"
+   ],
+   "status": "KILLED"
+  }
+ ],
+ "python": [
+  {
+   "behaviour": "a norm nonterminal rendered one higher by the generator",
+   "file": "tools/english_grammar_gen.py",
+   "plant": {
+    "before": "f\".own {own}\"",
+    "after": "f\".own {own + 1}\""
+   },
+   "test": [
+    "tests/test_english_grammar_gen.py::test_the_norm_table_parses_and_names_its_nonterminals",
+    "tests/test_english_grammar_gen.py::test_the_repository_is_in_sync"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "parse_norms' W3 check skipped",
+   "file": "tools/english_grammar_gen.py",
+   "plant": {
+    "before": "if type(first) is dict and \"n\" in first and not (",
+    "after": "if False and type(first) is dict and \"n\" in first and not ("
+   },
+   "test": [
+    "tests/test_english_grammar_gen.py::test_malformed_norm_rows[changes4-not well-founded]",
+    "tests/test_english_grammar_gen.py::test_malformed_norm_rows[changes5-not well-founded]"
+   ],
+   "status": "KILLED"
+  }
+ ]
+}
