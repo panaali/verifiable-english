@@ -10,6 +10,7 @@ open Lean VE.Acts VE.Acts.Wire VE.Acts.Decode VE.Acts.Examples VE.Acts.RuleExamp
 open VE.Acts.ElaborateExamples VE.Norms VE.NormDefaults
 open VE.Acts.MeaningExamples (fx5)
 
+def actsOf (fx : List String) (V : Vocab) (U : UDoc) := VE.Norms.Wire.actsOf fx V U.D.T.regulated
 def ck (fx : List String) (V : Vocab) (name : String) (k : Nat) (s : String) := checkAct fx V name k (.str s)
 def errText {α : Type} (e : Except String α) : String := match e with | .error m => m | .ok _ => "ok"
 
@@ -231,5 +232,34 @@ def viewed (s : VE.NormDefaults.Wire.SourceU) :=
 -- A7: a joined act with one atom is not split; the source's predicate stays.
 #guard ((flaggedSource (envOf plain6 (blockJ fx7 V7) (name := "p079") (act := a7) (role := "obligation")
   (default := "deny")) (Json.arr #[jrule "p079"])).toOption.map fun s => s.D.T.regulated.map (·.name)) == some ["p079"]
+
+/-! ### Each joined act read once, by the decoder, at the route's limits (`Norms.Wire.actsOf`) -/
+
+/-- Two letters from `i`, so that each act is its own. -/
+def tag (i : Nat) : String := String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]
+def manyActs (n : Nat) : List (String × Json) := (List.range n).map fun i => (s!"p{i}", Json.mkObj
+  [("arguments", toJson ["person"]), ("description", .str "d"), ("regulated", Json.mkObj [("role", .str "permission"),
+    ("default", .str "deny"), ("act", .str s!"\{0} be subjected to x{tag i} or to y{tag i}")])])
+def manyEnv (n : Nat) : Json := (envOf plain6 block6).setObjVal! "vocabulary"
+  (((envOf plain6 block6).getObjValD "vocabulary").setObjVal! "predicates" (Json.mkObj (manyActs n)))
+def manyRules (n : Nat) : Json := Json.arr ((List.range n).flatMap fun i => (List.range 4).map fun k =>
+  Json.mkObj [("norm", Json.mkObj [("name", .str s!"r{i}x{k}"), ("predicate", .str s!"p{i}"), ("sign", .bool false),
+    ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]).toArray
+-- 32 acts and 128 rules: the decoder's 32 trees, 64 parts and 256 part rules.
+#guard ((decodeElaboratedU (manyEnv 32) (manyRules 32)).toOption.map fun e =>
+  (e.s.src.ne.joined.length, e.D.acts == e.s.src.ne.joined, e.U'.D.T.regulated.length, e.U'.D.T.nodes.length)) ==
+  some (32, true, 64, 256)
+-- 33 acts split past the route's limit; the decoder's own limit stands at 65 declarations.
+#guard errText (decodeElaboratedU (manyEnv 33) (manyRules 33)) == "ResourceLimit: regulated predicates"
+#guard errText (decodeElaboratedU (manyEnv 65) (Json.arr #[])) == "ResourceLimit: regulated predicates"
+-- A lexical decoder reads no tree: `joined := false` keeps D-4, and a lexical act gives none.
+#guard errText (VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1) (joined := false)) ==
+  "InvalidInput: act phrase for p0 joins acts with 'or' outside a fixed phrase"
+#guard ((VE.Norms.Wire.decodeSource (envOf plain6 block6 (act := "{0} be held") (default := "deny")) norms27).toOption.map
+  (·.ne.joined.length)) == some 0
+#guard ((VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1)).toOption.map (·.ne.joined.map (·.1))) == some ["p0"]
+-- `joinedActs`: under `acts@0` only, and only when asked.
+#guard (VE.Norms.Wire.joinedActs true ["norms@0"] [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []
+#guard (VE.Norms.Wire.joinedActs false plain6 [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []
 
 end VE.Acts.DecodeExamples

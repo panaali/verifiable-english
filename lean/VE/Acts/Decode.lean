@@ -5,8 +5,8 @@ import VE.Acts.Wire
 document and its map.
 
 Elaboration runs after `decodeSourceU` has decoded the document and recovered its `unspecified` completions (SR6),
-so the source and its binding proofs are untouched. Each act of the decoded document is read once by `checkAct`
-(deterministic, so its tree is the decoder's answer): a lexical act gives no tree, a joined act its one meaning.
+so the source and its binding proofs are untouched. Each act of the decoded document was read once by `checkAct`,
+in the decoder (`Norms.Wire.actsOf`): a lexical act gives no tree, a joined act its one meaning.
 
 The norms hook admits a joined act, so every entry point an `acts@0` norms document reaches runs on `e.U'`: `sourceOf`
 gives it as the `Source` the routes read, the parts declared in place of their sources, so a route's theorem over any
@@ -25,21 +25,13 @@ structure ElaboratedU where
   M : SplitMap
   hE : elaborateMap D = .ok (U', M)
 
-/-- Each joined act of `U` and its one meaning (`checkAct` under the fixed phrases `fx` and the frames `V`). -/
-def actsOf (fx : List String) (V : Vocab) (U : UDoc) : Except String (List (String × Act)) :=
-  U.D.T.regulated.filterMapM fun r => match r.act with
-    | some a => do
-      let (_, A) ← VE.Acts.Wire.checkAct fx V r.name r.sorts.length (.str a)
-      pure (A.map (r.name, ·))
-    | none => pure none
-
-/-- The decoded source `s`, elaborated: `V` and `fixed` from the `acts` block, each joined act's tree from `checkAct`,
-    `declared := (declaredNames environment).length`; then `elaborateMap D`. Without `acts@0` no act is read. -/
+/-- The decoded source `s`, elaborated: `V` and `fixed` from the `acts` block, each joined act's tree as the decoder
+    read it (`Norms.Wire.actsOf`), `declared := (declaredNames environment).length`; then `elaborateMap D`. Without
+    `acts@0` the decoder reads no act. -/
 def elaborateSource (environment : Json) (s : VE.NormDefaults.Wire.SourceU) : Except String ElaboratedU := do
   let fx ← VE.Norms.Wire.actsFixed (VE.Norms.Wire.actsProfiles true environment) environment
   let V ← VE.Norms.Wire.actsVocab (VE.Norms.Wire.actsProfiles true environment) environment
-  let acts ← if s.src.ne.profiles.contains "acts@0" then actsOf fx V s.U else pure []
-  let D : ActsDoc := ⟨s.U, V, fx, acts, (VE.NormDefaults.Wire.declaredNames environment).length⟩
+  let D : ActsDoc := ⟨s.U, V, fx, s.src.ne.joined, (VE.NormDefaults.Wire.declaredNames environment).length⟩
   match h : elaborateMap D with
   | .ok (U', M) => pure ⟨s, D, rfl, U', M, h⟩
   | .error e => throw e
