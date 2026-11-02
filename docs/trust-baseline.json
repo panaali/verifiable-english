@@ -1755,6 +1755,34 @@
    "reason": "cmp-s3a: VE/RightClauses/Plain.lean S +103, VE/RightClauses/Tree.lean S +36 (K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
+   "commit": "01e3b48c54d9e07276183b018baec2d462990103"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "df-5a (DF-5 at one situation, Lean only): S +56 = lean/VE/Defaults/Zone.lean (S DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord); V +8 = lean/VE/Defaults/Zone.lean (G[V] zoneForm); K +0; the enumeration (defaultZoneOf, zoneMin, zoneRow, decSub, zoneAtoms, zoneDeclOk, zoneRecordOk, openAtomsAll, maxDefaultAtoms) C, checked by defaultZone_byDefault_sound, _leftTo_sound, _notSaid_sound, _noCompletion_sound, defaultZone_budget; ZoneExamples helpers T; trust mutants docs/defeasible/df-5a/trust-mutants.json",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5a, 2026-11-02",
+   "commit": "01e3b48c54d9e07276183b018baec2d462990103"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "sc-2d: VE/Scope/Theorems.lean S +3 (VE.Scope.Typed, spec 5.4's typing predicate in applyEffect_typed; exercised by Examples.lean:1236 and :1241, mutant typed_forgets_carve_outs)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-2d, 2026-10-18",
+   "commit": "4d9a0eeb043cd2a8a4eb7f1096fde3e610bd88f1"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "me-2d-f2: VE/Calc/Render.lean trusted +7 (G[V] lowerWords new, leadingPhrase and reservedIn ignore ASCII case); VE/Calc/Wire.lean D[R] +1 (checkWords, the words \"the\" alone), not trusted; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d-f2, 2026-11-02",
+   "commit": "f3a4da815e4c01fe574f3f0176e57e65fec142ab"
   }
  ]
 }
