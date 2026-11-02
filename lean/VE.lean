@@ -294,3 +294,5 @@ import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Defaults.Zone
+import VE.Defaults.ZoneExamples

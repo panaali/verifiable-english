@@ -131,6 +131,7 @@ import VE.Defaults.MeaningExamples
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
+import VE.Defaults.Zone
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -2098,6 +2099,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.Wire.viewOn_L
 #print axioms VE.Defaults.act_arity
+#print axioms VE.Defaults.any_eq_recTuples
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
@@ -2109,12 +2111,24 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.collision_unranked
 #print axioms VE.Defaults.cond_declared
 #print axioms VE.Defaults.cond_free
+#print axioms VE.Defaults.consistent_atomV
+#print axioms VE.Defaults.count_allTuples
+#print axioms VE.Defaults.count_map_cons
+#print axioms VE.Defaults.dc_of_min
+#print axioms VE.Defaults.decLe_iff
+#print axioms VE.Defaults.decisionAtoms_none
 #print axioms VE.Defaults.decisionNames_split
 #print axioms VE.Defaults.decision_arity
 #print axioms VE.Defaults.decision_declared
 #print axioms VE.Defaults.decision_not_unsaid
 #print axioms VE.Defaults.defaultBase_of_dflt
 #print axioms VE.Defaults.defaultCoherenceCheck_sound
+#print axioms VE.Defaults.defaultZone_budget
+#print axioms VE.Defaults.defaultZone_byDefault_sound
+#print axioms VE.Defaults.defaultZone_eq_noException
+#print axioms VE.Defaults.defaultZone_leftTo_sound
+#print axioms VE.Defaults.defaultZone_noCompletion_sound
+#print axioms VE.Defaults.defaultZone_notSaid_sound
 #print axioms VE.Defaults.default_entails_minimal
 #print axioms VE.Defaults.default_entails_minimal_of
 #print axioms VE.Defaults.defaults_model_default_base
@@ -2124,17 +2138,45 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.excepted_only
 #print axioms VE.Defaults.followsForm_short
 #print axioms VE.Defaults.least_le
+#print axioms VE.Defaults.length_allTuples
+#print axioms VE.Defaults.length_filter_ne
 #print axioms VE.Defaults.mem_exc
+#print axioms VE.Defaults.mem_of_mem_subsets
+#print axioms VE.Defaults.mem_zVals
+#print axioms VE.Defaults.min_of_dc
 #print axioms VE.Defaults.node_arity
+#print axioms VE.Defaults.openAtomsCount_eq
 #print axioms VE.Defaults.pairChecks_sound
+#print axioms VE.Defaults.pair_facts
 #print axioms VE.Defaults.premisesX_split
 #print axioms VE.Defaults.questionDiag_none
+#print axioms VE.Defaults.realized_C
+#print axioms VE.Defaults.realized_admissible
+#print axioms VE.Defaults.realized_off
+#print axioms VE.Defaults.realized_rec
 #print axioms VE.Defaults.reg_arity
 #print axioms VE.Defaults.replace_admissible
+#print axioms VE.Defaults.row_of_completion
 #print axioms VE.Defaults.sat_dflt
 #print axioms VE.Defaults.softX_eq
 #print axioms VE.Defaults.strict_of_withoutDefaults
+#print axioms VE.Defaults.sum_ite_count
+#print axioms VE.Defaults.sum_replicate_zone
+#print axioms VE.Defaults.toOption_eq_some
+#print axioms VE.Defaults.tuplesOutside_eq
+#print axioms VE.Defaults.val_dc
+#print axioms VE.Defaults.val_real
 #print axioms VE.Defaults.withOpen_denote
+#print axioms VE.Defaults.zoneAtoms_facts
+#print axioms VE.Defaults.zoneCharge_some
+#print axioms VE.Defaults.zoneDeclOk_iff
+#print axioms VE.Defaults.zoneFormOf_eq
+#print axioms VE.Defaults.zoneMin_error
+#print axioms VE.Defaults.zoneMin_noCompletion
+#print axioms VE.Defaults.zoneMin_ok
+#print axioms VE.Defaults.zoneRecordOk_facts
+#print axioms VE.Defaults.zoneRow_ok
+#print axioms VE.Defaults.zoneRow_true
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
 #print axioms VE.Definitions.Alias.faithful
