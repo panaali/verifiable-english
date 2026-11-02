@@ -958,4 +958,9 @@ def file : File where
     ("product_line", .schema product_line),
     ("verdicts_components", .schema verdicts_components)]
 
+/- The filled environment's shapes as `tools/response_schemas.py` renders them, pinned by their digests (ap-1bg: a plain
+act's `form` one of Lean's two forms, the `acts` block closed with its required `fixed` strings). -/
+#guard (render "readings-route.json" 64 filledPredicate).toOption.map (hash ·.compress) == some 2024890063286869925
+#guard (render "readings-route.json" 64 filledEnvironment).toOption.map (hash ·.compress) == some 7984071425157217422
+
 end ResponseShape.Schemas.ReadingsRoute

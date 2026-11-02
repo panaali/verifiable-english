@@ -15063,7 +15063,8 @@
         "VE.Service.ActsExamples.pairEnv",
         "VE.Service.ActsExamples.modelActsOf",
         "VE.Service.ActsExamples.view",
-        "VE.Service.ActsExamples.rels"
+        "VE.Service.ActsExamples.rels",
+        "VE.Service.ActsExamples.threeEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -17041,6 +17042,21 @@
       ],
       "P": [
         "VE.Cardinality.Render.tacticCharges"
+      ]
+    },
+    "VE/SoftNorms/ActsFrameExamples.lean": {
+      "T": [
+        "VE.SoftNorms.ActsFrameExamples.parse",
+        "VE.SoftNorms.ActsFrameExamples.block",
+        "VE.SoftNorms.ActsFrameExamples.paid",
+        "VE.SoftNorms.ActsFrameExamples.heard",
+        "VE.SoftNorms.ActsFrameExamples.reg",
+        "VE.SoftNorms.ActsFrameExamples.pred",
+        "VE.SoftNorms.ActsFrameExamples.env",
+        "VE.SoftNorms.ActsFrameExamples.sfP",
+        "VE.SoftNorms.ActsFrameExamples.err",
+        "VE.SoftNorms.ActsFrameExamples.actsOf",
+        "VE.SoftNorms.ActsFrameExamples.frame"
       ]
     }
   }
