@@ -198,4 +198,27 @@ def tuplesOf (j : Json) : Nat :=
 #guard tuplesOf (envWith 2) == maxCandidates + 1
 #guard read (envWith 2) "Wah t7." == .limit
 
+/-! ## `readCommand_typed_of_facts`' hypothesis holds of the fixtures' decoded environments -/
+
+#guard [E_web, envWith 1].all fun j => match decodeSpeechEnvironmentFull j with
+  | .ok se => declared se
+  | .error _ => false
+
+/-! ## Each value read once, and within its limit: with no act match the condition is not read (budget 0 gives no
+`limit`); with two, section 4's row 11; a very large wording stops at the first limit -/
+
+#guard web "Click nothing, if draft is approved." 0 == noReadingOutcome
+#guard web "Review the meaning, if draft is approved." 0 == .ofText Texts.actsMatch
+#guard web (String.mk (List.replicate 100000 'a')) == .limit
+
+/-! ## The tables a later row reads -/
+
+#guard Texts.limitText == "VE stopped reading this command at its work limit."
+#guard Texts.classOf "UnboundSlot" == some "VEError" && Texts.classOf "NoDerivation" == some "SyntaxError" &&
+  Texts.classOf "absent" == none
+#guard match se0, lex0 with
+  | some se, .ok (E, L) => guardsOf se E L workBudget "draft is approved" == [approvedDraft] &&
+      guardsOf se E L 0 "draft is approved" == []
+  | _, _ => false
+
 end VE.Commands.Examples
