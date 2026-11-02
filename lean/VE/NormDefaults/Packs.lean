@@ -373,8 +373,8 @@ def labelledJson (l : String) (a : VE.Formula) (origin : Option RequestPath) : J
   Json.mkObj ([("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)] ++
     match origin with | some o => [("origin", toJson o)] | none => [])
 
-/-- 2.7: the `"soft"` and `"rights"` arrays as today, and nothing else, whatever the pack list: `layered_elaborate`
-is closed on these two keys, and `layeredCase_fits` quantifies over every `LayeredU`. -/
+/-- 2.7: the `"soft"` and `"rights"` arrays as today, whatever the pack list: `layered_elaborate` is closed on these two
+keys and `eventsArray`'s, and `layeredCase_fits` quantifies over every `LayeredU`. -/
 def elaborateArrays (qs : List Pack) : List (String × Json) :=
   [("soft", Json.arr ((packPremises qs "soft").map (fun (l, a) => labelledJson l a none)).toArray),
    ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)]
