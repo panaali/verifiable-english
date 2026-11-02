@@ -291,6 +291,96 @@
    "result": "KILLED",
    "test": "lean/VE/Discourse/ComposeExamples.lean:131",
    "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: 14.5 step 4 skipped again (the state the review found)",
+   "from": "chainChecks environment j b.2.1",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:420",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.chainChecks",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: the @1 part's load (4.1(1)) skipped",
+   "from": "let _ ← VE.Service.Document.check (← (writtenText environment j (Loader.sourceOf j)).getStr?) (withGraph := false)",
+   "to": "let _ ← (fun (_ : String) => (pure () : Except String Unit)) (← (writtenText environment j (Loader.sourceOf j)).getStr?)",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:107 (PROBE F1, unit spans), :164-165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: no chain content's unit is a unit with meaning",
+   "from": "nouns := sortNouns environment, chain }",
+   "to": "nouns := sortNouns environment, chain := [] }",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:108 (PROBE F1, unrecorded It), :165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.coveredOk",
+   "file": "lean/VE/Discourse/WellFormed.lean",
+   "mutant": "review F1: coverage ignores chain contents (S4-14's class)",
+   "from": "if contentUnit D u || D.chain.contains u then",
+   "to": "if contentUnit D u then",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:108, :165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.slotUnit",
+   "file": "lean/VE/Discourse/WellFormed.lean",
+   "mutant": "review F1: a chain content's unit is no slot position",
+   "from": "(contentOf D u).isSome || D.chain.contains u || setUnit D u",
+   "to": "(contentOf D u).isSome || setUnit D u",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (pronoun naming a unit)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: the document sort unchecked on the chain",
+   "from": "documentSortOk rv tokK",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (document_sort)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseManifest",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1 sweep: caseManifest hands out an unchecked manifest",
+   "from": "chainChecks environment p b.2.1",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:162",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.formulaUnit",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: W2's view drops ast contents",
+   "from": "| .ok f => [(\"content\", f)]",
+   "to": "| .ok _ => []",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (It in the ast unit u1)",
+   "check": "#guard"
+  },
+  {
+   "definition": "tools/layer_policy.py lean_layer",
+   "file": "tools/layer_policy.py",
+   "mutant": "review F-ready1 (Python): Compose's layer-4 rule dropped",
+   "from": "if module in {\"VE.Discourse.Compose\", \"VE.Discourse.ComposeExamples\"}:",
+   "to": "if module in {\"VE.Discourse.ComposeExamples\"}:",
+   "result": "KILLED",
+   "test": "python3 tools/check_lean_imports.py (tools/select_tests.py CHECK_LEAN, run when tools/layer_policy.py changes; the gate's import check): exit 1, \"new outward Lean import: VE.Discourse.Compose -> VE.Service.Document\"",
+   "check": "lint"
   }
  ]
 }
