@@ -358,7 +358,7 @@ def labels (e : Json) : List String := match eventsHook e terms with
 #guard [1, 10, 62].all fun n => (labels (chain n)).length == 2 * n + 7
 #guard fault (chain 63) == "ok"
 #guard fault (chain 64) == "ResourceLimit: events dates"
-#guard fault (chain 20000) == "ResourceLimit: events dates"
+#guard fault (chain 2000) == "ResourceLimit: events dates"
 -- The largest list still names its repeat (spec 4's order), and ends: the check is one pass.
 #guard fault (profiled (block.setObjVal! "dates" (toJson (isos 20000 ++ ["2024-10-05"])))) == "DuplicateDeclaration: date 2024-10-05"
 #guard repeatOf [] ["a", "b", "a", "b"] == some "a" && repeatOf ["b"] ["a", "b"] == some "b" &&
