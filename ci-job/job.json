@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-stale-6h-fix-progress-2f78d92d-t637080-s1",
+ "head": "83038e410483ee21ecb7e47101e57f660cb73406",
+ "argv": [
+  "armsh-cand-stale-6h-fix-progress-2f78d92d-t637080-s1",
+  "83038e410483ee21ecb7e47101e57f660cb73406",
+  "4f861ab5cb3af05ac412b6bd957733604b003aef",
+  "-",
+  "-",
+  "4",
+  "1/2"
+ ]
+}
