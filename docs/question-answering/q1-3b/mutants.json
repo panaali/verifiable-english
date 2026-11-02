@@ -1,0 +1,138 @@
+{
+ "format": "ve.seeded-bugs@1",
+ "language": "Python",
+ "mutants": [
+  {
+   "behaviour": "F2 fronts only the first auxiliary",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for k, word in enumerate(words) if k and word in AUXILIARIES]",
+    "to": "for k, word in enumerate(words) if k and word in AUXILIARIES][:1]"
+   },
+   "test": "tests/test_question_reverse.py::test_frontings_front_every_is_must_or_may_in_turn",
+   "killed": true,
+   "result": "1 failed in 0.47s"
+  },
+  {
+   "behaviour": "a stream is dropped from the per-stream counts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "        if \"stream\" in row:\n            for key in",
+    "to": "        if \"stream\" in row and row[\"stream\"] != \"natural-view\":\n            for key in"
+   },
+   "test": "tests/test_question_reverse.py::test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial",
+   "killed": true,
+   "result": "1 failed in 1.17s"
+  },
+  {
+   "behaviour": "the 10.2 count over the wrong denominator (every named question with no reading)",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "pool = [q for q in found if q[\"kind\"] == \"f2\" and q[\"closest\"][\"candidates\"] > 1]",
+    "to": "pool = found"
+   },
+   "test": "tests/test_question_reverse.py::test_the_closest_shares_count_only_named_f2_questions_with_no_reading",
+   "killed": true,
+   "result": "1 failed in 0.43s"
+  },
+  {
+   "behaviour": "ties compared in code points, not bytes",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "len(c[:r[\"span\"][0]].encode())",
+    "to": "r[\"span\"][0]"
+   },
+   "test": "tests/test_question_reverse.py::test_closeness_names_leans_closest_its_ties_and_the_readers_sentence",
+   "killed": true,
+   "result": "1 failed in 0.49s"
+  },
+  {
+   "behaviour": "Lean's closest not checked against the leftmost tie",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "at is None or (bool(ties) and at == ties[0])",
+    "to": "at is None or at in ties"
+   },
+   "test": "tests/test_question_reverse.py::test_closeness_names_leans_closest_its_ties_and_the_readers_sentence",
+   "killed": true,
+   "result": "1 failed in 0.60s"
+  },
+  {
+   "behaviour": "coverage ignores a natural-view statement left out",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(sizes.get(\"english-mixed\"), sizes.get(\"natural-view\"))",
+    "to": "(sizes.get(\"english-mixed\"), natural_statements)"
+   },
+   "test": "tests/test_question_reverse.py::test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial",
+   "killed": true,
+   "result": "1 failed in 0.41s"
+  },
+  {
+   "behaviour": "the random Earley stream keeps a sealed text",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "        if text in known:\n            continue",
+    "to": "        if text in ():\n            continue"
+   },
+   "test": "tests/test_question_reverse.py::test_the_random_earley_stream_skips_the_sealed_texts",
+   "killed": true,
+   "result": "1 failed in 1.18s"
+  },
+  {
+   "behaviour": "a norm sentence read with two formulas counted as reached",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "return \"reached\" if r[\"one\"] else",
+    "to": "return \"reached\" if r[\"status\"] == \"one\" else"
+   },
+   "test": "tests/test_question_reverse.py::test_a_norm_documents_units_say_why_no_question_reaches_them",
+   "killed": true,
+   "result": "1 failed in 1.82s"
+  },
+  {
+   "behaviour": "a sentence with one fronting over the limits counted as limited",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "row[\"limited\"] += all(q[\"outcome\"][\"status\"] == \"budget\" for q in qs)",
+    "to": "row[\"limited\"] += any(q[\"outcome\"][\"status\"] == \"budget\" for q in qs)"
+   },
+   "test": "tests/test_question_reverse.py::test_every_fronting_of_the_group_document_is_read_by_lean",
+   "killed": true,
+   "result": "1 failed in 1.29s"
+  },
+  {
+   "behaviour": "a natural-view statement recorded without its period",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "out[current[\"name\"]][2].append(result.text + \".\")",
+    "to": "out[current[\"name\"]][2].append(result.text)"
+   },
+   "test": "tests/test_question_reverse.py::test_the_natural_stream_is_each_rendered_statement",
+   "killed": true,
+   "result": "1 failed in 0.96s"
+  },
+  {
+   "behaviour": "a mixed paragraph counted as one-sentence text",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "single = {d.formulas[0]: t for d, t in drawn if len(d.formulas) == 1}",
+    "to": "single = {d.formulas[0]: t for d, t in drawn}"
+   },
+   "test": "tests/test_question_reverse.py::test_the_mixed_stream_is_its_generators_draw",
+   "killed": true,
+   "result": "1 failed in 9.11s"
+  },
+  {
+   "behaviour": "the put-back sentence keeps the capital of an opener",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "return lower_initial(sentence[:-1]) + \".\"",
+    "to": "return sentence"
+   },
+   "test": "tests/test_question_reverse.py::test_frontings_front_every_is_must_or_may_in_turn",
+   "killed": true,
+   "result": "1 failed in 0.45s"
+  }
+ ]
+}

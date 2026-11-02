@@ -330,7 +330,9 @@ def test_closeness_names_leans_closest_its_ties_and_the_readers_sentence():
     assert R.closeness(cands, reads, text, None) | {"reader": None} == {
         "candidates": 3, "named": True, "closest": 0, "ties": 2, "consistent": True, "reader": None}
     assert R.closeness(cands, reads, "No reading.", None)["closest"] is None
-    assert R.closeness(["é is X."], [_none("é is X.")], "", None)["ties"] == 1  # bytes, not code points
+    assert R.closeness(["é X.", "ab X."], [_none("é X."), _none("ab X.")], "", None)["ties"] == 2  # bytes, not code points
+    second = 'Closest sentence tried: "a b is X.". '
+    assert R.closeness(cands, reads, second, None)["consistent"] is False  # a tie Lean did not break leftmost
 
 
 def _asked(kind, status, closest=None, stream_config="c", **extra):
@@ -397,6 +399,7 @@ def test_every_fronting_of_the_group_document_is_read_by_lean(group):
     budget = {**by[(clause, 3)], "outcome": {"status": "budget", "code": "QuestionTooLong"}}
     m = R.fronting_measure([budget, {**budget, "at": 5}, by[("Ann is verified.", 1)]])
     assert (m["sentences"], m["reached"], m["limited"], m["share"], m["share_within_limits"]) == (2, 1, 1, 0.5, 1.0)
+    assert R.fronting_measure([budget, by[(clause, 5)]])["limited"] == 0  # one fronting within the limits
 
 
 def test_a_question_with_no_reading_has_leans_closest_among_its_candidates(group):
@@ -424,6 +427,7 @@ def test_a_norm_documents_units_say_why_no_question_reaches_them():
     assert all(kind == "meta" or why.startswith("english.read:") for kind, _, why in counts if why != "not one sentence")
     assert all(1 <= len(texts) <= 2 for texts in examples.values()) and set(examples) == {"/".join(k) for k in counts}
     assert R.why("A b.", {"A b.": {"one": True}}) == "reached" and R.why("A\nb.", {}) == "not one sentence"
+    assert R.why("A b.", {"A b.": {"one": False, "status": "one", "code": None}}) == "english.read:one"  # two formulas
     _, odd = R.norm_units('---\n{"environment": {}, "units": [{"span": [0, 2]}, {"kind": ["a", ["b"]], "span": [2, 4]}]}\n---\nA.B.')
     assert odd == [("-", None, "A."), ('["a",["b"]]', None, "B.")]
 
