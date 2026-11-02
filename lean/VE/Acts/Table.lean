@@ -5,7 +5,7 @@ import VE.Acts.Linearize
 A rule's op is fixed by its predicate's role and its sign. For an op and an act tree the table gives the readings, each
 the list of simple acts the rule stands for: `[]` is no reading (refused), two or more make the English ambiguous.
 The table holds the distribution equations of the five deontic modals only; it is never used for `intends` or
-`believes`. Its equations stay provisional until the experiment AP-7 passes (decision D3).
+`believes`. Its equations are frozen at the ap-3r merge under D9 (i) (decision D3 as revised after AP-7).
 -/
 
 namespace VE.Acts
@@ -30,7 +30,8 @@ def opOf (r : VE.Norms.Regulated) (sign : Bool) : Option Op :=
 /-- *may* and *has the right to*. -/
 def freeTable : Act → List (List Simple)
   | .one a => [[.atom a]]
-  | .all false _ ps => [ps.map Simple.atom]
+  | .all false true ps => [ps.map Simple.atom]
+  | .all false false ps => [ps.map Simple.atom, [.whole (.all false false ps)]]
   | .all true true ps => [ps.map Simple.atom]
   | .all true false ps => [ps.map Simple.atom, [.whole (.all true false ps)]]
   | .any true _ _ => []
@@ -62,8 +63,11 @@ theorem table_mustNot_all (s : Bool) (ps : List Atom) :
     table .mustNot (.all s false ps) = [ps.map Simple.atom, [.whole (.all s false ps)]] := rfl
 theorem table_mustNot_all_split (s : Bool) (ps : List Atom) :
     table .mustNot (.all s true ps) = [ps.map Simple.atom] := rfl
-theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (sp : Bool) (ps : List Atom) :
-    table op (.all false sp ps) = [ps.map Simple.atom] := by
+theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false false ps) = [ps.map Simple.atom, [.whole (.all false false ps)]] := by
+  rcases hop with h | h <;> subst h <;> rfl
+theorem table_free_all_own_split (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false true ps) = [ps.map Simple.atom] := by
   rcases hop with h | h <;> subst h <;> rfl
 theorem table_free_all_shared (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
     table op (.all true false ps) = [ps.map Simple.atom, [.whole (.all true false ps)]] := by
