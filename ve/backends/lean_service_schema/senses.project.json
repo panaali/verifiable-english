@@ -33,31 +33,223 @@
   },
   "$defs": {
     "environment": {
-      "$comment": "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, composed blocks (Service.Document.envelopeKeys), constants and soft and rights blocks are the request's; the relay binds the whole by environment_id.",
+      "$comment": "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5), its profile list as written (VE.Senses.Projection.written); every other member is the request's (profileMembers), equal to it and present when it is; the relay binds the whole by environment_id.",
       "additionalProperties": false,
       "allOf": [
         {
-          "else": {"required": ["profiles"]},
-          "if": {"x-case": {"$ref": "#/$defs/request_profile"}},
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["language"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["language"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["profile"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
           "then": {"required": ["profile"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["profiles"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["profiles"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["spec_revision"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["spec_revision"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["alternatives"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["alternatives"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["cardinality"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["cardinality"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["cardinality_schema"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["cardinality_schema"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["unit_schema"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["unit_schema"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["units"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["units"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["risk"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["risk"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["speech_acts"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["speech_acts"]}
         }
       ],
       "properties": {
         "alternatives": {"x-equals": "/environment/alternatives"},
-        "language": {"type": "string", "x-equals": "/environment/language"},
-        "profile": {"type": "string", "x-equals": "/environment/profile"},
-        "profiles": {"$ref": "common.json#/$defs/strings"},
+        "cardinality": {"x-equals": "/environment/cardinality"},
+        "cardinality_schema": {"x-equals": "/environment/cardinality_schema"},
+        "language": {"x-equals": "/environment/language"},
+        "profile": {"x-equals": "/environment/profile"},
+        "profiles": {"x-equals": "/environment/profiles"},
         "risk": {"x-equals": "/environment/risk"},
-        "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
+        "spec_revision": {"x-equals": "/environment/spec_revision"},
+        "speech_acts": {"x-equals": "/environment/speech_acts"},
         "unit_schema": {"x-equals": "/environment/unit_schema"},
-        "units": {"type": "object", "x-equals": "/environment/units"},
+        "units": {"x-equals": "/environment/units"},
         "vocabulary": {
           "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["constants"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["constants"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["acts"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["acts"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["reports"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["reports"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["rights"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["rights"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["soft"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["soft"]}
+            }
+          ],
           "properties": {
-            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "acts": {"x-equals": "/environment/vocabulary/acts"},
+            "constants": {"x-equals": "/environment/vocabulary/constants"},
             "predicates": {"additionalProperties": {"$ref": "common.json#/$defs/environment_predicate"}, "type": "object"},
-            "rights": {"type": "object", "x-equals": "/environment/vocabulary/rights"},
-            "soft": {"type": "object", "x-equals": "/environment/vocabulary/soft"},
+            "reports": {"x-equals": "/environment/vocabulary/reports"},
+            "rights": {"x-equals": "/environment/vocabulary/rights"},
+            "soft": {"x-equals": "/environment/vocabulary/soft"},
             "sorts": {"additionalProperties": {"$ref": "#/$defs/sort"}, "type": "object"}
           },
           "required": ["sorts", "predicates", "constants"],
@@ -318,11 +510,6 @@
           "type": "object"
         }
       ]
-    },
-    "request_profile": {
-      "properties": {"environment": {"required": ["profile"], "type": "object"}},
-      "required": ["environment"],
-      "type": "object"
     },
     "sort": {
       "$comment": "A sort of the projected environment, the request's or a fresh sort of the dictionary's (VE.Senses.projectedJson): its description and its nouns.",

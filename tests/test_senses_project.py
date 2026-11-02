@@ -8,12 +8,14 @@ from copy import deepcopy
 
 import pytest
 
-from test_senses_route import PACK, _paths, _retyped, pack_with, read_in, sense, world
+import test_english_e2_boundary as boundary
+from test_senses_route import PACK, ROOT, _paths, _retyped, pack_with, read_in, sense, world
 from ve.assurance import operation
 from ve.backends import lean_service, senses as route
 from ve.backends.lean import ROUTE_TIMEOUT
 from ve.backends.service_schema import Invalid, check_row
-from ve.english_grammar import actions_version, grammar_id
+from ve.english_grammar import actions_version, grammar_id, lexicon_id
+from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.senses import bundled_pack
@@ -204,7 +206,123 @@ def test_the_typed_environment_is_bound_to_the_request(joke):
     mutant["result"]["projection"]["identities"]["environment_id"] = "0" * 64
     assert not _refused(env, genuine, case) and _refused(env, mutant, case)
     assert route._projection_problem(mutant, case, env, route._dictionary([PACK], [])[0]) \
-        == "the projection's the environment identity is not the returned environment's"
+        == "the projection's environment identity is not the returned environment's"
+
+
+def _core(profiles=("relational-fol@0",)):
+    return {"language": LANGUAGE, "spec_revision": SPEC_REVISION, "profiles": list(profiles),
+            "vocabulary": {"sorts": {"joke": {"description": "A sort."}}, "predicates": {},
+                           "constants": {"riddle": {"sort": "joke", "description": "A constant."}}}}
+
+
+def _data(path, *keys):
+    value = json.loads((ROOT / path).read_text())
+    for key in keys:
+        value = value[key]
+    return value
+
+
+# One request environment per member a profile adds (`profileMembers`, lean/ResponseShape/Schemas/SensesProject.lean),
+# and a document layer's profile list: the corpus families of the review's sweep. rights@0 is refused by
+# english.read itself (UnsupportedProfile), before any projection.
+FAMILIES = {
+    "v0": lambda: world()[0].to_dict(),
+    "core": _core,
+    "judgments": lambda: _core(["documents@1", "judgments@0", "relational-fol@0"]),
+    "acts": lambda: _data("tests/data/acts/environment.json"),
+    "reports": lambda: boundary.reports(),
+    "speech": lambda: boundary.speech(),
+    "readings": lambda: boundary.readings(),
+    "soft": lambda: _data("conformance/soft_norms_rust.json", 9, "source", "environment"),
+    "alternatives": lambda: _data("tests/data/et7/et1-component.json", "environment"),
+    "risk": lambda: _data("usecases/asimov-extended/environment.json"),
+    "units": lambda: _data("usecases/news-article/w6a-quantity-fixtures.json", "environment"),
+}
+
+
+def _changed(value):
+    return value + "x" if type(value) is str else [*value, "documents@1"] if type(value) is list else \
+        {**value, "x": {}} if type(value) is dict else [value]
+
+
+@pytest.mark.parametrize("family", FAMILIES)
+def test_every_member_a_request_environment_carries_is_copied_and_bound(family):
+    """F1, F2 (sn-b6b review): whatever member its profiles add, a request environment projects (an answer, not
+    CheckerUnavailable); the projection keeps every member but the sorts and predicates as the request's, the
+    profile list as written (`judgments@0` kept); and the schema refuses each copied member dropped or changed."""
+    env = Environment(FAMILIES[family]())
+    result = route.project(env, [], "", [])
+    projection = result["projection"]
+    assert projection["status"] == "ok", projection
+    sent, returned = env.to_dict(), projection["environment"]
+    own = {"vocabulary"}, {"sorts", "predicates"}
+    assert {k: v for k, v in returned.items() if k not in own[0]} == {k: v for k, v in sent.items() if k not in own[0]}
+    assert {k: v for k, v in returned["vocabulary"].items() if k not in own[1]} == \
+        {k: v for k, v in sent["vocabulary"].items() if k not in own[1]}
+    case = route.request(env, None, [])
+    del case["source"]
+    case.update(id=route.PROJECT, lines="", used=[])
+    row = {"id": route.PROJECT, "status": "ok", "result": result}
+    check_row(route.PROJECT, row, case, 0)
+    copied = [(k,) for k in returned if k not in own[0]] + [("vocabulary", k) for k in returned["vocabulary"]
+                                                             if k not in own[1]]
+    for path in copied:
+        for change in ("drop", "change"):
+            mutant = deepcopy(row)
+            parent = mutant["result"]["projection"]["environment"]
+            for part in path[:-1]:
+                parent = parent[part]
+            if change == "drop":
+                del parent[path[-1]]
+            else:
+                parent[path[-1]] = _changed(parent[path[-1]])
+            with pytest.raises(Invalid):
+                check_row(route.PROJECT, mutant, case, 0)
+
+
+def test_a_forged_profile_list_with_recomputed_identities_is_refused():
+    """F2 (sn-b6b review): a projected environment naming profiles the request does not, its identities recomputed
+    so the relay's identity binding holds, is refused by the schema's binding of `profiles` to the request's."""
+    env = Environment(_core())
+    result = route.project(env, [], "", [])
+    case = route.request(env, None, [])
+    del case["source"]
+    case.update(id=route.PROJECT, lines="", used=[])
+    forged = deepcopy(result)
+    projection = forged["projection"]
+    projection["environment"]["profiles"] = ["documents@1", "relational-fol@0"]
+    environment_id = Environment(projection["environment"]).environment_id
+    projection["lexicon"]["environment_id"] = projection["identities"]["environment_id"] = environment_id
+    projection["identities"]["lexicon_id"] = lexicon_id(projection["lexicon"])
+    row = {"id": route.PROJECT, "status": "ok", "result": forged}
+    assert route._projection_problem(row, case, env, route._dictionary([], [])[0]) is None  # self-consistent
+    with pytest.raises(Invalid, match="profiles"):
+        check_row(route.PROJECT, row, case, 0)
+
+
+@pytest.mark.parametrize("change", [
+    lambda e: e.update(language="ve.closure@0"),
+    lambda e: e.update(profile="relational-fol@1"),
+    lambda e: e.pop("spec_revision"),
+    lambda e: e.update(extra={}),
+    lambda e: e["vocabulary"]["constants"].pop("alice"),
+    lambda e: e["vocabulary"].update(acts={"fixed": []}),
+], ids=["language", "profile", "revision-dropped", "extra", "constant-dropped", "block-added"])
+def test_a_readings_environment_is_bound_to_the_request(joke, change):
+    """F1, F2 for `senses.read`: its reading carries the same projected environment, checked by the same generated
+    schema (`check_projected_environment`); a copied member changed, dropped or added is refused before anything
+    reads it."""
+    env, overlay = joke
+    genuine = read_in(joke, FUNNY)
+    binding = {"env": env, "source": FUNNY, "words": route._dictionary([PACK], [])[1],
+               "case": route.request(env, FUNNY, [PACK.decode()], overlay=overlay)}
+    def problem(result):
+        return route._response_problem(result, genuine["dictionary_id"], genuine["request_id"], source=FUNNY,
+                                       binding=binding)
+    assert problem(genuine) is None
+    mutant = deepcopy(genuine)
+    change(mutant["reading"]["environment"])
+    assert problem(mutant).startswith("the projected environment is not the request's")
 
 
 def test_reading_identity_rebinding_is_refused(joke):
@@ -212,7 +330,8 @@ def test_reading_identity_rebinding_is_refused(joke):
     returned environment and the dictionary's words."""
     env, _ = joke
     genuine = read_in(joke, FUNNY)
-    binding = {"env": env, "source": FUNNY, "words": route._dictionary([PACK], [])[1]}
+    binding = {"env": env, "source": FUNNY, "words": route._dictionary([PACK], [])[1],
+               "case": route.request(env, FUNNY, [PACK.decode()], overlay=joke[1])}
     def problem(result):
         return route._response_problem(result, genuine["dictionary_id"], genuine["request_id"], source=FUNNY,
                                        binding=binding)
