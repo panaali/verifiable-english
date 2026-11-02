@@ -1,0 +1,159 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Defaults.ByDefaultLeftTo",
+   "operator": "and-or",
+   "reason": "not equivalent: ByDefaultLeftTo quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T6, theorem defaultZone_leftTo_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultLeftTo",
+   "operator": "body-false",
+   "reason": "not equivalent: ByDefaultLeftTo quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T6, theorem defaultZone_leftTo_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultLeftTo",
+   "operator": "body-true",
+   "reason": "not equivalent: ByDefaultLeftTo quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T6, theorem defaultZone_leftTo_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultLeftTo",
+   "operator": "not-drop",
+   "reason": "not equivalent: ByDefaultLeftTo quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T6, theorem defaultZone_leftTo_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "and-or",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "body-false",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "body-true",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "bool-flip",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "eq-le",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ByDefaultZ",
+   "operator": "eq-ne",
+   "reason": "not equivalent: ByDefaultZ quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T5, theorem defaultZone_byDefault_sound, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DecLe",
+   "operator": "body-false",
+   "reason": "not equivalent: DecLe quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T1, theorem decLe_iff, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DecLe",
+   "operator": "body-true",
+   "reason": "not equivalent: DecLe quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T1, theorem decLe_iff, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "and-or",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "append-left",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "append-right",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "body-false",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "body-true",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "list-drop-first",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "list-drop-last",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "list-empty",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "list-first",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultCompletion",
+   "operator": "list-last",
+   "reason": "not equivalent: DefaultCompletion quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T4, theorem dc_of_min, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.DefaultZone",
+   "operator": "ctor-drop",
+   "reason": "not equivalent: dropping a constructor that defaultZoneOf returns stops lean/VE/Defaults/Zone.lean elaborating at defaultZoneOf and at the theorem naming the constructor, so no check downstream can run (hand mutant T8, docs/defeasible/df-5a/evidence/T8.out); every ZoneExamples guard reads defaultZoneOf through `tag`"
+  },
+  {
+   "definition": "VE.Defaults.Observed",
+   "operator": "body-false",
+   "reason": "not equivalent: Observed quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T2, theorem realized_admissible, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.Observed",
+   "operator": "body-true",
+   "reason": "not equivalent: Observed quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T2, theorem realized_admissible, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.Observed",
+   "operator": "bool-flip",
+   "reason": "not equivalent: Observed quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T2, theorem realized_admissible, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.Observed",
+   "operator": "eq-le",
+   "reason": "not equivalent: Observed quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T2, theorem realized_admissible, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.Observed",
+   "operator": "eq-ne",
+   "reason": "not equivalent: Observed quantifies over every relation R : String → List α → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks the zone theorems that use it (the proofs listed in docs/defeasible/df-5a/trust-mutants.json; hand mutant T2, theorem realized_admissible, docs/defeasible/df-5a/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.switchesOffRecord",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate: `[]` there has no element type, so the projection `.1` after it is rejected (Invalid projection), the module stops before any check; the other list operators on the same lists are KILLED by the ZoneExamples guards at two elements"
+  },
+  {
+   "definition": "VE.Defaults.zoneForm",
+   "operator": "list-drop-first",
+   "reason": "equivalent on every input: dropping the first decision name changes the form only for an open atom of that name; switch atoms are never open (the record or switchesOffRecord fixes each), and the first name is an exception name whenever a ranking name exists (outweighsTriples needs two default rules, collidingPairs, and exceptedDecisions come first in decisions), and an exception atom passes by the second disjunct anyway"
+  },
+  {
+   "definition": "VE.Defaults.zoneForm",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate: `[]` there has no element type, so the projection `.1` after it is rejected (Invalid projection), the module stops before any check; the other list operators on the same lists are KILLED by the ZoneExamples guards at two elements"
+  }
+ ]
+}
