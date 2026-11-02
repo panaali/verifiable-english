@@ -8103,7 +8103,7 @@
 'ResponseShape.Encoders.SoftNorms.declarations_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.documentReferences_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.elaborate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ResponseShape.Encoders.SoftNorms.envelope_ok' depends on axioms: [propext]
+'ResponseShape.Encoders.SoftNorms.envelope_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.environmentReferences_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.exceptionFields_ok' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.fail_ok' does not depend on any axioms
