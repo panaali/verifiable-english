@@ -265,6 +265,24 @@ def noExceptionRecord {α : Type} (D : SoftDoc) (M : VE.FiniteModel α) : List (
   (VE.SoftNorms.exceptedDecisions D).flatMap (fun (n, ss) =>
     (VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), false)))
 
+/-- The exception atoms true in every default completion, from the same complete enumeration as `defaultZoneOf`;
+    `none` when that enumeration is not complete (the budget, or a branch left unknown) or finds no default
+    completion. "The facts here force <e>" is rendered only from a `some` list. An atom the enumeration varies is
+    forced when every minimal assignment holds it; any other atom has one value in every assignment (the record's, or
+    `M`'s), read once from the empty one. Each atom is listed once. -/
+def forcedAllOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (proposed : List (List ((String × List α) × Bool))) : Option (List (String × List α)) :=
+  have _ := proposed
+  match zoneMin L X M record obs with
+  | .error _ => none
+  | .ok Min =>
+    if Min.isEmpty then none else
+    let C := zoneAtoms L M record
+    let V₀ := VE.NormDefaults.coneAtomVX M (openNames L) (record ++ switchesOffRecord L.D M record) C []
+    some (((noExceptionRecord L.D M).map (·.1)).filter (fun a =>
+      if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups
+
 /-! ## Proofs -/
 
 section Proofs
@@ -1121,6 +1139,102 @@ theorem defaultZone_eq_noException {α : Type} [DecidableEq α] (L : LayeredU) (
       exact ⟨⟨hR.1, by simp, hR.2.2⟩, by simp [Observed], fun _ _ _ _ a ha h => absurd h (hfalse R hR a ha)⟩
   unfold ByDefaultZ SettledZ
   simp only [key]
+
+/-! ### `forcedAll`: what every default completion holds -/
+
+theorem mem_of_mem_eraseDups {β : Type} [BEq β] : ∀ (l : List β) (x : β), x ∈ l.eraseDups → x ∈ l
+  | [], _, h => by simp at h
+  | a :: as, x, h => by
+    rw [List.eraseDups_cons] at h
+    rcases List.mem_cons.mp h with rfl | h
+    · exact List.mem_cons_self
+    · exact List.mem_cons_of_mem _ (List.mem_filter.mp (mem_of_mem_eraseDups _ x h)).1
+termination_by l => l.length
+decreasing_by have := List.length_filter_le (fun b => !b == a) as; simp only [List.length_cons]; omega
+
+/-- Off the enumerated atoms an assignment's valuation does not depend on the assignment. -/
+theorem coneAtomVX_off {a : String × List α} (ha : a ∉ C) (A B : List (String × List α)) :
+    coneAtomVX M opens rec' C A a.1 a.2 = coneAtomVX M opens rec' C B a.1 a.2 := by
+  unfold coneAtomVX
+  split <;> simp [coneAtomVO, ha]
+
+theorem forcedAll_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α) (valid : M.Valid (VE.Norms.envAt L.U.D 0)) (record : List ((String × List α) × Bool))
+    (obs : List ((VE.Norms.Regulated × List α) × Bool)) (proposed : List (List ((String × List α) × Bool)))
+    (fs : List (String × List α)) (hf : forcedAllOf L X M record obs proposed = some fs) :
+    (∃ R, DefaultCompletion L (X.map (·.2)) M record obs R) ∧
+    ∀ a ∈ fs, (∃ ss, (a.1, ss) ∈ VE.SoftNorms.exceptedDecisions L.D ∧ a.2 ∈ VE.NormDefaults.allTuples M ss) ∧
+      ∀ R, DefaultCompletion L (X.map (·.2)) M record obs R → R a.1 a.2 := by
+  unfold forcedAllOf at hf
+  simp only at hf
+  split at hf
+  · cases hf
+  rename_i Min hm
+  split at hf
+  · cases hf
+  rename_i hne
+  cases hf
+  obtain ⟨A, hA⟩ := List.exists_mem_of_ne_nil Min (by simpa using hne)
+  refine ⟨⟨_, dc_of_min valid hm hA⟩, fun a ha => ?_⟩
+  obtain ⟨hmem, hp⟩ := List.mem_filter.mp (mem_of_mem_eraseDups _ _ ha)
+  refine ⟨?_, fun R hR => ?_⟩
+  · simp only [noExceptionRecord, List.mem_map, List.mem_flatMap] at hmem
+    obtain ⟨_, ⟨⟨n, ss⟩, hn, vs, hvs, rfl⟩, rfl⟩ := hmem
+    exact ⟨ss, hn, hvs⟩
+  · have hAR := min_of_dc valid hm hR
+    obtain ⟨hRa, hRo, _⟩ := hR
+    obtain ⟨_, hc, _⟩ := row_of_completion (X := X) hRa hRo
+    refine (hc a.1 a.2 true ?_).mpr rfl
+    obtain ⟨hC, _⟩ := zoneAtoms_facts L M record
+    by_cases haC : a ∈ zoneAtoms L M record
+    · simp only [haC, List.contains_iff_mem, if_true, List.all_eq_true] at hp
+      exact (realized_C a haC (hC a haC).1 (hC a haC).2).mpr (hp _ hAR)
+    · simp only [haC, List.contains_iff_mem, if_false, beq_iff_eq] at hp
+      exact (coneAtomVX_off haC _ []).trans hp
+
+/-- The finite minimal-subcompletion lemma: below every admissible completion that agrees with the observations
+    there is a default completion (so it lacks every decision atom the first one lacks). -/
+theorem defaultCompletion_below {α : Type} [DecidableEq α] (L : LayeredU) (X : List VE.Formula)
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (obs : List ((VE.Norms.Regulated × List α) × Bool)) (R : String → List α → Prop)
+    (hR : AdmissibleCompletion L.U X M (openNames L) (record ++ switchesOffRecord L.D M record) R)
+    (ho : Observed L.U M obs R) :
+    ∃ R', DefaultCompletion L X M record obs R' ∧ DecLe L.D M R' R := by
+  -- the number of true decision atoms falls strictly below a completion that is not minimal
+  let f : (String → List α → Prop) → Nat := fun R' =>
+    (decisionAtoms L.D M).countP (fun a => @decide (R' a.1 a.2) (Classical.propDecidable _))
+  suffices h : ∀ n R, f R = n →
+      AdmissibleCompletion L.U X M (openNames L) (record ++ switchesOffRecord L.D M record) R →
+      Observed L.U M obs R → ∃ R', DefaultCompletion L X M record obs R' ∧ DecLe L.D M R' R from h _ R rfl hR ho
+  intro n
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+  intro R hf hR ho
+  by_cases hmin : ∀ R', AdmissibleCompletion L.U X M (openNames L) (record ++ switchesOffRecord L.D M record) R' →
+      Observed L.U M obs R' → DecLe L.D M R' R → DecLe L.D M R R'
+  · exact ⟨R, ⟨hR, ho, hmin⟩, fun _ _ h => h⟩
+  obtain ⟨R'', h1, h2, h3, h4⟩ : ∃ R'',
+      AdmissibleCompletion L.U X M (openNames L) (record ++ switchesOffRecord L.D M record) R'' ∧
+      Observed L.U M obs R'' ∧ DecLe L.D M R'' R ∧ ¬ DecLe L.D M R R'' :=
+    Classical.byContradiction fun hno => hmin fun R' a b c => Classical.byContradiction fun hd => hno ⟨R', a, b, c, hd⟩
+  obtain ⟨a, ha, hRa, hna⟩ : ∃ a ∈ decisionAtoms L.D M, R a.1 a.2 ∧ ¬ R'' a.1 a.2 :=
+    Classical.byContradiction fun hno => h4 fun a ha hRa => Classical.byContradiction fun hn => hno ⟨a, ha, hRa, hn⟩
+  have hlt : f R'' < f R :=
+    VE.NormDefaults.countP_lt_of (fun b hb h => by simpa using h3 b hb (by simpa using h))
+      ⟨a, ha, by simpa using hRa, by simpa using hna⟩
+  obtain ⟨R', hdc, hle⟩ := ih (f R'') (hf ▸ hlt) R'' rfl h1 h2
+  exact ⟨R', hdc, fun b hb h => h3 b hb (hle b hb h)⟩
+
+/-- "The facts here force <e>": a decision atom true in every default completion is true in every admissible
+    completion that agrees with the record and the observations. Proved in the stub from `defaultCompletion_below`. -/
+theorem forced_everywhere {α : Type} [DecidableEq α] (L : LayeredU) (X : List VE.Formula)
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool))
+    (obs : List ((VE.Norms.Regulated × List α) × Bool)) (a : String × List α) (ha : a ∈ decisionAtoms L.D M)
+    (hall : ∀ R, DefaultCompletion L X M record obs R → R a.1 a.2) (R : String → List α → Prop)
+    (hR : AdmissibleCompletion L.U X M (openNames L) (record ++ switchesOffRecord L.D M record) R)
+    (ho : Observed L.U M obs R) : R a.1 a.2 := by
+  obtain ⟨R', hdc, hle⟩ := defaultCompletion_below L X M record obs R hR ho
+  exact hle a ha (hall R' hdc)
 
 end Zone
 
