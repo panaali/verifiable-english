@@ -122,13 +122,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 94 modules — -
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 87 modules — -
-- [tests/ part 4](tests--part-4.md) — 93 modules — -
+- [tests/ part 4](tests--part-4.md) — 92 modules — -
 - [tests/ part 5](tests--part-5.md) — 81 modules — -
-- [tests/ part 6](tests--part-6.md) — 83 modules — -
-- [tests/ part 7](tests--part-7.md) — 34 modules — -
+- [tests/ part 6](tests--part-6.md) — 84 modules — -
+- [tests/ part 7](tests--part-7.md) — 35 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -
-- [tools/ part 2](tools--part-2.md) — 6 modules — -
+- [tools/ part 2](tools--part-2.md) — 7 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
