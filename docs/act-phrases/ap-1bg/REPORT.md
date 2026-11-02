@@ -79,5 +79,5 @@ is claimed (estimate only, not measured).
 10. PASS: `lean/statements.txt` unchanged; `environment_fits` rebuilt over the new member.
 11. N.A.: no budget, limit or deadline changed.
 12. PASS: `model_acts` costs nothing without `acts@0`; the view relays once per environment (`cached_rust_environment`).
-13. PASS: `Test-removed:` trailer in `b9a3b3740` for the replaced Rust test.
+13. PASS: `Test-removed:` trailer in `ca4316cab`; `gate_collection.py --check --prebuilt`: 1 removed by a trailer, 0 refused, 0 stale, 0 malformed.
 14. PASS: both sides: `test_the_readings_route_reads_single_acts_and_refuses_a_joined_act`, the "another soft block" guards.
