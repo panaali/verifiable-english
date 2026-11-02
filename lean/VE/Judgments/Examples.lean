@@ -2,6 +2,7 @@ import VE.Judgments.Status
 import VE.Norms.Checks
 import VE.Route.Typed
 import VE.Judgments.Undeclared
+import VE.EnglishGrammar.Evaluative
 
 /-! The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the
 built definitions. Each value is the one the spec's stub computed by `#eval`. Every rule fixture that JT-2 replays
@@ -344,11 +345,14 @@ def doc11 (nodes : List Node) : Doc :=
 
 /-! ## 11.7 Undeclared words (JT-3; spec 7, 8.4 and 11.8) -/
 
-/-- 11.7's rows: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
+/-- 11.7's words: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
     (not "necessary condition"), `effective` (not "effective date"). -/
-def rows117 : List EvaluativeRow :=
-  [⟨"reasonable", []⟩, ⟨"arbitrary", []⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩, ⟨"just", [["just", "as"]]⟩,
-   ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"effective", [["effective", "date"]]⟩]
+def words117 : List (String × List (List String)) :=
+  [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["just", "as"]]),
+   ("necessary", [["necessary", "condition"]]), ("effective", [["effective", "date"]])]
+
+/-- 11.7's rows, each word a one-word phrase (jt-3p). -/
+def rows117 : List EvaluativeRow := words117.map fun (w, o) => ⟨[w], o⟩
 
 def preds117 : List (String × List String) :=
   ["reasonable_grounds", "due_date", "arbitrary", "just_as_real", "just_requirement", "necessary_condition",
@@ -380,5 +384,34 @@ def regulated117 : List (String × List String) :=
   ["reasonable", "grounds", "0", "has", "reasonable", "grounds"]
 #guard predicateWords "arrest" (some "{0} is arbitrary") == ["arrest", "0", "is", "arbitrary"]
 #guard predicateWords "arrest" (some "arbitrary {0}") == ["arrest", "arbitrary", "0"]
+
+/-! ## Phrase rows (jt-3p; DRI 2026-10-31, reviews/dri-decisions-20261031-jt-3a.md item 3) -/
+
+-- A one-word row is written in `ws` exactly when its word is one of them (`singleton_infix_iff`).
+#guard [[], ["due"], ["the", "due"], ["due", "date"], ["date"], ["due", "due"]].all fun ws =>
+  hasPhrase ["due"] ws == ws.contains "due"
+
+/-- jt-3a's word match, kept here only as the reference the one-word rows must still agree with. -/
+def jt3aList (preds : List (String × List String)) (J : List String) : List String :=
+  (preds.filter fun (p, ws) => !J.contains p &&
+    words117.any fun (w, o) => ws.contains w && !o.any (hasPhrase · ws)).map (·.1)
+
+-- Each 11.7 fixture gives jt-3a's list after the change, for every `J` above.
+#guard [preds117, regulated117].all fun preds =>
+  [[], ["arbitrary"], ["arbitrary", "reasonable_grounds"]].all fun J =>
+    undeclaredEvaluative rows117 preds J == jt3aList preds J
+
+/-- Predicates with and without the phrase "good judgment": in its order, in another order, half of it, and in a
+    template (the constitution's u0052.s01 writes "use good judgment" as the act). -/
+def goodPreds : List (String × List String) :=
+  [("good_judgment", predicateWords "good_judgment" none), ("good_conduct", predicateWords "good_conduct" none),
+   ("judgment_good", predicateWords "judgment_good" none), ("court_judgment", predicateWords "court_judgment" none),
+   ("judgment_use_required", predicateWords "judgment_use_required" (some "{0} uses good judgment"))]
+
+-- The catalogue's "good judgment" row: listed when unbound, not listed when in `J`; `good_conduct` is never listed.
+#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds [] ==
+  ["good_judgment", "judgment_use_required"]
+#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds ["good_judgment"] == ["judgment_use_required"]
+#guard !(undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds []).contains "good_conduct"
 
 end VE.Judgments.Examples
