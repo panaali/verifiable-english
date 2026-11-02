@@ -1,0 +1,17 @@
+trust_mutants: 20 definitions, 231 mutants (58 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) or-and: || -> &&
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) body-true: (contentOf D u).isSome || D.chain.contains u || setUnit D u || (groupedUnits D).contains u -> true
+SURVIVOR lean/VE/Discourse/Admission.lean:550 VE.Discourse.documentSortOk (G[V], trusted) all-any: all -> any
+SURVIVOR lean/VE/Discourse/Admission.lean:550 VE.Discourse.documentSortOk (G[V], trusted) list-empty: rv.vocabulary.constants -> []
+UNKNOWN lean/VE/Discourse/Admission.lean:550 VE.Discourse.documentSortOk (G[V], trusted) list-empty: K.documents -> [] (lean/VE/Discourse/Admission.lean:550: Invalid field notation: Type of)
+SURVIVOR lean/VE/Discourse/Compose.lean:104 VE.Discourse.formulaUnit (S, trusted) list-empty: [("content", f)] -> []
+SURVIVOR lean/VE/Discourse/WellFormed.lean:230 VE.Discourse.coveredOk (S, trusted) list-first: D.chain -> (D.chain.take 1)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:230 VE.Discourse.coveredOk (S, trusted) list-drop-last: D.chain -> (D.chain.dropLast)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-drop-last: (groupedUnits D) -> ((groupedUnits D).dropLast)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:230 VE.Discourse.coveredOk (S, trusted) list-last: D.chain -> (D.chain.reverse.take 1)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:230 VE.Discourse.coveredOk (S, trusted) list-drop-first: D.chain -> (D.chain.drop 1)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-drop-first: (groupedUnits D) -> ((groupedUnits D).drop 1)
+trust_mutants: 29 KILLED, 11 SURVIVOR, 1 UNKNOWN, 9 INVALID, 8 ALLOWED, 0 NOT RUN, 173 OTHER SHARD in 838 s
+trust_mutants: G[V], trusted: 2 SURVIVOR, 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: S, trusted: 29 KILLED, 9 SURVIVOR, 9 INVALID, 8 ALLOWED, 152 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.5 s, control_probes 44.7 s, mutants 773.6 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 50.5 s (2), mutant_builds 461.2 s (65), mutant_checks 481.8 s (46), stage_controls 24.5 s (3), mutant_probes 2068.2 s (29)
