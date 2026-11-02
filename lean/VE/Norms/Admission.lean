@@ -244,12 +244,12 @@ def envelopeGate (environment : Json) : Except String Unit := do
 
 /-- Required document admission: regenerated norm layers, W2 provenance,
 certificate bindings, graph checking, citations and reading choices. -/
-def admitDocument (environment document : Json) : Except String Admitted := do
+def admitDocumentIn (dec : Wire.SourceDecoder) (environment document : Json) : Except String Admitted := do
   envelopeGate environment
   VE.Bridge.displayFields document ["units", "graph"]
     ["lemmas", "open_terms", "reading_sets", "narrowings"]
   let (clean, norms, quoted) ← splitDocument document
-  let src ← Wire.decodeSource environment norms (flags := true)
+  let src ← dec environment norms
   quoted.forM (checkQuoted src)
   let D₀ ← VE.Route.Admission.decodeDoc src.ne.rv (src.ne.profiles.contains "data@0") clean
   let D := { D₀ with literals := src.ne.rv.literals }
@@ -277,9 +277,9 @@ the well-formed tree whose layers are regenerated, every quoted norm passes the
 single-rule checks, the W2 document is decoded from the same source with the
 environment's literals, and every graph node is decoded from the source graph
 with the AST that its certificate binds. -/
-def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
+def SourceDecodedIn (dec : Wire.SourceDecoder) (environment document : Json) (res : Admitted) : Prop :=
   (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧
-    Wire.decodeSource environment norms (flags := true) = .ok res.src ∧
+    dec environment norms = .ok res.src ∧
     (∀ q ∈ quoted, checkQuoted res.src q = .ok ()) ∧
     ∃ D₀, VE.Route.Admission.decodeDoc res.src.ne.rv (res.src.ne.profiles.contains "data@0") clean = .ok D₀ ∧
       res.doc = { D₀ with literals := res.src.ne.rv.literals }) ∧
@@ -315,15 +315,15 @@ def ReportAdmitted (res : Admitted) : Prop :=
   CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report
 
 /-- Everything a successful admission establishes about its raw input. -/
-theorem admitDocument_spec (environment document : Json) (res : Admitted)
-    (h : admitDocument environment document = .ok res) :
-    SourceDecoded environment document res ∧ CertificatesBound environment res ∧
+theorem admitDocument_specIn (dec : Wire.SourceDecoder) (environment document : Json) (res : Admitted)
+    (h : admitDocumentIn dec environment document = .ok res) :
+    SourceDecodedIn dec environment document res ∧ CertificatesBound environment res ∧
     VE.Graph.SoundReport.{u} res.src.ne.rv.environment res.graph res.report ∧
     (∀ w ∈ res.wires, NodeAdmitted res.src res.doc w) ∧
     (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
       w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.src res.doc w) ∧
     CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report := by
-  unfold admitDocument at h
+  unfold admitDocumentIn at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨⟨clean, norms, quoted⟩, hsplit, h⟩ := bind_ok h
@@ -365,13 +365,13 @@ theorem admitDocument_spec (environment document : Json) (res : Admitted)
 /-- A successful admission has a sound checked graph and every submitted node
 is admitted either by W2's ordinary provenance rules or by a regenerated norm
 layer. Each report assumption is exactly one of those decoded leaves. -/
-theorem norms_wire_admission_sound (environment document : Json) (res : Admitted)
-    (h : admitDocument environment document = .ok res) :
+theorem norms_wire_admission_soundIn (dec : Wire.SourceDecoder) (environment document : Json) (res : Admitted)
+    (h : admitDocumentIn dec environment document = .ok res) :
     VE.Graph.SoundReport.{u} res.src.ne.rv.environment res.graph res.report ∧
     (∀ w ∈ res.wires, NodeAdmitted res.src res.doc w) ∧
     (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
       w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.src res.doc w) :=
-  let ⟨_, _, hsound, hnodes, hleaves, _⟩ := admitDocument_spec.{u} environment document res h
+  let ⟨_, _, hsound, hnodes, hleaves, _⟩ := admitDocument_specIn.{u} dec environment document res h
   ⟨hsound, hnodes, hleaves⟩
 
 theorem layerLeaf_formula (src : Wire.Source) (w : WireNode) (h : LayerLeaf src w) :
@@ -409,15 +409,15 @@ def otherAssumptions (res : Admitted) : List VE.Graph.Claim :=
 regenerated Background and layer premises, the remaining report assumptions
 entail the report's root. Layer leaves are discharged by the elaborations and
 Background leaves by the regenerated literal and pair premises. -/
-theorem norms_wire_report_consequence (environment document : Json) (res : Admitted)
-    (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
+theorem norms_wire_report_consequenceIn (dec : Wire.SourceDecoder) (environment document : Json) (res : Admitted)
+    (h : admitDocumentIn dec environment document = .ok res) (S : VE.Structure.{u})
     (hS : S.Admissible res.src.ne.rv.environment)
     (hflags : Sat S (VE.Data.Background.generate res.doc.flags))
     (hregen : Sat S (background res.src.D ++ elaborate res.src.D.T))
     (hother : Sat S ((otherAssumptions res).map (·.formula))) :
     res.report.root.formula.denote S [] := by
   obtain ⟨⟨⟨_, _, _, _, _, _, _, _, hdoc⟩, _, _, hlits, _⟩, _, hsound, _, hleaves, _⟩ :=
-    admitDocument_spec.{u} environment document res h
+    admitDocument_specIn.{u} dec environment document res h
   apply hsound.2.2.2.1 S hS
   intro a ha
   obtain ⟨leaf, hl, rfl⟩ := List.mem_map.mp ha
@@ -468,5 +468,37 @@ theorem norms_wire_report_consequence (environment document : Json) (res : Admit
     refine ⟨hl, ?_⟩
     simp only [Bool.not_eq_true] at hb
     simp [hb, hlayer]
+
+/-! ## The route's own decoder -/
+
+def admitDocument : Json → Json → Except String Admitted := admitDocumentIn Wire.decodeFlagged
+def SourceDecoded : Json → Json → Admitted → Prop := SourceDecodedIn Wire.decodeFlagged
+
+theorem admitDocument_spec (environment document : Json) (res : Admitted)
+    (h : admitDocument environment document = .ok res) :
+    SourceDecoded environment document res ∧ CertificatesBound environment res ∧
+    VE.Graph.SoundReport.{u} res.src.ne.rv.environment res.graph res.report ∧
+    (∀ w ∈ res.wires, NodeAdmitted res.src res.doc w) ∧
+    (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
+      w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.src res.doc w) ∧
+    CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report :=
+  admitDocument_specIn.{u} Wire.decodeFlagged environment document res h
+
+theorem norms_wire_admission_sound (environment document : Json) (res : Admitted)
+    (h : admitDocument environment document = .ok res) :
+    VE.Graph.SoundReport.{u} res.src.ne.rv.environment res.graph res.report ∧
+    (∀ w ∈ res.wires, NodeAdmitted res.src res.doc w) ∧
+    (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
+      w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.src res.doc w) :=
+  norms_wire_admission_soundIn.{u} Wire.decodeFlagged environment document res h
+
+theorem norms_wire_report_consequence (environment document : Json) (res : Admitted)
+    (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
+    (hS : S.Admissible res.src.ne.rv.environment)
+    (hflags : Sat S (VE.Data.Background.generate res.doc.flags))
+    (hregen : Sat S (background res.src.D ++ elaborate res.src.D.T))
+    (hother : Sat S ((otherAssumptions res).map (·.formula))) :
+    res.report.root.formula.denote S [] :=
+  norms_wire_report_consequenceIn.{u} Wire.decodeFlagged environment document res h S hS hflags hregen hother
 
 end VE.Norms.Admission

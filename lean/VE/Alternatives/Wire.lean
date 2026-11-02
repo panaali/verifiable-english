@@ -214,7 +214,7 @@ def otherDeclarations (scope : Scope) (view : Json) (ne : VE.Norms.Wire.NormsEnv
     unless ne.rv.flags.isEmpty do
       throw "UnsupportedProfile: alternatives route with data flags is not implemented"
   | .environment => do
-    let _ ← VE.Norms.Wire.decodeSource view (Json.arr #[]) (flags := true)
+    let _ ← VE.Norms.Wire.decodeSource view (Json.arr #[]) (flags := true) (joined := false)
 
 /-- A decoded, well-formed alternatives source. -/
 structure AltSource where
