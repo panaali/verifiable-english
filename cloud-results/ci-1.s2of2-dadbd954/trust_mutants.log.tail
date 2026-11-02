@@ -1,0 +1,51 @@
+trust_mutants: 17 definitions, 273 mutants (136 to run), 4 jobs, base 32652c51a9df
+SURVIVOR lean/VE/Commands/Read.lean:275 VE.Commands.declared (G[V], trusted) body-true: se.ne.regulated.all (fun g => se.ne.rv.environment.predicates g.name == some g.sorts && se.ne.reg... -> true (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/Commands/Read.lean:98 VE.Commands.commandable (G[V], trusted) body-true: g.role != .plain && (g.act.bind actVerb).isSome -> true (the proofs it breaks: lean/VE/Commands/Read.lean:547)
+SURVIVOR lean/VE/SpeechActs/Wire.lean:764 VE.SpeechActs.Wire.readingCandidates (D[V], trusted) and-or: && -> ||
+SURVIVOR lean/VE/SpeechActs/Wire.lean:764 VE.SpeechActs.Wire.readingCandidates (D[V], trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/SpeechActs/Wire.lean:764 VE.SpeechActs.Wire.readingCandidates (D[V], trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) and-or: && -> ||
+SURVIVOR lean/VE/Commands/Read.lean:275 VE.Commands.declared (G[V], trusted) all-any: all -> any (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/SpeechActs/Wire.lean:764 VE.SpeechActs.Wire.readingCandidates (D[V], trusted) lit-minus: 1 -> 0
+UNKNOWN lean/VE/Commands/Read.lean:55 VE.Commands.splitLastIf (G[V], trusted) list-empty: [x] -> [] (lean/VE/Commands/Read.lean:55: Unknown identifier `x`)
+UNKNOWN lean/VE/Commands/Read.lean:123 VE.Commands.actMatches (G[V], trusted) list-empty: match parts s with | none => [] | some p => ofForce p.force (phraseMatches se sc p.body) -> [] (lean/VE/Commands/Read.lean:406: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Commands/Read.lean:156 VE.Commands.guardOfOutcome (G[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/Commands/Read.lean:254 VE.Commands.manyOf (G[V], trusted) list-empty: rs -> [] (lean/VE/Commands/Read.lean:254: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Commands/Read.lean:129 VE.Commands.GuardFault (G[V], trusted) ctor-drop: | ambiguous (gs : List VE.Formula) ->  (lean/VE/Commands/Read.lean:162: Unknown constant `VE.Commands.GuardFault.ambiguous`)
+SURVIVOR lean/VE/SpeechActs/Wire.lean:764 VE.SpeechActs.Wire.readingCandidates (D[V], trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Commands/Read.lean:158 VE.Commands.guardOfOutcome (G[V], trusted) arm-default: .error (.unread "IllTyped" (ofCondition (VE.EnglishGrammar.Run.illTypedText (some 0)))) -> .error (unreadOf E L c)
+SURVIVOR lean/VE/Commands/Read.lean:277 VE.Commands.declared (G[V], trusted) all-any: all -> any (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+UNKNOWN lean/VE/Commands/Read.lean:83 VE.Commands.slotFills (G[V], trusted) list-empty: (se.ne.rv.vocabulary.constants.filter (·.2 == srt)).flatMap -> [] (lean/VE/Commands/Read.lean:83: Function expected at)
+UNKNOWN lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-empty: acc -> [] (lean/VE/Commands/Read.lean:112: Invalid field notation: Type of)
+UNKNOWN lean/VE/Commands/Read.lean:217 VE.Commands.Outcome (G[V], trusted) ctor-drop: | many (rs : List Reading) ->  (lean/VE/Commands/Read.lean:416: the failing proof cannot be cut: Unknown constant `VE.Commands.Ou...)
+UNKNOWN lean/VE/Commands/Read.lean:95 VE.Commands.tuples (G[V], trusted) list-empty: xs.flatMap -> [] (lean/VE/Commands/Read.lean:95: Function expected at)
+SURVIVOR lean/VE/Commands/Read.lean:277 VE.Commands.declared (G[V], trusted) list-empty: se.ne.rv.vocabulary.constants -> [] (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+UNKNOWN lean/VE/Commands/Read.lean:218 VE.Commands.Outcome (G[V], trusted) ctor-drop: | refused (code text : String) ->  (lean/VE/Commands/Read.lean:400: the failing proof cannot be cut: Unknown constant `VE.Commands.Ou...)
+UNKNOWN lean/VE/Commands/Read.lean:83 VE.Commands.slotFills (G[V], trusted) list-empty: se.ne.rv.vocabulary.constants.filter (·.2 == srt) -> [] (lean/VE/Commands/Read.lean:84: Invalid projection: Type of)
+UNKNOWN lean/VE/Commands/Read.lean:160 VE.Commands.guardOfOutcome (G[V], trusted) list-empty: [g] -> [] (lean/VE/Commands/Read.lean:160: Unknown identifier `g`)
+SURVIVOR lean/VE/Commands/Read.lean:155 VE.Commands.guardOfOutcome (G[V], trusted) list-first: rs -> (rs.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:155 VE.Commands.guardOfOutcome (G[V], trusted) list-drop-last: rs -> (rs.dropLast)
+SURVIVOR lean/VE/Commands/Read.lean:275 VE.Commands.declared (G[V], trusted) list-drop-last: se.ne.regulated -> (se.ne.regulated.dropLast) (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/Commands/Read.lean:56 VE.Commands.splitLastIf (G[V], trusted) list-first: xs.dropLast -> (xs.dropLast.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:212 VE.Commands.addressed (G[V], trusted) list-first: g.sorts -> (g.sorts.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:95 VE.Commands.tuples (G[V], trusted) list-first: (tuples rest) -> ((tuples rest).take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:596)
+SURVIVOR lean/VE/Commands/Read.lean:277 VE.Commands.declared (G[V], trusted) list-first: se.ne.rv.vocabulary.constants -> (se.ne.rv.vocabulary.constants.take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/Commands/Read.lean:277 VE.Commands.declared (G[V], trusted) list-drop-last: se.ne.rv.vocabulary.constants -> (se.ne.rv.vocabulary.constants.dropLast) (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/Commands/Read.lean:95 VE.Commands.tuples (G[V], trusted) list-first: (tuples rest).map (x :: ·) -> (((tuples rest).map (x :: ·)).take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:596)
+SURVIVOR lean/VE/Commands/Read.lean:84 VE.Commands.slotFills (G[V], trusted) list-first: sc.definites.filter (·.2 == c) -> ((sc.definites.filter (·.2 == c)).take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:364)
+UNKNOWN lean/VE/Commands/Read.lean:123 VE.Commands.actMatches (G[V], trusted) list-last: match parts s with | none => [] | some p => ofForce p.force (phraseMatches se sc p.body) -> ((match parts s with | none => [] | some p => ofForce p.force (phraseMatches se sc p.body)).rever... (lean/VE/Commands/Read.lean:406: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Commands/Read.lean:179 VE.Commands.guardsOf (G[V], trusted) list-last: guardList (guardOf se E L b c) -> ((guardList (guardOf se E L b c)).reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:275 VE.Commands.declared (G[V], trusted) list-last: se.ne.regulated -> (se.ne.regulated.reverse.take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+UNKNOWN lean/VE/Commands/Read.lean:123 VE.Commands.actMatches (G[V], trusted) list-drop-first: match parts s with | none => [] | some p => ofForce p.force (phraseMatches se sc p.body) -> ((match parts s with | none => [] | some p => ofForce p.force (phraseMatches se sc p.body)).drop 1) (lean/VE/Commands/Read.lean:406: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-last: acc -> (acc.reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:95 VE.Commands.tuples (G[V], trusted) list-drop-first: xs -> (xs.drop 1) (the proofs it breaks: lean/VE/Commands/Read.lean:596)
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-last: gs -> (gs.reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-last: gs.map (·.const) -> ((gs.map (·.const)).reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:190 VE.Commands.readingsOf (G[V], trusted) list-last: gs -> (gs.reverse.take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:607)
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-last: m.2 -> (m.2.reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:112 VE.Commands.firstMatch (G[V], trusted) list-last: m.2.map (·.const) -> ((m.2.map (·.const)).reverse.take 1)
+SURVIVOR lean/VE/Commands/Read.lean:113 VE.Commands.firstMatch (G[V], trusted) list-last: acc -> (acc.reverse.take 1) (the proofs it breaks: lean/VE/Commands/Read.lean:324)
+trust_mutants: 78 KILLED, 33 SURVIVOR, 13 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 137 OTHER SHARD in 2813 s
+trust_mutants: D[V], trusted: 5 SURVIVOR, 2 OTHER SHARD
+trust_mutants: G[V], trusted: 78 KILLED, 28 SURVIVOR, 13 UNKNOWN, 12 INVALID, 135 OTHER SHARD
+trust_mutants: steps: wall plan 10.9 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.4 s, control_probes 41.4 s, mutants 2753.1 s, cleanup 2.6 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 41.1 s (1), mutant_builds 779.7 s (209), mutant_checks 2204.2 s (114), stage_controls 162 s (9), mutant_probes 7702.3 s (78)
