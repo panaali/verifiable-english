@@ -1,6 +1,8 @@
 # cmp-s4: documents and cases, the composed admission, the identity cases (discourse 14.4 to 14.6)
 
 - **Status:** done as cut below; no DRI signature needed (DELTA has no row: reviews/dri-decisions-20261102-cmp-s4.md item 1).
+  Review of `4cd3844d4` (FIX): F1 (the composed path skipped 14.5 step 4) and F-ready1 (no Python seeded bug) fixed,
+  "Review fix" below; F2 to F6 are C findings, left as the review's FOLLOW-UPs.
 - **What changed:** `lean/VE/Discourse/Compose.lean` (new) holds 14.4, 14.5 and 14.6's identity theorems, all proved
   (no `sorry`, no new axiom). `lean/VE/Discourse/Run.lean` gains `encodeComposed`, `ComposedAdmissionAnswer` and the
   restated `discourse_wire_acceptance`; `fuelBudget` moved unchanged to `Admission.lean` as `VE.Discourse.fuelBudget`.
@@ -14,7 +16,7 @@
 - **Depends on cmp-s4ab (not merged):** 14.3 steps 1 and 3 to 7 and the fence slots. Until it merges, the composed path
   refuses a fenced unit and a prose unit with a recorded formula-producing mention by name (below). S4-4, S4-5, S4-22
   with its fence and S4-24 as a route case wait for it.
-- **Trust:** S +125, V +19, K +0 (trusted +144 of R16's 150). SIGNED by standing ruling R16. Trust mutants exit 0.
+- **Trust:** S +134, V +16, K +0 (trusted +150 of R16's 150). SIGNED by standing ruling R16. Trust mutants exit 0.
 - **DELTA:** no row (docs/composition/cmp-s4/DELTA.md). No route, wire, Python or English answer changes.
 
 ## Deliverables (task cmp-s4)
@@ -22,7 +24,7 @@
 | Task row | Delivered | Evidence |
 |---|---|---|
 | (1) 14.4 `resolveDocument`, `caseManifest`, `resolveCase`, `contentFree`, `caseShape`; `resolveDocument_keeps`, `resolveCase_keeps`, `resolveCase_off` | yes, statements verbatim | `Compose.lean:85-191`; statement check below |
-| (1) 14.5 `dispatchAdmission`, `chainDocument`, `ChainAdmitted`, `Composed`, `admitComposed`, `conditionalOnOf`, `composedJson`; `composed_admission`, `composed_path`, `conditions_retained` | yes, statements verbatim | `Compose.lean:196-376` |
+| (1) 14.5 `dispatchAdmission`, `chainDocument`, `ChainAdmitted`, `Composed`, `admitComposed`, `conditionalOnOf`, `composedJson`; `composed_admission`, `composed_path`, `conditions_retained` | yes, statements verbatim; step 4 (the manifest checks of 4.1) since the review fix: `chainChecks`, `composed_wellFormed` | `Compose.lean` |
 | (2) 14.6 `composed_unchanged`, `composed_base_unchanged`, `composed_unchanged_error` (DRI condition: the `"ve.discourse@1" ∉ profiles ∨` disjunct) | yes, verbatim, in `lean/statements.txt` | `Compose.lean:378-401` |
 | (2) `encodeComposed`, `ComposedAdmissionAnswer`, restated `discourse_wire_acceptance` (namespace `VE.Discourse.Run`) | yes, verbatim | `Run.lean:177-202`; `runCase` unchanged, so the proof takes the left disjunct |
 | (2) `fuelBudget` moved to `Admission.lean` | yes | `Admission.lean:715` |
@@ -51,7 +53,16 @@ environment j = true`; otherwise it is `.today` of `admitDiscourse … (baseVoca
 3. `chainBase`: the norms decoder's environment of the base pair, the chain route's environment id
    (`environmentId` of `Norms.Wire.canonicalEnvironmentJson`, the id the norms route's certificates bind) and the
    manifest; `definitions_version` must equal that id (`StaleTarget: definitions@<v>`);
-4. and 5. `resolveWith` (= `resolveDocument`): 14.3 step 6 (`MentionNotSlot: <m>` for a recorded formula-producing
+4. `chainChecks` (review F1), the manifest checks of 4.1: each unit's 14.3 step 6 and the abstentions below
+   (`contentOk`); 4.1(1), the `@1` part loaded as the document mode loads it (`Document.check` without the claim
+   graph, on `writtenText` under the base pair: the byte partition, `support`, `meaning_id`, narrowings, the norm
+   contents, with today's texts); then today's document sort (`documentSortOk`, now shared with `admitCore`) and
+   `wellFormed` (4.1(2) to (8): anchors, tables, mentions with `ResourceLimit: mentions`, coverage, bound units,
+   labels with `self_truth`) on `chainDDoc`, the document `prepare` builds: mentions on tokens, W2's units with their
+   `ast` formulas, and each chain content's unit a unit with meaning (`DDoc.chain`: its reference surfaces must be
+   recorded, `UnrecordedSlot` as S4-14 says, and it is a slot position). `composed_wellFormed`: a `.chain` answer
+   implies `wellFormed` of that document; `caseManifest` runs the same checks (`caseManifest_wellFormed`);
+5. `resolveWith` (= `resolveDocument`): 14.3 step 6 (`MentionNotSlot: <m>` for a recorded formula-producing
    mention on a JSON content) and two named abstentions while cmp-s4ab is out: `NotImplemented: fenced content on the
    chain`, `NotImplemented: a bound prose unit on the chain`. Every other content's `resolveContent` answer is the
    content as written (`resolve_identity`: no slot), so the answer is the payload itself;
@@ -95,10 +106,14 @@ with their docstrings and the proofs of the nine theorems take about 230 of `Com
 without leaving the statement gate's theorems unproved; the fixtures grew so that every new trusted definition has a
 check the trust mutants can read (below). I cut at the route entry (task row (3)), the fallback the task names.
 
-## Seeded bugs (Lean only; no Python or Rust product code changed)
+## Seeded bugs (Lean, and Python for `tools/layer_policy.py`; no Rust code changed)
 
 Each was planted alone, built with `lake build VE.Discourse.ComposeExamples VE.Service.ComposedAdmissionExamples`,
-and restored. All 29 are in `docs/composition/cmp-s4/mutants.json` with the first failing check.
+and restored. All 38 are in `docs/composition/cmp-s4/mutants.json` with the first failing check: the 29 of the build
+and the 9 of the review fix (eight Lean, in `admitChain`, `chainChecks`, `chainDDoc` twice, `coveredOk`, `slotUnit`,
+`caseManifest` and `formulaUnit`, and one Python, `tools/layer_policy.py`'s layer-4 rule for `VE.Discourse.Compose`
+dropped: `python3 tools/check_lean_imports.py`, the selection's and the gate's import check, exits 1 with "new outward
+Lean import: VE.Discourse.Compose -> VE.Service.Document").
 
 | Behaviour | Mutant | Fails |
 |---|---|---|
@@ -118,9 +133,13 @@ The other 22 (one per remaining new definition: `chainKeys`, `contentKey`, `unit
 ## Trust (R16)
 
 `uv run python tools/trust_map.py --check`: "PASS: K, S and untied [V] within 3b4e471f8c29 and the allowances
-introduced since"; against the merge base: K +0, S +125 (`Compose.lean`), V +19 (`Compose.lean` +18: `chainBase`,
-`caseManifest`; `Run.lean` +1: `encodeComposed`), trusted +144. Recorded with `--signed "SIGNED by standing ruling R16
-(DRI-RULINGS.md), cmp-s4, 2026-10-18"` (`docs/trust-baseline.json`). No line replaces a deleted Python path (no R6).
+introduced since"; against the merge base, re-measured on the review fix (`162a1f2b1`): K +0, S +134 (`Compose.lean`
++133: the build's 125 and `formulaUnit` +8; `Manifest.lean` +1: `DDoc.chain`), V +16 (`Compose.lean` +11: `chainBase`;
+`Admission.lean` +4: `documentSortOk`; `Run.lean` +1: `encodeComposed`), trusted +150 (per file: `Compose.lean` +144,
+`Admission.lean` +4, `Manifest.lean` +1, `Run.lean` +1). Recorded with `--signed "SIGNED by standing ruling R16
+(DRI-RULINGS.md), cmp-s4, 2026-10-18"` (S +125, V +19) and, for the review fix's S +9, `--signed "SIGNED by standing
+ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-11-02"` (`docs/trust-baseline.json`). No line replaces a deleted Python
+path (no R6).
 
 Classes (`tools/trust-classes.json`): S for the meaning the theorems are stated over or that decides acceptance
 (`chainConstructs` and its helpers, `contentOk`, `chainAbstentions`, `contentFree`, `caseShape` and their helpers,
@@ -128,17 +147,23 @@ Classes (`tools/trust-classes.json`): S for the meaning the theorems are stated 
 executables (`resolveWith`, `resolveDocument`, `resolveOn`, `resolveCase`, `writtenText`, `admitChain`,
 `admitComposed`); tied: `composedJson` (`conditions_retained`), `chainDocument` and `dispatchAdmission`
 (`composed_admission`), `fuelBudget` (`composed_unchanged`), `ComposedAdmissionAnswer` (`discourse_wire_acceptance`);
-`chainReferences` G[R]; fixtures T.
+`chainReferences` G[R]; fixtures T. Review fix: `formulaUnit` S (as `chainUnit`); `documentSortOk` G[V] (as
+`admitCore`'s other checks); `chainChecks` and `chainDDoc` G[V] tied by `chainChecks_wellFormed`, `caseManifest` D[V]
+tied by `caseManifest_wellFormed` (each states `wellFormed`, an S anchor, of `chainDDoc`'s document).
 
-R16's conditions: 144 ≤ 150, K +0; every new trusted definition has a check that can fail (the 29 hand mutants; the
+R16's conditions: 150 ≤ 150, K +0; every new trusted definition has a check that can fail (the 38 hand mutants; the
 trust mutants); the FOLLOW-UPS row is under "## cmp-s4" in `manage-agents/FOLLOW-UPS.md` (ties pass).
 
 Trust mutants: `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/composition/cmp-s4/trust-mutants-allow.json
---rescore … --json docs/composition/cmp-s4/trust-mutants.json` on `83ae4691e` (the final Lean tree): exit 0, "KILLED
-129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25". The 15 allow entries are type errors the tool reads as UNKNOWN
+--rescore … --json docs/composition/cmp-s4/trust-mutants.json` on `6e376756d` (the review fix's final Lean tree; a full
+run, since the table changed): exit 0, "KILLED 173, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 26". A first run on
+`06a97292d` left 36 survivors in `slotUnit`, `coveredOk`, `documentSortOk` and `formulaUnit`, whose kills were only in
+`VE/Service/` (outside the directory the tool builds); `6e376756d` adds their unit guards to `ComposeExamples.lean`
+(`chainDDoc`'s four-unit document, a group span in either position, documents in either order). The 16 allow entries are type errors the tool reads as UNKNOWN
 (`list-empty` on lists and maps of another type), `Composed`'s constructor drops (each constructor has a `#guard`), and
 equivalent mutants (`take 1` and `reverse.take 1` on lists of at most one element or under `isEmpty`, `chainKeys.dropLast`
-past the `fence` arm), each with its one-line reason. Two tool constraints shaped the fixtures, recorded for the next
+past the `fence` arm), each with its one-line reason; the review fix adds one, `documentSortOk`'s `K.documents` ->
+`[]` (a type error). Two tool constraints shaped the fixtures, recorded for the next
 item: the tool's source scan does not read Lean raw strings (`r#"…"#`), and it probes a definition's own module when
 that module holds `rfl` checks, so the key-order facts live in `ComposeKeys.lean` and the end-to-end fixtures (whose
 probe walks the whole chain route, about 11 minutes) are outside `Compose`'s directory.
