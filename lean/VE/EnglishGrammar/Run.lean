@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.Read
+import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.Fixed.Tables
 import VE.Service.Standalone
@@ -116,7 +117,7 @@ def codeClasses : List (String × String) :=
    ("NoDerivation", "SyntaxError"), ("Ambiguous", "AmbiguousDerivation"), ("Budget", "ResourceLimit"),
    ("InvalidGrammar", "CheckerUnavailable"), ("ConclusionWithoutPremise", "SyntaxError"),
    ("ConclusionNotDerived", "SyntaxError"), ("IllTyped", "TypeMismatch"), ("NotOneSentence", "SyntaxError"),
-   ("InvalidOverlay", "VEError")]
+   ("InvalidOverlay", "VEError"), ("UndeclaredEvaluative", "SyntaxError")]
 
 theorem codeClasses_total : ∀ r : Reject, (codeClasses.lookup r.code).isSome = true := by
   intro r
@@ -138,7 +139,7 @@ table: together they are the relay's whole table of codes, classes and statuses.
 def statusCodes : List (String × List String) :=
   [("none", ["NoDerivation"]), ("many", ["Ambiguous"]), ("budget", ["Budget"]),
    ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]),
-   ("rejected", rejectCodes ++ ["ConclusionWithoutPremise", "IllTyped", "NotOneSentence"])]
+   ("rejected", rejectCodes ++ ["ConclusionWithoutPremise", "IllTyped", "NotOneSentence", "UndeclaredEvaluative"])]
 
 theorem statusCodes_classed : ∀ s ∈ statusCodes, ∀ c ∈ s.2, (codeClasses.lookup c).isSome = true := by
   decide
@@ -228,7 +229,7 @@ def blockRouteView (environment : Json) : Json := Id.run do
 
 /-- The optional fields of an English request: the overlay, and `generated` (E2.6). -/
 def optionalFields (j : Json) : List String :=
-  ["overlay", "generated"].filter fun k => (j.getObjVal? k).toOption.isSome
+  ["overlay", "generated", "judgments"].filter fun k => (j.getObjVal? k).toOption.isSome
 
 /-- Whether the request reads Python's generated soft frame (`SoftEnvironment(prime, generated=True)`: the soft
 route's `E′` with its `soft__` decision predicates). Present only as `true`. -/
@@ -473,12 +474,26 @@ def derivations (G : Grammar Terminal) (source : String) : Except String (List J
       | some (.one t) => pure (treeJson tags t)
       | _ => throw "an accepted sentence has no single tree"
 
-def authoring (c : Case) (source : String) : Except String (List (String × Json)) := do
+/-- The bound names a request sends for spec 9.5's refusal (`judgments`). Absent, there is no such refusal: a caller opts
+in, so every request without the field answers as before (DRI 2026-11-02, jt-3 item 1). -/
+def judgmentsField (j : Json) : Except String (Option (List String)) :=
+  match j.getObjVal? "judgments" with
+  | .error _ => pure none
+  | .ok v => do
+    let names ← (VE.Bridge.strings v).mapError fun _ => "InvalidInput: judgments is a list of strings"
+    unless names.length ≤ JudgmentLines.maxJudgments do
+      throw s!"ResourceLimit: at most {JudgmentLines.maxJudgments} judgments in a request"
+    pure (some names)
+
+def authoring (c : Case) (source : String) (J : Option (List String) := none) :
+    Except String (List (String × Json)) := do
   if let some f := c.overlayFailure then return invalidOverlayFields "english.read" f
   let G := grammar c.E c.L
   let tags := G.rules.map (·.tag)
   match admitRequest c.E {} c.L workBudget source with
   | .ok rs obs =>
+    if let some (i, text) := J.bind (JudgmentLines.refusal c.E · (rs.map (·.1))) then
+      return status "rejected" ++ coded "UndeclaredEvaluative" text ++ [("sentence", toJson i)]
     pure (status "one" ++ [("ast", Json.arr (rs.map (·.1.encode)).toArray),
       ("conclusions", toJson ((List.range rs.length).filter fun i => (rs[i]?.map (·.2)).getD false)),
       ("derivation", Json.arr (← derivations G source).toArray),
@@ -557,11 +572,12 @@ def readCase (j : Json) : Except String Json := do
   let c ← decodeCase j
   let source ← VE.Bridge.stringField j "source"
   let cap ← (← j.getObjVal? "cap").getNat?
+  let judgments ← judgmentsField j
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 source.toUTF8))] ++ c.identities)
   let fields ← match ← VE.Bridge.stringField j "mode" with
     | "authoring" => do
       unless cap == 2 do throw "InvalidInput: authoring mode reads at cap 2"
-      authoring c source
+      authoring c source judgments
     | "translation" => pure (translation c cap source)
     | m => throw s!"InvalidInput: unknown reading mode {m}"
   let fields := refusalExtras c.E.profiles source fields

@@ -27,6 +27,7 @@ import VE.Risk.Eval
 import VE.Time.Document
 import VE.NormDefaults.Run
 import VE.Discourse.Run
+import VE.EnglishGrammar.JudgmentLines
 import VE.Readings.Run
 import VE.Service.Diagnose
 import VE.Service.Document
@@ -135,6 +136,7 @@ def runMode : Mode → Json → Json
   | .cardinality, j => VE.Cardinality.Run.runCaseReported j
   | .scope, j => VE.Scope.Run.runCaseReported j
   | .sensesProject, j => VE.Senses.Run.projectCaseReported j
+  | .judgmentLine, j => VE.EnglishGrammar.JudgmentLines.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -946,6 +948,8 @@ theorem runMode_scope (j : Json) : runMode .scope j = VE.Scope.Run.runCaseReport
 
 theorem runMode_sensesProject (j : Json) :
     runMode .sensesProject j = VE.Senses.Run.projectCaseReported j := rfl
+theorem runMode_judgmentLine (j : Json) :
+    runMode .judgmentLine j = VE.EnglishGrammar.JudgmentLines.runCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
