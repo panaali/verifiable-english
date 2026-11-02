@@ -197,10 +197,12 @@ def clsA : String := "{0} is classified as \"audited\""
 /-! The evaluative rows (`evaluativeRows`, judgment-terms.md 7 and 11.7): every row 11.7 names, with its other
 senses, and the words of the plan's catalogue row matched where they are evaluative and not in their other sense. -/
 
-#guard [(⟨"reasonable", []⟩ : VE.Judgments.EvaluativeRow), ⟨"arbitrary", []⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩,
-  ⟨"just", [["just", "as"]]⟩, ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"effective", [["effective", "date"]]⟩].all
-  evaluativeRows.contains
-#guard evaluativeRows.length == 15 && (evaluativeRows.map (·.word)).eraseDups.length == 15
+#guard [(⟨["reasonable"], []⟩ : VE.Judgments.EvaluativeRow), ⟨["arbitrary"], []⟩,
+  ⟨["due"], [["due", "date"], ["due", "to"]]⟩, ⟨["just"], [["just", "as"]]⟩,
+  ⟨["necessary"], [["necessary", "condition"]]⟩, ⟨["effective"], [["effective", "date"]]⟩,
+  ⟨["good", "judgment"], []⟩].all evaluativeRows.contains
+#guard evaluativeRows.length == 16 && (evaluativeRows.map (·.word)).eraseDups.length == 16 &&
+  evaluativeRows.all (!·.word.isEmpty)
 #guard VE.Judgments.undeclaredEvaluative evaluativeRows
   ([("reasonable_grounds", ["reasonable", "grounds"]), ("due_date", ["due", "date"]), ("arbitrary", ["arbitrary"]),
     ("just_as_real", ["just", "as", "real"]), ("just_requirement", ["just", "requirement"]),
@@ -215,9 +217,17 @@ senses, and the words of the plan's catalogue row matched where they are evaluat
     ("genuinely_arising", ["genuinely", "arising"]), ("effective_remedy", ["effective", "remedy"]),
     ("necessary_measure", ["necessary", "measure"]), ("due_process", ["due", "process"]),
     ("effective_date", ["effective", "date"]), ("due_to_illness", ["due", "to", "illness"]),
-    ("good_judgment", ["good", "judgment"])]) [] ==
+    ("good_judgment", ["good", "judgment"]), ("good_conduct", ["good", "conduct"]),
+    ("judgment_good", ["judgment", "good"])]) [] ==
   ["fair_hearing", "adequate_standard", "overly_cautious", "acts_arbitrarily", "appropriate_care",
     "acts_appropriately", "legitimate_aim", "genuine_need", "genuinely_arising", "effective_remedy",
-    "necessary_measure", "due_process"]
+    "necessary_measure", "due_process", "good_judgment"]
+-- The "good judgment" row (jt-3p): listed when unbound, in a name or a template, and not when bound; only the phrase
+-- in its order matches.
+#guard [([], ["good_judgment", "judgment_use_required"]), (["good_judgment"], ["judgment_use_required"])].all
+  fun (J, listed) => VE.Judgments.undeclaredEvaluative evaluativeRows
+    [("good_judgment", ["good", "judgment"]), ("good_conduct", ["good", "conduct"]),
+     ("judgment_good", ["judgment", "good"]), ("court_judgment", ["court", "judgment"]),
+     ("judgment_use_required", ["judgment", "use", "required", "0", "uses", "good", "judgment"])] J == listed
 
 end VE.EnglishGrammar.Examples
