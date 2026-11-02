@@ -1,4 +1,4 @@
-"""Compare PC-3's Lean declarations with the approved Lean blocks of docs/spec/profile-composition.md 1.2 to 1.5
+"""Compare PC-3's Lean declarations with the approved Lean blocks of docs/spec/profile-composition.md 1.2 to 1.6
 (build checklist 17).
 
 Every declaration of those blocks is compared with the one Lean declaration of that kind and name in the files PC-3
@@ -20,7 +20,8 @@ STOP = re.compile(r"^(?:\s*$|(?:theorem|def|structure|inductive|end|namespace|op
 LATER = {"ActsFaithful", "ActsPreserves", "StackRuns", "ReadingsFaithful", "readingsFaithful", "RewriterFacts",
          "VE.Discourse.caseManifest", "VE.Discourse.effectContent", "VE.Discourse.withEffectContent",
          "ResolvedEffect", "PairFacts", "stack_evidence", "stackRuns_all", "LayerFacts", "layer_evidence",
-         "layer_admitted"}
+         "layer_admitted", "fullEnvX", "BaseAdmissibleXV", "DocumentExpansionXV", "EntailsXV", "acceptanceXV",
+         "entailsXV_constraint", "countermodelXV"}
 STAGED = {"RouteFacts": ('| ["acts@0", "scope@0"] =>', "| _ => False")}
 
 
@@ -37,7 +38,7 @@ def declarations(code: str) -> dict[tuple[str, str], list[str]]:
 
 
 def approved() -> dict[tuple[str, str], list[str]]:
-    section = SPEC.read_text().split("### 1.2 ", 1)[1].split("### 1.6 ", 1)[0]
+    section = SPEC.read_text().split("### 1.2 ", 1)[1].split("### 1.7 ", 1)[0]
     return declarations("\n".join(re.findall(r"```lean\n(.*?)```", section, re.S)))
 
 
