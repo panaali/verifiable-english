@@ -5,6 +5,7 @@ import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
 import VE.Norms.Run
 import VE.Compose.Dispatch
+import VE.Events.Chain
 
 /-! The `ve_service` mode `norm-defaults` (docs/spec/norm-defaults.md 3, 6 and 8), formerly the one-shot `ve_norm_defaults_route`. The frozen
 norms route is unchanged; this executable adds the `norm-defaults@0` branch and
@@ -139,7 +140,7 @@ def usesNormDefaultsPath (j : Json) : Bool :=
   let kind := match j.getObjValD "kind" with
     | .str k => k.startsWith "norm-defaults-"
     | _ => false
-  Wire.hasProfile env || !(Wire.unspecifiedNames env).isEmpty || kind
+  Wire.hasProfile env || !(Wire.unspecifiedNames env).isEmpty || kind || (Wire.profilesOf env).contains "events@0"
 
 /-- The first target of `fill U` without an accepted certificate. -/
 def firstFailureU (r : Wire.ConflictReplayU) : Option String :=
@@ -360,14 +361,45 @@ def pendingDocumentLayer (j : Json) : Option String := do
     some s!"CheckerUnavailable: {l} with {kind} needs its composed Lean route"
   else none
 
-/-- `runCase` behind `Compose.pendingWithDefaults` and `pendingDocumentLayer`: a composed block this route does not
-read is refused by name. -/
+/-- The kinds of a list with `events@0` that read no situation, on the branches `eventsHook` reaches. An answer about a
+situation needs the calendar check and its fragment (spec 1.8, et-4c), so until then it is refused, never reported. -/
+def eventsServed (j : Json) (kind : String) : Bool :=
+  let route := Wire.layeredRoute (j.getObjValD "environment")
+  route.isSome && (kind == "norm-defaults-elaborate" ||
+    (kind == "norm-defaults-conflict" && !(j.getObjVal? "witness").toBool) ||
+    (kind == "norm-defaults-certificate" && route == some "soft-norms@0"))
+
+/-- A list with `events@0`: the row's refusal first (spec 4, item 1), then a kind no hook reads, by name. -/
+def pendingEvents (j : Json) : Option String := do
+  let listed := VE.Compose.listedProfiles (j.getObjValD "environment")
+  unless listed.contains "events@0" do none
+  match VE.Compose.gateOf VE.Compose.profileTable listed with
+  | .error e => some e
+  | .ok _ =>
+    let kind ← (VE.Route.Run.caseKind j).toOption
+    if eventsServed j kind then none else some s!"CheckerUnavailable: events@0 with {kind} needs its composed Lean route"
+
+/-- `norm-defaults-certificate` on a soft document with the block (`replayEventsEntailment`); `softCase` otherwise. -/
+def runCaseE (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let kind ← VE.Route.Run.caseKind j
+  if (VE.Compose.listedProfiles (j.getObjValD "environment")).contains "events@0" &&
+      kind == "norm-defaults-certificate" then
+    let r ← VE.Events.replayEventsEntailment j
+    return VE.Route.Wire.ok id [("valid", .bool r.valid),
+      ("premises", toJson (Wire.premisesX r.U (r.X ++ VE.Events.eventsX r.V) []).length)]
+  runCase j
+
+/-- `runCaseE` behind `Compose.pendingWithDefaults`, `pendingDocumentLayer` and `pendingEvents`: a composed block this
+route does not read is refused by name. -/
 def runGated (j : Json) : Except String Json :=
   match VE.Compose.pendingWithDefaults (Wire.profilesOf (j.getObjValD "environment")) with
   | some refusal => .error refusal
   | none => match pendingDocumentLayer j with
     | some refusal => .error refusal
-    | none => runCase j
+    | none => match pendingEvents j with
+      | some refusal => .error refusal
+      | none => runCaseE j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then

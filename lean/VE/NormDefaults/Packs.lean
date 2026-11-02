@@ -379,6 +379,13 @@ def elaborateArrays (qs : List Pack) : List (String × Json) :=
   [("soft", Json.arr ((packPremises qs "soft").map (fun (l, a) => labelledJson l a none)).toArray),
    ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)]
 
+/-- The `events` pack's labelled premises, on a document that has them (events 3): a pack's premises are never empty,
+so a list without the pack gets no key and its answer is byte-identical. -/
+def eventsArray (qs : List Pack) : List (String × Json) :=
+  match packPremises qs "events" with
+  | [] => []
+  | ls => [("events_premises", Json.arr (ls.map (fun (l, a) => labelledJson l a none)).toArray)]
+
 /-- 2.7: the keys pk-1's elaborate writes do not depend on the packs (the fact the encoder theorem needs). -/
 theorem elaborateArrays_keys (qs : List Pack) : (elaborateArrays qs).map (·.1) = ["soft", "rights"] := rfl
 

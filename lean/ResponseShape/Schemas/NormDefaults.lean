@@ -136,6 +136,7 @@ def layered_elaborate : Shape :=
       closed (elaborateFields ++ [
         ("soft", ref "common.json#/$defs/labelled_list"),
         ("rights", ref "common.json#/$defs/labelled_list"),
+        ("events_premises", ref "common.json#/$defs/labelled_list"),
         ("environment_id", str),
         ("document_hash", str),
         ("base_environment", ref "#/$defs/base_environment")])]
