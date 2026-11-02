@@ -17446,6 +17446,83 @@
         "VE.SoftNorms.ActsFrameExamples.frame",
         "VE.SoftNorms.ActsFrameExamples.inhP"
       ]
+    },
+    "VE/Calc/Interval.lean": {
+      "S": [
+        "VE.Calc.InBox"
+      ],
+      "C": [
+        "VE.Calc.Interval.add",
+        "VE.Calc.Interval.inv?",
+        "VE.Calc.Interval.mul",
+        "VE.Calc.Interval.pow",
+        "VE.Calc.Interval.sub",
+        "VE.Calc.binI",
+        "VE.Calc.chargeI",
+        "VE.Calc.enclose",
+        "VE.Calc.encloseC",
+        "VE.Calc.maxR",
+        "VE.Calc.minR",
+        "VE.Numbers.Printed.box"
+      ]
+    },
+    "VE/Calc/Consistency.lean": {
+      "S": [
+        "VE.Calc.Consistent"
+      ],
+      "G[R]": [
+        "VE.Calc.ConsistencyRefusal",
+        "VE.Calc.Source.isStated",
+        "VE.Calc.consistencyInputFault",
+        "VE.Calc.consistencyNameFault",
+        "VE.Calc.freeReadTable",
+        "VE.Calc.maxWitnessPoints",
+        "VE.Calc.searchUnknown"
+      ],
+      "C": [
+        "VE.Calc.Claim.misses",
+        "VE.Calc.ConsistencyAnswer",
+        "VE.Calc.allHoldC",
+        "VE.Calc.consistencyRun",
+        "VE.Calc.enclosesC",
+        "VE.Calc.endpointPoint",
+        "VE.Calc.grainRefutes",
+        "VE.Calc.pointDecls",
+        "VE.Calc.pointHoldsC",
+        "VE.Calc.refuteByEnclosure",
+        "VE.Calc.refuteByGrain",
+        "VE.Calc.refuteC",
+        "VE.Calc.searchC",
+        "VE.Calc.witnessCheck",
+        "VE.Calc.witnessPoints",
+        "VE.Numbers.Rel.misses"
+      ]
+    },
+    "VE/Calc/ConsistencyExamples.lean": {
+      "T": [
+        "VE.Calc.ConsistencyExamples.C1",
+        "VE.Calc.ConsistencyExamples.D12",
+        "VE.Calc.ConsistencyExamples.V6",
+        "VE.Calc.ConsistencyExamples.V6in",
+        "VE.Calc.ConsistencyExamples.V6outs",
+        "VE.Calc.ConsistencyExamples.V7",
+        "VE.Calc.ConsistencyExamples.V7b",
+        "VE.Calc.ConsistencyExamples.a",
+        "VE.Calc.ConsistencyExamples.chain",
+        "VE.Calc.ConsistencyExamples.ge",
+        "VE.Calc.ConsistencyExamples.hw",
+        "VE.Calc.ConsistencyExamples.inA",
+        "VE.Calc.ConsistencyExamples.k1",
+        "VE.Calc.ConsistencyExamples.k2",
+        "VE.Calc.ConsistencyExamples.lt",
+        "VE.Calc.ConsistencyExamples.p6",
+        "VE.Calc.ConsistencyExamples.run",
+        "VE.Calc.ConsistencyExamples.se",
+        "VE.Calc.ConsistencyExamples.sq",
+        "VE.Calc.ConsistencyExamples.sumOf",
+        "VE.Calc.ConsistencyExamples.twelve",
+        "VE.Calc.ConsistencyExamples.v6"
+      ]
     }
   }
 }

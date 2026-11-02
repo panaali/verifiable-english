@@ -162,6 +162,7 @@ import VE.Calc.Data
 import VE.Calc.TableExamples
 import VE.Calc.Stats
 import VE.Calc.StatsExamples
+import VE.Calc.ConsistencyExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
