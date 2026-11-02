@@ -122,7 +122,10 @@ def base_environment : Shape :=
           .required ["sorts", "predicates", "constants"],
           closed [
             ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
-            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("constants", n [obj, .ite (.onCase (ref "common.json#/$defs/request_block/events"))
+              -- The request's constants and the block's named dates (events 3); et-5's relay binds them.
+              (.object [] (some (n [obj, .required ["sort", "description"], closed [("sort", str), ("description", str)]])))
+              (.equals "/environment/vocabulary/constants")]),
             ("predicates", n [
               obj,
               .object [] (some (n [obj, .required ["arguments"], props [("arguments", ref "common.json#/$defs/strings")]]))])]])]]
