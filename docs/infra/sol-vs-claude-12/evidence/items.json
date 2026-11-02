@@ -1,0 +1,441 @@
+{
+ "scale-lean-memo": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "70da2be4d11a5b5af02c3983993f1c7bb491bb57",
+  "merged": "2026-10-30T11:40",
+  "build_start": "2026-10-29T06:52",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 1,
+  "lines": {
+   "md": 114,
+   "other": 1572,
+   "lean": 308,
+   "py": 197
+  },
+  "code_lines": 505,
+  "claude_cw_measured": 1138524,
+  "codex_input_tokens": 233759596
+ },
+ "df-1bbb": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "5f476e5fd2362079cc3c87287240335d91c82b4f",
+  "merged": "2026-10-30T11:17",
+  "build_start": "2026-10-29T22:52",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 1,
+  "lines": {
+   "md": 77,
+   "other": 677,
+   "py": 240,
+   "lean": 25
+  },
+  "code_lines": 265,
+  "claude_cw_measured": 631651,
+  "codex_input_tokens": 26328852
+ },
+ "usecase-safetyfw-b": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "79ce5893654dbfb894f6355173675f6f6df5f381",
+  "merged": "2026-10-30T10:24",
+  "build_start": "2026-10-28T22:56",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 734,
+   "other": 13106,
+   "lean": 33,
+   "rs": 699,
+   "py": 1724
+  },
+  "code_lines": 2456,
+  "claude_cw_measured": 3234186,
+  "codex_input_tokens": 447513919
+ },
+ "rd9-docroute": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "185e07ceba253e10b9f3ccc780fde785cd368ede",
+  "merged": "2026-10-30T08:50",
+  "build_start": "2026-10-29T06:53",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 276,
+   "other": 818,
+   "lean": 89,
+   "py": 526
+  },
+  "code_lines": 615,
+  "claude_cw_measured": 728242,
+  "codex_input_tokens": 217141007
+ },
+ "sc-5rc": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "38356ef6ce437780bd7ddbfd5484aa20f1bf9fc8",
+  "merged": "2026-10-30T02:57",
+  "build_start": "2026-10-29T12:57",
+  "first_review": "FIX",
+  "first_reviewer": "astra",
+  "fix_rounds": 1,
+  "lines": {
+   "md": 112,
+   "other": 784,
+   "lean": 246,
+   "py": 224
+  },
+  "code_lines": 470,
+  "claude_cw_measured": 152322,
+  "codex_input_tokens": 249917589
+ },
+ "eff-codemap": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "0bd4995683e6220a4fe66618b2cabe97a7dc38d8",
+  "merged": "2026-10-30T01:47",
+  "build_start": "2026-10-29T21:28",
+  "first_review": "MERGE",
+  "first_reviewer": "astra",
+  "fix_rounds": 0,
+  "lines": {
+   "other": 11,
+   "md": 2359,
+   "py": 305
+  },
+  "code_lines": 305,
+  "claude_cw_measured": 85330,
+  "codex_input_tokens": 10633899
+ },
+ "scale-admission-profile": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f",
+  "merged": "2026-10-30T01:36",
+  "build_start": "2026-10-29T12:35",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 1292,
+   "other": 248,
+   "py": 334
+  },
+  "code_lines": 334,
+  "claude_cw_measured": 643034,
+  "codex_input_tokens": 200980442
+ },
+ "sc-2": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "81b8371210db46ae992a2eff54f1a6d0039d2d0d",
+  "merged": "2026-10-29T23:50",
+  "build_start": "2026-10-29T21:41",
+  "first_review": "MERGE",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 59,
+   "other": 138,
+   "lean": 115
+  },
+  "code_lines": 115,
+  "claude_cw_measured": 0,
+  "codex_input_tokens": 26821249
+ },
+ "df-e1r": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "d34de5857e4d1ecdd85429970237422d684af45b",
+  "merged": "2026-10-29T23:47",
+  "build_start": "2026-10-29T19:43",
+  "first_review": "MERGE",
+  "first_reviewer": "astra",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 190,
+   "other": 805,
+   "py": 120
+  },
+  "code_lines": 120,
+  "claude_cw_measured": 0,
+  "codex_input_tokens": 24331124
+ },
+ "usecase-rsp-run": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "87a8c66d7587e10edf856985289f97c6cc09fd8b",
+  "merged": "2026-10-29T22:50",
+  "build_start": "2026-10-29T15:21",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 356,
+   "py": 1187,
+   "other": 5506
+  },
+  "code_lines": 1187,
+  "claude_cw_measured": 84748,
+  "codex_input_tokens": 105589420
+ },
+ "en-sw": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "bf28108dc14e7534f037e578850cd5ae5df69ff0",
+  "merged": "2026-10-29T21:39",
+  "build_start": "2026-10-29T12:27",
+  "first_review": "FIX",
+  "first_reviewer": "opus",
+  "fix_rounds": 1,
+  "lines": {
+   "other": 1377,
+   "md": 81,
+   "lean": 190,
+   "py": 117
+  },
+  "code_lines": 307,
+  "claude_cw_measured": 409107,
+  "codex_input_tokens": 135266998
+ },
+ "sc-3ac": {
+  "arm": "sol",
+  "builder": "sol (gpt-6-sol, no run-codex line)",
+  "merge_sha": "8868ce2124ec0a9282f7dde1d01cd75bcb4d676d",
+  "merged": "2026-10-29T20:13",
+  "build_start": "2026-10-29T12:37",
+  "first_review": "MERGE",
+  "first_reviewer": "astra",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 38,
+   "other": 1059,
+   "lean": 595
+  },
+  "code_lines": 595,
+  "claude_cw_measured": 0,
+  "codex_input_tokens": 106789272
+ },
+ "me-6cc": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "b9f2335ab2933b1e0c262f497c06af64e0bac079",
+  "merged": "2026-10-30T10:55",
+  "build_start": "2026-10-30T08:33",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 129,
+   "other": 398,
+   "lean": 30,
+   "py": 15
+  },
+  "code_lines": 45,
+  "claude_cw_measured": 477458,
+  "codex_input_tokens": 0
+ },
+ "gen-inv-design-c": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "28cbf26d8f83be1b7f32498a5e4c7d2265f9bea4",
+  "merged": "2026-10-30T10:05",
+  "build_start": "2026-10-30T09:14",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 153,
+   "py": 42
+  },
+  "code_lines": 42,
+  "claude_cw_measured": 852783,
+  "codex_input_tokens": 0
+ },
+ "me-12ac": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "13580c0baaf115465de078e56259c2e62ab1e06e",
+  "merged": "2026-10-30T09:45",
+  "build_start": "2026-10-30T06:40",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 178,
+   "other": 719,
+   "lean": 252
+  },
+  "code_lines": 252,
+  "claude_cw_measured": 830207,
+  "codex_input_tokens": 0
+ },
+ "fp-fresh-seen": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "2e40d8935f7a902cadd8b3a31760a30052057ea5",
+  "merged": "2026-10-30T09:19",
+  "build_start": "2026-10-30T08:15",
+  "first_review": "MERGE",
+  "first_reviewer": "opus(fallback)",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 79
+  },
+  "code_lines": 0,
+  "claude_cw_measured": 475191,
+  "codex_input_tokens": 0
+ },
+ "fp-fulltext": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "f58ef91bb85b9fa6f5cf97b99910462e23981ce8",
+  "merged": "2026-10-30T07:42",
+  "build_start": "2026-10-30T06:24",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 94
+  },
+  "code_lines": 0,
+  "claude_cw_measured": 705302,
+  "codex_input_tokens": 0
+ },
+ "sc-1af": {
+  "arm": "claude",
+  "builder": "opus via run-codex",
+  "merge_sha": "62d8329d4dd96a08301764a64405d8333aeb42af",
+  "merged": "2026-10-30T06:00",
+  "build_start": "2026-10-30T00:44",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 141,
+   "other": 442,
+   "lean": 219,
+   "py": 29
+  },
+  "code_lines": 248,
+  "claude_cw_measured": 1537261,
+  "codex_input_tokens": 0
+ },
+ "jt-e1r": {
+  "arm": "claude",
+  "builder": "opus via run-codex",
+  "merge_sha": "ddbed3bd49f9b3eb6dfe1ae0e570f7e09064a0ef",
+  "merged": "2026-10-30T05:51",
+  "build_start": "2026-10-29T21:31",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 1,
+  "lines": {
+   "md": 125,
+   "other": 9774,
+   "py": 689
+  },
+  "code_lines": 689,
+  "claude_cw_measured": 388224,
+  "codex_input_tokens": 47662367
+ },
+ "gate-shard-order": {
+  "arm": "claude",
+  "builder": "opus via run-codex",
+  "merge_sha": "a7a7fa1cb84eb95af559159e4bca2d97f116802d",
+  "merged": "2026-10-30T04:42",
+  "build_start": "2026-10-30T02:50",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "md": 150,
+   "other": 12,
+   "py": 202
+  },
+  "code_lines": 202,
+  "claude_cw_measured": 557011,
+  "codex_input_tokens": 0
+ },
+ "sc-1aeb": {
+  "arm": "claude",
+  "builder": "opus via run-codex",
+  "merge_sha": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876",
+  "merged": "2026-10-30T03:24",
+  "build_start": "2026-10-30T00:34",
+  "first_review": "MERGE",
+  "first_reviewer": "opus",
+  "fix_rounds": 0,
+  "lines": {
+   "other": 257,
+   "md": 175,
+   "lean": 142
+  },
+  "code_lines": 142,
+  "claude_cw_measured": 921173,
+  "codex_input_tokens": 0
+ },
+ "sc-1ae": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "9d646572fd8439cefd6d8878395e5ea13df14791",
+  "merged": "2026-10-29T09:03",
+  "build_start": "2026-10-28T11:15",
+  "first_review": "FIX",
+  "first_reviewer": "opus",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 329,
+   "other": 1352,
+   "lean": 810,
+   "py": 214
+  },
+  "code_lines": 1024,
+  "claude_cw_measured": 3765467,
+  "codex_input_tokens": 38725291
+ },
+ "et-4": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "6f59c66d6899f8a5b34be3392f3592842c9aabca",
+  "merged": "2026-10-29T07:55",
+  "build_start": "2026-10-28T16:50",
+  "first_review": "FIX",
+  "first_reviewer": "opus",
+  "fix_rounds": 1,
+  "lines": {
+   "md": 195,
+   "other": 1219,
+   "lean": 516,
+   "py": 294
+  },
+  "code_lines": 810,
+  "claude_cw_measured": 3337389,
+  "codex_input_tokens": 12595416
+ },
+ "me-4": {
+  "arm": "claude",
+  "builder": "opus direct (infra-item.sh, no -build.log)",
+  "merge_sha": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f",
+  "merged": "2026-10-29T07:10",
+  "build_start": "2026-10-28T15:49",
+  "first_review": "FIX",
+  "first_reviewer": "sol6.1",
+  "fix_rounds": 2,
+  "lines": {
+   "md": 124,
+   "other": 1144,
+   "lean": 588,
+   "py": 29
+  },
+  "code_lines": 617,
+  "claude_cw_measured": 1530993,
+  "codex_input_tokens": 107222714
+ }
+}

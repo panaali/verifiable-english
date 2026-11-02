@@ -149,7 +149,7 @@ _SOFT_CORE = {
     "environment_prime.vocabulary.predicates{}.arguments": BOUND,
     "environment_prime.vocabulary.predicates{}.arguments[]": BOUND,
     "environment_prime.vocabulary.rights": BOUND, "environment_prime.vocabulary.soft": BOUND,
-    "environment_prime.vocabulary.sorts": BOUND,
+    "environment_prime.vocabulary.sorts": BOUND, "environment_prime.vocabulary.acts": BOUND,
     "fragment": lean("whether the document is in Lean's decided fragment"),
     "order": UNORDERED, "order[]": BOUND,
     "premises": UNORDERED, "premises[].ast": FORMULA, "premises[].label": BOUND,
@@ -691,9 +691,13 @@ def test_another_requests_genuine_answer_is_unavailable(relays, route):
 
 # Bound fields no genuine answer above carries, each with the regression that covers it.
 _WITNESS_ROWS = "test_unrequested_witness_rows_are_unavailable"
+_ACTS_PRIME = {"environment_prime.vocabulary.acts": "test_a_soft_views_prime_acts_block_not_bound_to_the_request_is_unavailable"}
 UNEXERCISED = {
     "rights-conflict": {"conditional_on[]": "test_f15_rights_conflict_identities_are_bound"},
+    # `acts@0` refuses `rights@0`; the rights route's prime is bound by the soft route's binder (ap-1bg)
+    "rights-elaborate": _ACTS_PRIME,
     "soft-elaborate": {
+        **_ACTS_PRIME,
         # The soft relay never sends a rights block (`check_soft_source` removes it); the same prime
         # binder refuses a changed block on the rights route.
         "environment_prime.vocabulary.rights":

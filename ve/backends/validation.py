@@ -96,9 +96,30 @@ def validated_environment(env, data, decode: Callable[[dict | None], object]):
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
+
+    def bind(built, row):
+        bound_model_acts(row, data)
+        return built
     return construct_after_lean(lambda row: decode(row.get("acts")), cache,
                                 lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
-                                lambda built, row: row["environment_id"] == built.environment_id, "environment")
+                                lambda built, row: row["environment_id"] == built.environment_id, "environment", bind)
+
+
+def bound_model_acts(row: dict, data: dict) -> dict:
+    """The environment row's `model_acts` (Lean's `Standalone.modelActs`, ap-1bg) bound to the request `data`: under
+    `acts@0` exactly its permission and obligation predicates, two of them with one model act exactly when the row's
+    canonical acts are equal; without `acts@0`, none. Anything else is `CheckerUnavailable`."""
+    try:
+        acts, model = row.get("acts", {}), row.get("model_acts", {})
+        expected = set()
+        if "acts@0" in (data.get("profiles") or ()):
+            expected = {p for p, decl in data["vocabulary"]["predicates"].items()
+                        if decl.get("regulated", {}).get("role", "plain") != "plain"}
+        if set(model) == expected and all((acts[p] == acts[q]) == (model[p] == model[q]) for p in model for q in model):
+            return model
+    except (KeyError, TypeError, AttributeError):
+        pass
+    raise CheckerUnavailable("CheckerUnavailable: the environment row's model acts are not bound to the request")
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):
