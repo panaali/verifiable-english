@@ -8,7 +8,7 @@
   in 91% and has its moved word second in 97%.
 - **Open:** latency is recorded, not judged (q1-3c, HUMAN). The `soft-chain` part's profile `soft-norms@0` is refused
   by `english.read` and `english.question` (follow-up below), so `whole_streams` is false.
-  Hand-written size is SIZE_LINES lines, SIZE_OVER over the guide.
+  Hand-written size is about 1,160 lines, ~560 over the guide.
 
 The numbers are in [question-answering-q1-report.md](../../spec/question-answering-q1-report.md), section "q1-3b",
 and each cites its command (C4, C5). **Statement gate:** no theorem statement is added or changed, and Q1.2's reader is
@@ -66,7 +66,9 @@ norm's rendered English, not its text. This run does not measure rendered Englis
   and unavailable counts. No Lean or Rust code changed.
 - **Trust:** `tools/trust_map.py --check` gives K +0, S +0 and trusted +0 (PASS). There is no allowance and no
   FOLLOW-UPS row.
-- **Tests:** TESTS_LINE The full gate is left to the chain. `test_the_q1_3b_evidence_stays_in_the_tree` is removed:
+- **Tests:** The selected tests (137 units, 3 shards, GitHub Actions run `q1-3b-bf10cc66-t625396`) gave 0 failed at
+  `bf10cc666`. `lake build` and `lean/audit.py` pass. `gate_collection.py --check --prebuilt` reports 33 added, 0
+  refused, 0 stale and 0 malformed. The full gate is left to the chain. `test_the_q1_3b_evidence_stays_in_the_tree` is removed:
   it was a permanent test over batch evidence, which DRI decision D4 rules out, so the saved numbers are checked by
   this batch's review probes, and the regression tests run on fixtures.
 - **Corpus run:** C4, 13,694 s with 12 workers, at `5c56edcec`. It replaces the run at `5728eb968`. The code under
@@ -74,8 +76,8 @@ norm's rendered English, not its text. This run does not measure rendered Englis
   apart from the norm documents, every non-timing configuration field is equal.
 - **One unanswered fronting:** C4 has 1 `unavailable` in `usecase-surface`, and `coverage.whole_streams` reads sentence
   reads only, so it would not have noticed this one alone. The count is in `streams.usecase-surface.f2_unavailable`.
-- **Size and pilot bytes:** SIZE_LINES hand-written lines (`git diff --numstat` over the merge base, without the
-  evidence JSON and `mutants.json`). That is SIZE_OVER over the ~600 guide: the stream reproductions, the norm-document
+- **Size and pilot bytes:** About 1,160 hand-written lines (`git diff --numstat` over the merge base, without the
+  evidence JSON and `mutants.json`). That is ~560 over the ~600 guide: the stream reproductions, the norm-document
   reader and the tests are what grew. Pilot bytes expected to move: 0, since this is a measurement.
 - **Not run:** a whole UDHR or constitution document (L70). The English rendering of the 104 norm and AST contents.
   The `soft-chain` part's 1,005 sentences have no answer (`UnsupportedProfile`), and they are counted as unavailable,
