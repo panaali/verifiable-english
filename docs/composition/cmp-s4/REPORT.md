@@ -213,7 +213,8 @@ the norms route keeps its own limit of 256 rules. Fixture: a 200-norm-unit docum
   $(git merge-base HEAD main) --run` on `0e70487a2`): 424 units, 1 failed,
   `tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors` (20 printed SURVIVOR lines against
   21 in its JSON, on the tool's own Demo tree; no file it reads changed); rerun alone on the same commit: "1 passed"
-  (load-sensitive: FOLLOW-UP).
+  (load-sensitive: FOLLOW-UP). The selection for the report-only commit `3f6eb8234` (`--base 0e70487a2`: 5 units,
+  `tests/test_trust_mutants.py` whole, "564 passed"): exit 0.
 - No test in `main-known-red.txt` was hit. Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Pilot bytes
