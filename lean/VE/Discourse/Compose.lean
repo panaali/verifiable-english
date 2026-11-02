@@ -237,24 +237,23 @@ inductive Composed
   | today (res : Admitted)         -- today's discourse admission
   | chain (c : ChainAdmitted)
 
-mutual
 /-- Every `conditional_on` list of an answer, in pre-order. -/
 def conditionalOnOf (a : Json) : List Json :=
   match a with
-  | .obj ⟨⟨t⟩⟩ => conditionalOnTree t
-  | .arr ⟨xs⟩ => conditionalOnList xs
+  | .obj ⟨⟨t⟩⟩ => tree t
+  | .arr ⟨xs⟩ => list xs
   | _ => []
-/-- `conditionalOnOf` over an object's fields, in key order. -/
-def conditionalOnTree : Std.DTreeMap.Internal.Impl String (fun _ => Json) → List Json
-  | .leaf => []
-  | .inner _ k v l r => conditionalOnTree l ++
-      ((if k == "conditional_on" then (match v with | .arr _ => [v] | _ => []) else []) ++ conditionalOnOf v) ++
-      conditionalOnTree r
-/-- `conditionalOnOf` over an array's elements, in order. -/
-def conditionalOnList : List Json → List Json
-  | [] => []
-  | x :: xs => conditionalOnOf x ++ conditionalOnList xs
-end
+where
+  /-- An object's fields, in key order. -/
+  tree : Std.DTreeMap.Internal.Impl String (fun _ => Json) → List Json
+    | .leaf => []
+    | .inner _ k v l r => tree l ++
+        ((if k == "conditional_on" then (match v with | .arr _ => [v] | _ => []) else []) ++ conditionalOnOf v) ++
+        tree r
+  /-- An array's elements, in order. -/
+  list : List Json → List Json
+    | [] => []
+    | x :: xs => conditionalOnOf x ++ list xs
 
 /-- 14.5 step 1's named abstentions: groups, compatibility constraints, validity claims and reading sets. -/
 def chainAbstentions (front : Json) : Except String Unit := do
@@ -371,7 +370,7 @@ theorem conditions_retained (profiles : List String) (environment j : Json) (c :
     Std.DTreeMap.Internal.Impl.Const.ofList, Std.DTreeMap.Internal.Impl.Const.insertMany]
   simp (config := {decide := true}) [Std.DTreeMap.Internal.Impl.insert, Std.DTreeMap.Internal.Impl.empty,
     Std.DTreeMap.Internal.Impl.balanceL, Std.DTreeMap.Internal.Impl.balanceR, Std.DTreeMap.Internal.Impl.size,
-    conditionalOnOf, conditionalOnTree, hrefs, cmp_i_d, cmp_ir_d, cmp_ir_i, cmp_rf_i, cmp_rf_ir, cmp_rp_i, cmp_rp_ir,
+    conditionalOnOf, conditionalOnOf.tree, hrefs, cmp_i_d, cmp_ir_d, cmp_ir_i, cmp_rf_i, cmp_rf_ir, cmp_rp_i, cmp_rp_ir,
     cmp_rp_rf]
 
 /-! ## Identity cases (14.6) -/

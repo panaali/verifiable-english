@@ -74,6 +74,9 @@ def unitJ (content : Option String) (id := "u2") : Json :=
 #guard (manifestOf "u2").mentions.length == 1
 #guard ok? (contentOk (manifestOf "u2") (unitJ "{\"norm\": {}}")) == "MentionNotSlot: m1"
 #guard ok? (contentOk (manifestOf "u2") (unitJ "{\"right\": {}}")) == "MentionNotSlot: m1"
+def twoMentions : Manifest :=
+  { manifestOf "u2" with mentions := (manifestOf "u2").mentions ++ (manifestOf "u2").mentions.map (fun m => { m with id := "m2" }) }
+#guard ok? (contentOk twoMentions (unitJ "{\"norm\": {}}")) == "MentionNotSlot: m1"
 #guard ok? (contentOk (manifestOf "u2") (unitJ "{\"fence\": \"u2\"}")) == "NotImplemented: fenced content on the chain"
 #guard ok? (contentOk (manifestOf "u1") (unitJ "{\"fence\": \"u2\"}")) == "NotImplemented: fenced content on the chain"
 #guard ok? (contentOk (manifestOf "u2") (unitJ "{\"ast\": [\"top\"]}")) == "NotImplemented: a bound prose unit on the chain"
@@ -158,8 +161,8 @@ def payload (units : String) : Json :=
 
 -- `conditionalOnOf`: every `conditional_on` list, pre-order, keys in order, arrays in order
 #guard conditionalOnOf ((Json.parse "{\"a\": {\"conditional_on\": [\"x\"]}, \"b\": [{\"conditional_on\": [\"y\"]},
-  {\"conditional_on\": \"z\"}, {\"conditional_on\": [\"u\"]}], \"conditional_on\": [\"w\", {\"conditional_on\": [\"v\"]}]}").toOption.getD .null) ==
-  [Json.arr #[.str "x"], Json.arr #[.str "y"], Json.arr #[.str "u"], (Json.parse "[\"w\", {\"conditional_on\": [\"v\"]}]").toOption.getD .null,
+  {\"conditional_on\": \"z\"}, {\"conditional_on\": [\"u\"]}, {\"conditional_on\": [\"t\"]}], \"conditional_on\": [\"w\", {\"conditional_on\": [\"v\"]}]}").toOption.getD .null) ==
+  [Json.arr #[.str "x"], Json.arr #[.str "y"], Json.arr #[.str "u"], Json.arr #[.str "t"], (Json.parse "[\"w\", {\"conditional_on\": [\"v\"]}]").toOption.getD .null,
    Json.arr #[.str "v"]]
 
 -- `usesDiscoursePath` (Run.lean; its lines border the moved `fuelBudget`)
