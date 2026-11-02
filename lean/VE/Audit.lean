@@ -146,6 +146,7 @@ import VE.Discourse.Grammar
 import VE.Discourse.Joint
 import VE.Discourse.Loader
 import VE.Discourse.Manifest
+import VE.Discourse.Positions
 import VE.Discourse.Resolve
 import VE.Discourse.Run
 import VE.Discourse.Theorems
@@ -2263,6 +2264,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.bound_mem
 #print axioms VE.Discourse.canon_kind
 #print axioms VE.Discourse.carrier_cases
+#print axioms VE.Discourse.checkAll_ok
 #print axioms VE.Discourse.citation_choices_retained
 #print axioms VE.Discourse.citation_extends_joint
 #print axioms VE.Discourse.compatibleChoices_unconstrained
@@ -2277,6 +2279,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.conj_nil
 #print axioms VE.Discourse.conj_wf
 #print axioms VE.Discourse.constAcc_mem
+#print axioms VE.Discourse.contentSet_declared
 #print axioms VE.Discourse.coreEnd_cands
 #print axioms VE.Discourse.coreFormula_congr
 #print axioms VE.Discourse.coreFormula_ok
@@ -2301,6 +2304,8 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.disjunction_denote
 #print axioms VE.Discourse.document_find
 #print axioms VE.Discourse.document_sort_conservative
+#print axioms VE.Discourse.drop_app
+#print axioms VE.Discourse.drop_line
 #print axioms VE.Discourse.dupOf_none
 #print axioms VE.Discourse.dup_nodup
 #print axioms VE.Discourse.elaborateD_capture
@@ -2319,6 +2324,11 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.extendsTo_iff
 #print axioms VE.Discourse.extension_rejected
 #print axioms VE.Discourse.extension_unknown
+#print axioms VE.Discourse.fills_content
+#print axioms VE.Discourse.fills_line
+#print axioms VE.Discourse.fills_lines
+#print axioms VE.Discourse.fills_node
+#print axioms VE.Discourse.fills_opt
 #print axioms VE.Discourse.find_group
 #print axioms VE.Discourse.find_key
 #print axioms VE.Discourse.foldl_mul
@@ -2378,9 +2388,16 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.npConsts_ok
 #print axioms VE.Discourse.npEnd_cands
 #print axioms VE.Discourse.okKind_canon
+#print axioms VE.Discourse.optCount_eq
 #print axioms VE.Discourse.outcome_unknown_of_joint
 #print axioms VE.Discourse.pending_not_compatibility
+#print axioms VE.Discourse.placeT_denote
+#print axioms VE.Discourse.place_binder
+#print axioms VE.Discourse.place_const
+#print axioms VE.Discourse.place_denote
+#print axioms VE.Discourse.place_var
 #print axioms VE.Discourse.pluralMembers_ok
+#print axioms VE.Discourse.positions_withPositions
 #print axioms VE.Discourse.postOk_facts
 #print axioms VE.Discourse.predFormula_congr
 #print axioms VE.Discourse.predFormula_ok
@@ -2398,10 +2415,22 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.recorded_mention
 #print axioms VE.Discourse.registered_constant
 #print axioms VE.Discourse.registered_some
+#print axioms VE.Discourse.renameP_denote
 #print axioms VE.Discourse.report_extends_joint
 #print axioms VE.Discourse.req_ok
+#print axioms VE.Discourse.resolveAll_ok
+#print axioms VE.Discourse.resolveFormula_assertion
+#print axioms VE.Discourse.resolve_identity
+#print axioms VE.Discourse.resolve_keeps_shape
+#print axioms VE.Discourse.resolve_no_new_symbols
+#print axioms VE.Discourse.resolve_ok
+#print axioms VE.Discourse.resolve_position_faithful
+#print axioms VE.Discourse.resolve_typed
+#print axioms VE.Discourse.resolved_at
 #print axioms VE.Discourse.restr_agree
 #print axioms VE.Discourse.restr_wf
+#print axioms VE.Discourse.restriction_at
+#print axioms VE.Discourse.rewrite_denote
 #print axioms VE.Discourse.runAll_cons
 #print axioms VE.Discourse.runAll_error
 #print axioms VE.Discourse.runAll_head_error
@@ -2412,6 +2441,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.sharedWitness_spec
 #print axioms VE.Discourse.slotCands_complete
 #print axioms VE.Discourse.slots_of_derivs
+#print axioms VE.Discourse.split2
 #print axioms VE.Discourse.split_not_fused_model
 #print axioms VE.Discourse.stale_import_rejected
 #print axioms VE.Discourse.stale_target_rejected
@@ -2452,6 +2482,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.verdictOf_unknown
 #print axioms VE.Discourse.wellFormed_of
 #print axioms VE.Discourse.wf_bound
+#print axioms VE.Discourse.withPositions_self
 #print axioms VE.Discourse.wordAt_lt
 #print axioms VE.Discourse.wordAt_mem
 #print axioms VE.Discourse.xi_models
