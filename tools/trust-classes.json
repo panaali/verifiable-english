@@ -2949,6 +2949,7 @@
         "VE.Discourse.ComposeExamples.shape",
         "VE.Discourse.ComposeExamples.src1",
         "VE.Discourse.ComposeExamples.src2",
+        "VE.Discourse.ComposeExamples.twoMentions",
         "VE.Discourse.ComposeExamples.u1",
         "VE.Discourse.ComposeExamples.unitJ",
         "VE.Discourse.ComposeExamples.units",
