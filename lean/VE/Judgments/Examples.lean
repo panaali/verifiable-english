@@ -2,7 +2,6 @@ import VE.Judgments.Status
 import VE.Norms.Checks
 import VE.Route.Typed
 import VE.Judgments.Undeclared
-import VE.EnglishGrammar.Evaluative
 
 /-! The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the
 built definitions. Each value is the one the spec's stub computed by `#eval`. Every rule fixture that JT-2 replays
@@ -421,11 +420,11 @@ def goodPreds : List (String × List String) :=
    ("judgment_good", predicateWords "judgment_good" none), ("court_judgment", predicateWords "court_judgment" none),
    ("judgment_use_required", predicateWords "judgment_use_required" (some "{0} uses good judgment"))]
 
--- The catalogue's "good judgment" row: listed when unbound, not listed when in `J`; `good_conduct` is never listed.
-#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds [] ==
-  ["good_judgment", "judgment_use_required"]
-#guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds ["good_judgment"] == ["judgment_use_required"]
-#guard !(undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds []).contains "good_conduct"
+-- A "good judgment" row: listed when unbound, not listed when in `J`; `good_conduct` is never listed. The catalogue's
+-- own row is checked in `VE.EnglishGrammar.Examples` (english-lean's layer).
+#guard undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds [] == ["good_judgment", "judgment_use_required"]
+#guard undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds ["good_judgment"] == ["judgment_use_required"]
+#guard !(undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds []).contains "good_conduct"
 -- Each of them holds a word of the phrase: rows for the two words alone would list all five.
 #guard undeclaredEvaluative [⟨["good"], []⟩, ⟨["judgment"], []⟩] goodPreds [] ==
   ["good_judgment", "good_conduct", "judgment_good", "court_judgment", "judgment_use_required"]
