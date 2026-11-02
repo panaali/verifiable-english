@@ -244,13 +244,11 @@ def conditionalOnOf (a : Json) : List Json :=
   | .arr ⟨xs⟩ => list xs
   | _ => []
 where
-  /-- An object's fields, in key order. -/
   tree : Std.DTreeMap.Internal.Impl String (fun _ => Json) → List Json
     | .leaf => []
     | .inner _ k v l r => tree l ++
         ((if k == "conditional_on" then (match v with | .arr _ => [v] | _ => []) else []) ++ conditionalOnOf v) ++
         tree r
-  /-- An array's elements, in order. -/
   list : List Json → List Json
     | [] => []
     | x :: xs => conditionalOnOf x ++ list xs

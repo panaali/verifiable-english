@@ -9,7 +9,7 @@
    "from": "if \"norms@0\" ∈ profiles ∧ \"ve.discourse@1\" ∈ profiles ∧ chainConstructs",
    "to": "if \"norms@0\" ∈ profiles ∧ chainConstructs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:311",
+   "test": "lean/VE/Discourse/Compose.lean:309",
    "check": "proof"
   },
   {
@@ -29,7 +29,7 @@
    "from": "(\"inner\", c.inner),",
    "to": "(\"inner\", c.inner.setObjVal! \"conditional_on\" (.arr #[])),",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/Compose.lean:361",
+   "test": "lean/VE/Discourse/Compose.lean:359",
    "check": "proof"
   },
   {
