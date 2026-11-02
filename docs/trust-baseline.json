@@ -1741,6 +1741,13 @@
    "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 8,
+   "reason": "ap-3dd: lean/VE/Acts/Faithful.lean +8 (S: readAs, IntendedActs, the definitions spec 6.6 states elaborate_faithful with)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dd, 2026-11-02",
+   "commit": "fe6bf09b8aad4cd4468c80df38bf8b7b4ed498a1"
   }
  ]
 }

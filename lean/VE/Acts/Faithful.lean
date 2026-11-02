@@ -1,5 +1,4 @@
 import VE.Acts.Decode
-import VE.Norms.FlaggedSpec
 
 /-! Faithfulness of the elaboration (docs/spec/act-phrases.md 6.6, C17): each part means what the source rules mean,
 read of the part.
@@ -246,24 +245,29 @@ theorem tupleTyped_readAs (p q : String) (S : VE.Structure.{u}) : ∀ (ss : List
     simp only [VE.TupleTyped]
     exact and_congr Iff.rfl (tupleTyped_readAs p q S ss vs)
 
-/-- Truth of a formula reads only the relations it names. -/
-theorem denote_preds_congr (S : VE.Structure.{u}) (R R' : String → List S.Carrier → Prop) (a : VE.Formula)
-    (ρ : List S.Carrier) (h : ∀ r ∈ preds a, ∀ vs, R r vs ↔ R' r vs) :
+/-- Truth of a typed formula reads only the declared relations it names. -/
+theorem denote_preds_congr (S : VE.Structure.{u}) (R R' : String → List S.Carrier → Prop) {E : VE.Environment}
+    (a : VE.Formula) (Γ : List String) (ρ : List S.Carrier) (hw : a.WellFormed E Γ)
+    (h : ∀ r ∈ preds a, E.predicates r ≠ none → ∀ vs, R r vs ↔ R' r vs) :
     a.denote { S with relation := R } ρ ↔ a.denote { S with relation := R' } ρ := by
-  induction a generalizing ρ with
-  | unary r t => simp only [VE.Formula.denote, VE.Term.denote, h r (by simp [preds]) _]
-  | binary r t w => simp only [VE.Formula.denote, VE.Term.denote, h r (by simp [preds]) _]
+  induction a generalizing Γ ρ with
+  | unary r t =>
+    obtain ⟨_, hr, _⟩ := hw
+    simp only [VE.Formula.denote, VE.Term.denote, h r (by simp [preds]) (by simp [hr]) _]
+  | binary r t w =>
+    obtain ⟨_, _, hr, _⟩ := hw
+    simp only [VE.Formula.denote, VE.Term.denote, h r (by simp [preds]) (by simp [hr]) _]
   | eq t w => exact Iff.rfl
   | top | bottom => exact Iff.rfl
-  | not a ih => simp only [VE.Formula.denote]; rw [ih ρ h]
+  | not a ih => simp only [VE.Formula.denote]; rw [ih Γ ρ hw h]
   | and a b ia ib | or a b ia ib | implies a b ia ib =>
     simp only [VE.Formula.denote]
-    rw [ia ρ fun r hr => h r (by simp [preds, hr]), ib ρ fun r hr => h r (by simp [preds, hr])]
+    rw [ia Γ ρ hw.1 fun r hr => h r (by simp [preds, hr]), ib Γ ρ hw.2 fun r hr => h r (by simp [preds, hr])]
   | all t a ih | ex t a ih =>
     simp only [VE.Formula.denote]
     first
-    | exact forall_congr' fun v => imp_congr_right fun _ => ih (v :: ρ) h
-    | exact exists_congr fun v => and_congr_right fun _ => ih (v :: ρ) h
+    | exact forall_congr' fun v => imp_congr_right fun _ => ih (t :: Γ) (v :: ρ) hw.2 h
+    | exact exists_congr fun v => and_congr_right fun _ => ih (t :: Γ) (v :: ρ) hw.2 h
 
 theorem applies_agree {S₁ S₂ : VE.Structure.{u}} {ρ₁ : VE.Valuation S₁} {ρ₂ : VE.Valuation S₂} {N K : Node}
     (hg : K.guard = N.guard) (hc : K.carveOuts = N.carveOuts)
@@ -308,11 +312,10 @@ theorem node_regulated {N : Node} (hN : N ∈ D.U.D.T.nodes) : ∃ r ∈ D.U.D.T
   obtain ⟨_, _, r, hr, _⟩ := ((wellFormed_iff D.U.D).mp h0).1.2.2.2.2.2.2.1.1 N hN
   exact ⟨r, List.mem_of_find?_eq_some hr, by simpa using List.find?_some hr⟩
 
-theorem node_preds_declared {N : Node} (hN : N ∈ D.U.D.T.nodes) {φ : VE.Formula} (hφ : φ ∈ N.guard :: N.carveOuts)
-    {q : String} (hq : q ∈ preds φ) : D.U.D.E.predicates q ≠ none := by
+theorem node_typed {N : Node} (hN : N ∈ D.U.D.T.nodes) {φ : VE.Formula} (hφ : φ ∈ N.guard :: N.carveOuts) :
+    ∃ Γ, φ.WellFormed D.U.D.E Γ := by
   obtain ⟨_, _, _, _, ht⟩ := ((wellFormed_iff D.U.D).mp h0).1.2.2.2.2.2.2.1.1 N hN
-  obtain ⟨_, hs⟩ := preds_declared φ _ ((VE.check_iff_wellFormed _ _ _).mp (ht φ hφ).2) q hq
-  simp [hs]
+  exact ⟨_, (VE.check_iff_wellFormed _ _ _).mp (ht φ hφ).2⟩
 
 end Source
 
@@ -334,7 +337,8 @@ theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.No
         IntendedAt (splitDoc D (splitAtoms D) (splitMap D (splitAtoms D))).D.T r S) := by
     intro r hr hp
     refine intended_tracks (f := id) S (fun N hN e => ?_) (fun K hK e => ?_) (fun _ _ => Iff.rfl)
-      (fun ρ N _ _ => applies_agree rfl rfl fun φ _ => denote_preds_congr S _ _ φ ρ fun t _ vs => ?_) hac hac' rfl rfl
+      (fun ρ N hN _ => applies_agree rfl rfl fun φ hφ => let ⟨Γ, hw⟩ := node_typed h0 hN hφ
+        denote_preds_congr S _ _ φ Γ ρ hw fun t _ _ vs => ?_) hac hac' rfl rfl
     · exact ⟨List.mem_flatMap.mpr ⟨N, hN, mem_splitNode.mpr (.inl ⟨e ▸ hp, rfl⟩)⟩, e, rfl⟩
     · obtain ⟨N, hN, hs⟩ := List.mem_flatMap.mp hK
       rcases mem_splitNode.mp hs with ⟨_, rfl⟩ | ⟨x, hx, rfl⟩
@@ -354,7 +358,8 @@ theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.No
       (f := fun N => { N with name := partRule N.name x.2, pred := partPred N.pred x.2,
                               over := N.over.map (partRule · x.2) })
       S (fun N hN e => ?_) (fun K hK e => ?_) (fun N C => ?_)
-      (fun ρ N hN _ => applies_agree rfl rfl fun φ hφ => denote_preds_congr S _ _ φ ρ fun t ht vs => ?_) hac hac' hs hd
+      (fun ρ N hN _ => applies_agree rfl rfl fun φ hφ => let ⟨Γ, hw⟩ := node_typed h0 hN hφ
+        denote_preds_congr S _ _ φ Γ ρ hw fun t ht hdecl vs => ?_) hac hac' hs hd
     · exact ⟨List.mem_flatMap.mpr ⟨N, hN, mem_splitNode.mpr (.inr ⟨x, e ▸ hx, rfl⟩)⟩, by simp [e, hq], rfl⟩
     · rw [hq] at e
       obtain ⟨N, hN, hs⟩ := List.mem_flatMap.mp hK
@@ -371,7 +376,7 @@ theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.No
         exact partRule_inj e ▸ hm
       · exact fun hm => ⟨_, hm, rfl⟩
     · have hne : t ≠ r.name := fun e => hsome (e ▸ refsOk_preds hrefs hN hφ ht)
-      have hnq : t ≠ r'.name := fun e => node_preds_declared h0 hN hφ ht (by rw [e, hq]; exact hq'.1)
+      have hnq : t ≠ r'.name := fun e => hdecl (by rw [e, hq]; exact hq'.1)
       simp [hne, hnq, forget, readAs]
   have part' := fun r hr x hx => part r hr x hx
     { r with name := partPred r.name x.2, act := some (partAct D.fixed r.role x.1),

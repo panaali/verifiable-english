@@ -4,6 +4,8 @@ import Iceberg
 import VE.Acts.Compat
 import VE.Acts.Decode
 import VE.Acts.Elaborate
+import VE.Acts.Faithful
+import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
@@ -479,12 +481,24 @@ import VE.WireContract.Engine
 #print axioms Iceberg.water_unchanged
 #print axioms VE.Acts.Decode.ElaboratedU.hE
 #print axioms VE.Acts.Decode.ElaboratedU.hU
+#print axioms VE.Acts.Decode.decodeElaboratedU_faithful
 #print axioms VE.Acts.Decode.decodeElaboratedU_lexical
 #print axioms VE.Acts.Decode.decodeElaboratedU_source
 #print axioms VE.Acts.Decode.decodeElaboratedU_wellFormed
 #print axioms VE.Acts.Decode.elaborateSource_s
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
+#print axioms VE.Acts.FaithfulExamples.appliesB_iff
+#print axioms VE.Acts.FaithfulExamples.decidesB_iff
+#print axioms VE.Acts.FaithfulExamples.holdsB_iff
+#print axioms VE.Acts.FaithfulExamples.intendedActsB_iff
+#print axioms VE.Acts.FaithfulExamples.intendedB_iff
+#print axioms VE.Acts.FaithfulExamples.mem_tuples
+#print axioms VE.Acts.FaithfulExamples.readAs_asStructure
+#print axioms VE.Acts.FaithfulExamples.selectsB_iff
+#print axioms VE.Acts.FaithfulExamples.value_eq
+#print axioms VE.Acts.FaithfulExamples.value_forget
+#print axioms VE.Acts.FaithfulExamples.yieldsB_iff
 #print axioms VE.Acts.Lexical.actWord_chars
 #print axioms VE.Acts.Lexical.check_extends
 #print axioms VE.Acts.Lexical.check_iff
@@ -566,14 +580,21 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Wire.checkWith_lex
 #print axioms VE.Acts.Wire.joinedAct_read
 #print axioms VE.Acts.analyse_one
+#print axioms VE.Acts.applies_agree
 #print axioms VE.Acts.build_wf
+#print axioms VE.Acts.catalaValue_congr
+#print axioms VE.Acts.children_tracks
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.compareViews_ok
+#print axioms VE.Acts.decides_tracks
+#print axioms VE.Acts.denote_preds_congr
 #print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.elaborateMap_fst
 #print axioms VE.Acts.elaborateMap_ok
+#print axioms VE.Acts.elaborateMap_refsOk
+#print axioms VE.Acts.elaborate_faithful
 #print axioms VE.Acts.elaborate_identity
 #print axioms VE.Acts.elaborate_ok
 #print axioms VE.Acts.elaborate_one_reading
@@ -585,6 +606,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.getElem?_map_idxOf
 #print axioms VE.Acts.globalRules_ok
 #print axioms VE.Acts.grammar_wf
+#print axioms VE.Acts.inj_of_nodup_map
+#print axioms VE.Acts.intended_tracks
 #print axioms VE.Acts.kwSyms_ok
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
@@ -593,9 +616,17 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.lookup_splitsOf
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
+#print axioms VE.Acts.mem_partNamesIn
+#print axioms VE.Acts.mem_splitNode
+#print axioms VE.Acts.mem_splitReg
 #print axioms VE.Acts.modifier_edges
+#print axioms VE.Acts.namesOk_preds
+#print axioms VE.Acts.node_regulated
+#print axioms VE.Acts.node_typed
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
+#print axioms VE.Acts.partRule_inj
+#print axioms VE.Acts.part_mem_preds
 #print axioms VE.Acts.phraseReadings_exact
 #print axioms VE.Acts.phraseReadings_length
 #print axioms VE.Acts.phraseReadings_nodup
@@ -613,9 +644,11 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readings_exact
 #print axioms VE.Acts.readings_limit
 #print axioms VE.Acts.readings_nodup
+#print axioms VE.Acts.refsOk_preds
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
+#print axioms VE.Acts.selects_tracks
 #print axioms VE.Acts.sourceCheck_choices_le
 #print axioms VE.Acts.sourceCheck_exact
 #print axioms VE.Acts.splitDoc_none
@@ -636,8 +669,10 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.table_must_any_refused
 #print axioms VE.Acts.table_needNot
 #print axioms VE.Acts.table_one
+#print axioms VE.Acts.tupleTyped_readAs
 #print axioms VE.Acts.valueOf_eq_some
 #print axioms VE.Acts.viewsOn_choices
+#print axioms VE.Acts.yields_tracks
 #print axioms VE.Alternatives.Admission.Admitted.sound
 #print axioms VE.Alternatives.Admission.report_consequence
 #print axioms VE.Alternatives.AltChain.A_in
