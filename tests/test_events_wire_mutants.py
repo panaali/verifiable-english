@@ -58,8 +58,9 @@ HOOK = {
     "open-ignores-decider": ('(l.predicate, l.decidedBy.getD "unstated")', '(l.predicate, "the drafters")'),
     "open-first-link-only": ("firstFault (ls.map fun l =>\n    (!opens", "firstFault ((ls.take 1).map fun l =>\n    (!opens"),
     "open-terms-name-only": ('.ok n, .ok d => some (n, d)', '.ok n, _ => some (n, "the drafters")'),
-    "open-before-the-links-end": ("  open_ r.links\n    some <$> finishEvents r",
-                                  "  let d ← finishEvents r\n    open_ r.links\n    pure (some d)"),
+    "hook-dates-before-open": ("let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment",
+                               "let _ ← decodeEvents environment\n    "
+                               "let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment"),
     "view-keeps-the-block": ('(·.1 != "events")', "(fun _ => true)"),
     "view-keeps-the-profile": ('.filter (· != "events@0")', ""),
     "view-no-dates": ("(constants ++ dated)", "constants"),
