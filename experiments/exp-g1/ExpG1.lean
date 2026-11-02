@@ -235,12 +235,15 @@ def idsOf : Except String (List Pack) → List String
 
 /-! ### Non-vacuity: the attitude atom decides the guard -/
 
-/-- One agent, one user; the attitude atom and the guard as given, `knows` empty. -/
-def mG (believes guard : Bool) : VE.FiniteModel String where
+/-- One agent, one user; the attitude atoms and the guard as given. -/
+def mK (knows believes guard : Bool) : VE.FiniteModel String where
   domains s := match s with | "agent" => ["a"] | "user" => ["u"] | _ => []
   constants _ := none
   relations p := if p == attBelieves then (if believes then [["u"]] else [])
+    else if p == attKnows then (if knows then [["u"]] else [])
     else if p == guardName then (if guard then [["a", "u"]] else []) else []
+/-- `knows` empty. -/
+def mG (believes guard : Bool) : VE.FiniteModel String := mK false believes guard
 
 def holdsX (qs : List Pack) (M : VE.FiniteModel String) : Bool := (X qs).all (·.eval M [])
 /-- Atom off, guard off: `X` holds. Flip only the atom: `X` breaks. Turn the guard on: `X` holds again. -/
@@ -248,22 +251,32 @@ def nonVacuous (qs : List Pack) : Bool :=
   holdsX qs (mG false false) && !holdsX qs (mG true false) && holdsX qs (mG true true)
 
 #guard nonVacuous mixedV && nonVacuous mixedV.reverse && nonVacuous mixedC && nonVacuous mixedC.reverse
-theorem mG_admissible (b g : Bool) : (mG b g).asStructure.Admissible (envX uV mixedV) := by
-  refine ⟨fun c s hc => (nomatch hc), fun p vs hr => ?_⟩
-  change vs ∈ (mG b g).relations p at hr
-  simp only [mG] at hr
-  by_cases h₁ : p = attBelieves
-  · subst h₁
+/-- `mK` is admissible over any environment with no constants that declares the three names as `namesG` does. -/
+theorem mK_admissible {E : VE.Environment} (hc : ∀ c, E.constants c = none)
+    (hE : ∀ n ∈ namesG, E.predicates n.1 = some n.2) (k b g : Bool) : (mK k b g).asStructure.Admissible E := by
+  refine ⟨fun c s h => (by rw [hc c] at h; cases h), fun p vs hr => ?_⟩
+  change vs ∈ (mK k b g).relations p at hr
+  simp only [mK] at hr
+  have h₁ : attKnows ≠ attBelieves ∧ guardName ≠ attBelieves ∧ guardName ≠ attKnows := by decide
+  by_cases hb : p = attBelieves
+  · subst hb
     cases b <;> simp at hr
     subst hr
-    exact ⟨["user"], by decide, by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mG]⟩
-  · by_cases h₂ : p = guardName
-    · subst h₂
-      have hne : guardName ≠ attBelieves := by decide
-      cases g <;> simp [hne] at hr
-      subst hr
-      exact ⟨["agent", "user"], by decide, by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mG]⟩
-    · simp [h₁, h₂] at hr
+    exact ⟨["user"], hE (attBelieves, ["user"]) (by decide), by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mK]⟩
+  by_cases hk : p = attKnows
+  · subst hk
+    cases k <;> simp [h₁] at hr
+    subst hr
+    exact ⟨["user"], hE (attKnows, ["user"]) (by decide), by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mK]⟩
+  by_cases hg : p = guardName
+  · subst hg
+    cases g <;> simp [h₁] at hr
+    subst hr
+    exact ⟨["agent", "user"], hE (guardName, ["agent", "user"]) (by decide),
+      by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mK]⟩
+  · simp [hb, hk, hg] at hr
+theorem mG_admissible (b g : Bool) : (mG b g).asStructure.Admissible (envX uV mixedV) :=
+  mK_admissible (fun _ => rfl) (by decide) false b g
 
 theorem sat_of_holdsX {qs : List Pack} {M : VE.FiniteModel String} (h : holdsX qs M = true) : Sat M.asStructure (X qs) :=
   fun a ha => (VE.eval_iff_denote _ _ _).mp (List.all_eq_true.mp h a ha)
@@ -312,9 +325,6 @@ def certOK (U : UDoc) (E : VE.Environment) (qs : List Pack) (c : VE.Tableau.Cert
 #guard certOK uC (fullEnv uC) mixedC (certAt 0 1)
 #guard certOK uC (fullEnv uC) mixedC.reverse (certAt 1 0)
 #guard !certOK uC (fullEnv uC) mixedC.reverse (certAt 0 1)
--- The conclusion needs both packs: each alone refuses the same trace at its own indices.
-#guard !certOK uC (fullEnv uC) [weighingC] (certAt 0 0)
-#guard !certOK uC (fullEnv uC) [attitudesC] (certAt 0 0)
 -- The diagnostic does read the order, with the same truth value: `packOrder` is what fixes this text.
 #guard (firstFailing mixedV (fun _ => false)).map (·.1) == some "weighing"
 #guard (firstFailing mixedV.reverse (fun _ => false)).map (·.1) == some "attitudes"
@@ -329,6 +339,31 @@ theorem mixedC_accepted (hv : certOK uC (fullEnv uC) mixedC (certAt 0 1) = true)
     (VE.check_iff_wellFormed _ _ _).mp (List.all_eq_true.mp (by decide : (X mixedC).all (·.check (envAt (fill uC) 0) []) = true) a ha)
   ⟨acceptanceX uC hU (X mixedC) hX [] mixedφ _ hv,
     acceptanceX_order_free uC hU (List.reverse_perm mixedC).symm hX [] mixedφ _ hv⟩
+
+/-- A model of `X qs` at `uC`'s bases where `mixedφ` fails refutes `EntailsX`. -/
+theorem not_entailsX_uC {qs : List Pack} (k b g : Bool) (hX : holdsX qs (mK k b g) = true)
+    (hφ : mixedφ.eval (mK k b g) [] = false) : ¬ EntailsX.{0} uC (X qs) [] mixedφ := by
+  intro H
+  have ha := mK_admissible (E := envAt (fill uC) 0) (fun _ => rfl) (by decide) k b g
+  have hr := VE.Norms.restrictAll_self (D := fill uC) _ ha
+  have hs : size (fill uC) = 0 := by decide
+  have hbb : VE.Norms.backgroundBase (fill uC) = [] := by
+    show VE.Route.Background.literals [] = []
+    simp [VE.Route.Background.literals, VE.Route.sortStrings, VE.Route.Background.pairs]
+  have hfp : fillPremises uC = [] := by decide
+  have hbg : VE.Norms.background (fill uC) ++ VE.Norms.elaborate (fill uC).T = [] := by
+    simp only [VE.Norms.background, hbb]; simp (config := { ground := true, decide := true })
+  have hφ' := H (mK k b g).asStructure
+    (by rw [hr]; exact ⟨⟨⟨ha, by rw [hbb]; exact fun _ h => nomatch h⟩, by rw [hfp]; exact fun _ h => nomatch h⟩,
+      sat_of_holdsX hX⟩)
+    ⟨rfl, by rw [hs]; exact ha, by rw [hbg]; exact fun _ h => nomatch h⟩ (fun _ h => nomatch h)
+  simp [(VE.eval_iff_denote _ _ _).mpr hφ'] at hφ
+
+/-- The conclusion needs both packs: a model of each pack's `X` alone refutes it. Weighing alone: `knows` on,
+    `believes` and the guard off. Attitudes alone: `knows` and `believes` on, the guard off. (A trace refused at one
+    pack's indices is no such check: with one pack, index 2 is out of range whatever the pack says.) -/
+theorem single_pack_refuted : ¬ EntailsX.{0} uC (X [weighingC]) [] mixedφ ∧ ¬ EntailsX.{0} uC (X [attitudesC]) [] mixedφ :=
+  ⟨not_entailsX_uC true false false (by decide) (by decide), not_entailsX_uC true true false (by decide) (by decide)⟩
 
 /-- `V`: the conclusion of `acceptanceXV` at this fixture, at either order, from main's `checkCertificate_sound`. This
     proves the instance, not the unbuilt `acceptanceXV`. -/
@@ -523,6 +558,7 @@ end ExpG1
 #print axioms ExpG1.mixedV_decides
 #print axioms ExpG1.mixedC_accepted
 #print axioms ExpG1.mixedV_accepted
+#print axioms ExpG1.single_pack_refuted
 #print axioms ExpG1.dup_order_matters
 #print axioms ExpG1.mixedC_transfers
 #print axioms ExpG1.undeclared_empty_at_transfers_bases
