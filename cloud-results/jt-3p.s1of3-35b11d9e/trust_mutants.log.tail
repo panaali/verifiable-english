@@ -1,0 +1,24 @@
+trust_mutants: 6 definitions, 197 mutants (66 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-empty: ["due", "date"] -> []
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-empty: ["due", "to"] -> []
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-empty: [["effective", "date"]] -> []
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-empty: ["necessary", "condition"] -> []
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-first: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:17: Invalid `⟨...⟩` notation: The expected type of this te...)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["ju... -> ([("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["j...
+SURVIVOR lean/VE/Judgments/Examples.lean:398 VE.Judgments.Examples.jt3aList (?, trusted) list-drop-last: words117 -> (words117.dropLast)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-drop-first: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:17: Invalid `⟨...⟩` notation: The expected type of this te...)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-middle: ("due", [["due", "date"], ["due", "to"]]), -> 
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-last: ["due", "date"] -> (["due", "date"].reverse.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: ["due", "date"] -> (["due", "date"].drop 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-last: ["due", "to"] -> (["due", "to"].reverse.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: ["due", "to"] -> (["due", "to"].drop 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-middle: ("necessary", [["necessary", "condition"]]), -> 
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-last: ["necessary", "condition"] -> (["necessary", "condition"].reverse.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:352 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: ["just", "as"] -> (["just", "as"].drop 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-last: ["effective", "date"] -> (["effective", "date"].reverse.take 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: [["effective", "date"]] -> ([["effective", "date"]].drop 1)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-first: ["effective", "date"] -> (["effective", "date"].drop 1)
+trust_mutants: 45 KILLED, 17 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 131 OTHER SHARD in 216 s
+trust_mutants: ?, trusted: 27 KILLED, 17 SURVIVOR, 2 INVALID, 56 OTHER SHARD
+trust_mutants: S, trusted: 18 KILLED, 2 UNKNOWN, 75 OTHER SHARD
+trust_mutants: steps: wall plan 10.3 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.3 s, control_probes 5.7 s, mutants 192.6 s, cleanup 2.6 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 8.9 s (2), mutant_builds 183 s (71), mutant_checks 70.3 s (22), stage_controls 23.1 s (5), mutant_probes 422.8 s (45)
