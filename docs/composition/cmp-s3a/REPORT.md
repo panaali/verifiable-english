@@ -19,7 +19,7 @@ reviews/dri-decisions-20261031-spec-right-clauses.md items 1-7 (3: `RelationOnCa
 | (3) Examples.lean, 9.1 fixtures | K1, K2, K4, K5, K6, K7, K8, K11, K12, K13 (`plain_limPremises` by `#guard`), K14, plus both sides of every check | `lake build VE.RightClauses.Examples` |
 | (3) K9, K15 (`elided` missing) | not here: a `CLine` always has `elided`; the text is the wire decoder's (8.5, Wire.lean, cmp-s3) | - |
 | (3) K3's premise, K10 | Relation.lean / the profile-off route (cmp-s3); K3's line is accepted by `checkClauses` here | Examples.lean "K3 accepted" |
-| (4) seeded bugs | 4 named + 42 more, all killed | docs/composition/cmp-s3a/mutants.json |
+| (4) seeded bugs | 4 named + 45 more, all killed | docs/composition/cmp-s3a/mutants.json |
 | (5) statements.txt, `VE.lean`, `VE/Audit.lean` | imports in `VE.lean`; Audit.lean, statements.txt, axioms.txt, declarations.txt regenerated | `uv run python tools/regen_generated.py --write --skip route-cases` rc 0 |
 
 No import of `VE.Readings`: Tree.lean imports `VE.Compose.Slot` and `VE.Compose.Content` only. Frozen
@@ -53,18 +53,20 @@ lemma exists in the tree, and the proof would exceed this item's size cap by its
 
 | Bug (task row 4) | File | Fails |
 |---|---|---|
-| clause span may end past the unit (K5) | lean/VE/RightClauses/Plain.lean `checkSpans` | K5 `#guard`s, e.g. `check (cline [] none [(99, 101)])` |
-| elided range may overlap a clause (K6) | Plain.lean `checkSpans` | K6 `#guard check (cline [trig (charged 0) 10 20] none [(15, 25)])` |
-| clause variable sorts not checked (K7) | Plain.lean `checkBody` | K7 `#guard check (cline [trig (charged 1) 10 20] none [])` |
-| `plainGuard` drops the line's own guard | Plain.lean `plainGuard` | proofs of `plainSource_nil` and `plain_guard` |
+| clause span may end past the unit (K5) | lean/VE/RightClauses/Plain.lean `checkSpans` | Examples.lean:101 K5 `#guard check (cline [trig (charged 0) 90 110] none [])` |
+| elided range may overlap a clause (K6) | Plain.lean `checkSpans` | Examples.lean:113 K6 `#guard check (cline [trig (charged 0) 10 20] none [(15, 25)])` |
+| clause variable sorts not checked (K7) | Plain.lean `checkBody` | Examples.lean:127 K7 `#guard check (cline [trig (charged 1) 10 20] none [])` |
+| `plainGuard` drops the line's own guard | Plain.lean `plainGuard` | Plain.lean:137, the proof of `plainSource_nil` (and of `plain_guard`) |
 
-All 46 hand mutants, at least one per new trusted definition, are KILLED. They are listed in mutants.json with
+All 49 hand mutants, at least one per new trusted definition, are KILLED. They are listed in mutants.json with
 file, definition and the failing `#guard` or proof. Trust mutants: docs/composition/cmp-s3a/trust-mutants.json
 (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/composition/cmp-s3a/trust-mutants-allow.json`). The
 first run had 71 survivors and 44 unknowns. Fixtures now kill the survivors: several rights, lines and entries; slots
 (1, 0); a ternary line; spans with gaps; the prefixes; cites in either order. The allow file lists only the mutants
 that do not elaborate and the equivalent ones (an `Option.toList` has at most one element; `isEmpty` ignores
-`take 1`; a line with a relation has one instance and no fan-out). RESULT_TRUSTMUT
+`take 1`; a line with a relation has one instance and no fan-out). The final run (`--rescore` of the second full
+run, head 75ce3d87d) exits 0: 281 KILLED, 0 SURVIVOR, 0 UNKNOWN, 68 INVALID, 55 ALLOWED (44 that do not elaborate,
+11 equivalent survivors), 0 NOT RUN.
 
 ## Trust (R16)
 
@@ -75,8 +77,9 @@ standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18"`. Every check that de
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)`, hand-written: Lean 711 (Tree 50, Plain 386 of which lines 1-120 are the
-definitions, Examples 272, VE.lean 3); side table tools/trust-classes.json 67; evidence and report SIZE_EVIDENCE.
+`git diff --numstat $(git merge-base HEAD main)`, hand-written: Lean 717 (Tree 50, Plain 386 of which lines 1-120 are the
+definitions, Examples 278, VE.lean 3); side table tools/trust-classes.json 67; REPORT.md 135, mutants.json 51 and
+trust-mutants-allow.json 28 (trust-mutants.json, 406 lines, is the tool's output).
 That is over the ~600 cap. The cut was made at the one statement whose proof would double the item. The rest is the
 item's own mandated content (the 8.2/8.3 definitions, six of the seven theorems, the fixtures with both sides of each
 check, and the evidence R16 asks for).
@@ -89,7 +92,10 @@ Only additive lines in shared registries: `lean/VE.lean` (ap-3dd, cmp-s4, df-5a,
 
 ## Tests
 
-RESULT_TESTS
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on HEAD fc75c247 (clean): "exit=0;
+failed/error ids=0"; 199 units recorded, "0 failed"; known Mac-only failures: none (log /tmp/cmp-s3a-select.log,
+summary line `[mac-pytest 08:29:30Z]`). `lake build` (1233 jobs) and `python3 lean/audit.py` ("PASS: 726 source
+files; 8031 named theorem declarations audited") passed on the Lean code. No test of main-known-red.txt was touched.
 
 ## Pilot bytes
 
@@ -115,7 +121,7 @@ cmp-s3 (Relation.lean, Wire.lean, `right-clauses@0` in the registry, the `clause
 
 1. Typed and contained answers: N.A., no relayed answer (no route, wire or Python in this item).
 2. Deliverables: PASS, the table above; one cut (`plain_wellFormed`) under the size rule, named as cmp-s3ab.
-3. Tests can fail: PASS, mutants.json (46 KILLED) and trust-mutants.json with the allow file.
+3. Tests can fail: PASS, mutants.json (49 KILLED) and trust-mutants.json with the allow file.
 4. Python/Lean/Rust agree: N.A., Lean only; the differential is cmp-s3's.
 5. R8 binding: N.A., no relay.
 6. Gate evidence matches HEAD: PASS, the chain runs the gate on the final HEAD; no evidence reads live git.
