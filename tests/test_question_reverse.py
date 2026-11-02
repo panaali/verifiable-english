@@ -4,6 +4,7 @@ and the group document's questions read by Lean, with the candidate limit on bot
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
@@ -660,3 +661,95 @@ def test_the_random_earley_stream_skips_the_sealed_texts(monkeypatch):
     assert len(set(texts)) == 10 and info["documents"] == 2 and info["documents_not_their_sentences"] == 0
     again, _ = R.earley_stream(0, texts[:3], count=10)
     assert again[:7] == texts[3:] and not set(again) & set(texts[:3])
+
+
+# ------------------------------------------------------------------ the batch's claims check, on fixtures (D4)
+
+def claims():
+    spec = importlib.util.spec_from_file_location("q1_3b_claims", ROOT / "docs/question-answering/q1-3b/claims.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CLAIM_EVIDENCE = {"C4": {"norm": {"reached": 5, "documents": {"a": {"units": 7}, "b": {"units": 9}}},
+                         "closest": {"share_tied": 0.90846, "inconsistent": [], "measured": 1442},
+                         "f2": {"by_subject": {"q1-3 subject": {"reached": 1121}}}}}
+
+
+@pytest.mark.parametrize(("unit", "problem"), [
+    ("5 reached (C4 `norm.reached`).", None),
+    ("A tie in 91%, 0.908 of all (C4 `closest.share_tied`).", None),
+    ("1,442 measured and 0 inconsistent (C4 `closest.measured`, `closest.inconsistent`).", None),
+    ("7 units and 9 units (C4 `norm.documents.*.units`).", None),
+    ('1,121 of them (C4 `f2.by_subject."q1-3 subject".reached`).', None),
+    ("Only `7` in code and a plan's 10.2 (C4 `norm.reached`).", None),
+    ("No fronting reads another formula.", "cites no key"),
+    ("Reached 5 units.", "cites no key"),
+    ("Reached 5 units (C4 `norm.gone`).", "C4 has no key norm.gone"),
+    ("Reached 7 units (C4 `norm.reached`).", "7 is not a value"),
+    ("Reached 5 units, 1,442 measured (C4 `norm.reached`).", "1,442 is not a value"),
+    ("A tie in 12% (C4 `closest.share_tied`).", "12% is not a value"),
+    ("A tie in 0.71 of them (C4 `closest.share_tied`).", "0.71 is not a value"),
+])
+def test_a_claim_must_cite_a_key_that_holds_its_numbers(unit, problem):
+    found = claims().problems(unit, CLAIM_EVIDENCE)
+    assert (found == []) if problem is None else any(problem in p for p in found), found
+
+
+def claim_texts(c):
+    """The two reports cut down to the anchors of `STRICT` and `UNITS`, each sentence citing its key."""
+    good = "5 reached (C4 `norm.reached`)."
+    spec = (f"q1-3b (C4, below) adds things. {good}\n\n## Commands\n\n### Coverage (C4 `norm`)\n\n- A bullet of 5.\n\n"
+            f"- **For the plan:** {good}\n\n### Latency\n\nC4 `closest.measured`: 1,442.\n")
+    report = f"- **Result:** {good}\n\nThe numbers are in\n\n| (1) F2 | 5 | C4 `norm` |\n| (5) the report |\n\n" \
+             f"**On the gap row:** {good}\n\n## How each\n\n## Next\n\n- A row, 5 of them (C4 `norm.reached`).\n"
+    return {c.SPEC: spec, c.REPORT: report}
+
+
+NO_CLAIM_FIXTURE = {"q1-3b (C4, below) adds": "what it adds"}
+
+
+def test_the_old_premises_sentence_fails_the_claims_check():
+    # F10: a summary sentence written on the premise that no unit reads, left in place after the rerun reached 5.
+    c = claims()
+    texts = claim_texts(c)
+    assert c.check(texts, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE) == []
+
+    old = "No norm unit's text\nis a question's source."
+    spec = texts[c.SPEC].replace("5 reached (C4 `norm.reached`).", old, 1)
+    found = c.check({**texts, c.SPEC: spec}, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE)
+    assert any("stale wording" in p for p in found) and any("cites no key" in p for p in found)
+
+    # Under a heading without a citation a bullet has no key, and under one with a citation it has to hold the number.
+    uncited = texts[c.SPEC].replace("### Coverage (C4 `norm`)", "### Coverage")
+    assert any("cites no key" in p for p in c.check({**texts, c.SPEC: uncited}, CLAIM_EVIDENCE, frozenset(),
+                                                    NO_CLAIM_FIXTURE))
+    wrong = texts[c.SPEC].replace("- A bullet of 5.", "- A bullet of 6.")
+    assert any("6 is not a value" in p for p in c.check({**texts, c.SPEC: wrong}, CLAIM_EVIDENCE, frozenset(),
+                                                        NO_CLAIM_FIXTURE))
+    gone = texts[c.SPEC].replace("- **For the plan:**", "- **Plan:**")
+    assert any("anchor gone" in p for p in c.check({**texts, c.SPEC: gone}, CLAIM_EVIDENCE, frozenset(),
+                                                   NO_CLAIM_FIXTURE))
+    unused = {**NO_CLAIM_FIXTURE, "A sentence no report has": "no reason"}
+    assert any("row unused" in p for p in c.check(texts, CLAIM_EVIDENCE, frozenset(), unused))
+
+
+def test_the_unit_kinds_are_tallied_without_the_attributed_norms():
+    # The report once counted attributed norms and assertions as `unformalised`, and the norms without a `content`
+    # as if each had one.
+    kind = '["unformalised","norms"]'
+    attributed_inner = '["attributed","a","says",["unformalised","norms"]]'
+    reach = [["norm", "norm", "x", 11], ["norm", "-", "x", 13], ["asserted", "ast", "x", 17], ["asserted", "fence", "x", 19],
+             ["meta", "-", "x", 23], [kind, "-", "x", 100], [attributed_inner, "-", "x", 29],
+             ['["attributed","a","says","norm"]', "-", "x", 31], ['["attributed","a","says","asserted"]', "-", "x", 37]]
+    c4 = {"norm": {"by_why": {}, "reached": 0, "questions": dict.fromkeys(("f1_unavailable", "f2_unavailable", "f1_same",
+                                                                           "f2_same"), 0),
+                   "documents": {"d": {"reach": reach, "examples": {}}}},
+          "closest": {"one_candidate": 0, "measured": 0, "by_form": {"f2": 0}}, "f1": {"misses": []},
+          "streams": {"random-earley": {"configs": 0, "one_formula": 0}, "english-mixed": {"one_formula": 0}},
+          "coverage": {"mixed_texts": 0}, "f2": {"sentences": 0, "limited": 0}}
+    found = claims().derived(c4, {"soft_chain_without_soft": {"sentences": 0, "fences": 0}})
+    # `unformalised` with its attributed units, those units, the attributed others, `norm`, `asserted`; 197 would
+    # count the attributed norms and assertions as `unformalised`.
+    assert {129, 29, 68, 24, 36} <= found and 197 not in found
