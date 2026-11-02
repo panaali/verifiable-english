@@ -3,6 +3,7 @@
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
 - `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
 - `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
+- `tests/test_calc_consistency.py` — ME-8: consistency of printed numbers (math-evidence spec 8.1; fixtures C-1, R-5, V-6, V-7, V-7b, V-8, S-3 and R-10b's outcomes of 13.2, 13.3 and 13.6).
 - `tests/test_calc_derive.py` — Derivations over rational unknowns in the `calc` mode (math-evidence ME-5, me-5c): spec 13.6's R-3 and R-4 and the plan's physics fixtures H-6, H-6p, H-6n and …
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
@@ -87,5 +88,3 @@
 - `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
 - `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
-- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
-- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
