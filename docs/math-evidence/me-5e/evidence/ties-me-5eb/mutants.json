@@ -1,0 +1,75 @@
+{
+ "item": "me-5eb",
+ "note": "Seeded bugs of the R16 ties pass for me-5e. Each was applied alone to commit b0182877f, shown to fail the named check, and restored; the output of each is the seed-<id>.txt beside this file.",
+ "mutants": [
+  {
+   "id": "S1-uses",
+   "file": "lean/statements.txt",
+   "change": "drop VE.Calc.Run.rowJson@VE.Calc.Run from the -- uses line of VE.Calc.Run.rowJson_shown",
+   "behaviour": "a tie holds only when the tying theorem's statement names the declaration",
+   "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+   "result": "killed: the statement of VE.Calc.Run.rowJson_shown does not mention VE.Calc.Run.rowJson"
+  },
+  {
+   "id": "S2-unrelated",
+   "file": "tools/trust-classes.json",
+   "change": "tie VE.Calc.Shown.matches to VE.Calc.Run.outcomes_words instead of VE.Calc.Shown.matches_iff",
+   "behaviour": "a declaration cannot be tied to an unrelated theorem",
+   "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+   "result": "killed: the statement of VE.Calc.Run.outcomes_words does not mention VE.Calc.Shown.matches"
+  },
+  {
+   "id": "L1-matches",
+   "file": "lean/VE/Calc/Run.lean",
+   "definition": "VE.Calc.Shown.matches",
+   "change": "also accept an undefined outcome with a counterexample",
+   "behaviour": "Shown.matches is pinned outcome by outcome, null alternatives included",
+   "test": "lake build VE.Calc.Ties (VE.Calc.Shown.matches_iff, Ties.lean:21)",
+   "result": "killed; Run.lean's own theorems still build"
+  },
+  {
+   "id": "L2-derive-shown",
+   "file": "lean/VE/Calc/Run.lean",
+   "definition": "VE.Calc.Derive.shown",
+   "change": "a fails outcome shows the point [] instead of the checked point",
+   "behaviour": "a fails counterexample is the checked point",
+   "test": "lake build VE.Calc.Ties (VE.Calc.Derive.shown_fails, Ties.lean:56)",
+   "result": "killed; Run.lean's own theorems still build"
+  },
+  {
+   "id": "L3-runShown",
+   "file": "lean/VE/Calc/Run.lean",
+   "definition": "VE.Calc.Check.runShown",
+   "change": "a claim row shows a counterexample instead of nothing",
+   "behaviour": "a claim, and every outcome other than holds or fails, shows nothing",
+   "test": "lake build VE.Calc.Ties (VE.Calc.Check.runShown_nothing, Ties.lean:132)",
+   "result": "killed; Run.lean's own theorems still build"
+  },
+  {
+   "id": "L4-rowJson",
+   "file": "lean/VE/Calc/Run.lean",
+   "definition": "VE.Calc.Run.rowJson",
+   "change": "swap the certificate and counterexample members of a follows row",
+   "behaviour": "a holds row writes its certificate and a null counterexample, a fails row the converse",
+   "test": "lake build VE.Calc.Ties (VE.Calc.Run.rowJson_shown, Ties.lean:188 and 191)",
+   "result": "killed; Run.lean's own theorems and the #guard after rowJson still build"
+  },
+  {
+   "id": "L5-row-means",
+   "file": "lean/VE/Calc/Ties.lean",
+   "definition": "VE.Calc.Run.row",
+   "change": "restate Run.row_means over (cl.2.runShown c.decls) instead of (Run.row c cl), still true; statements regenerated",
+   "behaviour": "a tying theorem that stops naming its declaration voids the tie",
+   "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+   "result": "killed: the statement of VE.Calc.Run.row_means does not mention VE.Calc.Run.row"
+  },
+  {
+   "id": "P1-layer",
+   "file": "tools/layer_policy.py",
+   "change": "drop the VE.Calc.Ties row from lean_layer",
+   "behaviour": "VE.Calc.Ties sits in layer 4 beside the other theorems on a runner, so its import of VE.Calc.Run is not outward",
+   "test": "python3 tools/check_lean_imports.py; tests/test_precommit_hook.py::test_large_staged_change_passes",
+   "result": "killed: new outward Lean import VE.Calc.Ties -> VE.Calc.Run (layer 2 -> 4)"
+  }
+ ]
+}
