@@ -1752,14 +1752,14 @@
   {
    "class": "S",
    "lines": 4,
-   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3, lean/VE/Judgments/Examples.lean V +20; K +0",
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3, lean/VE/Judgments/Examples.lean V +23; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
    "class": "V",
-   "lines": 20,
-   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3, lean/VE/Judgments/Examples.lean V +20; K +0",
+   "lines": 23,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3, lean/VE/Judgments/Examples.lean V +23; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }

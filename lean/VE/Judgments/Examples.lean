@@ -346,14 +346,11 @@ def doc11 (nodes : List Node) : Doc :=
 
 /-! ## 11.7 Undeclared words (JT-3; spec 7, 8.4 and 11.8) -/
 
-/-- 11.7's words: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
-    (not "necessary condition"), `effective` (not "effective date"). -/
-def words117 : List (String × List (List String)) :=
-  [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["just", "as"]]),
-   ("necessary", [["necessary", "condition"]]), ("effective", [["effective", "date"]])]
-
-/-- 11.7's rows, each word a one-word phrase (jt-3p). -/
-def rows117 : List EvaluativeRow := words117.map fun (w, o) => ⟨[w], o⟩
+/-- 11.7's rows: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
+    (not "necessary condition"), `effective` (not "effective date"); each word a one-word phrase (jt-3p). -/
+def rows117 : List EvaluativeRow :=
+  [⟨["reasonable"], []⟩, ⟨["arbitrary"], []⟩, ⟨["due"], [["due", "date"], ["due", "to"]]⟩, ⟨["just"], [["just", "as"]]⟩,
+   ⟨["necessary"], [["necessary", "condition"]]⟩, ⟨["effective"], [["effective", "date"]]⟩]
 
 def preds117 : List (String × List String) :=
   ["reasonable_grounds", "due_date", "arbitrary", "just_as_real", "just_requirement", "necessary_condition",
@@ -392,15 +389,26 @@ def regulated117 : List (String × List String) :=
 #guard [[], ["due"], ["the", "due"], ["due", "date"], ["date"], ["due", "due"]].all fun ws =>
   hasPhrase ["due"] ws == ws.contains "due"
 
-/-- jt-3a's word match, kept here only as the reference the one-word rows must still agree with. -/
+/-- jt-3a's word rows and word match, written out on their own as the reference the one-word rows must agree with. -/
 def jt3aList (preds : List (String × List String)) (J : List String) : List String :=
   (preds.filter fun (p, ws) => !J.contains p &&
-    words117.any fun (w, o) => ws.contains w && !o.any (hasPhrase · ws)).map (·.1)
+    [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["just", "as"]]),
+      ("necessary", [["necessary", "condition"]]), ("effective", [["effective", "date"]])].any
+      fun (w, (o : List (List String))) => ws.contains w && !o.any (hasPhrase · ws)).map (·.1)
 
--- Each 11.7 fixture gives jt-3a's list after the change, for every `J` above.
-#guard [preds117, regulated117].all fun preds =>
+/-- Each row's word with and without its other senses: the word alone, beside a phrase's other word, in the other
+    order, and the phrase itself. -/
+def preds117x : List (String × List String) :=
+  ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_as_real",
+    "condition_necessary_step", "necessary_measure", "date_effective_remedy", "effective_date"].map
+    fun p => (p, predicateWords p none)
+
+-- Each 11.7 fixture gives jt-3a's list after the change, for every `J` above, and so do the rows' other senses.
+#guard [preds117, regulated117, preds117x].all fun preds =>
   [[], ["arbitrary"], ["arbitrary", "reasonable_grounds"]].all fun J =>
     undeclaredEvaluative rows117 preds J == jt3aList preds J
+#guard undeclaredEvaluative rows117 preds117x [] == ["due_process", "date_due_process", "to_pay_due_fees",
+  "as_just_cause", "condition_necessary_step", "necessary_measure", "date_effective_remedy"]
 
 /-- Predicates with and without the phrase "good judgment": in its order, in another order, half of it, and in a
     template (the constitution's u0052.s01 writes "use good judgment" as the act). -/
@@ -414,5 +422,8 @@ def goodPreds : List (String × List String) :=
   ["good_judgment", "judgment_use_required"]
 #guard undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds ["good_judgment"] == ["judgment_use_required"]
 #guard !(undeclaredEvaluative VE.EnglishGrammar.evaluativeRows goodPreds []).contains "good_conduct"
+-- Each of them holds a word of the phrase: rows for the two words alone would list all five.
+#guard undeclaredEvaluative [⟨["good"], []⟩, ⟨["judgment"], []⟩] goodPreds [] ==
+  ["good_judgment", "good_conduct", "judgment_good", "court_judgment", "judgment_use_required"]
 
 end VE.Judgments.Examples
