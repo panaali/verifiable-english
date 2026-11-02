@@ -1,6 +1,10 @@
 # df-5a: the zone at one situation, in Lean (report)
 
-**Status**: built and ready for review. No DRI signature is reserved.
+**Status**: review round 1 fixed (F1, its one B finding); ready for recheck. No DRI signature is reserved.
+**Fix**: `zoneCharge` counts the record, the open atoms (`openAtomsCount` = `openAtomsAll`'s length, proved) and the
+typed atoms before anything is listed; the review's probe answers `budget 20000000 12` in 2 s (it timed out at 30 s).
+**Open**: F2, F3 (C, follow-ups); df-5ab (`forcedAll`); the full gate (the chain runs it). Trust unchanged (+64, R16).
+
 **What changed**: `lean/VE/Defaults/Zone.lean` holds the zone, `defaultZoneOf` (nd-atoms' enumeration over
 `openAtomsAll`, no cone pruning) and seven theorems with no `sorry`. `ZoneExamples.lean` holds spec 8.6's fixtures as
 `#guard`s.
@@ -18,8 +22,8 @@ chain gate (`evidence/selected-tests.txt`).
 | Statement gate: 3.6's `open VE.Weighing (AdmissibleCompletion OutcomeIn decisionAtoms openNames SettledZ ZoneUnknown)` resolves on main after wg-6a | yes | `Zone.lean:17` (the line verbatim) | `lake build VE.Defaults.Zone` |
 | No `def` of the six weighing names under `lean/VE/Defaults/` (DRI 2026-10-31 item 2) | yes | — | `git diff main...HEAD -- lean/VE/Defaults \| grep -nE '^\+def (decisionAtoms\|openNames\|AdmissibleCompletion\|OutcomeIn\|SettledZ\|ZoneUnknown)\b'`: no match (exit 1) |
 | (1) `DecLe`, `Observed`, `switchesOffRecord`, `DefaultCompletion`, `ByDefaultZ`, `ByDefaultLeftTo`, `DefaultZone`, `maxDefaultAtoms` (12), `openAtomsAll` | yes, word for word | `Zone.lean:20-85` | `evidence/statements.out`: OK for each |
-| (1) `defaultZoneOf`: nd-atoms' bounded enumeration over `openAtomsAll` (nd-atoms' `subsets`, valued by nd-atoms' `coneAtomVX` and `kleene`), no cone pruning, no second enumerator; full assignments that satisfy X and `Fill_T` and agree with the observations, then the decision-minimality filter; `unknown (budget)` beyond `maxDefaultAtoms` | yes (signature word for word; body is this item's) | `Zone.lean:86-187` (`zoneRow`, `decSub`, `zoneAtoms`, `zoneDeclOk`, `zoneRecordOk`, `zoneMin`, `defaultZoneOf`) | fixtures below |
-| (1) Evaluator rule (DRI 2026-10-27): each value read once, size charged against the limit, a large well-formed situation that ends within it | yes | `zoneMin`: the open atoms are counted and charged against `maxDefaultAtoms` before any assignment is built; the record, premises (`X ++ Fill_T`), observed outcome formulas, atom list and typed-atom list are each let-bound once; the query formula is evaluated only on the minimal assignments | `ZoneExamples.lean` "The budget": DF-λ at 13 operators is `budget 26 12`; DF-λ at 6 operators (12 atoms, 4,096 assignments) ends with `no` at the observed operator (about 1.3 s over the import baseline: `/usr/bin/time … lake env lean` on that one guard) |
+| (1) `defaultZoneOf`: nd-atoms' bounded enumeration over `openAtomsAll` (nd-atoms' `subsets`, valued by nd-atoms' `coneAtomVX` and `kleene`), no cone pruning, no second enumerator; full assignments that satisfy X and `Fill_T` and agree with the observations, then the decision-minimality filter; `unknown (budget)` beyond `maxDefaultAtoms` | yes (signature word for word; body is this item's) | `Zone.lean` (`zoneRow`, `decSub`, `zoneAtoms`, `zoneDeclOk`, `zoneRecordOk`, the charge `tupleCount` … `zoneCharge`, `zoneMin`, `defaultZoneOf`) | fixtures below |
+| (1) Evaluator rule (DRI 2026-10-27): each value read once, size charged against the limit, a large well-formed situation that ends within it | yes (fixed in review round 1, F1: the first build charged the count only after listing every atom) | `zoneCharge`, first in `zoneMin` and `zoneFormOf`: the record's length against `maxZoneRecord` (1,024), the open atoms by `openAtomsCount` (sorts' sizes and the record's tuples, no atom listed; `openAtomsCount_eq` proves it is `openAtomsAll`'s length, so `budget n` keeps the exact `n` of `defaultZone_budget`), and the typed atoms against `maxZoneRecord + maxDefaultAtoms`. Only then are the switches record, the atom lists and the assignments built, each let-bound once per function (`zoneMin` and `defaultZoneOf` each build the record and the atom list once) | `ZoneExamples.lean` "The budget": the review's probe (ten binary predicates at 1,000 entities, 20,000,000 open atoms) is `budget 20000000 12`, and at 100,000 entities `budget 200000000000 12`; DF-λ at 13 operators is `budget 26 12`; DF-λ at 6 operators (12 atoms, 4,096 assignments) ends with `no`; the record at 1,024 and 1,025 entries, the typed atoms at 1,036 and 1,038; `evidence/F1.out` |
 | (1) `noExceptionRecord`, `zoneForm` | yes, word for word | `Zone.lean:189-202` | `evidence/statements.out` |
 | (1) `forcedAllOf` | **no: df-5ab** (size) | — | — |
 | (2) `defaultZone_byDefault_sound`, `_leftTo_sound`, `_notSaid_sound` | yes, with `valid` (DRI-signed) | `Zone.lean` | `evidence/statements.out` OK against the amended 7.5; `lean/axioms.txt`: propext, Classical.choice, Quot.sound only |
@@ -52,7 +56,20 @@ chain gate (`evidence/selected-tests.txt`).
    `fill`, `observed`, `typing`. No theorem constrains the labels. df-5 renders them.
 3. **Budget count.** `defaultZone_budget` states `n = (openAtomsAll L M record).length`, so the charge counts the atoms
    before the switches-off record removes any. The enumeration then runs over `zoneAtoms`, which drops those atoms, so
-   it is never larger than what was charged.
+   it is never larger than what was charged. The count is `openAtomsCount`, computed from the sorts' sizes and the
+   record's tuples without listing an atom, and `openAtomsCount_eq` proves it equal to that length.
+4. **The bounds the charge adds (review F1).** The statements leave these answers free; `zoneMin_error` allows
+   `unknown (branch …)`. A record of more than `maxZoneRecord` = 1,024 entries is `unknown (branch [] "record size")`
+   before the record is read (the record check is quadratic in its length). A situation with at most
+   `maxDefaultAtoms` open atoms but more than `maxZoneRecord + maxDefaultAtoms` typed decision and unsaid atoms is
+   `unknown (branch [] "size")`; with domains that list no element twice the record fixes at most one atom per entry,
+   so only a repeated element or predicate gets there. Spec 7.5's sentence "`unknown (budget)` when more than
+   `maxDefaultAtoms` = 12 open atoms remain" holds for every record within `maxZoneRecord`; a longer record is
+   `unknown (branch)` even then, because its exact count is not computed. This follows the review's fix line ("above
+   a stated cap answer `.unknown (.branch …)`"). No route reads the zone yet (df-5 adds it), so no user sees it.
+   `zoneForm` (spec 7.5's body, word for word) lists the atoms with no charge; `zoneFormOf` is the same form behind
+   `zoneCharge` (`zoneFormOf_eq`), the entry df-5's renderer calls. `noExceptionRecord` (word for word) is read only
+   by `defaultZone_eq_noException`'s statement and by fixtures; no computation calls it.
 
 ## Seeded bugs (Lean, the only product language changed; each planted alone, the named test fails, then restored)
 
@@ -80,6 +97,37 @@ control 0 failures, "ALL MUTANTS FAIL THEIR GUARDS". All in `lean/VE/Defaults/Zo
 | C3 | `zoneRow` | a contradicting observation does not refute | DF-μ (o1) and observation guards |
 | C4 | `zoneRecordOk` | first-entry check dropped | record guard (one atom both ways) |
 | C5 | `zoneDeclOk` | an undeclared predicate counts as declared | record guard (`zzz` held by an invalid model) |
+| C6 | `openAtomsCount` | the record ignored | typed-atom bound guard, count-equals-list guards |
+| C7 | `tupleMult` | a tuple counted once however often the domains list it | typed-atom bound guard, count guards |
+| C8 | `tuplesOutside` | a record tuple named twice subtracted twice | count-equals-list guard |
+| C9 | `zoneCharge` | the record's length not charged | record bound guard (1,025 entries) |
+| C10 | `zoneCharge` | the typed atoms not charged | typed-atom bound guard (2 × 519 copies) |
+| C11 | `zoneFormOf` | the form computed past the charge | budget guard (13 operators), typed-atom bound guard |
+| F1 | `zoneCharge` | the open atoms counted by listing them (equal by `openAtomsCount_eq`: only the cost changes) | by hand: the joined file does not finish in 300 s (control 15 s), `evidence/F1.out` |
+
+## Review fixes (round 1: `manage-agents/df-5a-review.final.md`, reviewed f1935bfd9)
+
+- **F1 (B)** -> `zoneCharge` (`Zone.lean`, "The charge"), called first by `zoneMin` and `zoneFormOf`: the record's
+  length, the open atoms counted by `openAtomsCount` from the sorts' sizes and the record's tuples (`openAtomsCount_eq`:
+  equal to `openAtomsAll`'s length, so `defaultZone_budget` and `budget 26 12` are unchanged) and the typed atoms, each
+  against a stated bound before any atom, tuple, switches record or assignment is built. The class, not the example:
+  every list the zone builds (`openAtomsAll`, `zoneAtoms`, `switchesOffRecord`, `decisionAtoms`, the record check,
+  `zoneForm`'s list) is now built only when its length is within `maxZoneRecord + maxDefaultAtoms` (the switches and
+  decision atoms are among the typed atoms counted) or, for the record, `maxZoneRecord`. The sweep: `zoneForm` is
+  spec 7.5's body word for word, so the charged entry is `zoneFormOf` (`zoneFormOf_eq`); `noExceptionRecord` is never
+  computed outside a statement and fixtures (deviation 4); the record is charged (`maxZoneRecord`, so `zoneRecordOk`'s
+  quadratic check reads at most 2,060 entries); "computed once": `zoneAtoms` binds the switches record once (it was
+  rebuilt per atom), `zoneMin` and `defaultZoneOf` bind `openNames L` once (it was rebuilt per row), and
+  `zoneMin`/`defaultZoneOf` each build the record and the atom list once, after the charge (the module docstring and
+  the plan row now say so). The overclaim (the over-limit fixture had 13 operators) is replaced by the review's own
+  probe and a 100,000-entity situation. PROBE F1: exit 124 before, `budget 20000000 12` exit 0 in 2.14 s after
+  (`evidence/F1.out`). Regression tests: `lean/VE/Defaults/ZoneExamples.lean` "The budget" (`dwide`, the record and
+  typed-atom bounds at the limit and one past it, `openAtomsCount` against the list, `zoneFormOf`); seeded bugs C6-C11
+  and F1. Commit 4e8075558.
+- **F2 (C)**, **F3 (C)**: follow-ups, not changed here (the size decision keeps fix rounds inside their findings).
+  F2: witnesses, `differ` and `noCompletion` labels are read by no check (`tag` drops them; `tag` now shows the
+  `branch` reason only). F3: the worst in-budget case (eleven or twelve unsaid atoms) runs for minutes; "about 1.3 s"
+  in the plan row is the 12-atom fixture's short path, not the worst case.
 
 ## Trust
 
@@ -92,12 +140,23 @@ P for the proof abbreviations, T for the fixtures. `tools/trust_mutants.py` on t
 - New fixtures at two elements (DF-ε2, DF-γ's record, DF-δ and DF-δ3's forms), then `trust-mutants-rescored.json`.
 - Final run with the allow file: `trust-mutants-final.json` (head 0a62408a1d08): 77 killed, 15 invalid, 45 allowed,
   0 survivor, 0 unknown, exit 0.
+- After the F1 fix (full run, no `--rescore`, same allow file): `trust-mutants-f1.json` (head 4e8075558e7e): 77 killed,
+  15 invalid, 45 allowed, 0 survivor, 0 unknown, 0 not run, exit 0.
+
+The F1 charge adds no trusted line: `tupleCount`, `tupleMult`, `tuplesOutside`, `zoneGens`, `recTuples`,
+`openAtomsCount`, `maxZoneRecord` and `zoneCharge` are C (checked by `openAtomsCount_eq`, `zoneCharge_some` and through
+them `zoneMin_error` and `defaultZone_budget`), and `zoneFormOf` is G[V] tied by `zoneFormOf_eq`. `trust_map.py
+--check` after the fix: K +0, S +56, G +16 (tied +8), unclassified +0, trusted +64, as before.
 
 The allowances are: the Props, which no check can evaluate (each breaks named proofs); the constructor drops; the
 ill-typed `[]` mutants; and one equivalent mutant, `zoneForm`'s `decisionNames.drop 1`, with its argument in the
 allow file. The FOLLOW-UPS ties row is in `manage-agents/FOLLOW-UPS.md` "## df-5a".
 
 ## Size
+
+Review round 1 (F1) adds about 190 lines to `Zone.lean` (about 50 of definitions and docstrings, about 140 of proofs:
+the count's exactness, `zoneCharge_some`, `zoneFormOf_eq`) and about 55 to `ZoneExamples.lean`, all inside F1 and its
+sweep, as the size decision's condition asks (no new deliverable).
 
 Measured with `git diff --numstat $(git merge-base HEAD main)`: `Zone.lean` 926, `ZoneExamples.lean` 193,
 `tools/trust-classes.json` 63, `docs/spec/defeasible.md` +8/−4, `lean/VE.lean` 2, `ve/assurance-manifest.json` 1, plus
@@ -144,7 +203,7 @@ unsaid tables varied; leftTo only with the same filling; the enumeration never o
 
 ## Next items
 
-- df-5: the kind `defaults-zone`, the English (DE10, DE10f, DE11, DE13) chosen by `zoneForm`, the relay in
+- df-5: the kind `defaults-zone`, the English (DE10, DE10f, DE11, DE13) chosen by `zoneForm` through `zoneFormOf`, the relay in
   `ve/defaults.py` and the route cases. It discharges `valid` through `LayeredU.sitValid`.
 - df-5ab: `forcedAllOf`, `forcedAll_sound`, `defaultCompletion_below`, `forced_everywhere`, the DF-μ/DF-μ′/DF-μ″
   `forcedAll` guards and the seeded bug "forcedAll read from one default completion".
@@ -167,10 +226,12 @@ unsaid tables varied; leftTo only with the same filling; the enumeration never o
    caught the unclassified JSON file).
 10. Statements say what is claimed: PASS (`evidence/statements.out`; T1/T2/T4-T6 break the named proofs; the added
     hypothesis is DRI-signed with its counterexample).
-11. Budgets fail closed: PASS (budget guard `budget 26 12` and theorem `defaultZone_budget`; an unknown Kleene value
-    gives `unknown (branch)`, never false).
-12. No CPU or memory regression: PASS (no route reads the file; the 12-atom fixture costs about 1.3 s; nothing enumerates
-    past 2^12).
+11. Budgets fail closed: PASS after review round 1 (the first build's PASS was wrong: F1). `zoneCharge` charges the
+    record, the open atoms and the typed atoms before listing any; the guards cover 20,000,000 and 2 × 10^11 open atoms
+    and each bound at the limit and one past it; theorem `defaultZone_budget` keeps the exact count; an unknown Kleene
+    value gives `unknown (branch)`, never false.
+12. No CPU or memory regression: PASS for routes (no route reads the file). Within the budget the cost is F3's open
+    follow-up: the 12-atom fixture's 1.3 s is a short path, not the worst in-budget case.
 13. Test-removed trailers: N.A. (no test removed or renamed).
 14. Both directions, cited evidence, spec re-read: PASS (each 8.6 guard has an accepting and a refusing side; the
     record, observation and typing checks are guarded both ways; "Spec re-read" above).
