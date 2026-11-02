@@ -1,8 +1,10 @@
 import VE.Scope.Run
 import VE.Scope.Examples
+import VE.Scope.ReadingsExamples
 
 /-! Acceptance fixtures of the explain route (docs/spec/scope.md 7.3, SC-1c) on the hard-constraint layout of
-    `VE.Scope.Examples`, with u0173.s01 after it. -/
+    `VE.Scope.Examples`, with u0173.s01 after it; the rows per choice (sc-1cb) on sc-5rb's fixtures of a reading set
+    governed per choice (`VE.Scope.ReadingsExamples`, scope 11.6). -/
 
 namespace VE.Scope.RunExamples
 open Lean VE.Scope VE.Scope.Examples
@@ -62,5 +64,74 @@ def shown (r : Except String (List Row)) : Option (List (String × List String �
 #guard (do pure (Run.cellBound (← sd [g1, g2]) 7)).toOption == some 112
 #guard (rowsOf [g1, g2] 112).isOk && (rowsOf [g1, g2] 111) matches .error "ResourceLimit: scope explain answer cells"
 #guard (rowsOf [g1, g2] 0) matches .error "ResourceLimit: scope explain answer cells"
+
+/-! sc-1cb: a reading set governed per choice (scope 11). -/
+
+def sdOn (doc : Json) (gs : List Governor) : Except String SDoc := do
+  pure (sdoc doc gs [] (← VE.Readings.Wire.decodeEnvironment envJ))
+/-- The route's groups, each choice named by `choiceText`. -/
+def groups (doc : Json) (gs : List Governor := [g1]) (limit : Nat := Run.cellLimit) :
+    Except String (List (String × List Row)) := do
+  let D ← sdOn doc gs
+  pure ((← Run.explainSetsWithin limit D source).map fun (ch, rows) => (choiceText D ch, rows))
+/-- Spec 5.3's rows of each choice's document (`explainRows (atChoice D ch)`), in lf-14d's order. -/
+def perChoiceRows (doc : Json) (gs : List Governor := [g1]) : Except String (List (List Row)) := do
+  let D ← sdOn doc gs
+  (← setChoices D).mapM fun ch => @explainRows ⟨fun u => ((Run.quotesOf D source.toUTF8).lookup u).getD ""⟩ (atChoice D ch)
+def twoDoc : Json := setDoc [s03, s05set] twoSets
+def strOf (p : Json) (k : String) : String := (p.getObjValD k).getStr?.toOption.getD ""
+def outcome {α} (r : Except String α) : String := match r with | .ok _ => "ok" | .error e => e
+
+-- SR-1: two groups, labelled wide then narrow, each F-ex's seven rows under g1; the coupled sets: four, s03 first
+#guard (groups (setDoc [s03])).toOption.map (·.map (·.1)) ==
+  some ["u0165.s03 scope-u0165-s03@1:wide", "u0165.s03 scope-u0165-s03@1:narrow"]
+#guard (groups (setDoc [s03])).toOption.map (·.map fun (_, rs) => rs.map fun r => (r.unit, r.governors.map (·.id), r.provenance)) ==
+  some [seven.map fun u => (u, ["g1"], [fr]), seven.map fun u => (u, ["g1"], [fr])]
+#guard (groups twoDoc).toOption.map (·.map (·.1)) == some ["u0165.s03 scope-u0165-s03@1:wide, u0165.s05 scope-u0165-s05@1:a",
+  "u0165.s03 scope-u0165-s03@1:wide, u0165.s05 scope-u0165-s05@1:b", "u0165.s03 scope-u0165-s03@1:narrow, u0165.s05 scope-u0165-s05@1:a",
+  "u0165.s03 scope-u0165-s03@1:narrow, u0165.s05 scope-u0165-s05@1:b"]
+-- each group holds `explainRows (atChoice D ch)`, one per choice (u0166.s01's rule depends on the choice in SR-dep's
+-- admitted form: hc-cyberweapons on one predicate)
+#guard [(setDoc [s03], [g1]), (twoDoc, [g1]), (setDoc [s03] depParts, [g1, gPr]), (setDoc [s03], [g1, gR])].all fun (d, gs) =>
+  (groups d gs).toOption.map (·.map (·.2)) == (perChoiceRows d gs).toOption && (perChoiceRows d gs).isOk
+-- the label is `choiceText`'s, typed (`choiceJson`): its picks written as 11.5 writes them
+#guard (do
+    let D ← sdOn twoDoc [g1]
+    let cs ← setChoices D
+    pure (cs.all fun ch => match Run.choiceJson (governedSets D) ch with
+      | .arr ps => ", ".intercalate (ps.toList.map fun p => strOf p "unit" ++ " " ++ strOf p "set" ++ "@" ++
+          (p.getObjValD "version").compress ++ ":" ++ strOf p "reading") == choiceText D ch
+      | _ => false)).toOption == some true
+-- the gate is `governSets`': the same refusal text on 11.6's refused fixtures (SR-c, SR-c-nr, SR-g, SR-dep, SR-cap's
+-- 72 and 65, a second version, a set without a reading) and admitted on SR-1, SR-u and the coupled sets
+#guard [(setDoc [s03set (cyberPart "cyberweapon_creation_permitted" guardWide)
+      (cyberPart "cyberweapon_creation_permitted" guardNarrow [("sign", .bool false)])], [g1]),
+    (setDoc [s03set (j "[\"top\"]") (cyberPart "cyberweapon_creation_permitted" guardNarrow)], [g1]),
+    (setDoc [rset "lead" "u0164.s02" [reading "a" .null], s03], [g1]),
+    (setDoc [s03], [⟨"gX", "u0165.s03", carveT, .list "u0164.s02", seven⟩, g1]),
+    (setDoc [s03set (cyberPart "cyberweapon_creation_permitted" guardWide) (cyberPart "other_permitted" guardNarrow)]
+      depParts, [g1, gPr]),
+    (setDoc [wideSet "s3" "u0165.s03" 8, wideSet "s5" "u0165.s05" 9] twoSets, [g1]),
+    (setDoc [wideSet "s3" "u0165.s03" 5, wideSet "s5" "u0165.s05" 13] twoSets, [g1]),
+    (setDoc [s03, s03.setObjVal! "version" (2 : Nat)], [g1]), (setDoc [s03, u0166set], [g1]), (twoDoc, [g1])].all
+  fun (d, gs) => outcome (groups d gs) == errorOf (sets d gs)
+#guard outcome (groups (setDoc [s03set (cyberPart "cyberweapon_creation_permitted" guardWide)
+    (cyberPart "cyberweapon_creation_permitted" guardNarrow [("sign", .bool false)])])) ==
+  "ScopeChoice: u0165.s03 scope-u0165-s03@1:narrow: ScopeConflict: u0165.s03: sign"
+-- the cells are summed over the choices: SR-1's two groups hold 2 × 7 × (7 + 1); at 112 it answers, at 111 (above one
+-- group's 56) and at 0 it is UNKNOWN
+#guard (groups (setDoc [s03]) [g1] 112).isOk && outcome (groups (setDoc [s03]) [g1] 111) == "ResourceLimit: scope explain answer cells" &&
+  outcome (groups (setDoc [s03]) [g1] 0) == "ResourceLimit: scope explain answer cells"
+-- 64 joint choices (8 by 8) are answered within the route's limit (64 × 7 × 8 cells); 65 (5 by 13) are UNKNOWN
+#guard (groups (setDoc [wideSet "s3" "u0165.s03" 8, wideSet "s5" "u0165.s05" 8] twoSets)).toOption.map (·.length) == some 64 &&
+  (do pure (decide (Run.cellBound (← sd [g1]) (64 * 7) ≤ Run.cellLimit))).toOption == some true
+#guard outcome (groups (setDoc [wideSet "s3" "u0165.s03" 5, wideSet "s5" "u0165.s05" 13] twoSets)) == "ResourceLimit: scope choices"
+-- a document with no governed set: today's answer, byte for byte (F-ex), never the choice loop
+#guard (do
+    let D ← sd [g1, g2]
+    let rows ← Run.explainWithin Run.cellLimit D source
+    pure ((Run.answerOf "x" D source).toOption.map Json.compress == some (Json.mkObj [("governed", Run.governedJson D rows),
+      ("id", "x"), ("rows", .arr (rows.map Run.rowJson).toArray), ("status", "ok")]).compress && rows.length == 7)).toOption ==
+  some true
 
 end VE.Scope.RunExamples
