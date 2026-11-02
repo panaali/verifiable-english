@@ -1660,8 +1660,8 @@
   },
   {
    "class": "V",
-   "lines": 12,
-   "reason": "pc-1 review fix: VE/Service/Document.lean checkDocSetsFast +12 (F2: the document mode's entry reads the front matter once on a request without scope@0; equal to checkDocSets by @[csimp] checkDocSets_eq_fast) (K +0, S +0, V +12)",
+   "lines": 18,
+   "reason": "pc-1 review fix: VE/Service/Document.lean checkDocSetsFast +18 (F2: the document mode's entry reads the front matter once; equal to checkDocSets by @[csimp] checkDocSets_eq_fast, and it calls no original a twin replaces) (K +0, S +0, V +18)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-01",
    "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
   },
