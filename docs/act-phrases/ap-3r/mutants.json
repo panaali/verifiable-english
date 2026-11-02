@@ -1,0 +1,151 @@
+{
+ "item": "ap-3r",
+ "command": "python3 docs/act-phrases/ap-3r/seed_bugs.py",
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "own-to-restored",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.freeTable",
+   "behaviour": "the own-*to* exception restored: one split reading for every `all false _`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Table.lean:67, lean/VE/Acts/TableExamples.lean:91, lean/VE/Acts/ElaborateExamples.lean:125, lean/VE/Acts/ElaborateExamples.lean:127, lean/VE/Acts/ElaborateExamples.lean:130, lean/VE/Acts/ElaborateExamples.lean:141, lean/VE/Acts/ElaborateExamples.lean:142, lean/VE/Acts/ElaborateExamples.lean:197, lean/VE/Acts/ReadingsExamples.lean:37, lean/VE/Acts/ReadingsExamples.lean:39, lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:55, lean/VE/Acts/ReadingsExamples.lean:58, lean/VE/Acts/ReadingsExamples.lean:84, lean/VE/Acts/ReadingsExamples.lean:92, lean/VE/Acts/ReadingsExamples.lean:183, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:186"
+  },
+  {
+   "id": "together-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.freeTable",
+   "behaviour": "the together reading dropped from the revised cell",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Table.lean:68, lean/VE/Acts/TableExamples.lean:91, lean/VE/Acts/ElaborateExamples.lean:125, lean/VE/Acts/ElaborateExamples.lean:127, lean/VE/Acts/ElaborateExamples.lean:130, lean/VE/Acts/ElaborateExamples.lean:141, lean/VE/Acts/ElaborateExamples.lean:142, lean/VE/Acts/ElaborateExamples.lean:197, lean/VE/Acts/ReadingsExamples.lean:37, lean/VE/Acts/ReadingsExamples.lean:39, lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:55, lean/VE/Acts/ReadingsExamples.lean:58, lean/VE/Acts/ReadingsExamples.lean:84, lean/VE/Acts/ReadingsExamples.lean:92, lean/VE/Acts/ReadingsExamples.lean:183, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:186"
+  },
+  {
+   "id": "together-wrong-whole",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.freeTable",
+   "behaviour": "the together reading is a whole of another join (shared *to*)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Table.lean:68, lean/VE/Acts/TableExamples.lean:91, lean/VE/Acts/ReadingsExamples.lean:37, lean/VE/Acts/ReadingsExamples.lean:39, lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:55"
+  },
+  {
+   "id": "split-marker-together",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.freeTable",
+   "behaviour": "a split marker's *and* under *may* gains a together reading",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Table.lean:71, lean/VE/Acts/TableExamples.lean:94, lean/VE/Acts/TableExamples.lean:117, lean/VE/Acts/ElaborateExamples.lean:120, lean/VE/Acts/ElaborateExamples.lean:122, lean/VE/Acts/ElaborateExamples.lean:196"
+  },
+  {
+   "id": "right-only-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "behaviour": "under *has the right to* only, the cell loses its together reading",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Table.lean:69, lean/VE/Acts/Readings.lean:106, lean/VE/Acts/Readings.lean:107, lean/VE/Acts/TableExamples.lean:91, lean/VE/Acts/ElaborateExamples.lean:125, lean/VE/Acts/ElaborateExamples.lean:127, lean/VE/Acts/ElaborateExamples.lean:141, lean/VE/Acts/ElaborateExamples.lean:142, lean/VE/Acts/ElaborateExamples.lean:197"
+  },
+  {
+   "id": "e1x-all-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the plan's AP-4 seeded bug, moved to rs_u055 (DRI 2026-11-01 ap-3r-spec item 2): the pre-modifier's `all` reading is dropped, so S4 must be refused",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:44, lean/VE/Acts/RuleExamples.lean:45, lean/VE/Acts/RuleExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:47, lean/VE/Acts/ReadingsExamples.lean:58, lean/VE/Acts/ReadingsExamples.lean:101, lean/VE/Acts/ReadingsExamples.lean:183, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:213, lean/VE/Acts/ReadingsExamples.lean:217, lean/VE/Acts/ReadingsExamples.lean:221, lean/VE/Acts/ReadingsExamples.lean:222, lean/VE/Acts/ReadingsExamples.lean:232, lean/VE/Acts/ReadingsExamples.lean:239, lean/VE/Acts/ReadingsExamples.lean:272"
+  },
+  {
+   "id": "norms-split-again",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "VE.Acts.ruleReading",
+   "behaviour": "the norms route splits the revised cell again (its split reading taken)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Elaborate.lean:265, lean/VE/Acts/Elaborate.lean:271, lean/VE/Acts/ElaborateExamples.lean:125, lean/VE/Acts/ElaborateExamples.lean:127, lean/VE/Acts/ElaborateExamples.lean:130, lean/VE/Acts/ElaborateExamples.lean:133, lean/VE/Acts/ElaborateExamples.lean:141, lean/VE/Acts/ElaborateExamples.lean:142, lean/VE/Acts/ElaborateExamples.lean:197"
+  },
+  {
+   "id": "eachOrTogether-order",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ReadingsExamples.lean",
+   "definition": "VE.Acts.ReadingsExamples.eachOrTogether",
+   "behaviour": "the expected readings in another order",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:37, lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:55"
+  },
+  {
+   "id": "together105-text",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ReadingsExamples.lean",
+   "definition": "VE.Acts.ReadingsExamples.together105",
+   "behaviour": "S1/S8's pinned F11 text names another reading",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:183, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:186"
+  },
+  {
+   "id": "e055x-denied-act",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ReadingsExamples.lean",
+   "definition": "VE.Acts.ReadingsExamples.e055x",
+   "behaviour": "S3b's environment declares another denial",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:232"
+  },
+  {
+   "id": "u055x-no-extra",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ReadingsExamples.lean",
+   "definition": "VE.Acts.ReadingsExamples.u055x",
+   "behaviour": "S3b's third candidate is not added",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:233"
+  },
+  {
+   "id": "other-listed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ReadingsExamples.lean",
+   "definition": "VE.Acts.ReadingsExamples.other",
+   "behaviour": "the unlisted set takes rs_u055's id",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:239"
+  },
+  {
+   "id": "seekP-object",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ElaborateExamples.lean",
+   "definition": "VE.Acts.ElaborateExamples.seekP",
+   "behaviour": "E17's first act loses its object's words",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ElaborateExamples.lean:141"
+  },
+  {
+   "id": "enjoyP-head",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ElaborateExamples.lean",
+   "definition": "VE.Acts.ElaborateExamples.enjoyP",
+   "behaviour": "E17's second act has another head",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ElaborateExamples.lean:141"
+  },
+  {
+   "id": "e17-sign",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ElaborateExamples.lean",
+   "definition": "VE.Acts.ElaborateExamples.e17",
+   "behaviour": "E17's rule is a plain predicate with sign false (no modal word)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ElaborateExamples.lean:141"
+  },
+  {
+   "id": "sick-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/ElaborateExamples.lean",
+   "definition": "VE.Acts.ElaborateExamples.sick",
+   "behaviour": "E16's atom has another cause",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ElaborateExamples.lean:191"
+  }
+ ]
+}

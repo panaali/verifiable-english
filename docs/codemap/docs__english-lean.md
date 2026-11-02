@@ -1,0 +1,1 @@
+- `docs/english-lean/en-s6/capture_blocks.py` — Records Python's node for each of the 120 pinned rule blocks (en-e3-norm EN-0, spec english-lean-s6 OPEN-3).
