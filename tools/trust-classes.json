@@ -16439,10 +16439,12 @@
         "VE.Scope.explainRows",
         "VE.Scope.rowsF",
         "VE.Scope.explainFast",
+        "VE.Scope.explainOut",
         "VE.Scope.Run.quotesOf",
         "VE.Scope.Run.govJson",
         "VE.Scope.Run.rowJson",
-        "VE.Scope.Run.governedJson"
+        "VE.Scope.Run.governedJson",
+        "VE.Scope.Run.choiceJson"
       ],
       "D[V]": [
         {
@@ -16455,9 +16457,11 @@
       "G[R]": [
         "VE.Scope.Run.cellLimit",
         "VE.Scope.Run.cellBound",
-        "VE.Scope.Run.explainWithin"
+        "VE.Scope.Run.explainWithin",
+        "VE.Scope.Run.explainSetsWithin"
       ],
       "G[I]": [
+        "VE.Scope.Run.answerOf",
         "VE.Scope.Run.explainCase",
         "VE.Scope.Run.runCaseReported"
       ]
@@ -16472,7 +16476,13 @@
         "VE.Scope.RunExamples.fr",
         "VE.Scope.RunExamples.g2s",
         "VE.Scope.RunExamples.item2",
-        "VE.Scope.RunExamples.shown"
+        "VE.Scope.RunExamples.shown",
+        "VE.Scope.RunExamples.sdOn",
+        "VE.Scope.RunExamples.groups",
+        "VE.Scope.RunExamples.perChoiceRows",
+        "VE.Scope.RunExamples.twoDoc",
+        "VE.Scope.RunExamples.strOf",
+        "VE.Scope.RunExamples.outcome"
       ]
     },
     "ResponseShape/Schemas/Scope.lean": {
@@ -16480,6 +16490,8 @@
         "ResponseShape.Schemas.Scope.governor",
         "ResponseShape.Schemas.Scope.unitRow",
         "ResponseShape.Schemas.Scope.governed",
+        "ResponseShape.Schemas.Scope.pick",
+        "ResponseShape.Schemas.Scope.choiceGroup",
         "ResponseShape.Schemas.Scope.row",
         "ResponseShape.Schemas.Scope.file"
       ]
