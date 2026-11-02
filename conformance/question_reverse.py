@@ -541,8 +541,8 @@ def norm_documents() -> list[tuple[str, str, str]]:
     latest = {}
     for name, blob, text in sorted(parts.documents()):
         branch, _, path = name.partition(":")
-        if "/evidence/" not in path:
-            latest[(branch.split("-")[0], path.rsplit("/", 1)[-1])] = (name, blob, text)
+        if "/evidence/" not in path and not path.rsplit("/", 1)[-1].startswith("udhr-part"):  # main's copy is added
+            latest[(branch.split("-")[0], path.rsplit("/", 1)[-1])] = (name, blob, bytes(text).decode())
     own = ROOT / "usecases/question-answering/udhr-part07.ve.md"
     raw = own.read_bytes()
     return sorted(latest.values()) + [(str(own.relative_to(ROOT)), hashlib.sha256(raw).hexdigest(), raw.decode())]
@@ -552,7 +552,7 @@ def norm_units(text: str) -> tuple[dict, list[tuple[str, str, str | None]]]:
     """(environment data, (kind, content kind, text) per unit with a span) of a `.ve.md` document."""
     _, front, body = text.split("---\n", 2)
     data, raw = json.loads(front), body.encode()
-    units = [("+".join(u["kind"]) if isinstance(u["kind"], list) else u["kind"],
+    units = [(u.get("kind", "-") if isinstance(u.get("kind", "-"), str) else json.dumps(u["kind"], separators=(",", ":")),
               next(iter(u["content"])) if isinstance(u.get("content"), dict) else None,
               raw[u["span"][0]:u["span"][1]].decode().strip()) for u in data["units"] if "span" in u]
     return data["environment"], units
