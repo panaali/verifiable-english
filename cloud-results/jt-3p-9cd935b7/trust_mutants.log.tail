@@ -1,0 +1,15 @@
+trust_mutants: 6 definitions, 215 mutants (215 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Judgments/Examples.lean:394 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: (preds.filter fun (p, ws) => !J.contains p && [("reasonable", []), ("arbitrary", []), ("due", [["... -> [] (lean/VE/Judgments/Examples.lean:394: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:394 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: preds -> [] (lean/VE/Judgments/Examples.lean:397: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-empty: ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_a... -> [] (lean/VE/Judgments/Examples.lean:402: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:394 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: preds.filter -> [] (lean/VE/Judgments/Examples.lean:394: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-empty: ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_a... -> [] (lean/VE/Judgments/Examples.lean:402: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:395 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["ju... -> [] (lean/VE/Judgments/Examples.lean:395: Function expected at)
+SURVIVOR lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-drop-last: ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_a... -> ((["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just...
+SURVIVOR lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-drop-last: ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_a... -> (["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_...
+SURVIVOR lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-drop-middle: "due_to_illness", -> 
+SURVIVOR lean/VE/Judgments/Examples.lean:402 VE.Judgments.Examples.preds117x (?, trusted) list-drop-middle: "just_as_real", -> 
+trust_mutants: 187 KILLED, 4 SURVIVOR, 6 UNKNOWN, 12 INVALID, 6 ALLOWED, 0 NOT RUN in 513 s
+trust_mutants: ?, trusted: 102 KILLED, 4 SURVIVOR, 6 UNKNOWN, 8 INVALID
+trust_mutants: S, trusted: 85 KILLED, 4 INVALID, 6 ALLOWED
+trust_mutants: steps: wall plan 8.5 s, scratch 1.9 s, control_build 0.2 s, probe_install 1.3 s, control_probes 5 s, mutants 491 s, cleanup 4.8 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 7.1 s (2), mutant_builds 408.5 s (227), mutant_checks 185.2 s (90), stage_controls 21.4 s (6), mutant_probes 1107.5 s (187)
