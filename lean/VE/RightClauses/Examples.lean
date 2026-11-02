@@ -70,6 +70,10 @@ def k2 : CLine := cline [] (some (rel (0, 1))) []
   .and .top (.binary "country_of" (.var 1) (.var 0))
 #guard guardOf (plain (cdoc k2)) "other" == .top
 
+-- slots (1, 0): slot 1 is variable 0
+#guard guardAfter (cline [] (some (rel (1, 0) (pred := "resident_of"))) [])
+    (r21Doc (base := [("resident_of", ["person", "state"])])) == .and .top (.binary "resident_of" (.var 0) (.var 1))
+
 /-! ## K3 accepted: total on the holder slot 1, `H_R = ⊤` typed -/
 
 def k3 : CLine := cline [] (some (rel (0, 1) (some 1))) []
@@ -112,6 +116,10 @@ def k4 : CLine := cline [trig (charged 0) 10 20] none [(30, 40)]
 #guard check (cline [trig (charged 0) 10 20] none [(30, 40), (35, 45)]) == "ClauseSpan: equal-access: [35, 45)"
 #guard check (cline [trig (charged 0) 10 20, trig (charged 0) 12 14] none []) == "ClauseSpan: equal-access: [12, 14)"
 
+-- gaps on either side of an earlier span; an overlap with an older span than the last
+#guard check (cline [trig (charged 0) 10 20] none [(25, 30), (0, 5)]) == "ok"
+#guard check (cline [trig (charged 0) 10 20, trig (charged 0) 30 40] none [(15, 16)]) == "ClauseSpan: equal-access: [15, 16)"
+
 /-! ## K7: clause typing in the line's context `[person, state]` (var 0 the person, var 1 the state) -/
 
 #guard check (cline [trig (charged 1) 10 20] none []) == "InvalidInput: ill-typed clause 0 of rule equal-access"
@@ -140,6 +148,22 @@ def k4 : CLine := cline [trig (charged 0) 10 20] none [(30, 40)]
 #guard check (cline [] (some (rel (0, 1) (pred := "ve__near"))) []) (r21Doc (base := [("ve__near", ["state", "person"])])) ==
   "RelationShape: equal-access"
 #guard check (cline [] (some (rel (0, 1) (pred := "near"))) []) (r21Doc (base := [("near", ["state", "person"])])) == "ok"
+#guard check (cline [] (some (rel (0, 1) (pred := "rights__near"))) []) (r21Doc (base := [("rights__near", ["state", "person"])])) ==
+  "RelationShape: equal-access"
+#guard check (cline [] (some (rel (0, 1) (pred := "soft__near"))) []) (r21Doc (base := [("soft__near", ["state", "person"])])) ==
+  "RelationShape: equal-access"
+-- a slot equal to the arity is out of range whatever the sorts read there
+#guard check (cline [] (some (rel (0, 2) (pred := "odd"))) []) (r21Doc (base := [("odd", ["state", ""])])) ==
+  "RelationShape: equal-access"
+#guard check (cline [] (some (rel (2, 0) (pred := "odd"))) []) (r21Doc (base := [("odd", ["", "state"])])) ==
+  "RelationShape: equal-access"
+-- on a ternary line the holder slot 1 is not one of the relation's slots (0, 2)
+def triDoc : RightsDoc :=
+  mkRights ["state", "person"] [("country_of", ["state", "person"])]
+    [VE.Norms.Checks.oblig "p3" ["state", "person", "person"] false none] [] block
+    [⟨"r21", "person", .top, [line .claim (strictNode "tri" "p3" true)]⟩] [] []
+#guard verdict (checkClauses ⟨triDoc, [("r21", "tri", ⟨line .claim (strictNode "tri" "p3" true), [], some (rel (0, 2) (some 1)),
+    [], (0, 100)⟩)], []⟩) == "RelationShape: tri"
 -- spans come before the relation
 #guard check (cline [] (some (rel (1, 1))) [(90, 110)]) == "ClauseSpan: equal-access: [90, 110)"
 
@@ -147,6 +171,7 @@ def k4 : CLine := cline [trig (charged 0) 10 20] none [(30, 40)]
 
 #guard check (cline [] (some (rel (0, 1) (cites := ["u1", "u082"]))) []) == "ok"
 #guard check (cline [] (some (rel (0, 1) (cites := ["u1", "u9"]))) []) == "UnknownSymbol: unit u9"
+#guard check (cline [] (some (rel (0, 1) (cites := ["u9", "u1"]))) []) == "UnknownSymbol: unit u9"
 #guard check (cline [] (some (rel (1, 1) (cites := ["u9"]))) []) == "RelationShape: equal-access"
 
 /-! ## K14: `H_R` typed over the base vocabulary for a total relation -/
@@ -176,6 +201,10 @@ def onPower (L : CLine) : ClauseDoc := ⟨epsilon, [("r16", "may-marry", L)], []
   "ClauseLineShape: no-torture"
 #guard verdict (checkClauses ⟨VE.Rights.Examples.beta fanMap,
     [("r5", "no-torture", ⟨fanLine fanMap, [], none, [(0, 5)], (0, 100)⟩)], []⟩) == "ok"
+
+#guard verdict (checkClauses ⟨VE.Rights.Examples.beta [("state", "torture_permitted_state")],
+    [("r5", "no-torture", ⟨fanLine [("state", "torture_permitted_state")], [], some (rel (0, 1)), [], (0, 100)⟩)], []⟩) ==
+  "ClauseLineShape: no-torture"
 
 /-! ## Entries (never shown for a decoded document) -/
 
@@ -214,5 +243,30 @@ def candDoc (L : CLine) : ClauseDoc :=
 #guard plainContent r21Doc.soft [("r21", "equal-access", k2)] (.rightLines "r21" [accessLine]) ==
   .rightLines "r21" [accessLine (.and .top (.binary "country_of" (.var 1) (.var 0)))]
 #guard plainContent r21Doc.soft [("r9", "equal-access", k2)] (.right r21) == .right r21
+
+/-! ## Several rights, lines and entries, the structured one in the middle of each -/
+
+def nl (n : String) : SourceLine := line .claim (strictNode n "public_service_access_required" true)
+def unl (n : String) : CLine := ⟨nl n, [], none, [], (0, 100)⟩
+def mid : Right := ⟨"r21", "person", .top, [nl "b", accessLine, nl "c"]⟩
+def many : RightsDoc := { r21Doc with rs := [⟨"r20", "person", .top, [nl "a"]⟩, mid, ⟨"r22", "person", .top, [nl "d"]⟩] }
+def midEntries (L : CLine) : List (String × String × CLine) :=
+  [("r21", "b", unl "b"), ("r21", "equal-access", L), ("r21", "c", unl "c")]
+def manyDoc (L : CLine) (doc : RightsDoc := many) : ClauseDoc :=
+  ⟨doc, ("r20", "a", unl "a") :: midEntries L ++ [("r22", "d", unl "d")], []⟩
+def k2Guard : VE.Formula := .and .top (.binary "country_of" (.var 1) (.var 0))
+def k5 : CLine := cline [trig (charged 0) 90 110] none []
+
+#guard verdict (checkClauses (manyDoc k2)) == "ok"
+#guard verdict (checkClauses (manyDoc k5)) == "ClauseSpan: equal-access: [90, 110)"
+#guard guardOf (plain (manyDoc k2)) "equal-access" == k2Guard && guardOf (plain (manyDoc k2)) "c" == .top
+#guard guardOf (plain (manyDoc k2 { many with sourceOrder := some (many.rs.flatMap (fun R => R.lines.map (R.name, ·))) }))
+  "equal-access" == k2Guard
+#guard verdict (checkCandidates ⟨many, [], [("s", 1, .right mid, midEntries k2)]⟩) == "ok"
+#guard verdict (checkCandidates ⟨many, [], [("s", 1, .right mid, midEntries k3)]⟩) == "RelationOnCandidate: s:1: equal-access"
+#guard verdict (checkCandidates ⟨many, [], [("s", 1, .right mid, midEntries k5)]⟩) == "ClauseSpan: equal-access: [90, 110)"
+#guard verdict (checkCandidates ⟨many, [], [("s", 1, .rightLines "r21" mid.lines, midEntries k2)]⟩) == "ok"
+#guard plainContent many.soft (midEntries k2) (.right mid) == .right { mid with lines := [nl "b", accessLine k2Guard, nl "c"] }
+#guard plainContent many.soft (midEntries k2) (.rightLines "r21" mid.lines) == .rightLines "r21" [nl "b", accessLine k2Guard, nl "c"]
 
 end VE.RightClauses.Examples
