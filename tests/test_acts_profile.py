@@ -1019,3 +1019,31 @@ def test_model_acts_not_bound_to_the_request_are_unavailable(monkeypatch, faults
         Environment(data)
     with pytest.raises(CheckerUnavailable):
         model_view(data)
+
+
+@pytest.mark.parametrize("mutant", ["changed", "dropped", "added"])
+def test_a_soft_views_prime_acts_block_not_bound_to_the_request_is_unavailable(monkeypatch, mutant):
+    """ap-1bg: `soft-elaborate` on the soft view of an `acts@0` norms frame echoes the request's `acts` block in
+    `environment_prime` (`bind_prime_environment` compares it with the request); a changed, dropped or added block is
+    `CheckerUnavailable`. The rights route's prime is bound by the same binder."""
+    from ve import softnorms
+    from ve.backends import soft_relay
+    from ve.errors import CheckerUnavailable
+    view = plain_environment(["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"])
+    view["vocabulary"]["soft"] = {"parties": [], "ranks": [], "outranks": [], "ties": [], "outranking": {"mode": "strict"}}
+    assert softnorms.check_soft_source(view, generated=True)["environment_prime"]["vocabulary"]["acts"] == {"fixed": FIXED}
+    genuine = soft_relay.run
+
+    def rebound(case):
+        row = copy.deepcopy(genuine(case))
+        vocabulary = row["environment_prime"]["vocabulary"]
+        if mutant == "changed":
+            vocabulary["acts"] = {"fixed": FIXED[1:]}
+        elif mutant == "dropped":
+            del vocabulary["acts"]
+        else:
+            vocabulary["rights"] = {"holders": []}
+        return row
+    monkeypatch.setattr(soft_relay, "run", rebound)
+    with pytest.raises(CheckerUnavailable):
+        softnorms.check_soft_source(view, generated=True)

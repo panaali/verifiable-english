@@ -355,19 +355,19 @@ Delegates: `/` to route.
 | `/acts/@key` | key | none |  |  | 0 | not probed |
 | `/acts/{}` | string | none |  |  | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
-| `/environment_id` | string | none |  | pattern | 3 | hand: `ve/backends/validation.py:construct_after_lean` |
+| `/environment_id` | string | none |  | pattern | 6 | hand: `ve/backends/validation.py:construct_after_lean` |
 | `/error` | string | none |  | minLength | 6 | not probed |
-| `/family` | string | closed domain | const |  | 3 | shape |
-| `/family` | string | closed domain | enum |  | 3 | shape |
-| `/id` | any | bound | x-echo |  | 5 | shape |
-| `/id` | string | bound | x-equals |  | 5 | shape |
+| `/family` | string | closed domain | const |  | 6 | shape |
+| `/family` | string | closed domain | enum |  | 6 | shape |
+| `/id` | any | bound | x-echo |  | 8 | shape |
+| `/id` | string | bound | x-equals |  | 8 | shape |
 | `/model_acts/@key` | key | none |  |  | 0 | not probed |
 | `/model_acts/{}` | string | none |  |  | 0 | not probed |
 | `/path` | string | none |  |  | 2 | not probed |
 | `/profile` | string | bound | x-equals |  | 3 | shape |
 | `/profiles` | any | bound | x-equals |  | 0 | shape |
-| `/profiles/*` | string | bound | x-equals |  | 0 | shape |
-| `/status` | string | closed domain | const |  | 9 | shape |
+| `/profiles/*` | string | bound | x-equals |  | 5 | shape |
+| `/status` | string | closed domain | const |  | 12 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
@@ -3001,7 +3001,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/span/line` | integer | none |  | minimum | 1 | not probed |
 | `/span/start` | integer | none |  | minimum | 1 | not probed |
 | `/status` | string | closed domain | const |  | 10 | shape |
-| `/undeclared_evaluative/*` | string | none |  | pattern | 0 | not probed |
+| `/undeclared_evaluative/*` | string | none |  | pattern | 2 | not probed |
 | `/units/*/content/bar/decided_by` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/name` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/reading` | string | closed domain | enum |  | 0 | shape |
