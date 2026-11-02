@@ -526,7 +526,8 @@ def test_senses_check_is_admission_only(joke, tmp_path):
 ])
 def test_own_senses_need_no_pack(joke, own, status):
     """Astra (added) B: a dictionary of own senses alone goes to Lean, which decides it; Python adds no rule.
-    The own sense's kind is a kind of the document (W4)."""
+    The own sense's kind is a kind of the document (W4). Plan fixture i3 as built: no packs and no own senses is
+    Lean's reading of the empty dictionary, status `none` (reviews/dri-decisions-20261031-sn-b6.md item 1)."""
     env, overlay = joke
     result = route.read(env, "The riddle is funny.", [], own=own, overlay=overlay)
     assert result["reading"]["status"] == status
