@@ -1,0 +1,16 @@
+[
+{"tag": "norm.header", "lhs": "norm_sentence", "act": "header", "rhs": ["rule", {"cls": "numeral"}]},
+{"tag": "norm.header-exception", "lhs": "norm_sentence", "act": "header", "rhs": ["rule", {"cls": "numeral"}, {"p": "(", "after": true}, "exception", "to", "rule", {"cls": "numeral"}, {"p": ")", "before": true, "after": true}]},
+{"tag": "norm.header-exceptions", "lhs": "norm_sentence", "act": "header", "rhs": ["rule", {"cls": "numeral"}, {"p": "(", "after": true}, "exception", "to", "rules", {"n": "rule_refs"}, {"p": ")", "before": true, "after": true}]},
+{"tag": "norm.precedence", "lhs": "norm_sentence", "act": "precedence", "rhs": ["rule", {"cls": "numeral"}, "takes", "precedence", "over", "rule", {"cls": "numeral"}]},
+{"tag": "norm.clause", "lhs": "norm_sentence", "act": "clause", "guard": false, "rhs": [{"n": "consequence"}]},
+{"tag": "norm.clause-if", "lhs": "norm_sentence", "act": "clause", "guard": true, "rhs": [{"n": "consequence"}, {"p": ",", "before": true}, "if", {"n": "formula"}]},
+{"tag": "norm.clause-unless", "lhs": "norm_sentence", "act": "clause", "guard": false, "rhs": [{"n": "consequence"}, {"p": ",", "before": true}, "unless", {"n": "formula"}]},
+{"tag": "norm.clause-except-when", "lhs": "norm_sentence", "act": "clause", "guard": false, "rhs": [{"n": "consequence"}, {"p": ",", "before": true}, "except", "when", {"n": "formula"}]},
+{"tag": "norm.clause-if-unless", "lhs": "norm_sentence", "act": "clause", "guard": true, "rhs": [{"n": "consequence"}, {"p": ",", "before": true}, "if", {"n": "formula"}, {"p": ",", "before": true}, "unless", {"n": "formula"}]},
+{"tag": "norm.clause-if-except-when", "lhs": "norm_sentence", "act": "clause", "guard": true, "rhs": [{"n": "consequence"}, {"p": ",", "before": true}, "if", {"n": "formula"}, {"p": ",", "before": true}, "except", "when", {"n": "formula"}]},
+{"tag": "norm.except-when", "lhs": "norm_sentence", "act": "exceptWhen", "rhs": ["except", "when", {"n": "formula"}]},
+{"tag": "norm.refs-one", "lhs": "rule_refs", "act": "refs", "rhs": [{"cls": "numeral"}]},
+{"tag": "norm.refs-comma", "lhs": "rule_refs", "act": "refs", "rhs": [{"cls": "numeral"}, {"p": ",", "before": true}, {"n": "rule_refs"}]},
+{"tag": "norm.refs-and", "lhs": "rule_refs", "act": "refs", "rhs": [{"cls": "numeral"}, "and", {"n": "rule_refs"}]}
+]
