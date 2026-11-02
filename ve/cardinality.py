@@ -83,11 +83,10 @@ def identities(environment: dict) -> Identities:
         raise unbound(f"its environment does not project: {exc}"[:200]) from exc
 
 
-def _bind_regions(environment: dict, regions: dict, erased: dict) -> None:
-    """The region table against the request and the problem: each counted sort is a finite sort of the request, its
-    predicates are distinct unary predicates of that sort, each row is `cardinality__<sort>__<bits>` with one bit per
-    predicate, every region of a sort has exactly one row, and rows are in the order of the region premises that open
-    the erased problem (`nonnegOf`). Which sorts and predicates a problem counts is Lean's."""
+def _bind_regions(environment: dict, regions: dict) -> None:
+    """The region table against the request: each counted sort is a finite sort of the request, its predicates are
+    distinct unary predicates of that sort, each row is `cardinality__<sort>__<bits>` with one bit per predicate, and
+    every region of a sort has exactly one row. Which sorts and predicates a problem counts is Lean's."""
     finite = environment["cardinality"]["finite_sorts"]
     declared = environment["vocabulary"]["predicates"]
     _require(all(sort in finite for sort in regions["predicates"]), "counted sort")
@@ -101,10 +100,6 @@ def _bind_regions(environment: dict, regions: dict, erased: dict) -> None:
                  and row["constant"] not in seen, "region")
         seen.add(row["constant"])
     _require(len(seen) == sum(2 ** len(p) for p in regions["predicates"].values()), "region count")
-    opening = erased["premises"][:len(regions["constants"])]
-    _require(len(opening) == len(regions["constants"]) and all(
-        p["core"] == ["le", ["num", "0"], ["const", row["constant"]]]
-        for p, row in zip(opening, regions["constants"])), "region premise")
 
 
 def _one(mode: str, case: dict) -> dict:
@@ -141,6 +136,14 @@ def _bind_problem(ids: Identities, premises: list, conclusion: dict, row: dict) 
     return row
 
 
+def _confirmed(claimed: dict, row: dict) -> None:
+    """What the request cannot say (the order of a sort's predicates, the bridges among the erased premises) only Lean
+    can: it refuses a claimed table or problem other than the one it regenerates (spec 4.1). That refusal is of this
+    answer, not of the request."""
+    from .backends.relay import rows
+    _require(_same(rows("cardinality", [claimed]), [row]), "region table or erased problem")
+
+
 def _case(kind: str, environment: dict, premises: list, conclusion: dict, **extra) -> dict:
     return {"id": kind, "kind": kind, "environment": environment, "premises": premises, "conclusion": conclusion,
             **extra}
@@ -153,19 +156,19 @@ def _bind_admission(ids, environment, premises, conclusion, row) -> dict:
     for formula in (*erased["premises"], erased["conclusion"]):
         ids.erased(formula)
     _require(len(erased["premises"]) >= len(premises) + len(row["regions"]["constants"]), "erased premise count")
-    _bind_regions(environment, row["regions"], erased)
+    _bind_regions(environment, row["regions"])
+    # The rows are in the order of the region premises that open the erased problem (`nonnegOf`).
+    _require(all(p["core"] == ["le", ["num", "0"], ["const", region["constant"]]]
+                 for p, region in zip(erased["premises"], row["regions"]["constants"], strict=False)), "region premise")
     return row
 
 
 def admission(environment: dict, premises: list, conclusion: dict) -> dict:
     """Lean's admission of a problem: the statements, the region table and the regenerated erased problem."""
-    row = _one("cardinality", _case("admission", environment, premises, conclusion))
+    case = _case("admission", environment, premises, conclusion)
+    row = _one("cardinality", case)
     _bind_admission(identities(environment), environment, premises, conclusion, row)
-    # What the request cannot say (the bridges among the erased premises) only Lean can: it refuses a claimed table or
-    # problem other than the one it regenerates (spec 4.1). That refusal is of this answer, not of the request.
-    from .backends.relay import rows
-    claimed = _case("admission", environment, premises, conclusion, regions=row["regions"], erased=row["erased"])
-    _require(_same(rows("cardinality", [claimed]), [row]), "region table or erased problem")
+    _confirmed({**case, "regions": row["regions"], "erased": row["erased"]}, row)
     return row
 
 
@@ -178,9 +181,10 @@ def check_certificate(environment: dict, premises: list, conclusion: dict, certi
 
 
 @_bound
-def _bind_countermodel(ids, premises, conclusion, row) -> dict:
+def _bind_countermodel(ids, environment, premises, conclusion, row) -> dict:
     _bind_problem(ids, premises, conclusion, row)
     _require(type(row["refutes"]) is bool, "refutes")
+    _bind_regions(environment, row["regions"])
     _require(_same([s["constant"] for s in row["sizes"]], [c["constant"] for c in row["regions"]["constants"]])
              and all(type(s["size"]) is int and s["size"] >= 0 for s in row["sizes"]), "sizes")
     return row
@@ -188,26 +192,34 @@ def _bind_countermodel(ids, premises, conclusion, row) -> dict:
 
 def countermodel(environment: dict, premises: list, conclusion: dict, model) -> dict:
     """Lean's countermodel verdict with each region's size in the model, in the region table's order."""
-    row = _one("cardinality", _case("countermodel", environment, premises, conclusion, model=model))
-    return _bind_countermodel(identities(environment), premises, conclusion, row)
+    case = _case("countermodel", environment, premises, conclusion, model=model)
+    row = _one("cardinality", case)
+    _bind_countermodel(identities(environment), environment, premises, conclusion, row)
+    _confirmed({**case, "regions": row["regions"]}, row)
+    return row
 
 
 @_bound
 def bind_report(ids: Identities, graph: dict, report: dict) -> dict:
-    """A document's report against its graph: the root and each leaf are distinct nodes, in submitted order, with their
-    statements, and `report_id` is the digest of exactly this report (`Cardinality.Run.reportId`, qt-a3d: the schema
-    types it and does not recompute it), so a duplicated, dropped or reordered leaf row is refused."""
+    """A document's report against its graph: the root is the graph's, the leaves are exactly the nodes without a
+    deduction the root rests on, each once and in submitted order (`Graph.leaves`), with their statements, and
+    `report_id` is the digest of exactly this report (`Cardinality.Run.reportId`, qt-a3d: the schema types it and does
+    not recompute it), so a duplicated, dropped or reordered leaf row is refused."""
     ids.bind(report)
-    nodes = {node["name"]: (position, node) for position, node in enumerate(graph["nodes"])}
+    nodes = {node["name"]: node for node in graph["nodes"]}
     claims = report["report"]
     _require(claims["root"]["name"] == graph["root"], "root")
-    ids.statement(claims["root"], nodes[graph["root"]][1]["statement"])
-    positions = [nodes[leaf["name"]][0] for leaf in claims["leaves"]]
-    _require(positions == sorted(set(positions)), "leaf order")
+    ids.statement(claims["root"], nodes[graph["root"]]["statement"])
+    reached, stack = set(), [graph["root"]]
+    while stack:
+        name = stack.pop()
+        if name not in reached:
+            reached.add(name)
+            stack.extend(nodes[name].get("premises", []))
+    _require([leaf["name"] for leaf in claims["leaves"]] ==
+             [n["name"] for n in graph["nodes"] if n["name"] in reached and "premises" not in n], "leaves")
     for leaf in claims["leaves"]:
-        node = nodes[leaf["name"]][1]
-        _require("premises" not in node, "leaf")
-        ids.statement(leaf, node["statement"])
+        ids.statement(leaf, nodes[leaf["name"]]["statement"])
     expected = digest(f"ve-report-{ids.identity_version}\n", {
         "environment_id": ids.environment_id, "w6_environment_id": ids.w6.environment_id,
         "w6_target_environment_id": ids.target.environment_id, "document": graph, "report": claims})
@@ -225,9 +237,10 @@ def document(environment: dict, graph: dict) -> dict:
 def _bind_paraphrase(ids, environment, statement, row) -> dict:
     ids.bind(row)
     ids.statement(row["statement"], statement)
-    _require(type(row["paraphrase"]) is str and type(row["assumptions"]) is list
+    # A line is Lean's words: Python checks that it is text, and that there is one assumption per finite sort.
+    _require(type(row["assumptions"]) is list
              and len(row["assumptions"]) == len(environment["cardinality"]["finite_sorts"])
-             and all(type(a) is str for a in row["assumptions"]), "paraphrase")
+             and all(type(a) is str and a and a.encode() for a in (row["paraphrase"], *row["assumptions"])), "paraphrase")
     return row
 
 
