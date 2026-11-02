@@ -631,6 +631,7 @@ module VE.Senses.Document
 module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
+module VE.Senses.Flip
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
