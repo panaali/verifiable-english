@@ -132,6 +132,44 @@ def twoReadings (complete : Bool) : TranslateOutcome :=
       | _ => false)
   | _, _ => false
 
+/-! ## W17 over a real lexicon: V4 lets modal predicates share a form, so a condition can have two derivations -/
+
+/-- An environment whose two obligations give the modal form of `reader must go`, in the sorts and spellings given. -/
+def goEnv (a b : String × String × String) : Json :=
+  envOf ["user", "service", "reading"]
+    [obligation a.1 [a.2.1] a.2.2, obligation b.1 [b.2.1] b.2.2, obligation "click_ask_required" ["user"] "{0} click Ask"]
+    [("reader", "user"), ("bot", "service"), ("draft", "reading")] "t" (some ("user", "reader")) []
+
+/-- The act in two sorts (S3's case): both readings derive, and the one of the other sort does not decode. -/
+def goSorts : Json := goEnv ("go_user_required", "user", "{0} go") ("go_service_required", "service", "{0} go")
+
+/-- The act in one sort, in two spellings the wire keeps apart: both readings derive and both decode, two guards. -/
+def goCase : Json := goEnv ("go_a_required", "user", "{0} go") ("go_b_required", "user", "{0} Go")
+
+/-- Whether `j`'s lexicon passes V1 to V5 and the sentence `reader must go.` has two derivations, the set whole. -/
+def derivesTwo (j : Json) : Bool :=
+  match lexOf j with
+  | .ok (E, L) =>
+    VE.EnglishGrammar.Lexicon.valid E {} L &&
+    match VE.EnglishGrammar.translateRequest E {} L maxCandidates workBudget "reader must go." with
+    | .readings rs complete => rs.length == 2 && complete
+    | _ => false
+  | .error _ => false
+
+#guard derivesTwo goSorts
+#guard read goSorts "Click Ask, if reader must go." ==
+  .refused "IllTyped" "The condition was read, and its formula does not pass the type check."
+
+def goA : VE.Formula := .unary "go_a_required" (.const "reader")
+def goB : VE.Formula := .unary "go_b_required" (.const "reader")
+
+#guard derivesTwo goCase
+#guard match decodeSpeechEnvironmentFull goCase, lexOf goCase with
+  | .ok se, .ok (E, L) => guardsOf se E L workBudget "reader must go" == [goA, goB]
+  | _, _ => false
+#guard read goCase "Click Ask, if reader must go." ==
+  .many [⟨.require, "click_ask_required", [], goA⟩, ⟨.require, "click_ask_required", [], goB⟩]
+
 /-! ## W18 to W30 -/
 
 #guard web "Click Check rule conflict, if draft is approved." 0 == .limit

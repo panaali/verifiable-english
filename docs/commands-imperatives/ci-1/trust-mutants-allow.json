@@ -51,16 +51,6 @@
    "reason": "Lean refuses the text: the field access on [] has no type"
   },
   {
-   "definition": "VE.Commands.guardsOf",
-   "operator": "list-first",
-   "reason": "guardsOf holds two guards only for a condition with two derivations, and none exists (spec section 5, W17); guardList itself is killed by the W17 and fixture rows"
-  },
-  {
-   "definition": "VE.Commands.guardsOf",
-   "operator": "list-last",
-   "reason": "same as list-first"
-  },
-  {
    "definition": "VE.Commands.slotFills",
    "operator": "list-empty",
    "reason": "Lean refuses the text: a list literal is applied as a function or projected"
