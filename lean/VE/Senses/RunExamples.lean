@@ -247,6 +247,15 @@ def wide (n : Nat) : Projection :=
 #guard ((flipModelOf (wide 16) [funny 1 riddle] ["sense__funny_1"]).map fun m =>
   ((List.lookup "sense__funny_1" m.relations).getD []).length) == some (2 ^ 16)
 #guard flipPair (wide 17) (cand 1 (funny 1 riddle)) (cand 2 (funny 2 riddle)) 5 == (.unknown, 5)
+/-- The joke's projection with both senses of `funny` over `n` jokes. -/
+def wideBoth (n : Nat) : Projection :=
+  { PJ with env := { PJ.env with predicates := PJ.env.predicates.map fun p => { p with args := List.replicate n "joke" } } }
+-- the limit counts every sense made true: two of `2 ^ 16` tuples each are over it, either alone within it
+#guard flipModelOf (wideBoth 16) [funny 1 riddle] ["sense__funny_1", "sense__funny_2"] == none &&
+  2 * 2 ^ 16 > VE.Limits.maxTuples && 2 ^ 16 ≤ VE.Limits.maxTuples
+-- a constant of every sort of the projection, the last included, is in the table
+#guard ((flipModelOf { PJ with env := { PJ.env with constants := PJ.env.constants ++ [{ name := "vault", sort := "resource" }] } }
+  [funny 1 riddle] ["sense__funny_1"]).map (·.constants)) == some [("alice", "person"), ("riddle", "riddle"), ("vault", "resource")]
 -- a distinguishing model on the wire carries its table in the model wire form
 #guard flipJson 0 ((0, 0, 1), .distinguished ["p"] true false ⟨[("joke", ["joke"])], [], [("p", [["joke"]])]⟩) ==
   Json.mkObj [("sentence", toJson 0), ("first", toJson 0), ("second", toJson 1), ("status", .str "distinguished"),
