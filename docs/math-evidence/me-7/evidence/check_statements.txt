@@ -1,0 +1,1 @@
+25 of 25 spec 7 declarations appear verbatim (whitespace and comments normalised) in Stats.lean
