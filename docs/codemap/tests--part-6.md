@@ -1,3 +1,5 @@
+- `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
+- `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
 - `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
@@ -80,4 +82,3 @@
 - `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
 - `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
 - `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
-- `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.

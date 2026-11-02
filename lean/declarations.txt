@@ -7743,7 +7743,7 @@ module VE.Defaults.Uniform c547786a342c777dd1fa0217fdf50cbe5fcf60dbdd07042deac9b
 119:0-121:80 def VE.Defaults.providerConditions@VE.Defaults.Uniform
 123:0-123:106 def VE.Defaults.providerRefusal@VE.Defaults.Uniform
 125:0-128:81 def VE.Defaults.providerE1d@VE.Defaults.Uniform
-module VE.Defaults.UniformExamples 2f6f29aff5e0ba9f7536154fecc6255395c6ed5eabd216d5e7481ccf3ea29760
+module VE.Defaults.UniformExamples bdb821879357e33f58bda15710a9b2f63c803fed5c89b626b6bac65451e72d54
 15:0-16:101 def VE.Defaults.UniformFixtures.abSoft@VE.Defaults.UniformExamples
 17:0-17:101 def VE.Defaults.UniformFixtures.over@VE.Defaults.UniformExamples
 18:0-19:120 def VE.Defaults.UniformFixtures.dAB@VE.Defaults.UniformExamples
@@ -7758,10 +7758,12 @@ module VE.Defaults.UniformExamples 2f6f29aff5e0ba9f7536154fecc6255395c6ed5eabd21
 55:0-55:84 def VE.Defaults.UniformFixtures.with_@VE.Defaults.UniformExamples
 56:0-56:117 def VE.Defaults.UniformFixtures.askK@VE.Defaults.UniformExamples
 57:0-57:58 def VE.Defaults.UniformFixtures.refusedP@VE.Defaults.UniformExamples
-78:0-80:37 instance VE.Defaults.UniformFixtures.leastUDec@VE.Defaults.UniformExamples
-81:0-82:118 def VE.Defaults.UniformFixtures.dOff@VE.Defaults.UniformExamples
-118:0-124:16 theorem VE.Defaults.UniformFixtures.decodeLayered_uniform@VE.Defaults.UniformExamples
-133:0-134:89 def VE.Defaults.UniformFixtures.otherKinds@VE.Defaults.UniformExamples
+76:0-79:106 def VE.Defaults.UniformFixtures.dS@VE.Defaults.UniformExamples
+80:0-82:92 def VE.Defaults.UniformFixtures.srcConds@VE.Defaults.UniformExamples
+103:0-105:37 instance VE.Defaults.UniformFixtures.leastUDec@VE.Defaults.UniformExamples
+132:0-138:16 theorem VE.Defaults.UniformFixtures.decodeLayered_uniform@VE.Defaults.UniformExamples
+139:0-144:79 def VE.Defaults.UniformFixtures.d2T@VE.Defaults.UniformExamples
+154:0-155:89 def VE.Defaults.UniformFixtures.otherKinds@VE.Defaults.UniformExamples
 module VE.Defaults.Wire 65c1110e5084e0231bb9489335b6fef9ce334589e49cc4c0e43182dc42fc383f
 32:0-40:65 structure VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire
 33:2-33:3 def VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire

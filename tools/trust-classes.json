@@ -17199,8 +17199,10 @@
         "VE.Defaults.UniformFixtures.askK",
         "VE.Defaults.UniformFixtures.refusedP",
         "VE.Defaults.UniformFixtures.leastUDec",
-        "VE.Defaults.UniformFixtures.dOff",
-        "VE.Defaults.UniformFixtures.otherKinds"
+        "VE.Defaults.UniformFixtures.otherKinds",
+        "VE.Defaults.UniformFixtures.dS",
+        "VE.Defaults.UniformFixtures.srcConds",
+        "VE.Defaults.UniformFixtures.d2T"
       ]
     }
   }
