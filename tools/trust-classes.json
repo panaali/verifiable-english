@@ -2934,28 +2934,40 @@
     },
     "VE/Discourse/ComposeExamples.lean": {
       "T": [
-        "VE.Discourse.ComposeExamples.alpha",
+        "VE.Discourse.ComposeExamples.c0",
         "VE.Discourse.ComposeExamples.caseOf",
-        "VE.Discourse.ComposeExamples.chainField",
-        "VE.Discourse.ComposeExamples.composed",
         "VE.Discourse.ComposeExamples.doc",
         "VE.Discourse.ComposeExamples.env",
         "VE.Discourse.ComposeExamples.envCase",
-        "VE.Discourse.ComposeExamples.front",
         "VE.Discourse.ComposeExamples.graph",
-        "VE.Discourse.ComposeExamples.large",
+        "VE.Discourse.ComposeExamples.loaded",
+        "VE.Discourse.ComposeExamples.manifestOf",
         "VE.Discourse.ComposeExamples.mention",
+        "VE.Discourse.ComposeExamples.mentionBlock",
         "VE.Discourse.ComposeExamples.normUnit",
+        "VE.Discourse.ComposeExamples.ok?",
+        "VE.Discourse.ComposeExamples.parsed",
         "VE.Discourse.ComposeExamples.payload",
-        "VE.Discourse.ComposeExamples.resolved",
-        "VE.Discourse.ComposeExamples.s425",
-        "VE.Discourse.ComposeExamples.s428",
+        "VE.Discourse.ComposeExamples.shape",
         "VE.Discourse.ComposeExamples.src1",
         "VE.Discourse.ComposeExamples.src2",
-        "VE.Discourse.ComposeExamples.today",
         "VE.Discourse.ComposeExamples.u1",
+        "VE.Discourse.ComposeExamples.unitJ",
         "VE.Discourse.ComposeExamples.units",
         "VE.Discourse.ComposeExamples.vocabulary"
+      ]
+    },
+    "VE/Service/ComposedAdmissionExamples.lean": {
+      "T": [
+        "VE.Service.ComposedAdmissionExamples.alpha",
+        "VE.Service.ComposedAdmissionExamples.chainField",
+        "VE.Service.ComposedAdmissionExamples.composed",
+        "VE.Service.ComposedAdmissionExamples.front",
+        "VE.Service.ComposedAdmissionExamples.large",
+        "VE.Service.ComposedAdmissionExamples.resolved",
+        "VE.Service.ComposedAdmissionExamples.s425",
+        "VE.Service.ComposedAdmissionExamples.s428",
+        "VE.Service.ComposedAdmissionExamples.today"
       ]
     },
     "VE/Discourse/Descriptions.lean": {

@@ -2125,6 +2125,7 @@
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
+      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
       "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
       "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
       "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
