@@ -2163,6 +2163,7 @@
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's and df-1ad's `#guard`s build defaults-* case JSON and certificates from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
+      "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
