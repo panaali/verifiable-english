@@ -177,6 +177,7 @@
 'VE.Acts.splitDoc_none' depends on axioms: [propext, Quot.sound]
 'VE.Acts.splits_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.table_free_all_own' does not depend on any axioms
+'VE.Acts.table_free_all_own_split' does not depend on any axioms
 'VE.Acts.table_free_all_shared' does not depend on any axioms
 'VE.Acts.table_free_all_split' does not depend on any axioms
 'VE.Acts.table_free_any' does not depend on any axioms
@@ -1818,6 +1819,7 @@
 'VE.Discourse.bound_mem' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.canon_kind' does not depend on any axioms
 'VE.Discourse.carrier_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.checkAll_ok' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.citation_choices_retained' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.citation_extends_joint' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.compatibleChoices_unconstrained' depends on axioms: [propext, Quot.sound]
@@ -1832,6 +1834,7 @@
 'VE.Discourse.conj_nil' does not depend on any axioms
 'VE.Discourse.conj_wf' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.constAcc_mem' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.contentSet_declared' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.coreEnd_cands' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.coreFormula_congr' depends on axioms: [propext]
 'VE.Discourse.coreFormula_ok' depends on axioms: [propext, Quot.sound]
@@ -1856,6 +1859,8 @@
 'VE.Discourse.disjunction_denote' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.document_find' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.document_sort_conservative' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.drop_app' depends on axioms: [propext]
+'VE.Discourse.drop_line' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.dupOf_none' depends on axioms: [propext]
 'VE.Discourse.dup_nodup' depends on axioms: [propext]
 'VE.Discourse.elaborateD_capture' depends on axioms: [propext, Quot.sound]
@@ -1874,6 +1879,11 @@
 'VE.Discourse.extendsTo_iff' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.extension_rejected' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.extension_unknown' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.fills_content' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.fills_line' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.fills_lines' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.fills_node' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.fills_opt' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.find_group' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.find_key' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.foldl_mul' depends on axioms: [propext]
@@ -1933,9 +1943,16 @@
 'VE.Discourse.npConsts_ok' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.npEnd_cands' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.okKind_canon' depends on axioms: [propext]
+'VE.Discourse.optCount_eq' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.outcome_unknown_of_joint' depends on axioms: [propext]
 'VE.Discourse.pending_not_compatibility' depends on axioms: [propext]
+'VE.Discourse.placeT_denote' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.place_binder' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.place_const' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.place_denote' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.place_var' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.pluralMembers_ok' does not depend on any axioms
+'VE.Discourse.positions_withPositions' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.postOk_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.predFormula_congr' depends on axioms: [propext]
 'VE.Discourse.predFormula_ok' depends on axioms: [propext, Quot.sound]
@@ -1953,10 +1970,22 @@
 'VE.Discourse.recorded_mention' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.registered_constant' depends on axioms: [propext]
 'VE.Discourse.registered_some' depends on axioms: [propext]
+'VE.Discourse.renameP_denote' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.report_extends_joint' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.req_ok' depends on axioms: [propext]
+'VE.Discourse.resolveAll_ok' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.resolveFormula_assertion' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.resolve_identity' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.resolve_keeps_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolve_no_new_symbols' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolve_ok' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.resolve_position_faithful' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolve_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Discourse.resolved_at' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.restr_agree' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.restr_wf' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.restriction_at' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.rewrite_denote' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.runAll_cons' depends on axioms: [propext]
 'VE.Discourse.runAll_error' does not depend on any axioms
 'VE.Discourse.runAll_head_error' does not depend on any axioms
@@ -1967,6 +1996,7 @@
 'VE.Discourse.sharedWitness_spec' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.slotCands_complete' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.slots_of_derivs' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.split2' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.split_not_fused_model' depends on axioms: [propext]
 'VE.Discourse.stale_import_rejected' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.stale_target_rejected' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -2007,6 +2037,7 @@
 'VE.Discourse.verdictOf_unknown' does not depend on any axioms
 'VE.Discourse.wellFormed_of' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.wf_bound' depends on axioms: [propext, Quot.sound]
+'VE.Discourse.withPositions_self' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Discourse.wordAt_lt' depends on axioms: [propext]
 'VE.Discourse.wordAt_mem' depends on axioms: [propext, Quot.sound]
 'VE.Discourse.xi_models' depends on axioms: [propext]
