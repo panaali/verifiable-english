@@ -13390,15 +13390,20 @@
       "T": [
         "VE.Scope.Examples.a29",
         "VE.Scope.Examples.anc",
+        "VE.Scope.Examples.applied",
+        "VE.Scope.Examples.atAB",
         "VE.Scope.Examples.blankLinesRef",
+        "VE.Scope.Examples.bothOrders",
         "VE.Scope.Examples.boxAnchors",
         "VE.Scope.Examples.boxUnits",
+        "VE.Scope.Examples.carveP",
         "VE.Scope.Examples.carveT",
         "VE.Scope.Examples.contentStr",
         "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
         "VE.Scope.Examples.effectAsStated",
         "VE.Scope.Examples.envJ",
+        "VE.Scope.Examples.envP",
         "VE.Scope.Examples.errorOf",
         "VE.Scope.Examples.exporting",
         "VE.Scope.Examples.fourNorms",
@@ -13442,21 +13447,27 @@
         "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
         "VE.Scope.Examples.narrowK",
+        "VE.Scope.Examples.narrowNotP",
         "VE.Scope.Examples.nd",
         "VE.Scope.Examples.nest",
         "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.normP",
         "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.notOwn",
+        "VE.Scope.Examples.notP",
         "VE.Scope.Examples.oA",
         "VE.Scope.Examples.oB",
         "VE.Scope.Examples.oC",
         "VE.Scope.Examples.oN",
+        "VE.Scope.Examples.onBoth",
         "VE.Scope.Examples.onceRule",
         "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.ownEnv",
         "VE.Scope.Examples.ownModel",
         "VE.Scope.Examples.ownVal",
+        "VE.Scope.Examples.pRule",
+        "VE.Scope.Examples.pX1",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
@@ -14233,6 +14244,9 @@
       ]
     },
     "VE/Scope/Theorems.lean": {
+      "S": [
+        "VE.Scope.Typed"
+      ],
       "P": [
         "VE.Scope.insertBy"
       ]
