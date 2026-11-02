@@ -13112,12 +13112,15 @@
         "VE.Judgments.Examples.fξ",
         "VE.Judgments.Examples.fξn",
         "VE.Judgments.Examples.fξw",
+        "VE.Judgments.Examples.goodPreds",
         "VE.Judgments.Examples.guardα",
         "VE.Judgments.Examples.jrec",
+        "VE.Judgments.Examples.jt3aList",
         "VE.Judgments.Examples.judgment",
         "VE.Judgments.Examples.mξ",
         "VE.Judgments.Examples.okVal",
         "VE.Judgments.Examples.preds117",
+        "VE.Judgments.Examples.preds117x",
         "VE.Judgments.Examples.regulated",
         "VE.Judgments.Examples.regulated117",
         "VE.Judgments.Examples.regulatedω",
@@ -16375,8 +16378,7 @@
         "VE.Calc.Filter.Selects",
         "VE.Calc.Table",
         "VE.Calc.Table.cell",
-        "VE.Calc.Table.numbers",
-        "VE.Calc.mean?"
+        "VE.Calc.Table.numbers"
       ],
       "D[V]": [
         "VE.Calc.ColType",
@@ -17316,6 +17318,92 @@
         "VE.Defaults.ZoneFixtures.tag",
         "VE.Defaults.ZoneFixtures.zone",
         "VE.Defaults.ZoneFixtures.zoneR"
+      ]
+    },
+    "VE/Acts/Faithful.lean": {
+      "S": [
+        "VE.Acts.IntendedActs",
+        "VE.Acts.readAs"
+      ]
+    },
+    "VE/Acts/FaithfulExamples.lean": {
+      "T": [
+        "VE.Acts.FaithfulExamples.Model",
+        "VE.Acts.FaithfulExamples.allowed",
+        "VE.Acts.FaithfulExamples.appliesB",
+        "VE.Acts.FaithfulExamples.bx",
+        "VE.Acts.FaithfulExamples.carved",
+        "VE.Acts.FaithfulExamples.ce",
+        "VE.Acts.FaithfulExamples.chain",
+        "VE.Acts.FaithfulExamples.conflict",
+        "VE.Acts.FaithfulExamples.decidesB",
+        "VE.Acts.FaithfulExamples.decodedSides",
+        "VE.Acts.FaithfulExamples.dropM",
+        "VE.Acts.FaithfulExamples.guarded",
+        "VE.Acts.FaithfulExamples.holdsB",
+        "VE.Acts.FaithfulExamples.intendedActsB",
+        "VE.Acts.FaithfulExamples.intendedB",
+        "VE.Acts.FaithfulExamples.jdoc",
+        "VE.Acts.FaithfulExamples.mix",
+        "VE.Acts.FaithfulExamples.one",
+        "VE.Acts.FaithfulExamples.parts027",
+        "VE.Acts.FaithfulExamples.people",
+        "VE.Acts.FaithfulExamples.readAsDecidable",
+        "VE.Acts.FaithfulExamples.readM",
+        "VE.Acts.FaithfulExamples.reads",
+        "VE.Acts.FaithfulExamples.selectsB",
+        "VE.Acts.FaithfulExamples.sides",
+        "VE.Acts.FaithfulExamples.tuples",
+        "VE.Acts.FaithfulExamples.valueB",
+        "VE.Acts.FaithfulExamples.yieldsB"
+      ]
+    },
+    "VE/Calc/Stats.lean": {
+      "S": [
+        "VE.Calc.SqrtRoundsTo",
+        "VE.Calc.Stat",
+        "VE.Calc.Stat.minLength",
+        "VE.Calc.Stat.run",
+        "VE.Calc.absR",
+        "VE.Calc.binomialTail",
+        "VE.Calc.choose",
+        "VE.Calc.kappa?",
+        "VE.Calc.mean?",
+        "VE.Calc.populationVariance?",
+        "VE.Calc.rootEq",
+        "VE.Calc.rootGe",
+        "VE.Calc.rootGt",
+        "VE.Calc.rootLe",
+        "VE.Calc.rootLt",
+        "VE.Calc.sampleVariance?",
+        "VE.Calc.signFlipP",
+        "VE.Calc.signs"
+      ],
+      "G[R]": [
+        "VE.Calc.maxSignFlip"
+      ],
+      "C": [
+        "VE.Calc.instDecidableRootEq",
+        "VE.Calc.instDecidableRootGe",
+        "VE.Calc.instDecidableRootGt",
+        "VE.Calc.instDecidableRootLe",
+        "VE.Calc.instDecidableRootLt",
+        "VE.Calc.instDecidableSqrtRoundsTo",
+        "VE.Calc.signFlipC",
+        "VE.Calc.signFlipWork"
+      ]
+    },
+    "VE/Calc/StatsExamples.lean": {
+      "T": [
+        "VE.Calc.StatsExamples.d12",
+        "VE.Calc.StatsExamples.d16",
+        "VE.Calc.StatsExamples.grid",
+        "VE.Calc.StatsExamples.milli",
+        "VE.Calc.StatsExamples.pv",
+        "VE.Calc.StatsExamples.rootsAt",
+        "VE.Calc.StatsExamples.sv",
+        "VE.Calc.StatsExamples.tie",
+        "VE.Calc.StatsExamples.v6"
       ]
     }
   }
