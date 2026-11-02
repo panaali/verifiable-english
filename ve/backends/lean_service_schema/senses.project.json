@@ -33,7 +33,7 @@
   },
   "$defs": {
     "environment": {
-      "$comment": "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, constants and soft and rights blocks are the request's; the relay binds the whole by environment_id.",
+      "$comment": "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, composed blocks (Service.Document.envelopeKeys), constants and soft and rights blocks are the request's; the relay binds the whole by environment_id.",
       "additionalProperties": false,
       "allOf": [
         {
@@ -43,9 +43,11 @@
         }
       ],
       "properties": {
+        "alternatives": {"x-equals": "/environment/alternatives"},
         "language": {"type": "string", "x-equals": "/environment/language"},
         "profile": {"type": "string", "x-equals": "/environment/profile"},
         "profiles": {"$ref": "common.json#/$defs/strings"},
+        "risk": {"x-equals": "/environment/risk"},
         "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
         "unit_schema": {"x-equals": "/environment/unit_schema"},
         "units": {"type": "object", "x-equals": "/environment/units"},
