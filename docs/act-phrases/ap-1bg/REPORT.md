@@ -53,6 +53,14 @@ it is not false as written; it is not built here (ap-1bh). Overlap: of the in-fl
   `regen_generated.py --check`: 35 entries.
 - Selected tests (`mac-pytest.sh --select`, 433 units at `40cbf7b3`): 4 failed, all of them field tables of the new
   members. They were fixed in `3d892ae73` and rerun by id with `mac-pytest.sh -- <ids>` at `747ab468`: 68 passed, exit 0.
+- Pre-review gate at `9b408b81`: the chain's selected tests failed one id,
+  `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: the new
+  `lean/VE/SoftNorms/ActsFrameExamples.lean` had no row under `other_json`. The row is added (fixtures only: `VE.lean`
+  alone imports the file); the id passes by `mac-pytest.sh -- <id>` (1 passed, exit 0), `regen_generated.py --check`
+  35 entries. No product code changed.
+- The chain's full gate at `9b408b81` stopped at collection, in the merge base's scratch worktree (`ve_service` of
+  `base-worktree` has an unlisted build), before its suite; five other items' gate logs show the same failure. The
+  chain treats it as a runner problem. No full gate has passed on this branch.
 
 ## 4. Size and bytes
 

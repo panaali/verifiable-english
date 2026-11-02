@@ -2242,6 +2242,7 @@
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
       "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
       "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
+      "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
