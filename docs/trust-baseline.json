@@ -1762,6 +1762,13 @@
    "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "sc-2d: VE/Scope/Theorems.lean S +3 (VE.Scope.Typed, spec 5.4's typing predicate in applyEffect_typed; exercised by Examples.lean:1236 and :1241, mutant typed_forgets_carve_outs)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-2d, 2026-10-18",
+   "commit": "4d9a0eeb043cd2a8a4eb7f1096fde3e610bd88f1"
   }
  ]
 }
