@@ -1192,21 +1192,6 @@ theorem forcedAll_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (S
     · simp only [haC, List.contains_iff_mem, if_false, beq_iff_eq] at hp
       exact (coneAtomVX_off haC _ []).trans hp
 
-/-- Fewer true atoms on a list: `p` implies `q` on `l`, and some element of `l` has `q` but not `p`. -/
-theorem countP_lt_of {β : Type} : ∀ (l : List β) {p q : β → Bool}, (∀ x ∈ l, p x = true → q x = true) →
-    ∀ x ∈ l, q x = true → p x = false → l.countP p < l.countP q
-  | [], _, _, _, _, hx, _, _ => absurd hx List.not_mem_nil
-  | y :: l, p, q, h, x, hx, hq, hp => by
-    have h' : ∀ z ∈ l, p z = true → q z = true := fun z hz => h z (List.mem_cons_of_mem _ hz)
-    have hle := List.countP_mono_left h'
-    have hy := h y List.mem_cons_self
-    simp only [List.countP_cons]
-    rcases List.mem_cons.mp hx with rfl | hx
-    · simp only [hq, hp, if_true, Bool.false_eq_true, if_false]
-      omega
-    · have := countP_lt_of l h' x hx hq hp
-      cases hpy : p y <;> cases hqy : q y <;> simp_all <;> omega
-
 /-- The finite minimal-subcompletion lemma: below every admissible completion that agrees with the observations
     there is a default completion (so it lacks every decision atom the first one lacks). -/
 theorem defaultCompletion_below {α : Type} [DecidableEq α] (L : LayeredU) (X : List VE.Formula)
@@ -1235,8 +1220,8 @@ theorem defaultCompletion_below {α : Type} [DecidableEq α] (L : LayeredU) (X :
   obtain ⟨a, ha, hRa, hna⟩ : ∃ a ∈ decisionAtoms L.D M, R a.1 a.2 ∧ ¬ R'' a.1 a.2 :=
     Classical.byContradiction fun hno => h4 fun a ha hRa => Classical.byContradiction fun hn => hno ⟨a, ha, hRa, hn⟩
   have hlt : f R'' < f R :=
-    countP_lt_of _ (fun b hb h => by simpa using h3 b hb (by simpa using h)) a ha (by simpa using hRa)
-      (by simpa using hna)
+    VE.NormDefaults.countP_lt_of (fun b hb h => by simpa using h3 b hb (by simpa using h))
+      ⟨a, ha, by simpa using hRa, by simpa using hna⟩
   obtain ⟨R', hdc, hle⟩ := ih (f R'') (hf ▸ hlt) R'' rfl h1 h2
   exact ⟨R', hdc, fun b hb h => h3 b hb (hle b hb h)⟩
 

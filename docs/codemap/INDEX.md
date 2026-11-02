@@ -79,13 +79,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
-- [lean/VE/Calc/](lean__VE__Calc.md) — 27 modules — -
+- [lean/VE/Calc/](lean__VE__Calc.md) — 28 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
-- [lean/VE/Defaults/](lean__VE__Defaults.md) — 8 modules — -
+- [lean/VE/Defaults/](lean__VE__Defaults.md) — 10 modules — -
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
 - [lean/VE/Discourse/](lean__VE__Discourse.md) — 19 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
@@ -126,7 +126,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 93 modules — -
 - [tests/ part 5](tests--part-5.md) — 81 modules — -
 - [tests/ part 6](tests--part-6.md) — 85 modules — -
-- [tests/ part 7](tests--part-7.md) — 29 modules — -
+- [tests/ part 7](tests--part-7.md) — 30 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -
 - [tools/ part 2](tools--part-2.md) — 6 modules — -
