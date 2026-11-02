@@ -48230,6 +48230,17 @@ theorem VE.Scope.balanced?_sound
   ∀ (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Scope.balanced? t = Bool.true → t.Balanced
   -- uses VE.Scope.balanced?@VE.Scope.Govern
   -- expr 3145925104
+theorem VE.Scope.bar_reach_every_right
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor) (B B' : VE.Rights.Bar),
+    VE.Scope.Pinned.withBarReach D g B = Except.ok B' →
+      ∀ (us : List String),
+        VE.Scope.covered D g.reach = Except.ok us →
+          B' = B ∧
+            ∀ (u : String),
+              u ∈ VE.Scope.unitIds D.doc →
+                (VE.Scope.Pinned.rightOf (VE.Scope.contentOf D.doc u)).isSome = Bool.true → u ∈ us
+  -- uses VE.Rights.Bar@VE.Rights.Tree VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Pinned.rightOf@VE.Scope.Reach VE.Scope.Pinned.withBarReach@VE.Scope.Reach VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 1487915435
 theorem VE.Scope.baseName_some
   ∀ (D : VE.Scope.SDoc) (u n : String),
     VE.Scope.baseName D u = Option.some n ↔
@@ -49410,6 +49421,17 @@ theorem VE.Scope.label_reach_iff
           ∀ (u : String), u ∈ us ↔ VE.Layout.ItemUnit D.layout i u
   -- uses VE.Layout.ItemUnit@VE.Layout.List VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.Reach.label@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
   -- expr 1985008681
+theorem VE.Scope.limitation_scope_of_reach
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor) (L L' : VE.Rights.Limitation),
+    VE.Scope.Pinned.withReach D g L = Except.ok L' →
+      ∀ (us : List String),
+        VE.Scope.covered D g.reach = Except.ok us →
+          L'.scope = Option.some (VE.Scope.Pinned.rightNames D us) ∧
+            { name := L'.name, scope := L.scope, kinds := L'.kinds, decidedBy := L'.decidedBy,
+                conditions := L'.conditions, factors := L'.factors } =
+              L
+  -- uses VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation.decidedBy@VE.Rights.Tree VE.Rights.Limitation.factors@VE.Rights.Tree VE.Rights.Limitation.kinds@VE.Rights.Tree VE.Rights.Limitation.mk@VE.Rights.Tree VE.Rights.Limitation.name@VE.Rights.Tree VE.Rights.Limitation.scope@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Pinned.rightNames@VE.Scope.Reach VE.Scope.Pinned.withReach@VE.Scope.Reach VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
+  -- expr 439049669
 theorem VE.Scope.listMember_wf
   ∀ (j : Lean.Json),
     VE.Scope.JsonWF j →
