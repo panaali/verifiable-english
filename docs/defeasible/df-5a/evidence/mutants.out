@@ -1,0 +1,77 @@
+control: 0 failures
+S1 VE.Defaults.zoneMin: FAILS 9 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dμ' fun L => zone L (sit "assistant" 1 ["cond_a", "cond_b"]) [] "p" [a0] == "
+    #guard holds dμ' fun L => zone L M1 [] "p" [a0] == "notSaid" && minCount L M1 [] [] == 2
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+S2 VE.Defaults.zoneMin: FAILS 1 guards
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+S3 VE.Defaults.defaultZoneOf: FAILS 1 guards
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+S4 VE.Defaults.zoneMin: FAILS 1 guards
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+S5 VE.Defaults.zoneForm: FAILS 1 guards
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+T1 VE.Defaults.DecLe: FAILS 7 guards
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+T2 VE.Defaults.Observed: FAILS 2 guards
+    THEOREM realized_admissible
+    THEOREM row_of_completion
+T3 VE.Defaults.switchesOffRecord: FAILS 1 guards
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+T4 VE.Defaults.DefaultCompletion: FAILS 7 guards
+    THEOREM dc_of_min
+    THEOREM dc_of_min
+    THEOREM min_of_dc
+    THEOREM val_dc
+    THEOREM defaultZone_noCompletion_sound
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+T5 VE.Defaults.ByDefaultZ: FAILS 2 guards
+    THEOREM defaultZone_byDefault_sound
+    THEOREM defaultZone_eq_noException
+T6 VE.Defaults.ByDefaultLeftTo: FAILS 2 guards
+    THEOREM defaultZone_leftTo_sound
+    THEOREM defaultZone_notSaid_sound
+T7 VE.Defaults.noExceptionRecord: FAILS 4 guards
+    #guard holds dα fun L => zone L M1 [] "x_required" [a0] == "yes" &&
+    #guard holds dπ fun L => settled L M1 (noExceptionRecord L.D M1) "x_required" == some true
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dβ fun L => zoneR L M1 (noExceptionRecord L.D M1) [] "x_required" [a0] == "ye
+C1 VE.Defaults.maxDefaultAtoms: FAILS 2 guards
+    #guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] 
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+C2 VE.Defaults.openAtomsAll: FAILS 12 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dμ' fun L => zone L (sit "assistant" 1 ["cond_a", "cond_b"]) [] "p" [a0] == "
+    #guard holds dμ' fun L => zone L M1 [] "p" [a0] == "notSaid" && minCount L M1 [] [] == 2
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => settled L M1 (noExceptionRecord L.D M1) "x_required" == some true
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+    #guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] 
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+C3 VE.Defaults.zoneRow: FAILS 3 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dα fun L => zone L M1 [((reg L "x_permitted", [a0]), false)] "x_required" [a0
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+C4 VE.Defaults.zoneRecordOk: FAILS 1 guards
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+C5 VE.Defaults.zoneDeclOk: FAILS 1 guards
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+T8 VE.Defaults.DefaultZone: not run here (lake build VE.Defaults.Zone: defaultZoneOf no longer elaborates (it returns notSaid); run by hand, evidence/T8.out)
+ALL MUTANTS FAIL THEIR GUARDS

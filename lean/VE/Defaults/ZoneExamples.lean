@@ -7,7 +7,7 @@ document's assembled premise packs (`Packs.labelledX`). Each check has an accept
 namespace VE.Defaults.ZoneFixtures
 open Lean
 open VE.Defaults
-open VE.Defaults.Fixtures (regJ xReq xPerm baseJ ruleJ dfltJ un holds val layered dα dβ dγ dδ Entity)
+open VE.Defaults.Fixtures (regJ xReq xPerm baseJ ruleJ dfltJ un holds val layered dα dβ dγ dδ dε Entity)
 open VE.Defaults.MeaningFixtures (dπ)
 open VE.NormDefaults.Wire (LayeredU)
 
@@ -128,15 +128,24 @@ def Mu : VE.FiniteModel Entity := sit "assistant" 1 ["urgent"]
 -- Without `urgent(a)` the record is met.
 #guard holds dβ fun L => zoneR L M1 (noExceptionRecord L.D M1) [] "x_required" [a0] == "yes"
 
+/-! ## Switches: DF-ε at {a}, where the user may turn r1 off -/
+
+-- The switch is off unless the record says otherwise: by default yes; the record turning it on leaves it not said.
+#guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), false)] &&
+  switchesOffRecord L.D M1 [(("soft__off__r1__user", [a0]), true)] == [] && zone L M1 [] "x_required" [a0] == "yes" &&
+  zoneR L M1 [(("soft__off__r1__user", [a0]), true)] [] "x_required" [a0] == "notSaid"
+
 /-! ## Observations and records that no completion meets -/
 
 -- Observing `x_permitted(a)` no at DF-α's situation contradicts the permission allowed by default: no completion.
 #guard holds dα fun L => zone L M1 [((reg L "x_permitted", [a0]), false)] "x_required" [a0] == "noCompletion" &&
   zone L M1 [((reg L "x_permitted", [a0]), true)] "x_required" [a0] == "yes"
--- A record that says one atom both ways, or a true atom at an undeclared predicate: no completion.
+-- A record that says one atom both ways, or a true atom at an undeclared predicate (even one the model holds): no
+-- completion.
 #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__excepted__r1", [a0]), false)] []
     "x_required" [a0] == "noCompletion" &&
   zoneR L M1 [(("zzz", [a0]), true)] [] "x_required" [a0] == "noCompletion" &&
+  zoneR L (sit "assistant" 1 ["zzz"]) [(("zzz", [a0]), true)] [] "x_required" [a0] == "noCompletion" &&
   zoneR L M1 [(("soft__excepted__r1", [a0]), true)] [] "x_required" [a0] == "notSaid"
 
 /-! ## The budget: every value read once, the open atoms charged against `maxDefaultAtoms` -/
