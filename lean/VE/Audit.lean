@@ -72,6 +72,7 @@ import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Calc.Poly
 import VE.Calc.Run
+import VE.Calc.Stats
 import VE.Calc.Table
 import VE.Calc.Ties
 import VE.Calc.Units
@@ -1265,6 +1266,21 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Run.unknown_named
 #print axioms VE.Calc.Run.verdict_sound
 #print axioms VE.Calc.Shown.matches_iff
+#print axioms VE.Calc.Stat.run_isSome
+#print axioms VE.Calc.Stats.binomial
+#print axioms VE.Calc.Stats.choose_eq_zero
+#print axioms VE.Calc.Stats.div_eq_iff_mul
+#print axioms VE.Calc.Stats.div_le_iff_mul
+#print axioms VE.Calc.Stats.foldl_add
+#print axioms VE.Calc.Stats.le_div_iff_mul
+#print axioms VE.Calc.Stats.root_iff
+#print axioms VE.Calc.Stats.sq_le_sq
+#print axioms VE.Calc.Stats.sq_lt_sq
+#print axioms VE.Calc.Stats.sum_append
+#print axioms VE.Calc.Stats.sum_congr
+#print axioms VE.Calc.Stats.sum_filter_le
+#print axioms VE.Calc.Stats.sum_map_add
+#print axioms VE.Calc.Stats.sum_map_mul
 #print axioms VE.Calc.Step.derive_sound
 #print axioms VE.Calc.Table.selectB_sound
 #print axioms VE.Calc.Table.select_iff
@@ -1343,10 +1359,13 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Work.zero_add_shape
 #print axioms VE.Calc.assign_wellFormed
 #print axioms VE.Calc.bind2_some
+#print axioms VE.Calc.binomialTail_unit
+#print axioms VE.Calc.binomialTail_zero
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step
 #print axioms VE.Calc.charge_eq
 #print axioms VE.Calc.checked_steps
+#print axioms VE.Calc.choose_succ_succ
 #print axioms VE.Calc.compare_invariant
 #print axioms VE.Calc.convert_by_factors
 #print axioms VE.Calc.counted_bound
@@ -1386,6 +1405,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.lt_of_sq_lt
 #print axioms VE.Calc.mapM_facts
 #print axioms VE.Calc.mem_firstAppearance_of
+#print axioms VE.Calc.mem_signs
 #print axioms VE.Calc.mul_pow_nat
 #print axioms VE.Calc.normOnce_fold
 #print axioms VE.Calc.notIdentity_of_differsAt
@@ -1405,6 +1425,11 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.runC_work
 #print axioms VE.Calc.runCounted_reads
 #print axioms VE.Calc.sidesAtB_eq
+#print axioms VE.Calc.signFlipC_complete
+#print axioms VE.Calc.signFlipC_sound
+#print axioms VE.Calc.signFlipP_grain
+#print axioms VE.Calc.signs_length
+#print axioms VE.Calc.sqrtRoundsTo_of_square
 #print axioms VE.Calc.sumOf_snoc
 #print axioms VE.Calc.sum_by_names
 #print axioms VE.Calc.sum_nonzero
@@ -3070,6 +3095,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.predicateWords_name
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.singleton_infix_iff
 #print axioms VE.Judgments.status_checked
 #print axioms VE.Judgments.status_eq
 #print axioms VE.Judgments.status_legacy
