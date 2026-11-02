@@ -6940,6 +6940,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.arrAt_mem
 #print axioms VE.Scope.ascending_sound
 #print axioms VE.Scope.assemble_ok
+#print axioms VE.Scope.assemble_units
 #print axioms VE.Scope.atChoiceOn_sets
 #print axioms VE.Scope.atChoiceOn_units
 #print axioms VE.Scope.balanceL_id
@@ -6983,6 +6984,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.decodeBlock_ok
 #print axioms VE.Scope.decodeBlock_payloads
 #print axioms VE.Scope.decodeBlock_sets
+#print axioms VE.Scope.decodeBlock_unitIds_nodup
 #print axioms VE.Scope.decodeBudgeted_of
 #print axioms VE.Scope.decodeBudgeted_ok
 #print axioms VE.Scope.decodeEffect_wf
@@ -7017,7 +7019,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.filter_drop_title
 #print axioms VE.Scope.filter_get
 #print axioms VE.Scope.filter_mergeSort
+#print axioms VE.Scope.filter_pair
 #print axioms VE.Scope.find?_congr_mem
+#print axioms VE.Scope.find?_idOf
+#print axioms VE.Scope.find?_pair
 #print axioms VE.Scope.find_map_id
 #print axioms VE.Scope.firstDup_none_iff
 #print axioms VE.Scope.firstDup_none_nodup
@@ -7038,6 +7043,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.frontier_graph_refused
 #print axioms VE.Scope.getD_of_get
 #print axioms VE.Scope.getD_set2
+#print axioms VE.Scope.getD_setObjVal
 #print axioms VE.Scope.getD_set_ne
 #print axioms VE.Scope.getObjValD_of
 #print axioms VE.Scope.getObjValD_str
@@ -7049,6 +7055,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.governFast_eq
 #print axioms VE.Scope.governSetsFast_eq
 #print axioms VE.Scope.governSets_choice_refused
+#print axioms VE.Scope.governSets_every_choice
 #print axioms VE.Scope.governSets_limit
 #print axioms VE.Scope.governSets_no_sets
 #print axioms VE.Scope.governSets_ok
@@ -7088,7 +7095,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.insertBy_filter
 #print axioms VE.Scope.insertBy_head
 #print axioms VE.Scope.insertBy_split
+#print axioms VE.Scope.insert_insert
+#print axioms VE.Scope.insert_repl
 #print axioms VE.Scope.insert_same
+#print axioms VE.Scope.insert_swap
 #print axioms VE.Scope.ite_bind_ok
 #print axioms VE.Scope.itemRule_decoder
 #print axioms VE.Scope.jsonWF?_sound
@@ -7113,7 +7123,11 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.mapM_ok_mem
 #print axioms VE.Scope.mapM_ok_of_mem
 #print axioms VE.Scope.mapM_some_mem
+#print axioms VE.Scope.map_balanceL
+#print axioms VE.Scope.map_balanceR
 #print axioms VE.Scope.map_filter_id
+#print axioms VE.Scope.map_insert
+#print axioms VE.Scope.map_repl_id
 #print axioms VE.Scope.mem_ordered
 #print axioms VE.Scope.memberOf_wf
 #print axioms VE.Scope.membersIn_eq
@@ -7176,9 +7190,12 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.setObjVal_ne
 #print axioms VE.Scope.setObjVal_null
 #print axioms VE.Scope.setObjVal_self
+#print axioms VE.Scope.setObjVal_swap
+#print axioms VE.Scope.setObjVal_twice
 #print axioms VE.Scope.setUnits_eq
 #print axioms VE.Scope.set_comm
 #print axioms VE.Scope.setsJson_of_get
+#print axioms VE.Scope.size_map_tree
 #print axioms VE.Scope.su_obj
 #print axioms VE.Scope.substOwn_and
 #print axioms VE.Scope.substOwn_id

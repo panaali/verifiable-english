@@ -48302,9 +48302,25 @@ theorem VE.Scope.assemble_ok
                                   ∃ c,
                                     r' = r.setObjVal! "content" c ∧
                                       (c = VE.Scope.readingAt s n ∨
-                                        ∃ p, p ∈ outs ∧ c = VE.Scope.contentOf p.snd (VE.Scope.setUnit s)))
-  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.assemble@VE.Scope.Readings VE.Scope.assemble_ok.match_1@VE.Scope.ReadingsLemmas VE.Scope.contentOf@VE.Scope.Govern VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.readingAt@VE.Scope.Readings VE.Scope.readingsJson@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern
-  -- expr 1461713506
+                                          ∃ p, p ∈ outs ∧ c = VE.Scope.contentOf p.snd (VE.Scope.setUnit s)) ∧
+                                        ∀ (p : VE.Discourse.Choice × Lean.Json),
+                                          p ∈ outs →
+                                            VE.Scope.pickOf p.fst s = Option.some n →
+                                              c = VE.Scope.contentOf p.snd (VE.Scope.setUnit s))
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.assemble@VE.Scope.Readings VE.Scope.assemble_ok.match_1@VE.Scope.ReadingsLemmas VE.Scope.contentOf@VE.Scope.Govern VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.pickOf@VE.Scope.Readings VE.Scope.readingAt@VE.Scope.Readings VE.Scope.readingsJson@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern
+  -- expr 1318279632
+theorem VE.Scope.assemble_units
+  ∀ (D : VE.Scope.SDoc) (ch₀ : VE.Discourse.Choice) (o₀ : Lean.Json) (outs : List (VE.Discourse.Choice × Lean.Json))
+    (out : Lean.Json),
+    VE.Scope.assemble D ch₀ o₀ outs = Except.ok out →
+      ∀ (p : VE.Discourse.Choice × Lean.Json),
+        p ∈ outs →
+          ∀ (i : Nat) (x x₀ : Lean.Json),
+            (VE.Scope.unitsOf p.snd)[i]? = Option.some x →
+              (VE.Scope.unitsOf o₀)[i]? = Option.some x₀ →
+                (VE.Scope.governedSetUnits D).contains (VE.Scope.idOf x) = Bool.true ∨ x = x₀
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.assemble@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.unitsOf@VE.Scope.Govern
+  -- expr 3700388105
 theorem VE.Scope.atChoiceOn_sets
   ∀ (su : List String) (doc : Lean.Json) (ch : VE.Discourse.Choice),
     VE.Scope.JsonWF doc →
@@ -48673,16 +48689,31 @@ theorem VE.Scope.decodeBlock_sets
               ∀ (s : String),
                 VE.Scope.HasStr s out →
                   VE.Scope.HasStr s D.doc ∨ ∃ g, g ∈ D.governors ∧ VE.Scope.HasStr s (VE.Scope.payload g.effect)) ∧
-        ∀ (g : VE.Scope.Governor),
-          g ∈ D.governors →
-            ∀ (us : List String),
-              VE.Scope.covered D g.reach = Except.ok us →
-                ∀ (u : String),
-                  u = g.unit ∨ u ∈ us →
-                    u ∈ VE.Scope.setUnits D.doc →
-                      ¬u ∈ VE.Scope.governedSetUnits D → (VE.Scope.governSets D).isOk = Bool.false
-  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.HasStr@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.payload@VE.Scope.Govern VE.Scope.readingsJson@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setUnits@VE.Scope.Govern VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern
-  -- expr 3373500434
+        (∀ (g : VE.Scope.Governor),
+            g ∈ D.governors →
+              ∀ (us : List String),
+                VE.Scope.covered D g.reach = Except.ok us →
+                  ∀ (u : String),
+                    u = g.unit ∨ u ∈ us →
+                      u ∈ VE.Scope.setUnits D.doc →
+                        ¬u ∈ VE.Scope.governedSetUnits D → (VE.Scope.governSets D).isOk = Bool.false) ∧
+          ∀ (out : Lean.Json),
+            VE.Scope.governSets D = Except.ok out →
+              VE.Scope.governedSetUnits D ≠ [] →
+                ∀ (cs : List VE.Discourse.Choice),
+                  VE.Scope.setChoices D = Except.ok cs →
+                    ∀ (ch : VE.Discourse.Choice),
+                      ch ∈ cs →
+                        ∃ o,
+                          VE.Scope.governChoice D ch = Except.ok o ∧
+                            VE.Scope.atChoiceOn (VE.Scope.governedSetUnits D) out ch = o
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.HasStr@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.atChoiceOn@VE.Scope.Readings VE.Scope.covered@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.payload@VE.Scope.Govern VE.Scope.readingsJson@VE.Scope.Readings VE.Scope.setChoices@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setUnits@VE.Scope.Govern VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern
+  -- expr 1209151694
+theorem VE.Scope.decodeBlock_unitIds_nodup
+  ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
+    VE.Scope.decodeBlock front source re = Except.ok D → (VE.Scope.unitIds D.doc).Nodup
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 259314787
 theorem VE.Scope.decodeBudgeted_of
   ∀ {n k : Nat} {j : Lean.Json} {φ : VE.Formula} {c : Nat},
     VE.Norms.Wire.budgetFormula n k j = Except.ok (φ, c) →
@@ -48945,10 +48976,34 @@ theorem VE.Scope.filter_mergeSort
         ∀ (p : α → Bool) (l : List α), List.filter p (l.mergeSort le) = (List.filter p l).mergeSort le
   -- uses
   -- expr 3550286953
+theorem VE.Scope.filter_pair
+  ∀ {α : Type} (p : α → Bool) (l l' : List α),
+    l'.length = l.length →
+      (∀ (i : Nat) (a b : α), l[i]? = Option.some a → l'[i]? = Option.some b → p b = p a ∧ (p a = Bool.true → b = a)) →
+        List.filter p l' = List.filter p l
+  -- uses
+  -- expr 445487983
 theorem VE.Scope.find?_congr_mem
   ∀ {α : Type} (p q : α → Bool) (l : List α), (∀ (x : α), x ∈ l → p x = q x) → List.find? p l = List.find? q l
   -- uses
   -- expr 713041259
+theorem VE.Scope.find?_idOf
+  ∀ (l : List Lean.Json),
+    (List.map VE.Scope.idOf l).Nodup →
+      ∀ (i : Nat) (x : Lean.Json),
+        l[i]? = Option.some x → List.find? (fun x_1 => VE.Scope.idOf x_1 == VE.Scope.idOf x) l = Option.some x
+  -- uses VE.Scope.idOf@VE.Scope.Govern
+  -- expr 2598466857
+theorem VE.Scope.find?_pair
+  ∀ {α : Type} (p q : α → Bool) (l l' : List α),
+    l'.length = l.length →
+      (∀ (i : Nat) (a b : α), l[i]? = Option.some a → l'[i]? = Option.some b → q b = p a) →
+        List.find? p l = Option.none ∧ List.find? q l' = Option.none ∨
+          ∃ i a b,
+            l[i]? = Option.some a ∧
+              l'[i]? = Option.some b ∧ List.find? p l = Option.some a ∧ List.find? q l' = Option.some b
+  -- uses
+  -- expr 3173998499
 theorem VE.Scope.find_map_id
   ∀ (F : Lean.Json → Lean.Json) (u : String) (ys : List Lean.Json),
     (∀ (y : Lean.Json), y ∈ ys → VE.Scope.idOf (F y) = VE.Scope.idOf y) →
@@ -49086,6 +49141,12 @@ theorem VE.Scope.getD_set2
               (((Lean.Json.obj t).setObjVal! k₁ v₁).setObjVal! k₂ v₂).getObjValD k₁ = v₁
   -- uses
   -- expr 1264467922
+theorem VE.Scope.getD_setObjVal
+  ∀ (s : Lean.Json),
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), s = Lean.Json.obj kvs → kvs.WF) →
+      ∀ (k k' : String), k ≠ k' → ∀ (v : Lean.Json), (s.setObjVal! k v).getObjValD k' = s.getObjValD k'
+  -- uses
+  -- expr 1294214455
 theorem VE.Scope.getD_set_ne
   ∀ (o : Lean.Json),
     (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), o = Lean.Json.obj kvs → kvs.WF) →
@@ -49151,6 +49212,22 @@ theorem VE.Scope.governSets_choice_refused
               ∀ (e : String), VE.Scope.governChoice D ch = Except.error e → (VE.Scope.governSets D).isOk = Bool.false
   -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.setChoices@VE.Scope.Readings
   -- expr 461767713
+theorem VE.Scope.governSets_every_choice
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.JsonWF D.doc →
+      (VE.Scope.unitIds D.doc).Nodup →
+        VE.Scope.governedSetUnits D ≠ [] →
+          ∀ (out : Lean.Json),
+            VE.Scope.governSets D = Except.ok out →
+              ∀ (cs : List VE.Discourse.Choice),
+                VE.Scope.setChoices D = Except.ok cs →
+                  ∀ (ch : VE.Discourse.Choice),
+                    ch ∈ cs →
+                      ∃ o,
+                        VE.Scope.governChoice D ch = Except.ok o ∧
+                          VE.Scope.atChoiceOn (VE.Scope.governedSetUnits D) out ch = o
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.atChoiceOn@VE.Scope.Readings VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.setChoices@VE.Scope.Readings VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 3451308232
 theorem VE.Scope.governSets_limit
   ∀ (D : VE.Scope.SDoc),
     VE.Discourse.productSize (VE.Scope.setShapes D) > VE.Scope.choiceLimit →
@@ -49168,9 +49245,12 @@ theorem VE.Scope.governSets_ok
         VE.Scope.governSets D = Except.ok out →
           ∃ ch₀ o₀ outs,
             (∀ (p : VE.Discourse.Choice × Lean.Json), p ∈ outs → VE.Scope.governChoice D p.fst = Except.ok p.snd) ∧
-              (ch₀, o₀) ∈ outs ∧ VE.Scope.assemble D ch₀ o₀ outs = Except.ok out
-  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.assemble@VE.Scope.Readings VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings
-  -- expr 1546854023
+              (ch₀, o₀) ∈ outs ∧
+                VE.Scope.assemble D ch₀ o₀ outs = Except.ok out ∧
+                  ∀ (cs : List VE.Discourse.Choice),
+                    VE.Scope.setChoices D = Except.ok cs → ∀ (ch : VE.Discourse.Choice), ch ∈ cs → ∃ o, (ch, o) ∈ outs
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.assemble@VE.Scope.Readings VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.setChoices@VE.Scope.Readings
+  -- expr 758615669
 theorem VE.Scope.governSets_preserves
   ∀ (D : VE.Scope.SDoc),
     VE.Scope.JsonWF D.doc →
@@ -49467,6 +49547,21 @@ theorem VE.Scope.insertBy_split
       (∀ (b : α), b ∈ l₂ → le a b = Bool.true) → VE.Scope.insertBy le a (l₁ ++ l₂) = l₁ ++ a :: l₂
   -- uses VE.Scope.insertBy@VE.Scope.Theorems
   -- expr 2253702922
+theorem VE.Scope.insert_insert
+  ∀ (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    t.WF →
+      ∀ (k : String) (a b : Lean.Json),
+        Std.DTreeMap.Internal.Impl.insert! k b (Std.DTreeMap.Internal.Impl.insert! k a t) =
+          Std.DTreeMap.Internal.Impl.insert! k b t
+  -- uses
+  -- expr 536646341
+theorem VE.Scope.insert_repl
+  ∀ (k : String) (a b : Lean.Json) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    t.Ordered →
+      Std.DTreeMap.Internal.Impl.insert! k b t =
+        Std.DTreeMap.Internal.Impl.map (fun k' v => if k' = k then b else v) (Std.DTreeMap.Internal.Impl.insert! k a t)
+  -- uses
+  -- expr 725467815
 theorem VE.Scope.insert_same
   ∀ (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
     t.Balanced →
@@ -49474,6 +49569,17 @@ theorem VE.Scope.insert_same
         Std.DTreeMap.Internal.Impl.Const.get? t k = Option.some v → Std.DTreeMap.Internal.Impl.insert! k v t = t
   -- uses
   -- expr 3298584066
+theorem VE.Scope.insert_swap
+  ∀ (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    t.WF →
+      ∀ (k k' : String),
+        k ≠ k' →
+          ∀ (a b c : Lean.Json),
+            Std.DTreeMap.Internal.Impl.insert! k c
+                (Std.DTreeMap.Internal.Impl.insert! k' b (Std.DTreeMap.Internal.Impl.insert! k a t)) =
+              Std.DTreeMap.Internal.Impl.insert! k' b (Std.DTreeMap.Internal.Impl.insert! k c t)
+  -- uses
+  -- expr 2640125032
 theorem VE.Scope.ite_bind_ok
   ∀ {ε α β : Type} {c : Prop} [inst : Decidable c] (a b : Except ε α) (k : α → Except ε β) (r : β),
     (if c then a >>= k else b >>= k) = Except.ok r → ∃ u, k u = Except.ok r
@@ -49610,12 +49716,41 @@ theorem VE.Scope.mapM_some_mem
         ∀ (t : VE.Reports.Status), t ∈ ts → ∃ u, u ∈ us ∧ st u = Option.some t
   -- uses VE.Reports.Status@VE.Attribution.Status
   -- expr 296189344
+theorem VE.Scope.map_balanceL
+  ∀ (f : String → Lean.Json → Lean.Json) (k : String) (v : Lean.Json)
+    (l r : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    Std.DTreeMap.Internal.Impl.map f (Std.DTreeMap.Internal.Impl.balanceL! k v l r) =
+      Std.DTreeMap.Internal.Impl.balanceL! k (f k v) (Std.DTreeMap.Internal.Impl.map f l)
+        (Std.DTreeMap.Internal.Impl.map f r)
+  -- uses
+  -- expr 1732640567
+theorem VE.Scope.map_balanceR
+  ∀ (f : String → Lean.Json → Lean.Json) (k : String) (v : Lean.Json)
+    (l r : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    Std.DTreeMap.Internal.Impl.map f (Std.DTreeMap.Internal.Impl.balanceR! k v l r) =
+      Std.DTreeMap.Internal.Impl.balanceR! k (f k v) (Std.DTreeMap.Internal.Impl.map f l)
+        (Std.DTreeMap.Internal.Impl.map f r)
+  -- uses
+  -- expr 3236858768
 theorem VE.Scope.map_filter_id
   ∀ (gs : List VE.Scope.Governor) (id : String),
     List.map (fun x => x.id) (List.filter (fun x => x.id != id) gs) =
       List.filter (fun x => x != id) (List.map (fun x => x.id) gs)
   -- uses VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern
   -- expr 2727101375
+theorem VE.Scope.map_insert
+  ∀ (f : String → Lean.Json → Lean.Json) (k : String) (v : Lean.Json)
+    (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    Std.DTreeMap.Internal.Impl.map f (Std.DTreeMap.Internal.Impl.insert! k v t) =
+      Std.DTreeMap.Internal.Impl.insert! k (f k v) (Std.DTreeMap.Internal.Impl.map f t)
+  -- uses
+  -- expr 449700876
+theorem VE.Scope.map_repl_id
+  ∀ (k : String) (b : Lean.Json) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    (∀ (p : (_ : String) × Lean.Json), p ∈ t.toListModel → p.fst ≠ k) →
+      Std.DTreeMap.Internal.Impl.map (fun k' v => if k' = k then b else v) t = t
+  -- uses
+  -- expr 317418817
 theorem VE.Scope.mem_ordered
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor), g ∈ VE.Scope.ordered D ↔ g ∈ D.governors
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
@@ -50141,6 +50276,20 @@ theorem VE.Scope.setObjVal_self
     kvs.WF → ∀ (k : String) (v : Lean.Json), ((Lean.Json.obj kvs).setObjVal! k v).getObjVal? k = Except.ok v
   -- uses
   -- expr 487205676
+theorem VE.Scope.setObjVal_swap
+  ∀ (d : Lean.Json),
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), d = Lean.Json.obj kvs → kvs.WF) →
+      ∀ (k k' : String),
+        k ≠ k' →
+          ∀ (a b c : Lean.Json), ((d.setObjVal! k a).setObjVal! k' b).setObjVal! k c = (d.setObjVal! k c).setObjVal! k' b
+  -- uses
+  -- expr 3244396992
+theorem VE.Scope.setObjVal_twice
+  ∀ (d : Lean.Json),
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), d = Lean.Json.obj kvs → kvs.WF) →
+      ∀ (k : String) (a b : Lean.Json), (d.setObjVal! k a).setObjVal! k b = d.setObjVal! k b
+  -- uses
+  -- expr 1565870893
 theorem VE.Scope.setUnits_eq
   ∀ (doc : Lean.Json), VE.Scope.setUnits doc = List.map VE.Scope.setUnit (VE.Scope.setsJson doc)
   -- uses VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setUnits@VE.Scope.Govern VE.Scope.setsJson@VE.Scope.Readings
@@ -50160,6 +50309,11 @@ theorem VE.Scope.setsJson_of_get
     a.getObjVal? "reading_sets" = b.getObjVal? "reading_sets" → VE.Scope.setsJson a = VE.Scope.setsJson b
   -- uses VE.Scope.setsJson@VE.Scope.Readings
   -- expr 899700002
+theorem VE.Scope.size_map_tree
+  ∀ (f : String → Lean.Json → Lean.Json) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    (Std.DTreeMap.Internal.Impl.map f t).size = t.size
+  -- uses
+  -- expr 828283527
 theorem VE.Scope.su_obj
   ∀ (D : VE.Scope.SDoc), VE.Scope.governedSetUnits D ≠ [] → ∃ t, D.doc = Lean.Json.obj t
   -- uses VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.governedSetUnits@VE.Scope.Readings
@@ -50266,7 +50420,7 @@ theorem VE.Scope.unitIds_atChoiceOn
   -- expr 1407444418
 theorem VE.Scope.unitsOf_atChoiceOn
   ∀ (su : List String) (doc : Lean.Json) (ch : VE.Discourse.Choice),
-    VE.Scope.JsonWF doc →
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), doc = Lean.Json.obj kvs → kvs.WF) →
       VE.Scope.unitsOf (VE.Scope.atChoiceOn su doc ch) =
         List.map
           (fun u =>
@@ -50277,8 +50431,8 @@ theorem VE.Scope.unitsOf_atChoiceOn
               u.setObjVal! "content" ((Option.map (VE.Scope.readingAt s) (VE.Scope.pickOf ch s)).getD Lean.Json.null)
             | Option.none => u)
           (VE.Scope.unitsOf doc)
-  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.atChoiceOn@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.pickOf@VE.Scope.Readings VE.Scope.readingAt@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern VE.Scope.unitsOf_atChoiceOn.match_1@VE.Scope.ReadingsLemmas
-  -- expr 3101080166
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.atChoiceOn@VE.Scope.Readings VE.Scope.idOf@VE.Scope.Govern VE.Scope.pickOf@VE.Scope.Readings VE.Scope.readingAt@VE.Scope.Readings VE.Scope.setUnit@VE.Scope.Readings VE.Scope.setsJson@VE.Scope.Readings VE.Scope.unitsOf@VE.Scope.Govern VE.Scope.unitsOf_atChoiceOn.match_1@VE.Scope.ReadingsLemmas
+  -- expr 1597848386
 theorem VE.Scope.unitsOf_mem
   ∀ (doc x : Lean.Json),
     x ∈ VE.Scope.unitsOf doc →
