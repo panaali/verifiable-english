@@ -1,0 +1,6 @@
+trust_mutants: 2 definitions, 26 mutants (26 to run), 4 jobs, base 0f7dc437078a
+UNKNOWN lean/VE/Scope/Reach.lean:26 VE.Scope.Pinned.rightNames (S, trusted) list-empty: us.filterMap -> [] (lean/VE/Scope/Reach.lean:26: Function expected at)
+trust_mutants: 17 KILLED, 0 SURVIVOR, 1 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN in 72 s
+trust_mutants: G[V], trusted: 2 KILLED, 4 INVALID
+trust_mutants: S, trusted: 15 KILLED, 1 UNKNOWN, 4 INVALID
+trust_mutants: steps: wall plan 6.4 s, scratch 1.8 s, control_build 0.2 s, probe_install 1 s, control_probes 4 s, mutants 50.6 s, cleanup 8.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 3.9 s (1), mutant_builds 22.1 s (26), mutant_checks 36 s (21), stage_controls 4.6 s (4), mutant_probes 121.4 s (17)
