@@ -207,4 +207,398 @@ theorem g1b_order_free (hA : AcceptanceXV.{u}) (U : UDoc) (hU : WellFormedU U = 
     EntailsXV.{u} U qs' Γ φ :=
   (entailsXV_perm U h (assembleIn_distinct hok) Γ φ).mp (hA U hU qs (assembleIn_fresh hok) hX Γ φ cert hv)
 
+/-! ## Part 3: fixture `EXP-G1-mixed`, the synthetic mixed-condition test PC-11 cites
+
+"Helpfulness outweighs caution on answering when the user believes the information is hazardous": weighing's
+`condPremise` shape (weighing-PLAN, `.sufficient`) over an attitude atom. Both packs are by hand; neither is on main.
+`V` is the plan's case, every name declared by some pack. `C` is the shape the attitudes and weighing plans build,
+`.constraint` packs whose names `U` declares (attitudes.md 2.4, RF-5; weighing-PLAN D3). -/
+
+def attBelieves : String := "attitudes__believes__1"
+def attKnows : String := "attitudes__knows__2"
+def guardName : String := "weighing__outweighs__answer__helpfulness__caution"
+
+/-- The condition under test, in context `[user, agent]`. Its one definition: the REPORT's mutants edit this line. -/
+def mixedCondition : VE.Formula := .unary attBelieves (.var 0)
+def mixedGuard : VE.Formula := .binary guardName (.var 1) (.var 0)
+def mixedPremise : VE.Formula := .all "agent" (.all "user" (.implies mixedCondition mixedGuard))
+def bridgePremise : VE.Formula := .all "user" (.implies (.unary attKnows (.var 0)) (.unary attBelieves (.var 0)))
+
+def outweighsKey : VE.SoftNorms.DecisionKey := .outweighs "answer" "helpfulness" "caution"
+
+def weighingV : Pack where
+  id := "weighing"
+  kind := .vocabulary
+  decls := [(guardName, ["agent", "user"])]
+  consts := []
+  labelled := [("weighing:condition:1", mixedPremise)]
+  origins := []
+  conditions := [(outweighsKey, mixedCondition)]
+
+def attitudesV : Pack where
+  id := "attitudes"
+  kind := .vocabulary
+  decls := [(attBelieves, ["user"]), (attKnows, ["user"])]
+  consts := []
+  labelled := [("attitudes:bridge:1", bridgePremise)]
+  origins := []
+  conditions := []
+
+def weighingC : Pack := { weighingV with kind := .constraint, decls := [] }
+def attitudesC : Pack := { attitudesV with kind := .constraint, decls := [] }
+
+/-- `packOrder`'s order: weighing's premise mentions a name of the later pack. -/
+def mixedV : List Pack := [weighingV, attitudesV]
+def mixedC : List Pack := [weighingC, attitudesC]
+
+def envG (ps : List (String × List String)) : VE.Environment := ⟨["agent", "user"], fun n => ps.lookup n, fun _ => none⟩
+def emptyTree : VE.Norms.Tree := ⟨[], [], []⟩
+def namesG : List (String × List String) := [(attBelieves, ["user"]), (attKnows, ["user"]), (guardName, ["agent", "user"])]
+/-- `V`: only the packs declare the names. -/
+def uV : UDoc := ⟨⟨envG [], [], emptyTree⟩, []⟩
+/-- `C`: `U` declares the names, as `envAtt` does. -/
+def uC : UDoc := ⟨⟨envG namesG, [], emptyTree⟩, []⟩
+
+/-- The predicate names a formula mentions. -/
+def preds : VE.Formula → List String
+  | .unary p _ | .binary p _ _ => [p]
+  | .top | .bottom | .eq _ _ => []
+  | .not a | .all _ a | .ex _ a => preds a
+  | .and a b | .or a b | .implies a b => preds a ++ preds b
+
+/-- A prefix table with `V`'s two rows: main's has none for weighing or attitudes (AT-2 adds attitudes'). -/
+def prefixesG : List (String × String) := reservedPrefixes ++ [("weighing", "weighing__"), ("attitudes", "attitudes__")]
+
+def idsOf : Except String (List Pack) → List String
+  | .ok qs => qs.map (·.id)
+  | .error e => [e]
+
+-- The mention is real: weighing's premise names a name only the later pack declares.
+#guard packOrder.idxOf "weighing" < packOrder.idxOf "attitudes"
+#guard (preds mixedPremise).contains attBelieves && !(weighingV.names.contains attBelieves) && attitudesV.names.contains attBelieves
+-- Typing: over the whole list at both orders, and neither over the base alone nor over weighing's own names alone.
+#guard (X mixedV).all (·.check (envX uV mixedV) [])
+#guard (X mixedV.reverse).all (·.check (envX uV mixedV.reverse) [])
+#guard !mixedPremise.check (envAt (fill uV) 0) []
+#guard !mixedPremise.check (envX uV [weighingV]) []
+-- Assembly puts weighing first from either input order, once its prefix rows exist.
+#guard idsOf (assembleIn prefixesG (fullEnv uV) 0 [attitudesV, weighingV]) == ["weighing", "attitudes"]
+#guard idsOf (assembleIn prefixesG (fullEnv uV) 0 mixedV) == ["weighing", "attitudes"]
+-- Main's table refuses shape `V`; shape `C` assembles on main.
+#guard idsOf (assemble uV 0 mixedV) == ["InvalidInput: a generated name of pack weighing lacks its reserved prefix"]
+#guard idsOf (assemble uC 0 mixedC) == ["weighing", "attitudes"]
+#guard WellFormedU uV && WellFormedU uC
+
+/-! ### Non-vacuity: the attitude atom decides the guard -/
+
+/-- One agent, one user; the attitude atom and the guard as given, `knows` empty. -/
+def mG (believes guard : Bool) : VE.FiniteModel String where
+  domains s := match s with | "agent" => ["a"] | "user" => ["u"] | _ => []
+  constants _ := none
+  relations p := if p == attBelieves then (if believes then [["u"]] else [])
+    else if p == guardName then (if guard then [["a", "u"]] else []) else []
+
+def holdsX (qs : List Pack) (M : VE.FiniteModel String) : Bool := (X qs).all (·.eval M [])
+
+/-- With the atom off the guard may be off. Flipping only the atom breaks `X`; turning the guard on restores it. A
+    condition that ignores the atom, or that always holds, or never, fails this check. -/
+def nonVacuous (qs : List Pack) : Bool :=
+  holdsX qs (mG false false) && !holdsX qs (mG true false) && holdsX qs (mG true true)
+
+#guard nonVacuous mixedV && nonVacuous mixedV.reverse && nonVacuous mixedC && nonVacuous mixedC.reverse
+
+theorem mG_admissible (b g : Bool) : (mG b g).asStructure.Admissible (envX uV mixedV) := by
+  refine ⟨fun c s hc => (nomatch hc), fun p vs hr => ?_⟩
+  change vs ∈ (mG b g).relations p at hr
+  simp only [mG] at hr
+  by_cases h₁ : p = attBelieves
+  · subst h₁
+    cases b <;> simp at hr
+    subst hr
+    exact ⟨["user"], by decide, by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mG]⟩
+  · by_cases h₂ : p = guardName
+    · subst h₂
+      have hne : guardName ≠ attBelieves := by decide
+      cases g <;> simp [hne] at hr
+      subst hr
+      exact ⟨["agent", "user"], by decide, by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mG]⟩
+    · simp [h₁, h₂] at hr
+
+theorem sat_of_holdsX {qs : List Pack} {M : VE.FiniteModel String} (h : holdsX qs M = true) : Sat M.asStructure (X qs) :=
+  fun a ha => (VE.eval_iff_denote _ _ _).mp (List.all_eq_true.mp h a ha)
+
+theorem uV_backgroundBase : VE.Norms.backgroundBase (fill uV) = [] := by
+  show VE.Route.Background.literals [] = []
+  simp [VE.Route.Background.literals, VE.Route.sortStrings, VE.Route.Background.pairs]
+theorem uV_fillPremises : fillPremises uV = [] := by decide
+theorem uV_background : VE.Norms.background (fill uV) = [] := by
+  simp only [VE.Norms.background, uV_backgroundBase]; simp (config := { ground := true, decide := true })
+theorem uV_elaborate : VE.Norms.elaborate (fill uV).T = [] := by
+  simp (config := { ground := true, decide := true })
+
+/-- The atom off with the guard off, and on with the guard on, are both bases of G1b's copy; the atom on with the
+    guard off is not. So on `V`, at `packOrder`'s order, the attitude atom decides the guard. -/
+theorem mixedV_decides :
+    BaseAdmissibleXV uV mixedV (mG false false).asStructure ∧ BaseAdmissibleXV uV mixedV (mG true true).asStructure ∧
+      ¬ BaseAdmissibleXV uV mixedV (mG true false).asStructure := by
+  have hb : ∀ B : VE.Structure.{0}, Sat B (VE.Norms.backgroundBase (fill uV)) ∧ Sat B (fillPremises uV) := fun _ => by
+    rw [uV_backgroundBase, uV_fillPremises]
+    exact ⟨fun _ ha => (nomatch ha), fun _ ha => (nomatch ha)⟩
+  have hv : nonVacuous mixedV = true := by decide
+  simp only [nonVacuous, Bool.and_eq_true, Bool.not_eq_true'] at hv
+  refine ⟨⟨mG_admissible _ _, (hb _).1, (hb _).2, sat_of_holdsX hv.1.1⟩,
+    ⟨mG_admissible _ _, (hb _).1, (hb _).2, sat_of_holdsX hv.2⟩, fun h => ?_⟩
+  have := hv.1.2
+  have hs : holdsX mixedV (mG true false) = true :=
+    List.all_eq_true.mpr fun a ha => (VE.eval_iff_denote _ _ _).mpr (h.2.2.2 a ha)
+  simp [this] at hs
+
+/-! ### Acceptance at either order -/
+
+def mixedφ : VE.Formula :=
+  .all "agent" (.all "user" (.implies (.unary attKnows (.var 0)) (.binary guardName (.var 1) (.var 0))))
+
+/-- A trace for premises `[…, …, ¬φ]`, with the mixed premise at `iw` and the bridge at `ia`: it needs both packs. -/
+def traceAt (iw ia : Nat) : VE.Tableau.Trace :=
+  .expand 2 none [.expand 3 none [.expand 4 none [.expand ia (some "w:1") [.expand iw (some "w:0") [
+    .expand 8 (some "w:1") [.expand 7 none [.close, .expand 9 none [.close, .close]]]]]]]]
+def certAt (iw ia : Nat) : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", "", [], "", traceAt iw ia⟩
+
+def certOK (U : UDoc) (E : VE.Environment) (qs : List Pack) (c : VE.Tableau.Certificate) : Bool :=
+  VE.Tableau.checkCertificate E (Wire.premisesX U (X qs) []) mixedφ c
+
+-- `V` over the copy's environment and `C` over main's, at each order; each certificate needs its own order, and the
+-- other order's is refused: a certificate is bound to its order, the entailment (below) is not.
+#guard certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1)
+#guard certOK uV (fullEnvX uV mixedV.reverse) mixedV.reverse (certAt 1 0)
+#guard !certOK uV (fullEnvX uV mixedV.reverse) mixedV.reverse (certAt 0 1)
+#guard certOK uC (fullEnv uC) mixedC (certAt 0 1)
+#guard certOK uC (fullEnv uC) mixedC.reverse (certAt 1 0)
+#guard !certOK uC (fullEnv uC) mixedC.reverse (certAt 0 1)
+-- The conclusion needs both packs: each alone refuses the same trace at its own indices.
+#guard !certOK uC (fullEnv uC) [weighingC] (certAt 0 0)
+#guard !certOK uC (fullEnv uC) [attitudesC] (certAt 0 0)
+-- The diagnostic does read the order, with the same truth value: `packOrder` is what fixes this text.
+#guard (firstFailing mixedV (fun _ => false)).map (·.1) == some "weighing"
+#guard (firstFailing mixedV.reverse (fun _ => false)).map (·.1) == some "attitudes"
+
+/-- `C`, on main's own definitions and main's proved `acceptanceX`, with no copy: a certificate at `packOrder`'s
+    order gives `EntailsX` at both orders. `hv` is the `#guard` above (the repo's `X1Checks` pattern). -/
+theorem mixedC_accepted (hU : WellFormedU uC = true) (hv : certOK uC (fullEnv uC) mixedC (certAt 0 1) = true) :
+    EntailsX.{u} uC (X mixedC) [] mixedφ ∧ EntailsX.{u} uC (X mixedC.reverse) [] mixedφ :=
+  have hX : ∀ a ∈ X mixedC, a.WellFormed (envAt (fill uC) 0) [] := fun a ha =>
+    (VE.check_iff_wellFormed _ _ _).mp (List.all_eq_true.mp (by decide : (X mixedC).all (·.check (envAt (fill uC) 0) []) = true) a ha)
+  ⟨acceptanceX uC hU (X mixedC) hX [] mixedφ _ hv,
+    acceptanceX_order_free uC hU (List.reverse_perm mixedC).symm hX [] mixedφ _ hv⟩
+
+/-- `V`: the conclusion of `acceptanceXV` at this fixture, at either order, from main's `checkCertificate_sound`. This
+    proves the instance, not the unbuilt `acceptanceXV`. -/
+theorem mixedV_accepted (hv : certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1) = true)
+    (hd : (names mixedV).Nodup) :
+    EntailsXV.{u} uV mixedV [] mixedφ ∧ EntailsXV.{u} uV mixedV.reverse [] mixedφ := by
+  have h : EntailsXV.{u} uV mixedV [] mixedφ := by
+    intro S hB hE _
+    apply VE.Tableau.checkCertificate_sound.{u} _ _ _ _ hv S hE.2.1
+    intro a ha
+    simp only [Wire.premisesX, List.mem_append] at ha
+    rcases ha with (((ha | ha) | ha) | ha) | ha
+    · exact hE.2.2 a (List.mem_append_left _ ha)
+    · have hw : a.WellFormed (envX uV mixedV) [] := (VE.check_iff_wellFormed _ _ _).mp
+        (List.all_eq_true.mp (by decide : (X mixedV).all (·.check (envX uV mixedV) []) = true) a ha)
+      exact (VE.Norms.denote_forget (by decide) S a [] [] hw).mp (hB.2.2.2 a ha)
+    · rw [uV_fillPremises] at ha; cases ha
+    · exact hE.2.2 a (List.mem_append_right _ ha)
+    · cases ha
+  exact ⟨h, (entailsXV_perm uV (List.reverse_perm mixedV).symm hd [] mixedφ).mp h⟩
+
+/-! ## Part 4: the one case where G1b's order matters, and why it is not a pack-order rule
+
+Two packs declare one name with different arities. `extendEnv` takes `lookup`'s first match, so the environment reads
+the order. `assemble` refuses this list (`Packs.lean:105`), and no premise mentions anything: the rule "a pack's
+premises mention only names of packs before it" would not touch it. -/
+
+def dupName : String := "weighing__n"
+def dupA : Pack := { weighingV with decls := [(dupName, ["agent"])], labelled := [], conditions := [] }
+def dupB : Pack := { attitudesV with decls := [(dupName, ["agent", "agent"])], labelled := [] }
+/-- True exactly when the binary reading of the name is empty. -/
+def dupφ : VE.Formula := .all "agent" (.all "agent" (.not (.binary dupName (.var 1) (.var 0))))
+
+#guard idsOf (assembleIn prefixesG (fullEnv uV) 0 [dupA, dupB]) ==
+  ["InvalidInput: generated name weighing__n of pack attitudes is declared twice"]
+
+/-- One element; the name holds of the pair. -/
+def dupS : VE.Structure.{0} where
+  Carrier := Unit
+  domain _ _ := True
+  constant _ := none
+  relation p vs := p = dupName ∧ vs = [(), ()]
+
+theorem dup_order_matters :
+    EntailsXV.{0} uV [dupA, dupB] [] dupφ ∧ ¬ EntailsXV.{0} uV [dupB, dupA] [] dupφ := by
+  constructor
+  · intro S _ hE _ v _ w _ hr
+    simp only [VE.Formula.denote, VE.Term.denote] at hr
+    obtain ⟨_, _, hv, hw, hr⟩ := hr
+    simp only [List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq] at hv hw
+    subst hv hw
+    obtain ⟨ss, hss, ht⟩ := hE.2.1.2 _ _ hr
+    rw [show (fullEnvX uV [dupA, dupB]).predicates dupName = some ["agent"] by decide] at hss
+    cases hss
+    simp [VE.TupleTyped] at ht
+  · intro H
+    have hA : dupS.Admissible (fullEnvX uV [dupB, dupA]) :=
+      ⟨fun _ _ hc => (nomatch hc), fun p vs hr => by
+        obtain ⟨rfl, rfl⟩ := hr
+        exact ⟨["agent", "agent"], by decide, trivial, trivial, trivial⟩⟩
+    have hA₀ : (restrictAll (fill uV).T dupS).Admissible (envX uV [dupB, dupA]) :=
+      ⟨fun _ _ hc => (nomatch hc), fun p vs hr => by
+        obtain ⟨_, rfl, rfl⟩ := hr
+        exact ⟨["agent", "agent"], by decide, trivial, trivial, trivial⟩⟩
+    have hbg : Sat dupS (VE.Norms.background (fill uV) ++ VE.Norms.elaborate (fill uV).T) := by
+      intro a ha
+      rw [uV_background, uV_elaborate] at ha
+      cases ha
+    have hbase : BaseAdmissibleXV.{0} uV [dupB, dupA] (restrictAll (fill uV).T dupS) :=
+      ⟨hA₀, by rw [uV_backgroundBase]; exact fun _ ha => (nomatch ha), by rw [uV_fillPremises]; exact fun _ ha => (nomatch ha),
+        fun _ ha => (nomatch ha)⟩
+    have := H dupS hbase ⟨rfl, hA, hbg⟩ (fun _ ha => (nomatch ha))
+    exact this () trivial () trivial ⟨(), (), rfl, rfl, rfl, rfl⟩
+
+/-! ## Part 5: `Transfers` on the readings route, at the fixture
+
+A readings document whose frame declares the names (shape `C`), so the atom can decide a guard at `Transfers`' own
+bases. -/
+
+open VE.Readings
+open VE.Readings.Examples (docK frameK rs1 ex₂)
+open VE.Rights (correlate)
+open VE.SoftNorms (soften)
+open VE.Compose (BaseAdmissibleP)
+
+def envKG : VE.Environment :=
+  let E₀ := frameK.soft.E
+  { E₀ with predicates := fun n => match namesG.lookup n with | some s => some s | none => E₀.predicates n }
+def frameG : VE.Rights.RightsDoc :=
+  let s := frameK.soft
+  { frameK with soft := { s with E := envKG } }
+def kG : Doc := docK [.set rs1] .soft frameG
+
+def KGChecks : Prop := WellFormedDoc kG = true ∧ superposable kG = true
+instance : Decidable KGChecks := inferInstanceAs (Decidable (_ ∧ _))
+#guard KGChecks
+#guard choices kG == [[("rs1", 0)], [("rs1", 1)]]
+
+theorem kG_hyps (hx : KGChecks) : Hyps kG := ⟨hx.1, by decide, hx.2⟩
+
+/-- A formula over frame predicates reads a pulled base as it reads the base. -/
+theorem denote_pull {D : Doc} (hh : Hyps D) (c : Choice) (S : VE.Structure.{u}) (a : VE.Formula) (ρ : VE.Valuation S)
+    (ha : ∀ p ∈ preds a, D.frame.soft.E.predicates p ≠ none) : a.denote (pull D c S) ρ ↔ a.denote S ρ := by
+  induction a generalizing ρ with
+  | top | bottom | eq => exact Iff.rfl
+  | unary p t =>
+    simp only [VE.Formula.denote]
+    exact exists_congr fun v => and_congr_right fun _ => pull_frame hh c S (ha p (by simp [preds])) _
+  | binary p t u =>
+    simp only [VE.Formula.denote]
+    exact exists_congr fun v => exists_congr fun w => and_congr_right fun _ => and_congr_right fun _ =>
+      pull_frame hh c S (ha p (by simp [preds])) _
+  | not a ih => exact not_congr (ih ρ ha)
+  | and a b iha ihb =>
+    exact and_congr (iha ρ fun p hp => ha p (by simp [preds, hp])) (ihb ρ fun p hp => ha p (by simp [preds, hp]))
+  | or a b iha ihb =>
+    exact or_congr (iha ρ fun p hp => ha p (by simp [preds, hp])) (ihb ρ fun p hp => ha p (by simp [preds, hp]))
+  | implies a b iha ihb =>
+    exact imp_congr (iha ρ fun p hp => ha p (by simp [preds, hp])) (ihb ρ fun p hp => ha p (by simp [preds, hp]))
+  | all s a ih => exact forall_congr' fun v => imp_congr_right fun _ => ih _ ha
+  | ex s a ih => exact exists_congr fun v => and_congr_right fun _ => ih _ ha
+
+def QcG (p : Pack) (_ : Choice) : List VE.Formula := p.labelled.map (·.2)
+
+theorem kG_compatible (hx : KGChecks) {c : Choice} (hc : Compatible kG c) : c = [("rs1", 0)] ∨ c = [("rs1", 1)] := by
+  have := (choices_spec kG (kG_hyps hx).ready (by decide) c).mpr hc
+  rw [show choices kG = [[("rs1", 0)], [("rs1", 1)]] by decide] at this
+  simpa using this
+
+/-- Each pack's premises transfer, on `C`, with no reference to the other pack, though weighing's names attitudes'. -/
+theorem mixedC_packs_transfer (hx : KGChecks) : ∀ p ∈ mixedC, Transfers.{u} kG (p.labelled.map (·.2)) (QcG p) := by
+  intro p hp
+  have hw : ∀ a ∈ X mixedC, ∀ c, (c = [("rs1", 0)] ∨ c = [("rs1", 1)]) → a.check (choiceEnvFull kG c) [] = true := by
+    intro a ha c hc
+    rcases hc with rfl | rfl
+    · exact List.all_eq_true.mp (by decide : (X mixedC).all (·.check (choiceEnvFull kG [("rs1", 0)]) []) = true) a ha
+    · exact List.all_eq_true.mp (by decide : (X mixedC).all (·.check (choiceEnvFull kG [("rs1", 1)]) []) = true) a ha
+  have hmem : ∀ a ∈ p.labelled.map (·.2), a ∈ X mixedC := fun a ha => by
+    simp only [X, labelledX, List.mem_map, List.mem_flatMap]
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha
+    exact ⟨b, ⟨p, hp, hb⟩, rfl⟩
+  have hfr : ∀ a ∈ X mixedC, ∀ q ∈ preds a, kG.frame.soft.E.predicates q ≠ none := by
+    intro a ha q hq
+    have hall : (X mixedC).all (fun a => (preds a).all (fun q => (kG.frame.soft.E.predicates q).isSome)) = true := by decide
+    have := List.all_eq_true.mp (List.all_eq_true.mp hall a ha) q hq
+    simpa [Option.isSome_iff_ne_none] using this
+  refine ⟨fun c hc a ha => (VE.check_iff_wellFormed _ _ _).mp (hw a (hmem a ha) c (kG_compatible hx hc)), fun c _ B _ _ => ?_⟩
+  exact ⟨fun hs a ha => (denote_pull (kG_hyps hx) c B a [] (hfr a (hmem a ha))).mpr (hs a ha),
+    fun hs a ha => (denote_pull (kG_hyps hx) c B a [] (hfr a (hmem a ha))).mp (hs a ha)⟩
+
+/-- `transfers_X` at `packOrder`'s order and at the other. -/
+theorem mixedC_transfers (hx : KGChecks) :
+    Transfers.{u} kG (X mixedC) (fun c => mixedC.flatMap (fun p => QcG p c)) ∧
+      Transfers.{u} kG (X mixedC.reverse) (fun c => mixedC.reverse.flatMap (fun p => QcG p c)) :=
+  ⟨transfers_X kG mixedC QcG (mixedC_packs_transfer hx),
+    transfers_X_either kG (List.reverse_perm mixedC).symm QcG (mixedC_packs_transfer hx)⟩
+
+/-- M2's base (reading 1) with the attitude atom and the guard as given. -/
+def baseG (believes guard : Bool) : VE.FiniteModel String where
+  domains s := match s with | "agent" => ["a"] | "user" => ["u"] | "ve__reading" => ["e"] | _ => []
+  constants x := if x == "ve__here" then some "e" else none
+  relations p := if p == "ve__bit__1__0" then [["e"]] else if p == ex₂ then [["a", "u"]]
+    else (mG believes guard).relations p
+
+-- Non-vacuity at `Transfers`' own bases: each is slot-admissible and spells reading 1, and the atom decides `X`.
+#guard [(false, false), (true, false), (true, true)].all fun (b, g) =>
+  VE.Compose.backgroundValidP (correlate (sup kG).1) (slotP kG) (baseG b g) && (choiceAtom kG "rs1" 1).eval (baseG b g) []
+#guard holdsX mixedC (baseG false false) && !holdsX mixedC (baseG true false) && holdsX mixedC (baseG true true)
+#guard holdsX mixedC.reverse (baseG false false) && !holdsX mixedC.reverse (baseG true false)
+
+/-! ### Shape `V` on the readings route: order free, and the atom decides nothing -/
+
+/-- `Transfers`' bases are admissible over the document's old vocabulary, so a name the document does not declare has
+    no tuple there: draft 3's G1b defect (profile-composition.md 1.6). The order plays no part. -/
+theorem undeclared_empty_at_transfers_bases {D : Doc} {P : List VE.Formula} {B : VE.Structure.{u}} {n : String}
+    (hB : BaseAdmissibleP (correlate (sup D).1) P B)
+    (hn : (envAt (soften (correlate (sup D).1)) 0).predicates n = none) (vs : List B.Carrier) : ¬ B.relation n vs :=
+  fun hr => by
+    obtain ⟨_, hss, _⟩ := hB.1.1.1.2 n vs hr
+    rw [hn] at hss
+    cases hss
+
+/-- The same on main's `BaseAdmissibleX`: `V`'s atom is empty at every base, so main's G1 cannot state this fixture. -/
+theorem undeclared_empty_on_main {X₀ : List VE.Formula} {B : VE.Structure.{u}}
+    (hB : Wire.BaseAdmissibleX uV X₀ B) (vs : List B.Carrier) : ¬ B.relation attBelieves vs :=
+  fun hr => by
+    obtain ⟨_, hss, _⟩ := hB.1.1.1.2 attBelieves vs hr
+    rw [show (envAt (fill uV) 0).predicates attBelieves = none by decide] at hss
+    cases hss
+
+-- On a document without the names: undeclared at the base, and untyped over each choice's complete vocabulary.
+#guard (envAt (soften (correlate (sup VE.Readings.Examples.K1).1)) 0).predicates attBelieves == none
+#guard (choices VE.Readings.Examples.K1).all (fun c => !mixedPremise.check (choiceEnvFull VE.Readings.Examples.K1 c) [])
+
 end ExpG1
+
+#print axioms ExpG1.sat_X_perm
+#print axioms ExpG1.transfers_X_perm
+#print axioms ExpG1.transfers_X_either
+#print axioms ExpG1.entailsX_perm
+#print axioms ExpG1.acceptanceX_order_free
+#print axioms ExpG1.entailsXV_perm
+#print axioms ExpG1.acceptanceXV_order_free
+#print axioms ExpG1.g1b_order_free
+#print axioms ExpG1.assembleIn_distinct
+#print axioms ExpG1.mixedV_decides
+#print axioms ExpG1.mixedC_accepted
+#print axioms ExpG1.mixedV_accepted
+#print axioms ExpG1.dup_order_matters
+#print axioms ExpG1.mixedC_transfers
+#print axioms ExpG1.undeclared_empty_at_transfers_bases
+#print axioms ExpG1.undeclared_empty_on_main
