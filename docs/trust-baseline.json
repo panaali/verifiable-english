@@ -1818,6 +1818,20 @@
    "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 39,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +76, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +41, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +76, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +41, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   }
  ]
 }

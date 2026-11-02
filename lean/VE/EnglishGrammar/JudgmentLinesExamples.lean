@@ -55,26 +55,19 @@ def weighsLine : String :=
 #guard statusLine [] == none
 #guard statusLine [arbitrary, noWording] == none
 
--- The mode: a W2 record and its predicate, W2's check and the admission's decider check, the line's limit.
-def lineRequest (line : String) (jurisdiction : String := "udhr") : Json :=
-  Json.mkObj [("id", .str "d"), ("line", .str line), ("jurisdiction", .str jurisdiction)]
-def errorOf (j : Json) : String := ((j.getObjValD "error").getStr?).toOption.getD ""
-
-#guard (runCaseReported (lineRequest governedLine)).getObjValD "record" == recordJson governed "udhr"
-#guard (runCaseReported (lineRequest unfairLine)).getObjValD "predicate" ==
-  Json.mkObj [("name", .str "treats_unfairly"), ("arguments", toJson ["person", "person"])]
-#guard errorOf (runCaseReported (lineRequest "No line.")) == lineFault
-#guard errorOf (runCaseReported (lineRequest (governedLine.replace "governance function" "unresolved decider"))) ==
+-- A W2 record and its predicate; W2's check and the admission's decider check answer for them.
+def errorOf (r : Except String (Json × String × List String)) : String :=
+  match r with
+  | .error e => e
+  | .ok _ => ""
+#guard (readDeclaration governedLine "udhr").toOption == some (recordJson governed "udhr", "arbitrary", ["act"])
+#guard ((readDeclaration unfairLine "udhr").toOption.map (·.2)) == some ("treats_unfairly", ["person", "person"])
+#guard (recordJson governed "udhr").getObjValD "decided_by" == .str "governance_function"
+#guard (recordJson governed "udhr").getObjValD "jurisdiction" == .str "udhr"
+#guard errorOf (readDeclaration "No line." "udhr") == lineFault
+#guard errorOf (readDeclaration (governedLine.replace "governance function" "unresolved decider") "udhr") ==
   "JudgmentDecider: arbitrary"
-#guard errorOf (runCaseReported (lineRequest governedLine "two words")) == "open term needs a decision role and jurisdiction"
-#guard errorOf (runCaseReported (Json.mkObj [("id", .str "d"), ("line", .str governedLine)])) != ""
-def longLine (k : Nat) : String := governedLine.replace "governance function" (String.mk (List.replicate k 'x'))
-def spare : Nat := maxLineChars - (governedLine.length - "governance function".length)
--- At the limit the line is read, and W2's check (a token's length) answers; one character more is the limit's.
-#guard (longLine spare).length == maxLineChars && (parseLine (longLine spare)).isSome &&
-  errorOf (runCaseReported (lineRequest (longLine spare))) == "open term needs a decision role and jurisdiction"
-#guard errorOf (runCaseReported (lineRequest (longLine (spare + 1)))) ==
-  s!"ResourceLimit: a declaration line has at most {maxLineChars} characters"
+#guard errorOf (readDeclaration governedLine "two words") == "open term needs a decision role and jurisdiction"
 
 -- 9.5's refusal, each form (DRI 2026-11-02, jt-3 item 4). The first sentence is 9.5's for every row.
 def rowOf (w : List String) : EvaluativeRow := ⟨w, []⟩

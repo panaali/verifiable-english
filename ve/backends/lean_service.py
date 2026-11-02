@@ -158,8 +158,6 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "senses.project": _SENSES,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
-    # The `judgment-line` mode: one line of at most `maxLineChars` characters, read once.
-    "judgment-line": (120.0, 120.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

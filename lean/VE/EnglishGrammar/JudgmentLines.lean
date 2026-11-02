@@ -111,29 +111,14 @@ def noVocabulary : VE.Route.Wire.RouteVocabulary :=
   { vocabulary := ⟨[], [], []⟩, sourceVocabulary := ⟨[], [], []⟩, validNames := rfl, literals := [], nodup := .nil,
     definitions := [], chain := trivial }
 
-def maxLineChars : Nat := 4096
-
-/-- The `judgment-line` mode: a declaration line, read to its W2 record and predicate. The record passes W2's own check
-and `judgments@0`'s admission over the line's predicate, so a refused decider is refused by their owner. -/
-def lineCase (j : Json) : Except String Json := do
-  VE.Bridge.exactFields j ["id", "line", "jurisdiction"]
-  let id ← VE.Bridge.stringField j "id"
-  let line ← VE.Bridge.stringField j "line"
-  let jurisdiction ← VE.Bridge.stringField j "jurisdiction"
-  unless line.length ≤ maxLineChars do
-    throw s!"ResourceLimit: a declaration line has at most {maxLineChars} characters"
-  let some judgment := parseLine line | throw lineFault
-  let record := recordJson judgment jurisdiction
+/-- A declaration line, read in authoring to its W2 record and its predicate. The record passes W2's own check and
+`judgments@0`'s admission over the line's predicate, so a refused decider is refused by their owner. -/
+def readDeclaration (line jurisdiction : String) : Except String (Json × String × List String) := do
+  let some j := parseLine line | throw lineFault
+  let record := recordJson j jurisdiction
   let rs ← records noVocabulary (.arr #[record]) false (some fun _ => pure ())
-  let E := VE.Bridge.Vocabulary.environment ⟨judgment.arguments.eraseDups, [(judgment.name, judgment.arguments)], []⟩
-  let _ ← admit E [] [] rs
-  pure (VE.Route.Wire.ok id [("line", .str line), ("record", record), ("predicate", Json.mkObj
-    [("name", .str judgment.name), ("arguments", toJson judgment.arguments)])])
-
-def runCaseReported (j : Json) : Json :=
-  match lineCase j with
-  | .ok row => row
-  | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+  let _ ← admit (VE.Bridge.Vocabulary.environment ⟨j.arguments.eraseDups, [(j.name, j.arguments)], []⟩) [] [] rs
+  pure (record, j.name, j.arguments)
 
 /-! ### The authoring refusal (9.5) -/
 
