@@ -24069,6 +24069,13 @@ theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
   -- expr 1953643462
 theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
+  ∀ (environment : Lean.Json) (acts : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts = Except.ok ne →
+      ∀ (f : VE.Data.Background.Flag),
+        f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 2693756424
+theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_joined
   ∀ (environment : Lean.Json) (acts joined : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
     VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts joined = Except.ok ne →
       ∀ (f : VE.Data.Background.Flag),
