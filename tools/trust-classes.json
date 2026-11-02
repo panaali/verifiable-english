@@ -17165,6 +17165,7 @@
       "C": [
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
+        "VE.Defaults.forcedAllOf",
         "VE.Defaults.maxDefaultAtoms",
         "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
@@ -17230,6 +17231,7 @@
         "VE.Defaults.ZoneFixtures.envS",
         "VE.Defaults.ZoneFixtures.exc",
         "VE.Defaults.ZoneFixtures.fixBoth",
+        "VE.Defaults.ZoneFixtures.forced",
         "VE.Defaults.ZoneFixtures.minCount",
         "VE.Defaults.ZoneFixtures.obsμ",
         "VE.Defaults.ZoneFixtures.off",
