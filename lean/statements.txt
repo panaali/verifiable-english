@@ -12144,6 +12144,14 @@ theorem VE.Defaults.cond_free
                           p ∈ VE.Norms.preds C → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ VE.NormDefaults.unsaidNames U
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4113157061
+theorem VE.Defaults.coneAtomVX_off
+  ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {opens : List String}
+    {rec' : List ((String × List α) × Bool)} {C : List (String × List α)} {a : String × List α},
+    ¬a ∈ C →
+      ∀ (A B : List (String × List α)),
+        VE.NormDefaults.coneAtomVX M opens rec' C A a.fst a.snd = VE.NormDefaults.coneAtomVX M opens rec' C B a.fst a.snd
+  -- uses VE.FiniteModel@VE.Finite VE.NormDefaults.coneAtomVX@VE.NormDefaults.Evidence
+  -- expr 2405090763
 theorem VE.Defaults.consistent_atomV
   ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {opens : List String}
     {rec' : List ((String × List α) × Bool)} {C A : List (String × List α)} {R : String → List α → Prop},
@@ -12246,6 +12254,16 @@ theorem VE.Defaults.defaultCoherenceCheck_sound
     VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
   -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
   -- expr 1184126990
+theorem VE.Defaults.defaultCompletion_below
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (R : String → List α → Prop),
+    VE.Weighing.AdmissibleCompletion L.U X M (VE.Weighing.openNames L)
+        (record ++ VE.Defaults.switchesOffRecord L.D M record) R →
+      VE.Defaults.Observed L.U M obs R →
+        ∃ R', VE.Defaults.DefaultCompletion L X M record obs R' ∧ VE.Defaults.DecLe L.D M R' R
+  -- uses VE.Defaults.DecLe@VE.Defaults.Zone VE.Defaults.DefaultCompletion@VE.Defaults.Zone VE.Defaults.Observed@VE.Defaults.Zone VE.Defaults.switchesOffRecord@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.openNames@VE.Weighing.Zone
+  -- expr 1072912096
 theorem VE.Defaults.defaultZone_budget
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
     (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
@@ -12418,6 +12436,32 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.forcedAll_sound
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α),
+    M.Valid (VE.Norms.envAt L.U.D 0) →
+      ∀ (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+        (proposed : List (List ((String × List α) × Bool))) (fs : List (String × List α)),
+        VE.Defaults.forcedAllOf L X M record obs proposed = Option.some fs →
+          (∃ R, VE.Defaults.DefaultCompletion L (List.map (fun x => x.snd) X) M record obs R) ∧
+            ∀ (a : String × List α),
+              a ∈ fs →
+                (∃ ss, (a.fst, ss) ∈ VE.SoftNorms.exceptedDecisions L.D ∧ a.snd ∈ VE.NormDefaults.allTuples M ss) ∧
+                  ∀ (R : String → List α → Prop),
+                    VE.Defaults.DefaultCompletion L (List.map (fun x => x.snd) X) M record obs R → R a.fst a.snd
+  -- uses VE.Defaults.DefaultCompletion@VE.Defaults.Zone VE.Defaults.forcedAllOf@VE.Defaults.Zone VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.allTuples@VE.NormDefaults.Evidence VE.Norms.Regulated@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.exceptedDecisions@VE.SoftNorms.Tree
+  -- expr 3793815824
+theorem VE.Defaults.forced_everywhere
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List VE.Formula) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool)) (a : String × List α),
+    a ∈ VE.Weighing.decisionAtoms L.D M →
+      (∀ (R : String → List α → Prop), VE.Defaults.DefaultCompletion L X M record obs R → R a.fst a.snd) →
+        ∀ (R : String → List α → Prop),
+          VE.Weighing.AdmissibleCompletion L.U X M (VE.Weighing.openNames L)
+              (record ++ VE.Defaults.switchesOffRecord L.D M record) R →
+            VE.Defaults.Observed L.U M obs R → R a.fst a.snd
+  -- uses VE.Defaults.DefaultCompletion@VE.Defaults.Zone VE.Defaults.Observed@VE.Defaults.Zone VE.Defaults.switchesOffRecord@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.decisionAtoms@VE.Weighing.Zone VE.Weighing.openNames@VE.Weighing.Zone
+  -- expr 4167300429
 theorem VE.Defaults.least_le
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -12453,6 +12497,10 @@ theorem VE.Defaults.mem_exc
                     VE.SoftNorms.excPremises D
   -- uses VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3950649200
+theorem VE.Defaults.mem_of_mem_eraseDups
+  ∀ {β : Type} [inst : BEq β] (l : List β) (x : β), x ∈ l.eraseDups → x ∈ l
+  -- uses
+  -- expr 3696583126
 theorem VE.Defaults.mem_of_mem_subsets
   ∀ {β : Type} {C A : List β}, A ∈ VE.NormDefaults.subsets C → ∀ (a : β), a ∈ A → a ∈ C
   -- uses VE.NormDefaults.subsets@VE.NormDefaults.Evidence
