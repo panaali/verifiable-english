@@ -1,0 +1,13 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Senses/Run.lean is a selected declaration's file or in its import closure
+trust_mutants: 10 definitions, 229 mutants (57 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Flip.lean:33 VE.Senses.formulaCore (G[V], trusted) all-any: all -> any (lean/VE/Senses/Flip.lean:33: Unknown constant `VE.Formula.any`)
+UNKNOWN lean/VE/Senses/Flip.lean:27 VE.Senses.formulaCore (G[V], trusted) list-empty: [t, u] -> [] (lean/VE/Senses/Flip.lean:27: Unknown identifier `t`)
+UNKNOWN lean/VE/Senses/Flip.lean:53 VE.Senses.Flip (S, trusted) ctor-drop: | undistinguished ->  (lean/VE/Senses/Flip.lean:73: Unknown constant `VE.Senses.Flip.undistinguished`)
+UNKNOWN lean/VE/Senses/Run.lean:238 VE.Senses.Run.writtenLines (G[V], trusted) list-empty: (sents.extract 0 k).toList.filterMap -> [] (lean/VE/Senses/Run.lean:238: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-empty: P.map.filter -> [] (lean/VE/Senses/Flip.lean:39: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) list-empty: (List.range (n - i - 1)).map -> [] (lean/VE/Senses/Flip.lean:78: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-empty: P.env.constants -> [] (lean/VE/Senses/Flip.lean:45: Invalid field notation: Type of)
+trust_mutants: 37 KILLED, 0 SURVIVOR, 7 UNKNOWN, 13 INVALID, 0 ALLOWED, 0 NOT RUN, 172 OTHER SHARD in 2107 s
+trust_mutants: G[V], trusted: 8 KILLED, 3 UNKNOWN, 7 INVALID, 42 OTHER SHARD
+trust_mutants: S, trusted: 29 KILLED, 4 UNKNOWN, 6 INVALID, 130 OTHER SHARD
+trust_mutants: steps: wall plan 8.1 s, scratch 2.3 s, control_build 0.2 s, probe_install 1.1 s, control_probes 91.9 s, mutants 1999.2 s, cleanup 4 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 91.6 s (1), mutant_builds 73.3 s (57), mutant_checks 1272.4 s (38), stage_controls 3.4 s (2), mutant_probes 6313.9 s (37)
