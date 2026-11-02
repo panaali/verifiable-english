@@ -151,7 +151,8 @@ theorem decodeLayered_conditions {j : Lean.Json} {L : Wire.LayeredU} (h : Wire.d
   all_goals first
     | (cases h; done)
     | (injection h with h; subst h
-       exact assemble_conditions (by assumption) (by simp [softPack_conditions, rightsPack_conditions]))
+       exact assemble_conditions (by assumption) (by
+         simp [softPack_conditions, rightsPack_conditions, Wire.hookPacks, VE.Events.eventsPack]))
 
 open VE.Rights.Examples (alpha gamma gamma7 rho epsilon) in
 #guard [alpha, gamma, gamma7, rho, epsilon].all fun R =>
