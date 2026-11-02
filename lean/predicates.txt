@@ -649,6 +649,7 @@ module VE.Senses.Run
 module VE.Senses.RunExamples
 module VE.Senses.Version
 module VE.Service.ActsExamples
+module VE.Service.CardinalityExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
