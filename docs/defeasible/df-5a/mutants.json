@@ -1,0 +1,270 @@
+{
+ "item": "df-5a",
+ "runner": "docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-5a/mutants.json",
+ "result": "docs/defeasible/df-5a/evidence/mutants.out",
+ "language": "Lean",
+ "file": "lean/VE/Defaults/Zone.lean",
+ "source": "VE/Defaults/Zone.lean",
+ "fixtures": "VE/Defaults/ZoneExamples.lean",
+ "module": "VE.Defaults.Zone",
+ "keep": [],
+ "note": "Each mutant edits lean/VE/Defaults/Zone.lean (Lean, the only product language this item changes). kind plan: the five seeded bugs of spec 8.9 this item delivers (S1-S5; 'forcedAll read from one default completion' moves with forcedAllOf to df-5ab). kind R16: one per new trusted definition of tools/trust_map.py (S: DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord; G[V]: zoneForm, S5). The Props (T1, T2, T4, T5, T6) keep every theorem and must fail inside the theorem named; T8 (an inductive) is run by hand. C1-C5: the enumeration's checks (C class): the budget, the atom list, observations, the record, typing.",
+ "mutants": [
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S1",
+   "definition": "VE.Defaults.zoneMin",
+   "kind": "plan",
+   "bug": "the zone filter compares unsaid atoms too (spec 8.9: DF-μ′b turns by default no)",
+   "find": "      .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))",
+   "replace": "      .ok (S.filter (fun A => S.all (fun B => !decSub C B A || decSub C A B)))",
+   "guards": [
+    "#guard holds dμ' fun L => zone L M1 [] \"p\" [a0] == \"notSaid\" && minCount L M1 [] [] == 2"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dμ' guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S2",
+   "definition": "VE.Defaults.zoneMin",
+   "kind": "plan",
+   "bug": "the zone filter compares only completions with the same filling (spec 8.9: DF-π′ no longer by default yes)",
+   "find": "      .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))",
+   "replace": "      .ok (S.filter (fun A => S.all (fun B => !(C.all (fun a => !(VE.NormDefaults.unsaidNames L.U).contains a.1 || (A.contains a == B.contains a))) || !decSub dec B A || decSub dec A B)))",
+   "guards": [
+    "#guard holds dπ fun L => zone L M1 [] \"x_required\" [a0] == \"yes\" && minCount L M1 [] [] =="
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dπ guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S3",
+   "definition": "VE.Defaults.defaultZoneOf",
+   "kind": "plan",
+   "bug": "minimality over the query's cone only (coneEvalO's atoms of the outcome, {excepted_r2} at DF-μ″; spec 8.9: DF-μ″ turns by default no)",
+   "find": "/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)`\n    beyond `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the\n    finite situation) and agree with the observations, then the minimality filter over their decision parts. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMin L X M record obs with",
+   "replace": "def zoneMinCone {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool)) (cone : List (String × List α)) :\n    Except (DefaultZone α) (List (List (String × List α))) :=\n  let n := (openAtomsAll L M record).length\n  if maxDefaultAtoms < n then .error (.unknown (.budget n maxDefaultAtoms)) else\n  let rec' := record ++ switchesOffRecord L.D M record\n  if !zoneRecordOk L M rec' then .error (.noCompletion [\"record\"]) else\n  if !(VE.Norms.backgroundBase (VE.NormDefaults.fill L.U)).all (·.eval M []) then\n    .error (.noCompletion [\"background\"]) else\n  let C := zoneAtoms L M record\n  let ok := C.filter (zoneDeclOk L M)\n  let P := X ++ (VE.NormDefaults.fillPremises L.U).map (fun ψ => (\"fill\", ψ))\n  let obsF := obs.map (fun o =>\n    ((VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) o.1.1.name, VE.Norms.tupleVal o.1.2), o.2))\n  let rows := (VE.NormDefaults.subsets C).map (fun A => (A, zoneRow M (openNames L) rec' C ok P obsF A))\n  match rows.find? (fun x => x.2.toOption == some false) with\n  | some x => .error (.unknown (.branch (C.map (fun a => (a, x.1.contains a))) \"none checked\"))\n  | none =>\n    let S := (rows.filter (fun x => x.2.toOption == some true)).map (·.1)\n    if S.isEmpty then\n      .error (.noCompletion (rows.filterMap (fun x => match x.2 with | .error l => some l | .ok _ => none)).eraseDups)\n    else\n      let dec := (decisionAtoms L.D M).filter (cone.contains ·)\n      .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))\n\n/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)`\n    beyond `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the\n    finite situation) and agree with the observations, then the minimality filter over their decision parts. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMinCone L X M record obs (VE.NormDefaults.coneEvalO M (openNames L) (VE.Norms.tupleVal vs)\n      (VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) r.name)).2 with",
+   "guards": [
+    "#guard holds dγ fun L => zone L M1 [] \"x_permitted\" [a0] == \"leftTo\" && minCount L M1 [] ["
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dγ guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S4",
+   "definition": "VE.Defaults.zoneMin",
+   "kind": "plan",
+   "bug": "the zone filter compares exception atoms only, not rankings (spec 8.9: DF-δz turns leftTo)",
+   "find": "      let dec := decisionAtoms L.D M\n      .ok",
+   "replace": "      let dec := (VE.SoftNorms.exceptedDecisions L.D).flatMap (fun (n, ss) => (VE.NormDefaults.allTuples M ss).map (fun vs => (n, vs)))\n      .ok",
+   "guards": [
+    "#guard holds dδ fun L => zone L M1 [] \"x_required\" [a0] == \"yes\" && minCount L M1 [] [] =="
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dδ guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S5",
+   "definition": "VE.Defaults.zoneForm",
+   "kind": "plan",
+   "bug": "zoneForm always short (spec 8.9: DF-δz, where a ranking is open)",
+   "find": "  then .short else .long",
+   "replace": "  then .short else .short",
+   "guards": [
+    "#guard holds dδ fun L => zone L M1 [] \"x_required\" [a0] == \"yes\" && minCount L M1 [] [] =="
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dδ guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T1",
+   "definition": "VE.Defaults.DecLe",
+   "kind": "R16",
+   "bug": "DecLe compares the wrong way round",
+   "find": "  ∀ a ∈ decisionAtoms D M, R₁ a.1 a.2 → R₂ a.1 a.2",
+   "replace": "  ∀ a ∈ decisionAtoms D M, R₂ a.1 a.2 → R₁ a.1 a.2",
+   "guards": [],
+   "theorems": [
+    "decLe_iff"
+   ],
+   "test": "theorem VE.Defaults.decLe_iff (a Prop no #guard evaluates)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T2",
+   "definition": "VE.Defaults.Observed",
+   "kind": "R16",
+   "bug": "Observed reads each observation negated",
+   "find": "  ∀ o ∈ obs, (OutcomeIn U M R o.1.1 o.1.2 ↔ o.2 = true)",
+   "replace": "  ∀ o ∈ obs, (OutcomeIn U M R o.1.1 o.1.2 ↔ o.2 = false)",
+   "guards": [],
+   "theorems": [
+    "realized_admissible"
+   ],
+   "test": "theorem VE.Defaults.realized_admissible (a Prop no #guard evaluates)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T3",
+   "definition": "VE.Defaults.switchesOffRecord",
+   "kind": "R16",
+   "bug": "switches turned on instead of off",
+   "find": "if record.any (fun r => r.1 == (n, vs)) then none else some ((n, vs), false)))",
+   "replace": "if record.any (fun r => r.1 == (n, vs)) then none else some ((n, vs), true)))",
+   "guards": [
+    "#guard holds dε fun L => switchesOffRecord L.D M1 [] == [((\"soft__off__r1__user\", [a0]), f"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dε guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T4",
+   "definition": "VE.Defaults.DefaultCompletion",
+   "kind": "R16",
+   "bug": "a default completion need not agree with the observations",
+   "find": "  AdmissibleCompletion L.U X M (openNames L) rec' R ∧ Observed L.U M obs R ∧\n",
+   "replace": "  AdmissibleCompletion L.U X M (openNames L) rec' R ∧\n",
+   "guards": [],
+   "theorems": [
+    "dc_of_min"
+   ],
+   "test": "theorem VE.Defaults.dc_of_min (a Prop no #guard evaluates)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T5",
+   "definition": "VE.Defaults.ByDefaultZ",
+   "kind": "R16",
+   "bug": "ByDefaultZ reads the value negated",
+   "find": "  ∀ R, DefaultCompletion L X M record obs R → (OutcomeIn L.U M R r vs ↔ b = true)",
+   "replace": "  ∀ R, DefaultCompletion L X M record obs R → (OutcomeIn L.U M R r vs ↔ b = false)",
+   "guards": [],
+   "theorems": [
+    "defaultZone_byDefault_sound"
+   ],
+   "test": "theorem VE.Defaults.defaultZone_byDefault_sound (a Prop no #guard evaluates)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T6",
+   "definition": "VE.Defaults.ByDefaultLeftTo",
+   "kind": "R16",
+   "bug": "ByDefaultLeftTo asks the two completions to agree",
+   "find": "    OutcomeIn L.U M R₁ r vs ∧ ¬ OutcomeIn L.U M R₂ r vs\n\n",
+   "replace": "    OutcomeIn L.U M R₁ r vs ∧ OutcomeIn L.U M R₂ r vs\n\n",
+   "guards": [],
+   "theorems": [
+    "defaultZone_leftTo_sound"
+   ],
+   "test": "theorem VE.Defaults.defaultZone_leftTo_sound (a Prop no #guard evaluates)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T7",
+   "definition": "VE.Defaults.noExceptionRecord",
+   "kind": "R16",
+   "bug": "weighing's record sets every exception true",
+   "find": "    (VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), false)))\n\n",
+   "replace": "    (VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), true)))\n\n",
+   "guards": [
+    "#guard holds dα fun L => zone L M1 [] \"x_required\" [a0] == \"yes\" &&",
+    "#guard holds dπ fun L => settled L M1 (noExceptionRecord L.D M1) \"x_required\" == some true",
+    "#guard holds dβ fun L => zoneR L M1 (noExceptionRecord L.D M1) [] \"x_required\" [a0] == \"ye"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dα guard; dπ guard; dβ guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C1",
+   "definition": "VE.Defaults.maxDefaultAtoms",
+   "kind": "limit",
+   "bug": "the bound raised to 13",
+   "find": "def maxDefaultAtoms : Nat := 12",
+   "replace": "def maxDefaultAtoms : Nat := 13",
+   "guards": [
+    "#guard holds dlam fun L => zone L (sit \"operator\" 13 []) [] \"instructs\" [el \"operator\" 0] "
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C2",
+   "definition": "VE.Defaults.openAtomsAll",
+   "kind": "enumeration",
+   "bug": "the unsaid atoms left out of the enumeration",
+   "find": "  (decisionAtoms L.D M ++ L.U.unspec.flatMap (fun p =>",
+   "replace": "  (decisionAtoms L.D M ++ ([] : List String).flatMap (fun p =>",
+   "guards": [
+    "#guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C3",
+   "definition": "VE.Defaults.zoneRow",
+   "kind": "observations",
+   "bug": "an observation that contradicts an assignment does not refute it",
+   "find": "      if ov.any (fun o => o.1 == some (!o.2)) then .error \"observed\"",
+   "replace": "      if false then .error \"observed\"",
+   "guards": [
+    "#guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)",
+    "#guard holds dα fun L => zone L M1 [((reg L \"x_permitted\", [a0]), false)] \"x_required\" [a0"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam guard; dα guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C4",
+   "definition": "VE.Defaults.zoneRecordOk",
+   "kind": "record",
+   "bug": "a record entry need not be the first for its atom",
+   "find": "  record.all (fun e => (record.find? (fun e' => decide (e'.1 = e.1))).map (·.2) == some e.2 &&",
+   "replace": "  record.all (fun e => true &&",
+   "guards": [
+    "#guard holds dα fun L => zoneR L M1 [((\"soft__excepted__r1\", [a0]), true), ((\"soft__except"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dα guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C5",
+   "definition": "VE.Defaults.zoneDeclOk",
+   "kind": "typing",
+   "bug": "an undeclared predicate counts as declared",
+   "find": "  | none => false\n\n/-- The record can be met",
+   "replace": "  | none => true\n\n/-- The record can be met",
+   "guards": [
+    "#guard holds dα fun L => zoneR L M1 [((\"soft__excepted__r1\", [a0]), true), ((\"soft__except"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dα guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "T8",
+   "definition": "VE.Defaults.DefaultZone",
+   "kind": "R16",
+   "bug": "constructor notSaid dropped (tools/trust_mutants.py's ctor-drop)",
+   "guards": [],
+   "test": "lake build VE.Defaults.Zone: defaultZoneOf no longer elaborates (it returns notSaid); run by hand, evidence/T8.out"
+  }
+ ]
+}
