@@ -7906,7 +7906,7 @@ module VE.Defaults.Zone 7265010c5595ac784e5ecc7ad81680e5e0acf296044f4c93e2ba943f
 857:0-874:26 theorem VE.Defaults.defaultZone_budget@VE.Defaults.Zone
 876:0-882:21 theorem VE.Defaults.decisionAtoms_none@VE.Defaults.Zone
 884:0-920:17 theorem VE.Defaults.defaultZone_eq_noException@VE.Defaults.Zone
-module VE.Defaults.ZoneExamples 1b968b65787c4dea51d8f498a57c66e39443068e35de8e5221e93438186fe220
+module VE.Defaults.ZoneExamples 6a90d1de50f738a2ef6f8f1622e112afee296b41b6ed79ede9e316793d4c8505
 16:0-20:66 def VE.Defaults.ZoneFixtures.envS@VE.Defaults.ZoneExamples
 21:0-23:76 def VE.Defaults.ZoneFixtures.ruleG@VE.Defaults.ZoneExamples
 25:0-29:59 def VE.Defaults.ZoneFixtures.dlam@VE.Defaults.ZoneExamples
