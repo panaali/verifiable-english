@@ -17,7 +17,6 @@ universe u
 
 theorem X_perm {qs qs' : List Pack} (h : qs.Perm qs') : (X qs).Perm (X qs') :=
   (h.flatMap_right _).map _
-
 theorem sat_perm (S : VE.Structure.{u}) {as bs : List VE.Formula} (h : as.Perm bs) : Sat S as ↔ Sat S bs :=
   ⟨fun hs a ha => hs a (h.mem_iff.mpr ha), fun hs a ha => hs a (h.mem_iff.mp ha)⟩
 
@@ -44,14 +43,10 @@ theorem transfers_X_either (D : Doc) {qs qs' : List Pack} (hp : qs.Perm qs') (Qc
     Transfers.{u} D (X qs') (fun c => qs'.flatMap (fun p => Qc p c)) :=
   VE.Readings.transfers_X D qs' Qc (fun p hm => h p (hp.mem_iff.mpr hm))
 
-theorem baseAdmissibleX_perm (U : UDoc) {X₁ X₂ : List VE.Formula} (h : X₁.Perm X₂) (B : VE.Structure.{u}) :
-    Wire.BaseAdmissibleX U X₁ B ↔ Wire.BaseAdmissibleX U X₂ B :=
-  and_congr_right fun _ => sat_perm B h
-
 /-- G1 (`EntailsX`, main's), the constraint-pack case: no hypothesis at all. -/
 theorem entailsX_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs') (Γ : List VE.Formula) (φ : VE.Formula) :
     EntailsX.{u} U (X qs) Γ φ ↔ EntailsX.{u} U (X qs') Γ φ :=
-  forall_congr' fun S => by rw [baseAdmissibleX_perm U (X_perm h) (restrictAll (fill U).T S)]
+  forall_congr' fun S => by simp only [Wire.BaseAdmissibleX, sat_X_perm _ h]
 
 /-- `acceptanceX` (main's, proved) from a certificate at one order gives the entailment at the other. -/
 theorem acceptanceX_order_free (U : UDoc) (hU : WellFormedU U = true) {qs qs' : List Pack} (h : qs.Perm qs')
@@ -100,47 +95,31 @@ theorem lookup_perm {β : Type} {l l' : List (String × β)} (h : l.Perm l') (hn
     obtain ⟨k₁, v₁⟩ := x
     obtain ⟨k₂, v₂⟩ := y
     simp only [List.map_cons, List.nodup_cons, List.mem_cons, not_or] at hn
-    have hne : k₂ ≠ k₁ := hn.1.1
     simp only [List.lookup]
-    by_cases h₁ : n = k₁
-    · subst h₁
-      have : (n == k₂) = false := by simpa using hne.symm
-      simp [this]
-    · have : (n == k₁) = false := by simpa using h₁
-      simp [this]
+    split <;> split <;> simp_all
   | trans h₁ _ ih₁ ih₂ =>
     rw [ih₁ hn, ih₂ ((h₁.map _).nodup_iff.mp hn)]
 
-theorem declKeys_sublist (qs : List Pack) : ((qs.flatMap (·.decls)).map (·.1)).Sublist (names qs) := by
+theorem keys_sublist (qs : List Pack) : ((qs.flatMap (·.decls)).map (·.1)).Sublist (names qs) ∧
+    ((qs.flatMap (·.consts)).map (·.1)).Sublist (names qs) := by
   induction qs with
-  | nil => exact List.Sublist.refl _
+  | nil => exact ⟨.refl _, .refl _⟩
   | cons p ps ih =>
     simp only [List.flatMap_cons, List.map_append, names, Pack.names]
-    exact (List.sublist_append_left _ _).append ih
-
-theorem constKeys_sublist (qs : List Pack) : ((qs.flatMap (·.consts)).map (·.1)).Sublist (names qs) := by
-  induction qs with
-  | nil => exact List.Sublist.refl _
-  | cons p ps ih =>
-    simp only [List.flatMap_cons, List.map_append, names, Pack.names]
-    exact (List.sublist_append_right _ _).append ih
+    exact ⟨(List.sublist_append_left _ _).append ih.1, (List.sublist_append_right _ _).append ih.2⟩
 
 /-- `extendEnv` reads the order of its lists only through `lookup`'s first match. -/
 theorem extendEnv_perm (E : VE.Environment) {qs qs' : List Pack} (h : qs.Perm qs') (hd : (names qs).Nodup) :
     extendEnv E (qs.flatMap (·.decls)) (qs.flatMap (·.consts)) =
       extendEnv E (qs'.flatMap (·.decls)) (qs'.flatMap (·.consts)) := by
-  have h₁ := lookup_perm (h.flatMap_right (·.decls)) (hd.sublist (declKeys_sublist qs))
-  have h₂ := lookup_perm (h.flatMap_right (·.consts)) (hd.sublist (constKeys_sublist qs))
+  have h₁ := lookup_perm (h.flatMap_right (·.decls)) (hd.sublist (keys_sublist qs).1)
+  have h₂ := lookup_perm (h.flatMap_right (·.consts)) (hd.sublist (keys_sublist qs).2)
   simp only [extendEnv, h₁, h₂]
 
 theorem envX_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs') (hd : (names qs).Nodup) :
     envX U qs = envX U qs' := extendEnv_perm _ h hd
-
 theorem fullEnvX_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs') (hd : (names qs).Nodup) :
     fullEnvX U qs = fullEnvX U qs' := extendEnv_perm _ h hd
-
-theorem names_perm {qs qs' : List Pack} (h : qs.Perm qs') : (names qs).Perm (names qs') := h.flatMap_right _
-
 theorem baseAdmissibleXV_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs') (hd : (names qs).Nodup)
     (B : VE.Structure.{u}) : BaseAdmissibleXV U qs B ↔ BaseAdmissibleXV U qs' B := by
   simp only [BaseAdmissibleXV, envX_perm U h hd, sat_X_perm B h]
@@ -153,17 +132,6 @@ theorem documentExpansionXV_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs
 theorem entailsXV_perm (U : UDoc) {qs qs' : List Pack} (h : qs.Perm qs') (hd : (names qs).Nodup)
     (Γ : List VE.Formula) (φ : VE.Formula) : EntailsXV.{u} U qs Γ φ ↔ EntailsXV.{u} U qs' Γ φ := by
   simp only [EntailsXV, baseAdmissibleXV_perm U h hd, documentExpansionXV_perm U h hd]
-
-/-- `acceptanceXV`'s hypotheses other than the certificate do not read the order. The certificate does: `Trace`
-    names premises by index. So one certificate at either order gives the entailment at the other. -/
-theorem acceptanceXV_order_free (hA : AcceptanceXV.{u}) (U : UDoc) (hU : WellFormedU U = true) {qs qs' : List Pack}
-    (h : qs.Perm qs') (hd : (names qs).Nodup) (hfresh : ∀ n ∈ names qs', declaredIn (fullEnv U) n = false)
-    (hX : ∀ a ∈ X qs', a.WellFormed (envX U qs') []) (Γ : List VE.Formula) (φ : VE.Formula)
-    (cert : VE.Tableau.Certificate)
-    (hv : VE.Tableau.checkCertificate (fullEnvX U qs) (Wire.premisesX U (X qs) Γ) φ cert = true) :
-    EntailsXV.{u} U qs' Γ φ :=
-  (entailsXV_perm U h hd Γ φ).mp <| hA U hU qs (fun n hn => hfresh n ((names_perm h).mem_iff.mp hn))
-    (fun a ha => envX_perm U h hd ▸ hX a ((X_perm h).mem_iff.mp ha)) Γ φ cert hv
 
 theorem firstRepeat_none : ∀ (seen : List String) (l : List (String × String)), firstRepeat seen l = none →
     (l.map (·.2)).Nodup ∧ ∀ n ∈ l.map (·.2), n ∉ seen
@@ -182,7 +150,6 @@ theorem firstRepeat_none : ∀ (seen : List String) (l : List (String × String)
 theorem named_keys (qs : List Pack) :
     (qs.flatMap (fun p => p.names.map (fun n => (p.id, n)))).map (·.2) = names qs := by
   simp [names, List.map_flatMap, Function.comp_def]
-
 /-- Assembly's own check: every list `assembleIn` returns has distinct names, so "declared by some pack" is "by one". -/
 theorem assembleIn_distinct {pre : List (String × String)} {E : VE.Environment} {used : Nat} {ps qs : List Pack}
     (h : assembleIn pre E used ps = .ok qs) : (names qs).Nodup := by
@@ -224,40 +191,22 @@ def mixedGuard : VE.Formula := .binary guardName (.var 1) (.var 0)
 def mixedPremise : VE.Formula := .all "agent" (.all "user" (.implies mixedCondition mixedGuard))
 def bridgePremise : VE.Formula := .all "user" (.implies (.unary attKnows (.var 0)) (.unary attBelieves (.var 0)))
 
-def outweighsKey : VE.SoftNorms.DecisionKey := .outweighs "answer" "helpfulness" "caution"
-
-def weighingV : Pack where
-  id := "weighing"
-  kind := .vocabulary
-  decls := [(guardName, ["agent", "user"])]
-  consts := []
-  labelled := [("weighing:condition:1", mixedPremise)]
-  origins := []
-  conditions := [(outweighsKey, mixedCondition)]
-
-def attitudesV : Pack where
-  id := "attitudes"
-  kind := .vocabulary
-  decls := [(attBelieves, ["user"]), (attKnows, ["user"])]
-  consts := []
-  labelled := [("attitudes:bridge:1", bridgePremise)]
-  origins := []
-  conditions := []
-
+def weighingV : Pack := ⟨"weighing", .vocabulary, [(guardName, ["agent", "user"])], [],
+  [("weighing:condition:1", mixedPremise)], [], [(.outweighs "answer" "helpfulness" "caution", mixedCondition)]⟩
+def attitudesV : Pack := ⟨"attitudes", .vocabulary, [(attBelieves, ["user"]), (attKnows, ["user"])], [],
+  [("attitudes:bridge:1", bridgePremise)], [], []⟩
 def weighingC : Pack := { weighingV with kind := .constraint, decls := [] }
 def attitudesC : Pack := { attitudesV with kind := .constraint, decls := [] }
 
 /-- `packOrder`'s order: weighing's premise mentions a name of the later pack. -/
 def mixedV : List Pack := [weighingV, attitudesV]
 def mixedC : List Pack := [weighingC, attitudesC]
-
 def envG (ps : List (String × List String)) : VE.Environment := ⟨["agent", "user"], fun n => ps.lookup n, fun _ => none⟩
-def emptyTree : VE.Norms.Tree := ⟨[], [], []⟩
 def namesG : List (String × List String) := [(attBelieves, ["user"]), (attKnows, ["user"]), (guardName, ["agent", "user"])]
 /-- `V`: only the packs declare the names. -/
-def uV : UDoc := ⟨⟨envG [], [], emptyTree⟩, []⟩
+def uV : UDoc := ⟨⟨envG [], [], ⟨[], [], []⟩⟩, []⟩
 /-- `C`: `U` declares the names, as `envAtt` does. -/
-def uC : UDoc := ⟨⟨envG namesG, [], emptyTree⟩, []⟩
+def uC : UDoc := ⟨⟨envG namesG, [], ⟨[], [], []⟩⟩, []⟩
 
 /-- The predicate names a formula mentions. -/
 def preds : VE.Formula → List String
@@ -299,14 +248,11 @@ def mG (believes guard : Bool) : VE.FiniteModel String where
     else if p == guardName then (if guard then [["a", "u"]] else []) else []
 
 def holdsX (qs : List Pack) (M : VE.FiniteModel String) : Bool := (X qs).all (·.eval M [])
-
-/-- With the atom off the guard may be off. Flipping only the atom breaks `X`; turning the guard on restores it. A
-    condition that ignores the atom, or that always holds, or never, fails this check. -/
+/-- Atom off, guard off: `X` holds. Flip only the atom: `X` breaks. Turn the guard on: `X` holds again. -/
 def nonVacuous (qs : List Pack) : Bool :=
   holdsX qs (mG false false) && !holdsX qs (mG true false) && holdsX qs (mG true true)
 
 #guard nonVacuous mixedV && nonVacuous mixedV.reverse && nonVacuous mixedC && nonVacuous mixedC.reverse
-
 theorem mG_admissible (b g : Bool) : (mG b g).asStructure.Admissible (envX uV mixedV) := by
   refine ⟨fun c s hc => (nomatch hc), fun p vs hr => ?_⟩
   change vs ∈ (mG b g).relations p at hr
@@ -326,7 +272,6 @@ theorem mG_admissible (b g : Bool) : (mG b g).asStructure.Admissible (envX uV mi
 
 theorem sat_of_holdsX {qs : List Pack} {M : VE.FiniteModel String} (h : holdsX qs M = true) : Sat M.asStructure (X qs) :=
   fun a ha => (VE.eval_iff_denote _ _ _).mp (List.all_eq_true.mp h a ha)
-
 theorem uV_backgroundBase : VE.Norms.backgroundBase (fill uV) = [] := by
   show VE.Route.Background.literals [] = []
   simp [VE.Route.Background.literals, VE.Route.sortStrings, VE.Route.Background.pairs]
@@ -336,8 +281,7 @@ theorem uV_background : VE.Norms.background (fill uV) = [] := by
 theorem uV_elaborate : VE.Norms.elaborate (fill uV).T = [] := by
   simp (config := { ground := true, decide := true })
 
-/-- The atom off with the guard off, and on with the guard on, are both bases of G1b's copy; the atom on with the
-    guard off is not. So on `V`, at `packOrder`'s order, the attitude atom decides the guard. -/
+/-- On `V`, at `packOrder`'s order, the attitude atom decides the guard at G1b's bases. -/
 theorem mixedV_decides :
     BaseAdmissibleXV uV mixedV (mG false false).asStructure ∧ BaseAdmissibleXV uV mixedV (mG true true).asStructure ∧
       ¬ BaseAdmissibleXV uV mixedV (mG true false).asStructure := by
@@ -367,8 +311,7 @@ def certAt (iw ia : Nat) : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", 
 def certOK (U : UDoc) (E : VE.Environment) (qs : List Pack) (c : VE.Tableau.Certificate) : Bool :=
   VE.Tableau.checkCertificate E (Wire.premisesX U (X qs) []) mixedφ c
 
--- `V` over the copy's environment and `C` over main's, at each order; each certificate needs its own order, and the
--- other order's is refused: a certificate is bound to its order, the entailment (below) is not.
+-- Each order needs its own certificate: `Trace` names premises by index. The entailment (below) is not so bound.
 #guard certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1)
 #guard certOK uV (fullEnvX uV mixedV.reverse) mixedV.reverse (certAt 1 0)
 #guard !certOK uV (fullEnvX uV mixedV.reverse) mixedV.reverse (certAt 0 1)
@@ -382,10 +325,12 @@ def certOK (U : UDoc) (E : VE.Environment) (qs : List Pack) (c : VE.Tableau.Cert
 #guard (firstFailing mixedV (fun _ => false)).map (·.1) == some "weighing"
 #guard (firstFailing mixedV.reverse (fun _ => false)).map (·.1) == some "attitudes"
 
+set_option maxRecDepth 100000 in
 /-- `C`, on main's own definitions and main's proved `acceptanceX`, with no copy: a certificate at `packOrder`'s
-    order gives `EntailsX` at both orders. `hv` is the `#guard` above (the repo's `X1Checks` pattern). -/
-theorem mixedC_accepted (hU : WellFormedU uC = true) (hv : certOK uC (fullEnv uC) mixedC (certAt 0 1) = true) :
+    order gives `EntailsX` at both orders. `hv` is the `#guard` above (the repo's `X1Checks` pattern: the kernel cannot reduce the replay). -/
+theorem mixedC_accepted (hv : certOK uC (fullEnv uC) mixedC (certAt 0 1) = true) :
     EntailsX.{u} uC (X mixedC) [] mixedφ ∧ EntailsX.{u} uC (X mixedC.reverse) [] mixedφ :=
+  have hU : WellFormedU uC = true := by decide
   have hX : ∀ a ∈ X mixedC, a.WellFormed (envAt (fill uC) 0) [] := fun a ha =>
     (VE.check_iff_wellFormed _ _ _).mp (List.all_eq_true.mp (by decide : (X mixedC).all (·.check (envAt (fill uC) 0) []) = true) a ha)
   ⟨acceptanceX uC hU (X mixedC) hX [] mixedφ _ hv,
@@ -393,8 +338,7 @@ theorem mixedC_accepted (hU : WellFormedU uC = true) (hv : certOK uC (fullEnv uC
 
 /-- `V`: the conclusion of `acceptanceXV` at this fixture, at either order, from main's `checkCertificate_sound`. This
     proves the instance, not the unbuilt `acceptanceXV`. -/
-theorem mixedV_accepted (hv : certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1) = true)
-    (hd : (names mixedV).Nodup) :
+theorem mixedV_accepted (hv : certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1) = true) :
     EntailsXV.{u} uV mixedV [] mixedφ ∧ EntailsXV.{u} uV mixedV.reverse [] mixedφ := by
   have h : EntailsXV.{u} uV mixedV [] mixedφ := by
     intro S hB hE _
@@ -409,7 +353,7 @@ theorem mixedV_accepted (hv : certOK uV (fullEnvX uV mixedV) mixedV (certAt 0 1)
     · rw [uV_fillPremises] at ha; cases ha
     · exact hE.2.2 a (List.mem_append_right _ ha)
     · cases ha
-  exact ⟨h, (entailsXV_perm uV (List.reverse_perm mixedV).symm hd [] mixedφ).mp h⟩
+  exact ⟨h, (entailsXV_perm uV (List.reverse_perm mixedV).symm (by decide) [] mixedφ).mp h⟩
 
 /-! ## Part 4: the one case where G1b's order matters, and why it is not a pack-order rule
 
@@ -572,14 +516,6 @@ theorem undeclared_empty_at_transfers_bases {D : Doc} {P : List VE.Formula} {B :
     rw [hn] at hss
     cases hss
 
-/-- The same on main's `BaseAdmissibleX`: `V`'s atom is empty at every base, so main's G1 cannot state this fixture. -/
-theorem undeclared_empty_on_main {X₀ : List VE.Formula} {B : VE.Structure.{u}}
-    (hB : Wire.BaseAdmissibleX uV X₀ B) (vs : List B.Carrier) : ¬ B.relation attBelieves vs :=
-  fun hr => by
-    obtain ⟨_, hss, _⟩ := hB.1.1.1.2 attBelieves vs hr
-    rw [show (envAt (fill uV) 0).predicates attBelieves = none by decide] at hss
-    cases hss
-
 -- On a document without the names: undeclared at the base, and untyped over each choice's complete vocabulary.
 #guard (envAt (soften (correlate (sup VE.Readings.Examples.K1).1)) 0).predicates attBelieves == none
 #guard (choices VE.Readings.Examples.K1).all (fun c => !mixedPremise.check (choiceEnvFull VE.Readings.Examples.K1 c) [])
@@ -588,17 +524,13 @@ end ExpG1
 
 #print axioms ExpG1.sat_X_perm
 #print axioms ExpG1.transfers_X_perm
-#print axioms ExpG1.transfers_X_either
 #print axioms ExpG1.entailsX_perm
 #print axioms ExpG1.acceptanceX_order_free
 #print axioms ExpG1.entailsXV_perm
-#print axioms ExpG1.acceptanceXV_order_free
 #print axioms ExpG1.g1b_order_free
-#print axioms ExpG1.assembleIn_distinct
 #print axioms ExpG1.mixedV_decides
 #print axioms ExpG1.mixedC_accepted
 #print axioms ExpG1.mixedV_accepted
 #print axioms ExpG1.dup_order_matters
 #print axioms ExpG1.mixedC_transfers
 #print axioms ExpG1.undeclared_empty_at_transfers_bases
-#print axioms ExpG1.undeclared_empty_on_main
