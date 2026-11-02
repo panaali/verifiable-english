@@ -9641,7 +9641,9 @@
       "G[I]": [
         "VE.Senses.Run.projectionIds",
         "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf"
+        "VE.Senses.Run.usedOf",
+        "VE.Senses.Projection.written",
+        "VE.Senses.SensesOutcome.written"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -16863,7 +16865,11 @@
         "ResponseShape.Schemas.SensesProject.file",
         "ResponseShape.Schemas.SensesProject.sort",
         "ResponseShape.Schemas.SensesProject.environment",
-        "ResponseShape.Schemas.SensesProject.requestProfile"
+        "ResponseShape.Schemas.SensesProject.profileMembers",
+        "ResponseShape.Schemas.SensesProject.copiedMembers",
+        "ResponseShape.Schemas.SensesProject.copiedVocabulary",
+        "ResponseShape.Schemas.SensesProject.requestHas",
+        "ResponseShape.Schemas.SensesProject.copiedAt"
       ]
     },
     "VE/Senses/RunExamples.lean": {
@@ -16893,7 +16899,11 @@
         "VE.Senses.RunExamples.cand2",
         "VE.Senses.RunExamples.piece",
         "VE.Senses.RunExamples.chain",
-        "VE.Senses.RunExamples.atLimit"
+        "VE.Senses.RunExamples.atLimit",
+        "VE.Senses.Flip.bare",
+        "VE.Senses.RunExamples.dist",
+        "VE.Senses.RunExamples.bareRows",
+        "VE.Senses.RunExamples.wide"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
@@ -17145,11 +17155,18 @@
         "VE.Senses.Flip",
         "VE.Senses.flipPair",
         "VE.Senses.candidatePairs",
-        "VE.Senses.flipsOf"
+        "VE.Senses.flipsOf",
+        "VE.Senses.FlipModel",
+        "VE.Senses.FlipModel.finite",
+        "VE.Senses.tuples",
+        "VE.Senses.flipValues"
       ],
       "G[V]": [
         "VE.Senses.termCore",
         "VE.Senses.formulaCore"
+      ],
+      "D[V]": [
+        "VE.Senses.FlipModel.json"
       ]
     }
   }

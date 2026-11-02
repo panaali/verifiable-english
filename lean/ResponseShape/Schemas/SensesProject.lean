@@ -26,25 +26,48 @@ def sort : Shape :=
     closed [("description", str),
       ("verbalisation", n [obj, .required ["singular", "plural"], closed [("singular", str), ("plural", str)]])]]
 
-def environment : Shape :=
-  c "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, composed blocks (Service.Document.envelopeKeys), constants and soft and rights blocks are the request's; the relay binds the whole by environment_id." [
-    obj, .required ["language", "spec_revision", "vocabulary"],
-    closed [("language", n [str, .equals "/environment/language"]),
-      ("profile", n [str, .equals "/environment/profile"]), ("profiles", ref "common.json#/$defs/strings"),
-      ("spec_revision", n [str, .equals "/environment/spec_revision"]),
-      ("units", n [obj, .equals "/environment/units"]), ("unit_schema", .equals "/environment/unit_schema"),
-      ("alternatives", .equals "/environment/alternatives"), ("risk", .equals "/environment/risk"),
-      ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"],
-        closed [("sorts", n [obj, .object [] (some (ref "#/$defs/sort"))]),
-          ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
-          ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
-          ("soft", n [obj, .equals "/environment/vocabulary/soft"]),
-          ("rights", n [obj, .equals "/environment/vocabulary/rights"])]])],
-    .allOf [.ite (.onCase (ref "#/$defs/request_profile")) (.required ["profile"]) (.required ["profiles"])]]
+/-- The members each profile adds to an environment, top-level and in `vocabulary`: one row per profile of
+`VE.Compose.profileTable` (the guard below), so a profile is classified here before a request can carry its
+blocks. -/
+def profileMembers : List (String × List String × List String) := [
+  ("acts@0", [], ["acts"]), ("alternatives@0", ["alternatives"], []),
+  ("cardinality@0", ["cardinality", "cardinality_schema", "unit_schema", "units"], []), ("closure@0", [], []),
+  ("data@0", [], []), ("definitions@0", [], []), ("documents@1", [], []), ("judgments@0", [], []),
+  ("nary@0", [], []), ("norm-defaults@0", [], []), ("norms@0", [], []), ("order@0", [], []), ("readings@1", [], []),
+  ("relational-fol@0", [], []), ("reports@0", [], ["reports"]), ("right-clauses@0", [], []), ("rights@0", [], ["rights"]),
+  ("risk@0", ["alternatives", "risk", "unit_schema", "units"], []), ("scope@0", [], []), ("soft-norms@0", [], ["soft"]),
+  ("speech-acts@0", ["speech_acts"], []), ("time@0", ["unit_schema", "units"], []), ("ve.discourse@1", [], [])]
 
-/-- The request's environment names its one profile in `profile` (the v0 envelope), else its list in `profiles`. -/
-def requestProfile : Shape :=
-  n [obj, .required ["environment"], props [("environment", n [obj, .required ["profile"]])]]
+#guard (VE.Compose.profileTable.map (·.profile)).all fun p => profileMembers.any (·.1 == p)
+
+/-- The members the projection copies from the request's environment (every member but `vocabulary`), and those
+of its vocabulary (every member but the sorts and predicates it adds to). -/
+def copiedMembers : List String :=
+  (["language", "profile", "profiles", "spec_revision"] ++ profileMembers.flatMap (·.2.1)).eraseDups
+def copiedVocabulary : List String := ("constants" :: profileMembers.flatMap (·.2.2)).eraseDups
+
+/-- A request case whose member at `path` exists. -/
+def requestHas : List String → Shape
+  | [] => .bool true
+  | [k] => n [obj, .required [k]]
+  | k :: ks => n [obj, .required [k], props [(k, requestHas ks)]]
+
+/-- The members `ks` of the request's object at `path` that a projected object copies: each equals the request's
+and is present when the request's is. -/
+def copiedAt (path : List String) (ks : List String) : List (String × Shape) × Shape :=
+  (ks.map fun k => (k, .equals ("/".intercalate ("" :: path ++ [k]))),
+   .allOf (ks.map fun k => .ite (.onCase (requestHas (path ++ [k]))) (.required [k]) (.bool true)))
+
+def environment : Shape :=
+  let (top, topPresent) := copiedAt ["environment"] copiedMembers
+  let (vocabulary, vocabularyPresent) := copiedAt ["environment", "vocabulary"] copiedVocabulary
+  c "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5), its profile list as written (VE.Senses.Projection.written); every other member is the request's (profileMembers), equal to it and present when it is; the relay binds the whole by environment_id." [
+    obj, .required ["language", "spec_revision", "vocabulary"],
+    closed (top ++ [("vocabulary", n [obj, .required ["sorts", "predicates", "constants"],
+      closed ([("sorts", n [obj, .object [] (some (ref "#/$defs/sort"))]),
+        ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))])] ++ vocabulary),
+      vocabularyPresent])]),
+    topPresent]
 
 def identities : Shape :=
   c "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar." [
@@ -100,7 +123,7 @@ def file : File where
   comment := some "Mode senses.project: VE.Senses.Run.projectCaseReported. A projection with its identities, or its fault."
   top := [("row", «row»)]
   defs := [("pair", .schema pair), ("lexicon", .schema lexicon), ("sort", .schema sort),
-    ("environment", .schema environment), ("request_profile", .schema requestProfile), ("identities", .schema identities),
+    ("environment", .schema environment), ("identities", .schema identities),
     ("projection", .schema projection)]
 
 end ResponseShape.Schemas.SensesProject

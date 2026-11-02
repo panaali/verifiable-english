@@ -95,7 +95,7 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- an open unit: two candidates with their identities
-#guard pin (runCaseReported (src "The riddle is funny.")) == "26ee2afe8fd5a83cbdd069418882a2eb949bf8d046d9caa54c1ed8afc309fae2"
+#guard pin (runCaseReported (src "The riddle is funny.")) == "fc6cf34f5586447b6ca587b517f43e9ff9e871375894e17b14dde0f525f70361"
 -- resolved by its line
 #guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "b2060ea4a1d1024e613d7fbc139f647949644fbf5e4cc46f70df79eb48ac574a"
 -- a sense fault
@@ -107,7 +107,7 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 -- an open fence without a reading set
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [])) == "1b6b6d44dcc4b67a043c3acd17db11d58f3191b8dc529039fa04c3e54bd3a3bd"
 -- an open fence with its reading set
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "542589bf96439d10c2bf6260981420b4c3bef8e8765b1d60f5bffffe6c5af147"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "7d2061583498ba527967b50c5581a471410e23c5689f2883b8e6ee42db3353bb"
 -- a fence that is a line
 #guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "3b2dd9e4d1d97f17a6d85135d938c9b7da74fcdbb24cd1c013a471dd6c3dd0c0"
 -- front-matter defaults
@@ -148,7 +148,7 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 -- two unresolved words: choices of two senses
 #guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "1fbb62255419b945e3475128555b06e4977d16f736d5e74c31c60a8f38052dce"
 -- two units
-#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "1021caf484885f5f969d02fe1983993b959a5f8f4050fa50229b7fc9f2b82f64"
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "e60a6f3331c4f061439d327cdb325205ab2cc457fb3e325436d8f3d54547b89d"
 -- own senses whose kinds are the document's sorts
 #guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "68b976a7428f70ffb6c3859985e81a2123d7d7ea7c5e6f38319c145d08a7f92f"
 -- a second used word outside the dictionary
@@ -198,11 +198,19 @@ def deep : Nat → EFormula → EFormula
   | 0, f => f
   | n + 1, f => .all "joke" (deep n f)
 
+/-- A flip with its model left out, for the guards on the valuation and the values; the model's own guards follow. -/
+def _root_.VE.Senses.Flip.bare : Flip → Flip
+  | .distinguished on a b _ => .distinguished on a b ⟨[], [], []⟩
+  | f => f
+def dist (on : List String) (a b : Bool) : Flip := .distinguished on a b ⟨[], [], []⟩
+def bareRows (rows : List ((Nat × Nat × Nat) × Flip)) : List ((Nat × Nat × Nat) × Flip) :=
+  rows.map fun (k, f) => (k, f.bare)
+
 -- the first valuation distinguishes the pair (n7's form, negated)
-#guard (flipPair PJ (cand 1 (.not (funny 1 riddle))) (cand 2 (.not (funny 2 riddle))) 0).1
-  == .distinguished ["sense__funny_1"] false true
+#guard (flipPair PJ (cand 1 (.not (funny 1 riddle))) (cand 2 (.not (funny 2 riddle))) 0).1.bare
+  == dist ["sense__funny_1"] false true
 -- only the exchanged valuation distinguishes it: s2's unit 0, `sense__funny_2` true alone, first true, second false
-#guard (flipPair PJ (cand 1 (s2 1)) (cand 2 (s2 2)) 0).1 == .distinguished ["sense__funny_2"] true false
+#guard (flipPair PJ (cand 1 (s2 1)) (cand 2 (s2 2)) 0).1.bare == dist ["sense__funny_2"] true false
 -- neither does: the two senses only under a conjunct both make false
 #guard (flipPair PJ (cand 1 (.and (funny 1 riddle) .bottom)) (cand 2 (.and (funny 2 riddle) .bottom)) 0).1
   == .undistinguished
@@ -214,10 +222,37 @@ def deep : Nat → EFormula → EFormula
 #guard (flipsOf PJ [openOf [cand 1 (.and (funny 1 riddle) (deep 21 (funny 1 (.var 0)))), cand 2 (funny 2 riddle)],
   openOf [cand 1 (funny 1 riddle), cand 2 (funny 2 riddle)]]).map (·.2) == [.unknown, .unknown]
 -- the same two units within the budget: one row per pair, in order
-#guard (flipsOf PJ [openOf [cand 1 (deep 3 (funny 1 (.var 0))), cand 2 (funny 2 riddle), cand 3 (funny 1 riddle)],
-  openOf [cand 1 (funny 1 riddle), cand 2 (funny 2 riddle)]]) ==
-  [((0, 0, 1), .distinguished ["sense__funny_1"] true false), ((0, 0, 2), .undistinguished),
-   ((0, 1, 2), .distinguished ["sense__funny_2"] true false), ((1, 0, 1), .distinguished ["sense__funny_1"] true false)]
+#guard bareRows (flipsOf PJ [openOf [cand 1 (deep 3 (funny 1 (.var 0))), cand 2 (funny 2 riddle),
+  cand 3 (funny 1 riddle)], openOf [cand 1 (funny 1 riddle), cand 2 (funny 2 riddle)]]) ==
+  [((0, 0, 1), dist ["sense__funny_1"] true false), ((0, 0, 2), .undistinguished),
+   ((0, 1, 2), dist ["sense__funny_2"] true false), ((1, 0, 1), dist ["sense__funny_1"] true false)]
+
+-- the model in the model wire form's table: every sort with its own entity, every constant (one the formulas do not
+-- name is its sort's entity), every predicate; the sense made true holds of every tuple of its sorts' entities
+#guard (flipPair PJ (cand 1 (s2 1)) (cand 2 (s2 2)) 0).1 == .distinguished ["sense__funny_2"] true false
+  { domains := [("joke", ["joke"]), ("person", ["person"]), ("service", ["service"]), ("number", ["number"]),
+      ("principal", ["principal"]), ("resource", ["resource"])],
+    constants := [("alice", "person"), ("riddle", "joke")],
+    relations := [("sense__funny_1", []), ("sense__funny_2", [["joke"]])] }
+-- the values are the formulas' truth in that model (`flipValues_sound`), here read back by `Formula.eval`
+#guard match (flipPair PJ (cand 1 (s2 1)) (cand 2 (s2 2)) 0).1, formulaCore (s2 1), formulaCore (s2 2) with
+  | .distinguished _ a b m, some fc, some fd => a == fc.eval m.finite [] && b == fd.eval m.finite []
+  | _, _, _ => false
+/-- The joke's projection with `sense__funny_1` over `n` jokes: `2 ^ n` tuples of the joke's entity and the riddle. -/
+def wide (n : Nat) : Projection :=
+  { PJ with env := { PJ.env with predicates := PJ.env.predicates.map fun p =>
+      if p.name == "sense__funny_1" then { p with args := List.replicate n "joke" } else p } }
+-- a model over `maxTuples` tuples is unknown, the work kept; one within it is written
+#guard flipModelOf (wide 17) [funny 1 riddle] ["sense__funny_1"] == none && 2 ^ 17 > VE.Limits.maxTuples
+#guard ((flipModelOf (wide 16) [funny 1 riddle] ["sense__funny_1"]).map fun m =>
+  ((List.lookup "sense__funny_1" m.relations).getD []).length) == some (2 ^ 16)
+#guard flipPair (wide 17) (cand 1 (funny 1 riddle)) (cand 2 (funny 2 riddle)) 5 == (.unknown, 5)
+-- a distinguishing model on the wire carries its table in the model wire form
+#guard flipJson 0 ((0, 0, 1), .distinguished ["p"] true false ⟨[("joke", ["joke"])], [], [("p", [["joke"]])]⟩) ==
+  Json.mkObj [("sentence", toJson 0), ("first", toJson 0), ("second", toJson 1), ("status", .str "distinguished"),
+    ("true", toJson ["p"]), ("values", Json.arr #[.bool true, .bool false]),
+    ("model", Json.mkObj [("complete", .bool true), ("domains", Json.mkObj [("joke", toJson ["joke"])]),
+      ("constants", Json.mkObj []), ("relations", Json.mkObj [("p", toJson [["joke"]])])])]
 
 -- the pairs of `n` candidates, each once, in order
 #guard candidatePairs 3 == [(0, 1), (0, 2), (1, 2)] && candidatePairs 1 == [] && candidatePairs 0 == []
@@ -244,17 +279,22 @@ def cand2 (f o : Nat) (φ : EFormula) : Candidate :=
 #guard flipOn PJ2 (cand2 1 1 .top) (cand2 2 2 .top) == ["sense__funny_1", "sense__odd_1"]
 #guard flipOn PJ2 (cand2 1 1 .top) (cand2 1 2 .top) == ["sense__odd_1"]
 #guard (flipPair PJ2 (cand2 1 1 (.and (funny 1 riddle) (odd 1 riddle))) (cand2 2 2 (.and (funny 2 riddle) (odd 2 riddle)))
-  0).1 == .distinguished ["sense__funny_1", "sense__odd_1"] true false
+  0).1.bare == dist ["sense__funny_1", "sense__odd_1"] true false
 -- only the exchanged valuation separates them, and the second candidate reads both of its senses
-#guard (flipPair PJ2 (cand2 1 1 .bottom) (cand2 2 2 (.and (funny 2 riddle) (odd 2 riddle))) 0).1
-  == .distinguished ["sense__funny_2", "sense__odd_2"] false true
--- every constant of both formulas is an entity of its sort's domain, each its own
-#guard (flipPair PJ2 (cand 1 (.and (funny 1 (.const "alice")) (funny 1 riddle))) (cand 2 (funny 2 (.const "gag"))) 0).1
-  == .distinguished ["sense__funny_1"] true false
+#guard (flipPair PJ2 (cand2 1 1 .bottom) (cand2 2 2 (.and (funny 2 riddle) (.ex "number" (odd 2 (.var 0))))) 0).1.bare
+  == dist ["sense__funny_2", "sense__odd_2"] false true
+-- every constant of both formulas is an entity of its sort's domain, each its own: alice is not the person's own
+#guard (flipPair PJ2 (cand 1 (.and (funny 1 riddle) (.ex "person" (.not (.eq (.var 0) (.const "alice"))))))
+  (cand 2 (funny 2 (.const "gag"))) 0).1.bare == dist ["sense__funny_1"] true false
+#guard match (flipPair PJ2 (cand 1 (.and (funny 1 riddle) (.ex "person" (.not (.eq (.var 0) (.const "alice"))))))
+    (cand 2 (funny 2 (.const "gag"))) 0).1 with
+  | .distinguished _ _ _ m => m.domains.take 2 == [("joke", ["gag", "joke", "riddle"]), ("person", ["alice", "person"])] &&
+      m.constants == [("gag", "gag"), ("alice", "alice"), ("riddle", "riddle")]
+  | _ => false
 #guard (flipPair PJ2 (cand 1 (.and (funny 1 riddle) (.and (.ex "joke" (.eq (.var 0) (.const "gag")))
-    (.ex "joke" (.eq (.var 0) riddle))))) (cand 2 (funny 2 riddle)) 0).1 == .distinguished ["sense__funny_1"] true false
-#guard (flipPair PJ2 (cand 1 (.ex "joke" (.not (.eq (.var 0) riddle)))) (cand 2 (.all "joke" (.eq (.var 0) riddle))) 0).1
-  == .distinguished ["sense__funny_1"] true false
+    (.ex "joke" (.eq (.var 0) riddle))))) (cand 2 (funny 2 riddle)) 0).1.bare == dist ["sense__funny_1"] true false
+#guard (flipPair PJ2 (cand 1 (.ex "joke" (.not (.eq (.var 0) riddle)))) (cand 2 (.all "joke" (.eq (.var 0) riddle))) 0).1.bare
+  == dist ["sense__funny_1"] true false
 
 /-- `deep i (funny_1 x)`, or `top` for `0`: true under `sense__funny_1`, with work `2 ^ (i + 1) - 1`. -/
 def piece : Nat → EFormula
@@ -269,8 +309,9 @@ def chain : List Nat → EFormula
 def atLimit : Candidate × Candidate :=
   (cand 1 (.and (funny 1 riddle) (chain [0, 1, 2, 3, 4, 8, 13, 15, 16, 17, 18])), cand 2 (funny 2 riddle))
 -- at the limit from no work: the model; one unit of work earlier spent: unknown
-#guard flipsOf PJ [openOf [atLimit.1, atLimit.2]] == [((0, 0, 1), .distinguished ["sense__funny_1"] true false)]
-#guard flipPair PJ atLimit.1 atLimit.2 0 == (.distinguished ["sense__funny_1"] true false, VE.Limits.maxEvaluations)
+#guard bareRows (flipsOf PJ [openOf [atLimit.1, atLimit.2]]) == [((0, 0, 1), dist ["sense__funny_1"] true false)]
+#guard (fun (f, w) => (Flip.bare f, w)) (flipPair PJ atLimit.1 atLimit.2 0) ==
+  (dist ["sense__funny_1"] true false, VE.Limits.maxEvaluations)
 #guard flipPair PJ atLimit.1 atLimit.2 1 == (.unknown, VE.Limits.maxEvaluations)
 
 end VE.Senses.RunExamples
