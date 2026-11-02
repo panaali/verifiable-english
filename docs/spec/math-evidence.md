@@ -2075,9 +2075,11 @@ atom       ::= value words | numeral | numeral "times ten to the power" integer
   Deeper nesting is refused (`NestedPhrase`) with the rewrite "Let … be …".
 - Every rewrite that names a value uses "Let … be …", and the rewritten claim uses "equals" (J7): "A is E" with an
   expression E is not a sentence (11.1, `IsExpression`).
-- Value words begin with "the", contain none of "and", "minus", "divided by", "to the power", "times ten to the
-  power", "is", "be", "equals", "when rounded", "through", and do not begin with a phrase word ("the sum of", "the
-  product of", "the square of", "the cube of", "twice", "half of"): `ValueWordsForm`, `ReservedWord`.
+- Value words begin with the word "the" followed by at least one more word, contain none of "and", "minus", "divided
+  by", "to the power", "times ten to the power", "is", "be", "equals", "when rounded", "through", and do not begin
+  with a phrase word ("the sum of", "the product of", "the square of", "the cube of", "twice", "half of"):
+  `ValueWordsForm`, `ReservedWord`. Reserved and phrase words match whatever their capital letters, so "the x And y"
+  and "the Sum of x" are refused and the refusal quotes the word as written; the first word "the" is lowercase.
 - Numerals are decimal digits ("0.25", "243"); symbols (`+`, `−`, `×`, `/`, `^`, `=`, `≈`, `<`, `≤`) are refused in VE
   text (`SymbolInText`). The formula view (`2D v²/V²`) is a display generated from the meaning and never parsed.
 
@@ -2775,7 +2777,7 @@ outcomes (1.5).
 | `DuplicateClaimId` | ME-2 | two claims share an id | `DuplicateClaimId: <id>` |
 | `NoClaims` | ME-2 | `claims` is empty | `NoClaims: a calculation needs at least one claim` |
 | `VerbalisationCollision` | ME-2 | W6a's check | as W6a |
-| `ValueWordsForm` | ME-2 | words do not begin with "the" or begin with a phrase word | `ValueWordsForm: the words of <name> must begin with "the" and not with "<phrase>"` |
+| `ValueWordsForm` | ME-2 | words do not begin with "the" or begin with a phrase word | `ValueWordsForm: the words of <name> must begin with "the" and not with "<phrase>"`; for the words "the" alone, `ValueWordsForm: the words of <name> must not be "the" alone` |
 | `ReservedWord` | ME-2 | words contain a reserved word (11.2) | `ReservedWord: "<word>" in the words of <name>` |
 | `CalcClaimFails` | ME-10 | authoring: a claim fails | the transcription-unchecked text of 2.5 |
 | `UnknownHandle` | ME-4 | a `data` or `source` handle not registered | `UnknownHandle: <sha256>` |
