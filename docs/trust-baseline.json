@@ -1804,6 +1804,20 @@
    "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
    "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 84,
+   "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
   }
  ]
 }
