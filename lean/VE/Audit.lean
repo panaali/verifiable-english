@@ -2977,6 +2977,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.predicateWords_name
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.singleton_infix_iff
 #print axioms VE.Judgments.status_checked
 #print axioms VE.Judgments.status_eq
 #print axioms VE.Judgments.status_legacy
