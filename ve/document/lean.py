@@ -92,6 +92,8 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
     if isinstance(error, ResourceLimit) and _lean_only(raw):
         # Python's own path cannot read a wrapper profile (`chain_environment`), so Lean's UNKNOWN is the answer.
         raise error
+    if isinstance(error, CheckerUnavailable) and _lists_cardinality(raw):
+        raise error
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None and getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
@@ -121,7 +123,17 @@ def _lean_only(raw: bytes) -> bool:
     Python's own path refuses it at the environment, so it never answers in Lean's place."""
     try:
         environment = _split(raw)[0].get("environment")
-        return chain_environment(environment) is not environment
+        return chain_environment(environment) is not environment or _lists_cardinality(raw)
+    except (AttributeError, KeyError, TypeError, ValueError, VEError):
+        return False
+
+
+def _lists_cardinality(raw: bytes) -> bool:
+    """Whether the document lists `cardinality@0`, whose environment only Lean models (`ve.cardinality`): there is no
+    Python path to fall back on."""
+    from ..cardinality import is_cardinality
+    try:
+        return is_cardinality(_split(raw)[0].get("environment"))
     except (AttributeError, KeyError, TypeError, ValueError, VEError):
         return False
 
@@ -192,6 +204,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
         declared = [(u, parent) for u, parent in _parts(meta["units"])]
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
+    if "cardinality@0" in listed_profiles(meta.get("environment")):
+        return _cardinality_document(meta, body, fences, declared, row, path, admitted)
     try:
         # The identities Lean answered are those of the environment its chain reads (`chain_environment`).
         env = _environment(chain_environment(meta["environment"]))
@@ -299,6 +313,33 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
+def _cardinality_document(meta, body, fences, declared, row, path, admitted):
+    """The document of a `cardinality@0` text (`Service.Document`, QT-A4), built from Lean's bound answer. Its statements
+    stay Lean's: `environment` is its W6a projection, the one environment of it Python models, for display only."""
+    from .. import cardinality
+    try:
+        _bind_document_answer(body, meta, declared, row)
+    except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
+        raise cardinality.unbound("its row") from exc
+    ids = cardinality.identities(meta["environment"])
+    cardinality.bind_units(ids, row["units"], declared)
+    source, graph, report = row["source"].encode("utf-8"), meta.get("graph"), row.get("cardinality")
+    if (row["source_id"] != source_id(source, ids) or row["document_id"] != _document_id(meta, source, fences)
+            or (report is not None) != (admitted and graph is not None)):
+        raise cardinality.unbound("its identities or report")
+    if report is not None:
+        cardinality.bind_report(ids, graph, report)
+    units = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"], "support": u["support"],
+              "source": source[u["span"][0]:u["span"][1]].decode("utf-8"), "content": u.get("content"),
+              "meaning_id": u.get("meaning_id"), "status": u["status"],
+              **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in row["units"]]
+    return {"meta": meta, "environment": ids.w6, "source": source, "source_id": row["source_id"],
+            "document_id": row["document_id"], "directory": path.parent, "units": units, "norms": None,
+            "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
+            "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
+            "cardinality": report, "lean": {"coverage": row["coverage"], "admitted": admitted}}
+
+
 # The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
 _BLOCK_LINES = ("alternatives_declared", "assumed_harm_free", "counterfactual_leaves", "dilemmas", "narrowings",
                 "proximate_judgments", "unmapped_obligations")
@@ -326,7 +367,9 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
     require(type(row) is dict and type(row.get("source")) is str and
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
             ({"judgments", "undeclared_evaluative"} if judged else set()) |
-            ({"composed_readings"} if composed else set()))
+            ({"composed_readings"} if composed else set()) |
+            ({"cardinality"} if "cardinality" in row and "cardinality@0" in listed_profiles(meta.get("environment"))
+             else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
         require(_undeclared_bound(row["undeclared_evaluative"], meta.get("environment"), meta.get("open_terms", [])))

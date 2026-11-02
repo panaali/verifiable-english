@@ -13,6 +13,7 @@ import VE.Judgments.Status
 import VE.EnglishGrammar.Evaluative
 import VE.Scope.Wire
 import VE.Scope.Readings
+import VE.Cardinality.Run
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -404,6 +405,8 @@ structure Env where
   generated : Bool := false
   /-- A frozen `ve.core@0` envelope (batch 16f, a senses document's), with its frozen identities. -/
   legacy : Option Standalone.Legacy := none
+  /-- A `cardinality@0` document's decoded environment (QT-A4): its units read `Cardinality.Wire.decodeStatement`. -/
+  cardinality : Option VE.Cardinality.CardEnv := none
 
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
 def Env.version (E : Env) : String := (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion E.profiles)
@@ -607,7 +610,7 @@ def decodedEnvironment (written : Json) (block : Block) : Except String Env := d
   let profiles ← VE.Route.Gate.profilesOf written
   if profiles.any VE.Compose.documentLayers.contains then
     let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
-  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none⟩
+  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none, none⟩
 
 /-- A `MIXED` unit's parts as Python's `_parts` generator yields them from `cursor`: each part that starts at the
 cursor (`Loader.partOk`), until the first that does not; with the cursor after the last part when every part was
@@ -689,6 +692,18 @@ def frozenEnv (json : Json) : Except String Env :=
            envId := ← Standalone.legacyEnvironmentId l json, block := .none, legacy := some l }
   built.mapError fun m => unavailable s!"a frozen envelope outside this mode keeps its loader's diagnostic: {m}"
 
+/-- A `cardinality@0` document's environment (quantities 4.1, QT-A4): the AR-10 gate over its list, then its own decoder
+(4.2, E1 to E8), which a list the gate admits reaches with `judgments@0` too, and refuses. `checked` and `rv` are W6a's
+core target's envelope with no words: no first-order formula is read under this profile (`contentOf`, `check`). -/
+def cardinalityEnv (written : Json) : Except String Env := do
+  let profiles ← VE.Route.Gate.profilesOf written
+  let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
+  let w ← VE.Cardinality.Wire.decodeEnvironment written
+  let empty := Json.mkObj [("sorts", Json.mkObj []), ("predicates", Json.mkObj []), ("constants", Json.mkObj [])]
+  let checked ← Standalone.validated (w.w6.target.setObjVal! "vocabulary" empty)
+  pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles, w.environmentId, .none, false,
+    none, some w⟩
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
@@ -698,6 +713,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
   | _ => pure ()
+  if (listedProfiles environment).contains "cardinality@0" then
+    if senses then throw "UnsupportedProfile: senses beside cardinality@0 is not composed"
+    return ← cardinalityEnv environment
   if Standalone.isLegacy environment then
     unless senses do
       throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
@@ -786,12 +804,16 @@ inductive UnitContent
   /-- A soft norm, which the soft route's single-rule check accepted, in its canonical form (`softCanonical`),
   with the unit's `cites` when it has them. -/
   | soft (rule : Json)
+  /-- A cardinality statement the unit's content decoded to: its meaning id and canonical formula
+  (`Cardinality.Run.statementJson`). -/
+  | cardinality (statement : Json)
 
 def UnitContent.json : UnitContent → Json
   | .formula f => VE.Route.Wire.encodeFormula f
   | .norm n => VE.Alternatives.Wire.encodeNode n
   | .rights b => b
   | .soft r => r
+  | .cardinality s => s
 
 /-- A unit's kind, decoded: W2's (`Route.Admission.decodeKind 16`) or, under `rights@0`, a rights source kind. -/
 inductive RowKind
@@ -1094,6 +1116,11 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
       | [kv] => pure kv
       | _ => throw one
     | _ => throw one
+  if let some w := E.cardinality then
+    unless key == "cardinality" do throw "UnsupportedProfile: a cardinality@0 unit's content is a cardinality statement"
+    let a ← VE.Cardinality.Wire.decodeStatement w value
+    return (.cardinality (VE.Cardinality.Run.statementJson a), a.meaningId)
+  if key == "cardinality" then throw "UnsupportedProfile: cardinality content requires cardinality@0"
   if key == "quantity" then throw "UnsupportedProfile: quantity content requires ve-units@1"
   if key == "norm" then
     -- `NormDocument._decode` and `norm_meaning_id`: the norms route's decoder of one norm object (batch 16f for a
@@ -1676,6 +1703,7 @@ def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List Str
 
 /-- A unit's own content as the status reads it (spec 4): a formula, or a norm as its rule. -/
 def UnitContent.judged : UnitContent → Option VE.Judgments.Content
+  | .cardinality _ => none
   | .formula f => some (.formula f)
   | .norm n => some (.rule n)
   | _ => none
@@ -1729,6 +1757,20 @@ def Env.basePredicates (E : Env) : List (String × List String) :=
 
 /-! ## The case -/
 
+/-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, each node then
+bound to the unit of its name, which holds its statement, so a report rests on nothing the document does not say. The
+report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`). -/
+def cardinalityReport (w : VE.Cardinality.CardEnv) (graph : Json) (units : List SourceUnit) : Except String Json := do
+  let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction graph
+  let meanings : Std.HashMap String (Option String) := units.foldl (fun m u => m.insert u.id u.meaningId) ∅
+  for n in g.nodes do
+    unless meanings[n.name]? == some (some n.adm.meaningId) do
+      throw s!"claim graph node {n.name} is not a unit holding its statement"
+  let report := VE.Cardinality.Run.reportJson g
+  pure (Json.mkObj [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
+    ("w6_target_environment_id", .str w.w6.targetId), ("report", report),
+    ("report_id", .str (← VE.Cardinality.Run.reportId w graph report))])
+
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
 structure Checked where
   documentId : String
@@ -1743,6 +1785,8 @@ structure Checked where
   /-- Under `judgments@0`, the base predicates whose words match english-lean's catalogue and that are not bound
   (spec 7 and 8.4): "these words match the catalogue; review them". -/
   undeclared : List String := []
+  /-- Under `cardinality@0`, the admitted claim graph's report (`cardinalityReport`). -/
+  cardinality : Option Json := none
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
@@ -1768,6 +1812,10 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless environment matches .obj _ do throw "document needs an embedded environment"
   let senses := (front.getObjVal? "senses").isOk
   let E ← environmentOf environment (front.getObjValD "units") senses
+  -- Open terms, reading sets and narrowings read the first-order chain, which cardinality content is not (qt-a4b).
+  if E.cardinality.isSome then
+    if let some k := ["open_terms", "reading_sets", "narrowings"].find? (front.getObjVal? · |>.isOk) then
+      throw s!"UnsupportedProfile: {k} beside cardinality@0 is not composed"
   if ["contexts", "assessments", "bridges", "scoped"].any (front.getObjVal? · |>.isOk) then
     throw "unknown document metadata"
   -- `judgments@0` (spec 8.1): W2's check of the records first (`Judgments.records`), then their admission.
@@ -1838,21 +1886,26 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   Loader.checkWeights front
   -- `_report`: the coverage (a block route's line may reject), then the claim graph.
   let block ← blockCoverage E front units
-  if let .ok graph := front.getObjVal? "graph" then
-    if withGraph then admitGraph E front graph units all active openNames narrowings
+  let report ← match front.getObjVal? "graph", E.cardinality with
+    | .ok graph, some w => if withGraph then some <$> cardinalityReport w graph units else pure none
+    | .ok graph, none => do
+      if withGraph then admitGraph E front graph units all active openNames narrowings
+      pure none
+    | .error _, _ => pure none
   pure ⟨← documentId doc, Loader.sourceIdOf E.version doc.source,
     doc.source, units, ← units.mapM rowOf, front, block,
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
-    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else []⟩
+    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
-    match c.judgments with
-    | some m => [("judgments", usageJson m),
+    match c.judgments, c.cardinality with
+    | some m, _ => [("judgments", usageJson m),
         ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
-    | none => [])
+    | none, some r => [("cardinality", r)]
+    | none, none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
