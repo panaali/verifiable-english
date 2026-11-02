@@ -373,21 +373,25 @@ def split (t : String) (senses : Bool := false) : Except String Loader.Split := 
   noLoneSurrogate front
   pure ⟨fm, source, fences⟩
 
+/-- A case's front matter and body, when its document's front matter reads. -/
+def frontOf (j : Json) : Option (Json × String) :=
+  (do let (front, body) ← Loader.frontText (← (j.getObjValD "document").getStr?)
+      pure (← frontJson front, body)).toOption
+
+/-- The profiles a front matter lists; none without one. The one reading of a case's profiles: `profilesOf` and the
+row 16 runs below read them here. -/
+def profilesIn : Option Json → List String
+  | some front => listedProfiles (front.getObjValD "environment")
+  | none => []
+
 /-- The profiles a case's document lists; none when its front matter does not read. -/
-def profilesOf (j : Json) : List String :=
-  (do let (front, _) ← Loader.frontText (← (j.getObjValD "document").getStr?)
-      pure (listedProfiles ((← frontJson front).getObjValD "environment"))).toOption.getD []
+def profilesOf (j : Json) : List String := profilesIn ((frontOf j).map (·.1))
 
 /-! ## The clash validation (PC-1; docs/spec/profile-composition.md 1.7, the G3 amendment, diagnostics row 16)
 
 Every request is checked first, before the gate: the model keys and `distinguishing_models` references its reading
 sets state must map one to one between the environment with `judgments@0` and the one without it, on the request
 and, when it lists `judgments@0`, on its twin (`withoutJudgments`). -/
-
-/-- A case's front matter and body, when its document's front matter reads (as `profilesOf` reads it). -/
-def frontOf (j : Json) : Option (Json × String) :=
-  (do let (front, body) ← Loader.frontText (← (j.getObjValD "document").getStr?)
-      pure (← frontJson front, body)).toOption
 
 /-- The transposition of `a` and `b` (2a): `a` becomes `b`, `b` becomes `a`, any other value is kept. -/
 def swap (a b x : String) : String := if x == a then b else if x == b then a else x
@@ -637,7 +641,7 @@ theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String ×
 /-- `swapInjective` on a front matter `frontOf` read: its sets, values and pairs computed once. -/
 def swapInjectiveIn (front : Json) : Bool :=
   let sets := sizedIn (readingSetsIn front)
-  swapInjectiveH (statedIdsIn sets) (statedPairsIn front (listedProfiles (front.getObjValD "environment")) sets)
+  swapInjectiveH (statedIdsIn sets) (statedPairsIn front (profilesIn (some front)) sets)
 
 /-- `swapInjective` as it runs (pc-1 review F2): the front matter read once, the values and the pairs computed once,
 each value hashed once, so no pass compares every stated value with every other. -/
@@ -651,15 +655,7 @@ theorem swapInjective_frontOf (j : Json) : swapInjective j = swapInjectiveH (sta
 
 @[csimp] theorem swapInjective_eq_fast : @swapInjective = @swapInjectiveFast := by
   funext j
-  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
-  -- lemma itself (and the compiler then runs the definitions as written).
-  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
-    unfold profilesOf frontOf
-    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
-    rename_i text
-    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
-    rename_i x
-    cases frontJson x.1 <;> rfl
+  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   rw [swapInjective_frontOf]
   unfold swapInjectiveFast statedIds statedPairs sizedSets readingSetsOf
   rw [hp]
@@ -749,31 +745,23 @@ def clashRefusalIn (j front : Json) (body : String) (ps : List String) : Option 
 def clashRefusalFast (j : Json) : Option String :=
   match frontOf j with
   | none => none
-  | some (front, body) => clashRefusalIn j front body (listedProfiles (front.getObjValD "environment"))
+  | some (front, body) => clashRefusalIn j front body (profilesIn (some front))
 
 @[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
   funext j
-  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
-  -- lemma itself (and the compiler then runs the definitions as written).
-  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
-    unfold profilesOf frontOf
-    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
-    rename_i text
-    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
-    rename_i x
-    cases frontJson x.1 <;> rfl
+  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   unfold clashRefusal clashRefusalFast withoutJudgments withoutJudgmentsOf
   rw [swapInjective_frontOf, hp]
   unfold statedIds statedPairs sizedSets readingSetsOf
   rw [hp]
   cases frontOf j with
-  | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
+  | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf, profilesIn]
   | some p =>
     obtain ⟨front, body⟩ := p
-    simp only [clashRefusalIn, Option.map_some, Option.getD_some]
-    by_cases hj : "judgments@0" ∈ listedProfiles (front.getObjValD "environment") <;>
+    simp only [clashRefusalIn, Option.map_some]
+    by_cases hj : "judgments@0" ∈ profilesIn (some front) <;>
       cases swapInjectiveH (statedIdsIn (sizedIn (readingSetsIn front)))
-        (statedPairsIn front (listedProfiles (front.getObjValD "environment")) (sizedIn (readingSetsIn front))) <;>
+        (statedPairsIn front (profilesIn (some front)) (sizedIn (readingSetsIn front))) <;>
       simp [hj, clashRefusalOf]
 
 /-! ## The environment -/
@@ -2330,7 +2318,7 @@ def checkCoreFast (j : Json) : Except String Json :=
   match frontOf j with
   | none => checkBody j
   | some (front, body) =>
-    let ps := listedProfiles (front.getObjValD "environment")
+    let ps := profilesIn (some front)
     if "scope@0" ∈ ps then checkBody j else
     match clashRefusalIn j front body ps with
     | some e => .error e
@@ -2338,15 +2326,7 @@ def checkCoreFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkCore_eq_fast : @checkCore = @checkCoreFast := by
   funext j
-  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
-  -- lemma itself (and the compiler then runs the definitions as written).
-  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
-    unfold profilesOf frontOf
-    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
-    rename_i text
-    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
-    rename_i x
-    cases frontJson x.1 <;> rfl
+  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   unfold checkCore checkCoreFast
   rw [clashRefusal_eq_fast, hp]
   unfold clashRefusalFast
@@ -2487,7 +2467,7 @@ def checkDocSetsFast (j : Json) : Except String Json :=
   match frontOf j with
   | none => checkBody j
   | some (front, body) =>
-    let ps := listedProfiles (front.getObjValD "environment")
+    let ps := profilesIn (some front)
     if "scope@0" ∈ ps then checkDocSets j else
     match clashRefusalIn j front body ps with
     | some e => .error e
@@ -2495,22 +2475,14 @@ def checkDocSetsFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
   funext j
-  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
-  -- lemma itself (and the compiler then runs the definitions as written).
-  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
-    unfold profilesOf frontOf
-    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
-    rename_i text
-    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
-    rename_i x
-    cases frontJson x.1 <;> rfl
+  have hp : profilesOf j = profilesIn ((frontOf j).map (·.1)) := rfl
   have hc := congrFun checkCore_eq_fast j
   unfold checkDocSetsFast
   cases hf : frontOf j with
   | none =>
     rw [hf] at hp
     unfold checkDocSets
-    rw [if_neg (by simp [hp]), hc]
+    rw [if_neg (by simp [hp, profilesIn]), hc]
     unfold checkCoreFast
     rw [hf]
   | some p =>
