@@ -1,0 +1,172 @@
+shard 4/6: 79 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/1120] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/1120] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/1120] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4841 lines cut; full output in shard-full.txt)
+✔ [692/697] Built EnglishLeanBenchMain (1.1s)
+✔ [694/697] Built ScopeBenchMain (1.0s)
+✔ [695/697] Built ScopeBenchMain:c.o (231ms)
+✔ [696/697] Built ve_english_lean_bench:exe (598ms)
+✔ [697/697] Built ve_scope_bench:exe (571ms)
+Build completed successfully (697 jobs).
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded version_check v0.9.5
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded itoa v1.0.18
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded serde_core v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.88s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.24s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_speech_polar_lean.py::chunk(2/4)
+recording 79 units with 4 jobs in /tmp/ve-select-run-j45tpsfv
+  tests/test_precommit_hook.py: exit 1 in 121.8 s, 262 functions
+  tests/test_consolidation_tools.py: exit 1 in 1300.7 s, 1225 functions
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 371.2 s in all, longest chunk 371.2 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+FAILED tests/test_consolidation_tools.py (exit 1): tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration; log /tmp/ve-select-run-j45tpsfv/tests__test_consolidation_tools.py.log
+........................................................................ [ 25%]
+........................................................................ [ 50%]
+........................................................................ [ 75%]
+............................................................F........... [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-jp0di1b5)
+
+=================================== FAILURES ===================================
+_____________ test_committed_trust_table_covers_every_declaration ______________
+
+    def test_committed_trust_table_covers_every_declaration():
+        files, problems = trust_map.measure()
+        assert problems == []
+        totals = trust_map.totals(files)
+>       assert totals["unclassified"] == 0
+E       assert 23 == 0
+
+tests/test_consolidation_tools.py:1322: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration - assert 23 == 0
+1 failed, 287 passed in 1299.96s (0:21:39)
+FAILED tests/test_precommit_hook.py (exit 1): tests/test_precommit_hook.py::test_large_staged_change_passes; log /tmp/ve-select-run-j45tpsfv/tests__test_precommit_hook.py.log
+E         pre-commit: English grammar: 0.024 s
+E         pre-commit: lean --deps confirmed or refuted 618 of 618 staged Lean headers
+E         pre-commit: total 29.376 s (2276 staged paths)
+E         pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/tools/hooks/pre-commit', '--timings'],...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\n').returncode
+
+tests/test_precommit_hook.py:600: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_precommit_hook.py::test_large_staged_change_passes - AssertionError: pre-commit: secrets: 0.724 s
+  pre-commit: layer imports: 23.155 s
+  pre-commit: layer imports check failed:
+    lean/VE/Judgments/Examples.lean: new outward Lean import VE.Judgments.Examples -> VE.EnglishGrammar.Evaluative (layer 2 -> 3)
+  pre-commit: Lean forbidden tokens: 4.775 s
+  pre-commit: frozen files: 0.019 s
+  pre-commit: wire contract: 0.480 s
+  pre-commit: English grammar: 0.024 s
+  pre-commit: lean --deps confirmed or refuted 618 of 618 staged Lean headers
+  pre-commit: total 29.376 s (2276 staged paths)
+  pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/tools/hooks/pre-commit', '--timings'],...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\n').returncode
+1 failed, 61 passed in 121.16s (0:02:01)
+recorded 78 units for tree eefe5c6357; 1 others left to the static graph until they run (1 with only some of their chunks here); 2 failed
+SHARD 4/6: exit 1 in 1467.3 s; 79 units, 77 passed
