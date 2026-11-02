@@ -634,16 +634,6 @@ theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String ×
       · exact e
       · exact absurd rfl e
 
-/-- `profilesOf` reads the front matter `frontOf` reads. -/
-theorem profilesOf_frontOf (j : Json) :
-    profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
-  unfold profilesOf frontOf
-  cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
-  rename_i text
-  cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
-  rename_i x
-  cases frontJson x.1 <;> rfl
-
 /-- `swapInjective` on a front matter `frontOf` read: its sets, values and pairs computed once. -/
 def swapInjectiveIn (front : Json) : Bool :=
   let sets := sizedIn (readingSetsIn front)
@@ -661,9 +651,18 @@ theorem swapInjective_frontOf (j : Json) : swapInjective j = swapInjectiveH (sta
 
 @[csimp] theorem swapInjective_eq_fast : @swapInjective = @swapInjectiveFast := by
   funext j
+  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
+  -- lemma itself (and the compiler then runs the definitions as written).
+  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
+    unfold profilesOf frontOf
+    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
+    rename_i text
+    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
+    rename_i x
+    cases frontJson x.1 <;> rfl
   rw [swapInjective_frontOf]
   unfold swapInjectiveFast statedIds statedPairs sizedSets readingSetsOf
-  rw [profilesOf_frontOf]
+  rw [hp]
   cases frontOf j with
   | none => rfl
   | some p => rfl
@@ -754,10 +753,19 @@ def clashRefusalFast (j : Json) : Option String :=
 
 @[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
   funext j
+  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
+  -- lemma itself (and the compiler then runs the definitions as written).
+  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
+    unfold profilesOf frontOf
+    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
+    rename_i text
+    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
+    rename_i x
+    cases frontJson x.1 <;> rfl
   unfold clashRefusal clashRefusalFast withoutJudgments withoutJudgmentsOf
-  rw [swapInjective_frontOf, profilesOf_frontOf]
+  rw [swapInjective_frontOf, hp]
   unfold statedIds statedPairs sizedSets readingSetsOf
-  rw [profilesOf_frontOf]
+  rw [hp]
   cases frontOf j with
   | none => simp [clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
   | some p =>
@@ -2330,8 +2338,17 @@ def checkCoreFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkCore_eq_fast : @checkCore = @checkCoreFast := by
   funext j
+  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
+  -- lemma itself (and the compiler then runs the definitions as written).
+  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
+    unfold profilesOf frontOf
+    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
+    rename_i text
+    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
+    rename_i x
+    cases frontJson x.1 <;> rfl
   unfold checkCore checkCoreFast
-  rw [clashRefusal_eq_fast, profilesOf_frontOf]
+  rw [clashRefusal_eq_fast, hp]
   unfold clashRefusalFast
   cases frontOf j with
   | none => simp
@@ -2478,7 +2495,15 @@ def checkDocSetsFast (j : Json) : Except String Json :=
 
 @[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
   funext j
-  have hp := profilesOf_frontOf j
+  -- `profilesOf` reads the front matter `frontOf` reads, proved here so that a change to `profilesOf` breaks this
+  -- lemma itself (and the compiler then runs the definitions as written).
+  have hp : profilesOf j = ((frontOf j).map fun p => listedProfiles (p.1.getObjValD "environment")).getD [] := by
+    unfold profilesOf frontOf
+    cases (j.getObjValD "document").getStr? <;> simp [bind, Except.bind, Except.toOption]
+    rename_i text
+    cases Loader.frontText text <;> simp [Except.toOption, pure, Except.pure]
+    rename_i x
+    cases frontJson x.1 <;> rfl
   have hc := congrFun checkCore_eq_fast j
   unfold checkDocSetsFast
   cases hf : frontOf j with

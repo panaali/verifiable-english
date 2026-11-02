@@ -48156,14 +48156,6 @@ theorem VE.Service.Document.pairIndex_get
     (VE.Service.Document.pairIndex pairs)[x]? = Option.map (fun x => x.snd) (List.find? (fun x_1 => x_1.fst == x) pairs)
   -- uses VE.Service.Document.pairIndex@VE.Service.Document
   -- expr 2896768923
-theorem VE.Service.Document.profilesOf_frontOf
-  ∀ (j : Lean.Json),
-    VE.Service.Document.profilesOf j =
-      (Option.map (fun p => VE.Service.Document.listedProfiles (p.fst.getObjValD "environment"))
-            (VE.Service.Document.frontOf j)).getD
-        []
-  -- uses VE.Service.Document.frontOf@VE.Service.Document VE.Service.Document.listedProfiles@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
-  -- expr 330587158
 theorem VE.Service.Document.swapInjectiveH_eq
   ∀ (ids : List String) (pairs : List (String × String × String)),
     VE.Service.Document.swapInjectiveH ids pairs =

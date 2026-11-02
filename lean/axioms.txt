@@ -6484,7 +6484,6 @@
 'VE.Service.Document.judgedIn_legacy' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.judgedIn_soft' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.pairIndex_get' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Service.Document.profilesOf_frontOf' depends on axioms: [propext]
 'VE.Service.Document.swapInjectiveH_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.swapInjective_eq_fast' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Document.swapInjective_frontOf' depends on axioms: [propext, Classical.choice, Quot.sound]
