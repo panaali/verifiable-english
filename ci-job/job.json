@@ -1,0 +1,12 @@
+{
+ "job": "testmap-7252a643-t659110-s0",
+ "head": "ddd040b86e752b2391302812499a2609caea7aac",
+ "argv": [
+  "testmap-7252a643-t659110-s0",
+  "ddd040b86e752b2391302812499a2609caea7aac",
+  "ddd040b86e752b2391302812499a2609caea7aac",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-46a1a28c9f40.tar.zst",
+  "6f80cabd3992817a64c1882e9e82b12aaa26820fa71ce3cc32e7f7be35a86e73",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_wire_gate_corpus.py tests/test_select_tests.py tests/test_precommit_hook.py tests/test_gate.py tests/test_platform_contract.py tests/test_run_order.py tests/test_readings_verdicts_split.py tests/test_document_split.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
