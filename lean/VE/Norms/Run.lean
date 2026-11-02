@@ -214,16 +214,16 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
       AdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer :=
   norms_wire_acceptanceIn Wire.decodeFlagged j answer h hk hn
 
-/-- Whether the case's environment reads `acts@0` (act-phrases 6.4). -/
-def readsActs (environment : Json) : Bool := !(Wire.actsProfiles true environment).isEmpty
+/-- Whether a case's environment is read with `acts@0`. -/
+def underActs (environment : Json) : Bool := !(Wire.actsProfiles true environment).isEmpty
 
-/-- The admission of `environment`'s document: on the elaborated document under `acts@0` (act-phrases 6.4); else on
-the decoded one. -/
-def admissionDecoder (environment : Json) : Wire.SourceDecoder :=
-  if readsActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlagged
+/-- The norms route's decoder of `environment`: the elaborated document under `acts@0` (act-phrases 6.4); else
+today's. -/
+def decoderOf (environment : Json) : Wire.SourceDecoder :=
+  if underActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlagged
 
 /-- The norms route's public entry: `runCaseIn` at the decoder of the case's environment. -/
-def runCaseRouted (j : Json) : Except String Json := runCaseIn (admissionDecoder (j.getObjValD "environment")) j
+def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j || Plain.layered (j.getObjValD "environment") then

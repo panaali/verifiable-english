@@ -305,7 +305,7 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
 /-- The norm-defaults route's decoder of `environment`: on the elaborated document under `acts@0` (act-phrases 6.4);
 else today's. -/
 def decoderOf (environment : Json) : Wire.UDecoder :=
-  if VE.Norms.Run.readsActs environment then VE.Acts.Decode.elaboratedU else Wire.decodeSourceU
+  if VE.Norms.Run.underActs environment then VE.Acts.Decode.elaboratedU else Wire.decodeSourceU
 
 /-- The norm-defaults route's public entry: `runCaseIn` at the decoder of the case's environment. -/
 def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j

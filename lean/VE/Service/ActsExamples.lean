@@ -541,12 +541,21 @@ def d4 : String := "InvalidInput: act phrase for p027 joins acts with 'or' outsi
 -- the model gate and Background read `regulatedOf`
 #guard err (VE.Service.Standalone.regulatedOf joinedE
   (((joinedE.getObjValD "vocabulary").getObjValD "predicates") |> VE.Bridge.fields).toOption.get!) == d4
+#guard err (VE.Service.Standalone.modelCase (Json.mkObj [("id", .str "m"), ("environment", joinedE),
+  ("model", Json.mkObj [])])) == d4
+#guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground joinedE ne.rv)) == some d4
+#guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground lexicalE ne.rv)) == some "ok"
 -- the English view's modal form
 #guard err (modalForm "p027" ["person"] (((joinedE.getObjValD "vocabulary").getObjValD "predicates").getObjValD "p027")
   plain6 VE.Acts.TableExamples.fx6) == d4
 -- `canonicalEnvironmentJson` only canonicalises: the act's bytes are the act's, on the elaborating routes.
 #guard (VE.Norms.Wire.canonicalEnvironmentJson joinedE >>= VE.Norms.Wire.canonicalActs).toOption ==
   some [("p027", VE.Acts.DecodeExamples.a6)]
+-- `canonicalShape`: the checks of 1.3 before a join, without `acts@0` `canonicalAct`.
+#guard (VE.Norms.Wire.canonicalShape plain6 [] "p" 1 (.str "{0}  seek  or enjoy")).toOption == some "{0} seek or enjoy"
+#guard err (VE.Norms.Wire.canonicalShape plain6 [] "p" 1 (.str "seek or enjoy")) == "InvalidInput: invalid act phrase for p"
+#guard err (VE.Norms.Wire.canonicalShape ["norms@0"] [] "p" 1 (.str "{0} seek or enjoy")) ==
+  "InvalidInput: invalid act phrase for p"
 -- The same decoders admit a lexical act.
 #guard err (VE.NormDefaults.Wire.decodeSourceLexical lexicalE norms27) == "ok"
 #guard err (VE.Norms.Wire.decodeNormsEnvironment lexicalE (acts := true)) == "ok"
