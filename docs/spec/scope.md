@@ -1244,7 +1244,7 @@ attitude node, so these theorems say nothing about attitude words, which are att
 namespace VE.Scope
 
 theorem reguard_applies (D : SDoc) (u : String) (c o o' : Json) (N N' : SoftNode) (G' : VE.Formula)
-    (h : applyEffect u (.reguard c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N)
+    (h : applyEffect u (.reguard c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
     (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
     (hG : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok G')
     (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
@@ -1255,13 +1255,14 @@ theorem reguard_applies (D : SDoc) (u : String) (c o o' : Json) (N N' : SoftNode
 theorem restrict_applies (D : SDoc) (u : String) (C o o' : Json) (C' : VE.Formula) (N N' : SoftNode)
     (hC : hasOwn depthLimit C = false) (hC' : VE.Norms.Wire.decodeBudgeted C = .ok C')
     (h : applyEffect u (.reguard (Json.arr #[.str "and", .str "own", C])) o = .ok o')
-    (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
+    (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
+    (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
     (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
     N' = { N with guard := .and N.guard C' } ∧
       ((VE.Norms.applies N'.toNode).denote S ρ ↔ (VE.Norms.applies N.toNode).denote S ρ ∧ C'.denote S ρ)
 
 theorem carveOut_applies (D : SDoc) (u : String) (c o o' : Json) (N N' : SoftNode) (C : VE.Formula)
-    (h : applyEffect u (.carveOut c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N)
+    (h : applyEffect u (.carveOut c) o = .ok o') (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
     (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N')
     (hC : VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok C)
     (S : VE.Structure.{v}) (ρ : VE.Valuation S) :
@@ -1273,7 +1274,7 @@ def Typed (E : VE.Environment) (Γ : List String) (N : SoftNode) : Prop :=
 
 /-- Typing is kept when the instantiated condition type-checks in the rule's situation context. -/
 theorem applyEffect_typed (D : SDoc) (u : String) (e : Effect) (o o' : Json) (N N' : SoftNode)
-    (E : VE.Environment) (Γ : List String) (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N)
+    (E : VE.Environment) (Γ : List String) (hN : VE.Readings.Wire.decodeNorm D.re o = .ok N) (hw : JsonWF o)
     (h : applyEffect u e o = .ok o') (hN' : VE.Readings.Wire.decodeNorm D.re o' = .ok N') (hT : Typed E Γ N)
     (hc : ∀ c ∈ conditions e, ∀ C,
       VE.Norms.Wire.decodeBudgeted (substOwn (o.getObjValD "guard") depthLimit c) = .ok C → C.check E Γ = true) :
@@ -1289,7 +1290,7 @@ theorem own_congr (c g₁ g₂ : Json) (hs : ownSafe depthLimit c = true) (G₁ 
 
 /-- Narrowings and own-free carve-outs commute, so source order is never a hidden choice. -/
 theorem commute_applies (D : SDoc) (u : String) (e₁ e₂ : Effect) (hc : Commutes e₁ e₂ = true)
-    (o o₁ o₂ : Json) (N₁ N₂ : SoftNode)
+    (o o₁ o₂ : Json) (N₁ N₂ : SoftNode) (hw : JsonWF o)
     (h₁ : (applyEffect u e₁ o).bind (applyEffect u e₂) = .ok o₁)
     (h₂ : (applyEffect u e₂ o).bind (applyEffect u e₁) = .ok o₂)
     (hN₁ : VE.Readings.Wire.decodeNorm D.re o₁ = .ok N₁) (hN₂ : VE.Readings.Wire.decodeNorm D.re o₂ = .ok N₂)
