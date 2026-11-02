@@ -1818,6 +1818,20 @@
    "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
    "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "S",
+   "lines": 2,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
+  },
+  {
+   "class": "V",
+   "lines": 63,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
   }
  ]
 }
