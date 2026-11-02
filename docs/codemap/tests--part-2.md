@@ -38,7 +38,7 @@
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
-- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9 and E1d, plan PC-9).
+- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
