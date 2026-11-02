@@ -1,0 +1,10 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Senses/Run.lean is a selected declaration's file or in its import closure
+trust_mutants: 10 definitions, 229 mutants (58 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Flip.lean:26 VE.Senses.formulaCore (G[V], trusted) list-empty: [t] -> [] (lean/VE/Senses/Flip.lean:26: Unknown identifier `t`)
+UNKNOWN lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-empty: (P.map.filter fun (_, s, _) => c.choice.contains (s.word, s.index) && !d.choice.contains (s.word,... -> [] (lean/VE/Senses/Flip.lean:39: Invalid projection: Type of)
+UNKNOWN lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-empty: (P.env.constants.find? (·.name == c)) -> [] (lean/VE/Senses/Flip.lean:45: Application type mismatch: The argument)
+SURVIVOR lean/VE/Senses/Flip.lean:65 VE.Senses.flipPair (S, trusted) list-first: on -> (on.take 1)
+trust_mutants: 46 KILLED, 1 SURVIVOR, 3 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN, 171 OTHER SHARD in 4037 s
+trust_mutants: G[V], trusted: 8 KILLED, 1 UNKNOWN, 51 OTHER SHARD
+trust_mutants: S, trusted: 38 KILLED, 1 SURVIVOR, 2 UNKNOWN, 8 INVALID, 120 OTHER SHARD
+trust_mutants: steps: wall plan 10.4 s, scratch 3.3 s, control_build 0.2 s, probe_install 1.4 s, control_probes 139.1 s, mutants 3879.7 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 138.6 s (1), mutant_builds 87.2 s (58), mutant_checks 2073.1 s (49), stage_controls 7.6 s (2), mutant_probes 12941.8 s (46)
