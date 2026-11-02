@@ -1,6 +1,6 @@
 {
  "item": "cmp-s4",
- "command": "lake build VE.Discourse.ComposeExamples (each mutant planted alone, then restored)",
+ "command": "lake build VE.Discourse.ComposeExamples VE.Service.ComposedAdmissionExamples (each mutant planted alone, then restored)",
  "mutants": [
   {
    "definition": "VE.Discourse.admitComposed",
@@ -19,7 +19,7 @@
    "from": "| .ok .readings => .error \"UnsupportedProfile: ve.discourse@1 with readings@1\"",
    "to": "| .ok .readings => VE.Norms.Run.runAdmission \"\" environment document",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:110",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:64",
    "check": "#guard"
   },
   {
@@ -39,7 +39,7 @@
    "from": "| .obj kvs => Json.obj (kvs.erase \"discourse\")",
    "to": "| .obj kvs => Json.obj kvs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:204",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:126",
    "check": "#guard"
   },
   {
@@ -49,7 +49,7 @@
    "from": "[\"norm\", \"right\", \"right_lines\"",
    "to": "[\"norm\", \"right_lines\"",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:147",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:76",
    "check": "#guard"
   },
   {
@@ -59,7 +59,7 @@
    "from": "| [(k, _)] => some k",
    "to": "| [(_, _)] => none",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:146",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:75",
    "check": "#guard"
   },
   {
@@ -69,7 +69,7 @@
    "from": "u :: ((u.getObjValD \"parts\").getArr?.toOption.getD #[]).toList",
    "to": "[u]",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:187",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:147",
    "check": "#guard"
   },
   {
@@ -79,7 +79,7 @@
    "from": "(vocabulary.getObjVal? \"soft\").toBool || (vocabulary.getObjVal? \"rights\").toBool ||",
    "to": "(vocabulary.getObjVal? \"soft\").toBool ||",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:179",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:139",
    "check": "#guard"
   },
   {
@@ -89,7 +89,7 @@
    "from": "| some \"fence\" => .error (Loader.notImplemented \"fenced content on the chain\")",
    "to": "| some \"fence\" => .ok ()",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:150",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:77",
    "check": "#guard"
   },
   {
@@ -99,7 +99,7 @@
    "from": "if (front.getObjValD \"reading_sets\").getArr?.toOption.any (!·.isEmpty) then throw (Loader.notImplemented \"reading sets on the chain\")",
    "to": "",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:125",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:90",
    "check": "#guard"
   },
   {
@@ -109,7 +109,7 @@
    "from": "| .obj kvs => .obj (kvs.map f)",
    "to": "| .obj kvs => .obj kvs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:192",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:106",
    "check": "#guard"
   },
   {
@@ -119,7 +119,7 @@
    "from": "| .arr xs => .arr (xs.map f)",
    "to": "| .arr xs => .arr xs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:192",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:106",
    "check": "#guard"
   },
   {
@@ -129,7 +129,7 @@
    "from": "else if k == \"parts\" then editArr",
    "to": "else if k == \"partz\" then editArr",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:192",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:152",
    "check": "#guard"
   },
   {
@@ -139,7 +139,7 @@
    "from": "| .obj kvs => .obj ((kvs.erase \"format\").erase \"discourse\")",
    "to": "| .obj kvs => .obj (kvs.erase \"discourse\")",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:204",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:106",
    "check": "#guard"
   },
   {
@@ -149,7 +149,7 @@
    "from": "pure (s.source, (frontShape s.front).compress)",
    "to": "pure (s.source, s.front.compress)",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:204",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:106",
    "check": "#guard"
   },
   {
@@ -159,7 +159,7 @@
    "from": "((j.getObjValD \"id\").getStr?.toOption, textShape (j.getObjValD \"document\"))",
    "to": "((j.getObjValD \"id\").getStr?.toOption, none)",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:209",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:108",
    "check": "#guard"
   },
   {
@@ -169,7 +169,7 @@
    "from": "else if k == \"fences\" then Json.mkObj [] else v) j",
    "to": "else v) j",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:192",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:152",
    "check": "#guard"
   },
   {
@@ -179,7 +179,7 @@
    "from": "| some (source, front) => Json.arr #[.str source, .str front] | none => .null)]",
    "to": "| some _ => .null | none => .null)]",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:209",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:108",
    "check": "#guard"
   },
   {
@@ -189,7 +189,7 @@
    "from": "[(\"content\", (c.getObjVal? \"ast\").toOption.getD c)]",
    "to": "[(\"content\", c)]",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:96",
    "check": "#guard"
   },
   {
@@ -199,7 +199,7 @@
    "from": "| .arr ⟨xs⟩ => conditionalOnList xs",
    "to": "| .arr _ => []",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:219",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:160",
    "check": "#guard"
   },
   {
@@ -209,7 +209,7 @@
    "from": "| .inner _ k v l r => conditionalOnTree l ++",
    "to": "| .inner _ k v r l => conditionalOnTree l ++",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:219",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:160",
    "check": "#guard"
   },
   {
@@ -219,7 +219,7 @@
    "from": "| x :: xs => conditionalOnOf x ++ conditionalOnList xs",
    "to": "| _ :: xs => conditionalOnList xs",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:219",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:160",
    "check": "#guard"
   },
   {
@@ -229,7 +229,7 @@
    "from": "let K ← Wire.decodeManifest [] (Loader.filesOf j) envId",
    "to": "let K ← Wire.decodeManifest [] (Loader.filesOf j) \"\"",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:119",
    "check": "#guard"
   },
   {
@@ -239,7 +239,7 @@
    "from": "pure (E, K)",
    "to": "pure (E, { K with mentions := [] })",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:144",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:122",
    "check": "#guard"
   },
   {
@@ -249,7 +249,7 @@
    "from": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr openTerms)",
    "to": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr #[])",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:35",
    "check": "#guard"
   },
   {
@@ -269,7 +269,7 @@
    "from": "req (b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
    "to": "req (true || b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:137",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:91",
    "check": "#guard"
   },
   {
@@ -289,7 +289,7 @@
    "from": "((composedJson c).setObjVal! \"id\" (.str id)).setObjVal! \"status\" (.str \"ok\")",
    "to": "(composedJson c).setObjVal! \"id\" (.str id)",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:115",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:128",
    "check": "#guard"
   }
  ]

@@ -3,7 +3,8 @@ import VE.Discourse.Run
 /-! # Fixtures of the composed admission (docs/spec/discourse.md 14.8, item cmp-s4)
 
 Synthetic documents over 10's α environment with the regulated `review_required : service` (14.8): `u1` asserts
-`deployed(web_api)`, `u2` is the norm `review-it`. Each `#guard` names its fixture or the definition it pins. -/
+`deployed(web_api)`, `u2` is the norm `review-it`. Each `#guard` names its fixture or the definition it pins. These
+check each step on its own input; the end-to-end admissions are in `VE/Service/ComposedAdmissionExamples.lean`. -/
 namespace VE.Discourse.ComposeExamples
 open Lean VE.Discourse
 
@@ -53,122 +54,81 @@ def doc (profiles : String := "\"norms@0\", \"relational-fol@0\", \"ve.discourse
 def caseOf (text : String) : Json :=
   Json.mkObj [("id", .str "s4"), ("kind", .str "admission"), ("document", .str text)]
 
-/-- The composed entry's answer: `chain` and the wrapper JSON, `today` and today's encoding, or the error. -/
-def composed (text : String) : String :=
-  match VE.Discourse.Run.loadCase (caseOf text) with
-  | .error e => "load: " ++ e
-  | .ok (d, env) => match VE.Route.Gate.profilesOf env >>= fun ps => admitComposed ps env d with
-    | .ok (.chain c) => "chain " ++ (composedJson c).compress
-    | .ok (.today r) => "today " ++ ((VE.Discourse.Run.encodeAdmission "s4" r).toOption.getD .null).compress
-    | .error e => "error: " ++ e
-
-/-- Today's discourse admission of the same case (`admitDiscourse` under `baseVocabulary`). -/
-def today (text : String) : String :=
-  match VE.Discourse.Run.loadCase (caseOf text) with
-  | .error e => "load: " ++ e
-  | .ok (d, env) => match (do
-      let ps ← VE.Route.Gate.profilesOf env
-      admitDiscourse ps env (← baseVocabulary env) d fuelBudget) with
-    | .ok r => "today " ++ ((VE.Discourse.Run.encodeAdmission "s4" r).toOption.getD .null).compress
-    | .error e => "error: " ++ e
-
-def chainField (text key : String) : Json :=
-  ((Json.parse ((composed text).drop 6)).toOption.getD .null).getObjValD key
-
-/-! ## The composed path (14.5) -/
-
--- S4-1 (synthetic): the norms route admits the resolved document; `inner` is its answer, the wrapper binds it
-#guard (composed doc).startsWith "chain "
-#guard (chainField doc "inner").getObjValD "admitted" == .bool true
-#guard (chainField doc "inner").getObjValD "kinds" == Json.arr #[.str "asserted", .str "norm"]
-#guard chainField doc "inner_report_id" == (chainField doc "inner").getObjValD "report_id"
--- S4-1: `inner` is the norms route's answer on the document without the discourse block (`chainDocument`)
-#guard match VE.Discourse.Run.loadCase (caseOf doc) with
-  | .ok (d, env) => (chainDocument (baseEnvironment env) d >>= VE.Norms.Run.runAdmission "" (baseEnvironment env)).toOption ==
-      some (chainField doc "inner")
-  | .error _ => false
--- a large well-formed document: 200 norm units end within the chain document's byte limit
-def large : String :=
-  let n := 200
-  let line := "Rule.\n"
-  let us := (List.range n).map fun i => normUnit s!"r{i}" (i * line.utf8ByteSize) ((i + 1) * line.utf8ByteSize)
-  doc (us := "[" ++ ", ".intercalate us ++ "]") (body := String.join (List.replicate n line))
-#guard (composed large).startsWith "chain "
--- the norm content reaches the chain route: a guard over a binary predicate is its rejection
-#guard (composed (doc (us := units (some ("{\"norm\": {\"name\": \"bad\", \"predicate\": \"review_required\", " ++
-  "\"sign\": true, \"guard\": [\"unary\", \"owns\", [\"var\", 0]], \"unless\": [], \"over\": []}}"))))).startsWith "error: "
-
--- S4-16, S4-17, the soft and rights lists: in item cmp-s4 the wrapper's FOL-family check is the frozen gate, which
--- refuses them as today (their chain decoders and `dispatchAdmission`'s refusals are item cmp-s4c)
-#guard composed (doc (profiles := "\"norms@0\", \"readings@1\", \"relational-fol@0\", \"ve.discourse@1\"")) ==
-  today (doc (profiles := "\"norms@0\", \"readings@1\", \"relational-fol@0\", \"ve.discourse@1\""))
-#guard composed (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"speech-acts@0\", \"ve.discourse@1\"")) ==
-  "error: UnsupportedProfile: Unsupported profile speech-acts@0"
-#guard composed (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"soft-norms@0\", \"ve.discourse@1\"")) ==
-  today (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"soft-norms@0\", \"ve.discourse@1\""))
--- S4-16 and S4-17 at `dispatchAdmission` itself (the list `dispatch` reads, base profiles)
-#guard (match dispatchAdmission ["norms@0", "readings@1", "relational-fol@0"] .null .null with
-  | .error e => e | .ok _ => "") == "UnsupportedProfile: ve.discourse@1 with readings@1"
-#guard (match dispatchAdmission ["norms@0", "relational-fol@0", "speech-acts@0"] .null .null with
-  | .error e => e | .ok _ => "") == "UnsupportedProfile: ve.discourse@1 with speech-acts@0"
--- `encodeComposed`: the wrapper with the case id
-#guard match VE.Discourse.Run.loadCase (caseOf doc) with
-  | .ok (d, env) => match admitComposed ["norms@0", "relational-fol@0", "ve.discourse@1"] env d with
-    | .ok (.chain c) => (VE.Discourse.Run.encodeComposed "s4" c).compress ==
-        ((composedJson c).setObjVal! "id" (.str "s4") |>.setObjVal! "status" (.str "ok")).compress &&
-        (VE.Discourse.Run.encodeComposed "s4" c).getObjValD "id" == .str "s4"
-    | _ => false
-  | .error _ => false
--- S4-20: a `groups` entry (14.5 step 1, named abstention)
-#guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"groups\": [{}]}")) ==
-  "error: NotImplemented: groups on the chain"
-#guard composed (doc (rest := ", " ++ graph ++ ", \"reading_sets\": [{}]")) ==
-  "error: NotImplemented: reading sets on the chain"
-#guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"constraints\": [{}]}")) ==
-  "error: NotImplemented: constraints on the chain"
-#guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"validity\": [{}]}")) ==
-  "error: NotImplemented: validity claims on the chain"
--- and empty lists are no abstention
-#guard (composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"groups\": [], \"constraints\": [],
-  \"validity\": []}") (rest := ", " ++ graph ++ ", \"reading_sets\": []"))).startsWith "chain "
--- S4-21 (OPEN 2): no claim graph, as today
-#guard composed (doc (rest := "")) == "error: NotImplemented: a document without a claim graph"
--- 14.5 step 3: `definitions_version` names the chain route's environment id
-#guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [],
-  \"definitions_version\": \"x\"}")) == "error: StaleTarget: definitions@x"
--- 14.3 step 6: a recorded formula-producing mention on a JSON content
 def mention (unit : String) : String :=
   s!", \"discourse\": \{\"version\": \"ve.discourse@1\", \"anchors\": [], \"mentions\": [\{\"id\": \"m1\", " ++
   s!"\"unit\": \"{unit}\", \"span\": [0, 3], \"form\": \"pronoun\", \"target\": \{\"kind\": \"entity\", \"name\": \"web_api\"}}]}"
+
+/-! ## The steps of the composed path, each on its own input -/
+
+def ok? : Except String Unit → String
+  | .ok () => "ok"
+  | .error e => e
+def parsed (s : String) : Json := (Json.parse s).toOption.getD .null
+def mentionBlock (unit : String) : Json := parsed ((mention unit).drop 15)
+def manifestOf (unit : String) : Manifest :=
+  (Wire.decodeManifest [] [] "e" (mentionBlock unit)).toOption.getD emptyManifest
+def unitJ (content : Option String) (id := "u2") : Json :=
+  parsed (s!"\{\"id\": \"{id}\"" ++ (content.map (", \"content\": " ++ ·)).getD "" ++ "}")
+
+-- 14.3 step 6 and this item's abstentions (`contentOk`), with the opposite direction
+#guard (manifestOf "u2").mentions.length == 1
+#guard ok? (contentOk (manifestOf "u2") (unitJ "{\"norm\": {}}")) == "MentionNotSlot: m1"
+#guard ok? (contentOk (manifestOf "u2") (unitJ "{\"right\": {}}")) == "MentionNotSlot: m1"
+#guard ok? (contentOk (manifestOf "u2") (unitJ "{\"fence\": \"u2\"}")) == "NotImplemented: fenced content on the chain"
+#guard ok? (contentOk (manifestOf "u1") (unitJ "{\"fence\": \"u2\"}")) == "NotImplemented: fenced content on the chain"
+#guard ok? (contentOk (manifestOf "u2") (unitJ "{\"ast\": [\"top\"]}")) == "NotImplemented: a bound prose unit on the chain"
+#guard ok? (contentOk (manifestOf "u2") (unitJ none)) == "NotImplemented: a bound prose unit on the chain"
+#guard ok? (contentOk (manifestOf "u1") (unitJ "{\"norm\": {}}")) == "ok"
+#guard ok? (contentOk (manifestOf "u1") (unitJ "{\"ast\": [\"top\"]}")) == "ok"
+
+-- 14.5 step 1's named abstentions (`chainAbstentions`), and empty or absent lists are none
+#guard ok? (chainAbstentions (parsed "{\"discourse\": {\"groups\": [{}]}}")) == "NotImplemented: groups on the chain"
+#guard ok? (chainAbstentions (parsed "{\"discourse\": {\"constraints\": [{}]}}")) ==
+  "NotImplemented: constraints on the chain"
+#guard ok? (chainAbstentions (parsed "{\"discourse\": {\"validity\": [{}]}}")) ==
+  "NotImplemented: validity claims on the chain"
+#guard ok? (chainAbstentions (parsed "{\"reading_sets\": [{}]}")) == "NotImplemented: reading sets on the chain"
+#guard ok? (chainAbstentions (parsed "{\"discourse\": {\"groups\": [], \"constraints\": [], \"validity\": []},
+  \"reading_sets\": []}")) == "ok"
+#guard ok? (chainAbstentions (parsed "{}")) == "ok"
+
+-- `chainUnit`: an `ast` content its formula, any other content as written, no content none
+#guard (chainUnit (parsed "{\"id\": \"u\", \"span\": [0, 1], \"kind\": \"asserted\", \"content\": {\"ast\": [\"top\"]}}")).compress ==
+  "{\"content\":[\"top\"],\"id\":\"u\",\"kind\":\"asserted\",\"span\":[0,1]}"
+#guard (chainUnit (parsed "{\"id\": \"u\", \"span\": [0, 1], \"kind\": \"norm\", \"content\": {\"norm\": {}}}")).compress ==
+  "{\"content\":{\"norm\":{}},\"id\":\"u\",\"kind\":\"norm\",\"span\":[0,1]}"
+#guard (chainUnit (parsed "{\"id\": \"u\", \"span\": [0, 1], \"kind\": \"asserted\"}")).compress ==
+  "{\"id\":\"u\",\"kind\":\"asserted\",\"span\":[0,1]}"
+
+-- `caseShape`: the id, the source and the front matter without what resolution rewrites (profiles, format, the
+-- discourse key, contents); anything else changed is another shape
+def shape (text : String) : String := (caseShape (caseOf text)).compress
+#guard shape doc == shape (doc (profiles := "\"norms@0\", \"relational-fol@0\"") (format := "ve-document@1")
+  (discourse := "") (us := units (some "{\"norm\": {}}")))
+#guard shape doc != shape (doc (body := src2 ++ src1))
+#guard shape doc != shape (doc (regulated := false))
+#guard shape doc != shape (doc (us := "[" ++ u1 ++ "]"))
+#guard (caseShape (caseOf doc)).getObjValD "id" == .str "s4"
+#guard (caseShape (caseOf doc)).getObjValD "document" != .null
+
+-- `chainBase` and `caseManifest`: the manifest decoded under the chain route's environment id (step 3's default)
+def loaded (text : String) : Json × Json :=
+  match Loader.splitText text with
+  | .ok s => (s.front.getObjValD "environment", Loader.payload s (Json.mkObj []))
+  | .error _ => (.null, .null)
+#guard ((chainBase (loaded doc).1 (loaded doc).2).toOption.map fun (_, K, id) =>
+  K.definitionsVersion == id && id.length == 64) == some true
 -- `caseManifest`: the case's recorded mentions, under the base pair
 #guard ((caseManifest (caseOf (doc (discourse := mention "u2")))).toOption.map (·.2.mentions.map (·.id))) ==
   some ["m1"]
-#guard composed (doc (discourse := mention "u2")) == "error: MentionNotSlot: m1"
-#guard composed (doc (us := units (some "{\"right\": {}}")) (discourse := mention "u2")) == "error: MentionNotSlot: m1"
--- item cmp-s4's abstentions: a bound prose unit and a fenced unit (14.3's slot steps are item cmp-s4ab)
-#guard composed (doc (discourse := mention "u1")) == "error: NotImplemented: a bound prose unit on the chain"
-#guard composed (doc (us := units (some "{\"fence\": \"u2\"}"))) == "error: NotImplemented: fenced content on the chain"
 
-/-! ## Identity cases (14.6): today's answer, byte for byte -/
-
-def alpha (profiles : String) : String :=
-  doc (profiles := profiles) (us := "[" ++ u1 ++ "]") (regulated := false)
-    (body := src1)
-
--- S4-3: α with `norms@0`, no chain construct
-#guard (composed (alpha "\"norms@0\", \"relational-fol@0\", \"ve.discourse@1\"")).startsWith "today "
-#guard composed (alpha "\"norms@0\", \"relational-fol@0\", \"ve.discourse@1\"") ==
-  today (alpha "\"norms@0\", \"relational-fol@0\", \"ve.discourse@1\"")
--- S4-2 (α): today's answer
-#guard composed (alpha "\"relational-fol@0\", \"ve.discourse@1\"") == today (alpha "\"relational-fol@0\", \"ve.discourse@1\"")
--- S4-28: a `ve-document@1` text on `norms@0, relational-fol@0` with a norm unit is not the composed path
-def s428 : String := doc (profiles := "\"norms@0\", \"relational-fol@0\"") (format := "ve-document@1") (discourse := "")
-#guard !(composed s428).startsWith "chain "
-#guard composed s428 == today s428
--- S4-25: no `norms@0`, a vocabulary `baseVocabulary` rejects: today's error
-def s425 : String := doc (profiles := "\"relational-fol@0\", \"ve.discourse@1\"")
-#guard (composed s425).startsWith "error: "
-#guard composed s425 == today s425
+-- `encodeComposed` and `composedJson`: the wrapper fields, `inner` verbatim, the case id
+def c0 : ChainAdmitted := ⟨.norms, .null, Json.mkObj [("report_id", "r"), ("conditional_on", Json.arr #["a"])], "d", "w",
+  Json.arr #[]⟩
+#guard (VE.Discourse.Run.encodeComposed "s4" c0).compress == "{\"document_id\":\"d\",\"id\":\"s4\"," ++
+  "\"inner\":{\"conditional_on\":[\"a\"],\"report_id\":\"r\"},\"inner_report_id\":\"r\",\"references\":[]," ++
+  "\"report_id\":\"w\",\"status\":\"ok\"}"
+#guard conditionalOnOf (composedJson c0) == [Json.arr #["a"]]
 
 /-! ## Chain constructs (14.2), cases (14.4) and the pre-order of `conditional_on` -/
 
@@ -195,25 +155,6 @@ def payload (units : String) : Json :=
   Json.mkObj [("metadata", (Json.parse "{\"units\": [{\"id\": \"u\", \"content\": null, \"parts\": [{\"id\": \"p\",
   \"content\": null}, {\"id\": \"q\", \"content\": null}]}, {\"id\": \"v\", \"content\": null}], \"format\": \"f\"}").toOption.getD
   .null), ("fences", Json.mkObj []), ("source", "s")]
-
--- S4-22 (without a fence): the case written out as a `ve-document@1` text, its shape kept; `checkCore` on it equals
--- `checkCore` on the hand-written `@1` document
-def resolved : Json := (resolveCase (caseOf doc)).toOption.getD .null
-def front (j : Json) : Json :=
-  (((j.getObjValD "document").getStr?.toOption.bind fun t => (Loader.splitText t).toOption).map (·.front)).getD .null
-#guard (front resolved).getObjValD "format" == .str "ve-document@1"
-#guard ((front resolved).getObjVal? "discourse").toOption.isNone
-#guard ((front resolved).getObjValD "environment").getObjValD "profiles" ==
-  Json.arr #[.str "norms@0", .str "relational-fol@0"]
-#guard (caseShape resolved).compress == (caseShape (caseOf doc)).compress
-#guard (caseShape resolved).getObjValD "document" != .null
-#guard (caseShape resolved).getObjValD "id" == .str "s4"
-#guard ((VE.Service.Document.checkCore resolved).toOption.map Json.compress) ==
-  ((VE.Service.Document.checkCore (caseOf (doc (profiles := "\"norms@0\", \"relational-fol@0\"")
-    (format := "ve-document@1") (discourse := "")))).toOption.map Json.compress)
-#guard ((VE.Service.Document.checkCore resolved).toOption.map (·.getObjValD "status")) == some (.str "ok")
--- S4-23: a case without `ve.discourse@1` is returned as it is
-#guard (resolveCase (caseOf s428)).toOption.map Json.compress == some (caseOf s428).compress
 
 -- `conditionalOnOf`: every `conditional_on` list, pre-order, keys in order, arrays in order
 #guard conditionalOnOf ((Json.parse "{\"a\": {\"conditional_on\": [\"x\"]}, \"b\": [{\"conditional_on\": [\"y\"]},
