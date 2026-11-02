@@ -16993,15 +16993,29 @@
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
         "VE.Defaults.maxDefaultAtoms",
+        "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
+        "VE.Defaults.openAtomsCount",
+        "VE.Defaults.recTuples",
+        "VE.Defaults.tupleCount",
+        "VE.Defaults.tupleMult",
+        "VE.Defaults.tuplesOutside",
         "VE.Defaults.zoneAtoms",
+        "VE.Defaults.zoneCharge",
         "VE.Defaults.zoneDeclOk",
+        "VE.Defaults.zoneGens",
         "VE.Defaults.zoneMin",
         "VE.Defaults.zoneRecordOk",
         "VE.Defaults.zoneRow"
       ],
       "G[V]": [
-        "VE.Defaults.zoneForm"
+        "VE.Defaults.zoneForm",
+        {
+          "name": "VE.Defaults.zoneFormOf",
+          "tied": [
+            "VE.Defaults.zoneFormOf_eq"
+          ]
+        }
       ],
       "P": [
         "VE.Defaults.zA",
@@ -17032,15 +17046,22 @@
         "VE.Defaults.ZoneFixtures.a0",
         "VE.Defaults.ZoneFixtures.a1",
         "VE.Defaults.ZoneFixtures.dlam",
+        "VE.Defaults.ZoneFixtures.dupA",
+        "VE.Defaults.ZoneFixtures.dupSit",
+        "VE.Defaults.ZoneFixtures.dwide",
         "VE.Defaults.ZoneFixtures.dδ3",
         "VE.Defaults.ZoneFixtures.dε2",
         "VE.Defaults.ZoneFixtures.dμ'",
+        "VE.Defaults.ZoneFixtures.e0",
         "VE.Defaults.ZoneFixtures.el",
         "VE.Defaults.ZoneFixtures.envS",
         "VE.Defaults.ZoneFixtures.exc",
+        "VE.Defaults.ZoneFixtures.fixBoth",
         "VE.Defaults.ZoneFixtures.minCount",
         "VE.Defaults.ZoneFixtures.obsμ",
         "VE.Defaults.ZoneFixtures.off",
+        "VE.Defaults.ZoneFixtures.recN",
+        "VE.Defaults.ZoneFixtures.recs",
         "VE.Defaults.ZoneFixtures.reg",
         "VE.Defaults.ZoneFixtures.ruleG",
         "VE.Defaults.ZoneFixtures.settled",

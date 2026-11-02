@@ -11468,6 +11468,11 @@ theorem VE.Defaults.act_arity
       ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.actSortsOf D (VE.SoftNorms.act D N))
   -- uses VE.Norms.Arity@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree
   -- expr 60109947
+theorem VE.Defaults.any_eq_recTuples
+  ∀ {α : Type} [inst : DecidableEq α] (record : List ((String × List α) × Bool)) (p : String) (vs : List α),
+    (record.any fun r => r.fst == (p, vs)) = (VE.Defaults.recTuples record p).contains vs
+  -- uses VE.Defaults.recTuples@VE.Defaults.Zone
+  -- expr 564422568
 theorem VE.Defaults.assumptions_sound
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -11600,6 +11605,16 @@ theorem VE.Defaults.consistent_atomV
             VE.NormDefaults.coneAtomVX M opens rec' C A p vs = Option.some c → (R p vs ↔ c = Bool.true)
   -- uses VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.coneAtomVX@VE.NormDefaults.Evidence
   -- expr 2175039695
+theorem VE.Defaults.count_allTuples
+  ∀ {α : Type} [inst : DecidableEq α] (M : VE.FiniteModel α) (ss : List String) (vs : List α),
+    List.count vs (VE.NormDefaults.allTuples M ss) = VE.Defaults.tupleMult M ss vs
+  -- uses VE.Defaults.tupleMult@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.allTuples@VE.NormDefaults.Evidence
+  -- expr 1153085968
+theorem VE.Defaults.count_map_cons
+  ∀ {α : Type} [inst : DecidableEq α] (v v' : α) (vs : List α) (L : List (List α)),
+    List.count (v :: vs) (List.map (fun x => v' :: x) L) = if v' = v then List.count vs L else 0
+  -- uses
+  -- expr 2499293663
 theorem VE.Defaults.dc_of_min
   ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {L : VE.NormDefaults.Wire.LayeredU}
     {X : List (String × VE.Formula)} {record : List ((String × List α) × Bool)}
@@ -11862,6 +11877,17 @@ theorem VE.Defaults.least_le
           ∀ (p : String) (vs : List B.Carrier), VE.Defaults.leastDecisions D B p vs → B.relation p vs
   -- uses VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Norms.Sat@VE.Norms.Prefix VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3632613416
+theorem VE.Defaults.length_allTuples
+  ∀ {α : Type} (M : VE.FiniteModel α) (ss : List String),
+    (VE.NormDefaults.allTuples M ss).length = VE.Defaults.tupleCount M ss
+  -- uses VE.Defaults.tupleCount@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.allTuples@VE.NormDefaults.Evidence
+  -- expr 4147056961
+theorem VE.Defaults.length_filter_ne
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (p : β → Bool) (x : β) (l : List β),
+    ((List.filter (fun v => !v == x && p v) l).length + if p x = Bool.true then List.count x l else 0) =
+      (List.filter p l).length
+  -- uses
+  -- expr 628926752
 theorem VE.Defaults.mem_exc
   ∀ {D : VE.SoftNorms.SoftDoc} {N : VE.SoftNorms.SoftNode},
     N ∈ D.T.nodes →
@@ -11911,6 +11937,12 @@ theorem VE.Defaults.node_arity
       ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.sortsOf D N.pred)
   -- uses VE.Norms.Arity@VE.Norms.Basic VE.Norms.Node.pred@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 898490877
+theorem VE.Defaults.openAtomsCount_eq
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)),
+    VE.Defaults.openAtomsCount L M record = (VE.Defaults.openAtomsAll L M record).length
+  -- uses VE.Defaults.openAtomsAll@VE.Defaults.Zone VE.Defaults.openAtomsCount@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 3804746123
 theorem VE.Defaults.pairChecks_sound
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
     (c : Option VE.Tableau.Certificate),
@@ -12074,10 +12106,24 @@ theorem VE.Defaults.strict_of_withoutDefaults
     VE.NormDefaults.EntailsX U (VE.Defaults.withoutDefaults D X) Γ φ → VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Defaults.withoutDefaults@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 3043036219
+theorem VE.Defaults.sum_ite_count
+  ∀ {α : Type} [inst : DecidableEq α] (v : α) (c : Nat) (D : List α),
+    (List.map (fun v' => if v' = v then c else 0) D).sum = List.count v D * c
+  -- uses
+  -- expr 99860057
+theorem VE.Defaults.sum_replicate_zone
+  ∀ (n c : Nat), (List.replicate n c).sum = n * c
+  -- uses
+  -- expr 3628465440
 theorem VE.Defaults.toOption_eq_some
   ∀ {x : Except String Bool} {b : Bool}, x.toOption = Option.some b ↔ x = Except.ok b
   -- uses
   -- expr 3222603673
+theorem VE.Defaults.tuplesOutside_eq
+  ∀ {α : Type} [inst : DecidableEq α] (M : VE.FiniteModel α) (ss : List String) (S : List (List α)),
+    VE.Defaults.tuplesOutside M ss S = (List.filter (fun vs => !S.contains vs) (VE.NormDefaults.allTuples M ss)).length
+  -- uses VE.Defaults.tuplesOutside@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.allTuples@VE.NormDefaults.Evidence
+  -- expr 2389632304
 theorem VE.Defaults.val_dc
   ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {L : VE.NormDefaults.Wire.LayeredU}
     {X : List (String × VE.Formula)} {record : List ((String × List α) × Bool)}
@@ -12135,6 +12181,17 @@ theorem VE.Defaults.zoneAtoms_facts
           (∃ b, (a, b) ∈ record ++ VE.Defaults.switchesOffRecord L.D M record) ∨ a ∈ VE.Defaults.zoneAtoms L M record
   -- uses VE.Defaults.switchesOffRecord@VE.Defaults.Zone VE.Defaults.zoneAtoms@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Weighing.decisionAtoms@VE.Weighing.Zone VE.Weighing.openNames@VE.Weighing.Zone
   -- expr 4060352771
+theorem VE.Defaults.zoneCharge_some
+  ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {L : VE.NormDefaults.Wire.LayeredU}
+    {record : List ((String × List α) × Bool)} {z : VE.Defaults.DefaultZone α},
+    VE.Defaults.zoneCharge L M record = Option.some z →
+      z =
+            VE.Defaults.DefaultZone.unknown
+              (VE.Weighing.ZoneUnknown.budget (VE.Defaults.openAtomsAll L M record).length VE.Defaults.maxDefaultAtoms) ∧
+          VE.Defaults.maxDefaultAtoms < (VE.Defaults.openAtomsAll L M record).length ∨
+        ∃ w y, z = VE.Defaults.DefaultZone.unknown (VE.Weighing.ZoneUnknown.branch w y)
+  -- uses VE.Defaults.DefaultZone.unknown@VE.Defaults.Zone VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.maxDefaultAtoms@VE.Defaults.Zone VE.Defaults.openAtomsAll@VE.Defaults.Zone VE.Defaults.zoneCharge@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Weighing.ZoneUnknown.branch@VE.Weighing.Zone VE.Weighing.ZoneUnknown.budget@VE.Weighing.Zone
+  -- expr 3619023520
 theorem VE.Defaults.zoneDeclOk_iff
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (M : VE.FiniteModel α) (a : String × List α),
     VE.Defaults.zoneDeclOk L M a = Bool.true ↔
@@ -12143,6 +12200,14 @@ theorem VE.Defaults.zoneDeclOk_iff
           VE.TupleTyped M.asStructure ss a.snd
   -- uses VE.Defaults.zoneDeclOk@VE.Defaults.Zone VE.Environment.predicates@VE.Syntax VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.TupleTyped@VE.Semantics
   -- expr 2037860155
+theorem VE.Defaults.zoneFormOf_eq
+  ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {L : VE.NormDefaults.Wire.LayeredU}
+    {record : List ((String × List α) × Bool)},
+    VE.Defaults.zoneFormOf L M record =
+      if (VE.Defaults.zoneCharge L M record).isSome = Bool.true then Option.none
+      else Option.some (VE.Defaults.zoneForm L M record)
+  -- uses VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.zoneCharge@VE.Defaults.Zone VE.Defaults.zoneForm@VE.Defaults.Zone VE.Defaults.zoneFormOf@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 3148757932
 theorem VE.Defaults.zoneMin_error
   ∀ {α : Type} [inst : DecidableEq α] {M : VE.FiniteModel α} {L : VE.NormDefaults.Wire.LayeredU}
     {X : List (String × VE.Formula)} {record : List ((String × List α) × Bool)}

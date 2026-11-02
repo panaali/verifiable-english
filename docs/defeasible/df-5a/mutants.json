@@ -8,7 +8,7 @@
  "fixtures": "VE/Defaults/ZoneExamples.lean",
  "module": "VE.Defaults.Zone",
  "keep": [],
- "note": "Each mutant edits lean/VE/Defaults/Zone.lean (Lean, the only product language this item changes). kind plan: the five seeded bugs of spec 8.9 this item delivers (S1-S5; 'forcedAll read from one default completion' moves with forcedAllOf to df-5ab). kind R16: one per new trusted definition of tools/trust_map.py (S: DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord; G[V]: zoneForm, S5). The Props (T1, T2, T4, T5, T6) keep every theorem and must fail inside the theorem named; T8 (an inductive) is run by hand. C1-C5: the enumeration's checks (C class): the budget, the atom list, observations, the record, typing.",
+ "note": "Each mutant edits lean/VE/Defaults/Zone.lean (Lean, the only product language this item changes). kind plan: the five seeded bugs of spec 8.9 this item delivers (S1-S5; 'forcedAll read from one default completion' moves with forcedAllOf to df-5ab). kind R16: one per new trusted definition of tools/trust_map.py (S: DecLe, Observed, switchesOffRecord, DefaultCompletion, ByDefaultZ, ByDefaultLeftTo, DefaultZone, noExceptionRecord; G[V]: zoneForm, S5). The Props (T1, T2, T4, T5, T6) keep every theorem and must fail inside the theorem named; T8 (an inductive) is run by hand. C1-C5: the enumeration's checks (C class): the budget, the atom list, observations, the record, typing. C6-C11 (review F1, the charge): the count ignoring the record (C6), counting a tuple once however often listed (C7), subtracting a repeated record tuple twice (C8), the record's length uncharged (C9), the typed atoms uncharged (C10), the form past the charge (C11). F1 (the open atoms counted by listing them) changes only the cost, so it is run by hand under `timeout` (evidence/F1.out).",
  "mutants": [
   {
    "language": "Lean",
@@ -45,8 +45,8 @@
    "definition": "VE.Defaults.defaultZoneOf",
    "kind": "plan",
    "bug": "minimality over the query's cone only (coneEvalO's atoms of the outcome, {excepted_r2} at DF-μ″; spec 8.9: DF-μ″ turns by default no)",
-   "find": "/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)`\n    beyond `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the\n    finite situation) and agree with the observations, then the minimality filter over their decision parts. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMin L X M record obs with",
-   "replace": "def zoneMinCone {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool)) (cone : List (String × List α)) :\n    Except (DefaultZone α) (List (List (String × List α))) :=\n  let n := (openAtomsAll L M record).length\n  if maxDefaultAtoms < n then .error (.unknown (.budget n maxDefaultAtoms)) else\n  let rec' := record ++ switchesOffRecord L.D M record\n  if !zoneRecordOk L M rec' then .error (.noCompletion [\"record\"]) else\n  if !(VE.Norms.backgroundBase (VE.NormDefaults.fill L.U)).all (·.eval M []) then\n    .error (.noCompletion [\"background\"]) else\n  let C := zoneAtoms L M record\n  let ok := C.filter (zoneDeclOk L M)\n  let P := X ++ (VE.NormDefaults.fillPremises L.U).map (fun ψ => (\"fill\", ψ))\n  let obsF := obs.map (fun o =>\n    ((VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) o.1.1.name, VE.Norms.tupleVal o.1.2), o.2))\n  let rows := (VE.NormDefaults.subsets C).map (fun A => (A, zoneRow M (openNames L) rec' C ok P obsF A))\n  match rows.find? (fun x => x.2.toOption == some false) with\n  | some x => .error (.unknown (.branch (C.map (fun a => (a, x.1.contains a))) \"none checked\"))\n  | none =>\n    let S := (rows.filter (fun x => x.2.toOption == some true)).map (·.1)\n    if S.isEmpty then\n      .error (.noCompletion (rows.filterMap (fun x => match x.2 with | .error l => some l | .ok _ => none)).eraseDups)\n    else\n      let dec := (decisionAtoms L.D M).filter (cone.contains ·)\n      .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))\n\n/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)`\n    beyond `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the\n    finite situation) and agree with the observations, then the minimality filter over their decision parts. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMinCone L X M record obs (VE.NormDefaults.coneEvalO M (openNames L) (VE.Norms.tupleVal vs)\n      (VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) r.name)).2 with",
+   "find": "/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `zoneCharge` first,\n    so `unknown (budget)` beyond `maxDefaultAtoms` is counted, never listed), then the full assignments that satisfy X\n    and `Fill_T` (each premise evaluated on the finite situation) and agree with the observations, then the minimality\n    filter over their decision parts. The record and the atom list are built once in `zoneMin` and once here, both\n    after the charge. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMin L X M record obs with\n",
+   "replace": "def zoneMinCone {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool)) (cone : List (String × List α)) :\n    Except (DefaultZone α) (List (List (String × List α))) :=\n  match zoneCharge L M record with\n  | some z => .error z\n  | none =>\n  let rec' := record ++ switchesOffRecord L.D M record\n  if !zoneRecordOk L M rec' then .error (.noCompletion [\"record\"]) else\n  if !(VE.Norms.backgroundBase (VE.NormDefaults.fill L.U)).all (·.eval M []) then\n    .error (.noCompletion [\"background\"]) else\n  let C := zoneAtoms L M record\n  let ok := C.filter (zoneDeclOk L M)\n  let P := X ++ (VE.NormDefaults.fillPremises L.U).map (fun ψ => (\"fill\", ψ))\n  let obsF := obs.map (fun o =>\n    ((VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) o.1.1.name, VE.Norms.tupleVal o.1.2), o.2))\n  let opens := openNames L\n  let rows := (VE.NormDefaults.subsets C).map (fun A => (A, zoneRow M opens rec' C ok P obsF A))\n  match rows.find? (fun x => x.2.toOption == some false) with\n  | some x => .error (.unknown (.branch (C.map (fun a => (a, x.1.contains a))) \"none checked\"))\n  | none =>\n    let S := (rows.filter (fun x => x.2.toOption == some true)).map (·.1)\n    if S.isEmpty then\n      .error (.noCompletion (rows.filterMap (fun x => match x.2 with | .error l => some l | .ok _ => none)).eraseDups)\n    else\n      let dec := (decisionAtoms L.D M).filter (cone.contains ·)\n      .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))\n\n/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `zoneCharge` first,\n    so `unknown (budget)` beyond `maxDefaultAtoms` is counted, never listed), then the full assignments that satisfy X\n    and `Fill_T` (each premise evaluated on the finite situation) and agree with the observations, then the minimality\n    filter over their decision parts. The record and the atom list are built once in `zoneMin` and once here, both\n    after the charge. -/\ndef defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)\n    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))\n    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=\n  have _ := proposed\n  match zoneMinCone L X M record obs (VE.NormDefaults.coneEvalO M (openNames L) (VE.Norms.tupleVal vs)\n      (VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) r.name)).2 with\n",
    "guards": [
     "#guard holds dγ fun L => zone L M1 [] \"x_permitted\" [a0] == \"leftTo\" && minCount L M1 [] ["
    ],
@@ -265,6 +265,105 @@
    "bug": "constructor notSaid dropped (tools/trust_mutants.py's ctor-drop)",
    "guards": [],
    "test": "lake build VE.Defaults.Zone: defaultZoneOf no longer elaborates (it returns notSaid); run by hand, evidence/T8.out"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C6",
+   "definition": "VE.Defaults.openAtomsCount",
+   "kind": "charge",
+   "bug": "the count ignores the record (the record's fixed atoms counted open)",
+   "find": "  ((zoneGens L).map (fun g => tuplesOutside M g.2 (recTuples record g.1))).sum",
+   "replace": "  ((zoneGens L).map (fun g => tuplesOutside M g.2 ([] : List (List α)))).sum",
+   "guards": [
+    "#guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] \"instructs\" [e0] == \"yes\" &&",
+    "#guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>",
+    "#guard holds dδ fun L => openAtomsCount L dupA [((outw, [a0]), true)] == 10 && openAtomsCount L A2 [] == 8"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C7",
+   "definition": "VE.Defaults.tupleMult",
+   "kind": "charge",
+   "bug": "a tuple counted once however often the domains list it",
+   "find": "  | s :: ss, v :: vs => (M.domains s).count v * tupleMult M ss vs",
+   "replace": "  | s :: ss, v :: vs => (if v ∈ M.domains s then 1 else 0) * tupleMult M ss vs",
+   "guards": [
+    "#guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] \"instructs\" [e0] == \"yes\" &&",
+    "#guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>",
+    "#guard holds dδ fun L => openAtomsCount L dupA [((outw, [a0]), true)] == 10 && openAtomsCount L A2 [] == 8"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C8",
+   "definition": "VE.Defaults.tuplesOutside",
+   "kind": "charge",
+   "bug": "a record tuple named twice subtracted twice",
+   "find": "  | vs :: S => tuplesOutside M ss S - (if S.contains vs then 0 else tupleMult M ss vs)",
+   "replace": "  | vs :: S => tuplesOutside M ss S - tupleMult M ss vs",
+   "guards": [
+    "#guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C9",
+   "definition": "VE.Defaults.zoneCharge",
+   "kind": "charge",
+   "bug": "the record's length not charged",
+   "find": "  if maxZoneRecord < record.length then some (.unknown (.branch [] \"record size\")) else",
+   "replace": "  if false then some (.unknown (.branch [] \"record size\")) else",
+   "guards": [
+    "#guard holds dlam fun L => zoneR L (sit \"operator\" 2 []) (recN maxZoneRecord) [] \"instructs\" [el \"o"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C10",
+   "definition": "VE.Defaults.zoneCharge",
+   "kind": "charge",
+   "bug": "the typed atoms not charged (only the open ones)",
+   "find": "  if maxZoneRecord + maxDefaultAtoms < openAtomsCount L M [] then some (.unknown (.branch [] \"size\")) else none",
+   "replace": "  if false then some (.unknown (.branch [] \"size\")) else none",
+   "guards": [
+    "#guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] \"instructs\" [e0] == \"yes\" &&"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "C11",
+   "definition": "VE.Defaults.zoneFormOf",
+   "kind": "charge",
+   "bug": "the form computed past the charge",
+   "find": "  | some _ => none\n  | none => some (zoneForm L M record)",
+   "replace": "  | some _ => some (zoneForm L M record)\n  | none => some (zoneForm L M record)",
+   "guards": [
+    "#guard holds dlam fun L => zone L (sit \"operator\" 13 []) [] \"instructs\" [el \"operator\" 0] ",
+    "#guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] \"instructs\" [e0] == \"yes\" &&"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: the guards named"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F1",
+   "definition": "VE.Defaults.zoneCharge",
+   "kind": "charge",
+   "bug": "review F1: the open atoms counted by listing them (`(openAtomsAll L M record).length`, equal by openAtomsCount_eq, so no guard's value changes: only the cost)",
+   "guards": [],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dwide guard (20,000,000 open atoms) no longer ends; run by hand under `timeout`, evidence/F1.out"
   }
  ]
 }

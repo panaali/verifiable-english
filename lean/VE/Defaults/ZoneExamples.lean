@@ -51,7 +51,7 @@ def tag : DefaultZone Entity → String
   | .notSaid _ _ => "notSaid"
   | .noCompletion _ => "noCompletion"
   | .unknown (.budget n k) => s!"budget {n} {k}"
-  | .unknown (.branch _ _) => "branch"
+  | .unknown (.branch _ y) => "branch " ++ y
 abbrev Obs := List ((VE.Norms.Regulated × List Entity) × Bool)
 def zoneR (L : LayeredU) (M : VE.FiniteModel Entity) (rec : List ((String × List Entity) × Bool)) (obs : Obs)
     (n : String) (vs : List Entity) : String :=
@@ -182,12 +182,59 @@ def exc (r : String) (e : Entity) : String × List Entity := ("soft__excepted__"
 #guard holds dδ3 fun L => zoneForm L M1 [(("soft__outweighs__honesty__safety__x_permitted", [a0]), true)] == .long &&
   zoneForm L M1 [((outw, [a0]), true), (("soft__outweighs__honesty__safety__x_permitted", [a0]), true)] == .short
 
-/-! ## The budget: every value read once, the open atoms charged against `maxDefaultAtoms` -/
+/-! ## The budget: the charge counts the record, the open atoms and the typed atoms before listing any -/
 
 -- DF-λ at 13 operators: 26 open atoms > 12, `unknown (budget 26)` before any assignment is built.
-#guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] == "budget 26 12"
+#guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] == "budget 26 12" &&
+  zoneFormOf L (sit "operator" 13 []) [] == none
 -- The largest well-formed situation within the limit (6 operators, 12 open atoms, 4,096 assignments) ends.
 #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultAtoms &&
   zone L (sit "operator" 6 []) [((reg L "instructs", [el "operator" 5]), false)] "instructs" [el "operator" 5] == "no"
+
+/-- DF-λ wide (review F1): ten binary plain predicates, each with a default rule decided by `o`. -/
+def dwide : Except String LayeredU :=
+  let ps := (List.range 10).map fun i => s!"p{i}"
+  layered (envS "o" (ps.map fun p => regJ p "[\"o\",\"o\"]" "plain" "unspecified")
+      r#"{"parties":["o"],"outranking":{"mode":"strict"}}"#)
+    (ps.map fun p => ruleJ ("g" ++ p) p true (dfltJ (dec := "o")))
+-- At 1,000 entities: 20,000,000 open atoms (an exception and an unsaid atom per pair, per predicate), counted from
+-- the sorts' sizes and answered at once, never listed (listing them took 96 s and 5 GB).
+#guard holds dwide fun L => zone L (sit "o" 1000 []) [] "p0" [el "o" 0, el "o" 0] == "budget 20000000 12"
+-- At 100,000 entities: 2 × 10¹¹ open atoms, which no listing could hold.
+#guard holds dwide fun L => zone L (sit "o" 100000 []) [] "p0" [el "o" 0, el "o" 0] == "budget 200000000000 12"
+
+/-- `k` copies of one operator: every typed atom listed `k` times. -/
+def dupSit (k : Nat) : VE.FiniteModel Entity :=
+  ⟨fun s => if s == "operator" then List.replicate k (el "operator" 0) else [], fun _ => none, fun _ => []⟩
+def e0 : Entity := el "operator" 0
+def recN (k : Nat) : List ((String × List Entity) × Bool) := List.replicate k (exc "g1" e0, false)
+def fixBoth : List ((String × List Entity) × Bool) := [(exc "g1" e0, false), (("unsaid__instructs", [e0]), true)]
+
+-- The record: `maxZoneRecord` entries are read, one more is `unknown` before the record is read, even with more
+-- than `maxDefaultAtoms` atoms open.
+#guard holds dlam fun L => zoneR L (sit "operator" 2 []) (recN maxZoneRecord) [] "instructs" [el "operator" 1] == "yes" &&
+  zoneR L (sit "operator" 2 []) (recN (maxZoneRecord + 1)) [] "instructs" [el "operator" 1] == "branch record size" &&
+  zoneR L (sit "operator" 13 []) (recN (maxZoneRecord + 1)) [] "instructs" [el "operator" 1] == "branch record size"
+-- The typed atoms: with every atom fixed, 2 × 518 = `maxZoneRecord + maxDefaultAtoms` copies are listed, 2 × 519 are
+-- `unknown`; unfixed, they are the exact budget.
+#guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+  zoneR L (dupSit 519) fixBoth [] "instructs" [e0] == "branch size" &&
+  zoneR L (dupSit 2000) fixBoth [] "instructs" [e0] == "branch size" &&
+  zone L (dupSit 2000) [] "instructs" [e0] == "budget 4000 12" && zoneFormOf L (dupSit 519) fixBoth == none
+
+-- The count is `openAtomsAll`'s length (`openAtomsCount_eq`) on records that repeat an atom, say it both ways, name an
+-- undeclared predicate or a tuple of the wrong length, and on domains that list an element twice.
+def recs : List (List ((String × List Entity) × Bool)) :=
+  [[], [((outw, [a0]), true)], [((outw, [a0]), true), ((outw, [a0]), false), ((outw, [a0]), true)],
+   [(exc "r1" a0, false), (exc "r2" a1, true), (("unsaid__x_required", [a1]), false)], [(("zzz", [a0]), true)],
+   [((outw, [a0, a1]), true), ((outw, []), true)]]
+def dupA : VE.FiniteModel Entity :=
+  ⟨fun s => if s == "assistant" then [a0, a1, a0] else [], fun _ => none, fun _ => []⟩
+#guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>
+  openAtomsCount L M r == (openAtomsAll L M r).length
+-- Four unary predicates: 4 × 3 listed elements, less the two copies of the fixed `outw(a0)`; 4 × 2 at two elements.
+#guard holds dδ fun L => openAtomsCount L dupA [((outw, [a0]), true)] == 10 && openAtomsCount L A2 [] == 8
+-- The form behind the charge is the form.
+#guard holds dδ fun L => zoneFormOf L M1 [] == some .long && zoneFormOf L A2 [((outw, [a0]), true), ((outw, [a1]), true)] == some .short
 
 end VE.Defaults.ZoneFixtures

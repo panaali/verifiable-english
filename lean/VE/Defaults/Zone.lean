@@ -9,8 +9,10 @@ whole `X` and `Fill_T`, the switches off unless the record says otherwise) that 
 minimal in its decision atoms; the unsaid tables vary (D15). `defaultZoneOf` computes the zone of an outcome by
 nd-atoms' enumeration (`subsets`, valued by `coneAtomVX` and Kleene evaluation) over every typed open atom of the
 situation (`openAtomsAll`), never the query's cone (D10: `cone_minimal_iff` is not proved, so cone pruning is off).
-Each value the enumeration reads (the atoms, the record, the premises, the observed outcomes) is computed once, and
-the number of open atoms is charged against `maxDefaultAtoms` before any assignment is built.
+`zoneCharge` counts the record, the open atoms (`openAtomsCount`, equal to `openAtomsAll`'s length) and the typed
+atoms arithmetically before any atom, tuple or assignment is listed; past a bound the zone is `unknown` at once. Within
+the bounds each value the enumeration reads (the atoms, the record, the premises, the observed outcomes) is let-bound
+once per function.
 -/
 
 namespace VE.Defaults
@@ -107,7 +109,8 @@ def decSub {α : Type} [DecidableEq α] (dec A B : List (String × List α)) : B
 /-- The atoms `defaultZoneOf` enumerates: `openAtomsAll` without the atoms the switches-off record fixes. -/
 def zoneAtoms {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
     (record : List ((String × List α) × Bool)) : List (String × List α) :=
-  (openAtomsAll L M record).filter (fun a => !(switchesOffRecord L.D M record).any (fun e => e.1 == a))
+  let off := switchesOffRecord L.D M record
+  (openAtomsAll L M record).filter (fun a => !off.any (fun e => e.1 == a))
 
 /-- An atom of the situation is a declared predicate of the filled base environment at a typed tuple. -/
 def zoneDeclOk {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α) (a : String × List α) : Bool :=
@@ -123,14 +126,64 @@ def zoneRecordOk {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel
     (decide (e.1.1 ∈ openNames L) || (decide (e.1.2 ∈ M.relations e.1.1) == e.2)) &&
     (!e.2 || zoneDeclOk L M e.1))
 
-/-- The enumeration and the minimality filter: `.error` with the zone when it ends early (the budget, a record or
+/-! ## The charge: sizes counted before anything is listed -/
+
+/-- The number of tuples `allTuples M ss` lists (`length_allTuples`), counted without listing them. -/
+def tupleCount {α : Type} (M : VE.FiniteModel α) : List String → Nat
+  | [] => 1
+  | s :: ss => (M.domains s).length * tupleCount M ss
+
+/-- How often `allTuples M ss` lists `vs` (`count_allTuples`), counted without listing it. -/
+def tupleMult {α : Type} [DecidableEq α] (M : VE.FiniteModel α) : List String → List α → Nat
+  | [], [] => 1
+  | s :: ss, v :: vs => (M.domains s).count v * tupleMult M ss vs
+  | _, _ => 0
+
+/-- How many entries of `allTuples M ss` are not in `S` (`tuplesOutside_eq`), counted without listing them. -/
+def tuplesOutside {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ss : List String) : List (List α) → Nat
+  | [] => tupleCount M ss
+  | vs :: S => tuplesOutside M ss S - (if S.contains vs then 0 else tupleMult M ss vs)
+
+/-- The predicates `openAtomsAll` lists atoms of, each with its sorts: the decisions, then the unsaid predicates. -/
+def zoneGens (L : LayeredU) : List (String × List String) :=
+  VE.SoftNorms.decisions L.D ++
+    L.U.unspec.map (fun p => (VE.NormDefaults.unsaidName p, VE.NormDefaults.sortsOf L.U.D p))
+
+/-- The tuples the record fixes at predicate `p`. -/
+def recTuples {α : Type} (record : List ((String × List α) × Bool)) (p : String) : List (List α) :=
+  record.filterMap (fun e => if e.1.1 == p then some e.1.2 else none)
+
+/-- `(openAtomsAll L M record).length` (`openAtomsCount_eq`), counted from the sorts' sizes and the record without
+    listing an atom or a tuple. With the empty record it counts every typed decision and unsaid atom. -/
+def openAtomsCount {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) : Nat :=
+  ((zoneGens L).map (fun g => tuplesOutside M g.2 (recTuples record g.1))).sum
+
+/-- The bound on the record's entries; with `maxDefaultAtoms`, the bound on the typed atoms listed. -/
+def maxZoneRecord : Nat := 1024
+
+/-- The charge, before any atom, tuple or record entry is listed (the evaluator rule: never a long run or a large
+    allocation). `unknown (branch [] "record size")` for a record of more than `maxZoneRecord` entries;
+    `unknown (budget n maxDefaultAtoms)` when more than `maxDefaultAtoms` atoms are open (`n` counted by
+    `openAtomsCount`); `unknown (branch [] "size")` when the situation has more than `maxZoneRecord + maxDefaultAtoms`
+    typed decision and unsaid atoms (with at most `maxDefaultAtoms` open, only a domain or a predicate listed twice
+    gets there). `none` when every list `zoneMin` and `zoneForm` build is within these bounds. -/
+def zoneCharge {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) : Option (DefaultZone α) :=
+  if maxZoneRecord < record.length then some (.unknown (.branch [] "record size")) else
+  let n := openAtomsCount L M record
+  if maxDefaultAtoms < n then some (.unknown (.budget n maxDefaultAtoms)) else
+  if maxZoneRecord + maxDefaultAtoms < openAtomsCount L M [] then some (.unknown (.branch [] "size")) else none
+
+/-- The enumeration and the minimality filter: `.error` with the zone when it ends early (`zoneCharge`, a record or
     background no completion meets, an assignment left unknown, no assignment left), otherwise `.ok` with the
-    decision-minimal assignments that pass every check. -/
+    decision-minimal assignments that pass every check. Nothing is listed before `zoneCharge` passes. -/
 def zoneMin {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
     (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool)) :
     Except (DefaultZone α) (List (List (String × List α))) :=
-  let n := (openAtomsAll L M record).length
-  if maxDefaultAtoms < n then .error (.unknown (.budget n maxDefaultAtoms)) else
+  match zoneCharge L M record with
+  | some z => .error z
+  | none =>
   let rec' := record ++ switchesOffRecord L.D M record
   if !zoneRecordOk L M rec' then .error (.noCompletion ["record"]) else
   if !(VE.Norms.backgroundBase (VE.NormDefaults.fill L.U)).all (·.eval M []) then
@@ -140,7 +193,8 @@ def zoneMin {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.
   let P := X ++ (VE.NormDefaults.fillPremises L.U).map (fun ψ => ("fill", ψ))
   let obsF := obs.map (fun o =>
     ((VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) o.1.1.name, VE.Norms.tupleVal o.1.2), o.2))
-  let rows := (VE.NormDefaults.subsets C).map (fun A => (A, zoneRow M (openNames L) rec' C ok P obsF A))
+  let opens := openNames L
+  let rows := (VE.NormDefaults.subsets C).map (fun A => (A, zoneRow M opens rec' C ok P obsF A))
   match rows.find? (fun x => x.2.toOption == some false) with
   | some x => .error (.unknown (.branch (C.map (fun a => (a, x.1.contains a))) "none checked"))
   | none =>
@@ -151,9 +205,11 @@ def zoneMin {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.
       let dec := decisionAtoms L.D M
       .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))
 
-/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)`
-    beyond `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the
-    finite situation) and agree with the observations, then the minimality filter over their decision parts. -/
+/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `zoneCharge` first,
+    so `unknown (budget)` beyond `maxDefaultAtoms` is counted, never listed), then the full assignments that satisfy X
+    and `Fill_T` (each premise evaluated on the finite situation) and agree with the observations, then the minimality
+    filter over their decision parts. The record and the atom list are built once in `zoneMin` and once here, both
+    after the charge. -/
 def defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
     (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
     (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=
@@ -164,8 +220,9 @@ def defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String 
     let rec' := record ++ switchesOffRecord L.D M record
     let C := zoneAtoms L M record
     let φ := VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) r.name
+    let opens := openNames L
     let wit := fun (A : List (String × List α)) => C.map (fun a => (a, A.contains a))
-    let qv := Min.map (fun A => (A, VE.NormDefaults.kleene M (VE.NormDefaults.coneAtomVX M (openNames L) rec' C A)
+    let qv := Min.map (fun A => (A, VE.NormDefaults.kleene M (VE.NormDefaults.coneAtomVX M opens rec' C A)
       (VE.Norms.tupleVal vs) φ))
     match qv.find? (fun x => x.2 == none) with
     | some x => .unknown (.branch (wit x.1) "none checked")
@@ -195,6 +252,14 @@ def zoneForm {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
       !(decisionNames L.D).contains a.1 || (VE.SoftNorms.exceptedDecisions L.D).any (·.1 == a.1))
   then .short else .long
 
+/-- `zoneForm` behind `zoneCharge`: `none` when the charge stops, so the form never lists the atoms of a situation
+    `defaultZoneOf` does not enumerate. The entry a renderer calls. -/
+def zoneFormOf {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) : Option Form :=
+  match zoneCharge L M record with
+  | some _ => none
+  | none => some (zoneForm L M record)
+
 /-- Weighing's record "assuming no exception applies": every `excepted` atom of the situation set to false. -/
 def noExceptionRecord {α : Type} (D : SoftDoc) (M : VE.FiniteModel α) : List ((String × List α) × Bool) :=
   (VE.SoftNorms.exceptedDecisions D).flatMap (fun (n, ss) =>
@@ -207,6 +272,139 @@ variable {α : Type} [DecidableEq α]
 open VE.NormDefaults (coneAtomVX coneAtomVO kleene subsets)
 variable {M : VE.FiniteModel α} {opens : List String} {rec' : List ((String × List α) × Bool)}
   {C ok A : List (String × List α)} {P : List (String × VE.Formula)} {ob : List ((VE.Formula × List α) × Bool)}
+
+/-! ### The charge counts exactly what `openAtomsAll` lists -/
+
+theorem sum_replicate_zone (n c : Nat) : (List.replicate n c).sum = n * c := by
+  induction n with
+  | zero => simp
+  | succ n ih => simp [List.replicate_succ, ih, Nat.succ_mul, Nat.add_comm]
+
+theorem count_map_cons (v v' : α) (vs : List α) :
+    ∀ L : List (List α), (L.map (v' :: ·)).count (v :: vs) = if v' = v then L.count vs else 0
+  | [] => by simp
+  | w :: L => by
+    have ih := count_map_cons v v' vs L
+    simp only [List.map_cons, List.count_cons, ih, List.cons.injEq, beq_iff_eq]
+    by_cases h : v' = v <;> simp [h]
+
+theorem sum_ite_count (v : α) (c : Nat) :
+    ∀ D : List α, (D.map (fun v' => if v' = v then c else 0)).sum = D.count v * c
+  | [] => by simp
+  | w :: D => by
+    have ih := sum_ite_count v c D
+    simp only [List.map_cons, List.sum_cons, ih, List.count_cons, beq_iff_eq]
+    by_cases h : w = v <;> simp [h, Nat.add_mul, Nat.add_comm]
+
+omit [DecidableEq α] in
+theorem length_allTuples (M : VE.FiniteModel α) :
+    ∀ ss, (VE.NormDefaults.allTuples M ss).length = tupleCount M ss
+  | [] => by simp [VE.NormDefaults.allTuples, tupleCount]
+  | s :: ss => by
+    simp only [VE.NormDefaults.allTuples, tupleCount, List.length_flatMap, List.length_map, length_allTuples M ss,
+      List.map_const', sum_replicate_zone]
+
+theorem count_allTuples (M : VE.FiniteModel α) :
+    ∀ ss vs, (VE.NormDefaults.allTuples M ss).count vs = tupleMult M ss vs
+  | [], [] => by simp [VE.NormDefaults.allTuples, tupleMult]
+  | [], _ :: _ => by simp [VE.NormDefaults.allTuples, tupleMult]
+  | s :: ss, [] => by
+    simp only [VE.NormDefaults.allTuples, tupleMult, List.count_eq_zero, List.mem_flatMap, List.mem_map]
+    rintro ⟨_, _, _, _, h⟩
+    cases h
+  | s :: ss, v :: vs => by
+    simp only [VE.NormDefaults.allTuples, tupleMult, List.count_flatMap, Function.comp_def, count_map_cons,
+      count_allTuples M ss vs, sum_ite_count]
+
+theorem length_filter_ne {β : Type} [BEq β] [LawfulBEq β] (p : β → Bool) (x : β) :
+    ∀ l : List β, (l.filter (fun v => !(v == x) && p v)).length + (if p x then l.count x else 0) =
+      (l.filter p).length
+  | [] => by simp
+  | y :: l => by
+    have ih := length_filter_ne p x l
+    rw [List.filter_cons, List.filter_cons, List.count_cons]
+    by_cases hy : y = x
+    · subst hy
+      cases hp : p y <;> simp only [hp, beq_self_eq_true, Bool.not_true, Bool.false_and, Bool.false_eq_true,
+        ↓reduceIte, List.length_cons] at ih ⊢ <;> omega
+    · have hb : (y == x) = false := by simpa [beq_iff_eq] using hy
+      cases hp : p y <;> cases hpx : p x <;> simp only [hp, hpx, hb, Bool.not_false, Bool.true_and,
+        Bool.false_eq_true, ↓reduceIte, List.length_cons, Nat.add_zero] at ih ⊢ <;> omega
+
+theorem tuplesOutside_eq (M : VE.FiniteModel α) (ss : List String) :
+    ∀ S, tuplesOutside M ss S = ((VE.NormDefaults.allTuples M ss).filter (fun vs => !S.contains vs)).length
+  | [] => by
+    rw [tuplesOutside, ← length_allTuples]
+    congr 1
+    exact (List.filter_eq_self.mpr (by simp)).symm
+  | x :: S => by
+    have h := length_filter_ne (fun v => !S.contains v) x (VE.NormDefaults.allTuples M ss)
+    have e : (fun v => !(x :: S).contains v) = (fun v => !(v == x) && !S.contains v) := by
+      funext v; rw [List.contains_cons, Bool.not_or]
+    rw [count_allTuples] at h
+    rw [tuplesOutside, tuplesOutside_eq M ss S, e]
+    cases hx : S.contains x <;> simp only [hx, Bool.not_false, Bool.not_true, ↓reduceIte, Bool.false_eq_true] at h ⊢
+      <;> omega
+
+theorem any_eq_recTuples (record : List ((String × List α) × Bool)) (p : String) (vs : List α) :
+    record.any (fun r => r.1 == (p, vs)) = (recTuples record p).contains vs := by
+  induction record with
+  | nil => simp [recTuples]
+  | cons e record ih =>
+    rcases e with ⟨⟨q, ws⟩, b⟩
+    simp only [recTuples] at ih ⊢
+    rw [List.any_cons, List.filterMap_cons, ih]
+    by_cases h : q = p
+    · subst h
+      simp only [beq_self_eq_true, ↓reduceIte, List.contains_cons]
+      congr 1
+      rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]
+      exact ⟨fun h => ((Prod.mk.inj h).2).symm, fun h => h ▸ rfl⟩
+    · have h' : (q == p) = false := by simpa using h
+      simp only [h', Bool.false_eq_true, ↓reduceIte]
+      simp [h]
+
+/-- The charge's count is `openAtomsAll`'s length, so `unknown (budget n _)` names the exact number of open atoms
+    without listing them. -/
+theorem openAtomsCount_eq (L : LayeredU) (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) :
+    openAtomsCount L M record = (openAtomsAll L M record).length := by
+  have hL : decisionAtoms L.D M ++ L.U.unspec.flatMap (fun p =>
+      (VE.NormDefaults.allTuples M (VE.NormDefaults.sortsOf L.U.D p)).map
+        (fun vs => (VE.NormDefaults.unsaidName p, vs))) =
+      (zoneGens L).flatMap (fun g => (VE.NormDefaults.allTuples M g.2).map (g.1, ·)) := by
+    simp only [decisionAtoms, zoneGens, List.flatMap_append, List.flatMap_map]
+  unfold openAtomsAll openAtomsCount
+  rw [hL, List.filter_flatMap, List.length_flatMap]
+  congr 1
+  apply List.map_congr_left
+  intro g _
+  rw [List.filter_map, List.length_map, tuplesOutside_eq]
+  congr 1
+  apply List.filter_congr
+  intro vs _
+  simp only [Function.comp_def, any_eq_recTuples]
+
+/-- What the charge answers: the exact budget, or a branch left unknown; never a zone with a completion. -/
+theorem zoneCharge_some {L : LayeredU} {record : List ((String × List α) × Bool)} {z : DefaultZone α}
+    (h : zoneCharge L M record = some z) :
+    (z = .unknown (.budget (openAtomsAll L M record).length maxDefaultAtoms) ∧
+      maxDefaultAtoms < (openAtomsAll L M record).length) ∨ ∃ w y, z = .unknown (.branch w y) := by
+  unfold zoneCharge at h
+  rw [← openAtomsCount_eq]
+  split at h
+  · cases h; exact Or.inr ⟨_, _, rfl⟩
+  simp only at h
+  split at h
+  · rename_i hn; cases h; exact Or.inl ⟨rfl, hn⟩
+  split at h
+  · cases h; exact Or.inr ⟨_, _, rfl⟩
+  · cases h
+
+/-- The form behind the charge is `zoneForm`'s, and it is given exactly when the charge passes. -/
+theorem zoneFormOf_eq {L : LayeredU} {record : List ((String × List α) × Bool)} :
+    zoneFormOf L M record = (if (zoneCharge L M record).isSome then none else some (zoneForm L M record)) := by
+  unfold zoneFormOf
+  split <;> rename_i h <;> simp [h]
 
 theorem mem_of_mem_subsets {β : Type} : ∀ {C A : List β}, A ∈ subsets C → ∀ a ∈ A, a ∈ C
   | [], A, h => by simp only [subsets, List.mem_singleton] at h; subst h; simp
@@ -614,7 +812,10 @@ theorem zoneMin_error {z : DefaultZone α} (h : zoneMin L X M record obs = .erro
   unfold zoneMin at h
   simp only at h
   split at h
-  · rename_i hn; cases h; exact Or.inl ⟨rfl, hn⟩
+  · rename_i hc; cases h
+    rcases zoneCharge_some hc with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr h)
   split at h
   · cases h; exact Or.inr (Or.inl ⟨_, rfl⟩)
   split at h
@@ -632,7 +833,9 @@ theorem zoneMin_noCompletion {l : List String} (h : zoneMin L X M record obs = .
   obtain ⟨hoff, hrec, ⟨⟨⟨hadm, hbgR⟩, _⟩, _⟩⟩ := hR
   unfold zoneMin at h
   simp only at h
-  split at h <;> try (cases h; done)
+  split at h
+  · rename_i hc; cases h
+    rcases zoneCharge_some hc with ⟨h, _⟩ | ⟨_, _, h⟩ <;> cases h
   split at h
   · rename_i hk
     have hk' : zoneRecordOk L M (record ++ switchesOffRecord L.D M record) ≠ true := by simpa using hk
