@@ -292,3 +292,170 @@ def test_a_delivered_row_has_the_whole_corpus_behind_it():
 
 def test_the_saved_evidence_stays_in_the_tree():
     assert (BATCH / "evidence/question-reverse.json").stat().st_size < 1_000_000  # DRI decision D4
+
+
+# ------------------------------------------------------------------ q1-3b
+
+BATCH_B = ROOT / "docs/question-answering/q1-3b"
+
+
+def test_frontings_front_every_is_must_or_may_in_turn():
+    assert R.frontings("Every member who is registered is eligible.") == [
+        (3, "Is every member who registered is eligible?"), (5, "Is every member who is registered eligible?")]
+    assert R.frontings("It is not the case that Ann must be verified.") == [
+        (1, "Is it not the case that Ann must be verified?"), (7, "Must it is not the case that Ann be verified?")]
+    assert R.frontings("Is Ann verified.") == [] and R.frontings("Ann registers.") == []
+    assert R.put_back("Every member is registered.") == "every member is registered."
+
+
+@pytest.mark.parametrize("sentence", ["Every member is registered.", "Every person must be given equal access.",
+                                      "Ann is verified.", "Some member is registered and Ann is verified."])
+def test_frontings_hold_q1_3s_question_and_its_put_back(sentence):
+    question, back = R.f2(sentence)
+    assert question in [q for _, q in R.frontings(sentence)] and back == R.put_back(sentence)
+    assert all(R.put_back(sentence) in R.candidates(q) for _, q in R.frontings(sentence))
+
+
+def _none(text):
+    return {"status": "none", "span": [text.index("X"), len(text)]}
+
+
+def test_closeness_names_leans_closest_its_ties_and_the_readers_sentence():
+    cands = ["a is X b.", "a b is X.", "a X is b."]
+    reads = [_none(cands[0]), _none(cands[1]), {"status": "rejected", "span": [0, 1]}]
+    text = 'No reading. Closest sentence tried: "a is X b.". Unknown.'
+    got = R.closeness(cands, reads, text, "a X is b.")
+    assert got == {"candidates": 3, "named": True, "closest": 0, "ties": 1, "consistent": False, "reader": 2}
+    reads[1] = _none("a is X b.")  # the same diagnosis start: a tie, and Lean's choice is its leftmost
+    assert R.closeness(cands, reads, text, None) | {"reader": None} == {
+        "candidates": 3, "named": True, "closest": 0, "ties": 2, "consistent": True, "reader": None}
+    assert R.closeness(cands, reads, "No reading.", None)["closest"] is None
+    assert R.closeness(["é is X."], [_none("é is X.")], "", None)["ties"] == 1  # bytes, not code points
+
+
+def _asked(kind, status, closest=None, stream_config="c", **extra):
+    q = {"config": stream_config, "sentence": "S.", "read": True, "kind": kind, "question": "Is a b c?",
+         "expected": "a is b c.", "ms": 1.0, "same": status == "one", "other": False, "outcome": {"status": status}}
+    if closest is not None:
+        q["outcome"]["text"] = ""
+        q["closest"] = {"candidates": 3, "named": True, "consistent": True, "reader": 1, **closest}
+    return q | extra
+
+
+def test_the_closest_shares_count_only_named_f2_questions_with_no_reading():
+    questions = [_asked("f2", "one"), _asked("f2", "moved"), _asked("f1", "none", {"closest": 0, "ties": 1,
+                                                                                   "candidates": 1}),
+                 _asked("f2", "none", {"closest": 0, "ties": 2}), _asked("f2", "none", {"closest": 1, "ties": 1}),
+                 _asked("f2", "none", {"closest": None, "ties": 0, "named": False})]
+    m = R.closest_measure(questions)
+    assert (m["no_reading"], m["named"], m["not_named"], m["one_candidate"], m["measured"]) == (4, 3, 1, 1, 2)
+    assert (m["tied"], m["leftmost_tie"], m["moved_second"], m["not_the_readers"]) == (1, 1, 1, 1)
+    assert (m["share_tied"], m["share_moved_second"], m["share_not_the_readers"]) == (0.5, 0.5, 0.5)
+    assert len(m["examples"]) == 1 and m["examples"][0]["closest"] == "a is b c."
+
+
+def test_every_stream_is_counted_and_a_missing_one_leaves_the_run_partial():
+    configs = {f"{s}:x": {"stream": s, "sentences": 2, "one_formula": 1, "questions": 1} for s in R.STREAMS}
+    questions = [_asked("f2", "one", stream_config=f"{s}:x") for s in R.STREAMS]
+    counts = R.per_stream(configs, questions)
+    assert list(counts) == list(R.STREAMS)
+    assert all(row == {"configs": 1, "f2": 1, "f2_many": 0, "f2_other": 0, "f2_same": 1, "one_formula": 1,
+                       "questions": 1, "sentences": 2} for row in counts.values())
+    seal = json.loads(R.SEAL.read_text())["generated"]
+    mixed = {r["vocabulary"]: (r["corpus_sha256"], r["texts"], 0)
+             for r in json.loads((ROOT / "conformance/english-mixed-report.json").read_text())["vocabularies"]}
+    whole = {}
+    for row in seal:
+        if row["stream"] == "english-surface":
+            whole[row["vocabulary"]] = {"stream": "english-surface", "stream_sha256": row["corpus_sha256"],
+                                        "asked": 5000, "drawn": 5000}
+            whole[f"random-earley:{row['vocabulary']}"] = {
+                "stream": "random-earley", "random_earley_sha256": row["random_earley_corpus_sha256"],
+                "document_sha256": row["document_corpus_sha256"], "documents_not_their_sentences": 0}
+    assert R.coverage_b(whole, mixed, 1220, 5000, 500)["whole_streams"] is True
+    assert R.coverage_b(whole, mixed, 1219, 5000, 500)["whole_streams"] is False          # a statement left out
+    assert R.coverage_b(whole, dict(list(mixed.items())[1:]), 1220, 5000, 500)["mixed_unmatched"] == [next(iter(mixed))]
+    del whole["random-earley:ordinary"]
+    result = R.coverage_b(whole, mixed, 1220, 5000, 500)
+    assert result["whole_streams"] is False and result["unsealed_random_earley"] == ["ordinary"]
+
+
+def test_every_fronting_of_the_group_document_is_read_by_lean(group):
+    path, env, words, texts = group
+    result = R.run_config_b(path, env, words, {}, texts, False, False)
+    by = {(q["sentence"], q["at"]): q for q in result["questions"]}
+    assert sorted(by) == [("Ann is verified.", 1), ("Every member is registered.", 2),
+                          ("Every member who is registered is eligible.", 3),
+                          ("Every member who is registered is eligible.", 5)]
+    clause = texts[1]
+    assert by[(clause, 3)]["outcome"]["code"] == "QuestionWordMoved" and not by[(clause, 3)]["same"]
+    assert by[(clause, 5)]["same"] and all(by[(s, k)]["same"] for s, k in by if s != clause)
+    m = R.fronting_measure(result["questions"])
+    assert (m["frontings"], m["sentences"], m["reached"], m["share"]) == (4, 3, 3, 1.0)
+    assert m["by_subject"]["other subject"] == {"reached": 1, "sentences": 1, "several_same": 0}
+    assert m["outcomes"] == {"moved:QuestionWordMoved": 1, "one": 3} and m["other_formula"] == []
+
+
+def test_a_question_with_no_reading_has_leans_closest_among_its_candidates(group):
+    path, env, words, _ = group
+    sentence = "Every member who registered is eligible."
+    result = R.run_config_b(path, env, words, {}, [sentence], True, True)
+    assert result["reads"][sentence]["one"] is False
+    q = next(q for q in result["questions"] if q["kind"] == "f2")
+    assert q["question"] == "Is every member who registered eligible?" and q["outcome"]["status"] == "none"
+    cands = R.candidates(q["question"])
+    assert q["closest"]["named"] and cands[q["closest"]["closest"]] in q["outcome"]["text"]
+    assert q["closest"]["consistent"] and q["closest"]["reader"] == cands.index(R.put_back(sentence))
+    f1 = next(q for q in result["questions"] if q["kind"] == "f1")
+    assert f1["outcome"]["status"] == "none" and f1["closest"]["candidates"] == 1
+
+
+def test_a_norm_documents_units_say_why_no_question_reaches_them():
+    own = ROOT / "usecases/question-answering/udhr-part07.ve.md"
+    data, units = R.norm_units(own.read_text())
+    env = Environment(data)
+    sentences = [t for _, _, t in units if R.one_sentence(t)]
+    reads = R.run_config_b("udhr-part07", env, EnglishVocabulary(env), {}, sentences, False, False)["reads"]
+    counts, examples = R.unit_reach(units, reads)
+    assert sum(counts.values()) == len(units) and not any(why == "reached" for _, _, why in counts)
+    assert all(kind == "meta" or why.startswith("english.read:") for kind, _, why in counts if why != "not one sentence")
+    assert all(1 <= len(texts) <= 2 for texts in examples.values()) and set(examples) == {"/".join(k) for k in counts}
+    assert R.why("A b.", {"A b.": {"one": True}}) == "reached" and R.why("A\nb.", {}) == "not one sentence"
+
+
+def test_the_mixed_stream_is_its_generators_draw():
+    texts, checks = R.mixed_texts(only={0})
+    report = json.loads((ROOT / "conformance/english-mixed-report.json").read_text())["vocabularies"][0]
+    (name, (_, _, sentences)), = texts.items()
+    assert name == report["vocabulary"] and checks[name] == (report["corpus_sha256"], report["texts"], 0)
+    assert sentences and all(s.endswith(".") for s in sentences)  # one formula each; a long one wraps
+
+
+def test_the_natural_stream_is_each_rendered_statement():
+    from conformance import natural_surface as N
+    from ve import ast
+    env = Environment(json.loads((ROOT / "examples/fluent/environment.json").read_text()))
+    formula = ast.Unary("reviewed", ast.Const("legacy"))
+
+    def audit():
+        N._measure("x", [formula, formula], env)
+        N.parse_english_argument(env, "")
+        raise AssertionError("the audit goes on past its statements")
+    texts, statements = R.natural_texts(audit)
+    assert statements == 2 and texts["x"][2] == [N.render_natural_sentence(formula, env).text + "."] * 2
+
+
+def test_the_random_earley_stream_skips_the_sealed_texts(monkeypatch):
+    from conformance.english_surface import vocabularies
+    name, env = next(iter(vocabularies()))
+    monkeypatch.setattr(R, "TARGETS", [(name, env, {}, EnglishVocabulary(env))])
+    texts, info = R.earley_stream(0, [], count=10)
+    assert len(set(texts)) == 10 and info["documents"] == 2 and info["documents_not_their_sentences"] == 0
+    again, _ = R.earley_stream(0, texts[:3], count=10)
+    assert again[:7] == texts[3:] and not set(again) & set(texts[:3])
+
+
+def test_the_q1_3b_evidence_stays_in_the_tree():
+    evidence = json.loads((BATCH_B / "evidence/question-reverse-b.json").read_text())
+    assert (BATCH_B / "evidence/question-reverse-b.json").stat().st_size < 1_000_000  # DRI decision D4
+    assert list(evidence["streams"]) == list(R.STREAMS) and evidence["coverage"]["whole_streams"] is True
