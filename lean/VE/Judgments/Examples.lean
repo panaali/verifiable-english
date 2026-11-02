@@ -34,7 +34,7 @@ def envText : String :=
   "\"arbitrary\": {\"arguments\": [\"act\"], \"description\": \"{0} is arbitrary\"}}, \"constants\": {}}}"
 
 def termText (name args : String) : String :=
-  "[{\"name\": \"" ++ name ++ "\", \"arguments\": " ++ args ++ ", \"decided_by\": \"unresolved_decider\", " ++
+  "[{\"name\": \"" ++ name ++ "\", \"arguments\": " ++ args ++ ", \"decided_by\": \"unstated\", " ++
   "\"necessary\": [], \"sufficient\": [], \"factors\": [\"the Declaration gives no test for arbitrariness\"], " ++
   "\"precedents\": [], \"jurisdiction\": \"udhr\", \"version\": 1}]"
 
@@ -57,13 +57,13 @@ def factor : String := "the Declaration gives no test for arbitrariness"
 #guard match w2Probe "treats_unfairly" "[\"person\", \"person\"]" with
   | .ok (a, b, c, d) => errText a == some "invalid open-term arguments" &&
       errText b == some "invalid open-term arguments" && okVal c == some ["treats_unfairly"] &&
-      okVal d == some [(⟨"treats_unfairly", ["person", "person"], "unresolved_decider", [factor]⟩, 0, 0)]
+      okVal d == some [(⟨"treats_unfairly", ["person", "person"], "unstated", [factor]⟩, 0, 0)]
   | .error _ => false
 -- J-α (wire): the same answer all three ways; `records` keeps the factor
 #guard match w2Probe "arbitrary" "[\"act\"]" with
   | .ok (a, b, c, d) => okVal a == some ["arbitrary"] && okVal b == some ["arbitrary"] &&
       okVal c == some ["arbitrary"] &&
-      okVal d == some [(⟨"arbitrary", ["act"], "unresolved_decider", [factor]⟩, 0, 0)]
+      okVal d == some [(⟨"arbitrary", ["act"], "unstated", [factor]⟩, 0, 0)]
   | .error _ => false
 
 /-! ## The environment of 11.2 to 11.7 -/
@@ -92,7 +92,7 @@ def defs : List VE.Definitions.Def :=
 
 def regulated : List String := ["subjects", "reports", "make_reasonable_efforts"]
 
-def jrec (name : String) (args : List String) (decider : String := "unresolved_decider")
+def jrec (name : String) (args : List String) (decider : String := "unstated")
     (nec suf : Nat := 0) : Rec :=
   (⟨name, args, decider, []⟩, nec, suf)
 
@@ -110,7 +110,7 @@ def J2 : List String := ["arbitrary", "unreasonable"]
 def guardα : VE.Formula := .and (u "arrest") (u "arbitrary")
 def uα (meaning : String) (listed : List String := ["arbitrary"]) : UnitView :=
   view "u1" meaning listed (some (.rule (rule "no-arbitrary-arrest" guardα)))
-def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "unresolved_decider", []⟩
+def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "unstated", []⟩
 
 /-! ## 11.2 Admission -/
 
@@ -128,8 +128,9 @@ def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "
   some "JudgmentCriterionAsUnit: arbitrary"
 #guard errText (admit E defs regulated [jrec "arbitrary" ["act"] (suf := 2)]) ==                         -- J-ζ′
   some "JudgmentCriterionAsUnit: arbitrary"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unstated"]) ==                         -- J-η
+#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unresolved_decider"]) ==               -- J-η (the retired spelling)
   some "JudgmentDecider: arbitrary"
+#guard okVal (admit E defs regulated [jrec "arbitrary" ["act"] "unstated"]) == some [judgment "arbitrary" ["act"]]
 #guard okVal (admit E defs regulated [jrec "treats_unfairly" ["person", "person"]]) ==                   -- J-ο
   some [judgment "treats_unfairly" ["person", "person"]]
 #guard okVal (admit E defs regulated [jrec "gives_serious_uplift" ["act"]]) ==                           -- J-ν
@@ -140,15 +141,15 @@ def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "
 #guard errText (admit E defs regulated
   [jrec "arbitrary" ["act"], jrec "reasonable_limitation" ["act"], jrec "unreasonable" ["person"]]) ==
   some "JudgmentUnbound: reasonable_limitation"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["person"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "arbitrary" ["person"] "unresolved_decider" 1 0]) ==
   some "JudgmentArguments: arbitrary"
 -- each later check of order 2 under the next one's fault: arguments before regulated, regulated before the
 -- criteria, the criteria before the decider
 #guard errText (admit E defs regulated [jrec "subjects" ["act"]]) ==
   some "JudgmentArguments: subjects"
-#guard errText (admit E defs regulated [jrec "subjects" ["person", "act"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "subjects" ["person", "act"] "unresolved_decider" 1 0]) ==
   some "JudgmentRegulated: subjects"
-#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unstated" 1 0]) ==
+#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unresolved_decider" 1 0]) ==
   some "JudgmentCriterionAsUnit: arbitrary"
 
 /-! ## 11.3 Status and usage -/
@@ -345,10 +346,10 @@ def doc11 (nodes : List Node) : Doc :=
 /-! ## 11.7 Undeclared words (JT-3; spec 7, 8.4 and 11.8) -/
 
 /-- 11.7's rows: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
-    (not "necessary condition"), `effective` (not "effective date"). -/
+    (not "necessary condition"), `effective` (not "effective date"); each word a one-word phrase (jt-3p). -/
 def rows117 : List EvaluativeRow :=
-  [⟨"reasonable", []⟩, ⟨"arbitrary", []⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩, ⟨"just", [["just", "as"]]⟩,
-   ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"effective", [["effective", "date"]]⟩]
+  [⟨["reasonable"], []⟩, ⟨["arbitrary"], []⟩, ⟨["due"], [["due", "date"], ["due", "to"]]⟩, ⟨["just"], [["just", "as"]]⟩,
+   ⟨["necessary"], [["necessary", "condition"]]⟩, ⟨["effective"], [["effective", "date"]]⟩]
 
 def preds117 : List (String × List String) :=
   ["reasonable_grounds", "due_date", "arbitrary", "just_as_real", "just_requirement", "necessary_condition",
@@ -380,5 +381,52 @@ def regulated117 : List (String × List String) :=
   ["reasonable", "grounds", "0", "has", "reasonable", "grounds"]
 #guard predicateWords "arrest" (some "{0} is arbitrary") == ["arrest", "0", "is", "arbitrary"]
 #guard predicateWords "arrest" (some "arbitrary {0}") == ["arrest", "arbitrary", "0"]
+
+/-! ## Phrase rows (jt-3p; DRI 2026-10-31, reviews/dri-decisions-20261031-jt-3a.md item 3) -/
+
+-- A one-word row is written in `ws` exactly when its word is one of them (`singleton_infix_iff`).
+#guard [[], ["due"], ["the", "due"], ["due", "date"], ["date"], ["due", "due"]].all fun ws =>
+  hasPhrase ["due"] ws == ws.contains "due"
+
+/-- jt-3a's word rows and word match, written out on their own as the reference the one-word rows must agree with. -/
+def jt3aList (preds : List (String × List String)) (J : List String) : List String :=
+  (preds.filter fun (p, ws) => !J.contains p &&
+    [("reasonable", []), ("arbitrary", []), ("due", [["due", "date"], ["due", "to"]]), ("just", [["just", "as"]]),
+      ("necessary", [["necessary", "condition"]]), ("effective", [["effective", "date"]])].any
+      fun (w, (o : List (List String))) => ws.contains w && !o.any (hasPhrase · ws)).map (·.1)
+
+/-- Each row's word with and without its other senses: the word alone, beside a phrase's other word, in the other
+    order, and the phrase itself. -/
+def preds117x : List (String × List String) :=
+  ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_as_real",
+    "condition_necessary_step", "necessary_measure", "date_effective_remedy", "effective_date"].map
+    fun p => (p, predicateWords p none)
+
+-- Each 11.7 fixture gives jt-3a's list after the change, for every `J` above, and so do the rows' other senses.
+#guard [preds117, regulated117, preds117x].all fun preds =>
+  [[], ["arbitrary"], ["arbitrary", "reasonable_grounds"]].all fun J =>
+    undeclaredEvaluative rows117 preds J == jt3aList preds J
+#guard undeclaredEvaluative rows117 preds117x [] == ["due_process", "date_due_process", "to_pay_due_fees",
+  "as_just_cause", "condition_necessary_step", "necessary_measure", "date_effective_remedy"]
+-- Each of them holds its row's word: without the other senses all ten are listed.
+#guard undeclaredEvaluative (rows117.map fun r => { r with otherSenses := [] }) preds117x [] ==
+  ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_as_real",
+    "condition_necessary_step", "necessary_measure", "date_effective_remedy", "effective_date"]
+
+/-- Predicates with and without the phrase "good judgment": in its order, in another order, half of it, and in a
+    template (the constitution's u0052.s01 writes "use good judgment" as the act). -/
+def goodPreds : List (String × List String) :=
+  [("good_judgment", predicateWords "good_judgment" none), ("good_conduct", predicateWords "good_conduct" none),
+   ("judgment_good", predicateWords "judgment_good" none), ("court_judgment", predicateWords "court_judgment" none),
+   ("judgment_use_required", predicateWords "judgment_use_required" (some "{0} uses good judgment"))]
+
+-- A "good judgment" row: listed when unbound, not listed when in `J`; `good_conduct` is never listed. The catalogue's
+-- own row is checked in `VE.EnglishGrammar.Examples` (english-lean's layer).
+#guard undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds [] == ["good_judgment", "judgment_use_required"]
+#guard undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds ["good_judgment"] == ["judgment_use_required"]
+#guard !(undeclaredEvaluative [⟨["good", "judgment"], []⟩] goodPreds []).contains "good_conduct"
+-- Each of them holds a word of the phrase: rows for the two words alone would list all five.
+#guard undeclaredEvaluative [⟨["good"], []⟩, ⟨["judgment"], []⟩] goodPreds [] ==
+  ["good_judgment", "good_conduct", "judgment_good", "court_judgment", "judgment_use_required"]
 
 end VE.Judgments.Examples
