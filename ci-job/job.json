@@ -1,0 +1,19 @@
+{
+ "job": "me-7.s2of3-123e24e1",
+ "head": "9e1ea11556c05946cd55e0004431dae300b2720b",
+ "argv": [
+  "me-7.s2of3-123e24e1",
+  "9e1ea11556c05946cd55e0004431dae300b2720b",
+  "63c3d38cd2f701b82de03157bf6c25655697c347",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-87b245deffd9.tar.zst",
+  "0612eedc8f26f10335041bca66287ad39496a6158c36ce571d263b39a0d0deb5",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/math-evidence/me-7/trust-mutants-allow.json",
+  "--shard",
+  "2/3",
+  "--jobs",
+  "4"
+ ]
+}
