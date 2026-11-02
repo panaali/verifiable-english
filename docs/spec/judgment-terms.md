@@ -67,7 +67,7 @@ with JT-1's one hunk is a copy of today's function with the hunk applied
 
 | # | Finding | Evidence | Consequence |
 |---|---|---|---|
-| F1 | Draft 1's `deciders` ("in first-occurrence order" over the differing atoms) is complete only when record names are distinct: with two records named `arbitrary` (deciders `court`, `unresolved_decider`) it names `court` only | 11.7: `decidersFirst` gives `["court"]`, `deciders` gives `["court", "unresolved_decider"]` | `deciders` reads the records in declaration order (6.2); `deciders_complete` needs no hypothesis. On admitted documents the two agree, since W2 refuses a repeated name; the two-record row is therefore an internal input to `deciders`, not a service fixture (11) |
+| F1 | Draft 1's `deciders` ("in first-occurrence order" over the differing atoms) is complete only when record names are distinct: with two records named `arbitrary` (deciders `court`, `unstated`) it names `court` only | 11.7: `decidersFirst` gives `["court"]`, `deciders` gives `["court", "unstated"]` | `deciders` reads the records in declaration order (6.2); `deciders_complete` needs no hypothesis. On admitted documents the two agree, since W2 refuses a repeated name; the two-record row is therefore an internal input to `deciders`, not a service fixture (11) |
 | F2 | J-ι as draft 1 wrote it ("a rule **requiring** the arrest where `court_ordered(a)`") has no conflict on `subjects`: two rules conflict on one regulated predicate when they have opposite signs; an obligation's conflict is the pair conflict `required ∧ ¬permitted` | 11.5: the conflict formula of `subjects` with a forbidding and a **permitting** rule is true at exactly one of the eight assignments | J-ι is written with a permitting rule ("An arrest ordered by a court is permitted") |
 | F3 | **Settled by the statement review.** Dependence through rule chains is not tracked. A rule unit whose guard reads a regulated predicate (`subjects`) that another unit's rule decides on a judgment is CHECKED, and the usage map omits it | 11.3, J-χ: `u2`'s status `CHECKED`; usage map `[("arbitrary", ["u1"])]` | kept, with the narrower guarantee the review agreed: dependence is syntactic use, directly or through W3 definitions (plan D3, D4). A unit's status is about its own meaning, which its W3 definitions are part of and another unit's rule is not; that other unit (`u1`) is already OPEN. An outcome downstream can still vary with a judgment (section 13); the zone answer (JT-4) answers that over the whole cone. J-χ stays as the fixture that shows the limit, and JT-5 records each such unit |
 | F4 | `LayeredU`, `ConflictFreeX`, `BaseAdmissibleX` and `conflictFreeX` live in `VE.NormDefaults.Wire` (`Layered.lean:59`, `:159`, `Report.lean:201`). Draft 1 and WG-6's plan write `VE.NormDefaults.LayeredU` | elaboration | the statements use the `Wire` names |
@@ -202,7 +202,7 @@ def faultOf (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : L
     if ss != r.1.arguments then some s!"JudgmentArguments: {r.1.name}"
     else if regulated.contains r.1.name then some s!"JudgmentRegulated: {r.1.name}"
     else if r.2.1 != 0 || r.2.2 != 0 then some s!"JudgmentCriterionAsUnit: {r.1.name}"
-    else if r.1.decidedBy == "unstated" then some s!"JudgmentDecider: {r.1.name}"
+    else if r.1.decidedBy == "unresolved_decider" then some s!"JudgmentDecider: {r.1.name}"
     else none
 
 /-- `judgments@0`'s admission: the first fault in record order. -/
@@ -215,11 +215,11 @@ def admit (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : Lis
 def names (js : List Judgment) : List String := js.map (·.name)
 
 /-- A record is admitted exactly when it is bound to a base predicate with its sorts, no rule regulates it, it
-    carries no criterion lists, and its decider is not `unstated`. -/
+    carries no criterion lists, and its decider is not `unresolved_decider`. -/
 theorem faultOf_none_iff (E defs regulated r) :
     faultOf E defs regulated r = none ↔
       (baseEnv E defs).predicates r.1.name = some r.1.arguments ∧ r.1.name ∉ regulated ∧
-        r.2.1 = 0 ∧ r.2.2 = 0 ∧ r.1.decidedBy ≠ "unstated"
+        r.2.1 = 0 ∧ r.2.2 = 0 ∧ r.1.decidedBy ≠ "unresolved_decider"
 
 theorem admit_ok_iff (E defs regulated rs js) :
     admit E defs regulated rs = .ok js ↔ js = rs.map (·.1) ∧ ∀ r ∈ rs, faultOf E defs regulated r = none
@@ -690,14 +690,14 @@ namespace VE.Judgments
 /-- One catalogue row for an evaluative word, tied to its evaluative sense: the word, and the phrases in which it
     has another sense. JT-3 reads the rows from english-lean's single catalogue; there is no second list. -/
 structure EvaluativeRow where
-  word        : String
+  word        : List String
   otherSenses : List (List String)
 
 def hasPhrase (ph ws : List String) : Bool :=
   (List.range (ws.length + 1)).any fun i => (ws.drop i).take ph.length == ph
 
 def EvaluativeRow.matches (row : EvaluativeRow) (ws : List String) : Bool :=
-  ws.contains row.word && !row.otherSenses.any (hasPhrase · ws)
+  hasPhrase row.word ws && !row.otherSenses.any (hasPhrase · ws)
 
 /-- The base predicates whose words match a row and that are not bound, in declaration order. `preds` is every
     predicate of the base environment `baseEnv E defs` (W3-defined names excluded, regulated predicates included),
@@ -709,10 +709,14 @@ def undeclaredEvaluative (rows : List EvaluativeRow) (preds : List (String × Li
 
 theorem undeclaredEvaluative_iff (rows preds J p) :
     p ∈ undeclaredEvaluative rows preds J ↔
-      ∃ ws, (p, ws) ∈ preds ∧ p ∉ J ∧ ∃ row ∈ rows, row.word ∈ ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws
+      ∃ ws, (p, ws) ∈ preds ∧ p ∉ J ∧ ∃ row ∈ rows, row.word <:+: ws ∧ ∀ ph ∈ row.otherSenses, ¬ ph <:+: ws
 
 end VE.Judgments
 ```
+
+A row's word is a phrase (jt-3p; DRI 2026-10-31, `manage-agents/reviews/dri-decisions-20261031-jt-3a.md` item 3), so
+the catalogue's "good judgment" is a row: it matches where both words are written in that order. A one-word row `[w]`
+matches exactly where jt-3a's word row `w` did (`[w] <:+: ws ↔ w ∈ ws`, `singleton_infix_iff`).
 
 The report says only "these words match the catalogue; review them". It is never a refusal, and it never says that a
 unit uses no other judgment: a judgment written in words the catalogue lacks is not found.
@@ -754,7 +758,7 @@ With the profile off, none of this runs and every answer is byte-identical (J-λ
 | `JudgmentArguments` | `JudgmentArguments: <term>` | the base predicate's sorts are not `arguments` | J-ε |
 | `JudgmentRegulated` | `JudgmentRegulated: <term>` | the environment declares the predicate regulated | J-ρ |
 | `JudgmentCriterionAsUnit` | `JudgmentCriterionAsUnit: <term>` | `necessary` or `sufficient` is not empty | J-ζ, J-ζ′ |
-| `JudgmentDecider` | `JudgmentDecider: <term>` | `decided_by` is `unstated` | J-η |
+| `JudgmentDecider` | `JudgmentDecider: <term>` | `decided_by` is `unresolved_decider` | J-η |
 | `JudgmentNotChecked` | `JudgmentNotChecked: <unit> <term>` | meaning `specified`, and the unit's list depends on `<term>` (the first such judgment in declaration order) | J-β, J-γ, J-γ′ |
 | `JudgmentNotListed` | `JudgmentNotListed: <unit> <term>` | meaning `open`, and `<term>` (the first in declaration order) is depended on but not listed | J-σ |
 | `JudgmentListedUnused` | `JudgmentListedUnused: <unit> <term>` | meaning `open`, the unit is complete (`UnitView.complete`: with an active set, it has a reading and none is pending; without one, the unit has its own content), and `<term>` (the first in the meaning's list) is a bound judgment the unit's list does not depend on | J-τ, J-τ′ (e); not J-τ′ (a) to (d) |
@@ -805,7 +809,7 @@ source of templates is added (phase 1: both of JT-0p's templates are rejected, 0
 
 | Text | Its one reading |
 |---|---|
-| "Whether an act is arbitrary is a judgment; the text does not say who makes it." | `arbitrary(act)` is a bound open term with `decided_by: unresolved_decider` |
+| "Whether an act is arbitrary is a judgment; the text does not say who makes it." | `arbitrary(act)` is a bound open term with `decided_by: unstated` |
 | "Whether an act is arbitrary is a judgment for the governance function." | the same, with `decided_by: governance_function` |
 | "Whether a person treats a person (the same or another) unfairly is a judgment; the text does not say who makes it." | `treats_unfairly(person, person)`, repeated sorts allowed under the profile (J-ο) |
 | "The text mentions these points: the Declaration gives no test for arbitrariness." | the record's `factors`, shown and never used as premises |
@@ -878,7 +882,7 @@ The environment of 11.2 to 11.7: sorts `person`, `act`, `thing`; base predicates
 `act`), `natural_and_fundamental_group_unit(thing)`, `treats_unfairly(person, person)`; regulated `subjects(person,
 act)`, `reports(person, act)` and `make_reasonable_efforts(person, act)`; W3 definitions `wrongful_detention(a) :↔
 detention(a) ∧ arbitrary(a)` and `unlawful_detention(a) :↔ detention(a) ∧ unlawful(a)`; constant `the_family : thing`.
-Records have `decided_by: unresolved_decider`, empty lists, unless a row says otherwise. Rules on `subjects` are typed in
+Records have `decided_by: unstated`, empty lists, unless a row says otherwise. Rules on `subjects` are typed in
 `[act, person]`, so the act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 reproduces the
 rows through the service, except the rows marked *internal*: inputs to one Lean function that W2 refuses on the wire
 before that function runs (A1). They stay `#guard`s and are never replayed through the service.
@@ -909,12 +913,12 @@ interference. Draft 3 put them on `subjects`, which this environment does not de
 | J-ρ | `subjects [person, act]` (regulated) | `JudgmentRegulated: subjects` |
 | J-ζ | `arbitrary [act]`, one `necessary` | `JudgmentCriterionAsUnit: arbitrary` |
 | J-ζ′ | `arbitrary [act]`, two `sufficient` | `JudgmentCriterionAsUnit: arbitrary` |
-| J-η | `arbitrary [act]`, `decided_by: unstated` | `JudgmentDecider: arbitrary` |
+| J-η | `arbitrary [act]`, `decided_by: unresolved_decider` | `JudgmentDecider: arbitrary` |
 | J-ο | `treats_unfairly [person, person]` | ok |
 | J-ν | `gives_serious_uplift [act]` (a `scales@0` grade) | ok |
 | J-θ | `natural_and_fundamental_group_unit [thing]` | ok |
 | order 1 | `arbitrary [act]`, `reasonable_limitation [act]`, `unreasonable [person]` | `JudgmentUnbound: reasonable_limitation` (the first faulty record; the third, `JudgmentArguments`, is not reached) |
-| order 2 | `arbitrary [person]`, `unstated`, one `necessary` | `JudgmentArguments: arbitrary` (the first failing check) |
+| order 2 | `arbitrary [person]`, `unresolved_decider`, one `necessary` | `JudgmentArguments: arbitrary` (the first failing check) |
 | J-ω | `arbitrary_measure [measure]`, `arbitrary_interference [interference]` (J-ω's environment) | ok `[arbitrary_measure, arbitrary_interference]` |
 | J-ω′ | `arbitrary_measure [interference]` (J-ω's environment) | `JudgmentArguments: arbitrary_measure` |
 
@@ -982,7 +986,7 @@ produce that certificate.
 
 | # | Expected |
 |---|---|
-| J-α | at one person, one arrest: `left to` (no one named), differing atom `arbitrary(a)`, deciders `[unresolved_decider]`; record `arbitrary(a)` → settled no; record `¬arbitrary(a)` → not said |
+| J-α | at one person, one arrest: `left to` (no one named), differing atom `arbitrary(a)`, deciders `[unstated]`; record `arbitrary(a)` → settled no; record `¬arbitrary(a)` → not said |
 | J-κ | 17 bound judgments in one guard over one tuple: 17 open atoms, over WG-6's limit 16 → `unknown`, budget |
 | J-μ | settled whatever is judged |
 | J-ν | `gives_serious_uplift`'s atoms are judgment atoms in the zone |
@@ -993,15 +997,16 @@ produce that certificate.
 
 | Input | Value |
 |---|---|
-| `deciders [arbitrary ↦ unresolved_decider, reasonable_grounds ↦ we] [arbitrary(a), soft__excepted__r1(a)]` | `[unresolved_decider]` |
+| `deciders [arbitrary ↦ unstated, reasonable_grounds ↦ we] [arbitrary(a), soft__excepted__r1(a)]` | `[unstated]` |
 | the same records, `[reasonable_grounds(s)]` | `[we]` |
 | the same records, `[soft__excepted__r1(a)]` (a decision atom only) | `[]` |
-| *internal*: two records named `arbitrary` (`court`, `unresolved_decider`), `[arbitrary(a)]` (W2 refuses the repeated name, "duplicate or invalid open term") | `deciders`: `[court, unresolved_decider]`; draft 1's first-occurrence form: `[court]` (F1) |
+| *internal*: two records named `arbitrary` (`court`, `unstated`), `[arbitrary(a)]` (W2 refuses the repeated name, "duplicate or invalid open term") | `deciders`: `[court, unstated]`; draft 1's first-occurrence form: `[court]` (F1) |
 | `undeclaredEvaluative` with rows `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary` (not "necessary condition"), `effective` (not "effective date"); predicates `reasonable_grounds`, `due_date`, `arbitrary`, `just_as_real`, `just_requirement`, `necessary_condition`, `arrest`; `J = [arbitrary]` | `[reasonable_grounds, just_requirement]` |
 | the same, `J = []` | `[reasonable_grounds, arbitrary, just_requirement]` |
 | F3′, regulated: `(baseEnv E defs).predicates make_reasonable_efforts` | `some [person, act]`: a regulated predicate stays in the base environment |
 | the rows and `J = [arbitrary]` above, with the regulated `make_reasonable_efforts` (words `make reasonable efforts`) appended to the predicates | `[reasonable_grounds, just_requirement, make_reasonable_efforts]`; the relay accepts this answer (8.4) |
 | `admit` of `make_reasonable_efforts [person, act]` | `JudgmentRegulated: make_reasonable_efforts`: listing it for review does not make it admissible |
+| jt-3p: the catalogue's rows; predicates `good_judgment`, `good_conduct`, `judgment_good`, `court_judgment` and `judgment_use_required` (template "{0} uses good judgment"); `J = []`, then `J = [good_judgment]` | `[good_judgment, judgment_use_required]`, then `[judgment_use_required]`: only the phrase in its order matches |
 
 ### 11.8 Each "exactly when" claim, both directions
 
@@ -1016,7 +1021,7 @@ produce that certificate.
 | `usageMap_unused` | J-μ: `arbitrary` unused | J-α: `arbitrary` used |
 | `usageMap_sound` / `_complete` | J-α, J-θ, J-ξ, J-ξ′ (a set-only unit is listed), J-ω (one row per term) | J-χ's `u2` (no dependence) is not listed; in J-ω, `u045a` is not in `arbitrary_measure`'s row |
 | `criteria_iff` | `u2` and J-θ's unit | a rule unit, a set unit, a CHECKED unit, a non-asserted unit, a unit over a defined name |
-| `deciders_sound` / `_complete` | `[unresolved_decider]`, `[we]` | a decision atom only: `[]` |
+| `deciders_sound` / `_complete` | `[unstated]`, `[we]` | a decision atom only: `[]` |
 | `undeclaredEvaluative_iff` | `reasonable_grounds`, `just_requirement`, the regulated `make_reasonable_efforts` (and `arbitrary` when unbound) | `due_date`, `just_as_real`, `necessary_condition` (other sense), `arrest` (no row), `arbitrary` (bound) |
 | `conflictFree_given_mono` (one direction only) | — | J-ι: conflict-free given the criterion, not without it |
 | `zone_leftTo` (the certified pair, JT-4) | J-α's pair | a wrong witness, an empty `differ` (`leftToPair_differ_ne_nil`) |
@@ -1089,3 +1094,4 @@ no product file may declare `zoneOfOpens` or `completionOf` as the stub did (`op
 | 2026-10-14 | 2 | The statement review's joint position (FIX; `manage-agents/debates/judgment-terms-spec/`, section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model, "order 1" ends with `unreasonable [person]`, *internal* rows marked. A2: `zone_leftTo` concludes R1's certified pair `LeftToPair` (with `leftToPair_leftTo` and `leftToPair_differ_ne_nil`, proved), wrong-witness and empty-`differ` mutations. A3: unconditional wording only for `conflictFreeU_consistent`; layered lines name `L.X` and say "without additional judgment criteria"; `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: `status_eq` worded "judgment dependence forces OPEN; otherwise the legacy status applies". A5: the relay checks declaration and unit order. F2: J-υ (LABELLED → OPEN). F3: settled, definition-only with the narrower guarantee. F3′: regulated predicates scanned and accepted by the relay, fixture rows. F4: `UnitView.complete` guards `JudgmentListedUnused`, pending readings kept as `none`; J-τ′ (a) to (e). Stub re-elaborated with no error; every changed fixture recomputed by `#eval`. |
 | 2026-10-14 | 3 | Phase 1 (`docs/research/judgment-terms-phase1.md`), with plan draft 4. New 0.2 (P-a to P-e: phase 1's results and why no statement changes). Fixture J-ω (and J-ω′): one word over two sorts is two bound terms, one usage row each, and the other sort is refused as `JudgmentArguments` (11.2, 11.3, 11.8; 9.1's declaration rows). 9: the fallback when the lint rejects a template. 10: the pilot points with phase 1's measurements, and JT-5 split into JT-5a, JT-5r and JT-5b. Stub re-elaborated with no error; earlier outputs unchanged; J-ω's values by `#eval`. |
 | 2026-10-14 | 3, fix round | The checker's verdict FIX. 4.4: `dependsOnC_remove` and `status_remove_unused`, proved in the stub, with the removal paragraph. J-ω's environment declares `person` and the regulated `subjects_to_measure` and `subjects_to_interference`; its rules are on them, and admission is given them (11, 11.3). New 11.9: removal rows (J-β, J-τ, J-μ) and validity (every replayed rule fixture passes `VE.Norms.validate`, draft 3's J-ω fails it, every formula fixture type-checks). 11.8 and 12 updated. Stub re-elaborated with no error; earlier outputs unchanged. |
+| 2026-11-02 | 3, jt-3p | Synthesis round 2's edit 1 (`manage-agents/debates/plan-synthesis-2/edits-judgment-terms.md`, PLANS-INDEX C2; the code rename `syn2code-judgment-terms-1`): the one decider token is `unstated`, and `JudgmentDecider` refuses `unresolved_decider` (2.2, 8.2, 9.1, 11). The DRI's statement change (2026-10-31, `manage-agents/reviews/dri-decisions-20261031-jt-3a.md` item 3): 7's `EvaluativeRow.word` is a phrase, `matches` reads `hasPhrase row.word ws`, `undeclaredEvaluative_iff` reads `row.word <:+: ws`; 11.7 adds the "good judgment" row. |
