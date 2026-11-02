@@ -1,4 +1,3 @@
-- `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
 - `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
@@ -83,3 +82,4 @@
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
 - `tests/test_vacuity.py` — (no module docstring)
 - `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
