@@ -1,0 +1,5 @@
+trust_mutants: 7 definitions, 42 mutants (42 to run), 4 jobs, base 30671a99b9db
+UNKNOWN lean/VE/Service/Document.lean:2486 VE.Service.Document.checkDocSetsFast (G[V], trusted) list-empty: (VE.Scope.governedSetUnits D) -> [] (lean/VE/Service/Document.lean:2486: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Service/Document.lean:385 VE.Service.Document.profilesOf (D[V], trusted) list-empty: match frontOf j with | some (front, _) => listedProfiles (front.getObjValD "environment") | none ... -> [] (lean/VE/Service/ScopeExamples.lean:69: Expression (VE.Service.Document.readingSetsOf, which it re...)
+SURVIVOR lean/VE/Service/Document.lean:2486 VE.Service.Document.checkDocSetsFast (G[V], trusted) list-first: (VE.Scope.governedSetUnits D) -> ((VE.Scope.governedSetUnits D).take 1) (the proofs it breaks: lean/VE/Service/Document.lean:2492)
+SURVIVOR lean/VE/Service/Document.lean:2486 VE.Service.Document.checkDocSetsFast (G[V], trusted) list-drop-last: (VE.Scope.governedSetUnits D) -> ((VE.Scope.governedSetUnits D).dropLast) (the proofs it breaks: lean/VE/Service/Document.lean:2492)
