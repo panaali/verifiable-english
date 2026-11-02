@@ -464,6 +464,21 @@ def modelled (j : Json) (rels : List (String × Json)) : String :=
 def dualEnv := env actsP dual (some (block fxs))
 #guard modelled envA [("heard", Json.arr #[]), ("paid", toJson [["p"]]), ("protected", Json.arr #[])] == "ok"
 #guard modelled dualEnv [("must_hear", toJson [["p", "c"]]), ("may_hear", toJson [["p", "c"]])] == "ok"
+-- ap-1bg: the soft view of an `acts@0` norms frame is model-checked as that frame (`SoftNorms.Phases.frameView`): its
+-- models are the frame's, a pair still bounds them, and the reported row answers; with another soft block it is refused
+def view (block : Json) : Json := VE.Readings.ActsExamples.softView VE.Readings.ActsExamples.sfP block dualEnv
+def rels (may : Json) : List (String × Json) := [("must_hear", toJson [["p", "c"]]), ("may_hear", may)]
+#guard [modelled (view VE.Readings.ActsExamples.pyBlock) (rels (toJson [["p", "c"]])),
+  modelled (view VE.Readings.ActsExamples.pyBlock) (rels (Json.arr #[]))] ==
+  ["ok", "InvalidModel(profile): required relation must_hear exceeds permission may_hear"]
+#guard (VE.Service.Standalone.reportedModel (Json.mkObj [("id", .str "m"), ("environment", view
+  VE.Readings.ActsExamples.pyBlock), ("model", Json.mkObj [("complete", .bool true), ("domains", Json.mkObj
+  [("person", toJson ["p"]), ("case", toJson ["c"])]), ("constants", Json.mkObj []), ("relations", Json.mkObj
+  (rels (toJson [["p", "c"]])))])])).getObjValD "status" == .str "ok"
+#guard modelled (view (VE.Readings.ActsExamples.pyBlock.setObjVal! "parties" (toJson ["x"]))) (rels (toJson [["p", "c"]]))
+  == "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+#guard VE.SoftNorms.Phases.frameView (view VE.Readings.ActsExamples.pyBlock) == dualEnv &&
+  VE.SoftNorms.Phases.frameView dualEnv == dualEnv
 #guard modelled dualEnv [("must_hear", toJson [["p", "c"]]), ("may_hear", Json.arr #[])] ==
   "InvalidModel(profile): required relation must_hear exceeds permission may_hear"
 #guard modelled (permEnv ["norms@0", "relational-fol@0"] (ab 26)) [("p", Json.arr #[])] ==
