@@ -23,8 +23,10 @@ REPORT = "docs/question-answering/q1-3b/REPORT.md"
 # Wording of a premise a rerun or a probe refuted; the phrase "norm unit" hid two meanings (F10).
 STALE = ("norm unit", "0 reached", "no prose unit reads", "prose never is", "for profile `soft-norms@0`",
          "has profile `soft-norms@0`", "profile `soft-norms@0` is refused", "every non-timing", "5,429 `unformalised`",
-         "the long random earley", "each other sentence `moved`")
-# (report, first words, last words, whether each sentence must cite its own key). Anchors that are gone fail the check.
+         "the long random earley", "each other sentence `moved`", "none of the 143 units of kind `norm` reads",
+         "is not a question's source", "the pilot blobs' sha-256")
+# (report, first words, last words or None for the end) of a part where each sentence must cite its own key. Anchors
+# that are gone fail the check.
 STRICT = ((SPEC, "q1-3b (C4, below) adds", "\n\n## Commands"), (SPEC, "- **For the plan:**", "\n\n### Latency"),
           (REPORT, "- **Result:**", "\n\nThe numbers are in"), (REPORT, "**On the gap row", "\n\n## How each"),
           (REPORT, "## Next", None))
@@ -82,24 +84,135 @@ def no_kind_norm_reads(e: dict) -> bool:
     return all(row[0] == "asserted" for row in reached_rows(e))
 
 
+# A unit's `english.read` outcome as a claim counts it. `unavailable` (no answer) and `not asked` (not one sentence) are
+# UNKNOWN: a unit with either does not read and does not fail to read, so "none of the N reads" cannot count it (F13).
+OUTCOME = (("reached", "reached"), ("english.read:none:", "none"), ("english.read:rejected:", "rejected"),
+           ("english.read:unavailable", "unavailable"), ("not one sentence", "not asked"))
+UNKNOWN = frozenset({"unavailable", "not asked"})
+
+
+def outcome(why: str) -> str:
+    """The outcome a reach row's `why` names; a `why` no row of `OUTCOME` knows fails the check."""
+    found = [name for prefix, name in OUTCOME if why == prefix or (prefix.endswith(":") and why.startswith(prefix))]
+    if len(found) != 1:
+        raise ValueError(f"reach row of unknown outcome: {why!r}")
+    return found[0]
+
+
+def kind_outcomes(e: dict, kind: str) -> Counter:
+    """Each outcome's count over every unit of `kind` in C4, reached or not."""
+    out = Counter()
+    for d in e["C4"]["norm"]["documents"].values():
+        for row in d["reach"]:
+            if row[0] == kind:
+                out[outcome(row[2])] += row[3]
+    return out
+
+
+def none_reads(counts: Counter | dict, population: int) -> bool:
+    """Whether "none of the `population` reads" holds of `counts`: each of them has an answer, and none reads."""
+    return sum(counts.values()) == population and all(k in ("none", "rejected") for k, v in counts.items() if v)
+
+
+def answered(counts: Counter) -> Counter:
+    return Counter({k: v for k, v in counts.items() if k not in UNKNOWN})
+
+
+def norm_units_answered(e: dict) -> bool:
+    found = kind_outcomes(e, "norm")
+    return sum(found.values()) == 143 and none_reads(answered(found), 100)
+
+
+def norm_units_unknown(e: dict) -> bool:
+    soft = [row for name, d in e["C4"]["norm"]["documents"].items() if "soft-chain" in name for row in d["reach"]
+            if row[0] == "norm" and outcome(row[2]) == "unavailable"]
+    found = kind_outcomes(e, "norm")
+    return found["not asked"] == 30 and found["unavailable"] == sum(row[3] for row in soft) == 13
+
+
+def fences_are_asserted(e: dict) -> bool:
+    """Every fenced unit, reached or not, is of kind `asserted`, and there are 8."""
+    rows = [row for d in e["C4"]["norm"]["documents"].values() for row in d["reach"] if row[1] == "fence"]
+    return all(row[0] == "asserted" for row in rows) and sum(row[3] for row in rows) == 8
+
+
+def soft_chain_others_answered(e: dict) -> bool:
+    soft = e["C6"]["soft_chain_without_soft"]
+    others = Counter(soft["outcomes"]) - Counter(one=soft["fences"])
+    return not soft["errors"] and none_reads(others, soft["sentences"] - soft["fences"])
+
+
+def corpus_streams_give_none(e: dict) -> bool:
+    c4 = e["C4"]
+    return not any(k.split(":")[0] == "none" for k in c4["f2"]["outcomes"]) and \
+        all(m["code"] == "QuestionTooLong" for m in c4["f1"]["misses"])
+
+
+def blob_ids_recorded(e: dict) -> bool:
+    """14 parts' values are 40-hex git blob ids and `udhr-part07`'s is a 64-hex SHA-256: recorded, not compared."""
+    ids = {name: d["sha256"] for name, d in e["C4"]["norm"]["documents"].items()}
+    hexes = all(re.fullmatch(r"[0-9a-f]+", v) for v in ids.values())
+    blobs = [n for n, v in ids.items() if len(v) == 40 and n.startswith("norm-documents:pilot/")]
+    own = [n for n, v in ids.items() if len(v) == 64 and n.endswith("/udhr-part07.ve.md")]
+    return hexes and len(blobs) == 14 and len(own) == 1 and len(ids) == 15
+
+
 TRUTHS = (
     (SPEC, "No fronting that Lean answers reads another formula or is `many`",
      lambda e: not e["C4"]["f2"]["other_formula"] and not e["C4"]["f2"]["many_causes"]),
     (SPEC, "5 of 5,859 units are reached, all `ve` fences of kind `asserted`", lambda e: fences_only(e) and no_kind_norm_reads(e)),
-    (SPEC, "none of the 143 units of kind `norm` reads", no_kind_norm_reads),
+    (SPEC, "of the 143 units of kind `norm`, `english.read` answers 100 and reads none", norm_units_answered),
+    (SPEC, "30 are not one sentence and 13 are in `soft-chain`", norm_units_unknown),
+    (SPEC, "`english.read` answers 100 of the 143 and reads none", norm_units_answered),
+    (SPEC, "13 in `soft-chain` have no answer and 30 are not one sentence", norm_units_unknown),
     (SPEC, "is false for one reason", only_soft_chain),
     (SPEC, "`english.question` refuse that pair", pair_is_refused),
-    (SPEC, "reads its 3 fences and none of its other 1,002 sentences", only_fences_without_soft),
-    (SPEC, "**Over-generation:** no answered fronting", lambda e: not e["C4"]["f2"]["other_formula"]),
+    (SPEC, "reads its 3 fences and none of its other 1,002 sentences",
+     lambda e: only_fences_without_soft(e) and soft_chain_others_answered(e)),
+    (SPEC, "**Over-generation:** no answered fronting reads with a formula other than its sentence's, so the 4.9 measure "
+     "finds no acceptance to list", lambda e: not e["C4"]["f2"]["other_formula"]),
+    (SPEC, "The corpus streams give none", corpus_streams_give_none),
+    (SPEC, "111 of 148 sentences have no fronting that reads", lambda e: (e["C5"]["unreached"], e["C5"]["sentences"]) ==
+     (111, 148) and e["C5"]["outcomes"].get("one") == e["C5"]["reached"] and
+     set(e["C5"]["outcomes"]) <= {"budget", "moved", "one", "none", "rejected"}),
+    (SPEC, "not compared: each part's git blob id, or `udhr-part07`'s SHA-256, recorded", blob_ids_recorded),
     (REPORT, "Lean answers all but one", lambda e: e["C4"]["f2"]["outcomes"]["unavailable"] == 1),
     (REPORT, "reads none with another formula, and none is `many`",
      lambda e: not e["C4"]["f2"]["other_formula"] and not e["C4"]["f2"]["many_causes"]),
     (REPORT, "5 of 5,859 units are reached, all `ve` fences", fences_only),
     (REPORT, "no prose Lean answers for reads", fences_only),
     (REPORT, "a pair `english.read` and `english.question` refuse though each alone reads", pair_is_refused),
-    (REPORT, "none is of kind `norm`", no_kind_norm_reads),
-    (REPORT, "reads its 3 fences and none of its other 1,002 sentences", only_fences_without_soft),
+    (REPORT, "only 8 of the 5,859 units have a fence, none is of kind `norm`", fences_are_asserted),
+    (REPORT, "none that Lean answers for reads", fences_only),
+    (REPORT, "reads its 3 fences and none of its other 1,002 sentences",
+     lambda e: only_fences_without_soft(e) and soft_chain_others_answered(e)),
+    (REPORT, "the other 70 norms have none", lambda e: sum(
+        row[3] for d in e["C4"]["norm"]["documents"].values() for row in d["reach"] if row[:2] == ["norm", "-"]) == 70),
 )
+# A universal claim ("none", "never", "no ... reads") claims of every unit, so a number cannot show it: each one in the
+# checked text must sit inside the words of a `TRUTHS` row, or of a row here that says why it claims nothing (F13).
+UNIVERSAL = re.compile(r"\b(?:none|never|nothing)\b|\bno\b[^,;.()]*?\b(?:reads?|reached|reaches|accept\w*)\b", re.I)
+NOT_UNIVERSAL = {
+    "C4 does not save which sentences no fronting reaches": "says what C4 does not hold",
+    "the sentences no question form reaches and why": "names the task's row",
+    "for which the document holds no VE sentence": "a document's text is source English (the sentence before)",
+}
+# The table's `Compared with` column: each cell as written, and what must hold of the evidence. A digest or a count the
+# run compares has its comparison's key; a value it only records says `not compared` (F14).
+COMPARED = {
+    "`corpus_sha256`, 17 of 17": lambda e: not e["C4"]["coverage"]["unsealed_streams"],
+    "not compared: drawn by the seal's generator (not sealed)": lambda e: True,
+    "not compared: read from the files": lambda e: True,
+    "`random_earley_corpus_sha256`, 17 of 17": lambda e: not e["C4"]["coverage"]["unsealed_random_earley"],
+    "`document_corpus_sha256`, 17 of 17": lambda e: not e["C4"]["coverage"]["unsealed_documents"],
+    "the report's `corpus_sha256`, 18 of 18; the seal's 6,757":
+        lambda e: not e["C4"]["coverage"]["mixed_unmatched"] and
+        e["C4"]["coverage"]["mixed_texts"] == e["C4"]["coverage"]["seal_sizes"]["english-mixed"],
+    "the seal's 1,220": lambda e: e["C4"]["coverage"]["natural_statements"] ==
+        e["C4"]["coverage"]["seal_sizes"]["natural-view"],
+    "not compared: each part's git blob id, or `udhr-part07`'s SHA-256, recorded (C4 `norm.documents.*.sha256`)":
+        blob_ids_recorded,
+}
 # Numbers in the checked text that name a plan section, or a fact of the host that the evidence does not hold.
 OUTSIDE = {"3.6", "4.9", "10.2", "2.5", "32"}
 NUMBER = re.compile(r"(?<![\w.,-])\d[\d,]*(?:\.\d+)?%?(?![\w-])")
@@ -176,6 +289,7 @@ def derived(c4: dict, c6: dict) -> frozenset:
     misses = Counter(m["config"].split(":")[0] for m in c4["f1"]["misses"])
     fences = {text for document in c4["norm"]["documents"].values() for key, texts in document["examples"].items()
               if key.endswith("/reached") for text in texts}
+    norms = kind_outcomes({"C4": c4}, "norm")
     return frozenset({
         sum(by_why.values()), sum(v for k, v in by_why.items() if ":rejected:" in k),
         questions["f1_unavailable"] + questions["f2_unavailable"], questions["f1_same"] + questions["f2_same"],
@@ -186,7 +300,8 @@ def derived(c4: dict, c6: dict) -> frozenset:
         kinds[("asserted", "fence")] - c4["norm"]["reached"], soft["sentences"] - soft["fences"],
         c4["streams"]["random-earley"]["configs"] * 50, 250,
         c4["coverage"]["mixed_texts"] - c4["streams"]["english-mixed"]["one_formula"], *misses.values(),
-        c4["f2"]["sentences"] - c4["f2"]["limited"], len(fences), 50})
+        c4["f2"]["sentences"] - c4["f2"]["limited"], len(fences), 50,
+        *norms.values(), sum(answered(norms).values()), sum(norms.values()) - sum(answered(norms).values())})
 
 
 def sentences(text: str) -> list[str]:
@@ -214,15 +329,53 @@ def blocks(text: str) -> list[tuple[str, tuple]]:
     return out
 
 
+def uncovered(unit: str, covers: list[str]) -> list[str]:
+    """Each universal claim in `unit`, outside code, that no words of `covers` contain."""
+    spans = [(m.start(), m.end()) for words in covers for m in re.finditer(re.escape(words), unit)]
+    spans += [(m.start(), m.end()) for m in re.finditer(r"`[^`]*`", unit)]
+    return [m.group(0) for m in UNIVERSAL.finditer(unit)
+            if not any(start <= m.start() and m.end() <= end for start, end in spans)]
+
+
+def compared_cells(text: str) -> list[str] | None:
+    """The `Compared with` column of the table that has one, or None when there is no such table."""
+    lines = text.split("\n")
+    head = next((k for k, line in enumerate(lines) if line.startswith("|") and "| Compared with |" in line), None)
+    if head is None:
+        return None
+    column = [c.strip() for c in lines[head].split("|")].index("Compared with")
+    rows = [line for line in lines[head + 1:] if line.startswith("|") or not line.strip()]
+    rows = rows[:next((k for k, line in enumerate(rows) if not line.strip()), len(rows))]
+    return [line.split("|")[column].strip() for line in rows if not line.startswith("|---")]
+
+
 def check(texts: dict[str, str], evidence: dict[str, dict], extra: frozenset, no_claim: dict = NO_CLAIM,
-          report=None, truths: tuple = TRUTHS) -> list[str]:
-    """Every problem of both reports; `report` receives each checked unit and whether it claims anything."""
+          report=None, truths: tuple = TRUTHS, compared: dict | None = COMPARED,
+          not_universal: dict = NOT_UNIVERSAL) -> list[str]:
+    """Every problem of both reports; `report` receives each checked unit and whether it claims anything. `compared`
+    None leaves out the `Compared with` column (a fixture with no table)."""
     out = [f"{path}: stale wording: {w!r}" for path, text in texts.items() for w in STALE
            if w in re.sub(r"\s+", " ", text).lower()]
     flat = {path: re.sub(r"\s+", " ", text) for path, text in texts.items()}
     out.extend(f"{path}: words gone: {words!r}" for path, words, _ in truths if words not in flat[path])
     out.extend(f"{path}: not so: {words!r}" for path, words, holds in truths
                if words in flat[path] and not holds(evidence))
+    if compared is not None:
+        cells = compared_cells(texts[SPEC])
+        if cells is None:
+            out.append(f"{SPEC}: anchor gone: 'Compared with'")
+        else:
+            out.extend(f"{SPEC}: compared with what no COMPARED row backs: {c!r}" for c in cells if c not in compared)
+            out.extend(f"{SPEC}: not so: compared with {c!r}" for c in cells if c in compared
+                       and not compared[c](evidence))
+            out.extend(f"COMPARED row unused: {c!r}" for c in compared if c not in cells)
+    covers = {path: [w for p, w, _ in truths if p == path] + list(not_universal) for path in texts}
+    universal_used = set()
+
+    def universal(path: str, unit: str) -> None:
+        universal_used.update(w for w in not_universal if w in unit)
+        out.extend(f"{path}: {unit[:70]!r}: universal claim with no TRUTHS row: {u!r}"
+                   for u in uncovered(unit, covers[path]))
     used = set()
     for path, start, end in STRICT:
         part = cut(texts[path], start, end)
@@ -234,6 +387,7 @@ def check(texts: dict[str, str], evidence: dict[str, dict], extra: frozenset, no
             used.add(reason)
             if report:
                 report(path, sentence, reason)
+            universal(path, sentence)
             if reason is None:
                 out.extend(f"{path}: {sentence[:70]!r}: {p}" for p in problems(sentence, evidence, (), extra))
     for path, start, end in UNITS:
@@ -246,8 +400,10 @@ def check(texts: dict[str, str], evidence: dict[str, dict], extra: frozenset, no
                 continue
             if report:
                 report(path, unit, None)
+            universal(path, unit)
             out.extend(f"{path}: {unit[:70]!r}: {p}" for p in problems(unit, evidence, heading, extra))
-    return out + [f"NO_CLAIM row unused: {k!r}" for k in no_claim if k not in used]
+    return out + [f"NO_CLAIM row unused: {k!r}" for k in no_claim if k not in used] + \
+        [f"NOT_UNIVERSAL row unused: {k!r}" for k in not_universal if k not in universal_used]
 
 
 def main(argv: list[str]) -> int:
