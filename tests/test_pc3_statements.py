@@ -42,3 +42,10 @@ def test_a_changed_statement_or_a_later_declaration_fails(tmp_path, capsys):
         assert checker.main(sources) == 1, name
     out = capsys.readouterr().out
     assert "pipeline_preserves: theorem differs" in out and "LayerFacts: listed as a later batch's but built" in out
+
+
+def test_a_theorem_is_cut_at_its_proofs_assignment_not_one_inside_the_statement():
+    """Review sc-6 F1, as a class: the shared `proof_cut` keeps a record update's `:=` in the compared statement."""
+    checker = _checker()
+    text = "theorem t (N : Norm) : { N with guard := g }.guard = g := by\n  rfl\n"
+    assert checker.declarations(text)[("theorem", "t")] == ["theorem t (N : Norm) : { N with guard := g }.guard = g"]
