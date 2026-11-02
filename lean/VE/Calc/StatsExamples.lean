@@ -28,12 +28,18 @@ def tie : Rat := (1085 / 10000) ^ 2
   decide (SqrtRoundsTo r ⟨D, 3⟩ tie)) = [[false, true], [true, false], [true, false], [false, true]]
 #guard [Rounding.tiesUp, .halfEven, .down, .up].map (fun r => [108, 109].map fun D =>
   decide (SqrtRoundsTo r ⟨D, 3⟩ (tie + 1 / 10 ^ 12))) = [[false, true], [false, true], [true, false], [false, true]]
+#guard [Rounding.tiesUp, .halfEven, .down, .up].map (fun r => [109, 110].map fun D =>
+  decide (SqrtRoundsTo r ⟨D, 3⟩ ((1095 / 10000) ^ 2))) = [[false, true], [false, true], [true, false], [false, true]]
+/-- Exact roots 0.1070 to 0.1090 in steps of 0.00005: every tie and both sides of it, against `RoundsTo` of the root. -/
+def grid : List Rat := (List.range 41).map fun i => (2140 + i : Nat) / 20000
+#guard [Rounding.tiesUp, .halfEven, .down, .up].all fun r => grid.all fun s => (List.range 5).all fun j =>
+  decide (SqrtRoundsTo r ⟨106 + j, 3⟩ (s * s)) == decide (RoundsTo r ⟨106 + j, 3⟩ s)
 #guard decide (SqrtRoundsTo .tiesUp ⟨0, 0⟩ 0) ∧ ¬ SqrtRoundsTo .tiesUp ⟨0, 1⟩ (-1 / 100)
-#guard decide (rootGe 4 2) ∧ ¬ rootGe 4 (201 / 100) ∧ decide (rootGe 0 (-1))
-#guard decide (rootGt 4 (199 / 100)) ∧ ¬ rootGt 4 2 ∧ decide (rootGt 0 (-1))
-#guard decide (rootLe 4 2) ∧ ¬ rootLe 4 (199 / 100) ∧ ¬ rootLe 0 (-1)
-#guard decide (rootLt 4 (201 / 100)) ∧ ¬ rootLt 4 2 ∧ ¬ rootLt 0 0
-#guard decide (rootEq 4 2) ∧ ¬ rootEq 4 (-2) ∧ ¬ rootEq 4 (201 / 100)
+#guard decide (rootGe 4 2) ∧ ¬ rootGe 4 (201 / 100) ∧ decide (rootGe 0 (-1)) ∧ decide (rootGe (-1) 0)
+#guard decide (rootGt 4 (199 / 100)) ∧ ¬ rootGt 4 2 ∧ decide (rootGt 0 (-1)) ∧ ¬ rootGt 0 0
+#guard decide (rootLe 4 2) ∧ ¬ rootLe 4 (199 / 100) ∧ ¬ rootLe 0 (-1) ∧ decide (rootLe 0 0)
+#guard decide (rootLt 4 (201 / 100)) ∧ ¬ rootLt 4 2 ∧ ¬ rootLt 0 0 ∧ ¬ rootLt (-1) 0
+#guard decide (rootEq 4 2) ∧ ¬ rootEq 4 (-2) ∧ ¬ rootEq 4 (201 / 100) ∧ decide (rootEq 0 0)
 
 /-! The sign-flip p over 12 synthetic differences, nine +1 and three −1: the observed mean is 6/12, and a sign vector
 reaches it exactly when it has at most 3 or at least 9 plus signs, 2 · (1 + 12 + 66 + 220) = 598 of 4,096 by hand. -/
@@ -59,6 +65,8 @@ def d16 : List Rat := List.replicate 16 1
 table and when chance agreement is 1. -/
 #guard kappa? [[20, 5], [10, 15]] = some (2 / 5) ∧ kappa? [[5, 0], [0, 5]] = some 1
 #guard kappa? [[0, 0], [0, 0]] = none ∧ kappa? [[4, 0], [0, 0]] = none ∧ kappa? [[2, 1], [0, 0]] = some 0
+-- A ragged table reads a missing cell as 0 (the decoder refuses it as `KappaTableNotSquare`, me-7b).
+#guard kappa? [[2], [1, 1]] = some (1 / 2) ∧ kappa? [[1, 1], [2]] = some (-1 / 2)
 
 /-! S-5 (J5): each statistic of a list is undefined below its shortest list, on both sides. -/
 #guard [Stat.mean, .variance, .populationVariance, .signFlip].map (·.run []) = [none, none, none, none]
