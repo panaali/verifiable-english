@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 272 |
+| leaves:bound | 274 |
 | leaves:closed domain | 294 |
 | leaves:none | 1488 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
 | today:not probed | 1087 |
-| today:shape | 566 |
+| today:shape | 568 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -3541,9 +3541,11 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/details/why/referent` | string | none |  |  | 0 | not probed |
 | `/result/projection/details/word` | string | none |  |  | 1 | not probed |
 | `/result/projection/details/words/*` | string | none |  |  | 0 | not probed |
+| `/result/projection/environment/alternatives` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/language` | string | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profile` | string | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profiles/*` | string | none |  |  | 0 | not probed |
+| `/result/projection/environment/risk` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/spec_revision` | string | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/unit_schema` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/units` | any | bound | x-equals |  | 0 | shape |

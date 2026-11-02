@@ -27,12 +27,13 @@ def sort : Shape :=
       ("verbalisation", n [obj, .required ["singular", "plural"], closed [("singular", str), ("plural", str)]])]]
 
 def environment : Shape :=
-  c "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, constants and soft and rights blocks are the request's; the relay binds the whole by environment_id." [
+  c "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, composed blocks (Service.Document.envelopeKeys), constants and soft and rights blocks are the request's; the relay binds the whole by environment_id." [
     obj, .required ["language", "spec_revision", "vocabulary"],
     closed [("language", n [str, .equals "/environment/language"]),
       ("profile", n [str, .equals "/environment/profile"]), ("profiles", ref "common.json#/$defs/strings"),
       ("spec_revision", n [str, .equals "/environment/spec_revision"]),
       ("units", n [obj, .equals "/environment/units"]), ("unit_schema", .equals "/environment/unit_schema"),
+      ("alternatives", .equals "/environment/alternatives"), ("risk", .equals "/environment/risk"),
       ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"],
         closed [("sorts", n [obj, .object [] (some (ref "#/$defs/sort"))]),
           ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
