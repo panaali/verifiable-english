@@ -245,6 +245,9 @@ def cand2 (f o : Nat) (φ : EFormula) : Candidate :=
 #guard flipOn PJ2 (cand2 1 1 .top) (cand2 1 2 .top) == ["sense__odd_1"]
 #guard (flipPair PJ2 (cand2 1 1 (.and (funny 1 riddle) (odd 1 riddle))) (cand2 2 2 (.and (funny 2 riddle) (odd 2 riddle)))
   0).1 == .distinguished ["sense__funny_1", "sense__odd_1"] true false
+-- only the exchanged valuation separates them, and the second candidate reads both of its senses
+#guard (flipPair PJ2 (cand2 1 1 .bottom) (cand2 2 2 (.and (funny 2 riddle) (odd 2 riddle))) 0).1
+  == .distinguished ["sense__funny_2", "sense__odd_2"] false true
 -- every constant of both formulas is an entity of its sort's domain, each its own
 #guard (flipPair PJ2 (cand 1 (.and (funny 1 (.const "alice")) (funny 1 riddle))) (cand 2 (funny 2 (.const "gag"))) 0).1
   == .distinguished ["sense__funny_1"] true false
