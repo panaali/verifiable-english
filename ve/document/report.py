@@ -428,12 +428,14 @@ def _check_quantity_document(doc, active):
 
 
 @semantic_entry("document.check")
-def check_document(path):
-    return _check_document(path)
+def check_document(path, *, raw=None):
+    """`ve document check`'s answer for the document at `path`, or for the text `raw` read as that document (a tool's
+    output before it is written)."""
+    return _check_document(path, raw=raw)
 
 
-def _check_document(path):
-    doc = _load(Path(path), admit=True)
+def _check_document(path, *, raw=None):
+    doc = _load(Path(path), admit=True, raw=raw)
     if "discourse" not in doc:
         return _report(doc)
     try:

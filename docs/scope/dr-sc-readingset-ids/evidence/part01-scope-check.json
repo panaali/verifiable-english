@@ -1,0 +1,40 @@
+{
+ "command": "uv run --frozen python -m ve document check <doc> (exit 0 both)",
+ "part01": {
+  "premises": "model",
+  "bytes_by_status": {
+   "CHECKED": 192,
+   "LABELLED": 265,
+   "OPEN": 1264,
+   "UNFORMALISED": 3003
+  },
+  "readings_sets": [
+   "rs_u025",
+   "rs_u027",
+   "rs_u037"
+  ],
+  "sizes_nodes": 138
+ },
+ "part01+scope@0 (g1)": {
+  "premises": "model",
+  "bytes_by_status": {
+   "CHECKED": 192,
+   "LABELLED": 265,
+   "OPEN": 1264,
+   "UNFORMALISED": 3003
+  },
+  "readings_sets": [
+   "rs_u025",
+   "rs_u027",
+   "rs_u037"
+  ],
+  "sizes_nodes": 140
+ },
+ "fields_that_differ": [
+  "document_id",
+  "readings"
+ ],
+ "readings_fields_that_differ": [
+  "sizes"
+ ]
+}
