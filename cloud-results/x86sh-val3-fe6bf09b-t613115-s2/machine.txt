@@ -1,0 +1,7 @@
+job=x86sh-val3-fe6bf09b-t613115-s2 shard=2/4 nproc=4 arch=x86_64 host=runnervm48cm3 date=2026-11-02T09:53:24Z ulimit_s=16384
+Mem:              15           1           9           0           4          13
+/dev/root       145G   62G   83G  43% /
+ 09:53:24 up 1 min,  0 user,  load average: 1.13, 0.31, 0.11
+pilot/codex branches: 98
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
