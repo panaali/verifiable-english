@@ -199,6 +199,12 @@ def test_the_typed_environment_is_bound_to_the_request(joke):
     assert not schema_refuses(lambda e: e["vocabulary"]["sorts"]["joke"].update(description="B."))
     assert route._projection_problem(mutant, case, env, route._dictionary([PACK], [])[0]) \
         == "the projected lexicon does not name the projected environment"
+    # the environment and lexicon kept, the identity another digest: refused by the environment_id binding
+    mutant = deepcopy(genuine)
+    mutant["result"]["projection"]["identities"]["environment_id"] = "0" * 64
+    assert not _refused(env, genuine, case) and _refused(env, mutant, case)
+    assert route._projection_problem(mutant, case, env, route._dictionary([PACK], [])[0]) \
+        == "the projection's the environment identity is not the returned environment's"
 
 
 def test_reading_identity_rebinding_is_refused(joke):
