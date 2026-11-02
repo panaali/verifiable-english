@@ -1,0 +1,14 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.IntendedActs",
+   "operator": "body-true",
+   "reason": "a Prop over every structure, which no check can evaluate; the mutant breaks elaborate_faithful and intendedActsB_iff (the proofs the detail names), and docs/act-phrases/ap-3dd/mutants.json plants IntendedActs with its Bool mirror so that named #guards fail"
+  },
+  {
+   "definition": "VE.Acts.IntendedActs",
+   "operator": "body-false",
+   "reason": "a Prop over every structure, which no check can evaluate; the mutant breaks elaborate_faithful and intendedActsB_iff (the proofs the detail names), and docs/act-phrases/ap-3dd/mutants.json plants IntendedActs with its Bool mirror so that named #guards fail"
+  }
+ ]
+}
