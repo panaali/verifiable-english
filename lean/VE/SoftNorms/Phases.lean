@@ -46,6 +46,27 @@ def sameKeys (actual expected : List String) : Bool :=
 
 def deciderOk (d : String) : Bool := !d.isEmpty && d.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes
 
+/-- The empty strict soft block the readings route adds to a norms frame (composition-s1 13.6). -/
+def emptyBlock : Json := Json.mkObj [("outranking", Json.mkObj [("mode", .str "strict")]), ("outranks", .arr #[]),
+  ("parties", .arr #[]), ("ranks", .arr #[]), ("ties", .arr #[])]
+
+/-- The soft view of an `acts@0` norms frame (act-phrases ap-1bg): the profiles list `acts@0` and the soft block is
+    `emptyBlock`. Its `acts` block and acts are read as the norms decoder reads them; any other source as before. -/
+def actsFrame (profiles : List String) (vocab : Json) : Bool :=
+  profiles.contains "acts@0" && (vocab.getObjVal? "soft").toOption == some emptyBlock
+
+/-- An environment as the frame it views (ap-1bg): the soft view of an `acts@0` norms frame (`actsFrame`), over which
+Python's superposed readings route checks its models, without `soft-norms@0` and its block, which no model reads;
+any other environment as it is. -/
+def frameView (environment : Json) : Json :=
+  let vocab := environment.getObjValD "vocabulary"
+  match strings (environment.getObjValD "profiles") with
+  | .ok ps => if actsFrame ps vocab then
+      (environment.setObjVal! "profiles" (toJson (ps.erase "soft-norms@0"))).setObjVal! "vocabulary"
+        (match vocab with | .obj kvs => .obj (kvs.erase "soft") | v => v)
+    else environment
+  | .error _ => environment
+
 /-! ## Phase 1: envelope -/
 
 def normArray (norms : Json) : Check (List Json) := do
@@ -69,7 +90,7 @@ def envelope (environment norms : Json) : Check (List String × List Json) := do
   let vocab := environment.getObjValD "vocabulary"
   let required := ["sorts", "predicates", "constants"]
   unless (keysOf vocab).any (fun ks => required.all ks.contains &&
-      ks.all (fun k => required.contains k || k == "soft")) &&
+      ks.all (fun k => required.contains k || k == "soft" || (k == "acts" && actsFrame profiles vocab))) &&
       required.all (fun k => (keysOf (vocab.getObjValD k)).isSome) do
     fail "SOFT_INVALID_INPUT" "InvalidInput: invalid vocabulary"
   pure (profiles, ← normArray norms)
@@ -134,8 +155,10 @@ def declarations (environment : Json) (profiles : List String) :
         fail "SOFT_INVALID_INPUT" s!"InvalidInput: instruction_of on {p}"
       io := io ++ [(p, π)]
     | .ok _ => fail "SOFT_INVALID_INPUT" s!"InvalidInput: instruction_of on {p}"
+  let acts := actsFrame profiles vocab
   let base := VE.Route.sortStrings
-    ((profiles.filter inheritedProfiles.contains).eraseDups ++ ["norms@0", VE.Route.Gate.base])
+    ((profiles.filter inheritedProfiles.contains).eraseDups ++ ["norms@0", VE.Route.Gate.base] ++
+      (if acts then ["acts@0"] else []))
   -- Python's W1 accepts a `defined` field only under `definitions@0`.
   unless base.contains "definitions@0" do
     if let some (p, _) := preds.find? (fun (_, e) => (e.getObjVal? "defined").isOk) then
@@ -148,10 +171,11 @@ def declarations (environment : Json) (profiles : List String) :
     else
       fail "SOFT_INVALID_INPUT" "UnsupportedProfile: unspecified completion requires norm-defaults@0"
   let stripped := (environment.setObjVal! "profiles" (toJson base)).setObjVal! "vocabulary"
-    (Json.mkObj [("sorts", vocab.getObjValD "sorts"), ("constants", vocab.getObjValD "constants"),
-      ("predicates", Json.mkObj (preds.map (fun (p, e) => (p, stripEntry e))))])
+    (Json.mkObj ([("sorts", vocab.getObjValD "sorts"), ("constants", vocab.getObjValD "constants"),
+      ("predicates", Json.mkObj (preds.map (fun (p, e) => (p, stripEntry e))))] ++
+      (if acts then (vocab.getObjVal? "acts").toOption.toList.map (("acts", ·)) else [])))
   -- A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19).
-  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped (displayConstants := true))
+  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped (displayConstants := true) (acts := acts))
   let some block := (vocab.getObjVal? "soft").toOption | pure (ne, noBlock io)
   unless (VE.Bridge.displayFields block ["outranking"]
       ["parties", "ranks", "outranks", "ties", "exception_decider"]).isOk do
@@ -194,7 +218,9 @@ def unsupported (message : String) : Check Unit :=
 def profileChecks (profiles : List String) (ne : Norms.Wire.NormsEnvironment) : Check Unit := do
   unless decide (profiles.Pairwise (· < ·)) do unsupported "profiles must be sorted and unique"
   for p in profiles do
-    unless VE.Route.Gate.known p || p == softProfile do unsupported s!"Unsupported profile {p}"
+    -- `acts@0` only where `declarations` read it (`actsFrame`)
+    unless VE.Route.Gate.known p || p == softProfile || (p == "acts@0" && ne.profiles.contains p) do
+      unsupported s!"Unsupported profile {p}"
   unless profiles.contains VE.Route.Gate.base do unsupported s!"Missing profile {VE.Route.Gate.base}"
   unless profiles.contains softProfile do unsupported "soft-norms@0 is required"
   unless profiles.contains "norms@0" do unsupported "soft-norms@0 requires norms@0"

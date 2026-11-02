@@ -10317,7 +10317,10 @@
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
         "VE.Service.Standalone.validatedEnvironment",
-        "VE.Service.Standalone.validatedLayerEnvironment"
+        "VE.Service.Standalone.validatedLayerEnvironment",
+        "VE.Service.Standalone.letterName",
+        "VE.Service.Standalone.modelAct",
+        "VE.Service.Standalone.modelActs"
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",
@@ -10447,7 +10450,9 @@
         "VE.SoftNorms.Phases.softNames",
         "VE.SoftNorms.Phases.softPairs",
         "VE.SoftNorms.Phases.stripEntry",
-        "VE.SoftNorms.Phases.typed"
+        "VE.SoftNorms.Phases.typed",
+        "VE.SoftNorms.Phases.emptyBlock",
+        "VE.SoftNorms.Phases.actsFrame"
       ],
       "D[R]": [
         "VE.SoftNorms.Phases.Fault",
@@ -10458,7 +10463,8 @@
         "VE.SoftNorms.Phases.inheritedProfiles",
         "VE.SoftNorms.Phases.keysOf",
         "VE.SoftNorms.Phases.softProfile",
-        "VE.SoftNorms.Phases.w1Keys"
+        "VE.SoftNorms.Phases.w1Keys",
+        "VE.SoftNorms.Phases.frameView"
       ]
     },
     "VE/SoftNorms/RankProof.lean": {
@@ -15208,7 +15214,13 @@
         "VE.Service.ActsExamples.typed",
         "VE.Service.ActsExamples.every",
         "VE.Service.ActsExamples.modelled",
-        "VE.Service.ActsExamples.dualEnv"
+        "VE.Service.ActsExamples.dualEnv",
+        "VE.Service.ActsExamples.oblig",
+        "VE.Service.ActsExamples.pairEnv",
+        "VE.Service.ActsExamples.modelActsOf",
+        "VE.Service.ActsExamples.view",
+        "VE.Service.ActsExamples.rels",
+        "VE.Service.ActsExamples.threeEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -16319,7 +16331,11 @@
         "VE.Readings.ActsExamples.setDoc",
         "VE.Readings.ActsExamples.noActs",
         "VE.Readings.ActsExamples.elabCase",
-        "VE.Readings.ActsExamples.wordings"
+        "VE.Readings.ActsExamples.wordings",
+        "VE.Readings.ActsExamples.sfP",
+        "VE.Readings.ActsExamples.softView",
+        "VE.Readings.ActsExamples.softErr",
+        "VE.Readings.ActsExamples.pyBlock"
       ]
     },
     "VE/Cardinality/Gate.lean": {},
@@ -17404,6 +17420,22 @@
         "VE.Calc.StatsExamples.sv",
         "VE.Calc.StatsExamples.tie",
         "VE.Calc.StatsExamples.v6"
+      ]
+    },
+    "VE/SoftNorms/ActsFrameExamples.lean": {
+      "T": [
+        "VE.SoftNorms.ActsFrameExamples.parse",
+        "VE.SoftNorms.ActsFrameExamples.block",
+        "VE.SoftNorms.ActsFrameExamples.paid",
+        "VE.SoftNorms.ActsFrameExamples.heard",
+        "VE.SoftNorms.ActsFrameExamples.reg",
+        "VE.SoftNorms.ActsFrameExamples.pred",
+        "VE.SoftNorms.ActsFrameExamples.env",
+        "VE.SoftNorms.ActsFrameExamples.sfP",
+        "VE.SoftNorms.ActsFrameExamples.err",
+        "VE.SoftNorms.ActsFrameExamples.actsOf",
+        "VE.SoftNorms.ActsFrameExamples.frame",
+        "VE.SoftNorms.ActsFrameExamples.inhP"
       ]
     }
   }
