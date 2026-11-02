@@ -176,6 +176,8 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Consistency
+module VE.Calc.ConsistencyExamples
 module VE.Calc.Csv
 module VE.Calc.Data
 module VE.Calc.Decls
@@ -188,6 +190,7 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
+module VE.Calc.Interval
 module VE.Calc.Jsonl
 module VE.Calc.Linear
 module VE.Calc.Lower
@@ -815,6 +818,7 @@ VE.Calc.Claim.Defined@VE.Calc.Syntax
 VE.Calc.Claim.Holds@VE.Calc.Syntax
 VE.Calc.Claim.Overflows@VE.Calc.Decls
 VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Consistent@VE.Calc.Consistency
 VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
@@ -823,6 +827,7 @@ VE.Calc.Filter.Selects@VE.Calc.Table
 VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.HasCounterexample@VE.Calc.Lower
+VE.Calc.InBox@VE.Calc.Interval
 VE.Calc.Inlined.Agrees@VE.Calc.Inline
 VE.Calc.Inlined.Faults@VE.Calc.Inline
 VE.Calc.IsIdentity@VE.Calc.Identity
