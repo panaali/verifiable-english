@@ -1,0 +1,37 @@
+trust_mutants: 39 definitions, 286 mutants (41 to run), 4 jobs, base 50c6842f84f7
+UNKNOWN lean/VE/Norms/Run.lean:203 VE.Norms.Run.AdmissionAnswer (S, trusted) body-false: AdmissionAnswerIn Wire.decodeFlagged -> False (lean/VE/Norms/Run.lean:203: Type mismatch)
+UNKNOWN lean/VE/Norms/Admission.lean:475 VE.Norms.Admission.SourceDecoded (S, trusted) body-true: SourceDecodedIn Wire.decodeFlagged -> True (lean/VE/Norms/Admission.lean:475: Type mismatch)
+UNKNOWN lean/VE/Acts/Decode.lean:184 VE.Acts.Decode.sourceOf (D[V], trusted) eq-le: = -> ≤ (lean/VE/Acts/Decode.lean:194: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Decode.lean:57 VE.Acts.Decode.splitPredicates (D[V], trusted) eq-ne: == -> != (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Norms/Run.lean:111 VE.Norms.Run.AdmissionAnswerIn (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Norms/Run.lean:123)
+UNKNOWN lean/VE/Acts/Decode.lean:184 VE.Acts.Decode.sourceOf (D[V], trusted) bool-flip: true -> false (lean/VE/Acts/Decode.lean:194: Application type mismatch: The argument)
+SURVIVOR lean/VE/Norms/Wire.lean:185 VE.Norms.Wire.actsVocab (D[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/NormDefaults/Admission.lean:163 VE.NormDefaults.Admission.SourceDecodedIn (S, trusted) body-false: (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧ dec environment norm... -> False (the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lea...)
+SURVIVOR lean/VE/Acts/Decode.lean:233 VE.Acts.Decode.Elaborated (S, trusted) body-true: ∃ e, decodeElaboratedFlagged environment norms = .ok e ∧ src.D = e.U'.D ∧ src.ne.rv.flags = e.s.s... -> True (the proofs it breaks: lean/VE/Acts/Decode.lean:236)
+SURVIVOR lean/VE/Acts/Decode.lean:233 VE.Acts.Decode.Elaborated (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Decode.lean:236)
+SURVIVOR lean/VE/Service/FamilyNorms.lean:313 VE.Service.FamilyNorms.folCase (G[V], trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Acts/DecodeTwins.lean:44 VE.Acts.Decode.ElaboratedDoc (S, trusted) eq-le: = -> ≤ (lean/VE/Acts/DecodeTwins.lean:44: failed to synthesize)
+SURVIVOR lean/VE/Norms/Wire.lean:175 VE.Norms.Wire.actsFixed (D[V], trusted) append-right: ["fixed"] ++ -> 
+SURVIVOR lean/VE/Norms/Wire.lean:153 VE.Norms.Wire.joinedActs (D[V], trusted) list-empty: ps -> []
+SURVIVOR lean/VE/Alternatives/Wire.lean:217 VE.Alternatives.Wire.otherDeclarations (D[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Acts/Decode.lean:229 VE.Acts.Decode.flaggedSource (D[V], trusted) list-empty: (decodeElaboratedFlagged environment norms >>= sourceOf).map (·.src) -> [] (lean/VE/Acts/Decode.lean:229: Type mismatch)
+UNKNOWN lean/VE/Norms/Wire.lean:102 VE.Norms.Wire.actsOf (D[V], trusted) list-empty: A.map (r.name, ·) -> [] (lean/VE/Norms/Wire.lean:102: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Decode.lean:57 VE.Acts.Decode.splitPredicates (D[V], trusted) list-empty: P -> [] (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+UNKNOWN lean/VE/Acts/Decode.lean:56 VE.Acts.Decode.splitPredicates (D[V], trusted) list-first: M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD [])) ++ P.filter fun x => !M.preds.an... -> ((M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD [])) ++ P.filter fun x => !M.preds.... (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Norms/Run.lean:218 VE.Norms.Run.underActs (G[V], trusted) list-first: (Wire.actsProfiles true environment) -> ((Wire.actsProfiles true environment).take 1)
+SURVIVOR lean/VE/Norms/Wire.lean:246 VE.Norms.Wire.decodeNormsEnvironment (D[V], trusted) list-first: ps -> (ps.take 1)
+SURVIVOR lean/VE/Norms/Wire.lean:93 VE.Norms.Wire.decodeRegulatedShape (D[V], trusted) list-drop-last: profiles -> (profiles.dropLast)
+SURVIVOR lean/VE/Acts/Decode.lean:234 VE.Acts.Decode.Elaborated (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Decode.lean:236)
+UNKNOWN lean/VE/Acts/Decode.lean:56 VE.Acts.Decode.splitPredicates (D[V], trusted) list-drop-last: M.preds -> (M.preds.dropLast) (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+UNKNOWN lean/VE/Acts/Decode.lean:193 VE.Acts.Decode.sourceOf (D[V], trusted) list-first: [(elaborateMap_ok e.hE).2.2.1, ← src.lits, ← e.s.doc, ← e.hU] -> ([(elaborateMap_ok e.hE).2.2.1, ← src.lits, ← e.s.doc, ← e.hU].take 1) (lean/VE/Acts/Decode.lean:193: unexpected token '('; expected '[')
+SURVIVOR lean/VE/Readings/Wire.lean:119 VE.Readings.Wire.decodeEnvironment (D[V], trusted) list-drop-last: re.profiles -> (re.profiles.dropLast) (the proofs it breaks: lean/VE/Readings/Wire.lean:125)
+SURVIVOR lean/VE/Norms/Wire.lean:184 VE.Norms.Wire.actsVocab (D[V], trusted) list-last: ps -> (ps.reverse.take 1)
+SURVIVOR lean/VE/Norms/Wire.lean:46 VE.Norms.Wire.canonicalShape (D[V], trusted) list-drop-first: profiles -> (profiles.drop 1)
+SURVIVOR lean/VE/Acts/Wire.lean:41 VE.Acts.Wire.fixedOf (D[V], trusted) list-last: (strings (((environment.getObjValD "vocabulary").getObjValD "acts").getObjValD "fixed")).toOption... -> (((strings (((environment.getObjValD "vocabulary").getObjValD "acts").getObjValD "fixed")).toOpti...
+UNKNOWN lean/VE/Acts/Decode.lean:56 VE.Acts.Decode.splitPredicates (D[V], trusted) list-drop-first: M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD [])) -> ((M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD []))).drop 1) (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Norms/Wire.lean:175 VE.Norms.Wire.actsFixed (D[V], trusted) list-drop-first: ["frames", "adverbs"] -> (["frames", "adverbs"].drop 1)
+trust_mutants: 5 KILLED, 18 SURVIVOR, 13 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 245 OTHER SHARD in 1471 s
+trust_mutants: D[V], trusted: 5 KILLED, 11 SURVIVOR, 10 UNKNOWN, 5 INVALID, 194 OTHER SHARD
+trust_mutants: G[V], trusted: 2 SURVIVOR, 12 OTHER SHARD
+trust_mutants: S, trusted: 5 SURVIVOR, 3 UNKNOWN, 39 OTHER SHARD
+trust_mutants: steps: wall plan 7.1 s, scratch 1.4 s, control_build 0.2 s, probe_install 0.9 s, control_probes 356.2 s, mutants 1104.5 s, cleanup 0.4 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 1040.6 s (30), mutant_builds 304.5 s (54), mutant_checks 2238.1 s (18), stage_controls 668.7 s (4), mutant_probes 249.4 s (5)
