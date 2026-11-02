@@ -1,0 +1,10 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Senses/Run.lean is a selected declaration's file or in its import closure
+trust_mutants: 10 definitions, 229 mutants (57 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Run.lean:238 VE.Senses.Run.writtenLines (G[V], trusted) list-empty: (sents.extract 0 k).toList -> [] (lean/VE/Senses/Run.lean:240: Invalid field notation: Type of)
+UNKNOWN lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) list-empty: (List.range n).flatMap -> [] (lean/VE/Senses/Flip.lean:78: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:54 VE.Senses.Flip (S, trusted) ctor-drop: | unknown ->  (lean/VE/Senses/Flip.lean:68: Unknown constant `VE.Senses.Flip.unknown`)
+UNKNOWN lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-empty: P.map -> [] (lean/VE/Senses/Flip.lean:39: Invalid field notation: Type of)
+trust_mutants: 41 KILLED, 0 SURVIVOR, 4 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 172 OTHER SHARD in 3521 s
+trust_mutants: G[V], trusted: 13 KILLED, 1 UNKNOWN, 6 INVALID, 40 OTHER SHARD
+trust_mutants: S, trusted: 28 KILLED, 3 UNKNOWN, 6 INVALID, 132 OTHER SHARD
+trust_mutants: steps: wall plan 10.4 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.4 s, control_probes 137.2 s, mutants 3365.9 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 136.8 s (1), mutant_builds 102.3 s (57), mutant_checks 1730.9 s (42), stage_controls 4.9 s (2), mutant_probes 11268 s (41)
