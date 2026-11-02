@@ -1667,8 +1667,8 @@
   },
   {
    "class": "V",
-   "lines": 4,
-   "reason": "pc-1 review fix: VE/Service/Document.lean profilesIn +6, profilesOf -2 (the one reading of a case's profiles, which profilesOf and row 16's runs share, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +4)",
+   "lines": 3,
+   "reason": "pc-1 review fix: VE/Service/Document.lean profilesOf +3 (a match on frontOf, inlined, which row 16's runs call too, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +3)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-02",
    "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
   }
