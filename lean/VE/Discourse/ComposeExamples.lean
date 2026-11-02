@@ -128,6 +128,50 @@ def loaded (text : String) : Json × Json :=
   "\"target\": {\"kind\": \"unit\", \"units\": [\"u2\"]}}]}")))).toOption.map (·.2.mentions.map (·.id))) ==
   some ["m1"]
 
+-- `formulaUnit`: W2's view of a unit on the composed path, an `ast` content its formula, any other content none
+#guard (formulaUnit (parsed "{\"id\": \"u\", \"span\": [0, 1], \"kind\": \"asserted\", \"content\": {\"ast\": [\"top\"]}}")).compress ==
+  "{\"content\":[\"top\"],\"id\":\"u\",\"kind\":\"asserted\",\"span\":[0,1]}"
+#guard (formulaUnit (parsed "{\"id\": \"u\", \"span\": [0, 1], \"kind\": \"norm\", \"content\": {\"norm\": {}}}")).compress ==
+  "{\"id\":\"u\",\"kind\":\"norm\",\"span\":[0,1]}"
+
+-- `chainDDoc`, and `slotUnit` and `coveredOk` on it (14.3 step 6): a chain content's unit is a unit with meaning.
+-- u1 asserts, u2 and u3 are norm units reading `It`, u4 has no content.
+def itText : String := "It must be reviewed when deployed.\n"
+def bareUnit (id : String) (a b : Nat) : String :=
+  s!"\{\"id\": \"{id}\", \"span\": [{a}, {b}], \"kind\": \"exposition\", \"meaning\": \{\"unformalised\": \"commentary\"}, " ++
+  "\"support\": \"none\"}"
+def fourUnits : String :=
+  doc (us := "[" ++ u1 ++ ", " ++ normUnit "u2" 21 56 ++ ", " ++ normUnit "u3" 56 91 ++ ", " ++ bareUnit "u4" 91 102 ++ "]")
+    (body := src1 ++ itText ++ itText ++ "See above.\n")
+def chainD : Option DDoc := do
+  let (e, p) := loaded fourUnits
+  let (_, K, _) ← (chainBase e p).toOption
+  (chainDDoc e p K).toOption
+#guard chainD.map (·.chain) == some ["u2", "u3"]
+#guard chainD.map (fun D => ["u1", "u2", "u3", "u4"].map (slotUnit D)) == some [true, true, true, false]
+#guard chainD.map (fun D => ["u1", "u2", "u3", "u4"].map fun u => ok? (coveredOk D u)) ==
+  some ["ok", "UnrecordedSlot: u2: [21, 23)", "UnrecordedSlot: u3: [56, 58)", "ok"]
+-- a group span is a slot position, wherever its group lists it
+def grouped (spans : List String) : Option Bool :=
+  chainD.map fun D => slotUnit { D with K := { D.K with groups := [⟨"s", 1, 0, spans⟩] } } "u4"
+#guard grouped ["u4", "u9"] == some true
+#guard grouped ["u9", "u4"] == some true
+#guard grouped ["u9"] == some false
+
+-- `documentSortOk` (shared with `admitCore`): every constant of the document sort is a document name
+def docName (n : String) : DocName := ⟨n, [n], .self, 1, none, [], none, none, none⟩
+def sortOk (sort : String) (names : List String) : String :=
+  match VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment (loaded doc).1) with
+  | .ok ne => ok? (documentSortOk ne.rv { emptyManifest with documentSort := sort, documents := names.map docName })
+  | .error e => e
+#guard sortOk "service" [] == "InvalidInput: document sort service has other constants"
+#guard sortOk "person" [] == "InvalidInput: document sort person has other constants"
+#guard sortOk "service" ["x"] == "InvalidInput: document sort service has other constants"
+#guard sortOk "service" ["web_api"] == "ok"
+#guard sortOk "service" ["x", "web_api"] == "ok"
+#guard sortOk "service" ["web_api", "x"] == "ok"
+#guard sortOk "other" [] == "ok"
+
 -- `encodeComposed` and `composedJson`: the wrapper fields, `inner` verbatim, the case id
 def c0 : ChainAdmitted := ⟨.norms, .null, Json.mkObj [("report_id", "r"), ("conditional_on", Json.arr #["a"])], "d", "w",
   Json.arr #[]⟩
