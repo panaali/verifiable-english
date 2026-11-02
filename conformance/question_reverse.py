@@ -3,8 +3,8 @@
     uv run python -m conformance.question_reverse [--per-config N] [--per-usecase N] [--workers N] [--output PATH]
 
 The defaults are the whole corpus (`english_lean_e2_evidence.PER_CONFIG`, `PER_USECASE`); the saved `coverage` says
-what a run left out, compares each round-trip stream with its digest in the seal, and names the seal's other streams,
-which this script does not draw. For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
+what a run left out, compares each round-trip stream with its digest in the seal, and (`--part a`) names the seal's
+other streams, which only `--part b` draws (q1-3b, below). For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
 `conformance.english_lean_e2_evidence`, and the units of every use-case `.ve.md` document under its own
 environment), the script builds the F1 question, the F2 question where the sentence begins with a quantified or
 named subject followed by *is*, *must* or *may* (plan 3.2), and spacing and capitalisation mutants of both. Each
@@ -14,6 +14,9 @@ Lean decides every outcome; this script only builds texts, compares formulas and
 one configuration at a time, so the measured times carry the host's load and each other's (`workers`,
 `load_average`). The result is
 `docs/question-answering/q1-3/evidence/question-reverse.json`, cited by `docs/spec/question-answering-q1-report.md`.
+
+`--part b` is q1-3b: every fronting of each sentence, the seal's other streams, the norm part documents and open
+point 10.2, written to `docs/question-answering/q1-3b/evidence/question-reverse-b.json`.
 """
 from __future__ import annotations
 
@@ -363,6 +366,18 @@ def measures(questions: list[dict], moved: list[dict], limits: list[dict]) -> di
 
 # ------------------------------------------------------------------ the corpus
 
+def document_units(raw: bytes) -> tuple[dict, list[tuple[dict, str, bool]]]:
+    """(front matter, (unit, text, whether the text is a fence) per unit with a span) of a `.ve.md` document, read as
+    the document loader reads it: `_parts`' units, spans over the source without its fences, and as a unit's text the
+    English `ve` fence it names (`_english_fences`), the sentence Lean reads, else its span, which is source prose."""
+    from ve.document.source import _english_fences, _parts, _split
+    meta, source, fences = _split(raw)
+    english = dict(_english_fences(meta.get("units", []), fences))
+    return meta, [(u, english[u["id"]].strip(), True) if u.get("id") in english else
+                  (u, source[u["span"][0]:u["span"][1]].decode().strip(), False)
+                  for u, _ in _parts(meta.get("units", [])) if "span" in u]
+
+
 def documents() -> list[tuple[str, dict, list[str]]]:
     """(path, environment data, unit texts ending with `.`) of every use-case `.ve.md` document outside the
     pilot runs (`run-*`)."""
@@ -370,10 +385,8 @@ def documents() -> list[tuple[str, dict, list[str]]]:
     for path in sorted(ROOT.glob("usecases/**/*.ve.md")):
         if any(part.startswith("run-") for part in path.parts):
             continue
-        _, front, body = path.read_text().split("---\n", 2)
-        data, raw = json.loads(front), body.encode()
-        texts = [raw[u["span"][0]:u["span"][1]].decode().strip() for u in data.get("units", []) if "span" in u]
-        out.append((str(path.relative_to(ROOT)), data["environment"], [t for t in texts if t.endswith(".")]))
+        data, units = document_units(path.read_bytes())
+        out.append((str(path.relative_to(ROOT)), data["environment"], [t for _, t, _ in units if t.endswith(".")]))
     return out
 
 
@@ -427,6 +440,7 @@ def run_config_b(name: str, env, words, options, sentences: list[str], asks_f1: 
                                               outcome["text"], record["expected"])
             questions.append(record)
     return {"sentences": len(sentences), "one_formula": sum(r["status"] == "one" and len(r["ast"]) == 1 for r in readings),
+            "unavailable": sum(r["status"] == "unavailable" for r in readings),
             "reads": {s: {"status": r["status"], "code": r.get("code"), "one": r["status"] == "one" and len(r["ast"]) == 1}
                       for s, r in zip(sentences, readings, strict=True)},
             "questions": questions}
@@ -548,36 +562,38 @@ def norm_documents() -> list[tuple[str, str, str]]:
     return sorted(latest.values()) + [(str(own.relative_to(ROOT)), hashlib.sha256(raw).hexdigest(), raw.decode())]
 
 
-def norm_units(text: str) -> tuple[dict, list[tuple[str, str, str | None]]]:
-    """(environment data, (kind, content kind, text) per unit with a span) of a `.ve.md` document."""
-    _, front, body = text.split("---\n", 2)
-    data, raw = json.loads(front), body.encode()
-    units = [(u.get("kind", "-") if isinstance(u.get("kind", "-"), str) else json.dumps(u["kind"], separators=(",", ":")),
-              next(iter(u["content"])) if isinstance(u.get("content"), dict) else None,
-              raw[u["span"][0]:u["span"][1]].decode().strip()) for u in data["units"] if "span" in u]
-    return data["environment"], units
-
-
 def one_sentence(text: str) -> bool:
     return text.endswith(".") and "\n" not in text
 
 
+def norm_units(text: str) -> tuple[dict, list[tuple[str, str, str | None, bool]]]:
+    """(environment data, (kind, content kind, text, whether Lean is asked to read it) per unit with a span) of a
+    `.ve.md` document: its `document_units`, a fence whatever its lines (a list is one sentence) and a span when it
+    is `one_sentence`."""
+    data, units = document_units(text.encode())
+    return data["environment"], [
+        (u.get("kind", "-") if isinstance(u.get("kind", "-"), str) else json.dumps(u["kind"], separators=(",", ":")),
+         next(iter(u["content"])) if isinstance(u.get("content"), dict) else None,
+         t, t.endswith(".") if fenced else one_sentence(t)) for u, t, fenced in units]
+
+
 def why(text: str, reads: dict[str, dict]) -> str:
-    """Whether a unit's text can be a question's source: `reached` only for one sentence that `english.read` (its
-    outcome in `reads`) reads with one formula; else why not (not one sentence, or Lean's outcome and code)."""
-    r = reads.get(text) if one_sentence(text) else None
+    """Whether a unit's text can be a question's source: `reached` only for a sentence that `english.read` (its
+    outcome in `reads`, which holds every text Lean was asked to read) reads with one formula; else why not (not
+    one sentence, or Lean's outcome and code)."""
+    r = reads.get(text)
     if r is None:
         return "not one sentence"
     return "reached" if r["one"] else ":".join(filter(None, ("english.read", r["status"], r["code"])))
 
 
-def unit_reach(units: list[tuple[str, str, str | None]], reads: dict[str, dict]) -> tuple[Counter, dict]:
-    """(units per (kind, content, `why`), two example texts of each key other than `reached`)."""
+def unit_reach(units: list[tuple[str, str, str | None, bool]], reads: dict[str, dict]) -> tuple[Counter, dict]:
+    """(units per (kind, content, `why`), two example texts of each key)."""
     counts, examples = Counter(), {}
-    for kind, content, text in units:
+    for kind, content, text, _ in units:
         key = (kind, content or "-", why(text, reads))
         counts[key] += 1
-        if key[2] != "reached" and len(examples.setdefault("/".join(key), [])) < 2:
+        if len(examples.setdefault("/".join(key), [])) < 2:
             examples["/".join(key)].append(text[:LISTED_HEAD])
     return counts, examples
 
@@ -615,6 +631,7 @@ def run_b(asked: dict[int, int], given: dict[int, list[str]], earley: dict[int, 
         configs[TARGETS[index][0]] = {
             "stream": PLANS[index], "asked": asked.get(index, len(given.get(index, ()))), "drawn": len(drawn[index]),
             "sentences": len(unique[index]), "one_formula": sum(r["one_formula"] for r in results[index]),
+            "unavailable": sum(r["unavailable"] for r in results[index]),
             "questions": len(mine), "p95_ms": p95([q["ms"] for q in mine]),
             "max_ms": max((q["ms"] for q in mine), default=None), **extra.get(index, {})}
         if PLANS[index] == "norm-documents":
@@ -625,7 +642,8 @@ def run_b(asked: dict[int, int], given: dict[int, list[str]], earley: dict[int, 
 
 def per_stream(configs: dict, questions: list[dict]) -> dict:
     """Per stream of `STREAMS`, every one listed: its configurations, sentences, one-formula sentences, and its
-    questions of each form with how many read with the sentence's formula, are `many` or read another formula."""
+    questions of each form with how many read with the sentence's formula, are `many`, read another formula or
+    have no answer."""
     out = {stream: Counter() for stream in STREAMS}
     for row in configs.values():
         if "stream" in row:
@@ -635,9 +653,16 @@ def per_stream(configs: dict, questions: list[dict]) -> dict:
     for q in questions:
         row = out[configs[q["config"]]["stream"]]
         for key, counted in (("", True), ("_same", q["same"]), ("_many", q["outcome"]["status"] == "many"),
-                             ("_other", q["other"])):
+                             ("_other", q["other"]), ("_unavailable", q["outcome"]["status"] == "unavailable")):
             row[q["kind"] + key] += counted
     return {stream: dict(sorted(row.items())) for stream, row in out.items()}
+
+
+def f1_measure(questions: list[dict]) -> dict:
+    """The F1 questions of the sentences with one formula: how many read with it, and the rest (200 listed)."""
+    f1s = [q for q in questions if q["kind"] == "f1" and q["read"]]
+    return {"questions": len(f1s), "same": sum(q["same"] for q in f1s),
+            "misses": [brief(q) for q in f1s if not q["same"]][:200]}
 
 
 def fronting_measure(questions: list[dict]) -> dict:
@@ -674,7 +699,8 @@ def closest_measure(questions: list[dict]) -> dict:
     """Open point 10.2 over every question with no reading: how often Lean names a closest sentence, how often it
     is a candidate, the leftmost of tied candidates or the only one, where its moved word sits (second: the first
     gap) and whether it is the reader's sentence (the put-back); each share over the F2 questions whose closest is
-    named among more than one candidate, with `EXAMPLES` of the moved-word-second ties."""
+    named among more than one candidate, with `EXAMPLES` of the moved-word-second ties, and how many of the questions
+    are distinct texts (a text repeated in several documents is a question of each)."""
     nones = [q for q in questions if q["outcome"]["status"] == "none"]
     named = [q for q in nones if q["closest"]["named"]]
     found = [q for q in named if q["closest"]["closest"] is not None]
@@ -686,7 +712,9 @@ def closest_measure(questions: list[dict]) -> dict:
     other = [q for q in known if c(q)["closest"] != c(q)["reader"]]
     examples = [brief(q) | {"closest": candidates(q["question"])[0], "ties": c(q)["ties"]} for q in tied
                 if c(q)["closest"] == 0 and c(q)["reader"] not in (None, 0)][:EXAMPLES]
-    return {"no_reading": len(nones), "by_form": dict(Counter(q["kind"] for q in nones)), "named": len(named),
+    return {"no_reading": len(nones), "distinct_no_reading": len({q["question"] for q in nones}),
+            "distinct_measured": len({q["question"] for q in pool}),
+            "by_form": dict(Counter(q["kind"] for q in nones)), "named": len(named),
             "not_named": len(nones) - len(named), "named_unmatched": [brief(q) for q in named if q not in found][:20],
             "one_candidate": sum(c(q)["candidates"] == 1 for q in found), "measured": len(pool),
             "tied": len(tied), "leftmost_tie": sum(c(q)["consistent"] for q in tied),
@@ -698,10 +726,34 @@ def closest_measure(questions: list[dict]) -> dict:
             "examples": examples}
 
 
+def norm_measure(norms: dict, configs: dict, questions: list[dict]) -> dict:
+    """The norm part documents: each one's reach, the units per `why` over all of them, the units it reached, the
+    stream's question counts, and how many of its sentences and frontings with an answer are distinct texts (the
+    constitution parts repeat one source)."""
+    mine = [q for q in questions if configs[q["config"]]["stream"] == "norm-documents"
+            and q["outcome"]["status"] != "unavailable"]
+    by_why = Counter()
+    for row in norms.values():
+        for *key, count in row["reach"]:
+            by_why[key[2]] += count
+    return {"documents": norms, "by_why": dict(sorted(by_why.items())), "reached": by_why["reached"],
+            "questions": per_stream(configs, questions)["norm-documents"],
+            "distinct_answered_sentences": len({q["sentence"] for q in mine}),
+            "distinct_answered_frontings": len({q["question"] for q in mine if q["kind"] == "f2"}),
+            "answered_frontings": sum(q["kind"] == "f2" for q in mine)}
+
+
+# The `coverage_b` keys that each leave a run partial when they are not empty or zero.
+LEFT_OUT = ("unsealed_streams", "unsealed_random_earley", "unsealed_documents", "mixed_unmatched",
+            "documents_not_their_sentences", "mixed_paragraphs_not_their_sentences", "short_streams", "skipped",
+            "unavailable_reads")
+
+
 def coverage_b(configs: dict, mixed_checks: dict, natural_statements: int, per_config: int, per_usecase: int) -> dict:
     """What a q1-3b run left out: each drawn stream against the seal's digest (the sealed streams, the random
     Earley texts and documents), `english-mixed` against its report's digest per configuration and the seal's
-    size, `natural-view` against the seal's statement count; `whole_streams` holds only when every one matches."""
+    size, `natural-view` against the seal's statement count, and the sentences with no answer; `whole_streams` holds
+    only when every one matches and every sentence has an answer."""
     seal = json.loads(SEAL.read_text())["generated"]
     surface = {row["vocabulary"]: row for row in seal if row["stream"] == "english-surface"}
     sizes = {row["stream"]: row.get("texts", row.get("statements")) for row in seal if row["stream"] != "english-surface"}
@@ -719,11 +771,10 @@ def coverage_b(configs: dict, mixed_checks: dict, natural_statements: int, per_c
            "mixed_paragraphs_not_their_sentences": sum(c[2] for c in mixed_checks.values()),
            "natural_statements": natural_statements, "seal_sizes": sizes,
            "short_streams": {n: r["drawn"] for n, r in configs.items() if "asked" in r and r["drawn"] < r["asked"]},
-           "skipped": sorted(n for n, r in configs.items() if "skipped" in r)}
+           "skipped": sorted(n for n, r in configs.items() if "skipped" in r),
+           "unavailable_reads": {n: r["unavailable"] for n, r in configs.items() if r.get("unavailable")}}
     out["whole_streams"] = (per_config, per_usecase) == (E.PER_CONFIG, E.PER_USECASE) and not any(
-        out[k] for k in ("unsealed_streams", "unsealed_random_earley", "unsealed_documents", "mixed_unmatched",
-                         "documents_not_their_sentences", "mixed_paragraphs_not_their_sentences", "short_streams",
-                         "skipped")) and (out["mixed_texts"], natural_statements) == \
+        out[k] for k in LEFT_OUT) and (out["mixed_texts"], natural_statements) == \
         (sizes.get("english-mixed"), sizes.get("natural-view"))
     return out
 
@@ -771,7 +822,7 @@ def main_b(args) -> int:
     for name, blob, text in norm_documents():
         data, found = norm_units(text)
         if add(f"norm-documents:{name}", Environment(data), {}, "norm-documents",
-               [t for _, _, t in found if one_sentence(t)]) is not None:
+               [t for _, _, t, asked_to_read in found if asked_to_read]) is not None:
             units[f"norm-documents:{name}"] = (blob, found)
     started = time.time()
     with multiprocessing.get_context("fork").Pool(args.workers) as pool:
@@ -789,11 +840,8 @@ def main_b(args) -> int:
               "load_average": {"start": load, "end": [round(x, 1) for x in os.getloadavg()], "cpus": os.cpu_count()},
               "coverage": coverage_b(configs, mixed_checks, statements, args.per_config, args.per_usecase),
               "streams": per_stream(configs, questions), "configs": configs,
-              "f1": {"questions": sum(q["kind"] == "f1" and q["read"] for q in questions),
-                     "same": sum(q["kind"] == "f1" and q["same"] for q in questions),
-                     "misses": [brief(q) for q in questions if q["kind"] == "f1" and q["read"] and not q["same"]][:200]},
-              "f2": fronting_measure(questions), "closest": closest_measure(questions),
-              "norm": {"documents": norms, "questions": per_stream(configs, questions)["norm-documents"]},
+              "f1": f1_measure(questions), "f2": fronting_measure(questions), "closest": closest_measure(questions),
+              "norm": norm_measure(norms, configs, questions),
               "latency": {"recorded_only": "q1-3c", "questions": len(questions), "p95_ms": p95([q["ms"] for q in questions]),
                           "max_ms": max((q["ms"] for q in questions), default=None), "p95_ms_by_kind": by_kind}}
     args.output.parent.mkdir(parents=True, exist_ok=True)

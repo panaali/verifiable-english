@@ -133,6 +133,270 @@
    "test": "tests/test_question_reverse.py::test_frontings_front_every_is_must_or_may_in_turn",
    "killed": true,
    "result": "1 failed in 0.45s"
+  },
+  {
+   "behaviour": "`other` hard-coded False: a fronting with another formula is not recorded",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "outcome[\"status\"] == \"one\" and outcome[\"ast\"] != formula",
+    "to": "False"
+   },
+   "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "per_stream's `_other` never counts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(\"_other\", q[\"other\"])",
+    "to": "(\"_other\", False)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`other_formula` lists nothing",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for q in f2s if q[\"other\"]]",
+    "to": "for q in f2s if False]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_fronting_read_with_another_formula_is_counted_and_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`many` left out of `reached`",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "any(q[\"same\"] or q[\"outcome\"][\"status\"] == \"many\" for q in qs)",
+    "to": "any(q[\"same\"] for q in qs)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`many_causes` lists nothing",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"many_causes\": [brief(q) for q in f2s if q[\"outcome\"][\"status\"] == \"many\"],",
+    "to": "\"many_causes\": [],"
+   },
+   "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "per_stream's `_many` never counts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(\"_many\", q[\"outcome\"][\"status\"] == \"many\")",
+    "to": "(\"_many\", False)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_many_fronting_reaches_its_sentence_and_is_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`several_same` never counts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "row[\"several_same\"] += sum(q[\"same\"] for q in qs) > 1",
+    "to": "row[\"several_same\"] += 0"
+   },
+   "test": "tests/test_question_reverse.py::test_two_frontings_that_read_are_counted",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "the fronting measure takes sentences with no formula",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "f2s = [q for q in questions if q[\"kind\"] == \"f2\" and q[\"read\"]]",
+    "to": "f2s = [q for q in questions if q[\"kind\"] == \"f2\"]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_sentence_lean_does_not_read_is_outside_the_measures_of_its_questions",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "the F1 measure takes sentences with no formula",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "f1s = [q for q in questions if q[\"kind\"] == \"f1\" and q[\"read\"]]",
+    "to": "f1s = [q for q in questions if q[\"kind\"] == \"f1\"]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_sentence_lean_does_not_read_is_outside_the_measures_of_its_questions",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`inconsistent` lists nothing",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for q in found if not c(q)[\"consistent\"]][:20]",
+    "to": "for q in found if False][:20]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_closest_that_is_not_the_leftmost_tie_is_listed",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "a unit's fence is not read: its prose is",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "if u.get(\"id\") in english else",
+    "to": "if False else"
+   },
+   "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "a fence over several lines is not asked",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "t.endswith(\".\") if fenced else one_sentence(t)",
+    "to": "one_sentence(t)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "a MIXED unit is read whole, not by its parts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for u, _ in _parts(meta.get(\"units\", [])) if \"span\" in u]",
+    "to": "for u in meta.get(\"units\", []) if \"span\" in u]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "spans read over the body with its fences",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(u, source[u[\"span\"][0]:u[\"span\"][1]].decode().strip(), False)",
+    "to": "(u, raw[raw.index(b\"\\n---\\n\", 4) + 5:][u[\"span\"][0]:u[\"span\"][1]].decode().strip(), False)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "a reached unit has no example",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "if len(examples.setdefault(\"/\".join(key), [])) < 2:",
+    "to": "if key[2] != \"reached\" and len(examples.setdefault(\"/\".join(key), [])) < 2:"
+   },
+   "test": "tests/test_question_reverse.py::test_a_units_english_fence_is_the_sentence_lean_reads_not_its_prose",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`unsealed_documents` is always empty",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"unsealed_documents\": diff(\"random-earley\", \"document_sha256\", \"document_corpus_sha256\"),",
+    "to": "\"unsealed_documents\": [],"
+   },
+   "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[unsealed_documents]",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`documents_not_their_sentences` is always zero",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"documents_not_their_sentences\": sum(r.get(\"documents_not_their_sentences\", 0) for r in rows.values()),",
+    "to": "\"documents_not_their_sentences\": 0,"
+   },
+   "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[documents_not_their_sentences]",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`mixed_paragraphs_not_their_sentences` is always zero",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"mixed_paragraphs_not_their_sentences\": sum(c[2] for c in mixed_checks.values()),",
+    "to": "\"mixed_paragraphs_not_their_sentences\": 0,"
+   },
+   "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[mixed_paragraphs_not_their_sentences]",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`unavailable_reads` is always empty",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"unavailable_reads\": {n: r[\"unavailable\"] for n, r in configs.items() if r.get(\"unavailable\")}}",
+    "to": "\"unavailable_reads\": {}}"
+   },
+   "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_stops_it_being_whole[unavailable_reads]",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "a `LEFT_OUT` key leaves `whole_streams`",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"unsealed_documents\", \"mixed_unmatched\",\n            \"documents_not_their_sentences\"",
+    "to": "\"mixed_unmatched\",\n            \"documents_not_their_sentences\""
+   },
+   "test": "tests/test_question_reverse.py::test_every_part_a_run_can_leave_out_has_its_case",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`unavailable` of a slice is always zero",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"unavailable\": sum(r[\"status\"] == \"unavailable\" for r in readings),",
+    "to": "\"unavailable\": 0,"
+   },
+   "test": "tests/test_question_reverse.py::test_a_sentence_with_no_answer_is_counted_not_a_refusal",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "per_stream's `_unavailable` never counts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(\"_unavailable\", q[\"outcome\"][\"status\"] == \"unavailable\")",
+    "to": "(\"_unavailable\", False)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_sentence_with_no_answer_is_counted_not_a_refusal",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "the norm measure counts unanswered texts",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\n            and q[\"outcome\"][\"status\"] != \"unavailable\"]",
+    "to": "]"
+   },
+   "test": "tests/test_question_reverse.py::test_the_norm_measure_counts_the_reach_and_the_distinct_answered_texts",
+   "killed": null,
+   "result": null
+  },
+  {
+   "behaviour": "`distinct_no_reading` is the plain count",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"distinct_no_reading\": len({q[\"question\"] for q in nones})",
+    "to": "\"distinct_no_reading\": len(nones)"
+   },
+   "test": "tests/test_question_reverse.py::test_the_norm_measure_counts_the_reach_and_the_distinct_answered_texts",
+   "killed": null,
+   "result": null
   }
  ]
 }
