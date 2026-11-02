@@ -1762,6 +1762,13 @@
    "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 84,
+   "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
   }
  ]
 }
