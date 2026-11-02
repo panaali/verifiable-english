@@ -238,7 +238,8 @@ inductive Composed
 
 mutual
 /-- Every `conditional_on` list of an answer, in pre-order. -/
-def conditionalOnOf : Json → List Json
+def conditionalOnOf (a : Json) : List Json :=
+  match a with
   | .obj ⟨⟨t⟩⟩ => conditionalOnTree t
   | .arr ⟨xs⟩ => conditionalOnList xs
   | _ => []
