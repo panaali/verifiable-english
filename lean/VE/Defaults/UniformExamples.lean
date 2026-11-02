@@ -1,4 +1,5 @@
-import VE.Defaults.RouteExamples
+import VE.Defaults.Route
+import VE.Defaults.WireExamples
 import VE.NormDefaults.PacksExamples
 import VE.Defaults.MeaningExamples
 
@@ -6,7 +7,7 @@ import VE.Defaults.MeaningExamples
 its own check, and the "no exception" statements of `Defaults/Uniform.lean` with the guard of `defaultsRows`. The
 packs with conditions are built by hand (no pack on main states one, `decodeLayered_conditions`). -/
 namespace VE.Defaults.UniformFixtures
-open Lean VE.Defaults VE.Defaults.Fixtures VE.Defaults.WireFixtures VE.Defaults.RouteFixtures
+open Lean VE.Defaults VE.Defaults.Fixtures VE.Defaults.WireFixtures
 open VE.NormDefaults.Packs (Pack)
 open VE.NormDefaults.Wire (LayeredU layeredKindCase decodeLayered)
 
@@ -52,6 +53,9 @@ def cond : List (VE.SoftNorms.DecisionKey × VE.Formula) := [(key, medical)]
 def wPack (i : String) (cs : List (VE.SoftNorms.DecisionKey × VE.Formula)) : Pack :=
   ⟨i, .constraint, [], [], [("p:0", .all "assistant"
     (.implies medical (.unary (VE.SoftNorms.outweighsName "x_permitted" "privacy" "disclosure") (.var 0))))], [], cs⟩
+/-- A kind's answer through the table, or its refusal's text. -/
+def shown (e : Except String (Option Json)) : Json :=
+  match e with | .ok (some a) => a | .ok none => .str "none" | .error e => .str ("error: " ++ e)
 def with_ (L : LayeredU) (p : Pack) : LayeredU := { L with packs := L.packs ++ [p] }
 def askK (L : LayeredU) (p : Pack) (k : String) : Json := shown (layeredKindCase (with_ L p) "c" k (req piEnv piR k))
 def refusedP : Json := .str ("error: " ++ providerRefusal)

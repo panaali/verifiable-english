@@ -17202,7 +17202,8 @@
         "VE.Defaults.UniformFixtures.otherKinds",
         "VE.Defaults.UniformFixtures.dS",
         "VE.Defaults.UniformFixtures.srcConds",
-        "VE.Defaults.UniformFixtures.d2T"
+        "VE.Defaults.UniformFixtures.d2T",
+        "VE.Defaults.UniformFixtures.shown"
       ]
     }
   }
