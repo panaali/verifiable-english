@@ -1,0 +1,29 @@
+{
+ "allow": [
+  {
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-empty` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
+  },
+  {
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "operator": "list-first",
+   "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-first` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
+  },
+  {
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "operator": "list-drop-last",
+   "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-drop-last` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
+  },
+  {
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "operator": "list-last",
+   "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-last` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
+  },
+  {
+   "definition": "VE.EnglishGrammar.evaluativeRows",
+   "operator": "list-drop-first",
+   "reason": "ill-typed where it is UNKNOWN: wrapping the row list in parentheses with `list-drop-first` leaves the anonymous constructor `⟨[w], []⟩` of the `.map` without an expected type (\"Invalid `⟨...⟩` notation\" / \"Function expected\" at lean/VE/EnglishGrammar/Evaluative.lean:16-17), so the mutant does not elaborate; the rows it would drop are each named by the #guards of lean/VE/EnglishGrammar/Examples.lean (row list, length 16) and lean/VE/Judgments/Examples.lean"
+  }
+ ]
+}

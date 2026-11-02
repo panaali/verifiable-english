@@ -1,0 +1,74 @@
+{
+ "item": "me-7",
+ "seeded": [
+  {
+   "id": "S1",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "sampleVariance?",
+   "language": "Lean",
+   "bug": "the sample variance divides by n instead of n − 1 (the plan's seeded bug)",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:20 (1527611/132000000) and :21 (V-6's SD rounds to 0.103, not [108]) fail (lake build VE.Calc.StatsExamples); tests/test_calc_stats.py::test_fixture[v6-sd] reads the same value"
+  },
+  {
+   "id": "S2",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipP",
+   "language": "Lean",
+   "bug": "the observed vector is not counted (obs < instead of obs ≤)",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:47 (598/4096 by hand) and :48 fail"
+  },
+  {
+   "id": "S3",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "binomialTail",
+   "language": "Lean",
+   "bug": "the tail sums i > k instead of i ≥ k",
+   "test": "binomialTail_zero and binomialTail_unit break; with them cut to sorry, #guard lean/VE/Calc/StatsExamples.lean:60 (7/128) and :62 (7424) fail; trust mutant M029 (same operator) KILLED at :60"
+  },
+  {
+   "id": "S4",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "kappa?",
+   "language": "Lean",
+   "bug": "kappa divides by 1 + pe instead of 1 − pe",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:66 (κ = 2/5) and :69 (ragged tables) fail"
+  },
+  {
+   "id": "S5",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Agg.run",
+   "language": "Lean",
+   "bug": "the variance aggregate runs populationVariance?",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:82 (T-1's 32B scores: variance 2, population variance 1) fails"
+  },
+  {
+   "id": "S6",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipWork",
+   "language": "Lean",
+   "bug": "the work charge leaves out the n products per sign vector (2^n instead of 2^n · (n + 1))",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:55 (1,114,128 units for 16 values) and :56 (one unit short is UNKNOWN) fail"
+  },
+  {
+   "id": "S7",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "SqrtRoundsTo",
+   "language": "Lean",
+   "bug": "ties up admits the upper tie (rootLe instead of rootLt)",
+   "test": "sqrtRoundsTo_of_square breaks; with it cut to sorry, #guard lean/VE/Calc/StatsExamples.lean:27 (the tie at 0.1085), :31 (0.1095) and :35 (the grid against RoundsTo) fail"
+  }
+ ],
+ "trust_mutants": {
+  "file": "docs/math-evidence/me-7/trust-mutants.json",
+  "allow": "docs/math-evidence/me-7/trust-mutants-allow.json",
+  "head": "123e24e12",
+  "counts": {
+   "KILLED": 212,
+   "ALLOWED": 145,
+   "INVALID": 32,
+   "SURVIVOR": 0,
+   "UNKNOWN": 0,
+   "NOT RUN": 0
+  }
+ }
+}
