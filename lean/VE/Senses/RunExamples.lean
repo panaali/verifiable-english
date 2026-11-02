@@ -95,23 +95,23 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- an open unit: two candidates with their identities
-#guard pin (runCaseReported (src "The riddle is funny.")) == "a1e20db5ae3cf8418bfd6dfa31a8f0d5fefb088543009ddfc2e57d5516090105"
+#guard pin (runCaseReported (src "The riddle is funny.")) == "26ee2afe8fd5a83cbdd069418882a2eb949bf8d046d9caa54c1ed8afc309fae2"
 -- resolved by its line
-#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "0c4c374c8b18a10458879e9d40ac0d3bd1327411ad91464a0d82c17e503ceaba"
+#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "b2060ea4a1d1024e613d7fbc139f647949644fbf5e4cc46f70df79eb48ac574a"
 -- a sense fault
 #guard pin (runCaseReported (src "In this document, funny means purple. The riddle is funny.")) == "95f53c1f0395ccf75fc3c669473b6ef312fdad77607b8900c047a4a4ef4a85d2"
 -- S2's outcome
 #guard pin (runCaseReported (src "Every joke that is funny (meaning strange) is not funny.")) == "feec3bb464919db664bec1018709bb45b5722ab78ea43711ecc19c365abe3c66"
 -- an open unit beside a glossed one
-#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "a21813713535244a7ec6ebb0446c861356d1e1e06c43b2551a8b626e0b1ae28d"
+#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "d82a0c9d39cd9106c9b64a3374eb4642bcd2d508f858b4ad70ca83e9426f894e"
 -- an open fence without a reading set
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [])) == "1b6b6d44dcc4b67a043c3acd17db11d58f3191b8dc529039fa04c3e54bd3a3bd"
 -- an open fence with its reading set
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "c6d455cca2fa920dd25ad35bd46ca2297ea7bcbcc4de0a32d4af93c81f9efe07"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "542589bf96439d10c2bf6260981420b4c3bef8e8765b1d60f5bffffe6c5af147"
 -- a fence that is a line
-#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "ea11e58ab2997fe6a74ad0fdcced3f3ac3fbaa310df56f2cce2435a6796f715d"
+#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "3b2dd9e4d1d97f17a6d85135d938c9b7da74fcdbb24cd1c013a471dd6c3dd0c0"
 -- front-matter defaults
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "559c50ea54e011add7f96ca1fc7ea84e193387cc836ac69d89046f4a94c1e6f5"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "bdb6effd30e587db2145c77f0c625dd3a26fa43aeb77c25ee7f8c1e236eb9842"
 -- fence identities refused
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1", "u2"] [])) == "2047a621e3c95f46bbf587bd22854141989afcd335200861aa63d0748985cb0b"
 -- an unknown member refused
@@ -146,9 +146,9 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- two unresolved words: choices of two senses
-#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "187ee652ad113601e78ed95eba32b783d3e57bfbccb76bac0c5ca6079b5680b1"
+#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "1fbb62255419b945e3475128555b06e4977d16f736d5e74c31c60a8f38052dce"
 -- two units
-#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "a0b6868e58d076c1a9290647b294e214868f893aec743964d627a6eb0dae6512"
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "1021caf484885f5f969d02fe1983993b959a5f8f4050fa50229b7fc9f2b82f64"
 -- own senses whose kinds are the document's sorts
 #guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "68b976a7428f70ffb6c3859985e81a2123d7d7ea7c5e6f38319c145d08a7f92f"
 -- a second used word outside the dictionary
@@ -161,5 +161,62 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 #guard pin (projectCaseReported (projectReq "x" ["funny"])) == "50c8b279ed22fc5d46e876ac027ba3d93f52cbdb0cfc8dbdc1fab42c05488de3"
 -- a lexicon english.read refuses
 #guard pin (projectCaseReported ((projectReq lineFunny2 ["funny"]).setObjVal! "lexicon" (lexiconJson ((VE.EnglishGrammar.Run.environmentId (displayJson EJ.source overlayJ)).toOption.getD "") { LJ with nouns := [("joke", "joke")] }))) == "97d9cdc7cda6f59b517a91ca091ccb4264362263ac3afec2b0efccc55a12015e"
+
+/-! ## The preamble lines of a source answer (plan B6): the source's sentences before the body, as written -/
+
+def readingOf (j : Json) : Json := ((runCaseReported j).getObjValD "result").getObjValD "reading"
+
+#guard writtenLines (lineFunny2 ++ "\n\nThe riddle is funny.") 1 == [lineFunny2]
+#guard writtenLines (lineFunny2 ++ "  In this document, odd means strange.\nThe riddle is odd.") 2
+  == [lineFunny2, "In this document, odd means strange."]
+#guard writtenLines "The riddle is funny." 0 == []
+#guard (readingOf (src (lineFunny2 ++ "\nThe riddle is funny."))).getObjValD "preamble" == toJson [lineFunny2]
+#guard (readingOf (src "The riddle is funny.")).getObjValD "preamble" == toJson ([] : List String)
+-- a fence request has no single source: its lines are mapped by `fences`, and there is no member
+#guard ((readingOf (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] ["u1"])).getObjVal? "preamble").toOption.isNone
+
+/-! ## Flip models (plan 2.6 step 7; spec 2.6 and 8.7's flip valuations of s2 and n7)
+
+Each side of the rule: a pair the first valuation distinguishes, a pair only the exchanged one does (s2's unit 0),
+a pair neither does, a form the evaluator has no case for, and an exhausted budget, which leaves the later pairs of
+the answer unknown too. -/
+
+def PJ : Projection := match project F ⟨[]⟩ EJ LJ ["funny"] with
+  | .ok P => P
+  | .error _ => { env := EJ, lexicon := LJ, envJson := .null, map := [] }
+
+def cand (i : Nat) (f : EFormula) : Candidate := { choice := [("funny", i)], lines := "", formula := f, mark := true }
+def funny (i : Nat) (t : ETerm) : EFormula := .pred s!"sense__funny_{i}" [t]
+def riddle : ETerm := .const "riddle"
+/-- s2's unit 0: `all joke (funny_2 → ¬funny_k)`. -/
+def s2 (k : Nat) : EFormula := .all "joke" (.implies (funny 2 (.var 0)) (.not (funny k (.var 0))))
+/-- An open unit over `funny` with candidates `cs`. -/
+def openOf (cs : List Candidate) : SenseUnit :=
+  { formula := none, candidates := cs, unresolved := ["funny"], after := DState.init }
+/-- `n` universal quantifiers over a two-entity domain (the joke's own entity and the riddle) around `f`. -/
+def deep : Nat → EFormula → EFormula
+  | 0, f => f
+  | n + 1, f => .all "joke" (deep n f)
+
+-- the first valuation distinguishes the pair (n7's form, negated)
+#guard (flipPair PJ (cand 1 (.not (funny 1 riddle))) (cand 2 (.not (funny 2 riddle))) 0).1
+  == .distinguished ["sense__funny_1"] false true
+-- only the exchanged valuation distinguishes it: s2's unit 0, `sense__funny_2` true alone, first true, second false
+#guard (flipPair PJ (cand 1 (s2 1)) (cand 2 (s2 2)) 0).1 == .distinguished ["sense__funny_2"] true false
+-- neither does: the two senses only under a conjunct both make false
+#guard (flipPair PJ (cand 1 (.and (funny 1 riddle) .bottom)) (cand 2 (.and (funny 2 riddle) .bottom)) 0).1
+  == .undistinguished
+-- a comparison is outside the evaluator: unknown, no work spent
+#guard flipPair PJ (cand 1 (.lt (.num 0) (.num 1))) (cand 2 (funny 2 riddle)) 7 == (.unknown, 7)
+-- an exhausted budget is unknown, and leaves none for the next pair of the answer
+#guard (flipPair PJ (cand 1 (.and (funny 1 riddle) (deep 21 (funny 1 (.var 0))))) (cand 2 (funny 2 riddle)) 0)
+  == (.unknown, VE.Limits.maxEvaluations)
+#guard (flipsOf PJ [openOf [cand 1 (.and (funny 1 riddle) (deep 21 (funny 1 (.var 0)))), cand 2 (funny 2 riddle)],
+  openOf [cand 1 (funny 1 riddle), cand 2 (funny 2 riddle)]]).map (·.2) == [.unknown, .unknown]
+-- the same two units within the budget: one row per pair, in order
+#guard (flipsOf PJ [openOf [cand 1 (deep 3 (funny 1 (.var 0))), cand 2 (funny 2 riddle), cand 3 (funny 1 riddle)],
+  openOf [cand 1 (funny 1 riddle), cand 2 (funny 2 riddle)]]) ==
+  [((0, 0, 1), .distinguished ["sense__funny_1"] true false), ((0, 0, 2), .undistinguished),
+   ((0, 1, 2), .distinguished ["sense__funny_2"] true false), ((1, 0, 1), .distinguished ["sense__funny_1"] true false)]
 
 end VE.Senses.RunExamples
