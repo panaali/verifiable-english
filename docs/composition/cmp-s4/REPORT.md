@@ -19,6 +19,19 @@
 - **Trust:** S +134, V +16, K +0 (trusted +150 of R16's 150). SIGNED by standing ruling R16. Trust mutants exit 0.
 - **DELTA:** no row (docs/composition/cmp-s4/DELTA.md). No route, wire, Python or English answer changes.
 
+## Review fix (review of `4cd3844d4`, `manage-agents/cmp-s4-review.final.md`)
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 (B): the composed path skipped 14.5 step 4, the manifest checks of 4.1; class: every check today's admission runs before W2 and the composed path did not (unit checks, anchors, tables, mentions and their limit, coverage, labels, the document sort; `caseManifest`; `chainDocument`'s narrowings) | `chainChecks` runs today's functions, no copy: the document mode's load of the `@1` part (4.1(1)) and `wellFormed` on `chainDDoc` (4.1(2) to (8)); a chain content's unit is a unit with meaning (`DDoc.chain`, read by `coveredOk` and `slotUnit`); `documentSortOk` shared with `admitCore`; `caseManifest` runs the same checks; `chainDocument`'s empty narrowings are now exact (the load refuses a narrowing with no reading set). Theorems `composed_wellFormed`, `chainChecks_wellFormed`, `caseManifest_wellFormed` | PROBE F1 as `ComposedAdmissionExamples.lean:107-108`; the differential table `mutations` (`:136`, guards `:161-177`): 14 mutations (byte gap, support, `meaning_id`, narrowing, unknown unit, anchor tree, unknown name, 4097 mentions, overlapping mentions, `It` in a norm unit and in an `ast` unit, a pronoun naming a unit in a norm unit, `self_truth`, document sort), each today's text on the twin without a chain construct and the same text on the composed path and from `caseManifest`; unit guards `ComposeExamples.lean:131-173` | `06a97292d`, `6e376756d` |
+| F1's records | the module docstring, `admitChain`'s docstring, this report's step list (step 4), deliverables row and trust figures | | `06a97292d`, this commit |
+| F-ready1 (B): no seeded bug named the changed Python file | `tools/layer_policy.py`'s rule for `VE.Discourse.Compose` dropped: `python3 tools/check_lean_imports.py` exits 1 ("new outward Lean import: VE.Discourse.Compose -> VE.Service.Document"); restored. `review-ready.py`: "PASS [mutants] Python: seeded bug in changed file tools/layer_policy.py" | `mutants.json` (last entry) | `0e70487a2` |
+| F2 to F6 (C) | not changed here: the review's FOLLOW-UPs cmp-s4-f2 to cmp-s4-f5 (F6 is disclosed size) | | |
+
+No answer of today's route changes: `DDoc.chain` defaults to `[]`, so `coveredOk` and `slotUnit` read as before off
+the composed path, and `documentSortOk` is `admitCore`'s former line; the twin guards pin today's texts. DELTA stays
+without a row.
+
 ## Deliverables (task cmp-s4)
 
 | Task row | Delivered | Evidence |
@@ -104,7 +117,10 @@ committed): "42 spec declarations and docstrings (discourse.md lines 2313-2513);
 this report and DELTA.md. About 950 lines before the report, above the ~600 guide. The spec-verbatim declarations
 with their docstrings and the proofs of the nine theorems take about 230 of `Compose.lean`'s lines and cannot leave
 without leaving the statement gate's theorems unproved; the fixtures grew so that every new trusted definition has a
-check the trust mutants can read (below). I cut at the route entry (task row (3)), the fallback the task names.
+check the trust mutants can read (below). I cut at the route entry (task row (3)), the fallback the task names. The review fix
+adds (`git diff --numstat 4cd3844d4`): `Compose.lean` +103/-16 (`chainChecks`, `chainDDoc`, `formulaUnit`, three
+theorems), `ComposedAdmissionExamples.lean` +78, `ComposeExamples.lean` +49/-2, `WellFormed.lean` +5/-5,
+`Admission.lean` +6/-2, `Manifest.lean` +1, `tools/trust-classes.json` +36/-2, the allow file +5.
 
 ## Seeded bugs (Lean, and Python for `tools/layer_policy.py`; no Rust code changed)
 
@@ -191,15 +207,27 @@ the norms route keeps its own limit of 256 rules. Fixture: a 200-norm-unit docum
   (the new files unclassified), was fixed in `edd6810d0`. After the fixture split, a second selected run on `161d199ea`
   (fast stage, 306 of 423 units: "1 failed, 10460 passed") failed only that test again, for `ComposeKeys.lean`'s
   docstring; fixed in `83ae4691e` and rerun: `uv run pytest -q tests/test_assurance_manifest.py`: "139 passed".
+- Review fix: `cd lean && lake build`: "Build completed successfully (1237 jobs)"; `python3 lean/audit.py`: "PASS: 727
+  source files; 8032 named theorem declarations audited"; `tools/regen_generated.py --check`: "checked 35 entries";
+  `tools/trust_map.py --check`: PASS; PROBE F1: exit 0. Selected tests (`zsh mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run` on `0e70487a2`): 424 units, 1 failed,
+  `tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors` (20 printed SURVIVOR lines against
+  21 in its JSON, on the tool's own Demo tree; no file it reads changed); rerun alone on the same commit: "1 passed"
+  (load-sensitive: FOLLOW-UP).
 - No test in `main-known-red.txt` was hit. Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Pilot bytes
 
 0 (*estimate*): no route reaches the composed path before cmp-s4c.
 
-## Commits (`git log --oneline --no-merges main..HEAD`, saved at `cb5edf9e1`)
+## Commits (`git log --oneline --no-merges main..HEAD`, saved at `0e70487a2`, plus this report's commit)
 
 ```
+0e70487a2 cmp-s4 review F1, F-ready1: mutants.json (38: the fix's eight Lean and one Python seeded bugs), REPORT step 4 and trust re-measured
+162a1f2b1 cmp-s4: trust mutants on 6e376756d (full run): exit 0 (KILLED 173, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 26)
+6e376756d cmp-s4 review F1: unit guards for slotUnit, coveredOk, documentSortOk and formulaUnit in the Discourse directory
+06a97292d cmp-s4 review F1: the composed path runs 14.5 step 4, the manifest checks of 4.1
+4cd3844d4 cmp-s4: REPORT (final)
 cb5edf9e1 cmp-s4: trust mutants on 83ae4691e (rescore): exit 0 (KILLED 129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25)
 83ae4691e cmp-s4: ComposeKeys' docstring reads no JSON API name (assurance manifest's JSON-use scan); inventories
 161d199ea cmp-s4: trust mutants on 2f6fcc6ab: exit 0 (KILLED 129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25)
@@ -231,10 +259,10 @@ ae3827aad cmp-s4: the composed admission's fixtures (14.8) as #guards; chainBase
 
 1. Typed and contained Lean answers: N.A., no relayed answer changes (`runCase` and the relay unchanged; cmp-s4c).
 2. Every deliverable built or ruled: PASS, the deliverables table; the cut to cmp-s4c is the task's own fallback and the DRI's decision item 1; no Python copy of a Lean decision, no report test, no in-flight overlap (`tools/layer_policy.py` edited away from feature/pc-1's hunk).
-3. Tests can fail: PASS, `mutants.json` (29 of 29 killed, each planted alone) and `trust-mutants.json` (exit 0, allow file with one reason per entry).
-4. Python, Lean and Rust agree: N.A., no Python or Rust change and no answer change.
+3. Tests can fail: PASS, `mutants.json` (38 of 38 killed, each planted alone) and `trust-mutants.json` (exit 0, allow file with one reason per entry).
+4. Python, Lean and Rust agree: N.A., no Python or Rust product change and no answer change; the composed path and today's admission agree on every mutation of the differential table (review F1).
 5. R8 binding: N.A., no relay field added (cmp-s4c).
-6. Gate evidence on the final HEAD: PASS, the chain runs the gate on the final HEAD; the trust mutants ran on `83ae4691e`, whose Lean tree is the final one.
+6. Gate evidence on the final HEAD: PASS, the chain runs the gate on the final HEAD; the trust mutants ran on `6e376756d`, whose Lean tree is the final one.
 7. No unsigned item: PASS, R16 growth signed (`docs/trust-baseline.json`); DELTA has no row (DRI decision item 1).
 8. Every user-visible change in DELTA: PASS, none: `runCase` unchanged; outside `lean/` and `tools/` the diff is `ve/assurance-manifest.json`'s three classification lines (`git diff --stat $(git merge-base HEAD main) -- ve rust tests`); DELTA.md.
 9. Test selection: PASS, the selected runs above chose 437 and 423 units, not every unit.
