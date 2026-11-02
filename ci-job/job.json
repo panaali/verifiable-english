@@ -1,0 +1,17 @@
+{
+ "job": "jt-3p-bb0adc08",
+ "head": "9cbcabb445fefc913c18b641b87de67fe3b7161a",
+ "argv": [
+  "jt-3p-bb0adc08",
+  "9cbcabb445fefc913c18b641b87de67fe3b7161a",
+  "eeb2a3b67d20999aba059745287b54ee5a88fab2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-196c570038e4.tar.zst",
+  "b5564553d2cdcb02a2212cde420b53815ac91fc28bae2deb0a2618929315bd4d",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/judgment-terms/jt-3p/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
