@@ -7,9 +7,9 @@
    "definition": "VE.Scope.Pinned.withReach",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "keeps the limitation's old scope",
-   "test": "VE/Scope/Reach.lean:59 (limitation_scope_of_reach's proof)",
+   "test": "lean/VE/Scope/Reach.lean:60 (limitation_scope_of_reach's proof)",
    "tests": [
-    "VE/Scope/Reach.lean:59 (limitation_scope_of_reach's proof)"
+    "lean/VE/Scope/Reach.lean:60 (limitation_scope_of_reach's proof)"
    ],
    "result": "KILLED"
   },
@@ -17,11 +17,11 @@
    "definition": "VE.Scope.Pinned.withReach",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "keeps the limitation's old scope (theorem proof set aside, so the fixtures build)",
-   "test": "VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
+   "test": "lean/VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
    "tests": [
-    "VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
-    "VE/Scope/ReachExamples.lean:84 (F14: Article 29's anchor reaches no right)",
-    "VE/Scope/ReachExamples.lean:122 (F14'': each choice's scope (scopesPerChoice))"
+    "lean/VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
+    "lean/VE/Scope/ReachExamples.lean:84 (F14: Article 29's anchor reaches no right)",
+    "lean/VE/Scope/ReachExamples.lean:122 (F14'': each choice's scope (scopesPerChoice))"
    ],
    "result": "KILLED"
   },
@@ -29,13 +29,13 @@
    "definition": "VE.Scope.Pinned.rightNames",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "drops the last right line",
-   "test": "VE/Scope/ReachExamples.lean:60 (rightNames guard (every right, each once))",
+   "test": "lean/VE/Scope/ReachExamples.lean:60 (rightNames guard (every right, each once))",
    "tests": [
-    "VE/Scope/ReachExamples.lean:60 (rightNames guard (every right, each once))",
-    "VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
-    "VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
-    "VE/Scope/ReachExamples.lean:95 (F14': the bar's reach holds every right line (barRights))",
-    "VE/Scope/ReachExamples.lean:122 (F14'': each choice's scope (scopesPerChoice))"
+    "lean/VE/Scope/ReachExamples.lean:60 (rightNames guard (every right, each once))",
+    "lean/VE/Scope/ReachExamples.lean:80 (F14: u111's scope is every right)",
+    "lean/VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
+    "lean/VE/Scope/ReachExamples.lean:95 (F14': the bar's reach holds every right line (barRights))",
+    "lean/VE/Scope/ReachExamples.lean:122 (F14'': each choice's scope (scopesPerChoice))"
    ],
    "result": "KILLED"
   },
@@ -43,10 +43,10 @@
    "definition": "VE.Scope.Pinned.rightOf",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "reads no right_lines unit",
-   "test": "VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
+   "test": "lean/VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
    "tests": [
-    "VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
-    "VE/Scope/ReachExamples.lean:97 (F14': a reach missing u049 is ScopeReach)"
+    "lean/VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
+    "lean/VE/Scope/ReachExamples.lean:97 (F14': a reach missing u049 is ScopeReach)"
    ],
    "result": "KILLED"
   },
@@ -54,9 +54,9 @@
    "definition": "VE.Scope.Pinned.wholeRights",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "admits a right reached in part",
-   "test": "VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
+   "test": "lean/VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)",
    "tests": [
-    "VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)"
+    "lean/VE/Scope/ReachExamples.lean:85 (F14: half of Article 13 is ScopeReach)"
    ],
    "result": "KILLED"
   },
@@ -64,9 +64,9 @@
    "definition": "VE.Scope.Pinned.withBarReach",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "admits a bar whose reach misses a right line",
-   "test": "VE/Scope/Reach.lean:76 (bar_reach_every_right's proof)",
+   "test": "lean/VE/Scope/Reach.lean:77 (bar_reach_every_right's proof)",
    "tests": [
-    "VE/Scope/Reach.lean:76 (bar_reach_every_right's proof)"
+    "lean/VE/Scope/Reach.lean:77 (bar_reach_every_right's proof)"
    ],
    "result": "KILLED"
   },
@@ -74,10 +74,10 @@
    "definition": "VE.Scope.Pinned.withBarReach",
    "file": "lean/VE/Scope/Reach.lean",
    "bug": "admits a bar whose reach misses a right line (theorem proof set aside, so the fixtures build)",
-   "test": "VE/Scope/ReachExamples.lean:96 (F14': Article 30's anchor is ScopeReach)",
+   "test": "lean/VE/Scope/ReachExamples.lean:96 (F14': Article 30's anchor is ScopeReach)",
    "tests": [
-    "VE/Scope/ReachExamples.lean:96 (F14': Article 30's anchor is ScopeReach)",
-    "VE/Scope/ReachExamples.lean:97 (F14': a reach missing u049 is ScopeReach)"
+    "lean/VE/Scope/ReachExamples.lean:96 (F14': Article 30's anchor is ScopeReach)",
+    "lean/VE/Scope/ReachExamples.lean:97 (F14': a reach missing u049 is ScopeReach)"
    ],
    "result": "KILLED"
   }

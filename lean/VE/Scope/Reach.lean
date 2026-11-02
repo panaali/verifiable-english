@@ -28,8 +28,9 @@ def rightNames (D : SDoc) (us : List String) : List String :=
 /-- A right is in a limitation's scope as a whole (every line of it), so a reach that holds some units of a right
     and not others is refused. -/
 def wholeRights (D : SDoc) (g : Governor) (us : List String) : Except String Unit := do
+  let rs := rightNames D us
   for u in unitIds D.doc do
-    if (rightOf (contentOf D.doc u)).any (rightNames D us).contains && !us.contains u then
+    if (rightOf (contentOf D.doc u)).any rs.contains && !us.contains u then
       throw s!"ScopeReach: {g.id}"
 
 /-- The limitation `L` with its scope generated from `g`'s reach: the rights the reach reaches. -/
