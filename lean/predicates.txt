@@ -197,6 +197,7 @@ module VE.Calc.RunExamples
 module VE.Calc.Syntax
 module VE.Calc.Table
 module VE.Calc.TableExamples
+module VE.Calc.Ties
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
@@ -296,6 +297,8 @@ module VE.Discourse.Grammar
 module VE.Discourse.Joint
 module VE.Discourse.Loader
 module VE.Discourse.Manifest
+module VE.Discourse.Positions
+module VE.Discourse.PositionsExamples
 module VE.Discourse.Resolve
 module VE.Discourse.Run
 module VE.Discourse.Theorems
@@ -332,6 +335,8 @@ module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Norm.Examples
+module VE.EnglishGrammar.Norm.Value
 module VE.EnglishGrammar.Policy
 module VE.EnglishGrammar.PolicyReference
 module VE.EnglishGrammar.ProfileExamples
@@ -930,7 +935,9 @@ VE.Discourse.CoreTyped@VE.Discourse.WellFormed
 VE.Discourse.DeclaredSymbol@VE.Discourse.WellFormed
 VE.Discourse.Derives@VE.Discourse.Grammar
 VE.Discourse.ExtendsTo@VE.Discourse.Joint
+VE.Discourse.Fills@VE.Discourse.Positions
 VE.Discourse.Intended@VE.Discourse.WellFormed
+VE.Discourse.IntendedAt@VE.Discourse.Positions
 VE.Discourse.IsConjunctionMentioningZero@VE.Discourse.Fusion
 VE.Discourse.LexiconCovers@VE.Discourse.English
 VE.Discourse.ModTyped@VE.Discourse.WellFormed
@@ -951,6 +958,7 @@ VE.Discourse.constHolds@VE.Discourse.Elaborate
 VE.Discourse.quantMeaning@VE.Discourse.Elaborate
 VE.Discourse.refersImport@VE.Discourse.Documents
 VE.Discourse.refersSelf@VE.Discourse.Documents
+VE.Discourse.slotMeaning@VE.Discourse.Positions
 VE.Document.denote@VE.Semantics
 VE.English.Admitted@VE.English.Lexicon
 VE.English.AtomStop@VE.English.ClauseProofs
@@ -1355,6 +1363,7 @@ VE.Scope.HasStr.below@VE.Scope.Govern
 VE.Scope.HasStr@VE.Scope.Govern
 VE.Scope.JsonWF.below@VE.Scope.Govern
 VE.Scope.JsonWF@VE.Scope.Govern
+VE.Scope.Typed@VE.Scope.Theorems
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
