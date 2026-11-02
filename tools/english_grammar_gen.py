@@ -539,7 +539,8 @@ def render_norms(rows: list[dict], source_sha256: str) -> bytes:
         data = ["true" if row[key] else "false" for key in NORM_ACTIONS[row["act"]]]
         return "(" + " ".join(["." + row["act"], *data]) + ")" if data else "." + row["act"]
 
-    constructors = [f"  | {name}" + "".join(f" ({key} : Bool)" for key in data) for name, data in NORM_ACTIONS.items()]
+    constructors = " ".join(f"| {name}" + "".join(f" ({key} : Bool)" for key in data)
+                            for name, data in NORM_ACTIONS.items())
     entries = [f"{{ tag := {lean_string(row['tag'])}, lhs := {NORM_INDEX[row['lhs']]}, act := {act(row)}, "
                f"rhs := [{', '.join(symbol(sym) for sym in row['rhs'])}] }}" for row in rows]
     return "\n".join([
@@ -555,11 +556,9 @@ def render_norms(rows: list[dict], source_sha256: str) -> bytes:
         "def normRanks : Array Nat := #[" + ", ".join(str(rank) for _, rank, _ in NORM_NONTERMINALS) + "]",
         "def normTys : Array Ty := #[" + ", ".join("." + ty for _, _, ty in NORM_NONTERMINALS) + "]",
         f"def normConsequence : Nat := {NORM_INDEX['consequence']}", "",
-        "inductive NormSym where", "  | t (a : Terminal)", "  | base (n : Nat)", "  | own (i : Nat)",
-        "  deriving DecidableEq, Repr", "",
-        "inductive NormAct where", *constructors, "  deriving DecidableEq, Repr", "",
-        "structure NormRow where", "  tag : String", "  lhs : Nat", "  act : NormAct", "  rhs : List NormSym",
-        "  deriving DecidableEq, Repr", "",
+        "inductive NormSym where | t (a : Terminal) | base (n : Nat) | own (i : Nat)",
+        f"inductive NormAct where {constructors}",
+        "structure NormRow where (tag : String) (lhs : Nat) (act : NormAct) (rhs : List NormSym)", "",
         "def normRows : Array NormRow := #[", *_lean_array(entries), "]", "",
         f"#guard normRows.size == {len(rows)} && normTys.size == normRanks.size",
         "#guard normRows.all fun r => decide (r.lhs < normRanks.size) && r.rhs.all fun",
