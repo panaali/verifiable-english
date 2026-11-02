@@ -1,16 +1,21 @@
 {
  "item": "dr-sc-readingset-ids",
  "language": "Python",
- "command": "uv run --frozen pytest -q tests/test_readings_s1_pilot_rebuild.py with each mutant applied to tools/readings_s1_pilot.py, then restored",
+ "command": "uv run --frozen pytest -q tests/test_readings_s1_pilot_rebuild.py with each mutant's `replace` pair applied once to its file, then restored (fix round 1: rerun on the fix, M7 to M12 added)",
  "mutants": [
   {
    "id": "M1-ids-on-written-environment",
    "file": "tools/readings_s1_pilot.py",
-   "definition": "rebuild_reading_ids",
+   "definition": "_rebuilt",
    "mutation": "ids computed on meta['environment'] as written instead of chain_environment",
+   "replace": [
+    "    data = chain_environment(meta[\"environment\"])\n",
+    "    data = meta[\"environment\"]\n"
+   ],
    "killed": true,
    "test": [
     "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_set_governed_per_choice_rebuilds_as_a_noop_lean_admits",
     "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts"
    ]
   },
@@ -19,6 +24,10 @@
    "file": "tools/readings_s1_pilot.py",
    "definition": "_reidentified",
    "mutation": "situation bases completed over the models' environment (main's padding: regulated predicates added)",
+   "replace": [
+    "extended(entry[\"base\"], author or model_env)",
+    "extended(entry[\"base\"], model_env)"
+   ],
    "killed": true,
    "test": [
     "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
@@ -32,18 +41,29 @@
    "file": "tools/readings_s1_pilot.py",
    "definition": "_reidentified",
    "mutation": "situation bases not completed at all",
+   "replace": [
+    "{**entry, \"base\": extended(entry[\"base\"], author or model_env)} if complete else entry",
+    "entry"
+   ],
    "killed": true,
    "test": [
     "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one"
    ]
   },
   {
-   "id": "M4-no-scope-gate",
+   "id": "M4-no-document-check",
    "file": "tools/readings_s1_pilot.py",
    "definition": "rebuild_reading_ids",
-   "mutation": "Lean's scope mode (ve.scope.explain) not asked before a scope@0 rebuild",
+   "mutation": "no `ve document check` of a scope@0 rebuild (neither the rebuilt text nor the text as written)",
+   "replace": [
+    "    scoped = \"scope@0\" in listed_profiles(meta[\"environment\"])\n",
+    "    scoped = False\n"
+   ],
    "killed": true,
    "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[a-choice-conflicts]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[past-the-choice-limit]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[with-judgments]",
     "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-discourse]",
     "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-risk]"
    ]
@@ -53,6 +73,10 @@
    "file": "tools/readings_s1_pilot.py",
    "definition": "_reidentified.extended",
    "mutation": "added relations placed before the base's own (key order changed)",
+   "replace": [
+    "\"relations\": {**data[\"relations\"], **{p: [] for p in vocabulary.predicates\n                                                      if p not in vocabulary.definition_entries\n                                                      and p not in data[\"relations\"]}}}",
+    "\"relations\": {**{p: [] for p in vocabulary.predicates\n                                                      if p not in vocabulary.definition_entries\n                                                      and p not in data[\"relations\"]}, **data[\"relations\"]}}"
+   ],
    "killed": true,
    "test": [
     "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one"
@@ -63,12 +87,109 @@
    "file": "tools/readings_s1_pilot.py",
    "definition": "base_vocabulary",
    "mutation": "under norm-defaults@0 Lean's filled frame not asked (Python's lower environment as the frame)",
+   "replace": [
+    "    return S1Environment(data, filled).author_environment()",
+    "    return S1Environment({**data, \"profiles\": [p for p in data[\"profiles\"] if p != NORM_DEFAULTS]}).author_environment()"
+   ],
    "killed": true,
    "test": [
     "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_part_with_a_reading_set_rebuilds_as_a_noop_lean_admits",
     "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts",
     "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_adds_a_new_base_predicate_and_no_regulated_one",
     "tests/test_readings_s1_pilot_rebuild.py::test_rebuild_is_a_noop_on_a_situation_over_the_filled_frame"
+   ]
+  },
+  {
+   "id": "M7-rebuilt-text-not-checked",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "rebuild_reading_ids",
+   "mutation": "the document check reads the file as written, not the rebuilt text",
+   "replace": [
+    "        check_document(where, raw=text(rebuilt, source))",
+    "        check_document(where)"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts"
+   ]
+  },
+  {
+   "id": "M8-raw-ignored-by-the-loader",
+   "file": "ve/document/load.py",
+   "definition": "_load",
+   "mutation": "the loader reads the file even when the text is given",
+   "replace": [
+    "    raw = path.read_bytes() if raw is None else raw",
+    "    raw = path.read_bytes()"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-discourse]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-risk]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[without-norms]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_an_edited_scope_part_rebuilds_to_the_ids_lean_accepts"
+   ]
+  },
+  {
+   "id": "M9-no-check-when-ids-fail",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "rebuild_reading_ids",
+   "mutation": "when the ids cannot be rebuilt, the document check's refusal of the text as written is not raised first",
+   "replace": [
+    "            check_document(where, raw=text(meta, source))\n",
+    "            pass\n"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-discourse]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_list_the_document_mode_refuses_is_refused_with_leans_text[with-risk]"
+   ]
+  },
+  {
+   "id": "M10-filled-read-unchecked",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "base_vocabulary",
+   "mutation": "Lean's `filled` read without checking it is there (the review's KeyError)",
+   "replace": [
+    "elaborate(data, units, sets).get(\"filled\")",
+    "elaborate(data, units, sets)[\"filled\"]"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[a-choice-conflicts]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[past-the-choice-limit]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_set_governed_per_choice_rebuilds_as_a_noop_lean_admits"
+   ]
+  },
+  {
+   "id": "M11-bases-completed-without-a-frame",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "_rebuilt",
+   "mutation": "where Lean answers no frame, bases completed over the models' environment instead of kept as written",
+   "replace": [
+    "complete=not situated or author is not None",
+    "complete=True"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_set_governed_per_choice_rebuilds_as_a_noop_lean_admits"
+   ]
+  },
+  {
+   "id": "M12-explain-gate-back",
+   "file": "tools/readings_s1_pilot.py",
+   "definition": "rebuild_reading_ids",
+   "mutation": "the scope explain mode (ve.scope.explain) as the gate in place of the document check, as before the fix",
+   "replace": [
+    "        check_document(where, raw=text(rebuilt, source))",
+    "        __import__(\"ve.scope\").scope.explain(text(meta, source))"
+   ],
+   "killed": true,
+   "test": [
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[a-choice-conflicts]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[past-the-choice-limit]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_scope_document_the_check_refuses_is_refused_with_its_answer[with-judgments]",
+    "tests/test_readings_s1_pilot_rebuild.py::test_a_set_governed_per_choice_rebuilds_as_a_noop_lean_admits"
    ]
   }
  ]
