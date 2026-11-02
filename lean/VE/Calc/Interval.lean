@@ -107,7 +107,7 @@ theorem Interval.pow_sound {a : Rat × Rat} {x : Rat} (k : Nat) (hx : a.1 ≤ x 
 
 /-- *Opaque* in spec 8.1: exact interval evaluation of an inlined expression over the input intervals; none when it
 reads a name that is not an input or divides by an interval that contains 0. -/
-def enclose (r : Rounding) (inputs : List (String × Printed)) : Expr → Option (Rat × Rat)
+def enclose (r : Rounding) (inputs : List (String × Printed)) (e : Expr) : Option (Rat × Rat) := match e with
   | .lit q => some (q, q)
   | .val n => (inputs.lookup n).map (Printed.box r)
   | .add a b => do pure (Interval.add (← enclose r inputs a) (← enclose r inputs b))
