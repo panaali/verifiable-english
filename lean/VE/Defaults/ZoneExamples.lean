@@ -257,6 +257,8 @@ def forced (L : LayeredU) (M : VE.FiniteModel Entity) (rec : List ((String × Li
 -- An exception the record fixes has one value in every completion: forced when true, not when false.
 #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [exc "g1" (el "operator" 1)] &&
   forced L M2 [(exc "g1" (el "operator" 1), false)] (obsμ L) == some [exc "g1" (el "operator" 0)]
+-- A decision atom true in every completion that is not an exception (the ranking atom) is not listed.
+#guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []
 -- No complete enumeration, no list: over the budget, over the record bound, no default completion.
 #guard holds dlam fun L => forced L (sit "operator" 13 []) [] [] == none &&
   forced L (sit "operator" 2 []) (recN (maxZoneRecord + 1)) [] == none
