@@ -1,3 +1,4 @@
+- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
 - `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
 - `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
@@ -88,4 +89,3 @@
 - `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
-- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).

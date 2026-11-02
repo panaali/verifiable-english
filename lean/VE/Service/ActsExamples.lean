@@ -515,7 +515,7 @@ def targetsOf (answer : Except String Json) : Except String (List String) := do
   (← (← answer).getObjVal? "conflict_targets" >>= (·.getArr?)).toList.mapM fun t => t.getObjVal? "target" >>= (·.getStr?)
 def d4 : String := "InvalidInput: act phrase for p027 joins acts with 'or' outside a fixed phrase"
 
--- The norms route: the answer names the parts and never `p027`; the source reads `p027` as one opaque predicate.
+-- The norms route: the answer names the parts and never `p027`; the undecoded route reads `p027` as one predicate.
 #guard (targetsOf (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" joinedE))).toOption ==
   some ["p027__1", "p027__2"]
 #guard (targetsOf (VE.Norms.Run.runCase (caseOf "norms-elaborate" joinedE))).toOption == some ["p027"]
