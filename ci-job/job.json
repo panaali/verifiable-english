@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-sol-vs-claude-12-278fe793-t633257-s2",
+ "head": "fbc19d49110d6e3a38bf6921a30e8c7c29eeebe5",
+ "argv": [
+  "armsh-cand-sol-vs-claude-12-278fe793-t633257-s2",
+  "fbc19d49110d6e3a38bf6921a30e8c7c29eeebe5",
+  "410140647748e79c6d072116072fc1aed6df2a98",
+  "-",
+  "-",
+  "4",
+  "2/2"
+ ]
+}
