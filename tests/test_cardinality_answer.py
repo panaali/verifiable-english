@@ -8,7 +8,7 @@ import random
 
 import pytest
 
-from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, text
+from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, TOP, text
 from ve import cardinality
 from ve.backends import relay
 from ve.document.lean import _lean_answer, _lean_document
@@ -69,12 +69,12 @@ def _mutants(row):
 
 
 def _answered(monkeypatch, row, call=0):
-    """The Lean service answers `row` to the relay's `call`th `rows`; every other runs."""
+    """The Lean service answers `row` to the relay's `call`th `rows` (to all of them when it is None); every other runs."""
     seen = []
 
     def rows(mode, cases, **options):
         seen.append(mode)
-        return [copy.deepcopy(row)] if len(seen) - 1 == call else REAL_ROWS(mode, cases, **options)
+        return [copy.deepcopy(row)] if call is None or len(seen) - 1 == call else REAL_ROWS(mode, cases, **options)
     monkeypatch.setattr(relay, "rows", rows)
 
 
@@ -159,6 +159,43 @@ def test_the_region_table_and_problem_are_bound(monkeypatch, genuine, change):
     _answered(monkeypatch, mutant)
     with pytest.raises(CheckerUnavailable):
         CALLS["admission"]()
+
+
+def test_a_renamed_region_is_refused_by_the_relay_itself(monkeypatch, genuine):
+    """The seeded bug's fixture (plan QT-A4): a service answering every call alike, so Lean's confirmation cannot help, and
+    the name changed in the table and its size alike, so only the binding to the request's sort and bits refuses it."""
+    row, _ = genuine("countermodel")
+    mutant = copy.deepcopy(row)
+    mutant["regions"]["constants"][0]["constant"] = mutant["sizes"][0]["constant"] = "cardinality__fomc_policymaker__absent"
+    _answered(monkeypatch, mutant, call=None)
+    with pytest.raises(CheckerUnavailable, match="region"):
+        CALLS["countermodel"]()
+
+
+def _another_statement(statement):
+    """Another statement under its own, correct meaning id: only the comparison with the request refuses it."""
+    ids = cardinality.identities(FA1["environment"])
+    statement.update(formula=TOP["formula"], meaning_id=cardinality.digest(f"ve-meaning-{ids.identity_version}\n", {
+        "environment_id": ids.environment_id, "ast": TOP}))
+
+
+@pytest.mark.parametrize("kind, change", [
+    ("admission", lambda r: r["regions"]["constants"].reverse()),
+    ("admission", lambda r: _another_statement(r["premises"][0])),
+    ("countermodel", lambda r: r["sizes"].pop()),
+    ("countermodel", lambda r: r["sizes"].reverse()),
+    ("countermodel", lambda r: r["sizes"][0].update(size=True)),
+    ("countermodel", lambda r: r["sizes"][0].update(size=-1)),
+    ("countermodel", lambda r: r["sizes"][0].update(size="3"))],
+    ids=["table-reordered", "another-statement", "sizes-dropped", "sizes-reordered", "size-bool", "size-negative", "size-text"])
+def test_the_relay_s_own_checks_hold_when_lean_cannot_confirm(monkeypatch, genuine, kind, change):
+    """A service answering every call alike: Lean's confirmation sees the same row, so each of these is the binder's."""
+    row, _ = genuine(kind)
+    mutant = copy.deepcopy(row)
+    change(mutant)
+    _answered(monkeypatch, mutant, call=None)
+    with pytest.raises(CheckerUnavailable):
+        CALLS[kind]()
 
 
 @pytest.mark.parametrize("change", [
