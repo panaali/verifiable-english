@@ -3,8 +3,9 @@ import VE.Senses.Run
 
 /-! The source of `ve/backends/lean_service_schema/senses.project.json` (`file`; `tools/response_schemas.py` writes
 it): the `senses.project` mode's row (`VE.Senses.Run.projectCaseReported`, docs/spec/senses-PLAN.md 2.6, B6). The
-projected environment is the request's with the dictionary's sorts and predicates added: the relay reads it as an
-environment and binds its identity, and the lexicon's, to the JSON returned (`ve.backends.senses`). -/
+projected environment is the request's with the dictionary's sorts and predicates added, typed here (`environment`):
+the relay reads it as an environment and binds its identity, and the lexicon's, to the JSON returned
+(`ve.backends.senses`). -/
 namespace ResponseShape.Schemas.SensesProject
 open Lean ResponseShape
 
@@ -18,6 +19,31 @@ def lexicon : Shape :=
       ("wordings", n [arr, .items (ref "#/$defs/pair")]), ("negatives", n [arr, .items (ref "#/$defs/pair")]),
       ("aliases", n [arr, .items (n [arr, .prefixItems [str, str, .type ["boolean"]], .minItems 3, .maxItems 3])]),
       ("spellings", n [arr, .items (ref "#/$defs/pair")])]]
+
+def sort : Shape :=
+  c "A sort of the projected environment, the request's or a fresh sort of the dictionary's (VE.Senses.projectedJson): its description and its nouns." [
+    obj, .required ["description"],
+    closed [("description", str),
+      ("verbalisation", n [obj, .required ["singular", "plural"], closed [("singular", str), ("plural", str)]])]]
+
+def environment : Shape :=
+  c "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5); its language, revision, units, constants and soft and rights blocks are the request's; the relay binds the whole by environment_id." [
+    obj, .required ["language", "spec_revision", "vocabulary"],
+    closed [("language", n [str, .equals "/environment/language"]),
+      ("profile", n [str, .equals "/environment/profile"]), ("profiles", ref "common.json#/$defs/strings"),
+      ("spec_revision", n [str, .equals "/environment/spec_revision"]),
+      ("units", n [obj, .equals "/environment/units"]), ("unit_schema", .equals "/environment/unit_schema"),
+      ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"],
+        closed [("sorts", n [obj, .object [] (some (ref "#/$defs/sort"))]),
+          ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
+          ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+          ("soft", n [obj, .equals "/environment/vocabulary/soft"]),
+          ("rights", n [obj, .equals "/environment/vocabulary/rights"])]])],
+    .allOf [.ite (.onCase (ref "#/$defs/request_profile")) (.required ["profile"]) (.required ["profiles"])]]
+
+/-- The request's environment names its one profile in `profile` (the v0 envelope), else its list in `profiles`. -/
+def requestProfile : Shape :=
+  n [obj, .required ["environment"], props [("environment", n [obj, .required ["profile"]])]]
 
 def identities : Shape :=
   c "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar." [
@@ -38,7 +64,7 @@ def projection : Shape :=
     c "The projection: its environment, its lexicon and their identities." [
       obj, .required ["status", "environment", "lexicon", "identities"],
       closed [("status", constS "ok"),
-        ("environment", copied "the request's environment with the projection's sorts and predicates (VE.Senses.projectedJson)" obj),
+        ("environment", copied "the request's environment with the projection's sorts and predicates (VE.Senses.projectedJson)" (ref "#/$defs/environment")),
         ("lexicon", ref "#/$defs/lexicon"), ("identities", ref "#/$defs/identities")]],
     c "VE.Senses.Run.faultJson of a dictionary failure: its check, name and reason." [
       obj, .required ["status", "code", "failure"],
@@ -72,7 +98,8 @@ def file : File where
   name := "senses.project.json"
   comment := some "Mode senses.project: VE.Senses.Run.projectCaseReported. A projection with its identities, or its fault."
   top := [("row", «row»)]
-  defs := [("pair", .schema pair), ("lexicon", .schema lexicon), ("identities", .schema identities),
+  defs := [("pair", .schema pair), ("lexicon", .schema lexicon), ("sort", .schema sort),
+    ("environment", .schema environment), ("request_profile", .schema requestProfile), ("identities", .schema identities),
     ("projection", .schema projection)]
 
 end ResponseShape.Schemas.SensesProject

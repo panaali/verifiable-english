@@ -113,22 +113,43 @@ def test_a_projection_is_as_available_as_the_reading_it_serves():
         assert lean_service.deadline(route.PROJECT, size) >= ROUTE_TIMEOUT
 
 
-def _refused(env, row) -> bool:
+def project_case(joke, lines=LINE2, used=("funny",)):
+    """The `senses.project` case `project` sends, which the schema's bindings read."""
+    env, overlay = joke
+    case = route.request(env, None, [PACK.decode()], overlay=overlay)
+    del case["source"]
+    case.update(id=route.PROJECT, lines=lines, used=list(used))
+    return case
+
+
+def _refused(env, row, case) -> bool:
     try:
-        check_row(route.PROJECT, row, {"id": route.PROJECT}, 0)
+        check_row(route.PROJECT, row, case, 0)
     except Invalid:
         return True
-    return route._projection_problem(row, {"id": route.PROJECT}, env, route._dictionary([PACK], [])[0]) is not None
+    return route._projection_problem(row, case, env, route._dictionary([PACK], [])[0]) is not None
+
+
+def _every_path(value, prefix=()):
+    """Every path to a member or element, the projected environment's included (typed in senses.project.json)."""
+    items = value.items() if type(value) is dict else enumerate(value) if type(value) is list else ()
+    for key, item in items:
+        yield prefix + (key,)
+        yield from _every_path(item, prefix + (key,))
 
 
 @pytest.mark.parametrize("lines", [LINE2, "In this document, funny means purple."])
 def test_projection_answer_mutations_are_rejected(joke, lines):
-    """Every member of a genuine answer dropped or retyped, and every string but the version rebound, is refused;
-    so is an environment whose identity is not the one the answer names."""
+    """Every member of a genuine answer, the projected environment's included, dropped or retyped, and every string
+    but the version rebound, is refused: by the schema or by the relay's binding of the environment's identity."""
     env, _ = joke
+    case = project_case(joke, lines)
     genuine = {"id": route.PROJECT, "status": "ok", "result": project(joke, lines)}
-    assert not _refused(env, genuine)
-    for path in _paths(genuine):
+    assert not _refused(env, genuine, case)
+    paths = list(_every_path(genuine))
+    assert genuine["result"]["projection"]["status"] != "ok" or \
+        ("result", "projection", "environment", "vocabulary", "sorts", "joke", "description") in paths
+    for path in paths:
         original = genuine
         for part in path:
             original = original[part]
@@ -146,11 +167,37 @@ def test_projection_answer_mutations_are_rejected(joke, lines):
                 del parent[path[-1]]
             else:
                 parent[path[-1]] = value
-            assert _refused(env, mutant), (path, value)
-    if genuine["result"]["projection"]["status"] == "ok":
+            assert _refused(env, mutant, case), (path, value)
+
+
+def test_the_typed_environment_is_bound_to_the_request(joke):
+    """The schema refuses a projected environment whose language, revision or constants are not the request's, an
+    unknown member, and a sort with an unknown member; the relay refuses one whose identity is not the answer's."""
+    env, _ = joke
+    case = project_case(joke)
+    genuine = {"id": route.PROJECT, "status": "ok", "result": project(joke)}
+    def schema_refuses(change):
         mutant = deepcopy(genuine)
-        mutant["result"]["projection"]["environment"]["vocabulary"]["sorts"]["joke"]["description"] = "B."
-        assert _refused(env, mutant)
+        change(mutant["result"]["projection"]["environment"])
+        try:
+            check_row(route.PROJECT, mutant, case, 0)
+        except Invalid:
+            return True
+        return False
+    assert not schema_refuses(lambda e: None)
+    assert schema_refuses(lambda e: e.update(language="ve.closure@0"))
+    assert schema_refuses(lambda e: e.update(spec_revision="other"))
+    assert schema_refuses(lambda e: e["vocabulary"]["constants"].pop("alice"))
+    assert schema_refuses(lambda e: e.update(extra={}))
+    assert schema_refuses(lambda e: e["vocabulary"].update(extra={}))
+    assert schema_refuses(lambda e: e["vocabulary"]["sorts"]["joke"].update(extra="x"))
+    assert schema_refuses(lambda e: e["vocabulary"]["predicates"]["sense__funny_1"].pop("arguments"))
+    # within the schema, an environment other than the one the identities name: the relay's binding
+    mutant = deepcopy(genuine)
+    mutant["result"]["projection"]["environment"]["vocabulary"]["sorts"]["joke"]["description"] = "B."
+    assert not schema_refuses(lambda e: e["vocabulary"]["sorts"]["joke"].update(description="B."))
+    assert route._projection_problem(mutant, case, env, route._dictionary([PACK], [])[0]) \
+        == "the projected lexicon does not name the projected environment"
 
 
 def test_reading_identity_rebinding_is_refused(joke):
