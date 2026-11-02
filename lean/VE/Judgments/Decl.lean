@@ -131,7 +131,7 @@ def faultOf (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : L
     if ss != r.1.arguments then some s!"JudgmentArguments: {r.1.name}"
     else if regulated.contains r.1.name then some s!"JudgmentRegulated: {r.1.name}"
     else if r.2.1 != 0 || r.2.2 != 0 then some s!"JudgmentCriterionAsUnit: {r.1.name}"
-    else if r.1.decidedBy == "unstated" then some s!"JudgmentDecider: {r.1.name}"
+    else if r.1.decidedBy == "unresolved_decider" then some s!"JudgmentDecider: {r.1.name}"
     else none
 
 /-- `judgments@0`'s admission: the first fault in record order. -/
@@ -144,11 +144,11 @@ def admit (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : Lis
 def names (js : List Judgment) : List String := js.map (·.name)
 
 /-- A record is admitted exactly when it is bound to a base predicate with its sorts, no rule regulates it, it
-    carries no criterion lists, and its decider is not `unstated`. -/
+    carries no criterion lists, and its decider is not `unresolved_decider`. -/
 theorem faultOf_none_iff (E defs regulated r) :
     faultOf E defs regulated r = none ↔
       (baseEnv E defs).predicates r.1.name = some r.1.arguments ∧ r.1.name ∉ regulated ∧
-        r.2.1 = 0 ∧ r.2.2 = 0 ∧ r.1.decidedBy ≠ "unstated" := by
+        r.2.1 = 0 ∧ r.2.2 = 0 ∧ r.1.decidedBy ≠ "unresolved_decider" := by
   unfold faultOf
   split
   · rename_i h; simp [h]
@@ -159,7 +159,7 @@ theorem faultOf_none_iff (E defs regulated r) :
       · simp [h, h2]
       · by_cases h3 : r.2.1 = 0
         · by_cases h4 : r.2.2 = 0
-          · by_cases h5 : r.1.decidedBy = "unstated"
+          · by_cases h5 : r.1.decidedBy = "unresolved_decider"
             · simp [h, h2, h3, h4, h5]
             · simp [h, h2, h3, h4, h5]
           · simp [h, h2, h3, h4]
