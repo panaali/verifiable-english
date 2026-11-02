@@ -8,10 +8,11 @@ import pytest
 from tests import lean_routes
 from tests.test_document import unit, write_doc
 from tests.test_readings_s1_lean import entry, norm, reading, reading_set, situation_id
+from tests.test_scope_readings_document import _doc as _scope_doc, _many_choices
 from tools import readings_s1_pilot as pilot
 from ve.ast import formula_from_data
 from ve.document import check_document, load_document
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.identity import meaning_id
 from ve.model import FiniteModel
 from ve.profiles import LANGUAGE, SPEC_REVISION
@@ -161,6 +162,56 @@ def test_rebuild_adds_a_new_base_predicate_and_no_regulated_one(lean, tmp_path):
     assert list(entry["base"]["relations"]) == ["asks", "unsaid__help_permitted", "unsaid__help_required", "trusts"]
     assert entry["base"]["relations"]["trusts"] == []
     assert [s["set"] for s in check_document(out)["readings"]["sets"]] == ["rs_1"]
+
+
+def _f1(tmp_path, edit=None):
+    """Fixture F1 of scope 11 (tests/test_scope_readings_document.py): a reading set governed per choice (sc-5rb),
+    whose `part` contents only Lean's GOVERN composes, so Lean's readings route answers no filled frame for it."""
+    path = tmp_path / "f1.ve.md"
+    path.write_text(_scope_doc(edit))
+    return path
+
+
+def test_a_set_governed_per_choice_rebuilds_as_a_noop_lean_admits(lean, tmp_path):
+    """Review F1: the rebuild admits what `ve document check` admits, the sets it governs per choice among them,
+    and keeps a situation's base as written where Lean answers no frame."""
+    path = _f1(tmp_path)
+    assert is_noop(path)
+    out = rebuilt(path, tmp_path)
+    assert out.read_bytes() == path.read_bytes()
+    assert check_document(out) == check_document(path)
+
+
+def _scope_sign(tmp_path):
+    # The narrow reading writes `sign`: `ScopeChoice: u0165.s03 ...@1:narrow: ScopeConflict: u0165.s03: sign`.
+    def sign(meta, rs):
+        rs["readings"][1]["content"]["part"]["sign"] = False
+    return _f1(tmp_path, sign)
+
+
+def _judgments(tmp_path):
+    # Review F2: the document mode composes no `judgments@0` with `scope@0`; the scoped F-ND1 part with both listed.
+    path = nd_part(tmp_path, scoped=True)
+    meta, source = pilot.read(path)
+    meta["environment"]["profiles"] = sorted([*meta["environment"]["profiles"], "documents@1", "judgments@0"])
+    pilot.write(path, meta, source)
+    return path
+
+
+@pytest.mark.parametrize("document", [_scope_sign, lambda tmp_path: _f1(tmp_path, _many_choices), _judgments],
+                         ids=["a-choice-conflicts", "past-the-choice-limit", "with-judgments"])
+def test_a_scope_document_the_check_refuses_is_refused_with_its_answer(lean, tmp_path, document):
+    """Review F1's class (and F2): the rebuild of a `scope@0` document raises what `ve document check` raises for
+    it, a per-choice fault, Lean's UNKNOWN at its choice limit and a list the document mode cannot compose
+    included, and writes nothing."""
+    path = document(tmp_path)
+    with pytest.raises((VEError, CheckerUnavailable)) as document_check:
+        check_document(path)
+    out = tmp_path / "out.ve.md"
+    with pytest.raises((VEError, CheckerUnavailable)) as rebuild:
+        pilot.main(["--rebuild-reading-ids", str(path), "--out", str(out)])
+    assert (type(rebuild.value), str(rebuild.value)) == (type(document_check.value), str(document_check.value))
+    assert not out.exists()
 
 
 def test_rebuild_command_is_noop_on_unchanged_environment(tmp_path, capsys):
