@@ -144,7 +144,7 @@ def straight := env actsP [("p", pred ["person", "case"] (perm "{0} comply with 
   ("description", .str "d")])])).getObjValD "acts" == Json.mkObj []
 -- the route row's members
 def members (row : Json) : Option (List String) := row.getObj?.toOption.map (·.toList.map (·.1))
-#guard members (environmentRow envA) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard members (environmentRow envA) == some ["acts", "environment_id", "family", "id", "model_acts", "profiles", "status"]
 #guard [(environmentRow envA).getObjValD "id", (environmentRow envA).getObjValD "status",
   (environmentRow envA).getObjValD "family", (environmentRow envA).getObjValD "profiles"] ==
   [.str "e", .str "ok", .str "fol", toJson actsP]
@@ -158,12 +158,36 @@ def frozen (language : String) (profiles : String × Json) (revision : String) :
 def closure01 := frozen "ve.core@0.1" ("profiles", toJson ["closure@0", "relational-fol@0"]) "ve-v0.1-closure-2026-09-21"
 def core0 := frozen "ve.core@0" ("profile", .str "relational-fol@0") "ve-v0-draft-2026-09-20"
 -- ve.core@0.1 lists its profiles, its family and no act; v0 names its one profile and has no `acts`
-#guard members (environmentRow closure01) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard members (environmentRow closure01) ==
+  some ["acts", "environment_id", "family", "id", "model_acts", "profiles", "status"]
 #guard [(environmentRow closure01).getObjValD "acts", (environmentRow closure01).getObjValD "family",
   (environmentRow closure01).getObjValD "profiles"] == [Json.mkObj [], .str "closure", toJson ["closure@0", "relational-fol@0"]]
 #guard members (environmentRow core0) == some ["environment_id", "family", "id", "profile", "status"]
 #guard [(environmentRow core0).getObjValD "family", (environmentRow core0).getObjValD "profile"] ==
   [.str "fol", .str "relational-fol@0"]
+
+/-! ### ap-1bg: the environment row gives Rust's model view of each permission and obligation act (`modelActs`):
+one placeholder per distinct act, which `canonicalAct` accepts; without `acts@0`, none -/
+
+def oblig (act dual : String) : List (String × Json) :=
+  [("role", .str "obligation"), ("default", .str "deny"), ("act", .str act), ("permission", .str dual)]
+def pairEnv (profiles : List String := actsP) (act := a3) : Json :=
+  env profiles ([("may_p", pred ["person", "case"] (perm act)), ("must_p", pred ["person", "case"] (oblig act "may_p")),
+    ("q", pred ["person"] (perm "{0} seek asylum"))] ++
+    if profiles.contains "acts@0" then [("paid", pred ["person"] (plain a2 "has the right"))] else [])
+    (if profiles.contains "acts@0" then some (block fxs) else none)
+def modelActsOf (j : Json) : Json := (environmentRow j).getObjValD "model_acts"
+#guard modelActsOf envA == Json.mkObj [("protected", .str "{0} acta {1}")]
+-- a dual pair shares its act's placeholder; another act has its own, with its arity's slots; a plain act has none
+#guard modelActsOf pairEnv ==
+  Json.mkObj [("may_p", .str "{0} acta {1}"), ("must_p", .str "{0} acta {1}"), ("q", .str "{0} actb")]
+#guard [("may_p", 2, "{0} acta {1}"), ("q", 1, "{0} actb")].all fun (p, k, a) =>
+  (VE.Norms.Wire.canonicalAct p k (.str a)).toOption == some a
+#guard modelActsOf (pairEnv ["norms@0", "relational-fol@0"] "{0} help {1}") == Json.mkObj [] &&
+  (environmentRow (pairEnv ["norms@0", "relational-fol@0"] "{0} help {1}")).getObjValD "status" == .str "ok"
+#guard VE.Service.Standalone.modelAct 27 3 == "{0} actbb {1} {2}"
+#guard ((List.range 1000).map VE.Service.Standalone.letterName).Nodup &&
+  [0, 25, 26, 676].map VE.Service.Standalone.letterName == ["a", "z", "ba", "baa"]
 
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
