@@ -96,6 +96,7 @@ module SpeechActsMain
 module VE.Acts.Compat
 module VE.Acts.Decode
 module VE.Acts.DecodeExamples
+module VE.Acts.DecodeTwins
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
 module VE.Acts.Faithful
@@ -754,6 +755,8 @@ ResponseShape.Fits@ResponseShape.Skeleton
 ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
+VE.Acts.Decode.Elaborated@VE.Acts.Decode
+VE.Acts.Decode.ElaboratedDoc@VE.Acts.DecodeTwins
 VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.IntendedActs@VE.Acts.Faithful
@@ -1052,6 +1055,7 @@ VE.NormDefaults.Admission.ReportAdmitted@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.ReportAdmittedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SoftLeafX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SourceDecoded@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.SourceDecodedIn@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.SourceDecodedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes
 VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
@@ -1069,6 +1073,7 @@ VE.NormDefaults.OverOK@VE.NormDefaults.Check
 VE.NormDefaults.RegOK@VE.NormDefaults.Check
 VE.NormDefaults.RulesOK@VE.NormDefaults.Check
 VE.NormDefaults.Run.AdmissionAnswerU@VE.NormDefaults.Run
+VE.NormDefaults.Run.AdmissionAnswerUIn@VE.NormDefaults.Run
 VE.NormDefaults.Run.BindingsMatchSourceAndRegeneration@VE.NormDefaults.Run
 VE.NormDefaults.SettledAs@VE.NormDefaults.Status
 VE.NormDefaults.UValid@VE.NormDefaults.Fill
@@ -1091,6 +1096,7 @@ VE.Norms.Admission.NodeAdmitted@VE.Norms.Admission
 VE.Norms.Admission.ProfileLeaf@VE.Norms.Admission
 VE.Norms.Admission.ReportAdmitted@VE.Norms.Admission
 VE.Norms.Admission.SourceDecoded@VE.Norms.Admission
+VE.Norms.Admission.SourceDecodedIn@VE.Norms.Admission
 VE.Norms.AgreesBelow@VE.Norms.Subst
 VE.Norms.AppliesD@VE.Norms.Elaborate
 VE.Norms.Arity@VE.Norms.Basic
@@ -1112,6 +1118,7 @@ VE.Norms.PairsBelow@VE.Norms.Prefix
 VE.Norms.PrefixAdmissible@VE.Norms.Prefix
 VE.Norms.RulesTyped@VE.Norms.Elaborate
 VE.Norms.Run.AdmissionAnswer@VE.Norms.Run
+VE.Norms.Run.AdmissionAnswerIn@VE.Norms.Run
 VE.Norms.Run.BindingsMatchSourceAndRegeneration@VE.Norms.Run
 VE.Norms.Sat@VE.Norms.Prefix
 VE.Norms.SelectsD@VE.Norms.Elaborate
