@@ -2623,6 +2623,7 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.acts_ne
 #print axioms VE.EnglishGrammar.Norm.assembleFrom_numbered
 #print axioms VE.EnglishGrammar.Norm.assemble_numbered
+#print axioms VE.EnglishGrammar.Norm.baseSize_eq
 #print axioms VE.EnglishGrammar.Norm.base_act
 #print axioms VE.EnglishGrammar.Norm.close_numbered
 #print axioms VE.EnglishGrammar.Norm.condition_same

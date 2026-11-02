@@ -17139,9 +17139,12 @@
         "VE.EnglishGrammar.Norm.Examples.regulated",
         "VE.EnglishGrammar.Norm.Examples.same",
         "VE.EnglishGrammar.Norm.Examples.situation",
+        "VE.EnglishGrammar.Norm.Examples.softAct",
         "VE.EnglishGrammar.Norm.Examples.statements",
         "VE.EnglishGrammar.Norm.Examples.stmts",
-        "VE.EnglishGrammar.Norm.Examples.universal"
+        "VE.EnglishGrammar.Norm.Examples.two",
+        "VE.EnglishGrammar.Norm.Examples.universal",
+        "VE.EnglishGrammar.Norm.Polarity.fits"
       ]
     },
     "VE/EnglishGrammar/Norm/Value.lean": {
@@ -17217,7 +17220,6 @@
         "VE.EnglishGrammar.Norm.Arg.read",
         "VE.EnglishGrammar.Norm.NormAct.action",
         "VE.EnglishGrammar.Norm.NormAct.step",
-        "VE.EnglishGrammar.Norm.Polarity.fits",
         "VE.EnglishGrammar.Norm.Polarity.of",
         "VE.EnglishGrammar.Norm.args",
         "VE.EnglishGrammar.Norm.bindings",

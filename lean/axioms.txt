@@ -2175,6 +2175,7 @@
 'VE.EnglishGrammar.Norm.acts_ne' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.Norm.assembleFrom_numbered' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.Norm.assemble_numbered' depends on axioms: [propext, Quot.sound]
+'VE.EnglishGrammar.Norm.baseSize_eq' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.Norm.base_act' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.Norm.close_numbered' depends on axioms: [propext]
 'VE.EnglishGrammar.Norm.condition_same' depends on axioms: [propext, Classical.choice, Quot.sound]

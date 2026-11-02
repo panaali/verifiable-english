@@ -1748,6 +1748,20 @@
    "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 61,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }

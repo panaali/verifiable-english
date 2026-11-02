@@ -94,6 +94,10 @@ Python relay and no authority change. Those are the layer's later steps, each wi
   `_consequence` reads `regulated` under either profile. An environment whose `profiles` name `soft-norms@0` is
   therefore decoded after `VE.SoftNorms.Wire.stripSoft`, as the soft route decodes it; any other environment is
   decoded as R6 states.
+- **R8. `Polarity.fits` lands with its theorem** (en-s6b; DRI decision reviews/dri-decisions-20261102-en-s6b.md item
+  4). The reader does not read it: only `readNorm_regulated` states it. en-s6b decides that statement by a `#guard`
+  over every section 6 fixture (section 4's substitution note), so `fits` is that guard's oracle in
+  `Norm/Examples.lean`; it moves to `Norm/Rules.lean` with `readNorm_regulated`'s proof (en-s6c).
 
 ## 2. Definitions
 
@@ -266,7 +270,7 @@ Python's counterparts: `Expected Rule {index} with its own block`, `Expected a c
 
 ```lean
 /-- Whether a polarity is one that the role's consequence rows generate. It is here, not in `Value.lean`, so
-that `Value.lean` imports only `Syntax.lean`. -/
+that `Value.lean` imports only `Syntax.lean` (R8: in `Norm/Examples.lean` until `readNorm_regulated` is proved). -/
 def Polarity.fits : Polarity → VE.Norms.Role → Bool
   | .modal .must, .obligation => true
   | .modal .needNot, .obligation => true
