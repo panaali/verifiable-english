@@ -325,9 +325,11 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
     composed = bool(composed_set_units(meta))
     require(type(row) is dict and type(row.get("source")) is str and
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
-            ({"judgments"} if judged else set()) | ({"composed_readings"} if composed else set()))
+            ({"judgments", "undeclared_evaluative"} if judged else set()) |
+            ({"composed_readings"} if composed else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
+        require(_undeclared_bound(row["undeclared_evaluative"], meta.get("environment"), meta.get("open_terms", [])))
     source = row["source"].encode("utf-8")
     require(source == body)
     units = row.get("units")
@@ -459,6 +461,23 @@ def _judgments_bound(usage, open_terms, unit_ids) -> bool:
     terms = [r["term"] for r in used]
     return (ordered(terms, names) and ordered(unused, names) and
             sorted(map(str, terms + unused)) == sorted(map(str, names)))
+
+
+def _undeclared_bound(names, environment, open_terms) -> bool:
+    """Whether an `undeclared_evaluative` list (Lean's `undeclaredEvaluative`, docs/spec/judgment-terms.md 7 and 8.4)
+    is bound to the request: each name a base predicate of the request's environment (not W3-defined; a regulated
+    one included), none a declared open term, in Lean's order (the vocabulary's members by name, as Lean's JSON object
+    holds them) with no repeat. Which predicates match the catalogue is Lean's."""
+    vocabulary = environment.get("vocabulary") if type(environment) is dict else None
+    predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
+    if type(names) is not list or type(predicates) is not dict or type(open_terms) is not list:
+        return False
+    base = sorted(p for p, entry in predicates.items() if type(entry) is dict and "defined" not in entry)
+    declared = {t.get("name") for t in open_terms if type(t) is dict}
+    if not all(type(n) is str and n in base and n not in declared for n in names):
+        return False
+    places = [base.index(n) for n in names]
+    return all(a < b for a, b in zip(places, places[1:]))
 
 
 def _governed_units(meta) -> set:

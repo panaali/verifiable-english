@@ -1,0 +1,17 @@
+{
+  "commit": "4d9a0eeb0",
+  "command": [
+    "/home/seyran/code/ve-jt-e1s/.venv/bin/python",
+    "-m",
+    "ve",
+    "render",
+    "--env",
+    "/home/seyran/code/ve-jt-e1s/docs/judgment-terms/jt-e1s/captures/U01.env.json",
+    "--view",
+    "ve_english",
+    "/home/seyran/code/ve-jt-e1s/docs/judgment-terms/jt-e1s/captures/U01.ve"
+  ],
+  "environment": "U01.env.json",
+  "document": "U01.ve",
+  "output": "U01-identifier.txt"
+}

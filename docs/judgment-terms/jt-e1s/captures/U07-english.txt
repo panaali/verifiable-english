@@ -1,0 +1,3 @@
+Whether this assembly is peaceful is a judgment for city magistrate.
+These rules conflict where this assembly is peaceful.
+Conflict-free, given these sentences: No assembly that blocks a hospital entrance is peaceful.

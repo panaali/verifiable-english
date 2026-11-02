@@ -44,9 +44,9 @@ theorem place_junk (X : RightsDoc) (c : Content) (cs : List (String × List Stri
 theorem copyContent_norms (D : Doc) (c : Content) : normsOf (copyContent D c) = (normsOf c).map (copyOver D) := by
   cases c <;> rfl
 theorem copyContent_contrib (D : Doc) (c : Content) : contrib (copyContent D c) = contrib c := by
-  cases c <;> rfl
+  cases c <;> simp [copyContent, contrib]
 theorem gateContent_contrib (D : Doc) (m i : Nat) (c : Content) : contrib (gateContent D m i c) = contrib c := by
-  cases c <;> rfl
+  cases c <;> simp [gateContent, contrib]
 
 /-! ## `build` -/
 

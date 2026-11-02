@@ -1,0 +1,9 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Readings.supCertificateCheckSD",
+   "operator": "append-right",
+   "reason": "does not elaborate: dropping `A ++ ` leaves `slotUnder N.D supX N` (SoftSup.lean:31, Application type mismatch), so no build reads it; the other append-right mutant here, `(sup N.D).2 ++ ` dropped, is KILLED by the certificate guards"
+  }
+ ]
+}

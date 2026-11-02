@@ -1,0 +1,2 @@
+Whether this content is harmful is a judgment for safety reviewer.
+Left to safety reviewer: these two admissible completions give different answers and differ on whether this content is harmful (a judgment for safety reviewer).

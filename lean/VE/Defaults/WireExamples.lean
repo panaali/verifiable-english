@@ -73,7 +73,7 @@ def envW : Json := αEnv.setObjVal! "profiles"
 def rest (L : VE.NormDefaults.Wire.LayeredU) : String :=
   match viewRest (req αEnv αR "x") L with | .error e => e | .ok _ => "ok"
 -- diagnostic 2: a later pack's premise names a decision; 6: two rules share a name; 4: a condition past `MAX_DEPTH`
-#guard holds dα fun L => rest { L with packs := L.packs ++ [⟨"rights", .constraint, [], [], [("lim:0", exAt exc1)], []⟩] } ==
+#guard holds dα fun L => rest { L with packs := L.packs ++ [⟨"rights", .constraint, [], [], [("lim:0", exAt exc1)], [], []⟩] } ==
   "InvalidInput: answers that assume no exception need premises that name no decision: lim:0"
 #guard holds dα fun L =>
   let D := { L.D with T := { L.D.T with nodes := L.D.T.nodes ++ L.D.T.nodes } }

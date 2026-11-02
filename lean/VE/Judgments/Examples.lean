@@ -1,13 +1,15 @@
 import VE.Judgments.Status
 import VE.Norms.Checks
 import VE.Route.Typed
+import VE.Judgments.Undeclared
 
 /-! The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the
 built definitions. Each value is the one the spec's stub computed by `#eval`. Every rule fixture that JT-2 replays
 through the service is also a document the norms route's own check accepts (`VE.Norms.validate`), and every formula
-fixture type-checks in its environment (11.9). The zone, criteria, deciders and undeclared-word rows (11.4 to 11.7)
-belong to JT-3 and JT-4. A difference between this file and a row of section 11 is a finding against the spec or the
-build, decided before the row is changed. -/
+fixture type-checks in its environment (11.9). The undeclared-word rows of 11.7 (JT-3) close the file, and
+english-lean's own rows are checked in `VE.EnglishGrammar.Examples`; the zone, criteria and deciders rows (11.4 to
+11.7) belong to JT-3 and JT-4. A difference between this file and a row of section 11 is a finding against the spec
+or the build, decided before the row is changed. -/
 
 namespace VE.Judgments.Examples
 open Lean VE.Judgments
@@ -339,5 +341,44 @@ def doc11 (nodes : List Node) : Doc :=
 #guard [fγ, fγ'', .unary "natural_and_fundamental_group_unit" (.const "the_family"), fξ, fξw, fξn,
   .all "act" (.implies guardα .bottom)].all
   fun φ => φ.check E []
+
+/-! ## 11.7 Undeclared words (JT-3; spec 7, 8.4 and 11.8) -/
+
+/-- 11.7's rows: `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary`
+    (not "necessary condition"), `effective` (not "effective date"). -/
+def rows117 : List EvaluativeRow :=
+  [⟨"reasonable", []⟩, ⟨"arbitrary", []⟩, ⟨"due", [["due", "date"], ["due", "to"]]⟩, ⟨"just", [["just", "as"]]⟩,
+   ⟨"necessary", [["necessary", "condition"]]⟩, ⟨"effective", [["effective", "date"]]⟩]
+
+def preds117 : List (String × List String) :=
+  ["reasonable_grounds", "due_date", "arbitrary", "just_as_real", "just_requirement", "necessary_condition",
+    "arrest"].map fun p => (p, predicateWords p none)
+
+def regulated117 : List (String × List String) :=
+  preds117 ++ [("make_reasonable_efforts", predicateWords "make_reasonable_efforts" none)]
+
+#guard undeclaredEvaluative rows117 preds117 ["arbitrary"] == ["reasonable_grounds", "just_requirement"]
+#guard undeclaredEvaluative rows117 preds117 [] == ["reasonable_grounds", "arbitrary", "just_requirement"]
+-- F3′: a regulated predicate stays in the base environment, is listed for review, and is still not admitted.
+#guard (baseEnv E defs).predicates "make_reasonable_efforts" == some ["person", "act"]
+#guard undeclaredEvaluative rows117 regulated117 ["arbitrary"] ==
+  ["reasonable_grounds", "just_requirement", "make_reasonable_efforts"]
+#guard errText (admit E defs regulated [jrec "make_reasonable_efforts" ["person", "act"]]) ==
+  some "JudgmentRegulated: make_reasonable_efforts"
+-- 11.8, `undeclaredEvaluative_iff` both ways: each `true` row is listed, each `false` row is not, for its reason.
+#guard ["reasonable_grounds", "just_requirement", "make_reasonable_efforts"].all
+  (undeclaredEvaluative rows117 regulated117 ["arbitrary"]).contains
+#guard ["due_date", "just_as_real", "necessary_condition", "arrest", "arbitrary"].all
+  fun p => !(undeclaredEvaluative rows117 regulated117 ["arbitrary"]).contains p
+-- A phrase of another sense excludes the word only where the phrase is written, and in order.
+#guard hasPhrase ["due", "date"] ["the", "due", "date"] && !hasPhrase ["due", "date"] ["date", "due"] &&
+  !hasPhrase ["due", "date"] ["due"] && hasPhrase [] [] && hasPhrase ["due", "date"] ["x", "y", "due", "date"]
+-- `J` with two names: each bound name is left out, whichever position it has in `J`.
+#guard undeclaredEvaluative rows117 preds117 ["arbitrary", "reasonable_grounds"] == ["just_requirement"]
+-- A predicate's words: its name split at `_`, then its template's words, lower case; punctuation splits a word.
+#guard predicateWords "Reasonable_grounds" (some "{0} has REASONABLE, grounds.") ==
+  ["reasonable", "grounds", "0", "has", "reasonable", "grounds"]
+#guard predicateWords "arrest" (some "{0} is arbitrary") == ["arrest", "0", "is", "arbitrary"]
+#guard predicateWords "arrest" (some "arbitrary {0}") == ["arrest", "arbitrary", "0"]
 
 end VE.Judgments.Examples

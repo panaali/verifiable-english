@@ -1,0 +1,14 @@
+{
+  "format": "ve.sense-pack@1",
+  "name": "software-services@1",
+  "sorts": [
+    {"name": "person", "noun": "person", "plural": "people", "description": "A recorded person.", "letter": "P"},
+    {"name": "service", "noun": "service", "plural": "services", "description": "A service recorded in the inventory.", "letter": "S"}
+  ],
+  "senses": [
+    {"word": "deployed", "index": 1, "gloss": "inventory", "description": "Recorded as deployed.", "kinds": ["service"], "wording": "{0} is deployed"},
+    {"word": "reviewed", "index": 1, "gloss": "inventory", "description": "Recorded as reviewed.", "kinds": ["service"], "wording": "{0} is reviewed"},
+    {"word": "owns", "index": 1, "gloss": "ownership", "description": "Recorded ownership; person first, service second.", "kinds": ["person", "service"], "wording": "{0} owns {1}"},
+    {"word": "safe", "index": 1, "gloss": "inventory", "description": "Recorded as safe in this inventory.", "kinds": ["service"], "wording": "{0} is safe"}
+  ]
+}

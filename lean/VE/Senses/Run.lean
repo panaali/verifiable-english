@@ -1,5 +1,6 @@
 import VE.Senses.Request
 import VE.Senses.Decode
+import VE.Senses.Version
 import VE.EnglishGrammar.Run
 
 /-! A one-shot admission boundary for the senses reader. The pack text reaches
@@ -14,15 +15,17 @@ open Lean VE.Senses VE.EnglishGrammar
 
 def pairJson (p : String × Nat) : Json := Json.arr #[.str p.1, toJson p.2]
 
-def candidateJson (c : Candidate) : Json := Json.mkObj
-  [("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines),
-   ("formula", c.formula.encode), ("mark", .bool c.mark)]
+/-- A candidate, with the identities of its own projection when asked (`ids` of its resolving lines, plan 2.6). -/
+def candidateJson (ids : Option (String → Json)) (c : Candidate) : Json := Json.mkObj
+  ([("choice", Json.arr (c.choice.map pairJson).toArray), ("lines", .str c.lines),
+   ("formula", c.formula.encode), ("mark", .bool c.mark)] ++ (ids.map fun f => ("identities", f c.lines)).toList)
 
 /-- Unit `i` of a text whose body starts at sentence `k`: its sentence, and the state after it (spec 4.1, as
 S2's `readingJson` gives it per reading); an open unit of a fence request also has its English (`text`, which
 is `documentText`). -/
-def unitJson (text : Option (Nat → SenseUnit → String)) (k i : Nat) (u : SenseUnit) : Json := Json.mkObj
-  ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map candidateJson).toArray),
+def unitJson (ids : Option (String → Json)) (text : Option (Nat → SenseUnit → String)) (k i : Nat) (u : SenseUnit) :
+    Json := Json.mkObj
+  ([("sentence", toJson (k + i)), ("candidates", Json.arr (u.candidates.map (candidateJson ids)).toArray),
     ("unresolved", toJson u.unresolved), ("referents", toJson u.after.referents),
     ("binder_seen", .bool u.after.binderSeen)] ++
     match u.formula, text with
@@ -97,19 +100,22 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : Option String) :
 
 /-- The answer to a text of `count` sentences (`documentInput`'s); the units are its last sentences
 (`readBody_good`). A fence request's admitted answer also maps each fence to its unit (`fenceUnits`), and its
-open units carry `text`. A refusal over a `source` has E2's span and advice (`refusalExtras`). -/
+open units carry `text`. A refusal over a `source` has E2's span and advice (`refusalExtras`). An admitted
+answer also has the identities of its projection and the words its body uses (`admitted`), and each candidate
+the identities of its own projection (`ids`). -/
 def outcomeJson (c : VE.EnglishGrammar.Run.Case) (source : Option String) (count : Nat)
-    (fences : Option (List (Option Nat))) (text : Nat → SenseUnit → String) (out : SensesOutcome) :
+    (fences : Option (List (Option Nat))) (text : Nat → SenseUnit → String)
+    (admitted : List (String × Json)) (ids : Option (String → Json)) (out : SensesOutcome) :
     Except String Json := do
   let (status, code) ← out.statusCode
   let common := [("status", .str status)] ++ (code.toList.map fun c => ("code", .str c))
   match out with
   | .ok units senses mixed unused P =>
     pure (Json.mkObj (common ++
-      [("units", Json.arr (units.mapIdx (unitJson (fences.map fun _ => text) (count - units.length))).toArray),
+      [("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length))).toArray),
        ("sense_map", Json.arr (senses.map occurrenceJson).toArray),
        ("mixed", toJson mixed), ("unused", toJson unused),
-       ("environment", P.envJson)] ++
+       ("environment", P.envJson)] ++ admitted ++
       (fences.toList.map fun fs => ("fences", Json.arr (fs.map fenceJson).toArray))))
   | .fault f => pure (Json.mkObj (common ++ faultFields f))
   | _ =>
@@ -185,7 +191,66 @@ def fenceIdsProblem (n : Nat) (ids allowed : List String) : Option String :=
     some s!"InvalidInput: reading-set unit {id} is given more than once"
   else (allowed.find? (!ids.contains ·)).map fun id => s!"InvalidInput: reading-set unit {id} names no English fence"
 
-def readCase (j : Json) : Except String Json := do
+/-- A lexicon as `english.read` receives one (`EnglishGrammar.Run.decodeLexicon`), naming the environment
+`envId`. -/
+def lexiconJson (envId : String) (L : Lexicon) : Json :=
+  let pairs (l : List (String × String)) : Json := Json.arr (l.map fun (a, b) => Json.arr #[.str a, .str b]).toArray
+  Json.mkObj [("format", .str VE.EnglishGrammar.Run.lexiconFormat), ("environment_id", .str envId),
+    ("nouns", pairs L.nouns), ("letters", pairs L.letters), ("wordings", pairs L.wordings),
+    ("negatives", pairs L.negatives),
+    ("aliases", Json.arr (L.aliases.map fun (p, a, n) => Json.arr #[.str p, .str a, .bool n]).toArray),
+    ("spellings", pairs L.spellings)]
+
+/-- A projection's lexicon JSON and its identities (plan 2.6, 2.7): its environment's and its lexicon's, as
+`english.read` computes them for a submitted environment and lexicon without an overlay (`decodeCase`), and the
+grammar's of the request's profiles, which a projection does not change. -/
+def projectionIds (c : VE.EnglishGrammar.Run.Case) (P : Projection) : Except String (Json × List (String × Json)) := do
+  let envId ← VE.EnglishGrammar.Run.environmentId P.envJson
+  let lexicon := lexiconJson envId P.lexicon
+  pure (lexicon, [("environment_id", .str envId),
+    ("lexicon_id", .str (← VE.CertificateWire.digest "ve-english-lexicon-v1\n" lexicon)),
+    ("grammar_id", .str (← VE.EnglishGrammar.Run.grammarId c.E.profiles))])
+
+/-- The projection of preamble `lines` over the `used` words (plan 2.6): the lines read as a document's preamble
+is (`readPreamble`), every sentence a line, then `project`. `senses.project` and a candidate's identities both
+reach `project` here. -/
+def linesProjection (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b : Nat) (lines : String)
+    (used : List String) : Except String (Except SenseFault Projection) := do
+  let sents ← if lines.isEmpty then pure [] else match lex lines with
+    | .ok s => pure (s.toList.map (·.toList))
+    | .error _ => throw "InvalidInput: the lines are not English sentences"
+  match readPreamble D b sents with
+  | .error f => pure (.error f)
+  | .ok (A, k) =>
+    if k < sents.length then throw s!"InvalidInput: sentence {k + 1} of the lines is not a preamble line"
+    else pure (project D A c.E c.L used)
+
+/-- The words of the dictionary a body uses, in the dictionary's order: those whose senses its projection
+declares (`projectedSenses`). -/
+def usedOf (P : Projection) : List String := (P.map.map (·.2.1.word)).eraseDups
+
+/-- An admitted reading's identities (plan 2.7): S2's of its projection, without `overlay_digest`, with a source
+request's `source_sha256`; the words its body uses; and each candidate's (`ids`), computed once per distinct
+resolving lines by `linesProjection`, as `senses.project` computes them. -/
+def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b : Nat) (text : SenseText) :
+    SensesOutcome → Except String (List (String × Json) × (String → Json))
+  | .ok units _ _ _ P => do
+    let used := usedOf P
+    let (_, own) ← projectionIds c P
+    let source := match text with
+      | .source s => [("source_sha256", Json.str (VE.CertificateWire.sha256 s.toUTF8))]
+      | .fences _ => []
+    let table ← (units.flatMap fun u => u.candidates.map (·.lines)).eraseDups.mapM fun l => do
+      match ← linesProjection D c b l used with
+      | .ok Q => pure (l, Json.mkObj (← projectionIds c Q).2)
+      | .error _ => throw "a candidate's resolving lines do not project"
+    pure ([("identities", Json.mkObj (own ++ source ++ [("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)])),
+      ("used", toJson used)], fun l => (VE.Bridge.lookup table l).getD (Json.mkObj []))
+  | _ => pure ([], fun _ => Json.mkObj [])
+
+/-- A `senses.read` case. With `identified` (the route's runner, not the document mode's call) an admitted answer
+carries its identities (`admittedIds`). -/
+def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let fenced := has j "fences"
   VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget",
     if fenced then "fences" else "source"] ++
@@ -216,16 +281,61 @@ def readCase (j : Json) : Except String Json := do
         let result := Json.mkObj [("status", .str "rejected"), ("code", .str "Unresolved"),
           ("unit", .str unit), ("text", .str message)]
         return VE.Route.Wire.ok id [("result", Json.mkObj
-          [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])]
+          [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
+           ("senses_version", .str sensesVersion), ("reading", result)])]
   let out := match out, text with
     | .lexical r, .fences fs => if A.defaults.isEmpty then .lexical (fenceReject r 0 0 fs) else out
     | o, _ => o
-  let result ← outcomeJson c (refusalSource A text) count fences unitText out
+  let (admitted, ids) ← if identified then do let (a, f) ← admittedIds D c budget text out; pure (a, some f)
+    else pure ([], none)
+  let result ← outcomeJson c (refusalSource A text) count fences unitText admitted ids out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
-    [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)), ("reading", result)])])
+    [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
+     ("senses_version", .str sensesVersion), ("reading", result)])])
 
 def runCaseReported (j : Json) : Json :=
-  match readCase j with
+  match readCase j true with
+  | .ok row => row
+  | .error message => Json.mkObj
+      [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+
+/-- A fault of `senses.project`: its status and code as `senses.read` gives them, and its arguments. -/
+def faultJson (f : SenseFault) : Json :=
+  let status := match (SensesOutcome.fault f).statusCode with
+    | .ok (status, _) => status
+    | .error _ => "rejected"
+  Json.mkObj ([("status", .str status), ("code", .str f.code)] ++ faultFields f)
+
+/-- `senses.project` (plan 2.6, B6): the projection of the dictionary and the preamble `lines` over the `used`
+words, distinct words of the dictionary, with its environment and lexicon JSON and their identities; or the
+dictionary's or the lines' fault. The lexicon must be one `english.read` reads. -/
+def projectCase (j : Json) : Except String Json := do
+  VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget", "lines", "used"] ++
+    (["overlay"].filter (has j)))
+  let id ← VE.Bridge.stringField j "id"
+  let c ← VE.EnglishGrammar.Run.decodeCase j
+  let D ← decodeDictionary j
+  let lines ← VE.Bridge.stringField j "lines"
+  let used ← VE.Bridge.strings (← j.getObjVal? "used")
+  if let some w := used.find? (!D.words.contains ·) then
+    throw s!"InvalidInput: used word {w} is not a word of the dictionary"
+  unless used.eraseDups.length == used.length do throw "InvalidInput: a used word is given more than once"
+  unless c.L.policyOk c.E {} && c.L.valid c.E {} do throw "InvalidInput: english.read refuses the lexicon"
+  let budget ← VE.Senses.natOf (← j.getObjVal? "budget")
+  let result ← match D.failures (c.E.sorts.map (·.name)) with
+    | f :: _ => pure (faultJson (.invalidDictionary f))
+    | [] => do
+      match ← linesProjection D c budget lines used with
+      | .error f => pure (faultJson f)
+      | .ok P => do
+        let (lexicon, ids) ← projectionIds c P
+        pure (Json.mkObj [("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon),
+          ("identities", Json.mkObj (ids ++ [("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)]))])
+  pure (VE.Route.Wire.ok id [("result", Json.mkObj
+    [("dictionary_id", .str (dictionaryId D)), ("senses_version", .str sensesVersion), ("projection", result)])])
+
+def projectCaseReported (j : Json) : Json :=
+  match projectCase j with
   | .ok row => row
   | .error message => Json.mkObj
       [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]

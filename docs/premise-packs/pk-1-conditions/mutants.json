@@ -1,0 +1,97 @@
+{
+  "item": "pk-1-conditions",
+  "base": "8c28fe286",
+  "mutants": [
+    {
+      "id": "M1",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "behaviour": "softPack exports no decision condition (DRI 2026-10-31 pc-9-prereqs item 2, seeded bug)",
+      "edits": [
+        {
+          "from": "softLabelledU U D, [], []⟩",
+          "to": "softLabelledU U D, [], [(.excepted \"x\", .top)]⟩"
+        }
+      ],
+      "test": "PacksExamples.lean softPack_conditions (line 138)",
+      "also_fails": "PacksExamples.lean #guard on the rights example documents (line 157) and #guard on the decoded soft documents dα..dσ (line 161)",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksExamples.lean:138:0: Not a definitional equality: the left-hand side",
+          "error: VE/NormDefaults/PacksExamples.lean:157:0: Expression",
+          "error: VE/NormDefaults/PacksExamples.lean:161:0: Expression"
+        ]
+      },
+      "restored": true
+    },
+    {
+      "id": "M2",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "behaviour": "rightsPack exports no decision condition",
+      "edits": [
+        {
+          "from": "VE.Rights.limPremisesLabelled R, [], []⟩",
+          "to": "VE.Rights.limPremisesLabelled R, [], [(.excepted \"x\", .top)]⟩"
+        }
+      ],
+      "test": "PacksExamples.lean rightsPack_conditions (line 139)",
+      "also_fails": "PacksExamples.lean #guard on the rights example documents (line 157)",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksExamples.lean:139:0: Not a definitional equality: the left-hand side",
+          "error: VE/NormDefaults/PacksExamples.lean:157:0: Expression"
+        ]
+      },
+      "restored": true
+    },
+    {
+      "id": "M3",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "behaviour": "every pack the layered routes assemble has empty conditions (decodeRightsU's pack list, not rightsPack itself)",
+      "edits": [
+        {
+          "from": "[softPack U D, rightsPack src.D]",
+          "to": "[softPack U D, { rightsPack src.D with conditions := [(.excepted \"x\", .top)] }]"
+        }
+      ],
+      "test": "PacksExamples.lean decodeLayered_conditions (proof, line 154)",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksExamples.lean:154:50: unsolved goals"
+        ]
+      },
+      "restored": true
+    },
+    {
+      "id": "M4",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "R16: the one new trusted declaration, the field Pack.conditions : List (DecisionKey × Formula)",
+      "edits": [
+        {
+          "from": "  conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)",
+          "to": "  conditions : Option (VE.SoftNorms.DecisionKey × VE.Formula)"
+        }
+      ],
+      "test": "build of VE.NormDefaults.PacksExamples (the constructor sites softPack and rightsPack stop elaborating)",
+      "note": "a type-level mutant: the field carries no behaviour beyond the value each constructor stores, which M1-M3 mutate; tools/trust_mutants.py finds 0 mutable definitions in the growth (trust-mutants.json)",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Layered.lean:58:107: Application type mismatch: The argument",
+          "error: VE/NormDefaults/Layered.lean:62:71: Application type mismatch: The argument"
+        ]
+      },
+      "restored": true
+    }
+  ]
+}

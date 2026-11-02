@@ -1,0 +1,111 @@
+{
+  "id": "U08",
+  "arm": "identifier",
+  "account": "claude-panaali2",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 20 synthetic: An arrest at an assembly is reviewed if this assembly is peaceful; a police ombudsman decides whether it is peaceful.\nCONCLUSION: an arrest at this assembly is reviewed\nJUDGMENT: peaceful_assembly means whether this assembly is peaceful; decider: police ombudsman.\nFocus is classified as \"peaceful_assembly\".\n",
+  "cli": {
+    "duration_api_ms": 1693,
+    "stop_reason": "end_turn",
+    "session_id": "f2c3cc37-3198-4778-be34-fa3493314d00",
+    "total_cost_usd": 0.0181524,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4012,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 103,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4012,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 103,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4012,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4012
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 103,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4012,
+        "webSearchRequests": 0,
+        "costUSD": 0.0181524,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4012,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: police ombudsman; WHY: The conclusion that an arrest at this assembly is reviewed follows only if the assembly is peaceful, and the text assigns that determination to the police ombudsman, so it is certified only given that decider's judgment criterion.",
+    "ttft_ms": 1817,
+    "type": "result",
+    "duration_ms": 1855,
+    "uuid": "9ca07b24-5dfd-4e4b-a246-c69e333d2b28",
+    "ttft_stream_ms": 922,
+    "time_to_request_ms": 154,
+    "first_content_frame_ms": 923,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14821,
+  "answer": "CLASS: CONDITIONAL; DECIDER: police ombudsman; WHY: The conclusion that an arrest at this assembly is reviewed follows only if the assembly is peaceful, and the text assigns that determination to the police ombudsman, so it is certified only given that decider's judgment criterion."
+}

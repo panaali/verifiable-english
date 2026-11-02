@@ -282,7 +282,7 @@ def decoded : Option EventsDecoded := (decodeEvents (env block)).toOption.join
   d.E.constants "date__2026_10_15" == none && d.V.anchor.map (·.iso) == some "2026-10-13"
 
 -- The pack: PK-1's one assembler places it last, after soft, whatever the order it is given in (X1).
-def softP : Pack := ⟨"soft", .constraint, [], [], [("soft:x", .top)], []⟩
+def softP : Pack := ⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []⟩
 #guard decoded.any fun d => (eventsPack d).id == "events" && (eventsPack d).labelled == eventsLabelled d.V
 #guard decoded.any fun d => match assembleIn reservedPrefixes d.E 0 [eventsPack d, softP] with
   | .ok qs => X qs == .top :: eventsX d.V &&

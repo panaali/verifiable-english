@@ -12,6 +12,7 @@ import pytest
 
 from tests.test_document_lean_switch import _structural_mutants
 from tests.test_scope_document import F1, OWN, _governed_text, _split, _text
+from tests.test_scope_readings_document import _doc as readings_doc
 from ve import scope
 from ve.backends import relay
 from ve.backends.service_schema import ROWS, Context, Invalid
@@ -29,6 +30,26 @@ def multi_text() -> str:
         {"id": "g2", "unit": "u0", "reach": {"rules": ["b"]}, "units": ["u2"], "effect": {"carve_out": OWN}},
         {"id": "g3", "unit": "u1", "reach": {"rules": ["c"]}, "units": ["u3"], "effect": "yields"}]
     return _text(meta, body)
+
+
+def sets_text(n03: int = 2, n05: int = 0, sign: bool = False, lead: bool = False) -> str:
+    """F1 with u0165.s03's set (sc-5rb's `_doc`): `wide` and `narrow` when `n03` is 2, else `n03` readings `r<i>`;
+    with `n05`, a second set coupled to it on u0165.s05 (its part as the readings, the unit without content); with
+    `sign`, the narrow reading writes `sign` as the frame does (11.6 SR-c, a fault under one choice); with `lead`, a
+    set on the lead-in u0164.s02 too, the governor's own unit, which 11.1 does not cover (SR-g)."""
+    def edit(meta, rs):
+        if lead:
+            meta["reading_sets"].append({**rs, "id": "scope-u0164-s02", "unit": "u0164.s02"})
+        if n03 != 2:
+            rs["readings"] = [{**rs["readings"][0], "id": f"r{i}", "meaning_id": f"m-r{i}"} for i in range(n03)]
+        if sign:
+            rs["readings"][1]["content"]["part"]["sign"] = False
+        if n05:
+            [unit] = [u for u in meta["units"] if u["id"] == "u0165.s05"]
+            part, unit["content"] = unit.pop("content"), None
+            meta["reading_sets"].append({**rs, "id": "scope-u0165-s05", "unit": "u0165.s05", "readings": [
+                {**rs["readings"][0], "id": f"s{i}", "meaning_id": f"m-s{i}", "content": part} for i in range(n05)]})
+    return readings_doc(edit)
 
 
 def _write(tmp_path, text):
@@ -92,40 +113,66 @@ def test_a_document_must_list_scope_and_a_refusal_of_govern_is_lean_s(tmp_path, 
 
 
 def _rebound(row):
-    """Mutants that keep the shape: reorders, out-of-range and rebound ids, and two-fault versions of a drop."""
-    def at(path):
-        def mutate(r):
-            *head, last = path
-            for key in head:
-                r = r[key]
-            return r, last
-        return mutate
+    """Mutants that keep the shape: reorders, out-of-range and rebound ids, and two-fault versions of a drop; for choice
+    groups (sc-1cb) each group's, and each label's picks reordered, out of range, rebound, copied, swapped."""
+    if "rows" in row:
+        yield from _rebound_rows(row, lambda r: r)
+        return
+    groups = row["choices"]
+    yield "choices reversed", lambda r: r["choices"].reverse()
+    for c, group in enumerate(groups):
+        for where, mutate in _rebound_rows(group, lambda r, c=c: r["choices"][c]):
+            yield f"choices[{c}] {where}", mutate
+        label = lambda r, c=c: r["choices"][c]["choice"]
+        yield f"choices[{c}] picks reversed", lambda r, label=label: label(r).reverse()
+        yield f"choices[{c}] relabelled as the next", lambda r, c=c: r["choices"][c].update(
+            choice=copy.deepcopy(r["choices"][(c + 1) % len(r["choices"])]["choice"]))
+        for k in range(len(group["choice"])):
+            p = lambda r, label=label, k=k: label(r)[k]
+            yield f"choices[{c}] pick {k} reading out of range", lambda r, p=p: p(r).update(reading="r9999")
+            yield f"choices[{c}] pick {k} set out of range", lambda r, p=p: p(r).update(set="scope-x")
+            yield f"choices[{c}] pick {k} version moved", lambda r, p=p: p(r).update(version=p(r)["version"] + 1)
+            yield f"choices[{c}] pick {k} unit rebound", lambda r, p=p: p(r).update(unit="u0164.s02")
+            yield f"choices[{c}] pick {k} over every pick", \
+                lambda r, label=label, k=k: label(r).__setitem__(slice(None), [copy.deepcopy(label(r)[k])] * len(label(r)))
+    if len(groups) > 1:
+        def swap(r):
+            first, second = r["choices"][:2]
+            first["choice"], second["choice"] = second["choice"], first["choice"]
+        yield "choices[0] and [1] labels swapped", swap
+
+
+def _rebound_rows(row, get):
+    """`_rebound`'s mutants of one answer's rows and their index, which `get` finds in a mutant."""
     rows = row["rows"]
-    yield "rows reversed", lambda r: r["rows"].reverse()
-    yield "governed reversed", lambda r: r["governed"].reverse()
+    yield "rows reversed", lambda r: get(r)["rows"].reverse()
+    yield "governed reversed", lambda r: get(r)["governed"].reverse()
     for i, entry in enumerate(rows):
-        yield f"rows[{i}] unit out of range", lambda r, i=i: r["rows"][i].update(unit="u9999")
-        yield f"rows[{i}] unit rebound", lambda r, i=i: r["rows"][i].update(unit="u0")
-        yield f"rows[{i}] governors reversed", lambda r, i=i: r["rows"][i]["governors"].reverse()
+        yield f"rows[{i}] unit out of range", lambda r, i=i: get(r)["rows"][i].update(unit="u9999")
+        yield f"rows[{i}] unit rebound", lambda r, i=i: get(r)["rows"][i].update(unit="u0")
+        yield f"rows[{i}] governors reversed", lambda r, i=i: get(r)["rows"][i]["governors"].reverse()
         for k, x in enumerate(entry["governors"]):
-            g = lambda r, i=i, k=k: r["rows"][i]["governors"][k]
+            g = lambda r, i=i, k=k: get(r)["rows"][i]["governors"][k]
             yield f"rows[{i}][{k}] reach reversed", lambda r, g=g: g(r)["reach"].reverse()
             yield f"rows[{i}][{k}] reach out of range", lambda r, g=g: g(r)["reach"].append("u9999")
             yield f"rows[{i}][{k}] id rebound", lambda r, g=g: g(r).update(id="g9" if g(r)["id"] != "g9" else "g1")
             yield f"rows[{i}][{k}] unit rebound", lambda r, g=g: g(r).update(unit="u3")
             for word in ("frame", "reguard", "carve-out", "precedes", "yields", "title"):
                 yield f"rows[{i}][{k}] effect {word}", lambda r, g=g, word=word: g(r).update(effect=word)
-            yield f"rows[{i}][{k}] dropped, governed kept", lambda r, i=i, k=k: r["rows"][i]["governors"].pop(k)
+            yield f"rows[{i}][{k}] dropped, governed kept", lambda r, i=i, k=k: get(r)["rows"][i]["governors"].pop(k)
             yield f"rows[{i}][{k}] dropped with its row", \
-                lambda r, i=i, k=k: r["rows"].pop(i) if len(r["rows"][i]["governors"]) == 1 else None
+                lambda r, i=i, k=k: get(r)["rows"].pop(i) if len(get(r)["rows"][i]["governors"]) == 1 else None
     for i, entry in enumerate(row["governed"]):
-        yield f"governed[{i}] units reversed", lambda r, i=i: r["governed"][i]["units"].reverse()
-        yield f"governed[{i}] unit out of range", lambda r, i=i: r["governed"][i]["units"].append("u9999")
+        yield f"governed[{i}] units reversed", lambda r, i=i: get(r)["governed"][i]["units"].reverse()
+        yield f"governed[{i}] unit out of range", lambda r, i=i: get(r)["governed"][i]["units"].append("u9999")
 
 
 def _regoverned(mutant):
     """The mutant with `governed` made consistent again with its rows (each governor with the units of the rows that
-    name it, in their order, repeats kept): the second fault of a forged row, so the row's own check must refuse it."""
+    name it, in their order, repeats kept): the second fault of a forged row, so the row's own check must refuse it.
+    In an answer of choice groups, each group's."""
+    if type(mutant) is dict and type(mutant.get("choices")) is list:
+        return {**mutant, "choices": [_regoverned(g) for g in mutant["choices"]]}
     try:
         units = {}
         for entry in mutant["rows"]:
@@ -143,6 +190,7 @@ def _omits(where) -> bool:
     if type(where) is str:
         return "dropped" in where
     shape = tuple(type(step) if type(step) is int else step for step in where)
+    shape = shape[2:] if shape[:2] == ("choices", int) else shape
     return shape in {("rows", "=empty"), ("rows", int, "-"), ("rows", int, "governors", "=empty"),
                      ("rows", int, "governors", int, "-")}
 
@@ -177,7 +225,7 @@ def _accepted(text, path, capsys, monkeypatch):
 
 
 DOCUMENTS = {"multi": multi_text, "precedes": lambda: _governed_text("norms", "precedes"),
-             "frame": lambda: _governed_text("norms", "frame")}
+             "frame": lambda: _governed_text("norms", "frame"), "sets": sets_text, "coupled": lambda: sets_text(2, 2)}
 
 
 @pytest.mark.parametrize("name", DOCUMENTS)
@@ -188,26 +236,28 @@ def test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown(tm
 
 
 def _checks():
-    """Each binding check of `scope.answer_problem` with the function that lacks it: every disjunct of a refusing
-    `if` (one at a time), or the whole condition when it is not a disjunction (review F1: no test failed when the
-    empty-sentence, reach, repeat or order check was deleted)."""
+    """Each binding check of the relay (`answer_problem`, `choices_problem`, `rows_problem`) with the relay that lacks
+    it: every disjunct of a refusing `if` (one at a time), or the whole condition when it is not a disjunction (review
+    F1: no test failed when the empty-sentence, reach, repeat or order check was deleted). The mutated module is run
+    whole, so a check deleted in a helper is missing from the `answer_problem` that calls it."""
     import ast
     import inspect
-    import textwrap
-    tree = ast.parse(textwrap.dedent(inspect.getsource(scope.answer_problem)))
-    sites = [node for node in ast.walk(tree) if type(node) is ast.If and type(node.body[0]) is ast.Return
-             and node.body[0].value is not None]
-    for n, site in enumerate(sites):
+    source = inspect.getsource(scope)
+
+    def sites(tree):
+        return [node for f in tree.body if type(f) is ast.FunctionDef and f.name.endswith("_problem")
+                for node in ast.walk(f) if type(node) is ast.If and type(node.body[0]) is ast.Return
+                and node.body[0].value is not None]
+    for n, site in enumerate(sites(ast.parse(source))):
         parts = site.test.values if type(site.test) is ast.BoolOp and type(site.test.op) is ast.Or else [site.test]
         for k, part in enumerate(parts):
-            mutated = copy.deepcopy(tree)
-            target = [node for node in ast.walk(mutated) if type(node) is ast.If
-                      and type(node.body[0]) is ast.Return and node.body[0].value is not None][n]
+            mutated = ast.parse(source)
+            target = sites(mutated)[n]
             if len(parts) == 1:
                 target.test = ast.Constant(False)
             else:
                 target.test.values[k] = ast.Constant(False)
-            namespace = dict(vars(scope))
+            namespace = {"__name__": "ve._scope_weakened", "__package__": "ve"}
             exec(compile(ast.fix_missing_locations(mutated), scope.__file__, "exec"), namespace)
             yield ast.unparse(part), namespace["answer_problem"]
 
@@ -215,11 +265,13 @@ def _checks():
 # The checks the service's schema (`scope.json`, applied by `run_bound` before the relay reads a row) decides first: a
 # mutant they would refuse never reaches the binding. Each is kept as the relay's own type guard.
 SCHEMA_FIRST = {
-    "type(row) is not dict", "set(row) != {'id', 'status', 'rows', 'governed'}", "row['id'] != case_id",
-    "row['status'] != 'ok'", "type(row['rows']) is not list", "type(row['governed']) is not list",
+    "type(row) is not dict", "set(row) not in ({'id', 'status', 'rows', 'governed'}, {'id', 'status', 'choices'})",
+    "row['id'] != case_id", "row['status'] != 'ok'", "type(rows) is not list", "type(governed) is not list",
     "type(entry) is not dict", "set(entry) != {'unit', 'governors'}", "type(entry['governors']) is not list",
     "type(unit) is not str", "not entry['governors']", "set(x) != {'id', 'unit', 'effect', 'reach', 'provenance'}",
-    "type(x['effect']) is not str", "type(x['provenance']) is not str"}
+    "type(x['effect']) is not str", "type(x['provenance']) is not str", "type(group) is not dict",
+    "set(group) != {'choice', 'rows', 'governed'}", "type(group['choice']) is not list",
+    "set(pick) != {'unit', 'set', 'version', 'reading'}", "type(pick['reading']) is not str", "not labels"}
 
 
 def test_every_binding_check_has_a_mutant_only_it_refuses(tmp_path, capsys, monkeypatch):
@@ -236,7 +288,7 @@ def test_every_binding_check_has_a_mutant_only_it_refuses(tmp_path, capsys, monk
         for text, path in texts:
             try:
                 killed = bool(_accepted(text, path, capsys, monkeypatch)[0])
-            except (TypeError, KeyError, AttributeError, IndexError):
+            except (TypeError, KeyError, AttributeError, IndexError, ValueError):
                 killed = True  # the weakened relay crashes on a mutant instead of refusing it
             if killed:
                 break
@@ -271,6 +323,43 @@ def test_route_cases_answer_their_rows():
         else:
             assert scope.answer_problem(row, _split(case["document"])[0], case["id"]) is None, (case["id"], row)
 
+
+
+# sc-1cb's route cases: the number of choice groups answered, or the refusal
+PER_CHOICE = {"sets-u0165-s03": 2, "sets-two-coupled": 4, "sets-64": 64,
+              "refused-sets-choice-fault": "ScopeChoice: u0165.s03 scope-u0165-s03@1:narrow: ScopeConflict: u0165.s03: sign",
+              "refused-sets-65": "ResourceLimit: scope choices", "refused-sets-uncovered": "ScopeReadings: u0164.s02"}
+
+
+def test_a_set_governed_per_choice_is_explained_per_choice_and_every_other_answer_is_mains():
+    """DRI decision 2026-11-01 sc-1cb item 1, conditions (a)-(d): u0165.s03's set (refused on main with
+    `ScopeReadings`) answers two groups, two coupled sets four and 64 choices 64, each bound; a fault under one choice
+    is 11.5's `ScopeChoice`, 65 choices UNKNOWN and a set 11.1 does not cover `ScopeReadings`; every other case is
+    answered as main answered it (`explain-main-answers.jsonl`, recorded from main's Lean at 3148e87c4), byte for byte."""
+    from pathlib import Path
+    from tests.lean_service_corpus import recorded
+    cases = recorded("scope")
+    main = {row["id"]: row for row in map(json.loads, (Path(__file__).parent / "data/scope/explain-main-answers.jsonl")
+                                          .read_text().splitlines())}
+    assert main["sets-u0165-s03"]["error"] == "ScopeReadings: u0165.s03"
+    assert {c["id"] for c in cases} == set(main) | set(PER_CHOICE)
+    for case, row in zip(cases, relay.rows("scope", cases)):
+        expected = PER_CHOICE.get(case["id"])
+        if type(expected) is int:
+            assert len(row["choices"]) == expected, case["id"]
+            assert scope.answer_problem(row, _split(case["document"])[0], case["id"]) is None
+        elif expected is not None:
+            assert row["error"] == expected
+        else:
+            assert json.dumps(row) == json.dumps(main[case["id"]]), case["id"]
+
+
+def test_each_choices_rows_are_shown_under_its_label(tmp_path, capsys):
+    plain, ids = _shown(_write(tmp_path, sets_text()), capsys)
+    groups = [line for line in plain.splitlines() if not line.startswith("  ")]
+    assert groups == ["Under the choice u0165.s03 scope-u0165-s03@1:wide:",
+                      "Under the choice u0165.s03 scope-u0165-s03@1:narrow:"]
+    assert len(plain.splitlines()) == 2 + 2 * 7 * 2 and "  [u0165.s01] " in ids
 
 
 def test_the_proved_statements_are_spec_5_3s_text():

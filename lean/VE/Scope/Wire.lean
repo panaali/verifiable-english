@@ -82,13 +82,21 @@ def listMember (ms : List (String × Json)) (k : String) : Except String (List J
   | some _ => throw (wireFault k "an array")
   | none => pure []
 
-/-- The block's governors, list names and anchors. -/
+/-- A forward declaration `(unit w, rule r, anchor a)` (1.9, SC-4). -/
+def decodeForward (j : Json) : Except String (String × String × String) := do
+  let ms ← membersIn "forward" ["unit", "rule", "anchor"] j
+  let w ← textOf "forward.unit" (← memberOf "forward" ms "unit")
+  let p := s!"forward.{w}"
+  pure (w, ← textOf s!"{p}.rule" (← memberOf p ms "rule"), ← textOf s!"{p}.anchor" (← memberOf p ms "anchor"))
+
+/-- The block's governors, list names, anchors and forward declarations. -/
 def decodeParts (block : Json) :
-    Except String (List Governor × List (VE.Discourse.ContentName × String × String) × List VE.Discourse.Anchor) := do
-  let ms ← membersIn "scope" ["version", "list_names", "anchors", "governors"] block
+    Except String (List Governor × List (VE.Discourse.ContentName × String × String) × List VE.Discourse.Anchor ×
+      List (String × String × String)) := do
+  let ms ← membersIn "scope" ["version", "list_names", "anchors", "forward", "governors"] block
   unless ms.lookup "version" == some (.str "scope@0") do throw (wireFault "version" "\"scope@0\"")
   pure (← (← listMember ms "governors").mapM decodeGovernor, ← (← listMember ms "list_names").mapM decodeListName,
-    ← (← listMember ms "anchors").mapM VE.Discourse.Wire.decodeAnchor)
+    ← (← listMember ms "anchors").mapM VE.Discourse.Wire.decodeAnchor, ← (← listMember ms "forward").mapM decodeForward)
 
 /-- A unit's span as written, clamped to the source (a span the document mode refuses reads as empty). -/
 def spanIn (size : Nat) (u : Json) : Nat × Nat :=
@@ -113,9 +121,9 @@ def illFormed (front : Json) : Option String :=
     environment `re`, once the document is well formed: every rule the route decodes is read from it. -/
 def decodeBlock (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) : Except String SDoc := do
   if let some p := illFormed front then throw (wireFault p "a well-formed JSON tree")
-  (decodeParts (front.getObjValD "scope")).map fun (governors, listNames, anchors) =>
+  (decodeParts (front.getObjValD "scope")).map fun (governors, listNames, anchors, forwards) =>
     { layout := layoutOf front source, doc := front, block := front.getObjValD "scope", governors, listNames,
-      anchors, re }
+      anchors, re, forwards }
 
 /-! The document mode's fold (1.6) -/
 

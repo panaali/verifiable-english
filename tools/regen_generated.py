@@ -191,8 +191,10 @@ GENERATED = (
               ((PY, "tools/question_lock.py", "--write"),), ((PY, "tools/question_lock.py"),),
               note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version",
               fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
-    Generated("assurance-manifest", ("ve/assurance-manifest.json",), None, ("check_assurance_pins",),
-              merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins",
+    Generated("assurance-manifest", ("ve/assurance-manifest.json",), ("write_assurance_layout",),
+              ("check_assurance_layout", "check_assurance_pins"), merge="json",
+              note="decoder pins are reviewed by hand; a merge keeps each side's pins; the writer only restores "
+                   "the file's layout",
               fresh="tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole"),
     Generated("assurance-doc", ("docs/spec/assurance-manifest.md",),
               ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),),
@@ -256,6 +258,7 @@ NOT_REGENERATED = {
     "conformance/wire_contract_faults.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
     "conformance/wire_contract_delta.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
     "conformance/wire_contract_gate.py": "unit conformance artifact and recorded test inputs; needs the Lean gate run",
+    "conformance/senses_usecases.py": "sn-b8 batch evidence (7.2 coverage table), measured once per batch and saved",
     "conformance/soft_norms_wire_report.py": "unit conformance report",
     "conformance/english_lean_e2_report.py": "batch report",
     "conformance/english_lean_e2_6_report.py": "batch report",
@@ -396,6 +399,33 @@ def check_pins() -> int:
 # The assurance manifest's decoder pins, checked by their tests.
 ASSURANCE_PIN_TESTS = ("tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole",
                        "tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned")
+
+
+# The assurance manifest's one layout: its merge, its writer and the selector's manifest seeds write
+# it, and its check refuses any other (a hand re-pin with json.dumps' default ensure_ascii wrote E‴ as E\u2034
+# on two syncs, lf-18 and rd9-docroute, and failed the train's Mac leg).
+ASSURANCE_MANIFEST = "ve/assurance-manifest.json"
+
+
+def manifest_text(manifest: dict) -> str:
+    """The assurance manifest's file text: indent 2, non-ASCII text as itself."""
+    return json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+
+
+def write_assurance_layout() -> int:
+    """Rewrite the assurance manifest in its layout; its values (the hand-reviewed pins) are unchanged."""
+    path = ROOT / ASSURANCE_MANIFEST
+    path.write_text(manifest_text(json.loads(path.read_text(encoding="utf-8"))), encoding="utf-8")
+    return 0
+
+
+def check_assurance_layout() -> int:
+    text = (ROOT / ASSURANCE_MANIFEST).read_text(encoding="utf-8")
+    if text != manifest_text(json.loads(text)):
+        print(f"{ASSURANCE_MANIFEST} is not in its layout (indent 2, no \\u escapes); run "
+              "tools/regen_generated.py --write --only assurance-manifest", file=sys.stderr)
+        return 1
+    return 0
 
 
 def check_assurance_pins() -> int:
@@ -581,6 +611,8 @@ def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]
     except Conflict as exc:
         print(f"{path}: {exc}", file=sys.stderr)
         return ours, False
+    if path == ASSURANCE_MANIFEST:  # its own layout, whatever layout a side was left in
+        return manifest_text(merged), True
     indent, ascii_ = _json_format(ours)
     return json.dumps(merged, indent=indent, ensure_ascii=ascii_) + "\n", True
 

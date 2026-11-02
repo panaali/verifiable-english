@@ -14,6 +14,8 @@ import VE.Readings.SoftVerdicts
 import VE.Readings.SoftExamples
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
+import VE.Readings.SoftSup
+import VE.Readings.SoftSupExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -31,6 +33,8 @@ import VE.EnglishGrammar.SourceWords
 import VE.EnglishGrammar.SourceWordsExamples
 import VE.Senses.Examples
 import VE.Senses.DocumentExamples
+import VE.Senses.RunExamples
+import VE.Service.RegistryExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
@@ -76,6 +80,9 @@ import VE.Readings.SupWitness
 import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
+import VE.Readings.BarQuiet
+import VE.Readings.RightsFixtures
+import VE.Readings.RightsExamples
 import VE.Readings.SupFree
 import VE.Readings.SupAll
 import VE.Readings.SupWireSound
@@ -108,6 +115,7 @@ import VE.Norms.Cedar
 import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
+import VE.SoftNorms.TreeExamples
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
@@ -117,6 +125,11 @@ import VE.Discourse.Run
 import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Discourse.Positions
+import VE.Discourse.PositionsExamples
+import VE.RightClauses.Tree
+import VE.RightClauses.Plain
+import VE.RightClauses.Examples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
@@ -131,6 +144,7 @@ import VE.Calc.UnitsExamples
 import VE.Calc.Wire
 import VE.Calc.Run
 import VE.Calc.RunExamples
+import VE.Calc.Ties
 import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
@@ -145,6 +159,8 @@ import VE.Calc.WorkExamples
 import VE.Calc.LowerExamples
 import VE.Calc.Data
 import VE.Calc.TableExamples
+import VE.Calc.Stats
+import VE.Calc.StatsExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -153,6 +169,7 @@ import VE.Cardinality.Gate
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
 import VE.Cardinality.RunTheorems
+import VE.Cardinality.RenderTheorems
 import VE.Cardinality.WireExamples
 import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
@@ -173,6 +190,8 @@ import VE.Rights.Run
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
+import VE.Judgments.Undeclared
+import VE.EnglishGrammar.Evaluative
 import VE.Judgments.Examples
 import VE.Judgments.ChainExamples
 import VE.Question.Properties
@@ -213,11 +232,15 @@ import VE.Acts.ElaborateExamples
 import VE.Acts.Wire
 import VE.Acts.Decode
 import VE.Acts.DecodeExamples
+import VE.Acts.Faithful
+import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Sources
+import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
@@ -257,9 +280,12 @@ import VE.Scope.ReadingsExamples
 import VE.Scope.English
 import VE.Scope.Run
 import VE.Scope.RunExamples
+import VE.Scope.FarTheorems
+import VE.Scope.FarExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
+import VE.Service.UndeclaredExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
@@ -272,3 +298,9 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.EnglishGrammar.Norm.Value
+import VE.EnglishGrammar.Norm.Examples
+import VE.Weighing.Zone
+import VE.Weighing.ZoneExamples
+import VE.Defaults.Zone
+import VE.Defaults.ZoneExamples

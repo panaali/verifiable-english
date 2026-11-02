@@ -8,4 +8,5 @@
 - `lean/VE/SoftNorms/Soften.lean` — The elaboration `soften(T) = T′` over `E′` (docs/spec/soft-norms.md 4.2, 5 and 6.1) and the executable well-formedness check `WellFormedSoft` (4.1, 8).
 - `lean/VE/SoftNorms/Status.lean` — The classification of colliding pairs (docs/spec/soft-norms.md 6.2) and its soundness.
 - `lean/VE/SoftNorms/Tree.lean` — Soft-norm documents (docs/spec/soft-norms.md sections 1, 3 and 9.1): the three independent rule attributes (mode, alterable, rank), the environment `soft` bloc…
+- `lean/VE/SoftNorms/TreeExamples.lean` — Fixture F6.1b (docs/spec/profile-composition.md 1.10, PC-6a): the staged decision key changes nothing.
 - `lean/VE/SoftNorms/Wire.lean` — The soft-norms decoder and replays (docs/spec/soft-norms.md 3, 9.3 and 9.4).

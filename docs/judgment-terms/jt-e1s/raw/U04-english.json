@@ -1,0 +1,111 @@
+{
+  "id": "U04",
+  "arm": "english",
+  "account": "claude-panaali2",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 10 synthetic: The costs are refunded if this hearing is not fair; a review judge decides whether this hearing is fair.\nCONCLUSION: the costs are refunded\nJUDGMENT: fair_hearing means whether this hearing is fair; decider: review judge.\nWhether this hearing is fair is a judgment for review judge.\nLeft to review judge: these two admissible completions give different answers and differ on whether this hearing is fair (a judgment for review judge).\n",
+  "cli": {
+    "duration_api_ms": 1544,
+    "stop_reason": "end_turn",
+    "session_id": "1708aecf-d406-4302-aebd-23259cd2f575",
+    "total_cost_usd": 0.0181364,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4033,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 93,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4033,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 93,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4033,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4033
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 93,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4033,
+        "webSearchRequests": 0,
+        "costUSD": 0.0181364,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4033,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: review judge; WHY: The refund holds only if the hearing is fair, and the text assigns that judgment to the review judge, so the conclusion is certified only given a fairness criterion, and the two admissible completions give different answers.",
+    "ttft_ms": 1719,
+    "type": "result",
+    "duration_ms": 1752,
+    "uuid": "bef04bbd-1ffd-4ddd-85cd-81e59c7e0891",
+    "ttft_stream_ms": 851,
+    "time_to_request_ms": 210,
+    "first_content_frame_ms": 851,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14832,
+  "answer": "CLASS: CONDITIONAL; DECIDER: review judge; WHY: The refund holds only if the hearing is fair, and the text assigns that judgment to the review judge, so the conclusion is certified only given a fairness criterion, and the two admissible completions give different answers."
+}

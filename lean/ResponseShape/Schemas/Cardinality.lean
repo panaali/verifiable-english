@@ -5,7 +5,7 @@ the `cardinality` mode's row (`VE.Cardinality.Run.runCaseReported`, docs/spec/qu
 carries the cardinality and W6a identities under separate names, one statement per request premise
 (`x-length`), and, for an admission, the region table, each constant of a request's finite sort
 (`x-references`), and the regenerated erased problem with its W6a identities; a countermodel, its verdict, the region
-table and each region's size. -/
+table and each region's size; a paraphrase, the statement, Lean's English line and one assumption per finite sort. -/
 namespace ResponseShape.Schemas.Cardinality
 open Lean ResponseShape
 
@@ -14,7 +14,8 @@ def kind : Def :=
     ("admission", kindIs "admission"),
     ("certificate", kindIs "certificate"),
     ("countermodel", kindIs "countermodel"),
-    ("document", kindIs "document")]
+    ("document", kindIs "document"),
+    ("paraphrase", kindIs "paraphrase")]
 
 def error : Shape :=
   c
@@ -167,6 +168,14 @@ def document : Shape :=
         ("leaves", n [arr, .items (ref "#/$defs/claim")])]]),
       ("report_id", ref "common.json#/$defs/hex64")])]
 
+def paraphrase : Shape :=
+  c "Cardinality.Run.runCase paraphrase: the statement, Lean's English line for it and one assumption per finite sort (Cardinality.Render.paraphrase)." [
+    obj,
+    .required (envIds.map (·.1) ++ ["statement", "paraphrase", "assumptions"]),
+    closed (envIds ++ [("statement", ref "#/$defs/statement"), ("paraphrase", ref "common.json#/$defs/text"),
+      ("assumptions", n [arr, .items (ref "common.json#/$defs/text"),
+        .length "/environment/cardinality/finite_sorts"])])]
+
 def «row» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
@@ -176,7 +185,8 @@ def «row» : Shape :=
       (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
       (ref "#/$defs/kind/certificate", ref "#/$defs/certificate"),
       (ref "#/$defs/kind/countermodel", ref "#/$defs/countermodel"),
-      (ref "#/$defs/kind/document", ref "#/$defs/document")]]
+      (ref "#/$defs/kind/document", ref "#/$defs/document"),
+      (ref "#/$defs/kind/paraphrase", ref "#/$defs/paraphrase")]]
 
 def file : File where
   name := "cardinality.json"
@@ -199,6 +209,7 @@ def file : File where
     ("sizes", .schema sizes),
     ("countermodel", .schema countermodel),
     ("claim", .schema claim),
-    ("document", .schema document)]
+    ("document", .schema document),
+    ("paraphrase", .schema paraphrase)]
 
 end ResponseShape.Schemas.Cardinality

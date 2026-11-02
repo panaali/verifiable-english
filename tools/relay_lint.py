@@ -94,7 +94,7 @@ READINGS_RESERVED = (*RESERVED, *WORDING_LAYER_PREFIXES["soft-norms@0"])
 NON_WORDING = "# relay-lint: non-wording"
 # The senses path (RD-8): the modules that may not name Python's English reader, and the loader whose senses
 # branches may not: every module of its package (AR-16a split `ve/document.py` into `ve/document/`).
-PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py")
+PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py", "ve/senses/display.py")
 SENSES_LOADER = "ve/document"
 ENGLISH_READER = "parse_english"
 # The default-label rule (defeasible DF-1b): the modules it reads and the label prefix it forbids.

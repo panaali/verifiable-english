@@ -1,0 +1,94 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "body-true",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "body-false",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "and-or",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "eq-le",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "eq-ne",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.AdmissibleCompletion",
+   "operator": "bool-flip",
+   "reason": "a Prop over every name and every relation `R : String → List α → Prop`, which no check can evaluate; exercised by the proofs `admissible0` (lean/VE/Weighing/ZoneExamples.lean:57, holds) and `notAdmissible1` (lean/VE/Weighing/ZoneExamples.lean:71, fails on the record), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.OutcomeIn",
+   "operator": "body-true",
+   "reason": "a Prop (`Formula.denote` in a structure with an arbitrary relation `R`), which no check can evaluate; exercised by the proofs `outcome_x` (lean/VE/Weighing/ZoneExamples.lean:75) and `not_outcome_y` (lean/VE/Weighing/ZoneExamples.lean:80), which compute `outcomeBase` through it by `decide` and which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.OutcomeIn",
+   "operator": "body-false",
+   "reason": "a Prop (`Formula.denote` in a structure with an arbitrary relation `R`), which no check can evaluate; exercised by the proofs `outcome_x` (lean/VE/Weighing/ZoneExamples.lean:75) and `not_outcome_y` (lean/VE/Weighing/ZoneExamples.lean:80), which compute `outcomeBase` through it by `decide` and which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "body-true",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "body-false",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "and-or",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "eq-le",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "eq-ne",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.SettledZ",
+   "operator": "bool-flip",
+   "reason": "a Prop quantified over every relation `R`, which no check can evaluate; exercised by the proofs `settled_x` (lean/VE/Weighing/ZoneExamples.lean:85), `not_settled_x_false` (lean/VE/Weighing/ZoneExamples.lean:91) and `not_settled_vacuous` (lean/VE/Weighing/ZoneExamples.lean:95, no completion settles nothing), which the mutant breaks"
+  },
+  {
+   "definition": "VE.Weighing.openNames",
+   "operator": "append-right",
+   "reason": "ill-typed: the mutant `decisionNames unsaidNames L.U` does not typecheck (Zone.lean:22), so no program differs"
+  },
+  {
+   "definition": "VE.Weighing.openNames",
+   "operator": "list-empty",
+   "reason": "ill-typed: the mutant `decisionNames [] ++ unsaidNames L.U` applies `decisionNames` to a list, not a `SoftDoc` (Zone.lean:22), so no program differs"
+  },
+  {
+   "definition": "VE.Weighing.decisionAtoms",
+   "operator": "list-empty",
+   "reason": "ill-typed: the mutant `[] fun (p, ss) => …` applies a list as a function (Zone.lean:21), so no program differs"
+  },
+  {
+   "definition": "VE.Weighing.ZoneUnknown",
+   "operator": "ctor-drop",
+   "reason": "a dropped constructor is an unknown name in the examples that build it (lean/VE/Weighing/ZoneExamples.lean:103 `budget`, lean/VE/Weighing/ZoneExamples.lean:104 `branch`, lean/VE/Weighing/ZoneExamples.lean:105 both), which no check can name; WG-6's `zoneOf` produces both"
+  }
+ ]
+}

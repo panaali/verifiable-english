@@ -1,0 +1,111 @@
+{
+  "id": "U03",
+  "arm": "english",
+  "account": "claude-panaali2",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 10 synthetic: The verdict of a fair hearing is enforced; a verdict that the appeals court quashes is not enforced. These rules are conflict-free given the criterion: No hearing whose verdict the appeals court quashes is fair. The appeals court decides fairness.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: fair_hearing means whether this hearing is fair; decider: appeals court.\nWhether this hearing is fair is a judgment for appeals court.\nThese rules conflict where this hearing is fair.\nConflict-free, given these sentences: No hearing whose verdict the appeals court quashes is fair.\n",
+  "cli": {
+    "duration_api_ms": 1535,
+    "stop_reason": "end_turn",
+    "session_id": "724078d6-19a1-4bb8-89ff-f1f8dce860fa",
+    "total_cost_usd": 0.0184644,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4095,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 101,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4095,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 101,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4095,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4095
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 101,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4095,
+        "webSearchRequests": 0,
+        "costUSD": 0.0184644,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4095,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: appeals court; WHY: The conclusion that the rules are conflict-free holds only given the stated criterion (no hearing whose verdict the appeals court quashes is fair), and whether this hearing is fair is left to the appeals court's judgment.",
+    "ttft_ms": 1634,
+    "type": "result",
+    "duration_ms": 1685,
+    "uuid": "f40105fa-6b15-405d-8cc2-b9dae7e80bec",
+    "ttft_stream_ms": 699,
+    "time_to_request_ms": 140,
+    "first_content_frame_ms": 700,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14902,
+  "answer": "CLASS: CONDITIONAL; DECIDER: appeals court; WHY: The conclusion that the rules are conflict-free holds only given the stated criterion (no hearing whose verdict the appeals court quashes is fair), and whether this hearing is fair is left to the appeals court's judgment."
+}

@@ -258,7 +258,7 @@ narrows an act.
 |---|---|---|
 | plain, with an act and a form (AP-1) | `Lexical.wording`: `{0} has the right` or `{0} is entitled`, then the act after its `{0} ` | `{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}` (A1) |
 | permission or obligation | unchanged: `{0} may`, `must`, `must not`, `need not`, then the act after its `{0} ` | `{0} must not be subjected to torture` |
-| a part `p__i` (AP-3) | as its source's role gives, over the part's act: its atom's text in normal order, with *to* exactly when the role is plain (`partAct`, 5.5), so a permission part of "to form and to join" is `{0} form trade unions` and reads "{0} may form trade unions" | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
+| a part `p__i` (AP-3) | as its source's role gives, over the part's act: its atom's text in normal order, with *to* exactly when the role is plain (`partAct`, 5.5), so an obligation part of "to form and to join" is `{0} form trade unions` and reads "{0} must form trade unions" (under *may* the phrase has two readings and does not split, 6.2) | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
 
 A reader never sees "classified as …" for a plain predicate with an act under `acts@0`. Lexicon V4 (wording
 distinctness) is not changed: two predicates whose wordings are equal stay a V4 duplicate (A15; 14, C24).
@@ -298,11 +298,15 @@ as for every rule today.
 
 For u051 (A5), under *has the right*:
 
-> This sentence has two readings.
+> This sentence has four readings.
 > 1. Everyone has the right to seek asylum from persecution, and everyone has the right to enjoy asylum from
 >    persecution in other countries.
-> 2. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
+> 2. Everyone has the right to seek asylum from persecution and to enjoy asylum from persecution in other countries,
+>    as one act done together (not each on its own).
+> 3. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
 >    asylum from persecution in other countries.
+> 4. Everyone has the right to seek asylum from persecution in other countries and to enjoy asylum from persecution in
+>    other countries, as one act done together (not each on its own).
 
 For u076 (A11):
 
@@ -940,7 +944,8 @@ inductive Simple | atom (a : Atom) | whole (A : Act)  deriving DecidableEq, Repr
 /-- *may* and *has the right to*. -/
 def freeTable : Act → List (List Simple)
   | .one a => [[.atom a]]
-  | .all false _ ps => [ps.map Simple.atom]                                  -- own "to": split
+  | .all false true ps => [ps.map Simple.atom]                               -- own "to", split marker: each
+  | .all false false ps => [ps.map Simple.atom, [.whole (.all false false ps)]] -- own "to": each, or both together
   | .all true true ps => [ps.map Simple.atom]                                -- split marker: each
   | .all true false ps => [ps.map Simple.atom, [.whole (.all true false ps)]]  -- each, or both together
   | .any true _ _ => []                                                      -- nor: refused
@@ -1006,8 +1011,10 @@ theorem table_mustNot_any (n sp : Bool) (ps : List Atom) : table .mustNot (.any 
 theorem table_mustNot_all (s : Bool) (ps : List Atom) :
     table .mustNot (.all s false ps) = [ps.map Simple.atom, [.whole (.all s false ps)]]
 theorem table_mustNot_all_split (s : Bool) (ps : List Atom) : table .mustNot (.all s true ps) = [ps.map Simple.atom]
-theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (sp : Bool) (ps : List Atom) :
-    table op (.all false sp ps) = [ps.map Simple.atom]
+theorem table_free_all_own (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false false ps) = [ps.map Simple.atom, [.whole (.all false false ps)]]
+theorem table_free_all_own_split (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
+    table op (.all false true ps) = [ps.map Simple.atom]
 theorem table_free_all_shared (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
     table op (.all true false ps) = [ps.map Simple.atom, [.whole (.all true false ps)]]
 theorem table_free_all_split (op : Op) (hop : op = .may ∨ op = .right) (ps : List Atom) :
@@ -1021,7 +1028,14 @@ theorem table_free_nor (op : Op) (hop : op = .may ∨ op = .right) (sp : Bool) (
 theorem table_needNot (A : Act) (h : ∀ a, A ≠ .one a) : table .needNot A = []
 ```
 
-They stay provisional until AP-7 passes (D3).
+`table_free_all_own` is the one changed equation (D3 revised after AP-7, DRI decision
+`manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1): it was `table op (.all false sp ps) = [ps.map
+Simple.atom]` for every `sp`, the own-*to* exception. Its `sp = false` case gains the together reading;
+its `sp = true` case (a split marker's *and*) keeps its one reading as `table_free_all_own_split`. No other equation
+changes.
+
+They are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only the cells it names (D3 as revised;
+AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 ### 6.3 Elaboration
 
@@ -1259,8 +1273,13 @@ theorem elaborate_one_reading (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : ela
 theorem elaborate_unspec (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U') :
     U'.unspec = D.U.unspec.flatMap (partNames D)
 /-- Faithfulness: the elaborated document's intended reading is the table's reading of the source. -/
-theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U')
-    (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
+theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h0 : VE.Norms.WellFormed D.U.D = true)
+    (h : elaborate D = .ok U') (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
+/-- `decodeElaboratedU` establishes `h0`, so the claim over every decoded document is unconditional
+    (`decodeElaboratedU_faithful`). -/
+theorem Decode.decodeElaboratedU_faithful {environment norms : Lean.Json} {e : Decode.ElaboratedU}
+    (h : Decode.decodeElaboratedU environment norms = .ok e) (S : VE.Structure.{u}) :
+    VE.Norms.holdsCatala e.U'.D.T S ↔ IntendedActs e.D S
 ```
 
 `elaborate_parts` closes what `splitMap_exact` leaves open: draft 1's statements held of a result that swapped two
@@ -1705,7 +1724,8 @@ The table, per cell (`table` on the act trees of 11.2):
 | T3 | *must not*, G9's trees (`any true false`) | 1 each: two atoms |
 | T4 | *may*, G9's trees | 0 each (*nor* under *may*: D-22) |
 | T5 | *has the right to*, G11 (`any false false`) | 2: two atoms (each way), or `whole` (one act) |
-| T6 | *has the right to*, G12's trees (`all false false`) | 1 each: two atoms |
+| T6 | *has the right to* and *may*, G12's trees (`all false false`: "to form and to join") | 2 each: two atoms (each), or `whole` (both together). D3 revised (ap-7 FAIL ruling item 1); a seeded bug that restores the own-*to* exception (one split reading for `all false _`) makes it 1 each, so T6 and P5 fail under it |
+| T6s | *may* and *has the right to*, a split marker's *and* (`all false true`, `all true true`) | 1 each: the atoms (each); the split marker declares the argument distributive |
 | T7 | *has the right to*, G10's trees (`any false true`) | 1 each: six atoms |
 | T8 | *must*, G6 (`any false true`) | 0 (a split marker's *or* under *must*: D-22). The plan's *must*/*or* seeded bug makes it 1, so this fixture fails under that bug (SR15: draft 1 seeded it on A7, a `one` act the table never splits) |
 | T9 | *must not*, `all false false` (G12's first tree read as a prohibition) | 2: two atoms, or `whole` (only doing both); P12n lists G12's four readings under *must not* with four distinct paraphrases |
@@ -1731,7 +1751,8 @@ Elaboration (on `UDoc`s built in `ElaborateExamples.lean`; sorts `person`, guard
 | E13 | E1 in an environment declaring 255 predicates (256 after); the same with 256 (257 after) | accepted; refused, `ResourceLimit: vocabulary size` (SR7; *hand, not yet run*) |
 | E14 | E5 with `p027` renamed to a 53-byte name (parts 56 B); to a 54-byte name (parts 57 B) | accepted; refused, `ResourceLimit: unspecified name length` (the source name passes at 54 B; SR7; *hand, not yet run*) |
 | E15 | E5 in a document with 253 rules (after the split: 254 rules and 2 unspecified, 256); with 254 rules (257) | accepted; refused, `ResourceLimit: rules` (SR7; *hand, not yet run*) |
-| E16 | plain predicate `p` with act `{0} to seek asylum and to seek asylum` (V5: one meaning, `all false false` of two equal atoms), rule sign true (*has the right to*: split) | refused, D-27: `InvalidInput: two parts of p are the same act`. Draft 1 accepted it: `actChecks` skips plain predicates (SR4; *hand, not yet run*) |
+| E16 | plain predicate `p` with act `{0} to security in the event of sickness or sickness` (V10: one meaning, `any false true` of two equal atoms, the split marker *in the event of*), rule sign true (*has the right to*: split) | refused, D-27: `InvalidInput: two parts of p are the same act`. Draft 1 accepted it: `actChecks` skips plain predicates (SR4; *hand, not yet run*). Until D3's revision E16 used `{0} to seek asylum and to seek asylum` (`all false false`), which now has two readings under *has the right to* and is refused by D-23 before step 4 |
+| E17 | plain predicate `p051` with u051's shape, act `{0} to seek and to enjoy asylum from persecution` (V5: one meaning, `all false false [seek+obj, enjoy+obj]`), rule `r051` sign true (*has the right to*) | refused, D-23, exactly: `InvalidInput: rule r051 has more than one reading: 1. {0} has the right to seek asylum from persecution, and {0} has the right to enjoy asylum from persecution. 2. {0} has the right to seek asylum from persecution and to enjoy asylum from persecution, as one act done together (not each on its own).`; no part is generated (before D3's revision it split into `p051__1`, `p051__2`; ap-7 FAIL ruling item 1; *hand, not yet run*) |
 
 `splitMap_exact` in both directions on E1: every generated name is in the map with its source and index, and
 `p027` (a source name) and `r027` are not generated names and not in the map. `elaborate_parts` on E1 and E4: part 1's
@@ -1745,15 +1766,15 @@ both hold makes both sides true.
 
 | # | Phrase, op | Phrase readings (*hand*) |
 |---|---|---|
-| P5 | G5, *has the right to* | 2 (split in each, with `in other countries` on `enjoy` or on both) |
-| P8 | G8, *has the right to* | 2 |
+| P5 | G5, *has the right to* | 4, in derivation order: split, then "seek and enjoy" as one act done together, with `in other countries` on `enjoy`; the same two with it on both (2.2; D3 revised, ap-7 FAIL ruling item 1: the together readings are new) |
+| P8 | G8, *has the right to* | 4, in derivation order: split, then the three as one act done together, with *freely* on `participate`; the same two with it on all three (D3 revised, ap-7 FAIL ruling item 1: the together readings are new) |
 | P9 | G9, *must not* | 2 = `deprivation_only`, `both_acts` |
 | P9m | G9, *may* | 0 (refused, D-22) |
 | P10 | G10, *has the right to* | 2 |
 | P11 | G11, *has the right to* | 2 (each way; or one act). The one-act reading renders as a joined act, so a reading set for it cannot pass `sourceCheck` on the readings route until the readings elaboration exists (F11) |
-| P12 | G12, *has the right to* | 2 |
+| P12 | G12, *has the right to* | 4 (each, or both together, for each place of *for the protection …*; D3 revised); *may* gives the same count |
 | P12n | G12, *must not* | 4, with 4 distinct paraphrases (SR2; draft 1 gave the two whole readings one text). In derivation order, as the stub's re-run confirms: 1. `{0} must not form trade unions, and {0} must not join trade unions for the protection of their interests.` 2. `{0} must not form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own).` 3. `{0} must not form trade unions for the protection of their interests, and {0} must not join trade unions for the protection of their interests.` 4. `{0} must not form trade unions for the protection of their interests and join trade unions for the protection of their interests, as one act done together (not each on its own).` *(hand, not yet run)* |
-| P64 | L6, *has the right to* | 64 (listed) |
+| P64 | L6, *must* (one reading per tree) | 64 (listed). Until D3's revision P64 used *has the right to*, which now gives 2 readings per tree, 128: `limit` as P65 |
 | P65 | L6, *must not* with the join read as *and* (each tree gives 2 readings) | `limit` (128 > 64) |
 
 `phraseReadings_exact` in both directions: P11's two readings are listed and derived; the reading "only through freely
@@ -1763,16 +1784,19 @@ form, finding F3; these need a readings document and are AP-4's, not in the stub
 
 | # | Sets | Expected |
 |---|---|---|
-| S1 | rs_u105b and rs_u105c coupled, u105a fixed, source G8 under *has the right to* | passes |
+| S1 | rs_u105b and rs_u105c coupled, u105a fixed, source G8 under *has the right to* | refused: a reading is a whole join and has no candidate (F11) |
 | S2 | S1 with the "all" candidate removed from both sets | refused: a reading has no choice (D-29) |
 | S3 | S1 plus a candidate putting *freely* on `enjoy` only | refused: a choice is not a reading (the skipped middle) |
 | S4 | rs_u055 re-written, source G9 under *must not* | passes |
 | S5 | S4 with one candidate's sign flipped to *may* | refused: the choice changes the source rule's modal |
 | S6 | S4 under `norm-defaults@0`, every candidate's predicate `unspecified`, the source's completion `unspecified` | passes |
 | S7 | S6 with one candidate predicate's `default` changed from `unspecified` to `deny`, nothing else | refused: the choice changes the source rule's completion (D-29). Under draft 1's Boolean completion both read as the placeholder `deny` and S7 passed (SR3) |
-| S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | passes: rules are compared up to order (SR14) |
+| S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | refused: a reading is a whole join and has no candidate (F11) |
+| S3b | S4 plus a third candidate whose rule is the deprivation without *arbitrarily* (`depr_plain`); with the shared u055a its choice is no reading of G9 | refused: a choice is not a reading. (*Arbitrarily* on `denied` only cannot be written while u055a is shared; the skipped middle stays guarded by S3 and G8's `phraseReadings_exact`.) DRI decision `manage-agents/reviews/dri-decisions-20261101-ap-3r.md` item 1 |
+| S8b | S4 with the document's items reordered, so that `both_acts`'s rules come in another order | passes: rules are compared up to order (SR14) |
 
-`sourceCheck_complete` is S1, S4, S6 and S8 read from right to left: their sets are exact, so the check passes.
+`sourceCheck_complete` is S4 and S6 read from right to left: their sets are exact, so the check passes. S2 and S3 stay
+refused; since S1's source has whole-join readings (D3 revised), their first diagnostic may be F11's.
 
 The `act-readings` binding (Python, `tests/test_acts_readings_answer.py`; SR5, SR12):
 
@@ -1910,7 +1934,7 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
 | F8 | The synthesis's protocol queue does not list AP-3's relay | resolved by C18; if the review prefers a mode, it joins the queue before AP-4 |
 | F9 | Not every statement could be type-checked: the AR-10 row (4.4), the response shapes (6.7, 7) and AP-6 (9) name modules that do not exist yet | each is type-checked by the batch that adds it |
 | F10 | *False* is a clause word (today's `actReserved`), and the clause words also hold *true*, *no*, *not* and *every*, which occur as ordinary words in act phrases. u0123.s03's fourth act, "provide false information that could deceive the user", is therefore refused even as a fixed phrase (A32), so the plan's A14 ("six prohibitions") cannot pass as written; the stub measured this, the hand draft had missed it | either keep the rule (the translator rephrases, and A14 gives five prohibitions plus one act left unformalised), or let a fixed phrase hold *true*, *false*, *no* and *every* as adjectives while still refusing the clause-forming words (*is*, *if*, *then*, *not*, *must* …). The second changes 1.1 condition 3 only; `check_extends` is unaffected, since today's check accepts none of these words. For the review and the DRI. **Decided by the review (SR13): keep the rule.** u0123.s03 gives five prohibitions (G14v, E3) plus one explicit residual; allowing the words later only widens what is accepted, so it can wait for evidence that readers still give one reading |
-| F11 | (from SR8) The readings route refuses joined acts (D-33). A reading whose simple act is a whole join, or an atom with a joined filler, renders as a joined act, so no candidate on the readings route can carry it, and a source with such a reading cannot pass `sourceCheck`. Of the pilot's AP-4 units, u076 (P11: its one-act reading) is affected; u092 (P10), u105 (P8, S1) and u055 (P9, S4) are not | u076's set waits for the readings elaboration, which needs its own statement review (candidate elaboration and preservation theorems). The plan's AP-4 credit drops to u092 (plan draft 3, AP-4 "Moves" and section 7) |
+| F11 | (from SR8) The readings route refuses joined acts (D-33). A reading whose simple act is a whole join, or an atom with a joined filler, renders as a joined act, so no candidate on the readings route can carry it, and a source with such a reading cannot pass `sourceCheck`. Of the pilot's AP-4 units, u076 (P11: its one-act reading) is affected; since D3's revision u051 (P5) and u105 (P8, S1) are affected too (their together readings are whole joins); u092 (P10) and u055 (P9, S4) are not | u076's set waits for the readings elaboration, which needs its own statement review (candidate elaboration and preservation theorems). The plan's AP-4 credit drops to u092 (plan draft 3, AP-4 "Moves" and section 7) |
 | F12 | (from SR6) Elaborating after `decodeSourceU` means every entry point an `acts@0` norms document reaches must take `decodeElaboratedU`; 6.4 lists the callers of `decodeSource` and `decodeSourceU` measured on `49de179e`, some of them on routes the AR-10 row refuses | AP-3 classifies each caller's reach at build time, gives each reached soundness theorem its twin over `e.U'`, and records the list in the batch |
 | F13 | (phase 1, report 5 and 7.6c) **Words shared inside a joined filler.** The edge rule covers modifiers over joined items, not words shared inside one joined filler whose marker is written once: an adjective or determiner before the first member, or a head noun and preposition. A run of filler words ends at the comma or join word (5.2), so the grammar lists one grouping and never the others: X037, X045a, X0062, X101, X0156, X0165s06 (11.2b). For X045a and X0062 it is not the source's grouping. No declaration is involved, so checklist item 1 does not catch it, and section 0 of the plan says such an ambiguity is refused or rephrased. Inside one simple act the act's text is unchanged; under a split marker the parts would lose the shared word. Phase 1's u106 met the same pattern: it passed only with "scientific, literary or artistic" merged into one predicate | The plan's D9, decided at the bounded re-check. **(i), recommended:** in the meaning (5.3), a joined filler whose marker is written once (`OLh`, `Oh`'s `PLh`, `OSh`) has no meaning when its first or last part is `words` of two or more words; the derivation stays (raw counts unchanged), the phrase gets D-16 if no other derivation has a meaning, and the translator declares a fixed phrase (checklist item 1) or rewords. A new diagnostic text naming the case is for the re-check to write. G5 to G14v are unchanged (none has such a filler); X037, X045a, X067, X101, X0062, X0156 and X0165s06 lose their meaning. **(ii):** an edge rule for joined fillers (first or all, last or all), which lists the other groupings; it raises raw counts, needs the rule table re-reviewed and N re-measured. **(iii):** exactness relative to the declared fixed phrases, with checklist item 7 as the audit item that names the case. D3, D4 and N stay provisional until it is decided |
 | F14 | (phase 1, 7.6a) u057's "to marry and to found a family" has no reading (X057: one derivation, meaning refused). A bare item before an item with an object fits none of the three coordination patterns (5.2): the shared-object pattern gives *marry* the object its frame forbids, and the full pattern needs material on every item but the last. AP-6 targets u057, which now fails before arity matters | the bounded re-check adds a pattern (bare items whose frames take no object, then a full last item), keeping one derivation per reading (checklist item 3), or records the refusal and the rewording. *Hand, not yet run:* "to found a family and to marry" fits the full pattern (`TM:F → J LM:CB`, a bare last item) |
@@ -1990,3 +2014,19 @@ touches no stub file.
   comments, 12); the display bound (2.1, 12); the interim checklist item 7 (2.4); the joined-filler note in 5.2; the
   phase-1 corpus rows (11.2b); the re-check's part (f) (13); findings F13 to F17 (14.2); the stub's sha256 and phase
   1's run (15). No statement, definition, diagnostic or existing fixture changed.
+- D3 revision (2026-11-01, `ap-3r-spec`; DRI decision `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md`
+  item 1, SIGNED; the plan's 2.3 and its change item 12): under *may* and *has the right to*, "A and B" with an own
+  *to* on every item has two readings, each or both together. Changed: `freeTable`'s `.all false _` line (6.2) and
+  the equation `table_free_all_own`, whose `sp = true` case is kept as the new `table_free_all_own_split`; the 2.1
+  example (now an obligation part) and u051's paraphrases (2.2, now four); fixtures T6, P5, P8, P12 (the together
+  readings), and F11's list of affected units; E16 and P64 (moved off the changed cell so they test what they tested before). New fixtures T6s (a split
+  marker's *and* keeps one reading) and E17 (the u051-shaped document is refused by D-23, no longer split). No other
+  statement, definition, diagnostic or fixture changed. The build item `ap-3r` proves the changed statements.
+- u105's reading sets under F11 (2026-11-01, `ap-3r-spec`; DRI decision
+  `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md` item 2, SIGNED): G8 now has whole-join readings, which have no candidate on the readings route (F11), so S1 and
+  S8 change from "passes" to "refused: a reading is a whole join and has no candidate (F11)"; S2 and S3 stay refused; `sourceCheck_complete` is S4 and S6 (11.4).
+  The build item `ap-3r` moves the guards.
+- Freeze wording (2026-11-01, `ap-3r-spec`; DRI decision
+  `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md` item 4, recording item 2 of
+  `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md`): 6.2's "provisional until AP-7 passes" becomes: the
+  equations freeze when ap-3r merges (D3 as revised); AP-7 ran (FAIL 2026-10-31) and is not re-run.

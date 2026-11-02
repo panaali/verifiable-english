@@ -1,6 +1,7 @@
 import VE.Cardinality.Wire
 import VE.Cardinality.Theorems
 import VE.Cardinality.Document
+import VE.Cardinality.Render
 
 /-! Cardinality certificates and the case runner (docs/spec/quantities.md 4.1–4.3).
 
@@ -10,8 +11,9 @@ the regenerated problem's W6a identities in the projection's environment (`CardE
 by the frozen checker on that problem (`checkCertificate_sound`). A claimed region table or erased problem must be
 the regenerated one. The runner answers the case kinds `admission`, `certificate`, `countermodel` (spec 3.9, W6a's
 budgeted countermodel check on the erased problem, the region sizes computed once and charged: `countermodel`),
-`document` (the claim graph of `Document.lean`, each deduction's problem built once, `checkDeduction`); W6a owns the
-identities (`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
+`document` (the claim graph of `Document.lean`, each deduction's problem built once, `checkDeduction`) and
+`paraphrase` (`Render.lean`: the statement decoded once, its line and assumptions charged against one byte limit); W6a
+owns the identities (`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
 namespace VE.Cardinality
 
 structure CardCertificate where
@@ -247,7 +249,8 @@ def runCase (j : Json) : Except String Json := do
   let kind ← match j.getObjVal? "kind" with
     | .ok k => k.getStr?
     | .error _ => pure "admission"
-  unless kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel" do
+  unless kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel" ||
+      kind == "paraphrase" do
     throw s!"unknown case kind {kind}"
   let w ← decodeEnvironment (← j.getObjVal? "environment")
   let envIds := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
@@ -257,6 +260,11 @@ def runCase (j : Json) : Except String Json := do
     let g ← Document.admitGraph w decodeCertificate checkDeduction document
     return VE.Time.Wire.ok id (envIds ++ [("report", reportJson g),
       ("report_id", .str (← reportId w document (reportJson g)))])
+  if kind == "paraphrase" then
+    let a ← decodeStatement w (← j.getObjVal? "statement")
+    let text ← Render.paraphrase w a.formula
+    return VE.Time.Wire.ok id (envIds ++ [("statement", statementJson a), ("paraphrase", .str text.1),
+      ("assumptions", toJson text.2)])
   let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeStatement w)
   let c ← decodeStatement w (← j.getObjVal? "conclusion")
   let (R, table, ep) ← checkedProblem w.env (ps.map (·.formula)) c.formula

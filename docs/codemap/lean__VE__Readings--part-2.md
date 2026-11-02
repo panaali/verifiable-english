@@ -1,0 +1,3 @@
+- `lean/VE/Readings/VerdictsExamples.lean` — The fixtures of RD-3 (docs/spec/readings-defaults.md 8.2), each a `#guard`: the gate of the entailment fold (3.1 to 3.3), each direction of ALL and NONE (3.4 t…
+- `lean/VE/Readings/VerdictsWire.lean` — The kind `readings-verdicts` on the enumerated route (docs/spec/readings-defaults.md 3, 4.4, 2.3 to 2.5, 6.4 and 6.5; plan RD-3).
+- `lean/VE/Readings/Wire.lean` — The wire of `readings@1` part A (docs/spec/composition-s1.md 3, 4.1, 7, 8.4).

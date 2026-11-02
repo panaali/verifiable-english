@@ -1,0 +1,33 @@
+{
+  "comment": "sc-4 seeded bugs (Lean, the only language whose product code this item changes). Each was planted alone at 557b799a3 by a scratch runner outside the checkout (apply, `lake build VE.Scope.FarExamples VE.Scope.WireExamples VE.Scope.FarTheorems`, record the failing lines, restore); M2 also silences two sc-1ad #guards of Examples.lean (594, 627) for its run, since they fail first and FarExamples imports Examples. Lines are of the files at that commit.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Scope.laterUnitsIn", "file": "lean/VE/Scope/Govern.lean",
+     "change": "every unit of the anchor, not those after w (the task's seeded bug: forwardCheck accepts an earlier unit)",
+     "test": "lean/VE/Scope/FarExamples.lean:106 (F12-f later units), :107 (F12-f's failing side passes), :112 (F12-f0)",
+     "result": "KILLED"},
+    {"id": "M2", "definition": "VE.Scope.edgesOf (and its run-path copy edgesOfF)", "file": "lean/VE/Scope/Govern.lean",
+     "change": "`precedes` drops the same-predicate condition (the task's seeded bug)",
+     "test": "lean/VE/Scope/FarExamples.lean:40 (F11), :45 (F11-a), :51 (F11′ no longer ScopeNoEffect); also Examples.lean:594, :627",
+     "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Scope.admitBlock", "file": "lean/VE/Scope/Govern.lean",
+     "change": "the forward bound set above 256 (`> 257`; the DRI's decision of 2026-11-01 item 2(c))",
+     "test": "lean/VE/Scope/FarExamples.lean:121 (257 declarations), :125 (before a step-2 fault)",
+     "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Scope.forwardsOk", "file": "lean/VE/Scope/Govern.lean",
+     "change": "only the first declaration is checked (`D.forwards.take 1`)",
+     "test": "lean/VE/Scope/FarExamples.lean:117 (declarations checked in block order)",
+     "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Scope.forwardCheck", "file": "lean/VE/Scope/Govern.lean",
+     "change": "the refusal branch answers `.ok ()`",
+     "test": "lean/VE/Scope/FarTheorems.lean:78 (forward_exception_sound no longer proved); FarExamples.lean:80 (F12), :107 (F12-f), :112 (F12-f0), :117",
+     "result": "KILLED"},
+    {"id": "M6", "definition": "VE.Scope.decodeForward", "file": "lean/VE/Scope/Wire.lean",
+     "change": "rule and anchor swapped",
+     "test": "lean/VE/Scope/WireExamples.lean:62 (the declarations decoded in block order)",
+     "result": "KILLED"},
+    {"id": "M7", "definition": "VE.Scope.decodeParts", "file": "lean/VE/Scope/Wire.lean",
+     "change": "the `forward` member is accepted but its declarations dropped (`[]`)",
+     "test": "lean/VE/Scope/WireExamples.lean:62, :69 (the member's own faults)",
+     "result": "KILLED"}
+  ]
+}

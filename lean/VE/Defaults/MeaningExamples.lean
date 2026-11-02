@@ -86,7 +86,7 @@ def dπ : Except String LayeredU := layered (envJ [xReq,
 /-! ## DF-π's two `example`s (spec 8.5) -/
 
 def nπ : VE.SoftNorms.SoftNode :=
-  ⟨⟨"r1", "x_required", true, .top, [], []⟩, .default, none, [], some ⟨some "assistant", [], [], []⟩, false⟩
+  ⟨⟨"r1", "x_required", true, .top, [], []⟩, .default, none, [], some ⟨some "assistant", [], [], []⟩, false, none⟩
 
 /-- DF-π as a literal: the default obligation r1 on `x_required` and its paired permission, both unspecified. -/
 def Dπ : VE.SoftNorms.SoftDoc where

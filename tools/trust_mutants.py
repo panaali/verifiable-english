@@ -5,6 +5,7 @@ growth only when "every new trusted definition is exercised by a test that can f
     uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...] [--deep]
                                          [--allow FILE] [--json OUT] [--root DIR] [--rescore PREV.json]
                                          [--classes LIST] [--shard K/N] [--plan]
+                                         [--deadline EPOCH | --budget SECONDS] [--resume PREV.json]
     uv run python tools/trust_mutants.py --merge OUT.json PART.json...
 
 Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
@@ -68,7 +69,8 @@ SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <op
 with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}); a `ctor-drop`
 survivor that breaks no proof is never allowed (no proof or check reads its constructor), and an allowed one keeps
 the proofs it breaks after its reason. Exit 0: all ran,
-none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 2: cannot run. Builder and reviewer
+none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 4: its --deadline left mutants unjudged
+(a partial record); 2: cannot run. Builder and reviewer
 evidence only: no gate, merge train or nightly reads it.
 
 --rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
@@ -107,6 +109,22 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
+
+--deadline, --budget and --resume (eff-tm-partial: an Actions part cancelled at its 120-min job limit returned
+nothing, so each verdict it had judged was lost):
+- --deadline EPOCH (unix seconds) or --budget SECONDS (from the run's start; both: the earlier): no mutant starts
+  once fewer seconds are left than the median of those judged so far (`Deadline`), and a Lake run still going at
+  the deadline is killed (`Abandoned`; the control phase's too). Every mutant the run owns and did not judge is NOT
+  RUN with the detail `NOT_STARTED` or `ABANDONED` (never UNKNOWN: it is unjudged, not undecided), the --json gains
+  `partial: {deadline, unjudged}` (those ids, plan order), one PARTIAL line says so, and the exit code is 4;
+- every --json records `tree`, HEAD's tree, beside `head`, its commit;
+- --resume PREV.json keeps PREV's verdicts (before --allow; the current --allow applies) of the mutants this run
+  owns when PREV ran at this HEAD: the same commit and tree, the same `inputs` (so no worktree edit since), plan,
+  --max-mutants, --shard part and --rescore facts (`resumable`). Only the rest (its `unjudged`) run, and the JSON
+  gains `resumed: {file, head, kept, rerun}`. Any other PREV, another HEAD's above all, is ignored with one line
+  why (`ignored`) and the run is a full one: no verdict of another HEAD is reused;
+- a partial record never counts as a sweep: --merge refuses a part that has `partial` (run that part again with
+  --resume), --rescore reads none (a full run), and --merge keeps each part's `resumed` in its `shards` entry.
 
 Every --json records where the time went (`steps`, eff-tm-control; a run fact, like "seconds", that no verdict
 reads): `wall`, the seconds of each phase of the run in turn (`WALL`: the plan, the scratch copies, the control
@@ -186,6 +204,9 @@ KILL, RFL, NONE = "KILL", "RFL", "UNKNOWN"  # `judge`'s verdicts on one error
 TIMED_OUT = -1000  # `Scratch.lake`'s code for a run killed past its time limit
 STATUSES = ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")
 OTHER = "OTHER SHARD"  # a --shard part's status of a mutant another part owns
+# The detail of a mutant a --deadline run owns but did not judge (status NOT RUN, listed in `partial.unjudged`)
+NOT_STARTED, ABANDONED = "not judged: the deadline came before it started", "not judged: abandoned at the deadline"
+PARTIAL = 4  # the exit code of a run its deadline stopped with a mutant unjudged (a partial record)
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -978,6 +999,39 @@ class Steps:
 
 
 STEPS = Steps()
+clock = time.time  # what --deadline is read against (tests inject an expired clock)
+
+
+class Abandoned(Exception):
+    """A Lake run the deadline stopped (`Scratch.lake`): the mutant, or the control phase, it was for is unjudged."""
+
+
+class Deadline:
+    """--deadline/--budget: no mutant starts once fewer seconds are left than the median the judged ones took (0
+    before any), and every Lake run still going at the deadline is killed (`Abandoned`). None: no deadline."""
+
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.reset(None)
+
+    def reset(self, at: float | None) -> None:
+        self.at, self.took = at, []
+
+    def left(self) -> float | None:
+        return None if self.at is None else self.at - clock()
+
+    def starts(self) -> bool:
+        """Whether a mutant may start now."""
+        with self.lock:
+            typical = sorted(self.took)[len(self.took) // 2] if self.took else 0
+        return (left := self.left()) is None or left > typical
+
+    def judged(self, seconds: float) -> None:
+        with self.lock:
+            self.took.append(seconds)
+
+
+DEADLINE = Deadline()
 
 
 def steps_line(steps: dict) -> str:
@@ -1027,15 +1081,21 @@ class Scratch:
 
     def lake(self, env: dict, *args: str, timeout: float | None = None) -> tuple[int, str]:
         """Lake's exit code and output; past `timeout` seconds the whole process group is killed and the code is
-        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7). Its seconds count in `STEPS`."""
+        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7). Its seconds count in `STEPS`. Past the
+        deadline (`DEADLINE`) it is killed the same way, or never started, and raises `Abandoned`."""
+        if (left := DEADLINE.left()) is not None and left <= 0:
+            raise Abandoned(f"lake {args[0]} not started: the deadline passed")
+        cut = left is not None and (timeout is None or left < timeout)  # the deadline comes first
         started = time.monotonic()
         child = subprocess.Popen([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
         try:
-            out, err = child.communicate(timeout=timeout)
+            out, err = child.communicate(timeout=left if cut else timeout)
         except subprocess.TimeoutExpired:
             os.killpg(child.pid, signal.SIGKILL)
             child.communicate()
+            if cut:
+                raise Abandoned(f"lake {args[0]} killed at the deadline") from None
             return TIMED_OUT, f"lake {args[0]} did not finish in {timeout:g} s (--build-timeout)"
         finally:
             STEPS.ran(time.monotonic() - started)
@@ -1416,6 +1476,8 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or "inputs" not in data:
             return "it records no inputs"
+        if "partial" in data:  # eff-tm-partial: its judged verdicts are reused by --resume at its HEAD only
+            return "it is a partial record (its --deadline left mutants unjudged): --resume it at its HEAD"
         old, changed = data["inputs"], []
         if not isinstance(old, dict):
             return "its inputs differ (keys)"
@@ -1439,6 +1501,37 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
         verdicts = {r["id"]: {"status": r["raw_status"], "detail": r.get("raw_detail", r["detail"]),
                               "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
         return "checks" if differ else "identical", head, verdicts, changed
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        return f"it cannot be read ({type(error).__name__}: {error})"
+
+
+def resumable(path: Path, head: str, tree: str, now: dict, found: list[Mutant], shard: dict | None,
+              max_mutants: int, rescore: dict | None) -> tuple[str, dict[str, dict]] | str:
+    """--resume PREV (eff-tm-partial): (its head, by mutant id its row) for every mutant of this run's that PREV
+    judged, when PREV ran at this commit and tree (`head`, `tree`: never another HEAD's verdicts), with these
+    `inputs` (the bytes, so a worktree edit since is no resume), plan, --max-mutants, --shard part and --rescore
+    facts, and its rows are rows this tool writes (`unwritten`, `unfinished`); else why not (a full run)."""
+    def facts(r):  # --rescore's facts but its counts, which the resumed run makes again
+        return r and {k: v for k, v in r.items() if k not in ("reused", "rerun")}
+    try:
+        data = json.loads(path.read_text())
+        if not isinstance(data, dict) or type(data.get("tree")) is not str or not data["tree"]:
+            return "it records no tree (no record this tool writes, or an older one)"
+        if data.get("head") != head or data["tree"] != tree:
+            return (f"it ran at {str(data.get('head'))[:12]} (tree {data['tree'][:12]}), not at this HEAD "
+                    f"{head[:12]} (tree {tree[:12]})")
+        if canon(data.get("inputs")) != canon(now):
+            return "its inputs differ (the worktree's bytes or the options)"
+        if data.get("max_mutants") != max_mutants or canon(data.get("shard")) != canon(shard):
+            return "it is another --max-mutants or --shard part"
+        if canon(facts(data.get("rescore"))) != canon(facts(rescore)):
+            return "its --rescore is not this run's"
+        rows, owned = data["mutants"], (shard or {}).get("owned", [m.id for m in found[:max(0, max_mutants)]])
+        if why := unwritten(rows) or unfinished(data, owned):
+            return f"it cannot be read: {why}"
+        if canon([[r[f] for f in PLANNED] for r in rows]) != canon([[getattr(m, f) for f in PLANNED] for m in found]):
+            return "its mutants are not this tree's"
+        return data["head"], {r["id"]: r for r in rows if r["id"] in owned and r["status"] not in ("NOT RUN", OTHER)}
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return f"it cannot be read ({type(error).__name__}: {error})"
 
@@ -1493,18 +1586,22 @@ def summary(found: list[Mutant], part: bool, seconds: int, rescore: dict | None)
 
 
 def exit_code(counts: dict[str, int]) -> int:
-    """The exit code over these verdicts: 1 a survivor or UNKNOWN left, 3 none left but some NOT RUN, 0 none."""
+    """The exit code over these verdicts: 1 a survivor or UNKNOWN left, 3 none left but some NOT RUN, 0 none (a run
+    its deadline stopped exits `PARTIAL` instead)."""
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if counts["NOT RUN"] else 0
 
 
 def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: int, deep: bool, tests: list[str],
            seconds: int, classes: list[str], digests: dict, rescore: dict | None, shard: dict | None = None,
-           shards: list[dict] | None = None, steps: dict | None = None) -> dict:
+           shards: list[dict] | None = None, steps: dict | None = None, tree: str = "", partial: dict | None = None,
+           resumed: dict | None = None) -> dict:
     """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`); `steps`, where its time
-    went (`Steps`)."""
+    went (`Steps`); `tree`, HEAD's tree; `partial`, what a --deadline run left unjudged; `resumed`, its --resume."""
     counts, by_class = tally(found, shard is not None)
-    return {"base": base, "head": head, "jobs": jobs, "max_mutants": max_mutants, "deep": deep, "tests": tests,
-            "seconds": seconds, **({"steps": steps} if steps else {}), "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
+    return {"base": base, "head": head, "tree": tree, **({"partial": partial} if partial else {}),
+            **({"resumed": resumed} if resumed else {}), "jobs": jobs, "max_mutants": max_mutants, "deep": deep,
+            "tests": tests, "seconds": seconds, **({"steps": steps} if steps else {}), "counts": counts,
+            "classes": classes, "class_counts": by_class, "inputs": digests,
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
             **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
@@ -1516,13 +1613,15 @@ def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: in
 OPTIONAL = ("reused_from", "carried", "reads", "killed_at")  # a row holds these only when they are set
 # raw_detail: only on a row --allow changed (review sc-1ae recheck F6); a row without it reads its detail
 ROW = {k: t for k, t in get_type_hints(Mutant).items() if k not in ("start", "end", "edit")}  # a row's fields
-PART = {"base": str, "head": str, "jobs": int, "max_mutants": int, "deep": bool, "tests": list[str], "seconds": int,
-        "classes": list[str], "inputs": dict, "shard": dict}  # what `record` copies from its arguments
+PART = {"base": str, "head": str, "tree": str, "jobs": int, "max_mutants": int, "deep": bool, "tests": list[str],
+        "seconds": int, "classes": list[str], "inputs": dict, "shard": dict}  # what `record` copies from its arguments
 SHARD = {"k": int, "n": int, "owned": list[str]}
 RESCORE = {"file": str, "head": str | None, "mode": str, "changed": list[str], "reused": int, "rerun": int,
            "full_run": str}  # full_run only when it was one
+PARTIAL_RECORD = {"deadline": int, "unjudged": list[str]}
+RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str}  # ignored only when it was
 PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
-AGREED = ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: the plan's (`unread`)
+AGREED = ("base", "head", "tree", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
 
 
 def typed(v, t) -> bool:
@@ -1575,21 +1674,39 @@ def idle(r: dict, status: str) -> dict:
 
 def unread(d) -> str | None:
     """Why the record d is not a --shard part's as `record` writes it, or None: the fields `record` copies of their
-    types (`PART`, `SHARD`, `RESCORE`), its rows `unwritten`, and the rest (counts, by class, definitions) what
-    `record` makes of them."""
+    types (`PART`, `SHARD`, `RESCORE`, `PARTIAL_RECORD`, `RESUMED`), its rows `unwritten` and `unfinished`, and the
+    rest (counts, by class, definitions) what `record` makes of them."""
     if not (fits({k: v for k, v in d.items() if k in PART}, PART) and fits(d["shard"], SHARD) and (
             "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run",)) and d["rescore"]["mode"] in (
-                "full", "identical", "checks"))):
+                "full", "identical", "checks")) and ("partial" not in d or fits(d["partial"], PARTIAL_RECORD))
+            and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored",)))):
         return "a field is missing or not of its type"
     if "steps" in d and not timed(d["steps"]):
         return "its steps are not a record of seconds by step"
-    if why := unwritten(d.get("mutants")):
+    if why := unwritten(d.get("mutants")) or unfinished(d, d["shard"]["owned"]):
         return why
     found = [row_mutant(r) for r in d["mutants"]]
     again = record(found, d["base"], d["head"], d["jobs"], d["max_mutants"], d["deep"], d["tests"], d["seconds"],
-                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"], steps=d.get("steps"))
+                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"], steps=d.get("steps"),
+                   tree=d["tree"], partial=d.get("partial"), resumed=d.get("resumed"))
     if bad := sorted(k for k in again.keys() | d.keys() if canon(again.get(k)) != canon(d.get(k))):
         return f"its {', '.join(bad)} are not what its rows give"
+    return None
+
+
+def unfinished(d: dict, owned: list[str]) -> str | None:
+    """Why record d's `partial` is not what its rows give, or None: `unjudged` is, in plan order, exactly the
+    `owned` mutants (those it runs) that are NOT RUN, at least one, each with the detail `NOT_STARTED` or
+    `ABANDONED`. (An owned NOT RUN row of a record with no `partial` is one with no verdict: --merge refuses it.)"""
+    if "partial" not in d:
+        return None
+    mine = set(owned)
+    left = [r["id"] for r in d["mutants"] if r["id"] in mine and r["status"] == "NOT RUN"]
+    if not left or d["partial"]["unjudged"] != left:
+        return "its partial.unjudged are not its NOT RUN rows that it runs"
+    if bad := next((r["id"] for r in d["mutants"] if r["id"] in left and (r["raw_status"] != "NOT RUN" or r[
+            "detail"] not in (NOT_STARTED, ABANDONED) or "raw_detail" in r)), None):
+        return f"{bad} is unjudged but its row is not one a deadline leaves"
     return None
 
 
@@ -1604,6 +1721,9 @@ def merge(out: Path, paths: list[Path]) -> int:
     if bad := [str(p) for d, p in parts if not (isinstance(d, dict) and isinstance(s := d.get("shard"), dict) and all(
             type(s.get(x)) is int for x in ("k", "n")) and isinstance(s.get("owned"), list))]:
         return refuse(f'no "shard" key {{k, n, owned}} (no --shard part): {", ".join(bad)}')
+    if bad := next((p for d, p in parts if "partial" in d), None):  # eff-tm-partial: the DRI's condition
+        return refuse(f"{bad} is a partial record (its --deadline left mutants unjudged): a merge needs every planned "
+                      f"mutant judged; run that part again with --resume {bad} at its HEAD")
     if bad := next(((p, why) for d, p in parts if (why := unread(d))), None):
         return refuse(f"{bad[0]} is not a part this tool writes: {bad[1]}")
     parts.sort(key=lambda x: x[0]["shard"]["k"])
@@ -1674,11 +1794,12 @@ def merge(out: Path, paths: list[Path]) -> int:
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
         shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
-                   **({"steps": d["steps"]} if "steps" in d else {})} for d, _ in parts]
+                   **({"steps": d["steps"]} if "steps" in d else {}),
+                   **({"resumed": d["resumed"]} if "resumed" in d else {})} for d, _ in parts]
         steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
         data = record(found, first["base"], first["head"], sum(s["jobs"] for s in shards), first["max_mutants"],
                       first["deep"], first["tests"], max(s["seconds"] for s in shards), first["classes"],
-                      first["inputs"], rescore, shards=shards, steps=steps)
+                      first["inputs"], rescore, shards=shards, steps=steps, tree=first["tree"])
     except (KeyError, TypeError, AttributeError, ValueError) as error:
         return refuse(f"a part cannot be read ({type(error).__name__}: {error})")
     for m in found:
@@ -1692,6 +1813,14 @@ def merge(out: Path, paths: list[Path]) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        return sweep(argv)
+    finally:
+        DEADLINE.reset(None)  # a deadline is one run's: no later Lake run in this process reads it
+
+
+def sweep(argv: list[str] | None = None) -> int:
+    """The command line (`main`)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base", help="the commit compared with (default: the merge base of HEAD and main)")
     parser.add_argument("--root", type=Path, default=ROOT, help="the checkout (default: this one); only read")
@@ -1715,6 +1844,13 @@ def main(argv: list[str] | None = None) -> int:
                         "only those files (every other option is ignored, --shard and --plan refused)")
     parser.add_argument("--plan", action="store_true",
                         help="print the plan's counts as one JSON line, and build nothing")
+    parser.add_argument("--deadline", type=float, metavar="EPOCH",
+                        help="unix time after which no mutant starts and every Lake run is killed; what is left is "
+                        "unjudged (a partial record, exit 4)")
+    parser.add_argument("--budget", type=float, metavar="SECONDS", help="--deadline this many seconds from the start")
+    parser.add_argument("--resume", type=Path, metavar="PREV.json",
+                        help="keep PREV's verdicts when it ran at this HEAD (commit, tree and inputs) and judge only "
+                        "the rest; another HEAD's are ignored")
     args = parser.parse_args(argv)
     if args.merge:
         if args.shard or args.plan or len(args.merge) < 2:
@@ -1743,7 +1879,12 @@ def main(argv: list[str] | None = None) -> int:
     outside = [(root / t).resolve() for t in args.test if t.removeprefix("lean/") not in tests]
     if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
+    if bad := next((f for f, v in (("--deadline", args.deadline), ("--budget", args.budget))
+                    if v is not None and not 0 <= v < 1e12), None):
+        return print(f"{bad}: not a number of seconds", file=sys.stderr) or 2
     started = time.monotonic()
+    at = [v for v in (args.deadline, None if args.budget is None else clock() + args.budget) if v is not None]
+    DEADLINE.reset(min(at) if at else None)
     STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
     for t in outside:
@@ -1765,7 +1906,9 @@ def main(argv: list[str] | None = None) -> int:
             m.status = m.raw_status = OTHER
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep, classes)
-    reused, rescore, why, mode, changed = "", None, "", "full", []
+    reused, rescore, why, mode, changed, verdicts = "", None, "", "full", [], {}
+    head, head_tree = (git(root, "rev-parse", x).stdout.strip() for x in ("HEAD", "HEAD^{tree}"))
+    owned = {"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None  # --json's "shard"
     reads = Reads(root, tree, outside) if args.rescore or args.json else None
     if args.rescore:
         got = previous(args.rescore, digests, found, lambda names: check_only(
@@ -1775,16 +1918,28 @@ def main(argv: list[str] | None = None) -> int:
             print(f"trust_mutants: --rescore {args.rescore}: a full run, since {why}", flush=True)
         else:
             mode, reused, verdicts, changed = got
-            for m in mine:
-                p = verdicts[m.id]
-                if mode == "identical" and p["status"] in REUSED:
-                    m.status, m.detail = p["status"], p["detail"]
-                elif mode == "checks" and (kept := reads.carry(m, p, targets(tree, m, tests, args.deep))):
-                    (m.status, m.detail), m.carried = kept, "checks"
-                else:
-                    continue
-                m.reused_from = reused
-    todo = [m for m in mine if not m.reused_from]
+        rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed,
+                   **({} if reused else {"full_run": why})}  # its facts; the counts are added at the end
+    resumed, kept = None, {}
+    if args.resume:  # eff-tm-partial: the verdicts PREV judged at this HEAD, kept as they are
+        got = resumable(args.resume, head, head_tree, digests, found, owned, args.max_mutants, rescore)
+        if isinstance(got, str):
+            print(f"trust_mutants: --resume {args.resume}: its verdicts are not reused (a full run), since {got}",
+                  flush=True)
+        resumed = {"file": str(args.resume), "head": None if isinstance(got, str) else got[0], "kept": 0,
+                   "rerun": 0, **({"ignored": got} if isinstance(got, str) else {})}
+        kept = {} if isinstance(got, str) else got[1]
+    for m in mine:
+        if r := kept.get(m.id):
+            m.status, m.detail = r["raw_status"], r.get("raw_detail", r["detail"])
+            m.reused_from, m.carried = r.get("reused_from", ""), r.get("carried", "")
+        elif not verdicts:
+            continue
+        elif mode == "identical" and (p := verdicts[m.id])["status"] in REUSED:
+            m.status, m.detail, m.reused_from = p["status"], p["detail"], reused
+        elif mode == "checks" and (c := reads.carry(m, verdicts[m.id], targets(tree, m, tests, args.deep))):
+            (m.status, m.detail), m.carried, m.reused_from = c, "checks", reused
+    todo = [m for m in mine if not m.reused_from and m.id not in kept]
     env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
     definitions = sorted({(m.file, m.definition) for m in found})
     print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(todo)} to run), {jobs} jobs, "
@@ -1800,53 +1955,71 @@ def main(argv: list[str] | None = None) -> int:
         if m.status in ("SURVIVOR", "UNKNOWN"):
             print(line(m), flush=True)
     for m in mine:
-        if m.reused_from:
+        if m.reused_from or m.id in kept:
             allowed(m)
+
+    def unjudged(m: Mutant, detail: str) -> None:
+        m.status = m.raw_status = "NOT RUN"
+        m.detail = m.raw_detail = detail
+
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
         hashes: dict = {}  # `probe`'s hash of each check without a mutant
         since = STEPS.phase("plan", started)
-        if todo:  # the control build, and each check's elaboration, only for the mutants that run
-            first = Scratch(root / "lean", Path(scratch_dir))
-            since = STEPS.phase("scratch", since)
-            with STEPS.step("control_build"):
-                code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(
-                    tree, m, tests, args.deep)}))
-                failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
-            since = STEPS.phase("control_build", since)
-            if code or failing:
-                return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
-            files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in todo for x in targets(
-                tree, m, tests, args.deep)}) if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
-            files.update({str(t): (t, file_roles(t)) for t in outside})
-            with STEPS.step("probe_install"):
-                if not install(lambda *a: first.lake(env, *a), first.lean):
-                    return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
-            since = STEPS.phase("probe_install", since)
+        try:
+            if todo:  # the control build, and each check's elaboration, only for the mutants that run
+                first = Scratch(root / "lean", Path(scratch_dir))
+                since = STEPS.phase("scratch", since)
+                with STEPS.step("control_build"):
+                    code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(
+                        tree, m, tests, args.deep)}))
+                    failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
+                since = STEPS.phase("control_build", since)
+                if code or failing:
+                    return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}",
+                                 file=sys.stderr) or 2
+                checked = {tree.files[x] for m in todo for x in targets(tree, m, tests, args.deep)}
+                files = {f: (first.lean / f, tree.roles[f]) for f in sorted(checked)
+                         if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
+                files.update({str(t): (t, file_roles(t)) for t in outside})
+                with STEPS.step("probe_install"):
+                    if not install(lambda *a: first.lake(env, *a), first.lean):
+                        return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
+                since = STEPS.phase("probe_install", since)
 
-            def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
-                i, (key, (path, roles)) = item
-                with STEPS.step("control_probes"):
-                    got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key),
-                                Path(key).is_absolute())
-                return {(key, span): said for span, said in got.items()}
-            with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
-                hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
-                               part.items()})
-            since = STEPS.phase("control_probes", since)
-            pool.put(first)
-            for _ in range(min(jobs, len(todo)) - 1):
-                pool.put(Scratch(root / "lean", Path(scratch_dir), first))
-            since = STEPS.phase("scratch", since)
+                def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
+                    i, (key, (path, roles)) = item
+                    with STEPS.step("control_probes"):
+                        got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key),
+                                    Path(key).is_absolute())
+                    return {(key, span): said for span, said in got.items()}
+                with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
+                    hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
+                                   part.items()})
+                since = STEPS.phase("control_probes", since)
+                pool.put(first)
+                for _ in range(min(jobs, len(todo)) - 1):
+                    pool.put(Scratch(root / "lean", Path(scratch_dir), first))
+                since = STEPS.phase("scratch", since)
+        except Abandoned:  # the deadline came before the mutants could start: none is judged
+            for m in todo:
+                unjudged(m, NOT_STARTED)
+            todo = []
+            since = STEPS.phase("control_build", since)
 
         def one(m: Mutant) -> None:
-            scratch = pool.get()
+            if not DEADLINE.starts():
+                return unjudged(m, NOT_STARTED)
+            scratch, began = pool.get(), clock()
             try:
                 m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls, hashes,
                                          args.build_timeout)
+            except Abandoned:
+                return unjudged(m, ABANDONED)
             finally:
                 pool.put(scratch)
+            DEADLINE.judged(clock() - began)
             allowed(m)
 
         with ThreadPoolExecutor(max_workers=jobs) as executor:
@@ -1856,10 +2029,18 @@ def main(argv: list[str] | None = None) -> int:
     for m in not_run:
         print(line(m))
     seconds = round(time.monotonic() - started)
-    if args.rescore:
-        rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed,
-                   "reused": len(mine) - len(todo), "rerun": len(todo), **({} if reused else {"full_run": why})}
+    if rescore:
+        n = sum(bool(m.reused_from) for m in mine)
+        rescore = {"file": rescore["file"], "head": rescore["head"], "mode": mode, "changed": changed, "reused": n,
+                   "rerun": len(mine) - n, **({k: v for k, v in rescore.items() if k == "full_run"})}
+    if resumed:
+        resumed.update(kept=len(kept), rerun=len(mine) - len(kept))
     counts = summary(found, shard is not None, seconds, rescore)
+    left = [m.id for m in mine if m.status == "NOT RUN"]  # the mutants it owns that the deadline left unjudged
+    partial = {"deadline": int(DEADLINE.at or 0), "unjudged": left} if left else None
+    if partial:
+        print(f"trust_mutants: PARTIAL: the deadline stopped the run with {len(left)} of its {len(mine)} mutants "
+              f"unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those", flush=True)
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
@@ -1867,10 +2048,9 @@ def main(argv: list[str] | None = None) -> int:
     print(steps_line(steps := STEPS.record()), flush=True)
     if args.json:
         args.json.write_text(evidence(record(
-            found, digests["base"], git(root, "rev-parse", "HEAD").stdout.strip(), jobs, args.max_mutants, args.deep,
-            args.test, seconds, list(classes), digests, rescore,
-            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None, steps=steps)))
-    return exit_code(counts)
+            found, digests["base"], head, jobs, args.max_mutants, args.deep, args.test, seconds, list(classes),
+            digests, rescore, shard=owned, steps=steps, tree=head_tree, partial=partial, resumed=resumed)))
+    return PARTIAL if partial else exit_code(counts)
 
 
 if __name__ == "__main__":

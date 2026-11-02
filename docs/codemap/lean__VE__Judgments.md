@@ -4,3 +4,4 @@
 - `lean/VE/Judgments/Examples.lean` — The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the built definitions.
 - `lean/VE/Judgments/Scan.lean` — The one scan of open names in formulas (docs/spec/judgment-terms.md section 3).
 - `lean/VE/Judgments/Status.lean` — Judgment terms: dependence, status and the usage map (docs/spec/judgment-terms.md section 4).
+- `lean/VE/Judgments/Undeclared.lean` — Undeclared evaluative words (`judgments@0`, docs/spec/judgment-terms.md 7; plan D15, JT-3).

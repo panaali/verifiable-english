@@ -44,9 +44,27 @@ theorem copyCites_no_sets (cs : List (String × List String)) : copyCites D cs =
       rw [over_drop hs]
     · rfl
 
+theorem copyLine_no_sets (S : VE.Rights.SourceLine) : copyLine D S = S := by
+  have hm : ∀ o : Option SoftNode, o.map (copyOver D) = o := fun o => by cases o <;> simp [copyOver_no_sets h]
+  cases S; simp only [copyLine, hm]
+
+theorem copyScope_no_sets (L : VE.Rights.Limitation) : copyScope D L = L := by
+  have hf : ∀ l : List String, l.flatMap (rightCopies D) = l := by
+    intro l; induction l with
+    | nil => rfl
+    | cons x l ih => simp [List.flatMap_cons, ih, rightCopies, h]
+  cases L; simp only [copyScope, hf, Option.map_id']
+
 theorem copyContent_no_sets (c : Content) : copyContent D c = c := by
+  have hl : ∀ l : List VE.Rights.SourceLine, l.map (copyLine D) = l := fun l => by
+    induction l with
+    | nil => rfl
+    | cons x l ih => simp only [List.map_cons, ih, copyLine_no_sets h]
   cases c with
   | norm N => simp only [copyContent, copyOver_no_sets h]
+  | right R => simp only [copyContent, hl]
+  | rightLines r ls => simp only [copyContent, hl]
+  | limitation L => simp only [copyContent, copyScope_no_sets h]
   | _ => rfl
 
 theorem supFrame_no_sets : supFrame D = D.frame := by
@@ -102,21 +120,88 @@ theorem mem_genKeys_outweighs {X : RightsDoc} {g : GenKey × String × List Stri
     · obtain ⟨m, _, rfl⟩ := List.mem_map.mp hb
       cases hk
 
-theorem fixedGenerated_no_sets {D : Doc} (h : D.sets = []) {g : GenKey × String × List String}
+/-- A lim or cond key of X comes from a line instance in scope of a limitation of that name, with that act. -/
+theorem genKeys_lim_witness {X : RightsDoc} {g : GenKey × String × List String} (hg : g ∈ genKeys X)
+    {L a : String} (hk : g.1 = .lim L a ∨ ∃ k, g.1 = .cond L a k) :
+    ∃ L' ∈ X.limits, L'.name = L ∧ ∃ RN ∈ VE.Rights.linesOf X, VE.Rights.inScope X L' RN.1 RN.2 = true ∧
+      VE.Rights.lineAct X RN.2 = a := by
+  have hw : ∀ L' ∈ X.limits, a ∈ VE.Rights.limActs X L' → ∃ RN ∈ VE.Rights.linesOf X,
+      VE.Rights.inScope X L' RN.1 RN.2 = true ∧ VE.Rights.lineAct X RN.2 = a := by
+    intro L' _ ha
+    simp only [VE.Rights.limActs, VE.Rights.mem_dedup, List.mem_filterMap] at ha
+    obtain ⟨RN, hRN, hs⟩ := ha
+    split at hs
+    · rename_i hin; cases hs; exact ⟨RN, hRN, hin, rfl⟩
+    · cases hs
+  simp only [genKeys, List.mem_append, List.mem_map, List.mem_filter, List.mem_flatMap] at hg
+  rcases hg with (((((⟨e, _, rfl⟩ | ⟨e, _, π, _, rfl⟩) | ⟨x, _, rfl⟩) | ⟨k, hk', rfl⟩) | ⟨k, hk', rfl⟩) | hb)
+  · rcases hk with hk | ⟨_, hk⟩ <;> cases hk
+  · rcases hk with hk | ⟨_, hk⟩ <;> cases hk
+  · rcases hk with hk | ⟨_, hk⟩ <;> cases hk
+  · rcases hk with hk | ⟨_, hk⟩ <;> simp only [GenKey.lim.injEq, reduceCtorEq] at hk
+    obtain ⟨rfl, rfl⟩ := hk
+    simp only [VE.Rights.limKeys, VE.Norms.mem_sortBy, List.mem_flatMap, List.mem_map] at hk'
+    obtain ⟨L', hL', a', ha', he⟩ := hk'
+    cases he
+    exact ⟨L', hL', rfl, hw L' hL' ha'⟩
+  · rcases hk with hk | ⟨_, hk⟩ <;> simp only [GenKey.cond.injEq, reduceCtorEq] at hk
+    obtain ⟨rfl, rfl, -⟩ := hk
+    simp only [VE.Rights.condKeys, VE.Norms.mem_sortBy, List.mem_flatMap, List.mem_map] at hk'
+    obtain ⟨L', hL', a', ha', c', _, he⟩ := hk'
+    cases he
+    exact ⟨L', hL', rfl, hw L' hL' ha'⟩
+  · split at hb
+    · cases hb
+    · obtain ⟨m, _, rfl⟩ := List.mem_map.mp hb
+      rcases hk with hk | ⟨_, hk⟩ <;> cases hk
+
+/-- An aimed key of X comes from a liberty instance on its predicate. -/
+theorem genKeys_aimed_witness {X : RightsDoc} {g : GenKey × String × List String} (hg : g ∈ genKeys X)
+    {m : String} (hk : g.1 = .aimed m) :
+    ∃ RN ∈ VE.Rights.linesOf X, VE.Rights.libertyKind RN.2 = true ∧ RN.2.node.pred = m := by
+  simp only [genKeys, List.mem_append, List.mem_map, List.mem_filter, List.mem_flatMap] at hg
+  rcases hg with (((((⟨e, _, rfl⟩ | ⟨e, _, π, _, rfl⟩) | ⟨x, _, rfl⟩) | ⟨k, _, rfl⟩) | ⟨k, _, rfl⟩) | hb) <;>
+    try cases hk
+  split at hb
+  · cases hb
+  · obtain ⟨m', hm', rfl⟩ := List.mem_map.mp hb
+    cases hk
+    rw [VE.Rights.mem_barPreds] at hm'
+    simp only [VE.Rights.rightPermission, VE.Rights.permPreds, List.contains_iff_mem, List.mem_filterMap] at hm'
+    obtain ⟨RN, hRN, hs⟩ := hm'
+    split at hs
+    · rename_i hl; cases hs; exact ⟨RN, hRN, hl, rfl⟩
+    · cases hs
+
+/-- Without a candidate origin every generated key is the fixed units' alone. -/
+theorem fixedGenerated_of_origin {D : Doc} (ho : ∀ n, origin D n = none) {g : GenKey × String × List String}
     (hg : g ∈ genKeys (sup D).1) : fixedGenerated D g.1 = true := by
   unfold fixedGenerated
+  have hlim : ∀ L a, (∃ k, g.1 = .lim L a ∨ g.1 = .cond L a k) → [] ∈ limOwners D L a := by
+    intro L a ⟨k, hk⟩
+    obtain ⟨L', hL', hn, RN, hRN, hin, hact⟩ :=
+      genKeys_lim_witness hg (hk.elim Or.inl (fun h => Or.inr ⟨k, h⟩))
+    simp only [limOwners, VE.SoftNorms.mem_dedup, List.mem_flatMap, List.mem_filter, List.mem_filterMap]
+    exact ⟨L', ⟨hL', by simp [hn]⟩, RN, hRN, by simp [hin, hact, jointOwner, ho]⟩
   cases hk : g.1 with
-  | excepted r b => simp [owners, origin_no_sets h]
-  | off r b π => simp [owners, origin_no_sets h]
+  | excepted r b => simp [owners, ho]
+  | off r b π => simp [owners, ho]
   | outweighs a L H =>
     obtain ⟨_, M, N, hp, hcmp, ht⟩ := mem_outweighsTriples.mp (mem_genKeys_outweighs hg hk)
     simp only [owners, List.contains_iff_mem, VE.SoftNorms.mem_dedup, List.mem_filterMap]
     refine ⟨(M, N), hp, ?_⟩
-    simp only [hcmp, ht, beq_self_eq_true, Bool.and_self, if_true, pairOwner, origin_no_sets h]
+    simp only [hcmp, ht, beq_self_eq_true, Bool.and_self, if_true, pairOwner, jointOwner, ho]
     rfl
-  | lim L a => simp [owners]
-  | cond L a c => simp [owners]
-  | aimed m => simp [owners]
+  | lim L a => simpa [owners] using hlim L a ⟨"", Or.inl hk⟩
+  | cond L a c => simpa [owners] using hlim L a ⟨c, Or.inr hk⟩
+  | aimed m =>
+    obtain ⟨RN, hRN, hl, hp⟩ := genKeys_aimed_witness hg hk
+    simp only [owners, aimedOwners, List.contains_iff_mem, VE.SoftNorms.mem_dedup, List.mem_filterMap]
+    exact ⟨RN, hRN, by simp [hl, hp, ho]⟩
+
+theorem fixedGenerated_no_sets {D : Doc} (h : D.sets = []) {g : GenKey × String × List String}
+    (hg : g ∈ genKeys (sup D).1) : fixedGenerated D g.1 = true :=
+  fixedGenerated_of_origin (origin_no_sets h) hg
 
 theorem choiceLabelled_no_sets {D : Doc} (h : D.sets = []) : choiceLabelled D = [] := by
   have h1 : onePremises D = [] := by simp [onePremises, h]

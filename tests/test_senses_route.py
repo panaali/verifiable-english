@@ -323,7 +323,8 @@ def test_spec_fixtures_through_the_route_against_lean(lean_guards, joke, fixture
     [unit] = reading["units"]
     assert unit.get("formula") == formula, fixture
     assert unit["unresolved"] == unresolved, fixture
-    assert unit["candidates"] == candidates, fixture
+    # Each candidate also carries the identities of its own projection (B6; tests/test_senses_project.py).
+    assert [{k: v for k, v in c.items() if k != "identities"} for c in unit["candidates"]] == candidates, fixture
 
 
 def test_spec_pack_python_file_and_lean_fixture_agree(tmp_path):

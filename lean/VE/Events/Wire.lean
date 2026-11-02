@@ -179,7 +179,7 @@ def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded
 /-- Spec 6.3: the `events` pack, last in `packOrder`; its labels are `eventsLabelled` (1.4). -/
 def eventsPack (d : EventsDecoded) : VE.NormDefaults.Packs.Pack :=
   { id := "events", kind := .constraint, decls := [], consts := [], labelled := eventsLabelled d.V,
-    origins := d.origins }
+    origins := d.origins, conditions := [] }
 
 /-- An absent block gives no pack (PK-1's rule then leaves X as the other packs' X). -/
 theorem eventsX_absent (environment : Lean.Json) (h : (environment.getObjVal? "events").toOption = none) :

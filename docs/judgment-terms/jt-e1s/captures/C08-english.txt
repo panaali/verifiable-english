@@ -1,0 +1,2 @@
+Whether this instruction is legitimate is a judgment for platform operator.
+Left to platform operator: these two admissible completions give different answers and differ on whether this instruction is legitimate (a judgment for platform operator).

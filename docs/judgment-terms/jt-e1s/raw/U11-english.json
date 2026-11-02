@@ -1,0 +1,111 @@
+{
+  "id": "U11",
+  "arm": "english",
+  "account": "claude-panaali2",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 5 synthetic: Degrading treatment is forbidden; a medical treatment that the detainee consented to is permitted. These rules are conflict-free given the criterion: No medical treatment that the detainee consented to is degrading. A prison inspector decides whether treatment is degrading.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: degrading_treatment means whether this treatment is degrading; decider: prison inspector.\nWhether this treatment is degrading is a judgment for prison inspector.\nThese rules conflict where this treatment is degrading.\nConflict-free, given these sentences: No medical treatment that the detainee consented to is degrading.\n",
+  "cli": {
+    "duration_api_ms": 1442,
+    "stop_reason": "end_turn",
+    "session_id": "85c4052c-8b0d-4053-9937-a98f048569a2",
+    "total_cost_usd": 0.0183784,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4101,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 90,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4101,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 90,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4101,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4101
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 90,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4101,
+        "webSearchRequests": 0,
+        "costUSD": 0.0183784,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4101,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: prison inspector; WHY: The conflict-free conclusion is certified only given the criterion that no consented medical treatment is degrading, and whether a treatment is degrading is a judgment left to the prison inspector.",
+    "ttft_ms": 1610,
+    "type": "result",
+    "duration_ms": 1635,
+    "uuid": "c4c1b901-c80f-4ecf-b811-cf799b6f2403",
+    "ttft_stream_ms": 797,
+    "time_to_request_ms": 195,
+    "first_content_frame_ms": 797,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14897,
+  "answer": "CLASS: CONDITIONAL; DECIDER: prison inspector; WHY: The conflict-free conclusion is certified only given the criterion that no consented medical treatment is degrading, and whether a treatment is degrading is a judgment left to the prison inspector."
+}

@@ -1,0 +1,26 @@
+{
+  "item": "wc-s4-2b",
+  "note": "Each bug was applied to the committed tree, the named test was run and failed as quoted, and the file was restored with git checkout (shown on 13ac2521d).",
+  "bugs": [
+    {"id": "B1", "language": "Rust", "file": "rust/ve-kernel/src/contract.rs", "behaviour": "the order rule of wire-contract.md 2.6",
+     "bug": "`Run::entries` swaps the first two entries of each list (the items phase runs group 2.2 before 2.1)",
+     "test": "rust/ve-kernel/tests/contract_engine.rs::engine_corpus_equals_the_golden",
+     "failure": "left: check 2.2a \"Shape: tags of a are not sorted\", right: the golden's 2.1c \"Duplicate: a\""},
+    {"id": "B2", "language": "Rust", "file": "rust/ve-kernel/src/contract.rs", "behaviour": "the closed renderer set of 2.7",
+     "bug": "`render` writes a string under `json` as `raw`",
+     "test": "rust/ve-kernel/tests/contract_engine.rs::engine_corpus_equals_the_golden",
+     "failure": "left: text \"Shape: mode shut\", right: the golden's \"Shape: mode \\\"shut\\\"\" (case E3)"},
+    {"id": "B3", "language": "Python (test runner)", "file": "tests/test_wire_contract_rust.py", "behaviour": "plan row d: a deferred outcome is counted, never compared",
+     "bug": "`share` drops the `continue` after counting a deferred row, so the row is compared as a fault",
+     "test": "tests/test_wire_contract_rust.py::test_the_deferred_share_is_counted_and_never_compared",
+     "failure": "AssertionError: E1, assert b'{\"wrong\":true}' == 'clean'"},
+    {"id": "B4", "language": "Rust", "file": "rust/ve-kernel/src/contract.rs", "behaviour": "F6: the size charge against MAX_ENGINE_UNITS",
+     "bug": "`Run::charge` never refuses (the limit test is skipped, the units saturate)",
+     "test": "rust/ve-kernel/tests/contract_engine.rs::a_large_input_ends_within_the_limit_and_one_step_over_is_refused",
+     "failure": "called `Result::unwrap_err()` on an `Ok` value: Deferred(\"3.4\") (90,898 entries, one over the limit)"},
+    {"id": "B5", "language": "Rust", "file": "rust/ve-kernel/src/contract.rs", "behaviour": "F6: each node of the root charged once by the domain pass",
+     "bug": "`Run::domain` charges nothing",
+     "test": "rust/ve-kernel/tests/contract_engine.rs::a_large_input_ends_within_the_limit_and_one_step_over_is_refused",
+     "failure": "left: (112, 10), right: (129, 11) (base and per-entry units)"}
+  ]
+}

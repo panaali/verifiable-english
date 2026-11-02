@@ -33,12 +33,13 @@ theorem sizesJson_fits (sizes : List (String × Nat)) :
 
 /-- The runner answers a certificate row only for the kind `certificate`. -/
 theorem certificate_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" = .str kind)
-    (h1 : (kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel") = true)
-    (hd : ¬(kind == "document") = true) (h2 : ¬(kind == "admission") = true)
+    (h1 : (kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel" ||
+      kind == "paraphrase") = true)
+    (hd : ¬(kind == "document") = true) (hp : ¬(kind == "paraphrase") = true) (h2 : ¬(kind == "admission") = true)
     (h3 : ¬(kind == "countermodel") = true) :
     (CaseCond.kind "certificate").holds j = true := by
-  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2 hd h3
-  obtain rfl := ((h1.resolve_right h3).resolve_right hd).resolve_left h2
+  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2 hd hp h3
+  obtain rfl := (((h1.resolve_right hp).resolve_right h3).resolve_right hd).resolve_left h2
   simp only [CaseCond.holds, hK]
   rfl
 
@@ -51,7 +52,7 @@ theorem countermodel_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" =
   rfl
 
 set_option hygiene false in
-/-- An admission, certificate, countermodel or document row, by the kind the runner read (the case's `kind` string,
+/-- An admission, certificate, countermodel, document or paraphrase row, by the kind the runner read (the case's `kind` string,
 else `admission`). -/
 macro "cardinality_rows" : tactic =>
   `(tactic|(okfits <;> kind_subst <;> (try simp only [VE.Time.Wire.ok, Run.statementJson]) <;>
@@ -59,7 +60,7 @@ macro "cardinality_rows" : tactic =>
     first
       | exact problemJson_fits _ _
       | exact countermodel_kind hK (by assumption)
-      | exact certificate_kind hK (by assumption) (by assumption) (by assumption) (by assumption)
+      | exact certificate_kind hK (by assumption) (by assumption) (by assumption) (by assumption) (by assumption)
       | exact absurd (by decide) ‹¬("admission" == "admission") = true›))
 
 theorem runCase_fits (j : Json) : OkFits j Skeletons.cardinality (Run.runCase j) := by

@@ -36,6 +36,7 @@ structure SDoc where
   listNames : List (VE.Discourse.ContentName × String × String)   -- name, its lead-in, its registering unit
   anchors : List VE.Discourse.Anchor
   re : VE.Readings.Wire.ReadingsEnvironment
+  forwards : List (String × String × String) := []   -- (unit w, rule r, anchor a), 1.9 (SC-4)
 
 /-! JSON access (read only; scope decodes no rule field itself) -/
 
@@ -114,6 +115,20 @@ def covered (D : SDoc) : Reach → Except String (List String)
       unless (ruleUnits D).any (fun u => baseName D u == some n) do throw s!"ScopeUnknownRule: {n}"
     pure ((ruleUnits D).filter (fun u => (baseName D u).any ns.contains))
   | r => coveredLayout D r
+
+/-! Forward declarations (1.9, SC-4): some unit of `a` after `w` has a base rule whose `over` names `r`. -/
+
+def laterUnitsIn (D : SDoc) (a w : String) : List String :=
+  ((VE.Layout.anchorUnits D.layout D.anchors a).dropWhile (· != w)).drop 1
+
+def forwardCheck (D : SDoc) (w r a : String) : Except String Unit :=
+  if (laterUnitsIn D a w).any (fun x => ((baseObj D x).toOption.bind
+      (fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption)).any (fun N => N.over.contains r)) then .ok ()
+  else .error s!"ScopeForward: {w}: rule {r} has no later exception in {a}"
+
+/-- `admitBlock`'s step 9: the forward declarations in block order. -/
+def forwardsOk (D : SDoc) : Except String Unit := do
+  for (w, r, a) in D.forwards do forwardCheck D w r a
 
 /-! Order (plan 1.4) -/
 
@@ -204,10 +219,12 @@ def kindOf (doc : Json) (u : String) : String :=
 def defSpans (D : SDoc) : List (Nat × Nat) :=
   (D.layout.filter (fun x => kindOf D.doc x.id == "definition")).map (·.span)
 
-/-- Spec 6.2's steps 1 to 8; step 7 is discourse's anchor checks, on the block's anchors. -/
+/-- Spec 6.2's steps 1 to 9; step 7 is discourse's anchor checks, on the block's anchors; step 9 the forward
+    declarations (SC-4). -/
 def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.length > 256 then throw "ResourceLimit: scope governors"
   if D.listNames.length > 256 then throw "ResourceLimit: scope list names"
+  if D.forwards.length > 256 then throw "ResourceLimit: scope forward declarations"
   if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}"
   if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}"
   for g in D.governors do
@@ -251,6 +268,7 @@ def admitBlock (D : SDoc) : Except String Unit := do
       for u in us do
         let c := contentOf D.doc u
         unless c.isNull || isPart c || isNorm c do throw s!"ScopeNotARule: {u}"
+  forwardsOk D
 
 def newContent (c o : Json) : Json :=
   if isPart c then Json.mkObj ((members c).filter (·.1 != "part") ++ [("norm", o)]) else c.setObjVal! "norm" o

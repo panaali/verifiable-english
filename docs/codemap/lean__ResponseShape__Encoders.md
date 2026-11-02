@@ -23,6 +23,7 @@
 - `lean/ResponseShape/Encoders/Route.lean` — The `route` mode (`Route.Run.runCaseReported`) against `route.json#/row`.
 - `lean/ResponseShape/Encoders/Scope.lean` — The `scope` mode (`VE.Scope.Run.runCaseReported`) against `scope.json#/row` (docs/spec/scope.md 5.3).
 - `lean/ResponseShape/Encoders/SearchBudget.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/SensesProject.lean` — The `senses.project` mode (`VE.Senses.Run.projectCaseReported`) against `senses.project.json#/row`.
 - `lean/ResponseShape/Encoders/SoftNorms.lean` — The `soft-norms` mode (`SoftNorms.Run.runCaseReported`) against `soft-norms.json#/row`.
 - `lean/ResponseShape/Encoders/SpeechActs.lean` — The `speech-acts` mode (`SpeechActs.Run.runCaseReported`) against `speech-acts.json#/row`.
 - `lean/ResponseShape/Encoders/Standalone.lean` — The standalone modes (`Service.Standalone.reported` of `environmentCase`, `modelCase`, `checkCase`, `identityCase`, `parseCase`) against their row shapes.
