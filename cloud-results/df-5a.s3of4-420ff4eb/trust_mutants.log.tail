@@ -1,0 +1,26 @@
+trust_mutants: 9 definitions, 137 mutants (34 to run), 4 jobs, base bbff495a66b2
+SURVIVOR lean/VE/Defaults/Zone.lean:30 VE.Defaults.Observed (S, trusted) body-false: ∀ o ∈ obs, (OutcomeIn U M R o.1.1 o.1.2 ↔ o.2 = true) -> False (the proofs it breaks: lean/VE/Defaults/Zone.lean:465, lean/VE/Defaults/Zone.lean:509, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:61 VE.Defaults.ByDefaultLeftTo (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Defaults/Zone.lean:733, lean/VE/Defaults/Zone.lean:789)
+SURVIVOR lean/VE/Defaults/Zone.lean:63 VE.Defaults.ByDefaultLeftTo (S, trusted) not-drop: ¬ ->  (the proofs it breaks: lean/VE/Defaults/Zone.lean:733, lean/VE/Defaults/Zone.lean:789)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) body-true: let rec' := record ++ switchesOffRecord L.D M record AdmissibleCompletion L.U X M (openNames L) r... -> True (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:30 VE.Defaults.Observed (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Defaults/Zone.lean:465, lean/VE/Defaults/Zone.lean:509)
+SURVIVOR lean/VE/Defaults/Zone.lean:194 VE.Defaults.zoneForm (G[V], trusted) append-right: record ++ -> 
+SURVIVOR lean/VE/Defaults/Zone.lean:194 VE.Defaults.zoneForm (G[V], trusted) list-empty: record -> []
+UNKNOWN lean/VE/Defaults/Zone.lean:68 VE.Defaults.DefaultZone (S, trusted) ctor-drop: | leftTo (differ : List (String × List α)) (w₁ w₂ : List ((String × List α) × Bool)) ->  (lean/VE/Defaults/Zone.lean:739: the failing proof cannot be cut: Unknown constant `VE.Defaults.De...)
+UNKNOWN lean/VE/Defaults/Zone.lean:195 VE.Defaults.zoneForm (G[V], trusted) list-empty: (VE.SoftNorms.exceptedDecisions L.D) -> [] (lean/VE/Defaults/Zone.lean:195: Invalid projection: Type of)
+SURVIVOR lean/VE/Defaults/Zone.lean:200 VE.Defaults.noExceptionRecord (S, trusted) list-first: (VE.SoftNorms.exceptedDecisions D).flatMap (fun (n, ss) => (VE.NormDefaults.allTuples M ss).map (... -> (((VE.SoftNorms.exceptedDecisions D).flatMap (fun (n, ss) => (VE.NormDefaults.allTuples M ss).map... (the proofs it breaks: lean/VE/Defaults/Zone.lean:876, lean/VE/Defaults/Zone.lean:884)
+SURVIVOR lean/VE/Defaults/Zone.lean:194 VE.Defaults.zoneForm (G[V], trusted) list-first: switchesOffRecord L.D M record -> ((switchesOffRecord L.D M record).take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-first: switchesOffRecord L.D M record -> ((switchesOffRecord L.D M record).take 1) (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:194 VE.Defaults.zoneForm (G[V], trusted) list-drop-last: record -> (record.dropLast)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-drop-last: record -> (record.dropLast) (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:36 VE.Defaults.switchesOffRecord (S, trusted) list-first: record -> (record.take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:201 VE.Defaults.noExceptionRecord (S, trusted) list-first: (VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), false)) -> (((VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), false))).take 1) (the proofs it breaks: lean/VE/Defaults/Zone.lean:876, lean/VE/Defaults/Zone.lean:884)
+SURVIVOR lean/VE/Defaults/Zone.lean:35 VE.Defaults.switchesOffRecord (S, trusted) list-last: (offDecisions D) -> ((offDecisions D).reverse.take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:35 VE.Defaults.switchesOffRecord (S, trusted) list-last: (VE.NormDefaults.allTuples M ss) -> ((VE.NormDefaults.allTuples M ss).reverse.take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:195 VE.Defaults.zoneForm (G[V], trusted) list-last: (decisionNames L.D) -> ((decisionNames L.D).reverse.take 1)
+SURVIVOR lean/VE/Defaults/Zone.lean:45 VE.Defaults.DefaultCompletion (S, trusted) list-drop-first: switchesOffRecord L.D M record -> ((switchesOffRecord L.D M record).drop 1) (the proofs it breaks: lean/VE/Defaults/Zone.lean:536, lean/VE/Defaults/Zone.lean:553, lean/VE/Def...)
+SURVIVOR lean/VE/Defaults/Zone.lean:195 VE.Defaults.zoneForm (G[V], trusted) list-drop-first: (decisionNames L.D) -> ((decisionNames L.D).drop 1)
+trust_mutants: 10 KILLED, 19 SURVIVOR, 2 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 103 OTHER SHARD in 540 s
+trust_mutants: G[V], trusted: 2 KILLED, 6 SURVIVOR, 1 UNKNOWN, 26 OTHER SHARD
+trust_mutants: S, trusted: 8 KILLED, 13 SURVIVOR, 1 UNKNOWN, 3 INVALID, 77 OTHER SHARD
+trust_mutants: steps: wall plan 8.4 s, scratch 1.7 s, control_build 0.2 s, probe_install 1.1 s, control_probes 9.7 s, mutants 514.5 s, cleanup 4.2 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 9.6 s (1), mutant_builds 1341.3 s (47), mutant_checks 277.1 s (32), stage_controls 104.9 s (3), mutant_probes 267.4 s (10)
