@@ -1,0 +1,5 @@
+recorded 45 units for tree ceed6efd1c; 3 others left to the static graph until they run (3 with only some of their chunks here); 0 failed
+SHARD 2/2: exit 0 in 1987.2 s; 51 units, 51 passed
+recorded 41 units for tree ceed6efd1c; 3 others left to the static graph until they run (3 with only some of their chunks here); 0 failed
+SHARD 1/2: exit 0 in 3273.3 s; 47 units, 47 passed
+[gha-select 15:18:31Z] summary: selected tests ran on GitHub Actions (2 shards, run df-5ab-177ce32f-t629309); exit=0; 3402s
