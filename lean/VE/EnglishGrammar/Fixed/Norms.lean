@@ -17,26 +17,9 @@ def normRanks : Array Nat := #[1, 0, 0]
 def normTys : Array Ty := #[.norm, .consequence, .refs]
 def normConsequence : Nat := 1
 
-inductive NormSym where
-  | t (a : Terminal)
-  | base (n : Nat)
-  | own (i : Nat)
-  deriving DecidableEq, Repr
-
-inductive NormAct where
-  | header
-  | precedence
-  | refs
-  | clause (guard : Bool)
-  | exceptWhen
-  deriving DecidableEq, Repr
-
-structure NormRow where
-  tag : String
-  lhs : Nat
-  act : NormAct
-  rhs : List NormSym
-  deriving DecidableEq, Repr
+inductive NormSym where | t (a : Terminal) | base (n : Nat) | own (i : Nat)
+inductive NormAct where | header | precedence | refs | clause (guard : Bool) | exceptWhen
+structure NormRow where (tag : String) (lhs : Nat) (act : NormAct) (rhs : List NormSym)
 
 def normRows : Array NormRow := #[
   { tag := "norm.header", lhs := 0, act := .header, rhs := [.t (.kw "rule"), .t (.cls .numeral)] },
