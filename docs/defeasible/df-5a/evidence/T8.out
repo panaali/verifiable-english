@@ -1,0 +1,4 @@
+error: VE/Defaults/Zone.lean:186:22: Unknown constant `VE.Defaults.DefaultZone.notSaid`
+error: VE/Defaults/Zone.lean:793:57: Unknown constant `VE.Defaults.DefaultZone.notSaid`
+error: Lean exited with code 1
+error: build failed

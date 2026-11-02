@@ -20,10 +20,31 @@
         },
         "required": ["id", "status", "rows", "governed"],
         "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "choices": {"items": {"$ref": "#/$defs/choice_group"}, "minItems": 1, "type": "array"},
+          "id": {"type": "string", "x-equals": "/id"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "choices"],
+        "type": "object"
       }
     ]
   },
   "$defs": {
+    "choice_group": {
+      "$comment": "VE.Scope.Run.explainCase: the rows under one joint choice of the governed sets, labelled by the choice.",
+      "additionalProperties": false,
+      "properties": {
+        "choice": {"items": {"$ref": "#/$defs/pick"}, "minItems": 1, "type": "array"},
+        "governed": {"items": {"$ref": "#/$defs/governed"}, "type": "array"},
+        "rows": {"items": {"$ref": "#/$defs/unit_row"}, "type": "array"}
+      },
+      "required": ["choice", "rows", "governed"],
+      "type": "object"
+    },
     "governed": {
       "$comment": "VE.Scope.Run.governedJson: a governor of the block, in its order, and the units whose rows list it.",
       "additionalProperties": false,
@@ -42,6 +63,18 @@
         "unit": {"type": "string"}
       },
       "required": ["id", "unit", "effect", "reach", "provenance"],
+      "type": "object"
+    },
+    "pick": {
+      "$comment": "VE.Scope.Run.choiceJson: a governed set's unit, id and version and the reading a choice takes from it.",
+      "additionalProperties": false,
+      "properties": {
+        "reading": {"type": "string"},
+        "set": {"type": "string"},
+        "unit": {"type": "string"},
+        "version": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["unit", "set", "version", "reading"],
       "type": "object"
     },
     "unit_row": {

@@ -9,6 +9,7 @@ text and Lean's sentences, and the unit and governor ids only in the provenance 
 """
 from __future__ import annotations
 
+import itertools
 import json
 from pathlib import Path
 
@@ -43,17 +44,61 @@ def _effect_key(effect) -> str | None:
 
 
 def answer_problem(row, meta, case_id: str = _CASE_ID) -> str | None:
-    """Why Lean's `scope` row is not an answer about the document `meta` (R8: its binding), or None. Rows follow the
-    document's unit order, each unit once. Every governor a row names is one of the document's, once, with its unit,
-    its effect and its recorded reach, which holds the row's unit (or, for `precedes`, its unit is the row's).
-    `governed` is the document's governors in order, each with exactly the units whose rows name it."""
-    if type(row) is not dict or set(row) != {"id", "status", "rows", "governed"} or row["id"] != case_id \
-            or row["status"] != "ok" or type(row["rows"]) is not list or type(row["governed"]) is not list:
+    """Why Lean's `scope` row is not an answer about the document `meta` (R8: its binding), or None: its rows and
+    their index (`rows_problem`), or, for a reading set governed per choice (sc-1cb), each choice's (`choices_problem`)."""
+    if type(row) is not dict or set(row) not in ({"id", "status", "rows", "governed"}, {"id", "status", "choices"}) \
+            or row["id"] != case_id or row["status"] != "ok":
         return "the row is not an answer to the case"
+    return choices_problem(row["choices"], meta) if "choices" in row else rows_problem(row["rows"], row["governed"], meta)
+
+
+def choices_problem(choices, meta) -> str | None:
+    """Why Lean's choice groups are not about the document `meta`, or None. Each group's label names reading sets of
+    the document (id, version and unit) and one reading of each; every group names the same sets, in the document's
+    order, each once; the groups are every choice of those sets once, in lf-14d's order (the first set's reading
+    changing slowest); each group's rows and index are bound as an answer's (`rows_problem`)."""
+    sets = {}
+    for position, s in enumerate(meta.get("reading_sets") or []):
+        if type(s) is dict and type(s.get("id")) is str and type(s.get("readings")) is list:
+            version = s.get("version") if type(s.get("version")) is int and s.get("version") >= 0 else 0
+            sets.setdefault((s["id"], version), (position, s.get("unit"), [r.get("id") if type(r) is dict else None
+                                                                            for r in s["readings"]]))
+    labels = []
+    for group in choices if type(choices) is list else [None]:
+        if type(group) is not dict or set(group) != {"choice", "rows", "governed"} or type(group["choice"]) is not list:
+            return "a choice group's fields are not choice, rows and governed"
+        label = []
+        for pick in group["choice"]:
+            found = sets.get((pick.get("set"), pick.get("version"))) \
+                if type(pick) is dict and type(pick.get("set")) is str and type(pick.get("version")) is int else None
+            if found is None or set(pick) != {"unit", "set", "version", "reading"} or pick["unit"] != found[1] \
+                    or type(pick["reading"]) is not str or pick["reading"] not in found[2]:
+                return "a choice names a reading set or a reading outside the document"
+            label.append((found[0], found[2].index(pick["reading"]), len(found[2])))
+        problem = rows_problem(group["rows"], group["governed"], meta)
+        if problem is not None:
+            return f"under a choice: {problem}"
+        labels.append(label)
+    named = sorted({at for label in labels for at, _, _ in label})
+    if not labels or any([at for at, _, _ in label] != named for label in labels):
+        return "the choices do not each name the same reading sets, in the document's order, each once"
+    if [[i for _, i, _ in label] for label in labels] != \
+            [list(x) for x in itertools.product(*(range(n) for _, _, n in labels[0]))]:
+        return "the choice groups are not every choice of their reading sets, once each, in order"
+    return None
+
+
+def rows_problem(rows, governed, meta) -> str | None:
+    """Why `rows` and their index `governed` are not about the document `meta`, or None. Rows follow the document's
+    unit order, each unit once. Every governor a row names is one of the document's, once, with its unit, its effect
+    and its recorded reach, which holds the row's unit (or, for `precedes`, its unit is the row's). `governed` is the
+    document's governors in order, each with exactly the units whose rows name it."""
+    if type(rows) is not list or type(governed) is not list:
+        return "the rows or their index are not lists"
     units, governors = _declared(meta)
     order = {u: i for i, u in enumerate(units)}
     listed, last = {}, -1
-    for entry in row["rows"]:
+    for entry in rows:
         if type(entry) is not dict or set(entry) != {"unit", "governors"} or type(entry["governors"]) is not list:
             return "a row's fields are not unit and governors"
         unit = entry["unit"]
@@ -76,7 +121,7 @@ def answer_problem(row, meta, case_id: str = _CASE_ID) -> str | None:
                 return f"{unit}: governor {x['id']} is named twice"
             listed[x["id"]].append(unit)
     expected = [{"id": g, "units": listed.get(g, [])} for g in governors]
-    if row["governed"] != expected:
+    if governed != expected:
         return "governed is not the document's governors with the units whose rows name them"
     return None
 
@@ -92,7 +137,7 @@ def read_answer(row, case: dict) -> tuple[list[dict], dict, bytes]:
     problem = answer_problem(row, meta, case.get("id")) if type(meta) is dict else "Lean answered a document Python cannot read"
     if problem is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean's scope answer is not bound to its document: {problem}")
-    return row["rows"], meta, source
+    return row["choices"] if "choices" in row else row["rows"], meta, source
 
 
 def explain(raw: bytes) -> tuple[list[dict], dict, bytes]:
@@ -112,7 +157,11 @@ def explain(raw: bytes) -> tuple[list[dict], dict, bytes]:
 def lines(rows: list[dict], meta, source: bytes, *, ids: bool = False) -> list[str]:
     """The reader's view: each governed unit's source text, then Lean's sentences under *Where the parts come from:*,
     in the block's order of its governors; with `ids`, the unit and each governor's id, effect and reach (the
-    provenance view)."""
+    provenance view). Choice groups (sc-1cb) are shown in Lean's order, each under its label as 11.5 writes a choice."""
+    if rows and "choice" in rows[0]:
+        return [line for group in rows for line in [
+            "Under the choice " + ", ".join(f"{p['unit']} {p['set']}@{p['version']}:{p['reading']}" for p in group["choice"])
+            + ":", *("  " + line for line in lines(group["rows"], meta, source, ids=ids))]]
     units, governors = _declared(meta)
     rank = {g: i for i, g in enumerate(governors)}
     out = []

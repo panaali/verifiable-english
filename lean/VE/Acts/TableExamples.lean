@@ -87,8 +87,12 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 -- T5: has the right to and may, G11: each way, or one act.
 #guard table .right g11 == [[.atom directly, .atom through], [.whole g11]]
 #guard table .may g11 == [[.atom directly, .atom through], [.whole g11]]
--- T6: has the right to and may, G12's trees (own "to"): two atoms each.
-#guard [false, true].all fun b => table .right (g12 b) == [[.atom (form b), .atom join]] && table .may (g12 b) == [[.atom (form b), .atom join]]
+-- T6: has the right to and may, G12's trees ("to form and to join", own "to"): each, or both together (D3 revised).
+#guard [false, true].all fun b => [Op.right, .may].all fun op =>
+  table op (g12 b) == [[.atom (form b), .atom join], [.whole (g12 b)]]
+-- T6s: may and has the right to, a split marker's and (own "to" or shared): one reading, each.
+#guard [false, true].all fun s => [Op.right, .may].all fun op =>
+  table op (.all s true [form false, join]) == [[.atom (form false), .atom join]]
 -- T7: has the right to, G10's trees (split marker): six atoms each.
 #guard [false, true].all fun b => shape (table .right (g10 b)) == [6] && shape (table .may (g10 b)) == [6]
 -- T8: must, G6 (a split marker's or): no reading.
