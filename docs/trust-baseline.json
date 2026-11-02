@@ -1741,6 +1741,20 @@
    "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 110,
+   "reason": "cmp-s4a: VE/Discourse/Positions.lean S +110 (positions, formulaMentions, slotName, rowOf, rowsAt, slotsIn, withConstant, withRelation, slotMeaning, IntendedAt: 14.2/14.3's meaning; every one killed by a mutant in docs/composition/cmp-s4a/mutants.json); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4a, 2026-10-18",
+   "commit": "a73c2f53b88e2fb57f2b3db256ceac4fe2845e64"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
+   "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
   }
  ]
 }
