@@ -1,0 +1,19 @@
+{
+ "job": "pc-1-c3772e0b",
+ "head": "69451a83cf2af90316ec678a71ac87861727c032",
+ "argv": [
+  "pc-1-c3772e0b",
+  "69451a83cf2af90316ec678a71ac87861727c032",
+  "30671a99b9db79ec0378330c3e8452090159374a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-196c570038e4.tar.zst",
+  "b5564553d2cdcb02a2212cde420b53815ac91fc28bae2deb0a2618929315bd4d",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Judgments/ChainExamples.lean",
+  "--allow",
+  "docs/profile-composition/pc-1/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
