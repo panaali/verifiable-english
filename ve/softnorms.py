@@ -221,13 +221,13 @@ def base_predicate_declaration(declaration):
 
 class SoftenedNormDocument(NormDocument):
     def base_environment(self):
-        data = self.env.to_dict()
+        from .norms import base_data
+        # The norms layer, `acts@0` with its block and `readings@1` as the norms projection drops them (one owner).
+        data = base_data(self.env.to_dict())
         data['vocabulary'].pop('soft', None)
         data['vocabulary']['predicates'] = {
-            name: base_predicate_declaration(decl)
-            for name, decl in data['vocabulary']['predicates'].items() if 'regulated' not in decl}
-        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class).
-        data['profiles'] = [p for p in data['profiles'] if p not in ('norms@0', 'soft-norms@0', 'readings@1')]
+            name: base_predicate_declaration(decl) for name, decl in data['vocabulary']['predicates'].items()}
+        data['profiles'] = [p for p in data['profiles'] if p != 'soft-norms@0']
         return SoftBaseEnvironment(data, getattr(self, 'soft_premises', ()))
 
 
