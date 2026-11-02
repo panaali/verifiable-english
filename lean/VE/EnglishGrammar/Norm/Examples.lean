@@ -285,6 +285,13 @@ def softAct (profiles : String) : Env := envOf actSorts permitted profiles ", \"
   some [⟨.every "act", .modal .may, .strict, "permitted", [], .pred "permitted" [.var 0], [.top], []⟩]
 #guard clauses (rd act LA "Rule 1. Every act may be done, if this holds in all cases, except when that act may be done.") ==
   some [⟨.every "act", .modal .may, .strict, "permitted", [], .top, [.pred "permitted" [.var 0]], []⟩]
+-- each condition place reads a formula, not only an atom (the rows' `.base 2`)
+def neg := "it is not the case that that act may be done"
+#guard ([", if " ++ neg ++ ".", ", unless " ++ neg ++ ".", ", except when " ++ neg ++ ".", ", if " ++ neg ++ ", unless " ++
+  neg ++ ".", ", if " ++ neg ++ ", except when " ++ neg ++ ".", ". Except when " ++ neg ++ "."].map fun t =>
+    (clauses (rd act LA ("Rule 1. Every act may be done" ++ t))).map (·.map fun c =>
+      ((c.guard :: c.carveOuts).filter (· matches .not _)).length)) == [some [1], some [1], some [1], some [2], some [2], some [1]]
+#guard outcome (rd act LA "Rule 1. Every act may be done, if may be done.") == "stopped 1 noDerivation"
 -- a binary plain role without a negative: the universal form binds both slots, "each" or "any"
 def assigned : Env := envOf "{\"item\": {\"description\": \"item\"}, \"person\": {\"description\": \"person\"}}"
   ("{\"assigned\": {\"arguments\": [\"item\", \"person\"], \"description\": \"assigned\", \"verbalisation\": " ++
