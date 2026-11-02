@@ -11,8 +11,8 @@ typed atoms before anything is listed; the review's probe answers `budget 200000
 **Recorded deviations**: `valid` added to four statements of spec 7.5 (signed:
 `reviews/dri-decisions-20261102-df-5a.md`). The `forcedAll` group is cut to df-5ab. The item is about 1,190 hand-written
 lines, against the 600-line rule; the DRI accepted it as it is (`reviews/dri-decisions-20261102-df-5a-size.md`, "Size").
-**Not run here**: the full gate (the chain runs it), and the 28 selected files over 120 s that were deferred to the
-chain gate (`evidence/selected-tests.txt`).
+**Not run here**: the full gate (the chain runs it). The first build deferred 28 selected files over 120 s to the
+chain gate; the round-1 selection (89 units) deferred none (`evidence/selected-tests.txt`).
 **Bytes 0. DELTA**: trust only (T1, R16).
 
 ## Plan rows (plan 3.6 and batch DF-5 at 174fbb62a; spec 7.5, 8.6, 8.9; task deliverables (1) to (4))
@@ -177,6 +177,11 @@ output (`trust-mutants*.json`, `evidence/`) are excluded.
 - Generators: `uv run python tools/regen_generated.py --write --skip route-cases`. route-cases needs a Rust release
   binary this worktree lacks, and this item changes none of its inputs. The run also refreshed six stale codemap pages
   of main (tracked files that main's codemap had not caught up with).
+- Review round 1 (F1): `lake build` (whole library, 1,228 jobs) builds; `python3 lean/audit.py` PASS (721 files, 8,014
+  theorems, only the standard axioms); `uv run python tools/lean_statements.py --check` PASS; `compare_statements.py`
+  unchanged (19 OK, `evidence/statements.out`); `uv run python tools/regen_generated.py --check` clean; selected tests at
+  0b1c25849: 89 of 526 units, 0 failed (`evidence/selected-tests.txt`); the F1 probe and the regression guards in
+  `ZoneExamples.lean`; seeded bugs `evidence/mutants.out` and `evidence/F1.out`.
 - Selected tests: `evidence/selected-tests.txt`. 387 units in six cloud shards plus a fast stage. One failure,
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: `ZoneExamples.lean` parses
   JSON. It is fixed in ba5a8c4c1 (an `other_json` entry), and the failed id rerun passes. Nothing in
