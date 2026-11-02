@@ -4,34 +4,36 @@
 - **What changed:** `lean/VE/Discourse/Compose.lean` (new) holds 14.4, 14.5 and 14.6's identity theorems, all proved
   (no `sorry`, no new axiom). `lean/VE/Discourse/Run.lean` gains `encodeComposed`, `ComposedAdmissionAnswer` and the
   restated `discourse_wire_acceptance`; `fuelBudget` moved unchanged to `Admission.lean` as `VE.Discourse.fuelBudget`.
-  `lean/VE/Discourse/ComposeExamples.lean` (new) holds the 14.8 fixtures this item can run, as `#guard`s.
+  Fixtures: `lean/VE/Discourse/ComposeExamples.lean` (each step on its own input) and
+  `lean/VE/Service/ComposedAdmissionExamples.lean` (the admission end to end); `lean/VE/Discourse/ComposeKeys.lean`
+  holds eight key-order facts `conditions_retained`'s proof reads.
 - **Cut to cmp-s4c (FOLLOW-UP):** the route entry (`runCase` on the composed path, the three `NotImplemented: <kind> on
   the chain` kinds), its relay, schema and fuzz tests, the route cases, the chain decoders that let the soft, rights
   and norm-defaults lists through step 1, and the fixtures that need them (S4-1 on the constitution part, S4-16 and
   S4-17 through the route, S4-18, S4-27, S4-28's route test, the saved byte-identity comparison). Reason: size (below).
 - **Depends on cmp-s4ab (not merged):** 14.3 steps 1 and 3 to 7 and the fence slots. Until it merges, the composed path
   refuses a fenced unit and a prose unit with a recorded formula-producing mention by name (below). S4-4, S4-5, S4-22
-  with its fence, S4-24 as a route case wait for it.
-- **Trust:** S +125, V +19, K +0 (trusted +143 of R16's 150). SIGNED by standing ruling R16.
+  with its fence and S4-24 as a route case wait for it.
+- **Trust:** S +125, V +19, K +0 (trusted +144 of R16's 150). SIGNED by standing ruling R16. Trust mutants exit 0.
 - **DELTA:** no row (docs/composition/cmp-s4/DELTA.md). No route, wire, Python or English answer changes.
 
 ## Deliverables (task cmp-s4)
 
 | Task row | Delivered | Evidence |
 |---|---|---|
-| (1) 14.4 `resolveDocument`, `caseManifest`, `resolveCase`, `contentFree`, `caseShape`; `resolveDocument_keeps`, `resolveCase_keeps`, `resolveCase_off` | yes, statements verbatim | `Compose.lean:84-190`; statement check below |
-| (1) 14.5 `dispatchAdmission`, `chainDocument`, `ChainAdmitted`, `Composed`, `admitComposed`, `conditionalOnOf`, `composedJson`; `composed_admission`, `composed_path`, `conditions_retained` | yes, statements verbatim | `Compose.lean:195-386` |
-| (2) 14.6 `composed_unchanged`, `composed_base_unchanged`, `composed_unchanged_error` (DRI condition: the `"ve.discourse@1" ∉ profiles ∨` disjunct) | yes, verbatim, in `lean/statements.txt` | `Compose.lean:389-411` |
+| (1) 14.4 `resolveDocument`, `caseManifest`, `resolveCase`, `contentFree`, `caseShape`; `resolveDocument_keeps`, `resolveCase_keeps`, `resolveCase_off` | yes, statements verbatim | `Compose.lean:85-191`; statement check below |
+| (1) 14.5 `dispatchAdmission`, `chainDocument`, `ChainAdmitted`, `Composed`, `admitComposed`, `conditionalOnOf`, `composedJson`; `composed_admission`, `composed_path`, `conditions_retained` | yes, statements verbatim | `Compose.lean:196-376` |
+| (2) 14.6 `composed_unchanged`, `composed_base_unchanged`, `composed_unchanged_error` (DRI condition: the `"ve.discourse@1" ∉ profiles ∨` disjunct) | yes, verbatim, in `lean/statements.txt` | `Compose.lean:378-401` |
 | (2) `encodeComposed`, `ComposedAdmissionAnswer`, restated `discourse_wire_acceptance` (namespace `VE.Discourse.Run`) | yes, verbatim | `Run.lean:177-202`; `runCase` unchanged, so the proof takes the left disjunct |
 | (2) `fuelBudget` moved to `Admission.lean` | yes | `Admission.lean:715` |
 | (3) route entry and relay | **cut to cmp-s4c** | widening row pre-signed there (DRI decision item 2) |
-| (4) fixtures as `#guard`s | S4-2 (α), S4-3, S4-20, S4-21, S4-22 and S4-23 (without a fence), S4-25, S4-28, S4-16 and S4-17 at `dispatchAdmission`; a synthetic S4-1 on the norms route | `ComposeExamples.lean` |
+| (4) fixtures as `#guard`s | S4-2 (α), S4-3, S4-20, S4-21, S4-22 and S4-23 (without a fence), S4-25, S4-28; S4-16 and S4-17 at `dispatchAdmission`; a synthetic S4-1 on the norms route | the two fixture modules |
 | (4) S4-1 on the constitution part, S4-14, S4-18, S4-27, route cases, saved byte-identity comparison | **cut to cmp-s4c** (S4-14 keeps today's answer: no code path changed) | |
 | (5) seeded bugs: the four the task names, plus one per new trusted definition | yes, 29 of 29 killed | `mutants.json`, table below |
 | evaluate once, charge against a stated limit, a large fixture | yes | "Evaluation cost" |
 | `lean/statements.txt`, generated tables | regenerated | `tools/regen_generated.py --write` |
 
-Plan rows (composition-PLAN.md S4 at `docs/spec/composition-PLAN.md:824`): "the discourse loader's three abstentions
+Plan rows (composition-PLAN.md S4, `docs/spec/composition-PLAN.md:824`): "the discourse loader's three abstentions
 become implementations" is cmp-s4c's (route) after cmp-s4ab (fences); "`ve/profiles.py` and the Lean gate admit
 `ve.discourse@1` beside the chain" is cmp-s4c's (three-way agreement, 14.6); question 7 stays OPEN 1 (DRI 2026-10-31
 item 2).
@@ -63,16 +65,19 @@ environment j = true`; otherwise it is `.today` of `admitDiscourse … (baseVoca
 Readings (each a point the spec leaves to the implementation):
 - **The FOL-family check of step 1** is today's gate (`Gate.decodeEnvelope` on `baseEnvironment`), which knows only
   the frozen profiles: `soft-norms@0`, `rights@0`, `norm-defaults@0`, `readings@1` and `speech-acts@0` lists stop
-  there with today's text, the same answer as off the path (`#guard`s at `ComposeExamples.lean:101-108`). So only the
+  there with today's text, the same answer as off the path (`ComposedAdmissionExamples.lean:55-62`). So only the
   norms route is reached in this item; the chain decoders are cmp-s4c's. `dispatchAdmission`'s own refusals are
-  pinned directly (`ComposeExamples.lean:109-113`).
+  pinned directly (`ComposedAdmissionExamples.lean:63-67`).
 - **`composedJson`** has the keys `document_id`, `inner`, `inner_report_id`, `references`, `report_id`;
   `encodeComposed` adds `id` and `status: ok`, as `Route.Wire.ok` does for today's answer.
 - **`caseShape`** is `{"id": <id>, "document": [<source>, <the front matter's shape as canonical text>]}`; `resolveCase`
   checks its own result against it (regenerated, never trusted) and `resolveCase_keeps` follows from that check.
   Lean's `Json` has no decidable equality, so the check compares strings (as `VE.Ask.Same` does).
-- **Layer:** `Compose` and its fixtures are layer 4 in `tools/layer_policy.py` (it states theorems on
-  `Service.Document.profilesOf` and runs the chain routes), as `VE.Compose.Contract` is.
+- **`conditionalOnOf`** recurses through objects and arrays in its `where`-clauses `tree` and `list` (structural
+  recursion through `Json`'s nested tree map); its signature is the spec's.
+- **Layer:** `Compose` and its step fixtures are layer 4 in `tools/layer_policy.py` (it states theorems on
+  `Service.Document.profilesOf` and runs the chain routes), as `VE.Compose.Contract` is; the end-to-end fixtures are
+  under `VE/Service/`.
 - **cmp-s4a review F1** (a definite's sort by `restrictionSort`) concerns resolution of slots, which no input reaches
   before cmp-s4ab; it stays with cmp-s4ab's route wiring.
 
@@ -82,52 +87,61 @@ committed): "42 spec declarations and docstrings (discourse.md lines 2313-2513);
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)`, hand-written: `Compose.lean` 412, `ComposeExamples.lean` 233,
-`Run.lean` +14/-7, `Admission.lean` 3, `lean/VE.lean` 2, `tools/layer_policy.py` 3, `tools/trust-classes.json`
-+101/-3, this report and DELTA.md. About 780 lines before the report, above the ~600 guide. The spec-verbatim
-declarations with their docstrings and the proofs of the nine theorems take about 230 of `Compose.lean`'s lines and
-cannot leave without leaving the statement gate's theorems unproved; I cut at the route entry (task row (3)), the
-fallback the task names.
+`git diff --numstat $(git merge-base HEAD main)`, hand-written: `Compose.lean` 401, `ComposeExamples.lean` 177,
+`ComposedAdmissionExamples.lean` 140, `ComposeKeys.lean` 16, `Run.lean` +14/-7, `Admission.lean` 3, `lean/VE.lean` 4,
+`tools/layer_policy.py` 3, `tools/trust-classes.json` +112/-3, `ve/assurance-manifest.json` 3, the allow file 79,
+this report and DELTA.md. About 950 lines before the report, above the ~600 guide. The spec-verbatim declarations
+with their docstrings and the proofs of the nine theorems take about 230 of `Compose.lean`'s lines and cannot leave
+without leaving the statement gate's theorems unproved; the fixtures grew so that every new trusted definition has a
+check the trust mutants can read (below). I cut at the route entry (task row (3)), the fallback the task names.
 
 ## Seeded bugs (Lean only; no Python or Rust product code changed)
 
-Each was planted alone, built with `lake build VE.Discourse.ComposeExamples`, and restored. All 29 are in
-`docs/composition/cmp-s4/mutants.json` with the first failing check.
+Each was planted alone, built with `lake build VE.Discourse.ComposeExamples VE.Service.ComposedAdmissionExamples`,
+and restored. All 29 are in `docs/composition/cmp-s4/mutants.json` with the first failing check.
 
 | Behaviour | Mutant | Fails |
 |---|---|---|
-| the composed path needs `ve.discourse@1` (S4-28) | `admitComposed`: `"ve.discourse@1" ∈ profiles ∧` dropped | `composed_path` (`Compose.lean:311`, via `admitChain_of`) |
-| `readings@1` beside `norms@0` is refused (S4-16) | `dispatchAdmission`: `.readings` runs the norms route | `ComposeExamples.lean:110` |
-| no coherence premise dropped from `conditional_on` (S4-18) | `composedJson`: `inner` with its `conditional_on` emptied | `conditions_retained` (`Compose.lean:370`) |
-| `resolveCase` removes the `discourse` key (S4-22) | `writtenText`: `discourse` kept | `ComposeExamples.lean:204` |
-| `definitions_version` is checked (step 3) | `admitChain`: `req (true || …)` | `ComposeExamples.lean:136` |
-| the payload is kept (`resolveDocument_keeps`) | `resolveWith`: the source rewritten | `resolveDocument_keeps` (`Compose.lean:169`) |
-| a case without `ve.discourse@1` is unchanged | `resolveCase`: always `resolveOn` | `resolveCase_keeps` (`Compose.lean:173`) |
+| the composed path needs `ve.discourse@1` (S4-28) | `admitComposed`: `"ve.discourse@1" ∈ profiles ∧` dropped | `composed_path` (`Compose.lean:309`, via `admitChain_of`) |
+| `readings@1` beside `norms@0` is refused (S4-16) | `dispatchAdmission`: `.readings` runs the norms route | `ComposedAdmissionExamples.lean:64` |
+| no coherence premise dropped from `conditional_on` (S4-18) | `composedJson`: `inner` with its `conditional_on` emptied | `conditions_retained` (`Compose.lean:359`) |
+| `resolveCase` removes the `discourse` key (S4-22) | `writtenText`: `discourse` kept | `ComposedAdmissionExamples.lean:126` |
+| `definitions_version` is checked (step 3) | `admitChain`: `req (true || …)` | `ComposedAdmissionExamples.lean:91` |
+| the payload is kept (`resolveDocument_keeps`) | `resolveWith`: the source rewritten | `resolveDocument_keeps` (`Compose.lean:170`) |
+| a case without `ve.discourse@1` is unchanged | `resolveCase`: always `resolveOn` | `resolveCase_keeps` (`Compose.lean:174`) |
 
 The other 22 (one per remaining new definition: `chainKeys`, `contentKey`, `unitsAndParts`, `chainConstructs`,
 `contentOk`, `chainAbstentions`, `editObj`, `editArr`, `unitFree`, `frontShape`, `textShape`, `caseParts`,
-`contentFree`, `caseShape`, `chainUnit`, `conditionalOnOf`, `conditionalOnTree`, `conditionalOnList`, `chainBase`,
-`caseManifest`, `chainDocument`, `encodeComposed`) each fail a named `#guard` (`mutants.json`).
+`contentFree`, `caseShape`, `chainUnit`, `conditionalOnOf` and its `tree` and `list`, `chainBase`, `caseManifest`,
+`chainDocument`, `encodeComposed`) each fail a named `#guard` (`mutants.json`).
 
 ## Trust (R16)
 
 `uv run python tools/trust_map.py --check`: "PASS: K, S and untied [V] within 3b4e471f8c29 and the allowances
 introduced since"; against the merge base: K +0, S +125 (`Compose.lean`), V +19 (`Compose.lean` +18: `chainBase`,
-`caseManifest`; `Run.lean` +1: `encodeComposed`). Recorded with `--signed "SIGNED by standing ruling R16
+`caseManifest`; `Run.lean` +1: `encodeComposed`), trusted +144. Recorded with `--signed "SIGNED by standing ruling R16
 (DRI-RULINGS.md), cmp-s4, 2026-10-18"` (`docs/trust-baseline.json`). No line replaces a deleted Python path (no R6).
 
 Classes (`tools/trust-classes.json`): S for the meaning the theorems are stated over or that decides acceptance
 (`chainConstructs` and its helpers, `contentOk`, `chainAbstentions`, `contentFree`, `caseShape` and their helpers,
-`chainUnit`, `conditionalOnOf`/`Tree`/`List`, `ChainAdmitted`, `Composed`), as cmp-s4a's review F2 asks; C for the
-checked executables (`resolveWith`, `resolveDocument`, `resolveOn`, `resolveCase`, `writtenText`, `admitChain`,
+`chainUnit`, `conditionalOnOf`, `ChainAdmitted`, `Composed`), as cmp-s4a's review F2 asks; C for the checked
+executables (`resolveWith`, `resolveDocument`, `resolveOn`, `resolveCase`, `writtenText`, `admitChain`,
 `admitComposed`); tied: `composedJson` (`conditions_retained`), `chainDocument` and `dispatchAdmission`
 (`composed_admission`), `fuelBudget` (`composed_unchanged`), `ComposedAdmissionAnswer` (`discourse_wire_acceptance`);
 `chainReferences` G[R]; fixtures T.
 
-R16's conditions: 143 ≤ 150, K +0; every new trusted definition has a check that can fail (the 29 hand mutants;
-trust mutants below); the FOLLOW-UPS row is under "## cmp-s4" in `manage-agents/FOLLOW-UPS.md` (ties pass).
+R16's conditions: 144 ≤ 150, K +0; every new trusted definition has a check that can fail (the 29 hand mutants; the
+trust mutants); the FOLLOW-UPS row is under "## cmp-s4" in `manage-agents/FOLLOW-UPS.md` (ties pass).
 
-TRUST-MUTANTS-RESULT
+Trust mutants: `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/composition/cmp-s4/trust-mutants-allow.json
+--rescore … --json docs/composition/cmp-s4/trust-mutants.json` on `83ae4691e` (the final Lean tree): exit 0, "KILLED
+129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25". The 15 allow entries are type errors the tool reads as UNKNOWN
+(`list-empty` on lists and maps of another type), `Composed`'s constructor drops (each constructor has a `#guard`), and
+equivalent mutants (`take 1` and `reverse.take 1` on lists of at most one element or under `isEmpty`, `chainKeys.dropLast`
+past the `fence` arm), each with its one-line reason. Two tool constraints shaped the fixtures, recorded for the next
+item: the tool's source scan does not read Lean raw strings (`r#"…"#`), and it probes a definition's own module when
+that module holds `rfl` checks, so the key-order facts live in `ComposeKeys.lean` and the end-to-end fixtures (whose
+probe walks the whole chain route, about 11 minutes) are outside `Compose`'s directory.
 
 ## Evaluation cost (feature feed, evaluators and runners)
 
@@ -137,25 +151,49 @@ manifest), `resolveWith` once, `chainDocument` once, the chain route once, the r
 document is charged against `Loader.maxDocumentBytes` (4,000,000 bytes, the loader's limit on a document text) before
 the chain route reads it: `ResourceLimit: chain document bytes`. No slot is resolved in this item, so nothing fans out;
 the norms route keeps its own limit of 256 rules. Fixture: a 200-norm-unit document ends within both
-(`ComposeExamples.lean:90-96`, `large`).
+(`ComposedAdmissionExamples.lean:45-50`, `large`).
 
 ## Tests
 
-- `lake build VE.Discourse.ComposeExamples`: every `#guard` passes. `cd lean && lake build`: "Build completed
-  successfully (1234 jobs)". `python3 lean/audit.py`: "PASS: 725 source files; 8029 named theorem declarations
-  audited … only the declared standard axiom allowlist".
+- `lake build VE.Discourse.ComposeExamples VE.Service.ComposedAdmissionExamples`: every `#guard` passes.
+  `cd lean && lake build`: "Build completed successfully". `python3 lean/audit.py`: "PASS: 727 source files; 8029 named
+  theorem declarations audited … only the declared standard axiom allowlist".
 - `uv run python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries" (route-cases needs the Rust
-  release binary; its inputs did not change: `runCase` is as on main).
-- SELECTED-RESULT
+  release binary; its inputs did not change: `runCase` is as on main). `tools/check_lean_imports.py`: "Lean layer
+  graph kept".
+- Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `eac6e76b1`: 436 of 437
+  units passed in 6 shards; the one failure, `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
+  (the new files unclassified), was fixed in `edd6810d0`. After the fixture split, a second selected run on `161d199ea`
+  (fast stage, 306 of 423 units: "1 failed, 10460 passed") failed only that test again, for `ComposeKeys.lean`'s
+  docstring; fixed in `83ae4691e` and rerun: `uv run pytest -q tests/test_assurance_manifest.py`: "139 passed".
 - No test in `main-known-red.txt` was hit. Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Pilot bytes
 
 0 (*estimate*): no route reaches the composed path before cmp-s4c.
 
-## Commits (`git log --oneline --no-merges main..HEAD`, saved)
+## Commits (`git log --oneline --no-merges main..HEAD`, saved at `cb5edf9e1`)
 
-COMMITS
+```
+cb5edf9e1 cmp-s4: trust mutants on 83ae4691e (rescore): exit 0 (KILLED 129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25)
+83ae4691e cmp-s4: ComposeKeys' docstring reads no JSON API name (assurance manifest's JSON-use scan); inventories
+161d199ea cmp-s4: trust mutants on 2f6fcc6ab: exit 0 (KILLED 129, SURVIVOR 0, UNKNOWN 0, INVALID 32, ALLOWED 25)
+2f6fcc6ab cmp-s4: S +125 again (no helper docstrings in conditionalOnOf's where-clauses); twoMentions classified T; inventories
+1028d3c6b cmp-s4: conditionalOnOf's helpers as where-clauses (one declaration); two more guards; trust-mutant allow file
+bf0f12d72 cmp-s4: the key-order lemmas in their own module (ComposeKeys); inventories, pins
+36cf6c26a cmp-s4: fixtures split: each step on its own input and the admission end to end; mutants rerun
+edd6810d0 cmp-s4: classify Compose.lean and its fixtures in the assurance manifest's other_json
+eac6e76b1 cmp-s4: DELTA (no row) and REPORT draft
+3afd13161 cmp-s4: R16 allowance S +125
+97452b9e5 cmp-s4: conditionalOnOf's signature as the spec writes it; inventories regenerated
+c16972559 cmp-s4: classify the fixture helper envCase (T)
+3539f48df cmp-s4: fixtures without raw strings, stronger guards; layer 4 for Compose; pins and inventories regenerated
+cfcf7604d cmp-s4: R16 allowance recorded (S +124, V +19, K +0)
+508ed932b cmp-s4: seeded mutants (29 of 29 killed), regenerated inventories
+66fd81dd0 cmp-s4: trust classes (R16), regenerated tables and inventories; guards at dispatchAdmission, caseManifest and encodeComposed
+ae3827aad cmp-s4: the composed admission's fixtures (14.8) as #guards; chainBase on the norms decoder
+26dcaaf71 cmp-s4: Compose.lean, 14.4 to 14.6 with their theorems; the wire entry restated; fuelBudget moved to Admission.lean
+```
 
 ## Next items
 
@@ -166,4 +204,17 @@ COMMITS
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELF-REVIEW
+1. Typed and contained Lean answers: N.A., no relayed answer changes (`runCase` and the relay unchanged; cmp-s4c).
+2. Every deliverable built or ruled: PASS, the deliverables table; the cut to cmp-s4c is the task's own fallback and the DRI's decision item 1; no Python copy of a Lean decision, no report test, no in-flight overlap (`tools/layer_policy.py` edited away from feature/pc-1's hunk).
+3. Tests can fail: PASS, `mutants.json` (29 of 29 killed, each planted alone) and `trust-mutants.json` (exit 0, allow file with one reason per entry).
+4. Python, Lean and Rust agree: N.A., no Python or Rust change and no answer change.
+5. R8 binding: N.A., no relay field added (cmp-s4c).
+6. Gate evidence on the final HEAD: PASS, the chain runs the gate on the final HEAD; the trust mutants ran on `83ae4691e`, whose Lean tree is the final one.
+7. No unsigned item: PASS, R16 growth signed (`docs/trust-baseline.json`); DELTA has no row (DRI decision item 1).
+8. Every user-visible change in DELTA: PASS, none: `runCase` unchanged; outside `lean/` and `tools/` the diff is `ve/assurance-manifest.json`'s three classification lines (`git diff --stat $(git merge-base HEAD main) -- ve rust tests`); DELTA.md.
+9. Test selection: PASS, the selected runs above chose 437 and 423 units, not every unit.
+10. Statements say what is claimed: PASS, the statement check (0 not verbatim) and the proof-killing mutants `admitComposed`, `composedJson`, `resolveWith`, `resolveCase`.
+11. Budgets fail closed: PASS, `ResourceLimit: chain document bytes` before the chain route; the `large` fixture ends within it (`ComposedAdmissionExamples.lean:45-50`).
+12. No CPU or memory regression: N.A., no route reaches the new code before cmp-s4c.
+13. `Test-removed` trailers: N.A., no test removed or renamed.
+14. Both directions, cited evidence, spec re-read: PASS, accepting and refusing guards for each check (e.g. `contentOk` refuses at `ComposeExamples.lean:75-83` and accepts at :84-85; `chainAbstentions` refuses at :88-93 and accepts empty or absent lists at :94-96); spec re-read: 14.4 against `docs/spec/discourse.md:2313-2352`, 14.5 against :2354-2441, 14.6 against :2443-2512, 14.8's rows against :2521-2561.
