@@ -13,8 +13,6 @@ from __future__ import annotations
 import json
 
 from .backends.lean_service import CheckerUnavailable
-from .backends.relay import rows
-from .discourse import rejection
 from .environment import Environment, listed_profiles
 from .errors import VEError
 from .wire import digest
@@ -112,6 +110,8 @@ def _bind_regions(environment: dict, regions: dict, erased: dict) -> None:
 def _one(mode: str, case: dict) -> dict:
     """Lean's one row for a case; a rejection row raises Lean's diagnostic, and a row naming no case, or another, is no
     answer."""
+    from .backends.relay import rows
+    from .discourse import rejection
     answered = rows(mode, [case])
     _require(type(answered) is list and len(answered) == 1 and type(answered[0]) is dict, "one row per case")
     row = answered[0]
@@ -160,7 +160,13 @@ def _bind_admission(ids, environment, premises, conclusion, row) -> dict:
 def admission(environment: dict, premises: list, conclusion: dict) -> dict:
     """Lean's admission of a problem: the statements, the region table and the regenerated erased problem."""
     row = _one("cardinality", _case("admission", environment, premises, conclusion))
-    return _bind_admission(identities(environment), environment, premises, conclusion, row)
+    _bind_admission(identities(environment), environment, premises, conclusion, row)
+    # What the request cannot say (the bridges among the erased premises) only Lean can: it refuses a claimed table or
+    # problem other than the one it regenerates (spec 4.1). That refusal is of this answer, not of the request.
+    from .backends.relay import rows
+    claimed = _case("admission", environment, premises, conclusion, regions=row["regions"], erased=row["erased"])
+    _require(_same(rows("cardinality", [claimed]), [row]), "region table or erased problem")
+    return row
 
 
 def check_certificate(environment: dict, premises: list, conclusion: dict, certificate) -> bool:
@@ -175,8 +181,8 @@ def check_certificate(environment: dict, premises: list, conclusion: dict, certi
 def _bind_countermodel(ids, premises, conclusion, row) -> dict:
     _bind_problem(ids, premises, conclusion, row)
     _require(type(row["refutes"]) is bool, "refutes")
-    _require(_same([s["constant"] for s in row["sizes"]], [c["constant"] for c in row["regions"]["constants"]]),
-             "sizes")
+    _require(_same([s["constant"] for s in row["sizes"]], [c["constant"] for c in row["regions"]["constants"]])
+             and all(type(s["size"]) is int and s["size"] >= 0 for s in row["sizes"]), "sizes")
     return row
 
 
