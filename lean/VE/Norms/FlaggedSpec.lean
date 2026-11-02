@@ -762,6 +762,7 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts joined :
   obtain ⟨_, _, h⟩ := bind_ok h
   dsimp (config := { zeta := false }) only [jpZ] at h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain rfl := Except.ok.inj h
   exact decodeVocabulary_flag_not_defined _ _ rv hrv
 

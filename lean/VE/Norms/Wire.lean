@@ -40,12 +40,6 @@ def canonicalAct (name : String) (arity : Nat) (raw : Json) : Except String Stri
 def canonicalActIn (profiles fx : List String) (name : String) (k : Nat) (raw : Json) : Except String String :=
   if profiles.contains "acts@0" then VE.Acts.Lexical.check fx name k raw else canonicalAct name k raw
 
-/-- The act check from AP-3 on (act-phrases 3.2, 6.4): `Acts.Wire.checkAct`'s canonical act, read with the document's
-fixed phrases `fx` and frames `V`, under `acts@0`; `canonicalAct` otherwise. It elaborates nothing. -/
-def canonicalActU (profiles fx : List String) (V : VE.Acts.Vocab) (name : String) (k : Nat) (raw : Json) :
-    Except String String :=
-  if profiles.contains "acts@0" then Prod.fst <$> VE.Acts.Wire.checkAct fx V name k raw else canonicalAct name k raw
-
 /-- The canonical act of a document's profiles, without reading it: under `acts@0` the checks and the lexing of 1.3
 that a joined act passes too (`Lexical.checkWith`); `canonicalAct` otherwise. -/
 def canonicalShape (profiles fx : List String) (name : String) (k : Nat) (raw : Json) : Except String String :=
@@ -94,10 +88,19 @@ def decodeRegulatedWith (acts : Bool) (actCheck : String → Nat → Json → Ex
 def decodeRegulatedIn (profiles fx : List String) : String → List String → Json → Except String Regulated :=
   decodeRegulatedWith (profiles.contains "acts@0") (canonicalActIn profiles fx)
 
-/-- `decodeRegulatedIn` with the act check from AP-3 on, which admits a joined act (`canonicalActU`). -/
-def decodeRegulatedU (profiles fx : List String) (V : VE.Acts.Vocab) :
-    String → List String → Json → Except String Regulated :=
-  decodeRegulatedWith (profiles.contains "acts@0") (canonicalActU profiles fx V)
+/-- One `regulated` declaration whose act may be joined (`canonicalShape`); `actsOf` reads it. -/
+def decodeRegulatedShape (profiles fx : List String) : String → List String → Json → Except String Regulated :=
+  decodeRegulatedWith (profiles.contains "acts@0") (canonicalShape profiles fx)
+
+/-- The act check from AP-3 on, once per act (act-phrases 6.4): `Acts.Wire.checkAct` on each declaration's act under
+the fixed phrases `fx` and the frames `V`, in order: the first refusal, or each joined act and its one meaning. -/
+def actsOf (fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
+    Except String (List (String × VE.Acts.Act)) :=
+  regs.filterMapM fun r => match r.act with
+    | some a => do
+      let (_, A) ← VE.Acts.Wire.checkAct fx V r.name r.sorts.length (.str a)
+      pure (A.map (r.name, ·))
+    | none => pure none
 
 /-- One `regulated` declaration without `acts@0`. -/
 def decodeRegulated : String → List String → Json → Except String Regulated :=
@@ -144,13 +147,20 @@ def plainWording (r : Regulated) (raw : Json) : Option String :=
   | .plain, some act, some f => some (VE.Acts.Lexical.wording f act)
   | _, _, _ => none
 
+/-- `actsOf` when the decoder admits a joined act; else nothing is read. -/
+def joinedActs (joined : Bool) (ps fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
+    Except String (List (String × VE.Acts.Act)) :=
+  if joined && ps.contains "acts@0" then actsOf fx V regs else pure []
+
 /-- A decoded norms environment: the complete environment, its literals, the
-regulated declarations (in vocabulary order) and the original JSON. -/
+regulated declarations (in vocabulary order), the original JSON, and each joined act with
+its one meaning, read once (`actsOf`; none unless the decoder admits joined acts). -/
 structure NormsEnvironment where
   rv : VE.Route.Wire.RouteVocabulary
   regulated : List Regulated
   profiles : List String
   json : Json
+  joined : List (String × VE.Acts.Act)
 
 /-- The wording of each plain act of `ne` by its predicate, in vocabulary order (the norms route's `wordings`). -/
 def plainWordings (ne : NormsEnvironment) : List (String × String) :=
@@ -202,8 +212,8 @@ def actsView (environment : Json) (ps : List String) : Json :=
 frozen P0 decoder, then decode and retain every `regulated` extension. With
 `acts`, an environment listing `acts@0` is read with its `acts` block and the
 act check of act-phrases 3.2; without it, `acts@0` is refused as today. The act check is `Lexical.check`, unless
-`joined`, which admits a joined act (`canonicalActU`): only `decodeSource` for an entry point that runs on the
-elaborated document passes it (act-phrases 6.4; DRI 2026-11-02 ap-3db item 2). -/
+`joined`, which admits a joined act (`canonicalShape`, then `actsOf`): only `decodeSource` for an entry point that runs
+on the elaborated document passes it (act-phrases 6.4; DRI 2026-11-02 ap-3db item 2). -/
 def decodeNormsEnvironment (environment : Json)
     (displayConstants : Bool := true) (acts : Bool := false) (joined : Bool := false) :
     Except String NormsEnvironment := do
@@ -229,10 +239,11 @@ def decodeNormsEnvironment (environment : Json)
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> (if joined then decodeRegulatedU ps fx V else decodeRegulatedIn ps fx) p args raw
+      some <$> (if joined then decodeRegulatedShape ps fx else decodeRegulatedIn ps fx) p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
-  pure ⟨rv, regs, if ps.isEmpty then e.profiles else ps, environment⟩
+  let acts ← joinedActs joined ps fx V regs
+  pure ⟨rv, regs, if ps.isEmpty then e.profiles else ps, environment, acts⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
 Apply that same canonicalisation before any source environment binding: each act by
