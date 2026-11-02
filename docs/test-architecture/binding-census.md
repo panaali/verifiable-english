@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 266 |
-| leaves:closed domain | 296 |
-| leaves:none | 1485 |
-| modes | 41 |
+| leaves:bound | 271 |
+| leaves:closed domain | 298 |
+| leaves:none | 1491 |
+| modes | 42 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1084 |
-| today:shape | 562 |
+| today:not probed | 1090 |
+| today:shape | 569 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -3592,6 +3592,35 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/lexicon/spellings/*` |  |  |  |  |
 | `/result/projection/lexicon/wordings` |  |  |  |  |
 | `/result/projection/lexicon/wordings/*` |  |  |  |  |
+
+## judgment-line
+
+0 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 0 | shape |
+| `/id` | string | bound | x-equals |  | 0 | shape |
+| `/line` | string | bound | x-equals |  | 0 | shape |
+| `/predicate/arguments/*` | string | none |  |  | 0 | not probed |
+| `/predicate/name` | string | none |  |  | 0 | not probed |
+| `/record/arguments/*` | string | none |  |  | 0 | not probed |
+| `/record/decided_by` | string | none |  |  | 0 | not probed |
+| `/record/jurisdiction` | string | bound | x-equals |  | 0 | shape |
+| `/record/name` | string | none |  |  | 0 | not probed |
+| `/record/version` | integer | closed domain | const |  | 0 | shape |
+| `/status` | string | closed domain | const |  | 0 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/predicate/arguments` |  |  |  |  |
+| `/record/arguments` |  |  |  |  |
+| `/record/factors` |  |  |  |  |
+| `/record/necessary` |  |  |  |  |
+| `/record/precedents` |  |  |  |  |
+| `/record/sufficient` |  |  |  |  |
 
 ## Grammars
 

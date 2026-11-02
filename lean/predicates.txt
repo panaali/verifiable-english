@@ -22,6 +22,7 @@ module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
+module ResponseShape.Encoders.JudgmentLine
 module ResponseShape.Encoders.Metered
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
@@ -62,6 +63,7 @@ module ResponseShape.Schemas.Evaluate
 module ResponseShape.Schemas.FamilyNorms
 module ResponseShape.Schemas.Graph
 module ResponseShape.Schemas.Identity
+module ResponseShape.Schemas.JudgmentLine
 module ResponseShape.Schemas.Metered
 module ResponseShape.Schemas.Model
 module ResponseShape.Schemas.NormDefaults
@@ -336,6 +338,8 @@ module VE.EnglishGrammar.Fixed.Staged
 module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
+module VE.EnglishGrammar.JudgmentLines
+module VE.EnglishGrammar.JudgmentLinesExamples
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures

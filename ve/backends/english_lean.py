@@ -61,9 +61,11 @@ def _frame(env, case: dict) -> dict:
     return case
 
 
-def request(env, source: str, words, options: dict) -> dict:
+def request(env, source: str, words, options: dict, judgments: list | None = None) -> dict:
     case = {"id": MODE, "environment": env.to_dict(), "lexicon": export(words), "source": source,
             "mode": "authoring", "cap": CAP}
+    if judgments is not None:
+        case["judgments"] = judgments
     if options.get("vocabulary") is not None:
         case["overlay"] = options["vocabulary"]
     return _frame(env, case)
@@ -354,9 +356,10 @@ class LeanReading:
         return out
 
 
-def read(env, source: str, words, options: dict) -> LeanReading:
-    """Lean's checked answer for `source`; `CheckerUnavailable` when there is none."""
-    case = request(env, source, words, options)
+def read(env, source: str, words, options: dict, *, judgments: list | None = None) -> LeanReading:
+    """Lean's checked answer for `source`; `CheckerUnavailable` when there is none. `judgments`, the bound names, opts in
+    to Lean's refusal of an undeclared evaluative word (judgment-terms 9.5); without it no such refusal exists."""
+    case = request(env, source, words, options, judgments)
     expected = identities(env, source, words, case["lexicon"])
     response = _transport(case)
     try:

@@ -70,8 +70,9 @@ def errorOf (j : Json) : String := ((j.getObjValD "error").getStr?).toOption.get
 #guard errorOf (runCaseReported (Json.mkObj [("id", .str "d"), ("line", .str governedLine)])) != ""
 def longLine (k : Nat) : String := governedLine.replace "governance function" (String.mk (List.replicate k 'x'))
 def spare : Nat := maxLineChars - (governedLine.length - "governance function".length)
-#guard (longLine spare).length == maxLineChars &&
-  (runCaseReported (lineRequest (longLine spare))).getObjValD "status" == .str "ok"
+-- At the limit the line is read, and W2's check (a token's length) answers; one character more is the limit's.
+#guard (longLine spare).length == maxLineChars && (parseLine (longLine spare)).isSome &&
+  errorOf (runCaseReported (lineRequest (longLine spare))) == "open term needs a decision role and jurisdiction"
 #guard errorOf (runCaseReported (lineRequest (longLine (spare + 1)))) ==
   s!"ResourceLimit: a declaration line has at most {maxLineChars} characters"
 

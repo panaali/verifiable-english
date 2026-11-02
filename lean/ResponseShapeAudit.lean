@@ -14,6 +14,7 @@ import ResponseShape.Encoders.English
 import ResponseShape.Encoders.EnglishLean
 import ResponseShape.Encoders.Envelope
 import ResponseShape.Encoders.Family
+import ResponseShape.Encoders.JudgmentLine
 import ResponseShape.Encoders.Metered
 import ResponseShape.Encoders.NormDefaults
 import ResponseShape.Encoders.Norms
@@ -28,7 +29,6 @@ import ResponseShape.Encoders.Route
 import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.SensesProject
-import ResponseShape.Encoders.JudgmentLine
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
 import ResponseShape.Encoders.Standalone
@@ -224,6 +224,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Family.readingsChoices_reported
 #print axioms ResponseShape.Encoders.Family.readings_fits
 #print axioms ResponseShape.Encoders.Family.readings_reported
+#print axioms ResponseShape.Encoders.JudgmentLine.lineCase_fits
+#print axioms ResponseShape.Encoders.JudgmentLine.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Metered.answer_fits
 #print axioms ResponseShape.Encoders.Metered.binding_fits
 #print axioms ResponseShape.Encoders.Metered.reportedWith_fits
