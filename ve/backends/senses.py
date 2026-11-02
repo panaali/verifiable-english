@@ -155,6 +155,49 @@ def _identities_problem(ids: object, keys: tuple, binding: dict | None, projecte
     return None
 
 
+def _preamble_problem(lines: object, count: int, source: str | None) -> str | None:
+    """A source answer's preamble lines (`VE.Senses.Run.writtenLines`), bound to the request: as many as the
+    sentences before the body, each non-empty, and together the source's leading sentences, in order, with only
+    white space before, between and after them."""
+    if type(lines) is not list or not all(_word(line) for line in lines) or len(lines) != count:
+        return "the preamble lines are malformed or not the sentences before the body"
+    at = 0
+    for line in lines:
+        rest = source[at:] if type(source) is str else ""
+        start = at + len(rest) - len(rest.lstrip())
+        at = start + len(line)
+        if not source.startswith(line, start) or not (source[at:at + 1].isspace() or at == len(source)):
+            return "a preamble line is not the next sentence of the request's source"
+    return None
+
+
+# The members of a flip model by its status (`VE.Senses.Run.flipJson`), besides its unit and pair.
+FLIP_FIELDS = {"distinguished": {"true", "values"}, "undistinguished": set(), "unknown": set()}
+
+
+def _flips_problem(flips: object, units: list, projected) -> str | None:
+    """The flip models (`VE.Senses.flipsOf`): one row per pair `first < second` of each open unit's candidates,
+    in unit order, then pair order; a distinguishing model names predicates of the projection and gives the two
+    candidates' values."""
+    pairs = [(unit["sentence"], i, j) for unit in units
+             for i in range(len(unit["candidates"])) for j in range(i + 1, len(unit["candidates"]))]
+    if type(flips) is not list or len(flips) != len(pairs):
+        return "the flip models are not one per pair of an open unit's candidates"
+    for row, pair in zip(flips, pairs):
+        if type(row) is not dict or type(row.get("status")) is not str or row["status"] not in FLIP_FIELDS \
+                or row.keys() != {"sentence", "first", "second", "status"} | FLIP_FIELDS[row["status"]]:
+            return "a flip model has missing or unknown fields"
+        if not all(_nat(row[key]) for key in ("sentence", "first", "second")) \
+                or (row["sentence"], row["first"], row["second"]) != pair:
+            return "a flip model does not name the next pair of an open unit's candidates"
+        if row["status"] == "distinguished" and (
+                not _words(row["true"]) or not all(name in projected.predicates for name in row["true"])
+                or type(row["values"]) is not list or len(row["values"]) != 2
+                or not all(type(value) is bool for value in row["values"])):
+            return "a flip model's senses or values are malformed or not the projection's"
+    return None
+
+
 def _response_problem(response: object, expected_id: str, request_id: str,
                       fences: int | None = None, *, source: str | None = "", defaults_count: int = 0,
                       fence_ids: list[str] | None = None,
@@ -175,8 +218,8 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             or reading["status"] not in STATUSES:
         return "the reading has no known status"
     if reading["status"] in {"one", "open"}:
-        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used"} | (
-            set() if fences is None else {"fences"})
+        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used",
+                    "flips"} | ({"preamble"} if fences is None else {"fences"})
         if reading.keys() != admitted | {"code"} and reading.keys() != admitted:
             return "an admitted reading has missing or unknown fields"
         if (reading.get("code") != "Unresolved" if reading["status"] == "open" else "code" in reading):
@@ -250,6 +293,14 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         if not all(_nat(s) for s in sentences) \
                 or sentences != list(range(sentences[0], sentences[0] + len(sentences))):
             return "the units are not the consecutive body sentences"
+        if fences is None:
+            problem = _preamble_problem(reading["preamble"], sentences[0] - defaults_count,
+                                        source if binding is None else binding["source"])
+            if problem:
+                return problem
+        problem = _flips_problem(reading["flips"], reading["units"], projected)
+        if problem:
+            return problem
         units = dict(zip(sentences, reading["units"]))
         if (reading["status"] == "one") != all(not u["candidates"] for u in reading["units"]):
             return "the status disagrees with the units"
