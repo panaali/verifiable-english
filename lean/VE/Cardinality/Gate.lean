@@ -51,13 +51,19 @@ theorem gate_cardinality (ps : List String) (h : "cardinality@0" ∈ ps) (hj : "
       obtain ⟨row, hr, rfl⟩ := hk x hx
       have key : ∀ p ∈ profileTable.map (·.profile), p = "documents@1" ∨
           p ∈ ["cardinality@0", "order@0", "relational-fol@0", "time@0"] ∨ p = "judgments@0" ∨
-            p ∈ cardinalityOthers := by
+            p ∈ cardinalityOthers ∨ p = "events@0" := by
         decide
-      rcases key _ (List.mem_map_of_mem hr) with h1 | h1 | h2 | h3
+      rcases key _ (List.mem_map_of_mem hr) with h1 | h1 | h2 | h3 | h4
       · exact .inl h1
       · exact .inr h1
       · exact absurd hx (h2 ▸ hj)
       · exact absurd hx (href _ (List.mem_map_of_mem (f := fun q => (q, s!"cardinality@0 with {q}")) h3))
+      · -- `events@0` requires `norm-defaults@0`, which the row refuses.
+        have hnd := (hrows ⟨"events@0", ["relational-fol@0", "norms@0", "norm-defaults@0"],
+          refusing "events@0" eventsRefused, "pack", .pack "events"⟩ (by simp [profileTable, packRows])
+          (.inl (h4 ▸ hx))).1 "norm-defaults@0" (by simp)
+        exact absurd hnd (href _ (List.mem_map_of_mem (f := fun q => (q, s!"cardinality@0 with {q}"))
+          (by decide : "norm-defaults@0" ∈ cardinalityOthers)))
     -- ps has E2's members, and only those: it is the one sorted list of them
     have hW : ∀ x ∈ ["cardinality@0", "order@0", "relational-fol@0", "time@0"], x ∈ ps := by
       intro x hx
