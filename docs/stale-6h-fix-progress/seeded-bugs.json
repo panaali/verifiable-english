@@ -1,0 +1,234 @@
+[
+ {
+  "behaviour": "commit counts as progress in a fix round",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_fix_start_after_a_closer_opens_a_new_round",
+  "killed": true,
+  "failing": [
+   "test_a_fix_start_after_a_closer_opens_a_new_round",
+   "test_a_live_chain_is_named",
+   "test_bad_lines_are_skipped",
+   "test_commit_alone_is_not_progress_past_the_limit",
+   "test_continue_round_folds_into_its_item",
+   "test_measured_not_a_constant",
+   "test_no_six_hour_floor",
+   "test_one_message_per_round_whatever_the_commits",
+   "test_the_window_is_seven_days"
+  ]
+ },
+ {
+  "behaviour": "6-h floor on the fix rule",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_fix_start_after_a_closer_opens_a_new_round",
+  "killed": true,
+  "failing": [
+   "test_a_fix_start_after_a_closer_opens_a_new_round",
+   "test_a_live_chain_is_named",
+   "test_bad_lines_are_skipped",
+   "test_commit_alone_is_not_progress_past_the_limit",
+   "test_continue_round_folds_into_its_item",
+   "test_measured_not_a_constant",
+   "test_no_six_hour_floor",
+   "test_one_message_per_round_whatever_the_commits",
+   "test_stages_that_do_not_close_keep_the_round_open",
+   "test_the_window_is_seven_days"
+  ]
+ },
+ {
+  "behaviour": "gate-skip no longer closes a round",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_each_closing_stage_ends_the_round",
+  "killed": true,
+  "failing": [
+   "test_each_closing_stage_ends_the_round"
+  ]
+ },
+ {
+  "behaviour": "train-start no longer closes a round",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_round_never_runs_across_a_train",
+  "killed": true,
+  "failing": [
+   "test_a_round_never_runs_across_a_train",
+   "test_each_closing_stage_ends_the_round"
+  ]
+ },
+ {
+  "behaviour": "recheck-start closes a round",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_recheck_is_not_the_end_of_a_round",
+  "killed": true,
+  "failing": [
+   "test_recheck_is_not_the_end_of_a_round",
+   "test_stages_that_do_not_close_keep_the_round_open"
+  ]
+ },
+ {
+  "behaviour": "median also counts train-start",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_round_never_runs_across_a_train",
+  "killed": true,
+  "failing": [
+   "test_a_round_never_runs_across_a_train",
+   "test_only_ready_and_gate_start_are_measured"
+  ]
+ },
+ {
+  "behaviour": "median drops ready",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_median_of_an_even_count",
+  "killed": true,
+  "failing": [
+   "test_median_of_an_even_count",
+   "test_only_ready_and_gate_start_are_measured"
+  ]
+ },
+ {
+  "behaviour": "factor 5",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_commit_alone_is_not_progress_past_the_limit",
+  "killed": true,
+  "failing": [
+   "test_commit_alone_is_not_progress_past_the_limit",
+   "test_one_message_per_round_whatever_the_commits",
+   "test_pc_1_shape",
+   "test_the_limit_is_exactly_four_times"
+  ]
+ },
+ {
+  "behaviour": "window 70 days",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_the_window_is_seven_days",
+  "killed": true,
+  "failing": [
+   "test_the_window_is_seven_days"
+  ]
+ },
+ {
+  "behaviour": "limit strict",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_pc_1_shape",
+  "killed": true,
+  "failing": [
+   "test_pc_1_shape",
+   "test_the_limit_is_exactly_four_times"
+  ]
+ },
+ {
+  "behaviour": "no median reads as zero",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_never_ended_round_says_whether_it_is_in_flight",
+  "killed": true,
+  "failing": [
+   "test_a_never_ended_round_says_whether_it_is_in_flight",
+   "test_a_round_under_the_limit_is_not_replayed",
+   "test_no_look_ahead",
+   "test_no_measured_round_is_unknown_not_zero",
+   "test_pc_1_shape",
+   "test_same_second_rounds",
+   "test_the_command_writes_nothing"
+  ]
+ },
+ {
+  "behaviour": "first fix-start kept",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_new_fix_start_restarts_the_round",
+  "killed": true,
+  "failing": [
+   "test_a_new_fix_start_restarts_the_round",
+   "test_a_round_is_timed_from_its_last_fix_start",
+   "test_one_message_per_round_whatever_the_commits",
+   "test_pc_1_shape"
+  ]
+ },
+ {
+  "behaviour": "events after now seen",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_pc_1_shape",
+  "killed": true,
+  "failing": [
+   "test_pc_1_shape"
+  ]
+ },
+ {
+  "behaviour": "row t is now: re-alarms",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_commit_alone_is_not_progress_past_the_limit",
+  "killed": true,
+  "failing": [
+   "test_commit_alone_is_not_progress_past_the_limit"
+  ]
+ },
+ {
+  "behaviour": "constant median 85",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_fix_round_under_the_limit_keeps_the_six_hour_rule",
+  "killed": true,
+  "failing": [
+   "test_a_fix_round_under_the_limit_keeps_the_six_hour_rule",
+   "test_a_fix_start_after_a_closer_opens_a_new_round",
+   "test_a_live_chain_is_named",
+   "test_a_measured_median_is_silent_and_saved",
+   "test_bad_lines_are_skipped",
+   "test_commit_alone_is_not_progress_past_the_limit",
+   "test_continue_round_folds_into_its_item",
+   "test_measured_not_a_constant",
+   "test_no_look_ahead",
+   "test_no_measured_round_is_unknown_not_zero",
+   "test_no_six_hour_floor",
+   "test_one_message_per_round_whatever_the_commits",
+   "test_pc_1_shape",
+   "test_stages_that_do_not_close_keep_the_round_open",
+   "test_the_command_writes_nothing",
+   "test_the_limit_is_exactly_four_times",
+   "test_the_window_is_seven_days"
+  ]
+ },
+ {
+  "behaviour": "replay looks ahead",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_pc_1_shape",
+  "killed": true,
+  "failing": [
+   "test_pc_1_shape"
+  ]
+ },
+ {
+  "behaviour": "replay same-second collision",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_same_second_rounds",
+  "killed": true,
+  "failing": [
+   "test_same_second_rounds"
+  ]
+ },
+ {
+  "behaviour": "-c rounds not folded",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_continue_round_folds_into_its_item",
+  "killed": true,
+  "failing": [
+   "test_continue_round_folds_into_its_item"
+  ]
+ },
+ {
+  "behaviour": "fix rule applies to no-fix items (any item open)",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_a_six_hour_message_keeps_its_text",
+  "killed": true,
+  "failing": [
+   "test_a_six_hour_message_keeps_its_text",
+   "test_other_items_keep_todays_rule"
+  ]
+ },
+ {
+  "behaviour": "median looks ahead of the pass",
+  "file": "tools-local/stale-6h.py",
+  "test": "tools-local/test_stale_6h.py::test_no_look_ahead",
+  "killed": true,
+  "failing": [
+   "test_no_look_ahead",
+   "test_pc_1_shape"
+  ]
+ }
+]
