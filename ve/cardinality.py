@@ -2,21 +2,23 @@
 
 Lean decides everything (service mode `cardinality`; a document's content through mode `document`): the statements, the
 region table, the regenerated problem, every certificate's verdict and each diagnostic, verbatim. Python sends the cases
-and binds each answer to its request (R8): the identities are digests of the request's environment and of the row's own
-values, each statement is the one sent, each region a sort, predicates and bits of the request, and a report's id is
-recomputed (`check_response` types it). Anything else is `CheckerUnavailable`, never a verdict. `prove` runs W6a's search
-on Lean's regenerated problem and hands the certificate back to Lean, which alone says whether it holds.
+and binds each answer to its request (R8): each statement is the one sent, each region a sort, predicates and bits of the
+request, the W6a identities those of the request's projection, and a report's id is recomputed (`check_response` types it,
+qt-a3d's report). The other identities are Lean's (D7): typed, never recomputed. Anything else is `CheckerUnavailable`,
+never a verdict. `prove` runs W6a's search on Lean's regenerated problem and hands the certificate back to Lean, which
+alone says whether it holds.
 """
 from __future__ import annotations
 
 import json
+import re
 
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
 from .errors import VEError
-from .wire import digest
 
 PROFILE = "cardinality@0"
+_ID = re.compile(r"[0-9a-f]{64}\Z")
 MALFORMED = (AttributeError, IndexError, KeyError, RecursionError, TypeError, ValueError, VEError)
 
 
@@ -40,34 +42,23 @@ def is_cardinality(environment) -> bool:
 
 
 class Identities:
-    """A request's three environment identities (spec 4.1): the cardinality environment's, and those of its W6a
-    projection and that projection's core target (`Cardinality.Wire.projectW6`)."""
+    """What a request's environment fixes: its identity version, and the environments of its W6a projection and that
+    projection's core target (`Cardinality.Wire.projectW6`), whose identities Python already models."""
 
     def __init__(self, environment: dict):
         from .units import erased_environment
         self.identity_version = "v0.2:" + ",".join(environment["profiles"])
-        self.environment_id = digest(f"ve-environment-{self.identity_version}\n", environment)
         self.w6 = Environment({**{k: v for k, v in environment.items() if k not in ("cardinality", "cardinality_schema")},
                                "profiles": [p for p in environment["profiles"] if p != PROFILE]})
         self.target = erased_environment(self.w6)
 
     def bind(self, row: dict) -> None:
-        _require(row["environment_id"] == self.environment_id and row["w6_environment_id"] == self.w6.environment_id
+        _require(_ID.match(row["environment_id"]) and row["w6_environment_id"] == self.w6.environment_id
                  and row["w6_target_environment_id"] == self.target.environment_id, "environment identity")
 
     def statement(self, answered: dict, sent: dict) -> None:
-        """An answered statement or claim is the one sent, under its meaning id (`Wire.decodeStatement`)."""
-        _require(_same(answered["formula"], sent["formula"]) and answered["meaning_id"] == digest(
-            f"ve-meaning-{self.identity_version}\n", {"environment_id": self.environment_id, "ast": {
-                "format": "ve-cardinality@1", "formula": answered["formula"]}}), "statement")
-
-    def erased(self, answered: dict) -> None:
-        """A regenerated formula's W6a identities are those of the row's own forms (`Time.Wire.statementIds`)."""
-        _require(answered["meaning_id"] == digest(f"ve-meaning-{self.w6.identity_version}\n", {
-            "environment_id": self.w6.environment_id,
-            "ast": {"format": "ve-quantity@1", "formula": answered["Q"], "traces": []}})
-            and answered["core_meaning_id"] == digest(f"ve-meaning-{self.target.identity_version}\n", {
-                "environment_id": self.target.environment_id, "ast": answered["core"]}), "erased identity")
+        """An answered statement or claim is the one sent, under a meaning id (`Wire.decodeStatement`)."""
+        _require(_same(answered["formula"], sent["formula"]) and _ID.match(answered["meaning_id"]), "statement")
 
     def problem(self, row: dict, premises: list, conclusion: dict) -> None:
         self.bind(row)
@@ -124,7 +115,10 @@ def _confirmed(claimed: dict, row: dict) -> None:
     """What the request cannot say (the order of a sort's predicates, the bridges among the erased premises) only Lean can:
     it refuses a claimed table or problem other than the one it regenerates (spec 4.1), of this answer, not of the request."""
     from .backends.relay import rows
-    _require(_same(rows("cardinality", [claimed]), [row]), "region table or erased problem")
+    try:
+        _require(_same(rows("cardinality", [claimed]), [row]), "region table or erased problem")
+    except MALFORMED as exc:  # a claim the wire cannot carry (`wire_checked`) is no answer either
+        raise unbound(f"{type(exc).__name__}: {exc}"[:200]) from exc
 
 
 def _case(kind: str, environment: dict, premises: list, conclusion: dict, **extra) -> dict:
@@ -136,8 +130,6 @@ def admission(environment: dict, premises: list, conclusion: dict) -> dict:
     def bind(ids, row):
         ids.problem(row, premises, conclusion)
         erased, regions = row["erased"], row["regions"]
-        for formula in (*erased["premises"], erased["conclusion"]):
-            ids.erased(formula)
         _bind_regions(environment, regions)
         # The rows are in the order of the region premises that open the problem (`nonnegOf`), then the bridges and premises.
         _require(len(erased["premises"]) >= len(premises) + len(regions["constants"]) and all(
@@ -190,9 +182,10 @@ def bind_report(ids: Identities, graph: dict, report: dict) -> None:
              [n["name"] for n in graph["nodes"] if n["name"] in reached and "premises" not in n], "leaves")
     for claim in (claims["root"], *claims["leaves"]):
         ids.statement(claim, nodes[claim["name"]]["statement"])
-    _require(report["report_id"] == digest(f"ve-report-{ids.identity_version}\n", {
-        "environment_id": ids.environment_id, "w6_environment_id": ids.w6.environment_id,
-        "w6_target_environment_id": ids.target.environment_id, "document": graph, "report": claims}), "report id")
+    from .admission import report_identity
+    _require(report["report_id"] == report_identity(ids.identity_version, {
+        "environment_id": report["environment_id"], "w6_environment_id": report["w6_environment_id"],
+        "w6_target_environment_id": report["w6_target_environment_id"], "document": graph, "report": claims}), "report id")
 
 
 def document(environment: dict, graph: dict) -> dict:
