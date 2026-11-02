@@ -9,7 +9,7 @@ stated sufficient condition forces it. The conditions are soft's own exceptions 
 are today's, label for label. `dfltUniform_sound` is not proved here: its statement is held as the definition
 `DfltUniformSound` (DRI decision 2026-11-02, pc-9, item 1), for defeasible's DF-U to prove in the specification's own
 form; item 3 of that decision is open against it. Until EXP-D3 and DF-U settle, the defaults kinds refuse a document some of whose packs state a condition
-(`providerConditions`, `providerRefusal` and its sentence E1d, read by `defaultsRows` in `Defaults/Route.lean`). -/
+(`providerConditions` and `providerRefusal`, read by `defaultsRows` in `Defaults/Route.lean`; E1d's text is `providerE1d`, which no route produces yet). -/
 namespace VE.Defaults
 open VE.Norms (bindAll atom anyF Sat)
 open VE.SoftNorms (SoftDoc SoftNode DecisionKey decisionRule exceptedF exceptedName outweighsF outweighsName offName
@@ -122,7 +122,7 @@ def providerConditions (qs : List Pack) : Bool := qs.any (!·.conditions.isEmpty
 
 def providerRefusal : String := "UnsupportedProfile: defaults with provider conditions is not implemented"
 
-/-- E1d (2.1): `providerRefusal` in English. It names no provider. -/
+/-- E1d (2.1): `providerRefusal` in English. It names no provider. No route produces it yet (its display is open with the DRI). -/
 def providerE1d : String :=
   "This question assumes no exception, and this document's providers state decision conditions. " ++
   "VE cannot check these two together yet. Nothing in this document was checked."

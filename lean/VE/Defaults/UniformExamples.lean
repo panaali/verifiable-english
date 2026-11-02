@@ -60,7 +60,7 @@ def with_ (L : LayeredU) (p : Pack) : LayeredU := { L with packs := L.packs ++ [
 def askK (L : LayeredU) (p : Pack) (k : String) : Json := shown (layeredKindCase (with_ L p) "c" k (req piEnv piR k))
 def refusedP : Json := .str ("error: " ++ providerRefusal)
 
--- F9.3: every defaults kind refuses, with `providerRefusal` and its sentence E1d
+-- F9.3: every defaults kind refuses with `providerRefusal`; E1d's text is `providerE1d`, which no route produces yet
 #guard holds dπ fun L => VE.NormDefaults.Wire.defaultsKinds.all fun k => askK L (wPack "weighing" cond) k == refusedP
 #guard providerRefusal == "UnsupportedProfile: defaults with provider conditions is not implemented"
 #guard providerE1d == "This question assumes no exception, and this document's providers state decision conditions. VE cannot check these two together yet. Nothing in this document was checked."
