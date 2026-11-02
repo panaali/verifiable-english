@@ -544,6 +544,9 @@ module VE.Readings.Verdicts
 module VE.Readings.VerdictsExamples
 module VE.Readings.VerdictsWire
 module VE.Readings.Wire
+module VE.RightClauses.Examples
+module VE.RightClauses.Plain
+module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
 module VE.Rights.Correlate
