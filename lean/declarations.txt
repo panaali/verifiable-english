@@ -11364,7 +11364,7 @@ module VE.Judgments.Decl 1e1e6743750025b98ec8b5a99443c90d8bfae5e264d24fbcbe842c3
 146:0-167:18 theorem VE.Judgments.faultOf_none_iff@VE.Judgments.Decl
 169:0-182:26 theorem VE.Judgments.admit_ok_iff@VE.Judgments.Decl
 184:0-195:39 theorem VE.Judgments.admit_first_fault@VE.Judgments.Decl
-module VE.Judgments.Examples 0d71f955f223d286d47fcadc194903fea60ee05b38348616a98a1ec4d2b99371
+module VE.Judgments.Examples 0575b8aec5e44339745871c4fcd2e299b6df5b4b55668e0ceb4aa08329376054
 18:0-21:17 def VE.Judgments.Examples.errText@VE.Judgments.Examples
 23:0-26:20 def VE.Judgments.Examples.okVal@VE.Judgments.Examples
 30:0-35:106 def VE.Judgments.Examples.envText@VE.Judgments.Examples
@@ -11424,12 +11424,12 @@ module VE.Judgments.Examples 0d71f955f223d286d47fcadc194903fea60ee05b38348616a98
 316:0-319:15 def VE.Judgments.Examples.rulesOf@VE.Judgments.Examples
 322:0-325:114 def VE.Judgments.Examples.docω@VE.Judgments.Examples
 328:0-335:17 def VE.Judgments.Examples.doc11@VE.Judgments.Examples
-349:0-353:87 def VE.Judgments.Examples.words117@VE.Judgments.Examples
-355:0-356:71 def VE.Judgments.Examples.rows117@VE.Judgments.Examples
-358:0-360:53 def VE.Judgments.Examples.preds117@VE.Judgments.Examples
-362:0-363:90 def VE.Judgments.Examples.regulated117@VE.Judgments.Examples
-395:0-398:82 def VE.Judgments.Examples.jt3aList@VE.Judgments.Examples
-405:0-410:101 def VE.Judgments.Examples.goodPreds@VE.Judgments.Examples
+349:0-353:91 def VE.Judgments.Examples.rows117@VE.Judgments.Examples
+355:0-357:53 def VE.Judgments.Examples.preds117@VE.Judgments.Examples
+359:0-360:90 def VE.Judgments.Examples.regulated117@VE.Judgments.Examples
+392:0-397:94 def VE.Judgments.Examples.jt3aList@VE.Judgments.Examples
+399:0-404:39 def VE.Judgments.Examples.preds117x@VE.Judgments.Examples
+413:0-418:101 def VE.Judgments.Examples.goodPreds@VE.Judgments.Examples
 module VE.Judgments.Scan f2291c292462dd6c570ab1676fc13c1c83fbdc04f1e461aba6596b68b61315e6
 9:0-11:65 def VE.Judgments.opensIn@VE.Judgments.Scan
 13:0-14:51 theorem VE.Judgments.opensIn_iff@VE.Judgments.Scan
