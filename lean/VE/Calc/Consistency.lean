@@ -38,9 +38,10 @@ def Claim.misses : Claim → List (Option (Rat × Rat)) → Bool
 def refuteByEnclosure (r : Rounding) (inputs : List (String × Printed)) (c : Claim) : Bool :=
   c.misses (c.exprs.map (enclose r inputs))
 
+set_option linter.unusedVariables false in
 /-- *Opaque* in spec 8.1: an inlined output `rounds r' (.stat .signFlip xs) p` with `grainRefutes (2 ^ xs.length) r' p`.
 `Expr` has no `.stat` yet (me-7b), so no claim carries a sign-flip p and none is refuted here; the arm comes with it. -/
-def refuteByGrain (_ : Claim) : Bool := false
+def refuteByGrain (c : Claim) : Bool := false
 
 theorem refuteByEnclosure_sound (r : Rounding) (inputs : List (String × Printed)) (c : Claim)
     (h : refuteByEnclosure r inputs c = true) (κ : String → Rat) (hκ : InBox r inputs κ) :
