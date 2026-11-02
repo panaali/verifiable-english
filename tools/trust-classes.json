@@ -9588,6 +9588,7 @@
         "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
         "VE.Service.Document.parsedLabels",
+        "VE.Service.Document.profilesIn",
         "VE.Service.Document.profilesOf",
         "VE.Service.Document.pythonMayRead",
         "VE.Service.Document.residual",
