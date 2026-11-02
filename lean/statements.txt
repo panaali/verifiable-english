@@ -1056,10 +1056,18 @@ theorem VE.Acts.splits_eq
 theorem VE.Acts.table_free_all_own
   ∀ (op : VE.Acts.Op),
     op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
-      ∀ (sp : Bool) (ps : List VE.Acts.Atom),
-        VE.Acts.table op (VE.Acts.Act.all Bool.false sp ps) = [List.map VE.Acts.Simple.atom ps]
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.all Bool.false Bool.false ps) =
+          [List.map VE.Acts.Simple.atom ps, [VE.Acts.Simple.whole (VE.Acts.Act.all Bool.false Bool.false ps)]]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple.whole@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 3174378414
+theorem VE.Acts.table_free_all_own_split
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.all Bool.false Bool.true ps) = [List.map VE.Acts.Simple.atom ps]
   -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
-  -- expr 2380062714
+  -- expr 518330708
 theorem VE.Acts.table_free_all_shared
   ∀ (op : VE.Acts.Op),
     op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
