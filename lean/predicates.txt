@@ -197,6 +197,7 @@ module VE.Calc.RunExamples
 module VE.Calc.Syntax
 module VE.Calc.Table
 module VE.Calc.TableExamples
+module VE.Calc.Ties
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
