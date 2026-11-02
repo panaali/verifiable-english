@@ -391,9 +391,12 @@ def test_every_fronting_of_the_group_document_is_read_by_lean(group):
     assert by[(clause, 3)]["outcome"]["code"] == "QuestionWordMoved" and not by[(clause, 3)]["same"]
     assert by[(clause, 5)]["same"] and all(by[(s, k)]["same"] for s, k in by if s != clause)
     m = R.fronting_measure(result["questions"])
-    assert (m["frontings"], m["sentences"], m["reached"], m["share"]) == (4, 3, 3, 1.0)
-    assert m["by_subject"]["other subject"] == {"reached": 1, "sentences": 1, "several_same": 0}
+    assert (m["frontings"], m["sentences"], m["reached"], m["share"], m["limited"]) == (4, 3, 3, 1.0, 0)
+    assert m["by_subject"]["other subject"] == {"limited": 0, "reached": 1, "sentences": 1, "several_same": 0}
     assert m["outcomes"] == {"moved:QuestionWordMoved": 1, "one": 3} and m["other_formula"] == []
+    budget = {**by[(clause, 3)], "outcome": {"status": "budget", "code": "QuestionTooLong"}}
+    m = R.fronting_measure([budget, {**budget, "at": 5}, by[("Ann is verified.", 1)]])
+    assert (m["sentences"], m["reached"], m["limited"], m["share"], m["share_within_limits"]) == (2, 1, 1, 0.5, 1.0)
 
 
 def test_a_question_with_no_reading_has_leans_closest_among_its_candidates(group):
