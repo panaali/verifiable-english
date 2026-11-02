@@ -449,6 +449,9 @@ def _check_document(path, *, raw=None):
 
 
 def _report(doc):
+    if "cardinality" in doc:
+        from ..cardinality import document_report
+        return document_report(doc)
     joint = doc.get("discourse", {}).get("joint")
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]
