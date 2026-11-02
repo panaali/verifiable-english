@@ -1,0 +1,15 @@
+trust_mutants: 6 definitions, 197 mutants (66 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Judgments/Examples.lean:397 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: (preds.filter fun (p, ws) => !J.contains p && words117.any fun (w, o) => ws.contains w && !o.any ... -> [] (lean/VE/Judgments/Examples.lean:397: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:397 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: preds -> [] (lean/VE/Judgments/Examples.lean:398: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Examples.lean:397 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: preds.filter -> [] (lean/VE/Judgments/Examples.lean:397: Function expected at)
+UNKNOWN lean/VE/Judgments/Examples.lean:398 VE.Judgments.Examples.jt3aList (?, trusted) list-empty: words117 -> [] (lean/VE/Judgments/Examples.lean:398: Invalid field notation: Type of)
+SURVIVOR lean/VE/Judgments/Undeclared.lean:24 VE.Judgments.EvaluativeRow.matches (S, trusted) list-first: row.otherSenses -> (row.otherSenses.take 1) (the proofs it breaks: lean/VE/Judgments/Undeclared.lean:50, lean/VE/Judgments/Undeclared.lean:70)
+SURVIVOR lean/VE/Judgments/Examples.lean:353 VE.Judgments.Examples.words117 (?, trusted) list-drop-last: ["necessary", "condition"] -> (["necessary", "condition"].dropLast)
+UNKNOWN lean/VE/EnglishGrammar/Evaluative.lean:16 VE.EnglishGrammar.evaluativeRows (S, trusted) list-last: (["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate",... -> (((["reasonable", "appropriate", "appropriately", "arbitrary", "arbitrarily", "fair", "legitimate... (lean/VE/EnglishGrammar/Evaluative.lean:17: Invalid `⟨...⟩` notation: The expected type of this te...)
+SURVIVOR lean/VE/Judgments/Examples.lean:408 VE.Judgments.Examples.goodPreds (?, trusted) list-drop-middle: ("good_conduct", predicateWords "good_conduct" none), -> 
+SURVIVOR lean/VE/Judgments/Examples.lean:408 VE.Judgments.Examples.goodPreds (?, trusted) list-drop-middle: ("judgment_good", predicateWords "judgment_good" none), -> 
+SURVIVOR lean/VE/Judgments/Examples.lean:409 VE.Judgments.Examples.goodPreds (?, trusted) list-drop-middle: ("court_judgment", predicateWords "court_judgment" none), -> 
+trust_mutants: 52 KILLED, 5 SURVIVOR, 5 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 131 OTHER SHARD in 146 s
+trust_mutants: ?, trusted: 19 KILLED, 4 SURVIVOR, 4 UNKNOWN, 2 INVALID, 73 OTHER SHARD
+trust_mutants: S, trusted: 33 KILLED, 1 SURVIVOR, 1 UNKNOWN, 2 INVALID, 58 OTHER SHARD
+trust_mutants: steps: wall plan 8.1 s, scratch 1.8 s, control_build 0.2 s, probe_install 1.1 s, control_probes 4.3 s, mutants 124.9 s, cleanup 5.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 6.4 s (2), mutant_builds 99.6 s (72), mutant_checks 65.5 s (36), stage_controls 3.6 s (4), mutant_probes 268.6 s (52)
