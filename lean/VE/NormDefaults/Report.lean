@@ -493,15 +493,15 @@ def normsSource (s : SourceU) (hs : s.profiled = true) (j : Json) : ReportSource
   { U := s.U, X := [], wfU := s.wfU hs, situation := situationFrom s, supplied := suppliedWitness s,
     never := neverReached s (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "packages") }
 
-structure ReportU (j : Json) where
+structure ReportUIn (dec : UDecoder) (j : Json) where
   s : SourceU
-  decoded : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok s
+  decoded : dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok s
   profiled : s.profiled = true
   rep : ReportG (normsSource s profiled j)
 
 /-- The norms-route report case: the source under the profile, then `reportWith`. -/
-def reportFrom (j : Json) : Except String (ReportU j) :=
-  match hs0 : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") with
+def reportFromIn (dec : UDecoder) (j : Json) : Except String (ReportUIn dec j) :=
+  match hs0 : dec (j.getObjValD "environment") (j.getObjValD "norms") with
   | .error e => throw e
   | .ok s =>
     if hs : s.profiled = true then do
@@ -511,9 +511,19 @@ def reportFrom (j : Json) : Except String (ReportU j) :=
 
 /-- `normDefaults_wire_report_sound`: the report of the document decoded from that very
 input satisfies `ReportSound` with no extra base premises. -/
+theorem normDefaults_wire_report_soundIn (dec : UDecoder) (j : Json) (rep : ReportUIn dec j) (_h : reportFromIn dec j = .ok rep) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok rep.s ∧
+      ReportSound (normsSource rep.s rep.profiled j) rep.rep :=
+  ⟨rep.decoded, report_sound _ rep.rep⟩
+
+/-! ## The route's own decoder -/
+
+abbrev ReportU := ReportUIn decodeSourceU
+def reportFrom : (j : Json) → Except String (ReportU j) := reportFromIn decodeSourceU
+
 theorem normDefaults_wire_report_sound (j : Json) (rep : ReportU j) (_h : reportFrom j = .ok rep) :
     decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok rep.s ∧
       ReportSound (normsSource rep.s rep.profiled j) rep.rep :=
-  ⟨rep.decoded, report_sound _ rep.rep⟩
+  normDefaults_wire_report_soundIn decodeSourceU j rep _h
 
 end VE.NormDefaults.Wire

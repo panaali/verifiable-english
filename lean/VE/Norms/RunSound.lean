@@ -23,10 +23,10 @@ theorem valid_field_steps (id : String) (b : Bool) (n m s : Json) :
 
 /-- The `norms-certificate` branch of `Norms.Run.runCase`: the answer's `valid`
 field is the checker's verdict on the replayed case. -/
-theorem runCase_certificate (j answer : Json) (h : Run.runCase j = .ok answer)
+theorem runCase_certificateIn (dec : Wire.SourceDecoder) (j answer : Json) (h : Run.runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "norms-certificate") :
-    ∃ r, replayEntailment j = .ok r ∧ answer.getObjValD "valid" = .bool (valid r) := by
-  unfold Run.runCase at h
+    ∃ r, replayEntailmentIn dec j = .ok r ∧ answer.getObjValD "valid" = .bool (valid r) := by
+  unfold Run.runCaseIn at h
   obtain ⟨id, _, h⟩ := bind_ok h
   obtain ⟨kind, hkind, h⟩ := bind_ok h
   have heq : kind = "norms-certificate" := by rw [hkind] at hk; cases hk; rfl
@@ -48,6 +48,29 @@ premises, the direct semantics, the definitions, the profile,
 `Background_base` and the premises; and (2) with no flag declared and the
 document conflict-free, the conclusion holds in every base-admissible structure
 satisfying the premises (`Flagged.norms_flagged_acceptance`). -/
+theorem norms_wire_certificate_acceptanceIn (dec : Wire.SourceDecoder) (j answer : Json) (h : Run.runCaseIn dec j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "norms-certificate")
+    (hv : answer.getObjValD "valid" = .bool true) :
+    ∃ r : Replay.EntailmentReplay, replayEntailmentIn dec j = .ok r ∧
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
+    (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) →
+      Sat S (flagPremises r.src) → holdsCatala r.src.D.T S →
+      definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
+      Sat S r.premises → r.conclusion.denote S []) ∧
+    (flagPremises r.src = [] →
+      (∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
+      (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
+      ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) := by
+  obtain ⟨r, hr, hval⟩ := runCase_certificateIn dec j answer h hk
+  rw [hval] at hv
+  have hvr : valid r = true := by cases hb : valid r <;> simp_all
+  exact ⟨r, hr, norms_flagged_acceptanceIn dec j r hr hvr⟩
+
+theorem runCase_certificate (j answer : Json) (h : Run.runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "norms-certificate") :
+    ∃ r, replayEntailment j = .ok r ∧ answer.getObjValD "valid" = .bool (valid r) :=
+  runCase_certificateIn Wire.decodeFlagged j answer h hk
+
 theorem norms_wire_certificate_acceptance (j answer : Json) (h : Run.runCase j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "norms-certificate")
     (hv : answer.getObjValD "valid" = .bool true) :
@@ -60,10 +83,7 @@ theorem norms_wire_certificate_acceptance (j answer : Json) (h : Run.runCase j =
     (flagPremises r.src = [] →
       (∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
       (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
-      ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) := by
-  obtain ⟨r, hr, hval⟩ := runCase_certificate j answer h hk
-  rw [hval] at hv
-  have hvr : valid r = true := by cases hb : valid r <;> simp_all
-  exact ⟨r, hr, norms_flagged_acceptance j r hr hvr⟩
+      ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) :=
+  norms_wire_certificate_acceptanceIn.{u} Wire.decodeFlagged j answer h hk hv
 
 end VE.Norms.RunSound

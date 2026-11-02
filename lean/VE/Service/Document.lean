@@ -1649,9 +1649,9 @@ def checkNormDefaults (E : Env) (front : Json) (units : List SourceUnit) (setUni
   let environment := E.lower
   let (free, single) := freeNorms units setUnits attached
   unless single.isEmpty do
-    let base ← VE.NormDefaults.Wire.decodeSourceU environment (Json.arr #[])
+    let base ← VE.NormDefaults.Wire.decodeSourceLexical environment (Json.arr #[])
     single.forM (VE.NormDefaults.Admission.checkQuoted base)
-  let source ← VE.NormDefaults.Wire.decodeSourceU environment (Json.arr free.toArray)
+  let source ← VE.NormDefaults.Wire.decodeSourceLexical environment (Json.arr free.toArray)
   let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
   let _ ← VE.NormDefaults.Wire.validateCompletions source.U block (units.map (·.id))
 
@@ -1664,10 +1664,10 @@ def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List Str
   let (free, single) := freeNorms units setUnits attached
   let checked : Except String Unit := do
     unless single.isEmpty do
-      let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true)
+      let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true) (joined := false)
       single.forM (VE.Norms.Admission.checkQuoted base)
     if !free.isEmpty || E.regulates then
-      let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true)
+      let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true) (joined := false)
   -- The norms route words these faults, and classes some, otherwise than the retained loader's `NormDocument`
   -- (`InvalidInput` for an `UnknownSymbol:` text, Python's `repr` of a name), so a rejection keeps that loader's.
   checked.mapError fun e => unavailable s!"a norm document the norms route refuses keeps its loader's diagnostic: {e}"
