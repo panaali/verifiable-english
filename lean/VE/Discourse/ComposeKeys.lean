@@ -1,7 +1,7 @@
 /-! # The key order of `composedJson`'s object (docs/spec/discourse.md 14.5)
 
-`Json.mkObj` orders an object's keys by `compare`; `conditions_retained` (`VE.Discourse.Compose`) reads the object's
-tree through these facts, which `simp` uses definitionally. -/
+An object built from a list of fields orders its keys by `compare`; `conditions_retained` (`VE.Discourse.Compose`)
+reads the object's tree through these facts, which `simp` uses definitionally. -/
 namespace VE.Discourse
 
 theorem cmp_i_d : compare "inner" "document_id" = .gt := rfl

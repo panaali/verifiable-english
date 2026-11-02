@@ -8284,7 +8284,7 @@ module VE.Discourse.ComposeExamples 7603984335165250d29e204ed2519da7578a6741cbb3
 138:0-138:112 def VE.Discourse.ComposeExamples.env@VE.Discourse.ComposeExamples
 139:0-140:87 def VE.Discourse.ComposeExamples.payload@VE.Discourse.ComposeExamples
 169:0-170:102 def VE.Discourse.ComposeExamples.envCase@VE.Discourse.ComposeExamples
-module VE.Discourse.ComposeKeys 6275dab97d94264bb92a3cbaafd519702af33e2335412d09be1b5abdf9df59d5
+module VE.Discourse.ComposeKeys 31aaa63d7fd1ff0a835725e801b9dfea8e1e6f49ac5c652ae46b63fe6a8accee
 7:0-7:60 theorem VE.Discourse.cmp_i_d@VE.Discourse.ComposeKeys
 8:0-8:71 theorem VE.Discourse.cmp_ir_d@VE.Discourse.ComposeKeys
 9:0-9:65 theorem VE.Discourse.cmp_ir_i@VE.Discourse.ComposeKeys
