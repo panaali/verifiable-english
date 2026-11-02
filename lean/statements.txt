@@ -4195,6 +4195,65 @@ theorem VE.Calc.Check.outcomeMeans_claim
       v = VE.Calc.Claim.decide (VE.Calc.values ds) c
   -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
   -- expr 33943527
+theorem VE.Calc.Check.runShown_fails
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (P : List VE.Calc.Claim) (links : List (String × String)) (C : VE.Calc.Claim) (s : VE.Calc.Shown),
+        VE.Calc.Check.runShown ds (VE.Calc.Check.follows P links C) =
+            (VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails, s) →
+          ∃ κ,
+            s = VE.Calc.Shown.counterexample κ ∧
+              (∀ (l : String × String),
+                  l ∈ links →
+                    VE.Calc.Answer.point κ l.fst = VE.Calc.Answer.point κ l.snd * VE.Calc.Answer.point κ l.snd ∧
+                      0 ≤ VE.Calc.Answer.point κ l.snd) ∧
+                (∀ (p : VE.Calc.Claim),
+                    p ∈ P →
+                      VE.Calc.Claim.Holds
+                        (VE.Calc.values (VE.Calc.assign ds (VE.Calc.freeNames ds) (VE.Calc.Answer.point κ))) p) ∧
+                  ¬VE.Calc.Claim.Holds
+                      (VE.Calc.values (VE.Calc.assign ds (VE.Calc.freeNames ds) (VE.Calc.Answer.point κ))) C
+  -- uses VE.Calc.Answer.point@VE.Calc.Derive VE.Calc.Check.follows@VE.Calc.Wire VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Shown.counterexample@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.freeNames@VE.Calc.Inline VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round
+  -- expr 1943126199
+theorem VE.Calc.Check.runShown_follows
+  ∀ (ds : List VE.Calc.Decl) (P : List VE.Calc.Claim) (links : List (String × String)) (C : VE.Calc.Claim)
+    (o : VE.Numbers.Outcome) (s : VE.Calc.Shown),
+    VE.Calc.Check.runShown ds (VE.Calc.Check.follows P links C) = (o, s) →
+      s = VE.Calc.Shown.nothing ∧
+          o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds ∧
+            o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails ∨
+        ∃ fss g,
+          List.mapM (VE.Calc.Claim.facts ds) P = Option.some fss ∧
+            VE.Calc.Claim.facts ds C = Option.some [g] ∧ VE.Calc.Derive.shown fss.flatten links g = (o, s)
+  -- uses VE.Calc.Check.follows@VE.Calc.Wire VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Claim.facts@VE.Calc.Lower VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.nothing@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 2302075630
+theorem VE.Calc.Check.runShown_holds
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (P : List VE.Calc.Claim) (links : List (String × String)) (C : VE.Calc.Claim) (s : VE.Calc.Shown),
+        VE.Calc.Check.runShown ds (VE.Calc.Check.follows P links C) =
+            (VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds, s) →
+          ∃ fss g d,
+            List.mapM (VE.Calc.Claim.facts ds) P = Option.some fss ∧
+              VE.Calc.Claim.facts ds C = Option.some [g] ∧
+                s = VE.Calc.Shown.certificate d.steps ∧
+                  VE.Calc.Derivation.check fss.flatten links g d = Bool.true ∧ VE.Calc.Follows ds P links C
+  -- uses VE.Calc.Check.follows@VE.Calc.Wire VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Claim.facts@VE.Calc.Lower VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation.steps@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.Follows@VE.Calc.Lower VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.certificate@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 341634175
+theorem VE.Calc.Check.runShown_nothing
+  ∀ (ds : List VE.Calc.Decl) (k : VE.Calc.Check) (o : VE.Numbers.Outcome) (s : VE.Calc.Shown),
+    VE.Calc.Check.runShown ds k = (o, s) →
+      (∃ c, k = VE.Calc.Check.claim c) ∨
+          o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds ∧
+            o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+        s = VE.Calc.Shown.nothing
+  -- uses VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Shown.nothing@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 384966266
+theorem VE.Calc.Check.runShown_sound
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds → ∀ (k : VE.Calc.Check), VE.Calc.Check.OutcomeMeans ds k (VE.Calc.Check.runShown ds k).fst
+  -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.Shown@VE.Calc.Run VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 3249470050
 theorem VE.Calc.Check.run_claim
   ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim), VE.Calc.Check.run ds (VE.Calc.Check.claim c) = VE.Calc.Claim.run ds c
   -- uses VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
@@ -4339,11 +4398,43 @@ theorem VE.Calc.Derivation.replay_sound
             ∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.Derivation.replay@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
   -- expr 2374285068
+theorem VE.Calc.Derive.shown_fails
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact) (s : VE.Calc.Shown),
+    VE.Calc.Derive.shown P links g = (VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails, s) →
+      ∃ κ,
+        s = VE.Calc.Shown.counterexample κ ∧
+          (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) f) ∧
+            (∀ (l : String × String),
+                l ∈ links →
+                  VE.Calc.Answer.point κ l.fst = VE.Calc.Answer.point κ l.snd * VE.Calc.Answer.point κ l.snd ∧
+                    0 ≤ VE.Calc.Answer.point κ l.snd) ∧
+              ¬VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) g
+  -- uses VE.Calc.Answer.point@VE.Calc.Derive VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.counterexample@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round
+  -- expr 4201899542
+theorem VE.Calc.Derive.shown_holds
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact) (s : VE.Calc.Shown),
+    VE.Calc.Derive.shown P links g = (VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds, s) →
+      ∃ d,
+        s = VE.Calc.Shown.certificate d.steps ∧
+          VE.Calc.Derivation.check P links g d = Bool.true ∧
+            ∀ (κ : String → Rat),
+              (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) →
+                (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ g
+  -- uses VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation.steps@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.certificate@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 2068359247
 theorem VE.Calc.Derive.shown_matches
   ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact),
     VE.Calc.Shown.matches (VE.Calc.Derive.shown P links g).fst (VE.Calc.Derive.shown P links g).snd = Bool.true
   -- uses VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
   -- expr 2086807563
+theorem VE.Calc.Derive.shown_nothing
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact) (o : VE.Numbers.Outcome)
+    (s : VE.Calc.Shown),
+    VE.Calc.Derive.shown P links g = (o, s) →
+      o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds →
+        o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails → s = VE.Calc.Shown.nothing
+  -- uses VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.nothing@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 2491433198
 theorem VE.Calc.Expr.evalB_eq
   ∀ (σ : VE.Calc.Values) (c : Nat) (e : VE.Calc.Expr) (n : Nat) {r : Option Rat} {m : Nat},
     VE.Calc.Expr.evalB σ c e n = Option.some (r, m) → r = VE.Calc.Expr.eval σ e
@@ -5013,6 +5104,11 @@ theorem VE.Calc.Rescale.pos
   ∀ (self : VE.Calc.Rescale) (b : String), 0 < self.factor b
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
   -- expr 3281404362
+theorem VE.Calc.Run.mkObj_get
+  ∀ (l : List (String × Lean.Json)) (k : String) (v : Lean.Json),
+    (List.map (fun x => x.fst) l).Nodup → (k, v) ∈ l → (Lean.Json.mkObj l).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 872787718
 theorem VE.Calc.Run.outcome_sound
   ∀ (j : Lean.Json) (c : VE.Calc.Case),
     VE.Calc.Wire.decodeCase j = Except.ok c →
@@ -5025,6 +5121,48 @@ theorem VE.Calc.Run.outcomes_words
     List.find? (fun x => VE.Calc.Run.words x == VE.Calc.Run.words o) VE.Calc.Run.outcomes = Option.some o
   -- uses VE.Calc.Run.outcomes@VE.Calc.Run VE.Calc.Run.words@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
   -- expr 133560894
+theorem VE.Calc.Run.rowJson_outcome
+  ∀ (ds : List VE.Calc.Decl) (id : String) (named : String → Option String) (vs : List VE.Calc.Val) (k : VE.Calc.Check)
+    (r : VE.Calc.Row),
+    ∃ w reason,
+      (VE.Calc.Run.rowJson ds id named vs k r).getObjVal? "outcome" = Except.ok (Lean.Json.str w) ∧
+        (VE.Calc.Run.rowJson ds id named vs k r).getObjVal? "reason" =
+            Except.ok (reason.elim Lean.Json.null Lean.Json.str) ∧
+          List.find? (fun x => VE.Calc.Run.words x == (w, reason)) VE.Calc.Run.outcomes = Option.some r.outcome
+  -- uses VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row@VE.Calc.Run VE.Calc.Run.outcomes@VE.Calc.Run VE.Calc.Run.rowJson@VE.Calc.Run VE.Calc.Run.words@VE.Calc.Run VE.Calc.Val@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 912549553
+theorem VE.Calc.Run.rowJson_shown
+  ∀ (ds : List VE.Calc.Decl) (id : String) (named : String → Option String) (vs : List VE.Calc.Val)
+    (P : List VE.Calc.Claim) (links : List (String × String)) (C : VE.Calc.Claim) (r : VE.Calc.Row),
+    VE.Calc.Shown.matches r.outcome r.shown = Bool.true →
+      (r.outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds →
+          ∃ steps,
+            r.shown = VE.Calc.Shown.certificate steps ∧
+              (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "certificate" =
+                  Except.ok (Lean.Json.arr (List.map VE.Calc.Run.stepJson steps).toArray) ∧
+                (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "counterexample" =
+                  Except.ok Lean.Json.null) ∧
+        (r.outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+            ∃ κ,
+              r.shown = VE.Calc.Shown.counterexample κ ∧
+                (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "certificate" =
+                    Except.ok Lean.Json.null ∧
+                  (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "counterexample" =
+                    Except.ok
+                      (Lean.Json.arr
+                        (List.map
+                            (fun n =>
+                              Lean.Json.arr
+                                #[Lean.Json.str n, Lean.Json.str (VE.Calc.Run.exact (VE.Calc.Answer.point κ n))])
+                            (VE.Calc.Run.reads ds (VE.Calc.Check.follows P links C))).toArray)) ∧
+          (r.outcome ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds →
+            r.outcome ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+              (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "certificate" =
+                  Except.ok Lean.Json.null ∧
+                (VE.Calc.Run.rowJson ds id named vs (VE.Calc.Check.follows P links C) r).getObjVal? "counterexample" =
+                  Except.ok Lean.Json.null)
+  -- uses VE.Calc.Answer.point@VE.Calc.Derive VE.Calc.Check.follows@VE.Calc.Wire VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row.shown@VE.Calc.Run VE.Calc.Row@VE.Calc.Run VE.Calc.Run.exact@VE.Calc.Run VE.Calc.Run.reads@VE.Calc.Run VE.Calc.Run.rowJson@VE.Calc.Run VE.Calc.Run.stepJson@VE.Calc.Run VE.Calc.Shown.certificate@VE.Calc.Run VE.Calc.Shown.counterexample@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.Step@VE.Calc.Derive VE.Calc.Val@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 3207962628
 theorem VE.Calc.Run.rowOf_matches
   ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check) (vs : List VE.Calc.Val),
     match cl.snd with
@@ -5055,6 +5193,14 @@ theorem VE.Calc.Run.row_matches
       VE.Calc.Shown.matches (VE.Calc.Run.row c cl).outcome (VE.Calc.Run.row c cl).shown = Bool.true
   -- uses VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.reasons.match_1@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row.shown@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run
   -- expr 2580751620
+theorem VE.Calc.Run.row_means
+  ∀ (c : VE.Calc.Case),
+    VE.Calc.WellFormed c.decls →
+      ∀ (cl : String × VE.Calc.Check),
+        VE.Calc.Check.OutcomeMeans c.decls cl.snd (VE.Calc.Run.row c cl).outcome ∧
+          (VE.Calc.Run.row c cl).shown = (VE.Calc.Check.runShown c.decls cl.snd).snd
+  -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row.shown@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1001978404
 theorem VE.Calc.Run.row_outcome
   ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check), (VE.Calc.Run.row c cl).outcome = VE.Calc.Check.run c.decls cl.snd
   -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
@@ -5109,6 +5255,15 @@ theorem VE.Calc.Run.verdict_sound
               v = VE.Calc.Claim.decide (VE.Calc.values c.decls) cl
   -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
   -- expr 3364826247
+theorem VE.Calc.Shown.matches_iff
+  ∀ (o : VE.Numbers.Outcome) (s : VE.Calc.Shown),
+    VE.Calc.Shown.matches o s = Bool.true ↔
+      (o = VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds ∧ ∃ st sts, s = VE.Calc.Shown.certificate (st :: sts)) ∨
+        (o = VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails ∧ ∃ κ, s = VE.Calc.Shown.counterexample κ) ∨
+          o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds ∧
+            o ≠ VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails ∧ s = VE.Calc.Shown.nothing
+  -- uses VE.Calc.Shown.certificate@VE.Calc.Run VE.Calc.Shown.counterexample@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown.nothing@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Calc.Step@VE.Calc.Derive VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 618930263
 theorem VE.Calc.Step.derive_sound
   ∀ (links : List (String × String)) (known : List VE.Calc.QFact) (st : VE.Calc.Step) (f : VE.Calc.QFact),
     VE.Calc.Step.derive links known st = Option.some f →
