@@ -1,0 +1,18 @@
+trust_mutants: 11 definitions, 248 mutants (35 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Flip.lean:52 VE.Senses.Flip (S, trusted) ctor-drop: | distinguished (on : List String) (first second : Bool) ->  (lean/VE/Senses/Flip.lean:70: Unknown constant `VE.Senses.Flip.distinguished`)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.readCase (G[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/Senses/Run.lean:238 VE.Senses.Run.writtenLines (G[V], trusted) list-empty: (sents.toList.take k).filterMap -> [] (lean/VE/Senses/Run.lean:238: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:78 VE.Senses.candidatePairs (S, trusted) list-empty: (List.range n).flatMap -> [] (lean/VE/Senses/Flip.lean:78: Function expected at)
+UNKNOWN lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-empty: (P.env.constants.find? (·.name == c)) -> [] (lean/VE/Senses/Flip.lean:45: Application type mismatch: The argument)
+UNKNOWN lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-empty: (P.env.constants.find? (·.name == c)).map (·.sort) -> [] (lean/VE/Senses/Flip.lean:45: Application type mismatch: The argument)
+SURVIVOR lean/VE/Senses/Flip.lean:44 VE.Senses.flipModelOf (S, trusted) list-first: (fs.flatMap EFormula.consts).eraseDups -> (((fs.flatMap EFormula.consts).eraseDups).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:238 VE.Senses.Run.writtenLines (G[V], trusted) list-drop-last: sents.toList -> (sents.toList.dropLast)
+SURVIVOR lean/VE/Senses/Flip.lean:44 VE.Senses.flipModelOf (S, trusted) list-last: (fs.flatMap EFormula.consts).eraseDups -> (((fs.flatMap EFormula.consts).eraseDups).reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:65 VE.Senses.flipPair (S, trusted) list-last: on -> (on.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:251 VE.Senses.Run.flipJson (G[V], trusted) list-drop-first: [("status", .str "unknown")] -> ([("status", .str "unknown")].drop 1)
+SURVIVOR lean/VE/Senses/Run.lean:240 VE.Senses.Run.writtenLines (G[V], trusted) list-last: sent.toList -> (sent.toList.reverse.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-drop-first: d.choice -> (d.choice.drop 1)
+trust_mutants: 14 KILLED, 8 SURVIVOR, 5 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 979 s
+trust_mutants: G[V], trusted: 2 KILLED, 4 SURVIVOR, 1 UNKNOWN, 3 INVALID, 69 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 4 SURVIVOR, 4 UNKNOWN, 5 INVALID, 144 OTHER SHARD
+trust_mutants: steps: wall plan 8.8 s, scratch 1.8 s, control_build 0.2 s, probe_install 1.2 s, control_probes 113 s, mutants 849 s, cleanup 5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 112.7 s (1), mutant_builds 55 s (35), mutant_checks 685.8 s (24), stage_controls 7.2 s (3), mutant_probes 2406.2 s (14)
