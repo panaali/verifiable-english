@@ -739,18 +739,22 @@ def clashRefusalIn (j front : Json) (body : String) (ps : List String) : Option 
     else none
   else some swapClash
 
-/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`); a case whose front matter does not read
-is `clashRefusal`'s. -/
+/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`). A case whose front matter does not read
+states no values and lists no profile, so row 16 passes it. -/
 def clashRefusalFast (j : Json) : Option String :=
   match frontOf j with
-  | none => clashRefusal j
+  | none => none
   | some (front, body) => clashRefusalIn j front body (profilesOf j)
 
 @[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
   funext j
   unfold clashRefusalFast
   cases hf : frontOf j with
-  | none => rfl
+  | none =>
+    unfold clashRefusal
+    rw [swapInjective_frontOf]
+    unfold statedIds statedPairs sizedSets readingSetsOf profilesOf
+    simp [hf, clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
   | some p =>
     obtain ⟨front, body⟩ := p
     unfold clashRefusal withoutJudgments withoutJudgmentsOf
@@ -2315,7 +2319,7 @@ def checkCore (j : Json) : Except String Json :=
 /-- `checkCore` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16. -/
 def checkCoreFast (j : Json) : Except String Json :=
   match frontOf j with
-  | none => checkCore j
+  | none => checkBody j
   | some (front, body) =>
     let ps := profilesOf j
     if "scope@0" ∈ ps then checkBody j else
@@ -2327,7 +2331,12 @@ def checkCoreFast (j : Json) : Except String Json :=
   funext j
   unfold checkCoreFast
   cases hf : frontOf j with
-  | none => rfl
+  | none =>
+    have hp : "scope@0" ∉ profilesOf j := by unfold profilesOf; simp [hf]
+    unfold checkCore
+    rw [if_neg hp, clashRefusal_eq_fast]
+    unfold clashRefusalFast
+    rw [hf]
   | some p =>
     obtain ⟨front, body⟩ := p
     unfold checkCore
@@ -2462,32 +2471,46 @@ theorem checkDocSets_clashFirst (j : Json)
   · have hc : checkCore j = .error swapClash := by unfold checkCore; rw [if_neg hs, h]
     simp [hs, hc]
 
-/-- `checkDocSets` as it runs (pc-1 review F2): without `scope@0`, the front matter read once for the scope test,
-row 16 and the chain's entry; a `scope@0` request is `checkDocSets`' own branch. -/
+/-- `checkDocSets` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16, and calling
+no definition a `@[csimp]` twin replaces (`checkCore` here compiles to `checkCoreFast`). -/
 def checkDocSetsFast (j : Json) : Except String Json :=
   match frontOf j with
-  | none => checkDocSets j
+  | none => checkBody j
   | some (front, body) =>
     let ps := profilesOf j
-    if "scope@0" ∈ ps then checkDocSets j else
-    match clashRefusalIn j front body ps with
-    | some e => .error e
-    | none => checkBody j
+    if "scope@0" ∈ ps then do
+      if let some e := clashRefusalIn j front body ps then throw e
+      let _ ← VE.Compose.gateOf VE.Compose.profileTable ps
+      let D ← VE.Scope.decodeScope j
+      let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+      let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
+      pure (VE.Scope.foldGovernors D a)
+    else match clashRefusalIn j front body ps with
+      | some e => .error e
+      | none => checkBody j
 
 @[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
   funext j
   have hc := congrFun checkCore_eq_fast j
+  have hr := congrFun clashRefusal_eq_fast j
   unfold checkDocSetsFast
   cases hf : frontOf j with
-  | none => rfl
+  | none =>
+    have hp : "scope@0" ∉ profilesOf j := by unfold profilesOf; simp [hf]
+    unfold checkDocSets
+    rw [if_neg hp, hc]
+    unfold checkCoreFast
+    rw [hf]
   | some p =>
     obtain ⟨front, body⟩ := p
+    have hr' : clashRefusal j = clashRefusalIn j front body (profilesOf j) := by
+      rw [hr]; unfold clashRefusalFast; rw [hf]
+    unfold checkDocSets
     simp only
     split
-    · rfl
+    · rw [hr']
     · rename_i h
-      unfold checkDocSets
-      rw [if_neg h, hc]
+      rw [hc]
       unfold checkCoreFast
       rw [hf]
       simp only [if_neg h]
