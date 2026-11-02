@@ -424,6 +424,8 @@ def test_a_norm_documents_units_say_why_no_question_reaches_them():
     assert all(kind == "meta" or why.startswith("english.read:") for kind, _, why in counts if why != "not one sentence")
     assert all(1 <= len(texts) <= 2 for texts in examples.values()) and set(examples) == {"/".join(k) for k in counts}
     assert R.why("A b.", {"A b.": {"one": True}}) == "reached" and R.why("A\nb.", {}) == "not one sentence"
+    _, odd = R.norm_units('---\n{"environment": {}, "units": [{"span": [0, 2]}, {"kind": ["a", ["b"]], "span": [2, 4]}]}\n---\nA.B.')
+    assert odd == [("-", None, "A."), ('["a",["b"]]', None, "B.")]
 
 
 def test_the_mixed_stream_is_its_generators_draw():
