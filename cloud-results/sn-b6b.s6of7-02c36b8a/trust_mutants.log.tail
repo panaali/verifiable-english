@@ -1,0 +1,12 @@
+trust_mutants: 11 definitions, 248 mutants (35 to run), 4 jobs, base eeb2a3b67d20
+UNKNOWN lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-empty: (P.map.filter fun (_, s, _) => c.choice.contains (s.word, s.index) && !d.choice.contains (s.word,... -> [] (lean/VE/Senses/Flip.lean:39: Invalid projection: Type of)
+UNKNOWN lean/VE/Senses/Flip.lean:53 VE.Senses.Flip (S, trusted) ctor-drop: | undistinguished ->  (lean/VE/Senses/Flip.lean:73: Unknown constant `VE.Senses.Flip.undistinguished`)
+UNKNOWN lean/VE/Senses/Flip.lean:83 VE.Senses.flipsOf (S, trusted) list-empty: u.candidates -> [] (lean/VE/Senses/Flip.lean:83: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Run.lean:238 VE.Senses.Run.writtenLines (G[V], trusted) list-empty: sents.toList -> [] (lean/VE/Senses/Run.lean:239: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-first: (P.map.filter fun (_, s, _) => c.choice.contains (s.word, s.index) && !d.choice.contains (s.word,... -> ((P.map.filter fun (_, s, _) => c.choice.contains (s.word, s.index) && !d.choice.contains (s.word...
+SURVIVOR lean/VE/Senses/Flip.lean:39 VE.Senses.flipOn (S, trusted) list-first: c.choice -> (c.choice.take 1)
+SURVIVOR lean/VE/Senses/Flip.lean:45 VE.Senses.flipModelOf (S, trusted) list-drop-first: P.env.constants -> (P.env.constants.drop 1)
+trust_mutants: 21 KILLED, 3 SURVIVOR, 4 UNKNOWN, 7 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 914 s
+trust_mutants: G[V], trusted: 9 KILLED, 1 UNKNOWN, 2 INVALID, 67 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 3 SURVIVOR, 3 UNKNOWN, 5 INVALID, 146 OTHER SHARD
+trust_mutants: steps: wall plan 6.1 s, scratch 2.1 s, control_build 0.2 s, probe_install 1 s, control_probes 67.6 s, mutants 833.7 s, cleanup 3.8 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 67.4 s (1), mutant_builds 46.2 s (35), mutant_checks 517.2 s (28), stage_controls 9.5 s (5), mutant_probes 2523.7 s (21)
