@@ -409,6 +409,10 @@ def preds117x : List (String × List String) :=
     undeclaredEvaluative rows117 preds J == jt3aList preds J
 #guard undeclaredEvaluative rows117 preds117x [] == ["due_process", "date_due_process", "to_pay_due_fees",
   "as_just_cause", "condition_necessary_step", "necessary_measure", "date_effective_remedy"]
+-- Each of them holds its row's word: without the other senses all ten are listed.
+#guard undeclaredEvaluative (rows117.map fun r => { r with otherSenses := [] }) preds117x [] ==
+  ["due_process", "date_due_process", "to_pay_due_fees", "due_to_illness", "as_just_cause", "just_as_real",
+    "condition_necessary_step", "necessary_measure", "date_effective_remedy", "effective_date"]
 
 /-- Predicates with and without the phrase "good judgment": in its order, in another order, half of it, and in a
     template (the constitution's u0052.s01 writes "use good judgment" as the act). -/
