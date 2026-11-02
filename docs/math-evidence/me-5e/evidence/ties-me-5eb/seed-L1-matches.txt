@@ -1,0 +1,4 @@
+mutant L1-matches: '  | .unknown _, .nothing => true' -> '  | .unknown _, .nothing => true
+  | .decided .undefined, .counterexample _ => true' in lean/VE/Calc/Run.lean
+error: VE/Calc/Ties.lean:21:2: unsolved goals
+error: build failed

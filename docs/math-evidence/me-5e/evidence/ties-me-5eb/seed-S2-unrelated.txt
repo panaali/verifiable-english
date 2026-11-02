@@ -1,0 +1,6 @@
+VE/Calc/Run.lean: VE.Calc.Shown.matches: the statement of VE.Calc.Run.outcomes_words does not mention VE.Calc.Shown.matches of VE.Calc.Run
+tied 1191, unclassified 0, trusted 57985 (K + S + untied [V] + unclassified), 225083 lines in 722 files
+exit 1
+FAILED tests/test_trust_ratchet.py::test_committed_budget_passes_its_check - ...
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 10.58s

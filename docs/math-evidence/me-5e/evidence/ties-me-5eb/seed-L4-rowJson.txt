@@ -1,0 +1,4 @@
+mutant L4-rowJson: '      [("certificate", cert), ("counterexample", cx)])' -> '      [("certificate", cx), ("counterexample", cert)])' in lean/VE/Calc/Run.lean
+error: VE/Calc/Ties.lean:188:68: unsolved goals
+error: VE/Calc/Ties.lean:191:68: unsolved goals
+error: build failed
