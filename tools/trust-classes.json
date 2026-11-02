@@ -483,6 +483,7 @@
     "ResponseShape/Schemas/Document.lean": {
       "G[V]": [
         "ResponseShape.Schemas.Document.blockCoverage",
+        "ResponseShape.Schemas.Document.cardinalityReport",
         "ResponseShape.Schemas.Document.cells",
         "ResponseShape.Schemas.Document.cites",
         "ResponseShape.Schemas.Document.composedReading",
@@ -9712,7 +9713,9 @@
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
-        "VE.Service.Document.withSets"
+        "VE.Service.Document.withSets",
+        "VE.Service.Document.cardinalityEnv",
+        "VE.Service.Document.cardinalityReport"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -15380,6 +15383,26 @@
         "VE.Scope.WireExamples.st",
         "VE.Scope.WireExamples.wfFault",
         "VE.Scope.WireExamples.withScope"
+      ]
+    },
+    "VE/Service/CardinalityExamples.lean": {
+      "T": [
+        "VE.Service.CardinalityExamples.card",
+        "VE.Service.CardinalityExamples.decoded",
+        "VE.Service.CardinalityExamples.environment",
+        "VE.Service.CardinalityExamples.graph",
+        "VE.Service.CardinalityExamples.listed",
+        "VE.Service.CardinalityExamples.low",
+        "VE.Service.CardinalityExamples.report",
+        "VE.Service.CardinalityExamples.reported",
+        "VE.Service.CardinalityExamples.row",
+        "VE.Service.CardinalityExamples.rowUnit",
+        "VE.Service.CardinalityExamples.run",
+        "VE.Service.CardinalityExamples.said",
+        "VE.Service.CardinalityExamples.statement",
+        "VE.Service.CardinalityExamples.text",
+        "VE.Service.CardinalityExamples.top",
+        "VE.Service.CardinalityExamples.unit"
       ]
     },
     "VE/Service/ScopeExamples.lean": {

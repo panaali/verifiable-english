@@ -17,7 +17,7 @@ from .errors import VEError
 from .wire import digest
 
 PROFILE = "cardinality@0"
-_MALFORMED = (AttributeError, IndexError, KeyError, RecursionError, TypeError, ValueError, VEError)
+MALFORMED = (AttributeError, IndexError, KeyError, RecursionError, TypeError, ValueError, VEError)
 
 
 def unbound(what: str) -> CheckerUnavailable:
@@ -81,7 +81,7 @@ def identities(environment: dict) -> Identities:
     """The request's identities, once Lean has admitted its environment: one Python cannot project is no answer."""
     try:
         return Identities(environment)
-    except _MALFORMED as exc:
+    except MALFORMED as exc:
         raise unbound(f"its environment does not project: {exc}"[:200]) from exc
 
 
@@ -115,7 +115,7 @@ def _ask(environment: dict, case: dict, bind) -> dict:
     ids = identities(environment)
     try:
         bind(ids, row)
-    except _MALFORMED as exc:
+    except MALFORMED as exc:
         raise unbound(f"{type(exc).__name__}: {exc}"[:200]) from exc
     return row
 
@@ -253,7 +253,7 @@ def bind_document(ids: Identities, row: dict, declared: list, graph, admitted: b
         _require(("cardinality" in row) == (admitted and graph is not None), "report")
         if "cardinality" in row:
             bind_report(ids, graph, row["cardinality"])
-    except _MALFORMED as exc:
+    except MALFORMED as exc:
         raise unbound(f"{type(exc).__name__}: {exc}"[:200]) from exc
 
 

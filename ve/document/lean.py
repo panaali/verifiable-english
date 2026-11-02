@@ -319,7 +319,7 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
     from .. import cardinality
     try:
         _bind_document_answer(body, meta, declared, row)
-    except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
+    except cardinality.MALFORMED as exc:
         raise cardinality.unbound("its row") from exc
     ids = cardinality.identities(meta["environment"])
     cardinality.bind_document(ids, row, declared, meta.get("graph"), admitted)
