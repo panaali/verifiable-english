@@ -310,7 +310,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, ve_experiments/runner.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -320,6 +320,7 @@
     "docs/act-phrases/ap-7/runner.py:run: git show",
     "docs/defeasible/df-e1/runner.py:prereg_committed: git show",
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
+    "docs/judgment-terms/jt-e1s/runner.py:committed: git show",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
@@ -713,6 +714,28 @@
    ],
    "via": [
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_jt_e1s.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
+    "docs/judgment-terms/jt-e1s/runner.py:committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_jt_e3.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
+    "docs/judgment-terms/jt-e1s/runner.py:committed: git show"
    ]
   },
   {
@@ -1581,6 +1604,26 @@
   },
   {
    "test": "tests/test_select_defer.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_select_fast_stage.py",
    "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "source"

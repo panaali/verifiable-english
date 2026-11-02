@@ -33,13 +33,14 @@ PYTHON = {
         "norm_english parser printer surface lexicon report_english speech_english readings_english "
         "readings_s2_english senses backends.english_lean").split(),
     # 4 CLI, documents, assist, adapters and route modules; `backends.senses` and `backends.speech_source` are
-    # the senses and speech-source routes (they read the English parser and build environments).
+    # the senses and speech-source routes (they read the English parser and build environments); `senses.display`
+    # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
-        "backends.senses backends.speech_source").split(),
+        "backends.senses backends.speech_source senses.display").split(),
     # 5 apps: fixtures and the experiments (every module of the APP_AREAS trees below).
     5: ["argument_fixtures"],
 }
@@ -160,9 +161,9 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
-                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples"}:
+                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run or Scope.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -171,6 +172,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
+    if module in {"VE.Calc.Ties"}:
+        return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)
     if module in {"VE.Compose.Contract", "VE.Compose.ContractExamples"}:
         return 4  # states theorems on Service.Document.checkDocSets (profile-composition 1.5, PC-3)
     if module == "VE.Judgments.ChainExamples":

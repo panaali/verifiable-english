@@ -171,6 +171,13 @@ def judgments : Shape :=
           ("units", n [arr, .minItems 1, .items (ref "common.json#/$defs/token")])]])]),
       ("unused", n [arr, .items (ref "common.json#/$defs/token")])]]
 
+/-- Under `judgments@0`, `Judgments.undeclaredEvaluative` (judgment-terms.md 7 and 8.4): the base predicates whose
+words match english-lean's catalogue and that are not bound. The client binds every name to a base predicate of the
+request (a regulated one included) that is not a declared open term. -/
+def undeclaredEvaluative : Shape :=
+  c "Service.Document.encode: the base predicates whose words match the evaluative catalogue, not bound." [
+    arr, .items (ref "common.json#/$defs/token")]
+
 /-- GOVERN's rules for a governed set, keyed by the set's authored identity and reading ids. -/
 def composedReading : Shape :=
   n [obj, .required ["id", "content"],
@@ -231,6 +238,7 @@ def «row» : Shape :=
         ("units", n [arr, .items (ref "#/$defs/unit")]),
         ("coverage", ref "#/$defs/coverage"),
         ("judgments", ref "#/$defs/judgments"),
+        ("undeclared_evaluative", ref "#/$defs/undeclared_evaluative"),
         ("composed_readings", ref "#/$defs/composed_readings")]]]
 
 def file : File where
@@ -238,7 +246,7 @@ def file : File where
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
   defs := [("plain_error", .schema plain_error), ("model_error", .schema model_error),
-    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
+    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("undeclared_evaluative", .schema undeclaredEvaluative), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
@@ -246,6 +254,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 16537645204567522740
+#guard (file.render.toOption.map (hash ·.compress)) == some 14901777319946045223
 
 end ResponseShape.Schemas.Document

@@ -1,0 +1,19 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Calc.English.lowerWords",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of the String `w` or `w.map Char.toLower` is a type mismatch (M001, M004)"
+  },
+  {
+   "definition": "VE.Calc.English.leadingPhrase",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a String or an Option String (`w`, the `find?`, `w.take ·.length`) is a type mismatch (M002, M005, M009, M011)"
+  },
+  {
+   "definition": "VE.Calc.English.reservedIn",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a String or a Nat (`w`, `before`, `r`, the `drop`/`take` slice) is a type mismatch or leaves its element type unknown (M006, M008, M010, M012, M013)"
+  }
+ ]
+}
