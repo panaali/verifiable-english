@@ -3,6 +3,8 @@
 - `lean/VE/Acts/DecodeExamples.lean` — Fixtures of `checkAct`, step 6 and `decodeElaboratedU` (docs/spec/act-phrases.md 6.3, 6.4; D-15 to D-18; 11.3: A6, A7, A14 from the act text, E13 to E15).
 - `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
 - `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
+- `lean/VE/Acts/Faithful.lean` — Faithfulness of the elaboration (docs/spec/act-phrases.md 6.6, C17): each part means what the source rules mean, read of the part.
+- `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
 - `lean/VE/Acts/GrammarExamples.lean` — Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
 - `lean/VE/Acts/Lexical.lean` — Lexical acts (docs/spec/act-phrases.md 1.1 to 1.3, 2.1, 4.2 and 4.3; batch AP-1).
