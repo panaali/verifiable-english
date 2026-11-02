@@ -4519,7 +4519,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit a4c8a65f2db7d9cb1c96b9115943801b0e930f463eb56beb36c1eae28652d9a7
+module VE.Audit 23309f9bec5f5047244c9ad6c67530dbc89cd4d308e9df9375535921b6a1717e
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -5531,6 +5531,20 @@ module VE.Calc.TableExamples 844d1b2f1949e6faebaa68fe5e141d2fb6749a2b57d09ca35e4
 117:0-119:26 def VE.Calc.TableExamples.trial@VE.Calc.TableExamples
 128:0-133:111 def VE.Calc.TableExamples.v5Csv@VE.Calc.TableExamples
 134:0-148:30 def VE.Calc.TableExamples.v5@VE.Calc.TableExamples
+module VE.Calc.Ties 7d2ad9de7f2ff8a146c589db06b3ff968f058bb206deb01f69f3cc75f5b1d754
+13:0-22:58 theorem VE.Calc.Shown.matches_iff@VE.Calc.Ties
+24:0-40:11 theorem VE.Calc.Derive.shown_holds@VE.Calc.Ties
+42:0-59:11 theorem VE.Calc.Derive.shown_fails@VE.Calc.Ties
+61:0-74:16 theorem VE.Calc.Derive.shown_nothing@VE.Calc.Ties
+76:0-95:56 theorem VE.Calc.Check.runShown_follows@VE.Calc.Ties
+97:0-100:24 theorem VE.Calc.Check.runShown_sound@VE.Calc.Ties
+102:0-111:88 theorem VE.Calc.Check.runShown_holds@VE.Calc.Ties
+113:0-125:58 theorem VE.Calc.Check.runShown_fails@VE.Calc.Ties
+127:0-138:57 theorem VE.Calc.Check.runShown_nothing@VE.Calc.Ties
+140:0-143:39 theorem VE.Calc.Run.row_means@VE.Calc.Ties
+147:0-154:5 theorem VE.Calc.Run.mkObj_get@VE.Calc.Ties
+156:0-165:29 theorem VE.Calc.Run.rowJson_outcome@VE.Calc.Ties
+167:0-196:75 theorem VE.Calc.Run.rowJson_shown@VE.Calc.Ties
 module VE.Calc.Units bfcd9e42c95c6d3af185ddb1f153c9687a34d797a953c45d48ea0615e222a1e4
 14:0-14:97 def VE.Calc.Units.affineNames@VE.Calc.Units
 15:0-15:65 def VE.Calc.Units.logarithmicNames@VE.Calc.Units
@@ -24996,4 +25010,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 10668e265b51c474e0271b998af476c0e1cf2b2a70eed90bdb8df5b2c15f73ac
+module VE 747984d879219e1155b9adac30bcbc0aa035c27edf4bd7a15cebb909b22b302a

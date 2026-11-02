@@ -71,6 +71,7 @@ import VE.Calc.LowerExamples
 import VE.Calc.Poly
 import VE.Calc.Run
 import VE.Calc.Table
+import VE.Calc.Ties
 import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Document
@@ -1056,6 +1057,11 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Check.fault_some
 #print axioms VE.Calc.Check.followsShown_matches
 #print axioms VE.Calc.Check.outcomeMeans_claim
+#print axioms VE.Calc.Check.runShown_fails
+#print axioms VE.Calc.Check.runShown_follows
+#print axioms VE.Calc.Check.runShown_holds
+#print axioms VE.Calc.Check.runShown_nothing
+#print axioms VE.Calc.Check.runShown_sound
 #print axioms VE.Calc.Check.run_claim
 #print axioms VE.Calc.Check.run_sound
 #print axioms VE.Calc.Check.sidesC_mono
@@ -1078,7 +1084,10 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Denotes.unique
 #print axioms VE.Calc.Derivation.check_sound
 #print axioms VE.Calc.Derivation.replay_sound
+#print axioms VE.Calc.Derive.shown_fails
+#print axioms VE.Calc.Derive.shown_holds
 #print axioms VE.Calc.Derive.shown_matches
+#print axioms VE.Calc.Derive.shown_nothing
 #print axioms VE.Calc.Expr.evalB_eq
 #print axioms VE.Calc.Expr.evalL_agrees
 #print axioms VE.Calc.Expr.evalL_causes
@@ -1198,12 +1207,16 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.of_one
 #print axioms VE.Calc.Rescale.of_pos
 #print axioms VE.Calc.Rescale.pos
+#print axioms VE.Calc.Run.mkObj_get
 #print axioms VE.Calc.Run.outcome_sound
 #print axioms VE.Calc.Run.outcomes_words
+#print axioms VE.Calc.Run.rowJson_outcome
+#print axioms VE.Calc.Run.rowJson_shown
 #print axioms VE.Calc.Run.rowOf_matches
 #print axioms VE.Calc.Run.rowOf_outcome
 #print axioms VE.Calc.Run.rowOf_reproduction
 #print axioms VE.Calc.Run.row_matches
+#print axioms VE.Calc.Run.row_means
 #print axioms VE.Calc.Run.row_outcome
 #print axioms VE.Calc.Run.row_sound
 #print axioms VE.Calc.Run.rowsC_rows
@@ -1211,6 +1224,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Run.rows_outcome
 #print axioms VE.Calc.Run.unknown_named
 #print axioms VE.Calc.Run.verdict_sound
+#print axioms VE.Calc.Shown.matches_iff
 #print axioms VE.Calc.Step.derive_sound
 #print axioms VE.Calc.Table.selectB_sound
 #print axioms VE.Calc.Table.select_iff
