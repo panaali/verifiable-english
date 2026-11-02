@@ -56,8 +56,11 @@ its text. The decision is the plan's.
   that keeps an opener's capital. No Lean or Rust code changed.
 - **Trust:** `tools/trust_map.py --check` gives K +0, S +0 and trusted +0 (PASS). There is no allowance and no
   FOLLOW-UPS row.
-- **Tests:** the new and changed tests of `tests/test_question_reverse.py` pass. The selected-tests result is in the
-  build report.
+- **Tests:** the first selected run (fast stage, 13 units) failed one test,
+  `test_the_q1_3b_evidence_stays_in_the_tree`, which compared the saved streams in order although the evidence is
+  written with sorted keys. With that fixed, the id passes, and the selected tests (137 units) gave 0 failed on the
+  Mac runner at `abf32707`. `gate_collection.py --check --prebuilt` reports 15 added, 0 refused, 0 stale and 0
+  malformed. The full gate is left to the chain.
 - **Corpus run:** one run, C4, of 12,248 s with 12 workers. The code under `conformance/` is unchanged since
   `5728eb968`; later commits add only tests, evidence and reports.
 - **Size and pilot bytes:** about 800 hand-written lines (`git diff --numstat` over the merge base, without the
