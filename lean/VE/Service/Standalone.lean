@@ -42,11 +42,13 @@ def checkRegulated (environment : Json) (predicates : List (String × Json)) : E
 /-- What the envelope and family decoders read of `environment` (act-phrases 4.4): when it reads `acts@0`
 (`Norms.Wire.readsActs`), the base rows' refusals on the list as written first (`readings@1`, the one profile only
 the whole table admits, is set aside before `validated`), then `Norms.Wire.actsView`, as the norms decoder reads
-it; any other environment as it is. -/
+it; any other environment as it is. The soft view of an `acts@0` norms frame is gated as that frame
+(`SoftNorms.Phases.frameView`, ap-1bg). -/
 def actsRead (environment : Json) : Except String Json := do
   let ps := VE.Norms.Wire.actsProfiles true environment
   if ps.isEmpty then return environment
-  let _ ← VE.Compose.gateOf VE.Compose.baseRows ps
+  let _ ← VE.Compose.gateOf VE.Compose.baseRows
+    (VE.Norms.Wire.actsProfiles true (VE.SoftNorms.Phases.frameView environment))
   pure (VE.Norms.Wire.actsView environment ps)
 
 /-- A gated envelope and the environment JSON its family decoders read: the
@@ -438,6 +440,30 @@ def legacyMeaningId (l : Legacy) (envId : String) (ast : Json) : Except String S
   VE.CertificateWire.digest s!"ve-meaning-{l.version}\n"
     (Json.mkObj [("environment_id", .str envId), ("ast", ast)])
 
+/-- A letter name of `i`: a, …, z, ba, bb, … (base 26, no leading `a`), so distinct numbers have distinct names. -/
+def letterName (i : Nat) : String :=
+  (if i < 26 then "" else letterName (i / 26)) ++ (Char.ofNat (97 + i % 26)).toString
+decreasing_by omega
+
+/-- The act Rust's model view gives the `i`-th distinct act, of arity `k` (ap-1bg): `{0} act<letters> {1} … {k-1}`,
+    which `canonicalAct` accepts. No model reads an act; equal acts stay equal, so each dual and role check is kept. -/
+def modelAct (i k : Nat) : String :=
+  " ".intercalate (s!"\{0} act{letterName i}" :: ((List.range k).drop 1).map fun j => s!"\{{j}}")
+
+/-- Rust's model view of an `acts@0` environment (act-phrases 2.9, ap-1bg): each permission or obligation's act is
+    `modelAct` of its place among the canonical environment's distinct permission and obligation acts, in vocabulary
+    order; without `acts@0`, none. Rust reads the view, never an `acts@0` act; Lean checks its witnesses. -/
+def modelActs (profiles : List String) (canonical : Json) : Except String (List (String × String)) := do
+  unless profiles.contains "acts@0" do return []
+  let predicates ← VE.Bridge.fields (← (← canonical.getObjVal? "vocabulary").getObjVal? "predicates")
+  let rs := predicates.filterMap fun (p, entry) =>
+    let r := entry.getObjValD "regulated"
+    match r.getObjValD "role", r.getObjValD "act", entry.getObjValD "arguments" with
+    | .str role, .str a, .arr args => if role == "plain" then none else some (p, a, args.size)
+    | _, _, _ => none
+  let distinct := (rs.map (·.2.1)).eraseDups
+  pure (rs.map fun (p, a, k) => (p, modelAct (distinct.idxOf a) k))
+
 def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
@@ -452,15 +478,17 @@ def environmentCase (j : Json) : Except String Json := do
        | .v0 _ => [("profile", environment.getObjValD "profile")]
        -- a frozen envelope regulates nothing: no act
        | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)] ++
-      (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj [])]))
+      (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj []), ("model_acts", Json.mkObj [])]))
   let e ← validatedComposedEnvironment environment
   -- `environmentIdOf` of the identity environment, with the canonical acts it hashes, which Python stores
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson (← identityEnvironment environment e.profiles)
   let environmentId ← VE.Route.Wire.environmentId e.profiles canonical
   let acts ← VE.Norms.Wire.canonicalActs canonical
+  let model ← modelActs e.profiles canonical
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
     ("profiles", toJson e.profiles), ("family", .str e.family.name),
-    ("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))])
+    ("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a))),
+    ("model_acts", Json.mkObj (model.map fun (p, a) => (p, .str a)))])
 
 /-- Python sorts relation rows by typed tuple order. In the order family,
 `$int` cells compare numerically even though they travel as strings. -/
@@ -553,7 +581,7 @@ def modelCase (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let model ← j.getObjVal? "model"
   if isLegacy environment then return ← legacyModelCase id environment model j
-  let _ ← validatedComposedEnvironment environment
+  let _ ← validatedComposedEnvironment (VE.SoftNorms.Phases.frameView environment)
   unless model.getObj?.isOk do
     throw "InvalidModel: object expected"
   let modelEnv ← modelEnvironment environment
@@ -1222,7 +1250,9 @@ def reportedEnvironment (j : Json) : Json :=
         | .error fault => reportedFault j fault
 
 def reportedModel (j : Json) : Json :=
-  let checkedEnvironment := reportedEnvironment j
+  -- the soft view of an `acts@0` norms frame is checked as that frame (ap-1bg)
+  let checkedEnvironment :=
+    reportedEnvironment (j.setObjVal! "environment" (VE.SoftNorms.Phases.frameView (j.getObjValD "environment")))
   if checkedEnvironment.getObjValD "status" == .str "error" then
     reportedFault j ⟨(checkedEnvironment.getObjValD "error").getStr?.toOption.getD "",
       Pointer.ofString ((checkedEnvironment.getObjValD "path").getStr?.toOption.getD "")⟩
@@ -1231,7 +1261,7 @@ def reportedModel (j : Json) : Json :=
       let environment ← j.getObjVal? "environment"
       let model ← j.getObjVal? "model"
       if !isLegacy environment then
-        let _ ← validatedComposedEnvironment environment
+        let _ ← validatedComposedEnvironment (VE.SoftNorms.Phases.frameView environment)
         pure ()
       let view ← if isLegacy environment then pure environment else modelEnvironment environment
       pure (environment, model, view)
