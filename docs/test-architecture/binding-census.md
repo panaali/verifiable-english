@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 264 |
-| leaves:closed domain | 293 |
-| leaves:none | 1470 |
+| leaves:bound | 266 |
+| leaves:closed domain | 295 |
+| leaves:none | 1474 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1069 |
-| today:shape | 557 |
+| today:not probed | 1073 |
+| today:shape | 561 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -355,17 +355,19 @@ Delegates: `/` to route.
 | `/acts/@key` | key | none |  |  | 0 | not probed |
 | `/acts/{}` | string | none |  |  | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
-| `/environment_id` | string | none |  | pattern | 6 | hand: `ve/backends/validation.py:construct_after_lean` |
+| `/environment_id` | string | none |  | pattern | 3 | hand: `ve/backends/validation.py:construct_after_lean` |
 | `/error` | string | none |  | minLength | 6 | not probed |
-| `/family` | string | closed domain | const |  | 6 | shape |
-| `/family` | string | closed domain | enum |  | 6 | shape |
-| `/id` | any | bound | x-echo |  | 8 | shape |
-| `/id` | string | bound | x-equals |  | 8 | shape |
+| `/family` | string | closed domain | const |  | 3 | shape |
+| `/family` | string | closed domain | enum |  | 3 | shape |
+| `/id` | any | bound | x-echo |  | 5 | shape |
+| `/id` | string | bound | x-equals |  | 5 | shape |
+| `/model_acts/@key` | key | none |  |  | 0 | not probed |
+| `/model_acts/{}` | string | none |  |  | 0 | not probed |
 | `/path` | string | none |  |  | 2 | not probed |
 | `/profile` | string | bound | x-equals |  | 3 | shape |
 | `/profiles` | any | bound | x-equals |  | 0 | shape |
-| `/profiles/*` | string | bound | x-equals |  | 5 | shape |
-| `/status` | string | closed domain | const |  | 12 | shape |
+| `/profiles/*` | string | bound | x-equals |  | 0 | shape |
+| `/status` | string | closed domain | const |  | 9 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
@@ -614,6 +616,7 @@ Delegates: `/` to norms.
 | `/environment_prime/language` | string | bound | x-equals |  | 3 | shape |
 | `/environment_prime/profiles/*` | string | none |  |  | 9 | later Lean request |
 | `/environment_prime/spec_revision` | string | bound | x-equals |  | 3 | shape |
+| `/environment_prime/vocabulary/acts` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/predicates/@key` | key | none |  |  | 7 | later Lean request |
 | `/environment_prime/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 9 | later Lean request |
@@ -781,6 +784,7 @@ Delegates: `/` to soft-norms.
 | `/environment_prime/language` | string | bound | x-equals |  | 3 | shape |
 | `/environment_prime/profiles/*` | string | none |  |  | 12 | later Lean request |
 | `/environment_prime/spec_revision` | string | bound | x-equals |  | 3 | shape |
+| `/environment_prime/vocabulary/acts` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/predicates/@key` | key | none |  |  | 9 | later Lean request |
 | `/environment_prime/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 17 | later Lean request |
@@ -1984,6 +1988,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/filled/environment/language` | string | bound | x-equals |  | 0 | shape |
 | `/components/*/answer/filled/environment/profiles/*` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/spec_revision` | string | bound | x-equals |  | 0 | shape |
+| `/components/*/answer/filled/environment/vocabulary/acts/fixed/*` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
@@ -1995,6 +2000,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/negative_verbalisation` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/regulated/act` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/regulated/default` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/filled/environment/vocabulary/predicates/{}/regulated/form` | string | closed domain | enum |  | 0 | shape |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/regulated/permission` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/regulated/role` | string | closed domain | enum |  | 0 | shape |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/verbalisation` | string | none |  |  | 0 | not probed |
@@ -2267,6 +2273,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/filled/environment/language` | string | bound | x-equals |  | 7 | shape |
 | `/filled/environment/profiles/*` | string | none |  |  | 15 | later Lean request |
 | `/filled/environment/spec_revision` | string | bound | x-equals |  | 7 | shape |
+| `/filled/environment/vocabulary/acts/fixed/*` | string | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
@@ -2278,6 +2285,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/filled/environment/vocabulary/predicates/{}/negative_verbalisation` | string | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/predicates/{}/regulated/act` | string | none |  |  | 14 | later Lean request |
 | `/filled/environment/vocabulary/predicates/{}/regulated/default` | string | closed domain | enum |  | 14 | shape |
+| `/filled/environment/vocabulary/predicates/{}/regulated/form` | string | closed domain | enum |  | 0 | shape |
 | `/filled/environment/vocabulary/predicates/{}/regulated/permission` | string | none |  |  | 6 | later Lean request |
 | `/filled/environment/vocabulary/predicates/{}/regulated/role` | string | closed domain | enum |  | 14 | shape |
 | `/filled/environment/vocabulary/predicates/{}/verbalisation` | string | none |  |  | 0 | unbound |
@@ -2640,6 +2648,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/fill_premises` |  |  |  |  |
 | `/components/*/answer/fill_premises/*/premises` |  |  |  |  |
 | `/components/*/answer/filled/environment/profiles` |  |  |  |  |
+| `/components/*/answer/filled/environment/vocabulary/acts/fixed` |  |  |  |  |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/arguments` |  |  |  |  |
 | `/components/*/answer/filled/environment/vocabulary/predicates/{}/defined/arguments` |  |  |  |  |
 | `/components/*/answer/filled/units` |  |  |  |  |
@@ -2763,6 +2772,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/fill_premises` |  |  |  | drop: accept/ve/readings_route.py:_need; drop+count: accept/ve/readings_route.py:_need; duplicate: accept/ve/readings_route.py:_need; duplicate+count: accept/ve/readings_route.py:_need; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
 | `/fill_premises/*/premises` |  |  |  | drop: accept/accepted; drop+count: accept/ve/readings_route.py:_need; duplicate: accept/accepted; duplicate+count: accept/ve/readings_route.py:_need |
 | `/filled/environment/profiles` |  |  |  | drop: accept/transport; duplicate: accept/transport; replace: accept/transport; reverse: accept/transport |
+| `/filled/environment/vocabulary/acts/fixed` |  |  |  |  |
 | `/filled/environment/vocabulary/predicates/{}/arguments` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted; reverse: accept/accepted |
 | `/filled/environment/vocabulary/predicates/{}/defined/arguments` |  |  |  |  |
 | `/filled/units` |  |  |  | drop: accept/accepted; duplicate: accept/ve/readings_route.py:_need; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
