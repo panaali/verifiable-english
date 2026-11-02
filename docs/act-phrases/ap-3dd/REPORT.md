@@ -152,7 +152,7 @@ ap-3dc (the relay), then ap-4. No work is cut from this item.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. N.A.: no relayed Lean answer; nothing under `ve/`, `lean/VE/Service/` or `rust/` changes.
+1. N.A.: no relayed Lean answer; nothing under `lean/VE/Service/` or `rust/` and no Python under `ve/` changes (only one entry in `ve/assurance-manifest.json`).
 2. PASS: sections 1 and 2 map each row and condition to a line. The diff has no Python product change and no report test.
    Overlap: no in-flight `feature/`, `infra/`, `lean-first/` or `foundation/` branch edits the Acts files or act-phrases spec (scripted `git diff --name-only main...<branch>`, empty).
 3. PASS: `mutants.json` (10 KILLED, each by a proof and a named `#guard`); `trust-mutants.json` exit 0 with 4 allowed, read exactly in section 3.
