@@ -55,6 +55,31 @@ Draft 4, from the phase-1 results (each change cites the report's section; secti
     u0123.s01.p1), and the NORTH-STAR-style score split into the language's part (0.09 to 0.13) and AP-0's pilot
     repair (0.24).
 11. **No Lean statement changed** (section 3 is draft 3's); the specification's draft 3 records the same results.
+12. **D3 revised in one cell after AP-7 FAIL** (2026-11-01, `ap-3r-spec`; DRI decision
+    `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1, SIGNED): under *may* and *has the right to*,
+    "A and B" always has two readings, each (split) or both together (one act); the exception "one reading, split, when
+    every item has its own *to*" is removed (2.3). Every other cell is unchanged, *must not* with *and* included, and a
+    split marker's *and* under *may* or *has the right to* still has one reading. Fixtures A5, A8 and A12 now count the
+    together readings (5). 2.1's u051 example lists the four readings, as the specification's 2.2 does, and says when their reading set can pass `sourceCheck` (the specification's F11). Section 3's `table_may_all_own` changes the same way, with `table_may_all_own_split` for a
+    split marker's *and*. AP-4's Tests line follows A5, A8 and A12. The specification's AP-3 table statement and fixtures change with it (its change log).
+13. **u105's reading sets refused under F11** (2026-11-01, `ap-3r-spec`; DRI decision
+    `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md` item 2, SIGNED): G8's together readings are whole joins, which have no candidate on the readings route (spec
+    F11), so the specification's S1 and S8 become "refused: a reading is a whole join and has no candidate (F11)". AP-4's Tests line says
+    rs_u105b/c are refused until the readings elaboration, its Lean seeded bug moves to rs_u055 (S4), A8 says the same,
+    and AP-4's M5 move and section 7 leave u051's and u105's sets to the readings elaboration, like u076.
+14. **Freeze wording** (2026-11-01, `ap-3r-spec`; DRI decision `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec.md`
+    item 4, recording item 2 of `manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md`): "provisional until AP-7
+    passes" becomes: D3 as revised freezes when ap-3r merges; D4 as written freezes when AP-4 merges; AP-7 ran (FAIL
+    2026-10-31) and is not re-run. Section 1's rows D3 and D4, 2.3, 2.4, section 4 step 5, 8.6, G10 and the AP-7 experiment
+    row; every "and D9 is decided" clause stays.
+15. **Freeze under D9 (i), and D7's refused units** (2026-11-01, `ap-3r`; DRI decision
+    `manage-agents/reviews/dri-decisions-20261101-ap-3r-spec-o5-o7.md` items 1-3, SIGNED): in the D3 and D4 rows, 2.3,
+    2.4 and the specification's 6.2, "stay(s) provisional until D9 is decided" becomes "frozen at <merge> under D9 (i);
+    a later D9 ruling reopens only the cells it names" (item 3; D2's N clause is not touched); the D7 row says that a
+    unit whose reading set cannot pass `sourceCheck` (F11: u051, u076, u105) is refused until the readings elaboration
+    (item 1); the specification's S-table gains S3b and S8b on rs_u055 (item 2; S3b as worded in
+    `manage-agents/reviews/dri-decisions-20261101-ap-3r.md` item 1, since *arbitrarily* on `denied` only cannot be
+    written while u055a is shared).
 
 ## 0. Summary
 
@@ -138,11 +163,11 @@ Pilot metrics (run `20261012T1800Z`; "after AP-0" measured in phase 1, report se
 |---|---|---|---|
 | D1 | How `acts@0` enters | A decoding extension of `norms@0`: the act check and the elaboration are chosen by the document's profiles inside the existing decoders. It is not a composition wrapper: no new route head. The only new responses are AP-3's mandatory `acts-elaborate` relay and AP-4's `act-readings` proposal mode, each through the relayed-route recipe. | AP-1 |
 | D2 | Budgets | Act phrase ≤ 400 bytes; fixed phrase ≤ 300 bytes; ≤ 128 fixed phrases and ≤ 128 frames per document. Two separate parse limits: a **raw derivation budget N** (the parser's cap; AP-0 measures the largest raw count over the pilots' act phrases and N is fixed above it) and a **public limit of 64 distinct readings** (= the `readings@1` limit), beside the engine's step budget. `read` (one reading required) and `readings` (listing) use the same limits. A reading is certified only from a complete enumeration: fewer than N raw derivations, within the step budget. Raw-cap saturation, an exhausted step budget, or more than 64 readings is an explicit **limit** outcome: a refusal, never a choice. Exactly 64 readings are accepted when the enumeration is complete. **Measured (AP-0 item 4, PASS):** R = 2 and S = 14,440 on the registered 22-phrase corpus, so N = 256 and the step budget 2,100,000 stand for draft 2's rule table. They stay **provisional** until D9 is decided, then R and S are re-measured on the same corpus plus the M1 act phrases it left out (section 11, item 4). | AP-1 |
-| D3 | The modal × connective table (2.3) | as written; its equations stay provisional until AP-7 passes and D9 is decided; frozen when AP-3 merges, which is after AP-7 | AP-3 |
-| D4 | The edge rule for modifiers (2.4) | as written; provisional until AP-7 passes and D9 is decided; frozen when AP-4 merges, after AP-7 | AP-4 |
+| D3 | The modal × connective table (2.3) | as written; D3 as revised (`manage-agents/reviews/dri-decisions-20261031-ap-7-fail.md` item 1): its equations are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only the cells it names; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-3 |
+| D4 | The edge rule for modifiers (2.4) | as written; D4 as written: frozen at the AP-4 merge under D9 (i); a later D9 ruling reopens only the cells it names; AP-7 ran (FAIL 2026-10-31) and is not re-run | AP-4 |
 | D5 | Specialisation premises | permission and obligation only, licensed by standard deontic logic, and only through markers and modifiers the `acts` block declares restrictive (visible semantic assumptions); entitlements stay UNKNOWN between related acts. The premises take effect only under the opt-in profile `act-specialise@0`, after AP-5b | AP-5 (definitions); AP-5b (use) |
 | D6 | n-ary route | decided by AP-6's pre-registered bar; route (a) reifies over `events@0`'s event sorts | after AP-6 |
-| D7 | Reading-set sources | optional under `acts@0`; mandatory in the UDHR and constitution pilots once AP-4 merges | AP-4 |
+| D7 | Reading-set sources | optional under `acts@0`; mandatory in the UDHR and constitution pilots once AP-4 merges; a unit whose reading set cannot pass `sourceCheck` (F11: u051, u076, u105) is refused until the readings elaboration | AP-4 |
 | D8 | Trust budget | AP-1 to AP-5 add proved Lean only; if `trust_map.py` reports growth beyond the signed budget, the DRI signs a reason (`trust_map.py --write --reason`) | each batch |
 | D9 | Words shared inside a joined filler (phase 1, report 7.6c; 2.3 below) | **(i): refuse** a joined filler whose marker is written once (a direct object, or a marker before the whole list) when its first or last member is a run of two or more words; the translator declares a fixed phrase, which the audit checks, or rewords. Why: it keeps section 0's rule (a known ambiguity the grammar does not model is refused), only narrows what is accepted, so (ii) can still be added later on AP-7's evidence (the argument the statement review used for F10), and leaves R, the fixtures G5 to G14v and their raw counts unchanged (none has such a filler). Against it: more declared fixed phrases ("their religion or belief", u067; "any individual or group", u0165.s06), each a declaration to audit. The alternatives: (ii) an edge rule for joined fillers (more faithful, but raises raw counts, needs a new rule-table review and makes the corpus's R obsolete); (iii) exactness relative to the declared fixed phrases with an audit item naming the case (cheapest; it reads a known ambiguity one way, against section 0) | the bounded re-check (before AP-2 merges) |
 
@@ -171,15 +196,19 @@ A reader sees the sentence "Every person is entitled in full equality to a fair 
 and impartial tribunal in each determination that …". Where the English has two structures, the reader also sees
 one plain sentence per reading. For u051:
 
-> This sentence has two readings.
-> 1. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
->    asylum from persecution in other countries.
-> 2. Everyone has the right to seek asylum from persecution, and everyone has the right to enjoy asylum from
+> This sentence has four readings.
+> 1. Everyone has the right to seek asylum from persecution, and everyone has the right to enjoy asylum from
 >    persecution in other countries.
+> 2. Everyone has the right to seek asylum from persecution and to enjoy asylum from persecution in other countries,
+>    as one act done together (not each on its own).
+> 3. Everyone has the right to seek asylum from persecution in other countries, and everyone has the right to enjoy
+>    asylum from persecution in other countries.
+> 4. Everyone has the right to seek asylum from persecution in other countries and to enjoy asylum from persecution in
+>    other countries, as one act done together (not each on its own).
 
 In authoring, the writer picks one. Each simple act of the chosen reading reads back with one meaning, by AP-2's
 `read_normal`; the paraphrases of one listing are pairwise distinct (the specification's 6.2). In translation,
-both stay, as a reading set whose source is the original phrase (AP-4). Nobody sees brackets, slots or frames. The
+all four stay, as a reading set whose source is the original phrase (AP-4); the set passes `sourceCheck` only after the readings elaboration, since the together readings are whole joins (the specification's F11). Nobody sees brackets, slots or frames. The
 IDE asks in plain words ("Is 'a fair and public hearing by an independent and impartial tribunal' one thing?").
 
 ### 2.2 The act grammar (AP-2)
@@ -242,12 +271,13 @@ A single reading is applied by AP-3. Two readings make the sentence ambiguous; A
 |---|---|---|
 | *must* | one reading, split: must A; must B (obligation distributes over *and*) | one reading, **one act** "A or B": the bearer chooses the way (obligation does not distribute over *or*) |
 | *must not* | two readings: each is forbidden (split), or only doing both (one act "A and B") | one reading, split: must not A; must not B (prohibition distributes over *or*) |
-| *may*, *has the right to* | one reading, split, when every item has its own *to* ("to form and to join"); otherwise ("to seek and enjoy", "may form and join") two readings: each (split), or both together (one act) | two readings: each way (free choice, split), or one act "A or B" |
+| *may*, *has the right to* | two readings: each (split), or both together (one act), whether every item has its own *to* ("to form and to join", "to seek and to enjoy") or not ("to seek and enjoy", "may form and join"); a split marker's *and* has one reading, each (below) | two readings: each way (free choice, split), or one act "A or B" |
 | *need not* | no reading: refused (no pilot case; rewrite) | no reading: refused |
 
 **Nor** reads only under *must not*, where prohibition distributes over it. Under *must*, *may* and *has the right
 to* it has no reading, and the writer rewrites. The table's theorems take the split-marker and *nor* flags of the act
-tree as conditions (section 3). Its equations stay provisional until AP-7 passes (D3).
+tree as conditions (section 3). Its equations are frozen at the ap-3r merge under D9 (i); a later D9 ruling reopens only
+the cells it names (D3 as revised; AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 The table holds the deontic distribution equations for the five modals of `VE.Acts.Op`. It is never reused for
 `intends` or `believes`, and a joined act under an attitude verb is not split by it.
@@ -306,7 +336,8 @@ So u105's *freely* has two readings, which is what its 2026-10-10 audit required
 the pilot's `both_acts` and `deprivation_only`. u051's "in other countries" has two. Several edge modifiers multiply
 their readings, up to the 64-reading limit. Beyond it, or when the enumeration reaches the raw derivation budget N or
 the step budget, the phrase is refused ("too many readings to list; split the sentence"), never read one way. The
-edge rule stays provisional until AP-7 passes (D4).
+edge rule is frozen at the AP-4 merge under D9 (i); a later D9 ruling reopens only the cells it names (D4 as written;
+AP-7 ran, FAIL 2026-10-31, and is not re-run).
 
 ### 2.5 Nothing accepted earlier changes meaning
 
@@ -546,8 +577,10 @@ theorem table_mustNot_any (fs n sp xs as) (h : simple xs = some as) : table fs .
 theorem table_mustNot_all (fs s xs as) (h : simple xs = some as) (h2 : 2 ≤ xs.length) :
     table fs .mustNot (.all s false xs) = [as, [Atom.joined fs (.all s false xs)]]
 theorem table_mustNot_all_split (fs s xs as) (h : simple xs = some as) : table fs .mustNot (.all s true xs) = [as]
-theorem table_may_all_own (fs sp xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
-    table fs op (.all false sp xs) = [as]
+theorem table_may_all_own (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as)
+    (h2 : 2 ≤ xs.length) : table fs op (.all false false xs) = [as, [Atom.joined fs (.all false false xs)]]
+theorem table_may_all_own_split (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
+    table fs op (.all false true xs) = [as]
 theorem table_may_all_shared (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as)
     (h2 : 2 ≤ xs.length) : table fs op (.all true false xs) = [as, [Atom.joined fs (.all true false xs)]]
 theorem table_may_all_split (fs xs as) (op) (hop : op = .may ∨ op = .right) (h : simple xs = some as) :
@@ -700,7 +733,8 @@ row, and AP-5b before any integration of AP-5.
    AP-1's row waits for AR-10's table, and its decoder hunk for `lean-first/b14b`.
 3. AP-2, merged: it changes no route. Its rule table is the one the bounded re-check fixes after D9.
 4. AP-3 (with the relay and the reference table) and an AP-4 prototype, each on its own branch.
-5. AP-7, run on `phraseReadings`. The table equations and the edge rule stay provisional until it passes.
+5. AP-7, run on `phraseReadings`: it ran (FAIL 2026-10-31) and is not re-run. D3 as revised freezes when ap-3r merges;
+   D4 as written freezes when AP-4 merges.
 6. Merge AP-3, then AP-4. AP-3 changes `_lean_route`, so merging it is already a release.
 7. AP-5, once the restrictive declarations are specified; AP-5b before any integration of it.
 8. AP-6 and AP-8, as experiments.
@@ -961,15 +995,16 @@ row, and AP-5b before any integration of AP-5.
   roots, `VE/Audit.lean`, `ResponseShape/Audit.lean`, axioms, statements, pins, assurance manifest, gate collection.
 - **Statements:** `modifier_edges`, `phraseReadings_exact`, `sourceCheck_exact`.
 - **Tests:**
-  - A5 (u051), A8 (u105), A9 (u055), A10 (u092) and A11 (u076) give exactly 2 readings each.
-  - A12 (u087) gives 2.
-  - The pilot's rs_u055 and rs_u105b/rs_u105c with their coupling pass `sourceCheck`.
+  - A9 (u055), A10 (u092) and A11 (u076) give exactly 2 readings each.
+  - A5 (u051), A8 (u105) and A12 (u087) give 4 (D3 revised).
+  - The pilot's rs_u055 passes `sourceCheck`; rs_u105b/rs_u105c with their coupling are refused under F11 until the
+    readings elaboration (spec S1, F11).
   - A set with a skipped-middle candidate is refused. A set missing a reading is refused. A set whose choice turns a
     permission into a prohibition is refused. A set whose choice changes only `unspecified` to `deny` is refused (spec
-    S7); one whose rules come in another order passes (S8).
+    S7); one whose rules come in another order (S8, on rs_u105b/c) is refused under F11 like S1.
   - The boundaries of `phraseReadings`: 64 readings listed, 65 refused; raw-cap saturation refused.
 - **Seeded bugs:**
-  - Lean: drop the "all" reading of a pre-modifier; rs_u105b/c must be refused.
+  - Lean: drop the "all" reading of a pre-modifier; rs_u055 (spec S4) must be refused.
   - Python: drop the token-index range check from the binding; the fuzz mutant with an index pushed out of range (spec
     AR2) is then accepted, so its test fails. (Draft 2's "relay a reading list with one reading removed" was a claim
     binding cannot meet: spec AR5.)
@@ -980,7 +1015,8 @@ row, and AP-5b before any integration of AP-5.
   - M1: u092, 163 B (*estimate*). u076 (125 B) waits for the readings elaboration: its one-act reading is a joined
     act, which the readings route refuses until then (spec F11).
   - M2: u055 checked exact.
-  - M5: 3 sets checked against the English.
+  - M5: rs_u055 checked against the English. rs_u105b/c, like u051's set, wait for the readings elaboration: their
+    together readings are whole joins (spec F11).
 
 ### AP-5. Specialisation: definitions and generator only (4 h)
 
@@ -1085,14 +1121,14 @@ declarations, its derivation and reading counts and its diagnostics, and adds th
 | A2 | u085 | `{0} to [equal pay for equal work] without any discrimination`, form "has the right"; open terms `discrimination`, `equal_pay_for_equal_work` | AP-1 | accepted |
 | A3 | u106 | `{0} to the protection of [the moral and material interests] resulting from {1}`, sorts person and production; guard: the person is the author of the production, and the production is scientific, literary or artistic | AP-1 | accepted |
 | A4 | u051 (today's wording) | `{0} to seek as well as enjoy in other countries asylum from persecution` | AP-1 | accepted; it never enters the grammar: its identity and meaning are its canonical string (2.5) |
-| A5 | u051 (source) | `{0} to seek and to enjoy in other countries asylum from persecution` | AP-1; AP-4 | AP-1: refused, *and* outside a fixed phrase. AP-4: 2 readings ("in other countries" on *enjoy* or on both) |
+| A5 | u051 (source) | `{0} to seek and to enjoy in other countries asylum from persecution` | AP-1; AP-4 | AP-1: refused, *and* outside a fixed phrase. AP-4: 4 readings ("in other countries" on *enjoy* or on both; each place read as each (split) or both together (one act), D3) |
 | A6 | u027 | `{0} be subjected to torture or to [cruel, inhuman or degrading treatment or punishment]`, permission, sign false; frame `be subjected` with `split: ["to"]` | AP-1; AP-3 | AP-1: refused. AP-3: two prohibitions |
 | A7 | u079b | `{0} be held by secret vote or by [equivalent free voting procedures]`, obligation | AP-1; AP-3 | AP-1: refused (or accepted with the two ways as one fixed phrase). AP-3: one obligation on the whole act; "by" is not a split marker |
-| A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | exactly 2 readings (*freely* on the first act, or on all); the pilot's coupled rs_u105b/rs_u105c pass `sourceCheck` |
+| A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | 4 readings (*freely* on the first act, or on all; each place read as each (split) or all together (one act), D3); rs_u105b/rs_u105c are refused by `sourceCheck` until the readings elaboration (spec F11) |
 | A9 | u055 | `{0} be arbitrarily deprived of their nationality nor denied [the right to change their nationality]`, permission, sign false | AP-4 | exactly 2 readings = rs_u055's `deprivation_only` and `both_acts` |
 | A10 | u092 | `{0} to security in the event of unemployment, sickness, disability, widowhood, old age or [other lack of livelihood] in circumstances beyond their control`, frame *security* with `split: ["in the event of"]` | AP-4 | 2 readings ("in circumstances beyond their control" on the last cause, or on all) |
 | A11 | u076 | `{0} to take part in {1} directly or through [freely chosen representatives]`, form "has the right"; the country slot as u077 | AP-4 | 2 act readings (each way, or one of the ways) × u077's 2 country readings; its reading set passes `sourceCheck` only after the readings elaboration (spec F11) |
-| A12 | u087 | `{0} to form and to join trade unions for the protection of their interests` | AP-4 | 2 readings ("for the protection …" on *join* or on both); the split itself (*to … and to …*) is AP-3's |
+| A12 | u087 | `{0} to form and to join trade unions for the protection of their interests` | AP-4 | 4 readings ("for the protection …" on *join* or on both; each place read as each (split) or both together (one act), D3); AP-3 does not split it under *may* or *has the right to* (two readings, D3) |
 | A13 | u0156.s03 | `{0} actively deceive {1} about [the existence of a system prompt or its content]` | AP-1 | accepted; replaces "existence-or-content" |
 | A14 | u0123.s03 | the six acts after "cannot instruct Claude to", joined by *or*, permission, sign false; *while* and *when* clauses move to guards | AP-3 | five prohibitions plus one explicit residual: "provide false information that could deceive the user" holds the clause word *false*, refused even in a fixed phrase, and the statement review kept that rule (spec F10, G14v); "instruct" stays `speech-acts@0`'s |
 | A15 | u024, u037 | two **permission** predicates with act `{0} take place` and different sorts | AP-1 | accepted (act identity includes sorts, and `actChecks` checks permissions); the specification decides whether wording distinctness may also use sorts (open question 8.3). Draft 2 left the role open; as plain predicates `actChecks` would skip them and the wording would read "has the right take place" |
@@ -1166,7 +1202,7 @@ the others are *estimates*. A pilot rerun and an audit decide each unit.
 | AP-1 | — | 0 | 49.93% | Group C wordings restored (6 units, 664 B; 844 B with u0123.s01.p1; faithfulness) |
 | AP-3 | u079b → OPEN | +76 | 50.62% | Groups A and B on real acts (1,658 B by the tagging rule; 1,838 B with u0123.s01.p1; faithfulness; A still needs attitudes and the act-performance bridge) |
 | AP-4 | u092 → READINGS | +163 | 52.12% | — |
-| the readings elaboration (a later statement review; spec F11) | u076 → READINGS | +125 | 53.26% | — |
+| the readings elaboration (a later statement review; spec F11) | u076 → READINGS; u051's and u105's reading sets pass `sourceCheck` (spec F11) | +125 | 53.26% | — |
 | AP-5 | — | 0 | — | nothing until AP-5b |
 | beyond this plan | u041, u108 (siblings), u086 (research), u082 (rights as objects) | up to +838 | — | — |
 
@@ -1202,8 +1238,8 @@ order is a cross-plan question (section 12, issue 1).
 5. **Python's norm-sentence matcher** still matches long acts as exact terminals. That is safe for one reading (a
    terminal is literal), but it may be slow for very long acts (not measured). E3 moves it to Lean; if the gate shows
    a regression, AP-1 caps acts lower (D2).
-6. **Freezing.** The table and the edge rule become part of `acts@0`'s meaning when AP-3 and AP-4 merge. AP-7 runs
-   before either merges, on their branches; until it passes, the table equations and the edge rule are provisional.
+6. **Freezing.** The table and the edge rule become part of `acts@0`'s meaning when AP-3 and AP-4 merge. AP-7 ran
+   (FAIL 2026-10-31) and is not re-run; D3 as revised freezes when ap-3r merges, D4 as written when AP-4 merges.
 7. **Lean audit words.** `lean/audit.py` refuses the words *sorry, axiom, unsafe, partial, opaque, extern* (with word
    boundaries) even in comments and strings. Fixture strings are checked for them. "Impartial" passes (no word
    boundary), but a fixture or comment saying "opaque" would not: the plan's Lean text avoids it.
@@ -1258,7 +1294,7 @@ accepted them):
 | G7 | Duals: a predicate whose rules or dual rules give different lists of simple acts is refused; aggregate/component premises deferred | 2.3 (last paragraph); 3 (`elaborate`); AP-3 goal and tests |
 | G8 | Inventory: `LexicalBase` below `Norms.Wire`; `check_extends` in a module above both; `canonicalEnvironmentJson`; the `.plain` admission in `Tree.check`; AP-1 lists all three hunks | 2.5; 2.8; 3 (`LexicalBase`, `Compat`, the `Norms/Wire.lean` block); AP-1 new and shared files; 6 |
 | G9 | Specialisation counts only markers and modifiers the `acts` block declares restrictive (visible assumptions); every deletion used in narrowing covered; the premises only under the opt-in `act-specialise@0`; the IDE's question | 0 item 5; D5; 2.6; 2.8; 3 (`Restrictive`); AP-5 |
-| G10 | Freezing: AP-7 runs before AP-3 or AP-4 merges; equations provisional until it passes; AP-2 merges on its own | D3; D4; 2.3; 2.4; 4 (build order); AP-2; AP-3; AP-4; AP-7; 8.6 |
+| G10 | Freezing: AP-7 ran (FAIL 2026-10-31) and is not re-run; D3 as revised freezes when ap-3r merges, D4 as written when AP-4 merges; AP-2 merges on its own | D3; D4; 2.3; 2.4; 4 (build order); AP-2; AP-3; AP-4; AP-7; 8.6 |
 | G11 | Mandatory `acts-elaborate` relay through the full recipe (shape, encoder theorem, schema; binding of each `p__i` and `<rule>-a<i>` to its source and index; fuzz); Python's searches on the relayed document; `_lean_route` true for `acts@0` and the retained path refuses; references to a split `p` refused; `p` removed | 0 item 3; D1; 2.3; 2.9; AP-3 (the relay, shared files, tests); 6 (`ve/norms.py`) |
 | G12 | One reference table for every place a split predicate can be named; a test over the fields of `Node`, `Regulated`, `Definition` and `Doc` | 2.3; AP-3 (the relay, tests); the specification writes the table |
 | G13 | `Act.any` and `Act.all` carry a split-marker flag, used in the table's conditions; *nor* refused under *may*, *must* and *has the right to* | 2.2; 2.3; 3 (`Act`, `table_*`) |
@@ -1352,12 +1388,12 @@ draft 4). Draft 4 applies these and makes no other change; the cross-plan edits 
 | 3. Tag the 18 norm units | **PASS** (measured): 17 units, 2,502 B | the M4 targets of AP-1 (Group C) and AP-3 (Groups A and B) | done; the ledger write is deferred item 2 |
 | 4. Measure N and the step budget | **PASS**: R = 2 ≤ 64, so N = 256; 10 S = 144,400 ≤ 2,100,000, so the step budget stands | D2's constants (`rawCap`, `stepBudget`) for AP-2 | **provisional** until D9; deferred item 5 |
 
-**Experiments** (none has run):
+**Experiments** (AP-7 ran; the others have not):
 
 | Experiment | Verdict | Gates | Trigger to run |
 |---|---|---|---|
 | AP-6 (n-ary routes) | not run | D6; u019 and u057 (389 B) | `lean-first/b14c` merged; for route (a), ET-3; and u057's act phrase reads (deferred item 8) |
-| AP-7 (do derivations find the auditors' readings?) | not run | D3 and D4 (freezing the table and the edge rule); the merges of AP-3 and AP-4; evidence on D9's choice | AP-3 and the AP-4 prototype on their branches, after D9 is decided |
+| AP-7 (do derivations find the auditors' readings?) | FAIL (2026-10-31); not re-run | D3's revised cell (2.3); D3 as revised freezes when ap-3r merges, D4 as written when AP-4 merges; the merges of AP-3 and AP-4; evidence on D9's choice | AP-3 and the AP-4 prototype on their branches, after D9 is decided |
 | AP-8 (frames from sense packs) | not run | whether frames stay declared vocabulary | senses B6 |
 
 **Deferred items**, each with its trigger:
