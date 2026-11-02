@@ -1,0 +1,17 @@
+{
+ "job": "ap-3dd-ea2109c0",
+ "head": "051dc7f0ca6e3fa447c2d493d2341b96e7898e5a",
+ "argv": [
+  "ap-3dd-ea2109c0",
+  "051dc7f0ca6e3fa447c2d493d2341b96e7898e5a",
+  "dee6a925845f5f8487b81143d586070bd5030af0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-42a64e8cc1ea.tar.zst",
+  "8f07e75e367297b65196576312992533eccf34bdd0aeb8e43242b755ba2a1074",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/act-phrases/ap-3dd/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
