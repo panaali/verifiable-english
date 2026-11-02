@@ -1,0 +1,296 @@
+{
+ "item": "cmp-s4",
+ "command": "lake build VE.Discourse.ComposeExamples (each mutant planted alone, then restored)",
+ "mutants": [
+  {
+   "definition": "VE.Discourse.admitComposed",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the ve.discourse@1 check dropped from the composed path (S4-28)",
+   "from": "if \"norms@0\" ∈ profiles ∧ \"ve.discourse@1\" ∈ profiles ∧ chainConstructs",
+   "to": "if \"norms@0\" ∈ profiles ∧ chainConstructs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:310",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.dispatchAdmission",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "readings@1 beside norms@0 accepted (S4-16)",
+   "from": "| .ok .readings => .error \"UnsupportedProfile: ve.discourse@1 with readings@1\"",
+   "to": "| .ok .readings => VE.Norms.Run.runAdmission \"\" environment document",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:107",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.composedJson",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a coherence premise dropped from conditional_on (S4-18)",
+   "from": "(\"inner\", c.inner),",
+   "to": "(\"inner\", c.inner.setObjVal! \"conditional_on\" (.arr #[])),",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:369",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.writtenText",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "resolveCase leaves the discourse key (S4-22)",
+   "from": "| .obj kvs => Json.obj (kvs.erase \"discourse\")",
+   "to": "| .obj kvs => Json.obj kvs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:186",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainKeys",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "right dropped from the chain keys",
+   "from": "[\"norm\", \"right\", \"right_lines\"",
+   "to": "[\"norm\", \"right_lines\"",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:171",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentKey",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a content's key never read",
+   "from": "| [(k, _)] => some k",
+   "to": "| [(_, _)] => none",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:136",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.unitsAndParts",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "MIXED parts not read",
+   "from": "u :: ((u.getObjValD \"parts\").getArr?.toOption.getD #[]).toList",
+   "to": "[u]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:171",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainConstructs",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a rights block is no chain construct",
+   "from": "(vocabulary.getObjVal? \"soft\").toBool || (vocabulary.getObjVal? \"rights\").toBool ||",
+   "to": "(vocabulary.getObjVal? \"soft\").toBool ||",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:168",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a fenced unit passes unresolved",
+   "from": "| some \"fence\" => .error (Loader.notImplemented \"fenced content on the chain\")",
+   "to": "| some \"fence\" => .ok ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:139",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainAbstentions",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "reading sets not refused",
+   "from": "if (front.getObjValD \"reading_sets\").getArr?.toOption.any (!·.isEmpty) then throw (Loader.notImplemented \"reading sets on the chain\")",
+   "to": "",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:122",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.editObj",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "fields not edited",
+   "from": "| .obj kvs => .obj (kvs.map f)",
+   "to": "| .obj kvs => .obj kvs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:175",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.editArr",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "elements not edited",
+   "from": "| .arr xs => .arr (xs.map f)",
+   "to": "| .arr xs => .arr xs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:175",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.unitFree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "parts' content kept",
+   "from": "else if k == \"parts\" then editArr",
+   "to": "else if k == \"partz\" then editArr",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:175",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.frontShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "format part of the shape",
+   "from": "| .obj kvs => .obj ((kvs.erase \"format\").erase \"discourse\")",
+   "to": "| .obj kvs => .obj (kvs.erase \"discourse\")",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:186",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.textShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the raw front matter as the shape",
+   "from": "pure (s.source, (frontShape s.front).compress)",
+   "to": "pure (s.source, s.front.compress)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:186",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseParts",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the document's shape dropped",
+   "from": "((j.getObjValD \"id\").getStr?.toOption, textShape (j.getObjValD \"document\"))",
+   "to": "((j.getObjValD \"id\").getStr?.toOption, none)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:191",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentFree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "fences kept",
+   "from": "else if k == \"fences\" then Json.mkObj [] else v) j",
+   "to": "else v) j",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:175",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the document's shape not in caseShape",
+   "from": "| some (source, front) => Json.arr #[.str source, .str front] | none => .null)]",
+   "to": "| some _ => .null | none => .null)]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:191",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainUnit",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "an ast content passed wrapped",
+   "from": "[(\"content\", (c.getObjVal? \"ast\").toOption.getD c)]",
+   "to": "[(\"content\", c)]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "arrays not searched",
+   "from": "| .arr ⟨xs⟩ => conditionalOnList xs",
+   "to": "| .arr _ => []",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:200",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnTree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "keys in reverse order",
+   "from": "| .inner _ k v l r => conditionalOnTree l ++",
+   "to": "| .inner _ k v r l => conditionalOnTree l ++",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:200",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnList",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "array elements skipped",
+   "from": "| x :: xs => conditionalOnOf x ++ conditionalOnList xs",
+   "to": "| _ :: xs => conditionalOnList xs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:200",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainBase",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the manifest decoded without the environment id",
+   "from": "let K ← Wire.decodeManifest [] (Loader.filesOf j) envId",
+   "to": "let K ← Wire.decodeManifest [] (Loader.filesOf j) \"\"",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseManifest",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the case's mentions dropped",
+   "from": "pure (E, K)",
+   "to": "pure (E, { K with mentions := [] })",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:134",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDocument",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "open terms not passed",
+   "from": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr openTerms)",
+   "to": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr #[])",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:81",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the payload rewritten outside contents",
+   "from": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure j",
+   "to": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure (j.setObjVal! \"fences\" (Json.mkObj []))",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:169",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "definitions_version not checked",
+   "from": "req (b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
+   "to": "req (true || b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:127",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveCase",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a case without ve.discourse@1 rewritten",
+   "from": "if (VE.Service.Document.profilesOf j).contains \"ve.discourse@1\" then resolveOn j else pure j",
+   "to": "resolveOn j",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:173",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.Run.encodeComposed",
+   "file": "lean/VE/Discourse/Run.lean",
+   "mutant": "the status field dropped",
+   "from": "((composedJson c).setObjVal! \"id\" (.str id)).setObjVal! \"status\" (.str \"ok\")",
+   "to": "(composedJson c).setObjVal! \"id\" (.str id)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:112",
+   "check": "#guard"
+  }
+ ]
+}
