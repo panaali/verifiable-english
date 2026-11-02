@@ -57,7 +57,7 @@ encoder proof `layeredKindCase_fits` (lean/ResponseShape/Encoders/NormDefaults.l
 - Size: `git diff --numstat $(git merge-base HEAD main)` without generated and verbatim files: 677 added lines before
   this report (trust-mutants-allow.json 26 after compaction, Uniform.lean 130, UniformExamples.lean 164).
 
-## Seeded bugs (Lean; mutants.json, applied one at a time, restored, `git status` clean)
+## Seeded bugs (Lean and Python; mutants.json, applied one at a time, restored, `git status` clean)
 
 1-2. `providerConditions` ignores conditions / reads only id `weighing`: F9.3 (:64) and F9.6 (:154) / F9.6 (:154).
 3-4. guard on every kind (`layeredKindCase`): F9.7 (:160, :162) with `layeredKindCase_other` set aside; as is,
@@ -66,7 +66,9 @@ encoder proof `layeredKindCase_fits` (lean/ResponseShape/Encoders/NormDefaults.l
 :91. 10. ranking ignores conditions: :68. 11. `dfltUniform` reversed: :150. 12-14. each `leastUniform` branch without
 `packConditions`: :111, :118, :124. 15. `ConditionsExact` without `SwitchesOff`: `conditionsExact_legacy`.
 16. `DfltUniformSound`'s conclusion: the lock. 17-18. `providerRefusal`, `providerE1d` texts: :65, :66.
-No Python or Rust product code changed, so no seed there.
+19-24 (Python, review F-ready1). `tools/check_pc9_statements.py`: the held form drops the binders, `leastUniform`
+compared with its body, the Lean text ignored, exit 0 on a difference, 1.8 read alone, theorems skipped: each fails
+`tests/test_pc9_statements.py` (ids in mutants.json). No Rust product code changed, so no seed there.
 
 ## Spec re-read
 
@@ -82,7 +84,7 @@ of the DRI decision), weighing's WG-3.
 1. PASS: no new relayed field; the refusal is an existing error row (`test_the_refusal_is_relayed_verbatim`).
 2. PASS: rows above; no Python copy (`test_no_python_copy_of_the_guard_or_its_sentence`); overlaps: lean/VE.lean
    (union-merged import list) and generated files (R12) only; Compose/, Service/, Zone files untouched.
-3. PASS: mutants.json (18), trust-mutants.json exit 0.
+3. PASS: mutants.json (24: 18 Lean, 6 Python), trust-mutants.json exit 0.
 4. N.A.: no Python or Rust path changes; Lean answers unchanged (F9.4, F9.7, `decodeLayered_uniform`).
 5. N.A.: no field Python reads is added.
 6. PASS for the evidence order: selected tests on the committed tree; the full gate is the chain's.
