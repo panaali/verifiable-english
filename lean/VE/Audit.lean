@@ -105,6 +105,7 @@ import VE.Closure.Syntax
 import VE.Compose.Adjoin
 import VE.Compose.Content
 import VE.Compose.Contract
+import VE.Compose.ContractExamples
 import VE.Compose.Dispatch
 import VE.Compose.Slot
 import VE.Compose.Stack
@@ -1875,6 +1876,10 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.Contract.scopeFaithful
 #print axioms VE.Compose.Contract.scopePreserves
 #print axioms VE.Compose.Contract.scopeSetsFaithful
+#print axioms VE.Compose.ContractExamples.G1.bare_admissible_ask
+#print axioms VE.Compose.ContractExamples.G1.composed_instance
+#print axioms VE.Compose.ContractExamples.G1.conflict_free_ask
+#print axioms VE.Compose.ContractExamples.G1.transfers_ask
 #print axioms VE.Compose.SlotChain.A_in
 #print axioms VE.Compose.SlotChain.A_out
 #print axioms VE.Compose.SlotChain.E_in
@@ -4922,6 +4927,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.complete_mem
 #print axioms VE.Readings.complete_nodup
 #print axioms VE.Readings.complete_setAt
+#print axioms VE.Readings.composed_superpose_all
 #print axioms VE.Readings.conditionItems_label
 #print axioms VE.Readings.conditionItems_ne_nil
 #print axioms VE.Readings.conditionLines_label
