@@ -56,8 +56,8 @@ def actsFrame (profiles : List String) (vocab : Json) : Bool :=
   profiles.contains "acts@0" && (vocab.getObjVal? "soft").toOption == some emptyBlock
 
 /-- An environment as the frame it views (ap-1bg): the soft view of an `acts@0` norms frame (`actsFrame`), over which
-Python's superposed readings route checks its models and words its acts, without `soft-norms@0` and its block, which
-no model or wording reads; any other environment as it is. -/
+Python's superposed readings route checks its models, without `soft-norms@0` and its block, which no model reads;
+any other environment as it is. -/
 def frameView (environment : Json) : Json :=
   let vocab := environment.getObjValD "vocabulary"
   match strings (environment.getObjValD "profiles") with

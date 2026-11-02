@@ -212,13 +212,12 @@ def plain_wordings(env) -> dict[str, str]:
     if not _plain_acts(env):
         return {}
     from .backends.relay import decide_once
-    lower = "norm-defaults" if NORM_DEFAULTS_PROFILE in env.profiles else "norms"
+    # the readings route's soft view of a norms frame is worded as its frame (`S1Environment.soft_frame`, ap-1bg)
+    source = getattr(env, "wording_frame", env)
+    lower = "norm-defaults" if NORM_DEFAULTS_PROFILE in source.profiles else "norms"
     kind = f"{lower}-elaborate"
-    # the soft view of an `acts@0` norms frame (only generated: its profiles are refused at load) is read by the same
-    # runner as its frame (ap-1bg)
-    view = {"acts@0", "soft-norms@0"} <= set(env.profiles)
-    mode = "readings-route" if "readings@1" in env.profiles or view else lower
-    row = decide_once(mode, {"id": kind, "kind": kind, "environment": env.to_dict(), "norms": []})
+    mode = "readings-route" if "readings@1" in source.profiles else lower
+    row = decide_once(mode, {"id": kind, "kind": kind, "environment": source.to_dict(), "norms": []})
     _bind_wordings(env, row, kind)
     return dict(row["wordings"])
 

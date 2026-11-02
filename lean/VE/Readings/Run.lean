@@ -515,10 +515,8 @@ def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admi
 
 /-! ## Dispatch -/
 
-/-- The case with `readings@1` stripped, run by the lower route's runner; the soft view of an `acts@0` norms frame
-    as that frame (`SoftNorms.Phases.frameView`, ap-1bg: the wordings of its plain acts are the frame's). -/
+/-- The case with `readings@1` stripped, run by the lower route's runner. -/
 def runLower (j : Json) : Json :=
-  let j := j.setObjVal! "environment" (VE.SoftNorms.Phases.frameView (j.getObjValD "environment"))
   match (j.getObjValD "environment").getObjVal? "profiles" >>= strings with
   | .error _ => VE.Rights.Run.runCaseReported j
   | .ok ps =>
