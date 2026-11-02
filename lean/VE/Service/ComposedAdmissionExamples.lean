@@ -96,6 +96,20 @@ def large : String :=
 -- item cmp-s4's abstentions: a bound prose unit and a fenced unit (14.3's slot steps are item cmp-s4ab)
 #guard composed (doc (discourse := mention "u1")) == "error: NotImplemented: a bound prose unit on the chain"
 #guard composed (doc (us := units (some "{\"fence\": \"u2\"}"))) == "error: NotImplemented: fenced content on the chain"
+-- review cmp-s4 F7: a body fence no unit binds is never read on the chain, so every entry refuses it by name with
+-- the loader's own refusal (`Loader.fencesOk`, `resolveWith`): the composed admission, `caseManifest`, `resolveCase`
+def fenceBody : String := src1 ++ src2 ++ "```ve zz\nIt is safe.\n```\n"
+#guard (composed (doc (body := fenceBody))).startsWith "error: "
+#guard composed (doc (body := fenceBody)) == "error: NotImplemented: fenced English or strict content"
+#guard (match caseManifest (caseOf (doc (body := fenceBody))) with | .ok _ => "" | .error e => e) ==
+  "NotImplemented: fenced English or strict content"
+#guard (match resolveCase (caseOf (doc (body := fenceBody))) with | .ok _ => "" | .error e => e) ==
+  "NotImplemented: fenced English or strict content"
+#guard (match Loader.fencesOk [("zz", "It is safe.\n")] with | .ok _ => "" | .error e => e) ==
+  "NotImplemented: fenced English or strict content"
+-- a fence a unit binds keeps that unit's abstention (`contentOk` runs first, as `compileUnits` does in `loadFront`)
+#guard composed (doc (us := units (some "{\"fence\": \"zz\"}")) (body := fenceBody)) ==
+  "error: NotImplemented: fenced content on the chain"
 
 /-! ## 14.5 step 4: the manifest checks of 4.1 on the composed path (review cmp-s4 F1)
 
