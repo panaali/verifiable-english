@@ -2178,6 +2178,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.collision_unranked
 #print axioms VE.Defaults.cond_declared
 #print axioms VE.Defaults.cond_free
+#print axioms VE.Defaults.coneAtomVX_off
 #print axioms VE.Defaults.consistent_atomV
 #print axioms VE.Defaults.count_allTuples
 #print axioms VE.Defaults.count_map_cons
@@ -2190,6 +2191,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.decision_not_unsaid
 #print axioms VE.Defaults.defaultBase_of_dflt
 #print axioms VE.Defaults.defaultCoherenceCheck_sound
+#print axioms VE.Defaults.defaultCompletion_below
 #print axioms VE.Defaults.defaultZone_budget
 #print axioms VE.Defaults.defaultZone_byDefault_sound
 #print axioms VE.Defaults.defaultZone_eq_noException
@@ -2204,10 +2206,13 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.excepted_inj
 #print axioms VE.Defaults.excepted_only
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.forcedAll_sound
+#print axioms VE.Defaults.forced_everywhere
 #print axioms VE.Defaults.least_le
 #print axioms VE.Defaults.length_allTuples
 #print axioms VE.Defaults.length_filter_ne
 #print axioms VE.Defaults.mem_exc
+#print axioms VE.Defaults.mem_of_mem_eraseDups
 #print axioms VE.Defaults.mem_of_mem_subsets
 #print axioms VE.Defaults.mem_zVals
 #print axioms VE.Defaults.min_of_dc
