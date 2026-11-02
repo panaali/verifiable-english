@@ -1,0 +1,12 @@
+trust_mutants: 20 definitions, 231 mutants (58 to run), 4 jobs, base eeb2a3b67d20
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) body-false: (contentOf D u).isSome || D.chain.contains u || setUnit D u || (groupedUnits D).contains u -> false
+SURVIVOR lean/VE/Discourse/WellFormed.lean:230 VE.Discourse.coveredOk (S, trusted) list-empty: D.chain -> []
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) or-and: || -> &&
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-first: D.chain -> (D.chain.take 1)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-drop-last: D.chain -> (D.chain.dropLast)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-last: D.chain -> (D.chain.reverse.take 1)
+SURVIVOR lean/VE/Discourse/WellFormed.lean:97 VE.Discourse.slotUnit (S, trusted) list-drop-first: D.chain -> (D.chain.drop 1)
+trust_mutants: 34 KILLED, 7 SURVIVOR, 0 UNKNOWN, 9 INVALID, 8 ALLOWED, 0 NOT RUN, 173 OTHER SHARD in 633 s
+trust_mutants: G[V], trusted: 3 KILLED, 21 OTHER SHARD
+trust_mutants: S, trusted: 31 KILLED, 7 SURVIVOR, 9 INVALID, 8 ALLOWED, 152 OTHER SHARD
+trust_mutants: steps: wall plan 8.4 s, scratch 2.4 s, control_build 0.2 s, probe_install 1.1 s, control_probes 29.4 s, mutants 588.1 s, cleanup 4 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 32.9 s (2), mutant_builds 283.8 s (58), mutant_checks 297.7 s (46), stage_controls 7 s (2), mutant_probes 1699.1 s (34)
