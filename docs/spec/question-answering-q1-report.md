@@ -7,7 +7,8 @@ no `many`. None of the 3,191 moved-word sentences is accepted. Both latency gate
 as follow-up q1-3c. q1-3b (C4, below) adds every fronting of *is*, *must* or *may*, the seal's other streams, the norm
 part documents and open point 10.2's count. No fronting that Lean answers reads another formula or is `many` (C4
 `f2.other_formula`, `f2.many_causes`). In the norm part documents, 5 of 5,859 units are reached, all `ve` fences of kind
-`asserted`; none of the 143 units of kind `norm` reads, and 1,006 units of `soft-chain` have no answer (C4 `norm.reached`,
+`asserted`; of the 143 units of kind `norm`, `english.read` answers 100 and reads none (97 `none`, 3 `rejected`), and of
+the other 43, 30 are not one sentence and 13 are in `soft-chain`, whose 1,006 units have no answer (C4 `norm.reached`,
 `norm.by_why`, `norm.documents.*.reach`). On the 1,442 F2 questions with no reading that 10.2 can measure, the closest
 candidate is a tie in 91% and has its moved word second in 97% (C4 `closest.measured`, `closest.share_tied`,
 `closest.share_moved_second`).
@@ -121,13 +122,13 @@ says what each stream is compared with; `usecase-surface` is not in the seal.
 | Stream | Drawn | Compared with | One-formula sentences | F1 read with the formula | F2 frontings (read with the formula) |
 |---|---|---|---|---|---|
 | `english-surface` (17 sealed streams) | 85,000 | `corpus_sha256`, 17 of 17 | 85,000 | asked in C1 | 343,977 (20,347) |
-| `usecase-surface` (26 streams) | 13,000 | the seal's generator (not sealed) | 12,905 | asked in C1 | 44,984 (3,058) |
-| `usecase-documents` (9) | 452 distinct | the files | 282 | asked in C1 | 316 (222) |
+| `usecase-surface` (26 streams) | 13,000 | not compared: drawn by the seal's generator (not sealed) | 12,905 | asked in C1 | 44,984 (3,058) |
+| `usecase-documents` (9) | 452 distinct | not compared: read from the files | 282 | asked in C1 | 316 (222) |
 | random Earley (17 × 250) | 4,250 | `random_earley_corpus_sha256`, 17 of 17 | 4,250 | 4,163 of 4,250 | 33,256 (408) |
 | documents of five (17 × 50) | 850 | `document_corpus_sha256`, 17 of 17 | each is its five random Earley sentences (`documents_not_their_sentences` 0), so its questions are theirs | | |
 | `english-mixed` (18 configurations) | 6,757 texts | the report's `corpus_sha256`, 18 of 18; the seal's 6,757 | 5,073 (1,684 paragraphs are their sentences) | 5,073 of 5,073 | 8,752 (1,766) |
 | `natural-view` (71 corpora) | 1,220 statements | the seal's 1,220 | 1,219 distinct | 1,202 of 1,219 | 3,851 (372) |
-| norm part documents (15) | 5,859 units | the pilot blobs' SHA-256 (C4 `norm.documents.*.sha256`) | 5 | 5 of 5,119 asked (1,005 unanswered) | 4 of 2,125 (422 unanswered) |
+| norm part documents (15) | 5,859 units | not compared: each part's git blob id, or `udhr-part07`'s SHA-256, recorded (C4 `norm.documents.*.sha256`) | 5 | 5 of 5,119 asked (1,005 unanswered) | 4 of 2,125 (422 unanswered) |
 
 - **How the new streams are drawn:** `english-mixed` by `english_mixed.mixed` itself (its texts kept, its parsing
   left out) and `natural-view` by `natural_surface.audit` itself (each `render_natural_sentence` text, the audit
@@ -196,7 +197,8 @@ Python does not choose the main sentence's word: Lean decides each candidate que
   fenced unit's sentence is in the document. The meaning of those 73 norms and 31 AST assertions is in their `content`,
   and the document holds no VE sentence for it: their text is the source English, which is not VE English. The other
   70 norms have no `content`. This run does not render those 104 contents into English, so no question starts from them
-  here. A norm is not a statement, so a unit of kind `norm` is not a question's source. Two example texts of each class
+  here. A norm is not a statement, but its text is read like any unit's: `english.read` answers 100 of the 143 and reads
+  none (97 `none`, 3 `rejected`); 13 in `soft-chain` have no answer and 30 are not one sentence. Two example texts of each class
   are in C4 `norm.documents.*.examples`.
 - **Questions asked of every sentence** (F1 for each of the 5,119 sentences, and each fronting): 7,244, of which 1,427
   have no answer (`f1_unavailable` 1,005, `f2_unavailable` 422, all `soft-chain`). Only the 9 above read (C4

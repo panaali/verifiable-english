@@ -714,7 +714,8 @@ def test_the_old_premises_sentence_fails_the_claims_check():
     # F10: a summary sentence written on the premise that no unit reads, left in place after the rerun reached 5.
     c = claims()
     texts = claim_texts(c)
-    run = lambda given, no_claim=NO_CLAIM_FIXTURE: c.check(given, CLAIM_EVIDENCE, frozenset(), no_claim, truths=())  # noqa: E731
+    run = lambda given, no_claim=NO_CLAIM_FIXTURE: c.check(  # noqa: E731
+        given, CLAIM_EVIDENCE, frozenset(), no_claim, truths=(), compared=None, not_universal={})
     assert run(texts) == []
 
     old = "No norm unit's text\nis a question's source."
@@ -737,7 +738,8 @@ def test_a_headline_claim_must_hold_of_the_evidence():
     c = claims()
     texts = claim_texts(c)
     holds = (c.SPEC, "5 reached", lambda e: e["C4"]["norm"]["reached"] == 5)
-    run = lambda ev, words=holds: c.check(texts, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(words,))  # noqa: E731
+    run = lambda ev, words=holds: c.check(  # noqa: E731
+        texts, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(words,), compared=None, not_universal={})
     assert run(CLAIM_EVIDENCE) == []
     refuted = {"C4": {**CLAIM_EVIDENCE["C4"], "norm": {**CLAIM_EVIDENCE["C4"]["norm"], "reached": 0}}}
     assert any("not so" in p for p in run(refuted))
@@ -757,9 +759,10 @@ def test_the_unit_kinds_are_tallied_without_the_attributed_norms():
     # as if each had one.
     kind = '["unformalised","norms"]'
     attributed_inner = '["attributed","a","says",["unformalised","norms"]]'
-    reach = [["norm", "norm", "x", 11], ["norm", "-", "x", 13], ["asserted", "ast", "x", 17], ["asserted", "fence", "x", 19],
-             ["meta", "-", "x", 23], [kind, "-", "x", 100], [attributed_inner, "-", "x", 29],
-             ['["attributed","a","says","norm"]', "-", "x", 31], ['["attributed","a","says","asserted"]', "-", "x", 37]]
+    x = "english.read:none:NoDerivation"
+    reach = [["norm", "norm", x, 11], ["norm", "-", x, 13], ["asserted", "ast", x, 17], ["asserted", "fence", x, 19],
+             ["meta", "-", x, 23], [kind, "-", x, 100], [attributed_inner, "-", x, 29],
+             ['["attributed","a","says","norm"]', "-", x, 31], ['["attributed","a","says","asserted"]', "-", x, 37]]
     c4 = {"norm": {"by_why": {}, "reached": 0, "questions": dict.fromkeys(("f1_unavailable", "f2_unavailable", "f1_same",
                                                                            "f2_same"), 0),
                    "documents": {"d": {"reach": reach, "examples": {}}}},
@@ -770,3 +773,105 @@ def test_the_unit_kinds_are_tallied_without_the_attributed_norms():
     # `unformalised` with its attributed units, those units, the attributed others, `norm`, `asserted`; 197 would
     # count the attributed norms and assertions as `unformalised`.
     assert {129, 29, 68, 24, 36} <= found and 197 not in found
+
+
+def norm_reach(*rows):
+    """C4 with one document per (name, reach rows)."""
+    return {"C4": {"norm": {"documents": {name: {"reach": reach, "sha256": "0" * 40} for name, reach in rows}}}}
+
+
+def test_none_of_a_population_reads_only_when_each_has_an_answer():
+    # F13: "none of the 143 units of kind `norm` reads" held by a check of the reached rows alone, while 30 were never
+    # asked and 13 had no answer. No answer and not asked are UNKNOWN, so a claim that none reads cannot count them.
+    c = claims()
+    reach = [["norm", "-", "english.read:none:NoDerivation", 97], ["norm", "norm", "english.read:rejected:BadCharacter", 3],
+             ["norm", "-", "not one sentence", 30], ["asserted", "fence", "reached", 5]]
+    soft = [["norm", "-", "english.read:unavailable", 13]]
+    e = norm_reach(("pilot/a", reach), ("pilot/soft-chain", soft))
+    assert c.no_kind_norm_reads(e)  # the old check: no reached row is a norm
+    assert c.kind_outcomes(e, "norm") == {"none": 97, "rejected": 3, "not asked": 30, "unavailable": 13}
+    assert not c.none_reads(c.kind_outcomes(e, "norm"), 143)
+    assert c.none_reads(c.answered(c.kind_outcomes(e, "norm")), 100)
+    assert c.norm_units_answered(e) and c.norm_units_unknown(e)
+    # The 13 out of `soft-chain`, or one of the 100 reached, and the claims are not so.
+    assert not c.norm_units_unknown(norm_reach(("pilot/a", reach), ("pilot/b", soft)))
+    reached = [*reach[1:], ["norm", "-", "english.read:none:NoDerivation", 96], ["norm", "-", "reached", 1]]
+    assert not c.norm_units_answered(norm_reach(("pilot/a", reached), ("pilot/soft-chain", soft)))
+    assert not c.none_reads({"none": 2, "one": 1}, 3) and not c.none_reads({"none": 2}, 3) and c.none_reads({}, 0)
+    with pytest.raises(ValueError, match="unknown outcome"):
+        c.kind_outcomes(norm_reach(("a", [["norm", "-", "english.read:many", 1]])), "norm")
+
+    # `soft-chain` without `soft-norms@0`: none of the others reads only when each of them has an answer.
+    def without_soft(outcomes, errors=()):
+        return {"C6": {"soft_chain_without_soft": {"sentences": 1005, "fences": 3, "errors": list(errors),
+                                                   "outcomes": outcomes, "read": ["a.", "b.", "c."]}}}
+    assert c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "rejected": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "unavailable": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 900, "one": 3, "rejected": 81}))
+    assert not c.soft_chain_others_answered(without_soft({"none": 921, "one": 3, "rejected": 81}, ["refused"]))
+
+    # Every fence, reached or not, is the population of "none is of kind `norm`".
+    fences = [["asserted", "fence", "reached", 5], ["asserted", "fence", "english.read:unavailable", 3]]
+    assert c.fences_are_asserted(norm_reach(("a", fences)))
+    assert not c.fences_are_asserted(norm_reach(("a", [*fences[:1], ["norm", "fence", "english.read:unavailable", 3]])))
+
+
+def test_a_universal_claim_needs_a_truths_row():
+    # F13's class: a universal claim ("none", "never", "no ... reads") that no `TRUTHS` row asks the evidence about.
+    c = claims()
+    texts = claim_texts(c)
+    claim = "None of the 7 units reads (C4 `norm.documents.*.units`)."
+    spec = texts[c.SPEC].replace("- A bullet of 5.", f"- A bullet of 5. {claim}")
+    given = {**texts, c.SPEC: spec}
+    run = lambda truths=(), not_universal={}: c.check(  # noqa: E731
+        given, CLAIM_EVIDENCE, frozenset(), NO_CLAIM_FIXTURE, truths=truths, compared=None, not_universal=not_universal)
+    assert any("universal claim with no TRUTHS row: 'None'" in p for p in run())
+    assert run(((c.SPEC, "None of the 7 units reads", lambda e: True),)) == []
+    assert run(not_universal={"None of the 7 units": "a fixture"}) == []
+    assert any("NOT_UNIVERSAL row unused" in p for p in run(not_universal={"never in the text": "a fixture"}))
+    assert c.uncovered("No fence reads, and `none` is code.", []) == ["No fence reads"]
+    assert c.uncovered("No fence reads.", ["No fence reads"]) == []
+    # The old summary sentence, and the probe's words (F13) and F14's, are stale wording.
+    old = "5 reached; none of the 143 units of kind `norm` reads, compared with the pilot blobs' SHA-256 (C4 `norm.reached`)."
+    found = c.check({**texts, c.SPEC: texts[c.SPEC].replace("5 reached (C4 `norm.reached`).", old, 1)}, CLAIM_EVIDENCE,
+                    frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=None, not_universal={})
+    assert {"none of the 143 units of kind `norm` reads", "the pilot blobs' sha-256"} <= {
+        p.split("stale wording: ")[1].strip("'\"") for p in found if "stale wording" in p}
+    assert any("universal claim with no TRUTHS row: 'none'" in p for p in found)
+
+
+COMPARED_TABLE = "| Stream | Drawn | Compared with | Sentences |\n|---|---|---|---|\n| a | 5 | {} | 5 |\n| b | 5 | {} | 5 |\n"
+
+
+def test_each_compared_with_cell_names_a_comparison_the_evidence_holds():
+    # F14: the table said the norm documents were compared with "the pilot blobs' SHA-256", where 14 of 15 values are
+    # git blob ids that nothing compares. Each cell is either a comparison the evidence shows or says `not compared`.
+    c = claims()
+    texts = claim_texts(c)
+    compared = {"`corpus_sha256`, 17 of 17": lambda e: not e["C4"]["coverage"]["unsealed_streams"],
+                "not compared: recorded": lambda e: True}
+    evidence = {**CLAIM_EVIDENCE, "C4": {**CLAIM_EVIDENCE["C4"], "coverage": {"unsealed_streams": []}}}
+
+    def run(cells, ev=evidence, rows=compared):
+        spec = texts[c.SPEC].replace("## Commands", "## Commands\n\n" + COMPARED_TABLE.format(*cells))
+        return c.check({**texts, c.SPEC: spec}, ev, frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=rows,
+                       not_universal={})
+    assert run(["`corpus_sha256`, 17 of 17", "not compared: recorded"]) == []
+    assert c.compared_cells(COMPARED_TABLE.format("x", "y") + "\n| other | table |\n") == ["x", "y"]
+    found = run(["`corpus_sha256`, 17 of 17", "the pilot blobs' SHA-256"])
+    assert any("no COMPARED row backs: \"the pilot blobs' SHA-256\"" in p for p in found)
+    assert any("COMPARED row unused: 'not compared: recorded'" in p for p in found)
+    unsealed = {**evidence, "C4": {**evidence["C4"], "coverage": {"unsealed_streams": ["v"]}}}
+    assert any("not so: compared with '`corpus_sha256`, 17 of 17'" in p
+               for p in run(["`corpus_sha256`, 17 of 17", "not compared: recorded"], unsealed))
+    assert any("anchor gone: 'Compared with'" in p for p in c.check(
+        texts, evidence, frozenset(), NO_CLAIM_FIXTURE, truths=(), compared=compared, not_universal={}))
+
+    # The norm documents' values: 14 git blob ids of `pilot/*` parts and `udhr-part07`'s SHA-256.
+    def ids(blob="5c156c0776667784092a63805081009d9b5e0e57", own="4f4e8c19" * 8):
+        docs = {f"norm-documents:pilot/p{k}:readings/s{k}.ve.md": {"sha256": blob} for k in range(14)}
+        docs["norm-documents:usecases/question-answering/udhr-part07.ve.md"] = {"sha256": own}
+        return {"C4": {"norm": {"documents": docs}}}
+    assert c.blob_ids_recorded(ids())
+    assert not c.blob_ids_recorded(ids(blob="4f4e8c19" * 8)) and not c.blob_ids_recorded(ids(own="5c156c07" * 5))
+    assert not c.blob_ids_recorded(ids(blob="5C156C07" * 5))
