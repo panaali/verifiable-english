@@ -78,7 +78,7 @@ standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18"`. Every check that de
 ## Size
 
 `git diff --numstat $(git merge-base HEAD main)`, hand-written: Lean 717 (Tree 50, Plain 386 of which lines 1-120 are the
-definitions, Examples 278, VE.lean 3); side table tools/trust-classes.json 67; REPORT.md 135, mutants.json 51 and
+definitions, Examples 278, VE.lean 3); side table tools/trust-classes.json 67; REPORT.md 141, mutants.json 51 and
 trust-mutants-allow.json 28 (trust-mutants.json, 406 lines, is the tool's output).
 That is over the ~600 cap. The cut was made at the one statement whose proof would double the item. The rest is the
 item's own mandated content (the 8.2/8.3 definitions, six of the seven theorems, the fixtures with both sides of each
@@ -115,7 +115,7 @@ None expected: no route reads these definitions before cmp-s3.
 ## Next item
 
 cmp-s3 (Relation.lean, Wire.lean, `right-clauses@0` in the registry, the `clauses-elaborate` differential, `ve/right_clauses.py`,
-9.2-9.3, K3, K9, K10, K15), after cmp-s2b; and cmp-s3ab (`plain_wellFormed`).
+9.2-9.3, K3, K9, K10, K15, and lean/RIGHT-CLAUSES.md of 8.1, which this item's file list leaves out), after cmp-s2b; and cmp-s3ab (`plain_wellFormed`).
 
 ## Self-review against BUILDER-CHECKLIST
 
