@@ -29,7 +29,7 @@ Command, from `lean/`: `PATH=~/.elan/bin:$PATH lake env lean ../experiments/exp-
 | Acceptance needing both packs (knows → believes → guard), both orders | `mixedC_accepted` (main's `acceptanceX`, no copy), `mixedV_accepted` | theorem; certificate replay is its hypothesis `hv`, shown by `#guard` |
 | `transfers_X` at the fixture, both orders | `mixedC_transfers` | theorem; `hx : KGChecks` shown by `#guard` |
 
-`hv` and `hx` follow the repo's `X1Checks` pattern: the kernel cannot reduce them (`by decide` was tried and got stuck), so the `#guard` is compiled evaluation, not a kernel proof.
+`hv` and `hx` follow the repo's `X1Checks` pattern: `by decide` got stuck on `V`'s `hv` and on `hx` (not tried separately on `C`'s `hv`, the same replay), so the `#guard` is compiled evaluation, not a kernel proof.
 
 ## Findings
 
@@ -68,7 +68,7 @@ No product code changed, so no language needs one; the plan's mutant is the firs
 - Trust: `tools/trust_map.py --check` PASS; no trusted line changes. No `trust_mutants`, no R16 row.
 - **Deviation from "Files":** `docs/codemap/` is generated and indexes `experiments/`, so `regen_generated.py --only codemap --write` changed three files. It also picked up rows other merges had left stale.
 - `regen_generated.py --write` stopped at `route-cases` (no Rust binary in this worktree), hence `--only codemap`. A `--skip route-cases --check` ended `failed: checker-pins`; `--only checker-pins --check` alone passed. Cause of the difference not established; the chain gate checks it.
-- **Size:** 528 Lean + 59 `run.py` + this report, about 50 over the ~600 cap, plus 24 lines of `run.py` output. Not cut further: every part backs a claim above, and nothing enters `lean/`.
+- **Size:** 528 Lean + 59 `run.py` + 89 this report = 676 hand-written lines (`git diff --numstat`), 76 over the ~600 cap, plus 24 lines of `run.py` output and the generated code map. Not cut further: every part backs a claim above, and nothing enters `lean/`.
 - Overlap: no in-flight branch touches `experiments/exp-g1` or `docs/profile-composition/exp-g1`. Pilot bytes expected to move: 0.
 
 ## Self-review against BUILDER-CHECKLIST
