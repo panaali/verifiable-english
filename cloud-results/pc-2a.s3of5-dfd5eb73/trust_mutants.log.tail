@@ -1,0 +1,14 @@
+trust_mutants: 23 definitions, 284 mutants (16 to run), 4 jobs, base 561aa79f5716
+SURVIVOR lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/Document.lean:1976 VE.Service.Document.admitGraph (D[V], trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) lit-plus: 257 -> 258
+UNKNOWN lean/VE/Service/Document.lean:2215 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: units.filterMap -> [] (lean/VE/Service/Document.lean:2215: Function expected at)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:55 VE.Service.DocumentChain.Examples.document (?, trusted) list-first: members -> (members.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-first: (front.getObjVal? "completions").toOption.toList.map (("completions", ·)) -> (((front.getObjVal? "completions").toOption.toList.map (("completions", ·))).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2338 VE.Service.Document.check (D[V], trusted) list-drop-first: E.profiles -> (E.profiles.drop 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:55 VE.Service.DocumentChain.Examples.document (?, trusted) list-last: members -> (members.reverse.take 1)
+trust_mutants: 49 KILLED, 7 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 227 OTHER SHARD in 2098 s; 41 carried from 30ae52a1ff3f (check-only change: lean/VE.lean, lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt, lean/predicates.txt)
+trust_mutants: ?, trusted: 42 KILLED, 5 SURVIVOR, 1 UNKNOWN, 179 OTHER SHARD
+trust_mutants: D[V], trusted: 4 KILLED, 2 SURVIVOR, 35 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 13 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 2.4 s, control_build 0.3 s, probe_install 1.1 s, control_probes 1139.3 s, mutants 941.1 s, cleanup 4.4 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 2869 s (9), mutant_builds 222.8 s (16), mutant_checks 1603.7 s (17), stage_controls 241.9 s (2), mutant_probes 1581.2 s (8)
