@@ -16971,46 +16971,6 @@
         "VE.Readings.SoftSupExamples.NSDa"
       ]
     },
-    "VE/EnglishGrammar/Norm/Examples.lean": {
-      "T": [
-        "VE.EnglishGrammar.Norm.Examples.a",
-        "VE.EnglishGrammar.Norm.Examples.b",
-        "VE.EnglishGrammar.Norm.Examples.cl",
-        "VE.EnglishGrammar.Norm.Examples.faultOf",
-        "VE.EnglishGrammar.Norm.Examples.hd",
-        "VE.EnglishGrammar.Norm.Examples.long",
-        "VE.EnglishGrammar.Norm.Examples.may",
-        "VE.EnglishGrammar.Norm.Examples.mustNot",
-        "VE.EnglishGrammar.Norm.Examples.statements"
-      ]
-    },
-    "VE/EnglishGrammar/Norm/Value.lean": {
-      "S": [
-        "VE.EnglishGrammar.Norm.Bearer",
-        "VE.EnglishGrammar.Norm.BlockFault",
-        "VE.EnglishGrammar.Norm.Clause",
-        "VE.EnglishGrammar.Norm.Force",
-        "VE.EnglishGrammar.Norm.Force.sign",
-        "VE.EnglishGrammar.Norm.Header",
-        "VE.EnglishGrammar.Norm.Mode",
-        "VE.EnglishGrammar.Norm.NState",
-        "VE.EnglishGrammar.Norm.NState.init",
-        "VE.EnglishGrammar.Norm.NormStatement",
-        "VE.EnglishGrammar.Norm.NormStatement.clauses",
-        "VE.EnglishGrammar.Norm.NormStatement.number?",
-        "VE.EnglishGrammar.Norm.NormStatement.refs",
-        "VE.EnglishGrammar.Norm.Open",
-        "VE.EnglishGrammar.Norm.Piece",
-        "VE.EnglishGrammar.Norm.Place",
-        "VE.EnglishGrammar.Norm.Polarity",
-        "VE.EnglishGrammar.Norm.Polarity.sign",
-        "VE.EnglishGrammar.Norm.Residual",
-        "VE.EnglishGrammar.Norm.assemble",
-        "VE.EnglishGrammar.Norm.assembleFrom",
-        "VE.EnglishGrammar.Norm.close",
-        "VE.EnglishGrammar.Norm.ruleCount"
-      ]
-    },
     "VE/Scope/FarExamples.lean": {
       "T": [
         "VE.Scope.FarExamples.checkF",
@@ -17126,20 +17086,44 @@
         "VE.Cardinality.Render.tacticCharges"
       ]
     },
-    "VE/SoftNorms/ActsFrameExamples.lean": {
+    "VE/EnglishGrammar/Norm/Examples.lean": {
       "T": [
-        "VE.SoftNorms.ActsFrameExamples.parse",
-        "VE.SoftNorms.ActsFrameExamples.block",
-        "VE.SoftNorms.ActsFrameExamples.paid",
-        "VE.SoftNorms.ActsFrameExamples.heard",
-        "VE.SoftNorms.ActsFrameExamples.reg",
-        "VE.SoftNorms.ActsFrameExamples.pred",
-        "VE.SoftNorms.ActsFrameExamples.env",
-        "VE.SoftNorms.ActsFrameExamples.sfP",
-        "VE.SoftNorms.ActsFrameExamples.err",
-        "VE.SoftNorms.ActsFrameExamples.actsOf",
-        "VE.SoftNorms.ActsFrameExamples.frame",
-        "VE.SoftNorms.ActsFrameExamples.inhP"
+        "VE.EnglishGrammar.Norm.Examples.a",
+        "VE.EnglishGrammar.Norm.Examples.b",
+        "VE.EnglishGrammar.Norm.Examples.cl",
+        "VE.EnglishGrammar.Norm.Examples.faultOf",
+        "VE.EnglishGrammar.Norm.Examples.hd",
+        "VE.EnglishGrammar.Norm.Examples.long",
+        "VE.EnglishGrammar.Norm.Examples.may",
+        "VE.EnglishGrammar.Norm.Examples.mustNot",
+        "VE.EnglishGrammar.Norm.Examples.statements"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Value.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.Bearer",
+        "VE.EnglishGrammar.Norm.BlockFault",
+        "VE.EnglishGrammar.Norm.Clause",
+        "VE.EnglishGrammar.Norm.Force",
+        "VE.EnglishGrammar.Norm.Force.sign",
+        "VE.EnglishGrammar.Norm.Header",
+        "VE.EnglishGrammar.Norm.Mode",
+        "VE.EnglishGrammar.Norm.NState",
+        "VE.EnglishGrammar.Norm.NState.init",
+        "VE.EnglishGrammar.Norm.NormStatement",
+        "VE.EnglishGrammar.Norm.NormStatement.clauses",
+        "VE.EnglishGrammar.Norm.NormStatement.number?",
+        "VE.EnglishGrammar.Norm.NormStatement.refs",
+        "VE.EnglishGrammar.Norm.Open",
+        "VE.EnglishGrammar.Norm.Piece",
+        "VE.EnglishGrammar.Norm.Place",
+        "VE.EnglishGrammar.Norm.Polarity",
+        "VE.EnglishGrammar.Norm.Polarity.sign",
+        "VE.EnglishGrammar.Norm.Residual",
+        "VE.EnglishGrammar.Norm.assemble",
+        "VE.EnglishGrammar.Norm.assembleFrom",
+        "VE.EnglishGrammar.Norm.close",
+        "VE.EnglishGrammar.Norm.ruleCount"
       ]
     },
     "VE/Discourse/Positions.lean": {
@@ -17448,6 +17432,22 @@
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
         "VE.RightClauses.Examples.verdict"
+      ]
+    },
+    "VE/SoftNorms/ActsFrameExamples.lean": {
+      "T": [
+        "VE.SoftNorms.ActsFrameExamples.parse",
+        "VE.SoftNorms.ActsFrameExamples.block",
+        "VE.SoftNorms.ActsFrameExamples.paid",
+        "VE.SoftNorms.ActsFrameExamples.heard",
+        "VE.SoftNorms.ActsFrameExamples.reg",
+        "VE.SoftNorms.ActsFrameExamples.pred",
+        "VE.SoftNorms.ActsFrameExamples.env",
+        "VE.SoftNorms.ActsFrameExamples.sfP",
+        "VE.SoftNorms.ActsFrameExamples.err",
+        "VE.SoftNorms.ActsFrameExamples.actsOf",
+        "VE.SoftNorms.ActsFrameExamples.frame",
+        "VE.SoftNorms.ActsFrameExamples.inhP"
       ]
     }
   }
