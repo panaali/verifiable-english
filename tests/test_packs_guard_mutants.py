@@ -73,6 +73,8 @@ MUTANTS = [
     ("elaborateArrays", 'Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)]',
      'Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)] ++\n'
      '  (qs.filter (fun p => p.id != "soft" && p.id != "rights")).map (fun p => (p.id, Json.arr #[]))'),
+    ("eventsArray", 'match packPremises qs "events" with', 'match packPremises qs "soft" with'),
+    ("eventsArray", '[("events_premises", Json.arr', '[("events", Json.arr'),
     ("coherenceLabels", "(VE.SoftNorms.collidingPairs D).map (fun (M, N) => VE.SoftNorms.Wire.cohLabel M N)",
      "((VE.SoftNorms.collidingPairs D).map (fun (M, N) => VE.SoftNorms.Wire.cohLabel M N)).take 0"),
     ("xWithout", "(fun a => !drop.contains a.1)", "(fun a => drop.contains a.1)"),
