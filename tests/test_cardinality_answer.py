@@ -3,12 +3,17 @@ answers of each case kind are mutated one and two faults at a time (each member 
 reordered, an index out of range): every mutant is `CheckerUnavailable` or changes nothing the relay returns."""
 from __future__ import annotations
 
+import ast
 import copy
+import json
 import random
+import sys
+import types
+from pathlib import Path
 
 import pytest
 
-from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, TOP, text
+from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, PLAIN, TOP, text
 from ve import cardinality
 from ve.admission import report_identity
 from ve.backends import relay
@@ -24,6 +29,22 @@ CALLS = {"admission": lambda: cardinality.admission(*PROBLEM),
          "countermodel": lambda: cardinality.countermodel(CM["environment"], CM["premises"], CM["conclusion"], CM["model"]),
          "document": lambda: cardinality.document(ENV, GRAPH["document"]),
          "paraphrase": lambda: cardinality.paraphrase(FA1["environment"], FA1["premises"][0])}
+COUNT = ["count", "fomc_policymaker", ["any"]]
+# A statement Lean answers in another spelling: each literal last in its list, where `_nodes` reaches it.
+RESPELLED = {"decimal": ["le", ["num", "bp", "2"], ["decimal", "bp", "1.5"]], "date": ["date_on", ["num", "day", "1"], ["date", "2026-01-01"]],
+             "untagged": ["le", ["num", "1"], ["add", ["num", "1"], ["scale", "2", ["num", "1"]]]], "const": ["le", ["num", "1"], ["const", "plain"]]}
+CALLS |= {f"{name}-respelled": lambda f=formula: cardinality.paraphrase(PLAIN, {"format": TOP["format"], "formula": f})
+          for name, formula in {**{k: ["quantity", v] for k, v in RESPELLED.items()},
+                                "printed": ["percent_of", COUNT, COUNT, "-0.0"]}.items()}
+UNREACHED = {**GRAPH["document"], "nodes": [*GRAPH["document"]["nodes"], {"name": "aside", "statement": TOP}]}
+CALLS |= {"no-premises": lambda: cardinality.admission(FA1["environment"], [], TOP),
+          "unreached": lambda: cardinality.document(ENV, UNREACHED)}
+
+
+def _known(relay_module=cardinality):
+    """`identities`, a function of the request alone, once per environment of these tests."""
+    known = {json.dumps(e, sort_keys=True): relay_module.Identities(e) for e in (FA1["environment"], ENV, PLAIN)}
+    return lambda environment: known[json.dumps(environment, sort_keys=True)]
 
 
 def _nodes(value, path=(), depth=5):
@@ -82,8 +103,7 @@ def _answered(monkeypatch, row, call=0):
 @pytest.fixture
 def genuine(monkeypatch):
     """A case kind's genuine row and answer; `identities`, a function of the request alone, looked up per mutant."""
-    table = {tuple(e["profiles"]): cardinality.identities(e) for e in (FA1["environment"], ENV)}
-    monkeypatch.setattr(cardinality, "identities", lambda environment: table[tuple(environment["profiles"])])
+    monkeypatch.setattr(cardinality, "identities", _known())
     seen = []
 
     def recording(mode, cases, **options):
@@ -91,6 +111,7 @@ def genuine(monkeypatch):
         return seen[-1]
 
     def of(kind):
+        seen.clear()
         with monkeypatch.context() as patch:
             patch.setattr(relay, "rows", recording)
             answer = CALLS[kind]()
@@ -99,10 +120,16 @@ def genuine(monkeypatch):
 
 
 def _lean_s(name):
-    """What R8 leaves to Lean, typed by the schema and bound to nothing: another wording of a line and a countermodel's
-    verdict and sizes, each of the same type (`test_cardinality_service.py` retypes each)."""
-    return name.startswith(("('paraphrase',)", "('assumptions',", "('refutes',)")) or (
+    """What R8 leaves to Lean, bound to nothing: another wording of a line, and a countermodel's verdict and sizes, each of
+    the same type. A member retyped, emptied or missing, or another number of lines, is the relay's."""
+    return (name.startswith(("('paraphrase',)", "('assumptions',")) and name.endswith((" shifted", ":= 'absent'", ":= ['x']"))) or (
         name.startswith("('sizes',") and "'size'" in name and any(x in name for x in ("out of range", ":= 7", ":= 999")))
+
+
+def _lean_confirms(name):
+    """What only Lean's confirmation (`_confirmed`) can refuse, as the request cannot say it: the erased problem past its
+    region premises and the order of a sort's predicates. The rest of a service answering every call alike is the relay's."""
+    return name.startswith("('erased',") or ("('regions', 'predicates'" in name and name.endswith(" reversed"))
 
 
 def _changed(call, answer) -> bool:
@@ -112,14 +139,16 @@ def _changed(call, answer) -> bool:
         return False
 
 
+@pytest.mark.parametrize("call", [0, None], ids=["lean-confirms", "answered-alike"])
 @pytest.mark.parametrize("kind", list(CALLS))
-def test_every_one_fault_mutant_is_refused_or_changes_nothing(monkeypatch, genuine, kind):
+def test_every_one_fault_mutant_is_refused_or_changes_nothing(monkeypatch, genuine, kind, call):
+    """Twice: Lean's confirmation can hide a check of the relay, so a service answering every call alike has none."""
     row, answer = genuine(kind)
     assert not _changed(CALLS[kind], answer)
     accepted = []
     for name, mutant in _mutants(row):
-        _answered(monkeypatch, mutant)
-        if _changed(CALLS[kind], answer) and not _lean_s(name):
+        _answered(monkeypatch, mutant, call=call)
+        if _changed(CALLS[kind], answer) and not (_lean_s(name) or (call is None and _lean_confirms(name))):
             accepted.append(name)
     assert not accepted
 
@@ -131,9 +160,9 @@ def test_two_faults_at_a_time_are_refused_or_change_nothing(monkeypatch, genuine
     for name, first in rng.sample(pool, min(120, len(pool))):
         if nodes := list(_nodes(first)):
             fault, path = rng.choice((*RETYPED, _replaced)), rng.choice(nodes)[0]
-            other = f"{path} := {fault!r}"
-            _answered(monkeypatch, _replaced(first, path, fault))
-            if _changed(CALLS[kind], answer) and not (_lean_s(name) or _lean_s(other)):
+            other, mutant = f"{path} := {fault!r}", _replaced(first, path, fault)
+            _answered(monkeypatch, mutant)
+            if mutant != first and _changed(CALLS[kind], answer) and not (_lean_s(name) and _lean_s(other)):
                 accepted.append((name, other))
     assert not accepted
 
@@ -178,15 +207,73 @@ def _another_statement(statement):
     statement.update(formula=TOP["formula"], meaning_id="0" * 64)
 
 
-@pytest.mark.parametrize("kind, change", [
-    ("admission", lambda r: r["regions"]["constants"].reverse()),
-    ("admission", lambda r: _another_statement(r["premises"][0])),
-    ("countermodel", lambda r: r["sizes"].pop()),
-    ("countermodel", lambda r: r["sizes"].reverse()),
-    ("countermodel", lambda r: r["sizes"][0].update(size=True)),
-    ("countermodel", lambda r: r["sizes"][0].update(size=-1)),
-    ("countermodel", lambda r: r["sizes"][0].update(size="3"))],
-    ids=["table-reordered", "another-statement", "sizes-dropped", "sizes-reordered", "size-bool", "size-negative", "size-text"])
+def _region_renamed(row, old, new):
+    """A region's name changed in its table row and the problem alike, so the region premises still agree."""
+    for member in ("regions", "erased", "sizes"):
+        if member in row:
+            row[member] = json.loads(json.dumps(row[member]).replace(old, new))
+
+
+def _counted(row, sort, predicates):
+    """A table counting `predicates` of `sort`, whole and consistent with the problem's region premises: only the binding of
+    the sort and predicates to the request can refuse it."""
+    old, bits = row["regions"]["constants"], [format(i, f"0{len(predicates)}b") for i in range(2 ** len(predicates))]
+    names = [f"cardinality__{sort}__{b}" for b in bits]
+    row["regions"] = {"predicates": {sort: predicates},
+                      "constants": [{"constant": n, "sort": sort, "bits": b} for n, b in zip(names, bits)]}
+    if "sizes" in row:
+        row["sizes"] = [{"constant": n, "size": 0} for n in names]
+    if "erased" in row:
+        row["erased"]["premises"] = [{**row["erased"]["premises"][0], "core": ["le", ["num", "0"], ["const", n]]} for n in names] + \
+            row["erased"]["premises"][len(old):]
+
+
+def _forged(row):
+    """The `report_id` a report's other members would need, so the row check answers for itself."""
+    row["report_id"] = report_identity(cardinality.identities(ENV).identity_version, {
+        **{k: row[k] for k in ("environment_id", "w6_environment_id", "w6_target_environment_id")},
+        "document": GRAPH["document"], "report": row["report"]})
+
+
+REGION = "cardinality__fomc_policymaker__00"
+ALIKE = {
+    "table-reordered": ("admission", lambda r: r["regions"]["constants"].reverse()),
+    "another-statement": ("admission", lambda r: _another_statement(r["premises"][0])),
+    "sizes-dropped": ("countermodel", lambda r: r["sizes"].pop()),
+    "sizes-reordered": ("countermodel", lambda r: r["sizes"].reverse()),
+    "size-bool": ("countermodel", lambda r: r["sizes"][0].update(size=True)),
+    "size-negative": ("countermodel", lambda r: r["sizes"][0].update(size=-1)),
+    "size-text": ("countermodel", lambda r: r["sizes"][0].update(size="3")),
+    # Review F2: each is the relay's alone. Its table agrees with the problem, and no Lean call can tell.
+    "admission-region-renamed": ("admission", lambda r: _region_renamed(r, REGION, "cardinality__fomc_policymaker__absent")),
+    "admission-sort-not-finite": ("admission", lambda r: _counted(r, "user", ["curious"])),
+    "admission-predicate-other-sort": ("admission", lambda r: _counted(r, "fomc_policymaker", ["curious"])),
+    "admission-predicate-undeclared": ("admission", lambda r: _counted(r, "fomc_policymaker", ["absent"])),
+    "admission-predicate-twice": ("admission", lambda r: r["regions"]["predicates"]["fomc_policymaker"].__setitem__(
+        1, r["regions"]["predicates"]["fomc_policymaker"][0])),
+    "countermodel-sort-not-finite": ("countermodel", lambda r: _counted(r, "user", ["curious"])),
+    "admission-bits-long": ("admission", lambda r: (r["regions"]["constants"][0].update(bits="000"),
+                                                    _region_renamed(r, REGION, "cardinality__fomc_policymaker__000"))),
+    "lines-short": ("paraphrase", lambda r: r["assumptions"].clear()),
+    "lines-long": ("paraphrase", lambda r: r["assumptions"].append("Another.")),
+    "lines-mapping": ("paraphrase", lambda r: r.update(assumptions={"Another.": 1})),
+    "lines-text": ("paraphrase", lambda r: r.update(paraphrase=7)),
+    "lines-empty": ("paraphrase", lambda r: r.update(paraphrase="")),
+    "lines-surrogate": ("paraphrase", lambda r: r["assumptions"].__setitem__(0, "\ud800")),
+    "decimal-another-number": ("decimal-respelled", lambda r: r["statement"]["formula"][1][2].__setitem__(2, "151")),
+    "decimal-another-tag": ("decimal-respelled", lambda r: r["statement"]["formula"][1][2].__setitem__(1, "day")),
+    "date-another-day": ("date-respelled", lambda r: r["statement"]["formula"][1][2].__setitem__(2, "20455")),
+    "tag-another": ("untagged-respelled", lambda r: r["statement"]["formula"][1][1].__setitem__(1, "bp")),
+    "tag-left-out": ("untagged-respelled", lambda r: r["statement"]["formula"][1][1].pop(1)),
+    "printed-another": ("printed-respelled", lambda r: r["statement"]["formula"].__setitem__(3, "0.1")),
+    "printed-left-negative": ("printed-respelled", lambda r: r["statement"]["formula"].__setitem__(3, "-0.0")),
+    "report-identity": ("document", lambda r: (r.update(w6_environment_id="0" * 64), _forged(r))),
+    "report-root": ("document", lambda r: (r["report"].update(root=r["report"]["leaves"][0]), _forged(r))),
+    "report-leaves": ("document", lambda r: (r["report"]["leaves"].reverse(), _forged(r))),
+    "report-statement": ("document", lambda r: (r["report"]["leaves"][0].update(formula=TOP["formula"]), _forged(r)))}
+
+
+@pytest.mark.parametrize("kind, change", ALIKE.values(), ids=ALIKE)
 def test_the_relay_s_own_checks_hold_when_lean_cannot_confirm(monkeypatch, genuine, kind, change):
     """A service answering every call alike: Lean's confirmation sees the same row, so each of these is the binder's."""
     row, _ = genuine(kind)
@@ -211,10 +298,9 @@ def test_a_report_s_rows_are_bound_with_and_without_a_matching_id(monkeypatch, g
     row, _ = genuine("document")
     mutant = copy.deepcopy(row)
     change(mutant)
-    forged = report_identity(cardinality.identities(ENV).identity_version, {
-        **{k: row[k] for k in ("environment_id", "w6_environment_id", "w6_target_environment_id")},
-        "document": GRAPH["document"], "report": mutant["report"]})
-    for answered in (mutant, {**mutant, "report_id": forged}):
+    forged = copy.deepcopy(mutant)
+    _forged(forged)
+    for answered in (mutant, forged):
         _answered(monkeypatch, answered)
         with pytest.raises(CheckerUnavailable):
             CALLS["document"]()
@@ -243,8 +329,7 @@ def part(tmp_path, monkeypatch):
     path = tmp_path / "part.ve.md"
     path.write_bytes(raw)
     row = _lean_answer(raw, True, tmp_path, {})
-    known = cardinality.identities(ENV)
-    monkeypatch.setattr(cardinality, "identities", lambda environment: known)
+    monkeypatch.setattr(cardinality, "identities", _known())
     return raw, path, row
 
 
@@ -277,3 +362,95 @@ def test_a_document_row_answers_the_case_it_asked(part):
     other["units"][0]["content"]["formula"] = ["quantity", ["top"]]
     with pytest.raises(CheckerUnavailable):
         _lean_document(raw, path, other, admitted=True)
+
+
+def _checks(tree):
+    """Each check of the relay, enumerated so a new one is in: a conjunct of a `_require`, a statement calling one of the
+    module's own binders, a respelling rule. Yields the node holding it, the member and the member without the check."""
+    own = {n.name for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)} - {"_require"}
+    true, none = ast.Constant(True, lineno=1, col_offset=0), ast.Constant(None, lineno=1, col_offset=0)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and getattr(node.func, "id", "") == "_require":
+            yield node, "args", [true, *node.args[1:]]
+            for part in ast.walk(node.args[0]):
+                if isinstance(part, ast.BoolOp) and isinstance(part.op, ast.And):
+                    yield from ((part, "values", [*part.values[:i], true, *part.values[i + 1:]]) for i in range(len(part.values)))
+        elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and (
+                getattr(node.value.func, "id", getattr(node.value.func, "attr", "")) in own):
+            yield node, "value", none
+        elif isinstance(node, ast.Match):
+            yield from ((node, "cases", [*node.cases[:i], *node.cases[i + 1:]]) for i in range(len(node.cases)))
+
+
+def _relay_without(tree, holder, member, without) -> types.ModuleType:
+    """The relay with one check gone, loaded beside the real one; nothing is written."""
+    kept = getattr(holder, member)
+    setattr(holder, member, without)
+    try:
+        code = compile(tree, "ve/cardinality.py", "exec")
+    finally:
+        setattr(holder, member, kept)
+    module = types.ModuleType("ve.cardinality_without")
+    module.__package__ = "ve"
+    exec(code, module.__dict__)
+    module.identities = _known(module)
+    return module
+
+
+def test_every_check_of_the_relay_is_one_a_test_can_fail(monkeypatch, genuine, part):
+    """Review F2's class: a check Lean's confirmation hides, or a fuzz exempts, is one no test can fail. Each check is dropped
+    in turn, and some answer must then be treated otherwise: the rows of `ALIKE`, then every one-fault mutant, each answered
+    alike and with a genuine confirmation. A respelling rule dropped refuses a genuine answer, so that counts too."""
+    import ve
+    this, real_relay = sys.modules[__name__], cardinality
+    raw, path, part_row = part
+    bare = text(GRAPH["document"]["nodes"], graph=False)
+    documents = {"part": (raw, True), "not-admitted": (raw, False), "no-graph": (bare, True)}
+    rows_of = {kind: genuine(kind)[0] for kind in CALLS}
+    rows_of |= {"part": part_row, "not-admitted": part_row, "no-graph": _lean_answer(bare, True, path.parent, {})}
+    queue = []
+    monkeypatch.setattr(relay, "rows", lambda mode, cases, **options: queue.pop(0) if len(queue) > 1 else queue[0])
+    monkeypatch.setattr(this, "cardinality", real_relay)
+    monkeypatch.setattr(ve, "cardinality", real_relay)
+
+    def outcome(module, kind, first, then):
+        this.cardinality = ve.cardinality = module
+        queue[:] = [[a] if type(a) is dict else a for a in (first, then)]
+        try:
+            if kind in documents:
+                done = _shown(_lean_document(documents[kind][0], path, first, admitted=documents[kind][1]))
+            else:
+                done = CALLS[kind]()
+            return json.dumps(done, sort_keys=True, default=str)
+        except CheckerUnavailable:
+            return "refused"
+        except Exception as exc:  # a malformed row past the dropped check is otherwise treated too
+            return type(exc).__name__
+
+    def answers():
+        for kind, change in ALIKE.values():
+            mutant = copy.deepcopy(rows_of[kind])
+            change(mutant)
+            yield kind, mutant, mutant
+        row = rows_of["paraphrase"]
+        yield from (("paraphrase", shape, shape) for shape in ((row,), [row, row], [7], [], None))
+        for kind, row in rows_of.items():
+            yield kind, row, row
+            for _, mutant in _mutants(row):
+                yield kind, mutant, mutant
+                if kind in ("admission", "countermodel"):  # the two that ask Lean to confirm
+                    yield kind, mutant, row
+    pool, real = list(answers()), {}
+
+    def treated_otherwise(module, at):
+        if at not in real:
+            real[at] = outcome(real_relay, *pool[at])
+        return outcome(module, *pool[at]) != real[at]
+    tree = ast.parse(Path(real_relay.__file__).read_text(encoding="utf-8"))
+    survivors = []
+    for holder, member, without in _checks(tree):
+        module = _relay_without(tree, holder, member, without)
+        if not any(treated_otherwise(module, at) for at in range(len(pool))):
+            gone = [ast.unparse(k)[:80] for k in getattr(holder, member) if k not in without] if member != "value" else [ast.unparse(holder)]
+            survivors.append(f"{holder.lineno}: {gone}")
+    assert not survivors, "\n".join(survivors)
