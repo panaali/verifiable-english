@@ -1914,12 +1914,12 @@
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
-        "lines": 172,
-        "sha256": "980ec6d8d8c400e9fc1ed6b3b37b5f36579dd881bb8dd0ae4f1e2029edba83bb",
+        "lines": 174,
+        "sha256": "cea31d4f1f9e0b79497d7b02c353f233496be9c5fe5cf4cd41877526b1189e14",
         "ranges": [
           [
             1,
-            172
+            174
           ]
         ],
         "declarations": [
