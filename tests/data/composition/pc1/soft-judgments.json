@@ -1,0 +1,28 @@
+{
+ "about": "PC-1's soft documents (docs/spec/profile-composition.md 5.1): constitution u0052.s01 (F1.1) and u0036.s05 (F1.2) as soft default rules with a bound judgment; tests/test_judgments_chain.py builds every case from these.",
+ "vocabulary": {
+  "sorts": {"situation": {"description": "a situation in which Claude acts"}},
+  "predicates": {
+   "evaluating_inputs": {"arguments": ["situation"], "description": "Claude is evaluating conversational inputs"},
+   "good_judgment": {"arguments": ["situation"], "description": "what Claude does in the situation is good judgment"},
+   "uses_judgment": {"arguments": ["situation"], "description": "Claude uses its judgment",
+                     "regulated": {"role": "obligation", "default": "deny", "act": "{0} use judgment"}},
+   "genuinely_ambiguous": {"arguments": ["situation"], "description": "the request is genuinely ambiguous"},
+   "reasonable": {"arguments": ["situation"], "description": "asking would be reasonable"},
+   "asks_clarification": {"arguments": ["situation"], "description": "Claude asks for clarification",
+                          "regulated": {"role": "obligation", "default": "deny", "act": "{0} clarify"}}},
+  "constants": {}},
+ "units": {
+  "u0052.s01": {"body": "Claude should always use good judgment when evaluating conversational inputs.\n",
+                "terms": ["good_judgment"],
+                "rule": {"name": "good-judgment", "predicate": "uses_judgment", "sign": true, "mode": "default",
+                         "guard": ["and", ["unary", "evaluating_inputs", ["var", 0]], ["unary", "good_judgment", ["var", 0]]],
+                         "unless": [], "over": []}},
+  "u0036.s05": {"body": "Claude should ask for clarification in cases of genuine ambiguity.\n",
+                "terms": ["genuinely_ambiguous"],
+                "rule": {"name": "ask-clarification", "predicate": "asks_clarification", "sign": true, "mode": "default",
+                         "guard": ["unary", "genuinely_ambiguous", ["var", 0]], "unless": [], "over": []}}},
+ "model": {"complete": true, "domains": {"situation": ["s"]}, "constants": {},
+           "relations": {"evaluating_inputs": [["s"]], "good_judgment": [], "uses_judgment": [],
+                         "genuinely_ambiguous": [], "reasonable": [], "asks_clarification": []}}
+}
