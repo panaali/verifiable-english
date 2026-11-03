@@ -83,6 +83,8 @@ FIXTURES = [
     ("hold-a12-no-enclosure", "say (run (squares 12) inA [lt (.val \"a12\") (.lit 0)])", INCONCLUSIVE),
     ("hold-a12-witness", "say (run (squares 12) inA [lt (.val \"a12\") (.lit 1)])", "holds a = 2/5"),
     ("hold-at-limit", "toString (noEnclosure big)", "false"),
+    ("hold-either-endpoint", "toString [edge (10 ^ 4096 / 2), edge (-(10 ^ 4096 / 2)), edge (10 ^ 4096 / 2 - 1), "
+                             "edge (-(10 ^ 4096 / 2 - 1))]", "[true, true, false, false]"),
     ("hold-past-limit", "toString ([Expr.lit (10 ^ 4096), .add big (.lit 1), .mul e2048 e2048, "
                         ".div e2048 (.lit (1 / 10 ^ 2048)), .pow e2048 2].map noEnclosure)",
      "[true, true, true, true, true]"),
