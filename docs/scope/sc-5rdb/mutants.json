@@ -1,0 +1,90 @@
+{
+ "item": "sc-5rdb",
+ "commit_base": "c6a608279",
+ "how": "each mutant applied alone, `lake build VE.Service.ScopeAdmission VE.Scope.WireExamples VE.Scope.ReadingsExamples` from lean/, errors read, source restored (git status clean after each)",
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Scope/Wire.lean",
+   "definition": "VE.Scope.decodeBlock",
+   "behaviour": "the boundary refuses a repeated unit id (DRI 2026-10-31 sc-5rd item 2; the decision's seeded bug)",
+   "mutation": "decodeBlock without the `firstDup (unitIds front)` check",
+   "test": [
+    "lean/VE/Service/ScopeAdmission.lean:135 (decodeBlock_unitIds_nodup), so decodeBlock_sets does not build",
+    "lean/VE/Service/ScopeAdmission.lean:105, 107 (decodeBlock_ok) and :240, 242 (decodeBlock_payloads)",
+    "lean/VE/Scope/WireExamples.lean:199 (the sc-5rdb boundary #guard)"
+   ],
+   "result": "KILLED"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Scope/Wire.lean",
+   "definition": "VE.Scope.decodeBlock",
+   "behaviour": "a repeated id read from a unit without an id is named `units`, any other `units.<id>`",
+   "mutation": "the path is always s!\"units.{u}\"",
+   "test": [
+    "lean/VE/Scope/WireExamples.lean:199 (the sc-5rdb boundary #guard)"
+   ],
+   "result": "KILLED"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Scope/Readings.lean",
+   "definition": "VE.Scope.assemble",
+   "behaviour": "governSets_every_choice rests on assemble's unit check (a unit outside the governed set units is o0's under every choice)",
+   "mutation": "the unit check passes every unit (`unless true || ...`)",
+   "test": [
+    "lean/VE/Scope/ReadingsLemmas.lean:304 (assemble_units, read by governSets_every_choice)",
+    "lean/VE/Scope/ReadingsExamples.lean:112, 166 (SR guards)"
+   ],
+   "result": "KILLED"
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Scope/ReadingsExamples.lean",
+   "definition": "VE.Scope.Examples.perChoice",
+   "behaviour": "SR-1-pc and SR-1-g2 (spec 11.6): each choice read off the answer is govern of that choice",
+   "mutation": "perChoice compares with `govern D` (no choice) instead of `governChoice D ch`",
+   "test": [
+    "lean/VE/Scope/ReadingsExamples.lean:61 (SR-1-pc)",
+    "lean/VE/Scope/ReadingsExamples.lean:62 (SR-1-g2)"
+   ],
+   "result": "KILLED"
+  },
+  {
+   "id": "S1",
+   "file": "docs/spec/scope/SpecStubs_sc5r.lean and lean/VE/Scope/ReadingsTheorems.lean",
+   "definition": "the statement gate",
+   "behaviour": "the proved governSets_every_choice is the stub's, with exactly the premise hd added",
+   "mutation": "the proof without hd; the proof with an extra premise; stub and proof both without hd (temporary copies)",
+   "test": [
+    "tests/test_scope_sc5r_stub.py::test_each_statement_sc5rb_proves_is_the_stubs_text"
+   ],
+   "result": "KILLED (3 of 3)"
+  },
+  {
+   "id": "S2",
+   "file": "ve/backends/relay.py (relay.answer, monkeypatched by a scratch pytest plugin)",
+   "definition": "the scope mode's answer to a repeated unit id",
+   "behaviour": "the scope mode refuses a document with a repeated unit id (DELTA row 3; review F1; DRI 2026-11-03 item 1)",
+   "mutation": "relay.answer returns the answer the scope mode gave before decodeBlock's check: ok, no rows, governed g1 with no units",
+   "test": [
+    "tests/test_scope_answer.py::test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id[1-True-units.u3-title]"
+   ],
+   "result": "KILLED (assert 0 == 2)"
+  },
+  {
+   "id": "S3",
+   "file": "ve/backends/relay.py (relay.answer, patched by a scratch pytest plugin, one cell at a time)",
+   "definition": "the scope mode's answer to a repeated unit id, per cell of old-answers.json",
+   "behaviour": "the scope mode refuses every document of DELTA row 3, frame included (recheck F9; DRI 2026-11-03 f9 item 1)",
+   "mutation": "relay.answer returns the cell's measured old ok answer, for frame/dup-u0, frame/noid2-u0, frame/noid-empty, yields/adj-u1 in turn",
+   "test": [
+    "tests/test_scope_answer.py::test_sc5rdb_frame_with_another_unit_repeated_is_refused (the three frame cells)",
+    "tests/test_scope_answer.py::test_sc5rdb_every_unit_of_every_effect_repeated_is_refused[frame] (the three frame cells)",
+    "tests/test_scope_answer.py::test_sc5rdb_every_unit_of_every_effect_repeated_is_refused[yields] (yields/adj-u1)"
+   ],
+   "result": "KILLED: 2 failed for each frame cell, 1 for yields/adj-u1; the F1 round's tests, which repeat only u3, still passed under each (18 or 19 passed), which is the gap F9 names"
+  }
+ ]
+}
