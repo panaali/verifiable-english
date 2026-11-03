@@ -1765,24 +1765,10 @@
   },
   {
    "class": "S",
-   "lines": 56,
-   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "lines": 84,
+   "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
    "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
-  },
-  {
-   "class": "V",
-   "lines": 3,
-   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
-   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
-  },
-  {
-   "class": "S",
-   "lines": 4,
-   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
-   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
    "class": "S",
@@ -1813,11 +1799,11 @@
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
-   "class": "S",
-   "lines": 84,
-   "reason": "me-7: VE/Calc/Stats.lean S +83 (spec 7's meanings: mean?, the variances, the five root bounds, SqrtRoundsTo, signs, absR, signFlipP, choose, binomialTail, kappa?, Stat, Stat.minLength, Stat.run; mean? moved from Table.lean), VE/Calc/Table.lean S +1 (Agg.variance, Agg.populationVariance)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-7, 2026-10-18",
-   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+   "class": "V",
+   "lines": 131,
+   "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
+   "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
   },
   {
    "class": "S",
@@ -1832,6 +1818,13 @@
    "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
    "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
    "class": "S",
@@ -1902,6 +1895,20 @@
    "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
   }
  ]
 }
