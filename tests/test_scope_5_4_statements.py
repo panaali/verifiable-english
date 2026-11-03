@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tools.check_readings_defaults_statements import proof_cut
+
 ROOT = Path(__file__).resolve().parents[1]
 EFFECTS = {
     "reguard_applies": "D u c o o' N N' G' h hN hw hN' hG S ρ",
@@ -24,12 +26,14 @@ PROVED = ("own_congr", "order_refused", "listName_run", *EFFECTS)
 
 
 def statement(text: str, name: str) -> str | None:
-    """The statement of `name`: from `theorem name ` to `:=` or the next blank line, whitespace normalised."""
+    """The statement of `name`: from `theorem name ` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the
+    statement, `{ L with scope := s }`, is kept) or the next blank line, whitespace normalised."""
     start = text.find(f"theorem {name} ")
     if start < 0:
         return None
     rest = text[start:]
-    return " ".join(rest[:min(i for i in (rest.find(":="), rest.find("\n\n")) if i >= 0)].split())
+    rest = rest[:rest.find("\n\n")] if "\n\n" in rest else rest
+    return " ".join(rest[:proof_cut(rest)].split())
 
 
 def binders(stmt: str) -> str:
@@ -59,6 +63,17 @@ def test_an_effect_statement_takes_exactly_the_signed_premises(name):
         stmt = statement(text, name)
         assert stmt.count("(hw : JsonWF o)") == 1, name
         assert binders(stmt) == EFFECTS[name], name
+
+
+@pytest.mark.parametrize("name", [n for n in PROVED if " with " in (statement(lean(), n) or "")])
+def test_the_statement_runs_past_a_record_update(name):
+    """Review sc-6 F1: a `:=` inside `{ N with f := v }` is part of the statement, so the text after it is compared,
+    and a change there is a different statement."""
+    text, proved = lean(), statement(lean(), name)
+    assert ":=" in proved and proved.rsplit(":=", 1)[1].strip(), name
+    inner = text.index(":=", text.index(f"theorem {name} "))
+    changed = text[:inner] + ":= changed" + text[inner + 2:]
+    assert statement(changed, name) != statement(spec_5_4(), name), name
 
 
 def test_the_check_tells_a_changed_statement():
