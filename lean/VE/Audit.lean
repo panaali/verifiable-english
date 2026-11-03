@@ -102,6 +102,7 @@ import VE.Closure.Paths
 import VE.Closure.RoundTrip
 import VE.Closure.Substitution
 import VE.Closure.Syntax
+import VE.Commands.Read
 import VE.Compose.Adjoin
 import VE.Compose.Content
 import VE.Compose.Contract
@@ -1866,6 +1867,32 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
+#print axioms VE.Commands.candidate_reads_back
+#print axioms VE.Commands.checked_many
+#print axioms VE.Commands.checked_one
+#print axioms VE.Commands.decodeClosedField_check
+#print axioms VE.Commands.dedup_sub
+#print axioms VE.Commands.manyOf_iff
+#print axioms VE.Commands.manyOf_one
+#print axioms VE.Commands.mem_dedup
+#print axioms VE.Commands.mem_firstMatch
+#print axioms VE.Commands.mem_mapM
+#print axioms VE.Commands.mem_ofForce
+#print axioms VE.Commands.mem_phraseMatches
+#print axioms VE.Commands.mem_slotFills
+#print axioms VE.Commands.outcome_checked
+#print axioms VE.Commands.parts_of_candidate
+#print axioms VE.Commands.parts_prefix
+#print axioms VE.Commands.readCommand_bound
+#print axioms VE.Commands.readCommand_complete
+#print axioms VE.Commands.readCommand_empty
+#print axioms VE.Commands.readCommand_many
+#print axioms VE.Commands.readCommand_one_iff
+#print axioms VE.Commands.readCommand_prefix
+#print axioms VE.Commands.readCommand_read
+#print axioms VE.Commands.readCommand_typed_of_facts
+#print axioms VE.Commands.refusalOf_refused
+#print axioms VE.Commands.tuples_typed
 #print axioms VE.Compose.Contract.Rewriter.Laws.fresh
 #print axioms VE.Compose.Contract.Rewriter.Laws.off
 #print axioms VE.Compose.Contract.Rewriter.Laws.preserves

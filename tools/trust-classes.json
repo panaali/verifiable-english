@@ -2030,6 +2030,156 @@
         "VE.Closure.Formula.check"
       ]
     },
+    "VE/Commands/Examples.lean": {
+      "T": [
+        "VE.Commands.Examples.E_web",
+        "VE.Commands.Examples.actsWeb",
+        "VE.Commands.Examples.approvedDraft",
+        "VE.Commands.Examples.approvedE",
+        "VE.Commands.Examples.constEntry",
+        "VE.Commands.Examples.definitesWeb",
+        "VE.Commands.Examples.derivesTwo",
+        "VE.Commands.Examples.envOf",
+        "VE.Commands.Examples.envWith",
+        "VE.Commands.Examples.extraEnv",
+        "VE.Commands.Examples.goA",
+        "VE.Commands.Examples.goB",
+        "VE.Commands.Examples.goCase",
+        "VE.Commands.Examples.goEnv",
+        "VE.Commands.Examples.goSorts",
+        "VE.Commands.Examples.lex0",
+        "VE.Commands.Examples.lexOf",
+        "VE.Commands.Examples.nReadings",
+        "VE.Commands.Examples.noReadingOutcome",
+        "VE.Commands.Examples.obligation",
+        "VE.Commands.Examples.outcomeOf",
+        "VE.Commands.Examples.permission",
+        "VE.Commands.Examples.predEntry",
+        "VE.Commands.Examples.read",
+        "VE.Commands.Examples.readingSet",
+        "VE.Commands.Examples.se0",
+        "VE.Commands.Examples.sortEntry",
+        "VE.Commands.Examples.tuplesOf",
+        "VE.Commands.Examples.twoReadings",
+        "VE.Commands.Examples.web",
+        "VE.Commands.Examples.webWith",
+        "VE.Commands.Examples.wordingOf"
+      ]
+    },
+    "VE/Commands/Read.lean": {
+      "G[R]": [
+        "VE.Commands.Outcome.ofText",
+        "VE.Commands.Texts.classOf",
+        "VE.Commands.coordinated",
+        "VE.Commands.maxCandidates",
+        "VE.Commands.maxWordingBytes",
+        "VE.Commands.noReading",
+        "VE.Commands.ofCondition",
+        "VE.Commands.prefixRefusal",
+        "VE.Commands.refusalOf",
+        "VE.Commands.strField",
+        "VE.Commands.tupleCount",
+        "VE.Commands.unreadOf",
+        "VE.Commands.withinLimits"
+      ],
+      "G[V]": [
+        "VE.Commands.Fill",
+        "VE.Commands.GuardFault",
+        "VE.Commands.Outcome",
+        "VE.Commands.Parts",
+        "VE.Commands.Reading",
+        {
+          "name": "VE.Commands.Reading.command",
+          "tied": [
+            "VE.Commands.readCommand_typed_of_facts"
+          ]
+        },
+        "VE.Commands.actMatches",
+        "VE.Commands.addressed",
+        {
+          "name": "VE.Commands.candidates",
+          "tied": [
+            "VE.Commands.candidate_reads_back"
+          ]
+        },
+        "VE.Commands.checkedAddressee",
+        "VE.Commands.commandable",
+        "VE.Commands.conditionOf",
+        {
+          "name": "VE.Commands.filled",
+          "tied": [
+            "VE.Commands.candidate_reads_back"
+          ]
+        },
+        "VE.Commands.firstMatch",
+        {
+          "name": "VE.Commands.fold",
+          "tied": [
+            "VE.Commands.candidate_reads_back"
+          ]
+        },
+        "VE.Commands.guardList",
+        "VE.Commands.guardOf",
+        "VE.Commands.guardOfOutcome",
+        "VE.Commands.guardsOf",
+        "VE.Commands.manyOf",
+        {
+          "name": "VE.Commands.ofForce",
+          "tied": [
+            "VE.Commands.mem_ofForce"
+          ]
+        },
+        {
+          "name": "VE.Commands.parts",
+          "tied": [
+            "VE.Commands.candidate_reads_back"
+          ]
+        },
+        {
+          "name": "VE.Commands.phraseMatches",
+          "tied": [
+            "VE.Commands.mem_phraseMatches"
+          ]
+        },
+        {
+          "name": "VE.Commands.readCommand",
+          "tied": [
+            "VE.Commands.readCommand_one_iff"
+          ]
+        },
+        "VE.Commands.readingsOf",
+        {
+          "name": "VE.Commands.roleOf",
+          "tied": [
+            "VE.Commands.candidate_reads_back"
+          ]
+        },
+        "VE.Commands.slotFills",
+        "VE.Commands.splitLastIf",
+        "VE.Commands.trimmed",
+        "VE.Commands.tuples"
+      ],
+      "P": [
+        "VE.Commands.declared"
+      ]
+    },
+    "VE/Commands/Texts.lean": {
+      "G[R]": [
+        "VE.Commands.Texts.actsMatch",
+        "VE.Commands.Texts.addressee",
+        "VE.Commands.Texts.codeClasses",
+        "VE.Commands.Texts.coordinated",
+        "VE.Commands.Texts.empty",
+        "VE.Commands.Texts.limitText",
+        "VE.Commands.Texts.missingObligation",
+        "VE.Commands.Texts.missingPermission",
+        "VE.Commands.Texts.noReading",
+        "VE.Commands.Texts.nonAscii",
+        "VE.Commands.Texts.permission",
+        "VE.Commands.Texts.please",
+        "VE.Commands.Texts.unbound"
+      ]
+    },
     "VE/Compose/Adjoin.lean": {
       "G[V]": [
         "VE.Compose.adjoinOne"
@@ -11053,7 +11203,8 @@
         "VE.SpeechActs.Wire.wraps"
       ],
       "D[R]": [
-        "VE.SpeechActs.Wire.readingSetsError"
+        "VE.SpeechActs.Wire.readingSetsError",
+        "VE.SpeechActs.Wire.readingsBound"
       ],
       "D[I]": [
         "VE.SpeechActs.Wire.Binding",
@@ -17275,45 +17426,52 @@
         "VE.Discourse.PositionsExamples.written4"
       ]
     },
-    "VE/Defaults/Uniform.lean": {
-      "G[R]": [
-        "VE.Defaults.providerConditions",
-        "VE.Defaults.providerE1d",
-        "VE.Defaults.providerRefusal"
-      ],
+    "VE/Calc/Stats.lean": {
       "S": [
-        "VE.Defaults.ConditionsExact",
-        "VE.Defaults.DfltUniformSound",
-        "VE.Defaults.dfltUniform",
-        "VE.Defaults.dfltUniformLabelled",
-        "VE.Defaults.dfltUniformOf",
-        "VE.Defaults.leastUniform",
-        "VE.Defaults.noneOr",
-        "VE.Defaults.packConditions"
+        "VE.Calc.SqrtRoundsTo",
+        "VE.Calc.Stat",
+        "VE.Calc.Stat.minLength",
+        "VE.Calc.Stat.run",
+        "VE.Calc.absR",
+        "VE.Calc.binomialTail",
+        "VE.Calc.choose",
+        "VE.Calc.kappa?",
+        "VE.Calc.mean?",
+        "VE.Calc.populationVariance?",
+        "VE.Calc.rootEq",
+        "VE.Calc.rootGe",
+        "VE.Calc.rootGt",
+        "VE.Calc.rootLe",
+        "VE.Calc.rootLt",
+        "VE.Calc.sampleVariance?",
+        "VE.Calc.signFlipP",
+        "VE.Calc.signs"
+      ],
+      "G[R]": [
+        "VE.Calc.maxSignFlip"
+      ],
+      "C": [
+        "VE.Calc.instDecidableRootEq",
+        "VE.Calc.instDecidableRootGe",
+        "VE.Calc.instDecidableRootGt",
+        "VE.Calc.instDecidableRootLe",
+        "VE.Calc.instDecidableRootLt",
+        "VE.Calc.instDecidableSqrtRoundsTo",
+        "VE.Calc.signFlipC",
+        "VE.Calc.signFlipWork"
       ]
     },
-    "VE/Defaults/UniformExamples.lean": {
+    "VE/Calc/StatsExamples.lean": {
       "T": [
-        "VE.Defaults.UniformFixtures.abSoft",
-        "VE.Defaults.UniformFixtures.over",
-        "VE.Defaults.UniformFixtures.dAB",
-        "VE.Defaults.UniformFixtures.piSoft",
-        "VE.Defaults.UniformFixtures.piEnv",
-        "VE.Defaults.UniformFixtures.piR",
-        "VE.Defaults.UniformFixtures.dπ",
-        "VE.Defaults.UniformFixtures.medical",
-        "VE.Defaults.UniformFixtures.key",
-        "VE.Defaults.UniformFixtures.cond",
-        "VE.Defaults.UniformFixtures.wPack",
-        "VE.Defaults.UniformFixtures.with_",
-        "VE.Defaults.UniformFixtures.askK",
-        "VE.Defaults.UniformFixtures.refusedP",
-        "VE.Defaults.UniformFixtures.leastUDec",
-        "VE.Defaults.UniformFixtures.otherKinds",
-        "VE.Defaults.UniformFixtures.dS",
-        "VE.Defaults.UniformFixtures.srcConds",
-        "VE.Defaults.UniformFixtures.d2T",
-        "VE.Defaults.UniformFixtures.shown"
+        "VE.Calc.StatsExamples.d12",
+        "VE.Calc.StatsExamples.d16",
+        "VE.Calc.StatsExamples.grid",
+        "VE.Calc.StatsExamples.milli",
+        "VE.Calc.StatsExamples.pv",
+        "VE.Calc.StatsExamples.rootsAt",
+        "VE.Calc.StatsExamples.sv",
+        "VE.Calc.StatsExamples.tie",
+        "VE.Calc.StatsExamples.v6"
       ]
     },
     "VE/Acts/Faithful.lean": {
@@ -17507,54 +17665,6 @@
         "VE.RightClauses.Examples.verdict"
       ]
     },
-    "VE/Calc/Stats.lean": {
-      "S": [
-        "VE.Calc.SqrtRoundsTo",
-        "VE.Calc.Stat",
-        "VE.Calc.Stat.minLength",
-        "VE.Calc.Stat.run",
-        "VE.Calc.absR",
-        "VE.Calc.binomialTail",
-        "VE.Calc.choose",
-        "VE.Calc.kappa?",
-        "VE.Calc.mean?",
-        "VE.Calc.populationVariance?",
-        "VE.Calc.rootEq",
-        "VE.Calc.rootGe",
-        "VE.Calc.rootGt",
-        "VE.Calc.rootLe",
-        "VE.Calc.rootLt",
-        "VE.Calc.sampleVariance?",
-        "VE.Calc.signFlipP",
-        "VE.Calc.signs"
-      ],
-      "G[R]": [
-        "VE.Calc.maxSignFlip"
-      ],
-      "C": [
-        "VE.Calc.instDecidableRootEq",
-        "VE.Calc.instDecidableRootGe",
-        "VE.Calc.instDecidableRootGt",
-        "VE.Calc.instDecidableRootLe",
-        "VE.Calc.instDecidableRootLt",
-        "VE.Calc.instDecidableSqrtRoundsTo",
-        "VE.Calc.signFlipC",
-        "VE.Calc.signFlipWork"
-      ]
-    },
-    "VE/Calc/StatsExamples.lean": {
-      "T": [
-        "VE.Calc.StatsExamples.d12",
-        "VE.Calc.StatsExamples.d16",
-        "VE.Calc.StatsExamples.grid",
-        "VE.Calc.StatsExamples.milli",
-        "VE.Calc.StatsExamples.pv",
-        "VE.Calc.StatsExamples.rootsAt",
-        "VE.Calc.StatsExamples.sv",
-        "VE.Calc.StatsExamples.tie",
-        "VE.Calc.StatsExamples.v6"
-      ]
-    },
     "VE/SoftNorms/ActsFrameExamples.lean": {
       "T": [
         "VE.SoftNorms.ActsFrameExamples.parse",
@@ -17659,6 +17769,47 @@
       "G[V]": [
         "VE.Senses.termCore",
         "VE.Senses.formulaCore"
+      ]
+    },
+    "VE/Defaults/Uniform.lean": {
+      "G[R]": [
+        "VE.Defaults.providerConditions",
+        "VE.Defaults.providerE1d",
+        "VE.Defaults.providerRefusal"
+      ],
+      "S": [
+        "VE.Defaults.ConditionsExact",
+        "VE.Defaults.DfltUniformSound",
+        "VE.Defaults.dfltUniform",
+        "VE.Defaults.dfltUniformLabelled",
+        "VE.Defaults.dfltUniformOf",
+        "VE.Defaults.leastUniform",
+        "VE.Defaults.noneOr",
+        "VE.Defaults.packConditions"
+      ]
+    },
+    "VE/Defaults/UniformExamples.lean": {
+      "T": [
+        "VE.Defaults.UniformFixtures.abSoft",
+        "VE.Defaults.UniformFixtures.over",
+        "VE.Defaults.UniformFixtures.dAB",
+        "VE.Defaults.UniformFixtures.piSoft",
+        "VE.Defaults.UniformFixtures.piEnv",
+        "VE.Defaults.UniformFixtures.piR",
+        "VE.Defaults.UniformFixtures.dπ",
+        "VE.Defaults.UniformFixtures.medical",
+        "VE.Defaults.UniformFixtures.key",
+        "VE.Defaults.UniformFixtures.cond",
+        "VE.Defaults.UniformFixtures.wPack",
+        "VE.Defaults.UniformFixtures.with_",
+        "VE.Defaults.UniformFixtures.askK",
+        "VE.Defaults.UniformFixtures.refusedP",
+        "VE.Defaults.UniformFixtures.leastUDec",
+        "VE.Defaults.UniformFixtures.otherKinds",
+        "VE.Defaults.UniformFixtures.dS",
+        "VE.Defaults.UniformFixtures.srcConds",
+        "VE.Defaults.UniformFixtures.d2T",
+        "VE.Defaults.UniformFixtures.shown"
       ]
     }
   }
