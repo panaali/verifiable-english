@@ -145,6 +145,8 @@ import VE.Definitions.Elaborate
 import VE.Definitions.Layer
 import VE.Definitions.Route
 import VE.Discourse.Access
+import VE.Discourse.Compose
+import VE.Discourse.ComposeKeys
 import VE.Discourse.Descriptions
 import VE.Discourse.Documents
 import VE.Discourse.Elaborate
@@ -2413,6 +2415,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.admission_projects
 #print axioms VE.Discourse.admit2_facts
 #print axioms VE.Discourse.admitAt_cases
+#print axioms VE.Discourse.admitChain_of
 #print axioms VE.Discourse.admit_cases
 #print axioms VE.Discourse.admit_facts2
 #print axioms VE.Discourse.aligned_refl
@@ -2430,14 +2433,33 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.bound_mem
 #print axioms VE.Discourse.canon_kind
 #print axioms VE.Discourse.carrier_cases
+#print axioms VE.Discourse.caseManifest_wellFormed
+#print axioms VE.Discourse.chainChecks_wellFormed
+#print axioms VE.Discourse.chainReferences_ok
 #print axioms VE.Discourse.checkAll_ok
 #print axioms VE.Discourse.citation_choices_retained
 #print axioms VE.Discourse.citation_extends_joint
+#print axioms VE.Discourse.cmp_i_d
+#print axioms VE.Discourse.cmp_ir_d
+#print axioms VE.Discourse.cmp_ir_i
+#print axioms VE.Discourse.cmp_rf_i
+#print axioms VE.Discourse.cmp_rf_ir
+#print axioms VE.Discourse.cmp_rp_i
+#print axioms VE.Discourse.cmp_rp_ir
+#print axioms VE.Discourse.cmp_rp_rf
 #print axioms VE.Discourse.compatibleChoices_unconstrained
 #print axioms VE.Discourse.compatible_budget
 #print axioms VE.Discourse.compatible_empty_error
 #print axioms VE.Discourse.compatible_no_sets
 #print axioms VE.Discourse.compatible_sound
+#print axioms VE.Discourse.composed_admission
+#print axioms VE.Discourse.composed_base_unchanged
+#print axioms VE.Discourse.composed_fenceless
+#print axioms VE.Discourse.composed_path
+#print axioms VE.Discourse.composed_unchanged
+#print axioms VE.Discourse.composed_unchanged_error
+#print axioms VE.Discourse.composed_wellFormed
+#print axioms VE.Discourse.conditions_retained
 #print axioms VE.Discourse.conjOn_denote
 #print axioms VE.Discourse.conjOn_wf
 #print axioms VE.Discourse.conj_denote
@@ -2585,7 +2607,11 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.report_extends_joint
 #print axioms VE.Discourse.req_ok
 #print axioms VE.Discourse.resolveAll_ok
+#print axioms VE.Discourse.resolveCase_keeps
+#print axioms VE.Discourse.resolveCase_off
+#print axioms VE.Discourse.resolveDocument_keeps
 #print axioms VE.Discourse.resolveFormula_assertion
+#print axioms VE.Discourse.resolveWith_fenceless
 #print axioms VE.Discourse.resolve_identity
 #print axioms VE.Discourse.resolve_keeps_shape
 #print axioms VE.Discourse.resolve_no_new_symbols

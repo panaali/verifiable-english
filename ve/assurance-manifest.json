@@ -2280,7 +2280,10 @@
       "lean/VE/Scope/ReachExamples.lean": "fixtures only: SC-6's #guard checks (scope spec 7.8) build UDHR part documents, rights contents, reading sets and u0218.s18's rule as JSON literals and run `withReach`, `withBarReach` and `governSets` on them; no runtime JSON handling",
       "lean/VE/Defaults/UniformExamples.lean": "fixtures only: #guard checks of F9.1 to F9.7 (docs/spec/profile-composition.md 4) build defaults-* request JSON and read the kind table's answers; no runner path",
       "lean/VE/Commands/Examples.lean": "test fixtures only: ci-1's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
-      "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row"
+      "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
+      "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
+      "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
+      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling"
     }
   },
   "plan_operations": {
