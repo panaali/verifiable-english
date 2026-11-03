@@ -429,8 +429,8 @@
    "from": "let bp := ...",
    "to": "let bp := ...\n  let _ ← VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment environment)",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: decodeNormsEnvironment on the path\")",
-   "check": "run_cmd"
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('path', 'VE.Norms.Wire.decodeNormsEnvironment'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
   },
   {
    "definition": "VE.Discourse.chainDDoc",
@@ -439,8 +439,8 @@
    "from": "let front := Loader.metaOf j",
    "to": "let front := Loader.metaOf j\n  (unitsAndParts front).forM (contentOk K)",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: contentOk on the path\")",
-   "check": "run_cmd"
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('path', 'VE.Discourse.contentOk'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
   },
   {
    "definition": "VE.Discourse.admitChain",
@@ -449,8 +449,8 @@
    "from": "let tables := tablesOf j\n  integrityOk j tables.1 tables.2",
    "to": "integrityOk j (tablesOf j).1 (tablesOf j).2",
    "result": "KILLED",
-   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (\"evaluated 2 times, expected 1: tablesOf in admitChain\")",
-   "check": "run_cmd"
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('admitChain', 'VE.Discourse.tablesOf'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
   }
  ]
 }
