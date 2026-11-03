@@ -380,7 +380,10 @@ OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
                 *(_SPLIT_CASE + name for name in ("environment", "document", "checked")),
                 # The projected environment (VE.Senses.projectedJson): the relay reads it whole as an Environment and
                 # binds its environment_id and the lexicon's to it (ve.backends.senses); its typed shape is sn-b6b's.
-                "senses.project.json#/$defs/projection/anyOf/0/properties/environment"}
+                "senses.project.json#/$defs/projection/anyOf/0/properties/environment",
+                # An events case's base constants: closed in `then`, equal to the request's in `else`; et-5's relay
+                # binds the named dates to the block (the selector is `request_block/events`).
+                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/constants"}
 
 
 def open_objects(directory=DIRECTORY):

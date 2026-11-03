@@ -8,7 +8,7 @@ answered on, each on both sides of its boundary. The hook's own checks are `Wire
 namespace VE.Events.RouteExamples
 open Lean
 open VE.Events
-open VE.Defaults.Fixtures (regJ xReq xPerm envJ strictSoft ruleJ dfltJ)
+open VE.Defaults.Fixtures (xReq xPerm envJ strictSoft ruleJ dfltJ)
 open VE.NormDefaults.Wire (LayeredU decodeLayered)
 
 def parse (s : String) : Json := (Json.parse s).toOption.getD .null
@@ -83,7 +83,7 @@ def decoded (e : Json) (t : Json := terms) : Except String LayeredU := decodeLay
 #guard ((decoded envOf).toOption.map (·.envId)) != ((decoded (envOf (blockJ "[\"2026-10-15\"]"))).toOption.map (·.envId))
 #guard ((decoded envOf).toOption.map (·.docHash)) != ((decoded (envOf (blockJ "[\"2026-10-15\"]"))).toOption.map (·.docHash))
 -- The date constants are charged to the vocabulary: the same document fits with one date and not with three.
-def filled (k : Nat) (b : Json) : String := match decoded (envOf b listed
+def filled (k : Nat) (b : Option Json) : String := match decoded (envOf b listed
     ((List.range k).map fun i => rolePred s!"f{i}" "[\"act\",\"day\"]" "d")) with
   | .ok _ => "ok"
   | .error e => e
@@ -125,6 +125,104 @@ def premiseLabels (e : Json) : List String :=
 #guard VE.NormDefaults.Wire.caseOpenTerms (Json.mkObj [("open_terms", terms), ("document", parse "{\"open_terms\":[]}")]) == terms
 #guard VE.NormDefaults.Wire.caseOpenTerms (Json.mkObj [("document", Json.mkObj [("open_terms", terms)])]) == terms
 #guard VE.NormDefaults.Wire.caseOpenTerms (Json.mkObj []) == .null
+
+-- Each way onto the route: the profile, an `unspecified` default, a route kind, `events@0` alone; and none of them.
+def pathOf (kind : String) (e : Json) : Bool := VE.NormDefaults.Run.usesNormDefaultsPath (caseOf kind e)
+def plainEnv (ps : List String) : Json := (envJ [xPerm] strictSoft).setObjVal! "profiles" (toJson ps)
+#guard pathOf "x" (plainEnv ["norm-defaults@0", "norms@0", "relational-fol@0"])
+#guard pathOf "x" (envOf none ["norms@0", "relational-fol@0"])
+#guard pathOf "norm-defaults-x" (plainEnv ["norms@0", "relational-fol@0"])
+#guard pathOf "x" (plainEnv ["events@0", "norms@0", "relational-fol@0"])
+#guard !pathOf "x" (plainEnv ["norms@0", "relational-fol@0"])
+
+-- The answer is the block-less answer's, field by field, with the pack's rows beside it.
+def fieldsOf (e : Json) : List String := ((VE.Bridge.fields (answer (caseOf "norm-defaults-elaborate" e))).toOption.getD []).map (·.1)
+def fieldOf (e : Json) (k : String) : Json := (answer (caseOf "norm-defaults-elaborate" e)).getObjValD k
+#guard (fieldsOf envOf).filter (· != "events_premises") == fieldsOf (envOf none) && (fieldsOf envOf).length > 8
+#guard ["soft", "rights", "premises", "fill", "background"].all fun k => fieldOf envOf k == fieldOf (envOf none) k
+
+-- A block-less document with the profile has no date to charge.
+#guard filled 248 none == "ok"
+#guard filled 249 none == "ResourceLimit: vocabulary size"
+
+/-! ## The rights branch: the pack after soft's and rights' -/
+
+def rightsEnv (b : Option Json) (ps : List String) (extra : List String := []) : Json :=
+  let e := parse ("{\"language\":\"ve.core@0.2\",\"spec_revision\":\"ve-v0.2-expand2-2026-09-25\",\"vocabulary\":{\"sorts\":{" ++
+    "\"state\":{\"description\":\"state\"},\"person\":{\"description\":\"person\"},\"day\":{\"description\":\"day\"}}," ++
+    "\"predicates\":{" ++ ",".intercalate ([rolePred "before" "[\"day\",\"day\"]" "{0} is before {1}",
+      "\"arrest_permitted\":{\"arguments\":[\"state\",\"person\"],\"description\":\"permission\",\"regulated\":{\"role\":" ++
+      "\"permission\",\"default\":\"unspecified\",\"act\":\"{0} arrest {1}\"}}",
+      "\"arbitrary\":{\"arguments\":[\"state\",\"person\"],\"description\":\"arbitrary\",\"verbalisation\":\"{0} arrests {1} arbitrarily\"}"] ++
+      extra) ++ "},\"constants\":{},\"rights\":{\"holders\":[\"person\"],\"bearers\":[\"state\"],\"protected\":[],\"alters\":{}}}}")
+  let e := e.setObjVal! "profiles" (toJson ps)
+  match b with
+  | some b => e.setObjVal! "events" b
+  | none => e
+
+def rightsDoc : Json := parse ("[{\"right\":{\"name\":\"liberty\",\"holder\":\"person\",\"guard\":[\"top\"],\"lines\":[{\"kind\":" ++
+  "\"claim\",\"cites\":{},\"norm\":{\"name\":\"art9\",\"predicate\":\"arrest_permitted\",\"sign\":false,\"guard\":[\"binary\"," ++
+  "\"arbitrary\",[\"var\",1],[\"var\",0]],\"unless\":[],\"over\":[]}}]}},{\"limitation\":{\"name\":\"l29\",\"scope\":[\"liberty\"]," ++
+  "\"kinds\":[\"claim\"],\"decided_by\":\"unstated\",\"conditions\":[{\"name\":\"law\",\"role\":\"necessary\",\"verbalisation\":" ++
+  "\"determined by law\"}],\"factors\":[]}}]")
+
+def rightsListed : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
+def dayBlock (dates : String := "[\"2026-10-12\"]") : Json :=
+  parse ("{\"day\":\"day\",\"before\":\"before\",\"events\":[],\"states\":[],\"dates\":" ++ dates ++ ",\"links\":[]}")
+def rightsCase (e : Json) : Json :=
+  Json.mkObj [("id", .str "a"), ("kind", .str "norm-defaults-elaborate"), ("environment", e), ("document", rightsDoc)]
+def rightsPacks (e : Json) : Option (List String) := (decodeLayered (rightsCase e)).toOption.map (·.packs.map (·.id))
+
+#guard rightsPacks (rightsEnv (some dayBlock) rightsListed) == some ["soft", "rights", "events"]
+#guard rightsPacks (rightsEnv none rightsListed) == some ["soft", "rights"]
+#guard (((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "events_premises").getArr?.toOption.map (·.size)) ==
+  some 3
+#guard (answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights" ==
+  (answer (rightsCase (rightsEnv none rightsListed))).getObjValD "rights"
+-- The date constants are charged on this branch too.
+def rightsFilled (k : Nat) (dates : String) : String :=
+  match decodeLayered (rightsCase (rightsEnv (some (dayBlock dates)) rightsListed
+      ((List.range k).map fun i => rolePred s!"f{i}" "[\"state\",\"day\"]" "d"))) with
+  | .ok _ => "ok"
+  | .error e => e
+def threeDates : String := "[\"2026-10-12\",\"2026-10-13\",\"2026-10-14\"]"
+#guard rightsFilled 247 threeDates == "ok" && rightsFilled 248 threeDates == "ResourceLimit: vocabulary size"
+#guard rightsFilled 250 "[]" == "ok" && rightsFilled 251 "[]" == "ResourceLimit: vocabulary size"
+
+/-! ## The replay: a one-node proof of a pack premise, bound by Lean's own identities -/
+
+def before (a b : String) : VE.Formula := .binary "before" (.const a) (.const b)
+def inPack : VE.Formula := before "date__2026_10_12" "date__2026_10_13"
+def notInPack : VE.Formula := before "date__2026_10_13" "date__2026_10_12"
+
+/-- A certificate as `bindCertX` binds it to `e`: its ids from Lean's own functions, its trace one `close`. -/
+def boundProof (e : Json) (c : VE.Formula) : Json := Id.run do
+  let .ok L := decoded e | return .null
+  let .ok canonical := VE.NormDefaults.Wire.canonicalEnvironmentJsonU e | return .null
+  let .ok id := VE.Route.Wire.environmentId listed canonical | return .null
+  let meaning := fun (a : VE.Formula) => (VE.Route.Wire.meaningId listed id (VE.NormDefaults.Wire.enc a)).toOption.getD ""
+  Json.mkObj [("checker_version", .str "ve-tableau-checker@2"), ("environment_id", .str id),
+    ("premise_meaning_ids", toJson ((VE.NormDefaults.Wire.premisesX L.U L.X []).map meaning)),
+    ("conclusion_meaning_id", .str (meaning c)), ("trace", parse "{\"rule\":\"close\"}")]
+
+def replayCase (e bound : Json) (c : VE.Formula) : Json :=
+  caseOf "norm-defaults-certificate" e terms
+    [("premises", parse "[]"), ("conclusion", VE.NormDefaults.Wire.enc c), ("certificate", bound)]
+def premiseCount : Nat := ((decoded envOf).toOption.map fun L => (VE.NormDefaults.Wire.premisesX L.U L.X []).length).getD 0
+
+#guard (answer (replayCase envOf (boundProof envOf inPack) inPack)).getObjValD "valid" == .bool true
+#guard (answer (replayCase envOf (boundProof envOf inPack) inPack)).getObjValD "premises" == toJson premiseCount
+#guard premiseCount > (hook envOf |>.toOption.map (·.length) |>.getD 0)
+-- The refusing sides: a proof that does not close, and a certificate of another block.
+#guard (answer (replayCase envOf (boundProof envOf notInPack) notInPack)).getObjValD "valid" == .bool false
+#guard status (replayCase envOf (boundProof envOf inPack) notInPack) == "certificate is stale or bound to different inputs"
+#guard status (replayCase (envOf (blockJ "[\"2026-10-14\",\"2026-10-12\",\"2026-10-15\"]")) (boundProof envOf inPack) inPack) ==
+  "certificate is stale or bound to different inputs"
+-- What the theorem reads: this block, the other packs' `X` without the pack, this case's formulas.
+#guard (match VE.Events.replayEventsEntailment (replayCase envOf (boundProof envOf inPack) inPack) with
+  | .ok r => r.V.dates.length == 3 && r.valid && r.premises.isEmpty && r.conclusion == inPack &&
+      r.X == ((decoded envOf).toOption.map fun L => (VE.NormDefaults.Wire.softLabelledU L.U L.D).map (·.2)).getD [.top]
+  | .error _ => false)
 
 -- A replay needs the block: with the profile alone there is no pack to replay against.
 #guard status (caseOf "norm-defaults-certificate" (envOf none)) == "InvalidInput: events"
