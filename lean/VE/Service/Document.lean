@@ -2692,4 +2692,70 @@ def runCaseReported (j : Json) : Json :=
     | some (text, at_) => locatedRow j text at_
     | none => Standalone.reported (fun _ => .error message) j
 
+/-! ## G3: success-only transparency (pc-1g; docs/spec/profile-composition.md 1.7, 2b to 2e)
+
+What G3 compares and what it accepts as the layer's own: an answer's verdict fields (2e), its units' statuses, and
+the layer's refusals (2d). -/
+
+/-- A member of an object dropped; any other value kept. -/
+def dropKey (k : String) : Json → Json
+  | .obj kvs => Json.mkObj (kvs.toList.filter (·.1 != k))
+  | v => v
+
+/-- An echoed reading set without its environment-dependent identities (2e): each reading's `meaning_id` and its
+`distinguishing_models` references (the reading ids they are stated for kept), and the models' keys (the models
+kept, in the order of their text). -/
+def setVerdictFields (s : Json) : Json :=
+  let s := match s.getObjValD "models" with
+    | .obj kvs => s.setObjVal! "models" (.arr ((kvs.toList.map fun (kv : String × Json) => kv.2).mergeSort
+        fun (a b : Json) => decide (a.compress ≤ b.compress)).toArray)
+    | _ => s
+  match s.getObjValD "readings" with
+  | .arr rs => s.setObjVal! "readings" (.arr (rs.map fun r =>
+      let r := dropKey "meaning_id" r
+      let admission := r.getObjValD "admission"
+      match admission.getObjValD "distinguishing_models" with
+      | .obj kvs => r.setObjVal! "admission" (admission.setObjVal! "distinguishing_models"
+          (.arr (kvs.toList.map fun (o, _) => Json.str o).toArray))
+      | _ => r))
+  | _ => s
+
+/-- An answer without the fields the layer may change (`judgments`, `document_id`, `source_id`, `coverage`, every
+unit's `status`) and without exactly the environment-dependent identities (2e): each unit's `meaning_id`, each
+echoed reading's `meaning_id`, each echoed model key and `distinguishing_models` reference. -/
+def verdictFields (a : Json) : Json :=
+  let a := ["judgments", "document_id", "source_id", "coverage"].foldl (fun a k => dropKey k a) a
+  let a := match a.getObjValD "units" with
+    | .arr us => a.setObjVal! "units" (.arr (us.map fun u => dropKey "meaning_id" (dropKey "status" u)))
+    | _ => a
+  match a.getObjValD "reading_sets" with
+  | .arr ss => a.setObjVal! "reading_sets" (.arr (ss.map setVerdictFields))
+  | _ => a
+
+/-- Each unit's id and status, in unit order. -/
+def unitStatuses (a : Json) : List (String × String) :=
+  match a.getObjValD "units" with
+  | .arr us => us.toList.map fun u =>
+      ((u.getObjValD "id").getStr?.toOption.getD "", (u.getObjValD "status").getStr?.toOption.getD "")
+  | _ => []
+
+/-- The layer's own refusal codes, in judgment-terms 8.2's order, `JudgmentListedUnused` first. -/
+def judgmentCodes : List String :=
+  ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentArguments",
+   "JudgmentRegulated", "JudgmentCriterionAsUnit", "JudgmentDecider"]
+
+/-- The gate texts of `judgments@0`'s rows, read from `profileTable` (2d): each requirement's, then each refusal's. -/
+def judgmentGateTexts : List String :=
+  (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r =>
+    (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported
+
+/-- A refusal of the layer: one of its codes, a document-mode refusal that names it (until PC-4 and PC-5 replace
+those, 4), or exactly a gate text of its rows (2d). -/
+def layerRefusal (e : String) : Bool :=
+  judgmentCodes.any (fun c => e.startsWith (c ++ ": ")) || e.startsWith "CheckerUnavailable: judgments@0 with " ||
+    judgmentGateTexts.contains e
+
+/-- The W2 check the layer relaxes (judgment-terms 8.2, row (W2): repeated `arguments`). -/
+def layerRelaxes : List String := ["invalid open-term arguments"]
+
 end VE.Service.Document
