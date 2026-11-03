@@ -302,6 +302,8 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.Defaults.Uniform
+import VE.Defaults.UniformExamples
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
