@@ -1,3 +1,9 @@
+- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
+- `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
+- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
+- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
+- `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
+- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
 - `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
@@ -18,6 +24,7 @@
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
 - `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
+- `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
 - `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
 - `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
 - `tests/test_fol_names.py` — (no module docstring)
@@ -49,6 +56,7 @@
 - `tests/test_jt_e1s.py` — JT-E1s frame, revision and scoring checks.
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
+- `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
 - `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
 - `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
@@ -78,10 +86,3 @@
 - `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
 - `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
 - `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
-- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
-- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
-- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
-- `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
-- `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
-- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
-- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…

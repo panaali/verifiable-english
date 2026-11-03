@@ -941,6 +941,9 @@ def test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline(tmp_path, monkey
 def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
     """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
     tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
+    # tests/ first, as pytest puts it when collecting a test file: an earlier test that left tools/ ahead of it on
+    # sys.path would make `import question_fixtures` find tools/'s generator, not the fixture table.
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parent))
     from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
     from test_lean_document_wrapper import test_a_document_past_its_cpu_deadline_is_unavailable_never_ok
     from ve.backends import lean_service

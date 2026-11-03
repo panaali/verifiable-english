@@ -37,7 +37,7 @@ PYTHON = {
     # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope cardinality "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
         "backends.senses backends.speech_source senses.display").split(),
@@ -159,11 +159,14 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "ResponseShapeAudit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
-                  "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
+                  "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
+    if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
+        return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
+        # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -178,8 +181,12 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)
     if module in {"VE.Compose.Contract", "VE.Compose.ContractExamples"}:
         return 4  # states theorems on Service.Document.checkDocSets (profile-composition 1.5, PC-3)
+    if module == "VE.Judgments.ChainExamples":
+        return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
+    if module == "VE.Commands.Read":
+        return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1)
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
@@ -193,7 +200,7 @@ def lean_layer(module: str) -> int | None:
         return 2  # act-phrases AP-3: the act check and the grammar it reads, below the norms decoder that calls it
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
-    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Acts.")) or module in {
+    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:

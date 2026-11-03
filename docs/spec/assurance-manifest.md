@@ -161,6 +161,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Norms/Replay.lean` | 406 | 71 | 103–153, 285–304 | `1540ad633e87…` |
 | `lean/VE/Norms/Wire.lean` | 461 | 431 | 29–459 | `92497f889740…` |
 | `lean/VE/Acts/Lexical.lean` | 213 | 146 | 16–161 | `3bc34305ffec…` |
+| `lean/VE/Acts/Wire.lean` | 119 | 119 | 1–119 | `5258c889cf60…` |
+| `lean/VE/Acts/Decode.lean` | 265 | 265 | 1–265 | `1c31983a3502…` |
 | `lean/VE/Order/Wire.lean` | 301 | 220 | 25–238, 253–258 | `0f2b4ab4442d…` |
 | `lean/VE/Readings/Companions.lean` | 923 | 923 | 1–923 | `69a9b55c501a…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |
@@ -181,8 +183,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Typed.lean` | 96 | 96 | 1–96 | `8e0e19fcb271…` |
 | `lean/VE/Route/Wire.lean` | 727 | 727 | 1–727 | `4829a9c7b8ee…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
-| `lean/VE/Senses/Run.lean` | 362 | 362 | 1–362 | `12ed6e661538…` |
-| `lean/VE/Service/Document.lean` | 2094 | 2094 | 1–2094 | `28c21ddae6fb…` |
+| `lean/VE/Senses/Run.lean` | 411 | 411 | 1–411 | `7ce569058768…` |
+| `lean/VE/Service/Document.lean` | 2695 | 2695 | 1–2695 | `8b3f6a0dbc01…` |
 | `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
 | `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `418076df3e0a…` |
@@ -194,7 +196,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Wire.lean` | 525 | 525 | 1–525 | `308401c5e256…` |
 | `lean/VE/SpeechActs/Source/Admission/Run.lean` | 632 | 632 | 1–632 | `776cebdcc648…` |
 | `lean/VE/SpeechActs/Source/Run.lean` | 934 | 934 | 1–934 | `95fb8af85ded…` |
-| `lean/VE/SpeechActs/Wire.lean` | 1008 | 1008 | 1–1008 | `3908d8db4079…` |
+| `lean/VE/SpeechActs/Wire.lean` | 1011 | 1011 | 1–1011 | `6255650542a6…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
 | `lean/VE/Readings/ComponentsWire.lean` | 614 | 614 | 1–614 | `991c4dcb69ad…` |
@@ -221,15 +223,13 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Calc/Run.lean` | 527 | 527 | 1–527 | `576ba58b428b…` |
 | `lean/VE/Scope/Wire.lean` | 172 | 172 | 1–172 | `980ec6d8d8c4…` |
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
-| `lean/VE/Defaults/Route.lean` | 46 | 46 | 1–46 | `97feda58f0f4…` |
+| `lean/VE/Defaults/Route.lean` | 49 | 49 | 1–49 | `dc63ff3235d9…` |
 | `lean/VE/Cardinality/Run.lean` | 292 | 292 | 1–292 | `e55af9708515…` |
-| `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
 | `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
-| `lean/VE/Acts/Wire.lean` | 119 | 119 | 1–119 | `5258c889cf60…` |
-| `lean/VE/Acts/Decode.lean` | 265 | 265 | 1–265 | `1c31983a3502…` |
-| **total** | | **41,523** | | |
+| `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
+| **total** | | **42,179** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

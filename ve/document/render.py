@@ -19,6 +19,10 @@ def render_document(path):
                   else doc["environment"])
 
     def wording(ast):
+        if "cardinality" in doc:
+            from ..cardinality import paraphrase
+            return paraphrase(doc["meta"]["environment"], {"format": "ve-cardinality@1",
+                                                           "formula": ast["formula"]})["paraphrase"]
         if doc["environment"].unit_schema is not None:
             from ..surface.time import render_quantity_sentence
             try:
