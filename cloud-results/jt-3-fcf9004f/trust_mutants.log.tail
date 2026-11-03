@@ -1,0 +1,8 @@
+usage: trust_mutants.py [-h] [--base BASE] [--root ROOT] [--jobs JOBS]
+                        [--max-mutants MAX_MUTANTS] [--test TEST] [--deep]
+                        [--allow ALLOW] [--json JSON] [--rescore PREV.json]
+                        [--build-timeout BUILD_TIMEOUT] [--classes LIST]
+                        [--shard K/N] [--merge OUT.json [PART.json ...]]
+                        [--plan] [--deadline EPOCH] [--budget SECONDS]
+                        [--resume PREV.json]
+trust_mutants.py: error: unrecognized arguments: lean/VE/EnglishGrammar/JudgmentRunExamples.lean
