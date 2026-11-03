@@ -10,7 +10,6 @@
 - `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
-- `tests/test_me_2d_f2_delta.py` — me-2d-f2's saved delta (docs/math-evidence/me-2d-f2/evidence/delta.json, DELTA row D1, standing ruling R1): the calc mode's refusal of the words "the" alone, r…
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
@@ -65,7 +64,6 @@
 - `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
 - `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.5 (build checklist 17), and the check's ability to fail.
-- `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
@@ -90,3 +88,6 @@
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
 - `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
+- `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
+- `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
+- `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
