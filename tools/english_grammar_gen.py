@@ -104,6 +104,7 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "boundary fixtures",
     "lean/VE/EnglishGrammar/Examples.lean": "fixtures",
     "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/JudgmentRunExamples.lean": "fixtures",
     "lean/VE/EnglishGrammar/FoldAgree.lean": "a theorem: foldChar agrees with the discourse fold",
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
     "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",

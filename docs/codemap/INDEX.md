@@ -89,7 +89,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
 - [lean/VE/Discourse/](lean__VE__Discourse.md) — 19 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
-- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 36 modules — -
+- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 37 modules — -
 - [lean/VE/Events/](lean__VE__Events.md) — 9 modules — -
 - [lean/VE/Grammar/](lean__VE__Grammar.md) — 9 modules — -
 - [lean/VE/Judgments/](lean__VE__Judgments.md) — 5 modules — -

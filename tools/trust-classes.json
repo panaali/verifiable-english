@@ -17501,6 +17501,21 @@
         "VE.EnglishGrammar.JudgmentLinesExamples.holds",
         "VE.EnglishGrammar.JudgmentLinesExamples.firstNamed"
       ]
+    },
+    "VE/EnglishGrammar/JudgmentRunExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentRunExamples.preds",
+        "VE.EnglishGrammar.JudgmentRunExamples.environment",
+        "VE.EnglishGrammar.JudgmentRunExamples.pairs",
+        "VE.EnglishGrammar.JudgmentRunExamples.lexicon",
+        "VE.EnglishGrammar.JudgmentRunExamples.plain",
+        "VE.EnglishGrammar.JudgmentRunExamples.word",
+        "VE.EnglishGrammar.JudgmentRunExamples.request",
+        "VE.EnglishGrammar.JudgmentRunExamples.J",
+        "VE.EnglishGrammar.JudgmentRunExamples.result",
+        "VE.EnglishGrammar.JudgmentRunExamples.member",
+        "VE.EnglishGrammar.JudgmentRunExamples.names"
+      ]
     }
   }
 }

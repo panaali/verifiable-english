@@ -117,7 +117,7 @@ def readDeclaration (line jurisdiction : String) : Except String (Json × String
   let some j := parseLine line | throw lineFault
   let record := recordJson j jurisdiction
   let rs ← records noVocabulary (.arr #[record]) false (some fun _ => pure ())
-  let _ ← admit (VE.Bridge.Vocabulary.environment ⟨j.arguments.eraseDups, [(j.name, j.arguments)], []⟩) [] [] rs
+  let _ ← admit (VE.Bridge.Vocabulary.environment ⟨[], [(j.name, j.arguments)], []⟩) [] [] rs
   pure (record, j.name, j.arguments)
 
 /-! ### The authoring refusal (9.5) -/
