@@ -10,6 +10,7 @@ import VE.Attribution.Preflight
 import VE.Rights.Run
 import VE.Limits
 import VE.Judgments.Status
+import VE.Judgments.Chain
 import VE.EnglishGrammar.Evaluative
 import VE.Scope.Wire
 import VE.Scope.Readings
@@ -373,6 +374,400 @@ def split (t : String) (senses : Bool := false) : Except String Loader.Split := 
   noLoneSurrogate front
   pure ⟨fm, source, fences⟩
 
+/-- A case's front matter and body, when its document's front matter reads. -/
+def frontOf (j : Json) : Option (Json × String) :=
+  (do let (front, body) ← Loader.frontText (← (j.getObjValD "document").getStr?)
+      pure (← frontJson front, body)).toOption
+
+/-- The profiles a case's document lists; none when its front matter does not read. Inlined, so a run that has read
+the front matter (`frontOf`) reads it once. -/
+@[inline]
+def profilesOf (j : Json) : List String :=
+  match frontOf j with
+  | some (front, _) => listedProfiles (front.getObjValD "environment")
+  | none => []
+
+/-! ## The clash validation (PC-1; docs/spec/profile-composition.md 1.7, the G3 amendment, diagnostics row 16)
+
+Every request is checked first, before the gate: the model keys and `distinguishing_models` references its reading
+sets state must map one to one between the environment with `judgments@0` and the one without it, on the request
+and, when it lists `judgments@0`, on its twin (`withoutJudgments`). -/
+
+/-- The transposition of `a` and `b` (2a): `a` becomes `b`, `b` becomes `a`, any other value is kept. -/
+def swap (a b x : String) : String := if x == a then b else if x == b then a else x
+
+/-- A request's profiles without `judgments@0`: its twin's (2a). -/
+def plainProfiles (j : Json) : List String := (profilesOf j).filter (· != "judgments@0")
+
+/-- A request's profiles with `judgments@0` in its sorted place: on a request that lists `judgments@0` with sorted,
+unique profiles (as the envelope requires, `Route/Gate.lean:72`), its own. A request and its twin have the same
+`plainProfiles`, so the same two environments. -/
+def layerProfiles (j : Json) : List String := ("judgments@0" :: plainProfiles j).mergeSort fun a b => decide (a ≤ b)
+
+/-- A front matter's reading sets, as written. -/
+def readingSetsIn (front : Json) : List Json :=
+  match front.getObjValD "reading_sets" with
+  | .arr xs => xs.toList
+  | _ => []
+
+/-- The front matter's reading sets, as written. -/
+def readingSetsOf (j : Json) : List Json :=
+  match frontOf j with
+  | some (front, _) => readingSetsIn front
+  | none => []
+
+/-- A reading set's stated models, under their keys. -/
+def setModels (s : Json) : List (String × Json) :=
+  match s.getObjValD "models" with
+  | .obj kvs => kvs.toList
+  | _ => []
+
+/-- A reading set's `admission.distinguishing_models` references, reading by reading. -/
+def setReferences (s : Json) : List String :=
+  match s.getObjValD "readings" with
+  | .arr rs => rs.toList.flatMap fun r => match (r.getObjValD "admission").getObjValD "distinguishing_models" with
+    | .obj kvs => kvs.toList.filterMap (·.2.getStr?.toOption)
+    | _ => []
+  | _ => []
+
+/-- The reading sets row 16 reads: the case's, when each holds 1 to 64 readings; none otherwise, so the chain's own
+check (`compileSets`, `reading sets hold 1 to 64 readings`, in its order) answers such a case before any work that
+grows with its stated values (pc-1 review F2). A request and its twin hold the same readings. -/
+def sizedIn (sets : List Json) : List Json :=
+  if sets.all fun s => match s.getObjValD "readings" with
+    | .arr rs => 1 ≤ rs.size && rs.size ≤ 64
+    | _ => false
+  then sets else []
+
+/-- The reading sets row 16 reads (`sizedIn`), of the case. -/
+def sizedSets (j : Json) : List Json := sizedIn (readingSetsOf j)
+
+/-- The values the given sets state (`statedIds`). -/
+def statedIdsIn (sets : List Json) : List String :=
+  sets.flatMap fun s => (setModels s).map (·.1) ++ setReferences s
+
+/-- The stated values the exchange reads, over every reading set of the case (`sizedSets`): each model key and each
+`admission.distinguishing_models` reference, dangling references included (the G3 amendment). A value stated twice is
+listed twice; the check reads the values as a set. -/
+def statedIds (j : Json) : List String := statedIdsIn (sizedSets j)
+
+/-- The triples `(x, v₁, v₂)` of 2a: each stated value `x` whose content decodes (a reference's content is the
+model it names), with the identity Lean computes for that content under `layerProfiles j` (`v₁`; on a request with
+`judgments@0`, its own environment) and under `plainProfiles j` (`v₂`; the twin's). A reference names a model of its
+own set, so its triple is that model key's. -/
+def statedPairsIn (front : Json) (ps : List String) (sets : List Json) : List (String × String × String) :=
+  if sets.all (setModels · |>.isEmpty) then [] else
+    let plain := ps.filter (· != "judgments@0")
+    let layer := ("judgments@0" :: plain).mergeSort fun a b => decide (a ≤ b)
+    let idOf := fun (ps : List String) =>
+      (Standalone.environmentIdOf ps ((front.getObjValD "environment").setObjVal! "profiles" (toJson ps))).toOption
+    match idOf layer, idOf plain with
+    | some e₁, some e₂ => sets.flatMap fun s => (setModels s).filterMap fun (k, m) =>
+        match Loader.modelId layer e₁ m, Loader.modelId plain e₂ m with
+        | .ok v₁, .ok v₂ => some (k, v₁, v₂)
+        | _, _ => none
+    | _, _ => []
+
+/-- The triples `(x, v₁, v₂)` of 2a, of the case (`statedPairsIn` on its front matter, its profiles, so `v₁` under
+`layerProfiles j` and `v₂` under `plainProfiles j`, and `sizedSets j`). -/
+def statedPairs (j : Json) : List (String × String × String) :=
+  match frontOf j with
+  | none => []
+  | some (front, _) => statedPairsIn front (profilesOf j) (sizedSets j)
+
+/-- The exchange of 2a on given pairs: `swap v₁ v₂` for a value's pair, every other value kept. -/
+def exchangeOf (pairs : List (String × String × String)) (x : String) : String :=
+  match pairs.find? (·.1 == x) with
+  | some (_, v₁, v₂) => swap v₁ v₂ x
+  | none => x
+
+/-- The exchange of 2a on one stated value: `swap v₁ v₂` for its pair, every other value kept. -/
+def exchange (j : Json) (x : String) : String := exchangeOf (statedPairs j) x
+
+/-- The G3 amendment on given values, pairs and exchange: the exchange is one-to-one on the values, and no value,
+resolved or not, equals the twin environment's identity (`v₂`) of a different stated value. -/
+def swapInjectiveOf (ids : List String) (pairs : List (String × String × String)) (ex : String → String) : Bool :=
+  ids.all (fun x => ids.all fun y => x == y || ex x != ex y) &&
+    pairs.all fun (y, _, v₂) => ids.all fun x => x == y || x != v₂
+
+/-- The G3 amendment, on a request: decided before the transformation, on every request, plain ones included. -/
+def swapInjective (j : Json) : Bool := swapInjectiveOf (statedIds j) (statedPairs j) (exchange j)
+
+/-- Each stated value's first pair, by value (`exchangeOf` reads the first). -/
+def pairIndex (pairs : List (String × String × String)) : Std.HashMap String (String × String) :=
+  pairs.foldr (fun p m => m.insert p.1 p.2) ∅
+
+/-- `exchangeOf` over `pairIndex` (`exchangeIn_pairIndex`): one lookup per value. -/
+def exchangeIn (idx : Std.HashMap String (String × String)) (x : String) : String :=
+  match idx[x]? with
+  | some (v₁, v₂) => swap v₁ v₂ x
+  | none => x
+
+theorem pairIndex_get (pairs : List (String × String × String)) (x : String) :
+    (pairIndex pairs)[x]? = (pairs.find? (·.1 == x)).map (·.2) := by
+  induction pairs with
+  | nil => simp [pairIndex]
+  | cons p ps ih =>
+    simp only [pairIndex, List.foldr_cons] at ih ⊢
+    rw [Std.HashMap.getElem?_insert, ih, List.find?_cons]
+    by_cases h : p.1 = x
+    · simp [h]
+    · have hb : (p.1 == x) = false := by simpa using h
+      simp [hb]
+
+theorem exchangeIn_pairIndex (pairs : List (String × String × String)) (x : String) :
+    exchangeIn (pairIndex pairs) x = exchangeOf pairs x := by
+  unfold exchangeIn exchangeOf
+  rw [pairIndex_get]
+  cases pairs.find? (·.1 == x) with
+  | none => rfl
+  | some p => rfl
+
+/-- One step of `injectiveH`: each image read so far under its first value; `none` once two values share one. -/
+def injStep (ex : String → String) : Option (Std.HashMap String String) → String → Option (Std.HashMap String String)
+  | none, _ => none
+  | some m, x =>
+    let a := ex x
+    match m[a]? with
+    | some y => if y == x then some m else none
+    | none => some (m.insert a x)
+
+/-- Whether `ex` is one to one on `ids`, each value hashed once (`injectiveH_eq`). -/
+def injectiveH (ex : String → String) (ids : List String) : Bool := (ids.foldl (injStep ex) (some ∅)).isSome
+
+theorem injStep_none (ex : String → String) (xs : List String) : xs.foldl (injStep ex) none = none := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simpa [List.foldl_cons, injStep] using ih
+
+theorem injectiveH_foldl (ex : String → String) : ∀ (xs : List String) (m : Std.HashMap String String)
+    (l : List String), (∀ a y, m[a]? = some y → y ∈ l ∧ ex y = a) → (∀ y ∈ l, (m[ex y]?).isSome) →
+    (∀ x ∈ l, ∀ y ∈ l, x = y ∨ ex x ≠ ex y) →
+    ((xs.foldl (injStep ex) (some m)).isSome = true ↔ ∀ x ∈ l ++ xs, ∀ y ∈ l ++ xs, x = y ∨ ex x ≠ ex y)
+  | [], _, l, _, _, hP => by simpa using hP
+  | x :: xs, m, l, h1, h2, hP => by
+    rw [List.foldl_cons]
+    cases hm : m[ex x]? with
+    | some y =>
+      obtain ⟨hy, hxy⟩ := h1 _ _ hm
+      by_cases hyx : y = x
+      · subst hyx
+        have := injectiveH_foldl ex xs m (l ++ [y]) (fun a z h => by
+            obtain ⟨hz, he⟩ := h1 a z h; exact ⟨by simp [hz], he⟩)
+          (fun z hz => by
+            simp only [List.mem_append, List.mem_singleton] at hz
+            rcases hz with hz | rfl
+            · exact h2 z hz
+            · simp [hm])
+          (fun a ha b hb => by
+            simp only [List.mem_append, List.mem_singleton] at ha hb
+            rcases ha with ha | rfl <;> rcases hb with hb | rfl
+            all_goals first | exact hP _ ‹_› _ ‹_› | exact Or.inl rfl)
+        simp only [injStep, hm, beq_self_eq_true, if_true] at this ⊢
+        simpa using this
+      · simp only [injStep, hm, beq_iff_eq, hyx, if_false, injStep_none, Option.isSome_none,
+          Bool.false_eq_true, false_iff]
+        intro h
+        rcases h y (by simp [hy]) x (by simp) with h | h
+        · exact hyx h
+        · exact h hxy
+    | none =>
+      have hne : ∀ z ∈ l, ex z ≠ ex x := fun z hz he => by
+        have := h2 z hz; rw [he, hm] at this; simp at this
+      have := injectiveH_foldl ex xs (m.insert (ex x) x) (l ++ [x])
+        (fun a z h => by
+          rw [Std.HashMap.getElem?_insert] at h
+          by_cases ha : ex x = a
+          · simp [ha] at h; subst h; exact ⟨by simp, ha⟩
+          · simp [ha] at h; obtain ⟨hz, he⟩ := h1 a z h; exact ⟨by simp [hz], he⟩)
+        (fun z hz => by
+          rw [Std.HashMap.getElem?_insert]
+          simp only [List.mem_append, List.mem_singleton] at hz
+          by_cases hz' : ex x = ex z
+          · simp [hz']
+          · simp only [beq_iff_eq, hz', if_false]
+            rcases hz with hz | rfl
+            · exact h2 z hz
+            · exact absurd rfl hz')
+        (fun a ha b hb => by
+          simp only [List.mem_append, List.mem_singleton] at ha hb
+          rcases ha with ha | rfl <;> rcases hb with hb | rfl
+          · exact hP _ ha _ hb
+          · exact Or.inr (hne _ ha)
+          · exact Or.inr (fun h => hne _ hb h.symm)
+          · exact Or.inl rfl)
+      simp only [injStep, hm] at this ⊢
+      simpa using this
+
+theorem injectiveH_eq (ex : String → String) (ids : List String) :
+    injectiveH ex ids = ids.all (fun x => ids.all fun y => x == y || ex x != ex y) := by
+  apply Bool.eq_iff_iff.mpr
+  rw [injectiveH, injectiveH_foldl ex ids ∅ [] (by simp) (by simp) (by simp)]
+  simp [List.all_eq_true]
+
+/-- `swapInjectiveOf` with the exchange `exchangeOf pairs`, each value hashed once (`swapInjectiveH_eq`). -/
+def swapInjectiveH (ids : List String) (pairs : List (String × String × String)) : Bool :=
+  -- The index and the set are values, computed once (the compiler eta-expands an exchange applied to its pairs).
+  let idx := pairIndex pairs
+  let known := Std.HashSet.ofList ids
+  injectiveH (exchangeIn idx) ids && pairs.all fun (y, _, v₂) => !known.contains v₂ || v₂ == y
+
+theorem swapInjectiveH_eq (ids : List String) (pairs : List (String × String × String)) :
+    swapInjectiveH ids pairs = swapInjectiveOf ids pairs (exchangeOf pairs) := by
+  have hex : exchangeIn (pairIndex pairs) = exchangeOf pairs := funext (exchangeIn_pairIndex pairs)
+  simp only [swapInjectiveH, swapInjectiveOf, hex, injectiveH_eq]
+  congr 1
+  congr 1
+  funext ⟨y, _, v₂⟩
+  simp only [Std.HashSet.contains_ofList]
+  apply Bool.eq_iff_iff.mpr
+  simp only [List.all_eq_true, Bool.or_eq_true, beq_iff_eq, bne_iff_ne, ne_eq]
+  cases hv : ids.contains v₂ with
+  | false =>
+    have hv' : v₂ ∉ ids := by simpa using hv
+    simp only [Bool.not_false, true_or, true_iff]
+    exact fun x hx => Or.inr (fun e => hv' (e ▸ hx))
+  | true =>
+    have hv' : v₂ ∈ ids := by simpa using hv
+    simp only [Bool.not_true, Bool.false_eq_true, false_or]
+    constructor
+    · rintro rfl
+      exact fun x _ => Classical.em _
+    · intro h
+      rcases h v₂ hv' with e | e
+      · exact e
+      · exact absurd rfl e
+
+/-- `swapInjective` on a front matter `frontOf` read, with the case's profiles `ps`: its sets, values and pairs
+computed once. -/
+def swapInjectiveIn (front : Json) (ps : List String) : Bool :=
+  let sets := sizedIn (readingSetsIn front)
+  swapInjectiveH (statedIdsIn sets) (statedPairsIn front ps sets)
+
+/-- `swapInjective` as it runs (pc-1 review F2): the front matter read once, the values and the pairs computed once,
+each value hashed once, so no pass compares every stated value with every other. -/
+def swapInjectiveFast (j : Json) : Bool :=
+  match frontOf j with
+  | none => true
+  | some (front, _) => swapInjectiveIn front (profilesOf j)
+
+theorem swapInjective_frontOf (j : Json) : swapInjective j = swapInjectiveH (statedIds j) (statedPairs j) := by
+  simp only [swapInjective, swapInjectiveH_eq]; rfl
+
+@[csimp] theorem swapInjective_eq_fast : @swapInjective = @swapInjectiveFast := by
+  funext j
+  rw [swapInjective_frontOf]
+  unfold swapInjectiveFast statedIds statedPairs sizedSets readingSetsOf
+  cases frontOf j with
+  | none => rfl
+  | some p => rfl
+
+/-- One reading set with each model key and reference sent through `ex`. -/
+def exchangeSet (ex : String → String) (s : Json) : Json :=
+  let s := match s.getObjValD "models" with
+    | .obj kvs => s.setObjVal! "models" (Json.mkObj (kvs.toList.map fun (k, m) => (ex k, m)))
+    | _ => s
+  match s.getObjValD "readings" with
+  | .arr rs => s.setObjVal! "readings" (.arr (rs.map fun r =>
+      let admission := r.getObjValD "admission"
+      match admission.getObjValD "distinguishing_models" with
+      | .obj kvs => r.setObjVal! "admission" (admission.setObjVal! "distinguishing_models"
+          (Json.mkObj (kvs.toList.map fun (o, v) => (o, match v with
+            | .str x => .str (ex x)
+            | v => v))))
+      | _ => r))
+  | _ => s
+
+/-- The case with `judgments@0` taken out of its document's environment, each stated model key and reference
+exchanged by the given pairs' exchange (`exchangeOf pairs`, run as `exchangeIn`), every other value as written; the
+front matter is written again compactly (`Json.compress`), the body as written. -/
+def withoutJudgmentsIn (pairs : List (String × String × String)) (j front : Json) (body : String) : Json :=
+  -- The index is a value, so it is computed once (an exchange with no pairs keeps every value).
+  let idx := pairIndex pairs
+  let ex := exchangeIn idx
+  let front := front.setObjVal! "environment" (VE.Compose.withoutDocumentLayers (front.getObjValD "environment"))
+  let front := match front.getObjValD "reading_sets" with
+    | .arr ss => front.setObjVal! "reading_sets" (.arr (ss.map (exchangeSet ex)))
+    | _ => front
+  j.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+
+/-- `withoutJudgmentsIn` on the case's front matter and body (`frontOf`); a case whose front matter does not read is
+kept. -/
+def withoutJudgmentsOf (pairs : List (String × String × String)) (j : Json) : Json :=
+  match frontOf j with
+  | none => j
+  | some (front, body) => withoutJudgmentsIn pairs j front body
+
+/-- The case with `judgments@0` taken out of its document's environment, each stated model key and reference
+exchanged by `swap v₁ v₂` (2a) when `swapInjective j`, every other value as written; the front matter is written
+again compactly (`Json.compress`), the body as written. (The unit and reading `meaning_id` exchange is pc-1g's.) -/
+def withoutJudgments (j : Json) : Json := withoutJudgmentsOf (if swapInjective j then statedPairs j else []) j
+
+/-- The validation text of a request whose exchange is not one-to-one (the G3 amendment; row 16 of 4). -/
+def swapClash : String :=
+  "distinguishing model ids and references do not map one to one between the environments with and without judgments@0"
+
+/-- The symmetric check on given decisions (pc-d2 round 2): `swapClash` unless the request's exchange is one-to-one
+and, when the request has a twin, the twin's is too. -/
+def clashRefusalOf (own : Bool) (twin : Option Bool) : Option String :=
+  if own && twin.getD true then none else some swapClash
+
+/-- The amendment's validation, symmetric (pc-d2 round 2): the first check of `checkDocSets` and `checkDoc`, before
+the gate, on every request, plain ones included (PC-1). It reads the request's exchange and, on a request that lists
+`judgments@0`, its twin's (`withoutJudgments j`, G3's twin). A request without `judgments@0` has no twin. -/
+def clashRefusal (j : Json) : Option String :=
+  clashRefusalOf (swapInjective j)
+    (if "judgments@0" ∈ profilesOf j then some (swapInjective (withoutJudgments j)) else none)
+
+/-- The check refuses exactly when the request's exchange is not one-to-one, or the request lists `judgments@0` and
+its twin's is not (proved in the stub, 9). -/
+theorem clashRefusal_some (j : Json) :
+    clashRefusal j = some swapClash ↔
+      (swapInjective j = false ∨
+        ("judgments@0" ∈ profilesOf j ∧ swapInjective (withoutJudgments j) = false)) := by
+  unfold clashRefusal clashRefusalOf
+  by_cases hj : "judgments@0" ∈ profilesOf j <;>
+    cases swapInjective j <;> cases swapInjective (withoutJudgments j) <;> simp [hj]
+
+/-- Row 16 on a request's front matter and body (`frontOf`) and its profiles `ps` (pc-1 review F2): the values and
+pairs computed once and its exchange decided once, the twin built from those pairs, and the twin read only when the
+request's own exchange is one-to-one (`clashRefusalOf` refuses otherwise, whatever the twin's). -/
+def clashRefusalIn (j front : Json) (body : String) (ps : List String) : Option String :=
+  let sets := sizedIn (readingSetsIn front)
+  let pairs := statedPairsIn front ps sets
+  if swapInjectiveH (statedIdsIn sets) pairs then
+    if "judgments@0" ∈ ps then clashRefusalOf true (some (swapInjective (withoutJudgmentsIn pairs j front body)))
+    else none
+  else some swapClash
+
+/-- `clashRefusal` as it runs: the front matter read once (`clashRefusalIn`). A case whose front matter does not read
+states no values and lists no profile, so row 16 passes it. -/
+def clashRefusalFast (j : Json) : Option String :=
+  match frontOf j with
+  | none => none
+  | some (front, body) => clashRefusalIn j front body (profilesOf j)
+
+@[csimp] theorem clashRefusal_eq_fast : @clashRefusal = @clashRefusalFast := by
+  funext j
+  unfold clashRefusalFast
+  cases hf : frontOf j with
+  | none =>
+    unfold clashRefusal
+    rw [swapInjective_frontOf]
+    unfold statedIds statedPairs sizedSets readingSetsOf profilesOf
+    simp [hf, clashRefusalOf, statedIdsIn, sizedIn, swapInjectiveH_eq, swapInjectiveOf]
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    unfold clashRefusal withoutJudgments withoutJudgmentsOf
+    rw [swapInjective_frontOf]
+    unfold statedIds statedPairs sizedSets readingSetsOf
+    rw [hf]
+    simp only [clashRefusalIn]
+    by_cases hj : "judgments@0" ∈ profilesOf j <;>
+      cases swapInjectiveH (statedIdsIn (sizedIn (readingSetsIn front)))
+        (statedPairsIn front (profilesOf j) (sizedIn (readingSetsIn front))) <;>
+      simp [hj, clashRefusalOf]
+
 /-! ## The environment -/
 
 /-- The block routes' document with no norms and no units, as Python's `coverage` sends it. -/
@@ -689,6 +1084,27 @@ def frozenEnv (json : Json) : Except String Env :=
            envId := ← Standalone.legacyEnvironmentId l json, block := .none, legacy := some l }
   built.mapError fun m => unavailable s!"a frozen envelope outside this mode keeps its loader's diagnostic: {m}"
 
+/-- What `judgments@0` does not compose with in this mode (PC-1): the soft chain is read by `UnitContent.judgedIn`;
+the rights chain's reader is pc-1g's. Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
+def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0"]
+
+/-- Whether a front matter's units, each unit and its parts as written, hold a norm with exception conditions
+(`exception.sufficient` or `exception.necessary` present and not `[]`). The soft route makes those conditions rules of
+its theory (`SoftNorms.excPremisesOf`), which `Judgments.softContent` does not read, so the document mode keeps
+`judgments@0` apart from `soft-norms@0` on such a document (pc-1 review F1; their reader is pc-1x's). -/
+def exceptionConditioned (units : Json) : Bool :=
+  let us := match units with
+    | .arr xs => xs.toList
+    | _ => []
+  (us.flatMap fun u => u :: match u.getObjValD "parts" with
+    | .arr ps => ps.toList
+    | _ => []).any fun u =>
+      let e := ((u.getObjValD "content").getObjValD "norm").getObjValD "exception"
+      ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
+        | .ok (.arr xs) => !xs.isEmpty
+        | .ok _ => true
+        | .error _ => false
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
@@ -706,8 +1122,10 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   if listed.contains "judgments@0" then
-    -- Refused by name, as by every composing mode; the layer's requirement is the gate's over the list, below.
-    VE.Compose.layersApart listed
+    -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
+    VE.Compose.layersApart listed judgmentsApart
+    -- Main's refusal, in its place, for a soft document whose exception conditions the layer does not read yet.
+    if exceptionConditioned units then VE.Compose.layersApart listed ["soft-norms@0"]
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
@@ -721,7 +1139,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
     throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
     if let .arr _ := units then
-      let _ ← softSource environment (softSourceNorms units)
+      let _ ← softSource (VE.Compose.withoutDocumentLayers environment) (softSourceNorms units)
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
@@ -1074,6 +1492,15 @@ def extendedEnv (json : Json) : Except String Env :=
            generated := true }
   built.mapError fun m => unavailable s!"the soft route's extended environment is outside this mode: {m}"
 
+/-- `X` (an environment the soft route generated from `E` without its document layers) with its identities over the
+list as written (jt-2c, reviews/dri-decisions-20261028-jt-2c.md item 1(b); PC-1): the document layers `E` lists join
+its profiles and identity; its decoders read `X` as generated. -/
+def layeredIds (E : Env) (X : Env) : Except String Env := do
+  let layers := E.profiles.filter VE.Compose.documentLayers.contains
+  if layers.isEmpty then return X
+  let profiles := (X.profiles ++ layers).mergeSort fun a b => decide (a ≤ b)
+  pure { X with profiles, envId := ← Standalone.environmentIdOf profiles (X.json.setObjVal! "profiles" (toJson profiles)) }
+
 /-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
 the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`
 over the norm content `_parts` yields before its first fault (`partsPrefix`). -/
@@ -1081,7 +1508,8 @@ def softLayer (E : Env) (declared : List String) (raw : List Json) : Except Stri
   let lower := wireJson 257 E.lower
   let src ← softSource E.lower (softSourceNorms (Json.arr raw.toArray))
   let prime ← VE.SoftNorms.Wire.primeJson src.D lower
-  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime (partsPrefix raw)⟩
+  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← layeredIds E (← extendedEnv prime),
+    ← softRules prime (partsPrefix raw)⟩
 
 /-- `_content` for the owned profiles: the unit's checked formula and `meaning_id`, or the reason it has none
 here. -/
@@ -1680,6 +2108,28 @@ def UnitContent.judged : UnitContent → Option VE.Judgments.Content
   | .norm n => some (.rule n)
   | _ => none
 
+/-- PC-1 (4). What a unit reads for judgment dependence: formulas and W1 rules as before (`judged`), a soft rule
+through the soft route's decoder and `softContent`; a rights block reads nothing yet (its reader, `blockFormulas`, is
+pc-1g's, and the mode keeps `rights@0` apart from the layer until then). -/
+def UnitContent.judgedIn (S : Option VE.SoftNorms.Wire.SoftEnvironment) (_R : Option RightsDoc) :
+    UnitContent → Except String (Option VE.Judgments.Content)
+  | .soft rule => match S with
+    | some se => do
+      let N ← (VE.SoftNorms.Wire.decodeSoftNorm se rule).mapError fun m =>
+        unavailable s!"a soft rule the soft route accepted does not decode again: {m}"
+      pure (some (VE.Judgments.softContent N))
+    | none => throw (unavailable "a soft rule outside the soft rule source")
+  | c => pure c.judged
+
+theorem judgedIn_legacy (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) (c : UnitContent)
+    (h : c.judged.isSome = true) : c.judgedIn S R = .ok c.judged := by
+  cases c <;> simp_all [UnitContent.judgedIn, UnitContent.judged] <;> rfl
+
+theorem judgedIn_soft (se : VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) (rule : Json)
+    (N : VE.SoftNorms.SoftNode) (h : VE.SoftNorms.Wire.decodeSoftNorm se rule = .ok N) :
+    (UnitContent.soft rule).judgedIn (some se) R = .ok (some (VE.Judgments.softContent N)) := by
+  simp [UnitContent.judgedIn, h, Except.mapError, bind, Except.bind, pure, Except.pure]
+
 /-- An active set's candidates (spec 4.2), from the front matter's readings of that `(id, version)`: an AST content
 is its formula, a `norm` content its rule (`Norms.Wire.decodeNorm`), never `readingsSets`' `top`; a pending reading
 (`content: null`) is `none`. -/
@@ -1705,13 +2155,16 @@ def listedOf (meaning : Json) : List String :=
 
 /-- Each unit's view (`Judgments.viewOf`), in unit order, over the active sets' candidates. -/
 def judgedViews (E : Env) (front : Json) (openNames : List String) (active : List (FrontSet × List Bool))
-    (units : List SourceUnit) : Except String (List VE.Judgments.UnitView) := do
+    (units : List SourceUnit) (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) :
+    Except String (List VE.Judgments.UnitView) := do
   let sets ← active.mapM fun (s, _) => return (s, ← setCandidates E front s)
   let candidates := fun s => ((sets.find? (·.1 == s)).map (·.2)).getD []
   units.mapM fun u => do
     let m ← Loader.meaningStatus openNames u.meaning (python := true)
-    pure (VE.Judgments.viewOf active candidates u.id m (listedOf u.meaning) (u.kind == .str "asserted")
-      (u.content.bind UnitContent.judged))
+    let own ← match u.content with
+      | some c => c.judgedIn S R
+      | none => pure none
+    pure (VE.Judgments.viewOf active candidates u.id m (listedOf u.meaning) (u.kind == .str "asserted") own)
 
 /-- The report field `judgments` (spec 8.3): `Judgments.usageMap`'s two lists. -/
 def usageJson (m : List (String × List String) × List String) : Json :=
@@ -1815,7 +2268,8 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let active := Loader.activeOf all
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
   -- Under `judgments@0`, each unit's status is `Judgments.status` of its view, in unit order (spec 8.1).
-  let views ← if judged then judgedViews E front openNames active units else pure []
+  let rules := (S.bind (·.rules)) <|> (R.bind (·.rules))
+  let views ← if judged then judgedViews E front names active units rules R else pure []
   let units ← if judged then (units.zip views).mapM fun (u, v) => do
       pure { u with status := ← VE.Judgments.status E.rv.definitions J v }
     else pure units
@@ -1856,7 +2310,7 @@ def encode (id : String) (c : Checked) : Json :=
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
-def checkCore (j : Json) : Except String Json := do
+def checkBody (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let text ← stringField j "document"
   let withGraph ← match j.getObjVal? "admit" with
@@ -1867,6 +2321,43 @@ def checkCore (j : Json) : Except String Json := do
   pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
     (j.getObjVal? "reading_sets").toOption))
 
+/-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
+every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls
+this on GOVERN's case (the same document), so it runs once per request (pc-1 review F2). -/
+def checkCore (j : Json) : Except String Json :=
+  if "scope@0" ∈ profilesOf j then checkBody j else
+  match clashRefusal j with
+  | some e => .error e
+  | none => checkBody j
+
+/-- `checkCore` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16. -/
+def checkCoreFast (j : Json) : Except String Json :=
+  match frontOf j with
+  | none => checkBody j
+  | some (front, body) =>
+    let ps := profilesOf j
+    if "scope@0" ∈ ps then checkBody j else
+    match clashRefusalIn j front body ps with
+    | some e => .error e
+    | none => checkBody j
+
+@[csimp] theorem checkCore_eq_fast : @checkCore = @checkCoreFast := by
+  funext j
+  unfold checkCoreFast
+  cases hf : frontOf j with
+  | none =>
+    have hp : "scope@0" ∉ profilesOf j := by unfold profilesOf; simp [hf]
+    unfold checkCore
+    rw [if_neg hp, clashRefusal_eq_fast]
+    unfold clashRefusalFast
+    rw [hf]
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    unfold checkCore
+    rw [clashRefusal_eq_fast]
+    unfold clashRefusalFast
+    rw [hf]
+
 /-! ## `scope@0` (docs/spec/scope.md 1.1, 1.6, 5.2 and 8.1; SC-1b)
 
 A document listing `scope@0` is governed before the chain: `checkDoc` gates its profiles by the profile table,
@@ -1874,11 +2365,6 @@ decodes its `scope` block (`VE.Scope.decodeScope`), runs the run path `VE.Scope.
 the governed units (`withUnits`) on the environment without `scope@0`, and folds each governor unit's status
 (`VE.Scope.foldGovernors`). Its identities are the document's as written: the block and the parts are in its
 `document_id`. A document without `scope@0` is `checkCore`'s, as before (`scope_absent_unchanged`). -/
-
-/-- The profiles a case's document lists; none when its front matter does not read. -/
-def profilesOf (j : Json) : List String :=
-  (do let (front, _) ← Loader.frontText (← (j.getObjValD "document").getStr?)
-      pure (listedProfiles ((← frontJson front).getObjValD "environment"))).toOption.getD []
 
 /-- The case with GOVERN's units, which `check` reads in place of the front matter's under `scope@0`. A case's own
     `reading_sets` is dropped: only `withSets` hands the chain reading sets. -/
@@ -1906,6 +2392,7 @@ def _root_.VE.Scope.decodeScope (j : Json) : Except String VE.Scope.SDoc := do
     choice (`checkDocSets_no_sets`). -/
 def checkDoc (j : Json) : Except String Json :=
   if "scope@0" ∈ profilesOf j then do
+    if let some e := clashRefusal j then throw e
     let _ ← VE.Compose.gateOf VE.Compose.profileTable (profilesOf j)
     let D ← VE.Scope.decodeScope j
     let out ← VE.Scope.governFast D
@@ -1976,12 +2463,71 @@ def composedReadings (D : VE.Scope.SDoc) (out : Json) : Except String Json := do
     (`checkDocSets_no_sets`). -/
 def checkDocSets (j : Json) : Except String Json :=
   if "scope@0" ∈ profilesOf j then do
+    if let some e := clashRefusal j then throw e
     let _ ← VE.Compose.gateOf VE.Compose.profileTable (profilesOf j)
     let D ← VE.Scope.decodeScope j
     let out ← VE.Scope.governSetsWith VE.Scope.governFast D
     let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
     pure (VE.Scope.foldGovernors D a)
   else checkCore j
+
+/-- On every request, plain ones included, a request whose exchange is not one-to-one, or that lists `judgments@0`
+and whose twin's exchange is not, is refused with `swapClash` before any other check (the change to plain requests;
+the symmetric check). -/
+theorem checkDocSets_clashFirst (j : Json)
+    (hk : swapInjective j = false ∨
+      ("judgments@0" ∈ profilesOf j ∧ swapInjective (withoutJudgments j) = false)) :
+    checkDocSets j = .error swapClash ∧ checkDoc j = .error swapClash := by
+  have h := (clashRefusal_some j).mpr hk
+  unfold checkDocSets checkDoc
+  by_cases hs : "scope@0" ∈ profilesOf j
+  · simp [hs, h]; exact ⟨rfl, rfl⟩
+  · have hc : checkCore j = .error swapClash := by unfold checkCore; rw [if_neg hs, h]
+    simp [hs, hc]
+
+/-- `checkDocSets` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16, and calling
+no definition a `@[csimp]` twin replaces (`checkCore` here compiles to `checkCoreFast`). -/
+def checkDocSetsFast (j : Json) : Except String Json :=
+  match frontOf j with
+  | none => checkBody j
+  | some (front, body) =>
+    let ps := profilesOf j
+    if "scope@0" ∈ ps then do
+      if let some e := clashRefusalIn j front body ps then throw e
+      let _ ← VE.Compose.gateOf VE.Compose.profileTable ps
+      let D ← VE.Scope.decodeScope j
+      let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+      let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
+      pure (VE.Scope.foldGovernors D a)
+    else match clashRefusalIn j front body ps with
+      | some e => .error e
+      | none => checkBody j
+
+@[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
+  funext j
+  have hc := congrFun checkCore_eq_fast j
+  have hr := congrFun clashRefusal_eq_fast j
+  unfold checkDocSetsFast
+  cases hf : frontOf j with
+  | none =>
+    have hp : "scope@0" ∉ profilesOf j := by unfold profilesOf; simp [hf]
+    unfold checkDocSets
+    rw [if_neg hp, hc]
+    unfold checkCoreFast
+    rw [hf]
+  | some p =>
+    obtain ⟨front, body⟩ := p
+    have hr' : clashRefusal j = clashRefusalIn j front body (profilesOf j) := by
+      rw [hr]; unfold clashRefusalFast; rw [hf]
+    unfold checkDocSets
+    simp only
+    split
+    · rw [hr']
+    · rename_i h
+      rw [hc]
+      unfold checkCoreFast
+      rw [hf]
+      simp only [if_neg h]
 
 /-- Extend the established document answer with the governed sets' composed rules. -/
 def checkDocSetsAnswered (j : Json) : Except String Json := do

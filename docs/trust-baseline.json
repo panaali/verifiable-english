@@ -1825,6 +1825,48 @@
    "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 29,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1 (E″'s identities over the written list): VE/Service/Document.lean softLayer +1 (K +0, S +0, V +1)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "pc-1 review fix: VE/Service/Document.lean environmentOf +2 (F1: main's refusal of the pairing beside exception conditions), checkCore +2 (F2: row 16 once on a scope@0 request) (K +0, S +0, V +4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-01",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 18,
+   "reason": "pc-1 review fix: VE/Service/Document.lean checkDocSetsFast +18 (F2: the document mode's entry reads the front matter once; equal to checkDocSets by @[csimp] checkDocSets_eq_fast, and it calls no original a twin replaces) (K +0, S +0, V +18)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-01",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-1 review fix: VE/Service/Document.lean profilesOf +3 (a match on frontOf, inlined, which row 16's runs call too, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +3)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-02",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
   }
  ]
 }
