@@ -345,4 +345,17 @@ def f13c : Json := match frontOf f11 with
   !layerRefusal swapClash && !layerRefusal "unit meaning id does not match content" &&
   !layerRefusal "UnsupportedProfile: rights@0 is required"
 
+-- 2e on an answer: the fields the layer may change and the identities are dropped, every other field kept.
+#guard verdictFields (Json.mkObj [("id", "c"), ("status", "ok"), ("document_id", "d"), ("source_id", "s"),
+    ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("source", "t"),
+    ("units", Json.arr #[Json.mkObj [("id", "u"), ("status", "OPEN"), ("meaning_id", "m"), ("kind", "norm")]]),
+    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.mkObj [("k2", "B"), ("k1", "A")]),
+      ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("meaning_id", "m0"), ("admission", Json.mkObj [
+        ("distinguishing_models", Json.mkObj [("r1", "k1")])])]])]])]) ==
+  Json.mkObj [("id", "c"), ("status", "ok"), ("source", "t"),
+    ("units", Json.arr #[Json.mkObj [("id", "u"), ("kind", "norm")]]),
+    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.arr #["A", "B"]),
+      ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("admission", Json.mkObj [
+        ("distinguishing_models", Json.arr #["r1"])])]])]])]
+
 end VE.Judgments.ChainExamples

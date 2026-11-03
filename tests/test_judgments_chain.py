@@ -275,14 +275,16 @@ U111 = json.loads((ROOT / "tests/data/composition/pc1g/udhr-u111.json").read_tex
 RIGHTS = sorted(LAYER + ["rights@0"])
 
 
-def udhr(profiles=RIGHTS, line_guard=None):
-    """F1.4's part document: Art. 19 as a right (its liberty line guarded by `line_guard`, a judgment the right's unit
-    then lists) and u111 as its limitation, whose conditions are the four bound judgments."""
+def udhr(profiles=RIGHTS, line_term=None, where="guard"):
+    """F1.4's part document: Art. 19 as a right (its liberty line reading `line_term` in its `guard` or an `unless`
+    clause, a judgment the right's unit then lists) and u111 as its limitation, whose conditions are the four bound
+    judgments."""
     right = deepcopy(U111["right"])
     listed = []
-    if line_guard:
-        right["right"]["lines"][0]["norm"]["guard"] = ["unary", line_guard, ["var", 0]]
-        listed = [line_guard]
+    if line_term:
+        atom = ["unary", line_term, ["var", 0]]
+        right["right"]["lines"][0]["norm"][where] = atom if where == "guard" else [atom]
+        listed = [line_term]
     body, first = "".join(U111["body"]), len(U111["body"][0])
     fm = {"format": "ve-document@1", "environment": {"language": LANGUAGE, "profiles": list(profiles),
                                                      "spec_revision": SPEC_REVISION,
@@ -308,9 +310,11 @@ def test_f1_4_udhr_u111_as_a_rights_limitation_is_admitted_and_open(service):
     assert row["judgments"] == {"used": [{"term": t, "units": ["u111"]} for t in U111["terms"]], "unused": []}
 
 
-def test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit(service):
-    """A right block reads its lines as written: a judgment in its liberty line's guard is used by the right's unit."""
-    row = run(service, udhr(line_guard="morality"))
+@pytest.mark.parametrize("where", ["guard", "unless"])
+def test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit(service, where):
+    """A right block reads its lines as written: a judgment in its liberty line's guard or author carve-out is used by
+    the right's unit."""
+    row = run(service, udhr(line_term="morality", where=where))
     assert row["status"] == "ok", row
     assert {"term": "morality", "units": ["u029", "u111"]} in row["judgments"]["used"]
 
