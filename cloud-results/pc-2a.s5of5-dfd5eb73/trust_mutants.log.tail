@@ -1,0 +1,12 @@
+trust_mutants: 23 definitions, 284 mutants (13 to run), 4 jobs, base 561aa79f5716
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:48 VE.Service.DocumentChain.Examples.denyRule (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:151 VE.Service.DocumentChain.Examples.plainCase (?, trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:151 VE.Service.DocumentChain.Examples.plainCase (?, trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/Service/Document.lean:1516 VE.Service.Document.softLayer (G[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:1974 VE.Service.Document.admitGraph (D[V], trusted) list-drop-last: E.profiles -> (E.profiles.dropLast)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-last: permission -> (permission.reverse.take 1)
+trust_mutants: 50 KILLED, 6 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 228 OTHER SHARD in 1584 s; 43 carried from 30ae52a1ff3f (check-only change: lean/VE.lean, lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt, lean/predicates.txt)
+trust_mutants: ?, trusted: 39 KILLED, 4 SURVIVOR, 184 OTHER SHARD
+trust_mutants: D[V], trusted: 10 KILLED, 1 SURVIVOR, 30 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 14 OTHER SHARD
+trust_mutants: steps: wall plan 6.7 s, scratch 2.2 s, control_build 0.1 s, probe_install 0.9 s, control_probes 887.7 s, mutants 681.3 s, cleanup 5 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2253.5 s (9), mutant_builds 161.2 s (13), mutant_checks 1069 s (16), stage_controls 308.1 s (3), mutant_probes 1000.3 s (7)
