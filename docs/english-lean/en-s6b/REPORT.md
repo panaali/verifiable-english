@@ -76,6 +76,13 @@ number; at most one inline carve-out), ranks W3 does not bind, the deduplicated 
 no decoder reads, `NormOneReading` (a Prop) by the section 4 proofs each mutant breaks, and mutants Lean refuses to
 elaborate. The first runs' survivors were real gaps, closed by the fixtures at :284-348 and :283.
 
+After review F1 and F2 (`Examples.lean` changed, no trusted definition): `--rescore` in its checks mode against that
+record on fe1cad4f5, sharded over four parts (three on GitHub Actions, one on the VM): 555 rerun, 56 carried, 462
+KILLED, 0 SURVIVOR, 0 UNKNOWN, 50 INVALID, 99 ALLOWED; no allow entry changed. The parts' `--merge` first refused them
+because part 4 named the same PREV by its worktree-relative path and the others by its absolute path; the merge was
+run on copies with that one string made absolute (every other field, the head, tree, inputs and options, already
+agreed). A full run on the VM was stopped at about 240 of 611 mutants after 6.4 h (VM load 70-95).
+
 ## Trust, size, overlap
 
 - `tools/trust_map.py --check`: K +0, S +88, untied V +61, trusted +149 (Rules +94, Fixed/Norms +25, Elab +18, Read +7,
@@ -100,16 +107,20 @@ en-s6c (filed by the DRI): the proofs of `readNorm_authoring` and `readNorm_regu
 
 ## Commands and their outputs (final code)
 
-- `lake build` (1235 jobs, through `regen_generated.py --write`) succeeded. `python3 lean/audit.py`: "PASS: 727 source
+- On fe1cad4f5 (after review F1, F2): `lake build` (1235 jobs, through `regen_generated.py --write`) succeeded. `python3 lean/audit.py`: "PASS: 727 source
   files; 8040 named theorem declarations audited".
 - `uv run python tools/lean_statements.py --diff <main's statements.txt> lean/statements.txt`: added 30, removed 0,
-  changed 0.
+  changed 0; `--check`: changed 0.
 - `uv run python tools/english_grammar_gen.py --check --base $(git merge-base HEAD main)`: exit 0.
 - `uv run python tools/trust_map.py --check`: "PASS: K, S and untied [V] within 3b4e471f8c29 and the allowances
   introduced since".
-- `uv run pytest -q tests/test_english_statement_blocks.py`: 4 passed (496 s); `tests/test_english_grammar_gen.py`:
+- `uv run pytest -q tests/test_english_statement_blocks.py`: 4 passed (496 s) before the review, 5 after it (the Mac
+  run below: 75 s); `tests/test_english_grammar_gen.py`:
   104 passed; `tests/test_ask_fixtures.py tests/test_ask_relay.py tests/test_ask_cli.py`: 106 passed.
-- `mac-pytest.sh --select -- --base <merge base> --run`: 6 shards; failures fixed above, and the 64 units `--maxfail`
+- After review F1, F2: `mac-pytest.sh --select -- --base <merge base> --run` on ve-mac-1, HEAD fe1cad4f (clean),
+  3710 s: exit 0, 0 failed or error ids. `regen_generated.py --check`: 35 entries; `gate_collection.py --check
+  --prebuilt`: 15 added, 2 removed by a trailer, 0 refused, 0 stale, 0 malformed. Before the review:
+  `mac-pytest.sh --select -- --base <merge base> --run`: 6 shards; failures fixed above, and the 64 units `--maxfail`
   left unrun were run with the fixed ids: 13,438 passed, 1 failed
   (`tests/test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records`, fixed by
   re-recording the S3 comparison). The first run's failures, all fixed: `test_assurance_manifest` (other_json),
