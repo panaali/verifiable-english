@@ -2796,6 +2796,7 @@
 'VE.NormDefaults.Run.normDefaults_wire_admissionX' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Run.runAdmission_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Run.runAdmission_soundIn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.NormDefaults.Run.runCase_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.UValid.acyclic' depends on axioms: [propext, Quot.sound]
 'VE.NormDefaults.UValid.ast' depends on axioms: [propext, Quot.sound]
 'VE.NormDefaults.UValid.count' depends on axioms: [propext, Quot.sound]

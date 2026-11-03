@@ -3248,6 +3248,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admissionX
 #print axioms VE.NormDefaults.Run.runAdmission_sound
 #print axioms VE.NormDefaults.Run.runAdmission_soundIn
+#print axioms VE.NormDefaults.Run.runCase_eq
 #print axioms VE.NormDefaults.UValid.acyclic
 #print axioms VE.NormDefaults.UValid.ast
 #print axioms VE.NormDefaults.UValid.count
