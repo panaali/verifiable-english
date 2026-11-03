@@ -44,18 +44,25 @@
    "claim": "an answered statement is not compared with the one sent"
   },
   {
-   "id": "meaning-id-unbound",
+   "id": "ids-untyped",
    "file": "ve/cardinality.py",
    "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[paraphrase]",
    "killed": true,
-   "claim": "a statement's meaning id is not recomputed"
+   "claim": "a statement's meaning id is not typed as an identity (D7: typed, never recomputed)"
   },
   {
-   "id": "erased-ids-unbound",
+   "id": "w6-identity-unbound",
    "file": "ve/cardinality.py",
-   "test": "tests/test_cardinality_answer.py::test_two_faults_at_a_time_are_refused_or_change_nothing[admission]",
+   "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[paraphrase]",
    "killed": true,
-   "claim": "the erased problem's W6a identities are not recomputed"
+   "claim": "the W6a identities are not bound to the request's projection"
+  },
+  {
+   "id": "unsendable-claim-escapes",
+   "file": "ve/cardinality.py",
+   "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[admission]",
+   "killed": true,
+   "claim": "a claim the wire cannot carry escapes as a VEError from the confirmation"
   },
   {
    "id": "report-presence-unbound",
@@ -157,5 +164,23 @@
    "killed": true,
    "claim": "cardinality content without the profile gets the fence text"
   }
- ]
+ ],
+ "per_definition": {
+  "evidence": "docs/quantities/qt-a4/trust-mutants.json",
+  "allowed": "docs/quantities/qt-a4/trust-mutants-allow.json",
+  "counts": {
+   "ResponseShape.Schemas.Document.cardinalityReport": "43 killed",
+   "ResponseShape.Schemas.Document.file": "18 killed",
+   "ResponseShape.Schemas.Document.row": "16 killed",
+   "ResponseShape.Schemas.Document.unit": "18 killed",
+   "VE.Service.Document.UnitContent": "1 allowed (does not build)",
+   "VE.Service.Document.cardinalityEnv": "7 killed",
+   "VE.Service.Document.cardinalityReport": "18 killed, 2 allowed (do not build)",
+   "VE.Service.Document.check": "6 killed",
+   "VE.Service.Document.contentOf": "2 killed",
+   "VE.Service.Document.decodedEnvironment": "1 killed",
+   "VE.Service.Document.encode": "8 killed",
+   "VE.Service.Document.environmentOf": "4 killed, 1 allowed (equivalent)"
+  }
+ }
 }
