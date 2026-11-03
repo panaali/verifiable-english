@@ -89,11 +89,19 @@ FOLLOW-UPS.md row under "## sc-5rdb". PASS.
   `tools/trust_map.py --check`: PASS, K +0, S +0, `VE/Scope/Wire.lean` trusted +2. Selected tests (`mac-pytest.sh
   --select -- --base 287d5dc60 --run`, on ve-mac-1): exit 0, 0 failed ids.
 
+- Recheck F9 round, on e828aa5b4: PROBE F9 rc 1 before the DELTA and REPORT edit and rc 0 after; PROBE F1 rc 0; `review-ready.py
+  --delta-dri-needed` rc 0. `tests/test_scope_answer.py`, the sc5rdb tests: 20 passed. `lake build`: `Build completed
+  successfully (1241 jobs)`. `python3 lean/audit.py`: PASS (734 files, 8205 declarations). `tools/trust_map.py --check`: PASS,
+  `VE/Scope/Wire.lean` trusted +2. Selected tests (`mac-pytest.sh --select -- --base 287d5dc60 --run`, 422 of 530 units, on
+  the VM because no Mac slot was free): exit 0, 0 failed. The full gate was not run: the merge train's branch verify runs it.
+  This round changes no Lean, Python or Rust product code: a test, this report, DELTA.md and the evidence files.
+
 **Size:** 546 hand-written lines added and 53 removed outside generated files and `mutants.json`, before this report
 (`git diff --numstat 287d5dc60`). Of these, about 450 are the proof and its lemmas (95 of them sc-5rd's tree lemmas).
 With this report (108 lines before the F1 round) the item ended at about 654 added lines, about 50 over ~600. Nothing is
 cut: the proof is the item's one deliverable. The F1 round adds 42 test lines, 11 lines of `mutants.json` and about 20
-lines of records.
+lines of records. The F9 round adds 34 test lines net, 13 of `mutants.json`, about 25 of records and the
+595-line evidence file `old-answers.json`.
 
 ## Spec re-read
 
@@ -123,9 +131,12 @@ lines of records.
 13. `Test-removed` trailers: N.A. No test removed or renamed.
 14. Both directions, cited evidence, spec re-read: PASS. Refused and admitted fixtures on each side; the spec re-read is above.
 
-## Commits (`git log --oneline --no-merges main..HEAD`, saved before this report)
+## Commits (`git log --oneline --no-merges main..HEAD`, saved before this report's last edit)
 
 ```
+e828aa5b4 sc-5rdb F9: DELTA row 3 by the old answer, frame included (DRI f9 item 1); row 4 narrowed to refused before (R2); old-answers.json and REPORT's table; S3
+0e26f087f sc-5rdb F9: frame with u0 repeated and two units without an id refused on both routes; every unit of every effect repeated, each refused with Lean's text
+af198c5a2 sc-5rdb F1: REPORT status, commands, size and commit list for the F1 round
 522991fdb sc-5rdb F1: DELTA row 2 is the document mode; row 3 the scope mode's ok -> InvalidInput (DRI 2026-11-03 item 1); row 4 frame's fault order (R2); REPORT corrected; S2
 a83d40482 sc-5rdb F1: both routes that decode the scope block refuse a repeated unit id, per effect, with Lean's text
 4b8d25c05 sc-5rdb: lean_decoders.total_lines counts Wire.lean's 2 new pinned lines; doc regenerated; REPORT
