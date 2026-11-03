@@ -1,0 +1,12 @@
+{
+ "job": "testmap-9971d6d7-t669550-s5",
+ "head": "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+ "argv": [
+  "testmap-9971d6d7-t669550-s5",
+  "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+  "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-a9598f6285de.tar.zst",
+  "a6984d6461835b004125e6c89a2d75e7795f0c5928c441d4855b1df3c67f7183",
+  "shard=if [ -f /tmp/cc-run.sh ] && [ -d /tmp/cc-out ]; then mkdir -p /tmp/ccrt /var/tmp/cct && ln -sfn /tmp/cc-out /tmp/ccrt/out && export RUNNER_TEMP=/tmp/ccrt TMPDIR=/var/tmp/cct; git fetch -q --unshallow --tags origin 2>/dev/null || git fetch -q --tags origin 2>/dev/null; fi; ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s5.json.gz\" tests/test_difffuzz.py tests/test_lean_dump_cache.py tests/test_calc_algebra.py tests/test_encoder_shapes.py tools/test_layer_policy.py tests/test_calc_units.py tests/test_lean_share.py tests/test_english_lean_route.py tests/test_w6a_looprecheck1.py tests/test_lake_outputs.py tests/test_trust_budget.py tests/test_readings_lazy_pairs.py tests/test_calc_stats.py tests/test_gen_inv_design.py tests/test_rd9_statements.py tests/test_scope_lean.py tests/test_premise_packs_stub.py tests/test_source_words.py tests/test_lean_default_build.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
