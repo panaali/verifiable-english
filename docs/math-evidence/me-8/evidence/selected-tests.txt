@@ -1,0 +1,9 @@
+# me-8 selected tests: zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, at bd6cd04ee (tree as committed), exit 0
+# plan (uv run python tools/select_tests.py --base $(git merge-base HEAD main)): 102/531 test units
+SHARD 2/6: exit 0 in 532.0 s; 19 units, 19 passed
+SHARD 1/6: exit 0 in 723.8 s; 20 units, 20 passed
+SHARD 3/6: exit 0 in 757.9 s; 19 units, 19 passed
+SHARD 4/6: exit 0 in 879.5 s; 20 units, 20 passed
+SHARD 6/6: exit 0 in 1044.6 s; 15 units, 15 passed
+SHARD 5/6: exit 0 in 1034.4 s; 17 units, 17 passed
+[gha-select 01:27:15Z] summary: selected tests ran on the Claude cloud (6 shards, run me-8-bd6cd04e-t667818); exit=0; 1417s
