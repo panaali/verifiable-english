@@ -57,7 +57,7 @@ theorem preds_foldl_or (l : List VE.Formula) (a : VE.Formula) :
   | nil => simp
   | cons b l ih => simp [List.foldl, ih, VE.Norms.preds]
 
-theorem preds_bindAll' (ss : List String) (φ : VE.Formula) :
+theorem preds_bindAll_eq (ss : List String) (φ : VE.Formula) :
     VE.Norms.preds (VE.Norms.bindAll ss φ) = VE.Norms.preds φ := by
   induction ss with
   | nil => rfl
@@ -167,7 +167,7 @@ theorem correlate_covered (R : VE.Rights.RightsDoc) :
       · simp only [Option.some.injEq, Prod.mk.injEq] at hk
         obtain ⟨_, rfl⟩ := hk
         unfold VE.Rights.limPremise at hp
-        rw [preds_bindAll'] at hp
+        rw [preds_bindAll_eq] at hp
         unfold VE.Rights.limAtom VE.Rights.condAtom at hp
         split at hp <;>
         · simp only [VE.Norms.preds, List.mem_append] at hp

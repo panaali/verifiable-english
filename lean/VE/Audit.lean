@@ -3194,6 +3194,8 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.Examples.viewOf_xi
 #print axioms VE.Judgments.admit_first_fault
 #print axioms VE.Judgments.admit_ok_iff
+#print axioms VE.Judgments.correlate_covered
+#print axioms VE.Judgments.correlate_judged
 #print axioms VE.Judgments.dependsOnC_remove
 #print axioms VE.Judgments.dependsOnC_sub
 #print axioms VE.Judgments.dependsOn_iff
@@ -3205,6 +3207,9 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.foldlM_ok_mono
 #print axioms VE.Judgments.hasPhrase_iff
 #print axioms VE.Judgments.matches_iff
+#print axioms VE.Judgments.mem_author_holder
+#print axioms VE.Judgments.mem_author_line
+#print axioms VE.Judgments.mem_author_outside
 #print axioms VE.Judgments.mem_defEdges
 #print axioms VE.Judgments.openTermNames_length
 #print axioms VE.Judgments.openTermNames_sorts
@@ -3213,8 +3218,16 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.opensIn_isEmpty
 #print axioms VE.Judgments.path_last
 #print axioms VE.Judgments.predicateWords_name
+#print axioms VE.Judgments.preds_andAll
+#print axioms VE.Judgments.preds_atom
+#print axioms VE.Judgments.preds_bindAll_eq
+#print axioms VE.Judgments.preds_foldl_or
+#print axioms VE.Judgments.preds_inst
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.reserved_generated
+#print axioms VE.Judgments.reserved_reaches_none
+#print axioms VE.Judgments.reserved_rights
 #print axioms VE.Judgments.singleton_infix_iff
 #print axioms VE.Judgments.softContent_formulas
 #print axioms VE.Judgments.status_checked
