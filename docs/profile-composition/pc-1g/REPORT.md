@@ -28,7 +28,7 @@ Nothing false or unproved is stated: no `sorry`, no axiom (`python3 lean/audit.p
 | (1) `noUnitStatus`, `withoutStatuses` (2b, 2c) | yes (definitions) | Document.lean | F1.3i `#guard`; mutants 18, 19 |
 | (2) the round-trip lemma | **no**: unprovable (Lean's parser is opaque to the kernel). Ruling item 2: restated later; the boundary is in DELTA with its round-trip checks | ChainExamples `twinFront`, `drawn` | DELTA row 2 |
 | (3) F5 | **no**: pc-1h (ruling item 5, addendum) | | |
-| (4) `rightsAuthorFormulas`, `correlate_judged` (proved), `blockFormulas`, `andAll`, `preds_andAll` (proved), through `judgedIn` | yes | Chain.lean "The rights chain's reader"; Document.lean `UnitContent.judgedIn` | mutants 1 to 8 |
+| (4) `rightsAuthorFormulas`, `correlate_judged` (proved), `blockFormulas`, `andAll`, `preds_andAll` (proved), through `judgedIn` | yes; the block readers are stated about by `blockFormula_null`, `ruleFormulas_ok`, `linesFormulas_none`, `blockFormulas_bar` and `blockFormulas_limitation` (test_judgments_exercised); Chain.lean is classified in ve/assurance-manifest.json `other_json`, and Document.lean's pin is updated (whole file) | Chain.lean "The rights chain's reader"; Document.lean `UnitContent.judgedIn` | mutants 1 to 8 |
 | (4) spec section 4 row 2 deleted (`judgmentsApart` drops `rights@0`) | yes | Document.lean `judgmentsApart` | `test_f1_4_...`; mutant 9 |
 | (4) F1.4 (UDHR u111, part document; `Lim_D` the same) | yes | tests/data/composition/pc1g/udhr-u111.json; ChainExamples `udhr`, `udhrLim` | `test_f1_4_udhr_u111_as_a_rights_limitation_is_admitted_and_open`; ChainExamples F1.4 `#guard`s |
 | (4) rights twin test (same verdict fields, different ids) | yes | | `test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2,5]`; ChainExamples F1.1/F1.4 twin `#guard` |
@@ -55,7 +55,7 @@ Lean is the only product language changed; the Python and Rust product code is u
 2. `blockFormulas`, a limitation reading no condition: ChainExamples F1.4 `#guard` (:279).
 3. `linesFormulas` reading no line: `test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[guard]` (`JudgmentListedUnused: u029 morality`).
 4. `ruleFormulas` without carve-outs: the same test's `[unless]` case.
-5. `blockFormula` always `⊤`: the same test's `[guard]` case.
+5. `blockFormula` always `⊤` (`| _ => pure .top`): the same test's `[guard]` case.
 6. `andAll` over no formula: `preds_andAll` no longer proves.
 7. `judgedIn`'s rights block reading nothing: ChainExamples F1.4 `#guard`.
 8. `judgedIn` without the `cites` fallback: `test_a_rights_document_and_its_twin_...[2]` (`a soft rule the soft route accepted does not decode again`).
@@ -72,7 +72,7 @@ The trust-mutant tool's run (`tools/trust_mutants.py` through `mac-pytest.sh --t
 
 ## Trust
 
-`uv run python tools/trust_map.py --check` on the final Lean: "against fd9f25f9bfaa: K +0, S +85, D +36, G +14, tied +0, unclassified +0, trusted +130", then "PASS: K, S and untied [V] within fd9f25f9bfaa and the allowances introduced since". Per file: Document.lean S +76 and G[V] +9; Chain.lean S +9 and D[V] +36. The classes are in `tools/trust-classes.json`, and the allowances (S +84, S +1, V +45) in `docs/trust-baseline.json`, SIGNED by standing ruling R16. FOLLOW-UPS.md row "## pc-1g" asks for the ties pass. 130 is within R16's 150, with no K growth. Proofs (P) and ChainExamples (T) are not trusted.
+`uv run python tools/trust_map.py --check` on the final Lean: "against fd9f25f9bfaa: K +0, S +85, D +37, G +14, tied +0, unclassified +0, trusted +131", then "PASS: K, S and untied [V] within fd9f25f9bfaa and the allowances introduced since". Per file: Document.lean S +76 and G[V] +9; Chain.lean S +9 and D[V] +37. The classes are in `tools/trust-classes.json`, and the allowances (S +84, S +1, V +45, V +1) in `docs/trust-baseline.json`, SIGNED by standing ruling R16. FOLLOW-UPS.md row "## pc-1g" asks for the ties pass. 131 is within R16's 150, with no K growth. Proofs (P) and ChainExamples (T) are not trusted.
 
 ## Size
 

@@ -4602,7 +4602,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit de740609e563a3d27a575a611013b6287bc8ff18b60581000af51b405c6bc6be
+module VE.Audit a4f373e0e0139fb44d9b7253f871f9ef1ca367964ec4c838bbbd8ef1e0cd0a5b
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -12042,7 +12042,7 @@ module VE.Json 10dcb30ca301a966d8d306ad10d308b609574bac649bf175fab375a1a8a8376c
 93:0-95:69 def VE.JsonInput.parse@VE.Json
 97:0-127:44 def VE.JsonInput.caseTexts@VE.Json
 129:0-139:24 def VE.JsonInput.parseCases@VE.Json
-module VE.Judgments.Chain 3927e53f6fafde56cf40bb9200c79e4f5e7a8680007afb3d32e68c687beb377a
+module VE.Judgments.Chain 9dc44791a6ac4484f480fd346c4bf73c0087af53988bf452ec5439eb408a5901
 16:0-29:22 theorem VE.Judgments.opensIn_generated@VE.Judgments.Chain
 31:0-32:71 def VE.Judgments.softContent@VE.Judgments.Chain
 34:0-34:115 theorem VE.Judgments.softContent_formulas@VE.Judgments.Chain
@@ -12061,10 +12061,15 @@ module VE.Judgments.Chain 3927e53f6fafde56cf40bb9200c79e4f5e7a8680007afb3d32e68c
 194:0-205:65 theorem VE.Judgments.correlate_judged@VE.Judgments.Chain
 207:0-208:68 def VE.Judgments.andAll@VE.Judgments.Chain
 209:0-212:67 theorem VE.Judgments.preds_andAll@VE.Judgments.Chain
-214:0-216:80 def VE.Judgments.blockFormula@VE.Judgments.Chain
-218:0-223:61 def VE.Judgments.ruleFormulas@VE.Judgments.Chain
-225:0-233:17 def VE.Judgments.linesFormulas@VE.Judgments.Chain
-235:0-248:57 def VE.Judgments.blockFormulas@VE.Judgments.Chain
+214:0-217:53 def VE.Judgments.blockFormula@VE.Judgments.Chain
+219:0-224:61 def VE.Judgments.ruleFormulas@VE.Judgments.Chain
+226:0-234:17 def VE.Judgments.linesFormulas@VE.Judgments.Chain
+236:0-249:57 def VE.Judgments.blockFormulas@VE.Judgments.Chain
+251:0-252:64 theorem VE.Judgments.blockFormula_null@VE.Judgments.Chain
+254:0-258:76 theorem VE.Judgments.ruleFormulas_ok@VE.Judgments.Chain
+260:0-262:78 theorem VE.Judgments.linesFormulas_none@VE.Judgments.Chain
+264:0-267:44 theorem VE.Judgments.blockFormulas_bar@VE.Judgments.Chain
+269:0-273:48 theorem VE.Judgments.blockFormulas_limitation@VE.Judgments.Chain
 module VE.Judgments.ChainExamples d612e9ce8f71becded9b12b50bf6c9d5e14615d7d2b3672a8b87bff6e6bd6753
 12:0-16:87 def VE.Judgments.ChainExamples.carved@VE.Judgments.ChainExamples
 32:0-32:78 def VE.Judgments.ChainExamples.u@VE.Judgments.ChainExamples

@@ -212,8 +212,9 @@ theorem preds_andAll (fs : List VE.Formula) : VE.Norms.preds (andAll fs) = fs.fl
   | cons f fs ih => simp [andAll, VE.Norms.preds] at ih ⊢; exact ih
 
 /-- A formula of a block as written; an absent guard is `⊤`. -/
-def blockFormula (g : Lean.Json) : Except String VE.Formula :=
-  if g == .null then pure .top else VE.Bridge.decodeFormula VE.Limits.maxDepth g
+def blockFormula : Lean.Json → Except String VE.Formula
+  | .null => pure .top
+  | g => VE.Bridge.decodeFormula VE.Limits.maxDepth g
 
 /-- A rule object's author formulas: its guard and its author carve-outs (`unless`). -/
 def ruleFormulas (n : Lean.Json) : Except String (List VE.Formula) := do
@@ -246,5 +247,29 @@ def blockFormulas (R : VE.Rights.RightsDoc) (block : Lean.Json) : Except String 
     | [("bar", _)] => pure []
     | _ => throw "a rights block outside the rights reader"
   | _ => throw "a rights block outside the rights reader"
+
+/-- An absent guard reads as `⊤`. -/
+theorem blockFormula_null : blockFormula .null = .ok .top := rfl
+
+/-- A rule reads its guard first, then each author carve-out (`unless`) in order. -/
+theorem ruleFormulas_ok (n : Lean.Json) (g : VE.Formula) (us : Array Lean.Json) (cs : List VE.Formula)
+    (hg : blockFormula (n.getObjValD "guard") = .ok g) (hu : n.getObjValD "unless" = .arr us)
+    (hc : us.toList.mapM blockFormula = .ok cs) : ruleFormulas n = .ok (g :: cs) := by
+  simp only [ruleFormulas, hu, hc, hg, bind, Except.bind, pure, Except.pure]
+
+/-- A block with no lines reads none. -/
+theorem linesFormulas_none (b : Lean.Json) (h : b.getObjValD "lines" = .arr #[]) : linesFormulas b = .ok [] := by
+  simp [linesFormulas, h, pure, Except.pure, bind, Except.bind, List.mapM_nil]
+
+/-- A bar reads nothing, and a limitation reads its conditions by name, as the rights route decoded them. -/
+theorem blockFormulas_bar (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json) (b : Lean.Json)
+    (h : kvs.toList = [("bar", b)]) : blockFormulas R (.obj kvs) = .ok [] := by
+  simp [blockFormulas, h, pure, Except.pure]
+
+theorem blockFormulas_limitation (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json) (l : Lean.Json)
+    (L : VE.Rights.Limitation) (h : kvs.toList = [("limitation", l)])
+    (hL : R.limits.find? (fun L => .str L.name == l.getObjValD "name") = some L) :
+    blockFormulas R (.obj kvs) = .ok (L.conditions.map fun c => .unary c.name (.var 0)) := by
+  simp [blockFormulas, h, hL, pure, Except.pure]
 
 end VE.Judgments

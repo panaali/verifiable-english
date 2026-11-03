@@ -41,7 +41,7 @@
   {
    "definition": "blockFormula",
    "file": "lean/VE/Judgments/Chain.lean",
-   "mutant": "if true then pure .top else",
+   "mutant": "| _ => pure .top",
    "test": "tests/test_judgments_chain.py::test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[guard]",
    "caught": true,
    "detail": "E       AssertionError: {'error': 'JudgmentListedUnused: u029 morality', 'id': 'c', 'status': 'error'}",

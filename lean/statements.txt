@@ -19613,6 +19613,24 @@ theorem VE.Judgments.admit_ok_iff
         ∀ (r : VE.Judgments.Rec), r ∈ rs → VE.Judgments.faultOf E defs regulated r = Option.none
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
   -- expr 4037456850
+theorem VE.Judgments.blockFormula_null
+  VE.Judgments.blockFormula Lean.Json.null = Except.ok VE.Formula.top
+  -- uses VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.blockFormula@VE.Judgments.Chain
+  -- expr 342197865
+theorem VE.Judgments.blockFormulas_bar
+  ∀ (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (b : Lean.Json),
+    kvs.toList = [("bar", b)] → VE.Judgments.blockFormulas R (Lean.Json.obj kvs) = Except.ok []
+  -- uses VE.Formula@VE.Syntax VE.Judgments.blockFormulas@VE.Judgments.Chain VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1494586108
+theorem VE.Judgments.blockFormulas_limitation
+  ∀ (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (l : Lean.Json)
+    (L : VE.Rights.Limitation),
+    kvs.toList = [("limitation", l)] →
+      List.find? (fun L => Lean.Json.str L.name == l.getObjValD "name") R.limits = Option.some L →
+        VE.Judgments.blockFormulas R (Lean.Json.obj kvs) =
+          Except.ok (List.map (fun c => VE.Formula.unary c.name (VE.Term.var 0)) L.conditions)
+  -- uses VE.Formula.unary@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.blockFormulas@VE.Judgments.Chain VE.Rights.Condition.name@VE.Rights.Tree VE.Rights.Condition@VE.Rights.Tree VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation.name@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Term.var@VE.Syntax
+  -- expr 3938196696
 theorem VE.Judgments.correlate_covered
   ∀ (R : VE.Rights.RightsDoc) (φ : VE.Formula),
     φ ∈
@@ -19695,6 +19713,10 @@ theorem VE.Judgments.hasPhrase_iff
   ∀ (ph ws : List String), VE.Judgments.hasPhrase ph ws = Bool.true ↔ ph <:+: ws
   -- uses VE.Judgments.hasPhrase@VE.Judgments.Undeclared
   -- expr 2123165226
+theorem VE.Judgments.linesFormulas_none
+  ∀ (b : Lean.Json), b.getObjValD "lines" = Lean.Json.arr #[] → VE.Judgments.linesFormulas b = Except.ok []
+  -- uses VE.Formula@VE.Syntax VE.Judgments.linesFormulas@VE.Judgments.Chain
+  -- expr 2187402933
 theorem VE.Judgments.matches_iff
   ∀ (row : VE.Judgments.EvaluativeRow) (ws : List String),
     row.matches ws = Bool.true ↔ row.word <:+: ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
@@ -19821,6 +19843,13 @@ theorem VE.Judgments.reserved_rights
   ∀ (t : String), VE.NormDefaults.Packs.reserved ("rights__" ++ t) = Bool.true
   -- uses VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs
   -- expr 2453092427
+theorem VE.Judgments.ruleFormulas_ok
+  ∀ (n : Lean.Json) (g : VE.Formula) (us : Array Lean.Json) (cs : List VE.Formula),
+    VE.Judgments.blockFormula (n.getObjValD "guard") = Except.ok g →
+      n.getObjValD "unless" = Lean.Json.arr us →
+        List.mapM VE.Judgments.blockFormula us.toList = Except.ok cs → VE.Judgments.ruleFormulas n = Except.ok (g :: cs)
+  -- uses VE.Formula@VE.Syntax VE.Judgments.blockFormula@VE.Judgments.Chain VE.Judgments.ruleFormulas@VE.Judgments.Chain
+  -- expr 939269028
 theorem VE.Judgments.singleton_infix_iff
   ∀ (w : String) (ws : List String), [w] <:+: ws ↔ w ∈ ws
   -- uses

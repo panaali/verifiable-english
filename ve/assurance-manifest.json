@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41747,
+    "total_lines": 41842,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1150,12 +1150,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2695,
-        "sha256": "4624b3f635384732acc0168f423e6b5dbe93ed18f7b11f3e7f8c75795449f612",
+        "lines": 2790,
+        "sha256": "494d11d0d6ad0d0fa4a4ceb504a9ffd41e17c05379a6672ce868820d76975852",
         "ranges": [
           [
             1,
-            2695
+            2790
           ]
         ],
         "declarations": [
@@ -2283,7 +2283,8 @@
       "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
-      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling"
+      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
+      "lean/VE/Judgments/Chain.lean": "lean:judgments-rights-reader: `blockFormulas` re-reads a rights block the rights route already accepted with the whole source (`rightsDoc`, `decodeRightsSource`) for the names its formulas use (`VE.Bridge.decodeFormula`, guards and `unless` clauses; a limitation's conditions from the decoded `RightsDoc`); a block it does not read is `CheckerUnavailable` in `UnitContent.judgedIn`; it admits nothing"
     }
   },
   "plan_operations": {

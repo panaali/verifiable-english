@@ -3194,6 +3194,9 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.Examples.viewOf_xi
 #print axioms VE.Judgments.admit_first_fault
 #print axioms VE.Judgments.admit_ok_iff
+#print axioms VE.Judgments.blockFormula_null
+#print axioms VE.Judgments.blockFormulas_bar
+#print axioms VE.Judgments.blockFormulas_limitation
 #print axioms VE.Judgments.correlate_covered
 #print axioms VE.Judgments.correlate_judged
 #print axioms VE.Judgments.dependsOnC_remove
@@ -3206,6 +3209,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.foldlM_ok_length
 #print axioms VE.Judgments.foldlM_ok_mono
 #print axioms VE.Judgments.hasPhrase_iff
+#print axioms VE.Judgments.linesFormulas_none
 #print axioms VE.Judgments.matches_iff
 #print axioms VE.Judgments.mem_author_holder
 #print axioms VE.Judgments.mem_author_line
@@ -3228,6 +3232,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.reserved_generated
 #print axioms VE.Judgments.reserved_reaches_none
 #print axioms VE.Judgments.reserved_rights
+#print axioms VE.Judgments.ruleFormulas_ok
 #print axioms VE.Judgments.singleton_infix_iff
 #print axioms VE.Judgments.softContent_formulas
 #print axioms VE.Judgments.status_checked
