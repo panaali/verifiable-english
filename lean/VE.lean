@@ -311,6 +311,9 @@ import VE.Defaults.RouteExamples
 import VE.Defaults.Uniform
 import VE.Defaults.UniformExamples
 import VE.EnglishGrammar.Norm.Value
+import VE.EnglishGrammar.Norm.Rules
+import VE.EnglishGrammar.Norm.Read
+import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples

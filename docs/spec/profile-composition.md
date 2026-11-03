@@ -1171,13 +1171,15 @@ theorem dfltUniform_legacy (D : SoftDoc) (qs : List Pack) (h : ∀ p ∈ qs, p.c
 /-- The least decision tables of the stated conditions on `B`'s facts. -/
 def leastUniform (D : SoftDoc) (qs : List Pack) (B : VE.Structure.{u}) : String → List B.Carrier → Prop
 
-/-- The stated conditions are all that force a decision: the least tables keep the base admissible (the uniform
+/-- The stated conditions are all that force a decision: on every admissible base the least tables lie below the
+base's (sa-no-exception, DRI decision 2026-11-02, pc9-decide-check, item 2) and keep it admissible (the uniform
 analogue of `ReplacementHolds`, Meaning.lean:70). -/
 def ConditionsExact (U : UDoc) (D : SoftDoc) (qs : List Pack) : Prop :=
   ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B →
-    ∃ F : String → List B.Carrier → Prop,
+    (∃ F : String → List B.Carrier → Prop,
       BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) (withOpen U D B (leastUniform D qs B) F) ∧
-      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)
+      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)) ∧
+    ∀ p vs, leastUniform D qs B p vs → B.relation p vs
 
 /-- Proved by defeasible's named batch DF-U (DRI ruling 2(b)), against `DefaultBase`. -/
 theorem dfltUniform_sound (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)

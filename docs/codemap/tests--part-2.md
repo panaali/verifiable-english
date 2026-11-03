@@ -10,9 +10,7 @@
 - `tests/test_calc_stats.py` — ME-7: exact statistics (math-evidence spec 7; fixtures V-6, V-6r and S-5 of 13.2 and 13.3).
 - `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
 - `tests/test_calendar_regression_w6b.py` — Independent Art.
-- `tests/test_cardinality_answer.py` — The relay never accepts a Lean cardinality answer that is not an answer to its request (quantities QT-A4, R8).
 - `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
-- `tests/test_cardinality_lean.py` — The `cardinality@0` route through its relay and `ve document` (quantities QT-A4): both sides of each check.
 - `tests/test_cardinality_service.py` — The `cardinality` service mode (quantities QT-A3, qt-a3c): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, eac…
 - `tests/test_cedar_attributes.py` — (no module docstring)
 - `tests/test_cedar_norms.py` — Runtime-type Cedar conditions from W1 section 10.2.
@@ -22,6 +20,7 @@
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
+- `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
@@ -41,6 +40,7 @@
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
+- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
