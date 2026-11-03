@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-nightly-9971d6d7-t675860-s1",
+ "head": "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+ "argv": [
+  "x86sh-nightly-9971d6d7-t675860-s1",
+  "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+  "8d58480372acc2270f2ee73a53473c12185ff0df",
+  "-",
+  "-",
+  "4",
+  "1/3",
+  "authority"
+ ]
+}
