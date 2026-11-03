@@ -69,7 +69,7 @@ def environment(vocabulary=VOCAB, profiles=PROFILES):
             "vocabulary": deepcopy(vocabulary)}
 
 
-def record(name, *args, decided_by="unresolved_decider", necessary=(), sufficient=(), factors=()):
+def record(name, *args, decided_by="unstated", necessary=(), sufficient=(), factors=()):
     return {"name": name, "arguments": list(args or ("act",)), "decided_by": decided_by,
             "necessary": list(necessary), "sufficient": list(sufficient), "factors": list(factors),
             "precedents": [], "jurisdiction": "document", "version": 1}
@@ -169,13 +169,14 @@ ADMISSION = {
     "J-rho": ([record("subjects", "person", "act")], "JudgmentRegulated: subjects"),
     "J-zeta": ([record("arbitrary", necessary=[UPSILON])], "JudgmentCriterionAsUnit: arbitrary"),
     "J-zeta-prime": ([record("arbitrary", sufficient=[UPSILON, UPSILON])], "JudgmentCriterionAsUnit: arbitrary"),
-    "J-eta": ([record("arbitrary", decided_by="unstated")], "JudgmentDecider: arbitrary"),
+    "J-eta": ([record("arbitrary", decided_by="unresolved_decider")], "JudgmentDecider: arbitrary"),
+    "J-eta-unstated": ([record("arbitrary", decided_by="unstated")], "ok"),
     "J-omicron": ([record("treats_unfairly", "person", "person")], "ok"),
     "J-nu": ([record("gives_serious_uplift")], "ok"),
     "J-theta": ([record("natural_and_fundamental_group_unit", "thing")], "ok"),
     "order-1": ([record("arbitrary"), record("reasonable_limitation"), record("unreasonable", "person")],
                 "JudgmentUnbound: reasonable_limitation"),
-    "order-2": ([record("arbitrary", "person", decided_by="unstated", necessary=[UPSILON])],
+    "order-2": ([record("arbitrary", "person", decided_by="unresolved_decider", necessary=[UPSILON])],
                 "JudgmentArguments: arbitrary"),
 }
 
@@ -346,10 +347,11 @@ def test_the_profile_requires_documents_and_its_records_are_w2s(service):
 
 
 def test_layers_judgments_does_not_compose_with_are_unavailable(service):
-    soft = sorted(PROFILES + ["soft-norms@0"])
-    text = document(service, [unit("u1", kind="meta")], J1, profiles=soft)
+    # PC-1 composes the soft chain (tests/test_judgments_chain.py); the rights chain stays apart until pc-1g.
+    rights = sorted(PROFILES + ["rights@0", "soft-norms@0"])
+    text = document(service, [unit("u1", kind="meta")], J1, profiles=rights)
     assert outcome(answer(service, text)) == (
-        "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route", None)
+        "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route", None)
     front, body = document(service, [unit("u1", kind="meta")], J1).split("\n---\n")
     senses = front[:-1] + ', "senses": []}\n---\n' + body
     assert outcome(answer(service, senses)) == (

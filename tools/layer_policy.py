@@ -175,8 +175,12 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
+    if module in {"VE.Calc.Ties"}:
+        return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)
     if module in {"VE.Compose.Contract", "VE.Compose.ContractExamples"}:
         return 4  # states theorems on Service.Document.checkDocSets (profile-composition 1.5, PC-3)
+    if module == "VE.Judgments.ChainExamples":
+        return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):
