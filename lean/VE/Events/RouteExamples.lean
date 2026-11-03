@@ -69,6 +69,18 @@ def bad : Json := blockJ "[\"nonsense\"]"
 #guard elaborated (envOf (some blockJ) ["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]) ==
   "InvalidInput: invalid environment envelope"
 
+-- The charge counts every event, both roles of every state and every link: two of each at the boundary.
+def counted (links : Nat) : String :=
+  let rows := fun (n : Nat) (f : Nat → String) => ",".intercalate ((List.range n).map f)
+  let b := parse ("{\"day\":\"day\",\"before\":\"before\",\"events\":[" ++
+    rows 2 (fun i => "{\"sort\":\"e" ++ toString i ++ "\",\"on\":\"on" ++ toString i ++ "\"}") ++ "],\"states\":[" ++
+    rows 2 (fun i => "{\"sort\":\"s" ++ toString i ++ "\",\"begins\":\"b" ++ toString i ++ "\",\"ends\":\"x" ++ toString i ++ "\"}") ++
+    "],\"dates\":[],\"links\":[" ++ rows links (fun i => linkJ s!"l{i}") ++ "]}")
+  match eventsHook (envOf b) terms with
+  | .ok _ => "ok"
+  | .error e => e
+#guard counted 250 == "EventsSort: e0" && counted 251 == "ResourceLimit: events premises"
+
 /-! ## The view a layered decoder reads, and the identities it does not -/
 
 def decoded (e : Json) (t : Json := terms) : Except String LayeredU := decodeLayered (caseOf "k" e t)
