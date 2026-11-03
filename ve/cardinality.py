@@ -2,8 +2,8 @@
 
 Lean decides everything (service mode `cardinality`; a document's content through mode `document`): the statements, the
 region table, the regenerated problem, every certificate's verdict and each diagnostic, verbatim. Python sends the cases
-and binds each answer to its request (R8): each statement is the one sent, each region a sort, predicates and bits of the
-request, the W6a identities those of the request's projection, and a report's id is recomputed (`check_response` types it,
+and binds each answer to its request (R8): each statement is the one sent in Lean's spelling, each region a sort, predicates
+and bits of the request, the W6a identities those of the request's projection, and a report's id is recomputed (`check_response` types it,
 qt-a3d's report). The other identities are Lean's (D7): typed, never recomputed. Anything else is `CheckerUnavailable`,
 never a verdict. `prove` runs W6a's search on Lean's regenerated problem and hands the certificate back to Lean, which
 alone says whether it holds.
@@ -56,9 +56,34 @@ class Identities:
         _require(_ID.match(row["environment_id"]) and row["w6_environment_id"] == self.w6.environment_id
                  and row["w6_target_environment_id"] == self.target.environment_id, "environment identity")
 
+    def spelled(self, node):
+        """`node` as Lean's encoders spell it (`Cardinality.Wire.encode`): a literal lowered on the request's scale, an omitted
+        tag written, a printed negative zero unsigned. It only checks an answer, which stays Lean's: where the two lowerings
+        differ the answer is refused, never replaced. Whether `node` is admitted is Lean's, and already answered."""
+        from .units import DIMENSIONLESS, day_number, decimal_exact
+        match node:
+            case ["decimal", str(tag), text]:
+                return ["num", tag, str(decimal_exact(text, tag, self.w6))]
+            case ["date", text]:
+                return ["num", "day", str(day_number(text))]
+            case ["num", z]:
+                return ["num", DIMENSIONLESS, z]
+            case ["const", str(name)] if self.w6.constants[name].sort == "$int":
+                return ["const", DIMENSIONLESS, name]
+            case ["add", list(left), list(right)]:
+                return ["add", DIMENSIONLESS, self.spelled(left), self.spelled(right)]
+            case ["scale", str(k), list(term)]:
+                return ["scale", DIMENSIONLESS, k, self.spelled(term)]
+            case ["rounds_to" | "percent_of" | "percent_rounds_to" as op, *rest, str(printed)]:
+                zero = printed[:1] == "-" and not printed.strip("-0.")
+                return [op, *map(self.spelled, rest), printed[1:] if zero else printed]
+            case list():
+                return [self.spelled(child) for child in node]
+        return node
+
     def statement(self, answered: dict, sent: dict) -> None:
-        """An answered statement or claim is the one sent, under a meaning id (`Wire.decodeStatement`)."""
-        _require(_same(answered["formula"], sent["formula"]) and _ID.match(answered["meaning_id"]), "statement")
+        """An answered statement or claim is the one sent, in Lean's spelling, under a meaning id (`Wire.decodeStatement`)."""
+        _require(_same(answered["formula"], self.spelled(sent["formula"])) and _ID.match(answered["meaning_id"]), "statement")
 
     def problem(self, row: dict, premises: list, conclusion: dict) -> None:
         self.bind(row)
@@ -84,6 +109,7 @@ def _bind_regions(environment: dict, regions: dict) -> None:
     for sort, predicates in regions["predicates"].items():
         _require(sort in finite and len(set(predicates)) == len(predicates)
                  and all(declared[name]["arguments"] == [sort] for name in predicates), "counted sort or predicate")
+    _require(type(regions["constants"]) is list, "region rows")
     names = [row["constant"] for row in regions["constants"]]
     for row in regions["constants"]:
         _require(len(row["bits"]) == len(regions["predicates"][row["sort"]])
@@ -201,7 +227,7 @@ def paraphrase(environment: dict, statement: dict) -> dict:
         ids.bind(row)
         ids.statement(row["statement"], statement)
         _require(type(row["assumptions"]) is list and len(row["assumptions"]) == len(environment["cardinality"]["finite_sorts"])
-                 and all(type(a) is str and a and a.encode() for a in (row["paraphrase"], *row["assumptions"])), "paraphrase")
+                 and all(a.encode() for a in (row["paraphrase"], *row["assumptions"])), "paraphrase")  # text, not empty, encodable
     return _ask(environment, {"id": "paraphrase", "kind": "paraphrase", "environment": environment, "statement": statement},
                 bind)
 

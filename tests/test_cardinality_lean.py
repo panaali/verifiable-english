@@ -4,11 +4,14 @@ the one recorded."""
 from __future__ import annotations
 
 import json
+import re
+from pathlib import Path
 
 import pytest
 
 from tests.lean_service_corpus import cardinality_cases, recorded
 from ve import cardinality
+from ve.discourse import rejection
 from ve.document import check_document, load_document, main, render_document
 from ve.document.report import coverage
 from ve.errors import CheckerUnavailable, ResourceLimit, UnsupportedProfile, VEError
@@ -190,3 +193,93 @@ def test_lean_answering_unavailable_is_no_python_verdict(tmp_path, monkeypatch):
         {"id": case["id"], "status": "error", "error": "CheckerUnavailable: no"}, CheckerUnavailable("no")))
     with pytest.raises(CheckerUnavailable, match="no"):
         check_document(path)
+
+
+# Review F1: Lean answers a statement in its canonical spelling, so the relay's "the one sent" is that spelling of it.
+COUNT = ["count", "fomc_policymaker", ["any"]]
+DECIMAL, DATE = ["le", ["decimal", "bp", "1.5"], ["decimal", "bp", "2.25"]], ["date_on", ["date", "2026-01-01"], ["date", "2026-01-02"]]
+UNTAGGED = ["le", ["add", ["num", "1"], ["const", "plain"]], ["scale", "2", ["num", "1"]]]
+RESPELLED = {"decimal": ["quantity", DECIMAL], "date": ["quantity", DATE], "untagged": ["quantity", UNTAGGED],
+             "negative-zero": ["percent_of", COUNT, COUNT, "-0.0"]}
+# With `RESPELLED`, each operator of the two elaborators (`test_the_spelling_corpus_has_every_operator_lean_reads`).
+SAME = ["quantity", ["and", ["or", ["top"], ["bottom"]], ["implies", ["not", ["lt", ["num", "bp", "1"], ["const", "bp", "june"]]], ["eq", ["const", "bp", "june"], ["num", "bp", "2"]]]]]
+DATES = ["quantity", ["and", ["date_before", ["date", "2026-01-01"], ["const", "day", "d1"]], ["and", ["date_after", ["const", "day", "d1"], ["num", "day", "0"]], ["and", ["date_no_later", ["const", "day", "d1"], ["const", "day", "d2"]], ["and", ["within_days", ["const", "day", "d1"], ["date", "2026-01-01"], "3"], ["and", ["shift_days", ["date", "2026-01-01"], ["const", "day", "d1"], "3"], ["elapsed_days", ["date", "2026-01-01"], ["const", "day", "d1"], ["num", "elapsed_day", "3"]]]]]]]]
+OBJECTS = ["quantity", ["and", ["exists", "fomc_policymaker", ["unary", "expects_rates_to_stay", ["var", 0]]], ["forall", "fomc_policymaker", ["binary", "advises", ["var", 0], ["const", "chair"]]]]]
+RATIOS = ["and", ["rounds_to", "ties_up", ["quantity", ["add", "bp", ["decimal", "bp", "1"], ["const", "bp", "june"]]], ["quantity", ["scale", "bp", "2", ["num", "bp", "1"]]], "0.30"], ["percent_rounds_to", "half_even", COUNT, COUNT, "-1.50"]]
+BODIES = ["or", ["count", "fomc_policymaker", [["1", ["and", ["is", "expects_rates_to_stay"], ["not", ["or", ["any"], ["any"]]]]]], "eq", "18"], ["proportion", "fomc_policymaker", ["any"], ["any"], "ge", "1", "2"]]
+EVERY = [*RESPELLED.values(), SAME, DATES, OBJECTS, RATIOS, BODIES]
+PLAIN = {**FA1["environment"], "units": {**FA1["environment"]["units"], "elapsed_day": {"scale": "1", "display": {"kind": "decimal", "label": "days"}}},
+         "vocabulary": {**FA1["environment"]["vocabulary"], "constants": {
+    **FA1["environment"]["vocabulary"]["constants"], "plain": {"description": "a plain number", "sort": "$int"},
+    "chair": {"description": "the chair", "sort": "fomc_policymaker"}}}}
+
+
+def _stated(formula):
+    return {"format": TOP["format"], "formula": formula}
+
+
+def _lean_s(formula):
+    from ve.backends.relay import rows
+    return rows("cardinality", [{"id": "paraphrase", "kind": "paraphrase", "environment": PLAIN, "statement": _stated(formula)}])[0]
+
+
+@pytest.mark.parametrize("name", RESPELLED)
+def test_a_statement_lean_respells_is_answered_at_every_entry(tmp_path, name):
+    """Each caller of `Identities.statement`: Lean's answer reaches the caller, as the one Lean wrote."""
+    statement, environment = _stated(RESPELLED[name]), {**ENV, "vocabulary": PLAIN["vocabulary"]}
+    canonical = _lean_s(RESPELLED[name])["statement"]
+    assert canonical["formula"] != statement["formula"]
+    premises, conclusion = [*FA1["premises"], statement], FA1["conclusion"]
+    assert cardinality.paraphrase(PLAIN, statement)["statement"] == canonical
+    assert cardinality.admission(PLAIN, premises, conclusion)["premises"][-1] == canonical
+    assert cardinality.admission(PLAIN, premises[:-1], statement)["conclusion"] == canonical
+    certificate = cardinality.prove(PLAIN, premises, conclusion)
+    assert cardinality.check_certificate(PLAIN, premises, conclusion, certificate) is True
+    model = CASES["fa1-countermodel"]["model"]
+    model = {**model, "constants": {**model["constants"], "plain": "0", "chair": "p1"}}
+    assert cardinality.countermodel(PLAIN, premises, conclusion, model)["premises"][-1] == canonical
+    node = {"name": "only", "statement": statement}
+    assert cardinality.document(environment, {"root": "only", "nodes": [node]})["report"]["root"]["formula"] == canonical["formula"]
+    path = written(tmp_path, [node], environment)
+    assert check_document(path)["cardinality"]["report"]["root"]["formula"] == canonical["formula"]
+    assert load_document(path)["units"][0]["content"]["formula"] == canonical["formula"]
+    assert coverage(load_document(path))["coverage_percent"] == 100 and render_document(path)
+
+
+@pytest.mark.parametrize("formula", EVERY)
+def test_the_relay_answers_each_form_as_lean_does(formula):
+    assert _lean_s(formula)["status"] == "ok"
+    assert cardinality.paraphrase(PLAIN, _stated(formula))["statement"] == _lean_s(formula)["statement"]
+
+
+@pytest.mark.parametrize("wrap, literals", [
+    (lambda x: ["quantity", ["le", ["decimal", "bp", x], ["num", "bp", "1"]]],
+     ["1.5", "-1.5", "1.50", "0.00", "-0.00", "-0", "0", "1.555", "1.", ".5", "+1", "01", "1e2", "\u0661", "", "9" * 38, "9" * 39, "9" * 40, "9" * 41,
+      "0." + "0" * 39, "0." + "0" * 40, "1" * 38 + ".5"]),
+    (lambda x: ["quantity", ["le", ["decimal", "dimensionless", x], ["num", "1"]]], ["1", "1.0", "1.5", "-0.0"]),
+    (lambda x: ["quantity", ["date_on", ["date", x], ["num", "day", "1"]]],
+     ["1970-01-01", "1969-12-31", "0001-01-01", "0000-01-01", "2024-02-29", "2026-02-29", "2026-13-01", "9999-12-31", "10000-01-01",
+      "2026-1-1", "\u0662026-01-01", "2026-01-01T00", ""]),
+    (lambda x: ["percent_of", COUNT, COUNT, x], ["-0.0", "-0", "-0.00", "0.0", "0", "0.30", "-1.50", "-0.5", "-00", "1.", ".5", "+1", "", "-", "-."])],
+    ids=["decimal", "dimensionless", "date", "printed"])
+def test_the_relay_and_lean_agree_at_each_literal(wrap, literals):
+    """The differential: admitted is answered as Lean wrote it, refused is Lean's text, across the limits and bad spellings."""
+    for formula in map(wrap, literals):
+        lean = _lean_s(formula)
+        if lean["status"] == "ok":
+            assert cardinality.paraphrase(PLAIN, _stated(formula))["statement"] == lean["statement"], formula
+        else:
+            with pytest.raises(VEError) as refused:
+                cardinality.paraphrase(PLAIN, _stated(formula))
+            assert (refused.type, str(refused.value)) == (type(rejection(lean)), str(rejection(lean))), formula
+
+
+def test_the_spelling_corpus_has_every_operator_lean_reads():
+    """A form Lean starts to read in another spelling is refused by the relay until it is here. The names are read from the two
+    elaborators (a coverage list, not a parser), so a new operator fails this test until the corpus has it."""
+    found = set()
+    for source, first, last in (("lean/VE/Time/Wire.lean", "def elabTerm", "/-- Array nodes"),
+                                ("lean/VE/Cardinality/Wire.lean", "def elabBody", "/-! ## Canonical encoding")):
+        lean = (Path(__file__).parent.parent / source).read_text(encoding="utf-8")
+        found |= set(re.findall(r'\[\.str "(\w+)"', lean[lean.index(first):lean.index(last)]))
+    assert not found - set(re.findall(r'"(\w+)"', json.dumps(EVERY)))
