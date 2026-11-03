@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cut1-9971d6d7-t734979-lean",
+ "head": "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+ "argv": [
+  "x86sh-cut1-9971d6d7-t734979-lean",
+  "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+  "8d58480372acc2270f2ee73a53473c12185ff0df",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
