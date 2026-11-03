@@ -1,0 +1,21 @@
+{
+ "job": "pc-1g.s1of5-d4aa6e60",
+ "head": "244f8947838d51221efcd09377a3194ba724182a",
+ "argv": [
+  "pc-1g.s1of5-d4aa6e60",
+  "244f8947838d51221efcd09377a3194ba724182a",
+  "493d7f55b6d748263b3dc749e2c579380eba8014",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-f2a0a4793592.tar.zst",
+  "f652a41b4d8bdd75b5d4d9cf945cefc08ab08e2cff089820d9d420525965c0c5",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Judgments/ChainExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "1/5",
+  "--jobs",
+  "4"
+ ]
+}
