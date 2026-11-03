@@ -557,12 +557,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 460,
-        "sha256": "1fd32b178bfbc937756ed85b015a2ad149ac0801896f67e2cc53d9b5ff062bb9",
+        "lines": 461,
+        "sha256": "92497f88974002490a12d78080de9c65a2db6cafdfeca08114878e79c3384d8c",
         "ranges": [
           [
-            28,
-            458
+            29,
+            459
           ]
         ],
         "declarations": [
