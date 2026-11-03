@@ -338,6 +338,7 @@ module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.JudgmentLines
 module VE.EnglishGrammar.JudgmentLinesExamples
+module VE.EnglishGrammar.JudgmentRunExamples
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures

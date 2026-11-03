@@ -27,6 +27,9 @@ def weighsLine : String :=
 #guard declarationLine unfair == some unfairLine
 #guard declarationLine weighs == some weighsLine
 #guard declarationLine noWording == none
+#guard atom "lists" ["person", "act", "act", "person"] == some ("a person has recorded relation lists with argument " ++
+  "two an act and argument three an act (the same or another) and argument four a person (the same or another)")
+#guard atom "lists" (List.replicate 7 "act") == none
 
 -- Round trip, accepting: each line reads to its record, and only to it.
 #guard [arbitrary, governed, unfair, weighs].all fun j => (declarationLine j).bind parseLine == some j
@@ -44,6 +47,8 @@ def weighsLine : String :=
 #guard legendLines { arbitrary with factors := ["the Declaration gives no test", "see the preamble"] } ==
   [arbitraryLine, "The text mentions these points: the Declaration gives no test; see the preamble."]
 #guard legendLines noWording == []
+#guard factorsLine { arbitrary with factors := ["one point"] } == some "The text mentions these points: one point."
+#guard factorsLine arbitrary == none
 
 -- The status line says "uses": neutral, in the order given, and no line without a judgment.
 #guard statusLine [arbitrary] == some "Open: this uses the judgment whether an act is classified as \"arbitrary\"."
@@ -68,6 +73,7 @@ def errorOf (r : Except String (Json × String × List String)) : String :=
 #guard errorOf (readDeclaration (governedLine.replace "governance function" "unresolved decider") "udhr") ==
   "JudgmentDecider: arbitrary"
 #guard errorOf (readDeclaration governedLine "two words") == "open term needs a decision role and jurisdiction"
+#guard (readDeclaration weighsLine "udhr").toOption.map (·.2.2) == some ["person", "act", "act"]
 
 -- 9.5's refusal, each form (DRI 2026-11-02, jt-3 item 4). The first sentence is 9.5's for every row.
 def rowOf (w : List String) : EvaluativeRow := ⟨w, []⟩
@@ -92,8 +98,10 @@ def pred (name : String) (wording : Option String := none) : PredDecl :=
 def env : Env :=
   { sorts := [], constants := [],
     predicates := [pred "reasonable_limit", pred "reasonable_grounds", pred "due_date", pred "arrest", pred "rule_ok" (some "{0} is fair"),
-      pred "sense__just_1", pred "defined_fair"],
-    source := Json.mkObj [("definitions", Json.arr #[Json.mkObj [("name", .str "defined_fair")]])] }
+      pred "sense__just_1", pred "defined_fair", pred "fair_defined", pred "good_judgment", pred "arbitrary",
+      { pred "just" with args := ["act", "limit"] }],
+    source := Json.mkObj [("definitions", Json.arr #[Json.mkObj [("name", .str "defined_fair")],
+      Json.mkObj [("name", .str "fair_defined")]])] }
 def holds (p : String) : EFormula := .pred p [.const "x"]
 def firstNamed (J : List String) (fs : List EFormula) : Option (Nat × String) :=
   (refusal env J fs).map fun (i, t) => (i, (t.splitOn "' is")[0]!)
@@ -114,5 +122,12 @@ def firstNamed (J : List String) (fs : List EFormula) : Option (Nat × String) :
 #guard firstNamed [] [holds "sense__just_1"] == some (0, "'Just")
 #guard firstNamed ["sense__just_1"] [holds "sense__just_1"] == none
 #guard firstNamed [] [holds "defined_fair"] == none
+#guard firstNamed [] [holds "fair_defined"] == none
+#guard firstNamed [] [holds "good_judgment"] == some (0, "'Good judgment")
+-- The first such sentence, its first such predicate, and the first argument's sort for the noun.
+#guard firstNamed [] [holds "reasonable_limit", holds "rule_ok"] == some (0, "'Reasonable")
+#guard firstNamed [] [.and (holds "arrest") (holds "reasonable_limit")] == some (0, "'Reasonable")
+#guard (refusal env [] [holds "arbitrary"]).map (·.2) == some (text ["arbitrary"] ["arbitrary"] (some "limit"))
+#guard (refusal env [] [holds "just"]).map (·.2) == some (text ["just"] ["just"] (some "act"))
 
 end VE.EnglishGrammar.JudgmentLinesExamples
