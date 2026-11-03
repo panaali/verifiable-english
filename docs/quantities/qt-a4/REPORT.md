@@ -3,7 +3,7 @@
 Status: all four deliverables built. `ve document check` admits a part document under W6a's lists with `documents@1`, and refuses the constitution's four-profile list at the gate.
 Changed: `ve/cardinality.py` (new relay), Lean's `document` mode reads `cardinality` content, `tests/test_cardinality_{lean,answer}.py`, two route cases, the layer row.
 Open: the four-profile list stays refused, so the constitution's 29 units stay blocked until qt-a4b's first row, which changes an approved statement (`gate_cardinality`) and needs the DRI's ruling then. HEAD: the commit holding this file.
-DRI signature needed: none on a DELTA row (DELTA cites R1, R8, R16). **Size asked:** the F1/F2 fix round takes the total past the ~1,050 of `reviews/dri-decisions-20261103-qt-a4-size2.md` ("Size", below).
+DRI signature needed: none (DELTA cites R1, R8, R16). Size: 1,306 hand-written, accepted to about 1,350 (`reviews/dri-decisions-20261103-qt-a4-size3.md`).
 Pre-existing red: none met in this item's selected run (below). Report tests: none added (D4).
 
 ## Statement gate and edits
@@ -76,7 +76,8 @@ The first sweep's kills all read UNKNOWN: each guard through `check` walks about
 
 ## Tests and gates
 
-- Selected: `zsh .../mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on the Mac at 9deb1aefa: exit 0, 478 units, 0 failed, 4,660 s. Only this report and `mutants.json` changed after it. Two earlier runs at earlier commits stopped or failed on this item's own faults (the identity lint, the layer map, the seeded fault's text, the pending allowance, the schema corpus), each fixed and its ids rerun (205 passed).
+- Selected, fix round: the same command at b24ce6647 (`tests/test_cardinality_answer.py` and `tests/test_cardinality_lean.py` first, as changed): exit 0, 493 units over 6 GitHub Actions shards, 0 failed, 2,853 s, run `qt-a4-b24ce664-t695483`. Only this report changed after it. `lake build`, `lean/audit.py` (8,211 theorems), `tools/regen_generated.py --check` (35 entries), `tools/relay_lint.py` and `tools/identity_lint.py` pass at the same commit. No test on `main-known-red.txt` was met.
+- Selected, before the fix round: `zsh .../mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on the Mac at 9deb1aefa: exit 0, 478 units, 0 failed, 4,660 s. Only this report and `mutants.json` changed after it. Two earlier runs at earlier commits stopped or failed on this item's own faults (the identity lint, the layer map, the seeded fault's text, the pending allowance, the schema corpus), each fixed and its ids rerun (205 passed).
 - `uv run python tools/relay_mutation_gate.py` rc 0 on the final code: 46 routes, 148,149 mutants, 0 failures (`service:document` 13 fixtures, `service:cardinality` 13 fixtures).
 - Not run: the full gate (the chain runs it on the final HEAD), and Rust (no Rust changed).
 - `python3 lean/audit.py --check`: PASS (737 source files, on the merged tree). `tools/regen_generated.py --check`: 35 entries.
@@ -95,7 +96,7 @@ Probes: F1 raised `CheckerUnavailable` before and prints Lean's line after. F2 e
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)`, generated files out: about +1,308 (product about 446, tests about 760, Lean guards 117). Before the fix round it was +992/-20 (product about 420, tests 476); I measured that late, after the second half, and the DRI accepted it twice, with conditions this item keeps (both test files whole, the guards, the route cases). The fix round passes that ruling's ~1,050, so it asks again: `inbox/dri/20261103T083209Z-qt-a4-fix-size.md`. Product code stays inside the ~600; the growth is the tests F1 and F2 ask for.
+`git diff --numstat $(git merge-base HEAD main)`, generated files out: 1,306 lines at b24ce6647, as the DRI measured them: product 443, tests 746 (`test_cardinality_answer.py` 456, `test_cardinality_lean.py` 285, `test_route_row_schemas.py` 5), Lean guards 117. Before the fix round it was +992/-20 (product about 420, tests 476); I measured that late, after the second half, and the DRI accepted it twice. The fix round passed that ruling's ~1,050, so it asked again, and `reviews/dri-decisions-20261103-qt-a4-size3.md` accepts up to about 1,350 with no cut, which overrides the earlier two for this item's tests only. Its conditions hold: both test files stay whole and selected, with the fuzz against a service answering alike and the AST-enumerated test, plus the 11-03 conditions.
 
 ## Pilot bytes
 
