@@ -228,7 +228,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Acts/Wire.lean` | 119 | 119 | 1–119 | `5258c889cf60…` |
-| `lean/VE/Acts/Decode.lean` | 267 | 267 | 1–267 | `8640c92d49bc…` |
+| `lean/VE/Acts/Decode.lean` | 265 | 265 | 1–265 | `1c31983a3502…` |
 | **total** | | **41,091** | | |
 <!-- END GENERATED -->
 

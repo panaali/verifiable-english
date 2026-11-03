@@ -2101,12 +2101,12 @@
       },
       {
         "file": "lean/VE/Acts/Decode.lean",
-        "lines": 267,
-        "sha256": "8640c92d49bc5dd06096eadfddb3cddba66d3bf2e2b49b9361fdc26eca671b33",
+        "lines": 265,
+        "sha256": "1c31983a35023633157b45969696a036b5b6c1a0d5783495d3ebe3aeabbaa4c5",
         "ranges": [
           [
             1,
-            267
+            265
           ]
         ],
         "declarations": [

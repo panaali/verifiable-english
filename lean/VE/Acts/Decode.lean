@@ -105,9 +105,8 @@ theorem lookup_filter_drop (P : List (String × List String)) (q : String) (f : 
 /-- `splitPredicates` declares what `splitEnv` does, when every split source is declared. -/
 theorem lookup_split (P : List (String × List String)) (M : SplitMap) (q : String)
     (hall : (M.preds.all fun x => (VE.Bridge.lookup P x.2.1).isSome) = true) :
-    VE.Bridge.lookup (splitPredicates P M) q = match M.preds.find? (·.1 == q) with
-      | some x => VE.Bridge.lookup P x.2.1
-      | none => if M.preds.any (·.2.1 == q) then none else VE.Bridge.lookup P q := by
+    VE.Bridge.lookup (splitPredicates P M) q = (M.preds.find? (·.1 == q)).elim
+      (if M.preds.any (·.2.1 == q) then none else VE.Bridge.lookup P q) (VE.Bridge.lookup P ·.2.1) := by
   unfold splitPredicates
   rw [lookup_append, lookup_map]
   cases hx : M.preds.find? (·.1 == q) with
@@ -121,11 +120,10 @@ theorem lookup_split (P : List (String × List String)) (M : SplitMap) (q : Stri
       simpa [h] using List.find?_eq_none.mp hx y hy
     have hany : M.preds.any (·.1 == q) = false := by
       simpa using hno
-    simp only [Option.map_none, Option.none_or]
+    simp only [Option.map_none, Option.none_or, Option.elim_none]
     by_cases hs : M.preds.any (·.2.1 == q) = true
-    · rw [hs, lookup_filter_drop]
-      · rfl
-      · intro y _ hy; subst hy; simp [hs]
+    · rw [if_pos hs, lookup_filter_drop]
+      intro y _ hy; subst hy; simp [hs]
     · rw [if_neg hs, lookup_filter_keep]
       intro y _ hy; subst hy
       simp only [Bool.not_eq_true] at hs
@@ -169,7 +167,7 @@ theorem splitEnv_route (e : ElaboratedU) (rv' : VE.Route.Wire.RouteVocabulary)
   congr
   funext q
   rw [lookup_split _ _ _ hs]
-  rfl
+  cases M_find : e.M.preds.find? (·.1 == q) <;> rfl
 
 /-- The elaborated document as the `SourceU` the routes read: the source's own value when its acts are all lexical;
     else the parts declared in place of their sources, the names and the definitions chain checked over them. -/

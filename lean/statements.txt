@@ -286,11 +286,11 @@ theorem VE.Acts.Decode.lookup_split
   ∀ (P : List (String × List String)) (M : VE.Acts.SplitMap) (q : String),
     (M.preds.all fun x => (VE.Bridge.lookup P x.snd.fst).isSome) = Bool.true →
       VE.Bridge.lookup (VE.Acts.Decode.splitPredicates P M) q =
-        match List.find? (fun x => x.fst == q) M.preds with
-        | Option.some x => VE.Bridge.lookup P x.snd.fst
-        | Option.none => if (M.preds.any fun x => x.snd.fst == q) = Bool.true then Option.none else VE.Bridge.lookup P q
-  -- uses VE.Acts.Decode.lookup_split.match_1@VE.Acts.Decode VE.Acts.Decode.splitPredicates@VE.Acts.Decode VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Bridge.lookup@VE.Bridge
-  -- expr 2780803822
+        (List.find? (fun x => x.fst == q) M.preds).elim
+          (if (M.preds.any fun x => x.snd.fst == q) = Bool.true then Option.none else VE.Bridge.lookup P q) fun x =>
+          VE.Bridge.lookup P x.snd.fst
+  -- uses VE.Acts.Decode.splitPredicates@VE.Acts.Decode VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Bridge.lookup@VE.Bridge
+  -- expr 3300516841
 theorem VE.Acts.Decode.normDefaults_wire_acceptance_elaborated
   ∀ (j : Lean.Json) (r : VE.NormDefaults.Wire.EntailmentReplayU),
     VE.NormDefaults.Wire.replayEntailmentUIn VE.Acts.Decode.elaboratedU j = Except.ok r →
