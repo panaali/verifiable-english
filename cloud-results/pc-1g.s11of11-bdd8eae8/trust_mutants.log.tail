@@ -1,0 +1,26 @@
+trust_mutants: 17 definitions, 324 mutants (29 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-empty: us.toList -> [] (lean/VE/Service/Document.lean:2768: Invalid field notation: Type of)
+SURVIVOR lean/VE/Judgments/Chain.lean:232 VE.Judgments.linesFormulas (D[V], trusted) list-empty: rules -> []
+UNKNOWN lean/VE/Judgments/Chain.lean:244 VE.Judgments.blockFormulas (D[V], trusted) list-empty: R.limits -> [] (lean/VE/Judgments/Chain.lean:244: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: (VE.Compose.needText r) -> [] (lean/VE/Service/Document.lean:2779: Application type mismatch: The argument)
+SURVIVOR lean/VE/Service/Document.lean:2749 VE.Service.Document.noUnitStatus (S, trusted) all-any: all -> any
+SURVIVOR lean/VE/Service/Document.lean:2149 VE.Service.Document.UnitContent.judgedIn (G[V], trusted) list-empty: [("norm", rule.getObjValD "norm")] -> []
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) append-left: ++ r.refuses.map (·.2) -> 
+SURVIVOR lean/VE/Judgments/Chain.lean:221 VE.Judgments.ruleFormulas (D[V], trusted) list-drop-last: xs.toList -> (xs.toList.dropLast)
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-first: ["norm", "liberty", "recognition"].filterMap -> ((["norm", "liberty", "recognition"].filterMap).take 1) (lean/VE/Judgments/Chain.lean:232: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:1104 VE.Service.Document.judgmentsApart (G[V], trusted) list-first: ["alternatives@0", "risk@0"] -> (["alternatives@0", "risk@0"].take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: R.soft.T.nodes -> (R.soft.T.nodes.dropLast) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map (V... -> (((VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map ...
+SURVIVOR lean/VE/Service/Document.lean:2785 VE.Service.Document.layerRefusal (S, trusted) list-first: judgmentGateTexts -> (judgmentGateTexts.take 1)
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-last: ["norm", "liberty", "recognition"].filterMap -> ((["norm", "liberty", "recognition"].filterMap).reverse.take 1) (lean/VE/Judgments/Chain.lean:232: Invalid field notation: Type of)
+SURVIVOR lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-drop-first: ["norm", "liberty", "recognition"] -> (["norm", "liberty", "recognition"].drop 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:232 VE.Judgments.linesFormulas (D[V], trusted) list-drop-first: rules -> (rules.drop 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: (VE.Rights.linesOf R) -> ((VE.Rights.linesOf R).drop 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+SURVIVOR lean/VE/Service/Document.lean:2719 VE.Service.Document.setVerdictFields (S, trusted) list-drop-first: kvs.toList -> (kvs.toList.drop 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-last: L.conditions -> (L.conditions.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-drop-middle: "JudgmentNotListed", -> 
+trust_mutants: 0 KILLED, 15 SURVIVOR, 5 UNKNOWN, 9 INVALID, 0 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 2194 s
+trust_mutants: D[V], trusted: 4 SURVIVOR, 3 UNKNOWN, 2 INVALID, 57 OTHER SHARD
+trust_mutants: G[V], trusted: 2 SURVIVOR, 6 OTHER SHARD
+trust_mutants: S, trusted: 9 SURVIVOR, 2 UNKNOWN, 7 INVALID, 232 OTHER SHARD
+trust_mutants: steps: wall plan 11.6 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1735.6 s, mutants 438.9 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 3939 s (9), mutant_builds 360.9 s (31), mutant_checks 1369.7 s (15)
