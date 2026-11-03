@@ -123,6 +123,9 @@ def enclose (r : Rounding) (inputs : List (String × Printed)) (e : Expr) : Opti
 def InBox (r : Rounding) (inputs : List (String × Printed)) (κ : String → Rat) : Prop :=
   ∀ i ∈ inputs, RoundsTo r i.2 (κ i.1)
 
+instance (r : Rounding) (inputs : List (String × Printed)) (κ : String → Rat) : Decidable (InBox r inputs κ) := by
+  unfold InBox; infer_instance
+
 theorem lookup_mem {α : Type} {l : List (String × α)} {n : String} {p : α} (h : l.lookup n = some p) :
     (n, p) ∈ l := by
   induction l with
