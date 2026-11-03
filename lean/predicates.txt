@@ -625,6 +625,8 @@ module VE.Scope.Examples
 module VE.Scope.FarExamples
 module VE.Scope.FarTheorems
 module VE.Scope.Govern
+module VE.Scope.Reach
+module VE.Scope.ReachExamples
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsLemmas
