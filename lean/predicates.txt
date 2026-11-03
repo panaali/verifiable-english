@@ -376,6 +376,8 @@ module VE.Grammar.TableInvariant
 module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
+module VE.Judgments.Chain
+module VE.Judgments.ChainExamples
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
@@ -673,6 +675,7 @@ module VE.Service.StageTimes
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.Service.UndeclaredExamples
+module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
 module VE.SoftNorms.Once
@@ -892,6 +895,7 @@ VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
 VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
 VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
 VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
+VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch
