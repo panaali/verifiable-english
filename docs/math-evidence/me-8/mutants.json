@@ -1,0 +1,323 @@
+{
+ "command": "python3 docs/math-evidence/me-8/evidence/seed.py (each bug alone, then lake build VE.Calc.ConsistencyExamples, then restore)",
+ "head": "570c73cfd (the final Lean sources but for one comment in passWork and the regenerated Audit.lean)",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "Interval.sub",
+   "claim": "plan's seeded bug: sub's enclosure [lo - lo, hi - hi]; V-6 is not refuted by it (its interval still brackets V-6's values), the complement fixture is",
+   "bug": "'(a.1 - b.2, a.2 - b.1)' -> '(a.1 - b.1, a.2 - b.2)'",
+   "proofs_cut_to_sorry": [
+    "enclose_sound"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:33",
+    "lean/VE/Calc/ConsistencyExamples.lean:34"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[complement]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "Printed.box",
+   "claim": "each printed input's rounding interval",
+   "bug": "'(2 * D + 1) / (2 * u))' -> '(2 * D + 3) / (2 * u))'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:121",
+    "lean/VE/Calc/ConsistencyExamples.lean:27",
+    "lean/VE/Calc/ConsistencyExamples.lean:29",
+    "lean/VE/Calc/ConsistencyExamples.lean:31",
+    "lean/VE/Calc/ConsistencyExamples.lean:33"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[r5-k1]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S3",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "endpointPoint",
+   "claim": "the witness search tries the interval endpoints",
+   "bug": "'if m % 2 = 1 then (i.2.box r).2 else (i.2.box r).1' -> '(i.2.box r).2'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:30"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[r5-k2]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "refuteC",
+   "claim": "a refutation names its output",
+   "bug": "'else refuteC limit r inputs cs (j + 1) w' -> 'else refuteC limit r inputs cs j w'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:31"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[r5-order]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S5",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "chargeI",
+   "claim": "every enclosure is charged its endpoints' sizes",
+   "bug": "'  if limit < w + qbits i.1 + qbits i.2 then none\\n  else if Small i.1 ∧ Small i.2 then some (some i, w + qbits i.1 + qbits i.2)\\n  else some (none, w + qbits i.1 + qbits i.2)\\n' -> '  if limit < w then none\\n  else if Small i.1 ∧ Small i.2 then some (some i, w)\\n  else some (none, w)\\n'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S6",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "grainRefutes",
+   "claim": "granularity under the claim's rule",
+   "bug": "'!decide (RoundsTo r p (((a + i : Int) : Rat) / g))' -> '!decide (RoundsTo .halfEven p (((a + i : Int) : Rat) / g))'",
+   "proofs_cut_to_sorry": [
+    "grain_sound"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:136",
+    "lean/VE/Calc/ConsistencyExamples.lean:146"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[v7-ties-up]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S7",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "freeReadTable",
+   "claim": "the name rule reads through definitions",
+   "bug": "'| .defined e => e.names.findSome? fun n => (t.lookup n).join' -> '| .defined _ => none'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:36"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[c1-through-definition]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S8",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "consistencyInputFault",
+   "claim": "an input is named at most once",
+   "bug": "'if n ∈ ns ∨ !(ds.any' -> 'if !(ds.any'",
+   "proofs_cut_to_sorry": [
+    "consistencyInputFault_none"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:38"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[input-twice]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S9",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "pointHoldsC",
+   "claim": "each candidate point is charged its input check before it runs",
+   "bug": "'visitC limit (u + pass) fun u =>' -> 'visitC limit u fun u =>'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:79"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S10",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "chargeI",
+   "claim": "every enclosure endpoint is held to the digit limit (F1, products and quotients): no hold at all",
+   "bug": "'else if Small i.1 ∧ Small i.2 then' -> 'else if True then'",
+   "proofs_cut_to_sorry": [
+    "chargeI_some"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:113",
+    "lean/VE/Calc/ConsistencyExamples.lean:115",
+    "lean/VE/Calc/ConsistencyExamples.lean:121",
+    "lean/VE/Calc/ConsistencyExamples.lean:123",
+    "lean/VE/Calc/ConsistencyExamples.lean:126",
+    "lean/VE/Calc/ConsistencyExamples.lean:128"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[hold-past-limit]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S11",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "chargeI",
+   "claim": "the hold reads both endpoints: only the lower one read",
+   "bug": "'else if Small i.1 ∧ Small i.2 then' -> 'else if Small i.1 then'",
+   "proofs_cut_to_sorry": [
+    "chargeI_some"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:121"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[hold-either-endpoint]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S12",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Interval.lean",
+   "definition": "chargeI",
+   "claim": "the hold reads both endpoints: only the upper one read",
+   "bug": "'else if Small i.1 ∧ Small i.2 then' -> 'else if Small i.2 then'",
+   "proofs_cut_to_sorry": [
+    "chargeI_some"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:121"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[hold-either-endpoint]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S13",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "outputNodes",
+   "claim": "the outputs are held to 10,000 nodes before either phase (F1, inlined nodes): no cap. The two chain guards at maxWork are dropped for this bug, since they then run past any timeout (the review measured 170 s and 16 minutes natively); the boundary guards fail without them",
+   "bug": "'.foldlM (fun n (e : Expr) => e.nodesWithin n) maxPolyTerms)' -> '.foldlM (fun n (_ : Expr) => some n) maxPolyTerms)'",
+   "proofs_cut_to_sorry": [],
+   "guards_dropped": [
+    "#guard run \\(chain 40\\)",
+    "#guard run \\(squares 23\\)"
+   ],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:88",
+    "lean/VE/Calc/ConsistencyExamples.lean:90",
+    "lean/VE/Calc/ConsistencyExamples.lean:91",
+    "lean/VE/Calc/ConsistencyExamples.lean:93"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[nodes-past-limit]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S14",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "outputNodes",
+   "claim": "the node limit holds the outputs together: each expression given its own 10,000",
+   "bug": "'.foldlM (fun n (e : Expr) => e.nodesWithin n) maxPolyTerms)' -> '.foldlM (fun _ (e : Expr) => e.nodesWithin maxPolyTerms) maxPolyTerms)'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:88",
+    "lean/VE/Calc/ConsistencyExamples.lean:90",
+    "lean/VE/Calc/ConsistencyExamples.lean:91",
+    "lean/VE/Calc/ConsistencyExamples.lean:93"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[nodes-together]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S15",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "consistencyRun",
+   "claim": "the node limit answers unknown, never a verdict: it answers fails",
+   "bug": "'| none => some (.unknown .consistencyInconclusive)' -> '| none => some (.fails 0 [])'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/Consistency.lean:547"
+   ],
+   "pytest": "the proof consistencyRun_fails (Consistency.lean:547) stops the build",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S16",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "passWork",
+   "claim": "a pass is charged by node and input: nodes charged 1 unit each",
+   "bug": "'nodes * (inputs.length + 64)' -> 'nodes'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:97"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S17",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "passWork",
+   "claim": "a pass is charged 8 units a lookup step: 1 unit",
+   "bug": "'8 * (inputs.length * inputs.length +' -> '(inputs.length * inputs.length +'",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:97"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "build_exit": 1,
+   "result": "KILLED"
+  },
+  {
+   "id": "S18",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "consistencyRun",
+   "claim": "the enclosure pass is charged too: only the points are",
+   "bug": "\"(refuteC limit r inputs outs' 0 pass)\" -> \"(refuteC limit r inputs outs' 0 0)\"",
+   "proofs_cut_to_sorry": [],
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75"
+   ],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "build_exit": 1,
+   "result": "KILLED"
+  }
+ ],
+ "trust_mutants": {
+  "command": "zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/math-evidence/me-8/trust-mutants-allow.json --json docs/math-evidence/me-8/trust-mutants.json",
+  "result": "15 ALLOWED, 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0, a full run at 61c128228",
+  "definitions": {
+   "VE.Calc.InBox": "body-true and body-false fail the #guards at ConsistencyExamples.lean:24 and :23 (UNKNOWN by instance drift, allowed)",
+   "VE.Calc.Consistent": "13 mutants, each breaking consistent_of_witness and inconsistent_of_refutation (undecidable: allowed, as me-9b)"
+  },
+  "dri_item_1": "refuteByGrain's mutant (true) fails refuteByGrain_sound to compile: killed (reviews/dri-decisions-20261102-me-8.md item 1)"
+ }
+}

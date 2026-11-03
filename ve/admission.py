@@ -289,6 +289,13 @@ def bind_report(document, report) -> None:
             position += 1
 
 
+def report_identity(version: str, payload: dict) -> str:
+    """A report's identity (`ve-report`, the wire digest of rule 5) under an environment's identity version, for the relays
+    that recompute it to bind a report to the request: `bound_admission` and `ve.cardinality.bind_report`."""
+    from .wire import digest
+    return digest(f"ve-report-{version}\n", payload)
+
+
 def bound_admission(env, document, row) -> dict:
     """Lean's admission row, bound to the request: the units' kinds rendered back are the request's,
     each reported claim is a graph node with the same name, AST and label, the report's root is
@@ -297,7 +304,6 @@ def bound_admission(env, document, row) -> dict:
     Anything else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
     from .backends.lean_service import CheckerUnavailable
     from .backends.service_schema import same_json
-    from .wire import digest
     if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
     units = document.get("units") if type(document) is dict else None
@@ -308,8 +314,8 @@ def bound_admission(env, document, row) -> dict:
     except (KeyError, TypeError, ValueError, IndexError):
         bound = False
     try:
-        expected = digest(f"ve-report-{env.identity_version}\n",
-                          {"environment_id": env.environment_id, "document": document, "report": report})
+        expected = report_identity(env.identity_version,
+                                   {"environment_id": env.environment_id, "document": document, "report": report})
     except (VEError, TypeError, ValueError):
         expected = None
     if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
