@@ -100,8 +100,9 @@ def env : Env :=
     predicates := [pred "reasonable_limit", pred "reasonable_grounds", pred "due_date", pred "arrest", pred "rule_ok" (some "{0} is fair"),
       pred "sense__just_1", pred "defined_fair", pred "fair_defined", pred "good_judgment", pred "arbitrary",
       { pred "just" with args := ["act", "limit"] }],
-    source := Json.mkObj [("definitions", Json.arr #[Json.mkObj [("name", .str "defined_fair")],
-      Json.mkObj [("name", .str "fair_defined")]])] }
+    source := Json.mkObj [("vocabulary", Json.mkObj [("predicates", Json.mkObj
+      ((["defined_fair", "fair_defined"].map fun p => (p, Json.mkObj [("defined", Json.mkObj [])])) ++
+        [("rule_ok", Json.mkObj [("description", .str "not defined")])]))])] }
 def holds (p : String) : EFormula := .pred p [.const "x"]
 def firstNamed (J : List String) (fs : List EFormula) : Option (Nat × String) :=
   (refusal env J fs).map fun (i, t) => (i, (t.splitOn "' is")[0]!)

@@ -181,6 +181,9 @@ def refusal_problem(response: dict, source: str | None, *,
         return f"the class {response['class']!r} is not a class of ve.errors"
     if "sentence" in response and not _nat(response["sentence"]):
         return "sentence is not a natural number"
+    # Every sentence ends with a period (the lexer's `Unterminated`), so a sentence the source cannot hold is not bound.
+    if "sentence" in response and source is not None and response["sentence"] >= source.count("."):
+        return "sentence is not a sentence of the source"
     if status == "rejected" and code not in unlocated and ("sentence" in response) == (code in UNSENTENCED):
         return f"a {code} rejection {'names' if code in UNSENTENCED else 'does not name'} a sentence"
     if "span" in response and not _span(response["span"], source):

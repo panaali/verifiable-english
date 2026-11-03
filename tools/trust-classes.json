@@ -17468,7 +17468,7 @@
       "G[V]": [
         "VE.EnglishGrammar.JudgmentLines.readDeclaration",
         "VE.EnglishGrammar.JudgmentLines.preds",
-        "VE.EnglishGrammar.JudgmentLines.definedNames",
+        "VE.EnglishGrammar.JudgmentLines.isDefined",
         "VE.EnglishGrammar.JudgmentLines.readingPreds",
         "VE.EnglishGrammar.JudgmentLines.refusal"
       ],

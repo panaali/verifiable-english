@@ -154,15 +154,14 @@ def refusalText (row : EvaluativeRow) (ws : List String) (sort : Option String) 
   s!"'{written.capitalize}' is a judgment. Say who decides it ('… is a judgment for the operator'), or define it " ++
     s!"('In this document, {defined} means …')."
 
-/-- The names the environment defines by W3, which spec 7 leaves out: a defined word is not undeclared. -/
-def definedNames (E : Env) : List String :=
-  (((E.source.getObjValD "definitions").getArr?.toOption.getD #[]).toList.filterMap fun d =>
-    (d.getObjValD "name").getStr?.toOption)
+/-- Whether the environment defines `p` by W3 (its entry's `defined`), which spec 7 leaves out: a defined word is not
+undeclared, as 9.5's own rewrite asks. -/
+def isDefined (E : Env) (p : String) : Bool :=
+  ((((E.source.getObjValD "vocabulary").getObjValD "predicates").getObjValD p).getObjVal? "defined").toOption.isSome
 
 /-- A reading's base predicates (spec 7's `preds`), each with its words. -/
 def readingPreds (E : Env) (f : EFormula) : List (String × List String) :=
-  ((preds f).filter (!(definedNames E).contains ·)).map fun p =>
-    (p, predicateWords p ((E.predicate? p).bind (·.wording)))
+  ((preds f).filter (!isDefined E ·)).map fun p => (p, predicateWords p ((E.predicate? p).bind (·.wording)))
 
 /-- The first sentence whose reading has a predicate `undeclaredEvaluative` lists, with 9.5's text for the first such
 predicate. It binds per predicate, as spec 7 and 8.4 do: a bound name binds itself and no other predicate that shares
