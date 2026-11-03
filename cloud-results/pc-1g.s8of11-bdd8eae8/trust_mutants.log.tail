@@ -1,0 +1,27 @@
+trust_mutants: 17 definitions, 324 mutants (29 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Judgments/Chain.lean:230 VE.Judgments.linesFormulas (D[V], trusted) list-empty: lines -> [] (lean/VE/Judgments/Chain.lean:231: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/Document.lean:2719 VE.Service.Document.setVerdictFields (S, trusted) list-empty: kvs.toList.map -> [] (lean/VE/Service/Document.lean:2719: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-empty: us.toList.map -> [] (lean/VE/Service/Document.lean:2767: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-empty: ss.map setVerdictFields -> [] (lean/VE/Service/Document.lean:2742: Application type mismatch: The argument)
+SURVIVOR lean/VE/Judgments/Chain.lean:221 VE.Judgments.ruleFormulas (D[V], trusted) list-first: xs.toList -> (xs.toList.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) list-empty: judgmentCodes -> []
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: r.requires.map (VE.Compose.needText r) -> []
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) list-first: judgmentCodes -> (judgmentCodes.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: (VE.Rights.linesOf R) -> ((VE.Rights.linesOf R).dropLast) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: R.limits -> (R.limits.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2760 VE.Service.Document.withoutStatuses (S, trusted) list-first: us.map (dropKey "status") -> ((us.map (dropKey "status")).take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: L.conditions -> (L.conditions.dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> (((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported).dro...
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-last: ["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"] -> (["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"].reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2788 VE.Service.Document.layerRelaxes (S, trusted) list-drop-first: ["invalid open-term arguments"] -> (["invalid open-term arguments"].drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-drop-middle: "document_id", -> 
+SURVIVOR lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-last: ss -> (ss.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2728 VE.Service.Document.setVerdictFields (S, trusted) list-last: kvs.toList -> (kvs.toList.reverse.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-last: R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts) -> ((R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts)).reverse.take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> (((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported).rev...
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: r.refuses -> (r.refuses.reverse.take 1)
+trust_mutants: 1 KILLED, 17 SURVIVOR, 4 UNKNOWN, 7 INVALID, 0 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 2810 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 3 INVALID, 60 OTHER SHARD
+trust_mutants: G[V], trusted: 8 OTHER SHARD
+trust_mutants: S, trusted: 16 SURVIVOR, 3 UNKNOWN, 4 INVALID, 227 OTHER SHARD
+trust_mutants: steps: wall plan 11.7 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1760.8 s, mutants 1029.7 s, cleanup 2.6 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 3910.3 s (9), mutant_builds 392 s (31), mutant_checks 1781.7 s (19), stage_controls 34.2 s (1), mutant_probes 909.9 s (1)
