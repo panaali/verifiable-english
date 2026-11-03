@@ -2029,8 +2029,8 @@ The `w2`, `pending` and abstention rows are unchanged. `routeOf` and `routeND` a
 | `readings-choice` | as today, byte-identical (4.3: `choiceLayeredG`) | as today |
 | `readings-elaborate` | the soft row (14.3) | as today, byte-identical |
 | `readings-conflict`, `-certificate`, `-model` | answered (14.3, 14.8) | today's `sdRefusal` text |
-| `readings-verdicts` with `budget` | the superposed answer (14.3) | RD-3's answer, `runVerdictsSD` |
-| `readings-verdicts` without `budget` | RD-3's answer, `runVerdictsSD` (the service contract `runS2ND` keeps on the norms chain) | as today |
+| `readings-verdicts` with `budget` | the superposed answer (14.3) | RD-3's answer, `runVerdictsD` |
+| `readings-verdicts` without `budget` | RD-3's answer, `runVerdictsD` (the service contract `runS2ND` keeps on the norms chain) | as today |
 
 ### 14.3 The wire
 
@@ -2062,10 +2062,10 @@ No other request member changes.
 `supResult`: per-choice statuses in `choices`, and the fold under named readings (SOME, NONE), never "NOT ALL" (the RD-6b
 review's finding). On the soft chain these members differ from RD-6b's:
 
-- `conditional_on` (also on each `proofs[]`) is `sdShown` of the used `supX` labels, then the used `Fill_T` labels,
+- `conditional_on` (also on SOME's `proof` and each `proofs[]`) is `sdShown` of the used `supX` labels, then the used `Fill_T` labels,
   then `restrictionsFor D A`, each once. Slot labels are not conditions here: the enumerated route never lists them,
   and they stay in `reading_premises_used`.
-- `reading_premises_used`, `scopes[].used` and `english[].label` show a soft premise only by its shown label.
+- `reading_premises_used` (top level, `proof`, `proofs[]`), `scopes[].used` and `english[].label` show a soft premise only by its shown label.
 - `decided_units` is present, as on the enumerated row (OPEN-SC11-6). With no named reading and at most 64 choices, it is
   1.12's rule on the rows the scopes establish: `setDecided` and `fixedDecided`, with a choice's conflict row `free` when the
   global scope is CONFLICT-FREE and else that choice's own scope's, and each reading's status from its candidate scope, dead
@@ -2124,7 +2124,7 @@ and does not call `superposed_document`, whose soft elaborator reads the placeho
 `_labelled`'s in 14.3's order, with `soft` between the atoms and `fill`. `_prove`'s labelled minimisation runs over the
 slot, `soft` and `fill` entries; a `null`-labelled `soft` entry counts as labelled there, so a dead premise is dropped
 from a proof when the proof holds without it. `_lifted` is not used, as under RD-6b. Lean checks each piece. A refusal of
-evidence Python's own check accepted is `CheckerUnavailable`. `context` needs no change, since it reads `route`.
+evidence Python's own check accepted is `CheckerUnavailable`. `context` needs no change, since it reads `route`. DF-3's `_readings_without_exception` keeps its answer: on the soft row it builds `Enumerated` from the row with `route: "enumerated"` and today's `finding`, as 14.6's oracle does, and Lean answers its budget-free request by `runVerdictsD` as today.
 
 **Documents.** `generated(index)` in `tests/test_readings_sc11_differential.py` (new), in the shape of
 `tests/test_readings_rd6b_differential.py`, seeded `sc11-differential:<index>`, independent per index:
@@ -2188,7 +2188,7 @@ test; no seed is dropped and no generator narrowed without a DRI ruling (OPEN-SC
 - **`routeSD_superposed_iff`.** The route is superposed exactly when `routeOf true N.D` is enumerated, `sdSuperposable N` holds
   and `sdChecked re N` holds.
 - **`sdChecked_spec`.** If the check passes, every compatible choice has `sdChoiceText` none and its `choiceU N c` is `WellFormedU`.
-- **`sdCheck_of_admitted`.** On an admitted document with at most 64 compatible choices, whose work is within the limit, the
+- **`sdCheck_of_admitted`.** On a document `admitSDOf b` accepted as `r` with at most 64 compatible choices, whose work is within the limit, the
   check passes, so it need not be run a second time.
 - **`readings_wire_sd_choices`.** A replayed superposed case has a compatible choice, and every compatible choice is `sdChecked`'s
   conclusion.
@@ -2324,7 +2324,7 @@ theorem sdChecked_spec (re : ReadingsEnvironment) (N : NDoc) (hr : supReady N.D 
     (hw : sdChecked re N = true) (c : Choice) (hc : Compatible N.D c) :
     sdChoiceText re N c = none ∧ VE.NormDefaults.WellFormedU (choiceU N c) = true
 
-theorem sdCheck_of_admitted (r : AdmittedSD) (hr : supReady r.N.D = true)
+theorem sdCheck_of_admitted (b : Admitted2) (r : AdmittedSD) (hadm : admitSDOf b = .ok r) (hr : supReady r.N.D = true)
     (hle : (checkedChoices r.N.D).length ≤ maxChoices) (hw : sdCheckWork r.N ≤ maxSdCheckWork) :
     sdChecked r.b.a.re r.N = true
 
@@ -2434,12 +2434,12 @@ binder and no new binder is written (edit 2). A failed check is `CheckerUnavaila
 | Field | Request binding or Lean-derived value | Regression (names the build uses) |
 | --- | --- | --- |
 | `route`, `finding`, `choices_checked` (soft row) | `superposed` with `finding` null and `choices_checked` an integer, or the enumerated row's existing binding | `test_sc11_soft_row_route_fields_are_bound` |
-| `soft[].label` | null, or a `soft_label` over `soft_rules` of the request's own bodies: author names, never the `names` map's qualified names; each `soft_premises` label of a reading occurs here | `test_sc11_a_qualified_soft_label_is_unavailable` |
+| `soft[].label` | null, or a `soft_label` over `soft_rules` of the request's own bodies: author names, never the `names` map's qualified names | `test_sc11_a_qualified_soft_label_is_unavailable` |
 | `soft[].ast`, `filled_premises[]`, `conflict_targets[].ast` | Lean-derived, typed by the generated schema | `test_route_row_schemas` |
 | `fill[].label` | `unsaid:pair:<r>,<m>` of a declared pair, equal as a set to `fill_premises`' labels, each once (RD-6b's row) | `test_sc11_fill_labels_are_bound` |
 | `base_environment`, `unsaid[].name` | as `_FilledChoiceDocument`'s row: the request's vocabulary plus the regenerated names of `unsaid__p` for its unspecified `p` and the elaborated decisions | `test_sc11_soft_row_environment_is_bound` |
 | `conflict_targets[].target`, `.sorts` | the regulated predicates and declared pairs, once, with their sorts (the `conflict_targets` row) | `test_sc11_soft_row_targets_are_bound` |
-| `result.conditional_on`, `proofs[].conditional_on`, `reading_premises_used`, `scopes[].used`, `english[].label` | closed list: a slot label of the row, a `fill` label, a `soft[].label` not null, a restriction of the document; each once per list; a qualified label is `CheckerUnavailable` | `test_sc11_answer_labels_are_the_rows_labels` |
+| `result.conditional_on`, `proofs[].conditional_on`, `proof.conditional_on`, `proof.reading_premises_used`, `proofs[].reading_premises_used`, `reading_premises_used`, `scopes[].used`, `english[].label` | closed list: a slot label of the row, a `fill` label, a `soft[].label` not null, a restriction of the document; each once per list; a qualified label is `CheckerUnavailable` | `test_sc11_answer_labels_are_the_rows_labels` |
 | `decided_units` | present; each a unit of the document, once, in document order (`binding.py`'s row) | `test_sc11_decided_units_are_bound` |
 | `result.choices`, `proofs`, `countermodels` | the compatible choices taking `A`, in canonical order, at most 64 (`_check_sup_answer`) | `test_readings_sup_verdicts` rows |
 | `model`, `filling` (shown) | equal to the scope's shown model; `gaps` bound by `_bound_gaps` | `test_sc11_shown_model_and_filling_are_bound` |
@@ -2474,6 +2474,7 @@ This section supersedes them from sc-11b's merge. This item edits no earlier sec
 | 8.3 F-SD2 (K18), elaborate and superposed kinds | enumerated; refusal | the soft row with `soft` and `fill` empty, not K1's S2a row; `readings-validate`, `-separate`, `-choice`, budget-free `-verdicts` unchanged |
 | 8.3 F-SD9 | enumerated, query UNKNOWN | W-12 |
 | 8.1 F-SD2 route | `routeOf` values | unchanged (`routeOf` not edited) |
+| `ve/document/cli.py` `_readings_without_exception`, `tests/test_defaults_readings.py` | enumerated | unchanged answers on the soft row |
 | `sdRefusal`'s docstring, `SoftWire.lean`'s and `Run.lean`'s "the route is the enumerated one" | | updated with the switch |
 | `tests/test_readings_sd_lean.py` (:134-151, :173-195, :316, :579), `tests/test_readings_sd_document.py` (:71-86), `tests/test_readings_sd_ce4.py` (:215-238), `tests/test_rd9_chain_relay.py` (:49) | enumerated | as above; none deleted, each asserting the new row or the budget-free answer |
 
