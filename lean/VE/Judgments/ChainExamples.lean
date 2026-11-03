@@ -358,4 +358,53 @@ def f13c : Json := match frontOf f11 with
       ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("admission", Json.mkObj [
         ("distinguishing_models", Json.arr #["r1"])])]])]])]
 
+/-! pc-1g: F1.1 and F1.6, F1.4's twin. The case and its twin have the same verdict fields (`undeclared_evaluative`
+dropped, DRI 2026-11-03 pc-1g stop item 4) and their own identities. -/
+
+#guard [f11, udhr rightsLayer].all fun j => match checkDocSets j, checkDocSets (withoutJudgments j) with
+  | .ok a, .ok b => verdictFields a == verdictFields b && a.getObjValD "document_id" != b.getObjValD "document_id" &&
+      (unitStatuses a).map (·.1) == (unitStatuses b).map (·.1)
+  | _, _ => false
+#guard match checkDocSets f11, checkDocSets (withoutJudgments f11) with
+  | .ok a, .ok b => unitStatuses a == [("u0052.s01", "OPEN")] &&
+      ((a.getObjValD "units").getArrVal? 0 |>.toOption |>.map (·.getObjValD "meaning_id")) !=
+        ((b.getObjValD "units").getArrVal? 0 |>.toOption |>.map (·.getObjValD "meaning_id"))
+  | _, _ => false
+
+/-! pc-1g, the trusted boundary `Json.compress` / `Json.parse` (DRI 2026-11-03 pc-1g stop item 2: both are `partial`
+in Lean v4.24.0, so their round trip is checked, not proved). A twin reads back the front matter `withoutJudgments`
+built, on every fixture; and on values the renderer emits, drawn by a fixed linear congruential generator: escapes,
+non-ASCII and astral characters, naturals up to 2^53-1, nested arrays and objects. -/
+
+/-- The front matter `withoutJudgments` builds for a case with no exchange (`withoutJudgmentsIn []`), as a value. -/
+def twinFront (j : Json) : Option Json := (frontOf j).map fun (front, _) =>
+  front.setObjVal! "environment" (VE.Compose.withoutDocumentLayers (front.getObjValD "environment"))
+
+#guard [f11, f13c, udhr rightsLayer, bothRules layer, f13l noDocuments].all fun j =>
+  (frontOf (withoutJudgments j)).map (·.1) == twinFront j && (twinFront j).isSome
+
+/-- A leaf the renderer emits, by `seed`: a string with escapes, non-ASCII and astral characters, a natural up to
+2^53-1, a Boolean or `null`. -/
+def drawnLeaf (seed : Nat) : Json :=
+  match seed % 4 with
+  | 0 => .str (String.mk ((List.range (seed / 4 % 9)).map fun i =>
+      #['a', '"', '\\', '\n', '\t', 'é', '𝔸', '\u0001', '/', ' '][(seed / 36 + i * 7) % 10]!))
+  | 1 => .num (seed * 2654435761 % 9007199254740992 : Nat)
+  | 2 => .bool (seed % 8 < 4)
+  | _ => .null
+
+/-- A value of `depth` levels at most, by `seed`: arrays and objects of up to 3 members, keys with escapes. -/
+def drawn : Nat → Nat → Json
+  | 0, seed => drawnLeaf seed
+  | depth + 1, seed =>
+    let next (i : Nat) := (seed * 1103515245 + 12345 + i * 7919) % 2147483648
+    match seed % 5 with
+    | 0 => .arr ((List.range (seed / 5 % 4)).map fun i => drawn depth (next i)).toArray
+    | 1 => Json.mkObj ((List.range (seed / 5 % 4)).map fun i =>
+        (s!"k{next i % 13}\"é𝔸", drawn depth (next (i + 1))))
+    | _ => drawnLeaf (seed / 5)
+
+#guard (List.range 300).all fun n => let v := drawn 4 (n * 2654435761 % 2147483648)
+  (Json.parse v.compress).toOption == some v
+
 end VE.Judgments.ChainExamples
