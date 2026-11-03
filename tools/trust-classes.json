@@ -2955,8 +2955,6 @@
         "VE.Discourse.ComposeExamples.c0",
         "VE.Discourse.ComposeExamples.caseOf",
         "VE.Discourse.ComposeExamples.chainD",
-        "VE.Discourse.ComposeExamples.composedPath",
-        "VE.Discourse.ComposeExamples.constCount",
         "VE.Discourse.ComposeExamples.doc",
         "VE.Discourse.ComposeExamples.docName",
         "VE.Discourse.ComposeExamples.env",

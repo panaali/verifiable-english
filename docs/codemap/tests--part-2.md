@@ -19,6 +19,7 @@
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
+- `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
@@ -87,5 +88,3 @@
 - `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
-- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
-- `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
