@@ -1,0 +1,7 @@
+trust_mutants: 1 definitions, 3 mutants (3 to run), 4 jobs, base 561aa79f5716
+UNKNOWN lean/VE/Defaults/Uniform.lean:94 VE.Defaults.ConditionsExact (S, trusted) body-false: ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B → (∃ F : String → List B... -> False (lean/VE/Defaults/Uniform.lean:102: the failing proof cannot be cut: too many explicit universe le...)
+UNKNOWN lean/VE/Defaults/Uniform.lean:94 VE.Defaults.ConditionsExact (S, trusted) body-true: ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B → (∃ F : String → List B... -> True (lean/VE/Defaults/Uniform.lean:102: the failing proof cannot be cut: too many explicit universe le...)
+SURVIVOR lean/VE/Defaults/Uniform.lean:97 VE.Defaults.ConditionsExact (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Defaults/Uniform.lean:100, lean/VE/Defaults/Uniform.lean:214, lean/...)
+trust_mutants: 0 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 127 s
+trust_mutants: S, trusted: 1 SURVIVOR, 2 UNKNOWN
+trust_mutants: steps: wall plan 11 s, scratch 2.8 s, control_build 0.2 s, probe_install 1.6 s, control_probes 76.5 s, mutants 32.5 s, cleanup 2.2 s; lake control_build 0.2 s (1), probe_install 1.6 s (1), control_probes 100.1 s (2), mutant_builds 65.9 s (6), mutant_checks 9.9 s (2)
