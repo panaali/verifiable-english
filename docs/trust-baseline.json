@@ -1674,9 +1674,9 @@
   },
   {
    "class": "S",
-   "lines": 1,
-   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
+   "lines": 142,
+   "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
   },
   {
@@ -1736,11 +1736,53 @@
    "commit": "c1b87f65344a13ce3d1da5bf63ee9c87bcb62ba7"
   },
   {
+   "class": "V",
+   "lines": 7,
+   "reason": "me-2d-f2: VE/Calc/Render.lean trusted +7 (G[V] lowerWords new, leadingPhrase and reservedIn ignore ASCII case); VE/Calc/Wire.lean D[R] +1 (checkWords, the words \"the\" alone), not trusted; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d-f2, 2026-11-02",
+   "commit": "f3a4da815e4c01fe574f3f0176e57e65fec142ab"
+  },
+  {
    "class": "S",
-   "lines": 142,
-   "reason": "en-s6: VE/EnglishGrammar/Norm/Value.lean S +142 (norm values and block assembly, spec english-lean-s6 2.2-2.4); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6, 2026-10-18",
+   "lines": 3,
+   "reason": "sc-2d: VE/Scope/Theorems.lean S +3 (VE.Scope.Typed, spec 5.4's typing predicate in applyEffect_typed; exercised by Examples.lean:1236 and :1241, mutant typed_forgets_carve_outs)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-2d, 2026-10-18",
+   "commit": "4d9a0eeb043cd2a8a4eb7f1096fde3e610bd88f1"
+  },
+  {
+   "class": "S",
+   "lines": 110,
+   "reason": "cmp-s4a: VE/Discourse/Positions.lean S +110 (positions, formulaMentions, slotName, rowOf, rowsAt, slotsIn, withConstant, withRelation, slotMeaning, IntendedAt: 14.2/14.3's meaning; every one killed by a mutant in docs/composition/cmp-s4a/mutants.json); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4a, 2026-10-18",
+   "commit": "a73c2f53b88e2fb57f2b3db256ceac4fe2845e64"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "ap-3r: K +0, S +1 (lean/VE/Acts/Table.lean +1: freeTable's own-to 'and' line split into the split-marker line and the revised cell's line); the new fixture definitions are class T in tools/trust-classes.json; trusted +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3r, 2026-11-01",
    "commit": "3148e87c47dc23548161cf7d5245e75a23308e3f"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
    "class": "S",
@@ -1765,51 +1807,9 @@
   },
   {
    "class": "S",
-   "lines": 110,
-   "reason": "cmp-s4a: VE/Discourse/Positions.lean S +110 (positions, formulaMentions, slotName, rowOf, rowsAt, slotsIn, withConstant, withRelation, slotMeaning, IntendedAt: 14.2/14.3's meaning; every one killed by a mutant in docs/composition/cmp-s4a/mutants.json); K +0, V +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4a, 2026-10-18",
-   "commit": "a73c2f53b88e2fb57f2b3db256ceac4fe2845e64"
-  },
-  {
-   "class": "S",
-   "lines": 3,
-   "reason": "sc-2d: VE/Scope/Theorems.lean S +3 (VE.Scope.Typed, spec 5.4's typing predicate in applyEffect_typed; exercised by Examples.lean:1236 and :1241, mutant typed_forgets_carve_outs)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-2d, 2026-10-18",
-   "commit": "4d9a0eeb043cd2a8a4eb7f1096fde3e610bd88f1"
-  },
-  {
-   "class": "V",
-   "lines": 7,
-   "reason": "me-2d-f2: VE/Calc/Render.lean trusted +7 (G[V] lowerWords new, leadingPhrase and reservedIn ignore ASCII case); VE/Calc/Wire.lean D[R] +1 (checkWords, the words \"the\" alone), not trusted; K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d-f2, 2026-11-02",
-   "commit": "f3a4da815e4c01fe574f3f0176e57e65fec142ab"
-  },
-  {
-   "class": "S",
    "lines": 139,
    "reason": "cmp-s3a: VE/RightClauses/Plain.lean S +103, VE/RightClauses/Tree.lean S +36 (K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a, 2026-10-18",
-   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
-  },
-  {
-   "class": "S",
-   "lines": 10,
-   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
-   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
-  },
-  {
-   "class": "V",
-   "lines": 8,
-   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
-   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
-  },
-  {
-   "class": "S",
-   "lines": 4,
-   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   },
   {
@@ -1874,6 +1874,20 @@
    "reason": "pc-1 review fix: VE/Service/Document.lean profilesOf +3 (a match on frontOf, inlined, which row 16's runs call too, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +3)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-02",
    "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "S",
+   "lines": 10,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
   }
  ]
 }
