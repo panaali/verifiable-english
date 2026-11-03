@@ -250,6 +250,71 @@ def test_a_large_document_ends_within_the_layered_routes_own_limit():
     assert isinstance(error, ResourceLimit) and str(error) == "ResourceLimit: rules"
 
 
+def test_the_judgment_layer_composes_beside_this_chain():
+    """`judgments@0` over a strict rule of this chain is read by PC-1's reader: the unit is OPEN, with its term's usage."""
+    front = chain_front(DENY, profiles=sorted([*CHAIN["profiles"], "judgments@0"]))
+    vocabulary = front["environment"]["vocabulary"]["predicates"]
+    vocabulary["t"] = {"arguments": ["claude_instance"], "description": "a judgment"}
+    front["units"][0]["meaning"] = {"open": ["t"]}
+    front["units"][0]["content"]["norm"]["guard"] = ["unary", "t", ["var", 0]]
+    front["open_terms"] = [{"name": "t", "arguments": ["claude_instance"], "decided_by": "unstated", "necessary": [],
+                            "sufficient": [], "factors": [], "precedents": [], "jurisdiction": "document", "version": 1}]
+    row, error = document_mode(text(front, CHAIN["units"][DENY]["body"].encode()))
+    assert error is None
+    assert row["units"][0]["status"] == "OPEN"
+    assert row["judgments"]["used"] == [{"term": "t", "units": [DENY]}]
+
+
+def test_the_judgment_layer_stays_apart_from_a_rule_with_exception_conditions():
+    """The opposite direction: PC-1 reads no exception condition (pc-1x), so this rule keeps main's refusal."""
+    front = chain_front(COMPLY, profiles=sorted([*CHAIN["profiles"], "judgments@0"]))
+    _, error = document_mode(text(front, CHAIN["units"][COMPLY]["body"].encode()))
+    assert isinstance(error, CheckerUnavailable)
+    assert str(error) == "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+
+
+def _nodes(value, path=()):
+    """Every JSON node's path under `value`."""
+    yield path
+    if type(value) is dict:
+        for key, item in value.items():
+            yield from _nodes(item, (*path, key))
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            yield from _nodes(item, (*path, index))
+
+
+def _replaced(value, path, new):
+    if not path:
+        return new
+    if type(value) is dict:
+        return {key: _replaced(item, path[1:], new) if key == path[0] else item for key, item in value.items()}
+    return [_replaced(item, path[1:], new) if index == path[0] else item for index, item in enumerate(value)]
+
+
+@pytest.mark.parametrize("new", [7, True, None, [], {}, 1.5, "\ud800"], ids=repr)
+def test_only_a_ve_error_escapes_a_malformed_node(new):
+    """Every node of F2.1's front matter replaced, on the public entry: a refusal is a `VEError` or `CheckerUnavailable`,
+    never another type."""
+    body = CHAIN["units"][COMPLY]["body"].encode()
+    front = chain_front(COMPLY)
+    front["completions"] = {"comply_permitted": {"cites": [COMPLY], "reason": "the rule"}}
+    for path in _nodes(front):
+        if path:
+            raw = text(_replaced(front, path, new), body)
+            try:
+                _load(ROUTE, admit=True, raw=raw)
+            except (VEError, CheckerUnavailable):
+                pass
+
+
+def test_only_a_ve_error_escapes_a_deep_node():
+    deep = "[" * 10000 + "]" * 10000
+    raw = chain_document(COMPLY).replace(b'"guard": ["top"]', f'"guard": {deep}'.encode())
+    with pytest.raises((VEError, CheckerUnavailable)):
+        _load(ROUTE, admit=True, raw=raw)
+
+
 def test_statements_equal_the_spec():
     sys.path.insert(0, str(ROOT / "tools"))
     from check_pc2a_statements import main

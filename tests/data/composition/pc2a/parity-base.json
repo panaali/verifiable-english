@@ -9,6 +9,9 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true,\n  \"deciders\": [\n    \"unstated\"\n  ],\n  \"english\": [\n    \"This holds whatever is decided where the text names no decider.\"\n  ]\n}\n"
+  },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"935d13ec598fb1dd0c5090d92144fec2ab8d9ef9cf8278b08176869aa7f737cc\",\n    \"premise_meaning_ids\": [\n      \"ddd89f4b46fc0218ebcfa691b256f49e757b1bccb9178a80d1a7d8a3fced67e6\",\n      \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\"\n    ],\n    \"conclusion_meaning_id\": \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"6db9f3ded287e0f209c9ebe560e6fab375a1f1c26041d9c8c467ecc5640d799a\"\n  }\n}\n"
   },
@@ -25,6 +28,10 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "offset 671: expected restricted JSON value"
   },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"e384ebab90805ff1a0ce63590727a198e4f29840e176ecccc6ecc3552ef89c55\",\n    \"premise_meaning_ids\": [\n      \"a8e71fbe9009dc6189dc1a069f1585f782e39b64ed6077340ce6944145955c04\",\n      \"581cb212894f4203619ab722039835acb65133af1655cd55b39e8486b3f73e62\"\n    ],\n    \"conclusion_meaning_id\": \"581cb212894f4203619ab722039835acb65133af1655cd55b39e8486b3f73e62\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"6c051799f3f77752c461e96303aec8042b944809013a723c912b26004a8722d5\"\n  }\n}\n"
@@ -43,6 +50,9 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true,\n  \"deciders\": [\n    \"unstated\"\n  ],\n  \"english\": [\n    \"This holds whatever is decided where the text names no decider.\"\n  ]\n}\n"
+  },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"935d13ec598fb1dd0c5090d92144fec2ab8d9ef9cf8278b08176869aa7f737cc\",\n    \"premise_meaning_ids\": [\n      \"ddd89f4b46fc0218ebcfa691b256f49e757b1bccb9178a80d1a7d8a3fced67e6\",\n      \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\"\n    ],\n    \"conclusion_meaning_id\": \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"6db9f3ded287e0f209c9ebe560e6fab375a1f1c26041d9c8c467ecc5640d799a\"\n  }\n}\n"
   },
@@ -59,6 +69,9 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true,\n  \"deciders\": [\n    \"unstated\"\n  ],\n  \"english\": [\n    \"This holds whatever is decided where the text names no decider.\"\n  ]\n}\n"
   },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"935d13ec598fb1dd0c5090d92144fec2ab8d9ef9cf8278b08176869aa7f737cc\",\n    \"premise_meaning_ids\": [\n      \"ddd89f4b46fc0218ebcfa691b256f49e757b1bccb9178a80d1a7d8a3fced67e6\",\n      \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\"\n    ],\n    \"conclusion_meaning_id\": \"edb87b54fc6175d600e345039ca2d03649b2ce8e4610ea8a405c727476b283ca\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"6db9f3ded287e0f209c9ebe560e6fab375a1f1c26041d9c8c467ecc5640d799a\"\n  }\n}\n"
@@ -77,6 +90,9 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true,\n  \"deciders\": [\n    \"unstated\"\n  ],\n  \"english\": [\n    \"This holds whatever is decided where the text names no decider.\"\n  ]\n}\n"
+  },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"1a3c703b520ff76c2ebbb0d228f9ff450fbb3d2cc5bf939c7211cc9826c373f7\",\n    \"premise_meaning_ids\": [\n      \"9eeaa2355cdfebe1e71187870ebf2d817d4050d527ca9b1da76270ed77aef441\",\n      \"4fcf0cd7ac8c0703423a3c59d7fec490501bf107db5be61406086c2b07e322d6\",\n      \"cb8505ea910eb8008d4f16ae70b0cdccff512deb95bff399ad39e71db2fe5cc7\",\n      \"86b5cb6307a398fd1a7a1bc431ab8cb03d2c31526d892c0e90d1dd4a8506fe99\"\n    ],\n    \"conclusion_meaning_id\": \"5f711b221e2bde153e172cfe445b1e63c3a20b903b8acb034c0f684e2c038d99\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"a41af0dff71e8e9da15f1d737b6a4987f90ea4e6ceedaff3b1e57b39f1161b1a\"\n  }\n}\n"
   },
@@ -93,6 +109,9 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true,\n  \"deciders\": [\n    \"unstated\"\n  ],\n  \"english\": [\n    \"This holds whatever is decided where the text names no decider.\"\n  ]\n}\n"
   },
   "readings --conclusion [\"top\"]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"1a3c703b520ff76c2ebbb0d228f9ff450fbb3d2cc5bf939c7211cc9826c373f7\",\n    \"premise_meaning_ids\": [\n      \"9eeaa2355cdfebe1e71187870ebf2d817d4050d527ca9b1da76270ed77aef441\",\n      \"4fcf0cd7ac8c0703423a3c59d7fec490501bf107db5be61406086c2b07e322d6\",\n      \"cb8505ea910eb8008d4f16ae70b0cdccff512deb95bff399ad39e71db2fe5cc7\",\n      \"86b5cb6307a398fd1a7a1bc431ab8cb03d2c31526d892c0e90d1dd4a8506fe99\"\n    ],\n    \"conclusion_meaning_id\": \"5f711b221e2bde153e172cfe445b1e63c3a20b903b8acb034c0f684e2c038d99\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"a41af0dff71e8e9da15f1d737b6a4987f90ea4e6ceedaff3b1e57b39f1161b1a\"\n  }\n}\n"
@@ -111,6 +130,10 @@
    "text": "MIXED unit needs partitioned parts"
   },
   "readings": {
+   "refused": "VEError",
+   "text": "MIXED unit needs partitioned parts"
+  },
+  "readings --assume-no-exception [\"top\"]": {
    "refused": "VEError",
    "text": "MIXED unit needs partitioned parts"
   },
@@ -136,6 +159,10 @@
    "refused": "VEError",
    "text": "unit spans do not partition all source bytes"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
   "readings --conclusion [\"top\"]": {
    "refused": "VEError",
    "text": "unit spans do not partition all source bytes"
@@ -155,6 +182,10 @@
    "text": "unit status contradicts content, meaning, or active reading set"
   },
   "readings": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  },
+  "readings --assume-no-exception [\"top\"]": {
    "refused": "VEError",
    "text": "unit status contradicts content, meaning, or active reading set"
   },
@@ -180,6 +211,10 @@
    "refused": "VEError",
    "text": "unknown kind unknown"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  },
   "readings --conclusion [\"top\"]": {
    "refused": "VEError",
    "text": "unknown kind unknown"
@@ -199,6 +234,10 @@
    "text": "UnknownSymbol: regulated predicate absent"
   },
   "readings": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  },
+  "readings --assume-no-exception [\"top\"]": {
    "refused": "UnknownSymbol",
    "text": "UnknownSymbol: regulated predicate absent"
   },
@@ -224,6 +263,10 @@
    "refused": "VEError",
    "text": "unit meaning id does not match content"
   },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  },
   "readings --conclusion [\"top\"]": {
    "refused": "VEError",
    "text": "unit meaning id does not match content"
@@ -242,6 +285,12 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
@@ -263,6 +312,12 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
   },
@@ -282,6 +337,12 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
@@ -303,6 +364,12 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
   },
@@ -322,6 +389,12 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
@@ -344,6 +417,12 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
   },
@@ -363,6 +442,14 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"assertion-disjunction\",\n  \"choices\": null,\n  \"all\": \"one proof from per-unit disjunctions\",\n  \"none\": \"one shared finite model satisfying every reading\"\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "refused": "VEError",
+   "text": "--assume-no-exception applies to a soft-norms@0 document without open reading sets"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "--assume-no-exception applies to a soft-norms@0 document without open reading sets"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [\n    \"readings:rs@1:all\"\n  ],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
@@ -384,6 +471,12 @@
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
   },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\"\n  }\n}\n"
   },
@@ -403,6 +496,12 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
@@ -424,6 +523,14 @@
    "text": "invalid meaning status"
   },
   "readings": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "readings --assume-no-exception [\"top\"]": {
    "refused": "VEError",
    "text": "invalid meaning status"
   },
@@ -453,6 +560,14 @@
    "refused": "VEError",
    "text": "unit spans do not partition all source bytes"
   },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "refused": "VEError",
    "text": "unit spans do not partition all source bytes"
@@ -475,6 +590,12 @@
   },
   "readings": {
    "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --assume-no-exception [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
+  },
+  "readings --assume-no-exception [\"top\"]": {
+   "output": "{\n  \"question\": \"strict\",\n  \"valid\": true\n}\n"
   },
   "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
    "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
