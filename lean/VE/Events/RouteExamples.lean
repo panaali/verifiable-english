@@ -231,6 +231,28 @@ def premiseCount : Nat := ((decoded envOf).toOption.map fun L => (VE.NormDefault
       r.X == ((decoded envOf).toOption.map fun L => (VE.NormDefaults.Wire.softLabelledU L.U L.D).map (·.2)).getD [.top]
   | .error _ => false)
 
+-- With another pack's premise in `X`: the count is the whole of `premisesX`, the soft premise among it.
+def excCase (c : VE.Formula) : Json :=
+  let e := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
+  let n := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ [VE.Defaults.Fixtures.un "s"]) ++ "]")
+  let bound : Json := Id.run do
+    let .ok L := decodeLayered ((caseOf "k" e).setObjVal! "norms" n) | return .null
+    let .ok canonical := VE.NormDefaults.Wire.canonicalEnvironmentJsonU e | return .null
+    let .ok id := VE.Route.Wire.environmentId listed canonical | return .null
+    let meaning := fun (a : VE.Formula) => (VE.Route.Wire.meaningId listed id (VE.NormDefaults.Wire.enc a)).toOption.getD ""
+    Json.mkObj [("checker_version", .str "ve-tableau-checker@2"), ("environment_id", .str id),
+      ("premise_meaning_ids", toJson ((VE.NormDefaults.Wire.premisesX L.U L.X []).map meaning)),
+      ("conclusion_meaning_id", .str (meaning c)), ("trace", parse "{\"rule\":\"close\"}")]
+  (replayCase e bound c).setObjVal! "norms" n
+def excCount : Nat :=
+  let e := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
+  ((decodeLayered ((caseOf "k" e).setObjVal! "norms" (excCase inPack |>.getObjValD "norms"))).toOption.map fun L =>
+    ((VE.NormDefaults.Wire.softLabelledU L.U L.D).length, (VE.NormDefaults.Wire.premisesX L.U L.X []).length)).getD (0, 0) |>.2
+#guard (answer (excCase inPack)).getObjValD "valid" == .bool true
+#guard (answer (excCase inPack)).getObjValD "premises" == toJson excCount && excCount == premiseCount + 1
+#guard (match VE.Events.replayEventsEntailment (excCase inPack) with
+  | .ok r => r.X.length == 1 | .error _ => false)
+
 -- A replay needs the block: with the profile alone there is no pack to replay against.
 #guard status (caseOf "norm-defaults-certificate" (envOf none)) == "InvalidInput: events"
 #guard status (caseOf "norm-defaults-certificate" envOf) == "property not found: premises"
