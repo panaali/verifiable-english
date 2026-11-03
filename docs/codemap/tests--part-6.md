@@ -1,7 +1,3 @@
-- `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
-- `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
-- `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
-- `tests/test_risk_english.py` — Fixture k19 (risk.md 2.1 to 2.3, 8.2): the gate of the risk English surface.
 - `tests/test_risk_every_diagnostic.py` — Every diagnostic of risk.md 6 from the Lean route on a hand-written input (docs/spec/risk.md 8.3).
 - `tests/test_risk_fixtures.py` — risk@0 fixtures of docs/spec/risk.md 8.1 checked against the expectations of 8.2 on the Lean route.
 - `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
@@ -83,3 +79,7 @@
 - `tests/test_surface_registry.py` — (no module docstring)
 - `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
 - `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
+- `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
+- `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
+- `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
+- `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
