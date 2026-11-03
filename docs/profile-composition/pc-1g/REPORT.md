@@ -1,38 +1,93 @@
-# pc-1g report: G3 for `judgments@0` in the document mode, and the rights@0 reader
+# pc-1g report: the rights@0 reader, G3's definitions, and the statement stop
 
-Status: STOPPED on statements (task: "If one must change, stop on it only, build the rest and ask the DRI decider
-through msg.sh"). Question sent to the DRI decider on 2026-11-03 (msg.sh dri pc-1g). The work the question does not
-block continues below.
+Status: STOPPED on statements and resolved by the DRI. Under reviews/dri-decisions-20261103-pc-1g-stop.md, pc-1g merges its unblocked parts, and the statements that could not be proved leave its deliverables. No DRI signature is reserved.
+HEAD: the last commit on feature/pc-1g. Changed: the rights chain's reader (`correlate_judged` proved), `judgments@0` beside `rights@0` admitted (spec section 4 row 2 deleted), F1.4, G3's definitions, fixtures F1.1/F1.6, F1.3b/c/i/j/k, and the compress/parse round trip checked.
+Open (DRI ruling items 2 to 6): G3 and its 2a/2c proofs, F5 and F1.3e to F1.3h go to pc-1h. The restated round-trip lemma, `swap_correct` and `verdictFields` go through a statement review, then a follow-up proves them.
+DELTA: row 2's deletion is SIGNED by the DRI (20261101 item 1); the compress/parse boundary is SIGNED by the DRI (20261103 stop item 2); trust is R16.
 
-Plan: docs/spec/profile-composition-PLAN.md "PC-1" and spec 1.7 at 3dfadd302 (main's copies are byte-identical:
-`git -C ../verifiable-english show 3dfadd302:<file> | diff -q - <file>` prints nothing). This item proves edit 2 of
-debates/plan-synthesis-2/edits-profile-composition.md, the G3 amendment (the exchange applies only when it is one to
-one, decided in Lean first), as far as the stop below allows.
+Plan: docs/spec/profile-composition-PLAN.md "PC-1" and spec 1.7, 3.1 and 5.1, at 3dfadd302. Main's copies are byte-identical: `git -C ../verifiable-english show 3dfadd302:<file> | diff -q - <file>` printed nothing for both files. Synthesis round 2: this item was to prove edit 2 of debates/plan-synthesis-2/edits-profile-composition.md, the G3 amendment (the exchange applies only when it is one-to-one, decided in Lean first). It does not prove it. The amendment's statements rest on the round trip and on `swap_correct`, both stopped below. Its runtime check (pc-1's row 16) is unchanged.
 
-## The stop: three of the approved statements cannot be proved as written
+## The stop, and the DRI's ruling
 
-1. **The round-trip lemma (deliverable 2) is not provable without an axiom in this toolchain.** `withoutJudgments`
-   writes the twin's front matter with `Lean.Json.compress`, and the twin's check reads it back with
-   `Lean.Json.parse` (`frontJson`, Document.lean:330). In Lean v4.24.0 both are `partial def`s
-   (`Lean/Data/Json/Printer.lean:164` `compress`; `Lean/Data/Json/Parser.lean:75,94,204-233` `strCore`, `natCore`,
-   `arrayCore`, `objectCore`, `anyCore`). The kernel cannot unfold a `partial def`, so no fact about its value can
-   be proved. Even `Json.parse "1" = .ok 1` and `Json.compress (.num 1) = "1"` fail by `rfl`, and
-   `decide` has no instance. The DRI's condition (20261031 item 2: "a theorem, not an axiom") therefore cannot be
-   met for any front matter. Every theorem that reads `checkDocSets (withoutJudgments j)` or
-   `swapInjective (withoutJudgments j)` rests on it: `swapInjective_twin`, `withoutJudgments_ids`,
-   `checkDocSets_swapClash` (its first two conjuncts), `checkDocSets_judgments_transparent`, and
-   `checkDocSets_withoutStatuses` (`withoutStatuses` writes the front matter again too).
-2. **`swap_correct` is false.** A key stated in two reading sets for two contents has two pairs, and `exchange` is
-   a function of the value alone, so it reads the first. Take set 1 stating model A under `K`, and set 2 stating
-   model B under `K = v₁(B)`. `swapInjective j` holds: the values are `[K, K]`, and every pair's value is `K`.
-   `(K, v₁(B), v₂(B)) ∈ statedPairs j`, and `K ∈ statedIds j`. But `exchange j K = swap v₁(A) v₂(A) K = K`, so
-   `(exchange j K == v₂(B)) = false`, while `(K == v₁(B)) = true`. No digest collision is needed. The witness is a
-   `#guard` in lean/VE/Judgments/ChainExamples.lean (`twoSets`). `withoutJudgments_ids` fails on the same case, at
-   the model site (s2, K).
-3. **`verdictFields` as specified makes G3 false** (pc-1 DELTA row 10, recorded there and left open). A judged
-   answer carries jt-3a's `undeclared_evaluative`, and its twin has no such member. Spec 2e says "No other field is
-   dropped".
+Asked through msg.sh on 2026-11-03 (inbox/dri/20261103T143453Z-pc-1g-2914307.md, addendum 164838Z). Ruled 17:15Z in reviews/dri-decisions-20261103-pc-1g-stop.md.
 
-Also on size: G3 relates two runs of the whole document chain, `check` and everything it calls (Document.lean is
-2,695 lines, plus the soft, readings, discourse and rights decoders). Even with 1 to 3 settled, its proof is a
-multi-thousand-line relational proof. It does not fit the 600-line size line or R16's 150 trusted lines.
+1. **The round-trip lemma (deliverable 2) is not provable without an axiom in Lean v4.24.0.** `withoutJudgments` writes the twin's front matter with `Lean.Json.compress`, and `frontJson` (Document.lean:330) reads it back with `Lean.Json.parse`. Both are `partial def`s in the toolchain: `Lean/Data/Json/Printer.lean:164`, and `Parser.lean:75,94,204-233`. The kernel cannot unfold them. In a scratch file, `Json.parse "1" = .ok 1` and `Json.compress (.num 1) = "1"` both fail by `rfl`, and `decide` has no instance. Every theorem about the twin reads the parse: `swapInjective_twin`, `withoutJudgments_ids`, `checkDocSets_swapClash` (its first two conjuncts), `checkDocSets_judgments_transparent` and `checkDocSets_withoutStatuses`. **Ruling item 2:** restate the lemma over the structured value, and record compress/parse as one named trusted boundary in DELTA with a differential round-trip test. Built here: DELTA row 2, and the ChainExamples `#guard`s `twinFront` (every fixture's twin reads back the front matter built) and `drawn` (300 generated values: escapes, astral characters, naturals up to 2^53-1, `null`, nesting; 160 distinct, up to 315 characters, measured with a scratch `#eval`).
+2. **`swap_correct` is false.** Take one key `K` stated in two reading sets for contents A and B, with `K = v₁(B)`. Then `swapInjective` holds, `(K, v₁(B), v₂(B))` is a pair, and `exchange K = K`, because it uses the first pair. No digest collision is needed. The witness is the `#guard` after `twoSets` in ChainExamples. **Ruling item 3:** restate it (each stated key maps to one content), or reject such documents. This is triage row syn2-pc1-exchange.
+3. **`verdictFields` as specified made G3 false** through jt-3a's `undeclared_evaluative` (pc-1 DELTA row 10). **Ruling item 4:** the spec drops it. Done here: `verdictFields` drops it and names the ruling, and the F1.1/F1.6 and F1.4 `#guard`s check equal verdict fields. This closes pc-1 DELTA row 10.
+4. **G3 (whole-chain relational proof):** **ruling item 5** moves it to pc-1h, with its own size budget.
+5. **F5 and the unit/reading `meaning_id` exchange (F1.3e to F1.3h)** cannot be built without moving pc-1's whole clash section (Document.lean:391-750). Lean has no forward references, and E″ and a unit's identity need `environmentOf`, `softSource`, `softLayer` and `contentOf`, which come later. The move alone is about 720 numstat lines. The addendum proposed moving them to pc-1h with G3. The ruling (which cites the addendum) lists the parts that merge here, and F5 is not among them. So they are pc-1h's, and row 16's answers are unchanged here.
+
+Nothing false or unproved is stated: no `sorry`, no axiom (`python3 lean/audit.py`: "PASS: 752 source files; 8327 named theorem declarations audited ... only the declared standard axiom allowlist").
+
+## Plan rows
+
+| Row | Delivered | Where | Checked by |
+|---|---|---|---|
+| (1) `verdictFields`, `unitStatuses`, `judgmentCodes`, `judgmentGateTexts`, `layerRefusal`, `layerRelaxes` | yes (definitions; `verdictFields` per ruling item 4) | Document.lean, "G3: success-only transparency" | ChainExamples 2d and 2e `#guard`s; mutants 10 to 17 |
+| (1) `swap_correct`, `withoutJudgments_ids`, `checkDocSets_judgments_transparent`, `checkDocSets_swapClash`, `checkDocSets_withoutStatuses`, `swapInjective_twin` | **no**: the stop. Ruling items 1, 3 and 5 (G3 to pc-1h; the rest restated after statement review) | | `twoSets` witness; pc-1's F1.3l/m/o `swapInjective_twin` guards stay selected (ChainExamples:91-116) |
+| (1) `noUnitStatus`, `withoutStatuses` (2b, 2c) | yes (definitions) | Document.lean | F1.3i `#guard`; mutants 18, 19 |
+| (2) the round-trip lemma | **no**: unprovable (Lean's parser is opaque to the kernel). Ruling item 2: restated later; the boundary is in DELTA with its round-trip checks | ChainExamples `twinFront`, `drawn` | DELTA row 2 |
+| (3) F5 | **no**: pc-1h (ruling item 5, addendum) | | |
+| (4) `rightsAuthorFormulas`, `correlate_judged` (proved), `blockFormulas`, `andAll`, `preds_andAll` (proved), through `judgedIn` | yes | Chain.lean "The rights chain's reader"; Document.lean `UnitContent.judgedIn` | mutants 1 to 8 |
+| (4) spec section 4 row 2 deleted (`judgmentsApart` drops `rights@0`) | yes | Document.lean `judgmentsApart` | `test_f1_4_...`; mutant 9 |
+| (4) F1.4 (UDHR u111, part document; `Lim_D` the same) | yes | tests/data/composition/pc1g/udhr-u111.json; ChainExamples `udhr`, `udhrLim` | `test_f1_4_udhr_u111_as_a_rights_limitation_is_admitted_and_open`; ChainExamples F1.4 `#guard`s |
+| (4) rights twin test (same verdict fields, different ids) | yes | | `test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2,5]`; ChainExamples F1.1/F1.4 twin `#guard` |
+| (5) F1.1 and F1.6 equal verdict fields | yes (`#guard`; Python's `verdict` already dropped the field) | ChainExamples | mutant 20 |
+| (5) F1.3b, F1.3c, F1.3i, F1.3j, F1.3k | yes (`#guard`s) | ChainExamples | |
+| (5) F1.3e, F1.3f, F1.3g, F1.3h | **no**: pc-1h, with the `meaning_id` exchange (item 5 above) | | |
+| (5) F1.8 | **no**: cut to pc-1h at the size line (task: "cut fixtures of (5) to pc-1h") | | |
+| Seeded bug "`withoutJudgments` keeps stated identities as written, so F1.3e fails" | **no**: F1.3e is pc-1h's. The nearest: mutant 21 (the twin keeps `judgments@0`) fails F1.3m and F1.3c | | |
+
+Deviations, each recorded only here:
+- **The rights reader's reading of "limitation conditions, aims".** A limitation's condition has no formula in `RightsDoc` (`Rights/Tree.lean:34`), only a name. So `rightsAuthorFormulas` and `blockFormulas` read it as an atom of its name: the scan reads names only (spec 3.1, `andAll`). An aim states no author formula: a bar's name is an identifier (`b30`), and its `aimed` atom is generated (`rights__bar__k`, reserved). The norm units outside rights are read as written, guard and author carve-outs, as `correlate` reads them; `correlate_judged` needs them. The comment above `rightsAuthorFormulas` says this.
+- **`blockFormulas` decodes a right's lines from the block as written** (`VE.Bridge.decodeFormula`), so that it reads "by its unit": `R.rs` merges `right_lines` units into their right. It reads a limitation's conditions from `R.limits` by name. `R` is otherwise unused.
+- **`judgedIn` on a rights document's norm unit:** the unit keeps its `cites` beside the rule (`{"norm", "cites"}`), which the soft decoder refuses. So when the rule as written does not decode, `judgedIn` decodes the rule alone. `judgedIn_soft` keeps its statement and proof.
+- **`withoutStatuses`' docstring** says "every other value as written; the front matter is written again compactly". The spec says "every other byte", which no rendering of the front matter can keep.
+- **`verdictFields`' docstring** names `undeclared_evaluative`, by ruling item 4, ahead of the spec's amendment of 2e (ruling item 6).
+- **`preds_bindAll_eq`:** `lean/audit.py` reads no primed theorem name.
+
+Spec re-read (BUILDER-CHECKLIST 14): a scratch Python comparison, whitespace-normalised, of each statement and given body against spec 3.1 (lines 1458-1484) and 1.7 (lines 980-1011): `rightsAuthorFormulas` (signature and docstring), `correlate_judged`, `blockFormulas`, `andAll` and `preds_andAll`, `judgedIn`'s docstring, `judgmentCodes`, `judgmentGateTexts`, `layerRefusal`, `layerRelaxes`, `noUnitStatus` and `unitStatuses`. All 11 equal ("spec src" on each line). `verdictFields` and `withoutStatuses` deviate as above.
+
+## Seeded bugs and mutants (`mutants.json`, 21 of 21 caught)
+
+Lean is the only product language changed; the Python and Rust product code is unchanged, and the tests are Python. Each mutant was applied to the committed file and rebuilt (`lake build`, and the service for pytest checks). Its named check was run (`VE_NATIVE_PREBUILT=1`, runner /tmp/pc1g-mut/run.py), and the file restored. One per new trusted definition, plus two for the ruling's edits:
+1. `rightsAuthorFormulas` without its lines: the proof of `correlate_judged` no longer checks (`mem_author_holder`, Chain.lean:89).
+2. `blockFormulas`, a limitation reading no condition: ChainExamples F1.4 `#guard` (:279).
+3. `linesFormulas` reading no line: `test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[guard]` (`JudgmentListedUnused: u029 morality`).
+4. `ruleFormulas` without carve-outs: the same test's `[unless]` case.
+5. `blockFormula` always `⊤`: the same test's `[guard]` case.
+6. `andAll` over no formula: `preds_andAll` no longer proves.
+7. `judgedIn`'s rights block reading nothing: ChainExamples F1.4 `#guard`.
+8. `judgedIn` without the `cites` fallback: `test_a_rights_document_and_its_twin_...[2]` (`a soft rule the soft route accepted does not decode again`).
+9. `judgmentsApart` with `rights@0`: ChainExamples F1.4 `#guard`.
+10. to 12. `dropKey`, `setVerdictFields`, `verdictFields` (keeping each unit's status): ChainExamples 2e `#guard`.
+13. `unitStatuses` reading `kind`: ChainExamples F1.3i and F1.4 `#guard`s.
+14. to 16. `judgmentCodes` without `JudgmentListedUnused`, `judgmentGateTexts` empty, `layerRefusal` without its `CheckerUnavailable` clause: the 2d `#guard`.
+17. `layerRelaxes` reworded: the F1.3c `#guard`.
+18., 19. `noUnitStatus` always true, `withoutStatuses` keeping statuses: the F1.3i `#guard`.
+20. `verdictFields` keeping `undeclared_evaluative`: the F1.1/F1.4 twin `#guard` (:364).
+21. `withoutJudgmentsIn` (pc-1's) keeping `judgments@0` in the twin: the F1.3m (:107) and F1.3c `#guard`s.
+
+The trust-mutant tool's run (`tools/trust_mutants.py` through `mac-pytest.sh --trustmut`) is in `trust-mutants.json`; see "Trust".
+
+## Trust
+
+`uv run python tools/trust_map.py --check` on the final Lean: "against fd9f25f9bfaa: K +0, S +85, D +36, G +14, tied +0, unclassified +0, trusted +130", then "PASS: K, S and untied [V] within fd9f25f9bfaa and the allowances introduced since". Per file: Document.lean S +76 and G[V] +9; Chain.lean S +9 and D[V] +36. The classes are in `tools/trust-classes.json`, and the allowances (S +84, S +1, V +45) in `docs/trust-baseline.json`, SIGNED by standing ruling R16. FOLLOW-UPS.md row "## pc-1g" asks for the ties pass. 130 is within R16's 150, with no K growth. Proofs (P) and ChainExamples (T) are not trusted.
+
+## Size
+
+`git diff --numstat $(git merge-base HEAD main)`, hand-written files only (no generated inventories, pins or codemaps; mutants.json excluded): about +730 / -20 with this report. That is over the ~600 size line. The proofs of `correlate_judged` and its lemmas are about 130 lines of Chain.lean, and the fixtures and `#guard`s about 260 lines of ChainExamples, the F1.4 data and the tests. The DRI's stop ruling (item 1) names these parts for this item, so nothing more was cut. F1.8 and F1.3e to F1.3h were cut to pc-1h.
+
+## Tests
+
+- Iterating: `tests/test_judgments_chain.py` and `tests/test_judgments_document.py`, the cases touched (`VE_NATIVE_PREBUILT=1 uv run pytest -q ... -k ...`: "5 passed", "2 passed", "2 passed", "1 passed"); `lake build VE.Judgments.ChainExamples` after each Lean edit.
+- Once on the finished code: `regen_generated.py --write` ("wrote 35 entries"), `python3 lean/audit.py` (PASS, above), `trust_map.py --check` (PASS), the trust mutants, and the selected tests (`mac-pytest.sh --select`; result below).
+- Pre-existing failures on main (main-known-red.txt) are not touched here.
+
+## Pilot bytes
+
+0 B directly. Neither the pinned constitution translation nor the pinned UDHR translation lists `rights@0` beside `judgments@0`; the UDHR pilot's environment lists neither `rights@0` nor `judgments@0`. PC-2a and PC-5 build on the rights reader. This is an estimate: no pilot audit was run (L70: no whole-document runs).
+
+## Next
+
+pc-2a (after PC-1) and pc-5 (after sc-1ae, sc-5rc and PC-1), then pc-2b. The DRI's stop ruling adds pc-1h (G3, F5, F1.3e to F1.3h, F1.8) and a follow-up item for the restated round-trip lemma, `swap_correct` and `verdictFields`, after their statement review.
