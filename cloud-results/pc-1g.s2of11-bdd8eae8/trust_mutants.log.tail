@@ -1,0 +1,30 @@
+trust_mutants: 17 definitions, 324 mutants (30 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) append-right: (VE.Compose.needText r) ++ ->  (lean/VE/Service/Document.lean:2779: Application type mismatch: The argument)
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) body-true: judgmentCodes.any (fun c => e.startsWith (c ++ ": ")) || e.startsWith "CheckerUnavailable: judgme... -> true
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-empty: ["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"] -> []
+SURVIVOR lean/VE/Service/Document.lean:2750 VE.Service.Document.noUnitStatus (S, trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Service/Document.lean:2723 VE.Service.Document.setVerdictFields (S, trusted) list-empty: rs.map -> [] (lean/VE/Service/Document.lean:2723: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:2785 VE.Service.Document.layerRefusal (S, trusted) list-empty: judgmentGateTexts -> []
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: r.refuses -> [] (lean/VE/Service/Document.lean:2779: Invalid projection: Type of)
+SURVIVOR lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-drop-last: ["norm", "liberty", "recognition"] -> (["norm", "liberty", "recognition"].dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> []
+SURVIVOR lean/VE/Service/Document.lean:2788 VE.Service.Document.layerRelaxes (S, trusted) list-drop-last: ["invalid open-term arguments"] -> (["invalid open-term arguments"].dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-first: ["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"] -> (["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"].take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: (VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts) -> (((VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts)).take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+SURVIVOR lean/VE/Service/Document.lean:2723 VE.Service.Document.setVerdictFields (S, trusted) list-first: rs -> (rs.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: VE.Compose.profileTable.filter (·.profile == "judgments@0") -> ((VE.Compose.profileTable.filter (·.profile == "judgments@0")).dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: r.requires -> (r.requires.dropLast)
+SURVIVOR lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-last: ["norm", "liberty", "recognition"] -> (["norm", "liberty", "recognition"].reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map (V... -> (((VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map ...
+SURVIVOR lean/VE/Service/Document.lean:2749 VE.Service.Document.noUnitStatus (S, trusted) list-drop-first: us -> (us.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2723 VE.Service.Document.setVerdictFields (S, trusted) list-last: rs -> (rs.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-drop-middle: "source_id", -> 
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-last: R.limits -> (R.limits.reverse.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: L.conditions -> (L.conditions.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2728 VE.Service.Document.setVerdictFields (S, trusted) list-drop-first: kvs.toList -> (kvs.toList.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2774 VE.Service.Document.judgmentCodes (S, trusted) list-drop-middle: "JudgmentCriterionAsUnit", -> 
+trust_mutants: 1 KILLED, 21 SURVIVOR, 3 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 294 OTHER SHARD in 2821 s
+trust_mutants: D[V], trusted: 2 SURVIVOR, 1 INVALID, 63 OTHER SHARD
+trust_mutants: G[V], trusted: 8 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 19 SURVIVOR, 3 UNKNOWN, 4 INVALID, 223 OTHER SHARD
+trust_mutants: steps: wall plan 11.6 s, scratch 3.1 s, control_build 0.3 s, probe_install 1.3 s, control_probes 1630.1 s, mutants 1172.2 s, cleanup 2.2 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 3622.5 s (9), mutant_builds 428.8 s (32), mutant_checks 2338.5 s (23), stage_controls 33.1 s (1), mutant_probes 666.5 s (1)
