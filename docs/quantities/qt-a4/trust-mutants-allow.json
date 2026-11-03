@@ -1,0 +1,3 @@
+{"allow": [
+ {"definition": "VE.Service.Document.cardinalityEnv", "operator": "bool-flip", "reason": "equivalent: `Env.generated` is read only by contentOf's strict-fence and English branches (Document.lean, `E.generated`), and under cardinality@0 contentOf returns or throws before them, so no answer depends on it"}
+]}
