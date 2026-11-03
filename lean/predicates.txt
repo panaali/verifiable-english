@@ -241,6 +241,9 @@ module VE.Closure.RoundTrip
 module VE.Closure.Substitution
 module VE.Closure.Surface
 module VE.Closure.Syntax
+module VE.Commands.Examples
+module VE.Commands.Read
+module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
@@ -280,6 +283,8 @@ module VE.Defaults.MeaningExamples
 module VE.Defaults.Premises
 module VE.Defaults.Route
 module VE.Defaults.RouteExamples
+module VE.Defaults.Uniform
+module VE.Defaults.UniformExamples
 module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Defaults.Zone
@@ -622,6 +627,8 @@ module VE.Scope.Examples
 module VE.Scope.FarExamples
 module VE.Scope.FarTheorems
 module VE.Scope.Govern
+module VE.Scope.Reach
+module VE.Scope.ReachExamples
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsLemmas
@@ -643,6 +650,7 @@ module VE.Senses.Document
 module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
+module VE.Senses.Flip
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
@@ -921,15 +929,18 @@ VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
 VE.Defaults.ByDefaultLeftTo@VE.Defaults.Zone
 VE.Defaults.ByDefaultZ@VE.Defaults.Zone
+VE.Defaults.ConditionsExact@VE.Defaults.Uniform
 VE.Defaults.DecLe@VE.Defaults.Zone
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Defaults.DefaultCompletion@VE.Defaults.Zone
+VE.Defaults.DfltUniformSound@VE.Defaults.Uniform
 VE.Defaults.MeaningFixtures.DefaultBaseFixed@VE.Defaults.MeaningExamples
 VE.Defaults.Observed@VE.Defaults.Zone
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
 VE.Defaults.SwitchesOff@VE.Defaults.Meaning
 VE.Defaults.leastDecisions@VE.Defaults.Meaning
+VE.Defaults.leastUniform@VE.Defaults.Uniform
 VE.Defaults.zReal@VE.Defaults.Zone
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
