@@ -1068,7 +1068,7 @@ without it (`GF`):
 |---|---|---|
 | i1 | `senses.read` on `J` | the response of B6 with S2's six identities of the projection, `dictionary_id` and `senses_version`; `environment_id` equals Python's over the returned environment JSON |
 | i2 | the same request twice | byte-identical responses |
-| i3 | a request without `packs` and without own senses | the mode refuses: `InvalidInput` (use `english.read`) |
+| i3 | a request without `packs` and without own senses | as built: Lean reads the empty dictionary; status `none` (review Astra B; reviews/dri-decisions-20261031-sn-b6.md item 1) |
 | i4 | a pack whose bytes differ from the pinned digest | `review_status: unreviewed`; the reading is unchanged |
 | i5 | the service killed mid-request | `CheckerUnavailable` from the relay, once retried |
 | i6 | the manifest | `senses.read` and `senses.project` have `authority: lean`, no `python` entry; the manifest test that every JSON-reading Lean file is classified passes |
