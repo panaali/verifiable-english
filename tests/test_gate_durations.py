@@ -3,12 +3,15 @@
 The durations are scheduling data only (tools/test_schedule.py): they decide which xdist worker runs a test and
 when, never whether it runs or passes. Checked here: the record's compact field round-trips and a malformed one is
 ignored; the overlay of the committed file with a base record's durations; `base_durations` against a real git
-note; the gate's own run, which names the overlay to its suite and keeps its suite's seconds in the record and the
-note; and the record's readers (tools/gate_collection.py, tools/batch_evidence.py) with the new field.
+note; a gate record file (`--durations-record`) for a base without a note, which weighs the shard plan, falls back to
+the committed durations when it is missing, malformed or oversize, and loses to a base note; the gate's own run,
+which names the overlay to its suite and keeps its suite's seconds in the record and the note; and the record's
+readers (tools/gate_collection.py, tools/batch_evidence.py) with the new field.
 """
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -20,7 +23,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from test_gate_integrity import PYTEST_STAGES, events, fake_trust, pin_base_collection, pin_rust_binary
-from tools import gate, gate_collection, test_schedule
+from tools import gate, gate_collection, gate_shards, test_schedule
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMED = {"tests/a.py::test_slow": 12.34, "tests/a.py::test_one": 1.0, "tests/b.py::test_quick": 0.5,
@@ -241,3 +244,131 @@ def test_the_records_readers_take_a_record_with_durations(repository):
     assert gate_collection.read_record(commit, cwd=repository) == IDS
     assert gate_collection.read_gate_result(commit, cwd=repository) == gate_record
     assert gate.base_durations({"collection": {"base": commit}}, None, repository)[1].measured == frozenset(IDS)
+
+
+# --- the durations of a gate record file (`--durations-record`), for a base without a note -----------------------
+
+HEAVY = [f"tests/heavy.py::test_case[{i}]" for i in range(4)]
+LIGHT = [f"tests/light_{name}.py::test_one" for name in "abcdef"]
+COLLECTED = sorted([*HEAVY, *LIGHT])
+# The committed file weighs the heavy file at a second a test; the measured run took a minute each.
+COMMITTED = {**{nodeid: 1.0 for nodeid in HEAVY}, **{nodeid: 30.0 for nodeid in LIGHT}}
+MEASURED = {**{nodeid: 60.0 for nodeid in HEAVY}, **{nodeid: 30.0 for nodeid in LIGHT}}
+BASE_DURATIONS = gate.base_durations  # before a test replaces it
+
+
+def record_file(path: Path, seconds: dict, ids: list[str] = COLLECTED, **fields) -> Path:
+    """A full gate record file as a merged shard record carries it: its suite's seconds and its collection."""
+    path.write_text(json.dumps({"status": "passed", "mode": "full", "counts": {"selected": len(ids)},
+                                "durations": test_schedule.record_field(seconds),
+                                "collection": {"collected_zlib": gate_collection.encode_ids(ids)}, **fields}))
+    return path
+
+
+@pytest.fixture
+def committed_file(tmp_path, monkeypatch):
+    """The committed durations are COMMITTED and the merge base has no gate record."""
+    path = tmp_path / "committed-durations.json"
+    path.write_text(test_schedule.durations_text(COMMITTED, source="fixture"))
+    monkeypatch.setattr(test_schedule, "DURATIONS", path)
+    monkeypatch.setattr(gate, "base_durations", lambda result, env: None)
+    return path
+
+
+def planned(tmp_path, record: Path | None, name: str) -> tuple[dict, dict]:
+    """(the 3-shard plan of COLLECTED, the result) from the durations `suite_durations` writes."""
+    result, path = {"collection": {"base": "c" * 40}}, tmp_path / f"{name}.json"
+    gate.suite_durations(result, {}, path, record)
+    return gate_shards.plan(COLLECTED, test_schedule.read_source(path), 3), result
+
+
+def true_loads(plan: dict) -> list[float]:
+    """Each shard's measured seconds under `plan`."""
+    loads = [0.0] * plan["n"]
+    for nodeid in COLLECTED:
+        loads[plan["assignments"][test_schedule.unit_of(nodeid)] - 1] += MEASURED[nodeid]
+    return loads
+
+
+def test_a_durations_record_file_weighs_the_file_the_committed_durations_underweight(tmp_path, committed_file):
+    """The committed durations put the heavy file with two light ones (it weighs 4 s there, 240 s measured); the
+    record file's plan puts it alone, and the heaviest shard's measured load against the mean drops."""
+    committed_plan, _ = planned(tmp_path, None, "committed")
+    record = record_file(tmp_path / "gate-record.json", MEASURED)
+    record_plan, result = planned(tmp_path, record, "record")
+    heavy = record_plan["assignments"]["tests/heavy.py"]
+    assert [file for file, shard in record_plan["assignments"].items() if shard == heavy] == ["tests/heavy.py"]
+    assert len([file for file, shard in committed_plan["assignments"].items()
+                if shard == committed_plan["assignments"]["tests/heavy.py"]]) == 3
+    before, after = true_loads(committed_plan), true_loads(record_plan)
+    assert max(after) / (sum(after) / 3) < max(before) / (sum(before) / 3)
+    assert result["durations_source"] == {
+        "committed": len(COMMITTED), "base": None, "base_recorded": len(MEASURED), "measured": len(COLLECTED),
+        "record_file": {"used": True, "sha256": hashlib.sha256(record.read_bytes()).hexdigest(),
+                        "recorded": len(MEASURED)}}
+    # The plan is a function of the file: every shard given it plans the same.
+    assert planned(tmp_path, record, "again")[0] == record_plan
+
+
+def oversize_seconds(path: Path) -> Path:
+    data = json.loads(record_file(path, MEASURED).read_text())
+    data["durations"]["seconds_zlib"] = BAD["seconds too large"]["seconds_zlib"]
+    path.write_text(json.dumps(data))
+    return path
+
+
+BAD_FILES = {
+    "missing": lambda path: path,
+    "not JSON": lambda path: (path.write_text("{not json"), path)[1],
+    "not an object": lambda path: (path.write_text(json.dumps([1, 2])), path)[1],
+    "no durations": lambda path: (path.write_text(json.dumps({"status": "passed"})), path)[1],
+    "durations malformed": lambda path: (path.write_text(json.dumps(
+        {"durations": BAD["seconds not zlib"], "counts": {"selected": 1}})), path)[1],
+    "seconds over MAX_RECORD_BYTES": oversize_seconds,
+    "not a file": lambda path: (path.mkdir(), path)[1],
+}
+
+
+@pytest.mark.parametrize("make", BAD_FILES.values(), ids=BAD_FILES)
+def test_a_missing_malformed_or_oversize_record_file_leaves_the_committed_plan(tmp_path, committed_file, make,
+                                                                               capsys):
+    committed_plan, committed_result = planned(tmp_path, None, "committed")
+    record = make(tmp_path / "gate-record.json")
+    plan, result = planned(tmp_path, record, "record")
+    assert plan == committed_plan
+    assert result["durations_source"] == {**committed_result["durations_source"],
+                                          "record_file": {"used": False, "sha256": None, "recorded": None}}
+    assert capsys.readouterr().out.count("[gate] durations record") == 1
+
+
+def test_a_record_file_larger_than_the_limit_is_not_read(tmp_path, committed_file, monkeypatch):
+    committed_plan, _ = planned(tmp_path, None, "committed")
+    record = record_file(tmp_path / "gate-record.json", MEASURED)
+    monkeypatch.setattr(gate, "MAX_DURATIONS_RECORD_BYTES", len(record.read_bytes()) - 1)
+    assert planned(tmp_path, record, "record")[0] == committed_plan
+    monkeypatch.setattr(gate, "MAX_DURATIONS_RECORD_BYTES", len(record.read_bytes()))
+    assert planned(tmp_path, record, "record")[0] != committed_plan
+
+
+def test_a_record_file_that_did_not_time_its_whole_selection_names_no_measured_tests(tmp_path):
+    record = record_file(tmp_path / "gate-record.json", MEASURED, counts={"selected": len(COLLECTED) + 1})
+    assert gate.record_file_durations(record)[1].measured is None
+    record = record_file(tmp_path / "gate-record.json", MEASURED, collection={"collected_zlib": "***"})
+    assert gate.record_file_durations(record)[1].measured is None
+    assert gate.record_file_durations(record_file(tmp_path / "gate-record.json", MEASURED))[1].measured == \
+        frozenset(COLLECTED)
+
+
+def test_a_base_note_wins_over_the_record_file(tmp_path, repository, committed_file, monkeypatch):
+    """When the merge base has a gate record (its git note), its durations weigh the plan and the file is not read."""
+    base = git(repository, "rev-parse", "HEAD")
+    gate_collection.write_record(base, COLLECTED, result={"status": "passed", "counts": {"selected": len(COLLECTED)},
+                                                          "durations": test_schedule.record_field(COMMITTED)},
+                                 cwd=repository)
+    monkeypatch.setattr(gate, "base_durations", lambda result, env: BASE_DURATIONS(result, env, repository))
+    record = record_file(tmp_path / "gate-record.json", MEASURED)
+    result, path = {"collection": {"base": base}}, tmp_path / "durations.json"
+    gate.suite_durations(result, {}, path, record)
+    assert test_schedule.read_source(path).durations == COMMITTED
+    assert result["durations_source"]["base"] == base
+    assert result["durations_source"]["record_file"] == {"used": False, "sha256": None, "recorded": None}
