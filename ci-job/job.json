@@ -1,0 +1,17 @@
+{
+ "job": "pc-2a-30ae52a1",
+ "head": "fed35366138510eae1b9bf255a86635d7faa418e",
+ "argv": [
+  "pc-2a-30ae52a1",
+  "fed35366138510eae1b9bf255a86635d7faa418e",
+  "561aa79f57165e73051017440794660e8525f95d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-055940b99ea8.tar.zst",
+  "737a008e33d607779824e671308fc9ecc89c80f453a454ab1b606756b117b6b9",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "tests/test_document_chain.py",
+  "--jobs",
+  "4"
+ ]
+}
