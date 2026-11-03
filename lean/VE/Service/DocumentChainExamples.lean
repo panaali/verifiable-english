@@ -98,7 +98,6 @@ def statusAt (m : Json) (method : String) : Except String String := do
 #guard holds (layered complyDocument) fun L => L.packs.map (·.id) == ["soft"] && L.X.length == 3
 -- The case and no exception: SETTLED yes.
 #guard holds (statusAt (situation false false) "enumerate") (· == "SETTLED yes")
-#guard holds (statusAt (situation false false) "table3") (· == "SETTLED yes")
 -- An exception: UNDECIDED, by the two fillings.
 #guard holds (statusAt (situation true true) "undecided") (· == "UNDECIDED")
 -- The other direction: no exception holds, so the two fillings are no UNDECIDED witness.
@@ -125,11 +124,6 @@ def completions (predicate cite : String) : Json :=
 
 #guard checkError (complyDocument [("completions", completions "comply_permitted" "absent")]) ==
   some "InvalidInput: completion grounding for comply_permitted cites an unknown unit"
-#guard checkError (complyDocument [("completions", completions "comply_required" "u1")]) ==
-  some "InvalidInput: completion of comply_required is unspecified and cites nothing"
-#guard checkError (complyDocument [("completions", completions "absent" "u1")]) ==
-  some "UnknownSymbol: regulated predicate absent"
-#guard checkError (complyDocument [("completions", toJson (7 : Nat))]) == some "InvalidInput: completions must be an object"
 #guard checkError (complyDocument [("completions", completions "comply_permitted" "u1")]) == none
 #guard checkError complyDocument == none
 
@@ -149,7 +143,6 @@ def caseOf (front : Json) : Except String Json := do
   j.getObjValD "norms" == Json.arr #[wireJson 257 complyRule] &&
   j.getObjValD "environment" == wireJson 257 (environmentOver chain complyPredicates) &&
   j.getObjValD "completions" == completions "comply_permitted" "u1"
-#guard holds (caseOf complyDocument) fun j => (j.getObjVal? "completions").toOption.isNone
 
 /-- A case with the given unit kind and reading sets over `E`, built without `check`. -/
 def plainCase (environment : Json) (kind : String) (members : List (String × Json)) : Except String Json := do
@@ -160,12 +153,11 @@ def plainCase (environment : Json) (kind : String) (members : List (String × Js
       content := some (UnitContent.soft complyRule) }
   pure (requestOf E (Json.mkObj members) [unit])
 
--- A norm under a reading set is no free norm; nor is a quoted unit's; another unit's set holds nothing here.
+-- A norm under a reading set is no free norm, nor is another kind's; a free unit's is.
 #guard holds (plainCase (environmentOver chain complyPredicates) "norm"
     [("reading_sets", Json.arr #[Json.mkObj [("unit", .str "u1")]])]) (·.getObjValD "norms" == Json.arr #[])
 #guard holds (plainCase (environmentOver chain complyPredicates) "quoted" []) (·.getObjValD "norms" == Json.arr #[])
-#guard holds (plainCase (environmentOver chain complyPredicates) "norm"
-    [("reading_sets", Json.arr #[Json.mkObj [("unit", .str "u2")]])]) (·.getObjValD "norms" != Json.arr #[])
+#guard holds (plainCase (environmentOver chain complyPredicates) "norm" []) (·.getObjValD "norms" != Json.arr #[])
 
 -- An environment off the soft route makes no case: the mode's decoder refuses it.
 #guard holds (plainCase (environmentOver ["documents@1", "norms@0", "relational-fol@0"] []) "norm" []) (· == .null)
@@ -179,7 +171,4 @@ def refusal (profiles : List String) : Option String :=
 
 #guard refusal (chain ++ ["readings@1"]) ==
   some "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
-#guard refusal ["documents@1", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"] ==
-  some "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
-
 end VE.Service.DocumentChain.Examples

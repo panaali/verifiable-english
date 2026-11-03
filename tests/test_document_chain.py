@@ -10,8 +10,8 @@ import sys
 
 import pytest
 
-from tests.document_chain_corpus import (CHAIN, CLAIM, DENIABLE, NEVER, ROOT, SAVED, TOP, answers, chain_document,
-                                         chain_front, conclusions_of, corpus, split, text)
+from tests.document_chain_corpus import (CHAIN, NEVER, ROOT, SAVED, TOP, answers, chain_document, chain_front,
+                                         conclusions_of, corpus, text)
 from ve.backends.relay import answer
 from ve.document import load_document
 from ve.document.lean import _lean_only
@@ -183,21 +183,13 @@ def test_a_document_lean_refuses_is_refused_on_every_path(tmp_path):
         load_document(path)
 
 
-def _lower(raw, drop):
-    front, body = split(raw)
-    front["environment"]["profiles"] = [p for p in front["environment"]["profiles"] if p != drop]
-    return text(front, body)
-
-
 def test_the_retained_branch_keeps_every_other_chain():
     """The opposite direction: `readings@1` beside the chain, the plain soft route and a discourse admission still load."""
     (with_readings,) = WRITTEN.values()
     assert _load_document(with_readings, ROUTE, None)["soft_document"] is not None
-    plain_soft = _lower(_lower(chain_document(DENY), "norm-defaults@0"), "unused")
-    front, body = split(plain_soft)
-    front["units"][0]["content"]["norm"]["predicate"] = "deny_being_claude_permitted"
-    front["environment"]["vocabulary"]["predicates"]["deny_being_claude_permitted"]["regulated"]["default"] = "allow"
-    assert _load_document(text(front, body), ROUTE, None)["soft_document"] is not None
+    plain = chain_front(DENY, profiles=[p for p in CHAIN["profiles"] if p != "norm-defaults@0"])
+    plain["environment"]["vocabulary"]["predicates"]["deny_being_claude_permitted"]["regulated"]["default"] = "allow"
+    assert _load_document(text(plain, CHAIN["units"][DENY]["body"].encode()), ROUTE, None)["soft_document"] is not None
     assert _load_document(chain_document(COMPLY), ROUTE, {})["soft_document"] is not None
 
 

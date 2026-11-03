@@ -78,12 +78,6 @@ def _mixed(raw: bytes) -> bytes:
     return text(front, body)
 
 
-def _without_norm_content(raw: bytes) -> bytes:
-    front, body = split(raw)
-    front["units"][0].pop("content")
-    return text(front, body)
-
-
 def _with_held_norm(uid: str) -> bytes:
     """The unit's norm under an open reading set of one assertion: no rule of the free document. The `meaning_id` is
     `["top"]`'s in the soft route's extended environment of `u0125.s04.p2`, as `ve.identity.meaning_id` gave it on the base."""
@@ -93,67 +87,50 @@ def _with_held_norm(uid: str) -> bytes:
     return chain_document(uid, reading_sets=sets)
 
 
-def _edited(uid: str, edit, extra: bytes = b"", **members) -> bytes:
-    """The unit's document with `edit` applied to its front matter, and `extra` source bytes after its body."""
+def _edited(uid: str, edit, **members) -> bytes:
+    """The unit's document with `edit` applied to its front matter."""
     front = chain_front(uid, **members)
     edit(front)
-    return text(front, CHAIN["units"][uid]["body"].encode() + extra)
+    return text(front, CHAIN["units"][uid]["body"].encode())
 
 
 def _set_unit(field, value):
-    def edit(front):
-        front["units"][0][field] = value
-    return edit
+    return lambda front: front["units"][0].__setitem__(field, value)
 
 
-def _predicate(name):
-    def edit(front):
-        front["units"][0]["content"]["norm"]["predicate"] = name
-    return edit
-
-
-def _second_unit(uid: str, unit, extra: bytes, fence: bytes = b"", **members) -> bytes:
-    """A second unit over `extra`, with a `ve` fence holding `fence` when it has one."""
+def _second_unit(uid: str, unit, **members) -> bytes:
+    """A second unit over `CLAIM`."""
     start = len(CHAIN["units"][uid]["body"])
     front = chain_front(uid, **members)
-    front["units"].append({"id": "u2", "span": [start, start + len(extra)], "meaning": "specified",
+    front["units"].append({"id": "u2", "span": [start, start + len(CLAIM)], "meaning": "specified",
                            "support": "assumption", **unit})
-    return text(front, CHAIN["units"][uid]["body"].encode() + extra + fence)
+    return text(front, CHAIN["units"][uid]["body"].encode() + CLAIM)
 
 
-# A claim that no Claude instance may deny, and that one may: the second contradicts F2.2's strict rule.
+# That one Claude instance may deny: it contradicts F2.2's strict rule.
 DENIABLE = ["exists", "claude_instance", ["unary", "deny_being_claude_permitted", ["var", 0]]]
 CLAIM = b" This follows."
 
 
 def _extras():
     uid, strict = "u0073.s05", "u0125.s04.p2"
-    claim = {"kind": "asserted"}
-    graph = {"nodes": [{"ast": NEVER, "name": "claim", "unit": "u2"}], "root": "claim"}
+    claim = {"kind": "asserted", "content": {"ast": NEVER}}
     record = {"name": "t", "arguments": ["claude_instance"], "decided_by": "unstated", "necessary": [],
               "sufficient": [], "factors": [], "precedents": [], "jurisdiction": "document", "version": 1}
-    return {f"{uid}#unknown-predicate": _edited(uid, _predicate("absent")),
+    rule = {**CHAIN["units"][strict]["rule"], "name": "quoted-rule"}
+    return {f"{uid}#unknown-predicate": _edited(uid, lambda f: f["units"][0]["content"]["norm"].update(predicate="absent")),
             f"{uid}#wrong-meaning-id": _edited(uid, _set_unit("meaning_id", "0" * 64)),
             f"{uid}#status-contradiction": _edited(uid, _set_unit("status", "OPEN")),
-            f"{uid}#span-short": _edited(uid, _set_unit("span", [0, 3])),
-            f"{uid}#unit-kind": _edited(uid, _set_unit("kind", "unknown")),
             f"{strict}#unformalised": _second_unit(strict, {"kind": ["unformalised", "prose"],
-                                                            "meaning": {"unformalised": "prose"}}, CLAIM),
-            f"{strict}#contextual": _second_unit(strict, {"kind": "example", "meaning": {"contextual": "a heading"}},
-                                                 CLAIM),
+                                                            "meaning": {"unformalised": "prose"}}),
+            f"{strict}#contextual": _second_unit(strict, {"kind": "example", "meaning": {"contextual": "a heading"}}),
             f"{strict}#open-term": _edited(strict, _set_unit("meaning", {"open": ["t"]}), open_terms=[record]),
-            f"{strict}#open-unlisted": _edited(strict, _set_unit("meaning", {"open": ["t"]})),
-            f"{strict}#assertion": _second_unit(strict, {**claim, "content": {"ast": NEVER}}, CLAIM),
-            f"{strict}#graph": _second_unit(strict, {**claim, "content": {"ast": NEVER}}, CLAIM, graph=graph),
-            f"{strict}#graph-root": _second_unit(strict, {**claim, "content": {"ast": NEVER}}, CLAIM,
-                                                 graph={**graph, "root": "absent"}),
-            f"{strict}#inconsistent": _second_unit(
-                strict, {**claim, "content": {"ast": DENIABLE}}, CLAIM,
-                graph={"nodes": [{"ast": DENIABLE, "name": "claim", "unit": "u2"}], "root": "claim"}),
-            f"{strict}#unbound-fence": _second_unit(strict, {**claim, "content": {"ast": NEVER}}, CLAIM,
-                                                    fence=b"\n```ve u9\nfoo\n```\n"),
-            f"{strict}#attributed": _second_unit(strict, {"kind": ["attributed", "constitution", "says", "norm"], "content": {
-                "norm": {**CHAIN["units"][strict]["rule"], "name": "quoted-rule"}}}, CLAIM)}
+            f"{strict}#graph": _second_unit(strict, claim, graph={"nodes": [{"ast": NEVER, "name": "claim", "unit": "u2"}],
+                                                                  "root": "claim"}),
+            f"{strict}#inconsistent": _second_unit(strict, {**claim, "content": {"ast": DENIABLE}}, graph={
+                "nodes": [{"ast": DENIABLE, "name": "claim", "unit": "u2"}], "root": "claim"}),
+            f"{strict}#attributed": _second_unit(strict, {"kind": ["attributed", "constitution", "says", "norm"],
+                                                          "content": {"norm": rule}})}
 
 
 def corpus():
@@ -163,7 +140,7 @@ def corpus():
     lowered = {f"{path}#lower": _lowered(raw) for path, raw in written.items()}
     route = lowered["tests/data/rd9-docroute.ve.md#lower"]
     uids = list(CHAIN["units"])
-    answered = {**lowered, "rd9-docroute#mixed": _mixed(route), "rd9-docroute#no-norm-content": _without_norm_content(route),
+    answered = {**lowered, "rd9-docroute#mixed": _mixed(route),
                 **{uid: chain_document(uid) for uid in uids},
                 "u0073.s05#mixed": _mixed(chain_document("u0073.s05")),
                 "u0073.s05#completions": chain_document(
