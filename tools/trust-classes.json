@@ -17667,6 +17667,52 @@
         "VE.Judgments.ChainExamples.withCondition",
         "VE.Judgments.ChainExamples.f13lWith"
       ]
+    },
+    "VE/Scope/Reach.lean": {
+      "G[R]": [
+        "VE.Scope.Pinned.withBarReach",
+        "VE.Scope.Pinned.wholeRights"
+      ],
+      "G[V]": [
+        "VE.Scope.Pinned.rightOf"
+      ],
+      "S": [
+        "VE.Scope.Pinned.rightNames",
+        "VE.Scope.Pinned.withReach"
+      ]
+    },
+    "VE/Scope/ReachExamples.lean": {
+      "T": [
+        "VE.Scope.ReachExamples.bar114",
+        "VE.Scope.ReachExamples.barAt",
+        "VE.Scope.ReachExamples.barRights",
+        "VE.Scope.ReachExamples.candidates",
+        "VE.Scope.ReachExamples.contents",
+        "VE.Scope.ReachExamples.declared",
+        "VE.Scope.ReachExamples.err",
+        "VE.Scope.ReachExamples.g17",
+        "VE.Scope.ReachExamples.gov",
+        "VE.Scope.ReachExamples.lim111",
+        "VE.Scope.ReachExamples.limitation",
+        "VE.Scope.ReachExamples.limitationAt",
+        "VE.Scope.ReachExamples.oc",
+        "VE.Scope.ReachExamples.ocAnchors",
+        "VE.Scope.ReachExamples.ocComposed",
+        "VE.Scope.ReachExamples.ocGuard",
+        "VE.Scope.ReachExamples.ocPieces",
+        "VE.Scope.ReachExamples.ocRule",
+        "VE.Scope.ReachExamples.ocSet",
+        "VE.Scope.ReachExamples.right",
+        "VE.Scope.ReachExamples.rs112",
+        "VE.Scope.ReachExamples.scopeOf",
+        "VE.Scope.ReachExamples.scopesPerChoice",
+        "VE.Scope.ReachExamples.u0218Blocker",
+        "VE.Scope.ReachExamples.udhr",
+        "VE.Scope.ReachExamples.udhr112",
+        "VE.Scope.ReachExamples.udhrAnchors",
+        "VE.Scope.ReachExamples.udhrDoc",
+        "VE.Scope.ReachExamples.udhrPieces"
+      ]
     }
   }
 }
