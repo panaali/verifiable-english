@@ -376,6 +376,8 @@ module VE.Grammar.TableInvariant
 module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
+module VE.Judgments.Chain
+module VE.Judgments.ChainExamples
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
@@ -620,6 +622,8 @@ module VE.Scope.Examples
 module VE.Scope.FarExamples
 module VE.Scope.FarTheorems
 module VE.Scope.Govern
+module VE.Scope.Reach
+module VE.Scope.ReachExamples
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsLemmas
@@ -641,6 +645,7 @@ module VE.Senses.Document
 module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
+module VE.Senses.Flip
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
