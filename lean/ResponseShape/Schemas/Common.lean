@@ -417,10 +417,13 @@ def environment : Shape :=
               obj,
               .object [] (some (ref "#/$defs/environment_predicate"))]),
             ("soft", n [obj, .equals "/environment/vocabulary/soft"]),
-            ("rights", n [obj, .equals "/environment/vocabulary/rights"])],
+            ("rights", n [obj, .equals "/environment/vocabulary/rights"]),
+            -- `acts@0`'s block, the request's (the soft view of an `acts@0` norms frame, ap-1bg)
+            ("acts", n [obj, .equals "/environment/vocabulary/acts"])],
           .allOf [
             .ite (.onCase (ref "#/$defs/request_block/soft")) (.required ["soft"]) (.bool true),
-            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true)]])]])
+            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true),
+            .ite (.onCase (ref "#/$defs/request_block/acts")) (.required ["acts"]) (.bool true)]])]])
 
 def request_block : Def :=
   .group (some "Selectors over the request case: its environment's vocabulary declares the block.") [
@@ -433,7 +436,12 @@ def request_block : Def :=
       obj,
       .required ["environment"],
       props [
-        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["rights"]])]])]])]
+        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["rights"]])]])]]),
+    ("acts", n [
+      obj,
+      .required ["environment"],
+      props [
+        ("environment", n [obj, .required ["vocabulary"], props [("vocabulary", n [obj, .required ["acts"]])]])]])]
 
 def file : File where
   name := "common.json"
@@ -490,5 +498,13 @@ def file : File where
     ("route_path_error", .schema route_path_error),
     ("environment", .schema environment),
     ("request_block", request_block)]
+
+/- `environment` and `request_block` as `tools/response_schemas.py` renders them, pinned by their digests (ap-1bg:
+the `acts` block equal to the request's, required exactly when the request has one). -/
+#guard (render "common.json" 64 environment).toOption.map (hash ·.compress) == some 57628893804780194
+#guard ((match request_block with | .group _ es => es.map fun (e : String × Shape) => e.2 | .schema s => [s]).map
+  fun (s : Shape) =>
+  (render "common.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 3083592046191586682, some 13337872115853545753, some 16337170350225756421] : List (Option UInt64))
 
 end ResponseShape.Schemas.Common

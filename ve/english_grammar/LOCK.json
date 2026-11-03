@@ -1,13 +1,13 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "37",
+ "actions_version": "38",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "c006b1d40d125153f1329daa092278ec2bd2ec8423d20f7c2923da61e25e1389",
   "lean/VE/EnglishGrammar/Advice.lean": "a5b8fbf8dfc23f8d689b10b8c1053365385335955078d04148c62140ac9ff79f",
   "lean/VE/EnglishGrammar/Catalogue.lean": "1a2ee6f5dd19d990936dc6bd8ede723931b41be14e0e5ac0b39edf075aa338b6",
   "lean/VE/EnglishGrammar/Diagnose.lean": "43bd2820caf60652bc0a03497e1d52591a79c01ee6575e8ef88960ac3c8701b9",
   "lean/VE/EnglishGrammar/Encode.lean": "c68b8627d4e6edc12b8bb270ff52fb96382966403c22df38bbda8b99865d131f",
-  "lean/VE/EnglishGrammar/Evaluative.lean": "c90652bb487c0d9132233780f94fd22ea573a4128044d9c835773daa4ef9611a",
+  "lean/VE/EnglishGrammar/Evaluative.lean": "b325b4a1cb01fbbc1216acfe0f24bb5713aa11a49fea396ab23282cb62374d57",
   "lean/VE/EnglishGrammar/Fixed/Alternatives.lean": "e892f23e98920ee2d01d75ed7891d3096487f394f28610e4ad444edd007edfb1",
   "lean/VE/EnglishGrammar/Fixed/Norms.lean": "2d3112543e5d395eb092fd83c744e64789af461a6c4ed49c82719e1b70439f23",
   "lean/VE/EnglishGrammar/Fixed/Order.lean": "1436122b3e5f80fa5eee0869fc5d318d8a5983529d88a23d8a2b255a63237269",
