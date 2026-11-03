@@ -180,12 +180,14 @@ def _reserved_name():
 
 @pytest.mark.parametrize("command", ["coverage", "render", "readings"])
 @pytest.mark.parametrize(("document", "refused", "says"), [
-    # Lean refuses a null `completions` as outside its JSON reader.
+    # Lean refuses a null `completions` as outside its JSON reader, and a repeated profile as outside the gate.
     (lambda: chain_document(COMPLY, completions=None), "CheckerUnavailable", "answered only by Lean's document mode"),
+    (lambda: text(chain_front(COMPLY, profiles=[*CHAIN["profiles"], "norm-defaults@0"]),
+                  CHAIN["units"][COMPLY]["body"].encode()), "CheckerUnavailable", "answered only by Lean's document mode"),
     # The layered route's own refusals, which the retained loader did not read at load (rows45 item 5).
     (lambda: _many_rules(250), "ResourceLimit", "ResourceLimit: rules"),
     (_reserved_name, "VEError", "InvalidInput: reserved name unsaid__x"),
-], ids=["null-completions", "limit", "reserved-name"])
+], ids=["null-completions", "repeated-profile", "limit", "reserved-name"])
 def test_a_document_lean_refuses_is_refused_on_every_path(document, refused, says, command, tmp_path):
     """Each load-only command gets Lean's refusal of a document the retained loader accepted at load."""
     found = answers(document(), tmp_path, ())[command]
