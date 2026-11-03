@@ -1,0 +1,4 @@
+VE/Events/RouteExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/NormDefaults/PacksExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Events/RouteExamples.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/NormDefaults/PacksExamples.lean; rerun tools/lean_statements.py
