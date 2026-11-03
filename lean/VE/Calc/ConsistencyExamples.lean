@@ -114,6 +114,11 @@ def noEnclosure (e : Expr) : Bool := match encloseC Work.maxWork .tiesUp inA e 0
   .mul e2048 e2048, .div e2048 (.lit (1 / 10 ^ 2048)), .pow e2048 2, .pow (.lit (1 / 10 ^ 2048)) 2].all noEnclosure
 #guard [Expr.mul (.mul e2048 e2048) big, .add big (.mul e2048 e2048), .pow (.mul e2048 e2048) 1,
   .div (.lit 1) (.mul e2048 e2048)].all noEnclosure
+-- Either endpoint past the limit is enough: x printed with no places has [x − 1/2, x + 1/2].
+def edge (d : Int) : Bool := match encloseC Work.maxWork .tiesUp [("x", ⟨d, 0⟩)] (.val "x") 0 with
+  | some (none, _) => true
+  | _ => false
+#guard edge (10 ^ 4096 / 2) && edge (-(10 ^ 4096 / 2)) && !edge (10 ^ 4096 / 2 - 1) && !edge (-(10 ^ 4096 / 2 - 1))
 -- Past the hold an operation costs its visit alone: nothing above the held node is charged, so nothing is computed.
 #guard (encloseC Work.maxWork .tiesUp inA (.pow (.mul e2048 e2048) 1) 0).map (·.2) =
   (encloseC Work.maxWork .tiesUp inA (.mul e2048 e2048) 0).map (·.2 + 1)

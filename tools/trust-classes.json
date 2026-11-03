@@ -17518,6 +17518,7 @@
         "VE.Calc.ConsistencyExamples.chain",
         "VE.Calc.ConsistencyExamples.d0IsNot",
         "VE.Calc.ConsistencyExamples.e2048",
+        "VE.Calc.ConsistencyExamples.edge",
         "VE.Calc.ConsistencyExamples.ge",
         "VE.Calc.ConsistencyExamples.hundred",
         "VE.Calc.ConsistencyExamples.hw",
