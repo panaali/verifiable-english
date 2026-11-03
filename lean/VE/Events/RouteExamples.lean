@@ -232,9 +232,18 @@ def premiseCount : Nat := ((decoded envOf).toOption.map fun L => (VE.NormDefault
   | .error _ => false)
 
 -- With another pack's premise in `X`: the count is the whole of `premisesX`, the soft premise among it.
+def excEnv : Json := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
+def excNorms : Json := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ [VE.Defaults.Fixtures.un "s"]) ++ "]")
+def excElaborated : Json := answer ((caseOf "norm-defaults-elaborate" excEnv).setObjVal! "norms" excNorms)
+-- The other packs' arrays stay in the answer, with their rows: soft's one exception premise, rights' limitation.
+#guard ((excElaborated.getObjValD "soft").getArr?.toOption.map (·.size)) == some 1
+#guard ((excElaborated.getObjValD "rights").getArr?.toOption.map (·.size)) == some 0
+#guard ((((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) ==
+  ((((answer (rightsCase (rightsEnv none rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) &&
+  ((((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size) |>.getD 0) > 0
 def excCase (c : VE.Formula) : Json :=
-  let e := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
-  let n := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ [VE.Defaults.Fixtures.un "s"]) ++ "]")
+  let e := excEnv
+  let n := excNorms
   let bound : Json := Id.run do
     let .ok L := decodeLayered ((caseOf "k" e).setObjVal! "norms" n) | return .null
     let .ok canonical := VE.NormDefaults.Wire.canonicalEnvironmentJsonU e | return .null
@@ -245,9 +254,8 @@ def excCase (c : VE.Formula) : Json :=
       ("conclusion_meaning_id", .str (meaning c)), ("trace", parse "{\"rule\":\"close\"}")]
   (replayCase e bound c).setObjVal! "norms" n
 def excCount : Nat :=
-  let e := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
-  ((decodeLayered ((caseOf "k" e).setObjVal! "norms" (excCase inPack |>.getObjValD "norms"))).toOption.map fun L =>
-    ((VE.NormDefaults.Wire.softLabelledU L.U L.D).length, (VE.NormDefaults.Wire.premisesX L.U L.X []).length)).getD (0, 0) |>.2
+  ((decodeLayered ((caseOf "k" excEnv).setObjVal! "norms" excNorms)).toOption.map fun L =>
+    (VE.NormDefaults.Wire.premisesX L.U L.X []).length).getD 0
 #guard (answer (excCase inPack)).getObjValD "valid" == .bool true
 #guard (answer (excCase inPack)).getObjValD "premises" == toJson excCount && excCount == premiseCount + 1
 #guard (match VE.Events.replayEventsEntailment (excCase inPack) with
