@@ -126,6 +126,10 @@ import VE.Discourse.Run
 import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Discourse.ComposeKeys
+import VE.Discourse.Compose
+import VE.Discourse.ComposeExamples
+import VE.Service.ComposedAdmissionExamples
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
 import VE.RightClauses.Tree
@@ -194,6 +198,7 @@ import VE.Judgments.Status
 import VE.Judgments.Undeclared
 import VE.EnglishGrammar.Evaluative
 import VE.Judgments.Examples
+import VE.Judgments.ChainExamples
 import VE.Question.Properties
 import VE.Question.Examples
 import VE.Question.Run
@@ -201,6 +206,7 @@ import VE.Question.Moved
 import VE.Question.Frames
 import VE.Question.Fixtures
 import VE.Question.Spans
+import VE.Commands.Examples
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -282,6 +288,8 @@ import VE.Scope.Run
 import VE.Scope.RunExamples
 import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
+import VE.Scope.Reach
+import VE.Scope.ReachExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
@@ -298,6 +306,8 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.Defaults.Uniform
+import VE.Defaults.UniformExamples
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone

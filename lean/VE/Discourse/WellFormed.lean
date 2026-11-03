@@ -91,10 +91,10 @@ def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).b
 /-- The unit carries an active reading set: its readings are its meaning (W2 drops its content). -/
 def setUnit (D : DDoc) (u : String) : Bool := D.sets.any (·.unit == u)
 
-/-- A slot position (1.4): a unit with meaning (content or an active reading set) or a group
-span is read by a derivation, so a pronoun or demonstrative in it is a slot. -/
+/-- A slot position (1.4): a unit with meaning (content, a chain route's JSON content (14.3 step 6) or an
+active reading set) or a group span is read by a derivation, so a pronoun or demonstrative in it is a slot. -/
 def slotUnit (D : DDoc) (u : String) : Bool :=
-  (contentOf D u).isSome || setUnit D u || (groupedUnits D).contains u
+  (contentOf D u).isSome || D.chain.contains u || setUnit D u || (groupedUnits D).contains u
 
 /-- 4.1(4): a location binding's target exists: an anchor of the table (`DanglingAnchor`), a
 nonempty list of source units (`UnresolvedReference`) that its content name, if any, lists
@@ -225,9 +225,9 @@ def uncoveredSurface (D : DDoc) (u : String) : Option (Nat × Nat) :=
   (discovered D u).find? fun r => !(recordedBytes D u).contains r
 
 /-- Every reference surface of a unit with meaning is recorded (`UnrecordedSlot: <unit>: [a, b)`,
-prose bytes, the Python text). -/
+prose bytes, the Python text). A unit whose content is a chain route's JSON has meaning too (14.3 step 6). -/
 def coveredOk (D : DDoc) (u : String) : Except String Unit :=
-  if contentUnit D u then match uncoveredSurface D u with
+  if contentUnit D u || D.chain.contains u then match uncoveredSurface D u with
     | some r => .error ("UnrecordedSlot: " ++ u ++ ": [" ++ toString r.1 ++ ", " ++ toString r.2 ++ ")")
     | none => .ok ()
   else .ok ()

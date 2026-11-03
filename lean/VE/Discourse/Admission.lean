@@ -545,6 +545,11 @@ def bindingsOk (D : DDoc) (res : VE.Route.Admission.Admitted) (bound : String �
           | .error e => .error e
         | none => .ok ()]]
 
+/-- 4.1(3), 1.6: no constant other than a document name has the document sort. -/
+def documentSortOk (rv : Wire.RouteVocabulary) (K : Manifest) : Except String Unit :=
+  req (rv.vocabulary.constants.all fun (c, s) => s != K.documentSort || K.documents.any (·.name == c))
+    ("InvalidInput: document sort " ++ K.documentSort ++ " has other constants")
+
 /-- The validity-free core of a `@2` admission: everything W2 sees is computed from it. -/
 structure CoreResult where
   base : VE.Route.Admission.Admitted
@@ -563,8 +568,7 @@ def admitCore (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
   let be := baseEnvironment environment
   let data := bp.contains "data@0"
   req (K.definitionsVersion == envId) ("StaleTarget: definitions@" ++ K.definitionsVersion)
-  req (rv.vocabulary.constants.all fun (c, s) => s != K.documentSort || K.documents.any (·.name == c))
-    ("InvalidInput: document sort " ++ K.documentSort ++ " has other constants")
+  documentSortOk rv K
   wellFormed D
   Loader.explicitOk (D.status.map fun (u, _) => (u, unitStatus D u)) front.explicit
   let boundAll : String → Option VE.Formula := fun u =>
@@ -710,6 +714,9 @@ def outcomeWith (check : List String → Json → Wire.RouteVocabulary → Json 
     | .ok ps, .ok rv => outcomeOf (check ps env rv p)
     | .error e, _ => .rejected e
     | _, .error e => .rejected e
+
+/-- The nesting budget the discourse route admits a document with (moved from `Discourse/Run.lean`, 14.5). -/
+def fuelBudget : Nat := 5
 
 /-- The discourse admission with a nesting budget: the second phase checks other documents
 one level down, each under its own environment. -/
