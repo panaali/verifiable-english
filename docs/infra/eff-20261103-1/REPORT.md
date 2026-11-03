@@ -17,7 +17,7 @@ no `refs/notes/ve-gate-result`. So `base_durations` finds nothing, `durations_so
 moved. The me-8 leg planned 5 × 10492.3 s but measured 3658 / 2434 / 2621 / 5636 / 9690 pytest-seconds per shard
 (`evidence/legs.json`, below).
 
-## Diff summary (`git diff --stat main...HEAD`: 15 files; the code is in the first five)
+## Diff summary (`git diff --stat main...HEAD`: 16 files; the code is in the first five below)
 
 - `tools/gate.py`:
   - `record_file_durations(path)` (l.651) reads a gate record file. It reads at most `MAX_DURATIONS_RECORD_BYTES`
