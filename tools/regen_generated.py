@@ -253,6 +253,8 @@ NOT_REGENERATED = {
     "tools/lean_first_oracle.py": "batch 0 oracle, recorded once",
     "tools/semantic_inventory.py": "reads ~/code/ve-webapp and ~/code/ve-bench: not derived from this tree",
     "tools/relay_mutation_gate.py": "--record re-records gate fixtures from a test run; the gate reads answers live",
+    "tools/bench/suite_tail.py": "measured data: `durations --record` reads gate records into tools/test-durations.json, "
+                                 "which profiled runs and gate records measure (tools/test_schedule.py)",
     "tests/probe_matrix.py": "frozen Stage 0 baseline with a pinned runtime hash",
     "conformance/wire_contract_golden.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
     "conformance/wire_contract_faults.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
