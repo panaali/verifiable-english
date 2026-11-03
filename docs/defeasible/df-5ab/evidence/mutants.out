@@ -1,0 +1,59 @@
+control: 0 failures
+S6 VE.Defaults.forcedAllOf: FAILS 2 guards
+    #guard holds dμ' fun L => forced L (sit "assistant" 1 ["cond_a", "cond_b"]) [] [] == some 
+    #guard holds dγ fun L => forced L M1 [] [] == some []
+F1 VE.Defaults.forcedAllOf: FAILS 1 guards
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+F2 VE.Defaults.forcedAllOf: FAILS 2 guards
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dlam fun L =>
+F3 VE.Defaults.forcedAllOf: FAILS 2 guards
+    #guard holds dμ' fun L => forced L (sit "assistant" 1 ["cond_a", "cond_b"]) [] [] == some 
+    #guard holds dγ fun L => forced L M1 [] [] == some []
+F4 VE.Defaults.forcedAllOf: FAILS 4 guards
+    #guard holds dlam fun L => forced L (sit "operator" 13 []) [] [] == none &&
+    #guard holds dα fun L => forced L M1 [] [((reg L "x_permitted", [a0]), false)] == none
+    #guard holds dwide fun L => forced L (sit "o" 1000 []) [] [] == none
+    #guard holds dlam fun L =>
+F5 VE.Defaults.forcedAllOf: FAILS 7 guards
+    #guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc "g1" (el "operator" 0)] &&
+    #guard holds dμ' fun L => forced L (sit "assistant" 1 ["cond_a", "cond_b"]) [] [] == some 
+    #guard holds dγ fun L => forced L M1 [] [] == some []
+    #guard holds dδ fun L => forced L M1 [] [] == some []
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []
+    #guard holds dlam fun L =>
+F6 VE.Defaults.forcedAllOf: FAILS 1 guards
+    #guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []
+F7 VE.Defaults.forcedAllOf: FAILS 1 guards
+    #guard holds dlam fun L =>
+F8 VE.Defaults.forcedAllOf: FAILS 3 guards
+    #guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc "g1" (el "operator" 0)] &&
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dlam fun L =>
+P1 VE.Defaults.forcedAllOf: FAILS 3 guards
+    THEOREM forcedAll_sound
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dlam fun L =>
+P2 VE.Defaults.DefaultCompletion: FAILS 8 guards
+    THEOREM dc_of_min
+    THEOREM dc_of_min
+    THEOREM dc_of_min
+    THEOREM min_of_dc
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultCompletion_below
+P3 VE.Defaults.DecLe: FAILS 11 guards
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultCompletion_below
+    THEOREM defaultCompletion_below
+    THEOREM defaultCompletion_below
+    THEOREM forced_everywhere
+ALL MUTANTS FAIL THEIR GUARDS
