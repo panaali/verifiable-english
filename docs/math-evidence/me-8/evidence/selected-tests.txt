@@ -1,0 +1,26 @@
+# me-8 selected tests: zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, at bd6cd04ee (tree as committed), exit 0
+# plan (uv run python tools/select_tests.py --base $(git merge-base HEAD main)): 102/531 test units
+SHARD 2/6: exit 0 in 532.0 s; 19 units, 19 passed
+SHARD 1/6: exit 0 in 723.8 s; 20 units, 20 passed
+SHARD 3/6: exit 0 in 757.9 s; 19 units, 19 passed
+SHARD 4/6: exit 0 in 879.5 s; 20 units, 20 passed
+SHARD 6/6: exit 0 in 1044.6 s; 15 units, 15 passed
+SHARD 5/6: exit 0 in 1034.4 s; 17 units, 17 passed
+[gha-select 01:27:15Z] summary: selected tests ran on the Claude cloud (6 shards, run me-8-bd6cd04e-t667818); exit=0; 1417s
+
+# after the fix 7e6733b8c (points built when tried, charged): zsh mac-pytest.sh --select -- --base bd6cd04ee --run at 7e6733b8c, exit 0
+# plan (uv run python tools/select_tests.py --base bd6cd04ee): 101/531 test units
+SHARD 2/4: exit 0 in 744.2 s; 28 units, 28 passed
+SHARD 1/4: exit 0 in 934.9 s; 27 units, 27 passed
+SHARD 3/4: exit 0 in 1168.6 s; 28 units, 28 passed
+SHARD 4/4: exit 0 in 1693.0 s; 26 units, 26 passed
+[gha-select 02:52:34Z] summary: selected tests ran on GitHub Actions (4 shards, run me-8-baf40f71-t672471); exit=0; 1883s
+
+# after the fix of the review's F1 (hold, node limit, pass charge): zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run at 36c1db95b, exit 0
+# plan (uv run python tools/select_tests.py --base $(git merge-base HEAD main)): 102/531 test units
+SHARD 1/5: exit 0 in 704.5 s; 23 units, 23 passed
+SHARD 2/5: exit 0 in 761.4 s; 22 units, 22 passed
+SHARD 3/5: exit 0 in 954.4 s; 21 units, 21 passed
+SHARD 4/5: exit 0 in 1037.0 s; 22 units, 22 passed
+SHARD 5/5: exit 0 in 1422.9 s; 22 units, 22 passed
+[gha-select 05:55:34Z] summary: selected tests ran on GitHub Actions (5 shards, run me-8-36c1db95-t683749); exit=0; 1585s

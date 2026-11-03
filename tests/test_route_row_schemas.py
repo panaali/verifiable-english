@@ -36,7 +36,7 @@ from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Inva
 ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "tests/data/route-cases.jsonl"
 ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
-               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc", "cardinality", "scope")
+               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc", "cardinality", "scope", "document")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
@@ -175,7 +175,10 @@ def test_dropped_retyped_or_emptied_fields_are_rejected(genuine):
     # the admitted request by readings_verdicts._check_answer (and mutated in
     # test_a_mutated_verdicts_answer_is_unavailable); a JSON shape alone cannot
     # distinguish that request from an ordinary enumerated readings answer.
-    assert set(accepted) == {("readings-route", "readings-verdicts", "drop decided_units")}, accepted[:10]
+    # A document row's report is optional (`document.json`): the relay refuses a row without the one `check` asked for
+    # (`tests/test_cardinality_answer.py::test_a_document_row_answers_the_case_it_asked`).
+    assert set(accepted) == {("readings-route", "readings-verdicts", "drop decided_units"),
+                             ("document", None, "drop cardinality")}, accepted[:10]
     assert set(checked) >= set(ROUTE_MODES) and min(checked.values()) > 0
 
 
@@ -377,10 +380,7 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 _SPLIT_CASE = "readings-route.json#/$defs/elaborate_components/properties/components/items/properties/"
 OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
                 "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties",
-                *(_SPLIT_CASE + name for name in ("environment", "document", "checked")),
-                # The projected environment (VE.Senses.projectedJson): the relay reads it whole as an Environment and
-                # binds its environment_id and the lexicon's to it (ve.backends.senses); its typed shape is sn-b6b's.
-                "senses.project.json#/$defs/projection/anyOf/0/properties/environment"}
+                *(_SPLIT_CASE + name for name in ("environment", "document", "checked"))}
 
 
 def open_objects(directory=DIRECTORY):

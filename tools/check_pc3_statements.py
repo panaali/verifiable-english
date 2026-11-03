@@ -1,4 +1,4 @@
-"""Compare PC-3's Lean declarations with the approved Lean blocks of docs/spec/profile-composition.md 1.2 to 1.5
+"""Compare PC-3's Lean declarations with the approved Lean blocks of docs/spec/profile-composition.md 1.2 to 1.6
 (build checklist 17).
 
 Every declaration of those blocks is compared with the one Lean declaration of that kind and name in the files PC-3
@@ -10,8 +10,12 @@ PC-7b's and PC-4b's, so until they land its last clause is `| _ => False` in pla
 
 from pathlib import Path
 import re
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+from check_readings_defaults_statements import proof_cut  # noqa: E402
+
 SPEC = ROOT / "docs/spec/profile-composition.md"
 SOURCES = [ROOT / "lean/VE/Compose" / name for name in ("Dispatch.lean", "Stack.lean", "Contract.lean")]
 KINDS = ("theorem", "def", "structure", "inductive")
@@ -20,7 +24,8 @@ STOP = re.compile(r"^(?:\s*$|(?:theorem|def|structure|inductive|end|namespace|op
 LATER = {"ActsFaithful", "ActsPreserves", "StackRuns", "ReadingsFaithful", "readingsFaithful", "RewriterFacts",
          "VE.Discourse.caseManifest", "VE.Discourse.effectContent", "VE.Discourse.withEffectContent",
          "ResolvedEffect", "PairFacts", "stack_evidence", "stackRuns_all", "LayerFacts", "layer_evidence",
-         "layer_admitted"}
+         "layer_admitted", "fullEnvX", "BaseAdmissibleXV", "DocumentExpansionXV", "EntailsXV", "acceptanceXV",
+         "entailsXV_constraint", "countermodelXV"}
 STAGED = {"RouteFacts": ('| ["acts@0", "scope@0"] =>', "| _ => False")}
 
 
@@ -31,13 +36,13 @@ def declarations(code: str) -> dict[tuple[str, str], list[str]]:
         stop = STOP.search(code, code.find("\n", start.end()) + 1)
         body = code[start.start():stop.start() if stop else len(code)]
         if start[1] == "theorem":
-            body = body.split(":=", 1)[0]
+            body = body[:proof_cut(body)]
         out.setdefault((start[1], start[2]), []).append(re.sub(r"\s+", " ", body).strip())
     return out
 
 
 def approved() -> dict[tuple[str, str], list[str]]:
-    section = SPEC.read_text().split("### 1.2 ", 1)[1].split("### 1.6 ", 1)[0]
+    section = SPEC.read_text().split("### 1.2 ", 1)[1].split("### 1.7 ", 1)[0]
     return declarations("\n".join(re.findall(r"```lean\n(.*?)```", section, re.S)))
 
 
