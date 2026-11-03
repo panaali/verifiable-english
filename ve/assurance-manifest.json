@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41744,
+    "total_lines": 41747,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1436,12 +1436,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1008,
-        "sha256": "3908d8db4079460afc3fc4ffbb2c74aa379bcf526de7774ee110fb75a12f040f",
+        "lines": 1011,
+        "sha256": "6255650542a69f1d2fcb10d343cea19f2bbb284eae16a12c6f77510c59d9477f",
         "ranges": [
           [
             1,
-            1008
+            1011
           ]
         ],
         "declarations": [
@@ -2278,7 +2278,9 @@
       "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it",
       "lean/VE/Scope/Reach.lean": "`Pinned.rightOf` reads which right a `right` or `right_lines` unit content names (rights 3.2) with getObjValD/getStr?; `withReach` and `withBarReach` read only that and the reach; the contents are rights@0's to decode, never scope's; no route calls it yet (sc-6b)",
       "lean/VE/Scope/ReachExamples.lean": "fixtures only: SC-6's #guard checks (scope spec 7.8) build UDHR part documents, rights contents, reading sets and u0218.s18's rule as JSON literals and run `withReach`, `withBarReach` and `governSets` on them; no runtime JSON handling",
-      "lean/VE/Defaults/UniformExamples.lean": "fixtures only: #guard checks of F9.1 to F9.7 (docs/spec/profile-composition.md 4) build defaults-* request JSON and read the kind table's answers; no runner path"
+      "lean/VE/Defaults/UniformExamples.lean": "fixtures only: #guard checks of F9.1 to F9.7 (docs/spec/profile-composition.md 4) build defaults-* request JSON and read the kind table's answers; no runner path",
+      "lean/VE/Commands/Examples.lean": "test fixtures only: ci-1's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
+      "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row"
     }
   },
   "plan_operations": {
