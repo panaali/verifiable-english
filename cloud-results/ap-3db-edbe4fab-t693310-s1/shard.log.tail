@@ -1,0 +1,172 @@
+shard 2/6: 77 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [110/1084] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [125/1084] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [133/1084] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4967 lines cut; full output in shard-full.txt)
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded autocfg v1.5.1
+  Downloaded itoa v1.0.18
+  Downloaded block-buffer v0.10.4
+  Downloaded generic-array v0.14.7
+  Downloaded memchr v2.8.3
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded sha2 v0.10.9
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded zmij v1.0.23
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.29s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.80s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_speech_polar_lean.py::chunk(3/4), tests/test_acts_vocab_mutants.py::chunk(4/4), tests/test_english_evidence.py::chunk(2/4), tests/test_english_evidence.py::chunk(3/4)
+recording 77 units with 4 jobs in /tmp/ve-select-run-y1tk5kk2
+  tests/test_acts_lexical.py: exit 1 in 1.0 s, 336 functions
+  tests/test_trust_budget.py: exit 1 in 57.5 s, 270 functions
+chunked tests/test_english_evidence.py: 2 of 4 chunks, exit 0, 1088.6 s in all, longest chunk 549.9 s; 39 passed, 0 skipped, 0 failed; each of its 39 tests ran in exactly one chunk
+chunked tests/test_acts_vocab_mutants.py: 1 of 4 chunks, exit 0, 359.7 s in all, longest chunk 359.7 s; 160 passed, 0 skipped, 0 failed; each of its 160 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 512.2 s in all, longest chunk 512.2 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+FAILED tests/test_trust_budget.py (exit 1): tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree; log /tmp/ve-select-run-y1tk5kk2/tests__test_trust_budget.py.log
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/trust_map.py... +14, VE/NormDefaults/Wire.lean +11, VE/NormDefaults/Run.lean +11, VE/Readings/Wire.lean +6, VE/Acts/Decode.lean +1\n').returncode
+
+tests/test_trust_budget.py:37: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree - AssertionError: class lines: K 994, S 12982, D 17530, G 34719, C 12729, P 102287, T 31890, o 18374
+  D/G groups: D[V] 15249, D[R] 1522, D[I] 759, G[V] 30481, G[R] 3897, G[I] 341
+  tied 1267, unclassified 0, trusted 58583 (K + S + untied [V] + unclassified), 231505 lines in 735 files
+  against 50c6842f84f7: K +0, S +15, D +144, G +25, tied +60, unclassified +0, trusted +122
+    VE/Norms/Wire.lean: trusted +46
+    VE/Acts/Wire.lean: trusted +18
+    VE/Norms/Run.lean: trusted +15
+    VE/NormDefaults/Run.lean: trusted +12
+    VE/NormDefaults/Wire.lean: trusted +11
+    VE/Acts/Decode.lean: trusted +6
+    VE/Readings/Wire.lean: trusted +6
+    VE/Acts/DecodeTwins.lean: trusted +4
+    VE/NormDefaults/Admission.lean: trusted +2
+    VE/Norms/Admission.lean: trusted +2
+  note: 50c6842f84f7 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 994, 'S': 12967, 'V': 44500} (the merge train's --write has not run since)
+  BUDGET against 50c6842f84f7: S grew from 12967 to 12982 (signed allowance 0): VE/Acts/Decode.lean +5, VE/Acts/DecodeTwins.lean +4, VE/Norms/Admission.lean +2, VE/NormDefaults/Admission.lean +2, VE/Norms/Run.lean +1, VE/NormDefaults/Run.lean +1
+  BUDGET against 50c6842f84f7: V grew from 44500 to 44607 (signed allowance 0): VE/Norms/Wire.lean +46, VE/Acts/Wire.lean +18, VE/Norms/Run.lean +14, VE/NormDefaults/Wire.lean +11, VE/NormDefaults/Run.lean +11, VE/Readings/Wire.lean +6, VE/Acts/Decode.lean +1
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/trust_map.py... +14, VE/NormDefaults/Wire.lean +11, VE/NormDefaults/Run.lean +11, VE/Readings/Wire.lean +6, VE/Acts/Decode.lean +1\n').returncode
+1 failed, 6 passed in 55.27s
+FAILED tests/test_acts_lexical.py (exit 1): tests/test_acts_lexical.py::test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check; log /tmp/ve-select-run-y1tk5kk2/tests__test_acts_lexical.py.log
+.F........                                                               [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-p38gejs9)
+
+=================================== FAILURES ===================================
+_ test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check _
+
+    def test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check():
+        # ap-1b: the row landed; A1 (97 B) needs its fixed phrase for its "and"
+        regulated = {"role": "permission", "default": "allow", "act": A1}
+        profiles = ["acts@0", "norms@0", "relational-fol@0"]
+>       assert message(answer(regulated, profiles)) == (
+            "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase")
+E       AssertionError: assert 'InvalidInput...clared frames' == 'InvalidInput... fixed phrase'
+E         
+E         - InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase
+E         + InvalidInput: act phrase for heard has no reading under the declared frames
+
+tests/test_acts_lexical.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_acts_lexical.py::test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check - AssertionError: assert 'InvalidInput...clared frames' == 'InvalidInput... fixed phrase'
+  
+  - InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase
+  + InvalidInput: act phrase for heard has no reading under the declared frames
+1 failed, 9 passed in 0.32s
+recorded 73 units for tree 339d43e4f8; 3 others left to the static graph until they run (3 with only some of their chunks here); 2 failed
+SHARD 2/6: exit 1 in 1603.2 s; 77 units, 75 passed
