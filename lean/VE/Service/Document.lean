@@ -2741,6 +2741,25 @@ def verdictFields (a : Json) : Json :=
   | .arr ss => a.setObjVal! "reading_sets" (.arr (ss.map setVerdictFields))
   | _ => a
 
+/-- No unit of the case states a `status` (2b). -/
+def noUnitStatus (j : Json) : Bool :=
+  match frontOf j with
+  | some (front, _) => match front.getObjValD "units" with
+    | .arr us => us.all fun u => (u.getObjVal? "status").toOption.isNone
+    | _ => true
+  | none => true
+
+/-- The case with every unit's authored `status` removed, every other value as written (2c); the front matter is
+written again compactly (`Json.compress`), the body as written. -/
+def withoutStatuses (j : Json) : Json :=
+  match frontOf j with
+  | none => j
+  | some (front, body) =>
+    let front := match front.getObjValD "units" with
+      | .arr us => front.setObjVal! "units" (.arr (us.map (dropKey "status")))
+      | _ => front
+    j.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+
 /-- Each unit's id and status, in unit order. -/
 def unitStatuses (a : Json) : List (String × String) :=
   match a.getObjValD "units" with

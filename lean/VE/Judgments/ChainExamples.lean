@@ -293,4 +293,56 @@ def udhrLim (profiles : List String) : Option (List (String × VE.Formula)) := d
     | .error _ => false
   | none => false
 
+/-! pc-1g: F1.3b, F1.3c, F1.3i, F1.3j and F1.3k on F1.1's document (spec 5.1). -/
+
+/-- A case with its front matter's first unit edited by `f`. -/
+def editUnit (j : Json) (f : Json → Json) : Json :=
+  match frontOf j with
+  | some (front, body) => match (front.getObjValD "units").getArrVal? 0 with
+    | .ok u => j.setObjVal! "document" (.str ("---\n" ++
+        (front.setObjVal! "units" (Json.arr #[f u])).compress ++ "\n---\n" ++ body))
+    | .error _ => j
+  | none => j
+
+def f11 : Json := case layer [reading "r0" []] []
+
+-- F1.3b: a unit `meaning_id` wrong under both environments is refused on both sides (the exchange keeps it).
+#guard let j := editUnit f11 (·.setObjVal! "meaning_id" (.str (String.mk (List.replicate 64 '0'))))
+  [refusal j, refusal (withoutJudgments j)].all (· == some "unit meaning id does not match content")
+/-- F1.3c: F1.1 with its judgment binary, declared with repeated argument sorts (`["situation", "situation"]`). -/
+def f13c : Json := match frontOf f11 with
+  | some (front, body) =>
+    let two := Lean.toJson ["situation", "situation"]
+    let record := ((front.getObjValD "open_terms").getArrVal? 0).toOption.getD .null
+    let env := front.getObjValD "environment"
+    let voc := env.getObjValD "vocabulary"
+    let env := env.setObjVal! "vocabulary" (voc.setObjVal! "predicates" ((voc.getObjValD "predicates").setObjVal!
+      "good_judgment" (Json.mkObj [("arguments", two), ("description", "good")])))
+    let unit := ((front.getObjValD "units").getArrVal? 0).toOption.getD .null
+    let norm := ((unit.getObjValD "content").getObjValD "norm").setObjVal! "guard" (Json.arr #["and",
+      u "evaluating_inputs", Json.arr #["binary", "good_judgment", Json.arr #["var", 0], Json.arr #["var", 0]]])
+    let front := ((front.setObjVal! "open_terms" (Json.arr #[record.setObjVal! "arguments" two])).setObjVal!
+      "environment" env).setObjVal! "units" (Json.arr #[unit.setObjVal! "content" (Json.mkObj [("norm", norm)])])
+    f11.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+  | none => f11
+
+-- F1.3c: admitted with the layer; the twin refused by W2, the one relaxation (`layerRelaxes`).
+#guard refusal f13c == none && (refusal (withoutJudgments f13c)).any layerRelaxes.contains
+-- F1.3i: an authored OPEN; its status-omitted form succeeds with equal verdict fields and statuses (2c).
+#guard let j := editUnit f11 (·.setObjVal! "status" "OPEN")
+  !noUnitStatus j && noUnitStatus (withoutStatuses j) && match checkDocSets j, checkDocSets (withoutStatuses j) with
+    | .ok a, .ok b => verdictFields a == verdictFields b && unitStatuses a == unitStatuses b &&
+        unitStatuses a == [("u0052.s01", "OPEN")]
+    | _, _ => false
+-- F1.3j, F1.3k: an authored status the original request's own validation refuses, never a refusal of the layer.
+#guard [(Json.str "CHECKED", "unit status contradicts content, meaning, or active reading set"),
+    ((5 : Nat), "invalid unit status")].all fun (v, e) =>
+  refusal (editUnit f11 (·.setObjVal! "status" v)) == some e && !layerRefusal e
+-- 2d: the layer's own refusals and gate texts are accepted, validation texts are not.
+#guard layerRefusal "JudgmentListedUnused: u0036.s05 reasonable" &&
+  layerRefusal "UnsupportedProfile: judgments@0 requires documents@1" &&
+  layerRefusal "CheckerUnavailable: judgments@0 with alternatives@0 needs its composed Lean route" &&
+  !layerRefusal swapClash && !layerRefusal "unit meaning id does not match content" &&
+  !layerRefusal "UnsupportedProfile: rights@0 is required"
+
 end VE.Judgments.ChainExamples
