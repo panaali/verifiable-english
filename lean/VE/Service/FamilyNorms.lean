@@ -310,7 +310,7 @@ def folCase (j : Json) : Except String Json := do
   let profiles ← VE.Route.Gate.profilesOf environment
   let view ← folView environment
   if kind == "norms-elaborate" then
-    let src ← VE.Norms.Wire.decodeSource view norms (flags := true) (joined := false)
+    let src ← VE.Norms.Wire.decodeSource view norms (flags := true)
     return VE.Route.Wire.ok id (VE.Norms.Flagged.regenerated src)
   if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
     let witness ← j.getObjVal? "witness"
@@ -320,7 +320,7 @@ def folCase (j : Json) : Except String Json := do
       ((j.setObjVal! "environment" view).setObjVal! "witness" (witness.setObjVal! "model" model))
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
       ("target", .str w.target.1), ("targets", toJson ((VE.Norms.targets src.D).map (·.1)))]
-  let src ← VE.Norms.Wire.decodeSource view norms (flags := true) (joined := false)
+  let src ← VE.Norms.Wire.decodeSource view norms (flags := true)
   if kind == "norms-certificate" then
     let canonical ← VE.Norms.Wire.canonicalEnvironmentJson environment
     let regenerated := VE.Norms.Flagged.flagPremises src ++ VE.Norms.background src.D ++

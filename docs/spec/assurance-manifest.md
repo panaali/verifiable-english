@@ -136,11 +136,11 @@ through the pinned `Gate.decodeEnvelope`.
 |---|---:|---:|---|---|
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
 | `lean/VE/Alternatives/Replay.lean` | 333 | 333 | 1–333 | `dc387661ef1e…` |
-| `lean/VE/Alternatives/Wire.lean` | 423 | 423 | 1–423 | `7909c50c60df…` |
+| `lean/VE/Alternatives/Wire.lean` | 423 | 423 | 1–423 | `77bab0654eb0…` |
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 727 | 727 | 1–727 | `8a645b0f5269…` |
 | `lean/VE/Attribution/Preflight.lean` | 457 | 457 | 1–457 | `fa6956756459…` |
-| `lean/VE/Attribution/Wire.lean` | 515 | 515 | 1–515 | `b6092ed716a1…` |
+| `lean/VE/Attribution/Wire.lean` | 515 | 515 | 1–515 | `5dd9512e2a22…` |
 | `lean/VE/Bridge.lean` | 335 | 288 | 14–301 | `4f7b5313509e…` |
 | `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `d81be730d087…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
@@ -185,7 +185,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Service/Document.lean` | 2094 | 2094 | 1–2094 | `28c21ddae6fb…` |
 | `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
-| `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `ee6c49f9e03c…` |
+| `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `418076df3e0a…` |
 | `lean/VE/Service/Graph.lean` | 256 | 256 | 1–256 | `e27c762fff7a…` |
 | `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
 | `lean/VE/Service/ReadingsChoices.lean` | 257 | 257 | 1–257 | `9881463bf760…` |
