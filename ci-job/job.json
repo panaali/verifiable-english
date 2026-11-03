@@ -1,0 +1,25 @@
+{
+ "job": "jt-3.s8of8-63a72168",
+ "head": "f4361a3724c331e5c21f25ba39633f3a3e164831",
+ "argv": [
+  "jt-3.s8of8-63a72168",
+  "f4361a3724c331e5c21f25ba39633f3a3e164831",
+  "50c6842f84f750ae9b3882025cc847af1cff93cf",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-055940b99ea8.tar.zst",
+  "737a008e33d607779824e671308fc9ecc89c80f453a454ab1b606756b117b6b9",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/judgment-terms/jt-3/trust-mutants-allow.json",
+  "--test",
+  "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean",
+  "--test",
+  "lean/VE/EnglishGrammar/JudgmentRunExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "8/8",
+  "--jobs",
+  "4"
+ ]
+}
