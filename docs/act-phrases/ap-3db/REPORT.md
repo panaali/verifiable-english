@@ -169,8 +169,15 @@ its file, definition and the failing `#guard`).
 - One row is a proof kill (`readings-guard-dropped`): the branch it cuts is reached by no input while the frame
   decoder is lexical, so `readings_lexical_only` is what fails.
 - Item 1's seeded bug, "the entry point put back on the source", is `norms-entry-source` and `defaults-entry-source`.
-- When it ran: at `d26ecfc67`. Since then the product definitions have changed only in `lookup_split`'s statement (a
-  proof) and in the revert of the four gate-refused calls (section 7).
+- When it ran: at `d26ecfc67`, with the three service-side reruns at `aa1fd9ada`. Since then the product definitions
+  have changed only in three ways:
+  - `lookup_split`'s statement (a proof);
+  - the revert of the four gate-refused calls (section 7);
+  - `actsOf` and `joinedActs` moved after the lexical decoder in `Norms/Wire.lean`, with their text unchanged, and
+    `NormDefaults.Run.runCase` restored beside `runCaseIn`.
+
+  Every planted string still occurs exactly once on the final tree (checked by script: 43 of 43). The `#guard` line
+  numbers in mutants.json are those of that tree.
 - Dropped row: `source-profile-lost` cannot be planted past `sourceOf`'s embedded proof. Three other `sourceOf` rows
   cover the definition.
 
@@ -183,7 +190,24 @@ its file, definition and the failing `#guard`).
 - Restored: 7 passed.
 - No Python or Rust product code changed, so there is no Python or Rust product bug to seed.
 
-**trust_mutants:** TMLINE
+**trust_mutants:** the final run, on `02a15ce6e` (clean), ran on ve-mac-1. Command:
+`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Service/ActsExamples.lean --test lean/VE/Acts/DecodeExamples.lean --allow … --rescore … --json …`.
+- It was a full run: the rescore reused nothing, because the inputs had changed.
+- Result: 29 definitions, 160 mutants: **57 KILLED, 0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 91 ALLOWED, 0 NOT RUN**, exit 0
+  ([trust-mutants.json](trust-mutants.json)).
+- Run 1 is kept as `trust-mutants-run1.json`. It had no `--test`, so it saw no fixture outside the mutated module's
+  directory, and `lookup_split`'s `match` statement stopped the proof cutter (39 UNKNOWN on `splitPredicates`).
+- Run 2 is kept as `trust-mutants-run2.json`. Both of run 1's causes were fixed before it, and its survivors are what
+  [trust-mutants-allow.json](trust-mutants-allow.json) answers, with one reason per definition and operator:
+  - **`Prop` statement predicates** (`Elaborated`, `ElaboratedDoc`, `SourceDecodedIn`, `AdmissionAnswerIn`,
+    `AdmissionAnswerUIn`): no check can evaluate them. The reason names the proofs each mutant breaks, as R16 asks.
+  - **Their base-named wrappers:** the original theorem refuses the mutant.
+  - **The profile-list operators** (`take 1`, `dropLast`, `reverse.take 1`, `drop 1`) are equivalent: `ps` is `[]`, or
+    a sorted unique list where acts@0 sorts first and norms@0 after it.
+  - **`underActs := true`** is equivalent: `sourceOf_lexical`.
+  - **`elaborateSource`'s frames** are equivalent, because no step of `elaborateMap` reads `ActsDoc.V`.
+  - **The base's `flags`/`displayConstants` arguments** sit on lines this item extends with `joined`.
+  - **Mutants that do not elaborate**, and `plainU`'s proof terms.
 
 ## 6. Trust, size, tests and checks
 
@@ -199,7 +223,7 @@ trusted +122.
 - Recorded with `--allow`, signed by R16 (DELTA row 6); FOLLOW-UPS "## ap-3db" asks for the ties pass.
 
 **Size:** `git diff --numstat $(git merge-base HEAD main)`, hand-written lines, added plus deleted.
-- Lean product 1,327:
+- Lean product 1,336:
   - `Decode.lean` 231;
   - `DecodeTwins.lean` 210 (statements of the twins);
   - the `In` generalisation of 11 route files, about 600;
@@ -207,10 +231,11 @@ trusted +122.
   - the moved `forIn_ok`, 38;
   - the two shape proofs, 45.
 - Fixtures 265 (`DecodeExamples.lean` 132, `ActsExamples.lean` 109, the senses pins 24).
-- Tests 83, `tools/layer_policy.py` 8.
-- Evidence 282 (the seed script 222, `check_statements.py` 41, DELTA 19), and this report.
-- Side tables: `tools/trust-classes.json` 253 and `ve/assurance-manifest.json` 131, reviewed by hand.
-- Total: about 1,970 without the tables. Deliverables (1) to (3) are one safety unit (the task: "even if they alone
+- Tests 97 (the new route test 83, the lexical sweep's cut 9, the D-16 expectation 5).
+- Tools 12: `tools/layer_policy.py` 8, `tools/consolidation-ledger.json` 4. Plan figures 6.
+- Evidence: about 630, counting the seed script, `check_statements.py`, the allow file, DELTA and this report.
+- Side tables: `tools/trust-classes.json` and `ve/assurance-manifest.json`, 392 together, reviewed by hand.
+- Total: about 2,000 hand-written lines without the tables and evidence. Deliverables (1) to (3) are one safety unit (the task: "even if they alone
   pass ~600 lines"), and they alone are most of it. (4) and (5) add about 60 product lines.
 
 **Builds and checks on the final tree:**
@@ -222,7 +247,28 @@ trusted +122.
 - `tests/test_acts_profile.py` passed unchanged, at 372 passed together with the manifest tests before the final pins.
 - `uv run python tools/english_grammar_gen.py --check` passes (version 38).
 
-**Selected tests:** SELLINE
+**Selected tests:** `mac-pytest.sh --select -- --base fe252f79a --run`, then the units it left.
+- First run: it stopped at the cheap units with 5 failures:
+  - `test_acts_lexical.py` expected D-4 on the norms route, which now elaborates (DELTA row 2);
+  - `test_rd9_statements.py` ×3: `tools/check_rd9_sc1_statements.py` pins the approved RD-9 text of
+    `NormDefaults.Run.runCase` (section 7);
+  - `test_trust_budget.py` failed before the allowance was recorded.
+- Second run, on `7ad9b3e11`: 276 units recorded, 2 failed, and 153 not run (`--maxfail 5`). The two failures:
+  - `test_acts_lexical_mutants.py`: the sweep inlines `Lexical.lean`, and `Norms/Wire.lean`'s new import brought a
+    second copy in;
+  - `test_consolidation_tools.py::test_committed_ledger_names_real_declarations`: the ledger did not count the `In`
+    forms.
+- Both were fixed in `02a15ce6e`:
+  - The act reading now follows the lexical decoder in the file, and the sweep's inlined copy ends before it. The
+    sweep's 84 tests pass, with the same ids.
+  - The ledger counts the `In` forms, and the plan's figures for steps 4, 7 and 8b are recomputed (4: 697, 7: 729,
+    8b: 3,719).
+- Final run, on `02a15ce6e`: `mac-pytest.sh -- -q -n 6 <the 153 units> tests/test_acts_lexical_mutants.py
+  tests/test_acts_lexical.py tests/test_rd9_statements.py tests/test_trust_budget.py <the ledger test>` (VM fallback):
+  15,634 passed, 3 skipped, exit 0. Log: `/tmp/ap3db-rest.log`.
+- Earlier runs on `02a15ce6e`'s code: `tests/test_assurance_manifest.py` 139 passed, `test_acts_joined_route.py` and
+  `test_acts_lexical.py` 17 passed.
+- No test in `main-known-red.txt` was hit.
 
 **Not run:** the full gate (the chain runs it), any pilot, AP-7.
 
@@ -257,6 +303,14 @@ trusted +122.
    joined act (guard).
 8. **`singleActsOnly`** (ap-1bd's text match of D-4) stays, unchanged. The new guard behind it is structural
    (`lexicalAct`).
+9. **`NormDefaults.Run.runCase` keeps its approved text.** rd-9-soft-chain.md 6 approves its body word for word
+   (`tools/check_rd9_sc1_statements.py`). `runCaseIn dec` restates its eleven lines at a decoder, and
+   `runCase_eq : runCase = runCaseIn Wire.decodeSourceU` (`rfl`) ties the two (`runCaseIn` is tied by it in the trust
+   table).
+10. **The act grammar is assigned layer 2** (`tools/layer_policy.py`: `VE.Acts.{Wire, Readings, Meaning, Grammar, Read,
+    Syntax, Table, Linearize, Tree}` and the six `VE.Grammar` modules they import), beside AP-1's lexical check,
+    because the norms decoder calls it. `VE.Acts.DecodeTwins` is layer 4, because it states theorems on the runners.
+    `check_lean_imports.py`: "Lean layer graph kept".
 
 ## 8. DELTA
 
@@ -344,4 +398,20 @@ See [DELTA.md](DELTA.md), rows 1 to 6.
 
 ## 11. Commits (`main..HEAD --no-merges`)
 
-COMMITS
+- this report and its evidence lines (the last commit)
+- `bdea9f830` ap-3db evidence: trust_mutants on 02a15ce6e (full run, --test both fixture files, allow file): 57 killed, 91 allowed, 12 invalid, 0 survivor, 0 unknown
+- `02a15ce6e` ap-3db: fixes from the selected run: the lexical sweep's inlined decoder ends before the act grammar (the reading moves after the lexical decoder); the consolidation ledger counts the In
+- `7ad9b3e11` ap-3db: NormDefaults.Run.runCase keeps the approved RD-9 text (runCaseIn beside it, runCase_eq); the lexical test reads D-16 on the elaborating route; R16 allowance S +15, V +107
+- `edbe4fab0` ap-3db: REPORT draft
+- `dc5791cbf` ap-3db: second trust_mutants run (with the fixture files as --test) kept for the rescore
+- `9d02cef9b` ap-3db: the gate-refused paths keep the base's call (the profile gate refuses acts@0 there; guard for the quoted W1 block); trust-mutants allow file; regenerated files
+- `c703481c8` ap-3db: the assurance manifest's decoder total recomputed
+- `7cebb9090` ap-3db: first trust_mutants run kept as trust-mutants-run1.json
+- `aa1fd9ada` ap-3db: lookup_split stated without a match (trust mutants cut its proof); the document gate's guards; S3 comparison under actions_version 38; ties of the new decoders to their theorems;
+- `d26ecfc67` ap-3db: fixtures that tell the frame fields apart, the readings refusal with no frames; seeded-bug script
+- `9dd62357f` ap-3db: the act check and the grammar sit below the norms decoder (layer policy); the plain parts' wordings pinned; assurance pins after review of each range; regenerated files
+- `fac09eaa3` ap-3db: flagged acts@0 fixtures; the helper theorem keeps its statement; trust classes of the new declarations
+- `3df00c12f` ap-3db: English actions_version 38 (EnglishGrammar/Run.lean reads decodeSourceLexical); the sense pins, ask fixtures and generated inventories
+- `daa658e1d` ap-3db: each joined act read once, in the decoder (actsOf on the decoded declarations; canonicalShape reads no act); the trees carried on NormsEnvironment; fixtures at the route's limits
+- `67cad1913` ap-3db: the twins of the reached soundness theorems (DecodeTwins.lean); canonicalShape reads no joined act; the response-shape proofs over each route's decoder; model gate and Background
+- `883064b16` ap-3db: the hook reads joined acts on the elaborating entry points: checkAct, decodeVocab, sourceOf, every norms and norm-defaults entry over its decoder; D-33 by readings_lexical_only; 
