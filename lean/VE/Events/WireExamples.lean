@@ -311,7 +311,8 @@ def linked (ls : List Json) : Json := block.setObjVal! "links" (toJson ls)
 #guard fault (profiled badDate ["events@0", "norms@0", "relational-fol@0"]) == "UnsupportedProfile: events@0 requires norm-defaults@0"
 #guard fault (profiled badDate) == "InvalidDate(nonsense)"
 -- Every refused profile by name, the first of a sorted list ahead of any other row's text; beside the row, the block's.
-#guard VE.Compose.eventsRefused.all fun p => fault (profiled badDate (sortedWith p)) == s!"UnsupportedProfile: events@0 with {p}"
+#guard ["alternatives@0", "closure@0", "data@0", "nary@0", "order@0", "reports@0", "risk@0", "speech-acts@0", "time@0"].all
+  fun p => fault (profiled badDate (sortedWith p)) == s!"UnsupportedProfile: events@0 with {p}"
 #guard fault (profiled badDate ["alternatives@0", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"]) ==
   "UnsupportedProfile: events@0 with alternatives@0"
 #guard ["documents@1", "rights@0", "readings@1", "definitions@0"].all fun p =>

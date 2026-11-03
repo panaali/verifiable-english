@@ -144,6 +144,12 @@ def layered_elaborate : Shape :=
         ("document_hash", str),
         ("base_environment", ref "#/$defs/base_environment")])]
 
+/- et-4b: `base_environment` and `layered_elaborate` as `tools/response_schemas.py` renders them, pinned by their digests
+(the events selector on the constants, the optional `events_premises`). -/
+#guard [base_environment, layered_elaborate].map (fun (s : Shape) =>
+  (render "norm-defaults.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 5141493250304792031, some 3476203141762586412] : List (Option UInt64))
+
 def report_line : Shape :=
   c
     "NormDefaults.Wire.LineU.toJson: one regulated predicate's lines (spec 3.2); `witness` (NormDefaults.Wire.WitnessRow.toJson: the tuple's entity ids and every unsaid table of the checked filled situation) and `value` (NormDefaults.Wire.completedLabel: the completion's value where no author rule decides) exactly on a reachable line."
