@@ -982,7 +982,8 @@ def decodedEnvironment (written : Json) (block : Block) : Except String Env := d
   let lower := if readings then lowerReadings environment else environment
   if readings then
     let _ ← VE.Readings.Wire.decodeEnvironment written
-  if defaults then
+  -- A soft frame is the layered route's, read in `softSource` and `layeredOf`; this decoder is the norms route's.
+  if defaults && !profiles.contains "soft-norms@0" then
     let _ ← VE.NormDefaults.Wire.decodeEnvironmentU lower
   if rights then
     -- The rights route's own decoding of the environment and its block with no units (`checkBlock`'s holders,
@@ -1970,7 +1971,10 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
   let admitted := match E.block with
     -- The route's own admission case (its gates, such as the definitions deferral, then `runAdmit`), as
     -- Python's `admit_document` asks it.
-    | .none => if E.profiles.contains "norm-defaults@0" then
+    | .none => if E.soft && E.profiles.contains "norm-defaults@0" then
+        -- The layered route's own admission (`Admission.softCase`), on the filled tree.
+        VE.NormDefaults.Admission.runAdmissionX "admission" (wireJson 257 E.lower) (wireJson 257 document)
+      else if E.profiles.contains "norm-defaults@0" then
         VE.NormDefaults.Run.runAdmission "admission" E.lower document
       -- A soft-norms document takes the soft route (`admit_soft_document`, the soft relay's wire form), a norm
       -- construct the norms route (`_uses_norms`; batch 16f). Python's relay raises a soft rejection with the soft
