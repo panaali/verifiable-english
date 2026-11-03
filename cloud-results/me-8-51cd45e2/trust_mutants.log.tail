@@ -1,0 +1,19 @@
+trust_mutants: 2 definitions, 15 mutants (15 to run), 4 jobs, base 8d58480372ac
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) body-true: ∃ κ : String → Rat, InBox r inputs κ ∧ ∀ c ∈ outs, c.Holds (values (assign ds (inputs.map Prod.fs... -> True (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) body-false: ∃ κ : String → Rat, InBox r inputs κ ∧ ∀ c ∈ outs, c.Holds (values (assign ds (inputs.map Prod.fs... -> False (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+UNKNOWN lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-empty: inputs -> [] (lean/VE/Calc/Consistency.lean:14: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-empty: inputs.map Prod.fst -> [] (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-first: inputs -> (inputs.take 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-drop-last: inputs -> (inputs.dropLast) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-first: inputs.map Prod.fst -> ((inputs.map Prod.fst).take 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-drop-last: inputs.map Prod.fst -> ((inputs.map Prod.fst).dropLast) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-last: inputs -> (inputs.reverse.take 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-drop-first: inputs -> (inputs.drop 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-last: inputs.map Prod.fst -> ((inputs.map Prod.fst).reverse.take 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Consistency.lean:14 VE.Calc.Consistent (S, trusted) list-drop-first: inputs.map Prod.fst -> ((inputs.map Prod.fst).drop 1) (the proofs it breaks: lean/VE/Calc/Consistency.lean:122, lean/VE/Calc/Consistency.lean:143)
+SURVIVOR lean/VE/Calc/Interval.lean:124 VE.Calc.InBox (S, trusted) body-true: ∀ i ∈ inputs, RoundsTo r i.2 (κ i.1) -> True (the proofs it breaks: lean/VE/Calc/Interval.lean:137, lean/VE/Calc/Consistency.lean:122)
+SURVIVOR lean/VE/Calc/Interval.lean:124 VE.Calc.InBox (S, trusted) body-false: ∀ i ∈ inputs, RoundsTo r i.2 (κ i.1) -> False (the proofs it breaks: lean/VE/Calc/Interval.lean:137, lean/VE/Calc/Consistency.lean:122)
+trust_mutants: 0 KILLED, 14 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 96 s
+trust_mutants: S, trusted: 14 SURVIVOR, 1 UNKNOWN
+trust_mutants: steps: wall plan 8.6 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.2 s, control_probes 2.6 s, mutants 77 s, cleanup 4 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 2.5 s (1), mutant_builds 246.7 s (29), mutant_checks 53.2 s (16)
