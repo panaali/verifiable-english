@@ -365,11 +365,10 @@ def test_each_choices_rows_are_shown_under_its_label(tmp_path, capsys):
 def test_the_proved_statements_are_spec_5_3s_text():
     """The statement gate: `explain_bound` and `explain_rows_iff` are the reviewed text (scope.md 5.3), whitespace aside."""
     from pathlib import Path
+
+    from tests.test_scope_5_4_statements import statement
     root = Path(__file__).resolve().parents[1]
     spec, lean = (root / "docs/spec/scope.md").read_text(), (root / "lean/VE/Scope/Run.lean").read_text()
-
-    def statement(text, name):
-        rest = text[text.index(f"theorem {name} "):]
-        return " ".join(rest[:min(i for i in (rest.find(":="), rest.find("\n\n")) if i >= 0)].split())
     for name in ("explain_bound", "explain_rows_iff"):
+        assert statement(spec, name) is not None, name
         assert statement(lean, name) == statement(spec, name), name
