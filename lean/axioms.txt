@@ -2731,6 +2731,9 @@
 'VE.Judgments.Examples.viewOf_xi' does not depend on any axioms
 'VE.Judgments.admit_first_fault' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.admit_ok_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.blockFormula_null' does not depend on any axioms
+'VE.Judgments.blockFormulas_bar' depends on axioms: [propext]
+'VE.Judgments.blockFormulas_limitation' depends on axioms: [propext]
 'VE.Judgments.correlate_covered' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.correlate_judged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.dependsOnC_remove' depends on axioms: [propext]
@@ -2743,6 +2746,7 @@
 'VE.Judgments.foldlM_ok_length' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.foldlM_ok_mono' depends on axioms: [propext]
 'VE.Judgments.hasPhrase_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.linesFormulas_none' depends on axioms: [propext]
 'VE.Judgments.matches_iff' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.mem_author_holder' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.mem_author_line' depends on axioms: [propext, Quot.sound]
@@ -2765,6 +2769,7 @@
 'VE.Judgments.reserved_generated' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.reserved_reaches_none' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.reserved_rights' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.ruleFormulas_ok' depends on axioms: [propext]
 'VE.Judgments.singleton_infix_iff' depends on axioms: [propext]
 'VE.Judgments.softContent_formulas' does not depend on any axioms
 'VE.Judgments.status_checked' depends on axioms: [propext, Quot.sound]
