@@ -3,10 +3,12 @@
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
 - `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
 - `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
+- `tests/test_calc_consistency.py` — ME-8: consistency of printed numbers (math-evidence spec 8.1; fixtures C-1, R-5, V-6, V-7, V-7b, V-8, S-3 and R-10b's outcomes of 13.2, 13.3 and 13.6).
 - `tests/test_calc_derive.py` — Derivations over rational unknowns in the `calc` mode (math-evidence ME-5, me-5c): spec 13.6's R-3 and R-4 and the plan's physics fixtures H-6, H-6p, H-6n and …
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
 - `tests/test_calc_service.py` — The `calc` service mode (math-evidence ME-2, me-2b): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, and the m…
+- `tests/test_calc_stats.py` — ME-7: exact statistics (math-evidence spec 7; fixtures V-6, V-6r and S-5 of 13.2 and 13.3).
 - `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
 - `tests/test_calendar_regression_w6b.py` — Independent Art.
 - `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
@@ -19,7 +21,6 @@
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
-- `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
@@ -87,4 +88,3 @@
 - `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
 - `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
-- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.

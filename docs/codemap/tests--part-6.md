@@ -1,3 +1,7 @@
+- `tests/test_risk_lean_route.py` — The Lean `ve_risk_route` on the risk@0 stage A fixtures (docs/spec/risk.md 8.1, expectations 8.2).
+- `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
+- `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
+- `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
@@ -11,7 +15,7 @@
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
 - `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c).
+- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
 - `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
@@ -77,8 +81,3 @@
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
 - `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
 - `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
-- `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
-- `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
-- `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
-- `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
-- `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
