@@ -274,7 +274,7 @@ def outputNodes (outs : List Claim) : Option Nat :=
 /-- What one pass over the outputs costs beyond the sizes of its values (spec 3.2: every kind of work charged in
 proportion to its time). A lookup walks the n inputs, about 10 ns a step: the input check makes n of them and each node
 at most one. A node's visit, small values included, takes about 64 steps' time (0.64 µs). At 8 units a step, 2^33 units
-is at most about 20 s of any kind of this work (measured: `docs/math-evidence/me-8/evidence/limit-times.txt`). -/
+is at most about 26 s of any shape measured, under the 60 s deadline (`docs/math-evidence/me-8/evidence/limit-times.txt`). -/
 def passWork (inputs : List (String × Printed)) (nodes : Nat) : Nat :=
   8 * (inputs.length * inputs.length + nodes * (inputs.length + 64))
 
