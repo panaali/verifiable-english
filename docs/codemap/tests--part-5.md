@@ -1,3 +1,4 @@
+- `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
 - `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
 - `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
 - `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
@@ -78,4 +79,3 @@
 - `tests/test_risk_fixtures.py` — risk@0 fixtures of docs/spec/risk.md 8.1 checked against the expectations of 8.2 on the Lean route.
 - `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
 - `tests/test_risk_integration.py` — Risk spec cell fixtures through the Python relay and direct Lean route.
-- `tests/test_risk_lean_route.py` — The Lean `ve_risk_route` on the risk@0 stage A fixtures (docs/spec/risk.md 8.1, expectations 8.2).
