@@ -1099,9 +1099,9 @@ def cardinalityEnv (written : Json) : Except String Env := do
   pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles, w.environmentId, .none, false,
     none, some w⟩
 
-/-- What `judgments@0` does not compose with in this mode (PC-1): the soft chain is read by `UnitContent.judgedIn`;
-the rights chain's reader is pc-1g's. Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
-def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0"]
+/-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by
+`UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
+def judgmentsApart : List String := ["alternatives@0", "risk@0"]
 
 /-- Whether a front matter's units, each unit and its parts as written, hold a norm with exception conditions
 (`exception.sufficient` or `exception.necessary` present and not `[]`). The soft route makes those conditions rules of
@@ -2137,16 +2137,25 @@ def UnitContent.judged : UnitContent → Option VE.Judgments.Content
   | _ => none
 
 /-- PC-1 (4). What a unit reads for judgment dependence: formulas and W1 rules as before (`judged`), a soft rule
-through the soft route's decoder and `softContent`; a rights block reads nothing yet (its reader, `blockFormulas`, is
-pc-1g's, and the mode keeps `rights@0` apart from the layer until then). -/
-def UnitContent.judgedIn (S : Option VE.SoftNorms.Wire.SoftEnvironment) (_R : Option RightsDoc) :
+through the soft route's decoder and `softContent`, a rights block through `blockFormulas` and `andAll`. -/
+def UnitContent.judgedIn (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) :
     UnitContent → Except String (Option VE.Judgments.Content)
   | .soft rule => match S with
     | some se => do
-      let N ← (VE.SoftNorms.Wire.decodeSoftNorm se rule).mapError fun m =>
-        unavailable s!"a soft rule the soft route accepted does not decode again: {m}"
+      -- A rights document's norm unit keeps its `cites` beside the rule; the rule alone is what the route decoded.
+      let N ← match VE.SoftNorms.Wire.decodeSoftNorm se rule with
+        | .ok N => pure N
+        | .error m =>
+          let again := VE.SoftNorms.Wire.decodeSoftNorm se (Json.mkObj [("norm", rule.getObjValD "norm")])
+          again.mapError fun _ => unavailable s!"a soft rule the soft route accepted does not decode again: {m}"
       pure (some (VE.Judgments.softContent N))
     | none => throw (unavailable "a soft rule outside the soft rule source")
+  | .rights block => match R with
+    | some R => do
+      let fs ← (VE.Judgments.blockFormulas R.src.D block).mapError fun m =>
+        unavailable s!"a rights block the rights route accepted does not read again: {m}"
+      pure (some (.formula (VE.Judgments.andAll fs)))
+    | none => pure none
   | c => pure c.judged
 
 theorem judgedIn_legacy (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) (c : UnitContent)
