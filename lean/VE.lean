@@ -283,6 +283,8 @@ import VE.Scope.Run
 import VE.Scope.RunExamples
 import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
+import VE.Scope.Reach
+import VE.Scope.ReachExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
@@ -300,6 +302,8 @@ import VE.Defaults.WireExamples
 import VE.Readings.DefaultVerdicts
 import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
+import VE.Defaults.Uniform
+import VE.Defaults.UniformExamples
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone

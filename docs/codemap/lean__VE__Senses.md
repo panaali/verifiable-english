@@ -5,6 +5,7 @@
 - `lean/VE/Senses/DocumentExamples.lean` — The fixtures of RD-8 (readings-defaults plan, section 6), as `#guard` checks: the senses spec's s1, s9, s16 and s22 as a document's English fences read as `ve …
 - `lean/VE/Senses/Examples.lean` — The acceptance fixtures of docs/spec/senses.md section 8, as `#guard` checks on the built definitions.
 - `lean/VE/Senses/Fixtures.lean` — The fixture dictionaries, environments and lexicons of docs/spec/senses.md section 8, and the summaries the checks of `VE.Senses.Examples` compare by `==`.
+- `lean/VE/Senses/Flip.lean` — Flip models (senses plan 2.6 step 7; spec 2.6, "Flip models").
 - `lean/VE/Senses/Preamble.lean` — The preamble: the lines that choose defaults (docs/spec/senses.md 2.4, 3.2 and 5.3; batch B4).
 - `lean/VE/Senses/Project.lean` — The projection of a dictionary onto S2's lexicon (docs/spec/senses.md 2.5 and 5.3; batch B3).
 - `lean/VE/Senses/Read.lean` — Reading with senses (docs/spec/senses.md 2.6, 3.3 and 5.3; batch B5, on the merged S2 grammar).

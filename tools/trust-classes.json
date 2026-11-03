@@ -9610,7 +9610,8 @@
         "VE.Senses.Run.decodeDefaults",
         "VE.Senses.Run.decodeDictionary",
         "VE.Senses.Run.has",
-        "VE.Senses.Run.lexiconJson"
+        "VE.Senses.Run.lexiconJson",
+        "VE.Senses.Run.flipModelJson"
       ],
       "G[V]": [
         "VE.Senses.Run.candidateJson",
@@ -9628,7 +9629,9 @@
         "VE.Senses.Run.unitJson",
         "VE.Senses.Run.linesProjection",
         "VE.Senses.Run.projectCase",
-        "VE.Senses.Run.projectCaseReported"
+        "VE.Senses.Run.projectCaseReported",
+        "VE.Senses.Run.writtenLines",
+        "VE.Senses.Run.flipJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9640,7 +9643,9 @@
       "G[I]": [
         "VE.Senses.Run.projectionIds",
         "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf"
+        "VE.Senses.Run.usedOf",
+        "VE.Senses.Projection.written",
+        "VE.Senses.SensesOutcome.written"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -17014,7 +17019,14 @@
         "ResponseShape.Schemas.SensesProject.fault",
         "ResponseShape.Schemas.SensesProject.projection",
         "ResponseShape.Schemas.SensesProject.row",
-        "ResponseShape.Schemas.SensesProject.file"
+        "ResponseShape.Schemas.SensesProject.file",
+        "ResponseShape.Schemas.SensesProject.sort",
+        "ResponseShape.Schemas.SensesProject.environment",
+        "ResponseShape.Schemas.SensesProject.profileMembers",
+        "ResponseShape.Schemas.SensesProject.copiedMembers",
+        "ResponseShape.Schemas.SensesProject.copiedVocabulary",
+        "ResponseShape.Schemas.SensesProject.requestHas",
+        "ResponseShape.Schemas.SensesProject.copiedAt"
       ]
     },
     "VE/Senses/RunExamples.lean": {
@@ -17030,7 +17042,28 @@
         "VE.Senses.RunExamples.pin",
         "VE.Senses.RunExamples.projectReq",
         "VE.Senses.RunExamples.src",
-        "VE.Senses.RunExamples.fenced"
+        "VE.Senses.RunExamples.fenced",
+        "VE.Senses.RunExamples.PJ",
+        "VE.Senses.RunExamples.cand",
+        "VE.Senses.RunExamples.funny",
+        "VE.Senses.RunExamples.riddle",
+        "VE.Senses.RunExamples.s2",
+        "VE.Senses.RunExamples.openOf",
+        "VE.Senses.RunExamples.deep",
+        "VE.Senses.RunExamples.readingOf",
+        "VE.Senses.RunExamples.PJ2",
+        "VE.Senses.RunExamples.odd",
+        "VE.Senses.RunExamples.cand2",
+        "VE.Senses.RunExamples.piece",
+        "VE.Senses.RunExamples.chain",
+        "VE.Senses.RunExamples.atLimit",
+        "VE.Senses.Flip.bare",
+        "VE.Senses.RunExamples.dist",
+        "VE.Senses.RunExamples.bareRows",
+        "VE.Senses.RunExamples.wide",
+        "VE.Senses.RunExamples.wideBoth",
+        "VE.Senses.RunExamples.atTuples",
+        "VE.Senses.RunExamples.namesFive"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
@@ -17554,6 +17587,111 @@
         "VE.SoftNorms.ActsFrameExamples.actsOf",
         "VE.SoftNorms.ActsFrameExamples.frame",
         "VE.SoftNorms.ActsFrameExamples.inhP"
+      ]
+    },
+    "VE/Senses/Flip.lean": {
+      "S": [
+        "VE.Senses.flipOn",
+        "VE.Senses.flipModelOf",
+        "VE.Senses.Flip",
+        "VE.Senses.flipPair",
+        "VE.Senses.candidatePairs",
+        "VE.Senses.flipsOf",
+        "VE.Senses.FlipModel",
+        "VE.Senses.FlipModel.finite",
+        "VE.Senses.tuples",
+        "VE.Senses.flipValues"
+      ],
+      "G[V]": [
+        "VE.Senses.termCore",
+        "VE.Senses.formulaCore"
+      ]
+    },
+    "VE/Scope/Reach.lean": {
+      "G[R]": [
+        "VE.Scope.Pinned.withBarReach",
+        "VE.Scope.Pinned.wholeRights"
+      ],
+      "G[V]": [
+        "VE.Scope.Pinned.rightOf"
+      ],
+      "S": [
+        "VE.Scope.Pinned.rightNames",
+        "VE.Scope.Pinned.withReach"
+      ]
+    },
+    "VE/Scope/ReachExamples.lean": {
+      "T": [
+        "VE.Scope.ReachExamples.bar114",
+        "VE.Scope.ReachExamples.barAt",
+        "VE.Scope.ReachExamples.barRights",
+        "VE.Scope.ReachExamples.candidates",
+        "VE.Scope.ReachExamples.contents",
+        "VE.Scope.ReachExamples.declared",
+        "VE.Scope.ReachExamples.err",
+        "VE.Scope.ReachExamples.g17",
+        "VE.Scope.ReachExamples.gov",
+        "VE.Scope.ReachExamples.lim111",
+        "VE.Scope.ReachExamples.limitation",
+        "VE.Scope.ReachExamples.limitationAt",
+        "VE.Scope.ReachExamples.oc",
+        "VE.Scope.ReachExamples.ocAnchors",
+        "VE.Scope.ReachExamples.ocComposed",
+        "VE.Scope.ReachExamples.ocGuard",
+        "VE.Scope.ReachExamples.ocPieces",
+        "VE.Scope.ReachExamples.ocRule",
+        "VE.Scope.ReachExamples.ocSet",
+        "VE.Scope.ReachExamples.right",
+        "VE.Scope.ReachExamples.rs112",
+        "VE.Scope.ReachExamples.scopeOf",
+        "VE.Scope.ReachExamples.scopesPerChoice",
+        "VE.Scope.ReachExamples.u0218Blocker",
+        "VE.Scope.ReachExamples.udhr",
+        "VE.Scope.ReachExamples.udhr112",
+        "VE.Scope.ReachExamples.udhrAnchors",
+        "VE.Scope.ReachExamples.udhrDoc",
+        "VE.Scope.ReachExamples.udhrPieces"
+      ]
+    },
+    "VE/Defaults/Uniform.lean": {
+      "G[R]": [
+        "VE.Defaults.providerConditions",
+        "VE.Defaults.providerE1d",
+        "VE.Defaults.providerRefusal"
+      ],
+      "S": [
+        "VE.Defaults.ConditionsExact",
+        "VE.Defaults.DfltUniformSound",
+        "VE.Defaults.dfltUniform",
+        "VE.Defaults.dfltUniformLabelled",
+        "VE.Defaults.dfltUniformOf",
+        "VE.Defaults.leastUniform",
+        "VE.Defaults.noneOr",
+        "VE.Defaults.packConditions"
+      ]
+    },
+    "VE/Defaults/UniformExamples.lean": {
+      "T": [
+        "VE.Defaults.UniformFixtures.abSoft",
+        "VE.Defaults.UniformFixtures.over",
+        "VE.Defaults.UniformFixtures.dAB",
+        "VE.Defaults.UniformFixtures.piSoft",
+        "VE.Defaults.UniformFixtures.piEnv",
+        "VE.Defaults.UniformFixtures.piR",
+        "VE.Defaults.UniformFixtures.dπ",
+        "VE.Defaults.UniformFixtures.medical",
+        "VE.Defaults.UniformFixtures.key",
+        "VE.Defaults.UniformFixtures.cond",
+        "VE.Defaults.UniformFixtures.wPack",
+        "VE.Defaults.UniformFixtures.with_",
+        "VE.Defaults.UniformFixtures.askK",
+        "VE.Defaults.UniformFixtures.refusedP",
+        "VE.Defaults.UniformFixtures.leastUDec",
+        "VE.Defaults.UniformFixtures.otherKinds",
+        "VE.Defaults.UniformFixtures.dS",
+        "VE.Defaults.UniformFixtures.srcConds",
+        "VE.Defaults.UniformFixtures.d2T",
+        "VE.Defaults.UniformFixtures.shown"
       ]
     }
   }
