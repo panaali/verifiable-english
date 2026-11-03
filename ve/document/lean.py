@@ -331,7 +331,7 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
               "meaning_id": u.get("meaning_id"), "status": u["status"],
               **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in row["units"]]
     return {"meta": meta, "environment": ids.w6, "source": source, "source_id": row["source_id"],
-            "document_id": row["document_id"], "directory": path.parent, "units": units, "norms": None,
+            "directory": path.parent, "document_id": row["document_id"], "units": units, "norms": None,
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
             "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
             "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted}}
