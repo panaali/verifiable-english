@@ -200,4 +200,25 @@ def f13lWith (n : Nat) : Json :=
     (["a1", "w", "a1"], [("a1", "a1", "a2"), ("w", "a1", "a2")])].all fun (ids, pairs) =>
   swapInjectiveH ids pairs == swapInjectiveOf ids pairs (exchangeOf pairs)
 
+/-! pc-1g, the statement stop (docs/profile-composition/pc-1g/REPORT.md): `swap_correct` as the spec states it is
+false. One key `K` stated in two reading sets for two contents, `K` the layer identity of the second set's model:
+the exchange is one-to-one on the values (`swapInjective`), `(K, b₁, b₂)` is a pair with `K = b₁`, and the exchange
+of `K` (by its first pair, the first set's) is `K`, not `b₂`. No digest collision is needed. -/
+
+/-- `case` with a second reading set `s2` on the same unit, stating its model `m₂` under `k₂`. -/
+def twoSets (k₁ : String) (m₁ : Json) (k₂ : String) (m₂ : Json) : Json :=
+  let j := case layer [reading "r0" []] [(k₁, m₁)]
+  match frontOf j with
+  | some (front, body) =>
+    let s₁ := (readingSetsIn front).headD .null
+    let s₂ := (s₁.setObjVal! "id" "s2").setObjVal! "models" (Json.mkObj [(k₂, m₂)])
+    j.setObjVal! "document" (.str ("---\n" ++ (front.setObjVal! "reading_sets" (Json.arr #[s₁, s₂])).compress ++
+      "\n---\n" ++ body))
+  | none => j
+
+#guard let j := twoSets (ids true).1 (model false) (ids true).1 (model true)
+  swapInjective j && (statedIds j).contains (ids true).1 && match statedPairs j with
+    | [_, (x, v₁, v₂)] => x == v₁ && (exchange j x == v₂) == false
+    | _ => false
+
 end VE.Judgments.ChainExamples
