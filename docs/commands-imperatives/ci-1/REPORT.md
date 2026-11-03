@@ -1,8 +1,8 @@
 # ci-1 report: the Lean command reader
 
-**Status:** first part built; proved, fixtures pass, trust mutants exit 0; no signature reserved. **Head:** the commit of this file, on feature/ci-1, not synced with main (70 commits behind at c417dfc72; the merge train syncs, R12).
+**Status:** first part built; proved, fixtures pass, trust mutants exit 0; no signature reserved. **Head:** the commit of this file, on feature/ci-1, not synced with main (92 commits behind at ec141e96a; the merge train syncs, R12).
 **What changed:** `lean/VE/Commands/` (reader, texts, fixtures), `readingsBound` in `Wire.lean`, imports, layer, generated lists. No mode, so no answer changes; nothing calls the reader until CI-2.
-**Open:** size is 978 hand-written Lean and policy lines against the DRI's "about 900" (reviews/dri-decisions-20261102-ci-1-size.md); the about 80 over are the fixtures R16's mutants required; the side table and evidence add 456 more. `readCommand_typed` is ci-1b's.
+**Open:** size is 1016 hand-written Lean and policy lines against the DRI's "about 900" (reviews/dri-decisions-20261102-ci-1-size.md); the about 120 over are the fixtures R16's mutants required, 38 of them the review fix's; the side table and evidence add 456 more. `readCommand_typed` is ci-1b's.
 **Signature:** none needed. V +131 under R16; K +0.
 
 `FOLLOW-UP: ci-1b the rest of CI-1: readCommand_typed with hw, candidate_guard, candidate_fills, guard_ambiguous, guard_limit, guard_unread, refused_classed, F0's rows, the other 50 web segments`
@@ -15,10 +15,10 @@
 | (2) `readingsBound`, the `64` of `readingCandidates`, no new literal | yes; only that line and the `def` change in `SpeechActs/` | `git diff main...HEAD -- lean/VE/SpeechActs`; `#guard`s on 0, 1, 2, 64, 65 readings |
 | (3) Statements proved | `readCommand_prefix`, `_one_iff`, `_many`, `_complete`, `_bound`, `candidate_reads_back`, `readCommand_typed_of_facts` | `python3 lean/audit.py`: PASS, 736 files, 8208 theorems, the allowed axioms only; `grep sorry`: none |
 | (4) Diagnostics, section 4, in order | all 14 rows | `Examples.lean`, the W rows; `Texts.lean` holds every text |
-| (5) Fixtures | W1 to W15, W17 to W31, W32's shape on `E_web`; S3's two rows on `E_web`; each limit at its boundary | 66 `#guard`s, `lake build VE.Commands.Examples`. W16 (F0) and the other 50 segments are ci-1b's |
+| (5) Fixtures | W1 to W15, W17 to W31, W32's shape on `E_web`; S3's two rows on `E_web`; each limit at its boundary | 71 `#guard`s, `lake build VE.Commands.Examples`. W16 (F0) and the other 50 segments are ci-1b's |
 | (6) Imports, layer, inventories | yes | `uv run python tools/regen_generated.py --check`: 35 entries; `tools/check_lean_imports.py`: kept |
 
-Limits: `maxWordingBytes` 400/401, `tupleCount` 4096/4097 (64 regulated predicates, 67 and 68 constants), `readingsBound` 64/65, a 100,000-byte wording stops at `limit`. Each value is read once: `readCommand` computes the phrase matches, act matches and condition once and passes them on, and no act match means no condition read (`#guard` on `conditionOf`). The one second read is the spec's: `unreadOf` reads the sentence again at `workBudget`, for its text, on a refusal only. Open: `eraseDups` is quadratic in act matches times guards, at most 4096 by the tuple cap and one guard in practice, since no condition over a V4 lexicon has two derivations (spec W17).
+Limits: `maxWordingBytes` 400/401, `tupleCount` 4096/4097 (64 regulated predicates, 67 and 68 constants), `readingsBound` 64/65, a 100,000-byte wording stops at `limit`. Each value is read once: `readCommand` computes the phrase matches, act matches and condition once and passes them on, and no act match means no condition read (`#guard` on `conditionOf`). The one second read is the spec's: `unreadOf` reads the sentence again at `workBudget`, for its text, on a refusal only. Open: `eraseDups` is quadratic in act matches times guards, with act matches at most 4096 by the tuple cap. A condition can have two derivations: V4 lets modal predicates share a form (`Lexicon.lean:489-492`). Across sorts (`goSorts`) one reading fails decode and the reader says `IllTyped`. In one sort, with acts the speech wire keeps apart by case (`goCase`: `{0} go`, `{0} Go`), both decode: two guards, and `many`. Both are `#guard`s under W17. Whether any other condition has two guards is not proved.
 
 **A/B:** no record to compare: `git diff --name-only main...HEAD -- ve rust` lists only `ve/assurance-manifest.json`, a pin, and no mode or schema changes.
 
@@ -55,7 +55,15 @@ It reduces to `readCommand_typed_of_facts` by a proof of `declared se = true` fr
 
 `uv run python tools/trust_map.py --check`: PASS, K +0, S +0, V +131, all `VE/Commands/Read.lean`, unclassified +0. Nine definitions are tied (`candidates`, `parts`, `roleOf`, `filled`, `fold`, `phraseMatches`, `ofForce`, `readCommand`, `Reading.command`, to `candidate_reads_back`, `mem_phraseMatches`, `mem_ofForce`, `readCommand_one_iff`, `readCommand_typed_of_facts`); diagnostics are G[R].
 
-`trust-mutants.json`, at fadfe0bed (no Lean file changed since): exit 0, 248 mutants over 16 definitions: 173 killed, 24 invalid, 51 allowed, 0 left. The allow file gives each reason; each of the 18 raw survivors was checked against its reason, and one false reason (that the decoder refuses `{0} {1}`) was replaced by a fixture.
+`trust-mutants.json`, at ec141e96a (a full run, `--rescore` found the classes file changed; no Lean file changed since): exit 0, 248 mutants over 16 definitions: 175 killed, 24 invalid, 49 allowed, 0 left. The allow file gives each reason; each of the 16 raw survivors was checked against its reason, and two false reasons were replaced by fixtures: that the decoder refuses `{0} {1}`, and that `guardsOf` never holds two guards (M094 and M175, now killed at `Examples.lean:167`). The reason "a decoded environment has at most two argument sorts" was rerun on three sorts: the decoder says `invalid signature`.
+
+## Review fixes (ci-1-review.final.md)
+
+F1 (A): the report and the allow file said a V4 lexicon gives no condition two derivations. It does, and the review's proposed reason, that one reading always fails decode, is false too: `goCase` gives two guards. So the two allow entries are gone and the fixtures kill their mutants; no reason was restated. Probe F1 passes. It is not a permanent test, since it greps batch prose (D4, R11); the `#guard`s under W17 are the regression.
+
+`FOLLOW-UP: ci-rev spec W17's "grammar's actions separate" is false: goSorts and goCase are its counterexamples`
+`FOLLOW-UP: ci-rev the speech wire's DuplicateActRole compares acts exactly, so {0} go and {0} Go both decode and share a modal form; the reader answers many, no guess; decide whether the wire should refuse them`
+`FOLLOW-UP: ci-2 the review's F3 to F8 (C), F3 for its A/B, and goCase's row there`
 
 ## Pilot bytes
 
@@ -63,7 +71,7 @@ Estimate, nothing claimed: the plan's +9 units / +273 B on the web fixture is CI
 
 ## Tests
 
-`mac-pytest.sh --select`: 4 failed at 40d288a40, all in `tests/test_assurance_manifest.py` (deviation 3); after the fix `uv run pytest -q tests/test_assurance_manifest.py`: 139 passed. No test in main-known-red.txt failed. `tools/layer_policy.py` is in the diff, so selection widens to the policy's rule; the cause is the task's own edit. Not run: the full gate (the chain's); `gate_collection --check --prebuilt`: 0 added, 0 refused. Shared files: `tools/layer_policy.py` overlaps feature/cmp-s4 and feature/pc-1; `lean/VE.lean`, `lean/VE/Audit.lean`, `tools/trust-classes.json` and `ve/assurance-manifest.json` also changed on main, for the merge train's sync.
+`mac-pytest.sh --select` at ec141e96a: exit 0, 417 units, no failed id. No test in main-known-red.txt failed. After it only this report and the mutant evidence changed. `tools/layer_policy.py` is in the diff, so selection widens to the policy's rule; the cause is the task's own edit. Not run: the full gate (the chain's); `gate_collection --check --prebuilt`: 0 added, 0 refused. Shared files: `tools/layer_policy.py` overlaps feature/cmp-s4 and feature/pc-1; `lean/VE.lean`, `lean/VE/Audit.lean`, `tools/trust-classes.json` and `ve/assurance-manifest.json` also changed on main, for the merge train's sync.
 
 ## Self-review against BUILDER-CHECKLIST
 
