@@ -135,6 +135,8 @@ import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples
 import VE.Defaults.Premises
 import VE.Defaults.Route
+import VE.Defaults.Uniform
+import VE.Defaults.UniformExamples
 import VE.Defaults.Wire
 import VE.Defaults.Zone
 import VE.Definitions.Alias
@@ -2165,6 +2167,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.MeaningFixtures.switchesOff_π
 #print axioms VE.Defaults.MeaningFixtures.typed_π
 #print axioms VE.Defaults.MeaningFixtures.unsaid_π
+#print axioms VE.Defaults.UniformFixtures.decodeLayered_uniform
 #print axioms VE.Defaults.Wire.DefaultsView.hD
 #print axioms VE.Defaults.Wire.DefaultsView.hR
 #print axioms VE.Defaults.Wire.DefaultsView.hU
@@ -2207,6 +2210,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.collision_unranked
 #print axioms VE.Defaults.cond_declared
 #print axioms VE.Defaults.cond_free
+#print axioms VE.Defaults.conditionsExact_legacy
 #print axioms VE.Defaults.coneAtomVX_off
 #print axioms VE.Defaults.consistent_atomV
 #print axioms VE.Defaults.count_allTuples
@@ -2230,6 +2234,8 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.default_entails_minimal
 #print axioms VE.Defaults.default_entails_minimal_of
 #print axioms VE.Defaults.defaults_model_default_base
+#print axioms VE.Defaults.dfltUniformSound_iff
+#print axioms VE.Defaults.dfltUniform_legacy
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
 #print axioms VE.Defaults.excepted_inj
@@ -2237,6 +2243,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.followsForm_short
 #print axioms VE.Defaults.forcedAll_sound
 #print axioms VE.Defaults.forced_everywhere
+#print axioms VE.Defaults.leastUniform_legacy
 #print axioms VE.Defaults.least_le
 #print axioms VE.Defaults.length_allTuples
 #print axioms VE.Defaults.length_filter_ne
@@ -2247,8 +2254,10 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.min_of_dc
 #print axioms VE.Defaults.node_arity
 #print axioms VE.Defaults.openAtomsCount_eq
+#print axioms VE.Defaults.packConditions_nil
 #print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.pair_facts
+#print axioms VE.Defaults.precedence_apart
 #print axioms VE.Defaults.premisesX_split
 #print axioms VE.Defaults.questionDiag_none
 #print axioms VE.Defaults.realized_C
