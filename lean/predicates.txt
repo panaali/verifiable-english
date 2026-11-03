@@ -666,6 +666,7 @@ module VE.Service.ComposedAdmissionExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.DocumentChain
+module VE.Service.DocumentChainChecks
 module VE.Service.DocumentChainExamples
 module VE.Service.EnglishRun
 module VE.Service.Family
