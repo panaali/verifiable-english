@@ -76,8 +76,9 @@ The first sweep's kills all read UNKNOWN: each guard through `check` walks about
 
 ## Tests and gates
 
-- Selected: SELECTED-RESULT
-- `uv run python tools/relay_mutation_gate.py` rc 0: 46 routes, 148,135 mutants, 0 failures, before the identity rework and the merge (`review-ready` reruns it).
+- Selected: `zsh .../mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on the Mac at 9deb1aefa: exit 0, 478 units, 0 failed, 4,660 s. Only this report and `mutants.json` changed after it. Two earlier runs at earlier commits stopped or failed on this item's own faults (the identity lint, the layer map, the seeded fault's text, the pending allowance, the schema corpus), each fixed and its ids rerun (205 passed).
+- `uv run python tools/relay_mutation_gate.py` rc 0 on the final code: 46 routes, 148,149 mutants, 0 failures (`service:document` 13 fixtures, `service:cardinality` 13 fixtures).
+- Not run: the full gate (the chain runs it on the final HEAD), and Rust (no Rust changed).
 - `python3 lean/audit.py --check`: PASS (737 source files, on the merged tree). `tools/regen_generated.py --check`: 35 entries.
 
 ## Size
