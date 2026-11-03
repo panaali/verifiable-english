@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 1/6: 77 units; commands: ['python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_lean_imports.py
+Lean layer graph kept (751 modules, 22 reviewed legacy edges)
++ lake build
+⚠ [95/256] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/256] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/256] Replayed VE.Readings.Superpose
+... (13262 lines cut; full output in shard-full.txt)
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded serde v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded typenum v1.20.1
+  Downloaded digest v0.10.7
+  Downloaded num-bigint v0.4.8
+  Downloaded cpufeatures v0.2.17
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded zmij v1.0.23
+  Downloaded autocfg v1.5.1
+  Downloaded generic-array v0.14.7
+  Downloaded quote v1.0.47
+  Downloaded memchr v2.8.3
+  Downloaded version_check v0.9.5
+  Downloaded block-buffer v0.10.4
+  Downloaded itoa v1.0.18
+  Downloaded serde_json v1.0.151
+  Downloaded num-integer v0.1.47
+  Downloaded syn v3.0.6
+  Downloaded proc-macro2 v1.0.107
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.41s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.06s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_acts_vocab_mutants.py::chunk(3/3), tests/test_trust_mutants.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(3/4)
+recording 77 units with 4 jobs in /var/tmp/cct/ve-select-run-5mpcvf1e
+  tests/test_assurance_manifest.py: exit 1 in 28.5 s, 1508 functions
+  tests/test_trust_ratchet.py: exit 1 in 9.3 s, 309 functions
+stopping after 5 failed tests (--maxfail 5)
+chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 102.7 s in all, longest chunk 102.7 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole, tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified, tests/test_assurance_manifest.py::test_full_file_decoder_pins_cover_the_current_file, tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned; log /var/tmp/cct/ve-select-run-5mpcvf1e/tests__test_assurance_manifest.py.log
+        lean = ROOT / "lean"
+        found = {path.relative_to(ROOT).as_posix() for path in lean.rglob("*.lean")
+                 if ".lake" not in path.parts and JSON_USE.search(path.read_text())}
+        decoders = {entry["file"] for entry in MANIFEST["lean_decoders"]["files"]}
+        other = MANIFEST["lean_decoders"]["other_json"]
+        assert not decoders & set(other)
+>       assert found == decoders | set(other), "\n".join(sorted(found ^ (decoders | set(other))))
+E       AssertionError: lean/VE/Service/DocumentChain.lean
+E         lean/VE/Service/DocumentChainChecks.lean
+E         lean/VE/Service/DocumentChainExamples.lean
+E       assert {'lean/Englis...es.lean', ...} == {'lean/Englis...es.lean', ...}
+E         
+E         Extra items in the left set:
+E         'lean/VE/Service/DocumentChainExamples.lean'
+E         'lean/VE/Service/DocumentChainChecks.lean'
+E         'lean/VE/Service/DocumentChain.lean'
+E         Use -v to get more diff
+
+tests/test_assurance_manifest.py:641: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned
+FAILED tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole
+FAILED tests/test_assurance_manifest.py::test_full_file_decoder_pins_cover_the_current_file
+FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
+4 failed, 135 passed in 27.87s
+FAILED tests/test_trust_ratchet.py (exit 1): tests/test_trust_ratchet.py::test_committed_budget_passes_its_check; log /var/tmp/cct/ve-select-run-5mpcvf1e/tests__test_trust_ratchet.py.log
+        """The committed file is in the AR-4 format and the tree is within its base and the allowances
+        introduced since (the base is the merge base with `main`, or the first parent on main's tip).
+        The tree's per-file counts are what the gate record accepts."""
+        data = json.loads(trust_map.BASELINE.read_text())
+        assert trust_map.parse_baseline(data)[1] == []
+        assert list(data) == ["comment", "budget", "allowances"]
+>       assert trust_map.main(["--check", "--files", str(tmp_path / "trust-files.json")]) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = <function main at 0x7fce2c8d9380>(['--check', '--files', '/var/tmp/cct/pytest-of-ccrun/pytest-25/test_committed_budget_passes_i0/trust-files.json'])
+E        +    where <function main at 0x7fce2c8d9380> = trust_map.main
+
+tests/test_trust_ratchet.py:433: AssertionError
+----------------------------- Captured stdout call -----------------------------
+class lines: K 994, S 13261, D 17460, G 35496, C 12799, P 102853, T 33207, o 18759
+D/G groups: D[V] 15173, D[R] 1530, D[I] 757, G[V] 30828, G[R] 4300, G[I] 368
+tied 1372, unclassified 137, trusted 59165 (K + S + untied [V] + unclassified), 234966 lines in 751 files
+against 561aa79f5716: K +0, S +0, D +9, G -1, tied +0, unclassified +137, trusted +145
+  VE/Service/DocumentChainExamples.lean: trusted +109
+  VE/Service/Document.lean: trusted +36
+note: 561aa79f5716 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 994, 'S': 13261, 'V': 44765} (the merge train's --write has not run since)
+----------------------------- Captured stderr call -----------------------------
+BUDGET against 561aa79f5716: V grew from 44765 to 44910 (signed allowance 0): VE/Service/DocumentChainExamples.lean +109, VE/Service/Document.lean +36
+=========================== short test summary info ============================
+FAILED tests/test_trust_ratchet.py::test_committed_budget_passes_its_check - ...
+1 failed, 104 passed in 8.87s
+recorded 42 units for tree b711cbfa24; 35 others left to the static graph until they run (1 with only some of their chunks here); 2 failed
+STOPPED EARLY (--maxfail 5): 34 selected units did not run: tests/test_wire_gate_corpus.py, tests/test_acts_vocab_mutants.py, tests/test_trust_mutants.py, tests/test_speech_polar_lean.py, tests/test_events_wire_mutants.py, tests/test_senses_project.py, tests/test_jt_e1s.py, tests/test_readings_sup_verdicts.py, tests/test_frozen_sources.py, tests/test_acts_profile.py, tests/test_readings_sd_document.py, tests/test_judgments_compose.py, tests/test_reports_agreement.py, tests/test_news_w6a_fixtures.py, tests/test_lean_first_b14a.py, tests/test_norm_defaults_soft_kinds.py, tests/test_readings_companions_lean.py, tests/test_rights_lean.py, tests/test_bundle.py, tests/test_cardinality_exercised.py, tests/test_p0_three_way.py, tests/test_me_2d_f2_delta.py, tests/test_numbers_phrases.py, tests/test_premise_packs_stub.py, tests/test_units_w6a.py, tests/test_readings_s1_integration.py, tests/test_norm_english.py, tests/test_acts_contract.py, tests/test_w6a_review_regressions.py, tests/test_evaluate_search.py, tests/test_presupposition_wordings.py, tests/test_fret_w6a_rerating.py, tests/test_select_fast_stage.py, tests/test_acts_lexical.py
+SHARD 1/6: exit 1 in 574.3 s; 77 units, 41 passed
