@@ -1937,6 +1937,13 @@
    "reason": "cmp-s4 review F1 fix: VE/Discourse/Compose.lean S +8 (formulaUnit: the W2 view of the chain's units, 14.5 step 4), VE/Discourse/Manifest.lean S +1 (DDoc.chain); chainChecks, chainDDoc and caseManifest tied (chainChecks_wellFormed, caseManifest_wellFormed); the item against the merge base: K +0, S +134, V +16, trusted +150",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 8,
+   "reason": "me-8: S +8 (lean/VE/Calc/Interval.lean InBox +4; lean/VE/Calc/Consistency.lean Consistent +4); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-8, 2026-11-02",
+   "commit": "287d5dc601e634a3d1720b907e79522a3464c8aa"
   }
  ]
 }
