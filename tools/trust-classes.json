@@ -17461,6 +17461,7 @@
         "VE.Calc.chargeI",
         "VE.Calc.enclose",
         "VE.Calc.encloseC",
+        "VE.Calc.instDecidableInBox",
         "VE.Calc.maxR",
         "VE.Calc.minR",
         "VE.Numbers.Printed.box"
