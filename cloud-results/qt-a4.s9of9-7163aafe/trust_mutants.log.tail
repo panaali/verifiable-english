@@ -1,0 +1,6 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (tool, base)
+trust_mutants: 12 definitions, 145 mutants (16 to run), 4 jobs, base 518eeb667f81
+trust_mutants: 16 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 129 OTHER SHARD in 1085 s
+trust_mutants: D[V], trusted: 3 KILLED, 38 OTHER SHARD
+trust_mutants: G[V], trusted: 13 KILLED, 91 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 489.1 s, mutants 578.5 s, cleanup 4.3 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 832 s (8), mutant_builds 221.7 s (18), mutant_checks 800.4 s (9), stage_controls 393.4 s (6), mutant_probes 596.3 s (16)
