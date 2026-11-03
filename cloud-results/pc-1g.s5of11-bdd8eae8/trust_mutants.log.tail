@@ -1,0 +1,30 @@
+trust_mutants: 17 definitions, 324 mutants (30 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: R.rs -> [] (lean/VE/Judgments/Chain.lean:47: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Chain.lean:243 VE.Judgments.blockFormulas (D[V], trusted) list-empty: [("limitation", l)] -> [] (lean/VE/Judgments/Chain.lean:244: Unknown identifier `l.getObjValD`)
+UNKNOWN lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: (VE.Rights.linesOf R) -> [] (lean/VE/Judgments/Chain.lean:47: Invalid projection: Type of)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: R.rs.map (·.guard) ++ (VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carve... -> [] (the proofs it breaks: lean/VE/Judgments/Chain.lean:86, lean/VE/Judgments/Chain.lean:91, lean/VE/J...)
+UNKNOWN lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: L.conditions.map -> [] (lean/VE/Judgments/Chain.lean:49: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:2766 VE.Service.Document.unitStatuses (S, trusted) list-empty: match a.getObjValD "units" with | .arr us => us.toList.map fun u => ((u.getObjValD "id").getStr?.... -> []
+UNKNOWN lean/VE/Judgments/Chain.lean:244 VE.Judgments.blockFormulas (D[V], trusted) list-first: (R.limits.find? fun L => .str L.name == l.getObjValD "name").map -> (((R.limits.find? fun L => .str L.name == l.getObjValD "name").map).take 1) (lean/VE/Judgments/Chain.lean:244: Invalid dotted identifier notation: The expected type of `.str`...)
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) or-and: || -> &&
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: r.requires -> []
+SURVIVOR lean/VE/Service/Document.lean:2719 VE.Service.Document.setVerdictFields (S, trusted) list-drop-last: kvs.toList -> (kvs.toList.dropLast)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: (VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts) -> (((VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts)).dropLast) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts) -> ((R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts)).dropLast) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+UNKNOWN lean/VE/Judgments/Chain.lean:244 VE.Judgments.blockFormulas (D[V], trusted) list-last: (R.limits.find? fun L => .str L.name == l.getObjValD "name") -> ((R.limits.find? fun L => .str L.name == l.getObjValD "name").reverse.take 1) (lean/VE/Judgments/Chain.lean:244: Invalid dotted identifier notation: The expected type of `.str`...)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: VE.Compose.profileTable -> (VE.Compose.profileTable.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2728 VE.Service.Document.setVerdictFields (S, trusted) list-first: kvs.toList -> (kvs.toList.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: r.refuses -> (r.refuses.dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-drop-first: ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentA... -> (["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "Judgment...
+SURVIVOR lean/VE/Service/Document.lean:2739 VE.Service.Document.verdictFields (S, trusted) list-last: us -> (us.reverse.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:232 VE.Judgments.linesFormulas (D[V], trusted) list-last: rules -> (rules.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-drop-first: us.toList -> (us.toList.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: VE.Compose.profileTable -> (VE.Compose.profileTable.reverse.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: R.soft.T.nodes -> (R.soft.T.nodes.drop 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-drop-middle: "JudgmentArguments", -> 
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-drop-middle: "JudgmentRegulated", -> 
+trust_mutants: 1 KILLED, 18 SURVIVOR, 6 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 294 OTHER SHARD in 2914 s
+trust_mutants: D[V], trusted: 1 SURVIVOR, 3 UNKNOWN, 1 INVALID, 61 OTHER SHARD
+trust_mutants: G[V], trusted: 8 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 17 SURVIVOR, 3 UNKNOWN, 4 INVALID, 225 OTHER SHARD
+trust_mutants: steps: wall plan 11.6 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1738.5 s, mutants 1155.8 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 3833.7 s (9), mutant_builds 401.6 s (35), mutant_checks 2019.1 s (20), stage_controls 46.5 s (1), mutant_probes 723.8 s (1)
