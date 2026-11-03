@@ -17774,7 +17774,6 @@
       ],
       "S": [
         "VE.Defaults.ConditionsExact",
-        "VE.Defaults.DfltUniformSound",
         "VE.Defaults.dfltUniform",
         "VE.Defaults.dfltUniformLabelled",
         "VE.Defaults.dfltUniformOf",
@@ -17804,7 +17803,20 @@
         "VE.Defaults.UniformFixtures.dS",
         "VE.Defaults.UniformFixtures.srcConds",
         "VE.Defaults.UniformFixtures.d2T",
-        "VE.Defaults.UniformFixtures.shown"
+        "VE.Defaults.UniformFixtures.shown",
+        "VE.Defaults.UniformFixtures.Exact.nc",
+        "VE.Defaults.UniformFixtures.Exact.Dc",
+        "VE.Defaults.UniformFixtures.Exact.Uc",
+        "VE.Defaults.UniformFixtures.Exact.dcJ",
+        "VE.Defaults.UniformFixtures.Exact.dName",
+        "VE.Defaults.UniformFixtures.Exact.cC",
+        "VE.Defaults.UniformFixtures.Exact.exD",
+        "VE.Defaults.UniformFixtures.Exact.exC",
+        "VE.Defaults.UniformFixtures.Exact.impCD",
+        "VE.Defaults.UniformFixtures.Exact.wEx",
+        "VE.Defaults.UniformFixtures.Exact.wImp",
+        "VE.Defaults.UniformFixtures.Exact.Sc",
+        "VE.Defaults.UniformFixtures.Exact.Bc"
       ]
     },
     "VE/Commands/Examples.lean": {
