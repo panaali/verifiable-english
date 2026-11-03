@@ -136,7 +136,7 @@ def decodeNormNode (j : Json) : Except String Content := do
   let env ← j.getObjVal? "environment"
   let envelope ← VE.Route.Gate.decodeEnvelope env
   require (envelope.profiles.contains "norms@0") "UnsupportedProfile: quoted norm needs norms@0 locally"
-  let src ← VE.Norms.Wire.decodeSource env (← j.getObjVal? "norms") (joined := false)
+  let src ← VE.Norms.Wire.decodeSource env (← j.getObjVal? "norms")
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson env
   let id ← VE.Route.Wire.environmentId src.ne.profiles canonical
   pure (.norm ⟨src.D.E, id, VE.Route.Background.literals src.D.lits, src.ne.profiles⟩ src.D)

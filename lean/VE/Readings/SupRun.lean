@@ -298,7 +298,7 @@ def choiceModel (chain : Chain) (id : String) (lowerCase : Json) (assertions : N
     let r : RightsChoiceModel := ⟨src, M, valid, Γ, φ⟩
     pure (modelAnswer id r.check r.value (Γ.map (fun a => (VE.SoftNorms.circ X a).eval M [])) assertions)
   | .norms =>
-    let src ← VE.Norms.Wire.decodeSource environment (lowerCase.getObjValD "norms") (joined := false)
+    let src ← VE.Norms.Wire.decodeSource environment (lowerCase.getObjValD "norms")
     unless src.D.T.definitions.isEmpty do
       throw "UnsupportedProfile: a model of a reading's document with definitions is not implemented"
     let v := VE.Norms.Replay.baseModelVocabulary src.ne src.D

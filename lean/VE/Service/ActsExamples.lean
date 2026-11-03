@@ -562,6 +562,11 @@ def ruleOn : Json := Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "
 #guard err (VE.Service.Document.decodedEnvironment joinedE .none) == d4
 #guard err (VE.Service.Document.decodedEnvironment joinedU .none) == d4
 #guard err (VE.Service.Document.decodedEnvironment lexicalE .none) == "ok"
+-- a quoted W1 block (`Reports.Wire.decodeNormNode`) refuses `acts@0` at its envelope, joined act or not
+#guard err (VE.Reports.Wire.decodeNormNode (Json.mkObj [("environment", joinedE), ("norms", Json.arr #[])])) ==
+  "UnsupportedProfile: Unsupported profile acts@0"
+#guard err (VE.Reports.Wire.decodeNormNode (Json.mkObj [("environment", lexicalE), ("norms", Json.arr #[])])) ==
+  "UnsupportedProfile: Unsupported profile acts@0"
 -- the English view's modal form
 #guard err (modalForm "p027" ["person"] (((joinedE.getObjValD "vocabulary").getObjValD "predicates").getObjValD "p027")
   plain6 VE.Acts.TableExamples.fx6) == d4

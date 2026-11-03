@@ -3146,7 +3146,7 @@ module VE.Alternatives.Validate 335e024a93e9ef91366415a21d6f0902ae729bb9a4e12c69
 381:0-386:74 def VE.Alternatives.minimalJoint@VE.Alternatives.Validate
 388:0-405:23 def VE.Alternatives.diagnoseIn@VE.Alternatives.Validate
 407:0-407:105 def VE.Alternatives.diagnose@VE.Alternatives.Validate
-module VE.Alternatives.Wire 7909c50c60df5f9dd88adcb74555d5961e637b454ae16a9b5f34edd124bb3526
+module VE.Alternatives.Wire 77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566461d95177e4d
 26:0-33:9 def VE.Alternatives.Wire.profileGate@VE.Alternatives.Wire
 35:0-38:93 def VE.Alternatives.Wire.normsView@VE.Alternatives.Wire
 42:0-42:103 def VE.Alternatives.Wire.mandatoryFields@VE.Alternatives.Wire
@@ -3169,7 +3169,7 @@ module VE.Alternatives.Wire 7909c50c60df5f9dd88adcb74555d5961e637b454ae16a9b5f34
 205:11-205:22 instance VE.Alternatives.Wire.instDecidableEqScope@VE.Alternatives.Wire
 205:24-205:28 def VE.Alternatives.Wire.instReprScope.repr@VE.Alternatives.Wire
 205:24-205:28 instance VE.Alternatives.Wire.instReprScope@VE.Alternatives.Wire
-207:0-217:92 def VE.Alternatives.Wire.otherDeclarations@VE.Alternatives.Wire
+207:0-217:74 def VE.Alternatives.Wire.otherDeclarations@VE.Alternatives.Wire
 219:0-226:31 structure VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire
 221:2-221:10 def VE.Alternatives.Wire.AltSource.profiles@VE.Alternatives.Wire
 222:2-222:4 def VE.Alternatives.Wire.AltSource.ne@VE.Alternatives.Wire
@@ -4603,7 +4603,7 @@ module VE.Attribution.Structure f1490f854fe501f300edc2183b0dd2b1780fbd8ea6d54fb8
 170:0-176:85 theorem VE.Reports.literal_paraphrase_distinct@VE.Attribution.Structure
 180:0-194:35 theorem VE.Reports.all_truth_combinations@VE.Attribution.Structure
 196:0-208:35 theorem VE.Reports.all_truth_combinations_assess@VE.Attribution.Structure
-module VE.Attribution.Wire b6092ed716a151fbf1710ce2a3813c71ab5eb2f83aded46339d5554c9665b6a0
+module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bcee707ca2cc29
 30:0-30:47 def VE.Reports.Wire.language@VE.Attribution.Wire
 34:0-42:30 structure VE.Reports.Wire.ReportsEnvironment@VE.Attribution.Wire
 35:2-35:10 def VE.Reports.Wire.ReportsEnvironment.profiles@VE.Attribution.Wire
@@ -17016,7 +17016,7 @@ module VE.Readings.SupFree 642e51a68d1670dc968f6a5ff583aa76052439315a44dfac7d1bf
 module VE.Readings.SupPacks 12a287437ffa3d4eef6d7bd99fa41e0589e4ae834c8f944153f222099d5e7192
 9:0-18:59 theorem VE.Readings.transfers_append@VE.Readings.SupPacks
 20:0-33:86 theorem VE.Readings.transfers_X@VE.Readings.SupPacks
-module VE.Readings.SupRun e1dbb0ac0220678de6c3c66b1790c016e631aae5fd636fabc4fa97a2a69485a3
+module VE.Readings.SupRun 9677a07447416f397f476aa38026895057ecd71af45a6c27de30fa04d927163a
 37:0-37:93 def VE.Readings.Run.okWith@VE.Readings.SupRun
 39:0-42:73 def VE.Readings.Run.encodedChoice@VE.Readings.SupRun
 44:0-44:68 def VE.Readings.Run.slotLabels@VE.Readings.SupRun
@@ -22218,7 +22218,7 @@ module VE.Senses.RunExamples 9df3ac383552f83b9ca0e9f7f8fa066c6fa77bd95366b4c4fb5
 90:0-92:107 def VE.Senses.RunExamples.fenced@VE.Senses.RunExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f
 3:0-5:33 def VE.Senses.sensesVersion@VE.Senses.Version
-module VE.Service.ActsExamples 8a407175f630f55b33fe1313ccc69cbfaec7f9006d447984d32da4cb3cdd8a96
+module VE.Service.ActsExamples babc6063ddbd1e7f03556cb6b99606071534c0aeaed559c35ba468d08060eaee
 19:0-19:109 def VE.Service.ActsExamples.a1@VE.Service.ActsExamples
 20:0-20:70 def VE.Service.ActsExamples.a2@VE.Service.ActsExamples
 21:0-21:88 def VE.Service.ActsExamples.a3@VE.Service.ActsExamples
@@ -22287,7 +22287,7 @@ module VE.Service.ActsExamples 8a407175f630f55b33fe1313ccc69cbfaec7f9006d447984d
 517:0-517:98 def VE.Service.ActsExamples.d4@VE.Service.ActsExamples
 529:0-533:111 def VE.Service.ActsExamples.plainJoined@VE.Service.ActsExamples
 534:0-535:111 def VE.Service.ActsExamples.ruleOn@VE.Service.ActsExamples
-581:0-581:124 def VE.Service.ActsExamples.readingsOf@VE.Service.ActsExamples
+586:0-586:124 def VE.Service.ActsExamples.readingsOf@VE.Service.ActsExamples
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose
@@ -22701,7 +22701,7 @@ module VE.Service.FamilyBundle 75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830
 466:0-475:109 theorem VE.Service.FamilyBundle.closure_bundle_sound@VE.Service.FamilyBundle
 477:0-486:106 theorem VE.Service.FamilyBundle.core_bundle_sound@VE.Service.FamilyBundle
 488:0-498:107 theorem VE.Service.FamilyBundle.order_bundle_sound@VE.Service.FamilyBundle
-module VE.Service.FamilyNorms ee6c49f9e03ca557e367494409ab4d6baadce594f03edfb986ed1a1ecbb3532c
+module VE.Service.FamilyNorms 418076df3e0aaf7c4194110db9e9bd055eb4b832a0b2beabea4fcfc5af14b8df
 37:0-48:59 def VE.Service.FamilyNorms.folView@VE.Service.FamilyNorms
 50:0-53:37 def VE.Service.FamilyNorms.viewModel@VE.Service.FamilyNorms
 55:0-62:17 structure VE.Service.FamilyNorms.Checker@VE.Service.FamilyNorms
