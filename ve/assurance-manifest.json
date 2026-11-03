@@ -4675,7 +4675,7 @@
         "python:backend-adapter"
       ],
       "notes": [
-        "The relay in ve.backends.senses:project only transports the request and binds the answer: the dictionary identity, the senses version, and identities equal to Python's over the returned environment and lexicon; no Python function computes a projection.",
+        "The relay in ve.backends.senses:project only transports the request and binds the answer: the dictionary identity and identities equal to Python's over the returned environment and lexicon; it types the senses version (a non-empty string) and does not bind it, which sn-b6bb does against ve/senses/LOCK.json; no Python function computes a projection.",
         "The budget class is the projection's status `budget`, with the code PreambleBudget (a line read past the budget)."
       ]
     },

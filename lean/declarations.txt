@@ -3140,7 +3140,7 @@ module VE.Alternatives.Wire 77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566
 363:0-364:46 def VE.Alternatives.Wire.coverageField@VE.Alternatives.Wire
 366:0-369:66 def VE.Alternatives.Wire.coverageConstNames@VE.Alternatives.Wire
 371:0-421:68 def VE.Alternatives.Wire.coverage@VE.Alternatives.Wire
-module VE.Arith.Bounded 39f90d9be08daa2fad1114f9101766dc95f64c736734517112662bb184ebc104
+module VE.Arith.Bounded fb124c53b88e03a1c0d89fab1d46267f1608989194c62ff9a0d41f12c2aad5ee
 16:0-17:39 def VE.Arith.charge@VE.Arith.Bounded
 19:0-21:59 def VE.Arith.chargeBits@VE.Arith.Bounded
 23:0-25:49 def VE.Arith.stepB@VE.Arith.Bounded
