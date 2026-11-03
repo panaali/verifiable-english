@@ -15,10 +15,14 @@
           "environment_id": {"$ref": "common.json#/$defs/hex64"},
           "family": {"enum": ["fol", "closure", "closure+n-ary", "order"]},
           "id": {"type": "string", "x-equals": "/id"},
+          "model_acts": {
+            "$comment": "Standalone.modelActs: under acts@0 the act Rust's model view gives each permission or obligation, by its name; Python binds the names and the equal acts to the request.",
+            "$ref": "common.json#/$defs/string_map"
+          },
           "profiles": {"$ref": "common.json#/$defs/strings", "x-equals": "/environment/profiles"},
           "status": {"const": "ok"}
         },
-        "required": ["id", "status", "environment_id", "profiles", "family", "acts"],
+        "required": ["id", "status", "environment_id", "profiles", "family", "acts", "model_acts"],
         "type": "object"
       },
       {
