@@ -244,6 +244,9 @@ module VE.Closure.RoundTrip
 module VE.Closure.Substitution
 module VE.Closure.Surface
 module VE.Closure.Syntax
+module VE.Commands.Examples
+module VE.Commands.Read
+module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
