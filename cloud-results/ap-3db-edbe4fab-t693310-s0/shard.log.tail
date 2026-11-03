@@ -1,0 +1,172 @@
+shard 1/6: 77 units; commands: ['uv run --frozen --group dev python tools/check_python_layers.py', 'python3 tools/check_lean_imports.py', 'python3 tools/check_rust_deps.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ uv run --frozen --group dev python tools/check_python_layers.py
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 186 files, 1040 dependencies.
+--------------------------------------
+
+... (13237 lines cut; full output in shard-full.txt)
+'ResponseShape.Fits.strNotIn_lit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.toJsonStrs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.KindRead.of_str' depends on axioms: [propext]
+'ResponseShape.Lit.of_json' does not depend on any axioms
+'ResponseShape.OkP.arrayMapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.bind' does not depend on any axioms
+'ResponseShape.OkP.error' does not depend on any axioms
+'ResponseShape.OkP.filterMapM' depends on axioms: [propext]
+'ResponseShape.OkP.filterMapM_loop' depends on axioms: [propext]
+'ResponseShape.OkP.foldlM' depends on axioms: [propext]
+'ResponseShape.OkP.forIn' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.ite' does not depend on any axioms
+'ResponseShape.OkP.map' does not depend on any axioms
+'ResponseShape.OkP.mapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.mapOf' does not depend on any axioms
+'ResponseShape.OkP.of' does not depend on any axioms
+'ResponseShape.OkP.ok' does not depend on any axioms
+'ResponseShape.OkP.pure' does not depend on any axioms
+'ResponseShape.OkP.pure_ok' does not depend on any axioms
+'ResponseShape.OkP.throw' does not depend on any axioms
+'ResponseShape.OkP.throw_bind' does not depend on any axioms
+'ResponseShape.Skel.condsOk_field' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Skel.lookup_mem' does not depend on any axioms
+'ResponseShape.getArr_arr' does not depend on any axioms
+'ResponseShape.getObjVal_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_empty' does not depend on any axioms
+'ResponseShape.isEmpty_iff_data' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.kind_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.not_not_true' depends on axioms: [propext]
+'ResponseShape.setObjVal_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.toOption_ok' does not depend on any axioms
+PASS: 735 source files; 8245 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded zmij v1.0.23
+  Downloaded quote v1.0.47
+  Downloaded itoa v1.0.18
+  Downloaded digest v0.10.7
+  Downloaded version_check v0.9.5
+  Downloaded generic-array v0.14.7
+  Downloaded sha2 v0.10.9
+  Downloaded num-integer v0.1.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.98s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.79s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(2/4), tests/test_speech_polar_lean.py::chunk(2/4)
+recording 77 units with 4 jobs in /tmp/ve-select-run-y9chzgc7
+  tests/test_trust_ratchet.py: exit 1 in 12.0 s, 309 functions
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 358.2 s in all, longest chunk 358.2 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 415.1 s in all, longest chunk 415.1 s; 141 passed, 0 skipped, 0 failed; each of its 141 tests ran in exactly one chunk
+FAILED tests/test_trust_ratchet.py (exit 1): tests/test_trust_ratchet.py::test_committed_budget_passes_its_check; log /tmp/ve-select-run-y9chzgc7/tests__test_trust_ratchet.py.log
+tests/test_trust_ratchet.py:433: AssertionError
+----------------------------- Captured stdout call -----------------------------
+class lines: K 994, S 12982, D 17530, G 34719, C 12729, P 102287, T 31890, o 18374
+D/G groups: D[V] 15249, D[R] 1522, D[I] 759, G[V] 30481, G[R] 3897, G[I] 341
+tied 1267, unclassified 0, trusted 58583 (K + S + untied [V] + unclassified), 231505 lines in 735 files
+against 50c6842f84f7: K +0, S +15, D +144, G +25, tied +60, unclassified +0, trusted +122
+  VE/Norms/Wire.lean: trusted +46
+  VE/Acts/Wire.lean: trusted +18
+  VE/Norms/Run.lean: trusted +15
+  VE/NormDefaults/Run.lean: trusted +12
+  VE/NormDefaults/Wire.lean: trusted +11
+  VE/Acts/Decode.lean: trusted +6
+  VE/Readings/Wire.lean: trusted +6
+  VE/Acts/DecodeTwins.lean: trusted +4
+  VE/NormDefaults/Admission.lean: trusted +2
+  VE/Norms/Admission.lean: trusted +2
+note: 50c6842f84f7 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 994, 'S': 12967, 'V': 44500} (the merge train's --write has not run since)
+----------------------------- Captured stderr call -----------------------------
+BUDGET against 50c6842f84f7: S grew from 12967 to 12982 (signed allowance 0): VE/Acts/Decode.lean +5, VE/Acts/DecodeTwins.lean +4, VE/Norms/Admission.lean +2, VE/NormDefaults/Admission.lean +2, VE/Norms/Run.lean +1, VE/NormDefaults/Run.lean +1
+BUDGET against 50c6842f84f7: V grew from 44500 to 44607 (signed allowance 0): VE/Norms/Wire.lean +46, VE/Acts/Wire.lean +18, VE/Norms/Run.lean +14, VE/NormDefaults/Wire.lean +11, VE/NormDefaults/Run.lean +11, VE/Readings/Wire.lean +6, VE/Acts/Decode.lean +1
+=========================== short test summary info ============================
+FAILED tests/test_trust_ratchet.py::test_committed_budget_passes_its_check - AssertionError: assert 1 == 0
+ +  where 1 = <function main at 0x7f7ebe75aae0>(['--check', '--files', '/tmp/pytest-of-runner/pytest-21/test_committed_budget_passes_i0/trust-files.json'])
+ +    where <function main at 0x7f7ebe75aae0> = trust_map.main
+1 failed, 104 passed in 11.46s
+recorded 75 units for tree 339d43e4f8; 2 others left to the static graph until they run (2 with only some of their chunks here); 1 failed
+SHARD 1/6: exit 1 in 1176.1 s; 77 units, 76 passed
