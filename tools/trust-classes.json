@@ -483,6 +483,7 @@
     "ResponseShape/Schemas/Document.lean": {
       "G[V]": [
         "ResponseShape.Schemas.Document.blockCoverage",
+        "ResponseShape.Schemas.Document.cardinalityReport",
         "ResponseShape.Schemas.Document.cells",
         "ResponseShape.Schemas.Document.cites",
         "ResponseShape.Schemas.Document.composedReading",
@@ -9668,7 +9669,9 @@
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
-        "VE.Service.Document.withSets"
+        "VE.Service.Document.withSets",
+        "VE.Service.Document.cardinalityEnv",
+        "VE.Service.Document.cardinalityReport"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -18051,6 +18054,36 @@
         "VE.Calc.ConsistencyExamples.tree",
         "VE.Calc.ConsistencyExamples.twelve",
         "VE.Calc.ConsistencyExamples.v6"
+      ]
+    },
+    "VE/Service/CardinalityExamples.lean": {
+      "T": [
+        "VE.Service.CardinalityExamples.asWritten",
+        "VE.Service.CardinalityExamples.both",
+        "VE.Service.CardinalityExamples.card",
+        "VE.Service.CardinalityExamples.content",
+        "VE.Service.CardinalityExamples.decoded",
+        "VE.Service.CardinalityExamples.environment",
+        "VE.Service.CardinalityExamples.graph",
+        "VE.Service.CardinalityExamples.idOf",
+        "VE.Service.CardinalityExamples.listed",
+        "VE.Service.CardinalityExamples.low",
+        "VE.Service.CardinalityExamples.one",
+        "VE.Service.CardinalityExamples.plain",
+        "VE.Service.CardinalityExamples.quoted",
+        "VE.Service.CardinalityExamples.refused",
+        "VE.Service.CardinalityExamples.report",
+        "VE.Service.CardinalityExamples.reportOf",
+        "VE.Service.CardinalityExamples.rowOf",
+        "VE.Service.CardinalityExamples.run",
+        "VE.Service.CardinalityExamples.said",
+        "VE.Service.CardinalityExamples.source",
+        "VE.Service.CardinalityExamples.statement",
+        "VE.Service.CardinalityExamples.text",
+        "VE.Service.CardinalityExamples.top",
+        "VE.Service.CardinalityExamples.unit",
+        "VE.Service.CardinalityExamples.w",
+        "VE.Service.CardinalityExamples.withGraph"
       ]
     }
   }
