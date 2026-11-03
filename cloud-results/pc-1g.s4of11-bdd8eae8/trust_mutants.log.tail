@@ -1,0 +1,25 @@
+trust_mutants: 17 definitions, 324 mutants (30 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Service/Document.lean:2760 VE.Service.Document.withoutStatuses (S, trusted) list-empty: us -> [] (lean/VE/Service/Document.lean:2760: Application type mismatch: The argument)
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-empty: ["norm", "liberty", "recognition"].filterMap -> [] (lean/VE/Judgments/Chain.lean:231: Function expected at)
+SURVIVOR lean/VE/Judgments/Chain.lean:245 VE.Judgments.blockFormulas (D[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: VE.Compose.profileTable.filter (·.profile == "judgments@0") -> [] (lean/VE/Service/Document.lean:2779: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Chain.lean:245 VE.Judgments.blockFormulas (D[V], trusted) list-empty: L.conditions -> [] (lean/VE/Judgments/Chain.lean:245: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2751 VE.Service.Document.noUnitStatus (S, trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) body-false: judgmentCodes.any (fun c => e.startsWith (c ++ ": ")) || e.startsWith "CheckerUnavailable: judgme... -> false
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: r.refuses.map (·.2) -> []
+SURVIVOR lean/VE/Service/Document.lean:2760 VE.Service.Document.withoutStatuses (S, trusted) list-first: us -> (us.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-first: ["norm", "liberty", "recognition"] -> (["norm", "liberty", "recognition"].take 1)
+SURVIVOR lean/VE/Service/Document.lean:2149 VE.Service.Document.UnitContent.judgedIn (G[V], trusted) list-drop-last: [("norm", rule.getObjValD "norm")] -> ([("norm", rule.getObjValD "norm")].dropLast)
+SURVIVOR lean/VE/Judgments/Chain.lean:230 VE.Judgments.linesFormulas (D[V], trusted) list-last: lines -> (lines.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> (((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported).tak...
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: r.requires.map (VE.Compose.needText r) -> ((r.requires.map (VE.Compose.needText r)).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2760 VE.Service.Document.withoutStatuses (S, trusted) list-drop-first: us.map (dropKey "status") -> ((us.map (dropKey "status")).drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: VE.Compose.profileTable.filter (·.profile == "judgments@0") -> ((VE.Compose.profileTable.filter (·.profile == "judgments@0")).drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)) -> ((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).drop 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: R.limits -> (R.limits.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: r.requires -> (r.requires.reverse.take 1)
+trust_mutants: 1 KILLED, 15 SURVIVOR, 4 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 294 OTHER SHARD in 2889 s
+trust_mutants: D[V], trusted: 1 KILLED, 3 SURVIVOR, 2 UNKNOWN, 1 INVALID, 59 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 7 OTHER SHARD
+trust_mutants: S, trusted: 11 SURVIVOR, 2 UNKNOWN, 9 INVALID, 228 OTHER SHARD
+trust_mutants: steps: wall plan 11.5 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1766.2 s, mutants 1103.5 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 3922.3 s (9), mutant_builds 418.8 s (30), mutant_checks 1692 s (17), stage_controls 57.5 s (1), mutant_probes 741.1 s (1)
