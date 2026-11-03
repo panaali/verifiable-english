@@ -1,0 +1,5 @@
+job=testmap-87475ae6-t730871-s7 nproc=4 host=runnervm48cm3 date=2026-11-03T18:40:28Z
+Mem:              15           1          10           0           4          14
+/dev/root       145G   63G   83G  43% /
+ 18:40:28 up 7 min,  0 user,  load average: 0.95, 0.36, 0.14
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
