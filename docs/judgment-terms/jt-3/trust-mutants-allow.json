@@ -17,7 +17,6 @@
   {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-empty", "reason": "unsupported: `js` is under `mapM`'s binder and `[w]` is a match pattern."},
   {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-drop-last", "reason": "unsupported: `[w]` is a match pattern, which takes no function."},
   {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-drop-first", "reason": "unsupported: `[w]` is a match pattern, which takes no function."},
-  {"definition": "VE.EnglishGrammar.JudgmentLines.definedNames", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: the wrapped element types are not known without the original expression."},
   {"definition": "VE.EnglishGrammar.JudgmentLines.readingPreds", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: the map's element type is not known without the original list."},
   {"definition": "VE.EnglishGrammar.JudgmentLines.refusal", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: the pattern lambda's type is not known without `fs.zipIdx`."},
   {"definition": "VE.EnglishGrammar.JudgmentLines.refusal", "operator": "list-first", "reason": "equivalent where it survives: `take 1` before `.head?` on the listed names and on the sort's arguments reads the same first element."},

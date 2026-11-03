@@ -58,6 +58,38 @@ def test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read(env):
     assert judgment_lines.read_authored(env, source, ["reasonable_limit"]).status == "one"
 
 
+def test_every_retyped_or_rebound_refusal_field_is_refused(env):
+    """A relayed refusal is typed and bound by `refusal_problem`: each field dropped or retyped, a code no status has, a
+    class that is not Lean's, a span out of the source, a sentence number the source cannot hold."""
+    source = said("reasonable_limit")
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
+    expected = english_lean.identities(env, source, words, english_lean.export(words))
+    genuine = raw(env, source, judgments=[])["result"]
+    assert english_lean.response_problem(genuine, expected, env, source) is None
+    deep: list = []
+    for _ in range(10_000):
+        deep = [deep]
+
+    def refused(answer) -> bool:
+        """`read` answers a problem or a too-deep answer `CheckerUnavailable`."""
+        try:
+            return bool(english_lean.response_problem(answer, expected, env, source))
+        except RecursionError:
+            return True
+
+    assert not refused(genuine)
+    for field in ("status", "code", "class", "text", "sentence", "span"):
+        assert refused({k: v for k, v in genuine.items() if k != field}), field
+        for value in (7, True, None, {}, [], 1.5, "", deep):
+            if value != genuine[field]:
+                assert refused({**genuine, field: value}), (field, value)
+    for field, value in (("code", "NoDerivation"), ("code", "Undeclared"), ("class", "TypeMismatch"),
+                         ("span", [0, len(source) + 1]), ("span", [5, 2]), ("sentence", 1)):
+        assert refused({**genuine, field: value}), (field, value)
+    assert refused({**genuine, "extra": 1})
+    assert refused({k: v for k, v in genuine.items() if k != "identities"})
+
+
 def test_binding_is_per_predicate_never_per_word(env):
     """Spec 7 and 8.4 bind per predicate: `reasonable_grounds` does not silence `reasonable_limit` (DRI item 3)."""
     result = raw(env, said("reasonable_limit"), judgments=["reasonable_grounds"])["result"]
@@ -65,6 +97,18 @@ def test_binding_is_per_predicate_never_per_word(env):
     two = f'{said("reasonable_limit")} {said("reasonable_grounds")}'
     assert raw(env, two, judgments=["reasonable_limit"])["result"]["sentence"] == 1
     assert raw(env, two, judgments=["reasonable_limit", "reasonable_grounds"])["result"]["status"] == "one"
+
+
+def test_a_word_defined_by_w3_is_not_refused_as_the_real_environment_writes_it():
+    """9.5's second way out, on the environment's own shape (`defined` in the predicate's entry); the same word undefined
+    is refused."""
+    predicates = {**ENV["vocabulary"]["predicates"], "reasonable_limit": {
+        "arguments": ["limit"], "description": "reasonable_limit",
+        "defined": {"arguments": ["limit"], "body": ["unary", "published", ["var", 0]]}}}
+    written = {**ENV, "profiles": ["definitions@0", "relational-fol@0"],
+               "vocabulary": {**ENV["vocabulary"], "predicates": predicates}}
+    result = raw(Environment.from_dict(written), said("reasonable_limit"), judgments=[])["result"]
+    assert result["status"] == "one", result
 
 
 def test_each_definition_form_reaches_the_relay(env):
