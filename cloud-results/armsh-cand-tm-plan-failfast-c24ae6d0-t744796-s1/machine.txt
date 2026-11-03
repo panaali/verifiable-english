@@ -1,0 +1,7 @@
+job=armsh-cand-tm-plan-failfast-c24ae6d0-t744796-s1 shard=1/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-03T22:27:43Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 22:27:43 up 1 min,  0 user,  load average: 1.94, 0.67, 0.24
+pilot/codex branches: 98
+ve-cache: lean-build exact key 250829f5e578 asset lean-build-250829f5e578-linux-aarch64.tar.zst sha256 bcb340e4ec59 ok, seal ok, from download, 23.4 s
+p1-tokenizers: 443909a61d42 fetched
