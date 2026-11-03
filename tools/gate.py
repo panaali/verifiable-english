@@ -658,7 +658,7 @@ def record_file_durations(path: Path) -> tuple[str, test_schedule.Estimates] | N
         with path.open("rb") as handle:
             raw = handle.read(MAX_DURATIONS_RECORD_BYTES + 1)
         record = json.loads(raw) if len(raw) <= MAX_DURATIONS_RECORD_BYTES else None
-    except (OSError, ValueError):
+    except (OSError, ValueError, RecursionError):
         record = None
     estimates = test_schedule.read_record_field(record.get("durations")) if isinstance(record, dict) else None
     if estimates is None:
