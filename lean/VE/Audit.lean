@@ -396,6 +396,7 @@ import VE.SearchBudget.Demand
 import VE.Semantics
 import VE.Senses.Dictionary
 import VE.Senses.Document
+import VE.Senses.Flip
 import VE.Senses.Preamble
 import VE.Senses.Project
 import VE.Senses.Read
@@ -7254,6 +7255,7 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.document_unit_sound
 #print axioms VE.Senses.fenceSents_ok
 #print axioms VE.Senses.filterMap_of_map_some
+#print axioms VE.Senses.flipValues_sound
 #print axioms VE.Senses.grammarFault_none
 #print axioms VE.Senses.length_choicesOf
 #print axioms VE.Senses.mem_eraseDups_iff

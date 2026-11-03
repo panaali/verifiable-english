@@ -50796,6 +50796,12 @@ theorem VE.Senses.filterMap_of_map_some
     List.map f l = List.map Option.some rs → List.filterMap f l = rs
   -- uses
   -- expr 4154983731
+theorem VE.Senses.flipValues_sound
+  ∀ {m : VE.Senses.FlipModel} {fc fd : VE.Formula} {w w' : Nat} {a b : Bool},
+    VE.Senses.flipValues m fc fd w = Option.some ((a, b), w') →
+      a = VE.Formula.eval m.finite [] fc ∧ b = VE.Formula.eval m.finite [] fd
+  -- uses VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Senses.FlipModel.finite@VE.Senses.Flip VE.Senses.FlipModel@VE.Senses.Flip VE.Senses.flipValues@VE.Senses.Flip
+  -- expr 2280844994
 theorem VE.Senses.grammarFault_none
   ∀ {P : VE.Senses.Projection},
     VE.Senses.grammarFault P = Option.none →

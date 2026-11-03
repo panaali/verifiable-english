@@ -6798,6 +6798,7 @@
 'VE.Senses.document_unit_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Senses.fenceSents_ok' depends on axioms: [propext]
 'VE.Senses.filterMap_of_map_some' depends on axioms: [propext]
+'VE.Senses.flipValues_sound' depends on axioms: [propext]
 'VE.Senses.grammarFault_none' depends on axioms: [propext, Quot.sound]
 'VE.Senses.length_choicesOf' depends on axioms: [propext, Quot.sound]
 'VE.Senses.mem_eraseDups_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
