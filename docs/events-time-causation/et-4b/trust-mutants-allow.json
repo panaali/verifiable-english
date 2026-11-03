@@ -1,4 +1,13 @@
 {"allow": [
   {"definition": "VE.NormDefaults.Wire.hookPacks", "operator": "list-first", "reason": "equivalent: `Option.toList` has at most one element, so its first is itself"},
-  {"definition": "VE.NormDefaults.Packs.eventsArray", "operator": "list-first", "reason": "equivalent on its outer list: the result is a one-element list, so its first is itself (the rows' list-first is killed by the events_premises guards)"}
+  {"definition": "VE.NormDefaults.Wire.hookPacks", "operator": "list-last", "reason": "equivalent: `Option.toList` has at most one element, so its last is itself"},
+  {"definition": "VE.NormDefaults.Packs.eventsArray", "operator": "list-first", "reason": "equivalent on its outer one-element list (the rows' list-first is killed by the events_premises guards of RouteExamples and PacksExamples)"},
+  {"definition": "VE.NormDefaults.Packs.eventsArray", "operator": "list-last", "reason": "equivalent on its outer one-element list (the rows' list-last is killed by the events_premises guards)"},
+  {"definition": "VE.NormDefaults.Wire.decodeSoftU", "operator": "list-first", "reason": "equivalent on `hookPacks H` (at most one pack) and on `[softPack U src.D]` (one); its list-first on `decisions src.D` is killed by RouteExamples' filled2 boundary"},
+  {"definition": "VE.NormDefaults.Wire.decodeRightsU", "operator": "list-first", "reason": "equivalent on `hookPacks H` (at most one pack); its list-firsts on `decisions D` and on `[softPack U D, rightsPack src.D]` are killed by RouteExamples' defaultFilled and rightsPacks guards"},
+  {"definition": "VE.NormDefaults.Wire.layeredElaborate", "operator": "list-first", "reason": "equivalent on `Packs.eventsArray L.packs` (at most one field); its list-firsts on `L.packs` and `Packs.elaborateArrays L.packs` are killed by RouteExamples' soft and rights array guards"},
+  {"definition": "VE.NormDefaults.Run.runCaseE", "operator": "list-drop-last", "reason": "equivalent on `listedProfiles`: `events@0` is never the last of a sorted list it is answered on (it requires norms@0, which sorts after it); its list-drop-last on `r.X` and on the answer's fields are killed by RouteExamples' excCase and premises guards"},
+  {"definition": "VE.NormDefaults.Run.usesNormDefaultsPath", "operator": "list-first", "reason": "equivalent on `unspecifiedNames env` (only `isEmpty` reads it, and a list and its first are empty together); its list-first on `profilesOf env` is killed by RouteExamples' documents@1 path guard"},
+  {"definition": "VE.NormDefaults.Run.usesNormDefaultsPath", "operator": "list-last", "reason": "equivalent on `unspecifiedNames env` (only `isEmpty` reads it); its list-last on `profilesOf env` is killed by RouteExamples' events@0-first path guard"},
+  {"definition": "VE.Events.routeView", "operator": "list-drop-last", "reason": "equivalent: the last field of an environment in key order is `vocabulary`, which the next line sets again"}
 ]}

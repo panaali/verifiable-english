@@ -83,6 +83,16 @@ def counted (links : Nat) : String :=
 
 /-! ## The view a layered decoder reads, and the identities it does not -/
 
+-- The author's constants stay beside the dates, every one of them.
+def twoConstants : Json :=
+  let e := envOf
+  let v := e.getObjValD "vocabulary"
+  e.setObjVal! "vocabulary" (v.setObjVal! "constants" (parse "{\"a1\":{\"sort\":\"act\",\"description\":\"a1\"},\"a2\":{\"sort\":\"act\",\"description\":\"a2\"}}"))
+#guard (match eventsHook twoConstants terms with
+  | .ok (some h) => ((VE.Bridge.fields ((h.view.getObjValD "vocabulary").getObjValD "constants")).toOption.map (·.map (·.1))) ==
+      some ["a1", "a2", "date__2026_10_12", "date__2026_10_13", "date__2026_10_14"]
+  | _ => false)
+
 def decoded (e : Json) (t : Json := terms) : Except String LayeredU := decodeLayered (caseOf "k" e t)
 -- The pack is last, the date constants reach the regenerated environment, and identity reads the bytes as written.
 #guard ((decoded envOf).toOption.map fun L => L.packs.map (·.id)) == some ["soft", "events"]
@@ -148,6 +158,7 @@ def plainEnv (ps : List String) : Json := (envJ [xPerm] strictSoft).setObjVal! "
 #guard !pathOf "x" (plainEnv ["norms@0", "relational-fol@0"])
 -- The profile read anywhere in the list, not first: `documents@1` sorts before it.
 #guard pathOf "x" (plainEnv ["documents@1", "events@0", "norms@0", "relational-fol@0"])
+#guard pathOf "x" (plainEnv ["data@0", "events@0"])
 
 -- The answer is the block-less answer's, field by field, with the pack's rows beside it.
 def fieldsOf (e : Json) : List String := ((VE.Bridge.fields (answer (caseOf "norm-defaults-elaborate" e))).toOption.getD []).map (·.1)
@@ -262,11 +273,15 @@ def premiseCount : Nat := ((decoded envOf).toOption.map fun L => (VE.NormDefault
   | .error _ => false)
 
 -- With another pack's premise in `X`: the count is the whole of `premisesX`, the soft premise among it.
-def excEnv : Json := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s"]
-def excNorms : Json := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ [VE.Defaults.Fixtures.un "s"]) ++ "]")
+def excEnv : Json := envOf (some blockJ) listed [VE.Defaults.Fixtures.baseJ "s", VE.Defaults.Fixtures.baseJ "t"]
+def excNorms : Json := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ [VE.Defaults.Fixtures.un "s"]) ++ "," ++
+  ruleJ "q" "x_permitted" true (dfltJ [VE.Defaults.Fixtures.un "t"]) ++ "]")
 def excElaborated : Json := answer ((caseOf "norm-defaults-elaborate" excEnv).setObjVal! "norms" excNorms)
--- The other packs' arrays stay in the answer, with their rows: soft's one exception premise, rights' limitation.
-#guard ((excElaborated.getObjValD "soft").getArr?.toOption.map (·.size)) == some 1
+-- The other packs' arrays stay in the answer, with their rows: soft's two exception premises, rights' limitation.
+#guard ((excElaborated.getObjValD "soft").getArr?.toOption.map (·.size)) == some 2
+-- Every regenerated field of the route is in the answer.
+#guard ((decodeLayered ((caseOf "k" excEnv).setObjVal! "norms" excNorms)).toOption.map fun L =>
+  (VE.NormDefaults.Wire.regeneratedU L.U).all fun (k, _) => excElaborated.getObjValD k != .null) == some true
 #guard ((excElaborated.getObjValD "rights").getArr?.toOption.map (·.size)) == some 0
 #guard ((((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) ==
   ((((answer (rightsCase (rightsEnv none rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) &&
@@ -287,9 +302,9 @@ def excCount : Nat :=
   ((decodeLayered ((caseOf "k" excEnv).setObjVal! "norms" excNorms)).toOption.map fun L =>
     (VE.NormDefaults.Wire.premisesX L.U L.X []).length).getD 0
 #guard (answer (excCase inPack)).getObjValD "valid" == .bool true
-#guard (answer (excCase inPack)).getObjValD "premises" == toJson excCount && excCount == premiseCount + 1
+#guard (answer (excCase inPack)).getObjValD "premises" == toJson excCount && excCount == premiseCount + 2
 #guard (match VE.Events.replayEventsEntailment (excCase inPack) with
-  | .ok r => r.X.length == 1 | .error _ => false)
+  | .ok r => r.X.length == 2 | .error _ => false)
 
 -- The replay reads the profile anywhere in the list: with `documents@1` before it, the same proof replays.
 def docListed : List String := ["documents@1", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
