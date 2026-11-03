@@ -1,7 +1,9 @@
 import VE.EnglishGrammar.Run
+import VE.Question.Run
 
 /-! 9.5's refusal through `english.read` (`Run.readCase`; DRI 2026-11-02, jt-3 item 1): only a request in authoring that
-sends `judgments` can be refused, and translation answers the same with or without the field. -/
+sends `judgments` can be refused, and translation answers the same with or without the field. The field is
+`english.read`'s alone: the modes that share `optionalFields` refuse it (jt-3 review F1). -/
 
 namespace VE.EnglishGrammar.JudgmentRunExamples
 open Lean VE.EnglishGrammar.Run
@@ -62,5 +64,23 @@ def names (k : Nat) : List String := List.replicate k "n"
 #guard [word, plain].all fun s => [[], ["reasonable_limit"], ["absent"]].all fun js =>
   ((readCase (request s "translation" (J js))).toOption.map (·.compress)) ==
     ((readCase (request s "translation")).toOption.map (·.compress))
+
+-- `judgments` is `english.read`'s alone: `english.grammar`, `english.check` and `english.question` share
+-- `optionalFields` with it and refuse the field, as on the merge base, rather than drop the opt-in unread.
+def question : String := "Is Atlas published?"
+def shared (fields : List (String × Json)) : List (Except String Json) :=
+  let g := [("environment", environment), ("lexicon", lexicon)] ++ fields
+  let empty : Json := toJson ([] : List Json)
+  [grammarCase (Json.mkObj ([("id", .str "g")] ++ g)),
+   checkCase (Json.mkObj ([("id", .str "k"), ("formulas", empty), ("marks", empty), ("candidates", empty)] ++ g)),
+   VE.Question.Run.questionCase (request question "authoring" ([("question", .str question)] ++ fields))]
+def mismatch : Except String Json → Bool
+  | .error m => m.startsWith "fields do not match: expected " &&
+    ((m.splitOn "got").head!.splitOn "judgments").length == 1
+  | .ok _ => false
+#guard (shared []).all (·.toOption.isSome)
+#guard (shared [("overlay", Json.mkObj [])]).all (·.toOption.isSome)
+#guard [J [], J ["reasonable_limit"], [("judgments", .str "x")]].all fun f => (shared f).all mismatch
+#guard (shared ([("overlay", Json.mkObj [])] ++ J [])).all mismatch
 
 end VE.EnglishGrammar.JudgmentRunExamples

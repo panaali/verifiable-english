@@ -328,7 +328,7 @@
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
         "lines": 754,
-        "sha256": "fe3b4fc0ecb9ef6aad6b7d46ee40584558ee061d5430306b3c71ae7f0b17eeb5",
+        "sha256": "090692e63a1fca65859379e57ed832d4a2c81882883f8ba69d6e3d33a09c56fc",
         "ranges": [
           [
             1,
@@ -353,7 +353,7 @@
       {
         "file": "lean/VE/Question/Run.lean",
         "lines": 259,
-        "sha256": "75de40527c88423dccc98232a914c85338e29307bbd61cddbfc633780be309b7",
+        "sha256": "b00954a5bd99ef719e4970d60852f22bf770ed72f3e71ea01096a397946d0a1c",
         "ranges": [
           [
             1,

@@ -17514,7 +17514,10 @@
         "VE.EnglishGrammar.JudgmentRunExamples.J",
         "VE.EnglishGrammar.JudgmentRunExamples.result",
         "VE.EnglishGrammar.JudgmentRunExamples.member",
-        "VE.EnglishGrammar.JudgmentRunExamples.names"
+        "VE.EnglishGrammar.JudgmentRunExamples.names",
+        "VE.EnglishGrammar.JudgmentRunExamples.question",
+        "VE.EnglishGrammar.JudgmentRunExamples.shared",
+        "VE.EnglishGrammar.JudgmentRunExamples.mismatch"
       ]
     }
   }
