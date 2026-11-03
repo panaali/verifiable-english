@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from functools import cache
 import importlib.util
+from itertools import permutations
 import json
 from pathlib import Path
 import re
@@ -22,9 +23,10 @@ import pytest
 
 from tests.lean_build import lean_build
 from tests.subprocesses import HANG_TIMEOUT
+from tests.test_norms import environment, permission
 from ve.english_grammar import export
 from ve.environment import Environment
-from ve.norm_english import _words
+from ve.norm_english import _words, parse_english
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "tests/data/norm-blocks"
@@ -153,6 +155,42 @@ def test_lean_reads_each_pinned_block_as_python(lake, tmp_path):
     different = {i: v for i, v in out.items() if i not in soft and v != "same"}
     assert set(different) == set(DIFFERENT), "\n".join(f"{i}: {v}" for i, v in different.items())
     assert sum(v == "same" for v in out.values()) == 104 - len(DIFFERENT)
+
+
+def header(targets: tuple[int, ...]) -> str:
+    if len(targets) < 2:
+        return f" (exception to rule {targets[0]})" if targets else ""
+    return f" (exception to rules {', '.join(map(str, targets[:-1]))} and {targets[-1]})"
+
+
+def over_text(order: tuple[int, ...], split: int, lines_first: bool) -> str:
+    """Rule 5 over `order`: the first `split` targets in its header, the rest as precedence lines."""
+    rules = [f"Rule {n}. Every act must not be done." for n in range(1, 5)]
+    rules.append(f"Rule 5{header(order[:split])}. Every act may be done.")
+    lines = [f"Rule 5 takes precedence over rule {n}." for n in order[split:]]
+    return "\n".join(lines + rules if lines_first else rules + lines)
+
+
+def test_lean_orders_over_as_python(lake, tmp_path):
+    """Every pinned node has `over = []`, so `over`'s order is compared here, with Python's node read live: f7, f8, and
+    rule 5 over every order of four targets, at every split between its header and its precedence lines (those lines
+    before the rules at an odd split, after them at an even one)."""
+    env = environment({"permitted": permission()})
+    f7 = ("Rule 1. Every act must not be done.\nRule 2. Every act may be done.\n"
+          "Rule 2 takes precedence over rule 1.")
+    f8 = ("Rule 1. Every act must not be done.\nRule 2. Every act must not be done.\n"
+          "Rule 3 (exception to rules 1 and 2). Every act may be done.")
+    texts = {"f7": f7, "f8": f8} | {
+        f"{''.join(map(str, order))}-{split}": over_text(order, split, lines_first=split % 2 == 1)
+        for order in permutations(range(1, 5)) for split in range(5)}
+    nodes = {i: [r.to_dict()["norm"] for r in parse_english(env, text).rules] for i, text in texts.items()}
+    assert {tuple(n[-1]["over"]) for i, n in nodes.items() if i not in ("f7", "f8")} == {
+        tuple(f"rule-{n}" for n in order) for order in permutations(range(1, 5))}
+    swapped = [*nodes["1234-2"][:4], {**nodes["1234-2"][4], "over": ["rule-3", "rule-4", "rule-1", "rule-2"]}]
+    rows = [(i, text, nodes[i]) for i, text in texts.items()] + [("swapped", texts["1234-2"], swapped)]
+    out = readings(lake, tmp_path, [(case_of(env), rows[k:k + 50]) for k in range(0, len(rows), 50)])
+    assert out.pop("swapped").startswith("differs")
+    assert {i: v for i, v in out.items() if v != "same"} == {}
 
 
 def test_the_comparison_fails_on_a_changed_node(lake, tmp_path):
