@@ -1965,6 +1965,13 @@
    "reason": "pc-1g: VE/Service/Document.lean S +75 (verdictFields, setVerdictFields, unitStatuses, judgmentCodes, judgmentGateTexts, layerRefusal, layerRelaxes, noUnitStatus, withoutStatuses), V +9 (UnitContent.judgedIn: the rights block and a rights norm unit beside its cites); VE/Judgments/Chain.lean S +9 (rightsAuthorFormulas, andAll), V +36 (blockFormula, ruleFormulas, linesFormulas, blockFormulas)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
    "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "pc-1g: VE/Service/Document.lean S +1 (verdictFields names undeclared_evaluative, DRI 2026-11-03 pc-1g stop item 4); item total S +85, V +45, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
   }
  ]
 }
