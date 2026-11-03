@@ -1,0 +1,15 @@
+$ cd lean && PATH=~/.elan/bin:$PATH lake env lean ../experiments/exp-g1/ExpG1.lean
+rc=0
+'ExpG1.sat_X_perm' depends on axioms: [propext, Quot.sound]
+'ExpG1.transfers_X_perm' depends on axioms: [propext, Quot.sound]
+'ExpG1.entailsX_perm' depends on axioms: [propext, Quot.sound]
+'ExpG1.acceptanceX_order_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.entailsXV_perm' depends on axioms: [propext, Quot.sound]
+'ExpG1.g1b_order_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.mixedV_decides' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.mixedC_accepted' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.mixedV_accepted' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.single_pack_refuted' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.dup_order_matters' depends on axioms: [propext, Quot.sound]
+'ExpG1.mixedC_transfers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ExpG1.undeclared_empty_at_transfers_bases' depends on axioms: [propext, Quot.sound]

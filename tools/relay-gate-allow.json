@@ -2450,12 +2450,14 @@
    "route": "service:senses.project",
    "mutation": "*",
    "path": [
-    "*/result/result/projection/environment",
-    "*/result/result/projection/environment/*"
+    "*/result/result/projection/environment/vocabulary/sorts",
+    "*/result/result/projection/environment/vocabulary/sorts/*",
+    "*/result/result/projection/environment/vocabulary/predicates",
+    "*/result/result/projection/environment/vocabulary/predicates/*"
    ],
-   "kind": "follow-up",
-   "id": "F7",
-   "reason": "Untyped: the projected environment (VE.Senses.projectedJson) has no shape beyond an object in senses.project.json; the relay (ve.backends.senses._projection_problem) reads it whole as an Environment and binds its environment_id and the lexicon's to it. sn-b6b types it in lean/ResponseShape/Schemas."
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of the projected environment (VE.Senses.projectedJson: the request's entries and the dictionary's fresh sorts and sense predicates) and their fields beside `arguments`: senses.project.json `environment` types the envelope, the sort entries and the request-bound members; the relay (ve.backends.senses._projection_problem) refuses any other content, since the environment_id it computes over the returned JSON must be the one Lean names and the one the projected lexicon names (tests/test_senses_project.py::test_projection_answer_mutations_are_rejected)."
   },
   {
    "route": "service:senses.project",

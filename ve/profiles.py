@@ -49,7 +49,7 @@ _KEPT = ModelReduction(kept=True)
 # environment first; the engines answer model questions only, over the
 # vocabulary a model interprets.
 MODEL_REDUCTIONS = {
-    # acts@0: kept, so Rust and Lean's model path refuse the environment (UnsupportedProfile; act-phrases 2.9)
+    # acts@0: kept (Lean's model path reads it); Rust's search reads Lean's model view (`model_view`, act-phrases 2.9)
     "acts@0": _KEPT,
     "alternatives@0": ModelReduction(blocks=("alternatives",)),
     "closure@0": _KEPT,
@@ -118,16 +118,20 @@ def model_environment(data: dict, *, layers=None, display: bool = True) -> dict:
             "profiles": [p for p, r in zip(profiles, reductions) if r.kept], "vocabulary": vocabulary}
 
 
-def without_wording_acts(data: dict) -> dict:
-    """The model environment `data` of a Rust search without `acts@0` when every regulated declaration is plain:
-    the profile then adds only the `acts` block and each plain declaration's `act` and `form`, its wording
-    (act-phrases 2.1), which no model reads. Rust refuses every `acts@0` environment (act-phrases 2.9); Lean checks
-    its witnesses over the whole environment. Any other environment as it is."""
-    vocabulary = data.get("vocabulary")
-    if "acts@0" not in (data.get("profiles") or ()) or any(
-            decl["regulated"]["role"] != "plain" for decl in vocabulary["predicates"].values() if "regulated" in decl):
+def model_view(data: dict) -> dict:
+    """Rust's model view of the model environment `data` under `acts@0` (act-phrases 2.9, ap-1bg): without the
+    profile, its `acts` block and each plain act's `act` and `form` (its wording, act-phrases 2.1), each permission
+    and obligation act the one Lean's environment row gives it (`model_acts`, `Standalone.modelActs`), which Rust's act
+    check accepts and which keeps equal acts equal. No model reads an act; Lean checks every witness over the whole
+    environment. Any other environment as it is."""
+    if "acts@0" not in (data.get("profiles") or ()):
         return data
-    predicates = {name: {**decl, "regulated": {k: v for k, v in decl["regulated"].items() if k not in ("act", "form")}}
+    from .backends.relay import decide
+    from .backends.validation import bound_model_acts
+    model = bound_model_acts(decide("environment", [{"id": "environment", "environment": data}])[0], data)
+    vocabulary = data["vocabulary"]
+    predicates = {name: {**decl, "regulated": {**{k: v for k, v in decl["regulated"].items() if k not in ("act", "form")},
+                                               **({"act": model[name]} if name in model else {})}}
                   if "regulated" in decl else decl for name, decl in vocabulary["predicates"].items()}
     return {**data, "profiles": [p for p in data["profiles"] if p != "acts@0"],
             "vocabulary": {**{k: v for k, v in vocabulary.items() if k != "acts"}, "predicates": predicates}}

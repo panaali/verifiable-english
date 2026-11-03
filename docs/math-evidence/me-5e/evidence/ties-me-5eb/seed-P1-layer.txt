@@ -1,0 +1,6 @@
+mutant P1-layer: drop the VE.Calc.Ties row from tools/layer_policy.py's lean_layer
+new outward Lean import: VE.Calc.Ties -> VE.Calc.Run
+check_lean_imports exit 1
+OK
+Lean layer graph kept (2 modules, 0 reviewed legacy edges)
+1 failed in 86.41s (0:01:26)
