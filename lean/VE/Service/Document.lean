@@ -1758,14 +1758,16 @@ def Env.basePredicates (E : Env) : List (String × List String) :=
 /-! ## The case -/
 
 /-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, each node then
-bound to the unit of its name, which holds its statement, so a report rests on nothing the document does not say. The
+bound to the asserted unit of its name, which holds its statement, so a report rests on nothing the document does not
+assert (W6a's provenance rule for an asserted leaf, `VE.Time.Document`; bridges have no label here yet: qt-a4b). The
 report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`). -/
 def cardinalityReport (w : VE.Cardinality.CardEnv) (graph : Json) (units : List SourceUnit) : Except String Json := do
   let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction graph
-  let meanings : Std.HashMap String (Option String) := units.foldl (fun m u => m.insert u.id u.meaningId) ∅
+  let meanings : Std.HashMap String (Option String) := units.foldl
+    (fun m u => if u.kind == .str "asserted" then m.insert u.id u.meaningId else m) ∅
   for n in g.nodes do
     unless meanings[n.name]? == some (some n.adm.meaningId) do
-      throw s!"claim graph node {n.name} is not a unit holding its statement"
+      throw s!"claim graph node {n.name} is not an asserted unit holding its statement"
   let report := VE.Cardinality.Run.reportJson g
   pure (Json.mkObj [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
     ("w6_target_environment_id", .str w.w6.targetId), ("report", report),

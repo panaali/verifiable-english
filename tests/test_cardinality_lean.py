@@ -28,14 +28,14 @@ def text(nodes, environment=ENV, graph=True, **front) -> bytes:
     body, units, cursor = b"", [], 0
     for position, node in enumerate(nodes):
         line = f"Sentence {position} about the count.\n".encode()
-        units.append({"id": node["name"], "span": [cursor, cursor + len(line)], "kind": "asserted", "meaning": "specified",
+        units.append({"id": node["name"], "span": [cursor, cursor + len(line)], "kind": node.get("kind", "asserted"), "meaning": "specified",
                       "support": "testimony", "content": node.get("content", {"cardinality": node["statement"]}),
                       **({"meaning_id": node["meaning_id"]} if "meaning_id" in node else {})})
         body, cursor = body + line, cursor + len(line)
     root = nodes[-1]["name"]
     meta = {"format": "ve-document@1", "environment": environment, "units": units, **front}
     if graph:
-        meta["graph"] = {"root": root, "nodes": [{k: v for k, v in n.items() if k not in ("content", "meaning_id")} for n in nodes]}
+        meta["graph"] = {"root": root, "nodes": [{k: v for k, v in n.items() if k not in ("content", "meaning_id", "kind")} for n in nodes]}
     return b"---\n" + json.dumps(meta).encode() + b"\n---\n" + body
 
 
@@ -150,12 +150,17 @@ def test_every_graph_node_is_a_unit_holding_its_statement(tmp_path):
     renamed = text(nodes).replace(b'"id": "total"', b'"id": "other"')
     path = tmp_path / "renamed.ve.md"
     path.write_bytes(renamed)
-    with pytest.raises(VEError, match="claim graph node total is not a unit holding its statement"):
+    with pytest.raises(VEError, match="claim graph node total is not an asserted unit holding its statement"):
         check_document(path)
     other = [{**nodes[0], "content": {"cardinality": TOP}}, *nodes[1:]]
-    with pytest.raises(VEError, match="claim graph node total is not a unit holding its statement"):
+    with pytest.raises(VEError, match="claim graph node total is not an asserted unit holding its statement"):
         check_document(written(tmp_path, other))
     assert check_document(written(tmp_path, [{**n, "content": {"cardinality": n["statement"]}} for n in nodes]))
+    # W6a's provenance rule: a quoted unit is no asserted leaf (a bridge needs a label: qt-a4b), though its content checks.
+    quoted = [{**nodes[0], "kind": ["attributed", "fomc", "says", "asserted"]}, *nodes[1:]]
+    with pytest.raises(VEError, match="claim graph node total is not an asserted unit holding its statement"):
+        check_document(written(tmp_path, quoted))
+    assert check_document(written(tmp_path, quoted, graph=False))
 
 
 def test_a_stale_meaning_id_and_an_unproved_root_are_refused(tmp_path):

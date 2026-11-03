@@ -61,8 +61,8 @@ def content (E : Option Env) (c : Json) : Except String (UnitContent × String) 
 its statement. -/
 def graph (root : String) (nodes : List (String × Json)) : Json := Json.mkObj [("root", .str root),
   ("nodes", toJson (nodes.map fun n => Json.mkObj [("name", .str n.1), ("statement", n.2)]))]
-def source (name : String) (mid : Option String) : SourceUnit :=
-  { id := name, span := (0, 1), kind := .null, decoded := .route .asserted, meaning := .null, support := "none",
+def source (name : String) (mid : Option String) (kind : Json := .str "asserted") : SourceUnit :=
+  { id := name, span := (0, 1), kind, decoded := .route .asserted, meaning := .null, support := "none",
     status := "CHECKED", parent := none, meaningId := mid }
 def idOf (s : Json) : Option String := w.bind fun w => ((VE.Cardinality.Wire.decodeStatement w s).toOption).map (·.meaningId)
 def reportOf (g : Json) (units : List SourceUnit) : Except String Json := match w with
@@ -76,10 +76,12 @@ def report : Json := (reportOf both asWritten).toOption.getD .null
 #guard (w.map (Json.str ·.environmentId)) == some (report.getObjValD "environment_id") &&
   (w.map (Json.str ·.w6.environmentId)) == some (report.getObjValD "w6_environment_id") &&
   (w.map (Json.str ·.w6.targetId)) == some (report.getObjValD "w6_target_environment_id")
-def refused (name : String) : String := s!"claim graph node {name} is not a unit holding its statement"
+def refused (name : String) : String := s!"claim graph node {name} is not an asserted unit holding its statement"
+def quoted : Json := toJson [toJson "attributed", toJson "x", toJson "says", toJson "asserted"]
 #guard [([source "b" (idOf low)], "a"), ([source "a" (idOf top)], "b"), ([source "a" (idOf low), source "b" (idOf low)], "a"),
   ([source "a" (idOf top), source "b" (idOf top)], "b"), ([source "a" none, source "b" (idOf low)], "a"),
-  ([source "a" (idOf top), source "b" none], "b")].all fun (us, n) => said (reportOf both us) == refused n
+  ([source "a" (idOf top), source "b" none], "b"), ([source "a" (idOf top) quoted, source "b" (idOf low)], "a"),
+  ([source "a" (idOf top), source "b" (idOf low) (.str "meta")], "b")].all fun (us, n) => said (reportOf both us) == refused n
 
 /-! `check` and `encode`: an admitted row, with the report only when it is asked for. -/
 def unit (id : String) (c : Json) : Json := Json.mkObj [("id", .str id), ("span", toJson [0, 2]), ("kind", .str "asserted"),
