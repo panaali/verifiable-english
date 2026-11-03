@@ -43,14 +43,23 @@ elaboration status below is unchanged.
 > in a checkout whose Lean modules are built; every `#guard` passes; and both reviewers do a bounded re-check of
 > the edited sections. PS-1 starts only after that.
 >
-> **Not yet elaborated.** Every definition and statement below is transcribed in the scratch file
-> `lean/SpecStubs_presupposition.lean`: definitions with their bodies, each theorem as a `Prop`-valued definition
-> `stmt_<name>`, and every fixture value as a `#guard` on a finite model. The stubs have not elaborated and the
-> `#guard`s have not run: draft 1's attempt failed with `unknown module prefix 'VE'` because the checkout had no
-> built modules, which is not evidence either way, and draft 2's session could not run commands. The fixture values
-> in section 7 were derived by hand and count as computed only once the stub run passes. The run, after
-> `lake build` in the same checkout: `cd lean && PATH=~/.elan/bin:$PATH lake env lean SpecStubs_presupposition.lean`.
-> The scratch file contains no word the Lean audit bans, and it is not committed.
+> **Elaborated (PS-S stub gate, 2026-11-03).** Every definition and statement below is transcribed in the scratch
+> file `lean/SpecStubs_presupposition.lean`: definitions with their bodies, each theorem as a `Prop`-valued
+> definition `stmt_<name>`, and every fixture value as a `#guard` on a finite model. It was run in a checkout of
+> main at `ce5f920e5` (Lean 4.24.0) after `lake build` there (1270 jobs, no error), with
+> `cd lean && PATH=~/.elan/bin:$PATH lake env lean SpecStubs_presupposition.lean`: exit 0, no message. The file is
+> the draft-2 stub byte for byte (md5 `4c543f9b`, last written 2026-10-14), so **no fix was needed**: all 115
+> `#guard`s pass, 0 fail; the 59 `stmt_` statements, `Frame.shallowB_iff` (proved in the stub) and the two `rfl`
+> examples of 4.1 elaborate. A `#guard` with a false value appended to a copy fails the run, so the `#guard`s are
+> evaluated. Every `#guard` value equals section 7.1's hand value, so 7.1's values now count as computed. The guards
+> cover S1, S2, S4, S5, S8, S9, S12 to S27 (S22's raw side; its `SatUnder` side is a PS-3 `example`), 4.1, 4.2, the
+> table shapes (R-2) and the expected-readings lengths (R-D3, R-6). The admission fixtures of 7.3 named by the
+> ruling's items 6, 7, 8, 10 and D5 (A5u-allow, A5u-deny, A19, A20, A21, A24 to A28) need PS-2a's admission
+> function, which the stub does not define (its admission statements take it as a parameter `admitFn`), so they are
+> not `#guard`s here and are run by PS-2a and PS-2b; their statements (`admit_conditioned_rule_unspecified`,
+> `admit_assumed_sound`, `admit_unresolved_readings`, `admit_empty_table`, `admit_heading_goal`,
+> `admit_carrier_candidate`) elaborate. The scratch file contains no word the Lean audit bans, and it is not
+> committed; a copy is kept at `manage-agents/reviews/ps-s-stub/SpecStubs_presupposition.lean`.
 >
 > Section 10 lists every place where this draft chose between readings of the plan or of the ruling.
 
