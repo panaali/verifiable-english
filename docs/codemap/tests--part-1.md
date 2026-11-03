@@ -8,6 +8,7 @@
 - `tests/check_mutants.py` — Seeded bugs of a relay's checks, enumerated from its source: each check weakened or deleted in turn.
 - `tests/conftest.py` — Shared test setup for serial and xdist runs.
 - `tests/contract_input_recorder.py` — A pytest plugin that records every input of one wire unit that the tests themselves submit.
+- `tests/document_chain_corpus.py` — PC-2a's parity corpus (F2.3, docs/spec/profile-composition.md 5.2): every document of `tests/data` listing soft-norms@0 with norm-defaults@0, as written and wi…
 - `tests/explicit_inverse.py` — Independent structural decoder for the four fully grouped test surfaces.
 - `tests/fluent_inverse.py` — Test-only recursive-descent inverse, not a new VE source language.
 - `tests/lean_build.py` — The one way a test fixture builds named Lean targets.
@@ -91,4 +92,3 @@
 - `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
 - `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
 - `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
-- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.

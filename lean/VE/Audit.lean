@@ -406,6 +406,7 @@ import VE.Senses.Read
 import VE.Senses.Request
 import VE.Service.Diagnose
 import VE.Service.Document
+import VE.Service.DocumentChain
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
@@ -7360,6 +7361,10 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
+#print axioms VE.Service.DocumentChain.layeredOf_entails
+#print axioms VE.Service.DocumentChain.layeredOf_ids
+#print axioms VE.Service.DocumentChain.layeredOf_soft
+#print axioms VE.Service.DocumentChain.requestOf_environment
 #print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound

@@ -1,3 +1,4 @@
+- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
 - `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
 - `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
@@ -7,6 +8,7 @@
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
 - `tests/test_calc_service.py` — The `calc` service mode (math-evidence ME-2, me-2b): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, and the m…
+- `tests/test_calc_stats.py` — ME-7: exact statistics (math-evidence spec 7; fixtures V-6, V-6r and S-5 of 13.2 and 13.3).
 - `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
 - `tests/test_calendar_regression_w6b.py` — Independent Art.
 - `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
@@ -39,6 +41,7 @@
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
+- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
@@ -51,6 +54,7 @@
 - `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
+- `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 - `tests/test_e1_core.py` — (no module docstring)
@@ -84,7 +88,3 @@
 - `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
 - `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
 - `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
-- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
-- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
-- `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
-- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
