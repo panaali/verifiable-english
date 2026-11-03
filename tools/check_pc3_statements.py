@@ -10,8 +10,12 @@ PC-7b's and PC-4b's, so until they land its last clause is `| _ => False` in pla
 
 from pathlib import Path
 import re
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+from check_readings_defaults_statements import proof_cut  # noqa: E402
+
 SPEC = ROOT / "docs/spec/profile-composition.md"
 SOURCES = [ROOT / "lean/VE/Compose" / name for name in ("Dispatch.lean", "Stack.lean", "Contract.lean")]
 KINDS = ("theorem", "def", "structure", "inductive")
@@ -32,7 +36,7 @@ def declarations(code: str) -> dict[tuple[str, str], list[str]]:
         stop = STOP.search(code, code.find("\n", start.end()) + 1)
         body = code[start.start():stop.start() if stop else len(code)]
         if start[1] == "theorem":
-            body = body.split(":=", 1)[0]
+            body = body[:proof_cut(body)]
         out.setdefault((start[1], start[2]), []).append(re.sub(r"\s+", " ", body).strip())
     return out
 
