@@ -1,4 +1,4 @@
-import VE.Discourse.Admission
+import VE.Discourse.Compose
 
 /-! # The `ve_service` mode `discourse` (docs/spec/discourse.md 9.7), formerly the one-shot `ve_discourse_route`
 
@@ -35,8 +35,6 @@ def usesDiscoursePath (j : Json) : Bool :=
     | .str _ => true
     | _ => false
   text || profiles.contains discourseProfile || kind
-
-def fuelBudget : Nat := 5
 
 /-- A case's document, loaded, and its environment: a document text brings its own. -/
 def loadCase (j : Json) : Except String (Json × Json) := do
@@ -176,11 +174,20 @@ def DiscourseAdmissionAnswer (id : String) (j answer : Json) : Prop :=
     VE.Route.Gate.profilesOf environment = .ok profiles ∧ baseVocabulary environment = .ok rv ∧
     admitDiscourse profiles environment rv document fuelBudget = .ok res ∧ encodeAdmission id res = .ok answer
 
-/-- The public entry point: a successful `admission` answer on the discourse path is the encoding
-of a checked discourse admission whose results satisfy the admission theorems. -/
+/-- The `admission` answer of a composed admission: `composedJson c` with the case id. -/
+def encodeComposed (id : String) (c : ChainAdmitted) : Json :=
+  ((composedJson c).setObjVal! "id" (.str id)).setObjVal! "status" (.str "ok")
+def ComposedAdmissionAnswer (id : String) (j answer : Json) : Prop :=
+  ∃ document environment profiles c, loadCase j = .ok (document, environment) ∧
+    VE.Route.Gate.profilesOf environment = .ok profiles ∧
+    admitComposed profiles environment document = .ok (.chain c) ∧ encodeComposed id c = answer
+
+/-- The wire entry (9.6, over 9.7's entry), revised in place: a successful `admission` answer on the discourse path is today's
+    checked discourse admission or a composed one. -/
 theorem discourse_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "admission") (hd : usesDiscoursePath j = true) :
-    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧ DiscourseAdmissionAnswer id j answer := by
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      (DiscourseAdmissionAnswer id j answer ∨ ComposedAdmissionAnswer id j answer) := by
   unfold runCase at h
   obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -193,7 +200,7 @@ theorem discourse_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   obtain ⟨rv, hrv, h⟩ := VE.Order.ProfileGate.bind_ok h
   simp only [beq_self_eq_true, if_true] at h
   obtain ⟨res, hres, h⟩ := VE.Order.ProfileGate.bind_ok h
-  exact ⟨id, hid, document, environment, profiles, rv, res, hl, hp, hrv, hres, h⟩
+  exact ⟨id, hid, .inl ⟨document, environment, profiles, rv, res, hl, hp, hrv, hres, h⟩⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesDiscoursePath j then

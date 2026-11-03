@@ -347,10 +347,11 @@ def test_the_profile_requires_documents_and_its_records_are_w2s(service):
 
 
 def test_layers_judgments_does_not_compose_with_are_unavailable(service):
-    soft = sorted(PROFILES + ["soft-norms@0"])
-    text = document(service, [unit("u1", kind="meta")], J1, profiles=soft)
+    # PC-1 composes the soft chain (tests/test_judgments_chain.py); the rights chain stays apart until pc-1g.
+    rights = sorted(PROFILES + ["rights@0", "soft-norms@0"])
+    text = document(service, [unit("u1", kind="meta")], J1, profiles=rights)
     assert outcome(answer(service, text)) == (
-        "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route", None)
+        "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route", None)
     front, body = document(service, [unit("u1", kind="meta")], J1).split("\n---\n")
     senses = front[:-1] + ', "senses": []}\n---\n' + body
     assert outcome(answer(service, senses)) == (

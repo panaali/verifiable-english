@@ -1825,6 +1825,118 @@
    "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
    "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
+  },
+  {
+   "class": "S",
+   "lines": 10,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
+   "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 29,
+   "reason": "pc-1: VE/Service/Document.lean +28, VE/Judgments/Chain.lean +3, VE/Compose/Dispatch.lean +1 (K +0, S +3, V +29)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1 (E″'s identities over the written list): VE/Service/Document.lean softLayer +1 (K +0, S +0, V +1)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-10-18",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "pc-1 review fix: VE/Service/Document.lean environmentOf +2 (F1: main's refusal of the pairing beside exception conditions), checkCore +2 (F2: row 16 once on a scope@0 request) (K +0, S +0, V +4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-01",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 18,
+   "reason": "pc-1 review fix: VE/Service/Document.lean checkDocSetsFast +18 (F2: the document mode's entry reads the front matter once; equal to checkDocSets by @[csimp] checkDocSets_eq_fast, and it calls no original a twin replaces) (K +0, S +0, V +18)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-01",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-1 review fix: VE/Service/Document.lean profilesOf +3 (a match on frontOf, inlined, which row 16's runs call too, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +3)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-02",
+   "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "S",
+   "lines": 91,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 52,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
+   "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
+  },
+  {
+   "class": "S",
+   "lines": 125,
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 19,
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "cmp-s4 review F1 fix: VE/Discourse/Compose.lean S +8 (formulaUnit: the W2 view of the chain's units, 14.5 step 4), VE/Discourse/Manifest.lean S +1 (DDoc.chain); chainChecks, chainDDoc and caseManifest tied (chainChecks_wellFormed, caseManifest_wellFormed); the item against the merge base: K +0, S +134, V +16, trusted +150",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }
