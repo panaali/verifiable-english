@@ -1,6 +1,6 @@
 {
  "command": "python3 seed.py (each mutant alone, then lake build VE.Calc.ConsistencyExamples, then restore)",
- "head": "8ce3d3b68",
+ "head": "c84d1a1bf",
  "mutants": [
   {
    "id": "S1",
@@ -13,8 +13,8 @@
     "enclose_sound"
    ],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:30",
-    "lean/VE/Calc/ConsistencyExamples.lean:31"
+    "lean/VE/Calc/ConsistencyExamples.lean:33",
+    "lean/VE/Calc/ConsistencyExamples.lean:34"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[complement]",
    "build_exit": 1,
@@ -29,10 +29,10 @@
    "bug": "'| .tiesUp | .halfEven => ((2 * D - 1) / (2 * u), (2 * D + 1) / (2 * u))' -> '| .tiesUp | .halfEven => ((2 * D - 1) / (2 * u), (2 * D + 3) / (2 * u))'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:24",
-    "lean/VE/Calc/ConsistencyExamples.lean:26",
-    "lean/VE/Calc/ConsistencyExamples.lean:28",
-    "lean/VE/Calc/ConsistencyExamples.lean:30"
+    "lean/VE/Calc/ConsistencyExamples.lean:27",
+    "lean/VE/Calc/ConsistencyExamples.lean:29",
+    "lean/VE/Calc/ConsistencyExamples.lean:31",
+    "lean/VE/Calc/ConsistencyExamples.lean:33"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[r5-k1]",
    "build_exit": 1,
@@ -47,7 +47,7 @@
    "bug": "'(i.1, if m % 2 = 1 then (i.2.box r).2 else (i.2.box r).1)' -> '(i.1, (i.2.box r).2)'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:27"
+    "lean/VE/Calc/ConsistencyExamples.lean:30"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[r5-k2]",
    "build_exit": 1,
@@ -62,7 +62,7 @@
    "bug": "'else refuteC limit r inputs cs (j + 1) w' -> 'else refuteC limit r inputs cs j w'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:28"
+    "lean/VE/Calc/ConsistencyExamples.lean:31"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[r5-order]",
    "build_exit": 1,
@@ -77,7 +77,7 @@
    "bug": "'if limit < w + qbits i.1 + qbits i.2 then none else some (some i, w + qbits i.1 + qbits i.2)' -> 'if limit < w then none else some (some i, w)'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:71"
+    "lean/VE/Calc/ConsistencyExamples.lean:74"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
    "build_exit": 1,
@@ -94,8 +94,8 @@
     "grain_sound"
    ],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:79",
-    "lean/VE/Calc/ConsistencyExamples.lean:89"
+    "lean/VE/Calc/ConsistencyExamples.lean:82",
+    "lean/VE/Calc/ConsistencyExamples.lean:92"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[v7-ties-up]",
    "build_exit": 1,
@@ -110,7 +110,7 @@
    "bug": "'| .defined e => e.names.findSome? fun n => (t.lookup n).join' -> '| .defined _ => none'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:33"
+    "lean/VE/Calc/ConsistencyExamples.lean:36"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[c1-through-definition]",
    "build_exit": 1,
@@ -127,11 +127,20 @@
     "consistencyInputFault_none"
    ],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:35"
+    "lean/VE/Calc/ConsistencyExamples.lean:38"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[input-twice]",
    "build_exit": 1,
    "result": "KILLED"
   }
- ]
+ ],
+ "trust_mutants": {
+  "command": "zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/math-evidence/me-8/trust-mutants-allow.json --rescore docs/math-evidence/me-8/trust-mutants.json --json docs/math-evidence/me-8/trust-mutants.json",
+  "result": "15 ALLOWED, 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0",
+  "definitions": {
+   "VE.Calc.InBox": "body-true and body-false fail the #guards at ConsistencyExamples.lean:24 and :23 (UNKNOWN by instance drift, allowed)",
+   "VE.Calc.Consistent": "13 mutants, each breaking consistent_of_witness and inconsistent_of_refutation (undecidable: allowed, as me-9b)"
+  },
+  "dri_item_1": "refuteByGrain's mutant (true) fails refuteByGrain_sound to compile: killed (reviews/dri-decisions-20261102-me-8.md item 1)"
+ }
 }
