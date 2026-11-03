@@ -35,6 +35,13 @@
       "change": "durations --record takes the shortest unrecorded mean of the inputs, not the longest",
       "test": "tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs",
       "restored": true
+    },
+    {
+      "id": "S6",
+      "file": "tools/gate.py",
+      "change": "record_file_durations catches (OSError, ValueError) only, so a deeply nested file raises RecursionError out of the gate",
+      "test": "tests/test_gate_durations.py::test_a_missing_malformed_or_oversize_record_file_leaves_the_committed_plan[nested 100k deep]",
+      "restored": true
     }
   ]
 }

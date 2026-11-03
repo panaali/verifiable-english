@@ -326,6 +326,8 @@ BAD_FILES = {
         {"durations": BAD["seconds not zlib"], "counts": {"selected": 1}})), path)[1],
     "seconds over MAX_RECORD_BYTES": oversize_seconds,
     "not a file": lambda path: (path.mkdir(), path)[1],
+    "nested 100k deep": lambda path: (path.write_text("[" * 100_000 + "]" * 100_000), path)[1],
+    "not UTF-8": lambda path: (path.write_bytes(b'{"durations": "\xff"}'), path)[1],
 }
 
 
