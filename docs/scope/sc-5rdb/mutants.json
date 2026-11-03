@@ -72,6 +72,19 @@
     "tests/test_scope_answer.py::test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id[1-True-units.u3-title]"
    ],
    "result": "KILLED (assert 0 == 2)"
+  },
+  {
+   "id": "S3",
+   "file": "ve/backends/relay.py (relay.answer, patched by a scratch pytest plugin, one cell at a time)",
+   "definition": "the scope mode's answer to a repeated unit id, per cell of old-answers.json",
+   "behaviour": "the scope mode refuses every document of DELTA row 3, frame included (recheck F9; DRI 2026-11-03 f9 item 1)",
+   "mutation": "relay.answer returns the cell's measured old ok answer, for frame/dup-u0, frame/noid2-u0, frame/noid-empty, yields/adj-u1 in turn",
+   "test": [
+    "tests/test_scope_answer.py::test_sc5rdb_frame_with_another_unit_repeated_is_refused (the three frame cells)",
+    "tests/test_scope_answer.py::test_sc5rdb_every_unit_of_every_effect_repeated_is_refused[frame] (the three frame cells)",
+    "tests/test_scope_answer.py::test_sc5rdb_every_unit_of_every_effect_repeated_is_refused[yields] (yields/adj-u1)"
+   ],
+   "result": "KILLED: 2 failed for each frame cell, 1 for yields/adj-u1; the F1 round's tests, which repeat only u3, still passed under each (18 or 19 passed), which is the gap F9 names"
   }
  ]
 }

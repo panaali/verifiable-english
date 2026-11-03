@@ -1,15 +1,10 @@
 # sc-5rdb: `governSets_every_choice` proved for distinct unit ids; `decodeBlock` refuses a repeated unit id
 
-**Status:** built, ready for review. No signature is reserved. DELTA rows 1 and 2 are signed by the DRI (items 1 and 2 of
-reviews/dri-decisions-20261031-sc-5rd.md), row 3 by the DRI 2026-11-03 (reviews/dri-decisions-20261103-sc-5rdb.md
-item 1), row 4 by standing ruling R2. **Next:** SC-6 (the UDHR rights reach) and PC-5b.
-**What changed:** the last of spec 11.3's four `JsonWF` statements is proved, with the one premise the DRI signed,
-`(hd : (unitIds D.doc).Nodup)`. The scope boundary now refuses a repeated unit id (2 trusted lines), and the route
-corollary `decodeBlock_sets` discharges `hd` from that check, so no caller takes it as a hypothesis. The check is a
-verdict change in the `scope` mode: `ve scope explain` used to answer `ok` for a document with a repeated unit id
-(five of the six effects) and now refuses it (DELTA row 3, signed by the DRI 2026-11-03). In the document mode it is an
-earlier refusal of documents the chain already refuses (row 2); `frame`'s refusal changes its fault (row 4, R2). Pilot
-bytes: 0 expected (the pilot documents' unit ids are distinct).
+**Status:** built, ready for review. No signature is reserved. DELTA rows 1-2: the DRI, reviews/dri-decisions-20261031-sc-5rd.md items 1-2. Row 3: the DRI, reviews/dri-decisions-20261103-sc-5rdb-f9.md item 1. Row 4: standing ruling R2.
+**What changed:** spec 11.3's last `JsonWF` statement is proved, with the signed premise `(hd : (unitIds D.doc).Nodup)`; the scope boundary refuses a repeated unit id (2 trusted lines), and `decodeBlock_sets` discharges `hd` from that check.
+**Verdict change:** `ve scope explain` refuses every such document whose old answer was an accepted `ok`, on any of the six effects, `frame` included (row 3). A document refused before only changes its fault (row 4); the document mode refuses earlier what the chain refused (row 2).
+**Open:** nothing for this item. Pilot bytes: 0 expected (the pilot documents' unit ids are distinct).
+**Next:** SC-6 (the UDHR rights reach) and PC-5b.
 
 ## Task rows
 
@@ -45,6 +40,21 @@ its answer in `outs` (from `faultOf = none`). `unitsOf_atChoiceOn` takes the top
 `ScopeAdmission.lean` (6 lines inside `scope_admission`'s proofs, a region this item does not edit). Main was merged at
 287d5dc60. **Plan edits** (b2e050be2, edits-scope.md): none concerns these statements; this item implements none.
 
+## Old answers, each effect by each repeated unit (DRI 2026-11-03, f9 item 3)
+
+Measured on af198c5a2 with a scratch `decodeBlock` without the check (`docs/scope/sc-5rdb/old-answers.json`, which says how). Each cell is the `scope` mode's old answer and the DELTA row that covers it. Columns: the unit repeated at the end of `units`; two copies of the unit without an id; two units `{}`. `ok` is an answer `read_answer` accepts. `MM` is `ManifestMismatch: scope.governors.g1.units`. `CU` is `CheckerUnavailable` (Lean answered `ok`, `read_answer` refused it).
+
+| Effect | `u0` | `u1` | `u2` | `u3` | no id, `u0` | no id, `u1` | no id, `u2` | no id, `u3` | `{}`, `{}` |
+|---|---|---|---|---|---|---|---|---|---|
+| carve_out | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 |
+| frame | ok 3 | MM 4 | MM 4 | MM 4 | ok 3 | MM 4 | MM 4 | MM 4 | ok 3 |
+| precedes | ok 3 | CU 4 | MM 4 | ok 3 | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 |
+| reguard | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 |
+| title | ok 3 | ok 3 | ok 3 | ok 3 | ok 3 | ok 3 | ok 3 | ok 3 | ok 3 |
+| yields | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 | ok 3 | MM 4 | ok 3 | ok 3 |
+
+Rows 3 and 4 cover every cell, so none goes back to the decider. The JSON holds 84 cells (54 under row 3, 30 under row 4), including two kinds beyond this table, both row 4. A unit repeated beside itself answers as at the end, except `frame` with `u0`, `NotALeadIn: u0`. `u1` and `u2` without their ids give `ScopeUnknownUnit` (`frame`: `MM`). On the document route no cell was `ok` before: 56 are the chain's own refusal (row 2) and 28 the same refusal as the `scope` mode's (row 4). All 84 now give the one `InvalidInput` on both routes.
+
 ## Seeded bugs (`docs/scope/sc-5rdb/mutants.json`; each applied alone, built, restored)
 
 Lean is the only product language changed (no Python or Rust product code).
@@ -57,6 +67,7 @@ Lean is the only product language changed (no Python or Rust product code).
 | M4 | lean/VE/Scope/ReadingsExamples.lean | `perChoice` compares with `govern D` | `ReadingsExamples.lean:61` (SR-1-pc), `:62` (SR-1-g2) |
 | S1 | stub test | the proof without `hd`; with an extra premise; stub and proof both without `hd` | `test_each_statement_sc5rb_proves_is_the_stubs_text` (3 of 3) |
 | S2 | relay (F1 round) | the `scope` mode answers `title` with `u3` repeated as before the check (`ok`, no rows), fed through `relay.answer` | `test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id[1-True-units.u3-title]`: `assert 0 == 2` |
+| S3 | relay (F9 round) | the `scope` mode answers one cell as before the check: `frame/dup-u0`, `frame/noid2-u0`, `frame/noid-empty`, `yields/adj-u1`, each in turn | `test_sc5rdb_frame_with_another_unit_repeated_is_refused` (the `frame` cells) and `test_sc5rdb_every_unit_of_every_effect_repeated_is_refused[frame]`, `[yields]`. The F1 round's tests, which repeat only `u3`, still passed under each. |
 
 ## Trust (`tools/trust_map.py --check`, against 287d5dc601e6)
 
@@ -103,6 +114,8 @@ lines of records.
    (the `scope` mode's `ok` answers now refused) and row 4 (`frame`'s fault order). The first round named only the
    document mode (review F1): each route that reaches `decodeBlock` (`checkDocSets`, the compose `scopeRewriter`
    before `checkCore`, and `readSplit`) was then listed, and each was run on the six effects before and after.
+   That round still took a repeated `u3` as the whole case (recheck F9): `frame` with `u0` repeated also went from `ok` to
+   refused. Row 3 is now stated by the old answer, row 4 by refused-before, and the table above covers each unit.
 9. Test selection finds the tests: PASS. The selection included the stub, scope, assurance and trust tests (the manifest failure was found by it).
 10. Lean statements say what is claimed: PASS. The statement is about `governSets D`'s returned value; M3 breaks its proof.
 11. Budgets and limits fail closed: N.A. No budget changed; the doc-only 8.2 row matches sc-4.
