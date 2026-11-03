@@ -138,8 +138,6 @@ def LD := lexOf [("dservice", "deployed service"), ("person", "person"), ("servi
   [("dservice", "D"), ("person", "P"), ("service", "S")] [("deployed", "{0} is deployed"), ("reviewed", "{0} is reviewed"),
     ("used", "{0} may be used")]
 
-def rd (E : Env) (L : Lexicon) (s : String) : NormOutcome := readNorm E {} L workBudget s
-
 /-- An outcome without its values: where and why the reader stopped. -/
 def outcome : NormOutcome → String
   | .ok _ => "ok"
@@ -201,14 +199,21 @@ def authored (E : Env) (o : NormOutcome) : Bool :=
         r.name == c.pred && c.force.fits r.role && r.sorts.head?.any (c.bearer == .every ·)
   | none => false
 
+/-- The one reading of this file, so `authored` runs on every text that reads and a fixture cannot leave it out: a
+reading it refuses comes back as a stop, which no accepting guard passes. -/
+def rd (E : Env) (L : Lexicon) (s : String) : NormOutcome :=
+  match readNorm E {} L workBudget s with
+  | .ok rs => if authored E (.ok rs) then .ok rs else .stopped 0 .noDerivation
+  | o => o
+
 -- f1: the four rules `render_english` gives in `test_four_wordings_and_identity_manifest`.
 def f1 := "Rule 1. Every act must not be done.\nRule 2 (exception to rule 1). Every act may be done.\nRule 3. Every act must be done.\nRule 4. Every act need not be done."
 def f1Python := "[{\"guard\": [\"top\"], \"name\": \"rule-1\", \"over\": [], \"predicate\": \"permitted\", \"sign\": false, \"unless\": []}, {\"guard\": [\"top\"], \"name\": \"rule-2\", \"over\": [\"rule-1\"], \"predicate\": \"permitted\", \"sign\": true, \"unless\": []}, {\"guard\": [\"top\"], \"name\": \"rule-3\", \"over\": [], \"predicate\": \"required\", \"sign\": true, \"unless\": []}, {\"guard\": [\"top\"], \"name\": \"rule-4\", \"over\": [], \"predicate\": \"required\", \"sign\": false, \"unless\": []}]"
-#guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two (rd two L2 f1)
+#guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1)
 #guard !same (nodes (rd two L2 (f1.replace "Rule 4. Every act need not" "Rule 4. Every act must"))) (python f1Python)
 #guard !document two (rd two L2 (f1.replace "rule 1)" "rule 4)")) && !authored two (rd two L2 "")
 -- f2: `No act may be done` is a permission of sign false.
-#guard clauses (rd act LA "Rule 1. No act may be done.") == some [cl .mustNot] && authored act (rd act LA "Rule 1. No act may be done.")
+#guard clauses (rd act LA "Rule 1. No act may be done.") == some [cl .mustNot]
 #guard same (nodes (rd act LA "Rule 1. No act may be done.")) (python "[{\"guard\": [\"top\"], \"name\": \"rule-1\", \"over\": [], \"predicate\": \"permitted\", \"sign\": false, \"unless\": []}]")
 #guard outcome (rd act LA "Rule 1. No act must be done.") == "stopped 1 noDerivation"
 -- f3, f4, f17: no consequence row matches; the declared wording does.
@@ -243,7 +248,7 @@ def f8 := "Rule 1. Every act must not be done.\nRule 2. Every act must not be do
 -- f11: a guard, then two except-when sentences read under the clause's bindings.
 def f11 := "Rule 1. Every act may be done.\nRule 2. Every act must be done, if that act may be done. Except when that act may be done. Except when this holds in all cases."
 def f11Python := "[{\"guard\": [\"top\"], \"name\": \"rule-1\", \"over\": [], \"predicate\": \"permitted\", \"sign\": true, \"unless\": []}, {\"guard\": [\"unary\", \"permitted\", [\"var\", 0]], \"name\": \"rule-2\", \"over\": [], \"predicate\": \"required\", \"sign\": true, \"unless\": [[\"unary\", \"permitted\", [\"var\", 0]], [\"top\"]]}]"
-#guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11) && authored two (rd two L2 f11)
+#guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11)
 #guard !same (nodes (rd two L2 (f11.replace "Except when that act may be done. Except when this holds in all cases."
   "Except when this holds in all cases. Except when that act may be done."))) (python f11Python)
 #guard outcome (rd two L2 "Rule 1. Every act must be done. Except when that act may be done.\nRule 2. Except when this holds in all cases.") ==
@@ -252,7 +257,7 @@ def f11Python := "[{\"guard\": [\"top\"], \"name\": \"rule-1\", \"over\": [], \"
 def plainNo := "[{\"guard\": [\"top\"], \"name\": \"rule-1\", \"over\": [], \"predicate\": \"admitted\", \"sign\": false, \"unless\": []}]"
 def universal := "Rule 1. For every item, it is not the case that that item is admitted."
 def negative := "\"negative_verbalisation\": \"{0} is not admitted\", "
-#guard same (nodes (rd (item "") (LI []) universal)) (python plainNo) && authored (item "") (rd (item "") (LI []) universal)
+#guard same (nodes (rd (item "") (LI []) universal)) (python plainNo)
 #guard same (nodes (rd (item negative) (LI [("admitted", "{0} is not admitted")]) "Rule 1. Every item is not admitted.")) (python plainNo)
 #guard clauses (rd (item "") (LI []) "Rule 1. Every item is admitted.") == some [⟨.every "item", .plain true, .strict, "admitted", [], .top, [], []⟩]
 #guard outcome (rd (item "") (LI []) "Rule 1. Every item is not admitted.") == "stopped 1 noDerivation"
@@ -321,6 +326,12 @@ def overs (o : NormOutcome) : Option (List (List String)) := (nodes o).toOption.
   "not be done.\nRule 3 (exception to rule 2). Every act may be done.")) == some [["rule-2"], [], ["rule-2"]]
 #guard overs (rd act LA "Rule 1 (exception to rule 2). Every act may be done.\nRule 2. Every act must not be done.") ==
   some [["rule-2"], []]
+-- the header's targets come before the precedence lines', each in text order (`norm_english.py:323`); the differential
+-- is `test_lean_orders_over_as_python`
+#guard (statements [hd 1, may, hd 2, may, hd 3 [2], may, .precedence 3 1]).map (overOf · 3) == some [2, 1]
+#guard overs (rd act LA ("Rule 1. Every act must not be done.\nRule 2. Every act must not be done.\nRule 3. Every act must " ++
+  "not be done.\nRule 4 (exception to rules 3 and 1). Every act may be done.\nRule 4 takes precedence over rule 2.")) ==
+  some [[], [], [], ["rule-3", "rule-1", "rule-2"]]
 -- no norm sentence is marked (`normMeaning_unmarked`, on the pieces `readNorm` assembles)
 def marks (E : Env) (L : Lexicon) (s : String) : Option (List Bool) :=
   match lex s with
