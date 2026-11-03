@@ -251,6 +251,9 @@ the norms route keeps its own limit of 256 rules. Fixture: a 200-norm-unit docum
   (`test_the_real_tree_runs_no_code_while_it_elaborates` and two that follow from it: the `run_cmd` then in
   `ComposeExamples.lean` is code run while elaborating). Fixed in `f45619184` (the check moved to
   `tests/test_cmp_s4_evaluate_once.py`); those three and the new file rerun alone: "6 passed".
+  Selected tests on `8dab6ee04` (the final code and evidence; `zsh mac-pytest.sh --select -- --base $(git merge-base
+  HEAD main) --run`, 6 shards, 445 units, among them `tests/test_cmp_s4_evaluate_once.py` and
+  `tests/test_lean_dump_cache.py`): exit 0, 445 passed. This commit changes only this report.
 - No test in `main-known-red.txt` was hit. Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Pilot bytes
