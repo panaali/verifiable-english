@@ -1,0 +1,7 @@
+trust_mutants: 16 definitions, 611 mutants (133 to run), 4 jobs, base eeb2a3b67d20
+trust_mutants: 113 KILLED, 0 SURVIVOR, 0 UNKNOWN, 16 INVALID, 19 ALLOWED, 4 NOT RUN, 459 OTHER SHARD in 5066 s; 19 carried from d22d05cbae4b (check-only change: lean/VE/EnglishGrammar/Norm/Examples.lean, lean/declarations.txt)
+trust_mutants: D[V], trusted: 14 KILLED, 4 ALLOWED, 31 OTHER SHARD
+trust_mutants: G[V], trusted: 49 KILLED, 6 INVALID, 1 ALLOWED, 4 NOT RUN, 186 OTHER SHARD
+trust_mutants: S, trusted: 50 KILLED, 10 INVALID, 14 ALLOWED, 242 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 4 of its 152 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.4 s, control_probes 58.9 s, mutants 4987.8 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 58.8 s (2), mutant_builds 1305 s (144), mutant_checks 2598.7 s (128), stage_controls 107.9 s (5), mutant_probes 15649.3 s (110)
