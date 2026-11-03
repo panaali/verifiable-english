@@ -10354,7 +10354,10 @@
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
         "VE.Service.Standalone.validatedEnvironment",
-        "VE.Service.Standalone.validatedLayerEnvironment"
+        "VE.Service.Standalone.validatedLayerEnvironment",
+        "VE.Service.Standalone.letterName",
+        "VE.Service.Standalone.modelAct",
+        "VE.Service.Standalone.modelActs"
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",
@@ -10484,7 +10487,9 @@
         "VE.SoftNorms.Phases.softNames",
         "VE.SoftNorms.Phases.softPairs",
         "VE.SoftNorms.Phases.stripEntry",
-        "VE.SoftNorms.Phases.typed"
+        "VE.SoftNorms.Phases.typed",
+        "VE.SoftNorms.Phases.emptyBlock",
+        "VE.SoftNorms.Phases.actsFrame"
       ],
       "D[R]": [
         "VE.SoftNorms.Phases.Fault",
@@ -10495,7 +10500,8 @@
         "VE.SoftNorms.Phases.inheritedProfiles",
         "VE.SoftNorms.Phases.keysOf",
         "VE.SoftNorms.Phases.softProfile",
-        "VE.SoftNorms.Phases.w1Keys"
+        "VE.SoftNorms.Phases.w1Keys",
+        "VE.SoftNorms.Phases.frameView"
       ]
     },
     "VE/SoftNorms/RankProof.lean": {
@@ -13156,12 +13162,15 @@
         "VE.Judgments.Examples.fξ",
         "VE.Judgments.Examples.fξn",
         "VE.Judgments.Examples.fξw",
+        "VE.Judgments.Examples.goodPreds",
         "VE.Judgments.Examples.guardα",
         "VE.Judgments.Examples.jrec",
+        "VE.Judgments.Examples.jt3aList",
         "VE.Judgments.Examples.judgment",
         "VE.Judgments.Examples.mξ",
         "VE.Judgments.Examples.okVal",
         "VE.Judgments.Examples.preds117",
+        "VE.Judgments.Examples.preds117x",
         "VE.Judgments.Examples.regulated",
         "VE.Judgments.Examples.regulated117",
         "VE.Judgments.Examples.regulatedω",
@@ -15249,7 +15258,13 @@
         "VE.Service.ActsExamples.typed",
         "VE.Service.ActsExamples.every",
         "VE.Service.ActsExamples.modelled",
-        "VE.Service.ActsExamples.dualEnv"
+        "VE.Service.ActsExamples.dualEnv",
+        "VE.Service.ActsExamples.oblig",
+        "VE.Service.ActsExamples.pairEnv",
+        "VE.Service.ActsExamples.modelActsOf",
+        "VE.Service.ActsExamples.view",
+        "VE.Service.ActsExamples.rels",
+        "VE.Service.ActsExamples.threeEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -16360,7 +16375,11 @@
         "VE.Readings.ActsExamples.setDoc",
         "VE.Readings.ActsExamples.noActs",
         "VE.Readings.ActsExamples.elabCase",
-        "VE.Readings.ActsExamples.wordings"
+        "VE.Readings.ActsExamples.wordings",
+        "VE.Readings.ActsExamples.sfP",
+        "VE.Readings.ActsExamples.softView",
+        "VE.Readings.ActsExamples.softErr",
+        "VE.Readings.ActsExamples.pyBlock"
       ]
     },
     "VE/Cardinality/Gate.lean": {},
@@ -16952,7 +16971,18 @@
         "VE.Compose.ContractExamples.plannedRows",
         "VE.Compose.ContractExamples.ungoverned",
         "VE.Compose.ContractExamples.governedSet",
-        "VE.Compose.ContractExamples.tagRewriter"
+        "VE.Compose.ContractExamples.tagRewriter",
+        "VE.Compose.ContractExamples.G1.noAsks",
+        "VE.Compose.ContractExamples.G1.noAsksUser",
+        "VE.Compose.ContractExamples.G1.askPack",
+        "VE.Compose.ContractExamples.G1.qs",
+        "VE.Compose.ContractExamples.G1.Qc",
+        "VE.Compose.ContractExamples.G1.A",
+        "VE.Compose.ContractExamples.G1.cert",
+        "VE.Compose.ContractExamples.G1.conflictCertA",
+        "VE.Compose.ContractExamples.G1.acceptedOn",
+        "VE.Compose.ContractExamples.G1.G1Checks",
+        "VE.Compose.ContractExamples.G1.instDecidableG1Checks"
       ]
     },
     "VE/Readings/RightsExamples.lean": {
@@ -17405,6 +17435,7 @@
       "C": [
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
+        "VE.Defaults.forcedAllOf",
         "VE.Defaults.maxDefaultAtoms",
         "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
@@ -17470,6 +17501,7 @@
         "VE.Defaults.ZoneFixtures.envS",
         "VE.Defaults.ZoneFixtures.exc",
         "VE.Defaults.ZoneFixtures.fixBoth",
+        "VE.Defaults.ZoneFixtures.forced",
         "VE.Defaults.ZoneFixtures.minCount",
         "VE.Defaults.ZoneFixtures.obsμ",
         "VE.Defaults.ZoneFixtures.off",
@@ -17550,6 +17582,22 @@
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
         "VE.RightClauses.Examples.verdict"
+      ]
+    },
+    "VE/SoftNorms/ActsFrameExamples.lean": {
+      "T": [
+        "VE.SoftNorms.ActsFrameExamples.parse",
+        "VE.SoftNorms.ActsFrameExamples.block",
+        "VE.SoftNorms.ActsFrameExamples.paid",
+        "VE.SoftNorms.ActsFrameExamples.heard",
+        "VE.SoftNorms.ActsFrameExamples.reg",
+        "VE.SoftNorms.ActsFrameExamples.pred",
+        "VE.SoftNorms.ActsFrameExamples.env",
+        "VE.SoftNorms.ActsFrameExamples.sfP",
+        "VE.SoftNorms.ActsFrameExamples.err",
+        "VE.SoftNorms.ActsFrameExamples.actsOf",
+        "VE.SoftNorms.ActsFrameExamples.frame",
+        "VE.SoftNorms.ActsFrameExamples.inhP"
       ]
     }
   }

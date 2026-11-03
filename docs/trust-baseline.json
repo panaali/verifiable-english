@@ -1804,6 +1804,27 @@
    "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
    "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
+  },
+  {
+   "class": "S",
+   "lines": 2,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
+  },
+  {
+   "class": "V",
+   "lines": 63,
+   "reason": "ap-1bg: K +0, S +2, V +63 untied (VE/Service/Standalone.lean S +2, V +28: letterName, modelAct, modelActs, the model gates' frame view; VE/SoftNorms/Phases.lean +26: emptyBlock, actsFrame, frameView and their reads; ResponseShape/Schemas Common +8, ReadingsRoute +3, Environment +1: the acts block, form and model_acts shapes; VE/Readings/Wire.lean -3: the reading-set refusal lifted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bg, 2026-10-18",
+   "commit": "77c5490c62df75428a3ac81dd90509dd6384f96c"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }

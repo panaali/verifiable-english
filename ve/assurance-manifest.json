@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41071,
+    "total_lines": 41094,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -798,12 +798,12 @@
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
-        "lines": 1019,
-        "sha256": "652336147f29e5e0f05cb0f7005e6e01550f06d2c47d6e0396d6fbc552dbabaa",
+        "lines": 1016,
+        "sha256": "bbf03167935511821e64cb725b0a8ef4946a3c5ae3b168879dd7c192d89e97cb",
         "ranges": [
           [
             1,
-            1019
+            1016
           ]
         ],
         "declarations": [
@@ -1316,15 +1316,17 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 371,
-        "sha256": "66cff3a49c9dde13cb270d7b11c1bffce7f791a07ba4acc1aae70e54332b191d",
+        "lines": 397,
+        "sha256": "af73ebb4abf9be5f66fba02071c3d35292f3a59c09c364acd0ff00e9b6f6813b",
         "ranges": [
           [
             1,
-            371
+            397
           ]
         ],
         "declarations": [
+          "actsFrame",
+          "frameView",
           "envelope",
           "declarations",
           "ruleFields",
@@ -2267,7 +2269,8 @@
       "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file",
       "lean/VE/Commands/Examples.lean": "test fixtures only: ci-1's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
       "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
-      "lean/VE/Calc/Ties.lean": "statements about the calc runner's evidence and rows (the R16 ties of me-5e: rowJson_outcome and rowJson_shown read the outcome, reason, certificate and counterexample members with Json.getObjVal?); no runtime JSON handling"
+      "lean/VE/Calc/Ties.lean": "statements about the calc runner's evidence and rows (the R16 ties of me-5e: rowJson_outcome and rowJson_shown read the outcome, reason, certificate and counterexample members with Json.getObjVal?); no runtime JSON handling",
+      "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it"
     }
   },
   "plan_operations": {
