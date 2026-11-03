@@ -140,6 +140,10 @@ def fieldsOf (e : Json) : List String := ((VE.Bridge.fields (answer (caseOf "nor
 def fieldOf (e : Json) (k : String) : Json := (answer (caseOf "norm-defaults-elaborate" e)).getObjValD k
 #guard (fieldsOf envOf).filter (· != "events_premises") == fieldsOf (envOf none) && (fieldsOf envOf).length > 8
 #guard ["soft", "rights", "premises", "fill", "background"].all fun k => fieldOf envOf k == fieldOf (envOf none) k
+-- The base environment, with the dates; the identity is the bytes as written.
+#guard (((fieldOf envOf "base_environment").getObjValD "vocabulary").getObjValD "constants").getObjValD "date__2026_10_13" ==
+  parse "{\"sort\":\"day\",\"description\":\"the date of this document\"}"
+#guard fieldOf envOf "environment_id" == toJson ((VE.Route.Wire.environmentId listed envOf).toOption.getD "")
 
 -- Every decision predicate is charged with the dates: two default rules move the boundary by one more.
 def twoRules : Json := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ []) ++ "," ++ ruleJ "s" "x_permitted" true (dfltJ []) ++ "]")
