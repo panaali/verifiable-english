@@ -1,0 +1,8 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (tool, base)
+trust_mutants: 29 definitions, 160 mutants (16 to run), 4 jobs, base 493d7f55b6d7
+trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 9 ALLOWED, 4 NOT RUN, 144 OTHER SHARD in 4880 s
+trust_mutants: D[V], trusted: 3 KILLED, 5 ALLOWED, 4 NOT RUN, 92 OTHER SHARD
+trust_mutants: G[V], trusted: 9 OTHER SHARD
+trust_mutants: S, trusted: 4 ALLOWED, 43 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 4 of its 16 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.5 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.5 s, control_probes 586.2 s, mutants 4273.8 s, cleanup 3 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 1528.9 s (28), mutant_builds 266 s (16), mutant_checks 10865.9 s (15), stage_controls 3946.6 s (5), mutant_probes 1612.8 s (3)
