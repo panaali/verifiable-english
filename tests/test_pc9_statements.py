@@ -4,30 +4,31 @@ checklist 17), and the check's ability to fail."""
 from __future__ import annotations
 
 import importlib.util
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _checker():
-    sys.path.insert(0, str(ROOT / "tools"))
+def _checker(monkeypatch):
+    # The checker imports `check_pc3_statements` from tools/, as when run; the path is restored after the test, so a
+    # later test's `import question_fixtures` still finds tests/question_fixtures.py, not tools/'s generator.
+    monkeypatch.syspath_prepend(str(ROOT / "tools"))
     spec = importlib.util.spec_from_file_location("check_pc9", ROOT / "tools/check_pc9_statements.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-def test_pc9_statements_equal_the_approved_text():
-    checker = _checker()
+def test_pc9_statements_equal_the_approved_text(monkeypatch):
+    checker = _checker(monkeypatch)
     assert checker.main() == 0
     names = {name for _, name in checker.approved()}
     assert {"precedence_apart", "dfltUniform_legacy", "ConditionsExact", "dfltUniform_sound", "providerConditions",
             "providerRefusal", "dfltUniformOf"} <= names
 
 
-def test_a_changed_statement_fails(tmp_path, capsys):
-    checker = _checker()
+def test_a_changed_statement_fails(tmp_path, capsys, monkeypatch):
+    checker = _checker(monkeypatch)
     text = checker.SOURCES[0].read_text()
     cases = {
         "legacy": text.replace("(h : ∀ p ∈ qs, p.conditions = []) :\n    dfltUniformLabelled",
