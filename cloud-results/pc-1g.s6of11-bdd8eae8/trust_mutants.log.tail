@@ -1,0 +1,26 @@
+trust_mutants: 17 definitions, 324 mutants (29 to run), 4 jobs, base 493d7f55b6d7
+SURVIVOR lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-empty: ["norm", "liberty", "recognition"] -> []
+UNKNOWN lean/VE/Service/Document.lean:2723 VE.Service.Document.setVerdictFields (S, trusted) list-empty: rs -> [] (lean/VE/Service/Document.lean:2723: Application type mismatch: The argument)
+UNKNOWN lean/VE/Judgments/Chain.lean:244 VE.Judgments.blockFormulas (D[V], trusted) list-empty: (R.limits.find? fun L => .str L.name == l.getObjValD "name").map -> [] (lean/VE/Judgments/Chain.lean:244: Function expected at)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts) -> [] (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-empty: ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentA... -> []
+SURVIVOR lean/VE/Service/Document.lean:2720 VE.Service.Document.setVerdictFields (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-last: R.rs.map (·.guard) -> ((R.rs.map (·.guard)).dropLast) (the proofs it breaks: lean/VE/Judgments/Chain.lean:86)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-first: ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentA... -> (["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "Judgment...
+SURVIVOR lean/VE/Service/Document.lean:2737 VE.Service.Document.verdictFields (S, trusted) list-drop-last: ["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"] -> (["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"].dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-first: ss -> (ss.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-first: ss.map setVerdictFields -> ((ss.map setVerdictFields).take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: L.conditions -> (L.conditions.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:221 VE.Judgments.ruleFormulas (D[V], trusted) list-drop-first: xs.toList -> (xs.toList.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:1104 VE.Service.Document.judgmentsApart (G[V], trusted) list-last: ["alternatives@0", "risk@0"] -> (["alternatives@0", "risk@0"].reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map (V... -> (((VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map ...
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: R.rs.map (·.guard) -> ((R.rs.map (·.guard)).drop 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:86)
+SURVIVOR lean/VE/Service/Document.lean:2760 VE.Service.Document.withoutStatuses (S, trusted) list-last: us.map (dropKey "status") -> ((us.map (dropKey "status")).reverse.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-last: (VE.Rights.linesOf R) -> ((VE.Rights.linesOf R).reverse.take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-last: (VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts) -> (((VE.Rights.linesOf R).flatMap (fun RN => RN.2.node.guard :: RN.2.node.carveOuts)).reverse.take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:91)
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: (VE.Compose.needText r) -> ((VE.Compose.needText r).drop 1) (lean/VE/Service/Document.lean:2779: Invalid projection: Type of)
+trust_mutants: 4 KILLED, 17 SURVIVOR, 3 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 1872 s
+trust_mutants: D[V], trusted: 3 KILLED, 2 SURVIVOR, 1 UNKNOWN, 1 INVALID, 59 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 7 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 14 SURVIVOR, 2 UNKNOWN, 4 INVALID, 229 OTHER SHARD
+trust_mutants: steps: wall plan 6.4 s, scratch 2.1 s, control_build 0.1 s, probe_install 0.9 s, control_probes 977 s, mutants 881.5 s, cleanup 4.3 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2183.9 s (9), mutant_builds 199.6 s (35), mutant_checks 894.1 s (23), stage_controls 34.9 s (2), mutant_probes 2001.7 s (4)
