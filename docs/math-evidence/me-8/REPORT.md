@@ -73,7 +73,8 @@ SURVIVOR and 1 UNKNOWN. `refuteByGrain`'s mutant `true` fails `refuteByGrain_sou
 - `uv run pytest -q tests/test_calc_consistency.py`: 40 passed.
 - Selected tests on the finished code: 102 of 531 units planned, 110 run units in 6 shards, exit 0, 0 failed, at
   `bd6cd04ee`; then for the fix (`--base bd6cd04ee`): 101 units planned, 109 run, exit 0, 0 failed
-  (`evidence/selected-tests.txt`). Nothing from `main-known-red.txt` was hit.
+  (`evidence/selected-tests.txt`); then for F1's fix (`--base $(git merge-base HEAD main)`, at `36c1db95b`): 102 of 531
+  units planned, 110 run in 5 shards, exit 0, 0 failed. Nothing from `main-known-red.txt` was hit.
 - `lake build` (1,244 jobs) and `python3 lean/audit.py` ("PASS: 737 source files"), after the last Lean change.
 - `uv run python tools/regen_generated.py --check`: "checked 35 entries". `tools/gate_collection.py --check --prebuilt`:
   24 added, 0 refused, 0 stale, 0 malformed. The full gate: not run here (the chain runs it).
@@ -83,8 +84,8 @@ SURVIVOR and 1 UNKNOWN. `refuteByGrain`'s mutant `true` fails `refuteByGrain_sou
 - `uv run python tools/trust_map.py --check`: K +0, S +8, untied V +0; PASS with the R16 allowance (DELTA row 1).
 - Size (`git diff --numstat $(git merge-base HEAD main)`, generated files excluded): Lean 1,014 (`Consistency.lean` 560,
   of which about 300 are proofs; `Interval.lean` 299, about 165 proofs; `ConsistencyExamples.lean` 155), test 158,
-  `tools/trust-classes.json` 93, statement check 28, seeded-bug runner and bench 190, baseline and import 8, DELTA and
-  this report about 125: about 1,600, more than twice the ~600 guide (`mutants.json`, the allow file and the trust-mutant JSON are evidence data). Measured
+  `tools/trust-classes.json` 93, statement check 28, seeded-bug runner and bench 154, baseline and import 8, DELTA and
+  this report about 125: about 1,570, more than twice the ~600 guide (`mutants.json`, the allow file and the trust-mutant JSON are evidence data). Measured
   before the second half at 782 (Lean only); I kept the runner rather than cut it, since spec 8.1's search and limits
   and R-5's behaviours live there and it was already proved. No Mathlib: each interval bound is proved by hand.
 - Pilot bytes expected: 0 (plan "Bytes: 0"). Nothing is claimed.
@@ -96,14 +97,14 @@ SURVIVOR and 1 UNKNOWN. `refuteByGrain`'s mutant `true` fails `refuteByGrain_sou
   still brackets V-6's value at every claim. The fixture that catches it is a share's complement 1 − a ≥ 0.56.
 - **F1 (review of `98c053ba2`).** The limit did not bound the run: enclosure endpoints grew without a hold, and trees
   were walked at every point with no node limit. Now the outputs' trees are held to `maxPolyTerms` nodes together, not
-  per expression as `Identity` holds a side, because a case may have 512 outputs (at most 4.2 million visits a point
+  per expression as `Identity` holds a side, because a case may have 512 outputs (about 10 million visits a point
   otherwise). Past it the answer is `consistencyInconclusive`, the kind's own reason in the spec's list and true: neither
   phase ran. A refutation another output would have given is then not looked for; that is UNKNOWN, never a verdict.
   The limit is not in the spec's limit table: me-8b adds it with the wire form.
 - **Refusals the charge adds.** `passWork` charges 8 units a lookup step and 512 a node, calibrated as `entryUnits` is
   (spec 3.2), so a search with no witness over many inputs or nodes can reach limit 10 before its 4,096 points: 512
   inputs reach it at the last point, and 12 inputs over 10,000 nodes after about 1,400 points. Both fail closed; a
-  witness found earlier is unaffected (V-6, with about 650 nodes, would afford all 4,096).
+  witness found earlier is unaffected (V-6, with 648 nodes, would afford all 4,096).
 - `limit_bench.lean` is run by hand as a temporary `lean_exe`; it is not a test and no time is asserted. Its figures are
   one serial run on the VM. A tree 9,999 levels deep runs natively; the interpreter's stack ends near 2,200 levels, so
   the fixtures use a balanced tree. me-8b should check the depth on the service's own stack.
