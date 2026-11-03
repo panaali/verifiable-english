@@ -1,5 +1,4 @@
 {"allow": [
   {"definition": "VE.NormDefaults.Wire.hookPacks", "operator": "list-first", "reason": "equivalent: `Option.toList` has at most one element, so its first is itself"},
-  {"definition": "VE.NormDefaults.Packs.eventsArray", "operator": "list-first", "reason": "equivalent: the result is a one-element list, so its first is itself"},
-  {"definition": "VE.NormDefaults.Wire.decodeSoftU", "operator": "list-first", "reason": "equivalent: `[softPack U src.D]` has one element, so its first is itself"}
+  {"definition": "VE.NormDefaults.Packs.eventsArray", "operator": "list-first", "reason": "equivalent on its outer list: the result is a one-element list, so its first is itself (the rows' list-first is killed by the events_premises guards)"}
 ]}

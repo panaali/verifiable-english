@@ -141,6 +141,13 @@ def fieldOf (e : Json) (k : String) : Json := (answer (caseOf "norm-defaults-ela
 #guard (fieldsOf envOf).filter (· != "events_premises") == fieldsOf (envOf none) && (fieldsOf envOf).length > 8
 #guard ["soft", "rights", "premises", "fill", "background"].all fun k => fieldOf envOf k == fieldOf (envOf none) k
 
+-- Every decision predicate is charged with the dates: two default rules move the boundary by one more.
+def twoRules : Json := parse ("[" ++ ruleJ "r" "x_required" true (dfltJ []) ++ "," ++ ruleJ "s" "x_permitted" true (dfltJ []) ++ "]")
+def filled2 (k : Nat) : String := match decodeLayered ((caseOf "k" (envOf (some blockJ) listed
+    ((List.range k).map fun i => rolePred s!"f{i}" "[\"act\",\"day\"]" "d"))).setObjVal! "norms" twoRules) with
+  | .ok _ => "ok"
+  | .error e => e
+#guard filled2 244 == "ok" && filled2 245 == "ResourceLimit: vocabulary size" && filled 245 blockJ == "ok"
 -- A block-less document with the profile has no date to charge.
 #guard filled 248 none == "ok"
 #guard filled 249 none == "ResourceLimit: vocabulary size"
