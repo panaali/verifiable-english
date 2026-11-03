@@ -7,3 +7,11 @@ SHARD 4/6: exit 0 in 879.5 s; 20 units, 20 passed
 SHARD 6/6: exit 0 in 1044.6 s; 15 units, 15 passed
 SHARD 5/6: exit 0 in 1034.4 s; 17 units, 17 passed
 [gha-select 01:27:15Z] summary: selected tests ran on the Claude cloud (6 shards, run me-8-bd6cd04e-t667818); exit=0; 1417s
+
+# after the fix 7e6733b8c (points built when tried, charged): zsh mac-pytest.sh --select -- --base bd6cd04ee --run at 7e6733b8c, exit 0
+# plan (uv run python tools/select_tests.py --base bd6cd04ee): 101/531 test units
+SHARD 2/4: exit 0 in 744.2 s; 28 units, 28 passed
+SHARD 1/4: exit 0 in 934.9 s; 27 units, 27 passed
+SHARD 3/4: exit 0 in 1168.6 s; 28 units, 28 passed
+SHARD 4/4: exit 0 in 1693.0 s; 26 units, 26 passed
+[gha-select 02:52:34Z] summary: selected tests ran on GitHub Actions (4 shards, run me-8-baf40f71-t672471); exit=0; 1883s

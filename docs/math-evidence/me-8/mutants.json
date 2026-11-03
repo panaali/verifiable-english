@@ -1,6 +1,6 @@
 {
  "command": "python3 seed.py (each mutant alone, then lake build VE.Calc.ConsistencyExamples, then restore)",
- "head": "c84d1a1bf",
+ "head": "7e6733b8c",
  "mutants": [
   {
    "id": "S1",
@@ -77,7 +77,7 @@
    "bug": "'if limit < w + qbits i.1 + qbits i.2 then none else some (some i, w + qbits i.1 + qbits i.2)' -> 'if limit < w then none else some (some i, w)'",
    "proofs_cut_to_sorry": [],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:74"
+    "lean/VE/Calc/ConsistencyExamples.lean:75"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
    "build_exit": 1,
@@ -94,8 +94,8 @@
     "grain_sound"
    ],
    "test": [
-    "lean/VE/Calc/ConsistencyExamples.lean:82",
-    "lean/VE/Calc/ConsistencyExamples.lean:92"
+    "lean/VE/Calc/ConsistencyExamples.lean:86",
+    "lean/VE/Calc/ConsistencyExamples.lean:96"
    ],
    "pytest": "tests/test_calc_consistency.py::test_fixture[v7-ties-up]",
    "build_exit": 1,
@@ -132,11 +132,27 @@
    "pytest": "tests/test_calc_consistency.py::test_fixture[input-twice]",
    "build_exit": 1,
    "result": "KILLED"
+  },
+  {
+   "id": "S9",
+   "language": "Lean",
+   "file": "lean/VE/Calc/Consistency.lean",
+   "definition": "pointHoldsC",
+   "claim": "each candidate point is charged its input check before it runs",
+   "bug": "'visitC limit (u + inputs.length * inputs.length) fun u =>' -> 'visitC limit u fun u =>'",
+   "proofs_cut_to_sorry": [],
+   "pytest": "tests/test_calc_consistency.py::test_fixture[chain-short]",
+   "test": [
+    "lean/VE/Calc/ConsistencyExamples.lean:75",
+    "lean/VE/Calc/ConsistencyExamples.lean:78"
+   ],
+   "build_exit": 1,
+   "result": "KILLED"
   }
  ],
  "trust_mutants": {
   "command": "zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/math-evidence/me-8/trust-mutants-allow.json --rescore docs/math-evidence/me-8/trust-mutants.json --json docs/math-evidence/me-8/trust-mutants.json",
-  "result": "15 ALLOWED, 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0",
+  "result": "15 ALLOWED, 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0, at 7e6733b8c",
   "definitions": {
    "VE.Calc.InBox": "body-true and body-false fail the #guards at ConsistencyExamples.lean:24 and :23 (UNKNOWN by instance drift, allowed)",
    "VE.Calc.Consistent": "13 mutants, each breaking consistent_of_witness and inconsistent_of_refutation (undecidable: allowed, as me-9b)"
