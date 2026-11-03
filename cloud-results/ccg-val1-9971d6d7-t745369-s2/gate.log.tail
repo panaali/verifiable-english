@@ -1,0 +1,200 @@
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /tmp/cc-wt/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+31745/31746 tests collected (1 deselected) in 46.51s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_acts_profile.py tests/test_acts_vocab_mutants.py tests/test_ask_fixtures.py tests/test_ask_null_free.py tests/test_assist_invariants.py tests/test_assurance_manifest.py tests/test_authoring.py tests/test_b16c_evidence.py tests/test_b16e_rights_document.py tests/test_closure.py tests/test_colab.py tests/test_conformance.py tests/test_consolidation_tools.py tests/test_count_w6a.py tests/test_coverage_dashboard.py tests/test_defaults_checks.py tests/test_eligibility_wfp.py tests/test_english.py tests/test_english_e2_overlay.py tests/test_english_e2_selection.py tests/test_english_grammar_gen.py tests/test_english_lean_route.py tests/test_english_lean_s2.py tests/test_english_lean_s3_compare.py tests/test_equivalence.py tests/test_fret_w6a_rerating.py tests/test_gate.py tests/test_gate_collection.py tests/test_gate_integrity.py tests/test_jt_e3.py tests/test_judgments_answer.py tests/test_lean_budget_types.py tests/test_lean_first_b3d_report.py tests/test_lean_service_audit.py tests/test_metered_answer.py tests/test_nary.py tests/test_norm_defaults_relay_english.py tests/test_order.py tests/test_p1_amendment11.py tests/test_p1_native_counter.py tests/test_platform_contract.py tests/test_premise_scale.py tests/test_progress_watch.py tests/test_question_answering_readability.py tests/test_question_lean_relay.py tests/test_question_reading.py tests/test_rd9_chain_relay.py tests/test_rd9_gap_relay.py tests/test_rd9_soft_split.py tests/test_rd9_statements.py tests/test_readings_budget_zero.py tests/test_readings_component_names.py tests/test_readings_components_lean.py tests/test_readings_defaults_english.py tests/test_readings_defaults_rd6b_report.py tests/test_readings_route_fuzz.py tests/test_readings_stage_trace.py tests/test_relay_english_scale.py tests/test_report_english.py tests/test_risk_differential.py tests/test_risk_generated_policies.py tests/test_runner.py tests/test_rust_memory_budget.py tests/test_scales_exercised.py tests/test_scope_b1_input.py tests/test_search_options.py tests/test_senses_pack.py tests/test_soft_norms_conformance.py tests/test_stage2_norms.py tests/test_test_speed_b2.py tests/test_time_surface_w6a.py tests/test_w6a_looprecheck1.py tests/test_wire_contract_lean.py tests/test_wire_contract_lint.py tests/test_wire_contract_soft_lean.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 32%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+............................................................F........... [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+........................................................................ [ 67%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+...................................s.................................... [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 98%]
+........................................                                 [100%]
+ve: English comparator: {"records": 12804, "excluded": 0, "planted": 0, "classes": {"agree": 12803, "diagnostic-code": 1}} (/tmp/ve-gate-au5va57x/tmp/ve-english-comparator-hf72c_jz)
+
+=================================== FAILURES ===================================
+_________ test_native_pytest_parameter_selector_matches_the_gate_rule __________
+[gw2] linux -- Python 3.14.7 /tmp/cc-wt/.venv/bin/python
+
+tmp_path = PosixPath('/tmp/ve-gate-au5va57x/tmp/pytest-of-ccrun/pytest-0/popen-gw2/test_native_pytest_parameter_s0')
+
+    def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
+        source = tmp_path / "test_parameters.py"
+        source.write_text("import pytest\n"
+                          "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
+                          "pytest.param(2, id='ab'), pytest.param(3, id='a::b'), "
+                          "pytest.param(4, id='a::b[c]')])\n"
+                          "def test_x(value): pass\n"
+                          "def test_xy(): pass\n")
+        for parameter, sibling in (("a", "ab"), ("a::b", "a::b[c]")):
+            selector = f"{source}::test_x[{parameter}]"
+            done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+                                  env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+            assert done.returncode == 0, done.stdout + done.stderr
+            selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+>           assert [str(source.parent / line) for line in selected] == [selector]
+E           AssertionError: assert [] == ['/tmp/ve-gat...y::test_x[a]']
+E             
+E             Right contains one more item: '/tmp/ve-gate-au5va57x/tmp/pytest-of-ccrun/pytest-0/popen-gw2/test_native_pytest_parameter_s0/test_parameters.py::test_x[a]'
+E             Use -v to get more diff
+
+tests/test_platform_contract.py:278: AssertionError
+=============================== warnings summary ===============================
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /tmp/cc-wt/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /tmp/cc-wt/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+FAILED tests/test_platform_contract.py::test_native_pytest_parameter_selector_matches_the_gate_rule
+1 failed, 3494 passed, 1 skipped, 2 warnings in 1570.51s (0:26:10)
+[gate] slowest:    935.0 s tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected
+[gate] slowest:    218.6 s tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test
+[gate] slowest:    126.0 s tests/test_consolidation_tools.py::test_statement_dump_is_current
+[gate] slowest:     82.6 s tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip
+[gate] slowest:     80.8 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[2-False]
+[gate] slowest:     56.4 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[0-False]
+[gate] slowest:     55.3 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[16-True]
+[gate] slowest:     39.5 s tests/test_eligibility_wfp.py::test_staged_answers_match_the_key_and_the_recorded_results
+[gate] slowest:     39.0 s tests/test_order.py::test_lean_differential_corpus
+[gate] slowest:     37.0 s tests/test_eligibility_wfp.py::test_recheck_examples_get_the_source_answer
+[gate] slowest:     29.6 s tests/test_wire_contract_soft_lean.py::test_tier_a_pairs_and_triples
+[gate] slowest:     27.7 s tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[15]
+[gate] slowest:     25.0 s tests/test_gate.py::test_the_gate_collects_the_whole_suite_cleanly
+[gate] slowest:     24.8 s tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[12]
+[gate] slowest:     23.3 s tests/test_eligibility_wfp.py::test_lean_admits_every_answer_and_replays_every_step
+[gate] slowest:     22.4 s tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[11]
+[gate] slowest:     20.5 s tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[14]
+[gate] slowest:     20.2 s tests/test_w6a_looprecheck1.py::test_whole_grammar_reads_a_rendering_as_itself_or_rejects
+[gate] slowest:     18.9 s tests/test_premise_scale.py::test_readings_entailment_takes_no_scaled_search[None]
+[gate] slowest:     18.1 s tests/test_english_lean_route.py::test_pythons_renderings_read_back_in_lean_as_their_formulas
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+7fd4a6fa35a3fa00048ddb92e9396936eef284f0
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 7fd4a6fa35a3fa00048ddb92e9396936eef284f0
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] failed: /tmp/cc-wt/gate-result.json; 3494 passed, 1 skipped, 2 failures
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/tmp/cc-wt/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_platform_contract.py::test_native_pytest_parameter_selector_matches_the_gate_rule tmp_path = PosixPath('/tmp/ve-gate-au5va57x/tmp/pytest-of-ccrun/pytest-0/popen-gw2/test_native_pytest_parameter_s0')
+
+    def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
+        source = tmp_path / "test_parameters.py"
+        source.write_text("import pytest\n"
+                          "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
+                          "pytest.param(2, id='ab'), pytest.param(3, id='a::b'), "
+                          "pytest.param(4, id='a::b[c]')])\n"
+                          "def test_x(value): pass\n"
+                          "def test_xy(): pass\n")
+        for parameter, sibling in (("a", "ab"), ("a::b", "a::b[c]")):
+            selector = f"{source}::test_x[{parameter}]"
+            done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+                                  env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+            assert done.returncode == 0, done.stdout + done.stderr
+            selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+>           assert [str(source.parent / line) for line in selected] == [selector]
+E           AssertionError: assert [] == ['/tmp/ve-gat...y::test_x[a]']
+E             
+E             Right contains one more item: '/tmp/ve-gate-au5va57x/tmp/pytest-of-ccrun/pytest-0/popen-gw2/test_native_pytest_parameter_s0/test_parameters.py::test_x[a]'
+E             Use -v to get more diff
+
+tests/test_platform_contract.py:278: AssertionError
