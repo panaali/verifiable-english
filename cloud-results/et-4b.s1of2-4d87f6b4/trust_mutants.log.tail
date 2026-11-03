@@ -1,0 +1,52 @@
+trust_mutants: 20 definitions, 454 mutants (227 to run), 4 jobs, base 50c6842f84f7
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-le: = -> ≤ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/NormDefaults/Run.lean:139 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) body-true: let env := j.getObjValD "environment" let kind := match j.getObjValD "kind" with | .str k => k.st... -> true (lean/VE/NormDefaults/Run.lean:139: Function expected at)
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) bool-flip: true -> false (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+SURVIVOR lean/VE/NormDefaults/Run.lean:143 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) not-drop: ! -> 
+SURVIVOR lean/VE/NormDefaults/Run.lean:143 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) or-and: || -> &&
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:136 ResponseShape.Schemas.NormDefaults.layered_elaborate (G[V], trusted) list-empty: [ obj, .required (elaborateRequired ++ ["soft", "rights", "environment_id", "document_hash", "bas... -> []
+UNKNOWN lean/VE/Compose/Dispatch.lean:829 VE.Compose.packRows (G[V], trusted) list-empty: [ ⟨"events@0", ["relational-fol@0", "norms@0", "norm-defaults@0"], refusing "events@0" eventsRefu... -> [] (lean/VE/Compose/Dispatch.lean:1039: the failing proof cannot be cut: unexpected token ':='; expec...)
+UNKNOWN lean/VE/Events/Wire.lean:265 VE.Events.routeView (D[V], trusted) list-empty: d -> [] (lean/VE/Events/Wire.lean:266: Application type mismatch: The argument)
+SURVIVOR lean/VE/NormDefaults/Layered.lean:112 VE.NormDefaults.Wire.hookNames (D[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/NormDefaults/Layered.lean:125 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) list-empty: (VE.SoftNorms.decisions src.D) -> [] (lean/VE/NormDefaults/Layered.lean:125: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Events/Wire.lean:177 VE.Events.decodeThroughLinks (D[V], trusted) list-empty: ["day", "before", "events", "states", "dates", "links"] -> [] (lean/VE/Events/WireExamples.lean:0: maximum number of errors (100; from option `maxErrors`) reach...)
+UNKNOWN lean/VE/NormDefaults/Run.lean:143 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) list-empty: (Wire.unspecifiedNames env) -> [] (lean/VE/NormDefaults/Run.lean:143: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:139 ResponseShape.Schemas.NormDefaults.layered_elaborate (G[V], trusted) append-left: ++ [ ("soft", ref "common.json#/$defs/labelled_list"), ("rights", ref "common.json#/$defs/labelle... -> 
+SURVIVOR lean/VE/NormDefaults/Layered.lean:183 VE.NormDefaults.Wire.layeredElaborate (D[V], trusted) append-left: ++ Packs.elaborateArrays L.packs -> 
+SURVIVOR lean/VE/NormDefaults/Layered.lean:149 VE.NormDefaults.Wire.decodeRightsU (D[V], trusted) append-right: [softPack U D, rightsPack src.D] ++ ->  (the proofs it breaks: lean/VE/Events/Chain.lean:51)
+SURVIVOR lean/VE/NormDefaults/Run.lean:390 VE.NormDefaults.Run.runCaseE (G[V], trusted) append-right: r.X ++ -> 
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:116 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: [ ("language", n [str, .equals "/environment/language"]), ("profiles", ref "common.json#/$defs/st... -> []
+UNKNOWN lean/VE/NormDefaults/Layered.lean:126 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) append-left: ++ hookPacks H ->  (lean/VE/Events/RouteExamples.lean:119: Expression (it computes through a proof the mutant broke (...)
+UNKNOWN lean/VE/Events/Wire.lean:265 VE.Events.routeView (D[V], trusted) list-empty: d.map -> [] (lean/VE/Events/Wire.lean:265: Function expected at)
+UNKNOWN lean/VE/Events/Wire.lean:177 VE.Events.decodeThroughLinks (D[V], trusted) list-empty: ["anchor"] -> [] (lean/VE/Events/WireExamples.lean:0: maximum number of errors (100; from option `maxErrors`) reach...)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:183 VE.NormDefaults.Wire.layeredElaborate (D[V], trusted) list-empty: L.U -> [] (lean/VE/NormDefaults/Layered.lean:183: Application type mismatch: The argument)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:126 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) list-empty: [softPack U src.D] -> [] (lean/VE/Defaults/Examples.lean:203: Expression (Lean could not elaborate it in the probe))
+SURVIVOR lean/VE/NormDefaults/Run.lean:143 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) list-empty: (Wire.profilesOf env) -> []
+SURVIVOR lean/VE/NormDefaults/Run.lean:143 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) or-and: || -> &&
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:120 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: [ obj, .required ["sorts", "predicates", "constants"], closed [ ("sorts", n [obj, .equals "/envir... -> []
+UNKNOWN lean/VE/NormDefaults/Layered.lean:112 VE.NormDefaults.Wire.hookNames (D[V], trusted) list-empty: (·.V.dates -> (fun x_tm => [] (lean/VE/NormDefaults/Layered.lean:112: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/NormDefaults/Layered.lean:149 VE.NormDefaults.Wire.decodeRightsU (D[V], trusted) list-empty: [softPack U D, rightsPack src.D] -> [] (the proofs it breaks: lean/VE/Events/Chain.lean:51)
+UNKNOWN lean/VE/Compose/Dispatch.lean:1023 VE.Compose.eventsFault (G[V], trusted) list-empty: packRows.flatMap (rowChecks ps) -> [] (lean/VE/Compose/Dispatch.lean:1023: Invalid projection: Type of)
+UNKNOWN lean/VE/Events/Wire.lean:265 VE.Events.routeView (D[V], trusted) list-empty: d.V.dates.map -> [] (lean/VE/Events/Wire.lean:265: Function expected at)
+SURVIVOR lean/VE/NormDefaults/Run.lean:390 VE.NormDefaults.Run.runCaseE (G[V], trusted) list-empty: r.X -> []
+SURVIVOR lean/VE/NormDefaults/Layered.lean:183 VE.NormDefaults.Wire.layeredElaborate (D[V], trusted) list-empty: L.packs -> []
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:125 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: [obj, .ite (.onCase (ref "common.json#/$defs/request_block/events")) -- The request's constants a... -> []
+SURVIVOR lean/VE/NormDefaults/Run.lean:390 VE.NormDefaults.Run.runCaseE (G[V], trusted) list-empty: VE.Events.eventsX r.V -> []
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:127 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: [obj, .required ["sort", "description"], closed [("sort", str), ("description", str)]] -> []
+UNKNOWN lean/VE/Events/Wire.lean:267 VE.Events.routeView (D[V], trusted) list-empty: (VE.Compose.listedProfiles environment).filter (· != "events@0") -> [] (lean/VE/Events/Wire.lean:269: typeclass instance problem is stuck, it is often due to metavariables)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:127 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: [("sort", str), ("description", str)] -> []
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:127 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-empty: ["sort", "description"] -> []
+UNKNOWN lean/VE/Events/Wire.lean:191 VE.Events.decodeThroughLinks (D[V], trusted) list-empty: raw -> [] (lean/VE/Events/Wire.lean:191: Invalid projection: Type of)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:113 ResponseShape.Schemas.NormDefaults.base_environment (G[V], trusted) list-first: [ obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [ ("language", n... -> ([ obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [ ("language", ...
+UNKNOWN lean/VE/Events/Wire.lean:248 VE.Events.openTermsOf (D[V], trusted) list-first: match terms with | .arr ts => ts.toList.filterMap fun t => match (t.getObjValD "name").getStr?, (... -> ((match terms with | .arr ts => ts.toList.filterMap fun t => match (t.getObjValD "name").getStr?,... (lean/VE/Events/Wire.lean:251: Invalid dotted identifier notation: The expected type of `.ok` coul...)
+SURVIVOR lean/VE/Compose/Dispatch.lean:824 VE.Compose.eventsRefused (G[V], trusted) list-first: ["alternatives@0", "closure@0", "data@0", "nary@0", "order@0", "reports@0", "risk@0", "speech-act... -> (["alternatives@0", "closure@0", "data@0", "nary@0", "order@0", "reports@0", "risk@0", "speech-ac...
+SURVIVOR lean/VE/NormDefaults/Layered.lean:148 VE.NormDefaults.Wire.decodeRightsU (D[V], trusted) list-first: (VE.Rights.genDecls src.D) -> ((VE.Rights.genDecls src.D).take 1)
+SURVIVOR lean/VE/NormDefaults/Packs.lean:385 VE.NormDefaults.Packs.eventsArray (D[V], trusted) list-first: match packPremises qs "events" with | [] => [] | ls => [("events_premises", Json.arr (ls.map (fun... -> ((match packPremises qs "events" with | [] => [] | ls => [("events_premises", Json.arr (ls.map (f...
+UNKNOWN lean/VE/Events/Wire.lean:248 VE.Events.openTermsOf (D[V], trusted) list-drop-last: match terms with | .arr ts => ts.toList.filterMap fun t => match (t.getObjValD "name").getStr?, (... -> ((match terms with | .arr ts => ts.toList.filterMap fun t => match (t.getObjValD "name").getStr?,... (lean/VE/Events/Wire.lean:251: Invalid dotted identifier notation: The expected type of `.ok` coul...)
+trust_mutants: 19 KILLED, 24 SURVIVOR, 21 UNKNOWN, 7 INVALID, 0 ALLOWED, 156 NOT RUN, 227 OTHER SHARD in 5193 s
+trust_mutants: D[V], trusted: 13 KILLED, 7 SURVIVOR, 17 UNKNOWN, 5 INVALID, 82 NOT RUN, 135 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 13 SURVIVOR, 2 UNKNOWN, 2 INVALID, 70 NOT RUN, 86 OTHER SHARD
+trust_mutants: S, trusted: 4 SURVIVOR, 2 UNKNOWN, 4 NOT RUN, 6 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 156 of its 227 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.2 s, scratch 3.4 s, control_build 0.4 s, probe_install 1.6 s, control_probes 233.9 s, mutants 4939.9 s, cleanup 3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 682.2 s (12), mutant_builds 3266.5 s (77), mutant_checks 7886.2 s (56), stage_controls 1167.1 s (6), mutant_probes 7397.2 s (29)
