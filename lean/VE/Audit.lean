@@ -175,6 +175,9 @@ import VE.English.Statements
 import VE.EnglishGrammar.Encode
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.Norm.Elab
+import VE.EnglishGrammar.Norm.Read
+import VE.EnglishGrammar.Norm.Rules
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Read
@@ -2214,6 +2217,26 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.MeaningFixtures.switchesOff_π
 #print axioms VE.Defaults.MeaningFixtures.typed_π
 #print axioms VE.Defaults.MeaningFixtures.unsaid_π
+#print axioms VE.Defaults.UniformFixtures.Exact.Uc_eq
+#print axioms VE.Defaults.UniformFixtures.Exact.X_ex
+#print axioms VE.Defaults.UniformFixtures.Exact.X_imp
+#print axioms VE.Defaults.UniformFixtures.Exact.admissible_c
+#print axioms VE.Defaults.UniformFixtures.Exact.cond_ex
+#print axioms VE.Defaults.UniformFixtures.Exact.cond_imp
+#print axioms VE.Defaults.UniformFixtures.Exact.decisionNames_c
+#print axioms VE.Defaults.UniformFixtures.Exact.decisions_c
+#print axioms VE.Defaults.UniformFixtures.Exact.defaultBase_c
+#print axioms VE.Defaults.UniformFixtures.Exact.exact_holds
+#print axioms VE.Defaults.UniformFixtures.Exact.exact_refuses
+#print axioms VE.Defaults.UniformFixtures.Exact.exceptedName_c
+#print axioms VE.Defaults.UniformFixtures.Exact.least_iff
+#print axioms VE.Defaults.UniformFixtures.Exact.least_typed
+#print axioms VE.Defaults.UniformFixtures.Exact.open_rel
+#print axioms VE.Defaults.UniformFixtures.Exact.pred_cc
+#print axioms VE.Defaults.UniformFixtures.Exact.pred_d
+#print axioms VE.Defaults.UniformFixtures.Exact.rel_d
+#print axioms VE.Defaults.UniformFixtures.Exact.sound_holds
+#print axioms VE.Defaults.UniformFixtures.Exact.switchesOff_c
 #print axioms VE.Defaults.UniformFixtures.decodeLayered_uniform
 #print axioms VE.Defaults.Wire.DefaultsView.hD
 #print axioms VE.Defaults.Wire.DefaultsView.hR
@@ -2281,8 +2304,8 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.default_entails_minimal
 #print axioms VE.Defaults.default_entails_minimal_of
 #print axioms VE.Defaults.defaults_model_default_base
-#print axioms VE.Defaults.dfltUniformSound_iff
 #print axioms VE.Defaults.dfltUniform_legacy
+#print axioms VE.Defaults.dfltUniform_sound
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
 #print axioms VE.Defaults.excepted_inj
@@ -2290,6 +2313,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.followsForm_short
 #print axioms VE.Defaults.forcedAll_sound
 #print axioms VE.Defaults.forced_everywhere
+#print axioms VE.Defaults.key_inj
 #print axioms VE.Defaults.leastUniform_legacy
 #print axioms VE.Defaults.least_le
 #print axioms VE.Defaults.length_allTuples
@@ -2300,6 +2324,8 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.mem_zVals
 #print axioms VE.Defaults.min_of_dc
 #print axioms VE.Defaults.node_arity
+#print axioms VE.Defaults.noneOr_denote
+#print axioms VE.Defaults.off_names
 #print axioms VE.Defaults.openAtomsCount_eq
 #print axioms VE.Defaults.packConditions_nil
 #print axioms VE.Defaults.pairChecks_sound
@@ -2315,6 +2341,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.replace_admissible
 #print axioms VE.Defaults.row_of_completion
 #print axioms VE.Defaults.sat_dflt
+#print axioms VE.Defaults.sat_dfltUniform
 #print axioms VE.Defaults.softX_eq
 #print axioms VE.Defaults.strict_of_withoutDefaults
 #print axioms VE.Defaults.sum_ite_count
@@ -2853,9 +2880,39 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Norm.action_mark
+#print axioms VE.EnglishGrammar.Norm.acts_ne
 #print axioms VE.EnglishGrammar.Norm.assembleFrom_numbered
 #print axioms VE.EnglishGrammar.Norm.assemble_numbered
+#print axioms VE.EnglishGrammar.Norm.baseSize_eq
+#print axioms VE.EnglishGrammar.Norm.base_act
 #print axioms VE.EnglishGrammar.Norm.close_numbered
+#print axioms VE.EnglishGrammar.Norm.condition_same
+#print axioms VE.EnglishGrammar.Norm.derivesAll_start
+#print axioms VE.EnglishGrammar.Norm.derives_start
+#print axioms VE.EnglishGrammar.Norm.doc_unmarked
+#print axioms VE.EnglishGrammar.Norm.fields_wire
+#print axioms VE.EnglishGrammar.Norm.fixed_ne
+#print axioms VE.EnglishGrammar.Norm.forIn_length
+#print axioms VE.EnglishGrammar.Norm.lex_ne
+#print axioms VE.EnglishGrammar.Norm.normActs_mark
+#print axioms VE.EnglishGrammar.Norm.normMeaning_unmarked
+#print axioms VE.EnglishGrammar.Norm.ntTy_ne
+#print axioms VE.EnglishGrammar.Norm.prefixMap_ok
+#print axioms VE.EnglishGrammar.Norm.readNorm_checks
+#print axioms VE.EnglishGrammar.Norm.readNorm_complete
+#print axioms VE.EnglishGrammar.Norm.readNorm_eq
+#print axioms VE.EnglishGrammar.Norm.readNorm_numbered
+#print axioms VE.EnglishGrammar.Norm.readNorm_sound
+#print axioms VE.EnglishGrammar.Norm.readNorm_unique
+#print axioms VE.EnglishGrammar.Norm.semAll_start
+#print axioms VE.EnglishGrammar.Norm.sem_start
+#print axioms VE.EnglishGrammar.Norm.start_norm
+#print axioms VE.EnglishGrammar.Norm.strings_map
+#print axioms VE.EnglishGrammar.Norm.toNode_fields
+#print axioms VE.EnglishGrammar.Norm.tree_id
+#print axioms VE.EnglishGrammar.Norm.trees_id
+#print axioms VE.EnglishGrammar.Norm.ty_ne
 #print axioms VE.EnglishGrammar.Run.alternativesView_eq
 #print axioms VE.EnglishGrammar.Run.codeClasses_total
 #print axioms VE.EnglishGrammar.Run.rejectCodes_total
