@@ -172,15 +172,24 @@ def test_the_retained_branch_accepts_nothing_of_this_chain(name):
         _load_document(ANSWERED[name], ROUTE, None)
 
 
-def test_a_document_lean_refuses_is_refused_on_every_path(tmp_path):
-    """Lean refuses a null `completions` as outside its JSON reader; the retained loader accepted it."""
-    raw = chain_document(COMPLY, completions=None)
-    _, error = document_mode(raw)
-    assert isinstance(error, CheckerUnavailable)
-    path = tmp_path / "document.ve.md"
-    path.write_bytes(raw)
-    with pytest.raises(CheckerUnavailable, match="answered only by Lean's document mode"):
-        load_document(path)
+def _reserved_name():
+    front = chain_front(DENY)
+    front["environment"]["vocabulary"]["predicates"]["unsaid__x"] = {"arguments": ["claude_instance"], "description": "x"}
+    return text(front, CHAIN["units"][DENY]["body"].encode())
+
+
+@pytest.mark.parametrize("command", ["coverage", "render", "readings"])
+@pytest.mark.parametrize(("document", "refused", "says"), [
+    # Lean refuses a null `completions` as outside its JSON reader.
+    (lambda: chain_document(COMPLY, completions=None), "CheckerUnavailable", "answered only by Lean's document mode"),
+    # The layered route's own refusals, which the retained loader did not read at load (rows45 item 5).
+    (lambda: _many_rules(250), "ResourceLimit", "ResourceLimit: rules"),
+    (_reserved_name, "VEError", "InvalidInput: reserved name unsaid__x"),
+], ids=["null-completions", "limit", "reserved-name"])
+def test_a_document_lean_refuses_is_refused_on_every_path(document, refused, says, command, tmp_path):
+    """Each load-only command gets Lean's refusal of a document the retained loader accepted at load."""
+    found = answers(document(), tmp_path, ())[command]
+    assert found["refused"] == refused and says in found["text"]
 
 
 def test_the_retained_branch_keeps_every_other_chain():

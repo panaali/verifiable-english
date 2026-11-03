@@ -294,6 +294,7 @@ import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
 import VE.Service.DocumentChainExamples
+import VE.Service.DocumentChainChecks
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
 import VE.Defaults.Premises
