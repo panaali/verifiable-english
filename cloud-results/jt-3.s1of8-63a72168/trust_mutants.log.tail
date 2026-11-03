@@ -1,0 +1,7 @@
+trust_mutants: 14 definitions, 231 mutants (29 to run), 4 jobs, base 50c6842f84f7
+UNKNOWN lean/VE/EnglishGrammar/Run.lean:570 VE.EnglishGrammar.Run.readCase (G[V], trusted) append-right: j ++ ->  (lean/VE/EnglishGrammar/Run.lean:570: Application type mismatch: The argument)
+trust_mutants: 19 KILLED, 0 SURVIVOR, 1 UNKNOWN, 4 INVALID, 2 ALLOWED, 3 NOT RUN, 202 OTHER SHARD in 5302 s
+trust_mutants: G[V], trusted: 9 KILLED, 1 UNKNOWN, 2 INVALID, 1 ALLOWED, 2 NOT RUN, 94 OTHER SHARD
+trust_mutants: S, trusted: 10 KILLED, 2 INVALID, 1 ALLOWED, 1 NOT RUN, 108 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 3 of its 29 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 10.3 s, scratch 2.1 s, control_build 0.2 s, probe_install 1.2 s, control_probes 450.4 s, mutants 4835.7 s, cleanup 1.7 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 916.2 s (5), mutant_builds 59.4 s (28), mutant_checks 15017.7 s (28), stage_controls 3017.3 s (6), mutant_probes 690.1 s (25)
