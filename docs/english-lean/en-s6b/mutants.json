@@ -15,7 +15,7 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be done.\") =="
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:244 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be"
    ],
    "status": "KILLED"
   },
@@ -29,9 +29,9 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:238 #guard clauses (rd act LA \"Rule 1. Every act may be done, except when this holds in all cases.\") == ",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be done.\") ==",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:291 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ neg ++ \".\", \", if \" +"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:243 #guard clauses (rd act LA \"Rule 1. Every act may be done, except when this holds",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:244 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:296 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ n"
    ],
    "status": "KILLED"
   },
@@ -45,13 +45,13 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:209 #guard !document two (rd two L2 (f1.replace \"rule 1)\" \"rule 4)\")) && !authored two (rd two L2 \"\")",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:234 #guard (stmts (rd act LA f8)).map (·.flatMap NormStatement.refs) == some [1, 2] && document act (rd ",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:235 #guard (stmts (rd act LA (f8.replace \"rules 1 and 2\" \"rules 2, 1\"))).map (·.flatMap NormStatement.re",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:319 #guard overs (rd act LA f8) == some [[], [], [\"rule-1\", \"rule-2\"]]",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:320 #guard overs (rd act LA (\"Rule 1 takes precedence over rule 2.\\nRule 1. Every act must not be done.\\",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:322 #guard overs (rd act LA \"Rule 1 (exception to rule 2). Every act may be done.\\nRule 2. Every act mus"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:212 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:214 #guard !document two (rd two L2 (f1.replace \"rule 1)\" \"rule 4)\")) && !authored t",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard (stmts (rd act LA f8)).map (·.flatMap NormStatement.refs) == some [1, 2] ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:240 #guard (stmts (rd act LA (f8.replace \"rules 1 and 2\" \"rules 2, 1\"))).map (·.flat",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:324 #guard overs (rd act LA f8) == some [[], [], [\"rule-1\", \"rule-2\"]]",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:325 #guard overs (rd act LA (\"Rule 1 takes precedence over rule 2.\\nRule 1. Every ac",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:327 #guard overs (rd act LA \"Rule 1 (exception to rule 2). Every act may be done.\\nR"
    ],
    "status": "KILLED"
   },
@@ -65,10 +65,10 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:246 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11) && authored t",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:249 #guard outcome (rd two L2 \"Rule 1. Every act must be done. Except when that act may be done.\\nRule 2",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:291 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ neg ++ \".\", \", if \" +",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:332 #guard marks two L2 f11 == some (List.replicate 6 false) && marks two L2 \"Rule 1.\" == some [false]"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:251 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:254 #guard outcome (rd two L2 \"Rule 1. Every act must be done. Except when that act ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:296 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ n",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:343 #guard marks two L2 f11 == some (List.replicate 6 false) && marks two L2 \"Rule 1"
    ],
    "status": "KILLED"
   },
@@ -82,7 +82,7 @@
    },
    "proofs_cut": true,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:374 #guard match lean (long 5000) with"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:385 #guard match lean (long 5000) with"
    ],
    "status": "KILLED"
   },
@@ -96,10 +96,10 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:75 #guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [true, false, true, fa",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:212 #guard same (nodes (rd act LA \"Rule 1. No act may be done.\")) (python \"[{\\\"guard\\\": [\\\"top\\\"], \\\"nam",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:362 #guard same (lean (situation \"denial_of_being_claude_permitted\" (.modal .mustNot) (s := \"claude_inst"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:75 #guard [Force.must, .needNot, .may, .mustNot].map (Polarity.sign ∘ .modal) == [t",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:212 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:217 #guard same (nodes (rd act LA \"Rule 1. No act may be done.\")) (python \"[{\\\"guard",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:373 #guard same (lean (situation \"denial_of_being_claude_permitted\" (.modal .mustNot"
    ],
    "status": "KILLED"
   },
@@ -113,8 +113,8 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:274 #guard (softAct \"\").predicates.length == 1 && (regulatedOf (softAct \"\")).isEmpty",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:275 #guard outcome (rd (softAct \"\") LA \"Rule 1. Every act may be done.\") == \"stopped 1 noDerivation\""
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:279 #guard (softAct \"\").predicates.length == 1 && (regulatedOf (softAct \"\")).isEmpty",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:280 #guard outcome (rd (softAct \"\") LA \"Rule 1. Every act may be done.\") == \"stopped"
    ],
    "status": "KILLED"
   },
@@ -128,8 +128,8 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:207 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 f1) && authored two ",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:246 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L2 f11) && authored t"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:212 #guard same (nodes (rd two L2 f1)) (python f1Python) && document two (rd two L2 ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:251 #guard same (nodes (rd two L2 f11)) (python f11Python) && document two (rd two L"
    ],
    "status": "KILLED"
   },
@@ -142,7 +142,7 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:278 #guard (regulatedOf (softAct \", \\\"soft-norms@0\\\", \\\"time@0\\\"\")).map (·.name) == [\"permitted\"]"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:283 #guard (regulatedOf (softAct \", \\\"soft-norms@0\\\", \\\"time@0\\\"\")).map (·.name) == "
    ],
    "status": "KILLED"
   },
@@ -155,10 +155,100 @@
    },
    "proofs_cut": false,
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:269 #guard outcome (rd fd LD \"Rule 1. Every service may be used, if every deployed service is reviewed.\"",
-    "lean/VE/EnglishGrammar/Norm/Examples.lean:291 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ neg ++ \".\", \", if \" +"
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:274 #guard outcome (rd fd LD \"Rule 1. Every service may be used, if every deployed s",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:296 #guard ([\", if \" ++ neg ++ \".\", \", unless \" ++ neg ++ \".\", \", except when \" ++ n"
    ],
    "status": "KILLED"
+  },
+  {
+   "behaviour": "a binary predicate refused by `authored`, which only f5 and f23's shape reaches (review F1; survived 7473dc8d0's guards)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "r.sorts.head?.any (c.bearer == .every ·)",
+    "after": "r.sorts.length == 1 && r.sorts.head?.any (c.bearer == .every ·)"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:225 #guard clauses (rd help LH \"Rule 1. Every state may help each person.\") ==",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:229 #guard clauses (rd pair LS \"Rule 1. Every first act may help each second act.\") "
+   ]
+  },
+  {
+   "behaviour": "a precedence line refused by `authored`, which f7 reaches (review F1; survived 7473dc8d0's guards)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "rs.all (fun | .source _ => false | _ => true)",
+    "after": "rs.all (fun | .source _ => false | .precedence _ _ => false | _ => true)"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:234 #guard (stmts (rd act LA f7)).map (overOf · 2) == some [1] && document act (rd a",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:235 #guard (nodes (rd act LA f7)).toOption.map (·.map (·.over)) == some [[], [\"rule-"
+   ]
+  },
+  {
+   "behaviour": "two header targets refused by `authored`, which f8 reaches (review F1; survived 7473dc8d0's guards)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "rs.all (fun | .source _ => false | _ => true)",
+    "after": "rs.all (fun | .source _ => false | .rule h _ => h.exceptionTo.length < 2 | _ => true)"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:239 #guard (stmts (rd act LA f8)).map (·.flatMap NormStatement.refs) == some [1, 2] ",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:240 #guard (stmts (rd act LA (f8.replace \"rules 1 and 2\" \"rules 2, 1\"))).map (·.flat"
+   ]
+  },
+  {
+   "behaviour": "a carve-out without a guard refused by `authored`, which f10 reaches (review F1; survived 7473dc8d0's guards)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "c.mode == .strict && c.residuals.isEmpty",
+    "after": "(c.carveOuts.isEmpty || c.guard != .top) && c.mode == .strict && c.residuals.isEmpty"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:243 #guard clauses (rd act LA \"Rule 1. Every act may be done, except when this holds",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:244 #guard clauses (rd act LA \"Rule 1. Every act may be done, unless that act may be"
+   ]
+  },
+  {
+   "behaviour": "`fits` refusing a plain role of sign false: f12's negative form now fails with its universal form (review F1)",
+   "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Examples.lean",
+    "before": "  | .plain _, .plain => true",
+    "after": "  | .plain s, .plain => s"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:260 #guard same (nodes (rd (item \"\") (LI []) universal)) (python plainNo)",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:261 #guard same (nodes (rd (item negative) (LI [(\"admitted\", \"{0} is not admitted\")]"
+   ]
+  },
+  {
+   "behaviour": "`overOf` with its two lists swapped (review F2; survived 7473dc8d0's guards, its probe)",
+   "file": "lean/VE/EnglishGrammar/Norm/Elab.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Elab.lean",
+    "before": "(rs.filterMap fun | .rule h _ => if h.number = n then some h.exceptionTo else none | _ => none).flatten ++\n  rs.filterMap fun | .precedence n2 m => if n2 = n then some m else none | _ => none",
+    "after": "(rs.filterMap fun | .precedence n2 m => if n2 = n then some m else none | _ => none) ++\n  (rs.filterMap fun | .rule h _ => if h.number = n then some h.exceptionTo else none | _ => none).flatten"
+   },
+   "proofs_cut": false,
+   "status": "KILLED",
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:331 #guard (statements [hd 1, may, hd 2, may, hd 3 [2], may, .precedence 3 1]).map (",
+    "lean/VE/EnglishGrammar/Norm/Examples.lean:332 #guard overs (rd act LA (\"Rule 1. Every act must not be done.\\nRule 2. Every act"
+   ]
   }
  ],
  "python": [
