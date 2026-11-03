@@ -123,6 +123,116 @@
    "text": "MIXED unit needs partitioned parts"
   }
  },
+ "u0073.s05#span-short": {
+  "check": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  }
+ },
+ "u0073.s05#status-contradiction": {
+  "check": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "unit status contradicts content, meaning, or active reading set"
+  }
+ },
+ "u0073.s05#unit-kind": {
+  "check": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "unknown kind unknown"
+  }
+ },
+ "u0073.s05#unknown-predicate": {
+  "check": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  },
+  "coverage": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  },
+  "readings": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  },
+  "render": {
+   "refused": "UnknownSymbol",
+   "text": "UnknownSymbol: regulated predicate absent"
+  }
+ },
+ "u0073.s05#wrong-meaning-id": {
+  "check": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "unit meaning id does not match content"
+  }
+ },
  "u0125.s04.p2": {
   "check": {
    "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"af369699bff4ef2e27ba598443c7ee757ea510f828a599973da995b6cf37335b\",\n  \"document_id\": \"8d33a051fb4e0213b071894fb00dbd03bf277348c07aa0b34e2b34c19dae0a87\",\n  \"coverage\": {\n    \"source_bytes\": 52,\n    \"accounted_bytes\": 52,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 52\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 1,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 1,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
@@ -143,6 +253,107 @@
    "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\n"
   }
  },
+ "u0125.s04.p2#assertion": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"02916f99efb88d0862713a9d93f436a751d71307d649e747005a3381abb60137\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"asserted\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 66\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"asserted\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 66\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nChecked reading: For every entity of sort \"claude_instance\", it is not the case that that entity of sort \"claude_instance\" may directly deny being Claude.\n"
+  }
+ },
+ "u0125.s04.p2#attributed": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"5563b24c73cb1acb37f3bcdd7a36c19dc7cb2deb530039af016c7ea30f9cfd98\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"attributed\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 66\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"attributed\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 66\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nChecked reading: Rule quoted-rule is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude. The source presents this as a rule attributed to constitution as something constitution says.\n"
+  }
+ },
+ "u0125.s04.p2#contextual": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"14c7f035e10d88f4a071a479f96473eef959165ef68bd4a9d7518e2e94692abf\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"example\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 52,\n      \"LABELLED\": 14\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"example\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 52,\n    \"LABELLED\": 14\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nRecorded meaning: The passage is recorded as an example.\n"
+  }
+ },
+ "u0125.s04.p2#graph": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"94a44f7df6c4e1aee52d7427094c553f472008e6d8f3e0358bc225568a6ed01a\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"asserted\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 66\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"admission\": {\n    \"admitted\": true,\n    \"report\": {\n      \"assumptions\": [\n        {\n          \"ast\": [\n            \"forall\",\n            \"claude_instance\",\n            [\n              \"not\",\n              [\n                \"unary\",\n                \"deny_being_claude_permitted\",\n                [\n                  \"var\",\n                  0\n                ]\n              ]\n            ]\n          ],\n          \"name\": \"claim\"\n        }\n      ],\n      \"root\": {\n        \"ast\": [\n          \"forall\",\n          \"claude_instance\",\n          [\n            \"not\",\n            [\n              \"unary\",\n              \"deny_being_claude_permitted\",\n              [\n                \"var\",\n                0\n              ]\n            ]\n          ]\n        ],\n        \"name\": \"claim\"\n      }\n    },\n    \"report_id\": \"3b6e90606bfa8ec109166d73dd3d49e1ce035211e0bd5b1dc9d0b0ed03273c09\",\n    \"kinds\": [\n      \"norm\",\n      \"asserted\"\n    ],\n    \"conditional_on\": [],\n    \"core_report_id\": \"9586af0f6ab6551872833dbaed9a6e5218100d88c4c2ed621ddc3f65294db2dc\",\n    \"vacuous\": false\n  },\n  \"stale_reading_labels\": [],\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"asserted\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 66\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nChecked reading: For every entity of sort \"claude_instance\", it is not the case that that entity of sort \"claude_instance\" may directly deny being Claude.\n"
+  }
+ },
+ "u0125.s04.p2#graph-root": {
+  "check": {
+   "refused": "VEError",
+   "text": "graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or invalid certificate"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"asserted\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 66\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"5f848653570c642e26fbb1e18a8275debf6d9fc8d1ddfdd438375f0f4ff745eb\"\n    ],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nChecked reading: For every entity of sort \"claude_instance\", it is not the case that that entity of sort \"claude_instance\" may directly deny being Claude.\n"
+  }
+ },
  "u0125.s04.p2#held": {
   "check": {
    "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"af369699bff4ef2e27ba598443c7ee757ea510f828a599973da995b6cf37335b\",\n  \"document_id\": \"00c2476cbc8021010ed62a0bfb7e651055a39099dd90be09865c6cb1f8dd2041\",\n  \"coverage\": {\n    \"source_bytes\": 52,\n    \"accounted_bytes\": 52,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52\n    },\n    \"bytes_by_status\": {\n      \"OPEN\": 52\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 1,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 1,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"assertion-disjunction\",\n    \"choices\": null,\n    \"all\": \"one proof from per-unit disjunctions\",\n    \"none\": \"one shared finite model satisfying every reading\"\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
@@ -161,6 +372,118 @@
   },
   "render": {
    "output": "Claude should never directly deny that it is Claude.\nOpen reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis sentence could mean:\nOne reading is: This holds in all cases.\n"
+  }
+ },
+ "u0125.s04.p2#inconsistent": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"b7aeb13c57579b862cac288268776c4285ee248c9095013e92e5abd35b0d201b\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"asserted\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 66\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"admission\": {\n    \"admitted\": true,\n    \"report\": {\n      \"assumptions\": [\n        {\n          \"ast\": [\n            \"exists\",\n            \"claude_instance\",\n            [\n              \"unary\",\n              \"deny_being_claude_permitted\",\n              [\n                \"var\",\n                0\n              ]\n            ]\n          ],\n          \"name\": \"claim\"\n        }\n      ],\n      \"root\": {\n        \"ast\": [\n          \"exists\",\n          \"claude_instance\",\n          [\n            \"unary\",\n            \"deny_being_claude_permitted\",\n            [\n              \"var\",\n              0\n            ]\n          ]\n        ],\n        \"name\": \"claim\"\n      }\n    },\n    \"report_id\": \"dbced10e7fee095b3c8f67535babdea0a5b87859bdc4f4dea3c35b18d4d66b6e\",\n    \"kinds\": [\n      \"norm\",\n      \"asserted\"\n    ],\n    \"conditional_on\": [],\n    \"core_report_id\": \"c141e5ff6e6b05ad6cd62ee9e7de072ef11e72c5ca3c5740d2c5acb69517f270\",\n    \"vacuous\": true\n  },\n  \"stale_reading_labels\": [],\n  \"premises\": {\n    \"status\": \"INCONSISTENT\",\n    \"certificate\": {\n      \"checker_version\": \"ve-tableau-checker@2\",\n      \"environment_id\": \"75f522a6050747a1307dd0abaa23457ced7d0c4b26015d9de0ce8dd3143bca95\",\n      \"premise_meaning_ids\": [\n        \"4e4f40de693a4ec80f1977b7b49e4b7016d2780556c4477c84f89268af56e4c2\",\n        \"9affc8286fccb362978408c8283c53202aa64edab6d1504c96178628f62e3a52\",\n        \"4e4f40de693a4ec80f1977b7b49e4b7016d2780556c4477c84f89268af56e4c2\"\n      ],\n      \"conclusion_meaning_id\": \"80d4f52a12e7b6d71a81a01364feb0d1a488810c8560919e3cfcc5804c17b35d\",\n      \"trace\": {\n        \"rule\": \"expand\",\n        \"at\": 0,\n        \"children\": [\n          {\n            \"rule\": \"expand\",\n            \"at\": 1,\n            \"children\": [\n              {\n                \"rule\": \"expand\",\n                \"at\": 5,\n                \"children\": [\n                  {\n                    \"rule\": \"expand\",\n                    \"at\": 6,\n                    \"children\": [\n                      {\n                        \"rule\": \"expand\",\n                        \"at\": 7,\n                        \"children\": [\n                          {\n                            \"rule\": \"expand\",\n                            \"at\": 9,\n                            \"children\": [\n                              {\n                                \"rule\": \"expand\",\n                                \"at\": 8,\n                                \"children\": [\n                                  {\n                                    \"rule\": \"expand\",\n                                    \"at\": 10,\n                                    \"children\": [\n                                      {\n                                        \"rule\": \"expand\",\n                                        \"at\": 11,\n                                        \"children\": [\n                                          {\n                                            \"rule\": \"expand\",\n                                            \"at\": 13,\n                                            \"children\": [\n                                              {\n                                                \"rule\": \"expand\",\n                                                \"at\": 14,\n                                                \"children\": [\n                                                  {\n                                                    \"rule\": \"close\"\n                                                  }\n                                                ]\n                                              },\n                                              {\n                                                \"rule\": \"expand\",\n                                                \"at\": 14,\n                                                \"children\": [\n                                                  {\n                                                    \"rule\": \"expand\",\n                                                    \"at\": 16,\n                                                    \"children\": [\n                                                      {\n                                                        \"rule\": \"expand\",\n                                                        \"at\": 18,\n                                                        \"children\": [\n                                                          {\n                                                            \"rule\": \"close\"\n                                                          },\n                                                          {\n                                                            \"rule\": \"expand\",\n                                                            \"at\": 19,\n                                                            \"children\": [\n                                                              {\n                                                                \"rule\": \"close\"\n                                                              },\n                                                              {\n                                                                \"rule\": \"expand\",\n                                                                \"at\": 20,\n                                                                \"children\": [\n                                                                  {\n                                                                    \"rule\": \"expand\",\n                                                                    \"at\": 21,\n                                                                    \"children\": [\n                                                                      {\n                                                                        \"rule\": \"close\"\n                                                                      }\n                                                                    ]\n                                                                  }\n                                                                ]\n                                                              }\n                                                            ]\n                                                          }\n                                                        ]\n                                                      },\n                                                      {\n                                                        \"rule\": \"expand\",\n                                                        \"at\": 18,\n                                                        \"children\": [\n                                                          {\n                                                            \"rule\": \"close\"\n                                                          },\n                                                          {\n                                                            \"rule\": \"expand\",\n                                                            \"at\": 19,\n                                                            \"children\": [\n                                                              {\n                                                                \"rule\": \"close\"\n                                                              }\n                                                            ]\n                                                          }\n                                                        ]\n                                                      }\n                                                    ]\n                                                  }\n                                                ]\n                                              }\n                                            ]\n                                          }\n                                        ]\n                                      },\n                                      {\n                                        \"rule\": \"expand\",\n                                        \"at\": 11,\n                                        \"children\": [\n                                          {\n                                            \"rule\": \"expand\",\n                                            \"at\": 13,\n                                            \"children\": [\n                                              {\n                                                \"rule\": \"expand\",\n                                                \"at\": 14,\n                                                \"children\": [\n                                                  {\n                                                    \"rule\": \"close\"\n                                                  }\n                                                ]\n                                              },\n                                              {\n                                                \"rule\": \"expand\",\n                                                \"at\": 14,\n                                                \"children\": [\n                                                  {\n                                                    \"rule\": \"close\"\n                                                  }\n                                                ]\n                                              }\n                                            ]\n                                          }\n                                        ]\n                                      }\n                                    ]\n                                  }\n                                ]\n                              },\n                              {\n                                \"rule\": \"expand\",\n                                \"at\": 10,\n                                \"children\": [\n                                  {\n                                    \"rule\": \"expand\",\n                                    \"at\": 8,\n                                    \"children\": [\n                                      {\n                                        \"rule\": \"expand\",\n                                        \"at\": 11,\n                                        \"children\": [\n                                          {\n                                            \"rule\": \"close\"\n                                          }\n                                        ]\n                                      }\n                                    ]\n                                  },\n                                  {\n                                    \"rule\": \"expand\",\n                                    \"at\": 11,\n                                    \"children\": [\n                                      {\n                                        \"rule\": \"close\"\n                                      }\n                                    ]\n                                  }\n                                ]\n                              }\n                            ]\n                          },\n                          {\n                            \"rule\": \"expand\",\n                            \"at\": 9,\n                            \"children\": [\n                              {\n                                \"rule\": \"expand\",\n                                \"at\": 8,\n                                \"children\": [\n                                  {\n                                    \"rule\": \"expand\",\n                                    \"at\": 10,\n                                    \"children\": [\n                                      {\n                                        \"rule\": \"close\"\n                                      }\n                                    ]\n                                  }\n                                ]\n                              },\n                              {\n                                \"rule\": \"expand\",\n                                \"at\": 10,\n                                \"children\": [\n                                  {\n                                    \"rule\": \"close\"\n                                  }\n                                ]\n                              }\n                            ]\n                          }\n                        ]\n                      }\n                    ]\n                  }\n                ]\n              }\n            ],\n            \"parameter\": \"w:0\"\n          }\n        ]\n      }\n    }\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"asserted\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 66\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [\n      \"ea45e2e550ae9f2a22260dfe78b4c7354ca98eaf82b76ccb16025589b93c56b7\"\n    ],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nChecked reading: There is an entity of sort \"claude_instance\" that may directly deny being Claude.\n"
+  }
+ },
+ "u0125.s04.p2#open-term": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"af369699bff4ef2e27ba598443c7ee757ea510f828a599973da995b6cf37335b\",\n  \"document_id\": \"e067ae1abd5106ed8be005c659d1752d1b3209f9f1e9e1a17bde8361ce1e8c4c\",\n  \"coverage\": {\n    \"source_bytes\": 52,\n    \"accounted_bytes\": 52,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52\n    },\n    \"bytes_by_status\": {\n      \"OPEN\": 52\n    },\n    \"unformalised_reasons\": {},\n    \"residual\": {\n      \"open_terms\": 1,\n      \"assumptions\": 1,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 52,\n  \"accounted_bytes\": 52,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52\n  },\n  \"bytes_by_status\": {\n    \"OPEN\": 52\n  },\n  \"unformalised_reasons\": {},\n  \"residual\": {\n    \"open_terms\": 1,\n    \"assumptions\": 1,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nOpen reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\n"
+  }
+ },
+ "u0125.s04.p2#open-unlisted": {
+  "check": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "invalid meaning status"
+  }
+ },
+ "u0125.s04.p2#unbound-fence": {
+  "check": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "coverage": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "readings --conclusion [\"top\"]": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  },
+  "render": {
+   "refused": "VEError",
+   "text": "unit spans do not partition all source bytes"
+  }
+ },
+ "u0125.s04.p2#unformalised": {
+  "check": {
+   "output": "{\n  \"format\": \"ve-document@1\",\n  \"source_id\": \"9ed67f39eb28cbc01743c05987fe1f0b0bcdea2338625c937e3a8af52d3cd3f1\",\n  \"document_id\": \"1a668f50e82a6846b4d7f686ccac414e6928a44c55e64d2419f521d6e9fb78cd\",\n  \"coverage\": {\n    \"source_bytes\": 66,\n    \"accounted_bytes\": 66,\n    \"coverage_percent\": 100,\n    \"bytes_by_kind\": {\n      \"norm\": 52,\n      \"unformalised\": 14\n    },\n    \"bytes_by_status\": {\n      \"CHECKED\": 52,\n      \"UNFORMALISED\": 14\n    },\n    \"unformalised_reasons\": {\n      \"prose\": 1\n    },\n    \"residual\": {\n      \"open_terms\": 0,\n      \"assumptions\": 2,\n      \"bridge_leaves\": 0,\n      \"unresolved_reading_sets\": 0,\n      \"default_exceptions\": 0,\n      \"holistic_overrides\": 0,\n      \"instruction_switches\": 0,\n      \"weighing_points\": 0\n    },\n    \"residual_total\": 2,\n    \"soft_status\": \"CHECKED\",\n    \"default_exceptions_by_decider\": {},\n    \"soft_residual_labels\": [],\n    \"soft_background_labels\": []\n  },\n  \"reading_plan\": {\n    \"route\": \"single\",\n    \"choices\": [\n      {}\n    ]\n  },\n  \"soft\": {\n    \"environment_id\": \"b2fbc05b558ca32f9af0035dddefcba379c1447912623493621cccb4886e601e\",\n    \"soft_document_hash\": \"046194acd586c86271f59c332a4cd3f97d30b9ec4c67b09efe4b21fba4ecd7ee\",\n    \"decision_predicates\": [],\n    \"background_labels\": []\n  },\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"2d9bf0e4dfce677688ebf774b6fe79c3ddfb8d4bb783a64821fa41cf2f2b1328\"\n  }\n}\n"
+  },
+  "coverage": {
+   "output": "{\n  \"source_bytes\": 66,\n  \"accounted_bytes\": 66,\n  \"coverage_percent\": 100,\n  \"bytes_by_kind\": {\n    \"norm\": 52,\n    \"unformalised\": 14\n  },\n  \"bytes_by_status\": {\n    \"CHECKED\": 52,\n    \"UNFORMALISED\": 14\n  },\n  \"unformalised_reasons\": {\n    \"prose\": 1\n  },\n  \"residual\": {\n    \"open_terms\": 0,\n    \"assumptions\": 2,\n    \"bridge_leaves\": 0,\n    \"unresolved_reading_sets\": 0,\n    \"default_exceptions\": 0,\n    \"holistic_overrides\": 0,\n    \"instruction_switches\": 0,\n    \"weighing_points\": 0\n  },\n  \"residual_total\": 2,\n  \"soft_status\": \"CHECKED\",\n  \"default_exceptions_by_decider\": {},\n  \"soft_residual_labels\": [],\n  \"soft_background_labels\": []\n}\n"
+  },
+  "readings": {
+   "output": "{\n  \"route\": \"single\",\n  \"choices\": [\n    {}\n  ]\n}\n"
+  },
+  "readings --conclusion [\"forall\", \"claude_instance\", [\"not\", [\"unary\", \"deny_being_claude_permitted\", [\"var\", 0]]]]": {
+   "output": "{\n  \"verdict\": \"NONE\",\n  \"route\": \"assertion-shared-model\",\n  \"model_id\": \"c9f2e41dd74c3c5a8b7778a170397d7153fc3970b9520b4d3dd7d19ef657be0e\",\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "readings --conclusion [\"top\"]": {
+   "output": "{\n  \"verdict\": \"ALL\",\n  \"route\": \"assertion-disjunction\",\n  \"certificate\": {\n    \"checker_version\": \"ve-tableau-checker@2\",\n    \"environment_id\": \"cbfe7cce1d8bdb9e3bb9aa48fa947c00eb21a446505287cb8f131202453f73b9\",\n    \"premise_meaning_ids\": [],\n    \"conclusion_meaning_id\": \"f3d42b96f7a76a47c1dbaff19f17073660360daa79e02dbb501f1ec87c47936f\",\n    \"trace\": {\n      \"rule\": \"close\"\n    }\n  },\n  \"labels\": [],\n  \"vacuous\": false,\n  \"premises\": {\n    \"status\": \"model\",\n    \"model_id\": \"e2b6fa8e55b735f3de15252f225600a60f99e77b9f674a07e8650a1415dc9278\"\n  }\n}\n"
+  },
+  "render": {
+   "output": "Claude should never directly deny that it is Claude.\nChecked reading: Rule never-deny is a strict rule on deny_being_claude_permitted with sign negative. Every entity of sort \"claude_instance\" must not directly deny being Claude.\nThis follows.\nRecorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: prose.\n"
   }
  }
 }
