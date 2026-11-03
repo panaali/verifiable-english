@@ -1,0 +1,23 @@
+trust_mutants: 23 definitions, 284 mutants (21 to run), 4 jobs, base 561aa79f5716
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:74 VE.Service.DocumentChain.Examples.holds (?, trusted) body-true: match x with | .ok a => p a | .error _ => false -> true
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:76 VE.Service.DocumentChain.Examples.holds (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:151 VE.Service.DocumentChain.Examples.plainCase (?, trusted) lit-minus: 1 -> 0
+UNKNOWN lean/VE/Service/Document.lean:2214 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: sets -> [] (lean/VE/Service/Document.lean:2214: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:1976 VE.Service.Document.admitGraph (D[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:1055 VE.Service.Document.softSource (G[V], trusted) lit-minus: 257 -> 256
+UNKNOWN lean/VE/Service/Document.lean:2214 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: sets.map (·.getObjValD "unit") -> [] (lean/VE/Service/Document.lean:2216: Invalid dotted identifier notation: The expected type of `.st...)
+SURVIVOR lean/VE/Service/Document.lean:1057 VE.Service.Document.softSource (G[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:1057 VE.Service.Document.softSource (G[V], trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:83 VE.Service.DocumentChain.Examples.situation (?, trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: held -> [] (lean/VE/Service/Document.lean:2216: Invalid dotted identifier notation: The expected type of `.st...)
+UNKNOWN lean/VE/Service/DocumentChainExamples.lean:54 VE.Service.DocumentChain.Examples.document (?, trusted) list-empty: [0, 1] -> [] (lean/VE/Service/DocumentChainExamples.lean:54: typeclass instance problem is stuck, it is often d...)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-first: permission -> (permission.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-first: (front.getObjVal? "completions").toOption.toList -> (((front.getObjVal? "completions").toOption.toList).take 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:24 VE.Service.DocumentChain.Examples.chain (?, trusted) list-drop-first: ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"] -> (["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"].drop 1)
+SURVIVOR lean/VE/Service/Document.lean:1977 VE.Service.Document.admitGraph (D[V], trusted) list-drop-first: E.profiles -> (E.profiles.drop 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-last: permission.map (("permission", .str ·)) -> ((permission.map (("permission", .str ·))).reverse.take 1)
+trust_mutants: 40 KILLED, 13 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 227 OTHER SHARD in 1450 s; 36 carried from 30ae52a1ff3f (check-only change: lean/VE.lean, lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt, lean/predicates.txt)
+trust_mutants: ?, trusted: 35 KILLED, 8 SURVIVOR, 4 UNKNOWN, 180 OTHER SHARD
+trust_mutants: D[V], trusted: 1 KILLED, 2 SURVIVOR, 38 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 3 SURVIVOR, 9 OTHER SHARD
+trust_mutants: steps: wall plan 6.9 s, scratch 2.1 s, control_build 0.2 s, probe_install 0.9 s, control_probes 879.6 s, mutants 556.3 s, cleanup 4 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 2221.3 s (9), mutant_builds 241.6 s (21), mutant_checks 1129 s (20), stage_controls 294.7 s (3), mutant_probes 546.2 s (4)
