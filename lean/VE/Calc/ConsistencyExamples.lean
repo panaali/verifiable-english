@@ -64,15 +64,19 @@ def V6outs : List Claim :=
 #guard (run V6 V6in [ge (.div (.mul (.val "v") (.lit 11)) (.lit 12)) (sq 1075)]).map (·matches .fails ..) = some true
 
 /-! Limits (fail closed): no units, and C-1's measured chain a(i+1) = a(i) + a(i) to a12 over the input (8,191
-inlined nodes): within the limit at `maxWork` and at its work, 196,595 units (the enclosure, then the printed point),
-refused one unit short; 40 levels (2⁴¹ nodes) are cut off at 1,000,000 units. -/
+inlined nodes): within the limit at `maxWork` and at its work, 196,596 units (the enclosure, then the printed point),
+refused one unit short; 40 levels (2⁴¹ nodes) are cut off at 1,000,000 units, and so is the search over 100 inputs,
+each point charged 100 × 100 units for its input check before it is built further. -/
 def chain (k : Nat) : List Decl := ⟨"a", .stated (2 / 5)⟩ :: ⟨"a0", .defined a⟩ ::
   (List.range k).map fun i => ⟨s!"a{i + 1}", .defined (.add (.val s!"a{i}") (.val s!"a{i}"))⟩
 #guard consistencyRun 0 C1 .tiesUp inA [k2] = none
 #guard run (chain 12) inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
-#guard consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
-#guard consistencyRun 196594 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = none
+#guard consistencyRun 196596 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
+#guard consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = none
 #guard consistencyRun 1000000 (chain 40) .tiesUp inA [lt (.val "a40") (.lit 1)] = none
+def hundred : List (String × Printed) := (List.range 100).map fun i => (s!"d{i}", ⟨4, 1⟩)
+#guard consistencyRun 1000000 (hundred.map fun i => ⟨i.1, .stated (2 / 5)⟩) .tiesUp hundred
+  [.compare ⟨.eq, false⟩ (.val "d0") (.lit (41 / 100))] = none
 
 /-! V-7, V-8 (granularity 1/512, nine templates) and V-7b (1/4,096, twelve), both rules: no printed p is refuted but
 V-8's 0.007812 under ties up (4/512 = 0.0078125 is a tie: half to even prints 0.007812). -/

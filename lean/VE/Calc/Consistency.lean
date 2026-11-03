@@ -286,10 +286,13 @@ def endpointPoint (r : Rounding) (m : Nat) : List (String × Printed) → List (
   | [] => []
   | i :: is => (i.1, if m % 2 = 1 then (i.2.box r).2 else (i.2.box r).1) :: endpointPoint r (m / 2) is
 
-/-- The candidate points, at most `maxWitnessPoints`: the printed values, then the 2ⁿ endpoint choices. -/
-def witnessPoints (r : Rounding) (inputs : List (String × Printed)) : List (List (String × Rat)) :=
-  (inputs.map fun i => (i.1, i.2.value)) ::
-    (List.range (min (2 ^ inputs.length) (maxWitnessPoints - 1))).map fun m => endpointPoint r m inputs
+/-- Candidate point `m`, built when it is tried: the printed values, then the 2ⁿ endpoint choices. -/
+def witnessPoint (r : Rounding) (inputs : List (String × Printed)) : Nat → List (String × Rat)
+  | 0 => inputs.map fun i => (i.1, i.2.value)
+  | m + 1 => endpointPoint r m inputs
+
+/-- How many points are tried: at most `maxWitnessPoints`. -/
+def witnessCount (inputs : List (String × Printed)) : Nat := 1 + min (2 ^ inputs.length) (maxWitnessPoints - 1)
 
 /-- A point as stated declarations. -/
 def pointDecls (w : List (String × Rat)) : List Decl := w.map fun (n, x) => ⟨n, .stated x⟩
@@ -300,22 +303,23 @@ def allHoldC (limit : Nat) (t : Table) : List Claim → Nat → Option (Bool × 
   | c :: cs, u => (Expr.evalsC limit t c.exprs u).bind fun (vs, u) =>
       if Claim.ofSides c vs = .decided .holds then allHoldC limit t cs u else some (false, u)
 
-/-- One point, one unit and then its values charged into a table once: inside the inputs' intervals and every
-output holding. -/
+/-- One point, charged first its input check (a lookup per input: n × n units) and then its values into a table once:
+inside the inputs' intervals and every output holding. -/
 def pointHoldsC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim)
     (w : List (String × Rat)) (u : Nat) : Option (Bool × Nat) :=
-  visitC limit u fun u =>
+  visitC limit (u + inputs.length * inputs.length) fun u =>
     if inputs.all (fun i => match w.lookup i.1 with
       | some x => decide (RoundsTo r i.2 x)
       | none => false) then
       (valueTableC limit (pointDecls w) [] u).bind fun (t, u) => allHoldC limit t outs u
     else some (false, u)
 
+/-- `n` points from point `m`, in order, each built when it is tried; the first witness. -/
 def searchC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) :
-    List (List (String × Rat)) → Nat → Option (Option (List (String × Rat)) × Nat)
-  | [], u => some (none, u)
-  | w :: ws, u => (pointHoldsC limit r inputs outs w u).bind fun (b, u) =>
-      if b then some (some w, u) else searchC limit r inputs outs ws u
+    Nat → Nat → Nat → Option (Option (List (String × Rat)) × Nat)
+  | 0, _, u => some (none, u)
+  | n + 1, m, u => (pointHoldsC limit r inputs outs (witnessPoint r inputs m) u).bind fun (b, u) =>
+      if b then some (some (witnessPoint r inputs m), u) else searchC limit r inputs outs n (m + 1) u
 
 /-- No point decided it: the points ran out at the limit, or all were tried. -/
 def searchUnknown (inputs : List (String × Printed)) : UnknownReason :=
@@ -336,7 +340,7 @@ def consistencyRun (limit : Nat) (ds : List Decl) (r : Rounding) (inputs : List 
     | .error _ => some (.unknown (.limit .digits))
     | .ok outs' => (refuteC limit r inputs outs' 0 0).bind fun
       | (some (j, es), _) => some (.fails j es)
-      | (none, w) => (searchC limit r inputs outs' (witnessPoints r inputs) w).map fun
+      | (none, w) => (searchC limit r inputs outs' (witnessCount inputs) 0 w).map fun
         | (some pt, _) => .holds pt
         | (none, _) => .unknown (searchUnknown inputs)
 
@@ -424,7 +428,7 @@ theorem pointHoldsC_sound {limit : Nat} {r : Rounding} {inputs : List (String ×
   split at h
   · rename_i hin
     obtain ⟨⟨t, u1⟩, ht, h⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -, hu1⟩ := valueTableC_some limit (pointDecls w) [] (u + 1) t u1 hu ht
+    obtain ⟨rfl, -, hu1⟩ := valueTableC_some limit (pointDecls w) [] _ t u1 hu ht
     have hall := allHoldC_sound hu1 h
     rw [show Table.read (List.foldl _ [] (pointDecls w)) = valuesL (pointDecls w) from valueTable_read _] at hall
     simp only [witnessCheck, hin, Bool.true_and, List.all_eq_true, beq_iff_eq]
@@ -434,28 +438,27 @@ theorem pointHoldsC_sound {limit : Nat} {r : Rounding} {inputs : List (String ×
   · cases h
 
 theorem searchC_some {limit : Nat} {r : Rounding} {inputs : List (String × Printed)} {outs : List Claim}
-    {ws : List (List (String × Rat))} {u : Nat} {w : List (String × Rat)} {u' : Nat}
-    (h : searchC limit r inputs outs ws u = some (some w, u')) :
-    w ∈ ws ∧ ∃ u0 u1, pointHoldsC limit r inputs outs w u0 = some (true, u1) := by
-  induction ws generalizing u with
-  | nil => cases h
-  | cons v ws ih =>
+    {n m u : Nat} {w : List (String × Rat)} {u' : Nat}
+    (h : searchC limit r inputs outs n m u = some (some w, u')) :
+    (∃ k, w = witnessPoint r inputs k) ∧ ∃ u0 u1, pointHoldsC limit r inputs outs w u0 = some (true, u1) := by
+  induction n generalizing m u with
+  | zero => cases h
+  | succ n ih =>
     obtain ⟨⟨b, u1⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
     simp only at h; split at h
     · simp only [Option.some.injEq, Prod.mk.injEq] at h; obtain ⟨rfl, -⟩ := h
-      rename_i hb'; subst hb'; exact ⟨by simp, _, _, hb⟩
-    · obtain ⟨hm, hp⟩ := ih h; exact ⟨by simp [hm], hp⟩
+      rename_i hb'; subst hb'; exact ⟨⟨m, rfl⟩, _, _, hb⟩
+    · exact ih h
 
-theorem witnessPoints_names (r : Rounding) (inputs : List (String × Printed)) :
-    ∀ w ∈ witnessPoints r inputs, w.map Prod.fst = inputs.map Prod.fst := by
+theorem witnessPoint_names (r : Rounding) (inputs : List (String × Printed)) (k : Nat) :
+    (witnessPoint r inputs k).map Prod.fst = inputs.map Prod.fst := by
   have he : ∀ m (is : List (String × Printed)), (endpointPoint r m is).map Prod.fst = is.map Prod.fst := by
     intro m is; induction is generalizing m with
     | nil => rfl
     | cons i is ih => simp [endpointPoint, ih]
-  intro w hw; simp only [witnessPoints, List.mem_cons, List.mem_map] at hw
-  rcases hw with rfl | ⟨m, -, rfl⟩
-  · simp
-  · exact he m inputs
+  cases k with
+  | zero => simp [witnessPoint]
+  | succ m => exact he m inputs
 
 theorem consistencyInputFault_none {ds : List Decl} {ns : List String} (h : consistencyInputFault ds ns = none) :
     ns.Nodup ∧ ∀ n ∈ ns, n ∈ ds.map Decl.name := by
@@ -498,8 +501,8 @@ theorem consistencyRun_holds (limit : Nat) (ds : List Decl) (h : WellFormed ds) 
       | none => simp at hr
       | some pt =>
         simp only [ConsistencyAnswer.holds.injEq] at hr; subst hr
-        obtain ⟨hmem, _, _, hp⟩ := searchC_some hs
-        have hw := pointHoldsC_sound (by rw [witnessPoints_names r inputs pt hmem]; exact hnd) hp
+        obtain ⟨⟨k, hk'⟩, _, _, hp⟩ := searchC_some hs
+        have hw := pointHoldsC_sound (by rw [hk', witnessPoint_names r inputs k]; exact hnd) hp
         exact consistent_of_witness ds h r inputs (fun i hi => hk _ (List.mem_map_of_mem hi)) outs outs' hl pt hw
 
 /-- A refutation the runner returns proves `¬ Consistent`. -/

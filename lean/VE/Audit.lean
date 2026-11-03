@@ -1491,7 +1491,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.vprod_cons
 #print axioms VE.Calc.vprod_mulVars
 #print axioms VE.Calc.weighted_nonneg
-#print axioms VE.Calc.witnessPoints_names
+#print axioms VE.Calc.witnessPoint_names
 #print axioms VE.Calc.zpowR_eq
 #print axioms VE.Calc.zpowR_mul_nat
 #print axioms VE.Cardinality.CAdmission.admitted

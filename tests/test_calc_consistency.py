@@ -58,9 +58,9 @@ FIXTURES = [
     ("v6", "say (run V6 V6in V6outs)", f"holds {V6_PRINTED}"),
     # The limit: none at 0 units; C-1's 8,191-node chain ends at its work, one unit short is refused.
     ("limit-zero", "say (consistencyRun 0 C1 .tiesUp inA [k2])", "limit"),
-    ("chain-at-work", "say (consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])",
+    ("chain-at-work", "say (consistencyRun 196596 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])",
      "holds a = 2/5"),
-    ("chain-short", "say (consistencyRun 196594 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])", "limit"),
+    ("chain-short", "say (consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])", "limit"),
     # V-7 and V-8 (1/512, ties up, then half to even) and V-7b (1/4,096, both rules).
     ("v7-ties-up", "toString (V7.map (grainRefutes 512 .tiesUp))",
      "[false, false, false, true, false, false, false, false]"),
