@@ -1,0 +1,28 @@
+trust_mutants: 17 definitions, 324 mutants (29 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Judgments/Chain.lean:242 VE.Judgments.blockFormulas (D[V], trusted) list-empty: [("right_lines", r)] -> [] (lean/VE/Judgments/Chain.lean:242: Unknown identifier `r`)
+UNKNOWN lean/VE/Service/Document.lean:2739 VE.Service.Document.verdictFields (S, trusted) list-empty: us.map -> [] (lean/VE/Service/Document.lean:2739: Function expected at)
+SURVIVOR lean/VE/Judgments/Chain.lean:221 VE.Judgments.ruleFormulas (D[V], trusted) list-empty: xs.toList -> []
+UNKNOWN lean/VE/Service/Document.lean:2728 VE.Service.Document.setVerdictFields (S, trusted) list-empty: kvs.toList -> [] (lean/VE/Service/Document.lean:2728: Invalid match expression: The type of pattern variable 'snd✝'...)
+UNKNOWN lean/VE/Judgments/Chain.lean:245 VE.Judgments.blockFormulas (D[V], trusted) list-empty: L.conditions.map -> [] (lean/VE/Judgments/Chain.lean:245: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map (V... -> []
+SURVIVOR lean/VE/Service/Document.lean:2720 VE.Service.Document.setVerdictFields (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map (V... -> (((VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r => (r.requires.map ...
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-drop-last: ["norm", "liberty", "recognition"].filterMap -> ((["norm", "liberty", "recognition"].filterMap).dropLast) (lean/VE/Judgments/Chain.lean:232: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2739 VE.Service.Document.verdictFields (S, trusted) list-first: us -> (us.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-drop-last: us.toList -> (us.toList.dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: VE.Compose.profileTable.filter (·.profile == "judgments@0") -> ((VE.Compose.profileTable.filter (·.profile == "judgments@0")).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)) -> ((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: r.requires.map (VE.Compose.needText r) -> ((r.requires.map (VE.Compose.needText r)).dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: r.refuses.map (·.2) -> ((r.refuses.map (·.2)).take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:230 VE.Judgments.linesFormulas (D[V], trusted) list-drop-first: lines -> (lines.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2719 VE.Service.Document.setVerdictFields (S, trusted) list-last: kvs.toList -> (kvs.toList.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) list-drop-first: judgmentCodes -> (judgmentCodes.drop 1)
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-drop-first: ["norm", "liberty", "recognition"].filterMap -> ((["norm", "liberty", "recognition"].filterMap).drop 1) (lean/VE/Judgments/Chain.lean:232: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-last: us.toList -> (us.toList.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2785 VE.Service.Document.layerRefusal (S, trusted) list-drop-first: judgmentGateTexts -> (judgmentGateTexts.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: r.requires -> (r.requires.drop 1)
+trust_mutants: 1 KILLED, 16 SURVIVOR, 6 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 1589 s
+trust_mutants: D[V], trusted: 2 SURVIVOR, 4 UNKNOWN, 1 INVALID, 59 OTHER SHARD
+trust_mutants: G[V], trusted: 8 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 14 SURVIVOR, 2 UNKNOWN, 5 INVALID, 228 OTHER SHARD
+trust_mutants: steps: wall plan 6.5 s, scratch 2.2 s, control_build 0.1 s, probe_install 0.9 s, control_probes 943.9 s, mutants 630.9 s, cleanup 4.1 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2127.6 s (9), mutant_builds 292.1 s (30), mutant_checks 1214.8 s (18), stage_controls 23.5 s (1), mutant_probes 512.6 s (1)
