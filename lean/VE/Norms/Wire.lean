@@ -1,4 +1,5 @@
 import VE.Acts.Wire
+import VE.Acts.Tree
 import VE.Norms.LayersOnce
 import VE.Route.Gate
 import VE.Route.Wire
@@ -92,16 +93,6 @@ def decodeRegulatedIn (profiles fx : List String) : String → List String → J
 def decodeRegulatedShape (profiles fx : List String) : String → List String → Json → Except String Regulated :=
   decodeRegulatedWith (profiles.contains "acts@0") (canonicalShape profiles fx)
 
-/-- The act check from AP-3 on, once per act (act-phrases 6.4): `Acts.Wire.checkAct` on each declaration's act under
-the fixed phrases `fx` and the frames `V`, in order: the first refusal, or each joined act and its one meaning. -/
-def actsOf (fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
-    Except String (List (String × VE.Acts.Act)) :=
-  regs.filterMapM fun r => match r.act with
-    | some a => do
-      let (_, A) ← VE.Acts.Wire.checkAct fx V r.name r.sorts.length (.str a)
-      pure (A.map (r.name, ·))
-    | none => pure none
-
 /-- One `regulated` declaration without `acts@0`. -/
 def decodeRegulated : String → List String → Json → Except String Regulated :=
   decodeRegulatedWith false canonicalAct
@@ -147,11 +138,6 @@ def plainWording (r : Regulated) (raw : Json) : Option String :=
   | .plain, some act, some f => some (VE.Acts.Lexical.wording f act)
   | _, _, _ => none
 
-/-- `actsOf` when the decoder admits a joined act; else nothing is read. -/
-def joinedActs (joined : Bool) (ps fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
-    Except String (List (String × VE.Acts.Act)) :=
-  if joined && ps.contains "acts@0" then actsOf fx V regs else pure []
-
 /-- A decoded norms environment: the complete environment, its literals, the
 regulated declarations (in vocabulary order), the original JSON, and each joined act with
 its one meaning, read once (`actsOf`; none unless the decoder admits joined acts). -/
@@ -177,6 +163,21 @@ def actsFixed (ps : List String) (environment : Json) : Except String (List Stri
     let _ ← VE.Acts.Lexical.decodeFixed fx
     pure fx
   | _, _ => pure []
+
+/-- The act check from AP-3 on, once per act (act-phrases 6.4): `Acts.Wire.checkAct` on each declaration's act under
+the fixed phrases `fx` and the frames `V`, in order: the first refusal, or each joined act and its one meaning. -/
+def actsOf (fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
+    Except String (List (String × VE.Acts.Act)) :=
+  regs.filterMapM fun r => match r.act with
+    | some a => do
+      let (_, A) ← VE.Acts.Wire.checkAct fx V r.name r.sorts.length (.str a)
+      pure (A.map (r.name, ·))
+    | none => pure none
+
+/-- `actsOf` when the decoder admits a joined act; else nothing is read. -/
+def joinedActs (joined : Bool) (ps fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
+    Except String (List (String × VE.Acts.Act)) :=
+  if joined && ps.contains "acts@0" then actsOf fx V regs else pure []
 
 /-- The frames and adverbs of an environment's `acts` block (act-phrases 3.1), when its profiles `ps` are read with
 `acts@0`; else none. -/

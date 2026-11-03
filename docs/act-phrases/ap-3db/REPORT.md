@@ -278,7 +278,69 @@ See [DELTA.md](DELTA.md), rows 1 to 6.
 
 ## 10. Self-review against BUILDER-CHECKLIST
 
-SELFREVIEW
+1. **Lean answers typed and contained: N.A.**
+   - No relayed answer, route mode or schema is added or changed; the relay is ap-3dc's.
+   - The answers the service gives (`norms`, `norm-defaults`) keep their shapes: `runCaseReported_fits` (both
+     encoders), proved over each route's decoder.
+2. **Every deliverable built, no rule broken: PASS.**
+   - Section 2 lists (1) to (5) with their files.
+   - Rule checks: no Python product change, and no new report test. One owner: `actsOf` moved out of `Decode.lean`,
+     not copied. `NormDefaults.Run.runCaseIn` restates the approved RD-9 `runCase`'s eleven lines at a decoder, and
+     `runCase_eq` (`rfl`) proves the two equal.
+   - Overlaps checked at the start: pc-1 and qt-a4 edit `Service/Document.lean` (this item changes only two decoder
+     calls there), qt-a4 `tests/data/route-cases.jsonl` (untouched here), en-s6b `EnglishGrammar` files (not
+     `Run.lean`).
+3. **Tests and gates can fail: PASS.**
+   - [mutants.json](mutants.json): 43 of 43 Lean seeded bugs KILLED by a named `#guard`.
+   - Two service seeds fail `tests/test_acts_joined_route.py`.
+   - trust_mutants: section 5, with [trust-mutants-allow.json](trust-mutants-allow.json) (one reason per definition
+     and operator).
+4. **Python, Lean and Rust agree; valid inputs still pass: PASS.**
+   - `route-cases.json` unchanged under `regen_generated.py --write` (Rust binary present).
+   - A lexical document answers byte for byte as before (`ActsExamples.lean`; `sourceOf_lexical`).
+   - Rust refuses `acts@0`, as before.
+5. **R8 binding: N.A.** No field Python reads is added; the relay and its binding are ap-3dc's.
+6. **Gate evidence matches the final HEAD: PASS.**
+   - The selected tests ran on the committed tree (section 6), and the commit list is `main..HEAD --no-merges`.
+   - The chain runs the full gate on the final HEAD.
+7. **No unsigned item left: PASS.**
+   - Each DELTA Ruling cell cites the ruling file and item, R1 or R16, and none is reserved.
+   - Trust is recorded with `--allow`; `trust_map.py --check` prints PASS.
+8. **Every user-visible change in DELTA: PASS.**
+   - Rows 1 to 5 cover the elaborating routes, the refusal texts and their order, `frames`/`adverbs`, D-33 and
+     `actions_version`.
+   - Every path Python reaches answers as before (item 2: `tests/test_acts_profile.py` unchanged and passing).
+9. **Test selection finds the tests: PASS.**
+   - `select_tests.py` selected the units that hold `tests/test_acts_lexical.py` and
+     `tests/test_rd9_statements.py`; both failed on the first run and are fixed (section 6). That is a seeded change
+     the selection held.
+10. **Lean statements say what is claimed: PASS.**
+    - `check_statements.py`: 6 EQUAL.
+    - `tools/check_rd9_sc1_statements.py` and the other `check_*_statements.py` exit 0.
+    - Each seeded bug cuts the proofs beside it and still breaks a fixture.
+    - No hypothesis is added to an approved statement. The twins conclude about the value each route returns.
+11. **Budgets, limits and deadlines fail closed: PASS.**
+    - The limits after a split are the route's own (`elaborateMap` steps 5 and 6): 32 acts and 128 rules elaborate
+      to 64 parts and 256 rules, and 33 acts are refused (`DecodeExamples.lean`).
+    - `checkAct`'s limit is D-17. No deadline is added.
+12. **No CPU or memory regression: PASS.**
+    - Each joined act is read once, in the decoder (`actsOf`; `NormsEnvironment.joined`), and
+      `canonicalEnvironmentJson` reads no act.
+    - A lexical document takes `sourceOf`'s first branch, so elaboration builds nothing for it.
+    - The fixture at the limits ends in the module's build. Speed is not measured in the suite.
+13. **No test removed or renamed: PASS.**
+    - `tests/test_acts_lexical.py`'s test keeps its name; its expected text moves to D-16.
+    - New: `tests/test_acts_joined_route.py`.
+14. **Both directions, cited evidence, spec re-read: PASS.**
+    - Every new check has its opposite side in section 4.
+    - Spec re-read:
+      - `checkAct`, `decodeElaboratedU`'s three theorems and `readings_lexical_only` against act-phrases.md 6.4
+        (`check_statements.py`);
+      - D-31's rows against 10 (lines 1518 to 1541), the guards citing 31e and 31p;
+      - D-33 against 10 (line 1516);
+      - E5j against 11.3 (line 1743);
+      - the block's fields against 3.1 (lines 385 to 395): unknown fields refused, absent ones empty, the block
+        refused without `acts@0`.
 
 ## 11. Commits (`main..HEAD --no-merges`)
 
