@@ -937,7 +937,6 @@ VE.Defaults.DecLe@VE.Defaults.Zone
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Defaults.DefaultCompletion@VE.Defaults.Zone
-VE.Defaults.DfltUniformSound@VE.Defaults.Uniform
 VE.Defaults.MeaningFixtures.DefaultBaseFixed@VE.Defaults.MeaningExamples
 VE.Defaults.Observed@VE.Defaults.Zone
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
