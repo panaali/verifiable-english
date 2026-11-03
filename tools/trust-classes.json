@@ -9546,7 +9546,8 @@
         "VE.Senses.Run.decodeDefaults",
         "VE.Senses.Run.decodeDictionary",
         "VE.Senses.Run.has",
-        "VE.Senses.Run.lexiconJson"
+        "VE.Senses.Run.lexiconJson",
+        "VE.Senses.Run.flipModelJson"
       ],
       "G[V]": [
         "VE.Senses.Run.candidateJson",
@@ -9564,7 +9565,9 @@
         "VE.Senses.Run.unitJson",
         "VE.Senses.Run.linesProjection",
         "VE.Senses.Run.projectCase",
-        "VE.Senses.Run.projectCaseReported"
+        "VE.Senses.Run.projectCaseReported",
+        "VE.Senses.Run.writtenLines",
+        "VE.Senses.Run.flipJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9576,7 +9579,9 @@
       "G[I]": [
         "VE.Senses.Run.projectionIds",
         "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf"
+        "VE.Senses.Run.usedOf",
+        "VE.Senses.Projection.written",
+        "VE.Senses.SensesOutcome.written"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -16790,7 +16795,14 @@
         "ResponseShape.Schemas.SensesProject.fault",
         "ResponseShape.Schemas.SensesProject.projection",
         "ResponseShape.Schemas.SensesProject.row",
-        "ResponseShape.Schemas.SensesProject.file"
+        "ResponseShape.Schemas.SensesProject.file",
+        "ResponseShape.Schemas.SensesProject.sort",
+        "ResponseShape.Schemas.SensesProject.environment",
+        "ResponseShape.Schemas.SensesProject.profileMembers",
+        "ResponseShape.Schemas.SensesProject.copiedMembers",
+        "ResponseShape.Schemas.SensesProject.copiedVocabulary",
+        "ResponseShape.Schemas.SensesProject.requestHas",
+        "ResponseShape.Schemas.SensesProject.copiedAt"
       ]
     },
     "VE/Senses/RunExamples.lean": {
@@ -16806,7 +16818,28 @@
         "VE.Senses.RunExamples.pin",
         "VE.Senses.RunExamples.projectReq",
         "VE.Senses.RunExamples.src",
-        "VE.Senses.RunExamples.fenced"
+        "VE.Senses.RunExamples.fenced",
+        "VE.Senses.RunExamples.PJ",
+        "VE.Senses.RunExamples.cand",
+        "VE.Senses.RunExamples.funny",
+        "VE.Senses.RunExamples.riddle",
+        "VE.Senses.RunExamples.s2",
+        "VE.Senses.RunExamples.openOf",
+        "VE.Senses.RunExamples.deep",
+        "VE.Senses.RunExamples.readingOf",
+        "VE.Senses.RunExamples.PJ2",
+        "VE.Senses.RunExamples.odd",
+        "VE.Senses.RunExamples.cand2",
+        "VE.Senses.RunExamples.piece",
+        "VE.Senses.RunExamples.chain",
+        "VE.Senses.RunExamples.atLimit",
+        "VE.Senses.Flip.bare",
+        "VE.Senses.RunExamples.dist",
+        "VE.Senses.RunExamples.bareRows",
+        "VE.Senses.RunExamples.wide",
+        "VE.Senses.RunExamples.wideBoth",
+        "VE.Senses.RunExamples.atTuples",
+        "VE.Senses.RunExamples.namesFive"
       ]
     },
     "VE/WireContract/Hooks/Acts.lean": {
@@ -17608,6 +17641,24 @@
         "VE.Scope.ReachExamples.udhrAnchors",
         "VE.Scope.ReachExamples.udhrDoc",
         "VE.Scope.ReachExamples.udhrPieces"
+      ]
+    },
+    "VE/Senses/Flip.lean": {
+      "S": [
+        "VE.Senses.flipOn",
+        "VE.Senses.flipModelOf",
+        "VE.Senses.Flip",
+        "VE.Senses.flipPair",
+        "VE.Senses.candidatePairs",
+        "VE.Senses.flipsOf",
+        "VE.Senses.FlipModel",
+        "VE.Senses.FlipModel.finite",
+        "VE.Senses.tuples",
+        "VE.Senses.flipValues"
+      ],
+      "G[V]": [
+        "VE.Senses.termCore",
+        "VE.Senses.formulaCore"
       ]
     }
   }
