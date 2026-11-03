@@ -1,0 +1,41 @@
+trust_mutants: 39 definitions, 286 mutants (41 to run), 4 jobs, base 50c6842f84f7
+UNKNOWN lean/VE/Norms/Run.lean:203 VE.Norms.Run.AdmissionAnswer (S, trusted) body-true: AdmissionAnswerIn Wire.decodeFlagged -> True (lean/VE/Norms/Run.lean:203: Type mismatch)
+SURVIVOR lean/VE/NormDefaults/Run.lean:183 VE.NormDefaults.Run.AdmissionAnswerUIn (S, trusted) body-false: ∃ res : Admission.Admitted, ∃ reportId : String, Admission.admitDocumentIn dec environment docume... -> False (the proofs it breaks: lean/VE/NormDefaults/Run.lean:197)
+UNKNOWN lean/VE/Acts/DecodeTwins.lean:44 VE.Acts.Decode.ElaboratedDoc (S, trusted) eq-le: = -> ≤ (lean/VE/Acts/DecodeTwins.lean:44: failed to synthesize)
+SURVIVOR lean/VE/NormDefaults/Admission.lean:164 VE.NormDefaults.Admission.SourceDecodedIn (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lea...)
+UNKNOWN lean/VE/Acts/Decode.lean:184 VE.Acts.Decode.sourceOf (D[V], trusted) all-any: all -> any (lean/VE/Acts/Decode.lean:194: Application type mismatch: The argument)
+SURVIVOR lean/VE/NormDefaults/Admission.lean:163 VE.NormDefaults.Admission.SourceDecodedIn (S, trusted) body-true: (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧ dec environment norm... -> True (the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lea...)
+SURVIVOR lean/VE/Attribution/Wire.lean:139 VE.Reports.Wire.decodeNormNode (D[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Acts/Decode.lean:47 VE.Acts.Decode.plainU (D[V], trusted) list-empty: [fill_eq_self _ rfl] -> [] (lean/VE/Acts/Decode.lean:47: Type mismatch)
+SURVIVOR lean/VE/Norms/Wire.lean:414 VE.Norms.Wire.decodeSource (D[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Acts/Decode.lean:233 VE.Acts.Decode.Elaborated (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Decode.lean:236)
+UNKNOWN lean/VE/Norms/Wire.lean:184 VE.Norms.Wire.actsVocab (D[V], trusted) list-empty: ps -> [] (lean/VE/Norms/Wire.lean:184: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Acts/Decode.lean:185 VE.Acts.Decode.sourceOf (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Acts/Decode.lean:188: Type mismatch)
+SURVIVOR lean/VE/Norms/Wire.lean:218 VE.Norms.Wire.decodeNormsEnvironment (D[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Norms/Wire.lean:175 VE.Norms.Wire.actsFixed (D[V], trusted) list-empty: ["frames", "adverbs"] -> []
+SURVIVOR lean/VE/Norms/Wire.lean:218 VE.Norms.Wire.decodeNormsEnvironment (D[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Acts/Decode.lean:192 VE.Acts.Decode.sourceOf (D[V], trusted) eq-le: = -> ≤ (lean/VE/Acts/Decode.lean:194: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Decode.lean:57 VE.Acts.Decode.splitPredicates (D[V], trusted) list-empty: P.filter -> [] (lean/VE/Acts/Decode.lean:57: Function expected at)
+SURVIVOR lean/VE/Acts/Decode.lean:233 VE.Acts.Decode.Elaborated (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Acts/Decode.lean:236)
+SURVIVOR lean/VE/Norms/Wire.lean:93 VE.Norms.Wire.decodeRegulatedShape (D[V], trusted) list-first: profiles -> (profiles.take 1)
+SURVIVOR lean/VE/Acts/Decode.lean:183 VE.Acts.Decode.sourceOf (D[V], trusted) list-first: e.D.acts -> (e.D.acts.take 1) (the proofs it breaks: lean/VE/Acts/Decode.lean:206)
+SURVIVOR lean/VE/Readings/Wire.lean:119 VE.Readings.Wire.decodeEnvironment (D[V], trusted) list-first: re.profiles -> (re.profiles.take 1) (the proofs it breaks: lean/VE/Readings/Wire.lean:125)
+SURVIVOR lean/VE/Norms/Wire.lean:153 VE.Norms.Wire.joinedActs (D[V], trusted) list-drop-last: ps -> (ps.dropLast)
+UNKNOWN lean/VE/Acts/Decode.lean:184 VE.Acts.Decode.sourceOf (D[V], trusted) list-first: e.M.preds -> (e.M.preds.take 1) (lean/VE/Acts/Decode.lean:194: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Decode.lean:56 VE.Acts.Decode.splitPredicates (D[V], trusted) list-drop-last: M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD [])) -> ((M.preds.map (fun x => (x.1, (VE.Bridge.lookup P x.2.1).getD []))).dropLast) (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+UNKNOWN lean/VE/Acts/Decode.lean:193 VE.Acts.Decode.sourceOf (D[V], trusted) list-drop-last: [(elaborateMap_ok e.hE).2.2.1, ← src.lits, ← e.s.doc, ← e.hU] -> ([(elaborateMap_ok e.hE).2.2.1, ← src.lits, ← e.s.doc, ← e.hU].dropLast) (lean/VE/Acts/Decode.lean:193: unexpected token '('; expected '[')
+UNKNOWN lean/VE/Acts/Decode.lean:197 VE.Acts.Decode.sourceOf (D[V], trusted) list-drop-last: [splitDoc, e.hU, e.s.plain hp] -> ([splitDoc, e.hU, e.s.plain hp].dropLast) (lean/VE/Acts/Decode.lean:197: Application type mismatch: The argument)
+SURVIVOR lean/VE/Acts/Decode.lean:63 VE.Acts.Decode.splitJson (D[V], trusted) list-last: M.preds -> (M.preds.reverse.take 1)
+SURVIVOR lean/VE/Norms/Wire.lean:46 VE.Norms.Wire.canonicalShape (D[V], trusted) list-last: profiles -> (profiles.reverse.take 1)
+UNKNOWN lean/VE/Readings/Wire.lean:111 VE.Readings.Wire.lexicalAct (D[V], trusted) body-false: match r.act with | some a => (VE.Acts.Lexical.check fx r.name r.sorts.length (.str a)).toOption =... -> false (lean/VE/Readings/ActsExamples.lean:42: Expression (VE.Readings.Wire.abstention, which it reads, i...)
+SURVIVOR lean/VE/Norms/Wire.lean:101 VE.Norms.Wire.actsOf (D[V], trusted) list-drop-first: r.sorts -> (r.sorts.drop 1)
+UNKNOWN lean/VE/Acts/Decode.lean:193 VE.Acts.Decode.sourceOf (D[V], trusted) list-drop-middle: ← src.lits, ->  (lean/VE/Acts/Decode.lean:193: Tactic `rewrite` failed: Did not find an occurrence of the pattern)
+UNKNOWN lean/VE/Acts/Decode.lean:193 VE.Acts.Decode.sourceOf (D[V], trusted) list-drop-middle: ← e.s.doc, ->  (lean/VE/Acts/Decode.lean:193: Tactic `rewrite` failed: Did not find an occurrence of the pattern)
+UNKNOWN lean/VE/Acts/Decode.lean:57 VE.Acts.Decode.splitPredicates (D[V], trusted) list-last: P -> (P.reverse.take 1) (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+SURVIVOR lean/VE/Readings/Wire.lean:120 VE.Readings.Wire.decodeEnvironment (D[V], trusted) list-last: re.se.ne.regulated -> (re.se.ne.regulated.reverse.take 1) (the proofs it breaks: lean/VE/Readings/Wire.lean:125)
+UNKNOWN lean/VE/Acts/Decode.lean:57 VE.Acts.Decode.splitPredicates (D[V], trusted) list-last: M.preds -> (M.preds.reverse.take 1) (lean/VE/Acts/Decode.lean:108: the failing proof cannot be cut: unexpected token ':='; expected '|')
+trust_mutants: 3 KILLED, 18 SURVIVOR, 17 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 245 OTHER SHARD in 2062 s
+trust_mutants: D[V], trusted: 3 KILLED, 13 SURVIVOR, 15 UNKNOWN, 3 INVALID, 191 OTHER SHARD
+trust_mutants: G[V], trusted: 14 OTHER SHARD
+trust_mutants: S, trusted: 5 SURVIVOR, 2 UNKNOWN, 40 OTHER SHARD
+trust_mutants: steps: wall plan 8.9 s, scratch 2.4 s, control_build 0.2 s, probe_install 1.2 s, control_probes 256.8 s, mutants 1788 s, cleanup 4.4 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 984.5 s (26), mutant_builds 579.6 s (55), mutant_checks 4416.9 s (16), stage_controls 1301.2 s (3), mutant_probes 301.4 s (4)
