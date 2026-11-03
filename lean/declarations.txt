@@ -12065,7 +12065,7 @@ module VE.Judgments.Chain 3927e53f6fafde56cf40bb9200c79e4f5e7a8680007afb3d32e68c
 218:0-223:61 def VE.Judgments.ruleFormulas@VE.Judgments.Chain
 225:0-233:17 def VE.Judgments.linesFormulas@VE.Judgments.Chain
 235:0-248:57 def VE.Judgments.blockFormulas@VE.Judgments.Chain
-module VE.Judgments.ChainExamples 4fd57873887693f746cfc45b25dba89c497682a7013b1abc620c8746261745fb
+module VE.Judgments.ChainExamples d612e9ce8f71becded9b12b50bf6c9d5e14615d7d2b3672a8b87bff6e6bd6753
 12:0-16:87 def VE.Judgments.ChainExamples.carved@VE.Judgments.ChainExamples
 32:0-32:78 def VE.Judgments.ChainExamples.u@VE.Judgments.ChainExamples
 34:0-45:115 def VE.Judgments.ChainExamples.environment@VE.Judgments.ChainExamples
