@@ -227,9 +227,9 @@ def blockRouteView (environment : Json) : Json := Id.run do
   return environment.setObjVal! "vocabulary"
     ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
 
-/-- The optional fields of an English request: the overlay, and `generated` (E2.6). -/
+/-- The optional fields every English mode shares: the overlay, and `generated` (E2.6); `judgments` is `readCase`'s. -/
 def optionalFields (j : Json) : List String :=
-  ["overlay", "generated", "judgments"].filter fun k => (j.getObjVal? k).toOption.isSome
+  ["overlay", "generated"].filter fun k => (j.getObjVal? k).toOption.isSome
 
 /-- Whether the request reads Python's generated soft frame (`SoftEnvironment(prime, generated=True)`: the soft
 route's `E′` with its `soft__` decision predicates). Present only as `true`. -/
@@ -567,7 +567,7 @@ def refusalExtras (profiles : List String) (source : String) (fields : List (Str
 
 def readCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap"] ++
-    optionalFields j))
+    optionalFields j ++ (if (j.getObjVal? "judgments").toOption.isSome then ["judgments"] else [])))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   let source ← VE.Bridge.stringField j "source"

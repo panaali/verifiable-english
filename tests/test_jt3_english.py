@@ -150,6 +150,24 @@ def test_the_field_s_size_is_charged_against_its_limit(env):
         raw(env, "Atlas is published.", judgments=[*names, "extra"])
 
 
+def sibling(env, mode: str, **fields) -> dict:
+    """A request to a mode that shares `english.read`'s optional fields (`Run.optionalFields`)."""
+    case = english_lean.request(env, "Is Atlas published?", EnglishVocabulary(env, _defer_overlay_refusals=True), {})
+    shared = {"environment": case["environment"], "lexicon": case["lexicon"]}
+    return {"english.question": {**case, "question": case["source"]}, "english.grammar": shared,
+            "english.check": {**shared, "formulas": [], "marks": [], "candidates": []}}[mode] | {"id": mode, **fields}
+
+
+@pytest.mark.parametrize("mode", ["english.question", "english.grammar", "english.check"])
+@pytest.mark.parametrize("judgments", [[], ["reasonable_limit"]])
+def test_the_modes_that_share_read_s_fields_refuse_judgments(env, mode, judgments):
+    """The field is signed for `english.read` only (DRI item 1): the sibling modes refuse it, as on the merge base,
+    never drop the opt-in unread (jt-3 review F1)."""
+    assert decide(mode, [sibling(env, mode)])[0]["id"] == mode
+    with pytest.raises(VEError, match="fields do not match"):
+        decide(mode, [sibling(env, mode, judgments=judgments)])
+
+
 def test_the_command_line_shows_lean_s_text(tmp_path, capsys):
     path = tmp_path / "env.json"
     path.write_text(json.dumps(ENV), encoding="utf-8")
