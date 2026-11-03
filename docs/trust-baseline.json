@@ -1909,6 +1909,20 @@
    "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 56,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
+   "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
   }
  ]
 }
