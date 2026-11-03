@@ -1,0 +1,200 @@
+[gw0] linux -- Python 3.14.7 /tmp/cc-wt/.venv/bin/python
+
+tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-0/popen-gw0'), _trace=<plu...PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-0/popen-gw0'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def recorded_inputs(tmp_path_factory):
+        """Every unit's recorded test inputs, from one run of the union of their recorded test files
+        (each unit records only its own files' inputs, as `record_test_inputs` does for one unit). The run is
+        cached under a key of everything it reads (`tools/run_cache.py`): the outer suite runs these files too,
+        and an unchanged record is not run again."""
+        output = tmp_path_factory.mktemp("recorded") / "inputs.json"
+        # This fixture runs inside the full gate's xdist suite. Bound its nested
+        # worker count so it cannot multiply the outer pool on a busy host.
+        result, cache = cached_record_all_test_inputs(output, (PILOT, *UNITS), _complete, workers=4)
+        print(f"recorded test inputs: cache {cache}")
+>       assert _complete(result), result.stdout[-4000:] + result.stderr[-4000:]
+E       AssertionError: bringing up nodes...
+E         bringing up nodes...
+E         
+E         ........................................................................ [  4%]
+E         ........................................................................ [  9%]
+E         ........................................................................ [ 13%]
+E         ........................................................................ [ 18%]
+E         ........................................................................ [ 23%]
+E         ........................................................................ [ 27%]
+E         .........................................F.............................. [ 32%]
+E         ........................................................................ [ 37%]
+E         ........................................................................ [ 41%]
+E         ........................................................................ [ 46%]
+E         ........................................................................ [ 51%]
+E         ........................................................................ [ 55%]
+E         ........................................................................ [ 60%]
+E         ........................................................................ [ 65%]
+E         ........................................................................ [ 69%]
+E         ........................................................................ [ 74%]
+E         ........................................................................ [ 79%]
+E         ........................................................................ [ 83%]
+E         ........................................................................ [ 88%]
+E         ........................................................................ [ 92%]
+E         ........................................................................ [ 97%]
+E         .....................................                                    [100%]
+E         =================================== FAILURES ===================================
+E         _________ test_native_pytest_parameter_selector_matches_the_gate_rule __________
+E         [gw0] linux -- Python 3.14.7 /tmp/cc-wt/.venv/bin/python
+E         
+E         tmp_path = PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-1/popen-gw0/test_native_pytest_parameter_s0')
+E         
+E             def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
+E                 source = tmp_path / "test_parameters.py"
+E                 source.write_text("import pytest\n"
+E                                   "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
+E                                   "pytest.param(2, id='ab'), pytest.param(3, id='a::b'), "
+E                                   "pytest.param(4, id='a::b[c]')])\n"
+E                                   "def test_x(value): pass\n"
+E                                   "def test_xy(): pass\n")
+E                 for parameter, sibling in (("a", "ab"), ("a::b", "a::b[c]")):
+E                     selector = f"{source}::test_x[{parameter}]"
+E                     done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+E                                           env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+E                     assert done.returncode == 0, done.stdout + done.stderr
+E                     selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+E         >           assert [str(source.parent / line) for line in selected] == [selector]
+E         E           AssertionError: assert [] == ['/tmp/ve-gat...y::test_x[a]']
+E         E             
+E         E             Right contains one more item: '/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-1/popen-gw0/test_native_pytest_parameter_s0/test_parameters.py::test_x[a]'
+E         E             Use -v to get more diff
+E         
+E         tests/test_platform_contract.py:278: AssertionError
+E         =========================== short test summary info ============================
+E         FAILED tests/test_platform_contract.py::test_native_pytest_parameter_selector_matches_the_gate_rule
+E         1 failed, 1548 passed in 273.84s (0:04:33)
+E         
+E         ve: English comparator: {"records": 2255, "excluded": 0, "planted": 0, "classes": {"agree": 2253, "diagnostic-code,schema,verdict": 2}} (/tmp/ve-gate-3qzvu90l/tmp/ve-english-comparator-00odoi3y)
+E         
+E       assert False
+E        +  where False = _complete(CompletedProcess(args=['/tmp/cc-wt/.venv/bin/python', '-m', 'pytest', '-p', 'hypothesis.extra.pytestplugin', '-p', 'xd...": {"agree": 2253, "diagnostic-code,schema,verdict": 2}} (/tmp/ve-gate-3qzvu90l/tmp/ve-english-comparator-00odoi3y)\n'))
+
+tests/test_wire_gate_corpus.py:69: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+recorded test inputs: cache off
+=============================== warnings summary ===============================
+tests/test_p1_amendment14.py::test_visible_wire_and_billed_reserve_are_separate[304-True]
+tests/test_p1_amendment8.py::test_identical_judge_contract_all_arms_and_phases
+  /tmp/cc-wt/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_natural.py::test_lowercase_alias_and_conclusion_initials_roundtrip
+  /tmp/cc-wt/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 0334e56c0a227743ad227cc2dff500cd267289c6847637e27d1a8b16cf47e538: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+11947 passed, 3 warnings, 1 error in 1313.21s (0:21:53)
+[gate] slowest:    274.5 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+[gate] slowest:    111.4 s tests/test_safetyfw_usecases.py::test_pf_each_narrowing_has_an_unscored_counterfactual
+[gate] slowest:    104.0 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+[gate] slowest:     96.5 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:readings-route]
+[gate] slowest:     94.6 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[2]
+[gate] slowest:     88.5 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]
+[gate] slowest:     78.0 s tests/test_safetyfw_usecases.py::test_rsp_six_mutants_change_exactly_the_named_results
+[gate] slowest:     72.7 s tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase
+[gate] slowest:     72.6 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env1]
+[gate] slowest:     72.5 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[1]
+[gate] slowest:     70.1 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:ask]
+[gate] slowest:     67.9 s tests/test_safetyfw_usecases.py::test_rsp_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:     64.7 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m3]
+[gate] slowest:     61.9 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env0]
+[gate] slowest:     59.5 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m2]
+[gate] slowest:     57.7 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m4]
+[gate] slowest:     57.5 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m6]
+[gate] slowest:     57.0 s tests/test_safetyfw_usecases.py::test_pf_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:     56.2 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:alternatives]
+[gate] slowest:     55.1 s tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+7fd4a6fa35a3fa00048ddb92e9396936eef284f0
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 7fd4a6fa35a3fa00048ddb92e9396936eef284f0
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] failed: /tmp/cc-wt/gate-result.json; 11947 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit tmp_path_factory = TempPathFactory(_given_basetemp=PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-0/popen-gw0'), _trace=<plu...PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-0/popen-gw0'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def recorded_inputs(tmp_path_factory):
+        """Every unit's recorded test inputs, from one run of the union of their recorded test files
+        (each unit records only its own files' inputs, as `record_test_inputs` does for one unit). The run is
+        cached under a key of everything it reads (`tools/run_cache.py`): the outer suite runs these files too,
+        and an unchanged record is not run again."""
+        output = tmp_path_factory.mktemp("recorded") / "inputs.json"
+        # This fixture runs inside the full gate's xdist suite. Bound its nested
+        # worker count so it cannot multiply the outer pool on a busy host.
+        result, cache = cached_record_all_test_inputs(output, (PILOT, *UNITS), _complete, workers=4)
+        print(f"recorded test inputs: cache {cache}")
+>       assert _complete(result), result.stdout[-4000:] + result.stderr[-4000:]
+E       AssertionError: bringing up nodes...
+E         bringing up nodes...
+E         
+E         ........................................................................ [  4%]
+E         ........................................................................ [  9%]
+E         ........................................................................ [ 13%]
+E         ........................................................................ [ 18%]
+E         ........................................................................ [ 23%]
+E         ........................................................................ [ 27%]
+E         .........................................F.............................. [ 32%]
+E         ........................................................................ [ 37%]
+E         ........................................................................ [ 41%]
+E         ........................................................................ [ 46%]
+E         ........................................................................ [ 51%]
+E         ........................................................................ [ 55%]
+E         ........................................................................ [ 60%]
+E         ........................................................................ [ 65%]
+E         ........................................................................ [ 69%]
+E         ........................................................................ [ 74%]
+E         ........................................................................ [ 79%]
+E         ........................................................................ [ 83%]
+E         ........................................................................ [ 88%]
+E         ........................................................................ [ 92%]
+E         ........................................................................ [ 97%]
+E         .....................................                                    [100%]
+E         =================================== FAILURES ===================================
+E         _________ test_native_pytest_parameter_selector_matches_the_gate_rule __________
+E         [gw0] linux -- Python 3.14.7 /tmp/cc-wt/.venv/bin/python
+E         
+E         tmp_path = PosixPath('/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-1/popen-gw0/test_native_pytest_parameter_s0')
+E         
+E             def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
+E                 source = tmp_path / "test_parameters.py"
+E                 source.write_text("import pytest\n"
+E                                   "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
+E                                   "pytest.param(2, id='ab'), pytest.param(3, id='a::b'), "
+E                                   "pytest.param(4, id='a::b[c]')])\n"
+E                                   "def test_x(value): pass\n"
+E                                   "def test_xy(): pass\n")
+E                 for parameter, sibling in (("a", "ab"), ("a::b", "a::b[c]")):
+E                     selector = f"{source}::test_x[{parameter}]"
+E                     done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+E                                           env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+E                     assert done.returncode == 0, done.stdout + done.stderr
+E                     selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+E         >           assert [str(source.parent / line) for line in selected] == [selector]
+E         E           AssertionError: assert [] == ['/tmp/ve-gat...y::test_x[a]']
+E         E             
+E         E             Right contains one more item: '/tmp/ve-gate-3qzvu90l/tmp/pytest-of-ccrun/pytest-1/popen-gw0/test_native_pytest_parameter_s0/test_parameters.py::test_x[a]'
+E         E             Use -v to get more diff
+E         
+E         tests/test_platform_contract.py:278: AssertionError
+E         =========================== short test summary info ============================
+E         FAILED tests/test_platform_contract.py::test_native_pytest_parameter_selector_matches_the_gate_rule
+E         1 failed, 1548 passed in 273.84s (0:04:33)
+E         
+E         ve: English comparator: {"records": 2255, "excluded": 0, "planted": 0, "classes": {"agree": 2253, "diagnostic-code,schema,verdict": 2}} (/tmp/ve-gate-3qzvu90l/tmp/ve-english-comparator-00odoi3y)
+E         
+E       assert False
+E        +  where False = _complete(CompletedProcess(args=['/tmp/cc-wt/.venv/bin/python', '-m', 'pytest', '-p', 'hypothesis.extra.pytestplugin', '-p', 'xd...": {"agree": 2253, "diagnostic-code,schema,verdict": 2}} (/tmp/ve-gate-3qzvu90l/tmp/ve-english-comparator-00odoi3y)\n'))
+
+tests/test_wire_gate_corpus.py:69: AssertionError
