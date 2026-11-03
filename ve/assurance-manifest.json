@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41094,
+    "total_lines": 41640,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1112,12 +1112,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2094,
-        "sha256": "6255c510947d574b10f34352d90ffb87fda82806e1c1d6ce13afbe5c55cd359f",
+        "lines": 2640,
+        "sha256": "4a9b990bca8851fd749a6a91bfc43293b16d37a1c100b061394c1bae10721122",
         "ranges": [
           [
             1,
-            2094
+            2640
           ]
         ],
         "declarations": [
@@ -2269,7 +2269,8 @@
       "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling",
       "lean/VE/Acts/FaithfulExamples.lean": "fixtures only: `#guard`s that compute both sides of elaborate_faithful on small finite models, one case decoding environment and norm JSON (act-phrases ap-3dd); no admission path, service mode or record reads them",
       "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file",
-      "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it"
+      "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it",
+      "lean/VE/Judgments/ChainExamples.lean": "examples only: PC-1's fixtures (profile-composition 5.1) are built as JSON documents and sent to `checkDocSets` and the clash validation in `#guard`s; no admission path, service mode or record reads it"
     }
   },
   "plan_operations": {
