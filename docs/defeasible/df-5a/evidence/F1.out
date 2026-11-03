@@ -1,0 +1,19 @@
+Review F1 (df-5a-review.final.md): the open atoms charged only after the whole list is built.
+
+PROBE F1 (the review's command; the file is the review's five lines):
+  cd lean && PATH=~/.elan/bin:$PATH timeout 30 lake env lean --run /tmp/f1.lean
+  at f1935bfd9 (before the fix): exit 124 (no answer within 30 s; the review measured 96 s and about 5 GB)
+  after the fix:                 budget 20000000 12, exit 0, 2.14 s and 1.36 GB (`/usr/bin/time`; the import alone
+                                 takes about 2 s and 1.36 GB)
+
+Regression guards (lean/VE/Defaults/ZoneExamples.lean, "The budget"): DF-λ wide (`dwide`) at 1,000 entities is
+`budget 20000000 12` (the probe) and at 100,000 entities `budget 200000000000 12`; the record at `maxZoneRecord`
+and one more; the typed atoms at `maxZoneRecord + maxDefaultAtoms` and one more; `openAtomsCount` against
+`openAtomsAll`'s length; `zoneFormOf` behind the charge.
+
+Seeded bug F1 (mutants.json), run by hand: the runner's own `run` on the joined file with `zoneCharge`'s count
+`let n := openAtomsCount L M record` replaced by `let n := (openAtomsAll L M record).length` (equal by
+`openAtomsCount_eq`, so every guard's value is unchanged; only the cost differs), under `timeout 300` and
+`ulimit -v 16000000`:
+  F1 mutant (zoneCharge: `let n := (openAtomsAll L M record).length`): lean exit timeout (300 s) after 300 s
+  control (unmutated, same runner): 0 failures, about 15 s
