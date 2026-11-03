@@ -295,6 +295,7 @@ import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
+import VE.Service.CardinalityExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
