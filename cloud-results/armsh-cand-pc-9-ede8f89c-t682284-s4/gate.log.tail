@@ -1,0 +1,200 @@
+    
+    pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
+    
+>   IDS = [row[0] for row in F.FIXTURES]
+                             ^^^^^^^^^^
+E   AttributeError: module 'question_fixtures' has no attribute 'FIXTURES'
+
+tests/test_question_reading.py:37: AttributeError
+=============================== warnings summary ===============================
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=11946) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_natural.py::test_lowercase_alias_and_conclusion_initials_roundtrip
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 0334e56c0a227743ad227cc2dff500cd267289c6847637e27d1a8b16cf47e538: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope
+SKIPPED [1] tests/test_grammar_backends.py:22: could not import 'llguidance': No module named 'llguidance'
+SKIPPED [1] tests/test_grammar_backends.py:51: could not import 'xgrammar': No module named 'xgrammar'
+SKIPPED [1] tests/test_nary_folio.py:18: optional pinned FOLIO v2 corpus is not downloaded
+FAILED tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[checked]
+FAILED tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[response unchecked]
+2 failed, 4461 passed, 6 skipped, 5 warnings in 1627.66s (0:27:07)
+[gate] slowest:   1025.7 s tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected
+[gate] slowest:    962.3 s tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results
+[gate] slowest:    205.1 s tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results
+[gate] slowest:    175.7 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[1]
+[gate] slowest:    139.1 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[12]
+[gate] slowest:    130.1 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]
+[gate] slowest:    110.7 s tests/test_consolidation_tools.py::test_statement_dump_is_current
+[gate] slowest:    103.2 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[8]
+[gate] slowest:    101.5 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[9]
+[gate] slowest:     95.8 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]
+[gate] slowest:     90.1 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[10]
+[gate] slowest:     84.1 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[5]
+[gate] slowest:     77.2 s tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip
+[gate] slowest:     74.2 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]
+[gate] slowest:     68.3 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[11]
+[gate] slowest:     62.2 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[3]
+[gate] slowest:     57.0 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[13]
+[gate] slowest:     53.7 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]
+[gate] slowest:     52.0 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M3]
+[gate] slowest:     51.3 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M5]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+fae7b374a8b4ec939f1548b76d69c32ef05d10eb
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree fae7b374a8b4ec939f1548b76d69c32ef05d10eb
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 7a93c683a4682106a988955cec3c37b941983099, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 4461 passed, 6 skipped, 3 failures
+[gate] skip allowed: tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 22, "Skipped: could not import 'llguidance': No module named 'llguidance'")
+[gate] skip allowed: tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 51, "Skipped: could not import 'xgrammar': No module named 'xgrammar'")
+[gate] skip allowed: tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[admission]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: admission is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: dependency-order is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[labels]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: labels is outside Rust scope')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[checked] monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffb288a37cb0>
+unchecked = False
+
+    @pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+    @pytest.mark.parametrize("unchecked", [False, True], ids=["checked", "response unchecked"])
+    def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
+        """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
+        tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
+>       from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
+
+tests/test_lean_service.py:944: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
+    
+    The fixture table (`tests/question_fixtures.py`) is compared three ways: with the spec's own rows of section 7, with
+    Lean (the `#guard`s generated into `lean/VE/Question/Fixtures.lean`, which `lake build` evaluates), and with the running
+    `ve_service`, through the relay (`ve.backends.english_lean.read_question`), through the one entry point `ve.ask.read`
+    and through the CLI `ve ask --reading`. The relay's checks of an untrusted answer are fuzzed on genuine answers; the
+    mode's own decoding is fuzzed on malformed cases; text variants (spacing, quotes, look-alike letters, control
+    characters) get well-formed answers.
+    """
+    from __future__ import annotations
+    
+    import copy
+    import itertools
+    import json
+    import os
+    from pathlib import Path
+    import re
+    import subprocess
+    import sys
+    
+    import pytest
+    
+    import question_fixtures as F
+    from subprocesses import HANG_TIMEOUT, busy_cpu
+    from ve import ask
+    from ve.backends import english_lean, relay
+    from ve.english import EnglishVocabulary
+    from ve.errors import CheckerUnavailable, ResourceLimit, VEError
+    from tools.lean_statements import inventory_path  # noqa: E402
+    
+    ROOT = Path(__file__).resolve().parents[1]
+    SPEC = ROOT / "docs/spec/question-answering.md"
+    MODE = "english.question"
+    
+    pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
+    
+>   IDS = [row[0] for row in F.FIXTURES]
+                             ^^^^^^^^^^
+E   AttributeError: module 'question_fixtures' has no attribute 'FIXTURES'
+
+tests/test_question_reading.py:37: AttributeError
+[gate] FAILURE: pytest: tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[response unchecked] monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffb282fa1240>
+unchecked = True
+
+    @pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+    @pytest.mark.parametrize("unchecked", [False, True], ids=["checked", "response unchecked"])
+    def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
+        """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
+        tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
+>       from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
+
+tests/test_lean_service.py:944: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
+    
+    The fixture table (`tests/question_fixtures.py`) is compared three ways: with the spec's own rows of section 7, with
+    Lean (the `#guard`s generated into `lean/VE/Question/Fixtures.lean`, which `lake build` evaluates), and with the running
+    `ve_service`, through the relay (`ve.backends.english_lean.read_question`), through the one entry point `ve.ask.read`
+    and through the CLI `ve ask --reading`. The relay's checks of an untrusted answer are fuzzed on genuine answers; the
+    mode's own decoding is fuzzed on malformed cases; text variants (spacing, quotes, look-alike letters, control
+    characters) get well-formed answers.
+    """
+    from __future__ import annotations
+    
+    import copy
+    import itertools
+    import json
+    import os
+    from pathlib import Path
+    import re
+    import subprocess
+    import sys
+    
+    import pytest
+    
+    import question_fixtures as F
+    from subprocesses import HANG_TIMEOUT, busy_cpu
+    from ve import ask
+    from ve.backends import english_lean, relay
+    from ve.english import EnglishVocabulary
+    from ve.errors import CheckerUnavailable, ResourceLimit, VEError
+    from tools.lean_statements import inventory_path  # noqa: E402
+    
+    ROOT = Path(__file__).resolve().parents[1]
+    SPEC = ROOT / "docs/spec/question-answering.md"
+    MODE = "english.question"
+    
+    pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
+    
+>   IDS = [row[0] for row in F.FIXTURES]
+                             ^^^^^^^^^^
+E   AttributeError: module 'question_fixtures' has no attribute 'FIXTURES'
+
+tests/test_question_reading.py:37: AttributeError
