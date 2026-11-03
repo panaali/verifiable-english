@@ -7426,7 +7426,12 @@
         "VE.Readings.Wire.decodeCandidate",
         "VE.Readings.Wire.decodeContent",
         "VE.Readings.Wire.decodeDocument",
-        "VE.Readings.Wire.decodeEnvironment",
+        {
+          "name": "VE.Readings.Wire.decodeEnvironment",
+          "tied": [
+            "VE.Readings.Wire.readings_lexical_only"
+          ]
+        },
         "VE.Readings.Wire.decodeFrame",
         "VE.Readings.Wire.decodeKey",
         "VE.Readings.Wire.decodeNorm",
@@ -15848,22 +15853,52 @@
         "VE.Acts.Wire.checkAct",
         "VE.Acts.Wire.decodeFrame",
         "VE.Acts.Wire.decodeVocab",
-        "VE.Acts.Wire.fixedOf",
+        {
+          "name": "VE.Acts.Wire.fixedOf",
+          "tied": [
+            "VE.Readings.Wire.readings_lexical_only"
+          ]
+        },
         "VE.Acts.Wire.joinedAct"
       ]
     },
     "VE/Acts/Decode.lean": {
       "D[V]": [
         "VE.Acts.Decode.ElaboratedU",
-        "VE.Acts.Decode.decodeElaboratedFlagged",
+        {
+          "name": "VE.Acts.Decode.decodeElaboratedFlagged",
+          "tied": [
+            "VE.Acts.Decode.decodeElaboratedFlagged_source"
+          ]
+        },
         "VE.Acts.Decode.decodeElaboratedU",
         "VE.Acts.Decode.elaborateSource",
-        "VE.Acts.Decode.elaboratedU",
-        "VE.Acts.Decode.flaggedSource",
+        {
+          "name": "VE.Acts.Decode.elaboratedU",
+          "tied": [
+            "VE.Acts.Decode.elaboratedU_elaborated"
+          ]
+        },
+        {
+          "name": "VE.Acts.Decode.flaggedSource",
+          "tied": [
+            "VE.Acts.Decode.flaggedSource_elaborated"
+          ]
+        },
         "VE.Acts.Decode.plainU",
-        "VE.Acts.Decode.sourceOf",
+        {
+          "name": "VE.Acts.Decode.sourceOf",
+          "tied": [
+            "VE.Acts.Decode.sourceOf_U"
+          ]
+        },
         "VE.Acts.Decode.splitJson",
-        "VE.Acts.Decode.splitPredicates"
+        {
+          "name": "VE.Acts.Decode.splitPredicates",
+          "tied": [
+            "VE.Acts.Decode.lookup_split"
+          ]
+        }
       ],
       "S": [
         "VE.Acts.Decode.Elaborated"

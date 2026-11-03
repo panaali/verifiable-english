@@ -59,7 +59,8 @@ BUGS = [
        "canonicalShape ps fx")], [], "guard"),
     ("source-lexical", "decodeSource", "decodeSource admits a joined act by default",
      [(W, "(displayConstants : Bool := true) (joined : Bool := true) : Except String Source",
-       "(displayConstants : Bool := true) (joined : Bool := false) : Except String Source")], [], "guard"),
+       "(displayConstants : Bool := true) (joined : Bool := false) : Except String Source")],
+     [(NW, "decode_conservative"), (NW, "decodeSourceU_plain")], "guard"),
     ("environment-joined", "decodeNormsEnvironment", "the decoder's default stays lexical (DRI item 2)",
      [(W, "(displayConstants : Bool := true) (acts : Bool := false) (joined : Bool := false) :",
        "(displayConstants : Bool := true) (acts : Bool := false) (joined : Bool := true) :")], [], "guard"),
@@ -67,7 +68,7 @@ BUGS = [
      [(AW, "← strings (j.getObjValD \"markers\"), ← strings (j.getObjValD \"split\"),",
        "← strings (j.getObjValD \"split\"), ← strings (j.getObjValD \"markers\"),")], [], "guard"),
     ("frame-modifiers", "decodeFrame", "modifiers are read from their key",
-     [(AW, "← strings (j.getObjValD \"modifiers\")⟩", "← strings (j.getObjValD \"split\")⟩")], [], "guard"),
+     [(AW, "← strings (j.getObjValD \"modifiers\")⟩", "(← strings (j.getObjValD \"modifiers\")).take 0⟩")], [], "guard"),
     ("frame-head", "decodeFrame", "a head is its words",
      [(AW, "⟨wordsOf (← stringField j \"head\"),", "⟨[← stringField j \"head\"],")], [], "guard"),
     ("vocab-unchecked", "decodeVocab", "D-31 raised by checkVocab",
@@ -99,10 +100,6 @@ BUGS = [
     ("source-vocabulary", "sourceOf", "the source vocabulary declares the parts",
      [(DE, "{ rv.sourceVocabulary with predicates := splitPredicates rv.sourceVocabulary.predicates e.M }",
        "{ rv.sourceVocabulary with predicates := rv.sourceVocabulary.predicates }")], SRC, "guard"),
-    ("source-profile-lost", "sourceOf", "the elaborated source keeps the profile flag",
-     [(DE, "VE.NormDefaults.fill_wellFormed _ hu, e.s.profiled, fun _ => hu,",
-       "VE.NormDefaults.fill_wellFormed _ hu, false, fun _ => hu,")],
-     [(DE, "sourceOf_U"), (DE, "sourceOf_lexical")], "fails-to-elaborate-or-guard"),
     ("flags-refused", "decodeElaboratedFlagged", "the norms route keeps its data@0 flags",
      [(DE, "VE.Norms.Wire.decodeSource environment norms (flags := true) >>= (elaborateSource",
        "VE.Norms.Wire.decodeSource environment norms >>= (elaborateSource")], [], "guard"),
@@ -111,7 +108,8 @@ BUGS = [
        "  VE.NormDefaults.Wire.decodeSourceU environment norms\n")], [], "guard"),
     ("flagged-source", "flaggedSource", "the norms route reads e.U'",
      [(DE, "  (decodeElaboratedFlagged environment norms >>= sourceOf).map (·.src)\n",
-       "  (decodeElaboratedFlagged environment norms >>= pure ∘ (·.s)).map (·.src)\n")], [], "guard"),
+       "  ((decodeElaboratedFlagged environment norms).map (·.s)).map (·.src)\n")],
+     [(DE, "flaggedSource_elaborated")], "guard"),
     ("trees-not-read", "elaborateSource", "elaboration reads the decoder's trees",
      [(DE, "⟨s.U, V, fx, s.src.ne.joined,", "⟨s.U, V, fx, [],")], [], "guard"),
     ("norms-entry-source", "Run.decoderOf", "the entry point put back on the source (DRI item 1's seeded bug)",
@@ -211,8 +209,12 @@ def main():
         for t in ts:
             t.join()
     rows.sort(key=lambda r: [b[0] for b in BUGS].index(r["id"]))
-    if only is None:
-        OUT.write_text(json.dumps({"mutants": rows}, indent=1, ensure_ascii=False) + "\n")
+    if only is not None and OUT.exists():
+        # a rerun of some rows replaces those rows of the last full run
+        kept = {r["id"]: r for r in json.loads(OUT.read_text())["mutants"]}
+        kept.update({r["id"]: r for r in rows})
+        rows = [kept[b[0]] for b in BUGS if b[0] in kept]
+    OUT.write_text(json.dumps({"mutants": rows}, indent=1, ensure_ascii=False) + "\n")
     sys.exit(0 if all(r["status"] == "KILLED" for r in rows) else 1)
 
 

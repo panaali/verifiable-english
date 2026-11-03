@@ -7,6 +7,7 @@ import VE.Words.Situation
 import VE.NormDefaults.Run
 import VE.Readings.ActsExamples
 import VE.Acts.DecodeExamples
+import VE.Service.Document
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -557,6 +558,10 @@ def ruleOn : Json := Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "
   ("model", Json.mkObj [])])) == d4
 #guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground joinedE ne.rv)) == some d4
 #guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground lexicalE ne.rv)) == some "ok"
+-- the document route's environment gate, before its admission (which runs on the decoded source)
+#guard err (VE.Service.Document.decodedEnvironment joinedE .none) == d4
+#guard err (VE.Service.Document.decodedEnvironment joinedU .none) == d4
+#guard err (VE.Service.Document.decodedEnvironment lexicalE .none) == "ok"
 -- the English view's modal form
 #guard err (modalForm "p027" ["person"] (((joinedE.getObjValD "vocabulary").getObjValD "predicates").getObjValD "p027")
   plain6 VE.Acts.TableExamples.fx6) == d4
