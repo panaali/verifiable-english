@@ -1909,6 +1909,13 @@
    "reason": "pc-9: VE/Defaults/Uniform.lean S +56 (packConditions, noneOr, dfltUniformOf, dfltUniformLabelled, dfltUniform, leastUniform, ConditionsExact, DfltUniformSound); VE/Defaults/Route.lean V +3 (the providerConditions guard line in defaultsRows); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-9, 2026-11-02",
    "commit": "d8f58bf3be47b2b6f5f0cd17052412e4be487b86"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
+   "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
   }
  ]
 }
