@@ -7,12 +7,14 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 
 import pytest
 
 from tests.test_document_lean_switch import _structural_mutants
-from tests.test_scope_document import F1, OWN, _governed_text, _split, _text
+from tests.test_scope_document import EFFECTS, F1, OWN, _governed_text, _split, _text
 from tests.test_scope_readings_document import _doc as readings_doc
+from ve import document as D
 from ve import scope
 from ve.backends import relay
 from ve.backends.service_schema import ROWS, Context, Invalid
@@ -110,6 +112,44 @@ def test_a_document_must_list_scope_and_a_refusal_of_govern_is_lean_s(tmp_path, 
     meta["scope"]["governors"][0]["units"] = ["u1", "u2"]
     assert scope.main(["explain", str(_write(tmp_path, _text(meta, body)))]) == 2
     assert "ManifestMismatch: scope.governors.g1.units" in capsys.readouterr().out
+
+
+def _repeated(effect: str, copies: int, with_id: bool) -> str:
+    """`_governed_text`'s document with `copies` more copies of unit u3, keeping its id or without one."""
+    meta, body = _split(_governed_text("norms", effect))
+    for _ in range(copies):
+        unit = copy.deepcopy(meta["units"][3])
+        if not with_id:
+            del unit["id"]
+        meta["units"].append(unit)
+    return _text(meta, body)
+
+
+@pytest.mark.parametrize("effect", sorted(EFFECTS))
+@pytest.mark.parametrize("copies, with_id, path", [(1, True, "units.u3"), (2, False, "units")])
+def test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id(tmp_path, capsys, effect, copies,
+                                                                                 with_id, path):
+    """sc-5rdb review F1: `decodeBlock`'s repeated-id check reaches the scope mode as well as the document mode. The
+    scope mode used to answer `ok` here (frame: ManifestMismatch), the document mode to refuse it later in the chain;
+    both now give Lean's one refusal. The document without the copies is answered on both routes."""
+    refusal = f"InvalidInput: scope@0 {path} must be a unit id no other unit has"
+    repeated = _write(tmp_path, _repeated(effect, copies, with_id))
+    assert scope.main(["explain", str(repeated)]) == 2
+    assert refusal in capsys.readouterr().out
+    with pytest.raises(VEError, match=f"^{re.escape(refusal)}$"):
+        D.check_document(repeated)
+    plain = _write(tmp_path, _governed_text("norms", effect))
+    assert scope.main(["explain", str(plain)]) == 0
+    capsys.readouterr()
+    D.check_document(plain)
+
+
+def test_sc5rdb_one_unit_without_an_id_passes_the_scope_boundary(tmp_path):
+    """A lone unit without an id repeats no id: the scope mode answers it; the chain refuses it for its own reason."""
+    single = _write(tmp_path, _repeated("title", 1, False))
+    scope.explain(single.read_bytes())
+    with pytest.raises(VEError, match="^invalid unit schema$"):
+        D.check_document(single)
 
 
 def _rebound(row):
