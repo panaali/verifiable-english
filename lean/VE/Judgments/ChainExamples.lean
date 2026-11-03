@@ -154,8 +154,9 @@ def bothRules (profiles : List String) (conditions : List (String × Json) := []
       Json.mkObj [("term", "good_judgment"), ("units", Lean.toJson ["u0052.s01"])],
       Json.mkObj [("term", "genuinely_ambiguous"), ("units", Lean.toJson ["u0036.s05"])]]), ("unused", Json.arr #[])]
   | _, _ => false
--- What the layer stays apart from in this mode (`judgmentsApart`), each by its own text.
-#guard ["alternatives@0", "rights@0", "risk@0"].all fun p =>
+-- What the layer stays apart from in this mode (`judgmentsApart`), each by its own text; `rights@0` is read since
+-- pc-1g (F1.4 below).
+#guard ["alternatives@0", "risk@0"].all fun p =>
   refusal (bothRules ((p :: layer).mergeSort fun a b => decide (a ≤ b))) ==
     some s!"CheckerUnavailable: judgments@0 with {p} needs its composed Lean route"
 
@@ -220,5 +221,76 @@ def twoSets (k₁ : String) (m₁ : Json) (k₂ : String) (m₂ : Json) : Json :
   swapInjective j && (statedIds j).contains (ids true).1 && match statedPairs j with
     | [_, (x, v₁, v₂)] => x == v₁ && (exchange j x == v₂) == false
     | _ => false
+
+/-! pc-1g: F1.4, UDHR u111 (Art. 29(2)) as a rights limitation whose conditions are the four bound judgments, beside
+Art. 19 as a right, a part document (tests/data/composition/pc1g/udhr-u111.json): admitted with the layer, u111 OPEN
+and using the four; `Lim_D` the same with and without the layer; the twin's verdict fields equal. -/
+
+def udhrTerms : List String := ["general_welfare", "just_requirements", "morality", "public_order"]
+
+def udhr (profiles : List String) : Json :=
+  let args := Lean.toJson ["person"]
+  let none := Json.arr #[]
+  let vocabulary := Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj [("description", "a person")])]),
+    ("constants", Json.mkObj []), ("predicates", Json.mkObj (("express_permitted", Json.mkObj [("arguments", args),
+      ("description", "may express"), ("regulated", Json.mkObj [("role", "permission"), ("default", "allow"),
+        ("act", "{0} express opinions")])]) :: udhrTerms.map fun t =>
+      (t, Json.mkObj [("arguments", args), ("description", .str t)]))),
+    ("rights", Json.mkObj [("holders", args), ("bearers", args), ("protected", none), ("alters", Json.mkObj [])]),
+    ("soft", Json.mkObj [("parties", none), ("ranks", none), ("outranks", none),
+      ("outranking", Json.mkObj [("mode", "strict")])])]
+  let right := Json.mkObj [("right", Json.mkObj [("name", "r19"), ("holder", "person"), ("lines", Json.arr #[
+    Json.mkObj [("kind", "liberty"), ("cites", Json.mkObj []), ("norm", Json.mkObj [("name", "express-19"),
+      ("predicate", "express_permitted"), ("sign", true), ("guard", Json.arr #["top"]), ("unless", none),
+      ("over", none)])]])])]
+  let limitation := Json.mkObj [("limitation", Json.mkObj [("name", "l29"), ("scope", "all"), ("kinds", "all"),
+    ("decided_by", "unstated"), ("factors", none), ("conditions", Json.arr (udhrTerms.map fun t => Json.mkObj [
+      ("name", .str t), ("role", if t == "just_requirements" then "necessary" else "sufficient"),
+      ("verbalisation", .str t), ("decided_by", .null)]).toArray)])]
+  let first := "Everyone has the right to freedom of opinion and expression.\n"
+  let body := first ++ "Everyone shall be subject only to such limitations as meet the just requirements of " ++
+    "morality, public order and the general welfare.\n"
+  let front := Json.mkObj [("format", "ve-document@1"), ("environment", Json.mkObj [("language", "ve.core@0.2"),
+      ("profiles", Lean.toJson profiles), ("spec_revision", "ve-v0.2-expand2-2026-09-25"),
+      ("vocabulary", vocabulary)]),
+    ("units", Json.arr #[Json.mkObj [("id", "u029"), ("span", Lean.toJson [0, first.length]), ("kind", "right"),
+        ("meaning", "specified"), ("support", "none"), ("content", right)],
+      Json.mkObj [("id", "u111"), ("span", Lean.toJson [first.length, body.length]), ("kind", "limitation"),
+        ("meaning", Json.mkObj [("open", Lean.toJson udhrTerms)]), ("support", "none"), ("content", limitation)]]),
+    ("open_terms", Json.arr (udhrTerms.map fun t => Json.mkObj [("name", .str t), ("arguments", args),
+      ("decided_by", "unstated"), ("necessary", none), ("sufficient", none), ("factors", none),
+      ("precedents", none), ("jurisdiction", "document"), ("version", 1)]).toArray)]
+  Json.mkObj [("id", "c"), ("document", .str ("---\n" ++ front.compress ++ "\n---\n" ++ body))]
+
+def rightsLayer : List String :=
+  ["documents@1", "judgments@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
+
+/-- `Lim_D`, labelled, as the document mode's rights reader decodes the case's rights source. -/
+def udhrLim (profiles : List String) : Option (List (String × VE.Formula)) := do
+  let (front, _) ← frontOf (udhr profiles)
+  let E ← (environmentOf (front.getObjValD "environment") (front.getObjValD "units")).toOption
+  let raw := match front.getObjValD "units" with
+    | .arr us => us.toList
+    | _ => []
+  let R ← (rightsDoc E front udhrTerms raw).toOption
+  pure (VE.Rights.limPremisesLabelled R.src.D)
+
+#guard (udhrLim rightsLayer).getD [] != [] && udhrLim rightsLayer == udhrLim (rightsLayer.erase "judgments@0")
+#guard match checkDocSets (udhr rightsLayer), checkDocSets (withoutJudgments (udhr rightsLayer)) with
+  | .ok a, .ok b => unitStatuses a == [("u029", "OPEN"), ("u111", "OPEN")] &&
+      a.getObjValD "judgments" == Json.mkObj [("unused", Json.arr #[]), ("used", Json.arr (udhrTerms.map fun t =>
+        Json.mkObj [("term", .str t), ("units", Lean.toJson ["u111"])]).toArray)] &&
+      (unitStatuses b).map (·.1) == ["u029", "u111"]
+  | _, _ => false
+-- The rights reader by block: a limitation reads its conditions, a right its lines, a bar nothing.
+#guard match frontOf (udhr rightsLayer) with
+  | some (front, _) => match (front.getObjValD "units").getArrVal? 1 with
+    | .ok u => (do
+        let E ← (environmentOf (front.getObjValD "environment") (front.getObjValD "units")).toOption
+        let R ← (rightsDoc E front udhrTerms [u]).toOption
+        let fs ← (blockFormulas R.src.D (u.getObjValD "content")).toOption
+        pure (opensIn udhrTerms fs == udhrTerms)) == some true
+    | .error _ => false
+  | none => false
 
 end VE.Judgments.ChainExamples
