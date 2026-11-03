@@ -1036,7 +1036,7 @@
 'VE.Calc.vprod_cons' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.vprod_mulVars' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.weighted_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Calc.witnessPoints_names' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.witnessPoint_names' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.zpowR_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.zpowR_mul_nat' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.CAdmission.admitted' depends on axioms: [propext]

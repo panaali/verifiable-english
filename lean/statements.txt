@@ -6767,11 +6767,12 @@ theorem VE.Calc.runCounted_reads
   -- expr 1580874912
 theorem VE.Calc.searchC_some
   ∀ {limit : Nat} {r : VE.Numbers.Rounding} {inputs : List (String × VE.Numbers.Printed)} {outs : List VE.Calc.Claim}
-    {ws : List (List (String × Rat))} {u : Nat} {w : List (String × Rat)} {u' : Nat},
-    VE.Calc.searchC limit r inputs outs ws u = Option.some (Option.some w, u') →
-      w ∈ ws ∧ ∃ u0 u1, VE.Calc.pointHoldsC limit r inputs outs w u0 = Option.some (Bool.true, u1)
-  -- uses VE.Calc.Claim@VE.Calc.Syntax VE.Calc.pointHoldsC@VE.Calc.Consistency VE.Calc.searchC@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
-  -- expr 3771601759
+    {n m u : Nat} {w : List (String × Rat)} {u' : Nat},
+    VE.Calc.searchC limit r inputs outs n m u = Option.some (Option.some w, u') →
+      (∃ k, w = VE.Calc.witnessPoint r inputs k) ∧
+        ∃ u0 u1, VE.Calc.pointHoldsC limit r inputs outs w u0 = Option.some (Bool.true, u1)
+  -- uses VE.Calc.Claim@VE.Calc.Syntax VE.Calc.pointHoldsC@VE.Calc.Consistency VE.Calc.searchC@VE.Calc.Consistency VE.Calc.witnessPoint@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 4272059789
 theorem VE.Calc.sidesAtB_eq
   ∀ (a b : VE.Calc.Expr) (κ : List (String × Rat)) (n : Nat) {r : Option (Rat × Rat)} {m : Nat},
     VE.Calc.sidesAtB a b κ n = Option.some (r, m) →
@@ -6932,11 +6933,11 @@ theorem VE.Calc.weighted_nonneg
             0 < (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) ws fs).sum)
   -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact.strict@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
   -- expr 1703173439
-theorem VE.Calc.witnessPoints_names
-  ∀ (r : VE.Numbers.Rounding) (inputs : List (String × VE.Numbers.Printed)) (w : List (String × Rat)),
-    w ∈ VE.Calc.witnessPoints r inputs → List.map Prod.fst w = List.map Prod.fst inputs
-  -- uses VE.Calc.witnessPoints@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
-  -- expr 3790798716
+theorem VE.Calc.witnessPoint_names
+  ∀ (r : VE.Numbers.Rounding) (inputs : List (String × VE.Numbers.Printed)) (k : Nat),
+    List.map Prod.fst (VE.Calc.witnessPoint r inputs k) = List.map Prod.fst inputs
+  -- uses VE.Calc.witnessPoint@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 1967476124
 theorem VE.Calc.zpowR_eq
   ∀ (q : Rat) (i : Int), VE.Calc.zpowR q i = q ^ i
   -- uses VE.Calc.zpowR@VE.Calc.Dimension

@@ -17495,7 +17495,8 @@
         "VE.Calc.refuteC",
         "VE.Calc.searchC",
         "VE.Calc.witnessCheck",
-        "VE.Calc.witnessPoints",
+        "VE.Calc.witnessCount",
+        "VE.Calc.witnessPoint",
         "VE.Numbers.Rel.misses"
       ]
     },
@@ -17511,6 +17512,7 @@
         "VE.Calc.ConsistencyExamples.a",
         "VE.Calc.ConsistencyExamples.chain",
         "VE.Calc.ConsistencyExamples.ge",
+        "VE.Calc.ConsistencyExamples.hundred",
         "VE.Calc.ConsistencyExamples.hw",
         "VE.Calc.ConsistencyExamples.inA",
         "VE.Calc.ConsistencyExamples.k1",
