@@ -1916,6 +1916,27 @@
    "reason": "ci-1: VE/Commands/Read.lean V +131 (the reader's verdict-bearing definitions, G[V] untied; K +0, S +0, no other file trusted; Texts.lean and the refusal definitions are G[R], Examples.lean T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-1, 2026-10-18",
    "commit": "ea108ea4e01586425d40d34b1155c9f50281d73c"
+  },
+  {
+   "class": "S",
+   "lines": 125,
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 19,
+   "reason": "cmp-s4: VE/Discourse/Compose.lean S +125, V +18 (chainBase, caseManifest); VE/Discourse/Run.lean V +1 (encodeComposed); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "cmp-s4 review F1 fix: VE/Discourse/Compose.lean S +8 (formulaUnit: the W2 view of the chain's units, 14.5 step 4), VE/Discourse/Manifest.lean S +1 (DDoc.chain); chainChecks, chainDDoc and caseManifest tied (chainChecks_wellFormed, caseManifest_wellFormed); the item against the merge base: K +0, S +134, V +16, trusted +150",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }
