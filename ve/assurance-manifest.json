@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41694,
+    "total_lines": 41749,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1117,12 +1117,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2640,
-        "sha256": "4a9b990bca8851fd749a6a91bfc43293b16d37a1c100b061394c1bae10721122",
+        "lines": 2695,
+        "sha256": "4624b3f635384732acc0168f423e6b5dbe93ed18f7b11f3e7f8c75795449f612",
         "ranges": [
           [
             1,
-            2640
+            2695
           ]
         ],
         "declarations": [
@@ -2130,9 +2130,6 @@
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
-      "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
-      "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
-      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
       "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
       "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
       "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
@@ -2248,9 +2245,10 @@
       "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
       "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
+      "lean/VE/Compose/Contract.lean": "statements only (profile-composition PC-3): scopeRewriter is checkDocSets' scope branch as a case rewriter, read by checkDocSets_pipeline and no service mode; no runtime JSON handling",
+      "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
       "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path",
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
-      "lean/VE/Scope/RunExamples.lean": "fixtures only: the explain route's #guard checks (SC-1c, sc-1cb) build hard-constraint documents and reading sets as JSON literals, run the explain runner on them and read a choice label's picks back; no service mode reads this file",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
       "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
       "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
@@ -2258,31 +2256,34 @@
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
+      "lean/VE/Service/StageTimes.lean": "the readings stage timer of ve_service (VE_READINGS_STAGE_TIMES): writes diagnostic JSON lines to stderr only, from the marker lines of VE.Readings.Stage; reads no request and no answer; no assurance operation path",
       "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
-      "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
       "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
       "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path",
       "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder",
       "lean/VE/Scope/ReadingsLemmas.lean": "lemmas about the JSON trees `atChoiceOn` and `assemble` build (what a lookup reads back after setObjVal! on a well-formed tree; the parts of a successful `governSets`), for the statements of scope spec 11.3; no runtime JSON handling",
       "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling",
-      "lean/VE/Service/StageTimes.lean": "the readings stage timer of ve_service (VE_READINGS_STAGE_TIMES): writes diagnostic JSON lines to stderr only, from the marker lines of VE.Readings.Stage; reads no request and no answer; no assurance operation path",
       "lean/VE/WireContract/Hooks/Acts.lean": "diagnostic only: no verdict depends on it. The classifier and the adapter of the contract acts@0, in shadow (ap-1bf); they read the environment through Norms.Wire.decodeNormsEnvironment with acts and VE.Acts.Lexical read-only, never decodeSource",
-      "lean/VE/Compose/Contract.lean": "statements only (profile-composition PC-3): scopeRewriter is checkDocSets' scope branch as a case rewriter, read by checkDocSets_pipeline and no service mode; no runtime JSON handling",
-      "lean/VE/Compose/ContractExamples.lean": "fixtures only: PC-3's #guard checks run scopeRewriter, pipeline and checkDocSets on ScopeExamples' scope documents; no service mode",
+      "lean/VE/Judgments/ChainExamples.lean": "examples only: PC-1's fixtures (profile-composition 5.1) are built as JSON documents and sent to `checkDocSets` and the clash validation in `#guard`s; no admission path, service mode or record reads it",
+      "lean/VE/Scope/RunExamples.lean": "fixtures only: the explain route's #guard checks (SC-1c, sc-1cb) build hard-constraint documents and reading sets as JSON literals, run the explain runner on them and read a choice label's picks back; no service mode reads this file",
+      "lean/VE/Acts/FaithfulExamples.lean": "fixtures only: `#guard`s that compute both sides of elaborate_faithful on small finite models, one case decoding environment and norm JSON (act-phrases ap-3dd); no admission path, service mode or record reads them",
+      "lean/VE/Acts/ReadingsExamples.lean": "fixtures only: `#guard`s that build acts@0 readings environments as JSON and decode them with the readings route's own decoder to check sourceCheck and atomSituation (act-phrases ap-4b, spec 11.4 S1 to S8); no admission path, service mode or record reads them",
       "lean/VE/Senses/RunExamples.lean": "fixtures only: #guard checks of the senses runner's answers to whole requests (B6), pinned by digest; no runner path",
       "lean/VE/Scope/FarExamples.lean": "fixtures only: SC-4's #guard checks (scope spec 7.6) build scope@0 documents, rule contents and one raw unit tree (F-raw-edges) as JSON literals and run `govern` and `forwardCheck` on them; no runtime JSON handling",
+      "lean/VE/Service/CardinalityExamples.lean": "fixtures only: QT-A4's #guard checks build small cardinality@0 part documents as request JSON and run the document mode (`checkCore`) on them; no service mode reads this file",
       "lean/VE/Service/UndeclaredExamples.lean": "fixtures only: jt-3a's #guard checks build one judgments@0 document as request JSON and read the document mode's `undeclared_evaluative` member and `Env.basePredicates` (judgment-terms.md 8.4); no service mode reads this file",
       "lean/VE/Cardinality/RenderTheorems.lean": "statements about the paraphrase renderer (describe_of over Json.getObjValD, the byte charge of every rendering action, paraphrase_within); no runtime JSON handling",
-      "lean/VE/Acts/FaithfulExamples.lean": "fixtures only: `#guard`s that compute both sides of elaborate_faithful on small finite models, one case decoding environment and norm JSON (act-phrases ap-3dd); no admission path, service mode or record reads them",
       "lean/VE/Defaults/ZoneExamples.lean": "test fixtures only: df-5a's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftU`) and compute `defaultZoneOf` on finite situations; no service mode reads this file",
       "lean/VE/Calc/Ties.lean": "statements about the calc runner's evidence and rows (the R16 ties of me-5e: rowJson_outcome and rowJson_shown read the outcome, reason, certificate and counterexample members with Json.getObjVal?); no runtime JSON handling",
       "lean/VE/SoftNorms/ActsFrameExamples.lean": "fixtures only: #guard checks of the soft view of an acts@0 norms frame (ap-1bg) that build environments and acts blocks as JSON test inputs for the pinned decoders; no admission path, service mode or record reads it",
-      "lean/VE/Judgments/ChainExamples.lean": "examples only: PC-1's fixtures (profile-composition 5.1) are built as JSON documents and sent to `checkDocSets` and the clash validation in `#guard`s; no admission path, service mode or record reads it",
       "lean/VE/Scope/Reach.lean": "`Pinned.rightOf` reads which right a `right` or `right_lines` unit content names (rights 3.2) with getObjValD/getStr?; `withReach` and `withBarReach` read only that and the reach; the contents are rights@0's to decode, never scope's; no route calls it yet (sc-6b)",
       "lean/VE/Scope/ReachExamples.lean": "fixtures only: SC-6's #guard checks (scope spec 7.8) build UDHR part documents, rights contents, reading sets and u0218.s18's rule as JSON literals and run `withReach`, `withBarReach` and `governSets` on them; no runtime JSON handling",
       "lean/VE/Defaults/UniformExamples.lean": "fixtures only: #guard checks of F9.1 to F9.7 (docs/spec/profile-composition.md 4) build defaults-* request JSON and read the kind table's answers; no runner path",
       "lean/VE/Commands/Examples.lean": "test fixtures only: ci-1's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
-      "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row"
+      "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
+      "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
+      "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
+      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling"
     }
   },
   "plan_operations": {

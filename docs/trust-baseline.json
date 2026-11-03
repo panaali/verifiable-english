@@ -1944,6 +1944,20 @@
    "reason": "me-8: S +8 (lean/VE/Calc/Interval.lean InBox +4; lean/VE/Calc/Consistency.lean Consistent +4); K +0, untied V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-8, 2026-11-02",
    "commit": "287d5dc601e634a3d1720b907e79522a3464c8aa"
+  },
+  {
+   "class": "V",
+   "lines": 65,
+   "reason": "qt-a4: VE/Service/Document.lean V +52 (cardinalityEnv, cardinalityReport, the contentOf, check and encode hunks: the document hook), ResponseShape/Schemas/Document.lean V +13 (the cardinality_report shape and its row member); K +0, S +0, new Lean-owned behaviour",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4, 2026-10-18",
+   "commit": "278fe7938ffc9d206da1c8690b0b245dc38dff6e"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "qt-a4 provenance rule: VE/Service/Document.lean V +2 over the allowance above (cardinalityReport binds each node to an asserted unit); now V +54 there, +13 in ResponseShape/Schemas/Document.lean; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4, 2026-10-18",
+   "commit": "278fe7938ffc9d206da1c8690b0b245dc38dff6e"
   }
  ]
 }
