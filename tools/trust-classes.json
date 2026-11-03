@@ -15387,22 +15387,31 @@
     },
     "VE/Service/CardinalityExamples.lean": {
       "T": [
+        "VE.Service.CardinalityExamples.asWritten",
+        "VE.Service.CardinalityExamples.both",
         "VE.Service.CardinalityExamples.card",
+        "VE.Service.CardinalityExamples.content",
         "VE.Service.CardinalityExamples.decoded",
         "VE.Service.CardinalityExamples.environment",
         "VE.Service.CardinalityExamples.graph",
+        "VE.Service.CardinalityExamples.idOf",
         "VE.Service.CardinalityExamples.listed",
         "VE.Service.CardinalityExamples.low",
+        "VE.Service.CardinalityExamples.one",
+        "VE.Service.CardinalityExamples.plain",
+        "VE.Service.CardinalityExamples.refused",
         "VE.Service.CardinalityExamples.report",
-        "VE.Service.CardinalityExamples.reported",
-        "VE.Service.CardinalityExamples.row",
-        "VE.Service.CardinalityExamples.rowUnit",
+        "VE.Service.CardinalityExamples.reportOf",
+        "VE.Service.CardinalityExamples.rowOf",
         "VE.Service.CardinalityExamples.run",
         "VE.Service.CardinalityExamples.said",
+        "VE.Service.CardinalityExamples.source",
         "VE.Service.CardinalityExamples.statement",
         "VE.Service.CardinalityExamples.text",
         "VE.Service.CardinalityExamples.top",
-        "VE.Service.CardinalityExamples.unit"
+        "VE.Service.CardinalityExamples.unit",
+        "VE.Service.CardinalityExamples.w",
+        "VE.Service.CardinalityExamples.withGraph"
       ]
     },
     "VE/Service/ScopeExamples.lean": {
