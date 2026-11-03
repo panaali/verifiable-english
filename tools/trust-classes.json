@@ -9759,7 +9759,6 @@
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
-        "VE.Service.Document.Env.basePredicates",
         "VE.Service.Document.Env.regulated",
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
@@ -9803,6 +9802,13 @@
         "VE.Service.Document.unitJson",
         "VE.Service.Document.checkCore",
         {
+          "name": "VE.Service.Document.checkCoreFast",
+          "tied": [
+            "VE.Service.Document.checkCore_eq_fast"
+          ]
+        },
+        "VE.Service.Document.checkDocSetsFast",
+        {
           "name": "VE.Service.Document.checkDoc",
           "tied": [
             "VE.Scope.scope_admission",
@@ -9816,7 +9822,11 @@
             "VE.Scope.checkDocSets_no_sets",
             "VE.Scope.scope_admission_sets"
           ]
-        }
+        },
+        "VE.Service.Document.judgmentsApart",
+        "VE.Service.Document.UnitContent.judgedIn",
+        "VE.Service.Document.checkBody",
+        "VE.Service.Document.Env.basePredicates"
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -9835,7 +9845,45 @@
         "VE.Service.Document.locatedRow",
         "VE.Service.Document.partsPrefix",
         "VE.Service.Document.undecided",
-        "VE.Service.Document.yieldedParts"
+        "VE.Service.Document.yieldedParts",
+        "VE.Service.Document.frontOf",
+        "VE.Service.Document.swap",
+        "VE.Service.Document.plainProfiles",
+        "VE.Service.Document.layerProfiles",
+        "VE.Service.Document.readingSetsIn",
+        "VE.Service.Document.readingSetsOf",
+        "VE.Service.Document.setModels",
+        "VE.Service.Document.setReferences",
+        "VE.Service.Document.sizedIn",
+        "VE.Service.Document.sizedSets",
+        "VE.Service.Document.statedIdsIn",
+        "VE.Service.Document.statedIds",
+        "VE.Service.Document.statedPairsIn",
+        "VE.Service.Document.statedPairs",
+        "VE.Service.Document.exchangeOf",
+        "VE.Service.Document.exchange",
+        "VE.Service.Document.swapInjectiveOf",
+        "VE.Service.Document.swapInjective",
+        "VE.Service.Document.pairIndex",
+        "VE.Service.Document.exchangeIn",
+        "VE.Service.Document.injStep",
+        "VE.Service.Document.injectiveH",
+        "VE.Service.Document.swapInjectiveH",
+        "VE.Service.Document.swapInjectiveIn",
+        "VE.Service.Document.swapInjectiveFast",
+        "VE.Service.Document.exchangeSet",
+        "VE.Service.Document.withoutJudgmentsIn",
+        "VE.Service.Document.withoutJudgmentsOf",
+        "VE.Service.Document.withoutJudgments",
+        "VE.Service.Document.swapClash",
+        "VE.Service.Document.clashRefusalOf",
+        "VE.Service.Document.clashRefusal",
+        "VE.Service.Document.clashRefusalIn",
+        "VE.Service.Document.clashRefusalFast",
+        "VE.Service.Document.exceptionConditioned"
+      ],
+      "G[I]": [
+        "VE.Service.Document.layeredIds"
       ]
     },
     "VE/Service/EnglishRun.lean": {
@@ -10253,7 +10301,10 @@
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
         "VE.Service.Standalone.validatedEnvironment",
-        "VE.Service.Standalone.validatedLayerEnvironment"
+        "VE.Service.Standalone.validatedLayerEnvironment",
+        "VE.Service.Standalone.letterName",
+        "VE.Service.Standalone.modelAct",
+        "VE.Service.Standalone.modelActs"
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",
@@ -10383,7 +10434,9 @@
         "VE.SoftNorms.Phases.softNames",
         "VE.SoftNorms.Phases.softPairs",
         "VE.SoftNorms.Phases.stripEntry",
-        "VE.SoftNorms.Phases.typed"
+        "VE.SoftNorms.Phases.typed",
+        "VE.SoftNorms.Phases.emptyBlock",
+        "VE.SoftNorms.Phases.actsFrame"
       ],
       "D[R]": [
         "VE.SoftNorms.Phases.Fault",
@@ -10394,7 +10447,8 @@
         "VE.SoftNorms.Phases.inheritedProfiles",
         "VE.SoftNorms.Phases.keysOf",
         "VE.SoftNorms.Phases.softProfile",
-        "VE.SoftNorms.Phases.w1Keys"
+        "VE.SoftNorms.Phases.w1Keys",
+        "VE.SoftNorms.Phases.frameView"
       ]
     },
     "VE/SoftNorms/RankProof.lean": {
@@ -15144,7 +15198,13 @@
         "VE.Service.ActsExamples.typed",
         "VE.Service.ActsExamples.every",
         "VE.Service.ActsExamples.modelled",
-        "VE.Service.ActsExamples.dualEnv"
+        "VE.Service.ActsExamples.dualEnv",
+        "VE.Service.ActsExamples.oblig",
+        "VE.Service.ActsExamples.pairEnv",
+        "VE.Service.ActsExamples.modelActsOf",
+        "VE.Service.ActsExamples.view",
+        "VE.Service.ActsExamples.rels",
+        "VE.Service.ActsExamples.threeEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -16285,7 +16345,11 @@
         "VE.Readings.ActsExamples.setDoc",
         "VE.Readings.ActsExamples.noActs",
         "VE.Readings.ActsExamples.elabCase",
-        "VE.Readings.ActsExamples.wordings"
+        "VE.Readings.ActsExamples.wordings",
+        "VE.Readings.ActsExamples.sfP",
+        "VE.Readings.ActsExamples.softView",
+        "VE.Readings.ActsExamples.softErr",
+        "VE.Readings.ActsExamples.pyBlock"
       ]
     },
     "VE/Cardinality/Gate.lean": {},
@@ -16923,7 +16987,18 @@
         "VE.Compose.ContractExamples.plannedRows",
         "VE.Compose.ContractExamples.ungoverned",
         "VE.Compose.ContractExamples.governedSet",
-        "VE.Compose.ContractExamples.tagRewriter"
+        "VE.Compose.ContractExamples.tagRewriter",
+        "VE.Compose.ContractExamples.G1.noAsks",
+        "VE.Compose.ContractExamples.G1.noAsksUser",
+        "VE.Compose.ContractExamples.G1.askPack",
+        "VE.Compose.ContractExamples.G1.qs",
+        "VE.Compose.ContractExamples.G1.Qc",
+        "VE.Compose.ContractExamples.G1.A",
+        "VE.Compose.ContractExamples.G1.cert",
+        "VE.Compose.ContractExamples.G1.conflictCertA",
+        "VE.Compose.ContractExamples.G1.acceptedOn",
+        "VE.Compose.ContractExamples.G1.G1Checks",
+        "VE.Compose.ContractExamples.G1.instDecidableG1Checks"
       ]
     },
     "VE/Senses/Version.lean": {
@@ -17242,6 +17317,7 @@
       "C": [
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
+        "VE.Defaults.forcedAllOf",
         "VE.Defaults.maxDefaultAtoms",
         "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
@@ -17307,6 +17383,7 @@
         "VE.Defaults.ZoneFixtures.envS",
         "VE.Defaults.ZoneFixtures.exc",
         "VE.Defaults.ZoneFixtures.fixBoth",
+        "VE.Defaults.ZoneFixtures.forced",
         "VE.Defaults.ZoneFixtures.minCount",
         "VE.Defaults.ZoneFixtures.obsμ",
         "VE.Defaults.ZoneFixtures.off",
@@ -17435,6 +17512,48 @@
         "VE.Calc.StatsExamples.sv",
         "VE.Calc.StatsExamples.tie",
         "VE.Calc.StatsExamples.v6"
+      ]
+    },
+    "VE/Judgments/Chain.lean": {
+      "S": [
+        "VE.Judgments.softContent"
+      ]
+    },
+    "VE/Judgments/ChainExamples.lean": {
+      "T": [
+        "VE.Judgments.ChainExamples.carved",
+        "VE.Judgments.ChainExamples.u",
+        "VE.Judgments.ChainExamples.environment",
+        "VE.Judgments.ChainExamples.model",
+        "VE.Judgments.ChainExamples.reading",
+        "VE.Judgments.ChainExamples.case",
+        "VE.Judgments.ChainExamples.layer",
+        "VE.Judgments.ChainExamples.noDocuments",
+        "VE.Judgments.ChainExamples.plain",
+        "VE.Judgments.ChainExamples.ids",
+        "VE.Judgments.ChainExamples.refusal",
+        "VE.Judgments.ChainExamples.clashBothSides",
+        "VE.Judgments.ChainExamples.f13l",
+        "VE.Judgments.ChainExamples.f13o",
+        "VE.Judgments.ChainExamples.bothRules",
+        "VE.Judgments.ChainExamples.withCondition",
+        "VE.Judgments.ChainExamples.f13lWith"
+      ]
+    },
+    "VE/SoftNorms/ActsFrameExamples.lean": {
+      "T": [
+        "VE.SoftNorms.ActsFrameExamples.parse",
+        "VE.SoftNorms.ActsFrameExamples.block",
+        "VE.SoftNorms.ActsFrameExamples.paid",
+        "VE.SoftNorms.ActsFrameExamples.heard",
+        "VE.SoftNorms.ActsFrameExamples.reg",
+        "VE.SoftNorms.ActsFrameExamples.pred",
+        "VE.SoftNorms.ActsFrameExamples.env",
+        "VE.SoftNorms.ActsFrameExamples.sfP",
+        "VE.SoftNorms.ActsFrameExamples.err",
+        "VE.SoftNorms.ActsFrameExamples.actsOf",
+        "VE.SoftNorms.ActsFrameExamples.frame",
+        "VE.SoftNorms.ActsFrameExamples.inhP"
       ]
     }
   }

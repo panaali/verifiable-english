@@ -116,6 +116,7 @@ import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
 import VE.SoftNorms.TreeExamples
+import VE.SoftNorms.ActsFrameExamples
 import VE.English.Run
 import VE.Discourse.Examples
 import VE.Discourse.Access
@@ -193,6 +194,7 @@ import VE.Judgments.Status
 import VE.Judgments.Undeclared
 import VE.EnglishGrammar.Evaluative
 import VE.Judgments.Examples
+import VE.Judgments.ChainExamples
 import VE.Question.Properties
 import VE.Question.Examples
 import VE.Question.Run
