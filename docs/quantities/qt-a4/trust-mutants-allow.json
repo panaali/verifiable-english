@@ -1,11 +1,6 @@
 {
  "allow": [
   {
-   "definition": "VE.Service.Document.cardinalityEnv",
-   "operator": "bool-flip",
-   "reason": "equivalent: `Env.generated` is read only by contentOf's strict-fence and English branches (Document.lean, `E.generated`), and under cardinality@0 contentOf returns or throws before them, so no answer depends on it"
-  },
-  {
    "definition": "VE.Service.Document.environmentOf",
    "operator": "list-first",
    "reason": "equivalent where it survives (line 716, the route to cardinalityEnv): cardinality@0 sorts first in every list the gate admits, and a list with an earlier profile is refused with the same gate text on both paths (the guard over [alternatives@0, cardinality@0] in CardinalityExamples.lean and the probe in the REPORT)"
