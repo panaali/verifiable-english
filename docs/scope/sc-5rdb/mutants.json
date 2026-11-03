@@ -61,6 +61,17 @@
     "tests/test_scope_sc5r_stub.py::test_each_statement_sc5rb_proves_is_the_stubs_text"
    ],
    "result": "KILLED (3 of 3)"
+  },
+  {
+   "id": "S2",
+   "file": "ve/backends/relay.py (relay.answer, monkeypatched by a scratch pytest plugin)",
+   "definition": "the scope mode's answer to a repeated unit id",
+   "behaviour": "the scope mode refuses a document with a repeated unit id (DELTA row 3; review F1; DRI 2026-11-03 item 1)",
+   "mutation": "relay.answer returns the answer the scope mode gave before decodeBlock's check: ok, no rows, governed g1 with no units",
+   "test": [
+    "tests/test_scope_answer.py::test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id[1-True-units.u3-title]"
+   ],
+   "result": "KILLED (assert 0 == 2)"
   }
  ]
 }

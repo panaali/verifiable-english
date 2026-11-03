@@ -4,8 +4,11 @@
 reviews/dri-decisions-20261031-sc-5rd.md). **Next:** SC-6 (the UDHR rights reach) and PC-5b.
 **What changed:** the last of spec 11.3's four `JsonWF` statements is proved, with the one premise the DRI signed,
 `(hd : (unitIds D.doc).Nodup)`. The scope boundary now refuses a repeated unit id (2 trusted lines), and the route
-corollary `decodeBlock_sets` discharges `hd` from that check, so no caller takes it as a hypothesis. Pilot bytes: 0
-expected (a proof, and an earlier refusal of documents the chain already refuses).
+corollary `decodeBlock_sets` discharges `hd` from that check, so no caller takes it as a hypothesis. The check is a
+verdict change in the `scope` mode: `ve scope explain` used to answer `ok` for a document with a repeated unit id
+(five of the six effects) and now refuses it (DELTA row 3, signed by the DRI 2026-11-03). In the document mode it is an
+earlier refusal of documents the chain already refuses (row 2); `frame`'s refusal changes its fault (row 4, R2). Pilot
+bytes: 0 expected (the pilot documents' unit ids are distinct).
 
 ## Task rows
 
@@ -52,6 +55,7 @@ Lean is the only product language changed (no Python or Rust product code).
 | M3 | lean/VE/Scope/Readings.lean | `assemble`'s unit check passes every unit | `ReadingsLemmas.lean:304` (`assemble_units`, read by `every_choice`); `ReadingsExamples.lean:112, 166` |
 | M4 | lean/VE/Scope/ReadingsExamples.lean | `perChoice` compares with `govern D` | `ReadingsExamples.lean:61` (SR-1-pc), `:62` (SR-1-g2) |
 | S1 | stub test | the proof without `hd`; with an extra premise; stub and proof both without `hd` | `test_each_statement_sc5rb_proves_is_the_stubs_text` (3 of 3) |
+| S2 | relay (F1 round) | the `scope` mode answers `title` with `u3` repeated as before the check (`ok`, no rows), fed through `relay.answer` | `test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id[1-True-units.u3-title]`: `assert 0 == 2` |
 
 ## Trust (`tools/trust_map.py --check`, against 287d5dc601e6)
 
@@ -64,7 +68,7 @@ FOLLOW-UPS.md row under "## sc-5rdb". PASS.
 - `lake build`: `Build completed successfully (1241 jobs)`. `python3 lean/audit.py`: `PASS: 734 source files; 8200 named theorem declarations audited`.
 - `regen_generated.py --write`, once on the change and once after the merge of main. The codemap drift it wrote from other merges was left out.
 - Selected tests (`mac-pytest.sh --select -- --base 287d5dc60 --run`, ran on the VM): every file exited 0 except `tests/test_assurance_manifest.py` (2 tests: `Wire.lean`'s pin). After the repin, `mac-pytest.sh -- <the 2 ids>`: `2 passed`. `tests/test_trust_mutants.py`: 564 passed.
-- Pre-review gate on c7bbfaf2: the repin had not moved `total_lines`, and the rerun of the 2 pin ids did not cover the 3 tests that read it. `test_trusted_decoder_line_ranges_are_pinned` and the two `test_assurance_manifest_merge_*` tests of `tests/test_regen_generated.py` failed in the chain's selected run (41,093 against 41,091). Fixed by the total above. The chain's full gate on c7bbfaf2 stopped before its suite: at collection, the merge base's own `ve_service` had a build its `lean/checkers.lock` does not list on the aarch64 runner. The chain treated this as a runner problem, so no full suite has passed on this branch.
+- Pre-review gate on c7bbfaf2: the repin had not moved `total_lines`, and the rerun of the 2 pin ids did not cover the 3 tests that read it. `test_trusted_decoder_line_ranges_are_pinned` and the two `test_assurance_manifest_merge_*` tests of `tests/test_regen_generated.py` failed in the chain's selected run (41,093 against 41,091). Fixed by the total above. The chain's full gate on c7bbfaf2 stopped before its suite: at collection, the merge base's own `ve_service` had a build its `lean/checkers.lock` does not list on the aarch64 runner. The chain treated this as a runner problem. The full gate on 4b8d25c05 then passed (31,651 passed, 0 failed).
 - The pre-existing `tests/test_scope_sc5r_stub.py` passed (7), and the S1 probe ran.
 - `review-ready.py --delta-dri-needed`: rc 0.
 
@@ -87,7 +91,10 @@ With this report (107 lines) the item ends at about 653 added lines, about 50 ov
 5. R8 binding: N.A. No field is read from a Lean answer.
 6. Gate evidence matches the final HEAD: PASS. The chain's gate runs on the final HEAD; commits below.
 7. No unsigned item: PASS. `review-ready.py --delta-dri-needed` rc 0; trust under R16.
-8. Every user-visible change in DELTA: PASS. Row 1 (the statement) and row 2 (the earlier refusal).
+8. Every user-visible change in DELTA: PASS. Row 1 (the statement), row 2 (the document mode's earlier refusal), row 3
+   (the `scope` mode's `ok` answers now refused) and row 4 (`frame`'s fault order). The first round named only the
+   document mode (review F1): each route that reaches `decodeBlock` (`checkDocSets`, the compose `scopeRewriter`
+   before `checkCore`, and `readSplit`) was then listed, and each was run on the six effects before and after.
 9. Test selection finds the tests: PASS. The selection included the stub, scope, assurance and trust tests (the manifest failure was found by it).
 10. Lean statements say what is claimed: PASS. The statement is about `governSets D`'s returned value; M3 breaks its proof.
 11. Budgets and limits fail closed: N.A. No budget changed; the doc-only 8.2 row matches sc-4.
