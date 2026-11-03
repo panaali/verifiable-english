@@ -8270,7 +8270,7 @@ module VE.Discourse.Compose 97599aaad9a26fa3a5a2444f4175d19acc613f9c37b4fa48d40c
 486:0-494:47 theorem VE.Discourse.composed_unchanged@VE.Discourse.Compose
 496:0-500:58 theorem VE.Discourse.composed_base_unchanged@VE.Discourse.Compose
 502:0-509:47 theorem VE.Discourse.composed_unchanged_error@VE.Discourse.Compose
-module VE.Discourse.ComposeExamples 15b1e14cd4c1b1e32bcdb27a40e56bc674dcb024b2bd40b1f0b234454bbb0fca
+module VE.Discourse.ComposeExamples a2f34f79cfa76cd23b7ef0be36688b1dfddae6071dd9a8cc8a63ad3fab5ea9fb
 11:0-11:45 def VE.Discourse.ComposeExamples.src1@VE.Discourse.ComposeExamples
 12:0-12:65 def VE.Discourse.ComposeExamples.src2@VE.Discourse.ComposeExamples
 14:0-23:68 def VE.Discourse.ComposeExamples.vocabulary@VE.Discourse.ComposeExamples
@@ -8300,8 +8300,6 @@ module VE.Discourse.ComposeExamples 15b1e14cd4c1b1e32bcdb27a40e56bc674dcb024b2bd
 185:0-185:112 def VE.Discourse.ComposeExamples.env@VE.Discourse.ComposeExamples
 186:0-187:87 def VE.Discourse.ComposeExamples.payload@VE.Discourse.ComposeExamples
 216:0-217:102 def VE.Discourse.ComposeExamples.envCase@VE.Discourse.ComposeExamples
-230:0-237:10 def VE.Discourse.ComposeExamples.constCount@VE.Discourse.ComposeExamples
-239:0-242:19 def VE.Discourse.ComposeExamples.composedPath@VE.Discourse.ComposeExamples
 module VE.Discourse.ComposeKeys 31aaa63d7fd1ff0a835725e801b9dfea8e1e6f49ac5c652ae46b63fe6a8accee
 7:0-7:60 theorem VE.Discourse.cmp_i_d@VE.Discourse.ComposeKeys
 8:0-8:71 theorem VE.Discourse.cmp_ir_d@VE.Discourse.ComposeKeys

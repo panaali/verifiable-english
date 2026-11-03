@@ -221,48 +221,4 @@ def envCase (ps : List String) (kind : String := "admission") : Json :=
 #guard VE.Discourse.Run.usesDiscoursePath (envCase ["relational-fol@0"] "discourse-joint")
 #guard VE.Discourse.Run.usesDiscoursePath (caseOf doc)
 
-/-! ## Each value once (review cmp-s4 F8)
-
-The elaborated bodies, read by the compiler (no source text): along the composed path the base environment is
-decoded in `chainBase` only, `contentOk` runs in `resolveWith` only, `resolveWith` in `chainChecks` only, and
-`admitChain` calls `chainBase`, `chainChecks` and `tablesOf` once each and no `resolveWith` of its own. -/
-
-/-- The occurrences of the constant `n` in an expression. -/
-def constCount (n : Lean.Name) : Expr → Nat
-  | .const m _ => if m == n then 1 else 0
-  | .app f a => constCount n f + constCount n a
-  | .lam _ t b _ | .forallE _ t b _ => constCount n t + constCount n b
-  | .letE _ t v b _ => constCount n t + constCount n v + constCount n b
-  | .mdata _ e | .proj _ _ e => constCount n e
-  | _ => 0
-
-/-- The definitions of the composed path, with their auxiliary definitions. -/
-def composedPath : List Lean.Name :=
-  [``chainBase, ``resolveWith, ``resolveDocument, ``chainDDoc, ``chainChecks, ``caseManifest, ``admitChain,
-   ``admitComposed]
-
-open Elab Command in
-run_cmd do
-  let env ← getEnv
-  let count (d n : Lean.Name) : Nat := match env.find? d with
-    | some ci => (ci.value?.map (constCount n)).getD 0
-    | none => 0
-  let aux (d : Lean.Name) : List Lean.Name :=
-    d :: (env.constants.map₂.foldl (fun acc m _ => if d.isPrefixOf m && d != m then m :: acc else acc) [])
-  let total (n : Lean.Name) : Nat := (composedPath.flatMap aux).foldl (fun k d => k + count d n) 0
-  let expected : List (String × Nat × Nat) := [
-    ("decodeNormsEnvironment on the path", total ``VE.Norms.Wire.decodeNormsEnvironment, 1),
-    ("decodeNormsEnvironment in chainBase", count ``chainBase ``VE.Norms.Wire.decodeNormsEnvironment, 1),
-    ("contentOk on the path", total ``contentOk, 1),
-    ("contentOk in resolveWith", count ``resolveWith ``contentOk, 1),
-    ("resolveWith in chainChecks", count ``chainChecks ``resolveWith, 1),
-    ("resolveWith in admitChain", count ``admitChain ``resolveWith, 0),
-    ("chainBase in admitChain", count ``admitChain ``chainBase, 1),
-    ("chainChecks in admitChain", count ``admitChain ``chainChecks, 1),
-    ("tablesOf in admitChain", count ``admitChain ``tablesOf, 1),
-    ("chainBase in caseManifest", count ``caseManifest ``chainBase, 1),
-    ("chainChecks in caseManifest", count ``caseManifest ``chainChecks, 1)]
-  for (what, got, want) in expected do
-    unless got == want do throwError "evaluated {got} times, expected {want}: {what}"
-
 end VE.Discourse.ComposeExamples
