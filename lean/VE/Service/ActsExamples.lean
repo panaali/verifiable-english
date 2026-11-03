@@ -576,6 +576,9 @@ def ruleOn : Json := Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "
 def readingsOf (j : Json) : Json := j.setObjVal! "profiles" (toJson ["acts@0", "norms@0", "readings@1", "relational-fol@0"])
 #guard err (VE.Readings.Wire.decodeEnvironment (readingsOf joinedE)) ==
   "UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of p027 joins acts"
+#guard err (VE.Readings.Wire.decodeEnvironment (readingsOf (envOf plain6 (block fxs) (default := "deny")))) ==
+  "UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of p027 joins acts"
+#guard err (VE.Norms.Wire.canonicalEnvironmentJson (readingsOf joinedE)) == d4
 #guard err (VE.Readings.Wire.decodeEnvironment (readingsOf lexicalE)) == "ok"
 #guard VE.Readings.Wire.lexicalAct VE.Acts.TableExamples.fx6 ⟨"p", ["person"], false, .permission, some "{0} be held", none⟩
 #guard !VE.Readings.Wire.lexicalAct [] ⟨"p", ["person"], false, .permission, some VE.Acts.DecodeExamples.a6, none⟩

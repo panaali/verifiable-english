@@ -188,6 +188,10 @@ def e5j (j : Json) := (decodeElaboratedU j norms27).toOption.map fun e =>
 /-- `decodeVocab`'s answer on a block: D-31 from `checkVocab`, a malformed field refused, an absent one empty. -/
 def vocabText (block : Json) : String := errText (decodeVocab block)
 #guard (decodeVocab block6).toOption == some V6
+-- Each field read from its own key: markers beside `split`, modifiers, a head of two words.
+#guard (decodeVocab (blockJ [] VE.Acts.MeaningExamples.V6b)).toOption == some VE.Acts.MeaningExamples.V6b
+#guard (decodeVocab (blockJ [] ⟨[⟨["turn", "away"], [""], [], ["in"]⟩], []⟩)).toOption ==
+  some ⟨[⟨["turn", "away"], [""], [], ["in"]⟩], []⟩
 #guard (decodeVocab (Json.mkObj [])).toOption == some ⟨[], []⟩
 #guard (decodeVocab (Json.mkObj [("adverbs", toJson ["freely"])])).toOption == some ⟨[], ["freely"]⟩
 #guard vocabText (Json.mkObj [("frames", toJson [frameJ ⟨["seek"], [""], [], []⟩, frameJ ⟨["seek"], [""], [], []⟩])]) ==
