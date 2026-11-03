@@ -170,9 +170,12 @@ theorem enclose_sound (r : Rounding) (inputs : List (String × Printed)) (e : Ex
       obtain ⟨⟨la, ha⟩, hea, hr⟩ := Option.map_eq_some_iff.mp h
       have := Interval.pow_sound (a := (la, ha)) k (iha la ha hea _ hxa); rw [hr] at this; exact this
 
-/-- An interval computed is charged its endpoints' sizes. -/
+/-- An interval computed is charged its endpoints' sizes, then held to the digit limit as `chargeQ` holds a value: an
+endpoint beyond it gives no enclosure, so no operation ever reads an endpoint past the limit. -/
 def chargeI (limit : Nat) (i : Rat × Rat) (w : Nat) : Option (Option (Rat × Rat) × Nat) :=
-  if limit < w + qbits i.1 + qbits i.2 then none else some (some i, w + qbits i.1 + qbits i.2)
+  if limit < w + qbits i.1 + qbits i.2 then none
+  else if Small i.1 ∧ Small i.2 then some (some i, w + qbits i.1 + qbits i.2)
+  else some (none, w + qbits i.1 + qbits i.2)
 
 /-- Two charged enclosures, in order, combined by `f`; no enclosure on either side gives none. -/
 def binI (limit : Nat) (ea eb : Nat → Option (Option (Rat × Rat) × Nat))
@@ -186,8 +189,8 @@ def binI (limit : Nat) (ea eb : Nat → Option (Option (Rat × Rat) × Nat))
     | (none, w) => some (none, w)
 
 /-- `enclose`, charged in 3.2's unit: one unit a visit and each endpoint's size, so each node is computed once and
-its size paid; none (UNKNOWN) when the units would pass `limit`. A power beyond the digit limit is not computed: no
-enclosure. -/
+its size paid; none (UNKNOWN) when the units would pass `limit`. A power beyond the digit limit is not computed, and any
+other endpoint beyond it is held (`chargeI`): no enclosure. -/
 def encloseC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) :
     Expr → Nat → Option (Option (Rat × Rat) × Nat)
   | .lit q, w => visitC limit w (chargeI limit (q, q))
@@ -207,9 +210,13 @@ def encloseC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) :
       if powTooLarge x.1 k || powTooLarge x.2 k then some (none, w) else chargeI limit (Interval.pow x k) w
     | (none, w) => some (none, w)
 
-theorem chargeI_some {limit : Nat} {i : Rat × Rat} {w : Nat} {j : Option (Rat × Rat)} {w' : Nat}
-    (h : chargeI limit i w = some (j, w')) : j = some i := by
-  unfold chargeI at h; split at h <;> simp_all
+theorem chargeI_some {limit : Nat} {i j : Rat × Rat} {w w' : Nat}
+    (h : chargeI limit i w = some (some j, w')) : j = i ∧ Small i.1 ∧ Small i.2 := by
+  unfold chargeI at h; split at h
+  · cases h
+  · split at h
+    · simp only [Option.some.injEq, Prod.mk.injEq] at h; obtain ⟨rfl, -⟩ := h; exact ⟨rfl, ‹_›⟩
+    · simp at h
 
 theorem binI_some {limit : Nat} {ea eb : Nat → Option (Option (Rat × Rat) × Nat)}
     {f : Rat × Rat → Rat × Rat → Option (Rat × Rat)} {w : Nat} {i : Rat × Rat} {w' : Nat}
@@ -225,18 +232,18 @@ theorem binI_some {limit : Nat} {ea eb : Nat → Option (Option (Rat × Rat) × 
     | none => cases h
     | some x =>
       simp only at h; split at h
-      · rename_i j hj; cases chargeI_some h; exact ⟨x, y, _, _, _, ha, hb, hj⟩
+      · rename_i j hj; obtain ⟨rfl, -⟩ := chargeI_some h; exact ⟨x, y, _, _, _, ha, hb, hj⟩
       · cases h
 
 /-- A charged enclosure is `enclose`'s. -/
 theorem encloseC_some (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (e : Expr) (w : Nat)
     (i : Rat × Rat) (w' : Nat) (h : encloseC limit r inputs e w = some (some i, w')) : enclose r inputs e = some i := by
   induction e generalizing w i w' with
-  | lit q => unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h; simp [enclose, chargeI_some h]
+  | lit q => unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h; simp [enclose, (chargeI_some h).1]
   | val n =>
     unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h
     split at h
-    · rename_i hp; simp [enclose, hp, chargeI_some h]
+    · rename_i hp; simp [enclose, hp, (chargeI_some h).1]
     · cases h
   | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
     unfold encloseC at h
@@ -251,6 +258,42 @@ theorem encloseC_some (limit : Nat) (r : Rounding) (inputs : List (String × Pri
     | some x =>
       simp only at h; split at h
       · cases h
-      · simp [enclose, iha _ _ _ ha, chargeI_some h]
+      · simp [enclose, iha _ _ _ ha, (chargeI_some h).1]
+
+/-- A charged enclosure's endpoints are within the digit limit, so every operation reads operands of bounded size. -/
+theorem encloseC_small (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (e : Expr) (w : Nat)
+    (i : Rat × Rat) (w' : Nat) (h : encloseC limit r inputs e w = some (some i, w')) : Small i.1 ∧ Small i.2 := by
+  have done : ∀ {j v v'}, chargeI limit j v = some (some i, v') → Small i.1 ∧ Small i.2 := fun h => by
+    obtain ⟨rfl, hs⟩ := chargeI_some h; exact hs
+  have bin : ∀ {ea eb f v}, binI limit ea eb f v = some (some i, w') → Small i.1 ∧ Small i.2 := fun h => by
+    obtain ⟨_, h⟩ := visitC_some h
+    obtain ⟨⟨x, w1⟩, -, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨y, w2⟩, -, h⟩ := Option.bind_eq_some_iff.mp h
+    cases y with
+    | none => cases h
+    | some y =>
+      cases x with
+      | none => cases h
+      | some x =>
+        simp only at h; split at h
+        · exact done h
+        · cases h
+  cases e with
+  | lit q => unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h; exact done h
+  | val n =>
+    unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h
+    split at h
+    · exact done h
+    · cases h
+  | add a b | sub a b | mul a b | div a b => unfold encloseC at h; exact bin h
+  | pow a k =>
+    unfold encloseC at h; obtain ⟨_, h⟩ := visitC_some h
+    obtain ⟨⟨x, w1⟩, -, h⟩ := Option.bind_eq_some_iff.mp h
+    cases x with
+    | none => cases h
+    | some x =>
+      simp only at h; split at h
+      · cases h
+      · exact done h
 
 end VE.Calc

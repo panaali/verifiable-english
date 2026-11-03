@@ -34,6 +34,8 @@ def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value)
 V6_PRINTED = "d0 = -1/10, d1 = -133/1000, d2 = 47/500, d3 = -24/125, d4 = 21/1000, d5 = 43/500, d6 = -57/1000, " \
              "d7 = 0, d8 = 61/1000, d9 = -1/20, d10 = -123/500, d11 = -29/1000"
 
+INCONCLUSIVE = "unknown: neither a witness nor an enclosure decides it"
+
 FIXTURES = [
     # R-5 (C-1's k1 and k2): k1 refuted by its enclosure [13/20, 3/4]; k2 witnessed at a's lower endpoint 7/20.
     ("r5-k1", "say (run C1 inA [k1])", "fails output 0 [13/20, 3/4]"),
@@ -51,16 +53,39 @@ FIXTURES = [
     ("r10b-unknown", "say (run C1 inA [lt a (.val \"n\")])", "unknown: the budget of 6 evaluation steps ran out"),
     ("r10b-undefined", "say (run C1 inA [lt a (.val \"m\")])", "undefined"),
     ("inconclusive", "say (run C1 inA [.compare ⟨.eq, false⟩ a (.lit (41 / 100))])",
-     "unknown: neither a witness nor an enclosure decides it"),
+     INCONCLUSIVE),
     ("witness-points", "say (run D12 twelve [.compare ⟨.eq, false⟩ (.val \"d0\") (.lit (41 / 100))])",
      "unknown: the consistency search tried its 4,096 candidate points"),
     # V-6: the printed per-template values are the witness of the three printed roots.
     ("v6", "say (run V6 V6in V6outs)", f"holds {V6_PRINTED}"),
     # The limit: none at 0 units; C-1's 8,191-node chain ends at its work, one unit short is refused.
     ("limit-zero", "say (consistencyRun 0 C1 .tiesUp inA [k2])", "limit"),
-    ("chain-at-work", "say (consistencyRun 196596 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])",
+    ("chain-at-work", "say (consistencyRun 8716291 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])",
      "holds a = 2/5"),
-    ("chain-short", "say (consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])", "limit"),
+    ("chain-short", "say (consistencyRun 8716290 (chain 12) .tiesUp inA [lt (.val \"a12\") (.lit 2000)])", "limit"),
+    ("search-short", "say (consistencyRun 1000000 Dhundred .tiesUp hundred [d0IsNot])", "limit"),
+    ("search-at-max-work", "say (run Dhundred hundred [d0IsNot])",
+     "unknown: the consistency search tried its 4,096 candidate points"),
+    # The review's two chains at the runner's limit: answered without walking 2^41 and 2^24 nodes.
+    ("add-chain-max-work", "say (run (chain 40) inA [lt (.val \"a40\") (.lit 1)])", INCONCLUSIVE),
+    ("mul-chain-max-work", "say (run (squares 23) inA [lt (.val \"a23\") (.lit 1)])", INCONCLUSIVE),
+    # The node limit holds the outputs together, after a refusal or a fault, before either phase.
+    ("nodes-at-limit", "say (run C1 inA [atCap])", "holds a = 2/5"),
+    ("nodes-past-limit", "say (run C1 inA [pastCap])", INCONCLUSIVE),
+    ("nodes-together", "say (run (chain 12) inA [lt (.val \"a12\") (.lit 2000), lt (.val \"a12\") (.lit 2000)])",
+     INCONCLUSIVE),
+    ("nodes-before-refutation", "say (run C1 inA [k1, pastCap])", INCONCLUSIVE),
+    ("nodes-after-fault", "say (run C1 inA [pastCap, lt a (.val \"m\")])", "undefined"),
+    ("nodes-after-refusal", "say (run C1 inA [pastCap, lt a (.val \"f\")])", "ConsistencyName: f"),
+    # The digit hold, on each side of the limit: an enclosure past it is none, and its points still decide.
+    ("hold-a11-refutes", "toString ((run (squares 11) inA [lt (.val \"a11\") (.lit 0)]).map (·matches .fails ..))",
+     "(some true)"),
+    ("hold-a12-no-enclosure", "say (run (squares 12) inA [lt (.val \"a12\") (.lit 0)])", INCONCLUSIVE),
+    ("hold-a12-witness", "say (run (squares 12) inA [lt (.val \"a12\") (.lit 1)])", "holds a = 2/5"),
+    ("hold-at-limit", "toString (noEnclosure big)", "false"),
+    ("hold-past-limit", "toString ([Expr.lit (10 ^ 4096), .add big (.lit 1), .mul e2048 e2048, "
+                        ".div e2048 (.lit (1 / 10 ^ 2048)), .pow e2048 2].map noEnclosure)",
+     "[true, true, true, true, true]"),
     # V-7 and V-8 (1/512, ties up, then half to even) and V-7b (1/4,096, both rules).
     ("v7-ties-up", "toString (V7.map (grainRefutes 512 .tiesUp))",
      "[false, false, false, true, false, false, false, false]"),

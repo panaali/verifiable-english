@@ -927,7 +927,7 @@
 'VE.Calc.binomialTail_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.causes_accumulate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.causes_step' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Calc.chargeI_some' depends on axioms: [propext]
+'VE.Calc.chargeI_some' depends on axioms: [propext, Quot.sound]
 'VE.Calc.charge_eq' depends on axioms: [propext]
 'VE.Calc.checked_steps' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.choose_succ_succ' does not depend on any axioms
@@ -943,6 +943,7 @@
 'VE.Calc.denotes_rescale' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.differsAt_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.digitCount_le_iff' depends on axioms: [propext, Quot.sound]
+'VE.Calc.encloseC_small' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.encloseC_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.enclose_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.enclosesC_some' depends on axioms: [propext, Classical.choice, Quot.sound]
