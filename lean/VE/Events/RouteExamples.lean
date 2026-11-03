@@ -134,6 +134,8 @@ def plainEnv (ps : List String) : Json := (envJ [xPerm] strictSoft).setObjVal! "
 #guard pathOf "norm-defaults-x" (plainEnv ["norms@0", "relational-fol@0"])
 #guard pathOf "x" (plainEnv ["events@0", "norms@0", "relational-fol@0"])
 #guard !pathOf "x" (plainEnv ["norms@0", "relational-fol@0"])
+-- The profile read anywhere in the list, not first: `documents@1` sorts before it.
+#guard pathOf "x" (plainEnv ["documents@1", "events@0", "norms@0", "relational-fol@0"])
 
 -- The answer is the block-less answer's, field by field, with the pack's rows beside it.
 def fieldsOf (e : Json) : List String := ((VE.Bridge.fields (answer (caseOf "norm-defaults-elaborate" e))).toOption.getD []).map (·.1)
@@ -197,6 +199,18 @@ def rightsFilled (k : Nat) (dates : String) : String :=
   | .ok _ => "ok"
   | .error e => e
 def threeDates : String := "[\"2026-10-12\",\"2026-10-13\",\"2026-10-14\"]"
+-- Every decision predicate of the rights document is charged too: two default norms, one more than one norm.
+def dflt : String := ",\"mode\":\"default\",\"exception\":{\"decided_by\":\"the court\",\"sufficient\":[],\"necessary\":[],\"factors\":[]}"
+def defaultDoc (two : Bool) : Json := parse ("[{\"right\":{\"name\":\"liberty\",\"holder\":\"person\",\"guard\":[\"top\"],\"lines\":[" ++
+  ",".intercalate ((if two then ["art9", "art9b"] else ["art9"]).map fun n => "{\"kind\":\"claim\",\"cites\":{},\"norm\":{\"name\":\"" ++
+    n ++ "\",\"predicate\":\"arrest_permitted\",\"sign\":false,\"guard\":[\"top\"],\"unless\":[],\"over\":[]" ++ dflt ++ "}}") ++ "]}}]")
+def defaultFilled (k : Nat) (two : Bool) : String :=
+  match decodeLayered ((rightsCase (rightsEnv (some (dayBlock threeDates)) rightsListed
+      ((List.range k).map fun i => rolePred s!"f{i}" "[\"state\",\"day\"]" "d"))).setObjVal! "document" (defaultDoc two)) with
+  | .ok _ => "ok"
+  | .error e => e
+#guard defaultFilled 248 false == "ok" && defaultFilled 249 false == "ResourceLimit: vocabulary size"
+#guard defaultFilled 247 true == "ok" && defaultFilled 248 true == "ResourceLimit: vocabulary size"
 #guard rightsFilled 247 threeDates == "ok" && rightsFilled 248 threeDates == "ResourceLimit: vocabulary size"
 #guard rightsFilled 250 "[]" == "ok" && rightsFilled 251 "[]" == "ResourceLimit: vocabulary size"
 
@@ -207,11 +221,11 @@ def inPack : VE.Formula := before "date__2026_10_12" "date__2026_10_13"
 def notInPack : VE.Formula := before "date__2026_10_13" "date__2026_10_12"
 
 /-- A certificate as `bindCertX` binds it to `e`: its ids from Lean's own functions, its trace one `close`. -/
-def boundProof (e : Json) (c : VE.Formula) : Json := Id.run do
+def boundProof (e : Json) (c : VE.Formula) (ps : List String := listed) : Json := Id.run do
   let .ok L := decoded e | return .null
   let .ok canonical := VE.NormDefaults.Wire.canonicalEnvironmentJsonU e | return .null
-  let .ok id := VE.Route.Wire.environmentId listed canonical | return .null
-  let meaning := fun (a : VE.Formula) => (VE.Route.Wire.meaningId listed id (VE.NormDefaults.Wire.enc a)).toOption.getD ""
+  let .ok id := VE.Route.Wire.environmentId ps canonical | return .null
+  let meaning := fun (a : VE.Formula) => (VE.Route.Wire.meaningId ps id (VE.NormDefaults.Wire.enc a)).toOption.getD ""
   Json.mkObj [("checker_version", .str "ve-tableau-checker@2"), ("environment_id", .str id),
     ("premise_meaning_ids", toJson ((VE.NormDefaults.Wire.premisesX L.U L.X []).map meaning)),
     ("conclusion_meaning_id", .str (meaning c)), ("trace", parse "{\"rule\":\"close\"}")]
@@ -264,6 +278,11 @@ def excCount : Nat :=
 #guard (answer (excCase inPack)).getObjValD "premises" == toJson excCount && excCount == premiseCount + 1
 #guard (match VE.Events.replayEventsEntailment (excCase inPack) with
   | .ok r => r.X.length == 1 | .error _ => false)
+
+-- The replay reads the profile anywhere in the list: with `documents@1` before it, the same proof replays.
+def docListed : List String := ["documents@1", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+#guard (answer (replayCase (envOf (some blockJ) docListed) (boundProof (envOf (some blockJ) docListed) inPack docListed) inPack)).getObjValD
+  "valid" == .bool true
 
 -- A replay needs the block: with the profile alone there is no pack to replay against.
 #guard status (caseOf "norm-defaults-certificate" (envOf none)) == "InvalidInput: events"
