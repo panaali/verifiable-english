@@ -69,7 +69,7 @@ FOLLOW-UPS.md row under "## sc-5rdb". PASS.
 
 **Size:** 546 hand-written lines added and 53 removed outside generated files and `mutants.json`, before this report
 (`git diff --numstat 287d5dc60`). Of these, about 450 are the proof and its lemmas (95 of them sc-5rd's tree lemmas).
-With this report the item ends about 40 lines over ~600. Nothing is cut: the proof is the item's one deliverable.
+With this report (107 lines) the item ends at about 653 added lines, about 50 over ~600. Nothing is cut: the proof is the item's one deliverable.
 
 ## Spec re-read
 
