@@ -371,9 +371,9 @@ dropped, DRI 2026-11-03 pc-1g stop item 4) and their own identities. -/
         ((b.getObjValD "units").getArrVal? 0 |>.toOption |>.map (·.getObjValD "meaning_id"))
   | _, _ => false
 
-/-! pc-1g, the trusted boundary `Json.compress` / `Json.parse` (DRI 2026-11-03 pc-1g stop item 2: both are `partial`
-in Lean v4.24.0, so their round trip is checked, not proved). A twin reads back the front matter `withoutJudgments`
-built, on every fixture; and on values the renderer emits, drawn by a fixed linear congruential generator: escapes,
+/-! pc-1g, the trusted boundary `Json.compress` / `Json.parse` (DRI 2026-11-03 pc-1g stop item 2: the kernel cannot
+unfold either in Lean v4.24.0, so their round trip is checked, not proved). A twin reads back the front matter
+`withoutJudgments` built, on every fixture; and on values the renderer emits, drawn by a fixed linear congruential generator: escapes,
 non-ASCII and astral characters, naturals up to 2^53-1, nested arrays and objects. -/
 
 /-- The front matter `withoutJudgments` builds for a case with no exchange (`withoutJudgmentsIn []`), as a value. -/
