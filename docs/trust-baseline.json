@@ -1881,6 +1881,20 @@
    "reason": "pc-1 review fix: VE/Service/Document.lean profilesOf +3 (a match on frontOf, inlined, which row 16's runs call too, so a change to it changes both sides of their @[csimp] lemmas) (K +0, S +0, V +3)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1, 2026-11-02",
    "commit": "a24d66a7cd593cf90b3baa9eb51f21edd406e763"
+  },
+  {
+   "class": "S",
+   "lines": 91,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 52,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }
