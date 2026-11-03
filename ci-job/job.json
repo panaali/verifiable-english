@@ -1,0 +1,14 @@
+{
+ "job": "ccg-val2-9971d6d7-t749540-s3",
+ "head": "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+ "argv": [
+  "ccg-val2-9971d6d7-t749540-s3",
+  "7fd4a6fa35a3fa00048ddb92e9396936eef284f0",
+  "8d58480372acc2270f2ee73a53473c12185ff0df",
+  "-",
+  "-",
+  "4",
+  "3/7",
+  "authority"
+ ]
+}
