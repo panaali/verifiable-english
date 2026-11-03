@@ -1,0 +1,13 @@
+# Native run of evidence/limit_bench.lean on the VM, `consistencyRun` at Work.maxWork (2^33 units), Lean tree of 9f203b085, one run, serial.
+# Shape, answer, wall time. 'limit 10' is the refusal (none), never a verdict.
+add chain, 40 levels	unknown: inconclusive	0 ms
+mul chain, 23 levels	unknown: inconclusive	4 ms
+mul chain, 12 levels (8,191 nodes, held)	unknown: inconclusive	49 ms
+add chain, 12 levels (8,191 nodes)	fails	20 ms
+512 inputs, no reads	limit 10	23440 ms
+1,447 inputs, no reads (past the wire's 512)	limit 10	11670 ms
+200 inputs, 5,000 reads (every point, near the limit)	limit 10	6054 ms
+512 inputs, 5,000 reads (the limit ends it)	limit 10	5962 ms
+12 inputs, 5,000 reads	limit 10	11603 ms
+12 inputs, 1,428 outputs of near-limit powers	limit 10	25930 ms
+12 inputs, a tree 9,999 levels deep	limit 10	6805 ms
