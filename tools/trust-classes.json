@@ -9693,7 +9693,6 @@
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
-        "VE.Service.Document.Env.basePredicates",
         "VE.Service.Document.Env.regulated",
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
@@ -9737,6 +9736,13 @@
         "VE.Service.Document.unitJson",
         "VE.Service.Document.checkCore",
         {
+          "name": "VE.Service.Document.checkCoreFast",
+          "tied": [
+            "VE.Service.Document.checkCore_eq_fast"
+          ]
+        },
+        "VE.Service.Document.checkDocSetsFast",
+        {
           "name": "VE.Service.Document.checkDoc",
           "tied": [
             "VE.Scope.scope_admission",
@@ -9750,7 +9756,11 @@
             "VE.Scope.checkDocSets_no_sets",
             "VE.Scope.scope_admission_sets"
           ]
-        }
+        },
+        "VE.Service.Document.judgmentsApart",
+        "VE.Service.Document.UnitContent.judgedIn",
+        "VE.Service.Document.checkBody",
+        "VE.Service.Document.Env.basePredicates"
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -9769,7 +9779,45 @@
         "VE.Service.Document.locatedRow",
         "VE.Service.Document.partsPrefix",
         "VE.Service.Document.undecided",
-        "VE.Service.Document.yieldedParts"
+        "VE.Service.Document.yieldedParts",
+        "VE.Service.Document.frontOf",
+        "VE.Service.Document.swap",
+        "VE.Service.Document.plainProfiles",
+        "VE.Service.Document.layerProfiles",
+        "VE.Service.Document.readingSetsIn",
+        "VE.Service.Document.readingSetsOf",
+        "VE.Service.Document.setModels",
+        "VE.Service.Document.setReferences",
+        "VE.Service.Document.sizedIn",
+        "VE.Service.Document.sizedSets",
+        "VE.Service.Document.statedIdsIn",
+        "VE.Service.Document.statedIds",
+        "VE.Service.Document.statedPairsIn",
+        "VE.Service.Document.statedPairs",
+        "VE.Service.Document.exchangeOf",
+        "VE.Service.Document.exchange",
+        "VE.Service.Document.swapInjectiveOf",
+        "VE.Service.Document.swapInjective",
+        "VE.Service.Document.pairIndex",
+        "VE.Service.Document.exchangeIn",
+        "VE.Service.Document.injStep",
+        "VE.Service.Document.injectiveH",
+        "VE.Service.Document.swapInjectiveH",
+        "VE.Service.Document.swapInjectiveIn",
+        "VE.Service.Document.swapInjectiveFast",
+        "VE.Service.Document.exchangeSet",
+        "VE.Service.Document.withoutJudgmentsIn",
+        "VE.Service.Document.withoutJudgmentsOf",
+        "VE.Service.Document.withoutJudgments",
+        "VE.Service.Document.swapClash",
+        "VE.Service.Document.clashRefusalOf",
+        "VE.Service.Document.clashRefusal",
+        "VE.Service.Document.clashRefusalIn",
+        "VE.Service.Document.clashRefusalFast",
+        "VE.Service.Document.exceptionConditioned"
+      ],
+      "G[I]": [
+        "VE.Service.Document.layeredIds"
       ]
     },
     "VE/Service/EnglishRun.lean": {
@@ -17493,6 +17541,32 @@
         "VE.SoftNorms.ActsFrameExamples.actsOf",
         "VE.SoftNorms.ActsFrameExamples.frame",
         "VE.SoftNorms.ActsFrameExamples.inhP"
+      ]
+    },
+    "VE/Judgments/Chain.lean": {
+      "S": [
+        "VE.Judgments.softContent"
+      ]
+    },
+    "VE/Judgments/ChainExamples.lean": {
+      "T": [
+        "VE.Judgments.ChainExamples.carved",
+        "VE.Judgments.ChainExamples.u",
+        "VE.Judgments.ChainExamples.environment",
+        "VE.Judgments.ChainExamples.model",
+        "VE.Judgments.ChainExamples.reading",
+        "VE.Judgments.ChainExamples.case",
+        "VE.Judgments.ChainExamples.layer",
+        "VE.Judgments.ChainExamples.noDocuments",
+        "VE.Judgments.ChainExamples.plain",
+        "VE.Judgments.ChainExamples.ids",
+        "VE.Judgments.ChainExamples.refusal",
+        "VE.Judgments.ChainExamples.clashBothSides",
+        "VE.Judgments.ChainExamples.f13l",
+        "VE.Judgments.ChainExamples.f13o",
+        "VE.Judgments.ChainExamples.bothRules",
+        "VE.Judgments.ChainExamples.withCondition",
+        "VE.Judgments.ChainExamples.f13lWith"
       ]
     }
   }
