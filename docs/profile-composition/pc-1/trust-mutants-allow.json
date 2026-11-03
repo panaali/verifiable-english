@@ -1,0 +1,5 @@
+{
+ "allow": [
+  {"definition": "VE.Service.Document.judgedViews", "operator": "eq-ne", "reason": "equivalent: the mutated `==` is the view's `asserted` flag (`u.kind == .str \"asserted\"`), and no status, usage or refusal reads `UnitView.asserted` (lean/VE/Judgments/Status.lean only stores it; grep of lean/VE finds no reader), so flipping it changes no answer"}
+ ]
+}
