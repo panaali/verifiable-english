@@ -104,7 +104,16 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 
   The product code was cut at (2). The excess is mostly the both-sides fixtures that the tool's survivors asked for
   (about 180 lines of `RouteExamples.lean`, added after the first trust run).
-- **Tests:** TESTS-LINE
+- **Tests:** the selected set ran once on the finished route, on the tree of ac7dfa4a3 plus the report (run
+  et-4b-2eb17c0c-t676215, Claude cloud, 6 shards, 545 units).
+  - Every unit passed but `tests/test_packs_guard_mutants.py::test_every_trusted_definition_has_a_mutant`. It was
+    fixed in 6ede4003b (`eventsArray`'s two mutants), and that file then passed whole (46 passed, VM).
+  - The first selection's failures were the new import edge (`check_lean_imports`, and `test_precommit_hook` through
+    it), `test_assurance_manifest` ×4, `test_profile_table` and `test_route_row_schemas` ×2. All were inventory lines
+    and fixed before that run; those files passed (189 passed, local).
+  - Fixtures added afterwards for the tool's survivors: built by `lake build` in the regeneration at 28d5911b6, and
+    `tests/test_events_wire_mutants.py` with `tests/test_events_route.py` on the Mac (112 passed, 28d5911b).
+  - `trust_map.py --check` PASS. No `main-known-red.txt` test failed. Not run: the full gate (the chain's).
 - **Pilot bytes:** 0. Python has no model of `events@0`, so no document, English line or pilot output moves.
   ET-6's estimate (UDHR +201 to 548 B) waits for et-4c and et-5. Nothing is claimed before a pilot audit.
 
@@ -121,7 +130,44 @@ Acceptance items: all AGENT; none HUMAN or EXTERNAL.
 
 ## Self-review against BUILDER-CHECKLIST
 
-FILL-SELF
+1. Lean answers typed and contained: PASS. The one new field, `events_premises`, is the typed `labelled_list`
+   (`runCaseE_fits`, `layeredCase_fits`), and every retyping of it is refused
+   (`tests/test_events_route.py::test_a_retyped_events_premises_row_is_refused`, 10 values). `base_environment`'s
+   constants are typed on an events case. The binding is et-5's relay (R8, row 2 of the plan's ET-5).
+2. Deliverables: PASS. The plan-row table above names each row's code and test, or et-4c. A grep of
+   `git diff main...HEAD` finds no Python copy of a Lean decision (the kind gate, the row, the view and the replay are
+   Lean's) and no report test. `feature/pc-1` (`Dispatch.lean`, `layersApart`) and `feature/pc-3b`
+   (`ContractExamples.lean`, the end of the file) overlap in other hunks.
+3. Tests can fail: PASS. `mutants.json`; `tests/test_events_wire_mutants.py` (HOOK and generated);
+   `tests/test_packs_guard_mutants.py`; `trust-mutants.json` (TM-COUNTS).
+4. Py/Lean/Rust agree: PASS. No Python or Rust decision changed. A list without `events@0` keeps every answer
+   (`gate_legacy`, the block-less guards); the route cases are in the selected run.
+5. R8 binding: N.A. Python reads none of the new fields yet (et-5 binds them). The schema half is item 1.
+6. Gate evidence on the final HEAD: PASS for what I ran (Tests, above). The chain runs the gate.
+7. No unsigned item: PASS. DELTA row 1 cites R16, row 2 cites SYNTHESIS 2.2 as ap-1bd's row 2 did, row 3 cites R2.
+8. Every user-visible change is in DELTA: PASS. The three rows. Nothing changes for a list without `events@0`.
+9. Test selection: PASS. The 545-unit selection picked `test_profile_table`, `test_route_row_schemas`,
+   `test_assurance_manifest`, `test_packs_guard_mutants` and `check_lean_imports`, which caught this branch's
+   inventory faults.
+10. Lean statements: PASS. `events_wire_acceptance` matches spec 6.3 word for word. `gate_events`,
+    `events_row_composition`, `hooked_X` and `decodeEventsWith_ok` state the returned values. The tool's
+    proof-breaking mutants name the proofs they break.
+11. Budgets and limits: PASS. `ResourceLimit: events premises` is tested at 253/254 and 250/251 (two of each) and at
+    20,000 links. The pack total is tested at `nodes 0 + nodes 1` and one under, `weaker 60`/`weaker 30`. The dates
+    are tested at 63/64 and 2,000, the vocabulary at 245/246, 247/248, 248/249 and 244/245. All fail closed with
+    `ResourceLimit`.
+12. CPU or memory: PASS. Every check before a quadratic step is charged first, and `repeatOf` is one pass (the
+    20,000-entry lists end in seconds, with no timing assert). No route without `events@0` does new work.
+13. Removed tests: N.A. No test removed.
+14. Both directions, cited evidence, spec re-read: PASS. Each new check has an accepting and a refusing fixture (the
+    tables above). Spec re-read:
+    - spec 1.1 (the row) against `packRows`;
+    - spec 3 (identity, the dates in the regenerated vocabulary, `base_environment`) against `routeView` and the
+      identity guards;
+    - spec 4 items 1 and 5 (the row first, `LinkNotOpen` before the dates) against `eventsHook` and
+      `decodeEventsWith`;
+    - spec 6.3 (`events_wire_acceptance`, `EventsEntailmentReplay`) against `Chain.lean`;
+    - plan ET-4 and 3.3 against the plan-row table.
 
 ## FIXMAP
 Files:
