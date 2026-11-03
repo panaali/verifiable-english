@@ -1,0 +1,168 @@
+{
+ "answers": {
+  "udhr": {
+   "coverage": {
+    "accounted_bytes": 345,
+    "bytes_by_kind": {
+     "bar": 117,
+     "limitation": 125,
+     "right": 32,
+     "unformalised": 71
+    },
+    "bytes_by_status": {
+     "OPEN": 274,
+     "UNFORMALISED": 71
+    },
+    "coverage_percent": 100,
+    "residual": {
+     "assumptions": 0,
+     "bridge_leaves": 0,
+     "open_terms": 0,
+     "unresolved_reading_sets": 0
+    },
+    "residual_total": 0,
+    "source_bytes": 345,
+    "unformalised_reasons": {
+     "other.discourse": 3
+    }
+   },
+   "document_id": "be266ef3fddb8c05626e26404b910c03b854729fe9c1742529cbc25c982b7321",
+   "id": "d",
+   "source": "# Universal Declaration of Human Rights\n\nEveryone has the right to life\n\n## Article 29\n\n2. In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law.\n\n## Article 30\n\nNothing in this Declaration may be interpreted as implying for any State, group or person any right to destroy them.\n",
+   "source_id": "c238342410c40ebe0b20a2c96d0bc388f46909582f3ca08ae5be1be61b74bdb7",
+   "status": "ok",
+   "units": [
+    {
+     "id": "u001",
+     "kind": [
+      "unformalised",
+      "other.discourse"
+     ],
+     "meaning": {
+      "unformalised": "other.discourse"
+     },
+     "span": [
+      0,
+      41
+     ],
+     "status": "UNFORMALISED",
+     "support": "none"
+    },
+    {
+     "content": {
+      "right": {
+       "holder": "person",
+       "lines": [
+        {
+         "kind": "claim",
+         "norm": {
+          "guard": [
+           "top"
+          ],
+          "name": "protect",
+          "over": [],
+          "predicate": "protect_required",
+          "sign": true,
+          "unless": []
+         }
+        }
+       ],
+       "name": "life"
+      }
+     },
+     "id": "u022a",
+     "kind": "right",
+     "meaning": "specified",
+     "meaning_id": "0563f44b88c1b2940587bc27ac1c1b43ae53ebb55fd7d7201fce59f74e6e5a46",
+     "span": [
+      41,
+      73
+     ],
+     "status": "OPEN",
+     "support": "none"
+    },
+    {
+     "id": "u109",
+     "kind": [
+      "unformalised",
+      "other.discourse"
+     ],
+     "meaning": {
+      "unformalised": "other.discourse"
+     },
+     "span": [
+      73,
+      88
+     ],
+     "status": "UNFORMALISED",
+     "support": "none"
+    },
+    {
+     "content": {
+      "limitation": {
+       "conditions": [
+        {
+         "name": "law",
+         "role": "necessary",
+         "verbalisation": "determined by law"
+        }
+       ],
+       "decided_by": "unstated",
+       "factors": [],
+       "kinds": "all",
+       "name": "l29",
+       "scope": [
+        "life"
+       ]
+      }
+     },
+     "id": "u111",
+     "kind": "limitation",
+     "meaning": "specified",
+     "meaning_id": "f3d38e2b107a64e3384f914d1cd4f209b10ea52ea60b43d7d02d8081fdf96d7e",
+     "span": [
+      88,
+      213
+     ],
+     "status": "OPEN",
+     "support": "none"
+    },
+    {
+     "id": "u113",
+     "kind": [
+      "unformalised",
+      "other.discourse"
+     ],
+     "meaning": {
+      "unformalised": "other.discourse"
+     },
+     "span": [
+      213,
+      228
+     ],
+     "status": "UNFORMALISED",
+     "support": "none"
+    },
+    {
+     "content": {
+      "bar": {
+       "name": "art30",
+       "reading": "rule"
+      }
+     },
+     "id": "u114",
+     "kind": "bar",
+     "meaning": "specified",
+     "meaning_id": "2efe646ca9d8ed45287ea083ab5e3be77599d32dda177e0137c0de6e99839bcc",
+     "span": [
+      228,
+      345
+     ],
+     "status": "OPEN",
+     "support": "none"
+    }
+   ]
+  }
+ },
+ "main": "f1c306460"
+}
