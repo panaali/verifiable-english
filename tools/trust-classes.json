@@ -17613,7 +17613,10 @@
         "VE.Judgments.ChainExamples.udhrLim",
         "VE.Judgments.ChainExamples.editUnit",
         "VE.Judgments.ChainExamples.f11",
-        "VE.Judgments.ChainExamples.f13c"
+        "VE.Judgments.ChainExamples.f13c",
+        "VE.Judgments.ChainExamples.twinFront",
+        "VE.Judgments.ChainExamples.drawnLeaf",
+        "VE.Judgments.ChainExamples.drawn"
       ]
     },
     "VE/SoftNorms/ActsFrameExamples.lean": {

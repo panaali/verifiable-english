@@ -2729,11 +2729,12 @@ def setVerdictFields (s : Json) : Json :=
       | _ => r))
   | _ => s
 
-/-- An answer without the fields the layer may change (`judgments`, `document_id`, `source_id`, `coverage`, every
-unit's `status`) and without exactly the environment-dependent identities (2e): each unit's `meaning_id`, each
-echoed reading's `meaning_id`, each echoed model key and `distinguishing_models` reference. -/
+/-- An answer without the fields the layer may change (`judgments`, `undeclared_evaluative`, `document_id`,
+`source_id`, `coverage`, every unit's `status`; DRI 2026-11-03, pc-1g stop item 4) and without exactly the
+environment-dependent identities (2e): each unit's `meaning_id`, each echoed reading's `meaning_id`, each echoed model
+key and `distinguishing_models` reference. -/
 def verdictFields (a : Json) : Json :=
-  let a := ["judgments", "document_id", "source_id", "coverage"].foldl (fun a k => dropKey k a) a
+  let a := ["judgments", "undeclared_evaluative", "document_id", "source_id", "coverage"].foldl (flip dropKey) a
   let a := match a.getObjValD "units" with
     | .arr us => a.setObjVal! "units" (.arr (us.map fun u => dropKey "meaning_id" (dropKey "status" u)))
     | _ => a
