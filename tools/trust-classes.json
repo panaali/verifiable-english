@@ -17517,7 +17517,27 @@
         "VE.Events.RouteExamples.decoded",
         "VE.Events.RouteExamples.filled",
         "VE.Events.RouteExamples.refusedKind",
-        "VE.Events.RouteExamples.premiseLabels"
+        "VE.Events.RouteExamples.premiseLabels",
+        "VE.Events.RouteExamples.pathOf",
+        "VE.Events.RouteExamples.plainEnv",
+        "VE.Events.RouteExamples.fieldsOf",
+        "VE.Events.RouteExamples.fieldOf",
+        "VE.Events.RouteExamples.twoRules",
+        "VE.Events.RouteExamples.filled2",
+        "VE.Events.RouteExamples.rightsEnv",
+        "VE.Events.RouteExamples.rightsDoc",
+        "VE.Events.RouteExamples.rightsListed",
+        "VE.Events.RouteExamples.dayBlock",
+        "VE.Events.RouteExamples.rightsCase",
+        "VE.Events.RouteExamples.rightsPacks",
+        "VE.Events.RouteExamples.rightsFilled",
+        "VE.Events.RouteExamples.threeDates",
+        "VE.Events.RouteExamples.before",
+        "VE.Events.RouteExamples.inPack",
+        "VE.Events.RouteExamples.notInPack",
+        "VE.Events.RouteExamples.boundProof",
+        "VE.Events.RouteExamples.replayCase",
+        "VE.Events.RouteExamples.premiseCount"
       ]
     }
   }
