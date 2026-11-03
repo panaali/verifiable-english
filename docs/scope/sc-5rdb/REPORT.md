@@ -1,7 +1,8 @@
 # sc-5rdb: `governSets_every_choice` proved for distinct unit ids; `decodeBlock` refuses a repeated unit id
 
-**Status:** built, ready for review. No signature is reserved; both DELTA rows are signed by the DRI (items 1 and 2 of
-reviews/dri-decisions-20261031-sc-5rd.md). **Next:** SC-6 (the UDHR rights reach) and PC-5b.
+**Status:** built, ready for review. No signature is reserved. DELTA rows 1 and 2 are signed by the DRI (items 1 and 2 of
+reviews/dri-decisions-20261031-sc-5rd.md), row 3 by the DRI 2026-11-03 (reviews/dri-decisions-20261103-sc-5rdb.md
+item 1), row 4 by standing ruling R2. **Next:** SC-6 (the UDHR rights reach) and PC-5b.
 **What changed:** the last of spec 11.3's four `JsonWF` statements is proved, with the one premise the DRI signed,
 `(hd : (unitIds D.doc).Nodup)`. The scope boundary now refuses a repeated unit id (2 trusted lines), and the route
 corollary `decodeBlock_sets` discharges `hd` from that check, so no caller takes it as a hypothesis. The check is a
@@ -71,10 +72,17 @@ FOLLOW-UPS.md row under "## sc-5rdb". PASS.
 - Pre-review gate on c7bbfaf2: the repin had not moved `total_lines`, and the rerun of the 2 pin ids did not cover the 3 tests that read it. `test_trusted_decoder_line_ranges_are_pinned` and the two `test_assurance_manifest_merge_*` tests of `tests/test_regen_generated.py` failed in the chain's selected run (41,093 against 41,091). Fixed by the total above. The chain's full gate on c7bbfaf2 stopped before its suite: at collection, the merge base's own `ve_service` had a build its `lean/checkers.lock` does not list on the aarch64 runner. The chain treated this as a runner problem. The full gate on 4b8d25c05 then passed (31,651 passed, 0 failed).
 - The pre-existing `tests/test_scope_sc5r_stub.py` passed (7), and the S1 probe ran.
 - `review-ready.py --delta-dri-needed`: rc 0.
+- Review F1 round, on 522991fdb: PROBE F1 rc 1 before the DELTA rewrite and rc 0 after; `review-ready.py
+  --delta-dri-needed` rc 0 on the four rows. The new `tests/test_scope_answer.py -k sc5rdb`: 13 passed. `lake build`:
+  `Build completed successfully (1241 jobs)`. `python3 lean/audit.py`: PASS (734 files, 8205 declarations).
+  `tools/trust_map.py --check`: PASS, K +0, S +0, `VE/Scope/Wire.lean` trusted +2. Selected tests (`mac-pytest.sh
+  --select -- --base 287d5dc60 --run`, on ve-mac-1): exit 0, 0 failed ids.
 
 **Size:** 546 hand-written lines added and 53 removed outside generated files and `mutants.json`, before this report
 (`git diff --numstat 287d5dc60`). Of these, about 450 are the proof and its lemmas (95 of them sc-5rd's tree lemmas).
-With this report (107 lines) the item ends at about 653 added lines, about 50 over ~600. Nothing is cut: the proof is the item's one deliverable.
+With this report (108 lines before the F1 round) the item ended at about 654 added lines, about 50 over ~600. Nothing is
+cut: the proof is the item's one deliverable. The F1 round adds 42 test lines, 11 lines of `mutants.json` and about 20
+lines of records.
 
 ## Spec re-read
 
@@ -105,6 +113,11 @@ With this report (107 lines) the item ends at about 653 added lines, about 50 ov
 ## Commits (`git log --oneline --no-merges main..HEAD`, saved before this report)
 
 ```
+522991fdb sc-5rdb F1: DELTA row 2 is the document mode; row 3 the scope mode's ok -> InvalidInput (DRI 2026-11-03 item 1); row 4 frame's fault order (R2); REPORT corrected; S2
+a83d40482 sc-5rdb F1: both routes that decode the scope block refuse a repeated unit id, per effect, with Lean's text
+4b8d25c05 sc-5rdb: lean_decoders.total_lines counts Wire.lean's 2 new pinned lines; doc regenerated; REPORT
+c7bbfaf2e sc-5rdb: REPORT size line
+eb4589abe sc-5rdb: REPORT
 7d950c6ec sc-5rdb: trust-classes.json as main's text plus the three example helpers (the merge had reordered its modules)
 a4e667a83 sc-5rdb: pin lean/VE/Scope/Wire.lean whole again (decodeBlock's repeated unit id refusal, reviewed)
 5a223d662 sc-5rdb: regenerate the Lean inventories after the merge of main
