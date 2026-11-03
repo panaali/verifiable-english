@@ -3,7 +3,7 @@
 Status: all four deliverables built. `ve document check` admits a part document under W6a's lists with `documents@1`, and refuses the constitution's four-profile list at the gate.
 Changed: `ve/cardinality.py` (new relay), Lean's `document` mode reads `cardinality` content, `tests/test_cardinality_{lean,answer}.py`, two route cases, the layer row.
 Open: the four-profile list stays refused, so the constitution's 29 units stay blocked until qt-a4b's first row, which changes an approved statement (`gate_cardinality`) and needs the DRI's ruling then. HEAD: the commit holding this file.
-DRI signature needed: none (DELTA cites R1, R8, R16). Size: +992/-20 hand-written, accepted to about 1,050 (`reviews/dri-decisions-20261103-qt-a4-size2.md`).
+DRI signature needed: none on a DELTA row (DELTA cites R1, R8, R16). **Size asked:** the F1/F2 fix round takes the total past the ~1,050 of `reviews/dri-decisions-20261103-qt-a4-size2.md` ("Size", below).
 Pre-existing red: none met in this item's selected run (below). Report tests: none added (D4).
 
 ## Statement gate and edits
@@ -47,7 +47,7 @@ The refusal comes from the gate, so `Dispatch.lean` is not edited. Probe through
 
 | Member | Treatment |
 |---|---|
-| Statements and claims | `formula` equal to the one sent (a formula Lean canonicalised differently would be `CheckerUnavailable`, fail closed: no canonical form differed over the route cases, `/tmp` probe not kept) |
+| Statements and claims | `formula` equal to the one sent in Lean's spelling (`Identities.spelled`: a literal lowered on the request's scale, an omitted tag written, a printed negative zero unsigned), so another number, tag or statement is refused. See "Review fix round" |
 | Region table | each sort finite in the request, predicates distinct, declared, unary on that sort; each row `cardinality__<sort>__<bits>`, one bit per predicate, one row per region; order tied to the problem's region premises; then Lean confirms the claimed table and problem (`_confirmed`, spec 4.1), which also covers what the request cannot say (predicate order, bridges) |
 | Report | root, leaves as the request graph's reachable leaves, each once, in submitted order, statements, `report_id` recomputed |
 | W6a identities | equal to the request projection's, through `Environment` |
@@ -81,9 +81,21 @@ The first sweep's kills all read UNKNOWN: each guard through `check` walks about
 - Not run: the full gate (the chain runs it on the final HEAD), and Rust (no Rust changed).
 - `python3 lean/audit.py --check`: PASS (737 source files, on the merged tree). `tools/regen_generated.py --check`: 35 entries.
 
+## Review fix round (`qt-a4-review.final.md`, F1 and F2, both B)
+
+**F1: the relay refused statements Lean admits.** The earlier claim in this report, that no canonical form differed, held only because the route cases have no decimal or date. The sweep found more than the review listed: `["num","1"]`, `add`, `scale` and a plain `const` gain the `dimensionless` tag, and failed the same way. `Identities.spelled` is the one rule, at the one place every caller goes through (`problem`, `paraphrase`, `bind_report`, `bind_document`).
+
+It calls `ve.units.decimal_exact` and `day_number`, the existing Python lowerings, so a lowered number stays bound to the request's literal and its scale. This is a relation to the request (R8, D1), not a derived value Python answers with: the row returned is Lean's, and where the lowerings differ the answer is refused, never replaced. Only typing the number would have let `150` become `151`. A difference between the lowerings would be `CheckerUnavailable`, and `::test_the_relay_and_lean_agree_at_each_literal` compares them with Lean at the limits and on bad spellings.
+
+**F2: checks no test could fail.** The fuzz now also runs against a service answering every call alike, and exempts only another wording of the same type. `::test_every_check_of_the_relay_is_one_a_test_can_fail` drops each check in turn, enumerated from the module's AST (each conjunct of a `_require`, each statement calling one of the module's binders, each respelling rule), and requires some answer to be treated otherwise, so a new check is covered without being listed. Beyond the review's three instances it found these, each now with an isolating case: the report's own checks hidden behind `report_id`, the outer answer's shape, the not-admitted and no-graph paths, and `premises` and `assumptions` retyped as mappings.
+
+Two product changes came from it. `regions.constants` was untyped, and retyping it as `{}` on a problem with no counted sort was accepted when Lean could not confirm; it is typed now. `type(a) is str and a and a.encode()` became `a.encode()`: the first two conjuncts could never decide anything, as `.encode()` refuses every other JSON value through `MALFORMED`, and an empty line through its falsy result. Refusals are unchanged (`::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[lines-text]`, `[lines-empty]`).
+
+Probes: F1 raised `CheckerUnavailable` before and prints Lean's line after. F2 exited 1 before (62 passed with the check removed) and exits 0 after (8 failed). Seeded bugs: ten more in `mutants.json`, each planted alone and killed. No Lean or Rust changed, so none is seeded there, and the trust mutants are unaffected. F3 to F6 are on `FOLLOW-UPS.md`, "## qt-a4".
+
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)`, generated files out: +992/-20 (product about 420, tests 476, Lean guards 117). I measured late, after the second half; the DRI accepted it twice, with conditions this item keeps (both test files whole, the guards, the route cases).
+`git diff --numstat $(git merge-base HEAD main)`, generated files out: about +1,308 (product about 446, tests about 760, Lean guards 117). Before the fix round it was +992/-20 (product about 420, tests 476); I measured that late, after the second half, and the DRI accepted it twice, with conditions this item keeps (both test files whole, the guards, the route cases). The fix round passes that ruling's ~1,050, so it asks again: `inbox/dri/20261103T083209Z-qt-a4-fix-size.md`. Product code stays inside the ~600; the growth is the tests F1 and F2 ask for.
 
 ## Pilot bytes
 
@@ -101,7 +113,7 @@ The first sweep's kills all read UNKNOWN: each guard through `check` walks about
 
 1. PASS: `tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing` (7, true, null, [], {}, 1.5, a lone surrogate, deep lists, each kind). Not the bad stdout byte: that is the service client's, unchanged.
 2. PASS: "Plan rows"; `tools/identity_lint.py`, `tools/relay_lint.py` PASS; the cut is named.
-3. PASS: `mutants.json` 23/23 killed; `trust-mutants.json` exit 0, evidence and allow file committed.
+3. PASS: `mutants.json` 33/33 killed; `trust-mutants.json` exit 0, evidence and allow file committed.
 4. PASS: `tests/test_cardinality_lean.py`, key order `tests/test_cardinality_answer.py::test_object_key_order_is_no_part_of_an_answer`. No Rust; no Python decision added.
 5. PASS: `::test_the_region_table_and_problem_are_bound`, `::test_a_report_s_rows_are_bound_with_and_without_a_matching_id`, `::test_a_renamed_region_is_refused_by_the_relay_itself`.
 6. PASS: main merged at f448ffa45; the chain gates the final HEAD. Main has moved since; the train syncs.
