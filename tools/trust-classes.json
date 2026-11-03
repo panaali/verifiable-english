@@ -17537,7 +17537,18 @@
         "VE.Events.RouteExamples.notInPack",
         "VE.Events.RouteExamples.boundProof",
         "VE.Events.RouteExamples.replayCase",
-        "VE.Events.RouteExamples.premiseCount"
+        "VE.Events.RouteExamples.premiseCount",
+        "VE.Events.RouteExamples.counted",
+        "VE.Events.RouteExamples.twoConstants",
+        "VE.Events.RouteExamples.dflt",
+        "VE.Events.RouteExamples.defaultDoc",
+        "VE.Events.RouteExamples.defaultFilled",
+        "VE.Events.RouteExamples.excEnv",
+        "VE.Events.RouteExamples.excNorms",
+        "VE.Events.RouteExamples.excElaborated",
+        "VE.Events.RouteExamples.excCase",
+        "VE.Events.RouteExamples.excCount",
+        "VE.Events.RouteExamples.docListed"
       ]
     }
   }

@@ -57,11 +57,56 @@ Item: feature item et-4b (rank 132 of the feature feed, acting DRI dri-featurefe
 
 ## Seeded bugs and mutants
 
-FILL-SEEDED
+Every seeded bug is in [mutants.json](mutants.json) (88 records, with `file` and `test`); the tool's mutants of
+every other new trusted definition are [trust-mutants.json](trust-mutants.json).
+
+- **Lean, `lean/VE/Events/Wire.lean`:** `tests/test_events_wire_mutants.py` elaborates `Wire.lean` with
+  `WireExamples.lean` once per mutant. Its `HOOK` table plants 19 by hand, one per claimed behaviour of the hook,
+  each failing a `#guard`:
+  - the row skipped (`hook-no-row`) or read on every list (`hook-no-profile-test`);
+  - `LinkNotOpen` dropped, its decider ignored, its first link only, an open term read by name only, or run after
+    the dates (`hook-dates-before-open`);
+  - the view keeping the block or the profile, losing the dates or the author's constants, or giving the anchor its
+    ISO wording;
+  - the charge counting states once, links not at all, or one too many;
+  - the pack's sum off by one or read on its first premise;
+  - `repeatOf` forgetting its seed or reporting the last repeat.
+
+  The generator adds 68 more mutants from the source as written (every check step dropped, every independent pair
+  swapped, every role list read for its sibling); with the review's 7 and the old equivalents, 98 tests. Mac runner,
+  1c24fb3e: 96 passed and 2 failed (one killed by a stack crash, one by a proof). Both got a guard that kills them, and
+  the rerun of those ids passed (3 passed). `drop-decodeEvents-15` (et-4's equivalent node limit) is no longer
+  equivalent: the pack's total is reachable (`weaker 60`), so it is killed.
+- **Lean, `lean/VE/NormDefaults/Packs.lean`:** `eventsArray-reads-soft` and `eventsArray-key` in
+  `tests/test_packs_guard_mutants.py`, each failing a `PacksExamples.lean` guard (46 passed, VM).
+- **Lean, the route's files** (`Layered.lean`, `LayeredAdmission.lean`, `Run.lean`, `Compose/Dispatch.lean`,
+  `Events/Chain.lean`, `Packs.lean`, the shapes): `tools/trust_mutants.py` with `--test WireExamples.lean --test
+  RouteExamples.lean` (TM-COUNTS).
+- **Python, `tools/layer_policy.py`:** dropping `VE.Events.RouteExamples` from the runner fixtures makes
+  `python3 tools/check_lean_imports.py` print `new outward Lean import: VE.Events.RouteExamples -> VE.NormDefaults.Run`.
+  The check runs in the gate and in `tests/test_precommit_hook.py`. No `ve/` or `rust/` product code changed (only
+  generated data).
 
 ## Trust, size, tests
 
-FILL-TRUST
+- **Trust:** `uv run python tools/trust_map.py --check` against `fe252f79a` gives K +0, S +0, V +123, unclassified 0,
+  PASS, with the R16 allowance in `docs/trust-baseline.json`. Per file: `Events/Wire.lean` +56, `Layered.lean` +18,
+  `Compose/Dispatch.lean` +14, `Run.lean` +13, `Events/Chain.lean` +10, `Packs.lean` +7, shapes +5. The ties row is
+  `manage-agents/FOLLOW-UPS.md` "## et-4b". New fixtures are T, `checkOpen` and the kind gate are reject-only.
+- **Size (over the rule):** `git diff --numstat fe252f79a` gives about 1,490 hand-written lines, without generated
+  files, tool-written evidence and `mutants.json` (2,259 with them), against ~600:
+  - product Lean, about 520: `Wire.lean` 126, `Chain.lean` 138, `Dispatch.lean` 84, `Layered.lean` 32,
+    `LayeredAdmission.lean` 41, `Run.lean` 36, shapes and encoders about 35;
+  - fixtures and tests, about 645: `RouteExamples.lean` 323, `WireExamples.lean` 122, `test_events_route.py` 164,
+    the two mutant tests 38;
+  - inventories, about 250: `trust-classes.json`, the manifest's pins, the Compose and profile-table guards;
+  - docs, about 130.
+
+  The product code was cut at (2). The excess is mostly the both-sides fixtures that the tool's survivors asked for
+  (about 180 lines of `RouteExamples.lean`, added after the first trust run).
+- **Tests:** TESTS-LINE
+- **Pilot bytes:** 0. Python has no model of `events@0`, so no document, English line or pilot output moves.
+  ET-6's estimate (UDHR +201 to 548 B) waits for et-4c and et-5. Nothing is claimed before a pilot audit.
 
 ## Next items
 
