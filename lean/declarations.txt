@@ -12070,7 +12070,7 @@ module VE.Judgments.Chain 9dc44791a6ac4484f480fd346c4bf73c0087af53988bf452ec5439
 260:0-262:78 theorem VE.Judgments.linesFormulas_none@VE.Judgments.Chain
 264:0-267:44 theorem VE.Judgments.blockFormulas_bar@VE.Judgments.Chain
 269:0-273:48 theorem VE.Judgments.blockFormulas_limitation@VE.Judgments.Chain
-module VE.Judgments.ChainExamples d612e9ce8f71becded9b12b50bf6c9d5e14615d7d2b3672a8b87bff6e6bd6753
+module VE.Judgments.ChainExamples b4aa3931640361a2e632ab51877c3c0ef1f63b4fd90626bb521e1f4cece4f89a
 12:0-16:87 def VE.Judgments.ChainExamples.carved@VE.Judgments.ChainExamples
 32:0-32:78 def VE.Judgments.ChainExamples.u@VE.Judgments.ChainExamples
 34:0-45:115 def VE.Judgments.ChainExamples.environment@VE.Judgments.ChainExamples
@@ -12093,12 +12093,12 @@ module VE.Judgments.ChainExamples d612e9ce8f71becded9b12b50bf6c9d5e14615d7d2b367
 231:0-263:95 def VE.Judgments.ChainExamples.udhr@VE.Judgments.ChainExamples
 265:0-266:91 def VE.Judgments.ChainExamples.rightsLayer@VE.Judgments.ChainExamples
 268:0-276:46 def VE.Judgments.ChainExamples.udhrLim@VE.Judgments.ChainExamples
-298:0-305:13 def VE.Judgments.ChainExamples.editUnit@VE.Judgments.ChainExamples
-307:0-307:49 def VE.Judgments.ChainExamples.f11@VE.Judgments.ChainExamples
-312:0-327:15 def VE.Judgments.ChainExamples.f13c@VE.Judgments.ChainExamples
-379:0-381:100 def VE.Judgments.ChainExamples.twinFront@VE.Judgments.ChainExamples
-386:0-394:14 def VE.Judgments.ChainExamples.drawnLeaf@VE.Judgments.ChainExamples
-396:0-405:31 def VE.Judgments.ChainExamples.drawn@VE.Judgments.ChainExamples
+317:0-324:13 def VE.Judgments.ChainExamples.editUnit@VE.Judgments.ChainExamples
+326:0-326:49 def VE.Judgments.ChainExamples.f11@VE.Judgments.ChainExamples
+331:0-346:15 def VE.Judgments.ChainExamples.f13c@VE.Judgments.ChainExamples
+399:0-401:100 def VE.Judgments.ChainExamples.twinFront@VE.Judgments.ChainExamples
+406:0-414:14 def VE.Judgments.ChainExamples.drawnLeaf@VE.Judgments.ChainExamples
+416:0-425:31 def VE.Judgments.ChainExamples.drawn@VE.Judgments.ChainExamples
 module VE.Judgments.Decl 1e1e6743750025b98ec8b5a99443c90d8bfae5e264d24fbcbe842c3c2f25acf4
 12:0-18:28 structure VE.Judgments.Judgment@VE.Judgments.Decl
 14:2-14:6 def VE.Judgments.Judgment.name@VE.Judgments.Decl

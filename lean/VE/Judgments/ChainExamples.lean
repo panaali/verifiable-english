@@ -293,6 +293,25 @@ def udhrLim (profiles : List String) : Option (List (String × VE.Formula)) := d
     | .error _ => false
   | none => false
 
+-- The rights reader by line: a rule's guard, then each `unless` clause; a power's `liberty` and `recognition` (an
+-- absent guard is `⊤`).
+#guard match linesFormulas (Json.mkObj [("lines", Json.arr #[
+    Json.mkObj [("kind", "claim"), ("norm", Json.mkObj [("guard", u "a"), ("unless", Json.arr #[u "b", u "c"])])],
+    Json.mkObj [("kind", "power"), ("liberty", Json.mkObj [("guard", u "d")]),
+      ("recognition", Json.mkObj [("unless", Json.arr #[u "e"])])]])]) with
+  | .ok fs => opensIn ["a", "b", "c", "d", "e"] fs == ["a", "b", "c", "d", "e"] && fs.length == 6
+  | .error _ => false
+-- The rights source's author formulas read the limitation's conditions by name (`correlate_judged`'s right side).
+#guard match frontOf (udhr rightsLayer) with
+  | some (front, _) => (do
+      let E ← (environmentOf (front.getObjValD "environment") (front.getObjValD "units")).toOption
+      let raw := match front.getObjValD "units" with
+        | .arr us => us.toList
+        | _ => []
+      let R ← (rightsDoc E front udhrTerms raw).toOption
+      pure (opensIn udhrTerms (rightsAuthorFormulas R.src.D) == udhrTerms)) == some true
+  | none => false
+
 /-! pc-1g: F1.3b, F1.3c, F1.3i, F1.3j and F1.3k on F1.1's document (spec 5.1). -/
 
 /-- A case with its front matter's first unit edited by `f`. -/
@@ -349,12 +368,13 @@ def f13c : Json := match frontOf f11 with
 #guard verdictFields (Json.mkObj [("id", "c"), ("status", "ok"), ("document_id", "d"), ("source_id", "s"),
     ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("source", "t"),
     ("units", Json.arr #[Json.mkObj [("id", "u"), ("status", "OPEN"), ("meaning_id", "m"), ("kind", "norm")]]),
-    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.mkObj [("k2", "B"), ("k1", "A")]),
+    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"),
+      ("models", Json.mkObj [("k1", "A"), ("k2", "C"), ("k3", "B")]),
       ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("meaning_id", "m0"), ("admission", Json.mkObj [
         ("distinguishing_models", Json.mkObj [("r1", "k1")])])]])]])]) ==
   Json.mkObj [("id", "c"), ("status", "ok"), ("source", "t"),
     ("units", Json.arr #[Json.mkObj [("id", "u"), ("kind", "norm")]]),
-    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.arr #["A", "B"]),
+    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.arr #["A", "B", "C"]),
       ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("admission", Json.mkObj [
         ("distinguishing_models", Json.arr #["r1"])])]])]])]
 
