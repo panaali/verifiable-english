@@ -305,7 +305,7 @@ def test_rsp_identifiers_and_inventions(rsp_modules):
 
 def test_rsp_stage0_saved_answers(rsp_modules):
     """The saved stage 0: P1 OPEN, P2 pending, D2 admitted only without T4's unclassified harm, D3's certificates,
-    P5 and P6 total, and judgments@0 refused beside soft-norms@0 (P8)."""
+    P5 and P6 total, and judgments@0 beside soft-norms@0 refused by the layer's own check (P8, since PC-1)."""
     saved = json.loads((RSP_EVIDENCE / "stage0.json").read_text())
     assert saved["P1"]["units"] == {"s36-full-review": "OPEN"}
     assert (saved["P2"]["units"], saved["P2"]["premises"]) == ({"t1-plan": "OPEN"}, "UNKNOWN")
@@ -314,8 +314,7 @@ def test_rsp_stage0_saved_answers(rsp_modules):
     assert all(c["might"] and not c["leads"] for c in saved["P3"]["stated_cells"])
     assert saved["P4"]["admitted"] and all(saved["P4"]["certificates"].values())
     assert saved["P5"]["total"] == saved["P6"]["master_total"] == 59410 and saved["P6"]["contiguous"]
-    assert saved["P8"]["diagnostic"] == ("CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean "
-                                         "route")
+    assert saved["P8"]["diagnostic"] == "JudgmentUnbound: ot4_significantly_redacted"
 
 
 @pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")

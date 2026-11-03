@@ -268,6 +268,9 @@ theorem scope_admission (front ans : Json) (h : checkDoc front = .ok ans)
   simp only [bind, Except.bind] at h
   split at h
   · cases h
+  simp only [pure, Except.pure] at h
+  split at h
+  · cases h
   split at h
   · cases h
   rename_i D hD
@@ -313,6 +316,9 @@ theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front =
   unfold VE.Service.Document.checkDocSets at h
   rw [if_pos hs] at h
   simp only [bind, Except.bind] at h
+  split at h
+  · cases h
+  simp only [pure, Except.pure] at h
   split at h
   · cases h
   split at h

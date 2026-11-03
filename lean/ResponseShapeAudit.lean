@@ -162,6 +162,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Discourse.w2SetStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.w2Status_mem
 #print axioms ResponseShape.Encoders.Document.block_coverage_fits
+#print axioms ResponseShape.Encoders.Document.body_fits
 #print axioms ResponseShape.Encoders.Document.cells_fits
 #print axioms ResponseShape.Encoders.Document.checkCore_encode
 #print axioms ResponseShape.Encoders.Document.checkDocSetsAnswered_fits

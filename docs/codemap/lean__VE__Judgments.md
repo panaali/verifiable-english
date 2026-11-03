@@ -1,3 +1,5 @@
+- `lean/VE/Judgments/Chain.lean` — Judgment terms beside the soft chain (docs/spec/profile-composition.md 3.1, PC-1; owner judgment-terms).
+- `lean/VE/Judgments/ChainExamples.lean` — PC-1's examples (docs/spec/profile-composition.md 5.1): the reader's carve-outs and the clash validation on F1.3l, F1.3m and F1.3o, over F1.1's soft document (…
 - `lean/VE/Judgments/Decl.lean` — Judgment terms (`judgments@0`), W2 records and admission (docs/spec/judgment-terms.md sections 1 and 2).
 - `lean/VE/Judgments/Examples.lean` — The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the built definitions.
 - `lean/VE/Judgments/Scan.lean` — The one scan of open names in formulas (docs/spec/judgment-terms.md section 3).
