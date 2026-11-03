@@ -311,6 +311,11 @@ def docListed : List String := ["documents@1", "events@0", "norm-defaults@0", "n
 #guard (answer (replayCase (envOf (some blockJ) docListed) (boundProof (envOf (some blockJ) docListed) inPack docListed) inPack)).getObjValD
   "valid" == .bool true
 
+-- The view keeps every other listed profile, the one before `events@0` too.
+#guard (match eventsHook (envOf (some blockJ) docListed) terms with
+  | .ok (some h) => VE.Compose.listedProfiles h.view == docListed.filter (· != "events@0")
+  | _ => false)
+
 -- A replay needs the block: with the profile alone there is no pack to replay against.
 #guard status (caseOf "norm-defaults-certificate" (envOf none)) == "InvalidInput: events"
 #guard status (caseOf "norm-defaults-certificate" envOf) == "property not found: premises"
