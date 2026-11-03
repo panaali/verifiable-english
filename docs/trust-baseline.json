@@ -1881,6 +1881,20 @@
    "reason": "sc-6: VE/Scope/Reach.lean S +10 (Pinned.rightNames, Pinned.withReach), V +8 (Pinned.rightOf); K +0; trusted +18",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-6, 2026-10-18",
    "commit": "f1c3064604766f0517c0b6d22f773c70bebf0367"
+  },
+  {
+   "class": "S",
+   "lines": 91,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 52,
+   "reason": "sn-b6b (review fix F3): VE/Senses/Flip.lean +113 (S +91 flipOn, FlipModel, FlipModel.finite, tuples, flipModelOf, Flip, flipValues, flipPair, candidatePairs, flipsOf; G[V] +22 termCore, formulaCore), VE/Senses/Run.lean +30 (G[V] +24 writtenLines, flipJson; D[V] +6 flipModelJson); K +0; trusted +143",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6b, 2026-11-02",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
   }
  ]
 }

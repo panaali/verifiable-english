@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 266 |
+| leaves:bound | 282 |
 | leaves:closed domain | 296 |
-| leaves:none | 1485 |
+| leaves:none | 1491 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1084 |
-| today:shape | 562 |
+| today:not probed | 1090 |
+| today:shape | 578 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -3551,6 +3551,28 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/details/why/referent` | string | none |  |  | 0 | not probed |
 | `/result/projection/details/word` | string | none |  |  | 1 | not probed |
 | `/result/projection/details/words/*` | string | none |  |  | 0 | not probed |
+| `/result/projection/environment/alternatives` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/cardinality` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/cardinality_schema` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/language` | any | bound | x-equals |  | 1 | shape |
+| `/result/projection/environment/profile` | any | bound | x-equals |  | 1 | shape |
+| `/result/projection/environment/profiles` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/risk` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/spec_revision` | any | bound | x-equals |  | 1 | shape |
+| `/result/projection/environment/speech_acts` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/unit_schema` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/units` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/acts` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/predicates/@key` | key | none |  |  | 2 | not probed |
+| `/result/projection/environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 2 | not probed |
+| `/result/projection/environment/vocabulary/reports` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/rights` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/soft` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/vocabulary/sorts/@key` | key | none |  |  | 6 | not probed |
+| `/result/projection/environment/vocabulary/sorts/{}/description` | string | none |  |  | 6 | not probed |
+| `/result/projection/environment/vocabulary/sorts/{}/verbalisation/plural` | string | none |  |  | 4 | not probed |
+| `/result/projection/environment/vocabulary/sorts/{}/verbalisation/singular` | string | none |  |  | 4 | not probed |
 | `/result/projection/failure/0` | string | none |  |  | 0 | not probed |
 | `/result/projection/failure/1` | string | none |  |  | 0 | not probed |
 | `/result/projection/failure/2` | string | none |  |  | 0 | not probed |
@@ -3579,6 +3601,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/result/projection/details/words` |  |  |  |  |
+| `/result/projection/environment/vocabulary/predicates/{}/arguments` |  |  |  |  |
 | `/result/projection/failure` |  |  |  |  |
 | `/result/projection/lexicon/aliases` |  |  |  |  |
 | `/result/projection/lexicon/aliases/*` |  |  |  |  |
