@@ -109,6 +109,21 @@ def normal(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+OPEN, CLOSE = "([{⟨⦃", ")]}⟩⦄"
+
+
+def proof_cut(text: str) -> int:
+    """Where a theorem's statement in `text` ends: its first `:=` outside every bracket, the one that starts the proof
+    (len(text) when there is none). A `:=` inside the statement (`{ L with scope := s }`) is part of it (review sc-6
+    F1); every statement gate cuts here."""
+    depth = 0
+    for i, char in enumerate(text):
+        depth += (char in OPEN) - (char in CLOSE)
+        if depth == 0 and text.startswith(":=", i):
+            return i
+    return len(text)
+
+
 def declarations(text: str, statements_only: bool) -> dict[tuple[str, str], list[str]]:
     """Every `theorem`, `def` or `structure` at column 0 of `text`: (kind, name) → its normalized texts. A theorem
     is cut at its proof's `:=` when `statements_only`."""
@@ -118,7 +133,7 @@ def declarations(text: str, statements_only: bool) -> dict[tuple[str, str], list
         stop = STOP.search(text, len(text) if line_end < 0 else line_end + 1)
         body = text[start.start():stop.start() if stop else len(text)]
         if statements_only and start[1] == "theorem":
-            body = body.split(":=", 1)[0]
+            body = body[:proof_cut(body)]
         out.setdefault((start[1], start[2]), []).append(normal(body))
     return out
 
