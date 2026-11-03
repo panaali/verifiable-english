@@ -378,6 +378,8 @@ module VE.Grammar.TableInvariant
 module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
+module VE.Judgments.Chain
+module VE.Judgments.ChainExamples
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
