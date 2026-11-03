@@ -1,0 +1,172 @@
+shard 6/6: 57 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [110/326] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [125/326] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [133/326] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4967 lines cut; full output in shard-full.txt)
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded crypto-common v0.1.7
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded proc-macro2 v1.0.107
+  Downloaded block-buffer v0.10.4
+  Downloaded zmij v1.0.23
+  Downloaded num-traits v0.2.19
+  Downloaded num-integer v0.1.47
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded serde v1.0.229
+  Downloaded serde_json v1.0.151
+  Downloaded num-bigint v0.4.8
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.70s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.50s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_speech_polar_lean.py::chunk(4/4), tests/test_readings_rd6b_differential.py::chunk(1/4), tests/test_readings_rd6b_differential.py::chunk(3/4)
+recording 57 units with 4 jobs in /tmp/ve-select-run-luiaa9vp
+  tests/test_rd9_statements.py: exit 1 in 2.2 s, 229 functions
+  tests/test_consolidation_tools.py: exit 1 in 1100.6 s, 1228 functions
+chunked tests/test_readings_rd6b_differential.py: 2 of 4 chunks, exit 0, 553.1 s in all, longest chunk 332.4 s; 8 passed, 0 skipped, 0 failed; each of its 8 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 312.9 s in all, longest chunk 312.9 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+FAILED tests/test_consolidation_tools.py (exit 1): tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations; log /tmp/ve-select-run-luiaa9vp/tests__test_consolidation_tools.py.log
+........................................................................ [ 25%]
+........................................................................ [ 50%]
+........................................................................ [ 75%]
+....................................................F................... [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-l_f_2fya)
+
+=================================== FAILURES ===================================
+________________ test_committed_ledger_names_real_declarations _________________
+
+    def test_committed_ledger_names_real_declarations():
+        rows, problems = trust_map.ledger()
+        assert problems == []
+        assert [r["step"] for r in rows] == ["1", "2a", "2b", "3", "4", "5", "6", "7", "8a", "8b", "9", "10"]
+        # The plan's section 4 quotes these measured figures (E9); regenerate them after a table change.
+        plan = (ROOT / "docs/CONSOLIDATION-PLAN.md").read_text()
+        for r in rows:
+>           assert f"| {r['step']} | {r['removed']} | {r['tied']} |" in plan, r["step"]
+E           AssertionError: 4
+E           assert '| 4 | 654 | 0 |' in "# Consolidation plan: a small core, shared kits, stated ties\n\nStatus: plan only, no code changes. Branch `design/co...lock merges, or only report, until step 0's numbers\n    have been checked against the trust map by a second reader?\n"
+
+tests/test_consolidation_tools.py:1172: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations - AssertionError: 4
+assert '| 4 | 654 | 0 |' in "# Consolidation plan: a small core, shared kits, stated ties\n\nStatus: plan only, no code changes. Branch `design/co...lock merges, or only report, until step 0's numbers\n    have been checked against the trust map by a second reader?\n"
+1 failed, 287 passed in 1099.80s (0:18:19)
+FAILED tests/test_rd9_statements.py (exit 1): tests/test_rd9_statements.py::test_probe_f27_the_signed_declarations_are_no_longer_pending, tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt, tests/test_rd9_statements.py::test_soft_leaf_reads_the_soft_pack_as_the_premise_packs_spec_approves; log /tmp/ve-select-run-luiaa9vp/tests__test_rd9_statements.py.log
+SC-1 fold PASS: 22 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 12 approved SC-2 separation declarations (6 theorems)
+SC-2 separation PASS: 12 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 23 approved SC-4 wire declarations (7 theorems)
+SC-4 wire PASS: 23 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+choiceLayeredG: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS): approved text with its one signed edit
+ndTextWith: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS): approved text with its one signed edit
+checked 27 approved SC-5 verdicts declarations (13 theorems)
+SC-5 verdicts PASS: 27 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 26 approved SC-6 layered kinds declarations (6 theorems)
+SoftLeafX: APPROVED by a later statement spec: docs/spec/premise-packs.md 5 (pk-1s statement review, merge 49a926ee7): approved text with its one approved edit
+runCase: def differs
+  approved: def runCase (j : Json) : Except String Json := do let id ← VE.Bridge.stringField j "id" let kind ← VE.Route.Run.caseKind j let env := j.getObjValD "environment" if Wire.hasProfile env && Wire.layeredRoute env == some "soft-norms@0" then if let some a ← Admission.softCase id kind j then return a if kind == "admission" && Wire.hasProfile env then let environment ← j.getObjVal? "environment" let document ← j.getObjVal? "document" return ← runAdmission id environment document runOtherCase id kind j
+  Lean:     def runCase : Json → Except String Json := runCaseIn Wire.decodeSourceU
+=========================== short test summary info ============================
+FAILED tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt - AssertionError: assert True == 0
+ +  where True = <function main at 0x7f76f1505900>()
+ +    where <function main at 0x7f76f1505900> = <module 'check_rd9' from '/home/runner/work/verifiable-english/verifiable-english/tools/check_rd9_sc1_statements.py'>.main
+FAILED tests/test_rd9_statements.py::test_probe_f27_the_signed_declarations_are_no_longer_pending - AssertionError: assert True == 0
+ +  where True = <function main at 0x7f76f17726c0>()
+ +    where <function main at 0x7f76f17726c0> = <module 'check_rd9' from '/home/runner/work/verifiable-english/verifiable-english/tools/check_rd9_sc1_statements.py'>.main
+FAILED tests/test_rd9_statements.py::test_soft_leaf_reads_the_soft_pack_as_the_premise_packs_spec_approves - AssertionError: assert True == 0
+ +  where True = <function main at 0x7f76f17737f0>()
+ +    where <function main at 0x7f76f17737f0> = <module 'check_rd9' from '/home/runner/work/verifiable-english/verifiable-english/tools/check_rd9_sc1_statements.py'>.main
+3 failed, 25 passed in 1.61s
+recorded 54 units for tree 339d43e4f8; 2 others left to the static graph until they run (2 with only some of their chunks here); 2 failed
+SHARD 6/6: exit 1 in 1158.8 s; 57 units, 55 passed
