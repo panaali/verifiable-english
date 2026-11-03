@@ -295,7 +295,23 @@ def runCaseIn (dec : Wire.UDecoder) (j : Json) : Except String Json := do
 
 def runAdmission : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeSourceU
 def AdmissionAnswerU : String → Json → Json → Json → Prop := AdmissionAnswerUIn Wire.decodeSourceU
-def runCase : Json → Except String Json := runCaseIn Wire.decodeSourceU
+def runOtherCase : String → String → Json → Except String Json := runOtherCaseIn Wire.decodeSourceU
+
+/-- `runCase` as rd-9-soft-chain.md 6 approves its text (`tools/check_rd9_sc1_statements.py`): `runCaseIn` at
+`decodeSourceU` (`runCase_eq`). -/
+def runCase (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let kind ← VE.Route.Run.caseKind j
+  let env := j.getObjValD "environment"
+  if Wire.hasProfile env && Wire.layeredRoute env == some "soft-norms@0" then
+    if let some a ← Admission.softCase id kind j then return a
+  if kind == "admission" && Wire.hasProfile env then
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    return ← runAdmission id environment document
+  runOtherCase id kind j
+
+theorem runCase_eq : runCase = runCaseIn Wire.decodeSourceU := rfl
 
 theorem runAdmission_sound (id : String) (environment document answer : Json)
     (h : runAdmission id environment document = .ok answer) :
@@ -344,7 +360,7 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
     (hs : Wire.layeredRoute (j.getObjValD "environment") ≠ some "soft-norms@0") :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
       AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer :=
-  normDefaults_wire_admissionIn Wire.decodeSourceU j answer h hk hp hs
+  normDefaults_wire_admissionIn Wire.decodeSourceU j answer (runCase_eq ▸ h) hk hp hs
 
 /-- The soft branch's admission: from raw JSON under the profile with a soft source, a successful answer satisfies
 the full admission obligation on the filled soft tree (`Admission.AdmissionAnswerX`) for the case's own id,
@@ -355,7 +371,7 @@ theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answ
     (hs : Wire.layeredRoute (j.getObjValD "environment") = some "soft-norms@0") :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
       Admission.AdmissionAnswerX id (j.getObjValD "environment") (j.getObjValD "document") answer := by
-  unfold runCase runCaseIn at h
+  unfold runCase at h
   obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
   have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl

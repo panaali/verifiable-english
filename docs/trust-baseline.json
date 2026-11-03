@@ -1818,6 +1818,20 @@
    "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
    "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "S",
+   "lines": 15,
+   "reason": "ap-3db: K +0, S +15, untied V +107 (trusted +122): VE/Norms/Wire.lean +46, VE/Acts/Wire.lean +18, VE/Norms/Run.lean +15, VE/NormDefaults/Run.lean +12, VE/NormDefaults/Wire.lean +11, VE/Acts/Decode.lean +6, VE/Readings/Wire.lean +6, VE/Acts/DecodeTwins.lean +4, VE/NormDefaults/Admission.lean +2, VE/Norms/Admission.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3db, 2026-11-03",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 107,
+   "reason": "ap-3db: K +0, S +15, untied V +107 (trusted +122): VE/Norms/Wire.lean +46, VE/Acts/Wire.lean +18, VE/Norms/Run.lean +15, VE/NormDefaults/Run.lean +12, VE/NormDefaults/Wire.lean +11, VE/Acts/Decode.lean +6, VE/Readings/Wire.lean +6, VE/Acts/DecodeTwins.lean +4, VE/NormDefaults/Admission.lean +2, VE/Norms/Admission.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3db, 2026-11-03",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   }
  ]
 }

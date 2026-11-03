@@ -5048,10 +5048,16 @@
         "VE.NormDefaults.Run.runAdmission",
         "VE.NormDefaults.Run.runAdmissionIn",
         "VE.NormDefaults.Run.runCase",
-        "VE.NormDefaults.Run.runCaseIn",
+        {
+          "name": "VE.NormDefaults.Run.runCaseIn",
+          "tied": [
+            "VE.NormDefaults.Run.runCase_eq"
+          ]
+        },
         "VE.NormDefaults.Run.runCaseReported",
         "VE.NormDefaults.Run.runCaseRouted",
         "VE.NormDefaults.Run.runGated",
+        "VE.NormDefaults.Run.runOtherCase",
         "VE.NormDefaults.Run.runOtherCaseIn",
         "VE.NormDefaults.Run.softAdmissionWitness"
       ],

@@ -20212,6 +20212,10 @@ theorem VE.NormDefaults.Run.runAdmission_soundIn
       VE.NormDefaults.Run.AdmissionAnswerUIn dec id environment document answer
   -- uses VE.NormDefaults.Run.AdmissionAnswerUIn@VE.NormDefaults.Run VE.NormDefaults.Run.runAdmissionIn@VE.NormDefaults.Run VE.NormDefaults.Wire.UDecoder@VE.NormDefaults.Wire
   -- expr 1214824109
+theorem VE.NormDefaults.Run.runCase_eq
+  VE.NormDefaults.Run.runCase = VE.NormDefaults.Run.runCaseIn VE.NormDefaults.Wire.decodeSourceU
+  -- uses VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Run.runCaseIn@VE.NormDefaults.Run VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire
+  -- expr 3119851581
 theorem VE.NormDefaults.UValid.acyclic
   ∀ {U : VE.NormDefaults.UDoc}, VE.NormDefaults.UValid U → VE.Route.DagAcyclic (VE.Norms.precedenceNodes U.D.T)
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.UValid@VE.NormDefaults.Fill VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DagAcyclic@VE.Route.Route
