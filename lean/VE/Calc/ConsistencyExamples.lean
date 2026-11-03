@@ -63,20 +63,65 @@ def V6outs : List Claim :=
 -- V-6r: the population reading's root, 0.1030, is no 0.108: refuted by its enclosure.
 #guard (run V6 V6in [ge (.div (.mul (.val "v") (.lit 11)) (.lit 12)) (sq 1075)]).map (·matches .fails ..) = some true
 
-/-! Limits (fail closed): no units, and C-1's measured chain a(i+1) = a(i) + a(i) to a12 over the input (8,191
-inlined nodes): within the limit at `maxWork` and at its work, 196,596 units (the enclosure, then the printed point),
-refused one unit short; 40 levels (2⁴¹ nodes) are cut off at 1,000,000 units, and so is the search over 100 inputs,
-each point charged 100 × 100 units for its input check before it is built further. -/
+/-! Limits (fail closed): no units; C-1's measured chain a(i+1) = a(i) + a(i) to a12 over the input (8,191 inlined nodes)
+within the limit at `maxWork` and at its work (the enclosure, then the printed point, each charged its pass), refused
+one unit short; a search over 100 inputs cut off at 1,000,000 units, each point charged its pass before it is built
+further, and ended at `maxWork` by its points. -/
 def chain (k : Nat) : List Decl := ⟨"a", .stated (2 / 5)⟩ :: ⟨"a0", .defined a⟩ ::
   (List.range k).map fun i => ⟨s!"a{i + 1}", .defined (.add (.val s!"a{i}") (.val s!"a{i}"))⟩
 #guard consistencyRun 0 C1 .tiesUp inA [k2] = none
 #guard run (chain 12) inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
-#guard consistencyRun 196596 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
-#guard consistencyRun 196595 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = none
-#guard consistencyRun 1000000 (chain 40) .tiesUp inA [lt (.val "a40") (.lit 1)] = none
+#guard consistencyRun 8716291 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = some (.holds [("a", 2 / 5)])
+#guard consistencyRun 8716290 (chain 12) .tiesUp inA [lt (.val "a12") (.lit 2000)] = none
 def hundred : List (String × Printed) := (List.range 100).map fun i => (s!"d{i}", ⟨4, 1⟩)
-#guard consistencyRun 1000000 (hundred.map fun i => ⟨i.1, .stated (2 / 5)⟩) .tiesUp hundred
-  [.compare ⟨.eq, false⟩ (.val "d0") (.lit (41 / 100))] = none
+def Dhundred : List Decl := hundred.map fun i => ⟨i.1, .stated (2 / 5)⟩
+def d0IsNot : Claim := .compare ⟨.eq, false⟩ (.val "d0") (.lit (41 / 100))
+#guard consistencyRun 1000000 Dhundred .tiesUp hundred [d0IsNot] = none
+#guard run Dhundred hundred [d0IsNot] = some (.unknown (.limit .witnessPoints))
+
+/-! The outputs' trees hold `maxPolyTerms` nodes together, before either phase: 10,000 are searched, 10,001 are not; two
+outputs that fit alone do not fit together; a fault or a refusal is found first. -/
+def tree (n : Nat) : Expr :=
+  if n ≤ 1 then a else if n % 2 = 0 then .pow (tree (n - 1)) 1 else .add (tree (n / 2)) (tree (n / 2))
+def atCap : Claim := lt (tree 9999) (.lit 10000)
+def pastCap : Claim := lt (tree 10000) (.lit 10000)
+#guard outputNodes [atCap] = some 10000 && outputNodes [pastCap] = none && outputNodes [k2, k2] = some 8
+#guard run C1 inA [atCap] = some (.holds [("a", 2 / 5)])
+#guard run C1 inA [pastCap] = some (.unknown .consistencyInconclusive)
+#guard run (chain 12) inA [lt (.val "a12") (.lit 2000), lt (.val "a12") (.lit 2000)] =
+  some (.unknown .consistencyInconclusive)
+#guard run C1 inA [k1, pastCap] = some (.unknown .consistencyInconclusive)
+#guard run C1 inA [pastCap, lt a (.val "m")] = some .undefined
+#guard run C1 inA [pastCap, lt a (.val "f")] = some (.refused (.name "f"))
+-- The pass is charged by input and by node: a limit between the two passes' works tells them apart.
+#guard passWork inA 8192 = 4259848 && passWork hundred 2 = 82624 && passWork [] 0 = 0
+-- Both chains of the review at the runner's limit: 2⁴¹ and 2²⁴ nodes, answered without walking them.
+def squares (k : Nat) : List Decl := ⟨"a", .stated (2 / 5)⟩ :: ⟨"a0", .defined a⟩ ::
+  (List.range k).map fun i => ⟨s!"a{i + 1}", .defined (.mul (.val s!"a{i}") (.val s!"a{i}"))⟩
+#guard run (chain 40) inA [lt (.val "a40") (.lit 1)] = some (.unknown .consistencyInconclusive)
+#guard run (squares 23) inA [lt (.val "a23") (.lit 1)] = some (.unknown .consistencyInconclusive)
+
+/-! The digit hold (`encloseC_small`): an endpoint at 4,096 digits is kept and one past them gives no enclosure, for each
+operation, so nothing above a held node is computed. The squaring chain stops growing at a¹²: a¹¹'s enclosure refutes,
+a¹²'s denominator 20⁴⁰⁹⁶ has 5,330 digits, so no enclosure refutes it and its points decide. -/
+def big : Expr := .lit (10 ^ 4096 - 1)
+def e2048 : Expr := .lit (10 ^ 2048)
+def noEnclosure (e : Expr) : Bool := match encloseC Work.maxWork .tiesUp inA e 0 with
+  | some (none, _) => true
+  | _ => false
+#guard !noEnclosure big && !noEnclosure (.mul e2048 (.lit (10 ^ 2047))) && !noEnclosure (.lit (1 / (10 ^ 4096 - 1)))
+#guard [Expr.lit (10 ^ 4096), .lit (1 / 10 ^ 4096), .add big (.lit 1), .sub (.lit (-(10 ^ 4096 - 1))) (.lit 1),
+  .mul e2048 e2048, .div e2048 (.lit (1 / 10 ^ 2048)), .pow e2048 2, .pow (.lit (1 / 10 ^ 2048)) 2].all noEnclosure
+#guard [Expr.mul (.mul e2048 e2048) big, .add big (.mul e2048 e2048), .pow (.mul e2048 e2048) 1,
+  .div (.lit 1) (.mul e2048 e2048)].all noEnclosure
+-- Past the hold an operation costs its visit alone: nothing above the held node is charged, so nothing is computed.
+#guard (encloseC Work.maxWork .tiesUp inA (.pow (.mul e2048 e2048) 1) 0).map (·.2) =
+  (encloseC Work.maxWork .tiesUp inA (.mul e2048 e2048) 0).map (·.2 + 1)
+def power (k : Nat) : Expr := (List.range k).foldl (fun e _ => .mul e e) a
+#guard !noEnclosure (power 11) && noEnclosure (power 12)
+#guard (run (squares 11) inA [lt (.val "a11") (.lit 0)]).map (·matches .fails ..) = some true
+#guard run (squares 12) inA [lt (.val "a12") (.lit 0)] = some (.unknown .consistencyInconclusive)
+#guard run (squares 12) inA [lt (.val "a12") (.lit 1)] = some (.holds [("a", 2 / 5)])
 
 /-! V-7, V-8 (granularity 1/512, nine templates) and V-7b (1/4,096, twelve), both rules: no printed p is refuted but
 V-8's 0.007812 under ties up (4/512 = 0.0078125 is a tie: half to even prints 0.007812). -/

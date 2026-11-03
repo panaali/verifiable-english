@@ -1398,6 +1398,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.denotes_rescale
 #print axioms VE.Calc.differsAt_sound
 #print axioms VE.Calc.digitCount_le_iff
+#print axioms VE.Calc.encloseC_small
 #print axioms VE.Calc.encloseC_some
 #print axioms VE.Calc.enclose_sound
 #print axioms VE.Calc.enclosesC_some

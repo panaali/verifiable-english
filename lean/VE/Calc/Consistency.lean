@@ -1,5 +1,6 @@
 import VE.Calc.Interval
 import VE.Calc.Inline
+import VE.Calc.Poly
 import VE.Calc.Stats
 
 /-! Consistency of printed numbers (math-evidence spec 8.1, ME-8): the one proposition `Consistent` (statement review
@@ -219,9 +220,10 @@ theorem mean_grain_refutes (xs : List Int) (hx : xs ≠ []) (r : Rounding) (p : 
   rw [sum_intCast]; exact grain_sound _ (List.length_pos_iff.mpr hx) r p h _
 
 /-! ## The runner (spec 8.1, 3.1): the decoder's two refusals, one lowering, the enclosures, then at most 4,096 witness
-points: the printed values, then the interval endpoints. Each declaration is inlined once, and every enclosure and
-every point is charged in 3.2's unit against `limit` (the DRI's rule of 2026-10-27): none past it, which the wire
-refuses as limit 10 (`Wire.workLimit`), never a verdict. -/
+points: the printed values, then the interval endpoints. Each declaration is inlined once; the outputs' trees are held
+to `maxPolyTerms` nodes together before either phase walks them; and every enclosure and every point is charged in
+3.2's unit against `limit` (the DRI's rule of 2026-10-27): none past it, which the wire refuses as limit 10
+(`Wire.workLimit`), never a verdict. -/
 
 /-- The decoder's refusals of a consistency check (3.1, 13.1). -/
 inductive ConsistencyRefusal where
@@ -263,6 +265,19 @@ def consistencyNameFault (ds : List Decl) (keep : List String) (outs : List Clai
   let t := freeReadTable ds keep
   outs.findSome? fun c => (c.exprs.flatMap Expr.names).findSome? fun n => if n ∈ keep then none else (t.lookup n).join
 
+/-- How many nodes the outputs' inlined trees have together; none past `maxPolyTerms` (inlining shares definitions, so
+a tree may be far larger than its memory, and the walk stops at the limit). An enclosure and each point visit every
+node once, so this bounds the visits of both phases, however many outputs there are. -/
+def outputNodes (outs : List Claim) : Option Nat :=
+  ((outs.flatMap Claim.exprs).foldlM (fun n (e : Expr) => e.nodesWithin n) maxPolyTerms).map (maxPolyTerms - ·)
+
+/-- What one pass over the outputs costs beyond the sizes of its values (spec 3.2: every kind of work charged in
+proportion to its time). A lookup walks the n inputs, about 10 ns a step: the input check makes n of them and each node
+at most one. A node's visit, small values included, takes about 64 steps' time (0.64 µs). At 8 units a step, 2^33 units
+is at most about 20 s of any kind of this work (measured: `docs/math-evidence/me-8/evidence/limit-times.txt`). -/
+def passWork (inputs : List (String × Printed)) (nodes : Nat) : Nat :=
+  8 * (inputs.length * inputs.length + nodes * (inputs.length + 64))
+
 /-- Expressions enclosed in order, charged; the inner none when one has no enclosure. -/
 def enclosesC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) :
     List Expr → Nat → Option (Option (List (Rat × Rat)) × Nat)
@@ -303,11 +318,11 @@ def allHoldC (limit : Nat) (t : Table) : List Claim → Nat → Option (Bool × 
   | c :: cs, u => (Expr.evalsC limit t c.exprs u).bind fun (vs, u) =>
       if Claim.ofSides c vs = .decided .holds then allHoldC limit t cs u else some (false, u)
 
-/-- One point, charged first its input check (a lookup per input: n × n units) and then its values into a table once:
-inside the inputs' intervals and every output holding. -/
-def pointHoldsC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim)
+/-- One point, charged first its pass (`passWork`), then its values into a table once: inside the inputs' intervals and
+every output holding. -/
+def pointHoldsC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) (pass : Nat)
     (w : List (String × Rat)) (u : Nat) : Option (Bool × Nat) :=
-  visitC limit (u + inputs.length * inputs.length) fun u =>
+  visitC limit (u + pass) fun u =>
     if inputs.all (fun i => match w.lookup i.1 with
       | some x => decide (RoundsTo r i.2 x)
       | none => false) then
@@ -315,11 +330,11 @@ def pointHoldsC (limit : Nat) (r : Rounding) (inputs : List (String × Printed))
     else some (false, u)
 
 /-- `n` points from point `m`, in order, each built when it is tried; the first witness. -/
-def searchC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) :
+def searchC (limit : Nat) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) (pass : Nat) :
     Nat → Nat → Nat → Option (Option (List (String × Rat)) × Nat)
   | 0, _, u => some (none, u)
-  | n + 1, m, u => (pointHoldsC limit r inputs outs (witnessPoint r inputs m) u).bind fun (b, u) =>
-      if b then some (some (witnessPoint r inputs m), u) else searchC limit r inputs outs n (m + 1) u
+  | n + 1, m, u => (pointHoldsC limit r inputs outs pass (witnessPoint r inputs m) u).bind fun (b, u) =>
+      if b then some (some (witnessPoint r inputs m), u) else searchC limit r inputs outs pass n (m + 1) u
 
 /-- No point decided it: the points ran out at the limit, or all were tried. -/
 def searchUnknown (inputs : List (String × Printed)) : UnknownReason :=
@@ -338,11 +353,15 @@ def consistencyRun (limit : Nat) (ds : List Decl) (r : Rounding) (inputs : List 
     | .error .undefined => some .undefined
     | .error .exhausted => some (.unknown (.limit .evaluations))
     | .error _ => some (.unknown (.limit .digits))
-    | .ok outs' => (refuteC limit r inputs outs' 0 0).bind fun
-      | (some (j, es), _) => some (.fails j es)
-      | (none, w) => (searchC limit r inputs outs' (witnessCount inputs) 0 w).map fun
-        | (some pt, _) => .holds pt
-        | (none, _) => .unknown (searchUnknown inputs)
+    | .ok outs' => match outputNodes outs' with
+      | none => some (.unknown .consistencyInconclusive)
+      | some nodes =>
+        let pass := passWork inputs nodes
+        (refuteC limit r inputs outs' 0 pass).bind fun
+        | (some (j, es), _) => some (.fails j es)
+        | (none, w) => (searchC limit r inputs outs' pass (witnessCount inputs) 0 w).map fun
+          | (some pt, _) => .holds pt
+          | (none, _) => .unknown (searchUnknown inputs)
 
 theorem enclosesC_some {limit : Nat} {r : Rounding} {inputs : List (String × Printed)} {es : List Expr} {w : Nat}
     {is : List (Rat × Rat)} {w' : Nat} (h : enclosesC limit r inputs es w = some (some is, w')) :
@@ -422,8 +441,8 @@ theorem allHoldC_sound {limit : Nat} {t : Table} {cs : List Claim} {u u' : Nat} 
     · cases h
 
 theorem pointHoldsC_sound {limit : Nat} {r : Rounding} {inputs : List (String × Printed)} {outs : List Claim}
-    {w : List (String × Rat)} {u u' : Nat} (hn : (w.map Prod.fst).Nodup)
-    (h : pointHoldsC limit r inputs outs w u = some (true, u')) : witnessCheck r inputs outs w = true := by
+    {pass : Nat} {w : List (String × Rat)} {u u' : Nat} (hn : (w.map Prod.fst).Nodup)
+    (h : pointHoldsC limit r inputs outs pass w u = some (true, u')) : witnessCheck r inputs outs w = true := by
   obtain ⟨hu, h⟩ := visitC_some h
   split at h
   · rename_i hin
@@ -438,9 +457,9 @@ theorem pointHoldsC_sound {limit : Nat} {r : Rounding} {inputs : List (String ×
   · cases h
 
 theorem searchC_some {limit : Nat} {r : Rounding} {inputs : List (String × Printed)} {outs : List Claim}
-    {n m u : Nat} {w : List (String × Rat)} {u' : Nat}
-    (h : searchC limit r inputs outs n m u = some (some w, u')) :
-    (∃ k, w = witnessPoint r inputs k) ∧ ∃ u0 u1, pointHoldsC limit r inputs outs w u0 = some (true, u1) := by
+    {pass n m u : Nat} {w : List (String × Rat)} {u' : Nat}
+    (h : searchC limit r inputs outs pass n m u = some (some w, u')) :
+    (∃ k, w = witnessPoint r inputs k) ∧ ∃ u0 u1, pointHoldsC limit r inputs outs pass w u0 = some (true, u1) := by
   induction n generalizing m u with
   | zero => cases h
   | succ n ih =>
@@ -492,6 +511,10 @@ theorem consistencyRun_holds (limit : Nat) (ds : List Decl) (h : WellFormed ds) 
   | error v => cases v <;> simp [consistencyRun, hin, hnm, hl] at hr
   | ok outs' =>
     simp only [consistencyRun, hin, hnm, hl] at hr
+    cases hc : outputNodes outs' with
+    | none => simp [hc] at hr
+    | some nodes =>
+    simp only [hc] at hr
     obtain ⟨⟨found, w1⟩, -, hr⟩ := Option.bind_eq_some_iff.mp hr
     cases found with
     | some jes => cases hr
@@ -520,6 +543,10 @@ theorem consistencyRun_fails (limit : Nat) (ds : List Decl) (h : WellFormed ds) 
   | error v => cases v <;> simp [consistencyRun, hin, hnm, hl] at hr
   | ok outs' =>
     simp only [consistencyRun, hin, hnm, hl] at hr
+    cases hc : outputNodes outs' with
+    | none => simp [hc] at hr
+    | some nodes =>
+    simp only [hc] at hr
     obtain ⟨⟨found, w1⟩, hf, hr⟩ := Option.bind_eq_some_iff.mp hr
     cases found with
     | some jes =>

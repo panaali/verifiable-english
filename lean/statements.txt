@@ -6198,10 +6198,10 @@ theorem VE.Calc.causes_step
   -- uses VE.Calc.CausesAt@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
   -- expr 667908898
 theorem VE.Calc.chargeI_some
-  ∀ {limit : Nat} {i : Rat × Rat} {w : Nat} {j : Option (Rat × Rat)} {w' : Nat},
-    VE.Calc.chargeI limit i w = Option.some (j, w') → j = Option.some i
-  -- uses VE.Calc.chargeI@VE.Calc.Interval
-  -- expr 3863763469
+  ∀ {limit : Nat} {i j : Rat × Rat} {w w' : Nat},
+    VE.Calc.chargeI limit i w = Option.some (Option.some j, w') → j = i ∧ VE.Calc.Small i.fst ∧ VE.Calc.Small i.snd
+  -- uses VE.Calc.Small@VE.Calc.Decls VE.Calc.chargeI@VE.Calc.Interval
+  -- expr 1152050702
 theorem VE.Calc.charge_eq
   ∀ {α : Type} {c n : Nat} {x : Unit → α} {r : α} {m : Nat}, VE.Calc.charge c n x = Option.some (r, m) → r = x ()
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.charge@VE.Calc.Poly
@@ -6315,6 +6315,12 @@ theorem VE.Calc.digitCount_le_iff
   ∀ (n : Nat), VE.Calc.digitCount n ≤ VE.Calc.maxDigits ↔ n < 10 ^ VE.Calc.maxDigits
   -- uses VE.Calc.digitCount@VE.Calc.Decls VE.Calc.maxDigits@VE.Calc.Decls
   -- expr 2300436323
+theorem VE.Calc.encloseC_small
+  ∀ (limit : Nat) (r : VE.Numbers.Rounding) (inputs : List (String × VE.Numbers.Printed)) (e : VE.Calc.Expr) (w : Nat)
+    (i : Rat × Rat) (w' : Nat),
+    VE.Calc.encloseC limit r inputs e w = Option.some (Option.some i, w') → VE.Calc.Small i.fst ∧ VE.Calc.Small i.snd
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Small@VE.Calc.Decls VE.Calc.encloseC@VE.Calc.Interval VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 1544666042
 theorem VE.Calc.encloseC_some
   ∀ (limit : Nat) (r : VE.Numbers.Rounding) (inputs : List (String × VE.Numbers.Printed)) (e : VE.Calc.Expr) (w : Nat)
     (i : Rat × Rat) (w' : Nat),
@@ -6651,12 +6657,12 @@ theorem VE.Calc.pointDecls_wellFormed
   -- expr 1722461256
 theorem VE.Calc.pointHoldsC_sound
   ∀ {limit : Nat} {r : VE.Numbers.Rounding} {inputs : List (String × VE.Numbers.Printed)} {outs : List VE.Calc.Claim}
-    {w : List (String × Rat)} {u u' : Nat},
+    {pass : Nat} {w : List (String × Rat)} {u u' : Nat},
     (List.map Prod.fst w).Nodup →
-      VE.Calc.pointHoldsC limit r inputs outs w u = Option.some (Bool.true, u') →
+      VE.Calc.pointHoldsC limit r inputs outs pass w u = Option.some (Bool.true, u') →
         VE.Calc.witnessCheck r inputs outs w = Bool.true
   -- uses VE.Calc.Claim@VE.Calc.Syntax VE.Calc.pointHoldsC@VE.Calc.Consistency VE.Calc.witnessCheck@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
-  -- expr 2222319333
+  -- expr 1386986061
 theorem VE.Calc.pointsB_eq
   ∀ (a b : VE.Calc.Expr) (ks : List (List (String × Rat))) (n : Nat)
     {r : Option (List (String × Rat) × Option (Rat × Rat))} {m : Nat},
@@ -6767,12 +6773,12 @@ theorem VE.Calc.runCounted_reads
   -- expr 1580874912
 theorem VE.Calc.searchC_some
   ∀ {limit : Nat} {r : VE.Numbers.Rounding} {inputs : List (String × VE.Numbers.Printed)} {outs : List VE.Calc.Claim}
-    {n m u : Nat} {w : List (String × Rat)} {u' : Nat},
-    VE.Calc.searchC limit r inputs outs n m u = Option.some (Option.some w, u') →
+    {pass n m u : Nat} {w : List (String × Rat)} {u' : Nat},
+    VE.Calc.searchC limit r inputs outs pass n m u = Option.some (Option.some w, u') →
       (∃ k, w = VE.Calc.witnessPoint r inputs k) ∧
-        ∃ u0 u1, VE.Calc.pointHoldsC limit r inputs outs w u0 = Option.some (Bool.true, u1)
+        ∃ u0 u1, VE.Calc.pointHoldsC limit r inputs outs pass w u0 = Option.some (Bool.true, u1)
   -- uses VE.Calc.Claim@VE.Calc.Syntax VE.Calc.pointHoldsC@VE.Calc.Consistency VE.Calc.searchC@VE.Calc.Consistency VE.Calc.witnessPoint@VE.Calc.Consistency VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
-  -- expr 4272059789
+  -- expr 588226161
 theorem VE.Calc.sidesAtB_eq
   ∀ (a b : VE.Calc.Expr) (κ : List (String × Rat)) (n : Nat) {r : Option (Rat × Rat)} {m : Nat},
     VE.Calc.sidesAtB a b κ n = Option.some (r, m) →

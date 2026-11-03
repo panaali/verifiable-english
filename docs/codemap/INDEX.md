@@ -47,7 +47,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/lean-first/b8/](docs__lean-first__b8.md) — 4 modules — -
 - [docs/lean-first/b9/](docs__lean-first__b9.md) — 5 modules — -
 - [docs/lean-first/e2/](docs__lean-first__e2.md) — 2 modules — -
-- [docs/math-evidence/](docs__math-evidence.md) — 5 modules — -
+- [docs/math-evidence/](docs__math-evidence.md) — 6 modules — -
 - [docs/math-evidence-me-1c/](docs__math-evidence-me-1c.md) — 2 modules — -
 - [docs/merge-tooling/](docs__merge-tooling.md) — 1 modules — -
 - [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
