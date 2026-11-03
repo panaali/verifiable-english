@@ -1,3 +1,4 @@
+- `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
 - `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
@@ -77,4 +78,3 @@
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
 - `tests/test_risk_english.py` — Fixture k19 (risk.md 2.1 to 2.3, 8.2): the gate of the risk English surface.
-- `tests/test_risk_every_diagnostic.py` — Every diagnostic of risk.md 6 from the Lean route on a hand-written input (docs/spec/risk.md 8.3).

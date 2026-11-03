@@ -3,10 +3,9 @@
 
 Each declaration of those blocks is compared with the one Lean declaration of that kind and name in
 lean/VE/Defaults/Uniform.lean, after whitespace normalization: a theorem up to its proof's `:=`, anything else in full.
-PK-1's `structure Pack` lives in lean/VE/NormDefaults/Packs.lean and is not compared here (`ELSEWHERE`). Two are
-compared in another form (`FORMS`): `leastUniform`, which the spec gives without a body, up to its `:=`; and
-`dfltUniform_sound`, which PC-9 does not prove, as `def DfltUniformSound : Prop := ∀ <its binders>, <its conclusion>`
-(DRI decision 2026-11-02, pc-9, item 1; DF-U proves it in the spec's form and deletes the definition).
+PK-1's `structure Pack` lives in lean/VE/NormDefaults/Packs.lean and is not compared here (`ELSEWHERE`). One is
+compared in another form (`FORMS`): `leastUniform`, which the spec gives without a body, up to its `:=`.
+`dfltUniform_sound` is the theorem DF-U proves (sa-no-exception), compared as every theorem is.
 """
 
 from pathlib import Path
@@ -20,13 +19,7 @@ SOURCES = [ROOT / "lean/VE/Defaults/Uniform.lean"]
 ELSEWHERE = {"Pack"}
 
 
-def held(text: str) -> tuple[tuple[str, str], str]:
-    """`dfltUniform_sound`'s text as the definition that holds it."""
-    binders, conclusion = text.removeprefix("theorem dfltUniform_sound ").rsplit(" : ", 1)
-    return ("def", "DfltUniformSound"), f"def DfltUniformSound : Prop := ∀ {binders}, {conclusion}"
-
-
-FORMS = {"leastUniform": lambda text: (("def", "leastUniform"), text), "dfltUniform_sound": held}
+FORMS = {"leastUniform": lambda text: (("def", "leastUniform"), text)}
 
 
 def approved() -> dict[tuple[str, str], list[str]]:

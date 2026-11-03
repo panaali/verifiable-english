@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Rules
 import VE.EnglishGrammar.Fixed.Version
+import VE.EnglishGrammar.Norm.Value
 import VE.Grammar.Meaning
 
 /-! The action library of the base profile (docs/spec/english-lean-s2.md 2.7, 2.8 and 5.2).
@@ -76,6 +77,9 @@ def Sem : Ty → Type
   | .natSubject => String × String × String
   | .count => Bool
   | .relation => String
+  | .norm => Norm.NState → Except Reject (Norm.Piece × Bool × Norm.NState)
+  | .consequence => Norm.Clause × Scope
+  | .refs => List Nat
 
 def sig : Sig Tok where
   Ty := Ty
