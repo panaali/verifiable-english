@@ -152,6 +152,9 @@ theorem layeredKindCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
     | some a => exact OkP.pure (layeredCase_fits L id _ j hi hk hp _ ho _ rfl)
   · obtain ⟨k, -, rfl⟩ := List.mem_map.mp hr
     cases hrk
+    by_cases hc : VE.Defaults.providerConditions L.packs = true
+    · simp only [hc, ↓reduceIte]; exact OkP.throw
+    simp only [hc, Bool.false_eq_true, ↓reduceIte]
     refine OkP.bind (fun v _ => OkP.bind (fun o ho => ?_))
     cases o with
     | none => exact OkP.throw
