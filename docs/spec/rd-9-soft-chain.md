@@ -1947,6 +1947,7 @@ SC-11.
   `supX`'s labels, which differ from every choice's (S-2, S-7). Whether SC-11 shows the superposed labels, maps them
   through `nameMap` to each choice's, or shows the per-choice labels is SC-11's decision. The plan leaves it open.
   SC-10's statements do not depend on it.
+- SC-11's statement spec is section 14: 14.4 applies the DRI's direction on OPEN-SC10-2, and 14.15 lists SC-11's own OPEN lines.
 
 ### 13.8 Review checklist (SC-10's statement review)
 
@@ -1961,3 +1962,587 @@ SC-11.
 4. The fixtures of 13.5: each *computed* value is as recorded, and each iff has a fixture per direction.
 5. OPEN-SC10-1 and OPEN-SC10-2 are stated, not decided.
 6. Placement and imports (D13): `SoftSup.lean` holds only soft-chain code; no general definition with `X` moves.
+
+## 14. SC-11: the superposed route under the soft completion (statement spec, 2026-11-03)
+
+> Status: SC-11's statement spec, written 2026-11-03 on branch `design/spec-sc11` from `main` at `90807e7f7`, from plan
+> D3, D11, 3.3 step 5, S2a's DRI ruling 5 (composition-s2 4.1 step 3), the SC-10/SC-11 batch text (plan 6), section 13,
+> DRI decisions `reviews/dri-decisions-20261031-sc-10.md` items 1 and 2, and edit 5 of synthesis round 2.
+>
+> **Not elaborated.** This item ran no Lean and no Python, by its task. The statements of 14.8 are written against the
+> sources at `90807e7f7`, and every name they use was read there, except the three theorems of 13.3 that sc-10b builds.
+> The builder elaborates each one first, before proving anything. A statement that does not elaborate, or is false as
+> written, goes back to the DRI with its counterexample. Fixture values are *derived*, except where marked *pinned*
+> (already a `#guard` on main).
+
+### 14.1 Definitions
+
+`N`, `A`, `supU N`, `supX N`, `pullF`, `sharedEnvSD N` and `supCertificateCheckSD` are as in 13.1. `re` is the case's
+`ReadingsEnvironment`, and `r : AdmittedSD` is the case's one admission.
+
+- **A superposable soft document** (`sdSuperposable N`): `superposable N.D` and `WellFormedU (supU N)` (13.4 item 7).
+- **The per-choice check** (`sdChecked re N`) is S2a's DRI ruling 5 extended by 3.3 step 5. The compatible choices number
+  at most `maxChoiceChecks` (1024), `sdCheckWork N` is within `maxSdCheckWork` (14.11), and `sdChoiceText re N c` is
+  `none` for each of them. `sdChoiceText` is the merged check of 3.3 step 5, S2a's chain text and then step 3's
+  checks on `choiceU N c`.
+- **The superposed labelled premises** are `softXL N (sup N.D).1`, the labelled form of `supX N`. A **superposed label**
+  is the first component of one of them (S-2: `soft:coherence:need-not-x,rd-2-must-x`). A **choice label** of `c` is a
+  first component of `softXL N (choiceDoc N.D c).1` (S-7: `soft:coherence:must-x,need-not-x`).
+- **The label image** `labelImage N c` pairs each choice label of `c` with the superposed label of the same premise.
+  A rule of `c`'s document is sent to its name in `sup D` by `fmap N.D c`, the node form of `qName`. `nameMap` itself maps
+  generated *predicate* names, and it reads rule names through `qName` (`qualifyKey`). A label carries rule names, so
+  the DRI's "through `nameMap`" is stated at `fmap`, the rule-name layer that `nameMap` is built on. An exception
+  label keeps its role and index. A coherence label is rebuilt with the two image names ascending (`collidingPairs`
+  orders by name), which is why S-7's pair changes order.
+- **A dead premise of `c`** is a superposed labelled premise whose label is in no pair of `labelImage N c`: an exception
+  premise of a candidate `c` does not take, or a coherence pair with a member `c` does not take. A pair of two candidates
+  of one set is dead in every choice. A dead premise holds at every encoded filled base of `c`, by `supLabel_other`.
+- **The shown labels** `sdShown N A used` take the superposed labels `used` that an accepted piece of evidence depends
+  on. They are the choice labels whose image is in `used`, read over the compatible choices taking `A` in canonical
+  order, each once. A used label with no image under `A` is dead in every choice taking `A`. It is not shown, and no
+  other name is shown in its place.
+- **The soft row**: the `readings-elaborate` row of a document whose `routeSD` is superposed (14.3).
+
+### 14.2 The route condition
+
+`routeSD re N` is `routeOf true N.D` with one change: its `enumerated` row becomes `superposed` exactly when
+`sdSuperposable N` and `sdChecked re N` hold. Otherwise that row stays enumerated, as today, with at most 64 compatible
+choices and the finding `ReadingsNotSuperposable: <sets>` with cause `the unspecified completion` (D3, OPEN-SC11-3).
+The `w2`, `pending` and abstention rows are unchanged. `routeOf` and `routeND` are not edited: the norms chain keeps
+`routeND`, and the rights chain keeps the abstention. `routeSD` is read only under `underSoftCompletion`.
+
+- **When the check can fail on a document admission accepted.** Admission already refuses a failing choice at most 64
+  (3.3 step 5, with its text). So `sdChecked` can fail only past 64 choices: a choice from 65 to 1024 that fails,
+  more than 1024 choices, or `sdCheckWork` over the limit. Each of these gives the enumerated row (`choice_count:
+  "over 64"`, verdicts UNKNOWN by budget), never a verdict over an unchecked choice. This differs from RD-6b, whose row
+  stays superposed and refuses with the text. The batch text makes the check part of the route's condition, and an
+  UNKNOWN from the enumerated row is the answer the document already has today.
+- **No compatible choice.** `unsatText` first on every kind, as today (4.1 step 3), whichever row `routeSD` gives.
+- **What ends synthesis edit 5.** Edit 5 says a soft-chain document's readings route enumerates until SC-10/11 land.
+  That holds until the merge that switches the dispatch (sc-11b, 14.13). From that merge, on a document under the soft
+  completion, the superposed route answers exactly in the kinds below when `routeSD re N = .superposed`. sc-10b and
+  sc-11 alone change no answer.
+
+| Kind | `routeSD` superposed | `routeSD` enumerated |
+| --- | --- | --- |
+| `readings-validate`, `readings-separate`, `readings-dead` | as today, byte-identical (they read no route) | as today |
+| `readings-choice` | as today, byte-identical (4.3: `choiceLayeredG`) | as today |
+| `readings-elaborate` | the soft row (14.3) | as today, byte-identical |
+| `readings-conflict`, `-certificate`, `-model` | answered (14.3, 14.8) | today's `sdRefusal` text |
+| `readings-verdicts` with `budget` | the superposed answer (14.3) | RD-3's answer, `runVerdictsSD` |
+| `readings-verdicts` without `budget` | RD-3's answer, `runVerdictsSD` (the service contract `runS2ND` keeps on the norms chain) | as today |
+
+### 14.3 The wire
+
+**Order.** Each premise list is the slot, then `A`'s atoms, then `supX N`, then `Fill_T`: 13.4 item 2's
+`slotUnder N.D A ++ supX N` as `X`, with `Fill_T` after it in `premisesX`. A conflict certificate is checked over
+`backgroundBase (fill (supU N)) ++ slotUnder N.D A ++ supX N ++ fillPremises (supU N)`
+(`conflictFreeCheckX (supU N) (slotUnder N.D A ++ supX N)`) for each target of `fill (supU N)`. A query certificate is
+checked by `supCertificateCheckSD` and bound by `bindCertX` (D14, F-SD11): a certificate whose binding leaves out a
+regenerated premise, or adds one, is diagnostic 11. A model is `modelCheckX (supU N) (slotUnder N.D A ++ supX N)` with
+a separate `filling`, and an `unsaid__` table in `relations` is refused (F-SD8). A reported model also has `localFree`.
+Queries are typed over `sharedEnvSD N` (DRI item 1).
+
+**Requests.** The superposed kinds keep S2a's and RD-6b's members. A model gains `filling`, as `choice-model` has it.
+No other request member changes.
+
+**The soft row.** `readings-elaborate` on `routeSD = .superposed` gives:
+
+- as RD-6b's row, read on `N.D` and not on `fillDoc N` (F-SD5): `route: "superposed"`, `generated_predicates`,
+  `finding: null`, `narrowings_stale`, `vocabulary`, `units`, `slot`, `names`, the choices (`choicesJson`),
+  `choices_checked`, `sizes`, `fill` (`fillLabelled (supU N)`);
+- the completion's fields, unchanged and byte-identical to the enumerated row's: `fill_premises`, `soft_premises`, `filled`;
+- new, because Python builds no `fill`, `X` or `Coh_T` (D12): `soft`, a list of `{label, ast}`, one entry per premise of
+  `supX N` in its order; and the filled superposed tree's `base_environment`, `filled_premises` (layers), `conflict_targets`
+  and `unsaid`, in the shapes `norm-defaults-elaborate` gives them for a choice (`_FilledChoiceDocument`).
+  `soft[].label` is the choice label the premise is the image of (14.4), or `null` for a premise dead in every
+  compatible choice. Two entries may share a label (fixture W-4).
+
+**The verdict answer.** `readings-verdicts` with `budget` has `runSupVerdicts`' shape, with the `nd` behaviour of
+`supResult`: per-choice statuses in `choices`, and the fold under named readings (SOME, NONE), never "NOT ALL" (the RD-6b
+review's finding). On the soft chain these members differ from RD-6b's:
+
+- `conditional_on` (also on each `proofs[]`) is `sdShown` of the used `supX` labels, then the used `Fill_T` labels,
+  then `restrictionsFor D A`, each once. Slot labels are not conditions here: the enumerated route never lists them,
+  and they stay in `reading_premises_used`.
+- `reading_premises_used`, `scopes[].used` and `english[].label` show a soft premise only by its shown label.
+- `decided_units` is present, as on the enumerated row (OPEN-SC11-6). With no named reading and at most 64 choices, it is
+  1.12's rule on the rows the scopes establish: `setDecided` and `fixedDecided`, with a choice's conflict row `free` when the
+  global scope is CONFLICT-FREE and else that choice's own scope's, and each reading's status from its candidate scope, dead
+  and narrowed as in `readingPremise`. The premises question under no named reading therefore lists the complete choices
+  too while the global conflict status is open (`supOpen`, on the soft chain only). Otherwise `[]`.
+- `english`: `supPlan`, with each used soft label through `conditionItems`, the lines the enumerated route gives it (D12: no
+  new wording), and `Fill_T` labels by `P1`. A gated UNKNOWN gets its E12 line (R8 or R4), which RD-6b's planner lacks
+  (readings-defaults 2.4 records that gap): the soft chain has that line today, so it may not lose it.
+
+**What changes and what stays byte-identical**, for a document that moves from the enumerated to the superposed row:
+
+| Field | After |
+| --- | --- |
+| `soft_premises`, `fill_premises`, `filled`, per-pair `gaps`, `choice_count`, `choices`, `narrowings_stale` on `readings-elaborate` | byte-identical |
+| every `readings-validate`, `readings-separate`, `readings-dead`, `readings-choice` answer | byte-identical |
+| `readings-verdicts` without `budget` | byte-identical |
+| `route`, `finding`, `choices_checked` on `readings-elaborate` | `superposed`, `null`; `choices_checked` counts up to 1024 |
+| `vocabulary`, `units`, `slot`, `names`, `sizes`, `fill`, `soft`, `base_environment`, `filled_premises`, `conflict_targets`, `unsaid` on `readings-elaborate` | new on this row |
+| `readings-conflict`, `-certificate`, `-model` | answered, not `sdRefusal` |
+| verdict `status`, `verdict`, per-choice and per-candidate statuses, `conditional_on` as a set, `decided_units` | the same as the enumerated answer at most 64 choices (14.6) |
+| verdict `route`, `status_text`, `evidence`, `reading_premises_used`, `scopes`, `model_proposals`, `model`, `countermodel`, `english` | the superposed route's own; the "checked one at a time" sentence would be false here and is dropped, as in RD-6b |
+| a query naming a decision predicate of one reading (for example `soft__excepted__must_x`) | refused as outside `sharedEnvSD N` (DRI item 1); the enumerated route types it over the first choice's vocabulary (OPEN-SC11-4) |
+
+Past 64 choices the verdicts are new answers where today's are UNKNOWN (OPEN-SC11-4).
+
+### 14.4 The label mapping (DRI item 2)
+
+A superposed answer shows each choice's own labels. `supX`'s labels are read through `labelImage`, and no label field
+carries a qualified `rd-<k>-` name. By 14.8's label theorems the mapping is total in the sense the ruling needs:
+
+- every choice label has exactly one image, and that image is a superposed label (`labelImage_fst`, `labelImage_snd_mem`);
+- at an encoded base of `c`, a premise and its image hold together (`supLabel_pull`);
+- every other superposed premise holds at that base (`supLabel_other`), so leaving it out of `conditional_on` hides no
+  condition the answer rests on under `c`;
+- one superposed label has one choice label in every choice that has it (`labelImage_functional`), so `soft[].label` is
+  well defined.
+
+So no document needs the ruling's refusal, and `ReadingsNotSuperposable` is not added for labels. If elaboration or
+proof shows one of these four false, the build stops at that theorem and the fallback applies: a new OPEN line, and the
+route enumerates on those documents. It does not show an unmapped name.
+
+`Fill_T` labels (`unsaid:pair:<r>,<m>`) name predicates and are the same on the superposed document and on every
+choice (`fillLabels_choice`). Slot labels (`readings:<set>@<v>:<i>:quiet`, `:one`, `coupling:`, `narrowing:`,
+`readings:quiet:outweighs:…`) name sets and keys, never a qualified rule.
+
+The ruling's scope is read as *labels*. `names`, `units`, `vocabulary`, `generated_predicates`, ASTs and a shown model's
+`relations` are machine fields that carry qualified names on S2a's and RD-6b's rows today, and a generator needs them
+(OPEN-SC11-1). No English line prints one (`supRuleName`, fixture W-1).
+
+### 14.5 The generators
+
+**Evidence.** Python's prover and model search stay untrusted generators (`ve/readings_verdicts/superposed.py`). On the
+soft chain they run on Lean's row and nothing Python builds: `Superposed` takes the base environment, the extended
+environment, the layers, the targets and the premises from the soft row, as `_FilledChoiceDocument` does for a choice,
+and does not call `superposed_document`, whose soft elaborator reads the placeholder `deny`. The premise list is
+`_labelled`'s in 14.3's order, with `soft` between the atoms and `fill`. `_prove`'s labelled minimisation runs over the
+slot, `soft` and `fill` entries; a `null`-labelled `soft` entry counts as labelled there, so a dead premise is dropped
+from a proof when the proof holds without it. `_lifted` is not used, as under RD-6b. Lean checks each piece. A refusal of
+evidence Python's own check accepted is `CheckerUnavailable`. `context` needs no change, since it reads `route`.
+
+**Documents.** `generated(index)` in `tests/test_readings_sc11_differential.py` (new), in the shape of
+`tests/test_readings_rd6b_differential.py`, seeded `sc11-differential:<index>`, independent per index:
+
+- environment: one or two regulated pairs, each with an unspecified member, the two conditions `c1`, `c2`, on the soft chain
+  under `norm-defaults@0`;
+- sets: one, two or three, with two or three readings each, drawn from strict duty, default duty, default duty with a
+  sufficient condition, default duty with a necessary condition, default duty under a guard on an unspecified permission,
+  and permission; three documents at exactly 64 choices (six sets of two), which run only the implication query;
+- fixed unit: none, a default `need-not` (a coherence pair, `X ≠ []`), a strict prohibition under a condition, or a permission;
+- a separating situation for each pair of readings, over `filledAuthorEnv N`, found by `ve.readings_s1.search`;
+- query: as RD-6b's three, in the shared vocabulary, with or without `--under` a reading of the first set; the general
+  queries where the choices are at most 4, the implication elsewhere.
+
+A generated document that admission or `routeSD` does not send to the soft row is not skipped: the test fails, naming it.
+
+### 14.6 The differential
+
+200 documents, at most 64 compatible choices each, answered on both routes. The superposed route is `Superposed(loaded)`.
+The enumerated oracle is `Enumerated({**loaded, "readings_s2": enumerated_row})` with today's enumerated row, as in RD-6b's test.
+
+**Identical means**, per document:
+
+1. `conflict` status, and each compatible choice's status in canonical order;
+2. `premises` status, and each candidate's status and index;
+3. the query's `verdict`;
+4. `conditional_on`, as a **set of strings**, on every CONFLICT-FREE, ALL and INCONSISTENT answer. This is the DRI's "the
+   same strings"; its order is not compared, because each route lists a label at the first choice or premise that used it;
+5. `soft_premises` and `fill_premises`, byte-identical;
+6. `decided_units` of the premises question under no named reading.
+
+**On the superposed side only:** every label in `conditional_on`, `reading_premises_used`, `scopes[].used`,
+`english[].label` is a slot label, a `Fill_T` label, a restriction, or a choice label of a compatible choice taking `A`; no
+such field contains the `rd-<k>-` of any qualified name in the row's `names`.
+
+**Not compared:** the fields 14.3 calls the route's own; a witness's or countermodel's model and named choice (each route
+shows its own checked one, and each is checked).
+
+**Guards.** ≥ 100 distinct shapes, none repeated more than 6 times; both conflict statuses and at least two verdicts in every
+chunk; `X ≠ []` on at least a third of the documents; an answer listing a coherence label, a sufficient label and a
+necessary label each at least once; the choice counts include 2, 3, 4, 6, 9 and 64; `--under` on 60 to 140 documents; 15
+chunks, as RD-6b.
+
+`conditional_on` equality is **checked here and not proved**: each route's list is what its own certificate used, and both
+are sound. A UNKNOWN on one side and a decided answer on the other is a difference too. A seed that differs fails the
+test; no seed is dropped and no generator narrowed without a DRI ruling (OPEN-SC11-5).
+
+### 14.7 What each statement says (one reading each)
+
+- **`labelImage_fst`.** The first components of `labelImage N c` are exactly `c`'s choice labels, in their order.
+- **`labelImage_snd_mem`.** Every second component of `labelImage N c`, for a compatible `c`, is a superposed label.
+- **`labelImage_functional`.** If two compatible choices each pair a choice label with the same superposed label, those two
+  choice labels are the same string.
+- **`supLabel_pull`.** At an encoded filled base `B` of `c`, a superposed premise holds at `B` exactly when the choice's premise
+  it is the image of holds at `pullF N c B`.
+- **`supLabel_other`.** At an encoded filled base `B` of `c`, a superposed premise whose label is no image for `c` holds at `B`.
+- **`sdShown_mem`.** A shown label under `A` is a choice label of some compatible choice taking `A`.
+- **`sdShown_image`.** If a used superposed label is the image of a choice label of a compatible choice taking `A`, that choice
+  label is shown.
+- **`fillLabels_choice`.** A compatible choice's `Fill_T` labels are the superposed document's, in the same order.
+- **`routeSD_superposed_iff`.** The route is superposed exactly when `routeOf true N.D` is enumerated, `sdSuperposable N` holds
+  and `sdChecked re N` holds.
+- **`sdChecked_spec`.** If the check passes, every compatible choice has `sdChoiceText` none and its `choiceU N c` is `WellFormedU`.
+- **`sdCheck_of_admitted`.** On an admitted document with at most 64 compatible choices, whose work is within the limit, the
+  check passes, so it need not be run a second time.
+- **`readings_wire_sd_choices`.** A replayed superposed case has a compatible choice, and every compatible choice is `sdChecked`'s
+  conclusion.
+- **`readings_wire_sd_conflict_sound`.** If the conflict certificates are accepted under `A`, every compatible choice taking `A`
+  is conflict-free, read in its own filled document with its own `choiceX`.
+- **`readings_wire_sd_all_sound`.** If in addition a certificate of `φ` from `Γ` is accepted under `A`, then every compatible
+  choice taking `A` entails `φ` from its assertions and `Γ`, with its own `choiceX`.
+- **`readings_wire_sd_model_sound`.** If a filled model passes the check under `A`, with `φ` false there and no conflict at any
+  tuple, its bits name a compatible choice taking `A`, and that choice has a countermodel.
+- **`readings_wire_sd_consistent_sound`.** The same model with `φ = ⊥` and `Γ = []` shows that choice's assertions consistent.
+- **`readings_wire_sd_witness_sound`.** If a filled model passes the base checks under `A` and a target of the filled superposed
+  tree holds at a typed tuple, its bits name a compatible choice taking `A`, and that choice is not conflict-free.
+
+### 14.8 Lean: the exact statements (no proofs; D13 placement)
+
+Two new files, soft-chain code only; no general definition with `X` moves. `lean/VE/Readings/SoftSupLabels.lean` imports
+`VE.Readings.SoftSup`. `lean/VE/Readings/SoftSupWire.lean` imports `VE.Readings.SoftSupLabels` and
+`VE.Readings.SupVerdictsWire`, and `Readings/Run.lean` imports it. Neither `SoftSup.lean` nor `SupVerdictsWire.lean` imports
+these, so the graph stays acyclic. `SupVerdictsWire.lean` may gain the parameters its soft use needs (the `nd` flag's reading,
+`supOpen`'s premises row, the gated-UNKNOWN line), each leaving the norms chain's bytes unchanged. `#guard`s go in
+`Readings/SoftSupWireExamples.lean`.
+
+```lean
+-- lean/VE/Readings/SoftSupLabels.lean
+namespace VE.Readings
+open VE.Norms (Sat)
+universe u
+
+/-- One rule's exception labels (the node form of `excLabels`). -/
+def nodeExcLabels (M : VE.SoftNorms.SoftNode) : List String :=
+  match M.mode, M.exception with
+  | .default, some e =>
+    (List.range e.sufficient.length).map (fun i => s!"soft:exception:{M.name}:sufficient:{i}") ++
+      (List.range e.necessary.length).map (fun i => s!"soft:exception:{M.name}:necessary:{i}")
+  | _, _ => []
+
+/-- (choice label, superposed label) of each soft premise of `c`'s document. -/
+def labelImage (N : NDoc) (c : Choice) : List (String × String) :=
+  let Y := (choiceDoc N.D c).1.soft
+  Y.T.nodes.flatMap (fun M => (nodeExcLabels M).zip (nodeExcLabels (fmap N.D c M))) ++
+    (VE.SoftNorms.collidingPairs Y).map (fun x =>
+      let a := fmap N.D c x.1
+      let b := fmap N.D c x.2
+      (VE.SoftNorms.Wire.cohLabel x.1 x.2,
+        if a.name < b.name then VE.SoftNorms.Wire.cohLabel a b else VE.SoftNorms.Wire.cohLabel b a))
+
+/-- What an answer shows for the superposed labels `used`: choice labels of the compatible choices taking `A`. -/
+def sdShown (N : NDoc) (A : Choice) (used : List String) : List String :=
+  VE.SoftNorms.dedup (((checkedChoices N.D).filter (fun c => A.all (c.contains ·))).flatMap (fun c =>
+    (labelImage N c).filterMap (fun p => if used.contains p.2 then some p.1 else none)))
+
+theorem labelImage_fst (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c) :
+    (labelImage N c).map (·.1) = (softXL N (choiceDoc N.D c).1).map (·.1)
+
+theorem labelImage_snd_mem (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (p : String × String) (hp : p ∈ labelImage N c) :
+    p.2 ∈ (softXL N (sup N.D).1).map (·.1)
+
+theorem labelImage_functional (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c₁ c₂ : Choice) (h₁ : Compatible N.D c₁)
+    (h₂ : Compatible N.D c₂) (l₁ l₂ s : String) (hp₁ : (l₁, s) ∈ labelImage N c₁) (hp₂ : (l₂, s) ∈ labelImage N c₂) :
+    l₁ = l₂
+
+theorem supLabel_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (VE.NormDefaults.fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) (l s : String) (a a' : VE.Formula) (hp : (l, s) ∈ labelImage N c)
+    (ha : (l, a) ∈ softXL N (choiceDoc N.D c).1) (ha' : (s, a') ∈ softXL N (sup N.D).1) :
+    a'.denote B [] ↔ a.denote (pullF N c B) []
+
+theorem supLabel_other (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (VE.NormDefaults.fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) (s : String) (a' : VE.Formula) (ha' : (s, a') ∈ softXL N (sup N.D).1)
+    (hn : ∀ p ∈ labelImage N c, p.2 ≠ s) :
+    a'.denote B []
+
+theorem sdShown_mem (N : NDoc) (hr : supReady N.D = true) (hle : (checkedChoices N.D).length ≤ maxChoiceChecks)
+    (A : Choice) (used : List String) (l : String) (hl : l ∈ sdShown N A used) :
+    ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ l ∈ (softXL N (choiceDoc N.D c).1).map (·.1)
+
+theorem sdShown_image (N : NDoc) (hr : supReady N.D = true) (hle : (checkedChoices N.D).length ≤ maxChoiceChecks)
+    (A : Choice) (used : List String) (c : Choice) (hc : Compatible N.D c) (hA : ∀ x ∈ A, x ∈ c)
+    (l s : String) (hp : (l, s) ∈ labelImage N c) (hu : s ∈ used) :
+    l ∈ sdShown N A used
+
+theorem fillLabels_choice (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c) :
+    VE.NormDefaults.Admission.fillLabels (choiceU N c) = VE.NormDefaults.Admission.fillLabels (supU N)
+end VE.Readings
+```
+
+```lean
+-- lean/VE/Readings/SoftSupWire.lean
+namespace VE.Readings.Wire
+open VE.Readings
+open VE.Bridge (Entity)
+open VE.Norms (targets)
+open VE.NormDefaults (fill)
+universe u
+
+def sdSuperposable (N : NDoc) : Bool := superposable N.D && VE.NormDefaults.WellFormedU (supU N)
+
+/-- 14.11: the compatible choices times the superposed premises and rule nodes each check reads. -/
+def maxSdCheckWork : Nat := 4194304
+def sdCheckWork (N : NDoc) : Nat :=
+  (checkedChoices N.D).length * ((softXL N (sup N.D).1).length + ((sup N.D).1.soft.T.nodes.map
+    (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
+
+/-- DRI ruling 5 extended by 3.3 step 5, within its limits. -/
+def sdChecked (re : ReadingsEnvironment) (N : NDoc) : Bool :=
+  decide ((checkedChoices N.D).length ≤ maxChoiceChecks) && decide (sdCheckWork N ≤ maxSdCheckWork) &&
+    (checkedChoices N.D).all (fun c => (sdChoiceText re N c).isNone)
+
+def routeSD (re : ReadingsEnvironment) (N : NDoc) : Route :=
+  match routeOf true N.D with
+  | .enumerated => if sdSuperposable N && sdChecked re N then .superposed else .enumerated
+  | r => r
+
+/-- A superposed case on the soft chain: the case's one admission, its route, a compatible choice. -/
+structure SupReplaySD where
+  r : AdmittedSD
+  route : routeSD r.b.a.re r.N = .superposed
+  sat : (choices r.N.D).isEmpty = false
+
+theorem routeSD_superposed_iff (re : ReadingsEnvironment) (N : NDoc) :
+    routeSD re N = .superposed ↔
+      routeOf true N.D = .enumerated ∧ sdSuperposable N = true ∧ sdChecked re N = true
+
+theorem sdChecked_spec (re : ReadingsEnvironment) (N : NDoc) (hr : supReady N.D = true)
+    (hw : sdChecked re N = true) (c : Choice) (hc : Compatible N.D c) :
+    sdChoiceText re N c = none ∧ VE.NormDefaults.WellFormedU (choiceU N c) = true
+
+theorem sdCheck_of_admitted (r : AdmittedSD) (hr : supReady r.N.D = true)
+    (hle : (checkedChoices r.N.D).length ≤ maxChoices) (hw : sdCheckWork r.N ≤ maxSdCheckWork) :
+    sdChecked r.b.a.re r.N = true
+
+theorem readings_wire_sd_choices (x : SupReplaySD) :
+    (∃ c, Compatible x.r.N.D c) ∧ ∀ c, Compatible x.r.N.D c →
+      sdChoiceText x.r.b.a.re x.r.N c = none ∧ VE.NormDefaults.WellFormedU (choiceU x.r.N c) = true
+
+theorem readings_wire_sd_conflict_sound (x : SupReplaySD) (A : Choice)
+    (hA : ∀ z ∈ A, (candidate x.r.N.D z.1 z.2).isSome) (certs : List (Option VE.Tableau.Certificate))
+    (hc : VE.NormDefaults.Wire.conflictFreeCheckX (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) certs = true) :
+    ∀ c, Compatible x.r.N.D c → (∀ z ∈ A, z ∈ c) →
+      VE.NormDefaults.Wire.ConflictFreeX.{u} (choiceU x.r.N c) (choiceX x.r.N c)
+
+theorem readings_wire_sd_all_sound (x : SupReplaySD) (A : Choice)
+    (hA : ∀ z ∈ A, (candidate x.r.N.D z.1 z.2).isSome) (certs : List (Option VE.Tableau.Certificate))
+    (hc : VE.NormDefaults.Wire.conflictFreeCheckX (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) certs = true)
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnvSD x.r.N) [])
+    (hφ : φ.WellFormed (sharedEnvSD x.r.N) []) (cert : VE.Tableau.Certificate)
+    (ha : supCertificateCheckSD x.r.N A Γ φ cert = true) :
+    ∀ c, Compatible x.r.N.D c → (∀ z ∈ A, z ∈ c) →
+      VE.NormDefaults.Wire.ConflictFreeX.{u} (choiceU x.r.N c) (choiceX x.r.N c) ∧
+        VE.NormDefaults.EntailsX.{u} (choiceU x.r.N c) (choiceX x.r.N c) ((choiceDoc x.r.N.D c).2 ++ Γ) φ
+
+theorem readings_wire_sd_model_sound (x : SupReplaySD) (A : Choice)
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnvSD x.r.N) [])
+    (hφ : φ.WellFormed (sharedEnvSD x.r.N) []) (M : VE.FiniteModel Entity)
+    (valid : M.Valid (VE.Norms.envAt (supU x.r.N).D 0)) (F : VE.NormDefaults.FiniteFill (supU x.r.N) Entity)
+    (hm : (VE.NormDefaults.modelCheckX (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) M F
+      ((sup x.r.N.D).2 ++ Γ) φ).1 = true)
+    (hn : (VE.NormDefaults.modelCheckX (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) M F
+      ((sup x.r.N.D).2 ++ Γ) φ).2 = false)
+    (hl : localFree (supU x.r.N) M F = true) :
+    ∃ c, Compatible x.r.N.D c ∧ (∀ z ∈ A, z ∈ c) ∧
+      Encodes x.r.N.D c (VE.NormDefaults.withFill (supU x.r.N) M.asStructure (VE.NormDefaults.finFill M F)) ∧
+      CounterX (choiceU x.r.N c) (choiceX x.r.N c) ((choiceDoc x.r.N.D c).2 ++ Γ) φ
+
+theorem readings_wire_sd_consistent_sound (x : SupReplaySD) (A : Choice) (M : VE.FiniteModel Entity)
+    (valid : M.Valid (VE.Norms.envAt (supU x.r.N).D 0)) (F : VE.NormDefaults.FiniteFill (supU x.r.N) Entity)
+    (hm : (VE.NormDefaults.modelCheckX (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) M F
+      (sup x.r.N.D).2 .bottom).1 = true)
+    (hl : localFree (supU x.r.N) M F = true) :
+    ∃ c, Compatible x.r.N.D c ∧ (∀ z ∈ A, z ∈ c) ∧
+      ConsistentX (choiceU x.r.N c) (choiceX x.r.N c) (choiceDoc x.r.N.D c).2
+
+theorem readings_wire_sd_witness_sound (x : SupReplaySD) (A : Choice)
+    (t : String × List String × VE.Formula) (ht : t ∈ targets (fill (supU x.r.N))) (M : VE.FiniteModel Entity)
+    (valid : M.Valid (VE.Norms.envAt (supU x.r.N).D 0)) (hbg : VE.Norms.backgroundValid (supU x.r.N).D M = true)
+    (F : VE.NormDefaults.FiniteFill (supU x.r.N) Entity)
+    (hf : VE.NormDefaults.fillValid (supU x.r.N) M F = true)
+    (hX : VE.NormDefaults.Wire.extraValid (supU x.r.N) (slotUnder x.r.N.D A ++ supX x.r.N) M F = true)
+    (vs : List Entity)
+    (typed : VE.TupleTyped (VE.NormDefaults.withFill (supU x.r.N) M.asStructure (VE.NormDefaults.finFill M F)) t.2.1 vs)
+    (hw : t.2.2.eval (M.withFill F) (VE.Norms.tupleVal vs) = true) :
+    ∃ c, Compatible x.r.N.D c ∧ (∀ z ∈ A, z ∈ c) ∧
+      Encodes x.r.N.D c (VE.NormDefaults.withFill (supU x.r.N) M.asStructure (VE.NormDefaults.finFill M F)) ∧
+      ¬ VE.NormDefaults.Wire.ConflictFreeX.{0} (choiceU x.r.N c) (choiceX x.r.N c)
+end VE.Readings.Wire
+```
+
+Namespaces above are as read at `90807e7f7`; an `open` the elaborator asks for is the builder's, and it changes no statement.
+
+What the proofs need, as guidance: `supLabel_pull` and `supLabel_other` are the per-premise halves of `exc_pullF` and
+`coh_pullF` (`SoftSup.lean`), whose list forms are `supX_pull`. Take the pieces from the merged lemmas (`F3`, `F4`, `dead_extra`,
+`pattern_off`, `quiet_holds`) and do not edit `SoftSup.lean` unless sc-10b has merged and a lemma must be exposed.
+`readings_wire_sd_conflict_sound` is `conflictFreeCheckX_sound` then `sd_superpose_conflict_free`.
+`readings_wire_sd_witness_sound` needs the downward half of `sd_superpose_conflict_free` at the named base, since the
+answer names the encoded choice. The superposed kinds can reuse the layered source: a `LayeredU` with `U = supU N` and `X =
+slotUnder N.D A ++ supX N`, whose `conflictFreeX`, `witnessConflictX` and `xEvidenceOf` already read as 14.3 states. That is the
+builder's choice, not frozen.
+
+### 14.9 Fixtures
+
+The per-choice route on the same input is the oracle for every *derived* verdict. Each iff has a fixture per direction.
+
+| # | Case | Expected | Pins |
+| --- | --- | --- | --- |
+| W-1 (DRI item 2's condition) | `NSD4`, `readings-elaborate` | `soft[].label` is exactly `["soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]` (S-7, *pinned* as choice labels) and `soft_premises` of `(rs1,1)` is the same list, byte-identical to the enumerated row; no label contains `rd-2-must-x`, while S-2's labels do (*pinned*). `NSD4`, `readings-verdicts`, `--under rs1:1`: CONFLICT (13.5, DRI item 3), on both routes, and no English line contains `rd-2-` or `rd_2_` (OPEN-SC11-2) | `labelImage`, 14.4 |
+| W-1a (the same, on an answer that lists them) | `NSD4a`, `--under rs1:1`: conflict; then the query `∀ a. c a → ¬ x_required a` | CONFLICT-FREE, `conditional_on: ["soft:coherence:must-x,need-not-x"]` on both routes (F-SD4's line). ALL on both routes, `conditional_on` as a set is exactly `{soft:exception:must-x:sufficient:0, soft:coherence:must-x,need-not-x}`; never `rd-2-must-x` (*derived*) | `sdShown`, 14.6 item 4 |
+| W-2 | `labelImage NSD4 (rs1,0)`; `labelImage NSD4 (rs1,1)` | `[]`; `[("soft:exception:must-x:sufficient:0", "soft:exception:rd-2-must-x:sufficient:0"), ("soft:coherence:must-x,need-not-x", "soft:coherence:need-not-x,rd-2-must-x")]` (the pair's order flips; S-2, S-7 *pinned*) | `labelImage_fst`, `labelImage_snd_mem` |
+| W-2′ | `labelImage` on `NC9`, `NSD2` | three `…:sufficient:i` pairs; one `…:necessary:0` pair, its `supX` premise bit-free (S-4′ *pinned*) | exception labels, both roles |
+| W-3 | `NSDd`: one set of two defaults on one act with opposite signs, no fixed unit | the sup pair `(rd-1-…, rd-2-…)` is a superposed label, `labelImage` is `[]` on both choices, `soft[].label` `null`; `sdShown` of it is `[]`; the premise holds at each encoded base (*derived*) | `supLabel_other`; dead in every choice |
+| W-4 | `NSDm`: one set of two defaults `x` under different guards, a fixed default `need-not-x` | two superposed labels, one choice label: `soft[]` has `soft:coherence:need-not-x,x` twice; `sdShown` under `[]` lists it once (*derived*) | `labelImage_functional`, not injective across choices |
+| W-5 | `supLabel_pull`: `NSD4`, `(rs1,1)`, `c = {a}`, `soft__excepted__rd_2_must_x = ∅`, and the same table `{a}` | the sufficient premise false on both sides; true on both sides (as 13.5 *derived*) | each direction |
+| W-5′ | `supLabel_other`, `hsl` needed: `NSD2`, bits naming `(rs1,0)`, `soft__excepted__rd_2_no_deception = {(a,u)}` | the slot is broken and the premise is false (13.5, *derived*) | no weaker hypothesis |
+| W-6 | `routeSD`: `NSD1`, `NSD4`, `NSD4a`, `NSD4c`, `NC9`, `NSD2`, `NSDq` (`facts` all true, *pinned*) | superposed | `routeSD_superposed_iff`, → |
+| W-6′ | `routeSD`: a document failing each conjunct alone: non-uniform precedence under a rule (`superposable` false); `WellFormedU (supU N)` false with `superposable` true; a choice at position 65 or later whose `sdChoiceText` is `some`; `F-SD9` with 11 sets (2048 choices); `w2`; `pending` | each of the first four enumerated, with today's finding and bytes; `w2`; `pending` | ← , one row per conjunct |
+| W-7 | `F-SD1`: elaborate, conflict, query, `--under rs1:0`, `--under rs1:1`, each answered as F-SD1.verdicts | route superposed; CONFLICT-FREE; SOME; ALL; NONE, with choice 1's countermodel `excepted = {(a,u)}` and the filling no; `decided_units: ["u1"]` then `[]` under each `--under` (*derived*) | RD-6b review's "NOT ALL" |
+| W-8 | certificates: 13.5's `sd_superpose_all` and `_countermodel` rows through the wire, and a certificate whose binding drops a `supX` premise or adds an assertion (F-SD11's form) | accepted; refused with diagnostic 11 (*derived*) | `bindCertX`, D14 |
+| W-9 | the `Fill_T` premise on `NSDq`: `fill[]` one entry, after `soft[]` in the premise list; the same request with `fill` applied before `soft`, or `supX` before the slot | a certificate generated for the wrong order fails `supCertificateCheckSD` (order is byte-level, though `BaseAdmissibleX` is unchanged by 13.4 item 2) | 14.3's order |
+| W-10 | a query over `sharedEnvSD`: `∀ agent ∀ user. unsaid__avoid_required agent user → avoid_required agent user` on `NSD1` (DRI item 1's guard); `soft__excepted__must_x` in a query on `NSD4` | decoded and answered; refused by the decoder | `decodeShared` over `sharedEnvSD N` |
+| W-11 | a model with an `unsaid__` table in `relations`; a filling that fails `Fill_T`; a model with `localFree` false (13.5's without-`hl` case) | refused or UNKNOWN, never `model` (F-SD8) | `hl`, F-SD8 |
+| W-12 | 7 sets each as `rs1` (F-SD9) | superposed, `choices_checked: 128`, `choice_count: "over 64"`, decided verdicts (F-ND3's analogue); `decided_units: []` (1.12); budget zero stays UNKNOWN (*derived*) | past 64 |
+| W-13 (large, well formed) | `NSDbig`: 10 sets of 2, each a default with a sufficient condition, one fixed unit (1024 choices at the limit); the same with 11 sets; the 10-set document with enough guard nodes that `sdCheckWork > maxSdCheckWork` | superposed, a conflict answer in one proof, `choices_checked: 1024`; enumerated, "over 64"; enumerated, "over 64" | 14.11 |
+| W-14 (read once) | `readings-verdicts` on `NSD4a` with conflict, certificate and model evidence, under `VE_READINGS_STAGE_TIMES=1` | one `admitSDOf` and one route check per case, however many pieces | 14.11 |
+
+Seeded bugs the build plants (each must fail a fixture): `labelImage` returning the superposed label as its first component
+(W-1, W-2); `sdShown` over all choices and not those taking `A` (W-7 under `--under`); `routeSD` without `sdChecked` (W-6′); the
+`nd` behaviour off (W-7); `Fill_T` dropped from the list (W-9); `null` shown as an empty string (W-3).
+
+### 14.10 Python relay-binding rows
+
+Python checks the schema and binds what the request fixes (R8); it recomputes no label, route or status. The rows go in
+`docs/spec/rd-9-relay-binding.md` with their fields in `tests/test_relay_binding_inventory.py` when the build adds them (synthesis
+edit 3), through `_bind_completion_superposed` and `_check_sup_answer`. If `sa-binder` has merged, they are rows of its one
+binder and no new binder is written (edit 2). A failed check is `CheckerUnavailable`.
+
+| Field | Request binding or Lean-derived value | Regression (names the build uses) |
+| --- | --- | --- |
+| `route`, `finding`, `choices_checked` (soft row) | `superposed` with `finding` null and `choices_checked` an integer, or the enumerated row's existing binding | `test_sc11_soft_row_route_fields_are_bound` |
+| `soft[].label` | null, or a `soft_label` over `soft_rules` of the request's own bodies: author names, never the `names` map's qualified names; each `soft_premises` label of a reading occurs here | `test_sc11_a_qualified_soft_label_is_unavailable` |
+| `soft[].ast`, `filled_premises[]`, `conflict_targets[].ast` | Lean-derived, typed by the generated schema | `test_route_row_schemas` |
+| `fill[].label` | `unsaid:pair:<r>,<m>` of a declared pair, equal as a set to `fill_premises`' labels, each once (RD-6b's row) | `test_sc11_fill_labels_are_bound` |
+| `base_environment`, `unsaid[].name` | as `_FilledChoiceDocument`'s row: the request's vocabulary plus the regenerated names of `unsaid__p` for its unspecified `p` and the elaborated decisions | `test_sc11_soft_row_environment_is_bound` |
+| `conflict_targets[].target`, `.sorts` | the regulated predicates and declared pairs, once, with their sorts (the `conflict_targets` row) | `test_sc11_soft_row_targets_are_bound` |
+| `result.conditional_on`, `proofs[].conditional_on`, `reading_premises_used`, `scopes[].used`, `english[].label` | closed list: a slot label of the row, a `fill` label, a `soft[].label` not null, a restriction of the document; each once per list; a qualified label is `CheckerUnavailable` | `test_sc11_answer_labels_are_the_rows_labels` |
+| `decided_units` | present; each a unit of the document, once, in document order (`binding.py`'s row) | `test_sc11_decided_units_are_bound` |
+| `result.choices`, `proofs`, `countermodels` | the compatible choices taking `A`, in canonical order, at most 64 (`_check_sup_answer`) | `test_readings_sup_verdicts` rows |
+| `model`, `filling` (shown) | equal to the scope's shown model; `gaps` bound by `_bound_gaps` | `test_sc11_shown_model_and_filling_are_bound` |
+
+### 14.11 Evaluation limits
+
+Each value is computed once per case, and its size is charged before it is used.
+
+| Value | Read | Charged against |
+| --- | --- | --- |
+| the compatible choices (`search`) | once per case; `choices` is read from the same cut | `maxChoiceChecks` 1024 (past it: enumerated) |
+| `sdChoiceText` per choice | at most 64 choices: admission's result, not run again (`sdCheck_of_admitted`); past 64: once, in the route | `sdCheckWork N ≤ maxSdCheckWork`, checked before the first `sdChoiceText` (over: enumerated, no choice read) |
+| `sup N.D`, `supU N`, `fill (supU N)`, `softXL N (sup N.D).1`, `premisesX`, `targets` | once per case; every piece of a `readings-verdicts` case runs on that value (as `conflictReplay` does), never re-admitting per piece as `x.run` does on the norms chain | 256 rules plus unspecified predicates; 10,000 AST nodes (section 9) on `supU N` |
+| `labelImage N c`, per choice taking `A` | once per scope, and only when a piece was accepted | within `sdCheckWork` |
+| `usedLabels` | per accepted piece, one replay per label of slot, `supX` and `Fill_T` | the labels within `sdCheckWork`; each replay is the piece's own certificate, within `max_steps` |
+| a request's JSON members (evidence, model, certificates) | decoded once; the input bytes charged by the existing admission memo | the existing limits |
+
+`maxSdCheckWork` = 4,194,304 is 1024 choices × 4096 premises and rule nodes. It is this spec's value from that arithmetic,
+not a measurement (OPEN-SC11-7). W-13 is the large well-formed request; the build records its Lean CPU, and R4's absolute
+budgets are the bar. Exceeding the limit is the enumerated row, not an error.
+
+### 14.12 Existing text and tests that sc-11b changes
+
+This section supersedes them from sc-11b's merge. This item edits no earlier section. 8.3's F-SD4 sentence stays with row
+`sc-fsd4-text`, DRI item 3.
+
+| Where | Today | After |
+| --- | --- | --- |
+| 1.1, D3, D11 (plan), 6.8's `routeOf` note | the soft chain's route is the enumerated row | the route is `routeSD`, 14.2 |
+| 8.3 F-SD1 (elaborate) | enumerated, `ReadingsNotSuperposable: rs1` | the soft row |
+| 8.3 F-SD1.verdicts, F-SD4 | RD-3's answer | same verdicts and labels (14.6), the superposed shape when `budget` is sent |
+| 8.3 F-SD2 (K18), elaborate and superposed kinds | enumerated; refusal | the soft row with `soft` and `fill` empty, not K1's S2a row; `readings-validate`, `-separate`, `-choice`, budget-free `-verdicts` unchanged |
+| 8.3 F-SD9 | enumerated, query UNKNOWN | W-12 |
+| 8.1 F-SD2 route | `routeOf` values | unchanged (`routeOf` not edited) |
+| `sdRefusal`'s docstring, `SoftWire.lean`'s and `Run.lean`'s "the route is the enumerated one" | | updated with the switch |
+| `tests/test_readings_sd_lean.py` (:134-151, :173-195, :316, :579), `tests/test_readings_sd_document.py` (:71-86), `tests/test_readings_sd_ce4.py` (:215-238), `tests/test_rd9_chain_relay.py` (:49) | enumerated | as above; none deleted, each asserting the new row or the budget-free answer |
+
+Each document the A/B comparison sees change is a DELTA row of the build (OPEN-SC11-4 for the kinds no standing ruling
+covers). `CE4`'s sets are read by `routeSD` like any other; whether they move is measured, not assumed here.
+
+### 14.13 Build items and the sc-10b dependency
+
+Two items, on the ~600-line rule; this is the plan's estimate of 5–6 h, not a measurement.
+
+- **sc-11 (Lean, no byte moves):** `SoftSupLabels.lean`, `SoftSupWire.lean` with every statement of 14.8, the soft runners
+  (`readings-conflict`, `-certificate`, `-model`, the soft row and the verdict scopes) reached only from `SoftSupWireExamples.lean`,
+  W-2 to W-6′ and W-13's route values as `#guard`s. The dispatch stays as today.
+- **sc-11b (the switch):** `runS2ND`, `runSDKind` and `runElaborateSD` read `routeSD`; the row in the response schema; Python
+  (14.5), relay rows (14.10); the changes of 14.12; the differential (14.6); the wire fixtures; DELTA and A/B. **The seam is
+  that commit:** before it no answer changes.
+
+**sc-10b must be on main before sc-11 builds** for `readings_wire_sd_conflict_sound`, `readings_wire_sd_all_sound`,
+`readings_wire_sd_model_sound`, `readings_wire_sd_consistent_sound`, `readings_wire_sd_witness_sound`, which read
+`sd_superpose_conflict_free`, `sd_superpose_all`, `sd_superpose_countermodel` as 13.3 states them. The rest of 14.8 needs only what
+is merged (`fillPremisesSD_pull`, `supX_pull` and their lemmas), and it could start first, but it is one item with the rest. sc-11 and
+sc-10b both read `SoftSup.lean`, and only sc-10b writes it, so run sc-10b first.
+
+### 14.14 Not claimed
+
+- No theorem that the two routes' `conditional_on` agree, or their verdicts: 14.6 checks them on 200 seeds, and
+  `readings_wire_sd_*` show each superposed answer true of the per-choice semantics, which is what the enumerated route folds.
+- No completeness: a superposed UNKNOWN says nothing, and no claim that an answer is found within budget. No speed claim.
+- No companions, no readings with their own vocabulary (RD-4a's refusal stays, D11), nothing on the rights chain under the completion.
+- `routeSD` says nothing about a document in a product (`readings_components`): those cases keep their own route.
+- No new English wording (D12).
+
+### 14.15 OPEN (for the DRI)
+
+- **OPEN-SC11-1 (scope of "no qualified names on the wire").** Item 2 is read as about labels (14.4). `names`, `units`,
+  `vocabulary`, `generated_predicates`, ASTs and a shown model's `relations` keep qualified names, as S2a's and RD-6b's rows do; a
+  generator needs them, and English prints none. The stricter reading, a shown model pulled into the choice's vocabulary, would
+  need a wire statement on the pulled model and more build. This spec takes the narrow reading.
+- **OPEN-SC11-2 (where item 2's condition is checked).** The condition says a superposed answer on `NSD4` under the default
+  reading lists exactly S-7's labels. `NSD4` under the default reading is CONFLICT (13.5, DRI item 3), and a CONFLICT answer has no
+  `conditional_on`. So W-1 checks `NSD4` on `soft[].label` and `soft_premises`, and W-1a checks the verdict's `conditional_on` on
+  `NSD4a`, the fixture with the filling the merged F-SD4 test uses. Confirm this meets the condition.
+- **OPEN-SC11-3 (the enumerated row's cause).** Kept byte-identical: `the unspecified completion` (D3), though a document may now
+  fail for a named cause such as non-uniform precedence. RD-6b's `ndNotSuperposable` names the cause; adopting its analogue changes
+  today's bytes on documents that stay enumerated, and needs a ruling.
+- **OPEN-SC11-4 (DELTA rows no standing ruling covers).** A verdict change other than R5 and any loss of information are never
+  standing (DRI-RULINGS). Three kinds arrive at sc-11b: (a) past 64 choices, UNKNOWN becomes a decided verdict (W-12; RD-6b's F-ND3 had this);
+  (b) a query naming one reading's decision predicate, typed today over the first choice's vocabulary, is refused (W-10; follows item 1);
+  (c) soft documents on the constitution's path may move routes at the merge, so `CE4` and SC-9's recorded output change wording (not
+  verdicts, by 14.6, at at most 64 choices), and the plan calls SC-11 off that path. The batch text has no flag, and this spec adds none. The
+  DRI signs these rows or rules before sc-11b's task file is written. No row is signed here.
+- **OPEN-SC11-5 (a differential seed that differs on `conditional_on`).** Both lists are sound and neither is a theorem's (14.6). Default:
+  the test fails and the build stops on that seed for the DRI; no seed is dropped. The alternative is comparing `conditional_on` by inclusion
+  in the union of the choice labels.
+- **OPEN-SC11-6 (`decided_units` on the superposed answer).** The plan does not name it, and RD-6b's answer has none. Default: keep it on
+  the soft chain (14.3), because dropping it would be a loss of information and would change SC-9's measure. It costs `supOpen`'s
+  extra premises scopes while the global conflict status is open.
+- **OPEN-SC11-7 (`maxSdCheckWork`).** 4,194,304 is arithmetic, not a measurement (14.11). Confirm or set it after W-13's CPU figure.
+
+### 14.16 Review checklist (SC-11's statement review)
+
+1. Each statement of 14.8 is true under its hypotheses, not only well typed, and each 14.7 paraphrase has one reading. In particular
+   `supLabel_other` (the slot is needed: W-5′) and `labelImage_functional` (a qualified name fixes its candidate).
+2. The route condition is plan 6's, D3's and DRI ruling 5's; `routeND` and `routeOf` are untouched; the fall-through past 64 is conservative.
+3. 14.3's order agrees with 13.3's statements, `premisesX` and D14; the queries are typed as DRI item 1 settled.
+4. Item 2's direction and condition hold: no label field carries a qualified name, and W-1 and W-1a pin it.
+5. 14.6 says what identical means, labels included, and what is not compared.
+6. The fixtures of 14.9 have a row per direction, each with something that would fail it.
+7. 14.10's rows only bind (R8); no row recomputes a Lean value.
+8. 14.11 charges each value once, with a stated limit and a large well-formed fixture.
+9. D13: no general definition with `X` moves; the split of 14.13 builds within the size rule.
+10. 14.15 decides nothing that the plan and rulings leave open.
