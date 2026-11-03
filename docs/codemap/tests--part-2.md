@@ -19,6 +19,7 @@
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
+- `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
@@ -38,7 +39,6 @@
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
-- `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
