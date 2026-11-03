@@ -164,6 +164,9 @@ def lean_layer(module: str) -> int | None:
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
+    if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
+        return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
+        # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):

@@ -2833,6 +2833,7 @@
         "VE.Discourse.checkImport",
         "VE.Discourse.choicesOk",
         "VE.Discourse.depthOf",
+        "VE.Discourse.documentSortOk",
         "VE.Discourse.gateOk",
         "VE.Discourse.importChain",
         "VE.Discourse.integrityOk",
@@ -2859,7 +2860,13 @@
         "VE.Discourse.validityPostOk",
         "VE.Discourse.verdictFor",
         "VE.Discourse.withoutContent",
-        "VE.Discourse.wrapperOk"
+        "VE.Discourse.wrapperOk",
+        {
+          "name": "VE.Discourse.fuelBudget",
+          "tied": [
+            "VE.Discourse.composed_unchanged"
+          ]
+        }
       ],
       "G[I]": [
         "VE.Discourse.bindingsOk",
@@ -3097,6 +3104,7 @@
         "VE.Discourse.Loader.w2Status"
       ],
       "D[R]": [
+        "VE.Discourse.Loader.fencesOk",
         "VE.Discourse.Loader.frontJsonError",
         "VE.Discourse.Loader.maxDocumentBytes",
         "VE.Discourse.Loader.partitionText"
@@ -3197,19 +3205,25 @@
         "VE.Discourse.Run.carrierText",
         "VE.Discourse.Run.choicesJson",
         "VE.Discourse.Run.encodeAdmission",
+        "VE.Discourse.Run.encodeComposed",
         "VE.Discourse.Run.jointFields",
         "VE.Discourse.Run.targetJson"
       ],
       "G[V]": [
         "VE.Discourse.Run.DiscourseAdmissionAnswer",
-        "VE.Discourse.Run.fuelBudget",
         "VE.Discourse.Run.jointJson",
         "VE.Discourse.Run.loadCase",
         "VE.Discourse.Run.runCase",
         "VE.Discourse.Run.runCaseReported",
         "VE.Discourse.Run.runJoint",
         "VE.Discourse.Run.runResolve",
-        "VE.Discourse.Run.usesDiscoursePath"
+        "VE.Discourse.Run.usesDiscoursePath",
+        {
+          "name": "VE.Discourse.Run.ComposedAdmissionAnswer",
+          "tied": [
+            "VE.Discourse.Run.discourse_wire_acceptance"
+          ]
+        }
       ]
     },
     "VE/Discourse/Theorems.lean": {
@@ -17903,6 +17917,137 @@
         "VE.Commands.Texts.permission",
         "VE.Commands.Texts.please",
         "VE.Commands.Texts.unbound"
+      ]
+    },
+    "VE/Discourse/Compose.lean": {
+      "S": [
+        "VE.Discourse.ChainAdmitted",
+        "VE.Discourse.Composed",
+        "VE.Discourse.caseParts",
+        "VE.Discourse.caseShape",
+        "VE.Discourse.chainAbstentions",
+        "VE.Discourse.chainConstructs",
+        "VE.Discourse.chainKeys",
+        "VE.Discourse.chainUnit",
+        "VE.Discourse.conditionalOnOf",
+        "VE.Discourse.contentFree",
+        "VE.Discourse.contentKey",
+        "VE.Discourse.contentOk",
+        "VE.Discourse.editArr",
+        "VE.Discourse.editObj",
+        "VE.Discourse.formulaUnit",
+        "VE.Discourse.frontShape",
+        "VE.Discourse.textShape",
+        "VE.Discourse.unitFree",
+        "VE.Discourse.unitsAndParts"
+      ],
+      "C": [
+        "VE.Discourse.admitChain",
+        "VE.Discourse.admitComposed",
+        "VE.Discourse.resolveCase",
+        "VE.Discourse.resolveDocument",
+        "VE.Discourse.resolveOn",
+        "VE.Discourse.resolveWith",
+        "VE.Discourse.writtenText"
+      ],
+      "D[V]": [
+        "VE.Discourse.chainBase",
+        {
+          "name": "VE.Discourse.chainDocument",
+          "tied": [
+            "VE.Discourse.composed_admission"
+          ]
+        },
+        {
+          "name": "VE.Discourse.composedJson",
+          "tied": [
+            "VE.Discourse.conditions_retained"
+          ]
+        },
+        {
+          "name": "VE.Discourse.caseManifest",
+          "tied": [
+            "VE.Discourse.caseManifest_wellFormed"
+          ]
+        }
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Discourse.dispatchAdmission",
+          "tied": [
+            "VE.Discourse.composed_admission"
+          ]
+        },
+        {
+          "name": "VE.Discourse.chainChecks",
+          "tied": [
+            "VE.Discourse.chainChecks_wellFormed"
+          ]
+        },
+        {
+          "name": "VE.Discourse.chainDDoc",
+          "tied": [
+            "VE.Discourse.chainChecks_wellFormed"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Discourse.chainReferences"
+      ]
+    },
+    "VE/Discourse/ComposeExamples.lean": {
+      "T": [
+        "VE.Discourse.ComposeExamples.bareUnit",
+        "VE.Discourse.ComposeExamples.c0",
+        "VE.Discourse.ComposeExamples.caseOf",
+        "VE.Discourse.ComposeExamples.chainD",
+        "VE.Discourse.ComposeExamples.doc",
+        "VE.Discourse.ComposeExamples.docName",
+        "VE.Discourse.ComposeExamples.env",
+        "VE.Discourse.ComposeExamples.envCase",
+        "VE.Discourse.ComposeExamples.fourUnits",
+        "VE.Discourse.ComposeExamples.graph",
+        "VE.Discourse.ComposeExamples.grouped",
+        "VE.Discourse.ComposeExamples.itText",
+        "VE.Discourse.ComposeExamples.loaded",
+        "VE.Discourse.ComposeExamples.manifestOf",
+        "VE.Discourse.ComposeExamples.mention",
+        "VE.Discourse.ComposeExamples.mentionBlock",
+        "VE.Discourse.ComposeExamples.normUnit",
+        "VE.Discourse.ComposeExamples.ok?",
+        "VE.Discourse.ComposeExamples.parsed",
+        "VE.Discourse.ComposeExamples.payload",
+        "VE.Discourse.ComposeExamples.shape",
+        "VE.Discourse.ComposeExamples.sortOk",
+        "VE.Discourse.ComposeExamples.src1",
+        "VE.Discourse.ComposeExamples.src2",
+        "VE.Discourse.ComposeExamples.twoMentions",
+        "VE.Discourse.ComposeExamples.u1",
+        "VE.Discourse.ComposeExamples.unitJ",
+        "VE.Discourse.ComposeExamples.units",
+        "VE.Discourse.ComposeExamples.vocabulary"
+      ]
+    },
+    "VE/Service/ComposedAdmissionExamples.lean": {
+      "T": [
+        "VE.Service.ComposedAdmissionExamples.Mutation",
+        "VE.Service.ComposedAdmissionExamples.alpha",
+        "VE.Service.ComposedAdmissionExamples.astUnit",
+        "VE.Service.ComposedAdmissionExamples.block",
+        "VE.Service.ComposedAdmissionExamples.chainField",
+        "VE.Service.ComposedAdmissionExamples.chainOf",
+        "VE.Service.ComposedAdmissionExamples.composed",
+        "VE.Service.ComposedAdmissionExamples.fenceBody",
+        "VE.Service.ComposedAdmissionExamples.front",
+        "VE.Service.ComposedAdmissionExamples.itBody",
+        "VE.Service.ComposedAdmissionExamples.large",
+        "VE.Service.ComposedAdmissionExamples.mutations",
+        "VE.Service.ComposedAdmissionExamples.navigations",
+        "VE.Service.ComposedAdmissionExamples.resolved",
+        "VE.Service.ComposedAdmissionExamples.s425",
+        "VE.Service.ComposedAdmissionExamples.s428",
+        "VE.Service.ComposedAdmissionExamples.today",
+        "VE.Service.ComposedAdmissionExamples.twinOf"
       ]
     }
   }
