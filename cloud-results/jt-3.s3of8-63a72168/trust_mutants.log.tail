@@ -1,0 +1,7 @@
+trust_mutants: 14 definitions, 231 mutants (29 to run), 4 jobs, base 50c6842f84f7
+SURVIVOR lean/VE/EnglishGrammar/Run.lean:570 VE.EnglishGrammar.Run.readCase (G[V], trusted) list-first: (if (j.getObjVal? "judgments").toOption.isSome then ["judgments"] else []) -> ((if (j.getObjVal? "judgments").toOption.isSome then ["judgments"] else []).take 1)
+trust_mutants: 18 KILLED, 1 SURVIVOR, 0 UNKNOWN, 2 INVALID, 4 ALLOWED, 4 NOT RUN, 202 OTHER SHARD in 5031 s
+trust_mutants: G[V], trusted: 12 KILLED, 1 SURVIVOR, 1 ALLOWED, 1 NOT RUN, 94 OTHER SHARD
+trust_mutants: S, trusted: 6 KILLED, 2 INVALID, 3 ALLOWED, 3 NOT RUN, 108 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 4 of its 29 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11 s, scratch 3.2 s, control_build 0.2 s, probe_install 1.4 s, control_probes 462.1 s, mutants 4551.1 s, cleanup 2.4 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 667.3 s (5), mutant_builds 64.9 s (25), mutant_checks 14511.5 s (24), stage_controls 2399.4 s (4), mutant_probes 997.2 s (22)
