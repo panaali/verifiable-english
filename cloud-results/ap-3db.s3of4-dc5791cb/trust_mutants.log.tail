@@ -1,0 +1,8 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Readings/SupRun.lean is a selected declaration's file or in its import closure
+trust_mutants: 29 definitions, 160 mutants (40 to run), 4 jobs, base 50c6842f84f7
+trust_mutants: 9 KILLED, 0 SURVIVOR, 0 UNKNOWN, 2 INVALID, 22 ALLOWED, 7 NOT RUN, 120 OTHER SHARD in 5302 s
+trust_mutants: D[V], trusted: 7 KILLED, 2 INVALID, 9 ALLOWED, 6 NOT RUN, 80 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 2 ALLOWED, 1 NOT RUN, 4 OTHER SHARD
+trust_mutants: S, trusted: 11 ALLOWED, 36 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 7 of its 40 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 8.7 s, scratch 2.4 s, control_build 0.2 s, probe_install 1.1 s, control_probes 413.1 s, mutants 4871.9 s, cleanup 4.3 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 1077.4 s (27), mutant_builds 1069 s (44), mutant_checks 13756.1 s (33), stage_controls 1378 s (4), mutant_probes 2485.5 s (12)
