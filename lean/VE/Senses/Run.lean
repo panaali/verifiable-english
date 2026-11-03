@@ -1,6 +1,7 @@
 import VE.Senses.Request
 import VE.Senses.Decode
 import VE.Senses.Version
+import VE.Senses.Flip
 import VE.EnglishGrammar.Run
 
 /-! A one-shot admission boundary for the senses reader. The pack text reaches
@@ -201,6 +202,19 @@ def lexiconJson (envId : String) (L : Lexicon) : Json :=
     ("aliases", Json.arr (L.aliases.map fun (p, a, n) => Json.arr #[.str p, .str a, .bool n]).toArray),
     ("spellings", pairs L.spellings)]
 
+/-- The projection as the wire gives it: its environment JSON with the request's profile list as written. The
+reader decides without the document layers (`VE.Compose.decidingEnvironment`), and every identity reads the list
+as written (`VE.Compose.documentLayers`). -/
+def _root_.VE.Senses.Projection.written (environment : Json) (P : Projection) : Projection :=
+  match environment.getObjVal? "profiles" with
+  | .ok ps => { P with envJson := P.envJson.setObjVal! "profiles" ps }
+  | .error _ => P
+
+/-- An outcome whose projection the wire gives (`Projection.written`). -/
+def _root_.VE.Senses.SensesOutcome.written (environment : Json) : SensesOutcome → SensesOutcome
+  | .ok units senses mixed unused P => .ok units senses mixed unused (P.written environment)
+  | o => o
+
 /-- A projection's lexicon JSON and its identities (plan 2.6, 2.7): its environment's and its lexicon's, as
 `english.read` computes them for a submitted environment and lexicon without an overlay (`decodeCase`), and the
 grammar's of the request's profiles, which a projection does not change. -/
@@ -229,27 +243,58 @@ def linesProjection (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b : Nat) 
 declares (`projectedSenses`). -/
 def usedOf (P : Projection) : List String := (P.map.map (·.2.1.word)).eraseDups
 
+/-- The first `k` sentences of a source as written (plan B6, the preamble lines): each from its first token's
+first byte to its terminator's last (`lexSpans`). -/
+def writtenLines (s : String) (k : Nat) : List String :=
+  match lexSpans s with
+  | .error _ => []
+  | .ok sents => (sents.extract 0 k).toList.filterMap fun sent => do
+    let first ← sent[0]?
+    let last ← sent.back?
+    pure (s.extract ⟨first.2.1⟩ ⟨last.2.2 + 1⟩)
+
+/-- A flip model's table in the existing model wire form (`VE.Bridge.decodeModelData`). -/
+def flipModelJson (m : FlipModel) : Json :=
+  Json.mkObj [("complete", .bool true), ("domains", Json.mkObj (m.domains.map fun (s, xs) => (s, toJson xs))),
+    ("constants", Json.mkObj (m.constants.map fun (c, x) => (c, .str x))),
+    ("relations", Json.mkObj (m.relations.map fun (p, rows) => (p, toJson rows)))]
+
+/-- A flip model on the wire: the unit's sentence, the pair, its status, and for a distinguishing model the senses
+it makes true, the two candidates' values under it and the model in the existing model wire form. -/
+def flipJson (start : Nat) : (Nat × Nat × Nat) × Flip → Json
+  | ((k, i, j), f) => Json.mkObj ([("sentence", toJson (start + k)), ("first", toJson i), ("second", toJson j)] ++
+    match f with
+    | .distinguished on a b m => [("status", .str "distinguished"), ("true", toJson on),
+        ("values", Json.arr #[.bool a, .bool b]), ("model", flipModelJson m)]
+    | .undistinguished => [("status", .str "undistinguished")]
+    | .unknown => [("status", .str "unknown")])
+
 /-- An admitted reading's identities (plan 2.7): S2's of its projection, without `overlay_digest`, with a source
-request's `source_sha256`; the words its body uses; and each candidate's (`ids`), computed once per distinct
-resolving lines by `linesProjection`, as `senses.project` computes them. -/
-def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b : Nat) (text : SenseText) :
-    SensesOutcome → Except String (List (String × Json) × (String → Json))
+request's `source_sha256` and the preamble lines it wrote (the sentences before the body, which is the last of the
+`count` sentences read, after `d` rendered defaults); the words its body uses; the flip models of its open units
+(`flipsOf`); and each candidate's identities (`ids`), computed once per distinct resolving lines by `linesProjection`, as
+`senses.project` computes them, with the request's `environment` profile list as written (`Projection.written`). -/
+def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (environment : Json) (b count d : Nat)
+    (text : SenseText) : SensesOutcome → Except String (List (String × Json) × (String → Json))
   | .ok units _ _ _ P => do
+    let start := count - units.length
     let used := usedOf P
     let (_, own) ← projectionIds c P
-    let source := match text with
-      | .source s => [("source_sha256", Json.str (VE.CertificateWire.sha256 s.toUTF8))]
-      | .fences _ => []
+    let (source, preamble) := match text with
+      | .source s => ([("source_sha256", Json.str (VE.CertificateWire.sha256 s.toUTF8))],
+          [("preamble", toJson (writtenLines s (start - d)))])
+      | .fences _ => ([], [])
     let table ← (units.flatMap fun u => u.candidates.map (·.lines)).eraseDups.mapM fun l => do
       match ← linesProjection D c b l used with
-      | .ok Q => pure (l, Json.mkObj (← projectionIds c Q).2)
+      | .ok Q => pure (l, Json.mkObj (← projectionIds c (Q.written environment)).2)
       | .error _ => throw "a candidate's resolving lines do not project"
     pure ([("identities", Json.mkObj (own ++ source ++ [("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)])),
-      ("used", toJson used)], fun l => (VE.Bridge.lookup table l).getD (Json.mkObj []))
+      ("used", toJson used)] ++ preamble ++ [("flips", Json.arr ((flipsOf P units).map (flipJson start)).toArray)],
+      fun l => (VE.Bridge.lookup table l).getD (Json.mkObj []))
   | _ => pure ([], fun _ => Json.mkObj [])
 
 /-- A `senses.read` case. With `identified` (the route's runner, not the document mode's call) an admitted answer
-carries its identities (`admittedIds`). -/
+carries its identities (`admittedIds`) and its environment's profile list as written (`Projection.written`). -/
 def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let fenced := has j "fences"
   VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget",
@@ -286,7 +331,10 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let out := match out, text with
     | .lexical r, .fences fs => if A.defaults.isEmpty then .lexical (fenceReject r 0 0 fs) else out
     | o, _ => o
-  let (admitted, ids) ← if identified then do let (a, f) ← admittedIds D c budget text out; pure (a, some f)
+  let environment := j.getObjValD "environment"
+  let out := if identified then out.written environment else out
+  let (admitted, ids) ← if identified then do
+      let (a, f) ← admittedIds D c environment budget count d text out; pure (a, some f)
     else pure ([], none)
   let result ← outcomeJson c (refusalSource A text) count fences unitText admitted ids out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
@@ -328,6 +376,7 @@ def projectCase (j : Json) : Except String Json := do
       match ← linesProjection D c budget lines used with
       | .error f => pure (faultJson f)
       | .ok P => do
+        let P := P.written (j.getObjValD "environment")
         let (lexicon, ids) ← projectionIds c P
         pure (Json.mkObj [("status", .str "ok"), ("environment", P.envJson), ("lexicon", lexicon),
           ("identities", Json.mkObj (ids ++ [("actions_version", .str VE.EnglishGrammar.Fixed.actionsVersion)]))])

@@ -1,3 +1,4 @@
+- `tools/trust_changes.py` — The trust report's changed files (architecture decision D2, AR-2): each Lean file changed since a base commit, with the lines it holds in each trusted class.
 - `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
 - `tools/trust_mutants.py` — Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted growth only when "every new trusted definitio…
 - `tools/wire_contract.py` — Lint format-1 wire tables and generate their single English reading.
