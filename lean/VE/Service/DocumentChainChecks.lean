@@ -26,8 +26,10 @@ open VE.Service.Document
 
 /-! ## Each chain's own branch: its `completions` and its claim graph -/
 
--- A list with `norm-defaults@0` first, and with a later profile beside the soft route: the same answers as `chain`.
+-- A list with `norm-defaults@0` first or last (the profile is set aside before the order is read), and with a later
+-- profile beside the soft route: the same answers as `chain`.
 #guard [["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+    ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0", "norm-defaults@0"],
     ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"]].all fun ps =>
   let d (ms : List (String × Json)) := document (environmentOver ps complyPredicates) complyRule ms
   checkError (d []) == none &&
@@ -38,13 +40,18 @@ open VE.Service.Document
 #guard checkError (document (environmentOver ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"]
     (("unsaid__x", arg "x") :: complyPredicates.map fun (p, j) => (p, if p == "comply_required" then
       j.setObjVal! "regulated" ((j.getObjValD "regulated").setObjVal! "default" (.str "deny")) else j))) complyRule) == none
-#guard checkError (document (environmentOver ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"] denyPredicates)
-    denyRule [("completions", completions "absent" "u1")]) == some "UnknownSymbol: regulated predicate absent"
+#guard [["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"], ["norm-defaults@0", "norms@0", "relational-fol@0"],
+    ["documents@1", "norms@0", "relational-fol@0", "norm-defaults@0"]].all fun ps =>
+  checkError (document (environmentOver ps denyPredicates) denyRule [("completions", completions "absent" "u1")]) ==
+    some "UnknownSymbol: regulated predicate absent"
 
 -- A claim graph on each route: the layered route's admission under the chain, each other route's beside it.
 #guard [(chain, complyPredicates, complyRule),
     (["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"], complyPredicates, complyRule),
+    (["documents@1", "norms@0", "relational-fol@0", "soft-norms@0", "norm-defaults@0"], complyPredicates, complyRule),
     (["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"], denyPredicates, denyRule),
+    (["norm-defaults@0", "norms@0", "relational-fol@0"], denyPredicates, denyRule),
+    (["documents@1", "norms@0", "relational-fol@0", "norm-defaults@0"], denyPredicates, denyRule),
     (["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"], complyPredicates,
       complyRule)].all fun (ps, predicates, rule) =>
   let claim := Json.mkObj [("id", .str "u2"), ("span", toJson [1, 2]), ("kind", .str "asserted"),
@@ -75,6 +82,9 @@ open VE.Service.Document
 #guard refusal ["documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"] ==
   some "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
 #guard refusal ["norms@0", "readings@1", "relational-fol@0", "soft-norms@0"] ==
+  some "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
+-- Read before the order of the list is: the same refusal with `readings@1` first.
+#guard refusal ["readings@1", "documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"] ==
   some "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
 
 end VE.Service.DocumentChain.Examples
