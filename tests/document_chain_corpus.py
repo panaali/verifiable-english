@@ -191,6 +191,8 @@ def answers(raw: bytes, directory: Path, conclusions=(TOP,)):
         asked = directory / f"conclusion{index}.json"
         asked.write_text(json.dumps(conclusion))
         found[f"readings --conclusion {json.dumps(conclusion)}"] = _run(["readings", str(path), "--conclusion", str(asked)])
+        found[f"readings --assume-no-exception {json.dumps(conclusion)}"] = _run(
+            ["readings", str(path), "--conclusion", str(asked), "--assume-no-exception"])
     return found
 
 
