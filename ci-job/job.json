@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-plan-failfast-c24ae6d0-t744796-s3",
+ "head": "60ed07844250819174d08226fa77ce5870053d1f",
+ "argv": [
+  "armsh-cand-tm-plan-failfast-c24ae6d0-t744796-s3",
+  "60ed07844250819174d08226fa77ce5870053d1f",
+  "f5f472b98980c66b7919e492efec869eafe1fe27",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
