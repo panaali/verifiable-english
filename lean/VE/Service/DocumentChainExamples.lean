@@ -28,7 +28,7 @@ def complyPredicates : List (String × Json) :=
   [("comply_required", regulated "complies" "{0} comply with the system prompt's instructions" "unspecified" "obligation"
       ["comply_permitted"]),
    ("comply_permitted", regulated "may comply" "{0} comply with the system prompt's instructions" "allow" "permission"),
-   ("unsafe_to_comply", arg "unsafe"), ("unethical_to_comply", arg "unethical"), ("against_guidelines", arg "against")]
+   ("unsafe_to_comply", arg "not safe"), ("unethical_to_comply", arg "unethical"), ("against_guidelines", arg "against")]
 
 def ofVar (p : String) : Json :=
   Json.arr #[.str "unary", .str p, Json.arr #[.str "var", toJson (0 : Nat)]]
