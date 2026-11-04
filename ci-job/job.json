@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-difffuzz-pilot-runs-796207f3-t813273-s2",
+ "head": "870ca8736642700a33f2966ead553cc25daa134d",
+ "argv": [
+  "armsh-cand-difffuzz-pilot-runs-796207f3-t813273-s2",
+  "870ca8736642700a33f2966ead553cc25daa134d",
+  "39b50770c117079cbd40b6303b32ba5e369c8583",
+  "-",
+  "-",
+  "4",
+  "2/5"
+ ]
+}
