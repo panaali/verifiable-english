@@ -1,0 +1,8 @@
+trust_mutants: 14 definitions, 426 mutants (53 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: L.D.T.nodes -> [] (lean/VE/Defaults/ZoneWire.lean:99: Invalid field notation: Type of)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:123 VE.Defaults.Wire.zoneFieldsOf (D[V], trusted) list-drop-first: let unknownF (why : String) : List (String × Json) := [("zone", .str "unknown"), ("reason", .str ... -> ((let unknownF (why : String) : List (String × Json) := [("zone", .str "unknown"), ("reason", .st... (lean/VE/Defaults/ZoneWire.lean:128: Invalid dotted identifier notation: The expected type of `.st...)
+SURVIVOR lean/VE/Defaults/ZoneWire.lean:128 VE.Defaults.Wire.zoneFieldsOf (D[V], trusted) list-last: value -> (value.reverse.take 1)
+trust_mutants: 48 KILLED, 1 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 4198 s
+trust_mutants: D[V], trusted: 17 KILLED, 1 SURVIVOR, 1 UNKNOWN, 91 OTHER SHARD
+trust_mutants: G[V], trusted: 31 KILLED, 1 UNKNOWN, 2 INVALID, 282 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.5 s, control_probes 448.9 s, mutants 3729.7 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.5 s (1), control_probes 946.8 s (6), mutant_builds 1073.8 s (54), mutant_checks 3135.4 s (30), stage_controls 456.4 s (5), mutant_probes 9785.3 s (49)
