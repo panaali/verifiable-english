@@ -1,0 +1,55 @@
+trust_mutants: 15 definitions, 262 mutants (131 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Weighing/Conditions.lean:66 VE.Weighing.grantConds (S, trusted) and-or: && -> ||
+SURVIVOR lean/VE/Weighing/Conditions.lean:30 VE.Weighing.strengthEntries (S, trusted) and-or: && -> ||
+SURVIVOR lean/VE/Weighing/Tree.lean:95 VE.Weighing.targetExists (S, trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/Weighing/Conditions.lean:363)
+UNKNOWN lean/VE/Weighing/Conditions.lean:43 VE.Weighing.condEntries (S, trusted) list-empty: Wd.W.conditions.zipIdx.map (fun (c, i) => (s!"weigh:condition:{i}:{c.kind.label}", condPremise Wd... -> [] (lean/VE/Weighing/Examples.lean:71: Expression (VE.Weighing.grantConds, which it reads, is not wha...)
+UNKNOWN lean/VE/Weighing/Tree.lean:75 VE.Weighing.ruleSorts (S, trusted) list-empty: match nodeNamed Wd.D n with | some N => sortsOf Wd.D N.pred | none => [] -> [] (lean/VE/Weighing/Examples.lean:103: Expression (VE.Weighing.targetExists, which it reads, is not ...)
+UNKNOWN lean/VE/Weighing/Tree.lean:25 VE.Weighing.Target (S, trusted) ctor-drop: | outweighs (act lower higher : String) ->  (lean/VE/Weighing/Tree.lean:80: Unknown constant `VE.Weighing.Target.outweighs`)
+UNKNOWN lean/VE/Weighing/Tree.lean:93 VE.Weighing.targetExists (S, trusted) arm-false: match nodeNamed Wd.D n with -> false (lean/VE/Weighing/Tree.lean:94: Type mismatch)
+UNKNOWN lean/VE/Weighing/Conditions.lean:43 VE.Weighing.condEntries (S, trusted) list-empty: Wd.W.conditions.zipIdx -> [] (lean/VE/Weighing/Conditions.lean:44: Invalid field notation: Type of)
+UNKNOWN lean/VE/Weighing/Conditions.lean:83 VE.Weighing.strengthPremises (S, trusted) list-empty: (strengthEntries Wd) -> [] (lean/VE/Weighing/Conditions.lean:83: Invalid projection: Type of)
+UNKNOWN lean/VE/Weighing/Conditions.lean:96 VE.Weighing.weighConditions (S, trusted) list-empty: Wd.W.conditions -> [] (lean/VE/Weighing/Conditions.lean:96: Invalid field notation: Type of)
+UNKNOWN lean/VE/Weighing/Tree.lean:26 VE.Weighing.Target (S, trusted) ctor-drop: | off (rule party : String) ->  (lean/VE/Weighing/Tree.lean:81: Unknown constant `VE.Weighing.Target.off`)
+UNKNOWN lean/VE/Weighing/Conditions.lean:30 VE.Weighing.strengthEntries (S, trusted) list-empty: Wd.W.always.zipIdx -> [] (lean/VE/Weighing/Conditions.lean:30: Invalid projection: Type of)
+UNKNOWN lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-empty: Wd.W.grants.filter (·.rule == n) -> [] (lean/VE/Weighing/Conditions.lean:47: Invalid field notation: Type of)
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) append-right: blockPath ++ -> 
+UNKNOWN lean/VE/Weighing/Conditions.lean:65 VE.Weighing.grantConds (S, trusted) list-empty: Wd.W.conditions.zipIdx -> [] (lean/VE/Weighing/Conditions.lean:66: Invalid field notation: Type of)
+UNKNOWN lean/VE/Weighing/Conditions.lean:70 VE.Weighing.grantConds (S, trusted) list-empty: Wd.W.grants.zipIdx -> [] (lean/VE/Weighing/Conditions.lean:71: Invalid field notation: Type of)
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) list-empty: blockPath -> []
+SURVIVOR lean/VE/Weighing/Conditions.lean:29 VE.Weighing.strengthEntries (S, trusted) list-first: (outweighsTriples Wd.D).filterMap (fun (a, L, H) => match Wd.W.always.zipIdx.find? (fun (e, _) =>... -> (((outweighsTriples Wd.D).filterMap (fun (a, L, H) => match Wd.W.always.zipIdx.find? (fun (e, _) ...
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-first: (Wd.W.grants.filter (·.rule == n)).map (fun g => (g.party, g.grantor)) -> (((Wd.W.grants.filter (·.rule == n)).map (fun g => (g.party, g.grantor))).take 1)
+SURVIVOR lean/VE/Weighing/Tree.lean:72 VE.Weighing.nodeNamed (S, trusted) list-first: D.T.nodes -> (D.T.nodes.take 1) (the proofs it breaks: lean/VE/Weighing/Conditions.lean:363)
+SURVIVOR lean/VE/Weighing/Tree.lean:92 VE.Weighing.targetExists (S, trusted) list-first: (outweighsTriples Wd.D) -> ((outweighsTriples Wd.D).take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:29 VE.Weighing.strengthEntries (S, trusted) list-first: (outweighsTriples Wd.D) -> ((outweighsTriples Wd.D).take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-first: Wd.W.grants -> (Wd.W.grants.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:60 VE.Weighing.grantConds (S, trusted) list-first: Wd.W.grants.zipIdx -> (Wd.W.grants.zipIdx.take 1) (the proofs it breaks: lean/VE/Weighing/Conditions.lean:349)
+SURVIVOR lean/VE/Weighing/Conditions.lean:55 VE.Weighing.grantedThrough (S, trusted) list-drop-last: Wd.D.soft.parties -> (Wd.D.soft.parties.dropLast)
+SURVIVOR lean/VE/Weighing/Conditions.lean:96 VE.Weighing.weighConditions (S, trusted) list-drop-last: Wd.W.conditions -> (Wd.W.conditions.dropLast)
+SURVIVOR lean/VE/Weighing/Conditions.lean:30 VE.Weighing.strengthEntries (S, trusted) list-first: Wd.W.always.zipIdx -> (Wd.W.always.zipIdx.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-first: Wd.W.grants.filter (·.rule == n) -> ((Wd.W.grants.filter (·.rule == n)).take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:64 VE.Weighing.grantConds (S, trusted) list-first: (grantedThrough Wd g.rule g.party).flatMap (fun ρ => (Wd.W.conditions.zipIdx.filterMap (fun (c, i... -> (((grantedThrough Wd g.rule g.party).flatMap (fun ρ => (Wd.W.conditions.zipIdx.filterMap (fun (c,...
+SURVIVOR lean/VE/Weighing/Conditions.lean:65 VE.Weighing.grantConds (S, trusted) list-first: Wd.W.conditions.zipIdx -> (Wd.W.conditions.zipIdx.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:65 VE.Weighing.grantConds (S, trusted) list-first: Wd.W.conditions.zipIdx.filterMap (fun (c, i) => if c.target == Target.off g.rule ρ && c.kind == .... -> ((Wd.W.conditions.zipIdx.filterMap (fun (c, i) => if c.target == Target.off g.rule ρ && c.kind ==...
+SURVIVOR lean/VE/Weighing/Conditions.lean:70 VE.Weighing.grantConds (S, trusted) list-first: Wd.W.grants.zipIdx -> (Wd.W.grants.zipIdx.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:70 VE.Weighing.grantConds (S, trusted) list-first: Wd.W.grants.zipIdx.filterMap (fun (g', k) => if g'.rule == g.rule && g'.party == ρ then some (s!"... -> ((Wd.W.grants.zipIdx.filterMap (fun (g', k) => if g'.rule == g.rule && g'.party == ρ then some (s...
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) list-first: blockPath -> (blockPath.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) list-first: ["grants", toString k] -> (["grants", toString k].take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:29 VE.Weighing.strengthEntries (S, trusted) list-last: (outweighsTriples Wd.D).filterMap (fun (a, L, H) => match Wd.W.always.zipIdx.find? (fun (e, _) =>... -> (((outweighsTriples Wd.D).filterMap (fun (a, L, H) => match Wd.W.always.zipIdx.find? (fun (e, _) ...
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-last: (Wd.W.grants.filter (·.rule == n)).map (fun g => (g.party, g.grantor)) -> (((Wd.W.grants.filter (·.rule == n)).map (fun g => (g.party, g.grantor))).reverse.take 1)
+SURVIVOR lean/VE/Weighing/Tree.lean:72 VE.Weighing.nodeNamed (S, trusted) list-last: D.T.nodes -> (D.T.nodes.reverse.take 1) (the proofs it breaks: lean/VE/Weighing/Conditions.lean:363)
+SURVIVOR lean/VE/Weighing/Tree.lean:92 VE.Weighing.targetExists (S, trusted) list-last: (outweighsTriples Wd.D) -> ((outweighsTriples Wd.D).reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:29 VE.Weighing.strengthEntries (S, trusted) list-last: (outweighsTriples Wd.D) -> ((outweighsTriples Wd.D).reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-last: Wd.W.grants -> (Wd.W.grants.reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:60 VE.Weighing.grantConds (S, trusted) list-last: Wd.W.grants.zipIdx -> (Wd.W.grants.zipIdx.reverse.take 1) (the proofs it breaks: lean/VE/Weighing/Conditions.lean:349)
+SURVIVOR lean/VE/Weighing/Conditions.lean:30 VE.Weighing.strengthEntries (S, trusted) list-last: Wd.W.always.zipIdx -> (Wd.W.always.zipIdx.reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:47 VE.Weighing.grantEdges (S, trusted) list-last: Wd.W.grants.filter (·.rule == n) -> ((Wd.W.grants.filter (·.rule == n)).reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:65 VE.Weighing.grantConds (S, trusted) list-last: Wd.W.conditions.zipIdx -> (Wd.W.conditions.zipIdx.reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:64 VE.Weighing.grantConds (S, trusted) list-last: (grantedThrough Wd g.rule g.party).flatMap (fun ρ => (Wd.W.conditions.zipIdx.filterMap (fun (c, i... -> (((grantedThrough Wd g.rule g.party).flatMap (fun ρ => (Wd.W.conditions.zipIdx.filterMap (fun (c,...
+SURVIVOR lean/VE/Weighing/Conditions.lean:65 VE.Weighing.grantConds (S, trusted) list-last: Wd.W.conditions.zipIdx.filterMap (fun (c, i) => if c.target == Target.off g.rule ρ && c.kind == .... -> ((Wd.W.conditions.zipIdx.filterMap (fun (c, i) => if c.target == Target.off g.rule ρ && c.kind ==...
+SURVIVOR lean/VE/Weighing/Conditions.lean:70 VE.Weighing.grantConds (S, trusted) list-last: Wd.W.grants.zipIdx -> (Wd.W.grants.zipIdx.reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:70 VE.Weighing.grantConds (S, trusted) list-last: Wd.W.grants.zipIdx.filterMap (fun (g', k) => if g'.rule == g.rule && g'.party == ρ then some (s!"... -> ((Wd.W.grants.zipIdx.filterMap (fun (g', k) => if g'.rule == g.rule && g'.party == ρ then some (s...
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) list-last: blockPath -> (blockPath.reverse.take 1)
+SURVIVOR lean/VE/Weighing/Conditions.lean:73 VE.Weighing.grantConds (S, trusted) list-last: ["grants", toString k] -> (["grants", toString k].reverse.take 1)
+trust_mutants: 78 KILLED, 39 SURVIVOR, 12 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 131 OTHER SHARD in 541 s
+trust_mutants: S, trusted: 78 KILLED, 39 SURVIVOR, 12 UNKNOWN, 2 INVALID, 131 OTHER SHARD
+trust_mutants: steps: wall plan 6.5 s, scratch 2.4 s, control_build 0.2 s, probe_install 1.1 s, control_probes 5.8 s, mutants 521 s, cleanup 4.6 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 5.7 s (1), mutant_builds 664.2 s (158), mutant_checks 379 s (133), stage_controls 43.9 s (8), mutant_probes 979.9 s (80)
