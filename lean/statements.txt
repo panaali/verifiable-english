@@ -14664,6 +14664,10 @@ theorem VE.Discourse.allOk_ok
     VE.Discourse.allOk xs f = Except.ok () → ∀ (x : α), x ∈ xs → f x = Except.ok ()
   -- uses VE.Discourse.allOk@VE.Layout.Anchors
   -- expr 2016512843
+theorem VE.Discourse.assertiveOpen_zero
+  ∀ (σ : String) (Dr P : VE.Formula), VE.Discourse.assertiveOpen 0 σ Dr P = VE.Discourse.assertive σ Dr P
+  -- uses VE.Discourse.assertive@VE.Discourse.Descriptions VE.Discourse.assertiveOpen@VE.Discourse.Descriptions VE.Formula@VE.Syntax
+  -- expr 861749226
 theorem VE.Discourse.assertive_denote
   ∀ (E : VE.Environment) (σ : String),
     σ ∈ E.sorts →
@@ -15561,6 +15565,10 @@ theorem VE.Discourse.instLawfulBEqTerm
   LawfulBEq VE.Term
   -- uses VE.Term@VE.Syntax VE.instBEqTerm@VE.Syntax
   -- expr 4059376306
+theorem VE.Discourse.inst_range_id
+  ∀ (a : VE.Formula) (k : Nat), VE.Norms.inst (List.map (fun i => VE.Term.var i) (List.range k)) a = a
+  -- uses VE.Formula@VE.Syntax VE.Norms.inst@VE.Norms.Basic VE.Term.var@VE.Syntax VE.Term@VE.Syntax
+  -- expr 1648583552
 theorem VE.Discourse.integrity_stale
   ∀ (j : Lean.Json) (docs : List VE.Discourse.DocName) (imports : List VE.Discourse.Import) (imp : VE.Discourse.Import),
     imp ∈ imports →
@@ -15974,6 +15982,10 @@ theorem VE.Discourse.propertyOf_ok
   ∀ (t : VE.Discourse.Target) (q : String), VE.Discourse.propertyOf t = Option.some q → VE.Discourse.okKind t = Bool.true
   -- uses VE.Discourse.Target@VE.Discourse.Manifest VE.Discourse.okKind@VE.Discourse.Resolve VE.Discourse.propertyOf@VE.Discourse.Elaborate
   -- expr 4070959950
+theorem VE.Discourse.raise1_zero
+  ∀ (Dr : VE.Formula), VE.Discourse.raise1 0 Dr = Dr
+  -- uses VE.Discourse.raise1@VE.Discourse.Descriptions VE.Formula@VE.Syntax
+  -- expr 4256764530
 theorem VE.Discourse.readingsOf_cons
   ∀ (rs : VE.Route.Admission.ReadingSet) (rest : List VE.Route.Admission.ReadingSet) (x : String × Nat × Nat)
     (c : VE.Discourse.Choice),
@@ -16305,6 +16317,10 @@ theorem VE.Discourse.term_eq_of_beq
   ∀ (a b : VE.Term), (a == b) = Bool.true → a = b
   -- uses VE.Term@VE.Syntax VE.instBEqTerm@VE.Syntax
   -- expr 1598150689
+theorem VE.Discourse.term_inst_range_id
+  ∀ (k : Nat) (t : VE.Term), VE.Norms.Term.inst (List.map (fun i => VE.Term.var i) (List.range k)) t = t
+  -- uses VE.Norms.Term.inst@VE.Norms.Basic VE.Term.var@VE.Syntax VE.Term@VE.Syntax
+  -- expr 1508749845
 theorem VE.Discourse.treeEnd_cands
   ∀ (D : VE.Discourse.DDoc) (u : String) (s : List VE.English.Tok) (t : VE.Discourse.STree) (e : Nat),
     VE.Discourse.treeEnd D u s t = Option.some e → t ∈ VE.Discourse.treeCands D u s
@@ -16340,6 +16356,10 @@ theorem VE.Discourse.uniqueD_denote
               VE.Formula.denote S [a] Dr ∧ ∀ (b : S.Carrier), S.domain σ b → VE.Formula.denote S [b] Dr → b = a
   -- uses VE.Discourse.uniqueD@VE.Discourse.Descriptions VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2838698877
+theorem VE.Discourse.uniqueOpen_zero
+  ∀ (σ : String) (Dr : VE.Formula), VE.Discourse.uniqueOpen 0 σ Dr = VE.Discourse.uniqueD σ Dr
+  -- uses VE.Discourse.uniqueD@VE.Discourse.Descriptions VE.Discourse.uniqueOpen@VE.Discourse.Descriptions VE.Formula@VE.Syntax
+  -- expr 619515715
 theorem VE.Discourse.validate_accepted
   ∀ (D : VE.Discourse.DDoc) (u : String) (A : VE.Formula) (s : List VE.English.Tok),
     D.text u = Option.some s → VE.Discourse.validate D u = Except.ok A → VE.Discourse.Accepted D u s A
@@ -17345,6 +17365,18 @@ theorem VE.EnglishGrammar.ETerm.decode_encode
   ∀ (t : VE.EnglishGrammar.ETerm), VE.EnglishGrammar.ETerm.decode t.encode = Option.some t
   -- uses VE.EnglishGrammar.ETerm.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
   -- expr 2165347204
+theorem VE.EnglishGrammar.JudgmentLines.parseLine_renders
+  ∀ {line : String} {j : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.parseLine line = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.parseLine@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2546311996
+theorem VE.EnglishGrammar.JudgmentLines.renderingTo_renders
+  ∀ {line : String} {j k : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.renderingTo line k = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.renderingTo@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2299198272
 theorem VE.EnglishGrammar.LexRow.Small.dom
   ∀ {E : VE.EnglishGrammar.Env} {r : VE.EnglishGrammar.LexRow},
     r.Small → VE.EnglishGrammar.LexRow.NtsIn (VE.EnglishGrammar.InDom E) r
@@ -27675,6 +27707,50 @@ theorem VE.Paths.warshall_sound
     (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
   -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
   -- expr 2609517366
+theorem VE.Presupposition.Frame.shallowB_iff
+  ∀ (f : VE.Presupposition.Frame), f.shallowB = Bool.true ↔ f.shallow
+  -- uses VE.Presupposition.Frame.shallow@VE.Presupposition.Frame VE.Presupposition.Frame.shallowB@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
+  -- expr 921197128
+theorem VE.Presupposition.close_wellFormed
+  ∀ (E : VE.Environment) (f : VE.Presupposition.Frame) (a p : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ (f.plug a) →
+      VE.Formula.WellFormed E (f.binders ++ Γ) p → VE.Formula.WellFormed E Γ (f.close p)
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.close@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
+  -- expr 290737351
+theorem VE.Presupposition.goal_denote
+  ∀ (f : VE.Presupposition.Frame) (p : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.Formula.denote S ρ (f.goal p) ↔
+      ∀ (τ : VE.Valuation S), VE.Presupposition.Frame.Reach S f ρ τ → VE.Formula.denote S τ p
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 848090388
+theorem VE.Presupposition.goal_wellFormed
+  ∀ (E : VE.Environment) (f : VE.Presupposition.Frame) (a p : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ (f.plug a) →
+      VE.Formula.WellFormed E (f.binders ++ Γ) p → VE.Formula.WellFormed E Γ (f.goal p)
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
+  -- expr 3126596479
+theorem VE.Presupposition.locate_plug
+  ∀ (a : VE.Formula) (path : List Nat) (f : VE.Presupposition.Frame) (b : VE.Formula),
+    VE.Presupposition.Frame.locate a path = Option.some (f, b) → f.plug b = a
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Frame.locate@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
+  -- expr 224701004
+theorem VE.Presupposition.plug_congr
+  ∀ (f : VE.Presupposition.Frame) (a b : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    (∀ (τ : VE.Valuation S),
+        VE.Presupposition.Frame.Reach S f ρ τ → (VE.Formula.denote S τ a ↔ VE.Formula.denote S τ b)) →
+      (VE.Formula.denote S ρ (f.plug a) ↔ VE.Formula.denote S ρ (f.plug b))
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 14921202
+theorem VE.Presupposition.plug_wellFormed
+  ∀ (E : VE.Environment) (f : VE.Presupposition.Frame) (a : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ (f.plug a) → VE.Formula.WellFormed E (f.binders ++ Γ) a
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
+  -- expr 386423840
+theorem VE.Presupposition.reach_typed
+  ∀ (f : VE.Presupposition.Frame) (S : VE.Structure) (Γ : List String) (ρ τ : VE.Valuation S),
+    VE.Valuation.Typed S Γ ρ → VE.Presupposition.Frame.Reach S f ρ τ → VE.Valuation.Typed S (f.binders ++ Γ) τ
+  -- uses VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Structure@VE.Semantics VE.Valuation.Typed@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2504862256
 theorem VE.Question.Run.oneFields_gated
   ∀ (q : String) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (c : VE.Question.Candidate)
     (φ : VE.EnglishGrammar.EFormula) (fs : List (String × Lean.Json)),
@@ -52438,6 +52514,38 @@ theorem VE.Service.Document.swapInjective_frontOf
       VE.Service.Document.swapInjectiveH (VE.Service.Document.statedIds j) (VE.Service.Document.statedPairs j)
   -- uses VE.Service.Document.statedIds@VE.Service.Document VE.Service.Document.statedPairs@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveH@VE.Service.Document
   -- expr 168316616
+theorem VE.Service.DocumentChain.layeredOf_entails
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate),
+        VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) (VE.Norms.size (VE.NormDefaults.fill L.U)))
+              (VE.NormDefaults.Wire.premisesX L.U L.X Γ) φ cert =
+            Bool.true →
+          VE.NormDefaults.EntailsX L.U L.X Γ φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 1058420681
+theorem VE.Service.DocumentChain.layeredOf_ids
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      E.soft = Bool.true → List.map (fun x => x.id) L.packs = ["soft"]
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Service.Document.Env.soft@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
+  -- expr 3982576285
+theorem VE.Service.DocumentChain.layeredOf_soft
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      ∃ environment norms, VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
+  -- expr 1375785200
+theorem VE.Service.DocumentChain.requestOf_environment
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit),
+    VE.NormDefaults.Wire.layeredRoute (VE.Service.Document.wireJson 257 E.lower) = Option.some "soft-norms@0" →
+      (VE.Service.DocumentChain.requestOf E front units).getObjVal? "environment" =
+        Except.ok (VE.Service.Document.wireJson 257 E.lower)
+  -- uses VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document VE.Service.DocumentChain.requestOf@VE.Service.Document
+  -- expr 3812763173
 theorem VE.Service.Entry.prepared_eq
   ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
