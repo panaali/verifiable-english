@@ -1,11 +1,10 @@
 # ap-3db build report: AP-3's switch-on (the hook, the entry points, D-33), with frames and each act read once
 
-**Status:** merged with main (`fd9f25f9b`). The selected tests (488 units) and trust_mutants (0 survivors) pass on
-the merged HEAD. Deliverables (1) to (5) are built: the hook, every `acts@0` entry point classified, `readings_lexical_only`,
-the block's `frames`/`adverbs` (E5j) and each joined act read once. **No DRI signature is reserved.** The DELTA rows
-cite the item's ruling (`reviews/dri-decisions-20261102-ap-3db.md` items 1, 3, 4), jt-3p's item 3 (the English
-`actions_version` raise), R1 and R16. Trust: K +0, S +15, untied V +107 (trusted +122), under R16. Size: about 1,970
-hand-written lines, over the ~600 guideline (section 6). Pilot bytes: 0 until ap-3dc (*estimate*).
+**Status:** done and merged with main `fd9f25f9b`; HEAD passes the selected tests (488 units) and trust_mutants (0
+survivors). Built: the hook on `checkAct`, every `acts@0` entry point classified (twins in `DecodeTwins.lean`),
+`readings_lexical_only`, `frames`/`adverbs` with E5j, and each joined act read once. **No DRI signature is reserved.**
+DELTA cites ruling 20261102-ap-3db items 1, 3, 4, jt-3p item 3, R1 and R16. Trust K +0, S +15, V +107 (R16). About 2,000
+hand-written lines (over ~600: the safety unit, section 6). Pilot bytes 0 until ap-3dc (*estimate*).
 
 Plan: section "AP-3. Joined acts" of the edited plan at `80f056f9e` (the hook, D-33, the relay, the theorem list,
 E5j). Spec on main: act-phrases.md 3.1, 3.2, 6.3, 6.4, 10 (D-15 to D-18, D-24, D-28, D-31, D-33) and 11.3 (E5j, A6,
