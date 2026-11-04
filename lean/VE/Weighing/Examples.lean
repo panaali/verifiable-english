@@ -15,9 +15,8 @@ open VE.Defaults.Fixtures (regJ baseJ ruleJ xReq xPerm)
 
 abbrev GAtom := String × List String
 
-def attrJ (p owner : String) : String :=
-  "\"" ++ p ++ "\":{\"arguments\":[\"assistant\",\"user\"],\"description\":\"" ++ p ++ "\",\"instruction_of\":\"" ++
-    owner ++ "\"}"
+def attrJ (p owner : String) (args := "[\"assistant\"]") : String :=
+  "\"" ++ p ++ "\":{\"arguments\":" ++ args ++ ",\"description\":\"" ++ p ++ "\",\"instruction_of\":\"" ++ owner ++ "\"}"
 def softJ (ranks : List String) (edges : List (String × String)) (holistic : Bool) (parties : List String := []) :=
   "{\"parties\":" ++ (toJson parties).compress ++ ",\"ranks\":" ++ (toJson ranks).compress ++ ",\"outranks\":" ++
     (toJson (edges.map (fun e => [e.1, e.2]))).compress ++ ",\"outranking\":" ++
@@ -79,13 +78,53 @@ def conj (n : Nat) : VE.Formula := ((List.range n).map (fun i => U s!"p{i}")).fo
 #guard propImplies (conj 12) (U "p11") && !propImplies (conj 13) (U "p12") && !propImplies (U "p0") (U "p1")
 #guard propImplies (.and (U "p0") (.not (U "p0"))) (U "p1") && propImplies (U "p0") (.or (U "p1") (.not (U "p1")))
 
+/-! ## Lists longer than one: triples, edges, conditions, grants and rules -/
+
+-- three ranks and two comparable colliding pairs: triples (x_permitted, b, a) and (x_permitted, c, b)
+def α3 : SoftDoc := decode (envOf [xReq "deny", xPerm, baseJ "urgent", baseJ "serious"] (softJ ["a", "b", "c"]
+    [("a", "b"), ("b", "c")] true)) [dfltR "h" "x_required" true "a", dfltR "l" "x_permitted" false "b",
+  dfltR "k" "x_required" true "c"]
+def w3 : WeighDoc := wd α3 (W [("a", "b"), ("b", "c")])
+def w3bc : WeighDoc := wd α3 (W [("b", "c")])
+#guard verdict w3 == "accepted" && weighOrigins w3 == [("weigh:strength:a:b:x_permitted", blockPath ++ ["always", "0"]),
+  ("weigh:strength:b:c:x_permitted", blockPath ++ ["always", "1"])]
+#guard strengthPremises w3 == [bindAll ["assistant"] (.not (outweighsF α3 "x_permitted" "b" "a")),
+  bindAll ["assistant"] (.not (outweighsF α3 "x_permitted" "c" "b"))]
+#guard strictPair w3bc "a" "c" && !strictPair w3bc "a" "b" && !strictPair w3bc "c" "b" && strictPair w3 "a" "b"
+def w3c : WeighDoc := wd α3 (W [] [⟨tOut "b" "a", .sufficient, U "urgent"⟩, ⟨tOut "c" "b", .sufficient, U "serious"⟩])
+#guard verdict w3c == "accepted" && weighConditions w3c ==
+  [(.outweighs "x_permitted" "b" "a", U "urgent"), (.outweighs "x_permitted" "c" "b", U "serious")]
+#guard (condEntries w3c).map (·.1) == ["weigh:condition:0:sufficient", "weigh:condition:1:sufficient"]
+#guard weighLabelled (wd α3 WeighEnv.empty) == [] && WellFormedWeigh (wd α3 WeighEnv.empty)
+
+-- W-ζ3's chain: the developer grants the operator rules n and m, the operator grants the user rule n
+def ζd : SoftDoc := decode (envOf [xReq "deny", xPerm, baseJ "urgent", baseJ "serious", attrJ "dev_allows" "developer",
+    attrJ "op_allows" "operator"] (softJ [] [] false ["developer", "operator", "user"]))
+  [ruleJ "n" "x_required" true ",\"mode\":\"strict\",\"alterable\":[\"developer\",\"operator\",\"user\"]",
+   ruleJ "m" "x_permitted" false ",\"mode\":\"strict\",\"alterable\":[\"developer\",\"operator\"]"]
+def wζ : WeighDoc := wd ζd (W [] [⟨.off "n" "developer", .necessary, U "urgent"⟩, ⟨.off "m" "developer", .necessary,
+    U "serious"⟩, ⟨.off "n" "operator", .necessary, U "serious"⟩, ⟨.off "n" "user", .necessary, U "urgent"⟩]
+  [⟨"n", "operator", "developer", "dev_allows"⟩, ⟨"m", "operator", "developer", "dev_allows"⟩,
+   ⟨"n", "user", "operator", "op_allows"⟩])
+def cp (i : Nat) : RequestPath := blockPath ++ ["conditions", toString i]
+def gp (j : Nat) : RequestPath := blockPath ++ ["grants", toString j]
+#guard verdict wζ == "accepted" && (weighOrigins wζ).drop 4 == [("weigh:grant:n:operator", gp 0),
+  ("weigh:grant:n:operator:condition:0", cp 0), ("weigh:grant:m:operator", gp 1), ("weigh:grant:m:operator:condition:1", cp 1),
+  ("weigh:grant:n:user", gp 2), ("weigh:grant:n:user:condition:0", cp 0), ("weigh:grant:n:user:condition:2", cp 2),
+  ("weigh:grant:n:user:grant:operator", gp 0)]
+#guard (weighLabelled wζ).lookup "weigh:grant:n:user:grant:operator" ==
+    some (condPremise wζ ⟨.off "n" "user", .necessary, atom "dev_allows" ["assistant"]⟩) &&
+  (weighLabelled wζ).lookup "weigh:grant:n:user:condition:2" == some (condPremise wζ ⟨.off "n" "user", .necessary, U "serious"⟩)
+#guard verdict (wd ζd (W [] [⟨.off "zz" "user", .necessary, U "urgent"⟩])) == "NoSuchDecision: off rule zz, user" &&
+  verdict (wd ζd (W [] [⟨.off "m" "user", .necessary, U "urgent"⟩])) == "NoSuchDecision: off rule m, user"
+
 /-! ## W-μ (argument order) -/
 
 def yReq : String := regJ "y_required" "[\"assistant\",\"user\"]" "obligation" "deny"
   ",\"act\":\"{0} meet {1}\",\"permission\":\"y_permitted\""
 def yPerm : String := regJ "y_permitted" "[\"assistant\",\"user\"]" "permission" "allow" ",\"act\":\"{0} meet {1}\""
 def μd : SoftDoc := decode (envOf [yReq, yPerm, "\"trusts\":{\"arguments\":[\"assistant\",\"user\"],\"description\":" ++
-    "\"trusts\"}", attrJ "operator_allows_for" "operator"] (softJ [] [] false ["operator", "user"]))
+    "\"trusts\"}", attrJ "operator_allows_for" "operator" "[\"assistant\",\"user\"]"] (softJ [] [] false ["operator", "user"]))
   [ruleJ "n" "y_required" true ",\"mode\":\"strict\",\"alterable\":[\"operator\",\"user\"]"]
 def trustsF : VE.Formula := .binary "trusts" (.var 1) (.var 0)
 def wμ : WeighDoc := wd μd (W [] [⟨.off "n" "operator", .necessary, trustsF⟩] [⟨"n", "user", "operator", "operator_allows_for"⟩])
@@ -111,5 +150,10 @@ def outcome (t : List GAtom) (vs : List String) : Bool :=
 #guard verdict (wd μd (W [] [] [⟨"n", "user", "operator", "trusts"⟩])) == "GrantNotAttributed: trusts, operator"
 #guard verdict (wd μd (W [] [⟨.off "n" "operator", .sufficient, trustsF⟩])) ==
   "InvalidInput: condition 0 on a switch must be necessary"
+
+#guard ruleSorts wμ "n" == ["assistant", "user"] && targetSorts wμ (.off "n" "user") == ["assistant", "user"]
+#guard condPremise wμ ⟨.off "n" "operator", .necessary, trustsF⟩ ==
+  bindAll ["assistant", "user"] (.implies (.binary "soft__off__n__operator" (.var 1) (.var 0)) trustsF)
+#guard weighPremises wμ == (weighLabelled wμ).map (·.2) && (weighPremises wμ).length == 3
 
 end VE.Weighing.Examples
