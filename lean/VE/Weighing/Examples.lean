@@ -97,21 +97,22 @@ def w3c : WeighDoc := wd α3 (W [] [⟨tOut "b" "a", .sufficient, U "urgent"⟩,
 #guard (condEntries w3c).map (·.1) == ["weigh:condition:0:sufficient", "weigh:condition:1:sufficient"]
 #guard weighLabelled (wd α3 WeighEnv.empty) == [] && WellFormedWeigh (wd α3 WeighEnv.empty)
 
--- W-ζ3's chain: the developer grants the operator rules n and m, the operator grants the user rule n
+-- W-ζ3's chain: the operator grants the user rule n, the developer grants the operator rules m and n
 def ζd : SoftDoc := decode (envOf [xReq "deny", xPerm, baseJ "urgent", baseJ "serious", attrJ "dev_allows" "developer",
-    attrJ "op_allows" "operator"] (softJ [] [] false ["developer", "operator", "user"]))
+    attrJ "op_allows" "operator"] (softJ [] [] false ["user", "operator", "developer"]))
   [ruleJ "n" "x_required" true ",\"mode\":\"strict\",\"alterable\":[\"developer\",\"operator\",\"user\"]",
    ruleJ "m" "x_permitted" false ",\"mode\":\"strict\",\"alterable\":[\"developer\",\"operator\"]"]
 def wζ : WeighDoc := wd ζd (W [] [⟨.off "n" "developer", .necessary, U "urgent"⟩, ⟨.off "m" "developer", .necessary,
-    U "serious"⟩, ⟨.off "n" "operator", .necessary, U "serious"⟩, ⟨.off "n" "user", .necessary, U "urgent"⟩]
-  [⟨"n", "operator", "developer", "dev_allows"⟩, ⟨"m", "operator", "developer", "dev_allows"⟩,
-   ⟨"n", "user", "operator", "op_allows"⟩])
+    U "serious"⟩, ⟨.off "n" "operator", .necessary, U "serious"⟩, ⟨.off "n" "user", .necessary, U "urgent"⟩,
+    ⟨.off "n" "operator", .necessary, U "urgent"⟩]
+  [⟨"n", "user", "operator", "op_allows"⟩, ⟨"m", "operator", "developer", "dev_allows"⟩,
+   ⟨"n", "operator", "developer", "dev_allows"⟩])
 def cp (i : Nat) : RequestPath := blockPath ++ ["conditions", toString i]
 def gp (j : Nat) : RequestPath := blockPath ++ ["grants", toString j]
-#guard verdict wζ == "accepted" && (weighOrigins wζ).drop 4 == [("weigh:grant:n:operator", gp 0),
-  ("weigh:grant:n:operator:condition:0", cp 0), ("weigh:grant:m:operator", gp 1), ("weigh:grant:m:operator:condition:1", cp 1),
-  ("weigh:grant:n:user", gp 2), ("weigh:grant:n:user:condition:0", cp 0), ("weigh:grant:n:user:condition:2", cp 2),
-  ("weigh:grant:n:user:grant:operator", gp 0)]
+#guard verdict wζ == "accepted" && (weighOrigins wζ).drop 5 == [("weigh:grant:n:user", gp 0),
+  ("weigh:grant:n:user:condition:2", cp 2), ("weigh:grant:n:user:condition:4", cp 4),
+  ("weigh:grant:n:user:grant:operator", gp 2), ("weigh:grant:n:user:condition:0", cp 0), ("weigh:grant:m:operator", gp 1),
+  ("weigh:grant:m:operator:condition:1", cp 1), ("weigh:grant:n:operator", gp 2), ("weigh:grant:n:operator:condition:0", cp 0)]
 #guard (weighLabelled wζ).lookup "weigh:grant:n:user:grant:operator" ==
     some (condPremise wζ ⟨.off "n" "user", .necessary, atom "dev_allows" ["assistant"]⟩) &&
   (weighLabelled wζ).lookup "weigh:grant:n:user:condition:2" == some (condPremise wζ ⟨.off "n" "user", .necessary, U "serious"⟩)
