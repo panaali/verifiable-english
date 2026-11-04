@@ -9,8 +9,8 @@
 Draft 3 applies phase 1 ([docs/research/presupposition-phase1.md](../research/presupposition-phase1.md), cited as
 Ph1) and the DRI's ruling PS-C9. **No Lean definition, body or theorem statement changes**, and no fixture value
 changes: phase 1 changes the English of the pilot's heading units and where the report is carried, not their
-formulas. The scratch stub `lean/SpecStubs_presupposition.lean` is not tracked, so it needs no edit, and the
-elaboration status below is unchanged.
+formulas. The scratch stub `lean/SpecStubs_presupposition.lean` is not tracked, so it needs no edit; draft 3
+left the elaboration status unchanged (it is now the PS-S stub run recorded below, 2026-11-03).
 - **Headings' English** (1.4a, 2.1, 7.4). The formulas of P1–P4 round-trip through VE's renderer (Ph1 2.3), but VE
   English has no admitted wording today for the four pilot nouns (core value, guideline, mission, nature): "is a core
   value of" and every variant phase 1 tried fall back to the quoted form (Ph1 2.5). VE does admit some relational
@@ -52,7 +52,7 @@ elaboration status below is unchanged.
 > `#guard`s pass, 0 fail; the 59 `stmt_` statements, `Frame.shallowB_iff` (proved in the stub) and the two `rfl`
 > examples of 4.1 elaborate. A `#guard` with a false value appended to a copy fails the run, so the `#guard`s are
 > evaluated. Every `#guard` value equals section 7.1's hand value, so the 7.1 values they compute count as computed;
-S2's certificate and "one reading", and the "unresolved" of S5(b) and S9, are not computed by a guard. The guards
+> S2's certificate and "one reading", and the "unresolved" of S5(b) and S9, are not computed by a guard. The guards
 > cover S1, S2, S4, S5, S8, S9, S12 to S27 (S22's raw side; its `SatUnder` side is a PS-3 `example`), 4.1, 4.2, the
 > table shapes (R-2) and the expected-readings lengths (R-D3, R-6). The admission fixtures of 7.3 named by the
 > ruling's items 6, 7, 8, 10 and D5 (A5u-allow, A5u-deny, A19, A20, A21, A24 to A28) need PS-2a's admission
@@ -265,9 +265,12 @@ elaborations, the unit `u` itself and every later unit are excluded. A certifica
   A failed separation is readings@1's own diagnostic on the admission path; in translation the unit stays
   UNFORMALISED (8).
 - **Chains** (R-8). An open set that contains a conditioned rule reading needs an `unspecified` predicate, so the
-  document carries `norm-defaults@0`, and the open set is therefore on the norms chain only: on the soft and rights
-  chains `abstention` in `lean/VE/Readings/Wire.lean` refuses readings@1 content beside `norm-defaults@0`
-  ("UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented").
+  document carries `norm-defaults@0`, and the open set is therefore on the norms chain only. On the rights chain
+  `abstention` in `lean/VE/Readings/Wire.lean` refuses readings@1 content beside `norm-defaults@0`
+  ("UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"). On the soft chain, which admits
+  that content under the unspecified completion, PS's check step 5 (4.7) refuses the open set itself:
+  "UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)" (DRI 2026-11-04, item 2:
+  no argument shows the separation sound under the soft chain's completion).
 - At most one unresolved obligation per unit (10, C6).
 
 ### 1.9 Coupling (PS-3)
@@ -1009,11 +1012,14 @@ restriction path; a generic row has no restriction.
    readings@1's separation check accepts each open set (its diagnostic). The separation function is named by the
    document (R-8): with `norm-defaults@0`, readings-defaults' `separates (fillDoc N) s i j σ` with
    `fillHolds N s i σ.base` (under the unspecified completion); without it, readings@1's `separates D s i j σ`.
+   On the soft chain an open set that contains a conditioned rule reading is refused first (below).
 
 An open set that contains a conditioned rule reading needs an `unspecified` predicate, hence `norm-defaults@0`, and
-is therefore admitted on the norms chain only. On the soft and rights chains `abstention` in
-`lean/VE/Readings/Wire.lean` refuses it before this check runs: "UnsupportedProfile: readings@1 content with
-norm-defaults@0 is not implemented" (R-8; fixtures A26, A27). In place appears only at a shallow frame in a
+is therefore admitted on the norms chain only. On the rights chain `abstention` in `lean/VE/Readings/Wire.lean`
+refuses it before this check runs: "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+(R-8; fixture A27). On the soft chain `abstention` admits it, and step 5 refuses it before the separation runs:
+"UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)" (R-8; DRI 2026-11-04,
+item 2; fixture A26). In place appears only at a shallow frame in a
 negated or antecedent cell (R-5), as the conditioned reading's alias or as a recorded carrier.
 
 **Statements.** `admit` is PS-2a's function `PDoc → Except String Report`.
@@ -1314,7 +1320,9 @@ listed elements, and only the listed tuples are true. "The owner" is `definite 0
 
 ### 7.3 Admission fixtures (PS-2a in Lean, PS-2b as documents)
 
-One fixture per accept rule and per diagnostic. The fixture table of the stub stands in for PS-E1's.
+One fixture per accept rule and per diagnostic. The fixture table of the stub stands in for PS-E1's. A5u-allow,
+A5u-deny, A19, A20, A21, A24, A25, A26 (soft and rights chain), A27 and A28 are PS-2a's and PS-2b's condition
+fixtures: their task files name them as tests their gates must select (DRI 2026-11-04, item 1).
 
 | Id | Document | Expected |
 |---|---|---|
@@ -1346,8 +1354,8 @@ One fixture per accept rule and per diagnostic. The fixture table of the stub st
 | A23 (R-D1) | a recorded in-place carrier at `not (· and r)`, the negated cell listing in place | `PresuppositionCandidates: p1` |
 | A24 (R-10) | p2 of section 3: a heading assumed on its own unit, whose content is `pre` | admitted; P1's unit is CHECKED as an assumption |
 | A25 (R-10) | A24 with the unit's content `pre` conjoined with one more atom, `∃x:entity (core_value_of(x, claude) ∧ desired(x))` (draft 2 wrote it in English as "Some entity is a core value of Claude, and it is desired.", which VE does not parse; the fixture is on formulas) | `PresuppositionAssumedUnit: p2: u0013.presupposition` (PS-0p's audit rule, checked by Lean) |
-| A26 (R-8) | S7 unresolved {assumed, conditioned}, predicate `unspecified`, on the soft chain | readings@1's abstention: `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` |
-| A27 (R-8) | A26 on the rights chain | the same abstention |
+| A26 (R-8) | S7 unresolved {assumed, conditioned}, predicate `unspecified`, on the soft chain | PS check step 5: `UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)` |
+| A27 (R-8) | A26 on the rights chain | readings@1's abstention: `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` |
 | A28 (R-10) | a heading obligation with a `body` | `PresuppositionMismatch: p1: body` |
 
 ### 7.4 Pilot fixtures
@@ -1412,7 +1420,9 @@ Each is a rewrite that PS-6 offers; each must parse to exactly one reading.
   (`PresuppositionCandidates` otherwise), and readings@1's separation decides the rest (its own diagnostic). In
   translation such a unit stays UNFORMALISED.
 - **Chains** (R-8). An open set with a conditioned rule reading needs `norm-defaults@0`, so it is admitted on the
-  norms chain only; on the soft and rights chains readings@1's `abstention` refuses it.
+  norms chain only; on the rights chain readings@1's `abstention` refuses it, and on the soft chain PS check step 5
+  does ("UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"; DRI 2026-11-04,
+  item 2).
 - **Proxy readers.** PS-E1 and PS-E2 use Sonnet as a proxy; the results bound careful readers from above and say
   nothing certain about untrained human readers.
 - **The table starts empty.** Until PS-E1 runs, every unproved trigger is refused in authoring and UNFORMALISED in
@@ -1440,8 +1450,8 @@ Each is a rewrite that PS-6 offers; each must parse to exactly one reading.
 7. `coupling_complete`'s conditions against S18 and S19, and `SameModels` under the completion against S22.
 8. The choices of section 10.
 9. The stub run, in a checkout whose Lean modules are built: every statement elaborates and every `#guard` passes,
-   including S2, S4, S5, S9, the open-description fixtures (S24) and the fixtures of R-2, R-4, R-6, R-7, R-8,
-   R-9, R-10 and R-D5.
+   including S2, S4, S5, S9, the open-description fixtures (S24) and the fixtures of R-2, R-4, R-6, R-9 (raw
+   side) and R-10 (S23); those of R-7, R-8 and R-D5 in PS-2a/PS-2b (7.3).
 10. Draft 2's edits (the bounded re-check): in place and its alias (1.4, 1.8, 2.3, 2.4, 2.5, 4.3, 4.7) against S12,
     S25, S26, S27, A22 and A23; headings (1.4a, 3, 4.7) against S23, A24, A25 and A28; the admission changes (R-D5,
     R-D6, R-6, R-7) against A5u, A18, A20 and A21; separation, chains and coupling semantics (R-8, R-9) against
@@ -1489,7 +1499,9 @@ Draft 2's choices in applying the ruling:
   with the other obligations' root modes as `ms₁` and `ms₂` and congruence through `carried` as `carried_idle`; and
   PS-2a states the same equivalence over `claimReading` for an admitted document (`admit_inPlace_alias`), with both
   premises `none`. The alias is attached exactly where `admit_inPlace_alias` applies (`aliasesOf`). Both are stated
-  for every structure, admissible or not; the ruling's "every admissible structure" is the special case.
+  for every structure, admissible or not; the ruling's "every admissible structure" is the special case. The DRI
+  accepted this placement as the record of R-D2 (`manage-agents/reviews/dri-decisions-20261104-ps-s-stub.md`,
+  item 3).
 - **C14. `SameDecides` under R-9.** The ruling redefines `SameModels` and `SameDecides`'s satisfaction hypothesis by
   one case split. This draft uses one predicate, `SatUnder`, for both. Without a norm-defaults block,
   `SameDecides`'s hypothesis therefore gains W1's elaboration, which draft 1's form (`Sat` of the formulas alone)
