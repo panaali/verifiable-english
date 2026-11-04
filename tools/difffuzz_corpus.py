@@ -86,6 +86,14 @@ EXCLUDED = {
     "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
     "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
     "usecases/udhr-pilot/*/frozen-run.json": ("artifact", "an earlier UDHR pilot run's files, frozen for migration"),
+    "usecases/claude-constitution-pilot/run-20261104T0716Z/answers/*.json": (
+        "artifact", "SC-9's recorded search, identities and measurements, not route inputs"),
+    "usecases/claude-constitution-pilot/run-20261104T0716Z/comprehension/questions.json": (
+        "artifact", "SC-9's saved comprehension questions and unrun answers"),
+    "usecases/claude-constitution-pilot/run-20261104T0716Z/changed_units.json": (
+        "artifact", "SC-9's migration output listing the units awaiting audit"),
+    "usecases/claude-constitution-pilot/run-20261104T0716Z/queries/*.json": (
+        "no-input", "query ASTs supplied with the SC-9 probe document by its measurement script"),
 }
 
 def _generated(module, name, convert=lambda value: value):
