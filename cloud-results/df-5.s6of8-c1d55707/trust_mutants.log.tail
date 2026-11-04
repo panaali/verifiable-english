@@ -1,0 +1,12 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:9 main (G[V], trusted) list-empty: [ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .str... -> []
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-empty: zoneLineWords -> []
+SURVIVOR lean/VE/Defaults/ZoneWire.lean:316 VE.Defaults.Wire.zoneJoins (G[V], trusted) list-drop-last: [("tuple", ", "), ("and", " and ")] -> ([("tuple", ", "), ("and", " and ")].dropLast)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-first: zoneLineWords -> (zoneLineWords.take 1)
+SURVIVOR lean/VE/Defaults/ZoneWire.lean:316 VE.Defaults.Wire.zoneJoins (G[V], trusted) list-drop-first: [("tuple", ", "), ("and", " and ")] -> ([("tuple", ", "), ("and", " and ")].drop 1)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-drop-middle: ("row", .str r), -> 
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:13 main (G[V], trusted) list-drop-middle: ("kind", .str k), -> 
+trust_mutants: 46 KILLED, 7 SURVIVOR, 0 UNKNOWN, 2 INVALID, 6 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 4126 s
+trust_mutants: D[V], trusted: 9 KILLED, 1 ALLOWED, 100 OTHER SHARD
+trust_mutants: G[V], trusted: 37 KILLED, 7 SURVIVOR, 2 INVALID, 5 ALLOWED, 327 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.6 s, control_build 1.2 s, probe_install 1.4 s, control_probes 486.9 s, mutants 3618.7 s, cleanup 3.1 s, reads 0.1 s; lake control_build 1.2 s (1), probe_install 1.4 s (1), control_probes 1037.9 s (6), mutant_builds 974.7 s (62), mutant_checks 3090 s (34), stage_controls 280.5 s (5), mutant_probes 9774.7 s (48)
