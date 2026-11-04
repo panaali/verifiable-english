@@ -1979,6 +1979,13 @@
    "reason": "wg-2: VE/Weighing/Tree.lean S +68 (the block's types, nodeNamed, ruleSorts, targetSorts, targetF, targetExists; rankOrder, strictPair and WeighEnv.empty tied); VE/Weighing/Conditions.lean S +64 (strengthEntries, condPremise, condEntries, grantEdges, grantReach, grantedThrough, grantConds, grantEntries, weighEntries, strengthPremises, weighLabelled, weighConditions; weighPremises and WellFormedWeigh tied); VE/Acts/Elaborate.lean V -1 (refsOk's two texts become splitRefusal, D[R]); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-2, 2026-10-18",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
+   "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
   }
  ]
 }
