@@ -10,22 +10,25 @@ open Lean ResponseShape
 def fill : Shape :=
   c "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query)." [
     obj, .required ["constant", "words", "span"],
-    closed [("constant", str), ("words", str), ("span", .anyOf [n [.type ["null"]],
+    closed [("constant", ref "common.json#/$defs/text"), ("words", ref "common.json#/$defs/text"), ("span", .anyOf [n [.type ["null"]],
       n [arr, .prefixItems [ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"], .minItems 2, .maxItems 2]])]]
 
 def reading : Shape :=
-  c "VE.Commands.Run.readingJson: the command object (SA 3.2), its fills, the proof task's query (else null) and speech-acts' paraphrase." [
+  c "VE.Commands.Run.readingJson: the command object (SA 3.2), its fills (at most one: a decoded environment's predicates have at most two argument sorts), the proof task's query (else null) and speech-acts' paraphrase." [
     obj, .required ["command", "fills", "query", "paraphrase"],
     closed [
       ("command", n [obj, .required ["force", "act", "args", "guard"],
-        closed [("force", enumS ["require", "forbid"]), ("act", str), ("args", ref "common.json#/$defs/strings"),
+        closed [("force", enumS ["require", "forbid"]), ("act", ref "common.json#/$defs/text"),
+          ("args", n [arr, .items (ref "common.json#/$defs/text"), .maxItems 1]),
           ("guard", ref "common.json#/$defs/generated_formula")]]),
-      ("fills", n [arr, .items (ref "#/$defs/fill")]),
-      ("query", .anyOf [n [.type ["null"]], str]),
+      ("fills", n [arr, .items (ref "#/$defs/fill"), .maxItems 1]),
+      ("query", .anyOf [n [.type ["null"]], ref "common.json#/$defs/text"]),
       ("paraphrase", ref "common.json#/$defs/text")]]
 
 def answer : Shape :=
-  let base : List (String × Shape) := [("unit", str), ("wording", str), ("legend", ref "common.json#/$defs/strings")]
+  let text := ref "common.json#/$defs/text"
+  let base : List (String × Shape) := [("unit", n [str, .equals "/unit"]), ("wording", n [str, .equals "/wording"]),
+    ("legend", n [arr, .items text, .minItems 1])]
   let base_keys := ["unit", "wording", "legend", "outcome"]
   .anyOf [
     c "readInstruction's one reading." [obj, .required (base_keys ++ ["reading"]),
@@ -34,9 +37,9 @@ def answer : Shape :=
       closed (base ++ [("outcome", constS "many"), ("readings", n [arr, .items (ref "#/$defs/reading")])])],
     c "readInstruction's refusal: its code, class and text (QueryMismatch's text is the unit)." [obj,
       .required (base_keys ++ ["code", "class", "text"]),
-      closed (base ++ [("outcome", constS "refused"), ("code", str), ("class", str), ("text", str)])],
+      closed (base ++ [("outcome", constS "refused"), ("code", text), ("class", text), ("text", text)])],
     c "readInstruction at its work limit (Texts.limitText)." [obj, .required (base_keys ++ ["text"]),
-      closed (base ++ [("outcome", constS "limit"), ("text", ref "common.json#/$defs/text")])]]
+      closed (base ++ [("outcome", constS "limit"), ("text", text)])]]
 
 def «row» : Shape :=
   .anyOf [
@@ -44,7 +47,7 @@ def «row» : Shape :=
     n [obj, .required ["id", "status", "error"],
       closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "common.json#/$defs/text")]],
     n [obj, .required ["id", "status", "result"],
-      closed [("id", str), ("status", constS "ok"), ("result", ref "#/$defs/answer")]]]
+      closed [("id", n [str, .equals "/id"]), ("status", constS "ok"), ("result", ref "#/$defs/answer")]]]
 
 def file : File where
   name := "english.command.json"

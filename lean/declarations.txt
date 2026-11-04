@@ -964,12 +964,12 @@ module ResponseShape.Schemas.CheckCertificate 073a4fa3360cd20c85cb6c07bc839a30ad
 7:0-12:92 def ResponseShape.Schemas.CheckCertificate.certificate@ResponseShape.Schemas.CheckCertificate
 14:0-18:30 def ResponseShape.Schemas.CheckCertificate.row@ResponseShape.Schemas.CheckCertificate
 20:0-25:41 def ResponseShape.Schemas.CheckCertificate.file@ResponseShape.Schemas.CheckCertificate
-module ResponseShape.Schemas.Command c4ae2b6323b54ba855e9dbeefeda09d64c8836c3f7fa621303ace7ad405f8626
+module ResponseShape.Schemas.Command 895ce757d420d0b98344dad23dc888b1c560bf2f160e1415bd73684a92fc7a56
 10:0-14:118 def ResponseShape.Schemas.Command.fill@ResponseShape.Schemas.Command
-16:0-25:53 def ResponseShape.Schemas.Command.reading@ResponseShape.Schemas.Command
-27:0-39:95 def ResponseShape.Schemas.Command.answer@ResponseShape.Schemas.Command
-41:0-47:87 def ResponseShape.Schemas.Command.row@ResponseShape.Schemas.Command
-49:0-53:92 def ResponseShape.Schemas.Command.file@ResponseShape.Schemas.Command
+16:0-26:53 def ResponseShape.Schemas.Command.reading@ResponseShape.Schemas.Command
+28:0-42:70 def ResponseShape.Schemas.Command.answer@ResponseShape.Schemas.Command
+44:0-50:106 def ResponseShape.Schemas.Command.row@ResponseShape.Schemas.Command
+52:0-56:92 def ResponseShape.Schemas.Command.file@ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common 02cf04ef1d1ebd2427c941907310316c1061226705c7248626d20b81852aea6f
 10:0-11:109 def ResponseShape.Schemas.Common.tokenRe@ResponseShape.Schemas.Common
 13:0-14:88 def ResponseShape.Schemas.Common.natRe@ResponseShape.Schemas.Common

@@ -12,7 +12,11 @@
       },
       {
         "additionalProperties": false,
-        "properties": {"id": {"type": "string"}, "result": {"$ref": "#/$defs/answer"}, "status": {"const": "ok"}},
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {"$ref": "#/$defs/answer"},
+          "status": {"const": "ok"}
+        },
         "required": ["id", "status", "result"],
         "type": "object"
       }
@@ -25,11 +29,11 @@
           "$comment": "readInstruction's one reading.",
           "additionalProperties": false,
           "properties": {
-            "legend": {"$ref": "common.json#/$defs/strings"},
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "one"},
             "reading": {"$ref": "#/$defs/reading"},
-            "unit": {"type": "string"},
-            "wording": {"type": "string"}
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
           },
           "required": ["unit", "wording", "legend", "outcome", "reading"],
           "type": "object"
@@ -38,11 +42,11 @@
           "$comment": "readInstruction's readings (2 to readingsBound).",
           "additionalProperties": false,
           "properties": {
-            "legend": {"$ref": "common.json#/$defs/strings"},
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "many"},
             "readings": {"items": {"$ref": "#/$defs/reading"}, "type": "array"},
-            "unit": {"type": "string"},
-            "wording": {"type": "string"}
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
           },
           "required": ["unit", "wording", "legend", "outcome", "readings"],
           "type": "object"
@@ -51,13 +55,13 @@
           "$comment": "readInstruction's refusal: its code, class and text (QueryMismatch's text is the unit).",
           "additionalProperties": false,
           "properties": {
-            "class": {"type": "string"},
-            "code": {"type": "string"},
-            "legend": {"$ref": "common.json#/$defs/strings"},
+            "class": {"$ref": "common.json#/$defs/text"},
+            "code": {"$ref": "common.json#/$defs/text"},
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "refused"},
-            "text": {"type": "string"},
-            "unit": {"type": "string"},
-            "wording": {"type": "string"}
+            "text": {"$ref": "common.json#/$defs/text"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
           },
           "required": ["unit", "wording", "legend", "outcome", "code", "class", "text"],
           "type": "object"
@@ -66,11 +70,11 @@
           "$comment": "readInstruction at its work limit (Texts.limitText).",
           "additionalProperties": false,
           "properties": {
-            "legend": {"$ref": "common.json#/$defs/strings"},
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "limit"},
             "text": {"$ref": "common.json#/$defs/text"},
-            "unit": {"type": "string"},
-            "wording": {"type": "string"}
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
           },
           "required": ["unit", "wording", "legend", "outcome", "text"],
           "type": "object"
@@ -81,7 +85,7 @@
       "$comment": "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query).",
       "additionalProperties": false,
       "properties": {
-        "constant": {"type": "string"},
+        "constant": {"$ref": "common.json#/$defs/text"},
         "span": {
           "anyOf": [
             {"type": "null"},
@@ -93,29 +97,29 @@
             }
           ]
         },
-        "words": {"type": "string"}
+        "words": {"$ref": "common.json#/$defs/text"}
       },
       "required": ["constant", "words", "span"],
       "type": "object"
     },
     "reading": {
-      "$comment": "VE.Commands.Run.readingJson: the command object (SA 3.2), its fills, the proof task's query (else null) and speech-acts' paraphrase.",
+      "$comment": "VE.Commands.Run.readingJson: the command object (SA 3.2), its fills (at most one: a decoded environment's predicates have at most two argument sorts), the proof task's query (else null) and speech-acts' paraphrase.",
       "additionalProperties": false,
       "properties": {
         "command": {
           "additionalProperties": false,
           "properties": {
-            "act": {"type": "string"},
-            "args": {"$ref": "common.json#/$defs/strings"},
+            "act": {"$ref": "common.json#/$defs/text"},
+            "args": {"items": {"$ref": "common.json#/$defs/text"}, "maxItems": 1, "type": "array"},
             "force": {"enum": ["require", "forbid"]},
             "guard": {"$ref": "common.json#/$defs/generated_formula"}
           },
           "required": ["force", "act", "args", "guard"],
           "type": "object"
         },
-        "fills": {"items": {"$ref": "#/$defs/fill"}, "type": "array"},
+        "fills": {"items": {"$ref": "#/$defs/fill"}, "maxItems": 1, "type": "array"},
         "paraphrase": {"$ref": "common.json#/$defs/text"},
-        "query": {"anyOf": [{"type": "null"}, {"type": "string"}]}
+        "query": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/text"}]}
       },
       "required": ["command", "fills", "query", "paraphrase"],
       "type": "object"
