@@ -175,6 +175,7 @@ import VE.English.Statements
 import VE.EnglishGrammar.Encode
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Rules
@@ -412,6 +413,7 @@ import VE.Senses.Read
 import VE.Senses.Request
 import VE.Service.Diagnose
 import VE.Service.Document
+import VE.Service.DocumentChain
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
@@ -2877,6 +2879,8 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.DecodeEncode.toString_nat
 #print axioms VE.EnglishGrammar.EFormula.decode_encode
 #print axioms VE.EnglishGrammar.ETerm.decode_encode
+#print axioms VE.EnglishGrammar.JudgmentLines.parseLine_renders
+#print axioms VE.EnglishGrammar.JudgmentLines.renderingTo_renders
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
@@ -7480,6 +7484,10 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
+#print axioms VE.Service.DocumentChain.layeredOf_entails
+#print axioms VE.Service.DocumentChain.layeredOf_ids
+#print axioms VE.Service.DocumentChain.layeredOf_soft
+#print axioms VE.Service.DocumentChain.requestOf_environment
 #print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
