@@ -1,0 +1,10 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): tools/trust-classes.json is no module of lean/, --test file or generated inventory
+trust_mutants: 16 definitions, 323 mutants (46 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Service/Document.lean:2750 VE.Service.Document.noUnitStatus (S, trusted) bool-flip: true -> false (lean/VE/Judgments/ChainExamples.lean:406: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Service/Document.lean:2784 VE.Service.Document.layerRefusal (S, trusted) or-and: || -> && (lean/VE/Judgments/ChainExamples.lean:383: Expression (Lean could not elaborate it in the probe))
+trust_mutants: 0 KILLED, 0 SURVIVOR, 2 UNKNOWN, 2 INVALID, 8 ALLOWED, 34 NOT RUN, 277 OTHER SHARD in 5820 s
+trust_mutants: D[V], trusted: 3 ALLOWED, 7 NOT RUN, 55 OTHER SHARD
+trust_mutants: G[V], trusted: 8 OTHER SHARD
+trust_mutants: S, trusted: 2 UNKNOWN, 2 INVALID, 5 ALLOWED, 27 NOT RUN, 214 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 34 of its 46 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 9.9 s, scratch 2.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 2158 s, mutants 3642.8 s, cleanup 4.7 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 5868.6 s (10), mutant_builds 200.8 s (17), mutant_checks 1429.4 s (13), stage_controls 474.8 s (5), mutant_probes 12460.7 s (8)
