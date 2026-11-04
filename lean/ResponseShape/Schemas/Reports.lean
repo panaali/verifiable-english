@@ -362,4 +362,7 @@ def file : File where
     ("status", .schema status),
     ("wants", .schema wants)]
 
+/-! The `reports-wants` row as rendered: a dropped type, member, requirement or binding changes it. -/
+#guard (ResponseShape.render "reports.json" 64 wants).toOption.map Json.compress == some r##"{"$comment":"Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order.","additionalProperties":false,"properties":{"id":{"$ref":"common.json#/$defs/id_ok"},"infinitives":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"finite":{"type":"string"},"infinitive":{"type":"string","x-equals":""}},"required":["infinitive","finite"],"type":"object"},"of":"/infinitives"}},"phrases":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"infinitive":{"type":["string","null"]},"phrase":{"type":"string","x-equals":""}},"required":["phrase","infinitive"],"type":"object"},"of":"/phrases"}},"status":{"const":"ok"}},"required":["id","status","phrases","infinitives"],"type":"object"}"##
+
 end ResponseShape.Schemas.Reports

@@ -679,6 +679,24 @@ theorem reports_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   rw [he', hd']
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
+/-! The `reports-wants` kind: its answer, a malformed list of each field, and the size limit's two
+sides (`max_source_bytes`, one byte more per phrase). -/
+#guard (runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #["is safe", "is not safe"]),
+    ("infinitives", Json.arr #["try x"])])).toOption.map Json.compress ==
+  some r#"{"id":"w","infinitives":[{"finite":"tries x","infinitive":"try x"}],"phrases":[{"infinitive":"be safe","phrase":"is safe"},{"infinitive":null,"phrase":"is not safe"}],"status":"ok"}"#
+#guard (match runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #[7]),
+    ("infinitives", Json.arr #[])]) with | .error e => e | .ok _ => "") ==
+  "InvalidInput: reports-wants phrases must be a list of strings"
+#guard (match runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #[]),
+    ("infinitives", Json.mkObj [])]) with | .error e => e | .ok _ => "") ==
+  "InvalidInput: reports-wants infinitives must be a list of strings"
+#guard (match runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #[]),
+    ("infinitives", Json.arr #[.str (String.mk (List.replicate VE.Limits.maxSourceBytes 'a'))])]) with
+    | .error e => e | .ok _ => "") == "ResourceLimit: reports-wants phrases exceed max_source_bytes"
+#guard (match runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #[]),
+    ("infinitives", Json.arr #[.str (String.mk (List.replicate (VE.Limits.maxSourceBytes - 1) 'a'))])]) with
+    | .error _ => false | .ok _ => true)
+
 def runCaseReported (j : Json) : Json :=
   if usesReportsPath j then
     match runCase j with
