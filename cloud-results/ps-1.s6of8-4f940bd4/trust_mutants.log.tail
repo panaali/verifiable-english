@@ -1,0 +1,11 @@
+trust_mutants: 11 definitions, 68 mutants (8 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Presupposition/Frame.lean:35 VE.Presupposition.Frame.plug (S, trusted) all-any: all -> any (lean/VE/Presupposition/Frame.lean:35: Unknown constant `VE.Formula.any`)
+SURVIVOR lean/VE/Presupposition/Frame.lean:57 VE.Presupposition.Frame.Reach (S, trusted) arm-false: f.Reach S ρ τ -> False (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:11...)
+UNKNOWN lean/VE/Presupposition/Frame.lean:58 VE.Presupposition.Frame.Reach (S, trusted) and-or: ∧ -> ∨ (lean/VE/Presupposition/Examples.lean:72: Invalid projection: Expected a value whose type is a str...)
+UNKNOWN lean/VE/Presupposition/Frame.lean:17 VE.Presupposition.Frame (S, trusted) ctor-drop: | andR (l : VE.Formula) (f : Frame) ->  (lean/VE/Presupposition/Frame.lean:30: Unknown constant `VE.Presupposition.Frame.andR`)
+UNKNOWN lean/VE/Presupposition/Frame.lean:23 VE.Presupposition.Frame (S, trusted) ctor-drop: | exF (s : String) (f : Frame) ->  (lean/VE/Presupposition/Frame.lean:36: Unknown constant `VE.Presupposition.Frame.exF`)
+SURVIVOR lean/VE/Discourse/Descriptions.lean:23 VE.Discourse.raise1 (D[V], trusted) list-last: (List.range n) -> ((List.range n).reverse.take 1)
+trust_mutants: 2 KILLED, 2 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 60 OTHER SHARD in 192 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 19 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 4 UNKNOWN, 41 OTHER SHARD
+trust_mutants: steps: wall plan 9 s, scratch 1.8 s, control_build 0.2 s, probe_install 1.2 s, control_probes 64.8 s, mutants 110.1 s, cleanup 4.5 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 95.5 s (5), mutant_builds 125.5 s (13), mutant_checks 126.7 s (7), stage_controls 71.7 s (4), mutant_probes 4.9 s (2)
