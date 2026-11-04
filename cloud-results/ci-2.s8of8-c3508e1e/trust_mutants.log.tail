@@ -1,0 +1,10 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Service/Registry.lean:17 VE.Service.Mode (G[V], trusted) ctor-drop: | cardinality | scope | sensesProject | englishCommand ->  (lean/VE/Service/Registry.lean:59: Unknown constant `VE.Service.Mode.cardinality`)
+UNKNOWN lean/VE/Commands/Run.lean:36 VE.Commands.proofSentence (G[V], trusted) list-empty: t.drop -> [] (lean/VE/Commands/Run.lean:36: Function expected at)
+UNKNOWN lean/VE/Commands/Run.lean:134 VE.Commands.Run.readingJson (D[V], trusted) list-empty: f.words -> [] (lean/VE/Commands/Run.lean:134: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Commands/Run.lean:136 VE.Commands.Run.readingJson (D[V], trusted) list-first: r.fills.map (·.const) -> ((r.fills.map (·.const)).take 1)
+SURVIVOR lean/VE/Commands/Run.lean:147 VE.Commands.Run.outcomeFields (D[V], trusted) list-drop-middle: ("class", .str ((Texts.classOf code).getD "")), -> 
+trust_mutants: 25 KILLED, 2 SURVIVOR, 3 UNKNOWN, 8 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 1859 s
+trust_mutants: D[V], trusted: 18 KILLED, 2 SURVIVOR, 1 UNKNOWN, 3 INVALID, 153 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 2 UNKNOWN, 5 INVALID, 115 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 127.5 s, mutants 1712.4 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 260.7 s (5), mutant_builds 86.6 s (40), mutant_checks 481.8 s (29), stage_controls 22.7 s (3), mutant_probes 5895.5 s (25)
