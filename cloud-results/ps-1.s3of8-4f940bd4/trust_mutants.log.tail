@@ -1,0 +1,11 @@
+trust_mutants: 11 definitions, 68 mutants (9 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Presupposition/Frame.lean:14 VE.Presupposition.Frame (S, trusted) ctor-drop: | hole ->  (lean/VE/Presupposition/Frame.lean:27: Unknown constant `VE.Presupposition.Frame.hole`)
+SURVIVOR lean/VE/Presupposition/Frame.lean:88 VE.Presupposition.Frame.shallow (S, trusted) body-true: f = .notF .hole ∨ ∃ r, f = .impL .hole r -> True (the proofs it breaks: lean/VE/Presupposition/Frame.lean:95)
+SURVIVOR lean/VE/Presupposition/Frame.lean:88 VE.Presupposition.Frame.shallow (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Presupposition/Frame.lean:95)
+UNKNOWN lean/VE/Presupposition/Frame.lean:20 VE.Presupposition.Frame (S, trusted) ctor-drop: | impL (f : Frame) (r : VE.Formula) ->  (lean/VE/Presupposition/Frame.lean:33: Unknown constant `VE.Presupposition.Frame.impL`)
+UNKNOWN lean/VE/Presupposition/Frame.lean:16 VE.Presupposition.Frame (S, trusted) ctor-drop: | andL (f : Frame) (r : VE.Formula) ->  (lean/VE/Presupposition/Frame.lean:29: Unknown constant `VE.Presupposition.Frame.andL`)
+SURVIVOR lean/VE/Discourse/Descriptions.lean:23 VE.Discourse.raise1 (D[V], trusted) list-first: (List.range n).map (fun i => .var (i + 2)) -> (((List.range n).map (fun i => .var (i + 2))).take 1)
+trust_mutants: 3 KILLED, 3 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 59 OTHER SHARD in 325 s
+trust_mutants: D[V], trusted: 3 KILLED, 1 SURVIVOR, 17 OTHER SHARD
+trust_mutants: S, trusted: 2 SURVIVOR, 3 UNKNOWN, 42 OTHER SHARD
+trust_mutants: steps: wall plan 11.4 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.3 s, control_probes 84.4 s, mutants 221 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 121.8 s (5), mutant_builds 120.7 s (16), mutant_checks 435.1 s (12), stage_controls 174.5 s (5), mutant_probes 18.4 s (5)
