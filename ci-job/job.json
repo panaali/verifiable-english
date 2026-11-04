@@ -1,0 +1,19 @@
+{
+ "job": "tmps-verify.s4of6-28101c76",
+ "head": "ff747240a27a7f7d06b165f7cdcc73cf0344f0bc",
+ "argv": [
+  "tmps-verify.s4of6-28101c76",
+  "ff747240a27a7f7d06b165f7cdcc73cf0344f0bc",
+  "bab15c522016ee6d6e81b0503608dbd2f60d1818",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-0ec07d49c792.tar.zst",
+  "fe1271bb68ab9869c393570775bec66c4a6973ee81489a3abba78778033ebac6",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/quantities/qt-a3d/trust-mutants-allow.json",
+  "--shard",
+  "4/6",
+  "--jobs",
+  "4"
+ ]
+}
