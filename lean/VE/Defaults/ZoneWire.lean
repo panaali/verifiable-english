@@ -315,6 +315,14 @@ def zoneLineWords : List (String × String × String × String) :=
 
 def zoneJoins : List (String × String) := [("tuple", ", "), ("and", " and ")]
 
+/-- `ve/defaults_words.json` (`ZoneWordsMain.lean` prints it): each row with the answer's fields that select it. -/
+def zoneWordsJson : Json := Json.mkObj [
+  ("heads", toJson (zoneHeads.map fun (z, f, r, w) =>
+    Json.mkObj [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)])),
+  ("lines", toJson (zoneLineWords.map fun (r, k, s, i) =>
+    Json.mkObj [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)])),
+  ("joins", Json.mkObj (zoneJoins.map fun (k, w) => (k, .str w)))]
+
 /-- Every row Lean selects has its words, once: DE10's form for each zone shown and each `form`, and each line. -/
 theorem zoneWords_complete (f : Form) (l : ZoneLine) :
     (zoneHeads.filter fun h => h.1 == "byDefault" && h.2.1 == formLabel f).length = 1 ∧
