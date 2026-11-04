@@ -78,13 +78,16 @@ the probes' first row and has its own guard. -/
     ("gos", none), ("ies", some "ie"), ("oes", some "o"), ("es", some "e"), ("zes", some "z"),
     ("sses", some "ss"), ("yies", some "yy"), ("aies", some "aie"), ("eies", some "eie"), ("iies", some "iie"),
     ("oies", some "oie"), ("uies", some "uie"), ("bathes", some "bathe"), ("x1s", none), ("dоes", none),
-    ("élèves", none)].all fun (p, i) => wantsPhrase? p == i
+    ("élèves", none), ("is\u00a0safe", none), ("is safe\r", some "be safe\r"),
+    ("is \u201csafe\u201d", some "be \u201csafe\u201d"), ("\u212aeeps x", none), ("\u0130s safe", none),
+    ("is\x00", none)].all fun (p, i) => wantsPhrase? p == i
 
 #guard [("be safe", "is safe"), ("have a key", "has a key"), ("do work", "does work"),
     ("be not safe", "is not safe"), ("try x", "tries x"), ("play", "plays"), ("pass", "passes"),
     ("wish", "wishes"), ("watch", "watches"), ("fix", "fixes"), ("buzz", "buzzes"), ("go", "goes"),
     ("", "s"), (" x", "s x"), ("Be safe", "Bes safe"), ("y", "ys"), ("ay", "ays"), ("Ay", "Aies"),
     ("1y", "1ies"), ("é", "és"), ("run fast", "runs fast"), ("key", "keys"), ("skiy", "skiys"),
-    ("toy", "toys"), ("buy", "buys"), ("bath", "baths")].all fun (p, f) => finitePhrase p == f
+    ("toy", "toys"), ("buy", "buys"), ("bath", "baths"), ("be\u00a0safe", "be\u00a0safes"),
+    ("be safe\r", "is safe\r"), ("\u212aeep", "\u212aeeps")].all fun (p, f) => finitePhrase p == f
 
 end VE.Reports

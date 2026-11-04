@@ -221,6 +221,30 @@
   [
    "élèves",
    null
+  ],
+  [
+   "is safe",
+   null
+  ],
+  [
+   "is safe\r",
+   "be safe\r"
+  ],
+  [
+   "is “safe”",
+   "be “safe”"
+  ],
+  [
+   "Keeps x",
+   null
+  ],
+  [
+   "İs safe",
+   null
+  ],
+  [
+   "is\u0000",
+   null
   ]
  ],
  "finite_probes": [
@@ -331,6 +355,18 @@
   [
    "bath",
    "baths"
+  ],
+  [
+   "be safe",
+   "be safes"
+  ],
+  [
+   "be safe\r",
+   "is safe\r"
+  ],
+  [
+   "Keep",
+   "Keeps"
   ]
  ]
 }
