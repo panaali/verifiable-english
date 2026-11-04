@@ -1,0 +1,172 @@
+--- a/manage-agents/mac-pytest.sh (.bak-20261103failfast)
++++ b/manage-agents/mac-pytest.sh
+@@ -133,6 +133,15 @@
+ #    pools). A miss keeps the key: when this run ends on the VM or the Mac its record is kept and compared with a cloud
+ #    result of the same key (a difference: the pool off as a verdict-sample mismatch, and CLOUD_LATE_APPLY off).
+ #    Tests only: MAC_PYTEST_LOG (the run log), CLOUD_JOBS_DIR, CLOUD_LATE_PY, CLOUD_LATE_APPLY_FLAG, MAC_PYTEST_TM_REUSE_TEST=1 (exit 5 after a reuse miss).
++#  - Plan fail-fast (2026-11-03 tm-plan-failfast, DRI reviews/dri-decisions-20261103-tm-plan-failfast.md item 1; kill
++#    switch TM_PLAN_FAILFAST.off, present = as before): 14 of 16 "--plan gave no count" runs were inputs trust_mutants
++#    refuses (a stale lean/declarations.txt, a Python file as --test, a second --test path without its flag), which every
++#    pool refused with exit 2 in seconds after 3-26 min of waiting. A --trustmut run (not a part run: MAC_PYTEST_TM_PART
++#    unset; not --merge, which plans nothing) first runs uv run python tools/trust_mutants.py <its args> --plan in the
++#    worktree (read-only; --json/--jobs/--rescore dropped as tm-shard.sh drops them; timeout 300 s). Exit 2 with a message
++#    on stderr (usage, indented and uv warning: lines aside; not uv's own error: line) = print it, log where=none rc 2,
++#    exit 2: no Actions job, no Mac slot, no VM. Any other outcome (exit 0, 124, a crash, exit 2 with no message) routes as
++#    before. Tests only: MAC_PYTEST_TM_PLAN_TIMEOUT (seconds), TM_PLAN_FAILFAST_OFF (the kill switch's path).
+ w=$PWD; [ "$1" = --worktree ] && { w=$2; shift 2; }; sel=""; [ "$1" = --select ] && { sel=1; shift; }; tm=""; [ "$1" = --trustmut ] && { tm=1; shift; }; [ "$1" = -- ] && shift
+ w=$(git -C "$w" rev-parse --show-toplevel 2>/dev/null) || { echo "usage: mac-pytest.sh [--worktree DIR] -- <pytest args...> (DIR must be a git worktree)" >&2; exit 2; }
+ args=("$@"); cap=${MAC_PYTEST_WORKERS:-6}; t0=$(date +%s); unset largs
+@@ -274,6 +283,18 @@
+   cd $w && PATH=$P $pre $cmd "${ra[@]}"; local rc=$?
+   say "summary: ran LOCALLY (VM) because: $1; exit=$rc; $(( $(date +%s) - t0 ))s"
+   logj ${2:-vm} $rc "$1"; exit $rc; }
++# tm-plan-failfast (header): trust_mutants refusing its inputs fails here, before any pool (Actions, Mac, VM) is asked
++if [ -n "$tm" ] && [ -z "$MAC_PYTEST_TM_PART" ] && [ ! -f ${TM_PLAN_FAILFAST_OFF:-$M/TM_PLAN_FAILFAST.off} ] && ! (( ${args[(I)--merge*]} )); then
++  pfa=(); i=1; while [ $i -le ${#args} ]; do a=${args[$i]}  # the --plan args, as tm-shard.sh builds them
++    case $a in --json|--jobs|--rescore) i=$((i+2)); continue;; --json=*|--jobs=*|--rescore=*) ;; *) pfa+=("$a");; esac; i=$((i+1)); done
++  ( cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH timeout -k 10 ${MAC_PYTEST_TM_PLAN_TIMEOUT:-300} \
++      uv run python tools/trust_mutants.py "${pfa[@]}" --plan > /dev/null 2> $tmp/plan.err ); prc=$?
++  pfm=(${(f)"$(grep -v -e '^usage:' -e '^ ' -e '^$' -e '^warning:' $tmp/plan.err 2>/dev/null)"})
++  if [ $prc = 2 ] && [ -n "${pfm[1]}" ] && [[ ${pfm[1]} != error:* ]]; then
++    print -u2 -r -- "trust_mutants refuses its inputs, so every pool would too:"; grep -v '^warning:' $tmp/plan.err | head -n 40 >&2
++    say "summary: trust_mutants not run: its --plan exits 2 on these inputs (fix them and rerun); exit=2; $(( $(date +%s) - t0 ))s"
++    logj none 2 "tm-plan-failfast: trust_mutants --plan refuses its inputs: ${${pfm[1]//[\"\\\\]/}[1,200]}"; exit 2; fi
++  [ $prc = 0 ] || say "trust_mutants --plan exit $prc${pfm[1]:+ (${pfm[1][1,160]})}: not a refusal of its inputs, the run routes as before"; fi
+ [ "${MAC_PYTEST:-1}" = 0 ] || [ -f $M/MAC_PYTEST_OFF ] && run_local "MAC_PYTEST off"
+ # 2026-10-28 dri-gha2 (reviews/gha-tests-20261028.md; flag ACTIONS_TESTS, absent = as before): a selected --run goes to
+ # GitHub Actions first, sharded over up to 6 runners (gha-select.sh: plan on the VM, one push, results by ci-result/*);
+--- a/manage-agents/fixloop.sh (.bak-20261103failfast)
++++ b/manage-agents/fixloop.sh
+@@ -69,7 +69,7 @@
+     if [ -f $M/MERGE-GATE-SELECTED ] && [ -n "$fresh" ]; then fin="the SELECTED tests for your change ONCE: zsh $M/mac-pytest.sh --select -- --base \$(git merge-base HEAD main) --run (the Mac test runner, VM fallback; do NOT run the full suite or the release gate (tools/gate.py): the merge train's branch verify and the nightly full suite run after you)"
+     else fin="lake build, python lean/audit.py and the full suite ONCE (zsh $M/mac-pytest.sh -- <pytest args>)"; fi
+     # 2026-10-28 dri-advfix2: FIX_LEAN_TESTS.off (the combined trial guard tripped, PL L126) keeps the standard test rules above
+-    [ -f $M/FIX_LEAN_TESTS.off ] || tests_fix="TESTS (FIX_LEAN: a fix round's time goes to test runs, so each heavy run happens once): (1) while iterating run ONLY each finding's PROBE line and the regression test you add for it (seconds to minutes; when you change Lean, lake build of just the module you edit); never the selected tests, the full suite, regen or trust_mutants between edits. (2) After ALL edits: regen ONCE if an input of a generated file changed (uv run python tools/regen_generated.py --write; the FIXMAP lists the generated files), then lake build and python lean/audit.py once if Lean changed, and commit. (3) Then $fin, in the FOREGROUND; if some fail, fix them and rerun ONLY the failed test ids (zsh $M/mac-pytest.sh -- <failed ids>), never the whole selection on an unchanged commit. (4) trust_mutants ONCE at the end, and only if this round changed trusted Lean definitions or a finding is about mutant kills (R16): zsh $M/mac-pytest.sh --trustmut -- --base $r0 --max-mutants 1000 --json <the folder of the branch's trust-mutants JSON>/trust-mutants-fix$r.json plus the build's --allow/--test arguments ($r0 is this round's start commit, so only the trusted lines this round changed are mutated, and the build's committed JSON covers the rest; tools/trust_mutants.py has no per-definition option, and --base is its narrowest selection). If the round changed no trusted lines but a finding is about surviving mutants, rerun the build's own trust_mutants command with --rescore <the build's JSON> instead (it reuses the verdicts whose inputs did not change). If you merged main this round, drop --base. Commit the JSON. CLOUD_POOL=0 is for timing runs only: never set it on these runs. A cloud pool that gives no result falls back on its own (to the Mac or the VM; a sharded cloud run reruns only its missing parts there and merges them), so after a cloud failure just rerun the same command: do not opt out with CLOUD_POOL=0 or split the run with --shard yourself. Run every long command in the FOREGROUND with a timeout above its expected runtime (${kaw}), and never poll it in a loop of short sleeps."
++    [ -f $M/FIX_LEAN_TESTS.off ] || tests_fix="TESTS (FIX_LEAN: a fix round's time goes to test runs, so each heavy run happens once): (1) while iterating run ONLY each finding's PROBE line and the regression test you add for it (seconds to minutes; when you change Lean, lake build of just the module you edit); never the selected tests, the full suite, regen or trust_mutants between edits. (2) After ALL edits: regen ONCE if an input of a generated file changed (uv run python tools/regen_generated.py --write; the FIXMAP lists the generated files), then lake build and python lean/audit.py once if Lean changed, and commit. (3) Then $fin, in the FOREGROUND; if some fail, fix them and rerun ONLY the failed test ids (zsh $M/mac-pytest.sh -- <failed ids>), never the whole selection on an unchanged commit. (4) trust_mutants ONCE at the end, and only if this round changed trusted Lean definitions or a finding is about mutant kills (R16): zsh $M/mac-pytest.sh --trustmut -- --base $r0 --max-mutants 1000 --json <the folder of the branch's trust-mutants JSON>/trust-mutants-fix$r.json plus the build's --allow/--test arguments ($r0 is this round's start commit, so only the trusted lines this round changed are mutated, and the build's committed JSON covers the rest; tools/trust_mutants.py has no per-definition option, and --base is its narrowest selection). Before that --trustmut run, if this round edited Lean, rerun uv run python tools/lean_statements.py and commit lean/declarations.txt (a stale one makes trust_mutants refuse the run with exit 2), and give each --test path its own --test flag, Lean files only (--test lean/VE/A.lean --test lean/VE/B.lean; a Python file, or a second path after one --test flag, is refused the same way). If the round changed no trusted lines but a finding is about surviving mutants, rerun the build's own trust_mutants command with --rescore <the build's JSON> instead (it reuses the verdicts whose inputs did not change). If you merged main this round, drop --base. Commit the JSON. CLOUD_POOL=0 is for timing runs only: never set it on these runs. A cloud pool that gives no result falls back on its own (to the Mac or the VM; a sharded cloud run reruns only its missing parts there and merges them), so after a cloud failure just rerun the same command: do not opt out with CLOUD_POOL=0 or split the run with --shard yourself. Run every long command in the FOREGROUND with a timeout above its expected runtime (${kaw}), and never poll it in a loop of short sleeps."
+     orient="ORIENTATION (FIX_LEAN): read the FIXMAP $fm FIRST: the files this branch touched with what each owns, the definitions per spec section, the item's own test commands, and the generated files with the regen command. Then read only the code each finding names (its file:line and the FIXMAP lines for those files), plus what its class sweep needs; do not grep or read through the whole change to re-learn it. "
+     fmap_out=" End your report with an updated map for the next round between a line '## FIXMAP' and a line '## END FIXMAP' (at most 70 lines: files with what each owns, key definitions as name -> file:line, the regression test commands, what needs regen; correct anything the FIXMAP had wrong)."
+   fi
+--- a/manage-agents/infra-item.sh (.bak-20261103failfast)
++++ b/manage-agents/infra-item.sh
+@@ -93,7 +93,7 @@
+ if [ -f $M/BUILDER_TEST_BUDGET ]; then
+   tb3="(3) Then run the selected tests ONCE on the finished code: zsh $M/mac-pytest.sh --select -- --base \$(git merge-base HEAD main) --run (the Mac test runner for your worktree as it is, uncommitted changes included; VM fallback); if some fail, fix them and rerun ONLY the failed test ids (zsh $M/mac-pytest.sh -- <ids>), never the whole selection on unchanged code; then commit."
+   [ "$lane" = FAST ] && tb3="(3) Do NOT run the selected-test set yourself: the chain runs it on your final HEAD (below)."
+-  tests_rule="TESTS (BUILDER_TEST_BUDGET: most of a build's time went to waiting on test runs, so each heavy run happens once; this replaces build checklist 22's 'while iterating, run only the selected tests'): (1) while iterating run ONLY the tests of the code you just touched: its named test files or -k selections (uv run pytest -q tests/test_<x>.py -k <name>), one-line PROBE-style checks (uv run python -c ..., a ve CLI call), the tests you add, and a lake build of just the Lean modules you edited (lake build VE.<Module>); never the selected-test set, the full suite, regen or trust_mutants between edits, and never rerun a check on unchanged code; each seeded bug (below) is shown with the one test that catches it. (2) When the code is done: regen ONCE if an input of a generated file changed (uv run python tools/regen_generated.py --write), lake build and python lean/audit.py ONCE if Lean changed, trust_mutants ONCE if the task or checklist asks for it (when its trusted Lean is done), then commit; if a later edit (a main merge, a fix) needs it again, rerun that same command with --rescore <the JSON of that run> (it reuses every verdict whose inputs did not change and still writes a complete JSON), never a fresh full run. $tb3 Run each of these, and every other long command, in the FOREGROUND with a timeout above its expected runtime (${kaw}) and wait for it; never poll a command or a background job with a loop of short sleeps, tail or status calls."
++  tests_rule="TESTS (BUILDER_TEST_BUDGET: most of a build's time went to waiting on test runs, so each heavy run happens once; this replaces build checklist 22's 'while iterating, run only the selected tests'): (1) while iterating run ONLY the tests of the code you just touched: its named test files or -k selections (uv run pytest -q tests/test_<x>.py -k <name>), one-line PROBE-style checks (uv run python -c ..., a ve CLI call), the tests you add, and a lake build of just the Lean modules you edited (lake build VE.<Module>); never the selected-test set, the full suite, regen or trust_mutants between edits, and never rerun a check on unchanged code; each seeded bug (below) is shown with the one test that catches it. (2) When the code is done: regen ONCE if an input of a generated file changed (uv run python tools/regen_generated.py --write), lake build and python lean/audit.py ONCE if Lean changed, trust_mutants ONCE if the task or checklist asks for it (when its trusted Lean is done; before that --trustmut run, after Lean edits, rerun uv run python tools/lean_statements.py and commit lean/declarations.txt (a stale one makes trust_mutants refuse the run with exit 2), and give each --test path its own --test flag, Lean files only (--test lean/VE/A.lean --test lean/VE/B.lean; a Python file, or a second path after one --test flag, is refused the same way)), then commit; if a later edit (a main merge, a fix) needs it again, rerun that same command with --rescore <the JSON of that run> (it reuses every verdict whose inputs did not change and still writes a complete JSON), never a fresh full run. $tb3 Run each of these, and every other long command, in the FOREGROUND with a timeout above its expected runtime (${kaw}) and wait for it; never poll a command or a background job with a loop of short sleeps, tail or status calls."
+ fi
+ # 2026-10-28 DRI (dri-applywaste, reviews/waste-audit-20261028.md row 2, PIPELINE-LIMITS L125; flag BUILDER_LEAN_IO, absent = as
+ # before): results over 3k tokens were 4% of builder tool results but 21% of builder CW (each is re-read on every later call)
+--- a/manage-agents/prompts/build-checklist.txt (.bak-20261103failfast)
++++ b/manage-agents/prompts/build-checklist.txt
+@@ -12,7 +12,7 @@
+ 11. Do not regex a real language (Lean, Rust, Python imports, git, JSON escapes, OTS). Use the compiler or library as oracle and fail closed on unknown syntax.
+ 12. State-machine and ledger code: Hypothesis stateful test with tamper, crash, restart, undo and retry. Replay(to_json(s)) == s. Derive totals from raw events.
+ 13. Tests must be able to fail: run seeded mutants of the checker or gate; constant-reject, all-INVALID and empty inputs must FAIL; no hard-coded expected summaries; three-way tests really call all three.
+-13a. Trusted Lean growth (R16): on the final Lean change run zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/<batch>/trust-mutants.json (add --allow/--test as needed; it runs tools/trust_mutants.py on the Mac and copies the JSON back; never run it on the VM directly, and never two at once); CLOUD_POOL=0 is for timing runs only: never set it on these runs. A cloud pool that gives no result falls back on its own (to the Mac or the VM; a sharded cloud run reruns only its missing parts there and merges them), so after a cloud failure just rerun the same command: do not opt out with CLOUD_POOL=0 or split the run with --shard yourself. (2026-10-29 tm-cloudpool-optout) fix every SURVIVOR and UNKNOWN with a check that kills it, or --allow it with one line saying why the mutant is equivalent, until it exits 0 (exit 3 = mutants NOT RUN: raise --max-mutants); commit the evidence JSON and the allow file. After an allow-only edit or for UNKNOWNs, rerun with --rescore <the last evidence JSON> (reuses verdicts only on byte-identical inputs; the PREV must be in the worktree); a code change still needs a full run (L91). Reviewers rerun it on the HEAD without --rescore (a full run), compare with the committed evidence (a rescored JSON marks each reused verdict reused_from <head> and records its rescore block), and plant hand mutants only beyond its OPERATORS (a premise dropped, an argument replaced by a constant, a list swapped for a sibling list, a check outside the mutated module's directory, which only --deep builds).
++13a. Trusted Lean growth (R16): on the final Lean change run zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/<batch>/trust-mutants.json (add --allow/--test as needed; it runs tools/trust_mutants.py on the Mac and copies the JSON back; before it, after Lean edits, rerun uv run python tools/lean_statements.py and commit lean/declarations.txt (a stale one makes trust_mutants refuse the run with exit 2), and give each --test path its own --test flag, Lean files only (--test lean/VE/A.lean --test lean/VE/B.lean; a Python file, or a second path after one --test flag, is refused the same way); never run it on the VM directly, and never two at once); CLOUD_POOL=0 is for timing runs only: never set it on these runs. A cloud pool that gives no result falls back on its own (to the Mac or the VM; a sharded cloud run reruns only its missing parts there and merges them), so after a cloud failure just rerun the same command: do not opt out with CLOUD_POOL=0 or split the run with --shard yourself. (2026-10-29 tm-cloudpool-optout) fix every SURVIVOR and UNKNOWN with a check that kills it, or --allow it with one line saying why the mutant is equivalent, until it exits 0 (exit 3 = mutants NOT RUN: raise --max-mutants); commit the evidence JSON and the allow file. After an allow-only edit or for UNKNOWNs, rerun with --rescore <the last evidence JSON> (reuses verdicts only on byte-identical inputs; the PREV must be in the worktree); a code change still needs a full run (L91). Reviewers rerun it on the HEAD without --rescore (a full run), compare with the committed evidence (a rescored JSON marks each reused verdict reused_from <head> and records its rescore block), and plant hand mutants only beyond its OPERATORS (a premise dropped, an argument replaced by a constant, a list swapped for a sibling list, a check outside the mutated module's directory, which only --deep builds).
+ 14. Hermetic: env allowlist, hashed/rebuilt binaries, tmp_path-only writes, no sleep or literal timeouts (use HANG_TIMEOUT or an injected clock), no reliance on caches.
+ 15. Identity: for each schema field, a mutation either changes the bound id or is listed as non-identity. Certificates are bound to the full outer envelope.
+ 16. Lists (profiles, audit, gate, corpus globs, frozen hashes, registry hooks) are generated or covered by a test that every registered item appears.
+--- a/manage-agents/test-harness/trustmut/test-trustmut.zsh (.bak-20261103failfast)
++++ b/manage-agents/test-harness/trustmut/test-trustmut.zsh
+@@ -31,8 +31,15 @@
+ X
+ cat > $S/bin/uv <<X
+ #!/bin/bash
++# tm-plan-failfast: a --plan call (mac-pytest.sh's local check) goes to plancalls; scen/planrc, planerr, planhang set its outcome
++case " \$* " in *" --plan "*) echo "uv \$* (cwd \$PWD)" >> $S/plancalls; [ -f $S/scen/planerr ] && cat $S/scen/planerr >&2
++  [ -f $S/scen/planhang ] && exec sleep 30; [ -f $S/scen/plancrash ] && kill -SEGV \$\$; exit \$(cat $S/scen/planrc 2>/dev/null || echo 0);; esac
+ echo "uv \$* (cwd \$PWD)" >> $S/calls; echo "LOCAL-RUN \$*"; [ -f $S/scen/hang ] && sleep 30; exit \$(cat $S/scen/localrc 2>/dev/null || echo 0)
+ X
++cat > $S/M/cloud-overflow.sh <<X
++# tm-plan-failfast: the pool stub (Actions first): logs the call, gives no result (the caller goes on to the Mac)
++echo "cloud \$*" >> $S/calls; exit 3
++X
+ cat > $S/bin/lake <<X
+ #!/bin/bash
+ echo "lake \$* (cwd \$PWD)" >> $S/calls; [ -f $S/scen/lakefail ] && { echo "error: Foo.lean:1:1: boom"; exit 1; }; exit 0
+@@ -50,11 +57,13 @@
+ flock -n -o -E 75 /home/verunner/locks/pyt1 bash /home/verunner/pytest-job.sh work cand-ish-wt-1234 abc 0 -- -x
+ bash -c sha256sum pytest-job.sh; ps -eo args= | grep -E "^flock .*/locks/slot[12] bash [^ ]*gate-job\.sh work cand-"'
+ # run <script> <scenario: flag ps load macrc localrc unreachable nofallback> -- args
+-run(){ local sc=$1; shift; rm -rf $S/scen; mkdir -p $S/scen; : > $S/calls; rm -f $S/M/mac-pytest.jsonl $S/M/MAC_PYTEST_YIELD
++run(){ local sc=$1; shift; rm -rf $S/scen; mkdir -p $S/scen; : > $S/calls; : > $S/plancalls; rm -f $S/M/mac-pytest.jsonl $S/M/MAC_PYTEST_YIELD $S/M/ACTIONS_FIRST $S/M/TM_PLAN_FAILFAST.off
++  [ -n "$AF" ] && : > $S/M/ACTIONS_FIRST; [ -n "$KILL" ] && : > $S/M/TM_PLAN_FAILFAST.off; [ -n "$PLANRC" ] && print $PLANRC > $S/scen/planrc
++  [ -n "$PLANERR" ] && print -r -- "$PLANERR" > $S/scen/planerr; [ -n "$PLANHANG" ] && : > $S/scen/planhang; [ -n "$PLANCRASH" ] && : > $S/scen/plancrash
+   [ -n "$FLAG" ] && : > $S/M/MAC_PYTEST_YIELD; print -r -- "$PS" > $S/scen/ps.txt; print -- "${LOAD:-5.00} 4 3 1/100 1" > $S/scen/loadavg
+   [ -n "$MACRC" ] && print $MACRC > $S/scen/macrc; [ -n "$LOCALRC" ] && print $LOCALRC > $S/scen/localrc; [ -n "$UNREACH" ] && : > $S/scen/unreachable; [ -n "$LAKEFAIL" ] && : > $S/scen/lakefail; [ -n "$HANG" ] && : > $S/scen/hang
+   ( cd $W && env -i HOME=$S/home PATH=$S/bin:/usr/bin:/bin TMPDIR=$S MAC_PYTEST_LOADAVG=$S/scen/loadavg VE_TESTMAP_CACHE=$S/maps \
+-      ${NOFB:+MAC_PYTEST_NOFALLBACK=1} ${RETRIES:+MAC_PYTEST_SLOT_RETRIES=$RETRIES} ${largs:+largs=$largs} ${NOY:+MAC_PYTEST_NOYIELD=$NOY} ${TMO:+MAC_PYTEST_TIMEOUT=$TMO} zsh $S/M/$sc.sh "$@" ) > $S/out 2>&1; RC=$?
++      ${NOFB:+MAC_PYTEST_NOFALLBACK=1} ${RETRIES:+MAC_PYTEST_SLOT_RETRIES=$RETRIES} ${largs:+largs=$largs} ${NOY:+MAC_PYTEST_NOYIELD=$NOY} ${TMO:+MAC_PYTEST_TIMEOUT=$TMO} ${PLANTMO:+MAC_PYTEST_TM_PLAN_TIMEOUT=$PLANTMO} ${PART:+MAC_PYTEST_TM_PART=$PART} zsh $S/M/$sc.sh "$@" ) > $S/out 2>&1; RC=$?
+   J=$(cat $S/M/mac-pytest.jsonl 2>/dev/null); }
+ mac_ran(){ grep -q '^ssh .*pytest-job.sh run' $S/calls; }
+ local_ran(){ grep -q '^uv run' $S/calls; }
+@@ -103,4 +112,34 @@
+ ok "plain pytest: no trustmut kind" '[ $(nmac) = 1 ] && [[ $(macline) != *trustmut* ]] && [[ $(macline) == *"-- -q tests -n 6" ]]'
+ # 7 runner side: the trustmut branch
+ ok "pytest-job.sh: trustmut branch runs tools/trust_mutants.py after removing tm-out.json" 'grep -q "KIND:-pytest}\" = trustmut" $S/M/mac-pytest-job.sh && grep -A2 "= trustmut ]" $S/M/mac-pytest-job.sh | grep -q "rm -f \$D/tm-out.json" && bash -n $S/M/mac-pytest-job.sh'
++# 8 tm-plan-failfast (DRI reviews/dri-decisions-20261103-tm-plan-failfast.md item 1): a local --plan before any pool
++nplan(){ grep -c '^uv run python tools/trust_mutants.py .* --plan (cwd' $S/plancalls; }
++ncloud(){ grep -c '^cloud run ' $S/calls; }  # a pool asked to run it (cloud pool = a status query)
++route(){ print -r -- "cloud=$(grep -c '^cloud' $S/calls) mac=$(nmac) local=$(grep '^uv run' $S/calls | sed 's/ (cwd .*//' | tr '\n' ';') rc=$RC"; }
++STALE='lean/declarations.txt was not compiled from lean/VE/T.lean; rerun tools/lean_statements.py'
++PA=(--max-mutants 5 --jobs 20 --json out.json --test lean/VE/T.lean --rescore docs/allow.json --rescore=docs/allow.json --jobs=3 --json=o.json --base main)
++AF=1 MACRC=0 PLANRC=2 PLANERR=$STALE run ut --trustmut -- $PA
++ok "plan exit 2 with a message -> rc 2, no pool called (no Actions, no Mac, no VM)" '[ $RC = 2 ] && ! grep -q "^cloud" $S/calls && [ $(nmac) = 0 ] && ! local_ran && ! grep -q "^ssh" $S/calls'
++ok "  the refusal and trust_mutants' message printed" 'grep -qxF "trust_mutants refuses its inputs, so every pool would too:" $S/out && grep -qxF -- "$STALE" $S/out'
++ok "  one --plan in the worktree, --json/--jobs/--rescore dropped, the rest kept in order" '[ $(nplan) = 1 ] && grep -qxF "uv run python tools/trust_mutants.py --max-mutants 5 --test lean/VE/T.lean --base main --plan (cwd $W)" $S/plancalls'
++ok "  logged where=none rc 2 with the message" '[[ $J == *\"where\":\"none\",*\"rc\":2,*tm-plan-failfast:\ trust_mutants\ --plan\ refuses\ its\ inputs:\ lean/declarations.txt\ was\ not* ]]'
++AF=1 MACRC=0 PLANRC=2 PLANERR=$'usage: trust_mutants.py [-h] [--test PATH]\n                        [--plan]\ntrust_mutants.py: error: unrecognized arguments: lean/VE/U.lean' run ut --trustmut -- --test lean/VE/T.lean lean/VE/U.lean
++ok "an argparse refusal (a second --test path without its flag): rc 2, no pool, its error line printed" '[ $RC = 2 ] && [ $(ncloud) = 0 ] && [ $(nmac) = 0 ] && grep -q "error: unrecognized arguments: lean/VE/U.lean" $S/out'
++# the routing of the other outcomes = the kill switch's (today's path) = the old script's
++AF=1 MACRC=0 KILL=1 PLANRC=2 PLANERR=$STALE run ut --trustmut -- $PA; base=$(route)
++ok "kill switch TM_PLAN_FAILFAST.off: no local --plan, routes as today (Actions first, then the Mac)" '[ $(nplan) = 0 ] && [ $(ncloud) = 1 ] && [ $(nmac) = 1 ] && [ $RC = 0 ]'
++AF=1 MACRC=0 run old --trustmut -- $PA; ok "  = the old script's routing ($OLD)" '[ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PLANRC=0 run ut --trustmut -- $PA; ok "plan exit 0: one --plan, routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PLANRC=2 run ut --trustmut -- $PA; ok "plan exit 2 with no message: routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PLANRC=2 PLANERR=$'warning: `VIRTUAL_ENV=/x` does not match the project environment path `.venv`\n' run ut --trustmut -- $PA
++ok "plan exit 2 with only a uv warning: routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PLANRC=2 PLANERR='error: No such file or directory (os error 2)' run ut --trustmut -- $PA
++ok "plan exit 2 from uv itself (error: line): routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PLANHANG=1 PLANTMO=1 run ut --trustmut -- $PA; ok "plan timeout (124): routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ] && grep -q "plan exit 124" $S/out'
++AF=1 MACRC=0 PLANCRASH=1 PLANERR=Traceback run ut --trustmut -- $PA; ok "plan crash (a signal): routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ] && ! grep -q "plan exit 2[ :]" $S/out'
++AF=1 MACRC=0 PLANRC=1 PLANERR='Traceback (most recent call last):' run ut --trustmut -- $PA; ok "plan exit 1 (an exception): routing unchanged" '[ $(nplan) = 1 ] && [ "$(route)" = "$base" ]'
++AF=1 MACRC=0 PART=tm-x PLANRC=2 PLANERR=$STALE run ut --trustmut -- $PA; ok "a part run (MAC_PYTEST_TM_PART): no local --plan, the Mac runs it" '[ $(nplan) = 0 ] && [ $(ncloud) = 0 ] && [ $(nmac) = 1 ] && [ $RC = 0 ]'
++AF=1 MACRC=0 PLANRC=2 PLANERR=x run ut --trustmut -- --merge $W/o.json $W/p.json; ok "--merge: no local --plan" '[ $(nplan) = 0 ] && [ $(nmac) = 1 ]'
++AF=1 MACRC=0 PLANRC=2 PLANERR=$STALE run ut -- -q tests; ok "plain pytest: no --plan" '[ $(nplan) = 0 ] && [ $(nmac) = 1 ]'
++AF=1 MACRC=0 PLANRC=2 PLANERR=$STALE run ut --select -- --base main; ok "--select: no --plan" '[ $(nplan) = 0 ]'
+ print "trustmut: $pass passed, $fail failed"; [ $fail = 0 ]
+--- a/manage-agents/test-harness/cloudplumb/test-tmoptout.zsh (.bak-20261103failfast)
++++ b/manage-agents/test-harness/cloudplumb/test-tmoptout.zsh
+@@ -29,6 +29,8 @@
+ # the VM's trust_mutants: logs its args, writes --json (a part record names its shard), exit 1 (survivors) or the scenario's
+ cat > $HM/bin/uv <<'X'
+ #!/bin/bash
++# tm-plan-failfast: mac-pytest.sh's local --plan check passes (its cases: test-harness/trustmut)
++case " $* " in *" --plan "*) exit 0;; esac
+ echo "LOCAL-RUN $*" >> HMDIR/calls; js=""; sh=""; a=("$@")
+ for ((i=0; i<${#a[@]}; i++)); do case ${a[$i]} in --json) js=${a[$((i+1))]};; --shard) sh=${a[$((i+1))]};; --resume) rs=${a[$((i+1))]};; esac; done
+ [ -n "$sh" ] && [ -f HMDIR/scen-partfail ] && [ "${sh%/*}" = 2 ] && exit 2
+--- a/manage-agents/test-harness/cloudplumb/test-cloudplumb.zsh (.bak-20261103failfast)
++++ b/manage-agents/test-harness/cloudplumb/test-cloudplumb.zsh
+@@ -289,6 +289,8 @@
+ X
+ cat > $HM/bin/uv <<X
+ #!/bin/bash
++# tm-plan-failfast: mac-pytest.sh's local --plan check passes (its cases: test-harness/trustmut)
++case " \$* " in *" --plan "*) exit 0;; esac
+ echo "LOCAL-RUN \$*" >> $HM/calls; exit 0
+ X
+ cat > $HM/bin/fakedispatch <<X
+--- a/manage-agents/test-harness/maclast/test-maclast.zsh (.bak-20261103failfast)
++++ b/manage-agents/test-harness/maclast/test-maclast.zsh
+@@ -32,6 +32,8 @@
+ X
+ cat > $S/bin/uv <<X
+ #!/bin/bash
++# tm-plan-failfast: mac-pytest.sh's local --plan check passes (its cases: test-harness/trustmut)
++case " \$* " in *" --plan "*) exit 0;; esac
+ echo "uv \$* (cwd \$PWD)" >> $S/calls; echo "LOCAL-RUN \$*"; exit \$(cat $S/scen/localrc 2>/dev/null || echo 0)
+ X
+ cat > $S/bin/lake <<X
