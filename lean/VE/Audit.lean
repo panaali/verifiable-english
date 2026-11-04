@@ -107,6 +107,7 @@ import VE.Closure.Substitution
 import VE.Closure.Syntax
 import VE.Commands.Read
 import VE.Commands.Run
+import VE.Commands.RunSplit
 import VE.Compose.Adjoin
 import VE.Compose.Content
 import VE.Compose.Contract
@@ -1918,6 +1919,8 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
+#print axioms VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b
+#print axioms VE.Commands.RunSplit.typed_facts_are_ci1s
 #print axioms VE.Commands.candidate_reads_back
 #print axioms VE.Commands.caseReported_eq
 #print axioms VE.Commands.checked_many

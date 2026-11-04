@@ -1451,6 +1451,10 @@
 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]
+'VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'VE.Commands.RunSplit.typed_facts_are_ci1s' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.candidate_reads_back' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.caseReported_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.checked_many' depends on axioms: [propext]
