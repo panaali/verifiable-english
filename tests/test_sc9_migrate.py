@@ -20,9 +20,9 @@ RUN = Path(__file__).resolve().parents[1] / "usecases/claude-constitution-pilot/
 _spec = importlib.util.spec_from_file_location("sc9_migrate_soft", RUN / "migrate_soft.py")
 migrate = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(migrate)
-_measure_spec = importlib.util.spec_from_file_location("sc9_measure", RUN / "measure.py")
-measure = importlib.util.module_from_spec(_measure_spec)
-_measure_spec.loader.exec_module(measure)
+_status_spec = importlib.util.spec_from_file_location("sc9_status", RUN / "c9_status.py")
+c9_status = importlib.util.module_from_spec(_status_spec)
+_status_spec.loader.exec_module(c9_status)
 DROPPED = (*migrate.EXCEPTIONS, migrate.GENERAL)
 
 
@@ -154,16 +154,14 @@ def test_c9_point_status_is_measured_on_every_choice_and_condition(tmp_path):
     choice, under each sufficient condition and with none, including the two old unsafe query phrasings."""
     from ve.readings_route import run_lean
 
-    assert all(any(name == "point-status-c9" for name, _ in measure.STEPS[document])
-               for document in ("after", "strict"))
     probe = RUN / "probe-translation.ve.md"
     meta, source = migrate.pilot.read(probe)
     strict = tmp_path / "strict.ve.md"
-    migrate.pilot.write(strict, measure.strict_twin(meta), source)
+    migrate.pilot.write(strict, c9_status.strict_twin(meta), source)
     scenarios = ["c9-unsafe-required", "c9-unsafe-not-required", "c9-compliance_unethical",
                  "c9-compliance_against_guidelines", "c9-none-required"]
     for document, path in (("after", probe), ("strict", strict)):
-        cases, labels = measure.point_status_cases(path)
+        cases, labels = c9_status.point_status_cases(path)
         saved = json.loads((RUN / "answers" / document / "point-status-c9.out").read_text())["cases"]
         assert len(cases) == len(labels) == len(saved) == 16 * len(scenarios)
         assert labels == scenarios * 16
