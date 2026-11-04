@@ -46,8 +46,11 @@
 > (draft 4) on `research/weighing-p1` at `8ed5f5cb`, the plan-synthesis files, the two pilot runs `20261012T1800Z`, and
 > `lean/VE/{SoftNorms,NormDefaults,Readings}/*.lean` on `main` and on `rd-9/integrate`. Planning only: no code, proof,
 > test or generated file changed, and no model was called. **The Lean statements below were not elaborated**: neither
-> session ran `lake`. Every name they use was read in the sources named beside it; names on unmerged branches (RD-9,
-> PK-1, WG-6) are taken from their reviewed specs and are interfaces until those land. Elaborating every statement is
+> session ran `lake`. Every name they use was read in the sources named beside it; names on unmerged branches (WG-6)
+> are taken from their reviewed specs and are interfaces until those land. RD-9 (SC-1, 2, 4, 5, 6, 8) and PK-1 (pk-1s,
+> pk-1, pk-1b, pk-1c) are on `main` (synthesis round 2, C20); their names are cited as built: `bindCertX`
+> (`NormDefaults/LayeredEntail.lean`), `assemble U used`, `Pack.consts`, and `reservedPrefixes` as (owner, prefix)
+> rows (`NormDefaults/Packs.lean`). Elaborating every statement is
 > DF-S's first step. Fixture values marked *derived* were worked out by reading the sources and were not run.
 
 ## Change log
@@ -119,8 +122,8 @@ DF-E1, DF-E2 and DF-E4 are later batches and were not run.
 | Item | Trigger | Then |
 |---|---|---|
 | DF-0.1, and DF-0.2's classification | the DRI authorises one blind-reader pass (a model call: 99 + 16 units, the two packets scored separately). The reader gets the packet files only, with no repository access (the key and research 2.3 are in the repository) | `score_second_reader.py` applies the bar as quoted. Below 90 of 99, research 2.3's G figures are withdrawn and replaced by the reader's, and DF-4's byte estimate is recomputed from them. Must precede DF-E2 |
-| DF-0.3 | `rd-9/integrate` merged into `main` (brings `CE4`, `tests/ce4.py`) | recorded verbatim on that `main`, with today's kinds, before DF-1b merges (DF-1a changes no existing answer, `defaultsCase_other`, so it may land first) |
-| DF-E3 re-run | a pinned pilot translation that contains RD-9 SC-9's soft default rules (the first constitution run after RD-9 merges that uses its soft form) | the same bar and definition, with the additions of DF-E3 below; the IDE check (D8's suggestion) and S8 are built only if it meets the bar |
+| DF-0.3 | RD-9 SC-9's `CE4` (`tests/ce4.py`) on `main` | recorded verbatim on that `main`, with today's kinds, before DF-1b merges (DF-1a changes no existing answer, `defaultsCase_other`, so it may land first) |
+| DF-E3 re-run | a pinned pilot translation that contains RD-9 SC-9's soft default rules (the first constitution run that uses RD-9's soft form) | the same bar and definition, with the additions of DF-E3 below; the IDE check (D8's suggestion) and S8 are built only if it meets the bar |
 | DF-4's bytes | DF-0.1 and then DF-E2 | counted as claimed bytes only after DF-E2 passes (unchanged) |
 
 ## 1. Decisions
@@ -367,9 +370,10 @@ universe u
 Sources of the names: `bindAll`, `atom`, `anyF` (`lean/VE/Norms/Basic.lean:18-31`); `preds` (`Norms/Tree.lean:143`);
 `exceptedF`, `outweighsF`, `excPremises`, `soften` (`SoftNorms/Soften.lean:64-157`); `offName`, `outweighsTriples`,
 `decisionNames`, `offDecisions`, `collidingPairs` (`SoftNorms/Tree.lean:242-295`); `BaseAdmissibleX`
-(`NormDefaults/Report.lean:201`); `EntailsX` (`NormDefaults/LayeredEntail.lean:14`, `rd-9/integrate`); `cohPremiseU`,
-`softLabelledU`, `LayeredU` (`NormDefaults/Layered.lean:45-72`, `rd-9/integrate`); `premisesX`, `modelCheckX`,
-`acceptanceX`, `modelCheckX_sound`, `bindCertX` (rd-9-soft-chain.md 6, `Wire.` prefix as there); `usedLabels`, `blank`
+(`NormDefaults/Report.lean:201`); `EntailsX` (`NormDefaults/LayeredEntail.lean:14`, `main`); `cohPremiseU`,
+`softLabelledU`, `LayeredU` (`NormDefaults/Layered.lean`, `main`); `premisesX`, `modelCheckX`,
+`acceptanceX`, `modelCheckX_sound`, `bindCertX` (`NormDefaults/LayeredEntail.lean`, `main`; as built, C20);
+`assemble U used`, `Pack.consts`, `reservedPrefixes` as (owner, prefix) rows (PK-1, `NormDefaults/Packs.lean`, `main`); `usedLabels`, `blank`
 (`Readings/Verdicts.lean:650-664`).
 
 ### 3.2 DF-1a: the premises, the gate and the basis (`Defaults/Premises.lean`)
@@ -759,8 +763,8 @@ pack, so PK-1's provider obligation 4 does not cover it; it is not in this plan 
 ### 3.6 DF-5: at one situation (`Defaults/Zone.lean`)
 
 Interface over WG-6's reviewed names (weighing-PLAN 3.4); exact once WG-6 lands. WG-6's reviewed enumeration is over
-the query's cone (`coneValuesO`); the enumeration over a given atom list that DF-5 calls is a request to WG-6, the
-owner (section 11.1, issue 1; adopted as DRI DF1), not a second enumerator.
+the query's cone (`coneValuesO`); the enumeration over a given atom list that DF-5 calls is norm-defaults' nd-atoms (C10), not a second
+enumerator.
 
 ```lean
 namespace VE.Defaults
@@ -816,7 +820,7 @@ def maxDefaultAtoms : Nat := 12
 def openAtomsAll (L : LayeredU) (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) :
     List (String × List α)
 
-/-- WG-6's bounded enumeration over `openAtomsAll` (the atom list given, no cone pruning; `unknown (budget)` beyond
+/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `unknown (budget)` beyond
     `maxDefaultAtoms`), then the full assignments that satisfy X and `Fill_T` (each premise evaluated on the finite
     situation) and agree with the observations, then the minimality filter over their decision parts. -/
 def defaultZoneOf (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α) (record obs)
@@ -951,33 +955,36 @@ The first two rows have no product code. The first build batch that moves a pilo
 
 | Batch | What | Hours | Kind | Needs | Pilot effect |
 |---|---|---|---|---|---|
-| DF-0 | Phase 1 measurement: the second reader, bare generics, the baseline probes, the plain-default probe | 2–3 | measurement | **phase 1 done** (0.1): items 2 (count) and 4 done; items 1 and 2's classification wait for the DRI's blind reader, item 3 for `rd-9/integrate` on `main` (0.2) | none; baseline |
+| DF-0 | Phase 1 measurement: the second reader, bare generics, the baseline probes, the plain-default probe | 2–3 | measurement | **phase 1 done** (0.1): items 2 (count) and 4 done; items 1 and 2's classification wait for the DRI's blind reader, item 3 for RD-9 SC-9's `CE4` on `main` (0.2) | none; baseline |
 | DF-S | Statement spec `docs/spec/defeasible.md` from draft 2, stub elaboration, statement review (Astra + Opus until converged; Fable arbitrates only an unconverged debate) | 3–4 | planner | none (it uses no DF-0 figure). **Done**: spec draft 2, diff-only re-check PASS | none |
-| DF-1a | `Dflt_T`, the gate, the three-valued basis, the form choice, four kinds, wire theorems, shapes and encoders | 5–6 | Lean | DF-S; `rd-9/integrate` merged; PK-1 | none (no CLI yet) |
+| DF-1a | `Dflt_T`, the gate, the three-valued basis, the form choice, four kinds, wire theorems, shapes and encoders | 5–6 | Lean | DF-S; RD-9 and PK-1 (both on `main`, C20) | none (no CLI yet) |
 | DF-1b | Relay, binding, CLI flag, English display, fuzz tests, pilot probes P-1 and P-3 | 4–5 | Python | DF-1a; RD-9 SC-8; DF-0.3 recorded | P-1: 0 → 3 probes answered (*derived*; the 0 from DF-0.3); 0 B |
 | DF-E1 | Reader test of the two forms | 2–3 | experiment | DF-1b | decides whether DE1's and DE6's short forms are kept |
 | DF-2 | The meaning theorem, with the replacement-admissibility lemma | 5–6 | Lean | DF-1a (runs alongside DF-1b) | none (meaning) |
 | DF-3 | Readings: `dSem`, `readings-verdicts` with the default fold shown when the strict fold is FREE, DE7 per choice, DE8 | 5–6 | Lean, Python | DF-1b, DF-E1; RD-9 SC-5; DF-0.3 recorded (P-2's SOME) | P-2: 3 queries SOME → ALL unless an exception applies (*derived*); P-4 (*estimate*, enumerated route only, DRI DF6); 0 B |
 | DF-4 | Defaults about facts: DE9, the reading-set row, deletion of the refusal | 4–5 | English | DF-1b; RD-9 SC-8 (explicit since DF-0.4; DF-1b also needs it); its English-queue slot right after QT-A6 (DRI DF3; 11.2 X1) | 98–572 B, 1–3 units, constitution (*estimate*, unconfirmed until DF-0.1), only after DF-E2 passes |
 | DF-E2 | Generic translations, blind audit | 3–4 | experiment | DF-4 (and moves with it, DRI DF3); DF-0.1 and DF-0.2's classification; `infra/oom-rootcause`, then premise-scale, first if a translation adds a sort to an existing part (DRI ET1) | gates DF-4's use in pilots; population from DF-0.1's result (at most 35 units if research 2.3's G class is confirmed, otherwise the reader's G set, at most 116) |
-| DF-5 | At one situation with observations, full bounded enumeration | 5–6 | Lean, Python | DF-2; weighing WG-6 with its enumeration over an explicit atom list (DRI DF1, merged with JT-R1), WG-7; the corrected statements (DF-S, done). Cone pruning: `cone_minimal_iff` proved | none in bytes; answers for presumptions once attitudes expresses them |
+| DF-5 | At one situation with observations, full bounded enumeration | 5–6 | Lean, Python | DF-2; norm-defaults' nd-atoms (the explicit atom list `atoms` and open names `opens` in `NormDefaults/Evidence.lean`), WG-7; DF-5 passes `openAtomsAll` (DF1) and no longer waits for WG-6 (C10); the corrected statements (DF-S, done). Cone pruning: `cone_minimal_iff` proved | none in bytes; answers for presumptions once attitudes expresses them |
 | DF-6 | `weighing@0` in `Dflt_T` | 2–3 | Lean | DF-2; weighing WG-3; its replacement argument reviewed (3.7) | lifts diagnostic 1 |
 | DF-7 | "Yes, unless an exception applies" in question answering | 3–4 | Lean, Python | DF-3; `qa-q2` merged | none in bytes |
+| DF-U | `dfltUniform_sound`, the one "no exception" (D3; synthesis round 2) | not estimated | Lean | profile-composition PC-9 (its statement) | none in bytes; the E1d refusal stands until EXP-D3 and DF-U |
 | DF-E3 | Specificity need | 2 | experiment | phase 1 run: **UNKNOWN**. Re-run: a pinned pilot translation with RD-9 SC-9's default rules (0.2) | decides whether an IDE check (and S8) is built |
 | DF-E4 | Observations over all situations | 4–6 | research | DF-5 | decides whether anything is built |
 
 ### Batch order (as the plan debate agreed, with the DRI's DF3 and phase 1's ordering)
 
 1. DF-0, then DF-S on draft 2. **Both done** (phase 1; spec draft 2 PASS); DF-0's deferred items follow 0.2.
-2. DF-0.3, the baseline, on `main` as soon as `rd-9/integrate` merges. DF-1a after `rd-9/integrate` merges and PK-1
-   lands; it may land before DF-0.3, since it changes no existing answer (`defaultsCase_other`).
+2. DF-0.3, the baseline, on `main` as soon as RD-9 SC-9's `CE4` is there. DF-1a's needs RD-9 and PK-1 are on `main`
+   (C20); it may land before DF-0.3, since it changes no existing answer (`defaultsCase_other`).
 3. DF-1b, after DF-0.3 is recorded, with DF-2 alongside.
 4. DF-E1, DF-3, then DF-4 at its English-queue slot right after QT-A6 (DRI DF3), then DF-E2, which also needs DF-0.1's
    reader (0.2).
-5. DF-5 after WG-6 (with the atom list, DRI DF1), WG-7 and the corrected statements. Cone pruning separately waits for
+5. DF-5 after norm-defaults' nd-atoms (its atom list; DF-5 passes `openAtomsAll`, DF1; no wait for WG-6, C10), WG-7
+   and the corrected statements. Cone pruning separately waits for
    `cone_minimal_iff`.
 6. DF-6 after WG-3 and its reviewed replacement argument.
 7. DF-7 after `qa-q2`.
+8. DF-U after profile-composition's PC-9 (synthesis round 2, D3).
 
 DF-0.1's reader can run whenever the DRI authorises it, and must run before DF-E2. DF-E3's re-run runs when its trigger
 is met (0.2). No English, `lean/DEFAULTS.md` or doc text claims minimality until DF-2 is proved; under the fallback
@@ -999,7 +1006,7 @@ The items and bars as pre-registered (unchanged), each with its phase-1 status (
    (`second-reader-packet-bare.json`, scored separately). Known limits, reported not corrected: subjects with a
    post-modifier are missed ("People with access to such friends are very lucky"), and 4 matches are fragments.
 3. Baseline: on RD-9 SC-9's probe translation, P-1's and P-2's questions with today's kinds, answers recorded verbatim.
-   **DEFERRED** until `rd-9/integrate` is on `main`; recorded before DF-1b merges.
+   **DEFERRED** until RD-9 SC-9's `CE4` is on `main`; recorded before DF-1b merges.
 4. The plain-default probe: a soft document with DF-λ's rule as JSON content, through `ve document check` and
    `render`; record what each does today (expected in draft 3: check passes, render refuses with
    `ve/norm_english.py:398`'s text). **Done; expectation not met**: on `main` both refuse at load
@@ -1141,6 +1148,9 @@ DF-π's second `example` fails (`B_π` becomes a default base).
   predicate (D13), with the frequency candidate as quantities' row or pending. DE9's fixed phrase "unless an exception
   applies" is a catalogue row of the kind "profile-fixed wording, not judged by the author lint" (DRI ET2). The batch's
   slot in the `lean/VE/EnglishGrammar/*` queue is right after QT-A6 (DRI DF3; section 11.2, X1).
+- **Source-word rows (synthesis round 2, D6).** DF-4 owns the plain normality rows in
+  `lean/VE/EnglishGrammar/SourceWords.lean`. Its set includes "tend to" and "in general", and soft-norms'
+  `FREQUENCY_WORDS` move into DF-4's rows: one owner of "generally", "normally", "usually".
 - **Deleted.** `_soft_consequence`'s refusal for plain predicates (`ve/norm_english.py:397-398`). DF-0.4 confirmed it
   is the only English obstacle seen once the document loads.
 - **Needs RD-9 SC-8** (DF-0.4): without it `ve document` refuses DF-λ (`unspecified`) at load (`ve/document.py:633`),
@@ -1179,10 +1189,10 @@ premise-scale (DRI ET1).
 `Defaults/Zone.lean` (3.6) on WG-6's `Weighing/Zone.lean`; the kind `defaults-zone` (a row of PK-1's kind table);
 English DE10 (three forms, chosen by Lean's `zoneForm`), DE10f (only from `forcedAll`), DE11 and DE13; the soundness
 of every zone (`defaultZone_*_sound`, with `notSaid` and `noCompletion`) and of `forcedAll` (`forcedAll_sound`,
-`defaultCompletion_below`, `forced_everywhere`), provisional until WG-6 exposes the enumeration over a given atom list;
+`defaultCompletion_below`, `forced_everywhere`), provisional until nd-atoms lands (C10);
 fixtures DF-μ, DF-μ′, DF-μ″, DF-δz, DF-ξ, DF-ξ′, DF-π′; relay in `ve/defaults.py`. **Deleted, not duplicated**: no
-second enumerator. `defaultZoneOf` calls WG-6's bounded enumeration over `openAtomsAll` (every typed open atom of the
-situation, decision and unsaid, not the cone; the atom-list form is WG-6's to expose, DRI DF1), keeps the
+second enumerator. `defaultZoneOf` calls the bounded enumeration over nd-atoms' atom list with `openAtomsAll` (every typed open atom
+of the situation, decision and unsaid, not the cone; DF1, C10), keeps the
 full assignments that satisfy X and `Fill_T` and agree with the observations (each evaluated on the finite situation),
 and filters the decision-minimal ones, all in `Defaults/Zone.lean`; `NormDefaults/Evidence.lean` is edited by WG-6
 only (SYNTHESIS O18). Beyond `maxDefaultAtoms` the answer is `unknown (budget)`. **Cone pruning** (`coneValuesO`) is a
@@ -1192,6 +1202,9 @@ turns `byDefault no`; the test fails); the filter compares only completions with
 answers `byDefault yes`; the test fails); the enumeration is restricted to the query's cone (DF-μ″ turns `byDefault
 no`; the test fails); the filter compares exception atoms only (DF-δz turns `leftTo`; the test fails); `forcedAll` is
 read from one default completion (DF-μ′ and DF-μ″ report r2's exception as forced; the test fails).
+**Need (synthesis round 2, C10)**: the enumeration's atom list is norm-defaults' nd-atoms (the explicit atom list
+`atoms` and open names `opens` in `NormDefaults/Evidence.lean`); DF-5 passes `openAtomsAll` (DF1) and no longer waits
+for WG-6.
 
 ### DF-6. With `weighing@0` (Lean, 2–3 h)
 
@@ -1205,6 +1218,15 @@ After `qa-q2` merges: a question read by Q1 and answered by Q2 gets, when the st
 default one is, "Yes, unless an exception applies:" (Lean's `form` short) or "Yes, under the assumptions listed
 below:" (`form` long) with DE2 to DE4 and, for basis `unsettled`, DE12, from the same kinds. No new kind; Q2's English
 rows gain the default case. **Seeded bug**: Q2 renders a default answer as "Yes." (the fixture test fails).
+
+### DF-U. The one "no exception" (Lean; synthesis round 2, D3)
+
+DF-U: prove `dfltUniform_sound`, the one "no exception" (D3). Its statement is profile-composition PC-9's, in
+defeasible's files; DF-U runs after PC-9. The rule around it: profile-composition's EXP-D3 either proves
+`record_eq_dflt` (then weighing's record is `dfltUniform`'s instance) or finds a counterexample (then defaults with
+provider conditions stay refused by name). Until EXP-D3 and DF-U, the E1d refusal of defaults with provider
+conditions, weighing's included, stands; it touches only the `--assume-no-exception` question, and the same document
+without that flag routes.
 
 ### DF-E3. Specificity (experiment, 2 h) — phase 1 UNKNOWN; re-run deferred
 
@@ -1251,9 +1273,9 @@ least 3 pilot questions need it and DF-5's per-situation answers cannot serve th
 
 | Item | Branch | What this plan uses | Batches |
 |---|---|---|---|
-| RD-9 | `rd-9/integrate` (fix rounds; not on `main` at `dccd9cf5`) | `EntailsX`, `acceptanceX`, `modelCheckX(_sound)`, `conflictFreeCheckX`, `bindCertX`, `premisesX`, `LayeredU`, `softLabelledU`, `cohPremiseU`; `ChoiceSem`, `xSem`, `sdSem`, `foldG_*`; SC-8 (`ve document` on soft documents with `norm-defaults@0`); SC-9 (`CE4`, the constitution's default rules) | DF-0.3 (SC-9), DF-1a, DF-1b and DF-4 (SC-8), DF-3, DF-E3's re-run (SC-9's rules in a pilot translation) |
-| PK-1 (premise packs) | new item after `rd-9-int` merges (SYNTHESIS 2.1) | the layered kind table (one row); the soft pack's position in X | DF-1a, DF-5 |
-| Weighing | `research/weighing-p1`, build items WG-3, WG-6, WG-7 | the weighing pack (DF-6); zone machinery (DF-5), including a bounded enumeration over a given atom list, which WG-6's statement review adds (DRI DF1 with JT-R1: `zoneOf` over an explicit `opens`) | DF-5, DF-6 |
+| RD-9 | on `main` (SC-1, 2, 4, 5, 6, 8; C20) | `EntailsX`, `acceptanceX`, `modelCheckX(_sound)`, `conflictFreeCheckX`, `bindCertX`, `premisesX`, `LayeredU`, `softLabelledU`, `cohPremiseU`; `ChoiceSem`, `xSem`, `sdSem`, `foldG_*`; SC-8 (`ve document` on soft documents with `norm-defaults@0`); SC-9 (`CE4`, the constitution's default rules) | DF-0.3 (SC-9), DF-1a, DF-1b and DF-4 (SC-8), DF-3, DF-E3's re-run (SC-9's rules in a pilot translation) |
+| PK-1 (premise packs) | on `main` (pk-1s, pk-1, pk-1b, pk-1c; C20) | the layered kind table (one row); the soft pack's position in X; as built: `assemble U used`, `Pack.consts`, `reservedPrefixes` as (owner, prefix) rows (`NormDefaults/Packs.lean`) | DF-1a, DF-5 |
+| Weighing | `research/weighing-p1`, build items WG-3, WG-6, WG-7 | the weighing pack (DF-6); zone machinery (DF-5) | DF-5, DF-6 |
 | english-lean | the norm-wording step of its catalogue (SYNTHESIS O15) | where DE9 and D13's row live | DF-4 |
 | Question answering | `qa-q2` (fix rounds) | Q2's English answers | DF-7 |
 | Lean document mode | `lean-first/b16g` (`lf-16g`) | if `ve document`'s readings command has moved to Lean's document mode, DF-1b's flag goes there instead | DF-1b, DF-3 |
@@ -1271,7 +1293,7 @@ New files carry most of the work; every shared file is listed.
 | DF-2 | `lean/VE/Defaults/Meaning.lean` | `lean/VE.lean` (import) | the audit manifests and statement lists; `lean/checkers.lock`; the trust tables |
 | DF-3 | `lean/VE/Readings/DefaultVerdicts.lean` | RD-9's verdict kind (one dispatch line, `Readings/SoftVerdicts.lean`); `lean/ResponseShape/Schemas/Readings.lean`, `Encoders/Readings.lean`; `ve/readings_verdicts.py`; `ve/readings_english.py` (DE8 renderer); `lean/VE.lean` | `ve/backends/lean_service_schema/readings.json`; the audit manifests and statement lists; `lean/checkers.lock`; the trust tables; route cases |
 | DF-4 | test data: DF-0.4's six probe documents | `lean/VE/EnglishGrammar/*` (in SYNTHESIS 4.2's queue, right after QT-A6 by DRI DF3) or `ve/surface/softnorms.py` and `ve/norm_english.py`; `tests/test_english_unambiguity.py` fixtures | grammar and lexicon ids as their tools regenerate them |
-| DF-5 | `lean/VE/Defaults/{Zone,ZoneExamples}.lean` | PK-1's kind table (one row); shapes and encoders; `lean/VE.lean` (WG-6's enumeration is called, not edited) | as DF-1a |
+| DF-5 | `lean/VE/Defaults/{Zone,ZoneExamples}.lean` | PK-1's kind table (one row); shapes and encoders; `lean/VE.lean` (nd-atoms' enumeration is called, not edited) | as DF-1a |
 | DF-6 | — | `lean/VE/Defaults/{Premises,Meaning}.lean` (own) | the audit manifests and statement lists; `lean/checkers.lock`; the trust tables |
 | DF-7 | — | Q2's English rows and relay (question-answering's files) | route cases |
 
@@ -1387,14 +1409,14 @@ Abstractions several topics could share. The cross-plan review decides owners; t
 
 | # | Piece | Who else needs it | Proposal |
 |---|---|---|---|
-| S1 | **The "no exception" record**: a situation's open decisions minimal (exceptions only where the facts force them, no switch on, no override), with the unsaid tables varied: circumscription of the decisions with the unsaid predicates varied, the facts fixed (D15), the same comparison as DF-2's `DefaultBase` | weighing (its record "assuming no exception applies", Z-ε; zone answers), attitudes (presumptions: "assume X unless …") | one definition, DF-5's `DefaultCompletion`, on WG-6's enumeration; weighing's record and its English become the instance (`defaultZone_eq_noException`, which needs the varied comparison, DF-π′); one sentence, owned once in the catalogue. Ownership against weighing's record: decided by DRI DF2 (DF owns the comparison; weighing's record sentence is rendered from DF's once `defaultZone_eq_noException` is proved) |
+| S1 | **The "no exception" record**: a situation's open decisions minimal (exceptions only where the facts force them, no switch on, no override), with the unsaid tables varied: circumscription of the decisions with the unsaid predicates varied, the facts fixed (D15), the same comparison as DF-2's `DefaultBase` | weighing (its record "assuming no exception applies", Z-ε; zone answers), attitudes (presumptions: "assume X unless …") | one definition, DF-5's `DefaultCompletion`, on nd-atoms' enumeration; weighing's record and its English become the instance (`defaultZone_eq_noException`, which needs the varied comparison, DF-π′); one sentence, owned once in the catalogue. Ownership against weighing's record: decided by DRI DF2 (DF owns the comparison; weighing's record sentence is rendered from DF's once `defaultZone_eq_noException` is proved) |
 | S2 | **`basis` on every answer that may rest on stated assumptions** (strict; needs, with a checked countermodel without them; or unsettled; and the list of assumptions used) | judgment-terms ("whatever the judgment" answers), weighing (zones under a record), attitudes, events (calendar completion), question answering | one response-shape member and one plain-English pattern ("This assumes …", and DE12 for unsettled), with each provider's assumption kinds as rows |
 | S3 | **A view of a layered document's `X` split by pack** (`DefaultsView`: the soft pack, its exception and coherence parts, and the rest `R`, so that the gate reads `Exc_T ++ R ++ Dflt_T` and answers read `X ++ Dflt_T`) | PK-1; weighing records; judgment-terms' bounded judgments | PK-1 exposes each pack's premises, the soft pack's exception and coherence parts separately, and a typed "pack names no decision" flag; DF reads them and adds no pack row. Not in SYNTHESIS 2.1's `Pack`: withdrawn as a request (DRI DF5); it describes `DefaultsView` only |
 | S4 | **RD-9's generic fold over `ChoiceSem`** | DF-3 (`dSem`); weighing records across readings; judgment-terms | stays RD-9's; each topic adds an instance, never a fold |
 | S5 | **Reading sets for frequency words** ("normally", "typically", "usually", "generally", "in most cases", "as a rule") | quantities (frequency candidate, QT-A6), soft-norms (deontic predicates), this plan (plain predicates) | one catalogue row per word in english-lean's catalogue, with the candidates supplied by soft, DF-4 and QT-A6 |
 | S6 | **Presumptions** ("Claude should assume X unless …", "might reasonably trust … unless there's clear evidence …") | attitudes (typed "assume", "trust"), judgment-terms ("clear evidence", "evident from context"), soft (the default rule and its sufficient conditions) | no new construct: a soft default rule on an attitude act with sufficient exception conditions; DF answers it; attitudes owns the act |
 | S7 | **Defeasible priority over data** ("later instructions take precedence, but not always", u0081.s05) | events (time order), soft (default rules), this plan (DF-4's rules about facts) | a default rule on a plain "prevails over" predicate with events' order in its guard; no priority logic of its own |
-| S8 | **A "more specific than" check** (one rule's guard implies another's) | weighing (rank suggestions), scope (governed rules), IDE (W8); none of the seven plans in `plan-synthesis/plans/` names it | one Lean entailment helper, used only as a suggestion, after DF-E3. **Deferred** (draft 4): DF-E3 phase 1 is UNKNOWN, so DF does not request it until the re-run meets the bar (11.2, X2); another plan may still ask for it on its own evidence |
+| S8 | **A "more specific than" check** (one rule's guard implies another's) | weighing (rank suggestions), scope (governed rules), IDE (W8); none of the seven plans in `plan-synthesis/plans/` names it | defeasible owns "more specific than" (synthesis round 2). Its meaning exists only as a declared relation: a stated `over` or `outranks`. The entailment helper below stays deferred and is only ever a suggestion, never a silent priority. One Lean entailment helper, used only as a suggestion, after DF-E3. **Deferred** (draft 4): DF-E3 phase 1 is UNKNOWN, so DF does not request it until the re-run meets the bar (11.2, X2); another plan may still ask for it on its own evidence |
 | S9 | **The two-rule conflict sentence** (DE7; soft's weighing point; weighing's "left to") | soft-norms, weighing, this plan | one wording owned in the catalogue; each answer kind fills it |
 | S10 | **"The question states facts only"** (D5's check) | question answering (what a question may state), weighing records (decisions fixed by the record, not the question) | one Lean check over a question's predicates, with each kind's allowed predicate classes as a parameter |
 | S11 | **`usedLabels`** (which labelled premises a certificate needs) | DF (assumptions), readings (conditions), judgment-terms (which judgments an answer rests on) | stays in `Readings/Verdicts.lean`; others import it |
@@ -1423,8 +1445,8 @@ SYNTHESIS's owners and queues, and DF1 to DF7 with JT-R1.
 
 Checked against `SYNTHESIS.md` (owners O1 to O19, PK-1 in 2.1, the queues of 4.2) and `DRI-DECISIONS-PHASE2.md`, for
 the shared owners this plan uses: weighing (WG-3, WG-6, WG-7; its PLAN draft 5 and spec draft 4 on
-`research/weighing-p1`), readings-defaults' RD-9 (`rd-9/integrate`, not yet merged into `main` at `f98183bf`) and PK-1
-(not started). SYNTHESIS reviewed seven other plans, so none of its owners was assigned with this plan in view. The DRI
+`research/weighing-p1`), readings-defaults' RD-9 and PK-1
+(both on `main` since: RD-9 SC-1, 2, 4, 5, 6, 8; PK-1 pk-1s, pk-1, pk-1b, pk-1c; synthesis round 2, C20). SYNTHESIS reviewed seven other plans, so none of its owners was assigned with this plan in view. The DRI
 decisions that touch this plan are applied in draft 2: SC2 and ET1 in DF-E2, ET2 in DF-4. The others (AP1 to AP4, AT1
 to AT4, QT1 to QT3, SC1, SC3, ET3, ET4, ME1 to ME5, WG1) do not touch it. Seven issues needed a ruling (draft 2;
 "Recommendation" is what DF1 to DF7 adopted):
@@ -1446,6 +1468,6 @@ them. Where a phase-1 result bears on one, it is written here for the DRI instea
 
 | # | Issue | Where it touches a shared part | Recommendation |
 |---|---|---|---|
-| X1 | **DF-4's English-queue slot against its unmet needs.** DF-0.4 shows that DE9 cannot be reached through `ve document` until RD-9 SC-8 opens `norm-defaults@0` beside `soft-norms@0` (`ve/document.py:633`). DF-4 also needs DF-1b, hence DF-1a, PK-1 and the RD-9 merge. DF-E2, which moves with DF-4 (DF3), now also needs DF-0.1's blind reader, a model call not yet authorised | DF3 puts DF-4 right after QT-A6 in the serialised `lean/VE/EnglishGrammar/*` queue (SYNTHESIS 4.2: AP-1's hunk, AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7). If QT-A6 lands before DF-4's needs are met, a reserved slot would hold ME-11, QT-B3 and SC-7 behind a batch that cannot start | DF-4 keeps its slot right after QT-A6 only if DF-1b and SC-8 are on `main` when QT-A6 lands. Otherwise the queue goes on, and DF-4 takes the next free place in landing order, still after QT-A6, so its rows still find QT-A6's frequency candidate in place (DF3's purpose). Whether a batch between them touches the same frequency-word rows is for the queue's owner to check. DF-E2 keeps moving with DF-4 |
-| X2 | **S8 is no longer requested.** DF-E3 is UNKNOWN (0 certain pairs, 9 undecided), so DF does not ask for the "more specific than" helper until its re-run meets the bar (0.2) | S8 is DF's own shared-piece proposal (section 10), naming weighing, scope and the IDE as other users. SYNTHESIS assigns it no owner, and none of the seven reviewed plans names it, so no shared decision changes | No ruling needed now. If another plan asks for S8 before DF-E3's re-run, it brings its own evidence, and the DRI assigns the owner then; DF would use it only as D8's suggestion |
-| X3 | **DF-E3's re-run depends on the pilot.** Its trigger is a pinned pilot translation that contains RD-9 SC-9's soft default rules | Pilot prompts are merged by the DRI before each constitution run (DRI SC2), and DF writes no unit of the translation (6.3) | No change to the pilot process. The DRI's merged prompt adopts RD-9's soft form when RD-9 merges, on RD-9's schedule; DF-E3 re-runs on the first pinned run that has it, and says which run it used |
+| X1 | **DF-4's English-queue slot against its unmet needs.** DF-0.4 shows that DE9 cannot be reached through `ve document` until RD-9 SC-8 opens `norm-defaults@0` beside `soft-norms@0` (`ve/document.py:633`). DF-4 also needs DF-1b, hence DF-1a (PK-1 and RD-9 are on `main`, C20). DF-E2, which moves with DF-4 (DF3), now also needs DF-0.1's blind reader, a model call not yet authorised | DF3 puts DF-4 right after QT-A6 in the serialised `lean/VE/EnglishGrammar/*` queue (SYNTHESIS 4.2: AP-1's hunk, AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7). If QT-A6 lands before DF-4's needs are met, a reserved slot would hold ME-11, QT-B3 and SC-7 behind a batch that cannot start | DF-4 keeps its slot right after QT-A6 only if DF-1b and SC-8 are on `main` when QT-A6 lands. Otherwise the queue goes on, and DF-4 takes the next free place in landing order, still after QT-A6, so its rows still find QT-A6's frequency candidate in place (DF3's purpose). Whether a batch between them touches the same frequency-word rows is for the queue's owner to check. DF-E2 keeps moving with DF-4 |
+| X2 | **S8 is no longer requested.** DF-E3 is UNKNOWN (0 certain pairs, 9 undecided), so DF does not ask for the "more specific than" helper until its re-run meets the bar (0.2) | S8 is DF's own shared-piece proposal (section 10), naming weighing, scope and the IDE as other users. synthesis round 2 makes DF its owner (S8), and none of the seven reviewed plans names it, so no shared decision changes | No ruling needed now. If another plan asks for S8 before DF-E3's re-run, it brings its own evidence, and DF owns it (S8); DF would use it only as D8's suggestion |
+| X3 | **DF-E3's re-run depends on the pilot.** Its trigger is a pinned pilot translation that contains RD-9 SC-9's soft default rules | Pilot prompts are merged by the DRI before each constitution run (DRI SC2), and DF writes no unit of the translation (6.3) | No change to the pilot process. The DRI's merged prompt adopts RD-9's soft form when RD-9 SC-9 is on `main` (SC-1, 2, 4, 5, 6, 8 are, C20), on its schedule; DF-E3 re-runs on the first pinned run that has it, and says which run it used |
