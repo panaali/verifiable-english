@@ -174,6 +174,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
     if module in {"VE.Norms.FlaggedSpec"}:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
+    if module in {"VE.Acts.DecodeTwins"}:
+        return 4  # states the twins of Norms.Run's and NormDefaults.Run's theorems (act-phrases 6.4)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Calc.Ties"}:
@@ -191,6 +193,12 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
                   "VE.Acts.LexicalExamples"}:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
+    if module in {"VE.Acts.Wire", "VE.Acts.Readings", "VE.Acts.Meaning", "VE.Acts.Grammar", "VE.Acts.Read",
+                  "VE.Acts.Syntax", "VE.Acts.Table", "VE.Acts.Linearize", "VE.Acts.Tree"} or module in {
+        "VE.Grammar.Basic", "VE.Grammar.Derives", "VE.Grammar.Reading", "VE.Grammar.Table",
+        "VE.Grammar.TableInvariant", "VE.Grammar.TableProofs",
+    }:
+        return 2  # act-phrases AP-3: the act check and the grammar it reads, below the norms decoder that calls it
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
