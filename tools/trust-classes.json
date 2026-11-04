@@ -15803,7 +15803,13 @@
         "ResponseShape.DefaultsExamples.set",
         "ResponseShape.DefaultsExamples.strictJ",
         "ResponseShape.DefaultsExamples.unsettled",
-        "ResponseShape.DefaultsExamples.variants"
+        "ResponseShape.DefaultsExamples.variants",
+        "ResponseShape.DefaultsExamples.zμ",
+        "ResponseShape.DefaultsExamples.zμ'",
+        "ResponseShape.DefaultsExamples.zNot",
+        "ResponseShape.DefaultsExamples.zNone",
+        "ResponseShape.DefaultsExamples.zBudget",
+        "ResponseShape.DefaultsExamples.zones"
       ]
     },
     "VE/Arith/Bounded.lean": {
