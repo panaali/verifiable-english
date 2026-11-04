@@ -1,0 +1,13 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/ResponseShape/Schemas/Reports.lean is a selected declaration's file or in its import closure
+trust_mutants: 12 definitions, 228 mutants (114 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) body-false: .contains c -> false (lean/VE/Attribution/Words.lean:13: Type mismatch)
+UNKNOWN lean/VE/Attribution/Run.lean:599 VE.Reports.Run.wantsStrings (?, trusted) list-empty: List -> [] (lean/VE/Attribution/Run.lean:599: Function expected at)
+UNKNOWN lean/VE/Attribution/Run.lean:611 VE.Reports.Run.runWants (?, trusted) list-empty: List -> [] (lean/VE/Attribution/Run.lean:611: Function expected at)
+UNKNOWN lean/VE/Attribution/Run.lean:610 VE.Reports.Run.runWants (?, trusted) list-empty: [ ("phrases", Json.arr (List.map (fun p => Json.mkObj [("phrase", .str p), ("infinitive", match w... -> [] (lean/VE/Attribution/Run.lean:686: Expression (VE.Reports.Run.runCase, which it reads, is not what...)
+UNKNOWN lean/VE/Attribution/Run.lean:613 VE.Reports.Run.runWants (?, trusted) list-empty: List -> [] (lean/VE/Attribution/Run.lean:613: Function expected at)
+UNKNOWN lean/VE/Attribution/Run.lean:611 VE.Reports.Run.runWants (?, trusted) list-empty: [("phrase", .str p), ("infinitive", match wantsPhrase? p with | some i => .str i | none => .null)] -> [] (lean/VE/Attribution/Run.lean:686: Expression (VE.Reports.Run.runCase, which it reads, is not what...)
+UNKNOWN lean/VE/Attribution/Run.lean:611 VE.Reports.Run.runWants (?, trusted) list-empty: List.map (fun p => Json.mkObj [("phrase", .str p), ("infinitive", match wantsPhrase? p with | som... -> [] (lean/VE/Attribution/Run.lean:686: Expression (VE.Reports.Run.runCase, which it reads, is not what...)
+trust_mutants: 95 KILLED, 0 SURVIVOR, 7 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 114 OTHER SHARD in 211 s
+trust_mutants: ?, trusted: 81 KILLED, 7 UNKNOWN, 12 INVALID, 99 OTHER SHARD
+trust_mutants: G[V], trusted: 14 KILLED, 15 OTHER SHARD
+trust_mutants: steps: wall plan 8.6 s, scratch 2.5 s, control_build 0.2 s, probe_install 1.1 s, control_probes 13.6 s, mutants 180.4 s, cleanup 4.7 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 19.5 s (3), mutant_builds 301.6 s (120), stage_controls 10.8 s (6), mutant_probes 373.5 s (98)
