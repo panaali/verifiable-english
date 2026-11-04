@@ -2,7 +2,7 @@
 
 **Status:** deliverables (1) to (3) built and committed on `feature/ci-2`; (4) to (6) are ci-2b (the size line). HEAD: the commit that adds this file.
 **What changed:** `VE.Commands.Run` (the proof task with O2 and O10, `readInstruction`, the request and answer), the service mode `english.command` with its shape, encoder theorem and `runMode_fits` branch, 42 `#guard`s; no Python caller yet.
-**Open:** size is about 957 hand-written lines against about 600 (the cut is already at the earliest seam the task allows; the excess is R16's mutant-killing guards, the route's fixtures and side tables, and evidence). The DRI was asked (inbox 20261104T061317Z) to confirm that the two facts-based statements follow ci-1's split precedent.
+**Open:** none blocking. The cut of (4) to (6) to ci-2b and the facts-based statements are SIGNED (reviews/dri-decisions-20261104-ci-2.md items 1 and 2); size is about 960 hand-written lines (the excess over about 600 is R16's mutant-killing guards, the route's fixtures, side tables and evidence).
 **Signatures:** none reserved; the one DELTA row cites R16.
 
 FOLLOW-UP: ci-2b the relay, the wrapper and the deletions of CI-2: read_command, speech_document's command fences through readInstruction (commandFence_needs_context), command.read, the inventory rows (D9), the deletion ledger and the A/B
@@ -18,7 +18,7 @@ reviews/dri-decisions-20261102-ci-0.md asks). Statement gate: passed (reviews/dr
 |---|---|---|
 | (1) `lean/VE/Commands/Run.lean`: `QueryRecord`, `Context`, `proofTask`, `proofMany` (O2), `readInstruction`, `Request`, `Run.decodeRequest`, `Run.encode`, `Run.caseReported` | yes (a46ff03de) | `cd lean && lake build`: 1278 jobs, success |
 | (1) statements `readInstruction_command`, `proofTask_bound`, `proofTask_addressed`, `caseReported_eq` | yes, as stated in spec section 6 | `python3 lean/audit.py`: PASS, 760 source files, 8397 theorems, the allowed axioms only; `lean/axioms.txt` lists each |
-| (1) `readInstruction_refused_classed`, `readInstruction_typed` | as `_refused_classed_of` and `_typed_of_facts` (deviations 2 and 3); the spec's statements are ci-2b's, after ci-1b | the same audit |
+| (1) `readInstruction_refused_classed`, `readInstruction_typed` | as `_refused_classed_of` and `_typed_of_facts` (deviations 2 and 3; SIGNED, reviews/dri-decisions-20261104-ci-2.md item 1, its conditions in `lean/VE/Commands/RunSplit.lean`); the spec's statements are ci-2b's, after ci-1b | the same audit |
 | (1) `Texts.lean`: the act wording `{0} submit a proof of {1}` (`proofAct`), no legend; `("QueryMismatch", "VEError")` in `codeClasses` | yes | `RunExamples.lean`: P4′ guard, the class guard |
 | (2) `Protocol.lean` entry, `runMode_englishCommand ... := rfl`, `Schemas/Command.lean`, `Encoders/Command.lean` (`caseReported_fits`), the `runMode_fits` branch | yes (b13d280d0) | `lake build`; `uv run python tools/repo_map.py --check`: "PASS: 42 modes, each with its schema file" |
 | (3) the plan's fixtures through the mode: P1′, P2, P3, P3′, P3″, P4, P4′, P5-like, P6, P7, P8, the two-request echo, O7, O10, the `jsonWF?` refusal, the `caseReported_eq` comparison | yes, as `#guard`s in `lean/VE/Commands/RunExamples.lean` | `lake build VE.Commands.RunExamples`: success |
@@ -47,8 +47,13 @@ genuine answers (`tests/data/binding-answers.jsonl.gz`, the six `english.command
    and `hq`. The spec's statement, with `hd` and `hw`, closes through ci-1b's `readCommand_typed` in ci-2b.
 3. **`readInstruction_refused_classed_of`** takes ci-1b's two statements as hypotheses: `hc` (the reader's
    refusals are classed, ci-1b's `refused_classed`) and `hg` (english-lean's refusal of a sentence is classed, ci-1b's
-   `guardOf_classed`). Its proof covers every proof-task refusal. The spec's statement is not claimed; it follows
-   when ci-1b lands. The DRI was asked to confirm that this is ci-1 item 2's split (inbox 20261104T061317Z).
+   `guardOf_classed`). Its proof covers every proof-task refusal. The spec's statement is not claimed. SIGNED as ci-1
+   item 2's split (reviews/dri-decisions-20261104-ci-2.md item 1). Its conditions: (i)
+   `VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b` takes ci-1b's two statements as written (spec
+   section 3's `refused_classed`; `guardOf_classed` at df2dee88b, which the spec does not state) and concludes the
+   spec's statement, and `typed_facts_are_ci1s` passes `hf` to ci-1's `readCommand_typed_of_facts` unchanged; (ii) a
+   `#guard` in `RunSplit.lean` that ci-1's `declared` holds of `E_web`'s and this item's fixture environments (and
+   ci-1's own at `Examples.lean:240`); (iii) the table above lists neither spec theorem as delivered.
 4. **O1:** `proofTask` refuses with `Texts.queryMismatch` = `("QueryMismatch", "")`, and `Run.outcomeFields` writes
    `q.unit` as the text of every `QueryMismatch` (the only code no other path writes).
 5. **The relay's `jsonWF?`** runs on the whole request, before any decoder: `InvalidInput: the request is not a
@@ -139,9 +144,32 @@ copied. ci-1's `goCase` is the base of O2's fixture. F3 (the A/B's two rows) is 
 mutants of `Read.lean`, F5 (`Read.lean:7`'s "read once" beside `unreadOf`'s re-read) and F8 (`ofCondition` and
 "Sentence 2") are `Read.lean`'s, left to ci-1b so that this item does not edit the reader.
 
+## ci-2b
+
+Blocked by ci-2 and ci-1b (the DRI's backlog row). It carries (4) to (6) and the spec's two statements, exactly as
+`docs/spec/commands-imperatives.md:679-689` states them:
+
+```lean
+theorem readInstruction_refused_classed (ctx : Context) (s code text : String)
+    (h : readInstruction ctx s = .refused code text) : (Texts.classOf code).isSome = true
+
+theorem readInstruction_typed (j : Lean.Json) (ctx : Context) (r : Reading) (D : VE.SpeechActs.SpeechDoc) (u : String)
+    (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok ctx.se)
+    (h : readInstruction ctx s = .one r)
+    (hE : D.E = ctx.se.ne.rv.environment) (hS : D.scope = ctx.sc) (hR : D.regulated = ctx.se.ne.regulated)
+    (hk : VE.SpeechActs.scopeOk D = true)
+    (hq : ∀ q ∈ ctx.queries, (q.id, "query") ∈ ctx.se.ne.rv.vocabulary.constants) :
+    VE.SpeechActs.commandOk D (r.command u) = true
+```
+
+with `hw : VE.Scope.JsonWF j` added beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1), through ci-1b's
+`readCommand_typed`. Also ci-2b's: the plan's Python seed (`read_command` accepting a fill the request does not
+hold), the A/B over the pinned command corpus with ci-1's review F3, and the relay gate's F4/F10 entries for this
+route, which `read_command`'s binding retires.
+
 ## Next item
 
-ci-2b (the relay, the wrapper and the deletions; the spec's two statements once ci-1b is on main), then ci-5.
+ci-2b, then ci-5.
 
 ## Self-review against BUILDER-CHECKLIST
 
