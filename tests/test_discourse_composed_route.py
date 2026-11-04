@@ -112,7 +112,7 @@ SOFT_TEXT = text(units=SOFT_UNITS, rest=SOFT_GRAPH, body="Rule a.\nRule b.\n", e
 def identity_cases():
     """The cases of the saved byte-identity comparison: every discourse case recorded from the suite
     (`tests/data/route-cases.jsonl`, S4-2's share), S4-3, S4-25 and S4-28."""
-    recorded = [c for m, c in RECORDED if m == "discourse"]
+    recorded = [c for m, c in RECORDED if m == "discourse" and c.get("id") != "s4c"]  # not this module's own
     return [(f"S4-2 recorded {i}", c) for i, c in enumerate(recorded)] + [
         ("S4-3", case(text(units=(U1,), regulated=False, body=SRC1))),
         ("S4-25", case(text(profiles=("relational-fol@0", "ve.discourse@1"), units=(U1,), body=SRC1))),
@@ -246,6 +246,12 @@ def _relayed(tmp_path, monkeypatch, row):
 
 def test_the_genuine_answer_passes_the_binding(tmp_path, monkeypatch, genuine):
     assert UNAVAILABLE in _relayed(tmp_path, monkeypatch, genuine)
+
+
+def test_the_relay_returns_leans_answer_unchanged(tmp_path):
+    raw = text().encode()
+    row = discourse.lean_admission(raw, tmp_path)
+    assert compact(row) == compact({**answer(text()), "id": row["id"]})
 
 
 def _mutants(row):
