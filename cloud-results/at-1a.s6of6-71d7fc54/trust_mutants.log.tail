@@ -1,0 +1,22 @@
+trust_mutants: 22 definitions, 395 mutants (65 to run), 4 jobs, base 39b50770c117
+SURVIVOR lean/VE/Attitudes/Scale.lean:50 VE.Attitudes.Table.reviewed (S, trusted) le-eq: ≤ -> =
+UNKNOWN lean/VE/Attitudes/Scale.lean:43 VE.Attitudes.Table.scale (S, trusted) list-empty: t.above -> [] (lean/VE/Attitudes/Scale.lean:43: Invalid projection: Type of)
+UNKNOWN lean/VE/Attitudes/Syntax.lean:151 VE.Attitudes.baseEnv (S, trusted) append-right: (·.name) ++ ->  (lean/VE/Attitudes/Syntax.lean:151: Application type mismatch: The argument)
+UNKNOWN lean/VE/Attitudes/Syntax.lean:21 VE.Attitudes.Mode (S, trusted) ctor-drop: | thinks (w : Word) ->  (lean/VE/Attitudes/Syntax.lean:27: Unknown constant `VE.Attitudes.Mode.thinks`)
+UNKNOWN lean/VE/Attitudes/Syntax.lean:50 VE.Attitudes.AFormula (S, trusted) ctor-drop: | or (a b : AFormula) ->  (lean/VE/Attitudes/Syntax.lean:122: Unknown constant `VE.Attitudes.AFormula.or`)
+UNKNOWN lean/VE/Attitudes/Scale.lean:55 VE.Attitudes.Table.reviewed (S, trusted) list-empty: t.knowsThinks -> [] (lean/VE/Attitudes/Scale.lean:55: Invalid projection: Type of)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:137 VE.Attitudes.partsOf (S, trusted) list-first: A.parts -> (A.parts.take 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:51 VE.Attitudes.Table.reviewed (S, trusted) list-drop-last: ws -> (ws.dropLast)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:140 VE.Attitudes.keys (S, trusted) list-first: partsOf A -> ((partsOf A).take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:114 VE.Attitudes.Cond.key (S, trusted) list-last: A.holders -> (A.holders.reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:50 VE.Attitudes.Table.reviewed (S, trusted) list-last: t.candidates -> (t.candidates.reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:50 VE.Attitudes.Table.reviewed (S, trusted) list-drop-first: t.candidates -> (t.candidates.drop 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:121 VE.Attitudes.AFormula.conds (S, trusted) list-last: b.conds Γ -> ((b.conds Γ).reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:151 VE.Attitudes.baseEnv (S, trusted) list-last: A.regulated.map (·.name) -> ((A.regulated.map (·.name)).reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:122 VE.Attitudes.AFormula.conds (S, trusted) list-last: b.conds Γ -> ((b.conds Γ).reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:123 VE.Attitudes.AFormula.conds (S, trusted) list-last: b.conds Γ -> ((b.conds Γ).reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:53 VE.Attitudes.Table.reviewed (S, trusted) list-drop-first: t.knowsThinks -> (t.knowsThinks.drop 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:55 VE.Attitudes.Table.reviewed (S, trusted) list-last: t.knowsThinks -> (t.knowsThinks.reverse.take 1)
+trust_mutants: 46 KILLED, 13 SURVIVOR, 5 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 330 OTHER SHARD in 127 s
+trust_mutants: S, trusted: 46 KILLED, 13 SURVIVOR, 5 UNKNOWN, 1 INVALID, 330 OTHER SHARD
+trust_mutants: steps: wall plan 8.8 s, scratch 2.6 s, control_build 0.1 s, probe_install 1.1 s, control_probes 4.8 s, mutants 105.3 s, cleanup 4.7 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 5.7 s (2), mutant_builds 115.1 s (66), mutant_checks 99.5 s (51), stage_controls 8.4 s (4), mutant_probes 175 s (46)
