@@ -89,9 +89,9 @@ functions under `open List`, and a dispatch guard that compares `runCase` with `
 ## Size
 
 `git diff --numstat $(git merge-base HEAD main)`, hand-written files only (generated files, the verbatim plan, spec
-and stub, the trust-mutant evidence, the trust baseline and the script-written parity table excluded): +657 −41 = 698
-changed lines, of which REPORT.md and DELTA.md are 152; product code, tests, guards and the recorder are 546. That is
-about 100 over the ~600 guide, all in the mandated report and evidence files; every deliverable is in, so no `at-1wb`
+and stub, the trust-mutant evidence, the trust baseline and the script-written parity table excluded): +669 −42 = 711
+changed lines (this measurement included), of which REPORT.md and DELTA.md are 162; product code, tests, guards and
+the recorder are 549. That is about 110 over the ~600 guide, all in the mandated report and evidence files; every deliverable is in, so no `at-1wb`
 is named. At the seam after (3) the count was about 460.
 
 ## Pilot bytes
