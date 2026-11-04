@@ -33,3 +33,21 @@ signed row ("read by the new head").
 
 Plan unless the DRI rules otherwise: the registration lands in cmp-s3b with the head's mode, so this item changes no
 answer and has no DELTA row.
+
+## Q3. `clauseSlot_labelled` (spec 8.4) is false as stated
+
+Its hypotheses are `WellFormedClauses D` and `WellFormedRights (plain D)`. `Lim_D`'s own labels can repeat on a
+well-formed rights document: `cx` (`lean/VE/NormDefaults/PacksLegacyExamples.lean:113`, the F1′ counterexample of
+reviews/dri-decisions-20261027-featureplan-gates.md item 3) has limitations `x`, `x:p` and act keys `p:q`, `q`. At
+`D := ⟨cx, [], []⟩` both hypotheses hold and `clauseSlotLabelled D = limPremisesLabelled cx` repeats
+`rights:limitation:x:p:q:necessary:c`. Checked by `#guard` (scratch file, both true):
+`WellFormedClauses dcx && WellFormedRights (plain dcx)` and `!wellLabelled (limPremisesLabelled (plain dcx))`.
+Q1's depth corner is checked the same way: `budgetFormula 64` accepts a depth-64 formula and refuses it under one `and`.
+
+Options:
+- B1 (recommended): add `(hl : VE.Compose.Labelled.wellLabelled (limPremisesLabelled D.doc) = true)`. The theorem then
+  says what S3 adds: the `Rel_D` labels are distinct, and none is a `Lim_D` label (prefix `rights:relation:`). The
+  proof is short.
+- B2: the precedent's hypothesis, `∀ k ∈ VE.Rights.condKeys D.doc, ':' ∉ k.2.1.toList`. Its proof
+  (`legacy_labels_nodup_of_actKeys`) uses lemmas of `VE.Readings` (`rightsNames_of_chainWF`, `nodup_flatMap_iff`),
+  which S3 may not import (spec 0). The proof would have to be copied without them, about 100 lines over the size cap.
