@@ -262,15 +262,15 @@ def listed (ps : List String) : String := ", ".intercalate (ps.map fun p => "\""
     "error: UnsupportedProfile: ve.discourse@1 with readings@1",
   routeOf "admission" (doc (profiles := listed ["norms@0", "relational-fol@0", "speech-acts@0", "ve.discourse@1"])) ==
     "error: UnsupportedProfile: ve.discourse@1 with speech-acts@0"].all id
--- step 1: on the composed path the envelope checks come first, with today's texts; off it, today's FOL-family check
-#guard (match VE.Discourse.Run.loadCase (caseOf doc) with
-  | .ok (d, env) => (match admitComposed ["norms@0", "relational-fol@0", "ve.discourse@1"] (env.setObjVal! "profiles"
+-- step 1: on the composed path the envelope checks come first, with today's texts (`admitChain`, the path's body);
+-- off it, today's FOL-family check
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => (match admitChain ["norms@0", "relational-fol@0", "ve.discourse@1"] (env.setObjVal! "profiles"
       (toJson ["norms@0", "relational-fol@0", "ve.discourse@1", "zz@0"])) d with | .error e => e | .ok _ => "") ==
     "UnsupportedProfile: environment profiles differ from the declared list"
-  | .error _ => false) &&
-  todayOf (doc (profiles := listed ["order@0", "relational-fol@0", "ve.discourse@1"]) (us := "[" ++ u1 ++ "]")
-    (regulated := false) (body := src1)) == "error: UnsupportedProfile: discourse admission requires the FOL family"
-
+  | .error _ => false
+#guard todayOf (doc (profiles := listed ["order@0", "relational-fol@0", "ve.discourse@1"]) (us := "[" ++ u1 ++ "]")
+  (regulated := false) (body := src1)) == "error: UnsupportedProfile: discourse admission requires the FOL family"
 -- `envelopeChecks` on its own: the environment's profile list must be the declared one
 #guard (match runAll (envelopeChecks ["norms@0", "relational-fol@0", "ve.discourse@1"]
     (Json.mkObj [("profiles", toJson ["x@0"])]) .null) with | .error e => e | .ok _ => "") ==
