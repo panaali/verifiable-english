@@ -1,0 +1,241 @@
+{
+ "admitted": true,
+ "route": "superposed",
+ "finding": null,
+ "choices": 16,
+ "soft_premises": null,
+ "units": {
+  "u0001": [
+   "LABELLED",
+   null
+  ],
+  "u0002.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0008.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0013.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0023": [
+   "LABELLED",
+   null
+  ],
+  "u0027.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0032.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0036.s05": [
+   "OPEN",
+   null
+  ],
+  "u0040.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0042.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0052.s01": [
+   "OPEN",
+   "953265b2e513b3e64c7a6d3c10431b2be2cf71f40b746dcef0d9f3947a2f3288"
+  ],
+  "u0055.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0062.s01": [
+   "OPEN",
+   "ddc34d79985648207a0df0aa17500201cd424b9ccb80fad5ed84ed16e88ff8f4"
+  ],
+  "u0069.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0073.s05": [
+   "OPEN",
+   "85bd853ed943138ae1517e54899e3ae1e68dbd1e434cba5eac4c651b89bc2dc7"
+  ],
+  "u0075.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0083.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0095.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0103": [
+   "LABELLED",
+   null
+  ],
+  "u0108": [
+   "LABELLED",
+   null
+  ],
+  "u0123.s01.p1": [
+   "OPEN",
+   "d5e3e4631ff15ce5dd64cf76ae70f83a1e6f8b158b754cf91d4a94f4bb727b4c"
+  ],
+  "u0123.s02.p1": [
+   "OPEN",
+   "9c230da257d40c6d43b3bf0a860f1ce827782c06d677c2c0e26f19019493a3e9"
+  ],
+  "u0123.s03": [
+   "OPEN",
+   "9e211153affbe8d2e9699bbf68fb363d8260a1ef61a16f36157cc49d3b96b30d"
+  ],
+  "u0125.s04.p2": [
+   "OPEN",
+   null
+  ],
+  "u0126": [
+   "LABELLED",
+   null
+  ],
+  "u0130.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0143.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0151.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0156.s03": [
+   "OPEN",
+   null
+  ],
+  "u0162.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0165.s01": [
+   "OPEN",
+   "1e80081dbcdc658a49645876e067931ed36305cf7ac48d1d280e480429dd0d6d"
+  ],
+  "u0165.s02": [
+   "OPEN",
+   "c77ba958d5e1b7bff4aa10d64c28aa9504ba0c9fb6e5008f6345d50de950102e"
+  ],
+  "u0165.s03": [
+   "OPEN",
+   "769e1f5ca4163a524e33fbb70d497bdeee19356d4ffc6f3eabbdbcf2930e31dd"
+  ],
+  "u0165.s04": [
+   "OPEN",
+   "4473676abab3fd4ae634d5d03ddc05faf4b343a2854440ad1178118f6442e07e"
+  ],
+  "u0165.s05": [
+   "OPEN",
+   "7116a5c36a9ab8b561aa25f8811b37120f7ace4d3c7e1601e82d7f74a16d2172"
+  ],
+  "u0165.s06": [
+   "OPEN",
+   "6f5aa8e522a98472b74e2c933145ec23a43f9e4a74e5710369f49424bae2c851"
+  ],
+  "u0165.s07": [
+   "OPEN",
+   "ff24b0913d01bb083d3e4bd75e7a13111a4d34d14d58ecfc909f74e8dadbdbc8"
+  ],
+  "u0168.s01": [
+   "OPEN",
+   "2b6ea546fa46ae744627d7a7c812dbb08ad2692460c67b718271b31808082d88"
+  ],
+  "u0174.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0195.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0207.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0212.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0219.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0235.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0238.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0245.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0248": [
+   "CHECKED",
+   "6441b867797273c20996158bf9b2dbf21d2974176c0cc0a1abca7fc5f6e3cfd9"
+  ],
+  "u0254.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0257.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0260.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0263.s04.p2": [
+   "OPEN",
+   null
+  ],
+  "u0265": [
+   "LABELLED",
+   null
+  ],
+  "u0268.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0277": [
+   "LABELLED",
+   null
+  ],
+  "u0282": [
+   "LABELLED",
+   null
+  ],
+  "u0286.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0294": [
+   "LABELLED",
+   null
+  ],
+  "u0298": [
+   "LABELLED",
+   null
+  ]
+ }
+}
