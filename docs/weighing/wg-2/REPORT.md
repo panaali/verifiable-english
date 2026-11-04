@@ -89,7 +89,7 @@ mutant, test and check. `splitRefusal`'s mutant fails `Acts/ElaborateExamples.le
 
 Trust mutants (build checklist 13a): `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
 docs/weighing/wg-2/trust-mutants-allow.json --rescore docs/weighing/wg-2/trust-mutants.json --json
-docs/weighing/wg-2/trust-mutants.json` exited 0 on the HEAD adfe58d0b (tree e4ded25a23ae; Lean is unchanged since):
+docs/weighing/wg-2/trust-mutants.json` exited 0: in a full run on adfe58d0b (tree e4ded25a23ae), and in a `--rescore` of it on ee34862a0 (tree 8cf7a935c74c; only the allow file's line reference changed), which the JSON records:
 231 KILLED, 0 SURVIVOR, 0 UNKNOWN, 8 INVALID, 23 ALLOWED ([trust-mutants.json](trust-mutants.json)). Each allow has
 one line of reason ([trust-mutants-allow.json](trust-mutants-allow.json)). Most allowed mutants do not elaborate
 (`[]` loses the next projection's type, or a dropped `Target` constructor), and grantConds' list-first and list-last
@@ -153,8 +153,8 @@ See the commit that follows this report: the selection run on the HEAD and its r
 3. Tests can fail: PASS: mutants.json (38 killed by guards), trust-mutants.json (exit 0), S1-S3 (section 4).
 4. Python, Lean and Rust agree: N.A.: Lean only, and nothing calls it.
 5. R8 binding: N.A.: no relayed answer.
-6. Gate evidence matches the final HEAD: PASS for the trust mutants (tree e4ded25a23ae; Lean is unchanged after
-   it). The gate itself is the chain's.
+6. Gate evidence matches the final HEAD: PASS for the trust mutants (rescored on ee34862a0, tree 8cf7a935c74c;
+   Lean is unchanged after it). The gate itself is the chain's.
 7. No unsigned item: PASS: DELTA.md's three rows cite R16. The one open question asks for no signature.
 8. Every user-visible change in DELTA: PASS: none changes (DELTA.md). The trust growth is the R16 rows.
 9. Test selection finds the tests: PASS: `--select` picked 116 units, among them `test_assurance_manifest.py`, which
