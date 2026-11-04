@@ -1,3 +1,4 @@
+- `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
 - `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
 - `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
 - `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).

@@ -125,7 +125,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 94 modules — -
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 87 modules — -
-- [tests/ part 4](tests--part-4.md) — 92 modules — -
+- [tests/ part 4](tests--part-4.md) — 93 modules — -
 - [tests/ part 5](tests--part-5.md) — 79 modules — -
 - [tests/ part 6](tests--part-6.md) — 85 modules — -
 - [tests/ part 7](tests--part-7.md) — 44 modules — -
