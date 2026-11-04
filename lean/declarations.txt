@@ -8932,7 +8932,7 @@ module VE.Discourse.Compose 28dbb485ebab5080d65da4f66f2641f4aaaa01d7b8977eaae046
 533:0-541:47 theorem VE.Discourse.composed_unchanged@VE.Discourse.Compose
 543:0-547:58 theorem VE.Discourse.composed_base_unchanged@VE.Discourse.Compose
 549:0-556:47 theorem VE.Discourse.composed_unchanged_error@VE.Discourse.Compose
-module VE.Discourse.ComposeExamples 1bbd9b177609113de702af29f9e29e3bf123aadd4f278e811e6bc254bde85935
+module VE.Discourse.ComposeExamples e2dfa9d17871f7ae13f27f6c4b5264f8fe51640f1ab5660df4f7ae3b8d244706
 11:0-11:45 def VE.Discourse.ComposeExamples.src1@VE.Discourse.ComposeExamples
 12:0-12:65 def VE.Discourse.ComposeExamples.src2@VE.Discourse.ComposeExamples
 14:0-23:68 def VE.Discourse.ComposeExamples.vocabulary@VE.Discourse.ComposeExamples
