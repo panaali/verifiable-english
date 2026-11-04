@@ -120,7 +120,7 @@ def test_units_spans_and_source_words_are_unchanged(pinned, migrated):
 def test_the_committed_probe_is_the_rewrite_with_searched_situations(pinned, migrated):
     """The probe translation is the rewrite, plus what the search and the identities add: one recorded situation
     per set, named by both readings, and a meaning id per candidate; its body is the translation's."""
-    probe, body = migrate.pilot.read(RUN / "probe-translation.ve.md")
+    probe, body = migrate.pilot.read(migrate.PROBE)
     assert body == pinned[1]
     found = copy.deepcopy(probe)
     for R in found["reading_sets"]:
@@ -154,7 +154,7 @@ def test_c9_point_status_is_measured_on_every_choice_and_condition(tmp_path):
     choice, under each sufficient condition and with none, including the two old unsafe query phrasings."""
     from ve.readings_route import run_lean
 
-    probe = RUN / "probe-translation.ve.md"
+    probe = migrate.PROBE
     meta, source = migrate.pilot.read(probe)
     strict = tmp_path / "strict.ve.md"
     migrate.pilot.write(strict, c9_status.strict_twin(meta), source)
@@ -192,7 +192,7 @@ def test_each_candidate_id_is_the_loaders_binding_of_its_content():
     `s1_content_meaning_id` of its content, and the saved record holds that id and Lean's unit id for all eight."""
     from ve.document import _environment
     from ve.readings import s1_content_meaning_id
-    probe, _ = migrate.pilot.read(RUN / "probe-translation.ve.md")
+    probe, _ = migrate.pilot.read(migrate.PROBE)
     env = _environment(probe["environment"])
     saved = json.loads((RUN / "answers/meaning-ids.json").read_text())
     ids = {f"{R['id']}:{r['id']}": r["meaning_id"] for R in probe["reading_sets"] for r in R["readings"]}
@@ -214,7 +214,7 @@ def test_the_comprehension_lines_are_the_renderers(tmp_path):
     assert saved["status"].startswith("NOT RUN") and all(row["answer"] is None for row in saved["rows"])
     assert [(row["case"], row["kind"]) for row in saved["rows"]] == [
         ("C1", "permission"), ("C2", "obligation"), ("C3", "permission"), ("C4", "obligation")]
-    lines = render_document(RUN / "probe-translation.ve.md").splitlines()
+    lines = render_document(migrate.PROBE).splitlines()
     for row in saved["rows"]:
         assert lines[row["line"] - 1] == row["rendered"], row["case"]
         assert row["question"].startswith("Does the text say that " +

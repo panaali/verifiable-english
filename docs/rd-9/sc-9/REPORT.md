@@ -36,7 +36,7 @@ Each bug was planted alone in the committed file, the named test was run, and th
 | S4 | same | `unchanged` ignores `source_word` | `test_units_spans_and_source_words_are_unchanged` FAILED |
 | S5 | same | the "still mentioned" guard disabled | `test_rule4_refuses_a_term_some_content_still_names` FAILED |
 | S6 | `comprehension/questions.json` | C2's line reworded | `test_the_comprehension_lines_are_the_renderers` FAILED |
-| S7 | `probe-translation.ve.md` | one candidate given Lean's unit id | `test_each_candidate_id_is_the_loaders_binding_of_its_content` FAILED |
+| S7 | `probe-translation.probe.md` | one candidate given Lean's unit id | `test_each_candidate_id_is_the_loaders_binding_of_its_content` FAILED |
 | S8 | `c9_status.py` | suppress the UNDECIDED witness, making a sufficient-condition request use `table3` | `test_c9_point_status_is_measured_on_every_choice_and_condition` FAILED (`method` mismatch) |
 
 ## Trust, size, bytes

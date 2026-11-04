@@ -4,7 +4,7 @@
     uv run python usecases/claude-constitution-pilot/run-20261104T0716Z/measure.py
 
 Three documents: `before`, the translation as committed (run 20261010T1800Z at `76922d6c`, `migrate_soft.pinned`);
-`after`, `probe-translation.ve.md` (`migrate_soft.py`); and `strict`, the probe with u0073.s05 as its strict force
+`after`, `probe-translation.probe.md` (`migrate_soft.py`); and `strict`, the probe with u0073.s05 as its strict force
 twin (the same rule, `mode: strict`, no exception), for C9's separation from the strict reading. Each step is one
 Python command, run one at a time in the foreground under `/usr/bin/time -v` with a 16 GB memory limit (L70);
 the host load is read before each step. Each answer is saved verbatim (`answers/<document>/<step>.out`
@@ -118,7 +118,7 @@ def main(only=()):
     """Every step, or the steps named in `only`, whose rows replace those of the same name in the saved record."""
     raw = migrate_soft.pinned()
     _, front, source = raw.split(b"---\n", 2)
-    probe = RUN / "probe-translation.ve.md"
+    probe = migrate_soft.PROBE
     after, after_source = pilot.read(probe)
     rows = []
     with tempfile.TemporaryDirectory() as tmp:
