@@ -1,0 +1,9 @@
+trust_mutants: 14 definitions, 426 mutants (53 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:113 VE.Defaults.Wire.exceptedRule (D[V], trusted) list-empty: (keyedDecisions D) -> [] (lean/VE/Defaults/ZoneWire.lean:114: Invalid dotted identifier notation: The expected type of `.ex...)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:94 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: w -> [] (lean/VE/Defaults/ZoneWire.lean:94: Invalid projection: Type of)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:95 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: (keyedDecisions L.D) -> [] (lean/VE/Defaults/ZoneWire.lean:98: Invalid dotted identifier notation: The expected type of `.exc...)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)) -> [] (lean/VE/Defaults/ZoneWire.lean:99: Application type mismatch: The argument)
+trust_mutants: 49 KILLED, 0 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 2861 s
+trust_mutants: D[V], trusted: 9 KILLED, 1 UNKNOWN, 100 OTHER SHARD
+trust_mutants: G[V], trusted: 40 KILLED, 3 UNKNOWN, 273 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.1 s, control_build 0.3 s, probe_install 1.4 s, control_probes 371.1 s, mutants 2471.8 s, cleanup 2.4 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 788 s (6), mutant_builds 877.4 s (58), mutant_checks 2485.3 s (25), stage_controls 685.3 s (9), mutant_probes 5610.8 s (49)
