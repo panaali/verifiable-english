@@ -68,7 +68,7 @@ def dispatchAdmission (ps : List String) (environment document : Json) : Except 
 without a document (each checks the FOL family); a list no chain route reads is `dispatchAdmission`'s refusal. -/
 def chainEnvironment (ps : List String) (be : Json) : Except String VE.Norms.Wire.NormsEnvironment :=
   match VE.Compose.dispatch ps with
-  | .ok .norms => VE.Norms.Wire.decodeNormsEnvironment be (acts := true)
+  | .ok .norms => VE.Norms.Wire.decodeNormsEnvironment be
   | .ok .normDefaults => VE.NormDefaults.Wire.decodeEnvironmentU be
   | .ok .soft => (VE.SoftNorms.Phases.checkSource be (.arr #[])).map (·.ne) |>.mapError (·.message)
   | .ok .rights => (·.se.ne) <$> VE.Rights.Wire.decodeRightsEnvironment be

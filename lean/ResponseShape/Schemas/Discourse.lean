@@ -287,4 +287,26 @@ def file : File where
     ("resolve", .schema resolve),
     ("joint", .schema joint)]
 
+/-- The composed row as `tools/response_schemas.py` renders it (cmp-s4c): a closed object, every member required, `inner`
+a chain admission; three chain admissions, by their `conditional_on`; the row's `admission` is either admission. -/
+def rendered (s : Shape) : Json := (ResponseShape.render "discourse.json" 64 s).toOption.getD .null
+#guard ((rendered composed).getObjValD "additionalProperties", (rendered composed).getObjValD "required",
+    ((rendered composed).getObjValD "properties").getObj?.toOption.map (·.toList.map (·.1)),
+    (((rendered composed).getObjValD "properties").getObjValD "inner").getObjValD "$ref") ==
+  (.bool false, toJson ["id", "status", "document_id", "inner", "inner_report_id", "references", "report_id"],
+    some ["document_id", "id", "inner", "inner_report_id", "references", "report_id", "status"],
+    .str "#/$defs/chain_admission")
+#guard ((rendered chain_admission).getObjValD "anyOf").getArr?.toOption.map (·.toList.map fun b =>
+    (b.getObjValD "additionalProperties", (b.getObjValD "required").getArr?.toOption.map (·.size),
+      (b.getObjValD "properties").getObj?.toOption.map (·.toList.map (·.1)),
+      (((b.getObjValD "properties").getObjValD "conditional_on").getObjValD "$ref"),
+      ((b.getObjValD "properties").getObjValD "id"), (((b.getObjValD "properties").getObjValD "kinds").getObjValD "items"))) ==
+  some ([Json.null, .str "soft-norms.json#/$defs/coherence_labels", .str "rights.json#/$defs/conditional_labels"].map fun c =>
+    (.bool false, some (if c == .null then 6 else 7), some ((["admitted"] ++ (if c == .null then [] else ["conditional_on"])) ++
+      ["id", "kinds", "report", "report_id", "status"]), c, Json.mkObj [("const", .str "")],
+      Json.mkObj [("$ref", .str "common.json#/$defs/kind")]))
+#guard ((((((rendered «row»).getObjValD "x-select").getArrVal? 0).toOption.getD .null).getObjValD "then").compress.splitOn
+  "{\"anyOf\":[{\"$ref\":\"#/$defs/admission\"},{\"$ref\":\"#/$defs/composed\"}]}").length == 2
+#guard ["chain_admission", "composed"].all (file.defs.map (·.1)).contains
+
 end ResponseShape.Schemas.Discourse
