@@ -1,0 +1,21 @@
+{
+ "job": "ps-1b.s3of4-7eaf7f09",
+ "head": "793f14c2c1d818a23fab921902da8538411da03b",
+ "argv": [
+  "ps-1b.s3of4-7eaf7f09",
+  "793f14c2c1d818a23fab921902da8538411da03b",
+  "d74d1fc9ca2233ef4911680d5c9f5ffb113626e3",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-588f0292b5c6.tar.zst",
+  "8e34085ef9f67af0b2b5641b996cad3fc9fec224924672b7516514e4f498d730",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Presupposition/Examples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/4",
+  "--jobs",
+  "4"
+ ]
+}
