@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41749,
+    "total_lines": 42059,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -348,6 +348,25 @@
           "grammarCase"
         ],
         "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written"
+      },
+      {
+        "file": "lean/VE/Commands/Run.lean",
+        "lines": 310,
+        "sha256": "d6b6d76ba0491793f34385fc35eadfd575db7d1c172729279f366705ec25f219",
+        "ranges": [
+          [
+            1,
+            310
+          ]
+        ],
+        "declarations": [
+          "decodeRequest",
+          "readingJson",
+          "outcomeFields",
+          "encode",
+          "caseReported"
+        ],
+        "reason": "commands-imperatives CI-2 (docs/spec/commands-imperatives.md section 6): english.command refuses a tree jsonWF? rejects, decodes the speech environment through the pinned decodeSpeechEnvironmentFull, english.read's case through decodeCase (its overlay and lexicon refusals first) and each query record through the pinned decodeQuery, and writes readInstruction's outcome with the request's id, unit and scope legend; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Question/Run.lean",
@@ -2285,7 +2304,10 @@
       "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
-      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling"
+      "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
+      "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path",
+      "lean/ResponseShape/Schemas/Command.lean": "the english.command response shape (schema source for tools/response_schemas.py); builds schema JSON, decodes no request",
+      "lean/ResponseShape/Encoders/Command.lean": "the english.command encoder theorem: proofs about the JSON VE.Commands.Run.caseReported writes; decodes nothing"
     }
   },
   "plan_operations": {
