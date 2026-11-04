@@ -1,0 +1,9 @@
+trust_mutants: 5 definitions, 39 mutants (10 to run), 4 jobs, base d74d1fc9ca22
+UNKNOWN lean/VE/Presupposition/Rows.lean:18 VE.Presupposition.plural (S, trusted) all-any: all -> any (lean/VE/Presupposition/Rows.lean:18: Unknown constant `VE.Formula.any`)
+UNKNOWN lean/VE/Presupposition/Reading.lean:66 VE.Presupposition.Root (S, trusted) ctor-drop: | bare | asserted | conditioned ->  (lean/VE/Presupposition/Reading.lean:99: the failing proof cannot be cut: Unknown constant `VE.Pre...)
+SURVIVOR lean/VE/Presupposition/Reading.lean:22 VE.Presupposition.Reading.DefinedAt (S, trusted) body-true: r.strong.denote S τ ↔ r.pre.denote S τ ∧ r.weak.denote S τ -> True (the proofs it breaks: lean/VE/Presupposition/Reading.lean:24, lean/VE/Presupposition/Rows.lean:47...)
+SURVIVOR lean/VE/Presupposition/Reading.lean:73 VE.Presupposition.carried (S, trusted) list-first: ms.filter (fun m => m.1 == Root.conditioned) -> ((ms.filter (fun m => m.1 == Root.conditioned)).take 1) (the proofs it breaks: lean/VE/Presupposition/Reading.lean:96, lean/VE/Presupposition/Reading.lean...)
+SURVIVOR lean/VE/Presupposition/Reading.lean:73 VE.Presupposition.carried (S, trusted) list-last: ms.filter (fun m => m.1 == Root.conditioned) -> ((ms.filter (fun m => m.1 == Root.conditioned)).reverse.take 1) (the proofs it breaks: lean/VE/Presupposition/Reading.lean:96, lean/VE/Presupposition/Reading.lean...)
+trust_mutants: 5 KILLED, 3 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 56 s
+trust_mutants: S, trusted: 5 KILLED, 3 SURVIVOR, 2 UNKNOWN, 29 OTHER SHARD
+trust_mutants: steps: wall plan 8.9 s, scratch 2.7 s, control_build 0.1 s, probe_install 1.1 s, control_probes 4.4 s, mutants 34.4 s, cleanup 4.5 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 3.8 s (1), mutant_builds 36.7 s (19), mutant_checks 34.6 s (12), stage_controls 14.3 s (3), mutant_probes 31.1 s (5)
