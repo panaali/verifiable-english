@@ -481,6 +481,9 @@
         "ResponseShape.Schemas.Discourse.target_kind",
         "ResponseShape.Schemas.Discourse.validity",
         "ResponseShape.Schemas.Discourse.validity_map"
+      ],
+      "T": [
+        "ResponseShape.Schemas.Discourse.rendered"
       ]
     },
     "ResponseShape/Schemas/Document.lean": {

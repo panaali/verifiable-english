@@ -93,6 +93,17 @@ def route (kind text : String) : String :=
 -- step 1's rights decoder (`chainEnvironment`): α has no rights block
 #guard route "admission" (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"rights@0\", \"soft-norms@0\", \"ve.discourse@1\"")) ==
   "error: InvalidInput: invalid rights block"
+-- S4-3 through the route: no chain construct on `norms@0, ve.discourse@1` is today's answer
+#guard "today " ++ route "admission" (doc (us := "[" ++ u1 ++ "]") (regulated := false) (body := src1)) ==
+  today (doc (us := "[" ++ u1 ++ "]") (regulated := false) (body := src1))
+-- step 1: the envelope checks first, with today's texts; off the path, today's FOL-family check
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => (match admitComposed ["norms@0", "relational-fol@0", "ve.discourse@1"] (env.setObjVal! "profiles"
+      (toJson ["norms@0", "relational-fol@0", "ve.discourse@1", "zz@0"])) d with | .error e => e | .ok _ => "") ==
+    "UnsupportedProfile: environment profiles differ from the declared list"
+  | .error _ => false
+#guard today (doc (profiles := "\"order@0\", \"relational-fol@0\", \"ve.discourse@1\"") (us := "[" ++ u1 ++ "]")
+  (regulated := false) (body := src1)) == "error: UnsupportedProfile: discourse admission requires the FOL family"
 -- S4-20: a `groups` entry (14.5 step 1, named abstention)
 #guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"groups\": [{}]}")) ==
   "error: NotImplemented: groups on the chain"
