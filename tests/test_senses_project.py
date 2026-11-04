@@ -156,7 +156,7 @@ def test_projection_answer_mutations_are_rejected(joke, lines):
         original = genuine
         for part in path:
             original = original[part]
-        # Lean's version constant is typed, not bound: its lock is sn-b6b's.
+        # Lean's version constant is typed, not bound: its lock is sn-b6bb's.
         rebound = [original + "0"] if type(original) is str and path[-1] != "senses_version" \
             and genuine["result"]["projection"]["status"] == "ok" else []
         for value in ["delete", *_retyped(original), 1.5, *rebound]:
