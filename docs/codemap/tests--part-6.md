@@ -1,5 +1,3 @@
-- `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
-- `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
@@ -24,7 +22,6 @@
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
 - `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
 - `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
 - `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
@@ -82,3 +79,7 @@
 - `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
 - `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
 - `tests/test_stats.py` — (no module docstring)
+- `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
+- `tests/test_surface_registry.py` — (no module docstring)
+- `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
+- `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
