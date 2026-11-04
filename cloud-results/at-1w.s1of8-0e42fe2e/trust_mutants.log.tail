@@ -1,0 +1,14 @@
+trust_mutants: 13 definitions, 252 mutants (32 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) body-true: c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == -> true (lean/VE/Attribution/Words.lean:13: Function expected at)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:330 ResponseShape.Schemas.Reports.row (G[V], trusted) list-empty: [ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate",... -> []
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:345 ResponseShape.Schemas.Reports.file (G[V], trusted) list-drop-last: [ ("reports_path", .schema reports_path), ("kind", kind), ("report_kind", .schema report_kind), (... -> ([ ("reports_path", .schema reports_path), ("kind", kind), ("report_kind", .schema report_kind), ...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:327 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-last: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref ... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref...
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-first: phrases -> (phrases.take 1)
+UNKNOWN lean/VE/Attribution/Run.lean:610 VE.Reports.Run.runWants (?, trusted) list-empty: [("phrase", .str p), ("infinitive", match wantsPhrase? p with | some i => .str i | none => .null)] -> [] (lean/VE/Attribution/Run.lean:684: Expression (VE.Reports.Run.runCase, which it reads, is not what...)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:345 ResponseShape.Schemas.Reports.file (G[V], trusted) list-drop-first: [ ("reports_path", .schema reports_path), ("kind", kind), ("report_kind", .schema report_kind), (... -> ([ ("reports_path", .schema reports_path), ("kind", kind), ("report_kind", .schema report_kind), ...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:30 ResponseShape.Schemas.Reports.kind (G[V], trusted) list-drop-middle: ("reports-status", kindIs "reports-status"), -> 
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-drop-first: phrases -> (phrases.drop 1)
+trust_mutants: 23 KILLED, 7 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 220 OTHER SHARD in 131 s
+trust_mutants: ?, trusted: 23 KILLED, 2 SURVIVOR, 2 UNKNOWN, 196 OTHER SHARD
+trust_mutants: G[V], trusted: 5 SURVIVOR, 24 OTHER SHARD
+trust_mutants: steps: wall plan 11 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.3 s, control_probes 27.9 s, mutants 84.1 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.3 s (1), control_probes 46.4 s (3), mutant_builds 164 s (36), stage_controls 5.5 s (4), mutant_probes 131.9 s (24)
