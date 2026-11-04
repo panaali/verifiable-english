@@ -18,12 +18,30 @@
 - **Depends on cmp-s4ab (not merged):** fenced content stays `NotImplemented: fenced content on the chain`.
 - **Trust:** trusted +76, K +0 (R16's cap 150). SIGNED by standing ruling R16.
 
+## Review fixes: F1 and F2
+
+F1: `bind_composed` now compares each report claim with the request graph node's complete copied
+identity (`name`, `ast`, and the optional `label`), using the schema comparator's JSON equality.
+Both the root and every assumption are checked. The F1 probe failed before the fix and passed
+after it. `test_f1_copied_claim_is_bound_to_its_complete_graph_node` covers all four fields on
+the norms, norm-defaults and soft composed routes; `test_f1_default_label_is_omitted_from_both_copies`
+covers the canonical default. A seeded name-only binder made the root-label case fail, then was restored.
+
+F2: the kinds check reads the shared document `_parts` traversal, whose MIXED parent is provenance
+and whose children are the units sent to the chain route. The F2 probe failed before the fix and
+passed after it. `test_f2_mixed_parent_passes_binding_on_each_available_chain` covers norms,
+norm-defaults and soft. A seeded parent-plus-parts traversal made its norms case fail, then was
+restored. No Lean or Rust product code changed; these findings are in Python's response binding.
+
+The three failures listed in `/home/seyran/code/manage-agents/main-known-red.txt` are pre-existing
+on main and were not edited in this branch. The full gate belongs to the merge train for this item.
+
 ## Deliverables (task cmp-s4c)
 
 | Task row | Delivered | Evidence |
 |---|---|---|
 | (1) route entry: the composed path only on `norms@0` + `ve.discourse@1` + a chain construct; every other input as today, byte for byte; the three `NotImplemented: <kind> on the chain` kinds | yes | `Run.lean` `chainCase`, `runCase`; `discourse_wire_acceptance` (both disjuncts); `ComposeExamples.lean` route checks; `test_answers_are_byte_identical_to_mains` (18 saved cases); `test_s4_27_other_kinds_on_the_chain_are_abstentions` |
-| (2) relay and schema, binding only (R8), fuzz tests | yes | `ve/discourse.py` `_composed_answer` (typing), `bind_composed` (references, kinds, report claims); `discourse.json` `composed`, `chain_admission`; `test_every_mutant_is_refused` (each member dropped and retyped, `inner`'s members dropped and retyped, the bound arrays duplicated and reordered, a foreign root, claim and reference); `test_the_relay_returns_leans_answer_unchanged` |
+| (2) relay and schema, binding only (R8), fuzz tests | yes | `ve/discourse.py` `_composed_answer` (typing), `bind_composed` (references, flattened kinds, complete copied report claims); `discourse.json` `composed`, `chain_admission`; `test_every_mutant_is_refused` (each member dropped and retyped, `inner`'s members dropped and retyped, the bound arrays duplicated and reordered, a foreign root, claim and reference); `test_f1_copied_claim_is_bound_to_its_complete_graph_node`, `test_f2_mixed_parent_passes_binding_on_each_available_chain`; `test_the_relay_returns_leans_answer_unchanged` |
 | (3) chain decoders of 14.5 step 1 (soft, rights, norm-defaults) | yes | `chainEnvironment`: norms, norm-defaults (`decodeEnvironmentU`), soft (`Phases.checkSource` without rules), rights (`decodeRightsEnvironment`); a list no chain route reads is `dispatchAdmission`'s refusal (S4-16, S4-17) |
 | (3) 14.6 three-way agreement | yes | `test_three_way_ve_discourse_beside_the_chain` (the profile table `ve/profiles.py` reads admits `ve.discourse@1` beside norms, norm-defaults and soft; Lean's route answers a composed row; the row fits `discourse.json`), `test_three_way_ve_discourse_refusals_agree` (the table's refusal texts are Lean's answers). `ve/profiles.py` is unchanged: its table is Lean's (`tools/profile_table.py`) and already agrees |
 | (4) route fixtures S4-14, S4-16, S4-17, S4-18, S4-27, S4-28 | yes | `tests/test_discourse_composed_route.py`; 18 route cases appended to `tests/data/route-cases.jsonl` (recorded with `tests/route_case_recorder.py`) |
