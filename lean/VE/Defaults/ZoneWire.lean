@@ -58,6 +58,8 @@ def ZoneReplay.zone (x : ZoneReplay) : DefaultZone Entity :=
 
 def replayZoneOn (v : DefaultsView) (j : Json) : Except String ZoneReplay := do
   let S ← VE.NormDefaults.Wire.situationX v.L (← j.getObjVal? "model")
+  if (VE.SoftNorms.decisionNames v.L.D).any (fun n => !(S.M.relations n).isEmpty) then
+    throw "InvalidInput: the situation's decision tables are empty; a fixed decision goes in the record"
   let record ← (← (← j.getObjVal? "record").getArr?).toList.mapM fun e => do
     VE.Bridge.exactFields e ["decision", "tuple", "value"]
     let (_, n, ss) ← decisionOf v.L (← e.getObjVal? "decision")
