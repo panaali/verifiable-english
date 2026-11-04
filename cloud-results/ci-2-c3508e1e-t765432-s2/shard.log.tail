@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 3/6: 96 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/301] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/301] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/301] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4919 lines cut; full output in shard-full.txt)
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded digest v0.10.7
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded crypto-common v0.1.7
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded num-integer v0.1.47
+  Downloaded memchr v2.8.3
+  Downloaded version_check v0.9.5
+  Downloaded zmij v1.0.23
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 20.25s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 12.79s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(4/4), tests/test_english_evidence.py::chunk(1/4), tests/test_speech_polar_lean.py::chunk(2/4), tests/test_speech_polar_lean.py::chunk(3/4)
+recording 96 units with 4 jobs in /var/tmp/cct/ve-select-run-r_ahr65d
+  tests/test_assurance_manifest.py: exit 1 in 48.2 s, 1511 functions
+  tests/test_shape_binding_mutants.py: exit 1 in 76.1 s, 369 functions
+chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 366.8 s in all, longest chunk 366.8 s; 18 passed, 0 skipped, 0 failed; each of its 18 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 2 of 4 chunks, exit 0, 1101.5 s in all, longest chunk 553.6 s; 4768 passed, 0 skipped, 0 failed; each of its 4768 tests ran in exactly one chunk
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 561.1 s in all, longest chunk 561.1 s; 141 passed, 0 skipped, 0 failed; each of its 141 tests ran in exactly one chunk
+FAILED tests/test_shape_binding_mutants.py (exit 1): tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[english.command]; log /var/tmp/cct/ve-select-run-r_ahr65d/tests__test_shape_binding_mutants.py.log
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+.........................................F.............................. [ 81%]
+................                                                         [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/var/tmp/cct/ve-english-comparator-qt3x6lg_)
+
+=================================== FAILURES ===================================
+_ test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[english.command] _
+
+mode = 'english.command'
+
+    @pytest.mark.parametrize("mode", MODES)
+    def test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides(mode):
+        """Every genuine answer passes; every mutant the shapes decide gets that verdict, and some are refused."""
+        answers = _answers(mode)
+>       assert answers, f"no recorded genuine answer of {mode}: run tools/binding_census.py --record"
+E       AssertionError: no recorded genuine answer of english.command: run tools/binding_census.py --record
+E       assert []
+
+tests/test_shape_binding_mutants.py:41: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[english.command]
+1 failed, 87 passed in 74.75s (0:01:14)
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified; log /var/tmp/cct/ve-select-run-r_ahr65d/tests__test_assurance_manifest.py.log
+=================================== FAILURES ===================================
+_______________ test_every_json_handling_lean_file_is_classified _______________
+
+    def test_every_json_handling_lean_file_is_classified():
+        """A Lean file that reads or builds JSON is a pinned decoder or has a recorded reason under other_json."""
+        lean = ROOT / "lean"
+        found = {path.relative_to(ROOT).as_posix() for path in lean.rglob("*.lean")
+                 if ".lake" not in path.parts and JSON_USE.search(path.read_text())}
+        decoders = {entry["file"] for entry in MANIFEST["lean_decoders"]["files"]}
+        other = MANIFEST["lean_decoders"]["other_json"]
+        assert not decoders & set(other)
+>       assert found == decoders | set(other), "\n".join(sorted(found ^ (decoders | set(other))))
+E       AssertionError: lean/ResponseShape/Encoders/Command.lean
+E         lean/ResponseShape/Schemas/Command.lean
+E       assert {'lean/Englis...es.lean', ...} == {'lean/Englis...es.lean', ...}
+E         
+E         Extra items in the right set:
+E         'lean/ResponseShape/Encoders/Command.lean'
+E         'lean/ResponseShape/Schemas/Command.lean'
+E         Use -v to get more diff
+
+tests/test_assurance_manifest.py:641: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
+1 failed, 138 passed in 47.01s
+recorded 92 units for tree fbd918f7dc; 3 others left to the static graph until they run (3 with only some of their chunks here); 2 failed
+SHARD 3/6: exit 1 in 1832.7 s; 96 units, 94 passed
