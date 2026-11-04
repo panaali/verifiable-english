@@ -1,0 +1,56 @@
+{
+ "item": "cmp-s4c",
+ "command": "Lean: lake build VE.Discourse.ComposeExamples ResponseShape.Encoders.Discourse; Python: uv run pytest -q tests/test_discourse_composed_route.py -k <test> (each bug planted alone, then restored; the trust mutants of every new trusted definition are trust-mutants.json)",
+ "mutants": [
+  {
+   "definition": "VE.Discourse.Run.runCase",
+   "file": "lean/VE/Discourse/Run.lean",
+   "mutant": "the ve.discourse@1 check dropped from the route entry (S4-28 changes)",
+   "from": "if \"norms@0\" ∈ profiles ∧ \"ve.discourse@1\" ∈ profiles ∧ chainConstructs environment document = true then",
+   "to": "if \"norms@0\" ∈ profiles ∧ chainConstructs environment document = true then",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Run.lean:223 (discourse_wire_acceptance); with that proof cut to sorry, lean/VE/Discourse/ComposeExamples.lean:245 (the route check's S4-28 conjunct)",
+   "check": "proof and #guard"
+  },
+  {
+   "definition": "VE.Discourse.dispatchAdmission",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "readings@1 beside norms@0 accepted (S4-16)",
+   "from": "| .ok .readings => .error \"UnsupportedProfile: ve.discourse@1 with readings@1\"",
+   "to": "| .ok .readings => VE.Norms.Run.runAdmission \"\" environment document",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (the route check's S4-16 conjunct)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.Run.encodeComposed",
+   "file": "lean/VE/Discourse/Run.lean",
+   "mutant": "a soft coherence premise dropped from conditional_on on the route (S4-18)",
+   "from": "VE.Route.Wire.ok id (composedFields c)",
+   "to": "VE.Route.Wire.ok id (composedFields { c with inner := c.inner.setObjVal! \"conditional_on\" (.arr #[]) })",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:178 (encodeComposed keeps inner's conditional_on); lean/ResponseShape/Encoders/Discourse.lean:264 (composed_fits)",
+   "check": "#guard and proof"
+  },
+  {
+   "definition": "ve.discourse.lean_admission",
+   "file": "ve/discourse.py",
+   "mutant": "the relay rewrites a Lean answer field (report_id := inner_report_id)",
+   "from": "if status == \"ok\" and binary:",
+   "to": "if \"inner\" in row: row[\"report_id\"] = row[\"inner_report_id\"]",
+   "result": "KILLED",
+   "test": "tests/test_discourse_composed_route.py::test_the_relay_returns_leans_answer_unchanged",
+   "check": "pytest"
+  },
+  {
+   "definition": "ve.discourse.bind_composed",
+   "file": "ve/discourse.py",
+   "mutant": "the chain route's kinds not bound to the document's units",
+   "from": "if inner.get(\"kinds\") != [u.get(\"kind\") for unit in meta[\"units\"] for u in [unit, *unit.get(\"parts\", [])]]:",
+   "to": "if False:",
+   "result": "KILLED",
+   "test": "tests/test_discourse_composed_route.py::test_every_mutant_is_refused[drop inner.kinds], [retype inner.kinds], [duplicate kinds], [reorder kinds]",
+   "check": "pytest"
+  }
+ ]
+}
