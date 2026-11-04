@@ -1,0 +1,17 @@
+trust_mutants: 23 definitions, 284 mutants (16 to run), 4 jobs, base 561aa79f5716
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:48 VE.Service.DocumentChain.Examples.denyRule (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:151 VE.Service.DocumentChain.Examples.plainCase (?, trusted) lit-minus: 1 -> 0
+SURVIVOR lean/VE/Service/Document.lean:1055 VE.Service.Document.softSource (G[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:1516 VE.Service.Document.softLayer (G[V], trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) lit-minus: 257 -> 256
+UNKNOWN lean/VE/Service/Document.lean:2215 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: units.filterMap -> [] (lean/VE/Service/Document.lean:2215: Function expected at)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-first: permission -> (permission.take 1)
+UNKNOWN lean/VE/Service/Document.lean:2215 VE.Service.DocumentChain.requestOf (?, trusted) list-drop-last: units.filterMap -> (units.filterMap.dropLast) (lean/VE/Service/Document.lean:2218: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:55 VE.Service.DocumentChain.Examples.document (?, trusted) list-last: members -> (members.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:986 VE.Service.Document.decodedEnvironment (D[V], trusted) list-drop-first: profiles -> (profiles.drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-last: (front.getObjVal? "completions").toOption.toList -> (((front.getObjVal? "completions").toOption.toList).reverse.take 1)
+trust_mutants: 60 KILLED, 9 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 2019 s; 55 carried from dfd5eb73f94b (check-only change: lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt)
+trust_mutants: ?, trusted: 48 KILLED, 6 SURVIVOR, 2 UNKNOWN, 171 OTHER SHARD
+trust_mutants: D[V], trusted: 9 KILLED, 1 SURVIVOR, 31 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 2 SURVIVOR, 11 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 1152.3 s, mutants 849 s, cleanup 4.5 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 2886.2 s (9), mutant_builds 258.2 s (16), mutant_checks 1513.6 s (17), stage_controls 406.9 s (3), mutant_probes 900.5 s (5)
