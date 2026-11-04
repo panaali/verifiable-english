@@ -160,6 +160,19 @@ def _joint_answer(row):
             and len({tuple(tuple(x[:2]) for x in c) for c in choices}) == 1)
 
 
+_COMPOSED = {"id", "status", "document_id", "inner", "inner_report_id", "references", "report_id"}
+
+
+def _composed_answer(row):
+    """Whether an admission row is a composed one (Run.lean `encodeComposed`, docs/spec/discourse.md 14.6): exactly
+    the wrapper's members, the chain route's admitted answer `inner` and its report id beside it."""
+    inner = row.get("inner")
+    return (set(row) == _COMPOSED and type(inner) is dict and inner.get("admitted") is True
+            and type(row["references"]) is list
+            and all(type(row[k]) is str and _REPORT_ID.match(row[k]) for k in ("document_id", "report_id"))
+            and type(inner.get("report_id")) is str and row["inner_report_id"] == inner["report_id"])
+
+
 def lean_admission(raw, directory):
     """Lean's admission of a `ve-document@2` text (service mode `discourse`, kind `admission`), with
     the sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
@@ -182,6 +195,7 @@ def lean_admission(raw, directory):
     # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
     well_formed = status is not None and row.get("id") == _CASE_ID and (
         "case_index" not in row and status == "error" and type(row.get("error")) is str or status == "ok" and (
+        _composed_answer(row) or
         # `in (True, ...)` would let 1 through: True == 1 is no JSON equality.
         (row.get("admitted") is True or row.get("admitted") == "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
@@ -404,11 +418,35 @@ def _presentations(doc, block, lean):
     return out
 
 
+def bind_composed(doc, lean):
+    """Lean's composed answer, bound to the loaded document: its reference lines are the document's mentions
+    (`_bind_references`); the chain route's kinds are the document's units' and parts' kinds in document order, and
+    its report's claims are nodes of the document's graph, the root its root (Compose.lean `chainDocument` copies
+    both). The chain route's verdict and report id, and the wrapper's, are Lean's."""
+    meta, inner = doc["meta"], lean["inner"]
+    _bind_references(meta["discourse"], lean["references"])
+    if inner.get("kinds") != [u.get("kind") for unit in meta["units"] for u in [unit, *unit.get("parts", [])]]:
+        raise _foreign("kinds")
+    graph, report = meta.get("graph"), inner.get("report")
+    graph = graph if type(graph) is dict else {}
+    names = {node.get("name") for node in graph.get("nodes", []) if type(node) is dict}
+    if (type(report) is not dict or set(report) != {"root", "assumptions"} or type(report["root"]) is not dict
+            or report["root"].get("name") != graph.get("root") or type(report["assumptions"]) is not list
+            or not all(type(c) is dict and c.get("name") in names for c in report["assumptions"])):
+        raise _foreign("report")
+    return lean
+
+
 def validate_discourse(doc, lean):
     """The discourse admission of a loaded `@2` document: Lean's verdict and answer (`lean`, the
     route's answer on the same bytes), never Python's. The references, every unit's status, the
     report id, the validity verdicts, the joint choices and the joint disjunction are Lean's
     (`load_document` has raised Lean's rejection of a document Lean does not admit)."""
+    if "inner" in lean:
+        bind_composed(doc, lean)
+        # 14.7: the unit statuses are the chain route's, and its answer carries none; Python shows none of its own
+        raise CheckerUnavailable("CheckerUnavailable: Lean admits the document on the composed path, "
+                                 "whose answer carries no unit statuses for the document report")
     block = doc["meta"]["discourse"]
     open_sets = [rs for rs in active_reading_sets(doc["meta"].get("reading_sets", [])) if rs["status"] == "open"]
     _bind_answer(doc, block, lean, open_sets)
