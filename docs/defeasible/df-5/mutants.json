@@ -1,6 +1,6 @@
 {
  "item": "df-5",
- "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants.json (tools/trust_mutants.py). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch).",
+ "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants-final.json (tools/trust_mutants.py, with trust-mutants-allow.json). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch).",
  "mutants": [
   {
    "id": "S1",
