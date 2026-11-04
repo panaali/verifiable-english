@@ -1,0 +1,172 @@
+shard 6/6: 62 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/1158] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/1158] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/1158] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (4919 lines cut; full output in shard-full.txt)
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded autocfg v1.5.1
+  Downloaded serde_derive v1.0.229
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded serde_core v1.0.229
+  Downloaded itoa v1.0.18
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded num-traits v0.2.19
+  Downloaded unicode-ident v1.0.26
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.49s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.51s
+order: failed last time []; changed ['tests/test_discourse_composed_route.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_readings_rd6b_differential.py::chunk(1/4), tests/test_readings_rd6b_differential.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(2/4)
+recording 62 units with 4 jobs in /tmp/ve-select-run-b12wy1lh
+  tests/test_discourse_composed_route.py: exit 1 in 2.4 s, 608 functions
+  tests/test_consolidation_tools.py: exit 1 in 1746.6 s, 1229 functions
+chunked tests/test_readings_rd6b_differential.py: 2 of 4 chunks, exit 0, 708.3 s in all, longest chunk 393.8 s; 8 passed, 0 skipped, 0 failed; each of its 8 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 506.3 s in all, longest chunk 506.3 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+FAILED tests/test_consolidation_tools.py (exit 1): tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations; log /tmp/ve-select-run-b12wy1lh/tests__test_consolidation_tools.py.log
+........................................................................ [ 25%]
+........................................................................ [ 50%]
+........................................................................ [ 75%]
+....................................................F................... [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-_bc7v9zl)
+
+=================================== FAILURES ===================================
+________________ test_committed_ledger_names_real_declarations _________________
+
+    def test_committed_ledger_names_real_declarations():
+        rows, problems = trust_map.ledger()
+        assert problems == []
+        assert [r["step"] for r in rows] == ["1", "2a", "2b", "3", "4", "5", "6", "7", "8a", "8b", "9", "10"]
+        # The plan's section 4 quotes these measured figures (E9); regenerate them after a table change.
+        plan = (ROOT / "docs/CONSOLIDATION-PLAN.md").read_text()
+        for r in rows:
+>           assert f"| {r['step']} | {r['removed']} | {r['tied']} |" in plan, r["step"]
+E           AssertionError: 7
+E           assert '| 7 | 732 | 0 |' in "# Consolidation plan: a small core, shared kits, stated ties\n\nStatus: plan only, no code changes. Branch `design/co...lock merges, or only report, until step 0's numbers\n    have been checked against the trust map by a second reader?\n"
+
+tests/test_consolidation_tools.py:1172: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations - AssertionError: 7
+assert '| 7 | 732 | 0 |' in "# Consolidation plan: a small core, shared kits, stated ties\n\nStatus: plan only, no code changes. Branch `design/co...lock merges, or only report, until step 0's numbers\n    have been checked against the trust map by a second reader?\n"
+1 failed, 287 passed in 1745.83s (0:29:05)
+FAILED tests/test_discourse_composed_route.py (exit 1): tests/test_discourse_composed_route.py::test_every_mutant_is_refused[retype inner.admitted 2], tests/test_discourse_composed_route.py::test_every_mutant_is_refused[retype references 4]; log /tmp/ve-select-run-b12wy1lh/tests__test_discourse_composed_route.py.log
+____________ test_every_mutant_is_refused[retype inner.admitted 2] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-3/test_every_mutant_is_refused_r56')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f1a2ced0e50>
+genuine = {'document_id': '713b82c095c27fb6d81ed87eb2ef682359efd32345e5606ec8e76f66d10079c3', 'id': 's4c', 'inner': {'admitted':...en:t', 'name': 'n'}}, ...}, 'inner_report_id': 'dbd86bb257612fddb2deb15e53cd2abaeb21b3be8565867bb6fb2b5daf61edb4', ...}
+name = 'retype inner.admitted 2'
+
+    @pytest.mark.parametrize("name", [name for name, _ in _mutants(copy.deepcopy({
+        "id": "", "status": "ok", "document_id": "", "inner": {"kinds": ["k"], "report": {"root": {}, "assumptions": []}},
+        "inner_report_id": "", "references": [], "report_id": ""}))])
+    def test_every_mutant_is_refused(tmp_path, monkeypatch, genuine, name):
+>       [mutant] = [m for n, m in _mutants(copy.deepcopy(genuine)) if n == name]
+        ^^^^^^^^
+E       ValueError: not enough values to unpack (expected 1, got 0)
+
+tests/test_discourse_composed_route.py:319: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_discourse_composed_route.py::test_every_mutant_is_refused[retype references 4] - AssertionError: retype references 4
+assert 'Lean admits...omposed path' not in 'CheckerUnav...ument report'
+  
+  'Lean admits the do...n the composed path' is contained here:
+    CheckerUnavailable: Lean admits the document on the composed path, whose answer carries no unit statuses for the document report
+  ?                     +++++++++++++++++++++++++++++++++++++++++++++
+FAILED tests/test_discourse_composed_route.py::test_every_mutant_is_refused[retype inner.admitted 2] - ValueError: not enough values to unpack (expected 1, got 0)
+2 failed, 145 passed in 1.60s
+recorded 59 units for tree 791eeb8723; 2 others left to the static graph until they run (2 with only some of their chunks here); 2 failed
+SHARD 6/6: exit 1 in 1793.7 s; 62 units, 60 passed
