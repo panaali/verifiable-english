@@ -34,8 +34,8 @@ inductive Polarity where
   | denied        -- "this isn't because", "not because"
   deriving DecidableEq, Repr
 
-/-- What the text says about other reasons for the same target. `partly`, not `partial`: `partial` is a Lean
-    keyword (plan 2.1). -/
+/-- What the text says about other reasons for the same target. The constructor is `partly` because draft 1's
+    name is a Lean keyword (plan 2.1). -/
 inductive Share where
   | plain         -- says nothing about other reasons
   | sole          -- "only because", "solely because", "simply because", "just because"

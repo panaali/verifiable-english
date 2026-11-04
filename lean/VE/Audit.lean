@@ -273,6 +273,9 @@ import VE.Order.Wire
 import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
+import VE.Purposes.Decl
+import VE.Purposes.WellFormed
+import VE.Purposes.Wire
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
@@ -377,6 +380,7 @@ import VE.Route.Decode
 import VE.Route.Examples
 import VE.Route.Flags
 import VE.Route.Gate
+import VE.Route.Inert
 import VE.Route.Layer
 import VE.Route.Metered
 import VE.Route.MeteredProofs
@@ -4298,6 +4302,41 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Purposes.Polarity.ofWire_wire
+#print axioms VE.Purposes.Relation.ofWire_wire
+#print axioms VE.Purposes.Relation.wire_mem
+#print axioms VE.Purposes.Relation.wire_ne_prevents
+#print axioms VE.Purposes.Share.ofWire_wire
+#print axioms VE.Purposes.adjacent_iff
+#print axioms VE.Purposes.bind_ok
+#print axioms VE.Purposes.check_ok_iff
+#print axioms VE.Purposes.decodeBlock_relations
+#print axioms VE.Purposes.decodeBlock_render
+#print axioms VE.Purposes.decodeLink_ok
+#print axioms VE.Purposes.decodeLink_render
+#print axioms VE.Purposes.decodeLinks_length
+#print axioms VE.Purposes.decodeLinks_ok
+#print axioms VE.Purposes.decodeLinks_render
+#print axioms VE.Purposes.decodeRef_ok
+#print axioms VE.Purposes.decodeRef_render
+#print axioms VE.Purposes.decodeRefs_ok
+#print axioms VE.Purposes.decodeRefs_render
+#print axioms VE.Purposes.decodeSide_ok
+#print axioms VE.Purposes.decodeSide_render
+#print axioms VE.Purposes.forM_iff
+#print axioms VE.Purposes.idOf_ok
+#print axioms VE.Purposes.idOf_str
+#print axioms VE.Purposes.map_ok
+#print axioms VE.Purposes.markerAgrees_kind
+#print axioms VE.Purposes.markerHonest_labelled
+#print axioms VE.Purposes.nonfactive_iff
+#print axioms VE.Purposes.require_iff
+#print axioms VE.Purposes.sameUnit_parent
+#print axioms VE.Purposes.shareOk_iff
+#print axioms VE.Purposes.sideAdjacent_iff
+#print axioms VE.Purposes.side_kind
+#print axioms VE.Purposes.unit_bind
+#print axioms VE.Purposes.unstated_eq
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed
 #print axioms VE.Question.Str.bsize_toSubstring
@@ -6768,13 +6807,18 @@ import VE.WireContract.Engine
 #print axioms VE.Risk.without_other
 #print axioms VE.Risk.without_split
 #print axioms VE.Risk.witnessE_sound
+#print axioms VE.Route.Admission.Kind.inert_active
 #print axioms VE.Route.Admission.admitNodes_ok
+#print axioms VE.Route.Admission.admit_inert
 #print axioms VE.Route.Admission.admit_labels_decoded
 #print axioms VE.Route.Admission.admit_report_sound
 #print axioms VE.Route.Admission.admit_string_sound
 #print axioms VE.Route.Admission.atomicKind_render
 #print axioms VE.Route.Admission.checkGraph_ok
 #print axioms VE.Route.Admission.decodeKind_render
+#print axioms VE.Route.Admission.inForce_inert
+#print axioms VE.Route.Admission.inert_unnamed
+#print axioms VE.Route.Admission.normRole_inert
 #print axioms VE.Route.Admission.parseLabel_render
 #print axioms VE.Route.Background.closure_route_acceptance
 #print axioms VE.Route.Background.fol_background_complete

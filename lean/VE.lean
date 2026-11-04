@@ -319,3 +319,8 @@ import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Route.Inert
+import VE.Purposes.Decl
+import VE.Purposes.Wire
+import VE.Purposes.WellFormed
+import VE.Purposes.Examples

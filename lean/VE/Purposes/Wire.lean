@@ -115,13 +115,13 @@ def renderBlock (B : Block) : Json := Json.mkObj [("links", .arr (B.links.map Li
 
 /-! ## The round trip -/
 
-private theorem bind_ok {α β : Type} {x : Except String α} {f : α → Except String β} {b : β}
+theorem bind_ok {α β : Type} {x : Except String α} {f : α → Except String β} {b : β}
     (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b := by
   cases x with
   | error e => cases h
   | ok a => exact ⟨a, rfl, h⟩
 
-private theorem map_ok {α β : Type} {x : Except String α} {f : α → β} {b : β}
+theorem map_ok {α β : Type} {x : Except String α} {f : α → β} {b : β}
     (h : (f <$> x) = .ok b) : ∃ a, x = .ok a ∧ f a = b := by
   cases x with
   | error e => cases h
