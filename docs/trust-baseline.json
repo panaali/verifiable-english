@@ -1972,6 +1972,20 @@
    "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
    "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 9,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   }
  ]
 }
