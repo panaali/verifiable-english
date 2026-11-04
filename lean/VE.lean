@@ -324,5 +324,8 @@ import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Weighing.Tree
+import VE.Weighing.Conditions
+import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples

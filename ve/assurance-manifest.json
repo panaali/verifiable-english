@@ -2310,7 +2310,8 @@
       "lean/VE/EnglishGrammar/Norm/Examples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s6.md section 6 build environment JSON for Env.decode and decode Python's recorded nodes; no runner path",
       "lean/VE/Service/DocumentChain.lean": "statements only (profile-composition PC-2a): `layeredOf_ids` and `layeredOf_entails` read `requestOf`'s case through `Json.getObjVal?`; no service mode",
       "lean/VE/Service/DocumentChainExamples.lean": "examples only: PC-2a's fixtures (profile-composition 5.2) are built as JSON documents and sent to `check` and `layeredOf` in `#guard`s; no service mode",
-      "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode"
+      "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode",
+      "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file"
     }
   },
   "plan_operations": {

@@ -60,7 +60,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
-- [docs/spec/](docs__spec.md) — 8 modules — -
+- [docs/spec/](docs__spec.md) — 9 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
 - [docs/test-speed-b1/](docs__test-speed-b1.md) — 1 modules — -
@@ -118,7 +118,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
-- [lean/VE/Weighing/](lean__VE__Weighing.md) — 2 modules — -
+- [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.

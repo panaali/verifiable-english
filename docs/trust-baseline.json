@@ -2028,6 +2028,13 @@
    "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "S",
+   "lines": 132,
+   "reason": "wg-2: VE/Weighing/Tree.lean S +68 (the block's types, nodeNamed, ruleSorts, targetSorts, targetF, targetExists; rankOrder, strictPair and WeighEnv.empty tied); VE/Weighing/Conditions.lean S +64 (strengthEntries, condPremise, condEntries, grantEdges, grantReach, grantedThrough, grantConds, grantEntries, weighEntries, strengthPremises, weighLabelled, weighConditions; weighPremises and WellFormedWeigh tied); VE/Acts/Elaborate.lean V -1 (refsOk's two texts become splitRefusal, D[R]); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-2, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   }
  ]
 }
