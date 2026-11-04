@@ -1,0 +1,18 @@
+{
+  "item": "tm-plan-failfast",
+  "note": "zsh only: the product code is manage-agents/mac-pytest.sh (no Lean, Python or Rust of this repo changed). Each seed was applied to a copy of the installed script and run with OLD=mac-pytest.sh.bak-20261103failfast zsh test-harness/trustmut/test-trustmut.zsh <copy>; every seed was removed (the copies deleted), and the installed script passes 32 of 35, the 3 failures predating this item.",
+  "mutants": [
+    {"id": "A-any-nonzero-is-refusal", "file": "manage-agents/mac-pytest.sh", "change": "[ $prc = 2 ] -> [ $prc != 0 ]",
+     "test": "test-trustmut.zsh: plan crash (a signal): routing unchanged; plan exit 1 (an exception): routing unchanged", "caught": true},
+    {"id": "B-rescore-kept", "file": "manage-agents/mac-pytest.sh", "change": "--json|--jobs|--rescore) i=$((i+2)) -> --json|--jobs) i=$((i+2))",
+     "test": "test-trustmut.zsh: one --plan in the worktree, --json/--jobs/--rescore dropped, the rest kept in order", "caught": true},
+    {"id": "C-part-run-plans", "file": "manage-agents/mac-pytest.sh", "change": "the [ -z \"$MAC_PYTEST_TM_PART\" ] guard removed",
+     "test": "test-trustmut.zsh: a part run (MAC_PYTEST_TM_PART): no local --plan, the Mac runs it", "caught": true},
+    {"id": "D-kill-switch-ignored", "file": "manage-agents/mac-pytest.sh", "change": "TM_PLAN_FAILFAST.off -> TM_PLAN_FAILFAST.of",
+     "test": "test-trustmut.zsh: kill switch TM_PLAN_FAILFAST.off: no local --plan, routes as today (Actions first, then the Mac)", "caught": true},
+    {"id": "E-uv-error-is-refusal", "file": "manage-agents/mac-pytest.sh", "change": "the [[ ${pfm[1]} != error:* ]] clause removed",
+     "test": "test-trustmut.zsh: plan exit 2 from uv itself (error: line): routing unchanged", "caught": true},
+    {"id": "F-no-exit-after-refusal", "file": "manage-agents/mac-pytest.sh", "change": "exit 2 after the refusal removed",
+     "test": "test-trustmut.zsh: plan exit 2 with a message -> rc 2, no pool called (no Actions, no Mac, no VM)", "caught": true}
+  ]
+}
