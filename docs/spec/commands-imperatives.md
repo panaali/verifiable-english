@@ -1714,6 +1714,8 @@ The plan leaves these open. The stub marks each where it is used; nothing here c
   `readInstruction ctx s` takes none; only `Request` has `unit`. The stub writes the literal `<u>`. Either `Context`
   gains the unit, or the encoder writes `q.unit` as the text. Until decided, CI-2's fixtures P2 to P3′ check the code
   only.
+  **Ruled** (reviews/dri-decisions-20261102-ci-0.md item 2): the wire encoder writes the request's unit `q.unit` as the text; P2, P3 and P3′ check
+  code and text.
 - **O2. What `many` lists for an ambiguous sentence to prove.** The plan says "ambiguous gives `many`" and "one
   reading must equal exactly one record's target". It does not say which proof readings `many` holds when P has two
   readings: one per reading that matches exactly one record, and what happens to a reading that matches none or two.
@@ -1721,6 +1723,8 @@ The plan leaves these open. The stub marks each where it is used; nothing here c
   `one`, and any refusal it gives has a classed code: `proofTask_bound`, `proofTask_addressed`, `readInstruction_typed`,
   `readInstruction_refused_classed` and CI-3's `readInstruction_typed_step` depend on that, and CI-2 cannot close those
   proofs until O2 is answered.
+  **Ruled** (reviews/dri-decisions-20261102-ci-0.md item 3): `proofMany` lists, in the reader's order, one proof reading per reading whose target
+  equals exactly one record's target; fewer than two left is `QueryMismatch`, never `one`.
 - **O3. A `Then` unit's antecedent in authoring.** Finding (c) names "the earlier translated instruction unit the
   writer names". A source document's unit schema (`Source/Run.lean:40-41`: `id`, `span`, `kind`, `meaning`, `support`,
   optional `content`, `surface`, `meaning_id`, `status`) has no field for it. Without one, every authored `Then` unit
@@ -1743,6 +1747,7 @@ The plan leaves these open. The stub marks each where it is used; nothing here c
   `cap`, and no field gives the work budget `b` (english-lean reads at `workBudget`). With `b > workBudget`, the
   condition reader's fallback (which re-reads at `workBudget` for the code and text) can report `Budget` as a refusal
   where the read at `b` found no reading.
+  **Ruled** (reviews/dri-decisions-20261102-ci-0.md item 4): `Context.b = workBudget`; the request has no budget field.
 - **O8. The refused step's name (finding (d)).** Plan 12.2(d) says that in authoring the refusal's text names the
   refused step, and gives no format; choosing one needs a new `shapeOutcome` body. Until decided, the step's own code
   and text pass through, and CI-3's refused-sequence rows check the code only.
@@ -1751,3 +1756,5 @@ The plan leaves these open. The stub marks each where it is used; nothing here c
   `Texts.codeClasses` lacks it, and section 4's row 8 covers only `Outcome.many`.
 - **O10. A proof wording over 400 bytes.** `proofTask` runs before `withinLimits`, so such a proof wording is not
   `limit`; neither the plan nor section 4's row 5 says whether it should be.
+  **Ruled** (reviews/dri-decisions-20261102-ci-0.md item 5): `proofTask` gives `limit` for a proof wording over 400 bytes before reading it. O3 to O6,
+  O8 and O9: the refusal the spec gives stands (item 5).
