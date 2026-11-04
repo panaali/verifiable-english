@@ -11,7 +11,7 @@ inside a test), when each worker finished its last test, and the slowest tests (
 teardown). `durations PROFILE [PROFILE ...] --output tools/test-durations.json` writes the durations file
 that `tools/test_schedule.py` orders the suite by (each test's longest time among the runs; `--previous FILE`
 counts an earlier file as one more run; `--log` reads the times a `--durations=0 --durations-min=0` run
-printed instead of a profile).
+printed instead of a profile; `--gate-record FILE` reads the durations a gate record keeps).
 
 A run elsewhere (the Mac test runner, whose output streams back) is measured from its `-v` output:
 `... pytest -v -n 9 --durations=0 --durations-min=0 | suite_tail.py stamp --output LOG` writes each line with
@@ -167,14 +167,26 @@ def durations(args) -> int:
 
     With `--previous`, an earlier durations file counts as one more run (of the tests it records) and keeps
     its estimate of an unrecorded test: profiling a few changed files adds the times of their new and split
-    tests without forgetting the rest of the suite, or a cold time that this run measured warm."""
+    tests without forgetting the rest of the suite, or a cold time that this run measured warm.
+
+    With `--gate-record`, a gate record file (its `durations`, `gate.record_file_durations`) counts as one more run of
+    the tests it records; it keeps only the mean of its short tests, so the estimate of an unrecorded test is
+    the longest of the inputs' (each record's, and the profiles' and logs' or the earlier file's). The source
+    line then names each record and its sha256."""
     current = set(json.loads(args.collection.read_text()) if args.collection is not None
                   else gate_collection.collect(ROOT))
     timed: dict[str, float] = {}
     runs = [[(row["nodeid"], seconds(row)) for row in records(profile)] for profile in args.profile]
     runs += [list(logged_seconds(log.read_text()).items()) for log in args.log]
+    gate_records = []
+    for path in args.gate_record:
+        found = gate.record_file_durations(path)
+        if found is None:
+            raise SystemExit(f"{path}: not a gate record with durations")
+        gate_records.append((path, *found))
+        runs.append(list(found[1].durations.items()))
     if not runs:
-        raise SystemExit("no profile directory and no --log")
+        raise SystemExit("no profile directory, no --log and no --gate-record")
     for run_seconds in runs:
         for nodeid, value in run_seconds:
             if nodeid in current:
@@ -187,7 +199,16 @@ def durations(args) -> int:
         for nodeid, value in previous.items():
             if nodeid in current:
                 timed[nodeid] = max(timed.get(nodeid, 0.0), value)
-    args.output.write_text(test_schedule.durations_text(timed, source=args.source, unrecorded=unrecorded))
+    source = args.source
+    if gate_records:
+        short = [value for value in timed.values() if value < test_schedule.RECORDED_SECONDS]
+        means = [estimates.unrecorded for _, _, estimates in gate_records]
+        means += [] if unrecorded is None else [unrecorded]
+        means += [sum(short) / len(short)] if short and unrecorded is None else []
+        unrecorded = round(max(means), 3)
+        source += "; with each test's longest time in the gate records (suite_tail.py durations --gate-record) " + \
+            ", ".join(f"{path} (sha256 {digest})" for path, digest, _ in gate_records)
+    args.output.write_text(test_schedule.durations_text(timed, source=source, unrecorded=unrecorded))
     kept = sum(value >= test_schedule.RECORDED_SECONDS for value in timed.values())
     print(f"wrote {kept} of {len(timed)} tests to {args.output}")
     return 0
@@ -283,6 +304,8 @@ def main() -> int:
     record.add_argument("--collection", type=Path, help="test IDs to keep (default: collect the current gate suite)")
     record.add_argument("--previous", type=Path,
                         help="an earlier durations file, counted as one more run")
+    record.add_argument("--gate-record", type=Path, action="append", default=[],
+                        help="a gate record file with durations (a full or merged shard gate record), as one more run")
     stamped = commands.add_parser("stamp", help="copy standard input, each line after the time it arrived")
     stamped.add_argument("--output", type=Path, required=True)
     tailed = commands.add_parser("tail", help="the wall and tail of a stamped -v xdist log")

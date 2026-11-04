@@ -1,0 +1,7 @@
+{
+  "status": "CheckerUnavailable",
+  "error": {
+    "code": "CheckerUnavailable",
+    "message": "ReadingsConformance: Lean's English plan has an unknown frame unworded"
+  }
+}

@@ -1965,6 +1965,69 @@
    "reason": "me-8: S +8 (lean/VE/Calc/Interval.lean InBox +4; lean/VE/Calc/Consistency.lean Consistent +4); K +0, untied V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-8, 2026-11-02",
    "commit": "287d5dc601e634a3d1720b907e79522a3464c8aa"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 61,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
+   "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 9,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 85,
+   "reason": "at-1w: V +85 (K +0, S +0): lean/VE/Attribution/Words.lean +47 (wantsPhrase?, finitePhrase, baseOf, headRest, vowel: replace ve/report_english.py's _infinitive and _finite, deleted in the same change; R6); lean/VE/Attribution/Run.lean +23 (runWants, the reports-wants kind's relay plumbing; R16) and lean/ResponseShape/Schemas/Reports.lean +15 (its row; R16), R16 total +38; trust mutants docs/attitudes/at-1w/trust-mutants.json: 204 killed, 0 survivors",
+   "signature": "SIGNED by standing ruling R6 (Words.lean +47) and standing ruling R16 (Run.lean +23, Schemas/Reports.lean +15) (DRI-RULINGS.md), at-1w, 2026-11-04",
+   "commit": "94580b39b2aa2d391c35eb5c47a08e8bf314e828"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
+   "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
+  },
+  {
+   "class": "S",
+   "lines": 39,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   }
  ]
 }
