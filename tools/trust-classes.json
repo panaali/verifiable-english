@@ -18280,14 +18280,29 @@
         "VE.Weighing.renderTarget"
       ],
       "G[I]": [
-        "VE.Weighing.CondKind.label"
+        "VE.Weighing.CondKind.label",
+        "VE.Weighing.chainLt"
       ],
       "G[V]": [
+        {
+          "name": "VE.Weighing.RankChain",
+          "tied": [
+            "VE.Weighing.holistic_iff_no_always_chain",
+            "VE.Weighing.strictWitness_chain"
+          ]
+        },
         {
           "name": "VE.Weighing.WeighEnv.empty",
           "tied": [
             "VE.Weighing.weigh_conservative",
             "VE.Weighing.wellFormedWeigh_empty"
+          ]
+        },
+        {
+          "name": "VE.Weighing.chainEdges",
+          "tied": [
+            "VE.Weighing.holistic_iff_no_always_chain",
+            "VE.Weighing.strictWitness_chain"
           ]
         },
         {
@@ -18304,7 +18319,17 @@
             "VE.Weighing.strictPair_outranks",
             "VE.Weighing.strictPair_up"
           ]
+        },
+        {
+          "name": "VE.Weighing.strictWitness",
+          "tied": [
+            "VE.Weighing.strictWitness_chain",
+            "VE.Weighing.strictWitness_isSome"
+          ]
         }
+      ],
+      "C": [
+        "VE.Weighing.chainsFrom"
       ]
     },
     "VE/Weighing/Conditions.lean": {
@@ -18343,9 +18368,21 @@
       ],
       "G[V]": [
         {
+          "name": "VE.Weighing.SameBase",
+          "tied": [
+            "VE.Weighing.weigh_alone_base_free"
+          ]
+        },
+        {
           "name": "VE.Weighing.WellFormedWeigh",
           "tied": [
             "VE.Weighing.wellFormedWeigh_empty"
+          ]
+        },
+        {
+          "name": "VE.Weighing.strictFlag",
+          "tied": [
+            "VE.Weighing.all_always_is_strict"
           ]
         },
         {
@@ -18360,6 +18397,7 @@
       ],
       "P": [
         "VE.Weighing.WeighFacts",
+        "VE.Weighing.freeWitness",
         "VE.Weighing.tacticWsimp",
         "VE.Weighing.tacticWsimp_all"
       ]
@@ -18369,12 +18407,17 @@
         "VE.Weighing.Examples.GAtom",
         "VE.Weighing.Examples.U",
         "VE.Weighing.Examples.W",
+        "VE.Weighing.Examples.allPairs",
         "VE.Weighing.Examples.alphaOf",
         "VE.Weighing.Examples.assignments",
         "VE.Weighing.Examples.attrJ",
         "VE.Weighing.Examples.baseμ",
+        "VE.Weighing.Examples.brute",
         "VE.Weighing.Examples.conj",
         "VE.Weighing.Examples.cp",
+        "VE.Weighing.Examples.cxD",
+        "VE.Weighing.Examples.cxW",
+        "VE.Weighing.Examples.cxX",
         "VE.Weighing.Examples.decode",
         "VE.Weighing.Examples.dfltR",
         "VE.Weighing.Examples.doms2",
@@ -18382,6 +18425,7 @@
         "VE.Weighing.Examples.gp",
         "VE.Weighing.Examples.modelOf",
         "VE.Weighing.Examples.outcome",
+        "VE.Weighing.Examples.ranks4",
         "VE.Weighing.Examples.softJ",
         "VE.Weighing.Examples.tOut",
         "VE.Weighing.Examples.trustsF",
@@ -18389,8 +18433,11 @@
         "VE.Weighing.Examples.w3",
         "VE.Weighing.Examples.w3bc",
         "VE.Weighing.Examples.w3c",
+        "VE.Weighing.Examples.wShort",
+        "VE.Weighing.Examples.wTie",
         "VE.Weighing.Examples.wd",
         "VE.Weighing.Examples.wα",
+        "VE.Weighing.Examples.wβ",
         "VE.Weighing.Examples.wε",
         "VE.Weighing.Examples.wζ",
         "VE.Weighing.Examples.wμ",
@@ -18398,6 +18445,7 @@
         "VE.Weighing.Examples.yReq",
         "VE.Weighing.Examples.α",
         "VE.Weighing.Examples.α3",
+        "VE.Weighing.Examples.β1",
         "VE.Weighing.Examples.ζd",
         "VE.Weighing.Examples.μAll",
         "VE.Weighing.Examples.μd"

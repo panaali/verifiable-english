@@ -160,4 +160,77 @@ def outcome (t : List GAtom) (vs : List String) : Bool :=
   bindAll ["assistant", "user"] (.implies (.binary "soft__off__n__operator" (.var 1) (.var 0)) trustsF)
 #guard weighPremises wμ == (weighLabelled wμ).map (·.2) && (weighPremises wμ).length == 3
 
+/-! ## W-β: the paraphrase's witness (weighing.md 2.3, 7.2), and a shortest and least chain -/
+
+def ranks4 : List String := ["e", "g", "h", "s"]
+def β1 : SoftDoc := alphaOf ranks4 [("s", "e"), ("e", "g"), ("g", "h")] "s" "h"
+def wβ (always : List (String × String)) : WeighDoc := wd β1 (W always)
+def allPairs : List (String × String) := ranks4.flatMap fun a => ranks4.map (a, ·)
+def brute (w : WeighDoc) (H L : String) : Bool :=
+  (chainsFrom w.D.soft.outranks L w.D.soft.ranks.length H).any (fun c => (chainEdges c).any w.W.always.contains)
+
+#guard verdict (wβ [("s", "e")]) == "accepted" && allPairs.all fun p => strictPair (wβ [("s", "e")]) p.1 p.2 ==
+  brute (wβ [("s", "e")]) p.1 p.2 && (strictWitness (wβ [("s", "e")]) p.1 p.2).isSome == strictPair (wβ [("s", "e")]) p.1 p.2
+#guard [strictWitness (wβ [("s", "e")]) "s" "h", strictWitness (wβ [("s", "e")]) "s" "g",
+    strictWitness (wβ [("s", "e")]) "s" "e", strictWitness (wβ [("s", "e")]) "e" "h",
+    strictWitness (wβ [("s", "e")]) "g" "h", strictWitness (wβ [("s", "e")]) "h" "s"] ==
+  [some ["s", "e", "g", "h"], some ["s", "e", "g"], some ["s", "e"], none, none, none]
+#guard strictWitness (wβ [("g", "h")]) "s" "h" == some ["s", "e", "g", "h"] && chainEdges ["s", "e", "g"] ==
+  [("s", "e"), ("e", "g")] && chainEdges ["s"] == []
+-- the shortest chain wins over the first one found; on equal lengths the least in list order
+def wShort : WeighDoc := wd (alphaOf ["a", "b", "c", "d"] [("a", "b"), ("b", "c"), ("c", "d"), ("a", "c")] "a" "d")
+  (W [("c", "d")])
+def wTie : WeighDoc := wd (alphaOf ["a", "b", "c", "d"] [("a", "c"), ("a", "b"), ("c", "d"), ("b", "d")] "a" "d")
+  (W [("c", "d"), ("b", "d")])
+#guard verdict wShort == "accepted" && chainsFrom wShort.D.soft.outranks "d" 4 "a" == [["a", "b", "c", "d"], ["a", "c", "d"]] &&
+  strictWitness wShort "a" "d" == some ["a", "c", "d"]
+#guard verdict wTie == "accepted" && chainsFrom wTie.D.soft.outranks "d" 4 "a" == [["a", "c", "d"], ["a", "b", "d"]] &&
+  strictWitness wTie "a" "d" == some ["a", "b", "d"] && chainLt ["a", "b", "d"] ["a", "c", "d"] &&
+  !chainLt ["a", "c", "d"] ["a", "b", "d"] && chainLt ["a", "d"] ["a", "b", "d"]
+-- the fuel bounds a chain at `ranks.length` edges
+#guard chainsFrom wShort.D.soft.outranks "d" 2 "a" == [["a", "c", "d"]] && chainsFrom wShort.D.soft.outranks "d" 0 "a" == []
+
+/-! ## `strength_iff` as approved is false off the decoder (DRI question, docs/weighing/wg-2/REPORT.md section 3)
+
+`outweighsName "_x_permitted" "l" "c"` and `outweighsName "x_permitted" "l" "c_"` are one string. On a document built
+directly (not decoded) with a regulated `_x_permitted`, every hypothesis of `strength_iff` holds at
+`(_x_permitted, l, c)` (well-formed, both ranks declared, the predicate declared), the premise is in `Str_T`, and the
+triple is not an `outweighs` decision. The decoder refuses the name, so no accepted wire document reaches it. -/
+
+def cxD : SoftDoc := alphaOf ["c", "c_", "l"] [("c_", "l")] "c_" "l"
+def cxX : SoftDoc :=
+  { cxD with
+    E := { cxD.E with predicates := fun n => if n = "_x_permitted" then some ["assistant"] else cxD.E.predicates n }
+    T := { cxD.T with regulated := cxD.T.regulated ++ [⟨"_x_permitted", ["assistant"], true, .plain, none, none⟩] } }
+def cxW : WeighDoc := wd cxX (W [("c_", "l")])
+#guard WellFormedWeigh cxW && cxX.soft.ranks.contains "l" && cxX.soft.ranks.contains "c" &&
+  (cxX.E.predicates "_x_permitted").isSome
+#guard (strengthPremises cxW).contains (bindAll (actSortsOf cxX "_x_permitted") (.not (outweighsF cxX "_x_permitted" "l" "c")))
+#guard !(outweighsTriples cxX).contains ("_x_permitted", "l", "c") && !strictPair cxW "c" "l" &&
+  outweighsName "_x_permitted" "l" "c" == outweighsName "x_permitted" "l" "c_"
+#guard match VE.SoftNorms.Wire.decodeSoftSource (envOf [xReq "deny", xPerm, baseJ "urgent",
+    regJ "_x_permitted" "[\"assistant\"]" "plain" "allow"] (softJ ["c", "c_", "l"] [("c_", "l")] true))
+    (Json.parse "[]").toOption.get! with
+  | .error e => e == "Invalid ASCII identifier: '_x_permitted'"
+  | .ok _ => false
+-- the reverse direction holds for every triple: `strength_mem`
+example (Wd : WeighDoc) (a L H : String) (ht : (a, L, H) ∈ outweighsTriples Wd.D) (hs : strictPair Wd H L = true) :
+    bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd := strength_mem Wd ht hs
+
+/-! ## The theorems of weighing.md 5 this item delivers (the review probe F1): the build fails if one is missing -/
+
+example : True := by
+  have _ := @strictWitness_isSome
+  have _ := @strictWitness_chain
+  have _ := @holistic_iff_no_always_chain
+  have _ := @always_dominates.{0}
+  have _ := @always_no_override.{0}
+  have _ := @all_always_is_strict.{0}
+  have _ := @factors_inert
+  have _ := @grant_within_grantor.{0}
+  have _ := @weighPremises_wellFormed
+  have _ := @weighPremises_substructure.{0}
+  have _ := @weigh_alone_base_free.{0}
+  trivial
+
 end VE.Weighing.Examples

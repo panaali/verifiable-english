@@ -5,8 +5,8 @@ import VE.SoftNorms.Soften
 /-!
 # Weighing's block, strength and targets (docs/spec/weighing.md 1.1-1.3)
 
-The decoded `weighing` block of a `weighing@0` document, the strength of a rank pair (plan D4) and the open
-decision a condition targets. Reachability is QS-1's (`VE.Closure.Order.atLeast`); weighing has no rank closure of
+The decoded `weighing` block of a `weighing@0` document, the strength of a rank pair (plan D4), the chain the
+paraphrase shows for a strict pair (2.3) and the open decision a condition targets. Reachability is QS-1's (`VE.Closure.Order.atLeast`); weighing has no rank closure of
 its own. The premises and checks are `Conditions.lean`'s.
 -/
 
@@ -68,6 +68,33 @@ def rankOrder (Wd : WeighDoc) : VE.Closure.Order String := ⟨Wd.D.soft.ranks, W
 /-- `(H, L)` is strict: some `always` edge `(a, b)` has `H` at or above `a` and `b` at or above `L`. -/
 def strictPair (Wd : WeighDoc) (H L : String) : Bool :=
   Wd.W.always.any (fun e => (rankOrder Wd).atLeast H e.1 && (rankOrder Wd).atLeast e.2 L)
+
+def chainEdges : List String → List (String × String)
+  | a :: b :: rest => (a, b) :: chainEdges (b :: rest)
+  | _ => []
+
+/-- A chain of declared edges from `H` down to `L`. -/
+def RankChain (Wd : WeighDoc) (H L : String) (c : List String) : Prop :=
+  c.head? = some H ∧ c.getLast? = some L ∧ 2 ≤ c.length ∧ ∀ e ∈ chainEdges c, e ∈ Wd.D.soft.outranks
+
+/-- Every chain of declared edges from `a` down to `L`, with fuel (the rank graph is acyclic, soft 4.1). -/
+def chainsFrom (E : List (String × String)) (L : String) : Nat → String → List (List String)
+  | 0, _ => []
+  | f + 1, a => (E.filter (·.1 == a)).flatMap (fun e =>
+      if e.2 == L then [[a, L]] else (chainsFrom E L f e.2).map (a :: ·))
+
+def chainLt (c d : List String) : Bool :=
+  c.length < d.length || (c.length == d.length && decide (c < d))
+
+/-- The chain the paraphrase shows (2.3): the shortest chain from `H` to `L` that contains an `always` edge, the
+    least in `String` list order on ties; `none` exactly when the pair is not strict (`strictWitness_isSome`).
+    Display only; at most 2^14 chains on 16 ranks. -/
+def strictWitness (Wd : WeighDoc) (H L : String) : Option (List String) :=
+  ((chainsFrom Wd.D.soft.outranks L Wd.D.soft.ranks.length H).filter
+      (fun c => (chainEdges c).any (Wd.W.always.contains ·))).foldl
+    (fun best c => match best with
+      | none => some c
+      | some b => if chainLt c b then some c else some b) none
 
 def nodeNamed (D : SoftDoc) (n : String) : Option SoftNode := D.T.nodes.find? (·.name == n)
 

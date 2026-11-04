@@ -14,7 +14,7 @@ current answer changes.
 | `ZoneExamples.lean` | the six on defeasible's decoded DF-α document and on a small literal document, as `#guard`s and proved `example`s |
 | `Tree.lean` | the block, its targets and the strength of a rank pair (WG-2, weighing.md 1.1-1.3) |
 | `Conditions.lean` | the premises `Weigh_T`, the implication check, `checkWeigh`, `WellFormedWeigh` and weighing.md 5's theorems that wg-2 proves |
-| `Examples.lean` | W-α, W-ε, W-λ and W-μ, the strict flag and the implication bounds, as `#guard`s |
+| `Examples.lean` | W-α, W-β's witness, W-ε, W-λ and W-μ, the strict flag, the implication bounds and `strength_iff`'s counterexample, as `#guard`s |
 
 ## Definitions
 
@@ -45,6 +45,10 @@ decoder, the pack and the profile row are WG-3's. The zone interface is `Weighin
   `outweighs` atom `(act, lower, higher)` or a switch `(rule, party)`. `targetF` is that decision's atom over
   `targetSorts`, its argument sorts. `targetExists` says the decision is one of soft's. `rankOrder` is soft's ranks as
   QS-1's order. `strictPair H L` holds when some `always` edge `(a, b)` has `H` at or above `a` and `b` at or above `L`.
+  `chainEdges c` lists the steps of a list of ranks, and `RankChain H L c` says `c` runs from `H` down to `L` along
+  declared edges. `chainsFrom` lists every such chain, with the number of ranks as fuel. `strictWitness H L` is the
+  chain the paraphrase shows: the shortest chain from `H` to `L` that passes an `always` edge, the least in list order
+  among the shortest (`chainLt`), and nothing when the pair is not strict.
 - `Conditions.lean`. A strength premise (`Str_T`) says no act of a strict pair outweighs. `condPremise` is the one
   generator: a sufficient condition implies its decision, and a decision implies each of its necessary conditions. A
   grant becomes necessary conditions on the grantee's switch: the grant itself, then every necessary condition and grant
@@ -52,6 +56,10 @@ decoder, the pack and the profile row are WG-3's. The zone interface is `Weighin
   `weighOrigins` gives each label's request path. `propImplies a b` checks `a → b` over every truth assignment to at
   most 12 distinct atoms. `checkWeigh` makes weighing.md 1.6's checks in order. `WellFormedWeigh` is
   `WellFormedSoft` and `checkWeigh` together.
+- `Conditions.lean`, for the statements. `strictFlag D` is the document with the strict flag in place of the
+  holistic one. `SameBase B B'` says `B'` is `B` with only the decision predicates changed. `freeWitness` is the
+  structure `weigh_alone_base_free` builds: each `outweighs` atom holds exactly where one of its sufficient conditions
+  holds, every switch is off, and every other predicate is `B`'s.
 - `VE.Acts.splitRefusal role name` is AP's refusal text. `refsOk` now uses it, with the same bytes.
 
 ## Block, strength, conditions and grants (WG-2): theorems (each assumes `WellFormedWeigh`, except where noted)
@@ -69,9 +77,32 @@ decoder, the pack and the profile row are WG-3's. The zone interface is `Weighin
   grant's predicate is attributed to the grantor.
 - `weigh_conservative`, `wellFormedWeigh_empty` (no assumption): an empty block adds no premise and accepts exactly
   the documents soft accepts.
+- `holistic_iff_no_always_chain`: a pair is not strict exactly when no chain of declared edges from the higher rank
+  to the lower one passes an `always` edge.
+- `strictWitness_isSome`: the paraphrase names a chain exactly for the strict pairs. `strictWitness_chain` (no
+  assumption): the chain it names runs from the higher rank to the lower one along declared edges and passes an
+  `always` edge.
+- `always_dominates`: in every structure that satisfies the strength premises, an effective higher default rule of a
+  strict pair dominates a colliding lower default rule. `always_no_override`: there the lower rule never overrides
+  the higher one.
+- `all_always_is_strict`: when every comparable colliding pair is strict, the document decides every act exactly as
+  the same document under the strict flag, in every structure that satisfies the strength premises.
+- `factors_inert` (no assumption): factor lists add no premise.
+- `grant_within_grantor`: where a granted switch is on, every necessary condition and every grant of each party it is
+  granted through holds.
+- `weighPremises_wellFormed`: every weighing premise is a closed formula over the base vocabulary of the filled
+  document (PK-1's typing obligation). `weighPremises_substructure`: every premise survives sort-respecting
+  substructures (soft's fragment).
+- `weigh_alone_base_free`: for every structure `B` there is a structure with `B`'s base predicates that satisfies the
+  weighing premises: they alone never constrain the base.
 
-The helpers `weighFacts` (what an accepted block guarantees), `rankOrder_above` (soft's `outranksPlus` is QS-1's
-`above`), `evalProp_denote` and `condPremise_mem` are lemmas for these proofs.
+`strength_iff` (weighing.md 5.1) is not proved: as approved it is false on a document built without the decoder
+(a regulated predicate named `_x_permitted`; `Examples.lean`'s guards). Its reverse direction is `strength_mem`. The
+statement waits for the DRI (docs/weighing/wg-2/REPORT.md section 3).
+
+The helpers `weighFacts` and `condFacts` (what an accepted block guarantees), `rankOrder_above` (soft's `outranksPlus`
+is QS-1's `above`), `evalProp_denote`, `condPremise_mem`, the chain lemmas, `premise_facts` and the arity lemmas are
+lemmas for these proofs.
 
 Not in this part (wg-2b): `holistic_iff_no_always_chain`, `strictWitness` with `strictWitness_isSome` and
 `strictWitness_chain`, `strength_iff`, `always_dominates`, `always_no_override`, `all_always_is_strict`,
