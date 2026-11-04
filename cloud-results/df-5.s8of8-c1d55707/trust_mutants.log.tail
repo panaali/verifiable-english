@@ -1,0 +1,10 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:13 main (G[V], trusted) list-empty: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> []
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-drop-last: zoneHeads -> (zoneHeads.dropLast)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-drop-middle: ("lines", toJson (zoneLineWords.map fun (r, k, s, i) => Json.mkObj [("row", .str r), ("kind", .st... -> 
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-drop-first: zoneLineWords -> (zoneLineWords.drop 1)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:14 main (G[V], trusted) list-last: zoneJoins -> (zoneJoins.reverse.take 1)
+trust_mutants: 49 KILLED, 5 SURVIVOR, 0 UNKNOWN, 3 INVALID, 4 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 5258 s
+trust_mutants: D[V], trusted: 19 KILLED, 2 ALLOWED, 89 OTHER SHARD
+trust_mutants: G[V], trusted: 30 KILLED, 5 SURVIVOR, 3 INVALID, 2 ALLOWED, 338 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.5 s, control_build 1.1 s, probe_install 1.4 s, control_probes 479.5 s, mutants 4758.3 s, cleanup 2.8 s, reads 0.1 s; lake control_build 1.1 s (1), probe_install 1.4 s (1), control_probes 1027.3 s (6), mutant_builds 1215.2 s (63), mutant_checks 3974.3 s (40), stage_controls 569 s (6), mutant_probes 12723.9 s (49)
