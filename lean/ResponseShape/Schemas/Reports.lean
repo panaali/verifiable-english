@@ -28,7 +28,8 @@ def kind : Def :=
     ("reports-certificate", kindIs "reports-certificate"),
     ("reports-countermodel", kindIs "reports-countermodel"),
     ("reports-scoped", kindIs "reports-scoped"),
-    ("reports-status", kindIs "reports-status")]
+    ("reports-status", kindIs "reports-status"),
+    ("reports-wants", kindIs "reports-wants")]
 
 def report_kind : Shape :=
   c
@@ -309,6 +310,18 @@ def status : Shape :=
         ("envelope", ref "#/$defs/envelope"),
         ("bindings", ref "#/$defs/envelope_binding")]]
 
+def wants : Shape :=
+  c "Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order." [
+    obj,
+    .required ["id", "status", "phrases", "infinitives"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("phrases", n [arr, .zip "/phrases" (n [obj, .required ["phrase", "infinitive"],
+        closed [("phrase", n [str, .equals ""]), ("infinitive", .type ["string", "null"])]])]),
+      ("infinitives", n [arr, .zip "/infinitives" (n [obj, .required ["infinitive", "finite"],
+        closed [("infinitive", n [str, .equals ""]), ("finite", str)]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/reports_path", .anyOf [
@@ -321,7 +334,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/reports-certificate", ref "#/$defs/certificate"),
         (ref "#/$defs/kind/reports-countermodel", ref "#/$defs/countermodel"),
         (ref "#/$defs/kind/reports-scoped", ref "#/$defs/scoped"),
-        (ref "#/$defs/kind/reports-status", ref "#/$defs/status")]]),
+        (ref "#/$defs/kind/reports-status", ref "#/$defs/status"),
+        (ref "#/$defs/kind/reports-wants", ref "#/$defs/wants")]]),
     ((.bool true), ref "route.json#/row")]
 
 def file : File where
@@ -345,6 +359,18 @@ def file : File where
     ("countermodel", .schema countermodel),
     ("envelope_binding", .schema envelope_binding),
     ("scoped", .schema «scoped»),
-    ("status", .schema status)]
+    ("status", .schema status),
+    ("wants", .schema wants)]
+
+/-! The `reports-wants` row and the mode's kind table, row and definitions as rendered: a dropped
+type, member, requirement, binding, kind or definition changes them. -/
+#guard (match kind with | .group _ entries => entries.map (·.1) | .schema _ => []) == ["admission",
+  "reports-elaborate", "reports-content", "reports-certificate", "reports-countermodel", "reports-scoped",
+  "reports-status", "reports-wants"]
+#guard (ResponseShape.render "reports.json" 64 «row»).toOption.map Json.compress == some r##"{"x-select":[{"then":{"anyOf":[{"$ref":"common.json#/$defs/case_error"},{"$ref":"common.json#/$defs/route_path_error"},{"x-select":[{"then":{"$ref":"#/$defs/admission"},"when":{"$ref":"#/$defs/kind/admission"}},{"then":{"$ref":"#/$defs/elaborate"},"when":{"$ref":"#/$defs/kind/reports-elaborate"}},{"then":{"$ref":"#/$defs/content"},"when":{"$ref":"#/$defs/kind/reports-content"}},{"then":{"$ref":"#/$defs/certificate"},"when":{"$ref":"#/$defs/kind/reports-certificate"}},{"then":{"$ref":"#/$defs/countermodel"},"when":{"$ref":"#/$defs/kind/reports-countermodel"}},{"then":{"$ref":"#/$defs/scoped"},"when":{"$ref":"#/$defs/kind/reports-scoped"}},{"then":{"$ref":"#/$defs/status"},"when":{"$ref":"#/$defs/kind/reports-status"}},{"then":{"$ref":"#/$defs/wants"},"when":{"$ref":"#/$defs/kind/reports-wants"}}]}]},"when":{"$ref":"#/$defs/reports_path"}},{"then":{"$ref":"route.json#/row"},"when":true}]}"##
+#guard file.top.map (·.1) == ["row"] && file.defs.map (·.1) == ["reports_path", "kind", "report_kind",
+  "envelope", "key", "status_word", "nested", "counts", "verdict", "admission", "elaborate", "content",
+  "certificate", "countermodel", "envelope_binding", "scoped", "status", "wants"]
+#guard (ResponseShape.render "reports.json" 64 wants).toOption.map Json.compress == some r##"{"$comment":"Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order.","additionalProperties":false,"properties":{"id":{"$ref":"common.json#/$defs/id_ok"},"infinitives":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"finite":{"type":"string"},"infinitive":{"type":"string","x-equals":""}},"required":["infinitive","finite"],"type":"object"},"of":"/infinitives"}},"phrases":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"infinitive":{"type":["string","null"]},"phrase":{"type":"string","x-equals":""}},"required":["phrase","infinitive"],"type":"object"},"of":"/phrases"}},"status":{"const":"ok"}},"required":["id","status","phrases","infinitives"],"type":"object"}"##
 
 end ResponseShape.Schemas.Reports
