@@ -1,0 +1,8 @@
+trust_mutants: 13 definitions, 252 mutants (31 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Words.lean:15 VE.Reports.joined (?, trusted) list-empty: rest -> [] (lean/VE/Attribution/Words.lean:15: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Attribution/Run.lean:610 VE.Reports.Run.runWants (?, trusted) list-empty: phrases.map -> [] (lean/VE/Attribution/Run.lean:610: Function expected at)
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-last: (phrases ++ infinitives).map (·.utf8ByteSize + 1) -> (((phrases ++ infinitives).map (·.utf8ByteSize + 1)).reverse.take 1)
+trust_mutants: 28 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 221 OTHER SHARD in 150 s
+trust_mutants: ?, trusted: 28 KILLED, 1 SURVIVOR, 2 UNKNOWN, 192 OTHER SHARD
+trust_mutants: G[V], trusted: 29 OTHER SHARD
+trust_mutants: steps: wall plan 11 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 28.9 s, mutants 102 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 48 s (3), mutant_builds 159.5 s (36), stage_controls 6.4 s (4), mutant_probes 207.4 s (28)
