@@ -357,6 +357,11 @@ def defaults_zone : Shape :=
       .ite (props [("zone", constS "noCompletion")]) (.required ["labels"]) (.not (.required ["labels"])),
       .ite (props [("zone", constS "unknown")]) (.required ["reason"]) (.not (.required ["reason"]))]]
 
+/- df-5: `defaults_zone_line` and `defaults_zone` as `tools/response_schemas.py` renders them, pinned by their digests. -/
+#guard [defaults_zone_line, defaults_zone].map (fun (s : Shape) =>
+  (render "norm-defaults.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 17762975791275432491, some 4795886175990517229] : List (Option UInt64))
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/norm_defaults_path", .anyOf [
