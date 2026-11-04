@@ -89,8 +89,10 @@ functions under `open List`, and a dispatch guard that compares `runCase` with `
 ## Size
 
 `git diff --numstat $(git merge-base HEAD main)`, hand-written files only (generated files, the verbatim plan, spec
-and stub, the trust-mutant evidence and the script-written parity table excluded): see the final measurement in the
-"Runs" section.
+and stub, the trust-mutant evidence, the trust baseline and the script-written parity table excluded): +657 −41 = 698
+changed lines, of which REPORT.md and DELTA.md are 152; product code, tests, guards and the recorder are 546. That is
+about 100 over the ~600 guide, all in the mandated report and evidence files; every deliverable is in, so no `at-1wb`
+is named. At the seam after (3) the count was about 460.
 
 ## Pilot bytes
 
@@ -98,10 +100,18 @@ and stub, the trust-mutant evidence and the script-written parity table excluded
 
 ## Runs
 
-- `uv run pytest -q tests/test_reports_wants.py`: 25 passed.
+- `uv run pytest -q tests/test_reports_wants.py`: 25 passed; `tests/test_nested_pytest.py`: 36 passed.
 - `uv run pytest -q tests/test_report_english.py tests/test_reports.py`: 55 passed (as on 94580b39b).
-- Selected tests on the finished code: SELECTED-RESULT.
-- `python3 lean/audit.py`: AUDIT-RESULT.
+- Selected tests, once on the finished code (`zsh mac-pytest.sh --select -- --base 94580b39b --run`, run
+  at-1w-acc1762e-t771698): its fast stage ran 308 of 442 units, `1 failed, 10194 passed, 6 skipped, 83 xfailed`. The
+  failure, `tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder`, was the new recorder
+  missing from that test's list of files that build a pytest command themselves; fixed, and the one id rerun
+  (`zsh mac-pytest.sh -- <id>`, VM fallback): `1 passed`. The runner took the fast stage's failure as its answer, and
+  its 6 shards with the other 134 units never reported: all still `dispatched` at 07:06Z, near their 07:10Z deadline.
+  **Not run here:** those 134 units; the chain's gate on the final HEAD runs them.
+- `python3 lean/audit.py`: `PASS: 757 source files; 8386 named theorem declarations audited`.
+- `uv run python tools/regen_generated.py --write` after the last Lean and doc edit: `wrote 35 entries`, no file
+  changed (`git status` clean).
 - Not run here: the full release gate (the chain runs it on the final HEAD).
 
 ## Spec re-read
