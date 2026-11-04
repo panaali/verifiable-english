@@ -142,7 +142,7 @@ text: all SAME.
 
 ## 9. Selected tests on the final code
 
-See the commit that follows this report: the selection run on the HEAD and its result.
+`zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on 443fa19c (clean tree, Lean unchanged after it): "recorded 110 units for tree 92f6db0594; … 0 failed", "exit=0; failed/error ids=0" (ve-mac-1). `uv run python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries", none stale (`route-cases` needs the Rust release binary, which this worktree has not built; nothing it reads changed).
 
 ## Self-review against BUILDER-CHECKLIST
 
