@@ -1,0 +1,8 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:14 main (G[V], trusted) list-empty: zoneJoins -> []
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-last: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].reverse.take 1) (lean/VE/Defaults/ZoneWordsMain.lean:11: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:14 main (G[V], trusted) list-drop-first: zoneJoins -> (zoneJoins.drop 1)
+trust_mutants: 51 KILLED, 2 SURVIVOR, 1 UNKNOWN, 4 INVALID, 3 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 3756 s
+trust_mutants: D[V], trusted: 10 KILLED, 100 OTHER SHARD
+trust_mutants: G[V], trusted: 41 KILLED, 2 SURVIVOR, 1 UNKNOWN, 4 INVALID, 3 ALLOWED, 327 OTHER SHARD
+trust_mutants: steps: wall plan 11.4 s, scratch 3.5 s, control_build 1.1 s, probe_install 1.5 s, control_probes 476.9 s, mutants 3258.6 s, cleanup 2.9 s, reads 0.2 s; lake control_build 1.1 s (1), probe_install 1.4 s (1), control_probes 1011.1 s (6), mutant_builds 1083.8 s (65), mutant_checks 2829.8 s (28), stage_controls 694.1 s (6), mutant_probes 8125.3 s (51)
