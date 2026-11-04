@@ -59,7 +59,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
-- [docs/spec/](docs__spec.md) — 7 modules — -
+- [docs/spec/](docs__spec.md) — 8 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
 - [docs/test-speed-b1/](docs__test-speed-b1.md) — 1 modules — -
@@ -101,7 +101,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 2 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
@@ -117,7 +116,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
-- [lean/VE/Weighing/](lean__VE__Weighing.md) — 2 modules — -
+- [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
