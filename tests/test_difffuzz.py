@@ -1027,6 +1027,19 @@ def _load(relative):
     return json.loads(text) if text.strip() else None
 
 
+def _coverage_issue(relative, data, usecase_origins):
+    verdict = corpus.excluded(relative)
+    if verdict is not None:
+        kind, reason = verdict
+        assert kind in ("artifact", "no-input") and reason, relative
+        if kind == "no-input" and data is not None and (corpus.environments_of(relative, data)
+                                                        or corpus.requests_of(relative, data)):
+            return "hiding"
+    elif not corpus.readers(relative, data, usecase_origins):
+        return "unread"
+    return None
+
+
 def test_every_fixture_is_read_or_excluded_with_a_reason():
     usecase_origins = [origin for origin, *_ in corpus.usecase_requests()]
     unread, hiding, matched = [], [], set()
@@ -1035,15 +1048,37 @@ def test_every_fixture_is_read_or_excluded_with_a_reason():
         data = _load(relative)
         if verdict is not None:
             matched |= {p for p in corpus.EXCLUDED if corpus.fnmatch.fnmatchcase(relative, p)}
-            kind, reason = verdict
-            assert kind in ("artifact", "no-input") and reason, relative
-            if kind == "no-input" and data is not None and (corpus.environments_of(relative, data)
-                                                            or corpus.requests_of(relative, data)):
-                hiding.append(relative)
-        elif not corpus.readers(relative, data, usecase_origins):
+        issue = _coverage_issue(relative, data, usecase_origins)
+        if issue == "hiding":
+            hiding.append(relative)
+        elif issue == "unread":
             unread.append(relative)
     assert unread == [] and hiding == [], (unread, hiding)
     assert matched == set(corpus.EXCLUDED), set(corpus.EXCLUDED) - matched
+
+
+def test_future_pilot_runs_do_not_hide_new_fixtures(tmp_path, monkeypatch):
+    paths = {
+        "usecases/future-pilot/run-next/changed_units.json": {},
+        "usecases/future-pilot/run-next/answers/result.json": {},
+        "usecases/future-pilot/run-next/comprehension/questions.json": {},
+        "usecases/future-pilot/fixture.json": {},
+        "usecases/ordinary/fixture.json": {},
+    }
+    for relative, data in paths.items():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data))
+    monkeypatch.setattr(corpus, "ROOT", tmp_path)
+    assert set(corpus.fixture_files()) == set(paths)
+    for relative, data in paths.items():
+        issue = _coverage_issue(relative, data, [])
+        if "/run-" in relative:
+            assert corpus.excluded(relative)[0] == "artifact"
+            assert issue is None
+        else:
+            assert corpus.excluded(relative) is None
+            assert issue == "unread"
 
 
 def test_gate_result_metadata_is_not_an_environment_seed():

@@ -81,19 +81,8 @@ EXCLUDED = {
     "usecases/gatekeeper-exemption/*.json": ("no-input", "a glob@1 policy request, outside the VE checker"),
     "usecases/agent-policy/requirements.json": (
         "no-input", "the policy family's requirement register, read by its level reader (apol-req)"),
-    "usecases/udhr-pilot/*/answers/*.json": ("artifact", "a UDHR pilot run's recorded query answers"),
-    "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
-    "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
-    "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
-    "usecases/udhr-pilot/*/frozen-run.json": ("artifact", "an earlier UDHR pilot run's files, frozen for migration"),
-    "usecases/claude-constitution-pilot/run-20261104T0716Z/answers/*.json": (
-        "artifact", "SC-9's recorded search, identities and measurements, not route inputs"),
-    "usecases/claude-constitution-pilot/run-20261104T0716Z/comprehension/questions.json": (
-        "artifact", "SC-9's saved comprehension questions and unrun answers"),
-    "usecases/claude-constitution-pilot/run-20261104T0716Z/changed_units.json": (
-        "artifact", "SC-9's migration output listing the units awaiting audit"),
-    "usecases/claude-constitution-pilot/run-20261104T0716Z/queries/*.json": (
-        "no-input", "query ASTs supplied with the SC-9 probe document by its measurement script"),
+    "usecases/*-pilot/run-*/*.json": (
+        "artifact", "a pilot run's recorded outputs, not independent fuzzer inputs"),
 }
 
 def _generated(module, name, convert=lambda value: value):
