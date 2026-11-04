@@ -1,0 +1,11 @@
+{
+  "translation": "76922d6c:usecases/claude-constitution-pilot/run-20261010T1800Z/translation.ve.md",
+  "probe": "probe-translation.probe.md",
+  "changed_units": [
+    "u0036.s05",
+    "u0073.s05",
+    "u0125.s04.p2",
+    "u0156.s03",
+    "u0263.s04.p2"
+  ]
+}
