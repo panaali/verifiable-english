@@ -1,0 +1,8 @@
+job=armsh-cand-ap-3db-4a97cf31-t809499-s3 shard=3/6 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-04T16:26:20Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 16:26:20 up 9 min,  0 user,  load average: 0.82, 0.30, 0.14
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3279 passed, 0 skipped, 2 failures
