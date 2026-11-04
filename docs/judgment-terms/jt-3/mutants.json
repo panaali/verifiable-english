@@ -1,6 +1,6 @@
 {
  "item": "jt-3",
- "note": "Each seed was applied to the committed file, the named #guards or test run, and the file restored from a saved copy (driver scripts outside the tree). `per_definition` is one killed mutant per new trusted definition from trust-mutants.json (164 killed, 0 survivors, 34 allowed).",
+ "note": "Each seed was applied to the committed file, the named #guards or test run, and the file restored from a saved copy (driver scripts outside the tree). `per_definition` is one killed mutant per new trusted definition from trust-mutants.json (160 killed, 0 survivors, 0 unknown, 37 allowed, a full run at d17d61c4f).",
  "mutants": [
   {"id": "L1", "language": "Lean", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "behaviour": "the legend line drops the decider (the plan's seeded bug)", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:26, :28"},
   {"id": "L2", "language": "Lean", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "behaviour": "the refusal binds per row, not per predicate (DRI jt-3 item 3)", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:117, :118"},
@@ -9,8 +9,8 @@
   {"id": "L5", "language": "Lean", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "behaviour": "the legend drops the factors line", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:47"},
   {"id": "L6", "language": "Lean", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "behaviour": "an adjective row loses 9.5's own definition form", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:81, :83"},
   {"id": "L7", "language": "Lean", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "behaviour": "a W3-defined name is refused", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:125, :126"},
-  {"id": "L8", "language": "Lean", "file": "lean/VE/EnglishGrammar/Run.lean", "behaviour": "the 9.5 refusal fires in translation mode (the task's seeded bug)", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:62"},
-  {"id": "L9", "language": "Lean", "file": "lean/VE/EnglishGrammar/Run.lean", "behaviour": "the refusal fires without the field (the opt-in is lost)", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:51"},
+  {"id": "L8", "language": "Lean", "file": "lean/VE/EnglishGrammar/Run.lean", "behaviour": "the 9.5 refusal fires in translation mode (the task's seeded bug)", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:64"},
+  {"id": "L9", "language": "Lean", "file": "lean/VE/EnglishGrammar/Run.lean", "behaviour": "the refusal fires without the field (the opt-in is lost)", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:53"},
   {"id": "L10", "language": "Lean", "file": "lean/VE/EnglishGrammar/Run.lean", "behaviour": "`judgments` in the shared `optionalFields` and not in `readCase`'s own list (the reviewed code, review F1): english.grammar, english.check and english.question accept the field and ignore it", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:83, :84; tests/test_jt3_english.py::test_the_modes_that_share_read_s_fields_refuse_judgments"},
   {"id": "P1", "language": "Python", "file": "ve/backends/english_lean.py", "behaviour": "the relay does not send the field", "test": "tests/test_jt3_english.py::test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read"},
   {"id": "P2", "language": "Python", "file": "ve/judgment_lines.py", "behaviour": "the relay shows a refusal as a reading", "test": "tests/test_jt3_english.py::test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read, tests/test_jt3_english.py::test_the_command_line_shows_lean_s_text"},
@@ -28,8 +28,8 @@
   {"definition": "VE.EnglishGrammar.JudgmentLines.refusal", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "operator": "list-empty", "before": "(undeclaredEvaluative evaluativeRows ps J)", "after": "[]", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:115"},
   {"definition": "VE.EnglishGrammar.JudgmentLines.slotNouns", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "operator": "list-empty", "before": "args.mapIdx fun i s => articled s ++ (if (args.take i).conta", "after": "[]", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:25"},
   {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "file": "lean/VE/EnglishGrammar/JudgmentLines.lean", "operator": "list-empty", "before": "atoms", "after": "[]", "test": "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean:54"},
-  {"definition": "VE.EnglishGrammar.Run.authoring", "file": "lean/VE/EnglishGrammar/Run.lean", "operator": "append-left", "before": " ++ [(\"sentence\", toJson i)]", "after": "", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:44"},
+  {"definition": "VE.EnglishGrammar.Run.authoring", "file": "lean/VE/EnglishGrammar/Run.lean", "operator": "append-left", "before": " ++ [(\"sentence\", toJson i)]", "after": "", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:46"},
   {"definition": "VE.EnglishGrammar.Run.codeClasses", "file": "lean/VE/EnglishGrammar/Run.lean", "operator": "list-empty", "before": "[(\"SourceTooLong\", \"ResourceLimit\"), (\"TextTooLong\", \"Resour", "after": "[]\n\n\n\n\n\n\n\n\n\n\n", "test": "lean/VE/EnglishGrammar/Run.lean:145"},
-  {"definition": "VE.EnglishGrammar.Run.optionalFields", "file": "lean/VE/EnglishGrammar/Run.lean", "operator": "list-empty", "before": "[\"overlay\", \"generated\", \"judgments\"].filter fun k => (j.get", "after": "[]", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:42"}
+  {"definition": "VE.EnglishGrammar.Run.readCase", "file": "lean/VE/EnglishGrammar/Run.lean", "operator": "list-empty", "before": "[\"judgments\"]", "after": "[]", "test": "lean/VE/EnglishGrammar/JudgmentRunExamples.lean:44"}
  ]
 }
