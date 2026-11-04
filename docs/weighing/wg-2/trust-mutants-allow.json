@@ -13,12 +13,12 @@
   {
    "definition": "VE.Weighing.weighEntries",
    "operator": "append-right",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Application type mismatch at Conditions.lean:81)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Application type mismatch at Conditions.lean:85)"
   },
   {
    "definition": "VE.Weighing.weighEntries",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Application type mismatch at Conditions.lean:81)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Application type mismatch at Conditions.lean:85)"
   },
   {
    "definition": "VE.Weighing.Target",
@@ -28,52 +28,52 @@
   {
    "definition": "VE.Weighing.targetExists",
    "operator": "arm-true",
-   "reason": "replacing the `match` head by `true` leaves its arms without a scrutinee (Type mismatch at Tree.lean:94): Lean refuses the mutated declaration"
+   "reason": "replacing the `match` head by `true` leaves its arms without a scrutinee (Type mismatch at Tree.lean:121): Lean refuses the mutated declaration"
   },
   {
    "definition": "VE.Weighing.targetExists",
    "operator": "arm-false",
-   "reason": "replacing the `match` head by `false` leaves its arms without a scrutinee (Type mismatch at Tree.lean:94): Lean refuses the mutated declaration"
+   "reason": "replacing the `match` head by `false` leaves its arms without a scrutinee (Type mismatch at Tree.lean:121): Lean refuses the mutated declaration"
   },
   {
    "definition": "VE.Weighing.strengthEntries",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid projection at Conditions.lean:30)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid projection at Conditions.lean:34)"
   },
   {
    "definition": "VE.Weighing.grantEdges",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:47)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:51)"
   },
   {
    "definition": "VE.Weighing.grantConds",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:61, :66, :71)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:65, :66, :71)"
   },
   {
    "definition": "VE.Weighing.strengthPremises",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid projection at Conditions.lean:83)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid projection at Conditions.lean:87)"
   },
   {
    "definition": "VE.Weighing.weighLabelled",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid match expression at Conditions.lean:84)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid match expression at Conditions.lean:88)"
   },
   {
    "definition": "VE.Weighing.weighConditions",
    "operator": "list-empty",
-   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:96)"
+   "reason": "the mutant does not elaborate: `[]` (or the dropped operand) leaves the next projection, field or pattern without its element type, so Lean refuses the mutated declaration on the line after the mutated text (trust_mutants' detail quotes the refusal); no program exists to test (Invalid field notation at Conditions.lean:100)"
   },
   {
    "definition": "VE.Weighing.grantConds",
    "operator": "list-first",
-   "reason": "equivalent on every accepted block: the filterMap at Conditions.lean:70 lists the grants on (rule, ρ), and checkWeigh refuses a second grant with the same rule and party (`DuplicateDeclaration: grant`, Conditions.lean:165), so the list has at most one element and taking its first is the identity; the other list-first mutants of grantConds are KILLED by W-ζ3 (Examples.lean:112)"
+   "reason": "equivalent on every accepted block: the filterMap at Conditions.lean:74 lists the grants on (rule, ρ), and checkWeigh refuses a second grant with the same rule and party (`DuplicateDeclaration: grant`, Conditions.lean:169), so the list has at most one element and taking its first is the identity; the other list-first mutants of grantConds are KILLED by W-ζ3 (Examples.lean:112)"
   },
   {
    "definition": "VE.Weighing.grantConds",
    "operator": "list-last",
-   "reason": "equivalent on every accepted block: the filterMap at Conditions.lean:70 lists the grants on (rule, ρ), and checkWeigh refuses a second grant with the same rule and party (`DuplicateDeclaration: grant`, Conditions.lean:165), so the list has at most one element and taking its last is the identity; the other list-last mutants of grantConds are KILLED by W-ζ3 (Examples.lean:112)"
+   "reason": "equivalent on every accepted block: the filterMap at Conditions.lean:74 lists the grants on (rule, ρ), and checkWeigh refuses a second grant with the same rule and party (`DuplicateDeclaration: grant`, Conditions.lean:169), so the list has at most one element and taking its last is the identity; the other list-last mutants of grantConds are KILLED by W-ζ3 (Examples.lean:112)"
   }
  ]
 }
