@@ -228,7 +228,7 @@ and using the four; `Lim_D` the same with and without the layer; the twin's verd
 
 def udhrTerms : List String := ["general_welfare", "just_requirements", "morality", "public_order"]
 
-def udhr (profiles : List String) : Json :=
+def udhr (profiles : List String) (split : Bool := false) : Json :=
   let args := Lean.toJson ["person"]
   let none := Json.arr #[]
   let vocabulary := Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj [("description", "a person")])]),
@@ -243,20 +243,24 @@ def udhr (profiles : List String) : Json :=
     Json.mkObj [("kind", "liberty"), ("cites", Json.mkObj []), ("norm", Json.mkObj [("name", "express-19"),
       ("predicate", "express_permitted"), ("sign", true), ("guard", Json.arr #["top"]), ("unless", none),
       ("over", none)])]])])]
-  let limitation := Json.mkObj [("limitation", Json.mkObj [("name", "l29"), ("scope", "all"), ("kinds", "all"),
-    ("decided_by", "unstated"), ("factors", none), ("conditions", Json.arr (udhrTerms.map fun t => Json.mkObj [
-      ("name", .str t), ("role", if t == "just_requirements" then "necessary" else "sufficient"),
-      ("verbalisation", .str t), ("decided_by", .null)]).toArray)])]
+  let limitation (name : String) (terms : List String) := Json.mkObj [("limitation", Json.mkObj [("name", .str name),
+    ("scope", "all"), ("kinds", "all"), ("decided_by", "unstated"), ("factors", none), ("conditions",
+      Json.arr (terms.map fun t => Json.mkObj [("name", .str t), ("verbalisation", .str t), ("decided_by", .null),
+        ("role", if t == "just_requirements" then "necessary" else "sufficient")]).toArray)])]
+  let limit (id : String) (span : List Nat) (terms : List String) := Json.mkObj [("id", .str id),
+    ("span", Lean.toJson span), ("kind", "limitation"), ("meaning", Json.mkObj [("open", Lean.toJson terms)]),
+    ("support", "none"), ("content", limitation (id.replace "u111" "l29") terms)]
   let first := "Everyone has the right to freedom of opinion and expression.\n"
   let body := first ++ "Everyone shall be subject only to such limitations as meet the just requirements of " ++
     "morality, public order and the general welfare.\n"
   let front := Json.mkObj [("format", "ve-document@1"), ("environment", Json.mkObj [("language", "ve.core@0.2"),
       ("profiles", Lean.toJson profiles), ("spec_revision", "ve-v0.2-expand2-2026-09-25"),
       ("vocabulary", vocabulary)]),
-    ("units", Json.arr #[Json.mkObj [("id", "u029"), ("span", Lean.toJson [0, first.length]), ("kind", "right"),
-        ("meaning", "specified"), ("support", "none"), ("content", right)],
-      Json.mkObj [("id", "u111"), ("span", Lean.toJson [first.length, body.length]), ("kind", "limitation"),
-        ("meaning", Json.mkObj [("open", Lean.toJson udhrTerms)]), ("support", "none"), ("content", limitation)]]),
+    ("units", Json.arr (#[Json.mkObj [("id", "u029"), ("span", Lean.toJson [0, first.length]), ("kind", "right"),
+        ("meaning", "specified"), ("support", "none"), ("content", right)]
+      ] ++ (if split then #[limit "u111a" [first.length, first.length + 40] (udhrTerms.take 2),
+        limit "u111b" [first.length + 40, body.length] (udhrTerms.drop 2)]
+      else #[limit "u111" [first.length, body.length] udhrTerms]))),
     ("open_terms", Json.arr (udhrTerms.map fun t => Json.mkObj [("name", .str t), ("arguments", args),
       ("decided_by", "unstated"), ("necessary", none), ("sufficient", none), ("factors", none),
       ("precedents", none), ("jurisdiction", "document"), ("version", 1)]).toArray)]
@@ -312,6 +316,24 @@ def udhrLim (profiles : List String) : Option (List (String × VE.Formula)) := d
       pure (opensIn udhrTerms (rightsAuthorFormulas R.src.D) == udhrTerms)) == some true
   | none => false
 
+/-- F1.4's rights source as the document mode decodes it (`rightsDoc`). -/
+def udhrRights (split : Bool := false) : Option VE.Rights.RightsDoc := do
+  let (front, _) ← frontOf (udhr rightsLayer split)
+  let E ← (environmentOf (front.getObjValD "environment") (front.getObjValD "units")).toOption
+  let raw := match front.getObjValD "units" with
+    | .arr us => us.toList
+    | _ => []
+  pure (← (rightsDoc E front udhrTerms raw).toOption).src.D
+
+-- u111 as two limitations, two judgments each: each unit reads its own limitation's conditions, and the source's
+-- author formulas read all four; a bar block reads nothing.
+#guard match checkDocSets (udhr rightsLayer true) with
+  | .ok a => unitStatuses a == [("u029", "OPEN"), ("u111a", "OPEN"), ("u111b", "OPEN")]
+  | .error _ => false
+#guard ((udhrRights true).map fun R => opensIn udhrTerms (rightsAuthorFormulas R)) == some udhrTerms &&
+  ((udhrRights).bind fun R => (blockFormulas R (Json.mkObj [("bar", Json.mkObj [("name", "b30")])])).toOption) ==
+    some []
+
 /-! pc-1g: F1.3b, F1.3c, F1.3i, F1.3j and F1.3k on F1.1's document (spec 5.1). -/
 
 /-- A case with its front matter's first unit edited by `f`. -/
@@ -364,19 +386,49 @@ def f13c : Json := match frontOf f11 with
   !layerRefusal swapClash && !layerRefusal "unit meaning id does not match content" &&
   !layerRefusal "UnsupportedProfile: rights@0 is required"
 
+-- 2d, each of the layer's codes.
+#guard ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentArguments",
+  "JudgmentRegulated", "JudgmentCriterionAsUnit", "JudgmentDecider"].all fun c => layerRefusal (c ++ ": u x")
+
+/-- A case with its units' authored statuses set, unit by unit (`none`: no status). -/
+def withStatuses (j : Json) (statuses : List (Option String)) : Json :=
+  match frontOf j with
+  | some (front, body) => match front.getObjValD "units" with
+    | .arr us => j.setObjVal! "document" (.str ("---\n" ++ (front.setObjVal! "units" (.arr (us.toList.zip statuses
+        |>.map (fun (u, s) => match s with
+          | some s => u.setObjVal! "status" (.str s)
+          | none => u)).toArray)).compress ++ "\n---\n" ++ body))
+    | _ => j
+  | none => j
+
+-- 2b, 2c on two units: a status on either unit is stated; `withoutStatuses` removes both and keeps both units; a case
+-- without front matter or units states none.
+#guard [[none, some "OPEN"], [some "OPEN", none]].all
+    (fun ss => !noUnitStatus (withStatuses (bothRules layer) ss)) &&
+  noUnitStatus (Json.mkObj [("id", "c"), ("document", "no front matter")]) &&
+  noUnitStatus (Json.mkObj [("id", "c"), ("document", "---\n{\"format\":\"ve-document@1\"}\n---\nx\n")])
+#guard let j := withoutStatuses (withStatuses (bothRules layer) [some "OPEN", some "OPEN"])
+  noUnitStatus j &&
+    (frontOf j).map (fun (f, _) => (f.getObjValD "units").getArr?.toOption.map (·.size)) == some (some 2)
+
+/-- 2e's answer: units `u0`, `u1`; reading sets `s0`, `s1`, each with three models out of key order and readings `r0`,
+`r1` that reference two of them. With `ids`, as the mode answers; without, as `verdictFields` must leave it. -/
+def answer2e (ids : Bool) : Json :=
+  let given (fields : List (String × Json)) : List (String × Json) := if ids then fields else []
+  let always (fields : List (String × Json)) : List (String × Json) := fields
+  let unit (i : String) := Json.mkObj (always [("id", .str i), ("kind", "norm")] ++
+    given [("status", "OPEN"), ("meaning_id", .str ("m" ++ i))])
+  let reading (r : String) := Json.mkObj (always [("id", .str r), ("admission", Json.mkObj [("distinguishing_models",
+    if ids then Json.mkObj [("r1", "k1"), ("r2", "k2")] else Json.arr #["r1", "r2"])])] ++
+    given [("meaning_id", .str ("m" ++ r))])
+  let set (s : String) := Json.mkObj [("id", .str s), ("readings", Json.arr #[reading "r0", reading "r1"]),
+    ("models", if ids then Json.mkObj [("k1", "A"), ("k2", "C"), ("k3", "B")] else Json.arr #["A", "B", "C"])]
+  Json.mkObj (always [("id", "c"), ("status", "ok"), ("source", "t"), ("units", Json.arr #[unit "u0", unit "u1"]),
+    ("reading_sets", Json.arr #[set "s0", set "s1"])] ++ given [("document_id", "d"), ("source_id", "s"),
+      ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("undeclared_evaluative", Json.arr #[])])
+
 -- 2e on an answer: the fields the layer may change and the identities are dropped, every other field kept.
-#guard verdictFields (Json.mkObj [("id", "c"), ("status", "ok"), ("document_id", "d"), ("source_id", "s"),
-    ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("source", "t"),
-    ("units", Json.arr #[Json.mkObj [("id", "u"), ("status", "OPEN"), ("meaning_id", "m"), ("kind", "norm")]]),
-    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"),
-      ("models", Json.mkObj [("k1", "A"), ("k2", "C"), ("k3", "B")]),
-      ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("meaning_id", "m0"), ("admission", Json.mkObj [
-        ("distinguishing_models", Json.mkObj [("r1", "k1")])])]])]])]) ==
-  Json.mkObj [("id", "c"), ("status", "ok"), ("source", "t"),
-    ("units", Json.arr #[Json.mkObj [("id", "u"), ("kind", "norm")]]),
-    ("reading_sets", Json.arr #[Json.mkObj [("id", "s"), ("models", Json.arr #["A", "B", "C"]),
-      ("readings", Json.arr #[Json.mkObj [("id", "r0"), ("admission", Json.mkObj [
-        ("distinguishing_models", Json.arr #["r1"])])]])]])]
+#guard verdictFields (answer2e true) == answer2e false
 
 /-! pc-1g: F1.1 and F1.6, F1.4's twin. The case and its twin have the same verdict fields (`undeclared_evaluative`
 dropped, DRI 2026-11-03 pc-1g stop item 4) and their own identities. -/
@@ -393,8 +445,8 @@ dropped, DRI 2026-11-03 pc-1g stop item 4) and their own identities. -/
 
 /-! pc-1g, the trusted boundary `Json.compress` / `Json.parse` (DRI 2026-11-03 pc-1g stop item 2: the kernel cannot
 unfold either in Lean v4.24.0, so their round trip is checked, not proved). A twin reads back the front matter
-`withoutJudgments` built, on every fixture; and on values the renderer emits, drawn by a fixed linear congruential generator: escapes,
-non-ASCII and astral characters, naturals up to 2^53-1, nested arrays and objects. -/
+`withoutJudgments` built, on every fixture; and on values the renderer emits, drawn by a fixed linear congruential
+generator: escapes, non-ASCII and astral characters, naturals up to 2^53-1, nested arrays and objects. -/
 
 /-- The front matter `withoutJudgments` builds for a case with no exchange (`withoutJudgmentsIn []`), as a value. -/
 def twinFront (j : Json) : Option Json := (frontOf j).map fun (front, _) =>
