@@ -1,5 +1,7 @@
 # cmp-s3: questions for the DRI (2026-11-04)
 
+Answered 16:05Z (reviews/dri-decisions-20261104-cmp-s3.md): Q1 A1 signed, Q2 plan accepted, Q3 B1 signed.
+
 ## Q1. `elaborate_plain` (spec 8.5) is false as stated
 
 `elaborate_plain` concludes `decodeRightsSource (stripProfile environment) (elaborateJson D document) = .ok src` from

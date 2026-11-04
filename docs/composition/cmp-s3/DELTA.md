@@ -14,3 +14,14 @@ Registered alone, it would change a profile-on refusal text that the signed row 
 | Delta | Detail | Evidence | Ruling |
 |---|---|---|---|
 | Trust budget | S +13: lean/VE/RightClauses/Relation.lean (`totalF`, `relPremisesLabelled`, `relPremises`, `clauseSlotLabelled`, `clauseSlot`); K +0 | `uv run python tools/trust_map.py --check`: PASS; mutants.json (9 killed), trust-mutants.json (32 killed, 0 survivors) | SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18 |
+
+## Statement changes (not answer deltas)
+
+Signed by the DRI 2026-11-04 (reviews/dri-decisions-20261104-cmp-s3.md). Each comes with a mechanised counterexample
+for the statement as written, kept as a `#guard` in lean/VE/RightClauses/Examples.lean:
+
+- `clauseSlot_labelled` (spec 8.4) gains `(hl : VE.Compose.Labelled.wellLabelled (limPremisesLabelled D.doc) = true)`
+  (Q3, option B1). `cxDoc` satisfies both of the spec's hypotheses and repeats a `Lim_D` label.
+- `elaborate_plain` (spec 8.5) gains `(hd : PlainOnWire D)`: every plain guard is within `VE.Limits.maxDepth` and
+  `VE.Limits.maxNodes` as the wire counts them (Q1, option A1). The theorem is cmp-s3b's. `notChain` shows that the
+  rights decoder reads a depth-64 clause but not that clause under `plain`'s `and`.
