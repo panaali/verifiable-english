@@ -1,0 +1,15 @@
+{
+ "job": "cmp-s3-73f288ec",
+ "head": "32e0cefb4345e7766d90016f3d02cfed0943c150",
+ "argv": [
+  "cmp-s3-73f288ec",
+  "32e0cefb4345e7766d90016f3d02cfed0943c150",
+  "a12f56fd716246ff783cedee4dc7885cb3069cfc",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-6f8fbd133597.tar.zst",
+  "b58f183170309b2b4812187cc97cc81c92ae364e473f35dcd79b592110b7cce1",
+  "--max-mutants",
+  "1000",
+  "--jobs",
+  "4"
+ ]
+}
