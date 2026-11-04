@@ -28,7 +28,8 @@ def kind : Def :=
     ("reports-certificate", kindIs "reports-certificate"),
     ("reports-countermodel", kindIs "reports-countermodel"),
     ("reports-scoped", kindIs "reports-scoped"),
-    ("reports-status", kindIs "reports-status")]
+    ("reports-status", kindIs "reports-status"),
+    ("reports-wants", kindIs "reports-wants")]
 
 def report_kind : Shape :=
   c
@@ -309,6 +310,18 @@ def status : Shape :=
         ("envelope", ref "#/$defs/envelope"),
         ("bindings", ref "#/$defs/envelope_binding")]]
 
+def wants : Shape :=
+  c "Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order." [
+    obj,
+    .required ["id", "status", "phrases", "infinitives"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("phrases", n [arr, .zip "/phrases" (n [obj, .required ["phrase", "infinitive"],
+        closed [("phrase", n [str, .equals ""]), ("infinitive", .type ["string", "null"])]])]),
+      ("infinitives", n [arr, .zip "/infinitives" (n [obj, .required ["infinitive", "finite"],
+        closed [("infinitive", n [str, .equals ""]), ("finite", str)]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/reports_path", .anyOf [
@@ -321,7 +334,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/reports-certificate", ref "#/$defs/certificate"),
         (ref "#/$defs/kind/reports-countermodel", ref "#/$defs/countermodel"),
         (ref "#/$defs/kind/reports-scoped", ref "#/$defs/scoped"),
-        (ref "#/$defs/kind/reports-status", ref "#/$defs/status")]]),
+        (ref "#/$defs/kind/reports-status", ref "#/$defs/status"),
+        (ref "#/$defs/kind/reports-wants", ref "#/$defs/wants")]]),
     ((.bool true), ref "route.json#/row")]
 
 def file : File where
@@ -345,6 +359,7 @@ def file : File where
     ("countermodel", .schema countermodel),
     ("envelope_binding", .schema envelope_binding),
     ("scoped", .schema «scoped»),
-    ("status", .schema status)]
+    ("status", .schema status),
+    ("wants", .schema wants)]
 
 end ResponseShape.Schemas.Reports

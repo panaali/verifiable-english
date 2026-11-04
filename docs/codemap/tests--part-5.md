@@ -1,3 +1,6 @@
+- `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
+- `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
+- `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
@@ -69,12 +72,8 @@
 - `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
 - `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
+- `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
 - `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
-- `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
-- `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
-- `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
-- `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
-- `tests/test_risk_english.py` — Fixture k19 (risk.md 2.1 to 2.3, 8.2): the gate of the risk English surface.

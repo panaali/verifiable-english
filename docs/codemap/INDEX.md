@@ -8,6 +8,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/act-phrases/](docs__act-phrases.md) — 37 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -47,7 +48,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/lean-first/b8/](docs__lean-first__b8.md) — 4 modules — -
 - [docs/lean-first/b9/](docs__lean-first__b9.md) — 5 modules — -
 - [docs/lean-first/e2/](docs__lean-first__e2.md) — 2 modules — -
-- [docs/math-evidence/](docs__math-evidence.md) — 4 modules — -
+- [docs/math-evidence/](docs__math-evidence.md) — 7 modules — -
 - [docs/math-evidence-me-1c/](docs__math-evidence-me-1c.md) — 2 modules — -
 - [docs/merge-tooling/](docs__merge-tooling.md) — 1 modules — -
 - [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
@@ -59,7 +60,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
-- [docs/spec/](docs__spec.md) — 7 modules — -
+- [docs/spec/](docs__spec.md) — 8 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
 - [docs/test-speed-b1/](docs__test-speed-b1.md) — 1 modules — -
@@ -79,8 +80,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
-- [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
-- [lean/VE/Calc/](lean__VE__Calc.md) — 30 modules — -
+- [lean/VE/Attribution/](lean__VE__Attribution.md) — 16 modules — -
+- [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
 - [lean/VE/Commands/](lean__VE__Commands.md) — 3 modules — -
@@ -91,7 +92,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
 - [lean/VE/Discourse/](lean__VE__Discourse.md) — 22 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
-- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 34 modules — -
+- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 38 modules — -
 - [lean/VE/Events/](lean__VE__Events.md) — 9 modules — -
 - [lean/VE/Grammar/](lean__VE__Grammar.md) — 9 modules — -
 - [lean/VE/Judgments/](lean__VE__Judgments.md) — 7 modules — -
@@ -112,7 +113,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Scope/](lean__VE__Scope.md) — 18 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 15 modules — -
-- [lean/VE/Service/](lean__VE__Service.md) — 26 modules — -
+- [lean/VE/Service/](lean__VE__Service.md) — 27 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
@@ -126,9 +127,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 87 modules — -
 - [tests/ part 4](tests--part-4.md) — 92 modules — -
-- [tests/ part 5](tests--part-5.md) — 80 modules — -
+- [tests/ part 5](tests--part-5.md) — 79 modules — -
 - [tests/ part 6](tests--part-6.md) — 85 modules — -
-- [tests/ part 7](tests--part-7.md) — 40 modules — -
+- [tests/ part 7](tests--part-7.md) — 45 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -
 - [tools/ part 2](tools--part-2.md) — 7 modules — -
@@ -136,7 +137,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 61 modules — -
-- [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 80 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
