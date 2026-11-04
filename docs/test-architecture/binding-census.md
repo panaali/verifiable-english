@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 282 |
-| leaves:closed domain | 296 |
-| leaves:none | 1500 |
-| modes | 41 |
+| leaves:bound | 284 |
+| leaves:closed domain | 300 |
+| leaves:none | 1525 |
+| modes | 42 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1099 |
-| today:shape | 578 |
+| today:not probed | 1124 |
+| today:shape | 584 |
 | today:unbound | 137 |
 | answers | 583 |
 | probes | 10204 |
@@ -3628,6 +3628,60 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/lexicon/spellings/*` |  |  |  |  |
 | `/result/projection/lexicon/wordings` |  |  |  |  |
 | `/result/projection/lexicon/wordings/*` |  |  |  |  |
+
+## english.command
+
+0 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 0 | shape |
+| `/id` | string | none |  |  | 0 | not probed |
+| `/result/class` | string | none |  |  | 0 | not probed |
+| `/result/code` | string | none |  |  | 0 | not probed |
+| `/result/legend/*` | string | none |  |  | 0 | not probed |
+| `/result/outcome` | string | closed domain | const |  | 0 | shape |
+| `/result/reading/command/act` | string | none |  |  | 0 | not probed |
+| `/result/reading/command/args/*` | string | none |  |  | 0 | not probed |
+| `/result/reading/command/force` | string | closed domain | enum |  | 0 | shape |
+| `/result/reading/fills/*/constant` | string | none |  |  | 0 | not probed |
+| `/result/reading/fills/*/span/0` | integer | none |  | minimum | 0 | not probed |
+| `/result/reading/fills/*/span/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/reading/fills/*/words` | string | none |  |  | 0 | not probed |
+| `/result/reading/paraphrase` | string | none |  | minLength | 0 | not probed |
+| `/result/reading/query` | string | none |  |  | 0 | not probed |
+| `/result/readings/*/command/act` | string | none |  |  | 0 | not probed |
+| `/result/readings/*/command/args/*` | string | none |  |  | 0 | not probed |
+| `/result/readings/*/command/force` | string | closed domain | enum |  | 0 | shape |
+| `/result/readings/*/fills/*/constant` | string | none |  |  | 0 | not probed |
+| `/result/readings/*/fills/*/span/0` | integer | none |  | minimum | 0 | not probed |
+| `/result/readings/*/fills/*/span/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/readings/*/fills/*/words` | string | none |  |  | 0 | not probed |
+| `/result/readings/*/paraphrase` | string | none |  | minLength | 0 | not probed |
+| `/result/readings/*/query` | string | none |  |  | 0 | not probed |
+| `/result/text` | string | none |  |  | 0 | not probed |
+| `/result/text` | string | none |  | minLength | 0 | not probed |
+| `/result/unit` | string | none |  |  | 0 | not probed |
+| `/result/wording` | string | none |  |  | 0 | not probed |
+| `/status` | string | closed domain | const |  | 0 | shape |
+
+| grammar at | grammar | bound whole by | observed |
+|---|---|---|---:|
+| `/result/reading/command/guard` | generated_formula |  | 0 |
+| `/result/readings/*/command/guard` | generated_formula |  | 0 |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/result/legend` |  |  |  |  |
+| `/result/reading/command/args` |  |  |  |  |
+| `/result/reading/fills` |  |  |  |  |
+| `/result/reading/fills/*/span` |  |  |  |  |
+| `/result/readings` |  |  |  |  |
+| `/result/readings/*/command/args` |  |  |  |  |
+| `/result/readings/*/fills` |  |  |  |  |
+| `/result/readings/*/fills/*/span` |  |  |  |  |
 
 ## Grammars
 

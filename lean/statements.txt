@@ -10092,6 +10092,12 @@ theorem VE.Commands.candidate_reads_back
                       VE.Commands.filled a r.fills = Option.some t ∧ VE.Commands.fold t = VE.Commands.fold p.body
   -- uses VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts.force@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading.act@VE.Commands.Read VE.Commands.Reading.fills@VE.Commands.Read VE.Commands.Reading.force@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.filled@VE.Commands.Read VE.Commands.fold@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.roleOf@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.SpeechActs.Force@VE.SpeechActs.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.actVerb@VE.SpeechActs.Wire
   -- expr 3589236825
+theorem VE.Commands.caseReported_eq
+  ∀ (j : Lean.Json) (q : VE.Commands.Request),
+    VE.Commands.Run.decodeRequest j = Except.ok q →
+      VE.Commands.Run.caseReported j = VE.Commands.Run.encode q (VE.Commands.readInstruction q.ctx q.s)
+  -- uses VE.Commands.Request.ctx@VE.Commands.Run VE.Commands.Request.s@VE.Commands.Run VE.Commands.Request@VE.Commands.Run VE.Commands.Run.caseReported@VE.Commands.Run VE.Commands.Run.decodeRequest@VE.Commands.Run VE.Commands.Run.encode@VE.Commands.Run VE.Commands.readInstruction@VE.Commands.Run
+  -- expr 1608021948
 theorem VE.Commands.checked_many
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (r : VE.Commands.Reading)
     (rs : List VE.Commands.Reading), VE.Commands.checkedAddressee se sc r ≠ VE.Commands.Outcome.many rs
@@ -10174,6 +10180,37 @@ theorem VE.Commands.parts_prefix
   ∀ {s : String} {p : VE.Commands.Parts}, VE.Commands.parts s = Option.some p → VE.Commands.prefixRefusal s = Option.none
   -- uses VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.prefixRefusal@VE.Commands.Read
   -- expr 2612302666
+theorem VE.Commands.proofMany_one
+  ∀ (ctx : VE.Commands.Context) (gs : List VE.Formula) (r : VE.Commands.Reading),
+    VE.Commands.proofMany ctx gs ≠ VE.Commands.Outcome.one r
+  -- uses VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.proofMany@VE.Commands.Run VE.Formula@VE.Syntax
+  -- expr 192437452
+theorem VE.Commands.proofTask_addressed
+  ∀ (ctx : VE.Commands.Context) (s : String) (r : VE.Commands.Reading),
+    VE.Commands.proofTask ctx s = Option.some (VE.Commands.Outcome.one r) →
+      VE.Commands.addressed ctx.se ctx.sc r = Bool.true
+  -- uses VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.proofTask@VE.Commands.Run
+  -- expr 292509842
+theorem VE.Commands.proofTask_bound
+  ∀ (ctx : VE.Commands.Context) (s p : String) (r : VE.Commands.Reading),
+    VE.Commands.proofSentence s = Option.some p →
+      VE.Commands.proofTask ctx s = Option.some (VE.Commands.Outcome.one r) →
+        ∃ φ q,
+          VE.Commands.guardOf ctx.se ctx.E ctx.L ctx.b p = Except.ok φ ∧
+            List.filter (fun x => x.target == φ) ctx.queries = [q] ∧ List.map (fun x => x.const) r.fills = [q.id]
+  -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.queries@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.QueryRecord.id@VE.Commands.Run VE.Commands.QueryRecord.target@VE.Commands.Run VE.Commands.QueryRecord@VE.Commands.Run VE.Commands.Reading.fills@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.proofSentence@VE.Commands.Run VE.Commands.proofTask@VE.Commands.Run VE.Formula@VE.Syntax VE.instBEqFormula@VE.Syntax
+  -- expr 1520656969
+theorem VE.Commands.proofTask_one
+  ∀ (ctx : VE.Commands.Context) (s : String) (r : VE.Commands.Reading),
+    VE.Commands.proofTask ctx s = Option.some (VE.Commands.Outcome.one r) →
+      ∃ p φ q g,
+        VE.Commands.proofSentence s = Option.some p ∧
+          VE.Commands.guardOf ctx.se ctx.E ctx.L ctx.b p = Except.ok φ ∧
+            List.filter (fun x => x.target == φ) ctx.queries = [q] ∧
+              VE.Commands.proofPreds ctx = [g] ∧
+                r = VE.Commands.proofReading g q ∧ VE.Commands.addressed ctx.se ctx.sc r = Bool.true
+  -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.queries@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.QueryRecord.target@VE.Commands.Run VE.Commands.QueryRecord@VE.Commands.Run VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.proofPreds@VE.Commands.Run VE.Commands.proofReading@VE.Commands.Run VE.Commands.proofSentence@VE.Commands.Run VE.Commands.proofTask@VE.Commands.Run VE.Formula@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.instBEqFormula@VE.Syntax
+  -- expr 2648345473
 theorem VE.Commands.readCommand_bound
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
@@ -10253,6 +10290,36 @@ theorem VE.Commands.readCommand_typed_of_facts
                 VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
   -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
   -- expr 2284583582
+theorem VE.Commands.readInstruction_command
+  ∀ (ctx : VE.Commands.Context) (s : String),
+    VE.Commands.proofTask ctx s = Option.none →
+      VE.Commands.readInstruction ctx s = VE.Commands.readCommand ctx.se ctx.sc ctx.E ctx.L ctx.b s
+  -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome@VE.Commands.Read VE.Commands.proofTask@VE.Commands.Run VE.Commands.readCommand@VE.Commands.Read VE.Commands.readInstruction@VE.Commands.Run
+  -- expr 3712459799
+theorem VE.Commands.readInstruction_refused_classed_of
+  ∀ (ctx : VE.Commands.Context) (s code text : String),
+    (∀ (c t : String),
+        VE.Commands.readCommand ctx.se ctx.sc ctx.E ctx.L ctx.b s = VE.Commands.Outcome.refused c t →
+          (VE.Commands.Texts.classOf c).isSome = Bool.true) →
+      (∀ (p c t : String),
+          VE.Commands.guardOf ctx.se ctx.E ctx.L ctx.b p = Except.error (VE.Commands.GuardFault.unread c t) →
+            (VE.Commands.Texts.classOf c).isSome = Bool.true) →
+        VE.Commands.readInstruction ctx s = VE.Commands.Outcome.refused code text →
+          (VE.Commands.Texts.classOf code).isSome = Bool.true
+  -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.readInstruction@VE.Commands.Run VE.Formula@VE.Syntax
+  -- expr 3302161302
+theorem VE.Commands.readInstruction_typed_of_facts
+  ∀ (ctx : VE.Commands.Context) (s : String) (r : VE.Commands.Reading) (D : VE.SpeechActs.SpeechDoc) (u : String),
+    VE.Commands.declared ctx.se = Bool.true →
+      VE.Commands.readInstruction ctx s = VE.Commands.Outcome.one r →
+        D.E = ctx.se.ne.rv.environment →
+          D.scope = ctx.sc →
+            D.regulated = ctx.se.ne.regulated →
+              VE.SpeechActs.scopeOk D = Bool.true →
+                (∀ (q : VE.Commands.QueryRecord), q ∈ ctx.queries → (q.id, "query") ∈ ctx.se.ne.rv.vocabulary.constants) →
+                  VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
+  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Context.queries@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.QueryRecord.id@VE.Commands.Run VE.Commands.QueryRecord@VE.Commands.Run VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readInstruction@VE.Commands.Run VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
+  -- expr 1832139632
 theorem VE.Commands.refusalOf_refused
   ∀ (s : String) (p : VE.Commands.Parts) (pm : List (VE.Norms.Regulated × List VE.Commands.Fill))
     (ms : List (String × List VE.Commands.Fill)) (gr : Except VE.Commands.GuardFault VE.Formula),
@@ -53331,6 +53398,10 @@ theorem VE.Service.runMode_englishCheck
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j
   -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3423368793
+theorem VE.Service.runMode_englishCommand
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishCommand j = VE.Commands.Run.caseReported j
+  -- uses VE.Commands.Run.caseReported@VE.Commands.Run VE.Service.Mode.englishCommand@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 2438095877
 theorem VE.Service.runMode_englishGrammar
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j
   -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
