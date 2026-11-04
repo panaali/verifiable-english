@@ -191,6 +191,8 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
                   "VE.Acts.LexicalExamples"}:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
+    if module in {"VE.Weighing.Tree", "VE.Weighing.Conditions", "VE.Weighing.Examples"}:
+        return 3  # weighing WG-2: a weighing document carries AP's split map (`VE.Acts.Elaborate`, weighing.md 1.1)
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
