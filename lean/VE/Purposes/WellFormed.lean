@@ -134,16 +134,16 @@ def WellFormed (U : Units) (B : Block) : Prop :=
     (L.polarity = .denied → L.share = .plain) ∧ shareOk B L = true) ∧
   markersLinked U B = true ∧ markerHonest U B = true
 
-private theorem require_iff {b : Bool} {m : String} : require b m = .ok () ↔ b = true := by
+theorem require_iff {b : Bool} {m : String} : require b m = .ok () ↔ b = true := by
   cases b <;> simp [require]
 
-private theorem unit_bind {α : Type} {x : Except String PUnit} {f : PUnit → Except String α} {y : α} :
+theorem unit_bind {α : Type} {x : Except String PUnit} {f : PUnit → Except String α} {y : α} :
     (x >>= f) = .ok y ↔ x = .ok () ∧ f () = .ok y := by
   cases x with
   | error e => simp [bind, Except.bind]
   | ok a => simp [bind, Except.bind]
 
-private theorem forM_iff {α : Type} (f : α → Except String PUnit) : ∀ l : List α,
+theorem forM_iff {α : Type} (f : α → Except String PUnit) : ∀ l : List α,
     l.forM f = .ok () ↔ ∀ a ∈ l, f a = .ok ()
   | [] => by simp; rfl
   | a :: l => by simp only [List.forM, unit_bind, forM_iff f l]; simp
@@ -173,7 +173,7 @@ theorem sameUnit_parent (U : Units) (L : Link) (h : sameUnit U L = true) :
       | some x => exact ⟨x, rfl, by simpa [hx] using this⟩
     · cases hp
 
-private theorem adjacent_iff : ∀ ps : List Part,
+theorem adjacent_iff : ∀ ps : List Part,
     ((ps.zip ps.tail).all fun (a, b) => a.span.2 == b.span.1) = true ↔
       ∀ (i : Nat) (h : i + 1 < ps.length), ps[i].span.2 = ps[i + 1].span.1
   | [] => by simp
@@ -223,7 +223,7 @@ theorem shareOk_iff (B : Block) (L : Link) :
         by_cases htg : M.target = L.target <;> simp_all
   | _ => simp
 
-private theorem side_kind {U : Units} {s : List Ref} {k : Kind} (h : sideOfKind U s k = true) :
+theorem side_kind {U : Units} {s : List Ref} {k : Kind} (h : sideOfKind U s k = true) :
     ∀ i ∈ s.filterMap Ref.partId?, U.kind? i = some k := by
   unfold sideOfKind at h
   simp only [Bool.and_eq_true, List.all_eq_true] at h

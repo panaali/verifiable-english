@@ -212,8 +212,8 @@ def f1Wire : String := "{\"links\": [{\"id\": \"l1\", \"relation\": \"in order t
 #guard decoded (f1Wire.replace "\"u0146.s01.p3\"" "\"\"") == some "InvalidPurposes: invalid id "
 #guard decoded (f1Wire.replace "\"affirmed\"" "\"asserted\"") ==
   some "InvalidPurposes: link l1 has polarity asserted; it must be affirmed or denied"
-#guard decoded (f1Wire.replace "\"plain\"" "\"partial\"") ==
-  some "InvalidPurposes: link l1 has share partial; it must be plain, sole, partly or not_sole"
+#guard decoded (f1Wire.replace "\"plain\"" "\"in_part\"") ==
+  some "InvalidPurposes: link l1 has share in_part; it must be plain, sole, partly or not_sole"
 #guard decoded (f1Wire.replace "\"plain\"" "\"not_sole\"") == none
 #guard decoded (f1Wire.replace "{\"part\": \"u0146.s01.p3\"}" "{\"unit\": \"u0146.s01.p3\"}") ==
   some "InvalidPurposes: link l1 has a side that is not a list of parts or mentions"
