@@ -1,0 +1,23 @@
+{
+ "job": "ci-2.s4of8-c3508e1e",
+ "head": "e945c7c0204a261552fc3543be0c6053c43ffa42",
+ "argv": [
+  "ci-2.s4of8-c3508e1e",
+  "e945c7c0204a261552fc3543be0c6053c43ffa42",
+  "4798b3f0ca8d19d5af93e923a79794e090039cda",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c62ae449f1e3.tar.zst",
+  "e718d069db6719b04bee3a5b7f01d94da823a802da830a89518796f9afac569a",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Commands/RunExamples.lean",
+  "--test",
+  "lean/VE/Service/RegistryExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "4/8",
+  "--jobs",
+  "4"
+ ]
+}
