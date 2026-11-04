@@ -421,19 +421,30 @@ def _presentations(doc, block, lean):
 
 def bind_composed(doc, lean):
     """Lean's composed answer, bound to the loaded document: its reference lines are the document's mentions
-    (`_bind_references`); the chain route's kinds are the document's units' and parts' kinds in document order, and
-    its report's claims are nodes of the document's graph, the root its root (Compose.lean `chainDocument` copies
-    both). The chain route's verdict and report id, and the wrapper's, are Lean's."""
+    (`_bind_references`); the chain route's kinds are the flattened units' kinds in document order, and
+    each report claim is the complete copied identity of a node in the document's graph, the root its root
+    (Compose.lean `chainDocument` copies both). The chain route's verdict and report id, and the wrapper's,
+    are Lean's."""
+    from .backends.service_schema import same_json
+    from .document.source import _parts
+
     meta, inner = doc["meta"], lean["inner"]
     _bind_references(meta["discourse"], lean["references"])
-    if inner.get("kinds") != [u.get("kind") for unit in meta["units"] for u in [unit, *unit.get("parts", [])]]:
+    if inner.get("kinds") != [u.get("kind") for u, _ in _parts(meta["units"])]:
         raise _foreign("kinds")
     graph, report = meta.get("graph"), inner.get("report")
     graph = graph if type(graph) is dict else {}
-    names = {node.get("name") for node in graph.get("nodes", []) if type(node) is dict}
+    nodes = {node.get("name"): node for node in graph.get("nodes", []) if type(node) is dict}
+
+    def copied_claim(claim):
+        node = nodes.get(claim.get("name"))
+        return node is not None and same_json(claim, {key: node[key] for key in ("name", "ast", "label")
+                                                      if key in node})
+
     if (type(report) is not dict or set(report) != {"root", "assumptions"} or type(report["root"]) is not dict
-            or report["root"].get("name") != graph.get("root") or type(report["assumptions"]) is not list
-            or not all(type(c) is dict and c.get("name") in names for c in report["assumptions"])):
+            or report["root"].get("name") != graph.get("root") or not copied_claim(report["root"])
+            or type(report["assumptions"]) is not list
+            or not all(type(c) is dict and copied_claim(c) for c in report["assumptions"])):
         raise _foreign("report")
     return lean
 
