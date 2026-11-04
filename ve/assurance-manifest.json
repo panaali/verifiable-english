@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41748,
+    "total_lines": 41805,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1117,12 +1117,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2696,
-        "sha256": "7ababced09d970de301d87b390c7f783560b4874d21e6012c731da24d1095936",
+        "lines": 2751,
+        "sha256": "9af31b37e10112e150bfd48be1d1872d72d79ef4d774e2ca6777fc06c86b365a",
         "ranges": [
           [
             1,
-            2696
+            2751
           ]
         ],
         "declarations": [
@@ -1922,12 +1922,12 @@
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
-        "lines": 172,
-        "sha256": "980ec6d8d8c400e9fc1ed6b3b37b5f36579dd881bb8dd0ae4f1e2029edba83bb",
+        "lines": 174,
+        "sha256": "cea31d4f1f9e0b79497d7b02c353f233496be9c5fe5cf4cd41877526b1189e14",
         "ranges": [
           [
             1,
-            172
+            174
           ]
         ],
         "declarations": [
@@ -2288,7 +2288,10 @@
       "lean/VE/Commands/Read.lean": "lean:runner-glue: the command reader decodes no request; it reads a decoded environment, the formulas of english-lean's reading through the pinned `decodeClosedField`, and the code and text fields of english-lean's own translation row",
       "lean/VE/Service/DocumentChain.lean": "statements only (profile-composition PC-2a): `layeredOf_ids` and `layeredOf_entails` read `requestOf`'s case through `Json.getObjVal?`; no service mode",
       "lean/VE/Service/DocumentChainExamples.lean": "examples only: PC-2a's fixtures (profile-composition 5.2) are built as JSON documents and sent to `check` and `layeredOf` in `#guard`s; no service mode",
-      "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode"
+      "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode",
+      "lean/VE/EnglishGrammar/Norm/Elab.lean": "builds a read rule's W1 norm wire object only to pass it to VE.Norms.Wire.decodeNorm, the pinned decoder (docs/spec/english-lean-s6.md 2.7); authoring mode, no runner path",
+      "lean/VE/EnglishGrammar/Norm/Examples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s6.md section 6 build environment JSON for Env.decode and decode Python's recorded nodes; no runner path",
+      "lean/VE/Service/CardinalityExamples.lean": "fixtures only: QT-A4's #guard checks build small cardinality@0 part documents as request JSON and run the document mode (`checkCore`) on them; no service mode reads this file"
     }
   },
   "plan_operations": {
@@ -4680,7 +4683,7 @@
         "python:backend-adapter"
       ],
       "notes": [
-        "The relay in ve.backends.senses:project only transports the request and binds the answer: the dictionary identity, the senses version, and identities equal to Python's over the returned environment and lexicon; no Python function computes a projection.",
+        "The relay in ve.backends.senses:project only transports the request and binds the answer: the dictionary identity and identities equal to Python's over the returned environment and lexicon; it types the senses version (a non-empty string) and does not bind it, which sn-b6bb does against ve/senses/LOCK.json; no Python function computes a projection.",
         "The budget class is the projection's status `budget`, with the code PreambleBudget (a line read past the budget)."
       ]
     },

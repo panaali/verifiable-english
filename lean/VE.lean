@@ -166,6 +166,7 @@ import VE.Calc.Data
 import VE.Calc.TableExamples
 import VE.Calc.Stats
 import VE.Calc.StatsExamples
+import VE.Calc.ConsistencyExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -297,6 +298,7 @@ import VE.Service.DocumentChainExamples
 import VE.Service.DocumentChainChecks
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
+import VE.Service.CardinalityExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
@@ -312,6 +314,9 @@ import VE.Defaults.RouteExamples
 import VE.Defaults.Uniform
 import VE.Defaults.UniformExamples
 import VE.EnglishGrammar.Norm.Value
+import VE.EnglishGrammar.Norm.Rules
+import VE.EnglishGrammar.Norm.Read
+import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples

@@ -306,6 +306,7 @@ _NOT_THIS_CHAIN = {
     "path": lean("a located refusal's model path, bound by `_names_a_model_member`"),
     "span": lean("a located refusal's span, bound by `_spans_a_strict_fence`"),
     "composed_readings": lean("`scope@0`'s; refused by the row's member set without a composed set"),
+    "cardinality": lean("`cardinality@0`'s; refused by the row's member set without that profile"),
     "judgments": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "undeclared_evaluative": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "coverage.alternatives": lean("`alternatives@0`'s, which this chain refuses; refused by the coverage's equality"),
