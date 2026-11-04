@@ -1,0 +1,7 @@
+job=armsh-cand-difffuzz-pilot-runs-796207f3-t813273-s1 shard=1/5 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-04T17:29:06Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 17:29:07 up 10 min,  0 user,  load average: 0.99, 0.36, 0.17
+pilot/codex branches: 98
+ve-cache: lean-build exact key 0ec07d49c792 asset lean-build-0ec07d49c792-linux-aarch64.tar.zst sha256 fa23c20483d6 ok, seal ok, from download, 17.8 s
+p1-tokenizers: 443909a61d42 fetched
