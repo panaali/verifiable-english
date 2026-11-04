@@ -746,6 +746,9 @@ module VE.Time.Semantics
 module VE.Time.Syntax
 module VE.Time.Wire
 module VE.Typing
+module VE.Weighing.Conditions
+module VE.Weighing.Examples
+module VE.Weighing.Tree
 module VE.Weighing.Zone
 module VE.Weighing.ZoneExamples
 module VE.WireContract.Diagnose
@@ -1543,6 +1546,10 @@ VE.TupleTyped@VE.Semantics
 VE.Valuation.Typed@VE.Semantics
 VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone
 VE.Weighing.OutcomeIn@VE.Weighing.Zone
+VE.Weighing.RankChain@VE.Weighing.Tree
+VE.Weighing.SameBase@VE.Weighing.Conditions
 VE.Weighing.SettledZ@VE.Weighing.Zone
+VE.Weighing.WeighFacts@VE.Weighing.Conditions
 VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples
+VE.Weighing.freeWitness@VE.Weighing.Conditions
 VE.WireContract.Holds@VE.WireContract.Engine
