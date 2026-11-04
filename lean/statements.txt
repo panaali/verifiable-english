@@ -17365,6 +17365,18 @@ theorem VE.EnglishGrammar.ETerm.decode_encode
   ∀ (t : VE.EnglishGrammar.ETerm), VE.EnglishGrammar.ETerm.decode t.encode = Option.some t
   -- uses VE.EnglishGrammar.ETerm.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
   -- expr 2165347204
+theorem VE.EnglishGrammar.JudgmentLines.parseLine_renders
+  ∀ {line : String} {j : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.parseLine line = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.parseLine@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2546311996
+theorem VE.EnglishGrammar.JudgmentLines.renderingTo_renders
+  ∀ {line : String} {j k : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.renderingTo line k = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.renderingTo@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2299198272
 theorem VE.EnglishGrammar.LexRow.Small.dom
   ∀ {E : VE.EnglishGrammar.Env} {r : VE.EnglishGrammar.LexRow},
     r.Small → VE.EnglishGrammar.LexRow.NtsIn (VE.EnglishGrammar.InDom E) r
@@ -52502,6 +52514,38 @@ theorem VE.Service.Document.swapInjective_frontOf
       VE.Service.Document.swapInjectiveH (VE.Service.Document.statedIds j) (VE.Service.Document.statedPairs j)
   -- uses VE.Service.Document.statedIds@VE.Service.Document VE.Service.Document.statedPairs@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveH@VE.Service.Document
   -- expr 168316616
+theorem VE.Service.DocumentChain.layeredOf_entails
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate),
+        VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) (VE.Norms.size (VE.NormDefaults.fill L.U)))
+              (VE.NormDefaults.Wire.premisesX L.U L.X Γ) φ cert =
+            Bool.true →
+          VE.NormDefaults.EntailsX L.U L.X Γ φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 1058420681
+theorem VE.Service.DocumentChain.layeredOf_ids
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      E.soft = Bool.true → List.map (fun x => x.id) L.packs = ["soft"]
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Service.Document.Env.soft@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
+  -- expr 3982576285
+theorem VE.Service.DocumentChain.layeredOf_soft
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
+    (L : VE.NormDefaults.Wire.LayeredU),
+    VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
+      ∃ environment norms, VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
+  -- expr 1375785200
+theorem VE.Service.DocumentChain.requestOf_environment
+  ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit),
+    VE.NormDefaults.Wire.layeredRoute (VE.Service.Document.wireJson 257 E.lower) = Option.some "soft-norms@0" →
+      (VE.Service.DocumentChain.requestOf E front units).getObjVal? "environment" =
+        Except.ok (VE.Service.Document.wireJson 257 E.lower)
+  -- uses VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document VE.Service.DocumentChain.requestOf@VE.Service.Document
+  -- expr 3812763173
 theorem VE.Service.Entry.prepared_eq
   ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
