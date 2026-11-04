@@ -51,6 +51,46 @@
    "result": "KILLED",
    "test": "tests/test_discourse_composed_route.py::test_every_mutant_is_refused[drop inner.kinds], [retype inner.kinds], [duplicate kinds], [reorder kinds]",
    "check": "pytest"
+  },
+  {
+   "definition": "VE.Discourse.chainEnvironment",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the soft list read by the norms decoder (no soft chain decoder in step 1)",
+   "from": "| .ok .soft => (VE.SoftNorms.Phases.checkSource be (.arr #[])).map (·.ne) |>.mapError (·.message)",
+   "to": "| .ok .soft => VE.Norms.Wire.decodeNormsEnvironment be",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (the route check's soft conjunct)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainEnvironment",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the norm-defaults list read by the norms decoder",
+   "from": "| .ok .normDefaults => VE.NormDefaults.Wire.decodeEnvironmentU be",
+   "to": "| .ok .normDefaults => VE.Norms.Wire.decodeNormsEnvironment be",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (the route check's norm-defaults conjunct)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainEnvironment",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the rights list read by the soft decoder (the rights block unread)",
+   "from": "| .ok .rights => (·.se.ne) <$> VE.Rights.Wire.decodeRightsEnvironment be",
+   "to": "| .ok .rights => (VE.SoftNorms.Phases.checkSource be (.arr #[])).map (·.ne) |>.mapError (·.message)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:245 (the route check's rights conjunct)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainBaseWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the chain route's environment id over the wrong profile list (14.5 step 3)",
+   "from": "let envId ← VE.Route.Wire.environmentId bp canonical",
+   "to": "let envId ← VE.Route.Wire.environmentId [] canonical",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:280",
+   "check": "#guard"
   }
  ]
 }
