@@ -93,11 +93,10 @@ span [15, 24] after leading spaces (:148); W10's `many` over `E_web` (:150); `js
 another environment's lexicon refused (:156); a duplicate record and an undeclared query id (:157, :159). R16's
 guards (:163 to :177). `caseReported_eq` as a guard over six requests (:181).
 
-Limits (the common rule): `readInstruction` reads the wording once, by the proof task or by `readCommand`, never both
+Limits (the common rule): `readInstruction` sends the wording to the proof task or to `readCommand`, never both
 (`Option.getD` is `@[macro_inline]`, `Init/Prelude.lean:2868`, so `readCommand` runs only when `proofTask` is `none`).
-One exception, ci-1's and the spec's: when english-lean refuses the sentence, `guardOf`'s `unreadOf` reads it a
-second time for the refusal's code and text (ci-1 review F5). `Run.lean:5-7`'s "each wording is read once" does not
-say so; that docstring goes to ci-2b, since editing it here would rerun every `Run.lean` mutant. The proof wording's
+`guardOf` now formats refusals from its existing `TranslateOutcome` through `translationOf`, so both paths translate
+each sentence once. The proof wording's
 400-byte bound comes before it is read (O10, both sides of the boundary); `many` is at most `readingsBound`
 (`manyOf`, both sides); budget 0 is `limit`.
 
@@ -151,8 +150,8 @@ through ci-2b's wrapper. Nothing is claimed before a pilot audit.
 
 F2 (ci-1's DELTA.md said no `ve/` path changed): fixed. F6 (the spec was not in the tree): the plan and spec are
 copied. ci-1's `goCase` is the base of O2's fixture. F3 (the A/B's two rows) is ci-2b's, with the A/B. F4's hand
-mutants of `Read.lean`, F5 (`Read.lean:7`'s "read once" beside `unreadOf`'s re-read) and F8 (`ofCondition` and
-"Sentence 2") are `Read.lean`'s, left to ci-1b so that this item does not edit the reader.
+mutants of `Read.lean` and F8 (`ofCondition` and "Sentence 2") were left to ci-1b. F5's second translation in
+`unreadOf` is removed by the ci-2 review fix: the refusal formatter receives the original `TranslateOutcome`.
 
 ## ci-2b
 
@@ -194,6 +193,6 @@ ci-2b, then ci-5.
 9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main) --explain`: 538/538 units, because every service test reads `envelope.json`, whose mode list gains the mode, and the service links `VE.Commands.Run`; the selection contains P1's failing test.
 10. Statements say what is claimed: PASS. S2 to S4 break `proofTask_one` and `readInstruction_refused_classed_of`; renaming `wording` in `Run.encode` breaks `encode_fits` (`lake build ResponseShape.Encoders.Command`: "unsolved goals" at `Encoders/Command.lean:15`); `caseReported_eq` is about the value `caseReported` returns. The two facts-based statements are named as such and do not claim the spec's.
 11. Budgets and limits fail closed: PASS. Budget 0 is `limit` (`RunExamples.lean:103`); 401 bytes `limit` (:111); 65 readings `limit` (:134).
-12. No CPU regression: N.A.: no document or pilot path calls the mode; it reads one wording once, inside `_CORE`'s deadline.
+12. No CPU regression: N.A.: no document or pilot path calls the mode; each proof sentence or matched command condition is translated once, inside `_CORE`'s deadline.
 13. `Test-removed` trailers: PASS. `tools/gate_collection.py --check --prebuilt`: "3 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 14. Both directions, cited evidence, spec re-read: PASS. 400 bytes `one` and 401 `limit` (:110, :111); 64 `many` and 65 `limit` (:134); one matching record `one` (:71) and none, a wrong one or two `QueryMismatch` (:72 to :74); an addressee `one` and none `UnboundSlot` (:71, :87); two matching readings `many` and one `QueryMismatch` (:125, :127); a declared query id read (:174) and an undeclared one refused (:159); every fixture request accepted and F-raw refused (:181, :154). Spec re-read: listed under the deviations.

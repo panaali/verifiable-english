@@ -4578,6 +4578,7 @@
         "VE.EnglishGrammar.Run.tables",
         "VE.EnglishGrammar.Run.tokJson",
         "VE.EnglishGrammar.Run.translation",
+        "VE.EnglishGrammar.Run.translationOf",
         "VE.EnglishGrammar.Run.treeJson",
         "VE.EnglishGrammar.Run.treeRows",
         "VE.EnglishGrammar.Run.triples",

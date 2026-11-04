@@ -3,8 +3,9 @@ import VE.SpeechActs.Run
 import VE.Scope.Govern
 
 /-! The one owner of command English (docs/spec/commands-imperatives.md section 6, CI-2): the reading context, the
-proof task, `readInstruction` (the one public entry) and the `english.command` mode. Each wording is read once: the
-proof task's sentence through `guardOf` inside the 400-byte bound, or the command through `readCommand`; `many` holds
+proof task, `readInstruction` (the one public entry for this mode) and the `english.command` mode. Each sentence is
+translated once: the proof task's sentence through `guardOf` inside the 400-byte bound, or a command condition
+through `readCommand`; `many` holds
 at most `readingsBound` readings (`manyOf`). -/
 
 namespace VE.Commands
@@ -79,7 +80,7 @@ def proofTask (ctx : Context) (s : String) : Option Outcome :=
           | _ => .refused Texts.missingObligation Texts.proofAct
         | none => .ofText Texts.queryMismatch
 
-/-- The one public entry (A3): the `english.command` mode and the source wrapper both call it. -/
+/-- The public entry for `english.command` (A3). Source-wrapper integration is deferred to ci-2b. -/
 def readInstruction (ctx : Context) (s : String) : Outcome :=
   (proofTask ctx s).getD (readCommand ctx.se ctx.sc ctx.E ctx.L ctx.b s)
 
