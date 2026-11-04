@@ -33,6 +33,7 @@ def theManager : VE.Formula := VE.Discourse.assertive "entity" (.unary "manager"
 #guard VE.Discourse.raise1 0 (.binary "request_in" (.var 0) (.var 1)) == .binary "request_in" (.var 0) (.var 1)
 #guard VE.Discourse.raise1 1 (.ex "entity" (.binary "r" (.var 1) (.var 2))) ==
   .ex "entity" (.binary "r" (.var 1) (.var 3))
+#guard VE.Discourse.raise1 2 (.binary "r" (.var 1) (.var 2)) == .binary "r" (.var 2) (.var 3)
 #guard VE.Discourse.uniqueOpen 1 "entity" (.binary "r" (.var 0) (.var 1)) ==
   VE.Discourse.uniqueAt "entity" (.binary "r" (.var 0) (.var 1)) (.binary "r" (.var 0) (.var 2))
 #guard VE.Discourse.assertiveOpen 1 "entity" (.binary "r" (.var 0) (.var 1)) ready ==
@@ -48,6 +49,7 @@ def theManager : VE.Formula := VE.Discourse.assertive "entity" (.unary "manager"
 #guard [Frame.hole, .exF "entity" (.andL (.impL .hole .top) .top), .orR .top .hole].map Frame.cls ==
   [.top, .antecedent, .disjunct]
 #guard (Frame.allF "a" (.exF "b" (.andR .top .hole))).binders == ["b", "a"]
+#guard (Frame.allF "a" (.exF "b" (.allF "c" .hole))).binders == ["c", "b", "a"]
 #guard (Frame.allF "a" (.exF "b" (.andR .top .hole))).plug .bottom == .all "a" (.ex "b" (.and .top .bottom))
 #guard (Frame.exF "a" (.orR .top (.impR .top .hole))).close .bottom == .all "a" .bottom
 
