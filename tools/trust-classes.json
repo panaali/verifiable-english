@@ -465,7 +465,10 @@
         "ResponseShape.Schemas.Discourse.admission",
         "ResponseShape.Schemas.Discourse.admissionFields",
         "ResponseShape.Schemas.Discourse.admissionRequired",
+        "ResponseShape.Schemas.Discourse.chainAdmission",
+        "ResponseShape.Schemas.Discourse.chain_admission",
         "ResponseShape.Schemas.Discourse.choices",
+        "ResponseShape.Schemas.Discourse.composed",
         "ResponseShape.Schemas.Discourse.discourse_path",
         "ResponseShape.Schemas.Discourse.file",
         "ResponseShape.Schemas.Discourse.joint",
@@ -2838,6 +2841,7 @@
         "VE.Discourse.choicesOk",
         "VE.Discourse.depthOf",
         "VE.Discourse.documentSortOk",
+        "VE.Discourse.envelopeChecks",
         "VE.Discourse.gateOk",
         "VE.Discourse.importChain",
         "VE.Discourse.integrityOk",
@@ -2910,6 +2914,9 @@
       ],
       "D[V]": [
         "VE.Discourse.chainBase",
+        "VE.Discourse.chainBaseWith",
+        "VE.Discourse.chainEnvironment",
+        "VE.Discourse.composedFields",
         {
           "name": "VE.Discourse.chainDocument",
           "tied": [
@@ -3002,6 +3009,7 @@
         "VE.Service.ComposedAdmissionExamples.mutations",
         "VE.Service.ComposedAdmissionExamples.navigations",
         "VE.Service.ComposedAdmissionExamples.resolved",
+        "VE.Service.ComposedAdmissionExamples.route",
         "VE.Service.ComposedAdmissionExamples.s425",
         "VE.Service.ComposedAdmissionExamples.s428",
         "VE.Service.ComposedAdmissionExamples.today",
@@ -3417,6 +3425,7 @@
       ],
       "G[V]": [
         "VE.Discourse.Run.DiscourseAdmissionAnswer",
+        "VE.Discourse.Run.chainCase",
         "VE.Discourse.Run.jointJson",
         "VE.Discourse.Run.loadCase",
         "VE.Discourse.Run.runCase",
