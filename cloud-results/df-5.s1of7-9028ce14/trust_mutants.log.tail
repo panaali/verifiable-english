@@ -1,0 +1,7 @@
+trust_mutants: 18 definitions, 488 mutants (70 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:321 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-drop-last: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].dropLast) (lean/VE/Defaults/ZoneWire.lean:321: Invalid dotted identifier notation: The expected type of `.st...)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:323 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-drop-first: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> ([("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)].drop 1) (lean/VE/Defaults/ZoneWire.lean:323: Invalid dotted identifier notation: The expected type of `.st...)
+trust_mutants: 64 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 3 ALLOWED, 0 NOT RUN, 418 OTHER SHARD in 2672 s
+trust_mutants: D[V], trusted: 9 KILLED, 101 OTHER SHARD
+trust_mutants: G[V], trusted: 55 KILLED, 2 UNKNOWN, 1 INVALID, 3 ALLOWED, 317 OTHER SHARD
+trust_mutants: steps: wall plan 6.6 s, scratch 2.3 s, control_build 0.2 s, probe_install 1 s, control_probes 235 s, mutants 2423.3 s, cleanup 3.9 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 509.2 s (6), mutant_builds 895.7 s (72), mutant_checks 2254.3 s (39), stage_controls 353.5 s (7), mutant_probes 6013.6 s (64)
