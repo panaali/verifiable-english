@@ -1986,6 +1986,13 @@
    "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
    "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
+   "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
   }
  ]
 }
