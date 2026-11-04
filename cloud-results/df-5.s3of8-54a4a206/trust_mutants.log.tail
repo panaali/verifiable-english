@@ -1,0 +1,8 @@
+trust_mutants: 14 definitions, 426 mutants (53 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:95 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: (keyedDecisions L.D).flatMap -> [] (lean/VE/Defaults/ZoneWire.lean:95: Function expected at)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:95 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: (VE.NormDefaults.allTuples x.S.M ss).filterMap -> [] (lean/VE/Defaults/ZoneWire.lean:95: Function expected at)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-empty: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).map (·.sufficient) -> [] (lean/VE/Defaults/ZoneWire.lean:99: Application type mismatch: The argument)
+trust_mutants: 50 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 2046 s
+trust_mutants: D[V], trusted: 16 KILLED, 94 OTHER SHARD
+trust_mutants: G[V], trusted: 34 KILLED, 3 UNKNOWN, 279 OTHER SHARD
+trust_mutants: steps: wall plan 6 s, scratch 2.1 s, control_build 0.1 s, probe_install 0.8 s, control_probes 199.4 s, mutants 1833.4 s, cleanup 3.8 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.8 s (1), control_probes 422.8 s (6), mutant_builds 496.6 s (56), mutant_checks 1924.4 s (34), stage_controls 391.4 s (8), mutant_probes 4431.1 s (50)
