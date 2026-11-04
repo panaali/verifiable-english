@@ -396,7 +396,7 @@ def retry_quarantined(result: dict, events: dict, env: dict[str, str], python: l
     except RuntimeError:
         pass  # a retry that fails exits 1: its events say which test failed again
     try:
-        retried = json.loads(retry_file.read_text())["tests"]
+        retried = test_schedule.json_value(retry_file.read_text())["tests"]
     except (OSError, ValueError, KeyError, TypeError):
         retried = {}
     for nodeid in failed:
@@ -461,7 +461,7 @@ def runner_identity() -> dict[str, str]:
 def read_previous(path: Path) -> dict | None:
     """The gate record at `path`, read before this gate replaces it, or None."""
     try:
-        record = json.loads(path.read_text())
+        record = test_schedule.json_value(path.read_text())
     except (OSError, ValueError):
         return None
     return record if isinstance(record, dict) else None
@@ -652,14 +652,15 @@ def record_file_durations(path: Path) -> tuple[str, test_schedule.Estimates] | N
     """(its sha256, its durations): the durations a gate record file holds (`--durations-record`: a full gate
     record or a merged shard record), with the IDs it collected when its suite timed every test it selected, as
     `base_durations` reads a note's; None, with one log line, when the file is missing, unreadable, larger than
-    MAX_DURATIONS_RECORD_BYTES, not a JSON object or holds no durations. Scheduling data only."""
+    MAX_DURATIONS_RECORD_BYTES, not a JSON object or holds no durations, at any nesting depth of the file or of its
+    compressed fields (`test_schedule.json_value`). Scheduling data only."""
     from tools import gate_collection
     try:
         with path.open("rb") as handle:
             raw = handle.read(MAX_DURATIONS_RECORD_BYTES + 1)
-        record = json.loads(raw) if len(raw) <= MAX_DURATIONS_RECORD_BYTES else None
-    except (OSError, ValueError, RecursionError):
-        record = None
+    except OSError:
+        raw = b""
+    record = test_schedule.json_value(raw) if len(raw) <= MAX_DURATIONS_RECORD_BYTES else None
     estimates = test_schedule.read_record_field(record.get("durations")) if isinstance(record, dict) else None
     if estimates is None:
         print(f"[gate] durations record {path} not used: missing, oversize or malformed", flush=True)

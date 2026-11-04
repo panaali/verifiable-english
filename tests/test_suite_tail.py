@@ -5,12 +5,14 @@ the suite by comes from the same records.
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import time
+import zlib
 
 import pytest
 
@@ -180,6 +182,15 @@ def test_durations_command_reads_gate_records_as_more_runs(tmp_path, monkeypatch
     assert suite_tail.main() == 0
     assert test_schedule.read_estimates(output) == ({"t::a": 6.0, "t::b": 10.0}, 0.25)
     second.write_text(json.dumps({"status": "passed"}))
+    with pytest.raises(SystemExit, match="not a gate record with durations"):
+        suite_tail.main()
+    # So is one nested deeper than the parser's stack, whole or in its compressed durations (eff-20261103-1 F1).
+    second.write_text("[" * 100_000 + "]" * 100_000)
+    with pytest.raises(SystemExit, match="not a gate record with durations"):
+        suite_tail.main()
+    deep = base64.b64encode(zlib.compress(b"[" * 100_000 + b"]" * 100_000)).decode()
+    second.write_text(json.dumps({"counts": {"selected": 1}, "durations": {
+        **test_schedule.record_field({"t::a": 6.0}), "seconds_zlib": deep}}))
     with pytest.raises(SystemExit, match="not a gate record with durations"):
         suite_tail.main()
 
