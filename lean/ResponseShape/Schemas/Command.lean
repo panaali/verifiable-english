@@ -2,8 +2,8 @@ import ResponseShape
 
 /-! The source of `ve/backends/lean_service_schema/english.command.json` (`file`; `tools/response_schemas.py` writes
 it): the `english.command` mode's row (`VE.Commands.Run.caseReported`, docs/spec/commands-imperatives.md section 6).
-The relay binds the id, unit, wording, each fill's constant, words and span, the act and the query to its request;
-the guard, paraphrase, legend, code, class and text are Lean's. -/
+The generated shape binds id, unit and wording to the request. Relay binding of fills, spans, act and query is
+deferred to ci-2b; guard, paraphrase, legend, code, class and text are Lean's. -/
 namespace ResponseShape.Schemas.Command
 open Lean ResponseShape
 
