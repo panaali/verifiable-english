@@ -532,6 +532,46 @@
    "max_rss_kb": 111888,
    "stderr_last_line": "",
    "commit": "2d0b9d1a912be88451767feb8b5c819144ed6f6d"
+  },
+  {
+   "document": "after",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     35.55419921875,
+     45.71142578125,
+     51.751953125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 117881480
+   },
+   "memory_limit": "RLIMIT_AS=16G (user bus unavailable)",
+   "wall_s": 25.18,
+   "cpu_s": 46.48,
+   "max_rss_kb": 173156,
+   "stderr_last_line": "",
+   "commit": "427f406847513c28972d6fc57b6c5fbb879b0742"
+  },
+  {
+   "document": "strict",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     34.25537109375,
+     44.59228515625,
+     51.22021484375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 117130352
+   },
+   "memory_limit": "RLIMIT_AS=16G (user bus unavailable)",
+   "wall_s": 23.28,
+   "cpu_s": 41.63,
+   "max_rss_kb": 185704,
+   "stderr_last_line": "",
+   "commit": "427f406847513c28972d6fc57b6c5fbb879b0742"
   }
  ]
 }
