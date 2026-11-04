@@ -1986,6 +1986,20 @@
    "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
    "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
+  },
+  {
+   "class": "S",
+   "lines": 39,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   }
  ]
 }
