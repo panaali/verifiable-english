@@ -3,11 +3,13 @@ the diff only labelling each removal (tools/gate_collection.py), and the collect
 discovery rules to the tree as it is now."""
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
 import subprocess
 import sys
+import zlib
 
 import pytest
 
@@ -403,6 +405,8 @@ BAD = {
     "collected retyped": {"collection": {"collected_zlib": 7}},
     "collected invalid base64": {"collection": {"collected_zlib": "***"}},
     "collected empty": {"collection": {"collected_zlib": gate_collection.encode_ids([])}},
+    "collected nested 100k deep": {"collection": {"collected_zlib": base64.b64encode(zlib.compress(
+        b"[" * 100_000 + b"]" * 100_000)).decode()}},
 }
 
 
@@ -436,7 +440,7 @@ def test_f2_gate_result_and_note_share_the_compact_collection(history):
     assert note["collection"]["collected_zlib"] == result["collection"]["collected_zlib"]
 
 
-@pytest.mark.parametrize("text", ["", "{", "[]", "null", "7", '"x"'])
+@pytest.mark.parametrize("text", ["", "{", "[]", "null", "7", '"x"', pytest.param("[" * 100_000 + "]" * 100_000, id="nested 100k deep")])
 def test_a_record_that_is_not_an_object_is_ignored(text):
     assert gate_collection.parse_record(text, "c" * 40, "t" * 40) is None
 
