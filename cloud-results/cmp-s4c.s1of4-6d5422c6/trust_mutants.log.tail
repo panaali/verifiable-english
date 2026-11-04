@@ -1,0 +1,6 @@
+trust_mutants: 11 definitions, 179 mutants (5 to run), 4 jobs, base a12f56fd7162
+UNKNOWN lean/VE/Discourse/Admission.lean:49 VE.Discourse.envelopeChecks (G[V], trusted) list-empty: [ fun _ => req (decide (profiles.Pairwise (· < ·))) (VE.Route.Gate.unsupported "profiles must be ... -> [] (lean/VE/Discourse/ComposeExamples.lean:266: Expression (VE.Discourse.postOk, which it reads, is n...)
+trust_mutants: 32 KILLED, 0 SURVIVOR, 1 UNKNOWN, 8 INVALID, 4 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 209 s; 40 carried from 0675710494a6 (check-only change: lean/VE/Discourse/ComposeExamples.lean, lean/declarations.txt)
+trust_mutants: D[V], trusted: 3 KILLED, 1 INVALID, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 29 KILLED, 1 UNKNOWN, 7 INVALID, 4 ALLOWED, 120 OTHER SHARD
+trust_mutants: steps: wall plan 6.6 s, scratch 2.2 s, control_build 0.1 s, probe_install 1 s, control_probes 80.1 s, mutants 114.1 s, cleanup 4.6 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 81.1 s (2), mutant_builds 9 s (5), mutant_checks 19.4 s (3), stage_controls 9.2 s (1), mutant_probes 83.1 s (1)
