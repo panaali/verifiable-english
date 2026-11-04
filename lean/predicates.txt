@@ -348,6 +348,9 @@ module VE.EnglishGrammar.Fixed.Staged
 module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
+module VE.EnglishGrammar.JudgmentLines
+module VE.EnglishGrammar.JudgmentLinesExamples
+module VE.EnglishGrammar.JudgmentRunExamples
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
@@ -673,6 +676,9 @@ module VE.Service.CardinalityExamples
 module VE.Service.ComposedAdmissionExamples
 module VE.Service.Diagnose
 module VE.Service.Document
+module VE.Service.DocumentChain
+module VE.Service.DocumentChainChecks
+module VE.Service.DocumentChainExamples
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
