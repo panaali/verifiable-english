@@ -1,0 +1,5 @@
+job=cmp-s4c.s1of2-6a6e5861 nproc=4 host=ip-10-0-136-50 date=2026-11-04T14:38:20Z
+Mem:              15           1           8           0           5          13
+/dev/mapper/cow-root   72G   62G  9.8G  87% /
+ 14:38:20 up 1 min,  0 user,  load average: 1.43, 0.47, 0.17
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
