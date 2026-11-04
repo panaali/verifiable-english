@@ -287,6 +287,8 @@ import VE.Scope.ReadingsExamples
 import VE.Scope.English
 import VE.Scope.Run
 import VE.Scope.RunExamples
+import VE.EnglishGrammar.JudgmentLinesExamples
+import VE.EnglishGrammar.JudgmentRunExamples
 import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach

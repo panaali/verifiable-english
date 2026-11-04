@@ -1,0 +1,31 @@
+{
+ "allow": [
+  {"definition": "VE.EnglishGrammar.JudgmentLines.preds", "operator": "all-any", "reason": "ill-typed: `.all` here is the EFormula constructor, which has no `any`."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.preds", "operator": "append-right", "reason": "ill-typed: the mutated `++` leaves two lists side by side."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.preds", "operator": "list-empty", "reason": "ill-typed: `a` is a formula, not a list."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.atom", "operator": "list-empty", "reason": "ill-typed: the wrapped expressions are Options or fixed by the fold's type."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.atom", "operator": "le-eq", "reason": "equivalent below 3: arities 1 and 2 take `fallbackWording` first, and the 4-ary guard kills it at 3."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.atom", "operator": "lit-minus", "reason": "equivalent: arity 2 always has `fallbackWording`, so `2 ≤` and `3 ≤` agree where the branch is reached."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.declarationLine", "operator": "list-empty", "reason": "ill-typed: the wrapped expression is an Option."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.factorsLine", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: `[].isEmpty` leaves the element type unknown."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.factorsLine", "operator": "list-first", "reason": "equivalent: `take 1` keeps `isEmpty`, and the intercalate's copy is killed by the two-factor guard."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.factorsLine", "operator": "list-last", "reason": "equivalent: `reverse.take 1` keeps `isEmpty`, and the intercalate's copy is killed by the two-factor guard."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.legendLines", "operator": "list-first", "reason": "equivalent: `Option.toList` has at most one element."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.legendLines", "operator": "list-last", "reason": "equivalent: `Option.toList` has at most one element."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.slotNouns", "operator": "list-empty", "reason": "ill-typed: `s` and the suffix are strings."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.slotNouns", "operator": "list-drop-last", "reason": "equivalent: `take i` for an index of `args` never reads its last element."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-empty", "reason": "unsupported: `js` is under `mapM`'s binder and `[w]` is a match pattern."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-drop-last", "reason": "unsupported: `[w]` is a match pattern, which takes no function."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.statusLine", "operator": "list-drop-first", "reason": "unsupported: `[w]` is a match pattern, which takes no function."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.readingPreds", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: the map's element type is not known without the original list."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.refusal", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: the pattern lambda's type is not known without `fs.zipIdx`."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.refusal", "operator": "list-first", "reason": "equivalent where it survives: `take 1` before `.head?` on the listed names and on the sort's arguments reads the same first element."},
+  {"definition": "VE.EnglishGrammar.JudgmentLines.readDeclaration", "operator": "bool-flip", "reason": "equivalent: `data` is read only when `formula` is none, and this call passes `some`."},
+  {"definition": "VE.EnglishGrammar.Run.authoring", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: `rs` and `text` lose their expected types."},
+  {"definition": "VE.EnglishGrammar.Run.authoring", "operator": "append-right", "reason": "ill-typed: `text ++` joins a string to a list of fields."},
+  {"definition": "VE.EnglishGrammar.Run.readCase", "operator": "list-empty", "reason": "ill-typed where it is UNKNOWN: `optionalFields` takes the request's Json, not a list; Lean reports the mismatch on the application, outside the edit."},
+  {"definition": "VE.EnglishGrammar.Run.readCase", "operator": "append-right", "reason": "ill-typed: without `optionalFields j ++` the conditional list is passed to `optionalFields` as its Json."},
+  {"definition": "VE.EnglishGrammar.Run.readCase", "operator": "list-first", "reason": "equivalent: `(if … then [\"judgments\"] else [])` has at most one element, so `take 1` keeps it."},
+  {"definition": "VE.EnglishGrammar.Run.readCase", "operator": "list-last", "reason": "equivalent: `(if … then [\"judgments\"] else [])` has at most one element, so `reverse.take 1` keeps it."}
+ ]
+}
