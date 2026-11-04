@@ -2014,6 +2014,13 @@
    "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "S",
+   "lines": 221,
+   "reason": "at-1a: Syntax.lean +145, Scale.lean +76 (S), K +0",
+   "signature": "SIGNED by the DRI 2026-11-04 (reviews/dri-decisions-20261104-at-1a.md item 1)",
+   "commit": "f67a18feb78c98399aa3f217beaf26cf6f28032e"
   }
  ]
 }
