@@ -87,7 +87,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
-- [lean/VE/Defaults/](lean__VE__Defaults.md) — 14 modules — -
+- [lean/VE/Defaults/](lean__VE__Defaults.md) — 15 modules — -
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
 - [lean/VE/Discourse/](lean__VE__Discourse.md) — 22 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
@@ -131,7 +131,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 7](tests--part-7.md) — 44 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 100 modules — -
-- [tools/ part 2](tools--part-2.md) — 7 modules — -
+- [tools/ part 2](tools--part-2.md) — 8 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.

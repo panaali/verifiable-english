@@ -18269,26 +18269,92 @@
       ]
     },
     "VE/Defaults/ZoneWire.lean": {
-      "C": [
-        "VE.Defaults.Wire.ZoneReplay",
-        "VE.Defaults.Wire.ZoneReplay.X",
-        "VE.Defaults.Wire.ZoneReplay.min",
-        "VE.Defaults.Wire.decisionOf",
-        "VE.Defaults.Wire.maxZoneObservations",
-        "VE.Defaults.Wire.outcomeOf",
-        "VE.Defaults.Wire.replayZoneOn",
-        "VE.Defaults.Wire.tupleIn"
-      ],
       "D[V]": [
         "VE.Defaults.Wire.ZoneLine.json",
         "VE.Defaults.Wire.exceptedRule",
         "VE.Defaults.Wire.zoneFields",
-        "VE.Defaults.Wire.zoneFieldsOf"
+        "VE.Defaults.Wire.zoneFieldsOf",
+        {
+          "name": "VE.Defaults.Wire.decisionOf",
+          "tied": [
+            "VE.Defaults.Wire.decisionOf_mem"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.obsEntry",
+          "tied": [
+            "VE.Defaults.Wire.obsEntry_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.outcomeOf",
+          "tied": [
+            "VE.Defaults.Wire.outcomeOf_mem"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.recordEntry",
+          "tied": [
+            "VE.Defaults.Wire.recordEntry_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.replayZoneOn",
+          "tied": [
+            "VE.Defaults.Wire.replayZoneOn_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.tupleIn",
+          "tied": [
+            "VE.Defaults.Wire.tupleIn_typed"
+          ]
+        }
       ],
       "G[V]": [
         "VE.Defaults.Wire.ZoneLine",
+        "VE.Defaults.Wire.ZoneReplay",
+        "VE.Defaults.Wire.ZoneReplay.X",
+        "VE.Defaults.Wire.maxZoneObservations",
         "VE.Defaults.Wire.zoneCase",
-        "VE.Defaults.Wire.zoneLines"
+        "VE.Defaults.Wire.zoneJoins",
+        "VE.Defaults.Wire.zoneLines",
+        {
+          "name": "VE.Defaults.Wire.ZoneReplay.min",
+          "tied": [
+            "VE.Defaults.Wire.ZoneReplay.min_ok"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneSizes",
+          "tied": [
+            "VE.Defaults.Wire.zoneSizes_record"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.ZoneLine.kind",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.ZoneLine.row",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneHeads",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneLineWords",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        }
       ]
     },
     "VE/Defaults/ZoneWireExamples.lean": {
@@ -18318,7 +18384,14 @@
         "VE.Defaults.ZoneWireFixtures.μ'Env",
         "VE.Defaults.ZoneWireFixtures.μ'R",
         "VE.Defaults.ZoneWireFixtures.ξ'Sit",
-        "VE.Defaults.ZoneWireFixtures.πEnv"
+        "VE.Defaults.ZoneWireFixtures.πEnv",
+        "VE.Defaults.ZoneWireFixtures.noOutcome",
+        "VE.Defaults.ZoneWireFixtures.recN"
+      ]
+    },
+    "VE/Defaults/ZoneWordsMain.lean": {
+      "G[V]": [
+        "main"
       ]
     }
   }
