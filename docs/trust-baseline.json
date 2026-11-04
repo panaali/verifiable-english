@@ -1979,6 +1979,13 @@
    "reason": "pc-1g: VE/Judgments/Chain.lean V +1 (blockFormula written as a match on null, so blockFormula_null holds by rfl); item total S +85, V +46, K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
    "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1g F1: lean/VE/Service/Document.lean D[V] +1 in environmentOf, refusing conditioned rights rules before their unchecked judgment usage; new ruleExceptionConditioned, rightsBlockRules and unitRules are G[R], reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g F1, 2026-11-04",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
   }
  ]
 }

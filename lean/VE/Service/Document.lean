@@ -1103,22 +1103,37 @@ def cardinalityEnv (written : Json) : Except String Env := do
 `UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
 def judgmentsApart : List String := ["alternatives@0", "risk@0"]
 
-/-- Whether a front matter's units, each unit and its parts as written, hold a norm with exception conditions
-(`exception.sufficient` or `exception.necessary` present and not `[]`). The soft route makes those conditions rules of
-its theory (`SoftNorms.excPremisesOf`), which `Judgments.softContent` does not read, so the document mode keeps
-`judgments@0` apart from `soft-norms@0` on such a document (pc-1 review F1; their reader is pc-1x's). -/
+/-- Conditions in a rule's exception are read by the soft theory, but not by the judgment scan. -/
+def ruleExceptionConditioned (rule : Json) : Bool :=
+  let e := rule.getObjValD "exception"
+  ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
+    | .ok (.arr xs) => !xs.isEmpty
+    | .ok _ => true
+    | .error _ => false
+
+/-- The written rules in a rights block, including a power's two rules and added `right_lines`. -/
+def rightsBlockRules (block : Json) : List Json :=
+  let lines := match (block.getObjValD "lines") with
+    | .arr ls => ls.toList
+    | _ => []
+  lines.flatMap fun line => ["norm", "liberty", "recognition"].filterMap fun k =>
+    (line.getObjVal? k).toOption
+
+/-- All rules in one written unit, before any rights or soft decoding. -/
+def unitRules (unit : Json) : List Json :=
+  let content := unit.getObjValD "content"
+  (content.getObjVal? "norm").toOption.toList ++
+    (["right", "right_lines"].filterMap fun k => (content.getObjVal? k).toOption).flatMap rightsBlockRules
+
+/-- Whether a front matter's units or MIXED parts contain an exception condition the judgment reader cannot see.
+This covers standalone norms and every rule shape in `right` and `right_lines` (pc-1 review F1, pc-1g review F1). -/
 def exceptionConditioned (units : Json) : Bool :=
   let us := match units with
     | .arr xs => xs.toList
     | _ => []
   (us.flatMap fun u => u :: match u.getObjValD "parts" with
     | .arr ps => ps.toList
-    | _ => []).any fun u =>
-      let e := ((u.getObjValD "content").getObjValD "norm").getObjValD "exception"
-      ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
-        | .ok (.arr xs) => !xs.isEmpty
-        | .ok _ => true
-        | .error _ => false
+    | _ => []).any fun u => (unitRules u).any ruleExceptionConditioned
 
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
@@ -1142,8 +1157,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "judgments@0" then
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed judgmentsApart
-    -- Main's refusal, in its place, for a soft document whose exception conditions the layer does not read yet.
-    if exceptionConditioned units then VE.Compose.layersApart listed ["soft-norms@0"]
+    -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.
+    if exceptionConditioned units then
+      VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
