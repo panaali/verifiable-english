@@ -275,15 +275,30 @@ def test_the_relay_returns_leans_answer_unchanged(tmp_path):
     assert compact(row) == compact({**answer(text()), "id": row["id"]})
 
 
+# each other JSON type, `1` beside `true`, a lone surrogate and a 10,000-deep list (BUILDER-CHECKLIST 1)
+def _deep(n=10000):
+    value = []
+    for _ in range(n):
+        value = [value]
+    return value
+
+
+RETYPES = (7, 1, True, None, [], {}, 1.5, "\ud800", _deep())
+
+
 def _mutants(row):
     """Each member dropped and retyped, and the bound arrays duplicated and reordered."""
     for key in row:
         if key != "id":
             yield f"drop {key}", {k: v for k, v in row.items() if k != key}
-            yield f"retype {key}", {**row, key: [row[key]] if not isinstance(row[key], list) else {}}
+            for i, value in enumerate(RETYPES):
+                if value is not row[key]:
+                    yield f"retype {key} {i}", {**row, key: value}
     for key in ("admitted", "report_id", "kinds", "report"):
         yield f"drop inner.{key}", {**row, "inner": {k: v for k, v in row["inner"].items() if k != key}}
-        yield f"retype inner.{key}", {**row, "inner": {**row["inner"], key: 1}}
+        for i, value in enumerate(RETYPES):
+            if value is not row["inner"].get(key):
+                yield f"retype inner.{key} {i}", {**row, "inner": {**row["inner"], key: value}}
     yield "inner report id", {**row, "inner_report_id": "0" * 64}
     kinds = row["inner"]["kinds"]
     yield "duplicate kinds", {**row, "inner": {**row["inner"], "kinds": kinds + kinds[-1:]}}
