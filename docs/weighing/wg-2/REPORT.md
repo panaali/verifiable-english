@@ -163,11 +163,25 @@ is the proofs.
   reported "1 failed, 1611 passed". The failure was `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
   (Examples.lean was not classified). It is fixed in d7c1dc7db, and the rerun of that id on the Mac printed
   "1 passed". The selection's final run on the HEAD is in section 9.
+- Fix round: `cd lean && lake build` (default targets) on the final Lean: "Build completed successfully (1273
+  jobs)"; `python3 lean/audit.py`: "PASS: 759 source files; 8487 named theorem declarations audited …"; `uv run
+  python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries", none stale; `python3
+  tools/check_lean_imports.py`: "Lean layer graph kept (759 modules, 22 reviewed legacy edges)" (the new import of
+  `VE.Readings.SupEnv`, layer 2, is inward); `git diff $(git merge-base HEAD main) -- lean/statements.txt`: no removed line.
+- Review probe F1, after the fix (f6e03a5df): `#check VE.Weighing.strictWitness`, `factors_inert`,
+  `weigh_alone_base_free` elaborate, exit 0. Before it, the three names were absent from the source
+  (`git show beb5d6569:lean/VE/Weighing/Conditions.lean`: 0 matches) and the reviewer's run failed; I did not rerun it
+  there. The regression is `Examples.lean`'s last `example`, which names all 11 restored theorems, and
+  `lean/VE/Audit.lean`'s `#print axioms` lines: the build fails if one is missing.
+- Probe F-ready1: `python3 manage-agents/review-ready.py <worktree> wg-2` on cc18864a1: "PASS [mutants] Python:
+  seeded bug in changed file tools/layer_policy.py". Its other FAILs: `[delta]` "L52 RESERVED BY DESIGN" (row 4),
+  and `[gate]`, as no full gate ran on this round's code (the chain's).
 
 ## 8. Pilot bytes, DELTA, next item
 
 No answer, verdict or byte changes: nothing calls the new code (DELTA.md). No pilot bytes are expected to move.
-Next: **wg-2b** (section 2's theorems, `strictWitness`, the rest of 7.2 and 7.3), then wg-3 (block decoder,
+Next: the DRI's answer on `strength_iff` (DELTA.md row 4), then **wg-2b** (the rest of 7.2 and 7.3's fixtures),
+then wg-3 (block decoder,
 `stripWeighing`, the `weighing` pack, AR-10's row; after AT-2/AT-3a, PC-3, PC-9 and EXP-G1). en-wg sits beside it
 after en-sw.
 
@@ -176,30 +190,43 @@ docs/spec/weighing.md:946-957; `propImplies_sound` against :1038; `condition_nec
 against :1042-1052; `grant_needed`, `delegation_bounded` against :1058-1080; `weigh_conservative`,
 `wellFormedWeigh_empty` against :1122-1124; `condPremise` :340, `grantConds` :363, `checkWeigh` :463, `strictPair`
 :256, `splitRefusal` :517. A script compared each delivered theorem's statement and each definition with the stub's
-text: all SAME.
+text: all SAME. Fix round: the same comparison, whitespace-normalised, of the 11 restored theorems against
+weighing.md 5's code blocks and of `chainEdges`, `RankChain`, `chainsFrom`, `chainLt`, `strictWitness`, `strictFlag`,
+`SameBase` and `freeWitness` against the stub: all SAME.
 
 ## 9. Selected tests on the final code
 
 `zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on 443fa19c (clean tree, Lean unchanged after it): "recorded 110 units for tree 92f6db0594; … 0 failed", "exit=0; failed/error ids=0" (ve-mac-1). `uv run python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries", none stale (`route-cases` needs the Rust release binary, which this worktree has not built; nothing it reads changed).
 
+Fix round: `zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on cc18864a1 (clean; the Lean is f6e03a5df's):
+"recorded 110 units for tree 19537ed546; 0 others left to the static graph until they run; 0 failed", "ran LOCALLY
+(VM) because: no mac-pytest slot on ve-mac-1 within 600s; … exit=0; 7685s". The chunked heavy files: test_trust_mutants
+564 passed, test_acts_vocab_mutants 643 passed, test_english_evidence 77 passed, 0 failed. The trust mutants (section
+4) ran on the snapshot c548eb971, which is f6e03a5df plus an uncommitted `mutants.json`: same Lean, "231 KILLED, 0
+SURVIVOR, 0 UNKNOWN, 8 INVALID, 23 ALLOWED", exit 0.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Lean answers typed and contained: N.A.: no service mode, relay or schema reads the new code.
-2. Every deliverable built or moved: PASS, with section 1's table and section 2's cut. The cut is named in the
-   FOLLOW-UP line (wg-2b). Grep of the diff: no Python file and no permanent report test. The shared files are
+2. Every deliverable built or moved: rows (1)-(2) are built except `strength_iff`, which is false as approved and
+   reserved for the DRI (DELTA.md row 4); only fixtures move to wg-2b (section 2). One Python file changes:
+   `tools/layer_policy.py` (2 lines, review F3); no permanent report test. The shared files are
    VE.lean and Audit.lean only (in-flight branch check at the start).
-3. Tests can fail: PASS: mutants.json (38 killed by guards), trust-mutants.json (exit 0), S1-S3 (section 4).
+3. Tests can fail: PASS: mutants.json (38 killed by guards, then W1-W8 in Lean and P1 in Python), trust-mutants.json
+   (exit 0), S1-S3 (section 4).
 4. Python, Lean and Rust agree: N.A.: Lean only, and nothing calls it.
 5. R8 binding: N.A.: no relayed answer.
-6. Gate evidence matches the final HEAD: PASS for the trust mutants (rescored on ee34862a0, tree 8cf7a935c74c;
-   Lean is unchanged after it). The gate itself is the chain's.
-7. No unsigned item: PASS: DELTA.md's three rows cite R16. The one open question asks for no signature.
+6. Gate evidence matches the final HEAD: PASS for the trust mutants (snapshot c548eb971, Lean identical to
+   f6e03a5df and to the HEAD). The gate itself is the chain's.
+7. No unsigned item: FAIL by design (L52): DELTA.md's rows 1-3 cite R16, and row 4 reserves the DRI's signature for
+   `strength_iff`'s statement. The layer question asks for no signature.
 8. Every user-visible change in DELTA: PASS: none changes (DELTA.md). The trust growth is the R16 rows.
 9. Test selection finds the tests: PASS: `--select` picked 116 units, among them `test_assurance_manifest.py`, which
    caught the unclassified file.
 10. Statements say what is claimed: PASS: statements are as written (script comparison, section 8), and
     `lean_statements.py` reported removed 0, changed 0. Each proof's definition was mutated: mutants.json, and each
-    proof broke in the first runner's log.
+    proof broke in the first runner's log. Fix round: the 11 restored statements are as written, and `strength_iff`
+    is not stated in any form, since it is false as approved (section 3).
 11. Budgets fail closed: PASS: `maxPropAtoms`. The guard `!propImplies (conj 13) …` (`Examples.lean:78`) refuses 13
     atoms and accepts 12. `ResourceLimit` is `checkWeigh`'s, which is unchanged spec text.
 12. No CPU or memory regression: N.A.: no runtime path calls the code. The fixtures build in seconds (`lake build
