@@ -1,0 +1,21 @@
+{
+ "job": "wg-2.s2of4-c548eb97",
+ "head": "e8d26b030349e5cb2f04aee6a9d5af4b736152ca",
+ "argv": [
+  "wg-2.s2of4-c548eb97",
+  "e8d26b030349e5cb2f04aee6a9d5af4b736152ca",
+  "e440181e206cd5e637d49121f8205fbaa12d453a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c62ae449f1e3.tar.zst",
+  "e718d069db6719b04bee3a5b7f01d94da823a802da830a89518796f9afac569a",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/weighing/wg-2/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "2/4",
+  "--jobs",
+  "4"
+ ]
+}
