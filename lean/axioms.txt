@@ -2460,6 +2460,9 @@
 'VE.Events.startRole_mem' depends on axioms: [propext, Quot.sound]
 'VE.Events.term_map' depends on axioms: [propext]
 'VE.Events.tupleTyped_relation' does not depend on any axioms
+'VE.Events.unblocked_wire_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.unhooked_X' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.unhooked_X_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.unorderedSame_of_order' depends on axioms: [propext]
 'VE.Events.wf_transfer' depends on axioms: [propext, Quot.sound]
 'VE.Grammar.BOk.addAll' depends on axioms: [propext, Classical.choice, Quot.sound]

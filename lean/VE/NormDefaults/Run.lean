@@ -116,6 +116,10 @@ theorem runAdmissionX_sound (id : String) (environment document answer : Json)
     ⟨canonical, envId, hc, he, hd⟩,
     fun S hS hf hg ho => wire_report_consequenceX environment document res hres S hS hf hg ho⟩
 
+/-- A replayed layered certificate's answer: `valid` and the count of the regenerated premises it is bound to. -/
+def certificateAnswer (id : String) (valid : Bool) (premises : Nat) : Json :=
+  VE.Route.Wire.ok id [("valid", .bool valid), ("premises", toJson premises)]
+
 /-- The soft branch's two kinds `layeredCase` lacks: `admission` and `norm-defaults-certificate`; `none` otherwise. -/
 def softCase (id kind : String) (j : Json) : Except String (Option Json) := do
   if kind == "admission" then
@@ -124,8 +128,7 @@ def softCase (id kind : String) (j : Json) : Except String (Option Json) := do
     return some (← runAdmissionX id environment document)
   if kind == "norm-defaults-certificate" then
     let r ← Wire.replayLayeredEntailment j
-    return some (VE.Route.Wire.ok id [("valid", .bool r.valid),
-      ("premises", toJson (Wire.premisesX r.L.U r.L.X []).length)])
+    return some (certificateAnswer id r.valid (Wire.premisesX r.L.U r.L.X []).length)
   return none
 
 end VE.NormDefaults.Admission
@@ -379,15 +382,18 @@ def pendingEvents (j : Json) : Option String := do
     let kind ← (VE.Route.Run.caseKind j).toOption
     if eventsServed j kind then none else some s!"CheckerUnavailable: events@0 with {kind} needs its composed Lean route"
 
-/-- `norm-defaults-certificate` on a soft document with the block (`replayEventsEntailment`); `softCase` otherwise. -/
+/-- `norm-defaults-certificate` on a soft document listing `events@0`: with the block `replayEventsEntailment`, without
+one `replayUnblockedEntailment`, as on the list without the profile; `softCase` otherwise. -/
 def runCaseE (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
-  if (VE.Compose.listedProfiles (j.getObjValD "environment")).contains "events@0" &&
-      kind == "norm-defaults-certificate" then
-    let r ← VE.Events.replayEventsEntailment j
-    return VE.Route.Wire.ok id [("valid", .bool r.valid),
-      ("premises", toJson (Wire.premisesX r.U (r.X ++ VE.Events.eventsX r.V) []).length)]
+  let environment := j.getObjValD "environment"
+  if (VE.Compose.listedProfiles environment).contains "events@0" && kind == "norm-defaults-certificate" then
+    if (Wire.hookBlock (← VE.Events.eventsHook environment (Wire.caseOpenTerms j))).isSome then
+      let r ← VE.Events.replayEventsEntailment j
+      return Admission.certificateAnswer id r.valid (Wire.premisesX r.U (r.X ++ VE.Events.eventsX r.V) []).length
+    let r ← VE.Events.replayUnblockedEntailment j
+    return Admission.certificateAnswer id r.valid (Wire.premisesX r.L.U r.L.X []).length
   runCase j
 
 /-- `runCaseE` behind `Compose.pendingWithDefaults`, `pendingDocumentLayer` and `pendingEvents`: a composed block this

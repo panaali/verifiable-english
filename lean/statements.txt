@@ -17730,6 +17730,28 @@ theorem VE.Events.tupleTyped_relation
       VE.TupleTyped { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := r } ss xs
   -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3453759998
+theorem VE.Events.unblocked_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.NormDefaults.Wire.LayeredEntailment),
+    VE.Events.replayUnblockedEntailment j = Except.ok r →
+      r.valid = Bool.true →
+        r.L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU r.L.U r.L.D) ∧
+          VE.NormDefaults.EntailsX r.L.U r.L.X r.premises r.conclusion
+  -- uses VE.Events.replayUnblockedEntailment@VE.Events.Chain VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.conclusion@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.premises@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.valid@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 1655573967
+theorem VE.Events.unhooked_X
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+      VE.NormDefaults.Wire.hookBlock H = Option.none →
+        L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D)
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 1805792490
+theorem VE.Events.unhooked_X_wellFormed
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+      VE.NormDefaults.Wire.hookBlock H = Option.none →
+        ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 1779775249
 theorem VE.Events.unorderedSame_of_order
   ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
     VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)

@@ -286,8 +286,7 @@ def excElaborated : Json := answer ((caseOf "norm-defaults-elaborate" excEnv).se
 #guard ((((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) ==
   ((((answer (rightsCase (rightsEnv none rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size)) &&
   ((((answer (rightsCase (rightsEnv (some dayBlock) rightsListed))).getObjValD "rights").getArr?).toOption.map (·.size) |>.getD 0) > 0
-def excCase (c : VE.Formula) : Json :=
-  let e := excEnv
+def excCase (c : VE.Formula) (e : Json := excEnv) : Json :=
   let n := excNorms
   let bound : Json := Id.run do
     let .ok L := decodeLayered ((caseOf "k" e).setObjVal! "norms" n) | return .null
@@ -316,8 +315,37 @@ def docListed : List String := ["documents@1", "events@0", "norm-defaults@0", "n
   | .ok (some h) => VE.Compose.listedProfiles h.view == docListed.filter (· != "events@0")
   | _ => false)
 
--- A replay needs the block: with the profile alone there is no pack to replay against.
-#guard status (caseOf "norm-defaults-certificate" (envOf none)) == "InvalidInput: events"
+-- Without a block the profile neither widens nor narrows the route (spec 1.1) and adds no pack (1.11): every kind
+-- `eventsServed` answers is answered, on both branches, as on the list without `events@0`; every other is refused by name.
+def unlisted (ps : List String) : List String := ps.filter (· != "events@0")
+def onBranch (rights : Bool) (k : String) (ps : List String) : Json :=
+  if rights then (rightsCase (rightsEnv none (if ps == listed then rightsListed else unlisted rightsListed))).setObjVal! "kind" (.str k)
+  else caseOf k (envOf none ps)
+def everyKind : List String :=
+  VE.NormDefaults.Wire.legacyKinds ++ ["norm-defaults-certificate", "norm-defaults-gaps", "admission", "defaults-conflict"]
+#guard [false, true].all fun r => everyKind.all fun k =>
+  if VE.NormDefaults.Run.eventsServed (onBranch r k listed) k then status (onBranch r k listed) == status (onBranch r k (unlisted listed))
+  else status (onBranch r k listed) == refusedKind k
+#guard ([false, true].map fun r => everyKind.filter fun k => VE.NormDefaults.Run.eventsServed (onBranch r k listed) k) ==
+  [["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate"], ["norm-defaults-elaborate", "norm-defaults-conflict"]]
+-- The certificate without a block replays over soft's premises alone, bound to the list as written.
+#guard status (caseOf "norm-defaults-certificate" (envOf none)) == "property not found: premises"
+#guard [(.top, true), (.bottom, false)].all fun ((c : VE.Formula), v) =>
+  answer (replayCase (envOf none) (boundProof (envOf none) c) c) == Json.mkObj [("id", .str "a"), ("status", .str "ok"),
+    ("valid", .bool v), ("premises", toJson ((decoded (envOf none)).toOption.map fun L => (VE.NormDefaults.Wire.premisesX L.U L.X []).length))]
+#guard (answer (replayCase (envOf none) (boundProof (envOf none) .top) .top)) ==
+  (answer (replayCase (envOf none (unlisted listed)) (boundProof (envOf none (unlisted listed)) .top (unlisted listed)) .top))
+#guard status (replayCase (envOf none) (boundProof (envOf none (unlisted listed)) .top (unlisted listed)) .top) ==
+  "certificate is stale or bound to different inputs"
+#guard status (replayCase (envOf none) (boundProof envOf .top) .top) == "certificate is stale or bound to different inputs"
+def excBare : Json := envOf none listed [VE.Defaults.Fixtures.baseJ "s", VE.Defaults.Fixtures.baseJ "t"]
+#guard (match VE.Events.replayUnblockedEntailment (excCase .top excBare) with
+  | .ok r => r.valid && r.L.packs.map (·.id) == ["soft"] &&
+      r.L.X == (VE.NormDefaults.Wire.softLabelledU r.L.U r.L.D).map (·.2) && r.L.X.length == 2
+  | .error _ => false)
+-- With the block the replay is `replayEventsEntailment`'s, never this one.
+#guard (match VE.Events.replayUnblockedEntailment (caseOf "norm-defaults-certificate" envOf) with
+  | .error e => e == "InvalidInput: events" | .ok _ => false)
 #guard status (caseOf "norm-defaults-certificate" envOf) == "property not found: premises"
 
 end VE.Events.RouteExamples

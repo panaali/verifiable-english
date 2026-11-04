@@ -115,7 +115,7 @@ structure EventsEntailmentReplay where
 /-- The hook, `decodeSoftU` with it, the assembled `X` typed over the route's base environment (the regenerated
 environment types the pack, `eventsPremises_wellFormed`, but the route's own environment is the one read here), then
 the one replay of the layered route, bound to the environment as written. A list without a block has no pack: its
-certificates are `replayLayeredEntailment`'s. -/
+certificates are `replayUnblockedEntailment`'s. -/
 def replayEventsEntailment (j : Json) : Except String EventsEntailmentReplay := do
   let environment ← j.getObjVal? "environment"
   let H ← eventsHook environment (caseOpenTerms j)
@@ -155,5 +155,50 @@ theorem events_wire_acceptance (j : Lean.Json) (r : EventsEntailmentReplay) (h :
     rw [← hooked_X hL hd]
     exact VE.NormDefaults.Wire.layered_entailment_of_valid q hv
   · cases h
+
+/-- Without a block the hook adds no pack (spec 1.11): `X` is soft's premises, as on the list without `events@0`. -/
+theorem unhooked_X {environment norms : Json} {H : Option EventsHook} {L : LayeredU}
+    (h : decodeSoftU environment norms H = .ok L) (hd : hookBlock H = none) :
+    L.X = (softLabelledU L.U L.D).map (·.2) := by
+  obtain ⟨_, src, _, _, hD, _, hl, _⟩ := VE.NormDefaults.Wire.decodeSoftU_source environment norms L h
+  simp [LayeredU.X, hl, hookPacks, hd, VE.NormDefaults.Packs.X, VE.NormDefaults.Packs.labelledX,
+    VE.NormDefaults.Wire.softPack, hD]
+
+theorem unhooked_X_wellFormed {environment norms : Json} {H : Option EventsHook} {L : LayeredU}
+    (h : decodeSoftU environment norms H = .ok L) (hd : hookBlock H = none) :
+    ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) [] := by
+  obtain ⟨_, src, _, _, hD, hU, _, _⟩ := VE.NormDefaults.Wire.decodeSoftU_source environment norms L h
+  have hw := L.wfU
+  rw [unhooked_X h hd, hD]
+  rw [hU] at hw ⊢
+  simpa using VE.NormDefaults.Wire.softLabelledU_wellFormed src.D _ src.wf hw
+
+/-- `norm-defaults-certificate` on a list with `events@0` and no block: the layered replay over the hook's view, which
+neither widens nor narrows the route (spec 1.1), with soft's `X` (`unhooked_X`). A block is `replayEventsEntailment`'s. -/
+def replayUnblockedEntailment (j : Json) : Except String VE.NormDefaults.Wire.LayeredEntailment := do
+  let environment ← j.getObjVal? "environment"
+  let H ← eventsHook environment (caseOpenTerms j)
+  match hd : hookBlock H with
+  | some _ => throw "InvalidInput: events"
+  | none =>
+    match hL : decodeSoftU environment (j.getObjValD "norms") H with
+    | .error e => throw e
+    | .ok L => replayLayeredOn L (unhooked_X_wellFormed hL hd) j
+
+/-- The wire without a block: a replayed entailment holds with soft's premises alone. -/
+theorem unblocked_wire_acceptance (j : Lean.Json) (r : VE.NormDefaults.Wire.LayeredEntailment)
+    (h : replayUnblockedEntailment j = .ok r) (hv : r.valid = true) :
+    r.L.X = (softLabelledU r.L.U r.L.D).map (·.2) ∧ EntailsX.{u} r.L.U r.L.X r.premises r.conclusion := by
+  unfold replayUnblockedEntailment at h
+  obtain ⟨environment, _, h⟩ := bind_ok h
+  obtain ⟨H, _, h⟩ := bind_ok h
+  split at h
+  · cases h
+  rename_i hd
+  split at h
+  · cases h
+  rename_i L hL
+  rw [VE.NormDefaults.Wire.replayLayeredOn_L h]
+  exact ⟨unhooked_X hL hd, VE.NormDefaults.Wire.replayLayeredOn_L h ▸ VE.NormDefaults.Wire.layered_entailment_of_valid r hv⟩
 
 end VE.Events
