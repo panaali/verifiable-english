@@ -17616,7 +17616,10 @@
         "VE.Judgments.ChainExamples.f13c",
         "VE.Judgments.ChainExamples.twinFront",
         "VE.Judgments.ChainExamples.drawnLeaf",
-        "VE.Judgments.ChainExamples.drawn"
+        "VE.Judgments.ChainExamples.drawn",
+        "VE.Judgments.ChainExamples.udhrRights",
+        "VE.Judgments.ChainExamples.withStatuses",
+        "VE.Judgments.ChainExamples.answer2e"
       ]
     },
     "VE/SoftNorms/ActsFrameExamples.lean": {
