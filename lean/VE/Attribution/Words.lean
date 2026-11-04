@@ -10,7 +10,7 @@ namespace VE.Reports
 private def headRest (w : String) : String × String :=
   (String.mk (w.toList.takeWhile (· != ' ')), String.mk ((w.toList.dropWhile (· != ' ')).drop 1))
 
-private def vowel (c : Char) : Bool := "aeiou".contains c
+private def vowel (c : Char) : Bool := c ∈ ['a', 'e', 'i', 'o', 'u']
 
 private def joined (head rest : String) : String := match rest with
   | "" => head
