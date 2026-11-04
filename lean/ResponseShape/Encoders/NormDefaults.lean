@@ -141,8 +141,9 @@ theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
 open VE.Defaults.Wire in
 theorem zoneLine_fits (l : ZoneLine) : Fits req (skel% "norm-defaults.json#/$defs/defaults_zone_line") l.json := by
   cases l with
-  | assumed k vs => cases k <;> simp only [ZoneLine.json, VE.SoftNorms.Wire.decisionKeyJson, entityIds] <;> fits
-  | _ => simp only [ZoneLine.json, entityIds]; fits
+  | assumed k vs => cases k <;> simp only [ZoneLine.json, ZoneLine.row, List.cons_append, List.nil_append,
+      VE.SoftNorms.Wire.decisionKeyJson, entityIds] <;> fits
+  | _ => simp only [ZoneLine.json, ZoneLine.row, List.cons_append, List.nil_append, entityIds]; fits
 
 open VE.Defaults.Wire in
 theorem zoneCase_fits (v : DefaultsView) (id kind : String) (j : Json)

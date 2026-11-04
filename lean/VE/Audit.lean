@@ -142,6 +142,7 @@ import VE.Defaults.Uniform
 import VE.Defaults.UniformExamples
 import VE.Defaults.Wire
 import VE.Defaults.Zone
+import VE.Defaults.ZoneWire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -2247,9 +2248,11 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.ViewRest.hR
 #print axioms VE.Defaults.Wire.ViewRest.hX
 #print axioms VE.Defaults.Wire.ViewRest.hl
+#print axioms VE.Defaults.Wire.ZoneReplay.min_ok
 #print axioms VE.Defaults.Wire.coherence_collision_named
 #print axioms VE.Defaults.Wire.coherence_collision_shown
 #print axioms VE.Defaults.Wire.collisionOf_request
+#print axioms VE.Defaults.Wire.decisionOf_mem
 #print axioms VE.Defaults.Wire.decodeLayered_soften
 #print axioms VE.Defaults.Wire.decodeRightsU_soften
 #print axioms VE.Defaults.Wire.default_exception
@@ -2262,11 +2265,21 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.eval_of_xModelOk
 #print axioms VE.Defaults.Wire.filledOf_request
 #print axioms VE.Defaults.Wire.forcedAt_sound
+#print axioms VE.Defaults.Wire.obsEntry_sound
+#print axioms VE.Defaults.Wire.outcomeOf_mem
+#print axioms VE.Defaults.Wire.recordEntry_sound
+#print axioms VE.Defaults.Wire.replayBind_ok
 #print axioms VE.Defaults.Wire.replayCertOn_request
 #print axioms VE.Defaults.Wire.replayCoherenceOn_request
+#print axioms VE.Defaults.Wire.replayMapM_length
+#print axioms VE.Defaults.Wire.replayMapM_mem
 #print axioms VE.Defaults.Wire.replayModelOn_request
+#print axioms VE.Defaults.Wire.replayZoneOn_sound
+#print axioms VE.Defaults.Wire.tupleIn_typed
 #print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.Wire.viewOn_L
+#print axioms VE.Defaults.Wire.zoneSizes_record
+#print axioms VE.Defaults.Wire.zoneWords_complete
 #print axioms VE.Defaults.act_arity
 #print axioms VE.Defaults.any_eq_recTuples
 #print axioms VE.Defaults.assumptions_sound

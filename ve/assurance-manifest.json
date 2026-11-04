@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 41906,
+    "total_lines": 42120,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1989,18 +1989,21 @@
       },
       {
         "file": "lean/VE/Defaults/ZoneWire.lean",
-        "lines": 154,
-        "sha256": "ed750f45e6a5c9668fa67244d094ad8f59d145e68878d74108ebfc091ad8547a",
+        "lines": 368,
+        "sha256": "095edc3b9bdaf24caa9388b6dfd8b8f8334bc99263e29caf1dd65f8a8de93e0d",
         "ranges": [
           [
             1,
-            154
+            368
           ]
         ],
         "declarations": [
+          "zoneSizes",
           "decisionOf",
           "outcomeOf",
           "tupleIn",
+          "recordEntry",
+          "obsEntry",
           "replayZoneOn",
           "ZoneReplay.min",
           "zoneLines",
@@ -2008,7 +2011,7 @@
           "zoneFields",
           "zoneCase"
         ],
-        "reason": "the defaults-zone kind (df-5): its request decoders (the situation by situationX, the record by decision key, the observations, the query) and its answer; the full file is pinned"
+        "reason": "the defaults-zone kind (df-5): its request decoders (the situation by situationX, the query, the record's and the observations' sizes before any entry (zoneSizes), each record entry by decision key, each observation), each tied to the request by a soundness theorem (decisionOf_mem, outcomeOf_mem, tupleIn_typed, recordEntry_sound, obsEntry_sound, replayZoneOn_sound), its answer and the words of its rows (zoneHeads, zoneLineWords); the full file is pinned"
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
@@ -2309,7 +2312,8 @@
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
       "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
-      "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path"
+      "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path",
+      "lean/VE/Defaults/ZoneWordsMain.lean": "generator only: prints the words of DE10 to DE13 (zoneHeads, zoneLineWords, zoneJoins) as JSON for ve/defaults_words.json; reads no request and is not a service decoder"
     }
   },
   "plan_operations": {

@@ -61,6 +61,7 @@ import audit  # noqa: E402
 
 RUN_ONLY = {"VE.Numbers.PhrasesMain": "tools/numbers_phrases.py",
             "VE.Compose.ProfilesMain": "tools/profile_table.py",
+            "VE.Defaults.ZoneWordsMain": "tools/defaults_words.py",
             **{path.removesuffix(".lean").replace("/", "."): "lean/audit.py"
                for path in audit.MANIFESTS}}
 

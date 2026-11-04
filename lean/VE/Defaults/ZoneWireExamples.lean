@@ -126,10 +126,22 @@ def obsN (k : Nat) : List Json := List.replicate k (at_ "instructs" ["o1"] (some
 #guard run (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (obsN 1025)) ==
   shownZ [("zone", .str "unknown"), ("reason", .str "observations size")]
 #guard zoneOf (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (obsN 1024)) == .str "byDefault"
+-- review F4: the sizes are counted before any entry is decoded (`zoneSizes`): past a bound, an entry no decoder
+-- accepts (an observation with no outcome, a record entry `null`) is not read; within the bounds it is refused
+def refusedZ (j : Json) : Json := (run j).getObjValD "error"
+def noOutcome : Json := Json.mkObj [("tuple", toJson ["o1"]), ("value", .bool false)]
+def recN (k : Nat) : List Json := List.replicate k (dec [("excepted", "g1")] ["o1"] false)
+#guard run (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (obsN 1024 ++ [noOutcome])) ==
+  shownZ [("zone", .str "unknown"), ("reason", .str "observations size")]
+#guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (obsN 1023 ++ [noOutcome])) ==
+  .str "fields do not match: expected [outcome, tuple, value], got [tuple, value]"
+#guard run (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [] (recN 1024 ++ [.null])) ==
+  shownZ [("zone", .str "unknown"), ("reason", .str "record size")]
+#guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [] (recN 1023 ++ [.null])) == .str "object expected"
+#guard zoneOf (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [] (recN 1024)) == .str "byDefault"
 
 /-! ## Refusals -/
 
-def refusedZ (j : Json) : Json := (run j).getObjValD "error"
 #guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (record := [dec [("excepted", "g2")] ["o1"] true])) ==
   .str "InvalidInput: the record names a decision the document does not have"
 #guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (record := [dec [("excepted", "g1"), ("x", "y")] ["o1"] true])) ==
