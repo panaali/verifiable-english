@@ -12876,6 +12876,16 @@ theorem VE.Defaults.defaultCompletion_below
         ∃ R', VE.Defaults.DefaultCompletion L X M record obs R' ∧ VE.Defaults.DecLe L.D M R' R
   -- uses VE.Defaults.DecLe@VE.Defaults.Zone VE.Defaults.DefaultCompletion@VE.Defaults.Zone VE.Defaults.Observed@VE.Defaults.Zone VE.Defaults.switchesOffRecord@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.openNames@VE.Weighing.Zone
   -- expr 1072912096
+theorem VE.Defaults.defaultZoneOf_eq
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))),
+    VE.Defaults.defaultZoneOf L X M record obs r vs proposed =
+      match VE.Defaults.zoneMin L X M record obs with
+      | Except.error z => z
+      | Except.ok Min => VE.Defaults.zoneOfMin L M record r vs Min
+  -- uses VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.defaultZoneOf.match_1@VE.Defaults.Zone VE.Defaults.defaultZoneOf@VE.Defaults.Zone VE.Defaults.zoneMin@VE.Defaults.Zone VE.Defaults.zoneOfMin@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1285445637
 theorem VE.Defaults.defaultZone_budget
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
     (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
@@ -13067,6 +13077,16 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.forcedAllOf_eq
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (proposed : List (List ((String × List α) × Bool))),
+    VE.Defaults.forcedAllOf L X M record obs proposed =
+      match VE.Defaults.zoneMin L X M record obs with
+      | Except.error a => Option.none
+      | Except.ok Min => VE.Defaults.forcedOfMin L M record Min
+  -- uses VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.defaultZoneOf.match_1@VE.Defaults.Zone VE.Defaults.forcedAllOf@VE.Defaults.Zone VE.Defaults.forcedOfMin@VE.Defaults.Zone VE.Defaults.zoneMin@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1231546800
 theorem VE.Defaults.forcedAll_sound
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
     (M : VE.FiniteModel α),
