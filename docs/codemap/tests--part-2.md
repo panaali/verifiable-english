@@ -3,6 +3,7 @@
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
 - `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
 - `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
+- `tests/test_calc_consistency.py` — ME-8: consistency of printed numbers (math-evidence spec 8.1; fixtures C-1, R-5, V-6, V-7, V-7b, V-8, S-3 and R-10b's outcomes of 13.2, 13.3 and 13.6).
 - `tests/test_calc_derive.py` — Derivations over rational unknowns in the `calc` mode (math-evidence ME-5, me-5c): spec 13.6's R-3 and R-4 and the plan's physics fixtures H-6, H-6p, H-6n and …
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
@@ -10,7 +11,9 @@
 - `tests/test_calc_stats.py` — ME-7: exact statistics (math-evidence spec 7; fixtures V-6, V-6r and S-5 of 13.2 and 13.3).
 - `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
 - `tests/test_calendar_regression_w6b.py` — Independent Art.
+- `tests/test_cardinality_answer.py` — The relay never accepts a Lean cardinality answer that is not an answer to its request (quantities QT-A4, R8).
 - `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
+- `tests/test_cardinality_lean.py` — The `cardinality@0` route through its relay and `ve document` (quantities QT-A4): both sides of each check.
 - `tests/test_cardinality_service.py` — The `cardinality` service mode (quantities QT-A3, qt-a3c): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, eac…
 - `tests/test_cedar_attributes.py` — (no module docstring)
 - `tests/test_cedar_norms.py` — Runtime-type Cedar conditions from W1 section 10.2.
@@ -41,6 +44,7 @@
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
 - `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
+- `tests/test_defaults_zone.py` — The `defaults-zone` kind through the Lean service (defeasible plan 2.7 and batch DF-5; spec 3.8, 4 and 8.6).
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
@@ -84,7 +88,3 @@
 - `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
 - `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
 - `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
-- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
-- `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
-- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
-- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
