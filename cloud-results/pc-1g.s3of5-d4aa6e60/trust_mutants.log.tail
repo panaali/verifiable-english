@@ -1,0 +1,35 @@
+trust_mutants: 16 definitions, 323 mutants (65 to run), 4 jobs, base 493d7f55b6d7
+UNKNOWN lean/VE/Judgments/Chain.lean:231 VE.Judgments.linesFormulas (D[V], trusted) list-empty: lines -> [] (lean/VE/Judgments/Chain.lean:232: Invalid field notation: Type of)
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) append-right: (·.guard) ++ ->  (lean/VE/Judgments/Chain.lean:47: Application type mismatch: The argument)
+UNKNOWN lean/VE/Service/Document.lean:2767 VE.Service.Document.unitStatuses (S, trusted) list-empty: us.toList -> [] (lean/VE/Service/Document.lean:2768: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Chain.lean:244 VE.Judgments.blockFormulas (D[V], trusted) list-empty: [("limitation", l)] -> [] (lean/VE/Judgments/Chain.lean:245: Unknown identifier `l.getObjValD`)
+UNKNOWN lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: (·.guard) -> [] (lean/VE/Judgments/Chain.lean:47: Application type mismatch: The argument)
+UNKNOWN lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: VE.Compose.profileTable.filter (·.profile == "judgments@0") -> [] (lean/VE/Service/Document.lean:2779: Invalid field notation: Type of)
+UNKNOWN lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-empty: R.soft.T.nodes -> [] (lean/VE/Judgments/Chain.lean:48: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-empty: r.refuses -> [] (lean/VE/Service/Document.lean:2779: Invalid projection: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-first: ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentA... -> (["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "Judgment...
+SURVIVOR lean/VE/Service/Document.lean:2773 VE.Service.Document.judgmentCodes (S, trusted) list-drop-last: ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentA... -> (["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "Judgment...
+UNKNOWN lean/VE/Judgments/Chain.lean:232 VE.Judgments.linesFormulas (D[V], trusted) list-drop-last: ["norm", "liberty", "recognition"].filterMap -> ((["norm", "liberty", "recognition"].filterMap).dropLast) (lean/VE/Judgments/Chain.lean:233: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2723 VE.Service.Document.setVerdictFields (S, trusted) list-first: rs -> (rs.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2778 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-last: VE.Compose.profileTable -> (VE.Compose.profileTable.dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-first: ss -> (ss.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2728 VE.Service.Document.setVerdictFields (S, trusted) list-first: kvs.toList -> (kvs.toList.take 1)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: R.soft.T.nodes -> (R.soft.T.nodes.take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Judgments/Chain.lean:48 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts) -> ((R.soft.T.nodes.flatMap (fun N => N.guard :: N.carveOuts)).take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:96)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> (((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported).tak...
+SURVIVOR lean/VE/Judgments/Chain.lean:49 VE.Judgments.rightsAuthorFormulas (S, trusted) list-first: R.limits -> (R.limits.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-first: r.refuses.map (·.2) -> ((r.refuses.map (·.2)).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2149 VE.Service.Document.UnitContent.judgedIn (G[V], trusted) list-drop-first: [("norm", rule.getObjValD "norm")] -> ([("norm", rule.getObjValD "norm")].drop 1)
+UNKNOWN lean/VE/Judgments/Chain.lean:245 VE.Judgments.blockFormulas (D[V], trusted) list-last: (R.limits.find? fun L => .str L.name == l.getObjValD "name").map -> (((R.limits.find? fun L => .str L.name == l.getObjValD "name").map).reverse.take 1) (lean/VE/Judgments/Chain.lean:245: Invalid dotted identifier notation: The expected type of `.str`...)
+SURVIVOR lean/VE/Judgments/Chain.lean:245 VE.Judgments.blockFormulas (D[V], trusted) list-last: R.limits -> (R.limits.reverse.take 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:269)
+SURVIVOR lean/VE/Judgments/Chain.lean:47 VE.Judgments.rightsAuthorFormulas (S, trusted) list-drop-first: R.rs.map (·.guard) -> ((R.rs.map (·.guard)).drop 1) (the proofs it breaks: lean/VE/Judgments/Chain.lean:86)
+SURVIVOR lean/VE/Service/Document.lean:2742 VE.Service.Document.verdictFields (S, trusted) list-last: ss.map setVerdictFields -> ((ss.map setVerdictFields).reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-last: (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported -> (((r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported).rev...
+SURVIVOR lean/VE/Service/Document.lean:2774 VE.Service.Document.judgmentCodes (S, trusted) list-drop-middle: "JudgmentCriterionAsUnit", -> 
+UNKNOWN lean/VE/Service/Document.lean:2779 VE.Service.Document.judgmentGateTexts (S, trusted) list-drop-first: (VE.Compose.needText r) -> ((VE.Compose.needText r).drop 1) (lean/VE/Service/Document.lean:2779: Invalid projection: Type of)
+trust_mutants: 24 KILLED, 18 SURVIVOR, 11 UNKNOWN, 12 INVALID, 0 ALLOWED, 0 NOT RUN, 258 OTHER SHARD in 4941 s
+trust_mutants: D[V], trusted: 6 KILLED, 1 SURVIVOR, 4 UNKNOWN, 1 INVALID, 53 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 6 OTHER SHARD
+trust_mutants: S, trusted: 17 KILLED, 16 SURVIVOR, 7 UNKNOWN, 11 INVALID, 199 OTHER SHARD
+trust_mutants: steps: wall plan 6.3 s, scratch 2 s, control_build 0.2 s, probe_install 0.9 s, control_probes 916.4 s, mutants 4011.1 s, cleanup 3.7 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.8 s (1), control_probes 2090 s (10), mutant_builds 478.7 s (73), mutant_checks 2456.8 s (49), stage_controls 349.7 s (7), mutant_probes 12420.8 s (24)
