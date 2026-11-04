@@ -680,6 +680,57 @@ def complete(entry: dict | None) -> bool:
     return entry is not None and "done" in entry["flags"]
 
 
+class Probes:
+    """A mutant's `probe` entries by (file, span): each file probed once, for the checks `settle` handed over
+    (`scope`), and read only for those (eff-tm-probe-scope F5: any other check is absent from the probe, a kill
+    lost). `probing(file, only)`: `probe`'s entries of the file (`only` as `probe`'s) and the spans `named` can
+    probe. A check of the set it can probe with no whole entry (`complete`: the run timed out or crashed, a cut that
+    changed a parse: F3, F4) is read from the whole file's probe."""
+
+    def __init__(self, probing):
+        self.probing = probing
+        self.given: dict[str, set[tuple[int, int]]] = {}  # file -> the spans of the checks `settle` reads
+        self.probed: dict[str, dict] = {}  # file -> its entries
+
+    def scope(self, keys: set[tuple]) -> None:
+        """The keys `settle` reads next."""
+        for f, span in keys:
+            if span not in self.given.setdefault(f, set()):
+                self.given[f].add(span)
+                self.probed.pop(f, None)  # a file probed for fewer checks is probed again
+
+    def __call__(self, key: tuple) -> dict | None:
+        f, span = key
+        if span not in self.given.get(f, ()):
+            raise LookupError(f"{f}:{span}: a check `settle` did not hand over")
+        if f not in self.probed:
+            got, probeable = self.probing(f, self.given[f])
+            if any(not complete(got.get(s)) for s in self.given[f] & probeable):
+                got = self.probing(f, None)[0]
+            self.probed[f] = got
+        return self.probed[f].get(span)
+
+
+def refusal(entry: dict | None, control: dict | None) -> str | None:
+    """Why the check whose `probe` entries in the mutant's build and in the control's are these cannot refute the
+    mutated definition, or None. An entry that is not whole (`complete`) is absent."""
+    if not complete(entry) or not complete(control):
+        return "Lean could not elaborate it in the probe"
+    if "hyps" in entry["flags"]:
+        return "its goal has a hypothesis"
+    if "sorry" in entry["flags"]:
+        return "it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it)"
+    if "axiom" in entry["flags"]:
+        return "it computes through an axiom of this tree, which the mutant can make false"
+    if "io" in entry["flags"]:
+        return "it runs IO (an `initialize`d value, `unsafeIO`), which can read the mutated source"
+    if not control["flags"] >= {x for x in entry["flags"] if x.startswith("hash ")}:
+        return "Lean elaborates it otherwise than without the mutant"
+    if drift := next((c for c, h in entry["consts"].items() if control["consts"].get(c) != h), None):
+        return f"{drift}, which it reads, is not what it is without the mutant"
+    return None
+
+
 def beside(lean: Path, f: str) -> Path:
     """Where `probe` writes `f`'s probe: the module itself in the scratch copy `lean` (restored afterwards), or for an
     outside --test file, which the tool only reads, a copy in the scratch directory."""
@@ -1171,59 +1222,24 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             rebuilt.append(all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage))
         return rebuilt[0]
 
-    probed: dict[str, dict] = {}  # file -> `probe` of its checks in this mutant's build
-    given: dict[str, set[tuple[int, int]]] = {}  # file -> the spans of the checks `settle` reads (`scope`)
-
-    def scope(keys: set[tuple]) -> None:
-        """The keys `settle` reads next: `reading` probes only their checks."""
-        for f, span in keys:
-            if span not in given.setdefault(f, set()):
-                given[f].add(span)
-                probed.pop(f, None)  # a file probed for fewer checks is probed again
+    def probing(f: str, only: set[tuple[int, int]] | None) -> tuple[dict, set[tuple[int, int]]]:
+        outside_file = next((t for t in outside if str(t) == f), None)
+        if outside_file is not None:
+            built_mutant()
+        elif not current["mutant"]:  # the probe reads the mutant's build
+            build(current["stage"])
+            current["mutant"] = True
+        text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
+            read(f), tree.roles.get(f, ()))
+        with STEPS.step("mutant_probes"):
+            return probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
+                                "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
+                         beside(scratch.lean, f), outside_file is not None, only), set(named(text, mine)[1].values())
+    probes = Probes(probing)  # the checks of this mutant's build
 
     def reading(key: tuple) -> str | None:
-        """Why the check at `key` cannot refute the mutated definition (`probe`), or None. Only a key `settle`
-        handed over (`scope`) is read: the probe walks only those checks (eff-tm-probe-scope), so any other would
-        be absent, a kill lost (F5)."""
-        f, span = key
-        if span not in given.get(f, ()):
-            raise LookupError(f"{f}:{span}: a check `settle` did not hand to `reading`")
-        if f not in probed:
-            outside_file = next((t for t in outside if str(t) == f), None)
-            if outside_file is not None:
-                built_mutant()
-            elif not current["mutant"]:  # the probe reads the mutant's build
-                build(current["stage"])
-                current["mutant"] = True
-            text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
-                read(f), tree.roles.get(f, ()))
-
-            def probing(only: set[tuple[int, int]] | None) -> dict:
-                with STEPS.step("mutant_probes"):
-                    return probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
-                                        "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
-                                 beside(scratch.lean, f), outside_file is not None, only)
-            probed[f] = probing(given[f])
-            # a check of the set the probe can read with no whole entry (the run timed out or crashed, a cut that
-            # changed a parse: F3, F4) is read in the whole file's probe
-            if any(not complete(probed[f].get(s)) for s in given[f] & set(named(text, mine)[1].values())):
-                probed[f] = probing(None)
-        entry, control = probed[f].get(span), hashes.get(key)
-        if not complete(entry) or not complete(control):
-            return "Lean could not elaborate it in the probe"
-        if "hyps" in entry["flags"]:
-            return "its goal has a hypothesis"
-        if "sorry" in entry["flags"]:
-            return "it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it)"
-        if "axiom" in entry["flags"]:
-            return "it computes through an axiom of this tree, which the mutant can make false"
-        if "io" in entry["flags"]:
-            return "it runs IO (an `initialize`d value, `unsafeIO`), which can read the mutated source"
-        if not control["flags"] >= {x for x in entry["flags"] if x.startswith("hash ")}:
-            return "Lean elaborates it otherwise than without the mutant"
-        if drift := next((c for c, h in entry["consts"].items() if control["consts"].get(c) != h), None):
-            return f"{drift}, which it reads, is not what it is without the mutant"
-        return None
+        """Why the check at `key` cannot refute the mutated definition (`probe`), or None."""
+        return refusal(probes(key), hashes.get(key))
     built = targets(tree, m, tests, deep)
     texts: dict[str, str] = {}  # file -> the checkout's text, written back at the end
     cuts: dict[str, list[tuple[int, int]]] = {}  # file -> the spans cut in it
@@ -1330,7 +1346,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
                 # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
                 return settle(found, read, lambda f: texts[f] if f in texts else read(f), tree.roles,
-                              lambda now: rebuild(stage, now), reading, scope=scope)
+                              lambda now: rebuild(stage, now), reading, scope=probes.scope)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         with STEPS.step("outside_checks"):
@@ -1367,7 +1383,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             text = t.read_text()
             status, detail = settle(found, lambda f: text if f == str(t) else "", lambda f: text if f == str(t) else "",
                                     {str(t): file_roles(t)}, lambda now, t=t: again(t, now), reading, str,
-                                    scope)
+                                    probes.scope)
             if status != "KILLED":
                 return status, detail
             first = first or detail
