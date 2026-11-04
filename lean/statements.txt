@@ -17345,6 +17345,18 @@ theorem VE.EnglishGrammar.ETerm.decode_encode
   ∀ (t : VE.EnglishGrammar.ETerm), VE.EnglishGrammar.ETerm.decode t.encode = Option.some t
   -- uses VE.EnglishGrammar.ETerm.decode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
   -- expr 2165347204
+theorem VE.EnglishGrammar.JudgmentLines.parseLine_renders
+  ∀ {line : String} {j : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.parseLine line = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.parseLine@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2546311996
+theorem VE.EnglishGrammar.JudgmentLines.renderingTo_renders
+  ∀ {line : String} {j k : VE.Judgments.Judgment},
+    VE.EnglishGrammar.JudgmentLines.renderingTo line k = Option.some j →
+      VE.EnglishGrammar.JudgmentLines.declarationLine j = Option.some line
+  -- uses VE.EnglishGrammar.JudgmentLines.declarationLine@VE.EnglishGrammar.JudgmentLines VE.EnglishGrammar.JudgmentLines.renderingTo@VE.EnglishGrammar.JudgmentLines VE.Judgments.Judgment@VE.Judgments.Decl
+  -- expr 2299198272
 theorem VE.EnglishGrammar.LexRow.Small.dom
   ∀ {E : VE.EnglishGrammar.Env} {r : VE.EnglishGrammar.LexRow},
     r.Small → VE.EnglishGrammar.LexRow.NtsIn (VE.EnglishGrammar.InDom E) r

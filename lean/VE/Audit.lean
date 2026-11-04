@@ -175,6 +175,7 @@ import VE.English.Statements
 import VE.EnglishGrammar.Encode
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Rules
@@ -2878,6 +2879,8 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.DecodeEncode.toString_nat
 #print axioms VE.EnglishGrammar.EFormula.decode_encode
 #print axioms VE.EnglishGrammar.ETerm.decode_encode
+#print axioms VE.EnglishGrammar.JudgmentLines.parseLine_renders
+#print axioms VE.EnglishGrammar.JudgmentLines.renderingTo_renders
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
