@@ -1,0 +1,6 @@
+trust_mutants: 5 definitions, 39 mutants (10 to run), 4 jobs, base d74d1fc9ca22
+SURVIVOR lean/VE/Presupposition/Reading.lean:22 VE.Presupposition.Reading.DefinedAt (S, trusted) body-false: r.strong.denote S τ ↔ r.pre.denote S τ ∧ r.weak.denote S τ -> False (the proofs it breaks: lean/VE/Presupposition/Reading.lean:24, lean/VE/Presupposition/Rows.lean:47...)
+UNKNOWN lean/VE/Presupposition/Reading.lean:73 VE.Presupposition.carried (S, trusted) list-empty: ms -> [] (lean/VE/Presupposition/Reading.lean:73: Invalid projection: Type of)
+trust_mutants: 8 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 69 s
+trust_mutants: S, trusted: 8 KILLED, 1 SURVIVOR, 1 UNKNOWN, 29 OTHER SHARD
+trust_mutants: steps: wall plan 9 s, scratch 2.6 s, control_build 0.1 s, probe_install 1.2 s, control_probes 4.5 s, mutants 46.4 s, cleanup 4.8 s; lake control_build 0.1 s (1), probe_install 1.2 s (1), control_probes 3.9 s (1), mutant_builds 39.9 s (19), mutant_checks 51.5 s (16), stage_controls 27.9 s (6), mutant_probes 49.4 s (8)
