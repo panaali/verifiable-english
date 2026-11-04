@@ -8,7 +8,7 @@
   {
    "definition": "VE.Weighing.ruleSorts",
    "operator": "list-empty",
-   "reason": "`ruleSorts := []` fails the direct check `#guard ruleSorts wμ \"n\" == [\"assistant\", \"user\"]` (lean/VE/Weighing/Examples.lean:155) and W-ζ3's verdict check (:112); trust_mutants reports UNKNOWN because the W-ζ3 check also reads targetExists, whose code it cannot match without the mutant"
+   "reason": "`ruleSorts := []` fails the direct check `#guard ruleSorts wμ \"n\" == [\"assistant\", \"user\"]` (lean/VE/Weighing/Examples.lean:158) and W-ζ3's verdict check (:112); trust_mutants reports UNKNOWN because the W-ζ3 check also reads targetExists, whose code it cannot match without the mutant"
   },
   {
    "definition": "VE.Weighing.weighEntries",
