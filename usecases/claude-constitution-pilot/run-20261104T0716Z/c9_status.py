@@ -30,7 +30,7 @@ def point_status_cases(path):
     from ve.readings_verdicts import context
 
     meta, _ = pilot.read(path)
-    probe, _ = pilot.read(RUN / "probe-translation.ve.md")
+    probe, _ = pilot.read(migrate_soft.PROBE)
     [rule] = [u["content"]["norm"] for u in pilot._flat(probe["units"]) if u["id"] == migrate_soft.CONDITIONED]
     [target] = [u["content"]["norm"] for u in pilot._flat(meta["units"]) if u["id"] == migrate_soft.CONDITIONED]
     conditions = rule["exception"]["sufficient"]

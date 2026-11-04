@@ -5,7 +5,7 @@
 
 Reads `translation.ve.md` of run 20261010T1800Z at pilot commit `76922d6c` (the pinned copy in `tests/data/ce4/`,
 checked against the commit's blob id) and writes
-`probe-translation.ve.md` beside this script. The rewriting rules, each one function:
+`probe-translation.probe.md` beside this script. The rewriting rules, each one function:
 
 1. `soft-norms@0` is added to the profiles (`with_soft`).
 2. Each `default` candidate is rewritten as in 5.2 (`tests/ce4.soft_default`, the one owner of that rule): the
@@ -51,7 +51,7 @@ CONDITIONED = "u0073.s05"
 GENERAL = "general_exception_to_complying"
 EXCEPTIONS = ("exception_to_asking_for_clarification", "exception_to_never_denying_being_claude",
               "exception_to_not_deceiving_about_system_prompt", "exception_to_complying_with_exploit_instruction")
-PROBE = RUN / "probe-translation.ve.md"
+PROBE = RUN / "probe-translation.probe.md"
 
 
 def pinned():
