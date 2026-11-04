@@ -1,7 +1,7 @@
 """Checked reports route."""
 from __future__ import annotations
 
-from .backends.relay import decide
+from .backends.relay import decide, decide_once
 
 
 def _without_null(value):
@@ -47,3 +47,10 @@ def run_case(kind, environment, document, **extra):
     if nulls:
         case["nulls"] = nulls
     return decide("reports", [case])[0]
+
+
+def wants_forms(phrases, infinitives):
+    """Lean's `wants` test (service mode `reports`, kind `reports-wants`): one row per phrase and
+    one per infinitive sent, typed by the mode's schema; a rejection raises Lean's diagnostic."""
+    return decide_once("reports", {"id": "wants", "kind": "reports-wants",
+                                   "phrases": list(phrases), "infinitives": list(infinitives)})

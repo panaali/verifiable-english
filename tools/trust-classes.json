@@ -785,7 +785,8 @@
         "ResponseShape.Schemas.Reports.scoped",
         "ResponseShape.Schemas.Reports.status",
         "ResponseShape.Schemas.Reports.status_word",
-        "ResponseShape.Schemas.Reports.verdict"
+        "ResponseShape.Schemas.Reports.verdict",
+        "ResponseShape.Schemas.Reports.wants"
       ],
       "G[I]": [
         "ResponseShape.Schemas.Reports.envelope_binding"
@@ -1623,7 +1624,8 @@
         "VE.Reports.Run.unitStatusText",
         "VE.Reports.Run.unknownPredicate",
         "VE.Reports.Run.unreviewedActs",
-        "VE.Reports.Run.verdictOf"
+        "VE.Reports.Run.verdictOf",
+        "VE.Reports.Run.wantsStrings"
       ],
       "G[V]": [
         "VE.Reports.Run.ReportsAdmissionAnswer",
@@ -1639,6 +1641,7 @@
         "VE.Reports.Run.runCertificate",
         "VE.Reports.Run.runCountermodel",
         "VE.Reports.Run.runStatus",
+        "VE.Reports.Run.runWants",
         "VE.Reports.Run.statusText",
         "VE.Reports.Run.textPath",
         "VE.Reports.Run.unformalisedKinds",
@@ -4601,7 +4604,8 @@
         "VE.EnglishGrammar.Run.rejectionText",
         "VE.EnglishGrammar.Run.riskEveryCannotText",
         "VE.EnglishGrammar.Run.statusCodes",
-        "VE.EnglishGrammar.Run.unsentencedCodes"
+        "VE.EnglishGrammar.Run.unsentencedCodes",
+        "VE.EnglishGrammar.Run.judgmentsField"
       ],
       "G[I]": [
         "VE.EnglishGrammar.Run.environmentId",
@@ -9864,6 +9868,8 @@
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
         "VE.Service.Document.withSets",
+        "VE.Service.DocumentChain.requestOf",
+        "VE.Service.DocumentChain.layeredOf",
         "VE.Service.Document.cardinalityEnv",
         "VE.Service.Document.cardinalityReport"
       ],
@@ -9976,7 +9982,8 @@
         "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.UnitContent.judgedIn",
         "VE.Service.Document.checkBody",
-        "VE.Service.Document.Env.basePredicates"
+        "VE.Service.Document.Env.basePredicates",
+        "VE.Service.Document.softFrame"
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -18449,6 +18456,125 @@
         "VE.Weighing.Examples.ζd",
         "VE.Weighing.Examples.μAll",
         "VE.Weighing.Examples.μd"
+      ]
+    },
+    "VE/Service/DocumentChainExamples.lean": {
+      "T": [
+        "VE.Service.DocumentChain.Examples.arg",
+        "VE.Service.DocumentChain.Examples.regulated",
+        "VE.Service.DocumentChain.Examples.environmentOver",
+        "VE.Service.DocumentChain.Examples.chain",
+        "VE.Service.DocumentChain.Examples.complyPredicates",
+        "VE.Service.DocumentChain.Examples.ofVar",
+        "VE.Service.DocumentChain.Examples.complyRule",
+        "VE.Service.DocumentChain.Examples.denyPredicates",
+        "VE.Service.DocumentChain.Examples.denyRule",
+        "VE.Service.DocumentChain.Examples.document",
+        "VE.Service.DocumentChain.Examples.textOf",
+        "VE.Service.DocumentChain.Examples.complyDocument",
+        "VE.Service.DocumentChain.Examples.layered",
+        "VE.Service.DocumentChain.Examples.checkError",
+        "VE.Service.DocumentChain.Examples.holds",
+        "VE.Service.DocumentChain.Examples.situation",
+        "VE.Service.DocumentChain.Examples.filling",
+        "VE.Service.DocumentChain.Examples.statusAt",
+        "VE.Service.DocumentChain.Examples.completions",
+        "VE.Service.DocumentChain.Examples.caseOf",
+        "VE.Service.DocumentChain.Examples.plainCase",
+        "VE.Service.DocumentChain.Examples.refusal"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLines.lean": {
+      "S": [
+        "VE.EnglishGrammar.JudgmentLines.articled",
+        "VE.EnglishGrammar.JudgmentLines.slotNouns",
+        "VE.EnglishGrammar.JudgmentLines.atom",
+        "VE.EnglishGrammar.JudgmentLines.noDeciderTail",
+        "VE.EnglishGrammar.JudgmentLines.declarationLine",
+        "VE.EnglishGrammar.JudgmentLines.factorsLine",
+        "VE.EnglishGrammar.JudgmentLines.legendLines",
+        "VE.EnglishGrammar.JudgmentLines.statusLine"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.parseLine",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.parseLine_renders"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.renderingTo",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.renderingTo_renders"
+          ]
+        }
+      ],
+      "D[I]": [
+        "VE.EnglishGrammar.JudgmentLines.recordJson"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.JudgmentLines.readDeclaration",
+        "VE.EnglishGrammar.JudgmentLines.preds",
+        "VE.EnglishGrammar.JudgmentLines.isDefined",
+        "VE.EnglishGrammar.JudgmentLines.readingPreds",
+        "VE.EnglishGrammar.JudgmentLines.refusal"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.JudgmentLines.lineFault",
+        "VE.EnglishGrammar.JudgmentLines.atomParts",
+        "VE.EnglishGrammar.JudgmentLines.noVocabulary",
+        "VE.EnglishGrammar.JudgmentLines.maxJudgments",
+        "VE.EnglishGrammar.JudgmentLines.wordAfter",
+        "VE.EnglishGrammar.JudgmentLines.refusalText"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLinesExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitrary",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governed",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfair",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighs",
+        "VE.EnglishGrammar.JudgmentLinesExamples.noWording",
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitraryLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governedLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfairLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighsLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.errorOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.rowOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.text",
+        "VE.EnglishGrammar.JudgmentLinesExamples.quoted",
+        "VE.EnglishGrammar.JudgmentLinesExamples.pred",
+        "VE.EnglishGrammar.JudgmentLinesExamples.env",
+        "VE.EnglishGrammar.JudgmentLinesExamples.holds",
+        "VE.EnglishGrammar.JudgmentLinesExamples.firstNamed"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentRunExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentRunExamples.preds",
+        "VE.EnglishGrammar.JudgmentRunExamples.environment",
+        "VE.EnglishGrammar.JudgmentRunExamples.pairs",
+        "VE.EnglishGrammar.JudgmentRunExamples.lexicon",
+        "VE.EnglishGrammar.JudgmentRunExamples.plain",
+        "VE.EnglishGrammar.JudgmentRunExamples.word",
+        "VE.EnglishGrammar.JudgmentRunExamples.request",
+        "VE.EnglishGrammar.JudgmentRunExamples.J",
+        "VE.EnglishGrammar.JudgmentRunExamples.result",
+        "VE.EnglishGrammar.JudgmentRunExamples.member",
+        "VE.EnglishGrammar.JudgmentRunExamples.names",
+        "VE.EnglishGrammar.JudgmentRunExamples.question",
+        "VE.EnglishGrammar.JudgmentRunExamples.shared",
+        "VE.EnglishGrammar.JudgmentRunExamples.mismatch"
+      ]
+    },
+    "VE/Attribution/Words.lean": {
+      "G[V]": [
+        "VE.Reports.baseOf",
+        "VE.Reports.finitePhrase",
+        "VE.Reports.headRest",
+        "VE.Reports.joined",
+        "VE.Reports.vowel",
+        "VE.Reports.wantsPhrase?"
       ]
     }
   }
