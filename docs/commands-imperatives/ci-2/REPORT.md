@@ -1,0 +1,148 @@
+# ci-2 REPORT: the `english.command` mode and `readInstruction` (CI-2, cut after deliverable (3))
+
+**Status:** deliverables (1) to (3) built and committed on `feature/ci-2`; (4) to (6) are ci-2b (the size line). HEAD: the commit that adds this file.
+**What changed:** `VE.Commands.Run` (the proof task with O2 and O10, `readInstruction`, the request and answer), the service mode `english.command` with its shape, encoder theorem and `runMode_fits` branch, 42 `#guard`s; no Python caller yet.
+**Open:** size is about 957 hand-written lines against about 600 (the cut is already at the earliest seam the task allows; the excess is R16's mutant-killing guards, the route's fixtures and side tables, and evidence). The DRI was asked (inbox 20261104T061317Z) to confirm that the two facts-based statements follow ci-1's split precedent.
+**Signatures:** none reserved; the one DELTA row cites R16.
+
+FOLLOW-UP: ci-2b the relay, the wrapper and the deletions of CI-2: read_command, speech_document's command fences through readInstruction (commandFence_needs_context), command.read, the inventory rows (D9), the deletion ledger and the A/B
+FOLLOW-UP: ci-2-ties a ties pass for VE/Commands/Run.lean under R16 (FOLLOW-UPS.md "## ci-2")
+
+Plan and spec: `docs/spec/commands-imperatives-PLAN.md` and `docs/spec/commands-imperatives.md`, copied verbatim from
+9a12df17a (commit c1a17b46b); section 17 records the DRI's rulings of O1, O2, O7 and O10 (d2e265bf4, as
+reviews/dri-decisions-20261102-ci-0.md asks). Statement gate: passed (reviews/dri-decisions-20261102-ci-0.md item 1).
+
+## Deliverables
+
+| Plan row | Delivered | Evidence |
+|---|---|---|
+| (1) `lean/VE/Commands/Run.lean`: `QueryRecord`, `Context`, `proofTask`, `proofMany` (O2), `readInstruction`, `Request`, `Run.decodeRequest`, `Run.encode`, `Run.caseReported` | yes (a46ff03de) | `cd lean && lake build`: 1278 jobs, success |
+| (1) statements `readInstruction_command`, `proofTask_bound`, `proofTask_addressed`, `caseReported_eq` | yes, as stated in spec section 6 | `python3 lean/audit.py`: PASS, 760 source files, 8397 theorems, the allowed axioms only; `lean/axioms.txt` lists each |
+| (1) `readInstruction_refused_classed`, `readInstruction_typed` | as `_refused_classed_of` and `_typed_of_facts` (deviations 2 and 3); the spec's statements are ci-2b's, after ci-1b | the same audit |
+| (1) `Texts.lean`: the act wording `{0} submit a proof of {1}` (`proofAct`), no legend; `("QueryMismatch", "VEError")` in `codeClasses` | yes | `RunExamples.lean`: P4′ guard, the class guard |
+| (2) `Protocol.lean` entry, `runMode_englishCommand ... := rfl`, `Schemas/Command.lean`, `Encoders/Command.lean` (`caseReported_fits`), the `runMode_fits` branch | yes (b13d280d0) | `lake build`; `uv run python tools/repo_map.py --check`: "PASS: 42 modes, each with its schema file" |
+| (3) the plan's fixtures through the mode: P1′, P2, P3, P3′, P3″, P4, P4′, P5-like, P6, P7, P8, the two-request echo, O7, O10, the `jsonWF?` refusal, the `caseReported_eq` comparison | yes, as `#guard`s in `lean/VE/Commands/RunExamples.lean` | `lake build VE.Commands.RunExamples`: success |
+| (4) `Source/Run.lean`: command fences read by `readInstruction`, `commandFence_needs_context` | no: ci-2b | the task's size clause ("the relay, the wrapper and the deletions must land together") |
+| (5) Python `read_command`, `speech_document.py`, manifest `command.read`, `relay_lint.py`, the inventory rows | no: ci-2b | as above |
+| (6) the deletions (`_command_candidates`, the command branch of `parse_speech`, `legend`'s scope sentences, `PROOF_TASK_ACT`) | no: ci-2b, in the same change as (5) | as above |
+
+Route plumbing the mode needed: its CPU deadline (`ve/backends/lean_service.py`), layer (`tools/layer_policy.py`),
+the manifest pin of `Run.lean` and the `other_json` reason of `RunExamples.lean`, the schema seed of
+`tests/test_lean_service.py`, the corpus cases `command_cases()` (`tests/lean_service_corpus.py`) with the relay gate's
+rows (`tests/data/relay-gate-cases.jsonl`, the rows `relay_mutation_gate.record` keeps for this route) and the census's
+genuine answers (`tests/data/binding-answers.jsonl.gz`, the six `english.command` rows only).
+
+## Deviations from the spec at 9a12df17a
+
+1. **The request** is `{id, environment, lexicon, unit, wording, queries, overlay?, generated?}`: one environment,
+   decoded by the speech decoder and by `english.read`'s `decodeCase`, so the lexicon names the same environment the
+   reader reads. It has no `cap`, `source` or `mode`: the reader reads its condition at `maxCandidates` and
+   `workBudget` (O7), so such a field would be unbound. `queries` are the document's query records, decoded by the
+   pinned `Wire.decodeQuery`; a duplicate id is `InvalidInput: duplicate query`, and an id that is not a declared
+   constant of sort `query` is `InvalidInput: query`, so every decoded request satisfies `readInstruction_typed`'s
+   `hq` (spec section 6 asked CI-2 to check it). `Context.sc` is the environment's scope (`se.scope`); a document's
+   bindings reach it through the source wrapper (ci-2b).
+2. **`readInstruction_typed_of_facts`** replaces `hd` by ci-1's `declared` facts (`hf : declared ctx.se = true`), as
+   the task says while ci-1b (`readCommand_typed`, the decoder half) is not on main; it keeps `hE`, `hS`, `hR`, `hk`
+   and `hq`. The spec's statement, with `hd` and `hw`, closes through ci-1b's `readCommand_typed` in ci-2b.
+3. **`readInstruction_refused_classed_of`** takes ci-1b's two statements as hypotheses: `hc` (the reader's
+   refusals are classed, ci-1b's `refused_classed`) and `hg` (english-lean's refusal of a sentence is classed, ci-1b's
+   `guardOf_classed`). Its proof covers every proof-task refusal. The spec's statement is not claimed; it follows
+   when ci-1b lands. The DRI was asked to confirm that this is ci-1 item 2's split (inbox 20261104T061317Z).
+4. **O1:** `proofTask` refuses with `Texts.queryMismatch` = `("QueryMismatch", "")`, and `Run.outcomeFields` writes
+   `q.unit` as the text of every `QueryMismatch` (the only code no other path writes).
+5. **The relay's `jsonWF?`** runs on the whole request, before any decoder: `InvalidInput: the request is not a
+   well-formed JSON tree`.
+6. **An overlay or lexicon `english.read` refuses** is the error row `InvalidOverlay: …` or `InvalidGrammar: …`
+   (`english.read`'s code and text with the mode named `english.command`), from `c.overlayFailure` and
+   `grammarFault c.E {} c.L`, before any wording is read.
+7. **The answer** (`english.command.json`): `id`, `status`, and `result` with `unit`, `wording`, `legend` (at least
+   one line) and `outcome`; `one` adds `reading`, `many` `readings`, `refused` `code`, `class` and `text`, `limit`
+   `text`. A reading is `{command: {force, act, args, guard}, fills: [{constant, words, span}], query, paraphrase}`,
+   at most one fill (a decoded environment's predicates have at most two argument sorts). The shape binds `id`,
+   `unit` and `wording` to the request (`equals`). The relay gate's eight remaining accepted mutants (act, constants,
+   words, span and query against the request, args and fills emptied, the legend repeated) are allow-listed as
+   follow-ups F4 and F10 naming ci-2b's `read_command` (`tools/relay-gate-allow.json`).
+8. **P4′** puts the second proof predicate on `service` (`submitx_required(service, query)`, as the spec's row
+   says): the speech decoder refuses two obligations with one act on the same sorts (`DuplicateActRole`).
+
+Spec re-read: `proofTask`'s order (byte bound, `guardOf` cases, record, predicate, `checkedAddressee`) against spec
+section 6 (`docs/spec/commands-imperatives.md:610-632`) and the ruled O10; `proofMany` against O2's ruling (item 3); `QueryMismatch`'s text against
+O1's (item 2); `Context.b` against O7's (item 4); `Request` and `encode` against section 6's `Request` and `Run.encode`
+docstrings (`docs/spec/commands-imperatives.md:648-666`) and the plan's (`docs/spec/commands-imperatives-PLAN.md:518-536`); the relay's `jsonWF?` against reviews/dri-decisions-20261102-ci-1.md item 1;
+the BOUND and LEAN classes against spec section 6 "Relay binding" (the shape's descriptions name them).
+
+## Fixtures (`lean/VE/Commands/RunExamples.lean`, all through `Run.caseReported` unless noted)
+
+P1′ `one` on `submit_required`, fill (`q1`, "q1"), span null, query `q1`, paraphrase "In this task, you are required
+to submit a proof of q1." (:71); P2 no record and P3 a wrong target: `QueryMismatch` with the unit as text (:72, :73);
+P3′ two matching records: `QueryMismatch` (:74); P3″ `one` on `q2` (:75); P4′ two proof predicates:
+`MissingObligationRole: {0} submit a proof of {1}` (:76); an unread sentence to prove: `NoDerivation: The sentence to
+prove has no reading …` (:80); P6 "Click Check." `one` with span [6, 11] (:82); P7 `UnboundSlot: you` (:87, and for a command :88);
+"Submit a proof of q1." is a command, span [18, 20] (:89); P4 over `E_web` and P8 at budget 0 (`limit`), on contexts
+(:100, :103). O7 `ctx.b = workBudget` (:107); O10 400 bytes `one`, 401 `limit` (:110, :111). O2 over `goProof` (ci-1's
+`goCase` with a proof predicate): two matching readings `many` with two entries, one of two `QueryMismatch`, a reading
+two records match dropped so `QueryMismatch` (:125, :127, :128); `proofMany` on 2, 64 and 65 targets: `many`, `many`,
+`limit` (:134). The echo: ids `r1`/`r2`, units `u1`/`u2`, legends for `alice`/`bob` (:142 to :147); the prohibition's
+span [15, 24] after leading spaces (:148); W10's `many` over `E_web` (:150); `jsonWF?`'s refusal of F-raw (:154);
+another environment's lexicon refused (:156); a duplicate record and an undeclared query id (:157, :159). R16's
+guards (:163 to :177). `caseReported_eq` as a guard over six requests (:181).
+
+Limits (the common rule): the wording is read once, by `guardOf` (proof task) or `readCommand`; the proof wording's
+400-byte bound comes before it is read (O10, both sides of the boundary); `many` is at most `readingsBound`
+(`manyOf`, both sides); budget 0 is `limit`.
+
+## Seeded bugs (`docs/commands-imperatives/ci-2/mutants.json`)
+
+| Id | File | Bug | Fails |
+|---|---|---|---|
+| S1 | lean/VE/Commands/Run.lean | `encode` writes a fixed unit (the plan's cached answer) | RunExamples.lean:142 |
+| S2 | lean/VE/Commands/Run.lean | `matchedRecord` ignores the records' targets | :73 (P3), :75, :125, :127; `proofTask_one` |
+| S3 | lean/VE/Commands/Run.lean | `matchedRecord` takes the first matching record | :74 (P3′), :128; `proofTask_one` |
+| S4 | lean/VE/Commands/Run.lean | `proofTask` skips `checkedAddressee` | :87 (P7); `proofTask_one`, `readInstruction_refused_classed_of` |
+| S5 | lean/VE/Commands/Run.lean | `proofMany` lists a reading two records match (O2) | :128 |
+| P1 | ve/backends/lean_service.py | no deadline for `english.command` | tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes |
+
+Each was planted, shown failing, and restored. The plan's fourth seed (Python `read_command` accepting a fill the
+request does not hold) is ci-2b's: `read_command` does not exist yet. No Rust product code changed.
+
+## Trust
+
+`uv run python tools/trust_map.py --check`: "K +0, S +0, … trusted +141", PASS with the allowance (V +141, signed
+R16) in `docs/trust-baseline.json`; per file in DELTA.md. R16's mutants: TRUSTMUT.
+
+## Tests
+
+The selected tests (`mac-pytest.sh --select`, base 94580b39b, at c3508e1e4): the fast stage ran 412 of 538 units,
+"1 failed, 11908 passed" (`test_every_json_handling_lean_file_is_classified`), and the six cloud shards ran the rest:
+shards 2, 4, 5 and 6 passed, shards 1 and 3 failed `test_relay_mutation_gate.py::test_every_route_has_fixtures`,
+`::test_the_gate_passes_on_every_route[service:english.command]` and
+`test_shape_binding_mutants.py::…[english.command]` (results on `claude/cc-result-ci-2-c3508e1e-t765432-s*`). Fixed
+in fd80f6039 and 54d980238; rerun of exactly those ids (`mac-pytest.sh -- <ids>`): 1 passed, then 3 passed. After the
+fix, `tests/test_lean_service_schema.py` (every corpus case through the real service): 161 passed;
+`tools/relay_mutation_gate.py --route service:english.command`: 1126 mutants, 1118 refused, 8 allowed, 0 failures.
+`tools/gate_collection.py --check --prebuilt`: 3 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+`uv run python tools/regen_generated.py --check`: 35 entries checked.
+
+Not run, per the task: the full gate (the chain runs it on the final HEAD), and no whole-UDHR or constitution run.
+Pre-existing failures on main (main-known-red.txt) were not touched.
+
+## Pilot bytes
+
+Expected: 0 from this batch (no document path calls the mode). CI-1's +9 segments / +273 B reach a document only
+through ci-2b's wrapper. Nothing is claimed before a pilot audit.
+
+## ci-1's review items folded here
+
+F2 (ci-1's DELTA.md said no `ve/` path changed): fixed. F6 (the spec was not in the tree): the plan and spec are
+copied. ci-1's `goCase` is the base of O2's fixture. F3 (the A/B's two rows) is ci-2b's, with the A/B. F4's hand
+mutants of `Read.lean`, F5 (`Read.lean:7`'s "read once" beside `unreadOf`'s re-read) and F8 (`ofCondition` and
+"Sentence 2") are `Read.lean`'s, left to ci-1b so that this item does not edit the reader.
+
+## Next item
+
+ci-2b (the relay, the wrapper and the deletions; the spec's two statements once ci-1b is on main), then ci-5.
+
+## Self-review against BUILDER-CHECKLIST
+
+SELFREVIEW
