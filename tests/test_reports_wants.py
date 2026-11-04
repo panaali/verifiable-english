@@ -122,6 +122,22 @@ def test_the_english_reads_both_forms_from_the_kind_and_refuses_a_dropped_row(le
     monkeypatch.undo()
 
 
+@pytest.mark.parametrize("content, text, phrase, infinitive", [
+    (report("anthropic", "wants", "c1", B("publishes", "anthropic", "service")), "Anthropic wants to publish service.",
+     "publishes service", "publish service"),
+    (report("article", "wants", "c1", B("audits", "anthropic", "service")),
+     "The article wants anthropic to audit service.", "audits service", "audit service")])
+def test_one_wants_sentence_asks_lean_three_times(lean, monkeypatch, content, text, phrase, infinitive):
+    """A step count, not a time: printing asks for the phrase's infinitive and, through the
+    printer's one-reading check, for its finite form; parsing asks for the finite form once."""
+    doc, calls = document(content), []
+    monkeypatch.setattr(reports, "wants_forms", lambda p, i: calls.append((list(p), list(i))) or wants_forms(p, i))
+    rendered = render_report_unit(doc, "u1")
+    parse_rendered_report(doc, rendered)
+    assert rendered["text"] == text
+    assert calls == [([phrase], []), ([], [infinitive]), ([], [infinitive])]
+
+
 def test_a_phrase_the_test_refuses_has_no_wants_wording(lean):
     """The opposite direction: `trys service` has no infinitive (`try`'s finite form is `tries`,
     not the phrase), so a `wants` of it has no reviewed wording and its assessment keeps the long form."""
