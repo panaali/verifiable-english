@@ -1,0 +1,18 @@
+trust_mutants: 23 definitions, 284 mutants (21 to run), 4 jobs, base 561aa79f5716
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:83 VE.Service.DocumentChain.Examples.situation (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/Document.lean:1055 VE.Service.Document.softSource (G[V], trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) lit-plus: 257 -> 258
+UNKNOWN lean/VE/Service/Document.lean:2214 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: sets.map (·.getObjValD "unit") -> [] (lean/VE/Service/Document.lean:2216: Invalid dotted identifier notation: The expected type of `.st...)
+SURVIVOR lean/VE/Service/Document.lean:1976 VE.Service.Document.admitGraph (D[V], trusted) lit-minus: 257 -> 256
+UNKNOWN lean/VE/Service/Document.lean:2216 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: held -> [] (lean/VE/Service/Document.lean:2216: Invalid dotted identifier notation: The expected type of `.st...)
+SURVIVOR lean/VE/Service/Document.lean:2209 VE.Service.DocumentChain.requestOf (?, trusted) lit-plus: 257 -> 258 (the proofs it breaks: lean/VE/Service/DocumentChain.lean:18, lean/VE/Service/DocumentChain.lean:28)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:55 VE.Service.DocumentChain.Examples.document (?, trusted) list-first: members -> (members.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-first: (front.getObjVal? "completions").toOption.toList -> (((front.getObjVal? "completions").toOption.toList).take 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-last: permission.map (("permission", .str ·)) -> ((permission.map (("permission", .str ·))).reverse.take 1)
+UNKNOWN lean/VE/Service/Document.lean:2215 VE.Service.DocumentChain.requestOf (?, trusted) list-last: units.filterMap -> (units.filterMap.reverse.take 1) (lean/VE/Service/Document.lean:2218: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-last: (front.getObjVal? "completions").toOption.toList.map (("completions", ·)) -> (((front.getObjVal? "completions").toOption.toList.map (("completions", ·))).reverse.take 1)
+trust_mutants: 59 KILLED, 9 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 1935 s; 50 carried from dfd5eb73f94b (check-only change: lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt)
+trust_mutants: ?, trusted: 50 KILLED, 7 SURVIVOR, 3 UNKNOWN, 167 OTHER SHARD
+trust_mutants: D[V], trusted: 9 KILLED, 1 SURVIVOR, 31 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 15 OTHER SHARD
+trust_mutants: steps: wall plan 6.7 s, scratch 2.2 s, control_build 0.1 s, probe_install 0.9 s, control_probes 893.3 s, mutants 1027.7 s, cleanup 4.3 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 2267 s (9), mutant_builds 274.3 s (21), mutant_checks 1799.2 s (23), stage_controls 463.5 s (4), mutant_probes 1297.8 s (9)
