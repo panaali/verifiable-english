@@ -1,0 +1,13 @@
+trust_mutants: 14 definitions, 306 mutants (39 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:130 VE.Commands.Run.readingJson (D[V], trusted) list-empty: q.ctx.se.ne.regulated -> [] (lean/VE/Commands/Run.lean:130: Invalid field notation: Type of)
+SURVIVOR lean/VE/Commands/Run.lean:35 VE.Commands.proofSentence (G[V], trusted) and-or: && -> ||
+UNKNOWN lean/VE/Commands/Run.lean:116 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: qs -> [] (lean/VE/Commands/Run.lean:116: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Commands/Run.lean:118 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: qs.map -> [] (lean/VE/Commands/Run.lean:118: Function expected at)
+SURVIVOR lean/VE/Commands/Run.lean:136 VE.Commands.Run.readingJson (D[V], trusted) list-first: r.fills -> (r.fills.take 1)
+SURVIVOR lean/VE/Commands/Run.lean:117 VE.Commands.Run.decodeRequest (D[V], trusted) list-drop-last: se.ne.rv.vocabulary.constants -> (se.ne.rv.vocabulary.constants.dropLast)
+SURVIVOR lean/VE/Commands/Run.lean:159 VE.Commands.Run.caseReported (G[V], trusted) list-drop-first: [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str e)] -> ([("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str e)].drop 1)
+SURVIVOR lean/VE/Commands/Run.lean:136 VE.Commands.Run.readingJson (D[V], trusted) list-last: r.fills.map (·.const) -> ((r.fills.map (·.const)).reverse.take 1)
+trust_mutants: 24 KILLED, 5 SURVIVOR, 3 UNKNOWN, 7 INVALID, 0 ALLOWED, 0 NOT RUN, 267 OTHER SHARD in 1683 s
+trust_mutants: D[V], trusted: 12 KILLED, 3 SURVIVOR, 3 UNKNOWN, 4 INVALID, 155 OTHER SHARD
+trust_mutants: G[V], trusted: 12 KILLED, 2 SURVIVOR, 3 INVALID, 112 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.3 s, control_probes 163.2 s, mutants 1501.5 s, cleanup 2.5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 451.4 s (8), mutant_builds 104.3 s (48), mutant_checks 910.2 s (35), stage_controls 228.6 s (8), mutant_probes 4539.8 s (24)
