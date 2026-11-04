@@ -215,7 +215,9 @@ def bind_zone(case, row, source, labels):
     its source (`zone_source`), a tuple of its sorts in the situation). In each completion the rows are its true
     decisions, each once, in Lean's order (the source's decisions, then the situation's entities): the DE11 and DE10f
     rows are exactly `forced_all` (a stated condition, or the record and the observations, force each in every
-    completion), a DE13 exception is none of them, and every decision the record sets true is there. A DE11
+    completion), a DE13 exception is none of them, every decision the record sets true is there and none it sets
+    false (so neither is a `forced_all` entry). An observed query fixes the zone: `byDefault` with the observed value
+    (a completion agrees with every observation), never `leftTo` or `notSaid` (two that differ there). A DE11
     condition is below its rule's number of stated conditions; `noCompletion`'s labels are X's (`labels`) or
     `ZONE_CHECKS`, distinct and not empty; `unknown`'s reason is not empty."""
     from .softnorms import _decision_key
@@ -235,7 +237,9 @@ def bind_zone(case, row, source, labels):
     completions = row.get("completions", [])
     if len(set(forced)) != len(forced) or len(completions) != {"byDefault": 1, "leftTo": 2}.get(row["zone"], 0):
         raise _unbound("forced exceptions" if len(set(forced)) != len(forced) else "completions")
-    recorded = {(_decision_key(e["decision"]), tuple(e["tuple"])) for e in case["record"] if e["value"] is True}
+    recorded = {True: set(), False: set()}
+    for entry in case["record"]:
+        recorded[entry["value"]].add((_decision_key(entry["decision"]), tuple(entry["tuple"])))
     for lines in completions:
         shown, exceptions = [], set()
         for line in lines:
@@ -255,10 +259,18 @@ def bind_zone(case, row, source, labels):
             raise _unbound("forced row")
         if shown != sorted(shown) or len({repr(e) for e in shown}) != len(shown):
             raise _unbound("decision rows")
-        if not recorded <= {(e[2], tuple(line["tuple"])) for e, line in zip(shown, lines)}:
+        named = {(e[2], tuple(line["tuple"])) for e, line in zip(shown, lines)}
+        if not recorded[True] <= named:
             raise _unbound("record")
+        if named & recorded[False]:
+            raise _unbound("recorded false")
     if row["zone"] == "leftTo" and (not all(completions) or completions[0] == completions[1]):
         raise _unbound("completions")
+    query = (case["query"]["outcome"], tuple(case["query"]["tuple"]))
+    observed = {o["value"] for o in case["observations"] if (o["outcome"], tuple(o["tuple"])) == query}
+    if observed and row["zone"] in ("byDefault", "leftTo", "notSaid") and (
+            row["zone"] != "byDefault" or {row["value"]} != observed):
+        raise _unbound("observed outcome")
     found = row.get("labels")
     if found is not None and (not found or len(set(found)) != len(found) or not set(found) <= {*labels, *ZONE_CHECKS}):
         raise _unbound("labels")

@@ -124,6 +124,10 @@ CASES = {
     "beta_none": (lambda: zcase(DOCS["beta"], "x_required", ["a"], on={"urgent": [["a"]]}, record=[
         {"decision": {"excepted": "r1"}, "tuple": ["a"], "value": False}]),
                   {"zone": "noCompletion", "labels": ["soft:exception:r1:sufficient:0"]}, []),
+    # review F2: the query observed both ways: no completion, which an observed query allows
+    "observed_twice": (lambda: zcase(_lam(), "instructs", ["o2"], ("o1", "o2"), "operator", obs=[
+        {"outcome": "instructs", "tuple": ["o2"], "value": value} for value in (True, False)]),
+                       {"zone": "noCompletion", "labels": ["observed"]}, []),
 }
 
 
@@ -219,6 +223,22 @@ TAMPERED = [
     ("labels", "no_completion", lambda r: r.update(labels=["soft:exception:g9"])),
     ("labels", "no_completion", lambda r: r.update(labels=["observed", "observed"])),
     ("labels", "no_completion", lambda r: r.update(labels=[])),
+    ("recorded false", "epsilon_two", lambda r: r["completions"][0].insert(0, {
+        "row": "DE13", "decision": {"excepted": "r1"}, "tuple": ["a"]})),
+    ("observed outcome", "closed_two", lambda r: r.update(value=True)),
+]
+# review F2: Lean's genuine row against a request whose record or observations contradict it (a request-value
+# comparison, no recomputation): a decision the record sets false shown as DE11, DE10f (with its `forced_all` entry),
+# or DE13 for an exception, a switch and a ranking; a zone other than the observed query's value
+CONTRADICTED = [
+    ("recorded false", "xi1", lambda c: c["record"].append({"decision": {"excepted": "r1"}, "tuple": ["a"], "value": False})),
+    ("recorded false", "mu", lambda c: c["record"].append({"decision": {"excepted": "g1"}, "tuple": ["o1"], "value": False})),
+    ("recorded false", "mu1", lambda c: c["record"].append({"decision": {"excepted": "r2"}, "tuple": ["a"], "value": False})),
+    ("recorded false", "epsilon_off", lambda c: c["record"][0].update(value=False)),
+    ("recorded false", "delta_outw", lambda c: c["record"][0].update(value=False)),
+    ("observed outcome", "closed_two", lambda c: c["observations"][1].update(value=True)),
+    ("observed outcome", "mu1", lambda c: c["observations"].append({"outcome": "p", "tuple": ["a"], "value": True})),
+    ("observed outcome", "mu1b", lambda c: c["observations"].append({"outcome": "p", "tuple": ["a"], "value": False})),
 ]
 
 
@@ -236,6 +256,23 @@ def test_each_binding_refuses_its_tampered_field():
             defaults.bind_zone(case, row, source, labels)
 
 
+def test_each_binding_refuses_a_row_its_request_contradicts():
+    for what, name, contradict in CONTRADICTED:
+        case, row, labels, source = genuine(name)
+        contradict(case)
+        with pytest.raises(CheckerUnavailable, match=rf"\({what}\)"):
+            defaults.bind_zone(case, row, source, labels)
+
+
+def test_review_f2_probe_a_switch_recorded_false_is_not_shown():
+    """PROBE F2 as the review gave it: DF-ε's row showing the user's switch, against a record that sets it false."""
+    environment, norms = DOCS["epsilon"]
+    case = dict(environment=environment, norms=norms, model={"domains": {"assistant": ["a"]}},
+                record=[{"decision": {"off": "r1", "party": "user"}, "tuple": ["a"], "value": False}])
+    with pytest.raises(CheckerUnavailable):
+        defaults.bind_zone(case, CASES["epsilon_off"][1], {"decisions": {("off", "r1", "user"): ["assistant"]}}, [])
+
+
 def test_answer_binds_a_zone_through_its_kind(monkeypatch):
     """`answer` asks for the zone's own source when none is given, and binds the row as a zone."""
     case, row, labels, _ = genuine("epsilon_off")
@@ -247,7 +284,7 @@ def test_answer_binds_a_zone_through_its_kind(monkeypatch):
 
 # Read by tests/test_defaults_checks.py: every check of `bind_zone` is needed by one of these.
 BOTH_SIDES = (test_every_genuine_row_binds, test_each_binding_refuses_its_tampered_field,
-              test_answer_binds_a_zone_through_its_kind)
+              test_each_binding_refuses_a_row_its_request_contradicts, test_answer_binds_a_zone_through_its_kind)
 
 REQUEST_PATHS = [("model",), ("record",), ("observations",), ("query",), ("query", "outcome"), ("query", "tuple"),
                  ("record", 0), ("record", 0, "decision"), ("record", 0, "tuple"), ("record", 0, "value"),
@@ -264,3 +301,42 @@ def test_each_request_member_retyped_or_dropped_is_refused_by_lean(path):
             continue  # the request itself, an empty list of facts, a list with one element fewer: all well formed
         with pytest.raises(VEError):
             defaults.answer(mutant)
+
+
+def test_review_f3_the_committed_words_are_the_lean_generators_output():
+    """Review F3: DE10 to DE13's words are Lean's (`zoneHeads`, `zoneLineWords`, `zoneJoins` in
+    `lean/VE/Defaults/ZoneWire.lean`): `ve/defaults_words.json` is what `ZoneWordsMain.lean` prints now, checked by
+    the generator itself, unmocked. elan's `lake` is the fallback when PATH has none."""
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+    from subprocesses import HANG_TIMEOUT
+    root = Path(__file__).resolve().parents[1]
+    environ = {**os.environ, "PATH": os.environ.get("PATH", "") + os.pathsep + str(Path.home() / ".elan/bin")}
+    done = subprocess.run([sys.executable, str(root / "tools/defaults_words.py"), "--check"], cwd=root, env=environ,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, (done.stdout, done.stderr)
+
+
+def test_review_f3_every_zone_sentence_is_lean_s_words_filled(monkeypatch):
+    """Review F3: Python words none of DE10 to DE13 (nor DE11 after DE6′): with each of Lean's rows and joins marked,
+    every sentence of every fixture is one marked row, its slots filled, and every row of the table is shown by some
+    fixture; with the table's words changed, the English changes with them."""
+    table = defaults_english._words()
+    marked = {"heads": [{**h, "words": f"<{h['row']}:{h['form']}>" + h["words"]} for h in table["heads"]],
+              "lines": [{**w, "sentence": f"<{w['row']}:{w['kind']}>" + w["sentence"],
+                         "inline": f"[{w['row']}:{w['kind']}]" + w["inline"]} for w in table["lines"]],
+              "joins": {key: f"|{word}|" for key, word in table["joins"].items()}}
+    monkeypatch.setattr(defaults_english, "_words", lambda: marked)
+    used = set()
+    for name in CASES:
+        case, row, *_ = genuine(name)
+        for sentence in defaults_english.sentences(case, row):
+            assert sentence.startswith("<"), (name, sentence)
+            used.add(sentence[1:sentence.index(">")])
+        for lines in row.get("completions", []) if row["zone"] == "leftTo" else []:
+            assert all(f"[{line['row']}:" in " ".join(defaults_english.sentences(case, row)) for line in lines)
+    expected = {f"{h['row']}:{h['form']}" for h in table["heads"]} | {f"{w['row']}:{w['kind']}" for w in table["lines"]}
+    # DE11 and DE13 for an exception are shown inside DE10″ only by some fixtures; the rest each lead a sentence
+    assert expected - used <= {"DE10″:long", "DE13:excepted"}, expected - used
