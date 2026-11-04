@@ -276,4 +276,12 @@ def listed (ps : List String) : String := ", ".intercalate (ps.map fun p => "\""
     (Json.mkObj [("profiles", toJson ["x@0"])]) .null) with | .error e => e | .ok _ => "") ==
   "UnsupportedProfile: environment profiles differ from the declared list"
 
+-- 14.5 step 3: the chain route's environment id is the one over the base pair's profiles
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => (do
+      let id ← VE.Route.Wire.environmentId ["norms@0", "relational-fol@0"]
+        (← VE.Norms.Wire.canonicalEnvironmentJson (baseEnvironment env))
+      pure ((← chainBase env d).2.2 == id)).toOption == some true
+  | .error _ => false
+
 end VE.Discourse.ComposeExamples
