@@ -1,6 +1,9 @@
 import VE.Weighing.Tree
 import VE.NormDefaults.Packs
 import VE.NormDefaults.Check
+import VE.Acts.LexicalProofs
+import VE.Discourse.Manifest
+import VE.EnglishGrammar.Rules
 
 /-!
 # Weighing's premises and checks (docs/spec/weighing.md 1.4-1.6, 5)
@@ -186,5 +189,95 @@ def WellFormedWeigh (Wd : WeighDoc) : Bool :=
   WellFormedSoft Wd.D && (match checkWeigh Wd with
     | .ok () => true
     | .error _ => false)
+
+/-! ## What an accepted block guarantees (weighing.md 1.6, steps 3 and 5) -/
+
+/-- A loop body of `checkWeigh` never stops early (`only`), and what its success says (`all`). -/
+local macro "wsimp" : tactic => `(tactic| ((try simp only [throw, throwThe, MonadExceptOf.throw, bind, Except.bind,
+  pure, Except.pure]) <;> (repeat' split) <;> simp [Except.isOk, Except.toBool]))
+local macro "wsimp_all" : tactic => `(tactic| ((try simp only [throw, throwThe, MonadExceptOf.throw, bind,
+  Except.bind, pure, Except.pure]) <;> (repeat' split) <;> simp_all [Except.isOk, Except.toBool]))
+
+theorem targetCheck_exists {Wd : WeighDoc} {t : Target} {u : Unit} (h : targetCheck Wd t = .ok u) :
+    targetExists Wd t = true := by
+  revert h; unfold targetCheck; wsimp_all
+
+/-- Each `always` edge is declared; each grant's party and grantor hold a switch on its rule, and its predicate is
+    the grantor's. -/
+structure WeighFacts (Wd : WeighDoc) : Prop where
+  always : ∀ e ∈ Wd.W.always, e ∈ Wd.D.soft.outranks
+  grants : ∀ g ∈ Wd.W.grants, targetExists Wd (.off g.rule g.party) = true ∧
+    targetExists Wd (.off g.rule g.grantor) = true ∧ (g.predicate, g.grantor) ∈ Wd.D.soft.instructionOf
+
+theorem weighFacts (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) : WeighFacts Wd := by
+  have hc : checkWeigh Wd = .ok () := by
+    unfold WellFormedWeigh at h; revert h; split <;> simp_all
+  unfold checkWeigh at hc
+  simp only [VE.NormDefaults.ebind_ok] at hc
+  obtain ⟨_, h1, _, h2, _, h3, _, h4, h5⟩ := hc
+  clear h2 h3 h5
+  refine ⟨fun e he => ?_, fun g hg => ?_⟩
+  · clear h4
+    have := VE.Acts.Lexical.forIn_ok h1 (by intro x; wsimp) e he
+    clear h1; revert this; wsimp_all
+  · clear h1
+    have := VE.Acts.Lexical.forIn_ok h4 (by intro x; unfold targetCheck; wsimp) g hg
+    clear h4; revert this
+    rcases ht : targetCheck Wd (.off g.rule g.party) with _ | u <;> wsimp_all
+    exact targetCheck_exists ht
+
+/-! ## 5.1 Strength -/
+
+theorem rankOrder_above (Wd : WeighDoc) (h : WellFormedSoft Wd.D = true) (a b : String) :
+    outranksPlus Wd.D.soft a b = (rankOrder Wd).above a b :=
+  VE.Closure.outranksPlus_eq_above _ (softValid_of_wellFormed _ h).ranks a b
+
+theorem above_of_atLeast {o : VE.Closure.Order String} {a b c : String} (h₁ : o.atLeast a b = true)
+    (h₂ : o.above b c = true) : o.above a c = true := by
+  rw [VE.Closure.above_iff] at h₂ ⊢
+  rcases (VE.Closure.atLeast_iff o a b).mp h₁ with rfl | h₁
+  · exact h₂
+  · exact h₁.trans h₂
+
+theorem atLeast_of_above {o : VE.Closure.Order String} {a b : String} (h : o.above a b = true) :
+    o.atLeast a b = true :=
+  (VE.Closure.atLeast_iff o a b).mpr (.inr ((VE.Closure.above_iff o a b).mp h))
+
+theorem strictPair_edge {Wd : WeighDoc} {H L : String} :
+    strictPair Wd H L = true ↔ ∃ e ∈ Wd.W.always, (rankOrder Wd).atLeast H e.1 ∧ (rankOrder Wd).atLeast e.2 L := by
+  simp [strictPair, List.any_eq_true]
+
+/-- A strict pair is ordered. -/
+theorem strictPair_outranks (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H L : String)
+    (hs : strictPair Wd H L = true) : outranksPlus Wd.D.soft H L = true := by
+  have hw : WellFormedSoft Wd.D = true := by simp_all [WellFormedWeigh]
+  obtain ⟨e, he, h₁, h₂⟩ := strictPair_edge.mp hs
+  have hab : (rankOrder Wd).above e.1 e.2 = true :=
+    (VE.Closure.above_iff _ _ _).mpr (.single ((weighFacts Wd h).always e he))
+  rw [rankOrder_above Wd hw]
+  rcases (VE.Closure.atLeast_iff _ _ _).mp h₂ with h₂ | h₂
+  · exact above_of_atLeast h₁ (h₂ ▸ hab)
+  · exact above_of_atLeast h₁ ((VE.Closure.above_iff _ _ _).mpr
+      (((VE.Closure.above_iff _ _ _).mp hab).trans h₂))
+
+/-- An `always` edge is a strict pair. -/
+theorem strictPair_of_always (Wd : WeighDoc) (a b : String) (hab : (a, b) ∈ Wd.W.always) :
+    strictPair Wd a b = true :=
+  strictPair_edge.mpr ⟨(a, b), hab, VE.Closure.atLeast_refl _ _, VE.Closure.atLeast_refl _ _⟩
+
+/-- Strictness is inherited downward and upward along the order. -/
+theorem strictPair_down (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : String)
+    (h₁ : strictPair Wd H M = true) (h₂ : outranksPlus Wd.D.soft M L = true) : strictPair Wd H L = true := by
+  have hw : WellFormedSoft Wd.D = true := by simp_all [WellFormedWeigh]
+  obtain ⟨e, he, ha, hb⟩ := strictPair_edge.mp h₁
+  rw [rankOrder_above Wd hw] at h₂
+  exact strictPair_edge.mpr ⟨e, he, ha, VE.Closure.atLeast_trans _ hb (atLeast_of_above h₂)⟩
+
+theorem strictPair_up (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : String)
+    (h₁ : outranksPlus Wd.D.soft H M = true) (h₂ : strictPair Wd M L = true) : strictPair Wd H L = true := by
+  have hw : WellFormedSoft Wd.D = true := by simp_all [WellFormedWeigh]
+  obtain ⟨e, he, ha, hb⟩ := strictPair_edge.mp h₂
+  rw [rankOrder_above Wd hw] at h₁
+  exact strictPair_edge.mpr ⟨e, he, VE.Closure.atLeast_trans _ (atLeast_of_above h₁) ha, hb⟩
 
 end VE.Weighing
