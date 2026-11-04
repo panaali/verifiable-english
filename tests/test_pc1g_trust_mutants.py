@@ -13,4 +13,6 @@ def test_pc1g_trust_mutation_record_has_no_unresolved_mutants():
     record = json.loads(RECORD.read_text())
     statuses = Counter(row["status"] for row in record["mutants"])
     assert statuses and record["counts"] == {key: statuses[key] for key in record["counts"]}
+    assert "partial" not in record
     assert not any(statuses[key] for key in ("SURVIVOR", "UNKNOWN", "NOT RUN"))
+    assert record.get("rescore", {}).get("mode") == "identical"
