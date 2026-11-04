@@ -32,7 +32,7 @@
     {
       "id": "S5",
       "file": "tools/bench/suite_tail.py",
-      "change": "durations --record takes the shortest unrecorded mean of the inputs, not the longest",
+      "change": "durations --gate-record takes the shortest unrecorded mean of the inputs, not the longest",
       "test": "tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs",
       "restored": true
     },

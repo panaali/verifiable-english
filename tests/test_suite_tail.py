@@ -155,7 +155,7 @@ def gate_record(path: Path, seconds: dict[str, float]) -> Path:
 
 
 def test_durations_command_reads_gate_records_as_more_runs(tmp_path, monkeypatch):
-    """Each `--record` is one more run of the tests it records: each test keeps its longest time across the
+    """Each `--gate-record` is one more run of the tests it records: each test keeps its longest time across the
     records and the profiles, the unrecorded estimate is the longest of their means of short tests, and the
     source line names each record and its sha256."""
     profile = tmp_path / "profile"
@@ -169,14 +169,14 @@ def test_durations_command_reads_gate_records_as_more_runs(tmp_path, monkeypatch
     output = tmp_path / "durations.json"
     monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", str(profile), "--output", str(output),
                                       "--source", "measured", "--collection", str(collection),
-                                      "--record", str(first), "--record", str(second)])
+                                      "--gate-record", str(first), "--gate-record", str(second)])
     assert suite_tail.main() == 0
     assert test_schedule.read_estimates(output) == ({"t::a": 6.0, "t::b": 30.0}, 0.4)
     source = json.loads(output.read_text())["source"]
     assert source.startswith("measured; ") and f"{first} (sha256 " in source and f"{second} (sha256 " in source
     # Records alone are inputs enough; a file that is not a gate record with durations is refused.
     monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", "--output", str(output), "--source", "records",
-                                      "--collection", str(collection), "--record", str(second)])
+                                      "--collection", str(collection), "--gate-record", str(second)])
     assert suite_tail.main() == 0
     assert test_schedule.read_estimates(output) == ({"t::a": 6.0, "t::b": 10.0}, 0.25)
     second.write_text(json.dumps({"status": "passed"}))
