@@ -732,9 +732,9 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
 
 
 /-- `normsEnvironment_flag_not_defined` with or without the decoder's `acts@0` reading. -/
-theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
+theorem normsEnvironment_flag_not_defined_joined (environment : Json) (acts joined : Bool)
     (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts joined = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name := by
   unfold VE.Norms.Wire.decodeNormsEnvironment at h
   extract_lets ps at h
@@ -752,6 +752,7 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   extract_lets vocab2 at h
   obtain ⟨rv, hrv, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -761,8 +762,15 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
   obtain ⟨_, _, h⟩ := bind_ok h
   dsimp (config := { zeta := false }) only [jpZ] at h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain rfl := Except.ok.inj h
   exact decodeVocabulary_flag_not_defined _ _ rv hrv
+
+theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
+    (ne : VE.Norms.Wire.NormsEnvironment)
+    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts = .ok ne) :
+    ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
+  normsEnvironment_flag_not_defined_joined environment acts false ne h
 
 theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
     (h : VE.Norms.Wire.decodeNormsEnvironment environment = .ok ne) :
@@ -800,7 +808,7 @@ theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) 
   · cases h
     intro f hf d hd
     obtain ⟨d', hd', rfl⟩ := List.mem_map.mp hd
-    exact normsEnvironment_flag_not_defined_in _ _ ne hne f hf d' hd'
+    exact normsEnvironment_flag_not_defined_joined _ _ _ ne hne f hf d' hd'
 
 /-! ## Rejection (b) and the empty-target case -/
 
@@ -847,11 +855,12 @@ every target certificate is accepted gives, for the document decoded from that
 very input, the spec's conflict-freedom over every base-admissible structure
 satisfying the flag premises, whether or not the document has flags or
 definitions. This is the statement `norms_flagged_witness_sound` refutes. -/
-theorem norms_flagged_conflict_free (j : Json) (r : ConflictReplay)
-    (h : replayConflict j = .ok r) (hv : r.conflictFree = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+theorem norms_flagged_conflict_freeIn (dec : Wire.SourceDecoder) (hdec : ∀ e n s, dec e n = .ok s → ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name)
+    (j : Json) (r : ConflictReplay)
+    (h : replayConflictIn dec j = .ok r) (hv : r.conflictFree = true) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
     ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B (flagPremises r.src) → ConflictFree r.src.D B := by
-  obtain ⟨hd, hplain, hflagged⟩ := norms_flagged_conflict_sound.{u} j r h hv
+  obtain ⟨hd, hplain, hflagged⟩ := norms_flagged_conflict_soundIn.{u} dec j r h hv
   refine ⟨hd, fun B hB hF => ?_⟩
   cases hp : r.plain
   · have hc := conflictFree_flagged r hv hp
@@ -859,7 +868,7 @@ theorem norms_flagged_conflict_free (j : Json) (r : ConflictReplay)
     · exact pyTargets_nil_conflictFree r.src ht B
     · obtain ⟨t, htm⟩ := List.exists_mem_of_ne_nil _ ht
       exact conflictFree_of_base r.src (conflictFreeCheck_background hc htm)
-        (decodeSource_flag_not_defined _ _ _ r.src hd) (hflagged hp) B hB hF
+        (hdec _ _ r.src hd) (hflagged hp) B hB hF
   · exact hplain hp B hB
 
 /-! ## The public entry -/
@@ -875,13 +884,13 @@ theorem verdict_conflict (id v : String) (t : Json) (rest : List (String × Json
 
 /-- The two `norms-conflict` branches of `Norms.Run.runCase`: with a witness
 the verdict is the witness replay's, otherwise the certificate replay's. -/
-theorem runCase_conflict (j answer : Json) (h : Run.runCase j = .ok answer)
+theorem runCase_conflictIn (dec : Wire.SourceDecoder) (j answer : Json) (h : Run.runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "norms-conflict") :
-    (∃ (src : Wire.Source) (w : Witness src), replayWitness j = .ok ⟨src, w⟩ ∧
+    (∃ (src : Wire.Source) (w : Witness src), replayWitnessIn dec j = .ok ⟨src, w⟩ ∧
       answer.getObjValD "verdict" = .str (if w.conflict then "CONFLICT" else "UNKNOWN")) ∨
-    (∃ r, replayConflict j = .ok r ∧
+    (∃ r, replayConflictIn dec j = .ok r ∧
       answer.getObjValD "verdict" = .str (if r.conflictFree then "CONFLICT-FREE" else "UNKNOWN")) := by
-  unfold Run.runCase at h
+  unfold Run.runCaseIn at h
   obtain ⟨id, _, h⟩ := bind_ok h
   obtain ⟨kind, hkind, h⟩ := bind_ok h
   have heq : kind = "norms-conflict" := by rw [hkind] at hk; cases hk; rfl
@@ -911,35 +920,36 @@ theorem runCase_conflict (j answer : Json) (h : Run.runCase j = .ok answer)
 answer whose `verdict` is `CONFLICT-FREE` means, for the document decoded from
 the case's own environment and norms, the spec's conflict-freedom over every
 base-admissible structure satisfying the flag premises. -/
-theorem norms_wire_conflict_free (j answer : Json) (h : Run.runCase j = .ok answer)
+theorem norms_wire_conflict_freeIn (dec : Wire.SourceDecoder) (hdec : ∀ e n s, dec e n = .ok s → ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name)
+    (j answer : Json) (h : Run.runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
     (hverdict : answer.getObjValD "verdict" = .str "CONFLICT-FREE") :
     ∃ src : Wire.Source,
-      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok src ∧
       ∀ B : VE.Structure.{u}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B := by
-  rcases runCase_conflict j answer h hk with ⟨src, w, _, hv⟩ | ⟨r, hr, hv⟩
+  rcases runCase_conflictIn dec j answer h hk with ⟨src, w, _, hv⟩ | ⟨r, hr, hv⟩
   · rw [hv] at hverdict
     split at hverdict <;> simp at hverdict
   · rw [hv] at hverdict
     split at hverdict
     · rename_i hcf
-      exact ⟨r.src, norms_flagged_conflict_free j r hr hcf⟩
+      exact ⟨r.src, norms_flagged_conflict_freeIn dec hdec j r hr hcf⟩
     · simp at hverdict
 
 /-- The witness side at the public entry: a `norms-conflict` answer whose
 `verdict` is `CONFLICT` refutes conflict-freedom over the base-admissible
 structures satisfying the flag premises, for the decoded document. -/
-theorem norms_wire_conflict_refuted (j answer : Json) (h : Run.runCase j = .ok answer)
+theorem norms_wire_conflict_refutedIn (dec : Wire.SourceDecoder) (j answer : Json) (h : Run.runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
     (hverdict : answer.getObjValD "verdict" = .str "CONFLICT") :
     ∃ src : Wire.Source,
-      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok src ∧
       ¬ ∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B := by
-  rcases runCase_conflict j answer h hk with ⟨src, w, hw, hv⟩ | ⟨r, _, hv⟩
+  rcases runCase_conflictIn dec j answer h hk with ⟨src, w, hw, hv⟩ | ⟨r, _, hv⟩
   · rw [hv] at hverdict
     split at hverdict
     · rename_i hc
-      obtain ⟨hd, _, _, _, hn⟩ := norms_flagged_witness_sound j src w hw hc
+      obtain ⟨hd, _, _, _, hn⟩ := norms_flagged_witness_soundIn dec j src w hw hc
       exact ⟨src, hd, hn⟩
     · simp at hverdict
   · rw [hv] at hverdict
@@ -947,18 +957,65 @@ theorem norms_wire_conflict_refuted (j answer : Json) (h : Run.runCase j = .ok a
 
 /-- The route never answers CONFLICT-FREE and CONFLICT for one document: two
 `norms-conflict` cases with the same environment and norms. -/
+theorem norms_wire_conflict_exclusiveIn (dec : Wire.SourceDecoder) (hdec : ∀ e n s, dec e n = .ok s → ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name)
+    (j₁ j₂ a₁ a₂ : Json)
+    (h₁ : Run.runCaseIn dec j₁ = .ok a₁) (hk₁ : VE.Route.Run.caseKind j₁ = .ok "norms-conflict")
+    (h₂ : Run.runCaseIn dec j₂ = .ok a₂) (hk₂ : VE.Route.Run.caseKind j₂ = .ok "norms-conflict")
+    (he : j₁.getObjValD "environment" = j₂.getObjValD "environment")
+    (hn : j₁.getObjValD "norms" = j₂.getObjValD "norms")
+    (hv₁ : a₁.getObjValD "verdict" = .str "CONFLICT-FREE") :
+    a₂.getObjValD "verdict" ≠ .str "CONFLICT" := by
+  intro hv₂
+  obtain ⟨s₁, hd₁, hc⟩ := norms_wire_conflict_freeIn.{0} dec hdec j₁ a₁ h₁ hk₁ hv₁
+  obtain ⟨s₂, hd₂, hr⟩ := norms_wire_conflict_refutedIn dec j₂ a₂ h₂ hk₂ hv₂
+  rw [he, hn, hd₂] at hd₁
+  cases hd₁
+  exact hr hc
+
+/-! ## The route's own decoder -/
+
+/-- `decodeFlagged` keeps a flag from naming a definition. -/
+theorem decodeFlagged_flag_not_defined (e n : Json) (s : Wire.Source) (h : Wire.decodeFlagged e n = .ok s) :
+    ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name :=
+  decodeSource_flag_not_defined e n true s h
+
+theorem norms_flagged_conflict_free (j : Json) (r : ConflictReplay)
+    (h : replayConflict j = .ok r) (hv : r.conflictFree = true) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B (flagPremises r.src) → ConflictFree r.src.D B :=
+  norms_flagged_conflict_freeIn.{u} Wire.decodeFlagged decodeFlagged_flag_not_defined j r h hv
+
+theorem runCase_conflict (j answer : Json) (h : Run.runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "norms-conflict") :
+    (∃ (src : Wire.Source) (w : Witness src), replayWitness j = .ok ⟨src, w⟩ ∧
+      answer.getObjValD "verdict" = .str (if w.conflict then "CONFLICT" else "UNKNOWN")) ∨
+    (∃ r, replayConflict j = .ok r ∧
+      answer.getObjValD "verdict" = .str (if r.conflictFree then "CONFLICT-FREE" else "UNKNOWN")) :=
+  runCase_conflictIn Wire.decodeFlagged j answer h hk
+
+theorem norms_wire_conflict_free (j answer : Json) (h : Run.runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
+    (hverdict : answer.getObjValD "verdict" = .str "CONFLICT-FREE") :
+    ∃ src : Wire.Source,
+      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      ∀ B : VE.Structure.{u}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B :=
+  norms_wire_conflict_freeIn.{u} Wire.decodeFlagged decodeFlagged_flag_not_defined j answer h hk hverdict
+
+theorem norms_wire_conflict_refuted (j answer : Json) (h : Run.runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
+    (hverdict : answer.getObjValD "verdict" = .str "CONFLICT") :
+    ∃ src : Wire.Source,
+      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      ¬ ∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B :=
+  norms_wire_conflict_refutedIn Wire.decodeFlagged j answer h hk hverdict
+
 theorem norms_wire_conflict_exclusive (j₁ j₂ a₁ a₂ : Json)
     (h₁ : Run.runCase j₁ = .ok a₁) (hk₁ : VE.Route.Run.caseKind j₁ = .ok "norms-conflict")
     (h₂ : Run.runCase j₂ = .ok a₂) (hk₂ : VE.Route.Run.caseKind j₂ = .ok "norms-conflict")
     (he : j₁.getObjValD "environment" = j₂.getObjValD "environment")
     (hn : j₁.getObjValD "norms" = j₂.getObjValD "norms")
     (hv₁ : a₁.getObjValD "verdict" = .str "CONFLICT-FREE") :
-    a₂.getObjValD "verdict" ≠ .str "CONFLICT" := by
-  intro hv₂
-  obtain ⟨s₁, hd₁, hc⟩ := norms_wire_conflict_free.{0} j₁ a₁ h₁ hk₁ hv₁
-  obtain ⟨s₂, hd₂, hr⟩ := norms_wire_conflict_refuted j₂ a₂ h₂ hk₂ hv₂
-  rw [he, hn, hd₂] at hd₁
-  cases hd₁
-  exact hr hc
+    a₂.getObjValD "verdict" ≠ .str "CONFLICT" :=
+  norms_wire_conflict_exclusiveIn Wire.decodeFlagged decodeFlagged_flag_not_defined j₁ j₂ a₁ a₂ h₁ hk₁ h₂ hk₂ he hn hv₁
 
 end VE.Norms.FlaggedSpec

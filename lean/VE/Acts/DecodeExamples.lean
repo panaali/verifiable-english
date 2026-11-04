@@ -10,6 +10,7 @@ open Lean VE.Acts VE.Acts.Wire VE.Acts.Decode VE.Acts.Examples VE.Acts.RuleExamp
 open VE.Acts.ElaborateExamples VE.Norms VE.NormDefaults
 open VE.Acts.MeaningExamples (fx5)
 
+def actsOf (fx : List String) (V : Vocab) (U : UDoc) := VE.Norms.Wire.actsOf fx V U.D.T.regulated
 def ck (fx : List String) (V : Vocab) (name : String) (k : Nat) (s : String) := checkAct fx V name k (.str s)
 def errText {α : Type} (e : Except String α) : String := match e with | .error m => m | .ok _ => "ok"
 
@@ -148,8 +149,135 @@ def lexical : List (String × String) :=
 -- Without `acts@0` no act is read: today's act check admits *nor*, which `checkAct` would send to the grammar.
 #guard dec (jenv ["norms@0", "relational-fol@0"] [("p", "{0} seek nor enjoy asylum")] false) [jrule "p"] ==
   some (true, 1, ⟨[], []⟩, 0, [], 1)
--- The norms decoder still refuses a joined act (its hook is `Lexical.check` until ap-3db), with its own text.
+-- A joined act under no frames is refused with D-16; with the block's frames it elaborates (E5j).
 #guard errText (decodeElaboratedU (jenv ["acts@0", "norms@0", "relational-fol@0"] [("p027", a6)])
-  (Json.arr #[jrule "p027"])) == "InvalidInput: act phrase for p027 joins acts with 'or' outside a fixed phrase"
+  (Json.arr #[jrule "p027"])) == "InvalidInput: act phrase for p027 has no reading under the declared frames"
+
+/-! ### E5j: frames and adverbs on the wire (`decodeVocab`, D-31), `sourceOf`, and the entry points -/
+
+def frameJ (f : Frame) : Json := Json.mkObj [("head", .str (" ".intercalate f.head)), ("markers", toJson f.markers),
+  ("split", toJson f.split), ("modifiers", toJson f.mods)]
+def blockJ (fx : List String) (V : Vocab) : Json :=
+  Json.mkObj [("fixed", toJson fx), ("frames", toJson (V.frames.map frameJ)), ("adverbs", toJson V.adverbs)]
+/-- A one-predicate environment with the `acts` block `block`; `role` and `default` as written. -/
+def envOf (profiles : List String) (block : Json) (name : String := "p027") (act : String := a6)
+    (role : String := "permission") (default : String := "unspecified") : Json :=
+  (jenv profiles [] false).setObjVal! "vocabulary" (((jenv profiles [] false).getObjValD "vocabulary").setObjVal!
+    "predicates" (Json.mkObj [(name, Json.mkObj [("arguments", toJson ["person"]), ("description", .str "d"),
+      ("regulated", Json.mkObj [("role", .str role), ("default", .str default), ("act", .str act)])])])
+    |>.setObjVal! "acts" block)
+def block6 : Json := blockJ fx6 V6
+def nd6 : List String := ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
+def plain6 : List String := ["acts@0", "norms@0", "relational-fol@0"]
+def rule27 : Json := Json.mkObj [("norm", Json.mkObj [("name", .str "r027"), ("predicate", .str "p027"),
+  ("sign", .bool false), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
+def norms27 : Json := Json.arr #[rule27]
+
+/-- `e.s.U.unspec`, `e.U'.unspec`, and each part's name and `allowByDefault`. -/
+def e5j (j : Json) := (decodeElaboratedU j norms27).toOption.map fun e =>
+  (e.s.U.unspec, e.U'.unspec, e.U'.D.T.regulated.map fun r => (r.name, r.allowByDefault))
+#guard e5j (envOf nd6 block6) ==
+  some (["p027"], ["p027__1", "p027__2"], [("p027__1", false), ("p027__2", false)])
+-- The opposite side: the same act with no frames has no reading; a `deny` default gives no unspecified part.
+#guard e5j (envOf nd6 (blockJ fx6 ⟨[], []⟩)) == none
+#guard e5j (envOf nd6 block6 (default := "deny")) == some ([], [], [("p027__1", false), ("p027__2", false)])
+-- `frames` is read under `acts@0` only: the frozen vocabulary decoder refuses the field otherwise.
+#guard (VE.NormDefaults.Wire.decodeSourceU (envOf ["norms@0", "relational-fol@0"] block6 (default := "deny"))
+  norms27).toOption.isNone
+
+/-- `decodeVocab`'s answer on a block: D-31 from `checkVocab`, a malformed field refused, an absent one empty. -/
+def vocabText (block : Json) : String := errText (decodeVocab block)
+#guard (decodeVocab block6).toOption == some V6
+-- Each field read from its own key: markers beside `split`, modifiers, a head of two words.
+#guard (decodeVocab (blockJ [] VE.Acts.MeaningExamples.V6b)).toOption == some VE.Acts.MeaningExamples.V6b
+#guard (decodeVocab (blockJ [] ⟨[⟨["turn", "away"], [""], [], ["in"]⟩], []⟩)).toOption ==
+  some ⟨[⟨["turn", "away"], [""], [], ["in"]⟩], []⟩
+#guard (decodeVocab (Json.mkObj [])).toOption == some ⟨[], []⟩
+#guard (decodeVocab (Json.mkObj [("adverbs", toJson ["freely"])])).toOption == some ⟨[], ["freely"]⟩
+#guard vocabText (Json.mkObj [("frames", toJson [frameJ ⟨["seek"], [""], [], []⟩, frameJ ⟨["seek"], [""], [], []⟩])]) ==
+  "InvalidInput: frame 'seek' is declared twice"
+#guard vocabText (Json.mkObj [("adverbs", toJson ["freely", "freely"])]) ==
+  "InvalidInput: the adverb 'freely' is declared twice"
+#guard vocabText (Json.mkObj [("frames", toJson [(frameJ ⟨["seek"], [""], [], []⟩).setObjVal! "extra" (.num 1)])]) !=
+  "ok"
+#guard vocabText (Json.mkObj [("frames", toJson [Json.mkObj [("head", .num 7), ("markers", toJson [""]),
+  ("split", toJson ([] : List String)), ("modifiers", toJson ([] : List String))]])]) != "ok"
+#guard vocabText (Json.mkObj [("frames", .num 7)]) != "ok"
+#guard vocabText (Json.mkObj [("adverbs", .num 7)]) != "ok"
+-- The block keeps refusing a field whose batch has not landed.
+#guard errText (decodeElaboratedU (envOf plain6 (block6.setObjVal! "sources" (Json.arr #[])) (default := "deny"))
+  norms27) != "ok"
+#guard (decodeElaboratedU (envOf plain6 (Json.mkObj [("frames", toJson (V6.frames.map frameJ))]) (default := "deny"))
+  norms27).toOption.isNone
+
+/-! `sourceOf`: the `Source` every route reads declares the parts, never the source predicate. -/
+
+def viewed (s : VE.NormDefaults.Wire.SourceU) :=
+  (s.src.D.T.regulated.map (·.name), s.src.ne.regulated.map (·.name),
+   s.src.ne.rv.vocabulary.predicates.map (·.1), s.src.ne.rv.sourceVocabulary.predicates.map (·.1),
+   s.U.unspec, s.profiled)
+#guard ((decodeElaboratedU (envOf nd6 block6) norms27 >>= sourceOf).toOption.map viewed) ==
+  some (["p027__1", "p027__2"], ["p027__1", "p027__2"], ["p027__1", "p027__2"], ["p027__1", "p027__2"],
+    ["p027__1", "p027__2"], true)
+#guard ((elaboratedU (envOf nd6 block6) norms27).toOption.map viewed) ==
+  ((decodeElaboratedU (envOf nd6 block6) norms27 >>= sourceOf).toOption.map viewed)
+#guard (((flaggedSource (envOf plain6 block6 (default := "deny")) norms27).toOption.map fun s =>
+    (s.D.T.nodes.map (·.name), (s.D.E.predicates "p027__2").isSome, (s.D.E.predicates "p027").isNone))) ==
+  some (["r027-a1", "r027-a2"], true, true)
+-- `splitJson`: a plain act's wording reads its source's `form`; the source's entry stays beside the parts.
+#guard ((splitJson (envOf plain6 block6) ⟨[("p027__1", "p027", 1)], []⟩).getObjValD "vocabulary" |>.getObjValD
+  "predicates" |>.getObjValD "p027__1") == ((((envOf plain6 block6).getObjValD "vocabulary").getObjValD
+    "predicates").getObjValD "p027")
+-- `splitPredicates`: parts first; the split source, and a name a part takes over, go; the rest stay.
+#guard splitPredicates [("p", ["a"]), ("q", ["b"]), ("p__1", ["c"])] ⟨[("p__1", "p", 1), ("p__2", "p", 2)], []⟩ ==
+  [("p__1", ["a"]), ("p__2", ["a"]), ("q", ["b"])]
+-- A lexical document is its source, and an empty map leaves the predicates as they are.
+#guard splitPredicates [("p", ["a"])] ⟨[], []⟩ == [("p", ["a"])]
+-- A7: a joined act with one atom is not split; the source's predicate stays.
+#guard ((flaggedSource (envOf plain6 (blockJ fx7 V7) (name := "p079") (act := a7) (role := "obligation")
+  (default := "deny")) (Json.arr #[jrule "p079"])).toOption.map fun s => s.D.T.regulated.map (·.name)) == some ["p079"]
+
+/-- `envOf` with a `data@0` flag: the norms route admits it, and `decodeSourceU`'s second branch does not (6.4). -/
+def flagged (act : String) : Json :=
+  let j := envOf ["acts@0", "data@0", "norms@0", "relational-fol@0"] block6 (act := act) (default := "deny")
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "dept" (Json.mkObj
+    [("arguments", toJson ["person", "person"]), ("description", .str "d"), ("functional", .bool true)])))
+#guard ((flaggedSource (flagged a6) norms27).toOption.map fun s => (s.D.T.regulated.map (·.name), s.ne.rv.flags.length)) ==
+  some (["p027__1", "p027__2"], 1)
+#guard errText (decodeElaboratedU (flagged a6) norms27) ==
+  "UnsupportedProfile: norms route with data flags is not implemented"
+-- A lexical act with a flag keeps the route's own source.
+#guard ((flaggedSource (flagged "{0} be held") norms27).toOption.map fun s => (s.D.T.regulated.map (·.name), s.ne.rv.flags.length)) ==
+  some (["p027"], 1)
+
+/-! ### Each joined act read once, by the decoder, at the route's limits (`Norms.Wire.actsOf`) -/
+
+/-- Two letters from `i`, so that each act is its own. -/
+def tag (i : Nat) : String := String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]
+def manyActs (n : Nat) : List (String × Json) := (List.range n).map fun i => (s!"p{i}", Json.mkObj
+  [("arguments", toJson ["person"]), ("description", .str "d"), ("regulated", Json.mkObj [("role", .str "permission"),
+    ("default", .str "deny"), ("act", .str s!"\{0} be subjected to x{tag i} or to y{tag i}")])])
+def manyEnv (n : Nat) : Json := (envOf plain6 block6).setObjVal! "vocabulary"
+  (((envOf plain6 block6).getObjValD "vocabulary").setObjVal! "predicates" (Json.mkObj (manyActs n)))
+def manyRules (n : Nat) : Json := Json.arr ((List.range n).flatMap fun i => (List.range 4).map fun k =>
+  Json.mkObj [("norm", Json.mkObj [("name", .str s!"r{i}x{k}"), ("predicate", .str s!"p{i}"), ("sign", .bool false),
+    ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]).toArray
+-- 32 acts and 128 rules: the decoder's 32 trees, 64 parts and 256 part rules.
+#guard ((decodeElaboratedU (manyEnv 32) (manyRules 32)).toOption.map fun e =>
+  (e.s.src.ne.joined.length, e.D.acts == e.s.src.ne.joined, e.U'.D.T.regulated.length, e.U'.D.T.nodes.length)) ==
+  some (32, true, 64, 256)
+-- 33 acts split past the route's limit; the decoder's own limit stands at 65 declarations.
+#guard errText (decodeElaboratedU (manyEnv 33) (manyRules 33)) == "ResourceLimit: regulated predicates"
+#guard errText (decodeElaboratedU (manyEnv 65) (Json.arr #[])) == "ResourceLimit: regulated predicates"
+-- A lexical decoder reads no tree: `joined := false` keeps D-4, and a lexical act gives none.
+#guard errText (VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1) (joined := false)) ==
+  "InvalidInput: act phrase for p0 joins acts with 'or' outside a fixed phrase"
+#guard ((VE.Norms.Wire.decodeSource (envOf plain6 block6 (act := "{0} be held") (default := "deny")) norms27).toOption.map
+  (·.ne.joined.length)) == some 0
+#guard ((VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1)).toOption.map (·.ne.joined.map (·.1))) == some ["p0"]
+-- `joinedActs`: under `acts@0` only, and only when asked.
+#guard (VE.Norms.Wire.joinedActs true ["norms@0"] [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []
+#guard (VE.Norms.Wire.joinedActs false plain6 [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []
 
 end VE.Acts.DecodeExamples
