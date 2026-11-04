@@ -1,0 +1,12 @@
+trust_mutants: 13 definitions, 252 mutants (32 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) body-false: c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == -> false (lean/VE/Attribution/Words.lean:13: Function expected at)
+UNKNOWN lean/VE/Attribution/Words.lean:47 VE.Reports.wantsPhrase? (?, trusted) list-empty: head -> [] (lean/VE/Attribution/Words.lean:47: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-empty: phrases -> [] (lean/VE/Attribution/Run.lean:607: Invalid field notation: Type of)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:326 ResponseShape.Schemas.Reports.row (G[V], trusted) list-empty: [ (ref "#/$defs/reports_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$d... -> []
+SURVIVOR lean/VE/Attribution/Words.lean:15 VE.Reports.joined (?, trusted) list-first: rest -> (rest.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:327 ResponseShape.Schemas.Reports.row (G[V], trusted) list-first: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref ... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref...
+SURVIVOR lean/VE/Attribution/Run.lean:612 VE.Reports.Run.runWants (?, trusted) list-first: infinitives -> (infinitives.take 1)
+trust_mutants: 22 KILLED, 4 SURVIVOR, 3 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 220 OTHER SHARD in 157 s
+trust_mutants: ?, trusted: 22 KILLED, 2 SURVIVOR, 3 UNKNOWN, 3 INVALID, 193 OTHER SHARD
+trust_mutants: G[V], trusted: 2 SURVIVOR, 27 OTHER SHARD
+trust_mutants: steps: wall plan 11 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.3 s, control_probes 28.2 s, mutants 110.1 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 47.8 s (3), mutant_builds 171.6 s (36), mutant_checks 3.4 s (1), stage_controls 5.9 s (4), mutant_probes 212.1 s (22)
