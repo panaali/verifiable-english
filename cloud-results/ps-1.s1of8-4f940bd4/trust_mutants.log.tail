@@ -1,0 +1,10 @@
+trust_mutants: 11 definitions, 68 mutants (9 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Presupposition/Frame.lean:88 VE.Presupposition.Frame.shallow (S, trusted) eq-le: = -> ≤ (lean/VE/Presupposition/Frame.lean:88: failed to synthesize)
+SURVIVOR lean/VE/Presupposition/Frame.lean:88 VE.Presupposition.Frame.shallow (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Presupposition/Frame.lean:95)
+UNKNOWN lean/VE/Presupposition/Frame.lean:56 VE.Presupposition.Frame.Reach (S, trusted) arm-true: τ = ρ -> True (lean/VE/Presupposition/Examples.lean:72: invalid `▸` notation, argument)
+UNKNOWN lean/VE/Presupposition/Frame.lean:18 VE.Presupposition.Frame (S, trusted) ctor-drop: | orL (f : Frame) (r : VE.Formula) ->  (lean/VE/Presupposition/Frame.lean:31: Unknown constant `VE.Presupposition.Frame.orL`)
+UNKNOWN lean/VE/Presupposition/Frame.lean:58 VE.Presupposition.Frame.Reach (S, trusted) arm-false: l.denote S ρ ∧ f.Reach S ρ τ -> False (lean/VE/Presupposition/Examples.lean:72: Invalid projection: Expected a value whose type is a str...)
+trust_mutants: 4 KILLED, 1 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 59 OTHER SHARD in 297 s
+trust_mutants: D[V], trusted: 2 KILLED, 19 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 1 SURVIVOR, 4 UNKNOWN, 40 OTHER SHARD
+trust_mutants: steps: wall plan 11.4 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.5 s, control_probes 90.4 s, mutants 186.9 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 138.7 s (5), mutant_builds 196.1 s (16), mutant_checks 195.7 s (10), stage_controls 124.8 s (5), mutant_probes 19.2 s (5)
