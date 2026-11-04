@@ -26,6 +26,7 @@
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
+- `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's deferred-route claims.
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -87,4 +88,3 @@
 - `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
 - `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
 - `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
-- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).

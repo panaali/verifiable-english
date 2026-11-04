@@ -12,6 +12,21 @@ open VE.Commands.Examples
 open VE.EnglishGrammar (workBudget)
 open VE.SpeechActs.Wire (readingsBound)
 
+/- A refusal keeps every diagnostic field, and the translation entry point uses that formatter unchanged
+when there is no overlay failure. This catches field loss at either list-producing boundary. -/
+#guard
+  let E : VE.EnglishGrammar.Env := { sorts := [], predicates := [], constants := [] }
+  let L : VE.EnglishGrammar.Lexicon :=
+    { nouns := [], letters := [], wordings := [], negatives := [], aliases := [], spellings := [] }
+  let c : VE.EnglishGrammar.Run.Case := ⟨E, {}, L, none, []⟩
+  let fields := VE.EnglishGrammar.Run.translationOf c "x." .notOneSentence
+  let source := "x."
+  let expected := VE.EnglishGrammar.Run.translationOf c source
+    (VE.EnglishGrammar.translateRequest E {} L VE.Commands.maxCandidates workBudget source)
+  fields.map Prod.fst == ["status", "code", "text", "class"] &&
+    expected.length > 1 &&
+    VE.EnglishGrammar.Run.translation c VE.Commands.maxCandidates source == expected
+
 /-- An obligation with its permission dual. -/
 def withDual (name : String) (args : List String) (act dual : String) : String × Json :=
   (name, Json.mkObj [("arguments", toJson args), ("description", .str name), ("regulated", Json.mkObj
