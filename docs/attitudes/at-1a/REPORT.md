@@ -3,7 +3,7 @@
 Status: done at the HEAD of this commit; deliverables (1)-(5) built; selected tests 105/542 units passed; the gate is the chain's.
 Changed: new lean/VE/Attitudes/{Scale,Syntax,Examples}.lean (spec 2.1-2.4, `table_reviewed`, F-AT0-3/C-a/C-e guards), lean/ATTITUDES.md.
 Signatures: none reserved; S +221 (K +0) SIGNED by the DRI (reviews/dri-decisions-20261104-at-1a.md item 1); layer row likewise (-layer.md).
-Open: cut-back row `at-1a-tie` (blocked by at-1b); hand-written size about 950 lines, over the ~600 guide (section "Size").
+Open: cut-back row `at-1a-tie` (blocked by at-1b); hand-written size about 940 lines, over the ~600 guide (section "Size").
 Next item: at-1b (elaboration and `checkAtt`, spec 2.5-2.6, with the five `WellFormedAtt` statements).
 
 Plan: docs/spec/attitudes-PLAN.md "AT-1. Lean core" (lines 792-~1000), on main. Spec: docs/spec/attitudes.md
@@ -101,10 +101,10 @@ the same part of `lean_layer`; keep both.
 | Spec Lean, verbatim | Scale.lean 92, Syntax.lean 166 |
 | Guards and fixtures | Examples.lean 319 |
 | Docs | ATTITUDES.md 33, DELTA.md 16, this report |
-| Evidence | mutants.json 12, trust-mutants-allow.json 20, spec_text_check.py 31 |
+| Evidence | mutants.json 12, trust-mutants-allow.json 20, spec_text_check.py 24 |
 | Side tables | trust-classes.json 92, trust-baseline.json 7, layer_policy.py 2, VE.lean 1 |
 
-The total is about 950 with this report (160 lines), over the ~600 guide. The spec's Lean cannot shrink. 49 of the
+The total is about 940 with this report (155 lines), over the ~600 guide. The spec's Lean cannot shrink. 49 of the
 guard lines (Examples.lean:271-319) are the trust-mutant fixtures R16 requires. The DRI ruled out a split (decision item 2: it adds a merge
 without lowering the total).
 
