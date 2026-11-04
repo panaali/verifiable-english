@@ -1,6 +1,6 @@
 # jt-3 report: the declaration, legend and status lines, and spec 9.5's authoring refusal
 
-Status: built; no DRI signature reserved. Over the size line: about 950 hand-written lines against ~600 (see "Size"), after cutting the `judgment-line` wire mode.
+Status: built, and review F1 fixed (`judgments` is `english.read`'s alone again; see "Review fix F1"); no DRI signature reserved. Over the size line: about 950 hand-written lines against ~600 (see "Size"), after cutting the `judgment-line` wire mode.
 Lean now has the declaration line parsed to a W2 record and predicate, the legend and neutral status lines, and 9.5's refusal, opt-in on `english.read`; Python relays Lean's text verbatim.
 Not delivered: any English wording (JT-E1r and JT-E1s failed: identifier wording, proxy-measured only); the lines in the document report and the refusal in document fences (jt-3b); the mode (jt-3c).
 Open residual: whether a reader understands which answers turn on which judgment is unmeasured, and never counted as semantic coverage. Bytes 0.
@@ -52,6 +52,7 @@ Deviation: the `sentence` bound in `refusal_problem` applies to every refusal co
 | L7 | Lean | JudgmentLines.lean | a W3-defined name is refused | JudgmentLinesExamples.lean:125, :126 |
 | L8 | Lean | Run.lean | the refusal fires in translation (the task's) | JudgmentRunExamples.lean:62 |
 | L9 | Lean | Run.lean | the refusal fires without the field | JudgmentRunExamples.lean:51 |
+| L10 | Lean | Run.lean | `judgments` in the shared `optionalFields` (review F1's code): the sibling modes accept it and ignore it | JudgmentRunExamples.lean:83, :84 |
 | P1 | Python | english_lean.py | the relay does not send the field | `test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read` |
 | P2 | Python | judgment_lines.py | a refusal is shown as a reading | the same, and `test_the_command_line_shows_lean_s_text` |
 | P3 | Python | english_lean.py | a sentence the source cannot hold is accepted | `test_every_retyped_or_rebound_refusal_field_is_refused` |
@@ -63,6 +64,14 @@ L1 to L6, L8 and L9 were run before the fix in commit 6be07421f; the code they t
 One real bug the review of my own fixture found: `definedNames` read a `definitions` array, a shape my fixture invented, so a word defined by W3 was still refused. It now reads the entry's `defined`, and `test_a_word_defined_by_w3_is_not_refused_as_the_real_environment_writes_it` sends the real shape through the service.
 
 Mutants per new trusted definition: `mutants.json`'s `per_definition` (14 definitions), from `docs/judgment-terms/jt-3/trust-mutants.json`.
+
+## Review fix F1
+
+The review (jt-3-review.final.md F1, B) found `judgments` in `Run.optionalFields`, the field list `english.grammar`, `english.check` and `english.question` share with `english.read`: all three accepted the field and ignored it, so a question sent with `judgments: []` answered `one`. DRI 2026-11-02 item 1 signs the field on `english.read` only. The class is a field added to a shared list for one mode. Fix: `optionalFields` is the merge base's list again, and `readCase` adds `judgments` to its own list, as `Question.caseFields` does for `caller`. No other mode reads the shared list (the senses `readCase` and `projectCase` keep their own). The three modes answer exactly as on the merge base, so this restores the base behaviour and DELTA gains no row.
+
+- Lean guards: `JudgmentRunExamples.lean:81`-`:84`. Each sibling mode answers without the field and with the overlay, and refuses the field with Lean's field mismatch, whose expected list does not name `judgments`. L10 (above), the reviewed code, fails :83 and :84 only.
+- Python: `tests/test_jt3_english.py::test_the_modes_that_share_read_s_fields_refuse_judgments`, 6 cases through the relay. Its refusal check sends PROBE F1's requests. The probe failed on all three modes at f5dde7d18 and passes at the fix. No Python or Rust product code changed: Python never sends `judgments` except on `english.read` (`english_lean.read`), and Rust has no English read path.
+- `actions_version` 41 -> 42 (see that section). The trust count is unchanged (`Run.lean` +4). The three new example definitions are `T`, and the decoder pins of `Run.lean` and `Question/Run.lean` were re-pinned whole after reviewing the ranges (`[[1, 754]]`, `[[1, 259]]`).
 
 ## Trust
 
@@ -78,7 +87,7 @@ New Lean text beyond the plan and the decisions: `lineFault`, the parser's refus
 
 ## actions_version
 
-37 -> 41: the hook refuses a changed hashed file at an unchanged version, and three later commits of this branch changed one. The DELTA row cites reviews/dri-decisions-20261102-jt-3p.md item 3. The 12 pins of `lean/VE/Senses/RunExamples.lean` have no generator; I recomputed them with Lean's `#eval` on a temporary copy at each raise. Each time: 12 moved, and with the version set back each hashes to its old pin; 20 unchanged; 0 other. The goldens were re-recorded by their own tools (17 ask fixtures; `conformance/english-lean/s3-fixture-comparison.json`, whose only other diff is Lark's expected-token order in two messages, as jt-3p reported). sn-b6b and en-s6b re-pin or raise the same values, so whichever merges second recomputes them.
+37 -> 42: the hook refuses a changed hashed file at an unchanged version, and four later commits of this branch changed one (the last, 41 -> 42, is the review fix F1 to `Run.lean`; the Senses pins reach no definition it changed, since `VE.Senses.Run.readCase` is the senses route's own). The DELTA row cites reviews/dri-decisions-20261102-jt-3p.md item 3. The 12 pins of `lean/VE/Senses/RunExamples.lean` have no generator; I recomputed them with Lean's `#eval` on a temporary copy at each raise. Each time: 12 moved, and with the version set back each hashes to its old pin; 20 unchanged; 0 other. The goldens were re-recorded by their own tools (17 ask fixtures; `conformance/english-lean/s3-fixture-comparison.json`, whose only other diff is Lark's expected-token order in two messages, as jt-3p reported). sn-b6b and en-s6b re-pin or raise the same values, so whichever merges second recomputes them.
 
 ## Size
 
