@@ -85,6 +85,8 @@ def step(document, path, name, argv):
                "/usr/bin/time", "-v", sys.executable, *[str(path) if a == "{doc}" else a for a in argv]]
     proc = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
     marker = proc.stderr.rfind("\tCommand being timed:")
+    status = proc.stderr.rfind("Command exited with non-zero status", 0, marker if marker >= 0 else None)
+    marker = status if status >= 0 else marker
     err, timing = (proc.stderr[:marker], proc.stderr[marker:]) if marker >= 0 else (proc.stderr, "")
     (out / f"{name}.out").write_text(proc.stdout)
     (out / f"{name}.err").write_text(err)
