@@ -15,7 +15,7 @@ from tests.test_defaults_answer import _faults, _set, _transported
 from tests.test_defaults_lean import DOCS, STRICT, env, rule, un
 from ve import defaults, defaults_english
 from ve.backends import relay
-from ve.errors import CheckerUnavailable, UnsupportedProfile
+from ve.errors import CheckerUnavailable, UnsupportedProfile, VEError
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 
 
@@ -195,3 +195,20 @@ def test_each_binding_refuses_its_tampered_field_and_keeps_the_genuine_row(what,
     tamper(row)
     with pytest.raises(CheckerUnavailable, match=rf"\({what}\)"):
         defaults.bind_zone(case, row, source, labels)
+
+
+REQUEST_PATHS = [("model",), ("record",), ("observations",), ("query",), ("query", "outcome"), ("query", "tuple"),
+                 ("record", 0), ("record", 0, "decision"), ("record", 0, "tuple"), ("record", 0, "value"),
+                 ("observations", 0, "outcome"), ("observations", 0, "value")]
+
+
+@pytest.mark.parametrize("path", REQUEST_PATHS, ids=["/".join(map(str, p)) for p in REQUEST_PATHS])
+def test_each_request_member_retyped_or_dropped_is_refused_by_lean(path):
+    case = zcase(DOCS["epsilon"], "x_permitted", ["a"], record=OFF,
+                 obs=[{"outcome": "x_permitted", "tuple": ["a"], "value": True}])
+    for value in (7, True, None, [], {}, "x", _set):
+        mutant = _set(case, path, value)
+        if mutant == case or path in (("record",), ("observations",)) and value == [] or type(path[-1]) is int and value is _set:
+            continue  # the request itself, an empty list of facts, a list with one element fewer: all well formed
+        with pytest.raises(VEError):
+            defaults.answer(mutant)
