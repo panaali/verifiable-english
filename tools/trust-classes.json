@@ -3373,6 +3373,7 @@
     },
     "VE/Presupposition/Examples.lean": {
       "T": [
+        "VE.Presupposition.Examples.allClasses",
         "VE.Presupposition.Examples.consF",
         "VE.Presupposition.Examples.ev",
         "VE.Presupposition.Examples.f4",

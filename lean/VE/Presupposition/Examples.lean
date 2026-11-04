@@ -31,7 +31,8 @@ def theManager : VE.Formula := VE.Discourse.assertive "entity" (.unary "manager"
 #guard VE.Discourse.assertiveOpen 0 "entity" owner ready == theOwner
 #guard VE.Discourse.raise1 1 (.binary "request_in" (.var 0) (.var 1)) == .binary "request_in" (.var 0) (.var 2)
 #guard VE.Discourse.raise1 0 (.binary "request_in" (.var 0) (.var 1)) == .binary "request_in" (.var 0) (.var 1)
-#guard VE.Discourse.raise1 1 (.ex "entity" (.binary "r" (.var 1) (.var 2))) == .ex "entity" (.binary "r" (.var 1) (.var 3))
+#guard VE.Discourse.raise1 1 (.ex "entity" (.binary "r" (.var 1) (.var 2))) ==
+  .ex "entity" (.binary "r" (.var 1) (.var 3))
 #guard VE.Discourse.uniqueOpen 1 "entity" (.binary "r" (.var 0) (.var 1)) ==
   VE.Discourse.uniqueAt "entity" (.binary "r" (.var 0) (.var 1)) (.binary "r" (.var 0) (.var 2))
 #guard VE.Discourse.assertiveOpen 1 "entity" (.binary "r" (.var 0) (.var 1)) ready ==
@@ -65,6 +66,8 @@ def mAliceTwo : VE.FiniteModel String :=
 #guard (Frame.impR theMgrU .hole).goal theMgrU == .implies theMgrU theMgrU
 #guard [mAliceNone, mAliceOne, mAliceTwo].map (fun M => ev M ((Frame.impR theMgrU .hole).goal theMgrU)) ==
   [true, true, true]
+#guard [mAliceNone, mAliceOne, mAliceTwo].map (fun M => (ev M theMgrU, ev M theMgr)) ==
+  [(false, false), (true, true), (false, false)]
 example (S : VE.Structure) (ρ : VE.Valuation S) : ((Frame.impR theMgrU .hole).goal theMgrU).denote S ρ :=
   (goal_denote _ _ S ρ).mpr fun _ h => h.2 ▸ h.1
 
@@ -120,6 +123,10 @@ def shopOpenOwnerReady : VE.FiniteModel String :=
 #guard decide (Frame.notF .hole).shallow && decide (Frame.impL .hole .top).shallow
 #guard [Frame.notF (.notF .hole), .notF (.andL .hole .top), .notF (.orL .hole .top), .andL (.notF .hole) .top].all
   (fun f => f.cls == .negated && !decide f.shallow)
-#guard !decide Frame.hole.shallow && !decide (Frame.impR .top .hole).shallow && !decide (Frame.impL (.notF .hole) .top).shallow
+-- the seven classes are distinct; `cls` gives no rule class (PS-2a's rule positions give `ruleAct` and `ruleGuard`)
+def allClasses : List PositionClass := [.top, .negated, .antecedent, .consequent, .disjunct, .ruleAct, .ruleGuard]
+#guard allClasses.eraseDups.length == 7
+#guard !decide Frame.hole.shallow && !decide (Frame.impR .top .hole).shallow &&
+  !decide (Frame.impL (.notF .hole) .top).shallow
 
 end VE.Presupposition.Examples
