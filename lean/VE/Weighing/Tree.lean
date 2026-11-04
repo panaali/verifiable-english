@@ -69,29 +69,6 @@ def rankOrder (Wd : WeighDoc) : VE.Closure.Order String := ⟨Wd.D.soft.ranks, W
 def strictPair (Wd : WeighDoc) (H L : String) : Bool :=
   Wd.W.always.any (fun e => (rankOrder Wd).atLeast H e.1 && (rankOrder Wd).atLeast e.2 L)
 
-def chainEdges : List String → List (String × String)
-  | a :: b :: rest => (a, b) :: chainEdges (b :: rest)
-  | _ => []
-
-/-- Every chain of declared edges from `a` down to `L`, with fuel (the rank graph is acyclic, soft 4.1). -/
-def chainsFrom (E : List (String × String)) (L : String) : Nat → String → List (List String)
-  | 0, _ => []
-  | f + 1, a => (E.filter (·.1 == a)).flatMap (fun e =>
-      if e.2 == L then [[a, L]] else (chainsFrom E L f e.2).map (a :: ·))
-
-def chainLt (c d : List String) : Bool :=
-  c.length < d.length || (c.length == d.length && decide (c < d))
-
-/-- The chain the paraphrase shows (2.3): the shortest chain from `H` to `L` that contains an `always` edge, the
-    least in `String` list order on ties; `none` exactly when the pair is not strict (`strictWitness_isSome`).
-    Display only; at most 2^14 chains on 16 ranks. -/
-def strictWitness (Wd : WeighDoc) (H L : String) : Option (List String) :=
-  ((chainsFrom Wd.D.soft.outranks L Wd.D.soft.ranks.length H).filter
-      (fun c => (chainEdges c).any (Wd.W.always.contains ·))).foldl
-    (fun best c => match best with
-      | none => some c
-      | some b => if chainLt c b then some c else some b) none
-
 def nodeNamed (D : SoftDoc) (n : String) : Option SoftNode := D.T.nodes.find? (·.name == n)
 
 def ruleSorts (Wd : WeighDoc) (n : String) : List String :=

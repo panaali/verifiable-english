@@ -79,14 +79,6 @@ def conj (n : Nat) : VE.Formula := ((List.range n).map (fun i => U s!"p{i}")).fo
 #guard propImplies (conj 12) (U "p11") && !propImplies (conj 13) (U "p12") && !propImplies (U "p0") (U "p1")
 #guard propImplies (.and (U "p0") (.not (U "p0"))) (U "p1") && propImplies (U "p0") (.or (U "p1") (.not (U "p1")))
 
-/-! ## The witness chain (2.3): shortest, then least in list order -/
-
-def diamond : WeighDoc := wd (decode (envOf [xReq "deny", xPerm] (softJ ["a", "b", "c", "d"]
-    [("a", "c"), ("a", "b"), ("c", "d"), ("b", "d")] true)) [dfltR "h" "x_required" true "a", dfltR "l" "x_permitted" false "d"])
-  (W [("c", "d"), ("b", "d")])
-#guard strictWitness diamond "a" "d" == some ["a", "b", "d"] && strictWitness diamond "c" "d" == some ["c", "d"]
-#guard strictWitness diamond "a" "b" == none && strictPair diamond "a" "d" && !strictPair diamond "a" "c"
-
 /-! ## W-μ (argument order) -/
 
 def yReq : String := regJ "y_required" "[\"assistant\",\"user\"]" "obligation" "deny"
