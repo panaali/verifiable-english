@@ -305,8 +305,10 @@ def rendered (s : Shape) : Json := (ResponseShape.render "discourse.json" 64 s).
     (.bool false, some (if c == .null then 6 else 7), some ((["admitted"] ++ (if c == .null then [] else ["conditional_on"])) ++
       ["id", "kinds", "report", "report_id", "status"]), c, Json.mkObj [("const", .str "")],
       Json.mkObj [("$ref", .str "common.json#/$defs/kind")]))
-#guard ((((((rendered «row»).getObjValD "x-select").getArrVal? 0).toOption.getD .null).getObjValD "then").compress.splitOn
-  "{\"anyOf\":[{\"$ref\":\"#/$defs/admission\"},{\"$ref\":\"#/$defs/composed\"}]}").length == 2
-#guard ["chain_admission", "composed"].all (file.defs.map (·.1)).contains
+-- every byte of the three renderings, pinned by their hashes (`tools/response_schemas.py --check` pins the file)
+#guard (hash (rendered composed).compress, hash (rendered chain_admission).compress, hash (rendered «row»).compress) ==
+  (12206428144082085645, 3722857857802430111, 9102400883268217988)
+#guard file.defs.map (·.1) == ["discourse_path", "kind", "target_kind", "reference", "validity_map", "joint_count",
+  "choices", "admission", "chain_admission", "composed", "validity", "resolved_target", "resolve", "joint"]
 
 end ResponseShape.Schemas.Discourse
