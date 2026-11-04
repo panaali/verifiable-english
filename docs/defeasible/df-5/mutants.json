@@ -36,7 +36,7 @@
    "bug": "Python accepts a tampered forced_all entry (its rule and tuple not bound to the request)",
    "find": "    for name, values in forced:\n        exception(name, list(values), \"forced exception\")\n",
    "replace": "",
-   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_its_tampered_field_and_keeps_the_genuine_row[forced exception-mu]"
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_its_tampered_field (its first tamper: an absent rule in forced_all)"
   }
  ]
 }
