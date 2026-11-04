@@ -596,21 +596,21 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
 def wantsStrings (j : Json) (field : String) : Except String (List String) :=
   let bad := s!"InvalidInput: reports-wants {field} must be a list of strings"
   match j.getObjVal? field with
-  | .ok (.arr xs) => List.mapM (fun | .str s => pure s | _ => throw bad) xs.toList
+  | .ok (.arr xs) => open List in mapM (fun | .str s => pure s | _ => throw bad) xs.toList
   | _ => throw bad
 
 /-- `reports-wants`: the `wants` test on each phrase and the finite form of each infinitive, each
 computed once, the phrases' UTF-8 bytes (one more per phrase) charged against `max_source_bytes`. -/
-def runWants (id : String) (j : Json) : Except String Json := do
+def runWants (id : String) (j : Json) : Except String Json := open List in do
   let phrases ← wantsStrings j "phrases"
   let infinitives ← wantsStrings j "infinitives"
-  VE.Route.Gate.require (List.foldl (fun n s => n + s.utf8ByteSize + 1) 0 (phrases ++ infinitives)
+  VE.Route.Gate.require (foldl (fun n s => n + s.utf8ByteSize + 1) 0 (phrases ++ infinitives)
       ≤ VE.Limits.maxSourceBytes)
     "ResourceLimit: reports-wants phrases exceed max_source_bytes"
   return VE.Route.Wire.ok id [
-    ("phrases", Json.arr (List.map (fun p => Json.mkObj [("phrase", .str p),
+    ("phrases", Json.arr (map (fun p => Json.mkObj [("phrase", .str p),
       ("infinitive", match wantsPhrase? p with | some i => .str i | none => .null)]) phrases).toArray),
-    ("infinitives", Json.arr (List.map (fun i => Json.mkObj [("infinitive", .str i),
+    ("infinitives", Json.arr (map (fun i => Json.mkObj [("infinitive", .str i),
       ("finite", .str (finitePhrase i))]) infinitives).toArray)]
 
 /-! ## Dispatch -/
@@ -683,9 +683,9 @@ theorem reports_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
 /-! The `reports-wants` kind, read through the dispatch once and then directly: its answer, a
 malformed list of each field, and the size limit's two sides (`max_source_bytes`, one byte more per
 string), its excess from the phrases, the infinitives, or several of each. -/
-#guard (runCase (Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #["is safe"]),
-    ("infinitives", Json.arr #[])])).toOption.map Json.compress ==
-  some r#"{"id":"w","infinitives":[],"phrases":[{"infinitive":"be safe","phrase":"is safe"}],"status":"ok"}"#
+#guard let j := Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #["is safe"]),
+    ("infinitives", Json.arr #[])]
+  (runCase j).toOption.map Json.compress == (runWants "w" j).toOption.map Json.compress
 #guard (runWants "w" (Json.mkObj [("phrases", Json.arr #["is safe", "is not safe"]),
     ("infinitives", Json.arr #["try x", "be safe"])])).toOption.map Json.compress ==
   some r#"{"id":"w","infinitives":[{"finite":"tries x","infinitive":"try x"},{"finite":"is safe","infinitive":"be safe"}],"phrases":[{"infinitive":"be safe","phrase":"is safe"},{"infinitive":null,"phrase":"is not safe"}],"status":"ok"}"#
