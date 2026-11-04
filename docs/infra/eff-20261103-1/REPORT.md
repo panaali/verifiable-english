@@ -186,8 +186,12 @@ It is not in main-known-red. The cause was this branch's `NOT_REGENERATED` entry
 - `tools/test-durations.json` was rewritten by the same command with `--gate-record`. Only its `source` line changed
   (`--record` → `--gate-record`); every duration and the unrecorded estimate are identical.
 - Tests: `tests/test_select_tests.py -k narrow_changes_select_few` → 1 passed.
-  `tests/test_suite_tail.py tests/test_regen_generated.py -k "gate_records or writing_mode"` → 2 passed.
-  The rest is listed in the gate-fix commit message.
+  `tests/test_suite_tail.py tests/test_regen_generated.py` → 72 passed. `tools/regen_generated.py --check` → 35 entries, nothing stale.
+- Selected for the fix: `zsh mac-pytest.sh --select -- --base 839a12844 --run` on ve-mac-1 at HEAD bc5d4b57.
+  49/538 units were selected, and all passed (exit 0, 0 failed ids; test_trust_mutants.py 564 passed in 4 chunks).
+  tests/test_gate_collection.py was deferred to the chain gate.
+- Seed S7 (tools/bench/suite_tail.py): `--gate-record` inputs are dropped (`runs.append` removed).
+  `tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs` failed; restored.
 
 ## Self-review against BUILDER-CHECKLIST
 
