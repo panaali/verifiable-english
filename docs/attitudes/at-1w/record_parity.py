@@ -24,18 +24,19 @@ import sys
 TESTS = ("tests/test_report_english.py", "tests/test_reports.py")
 # Phrases no test reaches, one or more per branch of each function (the `not ` refusal, the
 # `is/has/does` table, the `-ies`/`-es`/`-s` rules, a failed round trip, a head outside
-# `[a-z]+`, the empty phrase), and fixture C-e's phrase (spec 7.1); recorded apart.
+# `[a-z]+`, the empty phrase, NBSP, CR, curly quotes, U+212A, a dotted I, NUL), and fixture C-e's phrase (spec 7.1); recorded apart.
 PROBES = (
     'is classified as "mass_casualty_weapon_uplift"', "is", "has a key", "does work", "is not safe",
     "does not work", "is not", "is  safe", "Is safe", " is", "is\tsafe", "", "s", "be", "isnt",
     "carries x", "studies", "plays x", "says x", "passes x", "wishes", "watches", "fixes", "fizzes",
     "goes", "toes", "buses", "runs", "pass x", "boxs", "trys", "gos", "ies", "oes", "es", "zes", "sses",
     "yies", "aies", "eies", "iies", "oies", "uies", "bathes", "x1s", "dоes", "élèves",
+    "is\u00a0safe", "is safe\r", "is \u201csafe\u201d", "\u212aeeps x", "\u0130s safe", "is\u0000",
 )
 FINITE_PROBES = (
     'be classified as "mass_casualty_weapon_uplift"', "be safe", "have a key", "do work", "be not safe",
     "try x", "play", "pass", "wish", "watch", "fix", "buzz", "go", "", " x", "Be safe", "y", "ay", "Ay",
-    "1y", "é", "run fast", "key", "skiy", "toy", "buy", "bath",
+    "1y", "é", "run fast", "key", "skiy", "toy", "buy", "bath", "be\u00a0safe", "be safe\r", "\u212aeep",
 )
 
 

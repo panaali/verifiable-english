@@ -12,13 +12,14 @@ from pathlib import Path
 import pytest
 
 from ve.backends.service_schema import Compiler, Context, Invalid
+from ve.environment import Environment
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.limits import MAX_SOURCE_BYTES
 import ve.reports as reports
 from ve.report_english import parse_rendered_report, render_report_unit
 from ve.reports_route import wants_forms
 
-from test_report_english import B, document, report
+from test_report_english import B, assess, document, environment, report
 from test_reports_lean import lean, run1  # noqa: F401
 
 TABLE = json.loads((Path(__file__).parent / "data/reports_wants_parity.json").read_text(encoding="utf-8"))
@@ -119,6 +120,22 @@ def test_the_english_reads_both_forms_from_the_kind_and_refuses_a_dropped_row(le
         with pytest.raises(CheckerUnavailable):
             render_report_unit(doc, "u1") if field == "phrases" else parse_rendered_report(doc, rendered)
     monkeypatch.undo()
+
+
+def test_a_phrase_the_test_refuses_has_no_wants_wording(lean):
+    """The opposite direction: `trys service` has no infinitive (`try`'s finite form is `tries`,
+    not the phrase), so a `wants` of it has no reviewed wording and its assessment keeps the long form."""
+    env = environment().to_dict()
+    env["vocabulary"]["predicates"]["trys"] = {"arguments": ["organisation", "system"], "description": "trys",
+                                               "verbalisation": "{0} trys {1}"}
+    content = B("trys", "anthropic", "service")
+    doc = document(report("article", "wants", "c1", content), assess("probably", content),
+                   env=Environment(env))
+    assert doc.infinitive("trys service") is None
+    with pytest.raises(VEError, match="No reviewed wording: wants needs a sentence"):
+        render_report_unit(doc, "u1")
+    assert render_report_unit(doc, "u2")["text"] == (
+        "According to the stated assessment, it is probably the case that anthropic trys service.")
 
 
 def test_the_request_is_charged_against_max_source_bytes(lean):
