@@ -62,6 +62,15 @@ STAGED = frozenset({"order@0", "alternatives@0"})
 # The generated staged catalogue and the generated list of tables (S3 2.4, 2.14).
 STAGED_TARGET = "lean/VE/EnglishGrammar/Fixed/Staged.lean"
 TABLES_TARGET = "lean/VE/EnglishGrammar/Fixed/Tables.lean"
+# The norm table of docs/spec/english-lean-s6.md 2.5: its own rows, nonterminals and actions. Norm nonterminal `i`
+# is numbered `(grammar E L).rank.size + i`, so its rows are not `FixedRow`s; a row may also name a nonterminal of
+# the catalogue (the condition `formula`). Each nonterminal has its rank (W3) and its type; the first is the start.
+NORMS_SOURCE = "ve/english_grammar/norms@0.json"
+NORMS_TARGET = "lean/VE/EnglishGrammar/Fixed/Norms.lean"
+NORM_NONTERMINALS = (("norm_sentence", 1, "norm"), ("consequence", 0, "consequence"), ("rule_refs", 0, "refs"))
+NORM_INDEX = {name: i for i, (name, _, _) in enumerate(NORM_NONTERMINALS)}
+NORM_ACTIONS: dict[str, dict[str, object]] = {"header": {}, "precedence": {}, "refs": {}, "clause": {"guard": "bool"},
+                                              "exceptWhen": {}}
 
 # The Lean files that hold a trusted definition of base 2.13 (base 2.12): the tokens and their matching, the
 # lexer, the derivation checker, well-formedness, the reading relations, lexicon validity, the surface syntax
@@ -83,6 +92,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
     "lean/VE/EnglishGrammar/Evaluative.lean",
+    "lean/VE/EnglishGrammar/JudgmentLines.lean",
     SOURCE_WORDS_SOURCE,
     "lean/VE/EnglishGrammar/Rules.lean",
     "lean/VE/EnglishGrammar/Actions.lean",
@@ -92,6 +102,11 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/SensesRequest.lean",
     "lean/VE/EnglishGrammar/Fixed/Order.lean",
     "lean/VE/EnglishGrammar/Fixed/Alternatives.lean",
+    # The norm reader of docs/spec/english-lean-s6.md (section 5: the new definition files join the lock).
+    "lean/VE/EnglishGrammar/Norm/Value.lean",
+    "lean/VE/EnglishGrammar/Norm/Rules.lean",
+    "lean/VE/EnglishGrammar/Norm/Read.lean",
+    "lean/VE/EnglishGrammar/Norm/Elab.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
@@ -102,6 +117,8 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/EngineExamples.lean": "fixtures",
     "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "boundary fixtures",
     "lean/VE/EnglishGrammar/Examples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/JudgmentLinesExamples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/JudgmentRunExamples.lean": "fixtures",
     "lean/VE/EnglishGrammar/FoldAgree.lean": "a theorem: foldChar agrees with the discourse fold",
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
     "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",
@@ -110,8 +127,6 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/PolicyReference.lean": "spec 5.2's policy text, the reference E2Examples compares with",
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
-    "lean/VE/EnglishGrammar/Norm/Value.lean": "the norm values and their assembly: no reading reads them until "
-                                              "the reader joins them to the lock (en-s6b, spec english-lean-s6 5)",
     "lean/VE/EnglishGrammar/Norm/Examples.lean": "the norm block fixtures",
 }
 CLASSIFIED_DIRS = ("lean/VE/Grammar/", "lean/VE/EnglishGrammar/")
@@ -208,7 +223,7 @@ def _decode(data: bytes, what: str):
 
 # ------------------------------------------------------------------ the source
 
-def _symbol(sym, where: str, staged: bool = False) -> object:
+def _symbol(sym, where: str, staged: bool = False, own: frozenset[str] = frozenset()) -> object:
     if type(sym) is str:
         if not WORD.fullmatch(sym):
             raise GrammarSourceError(f"{where}: keyword {sym!r} is not one lower-case word")
@@ -217,7 +232,7 @@ def _symbol(sym, where: str, staged: bool = False) -> object:
         raise GrammarSourceError(f"{where}: a symbol is a word or an object, not {sym!r}")
     keys = set(sym)
     if keys == {"n"}:
-        if type(sym["n"]) is not str or sym["n"] not in (RANK_STAGED if staged else RANK):
+        if type(sym["n"]) is not str or sym["n"] not in (RANK_STAGED if staged else RANK) and sym["n"] not in own:
             raise GrammarSourceError(f"{where}: unknown nonterminal {sym['n']!r}")
     elif keys == {"c"}:
         if type(sym["c"]) is not str or not WORD.fullmatch(sym["c"]):
@@ -296,6 +311,42 @@ def parse_source(data: bytes, what: str, staged: bool = False) -> list[dict]:
                 raise GrammarSourceError(f"{where}: {first['n']} (rank {rank[first['n']]}) begins a rule of "
                                          f"{row['lhs']} (rank {rank[row['lhs']]}) under {certificate}: not "
                                          "well-founded (W3)")
+    return rows
+
+
+def parse_norms(data: bytes, what: str = NORMS_SOURCE) -> list[dict]:
+    """The rows of the norm table source, checked as `parse_source` checks a profile's: a known action with its data,
+    a norm nonterminal on the left, known symbols on the right, unique tags, and a first nonterminal of lower rank
+    (W3); a catalogue nonterminal never comes first, since the two numberings are not ranked against each other."""
+    rows = _decode(data, what)
+    if type(rows) is not list or not rows:
+        raise GrammarSourceError(f"{what}: the source is a non-empty array of rows")
+    tags: set[str] = set()
+    for k, row in enumerate(rows):
+        if type(row) is not dict or type(row.get("tag")) is not str or not TAG.fullmatch(row["tag"]):
+            raise GrammarSourceError(f"{what}: row {k}: a row is an object with a tag")
+        where = f"{what}: rule {row['tag']}"
+        if row["tag"] in tags:
+            raise GrammarSourceError(f"{where}: repeated tag")
+        tags.add(row["tag"])
+        data_keys = NORM_ACTIONS.get(row.get("act")) if type(row.get("act")) is str else None
+        if data_keys is None:
+            raise GrammarSourceError(f"{where}: unknown action {row.get('act')!r}")
+        if set(row) != {"tag", "lhs", "act", "rhs"} | set(data_keys):
+            raise GrammarSourceError(f"{where}: fields {sorted(row)}")
+        if any(type(row[key]) is not bool for key in data_keys):
+            raise GrammarSourceError(f"{where}: {row['act']} data is not true or false")
+        if row["lhs"] not in NORM_INDEX:
+            raise GrammarSourceError(f"{where}: unknown norm nonterminal {row['lhs']!r}")
+        if type(row["rhs"]) is not list or not row["rhs"]:
+            raise GrammarSourceError(f"{where}: the right-hand side is a non-empty list (W2)")
+        for sym in row["rhs"]:
+            _symbol(sym, where, own=frozenset(NORM_INDEX))
+        first = row["rhs"][0]
+        if type(first) is dict and "n" in first and not (
+                first["n"] in NORM_INDEX
+                and NORM_NONTERMINALS[NORM_INDEX[first["n"]]][1] < NORM_NONTERMINALS[NORM_INDEX[row["lhs"]]][1]):
+            raise GrammarSourceError(f"{where}: {first['n']} begins a rule of {row['lhs']}: not well-founded (W3)")
     return rows
 
 
@@ -478,13 +529,53 @@ def render_version(version: str) -> bytes:
         "end VE.EnglishGrammar.Fixed", ""]).encode()
 
 
+def render_norms(rows: list[dict], source_sha256: str) -> bytes:
+    """The generated norm table (`Fixed/Norms.lean`): its nonterminals' ranks and types, its row type, its action
+    names and one `NormRow` per row of the source, in order."""
+    def symbol(sym) -> str:
+        if type(sym) is dict and "n" in sym:
+            own = NORM_INDEX.get(sym["n"])
+            return f".base {NONTERMINAL[sym['n']]}" if own is None else f".own {own}"
+        return lean_symbol(sym)
+
+    def act(row: dict) -> str:
+        data = ["true" if row[key] else "false" for key in NORM_ACTIONS[row["act"]]]
+        return "(" + " ".join(["." + row["act"], *data]) + ")" if data else "." + row["act"]
+
+    constructors = " ".join(f"| {name}" + "".join(f" ({key} : Bool)" for key in data)
+                            for name, data in NORM_ACTIONS.items())
+    entries = [f"{{ tag := {lean_string(row['tag'])}, lhs := {NORM_INDEX[row['lhs']]}, act := {act(row)}, "
+               f"rhs := [{', '.join(symbol(sym) for sym in row['rhs'])}] }}" for row in rows]
+    return "\n".join([
+        "import VE.EnglishGrammar.Token", "import VE.EnglishGrammar.Syntax", "",
+        f"/-! Generated by `python tools/english_grammar_gen.py --write` from `{NORMS_SOURCE}`; do not edit.",
+        "The norm table of docs/spec/english-lean-s6.md 2.5: its nonterminals' ranks (W3) and types, norm nonterminal",
+        "`i` being `(grammar E L).rank.size + i` and the first the start symbol, and one `NormRow` per row of the source",
+        "in its order. A symbol `.own i` is norm nonterminal `i`, `.base n` nonterminal `n` of `grammar E L`.",
+        "`tools/english_grammar_gen.py --check` fails when this file differs from its source. -/", "",
+        "namespace VE.EnglishGrammar.Norm", "open VE.EnglishGrammar", "",
+        f"/-- The SHA-256 of `{NORMS_SOURCE}`. -/",
+        f"def normsSha256 : String := {lean_string(source_sha256)}", "",
+        "def normRanks : Array Nat := #[" + ", ".join(str(rank) for _, rank, _ in NORM_NONTERMINALS) + "]",
+        "def normTys : Array Ty := #[" + ", ".join("." + ty for _, _, ty in NORM_NONTERMINALS) + "]",
+        f"def normConsequence : Nat := {NORM_INDEX['consequence']}", "",
+        "inductive NormSym where | t (a : Terminal) | base (n : Nat) | own (i : Nat)",
+        f"inductive NormAct where {constructors}",
+        "structure NormRow where (tag : String) (lhs : Nat) (act : NormAct) (rhs : List NormSym)", "",
+        "def normRows : Array NormRow := #[", *_lean_array(entries), "]", "",
+        f"#guard normRows.size == {len(rows)} && normTys.size == normRanks.size",
+        "#guard normRows.all fun r => decide (r.lhs < normRanks.size) && r.rhs.all fun",
+        "  | .own i => decide (i < normRanks.size) | _ => true", "",
+        "end VE.EnglishGrammar.Norm", ""]).encode()
+
+
 # ------------------------------------------------------------------ the lock file
 
 def hashed_files() -> list[str]:
     """Every file the lock hashes: the table sources, the generated tables, the staged catalogue, the list of
     tables, the trusted Lean files."""
     return sorted({p for source, target, _ in PROFILES.values() for p in (source, target)} | set(TRUSTED)
-                  | {STAGED_TARGET, TABLES_TARGET, SOURCE_WORDS_TARGET})
+                  | {STAGED_TARGET, TABLES_TARGET, SOURCE_WORDS_TARGET, NORMS_SOURCE, NORMS_TARGET})
 
 
 def source_words_blob(root: Path) -> bytes:
@@ -516,9 +607,14 @@ def action_hashes(hashes: dict[str, str]) -> dict[str, str]:
     return {p: h for p, h in hashes.items() if p not in {SOURCE_WORDS_SOURCE, SOURCE_WORDS_TARGET}}
 
 
-def generated_extras() -> dict[str, bytes]:
-    """The generated modules that do not belong to one profile: the staged catalogue and the list of tables."""
-    return {STAGED_TARGET: render_staged(), TABLES_TARGET: render_tables()}
+def generated_extras(read: Read | None = None) -> dict[str, bytes]:
+    """The generated modules that do not belong to one profile: the staged catalogue, the list of tables and the
+    norm table, rendered from its source as `read` (the checkout's files by default) gives it."""
+    data = (read or file_reader(ROOT))(NORMS_SOURCE)
+    if data is None:
+        raise GrammarSourceError(f"{NORMS_SOURCE}: missing")
+    return {STAGED_TARGET: render_staged(), TABLES_TARGET: render_tables(),
+            NORMS_TARGET: render_norms(parse_norms(data), sha256(data))}
 
 
 def repeated_tags(tables: dict[str, list[dict]]) -> list[str]:
@@ -599,7 +695,12 @@ def check(read: Read, listing: Callable[[], Iterable[str]], base_lock: bytes | N
         elif actual != expected:
             errors.append(_drift(profile, rows, expected, tags, actual))
     errors += repeated_tags(parsed)
-    for target, expected in generated_extras().items():
+    try:
+        extras = generated_extras(read)
+    except GrammarSourceError as exc:
+        errors.append(str(exc))
+        extras = {}
+    for target, expected in extras.items():
         if read(target) != expected:
             errors.append(f"{target}: differs from what tools/english_grammar_gen.py generates; run --write")
     version_file = read(VERSION_TARGET)
@@ -620,7 +721,7 @@ def check(read: Read, listing: Callable[[], Iterable[str]], base_lock: bytes | N
             errors.append(f"{path}: SHA-256 {recorded} in {LOCK}, {now[path]} now; raise actions_version "
                           "and run --write")
     classified = (set(TRUSTED) | set(UNTRUSTED) | {target for _, target, _ in PROFILES.values()}
-                  | set(generated_extras()))
+                  | {STAGED_TARGET, TABLES_TARGET, NORMS_TARGET})
     for path in sorted(listing()):
         if path.startswith(CLASSIFIED_DIRS) and path.endswith(".lean") and path not in classified:
             errors.append(f"{path}: neither a trusted file of {LOCK} nor listed as untrusted in "
@@ -677,7 +778,7 @@ def write(root: Path, actions_version: str | None = None) -> list[str]:
     repeated = repeated_tags(parsed)
     if repeated:
         raise GrammarSourceError(repeated[0])
-    outputs.update(generated_extras())
+    outputs.update(generated_extras(read))
     hashes = {}
     for path in hashed_files():
         blob = outputs.get(path, read(path))

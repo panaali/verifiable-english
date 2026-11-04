@@ -373,3 +373,45 @@ def test_a_repeated_tag_is_refused():
     rows.append(dict(rows[0]))
     with pytest.raises(G.GrammarSourceError, match="rule sentence.plain: repeated tag"):
         G.parse_source(json.dumps(rows).encode(), SOURCE)
+
+
+# ------------------------------------------------------------------ the norm table (spec english-lean-s6 2.5)
+
+def _norm(**changes) -> bytes:
+    """The norm source with its `norm.clause-if` row changed."""
+    rows = json.loads((ROOT / G.NORMS_SOURCE).read_text())
+    row = next(r for r in rows if r["tag"] == "norm.clause-if")
+    row.update(changes)
+    return json.dumps([r for r in rows if r.get("drop") is not True]).encode()
+
+
+def test_the_norm_table_parses_and_names_its_nonterminals():
+    rows = G.parse_norms((ROOT / G.NORMS_SOURCE).read_bytes())
+    text = G.render_norms(rows, "0" * 64).decode()
+    assert '{ tag := "norm.clause-if", lhs := 0, act := (.clause true), rhs := [.own 1, ' in text
+    assert ".t (.kw \"if\"), .base 2]" in text and "lhs := 2, act := .refs" in text
+    assert "inductive NormAct where | header | precedence | refs | clause (guard : Bool) | exceptWhen" in text
+
+
+@pytest.mark.parametrize("changes, message", [
+    ({"act": "sentence"}, "unknown action"),
+    ({"act": "clause", "guard": 1}, "not true or false"),
+    ({"act": "header", "guard": True}, "fields"),
+    ({"lhs": "formula"}, "unknown norm nonterminal"),
+    ({"rhs": [{"n": "formula"}, "if"]}, "not well-founded"),
+    ({"rhs": [{"n": "norm_sentence"}]}, "not well-founded"),
+    ({"rhs": [{"n": "nowhere"}]}, "unknown nonterminal"),
+    ({"rhs": [{"p": "."}]}, "not a punctuation token"),
+    ({"rhs": []}, "non-empty list"),
+    ({"tag": "norm.header"}, "repeated tag"),
+])
+def test_malformed_norm_rows(changes, message):
+    with pytest.raises(G.GrammarSourceError, match=message):
+        G.parse_norms(_norm(**changes))
+    G.parse_norms(_norm(rhs=[{"n": "consequence"}, {"p": ",", "before": True}, "if", {"n": "formula"}]))
+
+
+def test_an_edited_norm_table_fails_the_check(tree):
+    target = tree / G.NORMS_TARGET
+    target.write_text(target.read_text().replace('.t (.kw "unless")', '.t (.kw "if")', 1))
+    assert any(G.NORMS_TARGET in e for e in run_check(tree))

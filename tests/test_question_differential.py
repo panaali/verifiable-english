@@ -44,6 +44,7 @@ import pytest
 import question_fixtures as F
 import question_reference as R
 from ve.backends import relay
+from ve.english_grammar import TABLES
 from ve.english import EnglishVocabulary
 
 pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
@@ -213,6 +214,7 @@ def test_the_comparison_can_fail(readers, monkeypatch):
 
 # ------------------------------------------------------------------ every part of every rule
 
+# The profile tables only: `norms@0.json` is the norm reader's table (english-lean-s6 2.5), not a formula grammar.
 GRAMMARS = Path(__file__).resolve().parents[1] / "ve/english_grammar"
 PARTS = ("formula", "atom")
 # What each other nonterminal of a part-bearing rule is written as, on G's vocabulary.
@@ -227,7 +229,7 @@ UNREAD = {"reach.body": "reach needs a relation of two members; G has none",
 def part_rules() -> list[dict]:
     """Every rule of the grammar sources that reads a part: a `formula` or `atom` beside a word of its own."""
     out = []
-    for path in sorted(GRAMMARS.glob("*@*.json")):
+    for path in [GRAMMARS / name for name in sorted(TABLES.values())]:
         for row in json.loads(path.read_text()):
             rhs = row["rhs"]
             if row.get("status") == "proposed" or not any(isinstance(x, dict) and x.get("n") in PARTS for x in rhs):
@@ -323,7 +325,7 @@ def join_rules() -> list[dict]:
     """Every rule of the grammar sources that joins verb phrases: it reads `and` or `or`, and two or more of its
     nonterminals are verb phrases (type `relative` in the specs' 2.4 tables)."""
     out = []
-    for path in sorted(GRAMMARS.glob("*@*.json")):
+    for path in [GRAMMARS / name for name in sorted(TABLES.values())]:
         for row in json.loads(path.read_text()):
             rhs = row["rhs"]
             phrases = [x for x in rhs if isinstance(x, dict) and x.get("n") in R.phrase_kinds()]

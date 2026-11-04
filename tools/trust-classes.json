@@ -785,7 +785,8 @@
         "ResponseShape.Schemas.Reports.scoped",
         "ResponseShape.Schemas.Reports.status",
         "ResponseShape.Schemas.Reports.status_word",
-        "ResponseShape.Schemas.Reports.verdict"
+        "ResponseShape.Schemas.Reports.verdict",
+        "ResponseShape.Schemas.Reports.wants"
       ],
       "G[I]": [
         "ResponseShape.Schemas.Reports.envelope_binding"
@@ -1623,7 +1624,8 @@
         "VE.Reports.Run.unitStatusText",
         "VE.Reports.Run.unknownPredicate",
         "VE.Reports.Run.unreviewedActs",
-        "VE.Reports.Run.verdictOf"
+        "VE.Reports.Run.verdictOf",
+        "VE.Reports.Run.wantsStrings"
       ],
       "G[V]": [
         "VE.Reports.Run.ReportsAdmissionAnswer",
@@ -1639,6 +1641,7 @@
         "VE.Reports.Run.runCertificate",
         "VE.Reports.Run.runCountermodel",
         "VE.Reports.Run.runStatus",
+        "VE.Reports.Run.runWants",
         "VE.Reports.Run.statusText",
         "VE.Reports.Run.textPath",
         "VE.Reports.Run.unformalisedKinds",
@@ -2882,7 +2885,12 @@
       ],
       "D[V]": [
         "VE.Discourse.assertive",
-        "VE.Discourse.uniqueD"
+        "VE.Discourse.assertiveAt",
+        "VE.Discourse.assertiveOpen",
+        "VE.Discourse.raise1",
+        "VE.Discourse.uniqueAt",
+        "VE.Discourse.uniqueD",
+        "VE.Discourse.uniqueOpen"
       ]
     },
     "VE/Discourse/Documents.lean": {
@@ -4399,7 +4407,8 @@
         "VE.EnglishGrammar.Run.rejectionText",
         "VE.EnglishGrammar.Run.riskEveryCannotText",
         "VE.EnglishGrammar.Run.statusCodes",
-        "VE.EnglishGrammar.Run.unsentencedCodes"
+        "VE.EnglishGrammar.Run.unsentencedCodes",
+        "VE.EnglishGrammar.Run.judgmentsField"
       ],
       "G[I]": [
         "VE.EnglishGrammar.Run.environmentId",
@@ -9720,6 +9729,8 @@
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
         "VE.Service.Document.withSets",
+        "VE.Service.DocumentChain.requestOf",
+        "VE.Service.DocumentChain.layeredOf",
         "VE.Service.Document.cardinalityEnv",
         "VE.Service.Document.cardinalityReport"
       ],
@@ -9832,7 +9843,8 @@
         "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.UnitContent.judgedIn",
         "VE.Service.Document.checkBody",
-        "VE.Service.Document.Env.basePredicates"
+        "VE.Service.Document.Env.basePredicates",
+        "VE.Service.Document.softFrame"
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -15471,6 +15483,7 @@
         "VE.Scope.WireExamples.blockWith",
         "VE.Scope.WireExamples.boundary",
         "VE.Scope.WireExamples.decoded",
+        "VE.Scope.WireExamples.dupFault",
         "VE.Scope.WireExamples.effectTag",
         "VE.Scope.WireExamples.errorOf",
         "VE.Scope.WireExamples.foldDoc",
@@ -15478,6 +15491,8 @@
         "VE.Scope.WireExamples.foldGov",
         "VE.Scope.WireExamples.fwd",
         "VE.Scope.WireExamples.gov",
+        "VE.Scope.WireExamples.idDoc",
+        "VE.Scope.WireExamples.idU",
         "VE.Scope.WireExamples.listName",
         "VE.Scope.WireExamples.st",
         "VE.Scope.WireExamples.wfFault",
@@ -17187,15 +17202,66 @@
     },
     "VE/EnglishGrammar/Norm/Examples.lean": {
       "T": [
+        "VE.EnglishGrammar.Norm.Examples.L2",
+        "VE.EnglishGrammar.Norm.Examples.LA",
+        "VE.EnglishGrammar.Norm.Examples.LAs",
+        "VE.EnglishGrammar.Norm.Examples.LD",
+        "VE.EnglishGrammar.Norm.Examples.LH",
+        "VE.EnglishGrammar.Norm.Examples.LI",
+        "VE.EnglishGrammar.Norm.Examples.LIs",
+        "VE.EnglishGrammar.Norm.Examples.LS",
         "VE.EnglishGrammar.Norm.Examples.a",
+        "VE.EnglishGrammar.Norm.Examples.act",
+        "VE.EnglishGrammar.Norm.Examples.actSorts",
+        "VE.EnglishGrammar.Norm.Examples.actsAct",
+        "VE.EnglishGrammar.Norm.Examples.assigned",
+        "VE.EnglishGrammar.Norm.Examples.authored",
         "VE.EnglishGrammar.Norm.Examples.b",
+        "VE.EnglishGrammar.Norm.Examples.binaryNo",
         "VE.EnglishGrammar.Norm.Examples.cl",
+        "VE.EnglishGrammar.Norm.Examples.clauses",
+        "VE.EnglishGrammar.Norm.Examples.document",
+        "VE.EnglishGrammar.Norm.Examples.envOf",
+        "VE.EnglishGrammar.Norm.Examples.f1",
+        "VE.EnglishGrammar.Norm.Examples.f11",
+        "VE.EnglishGrammar.Norm.Examples.f11Python",
+        "VE.EnglishGrammar.Norm.Examples.f1Python",
+        "VE.EnglishGrammar.Norm.Examples.f21Python",
+        "VE.EnglishGrammar.Norm.Examples.f7",
+        "VE.EnglishGrammar.Norm.Examples.f8",
+        "VE.EnglishGrammar.Norm.Examples.f8Public",
         "VE.EnglishGrammar.Norm.Examples.faultOf",
+        "VE.EnglishGrammar.Norm.Examples.fd",
         "VE.EnglishGrammar.Norm.Examples.hd",
+        "VE.EnglishGrammar.Norm.Examples.help",
+        "VE.EnglishGrammar.Norm.Examples.item",
+        "VE.EnglishGrammar.Norm.Examples.items",
+        "VE.EnglishGrammar.Norm.Examples.lean",
+        "VE.EnglishGrammar.Norm.Examples.lexOf",
         "VE.EnglishGrammar.Norm.Examples.long",
+        "VE.EnglishGrammar.Norm.Examples.marks",
         "VE.EnglishGrammar.Norm.Examples.may",
         "VE.EnglishGrammar.Norm.Examples.mustNot",
-        "VE.EnglishGrammar.Norm.Examples.statements"
+        "VE.EnglishGrammar.Norm.Examples.neg",
+        "VE.EnglishGrammar.Norm.Examples.negative",
+        "VE.EnglishGrammar.Norm.Examples.nodes",
+        "VE.EnglishGrammar.Norm.Examples.outcome",
+        "VE.EnglishGrammar.Norm.Examples.overs",
+        "VE.EnglishGrammar.Norm.Examples.pair",
+        "VE.EnglishGrammar.Norm.Examples.permitted",
+        "VE.EnglishGrammar.Norm.Examples.plainNo",
+        "VE.EnglishGrammar.Norm.Examples.python",
+        "VE.EnglishGrammar.Norm.Examples.rd",
+        "VE.EnglishGrammar.Norm.Examples.regulated",
+        "VE.EnglishGrammar.Norm.Examples.same",
+        "VE.EnglishGrammar.Norm.Examples.situation",
+        "VE.EnglishGrammar.Norm.Examples.softAct",
+        "VE.EnglishGrammar.Norm.Examples.statements",
+        "VE.EnglishGrammar.Norm.Examples.stmts",
+        "VE.EnglishGrammar.Norm.Examples.two",
+        "VE.EnglishGrammar.Norm.Examples.u",
+        "VE.EnglishGrammar.Norm.Examples.universal",
+        "VE.EnglishGrammar.Norm.Polarity.fits"
       ]
     },
     "VE/EnglishGrammar/Norm/Value.lean": {
@@ -17799,7 +17865,6 @@
       ],
       "S": [
         "VE.Defaults.ConditionsExact",
-        "VE.Defaults.DfltUniformSound",
         "VE.Defaults.dfltUniform",
         "VE.Defaults.dfltUniformLabelled",
         "VE.Defaults.dfltUniformOf",
@@ -17829,7 +17894,20 @@
         "VE.Defaults.UniformFixtures.dS",
         "VE.Defaults.UniformFixtures.srcConds",
         "VE.Defaults.UniformFixtures.d2T",
-        "VE.Defaults.UniformFixtures.shown"
+        "VE.Defaults.UniformFixtures.shown",
+        "VE.Defaults.UniformFixtures.Exact.nc",
+        "VE.Defaults.UniformFixtures.Exact.Dc",
+        "VE.Defaults.UniformFixtures.Exact.Uc",
+        "VE.Defaults.UniformFixtures.Exact.dcJ",
+        "VE.Defaults.UniformFixtures.Exact.dName",
+        "VE.Defaults.UniformFixtures.Exact.cC",
+        "VE.Defaults.UniformFixtures.Exact.exD",
+        "VE.Defaults.UniformFixtures.Exact.exC",
+        "VE.Defaults.UniformFixtures.Exact.impCD",
+        "VE.Defaults.UniformFixtures.Exact.wEx",
+        "VE.Defaults.UniformFixtures.Exact.wImp",
+        "VE.Defaults.UniformFixtures.Exact.Sc",
+        "VE.Defaults.UniformFixtures.Exact.Bc"
       ]
     },
     "VE/Commands/Examples.lean": {
@@ -18204,6 +18282,287 @@
         "VE.Calc.ConsistencyExamples.tree",
         "VE.Calc.ConsistencyExamples.twelve",
         "VE.Calc.ConsistencyExamples.v6"
+      ]
+    },
+    "VE/Presupposition/Frame.lean": {
+      "S": [
+        "VE.Presupposition.Frame",
+        "VE.Presupposition.Frame.Reach",
+        "VE.Presupposition.Frame.binders",
+        "VE.Presupposition.Frame.close",
+        "VE.Presupposition.Frame.cls",
+        "VE.Presupposition.Frame.goal",
+        "VE.Presupposition.Frame.plug",
+        "VE.Presupposition.Frame.shallow",
+        "VE.Presupposition.PositionClass"
+      ],
+      "C": [
+        "VE.Presupposition.Frame.locate",
+        "VE.Presupposition.Frame.shallowB",
+        "VE.Presupposition.instDecidableShallow"
+      ]
+    },
+    "VE/Presupposition/Examples.lean": {
+      "T": [
+        "VE.Presupposition.Examples.allClasses",
+        "VE.Presupposition.Examples.consF",
+        "VE.Presupposition.Examples.ev",
+        "VE.Presupposition.Examples.f4",
+        "VE.Presupposition.Examples.f5a",
+        "VE.Presupposition.Examples.f5b",
+        "VE.Presupposition.Examples.f5c",
+        "VE.Presupposition.Examples.isOpen",
+        "VE.Presupposition.Examples.m5",
+        "VE.Presupposition.Examples.mAliceNone",
+        "VE.Presupposition.Examples.mAliceOne",
+        "VE.Presupposition.Examples.mAliceTwo",
+        "VE.Presupposition.Examples.mgrOf",
+        "VE.Presupposition.Examples.mgrOfX",
+        "VE.Presupposition.Examples.model",
+        "VE.Presupposition.Examples.noMgr",
+        "VE.Presupposition.Examples.owner",
+        "VE.Presupposition.Examples.person",
+        "VE.Presupposition.Examples.ready",
+        "VE.Presupposition.Examples.shopClosed",
+        "VE.Presupposition.Examples.shopOpenNoOwner",
+        "VE.Presupposition.Examples.shopOpenOwnerReady",
+        "VE.Presupposition.Examples.theManager",
+        "VE.Presupposition.Examples.theMgr",
+        "VE.Presupposition.Examples.theMgrU",
+        "VE.Presupposition.Examples.theOwner",
+        "VE.Presupposition.Examples.theOwnerU",
+        "VE.Presupposition.Examples.thePl",
+        "VE.Presupposition.Examples.thePlU",
+        "VE.Presupposition.Examples.their",
+        "VE.Presupposition.Examples.theirU"
+      ]
+    },
+    "VE/EnglishGrammar/Fixed/Norms.lean": {
+      "G[V]": [
+        "VE.EnglishGrammar.Norm.NormAct",
+        "VE.EnglishGrammar.Norm.NormRow",
+        "VE.EnglishGrammar.Norm.NormSym",
+        "VE.EnglishGrammar.Norm.normConsequence",
+        "VE.EnglishGrammar.Norm.normRanks",
+        "VE.EnglishGrammar.Norm.normRows",
+        "VE.EnglishGrammar.Norm.normTys"
+      ],
+      "G[I]": [
+        "VE.EnglishGrammar.Norm.normsSha256"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Elab.lean": {
+      "D[V]": [
+        "VE.EnglishGrammar.Norm.Clause.wire",
+        {
+          "name": "VE.EnglishGrammar.Norm.Clause.toNode",
+          "tied": [
+            "VE.EnglishGrammar.Norm.toNode_fields"
+          ]
+        }
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.Norm.overOf",
+        "VE.EnglishGrammar.Norm.toNodes"
+      ],
+      "G[I]": [
+        "VE.EnglishGrammar.Norm.ruleName"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Read.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.NormOneReading"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.EnglishGrammar.Norm.NormOutcome",
+          "tied": [
+            "VE.EnglishGrammar.Norm.readNorm_sound"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.readNorm",
+          "tied": [
+            "VE.EnglishGrammar.Norm.readNorm_sound",
+            "VE.EnglishGrammar.Norm.readNorm_complete",
+            "VE.EnglishGrammar.Norm.readNorm_numbered"
+          ]
+        }
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Rules.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.Arg",
+        "VE.EnglishGrammar.Norm.Arg.nums",
+        "VE.EnglishGrammar.Norm.Arg.read",
+        "VE.EnglishGrammar.Norm.NormAct.action",
+        "VE.EnglishGrammar.Norm.NormAct.step",
+        "VE.EnglishGrammar.Norm.Polarity.of",
+        "VE.EnglishGrammar.Norm.args",
+        "VE.EnglishGrammar.Norm.bindings",
+        "VE.EnglishGrammar.Norm.consequences",
+        "VE.EnglishGrammar.Norm.wording"
+      ],
+      "D[V]": [
+        "VE.EnglishGrammar.Norm.regulatedOf"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.Norm.NormSym.sym",
+        {
+          "name": "VE.EnglishGrammar.Norm.baseSize",
+          "tied": [
+            "VE.EnglishGrammar.Norm.baseSize_eq"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.normActs",
+          "tied": [
+            "VE.EnglishGrammar.Norm.prefixMap_ok"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.normGrammar",
+          "tied": [
+            "VE.EnglishGrammar.Norm.prefixMap_ok"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.normMeaning",
+          "tied": [
+            "VE.EnglishGrammar.Norm.normMeaning_unmarked"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.normTy",
+          "tied": [
+            "VE.EnglishGrammar.Norm.start_norm"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.prefixMap",
+          "tied": [
+            "VE.EnglishGrammar.Norm.prefixMap_ok"
+          ]
+        }
+      ]
+    },
+    "VE/Attribution/Words.lean": {
+      "G[V]": [
+        "VE.Reports.baseOf",
+        "VE.Reports.finitePhrase",
+        "VE.Reports.headRest",
+        "VE.Reports.joined",
+        "VE.Reports.vowel",
+        "VE.Reports.wantsPhrase?"
+      ]
+    },
+    "VE/Service/DocumentChainExamples.lean": {
+      "T": [
+        "VE.Service.DocumentChain.Examples.arg",
+        "VE.Service.DocumentChain.Examples.regulated",
+        "VE.Service.DocumentChain.Examples.environmentOver",
+        "VE.Service.DocumentChain.Examples.chain",
+        "VE.Service.DocumentChain.Examples.complyPredicates",
+        "VE.Service.DocumentChain.Examples.ofVar",
+        "VE.Service.DocumentChain.Examples.complyRule",
+        "VE.Service.DocumentChain.Examples.denyPredicates",
+        "VE.Service.DocumentChain.Examples.denyRule",
+        "VE.Service.DocumentChain.Examples.document",
+        "VE.Service.DocumentChain.Examples.textOf",
+        "VE.Service.DocumentChain.Examples.complyDocument",
+        "VE.Service.DocumentChain.Examples.layered",
+        "VE.Service.DocumentChain.Examples.checkError",
+        "VE.Service.DocumentChain.Examples.holds",
+        "VE.Service.DocumentChain.Examples.situation",
+        "VE.Service.DocumentChain.Examples.filling",
+        "VE.Service.DocumentChain.Examples.statusAt",
+        "VE.Service.DocumentChain.Examples.completions",
+        "VE.Service.DocumentChain.Examples.caseOf",
+        "VE.Service.DocumentChain.Examples.plainCase",
+        "VE.Service.DocumentChain.Examples.refusal"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLines.lean": {
+      "S": [
+        "VE.EnglishGrammar.JudgmentLines.articled",
+        "VE.EnglishGrammar.JudgmentLines.slotNouns",
+        "VE.EnglishGrammar.JudgmentLines.atom",
+        "VE.EnglishGrammar.JudgmentLines.noDeciderTail",
+        "VE.EnglishGrammar.JudgmentLines.declarationLine",
+        "VE.EnglishGrammar.JudgmentLines.factorsLine",
+        "VE.EnglishGrammar.JudgmentLines.legendLines",
+        "VE.EnglishGrammar.JudgmentLines.statusLine"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.parseLine",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.parseLine_renders"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.JudgmentLines.renderingTo",
+          "tied": [
+            "VE.EnglishGrammar.JudgmentLines.renderingTo_renders"
+          ]
+        }
+      ],
+      "D[I]": [
+        "VE.EnglishGrammar.JudgmentLines.recordJson"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.JudgmentLines.readDeclaration",
+        "VE.EnglishGrammar.JudgmentLines.preds",
+        "VE.EnglishGrammar.JudgmentLines.isDefined",
+        "VE.EnglishGrammar.JudgmentLines.readingPreds",
+        "VE.EnglishGrammar.JudgmentLines.refusal"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.JudgmentLines.lineFault",
+        "VE.EnglishGrammar.JudgmentLines.atomParts",
+        "VE.EnglishGrammar.JudgmentLines.noVocabulary",
+        "VE.EnglishGrammar.JudgmentLines.maxJudgments",
+        "VE.EnglishGrammar.JudgmentLines.wordAfter",
+        "VE.EnglishGrammar.JudgmentLines.refusalText"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentLinesExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitrary",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governed",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfair",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighs",
+        "VE.EnglishGrammar.JudgmentLinesExamples.noWording",
+        "VE.EnglishGrammar.JudgmentLinesExamples.arbitraryLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.governedLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.unfairLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.weighsLine",
+        "VE.EnglishGrammar.JudgmentLinesExamples.errorOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.rowOf",
+        "VE.EnglishGrammar.JudgmentLinesExamples.text",
+        "VE.EnglishGrammar.JudgmentLinesExamples.quoted",
+        "VE.EnglishGrammar.JudgmentLinesExamples.pred",
+        "VE.EnglishGrammar.JudgmentLinesExamples.env",
+        "VE.EnglishGrammar.JudgmentLinesExamples.holds",
+        "VE.EnglishGrammar.JudgmentLinesExamples.firstNamed"
+      ]
+    },
+    "VE/EnglishGrammar/JudgmentRunExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.JudgmentRunExamples.preds",
+        "VE.EnglishGrammar.JudgmentRunExamples.environment",
+        "VE.EnglishGrammar.JudgmentRunExamples.pairs",
+        "VE.EnglishGrammar.JudgmentRunExamples.lexicon",
+        "VE.EnglishGrammar.JudgmentRunExamples.plain",
+        "VE.EnglishGrammar.JudgmentRunExamples.word",
+        "VE.EnglishGrammar.JudgmentRunExamples.request",
+        "VE.EnglishGrammar.JudgmentRunExamples.J",
+        "VE.EnglishGrammar.JudgmentRunExamples.result",
+        "VE.EnglishGrammar.JudgmentRunExamples.member",
+        "VE.EnglishGrammar.JudgmentRunExamples.names",
+        "VE.EnglishGrammar.JudgmentRunExamples.question",
+        "VE.EnglishGrammar.JudgmentRunExamples.shared",
+        "VE.EnglishGrammar.JudgmentRunExamples.mismatch"
       ]
     }
   }

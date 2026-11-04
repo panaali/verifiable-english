@@ -118,9 +118,11 @@ def illFormed (front : Json) : Option String :=
     | none => if jsonWF? (front.getObjValD "scope") then "document" else "scope"
 
 /-- The scope block of a front matter `front` (the complete document) over its source, read by the chain's
-    environment `re`, once the document is well formed: every rule the route decodes is read from it. -/
+    environment `re`, once the document is well formed and its unit ids distinct (the DRI's decision of 2026-10-31,
+    sc-5rd item 2): every rule the route decodes is read from it. -/
 def decodeBlock (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) : Except String SDoc := do
   if let some p := illFormed front then throw (wireFault p "a well-formed JSON tree")
+  if let some u := firstDup (unitIds front) then throw (wireFault (if u == "" then "units" else s!"units.{u}") "a unit id no other unit has")
   (decodeParts (front.getObjValD "scope")).map fun (governors, listNames, anchors, forwards) =>
     { layout := layoutOf front source, doc := front, block := front.getObjValD "scope", governors, listNames,
       anchors, re, forwards }

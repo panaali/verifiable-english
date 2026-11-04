@@ -1,6 +1,7 @@
 import VE.Attribution.Admission
 import VE.Attribution.Preflight
 import VE.Attribution.Status
+import VE.Attribution.Words
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
 import VE.Limits
@@ -39,6 +40,9 @@ document (`Wire.decodeDocument`); nothing on the wire supplies them.
   path, every unformalised node of its kind UNFORMALISED with its path and
   reason), `scoped` (the `reports-scoped` verdicts) and `document_status`, the
   meet of the units' statuses and the verdicts' (`Status.documentStatus_le`).
+* `reports-wants` with `phrases` and `infinitives` (lists of strings; no environment or
+  document) → each phrase's infinitive under the `wants` test (`wantsPhrase?`, null where it
+  refuses) and each infinitive's finite form (`finitePhrase`), in order (`runWants`).
 * `admission` of a document under `reports@0` → `admitted`, `report`,
   `report_id`, `envelope`, `kinds` (`Run.reports_wire_acceptance`).
 * Cases without a reports construct delegate unchanged to
@@ -586,6 +590,29 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
   obtain ⟨hwf, _, henv, hdoc, _⟩ := reports_admission_sound.{0} profiles environment document res hr
   exact ⟨profiles, res, reportId, hp, hr, hwf, henv, hdoc, hd, rfl⟩
 
+/-! ## The `wants` test -/
+
+/-- A list of strings at `field`, or the kind's `InvalidInput`. -/
+def wantsStrings (j : Json) (field : String) : Except String (List String) :=
+  let bad := s!"InvalidInput: reports-wants {field} must be a list of strings"
+  match j.getObjVal? field with
+  | .ok (.arr xs) => open List in mapM (fun | .str s => pure s | _ => throw bad) xs.toList
+  | _ => throw bad
+
+/-- `reports-wants`: the `wants` test on each phrase and the finite form of each infinitive, each
+computed once, the phrases' UTF-8 bytes (one more per phrase) charged against `max_source_bytes`. -/
+def runWants (id : String) (j : Json) : Except String Json := open List in do
+  let phrases ← wantsStrings j "phrases"
+  let infinitives ← wantsStrings j "infinitives"
+  VE.Route.Gate.require (foldl (fun n s => n + s.utf8ByteSize + 1) 0 (phrases ++ infinitives)
+      ≤ VE.Limits.maxSourceBytes)
+    "ResourceLimit: reports-wants phrases exceed max_source_bytes"
+  return VE.Route.Wire.ok id [
+    ("phrases", Json.arr (map (fun p => Json.mkObj [("phrase", .str p),
+      ("infinitive", match wantsPhrase? p with | some i => .str i | none => .null)]) phrases).toArray),
+    ("infinitives", Json.arr (map (fun i => Json.mkObj [("infinitive", .str i),
+      ("finite", .str (finitePhrase i))]) infinitives).toArray)]
+
 /-! ## Dispatch -/
 
 def runCase (j : Json) : Except String Json := do
@@ -595,6 +622,8 @@ def runCase (j : Json) : Except String Json := do
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     return ← runAdmission id environment document
+  if kind == "reports-wants" then
+    return ← runWants id j
   if kind.startsWith "reports-" then
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
@@ -650,6 +679,28 @@ theorem reports_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
     simp only [Json.getObjValD, hd]; rfl
   rw [he', hd']
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
+
+/-! The `reports-wants` kind, read through the dispatch once and then directly: its answer, a
+malformed list of each field, and the size limit's two sides (`max_source_bytes`, one byte more per
+string), its excess from the phrases, the infinitives, or several of each. -/
+#guard let j := Json.mkObj [("id", "w"), ("kind", "reports-wants"), ("phrases", Json.arr #["is safe"]),
+    ("infinitives", Json.arr #[])]
+  (runCase j).toOption.map Json.compress == (runWants "w" j).toOption.map Json.compress
+#guard (runWants "w" (Json.mkObj [("phrases", Json.arr #["is safe", "is not safe"]),
+    ("infinitives", Json.arr #["try x", "be safe"])])).toOption.map Json.compress ==
+  some r#"{"id":"w","infinitives":[{"finite":"tries x","infinitive":"try x"},{"finite":"is safe","infinitive":"be safe"}],"phrases":[{"infinitive":"be safe","phrase":"is safe"},{"infinitive":null,"phrase":"is not safe"}],"status":"ok"}"#
+#guard (match runWants "w" (Json.mkObj [("phrases", Json.arr #[7]), ("infinitives", Json.arr #[])]) with
+    | .error e => e | .ok _ => "") == "InvalidInput: reports-wants phrases must be a list of strings"
+#guard (match runWants "w" (Json.mkObj [("phrases", Json.arr #[]), ("infinitives", Json.mkObj [])]) with
+    | .error e => e | .ok _ => "") == "InvalidInput: reports-wants infinitives must be a list of strings"
+#guard [(2, 0, 2), (0, 2, 2), (1, 1, 2), (1, 0, 1), (0, 1, 1), (2, 0, 0), (1, 1, 0), (0, 1, 0)].all
+  fun (p, i, over) =>
+    -- `p` phrases and `i` infinitives of one size, `over` bytes more than the limit in all.
+    let item : Json := .str (String.mk (List.replicate ((VE.Limits.maxSourceBytes + over) / (p + i) - 1) 'a'))
+    match runWants "w" (Json.mkObj [("phrases", Json.arr (List.replicate p item).toArray),
+        ("infinitives", Json.arr (List.replicate i item).toArray)]) with
+    | .error e => over > 0 && e == "ResourceLimit: reports-wants phrases exceed max_source_bytes"
+    | .ok _ => over == 0
 
 def runCaseReported (j : Json) : Json :=
   if usesReportsPath j then

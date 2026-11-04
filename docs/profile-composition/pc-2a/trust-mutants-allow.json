@@ -1,0 +1,74 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Service.Document.admitGraph",
+   "operator": "lit-plus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.admitGraph",
+   "operator": "lit-minus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.softLayer",
+   "operator": "lit-plus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.softLayer",
+   "operator": "lit-minus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.softSource",
+   "operator": "lit-plus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.softSource",
+   "operator": "lit-minus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "lit-plus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "lit-minus",
+   "reason": "equivalent: the fuel of wireJson only matters at a node past depth 256, and no accepted document has one: hasNull 257 reads fuel 0 as a null for every other member of the front matter, and a norm's formulas stop at the decoders' depth limit (test_only_a_ve_error_escapes_a_deep_node)"
+  },
+  {
+   "definition": "VE.Service.Document.decodedEnvironment",
+   "operator": "list-drop-first",
+   "reason": "soft-norms@0 stands first only in an unsorted list, which softSource refuses before this line (probe: a soft-first list answers `profiles must be sorted`); without units the document is refused either way, so at most the refusal's text differs"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "list-first",
+   "reason": "`.toOption.toList` holds at most one element, so this cut is the identity; every other mutant of this operator here does not compile (its detail)"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "list-last",
+   "reason": "`.toOption.toList` holds at most one element, so this cut is the identity; every other mutant of this operator here does not compile (its detail)"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (a type error at the mutated line: its detail), so it is no program; no answer can change"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "list-drop-first",
+   "reason": "the mutant does not compile (a type error at the mutated line: its detail), so it is no program; no answer can change"
+  },
+  {
+   "definition": "VE.Service.DocumentChain.requestOf",
+   "operator": "list-drop-last",
+   "reason": "the mutant does not compile (a type error at the mutated line: its detail), so it is no program; no answer can change"
+  }
+ ]
+}
