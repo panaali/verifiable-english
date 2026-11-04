@@ -1,0 +1,6 @@
+trust_mutants: 5 definitions, 39 mutants (9 to run), 4 jobs, base d74d1fc9ca22
+UNKNOWN lean/VE/Presupposition/Reading.lean:72 VE.Presupposition.carried (S, trusted) list-empty: ms.filter (fun m => m.1 == Root.asserted) -> [] (lean/VE/Presupposition/Reading.lean:72: Invalid projection: Type of)
+SURVIVOR lean/VE/Presupposition/Reading.lean:22 VE.Presupposition.Reading.DefinedAt (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Presupposition/Reading.lean:24, lean/VE/Presupposition/Rows.lean:47...)
+trust_mutants: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 30 OTHER SHARD in 76 s
+trust_mutants: S, trusted: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 30 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.7 s, control_build 0.2 s, probe_install 1.3 s, control_probes 5.5 s, mutants 50.6 s, cleanup 3.8 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 4.8 s (1), mutant_builds 49.1 s (17), mutant_checks 46.5 s (12), stage_controls 19 s (3), mutant_probes 64.1 s (7)
