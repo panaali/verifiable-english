@@ -1,0 +1,13 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-empty: zoneHeads -> []
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-empty: zoneHeads.map -> [] (lean/VE/Defaults/ZoneWordsMain.lean:10: Function expected at)
+SURVIVOR lean/VE/Defaults/ZoneWire.lean:316 VE.Defaults.Wire.zoneJoins (G[V], trusted) list-empty: [("tuple", ", "), ("and", " and ")] -> []
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:14 main (G[V], trusted) list-empty: zoneJoins.map -> [] (lean/VE/Defaults/ZoneWordsMain.lean:14: Function expected at)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:9 main (G[V], trusted) list-drop-last: [ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .str... -> ([ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .st...
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:13 main (G[V], trusted) list-first: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> ([("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)].take 1) (lean/VE/Defaults/ZoneWordsMain.lean:13: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:9 main (G[V], trusted) list-drop-first: [ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .str... -> ([ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .st...
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-last: zoneHeads -> (zoneHeads.reverse.take 1)
+trust_mutants: 49 KILLED, 5 SURVIVOR, 3 UNKNOWN, 2 INVALID, 2 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 4424 s
+trust_mutants: D[V], trusted: 15 KILLED, 95 OTHER SHARD
+trust_mutants: G[V], trusted: 34 KILLED, 5 SURVIVOR, 3 UNKNOWN, 2 INVALID, 2 ALLOWED, 332 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 3.4 s, control_build 1.1 s, probe_install 1.3 s, control_probes 465.4 s, mutants 3938.6 s, cleanup 2.7 s, reads 0.2 s; lake control_build 1 s (1), probe_install 1.3 s (1), control_probes 1010.7 s (6), mutant_builds 1059 s (64), mutant_checks 3551.5 s (34), stage_controls 564.1 s (6), mutant_probes 9893.5 s (51)
