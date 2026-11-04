@@ -1979,6 +1979,13 @@
    "reason": "at-1w: V +85 (K +0, S +0): lean/VE/Attribution/Words.lean +47 (wantsPhrase?, finitePhrase, baseOf, headRest, vowel: replace ve/report_english.py's _infinitive and _finite, deleted in the same change; R6); lean/VE/Attribution/Run.lean +23 (runWants, the reports-wants kind's relay plumbing; R16) and lean/ResponseShape/Schemas/Reports.lean +15 (its row; R16), R16 total +38; trust mutants docs/attitudes/at-1w/trust-mutants.json: 204 killed, 0 survivors",
    "signature": "SIGNED by standing ruling R6 (Words.lean +47) and standing ruling R16 (Run.lean +23, Schemas/Reports.lean +15) (DRI-RULINGS.md), at-1w, 2026-11-04",
    "commit": "94580b39b2aa2d391c35eb5c47a08e8bf314e828"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
+   "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
   }
  ]
 }
