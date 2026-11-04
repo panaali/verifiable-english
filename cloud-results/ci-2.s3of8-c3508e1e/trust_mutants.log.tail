@@ -1,0 +1,8 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:44 VE.Commands.matchedRecord (G[V], trusted) list-empty: [q] -> [] (lean/VE/Commands/Run.lean:44: Unknown identifier `q`)
+UNKNOWN lean/VE/Commands/Run.lean:117 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: qs -> [] (lean/VE/Commands/Run.lean:117: Invalid projection: Type of)
+SURVIVOR lean/VE/Commands/Run.lean:117 VE.Commands.Run.decodeRequest (D[V], trusted) list-first: qs -> (qs.take 1)
+trust_mutants: 30 KILLED, 1 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 1411 s
+trust_mutants: D[V], trusted: 14 KILLED, 1 SURVIVOR, 1 UNKNOWN, 2 INVALID, 159 OTHER SHARD
+trust_mutants: G[V], trusted: 16 KILLED, 1 UNKNOWN, 3 INVALID, 109 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 1.8 s, control_build 0.3 s, probe_install 1.2 s, control_probes 124.4 s, mutants 1269.2 s, cleanup 5 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.1 s (1), control_probes 359.2 s (8), mutant_builds 93.7 s (45), mutant_checks 640.6 s (34), stage_controls 117.2 s (6), mutant_probes 4081.8 s (30)
