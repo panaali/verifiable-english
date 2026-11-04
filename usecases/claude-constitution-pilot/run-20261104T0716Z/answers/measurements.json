@@ -494,6 +494,44 @@
    "max_rss_kb": 141344,
    "stderr_last_line": "",
    "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "decided",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.15576171875,
+     42.62548828125,
+     45.42041015625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 56091940
+   },
+   "wall_s": 44.02,
+   "cpu_s": 44.03,
+   "max_rss_kb": 114808,
+   "stderr_last_line": "",
+   "commit": "2d0b9d1a912be88451767feb8b5c819144ed6f6d"
+  },
+  {
+   "document": "after",
+   "step": "decided",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     26.1240234375,
+     40.26318359375,
+     44.505859375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 51380384
+   },
+   "wall_s": 39.9,
+   "cpu_s": 39.98,
+   "max_rss_kb": 111888,
+   "stderr_last_line": "",
+   "commit": "2d0b9d1a912be88451767feb8b5c819144ed6f6d"
   }
  ]
 }
