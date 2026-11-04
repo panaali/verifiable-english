@@ -271,4 +271,9 @@ def listed (ps : List String) : String := ", ".intercalate (ps.map fun p => "\""
   todayOf (doc (profiles := listed ["order@0", "relational-fol@0", "ve.discourse@1"]) (us := "[" ++ u1 ++ "]")
     (regulated := false) (body := src1)) == "error: UnsupportedProfile: discourse admission requires the FOL family"
 
+-- `envelopeChecks` on its own: the environment's profile list must be the declared one
+#guard (match runAll (envelopeChecks ["norms@0", "relational-fol@0", "ve.discourse@1"]
+    (Json.mkObj [("profiles", toJson ["x@0"])]) .null) with | .error e => e | .ok _ => "") ==
+  "UnsupportedProfile: environment profiles differ from the declared list"
+
 end VE.Discourse.ComposeExamples
