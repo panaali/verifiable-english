@@ -1,6 +1,6 @@
 {
  "item": "df-5",
- "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants-final.json (tools/trust_mutants.py, with trust-mutants-allow.json). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch).",
+ "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants-final.json (tools/trust_mutants.py, with trust-mutants-allow.json). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch). Review fix round 1 (S4-S9): planted one at a time in the tree at c1d557077 and restored (`cmp` against the saved file); a Lean plant that a soundness theorem's proof also refutes was rerun with that proof `sorry`, so the named guard judges it alone.",
  "mutants": [
   {
    "id": "S1",
@@ -37,6 +37,66 @@
    "find": "    for name, values in forced:\n        exception(name, list(values), \"forced exception\")\n",
    "replace": "",
    "test": "tests/test_defaults_zone.py::test_each_binding_refuses_its_tampered_field (its first tamper: an absent rule in forced_all)"
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.replayZoneOn",
+   "bug": "review F4: the observations decoded before the size answer",
+   "find": "  | some z => pure ⟨v, S, some z, [], [], r, vs⟩",
+   "replace": "  | some z => do let _ ← obsJ.toList.mapM (obsEntry v.L S.M); pure ⟨v, S, some z, [], [], r, vs⟩",
+   "test": "replayZoneOn_sound's proof (lake build VE.Defaults.ZoneWire: error); with it sorry, lean/VE/Defaults/ZoneWireExamples.lean:134 (1,024 observations then one with no outcome: unknown, observations size)"
+  },
+  {
+   "id": "S5",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "review F2: a decision the record sets false accepted in a completion",
+   "find": "        if named & recorded[False]:\n            raise _unbound(\"recorded false\")\n",
+   "replace": "",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_a_row_its_request_contradicts, ::test_review_f2_probe_a_switch_recorded_false_is_not_shown, ::test_each_binding_refuses_its_tampered_field"
+  },
+  {
+   "id": "S6",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "review F2: a zone other than the observed query's value accepted",
+   "find": "        raise _unbound(\"observed outcome\")",
+   "replace": "        pass",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_a_row_its_request_contradicts, ::test_each_binding_refuses_its_tampered_field"
+  },
+  {
+   "id": "S7",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.outcomeOf",
+   "bug": "review F1: an outcome decoded without the request's name (the first regulated outcome)",
+   "find": "match L.U.D.T.regulated.find? (·.name == n) with",
+   "replace": "match L.U.D.T.regulated.find? (fun _ => true) with",
+   "test": "outcomeOf_mem's proof (error); with it sorry, lean/VE/Defaults/ZoneWireExamples.lean:74, :102 and :149 (orders is not a regulated outcome)"
+  },
+  {
+   "id": "S8",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneLineWords",
+   "bug": "review F3: DE10f's words changed in Lean without the generated table",
+   "find": "(\"DE10f\", \"\", \"The facts here force the exception to rule {rule} for {tuple}.\",",
+   "replace": "(\"DE10f\", \"\", \"The facts here may force the exception to rule {rule} for {tuple}.\",",
+   "test": "tests/test_defaults_zone.py::test_review_f3_the_committed_words_are_the_lean_generators_output (ve/defaults_words.json is stale)"
+  },
+  {
+   "id": "S9",
+   "language": "Python",
+   "file": "ve/defaults_english.py",
+   "definition": "zone",
+   "bug": "review F3: DE10's words written in Python",
+   "find": "    return [heads[0][\"words\"].format(result=result)] + [_decision(text, line) for line in row[\"completions\"][0]]",
+   "replace": "    head = {\"short\": \"exceptions\", \"long\": \"assumptions\"}[row[\"form\"]]\n    return [f\"With no {head} here that could be dropped, alone or together, {result}.\"] + [\n        _decision(text, line) for line in row[\"completions\"][0]]",
+   "test": "tests/test_defaults_zone.py::test_review_f3_every_zone_sentence_is_lean_s_words_filled"
   }
  ]
 }
