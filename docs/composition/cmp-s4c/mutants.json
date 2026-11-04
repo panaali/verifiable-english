@@ -49,7 +49,7 @@
    "from": "if inner.get(\"kinds\") != [u.get(\"kind\") for unit in meta[\"units\"] for u in [unit, *unit.get(\"parts\", [])]]:",
    "to": "if False:",
    "result": "KILLED",
-   "test": "tests/test_discourse_composed_route.py::test_every_mutant_is_refused[drop inner.kinds], [retype inner.kinds], [duplicate kinds], [reorder kinds]",
+   "test": "tests/test_discourse_composed_route.py::test_every_mutant_is_refused[drop inner.kinds], [retype inner.kinds 0] to [retype inner.kinds 8], [duplicate kinds], [reorder kinds]",
    "check": "pytest"
   },
   {
