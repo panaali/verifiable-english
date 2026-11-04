@@ -54,7 +54,7 @@ def α : SoftDoc := alphaOf ["a", "b"] [("a", "b")] "a" "b"
 def wα : WeighDoc := wd α (W [("a", "b")])
 
 #guard verdict wα == "accepted" && WellFormedWeigh wα && weighWarnings wα == []
-#guard weighOrigins wα == [("weigh:strength:a:b:x_permitted", blockPath ++ ["always", "0"])]
+#guard weighOrigins wα == [("weigh:strength:a:b:x_permitted", ["environment", "vocabulary", "weighing", "always", "0"])]
 #guard strengthPremises wα == [bindAll ["assistant"] (.not (outweighsF α "x_permitted" "b" "a"))]
 #guard strengthPremises (wd α) == [] && strictPair wα "a" "b" && !strictPair (wd α) "a" "b"
 #guard weighWarnings (wd (alphaOf ["a", "b"] [("a", "b")] "a" "b" false) (W [("a", "b")])) == ["StrengthInert: a, b"]
