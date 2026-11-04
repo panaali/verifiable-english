@@ -42,6 +42,27 @@
       "change": "record_file_durations catches (OSError, ValueError) only, so a deeply nested file raises RecursionError out of the gate",
       "test": "tests/test_gate_durations.py::test_a_missing_malformed_or_oversize_record_file_leaves_the_committed_plan[nested 100k deep]",
       "restored": true
+    },
+    {
+      "id": "S7",
+      "file": "tools/bench/suite_tail.py",
+      "change": "durations --gate-record drops its inputs (runs.append removed)",
+      "test": "tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs",
+      "restored": true
+    },
+    {
+      "id": "S8",
+      "file": "tools/test_schedule.py",
+      "change": "json_value catches ValueError only, so JSON nested too deep raises RecursionError out of every record reader",
+      "test": "tests/test_gate_durations.py::test_every_record_reader_leaves_a_value_nested_too_deep_unused",
+      "restored": true
+    },
+    {
+      "id": "S9",
+      "file": "tools/gate_collection.py",
+      "change": "parse_record parses with its own json.loads and except ValueError, not test_schedule.json_value",
+      "test": "tests/test_gate_durations.py::test_the_record_modules_parse_untrusted_json_only_through_json_value",
+      "restored": true
     }
   ]
 }
