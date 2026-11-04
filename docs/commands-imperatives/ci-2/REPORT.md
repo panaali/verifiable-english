@@ -1,7 +1,7 @@
 # ci-2 REPORT: the `english.command` mode and `readInstruction` (CI-2, cut after deliverable (3))
 
 **Status:** deliverables (1) to (3) built and committed on `feature/ci-2`; (4) to (6) are ci-2b (the size line). HEAD: the commit that adds this file.
-**What changed:** `VE.Commands.Run` (the proof task with O2 and O10, `readInstruction`, the request and answer), the service mode `english.command` with its shape, encoder theorem and `runMode_fits` branch, 42 `#guard`s; no Python caller yet.
+**What changed:** `VE.Commands.Run` (the proof task with O2 and O10, `readInstruction`, the request and answer), the service mode `english.command` with its shape, encoder theorem and `runMode_fits` branch, 43 `#guard`s (42 in `RunExamples.lean`, 1 in `RunSplit.lean`); no Python caller yet.
 **Open:** none blocking. The cut of (4) to (6) to ci-2b and the facts-based statements are SIGNED (reviews/dri-decisions-20261104-ci-2.md items 1 and 2); size is about 960 hand-written lines (the excess over about 600 is R16's mutant-killing guards, the route's fixtures, side tables and evidence).
 **Signatures:** none reserved; the one DELTA row cites R16.
 
@@ -16,8 +16,8 @@ reviews/dri-decisions-20261102-ci-0.md asks). Statement gate: passed (reviews/dr
 
 | Plan row | Delivered | Evidence |
 |---|---|---|
-| (1) `lean/VE/Commands/Run.lean`: `QueryRecord`, `Context`, `proofTask`, `proofMany` (O2), `readInstruction`, `Request`, `Run.decodeRequest`, `Run.encode`, `Run.caseReported` | yes (a46ff03de) | `cd lean && lake build`: 1278 jobs, success |
-| (1) statements `readInstruction_command`, `proofTask_bound`, `proofTask_addressed`, `caseReported_eq` | yes, as stated in spec section 6 | `python3 lean/audit.py`: PASS, 760 source files, 8397 theorems, the allowed axioms only; `lean/axioms.txt` lists each |
+| (1) `lean/VE/Commands/Run.lean`: `QueryRecord`, `Context`, `proofTask`, `proofMany` (O2), `readInstruction`, `Request`, `Run.decodeRequest`, `Run.encode`, `Run.caseReported` | yes (a46ff03de) | `cd lean && lake build`: 1279 jobs, success (final tree) |
+| (1) statements `readInstruction_command`, `proofTask_bound`, `proofTask_addressed`, `caseReported_eq` | yes, as stated in spec section 6 | `python3 lean/audit.py`: PASS, 761 source files, 8399 theorems, the allowed axioms only; `lean/axioms.txt` lists each |
 | (1) `readInstruction_refused_classed`, `readInstruction_typed` | as `_refused_classed_of` and `_typed_of_facts` (deviations 2 and 3; SIGNED, reviews/dri-decisions-20261104-ci-2.md item 1, its conditions in `lean/VE/Commands/RunSplit.lean`); the spec's statements are ci-2b's, after ci-1b | the same audit |
 | (1) `Texts.lean`: the act wording `{0} submit a proof of {1}` (`proofAct`), no legend; `("QueryMismatch", "VEError")` in `codeClasses` | yes | `RunExamples.lean`: P4′ guard, the class guard |
 | (2) `Protocol.lean` entry, `runMode_englishCommand ... := rfl`, `Schemas/Command.lean`, `Encoders/Command.lean` (`caseReported_fits`), the `runMode_fits` branch | yes (b13d280d0) | `lake build`; `uv run python tools/repo_map.py --check`: "PASS: 42 modes, each with its schema file" |
@@ -40,7 +40,7 @@ genuine answers (`tests/data/binding-answers.jsonl.gz`, the six `english.command
    `workBudget` (O7), so such a field would be unbound. `queries` are the document's query records, decoded by the
    pinned `Wire.decodeQuery`; a duplicate id is `InvalidInput: duplicate query`, and an id that is not a declared
    constant of sort `query` is `InvalidInput: query`, so every decoded request satisfies `readInstruction_typed`'s
-   `hq` (spec section 6 asked CI-2 to check it). `Context.sc` is the environment's scope (`se.scope`); a document's
+   `hq` (by reading `decodeRequest`, not proved; spec section 6 asked CI-2 to check it). `Context.sc` is the environment's scope (`se.scope`); a document's
    bindings reach it through the source wrapper (ci-2b).
 2. **`readInstruction_typed_of_facts`** replaces `hd` by ci-1's `declared` facts (`hf : declared ctx.se = true`), as
    the task says while ci-1b (`readCommand_typed`, the decoder half) is not on main; it keeps `hE`, `hS`, `hR`, `hk`
@@ -93,7 +93,11 @@ span [15, 24] after leading spaces (:148); W10's `many` over `E_web` (:150); `js
 another environment's lexicon refused (:156); a duplicate record and an undeclared query id (:157, :159). R16's
 guards (:163 to :177). `caseReported_eq` as a guard over six requests (:181).
 
-Limits (the common rule): the wording is read once, by `guardOf` (proof task) or `readCommand`; the proof wording's
+Limits (the common rule): `readInstruction` reads the wording once, by the proof task or by `readCommand`, never both
+(`Option.getD` is `@[macro_inline]`, `Init/Prelude.lean:2868`, so `readCommand` runs only when `proofTask` is `none`).
+One exception, ci-1's and the spec's: when english-lean refuses the sentence, `guardOf`'s `unreadOf` reads it a
+second time for the refusal's code and text (ci-1 review F5). `Run.lean:5-7`'s "each wording is read once" does not
+say so; that docstring goes to ci-2b, since editing it here would rerun every `Run.lean` mutant. The proof wording's
 400-byte bound comes before it is read (O10, both sides of the boundary); `many` is at most `readingsBound`
 (`manyOf`, both sides); budget 0 is `limit`.
 
@@ -114,7 +118,13 @@ request does not hold) is ci-2b's: `read_command` does not exist yet. No Rust pr
 ## Trust
 
 `uv run python tools/trust_map.py --check`: "K +0, S +0, … trusted +141", PASS with the allowance (V +141, signed
-R16) in `docs/trust-baseline.json`; per file in DELTA.md. R16's mutants: TRUSTMUT.
+R16) in `docs/trust-baseline.json`; per file in DELTA.md. R16's mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Commands/RunExamples.lean --test
+lean/VE/Service/RegistryExamples.lean --allow …/trust-mutants-allow.json`, then `--rescore` on each later Lean tree):
+`docs/commands-imperatives/ci-2/trust-mutants.json` at ad415a76a, the final Lean tree: 14 definitions, KILLED 229,
+SURVIVOR 0, UNKNOWN 0, INVALID 40, ALLOWED 37, NOT RUN 0. The first run (c3508e1e4) had 20 survivors and 29 unknown:
+the survivors were killed by the guards of fd80f6039, and the 29 unknown (mutated text Lean refuses) and the
+equivalent `take 1` mutants (at most one fill) are allowed with reasons in `trust-mutants-allow.json`. The six new or
+changed trusted definitions with no operator site have hand mutants H1 to H6 in `mutants.json`, each killed.
 
 ## Tests
 
@@ -175,7 +185,7 @@ ci-2b, then ci-5.
 
 1. Every Lean answer typed and contained: PASS. `uv run python tools/relay_mutation_gate.py --route service:english.command`: "1126 mutants, 1118 refused, 8 allowed", 0 failures (the 8 are ci-2b's request bindings, allow-listed F4/F10 with literal paths); `tests/test_lean_service_schema.py`: 161 passed (genuine answers of every corpus case, each field dropped, emptied, nulled and retyped against `ve_response_decode`); the corpus's adversarial requests (300-deep array, `{}`, no environment) and F-raw (`RunExamples.lean:154`) are error rows.
 2. Deliverables built, no rule broken: PASS. The table above; (4) to (6) are ci-2b under the task's size clause. No Python decision code is added (the corpus builds requests only); no permanent report test; no authority switch; `ve/backends/english_lean.py` and `tests/test_relay_binding_inventory.py` (jt-3, pc-2a) are not touched; the other shared files are generated or union-merged (`lean/VE.lean`, `lean/VE/Audit.lean`).
-3. Tests and gates can fail: PASS. `mutants.json` (S1 to S5, P1, each with its failing guard or test); `trust-mutants.json` TRUSTMUTLINE; the allow-list entries name literal paths.
+3. Tests and gates can fail: PASS. `mutants.json` (S1 to S5, P1, each with its failing guard or test); `trust-mutants.json` (229 killed, 0 survivors, 0 unknown) and the hand mutants H1 to H6; the allow-list entries name literal paths.
 4. Python, Lean and Rust agree: N.A.: no Python or Rust path reads command English in this item (no A/B base exists); the Python-built corpus cases read through Lean as the Lean guards do (P1′, P2, P6, P7 outcomes).
 5. R8 binding: N.A.: no Python code reads the answer until ci-2b's `read_command`; the shape binds `id`, `unit` and `wording` (`equals`), and the relay gate's rebind mutants of them are refused.
 6. Gate evidence on the final HEAD: PASS for what this item runs: main merged (ef6c43f75), `regen_generated.py --check` 35 entries; the full gate is the chain's, on the final HEAD.
