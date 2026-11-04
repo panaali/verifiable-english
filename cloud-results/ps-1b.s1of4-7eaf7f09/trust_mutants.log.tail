@@ -1,0 +1,7 @@
+trust_mutants: 5 definitions, 39 mutants (10 to run), 4 jobs, base d74d1fc9ca22
+UNKNOWN lean/VE/Presupposition/Rows.lean:18 VE.Presupposition.plural (S, trusted) all-any: all -> any (lean/VE/Presupposition/Rows.lean:18: Unknown constant `VE.Formula.any`)
+UNKNOWN lean/VE/Presupposition/Reading.lean:72 VE.Presupposition.carried (S, trusted) list-empty: ms -> [] (lean/VE/Presupposition/Reading.lean:72: Invalid projection: Type of)
+UNKNOWN lean/VE/Presupposition/Reading.lean:73 VE.Presupposition.carried (S, trusted) list-empty: ms.filter (fun m => m.1 == Root.conditioned) -> [] (lean/VE/Presupposition/Reading.lean:73: Invalid projection: Type of)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 60 s
+trust_mutants: S, trusted: 7 KILLED, 3 UNKNOWN, 29 OTHER SHARD
+trust_mutants: steps: wall plan 8.9 s, scratch 2.6 s, control_build 0.1 s, probe_install 1.1 s, control_probes 4.5 s, mutants 38.2 s, cleanup 4.7 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 3.9 s (1), mutant_builds 33.2 s (17), mutant_checks 33.7 s (11), stage_controls 20.8 s (4), mutant_probes 43.3 s (7)
