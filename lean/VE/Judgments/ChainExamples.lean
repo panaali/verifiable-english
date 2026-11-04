@@ -210,6 +210,16 @@ def rightsWithEmptyCondition : Json :=
             | .ok _ => false
   | none => false
 
+-- The minimal profile pair also fixes the gate's fault when the rights profile is the final list member.
+#guard ["right", "right_lines"].all fun block =>
+  ["norm", "liberty", "recognition"].all fun key =>
+    ["sufficient", "necessary"].all fun field =>
+      [false, true].all fun part =>
+        match environmentOf (Json.mkObj [("profiles", Lean.toJson ["judgments@0", "rights@0"])])
+            (rightsWithCondition block key field part) with
+        | .error message => message == "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route"
+        | .ok _ => false
+
 /-! pc-1 review F2: row 16 reads reading sets of 1 to 64 readings; a case with a set of more is answered by the
 chain's own check, in its order, before any work over its stated values. F1.3l's clash with readings added: at 64 it
 is row 16's, at 65 the chain's. -/
