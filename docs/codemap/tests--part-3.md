@@ -1,10 +1,13 @@
+- `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
+- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
+- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
 - `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
 - `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
 - `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
-- `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks and Python's recorded node for each (en-e3-norm EN-0; spec english-lean-s6 f22).
+- `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
 - `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
@@ -82,6 +85,3 @@
 - `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
 - `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
 - `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
-- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
-- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
-- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
