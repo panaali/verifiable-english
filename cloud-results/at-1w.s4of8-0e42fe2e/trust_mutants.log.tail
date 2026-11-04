@@ -1,0 +1,12 @@
+trust_mutants: 13 definitions, 252 mutants (32 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Run.lean:599 VE.Reports.Run.wantsStrings (?, trusted) list-empty: xs.toList -> [] (lean/VE/Attribution/Run.lean:599: Invalid dotted identifier notation: The expected type of `.str`...)
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) append-right: phrases ++ -> 
+SURVIVOR lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) or-and: || -> &&
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-drop-last: phrases -> (phrases.dropLast)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:361 ResponseShape.Schemas.Reports.file (G[V], trusted) list-drop-middle: ("status", .schema status), -> 
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-last: infinitives -> (infinitives.reverse.take 1)
+SURVIVOR lean/VE/Attribution/Run.lean:612 VE.Reports.Run.runWants (?, trusted) list-last: infinitives -> (infinitives.reverse.take 1)
+trust_mutants: 24 KILLED, 6 SURVIVOR, 1 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 220 OTHER SHARD in 124 s
+trust_mutants: ?, trusted: 24 KILLED, 5 SURVIVOR, 1 UNKNOWN, 1 INVALID, 192 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 28 OTHER SHARD
+trust_mutants: steps: wall plan 10.6 s, scratch 2.2 s, control_build 0.3 s, probe_install 1.4 s, control_probes 23.8 s, mutants 83.6 s, cleanup 1.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.3 s (1), control_probes 38.2 s (3), mutant_builds 142.1 s (36), mutant_checks 3.2 s (1), stage_controls 6 s (4), mutant_probes 140.8 s (24)
