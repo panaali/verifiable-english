@@ -1,0 +1,7 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/ResponseShape/Schemas/Discourse.lean is a selected declaration's file or in its import closure
+trust_mutants: 11 definitions, 179 mutants (45 to run), 4 jobs, base a12f56fd7162
+SURVIVOR lean/ResponseShape/Schemas/Discourse.lean:236 ResponseShape.Schemas.Discourse.chainAdmission (G[V], trusted) list-first: (conditional.map ("conditional_on", ·)).toList -> (((conditional.map ("conditional_on", ·)).toList).take 1)
+trust_mutants: 37 KILLED, 1 SURVIVOR, 0 UNKNOWN, 6 INVALID, 1 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 955 s
+trust_mutants: D[V], trusted: 3 KILLED, 1 INVALID, 1 ALLOWED, 13 OTHER SHARD
+trust_mutants: G[V], trusted: 34 KILLED, 1 SURVIVOR, 5 INVALID, 121 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 150.9 s, mutants 785.3 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 152.5 s (2), mutant_builds 228.7 s (49), mutant_checks 187.8 s (14), stage_controls 73.6 s (6), mutant_probes 2228.9 s (37)
