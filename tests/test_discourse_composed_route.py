@@ -248,6 +248,27 @@ def test_the_genuine_answer_passes_the_binding(tmp_path, monkeypatch, genuine):
     assert UNAVAILABLE in _relayed(tmp_path, monkeypatch, genuine)
 
 
+def test_document_check_is_checker_unavailable_and_shows_no_verdict(tmp_path, capsys):
+    # DRI 2026-11-04 item 1: Lean admits the document, the report has no unit statuses to show (14.7): exit 5
+    from ve.__main__ import EXIT_CHECKER_UNAVAILABLE, main
+    path = tmp_path / "doc.md"
+    path.write_text(text())
+    assert main(["document", "check", str(path)]) == EXIT_CHECKER_UNAVAILABLE == 5
+    out = capsys.readouterr().out
+    record = json.loads(out)
+    assert record["status"] == "CheckerUnavailable" and UNAVAILABLE in record["error"]["message"]
+    assert "admitted" not in out and not any(s in out for s in discourse._STATUSES)
+
+
+def test_r2_the_composed_path_reports_its_first_fault():
+    # two faults: a `groups` entry (step 1) and α's regulated predicate, which today's base vocabulary rejects first
+    # (S4-25's saved answer on the same vocabulary)
+    [(_, _, today)] = [e for e in json.loads(EVIDENCE.read_text()) if e[0] == "S4-25"]
+    assert json.loads(today)["error"].endswith("got [arguments, description, regulated]")
+    groups = {"version": "ve.discourse@1", "anchors": [], "groups": [{"id": "g", "units": ["u1"]}]}
+    assert error(text(block=groups)) == "NotImplemented: groups on the chain"
+
+
 def test_the_relay_returns_leans_answer_unchanged(tmp_path):
     raw = text().encode()
     row = discourse.lean_admission(raw, tmp_path)
