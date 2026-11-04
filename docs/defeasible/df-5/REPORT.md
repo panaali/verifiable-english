@@ -75,41 +75,49 @@ by the DRI (reviews/dri-decisions-20261104-df-5-size.md item 1).
 
 ## Trust
 
-`uv run python tools/trust_map.py --check`: K +0, S +0, V +113 (`ZoneWire.lean` +75, the two shapes +36, `Route.lean`
-+2); PASS with the R16 allowance. Classes in `tools/trust-classes.json`. FOLLOW-UPS.md "## df-5" asks for the ties pass.
-`tools/trust_mutants.py` (`mac-pytest.sh --trustmut`, cloud pool, `--test lean/VE/Defaults/ZoneWireExamples.lean --test
-lean/ResponseShape/DefaultsExamples.lean`), 14 new or changed trusted definitions, 426 mutants:
+`uv run python tools/trust_map.py --check` (exit 0): K +0, S +0, **V +140** (`ZoneWire.lean` +100, the two shapes +36,
+`ZoneWordsMain.lean` +2, `Route.lean` +2); the R16 allowance (`docs/trust-baseline.json`) and DELTA T1 itemise it.
+Review F1: the 60 lines classed C before are D[V]/G[V] now; the decoders, `ZoneReplay.min`, `zoneSizes` and the words'
+selectors are tied by the theorems in "Review fix round 1" (100 tied lines), and `ZoneReplay`, `ZoneReplay.X`,
+`maxZoneObservations`, `zoneJoins` and `zoneWordsJson` are counted. The words' text is tied by `zoneWords_complete`
+for its selection only; spec 4's sentences are checked by `tests/test_defaults_zone.py`. FOLLOW-UPS.md "## df-5" asks
+for the ties pass of the rest.
 
-- First run, `trust-mutants.json` (head 54a4a2067): 389 killed, 8 invalid, 4 survivors, 25 unknown.
-- With `trust-mutants-allow.json` (13 entries, each with its reason), `trust-mutants-final.json` (head 66190bd0c, Lean
-  unchanged since 54a4a2067): **389 killed, 8 invalid, 29 allowed, 0 survivor, 0 unknown, 0 not run**.
-- Every definition has killed mutants except the inductive `ZoneLine`. Its three `ctor-drop` mutants do not
-  elaborate, because `zoneLines` and `ZoneLine.json` name the dropped constructor (as df-5a's T8 for `DefaultZone`).
-  Each constructor is exercised by guards: `stated` by DF-ξ′ and β2, `forced` by DF-μ and two tuples, `assumed` by
-  DF-μ′, DF-ε and DF-δ.
-- The allowed mutants are type errors in the mutated text (24 unknown), two equivalent ones (`value` has at most one
-  element), two drops of `row`'s alternatives that no zone answer reaches (checked in Python by
-  `tests/test_route_row_schemas.py`), and `defaultsRows` emptied. That last one fails RouteExamples' guards, but they
-  also reach the fits proof the mutant breaks.
-- Earlier runs on the way, kept out of the evidence: a run with the encoder file as `--test` (its proofs then count,
-  which makes every row-shape mutant UNKNOWN) and a run before the two-tuple, two-rule and record fixtures. That run's
-  survivors led to those fixtures and to `zoneLines` reading the record only.
+`tools/trust_mutants.py` (`mac-pytest.sh --trustmut`, `--test lean/VE/Defaults/ZoneWireExamples.lean --test
+lean/ResponseShape/DefaultsExamples.lean`, `--allow trust-mutants-allow.json`), the trusted definitions the branch
+adds or changes:
 
-## Tests run
+- Build round (head 66190bd0c), `trust-mutants-final.json` before this round: 389 killed, 8 invalid, 29 allowed, 0
+  survivor, 0 unknown.
+- Fix round, first run (head c1d557077, kept out of the evidence): 396 killed, 32 survivors and 11 unknown, all in
+  the words generator's JSON builder (`ZoneWordsMain.main`) and `zoneJoins`, which only the Python freshness test
+  read. Fixed by `zoneWordsJson` and three guards that read it back (commit 9028ce14a).
+- Fix round, final run (head 9028ce14a): TRUSTMUT_FINAL.
+- Every definition has killed mutants except the inductive `ZoneLine`: its three `ctor-drop` mutants do not elaborate,
+  because `zoneLines` and `ZoneLine.json` name the dropped constructor (as df-5a's T8 for `DefaultZone`). Each
+  constructor is exercised by guards: `stated` by DF-ξ′ and β2, `forced` by DF-μ and two tuples, `assumed` by DF-μ′,
+  DF-ε and DF-δ.
+- The allowed mutants (`trust-mutants-allow.json`, each with its reason) are type errors in the mutated text, two
+  equivalent ones (`value` has at most one element), two drops of `row`'s alternatives that no zone answer reaches
+  (checked in Python by `tests/test_route_row_schemas.py`), and `defaultsRows` emptied (it fails RouteExamples'
+  guards, which also reach the fits proof the mutant breaks).
+- The tied decoders are not selected (R16 counts trusted lines); their mutants break their soundness proofs, and S4
+  and S7 show the guards catch such a bug with the proof set aside.
 
-- `tests/test_defaults_zone.py` (45 tests), and `tests/test_defaults_checks.py`: passed locally and on the Mac (the
-  seven `tests/test_defaults_*.py` files: 204 passed, mac-pytest 14:28Z, HEAD 44fc281f).
-- The selected tests (`mac-pytest.sh --select`, HEAD ace4f960): 270 units recorded, 2 failed:
-  `tests/test_defaults_answer.py::test_soft_source_is_the_exception_tables` (my `soft_source` gained a member; fixed
-  by `zone_source`, `soft_source` unchanged) and `tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test`
-  (the new `bind_zone` checks had no both-sides test; fixed). Both reran passing (above). The first selected run
-  stopped at `tools/check_lean_imports.py` (ZoneWireExamples' layer; fixed in `tools/layer_policy.py`).
-- `tests/test_route_row_schemas.py`: 32 passed (with the 12 new route cases). `tests/test_assurance_manifest.py`: 139
-  passed. `tools/relay_mutation_gate.py`: 46 routes, 148,161 mutants, 0 failures (17 min).
-- `cd lean && lake build`: completed; `python3 lean/audit.py`: PASS; `tools/lean_statements.py`: 0 removed, 0 changed;
-  `tools/regen_generated.py --check`: 35 entries up to date; `tools/gate_collection.py --check --prebuilt`: 45 added, 0
-  removed, 0 refused, 0 stale, 0 malformed; `tools/check_lean_imports.py`, `tools/test_layer_policy.py`: OK.
-- Not run here: the full gate (the chain runs it on the final HEAD).
+## Tests run (fix round 1)
+
+- Selected tests (`mac-pytest.sh --select`, HEAD 49cc5d1dd, GitHub Actions, 6 shards): 491 units, 1 failed:
+  `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry` (the new `defaults-words`
+  entry missing from `docs/merge-tooling.md`; fixed in bda9f6df5, the file rerun: 5 passed). `tests/test_defaults_zone.py`
+  and `tests/test_defaults_checks.py` (every `bind_zone` check needed by a both-sides test) passed there.
+- SELECT_FINAL
+- `cd lean && lake build`: completed; `python3 lean/audit.py`: PASS (759 files); `tools/lean_statements.py`: 0
+  removed, 0 changed; `tools/regen_generated.py --check`: 36 entries up to date; `tools/trust_map.py --check`: exit 0.
+- PROBE F2: fails on 8f507c5f4's `ve/defaults.py` (`DID NOT RAISE CheckerUnavailable`), passes now; it is
+  `::test_review_f2_probe_a_switch_recorded_false_is_not_shown`. F1, F3 and F4 had no probe.
+- F-ready1's probe (`review-ready.py`, HEAD bda9f6df5): `PASS [relay] relay mutation gate passed`; `[gate]` FAILs
+  until the chain's full gate runs on the final HEAD (not run here, as the task says).
+- Not run here: the full gate.
 
 ## Overlap
 
@@ -144,21 +152,26 @@ beyond the fix round's findings, holds: this round adds the four findings' fixes
    `tools/relay_mutation_gate.py`: 46 routes, 148,161 mutants, 0 failures.
 2. Every deliverable built: PASS (the plan rows table; CLI and W7 named as df-5b, not in the task's list). Grep of the
    diff: no Python copy of a Lean decision (`bind_zone` checks shape and binding only; `ZONE_CHECKS` names Lean's
-   labels for binding), no permanent report test, no def of the six weighing names under `lean/VE/Defaults/`.
-3. Tests can fail: PASS. S1-S3 (`mutants.json`), the R16 mutants (`trust-mutants.json`), df-5a's and df-5ab's Zone
+   labels for binding), no Python words of DE10-DE13 (review F3: Lean's `zoneHeads`, `zoneLineWords`, `zoneJoins`;
+   `::test_review_f3_every_zone_sentence_is_lean_s_words_filled`), no permanent report test, no def of the six
+   weighing names under `lean/VE/Defaults/`.
+3. Tests can fail: PASS. S1-S9 (`mutants.json`; S4-S9 this round, Lean and Python), the R16 mutants (`trust-mutants.json`), df-5a's and df-5ab's Zone
    mutants rerun on the refactor (`evidence/*-mutants-rerun.out`: all fail their guards).
 4. Python and Lean agree, valid inputs still pass: PASS. `evidence/conservativity.json` (62 of 62 identical);
    `tests/test_route_row_schemas.py` (32 passed: both decoders agree on every mutation of the 12 new cases).
-5. R8 binding: PASS. `::test_each_binding_refuses_its_tampered_field` (23 tampers: an absent or strict rule, a
+5. R8 binding: PASS. `::test_each_binding_refuses_a_row_its_request_contradicts` (review F2: 8 requests whose record
+   or observed query contradicts Lean's genuine row), `::test_each_binding_refuses_its_tampered_field` (25 tampers: an absent or strict rule, a
    tuple outside the situation, of the wrong length or type, a condition out of range, a party the rule lacks, a
    forced exception shown as an assumption, a duplicated or reordered row, an extra, repeated or emptied completion,
-   an absent, repeated or empty label, an empty reason) and `::test_every_genuine_row_binds` (17 genuine rows);
+   an absent, repeated or empty label, an empty reason, a decision recorded false shown, a value against the observed
+   query) and `::test_every_genuine_row_binds` (18 genuine rows);
    `tests/test_defaults_checks.py` reads them as both-sides tests, so each check of `bind_zone` weakened or deleted
    fails one of them (`test_review_f1_every_check_is_needed_by_a_both_sides_test`: passed); inputs:
    `ZoneWireExamples.lean` refusals (an absent decision, a malformed key, an outcome the document does not regulate,
    an entity outside the situation, a non-empty decision table).
 6. Gate evidence: N.A. here (the chain runs the gate on the final HEAD); the saved evidence reads no live git.
-7. No unsigned item: PASS. D1 SIGNED by the DRI (reviews/dri-decisions-20261104-df-5.md item 1), T1 R16.
+7. No unsigned item: PASS. D1 SIGNED by the DRI (reviews/dri-decisions-20261104-df-5.md item 1), T1 R16 (V +140),
+   size SIGNED by the DRI (reviews/dri-decisions-20261104-df-5-size.md item 1).
 8. Every user-visible change in DELTA: PASS. `evidence/delta.json` (the 12 cases, main against this branch),
    `evidence/conservativity.json`.
 9. Test selection: PASS. `tools/select_tests.py --base <merge base>` selects `tests/test_defaults_zone.py` (441 test
@@ -166,12 +179,13 @@ beyond the fix round's findings, holds: this round adds the four findings' fixes
 10. Lean statements: PASS. `lean/statements.txt` 0 removed, 0 changed; `defaultZoneOf_eq`, `forcedAllOf_eq` added;
     `python3 lean/audit.py`: PASS. A `BOGUS` row label in `ZoneLine.json` breaks `zoneLine_fits`
     (`Encoders/NormDefaults.lean:145`, restored).
-11. Budgets and limits: PASS. `budget: 26 open atoms, over 12` (13 operators), observations 1,025 `unknown`, 1,024
+11. Budgets and limits: PASS. `budget: 26 open atoms, over 12` (13 operators); the record's and the observations'
+    sizes counted before any entry is decoded (review F4): 1,025 `unknown` even with an undecodable last entry, 1,024
     answered (`ZoneWireExamples.lean`); df-5a's record and typed-atom bounds unchanged.
 12. CPU: PASS. `zoneMin` is evaluated once per request (`zoneFields`' one `let m := x.min`, DRI 2026-11-04 item 2;
     the `oneCall` guard: the answer equals `defaultZoneOf`/`forcedAllOf`'s). No step counter exists for this path.
-13. Test-removed trailers: N.A. (no test removed). `tools/gate_collection.py --check --prebuilt`: 45 added, 0
-    removed, 0 refused, 0 stale, 0 malformed.
+13. Test-removed trailers: N.A. (no test removed; this round adds five test ids in `tests/test_defaults_zone.py`).
+    `tools/gate_collection.py --check --prebuilt`: 0 removed, 0 refused, 0 stale, 0 malformed.
 14. Both directions, cited evidence, spec re-read: PASS. Each guard and binding test has its accepting side; each
     claim here names its command; spec 3.8, 4 (DE10-DE13 words verbatim), 5 row 1 and 8.6 re-read against the
     fixtures (every computed zone matches 8.6).
