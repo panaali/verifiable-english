@@ -1,0 +1,14 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:68 VE.Commands.proofTask (G[V], trusted) list-empty: (proofSentence s) -> [] (lean/VE/Commands/Run.lean:68: Type mismatch)
+UNKNOWN lean/ResponseShape/Schemas.lean:50 ResponseShape.Schemas.files (G[V], trusted) list-empty: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> [] (lean/ResponseShape/Schemas.lean:50: Function expected at)
+UNKNOWN lean/VE/Commands/Run.lean:116 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: (qs.map (·.1)).eraseDups.length -> [] (lean/VE/Commands/Run.lean:116: Type mismatch)
+UNKNOWN lean/VE/Commands/Run.lean:136 VE.Commands.Run.readingJson (D[V], trusted) list-empty: r.fills -> [] (lean/VE/Commands/Run.lean:136: Invalid field notation: Type of)
+UNKNOWN lean/VE/Commands/Run.lean:118 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: qs -> [] (lean/VE/Commands/Run.lean:118: Invalid match expression: The type of pattern variable 'fst✝' cont...)
+SURVIVOR lean/VE/Commands/Run.lean:49 VE.Commands.proofPreds (G[V], trusted) list-first: g.sorts.drop 1 -> ((g.sorts.drop 1).take 1) (the proofs it breaks: lean/VE/Commands/Run.lean:267)
+SURVIVOR lean/VE/Commands/Run.lean:153 VE.Commands.Run.encode (D[V], trusted) list-drop-middle: ("wording", .str q.s), -> 
+SURVIVOR lean/VE/Commands/Run.lean:49 VE.Commands.proofPreds (G[V], trusted) list-drop-first: ctx.se.ne.regulated -> (ctx.se.ne.regulated.drop 1) (the proofs it breaks: lean/VE/Commands/Run.lean:267)
+SURVIVOR lean/VE/Commands/Run.lean:49 VE.Commands.proofPreds (G[V], trusted) list-last: g.sorts.drop 1 -> ((g.sorts.drop 1).reverse.take 1) (the proofs it breaks: lean/VE/Commands/Run.lean:267)
+trust_mutants: 23 KILLED, 4 SURVIVOR, 5 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 1700 s
+trust_mutants: D[V], trusted: 16 KILLED, 1 SURVIVOR, 3 UNKNOWN, 1 INVALID, 156 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 3 SURVIVOR, 2 UNKNOWN, 5 INVALID, 112 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.5 s, control_probes 131.9 s, mutants 1548.5 s, cleanup 2.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 267.8 s (5), mutant_builds 107.7 s (46), mutant_checks 531.5 s (29), stage_controls 46.2 s (4), mutant_probes 5243.2 s (23)
