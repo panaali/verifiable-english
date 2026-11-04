@@ -20,6 +20,9 @@ RUN = Path(__file__).resolve().parents[1] / "usecases/claude-constitution-pilot/
 _spec = importlib.util.spec_from_file_location("sc9_migrate_soft", RUN / "migrate_soft.py")
 migrate = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(migrate)
+_measure_spec = importlib.util.spec_from_file_location("sc9_measure", RUN / "measure.py")
+measure = importlib.util.module_from_spec(_measure_spec)
+_measure_spec.loader.exec_module(measure)
 DROPPED = (*migrate.EXCEPTIONS, migrate.GENERAL)
 
 
@@ -144,6 +147,46 @@ def test_the_c9_probe_has_three_sufficient_premises_on_every_choice():
     assert sorted((e["set"], e["index"]) for e in load["soft_premises"]) == [(s, i) for s in ce4.SETS for i in (0, 1)]
     assert all([p["label"] for p in e["premises"]] == labels for e in load["soft_premises"])
     assert load["units"][migrate.CONDITIONED][0] == "OPEN"
+
+
+def test_c9_point_status_is_measured_on_every_choice_and_condition(tmp_path):
+    """F1: universal entailment UNKNOWN is not a point status. Both readings must save Lean's status on every
+    choice, under each sufficient condition and with none, including the two old unsafe query phrasings."""
+    from ve.readings_route import run_lean
+
+    assert all(any(name == "point-status-c9" for name, _ in measure.STEPS[document])
+               for document in ("after", "strict"))
+    probe = RUN / "probe-translation.ve.md"
+    meta, source = migrate.pilot.read(probe)
+    strict = tmp_path / "strict.ve.md"
+    migrate.pilot.write(strict, measure.strict_twin(meta), source)
+    scenarios = ["c9-unsafe-required", "c9-unsafe-not-required", "c9-compliance_unethical",
+                 "c9-compliance_against_guidelines", "c9-none-required"]
+    for document, path in (("after", probe), ("strict", strict)):
+        cases, labels = measure.point_status_cases(path)
+        saved = json.loads((RUN / "answers" / document / "point-status-c9.out").read_text())["cases"]
+        assert len(cases) == len(labels) == len(saved) == 16 * len(scenarios)
+        assert labels == scenarios * 16
+        assert len({tuple(map(tuple, case["choice"])) for case in cases}) == 16
+        for i, (case, label, record) in enumerate(zip(cases, labels, saved, strict=True)):
+            assert record["scenario"] == label
+            assert record["choice"] == case["choice"]
+            assert record["inner_request"] == case["inner"]
+            answer = record["answer"]
+            assert answer["id"] == case["id"] and answer["status"] == "ok"
+            assert answer["inner"]["status"] == "ok"
+            expected = ("UNDECIDED" if document == "after" and label != "c9-none-required"
+                        else "SETTLED yes")
+            assert answer["inner"]["point_status"] == expected, (document, i, answer)
+            relations = case["inner"]["model"]["relations"]
+            condition = next((p for p in ("compliance_unsafe", "compliance_unethical",
+                                           "compliance_against_guidelines") if relations[p]), None)
+            assert condition == (["compliance_unsafe", "compliance_unsafe", "compliance_unethical",
+                                  "compliance_against_guidelines", None][i % len(scenarios)])
+            c9_table = relations.get("soft__excepted__comply_operator_prompt")
+            expected_table = ([] if condition is None else [["c", "s"]]) if document == "after" else None
+            assert c9_table == expected_table
+        assert run_lean(cases[:len(scenarios)]) == [record["answer"] for record in saved[:len(scenarios)]]
 
 
 def test_each_candidate_id_is_the_loaders_binding_of_its_content():
