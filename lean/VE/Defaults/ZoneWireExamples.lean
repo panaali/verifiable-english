@@ -97,6 +97,22 @@ def oneCall (j : Json) : Bool :=
   zreq βEnv βR ξ'Sit (at_ "x_permitted" ["a"]), zreq πEnv αR (sitJ "assistant" ["a"] [exR "r1"]) (at_ "x_required" ["a"]),
   zreq lamEnv lamR lam13 (at_ "instructs" ["o0"])].all oneCall
 
+-- two true decisions of one rule at two tuples (DF-α with `x_required` closed, both observed no): DE10f twice, in
+-- tuple order; two rules' exceptions forced by their own stated conditions (β2 at {a}, urgent): DE11 twice
+#guard run (zreq (envJ [xReq "deny", xPerm] strictSoft) αR (sitJ "assistant" ["a", "b"] [exR "r1"]) (at_ "x_required" ["b"])
+    [at_ "x_required" ["a"] (some false), at_ "x_required" ["b"] (some false)]) ==
+  byDefault false "short" [("r1", ["a"]), ("r1", ["b"])] (["a", "b"].map fun e =>
+    rowJ "DE10f" [("rule", .str "r1"), ("tuple", toJson [e])])
+#guard run (zreq β2Env β2R (sitJ "assistant" ["a"] [exR "r1", exR "r2"] [("calm", []), ("urgent", [["a"]])])
+    (at_ "x_permitted" ["a"])) == byDefault true "short" [("r1", ["a"]), ("r2", ["a"])]
+  [rowJ "DE11" [("rule", .str "r1"), ("condition", toJson 1), ("tuple", toJson ["a"])],
+   rowJ "DE11" [("rule", .str "r2"), ("condition", toJson 0), ("tuple", toJson ["a"])]]
+-- a record of two entries: the second, a true switch, is listed
+#guard run (zreq (envJ [xReq, xPerm] userSoft) [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"alterable\":[\"user\"]"))]
+    (sitJ "assistant" ["a"] [exR "r1", "soft__off__r1__user"]) (at_ "x_permitted" ["a"])
+    (record := dec [("excepted", "r1")] ["a"] false :: recOff)) == byDefault true "short" []
+  [rowJ "DE13" [("decision", Json.mkObj [("off", .str "r1"), ("party", .str "user")]), ("tuple", toJson ["a"])]]
+
 /-! ## Zones with no rows, and the bounds -/
 
 -- the record rules out the observation: no completion, with the refuting check's label; no form, no forcedAll

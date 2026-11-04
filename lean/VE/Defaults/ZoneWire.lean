@@ -83,12 +83,13 @@ inductive ZoneLine
   | forced (rule : String) (vs : List Entity)
   | assumed (k : DecisionKey) (vs : List Entity)
 
-/-- The true decisions of the completion `w` (the record's, the switches off, and `w`'s enumerated atoms), in
-    `keyedDecisions` order then tuple order, each with its row. -/
+/-- The true decisions of the completion `w` (the record's and `w`'s enumerated atoms; a switch the record leaves
+    off is off in every completion, so no row names it), in `keyedDecisions` order then tuple order, each with its
+    row. -/
 def zoneLines (x : ZoneReplay) (forced : List (String × List Entity)) (w : List ((String × List Entity) × Bool)) :
     List ZoneLine :=
   let L := x.v.L
-  let rec' := x.record ++ switchesOffRecord L.D x.S.M x.record
+  let rec' := x.record
   let A := w.filterMap (fun e => if e.2 then some e.1 else none)
   let V := VE.NormDefaults.coneAtomVX x.S.M (VE.Weighing.openNames L) rec' (w.map (·.1)) A
   (keyedDecisions L.D).flatMap fun (k, n, ss) => (VE.NormDefaults.allTuples x.S.M ss).filterMap fun vs =>
