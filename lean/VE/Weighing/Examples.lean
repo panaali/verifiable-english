@@ -113,6 +113,9 @@ def gp (j : Nat) : RequestPath := blockPath ++ ["grants", toString j]
   ("weigh:grant:n:user:condition:2", cp 2), ("weigh:grant:n:user:condition:4", cp 4),
   ("weigh:grant:n:user:grant:operator", gp 2), ("weigh:grant:n:user:condition:0", cp 0), ("weigh:grant:m:operator", gp 1),
   ("weigh:grant:m:operator:condition:1", cp 1), ("weigh:grant:n:operator", gp 2), ("weigh:grant:n:operator:condition:0", cp 0)]
+-- the grantor's own grant first in the list (W-ζ3 has it last)
+#guard (weighOrigins (wd ζd (W [] [] [⟨"n", "operator", "developer", "dev_allows"⟩, ⟨"n", "user", "operator", "op_allows"⟩]))) ==
+  [("weigh:grant:n:operator", gp 0), ("weigh:grant:n:user", gp 1), ("weigh:grant:n:user:grant:operator", gp 0)]
 #guard (weighLabelled wζ).lookup "weigh:grant:n:user:grant:operator" ==
     some (condPremise wζ ⟨.off "n" "user", .necessary, atom "dev_allows" ["assistant"]⟩) &&
   (weighLabelled wζ).lookup "weigh:grant:n:user:condition:2" == some (condPremise wζ ⟨.off "n" "user", .necessary, U "serious"⟩)
