@@ -113,6 +113,24 @@ is named. At the seam after (3) the count was about 460.
 - `uv run python tools/regen_generated.py --write` after the last Lean and doc edit: `wrote 35 entries`, no file
   changed (`git status` clean).
 - Not run here: the full release gate (the chain runs it on the final HEAD).
+- The chain's gate on 20fe12347 (`gate-result.json`): `3 failed, 32001 passed`. All three were this item's, and
+  none is on main-known-red. Fixed:
+  - `test_committed_trust_table_covers_every_declaration` failed because 80 lines were unclassified. The eight new
+    declarations are now in `tools/trust-classes.json`, all in V classes, so the recorded allowance (V +85, K/S +0)
+    is unchanged:
+    - `VE/Attribution/Words.lean`'s six definitions are G[V];
+    - `runWants` is G[V], beside `runCase`;
+    - `wantsStrings` is D[V];
+    - `ResponseShape.Schemas.Reports.wants` is G[V].
+  - `test_committed_ledger_names_real_declarations` failed because consolidation step 7 now measures 729 removable
+    lines, not 727: `runCase` gained the kind's dispatch line. The ledger row in `docs/CONSOLIDATION-PLAN.md` now
+    reads 729 / net 669 / score 55.8.
+  - `test_corpus_reaches_every_answer_kind_of_every_route` failed because the corpus had no `reports-wants` case.
+    Two genuine cases are added to `tests/data/route-cases.jsonl`, recorded with `tests/route_case_recorder.py`
+    from `tests/test_reports_wants.py`: C-e's phrase alone, and a refusal beside both fields.
+  - Reran on the Mac runner (`zsh mac-pytest.sh --`): the three ids plus `tests/test_route_row_schemas.py`,
+    `tests/test_lean_handles.py` and `tests/test_lean_service_schema.py`, which read the whole corpus. Result:
+    `234 passed`. `tools/trust_map.py --check`: PASS.
 
 ## Spec re-read
 
