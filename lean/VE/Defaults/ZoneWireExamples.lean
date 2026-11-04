@@ -140,6 +140,21 @@ def recN (k : Nat) : List Json := List.replicate k (dec [("excepted", "g1")] ["o
 #guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [] (recN 1023 ++ [.null])) == .str "object expected"
 #guard zoneOf (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [] (recN 1024)) == .str "byDefault"
 
+/-! ## The words (review F3)
+
+`ve/defaults_words.json` is `zoneWordsJson`: it reads back as Lean's rows, and the joins are REPORT's choices 2 and 3
+(", " between a tuple's ids, " and " between a DE10″ completion's lines). -/
+
+open VE.Defaults.Wire (zoneWordsJson zoneHeads zoneLineWords)
+
+def wordsOf (key : String) (fields : List String) : Option (List (List String)) :=
+  ((zoneWordsJson.getObjValD key).getArr?.toOption).map fun a => a.toList.map fun h =>
+    fields.map fun f => ((h.getObjValD f).getStr?.toOption).getD "?"
+#guard wordsOf "heads" ["zone", "form", "row", "words"] == some (zoneHeads.map fun (z, f, r, w) => [z, f, r, w])
+#guard wordsOf "lines" ["row", "kind", "sentence", "inline"] ==
+  some (zoneLineWords.map fun (r, k, s, i) => [r, k, s, i])
+#guard zoneWordsJson.getObjValD "joins" == Json.mkObj [("tuple", .str ", "), ("and", .str " and ")]
+
 /-! ## Refusals -/
 
 #guard refusedZ (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) (record := [dec [("excepted", "g2")] ["o1"] true])) ==

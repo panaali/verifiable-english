@@ -18312,6 +18312,7 @@
         }
       ],
       "G[V]": [
+        "VE.Defaults.Wire.zoneWordsJson",
         "VE.Defaults.Wire.ZoneLine",
         "VE.Defaults.Wire.ZoneReplay",
         "VE.Defaults.Wire.ZoneReplay.X",
@@ -18386,7 +18387,8 @@
         "VE.Defaults.ZoneWireFixtures.ξ'Sit",
         "VE.Defaults.ZoneWireFixtures.πEnv",
         "VE.Defaults.ZoneWireFixtures.noOutcome",
-        "VE.Defaults.ZoneWireFixtures.recN"
+        "VE.Defaults.ZoneWireFixtures.recN",
+        "VE.Defaults.ZoneWireFixtures.wordsOf"
       ]
     },
     "VE/Defaults/ZoneWordsMain.lean": {
