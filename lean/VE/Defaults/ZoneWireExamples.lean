@@ -42,6 +42,7 @@ def πEnv : Json := envJ [xReq, regJ "x_permitted" "[\"assistant\"]" "permission
   strictSoft
 def lam2 : Json := sitJ "operator" ["o1", "o2"] [exR "g1"]
 def γSit : Json := sitJ "assistant" ["a"] [exR "r1", exR "r2"]
+def lam13 : Json := sitJ "operator" ((List.range 13).map (s!"o{·}")) [exR "g1"]
 
 /-! ## The zone and its rows (8.6) -/
 
@@ -83,13 +84,25 @@ def recOutw : List Json := [dec [("outweighs", "x_permitted"), ("lower", "helpfu
   [rowJ "DE13" [("decision", Json.mkObj [("outweighs", .str "x_permitted"), ("lower", .str "helpfulness"),
     ("higher", .str "safety")]), ("tuple", toJson ["a"])]]
 
+-- the wire's one enumeration answers as `defaultZoneOf` and `forcedAllOf` each do (DRI 2026-11-04, df-5 item 2)
+def oneCall (j : Json) : Bool :=
+  match VE.Defaults.Wire.viewOf j >>= fun v => VE.Defaults.Wire.replayZoneOn v j with
+  | .ok x => VE.Defaults.Wire.zoneFields x == VE.Defaults.Wire.zoneFieldsOf x
+      (defaultZoneOf x.v.L x.X x.S.M x.record x.obs x.r x.vs []) (forcedAllOf x.v.L x.X x.S.M x.record x.obs [])
+  | .error _ => false
+#guard [zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [at_ "instructs" ["o1"] (some false)],
+  zreq μ'Env μ'R (sitJ "assistant" ["a"] [exR "r1", exR "r2"] [("cond_a", [["a"]]), ("cond_b", [["a"]])]) (at_ "p" ["a"]),
+  zreq αEnv γR γSit (at_ "x_permitted" ["a"]), zreq δEnv δR δSit (at_ "x_required" ["a"]),
+  zreq αEnv αR (sitJ "assistant" ["a"] [exR "r1"]) (at_ "x_required" ["a"]),
+  zreq βEnv βR ξ'Sit (at_ "x_permitted" ["a"]), zreq πEnv αR (sitJ "assistant" ["a"] [exR "r1"]) (at_ "x_required" ["a"]),
+  zreq lamEnv lamR lam13 (at_ "instructs" ["o0"])].all oneCall
+
 /-! ## Zones with no rows, and the bounds -/
 
 -- the record rules out the observation: no completion, with the refuting check's label; no form, no forcedAll
 #guard run (zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [at_ "instructs" ["o1"] (some false)]
     [dec [("excepted", "g1")] ["o1"] false]) == shownZ [("zone", .str "noCompletion"), ("labels", toJson ["observed"])]
 -- DF-λ at 13 operators: unknown (budget), and no forcedAll, form or row from it
-def lam13 : Json := sitJ "operator" ((List.range 13).map (s!"o{·}")) [exR "g1"]
 #guard run (zreq lamEnv lamR lam13 (at_ "instructs" ["o0"])) ==
   shownZ [("zone", .str "unknown"), ("reason", .str "budget: 26 open atoms, over 12")]
 -- observations past `maxZoneObservations` are not read: unknown at 1,025, answered at 1,024
@@ -112,5 +125,9 @@ def refusedZ (j : Json) : Json := (run j).getObjValD "error"
 -- DF-θ: `weighing@0` is refused, by the layered decoder on main and by diagnostic 1 on a decoded document (WireExamples)
 #guard refusedZ (zreq envW αR (sitJ "assistant" ["a"] [exR "r1"]) (at_ "x_required" ["a"])) ==
   .str "UnsupportedProfile: Unsupported profile weighing@0"
+#guard holds dα fun L => VE.Defaults.Wire.weighingText ==
+    "UnsupportedProfile: answers that assume no exception are not available with weighing@0 yet" &&
+  match VE.Defaults.Wire.viewRest (zreq envW αR (sitJ "assistant" ["a"] [exR "r1"]) (at_ "x_required" ["a"])) L with
+  | .error e => e == VE.Defaults.Wire.weighingText | .ok _ => false
 
 end VE.Defaults.ZoneWireFixtures

@@ -3,7 +3,7 @@ import VE.Defaults.Wire
 
 /-! The `defaults-zone` kind (docs/spec/defeasible.md 3.8 and 4; plan 2.7, batch DF-5): the zone of an outcome at a
 tuple of one finite situation, with weighing's record and the observed outcomes, by df-5a's `defaultZoneOf`, with
-DE10's form (`zoneFormOf`), `forcedAllOf` and the rows that follow DE10 (DE11, DE10f, DE13).
+DE10's form (`zoneFormOf`), `forcedAllOf` (both from one `zoneMin`) and the rows that follow DE10 (DE11, DE10f, DE13).
 
 The request names a situation (`model`, `situationX`), a `record` of decisions by key (`decisionKeyJson`), the
 `observations` and the `query` (an outcome and a tuple). Lean selects every English row; Python renders them. -/
@@ -51,10 +51,11 @@ structure ZoneReplay where
 
 def ZoneReplay.X (x : ZoneReplay) : List (String × VE.Formula) := VE.NormDefaults.Packs.labelledX x.v.L.packs
 
-/-- The zone (`defaultZoneOf`); past `maxZoneObservations` observed outcomes, `unknown` before anything is listed. -/
-def ZoneReplay.zone (x : ZoneReplay) : DefaultZone Entity :=
-  if maxZoneObservations < x.obs.length then .unknown (.branch [] "observations size") else
-  defaultZoneOf x.v.L x.X x.S.M x.record x.obs x.r x.vs []
+/-- The enumeration (`zoneMin`), read once by `zoneFields`; past `maxZoneObservations` observed outcomes, `unknown`
+    before anything is listed. -/
+def ZoneReplay.min (x : ZoneReplay) : Except (DefaultZone Entity) (List (List (String × List Entity))) :=
+  if maxZoneObservations < x.obs.length then .error (.unknown (.branch [] "observations size")) else
+  zoneMin x.v.L x.X x.S.M x.record x.obs
 
 def replayZoneOn (v : DefaultsView) (j : Json) : Except String ZoneReplay := do
   let S ← VE.NormDefaults.Wire.situationX v.L (← j.getObjVal? "model")
@@ -112,14 +113,16 @@ def exceptedRule (D : VE.SoftNorms.SoftDoc) (n : String) : String :=
   | some (.excepted r, _) => r
   | _ => n
 
-/-- The answer: the zone; with `by default` or `left to`, DE10's form, `forced_all` and the completions shown (one,
-    or the two that differ), each a list of rows. `forcedAllOf` and `zoneFormOf` are read only for those two zones,
-    which come from a complete, nonempty enumeration; were either `none` there, the answer is `unknown`. -/
-def zoneFields (x : ZoneReplay) : List (String × Json) :=
+/-- The answer for the zone `zone` and the list `forced` (`defaultZoneOf` and `forcedAllOf`, from `zoneFields`'s one
+    enumeration): with `by default` or `left to`, DE10's form, `forced_all` and the completions shown (one, or the
+    two that differ), each a list of rows. `forced` and `zoneFormOf` are read only for those two zones, which come
+    from a complete, nonempty enumeration; were either `none` there, the answer is `unknown`. -/
+def zoneFieldsOf (x : ZoneReplay) (zone : DefaultZone Entity) (forced : Option (List (String × List Entity))) :
+    List (String × Json) :=
   let unknownF (why : String) : List (String × Json) := [("zone", .str "unknown"), ("reason", .str why)]
   let shown (tag : String) (value : List (String × Json)) (ws : List (List ((String × List Entity) × Bool))) :
       List (String × Json) :=
-    match zoneFormOf x.v.L x.S.M x.record, forcedAllOf x.v.L x.X x.S.M x.record x.obs [] with
+    match zoneFormOf x.v.L x.S.M x.record, forced with
     | some f, some fs =>
       [("zone", .str tag)] ++ value ++
       [("form", .str (formLabel f)),
@@ -127,13 +130,20 @@ def zoneFields (x : ZoneReplay) : List (String × Json) :=
           ("tuple", entityIds vs)])).toArray),
        ("completions", Json.arr (ws.map (fun w => Json.arr ((zoneLines x fs w).map ZoneLine.json).toArray)).toArray)]
     | _, _ => unknownF "size"
-  match x.zone with
+  match zone with
   | .byDefault b w => shown "byDefault" [("value", .bool b)] [w]
   | .leftTo _ w₁ w₂ => shown "leftTo" [] [w₁, w₂]
   | .notSaid _ _ => [("zone", .str "notSaid")]
   | .noCompletion l => [("zone", .str "noCompletion"), ("labels", toJson l)]
   | .unknown (.budget n k) => unknownF s!"budget: {n} open atoms, over {k}"
   | .unknown (.branch _ why) => unknownF why
+
+/-- The answer, with `zoneMin` evaluated once and given to `zoneOfMin` and `forcedOfMin` (`defaultZoneOf_eq`,
+    `forcedAllOf_eq`; DRI 2026-11-04, df-5 item 2). -/
+def zoneFields (x : ZoneReplay) : List (String × Json) :=
+  let m := x.min
+  zoneFieldsOf x (match m with | .error z => z | .ok Min => zoneOfMin x.v.L x.S.M x.record x.r x.vs Min)
+    (match m with | .error _ => none | .ok Min => forcedOfMin x.v.L x.S.M x.record Min)
 
 /-- `defaults-zone`, then the other `defaults-*` kinds (`defaultsCase`). -/
 def zoneCase (v : DefaultsView) (id kind : String) (j : Json) : Except String (Option Json) :=
