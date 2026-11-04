@@ -59,7 +59,7 @@ Then sc-9-comprehension and sc-9-candidate-ids, filed by the DRI. The next item 
 - `uv run python tools/regen_generated.py --check`: one stale entry, `history-tests` (`migrate_soft.py` ran `git cat-file`). The git call was removed instead; then `tools/history_tests.py --check` reported "every test that reads history is listed". The migration was rerun and the probe is byte-identical.
 - `uv run python tools/gate_collection.py --check --prebuilt`: "13 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 51/539 units, including `tests/test_sc9_migrate.py`.
-- Selected tests on the runner: see the next section.
+- Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `a60572b3` (clean) ran on ve-mac-1: "recorded 42 units … 0 failed"; summary "327s; exit=0; failed/error ids=0". Only this report changed after it.
 - Not run: the full gate, which the chain runs on the final HEAD.
 
 ## Self-review against BUILDER-CHECKLIST
