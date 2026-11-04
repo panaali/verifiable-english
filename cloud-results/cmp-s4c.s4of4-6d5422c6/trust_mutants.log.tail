@@ -1,0 +1,5 @@
+trust_mutants: 11 definitions, 179 mutants (4 to run), 4 jobs, base a12f56fd7162
+trust_mutants: 32 KILLED, 0 SURVIVOR, 0 UNKNOWN, 9 INVALID, 3 ALLOWED, 0 NOT RUN, 135 OTHER SHARD in 205 s; 40 carried from 0675710494a6 (check-only change: lean/VE/Discourse/ComposeExamples.lean, lean/declarations.txt)
+trust_mutants: D[V], trusted: 1 KILLED, 4 INVALID, 13 OTHER SHARD
+trust_mutants: G[V], trusted: 31 KILLED, 5 INVALID, 3 ALLOWED, 122 OTHER SHARD
+trust_mutants: steps: wall plan 6.7 s, scratch 2.2 s, control_build 0.1 s, probe_install 1 s, control_probes 81 s, mutants 109.2 s, cleanup 5 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 82.2 s (2), mutant_builds 8.5 s (4), mutant_checks 19.1 s (2), stage_controls 8.2 s (1), mutant_probes 79.3 s (1)
