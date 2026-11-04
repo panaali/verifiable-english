@@ -197,7 +197,7 @@ theorem decodeSide_ok {lid : String} {j : Json} {rs : List Ref} (h : decodeSide 
 
 theorem decodeSide_render (lid : String) (rs : List Ref) (h : ∀ r ∈ rs, r.idOk = true) :
     decodeSide lid (.arr (rs.map Ref.render).toArray) = .ok rs := by
-  simp only [decodeSide, List.toList_toArray]
+  simp only [decodeSide]
   exact decodeRefs_render lid rs h
 
 /-- What a decoded link carries: token ids, and refs whose ids are tokens. -/
