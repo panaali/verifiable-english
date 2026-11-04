@@ -1,0 +1,12 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:68 VE.Commands.proofTask (G[V], trusted) list-empty: (proofSentence s).map -> [] (lean/VE/Commands/Run.lean:68: Function expected at)
+UNKNOWN lean/VE/Commands/Run.lean:49 VE.Commands.proofPreds (G[V], trusted) list-empty: ctx.se.ne.regulated.filter -> [] (lean/VE/Commands/Run.lean:49: Function expected at)
+UNKNOWN lean/VE/Commands/Run.lean:137 VE.Commands.Run.readingJson (D[V], trusted) list-empty: (r.fills.zipIdx 1) -> [] (lean/VE/Commands/Run.lean:138: Invalid field notation: Type of)
+SURVIVOR lean/VE/Commands/Run.lean:137 VE.Commands.Run.readingJson (D[V], trusted) list-first: (r.fills.zipIdx 1) -> ((r.fills.zipIdx 1).take 1)
+UNKNOWN lean/ResponseShape/Schemas.lean:50 ResponseShape.Schemas.files (G[V], trusted) list-drop-first: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> ([ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file,... (lean/ResponseShape/Skeletons.lean:29: evaluate.json#/row: unresolved $ref common.json#/$defs/case...)
+SURVIVOR lean/VE/Commands/Run.lean:146 VE.Commands.Run.outcomeFields (D[V], trusted) list-drop-first: [("outcome", .str "many"), ("readings", Json.arr (rs.map (readingJson q)).toArray)] -> ([("outcome", .str "many"), ("readings", Json.arr (rs.map (readingJson q)).toArray)].drop 1)
+SURVIVOR lean/VE/Commands/Run.lean:117 VE.Commands.Run.decodeRequest (D[V], trusted) list-last: qs -> (qs.reverse.take 1)
+trust_mutants: 29 KILLED, 3 SURVIVOR, 4 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 1094 s
+trust_mutants: D[V], trusted: 16 KILLED, 3 SURVIVOR, 1 UNKNOWN, 1 INVALID, 156 OTHER SHARD
+trust_mutants: G[V], trusted: 13 KILLED, 3 UNKNOWN, 1 INVALID, 112 OTHER SHARD
+trust_mutants: steps: wall plan 7 s, scratch 1.5 s, control_build 0.1 s, probe_install 0.9 s, control_probes 78.2 s, mutants 1006 s, cleanup 0.3 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 151.5 s (5), mutant_builds 65.5 s (43), mutant_checks 433.4 s (37), stage_controls 35.1 s (7), mutant_probes 3363.2 s (29)
