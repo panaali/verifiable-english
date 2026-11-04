@@ -132,6 +132,9 @@ UNBUILT = {
     "docs/lean-first/b16d/seed_faults.py",
     "docs/lean-first/b16e/seed_faults.py",
     "docs/lean-first/b16f/seed_faults.py",
+    # An outermost evidence recording, run by hand on a checkout of AT-1w's base: `pytest.main` with an
+    # in-process plugin that wraps the two functions it records.
+    "docs/attitudes/at-1w/record_parity.py",
     # Frozen with the P1 preregistration (experiments/P1-deference/freeze.json); a serial outermost run
     # from a shell that passes no plugin option.
     "experiments/p1_preflight.py",
