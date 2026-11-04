@@ -1,6 +1,7 @@
 # ap-3db build report: AP-3's switch-on (the hook, the entry points, D-33), with frames and each act read once
 
-**Status:** deliverables (1) to (5) are built: the hook, every `acts@0` entry point classified, `readings_lexical_only`,
+**Status:** merged with main (`fd9f25f9b`). The selected tests (488 units) and trust_mutants (0 survivors) pass on
+the merged HEAD. Deliverables (1) to (5) are built: the hook, every `acts@0` entry point classified, `readings_lexical_only`,
 the block's `frames`/`adverbs` (E5j) and each joined act read once. **No DRI signature is reserved.** The DELTA rows
 cite the item's ruling (`reviews/dri-decisions-20261102-ap-3db.md` items 1, 3, 4), jt-3p's item 3 (the English
 `actions_version` raise), R1 and R16. Trust: K +0, S +15, untied V +107 (trusted +122), under R16. Size: about 1,970
@@ -190,9 +191,12 @@ its file, definition and the failing `#guard`).
 - Restored: 7 passed.
 - No Python or Rust product code changed, so there is no Python or Rust product bug to seed.
 
-**trust_mutants:** the final run, on `02a15ce6e` (clean), ran on ve-mac-1. Command:
+**trust_mutants:** the final run, on the merged HEAD `3cda58df` (clean), ran on the VM: the cloud returned three of its ten shards
+unjudged, and the tool and base had changed with the merge, so it made a full run of 19,112 s. The run before the
+merge, on `02a15ce6e` on ve-mac-1, gave the same counts (`trust-mutants-run3.json`). Command:
 `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Service/ActsExamples.lean --test lean/VE/Acts/DecodeExamples.lean --allow … --rescore … --json …`.
-- It was a full run: the rescore reused nothing, because the inputs had changed.
+- Both were full runs: the rescore reused nothing, because the inputs had changed (the Lean before the merge; the tool
+  and the base after it).
 - Result: 29 definitions, 160 mutants: **57 KILLED, 0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 91 ALLOWED, 0 NOT RUN**, exit 0
   ([trust-mutants.json](trust-mutants.json)).
 - Run 1 is kept as `trust-mutants-run1.json`. It had no `--test`, so it saw no fixture outside the mutated module's
@@ -263,7 +267,11 @@ trusted +122.
     sweep's 84 tests pass, with the same ids.
   - The ledger counts the `In` forms, and the plan's figures for steps 4, 7 and 8b are recomputed (4: 697, 7: 729,
     8b: 3,719).
-- Final run, on `02a15ce6e`: `mac-pytest.sh -- -q -n 6 <the 153 units> tests/test_acts_lexical_mutants.py
+- On the merged HEAD `3cda58df` (main `fd9f25f9b` merged, clean):
+  `mac-pytest.sh --select -- --base fd9f25f9bfaa --run` on ve-mac-1 (cheap units first, then 6 shards) gave
+  "recorded 488 units …; 0 failed", exit 0 (log `/tmp/ap3db-sel3.log`). This is the selection that counts for the
+  final code.
+- Before the merge, on `02a15ce6e`: `mac-pytest.sh -- -q -n 6 <the 153 units> tests/test_acts_lexical_mutants.py
   tests/test_acts_lexical.py tests/test_rd9_statements.py tests/test_trust_budget.py <the ledger test>` (VM fallback):
   15,634 passed, 3 skipped, exit 0. Log: `/tmp/ap3db-rest.log`.
 - Earlier runs on `02a15ce6e`'s code: `tests/test_assurance_manifest.py` 139 passed, `test_acts_joined_route.py` and
@@ -398,7 +406,9 @@ See [DELTA.md](DELTA.md), rows 1 to 6.
 
 ## 11. Commits (`main..HEAD --no-merges`)
 
-- this report and its evidence lines (the last commit)
+- this report's final evidence lines and the merged-tree trust_mutants JSON (the last commit)
+- `3cda58df1` ap-3db: third trust_mutants run (02a15ce6e) kept for the rescore after the main merge
+- `9ec995e22` ap-3db: REPORT (deliverables, entry points, fixtures, seeded bugs, trust_mutants, size, tests, deviations, self-review)
 - `bdea9f830` ap-3db evidence: trust_mutants on 02a15ce6e (full run, --test both fixture files, allow file): 57 killed, 91 allowed, 12 invalid, 0 survivor, 0 unknown
 - `02a15ce6e` ap-3db: fixes from the selected run: the lexical sweep's inlined decoder ends before the act grammar (the reading moves after the lexical decoder); the consolidation ledger counts the In
 - `7ad9b3e11` ap-3db: NormDefaults.Run.runCase keeps the approved RD-9 text (runCaseIn beside it, runCase_eq); the lexical test reads D-16 on the elaborating route; R16 allowance S +15, V +107
