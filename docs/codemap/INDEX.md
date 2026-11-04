@@ -83,7 +83,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
-- [lean/VE/Commands/](lean__VE__Commands.md) — 5 modules — -
+- [lean/VE/Commands/](lean__VE__Commands.md) — 6 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -

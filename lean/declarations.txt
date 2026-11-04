@@ -4613,7 +4613,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 1b304506ad92e84aa8f9dcad02cedebcfea91b5db8c62eda40d10d3d9bdc6c53
+module VE.Audit 2d163ecae67f7ce36d27590b6df3d37bd939cc59d1c5f74a34868b8bd7d339db
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -7320,6 +7320,9 @@ module VE.Commands.RunExamples b927c64782e5f5358536e92036e6b14f54cd3fcd305483eb7
 132:0-133:106 def VE.Commands.RunExamples.targets@VE.Commands.RunExamples
 141:0-141:52 def VE.Commands.RunExamples.youBob@VE.Commands.RunExamples
 152:0-153:128 def VE.Commands.RunExamples.rawEnv@VE.Commands.RunExamples
+module VE.Commands.RunSplit a66d0017d75e42630788728d3aee9bf77becdf20cf44fa642c8a141952f39fec
+12:0-22:48 theorem VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b@VE.Commands.RunSplit
+24:0-29:85 theorem VE.Commands.RunSplit.typed_facts_are_ci1s@VE.Commands.RunSplit
 module VE.Commands.Texts 216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365b85f66ec2
 6:0-6:78 def VE.Commands.Texts.nonAscii@VE.Commands.Texts
 7:0-7:65 def VE.Commands.Texts.empty@VE.Commands.Texts
@@ -26477,4 +26480,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE f036c14043fe9dc43b944288a0fd2458ecfd9c3ba475d182ae6bcde35acc898d
+module VE 4666233f5a1dc01d0ee02e1691639323bd26a91289c147ea8d26d448c0e8e629
