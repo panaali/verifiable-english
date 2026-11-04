@@ -164,6 +164,9 @@ def _main(argv=None):
     if argv[:1] == ["calc"]:
         from .calc import main as calc_main
         return calc_main(argv[1:])
+    if argv[:1] == ["judgments"]:
+        from .judgment_lines import main as judgments_main
+        return judgments_main(argv[1:])
     if argv[:1] == ["scope"]:
         from .scope import main as scope_main
         return scope_main(argv[1:])
@@ -224,6 +227,7 @@ def _main(argv=None):
     commands.add_parser("calc", help="check a ve-calc@0 calculation case (python -m ve calc check FILE)")
     commands.add_parser("definitions", help="preview definition wordings; --adopt English definitions and glossaries")
     commands.add_parser("document", help="document check, render, coverage and readings")
+    commands.add_parser("judgments", help="read an authored source with its bound judgment names")
     commands.add_parser("scope", help="explain a scope@0 document's governed units (python -m ve scope explain FILE)")
     commands.add_parser("speech-acts", help="experimental speech-act source inspection")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")

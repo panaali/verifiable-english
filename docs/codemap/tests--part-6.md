@@ -1,4 +1,3 @@
-- `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
@@ -83,3 +82,4 @@
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
 - `tests/test_surface_registry.py` — (no module docstring)
 - `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
+- `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
