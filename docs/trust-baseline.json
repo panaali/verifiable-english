@@ -1972,6 +1972,13 @@
    "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rdb, 2026-11-02",
    "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
+  },
+  {
+   "class": "V",
+   "lines": 141,
+   "reason": "ci-2: V +141: VE/Commands/Run.lean +133 (the proof task, readInstruction, the request decoder and answer encoder, G[V]/D[V] untied; ofPart and message G[R], holeStart G[I]), VE/Commands/Texts.lean +2 (proofAct, G[V]), ResponseShape/Skeletons.lean +3, VE/Service/Protocol.lean +1, VE/Service/Registry.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0; Schemas/Command.lean G[R], RunExamples.lean T; no R6 part (the Python deletions are ci-2b's)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2, 2026-10-18",
+   "commit": "94580b39b2aa2d391c35eb5c47a08e8bf314e828"
   }
  ]
 }
