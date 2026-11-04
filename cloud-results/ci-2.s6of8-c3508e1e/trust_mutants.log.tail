@@ -1,0 +1,11 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:131 VE.Commands.Run.readingJson (D[V], trusted) list-empty: (q.s.toList.takeWhile VE.SpeechActs.Wire.asciiSpace) -> [] (lean/VE/Commands/Run.lean:131: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Commands/Run.lean:78 VE.Commands.proofTask (G[V], trusted) list-empty: [g] -> [] (lean/VE/Commands/Run.lean:78: Unknown identifier `g`)
+UNKNOWN lean/VE/Commands/Run.lean:116 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: qs.map (·.1) -> [] (lean/VE/Commands/Run.lean:116: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Commands/Run.lean:137 VE.Commands.Run.readingJson (D[V], trusted) list-empty: (r.fills.zipIdx 1).map -> [] (lean/VE/Commands/Run.lean:137: Function expected at)
+SURVIVOR lean/VE/Commands/Run.lean:149 VE.Commands.Run.outcomeFields (D[V], trusted) list-drop-last: [("outcome", .str "limit"), ("text", .str Texts.limitText)] -> ([("outcome", .str "limit"), ("text", .str Texts.limitText)].dropLast)
+UNKNOWN lean/ResponseShape/Schemas.lean:50 ResponseShape.Schemas.files (G[V], trusted) list-drop-first: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> (([ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file... (lean/ResponseShape/Skeletons.lean:29: evaluate.json#/row: unresolved $ref common.json#/$defs/case...)
+trust_mutants: 31 KILLED, 1 SURVIVOR, 5 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 1553 s
+trust_mutants: D[V], trusted: 20 KILLED, 1 SURVIVOR, 3 UNKNOWN, 153 OTHER SHARD
+trust_mutants: G[V], trusted: 11 KILLED, 2 UNKNOWN, 1 INVALID, 115 OTHER SHARD
+trust_mutants: steps: wall plan 10.7 s, scratch 2.1 s, control_build 0.3 s, probe_install 1.2 s, control_probes 118.9 s, mutants 1417.6 s, cleanup 1.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 377.7 s (8), mutant_builds 119.6 s (45), mutant_checks 787.2 s (36), stage_controls 120.9 s (6), mutant_probes 4547.1 s (32)
