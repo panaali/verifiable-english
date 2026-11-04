@@ -10,6 +10,7 @@ readers (tools/gate_collection.py, tools/batch_evidence.py) with the new field.
 """
 from __future__ import annotations
 
+import ast
 import base64
 import hashlib
 import json
@@ -56,6 +57,10 @@ def packed(value) -> str:
 
 
 GOOD = test_schedule.record_field(TIMED)
+# JSON nested deeper than the parser's stack: json.loads raises RecursionError on it, not ValueError
+# (`test_every_record_reader_leaves_a_value_nested_too_deep_unused` checks that it still does).
+DEEP = b"[" * 100_000 + b"]" * 100_000
+DEEP_ZLIB = base64.b64encode(zlib.compress(DEEP)).decode()
 BAD = {
     "absent": None, "not an object": [GOOD], "format other": {**GOOD, "format": "ve-test-durations@2"},
     "format retyped": {**GOOD, "format": 1}, "seconds missing": {k: v for k, v in GOOD.items() if k != "seconds_zlib"},
@@ -73,6 +78,7 @@ BAD = {
     "unrecorded missing": {k: v for k, v in GOOD.items() if k != "unrecorded_seconds"},
     "unrecorded retyped": {**GOOD, "unrecorded_seconds": "0.3"},
     "unrecorded negative": {**GOOD, "unrecorded_seconds": -0.3},
+    "seconds nested 100k deep": {**GOOD, "seconds_zlib": DEEP_ZLIB},
 }
 
 
@@ -143,6 +149,12 @@ def test_the_base_durations_come_from_the_base_gate_record(repository):
     note(repository, base, durations={**GOOD, "tests": True}, counts={"selected": 1})
     assert gate.base_durations(result, None, repository)[1].measured is None
     note(repository, base, durations=BAD["seconds not zlib"])
+    assert gate.base_durations(result, None, repository) is None
+    note(repository, base, durations=BAD["seconds nested 100k deep"])
+    assert gate.base_durations(result, None, repository) is None
+    deep = repository.parent / "deep-note.json"
+    deep.write_bytes(DEEP)
+    git(repository, "notes", f"--ref={gate_collection.NOTES_REF}", "add", "-f", "-F", str(deep), base)
     assert gate.base_durations(result, None, repository) is None
     # A base-only record (no gate ran on it) holds no durations; neither does a commit no record names.
     gate_collection.write_record(base, IDS, cwd=repository)
@@ -317,6 +329,13 @@ def oversize_seconds(path: Path) -> Path:
     return path
 
 
+def deep_seconds(path: Path) -> Path:
+    data = json.loads(record_file(path, MEASURED).read_text())
+    data["durations"]["seconds_zlib"] = DEEP_ZLIB
+    path.write_text(json.dumps(data))
+    return path
+
+
 BAD_FILES = {
     "missing": lambda path: path,
     "not JSON": lambda path: (path.write_text("{not json"), path)[1],
@@ -328,6 +347,7 @@ BAD_FILES = {
     "not a file": lambda path: (path.mkdir(), path)[1],
     "nested 100k deep": lambda path: (path.write_text("[" * 100_000 + "]" * 100_000), path)[1],
     "not UTF-8": lambda path: (path.write_bytes(b'{"durations": "\xff"}'), path)[1],
+    "seconds nested 100k deep": deep_seconds,
 }
 
 
@@ -352,11 +372,16 @@ def test_a_record_file_larger_than_the_limit_is_not_read(tmp_path, committed_fil
     assert planned(tmp_path, record, "record")[0] != committed_plan
 
 
-def test_a_record_file_that_did_not_time_its_whole_selection_names_no_measured_tests(tmp_path):
+def test_a_record_file_that_did_not_time_its_whole_selection_names_no_measured_tests(tmp_path, committed_file):
     record = record_file(tmp_path / "gate-record.json", MEASURED, counts={"selected": len(COLLECTED) + 1})
     assert gate.record_file_durations(record)[1].measured is None
     record = record_file(tmp_path / "gate-record.json", MEASURED, collection={"collected_zlib": "***"})
     assert gate.record_file_durations(record)[1].measured is None
+    # IDs nested too deep are malformed IDs too: the durations are used, with no measured tests.
+    record = record_file(tmp_path / "gate-record.json", MEASURED, collection={"collected_zlib": DEEP_ZLIB})
+    assert gate.record_file_durations(record)[1].measured is None
+    result = planned(tmp_path, record, "deep ids")[1]
+    assert result["durations_source"]["measured"] is None and result["durations_source"]["record_file"]["used"]
     assert gate.record_file_durations(record_file(tmp_path / "gate-record.json", MEASURED))[1].measured == \
         frozenset(COLLECTED)
 
@@ -374,3 +399,70 @@ def test_a_base_note_wins_over_the_record_file(tmp_path, repository, committed_f
     assert test_schedule.read_source(path).durations == COMMITTED
     assert result["durations_source"]["base"] == base
     assert result["durations_source"]["record_file"] == {"used": False, "sha256": None, "recorded": None}
+
+
+def test_every_record_reader_leaves_a_value_nested_too_deep_unused(tmp_path):
+    """Each reader that leaves a malformed gate record, note or durations file unused does so for one nested deeper
+    than the parser's stack, which raises RecursionError, not ValueError (eff-20261103-1 F1): the file or note
+    itself, or a compressed field inside it."""
+    with pytest.raises(RecursionError):
+        json.loads(DEEP)
+    path = tmp_path / "deep.json"
+    path.write_bytes(DEEP)
+    assert test_schedule.json_value(DEEP) is None and test_schedule.json_value(DEEP.decode()) is None
+    assert test_schedule.zlib_json_value(DEEP_ZLIB, len(DEEP)) is None
+    assert test_schedule.read_record_field(BAD["seconds nested 100k deep"]) is None
+    assert gate_collection.decode_ids(DEEP_ZLIB) is None
+    assert gate_collection.parse_record(DEEP.decode(), "c" * 40, "t" * 40) is None
+    assert test_schedule.read_source(path) == ({}, test_schedule.UNRECORDED_SECONDS, None)
+    assert gate.read_previous(path) is None
+    assert gate.record_file_durations(path) is None
+    assert gate.record_file_durations(deep_seconds(tmp_path / "deep-seconds.json")) is None
+
+
+def test_the_compressed_field_decoder_takes_exactly_its_limit():
+    encoded = packed(["tests/a.py::t"])
+    size = len(json.dumps(["tests/a.py::t"]).encode())
+    assert test_schedule.zlib_json_value(encoded, size) == ["tests/a.py::t"]
+    assert test_schedule.zlib_json_value(encoded, size - 1) is None
+    assert test_schedule.json_value(b"[1]") == [1] and test_schedule.json_value("null") is None
+    for malformed in (None, 7, True, [encoded], "***", base64.b64encode(b"not zlib").decode(), "é"):
+        assert test_schedule.zlib_json_value(malformed, size) is None
+
+
+# The json.loads calls of the gate's record modules outside `test_schedule.json_value`, and why each may raise:
+# every other reader of a record, note, durations or retry file parses through json_value, so none lets the parser's
+# RecursionError out of a reader that leaves a malformed input unused.
+PARSER_CALLS = {
+    ("tools/gate.py", "read_trust"): "trust_map's own output: a malformed one fails the gate",
+    ("tools/gate.py", "collect"): "the gate's own collection events: a malformed one fails the gate",
+    ("tools/gate.py", "main"): "the committed policy and the suite's own events: malformed ones fail the gate",
+    ("tools/gate_collection.py", "collect"): "the collection's own events: a malformed one fails the collection",
+    ("tools/gate_collection.py", "read_gate_result"): "the note text parse_record has just parsed",
+    ("tools/test_schedule.py", "record_field"): "durations_text's own output",
+    ("tools/test_schedule.py", "json_value"): "the one parser that leaves no parser error out",
+}
+
+
+def json_parser_calls(file: str) -> set[tuple[str, str]]:
+    """(file, innermost enclosing function or "<module>") of each json.load(s) call in `file`."""
+    found = set()
+
+    def visit(node, owner: str) -> None:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            owner = node.name
+        if isinstance(node, ast.ImportFrom) and node.module == "json":
+            found.add((file, f"from json import in {owner}"))
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr in {"load", "loads"} \
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == "json":
+            found.add((file, owner))
+        for child in ast.iter_child_nodes(node):
+            visit(child, owner)
+
+    visit(ast.parse((ROOT / file).read_text()), "<module>")
+    return found
+
+
+def test_the_record_modules_parse_untrusted_json_only_through_json_value():
+    files = sorted({file for file, _ in PARSER_CALLS})
+    assert set().union(*(json_parser_calls(file) for file in files)) == set(PARSER_CALLS)
