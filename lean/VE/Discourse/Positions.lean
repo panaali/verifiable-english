@@ -503,8 +503,8 @@ theorem rewrite_denote (E : VE.Environment) (ctx : List String) (A : VE.Formula)
       simp only [Row.apply, place_binder S _ j a ρ ha, ih, slotMeaning, ha, Option.some.injEq, exists_eq_left']
     | assertive σ Dr =>
       have hD := restriction_at (by simpa [Row.typed] using ht.1) S
-      simp only [Row.apply, VE.Discourse.assertive, VE.Formula.denote, place_var, ih, slotMeaning, hD,
-        VE.Term.denote, List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq]
+      simp only [Row.apply, VE.Discourse.assertive, VE.Discourse.assertiveAt, VE.Formula.denote, place_var, ih,
+        slotMeaning, hD, VE.Term.denote, List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq]
       exact exists_congr fun a => and_congr_right fun _ => and_congr_right fun _ => and_congr_left fun _ =>
         forall_congr' fun b => imp_congr_right fun _ => imp_congr_right fun _ =>
           ⟨fun ⟨_, h1, h2⟩ => h1.trans h2.symm, fun h => ⟨a, h, rfl⟩⟩

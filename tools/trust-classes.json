@@ -3016,7 +3016,12 @@
       ],
       "D[V]": [
         "VE.Discourse.assertive",
-        "VE.Discourse.uniqueD"
+        "VE.Discourse.assertiveAt",
+        "VE.Discourse.assertiveOpen",
+        "VE.Discourse.raise1",
+        "VE.Discourse.uniqueAt",
+        "VE.Discourse.uniqueD",
+        "VE.Discourse.uniqueOpen"
       ]
     },
     "VE/Discourse/Documents.lean": {
@@ -3349,6 +3354,59 @@
         "VE.Discourse.PositionsExamples.slot",
         "VE.Discourse.PositionsExamples.twoDescriptions",
         "VE.Discourse.PositionsExamples.written4"
+      ]
+    },
+    "VE/Presupposition/Frame.lean": {
+      "S": [
+        "VE.Presupposition.Frame",
+        "VE.Presupposition.Frame.Reach",
+        "VE.Presupposition.Frame.binders",
+        "VE.Presupposition.Frame.close",
+        "VE.Presupposition.Frame.cls",
+        "VE.Presupposition.Frame.goal",
+        "VE.Presupposition.Frame.plug",
+        "VE.Presupposition.Frame.shallow",
+        "VE.Presupposition.PositionClass"
+      ],
+      "C": [
+        "VE.Presupposition.Frame.locate",
+        "VE.Presupposition.Frame.shallowB",
+        "VE.Presupposition.instDecidableShallow"
+      ]
+    },
+    "VE/Presupposition/Examples.lean": {
+      "T": [
+        "VE.Presupposition.Examples.allClasses",
+        "VE.Presupposition.Examples.consF",
+        "VE.Presupposition.Examples.ev",
+        "VE.Presupposition.Examples.f4",
+        "VE.Presupposition.Examples.f5a",
+        "VE.Presupposition.Examples.f5b",
+        "VE.Presupposition.Examples.f5c",
+        "VE.Presupposition.Examples.isOpen",
+        "VE.Presupposition.Examples.m5",
+        "VE.Presupposition.Examples.mAliceNone",
+        "VE.Presupposition.Examples.mAliceOne",
+        "VE.Presupposition.Examples.mAliceTwo",
+        "VE.Presupposition.Examples.mgrOf",
+        "VE.Presupposition.Examples.mgrOfX",
+        "VE.Presupposition.Examples.model",
+        "VE.Presupposition.Examples.noMgr",
+        "VE.Presupposition.Examples.owner",
+        "VE.Presupposition.Examples.person",
+        "VE.Presupposition.Examples.ready",
+        "VE.Presupposition.Examples.shopClosed",
+        "VE.Presupposition.Examples.shopOpenNoOwner",
+        "VE.Presupposition.Examples.shopOpenOwnerReady",
+        "VE.Presupposition.Examples.theManager",
+        "VE.Presupposition.Examples.theMgr",
+        "VE.Presupposition.Examples.theMgrU",
+        "VE.Presupposition.Examples.theOwner",
+        "VE.Presupposition.Examples.theOwnerU",
+        "VE.Presupposition.Examples.thePl",
+        "VE.Presupposition.Examples.thePlU",
+        "VE.Presupposition.Examples.their",
+        "VE.Presupposition.Examples.theirU"
       ]
     },
     "VE/Discourse/Resolve.lean": {
