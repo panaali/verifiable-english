@@ -1,0 +1,14 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-empty: zoneLineWords.map -> [] (lean/VE/Defaults/ZoneWordsMain.lean:12: Function expected at)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:9 main (G[V], trusted) list-first: [ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .str... -> ([ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .st...
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-first: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].take 1) (lean/VE/Defaults/ZoneWordsMain.lean:11: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-drop-last: zoneLineWords -> (zoneLineWords.dropLast)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:9 main (G[V], trusted) list-last: [ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .str... -> ([ ("heads", toJson (zoneHeads.map fun (z, f, r, w) => Json.mkObj [("zone", .str z), ("form", .st...
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-drop-middle: ("form", .str f), -> 
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-drop-first: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].drop 1) (lean/VE/Defaults/ZoneWordsMain.lean:11: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:12 main (G[V], trusted) list-last: zoneLineWords -> (zoneLineWords.reverse.take 1)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:13 main (G[V], trusted) list-drop-middle: ("sentence", .str s), -> 
+trust_mutants: 47 KILLED, 6 SURVIVOR, 3 UNKNOWN, 1 INVALID, 4 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 3083 s
+trust_mutants: D[V], trusted: 8 KILLED, 1 ALLOWED, 101 OTHER SHARD
+trust_mutants: G[V], trusted: 39 KILLED, 6 SURVIVOR, 3 UNKNOWN, 1 INVALID, 3 ALLOWED, 326 OTHER SHARD
+trust_mutants: steps: wall plan 8.8 s, scratch 2.5 s, control_build 1 s, probe_install 1.1 s, control_probes 313 s, mutants 2751.7 s, cleanup 4.6 s, reads 0.1 s; lake control_build 0.9 s (1), probe_install 1.1 s (1), control_probes 663 s (6), mutant_builds 848 s (62), mutant_checks 2554.9 s (35), stage_controls 343.1 s (6), mutant_probes 6930.8 s (49)
