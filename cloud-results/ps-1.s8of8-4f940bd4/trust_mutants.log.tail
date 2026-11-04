@@ -1,0 +1,11 @@
+trust_mutants: 11 definitions, 68 mutants (8 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Presupposition/Frame.lean:56 VE.Presupposition.Frame.Reach (S, trusted) eq-le: = -> ≤ (lean/VE/Presupposition/Frame.lean:56: failed to synthesize)
+UNKNOWN lean/VE/Presupposition/Frame.lean:53 VE.Presupposition.Frame.close (S, trusted) all-any: all -> any (lean/VE/Presupposition/Frame.lean:53: Unknown constant `VE.Formula.any`)
+UNKNOWN lean/VE/Presupposition/Frame.lean:88 VE.Presupposition.Frame.shallow (S, trusted) eq-le: = -> ≤ (lean/VE/Presupposition/Frame.lean:88: failed to synthesize)
+SURVIVOR lean/VE/Presupposition/Frame.lean:60 VE.Presupposition.Frame.Reach (S, trusted) arm-false: ∃ v, S.domain s v ∧ f.Reach S (v :: ρ) τ -> False (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:11...)
+SURVIVOR lean/VE/Presupposition/Frame.lean:40 VE.Presupposition.Frame.binders (S, trusted) list-first: f.binders -> (f.binders.take 1) (the proofs it breaks: lean/VE/Presupposition/Frame.lean:138, lean/VE/Presupposition/Frame.lean:14...)
+UNKNOWN lean/VE/Presupposition/Frame.lean:58 VE.Presupposition.Frame.Reach (S, trusted) arm-true: l.denote S ρ ∧ f.Reach S ρ τ -> True (lean/VE/Presupposition/Examples.lean:72: Invalid projection: Projections are not supported on thi...)
+trust_mutants: 2 KILLED, 2 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 60 OTHER SHARD in 234 s
+trust_mutants: D[V], trusted: 1 KILLED, 20 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 2 SURVIVOR, 4 UNKNOWN, 40 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 85 s, mutants 129.6 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 123.8 s (5), mutant_builds 138.6 s (12), mutant_checks 80.5 s (7), stage_controls 54 s (3), mutant_probes 6.3 s (2)
