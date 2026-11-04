@@ -461,6 +461,7 @@ import VE.Time.Semantics
 import VE.Time.Syntax
 import VE.Time.Wire
 import VE.Typing
+import VE.Weighing.Conditions
 import VE.Weighing.ZoneExamples
 import VE.WireContract.Engine
 
@@ -8247,6 +8248,8 @@ import VE.WireContract.Engine
 #print axioms VE.Time.yearLen_val
 #print axioms VE.Time.yearStart_mono
 #print axioms VE.Time.yearStart_succ
+#print axioms VE.Weighing.WeighFacts.always
+#print axioms VE.Weighing.WeighFacts.grants
 #print axioms VE.Weighing.ZoneFixtures.admissible0
 #print axioms VE.Weighing.ZoneFixtures.notAdmissible1
 #print axioms VE.Weighing.ZoneFixtures.not_outcome_y
@@ -8254,6 +8257,27 @@ import VE.WireContract.Engine
 #print axioms VE.Weighing.ZoneFixtures.not_settled_x_false
 #print axioms VE.Weighing.ZoneFixtures.outcome_x
 #print axioms VE.Weighing.ZoneFixtures.settled_x
+#print axioms VE.Weighing.above_of_atLeast
+#print axioms VE.Weighing.atLeast_of_above
+#print axioms VE.Weighing.condPremise_mem
+#print axioms VE.Weighing.condition_necessary
+#print axioms VE.Weighing.condition_sufficient
+#print axioms VE.Weighing.delegation_bounded
+#print axioms VE.Weighing.evalProp_denote
+#print axioms VE.Weighing.filter_mem_subsetsOf
+#print axioms VE.Weighing.grant_needed
+#print axioms VE.Weighing.propImplies_sound
+#print axioms VE.Weighing.rankOrder_above
+#print axioms VE.Weighing.strictPair_down
+#print axioms VE.Weighing.strictPair_edge
+#print axioms VE.Weighing.strictPair_of_always
+#print axioms VE.Weighing.strictPair_outranks
+#print axioms VE.Weighing.strictPair_up
+#print axioms VE.Weighing.targetCheck_exists
+#print axioms VE.Weighing.weighEntries_empty
+#print axioms VE.Weighing.weighFacts
+#print axioms VE.Weighing.weigh_conservative
+#print axioms VE.Weighing.wellFormedWeigh_empty
 #print axioms VE.WireContract.expandAll_views
 #print axioms VE.WireContract.expand_views
 #print axioms VE.WireContract.findSome_congr_reached
