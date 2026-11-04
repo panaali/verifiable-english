@@ -7,7 +7,7 @@ block with `LinkNotOpen` in spec order, the environment without the block) and p
 list; `replayEventsEntailment` replays certificates over it with `events_wire_acceptance` (spec 6.3, word for word).
 **Open items:** et-4c (below): `embeddable` and the fragment on situations, the 6.3 answer theorems, T3/T3b, the other
 report fields, `origins`. Until then every answer about a situation on an events document is refused by name.
-Size: 1,300+ hand-written lines against the ~600 rule (see Size). Pilot bytes 0.
+Size: about 1,490 hand-written lines against the ~600 rule (see Size). Pilot bytes 0.
 
 Item: feature item et-4b (rank 132 of the feature feed, acting DRI dri-featurefeed, 2026-10-18). Branch
 `feature/et-4b` from main `fe252f79a`. Plan and spec are on main; nothing was copied.
@@ -81,7 +81,7 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
   `tests/test_packs_guard_mutants.py`, each failing a `PacksExamples.lean` guard (46 passed, VM).
 - **Lean, the route's files** (`Layered.lean`, `LayeredAdmission.lean`, `Run.lean`, `Compose/Dispatch.lean`,
   `Events/Chain.lean`, `Packs.lean`, the shapes): `tools/trust_mutants.py` with `--test WireExamples.lean --test
-  RouteExamples.lean` (TM-COUNTS).
+  RouteExamples.lean` (full Mac run at 28d5911b6, then an allow-only rescore at 01d9048b (385 verdicts reused, identical inputs): 454 mutants over 20 definitions, 316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0. The 84 allowed are in [trust-mutants-allow.json](trust-mutants-allow.json), one line per definition and operator: equivalent ones (a list of at most one element, a list only `isEmpty` reads, the key the next line sets again), texts Lean refuses, and mutants a broken proof or more than 100 failing guards stop. Each line names the same-operator mutants that are killed. The first runs (VM, ac7dfa4a3) left 44 survivors; each one got a fixture in `RouteExamples.lean` (the rights branch, an accepting replay, two decisions, two soft premises, two events and states, the view's profiles and constants)).
 - **Python, `tools/layer_policy.py`:** dropping `VE.Events.RouteExamples` from the runner fixtures makes
   `python3 tools/check_lean_imports.py` print `new outward Lean import: VE.Events.RouteExamples -> VE.NormDefaults.Run`.
   The check runs in the gate and in `tests/test_precommit_hook.py`. No `ve/` or `rust/` product code changed (only
@@ -139,7 +139,7 @@ Acceptance items: all AGENT; none HUMAN or EXTERNAL.
    Lean's) and no report test. `feature/pc-1` (`Dispatch.lean`, `layersApart`) and `feature/pc-3b`
    (`ContractExamples.lean`, the end of the file) overlap in other hunks.
 3. Tests can fail: PASS. `mutants.json`; `tests/test_events_wire_mutants.py` (HOOK and generated);
-   `tests/test_packs_guard_mutants.py`; `trust-mutants.json` (TM-COUNTS).
+   `tests/test_packs_guard_mutants.py`; `trust-mutants.json` (316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0).
 4. Py/Lean/Rust agree: PASS. No Python or Rust decision changed. A list without `events@0` keeps every answer
    (`gate_legacy`, the block-less guards); the route cases are in the selected run.
 5. R8 binding: N.A. Python reads none of the new fields yet (et-5 binds them). The schema half is item 1.
