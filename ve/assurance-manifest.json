@@ -2312,8 +2312,7 @@
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
       "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
-      "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path",
-      "lean/VE/Defaults/ZoneWordsMain.lean": "generator only: prints the words of DE10 to DE13 (zoneHeads, zoneLineWords, zoneJoins) as JSON for ve/defaults_words.json; reads no request and is not a service decoder"
+      "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path"
     }
   },
   "plan_operations": {
