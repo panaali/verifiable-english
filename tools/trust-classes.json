@@ -785,7 +785,8 @@
         "ResponseShape.Schemas.Reports.scoped",
         "ResponseShape.Schemas.Reports.status",
         "ResponseShape.Schemas.Reports.status_word",
-        "ResponseShape.Schemas.Reports.verdict"
+        "ResponseShape.Schemas.Reports.verdict",
+        "ResponseShape.Schemas.Reports.wants"
       ],
       "G[I]": [
         "ResponseShape.Schemas.Reports.envelope_binding"
@@ -1623,7 +1624,8 @@
         "VE.Reports.Run.unitStatusText",
         "VE.Reports.Run.unknownPredicate",
         "VE.Reports.Run.unreviewedActs",
-        "VE.Reports.Run.verdictOf"
+        "VE.Reports.Run.verdictOf",
+        "VE.Reports.Run.wantsStrings"
       ],
       "G[V]": [
         "VE.Reports.Run.ReportsAdmissionAnswer",
@@ -1639,6 +1641,7 @@
         "VE.Reports.Run.runCertificate",
         "VE.Reports.Run.runCountermodel",
         "VE.Reports.Run.runStatus",
+        "VE.Reports.Run.runWants",
         "VE.Reports.Run.statusText",
         "VE.Reports.Run.textPath",
         "VE.Reports.Run.unformalisedKinds",
@@ -18256,6 +18259,16 @@
         "VE.Calc.ConsistencyExamples.tree",
         "VE.Calc.ConsistencyExamples.twelve",
         "VE.Calc.ConsistencyExamples.v6"
+      ]
+    },
+    "VE/Attribution/Words.lean": {
+      "G[V]": [
+        "VE.Reports.baseOf",
+        "VE.Reports.finitePhrase",
+        "VE.Reports.headRest",
+        "VE.Reports.joined",
+        "VE.Reports.vowel",
+        "VE.Reports.wantsPhrase?"
       ]
     }
   }
