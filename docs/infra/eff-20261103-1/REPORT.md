@@ -2,7 +2,7 @@
 
 **Status:** built and ready for the chain's gate. Branch infra/eff-20261103-1, merge base 87475ae6a (main = ve-integration).
 **What changed:** `tools/gate.py --durations-record RECORD` weighs the suite and the `--shard k/N` plan by a gate record
-file's durations when the base has no note. `tools/bench/suite_tail.py durations --record FILE` is added, and
+file's durations when the base has no note. `tools/bench/suite_tail.py durations --gate-record FILE` is added, and
 `tools/test-durations.json` is refreshed from four measured full runs.
 **No DRI signature needed.** No DELTA rows (no user-visible VE change: tools layer scheduling only). Trust +0. No Lean or Rust change.
 **Open:** the dispatcher wiring (one line, below) is the eff pass's FOLLOW-UPS row. It is outside this repo.
@@ -29,12 +29,15 @@ moved. The me-8 leg planned 5 × 10492.3 s but measured 3658 / 2434 / 2621 / 563
     `durations_source["record_file"] = {"used", "sha256", "recorded"}` when the option is given.
   - `--durations-record RECORD` (l.751) is resolved against the cwd. It is refused with `--merge-shards`.
   - Untouched: `selected`, the collection, `interpret_pytest`/the collection check, the plan digest and `merge_records`.
-- `tools/bench/suite_tail.py`: `durations --record FILE` (repeatable). Each record counts as one more run (each test's
+- `tools/bench/suite_tail.py`: `durations --gate-record FILE` (repeatable). Each record counts as one more run (each test's
   longest time). The unrecorded estimate is the longest of the inputs' means of short tests. The source line names
   each record path and its sha256. A file that is not a gate record with durations is refused.
-- `tools/regen_generated.py`: `tools/bench/suite_tail.py` is listed in `NOT_REGENERATED`, because the new `--record`
-  literal made `test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason` count it as a writer.
-  Its output is measured data, not a generated file (`tools/test_schedule.py` docstring).
+- The suite_tail option is `--gate-record`, not the task's `--record`. `--record` is one of the repo's writing-mode
+  flags (`tools/regen_generated.py` `WRITE_FLAGS`), so that name would class suite_tail.py as a writer of a generated
+  file. Listing it in `NOT_REGENERATED` put the literal `tools/bench/suite_tail.py` in `tools/regen_generated.py`.
+  The test selector then reached every importer of regen_generated (108 test files) from any `tools/bench/` change.
+  The chain's gate at 839a1284 failed on this, in `tests/test_select_tests.py::test_narrow_changes_select_few_tests`
+  (`tools/bench/baseline.py`: 108 not < 40). See "Gate fix" below.
 - `tools/test-durations.json`: refreshed (see below).
 - Tests: `tests/test_gate_durations.py` (+13), `tests/test_gate_shards.py` (+2; the stub of `suite_durations` in
   `patch_gate_stages` now accepts the new argument), `tests/test_suite_tail.py` (+1). No test was removed, renamed or skipped.
@@ -46,10 +49,10 @@ Command (run once, in this worktree, collection = the current gate collection):
 
 ```
 uv run python tools/bench/suite_tail.py durations --output tools/test-durations.json --source "eff-20261103-1 …" \
-  --record docs/infra/eff-20261103-1/evidence/arm-en-s6b-87475ae6-t724087.gate-record.json \
-  --record docs/infra/eff-20261103-1/evidence/arm-sc-5rdb-3564ccc8-t715994.gate-record.json \
-  --record docs/infra/eff-20261103-1/evidence/arm-qt-a4-fd9f25f9-t712041.gate-record.json \
-  --record docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json
+  --gate-record docs/infra/eff-20261103-1/evidence/arm-en-s6b-87475ae6-t724087.gate-record.json \
+  --gate-record docs/infra/eff-20261103-1/evidence/arm-sc-5rdb-3564ccc8-t715994.gate-record.json \
+  --gate-record docs/infra/eff-20261103-1/evidence/arm-qt-a4-fd9f25f9-t712041.gate-record.json \
+  --gate-record docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json
 → wrote 2395 of 2395 tests to tools/test-durations.json
 ```
 
@@ -163,7 +166,7 @@ product code changed, so there are no Lean or Rust seeds.
 - Selected: `zsh mac-pytest.sh --select -- --base 87475ae6 --run` on ve-mac-1 at HEAD 301c7c18.
   - 395/538 units were selected, and 54 heavy files were deferred to the chain gate.
   - 391 units passed, and 1 failed: `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason`
-    (fixed in tools/regen_generated.py, then `uv run pytest -q tests/test_regen_generated.py` → 62 passed).
+    (fixed then by a `NOT_REGENERATED` entry, which the gate fix below replaces with the `--gate-record` rename).
   - Known Mac-only failures: none.
   - After the run, one more change: `RecursionError` is caught in `record_file_durations` and two bad-file cases were
     added. Both are covered by `tests/test_gate_durations.py` (38 passed).
@@ -173,10 +176,23 @@ product code changed, so there are no Lean or Rust seeds.
 - No lake build or audit (no Lean change). No trust_mutants (no trusted Lean).
 - The full gate is not run by me: the chain runs it on the final HEAD.
 
+## Gate fix (after the chain's gate at 839a1284)
+
+The chain's full gate at 839a1284 ran 32089 selected tests: 31994 passed, 94 skipped, 1 failed. The failure was
+`tests/test_select_tests.py::test_narrow_changes_select_few_tests` (`tools/bench/baseline.py` selected 108 test files, not < 40).
+It is not in main-known-red. The cause was this branch's `NOT_REGENERATED` entry (see the diff summary).
+- What changed: suite_tail's flag `--record` is now `--gate-record` (tools/bench/suite_tail.py, tests/test_suite_tail.py),
+  and the `NOT_REGENERATED` entry is gone. The branch's diff of tools/regen_generated.py is now empty.
+- `tools/test-durations.json` was rewritten by the same command with `--gate-record`. Only its `source` line changed
+  (`--record` → `--gate-record`); every duration and the unrecorded estimate are identical.
+- Tests: `tests/test_select_tests.py -k narrow_changes_select_few` → 1 passed.
+  `tests/test_suite_tail.py tests/test_regen_generated.py -k "gate_records or writing_mode"` → 2 passed.
+  The rest is listed in the gate-fix commit message.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed Lean answer is read or changed.
-2. PASS: task items 1 (`--durations-record`, gate.py l.651/675/751), 2 (refresh plus `suite_tail --record`, evidence
+2. PASS: task items 1 (`--durations-record`, gate.py l.651/675/751), 2 (refresh plus `suite_tail --gate-record`, evidence
    copied) and 3 (no orchestration change; wiring above), and every Proof bullet are delivered by the tests named under
    Proof and Replay. No new permanent report test (D4): the replay is saved evidence.
 3. PASS: S1–S6 above, each with its failing test.
