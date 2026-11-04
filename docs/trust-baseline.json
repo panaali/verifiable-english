@@ -2035,6 +2035,20 @@
    "reason": "wg-2: VE/Weighing/Tree.lean S +68 (the block's types, nodeNamed, ruleSorts, targetSorts, targetF, targetExists; rankOrder, strictPair and WeighEnv.empty tied); VE/Weighing/Conditions.lean S +64 (strengthEntries, condPremise, condEntries, grantEdges, grantReach, grantedThrough, grantConds, grantEntries, weighEntries, strengthPremises, weighLabelled, weighConditions; weighPremises and WellFormedWeigh tied); VE/Acts/Elaborate.lean V -1 (refsOk's two texts become splitRefusal, D[R]); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), wg-2, 2026-10-18",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "S",
+   "lines": 43,
+   "reason": "ps-1b: VE/Presupposition/Reading.lean S +33 (Reading, Reading.DefinedAt, assertedAt, conditionedAt, inPlaceAt, Root, carried, peel); VE/Presupposition/Rows.lean S +10 (definite, plural, generic), D[V] +21 (buildReading, buildPre); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1b, 2026-10-18",
+   "commit": "8205a8e6966811b10bd3bc793496bd15ea7c2fbb"
+  },
+  {
+   "class": "V",
+   "lines": 21,
+   "reason": "ps-1b: VE/Presupposition/Reading.lean S +33 (Reading, Reading.DefinedAt, assertedAt, conditionedAt, inPlaceAt, Root, carried, peel); VE/Presupposition/Rows.lean S +10 (definite, plural, generic), D[V] +21 (buildReading, buildPre); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1b, 2026-10-18",
+   "commit": "8205a8e6966811b10bd3bc793496bd15ea7c2fbb"
   }
  ]
 }
