@@ -75,6 +75,24 @@ def large : String :=
         (VE.Discourse.Run.encodeComposed "s4" c).getObjValD "id" == .str "s4"
     | _ => false
   | .error _ => false
+-- the route entry (14.6, cmp-s4c): `runCase` answers `encodeComposed` on the composed path (S4-27), the other
+-- discourse kinds by name, any other kind as today; off the path S4-28's `@1` text keeps today's answer
+def route (kind text : String) : String :=
+  match VE.Discourse.Run.runCase (Json.mkObj [("id", .str "s4"), ("kind", .str kind), ("document", .str text)]) with
+  | .ok j => j.compress
+  | .error e => "error: " ++ e
+#guard route "admission" doc == (VE.Route.Wire.ok "s4" [("document_id", chainField doc "document_id"),
+  ("inner", chainField doc "inner"), ("inner_report_id", chainField doc "inner_report_id"),
+  ("references", chainField doc "references"), ("report_id", chainField doc "report_id")]).compress
+#guard route "discourse-joint" doc == "error: NotImplemented: discourse-joint on the chain"
+#guard route "discourse-validity" doc == "error: NotImplemented: discourse-validity on the chain"
+#guard route "discourse-resolve" doc == "error: NotImplemented: discourse-resolve on the chain"
+#guard route "no-such" doc == "error: UnsupportedProfile: case kind no-such is not available on the discourse route"
+#guard route "admission" (doc (format := "ve-document@1") (profiles := "\"norms@0\", \"relational-fol@0\"") (discourse := "")) ==
+  "error: fields do not match: expected [arguments, description], got [arguments, description, regulated]"
+-- step 1's rights decoder (`chainEnvironment`): α has no rights block
+#guard route "admission" (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"rights@0\", \"soft-norms@0\", \"ve.discourse@1\"")) ==
+  "error: InvalidInput: invalid rights block"
 -- S4-20: a `groups` entry (14.5 step 1, named abstention)
 #guard composed (doc (discourse := ", \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": [], \"groups\": [{}]}")) ==
   "error: NotImplemented: groups on the chain"

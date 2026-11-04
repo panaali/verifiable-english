@@ -2508,6 +2508,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.canon_kind
 #print axioms VE.Discourse.carrier_cases
 #print axioms VE.Discourse.caseManifest_wellFormed
+#print axioms VE.Discourse.chainBase_of
 #print axioms VE.Discourse.chainChecks_wellFormed
 #print axioms VE.Discourse.chainReferences_ok
 #print axioms VE.Discourse.checkAll_ok
@@ -2579,6 +2580,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.elaborate_ok
 #print axioms VE.Discourse.elaborate_tree
 #print axioms VE.Discourse.elaborate_typed
+#print axioms VE.Discourse.envelopeChecks_profiles
 #print axioms VE.Discourse.eta_models
 #print axioms VE.Discourse.extend_admissible
 #print axioms VE.Discourse.extend_denote
