@@ -1,0 +1,14 @@
+trust_mutants: 13 definitions, 252 mutants (31 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-empty: infinitives -> [] (lean/VE/Attribution/Run.lean:607: Invalid field notation: Type of)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:24 ResponseShape.Schemas.Reports.kind (G[V], trusted) list-empty: [ ("admission", kindIs "admission"), ("reports-elaborate", kindIs "reports-elaborate"), ("reports... -> []
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-first: (phrases ++ infinitives) -> ((phrases ++ infinitives).take 1)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:326 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-last: [ (ref "#/$defs/reports_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$d... -> ([ (ref "#/$defs/reports_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:330 ResponseShape.Schemas.Reports.row (G[V], trusted) list-first: [ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate",... -> ([ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate"...
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-last: (phrases ++ infinitives) -> ((phrases ++ infinitives).reverse.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:326 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-first: [ (ref "#/$defs/reports_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$d... -> ([ (ref "#/$defs/reports_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$...
+SURVIVOR lean/VE/Attribution/Words.lean:47 VE.Reports.wantsPhrase? (?, trusted) list-drop-first: head -> (head.drop 1)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:330 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-first: [ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate",... -> ([ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate"...
+trust_mutants: 19 KILLED, 8 SURVIVOR, 1 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 221 OTHER SHARD in 175 s
+trust_mutants: ?, trusted: 19 KILLED, 3 SURVIVOR, 1 UNKNOWN, 3 INVALID, 197 OTHER SHARD
+trust_mutants: G[V], trusted: 5 SURVIVOR, 24 OTHER SHARD
+trust_mutants: steps: wall plan 11.5 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.6 s, control_probes 31.4 s, mutants 123.4 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.6 s (1), control_probes 52.7 s (3), mutant_builds 204.8 s (35), mutant_checks 4.2 s (1), stage_controls 9.6 s (4), mutant_probes 238.6 s (19)
