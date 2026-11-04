@@ -1377,9 +1377,21 @@ def test_output_diff_harness_inputs_cover_the_other_executables():
     work = lean_output_diff.harness_invocations(lean_output_diff.BIN)
     assert {i.exe for i in work} == lean_output_diff.HARNESS_EXECUTABLES
     session = next(i for i in work if i.exe == "ve_service")
-    # Some request lines are malformed on purpose (the request errors); read the mode by prefix.
-    modes = {re.match(r'\{"id":"out-\d+","mode":"([\w-]+)"', line)[1] for line in session.stdin.decode().splitlines()}
-    assert {"evaluate", "route", "norms", "english", "identity"} <= modes
+    # Some request lines are malformed on purpose; decode only the complete id and mode fields.
+    decoder = json.JSONDecoder()
+    modes = set()
+    for line in session.stdin.decode().splitlines():
+        assert line.startswith("{")
+        key, pos = decoder.raw_decode(line, 1)
+        assert key == "id" and line[pos] == ":"
+        request_id, pos = decoder.raw_decode(line, pos + 1)
+        assert re.fullmatch(r"out-\d+", request_id) and line[pos] == ","
+        key, pos = decoder.raw_decode(line, pos + 1)
+        assert key == "mode" and line[pos] == ":"
+        mode, _ = decoder.raw_decode(line, pos + 1)
+        assert isinstance(mode, str) and mode
+        modes.add(mode)
+    assert {"evaluate", "route", "norms", "english", "english.command", "identity"} <= modes
     decoded = [lean_output_diff.run(lean_output_diff.BIN / i.exe, i) for i in work if i.exe == "ve_response_decode"]
     # The genuine responses are accepted, so the decoder runs past its input checks.
     assert all(code == 0 and b'"accept"' in out for code, out, _ in decoded)
