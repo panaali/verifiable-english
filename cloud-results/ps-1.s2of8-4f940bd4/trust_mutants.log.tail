@@ -1,0 +1,10 @@
+trust_mutants: 11 definitions, 68 mutants (9 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Presupposition/Frame.lean:56 VE.Presupposition.Frame.Reach (S, trusted) eq-ne: = -> ≠ (lean/VE/Presupposition/Examples.lean:72: invalid `▸` notation, argument)
+UNKNOWN lean/VE/Presupposition/Frame.lean:56 VE.Presupposition.Frame.Reach (S, trusted) arm-false: τ = ρ -> False (lean/VE/Presupposition/Examples.lean:72: invalid `▸` notation, argument)
+SURVIVOR lean/VE/Presupposition/Frame.lean:60 VE.Presupposition.Frame.Reach (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:11...)
+UNKNOWN lean/VE/Presupposition/Frame.lean:19 VE.Presupposition.Frame (S, trusted) ctor-drop: | orR (l : VE.Formula) (f : Frame) ->  (lean/VE/Presupposition/Frame.lean:32: Unknown constant `VE.Presupposition.Frame.orR`)
+SURVIVOR lean/VE/Discourse/Descriptions.lean:23 VE.Discourse.raise1 (D[V], trusted) list-last: (List.range n).map (fun i => .var (i + 2)) -> (((List.range n).map (fun i => .var (i + 2))).reverse.take 1)
+trust_mutants: 4 KILLED, 2 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 59 OTHER SHARD in 222 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 SURVIVOR, 18 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 1 SURVIVOR, 3 UNKNOWN, 41 OTHER SHARD
+trust_mutants: steps: wall plan 8.7 s, scratch 2.4 s, control_build 0.1 s, probe_install 1.1 s, control_probes 61.7 s, mutants 143.3 s, cleanup 4.5 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 94.5 s (5), mutant_builds 132.4 s (17), mutant_checks 209.1 s (13), stage_controls 115.1 s (6), mutant_probes 20.9 s (6)
