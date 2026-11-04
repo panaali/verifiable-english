@@ -5048,7 +5048,8 @@
         },
         "VE.NormDefaults.Admission.softCase",
         "VE.NormDefaults.Run.softAdmissionWitness",
-        "VE.NormDefaults.Run.runCaseE"
+        "VE.NormDefaults.Run.runCaseE",
+        "VE.NormDefaults.Admission.certificateAnswer"
       ],
       "G[R]": [
         "VE.NormDefaults.Run.pendingDocumentLayer",
@@ -17493,6 +17494,12 @@
           "tied": [
             "VE.Events.events_wire_acceptance"
           ]
+        },
+        {
+          "name": "VE.Events.replayUnblockedEntailment",
+          "tied": [
+            "VE.Events.unblocked_wire_acceptance"
+          ]
         }
       ]
     },
@@ -17548,7 +17555,11 @@
         "VE.Events.RouteExamples.excElaborated",
         "VE.Events.RouteExamples.excCase",
         "VE.Events.RouteExamples.excCount",
-        "VE.Events.RouteExamples.docListed"
+        "VE.Events.RouteExamples.docListed",
+        "VE.Events.RouteExamples.unlisted",
+        "VE.Events.RouteExamples.onBranch",
+        "VE.Events.RouteExamples.everyKind",
+        "VE.Events.RouteExamples.excBare"
       ]
     }
   }

@@ -206,7 +206,7 @@ theorem softCase_fits (id kind : String) (j : Json)
     subst hka
     exact runAdmissionX_fits id j _ _ hi hk hp _ ‹_›
   · read_kind
-    simp only [VE.Route.Wire.ok]
+    simp only [Admission.certificateAnswer, VE.Route.Wire.ok]
     fits
 
 theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
@@ -241,7 +241,7 @@ theorem runCaseE_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     | skip
   all_goals read_kind
   all_goals (try contra)
-  all_goals (try simp only [VE.Route.Wire.ok])
+  all_goals (try simp only [Admission.certificateAnswer, VE.Route.Wire.ok])
   all_goals fits
 
 theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :

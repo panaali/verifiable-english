@@ -2911,6 +2911,9 @@ import VE.WireContract.Engine
 #print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
 #print axioms VE.Events.tupleTyped_relation
+#print axioms VE.Events.unblocked_wire_acceptance
+#print axioms VE.Events.unhooked_X
+#print axioms VE.Events.unhooked_X_wellFormed
 #print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Events.wf_transfer
 #print axioms VE.Grammar.BOk.addAll

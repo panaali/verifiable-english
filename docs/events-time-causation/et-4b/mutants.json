@@ -763,6 +763,22 @@
    "definition": "VE.NormDefaults.Packs.eventsArray",
    "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard",
    "fails": "a #guard of lean/VE/NormDefaults/PacksExamples.lean"
+  },
+  {
+   "id": "f1-unblocked-certificate-refused",
+   "language": "Lean",
+   "file": "lean/VE/NormDefaults/Run.lean",
+   "definition": "VE.NormDefaults.Run.runCaseE",
+   "test": "cd lean && lake build VE.Events.RouteExamples",
+   "fails": "the #guards at lean/VE/Events/RouteExamples.lean:333 and :336 (the no-block certificate valid true and false, and the same answer as the list without events@0)"
+  },
+  {
+   "id": "f1-unblocked-reads-the-raw-environment",
+   "language": "Lean",
+   "file": "lean/VE/Events/Chain.lean",
+   "definition": "VE.Events.replayUnblockedEntailment",
+   "test": "cd lean && lake build VE.Events.RouteExamples",
+   "fails": "the proof of VE.Events.unblocked_wire_acceptance; with that proof stubbed, the #guards at lean/VE/Events/RouteExamples.lean:326 (every served kind as on the list without events@0), 332 to 342"
   }
  ]
 }
