@@ -64,9 +64,9 @@ def valid (r : Replay.EntailmentReplay) : Bool :=
 /-- `Replay.replayEntailment` with flags admitted: the certificate must bind the
 complete source environment, the regenerated flag premises, Background and
 layer premises followed by the case's premises, and the conclusion. -/
-def replayEntailment (j : Json) : Except String Replay.EntailmentReplay := do
+def replayEntailmentIn (dec : Wire.SourceDecoder) (j : Json) : Except String Replay.EntailmentReplay := do
   let environment ← j.getObjVal? "environment"
-  let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
+  let src ← dec environment (j.getObjValD "norms")
   let E := envAt src.D (size src.D)
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Route.Wire.decodeFormulas E premisesJson
@@ -79,10 +79,10 @@ def replayEntailment (j : Json) : Except String Replay.EntailmentReplay := do
     conclusionJson cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
   pure ⟨src, ps, c, cert⟩
 
-theorem replayEntailment_source (j : Json) (r : Replay.EntailmentReplay)
-    (h : replayEntailment j = .ok r) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src := by
-  unfold replayEntailment at h
+theorem replayEntailmentIn_source (dec : Wire.SourceDecoder) (j : Json) (r : Replay.EntailmentReplay)
+    (h : replayEntailmentIn dec j = .ok r) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src := by
+  unfold replayEntailmentIn at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨src, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -106,9 +106,9 @@ holds in every admissible structure satisfying the flag premises, the direct
 semantics, the definitions, the profile, `Background_base` and the premises; and
 (2) with no flag declared, the second half of `Replay.norms_wire_acceptance`
 (base consequence for a conflict-free document). -/
-theorem norms_flagged_acceptance (j : Json) (r : Replay.EntailmentReplay)
-    (h : replayEntailment j = .ok r) (hv : valid r = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+theorem norms_flagged_acceptanceIn (dec : Wire.SourceDecoder) (j : Json) (r : Replay.EntailmentReplay)
+    (h : replayEntailmentIn dec j = .ok r) (hv : valid r = true) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
     (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) →
       Sat S (flagPremises r.src) → holdsCatala r.src.D.T S →
       definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
@@ -117,7 +117,7 @@ theorem norms_flagged_acceptance (j : Json) (r : Replay.EntailmentReplay)
       (∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
       (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
       ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) := by
-  refine ⟨replayEntailment_source j r h, fun S hS hF hcat hdef hprof hbase hΓ => ?_, fun hF hc hΓ hφ => ?_⟩
+  refine ⟨replayEntailmentIn_source dec j r h, fun S hS hF hcat hdef hprof hbase hΓ => ?_, fun hF hc hΓ hφ => ?_⟩
   · have hsat : Sat S (flagPremises r.src ++ background r.src.D ++ elaborate r.src.D.T ++ r.premises) := by
       intro a ha
       rcases List.mem_append.mp ha with ha | ha
@@ -265,10 +265,10 @@ def ConflictReplay.accepts (r : ConflictReplay) (t : String × List String × VE
   if r.plain then VE.Tableau.checkCertificate (envAt r.src.D 0) (backgroundBase r.src.D) (targetConclusion t) c
   else VE.Tableau.checkCertificate (baseEnv r.src.D) (baseBackground r.src) (targetConclusion t) c
 
-def replayConflict (j : Json) : Except String ConflictReplay := do
+def replayConflictIn (dec : Wire.SourceDecoder) (j : Json) : Except String ConflictReplay := do
   let environment ← j.getObjVal? "environment"
   let norms := j.getObjValD "norms"
-  let src ← Wire.decodeSource environment norms (flags := true)
+  let src ← dec environment norms
   let plain := src.ne.rv.flags.isEmpty && src.D.T.definitions.isEmpty
   let packages := j.getObjValD "packages"
   let ts := if plain then targets src.D else pyTargets src.D
@@ -283,9 +283,9 @@ the frozen conclusion (every base-admissible structure is conflict-free) when
 the document has neither flags nor definitions, and otherwise that no target
 conflict holds in any structure admissible over Python's base environment that
 satisfies Python's base Background (flags, definitions, literals). -/
-theorem replayConflict_source (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src := by
-  unfold replayConflict at h
+theorem replayConflictIn_source (dec : Wire.SourceDecoder) (j : Json) (r : ConflictReplay) (h : replayConflictIn dec j = .ok r) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src := by
+  unfold replayConflictIn at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨src, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   cases h
@@ -304,13 +304,13 @@ theorem conflictFree_flagged (r : ConflictReplay) (hv : r.conflictFree = true) (
   simp only [ConflictReplay.conflictFree, hp, Bool.false_eq_true, ↓reduceIte] at hv
   exact hv
 
-theorem norms_flagged_conflict_sound (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r)
+theorem norms_flagged_conflict_soundIn (dec : Wire.SourceDecoder) (j : Json) (r : ConflictReplay) (h : replayConflictIn dec j = .ok r)
     (hv : r.conflictFree = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
     (r.plain = true → ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) ∧
     (r.plain = false → ∀ S : VE.Structure.{u}, S.Admissible (baseEnv r.src.D) →
       Sat S (baseBackground r.src) → BaseConflictFree r.src S) :=
-  ⟨replayConflict_source j r h,
+  ⟨replayConflictIn_source dec j r h,
     fun hp B hB => VE.Norms.conflictFreeCheck_sound r.src.D r.src.wf _ (conflictFree_plain r hv hp) B hB,
     fun hp S hS hB => conflictFreeCheck_sound r.src _ (conflictFree_flagged r hv hp) S hS hB⟩
 
@@ -353,9 +353,9 @@ def witnessFrom (src : Wire.Source) (w : Json) : Except String (Witness src) := 
     else throw (VE.Route.Wire.invalidModel "flags")
   else throw "model is not semantically admissible"
 
-def replayWitness (j : Json) : Except String ((src : Wire.Source) × Witness src) := do
+def replayWitnessIn (dec : Wire.SourceDecoder) (j : Json) : Except String ((src : Wire.Source) × Witness src) := do
   let environment ← j.getObjVal? "environment"
-  let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
+  let src ← dec environment (j.getObjValD "norms")
   let wd ← witnessFrom src (← j.getObjVal? "witness")
   pure ⟨src, wd⟩
 
@@ -363,13 +363,13 @@ def replayWitness (j : Json) : Except String ((src : Wire.Source) × Witness src
 regenerated target formula is true at the typed tuple refutes, for the document
 decoded from that very input, conflict-freedom over the base-admissible
 structures that satisfy the flag premises (the witness model is one). -/
-theorem norms_flagged_witness_sound (j : Json) (src : Wire.Source) (w : Witness src)
-    (h : replayWitness j = .ok ⟨src, w⟩) (hw : w.conflict = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+theorem norms_flagged_witness_soundIn (dec : Wire.SourceDecoder) (j : Json) (src : Wire.Source) (w : Witness src)
+    (h : replayWitnessIn dec j = .ok ⟨src, w⟩) (hw : w.conflict = true) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok src ∧
     BaseAdmissible src.D w.M.asStructure ∧ Sat w.M.asStructure (flagPremises src) ∧
     ¬ ConflictFree src.D w.M.asStructure ∧
       ¬ (∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B) := by
-  unfold replayWitness at h
+  unfold replayWitnessIn at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨src', hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -385,5 +385,52 @@ theorem norms_flagged_witness_sound (j : Json) (src : Wire.Source) (w : Witness 
   obtain ⟨hn, _, _⟩ := Replay.target_refutes src.D src.wf w.target w.mem w.M.asStructure hB
     w.tuple w.typed ((VE.eval_iff_denote w.M _ _).mp hw)
   exact ⟨by rw [he]; exact hd, hB, hF, hn, fun hall => hn (hall _ hB hF)⟩
+
+
+/-! ## The route's own decoder
+
+The entry points without `acts@0`: each is the `In` form at `Wire.decodeFlagged`, and keeps its statement. -/
+
+def replayEntailment : Json → Except String Replay.EntailmentReplay := replayEntailmentIn Wire.decodeFlagged
+def replayConflict : Json → Except String ConflictReplay := replayConflictIn Wire.decodeFlagged
+def replayWitness : Json → Except String ((src : Wire.Source) × Witness src) := replayWitnessIn Wire.decodeFlagged
+
+theorem replayEntailment_source (j : Json) (r : Replay.EntailmentReplay)
+    (h : replayEntailment j = .ok r) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
+  replayEntailmentIn_source Wire.decodeFlagged j r h
+
+theorem norms_flagged_acceptance (j : Json) (r : Replay.EntailmentReplay)
+    (h : replayEntailment j = .ok r) (hv : valid r = true) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) →
+      Sat S (flagPremises r.src) → holdsCatala r.src.D.T S →
+      definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
+      Sat S r.premises → r.conclusion.denote S []) ∧
+    (flagPremises r.src = [] →
+      (∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
+      (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
+      ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B [])  :=
+  norms_flagged_acceptanceIn.{u} Wire.decodeFlagged j r h hv
+
+theorem replayConflict_source (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
+  replayConflictIn_source Wire.decodeFlagged j r h
+
+theorem norms_flagged_conflict_sound (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r)
+    (hv : r.conflictFree = true) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    (r.plain = true → ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) ∧
+    (r.plain = false → ∀ S : VE.Structure.{u}, S.Admissible (baseEnv r.src.D) →
+      Sat S (baseBackground r.src) → BaseConflictFree r.src S)  :=
+  norms_flagged_conflict_soundIn.{u} Wire.decodeFlagged j r h hv
+
+theorem norms_flagged_witness_sound (j : Json) (src : Wire.Source) (w : Witness src)
+    (h : replayWitness j = .ok ⟨src, w⟩) (hw : w.conflict = true) :
+    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+    BaseAdmissible src.D w.M.asStructure ∧ Sat w.M.asStructure (flagPremises src) ∧
+    ¬ ConflictFree src.D w.M.asStructure ∧
+      ¬ (∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B)  :=
+  norms_flagged_witness_soundIn Wire.decodeFlagged j src w h hw
 
 end VE.Norms.Flagged
