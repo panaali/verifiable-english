@@ -211,10 +211,11 @@ def lean_admission(raw, directory):
 def _error_of(message):
     """A Lean diagnostic as a Python error with its code, from the message's `Class:` prefix: the
     route's rows carry no `code` yet (the service sets one, batch 1). Lean's `NotImplemented` is an
-    abstention, not a verdict: `UnsupportedProfile`, with Lean's text."""
+    abstention, not a verdict: `UnsupportedProfile`, with Lean's text; its `CheckerUnavailable` (the document
+    mode's, which the composed path's manifest checks run, `Service.Document.unavailable`) is no verdict either."""
     code = message.split(":", 1)[0]
     cls = {"ResourceLimit": ResourceLimit, "UnsupportedProfile": UnsupportedProfile,
-           "NotImplemented": UnsupportedProfile}.get(code, VEError)
+           "NotImplemented": UnsupportedProfile, "CheckerUnavailable": CheckerUnavailable}.get(code, VEError)
     error = cls(message)
     if cls is VEError and code.isidentifier() and code[:1].isupper():
         error.code = code
