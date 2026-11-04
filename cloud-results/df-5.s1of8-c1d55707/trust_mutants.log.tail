@@ -1,0 +1,11 @@
+trust_mutants: 18 definitions, 488 mutants (61 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-empty: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> []
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-first: zoneHeads -> (zoneHeads.take 1)
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:11 main (G[V], trusted) list-drop-last: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].dropLast) (lean/VE/Defaults/ZoneWordsMain.lean:11: Invalid dotted identifier notation: The expected type of ...)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:14 main (G[V], trusted) list-drop-last: zoneJoins -> (zoneJoins.dropLast)
+SURVIVOR lean/VE/Defaults/ZoneWordsMain.lean:10 main (G[V], trusted) list-drop-first: zoneHeads -> (zoneHeads.drop 1)
+UNKNOWN lean/VE/Defaults/ZoneWordsMain.lean:13 main (G[V], trusted) list-drop-first: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> ([("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)].drop 1) (lean/VE/Defaults/ZoneWordsMain.lean:13: Invalid dotted identifier notation: The expected type of ...)
+trust_mutants: 47 KILLED, 4 SURVIVOR, 2 UNKNOWN, 2 INVALID, 6 ALLOWED, 0 NOT RUN, 427 OTHER SHARD in 4494 s
+trust_mutants: D[V], trusted: 13 KILLED, 2 ALLOWED, 95 OTHER SHARD
+trust_mutants: G[V], trusted: 34 KILLED, 4 SURVIVOR, 2 UNKNOWN, 2 INVALID, 4 ALLOWED, 332 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 3.6 s, control_build 1.1 s, probe_install 1.4 s, control_probes 488.2 s, mutants 3985.3 s, cleanup 3.1 s, reads 0.2 s; lake control_build 1 s (1), probe_install 1.3 s (1), control_probes 1022.6 s (6), mutant_builds 1018 s (64), mutant_checks 3595.3 s (33), stage_controls 783.2 s (8), mutant_probes 9807.4 s (47)
