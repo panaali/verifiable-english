@@ -1,0 +1,29 @@
+{
+  "about": "PC-2a's fixtures (docs/spec/profile-composition.md 5.2): constitution sentences as soft rules under norm-defaults@0.",
+  "profiles": ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+  "units": {
+    "u0073.s05": {
+      "body": "Claude should generally comply with the system prompt's instructions if doing so is not unsafe, unethical, or against Anthropic's guidelines.",
+      "predicates": {
+        "comply_required": {"arguments": ["claude_instance"], "description": "Claude complies with the system prompt's instructions.",
+          "regulated": {"act": "{0} comply with the system prompt's instructions", "default": "unspecified", "role": "obligation", "permission": "comply_permitted"}},
+        "comply_permitted": {"arguments": ["claude_instance"], "description": "Claude may comply with the system prompt's instructions.",
+          "regulated": {"act": "{0} comply with the system prompt's instructions", "default": "allow", "role": "permission"}},
+        "unsafe_to_comply": {"arguments": ["claude_instance"], "description": "Complying is unsafe."},
+        "unethical_to_comply": {"arguments": ["claude_instance"], "description": "Complying is unethical."},
+        "against_guidelines": {"arguments": ["claude_instance"], "description": "Complying is against Anthropic's guidelines."}
+      },
+      "rule": {"name": "comply", "predicate": "comply_required", "sign": true, "mode": "default", "guard": ["top"], "unless": [], "over": [],
+        "exception": {"decided_by": "unstated", "necessary": [], "factors": [], "sufficient": [
+          ["unary", "unsafe_to_comply", ["var", 0]], ["unary", "unethical_to_comply", ["var", 0]], ["unary", "against_guidelines", ["var", 0]]]}}
+    },
+    "u0125.s04.p2": {
+      "body": "Claude should never directly deny that it is Claude.",
+      "predicates": {
+        "deny_being_claude_permitted": {"arguments": ["claude_instance"], "description": "Claude may directly deny that it is Claude.",
+          "regulated": {"act": "{0} directly deny being Claude", "default": "unspecified", "role": "permission"}}
+      },
+      "rule": {"name": "never-deny", "predicate": "deny_being_claude_permitted", "sign": false, "guard": ["top"], "unless": [], "over": []}
+    }
+  }
+}

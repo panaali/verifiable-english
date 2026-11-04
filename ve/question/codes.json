@@ -41,7 +41,8 @@
   ["ConclusionNotDerived", "SyntaxError"],
   ["IllTyped", "TypeMismatch"],
   ["NotOneSentence", "SyntaxError"],
-  ["InvalidOverlay", "VEError"]
+  ["InvalidOverlay", "VEError"],
+  ["UndeclaredEvaluative", "SyntaxError"]
  ],
  "statuses": [
   ["notQuestion", ["NotOneQuestion"]],

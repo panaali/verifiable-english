@@ -82,40 +82,10 @@ def _parse_formula(reports, text):
     return [{"ast": ast.formula_to_data(reports.environment, f)} for f in formulas] if len(formulas) == 1 else []
 
 
-def _infinitive(finite):
-    """`is safe` -> `be safe`: the finite verb phrase of a declared template as an
-    infinitive, only where `_finite` gives it back exactly."""
-    head, _, rest = finite.partition(" ")
-    if rest.startswith("not ") or not re.fullmatch(r"[a-z]+", head):
-        return None
-    base = {"is": "be", "has": "have", "does": "do"}.get(head)
-    if base is None:
-        if re.search(r"[^aeiou]ies\Z", head):
-            base = head[:-3] + "y"
-        elif re.search(r"(?:ss|sh|ch|x|z|o)es\Z", head):
-            base = head[:-2]
-        elif head.endswith("s") and not head.endswith("ss"):
-            base = head[:-1]
-    infinitive = base + (" " + rest if rest else "") if base else None
-    return infinitive if infinitive and _finite(infinitive) == finite else None
-
-
-def _finite(infinitive):
-    head, _, rest = infinitive.partition(" ")
-    verb = {"be": "is", "have": "has", "do": "does"}.get(head)
-    if verb is None:
-        if re.search(r"[^aeiou]y\Z", head):
-            verb = head[:-1] + "ies"
-        elif re.search(r"(?:s|sh|ch|x|z|o)\Z", head):
-            verb = head + "es"
-        else:
-            verb = head + "s"
-    return verb + (" " + rest if rest else "")
-
-
 def _subject_split(reports, words, node):
     """A formula content as (subject name, subject display, infinitival VP): its
-    rendering is `<display of a declared constant> <finite VP>`."""
+    rendering is `<display of a declared constant> <finite VP>`, the VP's infinitive
+    Lean's `wants` test (`reports.infinitive`, `VE.Reports.wantsPhrase?`)."""
     if next(iter(node)) != "ast":
         return None
     formula = ast.formula_from_data(reports.environment, node["ast"])
@@ -127,7 +97,7 @@ def _subject_split(reports, words, node):
     text, display = _formula_text(reports, words, formula), words.legend[subject.name]
     if not text.startswith(display + " "):
         return None
-    infinitive = _infinitive(text[len(display) + 1:])
+    infinitive = reports.infinitive(text[len(display) + 1:])
     return (subject.name, display, infinitive) if infinitive else None
 
 
@@ -244,14 +214,14 @@ def _report(reports, words, text, initial):
                     if act == "says" and tail.startswith(', "') and tail.endswith('"') and len(tail) > 4:
                         results.append({"report": {**node, "literal": tail[3:-1], "content": None}})
                     if act in ("wants", "intends") and tail.startswith(" to "):
-                        results += [{"report": {**node, "content": c}}
-                                    for c in _parse_formula(reports, words.legend[holder] + " " + _finite(tail[4:]))]
+                        finite = words.legend[holder] + " " + reports.finite(tail[4:])
+                        results += [{"report": {**node, "content": c}} for c in _parse_formula(reports, finite)]
                     if act == "wants":
                         for subject, sdisplay in words.legend.items():
                             if tail.startswith(" " + sdisplay + " to "):
                                 vp = tail[len(sdisplay) + 5:]
                                 results += [{"report": {**node, "content": c}}
-                                            for c in _parse_formula(reports, sdisplay + " " + _finite(vp))]
+                                            for c in _parse_formula(reports, sdisplay + " " + reports.finite(vp))]
     return results
 
 
@@ -275,7 +245,7 @@ def _assessment(reports, words, text, initial):
                               "stated assessment, it may be that S')")
         for word, judgment, verb in (("may ", "may", ""), ("is probably ", "probably", "be ")):
             if tail.startswith(word):
-                for c in _parse_formula(reports, display + " " + _finite(verb + tail[len(word):])):
+                for c in _parse_formula(reports, display + " " + reports.finite(verb + tail[len(word):])):
                     formula = ast.formula_from_data(reports.environment, c["ast"])
                     if type(formula) in (ast.Unary, ast.Binary):
                         results.append({"assessment": {"judgment": judgment, "content": c}})

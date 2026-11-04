@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from ve.document import _load_document, check_document, load_document
+from ve.document.load import _load
 from ve.document.report import _report, _report_premise_context
 from ve.errors import CheckerUnavailable, VEError
 from ve.admission import admit_document
@@ -32,6 +33,11 @@ def _front():
 def _loaded(front, body):
     return _load_document(b"---\n" + json.dumps(front).encode() + b"\n---\n" + body,
                           FIXTURE, None)
+
+
+def _chain_document(front, body):
+    """A document of the chain without `readings@1`, which only Lean's document mode answers (PC-2a)."""
+    return _load(FIXTURE, admit=False, raw=b"---\n" + json.dumps(front).encode() + b"\n---\n" + body)
 
 
 def _without_profile(tmp_path):
@@ -164,14 +170,14 @@ def test_soft_coherence_graph_leaf_uses_filled_vocabulary():
                                "content": norms[1]})
     front["graph"] = {"root": "coherence", "nodes": [
         {"name": "coherence", "label": coherence["label"], "ast": coherence["ast"]}]}
-    answer = _report(_loaded(front, body))
+    answer = _report(_chain_document(front, body))
     assert answer["admission"]["admitted"] is True
 
 
 def test_soft_chain_without_readings_uses_the_filled_route():
     front, body = _front()
     front["environment"]["profiles"].remove("readings@1")
-    answer = _report(_loaded(front, body))
+    answer = _report(_chain_document(front, body))
     assert answer["admission"]["admitted"] is True
     assert answer["premises"]["status"] == "model"
 
@@ -259,7 +265,7 @@ def test_filled_soft_source_instruction_declarations_match_lean_base(with_readin
     vocabulary["soft"] = {"parties": ["operator"], "outranking": {"mode": "strict"}}
     vocabulary["predicates"]["q"] = {
         "arguments": ["assistant"], "description": "instruction", "instruction_of": "operator"}
-    doc = _loaded(front, body)
+    doc = _loaded(front, body) if with_readings else _chain_document(front, body)
     env, _, _ = _report_premise_context(doc)
     assert env.predicates["q"].description == "instruction"
     assert _report(doc)["admission"]["admitted"] is True
