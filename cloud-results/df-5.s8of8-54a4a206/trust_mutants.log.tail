@@ -1,0 +1,9 @@
+trust_mutants: 14 definitions, 426 mutants (53 to run), 4 jobs, base e440181e206c
+SURVIVOR lean/VE/Defaults/ZoneWire.lean:128 VE.Defaults.Wire.zoneFieldsOf (D[V], trusted) list-first: value -> (value.take 1)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-first: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).map (·.sufficient) -> ((((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).map (·.sufficient)).take 1) (lean/VE/Defaults/ZoneWire.lean:100: Invalid field notation: Type of)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:367 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-drop-first: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref ... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref...
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-last: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)) -> (((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).reverse.take 1) (lean/VE/Defaults/ZoneWire.lean:100: Invalid field notation: Type of)
+trust_mutants: 49 KILLED, 2 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 2142 s
+trust_mutants: D[V], trusted: 12 KILLED, 1 SURVIVOR, 97 OTHER SHARD
+trust_mutants: G[V], trusted: 37 KILLED, 1 SURVIVOR, 2 UNKNOWN, 276 OTHER SHARD
+trust_mutants: steps: wall plan 6.8 s, scratch 1.5 s, control_build 0.1 s, probe_install 0.9 s, control_probes 246.1 s, mutants 1877.7 s, cleanup 9.3 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 514.9 s (6), mutant_builds 837.8 s (56), mutant_checks 1767 s (28), stage_controls 350 s (7), mutant_probes 4178.7 s (49)
