@@ -248,6 +248,43 @@ def test_the_genuine_answer_passes_the_binding(tmp_path, monkeypatch, genuine):
     assert UNAVAILABLE in _relayed(tmp_path, monkeypatch, genuine)
 
 
+@pytest.mark.parametrize("profiles", [CHAIN, tuple(sorted(CHAIN + ("norm-defaults@0",))), SOFT_PROFILES])
+def test_f2_mixed_parent_passes_binding_on_each_available_chain(profiles):
+    document = text(profiles=profiles, units=({"id": "parent", "span": [0, B2], "status": "MIXED",
+                                               "parts": [dict(U1, status="CHECKED"), dict(U2, status="CHECKED")]},))
+    row = answer(document)
+    assert row["status"] == "ok" and row["inner"]["kinds"] == ["asserted", "norm"]
+    assert discourse.bind_composed({"meta": json.loads(document.split("---\n")[1])}, row) is row
+
+
+@pytest.mark.parametrize("profiles", [CHAIN, tuple(sorted(CHAIN + ("norm-defaults@0",))), SOFT_PROFILES])
+@pytest.mark.parametrize("field,value", [("ast", ["bottom"]), ("label", "open:absent")])
+@pytest.mark.parametrize("position", ["root", "assumptions"])
+def test_f1_copied_claim_is_bound_to_its_complete_graph_node(profiles, field, value, position):
+    document = SOFT_TEXT if profiles == SOFT_PROFILES else text(profiles=profiles)
+    row = answer(document)
+    assert row["status"] == "ok"
+    mutant = copy.deepcopy(row)
+    claim = mutant["inner"]["report"][position]
+    if position == "assumptions":
+        claim = claim[0]
+    claim[field] = value
+    service_schema.check_row("discourse", mutant, case(document), 0)
+    with pytest.raises(CheckerUnavailable, match="answered another document \\(report\\)"):
+        discourse.bind_composed({"meta": json.loads(document.split("---\n")[1])}, mutant)
+
+
+def test_f1_default_label_is_omitted_from_both_copies():
+    document = text()
+    meta = json.loads(document.split("---\n")[1])
+    row = answer(document)
+    del meta["graph"]["nodes"][0]["label"]
+    row = copy.deepcopy(row)
+    del row["inner"]["report"]["root"]["label"]
+    del row["inner"]["report"]["assumptions"][0]["label"]
+    assert discourse.bind_composed({"meta": meta}, row) is row
+
+
 def test_document_check_is_checker_unavailable_and_shows_no_verdict(tmp_path, capsys):
     # DRI 2026-11-04 item 1: Lean admits the document, the report has no unit statuses to show (14.7): exit 5
     from ve.__main__ import EXIT_CHECKER_UNAVAILABLE, main
