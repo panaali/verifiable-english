@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-eff-tm-probe-scope-build-9721a29d-t824850-s4",
+ "head": "2d3aae1874acd16563b9c6ac2aa58bb207ba8f30",
+ "argv": [
+  "armsh-cand-eff-tm-probe-scope-build-9721a29d-t824850-s4",
+  "2d3aae1874acd16563b9c6ac2aa58bb207ba8f30",
+  "d74d1fc9ca2233ef4911680d5c9f5ffb113626e3",
+  "-",
+  "-",
+  "4",
+  "4/4"
+ ]
+}
