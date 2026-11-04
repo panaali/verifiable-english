@@ -1,0 +1,13 @@
+trust_mutants: 13 definitions, 252 mutants (32 to run), 4 jobs, base 4798b3f0ca8d
+SURVIVOR lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) or-and: || -> &&
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:345 ResponseShape.Schemas.Reports.file (G[V], trusted) list-empty: [ ("reports_path", .schema reports_path), ("kind", kind), ("report_kind", .schema report_kind), (... -> []
+UNKNOWN lean/VE/Attribution/Run.lean:609 VE.Reports.Run.runWants (?, trusted) list-empty: [ ("phrases", Json.arr (phrases.map fun p => Json.mkObj [("phrase", .str p), ("infinitive", match... -> [] (lean/VE/Attribution/Run.lean:684: Expression (VE.Reports.Run.runCase, which it reads, is not what...)
+SURVIVOR lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-first: (phrases ++ infinitives).map (·.utf8ByteSize + 1) -> (((phrases ++ infinitives).map (·.utf8ByteSize + 1)).take 1)
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:24 ResponseShape.Schemas.Reports.kind (G[V], trusted) list-first: [ ("admission", kindIs "admission"), ("reports-elaborate", kindIs "reports-elaborate"), ("reports... -> ([ ("admission", kindIs "admission"), ("reports-elaborate", kindIs "reports-elaborate"), ("report...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:24 ResponseShape.Schemas.Reports.kind (G[V], trusted) list-last: [ ("admission", kindIs "admission"), ("reports-elaborate", kindIs "reports-elaborate"), ("reports... -> ([ ("admission", kindIs "admission"), ("reports-elaborate", kindIs "reports-elaborate"), ("report...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:330 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-last: [ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate",... -> ([ (ref "#/$defs/kind/admission", ref "#/$defs/admission"), (ref "#/$defs/kind/reports-elaborate"...
+SURVIVOR lean/ResponseShape/Schemas/Reports.lean:336 ResponseShape.Schemas.Reports.row (G[V], trusted) list-drop-middle: (ref "#/$defs/kind/reports-status", ref "#/$defs/status"), -> 
+trust_mutants: 22 KILLED, 7 SURVIVOR, 1 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 220 OTHER SHARD in 156 s
+trust_mutants: ?, trusted: 21 KILLED, 2 SURVIVOR, 1 UNKNOWN, 2 INVALID, 197 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 5 SURVIVOR, 23 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.3 s, control_probes 29.3 s, mutants 107.6 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 47.7 s (3), mutant_builds 142.3 s (36), mutant_checks 3.6 s (1), stage_controls 7.9 s (4), mutant_probes 241.3 s (23)
