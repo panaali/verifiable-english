@@ -322,5 +322,24 @@ def twoTotal : ClauseDoc := ⟨{ many with limits := [l29] }, [("r20", "a", { un
   (clauseSlotLabelled twoTotal).map (·.1) == (VE.Rights.limPremisesLabelled twoTotal.doc).map (·.1) ++
     ["rights:relation:a:total", "rights:relation:d:total"] &&
   clauseSlot twoTotal == VE.Rights.limPremises twoTotal.doc ++ [k3Premise, k3Premise]
+-- `clauseSlot_labelled` needs `Lim_D`'s labels distinct (DRI question Q3): pk-1c's `cx`
+-- (lean/VE/NormDefaults/PacksLegacyExamples.lean), rebuilt here without importing `VE.Readings`, satisfies the
+-- spec's two hypotheses and repeats `rights:limitation:x:p:q:necessary:c`.
+open VE.Norms.Checks (perm) in
+def cxDoc : ClauseDoc := ⟨mkRights ["state", "person"] []
+    [perm "p:q" ["state", "person"] true "{0} arrest {1}", perm "q" ["state", "person"] true "{0} detain {1}"] [] block
+    [⟨"r9", "person", .top, [line .claim (strictNode "no-a" "p:q" false), line .claim (strictNode "no-b" "q" false)]⟩]
+    [⟨"x", none, none, some "unstated", [⟨"c", true, "c holds", none⟩], []⟩,
+     ⟨"x:p", none, none, some "unstated", [⟨"c", true, "c holds", none⟩], []⟩] [], [], []⟩
+#guard WellFormedClauses cxDoc && VE.Rights.WellFormedRights (plain cxDoc) &&
+  !VE.Compose.Labelled.wellLabelled (clauseSlotLabelled cxDoc) &&
+  !VE.Compose.Labelled.wellLabelled (VE.Rights.limPremisesLabelled cxDoc.doc)
+-- DRI question Q1 (`elaborate_plain`, Wire.lean, cmp-s3b): the rights decoder reads a clause of depth 64, but not
+-- that clause under the one `and` that `plain` adds, and `WellFormedRights` bounds no depth.
+def notChain : Nat → Lean.Json
+  | 0 => .arr #["top"]
+  | n + 1 => .arr #["not", notChain n]
+#guard (VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (notChain 63)).isOk &&
+  !(VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (.arr #["and", .arr #["top"], notChain 63])).isOk
 
 end VE.RightClauses.Examples
