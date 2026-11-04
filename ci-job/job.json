@@ -1,0 +1,25 @@
+{
+ "job": "df-5.s5of7-9028ce14",
+ "head": "7d63e852f0f1908f11ec20c995328d080b9be0a2",
+ "argv": [
+  "df-5.s5of7-9028ce14",
+  "7d63e852f0f1908f11ec20c995328d080b9be0a2",
+  "e440181e206cd5e637d49121f8205fbaa12d453a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-588f0292b5c6.tar.zst",
+  "8e34085ef9f67af0b2b5641b996cad3fc9fec224924672b7516514e4f498d730",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/defeasible/df-5/trust-mutants-allow.json",
+  "--test",
+  "lean/VE/Defaults/ZoneWireExamples.lean",
+  "--test",
+  "lean/ResponseShape/DefaultsExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "5/7",
+  "--jobs",
+  "4"
+ ]
+}
