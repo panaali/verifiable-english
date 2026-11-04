@@ -2150,6 +2150,7 @@
       "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/Common.lean": "the response shapes' shared value domains (common.json) and their predicates over a JSON value; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
+      "lean/ResponseShape/Schemas/Discourse.lean": "the discourse mode's response shapes (discourse.json) and #guards reading the members of its rendered composed row (cmp-s4c); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
