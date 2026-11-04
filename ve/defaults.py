@@ -205,14 +205,14 @@ def _situated(case, sorts, values, what):
     """A tuple of `sorts` in the request's situation (`case["model"]`, a `defaults-zone` request)."""
     domains = case["model"]["domains"]
     if type(values) is not list or len(values) != len(sorts) or any(
-            v not in domains.get(s, ()) for s, v in zip(sorts, values)):
+            v not in domains[s] for s, v in zip(sorts, values)):
         raise _unbound(what)
 
 
 def bind_zone(case, row, source, labels):
     """`defaults-zone`: one completion shown with `byDefault`, two with `leftTo`, both nonempty and different. Every
     rule, decision key and tuple a row or a `forced_all` entry names is the request's (a default rule, a decision of
-    its source (`soft_source`), a tuple of its sorts in the situation). In each completion the rows are its true
+    its source (`zone_source`), a tuple of its sorts in the situation). In each completion the rows are its true
     decisions, each once, in Lean's order (the source's decisions, then the situation's entities): the DE11 and DE10f
     rows are exactly `forced_all` (a stated condition, or the record and the observations, force each in every
     completion), a DE13 exception is none of them, and every decision the record sets true is there. A DE11
@@ -247,7 +247,7 @@ def bind_zone(case, row, source, labels):
             else:
                 key, rule = ("excepted", line["rule"]), exception(line["rule"], line["tuple"], "exception")
                 exceptions.add((line["rule"], tuple(line["tuple"])))
-                if line["row"] == "DE11" and line["condition"] >= len(rule["exception"].get("sufficient", ())):
+                if line["row"] == "DE11" and line["condition"] >= len(rule["exception"]["sufficient"]):
                     raise _unbound("stated condition")
             shown.append((keys.index(key), [domains[s].index(v) for s, v in zip(source["decisions"][key],
                                                                                  line["tuple"])], key))
@@ -260,8 +260,7 @@ def bind_zone(case, row, source, labels):
     if row["zone"] == "leftTo" and (not all(completions) or completions[0] == completions[1]):
         raise _unbound("completions")
     found = row.get("labels")
-    if found is not None and (not found or len(set(found)) != len(found) or any(
-            label not in labels and label not in ZONE_CHECKS for label in found)):
+    if found is not None and (not found or len(set(found)) != len(found) or not set(found) <= {*labels, *ZONE_CHECKS}):
         raise _unbound("labels")
     if row.get("reason") == "":
         raise _unbound("reason")
@@ -270,13 +269,16 @@ def bind_zone(case, row, source, labels):
 def answer(case, labels=(), targets=(), source=None):
     """Lean's bound answer to a `defaults-*` case: `labels` and `targets` are the same source's `defaults-elaborate`
     rows (`default_premises` labels, `coherence_targets`), which a certificate's and a coherence answer bind to (for
-    `defaults-zone`, `labels` are X's, the layered `norm-defaults-elaborate` row's); `source` its colliding pairs,
-    exception tables and decisions (`soft_source`), which an elaboration, a model and a zone bind to."""
+    `defaults-zone`, `labels` are X's, the layered `norm-defaults-elaborate` row's); `source` its colliding pairs and
+    exception tables (`soft_source`), which an elaboration and a model bind to, or its decisions (`zone_source`), which
+    a zone binds to."""
     row = run(case)
     kind = case["kind"]
     try:
-        if kind in ("defaults-elaborate", "defaults-model", "defaults-zone") and source is None:
+        if kind in ("defaults-elaborate", "defaults-model") and source is None:
             source = soft_source(case)
+        if kind == "defaults-zone" and source is None:
+            source = zone_source(case)
         if kind == "defaults-elaborate":
             return bind_elaborate(case, row, source)
         if kind == "defaults-coherence":
@@ -292,12 +294,19 @@ def answer(case, labels=(), targets=(), source=None):
 
 def soft_source(case):
     """The request's source as Lean's soft elaboration gives it (`SoftNormDocument`, which binds it to the source):
-    its colliding pairs, in order, each rule's exception table, and each decision's argument sorts by its key."""
+    its colliding pairs, in order, and each rule's exception table."""
     from .softnorms import SoftEnvironment, SoftNormDocument
     document = SoftNormDocument(SoftEnvironment(case["environment"]), case["norms"])
     return {"pairs": [[a.core.name, b.core.name] for a, b in document.collisions],
-            "excepted": {key[1]: name for key, name in document.decision_by_key.items() if key[0] == "excepted"},
-            "decisions": {key: document.decisions[name] for key, name in document.decision_by_key.items()}}
+            "excepted": {key[1]: name for key, name in document.decision_by_key.items() if key[0] == "excepted"}}
+
+
+def zone_source(case):
+    """Each decision of the request's source by its key, with its argument sorts, as Lean's soft elaboration gives
+    them (`SoftNormDocument`, which binds them to the source): what a `defaults-zone` answer binds to."""
+    from .softnorms import SoftEnvironment, SoftNormDocument
+    document = SoftNormDocument(SoftEnvironment(case["environment"]), case["norms"])
+    return {"decisions": {key: document.decisions[name] for key, name in document.decision_by_key.items()}}
 
 
 # -- the two questions (plan DF-1b), with the untrusted search
