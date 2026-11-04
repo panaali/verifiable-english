@@ -18691,7 +18691,7 @@ module VE.Readings.Wire bbf03167935511821e64cb725b0a8ef4946a3c5ae3b168879dd7c192
 974:0-1000:54 def VE.Readings.Wire.replayPair@VE.Readings.Wire
 1002:0-1008:37 def VE.Readings.Wire.replaySeparate@VE.Readings.Wire
 1010:0-1014:75 theorem VE.Readings.Wire.readings_wire_separate_sound@VE.Readings.Wire
-module VE.RightClauses.Examples 97f79d6a6af76878721da60f9b149f0e014814c8742fe581a417a1ca3e777ac4
+module VE.RightClauses.Examples 543b7f304dbd6b7014c63bf598d384ed8ffe1caf59dd13efc077d1ba733b45bc
 15:0-16:85 def VE.RightClauses.Examples.accessLine@VE.RightClauses.Examples
 18:0-19:50 def VE.RightClauses.Examples.r21@VE.RightClauses.Examples
 21:0-26:44 def VE.RightClauses.Examples.r21Doc@VE.RightClauses.Examples
@@ -18724,6 +18724,7 @@ module VE.RightClauses.Examples 97f79d6a6af76878721da60f9b149f0e014814c8742fe581
 284:0-284:96 def VE.RightClauses.Examples.both@VE.RightClauses.Examples
 285:0-286:78 def VE.RightClauses.Examples.slotValid@VE.RightClauses.Examples
 310:0-310:57 def VE.RightClauses.Examples.k13@VE.RightClauses.Examples
+319:0-320:77 def VE.RightClauses.Examples.twoTotal@VE.RightClauses.Examples
 module VE.RightClauses.Plain 0dd9bcd7320caa50c7767bc93bf6f5948633961e5dca0121b38f98c6643001c0
 16:0-18:76 def VE.RightClauses.relAtom@VE.RightClauses.Plain
 19:0-21:81 def VE.RightClauses.plainGuard@VE.RightClauses.Plain

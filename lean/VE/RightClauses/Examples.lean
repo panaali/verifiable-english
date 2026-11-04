@@ -315,5 +315,12 @@ def k13 : ClauseDoc := cdoc k3 (r21Doc (limits := [l29]))
   VE.Rights.limPremises k13.doc ++ [k3Premise]
 #guard VE.Rights.limPremises (plain k13) == VE.Rights.limPremises k13.doc
 #guard VE.Compose.Labelled.wellLabelled (clauseSlotLabelled k13)
+-- two total relations: both premises, in document order, after `Lim_D`
+def twoTotal : ClauseDoc := ⟨{ many with limits := [l29] }, [("r20", "a", { unl "a" with relation := some (rel (0, 1) (some 1)) }),
+  ("r22", "d", { unl "d" with relation := some (rel (0, 1) (some 1)) })], []⟩
+#guard relPremises twoTotal == [k3Premise, k3Premise] &&
+  (clauseSlotLabelled twoTotal).map (·.1) == (VE.Rights.limPremisesLabelled twoTotal.doc).map (·.1) ++
+    ["rights:relation:a:total", "rights:relation:d:total"] &&
+  clauseSlot twoTotal == VE.Rights.limPremises twoTotal.doc ++ [k3Premise, k3Premise]
 
 end VE.RightClauses.Examples
