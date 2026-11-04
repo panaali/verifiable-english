@@ -35,6 +35,11 @@ LOAD = ("import json, sys; from ve.document import load_document; d = load_docum
         "'finding': s2.get('finding'), 'choices': len(s2.get('choices', [])), 'soft_premises': s2.get('soft_premises'), "
         "'units': {u['id']: [u['status'], u.get('meaning_id')] for u in d['units'] if u['status'] != 'UNFORMALISED'}}, "
         "indent=1, ensure_ascii=False))")
+# Lean's premises answer on the readings route (C8, SC-5's `decided_units`): the status and the units it decides.
+DECIDED = ("import json, sys; from ve.document import load_document; from ve.readings_verdicts import context; "
+           "a = context(load_document(sys.argv[1])).premises_answer(); print(json.dumps({'status': a['result']"
+           "['status'], 'decided_units': a.get('decided_units'), 'per_choice': sorted({e['premises'] for e in "
+           "a.get('per_choice', [])})}, indent=1))")
 
 
 def queries(*names):
@@ -43,7 +48,7 @@ def queries(*names):
               *(["--under", under] if under else [])]) for name, under in names]
 
 
-CHECKS = [("load", ["-c", LOAD, "{doc}"]), ("check", ["document", "check", "{doc}"]),
+CHECKS = [("load", ["-c", LOAD, "{doc}"]), ("decided", ["-c", DECIDED, "{doc}"]), ("check", ["document", "check", "{doc}"]),
           ("render", ["document", "render", "{doc}"]), ("coverage", ["document", "coverage", "{doc}"])]
 CHECKS = [(name, argv if argv[0] == "-c" else ["-m", "ve", *argv]) for name, argv in CHECKS]
 C9 = queries(("c9-unsafe-required", None), ("c9-unsafe-not-required", None), ("c9-none-required", None))
@@ -100,7 +105,8 @@ def step(document, path, name, argv):
     return row
 
 
-def main():
+def main(only=()):
+    """Every step, or the steps named in `only`, whose rows replace those of the same name in the saved record."""
     raw = migrate_soft.pinned()
     _, front, source = raw.split(b"---\n", 2)
     probe = RUN / "probe-translation.ve.md"
@@ -112,11 +118,15 @@ def main():
         paths["before"].write_bytes(raw)
         pilot.write(paths["strict"], strict_twin(after), after_source)
         for document, steps in STEPS.items():
-            rows += [step(document, paths[document], name, argv) for name, argv in steps]
-    (ANSWERS / "measurements.json").write_text(json.dumps(
-        {"commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip(),
-         "translation": f"{migrate_soft.PILOT_COMMIT}:{migrate_soft.PILOT_PATH}", "steps": rows}, indent=1) + "\n")
+            rows += [step(document, paths[document], name, argv) for name, argv in steps if not only or name in only]
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    for row in rows:
+        row["commit"] = commit
+    record = ANSWERS / "measurements.json"
+    kept = [r for r in json.loads(record.read_text())["steps"] if r["step"] not in only] if only else []
+    record.write_text(json.dumps({"translation": f"{migrate_soft.PILOT_COMMIT}:{migrate_soft.PILOT_PATH}",
+                                  "steps": kept + rows}, indent=1) + "\n")
 
 
 if __name__ == "__main__":
-    main()
+    main(tuple(sys.argv[2:]) if sys.argv[1:2] == ["--only"] else ())
