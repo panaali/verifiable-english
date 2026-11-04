@@ -57,7 +57,7 @@ def x_labels(case):
     """X's labels: the layered `norm-defaults-elaborate` row's packs."""
     row = defaults.run({"id": "e", "kind": "norm-defaults-elaborate", "environment": case["environment"],
                         "norms": case["norms"]})
-    return [label for label, _ in row["soft"] + row.get("rights", [])]
+    return [item["label"] for item in row["soft"] + row.get("rights", [])]
 
 
 OBS_O1 = [{"outcome": "instructs", "tuple": ["o1"], "value": False}]
@@ -84,6 +84,8 @@ CASES = {
     "delta_z": (lambda: zcase(DOCS["delta"], "x_required", ["a"]),
                 {"zone": "byDefault", "value": True, "form": "long", "forced_all": [], "completions": [[]]},
                 [HEAD.format("assumptions") + "a must do x."]),
+    "zeta": (lambda: zcase(DOCS["zeta"], "x_permitted", ["a"]),
+             {"zone": "byDefault", "value": True, "form": "short", "forced_all": [], "completions": [[]]}, None),
     "xi": (lambda: zcase(DOCS["alpha"], "x_required", ["a"]),
            {"zone": "byDefault", "value": True, "form": "short", "forced_all": [], "completions": [[]]}, None),
     "pi1": (lambda: zcase(_pi(), "x_required", ["a"]),
@@ -108,23 +110,46 @@ CASES = {
                       {"zone": "noCompletion", "labels": ["observed"]}, []),
     "budget": (lambda: zcase(_lam(), "instructs", ["o0"], tuple(f"o{i}" for i in range(13)), "operator"),
                {"zone": "unknown", "reason": "budget: 26 open atoms, over 12"}, []),
+    # the binding's other sides: two rows in order, a record entry set false, a premise's own label
+    "closed_two": (lambda: zcase(_closed(), "x_required", ["b"], ("a", "b"), obs=[
+        {"outcome": "x_required", "tuple": [e], "value": False} for e in ("a", "b")]),
+                   {"zone": "byDefault", "value": False, "form": "short", "forced_all": [
+                       {"rule": "r1", "tuple": ["a"]}, {"rule": "r1", "tuple": ["b"]}], "completions": [[
+                           {"row": "DE10f", "rule": "r1", "tuple": ["a"]}, {"row": "DE10f", "rule": "r1", "tuple": ["b"]}]]},
+                   None),
+    "epsilon_two": (lambda: zcase(DOCS["epsilon"], "x_permitted", ["a"], record=[
+        {"decision": {"excepted": "r1"}, "tuple": ["a"], "value": False}, *OFF]), {
+        "zone": "byDefault", "value": True, "form": "short", "forced_all": [], "completions": [
+            [{"row": "DE13", "decision": {"off": "r1", "party": "user"}, "tuple": ["a"]}]]}, None),
+    "beta_none": (lambda: zcase(DOCS["beta"], "x_required", ["a"], on={"urgent": [["a"]]}, record=[
+        {"decision": {"excepted": "r1"}, "tuple": ["a"], "value": False}]),
+                  {"zone": "noCompletion", "labels": ["soft:exception:r1:sufficient:0"]}, []),
 }
+
+
+def _closed():
+    """DF-α with `x_required` closed (`deny`)."""
+    environment, norms = copy.deepcopy(DOCS["alpha"])
+    environment["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "deny"
+    return environment, norms
 _ROWS: dict = {}
 
 
 def genuine(name):
-    """The request and Lean's bound row, asked once per session (a copy each call)."""
+    """The request, Lean's bound row, X's labels and the source's decisions, asked once per session (a copy each
+    call), so a seeded bug of the binding (tests/test_defaults_checks.py) runs the binding alone."""
     if name not in _ROWS:
         case = CASES[name][0]()
-        _ROWS[name] = (case, defaults.answer(case, x_labels(case)))
+        labels, source = x_labels(case), defaults.zone_source(case)
+        _ROWS[name] = (case, defaults.answer(case, labels, source=source), labels, source)
     return copy.deepcopy(_ROWS[name])
 
 
 @pytest.mark.parametrize("name", CASES)
 def test_each_zone_is_lean_s_and_reads_as_spec_4_says(name):
-    case, row = genuine(name)
+    case, row, *_ = genuine(name)
     expected, english = CASES[name][1:]
-    assert {k: v for k, v in row.items() if k not in ("id", "status")} == expected
+    assert expected is None or {k: v for k, v in row.items() if k not in ("id", "status")} == expected
     if english is not None:
         shown = defaults_english.sentences(case, row)
         assert [s for s, e in zip(shown, english) if e is not None] == [e for e in english if e is not None]
@@ -134,7 +159,7 @@ def test_each_zone_is_lean_s_and_reads_as_spec_4_says(name):
 
 def test_de10f_only_from_forced_all_and_never_from_unknown_or_no_completion():
     for name in CASES:
-        case, row = genuine(name)
+        case, row, *_ = genuine(name)
         shown = " ".join(defaults_english.sentences(case, row))
         forced = {(e["rule"], tuple(e["tuple"])) for e in row.get("forced_all", [])}
         rows = [line for lines in row.get("completions", []) for line in lines if line["row"] == "DE10f"]
@@ -152,8 +177,7 @@ def test_weighing_documents_are_refused():
 
 @pytest.mark.parametrize("name", ["mu", "mu1", "xi1", "epsilon_off", "delta_outw", "no_completion", "budget"])
 def test_mutants_never_pass_as_answers(monkeypatch, name):
-    case, row = genuine(name)
-    labels, source = x_labels(case), defaults.soft_source(case)
+    case, row, labels, source = genuine(name)
     answered = {"row": row}
     monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [_transported(answered["row"])])
     accepted = []
@@ -173,6 +197,8 @@ def test_mutants_never_pass_as_answers(monkeypatch, name):
 
 TAMPERED = [
     ("forced exception", "mu", lambda r: r["forced_all"][0].update(rule="g9")),
+    ("forced exception", "mu", lambda r: r["forced_all"][0].update(tuple=["o9"])),
+    ("forced exception", "zeta", lambda r: r["forced_all"].append({"rule": "r0", "tuple": ["a"]})),
     ("forced row", "mu", lambda r: r["completions"][0].clear()),
     ("record", "delta_outw", lambda r: r["completions"][0].clear()),
     ("reason", "budget", lambda r: r.update(reason="")),
@@ -180,22 +206,48 @@ TAMPERED = [
     ("exception", "xi1", lambda r: r["completions"][0][0].update(tuple=["b"])),
     ("stated condition", "xi1", lambda r: r["completions"][0][0].update(condition=1)),
     ("assumed decision", "epsilon_off", lambda r: r["completions"][0][0]["decision"].update(party="operator")),
-    ("decision rows", "epsilon_off", lambda r: r["completions"][0].append(r["completions"][0][0])),
+    ("assumed decision", "epsilon_off", lambda r: r["completions"][0][0].update(tuple=["b"])),
+    ("assumed decision", "epsilon_off", lambda r: r["completions"][0][0].update(tuple="a")),
+    ("assumed decision", "epsilon_off", lambda r: r["completions"][0][0].update(tuple=["a", "a"])),
     ("assumed decision", "mu", lambda r: r["completions"][0][0].update(row="DE13", decision={"excepted": "g1"})),
+    ("decision rows", "epsilon_off", lambda r: r["completions"][0].append(r["completions"][0][0])),
+    ("decision rows", "closed_two", lambda r: r["completions"][0].reverse()),
     ("completions", "mu1", lambda r: r["completions"].append(r["completions"][0])),
+    ("completions", "mu1", lambda r: r["completions"].__setitem__(1, r["completions"][0])),
+    ("completions", "mu1", lambda r: r["completions"][0].clear()),
+    ("completions", "xi", lambda r: r["completions"].clear()),
     ("labels", "no_completion", lambda r: r.update(labels=["soft:exception:g9"])),
+    ("labels", "no_completion", lambda r: r.update(labels=["observed", "observed"])),
+    ("labels", "no_completion", lambda r: r.update(labels=[])),
 ]
 
 
-@pytest.mark.parametrize("what, name, tamper", TAMPERED, ids=[f"{t[0]}-{t[1]}" for t in TAMPERED])
-def test_each_binding_refuses_its_tampered_field_and_keeps_the_genuine_row(what, name, tamper):
-    case, row = genuine(name)
-    labels, source = x_labels(case), defaults.soft_source(case)
-    assert defaults.bind_zone(case, copy.deepcopy(row), source, labels) == row
-    tamper(row)
-    with pytest.raises(CheckerUnavailable, match=rf"\({what}\)"):
-        defaults.bind_zone(case, row, source, labels)
+def test_every_genuine_row_binds():
+    for name in CASES:
+        case, row, labels, source = genuine(name)
+        assert defaults.bind_zone(case, copy.deepcopy(row), source, labels) == row, name
 
+
+def test_each_binding_refuses_its_tampered_field():
+    for what, name, tamper in TAMPERED:
+        case, row, labels, source = genuine(name)
+        tamper(row)
+        with pytest.raises(CheckerUnavailable, match=rf"\({what}\)"):
+            defaults.bind_zone(case, row, source, labels)
+
+
+def test_answer_binds_a_zone_through_its_kind(monkeypatch):
+    """`answer` asks for the zone's own source when none is given, and binds the row as a zone."""
+    case, row, labels, _ = genuine("epsilon_off")
+    real = relay.decide
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [row] if mode == defaults.MODE else
+                        real(mode, cases, **options))
+    assert defaults.answer(case, labels) == row
+
+
+# Read by tests/test_defaults_checks.py: every check of `bind_zone` is needed by one of these.
+BOTH_SIDES = (test_every_genuine_row_binds, test_each_binding_refuses_its_tampered_field,
+              test_answer_binds_a_zone_through_its_kind)
 
 REQUEST_PATHS = [("model",), ("record",), ("observations",), ("query",), ("query", "outcome"), ("query", "tuple"),
                  ("record", 0), ("record", 0, "decision"), ("record", 0, "tuple"), ("record", 0, "value"),
