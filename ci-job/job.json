@@ -1,0 +1,23 @@
+{
+ "job": "df-5.s8of8-54a4a206",
+ "head": "0b810713bc07e48cb85cd8ae9683e642edcece8e",
+ "argv": [
+  "df-5.s8of8-54a4a206",
+  "0b810713bc07e48cb85cd8ae9683e642edcece8e",
+  "e440181e206cd5e637d49121f8205fbaa12d453a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c62ae449f1e3.tar.zst",
+  "e718d069db6719b04bee3a5b7f01d94da823a802da830a89518796f9afac569a",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Defaults/ZoneWireExamples.lean",
+  "--test",
+  "lean/ResponseShape/DefaultsExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "8/8",
+  "--jobs",
+  "4"
+ ]
+}
