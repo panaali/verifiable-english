@@ -69,66 +69,6 @@
    "definition": "VE.Service.DocumentChain.requestOf",
    "operator": "list-drop-last",
    "reason": "the mutant does not compile (a type error at the mutated line: its detail), so it is no program; no answer can change"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.chain",
-   "operator": "list-drop-first",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.denyRule",
-   "operator": "bool-flip",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.document",
-   "operator": "list-empty",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.document",
-   "operator": "list-first",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.document",
-   "operator": "list-last",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.holds",
-   "operator": "body-true",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.holds",
-   "operator": "bool-flip",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.plainCase",
-   "operator": "lit-plus",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.plainCase",
-   "operator": "lit-minus",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.regulated",
-   "operator": "list-first",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.regulated",
-   "operator": "list-last",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
-  },
-  {
-   "definition": "VE.Service.DocumentChain.Examples.situation",
-   "operator": "bool-flip",
-   "reason": "a fixture helper of DocumentChainExamples, not product code: it builds a test's input or reads its result (T once the merge train classifies it)"
   }
  ]
 }

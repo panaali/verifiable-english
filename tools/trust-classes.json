@@ -9862,7 +9862,9 @@
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
-        "VE.Service.Document.withSets"
+        "VE.Service.Document.withSets",
+        "VE.Service.DocumentChain.requestOf",
+        "VE.Service.DocumentChain.layeredOf"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -9973,7 +9975,8 @@
         "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.UnitContent.judgedIn",
         "VE.Service.Document.checkBody",
-        "VE.Service.Document.Env.basePredicates"
+        "VE.Service.Document.Env.basePredicates",
+        "VE.Service.Document.softFrame"
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -17955,6 +17958,32 @@
         "VE.Commands.Texts.permission",
         "VE.Commands.Texts.please",
         "VE.Commands.Texts.unbound"
+      ]
+    },
+    "VE/Service/DocumentChainExamples.lean": {
+      "T": [
+        "VE.Service.DocumentChain.Examples.arg",
+        "VE.Service.DocumentChain.Examples.regulated",
+        "VE.Service.DocumentChain.Examples.environmentOver",
+        "VE.Service.DocumentChain.Examples.chain",
+        "VE.Service.DocumentChain.Examples.complyPredicates",
+        "VE.Service.DocumentChain.Examples.ofVar",
+        "VE.Service.DocumentChain.Examples.complyRule",
+        "VE.Service.DocumentChain.Examples.denyPredicates",
+        "VE.Service.DocumentChain.Examples.denyRule",
+        "VE.Service.DocumentChain.Examples.document",
+        "VE.Service.DocumentChain.Examples.textOf",
+        "VE.Service.DocumentChain.Examples.complyDocument",
+        "VE.Service.DocumentChain.Examples.layered",
+        "VE.Service.DocumentChain.Examples.checkError",
+        "VE.Service.DocumentChain.Examples.holds",
+        "VE.Service.DocumentChain.Examples.situation",
+        "VE.Service.DocumentChain.Examples.filling",
+        "VE.Service.DocumentChain.Examples.statusAt",
+        "VE.Service.DocumentChain.Examples.completions",
+        "VE.Service.DocumentChain.Examples.caseOf",
+        "VE.Service.DocumentChain.Examples.plainCase",
+        "VE.Service.DocumentChain.Examples.refusal"
       ]
     }
   }
