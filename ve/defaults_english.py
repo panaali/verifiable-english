@@ -185,8 +185,47 @@ def collision(case, row):
     return out
 
 
+def _decision(text, line, inline=False):
+    """A row after DE10 (Lean's choice): DE11, DE10f or DE13 by its key; `inline`, its words without the sentence
+    frame, for DE10″'s two completions."""
+    from .softnorms import _decision_key
+    at = ", ".join(line["tuple"])
+    if line["row"] == "DE11":
+        condition = text.condition(text.rule(line["rule"]), line["condition"], line["tuple"])
+        words = f"the text's own exception to rule {line['rule']} applies here: {condition}"
+    elif line["row"] == "DE10f":
+        words = f"the facts here force the exception to rule {line['rule']} for {at}"
+    else:
+        kind, *parts = _decision_key(line["decision"])
+        words = {"excepted": lambda r: f"the exception to rule {r} applies to {at}",
+                 "off": lambda r, party: f"{_who(party)} has turned rule {r} off for {at}",
+                 "outweighs": lambda act, low, high: f"on {text.act(act)}, the {low} consideration outweighs the "
+                                                     f"{high} consideration"}[kind](*parts)
+        if not inline:
+            return "This assumes that" + ("," if kind == "outweighs" else "") + f" {words}."
+    return words if inline else _capital(words) + "."
+
+
+def zone(case, row):
+    """DE10 or DE10′ (Lean's `form`) with the outcome Lean's zone gives, then one sentence per row of the completion
+    shown; DE10″ for `leftTo`, its two completions in those rows' words; no sentence for any other zone."""
+    if row["zone"] not in ("byDefault", "leftTo"):
+        return []
+    from . import words
+    text = _Text(case)
+    head = f"With no {dict(short='exceptions', long='assumptions')[row['form']]} here that could be dropped, alone or together, "
+    if row["zone"] == "leftTo":
+        first, second = (" and ".join(_decision(text, line, inline=True) for line in lines) for lines in row["completions"])
+        return [head + f"the answer depends on which rule gives way: {first}, or {second}."]
+    query = case["query"]
+    result = words.clause(text.env, words.constants_of(case["model"]), query["outcome"], query["tuple"], row["value"])
+    return [head + result + "."] + [_decision(text, line) for line in row["completions"][0]]
+
+
 def sentences(case, row):
-    """The English of one bound `defaults-certificate`, `defaults-model` or `defaults-coherence` row."""
+    """The English of one bound `defaults-certificate`, `defaults-model`, `defaults-coherence` or `defaults-zone` row."""
+    if case.get("kind") == "defaults-zone":
+        return zone(case, row)
     if row.get("verdict") == "FOLLOWS":
         return follows(case, row)
     if row.get("verdict") == "DOES-NOT-FOLLOW":
