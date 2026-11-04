@@ -252,6 +252,9 @@ def ms3 : List (Root × VE.Formula) := [(.asserted, gOwner), (.bare, .top), (.co
 #guard peel 1 1 u16 == some b16 && peel 2 1 (carried ms3 b16) == some b16
 #guard peel 1 1 (carried ms3 b16) == none && peel 2 0 (carried ms3 b16) == some (.implies gManager b16)
 #guard peel 0 0 b16 == some b16 && peel 1 0 b16 == none && peel 0 1 b16 == none
+-- two conditioned goals nest in block order, after the asserted one
+def ms2c : List (Root × VE.Formula) := [(.conditioned, gOwner), (.asserted, .top), (.conditioned, gManager)]
+#guard carried ms2c b16 == .and .top (.implies gOwner (.implies gManager b16)) && peel 1 2 (carried ms2c b16) == some b16
 
 -- `plural_defined`, `generic_defined` at the S2 models and S26's model, both sides of each.
 #guard [mAliceNone, mAliceOne, mAliceTwo].all (fun M => ev M rPl.strong == (ev M rPl.pre && ev M rPl.weak))
