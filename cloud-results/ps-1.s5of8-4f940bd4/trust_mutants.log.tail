@@ -1,0 +1,10 @@
+trust_mutants: 11 definitions, 68 mutants (8 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Discourse/Descriptions.lean:19 VE.Discourse.assertiveAt (D[V], trusted) all-any: all -> any (lean/VE/Discourse/Descriptions.lean:19: Unknown constant `VE.Formula.any`)
+SURVIVOR lean/VE/Presupposition/Frame.lean:59 VE.Presupposition.Frame.Reach (S, trusted) not-drop: ¬ ->  (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:116)
+SURVIVOR lean/VE/Presupposition/Frame.lean:57 VE.Presupposition.Frame.Reach (S, trusted) arm-true: f.Reach S ρ τ -> True (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:11...)
+UNKNOWN lean/VE/Presupposition/Frame.lean:22 VE.Presupposition.Frame (S, trusted) ctor-drop: | allF (s : String) (f : Frame) ->  (lean/VE/Presupposition/Frame.lean:35: Unknown constant `VE.Presupposition.Frame.allF`)
+SURVIVOR lean/VE/Presupposition/Frame.lean:59 VE.Presupposition.Frame.Reach (S, trusted) arm-false: ¬ l.denote S ρ ∧ f.Reach S ρ τ -> False (the proofs it breaks: lean/VE/Presupposition/Frame.lean:101, lean/VE/Presupposition/Frame.lean:11...)
+trust_mutants: 3 KILLED, 3 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 60 OTHER SHARD in 257 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 18 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 3 SURVIVOR, 1 UNKNOWN, 42 OTHER SHARD
+trust_mutants: steps: wall plan 10.9 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.3 s, control_probes 84.6 s, mutants 153.6 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 121.6 s (5), mutant_builds 143.6 s (14), mutant_checks 210.5 s (11), stage_controls 108.1 s (4), mutant_probes 15.6 s (4)
