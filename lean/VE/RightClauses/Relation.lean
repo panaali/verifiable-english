@@ -39,6 +39,91 @@ theorem clauseSlot_no_total (D : ClauseDoc) (h : ∀ x ∈ D.lines, ∀ rel, x.2
     | some rel => simp [h x hx rel hr]
   simp [clauseSlot_eq, relPremises, this, VE.Compose.Labelled.formulas]
 
+/-! ## Labels -/
+
+theorem relLabel_inj {a b : String} (h : "rights:relation:" ++ a ++ ":total" = "rights:relation:" ++ b ++ ":total") :
+    a = b := by
+  have := congrArg String.data h
+  simp only [String.data_append, List.append_assoc] at this
+  exact String.ext (List.append_cancel_right (List.append_cancel_left this))
+
+theorem limLabel_at7 (X : RightsDoc) : ∀ x ∈ limPremisesLabelled X, (x.1.data.drop 7).head? = some 'l' := by
+  intro x hx
+  obtain ⟨k, -, hk⟩ := List.mem_filterMap.1 hx
+  unfold VE.Rights.keyPremise at hk
+  split at hk
+  · cases hk
+  · split at hk
+    · cases hk
+    · cases hk; simp only [String.data_append, toString]; rfl
+
+theorem relLabel_at7 (D : ClauseDoc) : ∀ x ∈ relPremisesLabelled D, (x.1.data.drop 7).head? = some 'r' := by
+  intro x hx
+  obtain ⟨y, -, hy⟩ := List.mem_filterMap.1 hx
+  simp only [Option.bind_eq_some_iff, Option.map_eq_some_iff] at hy
+  obtain ⟨_, -, _, -, rfl⟩ := hy
+  simp only [String.data_append]; rfl
+
+/-- Entries that are each the only one of their name have distinct names. -/
+theorem map_nodup_of_filter {α : Type} (k : α → String) :
+    ∀ l : List α, (∀ x ∈ l, l.filter (fun y => k y == k x) = [x]) → (l.map k).Nodup
+  | [], _ => List.nodup_nil
+  | y :: l, h => by
+    have hy := h y List.mem_cons_self
+    simp only [List.filter_cons, beq_self_eq_true, if_true, List.cons.injEq, true_and] at hy
+    rw [List.map_cons, List.nodup_cons]
+    refine ⟨fun hm => ?_, map_nodup_of_filter k l fun x hx => ?_⟩
+    · obtain ⟨z, hz, hzk⟩ := List.mem_map.1 hm
+      have : z ∈ l.filter (fun w => k w == k y) := List.mem_filter.2 ⟨hz, by simp [hzk]⟩
+      rw [hy] at this; cases this
+    · have hx' := h x (List.mem_cons_of_mem _ hx)
+      by_cases he : k y = k x
+      · have : x ∈ l.filter (fun w => k w == k y) := List.mem_filter.2 ⟨hx, by simp [he]⟩
+        rw [hy] at this; cases this
+      · simpa [List.filter_cons, he] using hx'
+
+theorem filterMap_labels_nodup {α β : Type} (k : α → String) (f : α → Option (String × β)) (g : String → String)
+    (hg : ∀ a b, g a = g b → a = b) (hf : ∀ a p, f a = some p → p.1 = g (k a)) :
+    ∀ l : List α, (l.map k).Nodup → ((l.filterMap f).map (·.1)).Nodup
+  | [], _ => List.nodup_nil
+  | a :: l, h => by
+    rw [List.map_cons, List.nodup_cons] at h
+    rw [List.filterMap_cons]
+    cases hfa : f a with
+    | none => exact filterMap_labels_nodup k f g hg hf l h.2
+    | some p =>
+      rw [List.map_cons, List.nodup_cons]
+      refine ⟨fun hm => h.1 ?_, filterMap_labels_nodup k f g hg hf l h.2⟩
+      obtain ⟨q, hq, hqp⟩ := List.mem_map.1 hm
+      obtain ⟨b, hb, hfb⟩ := List.mem_filterMap.1 hq
+      rw [hf a p hfa, hf b q hfb] at hqp
+      exact List.mem_map.2 ⟨b, hb, hg _ _ hqp⟩
+
+/-- The slot's labels are distinct: `Rel_D`'s, one per rule, and none is a `Lim_D` label. `hl` (DRI question Q3:
+    `Lim_D`'s own labels may repeat on a well-formed rights document) is that `Lim_D`'s are. -/
+theorem clauseSlot_labelled (D : ClauseDoc) (h : WellFormedClauses D = true) (hw : WellFormedRights (plain D) = true)
+    (hl : VE.Compose.Labelled.wellLabelled (limPremisesLabelled D.doc) = true) :
+  VE.Compose.Labelled.wellLabelled (clauseSlotLabelled D) = true := by
+  have hc : checkClauses D = .ok () := by unfold WellFormedClauses at h; split at h <;> simp_all
+  have hnames : (D.lines.map (·.2.1)).Nodup := map_nodup_of_filter (·.2.1) D.lines fun x hx => by
+    have := (checkEntry_ok (forM_ok _ _ hc _ hx)).1
+    simp only [entryOk, Bool.and_eq_true, decide_eq_true_eq] at this
+    exact this.1.2
+  have hrel : ((relPremisesLabelled D).map (·.1)).Nodup := by
+    unfold relPremisesLabelled
+    refine filterMap_labels_nodup (·.2.1) _ (fun n => "rights:relation:" ++ n ++ ":total")
+      (fun _ _ => relLabel_inj) (fun x p hp => ?_) D.lines hnames
+    simp only [Option.bind_eq_some_iff, Option.map_eq_some_iff] at hp
+    obtain ⟨_, -, _, -, rfl⟩ := hp; rfl
+  simp only [VE.Compose.Labelled.wellLabelled, decide_eq_true_eq, clauseSlotLabelled, List.map_append,
+    plain_limPremises] at hl ⊢
+  refine List.nodup_append.2 ⟨hl, hrel, fun a ha b hb hab => ?_⟩
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.1 ha
+  obtain ⟨y, hy, rfl⟩ := List.mem_map.1 hb
+  have h1 := limLabel_at7 _ x hx
+  rw [hab, relLabel_at7 D y hy] at h1
+  cases h1
+
 /-! ## The line's own instance -/
 
 theorem eq_of_nodup_map {α β : Type} (f : α → β) :
