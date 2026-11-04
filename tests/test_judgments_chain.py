@@ -319,6 +319,30 @@ def test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit(service, where
     assert {"term": "morality", "units": ["u029", "u111"]} in row["judgments"]["used"]
 
 
+@pytest.mark.parametrize("block,kind,rule_key", [
+    ("right", "claim", "norm"), ("right", "liberty", "norm"),
+    ("right", "immunity", "norm"), ("right", "fan", "norm"),
+    ("right", "power", "liberty"), ("right", "power", "recognition"),
+    ("right_lines", None, None),
+])
+@pytest.mark.parametrize("condition", ["sufficient", "necessary"])
+def test_a_rights_rule_with_an_exception_condition_keeps_the_layer_apart(
+        service, block, kind, rule_key, condition):
+    """F1: every written rights rule, including added lines and powers, reaches the early Lean refusal."""
+    from conformance import rights_differential as generator
+    seed = 1 if block == "right_lines" or kind == "fan" else 0
+    raw, units = generator.document(seed)
+    raw["profiles"] = sorted(set(raw["profiles"]) | {"documents@1", "judgments@0"})
+    selected = next(line for unit in units if block in unit for line in unit[block]["lines"]
+                    if kind is None or (kind == "fan" and "fan_out" in line)
+                    or (kind != "fan" and line["kind"] == kind))
+    key = rule_key or ("liberty" if selected["kind"] == "power" else "norm")
+    selected[key]["mode"] = "default"
+    selected[key]["exception"] = {**EXCEPTION, condition: [["unary", "adult", ["var", 0]]]}
+    row = run(service, generator.document_text(raw, units))
+    assert row.get("error") == "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route", row
+
+
 @pytest.mark.parametrize("seed", [2, 5])
 def test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities(service, seed):
     """The rights twin test (reviews/dri-decisions-20261101-pc-1.md item 3): F1.4, and the rights conformance

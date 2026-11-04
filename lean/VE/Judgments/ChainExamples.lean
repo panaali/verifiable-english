@@ -176,6 +176,29 @@ def withCondition (k : String) (inPart : Bool) : Json :=
 #guard ["sufficient", "necessary"].all fun k => [u "good_judgment", u "evaluating_inputs"].all fun f =>
   refusal (bothRules layer [(k, f)]) == some "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
 
+-- pc-1g review F1: the same exception reader visits all written rights rules, added lines, and MIXED parts.
+def rightsWithCondition (block ruleKey field : String) (inPart : Bool) : Json :=
+  let rule := Json.mkObj [("mode", "default"), ("exception", Json.mkObj
+    [(field, Json.arr #[u "good_judgment"])])]
+  let line := Json.mkObj [(ruleKey, rule)]
+  let content := Json.mkObj [(block, Json.mkObj [("lines", Json.arr #[line])])]
+  let unit := Json.mkObj [("content", content)]
+  Json.arr #[if inPart then Json.mkObj [("parts", Json.arr #[unit])] else unit]
+
+#guard ["right", "right_lines"].all fun block =>
+  ["norm", "liberty", "recognition"].all fun key =>
+    ["sufficient", "necessary"].all fun field =>
+      [false, true].all fun part => exceptionConditioned (rightsWithCondition block key field part)
+
+def rightsWithEmptyCondition : Json :=
+  let rule := Json.mkObj [("exception", Json.mkObj [("sufficient", Json.arr #[])])]
+  let line := Json.mkObj [("norm", rule)]
+  let content := Json.mkObj [("right", Json.mkObj [("lines", Json.arr #[line])])]
+  Json.arr #[Json.mkObj [("content", content)]]
+
+#guard !exceptionConditioned (rightsWithCondition "right" "norm" "factors" false) &&
+  !exceptionConditioned rightsWithEmptyCondition
+
 /-! pc-1 review F2: row 16 reads reading sets of 1 to 64 readings; a case with a set of more is answered by the
 chain's own check, in its order, before any work over its stated values. F1.3l's clash with readings added: at 64 it
 is row 16's, at 65 the chain's. -/

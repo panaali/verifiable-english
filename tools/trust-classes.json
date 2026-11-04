@@ -9899,7 +9899,10 @@
         "VE.Service.Document.clashRefusal",
         "VE.Service.Document.clashRefusalIn",
         "VE.Service.Document.clashRefusalFast",
-        "VE.Service.Document.exceptionConditioned"
+        "VE.Service.Document.exceptionConditioned",
+        "VE.Service.Document.ruleExceptionConditioned",
+        "VE.Service.Document.rightsBlockRules",
+        "VE.Service.Document.unitRules"
       ],
       "G[I]": [
         "VE.Service.Document.layeredIds",
@@ -17605,6 +17608,8 @@
         "VE.Judgments.ChainExamples.f13o",
         "VE.Judgments.ChainExamples.bothRules",
         "VE.Judgments.ChainExamples.withCondition",
+        "VE.Judgments.ChainExamples.rightsWithCondition",
+        "VE.Judgments.ChainExamples.rightsWithEmptyCondition",
         "VE.Judgments.ChainExamples.f13lWith",
         "VE.Judgments.ChainExamples.twoSets",
         "VE.Judgments.ChainExamples.udhrTerms",
