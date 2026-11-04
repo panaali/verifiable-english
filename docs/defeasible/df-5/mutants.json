@@ -1,0 +1,42 @@
+{
+ "item": "df-5",
+ "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants.json (tools/trust_mutants.py). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch).",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneFields, zoneFieldsOf",
+   "bug": "DE10f emitted from an unknown zone: forcedAll read as [] from an incomplete enumeration, and an unknown (branch) zone shown with its assignment's rows, form and forced_all",
+   "find": [
+    "(match m with | .error _ => none | .ok Min => forcedOfMin x.v.L x.S.M x.record Min)",
+    "  | .unknown (.branch _ why) => unknownF why"
+   ],
+   "replace": [
+    "(match m with | .error _ => some [] | .ok Min => forcedOfMin x.v.L x.S.M x.record Min)",
+    "  | .unknown (.branch w why) => shown \"unknown\" [] [w]"
+   ],
+   "test": "lean/VE/Defaults/ZoneWireExamples.lean: the observations-size guard (#guard run (zreq lamEnv lamR lam2 (at_ \"instructs\" [\"o2\"]) (obsN 1025)) == ...), lake build VE.Defaults.ZoneWireExamples: error at the guard"
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneFieldsOf",
+   "bug": "DE10's 'exceptions' form chosen although a non-exception decision atom (DF-δ's ranking) is open",
+   "find": "(\"form\", .str (formLabel f))",
+   "replace": "(\"form\", .str \"short\")",
+   "test": "lean/VE/Defaults/ZoneWireExamples.lean: the DF-δz guard (#guard run (zreq δEnv δR δSit (at_ \"x_required\" [\"a\"])) == byDefault true \"long\" [] [])"
+  },
+  {
+   "id": "S3",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "Python accepts a tampered forced_all entry (its rule and tuple not bound to the request)",
+   "find": "    for name, values in forced:\n        exception(name, list(values), \"forced exception\")\n",
+   "replace": "",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_its_tampered_field_and_keeps_the_genuine_row[forced exception-mu]"
+  }
+ ]
+}
