@@ -1,0 +1,12 @@
+{
+ "job": "testmap-94580b39-t756344-s4",
+ "head": "4798b3f0ca8d19d5af93e923a79794e090039cda",
+ "argv": [
+  "testmap-94580b39-t756344-s4",
+  "4798b3f0ca8d19d5af93e923a79794e090039cda",
+  "4798b3f0ca8d19d5af93e923a79794e090039cda",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c62ae449f1e3.tar.zst",
+  "e718d069db6719b04bee3a5b7f01d94da823a802da830a89518796f9afac569a",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s4.json.gz\" tests/test_wire_gate_corpus.py tests/test_assist.py tests/test_english_statement_blocks.py tests/test_precommit_hook.py tests/test_p1_amendment15.py tests/test_relay_binding_inventory.py tests/test_gate_quarantine.py tests/test_identity_lint.py tests/test_regen_generated.py tests/test_readings_verdicts_lean.py tests/test_events_wire_mutants.py tests/test_p1_reconcile.py tests/test_answer_cutoff.py tests/test_judgments_answer.py tests/test_p1_history.py tests/test_lean_layers_once.py tests/test_readings_lazy_pairs.py tests/test_numeral_conversion.py tests/test_stage2_graph.py tests/test_p0_three_way.py tests/test_gen_inv_design.py tests/test_scope_lean.py tests/test_argument.py tests/test_argument_adversarial.py tests/test_assist_split.py tests/test_premise_packs_stub.py tests/test_english_lean_s2.py tests/test_lean_default_build.py tests/test_scope_5_6_statements.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
