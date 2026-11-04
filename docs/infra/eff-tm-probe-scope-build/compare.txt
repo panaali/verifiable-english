@@ -1,0 +1,11 @@
+$ python3 /home/seyran/code/manage-agents/reviews/eff-tm-probe-scope-evidence/cmp.py /home/seyran/code/manage-agents/reviews/eff-tm-probe-scope-evidence/qta3d-dual.json docs/infra/eff-tm-probe-scope-build/qta3d-scoped.json
+69 mutants; plan differs []; status/raw_status differs []; counts {'KILLED': 60, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 4, 'ALLOWED': 5, 'NOT RUN': 0} vs {'KILLED': 60, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 4, 'ALLOWED': 5, 'NOT RUN': 0}
+detail differs: 0
+lake {'control_build': 1, 'probe_install': 8, 'control_probes': 246, 'mutant_builds': 161, 'mutant_checks': 9183, 'outside_checks': 0, 'stage_controls': 15, 'mutant_probes': 1111, 'other': 0} runs {'control_build': 6, 'probe_install': 6, 'control_probes': 6, 'mutant_builds': 71, 'mutant_checks': 67, 'outside_checks': 0, 'stage_controls': 7, 'mutant_probes': 60, 'other': 0}
+wall {'plan': 48, 'scratch': 15, 'control_build': 1, 'probe_install': 8, 'control_probes': 251, 'mutants': 2924, 'cleanup': 21, 'reads': 0} jobs 24 seconds 639
+
+$ probe-time saving (this sweep vs eff-tm-control's whole-file record of the same commit, git show 97c9c4f4a:docs/speed/tm-control/evidence.json runs[2])
+scoped (this sweep): mutant_probes 1111 Lake-s in 60 runs for 60 kills; mutant_checks 9183; Lake total 10725; probe share 10.4%
+whole-file (eff-tm-control): mutant_probes 10816 Lake-s in 60 runs; mutant_checks 9716; Lake total 20892; probe share 51.8%
+raw saving 89.7%; normalised by the unchanged mutant_checks step 89.1%
+this sweep: jobs 24 over 6 shards, wall 639 s; eff-tm-control: jobs 4, total 5446 s
