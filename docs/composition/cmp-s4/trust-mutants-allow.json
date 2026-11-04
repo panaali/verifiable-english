@@ -1,0 +1,84 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Discourse.contentKey",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[(k, _)]` -> `[]` leaves `k` unbound), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.chainConstructs",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` has no field `map`/`any` at the element type the body reads), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.editObj",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` is no `Std.TreeMap.Raw`), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.editArr",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` is no `Array Json`), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.chainAbstentions",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` has no element type for the pattern `(key, name)` or for `getArr?`), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` has no element type Lean can infer), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.unitsAndParts",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`[]` applied to the `flatMap` argument), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`x` -> `[]` at a `Json` argument; the other sites are killed by the guards at ComposeExamples.lean (conditionalOnOf)), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "operator": "append-right",
+   "reason": "a type error: the mutant does not compile (`x ++` dropped leaves a `Json` where a list is read), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Discourse.Composed",
+   "operator": "ctor-drop",
+   "reason": "dropping a constructor breaks admitComposed and every theorem that names it (the failing proof cannot be cut); each constructor has a #guard: `.today` S4-3, `.chain` S4-1 (Service/ComposedAdmissionExamples.lean)"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "operator": "list-first",
+   "reason": "equivalent: `ms.take 1` under `match ms with | m :: _` names the same first mention, and `(ms.take 1).isEmpty` is `ms.isEmpty`; `chainKeys.take 1` is killed (ComposeExamples.lean, the `right` content guard)"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "operator": "list-last",
+   "reason": "equivalent at the `ms.isEmpty` site (`(ms.reverse.take 1).isEmpty` is `ms.isEmpty`); the `match` site is killed by the two-mention guard (ComposeExamples.lean, twoMentions)"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "operator": "list-drop-last",
+   "reason": "equivalent: `chainKeys.dropLast` drops only \"fence\", which the `some \"fence\"` arm matches first"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "operator": "list-first",
+   "reason": "equivalent at the one-element list `[v]` (a `conditional_on` value) and the at-most-one-element `if`; the other sites are killed by the conditionalOnOf guard (ComposeExamples.lean)"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "operator": "list-last",
+   "reason": "equivalent at the one-element list `[v]` and the at-most-one-element `if`; the other sites are killed by the conditionalOnOf guard (ComposeExamples.lean)"
+  },
+  {
+   "definition": "VE.Discourse.documentSortOk",
+   "operator": "list-empty",
+   "reason": "a type error: the mutant does not compile (`K.documents` -> `[]` leaves the element type of `(·.name == c)` unknown), which the tool reads as UNKNOWN, not INVALID; `rv.vocabulary.constants` -> `[]` compiles and is killed by ComposeExamples' `sortOk` guards"
+  }
+ ]
+}

@@ -1,0 +1,219 @@
+{
+ "allow": [
+  {
+   "definition": "VE.EnglishGrammar.Norm.consequences",
+   "operator": "and-or",
+   "reason": "the No variant replaces 'Every <noun> must not ', which only a permission of sign false has; for any other role or sign the variant equals the wording and eraseDups removes it"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.consequences",
+   "operator": "list-first",
+   "reason": "anyOf and noOf have at most one element each"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.consequences",
+   "operator": "list-last",
+   "reason": "anyOf and noOf have at most one element each"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.consequences",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "any-all",
+   "reason": "Option.all differs from Option.any only when profilesOf fails; then stripSoft, which reads the same profiles, and decodeNormsEnvironment's envelope both refuse, so both give []"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "list-drop-first",
+   "reason": "decodeNormsEnvironment requires norms@0, which sorts before soft-norms@0 in a sorted profile list, so soft-norms@0 is never first; the toOption form does not elaborate"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "list-last",
+   "reason": "the toOption form does not elaborate (an Option has no reverse); the lambda's form is killed by Examples.lean:278 (soft-norms@0 before time@0)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself); an Option is no List"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "list-first",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself); an Option is no List"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.regulatedOf",
+   "operator": "list-drop-last",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself); an Option is no List"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.normRanks",
+   "operator": "lit-plus",
+   "reason": "ranks are W3's certificate only: raising norm_sentence's rank, or rule_refs' (no row begins with rule_refs), keeps every row well-founded and changes no derivation"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.normRows",
+   "operator": "bool-flip",
+   "reason": "row norm.clause has no condition, so clause true reads guard .top and no carve-out, as clause false does"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormAct.step",
+   "operator": "list-first",
+   "reason": "a header has at most one argument after its number (a numeral or a rule list), and a clause with a guard at most one inline carve-out: the list has at most one element"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormAct.step",
+   "operator": "list-last",
+   "reason": "a header has at most one argument after its number (a numeral or a rule list), and a clause with a guard at most one inline carve-out: the list has at most one element"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormAct.step",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.wording",
+   "operator": "list-first",
+   "reason": "a predicate has one or two arguments (VE/Route/Wire.lean:172 refuses any other signature), so ds.tail has at most one element"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.wording",
+   "operator": "list-last",
+   "reason": "a predicate has one or two arguments (VE/Route/Wire.lean:172 refuses any other signature), so ds.tail has at most one element"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.wording",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "list-first",
+   "reason": "these change sorts.take i, read only when a sort occurs twice; with at most two arguments (VE/Route/Wire.lean:172) i <= 1 and each mutant's list counts that sort as sorts.take i does"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "list-drop-last",
+   "reason": "these change sorts.take i, read only when a sort occurs twice; with at most two arguments (VE/Route/Wire.lean:172) i <= 1 and each mutant's list counts that sort as sorts.take i does"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "list-last",
+   "reason": "these change sorts.take i, read only when a sort occurs twice; with at most two arguments (VE/Route/Wire.lean:172) i <= 1 and each mutant's list counts that sort as sorts.take i does"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "list-drop-first",
+   "reason": "these change sorts.take i, read only when a sort occurs twice; with at most two arguments (VE/Route/Wire.lean:172) i <= 1 and each mutant's list counts that sort as sorts.take i does"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "lit-plus",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself) (a 1 or 2 changed makes an alternative redundant)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "lit-minus",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself) (a 1 or 2 changed makes an alternative redundant)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.bindings",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself) (a 1 or 2 changed makes an alternative redundant)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.overOf",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself); the filterMap list's mutant fails f1's #guard (Examples.lean:207), which the tool cannot read as a kill because the guard reads toNodes too"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.toNodes",
+   "operator": "list-empty",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.args",
+   "operator": "list-first",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.args",
+   "operator": "list-drop-last",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.args",
+   "operator": "list-last",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.args",
+   "operator": "list-drop-first",
+   "reason": "no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Ty",
+   "operator": "ctor-drop",
+   "reason": "dropping the norm, consequence and refs constructors leaves Sem, normTys and the norm actions naming them: no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "eq-le",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason (an eq-le that does not elaborate: no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself))"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "bool-flip",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "list-empty",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason (an eq-le that does not elaborate: no executable mutant: Lean refuses the mutated text (a type, field or pattern error in the declaration itself))"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "list-first",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "list-drop-last",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "list-last",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.NormOneReading",
+   "operator": "list-drop-first",
+   "reason": "a Prop no check can evaluate (the spec relation); the mutant breaks the section 4 proofs listed after this reason"
+  }
+ ]
+}

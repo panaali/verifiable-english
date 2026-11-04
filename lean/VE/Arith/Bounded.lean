@@ -139,7 +139,7 @@ def OpTable.add (limit : Nat) (T : OpTable) : Def → OpTable
   | .fn f n body => { T with funs := T.funs.insert f (n, fun xs w => Term.evalB T.env limit xs body w) }
   | .pred p n body => { T with preds := T.preds.insert p (n, fun xs w => Formula.evalB T.env limit xs body w) }
 
-/-- The tables, built once per case. -/
+/-- The tables, built once per statement: each `decideBounded` call builds them again. -/
 def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv := (D.foldl (OpTable.add limit) ⟨{}, {}⟩).env
 
 def maxSteps : Nat := VE.Time.maxEvaluations

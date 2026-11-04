@@ -1,5 +1,84 @@
 # Profile composition: the composition contract, the matrix, and the batches that lift measured refusals
 
+> **Change log: pc-fid-rev4, DRI 2026-10-31 pc-fid-rev4 item 1**
+> (`manage-agents/reviews/dri-decisions-20261031-pc-fid-rev4.md`, item 1, SIGNED: the 2026-10-31 fourth-draw
+> family-scoped re-pilot, 3/10 FAITHFUL and COMPOSES; this draft applies PC-R9 to PC-R12 and nothing else). Draft 8.
+> The plan's section 18 maps each finding to its rule, its statements, its fixtures and the unit it answers:
+> - PC-R9 (A; u0106.s02, u0242.s04, u0169.s03, u0255.s01's "its own"): **opened**, PC-11. RESOLVE was stated over
+>   `Content` only, and `CrossContent` has cases that are none (`attitude φ`; modality's, added in MD-2). PC-11's
+>   interface now registers every content kind a family adds with its formula positions as written (`KindPositions`),
+>   and asks of it, beside `ve.discourse@1`, a RESOLVE statement: each position resolved as S4 resolves an asserted
+>   formula of the unit, every other field kept (`resolveKindAt`, `KindResolveFaithful`, proved from the kind's laws by
+>   `kindResolve_faithful`). PC-11 states it for `attitude`, whose one position is its node's content as written
+>   (`attitudeKind`), and a case added without its entry breaks `crossKinds_cover` (3.10). F11.5 (stub, 7 guards).
+> - PC-R10 (A; u0018.s02): **opened**, PC-11. The same interface asks, beside `judgments@0`, a reader statement: the
+>   reader reads a kind's positions (`kindJudged`, `KindReaderCovers`). A `.layer` family proves both inside its own
+>   `LayerFacts` (`layer_kindFacts`), so until it does the layer rule refuses the list (row 25, row 17's text), stated
+>   for modality's kind (3.1, 3.10). F11.6 (stub, 6 guards: the stand-in modal kind's positions, the reader finding both
+>   judged predicates, row 25's two texts and the covering entry).
+> - PC-R11 (A; u0084.s03, u0073.s01): **opened**, a writing rule (3.13; the plan's 15.2 rule 9). Rule 9's filler slot
+>   holds a run of filler words beside a fixed phrase inside one argument, and nothing else; a clause on the whole
+>   predication is a predication-level stub naming its owner (act phrases, or modality for "as if"), and a whole
+>   embedded act is the act's own stub; never an argument filler. Row 27 (act phrases' clause-word text, kept). FW.5,
+>   FW.6 (stub, 4 guards on main's `VE.Acts.Lexical.check`).
+> - PC-R12 (B; u0255.s01): **opened**, PC-11. DEC 13(a) stays as signed: AT-8's sets use the `attitude` case and add
+>   no case. A candidate may hold a list of `CrossContent` parts, at most one of them a part the chain reads; its parts'
+>   premises are gated by its one choice atom (`crossSlotParts`, `crossSlotParts_single` proved,
+>   `crossSlotParts_choice`), and the chain reads its one rule through `sup` (`chainPart`). Row 26 (`partsRefusal`:
+>   no part, or two rule parts). F11.7, F11.8 (stub, 6 guards).
+> - Review fixes (pc-fid-rev4's statement review, findings 1 and 2, A and B; DRI 2026-10-31 pc-fid-rev4 item 2):
+>   1. `KindResolveFaithful` is a fact about `resolveKindAt` alone, so nothing tied RESOLVE to it. `ResolveReachesKind`
+>      (new, with `candidateParts` and `candidateAt`): wherever `discourseRewriter` answers, every candidate content or
+>      part of the kind sits at the same place of the resolved case as its `resolveKindAt` at its set's unit, under the
+>      case's `caseManifest`. `KindFacts`' discourse conjunct is now `KindResolveFaithful k ∧ ResolveReachesKind k`, so
+>      `attitudeKind_facts` and `layer_kindFacts` carry it; 3.7 says PC-11 extends `resolveDocument` with
+>      `resolveKindAt` on every registered kind's content, part by part; F11.5's end-to-end part names it (3.7, 3.10;
+>      F11.5, 2 more guards; 9, open points 20 and 25).
+>   2. `attitudeKind_laws` was false as stated: a formula deeper than the decoder's limit was written and not read back.
+>      `attitudeKind.write` and the stand-in `modalKindMD.write` now re-decode what they write and fail unless it gives
+>      the formula back, and `KindPositions`' docstring says `write` fails wherever the kind's wire cannot carry a
+>      formula (3.10; F11.5 and F11.6, 3 more guards; 9, open point 20).
+>
+> Where it landed: this log; 0; 3.1 (the reader over added kinds); 3.7 (PC-7c under PC-11); 3.10 (PC-11's interface
+> for every kind, a candidate of several parts); 3.13 (new); 4 (rows 25 to 27, the fault order); 5.9 (F11.5 to F11.8);
+> 5.12 (new: FW.5, FW.6); 6; 7 (choices 42 to 48); 8; 9 (the refreshed run with the review fixes: 319 declarations, 113
+> with `sorry`, 158 guards and 16 proofs pass; five seeded mutants and the review fixes' three; open points 20 to 25).
+> Nothing the DRI signed in pc-d2, pc-fid-rev, pc-fid-rev2, pc-fid-rev3 or the cross-plan rulings changes:
+> `CrossContent`, `crossSlot`, `crossSlot_choice`, `crossSlot_legacy`, `ResolveKeepsSets`, `DiscourseFaithful`,
+> `judgedIn`, `LayerFacts`, the layer rule and every earlier row and expected value keep their text; DEC 13 is met as
+> signed; no stack is listed or unlisted.
+>
+> **Change log: pc-fid-rev3, DRI 2026-10-31 pc-fid-rev3 item 1**
+> (`manage-agents/reviews/dri-decisions-20261031-pc-fid-rev3.md`, item 1, SIGNED: the 2026-10-30 third-draw
+> family-scoped re-pilot, 5/10 FAITHFUL and COMPOSES; this draft applies PC-R5 to PC-R8 and nothing else). Draft 7.
+> The plan's section 17 maps each finding to its rule, its fixture and the unit it answers. All four are writing
+> rules; none adds or changes a Lean statement (3.12):
+> - PC-R5 (A; ufsf.s135_bullet3, ufsf.s135_bullet2): **opened**. A level quantifier binds each level's reached,
+>   deployment and security conditions to that same level, for every level reached, beside the lead-in's own "a level
+>   has been reached"; never "there is a level such that" around the list (the plan's 15.2 rule 13). FW.1 (stub, on
+>   main's `VE.Formula.eval`: mitigated at the lower level and not at the higher, the pilot's guard holds and rule 13's
+>   does not; mitigated at both, rule 13's holds; no level reached, rule 13's fails).
+> - PC-R6 (A; ufsf.s135_bullet3_dm): **opened**. A reading a DRI decision dropped
+>   (`manage-agents/reviews/dri-decisions-20261029-uc-audit2.md` item 1: RS9 = same, RS6 = same) is never offered as
+>   a candidate, nor an axis only it made a choice (the plan's 15.2 rule 14). FW.2 (stub, on main's `choices`: two
+>   compatible choices, not the pilot's three).
+> - PC-R7 (A; ursp.t4_cost_factor): **opened**. A quantity inside an exact restatement is written in the restated
+>   term's exact shell, main's `VE.Definitions.Def.premise`, the quantity at its argument position inside the
+>   restatement; never a one-way shell (the plan's 15.2 rule 9). FW.3 (stub: the shell is main's biconditional; under
+>   the bound and not at the term, a model of the one-way shell and none of the exact one). No queued PC structure
+>   row's slot changes (the plan's 17.1).
+> - PC-R8 (B; the document, ursp.s34_step4): **stated** in main's forms (the plan's 15.2 rule 15). A document whose
+>   header declares more than 64 regulated predicates is split, or its answer is main's `ResourceLimit: regulated
+>   predicates` (row 23, `Soften.lean:471`); an unformalised span is LABELLED; a "GAP" part is main's `MIXED parts
+>   must partition their parent span` (row 24) and a "GAP" unit main's `invalid unit status` (row 15). FW.4 (stub, on
+>   main's `checkW1`, `Loader.statuses`, `w2Status` and `partOk`).
+>
+> Where it landed: this log; 0; 3.12 (new); 4 (rows 23 and 24, the note on PC-R5 to PC-R7 after the table); 5.11
+> (new: FW.1 to FW.4); 6; 7 (choices 37 to 41); 8; 9 (the refreshed run: 276 declarations, 107 with `sorry`, 130
+> guards and 11 proofs pass; four seeded mutants; the English check; open points 16 to 19). Nothing the DRI signed in
+> pc-d2, pc-fid-rev, pc-fid-rev2 or the cross-plan rulings changes: every earlier statement, row and expected value
+> keeps its text; main's limit, its statuses and `CouplingLabelMissing` stay; no stack is listed or unlisted.
+>
 > **Change log: pc-fid-rev2, DRI 2026-10-30 pc-fid-rev2 item 1**
 > (`manage-agents/reviews/dri-decisions-20261030-pc-fid-rev2.md`, item 1, SIGNED: the 2026-10-30 family-scoped
 > re-pilot, 5/10 FAITHFUL and COMPOSES; this draft applies R1 to R4 and nothing else). Draft 6. The plan's section 16
@@ -151,6 +230,13 @@ The batches then lift the refusals the pilots measured:
   (PC-2b; main's `CouplingLabelMissing` stays), an act phrase with several derivations inside a candidate (PC-6c),
   a purpose clause's two readings (PC-1, PC-2b), and, staged on modality's MD-4a, the scenario slot in a candidate's
   guard (PC-12).
+- from the 2026-10-30 third-draw re-pilot (pc-fid-rev3): writing rules only, with no batch and no new statement (3.12):
+  a level quantifier over a list's per-level conditions, a reading a DRI decision dropped, a quantity inside an exact
+  restatement, and main's regulated-predicate limit and statuses as a writer meets them.
+- from the 2026-10-31 fourth-draw re-pilot (pc-fid-rev4): PC-11's interface for every content kind a family adds, so
+  RESOLVE and the judgment reader reach each kind's formula positions (stated for `attitude`; for modality's kind,
+  the obligation and the layer rule's refusal while it is missing), a candidate of several parts for DEC 13(a)'s report
+  and soft rule (PC-11), and a writing rule for a clause on the whole predication (3.13).
 
 Priority stays two typed graphs, each with the check it already has (1.8). "No exception" gets one definition,
 owned by defeasible, read from metadata the packs export (1.9). A split rule keeps one decision (1.10).
@@ -1085,13 +1171,15 @@ theorem dfltUniform_legacy (D : SoftDoc) (qs : List Pack) (h : ∀ p ∈ qs, p.c
 /-- The least decision tables of the stated conditions on `B`'s facts. -/
 def leastUniform (D : SoftDoc) (qs : List Pack) (B : VE.Structure.{u}) : String → List B.Carrier → Prop
 
-/-- The stated conditions are all that force a decision: the least tables keep the base admissible (the uniform
+/-- The stated conditions are all that force a decision: on every admissible base the least tables lie below the
+base's (sa-no-exception, DRI decision 2026-11-02, pc9-decide-check, item 2) and keep it admissible (the uniform
 analogue of `ReplacementHolds`, Meaning.lean:70). -/
 def ConditionsExact (U : UDoc) (D : SoftDoc) (qs : List Pack) : Prop :=
   ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B →
-    ∃ F : String → List B.Carrier → Prop,
+    (∃ F : String → List B.Carrier → Prop,
       BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) (withOpen U D B (leastUniform D qs B) F) ∧
-      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)
+      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)) ∧
+    ∀ p vs, leastUniform D qs B p vs → B.relation p vs
 
 /-- Proved by defeasible's named batch DF-U (DRI ruling 2(b)), against `DefaultBase`. -/
 theorem dfltUniform_sound (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
@@ -1457,6 +1545,18 @@ nothing follows from a belief), and G3, stated for every list, covers lists with
 its node. The fixtures are F1.9 to F1.11. Where the pilot's writer stubs attitudes (`STUB[attitudes]`), the stub fills
 one guard conjunct of the rule (the node's position), with its holder, its slot (the rule's quantified variable) and
 its content; the judged predicate inside the content is a judgment term of this plan's reader.
+
+**The reader over every content kind a family adds (pc-fid-rev4, PC-R10; PC-11's interface).** 1.2's `layer` row
+gives `judgments@0` "a reader for every content kind of the route". PC-1 states it for today's unit contents and
+PC-1b for attitude guard nodes. A kind another family adds, as a unit content of its profile or as a `CrossContent`
+case (modality's `{"modal": …}`, its MD-2; DEC 13(b)), had no reader case, so a judged word inside a modal claim was
+read by nothing: listed, it gives `JudgmentListedUnused`. PC-11's interface now registers every such kind with its
+formula positions as written, and the reader reads a content of the kind at those positions (3.10: `kindJudged`,
+`KindReaderCovers`), as one carrier conjunction, PC-1 (3)'s `andAll`. A `.layer` family proves it inside its own
+`LayerFacts` on every list holding `judgments@0` (`layer_kindFacts`); until it does, the layer rule refuses the list
+(row 25), so a modal claim is never admitted with its judged words unread. PC-11 states it for an attitude candidate:
+the reader reads the node's content as written, which is the content PC-1b reads through the generated atom of a
+guard node, so the two agree. The fixture is F11.6.
 
 **A purpose clause after a rule (pc-fid-rev2, R4(a); PC-1 and PC-2b, no new statement).** "<rule>, so that <Y>",
 "<rule>, to <Y>", "<rule> for <Y>" can be read two ways (purpose-explanation D6(a)): the purpose limits the rule (the
@@ -2407,8 +2507,9 @@ def ResolveKeepsSets : Prop :=
     (caseSets j').map setShape = (caseSets j).map setShape ∧ caseChoiceLinks j' = caseChoiceLinks j
 ```
 
-PC-7c proves `ResolveKeepsSets` from S4's `resolveDocument` (it maps `resolveContent` over every content, and copies
-every other byte), proves `StackRuns ["ve.discourse@1", "readings@1"]` (PC-7b's RESOLVE line, then `checkCore`, whose
+PC-7c proves `ResolveKeepsSets` from S4's `resolveDocument` (it maps `resolveContent` over every content and copies
+every other byte, and PC-11 extends it with `resolveKindAt` on every registered kind's content, part by part), proves
+`StackRuns ["ve.discourse@1", "readings@1"]` (PC-7b's RESOLVE line, then `checkCore`, whose
 readings route superposes the resolved sets), lists the pair with its generic `RouteFacts` (`DiscourseFaithful`,
 `DiscoursePreserves`, `readingsFaithful`, `ResolveKeepsSets`), and, by 1.5's listing rule, lists
 `["ve.discourse@1", "scope@0", "readings@1"]`. Its fixtures are F7.6 to F7.8. So a reference inside a reading
@@ -2419,6 +2520,15 @@ phrases' identity is the phrase's canonical string), so a reference there stays 
 needs it resolved writes it as an argument of the act's predicate. A collective antecedent ("this content", two
 earlier outputs together) is outside discourse's scope (discourse.md: collective plurals); where the pilot's writer
 stubs it (`STUB[discourse]`), the stub fills that argument position.
+
+(pc-fid-rev4, PC-R9) Under PC-11 a candidate may also be a `CrossContent` case that is no `Content` (`attitude`, and
+the case modality adds), or a list of parts (3.10). RESOLVE resolves such a candidate through its kind's formula
+positions as written (3.10: `resolveKindAt`), each position as S4 resolves an asserted formula of the set's unit, so
+`DiscourseFaithful`, at `.assertion`, covers each (`KindResolveFaithful`, proved from the kind's laws by
+`kindResolve_faithful`); a part is resolved through its own kind, and RESOLVE's answer holds that resolution at the
+candidate's place (`ResolveReachesKind`, review fix). A kind with no such statement is refused beside
+`ve.discourse@1` (row 25). `ResolveKeepsSets` keeps its statement: it reads the sets' shapes, couplings and
+narrowings, which RESOLVE keeps whatever kind a candidate holds. The fixture is F11.5.
 
 ### 3.8 PC-9: typed priority, and the "no exception" statements
 
@@ -2489,6 +2599,259 @@ theorem crossSlot_legacy (cs : List (VE.Formula × Content)) :
 constrains nothing, and the chosen one's claim is a premise. `crossSlot_legacy` says the type changes no set
 without an attitude candidate. The fixtures are F11.1 to F11.4.
 
+**PC-11's interface for every content kind (pc-fid-rev4, PC-R9 and PC-R10).** RESOLVE (S4's `resolveContent`,
+`DiscourseFaithful`, PC-7c's `ResolveKeepsSets`) and the judgment reader (PC-1's `judgedIn`, PC-1b) are stated over
+composition's `Content` and today's unit contents. `CrossContent` has a case that is no `Content`, `attitude φ`, and
+modality's MD-2 adds another (DEC 13(b); its `{"modal": …}`, modality-counterfactual-PLAN 244, also a unit content).
+So a reference or a judged word inside such a candidate reached no stated construct. And `attitude φ` is the claim
+after AT-2's elaboration, the generated atom at the holder, whose content sits in the atom's key and at no position of
+`φ`; RESOLVE (rank 1) runs before CHAIN (rank 4) elaborates the node. PC-11's interface therefore registers every
+content kind a family adds, a `CrossContent` case or a unit content of its profile, with its formula positions as
+written, and asks two statements of it:
+
+```lean
+-- lean/VE/Compose/CrossContent.lean (PC-11; pc-fid-rev4)
+namespace VE.Discourse
+
+/-- STUB (pc-fid-rev4, over S4): S4's resolution at one formula position of unit `unit`, the position read as an
+asserted formula. -/
+def resolveFormula (E : VE.Environment) (K : Manifest) (unit : String) (φ : VE.Formula) :
+    Except String VE.Formula
+
+/-- (pc-fid-rev4, S4's): a position's resolution is the asserted formula's, so `DiscourseFaithful` covers it. -/
+theorem resolveFormula_assertion (E : VE.Environment) (K : Manifest) (unit : String) (φ ψ : VE.Formula) :
+    resolveFormula E K unit φ = .ok ψ ↔ resolveContent E K unit (.assertion φ) = .ok (.assertion ψ)
+
+namespace VE.Compose
+
+/-- (PC-R9, PC-R10) A content kind a family adds, as a `CrossContent` case or a unit content, as PC-11's interface
+registers it: the profile that adds it, its wire key, its formula positions as written, before CHAIN elaborates it, in
+canonical order (`read`), the content with them replaced (`write`), and every field that is no position (`rest`).
+(Review fix) `write` fails wherever the kind's wire cannot carry a formula (a decoder's depth limit): it answers only
+where `read` gives the formulas back. -/
+structure KindPositions where
+  profile : String
+  key : String
+  read : Json → Except String (List VE.Formula)
+  write : Json → List VE.Formula → Except String Json
+  rest : Json → Json
+
+/-- The positions' laws: positions written back are read back, and every field that is no position is kept. -/
+def KindPositions.Laws (k : KindPositions) : Prop :=
+  ∀ w fs, k.read w = .ok fs → ∀ gs w', gs.length = fs.length → k.write w gs = .ok w' →
+    k.read w' = .ok gs ∧ k.rest w' = k.rest w
+
+/-- (PC-R9) The `attitude` case's positions: the content of its node as written (AT-3a's node
+`{"attitude": {"holder", "mode", "degree"?, "slot"?, "content"}}`), which AT-2 elaborates after RESOLVE into its
+generated atom and that atom's key. Holder, mode, degree and slot are no formula position, so they are kept. The
+content's wire is attitudes' (AT-3a); main's indexed formula wire stands in for it in the stub. `write` is called with
+as many formulas as `read` gave (one); (review fix) it re-decodes the encoded formula and fails unless that gives it
+back. -/
+def attitudeKind : KindPositions where
+  profile := "attitudes@0"
+  key := "attitude"
+  read := fun w => do
+    let c ← (← w.getObjVal? "attitude").getObjVal? "content"
+    return [← VE.Bridge.decodeFormula 64 c]
+  write := fun w gs => match gs with
+    | [g] => do
+      let n ← w.getObjVal? "attitude"
+      let c := VE.Route.Wire.encodeFormula g
+      if (← VE.Bridge.decodeFormula 64 c) != g then throw "invalid attitude content"
+      return w.setObjVal! "attitude" (n.setObjVal! "content" c)
+    | _ => .error "invalid attitude content"
+  rest := fun w => w.setObjVal! "attitude" ((w.getObjValD "attitude").setObjVal! "content" Json.null)
+
+/-- (PC-R9) RESOLVE on a content of a registered kind: each position resolved as S4 resolves an asserted formula of
+the content's unit, and the content written back with them. -/
+def resolveKindAt (k : KindPositions) (E : VE.Environment) (K : VE.Discourse.Manifest) (unit : String) (w : Json) :
+    Except String Json := do
+  k.write w (← (← k.read w).mapM (VE.Discourse.resolveFormula E K unit))
+
+/-- (PC-R9) A kind's RESOLVE statement, PC-11's obligation beside `ve.discourse@1`: RESOLVE rewrites the kind's
+positions alone, each to S4's resolution of that position as an asserted formula of the unit, so `DiscourseFaithful`
+(at `.assertion`) covers each; every field that is no position is kept. -/
+def KindResolveFaithful (k : KindPositions) : Prop :=
+  ∀ (E : VE.Environment) (K : VE.Discourse.Manifest) (unit : String) (w w' : Json),
+    resolveKindAt k E K unit w = .ok w' → k.rest w' = k.rest w ∧
+      ∃ fs gs, k.read w = .ok fs ∧ k.read w' = .ok gs ∧ gs.length = fs.length ∧
+        ∀ p ∈ fs.zip gs, VE.Discourse.resolveContent E K unit (.assertion p.1) = .ok (.assertion p.2)
+
+/-- `mapM` in `Except` answers one value per input, each the function's answer on it (proved). -/
+theorem mapM_ok_zip {α β : Type} (f : α → Except String β) :
+    ∀ (fs : List α) (gs : List β), fs.mapM f = .ok gs → gs.length = fs.length ∧ ∀ p ∈ fs.zip gs, f p.1 = .ok p.2
+
+/-- (PC-R9) A kind whose positions keep their laws has its RESOLVE statement (proved, from S4's
+`resolveFormula_assertion`). -/
+theorem kindResolve_faithful (k : KindPositions) (h : k.Laws) : KindResolveFaithful k
+
+/-- (PC-R9, review fix) A candidate's contents as written, by place: a candidate of several parts (`{"parts": […]}`)
+its parts in order; any other content is itself, at place 0. -/
+def candidateParts (c : Json) : List Json :=
+  match c.getObjVal? "parts" with
+  | .ok (.arr ps) => ps.toList
+  | _ => [c]
+
+/-- (PC-R9, review fix) What sits at place `(i, r, p)` of a case: set `i` of `caseSets` and, in its reading `r`, the
+content or its part `p`. -/
+def candidateAt (j : Json) (i r p : Nat) : Option (Json × Json) := do
+  let s ← (Contract.caseSets j)[i]?
+  let rd ← (VE.Scope.readingsJson s)[r]?
+  let w ← (candidateParts (rd.getObjValD "content"))[p]?
+  pure (s, w)
+
+/-- (PC-R9, review fix) RESOLVE reaches the kind: where the case's RESOLVE answers, every candidate content or part
+with the kind's key, in a set `s` of the case, sits at the same place of the resolved case as its `resolveKindAt` at
+`s`'s unit, under the case's environment and manifest. -/
+def ResolveReachesKind (k : KindPositions) : Prop :=
+  ∀ (j j' : Json) (E : VE.Environment) (K : VE.Discourse.Manifest),
+    Contract.discourseRewriter.run j = .ok j' → VE.Discourse.caseManifest j = .ok (E, K) →
+      ∀ (i r p : Nat) (s w : Json), candidateAt j i r p = some (s, w) →
+        (w.getObjVal? k.key).toOption.isSome = true →
+          ∃ s' w', candidateAt j' i r p = some (s', w') ∧ resolveKindAt k E K (VE.Scope.setUnit s) w = .ok w'
+
+/-- (PC-R10) The judgment reader on a content of a registered kind: its positions as written, in one carrier
+conjunction (PC-1's `andAll`), so a judgment at any position is found. -/
+def kindJudged (k : KindPositions) (w : Json) : Except String (Option VE.Judgments.Content) :=
+  (k.read w).map fun fs => some (.formula (VE.Judgments.andAll fs))
+
+/-- STUB (PC-1's reader as PC-11 extends it): what the document mode's judgment reader reads of one content as
+written, a unit's or a candidate's, by its wire key. -/
+def contentJudged (w : Json) : Except String (Option VE.Judgments.Content)
+
+/-- (PC-R10) A kind's reader statement, PC-11's obligation beside `judgments@0`: the reader reads a content of the
+kind at its positions. -/
+def KindReaderCovers (k : KindPositions) : Prop :=
+  ∀ w : Json, (w.getObjVal? k.key).toOption.isSome = true → contentJudged w = kindJudged k w
+
+/-- PC-11's obligations on a registered kind in a list `ps`: beside discourse, the kind's RESOLVE statement and
+RESOLVE reaching the kind (review fix); beside judgments, the reader's statement. -/
+def KindFacts (k : KindPositions) (ps : List String) : Prop :=
+  ("ve.discourse@1" ∈ ps → KindResolveFaithful k ∧ ResolveReachesKind k) ∧ ("judgments@0" ∈ ps → KindReaderCovers k)
+
+/-- The kinds PC-11 registers: its own `attitude`. A family that adds a case adds its entry in the same batch
+(modality's MD-2). -/
+def crossKinds : List KindPositions := [attitudeKind]
+
+def CrossContent.key : CrossContent → String
+  | .content _ => "content"
+  | .attitude _ => "attitude"
+
+/-- Every case of `CrossContent` other than `content` has a registered kind: a case added without its entry breaks
+this proof (proved by cases). -/
+theorem crossKinds_cover (x : CrossContent) :
+    x.key = "content" ∨ (crossKinds.map (·.key)).contains x.key = true
+
+/-- (PC-R9, PC-R10) PC-11 proves its own kind's obligations on every list. -/
+theorem attitudeKind_laws : attitudeKind.Laws
+theorem attitudeKind_facts (ps : List String) : KindFacts attitudeKind ps
+
+/-- A `.layer` family's kind meets PC-11's obligations on every list its `LayerFacts` covers, so the layer rule
+(row 17) refuses every list where they are missing (`layer_evidence`). Proved on main, where no layer has facts; the
+row batch that writes a layer's `LayerFacts` and registers its kind proves it again. -/
+theorem layer_kindFacts : ∀ k ∈ crossKinds, ∀ ps, Contract.LayerFacts k.profile ps → KindFacts k ps
+```
+
+The obligation, part by part:
+- **The positions.** A kind's `read` gives its formula positions as written, in canonical order (S4's "positions" for
+  a kind that is no `Content`); `write` puts formulas back at them; `rest` is every other field. `KindPositions.Laws`:
+  what is written is read back, and `rest` is kept. (Review fix) `write` fails wherever the kind's wire cannot carry a
+  formula: `attitudeKind.write` (and the stand-in `modalKindMD.write`) re-decodes each encoded formula and fails unless
+  that gives the formula back, with the decoder's own error where it refuses (`ResourceLimit: formula depth exceeds
+  64`, `lean/VE/Bridge.lean:249`), so a write that answers is read back.
+- **RESOLVE (PC-R9), beside `ve.discourse@1`.** `resolveKindAt` resolves each position as S4 resolves an asserted
+  formula of the content's unit (`resolveFormula`; `resolveFormula_assertion`, S4's lemma: its answer is
+  `resolveContent`'s on `.assertion`) and writes them back. `KindResolveFaithful k`: every field that is no position is
+  kept, and each resolved position is S4's resolution of the written one, so `DiscourseFaithful` at
+  `.assertion φ ↦ .assertion ψ` says that each means what the unit's references intend. `kindResolve_faithful` proves
+  it from the kind's laws, with `mapM_ok_zip`. (Review fix) `KindResolveFaithful` is a fact about `resolveKindAt` alone;
+  `ResolveReachesKind k` ties RESOLVE to it: wherever `discourseRewriter` answers on a case, every candidate content or
+  part with the kind's key, in a set `s`, sits at the same place of the resolved case (`candidateAt`: set, reading,
+  part; `candidateParts`) as its `resolveKindAt` at `s`'s unit, under the case's `caseManifest`. PC-11 proves it from
+  its extension of S4's `resolveDocument` (3.7). `ResolveKeepsSets` keeps its statement (3.7).
+- **The reader (PC-R10), beside `judgments@0`.** `kindJudged` reads a content of the kind at its positions;
+  `KindReaderCovers k`: the document mode's reader (`contentJudged`, PC-1's reader as PC-11 extends it to candidates'
+  contents and to added unit contents) reads a content of the kind exactly so (3.1). A judgment at any position is then
+  in the unit's usage, and listing it is no `JudgmentListedUnused`.
+- **Who proves it.** PC-11 registers its own `attitude` kind and proves its laws and its facts on every list
+  (`attitudeKind_laws`, `attitudeKind_facts`). `crossKinds_cover` makes every case of `CrossContent` other than `content`
+  have a registered kind, so a family that adds a case without its entry breaks the build. A `.layer` family
+  (modality) proves its kind's `KindFacts` inside its own `LayerFacts`, on each list it covers (`layer_kindFacts`). A
+  unit content of a family's profile is registered in the same table by that family's batch, which proves its facts
+  before its decoder admits a list holding `ve.discourse@1` or `judgments@0`.
+- **The refusal while it is missing.** No `layerCovers` entry exists without `LayerFacts` (`layer_evidence`), and no
+  `LayerFacts` without the kind's `KindFacts` (`layer_kindFacts`). So the layer rule refuses every list that holds
+  modality's profile beside `ve.discourse@1` or `judgments@0` until modality proves them, with row 17's text (row 25 names
+  these instances): `UnsupportedProfile: modality@0 with ve.discourse@1 is not implemented` when the list holds
+  discourse, and on the soft chain's readings with `judgments@0` `UnsupportedProfile: modality@0 with readings@1 is not
+  implemented` (F11.6). No list is admitted with a modal claim whose references are unresolved or whose judged words are
+  unread.
+
+For `attitude`, the one position is the node's content as written. RESOLVE resolves "this" and "its own" there; AT-2
+then elaborates the resolved node, so the generated atom's key holds the resolved content, and PC-1b's
+`withAttitudeContents` reads that same content through the atom. Holder, mode, degree and slot are kept: the holder
+"we" is the document's legend (DEC 18), and a holder pronoun is attitudes' (D-A7 refuses one that does not resolve to
+a variable of the rule). The fixture is F11.5. For modality's kind this specification states only the obligation and
+the refusal: its positions (its plan's wire gives a restrictor and a body; the stub's stand-in `modalKindMD` reads
+them), its elaboration and its `slotAgrees` row are modality's.
+
+**A candidate of several parts (pc-fid-rev4, PC-R12; PC's side of DEC 13(a)).** DEC 13(a) gives AT-8's {report;
+report and soft rule} sets to PC-11's `attitude` case as built, with no new case. A `CrossContent` value is one case,
+so "report and soft rule" is two values: the report's `attitude` and the rule's `content (.norm N)`. PC's side: a
+candidate holds a list of `CrossContent` parts, at most one of them a part the chain reads. `CrossContent` gains no
+case, and `crossSlot` and its theorems keep their text.
+
+```lean
+namespace VE.Compose
+
+/-- (PC-R12) A candidate's parts' owned premises: every part's, in order. -/
+def partsPremises (ps : List CrossContent) : List VE.Formula := ps.flatMap CrossContent.premises
+
+/-- (PC-R12) A set whose candidates hold parts: each candidate's parts' premises gated by its one choice atom. -/
+def crossSlotParts (cs : List (VE.Formula × List CrossContent)) : List VE.Formula :=
+  cs.flatMap fun x => gate x.1 (partsPremises x.2)
+
+/-- (PC-R12) A one-part candidate owns what `crossSlot` gives it (proved). -/
+theorem crossSlotParts_single (cs : List (VE.Formula × CrossContent)) :
+    crossSlotParts (cs.map fun x => (x.1, [x.2])) = crossSlot cs
+
+/-- (PC-R12) Where exactly one candidate's choice atom holds, the set's gated premises hold exactly when that
+candidate's parts' premises all do. -/
+theorem crossSlotParts_choice (B : VE.Structure.{u}) (cs : List (VE.Formula × List CrossContent)) (i : Nat)
+    (hi : i < cs.length) (hon : (cs[i]'hi).1.denote B [])
+    (hoff : ∀ (k : Nat) (hk : k < cs.length), k ≠ i → ¬ (cs[k]'hk).1.denote B []) :
+    VE.Norms.Sat B (crossSlotParts cs) ↔ VE.Norms.Sat B (partsPremises (cs[i]'hi).2)
+
+/-- (PC-R12) The part the chain reads: a norm, right, right-lines or limitation content. -/
+def CrossContent.chainPart : CrossContent → Option Content
+  | .content c => if c.needs.isSome then some c else none
+  | .attitude _ => none
+
+/-- (PC-R12) The decoder's check of a candidate's parts (row 26): a candidate with no part, or with more than one part
+the chain reads, is refused; the chain reads the one it has through `sup`, as a one-part candidate's. -/
+def partsRefusal (setId readingId : String) (ps : List CrossContent) : Option String :=
+  if ps.isEmpty then some s!"InvalidInput: reading {setId}:{readingId} has no parts"
+  else if (ps.filterMap CrossContent.chainPart).length > 1 then
+    some s!"InvalidInput: reading {setId}:{readingId} has more than one norm, right or limitation part"
+  else none
+```
+
+- **The wire.** A candidate of several parts has content `{"parts": [<part>, …]}`, each part a content's wire or an
+  attitude node's, in the order written. A candidate of one value is written as that value, as before.
+- **Premises.** It owns every part's premises, gated by its one choice atom (`crossSlotParts`): under its choice they
+  all hold, under another none constrains (`crossSlotParts_choice`, as `crossSlot_choice`). A one-part candidate owns
+  exactly what `crossSlot` gives it (`crossSlotParts_single`), so no existing set changes.
+- **The chain.** Its one chain part (`chainPart`) is read by the chain through `sup`, as a one-value candidate's
+  content is, under the same choice atom. Under the report-and-rule choice the report's claim is a premise and the
+  soft rule is in the chain; under the report's choice the claim alone; the soft rule's force is weighing's (E3).
+- **The refusal.** `partsRefusal`, at decode (row 26): no part, or two or more chain parts. Superposition reads one
+  chain content per candidate (`superpose_faithful`), and no theorem states two, so the conservative answer is a
+  refusal, never a guess.
+- **RESOLVE and the reader.** Each part is resolved and read through its own kind: the report at its node's content
+  (`attitudeKind`), the rule as a `content`.
+
+The fixtures are F11.5 to F11.8.
+
 ### 3.11 PC-12: the scenario slot in a candidate's guard (pc-fid-rev2, R3; staged on modality's MD-4a)
 
 "Might X, in which case <rule>" limits which situations the rule binds, so it changes verdicts. Modality's MD-4
@@ -2535,6 +2898,98 @@ PC-12, after MD-4a (modality's scenarios and its `Scope/Effects.lean` case), mod
 `layerCovers` entries), PC-2b and PC-4, defines `scenarioGuard` and adds F12.1 to F12.3. It adds no route and no refusal of
 its own: `ScenarioUnbound` and the admission's texts are modality's.
 
+### 3.12 Writing rules of the third-draw re-pilot (pc-fid-rev3, PC-R5 to PC-R8; no batch, no new statement)
+
+The DRI's order (`manage-agents/reviews/dri-decisions-20261031-pc-fid-rev3.md`, item 1) names four findings in what a
+writer writes, not in what a batch builds. Each is a rule of the plan's 15.2 with a fixture in 5.11 (FW.1 to FW.4).
+None adds or changes a Lean statement: each rule fixes the content a unit or a candidate holds, which the existing
+statements already read (PC-1's `judgedIn`, PC-2b's `chainReadings_rows`), or restates a check main already makes.
+The fixtures' guards run on main's functions today: `VE.Formula.eval` on a `VE.FiniteModel` (`lean/VE/Finite.lean`;
+`eval_iff_denote` makes its answer the formula's meaning), `VE.Definitions.Def.premise`, `VE.Readings.choices`,
+`VE.SoftNorms.checkW1` and `VE.Discourse.Loader`'s statuses. No queued batch's statements, fixtures or slots change
+(the plan's 17.1).
+
+**A level quantifier over a list's conditions (PC-R5; the plan's 15.2 rule 13).** For a lead-in "a <proposal> for
+which a <level of kind K> has been reached is X, if:" whose items state conditions at the reached level, the
+candidate's rule is
+
+```text
+∀x. ( (∃l. reached(x, l) ∧ K(l)) ∧ C₀(x) ∧ ∀l. (reached(x, l) ∧ K(l) → DM(x, l) ∧ SEC(x, l)) ) → X(x)
+```
+
+with `C₀` the conditions that name no level (the deployment kind), and never the pilot's
+`∀x. (∃l. reached(x, l) ∧ K(l) ∧ C₀(x) ∧ DM(x, l) ∧ SEC(x, l)) → X(x)`, under which one reached level's
+conditions stand for another's (the translation-fidelity checklist's class 2). The first conjunct is the lead-in's
+own "a level has been reached": without it the universal holds for a proposal that reached no level (FW.1's third
+case). The English is main's core grammar's ("there is … such that", "for every", "if … then", nested lists;
+`lean/VE/English/Grammar.lean:13-18`): FW.1's sentences have one derivation each and read to these formulas (section 9,
+the English check). With one level of kind K the two forms agree; the per-level form is written in every case.
+
+**A reading a DRI decision dropped (PC-R6; the plan's 15.2 rule 14).** A set's candidates are its unit's use case's
+readings less every reading a signed DRI decision dropped as excluded by the source (for the DeepMind FSF,
+`manage-agents/reviews/dri-decisions-20261029-uc-audit2.md` item 1: RS9 = same and RS6 = same). A dropped reading is
+neither a candidate, pending or not, nor a value of an axis; an axis it alone made a choice is not written (no label,
+no coupling on it); a set left with one candidate is no set. So no compatible choice reads it (FW.2: two choices,
+where the pilot's form gave three, one of them the dropped reading's). Main's coupling check (row 20) is unchanged:
+every remaining candidate carries its coupled axes.
+
+**A quantity inside an exact restatement (PC-R7; the plan's 15.2 rule 9).** For "<term> (i.e., <restatement>)", or
+another marker definitions' PD-6 table fixes as exact, the span's content is the restated term's exact shell
+
+```text
+∀x̄. (p x̄ → B) ∧ (B → p x̄)   =   VE.Definitions.Def.premise ⟨p, args, B⟩   (lean/VE/Definitions/Layer.lean)
+```
+
+which definitions' `shapeOf` reads as exact, with `p` the restated words' own predicate over the shell's variables and
+`B` the restatement, the quantity `STUB[quantities]` at the argument position it fills inside `B` (the same stub in
+both conjuncts, over the shell's variables). A one-way shell, `∀x̄. p x̄ → B` or its converse, is a necessary or a
+sufficient statement and loses the other direction of "i.e." (FW.3: under the bound and not at the term, a model of
+the one-way shell and none of the exact one). Where `p`'s words lie inside a bound judgment's judged words, `p` is not
+the judgment: the shell decides `p` alone, the judgment stays OPEN with its record and decider, and whether the
+judgment is read through `p` is judgment terms' slot (9, open point 17). The quantity's own form and its
+`cardinality@0` beside the chain are quantities' (9, open point 18).
+
+**Main's forms in the header and the parts (PC-R8; the plan's 15.2 rule 15).** Main refuses a document whose header
+declares more than 64 regulated predicates with `ResourceLimit: regulated predicates` (`checkW1`,
+`lean/VE/SoftNorms/Soften.lean:471`; row 23); a writer counts them, declares those the units and candidates use, and
+splits a document still over the limit, every set, coupling and priority edge inside one document, or records main's
+refusal as its answer. A unit carries one of main's four statuses or none, a MIXED part one of the four
+(`docs/spec/document.md:66-69`): a span with no content of its own whose words belong to a rule or act another part
+holds is LABELLED (kind `exposition`, meaning `specified`, no content; `Loader.w2Status` infers LABELLED), and any
+other status, "GAP" included, is main's refusal, on a part `MIXED parts must partition their parent span` (row 24,
+before the part's own fields) and on a unit `invalid unit status` (row 15). FW.4 computes them on main's code. Main's
+limit and statuses stay.
+
+### 3.13 A writing rule of the fourth-draw re-pilot (pc-fid-rev4, PC-R11; no batch, no new statement)
+
+Rule 9's filler slot (the plan's 15.2) is "a run of filler words beside a fixed phrase in one argument" of an act: an
+argument or a modifier marker's part holds a slot, a fixed phrase or a run of filler words (act-phrases 1.4), and the
+follow-up row ap-mixed-filler derives such a run beside a fixed phrase. The re-pilot's writer used the slot for a whole
+embedded act ("imagine how <X> might react if they saw <R>") and for a participial clause on the whole predication
+("…, behaving as if <S>"). Neither is a filler, so each stub sat at a position it does not fill and was routed to a row
+that will never derive it. The plan's rule 9 now states the slot's limit, and the placement of each shape:
+- **The limit.** The filler slot holds a span only when the span has a fixed phrase with filler words beside it, all
+  inside one argument of the act's frame. A span with no fixed phrase, one that fills more than one argument, or one
+  that is no argument at all is not this slot, and ap-mixed-filler is not its owner.
+- **A clause on the whole predication** (a participial or adverbial clause on the act: "…, behaving as if <S>",
+  "…, acting as <X>"): one predication-level opaque stub after the act phrase,
+  `⟨STUB[<owner>]: "<the clause's words>" (on: <the act's predicate> of that <subject>)⟩`. Its owner is act phrases
+  (a modifier of the whole act, act-phrases 1.4) or, for "as if" and "as though", modality-counterfactual (a
+  comparison with a supposed situation). The act keeps its declared head and arguments. The clause limits no
+  situation, so it is not PC-12's scenario slot either.
+- **A whole embedded act** (the act's description is a clause: a head whose complement is an embedded question or
+  clause): the regulated act's phrase itself, `STUB[act-phrases]`, at the act's position, never one of its arguments. A
+  reference in it is written as an argument of the act's predicate (3.7). Other families' parts inside it are named
+  with their owners ("might … if" modality-counterfactual's, attitude words attitudes', judged words judgment terms'),
+  each its owner's slot, not designed here.
+
+Either way the candidates holding the stub are pending (rule 8), their rows `unknown`, never dropped. Main's
+act-phrase check (`VE.Acts.Lexical.check`, AP-1's D-3) refuses a clause written as words of the act when the clause
+holds a clause word ("if", "is", "must", …): `InvalidInput: act phrase for <name> uses the clause word '<w>'; write the
+condition in the rule's guard` (row 27; FW.5, FW.6). When it holds none ("acting as the deployer would"), main admits
+the words as part of the act, an act no one decides (FW.5). So the limit is a writing rule, like 3.12's: a review or an
+audit checks it, and no document-mode check can.
+
 ## 4. Diagnostics
 
 Every text is computed in Lean. "Kept" means byte-identical.
@@ -2564,6 +3019,11 @@ Every text is computed in Lean. "Kept" means byte-identical.
 | 20 | `CouplingLabelMissing: <coupling id>, <set id>`: the first set, in the coupling's order, with a candidate that has no label on the coupling's axis; or, when every set is labelled but they share no value, the coupling's first set | main's `decodeCouplings` (`Readings/SupWire.lean:66`, `:72`), inside S2a's admission (`admitS2Rest`) | — | kept, main's text (pc-fid-rev2, R1): `admitS2Rest_couplings` (proved) and `compatibleChoices_admitS2` (PC-2b); refused before any route; never a composition refusal, and no batch relaxes it (F2.10) |
 | 21 | `InvalidInput: act phrase for <name> has more than one reading: 1. … 2. …` (act phrases' D-15: each meaning rendered by `Act.text` with no modal word) | act phrases' `checkAct` (AP-3), at the declaration | — | kept, act phrases' text (pc-fid-rev2, R2): an act written as one derivation where the grammar gives several, with no narrowing; never a composition refusal (F6.17) |
 | 22 | `ScenarioUnbound` (modality's code; its text is modality's specification 2.3's) | modality's `Scenario.check` (MD-4a, MD-4b) | — | kept, modality's (pc-fid-rev2, R3): a scenario slot whose condition is closed, or has a free variable other than the rule's quantified variable; the slot is PC-12's (staged), the refusal modality's (F12.3) |
+| 23 | `ResourceLimit: regulated predicates` | main's check of the declared regulated predicates, more than 64: `checkW1` (`SoftNorms/Soften.lean:471`) on the soft chain, W1's `check` (`Norms/Tree.lean:304`), the regulated decoders (`Norms/Wire.lean:205`, `Norms/Plain.lean:43`) and `NormDefaults/Check.lean:138` | — | kept, main's text (pc-fid-rev3, PC-R8): a document whose header declares more than 64 regulated predicates (the third-draw pilot's 88 or 89); the writer splits it or records this answer (the plan's 15.2 rule 15); never a composition refusal, and no batch raises the limit (FW.4) |
+| 24 | `MIXED parts must partition their parent span` | main's `Loader.partOk` (`Discourse/Loader.lean:320, 329`), called by `unitsOf` (`Service/Document.lean:1343`) for each part before the part is read as a unit | — | kept, main's text (pc-fid-rev3, PC-R8): a MIXED part whose status is not one of main's four, the pilot's "GAP" among them (or whose span breaks the partition); the writer writes such a part LABELLED (the plan's 15.2 rule 15); never a composition refusal (FW.4) |
+| 25 | `UnsupportedProfile: <layer> with <p> is not implemented` (row 17's text and rule), for a list that holds the profile of a content kind a `.layer` family adds (`modality@0`) beside `ve.discourse@1` or `judgments@0`, while that layer's `LayerFacts` for the list does not hold the kind's `KindFacts` | `layerRuleIn` (row 17): no `layerCovers` entry exists without `LayerFacts` (`layer_evidence`), and no `LayerFacts` without `KindFacts` (`layer_kindFacts`, 3.10) | PC-11 (the obligation); the family's row batch lifts it | new instances of row 17 (pc-fid-rev4, PC-R9 and PC-R10): `UnsupportedProfile: modality@0 with ve.discourse@1 is not implemented` on a list with discourse, and `UnsupportedProfile: modality@0 with readings@1 is not implemented` on the soft chain's readings with `judgments@0` (F11.6); E1. A reference left unresolved or a judged word left unread inside a modal claim is never admitted |
+| 26 | `InvalidInput: reading <set>:<reading> has no parts`; `InvalidInput: reading <set>:<reading> has more than one norm, right or limitation part` | `partsRefusal` (3.10), PC-11's decoder of a candidate's `parts` | PC-11 | new (pc-fid-rev4, PC-R12): a candidate of several parts with none, or with two or more parts the chain reads; validation, shown as it is, never through E1 (F11.8) |
+| 27 | `InvalidInput: act phrase for <name> uses the clause word '<w>'; write the condition in the rule's guard` | act phrases' `VE.Acts.Lexical.check` (AP-1's D-3), at the declaration | — | kept, act phrases' text (pc-fid-rev4, PC-R11): a clause on the whole predication, or a whole embedded act, written as words of the act when the clause holds a clause word; the writer writes it as rule 9's predication-level stub or as the act's own stub (3.13); never a composition refusal (FW.5, FW.6) |
 
 Fault order. Row 16 comes first on every request, before the gate (1.7). Rows 1 to 5 keep today's order inside
 `documentRefusal`, which `environmentOf` calls where checks 1 to 4 are today, and row 17 comes after them. On a list
@@ -2571,8 +3031,17 @@ with `scope@0` the order is row 16, the gate, row 7 (or 7b), `decodeScope` (rows
 `check` (3.4). On a list without `scope@0`, row 16 is checked first and row 7 (or 7b) at `check`'s site, before
 `environmentOf`. Row 19 is scope's, inside `decodeScope`, so after row 7. Row 20 is main's S2a admission's, in the
 readings branch once the environment is decoded (after rows 1 to 5 and 17), before any choice is enumerated. Row 21 is
-act phrases', at the vocabulary's declarations; row 22 is modality's, at its scenario check; neither is a document-mode
-composition check. The record rule (3.4) adds no row: a record is read by no decoder. Row 9 is checked after the soft decoder's own checks and before `splitSoft`. Row 11 is checked
+act phrases', at the vocabulary's declarations; row 22 is modality's, at its scenario check; row 23 is main's, where
+the route's decoder reads the regulated declarations; row 24 is main's, in `unitsOf`, before a part is read as a unit;
+none of them is a document-mode composition check. (pc-fid-rev3) A part status outside main's four, the pilot's "GAP"
+among them, is row 24's text, checked before the part's own fields; a unit's is row 15's `invalid unit status`
+(`Service/Document.lean:1312`); both are the original request's validation. PC-R5 to PC-R7 add no row: a level
+quantifier written around a list, a dropped reading offered as a candidate and a one-way shell under an exact marker
+are well-formed VE that main admits, so no check can refuse them; FW.1 to FW.3 show the answers they get (6).
+(pc-fid-rev4) Row 25 is row 17's check, in row 17's place. Row 26 is PC-11's, at decode, where the readings branch
+reads a candidate's content, before any choice is enumerated. Row 27 is act phrases', at the vocabulary's
+declarations; a clause with no clause word reaches no row (3.13).
+The record rule (3.4) adds no row: a record is read by no decoder. Row 9 is checked after the soft decoder's own checks and before `splitSoft`. Row 11 is checked
 before any defaults premise is generated. Row 18 is `assemble`'s, before any certificate is checked.
 
 Python changes no decision. Its retained refusals at `ve/document/load.py:180-182` already send these documents to
@@ -2776,6 +3245,10 @@ PC-5b (pc-fid-rev, B3; staged: after scope's SC-5 and PC-5). Built from the shap
 | F11.2 | u0112.s11, likewise | as F11.1 | |
 | F11.3 | `crossSlot` on an assertion candidate `p(a)` gated by `x1(h)` and an attitude candidate `attitudes__wants__1(a)` gated by `x2(h)` | `[x1(h) → p(a), x2(h) → attitudes__wants__1(a)]` (stub) | each candidate's premise gated by its own atom |
 | F11.4 | `crossSlot_legacy` on today's readings documents (no attitude candidate) | the gated premises are today's, byte for byte | the type changes no existing set |
+| F11.5 (pc-fid-rev4, PC-R9; u0106.s02's shape) | stub: `attitudeKind` on a belief candidate's node, holder `anthropic`, mode `believes`, content as written `relies_on_own_judgment_in(m_its, m_this)` (a stand-in constant at each reference's position; how a slot sits in a written content is S4's); the content as RESOLVE leaves it, `relies_on_own_judgment_in(claude, honesty)`; the claim after AT-2, `.attitude (attitudes__believes__1(anthropic))`. End to end, after PC-7c and PC-11 (with AT-2 and AT-3a): profiles `["attitudes@0", "documents@1", "norms@0", "readings@1", "relational-fol@0", "ve.discourse@1"]`; u1 "Honesty is an area of Claude's conduct."; u2 "In this area, Anthropic believes that Claude relies on its own judgment.", its set `rs-u2`: `belief`, the attitude candidate (holder `anthropic`, the legend's "we" written out; content "Claude relies on its own judgment in this area"), and `fact`, the asserted "Claude relies on its own judgment in this area."; the manifest records "this area" (demonstrative, target `honesty`) and "its own" (possessive, target `claude`) in u2. (Review fixes) The node written with `deepContent`, 65 negations around `top`; `candidateParts` on the node and on `{"parts": [<the node>, {"norm": null}]}` | stub (10 guards): the kind's one position is the node's content as written; writing the resolved content back gives the resolved node, `rest` (holder, mode) unchanged, and reading it back gives the resolved content; the claim's premises name `attitudes__believes__1` and not `relies_on_own_judgment_in` (the elaborated claim holds no position, so RESOLVE runs on the node); `attitude` is a registered kind; (review fixes) writing `deepContent` is `some "ResourceLimit: formula depth exceeds 64"` (`errOf`), the decoder's limit, so no write answers that is not read back; the node is its own place 0, and the parts content gives `[<the node>, {"norm": null}]`, in order. End to end: before PC-7c, `UnsupportedProfile: ve.discourse@1 with readings@1 is not implemented` (row 7, F7.6's text); after PC-7c and PC-11, admitted; both references resolve in both candidates (in `belief` at the node's content, through `resolveKindAt`, whose answer RESOLVE's resolved case holds at `belief`'s place, `ResolveReachesKind`; in `fact` through `resolveContent`); `rs-u2`'s shape kept (`ResolveKeepsSets`); two rows; under `belief` the key of `attitudes__believes__1` holds `relies_on_own_judgment_in(claude, honesty)`; each row's answer equals that of the same document with "honesty" and "Claude" written in place of the references | RESOLVE reaches an attitude candidate's content |
+| F11.6 (pc-fid-rev4, PC-R10; u0018.s02's shape) | stub: `modalKindMD`, a stand-in for modality's kind written from its plan's wire (244), on the claim `{"modal": {"force": "possible", "sort": "situation", "restrictor": ["top"], "body": unsafe_goals_in(var 0) ∨ mistaken_beliefs_in(var 0)}}`; `layerRuleIn profileTableMD` on `["documents@1", "judgments@0", "modality@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]`, with and without `ve.discourse@1`, and with a covering entry. End to end, after MD-2, modality's row batch (its kind registered and its `LayerFacts` holding `KindFacts`) and PC-11: that list; u3 "A later version of the assistant could hold unsafe goals or mistaken beliefs.", the "could" row's set (possibility, ability; the authors' estimate pending until D2), `unsafe_goals_in` and `mistaken_beliefs_in` bound. (Review fixes) `modalKindMD.write` on the claim with `[top, <the body>]` and with `[top, deepContent]` | stub (8 guards): the kind's positions are the restrictor and the body; (review fixes) writing `[top, <the body>]` back and reading it gives `[top, <the body>]`, and writing `[top, deepContent]` is `some "ResourceLimit: formula depth exceeds 64"`; `kindJudged` finds both judged predicates; with no case the reader reads nothing there; without `KindFacts`, `some "UnsupportedProfile: modality@0 with readings@1 is not implemented"` (row 25), with discourse `some "UnsupportedProfile: modality@0 with ve.discourse@1 is not implemented"`, and with a covering entry, which `layer_kindFacts` admits only with the kind's facts, `none`. End to end: before modality's row batch, row 25's text; after it, admitted; u3 OPEN; usage `unsafe_goals_in: [u3], mistaken_beliefs_in: [u3]`; rows `unknown` while a candidate is pending | the reader reads a modal candidate's positions; a kind without its reader case is refused, never unread |
+| F11.7 (pc-fid-rev4, PC-R12; u0255.s01's shape) | stub: `crossSlotParts` on `rs-u1`, `report` = `[reportPart]` gated by `x1`, `report-and-rule` = `[reportPart, rulePart]` gated by `x2`, where `reportPart` is the report's claim `.attitude (attitudes__wants__1(anthropic))` and `rulePart` the soft rule `.content (.norm r-role)` ("Every assistant should stay calm under pressure.", default, exception decided by `unstated`); F11.3's set as one-part candidates. End to end, after PC-11 and AT-8 (with AT-2, AT-3a and E3's set form): u1 "We want the assistant to stay calm under pressure.", its set {`report`; `report-and-rule`}, the report's content attitudes' (here `calm_under_pressure(assistant)`, a base predicate, holder `anthropic`, mode `wants`), the rule's regulated predicate `stays_calm_under_pressure` | stub (4 guards): `[x1 → attitudes__wants__1(anthropic), x2 → attitudes__wants__1(anthropic)]`, the report's claim gated under both choices and the rule owning no premise; the chain part of `report-and-rule` is `r-role`; `partsRefusal` is `none` on it; F11.3's one-part set gives `crossSlot`'s premises. End to end: admitted; two rows; under `report` the claim alone; under `report-and-rule` the claim and the soft rule in the chain, so an assistant that is not calm under pressure violates the rule unless the exception holds; before AT-8 both candidates pending (rule 8) | one candidate carries DEC 13(a)'s report and soft rule |
+| F11.8 (pc-fid-rev4, PC-R12) | stub: `partsRefusal "rs-u1"` on `[reportPart, rulePart, r-role-2]` (two rules) and on `[]`. End to end: F11.7's document with a candidate holding two soft rules | `some "InvalidInput: reading rs-u1:two-rules has more than one norm, right or limitation part"` and `some "InvalidInput: reading rs-u1:empty has no parts"` (row 26; stub, 2 guards). End to end: refused at decode with row 26's text, before any choice | two chain parts are refused, never superposed by a guess |
 
 ### 5.10 PC-12 (pc-fid-rev2, R3; staged on modality's MD-4a)
 
@@ -2786,6 +3259,32 @@ Built from the shape of the re-pilot unit **ursp.t4_evidentiary**, in this fixtu
 | F12.1 | `scenarioGuard "u1" C N`, `N` a candidate norm `{"name": "r1", "guard": ["unary", "crossed_fourth", ["var", 1]], "unless": []}`, `C` = `["unary", "ai_runs_research", ["var", 1]]`; `layerRuleIn profileTableMD []` on `["documents@1", "judgments@0", "modality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]` | `N` with guard `["and", ["unary", "crossed_fourth", ["var", 1]], ["unary", "ai_runs_research", ["var", 1]]]` (stub): the condition is the last conjunct, after the rule's own; before modality's row batch covers the list, `some "UnsupportedProfile: modality@0 with readings@1 is not implemented"` (row 17; stub) | the slot's position; `.layer` grants nothing |
 | F12.2 (end to end, after MD-4a, modality's row batch and PC-12) | F12.1's list; u1 "At the fourth threshold, AI systems might run the safety research, in which case reviews of AI threats should meet strict standards."; its set `rs-std`: `F`, asserted, content `["top"]`, label `addressee = F`; `Ds_strict`, "Every situation must have its reviews of AI threats meet strict standards, if both that situation has crossed the fourth threshold and AI systems run the safety research at that situation.", labels `addressee = Ds`, `std = strict`; `Ds_default`, the same with "should", the exception decided by `unstated`; the last conjunct of both Ds guards is scenario σ1's condition (sort `situation`, condition `ai_runs_research` at the rule's variable); `crossed` bound | σ1 admitted by modality (one `.model` row per compatible choice); admitted; three rows. A situation past the fourth threshold in which AI systems do not run the safety research and the reviews meet no standard: no Ds rule violated (the conjunct fails); with the conjunct dropped (the seeded bug), `Ds_strict` is violated there. Before MD-4a: both Ds candidates pending, their rows `unknown`, never dropped | the condition limits the situations the rule binds |
 | F12.3 | F12.2 with σ1's condition written closed, about one named situation (`ai_runs_research(s_1)`, a constant) | refused `ScenarioUnbound` (modality's text, row 22), not admitted as a guard about every situation | a scenario takes the rule's situation variable or is refused |
+
+### 5.11 Writing rules (pc-fid-rev3, PC-R5 to PC-R8; no batch)
+
+Built from the shapes of the third-draw re-pilot's units **ufsf.s135_bullet2**, **ufsf.s135_bullet3_dm** and
+**ursp.t4_cost_factor**, and of its document, in these fixtures' own words. "FW" marks a fixture of a writing rule
+(the plan's 15.2 rules 9 and 13 to 15) that no batch builds: its stub guards run on main's functions today (section 9),
+and its end-to-end part is the answer the rule's form gets once the route its document takes has landed (PC-1 and
+PC-2b); no batch's fixture list changes (the plan's 17.1).
+
+| # | Document | Expected | Dir. |
+|---|---|---|---|
+| FW.1 (PC-R5, rule 13; ufsf.s135_bullet2's shape) | profiles `["documents@1", "judgments@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]`; sorts `release`, `level`, `measure`; u1 "A release for which the review finds that a misuse level has been reached is acceptable for launch, if:", its set `rs-lead`: `S`, "Every release is acceptable, if all of the following hold: (a) there is a level such that both that release has reached that level and that level is misuse; (b) for every level, if both that release has reached that level and that level is misuse, then all of the following hold: (i) if that release is external, then that release is mitigated at that level; (ii) there is a measure such that both that level recommends that measure and that release applies that measure.", label `rs1 = S`; `G`, pending, label `rs1 = G`; `reached` and `mitigated` bound, decided by the lab. The pilot's form: `S` as "Every release is acceptable, if there is a level such that all of the following hold: (a) both that release has reached that level and that level is misuse; (b) all of the following hold: (i) …; (ii) …" (the same two items). The case: `r1` external, has reached `l2` and `l3`, both misuse; mitigated at `l2` and not at `l3`; `l2` recommends `m2`, `l3` recommends `m3`, and `r1` applies both | the stub's model of the case (`lvModel ["l2"]`, nothing acceptable): the pilot's guard holds for `r1` (`guardSome`), rule 13's does not (`guardEach`); so the model satisfies rule 13's rule (`acceptRule guardEach`) and not the pilot's. With `r1` also mitigated at `l3` (`lvModel ["l2", "l3"]`): rule 13's guard holds, and the model without acceptability violates its rule. With no level reached: rule 13's guard fails, where its universal alone holds (stub, 8 guards). Both English sentences have one derivation on main's grammar, and rule 13's reads to `acceptRule guardEach` (section 9's English check). End to end, after PC-1 and PC-2b: admitted; u1 OPEN through `reached` and `mitigated`; two rows, `G`'s `unknown`. "Is r1 acceptable?" under `S`: with rule 13's form, it does not follow (the stub's model is a countermodel); with the pilot's form, it follows (the overclaim); with `r1` mitigated at `l3` as well, it follows under rule 13's form | the mitigated-lower, unmitigated-higher case refused; the same-level form admitted; no level reached, not covered |
+| FW.2 (PC-R6, rule 14; ufsf.s135_bullet3_dm's shape) | profiles as FW.1; u1 the lead-in of FW.1 with its set `rs-lead` {`S`, `G`}; u2 "We judge that the launch safeguards have lowered the risk of grave harm to an acceptable level.", its set `rs-item`: `S`, asserted, content `["top"]`, label `rs1 = S`; `G`, "Every release must have its safeguards lower the risk of grave harm acceptably, if both that release is external and there is a level such that both that release has reached that level and that level is critical.", label `rs1 = G`; coupling `c-rs1` on `rs1` over both sets. A signed decision, which the use case's PLAN lists in its section 12, dropped the reading that writes u2's act as the earlier item's act ("lower the risk of harm"), citing a note that the two items' safeguards differ. The pilot's form: `rs-item` as `S`, `G-same` (the earlier item's act) and `G-diff`, labelled `rs1` and `rs9` | rule 14's form: main's `choices` gives two, `[("rs-lead", 0), ("rs-item", 0)]` and `[("rs-lead", 1), ("rs-item", 1)]`; the pilot's form gives three, the dropped reading's `[("rs-lead", 1), ("rs-item", 1)]` among them (stub, 2 guards). End to end, after PC-1 and PC-2b: admitted; two rows, `S`'s and `G`'s (`unknown` while the lead-in's `G` is pending, rule 8), and no row reads the dropped act. With the pilot's form, three rows, one of them `G-same`'s, which reads the earlier item's act as u2's: for an external release past a critical level that lowered the risk of harm and not of grave harm, `G-same` holds where `G-diff` is violated, a separation the decision found the source excludes | a dropped reading has no candidate and no row |
+| FW.3 (PC-R7, rule 9; ursp.t4_cost_factor's shape) | profiles as FW.1; sorts `situation`, `bound`; u1, the fragment "at low cost (i.e., under twice the market price)", kind asserted, content by rule 9: "For every situation, all of the following hold: (a) if that situation is at low cost, then that situation is priced under twice_market; (b) if that situation is priced under twice_market, then that situation is at low cost.", where `twice_market` (sort `bound`) holds the quantity's argument position that the writer fills with ⟨STUB[quantities]: "twice the market price"⟩; the definitions block entry (u1, `low_cost`, the words "low cost") is `STUB[definitions]`. The pilot's form: "For every situation that is at low cost, that situation is priced under twice_market." | the shell is main's generated biconditional of the term, `Def.premise ⟨"low_cost", ["situation"], B⟩`, and the one-way shell is not; a situation priced under the bound and not at low cost (`costModel false true`) is a model of the one-way shell and none of the exact shell; at low cost and not under the bound, a model of neither; both, a model of the exact shell (stub, 7 guards). Both sentences have one derivation, and rule 9's reads to `exactShell` (section 9's English check). End to end, once quantities' stub and definitions' block land: definitions reads rule 9's shell as `exact` and the pilot's as `necessary` (its `shapeOf`); a situation priced under the bound is at low cost under rule 9's shell, and does not follow under the pilot's (the stub's model is a countermodel); a situation at low cost is under the bound under both | the exact marker keeps both directions |
+| FW.4 (PC-R8, rule 15; the document's and ursp.s34_step4's shape) | main's `checkW1` on a document declaring 65 plain regulated predicates and on one declaring 64 (`limitDoc`); main's unit statuses and `w2Status`; `Loader.partOk` on a part at byte 0 with status `"GAP"` and with `"LABELLED"` (`partAt`) | `.error "ResourceLimit: regulated predicates"` (row 23) and `.ok ()`; `["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]`, which does not contain `"GAP"`; `w2Status false "specified"` is `"LABELLED"`, `w2Status false "open"` is `"OPEN"`; the `"GAP"` part is refused `MIXED parts must partition their parent span` (row 24) and the LABELLED part passes (stub, 8 guards). End to end, on main today: a MIXED unit whose part has status `"GAP"` is refused with row 24's text; the same part as kind `exposition`, meaning `specified`, support `none`, status `LABELLED`, no content, is admitted LABELLED; a unit with status `"GAP"` is refused `invalid unit status` (row 15) | main's limit and statuses, as the writer must meet them |
+
+### 5.12 A writing rule (pc-fid-rev4, PC-R11; no batch)
+
+Built from the shapes of the fourth-draw re-pilot's units **u0073.s01** and **u0084.s03**, in these fixtures' own
+words. Their stub guards run on main's act-phrase check today (section 9); the end-to-end part is the form the plan's
+15.2 rule 9 writes.
+
+| # | Document | Expected | Dir. |
+|---|---|---|---|
+| FW.5 (PC-R11, rule 9; u0073.s01's shape) | u1 "The assistant can use loose defaults in each session, acting as if the tester were the deployer.", the "can" row's set (permission, ability, possibility); the permission candidate: "Every assistant may use loose defaults in each session" with ⟨STUB[modality-counterfactual]: "acting as if the tester were the deployer" (on: `uses_loose_defaults` of that assistant)⟩ after the act phrase; `uses_loose_defaults` declared with the act phrase `{0} use loose defaults in {1}`. The misplaced form: the clause written into the act phrase, `{0} use loose defaults in {1}, acting as if the tester were the deployer`; and the same clause without a clause word, `… acting as the deployer would` | stub (3 guards, main's `VE.Acts.Lexical.check`): the misplaced form is refused `InvalidInput: act phrase for uses_loose_defaults uses the clause word 'if'; write the condition in the rule's guard` (row 27); the clause with no clause word is admitted as words of the act (so the limit is a writing rule); the act as declared is admitted, `{0} use loose defaults in {1}`. End to end: the permission candidate pending (rule 8) until modality's "as if" lands, its row `unknown`; the stub is at the predication, never an argument filler, and ap-mixed-filler is not its owner | a clause on the whole predication is no argument filler |
+| FW.6 (PC-R11, rule 9; u0084.s03's shape) | u1 "When unsure whether a reply is too cautious, the assistant may picture how a careful reviewer might respond if they read the reply."; the permission candidate: "Every assistant may ⟨STUB[act-phrases]: "picture how a careful reviewer might respond if they read" (the act; inside it, "might … if" modality-counterfactual's, "careful" judgment terms')⟩ each reply, if ⟨STUB[attitudes]: the guard conjunct⟩", "the reply" the act's second argument. The misplaced form: the clause as the act's words, `{0} picture how a careful reviewer might respond if they read {1}` | stub (1 guard): the misplaced form is refused `InvalidInput: act phrase for pictures_reaction uses the clause word 'if'; write the condition in the rule's guard` (row 27). End to end: the candidate pending, its row `unknown`; the stub is the act's own, at the act's position; "the reply" resolves as an argument of the act's predicate (3.7) | a whole embedded act is the act's stub, never an argument filler |
 
 ## 6. Limits
 
@@ -2815,6 +3314,15 @@ Built from the shape of the re-pilot unit **ursp.t4_evidentiary**, in this fixtu
   waits for act phrases' readings elaboration to carry one derivation per candidate; until then, or if it cannot, the
   candidates holding it are pending. The scenario slot waits for modality's MD-4a and its row batch (PC-12); until
   then the candidates holding it are pending, and `modality@0` in the list is refused by the layer rule.
+- (pc-fid-rev3) The writing rules of 3.12 are not checks. A level quantifier written around a list, a reading a DRI
+  decision dropped offered as a candidate and a one-way shell under an exact marker are well-formed VE that main
+  admits, and the document mode cannot see which source sentence they came from; a review or an audit of the writer's
+  text checks them, and FW.1 to FW.3 show the answers each wrong form gets. Main's limit of 64 regulated predicates
+  and its four statuses are main's, unchanged (rows 23, 24 and 15).
+- (pc-fid-rev4) RESOLVE and the reader reach a kind another family adds only through that kind's registered positions
+  and its facts; until a `.layer` family proves them, every list holding its profile beside `ve.discourse@1` or
+  `judgments@0` is refused (row 25). A candidate holds at most one part the chain reads (row 26). Rule 9's filler limit
+  (3.13) is a writing rule: main refuses a misplaced clause only when it holds a clause word (row 27).
 - No coverage figure here is measured. The unlocks in the plan are ceilings or estimates.
 
 ## 7. Choices this specification makes
@@ -2921,6 +3429,51 @@ pc-fid-rev2 (DRI 2026-10-30 pc-fid-rev2, item 1) makes these choices where the o
 36. **A limiting purpose needs no new statement** (3.1, R4(a)). It is a bound judgment in a guard, which PC-1's reader
     and PC-2b's rows already cover; the order's rule is a writing rule, and F2.11 checks the reader on its shape.
 
+pc-fid-rev3 (DRI 2026-10-31 pc-fid-rev3, item 1) makes these choices where the order left one open:
+
+37. **Rule 13 keeps the lead-in's existential beside the per-level universal** (3.12, PC-R5). The lead-in says "a level
+    has been reached"; the universal alone holds for a proposal that reached no level (FW.1's third case), so it would
+    admit what the source does not. Keeping both is the conservative form.
+38. **Rule 13 is written for every number of levels**, one included (3.12, PC-R5). With one level of the kind the two
+    forms agree, but a writer would otherwise decide when a level is the only one of its kind; the per-level form
+    needs no such decision.
+39. **An axis only a dropped reading made a choice is not written** (3.12, PC-R6). A label with one value left would
+    decode, but it would name a choice the source does not have, and a coupling on it would join nothing.
+40. **The exact shell's head is the restated words' own predicate, never a bound judgment whose words hold them**
+    (3.12, PC-R7). An exact statement of a bound judgment would decide it, which definitions never does (its plan 0,
+    item 5); so the judgment stays OPEN, and whether it is read through the term is judgment terms' slot (9, open
+    point 17).
+41. **Rule 15 counts the declared regulated predicates, as main does** (`T.regulated.length`), and a header declares
+    those its units and candidates use (3.12, PC-R8). A split keeps every set, coupling and priority edge inside one
+    document, so no answer reads across two documents; a document that cannot be split so has main's refusal as its
+    answer.
+
+pc-fid-rev4 (DRI 2026-10-31 pc-fid-rev4, item 1) makes these choices where the order left one open:
+
+42. **RESOLVE and the reader over added kinds are PC-11's interface obligations, one per registered kind** (3.10,
+    PC-R9, PC-R10), the order's second form, not one statement over a closed list of cases. A family adds its case in
+    its own batch (DEC 13(b)), so PC cannot name every case; only an obligation each case brings reaches them, and
+    `crossKinds_cover` makes a case without its entry a failed proof.
+43. **An attitude candidate's positions are its node's content as written, not its claim `φ`** (3.10, PC-R9). `φ` is
+    the claim after AT-2's elaboration, the generated atom at the holder, and RESOLVE runs before CHAIN; the content
+    reaches the atom's key only through the resolved node. Resolving `φ` would reach no reference.
+44. **Each position is resolved as an asserted formula of the unit** (3.10, PC-R9), through S4's own `resolveContent`
+    (`resolveFormula_assertion`), so `DiscourseFaithful` is used as it is and no second resolution exists.
+45. **A `.layer` family proves its kind's facts inside its `LayerFacts`** (3.10, PC-R9, PC-R10), so row 17's layer
+    rule refuses a list while they are missing: no new check and no new text (row 25 names the instances). The
+    obligation is stated for the lists holding `ve.discourse@1` or `judgments@0`, since only those read the positions.
+46. **A candidate of several parts, not a new case** (3.10, PC-R12). DEC 13(a) adds no case; `CrossContent` and
+    `crossSlot` keep their text, a candidate holds a list of `CrossContent` values, and a one-part candidate is today's
+    (`crossSlotParts_single`). Naming one single case to carry "report and soft rule" would have to drop one of its two
+    contents.
+47. **At most one part the chain reads** (3.10, PC-R12; row 26). Superposition reads one chain content per candidate
+    and no theorem states two, so two rules in one candidate are refused. A candidate with no part is refused too: a
+    pending candidate is `content: null` (rule 8), never an empty list.
+48. **Rule 9's filler limit names the owner at the predication, and the candidate stays pending** (3.13, PC-R11). A
+    clause on the whole predication fills no argument, and writing it into the act phrase makes it act words no one
+    decides (or main's clause-word refusal), so the honest form is a stub at the predication, owner named, its
+    candidates pending until that owner lands.
+
 ## 8. Review checklist
 
 - Is every statement in sections 1 and 3 true as stated? Give a counterexample where not, especially for
@@ -2938,7 +3491,14 @@ row 19 of 4 and the refreshed section 9; then the family-scoped re-pilot runs on
 statement review (DRI 2026-10-30 pc-fid-rev2, item 2; one round, at most one apply round) covers the pc-fid-rev2
 change log's statements and rules (3.1's limiting purpose, 3.2's coupling rule with `admitS2Rest_couplings` and
 `compatibleChoices_admitS2`, 3.6's derivation rule, 3.11), their fixtures (F2.10, F2.11, F6.17, F12.1 to F12.3), rows
-20 to 22 of 4 and the refreshed section 9; then a family-scoped re-pilot on a fresh draw. The plan's
+20 to 22 of 4 and the refreshed section 9; then a family-scoped re-pilot on a fresh draw. Draft 7's one statement
+review (DRI 2026-10-31 pc-fid-rev3, item 2; one round, at most one apply round) covers the pc-fid-rev3 change log's
+rules (3.12; the plan's 15.2 rules 9 and 13 to 15), their fixtures (FW.1 to FW.4), rows 23 and 24 of 4 and the
+refreshed section 9; then a family-scoped re-pilot on the fourth draw (item 3). Draft 8's one statement review (DRI
+2026-10-31 pc-fid-rev4, item 2; one round, at most one apply round, no second review) covers the pc-fid-rev4 change
+log's statements and rules (3.1's reader over added kinds, 3.7's PC-7c paragraph, 3.10's kinds and parts, 3.13; the
+plan's 15.2 rules 4, 8, 9 and 16), their fixtures (F11.5 to F11.8, FW.5, FW.6), rows 25 to 27 of 4 and the refreshed
+section 9; then a family-scoped re-pilot on the fifth draw (item 3). The plan's
 change log (its first section) lists where each edit is applied. Batches stay held until that review passes, and
 then follow the amended order (plan section 8).
 
@@ -2964,6 +3524,217 @@ below. It does not check:
   `decisionNames_splitK` and `decisionNames_eqK` (1.10's revised names and table), `DecMeta` (the field `decMeta`),
   `gate_acts'`, `gate_scope'` and `gate_acts''` (the revised gate theorems), and `profileTablePC6` and
   `profileTableMD` (the table as PC-6 and MD-2 leave it).
+
+**Run on 2026-10-31 (pc-fid-rev4, DRI 2026-10-31 pc-fid-rev4 item 1: PC-R9 to PC-R12; with its review fixes, item
+2).** On this branch, `lean/` tree of `005d92883` (tree `b589be842`, the same as every earlier run's since `560abc9a9`:
+every commit since changes `docs/` only; the review fixes' run on the tree of `f3c476c08`, the same tree), with Lean
+4.24.0 (x86_64-unknown-linux-gnu, commit `797c613eb9b6`). The stub file is at SHA-256
+`b54117737f8db0763653b40b79bef69be093711d9fc6e7cc45e50e4daaf0841f` (2,280 lines). Every expected value of the new
+guards was read from main's code on this branch (`lean/` at `d25bc343b`: `VE.Acts.Lexical.check` and its clause words,
+`VE.Bridge.decodeFormula` and its depth limit's text, `lean/VE/Bridge.lean:249`, `VE.Route.Wire.encodeFormula`, the
+layer rule over `profileTableMD`) and computed by the run.
+
+The run, from the worktree, as before:
+
+```
+cd lean && PATH=~/.elan/bin:$PATH lake env lean SpecStubs_profile-composition.lean
+```
+
+The build: `lake build --no-build` answered `All targets up-to-date (1135 jobs).`, so no build ran; it answered the
+same before the review fixes' run.
+
+Baseline. The stub as pc-fid-rev3 left it (SHA-256 `e3b3e6c263ed6d64b486b5de30a0978e6ba881707e8a853bc684c09dc5f0b08d`,
+1,913 lines) was rerun first, on this build: exit code 0, 107 `sorry` warnings and no other message, the last at line
+1627, as that run recorded. This revision edits that file in place: one phrase of the header comment, on its own line
+(line 20), and one block appended at the end (lines 1914 to 2230: `VE.Discourse`, `VE.Compose`, then the fixtures in
+`VE.Compose.Fid4`). So every earlier declaration and guard keeps its text and its line.
+
+The review fixes (pc-fid-rev4's statement review, findings 1 and 2; DRI 2026-10-31 pc-fid-rev4, item 2) edit the
+revision's stub (SHA-256 `9987ae11b108fa85e9a419ae4e28784558a343854ec52aee88e27711267d3ff1`, 2,230 lines) in place.
+That stub, rerun first on this build from a scratch copy: exit code 0, 113 `sorry` warnings and no other message, at
+the lines the revision's run recorded and the statement review reproduced. The fixes, all after line 1938: two lines
+of `KindPositions`' docstring; `attitudeKind.write`'s re-decoding check, with its docstring (finding 2);
+`candidateParts`, `candidateAt` and `ResolveReachesKind` after `kindResolve_faithful`, and `KindFacts`' discourse
+conjunct `KindResolveFaithful k ∧ ResolveReachesKind k`, with its docstring (finding 1); `modalKindMD.write`'s
+re-decoding check (finding 2); and the fixes' guards, three in F11.5 (with `deepContent`) and two in F11.6. Every
+line up to 1938 keeps its text and its line.
+
+**Lean output (this run, with the review fixes).** Exit code 0. The output is 113 lines, each `warning: declaration
+uses 'sorry'`, with no error and no other message: the baseline's 107 lines, line for line, then six new ones, at
+lines 1925 (`resolveFormula`, a stub of S4's), 1929 (`resolveFormula_assertion`, S4's lemma), 2062 (`contentJudged`,
+a stub of the extended reader), 2090 (`attitudeKind_laws`), 2091 (`attitudeKind_facts`) and 2114
+(`crossSlotParts_choice`); the revision's stub had the last four at 2033, 2060, 2061 and 2084. The file has 319
+declarations: 226 `def`, 84 `theorem`, 5 `inductive` and 4 `structure`. All elaborate. pc-fid-rev4 adds 43 (39
+before its review fixes): the structure `KindPositions`; 33 `def`; and 9 theorems, five of them proved here:
+`mapM_ok_zip` (by induction on the list), `kindResolve_faithful` (from the kind's laws, `mapM_ok_zip` and S4's
+`resolveFormula_assertion`, which is typed with `sorry`), `crossKinds_cover` (by cases), `layer_kindFacts` (on main
+no layer has facts: `False.elim`) and `crossSlotParts_single` (by `simp`). So 16 proofs pass: pc-fid-rev3's 11 and
+these five. The new definitions are `resolveFormula`, `KindPositions.Laws`, `attitudeKind`, `resolveKindAt`,
+`KindResolveFaithful`, `candidateParts`, `candidateAt` and `ResolveReachesKind` (the last three from the review fixes),
+`kindJudged`, `contentJudged`, `KindReaderCovers`, `KindFacts`, `crossKinds`,
+`CrossContent.key`, `partsPremises`, `crossSlotParts`, `CrossContent.chainPart` and `partsRefusal` (3.10), and the
+fixtures' data: `writtenContent`, `resolvedContent`, `beliefNode`, `beliefClaim`, `deepContent` (F11.5; the last from
+the review fixes); `modalKindMD`, `couldBody`,
+`couldClaim`, `couldJ`, `couldList` (F11.6); `reportPart`, `roleRule`, `rulePart`, `x1`, `x2` (F11.7, F11.8).
+`modalKindMD` stands in for modality's MD-2 entry, as `profileTableMD` stands in for its row, and `attitudeKind`'s
+content wire is main's indexed formula wire standing in for attitudes' (AT-3a). No new guard computes with a `sorry`
+definition.
+
+**Guards.** 158 `#guard` lines, all pass: pc-fid-rev3's 130 and 28 new (23 before the review fixes). F11.5, 10
+(lines 2154 to 2177): the attitude kind's one position is the node's content; its write-back, `rest` and read-back;
+the elaborated claim names the generated atom and not the content's predicate; the kind is registered; (review fixes,
+lines 2172, 2176 and 2177) writing 65 negations around `top` answers `ResourceLimit: formula depth exceeds 64`, and a
+candidate's places: a one-value content is itself, a parts content gives its parts in order. F11.6, 8 (lines 2215 to
+2230): the stand-in modal kind's positions; (review fixes, lines 2218 and 2219) its write-back read back, and its
+write of the deep formula answering the depth limit; `kindJudged` finds both judged predicates; the empty read; row
+25's two texts, `UnsupportedProfile: modality@0 with readings@1 is not implemented` and `UnsupportedProfile:
+modality@0 with ve.discourse@1 is not implemented`; a covering entry gives `none`. F11.7, 4 (lines 2246 to 2252), and
+F11.8, 2 (lines 2257 and 2259): the parts' gated premises, the chain part, `partsRefusal` on the report and rule, the
+one-part set, and row 26's two texts. FW.5, 3 (lines 2265 to 2273), and FW.6, 1 (line 2276): main's
+`InvalidInput: act phrase for uses_loose_defaults uses the clause word 'if'; write the condition in the rule's guard`,
+the clause with no clause word admitted as act words, the act as declared admitted, and the same refusal for
+`pictures_reaction`.
+
+**pc-fid-rev4's mutants** (the revision's run, on its stub, SHA-256 `9987ae11…`, so its line numbers). This run tried
+five scratch copies of the final stub, each with one change and the same line count, run as
+`lean/Scratch_mutant-<name>.lean` and deleted after. Each fails as intended; beside the messages below, each copy's
+output held the 113 `sorry` warnings of the final run.
+- **The attitude kind reads its holder, not its content** (`getObjVal? "holder"` in `attitudeKind.read`; PC-R9).
+  Exit code 1; F11.5's guards at lines 2124, 2128 and 2132 fail. The first:
+
+  ```
+  Scratch_mutant-attitude-read.lean:2124:0: error: Expression
+    (attitudeKind.read (beliefNode writtenContent)).toOption == some [writtenContent]
+  did not evaluate to `true`
+  ```
+- **No kind registered** (`crossKinds := []`: a case without its entry; PC-R9, PC-R10). Exit code 1; the proof of
+  `crossKinds_cover` fails (`2056:74: error: unsolved goals`, case `attitude`, goal `False`), and F11.5's guard at line
+  2135 fails.
+- **The reader reads only a kind's first position** (`andAll (fs.take 1)` in `kindJudged`; PC-R10). Exit code 1;
+  F11.6's guard at line 2170 fails:
+
+  ```
+  Scratch_mutant-reader-first.lean:2170:0: error: Expression
+    Option.map (fun c => Judgments.opensIn couldJ c.formulas) ((kindJudged modalKindMD couldClaim).toOption.bind id) ==
+      some couldJ
+  did not evaluate to `true`
+  ```
+- **Two rule parts allowed** (`> 2` in `partsRefusal`; PC-R12). Exit code 1; F11.8's guard at line 2207 fails.
+- **The pilot's form: the clause written into the act phrase, claimed admitted** (FW.5's third guard with
+  `{0} use loose defaults in {1} acting as if the tester were the deployer`; PC-R11). Exit code 1; the guard at line
+  2223 fails: main's clause-word refusal is the answer, not the act.
+
+**The review fixes' mutants** (on this run's stub, SHA-256 `b5411773…`, so its line numbers). Three scratch copies,
+each with one change and the same line count, run as `lean/Scratch_mutant-<name>.lean` and deleted after; each fails
+as intended, and each copy's output held the 113 `sorry` warnings of this run.
+- **`attitudeKind.write` without its check** (`if false then throw …`: the revision's write; finding 2). Exit code 1;
+  F11.5's guard at line 2172 fails:
+
+  ```
+  Scratch_mutant-write-unchecked.lean:2172:0: error: Expression
+    errOf (attitudeKind.write (beliefNode writtenContent) [deepContent]) == some "ResourceLimit: formula depth exceeds 64"
+  did not evaluate to `true`
+  ```
+
+  A fourth copy, this one with two guards appended, reproduces the review's counterexample on that write: both pass, so
+  the write answers `.ok` and reading what it wrote answers `ResourceLimit: formula depth exceeds 64`; only line 2172
+  fails.
+- **`modalKindMD.write` without its check** (finding 2). Exit code 1; F11.6's guard at line 2219 fails.
+- **A parts content read as one place** (`| .ok (.arr _) => [c]` in `candidateParts`; finding 1). Exit code 1; F11.5's
+  guard at line 2177 fails.
+
+`ResolveReachesKind` and the new `KindFacts` conjunct are statements over `discourseRewriter`, whose `resolveCase` is
+S4's stub here, so no guard computes with them and no mutant can reach them; they are typed (open point 20).
+
+**Run on 2026-10-31 (pc-fid-rev3, DRI 2026-10-31 pc-fid-rev3 item 1: PC-R5 to PC-R8).** On this branch, `lean/`
+tree of `938e148cb` (tree `b589be842`, the same as every earlier run's since `560abc9a9`: every commit since changes
+`docs/` only), with Lean 4.24.0 (x86_64-unknown-linux-gnu, commit `797c613eb9b6`). The stub file is at SHA-256
+`e3b3e6c263ed6d64b486b5de30a0978e6ba881707e8a853bc684c09dc5f0b08d` (1,913 lines). Every expected value of the new
+guards was read from main's code on this branch (`lean/` at `d25bc343b`; the limit's line, `Soften.lean:471`, is the
+same on main at `541c6f4b4`, which the pilot read, and at `222e64b18`) and computed by the run.
+
+The run, from the worktree, as before:
+
+```
+cd lean && PATH=~/.elan/bin:$PATH lake env lean SpecStubs_profile-composition.lean
+```
+
+The build: `lake build --no-build` answered `All targets up-to-date (1135 jobs).`, pc-fid-rev2's build, so no build ran.
+
+Baseline. The stub as pc-fid-rev2's review fix left it (SHA-256
+`c55eb55a7f1ee27a9e281069b0fb2ea343d2cc30156f38c3828efc8762ecd235`, 1,775 lines) was rerun first, on this build: exit
+code 0, 107 `sorry` warnings and no other message, the last at line 1627, as that run recorded. This revision edits
+that file in place: one phrase of the header comment, on its own line (line 20), and one block appended at the end
+(lines 1776 to 1913, namespace `VE.Compose.Fid3`). So every earlier declaration and guard keeps its text and its line.
+
+**Lean output (this run).** Exit code 0. The output is 107 lines, each `warning: declaration uses 'sorry'`, with no
+error and no other message: the baseline's lines, line for line (the first three at 38, 47 and 56; the last four at
+1539, 1616, 1620 and 1627). The file has 276 declarations: 193 `def`, 75 `theorem`, 5 `inductive` and 3 `structure`.
+All elaborate. pc-fid-rev3 adds 18 `def`, the fixtures' data, and no theorem; none uses `sorry`: `lvModel`,
+`reachedMisuse`, `levelConds`, `guardSome`, `guardEach`, `acceptRule` (FW.1); `leadSet`, `itemSet`, `itemSetDropped`,
+`cRs1` (FW.2); `underBound`, `lowCost`, `exactShell`, `oneWayShell`, `costModel` (FW.3); `plainReg`, `limitDoc`,
+`partAt` (FW.4). The 107 that use `sorry` are pc-fid-rev2's, by the same names in the same order and at the same
+lines: the 42 stub definitions and 62 theorems listed under the ruling's run (below), then `readingsCaseOf` (line
+1616), `readingsCaseOf_keeps` (1620) and `compatibleChoices_admitS2` (1627). The 11 proofs are pc-fid-rev2's. No new
+guard computes with a `sorry` definition: each reads main's functions.
+
+**pc-fid-rev3's mutants.** This run tried four scratch copies of the final stub, each with one change and the same
+line count, run as `lean/Scratch_mutant-<name>.lean` and deleted after. Each fails as intended; beside the messages
+below, each copy's output held the 107 `sorry` warnings of the final run.
+- **Rule 13's guard written as the pilot's** (`guardEach := .ex "level" (.and reachedMisuse levelConds)`, the
+  quantifier around the list). Exit code 1; FW.1's guards at lines 1825 and 1826 fail:
+
+  ```
+  Scratch_mutant-level.lean:1825:0: error: Expression
+    Formula.eval (lvModel ["l2"]) ["r1"] guardEach == false
+  did not evaluate to `true`
+  Scratch_mutant-level.lean:1826:0: error: Expression
+    Formula.eval (lvModel ["l2"]) [] (acceptRule guardEach) == true
+  did not evaluate to `true`
+  ```
+- **Rule 13's guard without the lead-in's existential** (its first conjunct replaced by `.top`). Exit code 1; FW.1's
+  guard at line 1832 fails:
+
+  ```
+  Scratch_mutant-exists.lean:1832:0: error: Expression
+    Formula.eval (lvModel ["l2", "l3"] []) ["r1"] guardEach == false
+  did not evaluate to `true`
+  ```
+- **The exact shell with its second direction dropped** (`.implies underBound lowCost` replaced by `.top`, the
+  one-way shell). Exit code 1; FW.3's guards at lines 1878 and 1882 fail:
+
+  ```
+  Scratch_mutant-oneway.lean:1878:0: error: Expression
+    exactShell == { name := "low_cost", args := ["situation"], body := underBound }.premise
+  did not evaluate to `true`
+  Scratch_mutant-oneway.lean:1882:0: error: Expression
+    Formula.eval (costModel false true) [] exactShell == false
+  did not evaluate to `true`
+  ```
+- **Rule 14's set with the dropped reading offered** (`G-same` beside `G`, both labelled `rs1 = G`). Exit code 1;
+  FW.2's guard at line 1850 fails:
+
+  ```
+  Scratch_mutant-dropped.lean:1850:0: error: Expression
+    Readings.choices (docOf [leadSet, itemSet] [cRs1]) ==
+      [[("rs-lead", 0), ("rs-item", 0)], [("rs-lead", 1), ("rs-item", 1)]]
+  did not evaluate to `true`
+  ```
+
+**The English check (scratch files, not in the stub).** The stub does not import main's English examples, and adding
+the import would move every recorded line, so the English of FW.1 and FW.3 was read in a scratch file,
+`lean/Scratch_english-fw.lean` (deleted after), that imports `VE.EnglishGrammar.ReadExamples` and declares the
+fixtures' vocabulary (sorts `release`, `level`, `measure`, `situation`, `bound`; FW.1's and FW.3's predicates with
+wordings such as "{0} has reached {1}" and "{0} is priced under {1}"; constants `r1` and `twice_market`). Exit code 0.
+Main's English grammar gives exactly one derivation (`verdicts`, cap 2) to each of five sentences: FW.1's rule 13 guard
+closed at `r1`; rule 13's whole sentence, "For every release, if all of the following hold: (a) there is a level such
+that both that release has reached that level and that level is misuse; (b) for every level, if both that release has
+reached that level and that level is misuse, then all of the following hold: (i) …; (ii) …, then that release is
+acceptable."; the pilot's guard closed at `r1`; FW.3's exact shell; and its one-way shell. `rd` reads rule 13's
+sentence to `acceptRule guardEach`'s formula and the exact shell to `exactShell`'s, term for term, in the English
+reader's syntax (`EFormula`). A second scratch file (`lean/Scratch_english-k2.lean`, deleted after) added the
+predicate `critical` and read the form with a two-clause restriction, each antecedent a list (the plan's 15.2 rule 13
+and 17.2's ufsf.s135_bullet3): one derivation, and the intended formula.
 
 **Run on 2026-10-30 (pc-fid-rev2, DRI 2026-10-30 pc-fid-rev2 item 1: R1 to R4; with its review fix, item 2).** On
 this branch, `lean/` tree of `73711d1ba` (tree `b589be842`, the same as every earlier run's since `560abc9a9`: every
@@ -3001,8 +3772,8 @@ reproduced. The fix adds the theorem `readingsCaseOf_keeps` before `compatibleCh
 `cs = VE.Readings.choices a.D` to its conclusion, with their docstrings. No other line changes, and every line after
 1617 is eight lines lower than in the revision's stub.
 
-**Lean output (this run).** Exit code 0. The output is 107 lines, each `warning: declaration uses 'sorry'`, with no
-error and no other message. The first three lines and the last four:
+**Lean output (pc-fid-rev2's run, with its review fix).** Exit code 0. The output is 107 lines, each `warning:
+declaration uses 'sorry'`, with no error and no other message. The first three lines and the last four:
 
 ```
 SpecStubs_profile-composition.lean:38:4: warning: declaration uses 'sorry'
@@ -3231,10 +4002,10 @@ unchanged and pass. That run tried two scratch copies of its stub, each with one
   round 2's mutants (F4.9's text; F1.3o's guard; the one-sided clash check) are recorded below, under the earlier
   rounds' records, and were not rerun: their guards are unchanged and pass.
 
-**The executable guards (this run).** 105 `#guard` commands and the 11 proofs: the ruling's 90 and 10, and
-pc-fid-rev2's 15 guards and one proof (the last rows). Every one passes; none fails. Lines are this run's stub's, at
-SHA-256 `c55eb55a…` (the ruling's lines plus 2; pc-fid-rev2's lines after 1617 are the revision's plus 8, the review
-fix).
+**The executable guards (this run).** 130 `#guard` commands and the 11 proofs: the ruling's 90 and 10, pc-fid-rev2's
+15 guards and one proof, and pc-fid-rev3's 25 guards (the last rows). Every one passes; none fails. Lines are this
+run's stub's, at SHA-256 `e3b3e6c2…`; every line up to 1775 is pc-fid-rev2's run's, unchanged (the ruling's lines plus
+2; pc-fid-rev2's lines after 1617 are the revision's plus 8, the review fix).
 
 | Fixture | Guard | Expected | Result |
 |---|---|---|---|
@@ -3292,6 +4063,15 @@ fix).
 | F6.17 (new, R2) | `describeD15`, D-15's text from main's `Act.text` | the text of 5.6, written out | passes (1 guard, line 1748) |
 | F12.1 (new, R3) | `scenarioGuard "u1" runsResearch dsNorm`; `layerRuleIn profileTableMD []` on the soft chain with readings and `modality@0` | `dsNorm` with guard `["and", crossedFourth, runsResearch]`; `some "UnsupportedProfile: modality@0 with readings@1 is not implemented"` | passes (2 guards, lines 1758, 1761) |
 | F2.11 (new, R4(a)) | `opensIn ["crossed", "serves_finding_weaknesses"]` on `limiting`'s guard; on `rationale`'s | `["crossed", "serves_finding_weaknesses"]`; `["crossed"]` | passes (2 guards, lines 1771, 1773) |
+| FW.1 (new, PC-R5) | `guardSome` and `guardEach` at `r1` in `lvModel ["l2"]` (mitigated at `l2` only); `acceptRule` of each there | true; false; true (rule 13's rule holds with `r1` not acceptable); false | passes (4 guards, lines 1824-1827) |
+| FW.1 (new, PC-R5) | `guardEach` at `r1` and `acceptRule guardEach` in `lvModel ["l2", "l3"]` | true; false | passes (2 guards, lines 1829, 1830) |
+| FW.1 (new, PC-R5) | `guardEach` and its universal alone at `r1`, no level reached | false; true | passes (2 guards, lines 1832, 1833) |
+| FW.2 (new, PC-R6) | `VE.Readings.choices` on rule 14's sets; on the pilot's | the two choices; the three, the dropped reading's `[("rs-lead", 1), ("rs-item", 1)]` among them | passes (2 guards, lines 1850, 1852) |
+| FW.3 (new, PC-R7) | `exactShell` and `oneWayShell` against `Def.premise ⟨"low_cost", ["situation"], underBound⟩` | equal; not equal | passes (2 guards, lines 1878, 1879) |
+| FW.3 (new, PC-R7) | both shells in `costModel false true`; both in `costModel true false`; `exactShell` in `costModel true true` | one-way true, exact false; both false; true | passes (5 guards, lines 1881, 1882, 1884-1886) |
+| FW.4 (new, PC-R8) | `checkW1 (limitDoc 65)`; `checkW1 (limitDoc 64)` | the error `"ResourceLimit: regulated predicates"`; `.ok ()` | passes (2 guards, lines 1898, 1899) |
+| FW.4 (new, PC-R8) | `Loader.statuses`; whether it holds `"GAP"`; `w2Status false "specified"`; `w2Status false "open"` | `["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]`; false; `"LABELLED"`; `"OPEN"` | passes (4 guards, lines 1902-1905) |
+| FW.4 (new, PC-R8) | `Loader.partOk 0` on a part with status `"GAP"`; with `"LABELLED"` | the error `"MIXED parts must partition their parent span"`; `.ok ()` | passes (2 guards, lines 1910, 1911) |
 
 **Statements new or revised in pc-fid-rev**, each elaborated by this run: `withAttitudeContents` and
 `opensIn_attitude` (3.1, PC-1b); `recordProfile`, `profileTableCM`, `documentLayers'`, `withoutDocumentLayers'`,
@@ -3320,6 +4100,11 @@ functions (`opensIn`; `VE.Acts.readings`, `read`, `table`, `paraphrase`, `Act.te
 The review fix (pc-fid-rev2's statement review, finding 1; DRI 2026-10-30 pc-fid-rev2, item 2), elaborated by this
 run: `readingsCaseOf_keeps` (new) and `compatibleChoices_admitS2`'s conjunct `cs = VE.Readings.choices a.D` (3.2,
 PC-2b, R1); both typed with `sorry` (open point 12).
+
+**Statements new in pc-fid-rev3** (DRI 2026-10-31 pc-fid-rev3, item 1): none. 3.12's four rules are writing rules
+over statements and functions already elaborated or on main (`judgedIn_legacy`, `judgedIn_soft`,
+`chainReadings_rows`; `VE.Formula.eval`, `VE.Definitions.Def.premise`, `VE.Readings.choices`, `VE.SoftNorms.checkW1`,
+`VE.Discourse.Loader.partOk`), and the 18 new definitions are FW.1 to FW.4's data. No earlier statement changes.
 
 Earlier rounds' records, kept:
 
@@ -3384,13 +4169,15 @@ F5.6 to F5.8 (PC-5b; F5.8 (a) runs on main today), F6.7 (whichever of PC-6 and P
 (PC-6's and PC-6b's `SoftExamples.lean`; F6.11 by whichever of PC-6 and AT-3a merges second), F6.15 and F6.16
 (PC-6c), F7.1 to F7.5 (PC-7b), F7.8 (PC-7c), F9.3, F9.6 on a run and F9.7 (PC-9's `UniformExamples.lean`), F11.1,
 F11.2 and F11.4 (PC-11), and, from pc-fid-rev2, the end-to-end parts of F2.10 and F2.11 (PC-2b, with PC-1) and of
-F6.17 (PC-6c), and F12.2 and F12.3 (PC-12, after MD-4a).
+F6.17 (PC-6c), and F12.2 and F12.3 (PC-12, after MD-4a); and, from pc-fid-rev3, the end-to-end parts of FW.1 to
+FW.4, which no batch builds (5.11).
 
 **Open points found while applying the rulings.** Round 1 found two. Neither was an edit the ruling made, and
 neither changed a ruled statement or a ruled expected value. Round 2's decision resolves the first; the second
 stands. Round 2's run adds none. pc-fid-rev adds points 3 to 7; none changes a ruled statement or expected value, and
 none needs a ruling. Its review fixes revise points 5 and 6 and add points 8 to 11; point 9 was put to the DRI, whose
-decision of 2026-10-30 (item 1) replaces it. pc-fid-rev2 adds points 12 to 15; none changes a signed statement or
+decision of 2026-10-30 (item 1) replaces it. pc-fid-rev2 adds points 12 to 15, pc-fid-rev3 points 16 to 19, and
+pc-fid-rev4 points 20 to 24 (its review fixes revise point 20 and add point 25); none changes a signed statement or
 expected value, and none needs a ruling. (Line numbers in points 1 to 11 are the ruling's stub's; this run's are 2
 higher.) Lean accepted the symmetric
 check and every restated statement, and every guard computed the ruled value. So the ruled fallback (G3 with the added hypothesis `¬ swapClash (twin j)`) was not
@@ -3495,3 +4282,67 @@ needed, and there is no Lean message to record.
     choices instead of 3. By the sets' sizes the document has 360 compatible choices instead of 120, still over the
     enumerated route's 64, so a whole-document readings answer stays UNKNOWN naming the limit (the plan's rule "honest
     UNKNOWN"), never a refusal and never a verdict. The count is Lean's.
+16. **The writing rules are not checks (PC-R5 to PC-R7).** A level quantifier written around a list, a reading a DRI
+    decision dropped offered as a candidate and a one-way shell under an exact marker are well-formed VE, and main
+    admits them; no document-mode check can tell them from the rules' forms, because the difference is in the source
+    sentence (6). FW.1 to FW.3 show the answer each wrong form gets, and the four seeded mutants show the guards
+    catch it. The built f9-acc and f10-acc on main's safety-framework use case keep the pilot's form; fixing them is
+    the use case's (`dri-decisions-20261029-uc-audit2.md` item 1 (d) lists them among the disputed units), not this
+    plan's.
+17. **The judgment and the restated term (PC-R7).** Under the plan's 15.2 rule 9 the exact shell decides the restated
+    term `p` and never a bound judgment whose judged words hold `p`'s words. So in the RSP case, T5 (a substitution at
+    4.5 times the cost is at competitive costs) needs only the shell and quantities' bound, while T1 ("(1), with
+    4 ≤ 5") also needs the company's determination read through `competitive_cost`: a split of the judged atom, or a
+    criterion relating the two, both judgment terms' (its D6), which this plan does not design. Until then T1 is not
+    answered from the shell, and nothing about the determination is concluded.
+18. **The quantity's own form and its layer (PC-R7).** FW.3 holds the quantity's argument position with a stand-in
+    constant. How quantities writes the bound (a `cardinality` statement, typed ratio terms; quantities-PLAN 2.2) is
+    quantities'. So is its profile beside the chain: main's `cardinality@0` row refuses `norms@0`, `soft-norms@0` and
+    `readings@1` at the gate and requires `order@0`, which the soft route refuses (`Compose/Dispatch.lean:797-798`
+    on main, qt-a3c's row; `soft-norms-wire-table.md:63`); the DRI's order leaves both to quantities. The shell is written now, and its
+    quantity waits for quantities.
+19. **The re-pilot's document after rules 14 and 15 (PC-R6, PC-R8).** Without the dropped reading, `c-rs1`'s component
+    has two choices instead of three, so by the sets' sizes the document has 72 compatible choices instead of 108,
+    still over the enumerated route's 64: a whole-document readings answer stays UNKNOWN naming the limit, never a
+    refusal (point 15's rule). The count is Lean's. A document split by rule 15 is two documents, each answered alone;
+    no question across them is designed here, so the split never cuts a set, a coupling or a priority edge, and a
+    document that cannot be split so has main's limit refusal as its answer.
+20. **What is typed and what is proved (PC-R9, PC-R10, PC-R12; revised by the review fixes).** `kindResolve_faithful`
+    is proved, from the kind's laws and S4's `resolveFormula_assertion`, which is typed: S4 must keep an asserted
+    formula an assertion when it resolves it, which its `resolve_position_faithful` over `Content` already presumes.
+    `attitudeKind_laws` was false as the revision stated it (the review's finding 2: a formula deeper than the decoder's
+    limit was written and not read back). Its `write` now re-decodes what it writes and fails unless that gives the
+    formula back, so the round trip is checked, not assumed, and the laws need only the Json set/get lemmas
+    (`getObjVal?` after `setObjVal!` on the same key, and `setObjVal!` twice on one key), which no lemma on main states.
+    `attitudeKind_facts` also needs `ResolveReachesKind attitudeKind` (the review's finding 1), which PC-11 proves from
+    its extension of S4's `resolveDocument` (`resolveCase` and `caseManifest` are stubs here, as in point 5), and
+    `contentJudged`, the reader as PC-11 extends it (a stub here, PC-1's and PC-11's build); `crossSlotParts_choice` is
+    `crossSlot_choice`'s proof over parts. All are PC-11's to prove.
+21. **The attitude node's other fields, and a node in a guard (PC-R9).** RESOLVE resolves the content's position; the
+    holder "we" is the document's legend (DEC 18), a holder pronoun is attitudes' (D-A7), and the slot is the rule's
+    variable, so none is a position here. An attitude node inside a rule's guard (AT-3a; rule 9's attitude slot) holds
+    its content at the same place, and `attitudeKind` reads it the same way; whether S4 resolves a guard's node before
+    the chain decodes it is S4's and AT-3a's to state with the guard's other positions, and no finding of this order
+    reached it.
+22. **Modality's kind is modality's (PC-R9, PC-R10).** `modalKindMD` stands in for MD-2's entry, read from its plan's
+    wire (restrictor and body). Its positions as built, how its claim elaborates, and its `slotAgrees` row are modality's;
+    this specification states only `KindFacts` and row 25. If modality cannot state `KindFacts` on a list, row 25
+    stands for that list, and the "may"/"can" sets stay OPEN with no cross-reading verdicts, as DEC 13(b) already says
+    until the case lands.
+23. **The parts wire and AT-8 (PC-R12).** `{"parts": [...]}` is PC-11's wire for a candidate of several parts; which
+    sets are {report; report and soft rule} and which a report alone is E3's bar and AT-8's, and the report's content is
+    attitudes' (D-A2 does not admit "wants Y to VP" with an act phrase). A rule part whose act holds judged words (the
+    re-pilot's "settled", "secure") meets judgment terms' `JudgmentRegulated`; moving a judged modifier out of an act's
+    words is not PC-R12's and is not designed here.
+24. **Rule 9's limit is a writing rule (PC-R11).** Main refuses a clause written as act words only when it holds a
+    clause word (row 27); otherwise it admits words no one decides (FW.5's second guard). ap-mixed-filler, act
+    phrases' row, is not asked for these shapes. Whether act phrases designs a modifier slot for a clause on the whole
+    act, and whether modality designs "as if", is theirs; until then the candidates holding such a stub are pending.
+25. **`ResolveReachesKind` reaches candidates, not a unit's own content (review fixes, PC-R9).** As the review states
+    it, the statement covers every candidate content or part of the kind in a reading set (`candidateAt`). A unit
+    content of a registered kind (modality's `{"modal": …}` written as a unit's content, 3.10's "unit content of a
+    family's profile") is in `KindReaderCovers`' reach, since `contentJudged` reads a unit's content too, but in no
+    RESOLVE statement's. The conservative direction holds today: the layer rule refuses `modality@0` beside
+    `ve.discourse@1` (row 25) until modality's `LayerFacts` holds, and nothing here admits more. Before modality's row
+    batch lifts row 25, `KindFacts` needs the same tie for a unit's own content (a place over units as well as sets);
+    this round's order does not reach it, so it is recorded, not designed.

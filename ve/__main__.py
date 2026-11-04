@@ -81,16 +81,42 @@ def _main(argv=None):
         options = senses_parser.parse_args(argv[2:])
         try:
             from .assurance import operation
-            from .senses import load_pack
+            from .senses import load_pack, pack_review
             from .backends.senses import OPERATION, read
             env = Environment(loads_json(_read(options.env)))
-            result = read(env, _read(options.source, MAX_SOURCE_BYTES).decode("utf-8"),
-                          [load_pack(path) for path in options.pack])
+            packs = [load_pack(path) for path in options.pack]
+            result = read(env, _read(options.source, MAX_SOURCE_BYTES).decode("utf-8"), packs)
             # Lean's reading, not a `check` record: the honesty fields say what it does not establish, and
             # no marked conclusion is checked against its premises.
             _emit({"operation": OPERATION, "assurance": operation(OPERATION)["assurance"]["current"],
-                   "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result})
+                   "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result,
+                   "review_status": pack_review(packs, result["dictionary_id"])})
             return 0 if result["reading"]["status"] == "one" else 3
+        except (VEError, UnicodeError, OSError) as exc:
+            _emit({"status": "InvalidInput", "error": str(exc)})
+            return 2
+    if argv[:2] == ["senses", "project"]:
+        project_parser = argparse.ArgumentParser(
+            prog="python -m ve senses project",
+            description="Lean's projection (`senses.project`): the environment and lexicon the packs give under the "
+                        "preamble lines for the used words, with their identities, or Lean's fault. Exit 0 for a "
+                        "projection, 3 for a fault, 2 for invalid input, 5 when the checker is unavailable.")
+        project_parser.add_argument("--env", required=True, help="environment JSON file")
+        project_parser.add_argument("--pack", action="append", required=True, help="sense pack JSON file")
+        project_parser.add_argument("--used", action="append", default=[], help="a word of the packs the body uses")
+        project_parser.add_argument("--lines", help="text file of preamble lines (none when omitted)")
+        options = project_parser.parse_args(argv[2:])
+        try:
+            from .assurance import operation
+            from .senses import load_pack, pack_review
+            from .backends.senses import PROJECT, project
+            env = Environment(loads_json(_read(options.env)))
+            packs = [load_pack(path) for path in options.pack]
+            lines = _read(options.lines, MAX_SOURCE_BYTES).decode("utf-8") if options.lines else ""
+            result = project(env, packs, lines, options.used)
+            _emit({"operation": PROJECT, "assurance": operation(PROJECT)["assurance"]["current"], **result,
+                   "review_status": pack_review(packs, result["dictionary_id"])})
+            return 0 if result["projection"]["status"] == "ok" else 3
         except (VEError, UnicodeError, OSError) as exc:
             _emit({"status": "InvalidInput", "error": str(exc)})
             return 2

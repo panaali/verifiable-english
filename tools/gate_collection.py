@@ -47,7 +47,7 @@ import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import nested_pytest  # noqa: E402
+from tools import nested_pytest, test_schedule  # noqa: E402
 
 # The gate record includes its collection, bound to the commit and its tree.
 NOTES_REF = "refs/notes/ve-gate-result"
@@ -139,17 +139,8 @@ def encode_ids(ids: list[str]) -> str:
 
 
 def decode_ids(encoded: str) -> list[str] | None:
-    if type(encoded) is not str:
-        return None
-    try:
-        compressed = base64.b64decode(encoded, validate=True)
-        decoder = zlib.decompressobj()
-        raw = decoder.decompress(compressed, MAX_IDS_BYTES + 1)
-        if len(raw) > MAX_IDS_BYTES or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
-            return None
-        ids = json.loads(raw)
-    except (ValueError, zlib.error, UnicodeDecodeError):
-        return None
+    """The IDs `encode_ids` encoded, or None when `encoded` is not such an encoding (`test_schedule.zlib_json_value`)."""
+    ids = test_schedule.zlib_json_value(encoded, MAX_IDS_BYTES)
     if not isinstance(ids, list) or not ids or not all(type(nodeid) is str for nodeid in ids) \
             or ids != sorted(set(ids)):
         return None
@@ -165,10 +156,7 @@ def record_text(commit: str, tree: str, ids: list[str], result: dict | None = No
 
 def parse_record(text: str, commit: str, tree: str) -> list[str] | None:
     """The IDs of a gate record bound to `commit` and `tree`, or None if malformed."""
-    try:
-        record = json.loads(text)
-    except ValueError:
-        return None
+    record = test_schedule.json_value(text)
     if not isinstance(record, dict) or record.get("format") != FORMAT \
             or record.get("commit_sha") != commit or record.get("tree_sha") != tree:
         return None

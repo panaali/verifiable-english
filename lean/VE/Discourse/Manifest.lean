@@ -161,6 +161,7 @@ structure DDoc where
   prose : String                      -- the source (an embedded document is a unit's bytes of it)
   files : Lean.Json                   -- the sibling files an import may name (4.1(10))
   nouns : List (String × String) := [] -- (sort, declared singular noun): slot discovery and Acc read them
+  chain : List String := []           -- the units whose content is a chain route's JSON (discourse 14.3 step 6)
 
 /-- The unit record of a unit id. -/
 def unitOf (D : Doc) (u : String) : Option DocUnit := D.units.find? (fun x => x.id == u)

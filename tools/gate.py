@@ -76,6 +76,8 @@ REUSED_STAGES = ("lean_audit", "cargo_test")
 RERUNNABLE = frozenset({"pytest", "pytest command"})
 # How many of the suite's slowest tests the gate's log names.
 SLOWEST = 20
+# The largest `--durations-record` file read (a full gate record holds its collection: about 1 MB in Nov 2026).
+MAX_DURATIONS_RECORD_BYTES = 16 * 1024 * 1024
 # The x86 platform contract run (`--contract`, tools/platform_contract.py): the gate's stages but the Lean audit
 # and the collection check, which the complete gates on both runners run, over the listed tests only.
 CONTRACT_STAGES = ("toolchains", "lean_build", "rust_build", "cargo_test", "pytest")
@@ -394,7 +396,7 @@ def retry_quarantined(result: dict, events: dict, env: dict[str, str], python: l
     except RuntimeError:
         pass  # a retry that fails exits 1: its events say which test failed again
     try:
-        retried = json.loads(retry_file.read_text())["tests"]
+        retried = test_schedule.json_value(retry_file.read_text())["tests"]
     except (OSError, ValueError, KeyError, TypeError):
         retried = {}
     for nodeid in failed:
@@ -459,7 +461,7 @@ def runner_identity() -> dict[str, str]:
 def read_previous(path: Path) -> dict | None:
     """The gate record at `path`, read before this gate replaces it, or None."""
     try:
-        record = json.loads(path.read_text())
+        record = test_schedule.json_value(path.read_text())
     except (OSError, ValueError):
         return None
     return record if isinstance(record, dict) else None
@@ -646,18 +648,52 @@ def base_durations(result: dict, env: dict[str, str], cwd: Path = ROOT) -> tuple
     return found[0], estimates._replace(measured=frozenset(found[1]) if complete else None)
 
 
-def suite_durations(result: dict, env: dict[str, str], path: Path) -> None:
+def record_file_durations(path: Path) -> tuple[str, test_schedule.Estimates] | None:
+    """(its sha256, its durations): the durations a gate record file holds (`--durations-record`: a full gate
+    record or a merged shard record), with the IDs it collected when its suite timed every test it selected, as
+    `base_durations` reads a note's; None, with one log line, when the file is missing, unreadable, larger than
+    MAX_DURATIONS_RECORD_BYTES, not a JSON object or holds no durations, at any nesting depth of the file or of its
+    compressed fields (`test_schedule.json_value`). Scheduling data only."""
+    from tools import gate_collection
+    try:
+        with path.open("rb") as handle:
+            raw = handle.read(MAX_DURATIONS_RECORD_BYTES + 1)
+    except OSError:
+        raw = b""
+    record = test_schedule.json_value(raw) if len(raw) <= MAX_DURATIONS_RECORD_BYTES else None
+    estimates = test_schedule.read_record_field(record.get("durations")) if isinstance(record, dict) else None
+    if estimates is None:
+        print(f"[gate] durations record {path} not used: missing, oversize or malformed", flush=True)
+        return None
+    counts = record.get("counts") if isinstance(record.get("counts"), dict) else {}
+    collection = record.get("collection") if isinstance(record.get("collection"), dict) else {}
+    timed = record["durations"].get("tests")
+    ids = gate_collection.decode_ids(collection.get("collected_zlib")) \
+        if type(timed) is int and timed == counts.get("selected") else None
+    return hashlib.sha256(raw).hexdigest(), estimates._replace(measured=None if ids is None else frozenset(ids))
+
+
+def suite_durations(result: dict, env: dict[str, str], path: Path, record: Path | None = None) -> None:
     """Write the durations the suite's scheduler reads (SOURCE_VARIABLE names `path`): the committed file
-    overlaid with the merge base's recorded durations (`base_durations`); `result["durations_source"]` says
-    which. They change the order the tests start in, never which tests run (tools/test_schedule.py)."""
+    overlaid with the merge base's recorded durations (`base_durations`), or when the base has none with those
+    of the gate record file `record` (`record_file_durations`); `result["durations_source"]` says which. They
+    change the order the tests start in and the shard plan's weights, never which tests run
+    (tools/test_schedule.py, tools/gate_shards.py)."""
     committed = test_schedule.read_source(test_schedule.DURATIONS)
     found = base_durations(result, env)
-    base = None if found is None else found[1]
+    from_file = None if found is not None or record is None else record_file_durations(record)
+    base = found[1] if found is not None else None if from_file is None else from_file[1]
     path.write_text(test_schedule.overlay_text(committed, base, source=(
-        "the committed durations" if found is None else f"the committed durations with the gate record of {found[0]}")))
+        f"the committed durations with the gate record of {found[0]}" if found is not None
+        else "the committed durations" if from_file is None
+        else f"the committed durations with the gate record file of sha256 {from_file[0]}")))
     result["durations_source"] = {"committed": len(committed.durations), "base": None if found is None else found[0],
                                   "base_recorded": None if base is None else len(base.durations),
                                   "measured": None if base is None or base.measured is None else len(base.measured)}
+    if record is not None:
+        result["durations_source"]["record_file"] = {
+            "used": from_file is not None, "sha256": None if from_file is None else from_file[0],
+            "recorded": None if from_file is None else len(from_file[1].durations)}
 
 
 def record_durations(result: dict, events: dict) -> None:
@@ -713,11 +749,19 @@ def main() -> int:
                              "tests/platform-contract.json), without the Lean audit and the collection check (status "
                              "contract-passed or failed; default --output platform-contract-result.json). It is "
                              "never a full gate's evidence")
+    parser.add_argument("--durations-record", type=Path, metavar="RECORD",
+                        help="when the merge base has no gate record, weigh the suite's tests (their order and the "
+                             "--shard plan) by the durations of this gate RECORD file (a full or merged shard "
+                             "record); a missing or malformed file leaves the committed durations. Never changes "
+                             "which tests run")
     args = parser.parse_args()
     if args.merge_shards is not None:
-        if args.shard or args.contract is not None or args.rerun_failed is not None or args.base:
+        if args.shard or args.contract is not None or args.rerun_failed is not None or args.base \
+                or args.durations_record:
             parser.error("--merge-shards accepts only records and --output")
         return gate_shards.merge_files(args.merge_shards, (args.output or ROOT / "gate-result.json").resolve())
+    if args.durations_record is not None:
+        args.durations_record = args.durations_record.resolve()
     shard = None
     if args.shard is not None:
         match = re.fullmatch(r"([1-9][0-9]*)/([1-9][0-9]*)", args.shard)
@@ -881,7 +925,7 @@ def main() -> int:
             elif shard is not None:
                 result["collection"] = {"base": gate_collection.rev(f"{args.base}^{{commit}}", env=env)
                                         if args.base else gate_collection.merge_base(env=env)}
-            suite_durations(result, env, durations_file)
+            suite_durations(result, env, durations_file, args.durations_record)
             if shard is not None:
                 shard_plan = gate_shards.plan(collection["collected"],
                                               test_schedule.read_source(durations_file), shard[1],

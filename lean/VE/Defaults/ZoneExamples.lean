@@ -237,4 +237,38 @@ def dupA : VE.FiniteModel Entity :=
 -- The form behind the charge is the form.
 #guard holds dδ fun L => zoneFormOf L M1 [] == some .long && zoneFormOf L A2 [((outw, [a0]), true), ((outw, [a1]), true)] == some .short
 
+/-! ## `forcedAll`: the exception atoms every default completion holds (8.6, DF-μ′ and DF-μ″ as they bear on it) -/
+
+/-- `forcedAllOf` with no proposal. -/
+def forced (L : LayeredU) (M : VE.FiniteModel Entity) (rec : List ((String × List Entity) × Bool)) (obs : Obs) :
+    Option (List (String × List Entity)) :=
+  forcedAllOf L (Xl L) M rec obs []
+
+-- DF-μ: both default completions hold g1's exception at o1 (observed `instructs(o1)` = no), so it is forced and
+-- nothing else is; with nothing observed, nothing is forced.
+#guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc "g1" (el "operator" 0)] && forced L M2 [] [] == some []
+-- DF-μ′: four default completions, r1 excepted in two and r2 in the other two, so neither alternative exception is
+-- forced (seeded bug "forced read from one default completion": [r2's]); with neither guard nothing is forced.
+#guard holds dμ' fun L => forced L (sit "assistant" 1 ["cond_a", "cond_b"]) [] [] == some [] && forced L M1 [] [] == some []
+-- DF-μ″: three default completions, r2 excepted in two and r1 in one: neither is forced (the same seeded bug: [r2's]).
+#guard holds dγ fun L => forced L M1 [] [] == some []
+-- DF-δz: no default completion has an exception.
+#guard holds dδ fun L => forced L M1 [] [] == some []
+-- An exception the record fixes has one value in every completion: forced when true, not when false.
+#guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [exc "g1" (el "operator" 1)] &&
+  forced L M2 [(exc "g1" (el "operator" 1), false)] (obsμ L) == some [exc "g1" (el "operator" 0)]
+-- A decision atom true in every completion that is not an exception (the ranking atom) is not listed.
+#guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []
+-- No complete enumeration, no list: over the budget, over the record bound, no default completion.
+#guard holds dlam fun L => forced L (sit "operator" 13 []) [] [] == none &&
+  forced L (sit "operator" 2 []) (recN (maxZoneRecord + 1)) [] == none
+#guard holds dα fun L => forced L M1 [] [((reg L "x_permitted", [a0]), false)] == none
+#guard holds dwide fun L => forced L (sit "o" 1000 []) [] [] == none
+-- Large well-formed situations within the limits end: 12 open atoms (4,096 assignments), and 2 × 518 typed atoms
+-- listed (one past it is `none`). An atom a domain lists three times is reported once.
+#guard holds dlam fun L =>
+  forced L (sit "operator" 6 []) [] [((reg L "instructs", [el "operator" 5]), false)] == some [exc "g1" (el "operator" 5)] &&
+  forced L (dupSit 518) fixBoth [] == some [] && forced L (dupSit 519) fixBoth [] == none &&
+  forced L (dupSit 3) [] [((reg L "instructs", [e0]), false)] == some [exc "g1" e0]
+
 end VE.Defaults.ZoneFixtures

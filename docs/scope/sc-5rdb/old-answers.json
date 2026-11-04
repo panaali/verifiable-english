@@ -1,0 +1,595 @@
+{
+ "item": "sc-5rdb",
+ "commit": "af198c5a2",
+ "how": "Each document is _governed_text('norms', effect) (tests/test_scope_document.py) with: dup-uN, unit uN copied to the end; adj-uN, copied beside itself; noid2-uN, two copies of uN without an id; noid-own-u1u2, u1 and u2 without their ids; noid-empty, two units {}. Old answers: `lake env lean --run` of a scratch copy of readSplit and checkDocSets over decodeBlock without its firstDup line, on `commit`; an ok answer was then given to ROWS['scope'] and scope.read_answer. New: VE.Scope.Run.explainCase and checkDocSets on `commit`. Each of the six effects' documents without a fault answered ok on both routes, old and new.",
+ "cells": {
+  "carve_out/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "carve_out/adj-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "carve_out/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "carve_out/dup-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "carve_out/adj-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "carve_out/noid2-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "carve_out/dup-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "carve_out/adj-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "carve_out/noid2-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "carve_out/dup-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "carve_out/adj-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "carve_out/noid2-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "carve_out/noid-own-u1u2": {
+   "old_scope": "ScopeUnknownUnit: u1",
+   "scope_row": 4,
+   "old_document": "ScopeUnknownUnit: u1",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "carve_out/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "frame/adj-u0": {
+   "old_scope": "NotALeadIn: u0",
+   "scope_row": 4,
+   "old_document": "NotALeadIn: u0",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "frame/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/dup-u1": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "frame/adj-u1": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "frame/noid2-u1": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/dup-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "frame/adj-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "frame/noid2-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/dup-u3": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "frame/adj-u3": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "frame/noid2-u3": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/noid-own-u1u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "frame/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "precedes/adj-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "precedes/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/dup-u1": {
+   "old_scope": "CheckerUnavailable (Lean answered ok; read_answer refused it)",
+   "scope_row": 4,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "precedes/adj-u1": {
+   "old_scope": "CheckerUnavailable (Lean answered ok; read_answer refused it)",
+   "scope_row": 4,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "precedes/noid2-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/dup-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "precedes/adj-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "precedes/noid2-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/dup-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "precedes/adj-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "precedes/noid2-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/noid-own-u1u2": {
+   "old_scope": "ScopeUnknownUnit: u1",
+   "scope_row": 4,
+   "old_document": "ScopeUnknownUnit: u1",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "precedes/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "reguard/adj-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "reguard/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/dup-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "reguard/adj-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "reguard/noid2-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/dup-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "reguard/adj-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "reguard/noid2-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/dup-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "reguard/adj-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "reguard/noid2-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/noid-own-u1u2": {
+   "old_scope": "ScopeUnknownUnit: u1",
+   "scope_row": 4,
+   "old_document": "ScopeUnknownUnit: u1",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "reguard/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "title/adj-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "title/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/dup-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "title/adj-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "title/noid2-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/dup-u2": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "title/adj-u2": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "title/noid2-u2": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/dup-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "title/adj-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "title/noid2-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/noid-own-u1u2": {
+   "old_scope": "ScopeUnknownUnit: u2",
+   "scope_row": 4,
+   "old_document": "ScopeUnknownUnit: u2",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "title/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/dup-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "yields/adj-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u0 must be a unit id no other unit has"
+  },
+  "yields/noid2-u0": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/dup-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "yields/adj-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u1 must be a unit id no other unit has"
+  },
+  "yields/noid2-u1": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/dup-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "yields/adj-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units.u2 must be a unit id no other unit has"
+  },
+  "yields/noid2-u2": {
+   "old_scope": "ManifestMismatch: scope.governors.g1.units",
+   "scope_row": 4,
+   "old_document": "ManifestMismatch: scope.governors.g1.units",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/dup-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "yields/adj-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "duplicate or invalid unit id",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units.u3 must be a unit id no other unit has"
+  },
+  "yields/noid2-u3": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/noid-own-u1u2": {
+   "old_scope": "ScopeUnknownUnit: u1",
+   "scope_row": 4,
+   "old_document": "ScopeUnknownUnit: u1",
+   "document_row": 4,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  },
+  "yields/noid-empty": {
+   "old_scope": "ok",
+   "scope_row": 3,
+   "old_document": "invalid unit schema",
+   "document_row": 2,
+   "new": "InvalidInput: scope@0 units must be a unit id no other unit has"
+  }
+ }
+}
