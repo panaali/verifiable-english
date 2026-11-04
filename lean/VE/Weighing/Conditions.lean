@@ -17,6 +17,7 @@ node is not on `main`.
 
 namespace VE.Weighing
 open VE.Norms VE.SoftNorms
+universe u
 
 abbrev RequestPath := VE.NormDefaults.Packs.RequestPath
 
@@ -279,5 +280,111 @@ theorem strictPair_up (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : S
   obtain ⟨e, he, ha, hb⟩ := strictPair_edge.mp h₂
   rw [rankOrder_above Wd hw] at h₁
   exact strictPair_edge.mpr ⟨e, he, VE.Closure.atLeast_trans _ (atLeast_of_above h₁) ha, hb⟩
+
+/-! ## 5.3 Conditions and grants -/
+
+theorem filter_mem_subsetsOf {α : Type} (p : α → Bool) : ∀ l : List α, l.filter p ∈ subsetsOf l
+  | [] => by simp [subsetsOf]
+  | x :: xs => by by_cases hx : p x <;> simp [subsetsOf, hx, filter_mem_subsetsOf p xs]
+
+/-- On a quantifier-free formula, the propositional reading agrees with `denote` when each atom does. -/
+theorem evalProp_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (v : VE.Formula → Bool) :
+    ∀ a : VE.Formula, Formula.qfree a = true → (∀ φ ∈ atomsOf a, v φ = true ↔ φ.denote S ρ) →
+      (evalProp v a = true ↔ a.denote S ρ)
+  | .top, _, _ | .bottom, _, _ => by simp [evalProp, VE.Formula.denote]
+  | .unary _ _, _, hv | .binary _ _ _, _, hv | .eq _ _, _, hv => hv _ (by simp [atomsOf])
+  | .all _ _, hq, _ | .ex _ _, hq, _ => by simp [Formula.qfree] at hq
+  | .not a, hq, hv => by
+    have ih := evalProp_denote S ρ v a hq hv
+    simp only [evalProp, VE.Formula.denote, ← ih]; cases evalProp v a <;> simp
+  | .and a b, hq, hv | .or a b, hq, hv | .implies a b, hq, hv => by
+    simp only [Formula.qfree, Bool.and_eq_true] at hq
+    have ih₁ := evalProp_denote S ρ v a hq.1 (fun φ h => hv φ (by simp [atomsOf, h]))
+    have ih₂ := evalProp_denote S ρ v b hq.2 (fun φ h => hv φ (by simp [atomsOf, h]))
+    simp only [evalProp, VE.Formula.denote, ← ih₁, ← ih₂]
+    cases evalProp v a <;> cases evalProp v b <;> simp
+
+/-- The implication check is sound. -/
+theorem propImplies_sound (a b : VE.Formula) (hp : propImplies a b = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) (ha : a.denote S ρ) : b.denote S ρ := by
+  classical
+  simp only [propImplies, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at hp
+  obtain ⟨⟨⟨hqa, hqb⟩, _⟩, hall⟩ := hp
+  let t := (propAtoms a b).filter (fun φ => decide (φ.denote S ρ))
+  have hv : ∀ φ ∈ atomsOf a ++ atomsOf b, (t.contains φ = true ↔ φ.denote S ρ) := fun φ hφ => by
+    simp [t, propAtoms, VE.EnglishGrammar.mem_eraseDups hφ]
+  have key := hall t (filter_mem_subsetsOf _ _)
+  rw [(evalProp_denote S ρ _ a hqa (fun φ h => hv φ (List.mem_append_left _ h))).mpr ha] at key
+  simp only [Bool.not_true, Bool.false_or] at key
+  exact (evalProp_denote S ρ _ b hqb (fun φ h => hv φ (List.mem_append_right _ h))).mp key
+
+theorem condPremise_mem (Wd : WeighDoc) (c : CondDecl) (hc : c ∈ Wd.W.conditions) :
+    condPremise Wd c ∈ weighPremises Wd := by
+  rw [← List.zipIdx_map_fst 0 Wd.W.conditions] at hc
+  obtain ⟨⟨c', i⟩, hm, rfl⟩ := List.mem_map.mp hc
+  simp only [weighPremises, weighLabelled, weighEntries, condEntries, List.map_append, List.map_map,
+    List.mem_append, List.mem_map]
+  exact .inl (.inr ⟨(c', i), hm, rfl⟩)
+
+/-- E3 and E6: outside a necessary condition its decision is false. Fixtures W-δ, W-ζ2, W-μ. -/
+theorem condition_necessary (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .necessary → ¬ c.condition.denote S (tupleVal vs) → ¬ (targetF Wd c.target).denote S (tupleVal vs) := by
+  intro hk hn ht
+  have h0 := hS _ (condPremise_mem Wd c hc)
+  simp only [condPremise, hk] at h0
+  exact hn ((bindAll_denote_nil S _ _).mp h0 vs typed ht)
+
+/-- E4: inside a sufficient condition its decision is true. Fixtures W-ε, θ11. -/
+theorem condition_sufficient (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .sufficient → c.condition.denote S (tupleVal vs) → (targetF Wd c.target).denote S (tupleVal vs) := by
+  intro hk hn
+  have h0 := hS _ (condPremise_mem Wd c hc)
+  simp only [condPremise, hk] at h0
+  exact (bindAll_denote_nil S _ _).mp h0 vs typed hn
+
+/-- A delegated switch works only where its grant holds. Fixture W-ζ. -/
+theorem grant_needed (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (g : GrantDecl) (hg : g ∈ Wd.W.grants)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (ruleSorts Wd g.rule) vs)
+    (hng : ¬ (atom g.predicate (ruleSorts Wd g.rule)).denote S (tupleVal vs)) :
+    ¬ (targetF Wd (.off g.rule g.party)).denote S (tupleVal vs) := by
+  rw [← List.zipIdx_map_fst 0 Wd.W.grants] at hg
+  obtain ⟨⟨g', j⟩, hm, rfl⟩ := List.mem_map.mp hg
+  have h0 := hS (condPremise Wd ⟨.off g'.rule g'.party, .necessary, atom g'.predicate (ruleSorts Wd g'.rule)⟩) (by
+    simp only [weighPremises, weighLabelled, weighEntries, grantEntries, grantConds, List.map_append,
+      List.map_map, List.mem_append, List.mem_map, List.mem_flatMap]
+    exact .inr ⟨_, ⟨(g', j), hm, .head _⟩, rfl⟩)
+  exact fun ht => hng ((bindAll_denote_nil S _ _).mp h0 vs typed ht)
+
+/-- No party is granted a switch its grantor lacks. -/
+theorem delegation_bounded (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (g : GrantDecl)
+    (hg : g ∈ Wd.W.grants) :
+    ∃ N ∈ Wd.D.T.nodes, N.name = g.rule ∧ g.party ∈ N.alterable ∧ g.grantor ∈ N.alterable ∧
+      (g.predicate, g.grantor) ∈ Wd.D.soft.instructionOf := by
+  obtain ⟨hp, hr, hi⟩ := (weighFacts Wd h).grants g hg
+  simp only [targetExists] at hp hr
+  cases hN : nodeNamed Wd.D g.rule with
+  | none => simp [hN] at hp
+  | some N =>
+    simp only [hN, List.contains_iff_mem] at hp hr
+    exact ⟨N, List.mem_of_find?_eq_some hN, by simpa using List.find?_some hN, hp, hr, hi⟩
+
+/-! ## 5.4 Conservativity -/
+
+theorem weighEntries_empty (D : SoftDoc) (sm : VE.Acts.SplitMap) : weighEntries ⟨D, WeighEnv.empty, sm⟩ = [] := by
+  simp [weighEntries, strengthEntries, condEntries, grantEntries, grantConds, WeighEnv.empty]
+
+/-- Plan D2: an empty block adds nothing. -/
+theorem weigh_conservative (D : SoftDoc) (sm : VE.Acts.SplitMap) : weighPremises ⟨D, WeighEnv.empty, sm⟩ = [] := by
+  simp [weighPremises, weighLabelled, weighEntries_empty]
+
+theorem wellFormedWeigh_empty (D : SoftDoc) (sm : VE.Acts.SplitMap) :
+    WellFormedWeigh ⟨D, WeighEnv.empty, sm⟩ = WellFormedSoft D := by
+  simp only [WellFormedWeigh, checkWeigh, weighLabelled, weighEntries_empty]
+  simp [WeighEnv.empty, pure, Except.pure, bind, Except.bind]
 
 end VE.Weighing
