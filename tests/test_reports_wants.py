@@ -158,7 +158,8 @@ def test_the_request_is_charged_against_max_source_bytes(lean):
     # One byte more per phrase: a request of exactly the limit is answered, one byte more is not.
     many = ["runs x"] * ((MAX_SOURCE_BYTES - len("run x") - 1) // len("runs x "))
     answer = wants_forms(many, ["run x"])
-    assert len(answer["phrases"]) == len(many) and answer["infinitives"] == [{"infinitive": "run x", "finite": "runs x"}]
+    assert len(answer["phrases"]) == len(many)
+    assert answer["infinitives"] == [{"infinitive": "run x", "finite": "runs x"}]
     assert wants_forms(["a" * (MAX_SOURCE_BYTES - 1)], [])["phrases"][0]["infinitive"] is None
     for phrases, infinitives in ((["a" * MAX_SOURCE_BYTES], []), (["a" * (MAX_SOURCE_BYTES - 2)], ["b"])):
         with pytest.raises(ResourceLimit, match="reports-wants phrases exceed max_source_bytes"):

@@ -214,8 +214,8 @@ def _report(reports, words, text, initial):
                     if act == "says" and tail.startswith(', "') and tail.endswith('"') and len(tail) > 4:
                         results.append({"report": {**node, "literal": tail[3:-1], "content": None}})
                     if act in ("wants", "intends") and tail.startswith(" to "):
-                        results += [{"report": {**node, "content": c}}
-                                    for c in _parse_formula(reports, words.legend[holder] + " " + reports.finite(tail[4:]))]
+                        finite = words.legend[holder] + " " + reports.finite(tail[4:])
+                        results += [{"report": {**node, "content": c}} for c in _parse_formula(reports, finite)]
                     if act == "wants":
                         for subject, sdisplay in words.legend.items():
                             if tail.startswith(" " + sdisplay + " to "):
