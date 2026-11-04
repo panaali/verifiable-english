@@ -1,6 +1,6 @@
 # eff-20261103-1: gate shards weigh tests by measured durations when the merge base has no gate note
 
-**Status:** built and ready for the chain's gate. Branch infra/eff-20261103-1, merge base 87475ae6a (main = ve-integration).
+**Status:** fix round for review F1 done (one fail-closed JSON decoder for every gate-record reader; see "Fix round"); ready for the chain's gate. Branch infra/eff-20261103-1, merge base 87475ae6a (main = ve-integration).
 **What changed:** `tools/gate.py --durations-record RECORD` weighs the suite and the `--shard k/N` plan by a gate record
 file's durations when the base has no note. `tools/bench/suite_tail.py durations --gate-record FILE` is added, and
 `tools/test-durations.json` is refreshed from four measured full runs.
@@ -115,8 +115,9 @@ Add `--durations-record <path>` to each shard's `tools/gate.py --shard k/N …` 
 - **Content:** any full gate record or merged shard record, i.e. any JSON object with a `durations` field in
   `ve-test-durations@1` record format. At most 16 MiB.
 - **When it is used:** only when the merge base has no `refs/notes/ve-gate-result` record. A base note always wins.
-- **Failure:** a missing, unreadable, oversize or malformed file never fails the gate. It logs one line and leaves the
-  committed durations.
+- **Failure:** a missing, unreadable, oversize or malformed file never fails the gate, at any nesting depth of the
+  file or of its compressed `seconds_zlib` field (`test_schedule.json_value`, fix round F1). It logs one line and leaves
+  the committed durations. Malformed or too-deep `collected_zlib` IDs keep the file's durations with no measured tests.
 - **Effect:** the file changes only weights (the xdist start order and the shard plan's assignments), never `selected`,
   the collection or its check.
 - **Where to see it:** `durations_source.record_file` in each shard record says whether the file was used, with its
@@ -154,6 +155,9 @@ All shards given the same bytes compute the same plan. The plan digest and `merg
 | S4 | tools/gate.py | with the file, the plan takes the collected IDs as the selection | tests/test_gate_shards.py::test_a_durations_record_changes_only_the_plan[good] (and [malformed]) |
 | S5 | tools/bench/suite_tail.py | shortest instead of longest unrecorded mean | tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs |
 | S6 | tools/gate.py | `RecursionError` not caught when reading the file | tests/test_gate_durations.py::test_a_missing_malformed_or_oversize_record_file_leaves_the_committed_plan[nested 100k deep] |
+| S7 | tools/bench/suite_tail.py | `--gate-record` inputs dropped | tests/test_suite_tail.py::test_durations_command_reads_gate_records_as_more_runs |
+| S8 | tools/test_schedule.py | `json_value` catches `ValueError` only (the F1 bug, in the shared decoder) | tests/test_gate_durations.py::test_every_record_reader_leaves_a_value_nested_too_deep_unused (9 tests failed) |
+| S9 | tools/gate_collection.py | `parse_record` back on its own `json.loads` / `except ValueError` | tests/test_gate_durations.py::test_the_record_modules_parse_untrusted_json_only_through_json_value (3 tests failed) |
 
 Each showed `1 failed` (S4: `2 failed`) in `uv run pytest -q <test>`. The tree was clean after each. Only Python
 product code changed, so there are no Lean or Rust seeds.
@@ -199,7 +203,7 @@ It is not in main-known-red. The cause was this branch's `NOT_REGENERATED` entry
 2. PASS: task items 1 (`--durations-record`, gate.py l.651/675/751), 2 (refresh plus `suite_tail --gate-record`, evidence
    copied) and 3 (no orchestration change; wiring above), and every Proof bullet are delivered by the tests named under
    Proof and Replay. No new permanent report test (D4): the replay is saved evidence.
-3. PASS: S1–S6 above, each with its failing test.
+3. PASS: S1–S9 above, each with its failing test.
 4. N.A.: no Python/Lean/Rust semantics changed.
 5. N.A.: no Lean answer fields.
 6. PASS: the chain's gate runs on the final committed HEAD. The branch sits on current main 87475ae6 (merge base).
