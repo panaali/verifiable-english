@@ -118,7 +118,8 @@ def test_an_entry_without_its_done_marker_is_absent():
 # --- `probe(only=...)` and `kept`, without Lean ------------------------------------------------------------------
 
 
-PROBED = "import Demo.Defs\n#guard f 1 == 2\ndef g := 1\n#guard f 2 == 3\n\n#guard f 3 == 4\nexample : f 4 = 5 := by decide\n"
+PROBED = ("import Demo.Defs\n#guard f 1 == 2\ndef g := 1\n#guard f 2 == 3\n\n#guard f 3 == 4\n"
+          "example : f 4 = 5 := by decide\n")
 PROBED_ROLES = [(2, 2, "check", None), (3, 3, "other", None), (4, 5, "check", None), (6, 6, "check", None),
                 (7, 7, "check", None)]
 
