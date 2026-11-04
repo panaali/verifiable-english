@@ -144,3 +144,37 @@ def test_the_c9_probe_has_three_sufficient_premises_on_every_choice():
     assert sorted((e["set"], e["index"]) for e in load["soft_premises"]) == [(s, i) for s in ce4.SETS for i in (0, 1)]
     assert all([p["label"] for p in e["premises"]] == labels for e in load["soft_premises"])
     assert load["units"][migrate.CONDITIONED][0] == "OPEN"
+
+
+def test_each_candidate_id_is_the_loaders_binding_of_its_content():
+    """DRI decision sc-9 item 2 (deviation D1): every candidate's `meaning_id` in the probe is
+    `s1_content_meaning_id` of its content, and the saved record holds that id and Lean's unit id for all eight."""
+    from ve.document import _environment
+    from ve.readings import s1_content_meaning_id
+    probe, _ = migrate.pilot.read(RUN / "probe-translation.ve.md")
+    env = _environment(probe["environment"])
+    saved = json.loads((RUN / "answers/meaning-ids.json").read_text())
+    ids = {f"{R['id']}:{r['id']}": r["meaning_id"] for R in probe["reading_sets"] for r in R["readings"]}
+    assert len(ids) == 8 and set(saved) == set(ids)
+    for R in probe["reading_sets"]:
+        for r in R["readings"]:
+            assert r["meaning_id"] == s1_content_meaning_id(env, R["id"], r) == saved[f"{R['id']}:{r['id']}"]["candidate"]
+    assert all(type(v["lean_unit"]) is str and len(v["lean_unit"]) == 64 for v in saved.values())
+
+
+def test_the_comprehension_lines_are_the_renderers(tmp_path):
+    """DRI decision sc-9 item 1: C10 is NOT RUN; its four lines are the probe's rendered lines byte for byte, as this
+    branch's renderer produces them, each with spec 2.6's question and no answer."""
+    from tests import lean_routes
+    from ve.document import render_document
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
+    saved = json.loads((RUN / "comprehension/questions.json").read_text())
+    assert saved["status"].startswith("NOT RUN") and all(row["answer"] is None for row in saved["rows"])
+    assert [(row["case"], row["kind"]) for row in saved["rows"]] == [
+        ("C1", "permission"), ("C2", "obligation"), ("C3", "permission"), ("C4", "obligation")]
+    lines = render_document(RUN / "probe-translation.ve.md").splitlines()
+    for row in saved["rows"]:
+        assert lines[row["line"] - 1] == row["rendered"], row["case"]
+        assert row["question"].startswith("Does the text say that " +
+                                          ("c may " if row["kind"] == "permission" else "c need not "))
