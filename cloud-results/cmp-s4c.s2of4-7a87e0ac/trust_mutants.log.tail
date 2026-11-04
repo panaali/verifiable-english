@@ -1,0 +1,6 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/checkers.lock is no module of lean/, --test file or generated inventory
+trust_mutants: 11 definitions, 179 mutants (45 to run), 4 jobs, base a12f56fd7162
+trust_mutants: 32 KILLED, 0 SURVIVOR, 0 UNKNOWN, 6 INVALID, 7 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 630 s
+trust_mutants: D[V], trusted: 1 KILLED, 3 INVALID, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 31 KILLED, 3 INVALID, 7 ALLOWED, 120 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 143.8 s, mutants 467.2 s, cleanup 2.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 145.4 s (2), mutant_builds 158.6 s (49), mutant_checks 76.4 s (9), stage_controls 19.2 s (4), mutant_probes 1206.3 s (32)
