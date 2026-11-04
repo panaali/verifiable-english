@@ -24,8 +24,9 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `clauseSlot_eq`: the slot is `Lim_{plain D}` followed by `Rel_D`, one totality premise per total relation.
 - `clauseSlot_no_total`: with no total relation the slot is `Lim_{plain D}`: the rights route on `plain D`.
 - `clauseSlot_labelled`: if `Lim_D`'s labels are distinct, so are the slot's. Each totality premise has its own
-  label `rights:relation:<rule>:total`, and none is a limitation label. The hypothesis is DRI question Q3:
-  `Lim_D`'s labels can repeat on a well-formed rights document (pk-1c's `cx`).
+  label `rights:relation:<rule>:total`, and none is a limitation label. The hypothesis is signed by the DRI
+  (reviews/dri-decisions-20261104-cmp-s3.md Q3): `Lim_D`'s labels can repeat on a well-formed rights document
+  (pk-1c's `cx`, rebuilt as `cxDoc` in Examples.lean).
 - `clauseSlot_wellFormed` (8.4): not proved yet (cmp-s3b). It needs every base predicate that the base
   vocabulary shows to stay visible in the correlated document's stage-0 vocabulary. No lemma in the tree gives that.
 - `clause_fails_not_selected`: where a clause or the relation fails at a tuple, the line does not select there, so

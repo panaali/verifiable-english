@@ -1,15 +1,13 @@
 # cmp-s3: totality premises and the slot of the head (Relation.lean, spec 8.4)
 
-Status: Relation.lean is built, with five of 8.4's six theorems proved. No DRI signature is reserved. Three questions
-are open with the DRI (QUESTIONS.md Q1-Q3, sent 13:39Z and 13:42Z; not yet answered).
-Two spec statements are false as written. One is `elaborate_plain` (8.5, cut). The other is `clauseSlot_labelled`
-(8.4), delivered with one added hypothesis pending Q3; mechanised counterexamples for both are in Examples.lean.
-Cut to **cmp-s3b**: `clauseSlot_wellFormed`, all of 8.5 (Wire.lean and its two theorems), the `clauses-elaborate`
-case and mode, the registration of `right-clauses@0`, `ve/right_clauses.py`, the differential, 9.2, 9.3 and W1's budget.
-No answer changes (DELTA.md). Rows are listed below; FOLLOW-UP lines are at the end.
+Status: Relation.lean built, five of 8.4's six theorems proved; HEAD is the branch tip; no DRI signature reserved.
+Two spec statements were false as written; the DRI signed one added hypothesis each (reviews/dri-decisions-20261104-cmp-s3.md):
+`clauseSlot_labelled` (Q3 B1, delivered) and `elaborate_plain` (Q1 A1, cmp-s3b); counterexamples are `#guard`s.
+Cut to **cmp-s3b**: `clauseSlot_wellFormed`, 8.5 (Wire.lean), the `clauses-elaborate` mode, the registration (Q2),
+`ve/right_clauses.py` and the differential, 9.2, 9.3 and W1's budget. No answer changes (DELTA.md).
 
 Spec: docs/spec/right-clauses.md draft 3 (on main from cmp-s3a). Decisions read:
-reviews/dri-decisions-20261031-spec-right-clauses.md items 1-7. cmp-s3a's REPORT and names are used as they are.
+reviews/dri-decisions-20261031-spec-right-clauses.md items 1-7 and reviews/dri-decisions-20261104-cmp-s3.md (Q1-Q3). cmp-s3a's REPORT and names are used as they are.
 
 ## Deliverables (task rows)
 
@@ -17,10 +15,10 @@ reviews/dri-decisions-20261031-spec-right-clauses.md items 1-7. cmp-s3a's REPORT
 |---|---|---|
 | (1) `totalF`, `relPremisesLabelled`, `relPremises`, `clauseSlotLabelled`, `clauseSlot` | yes, word for word | 95b618a8f; statement check below |
 | (1) `clauseSlot_eq`, `clauseSlot_no_total`, `clause_fails_not_selected`, `relation_some_bearer` | yes, word for word, proved | `lake build` rc 0 (1280 jobs); `python3 lean/audit.py`: "PASS: 764 source files; 8408 named theorem declarations" |
-| (1) `clauseSlot_labelled` | proved with one added hypothesis `hl` (`Lim_D`'s labels distinct): **Q3** | b5f33f3da; counterexample `cxDoc` `#guard`, Examples.lean |
+| (1) `clauseSlot_labelled` | proved with one added hypothesis `hl` (`Lim_D`'s labels distinct), SIGNED by the DRI (Q3 B1) | b5f33f3da; counterexample `cxDoc` `#guard`, Examples.lean |
 | (1) `clauseSlot_wellFormed` | **no: cmp-s3b** (see "Cut") | - |
-| (2) Wire.lean, `decode_unstructured`, `elaborate_plain`, `clauses-elaborate` | **no: cmp-s3b**; `elaborate_plain` is false as stated (**Q1**) | depth `#guard` (`notChain`), Examples.lean |
-| (2) `right-clauses@0` in the registered list, ve/profile_table.json | **no: cmp-s3b**, with the head's mode (**Q2**) | QUESTIONS.md Q2 |
+| (2) Wire.lean, `decode_unstructured`, `elaborate_plain`, `clauses-elaborate` | **no: cmp-s3b**; `elaborate_plain` is false as stated; the DRI signed `(hd : PlainOnWire D)` (Q1 A1) | depth `#guard` (`notChain`), Examples.lean |
+| (2) `right-clauses@0` in the registered list, ve/profile_table.json | **no: cmp-s3b**, with the head's mode (Q2, plan accepted by the DRI) | QUESTIONS.md Q2 |
 | (3) ve/right_clauses.py, the differential | **no: cmp-s3b** | - |
 | (4) K3, K13; K2's `Rel_D = []` | yes, `#guard`s | Examples.lean "Relation.lean: `Rel_D` and the slot" |
 | (4) K9, K10, K15, F11-F14, 9.3, W1's 10,000-node budget | **no: cmp-s3b** (the wire decoder's and the runner's) | - |
@@ -42,19 +40,19 @@ lean/VE/Norms lean/VE/Route lean/VE/Compose` is empty). Plain.lean (cmp-s3a's) c
   `Valid` of the base tree, which nothing derives from `WellFormedRights (plain D)`. The proof also needs the holder
   slot's sort from `checkShape`. Together that is beyond this item. Nothing here depends on it: 4.2 reads it when the
   head runs (cmp-s3b).
-- 8.5 whole. `elaborate_plain` is false as stated (Q1); `decodeClauseDoc` reads a W2 document (units with spans and
+- 8.5 whole. `elaborate_plain` takes the DRI's added `(hd : PlainOnWire D)` (Q1 A1); `decodeClauseDoc` reads a W2 document (units with spans and
   `reading_sets`), so `stripElided` and `elaborateJson` must also take its rights source, a reading of the 8.5 notes to
   confirm there. The mode (Registry, Protocol, response shape, encoder theorem, relay, route cases, fuzz tests) and
   W1's budget fixture come with it; the DRI's evaluator rule of 2026-10-27 then applies there.
 - The registration (Q2), `ve/right_clauses.py`, the differential, 9.2, 9.3 as saved evidence.
 
-## DRI questions (QUESTIONS.md)
+## DRI questions (QUESTIONS.md; answered: reviews/dri-decisions-20261104-cmp-s3.md, 16:05Z)
 
 - Q1, `elaborate_plain` is false: `budgetFormula` refuses depth 65, `WellFormedRights` bounds no depth, and `plain`
-  nests a depth-64 clause one level deeper. `#guard` (`notChain`) shows both sides. Recommended: add a hypothesis.
-- Q2, registration without a runner changes a profile-on text. Plan: it lands with the mode in cmp-s3b.
+  nests a depth-64 clause one level deeper. `#guard` (`notChain`) shows both sides. Ruling: A1 SIGNED (the hypothesis).
+- Q2, registration without a runner changes a profile-on text. Ruling: plan accepted; it lands with the mode in cmp-s3b.
 - Q3, `clauseSlot_labelled` is false: at `⟨cx, [], []⟩` both hypotheses hold and `Lim_D` repeats a label. `#guard`
-  (`cxDoc`) shows it. Delivered with B1's hypothesis; if the DRI picks B2, the hypothesis changes in cmp-s3b.
+  (`cxDoc`) shows it. Ruling: B1 SIGNED, as delivered; the statement change is recorded in DELTA.md.
 
 ## Seeded bugs (each planted alone, `lake build VE.RightClauses.Examples`, restored)
 
@@ -127,25 +125,25 @@ estimate.
 
 ## Next item
 
-cmp-s3b (see "Cut"), after the DRI's answers to Q1-Q3; cmp-s3ab (`plain_wellFormed`) stays as cmp-s3a named it.
+cmp-s3b (see "Cut"), with the DRI's rulings on Q1 and Q2; cmp-s3ab (`plain_wellFormed`) stays as cmp-s3a named it.
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained answers: N.A., no relayed answer (no mode, wire or Python in this item).
 2. Deliverables: PASS, the table above; the cuts are named cmp-s3b under the size rule; the statement changes are
-   asked as Q1 and Q3.
+   signed by the DRI (Q1, Q3).
 3. Tests can fail: PASS, mutants.json (9 killed) and trust-mutants.json (32 killed, 0 survivors) with the allow file.
 4. Python/Lean/Rust agree: N.A., Lean only; the differential is cmp-s3b's.
 5. R8 binding: N.A., no relay.
 6. Gate evidence matches HEAD: PASS, the chain runs the gate on the final HEAD; no evidence reads live git.
-7. No unsigned item: PASS, R16 allowance signed by the standing ruling. `clauseSlot_labelled`'s hypothesis waits on
-   Q3, which is asked and listed in the first lines.
+7. No unsigned item: PASS, R16 allowance signed by the standing ruling; `clauseSlot_labelled`'s hypothesis signed by
+   the DRI (reviews/dri-decisions-20261104-cmp-s3.md Q3), recorded in DELTA.md "Statement changes".
 8. DELTA: PASS, DELTA.md: no answer changes (`grep -rn RightClauses lean/VE --include=*.lean` finds only
    `lean/VE/RightClauses/*`, VE.lean and Audit.lean).
 9. Test selection: PASS, `tools/select_tests.py --base $(git merge-base HEAD main)` selects `lake build` and
    `python3 lean/audit.py`, which run every `#guard` and proof the seeded bugs break.
 10. Statements say what is claimed: PASS, the statement comparison above. Each mutant breaks a proof or `#guard`.
-    The added hypothesis has a DRI question and a mechanised counterexample (`cxDoc`).
+    The added hypothesis has a DRI ruling (Q3) and a mechanised counterexample (`cxDoc`).
 11. Budgets fail closed: N.A., no evaluator, runner or budget in this item.
 12. CPU/memory: N.A., no route calls the new code.
 13. Test-removed trailers: N.A., no test removed or renamed.
