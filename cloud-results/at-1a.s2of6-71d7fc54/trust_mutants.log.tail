@@ -1,0 +1,16 @@
+trust_mutants: 22 definitions, 395 mutants (66 to run), 4 jobs, base 39b50770c117
+UNKNOWN lean/VE/Attitudes/Syntax.lean:124 VE.Attitudes.AFormula.conds (S, trusted) all-any: all -> any (lean/VE/Attitudes/Syntax.lean:124: Unknown constant `VE.Attitudes.AFormula.any`)
+UNKNOWN lean/VE/Attitudes/Scale.lean:50 VE.Attitudes.Table.reviewed (S, trusted) list-empty: t.candidates -> [] (lean/VE/Attitudes/Scale.lean:50: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Attitudes/Syntax.lean:46 VE.Attitudes.AFormula (S, trusted) ctor-drop: | base (φ : VE.Formula) ->  (lean/VE/Attitudes/Syntax.lean:118: Unknown constant `VE.Attitudes.AFormula.base`)
+UNKNOWN lean/VE/Attitudes/Syntax.lean:134 VE.Attitudes.condsOf (S, trusted) list-empty: A.rules -> [] (lean/VE/Attitudes/Syntax.lean:134: Invalid field notation: Type of)
+UNKNOWN lean/VE/Attitudes/Scale.lean:53 VE.Attitudes.Table.reviewed (S, trusted) list-empty: t.knowsThinks -> [] (lean/VE/Attitudes/Scale.lean:53: Invalid projection: Type of)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:144 VE.Attitudes.name (S, trusted) list-first: (keys A).filter (·.mode == k.mode) -> (((keys A).filter (·.mode == k.mode)).take 1)
+SURVIVOR lean/VE/Attitudes/Scale.lean:51 VE.Attitudes.Table.reviewed (S, trusted) list-drop-last: t.candidates -> (t.candidates.dropLast)
+SURVIVOR lean/VE/Attitudes/Scale.lean:52 VE.Attitudes.Table.reviewed (S, trusted) list-drop-last: ws -> (ws.dropLast)
+SURVIVOR lean/VE/Attitudes/Scale.lean:56 VE.Attitudes.Table.reviewed (S, trusted) list-drop-last: t.knowsThinks -> (t.knowsThinks.dropLast)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:151 VE.Attitudes.baseEnv (S, trusted) list-last: A.regulated -> (A.regulated.reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:123 VE.Attitudes.AFormula.conds (S, trusted) list-last: Γ -> (Γ.reverse.take 1)
+SURVIVOR lean/VE/Attitudes/Syntax.lean:123 VE.Attitudes.AFormula.conds (S, trusted) list-drop-first: Γ -> (Γ.drop 1)
+trust_mutants: 44 KILLED, 7 SURVIVOR, 5 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 329 OTHER SHARD in 158 s
+trust_mutants: S, trusted: 44 KILLED, 7 SURVIVOR, 5 UNKNOWN, 10 INVALID, 329 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 3.5 s, control_build 0.2 s, probe_install 1.3 s, control_probes 6.3 s, mutants 133.4 s, cleanup 2.7 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 7.2 s (2), mutant_builds 147.7 s (68), mutant_checks 113 s (39), stage_controls 12.9 s (4), mutant_probes 232.4 s (44)
