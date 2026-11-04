@@ -1,0 +1,10 @@
+trust_mutants: 14 definitions, 426 mutants (53 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:82 VE.Defaults.Wire.ZoneLine (G[V], trusted) ctor-drop: | stated (rule : String) (condition : Nat) (vs : List Entity) ->  (lean/VE/Defaults/ZoneWire.lean:101: Unknown constant `VE.Defaults.Wire.ZoneLine.stated`)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:84 VE.Defaults.Wire.ZoneLine (G[V], trusted) ctor-drop: | assumed (k : DecisionKey) (vs : List Entity) ->  (lean/VE/Defaults/ZoneWire.lean:102: Unknown constant `VE.Defaults.Wire.ZoneLine.assumed`)
+UNKNOWN lean/VE/Defaults/Route.lean:22 VE.NormDefaults.Wire.defaultsRows (G[V], trusted) list-empty: defaultsKinds.map fun k => ⟨k, some "soft", fun L id j => if VE.Defaults.providerConditions L.pac... -> [] (lean/VE/Defaults/RouteExamples.lean:17: Expression (VE.NormDefaults.Wire.runLayered, which it rea...)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-drop-last: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).map (·.sufficient) -> ((((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).map (·.sufficient)).dropLast) (lean/VE/Defaults/ZoneWire.lean:100: Invalid field notation: Type of)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:99 VE.Defaults.Wire.zoneLines (G[V], trusted) list-drop-first: ((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)) -> (((L.D.T.nodes.find? (·.name == rule)).bind (·.exception)).drop 1) (lean/VE/Defaults/ZoneWire.lean:100: Invalid field notation: Type of)
+trust_mutants: 48 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 2156 s
+trust_mutants: D[V], trusted: 14 KILLED, 96 OTHER SHARD
+trust_mutants: G[V], trusted: 34 KILLED, 5 UNKNOWN, 277 OTHER SHARD
+trust_mutants: steps: wall plan 6.4 s, scratch 2.2 s, control_build 0.2 s, probe_install 1 s, control_probes 213.5 s, mutants 1928 s, cleanup 4.6 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 459.5 s (6), mutant_builds 695.8 s (55), mutant_checks 2207.9 s (31), stage_controls 488.4 s (9), mutant_probes 4064.5 s (50)
