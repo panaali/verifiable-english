@@ -1,0 +1,17 @@
+trust_mutants: 23 definitions, 284 mutants (18 to run), 4 jobs, base 561aa79f5716
+UNKNOWN lean/VE/Service/Document.lean:2214 VE.Service.DocumentChain.requestOf (?, trusted) list-empty: sets -> [] (lean/VE/Service/Document.lean:2214: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:76 VE.Service.DocumentChain.Examples.holds (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:151 VE.Service.DocumentChain.Examples.plainCase (?, trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:83 VE.Service.DocumentChain.Examples.situation (?, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Service/Document.lean:1516 VE.Service.Document.softLayer (G[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:1976 VE.Service.Document.admitGraph (D[V], trusted) lit-minus: 257 -> 256
+SURVIVOR lean/VE/Service/Document.lean:1057 VE.Service.Document.softSource (G[V], trusted) lit-plus: 257 -> 258
+SURVIVOR lean/VE/Service/Document.lean:2219 VE.Service.DocumentChain.requestOf (?, trusted) list-first: (front.getObjVal? "completions").toOption.toList.map (("completions", ·)) -> (((front.getObjVal? "completions").toOption.toList.map (("completions", ·))).take 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:24 VE.Service.DocumentChain.Examples.chain (?, trusted) list-drop-first: ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"] -> (["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"].drop 1)
+SURVIVOR lean/VE/Service/DocumentChainExamples.lean:16 VE.Service.DocumentChain.Examples.regulated (?, trusted) list-last: permission -> (permission.reverse.take 1)
+UNKNOWN lean/VE/Service/Document.lean:2215 VE.Service.DocumentChain.requestOf (?, trusted) list-drop-first: units.filterMap -> (units.filterMap.drop 1) (lean/VE/Service/Document.lean:2218: Invalid field notation: Type of)
+trust_mutants: 60 KILLED, 9 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 213 OTHER SHARD in 2852 s; 53 carried from dfd5eb73f94b (check-only change: lean/VE/Service/DocumentChainChecks.lean, lean/declarations.txt)
+trust_mutants: ?, trusted: 47 KILLED, 6 SURVIVOR, 2 UNKNOWN, 172 OTHER SHARD
+trust_mutants: D[V], trusted: 8 KILLED, 1 SURVIVOR, 32 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 2 SURVIVOR, 9 OTHER SHARD
+trust_mutants: steps: wall plan 11.6 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.3 s, control_probes 1595.1 s, mutants 1237 s, cleanup 2.7 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 3909.9 s (9), mutant_builds 331.2 s (18), mutant_checks 2030.2 s (19), stage_controls 531.3 s (3), mutant_probes 1670.4 s (7)
