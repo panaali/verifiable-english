@@ -73,10 +73,6 @@ def chainEdges : List String → List (String × String)
   | a :: b :: rest => (a, b) :: chainEdges (b :: rest)
   | _ => []
 
-/-- A chain of declared edges from `H` down to `L`. -/
-def RankChain (Wd : WeighDoc) (H L : String) (c : List String) : Prop :=
-  c.head? = some H ∧ c.getLast? = some L ∧ 2 ≤ c.length ∧ ∀ e ∈ chainEdges c, e ∈ Wd.D.soft.outranks
-
 /-- Every chain of declared edges from `a` down to `L`, with fuel (the rank graph is acyclic, soft 4.1). -/
 def chainsFrom (E : List (String × String)) (L : String) : Nat → String → List (List String)
   | 0, _ => []
