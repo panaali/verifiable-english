@@ -154,7 +154,7 @@ theorem zoneCase_fits (v : DefaultsView) (id kind : String) (j : Json)
   · refine OkP.map (fun x a ha => ?_)
     cases ha
     read_kind
-    all_goals simp only [VE.Route.Wire.ok, zoneFields, formLabel, entityIds]
+    all_goals simp only [VE.Route.Wire.ok, zoneFields, zoneFieldsOf, formLabel, entityIds]
     all_goals (repeat' split) <;> fits using zoneLine_fits
   · exact defaultsCase_fits v id kind j hi hk hp
 
