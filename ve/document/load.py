@@ -413,6 +413,11 @@ def _load_document(raw: bytes, path: str | Path, lean):
     weights = meta.get("weights", [])
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
+    if soft_enabled and defaults_enabled and "readings@1" not in profiles and lean is None:
+        # PC-2a: Lean's document mode answers this chain (`Service.DocumentChain.layeredOf`). It refused this text as
+        # outside the mode, and this path adds its diagnostic above but never accepts in Lean's place.
+        raise CheckerUnavailable("CheckerUnavailable: soft-norms@0 with norm-defaults@0 is answered only by Lean's "
+                                 "document mode, which cannot decide this document")
     sid = source_id(source, env)
     document_id = _document_id(meta, source, fences)
     doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
