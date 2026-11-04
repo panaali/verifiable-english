@@ -5,12 +5,14 @@ the suite by comes from the same records.
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import time
+import zlib
 
 import pytest
 
@@ -144,6 +146,52 @@ def test_durations_command_counts_an_earlier_file_as_one_more_run(tmp_path, monk
         {"t::split[0]": 40.0, "t::warm": 90.0, "t::longer": 8.0, "t::kept": 12.0}, 0.2)
     previous.write_text("{}")
     with pytest.raises(SystemExit, match="not a durations file"):
+        suite_tail.main()
+
+
+def gate_record(path: Path, seconds: dict[str, float]) -> Path:
+    """A gate record file whose suite timed `seconds` (`test_schedule.record_field`)."""
+    path.write_text(json.dumps({"status": "passed", "counts": {"selected": len(seconds)},
+                                "durations": test_schedule.record_field(seconds)}))
+    return path
+
+
+def test_durations_command_reads_gate_records_as_more_runs(tmp_path, monkeypatch):
+    """Each `--gate-record` is one more run of the tests it records: each test keeps its longest time across the
+    records and the profiles, the unrecorded estimate is the longest of their means of short tests, and the
+    source line names each record and its sha256."""
+    profile = tmp_path / "profile"
+    profile.mkdir()
+    (profile / "gw0-1.jsonl").write_text("".join(json.dumps(row) + "\n" for row in (
+        {"kind": "test", "nodeid": "t::a", "call": 4.0}, {"kind": "test", "nodeid": "t::q", "call": 0.1})))
+    first = gate_record(tmp_path / "arm.json", {"t::a": 2.0, "t::b": 30.0, "t::gone": 9.0, "t::s": 0.4})
+    second = gate_record(tmp_path / "mac.json", {"t::a": 6.0, "t::b": 10.0, "t::s": 0.2, "t::r": 0.3})
+    collection = tmp_path / "collection.json"
+    collection.write_text(json.dumps(["t::a", "t::b", "t::q", "t::s"]))
+    output = tmp_path / "durations.json"
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", str(profile), "--output", str(output),
+                                      "--source", "measured", "--collection", str(collection),
+                                      "--gate-record", str(first), "--gate-record", str(second)])
+    assert suite_tail.main() == 0
+    assert test_schedule.read_estimates(output) == ({"t::a": 6.0, "t::b": 30.0}, 0.4)
+    source = json.loads(output.read_text())["source"]
+    assert source.startswith("measured; ") and f"{first} (sha256 " in source and f"{second} (sha256 " in source
+    # Records alone are inputs enough; a file that is not a gate record with durations is refused.
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", "--output", str(output), "--source", "records",
+                                      "--collection", str(collection), "--gate-record", str(second)])
+    assert suite_tail.main() == 0
+    assert test_schedule.read_estimates(output) == ({"t::a": 6.0, "t::b": 10.0}, 0.25)
+    second.write_text(json.dumps({"status": "passed"}))
+    with pytest.raises(SystemExit, match="not a gate record with durations"):
+        suite_tail.main()
+    # So is one nested deeper than the parser's stack, whole or in its compressed durations (eff-20261103-1 F1).
+    second.write_text("[" * 100_000 + "]" * 100_000)
+    with pytest.raises(SystemExit, match="not a gate record with durations"):
+        suite_tail.main()
+    deep = base64.b64encode(zlib.compress(b"[" * 100_000 + b"]" * 100_000)).decode()
+    second.write_text(json.dumps({"counts": {"selected": 1}, "durations": {
+        **test_schedule.record_field({"t::a": 6.0}), "seconds_zlib": deep}}))
+    with pytest.raises(SystemExit, match="not a gate record with durations"):
         suite_tail.main()
 
 

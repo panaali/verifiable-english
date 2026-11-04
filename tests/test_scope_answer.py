@@ -7,12 +7,14 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 
 import pytest
 
 from tests.test_document_lean_switch import _structural_mutants
-from tests.test_scope_document import F1, OWN, _governed_text, _split, _text
+from tests.test_scope_document import EFFECTS, F1, OWN, _governed_text, _split, _text
 from tests.test_scope_readings_document import _doc as readings_doc
+from ve import document as D
 from ve import scope
 from ve.backends import relay
 from ve.backends.service_schema import ROWS, Context, Invalid
@@ -110,6 +112,78 @@ def test_a_document_must_list_scope_and_a_refusal_of_govern_is_lean_s(tmp_path, 
     meta["scope"]["governors"][0]["units"] = ["u1", "u2"]
     assert scope.main(["explain", str(_write(tmp_path, _text(meta, body)))]) == 2
     assert "ManifestMismatch: scope.governors.g1.units" in capsys.readouterr().out
+
+
+def _repeated(effect: str, copies: int, with_id: bool, index: int = 3) -> str:
+    """`_governed_text`'s document with `copies` more copies of unit `index`, keeping its id or without one."""
+    meta, body = _split(_governed_text("norms", effect))
+    for _ in range(copies):
+        unit = copy.deepcopy(meta["units"][index])
+        if not with_id:
+            del unit["id"]
+        meta["units"].append(unit)
+    return _text(meta, body)
+
+
+def _refused_on_both_routes(tmp_path, capsys, text: str, path: str) -> None:
+    """The scope mode and the document mode both give Lean's one refusal of a repeated unit id at `path`."""
+    refusal = f"InvalidInput: scope@0 {path} must be a unit id no other unit has"
+    repeated = _write(tmp_path, text)
+    assert scope.main(["explain", str(repeated)]) == 2
+    assert refusal in capsys.readouterr().out
+    with pytest.raises(VEError, match=f"^{re.escape(refusal)}$"):
+        D.check_document(repeated)
+
+
+@pytest.mark.parametrize("effect", sorted(EFFECTS))
+@pytest.mark.parametrize("copies, with_id, path", [(1, True, "units.u3"), (2, False, "units")])
+def test_sc5rdb_both_routes_that_decode_the_scope_block_refuse_a_repeated_unit_id(tmp_path, capsys, effect, copies,
+                                                                                 with_id, path):
+    """sc-5rdb review F1: `decodeBlock`'s repeated-id check reaches the scope mode as well as the document mode. The
+    scope mode used to answer `ok` here (frame: ManifestMismatch), the document mode to refuse it later in the chain;
+    both now give Lean's one refusal. The document without the copies is answered on both routes."""
+    _refused_on_both_routes(tmp_path, capsys, _repeated(effect, copies, with_id), path)
+    plain = _write(tmp_path, _governed_text("norms", effect))
+    assert scope.main(["explain", str(plain)]) == 0
+    capsys.readouterr()
+    D.check_document(plain)
+
+
+def test_sc5rdb_frame_with_another_unit_repeated_is_refused(tmp_path, capsys):
+    """sc-5rdb recheck F9: `frame` went from `ok` to refused too. With u3 repeated it was refused before (ManifestMismatch:
+    DELTA row 4); these three documents it answered `ok`, and `read_answer` accepted the answer (row 3)."""
+    _refused_on_both_routes(tmp_path, capsys, _repeated("frame", 1, True, index=0), "units.u0")
+    _refused_on_both_routes(tmp_path, capsys, _repeated("frame", 2, False, index=0), "units")
+    meta, body = _split(_governed_text("norms", "frame"))
+    meta["units"] += [{}, {}]
+    _refused_on_both_routes(tmp_path, capsys, _text(meta, body), "units")
+
+
+@pytest.mark.parametrize("effect", sorted(EFFECTS))
+def test_sc5rdb_every_unit_of_every_effect_repeated_is_refused(tmp_path, capsys, effect):
+    """sc-5rdb recheck F9: which old answer a document got depends on which id repeats and where (REPORT.md's table), so
+    each unit of the document is repeated, at the end and beside itself, and copied twice without its id; two empty
+    units and two of its own units without their ids are the same fault."""
+    meta, body = _split(_governed_text("norms", effect))
+    for index, unit in enumerate(meta["units"]):
+        beside = copy.deepcopy(meta)
+        beside["units"].insert(index + 1, copy.deepcopy(unit))
+        _refused_on_both_routes(tmp_path, capsys, _repeated(effect, 1, True, index), f"units.{unit['id']}")
+        _refused_on_both_routes(tmp_path, capsys, _text(beside, body), f"units.{unit['id']}")
+        _refused_on_both_routes(tmp_path, capsys, _repeated(effect, 2, False, index), "units")
+    empty, own = copy.deepcopy(meta), copy.deepcopy(meta)
+    empty["units"] += [{}, {}]
+    del own["units"][1]["id"], own["units"][2]["id"]
+    _refused_on_both_routes(tmp_path, capsys, _text(empty, body), "units")
+    _refused_on_both_routes(tmp_path, capsys, _text(own, body), "units")
+
+
+def test_sc5rdb_one_unit_without_an_id_passes_the_scope_boundary(tmp_path):
+    """A lone unit without an id repeats no id: the scope mode answers it; the chain refuses it for its own reason."""
+    single = _write(tmp_path, _repeated("title", 1, False))
+    scope.explain(single.read_bytes())
+    with pytest.raises(VEError, match="^invalid unit schema$"):
+        D.check_document(single)
 
 
 def _rebound(row):
@@ -365,11 +439,10 @@ def test_each_choices_rows_are_shown_under_its_label(tmp_path, capsys):
 def test_the_proved_statements_are_spec_5_3s_text():
     """The statement gate: `explain_bound` and `explain_rows_iff` are the reviewed text (scope.md 5.3), whitespace aside."""
     from pathlib import Path
+
+    from tests.test_scope_5_4_statements import statement
     root = Path(__file__).resolve().parents[1]
     spec, lean = (root / "docs/spec/scope.md").read_text(), (root / "lean/VE/Scope/Run.lean").read_text()
-
-    def statement(text, name):
-        rest = text[text.index(f"theorem {name} "):]
-        return " ".join(rest[:min(i for i in (rest.find(":="), rest.find("\n\n")) if i >= 0)].split())
     for name in ("explain_bound", "explain_rows_iff"):
+        assert statement(spec, name) is not None, name
         assert statement(lean, name) == statement(spec, name), name

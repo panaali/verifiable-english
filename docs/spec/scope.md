@@ -1583,6 +1583,7 @@ end VE.Scope
 |---|---|---|
 | `InvalidInput: scope@0 unknown member <path>`, `InvalidInput: scope@0 <member> must be <form>` | a malformed block (3) | wire decoder |
 | `ResourceLimit: scope governors` / `ResourceLimit: scope list names` | more than 256 governors / list names | `admitBlock` 1 |
+| `ResourceLimit: scope forward declarations` | more than 256 forward declarations | `admitBlock` 1 |
 | `DuplicateDeclaration: governor <id>` / `DuplicateDeclaration: list name <n>` | a repeated id or name | `admitBlock` 2–3 |
 | `ScopeUnknownUnit: <unit>` | a governor's or registering unit, or a lead-in or item, not in the document | `admitBlock` 4, 6; reaches |
 | `ScopeReserved: own` | a condition, and the vocabulary declares `own` | `admitBlock` 5 |
@@ -1793,7 +1794,8 @@ separate the two readings.
 
 ### 8.2 Limits
 
-Governors ≤ 256; list names ≤ 256 (the governor limit's, enforced by `admitBlock` step 1); anchors ≤ 1,024
+Governors ≤ 256; list names ≤ 256 (the governor limit's, enforced by `admitBlock` step 1); forward declarations
+≤ 256 (`admitBlock` step 1, after list names); anchors ≤ 1,024
 (discourse's); condition depth ≤ 64; frontier constituents ≤ 8; reading-set candidates ≤ 8 (one choice per frontier
 governor). Every limit is `ResourceLimit`, UNKNOWN; a decoder's limit met while fitting a candidate leaves it live.
 
@@ -2104,7 +2106,7 @@ discharges it.
 | `governSets_no_sets` | `governAt_no_frontier` | With no reading set governed per choice, the answer is exactly `govern`'s. |
 | `governSetsFast_eq` | `governFast_eq` | The run path answers exactly as the statement does. |
 | `governSets_preserves` | `governAt_preserves`, `govern_preserves` | The answer keeps every document member other than `units` and `reading_sets`, the unit order, every unit member other than `content`, every governed set unit as written, and every other reading set. It also keeps every member of a governed set and of its readings, except the readings' `content`. |
-| `governSets_every_choice` | `governAt_preserves` ("every theorem of SC-1a holds per choice") | Every joint choice of the governed sets, read off the answer, is exactly `govern` of that choice. |
+| `governSets_every_choice` | `governAt_preserves` ("every theorem of SC-1a holds per choice") | Every joint choice of the governed sets, read off the answer, is exactly `govern` of that choice, for a document whose unit ids are distinct, as the boundary checks (`decodeBlock`). |
 | `governSets_strings` | `govern_strings`, per choice (9.4 item 6) | Every string in the answer is a string of the document or of a governor's payload, so no reading brings in a new symbol. |
 | `scope_set_choices` | `scope_choices` | The choices checked are lf-14d's joint choices over the governed sets: every choice lf-14d admits under any constraints is checked, and with no constraints the two lists are equal. |
 | `governSets_choice_refused` | — | If `govern` faults under one choice, the document is refused: it is admitted only when every choice is. |

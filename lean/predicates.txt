@@ -176,6 +176,8 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Consistency
+module VE.Calc.ConsistencyExamples
 module VE.Calc.Csv
 module VE.Calc.Data
 module VE.Calc.Decls
@@ -188,6 +190,7 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
+module VE.Calc.Interval
 module VE.Calc.Jsonl
 module VE.Calc.Linear
 module VE.Calc.Lower
@@ -241,6 +244,9 @@ module VE.Closure.RoundTrip
 module VE.Closure.Substitution
 module VE.Closure.Surface
 module VE.Closure.Syntax
+module VE.Commands.Examples
+module VE.Commands.Read
+module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
@@ -280,6 +286,8 @@ module VE.Defaults.MeaningExamples
 module VE.Defaults.Premises
 module VE.Defaults.Route
 module VE.Defaults.RouteExamples
+module VE.Defaults.Uniform
+module VE.Defaults.UniformExamples
 module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Defaults.Zone
@@ -291,6 +299,9 @@ module VE.Definitions.Layer
 module VE.Definitions.Route
 module VE.Discourse.Access
 module VE.Discourse.Admission
+module VE.Discourse.Compose
+module VE.Discourse.ComposeExamples
+module VE.Discourse.ComposeKeys
 module VE.Discourse.Descriptions
 module VE.Discourse.Documents
 module VE.Discourse.Elaborate
@@ -330,6 +341,7 @@ module VE.EnglishGrammar.Evaluative
 module VE.EnglishGrammar.Examples
 module VE.EnglishGrammar.Extends
 module VE.EnglishGrammar.Fixed.Alternatives
+module VE.EnglishGrammar.Fixed.Norms
 module VE.EnglishGrammar.Fixed.Order
 module VE.EnglishGrammar.Fixed.RelationalFol
 module VE.EnglishGrammar.Fixed.Staged
@@ -342,7 +354,10 @@ module VE.EnglishGrammar.JudgmentRunExamples
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Norm.Elab
 module VE.EnglishGrammar.Norm.Examples
+module VE.EnglishGrammar.Norm.Read
+module VE.EnglishGrammar.Norm.Rules
 module VE.EnglishGrammar.Norm.Value
 module VE.EnglishGrammar.Policy
 module VE.EnglishGrammar.PolicyReference
@@ -379,6 +394,8 @@ module VE.Grammar.TableInvariant
 module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
+module VE.Judgments.Chain
+module VE.Judgments.ChainExamples
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
@@ -623,6 +640,8 @@ module VE.Scope.Examples
 module VE.Scope.FarExamples
 module VE.Scope.FarTheorems
 module VE.Scope.Govern
+module VE.Scope.Reach
+module VE.Scope.ReachExamples
 module VE.Scope.Readings
 module VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsLemmas
@@ -644,6 +663,7 @@ module VE.Senses.Document
 module VE.Senses.DocumentExamples
 module VE.Senses.Examples
 module VE.Senses.Fixtures
+module VE.Senses.Flip
 module VE.Senses.Preamble
 module VE.Senses.Project
 module VE.Senses.Read
@@ -652,6 +672,8 @@ module VE.Senses.Run
 module VE.Senses.RunExamples
 module VE.Senses.Version
 module VE.Service.ActsExamples
+module VE.Service.CardinalityExamples
+module VE.Service.ComposedAdmissionExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
@@ -818,6 +840,7 @@ VE.Calc.Claim.Defined@VE.Calc.Syntax
 VE.Calc.Claim.Holds@VE.Calc.Syntax
 VE.Calc.Claim.Overflows@VE.Calc.Decls
 VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Consistent@VE.Calc.Consistency
 VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
@@ -826,6 +849,7 @@ VE.Calc.Filter.Selects@VE.Calc.Table
 VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.HasCounterexample@VE.Calc.Lower
+VE.Calc.InBox@VE.Calc.Interval
 VE.Calc.Inlined.Agrees@VE.Calc.Inline
 VE.Calc.Inlined.Faults@VE.Calc.Inline
 VE.Calc.IsIdentity@VE.Calc.Identity
@@ -895,6 +919,7 @@ VE.Compose.Contract.ScopePreserves@VE.Compose.Contract
 VE.Compose.Contract.ScopeRuns@VE.Compose.Contract
 VE.Compose.Contract.ScopeRunsOf@VE.Compose.Contract
 VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
+VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.TableAdmits@VE.Compose.Dispatch
@@ -920,6 +945,7 @@ VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
 VE.Defaults.ByDefaultLeftTo@VE.Defaults.Zone
 VE.Defaults.ByDefaultZ@VE.Defaults.Zone
+VE.Defaults.ConditionsExact@VE.Defaults.Uniform
 VE.Defaults.DecLe@VE.Defaults.Zone
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
@@ -929,6 +955,7 @@ VE.Defaults.Observed@VE.Defaults.Zone
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
 VE.Defaults.SwitchesOff@VE.Defaults.Meaning
 VE.Defaults.leastDecisions@VE.Defaults.Meaning
+VE.Defaults.leastUniform@VE.Defaults.Uniform
 VE.Defaults.zReal@VE.Defaults.Zone
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
@@ -963,6 +990,7 @@ VE.Discourse.PostFacts@VE.Discourse.Theorems
 VE.Discourse.PredTyped@VE.Discourse.WellFormed
 VE.Discourse.PrepareFacts@VE.Discourse.Theorems
 VE.Discourse.RestrTyped@VE.Discourse.WellFormed
+VE.Discourse.Run.ComposedAdmissionAnswer@VE.Discourse.Run
 VE.Discourse.Run.DiscourseAdmissionAnswer@VE.Discourse.Run
 VE.Discourse.Satisfies@VE.Discourse.Joint
 VE.Discourse.SlotMeaning@VE.Discourse.Elaborate
@@ -998,6 +1026,7 @@ VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.Norm.NormOneReading@VE.EnglishGrammar.Norm.Read
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics

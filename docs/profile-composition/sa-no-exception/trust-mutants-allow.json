@@ -1,0 +1,5 @@
+{"allow": [
+ {"definition": "VE.Defaults.ConditionsExact", "operator": "body-true", "reason": "a Prop of spec 1.9 (approved text, compared by tests/test_pc9_statements.py) that no decidable check can evaluate; the mutant breaks the proofs conditionsExact_legacy and dfltUniform_sound and the fixture exact_refuses (UniformExamples.lean), which the tool cannot cut (universe levels)"},
+ {"definition": "VE.Defaults.ConditionsExact", "operator": "body-false", "reason": "a Prop of spec 1.9 (approved text, compared by tests/test_pc9_statements.py) that no decidable check can evaluate; the mutant breaks the proofs conditionsExact_legacy and dfltUniform_sound and the fixture exact_holds (UniformExamples.lean), which the tool cannot cut (universe levels)"},
+ {"definition": "VE.Defaults.ConditionsExact", "operator": "and-or", "reason": "a Prop of spec 1.9 (approved text, compared by tests/test_pc9_statements.py) that no decidable check can evaluate; the mutant breaks the proofs conditionsExact_legacy (Uniform.lean:100), dfltUniform_sound (Uniform.lean:214) and the fixtures exact_refuses and exact_holds, proofs that count as no check"}
+]}
