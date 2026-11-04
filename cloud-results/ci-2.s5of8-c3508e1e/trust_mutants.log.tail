@@ -1,0 +1,9 @@
+trust_mutants: 14 definitions, 306 mutants (38 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Commands/Run.lean:131 VE.Commands.Run.readingJson (D[V], trusted) eq-le: = -> ≤ (lean/VE/Commands/Run.lean:131: failed to synthesize)
+UNKNOWN lean/VE/Commands/Run.lean:59 VE.Commands.proofMany (G[V], trusted) list-empty: [g] -> [] (lean/VE/Commands/Run.lean:59: Unknown identifier `g`)
+UNKNOWN lean/VE/Commands/Run.lean:116 VE.Commands.Run.decodeRequest (D[V], trusted) list-empty: (qs.map (·.1)).eraseDups -> [] (lean/VE/Commands/Run.lean:116: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Commands/Run.lean:137 VE.Commands.Run.readingJson (D[V], trusted) list-last: (r.fills.zipIdx 1) -> ((r.fills.zipIdx 1).reverse.take 1)
+trust_mutants: 29 KILLED, 1 SURVIVOR, 3 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 2170 s
+trust_mutants: D[V], trusted: 19 KILLED, 1 SURVIVOR, 2 UNKNOWN, 1 INVALID, 154 OTHER SHARD
+trust_mutants: G[V], trusted: 10 KILLED, 1 UNKNOWN, 4 INVALID, 114 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 126 s, mutants 2025.3 s, cleanup 3 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 259.2 s (5), mutant_builds 100.9 s (46), mutant_checks 756.5 s (35), stage_controls 128.1 s (5), mutant_probes 6720.1 s (31)
