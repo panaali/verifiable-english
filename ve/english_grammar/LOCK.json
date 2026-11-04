@@ -1,6 +1,6 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "38",
+ "actions_version": "39",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "c006b1d40d125153f1329daa092278ec2bd2ec8423d20f7c2923da61e25e1389",
   "lean/VE/EnglishGrammar/Advice.lean": "a5b8fbf8dfc23f8d689b10b8c1053365385335955078d04148c62140ac9ff79f",
@@ -23,7 +23,7 @@
   "lean/VE/EnglishGrammar/Policy.lean": "8053398c790011e867c874295b99b6ad8f5465457abe1a95f7c4d292e270c2fb",
   "lean/VE/EnglishGrammar/Read.lean": "ed29bf0a5c8e3fc49bd8af86b885206dc905ba0e2e55c9670303b9eec4db73df",
   "lean/VE/EnglishGrammar/Rules.lean": "87aeab4e98c32ef462b90f036808de81c88cdb3967febcd13d3806bc277fe85b",
-  "lean/VE/EnglishGrammar/Run.lean": "a614aab8eeff8f4106268b364502dca3de0d107aa7a258c269e631cb6ddb58f2",
+  "lean/VE/EnglishGrammar/Run.lean": "b9f75196a058dc028d5ac695d76c4aef003fc1f3ed2c9fff9e11cc4bfac19604",
   "lean/VE/EnglishGrammar/SensesRequest.lean": "46f8f486350fe97d4ac5942d8a3afb6e8e864aac64efe93dea2246eac21c6599",
   "lean/VE/EnglishGrammar/SourceWords.lean": "7bafca4ac75d19c0bd4bd370636ca056da5f3296115603104abd00c03decac92",
   "lean/VE/EnglishGrammar/Syntax.lean": "1341142dfe73d9ad1bfeefd7ff7de4cfbdfcfd5342f12a24d692de944265bc53",
