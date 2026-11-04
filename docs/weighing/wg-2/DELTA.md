@@ -27,10 +27,10 @@ order of the witness) and `freeWitness` is P (`tools/trust-classes.json`).
 | 2 | `lean/VE/Weighing/Conditions.lean` | +64, all S: `strengthEntries`, `condPremise`, `condEntries`, `grantEdges`, `grantReach`, `grantedThrough`, `grantConds`, `grantEntries`, `weighEntries`, `strengthPremises`, `weighLabelled`, `weighConditions` (`weighPremises` and `WellFormedWeigh` are G[V], tied) | the same | R16 |
 | 3 | `lean/VE/Acts/Elaborate.lean` | -1: `splitRefusal` is D[R] (refusal text), and `refsOk` is one line shorter | `Acts/ElaborateExamples.lean:150` and W-λ's guard (`Examples.lean:74`) | R16 |
 
-## Reserved for the DRI (the reason this item stops, L52)
+## Cut by the DRI (2026-11-04)
 
-Changing an approved Lean theorem statement is never covered by a standing ruling (DRI-RULINGS.md, "Never covered").
+Changing an approved Lean theorem statement is never covered by a standing ruling (DRI-RULINGS.md, "Never covered"). The DRI cut `strength_iff` from wg-2 (item 1) and signed its added hypothesis for follow-up row wg-2-siff (item 2): reviews/dri-decisions-20261104-wg-2-strength.md.
 
 | # | File | Row | Evidence | Ruling |
 |---|---|---|---|---|
-| 4 | `lean/VE/Weighing/Conditions.lean` | `strength_iff` (weighing.md 5.1) is not delivered. As approved it is false: on a directly built document with a regulated `_x_permitted`, every hypothesis holds at `(_x_permitted, l, c)`, the premise is in `Str_T` (it is `(x_permitted, l, c_)`'s, the same `outweighs` name), and the triple is no decision. The decoder refuses the name ("Invalid ASCII identifier"), so no wire document reaches it. Candidate fixes for the DRI: a hypothesis that `a` (or every regulated name) begins with a letter, or a soft check that refuses such names | `lean/VE/Weighing/Examples.lean` (`cxD`, `cxX`, `cxW` and the decoder guard); `strength_mem` proves the reverse direction for every triple | DRI signature needed: a change to an approved Lean theorem statement |
+| 4 | `lean/VE/Weighing/Conditions.lean` | `strength_iff` (weighing.md 5.1) is not delivered. As approved it is false: on a directly built document with a regulated `_x_permitted`, every hypothesis holds at `(_x_permitted, l, c)`, the premise is in `Str_T` (it is `(x_permitted, l, c_)`'s, the same `outweighs` name), and the triple is no decision. The decoder refuses the name ("Invalid ASCII identifier"), so no wire document reaches it. Candidate fixes for the DRI: a hypothesis that `a` (or every regulated name) begins with a letter, or a soft check that refuses such names | `lean/VE/Weighing/Examples.lean` (`cxD`, `cxX`, `cxW` and the decoder guard); `strength_mem` proves the reverse direction for every triple | SIGNED by the DRI 2026-11-04 (reviews/dri-decisions-20261104-wg-2-strength.md item 1) |
