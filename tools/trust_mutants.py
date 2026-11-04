@@ -64,6 +64,16 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
+A mutant's probe (eff-tm-probe-scope) elaborates the check file as the whole-file probe does, but walks only the
+checks `settle` reads and drops the text after the last of them (`probe`'s `only`, `kept`); the controls' probes
+walk every check of the whole file. Each entry it reads is the whole file's, so every verdict is the same but in two
+cases, where the whole file's probe has no entry for the check and the scoped one has its own: then UNKNOWN becomes
+KILLED, on that entry, checked against a control that finished (the verdict the whole file gives when its probe
+finishes). F1: the whole file's probe would not finish within --build-timeout or the deadline (seen twice on jt-2c
+73e809748). F2: Lean crashes or loses its output in a walk the scoped probe skips, or in the text it drops. A
+check of the set that has no whole entry (`complete`: a cut that changed a parse, a scoped run that timed out or
+crashed: F3, F4) is read from the whole file's probe instead.
+
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <operator>: <before> -> <after>`
 (`kind`: the class, ", trusted" added when R16 counts it), unless --allow FILE lists the definition and operator
 with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}); a `ctor-drop`
@@ -480,8 +490,14 @@ def classify(kind: str, span: str) -> str:
 #   targets of each constant it reaches). Since the tool cuts only a proof that fails (`run`), that is a proof the
 #   mutant broke: a `Decidable` instance or `@[csimp]` lemma resting on it computes through the mutated definition
 #   where the statement does not (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5);
-# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8).
+# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8);
+# - `<k> done`: the walk's last line. An entry without it is absent (`complete`): a walk Lean stopped midway (a
+#   stack overflow, memory) can leave `hash` and some `const` lines but no `sorry` (eff-tm-probe-scope review 1).
 # A check Lean cannot elaborate in the probe has `sorryAx` in its term, so it says `sorry` (hunt Q12).
+# With `TM_TRUST_ONLY` (the check names, space-separated: `probe`'s `only`) the walk of every other check returns as
+# its first statement; its elaborator still runs. The walk only reads the environment and prints: it adds no
+# constant, extension entry, option, `IO.Ref` or info-tree node (`test_the_walk_reads_and_prints_only`), so a
+# skipped walk changes nothing a later command reads.
 # It is a module of its own (`install`), imported on the copy's first line, so the copy keeps the file's lines for
 # what a check reads of its source (hunt Q6).
 READS = """import Lean
@@ -492,6 +508,8 @@ def tmTrustCore (env : Environment) (c : Name) : Bool :=
 
 open Lean Meta in
 def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
+  if let some only ← IO.getEnv "TM_TRUST_ONLY" then
+    if !((only.splitOn " ").contains k.toString) then return
   let env ← getEnv
   let say (s : String) : IO Unit := do IO.println s!"{(← IO.getEnv "TM_TRUST_NONCE").getD ""} {k} {s}"
   let mutated := ((← IO.getEnv "TM_TRUST_MUTATED").getD "").toName
@@ -545,6 +563,7 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
     let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
     if !(info matches .thmInfo _) && !(← inside c) then say s!"const {c} {mixHash info.type.hash value.hash}"
     todo := todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList
+  say "done"
 
 open Lean Elab Tactic Meta in
 elab "tm_trust_probe " k:ident : tactic => do
@@ -602,8 +621,18 @@ def install(lake, lean: Path) -> bool:
         source.unlink()
 
 
-def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False
-          ) -> dict[tuple[int, int], dict]:
+def kept(lines: list[str], roles: list[tuple], last: int) -> list[str]:
+    """The lines of a scoped probe (`probe`'s `only`) whose checks end at line `last`: up to the line before the
+    first command of `roles` that starts after it, every line when none does. Commands 1..k elaborate as in the whole
+    file (Lean elaborates a file's commands in order), so each check of the set gets the same entry. A cut that
+    changes a parse (a docstring, attribute, `set_option … in` or `#guard_msgs in` left at the end, a `mutual` left
+    open) is fail-closed: after the set an error the probe ignores; in it the check is absent, so `run`'s `reading`
+    probes the whole file (F3)."""
+    return lines[:min(after) - 1] if (after := [s for s, *_ in roles if s > last]) else lines
+
+
+def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False,
+          only: set[tuple[int, int]] | None = None) -> dict[tuple[int, int], dict]:
     """(first, last line) -> {"flags": what `READS` prints for the check (`hash <h>`, `sorry`, `axiom`, `io`, `hyps`),
     "consts": {constant: hash} of what it reads outside the mutated definition} for each check of `text` (a file of
     one build, its `roles`), elaborated as the build elaborates it: written (`named`, with `import TmTrustProbe` on
@@ -611,11 +640,20 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
     and run by `lake("lean", path)` with that module's options (a package's or library's `leanOptions` decide which
     instance Lean picks: hunt R5, S8); an `outside` --test file, which the tool only reads, is written to `path`
     beside it and run by `lake env lean`, as `run` checks one. Only lines that start with this call's nonce are read
-    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill)."""
+    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill).
+    `only` (eff-tm-probe-scope): the spans of the checks whose entries are read, of every check when None. The same
+    text is elaborated, every check rewritten (`named`), but only those are walked (`TM_TRUST_ONLY`, `READS`) and the
+    text after the last of them is dropped (`kept`); the other checks are absent."""
     text, spans = named(text, roles)
     lines = text.split("\n")
     first = next((n for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")), 0)
     lines[first] = "import TmTrustProbe " + lines[first]
+    if only is not None:
+        names = sorted(n for n, span in spans.items() if span in only)
+        env = {**env, "TM_TRUST_ONLY": " ".join(names)}
+        if not names:  # the whole file's probe has no entry for them either
+            return {}
+        lines = kept(lines, roles, max(spans[n][1] for n in names))
     nonce = secrets.token_hex(12)
     before = path.read_text() if path.is_file() else None
     path.write_text("\n".join(lines))
@@ -635,6 +673,11 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
             else:
                 entry["flags"].add(rest)
     return out
+
+
+def complete(entry: dict | None) -> bool:
+    """Whether `probe`'s entry for a check is there and whole: its walk printed `done` (`READS`)."""
+    return entry is not None and "done" in entry["flags"]
 
 
 def beside(lean: Path, f: str) -> Path:
@@ -821,7 +864,7 @@ def decided(text: str, first: int, last: int) -> str:
 
 
 def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, list], rebuild, reads,
-           where=lambda f: f"lean/{f}") -> tuple[str, str]:
+           where=lambda f: f"lean/{f}", scope=lambda keys: None) -> tuple[str, str]:
     """KILLED or UNKNOWN for the errors (file, line, message) a build left after the cuts and its control (review
     F11): KILLED only when every one is KILL (`judge`), or RFL and `decide` then refutes its check's statement, and
     every such check can refute the mutated definition (`reads`: (file, (first, last line)) -> None, else why not:
@@ -831,7 +874,8 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     located; a rewritten check that gives no error there, or an error that is no refutation, refutes nothing, and any
     other error must still be KILL. `read`, `checkout`: a file's built and checkout text; `roles`: file -> (first,
     last line, role, ...). `decide` only: `native_decide` evaluates compiled code, which an `rfl` check never reads
-    (an `implemented_by` can differ from the definition: hunt H7)."""
+    (an `implemented_by` can differ from the definition: hunt H7). `scope` gets every key `reads` may be asked
+    for, once, before the first (`run`'s `reading` probes only those checks and refuses any other key)."""
     def verdicts(found: list[tuple[str, int, str]], now: dict[str, tuple[str, str]]) -> list[tuple]:
         """`judge` on each error; `now`: file -> its built and checkout text with the rewrites, if any."""
         rows = []
@@ -848,6 +892,7 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     rows = verdicts(errors, {})
     if bad := next((x for x in rows if x[3] == NONE), None):
         return "UNKNOWN", f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])}"
+    scope({x[0] for x in rows})
     if bad := next(((x, why) for x in rows if (why := reads(x[0]))), None):
         return "UNKNOWN", f"{where(bad[0][0][0])}:{bad[0][1]}: {brief(bad[0][2])} ({bad[1]})"
     confirmed = ""
@@ -1127,10 +1172,22 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         return rebuilt[0]
 
     probed: dict[str, dict] = {}  # file -> `probe` of its checks in this mutant's build
+    given: dict[str, set[tuple[int, int]]] = {}  # file -> the spans of the checks `settle` reads (`scope`)
+
+    def scope(keys: set[tuple]) -> None:
+        """The keys `settle` reads next: `reading` probes only their checks."""
+        for f, span in keys:
+            if span not in given.setdefault(f, set()):
+                given[f].add(span)
+                probed.pop(f, None)  # a file probed for fewer checks is probed again
 
     def reading(key: tuple) -> str | None:
-        """Why the check at `key` cannot refute the mutated definition (`probe`), or None."""
+        """Why the check at `key` cannot refute the mutated definition (`probe`), or None. Only a key `settle`
+        handed over (`scope`) is read: the probe walks only those checks (eff-tm-probe-scope), so any other would
+        be absent, a kill lost (F5)."""
         f, span = key
+        if span not in given.get(f, ()):
+            raise LookupError(f"{f}:{span}: a check `settle` did not hand to `reading`")
         if f not in probed:
             outside_file = next((t for t in outside if str(t) == f), None)
             if outside_file is not None:
@@ -1140,12 +1197,19 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 current["mutant"] = True
             text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
                 read(f), tree.roles.get(f, ()))
-            with STEPS.step("mutant_probes"):
-                probed[f] = probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
-                                                 "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
-                                  beside(scratch.lean, f), outside_file is not None)
+
+            def probing(only: set[tuple[int, int]] | None) -> dict:
+                with STEPS.step("mutant_probes"):
+                    return probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
+                                        "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
+                                 beside(scratch.lean, f), outside_file is not None, only)
+            probed[f] = probing(given[f])
+            # a check of the set the probe can read with no whole entry (the run timed out or crashed, a cut that
+            # changed a parse: F3, F4) is read in the whole file's probe
+            if any(not complete(probed[f].get(s)) for s in given[f] & set(named(text, mine)[1].values())):
+                probed[f] = probing(None)
         entry, control = probed[f].get(span), hashes.get(key)
-        if entry is None or control is None:
+        if not complete(entry) or not complete(control):
             return "Lean could not elaborate it in the probe"
         if "hyps" in entry["flags"]:
             return "its goal has a hypothesis"
@@ -1266,7 +1330,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
                 # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
                 return settle(found, read, lambda f: texts[f] if f in texts else read(f), tree.roles,
-                              lambda now: rebuild(stage, now), reading)
+                              lambda now: rebuild(stage, now), reading, scope=scope)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         with STEPS.step("outside_checks"):
@@ -1302,7 +1366,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 return "UNKNOWN", f"{t} fails with no located error: {failing[t][1][-200:]}"
             text = t.read_text()
             status, detail = settle(found, lambda f: text if f == str(t) else "", lambda f: text if f == str(t) else "",
-                                    {str(t): file_roles(t)}, lambda now, t=t: again(t, now), reading, str)
+                                    {str(t): file_roles(t)}, lambda now, t=t: again(t, now), reading, str,
+                                    scope)
             if status != "KILLED":
                 return status, detail
             first = first or detail
