@@ -50,8 +50,8 @@ Deviation: the `sentence` bound in `refusal_problem` applies to every refusal co
 | L5 | Lean | JudgmentLines.lean | the legend drops the factors | JudgmentLinesExamples.lean:47 |
 | L6 | Lean | JudgmentLines.lean | an adjective loses 9.5's form | JudgmentLinesExamples.lean:81, :83 |
 | L7 | Lean | JudgmentLines.lean | a W3-defined name is refused | JudgmentLinesExamples.lean:125, :126 |
-| L8 | Lean | Run.lean | the refusal fires in translation (the task's) | JudgmentRunExamples.lean:62 |
-| L9 | Lean | Run.lean | the refusal fires without the field | JudgmentRunExamples.lean:51 |
+| L8 | Lean | Run.lean | the refusal fires in translation (the task's) | JudgmentRunExamples.lean:64 |
+| L9 | Lean | Run.lean | the refusal fires without the field | JudgmentRunExamples.lean:53 |
 | L10 | Lean | Run.lean | `judgments` in the shared `optionalFields` (review F1's code): the sibling modes accept it and ignore it | JudgmentRunExamples.lean:83, :84 |
 | P1 | Python | english_lean.py | the relay does not send the field | `test_the_refusal_names_lean_s_text_and_a_bound_predicate_is_read` |
 | P2 | Python | judgment_lines.py | a refusal is shown as a reading | the same, and `test_the_command_line_shows_lean_s_text` |
@@ -59,7 +59,7 @@ Deviation: the `sentence` bound in `refusal_problem` applies to every refusal co
 
 L8 fails its Lean #guard over `Run.readCase`. **UNVERIFIED:** the Python test `test_translation_answers_byte_identically_with_the_field` was not seen failing on L8. Both tries ended in `CheckerUnavailable: ... has unlisted build`, a pin refusal at fixture setup, which does not count as a test failure. I stopped there because each try cost about 20 minutes of compile.
 
-L1 to L6, L8 and L9 were run before the fix in commit 6be07421f; the code they touch did not change, but L2's and L7's guard lines moved by one and are given here as they now stand. L7 was rerun on the fix.
+L1 to L6, L8 and L9 were run before the fix in commit 6be07421f; the code they touch did not change, but L2's and L7's guard lines moved by one and are given here as they now stand. L8's and L9's moved by two with review fix F1's import and doc line, and are given as they now stand. L7 was rerun on the fix.
 
 One real bug the review of my own fixture found: `definedNames` read a `definitions` array, a shape my fixture invented, so a word defined by W3 was still refused. It now reads the entry's `defined`, and `test_a_word_defined_by_w3_is_not_refused_as_the_real_environment_writes_it` sends the real shape through the service.
 
@@ -77,7 +77,7 @@ The review (jt-3-review.final.md F1, B) found `judgments` in `Run.optionalFields
 
 `uv run python tools/trust_map.py --check` against fe252f79af28: K +0, S +39, D +24, G +93, tied +17, unclassified +0, trusted +79 (`VE/EnglishGrammar/JudgmentLines.lean` +75, `VE/EnglishGrammar/Run.lean` +4). Under R16's 150. The allowance is in `docs/trust-baseline.json`; the ties pass is FOLLOW-UPS.md "## jt-3".
 
-Trust mutants, on the Mac at 6be07421f (`mac-pytest.sh --trustmut`, exit 0): 164 KILLED, 0 SURVIVOR, 0 UNKNOWN, 34 INVALID, 34 ALLOWED, 0 NOT RUN. Each allowed row has its reason in `trust-mutants-allow.json`; every allowed survivor was read and is equivalent (for example `take 1` before `.head?`, or an `Option.toList`).
+Trust mutants, a full run on the Mac at d17d61c4f, review fix F1's final Lean (`mac-pytest.sh --trustmut`, exit 0; `--rescore` of the VM run fell back to a full run because the Mac re-pins `lean/checkers.lock`): 160 KILLED, 0 SURVIVOR, 0 UNKNOWN, 34 INVALID, 37 ALLOWED, 0 NOT RUN. The run before it, at 533c4cb68 on the loaded VM (the cloud pool gave no result), had 6 UNKNOWN that were build timeouts (`lake build did not finish in 1800 s`); each was KILLED on the Mac. Its 2 SURVIVOR and 2 ill-typed UNKNOWN are `readCase`'s new line, now allowed: `take 1` and `reverse.take 1` of a list of at most one element are equivalent, and `j -> []` or a dropped `j ++` does not typecheck. `optionalFields`'s allow row was dropped, since its line equals the merge base and has no mutant. Each allowed row has its reason in `trust-mutants-allow.json`; every allowed survivor was read and is equivalent (for example `take 1` before `.head?`, or an `Option.toList`).
 
 ## Statements
 
@@ -98,6 +98,7 @@ New Lean text beyond the plan and the decisions: `lineFault`, the parser's refus
 - Selected tests, run 1 (GitHub Actions, bfed17fe4): shard 1 stopped at `tools/check_lean_imports.py` before any test, and three real causes came out (new modules not in `lean/VE.lean`; the manifest's pins; goldens under the new version). All fixed.
 - Run 2 (`mac-pytest.sh --select`, Mac, 3d7beb319): 463 units, 1 failed: `tools/test_layer_policy.py` (the layer doc). Fixed; `mac-pytest.sh -- tools/test_layer_policy.py`: 48 passed.
 - **Not rerun as a selection after 6be07421f** (the W3 fix and the `sentence` bound). Run there instead: `tests/test_jt3_english.py`, `test_ask_cli`, `test_english_lean_s3_compare`, `test_lean_default_build`, `test_assurance_manifest`, `test_english_grammar_gen`, `test_judgments_undeclared`, `test_judgments_exercised` (334 passed, 1 failed: the new fuzz test, which led to the `sentence` bound), then `tests/test_jt3_english.py`, the `tests/test_english_lean*.py` files but s3_compare, and `tests/test_senses_lean.py` (428 passed). The chain's full gate is the first whole run on the final code.
+- Run 3, review fix F1 (`mac-pytest.sh --select`, Mac, 533c4cb68 with this report's edits uncommitted): 463 units, exit 0, 0 failed. After it only docs, the allow file and the trust evidence changed. Also run on 533c4cb68: `lake build` (via `regen_generated.py --write`), `regen_generated.py --check` (35 entries), `python3 lean/audit.py` PASS, `trust_map.py --check` PASS, `ask_fixtures.py --check` (18 of 18), PROBE F1 (passes; it failed on f5dde7d18), `tests/test_jt3_english.py` 33 passed.
 - Pre-existing red: none of `main-known-red.txt` appeared in these runs.
 - A process note: my first local commit (a8fda84da) used `--no-verify`, which I should not have done. The commits after it passed the hook, and `english_grammar_gen --check` covers what it skipped.
 - The branch is 162 commits behind main, pc-1 included; it was not merged here. The merge train syncs it.
