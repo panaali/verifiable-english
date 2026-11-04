@@ -2,7 +2,7 @@
 
 Status: STOPPED on statements and resolved by the DRI. Under reviews/dri-decisions-20261103-pc-1g-stop.md, pc-1g merges its unblocked parts, and the statements that could not be proved leave its deliverables. No DRI signature is reserved.
 HEAD: the last commit on feature/pc-1g. Changed: the rights chain's reader (`correlate_judged` proved), `judgments@0` beside `rights@0` admitted (spec section 4 row 2 deleted), F1.4, G3's definitions, fixtures F1.1/F1.6, F1.3b/c/i/j/k, and the compress/parse round trip checked.
-Open (DRI ruling items 2 to 6): G3 and its 2a/2c proofs, F5 and F1.3e to F1.3h go to pc-1h. The restated round-trip lemma, `swap_correct` and `verdictFields` go through a statement review, then a follow-up proves them.
+Open (DRI ruling items 2 to 6): G3 and its 2a/2c proofs, F5 and F1.3e to F1.3h go to pc-1h. The restated round-trip lemma, `swap_correct` and `verdictFields` go through a statement review, then a follow-up proves them. The trust-mutant record has 0 survivors but exits 1 on 43 probe UNKNOWNs, which the allow file now covers; the rescore that applies it is pc-1gtm.
 DELTA: row 2's deletion is SIGNED by the DRI (20261101 item 1); the compress/parse boundary is SIGNED by the DRI (20261103 stop item 2); trust is R16.
 
 Plan: docs/spec/profile-composition-PLAN.md "PC-1" and spec 1.7, 3.1 and 5.1, at 3dfadd302. Main's copies are byte-identical: `git -C ../verifiable-english show 3dfadd302:<file> | diff -q - <file>` printed nothing for both files. Synthesis round 2: this item was to prove edit 2 of debates/plan-synthesis-2/edits-profile-composition.md, the G3 amendment (the exchange applies only when it is one-to-one, decided in Lean first). It does not prove it. The amendment's statements rest on the round trip and on `swap_correct`, both stopped below. Its runtime check (pc-1's row 16) is unchanged.
@@ -80,7 +80,7 @@ Lean is the only product language changed; the Python and Rust product code is u
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)`, hand-written files only (no generated inventories, pins or codemaps; mutants.json excluded): about +730 / -20 with this report. That is over the ~600 size line. The proofs of `correlate_judged` and its lemmas are about 130 lines of Chain.lean, and the fixtures and `#guard`s about 260 lines of ChainExamples, the F1.4 data and the tests. The DRI's stop ruling (item 1) names these parts for this item, so nothing more was cut. F1.8 and F1.3e to F1.3h were cut to pc-1h.
+`git diff --numstat $(git merge-base HEAD main)...HEAD`, hand-written files only (no generated inventories, pins or codemaps; the mutant JSON evidence excluded): about +905 / -30. Chain.lean +247, ChainExamples +283, Document.lean +111, the tests +87, the F1.4 data +28, `tools/trust-classes.json` +40, the manifest pin +11 and the docs about +105. That is over the ~600 size line. The proofs of `correlate_judged` and of the block readers are about 150 lines of Chain.lean. About 270 lines of ChainExamples are fixtures and `#guard`s, about 130 of them added so that the trust-mutant tool, which runs only Lean checks, kills what pytest already caught. The DRI's stop ruling (item 1) names these parts for this item, so nothing more was cut. F1.8 and F1.3e to F1.3h were cut to pc-1h.
 
 ## Tests
 
@@ -96,3 +96,24 @@ Lean is the only product language changed; the Python and Rust product code is u
 ## Next
 
 pc-2a (after PC-1) and pc-5 (after sc-1ae, sc-5rc and PC-1), then pc-2b. The DRI's stop ruling adds pc-1h (G3, F5, F1.3e to F1.3h, F1.8) and a follow-up item for the restated round-trip lemma, `swap_correct` and `verdictFields`, after their statement review.
+
+## Base
+
+The branch is based on fd9f25f9b; main has since moved 165 commits. Of those, pc-2a's change Document.lean in other functions (`decodedEnvironment`, `softSourceNorms`, `environmentOf`, `layeredIds`, `admitGraph`, `check`), so the file merges without overlap. The generated files (pins, inventories, the assurance manifest's pin and the class table) need the merge train's regen (R12). I did not sync: a sync invalidates the trust-mutant record, whose last run took 17,839 s of mutant time.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no new relayed field or response member. The document answer's schema is unchanged; rights@0 documents with the layer answer through the existing `judgments` member (jt-2b's fuzz, tests/test_judgments_answer.py).
+2. PASS: every plan row and deliverable is in "Plan rows", with its commit and check, or with the DRI ruling that moved it (reviews/dri-decisions-20261103-pc-1g-stop.md items 1 to 6). No Python copy of a Lean decision (Python product code is unchanged), and no permanent report test. The files in-flight branches also edit are in "Base".
+3. PASS: 21 hand mutants, one per new trusted definition plus the ruling's edits (`mutants.json`, 21 of 21 caught by a named `#guard`, proof or test). The trust-mutant tool reports 0 SURVIVOR in `trust-mutants.json` (3e66f10e). Its 43 UNKNOWNs are guard failures its probe could not confirm, and the allow file names each of them; the rescore that applies it was not run (FOLLOW-UP pc-1gtm).
+4. PASS: base and head side by side. The twin tests compare each layered case with its plain twin (`test_a_rights_document_and_its_twin_...`, ChainExamples F1.1/F1.4 `#guard`s). Plain documents are unchanged: `judgmentsApart` only changes what lists `judgments@0`. The selected run passed (6 shards, exit 0).
+5. N.A.: Python reads no new field from a Lean answer.
+6. PASS: the chain runs the gate on the final HEAD. Not synced with main (see "Base"); the merge train syncs.
+7. PASS: the DELTA cells read "SIGNED by the DRI 2026-11-01 (reviews/dri-decisions-20261101-pc-1.md item 1)", "SIGNED by the DRI 2026-11-03 (reviews/dri-decisions-20261103-pc-1g-stop.md item 2)" and "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18"; no signature is reserved.
+8. PASS: the user-visible change (rights@0 beside `judgments@0` answered, and the refusal text for a document without a rights block) is DELTA row 1, with its tests; the trusted boundary is row 2.
+9. PASS: the selected run included tests/test_judgments_chain.py, test_judgments_document.py, test_judgments_exercised.py and test_assurance_manifest.py. The first run's two failures came from this change and were found by the selection.
+10. PASS: the proved statements (`correlate_judged`, `preds_andAll`, the block-reader theorems) equal the spec or pin the definitions' values. Mutants 1 and 6 break proofs. No hypothesis was added to an approved statement; the false statement (`swap_correct`) has a mechanised counterexample (`twoSets`) and a DRI ruling.
+11. N.A.: no budget, limit or deadline added. The readers run once per rights block, on blocks the rights route already decoded.
+12. N.A.: no new pass over a document beyond one read per rights unit; no pilot timing (L70).
+13. PASS: `uv run python tools/gate_collection.py --check --prebuilt`: "1 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers" (the renamed rights parametrisation).
+14. PASS: both directions. The rights reader admits F1.4 and refuses a judgment it does not find (mutants 3 to 5: `JudgmentListedUnused`). `layerRefusal` accepts the layer's codes and gate texts and rejects validation texts (2d `#guard`). `noUnitStatus` covers stated and not stated. Every count in this report quotes its command. Spec re-read: "Plan rows", Spec re-read (11 statements, whitespace-normalised).
