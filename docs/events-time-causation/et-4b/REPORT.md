@@ -5,6 +5,8 @@ ap-1bd's row 2, row 3 R2). **HEAD:** the branch's last commit (the chain gates i
 **What changed:** `events@0` is a row of AR-10's table; `decodeSoftU`/`decodeRightsU` run `eventsHook` (the row, the
 block with `LinkNotOpen` in spec order, the environment without the block) and put the pack last in `assemble`'s
 list; `replayEventsEntailment` replays certificates over it with `events_wire_acceptance` (spec 6.3, word for word).
+Review fix F1 (B): a soft list with the profile and no block replays its certificate as the list without it
+(`replayUnblockedEntailment`, `unblocked_wire_acceptance`) instead of refusing it; see "Review fixes".
 **Open items:** et-4c (below): `embeddable` and the fragment on situations, the 6.3 answer theorems, T3/T3b, the other
 report fields, `origins`. Until then every answer about a situation on an events document is refused by name.
 Size: about 1,490 hand-written lines against the ~600 rule (see Size). Pilot bytes 0.
@@ -55,6 +57,30 @@ Item: feature item et-4b (rank 132 of the feature feed, acting DRI dri-featurefe
 - Not reached by the hook yet, refused by name: the plain norm-defaults branch, the readings wrapper, admission,
   `defaults-*`, every situation kind; a rights document's certificate kind (the rights branch has none today).
 
+## Review fixes
+
+The review of `194539566` (`manage-agents/et-4b-review.final.md`) had one B finding and five C findings.
+
+- **F1 (B):** a soft document listing `events@0` without the block had its `norm-defaults-certificate` refused with
+  `InvalidInput: events`, though spec 1.11 gives it no pack and 1.1 says the profile neither widens nor narrows the
+  route. The class is "a kind the list without the profile answers that the list with it and no block refuses".
+  - Fix: `VE/Events/Chain.lean` `replayUnblockedEntailment` decodes through the hook's view (`decodeSoftU … H`) and
+    replays by `replayLayeredOn`. Its well-formedness is proved (`unhooked_X`, `unhooked_X_wellFormed`), and
+    `unblocked_wire_acceptance` ties it: `X` is soft's premises, and a valid replay is `EntailsX`. `runCaseE` takes it
+    when `hookBlock` is `none`. The docstring that named `replayLayeredEntailment` now names it. The answer shape is
+    one builder, `Admission.certificateAnswer`, for `softCase` and both events branches. Theorem statements
+    `events_wire_acceptance` and `EventsEntailmentReplay` are unchanged.
+  - Regression: the probe is a `#guard`. `RouteExamples.lean` sweeps every kind (`legacyKinds` with the certificate,
+    gaps, admission and `defaults-conflict`) on both branches: a kind `eventsServed` answers has the same status as
+    on the list without `events@0`, and every other kind is refused by name. The replay is valid on `⊤` and not
+    on `⊥`, and gives the same answer as on the plain list. Each list's certificate is stale on the other list,
+    `X` is soft's two premises, and with a block the function refuses. `tests/test_events_route.py::
+    test_a_certificate_listing_the_profile_without_the_block_replays_as_the_list_without_it` replays a prover
+    certificate through the service and checks it with `check_row`.
+  - DELTA row 2 now names the no-block answer, and row 1 the re-measured trust.
+- **F2 to F6 (C):** not changed here. F2 and F4 (with F3's binding) are the review's follow-ups et-4b-c1 and
+  et-4b-c2; F5 is the size note below; F6 (`gate_events` in `Dispatch.lean`) is left as built.
+
 ## Seeded bugs and mutants
 
 Every seeded bug is in [mutants.json](mutants.json) (88 records, with `file` and `test`); the tool's mutants of
@@ -82,6 +108,10 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 - **Lean, the route's files** (`Layered.lean`, `LayeredAdmission.lean`, `Run.lean`, `Compose/Dispatch.lean`,
   `Events/Chain.lean`, `Packs.lean`, the shapes): `tools/trust_mutants.py` with `--test WireExamples.lean --test
   RouteExamples.lean` (full Mac run at 28d5911b6, then an allow-only rescore at 01d9048b (385 verdicts reused, identical inputs): 454 mutants over 20 definitions, 316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0. The 84 allowed are in [trust-mutants-allow.json](trust-mutants-allow.json), one line per definition and operator: equivalent ones (a list of at most one element, a list only `isEmpty` reads, the key the next line sets again), texts Lean refuses, and mutants a broken proof or more than 100 failing guards stop. Each line names the same-operator mutants that are killed. The first runs (VM, ac7dfa4a3) left 44 survivors; each one got a fixture in `RouteExamples.lean` (the rights branch, an accepting replay, two decisions, two soft premises, two events and states, the view's profiles and constants)).
+- **Lean, F1:** `f1-unblocked-certificate-refused` (`runCaseE` refuses after the replay) fails the guards at
+  `RouteExamples.lean:333` and `:336`. `f1-unblocked-reads-the-raw-environment` (`replayUnblockedEntailment`
+  decodes without the hook's view) breaks the proof of `unblocked_wire_acceptance`; with that proof stubbed, it fails
+  the guards at `:326` (the kind sweep) and `:332` to `:342`. Both are in `mutants.json`.
 - **Python, `tools/layer_policy.py`:** dropping `VE.Events.RouteExamples` from the runner fixtures makes
   `python3 tools/check_lean_imports.py` print `new outward Lean import: VE.Events.RouteExamples -> VE.NormDefaults.Run`.
   The check runs in the gate and in `tests/test_precommit_hook.py`. No `ve/` or `rust/` product code changed (only
@@ -89,9 +119,9 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 
 ## Trust, size, tests
 
-- **Trust:** `uv run python tools/trust_map.py --check` against `fe252f79a` gives K +0, S +0, V +123, unclassified 0,
-  PASS, with the R16 allowance in `docs/trust-baseline.json`. Per file: `Events/Wire.lean` +56, `Layered.lean` +18,
-  `Compose/Dispatch.lean` +14, `Run.lean` +13, `Events/Chain.lean` +10, `Packs.lean` +7, shapes +5. The ties row is
+- **Trust:** `uv run python tools/trust_map.py --check` against `fe252f79a` gives K +0, S +0, V +129, unclassified 0,
+  PASS, with two R16 allowances in `docs/trust-baseline.json` (+123, and +6 for F1's `Run.lean` lines). Per file:
+  `Events/Wire.lean` +56, `Run.lean` +19, `Layered.lean` +18, `Compose/Dispatch.lean` +14, `Events/Chain.lean` +10, `Packs.lean` +7, shapes +5. The ties row is
   `manage-agents/FOLLOW-UPS.md` "## et-4b". New fixtures are T, `checkOpen` and the kind gate are reject-only.
 - **Size (over the rule):** `git diff --numstat fe252f79a` gives about 1,490 hand-written lines, without generated
   files, tool-written evidence and `mutants.json` (2,259 with them), against ~600:
@@ -114,6 +144,9 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
   - Fixtures added afterwards for the tool's survivors: built by `lake build` in the regeneration at 28d5911b6, and
     `tests/test_events_wire_mutants.py` with `tests/test_events_route.py` on the Mac (112 passed, 28d5911b).
   - `trust_map.py --check` PASS. No `main-known-red.txt` test failed. Not run: the full gate (the chain's).
+  - After F1, at abd1b9e8: the selected set on the Mac (`mac-pytest.sh --select`, 530 units, exit 0, 0 failed),
+    `lake build`, `python3 lean/audit.py` PASS, `regen_generated.py --check` 35 entries, and
+    `tests/test_events_route.py` (15 passed, local).
 - **Pilot bytes:** 0. Python has no model of `events@0`, so no document, English line or pilot output moves.
   ET-6's estimate (UDHR +201 to 548 B) waits for et-4c and et-5. Nothing is claimed before a pilot audit.
 
@@ -173,9 +206,9 @@ Acceptance items: all AGENT; none HUMAN or EXTERNAL.
 Files:
 - lean/VE/Compose/Dispatch.lean: eventsRefused, packRows (first in profileTable), eventsFault, gate_events
 - lean/VE/Events/Wire.lean: checkOpen, BlockLinks, decodeThroughLinks, finishEvents, decodeEventsWith(_ok), openTermsOf, EventsHook, routeView, eventsHook; repeatOf one pass; checkPremiseSize total
-- lean/VE/Events/Chain.lean: eventsHook_block, hooked_X, decodeRightsU_packs, events_row_composition, EventsEntailmentReplay, replayEventsEntailment, events_wire_acceptance
+- lean/VE/Events/Chain.lean: eventsHook_block, hooked_X, decodeRightsU_packs, events_row_composition, EventsEntailmentReplay, replayEventsEntailment, events_wire_acceptance; F1: unhooked_X(_wellFormed), replayUnblockedEntailment, unblocked_wire_acceptance
 - lean/VE/NormDefaults/Layered.lean: hookView/hookBlock/hookPacks/hookNames, caseOpenTerms, the hook in decodeSoftU/decodeRightsU/decodeLayered, eventsArray in layeredElaborate
-- lean/VE/NormDefaults/LayeredAdmission.lean: replayLayeredOn(_L), layered_entailment_of_valid; Run.lean: eventsServed, pendingEvents, runCaseE
+- lean/VE/NormDefaults/LayeredAdmission.lean: replayLayeredOn(_L), layered_entailment_of_valid; Run.lean: eventsServed, pendingEvents, runCaseE, certificateAnswer (F1)
 - lean/VE/NormDefaults/Packs.lean: eventsArray; ResponseShape: the events selector, events_premises, digests, runCaseE_fits
 - fixtures: lean/VE/Events/{WireExamples,RouteExamples}.lean; tests/test_events_route.py; tests/test_events_wire_mutants.py (HOOK)
 - inventories by hand: tools/trust-classes.json, ve/assurance-manifest.json (decoder pins), tools/layer_policy.py (RouteExamples a runner fixture), tests/test_profile_table.py, tests/test_route_row_schemas.py, lean/VE/Compose/Examples.lean, ContractExamples.lean, Cardinality/Gate.lean
