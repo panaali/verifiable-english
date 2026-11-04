@@ -10,9 +10,11 @@ namespace VE.Reports
 private def headRest (w : String) : String × String :=
   (String.mk (w.toList.takeWhile (· != ' ')), String.mk ((w.toList.dropWhile (· != ' ')).drop 1))
 
-private def vowel (c : Char) : Bool := c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
+private def vowel (c : Char) : Bool := "aeiou".contains c
 
-private def joined (head rest : String) : String := if rest.isEmpty then head else head ++ " " ++ rest
+private def joined (head rest : String) : String := match rest with
+  | "" => head
+  | _ => head ++ " " ++ rest
 
 /-- The finite form of an infinitival verb phrase: `be safe` is `is safe`, `try x` is `tries x`,
 `fix x` is `fixes x`, `audit x` is `audits x` (the head's third person singular; the rest as it is). -/
@@ -41,10 +43,10 @@ private def baseOf (head : String) : Option String :=
 
 /-- The `wants` test: a declared template's finite verb phrase (`is safe`) as an infinitive
 (`be safe`), only where `finitePhrase` gives the phrase back exactly. Refused: a rest starting
-`not `, a head outside `[a-z]+`, and a head no rule turns into a base. -/
+`not `, a head outside `[a-z]+` (the empty head has no base), and a head no rule turns into a base. -/
 def wantsPhrase? (w : String) : Option String :=
   let (head, rest) := headRest w
-  if rest.startsWith "not " || head.isEmpty || !head.all (fun c => 'a' ≤ c && c ≤ 'z') then none else
+  if rest.startsWith "not " || !head.all (fun c => 'a' ≤ c && c ≤ 'z') then none else
   match baseOf head with
   | none => none
   | some base =>
@@ -74,13 +76,15 @@ the probes' first row and has its own guard. -/
     ("fixes", some "fix"), ("fizzes", some "fizz"), ("goes", some "go"), ("toes", some "to"),
     ("buses", some "buse"), ("runs", some "run"), ("pass x", none), ("boxs", none), ("trys", none),
     ("gos", none), ("ies", some "ie"), ("oes", some "o"), ("es", some "e"), ("zes", some "z"),
-    ("sses", some "ss"), ("yies", some "yy"), ("aies", some "aie"), ("x1s", none), ("dоes", none),
+    ("sses", some "ss"), ("yies", some "yy"), ("aies", some "aie"), ("eies", some "eie"), ("iies", some "iie"),
+    ("oies", some "oie"), ("uies", some "uie"), ("bathes", some "bathe"), ("x1s", none), ("dоes", none),
     ("élèves", none)].all fun (p, i) => wantsPhrase? p == i
 
 #guard [("be safe", "is safe"), ("have a key", "has a key"), ("do work", "does work"),
     ("be not safe", "is not safe"), ("try x", "tries x"), ("play", "plays"), ("pass", "passes"),
     ("wish", "wishes"), ("watch", "watches"), ("fix", "fixes"), ("buzz", "buzzes"), ("go", "goes"),
     ("", "s"), (" x", "s x"), ("Be safe", "Bes safe"), ("y", "ys"), ("ay", "ays"), ("Ay", "Aies"),
-    ("1y", "1ies"), ("é", "és"), ("run fast", "runs fast")].all fun (p, f) => finitePhrase p == f
+    ("1y", "1ies"), ("é", "és"), ("run fast", "runs fast"), ("key", "keys"), ("skiy", "skiys"),
+    ("toy", "toys"), ("buy", "buys"), ("bath", "baths")].all fun (p, f) => finitePhrase p == f
 
 end VE.Reports

@@ -30,12 +30,12 @@ PROBES = (
     "does not work", "is not", "is  safe", "Is safe", " is", "is\tsafe", "", "s", "be", "isnt",
     "carries x", "studies", "plays x", "says x", "passes x", "wishes", "watches", "fixes", "fizzes",
     "goes", "toes", "buses", "runs", "pass x", "boxs", "trys", "gos", "ies", "oes", "es", "zes", "sses",
-    "yies", "aies", "x1s", "dоes", "élèves",
+    "yies", "aies", "eies", "iies", "oies", "uies", "bathes", "x1s", "dоes", "élèves",
 )
 FINITE_PROBES = (
     'be classified as "mass_casualty_weapon_uplift"', "be safe", "have a key", "do work", "be not safe",
     "try x", "play", "pass", "wish", "watch", "fix", "buzz", "go", "", " x", "Be safe", "y", "ay", "Ay",
-    "1y", "é", "run fast",
+    "1y", "é", "run fast", "key", "skiy", "toy", "buy", "bath",
 )
 
 

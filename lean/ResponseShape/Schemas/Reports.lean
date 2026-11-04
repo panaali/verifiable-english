@@ -362,7 +362,15 @@ def file : File where
     ("status", .schema status),
     ("wants", .schema wants)]
 
-/-! The `reports-wants` row as rendered: a dropped type, member, requirement or binding changes it. -/
+/-! The `reports-wants` row and the mode's kind table, row and definitions as rendered: a dropped
+type, member, requirement, binding, kind or definition changes them. -/
+#guard (match kind with | .group _ entries => entries.map (·.1) | .schema _ => []) == ["admission",
+  "reports-elaborate", "reports-content", "reports-certificate", "reports-countermodel", "reports-scoped",
+  "reports-status", "reports-wants"]
+#guard (ResponseShape.render "reports.json" 64 «row»).toOption.map Json.compress == some r##"{"x-select":[{"then":{"anyOf":[{"$ref":"common.json#/$defs/case_error"},{"$ref":"common.json#/$defs/route_path_error"},{"x-select":[{"then":{"$ref":"#/$defs/admission"},"when":{"$ref":"#/$defs/kind/admission"}},{"then":{"$ref":"#/$defs/elaborate"},"when":{"$ref":"#/$defs/kind/reports-elaborate"}},{"then":{"$ref":"#/$defs/content"},"when":{"$ref":"#/$defs/kind/reports-content"}},{"then":{"$ref":"#/$defs/certificate"},"when":{"$ref":"#/$defs/kind/reports-certificate"}},{"then":{"$ref":"#/$defs/countermodel"},"when":{"$ref":"#/$defs/kind/reports-countermodel"}},{"then":{"$ref":"#/$defs/scoped"},"when":{"$ref":"#/$defs/kind/reports-scoped"}},{"then":{"$ref":"#/$defs/status"},"when":{"$ref":"#/$defs/kind/reports-status"}},{"then":{"$ref":"#/$defs/wants"},"when":{"$ref":"#/$defs/kind/reports-wants"}}]}]},"when":{"$ref":"#/$defs/reports_path"}},{"then":{"$ref":"route.json#/row"},"when":true}]}"##
+#guard file.top.map (·.1) == ["row"] && file.defs.map (·.1) == ["reports_path", "kind", "report_kind",
+  "envelope", "key", "status_word", "nested", "counts", "verdict", "admission", "elaborate", "content",
+  "certificate", "countermodel", "envelope_binding", "scoped", "status", "wants"]
 #guard (ResponseShape.render "reports.json" 64 wants).toOption.map Json.compress == some r##"{"$comment":"Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order.","additionalProperties":false,"properties":{"id":{"$ref":"common.json#/$defs/id_ok"},"infinitives":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"finite":{"type":"string"},"infinitive":{"type":"string","x-equals":""}},"required":["infinitive","finite"],"type":"object"},"of":"/infinitives"}},"phrases":{"type":"array","x-zip":{"items":{"additionalProperties":false,"properties":{"infinitive":{"type":["string","null"]},"phrase":{"type":"string","x-equals":""}},"required":["phrase","infinitive"],"type":"object"},"of":"/phrases"}},"status":{"const":"ok"}},"required":["id","status","phrases","infinitives"],"type":"object"}"##
 
 end ResponseShape.Schemas.Reports
