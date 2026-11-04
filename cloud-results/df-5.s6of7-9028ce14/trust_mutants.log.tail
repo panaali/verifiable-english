@@ -1,0 +1,8 @@
+trust_mutants: 18 definitions, 488 mutants (69 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:320 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-empty: zoneHeads.map -> [] (lean/VE/Defaults/ZoneWire.lean:320: Function expected at)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:321 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-last: [("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)] -> ([("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)].reverse.take 1) (lean/VE/Defaults/ZoneWire.lean:321: Invalid dotted identifier notation: The expected type of `.st...)
+trust_mutants: 53 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 4 ALLOWED, 9 NOT RUN, 419 OTHER SHARD in 4852 s
+trust_mutants: D[V], trusted: 8 KILLED, 1 ALLOWED, 3 NOT RUN, 98 OTHER SHARD
+trust_mutants: G[V], trusted: 45 KILLED, 2 UNKNOWN, 1 INVALID, 3 ALLOWED, 6 NOT RUN, 321 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 9 of its 69 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.1 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 486.8 s, mutants 4345.8 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 1028.2 s (6), mutant_builds 1584.2 s (64), mutant_checks 3491.7 s (31), stage_controls 660.1 s (6), mutant_probes 11529.1 s (55)
