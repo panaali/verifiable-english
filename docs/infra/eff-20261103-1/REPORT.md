@@ -202,12 +202,12 @@ It is not in main-known-red. The cause was this branch's `NOT_REGENERATED` entry
 F1 (B) was the only A/B finding. F4 (C) is closed here as well. F2 (C, the replay script outside the repo) stays a follow-up.
 
 - **F1 class:** a reader that leaves a malformed gate record, note, durations or retry file unused let `json.loads`'s
-  `RecursionError` out (it is not a `ValueError`). There were six readers: `test_schedule.read_record_field` (the
+  `RecursionError` out (it is not a `ValueError`). There were seven readers: `test_schedule.read_record_field` (the
   compressed durations), `gate_collection.decode_ids` (the compressed IDs), `gate_collection.parse_record` (the note text),
   `gate.record_file_durations`, `gate.read_previous`, `gate.retry_quarantined` and `test_schedule.read_source`.
 - **Fix (cd9a64a65):** one decoder is shared. `test_schedule.json_value` returns None on any parser error, `RecursionError`
   included, and `test_schedule.zlib_json_value` is the one base64 + bounded zlib + JSON decoder of the compressed fields.
-  It replaces the two copies in `read_record_field` and `decode_ids`. All six readers go through it. So the note path in
+  It replaces the two copies in `read_record_field` and `decode_ids`. All seven readers go through it. So the note path in
   `base_durations` and `suite_tail durations --gate-record` (now `SystemExit: … not a gate record with durations`) are
   covered as well. A change to tools/test_schedule.py keeps the selection at the same units (checked: 42/538 before and
   after).
