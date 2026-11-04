@@ -15903,6 +15903,9 @@
         "VE.Acts.splitNode",
         "VE.Acts.splitReg",
         "VE.Acts.splitsOf"
+      ],
+      "D[R]": [
+        "VE.Acts.splitRefusal"
       ]
     },
     "VE/Acts/ElaborateExamples.lean": {
@@ -18563,6 +18566,196 @@
         "VE.EnglishGrammar.JudgmentRunExamples.question",
         "VE.EnglishGrammar.JudgmentRunExamples.shared",
         "VE.EnglishGrammar.JudgmentRunExamples.mismatch"
+      ]
+    },
+    "VE/Weighing/Tree.lean": {
+      "S": [
+        "VE.Weighing.CondDecl",
+        "VE.Weighing.CondKind",
+        "VE.Weighing.FactorDecl",
+        "VE.Weighing.GrantDecl",
+        "VE.Weighing.Target",
+        "VE.Weighing.WeighDoc",
+        "VE.Weighing.WeighEnv",
+        "VE.Weighing.nodeNamed",
+        "VE.Weighing.ruleSorts",
+        "VE.Weighing.targetExists",
+        "VE.Weighing.targetF",
+        "VE.Weighing.targetSorts"
+      ],
+      "D[R]": [
+        "VE.Weighing.renderTarget"
+      ],
+      "G[I]": [
+        "VE.Weighing.CondKind.label",
+        "VE.Weighing.chainLt"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Weighing.RankChain",
+          "tied": [
+            "VE.Weighing.holistic_iff_no_always_chain",
+            "VE.Weighing.strictWitness_chain"
+          ]
+        },
+        {
+          "name": "VE.Weighing.WeighEnv.empty",
+          "tied": [
+            "VE.Weighing.weigh_conservative",
+            "VE.Weighing.wellFormedWeigh_empty"
+          ]
+        },
+        {
+          "name": "VE.Weighing.chainEdges",
+          "tied": [
+            "VE.Weighing.holistic_iff_no_always_chain",
+            "VE.Weighing.strictWitness_chain"
+          ]
+        },
+        {
+          "name": "VE.Weighing.rankOrder",
+          "tied": [
+            "VE.Weighing.rankOrder_above"
+          ]
+        },
+        {
+          "name": "VE.Weighing.strictPair",
+          "tied": [
+            "VE.Weighing.strictPair_down",
+            "VE.Weighing.strictPair_of_always",
+            "VE.Weighing.strictPair_outranks",
+            "VE.Weighing.strictPair_up"
+          ]
+        },
+        {
+          "name": "VE.Weighing.strictWitness",
+          "tied": [
+            "VE.Weighing.strictWitness_chain",
+            "VE.Weighing.strictWitness_isSome"
+          ]
+        }
+      ],
+      "C": [
+        "VE.Weighing.chainsFrom"
+      ]
+    },
+    "VE/Weighing/Conditions.lean": {
+      "S": [
+        "VE.Weighing.condEntries",
+        "VE.Weighing.condPremise",
+        "VE.Weighing.grantConds",
+        "VE.Weighing.grantEdges",
+        "VE.Weighing.grantEntries",
+        "VE.Weighing.grantReach",
+        "VE.Weighing.grantedThrough",
+        "VE.Weighing.strengthEntries",
+        "VE.Weighing.strengthPremises",
+        "VE.Weighing.weighConditions",
+        "VE.Weighing.weighEntries",
+        "VE.Weighing.weighLabelled"
+      ],
+      "C": [
+        "VE.Weighing.atomsOf",
+        "VE.Weighing.checkWeigh",
+        "VE.Weighing.evalProp",
+        "VE.Weighing.propAtoms",
+        "VE.Weighing.propImplies",
+        "VE.Weighing.subsetsOf",
+        "VE.Weighing.targetCheck"
+      ],
+      "G[R]": [
+        "VE.Weighing.maxPropAtoms",
+        "VE.Weighing.weighWarnings"
+      ],
+      "G[I]": [
+        "VE.Weighing.RequestPath",
+        "VE.Weighing.Target.key",
+        "VE.Weighing.blockPath",
+        "VE.Weighing.weighOrigins"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Weighing.SameBase",
+          "tied": [
+            "VE.Weighing.weigh_alone_base_free"
+          ]
+        },
+        {
+          "name": "VE.Weighing.WellFormedWeigh",
+          "tied": [
+            "VE.Weighing.wellFormedWeigh_empty"
+          ]
+        },
+        {
+          "name": "VE.Weighing.strictFlag",
+          "tied": [
+            "VE.Weighing.all_always_is_strict"
+          ]
+        },
+        {
+          "name": "VE.Weighing.weighPremises",
+          "tied": [
+            "VE.Weighing.condition_necessary",
+            "VE.Weighing.condition_sufficient",
+            "VE.Weighing.grant_needed",
+            "VE.Weighing.weigh_conservative"
+          ]
+        }
+      ],
+      "P": [
+        "VE.Weighing.WeighFacts",
+        "VE.Weighing.freeWitness",
+        "VE.Weighing.tacticWsimp",
+        "VE.Weighing.tacticWsimp_all"
+      ]
+    },
+    "VE/Weighing/Examples.lean": {
+      "T": [
+        "VE.Weighing.Examples.GAtom",
+        "VE.Weighing.Examples.U",
+        "VE.Weighing.Examples.W",
+        "VE.Weighing.Examples.allPairs",
+        "VE.Weighing.Examples.alphaOf",
+        "VE.Weighing.Examples.assignments",
+        "VE.Weighing.Examples.attrJ",
+        "VE.Weighing.Examples.baseμ",
+        "VE.Weighing.Examples.brute",
+        "VE.Weighing.Examples.conj",
+        "VE.Weighing.Examples.cp",
+        "VE.Weighing.Examples.cxD",
+        "VE.Weighing.Examples.cxW",
+        "VE.Weighing.Examples.cxX",
+        "VE.Weighing.Examples.decode",
+        "VE.Weighing.Examples.dfltR",
+        "VE.Weighing.Examples.doms2",
+        "VE.Weighing.Examples.envOf",
+        "VE.Weighing.Examples.gp",
+        "VE.Weighing.Examples.modelOf",
+        "VE.Weighing.Examples.outcome",
+        "VE.Weighing.Examples.ranks4",
+        "VE.Weighing.Examples.softJ",
+        "VE.Weighing.Examples.tOut",
+        "VE.Weighing.Examples.trustsF",
+        "VE.Weighing.Examples.verdict",
+        "VE.Weighing.Examples.w3",
+        "VE.Weighing.Examples.w3bc",
+        "VE.Weighing.Examples.w3c",
+        "VE.Weighing.Examples.wShort",
+        "VE.Weighing.Examples.wTie",
+        "VE.Weighing.Examples.wd",
+        "VE.Weighing.Examples.wα",
+        "VE.Weighing.Examples.wβ",
+        "VE.Weighing.Examples.wε",
+        "VE.Weighing.Examples.wζ",
+        "VE.Weighing.Examples.wμ",
+        "VE.Weighing.Examples.yPerm",
+        "VE.Weighing.Examples.yReq",
+        "VE.Weighing.Examples.α",
+        "VE.Weighing.Examples.α3",
+        "VE.Weighing.Examples.β1",
+        "VE.Weighing.Examples.ζd",
+        "VE.Weighing.Examples.μAll",
+        "VE.Weighing.Examples.μd"
       ]
     }
   }

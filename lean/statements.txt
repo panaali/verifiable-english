@@ -58626,6 +58626,21 @@ theorem VE.Time.yearStart_succ
   ∀ (y : Nat), VE.Time.yearStart (y + 1) = VE.Time.yearStart y + VE.Time.yearLen y
   -- uses VE.Time.yearLen@VE.Time.Calendar VE.Time.yearStart@VE.Time.Calendar
   -- expr 4111558053
+theorem VE.Weighing.WeighFacts.always
+  ∀ {Wd : VE.Weighing.WeighDoc},
+    VE.Weighing.WeighFacts Wd → ∀ (e : String × String), e ∈ Wd.W.always → e ∈ Wd.D.soft.outranks
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranks@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.WeighFacts@VE.Weighing.Conditions
+  -- expr 126701595
+theorem VE.Weighing.WeighFacts.grants
+  ∀ {Wd : VE.Weighing.WeighDoc},
+    VE.Weighing.WeighFacts Wd →
+      ∀ (g : VE.Weighing.GrantDecl),
+        g ∈ Wd.W.grants →
+          VE.Weighing.targetExists Wd (VE.Weighing.Target.off g.rule g.party) = Bool.true ∧
+            VE.Weighing.targetExists Wd (VE.Weighing.Target.off g.rule g.grantor) = Bool.true ∧
+              (g.predicate, g.grantor) ∈ Wd.D.soft.instructionOf
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.instructionOf@VE.SoftNorms.Tree VE.Weighing.GrantDecl.grantor@VE.Weighing.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.Target.off@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WeighFacts@VE.Weighing.Conditions VE.Weighing.targetExists@VE.Weighing.Tree
+  -- expr 3244983934
 theorem VE.Weighing.ZoneFixtures.admissible0
   VE.Weighing.AdmissibleCompletion VE.Weighing.ZoneFixtures.U0 [] VE.Weighing.ZoneFixtures.M0 ["q"]
     VE.Weighing.ZoneFixtures.rec0 VE.Weighing.ZoneFixtures.R0
@@ -58662,6 +58677,747 @@ theorem VE.Weighing.ZoneFixtures.settled_x
     VE.Weighing.ZoneFixtures.rx [0] Bool.true
   -- uses VE.Formula@VE.Syntax VE.Weighing.SettledZ@VE.Weighing.Zone VE.Weighing.ZoneFixtures.M0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.U0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rec0@VE.Weighing.ZoneExamples VE.Weighing.ZoneFixtures.rx@VE.Weighing.ZoneExamples
   -- expr 2850788321
+theorem VE.Weighing.above_of_atLeast
+  ∀ {o : VE.Closure.Order String} {a b c : String},
+    o.atLeast a b = Bool.true → o.above b c = Bool.true → o.above a c = Bool.true
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 4267525838
+theorem VE.Weighing.act_arity
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.actSortsOf D (VE.SoftNorms.act D N))
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree
+  -- expr 60109947
+theorem VE.Weighing.all_always_is_strict
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      (∀ (M N : VE.SoftNorms.SoftNode),
+          (M, N) ∈ VE.SoftNorms.collidingPairs Wd.D →
+            VE.SoftNorms.Comparable Wd.D M N = Bool.true →
+              VE.Weighing.strictPair Wd (VE.SoftNorms.rk M) (VE.SoftNorms.rk N) = Bool.true ∨
+                VE.Weighing.strictPair Wd (VE.SoftNorms.rk N) (VE.SoftNorms.rk M) = Bool.true) →
+        ∀ (S : VE.Structure),
+          VE.Norms.Sat S (VE.Weighing.strengthPremises Wd) →
+            ∀ (p : String) (sign : Bool) (vs : List S.Carrier),
+              VE.TupleTyped S (VE.SoftNorms.actSortsOf Wd.D (VE.SoftNorms.actKey Wd.D p)) vs →
+                (VE.SoftNorms.DecidesSoftD Wd.D S (VE.Norms.tupleVal vs) p sign ↔
+                  VE.SoftNorms.DecidesSoftD (VE.Weighing.strictFlag Wd.D) S (VE.Norms.tupleVal vs) p sign)
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.actKey@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strengthPremises@VE.Weighing.Conditions VE.Weighing.strictFlag@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 2774651414
+theorem VE.Weighing.alterable_parties
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (N : VE.SoftNorms.SoftNode), N ∈ D.T.nodes → ∀ (π : String), π ∈ N.alterable → π ∈ D.soft.parties
+  -- uses VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.parties@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 459332865
+theorem VE.Weighing.always_dominates
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.strengthPremises Wd) →
+          ∀ (M N : VE.SoftNorms.SoftNode),
+            M ∈ Wd.D.T.nodes →
+              N ∈ Wd.D.T.nodes →
+                M.mode = VE.SoftNorms.Mode.default →
+                  N.mode = VE.SoftNorms.Mode.default →
+                    VE.SoftNorms.Incompatible Wd.D M N = Bool.true →
+                      VE.SoftNorms.higher Wd.D M N = Bool.true →
+                        VE.Weighing.strictPair Wd (VE.SoftNorms.rk M) (VE.SoftNorms.rk N) = Bool.true →
+                          ∀ (vs : List S.Carrier),
+                            VE.TupleTyped S (VE.SoftNorms.actSortsOf Wd.D (VE.SoftNorms.act Wd.D N)) vs →
+                              VE.SoftNorms.EffD Wd.D S (VE.Norms.tupleVal vs) (VE.SoftNorms.rankFuel Wd.D) M →
+                                VE.SoftNorms.DominatedD Wd.D S (VE.Norms.tupleVal vs) (VE.SoftNorms.rankFuel Wd.D) N
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.DominatedD@VE.SoftNorms.Semantics VE.SoftNorms.EffD@VE.SoftNorms.Semantics VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strengthPremises@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 1603163528
+theorem VE.Weighing.always_no_override
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.strengthPremises Wd) →
+          ∀ (M N : VE.SoftNorms.SoftNode),
+            M ∈ Wd.D.T.nodes →
+              N ∈ Wd.D.T.nodes →
+                M.mode = VE.SoftNorms.Mode.default →
+                  N.mode = VE.SoftNorms.Mode.default →
+                    VE.SoftNorms.Incompatible Wd.D M N = Bool.true →
+                      VE.SoftNorms.higher Wd.D M N = Bool.true →
+                        VE.Weighing.strictPair Wd (VE.SoftNorms.rk M) (VE.SoftNorms.rk N) = Bool.true →
+                          ∀ (vs : List S.Carrier),
+                            VE.TupleTyped S (VE.SoftNorms.actSortsOf Wd.D (VE.SoftNorms.act Wd.D M)) vs →
+                              ¬(Wd.D.soft.outranking = VE.SoftNorms.Outranking.holistic ∧
+                                  VE.SoftNorms.higher Wd.D M N = Bool.true ∧
+                                    VE.SoftNorms.EligibleD Wd.D S (VE.Norms.tupleVal vs) N ∧
+                                      VE.SoftNorms.OutweighsD Wd.D S (VE.Norms.tupleVal vs) (VE.SoftNorms.act Wd.D M)
+                                        (VE.SoftNorms.rk N) (VE.SoftNorms.rk M))
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.EligibleD@VE.SoftNorms.Semantics VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.Outranking.holistic@VE.SoftNorms.Tree VE.SoftNorms.Outranking@VE.SoftNorms.Tree VE.SoftNorms.OutweighsD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranking@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strengthPremises@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 2037898726
+theorem VE.Weighing.atLeast_edge
+  ∀ {o : VE.Closure.Order String} {a b : String}, (a, b) ∈ o.edges → o.atLeast a b = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 127602794
+theorem VE.Weighing.atLeast_of_above
+  ∀ {o : VE.Closure.Order String} {a b : String}, o.above a b = Bool.true → o.atLeast a b = Bool.true
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 1879440898
+theorem VE.Weighing.atom_rel
+  ∀ (S : VE.Structure) (p : String) (ss : List String) (vs : List S.Carrier),
+    VE.TupleTyped S ss vs → VE.Formula.denote S (VE.Norms.tupleVal vs) (VE.Norms.atom p ss) → S.relation p vs
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.atom@VE.Norms.Basic VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 1159081444
+theorem VE.Weighing.atom_wf
+  ∀ {E : VE.Environment} {p : String} {ss : List String},
+    E.predicates p = Option.some ss → ∀ (Γ : List String), VE.Formula.WellFormed E (ss.reverse ++ Γ) (VE.Norms.atom p ss)
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Norms.atom@VE.Norms.Basic
+  -- expr 1360677382
+theorem VE.Weighing.bindAll_wf
+  ∀ {E : VE.Environment} (body : VE.Formula) (ss Γ : List String),
+    (∀ (s : String), s ∈ ss → s ∈ E.sorts) →
+      VE.Formula.WellFormed E (ss.reverse ++ Γ) body → VE.Formula.WellFormed E Γ (VE.Norms.bindAll ss body)
+  -- uses VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic
+  -- expr 498828977
+theorem VE.Weighing.chainEdges_append
+  ∀ (l₁ l₂ : List String) (x y : String),
+    l₁.getLast? = Option.some x →
+      l₂.head? = Option.some y →
+        VE.Weighing.chainEdges (l₁ ++ l₂) = VE.Weighing.chainEdges l₁ ++ (x, y) :: VE.Weighing.chainEdges l₂
+  -- uses VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 2062182589
+theorem VE.Weighing.chain_head_reach
+  ∀ (o : VE.Closure.Order String) (a : String) (c : List String),
+    (∀ (e : String × String), e ∈ VE.Weighing.chainEdges (a :: c) → e ∈ o.edges) →
+      ∀ (x : String), x ∈ a :: c → o.atLeast a x = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 3921835037
+theorem VE.Weighing.chain_last_reach
+  ∀ (o : VE.Closure.Order String) (c : List String) (L : String),
+    (∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → e ∈ o.edges) →
+      c.getLast? = Option.some L → ∀ (x : String), x ∈ c → o.atLeast x L = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 1438998084
+theorem VE.Weighing.chain_members_ranks
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.SoftNorms.WellFormedSoft Wd.D = Bool.true →
+      ∀ (c : List String),
+        2 ≤ c.length →
+          (∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → e ∈ Wd.D.soft.outranks) →
+            ∀ (x : String), x ∈ c → x ∈ Wd.D.soft.ranks
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranks@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.ranks@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 2105688667
+theorem VE.Weighing.chain_nodup
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.SoftNorms.WellFormedSoft Wd.D = Bool.true →
+      ∀ (c : List String), (∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → e ∈ Wd.D.soft.outranks) → c.Nodup
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranks@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 1525731203
+theorem VE.Weighing.chain_of_atLeast
+  ∀ (o : VE.Closure.Order String) {a b : String},
+    o.atLeast a b = Bool.true →
+      ∃ c,
+        c.head? = Option.some a ∧
+          c.getLast? = Option.some b ∧ ∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → e ∈ o.edges
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 593086116
+theorem VE.Weighing.chain_of_strictPair
+  ∀ {Wd : VE.Weighing.WeighDoc},
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ {H L : String},
+        VE.Weighing.strictPair Wd H L = Bool.true →
+          ∃ c, VE.Weighing.RankChain Wd H L c ∧ ∃ e, e ∈ VE.Weighing.chainEdges c ∧ e ∈ Wd.W.always
+  -- uses VE.Weighing.RankChain@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 2412597339
+theorem VE.Weighing.chainsFrom_chain
+  ∀ {E : List (String × String)} (f : Nat) (L a : String) (c : List String),
+    c ∈ VE.Weighing.chainsFrom E L f a →
+      c.head? = Option.some a ∧
+        c.getLast? = Option.some L ∧ 2 ≤ c.length ∧ ∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → e ∈ E
+  -- uses VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.chainsFrom@VE.Weighing.Tree
+  -- expr 2091469800
+theorem VE.Weighing.checkSoft_ok
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.WellFormedSoft D = Bool.true → VE.SoftNorms.checkSoft D = Except.ok ()
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.checkSoft@VE.SoftNorms.Soften
+  -- expr 996345032
+theorem VE.Weighing.checkWeigh_ok
+  ∀ (Wd : VE.Weighing.WeighDoc), VE.Weighing.WellFormedWeigh Wd = Bool.true → VE.Weighing.checkWeigh Wd = Except.ok ()
+  -- uses VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.checkWeigh@VE.Weighing.Conditions
+  -- expr 1076156585
+theorem VE.Weighing.condFacts
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (c : VE.Weighing.CondDecl),
+        c ∈ Wd.W.conditions →
+          VE.Weighing.targetExists Wd c.target = Bool.true ∧
+            (∀ (n π : String), c.target = VE.Weighing.Target.off n π → c.kind = VE.Weighing.CondKind.necessary) ∧
+              (∀ (a L H : String),
+                  c.target = VE.Weighing.Target.outweighs a L H → VE.Weighing.strictPair Wd H L = Bool.false) ∧
+                VE.Formula.check Wd.D.E (VE.Weighing.targetSorts Wd c.target).reverse c.condition = Bool.true ∧
+                  (∀ (q : String),
+                      q ∈ VE.Norms.preds c.condition →
+                        VE.SoftNorms.definedOrRegulated Wd.D q = Bool.false ∧
+                          VE.SoftNorms.reservedPredicate q = Bool.false) ∧
+                    VE.Norms.Formula.qfree c.condition = Bool.true
+  -- uses VE.Formula.check@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.definedOrRegulated@VE.SoftNorms.Soften VE.SoftNorms.reservedPredicate@VE.SoftNorms.Soften VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.kind@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.CondKind.necessary@VE.Weighing.Tree VE.Weighing.CondKind@VE.Weighing.Tree VE.Weighing.Target.off@VE.Weighing.Tree VE.Weighing.Target.outweighs@VE.Weighing.Tree VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree VE.Weighing.targetExists@VE.Weighing.Tree VE.Weighing.targetSorts@VE.Weighing.Tree
+  -- expr 283580993
+theorem VE.Weighing.condPremise_mem
+  ∀ (Wd : VE.Weighing.WeighDoc) (c : VE.Weighing.CondDecl),
+    c ∈ Wd.W.conditions → VE.Weighing.condPremise Wd c ∈ VE.Weighing.weighPremises Wd
+  -- uses VE.Formula@VE.Syntax VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.condPremise@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 3824398055
+theorem VE.Weighing.condition_necessary
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.weighPremises Wd) →
+          ∀ (c : VE.Weighing.CondDecl),
+            c ∈ Wd.W.conditions →
+              ∀ (vs : List S.Carrier),
+                VE.TupleTyped S (VE.Weighing.targetSorts Wd c.target) vs →
+                  c.kind = VE.Weighing.CondKind.necessary →
+                    ¬VE.Formula.denote S (VE.Norms.tupleVal vs) c.condition →
+                      ¬VE.Formula.denote S (VE.Norms.tupleVal vs) (VE.Weighing.targetF Wd c.target)
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.kind@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.CondKind.necessary@VE.Weighing.Tree VE.Weighing.CondKind@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.targetF@VE.Weighing.Tree VE.Weighing.targetSorts@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 937270754
+theorem VE.Weighing.condition_sufficient
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.weighPremises Wd) →
+          ∀ (c : VE.Weighing.CondDecl),
+            c ∈ Wd.W.conditions →
+              ∀ (vs : List S.Carrier),
+                VE.TupleTyped S (VE.Weighing.targetSorts Wd c.target) vs →
+                  c.kind = VE.Weighing.CondKind.sufficient →
+                    VE.Formula.denote S (VE.Norms.tupleVal vs) c.condition →
+                      VE.Formula.denote S (VE.Norms.tupleVal vs) (VE.Weighing.targetF Wd c.target)
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.kind@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.CondKind.sufficient@VE.Weighing.Tree VE.Weighing.CondKind@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.targetF@VE.Weighing.Tree VE.Weighing.targetSorts@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 4061815482
+theorem VE.Weighing.condition_wf
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (c : VE.Weighing.CondDecl),
+        c ∈ Wd.W.conditions →
+          VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0)
+            (VE.Weighing.targetSorts Wd c.target).reverse c.condition
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.targetSorts@VE.Weighing.Tree
+  -- expr 961876028
+theorem VE.Weighing.cp_either
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {M N : VE.SoftNorms.SoftNode},
+        M ∈ D.T.nodes →
+          N ∈ D.T.nodes →
+            M.mode = VE.SoftNorms.Mode.default →
+              N.mode = VE.SoftNorms.Mode.default →
+                VE.SoftNorms.Incompatible D M N = Bool.true →
+                  (M, N) ∈ VE.SoftNorms.collidingPairs D ∨ (N, M) ∈ VE.SoftNorms.collidingPairs D
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 962377251
+theorem VE.Weighing.delegation_bounded
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (g : VE.Weighing.GrantDecl),
+        g ∈ Wd.W.grants →
+          ∃ N,
+            N ∈ Wd.D.T.nodes ∧
+              N.name = g.rule ∧
+                g.party ∈ N.alterable ∧ g.grantor ∈ N.alterable ∧ (g.predicate, g.grantor) ∈ Wd.D.soft.instructionOf
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.instructionOf@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Weighing.GrantDecl.grantor@VE.Weighing.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions
+  -- expr 3956102760
+theorem VE.Weighing.disagreeFacts
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (s n : VE.Weighing.CondDecl),
+        s ∈ Wd.W.conditions →
+          n ∈ Wd.W.conditions →
+            s.kind = VE.Weighing.CondKind.sufficient →
+              n.kind = VE.Weighing.CondKind.necessary →
+                n.target = s.target → VE.Weighing.propImplies s.condition n.condition = Bool.true
+  -- uses VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.kind@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.CondKind.necessary@VE.Weighing.Tree VE.Weighing.CondKind.sufficient@VE.Weighing.Tree VE.Weighing.CondKind@VE.Weighing.Tree VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.propImplies@VE.Weighing.Conditions
+  -- expr 3441680033
+theorem VE.Weighing.envAt_base
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ {q : String},
+        VE.SoftNorms.definedOrRegulated Wd.D q = Bool.false →
+          (Wd.D.E.predicates q).isSome = Bool.true →
+            (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0).predicates q = Wd.D.E.predicates q
+  -- uses VE.Environment.predicates@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.definedOrRegulated@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions
+  -- expr 4092949697
+theorem VE.Weighing.envAt_target
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ {t : VE.Weighing.Target},
+        VE.Weighing.targetExists Wd t = Bool.true →
+          VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0) (VE.Weighing.targetSorts Wd t).reverse
+            (VE.Weighing.targetF Wd t)
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.targetExists@VE.Weighing.Tree VE.Weighing.targetF@VE.Weighing.Tree VE.Weighing.targetSorts@VE.Weighing.Tree
+  -- expr 1674145708
+theorem VE.Weighing.evalProp_denote
+  ∀ (S : VE.Structure) (ρ : VE.Valuation S) (v : VE.Formula → Bool) (a : VE.Formula),
+    VE.Norms.Formula.qfree a = Bool.true →
+      (∀ (φ : VE.Formula), φ ∈ VE.Weighing.atomsOf a → (v φ = Bool.true ↔ VE.Formula.denote S ρ φ)) →
+        (VE.Weighing.evalProp v a = Bool.true ↔ VE.Formula.denote S ρ a)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.atomsOf@VE.Weighing.Conditions VE.Weighing.evalProp@VE.Weighing.Conditions
+  -- expr 3143420021
+theorem VE.Weighing.except_isOk
+  ∀ {ε α : Type} {e : Except ε α}, e.isOk = Bool.true ↔ ∃ a, e = Except.ok a
+  -- uses
+  -- expr 1414233404
+theorem VE.Weighing.factors_inert
+  ∀ (D : VE.SoftNorms.SoftDoc) (W : VE.Weighing.WeighEnv) (sm : VE.Acts.SplitMap) (fs : List VE.Weighing.FactorDecl),
+    VE.Weighing.weighPremises
+        { D := D, W := { always := W.always, conditions := W.conditions, factors := fs, grants := W.grants },
+          split := sm } =
+      VE.Weighing.weighPremises { D := D, W := W, split := sm }
+  -- uses VE.Acts.SplitMap@VE.Acts.Elaborate VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Weighing.FactorDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.mk@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WeighEnv.mk@VE.Weighing.Tree VE.Weighing.WeighEnv@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 1050793605
+theorem VE.Weighing.filter_mem_subsetsOf
+  ∀ {α : Type} (p : α → Bool) (l : List α), List.filter p l ∈ VE.Weighing.subsetsOf l
+  -- uses VE.Weighing.subsetsOf@VE.Weighing.Conditions
+  -- expr 506148974
+theorem VE.Weighing.foldl_best_isSome
+  ∀ (l : List (List String)) (init : Option (List String)),
+    init.isSome = Bool.true ∨ l ≠ [] →
+      (List.foldl
+            (fun best c =>
+              match best with
+              | Option.none => Option.some c
+              | Option.some b => if VE.Weighing.chainLt c b = Bool.true then Option.some c else Option.some b)
+            init l).isSome =
+        Bool.true
+  -- uses VE.Weighing.chainLt@VE.Weighing.Tree VE.Weighing.foldl_best_mem.match_1@VE.Weighing.Conditions
+  -- expr 237862994
+theorem VE.Weighing.foldl_best_mem
+  ∀ {l : List (List String)} {init : Option (List String)} {c : List String},
+    List.foldl
+          (fun best c =>
+            match best with
+            | Option.none => Option.some c
+            | Option.some b => if VE.Weighing.chainLt c b = Bool.true then Option.some c else Option.some b)
+          init l =
+        Option.some c →
+      init = Option.some c ∨ c ∈ l
+  -- uses VE.Weighing.chainLt@VE.Weighing.Tree VE.Weighing.foldl_best_mem.match_1@VE.Weighing.Conditions
+  -- expr 226694628
+theorem VE.Weighing.grantAtom_wf
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (g : VE.Weighing.GrantDecl),
+        g ∈ Wd.W.grants →
+          VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0) (VE.Weighing.ruleSorts Wd g.rule).reverse
+            (VE.Norms.atom g.predicate (VE.Weighing.ruleSorts Wd g.rule))
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Norms.atom@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.ruleSorts@VE.Weighing.Tree
+  -- expr 2723580458
+theorem VE.Weighing.grantCond_mem
+  ∀ (Wd : VE.Weighing.WeighDoc) {l : String} {cd : VE.Weighing.CondDecl} {p : VE.Weighing.RequestPath},
+    (l, cd, p) ∈ VE.Weighing.grantConds Wd → VE.Weighing.condPremise Wd cd ∈ VE.Weighing.weighPremises Wd
+  -- uses VE.Formula@VE.Syntax VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.RequestPath@VE.Weighing.Conditions VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.condPremise@VE.Weighing.Conditions VE.Weighing.grantConds@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 1500578754
+theorem VE.Weighing.grantFacts
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (g : VE.Weighing.GrantDecl),
+        g ∈ Wd.W.grants →
+          Wd.D.E.predicates g.predicate = Option.some (VE.Weighing.ruleSorts Wd g.rule) ∧
+            VE.Weighing.grantReach Wd g.rule g.party g.party = Bool.false
+  -- uses VE.Environment.predicates@VE.Syntax VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.grantReach@VE.Weighing.Conditions VE.Weighing.ruleSorts@VE.Weighing.Tree
+  -- expr 96999301
+theorem VE.Weighing.grant_needed
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.weighPremises Wd) →
+          ∀ (g : VE.Weighing.GrantDecl),
+            g ∈ Wd.W.grants →
+              ∀ (vs : List S.Carrier),
+                VE.TupleTyped S (VE.Weighing.ruleSorts Wd g.rule) vs →
+                  ¬VE.Formula.denote S (VE.Norms.tupleVal vs)
+                        (VE.Norms.atom g.predicate (VE.Weighing.ruleSorts Wd g.rule)) →
+                    ¬VE.Formula.denote S (VE.Norms.tupleVal vs)
+                        (VE.Weighing.targetF Wd (VE.Weighing.Target.off g.rule g.party))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Norms.atom@VE.Norms.Basic VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.Target.off@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.ruleSorts@VE.Weighing.Tree VE.Weighing.targetF@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 375640779
+theorem VE.Weighing.grant_within_grantor
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.weighPremises Wd) →
+          ∀ (n π ρ : String),
+            VE.Weighing.grantReach Wd n π ρ = Bool.true →
+              ∀ (vs : List S.Carrier),
+                VE.TupleTyped S (VE.Weighing.ruleSorts Wd n) vs →
+                  VE.Formula.denote S (VE.Norms.tupleVal vs) (VE.Weighing.targetF Wd (VE.Weighing.Target.off n π)) →
+                    (∀ (c : VE.Weighing.CondDecl),
+                        c ∈ Wd.W.conditions →
+                          c.target = VE.Weighing.Target.off n ρ →
+                            VE.Formula.denote S (VE.Norms.tupleVal vs) c.condition) ∧
+                      ∀ (g : VE.Weighing.GrantDecl),
+                        g ∈ Wd.W.grants →
+                          g.rule = n →
+                            g.party = ρ →
+                              VE.Formula.denote S (VE.Norms.tupleVal vs)
+                                (VE.Norms.atom g.predicate (VE.Weighing.ruleSorts Wd n))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Norms.atom@VE.Norms.Basic VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.Target.off@VE.Weighing.Tree VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.grantReach@VE.Weighing.Conditions VE.Weighing.ruleSorts@VE.Weighing.Tree VE.Weighing.targetF@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 143333636
+theorem VE.Weighing.higher_outranks
+  ∀ {D : VE.SoftNorms.SoftDoc} {M N : VE.SoftNorms.SoftNode},
+    VE.SoftNorms.higher D M N = Bool.true →
+      VE.SoftNorms.outranksPlus D.soft (VE.SoftNorms.rk M) (VE.SoftNorms.rk N) = Bool.true
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree
+  -- expr 4240390028
+theorem VE.Weighing.holistic_iff_no_always_chain
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (H L : String),
+        VE.Weighing.strictPair Wd H L = Bool.false ↔
+          ∀ (c : List String),
+            VE.Weighing.RankChain Wd H L c → ∀ (e : String × String), e ∈ VE.Weighing.chainEdges c → ¬e ∈ Wd.W.always
+  -- uses VE.Weighing.RankChain@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 1713443252
+theorem VE.Weighing.incompatible_irrefl
+  ∀ (D : VE.SoftNorms.SoftDoc) (M : VE.SoftNorms.SoftNode), VE.SoftNorms.Incompatible D M M = Bool.false
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3951479345
+theorem VE.Weighing.inj_of_nodup_map
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
+  -- uses
+  -- expr 2912099309
+theorem VE.Weighing.instructionOf_base
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (p π : String), (p, π) ∈ D.soft.instructionOf → VE.SoftNorms.definedOrRegulated D p = Bool.false
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.instructionOf@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.definedOrRegulated@VE.SoftNorms.Soften
+  -- expr 3335183332
+theorem VE.Weighing.mem_chainEdges
+  ∀ {c : List String} {e : String × String}, e ∈ VE.Weighing.chainEdges c → e.fst ∈ c ∧ e.snd ∈ c
+  -- uses VE.Weighing.chainEdges@VE.Weighing.Tree
+  -- expr 2430386019
+theorem VE.Weighing.mem_chainsFrom
+  ∀ {E : List (String × String)} (f : Nat) (L a : String) (rest : List String),
+    (a :: rest).Nodup →
+      (a :: rest).getLast? = Option.some L →
+        2 ≤ (a :: rest).length →
+          (a :: rest).length ≤ f + 1 →
+            (∀ (e : String × String), e ∈ VE.Weighing.chainEdges (a :: rest) → e ∈ E) →
+              a :: rest ∈ VE.Weighing.chainsFrom E L f a
+  -- uses VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.chainsFrom@VE.Weighing.Tree
+  -- expr 3342071914
+theorem VE.Weighing.mem_grantEdges
+  ∀ {Wd : VE.Weighing.WeighDoc} {n x y : String},
+    (x, y) ∈ VE.Weighing.grantEdges Wd n → ∃ g, g ∈ Wd.W.grants ∧ g.rule = n ∧ g.party = x ∧ g.grantor = y
+  -- uses VE.Weighing.GrantDecl.grantor@VE.Weighing.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.grantEdges@VE.Weighing.Conditions
+  -- expr 4102721724
+theorem VE.Weighing.mem_weighPremises
+  ∀ (Wd : VE.Weighing.WeighDoc) {φ : VE.Formula},
+    φ ∈ VE.Weighing.weighPremises Wd →
+      (∃ a L H,
+          (a, L, H) ∈ VE.SoftNorms.outweighsTriples Wd.D ∧
+            VE.Weighing.strictPair Wd H L = Bool.true ∧
+              φ = VE.Norms.bindAll (VE.SoftNorms.actSortsOf Wd.D a) (VE.SoftNorms.outweighsF Wd.D a L H).not) ∨
+        (∃ c, c ∈ Wd.W.conditions ∧ φ = VE.Weighing.condPremise Wd c) ∨
+          ∃ g,
+            g ∈ Wd.W.grants ∧
+              ∃ ψ,
+                φ =
+                    VE.Weighing.condPremise Wd
+                      { target := VE.Weighing.Target.off g.rule g.party, kind := VE.Weighing.CondKind.necessary,
+                        condition := ψ } ∧
+                  ((∃ g',
+                      g' ∈ Wd.W.grants ∧
+                        g'.rule = g.rule ∧ ψ = VE.Norms.atom g'.predicate (VE.Weighing.ruleSorts Wd g.rule)) ∨
+                    ∃ c, c ∈ Wd.W.conditions ∧ ∃ ρ, c.target = VE.Weighing.Target.off g.rule ρ ∧ ψ = c.condition)
+  -- uses VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Norms.atom@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.outweighsF@VE.SoftNorms.Soften VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree VE.Weighing.CondDecl.condition@VE.Weighing.Tree VE.Weighing.CondDecl.mk@VE.Weighing.Tree VE.Weighing.CondDecl.target@VE.Weighing.Tree VE.Weighing.CondDecl@VE.Weighing.Tree VE.Weighing.CondKind.necessary@VE.Weighing.Tree VE.Weighing.GrantDecl.party@VE.Weighing.Tree VE.Weighing.GrantDecl.predicate@VE.Weighing.Tree VE.Weighing.GrantDecl.rule@VE.Weighing.Tree VE.Weighing.GrantDecl@VE.Weighing.Tree VE.Weighing.Target.off@VE.Weighing.Tree VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.conditions@VE.Weighing.Tree VE.Weighing.WeighEnv.grants@VE.Weighing.Tree VE.Weighing.condPremise@VE.Weighing.Conditions VE.Weighing.ruleSorts@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 781508787
+theorem VE.Weighing.nodup_length_le
+  ∀ {α : Type} [DecidableEq α] {l m : List α}, l.Nodup → l ⊆ m → l.length ≤ m.length
+  -- uses
+  -- expr 4216536397
+theorem VE.Weighing.not_outweighs
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (S : VE.Structure),
+        VE.Norms.Sat S (VE.Weighing.strengthPremises Wd) →
+          Wd.D.soft.outranking = VE.SoftNorms.Outranking.holistic →
+            ∀ {M N : VE.SoftNorms.SoftNode},
+              M ∈ Wd.D.T.nodes →
+                N ∈ Wd.D.T.nodes →
+                  M.mode = VE.SoftNorms.Mode.default →
+                    N.mode = VE.SoftNorms.Mode.default →
+                      VE.SoftNorms.Incompatible Wd.D M N = Bool.true →
+                        VE.SoftNorms.higher Wd.D M N = Bool.true →
+                          VE.Weighing.strictPair Wd (VE.SoftNorms.rk M) (VE.SoftNorms.rk N) = Bool.true →
+                            ∀ (vs : List S.Carrier),
+                              VE.TupleTyped S (VE.SoftNorms.actSortsOf Wd.D (VE.SoftNorms.act Wd.D N)) vs →
+                                ¬VE.SoftNorms.OutweighsD Wd.D S (VE.Norms.tupleVal vs) (VE.SoftNorms.act Wd.D N)
+                                    (VE.SoftNorms.rk N) (VE.SoftNorms.rk M)
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.Outranking.holistic@VE.SoftNorms.Tree VE.SoftNorms.Outranking@VE.SoftNorms.Tree VE.SoftNorms.OutweighsD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranking@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strengthPremises@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 2112423140
+theorem VE.Weighing.path_ends
+  ∀ {α : Type} {R : α → α → Prop} {a b : α}, Relation.TransGen R a b → (∃ x, R a x) ∧ ∃ y, R y b
+  -- uses
+  -- expr 3576586321
+theorem VE.Weighing.preds_declared
+  ∀ {E : VE.Environment} (φ : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ φ → ∀ (q : String), q ∈ VE.Norms.preds φ → (E.predicates q).isSome = Bool.true
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
+  -- expr 933229586
+theorem VE.Weighing.premise_facts
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (φ : VE.Formula),
+        φ ∈ VE.Weighing.weighPremises Wd →
+          VE.SoftNorms.universalQF φ = Bool.true ∧
+            VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0) [] φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.universalQF@VE.SoftNorms.Coherence VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 96518055
+theorem VE.Weighing.propImplies_sound
+  ∀ (a b : VE.Formula),
+    VE.Weighing.propImplies a b = Bool.true →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S), VE.Formula.denote S ρ a → VE.Formula.denote S ρ b
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.propImplies@VE.Weighing.Conditions
+  -- expr 460157432
+theorem VE.Weighing.qfree_atom
+  ∀ (p : String) (ss : List String), VE.Norms.Formula.qfree (VE.Norms.atom p ss) = Bool.true
+  -- uses VE.Norms.Formula.qfree@VE.Norms.SmallModel VE.Norms.atom@VE.Norms.Basic
+  -- expr 2269713613
+theorem VE.Weighing.qfree_target
+  ∀ (Wd : VE.Weighing.WeighDoc) (t : VE.Weighing.Target), VE.Norms.Formula.qfree (VE.Weighing.targetF Wd t) = Bool.true
+  -- uses VE.Norms.Formula.qfree@VE.Norms.SmallModel VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.targetF@VE.Weighing.Tree
+  -- expr 3438080370
+theorem VE.Weighing.rankOrder_above
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.SoftNorms.WellFormedSoft Wd.D = Bool.true →
+      ∀ (a b : String), VE.SoftNorms.outranksPlus Wd.D.soft a b = (VE.Weighing.rankOrder Wd).above a b
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.rankOrder@VE.Weighing.Tree
+  -- expr 2871349429
+theorem VE.Weighing.regulatedName_arity
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {a : String}, a ∈ List.map (fun x => x.name) D.T.regulated → VE.Norms.Arity (VE.SoftNorms.sortsOf D a)
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 1031811633
+theorem VE.Weighing.strength_mem
+  ∀ (Wd : VE.Weighing.WeighDoc) {a L H : String},
+    (a, L, H) ∈ VE.SoftNorms.outweighsTriples Wd.D →
+      VE.Weighing.strictPair Wd H L = Bool.true →
+        VE.Norms.bindAll (VE.SoftNorms.actSortsOf Wd.D a) (VE.SoftNorms.outweighsF Wd.D a L H).not ∈
+          VE.Weighing.strengthPremises Wd
+  -- uses VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.outweighsF@VE.SoftNorms.Soften VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.strengthPremises@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 528415628
+theorem VE.Weighing.strictFlag_act
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.act (VE.Weighing.strictFlag D) = VE.SoftNorms.act D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 131545170
+theorem VE.Weighing.strictFlag_children
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.children (VE.Weighing.strictFlag D) = VE.SoftNorms.children D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.children@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 3585086902
+theorem VE.Weighing.strictFlag_comparable
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.Comparable (VE.Weighing.strictFlag D) = VE.SoftNorms.Comparable D
+  -- uses VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 1532268868
+theorem VE.Weighing.strictFlag_dualOblig
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.dualOblig (VE.Weighing.strictFlag D) = VE.SoftNorms.dualOblig D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.dualOblig@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 1915715837
+theorem VE.Weighing.strictFlag_dualPerm
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.dualPerm (VE.Weighing.strictFlag D) = VE.SoftNorms.dualPerm D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.dualPerm@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 725319579
+theorem VE.Weighing.strictFlag_eligible
+  ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S) (N : VE.SoftNorms.SoftNode),
+    VE.SoftNorms.EligibleD (VE.Weighing.strictFlag D) S ρ N ↔ VE.SoftNorms.EligibleD D S ρ N
+  -- uses VE.SoftNorms.EligibleD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 2206325219
+theorem VE.Weighing.strictFlag_fuel
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.fuel (VE.Weighing.strictFlag D) = VE.SoftNorms.fuel D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 618316094
+theorem VE.Weighing.strictFlag_higher
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.higher (VE.Weighing.strictFlag D) = VE.SoftNorms.higher D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 2300571357
+theorem VE.Weighing.strictFlag_incompatible
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.Incompatible (VE.Weighing.strictFlag D) = VE.SoftNorms.Incompatible D
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 4022464322
+theorem VE.Weighing.strictFlag_live
+  ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.SoftNorms.LiveD (VE.Weighing.strictFlag D) S ρ = VE.SoftNorms.LiveD D S ρ
+  -- uses VE.SoftNorms.LiveD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 2946445783
+theorem VE.Weighing.strictFlag_outweighs
+  ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.SoftNorms.OutweighsD (VE.Weighing.strictFlag D) S ρ = VE.SoftNorms.OutweighsD D S ρ
+  -- uses VE.SoftNorms.OutweighsD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 3805372432
+theorem VE.Weighing.strictFlag_rankFuel
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.rankFuel (VE.Weighing.strictFlag D) = VE.SoftNorms.rankFuel D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 518307251
+theorem VE.Weighing.strictFlag_rulesOn
+  ∀ (D : VE.SoftNorms.SoftDoc), VE.SoftNorms.rulesOn (VE.Weighing.strictFlag D) = VE.SoftNorms.rulesOn D
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.rulesOn@VE.SoftNorms.Tree VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 4102223089
+theorem VE.Weighing.strictFlag_strictDecides
+  ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S) (p : String) (sign : Bool),
+    VE.SoftNorms.StrictDecidesD (VE.Weighing.strictFlag D) S ρ p sign ↔ VE.SoftNorms.StrictDecidesD D S ρ p sign
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.StrictDecidesD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 2070280802
+theorem VE.Weighing.strictFlag_strictYields
+  ∀ (D : VE.SoftNorms.SoftDoc) (S : VE.Structure) (ρ : VE.Valuation S) (f : Nat) (N : VE.SoftNorms.SoftNode),
+    VE.SoftNorms.StrictYieldsD (VE.Weighing.strictFlag D) S ρ f N ↔ VE.SoftNorms.StrictYieldsD D S ρ f N
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.StrictYieldsD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics VE.Weighing.strictFlag@VE.Weighing.Conditions
+  -- expr 3773657493
+theorem VE.Weighing.strictPair_down
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (H M L : String),
+        VE.Weighing.strictPair Wd H M = Bool.true →
+          VE.SoftNorms.outranksPlus Wd.D.soft M L = Bool.true → VE.Weighing.strictPair Wd H L = Bool.true
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 3358227351
+theorem VE.Weighing.strictPair_edge
+  ∀ {Wd : VE.Weighing.WeighDoc} {H L : String},
+    VE.Weighing.strictPair Wd H L = Bool.true ↔
+      ∃ e,
+        e ∈ Wd.W.always ∧
+          (VE.Weighing.rankOrder Wd).atLeast H e.fst = Bool.true ∧ (VE.Weighing.rankOrder Wd).atLeast e.snd L = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.rankOrder@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 382053724
+theorem VE.Weighing.strictPair_of_always
+  ∀ (Wd : VE.Weighing.WeighDoc) (a b : String), (a, b) ∈ Wd.W.always → VE.Weighing.strictPair Wd a b = Bool.true
+  -- uses VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 3733246315
+theorem VE.Weighing.strictPair_of_chain
+  ∀ {Wd : VE.Weighing.WeighDoc} {H L : String} {c : List String},
+    VE.Weighing.RankChain Wd H L c →
+      ∀ {e : String × String}, e ∈ VE.Weighing.chainEdges c → e ∈ Wd.W.always → VE.Weighing.strictPair Wd H L = Bool.true
+  -- uses VE.Weighing.RankChain@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 3594082056
+theorem VE.Weighing.strictPair_outranks
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (H L : String), VE.Weighing.strictPair Wd H L = Bool.true → VE.SoftNorms.outranksPlus Wd.D.soft H L = Bool.true
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 3144547290
+theorem VE.Weighing.strictPair_up
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (H M L : String),
+        VE.SoftNorms.outranksPlus Wd.D.soft H M = Bool.true →
+          VE.Weighing.strictPair Wd M L = Bool.true → VE.Weighing.strictPair Wd H L = Bool.true
+  -- uses VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree
+  -- expr 3720249855
+theorem VE.Weighing.strictWitness_chain
+  ∀ (Wd : VE.Weighing.WeighDoc) (H L : String) (c : List String),
+    VE.Weighing.strictWitness Wd H L = Option.some c →
+      VE.Weighing.RankChain Wd H L c ∧ ∃ e, e ∈ VE.Weighing.chainEdges c ∧ e ∈ Wd.W.always
+  -- uses VE.Weighing.RankChain@VE.Weighing.Tree VE.Weighing.WeighDoc.W@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighEnv.always@VE.Weighing.Tree VE.Weighing.chainEdges@VE.Weighing.Tree VE.Weighing.strictWitness@VE.Weighing.Tree
+  -- expr 1334612963
+theorem VE.Weighing.strictWitness_isSome
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (H L : String), (VE.Weighing.strictWitness Wd H L).isSome = VE.Weighing.strictPair Wd H L
+  -- uses VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.strictPair@VE.Weighing.Tree VE.Weighing.strictWitness@VE.Weighing.Tree
+  -- expr 171701263
+theorem VE.Weighing.targetCheck_exists
+  ∀ {Wd : VE.Weighing.WeighDoc} {t : VE.Weighing.Target} {u : Unit},
+    VE.Weighing.targetCheck Wd t = Except.ok u → VE.Weighing.targetExists Wd t = Bool.true
+  -- uses VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.targetCheck@VE.Weighing.Conditions VE.Weighing.targetExists@VE.Weighing.Tree
+  -- expr 3368609516
+theorem VE.Weighing.targetSorts_sorts
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (t : VE.Weighing.Target) (s : String),
+        s ∈ VE.Weighing.targetSorts Wd t → s ∈ (VE.Norms.envAt (VE.SoftNorms.soften Wd.D) 0).sorts
+  -- uses VE.Environment.sorts@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.Target@VE.Weighing.Tree VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.targetSorts@VE.Weighing.Tree
+  -- expr 4241504350
+theorem VE.Weighing.triple_arity
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {a L H : String}, (a, L, H) ∈ VE.SoftNorms.outweighsTriples D → VE.Norms.Arity (VE.SoftNorms.actSortsOf D a)
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree
+  -- expr 3196506705
+theorem VE.Weighing.triple_mem
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      D.soft.outranking = VE.SoftNorms.Outranking.holistic →
+        ∀ {M N : VE.SoftNorms.SoftNode},
+          M ∈ D.T.nodes →
+            N ∈ D.T.nodes →
+              M.mode = VE.SoftNorms.Mode.default →
+                N.mode = VE.SoftNorms.Mode.default →
+                  VE.SoftNorms.Incompatible D M N = Bool.true →
+                    VE.SoftNorms.higher D M N = Bool.true →
+                      (VE.SoftNorms.act D N, VE.SoftNorms.rk N, VE.SoftNorms.rk M) ∈ VE.SoftNorms.outweighsTriples D
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.Outranking.holistic@VE.SoftNorms.Tree VE.SoftNorms.Outranking@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranking@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree VE.SoftNorms.rk@VE.SoftNorms.Tree
+  -- expr 2237226674
+theorem VE.Weighing.universalQF_bindAll
+  ∀ (body : VE.Formula) (ss : List String),
+    VE.SoftNorms.universalQF (VE.Norms.bindAll ss body) = VE.SoftNorms.universalQF body
+  -- uses VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.universalQF@VE.SoftNorms.Coherence
+  -- expr 1820453243
+theorem VE.Weighing.universalQF_qfree
+  ∀ {φ : VE.Formula}, VE.Norms.Formula.qfree φ = Bool.true → VE.SoftNorms.universalQF φ = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel VE.SoftNorms.universalQF@VE.SoftNorms.Coherence
+  -- expr 3868646447
+theorem VE.Weighing.weighEntries_empty
+  ∀ (D : VE.SoftNorms.SoftDoc) (sm : VE.Acts.SplitMap),
+    VE.Weighing.weighEntries { D := D, W := VE.Weighing.WeighEnv.empty, split := sm } = []
+  -- uses VE.Acts.SplitMap@VE.Acts.Elaborate VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Weighing.RequestPath@VE.Weighing.Conditions VE.Weighing.WeighDoc.mk@VE.Weighing.Tree VE.Weighing.WeighEnv.empty@VE.Weighing.Tree VE.Weighing.weighEntries@VE.Weighing.Conditions
+  -- expr 2864047208
+theorem VE.Weighing.weighFacts
+  ∀ (Wd : VE.Weighing.WeighDoc), VE.Weighing.WellFormedWeigh Wd = Bool.true → VE.Weighing.WeighFacts Wd
+  -- uses VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WeighFacts@VE.Weighing.Conditions VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions
+  -- expr 1088236173
+theorem VE.Weighing.weighPremises_substructure
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (B₀ B : VE.Structure),
+        VE.SoftNorms.BaseSubstructure Wd.D B₀ B →
+          VE.Norms.Sat B (VE.Weighing.weighPremises Wd) → VE.Norms.Sat B₀ (VE.Weighing.weighPremises Wd)
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.SoftNorms.BaseSubstructure@VE.SoftNorms.Coherence VE.Structure@VE.Semantics VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 167818757
+theorem VE.Weighing.weighPremises_wellFormed
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (unspec : List String),
+        VE.NormDefaults.WellFormedU { D := VE.SoftNorms.soften Wd.D, unspec := unspec } = Bool.true →
+          ∀ (a : VE.Formula),
+            a ∈ VE.Weighing.weighPremises Wd →
+              VE.Formula.WellFormed
+                (VE.Norms.envAt (VE.NormDefaults.fill { D := VE.SoftNorms.soften Wd.D, unspec := unspec }) 0) [] a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 2027198015
+theorem VE.Weighing.weigh_alone_base_free
+  ∀ (Wd : VE.Weighing.WeighDoc),
+    VE.Weighing.WellFormedWeigh Wd = Bool.true →
+      ∀ (B : VE.Structure), ∃ B', VE.Weighing.SameBase Wd B B' ∧ VE.Norms.Sat B' (VE.Weighing.weighPremises Wd)
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics VE.Weighing.SameBase@VE.Weighing.Conditions VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 2460106665
+theorem VE.Weighing.weigh_conservative
+  ∀ (D : VE.SoftNorms.SoftDoc) (sm : VE.Acts.SplitMap),
+    VE.Weighing.weighPremises { D := D, W := VE.Weighing.WeighEnv.empty, split := sm } = []
+  -- uses VE.Acts.SplitMap@VE.Acts.Elaborate VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Weighing.WeighDoc.mk@VE.Weighing.Tree VE.Weighing.WeighEnv.empty@VE.Weighing.Tree VE.Weighing.weighPremises@VE.Weighing.Conditions
+  -- expr 2834079566
+theorem VE.Weighing.wellFormedWeigh_empty
+  ∀ (D : VE.SoftNorms.SoftDoc) (sm : VE.Acts.SplitMap),
+    VE.Weighing.WellFormedWeigh { D := D, W := VE.Weighing.WeighEnv.empty, split := sm } = VE.SoftNorms.WellFormedSoft D
+  -- uses VE.Acts.SplitMap@VE.Acts.Elaborate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.Weighing.WeighDoc.mk@VE.Weighing.Tree VE.Weighing.WeighEnv.empty@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions
+  -- expr 408637684
+theorem VE.Weighing.wfSoft
+  ∀ (Wd : VE.Weighing.WeighDoc), VE.Weighing.WellFormedWeigh Wd = Bool.true → VE.SoftNorms.WellFormedSoft Wd.D = Bool.true
+  -- uses VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.Weighing.WeighDoc.D@VE.Weighing.Tree VE.Weighing.WeighDoc@VE.Weighing.Tree VE.Weighing.WellFormedWeigh@VE.Weighing.Conditions
+  -- expr 3356984010
+theorem VE.Weighing.wf_congr
+  ∀ {E E' : VE.Environment},
+    E'.sorts = E.sorts →
+      E'.constants = E.constants →
+        ∀ (φ : VE.Formula) (Γ : List String),
+          (∀ (q : String), q ∈ VE.Norms.preds φ → E'.predicates q = E.predicates q) →
+            VE.Formula.WellFormed E Γ φ → VE.Formula.WellFormed E' Γ φ
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
+  -- expr 1717762978
 theorem VE.WireContract.expandAll_views
   ∀ (h g : VE.WireContract.Hooks),
     h.view = g.view →
