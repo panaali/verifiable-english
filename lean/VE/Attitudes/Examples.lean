@@ -280,7 +280,8 @@ def vql : List Word := ["very likely", "quite likely", "likely"]
 def vqlPairs : List (Word × Word) :=
   [("very likely", "quite likely"), ("quite likely", "likely"), ("very likely", "likely")]
 
-#guard [tab e1Words vql vqlPairs true true vql, tab (e1Words.take 7) [] [] true true [],
+#guard [tab e1Words vql vqlPairs true true vql, tab e1Words vql.reverse vqlPairs true true vql,
+    tab (e1Words.take 7) [] [] true true [],
     tab e1Words ["very unlikely", "almost certain"] [] true true [], tab e1Words vql vqlPairs true true ["likely"],
     tab e1Words vql vqlPairs false false []].all Table.reviewed
 #guard [tab (e1Words ++ ["possible"]) [] [] true true [],
