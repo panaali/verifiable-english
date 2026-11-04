@@ -189,6 +189,166 @@
    "definition": "VE.Service.Document.unitStatuses",
    "operator": "list-drop-first",
    "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); `us.toList.drop 1` breaks the F1.4 `#guard` (ChainExamples), which the tool's probe could not re-elaborate (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "eq-ne",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-drop-middle",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentsApart",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:159 (the layer stays apart from alternatives and risk) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals), ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "or-and",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRelaxes",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:371 (F1.3c) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRelaxes",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:371 (F1.3c) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "body-true",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "bool-flip",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-middle",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i), ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:410 (2c, withoutStatuses on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:410 (2c, withoutStatuses on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
   }
  ]
 }

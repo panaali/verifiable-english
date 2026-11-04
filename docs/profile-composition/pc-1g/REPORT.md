@@ -68,7 +68,11 @@ Lean is the only product language changed; the Python and Rust product code is u
 20. `verdictFields` keeping `undeclared_evaluative`: the F1.1/F1.4 twin `#guard` (:364).
 21. `withoutJudgmentsIn` (pc-1's) keeping `judgments@0` in the twin: the F1.3m (:107) and F1.3c `#guard`s.
 
-The trust-mutant tool's run (`tools/trust_mutants.py` through `mac-pytest.sh --trustmut`) is in `trust-mutants.json`; see "Trust".
+**The trust-mutant tool** (`tools/trust_mutants.py` through `mac-pytest.sh --trustmut`, `--test lean/VE/Judgments/ChainExamples.lean`, `--allow trust-mutants-allow.json`), in three runs:
+- On d4aa6e60 (a full run): 108 KILLED, 94 SURVIVOR, 58 UNKNOWN, 63 INVALID. The tool judges with Lean checks only (no pytest), and most survivors were list mutants of lists my fixtures held one element of. Fix (commits d4aa6e60..3e66f10e): `#guard`s with two or more of each (every code, two units, two limitations, a bar, 2e on two sets of two readings with two references), and the allow file.
+- On 3e66f10e (a rescore of that record, sharded in 7 parts; cloud parts 2, 4, 7 and local parts 1, 3, 5, 6): **67 KILLED, 0 SURVIVOR, 43 UNKNOWN, 63 INVALID, 150 ALLOWED, 0 NOT RUN**. That is `trust-mutants.json`. The tool's own merge refused the parts because they "disagree on rescore.file": the cloud parts record the `--rescore` path absolute and the local parts relative. I set the field to the relative path in copies of parts 2, 4 and 7, which changes no verdict, and merged them with `trust_mutants.py --merge`. This is the same disclosed path edit as an earlier item's merge (FOLLOW-UPS.md, DEFERRED).
+- The 43 UNKNOWNs (32 definition-operator pairs) each make a ChainExamples `#guard` fail ("did not evaluate to `true`"), and the tool's probe could not re-elaborate that guard. They are not survivors. I checked two by hand: the `noUnitStatus` bool-flip makes ChainExamples:406 fail, and `andAll` over `fs.take 1` breaks `preds_andAll` (Chain.lean:212). The allow file names each pair with its guard line. A rescore that applies it would rerun every UNKNOWN; the VM took 2.8 to 3.9 h per part of 27 to 31 mutants, and the merge of sharded `--rescore` parts is refused as above. So it was not run: **the committed record exits 1 on these 43 UNKNOWNs, which the allow file covers**. FOLLOW-UP pc-1gtm runs it.
+- The allow file (`trust-mutants-allow.json`, 70 entries) covers equivalent mutants, mutants that break only `correlate_judged`'s proof, the `judgedIn` retry that only `test_a_rights_document_and_its_twin_...[2]` reaches, mutants that do not elaborate, and the probe UNKNOWNs above. Each entry gives its reason.
 
 ## Trust
 
@@ -81,7 +85,8 @@ The trust-mutant tool's run (`tools/trust_mutants.py` through `mac-pytest.sh --t
 ## Tests
 
 - Iterating: `tests/test_judgments_chain.py` and `tests/test_judgments_document.py`, the cases touched (`VE_NATIVE_PREBUILT=1 uv run pytest -q ... -k ...`: "5 passed", "2 passed", "2 passed", "1 passed"); `lake build VE.Judgments.ChainExamples` after each Lean edit.
-- Once on the finished code: `regen_generated.py --write` ("wrote 35 entries"), `python3 lean/audit.py` (PASS, above), `trust_map.py --check` (PASS), the trust mutants, and the selected tests (`mac-pytest.sh --select`; result below).
+- On the finished code: `regen_generated.py --write` ("wrote 35 entries"), `python3 lean/audit.py` (PASS, above) and `trust_map.py --check` (PASS). Each later Lean edit (the stop ruling's, then the fixes below) was followed by the same regen and check.
+- Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. The first run (04d62d20) had 2 failing files, test_judgments_exercised.py (the block readers were stated about by no theorem) and test_assurance_manifest.py (Document.lean's pin; Chain.lean now reads JSON); it stopped at its 5-failure limit. Fixed in 8232b41f2: five theorems about the block readers, Chain.lean classified under `other_json`, and Document.lean re-pinned whole. Those two files then passed (`uv run pytest -q tests/test_assurance_manifest.py tests/test_judgments_exercised.py`: "143 passed"), and the full selection on 8232b41f passed: "selected tests ran on GitHub Actions (6 shards, run pc-1g-8232b41f-t741741); exit=0". The later commits change only ChainExamples `#guard`s, the class table, the allow file and docs.
 - Pre-existing failures on main (main-known-red.txt) are not touched here.
 
 ## Pilot bytes
