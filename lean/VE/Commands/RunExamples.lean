@@ -18,15 +18,16 @@ def withDual (name : String) (args : List String) (act dual : String) : String �
     [("role", .str "obligation"), ("default", .str "deny"), ("act", .str act), ("permission", .str dual)])])
 
 /-- F0's proof-task part: `reviewed(service)`, the proof predicate, a command with a fill, a prohibition. -/
-def proofEnv (you : Option (String × String) := some ("user", "alice")) (extra : List (String × Json) := []) : Json :=
+def proofEnv (you : Option (String × String) := some ("user", "alice")) (extra : List (String × Json) := [])
+    (consts : List (String × String) := []) : Json :=
   envOf ["user", "control", "service", "query", "token"]
     ([obligation "click_required" ["user", "control"] "{0} click {1}",
       withDual "submit_required" ["user", "query"] Texts.proofAct "submit_permitted",
       permission "submit_permitted" ["user", "query"] Texts.proofAct,
       permission "share_permitted" ["user", "token"] "{0} share {1}",
       predEntry "reviewed" ["service"] none (some "{0} is reviewed")] ++ extra)
-    [("alice", "user"), ("bob", "user"), ("check", "control"), ("atlas", "service"), ("beacon", "service"),
-     ("q1", "query"), ("q2", "query"), ("token1", "token")] "t1" you [("the token", "token1")]
+    ([("alice", "user"), ("bob", "user"), ("check", "control"), ("atlas", "service"), ("beacon", "service"),
+     ("q1", "query"), ("q2", "query"), ("token1", "token")] ++ consts) "t1" you [("the token", "token1")]
 
 def lexJson (env : Json) : Json :=
   match lexOf env with
@@ -156,6 +157,26 @@ def rawEnv : Json := .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool tr
 #guard (Run.caseReported (request proveAtlas [("q1", atlasReviewed), ("q1", beaconReviewed)])).getObjValD "error" ==
   .str "InvalidInput: duplicate query"
 #guard (Run.caseReported (request proveAtlas [("atlas", atlasReviewed)])).getObjValD "error" == .str "InvalidInput: query"
+
+/-! ## R16's mutants: each field of the answer, each record and the proof predicate's place -/
+
+#guard refuses (request "Please prove that atlas is reviewed using these premises." [("q1", atlasReviewed)])
+  "InvalidInput" "please needs author approval"
+#guard [get (request proveAtlas) "class", get (request "Prove that atlas is wonderful using these premises.") "class"] ==
+  [.str "VEError", .str "SyntaxError"]
+#guard [get (request (proveSpaced 401)) "text", get (request "Click Check.") "wording"] ==
+  [.str Texts.limitText, .str "Click Check."]
+#guard get (request proveGo [("q1", goA), ("q2", goB)] (env := goProof)) "outcome" == .str "many"
+#guard get (request "Review the meaning." (env := E_web)) "outcome" == .str "many"
+#guard [[("q1", atlasReviewed), ("atlas", beaconReviewed)], [("atlas", beaconReviewed), ("q1", atlasReviewed)]].all
+  fun qs => (Run.caseReported (request proveAtlas qs)).getObjValD "error" == .str "InvalidInput: query"
+#guard (Run.caseReported (request proveAtlas [("atlas", atlasReviewed)] (id := "r9"))).getObjValD "id" == .str "r9"
+#guard get (request proveAtlas [("zq", atlasReviewed)] (env := proofEnv (consts := [("zq", "query")]))) "reading" ==
+  proofOne "zq"
+-- The proof predicate first among the regulated declarations.
+#guard ((ctxOf (request "x") [⟨"q1", atlasReviewed⟩]).map fun c =>
+  readInstruction { c with se := { c.se with ne := { c.se.ne with regulated := c.se.ne.regulated.reverse } } }
+    proveAtlas) == some (.one (proofOf "q1"))
 
 #guard [request proveAtlas [("q1", atlasReviewed)], request proveAtlas, request "Click Check." (env := youBob),
   request proveGo [("q1", goA), ("q2", goB)] (env := goProof), request (proveSpaced 401),

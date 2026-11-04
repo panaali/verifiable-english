@@ -2305,9 +2305,7 @@
       "lean/VE/Discourse/Compose.lean": "lean:discourse-wire: the composed admission (discourse 14.4-14.6) reads the loaded payload's front matter (units, parts, discourse block) and builds the chain document, the written-out case and the wrapper answer; the chain route's answer is passed verbatim (composed_admission, conditions_retained)",
       "lean/VE/Discourse/ComposeExamples.lean": "fixtures only: #guard checks of the composed admission (discourse 14.8) on documents built as text and with Json.parse and Json.mkObj; no runtime JSON handling",
       "lean/VE/Service/ComposedAdmissionExamples.lean": "fixtures only: #guard checks of the composed admission end to end (discourse 14.5, 14.6, 14.8) on document texts; no runtime JSON handling",
-      "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path",
-      "lean/ResponseShape/Schemas/Command.lean": "the english.command response shape (schema source for tools/response_schemas.py); builds schema JSON, decodes no request",
-      "lean/ResponseShape/Encoders/Command.lean": "the english.command encoder theorem: proofs about the JSON VE.Commands.Run.caseReported writes; decodes nothing"
+      "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path"
     }
   },
   "plan_operations": {
