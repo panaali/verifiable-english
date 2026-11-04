@@ -91,6 +91,16 @@
    "result": "KILLED",
    "test": "lean/VE/Discourse/ComposeExamples.lean:280",
    "check": "#guard"
+  },
+  {
+   "definition": "ve.discourse._error_of",
+   "file": "ve/discourse.py",
+   "mutant": "Lean's CheckerUnavailable code read as a plain error (the composed path's step-4 text taken as a rejection)",
+   "from": "\"NotImplemented\": UnsupportedProfile, \"CheckerUnavailable\": CheckerUnavailable}.get(code, VEError)",
+   "to": "\"NotImplemented\": UnsupportedProfile}.get(code, VEError)",
+   "result": "KILLED",
+   "test": "tests/test_discourse_constitution.py::test_norm_content_is_read_on_the_composed_path",
+   "check": "pytest"
   }
  ]
 }
