@@ -51,7 +51,8 @@ elaboration status below is unchanged.
 > the draft-2 stub byte for byte (md5 `4c543f9b`, last written 2026-10-14), so **no fix was needed**: all 115
 > `#guard`s pass, 0 fail; the 59 `stmt_` statements, `Frame.shallowB_iff` (proved in the stub) and the two `rfl`
 > examples of 4.1 elaborate. A `#guard` with a false value appended to a copy fails the run, so the `#guard`s are
-> evaluated. Every `#guard` value equals section 7.1's hand value, so 7.1's values now count as computed. The guards
+> evaluated. Every `#guard` value equals section 7.1's hand value, so the 7.1 values they compute count as computed;
+S2's certificate and "one reading", and the "unresolved" of S5(b) and S9, are not computed by a guard. The guards
 > cover S1, S2, S4, S5, S8, S9, S12 to S27 (S22's raw side; its `SatUnder` side is a PS-3 `example`), 4.1, 4.2, the
 > table shapes (R-2) and the expected-readings lengths (R-D3, R-6). The admission fixtures of 7.3 named by the
 > ruling's items 6, 7, 8, 10 and D5 (A5u-allow, A5u-deny, A19, A20, A21, A24 to A28) need PS-2a's admission
