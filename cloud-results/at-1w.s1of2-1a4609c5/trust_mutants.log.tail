@@ -1,0 +1,8 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/ResponseShape/Schemas/Reports.lean is a selected declaration's file or in its import closure
+trust_mutants: 12 definitions, 228 mutants (114 to run), 4 jobs, base 4798b3f0ca8d
+UNKNOWN lean/VE/Attribution/Words.lean:13 VE.Reports.vowel (?, trusted) body-true: .contains c -> true (lean/VE/Attribution/Words.lean:13: Type mismatch)
+UNKNOWN lean/VE/Attribution/Run.lean:607 VE.Reports.Run.runWants (?, trusted) list-empty: List -> [] (lean/VE/Attribution/Run.lean:607: Function expected at)
+trust_mutants: 106 KILLED, 0 SURVIVOR, 2 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 114 OTHER SHARD in 228 s
+trust_mutants: ?, trusted: 91 KILLED, 2 UNKNOWN, 6 INVALID, 100 OTHER SHARD
+trust_mutants: G[V], trusted: 15 KILLED, 14 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 17.9 s, mutants 191 s, cleanup 2.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 25.6 s (3), mutant_builds 344.4 s (120), stage_controls 8.1 s (6), mutant_probes 376.3 s (106)
