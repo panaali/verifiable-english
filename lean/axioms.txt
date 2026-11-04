@@ -2411,6 +2411,8 @@
 'VE.EnglishGrammar.DecodeEncode.toString_nat' does not depend on any axioms
 'VE.EnglishGrammar.EFormula.decode_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.EnglishGrammar.ETerm.decode_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.EnglishGrammar.JudgmentLines.parseLine_renders' depends on axioms: [propext]
+'VE.EnglishGrammar.JudgmentLines.renderingTo_renders' depends on axioms: [propext]
 'VE.EnglishGrammar.LexRow.Small.dom' depends on axioms: [propext]
 'VE.EnglishGrammar.LexRow.Small.rename_eq' depends on axioms: [propext, Quot.sound]
 'VE.EnglishGrammar.LexRow.rename_inj' depends on axioms: [propext, Classical.choice, Quot.sound]
