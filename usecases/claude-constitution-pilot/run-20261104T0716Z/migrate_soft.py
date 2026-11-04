@@ -3,8 +3,8 @@
 
     uv run python usecases/claude-constitution-pilot/run-20261104T0716Z/migrate_soft.py
 
-Reads `translation.ve.md` of run 20261010T1800Z at pilot commit `76922d6c` (from git when the repository holds the
-commit, else the pinned copy `tests/data/ce4/`; both are checked against the commit's blob id) and writes
+Reads `translation.ve.md` of run 20261010T1800Z at pilot commit `76922d6c` (the pinned copy in `tests/data/ce4/`,
+checked against the commit's blob id) and writes
 `probe-translation.ve.md` beside this script. The rewriting rules, each one function:
 
 1. `soft-norms@0` is added to the profiles (`with_soft`).
@@ -29,11 +29,8 @@ Units, spans, `source_word` and the body bytes are unchanged (`unchanged`). The 
 from __future__ import annotations
 
 import copy
-import gzip
-import hashlib
 import importlib.util
 import json
-import subprocess
 import sys
 import tempfile
 import time
@@ -43,7 +40,7 @@ RUN = Path(__file__).resolve().parent
 ROOT = RUN.parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tests.ce4 import BLOB, COPY, PILOT_COMMIT, PILOT_PATH, SETS, soft_default  # noqa: E402
+from tests.ce4 import PILOT_COMMIT, PILOT_PATH, SETS, pinned_bytes, soft_default  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location("readings_s1_pilot", ROOT / "tools/readings_s1_pilot.py")
 pilot = importlib.util.module_from_spec(_spec)
@@ -58,13 +55,9 @@ PROBE = RUN / "probe-translation.ve.md"
 
 
 def pinned():
-    """The translation's bytes at the pilot commit, checked against its blob id."""
-    found = subprocess.run(["git", "cat-file", "blob", f"{PILOT_COMMIT}:{PILOT_PATH}"], cwd=ROOT,
-                           capture_output=True, check=False)
-    data = found.stdout if found.returncode == 0 else gzip.decompress(COPY.read_bytes())
-    if hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest() != BLOB:
-        raise SystemExit(f"the translation is not blob {BLOB} of {PILOT_COMMIT}")
-    return data
+    """The translation's bytes at the pilot commit: `tests/ce4`'s pinned copy, checked against the commit's blob id
+    (`tests/test_readings_sd_ce4.py` reads the blob back from the commit where the repository holds it)."""
+    return pinned_bytes()
 
 
 def with_soft(environment):
