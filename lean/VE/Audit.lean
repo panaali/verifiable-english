@@ -175,6 +175,7 @@ import VE.English.Statements
 import VE.EnglishGrammar.Encode
 import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Rules
@@ -273,6 +274,7 @@ import VE.Order.Wire
 import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
+import VE.Presupposition.Frame
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
@@ -412,6 +414,7 @@ import VE.Senses.Read
 import VE.Senses.Request
 import VE.Service.Diagnose
 import VE.Service.Document
+import VE.Service.DocumentChain
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
@@ -2496,6 +2499,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.allOk_first_error
 #print axioms VE.Discourse.allOk_iff
 #print axioms VE.Discourse.allOk_ok
+#print axioms VE.Discourse.assertiveOpen_zero
 #print axioms VE.Discourse.assertive_denote
 #print axioms VE.Discourse.assignOf_cons_ne
 #print axioms VE.Discourse.assignOf_cons_self
@@ -2611,6 +2615,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.innermost_within
 #print axioms VE.Discourse.instLawfulBEqFormula
 #print axioms VE.Discourse.instLawfulBEqTerm
+#print axioms VE.Discourse.inst_range_id
 #print axioms VE.Discourse.integrity_stale
 #print axioms VE.Discourse.isClaim_ok
 #print axioms VE.Discourse.isW_lt
@@ -2670,6 +2675,7 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.product_iff
 #print axioms VE.Discourse.profile_adapter_base
 #print axioms VE.Discourse.propertyOf_ok
+#print axioms VE.Discourse.raise1_zero
 #print axioms VE.Discourse.readingsOf_cons
 #print axioms VE.Discourse.recordedSlots_nil
 #print axioms VE.Discourse.recordedTarget_none
@@ -2717,11 +2723,13 @@ import VE.WireContract.Engine
 #print axioms VE.Discourse.term_beq_refl
 #print axioms VE.Discourse.term_denote_prefix
 #print axioms VE.Discourse.term_eq_of_beq
+#print axioms VE.Discourse.term_inst_range_id
 #print axioms VE.Discourse.treeEnd_cands
 #print axioms VE.Discourse.unary_var0
 #print axioms VE.Discourse.unary_var_wf
 #print axioms VE.Discourse.unconstrained_product
 #print axioms VE.Discourse.uniqueD_denote
+#print axioms VE.Discourse.uniqueOpen_zero
 #print axioms VE.Discourse.validate_accepted
 #print axioms VE.Discourse.validate_budget
 #print axioms VE.Discourse.validate_closed
@@ -2878,6 +2886,8 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.DecodeEncode.toString_nat
 #print axioms VE.EnglishGrammar.EFormula.decode_encode
 #print axioms VE.EnglishGrammar.ETerm.decode_encode
+#print axioms VE.EnglishGrammar.JudgmentLines.parseLine_renders
+#print axioms VE.EnglishGrammar.JudgmentLines.renderingTo_renders
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
@@ -4299,6 +4309,14 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Presupposition.Frame.shallowB_iff
+#print axioms VE.Presupposition.close_wellFormed
+#print axioms VE.Presupposition.goal_denote
+#print axioms VE.Presupposition.goal_wellFormed
+#print axioms VE.Presupposition.locate_plug
+#print axioms VE.Presupposition.plug_congr
+#print axioms VE.Presupposition.plug_wellFormed
+#print axioms VE.Presupposition.reach_typed
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed
 #print axioms VE.Question.Str.bsize_toSubstring
@@ -7481,6 +7499,10 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
+#print axioms VE.Service.DocumentChain.layeredOf_entails
+#print axioms VE.Service.DocumentChain.layeredOf_ids
+#print axioms VE.Service.DocumentChain.layeredOf_soft
+#print axioms VE.Service.DocumentChain.requestOf_environment
 #print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
