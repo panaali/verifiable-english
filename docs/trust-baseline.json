@@ -1975,8 +1975,8 @@
   },
   {
    "class": "V",
-   "lines": 112,
-   "reason": "df-5: the defaults-zone kind: VE/Defaults/ZoneWire.lean +74 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +112",
+   "lines": 113,
+   "reason": "df-5: the defaults-zone kind: VE/Defaults/ZoneWire.lean +75 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +113",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   }
