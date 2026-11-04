@@ -608,7 +608,9 @@
         "ResponseShape.Schemas.NormDefaults.defaults_situation",
         "ResponseShape.Schemas.NormDefaults.defaults_coherence",
         "ResponseShape.Schemas.NormDefaults.defaults_certificate",
-        "ResponseShape.Schemas.NormDefaults.defaults_model"
+        "ResponseShape.Schemas.NormDefaults.defaults_model",
+        "ResponseShape.Schemas.NormDefaults.defaults_zone_line",
+        "ResponseShape.Schemas.NormDefaults.defaults_zone"
       ],
       "G[R]": [
         "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -17569,6 +17571,7 @@
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
         "VE.Defaults.forcedAllOf",
+        "VE.Defaults.forcedOfMin",
         "VE.Defaults.maxDefaultAtoms",
         "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
@@ -17582,6 +17585,7 @@
         "VE.Defaults.zoneDeclOk",
         "VE.Defaults.zoneGens",
         "VE.Defaults.zoneMin",
+        "VE.Defaults.zoneOfMin",
         "VE.Defaults.zoneRecordOk",
         "VE.Defaults.zoneRow"
       ],
@@ -18256,6 +18260,59 @@
         "VE.Calc.ConsistencyExamples.tree",
         "VE.Calc.ConsistencyExamples.twelve",
         "VE.Calc.ConsistencyExamples.v6"
+      ]
+    },
+    "VE/Defaults/ZoneWire.lean": {
+      "C": [
+        "VE.Defaults.Wire.ZoneReplay",
+        "VE.Defaults.Wire.ZoneReplay.X",
+        "VE.Defaults.Wire.ZoneReplay.min",
+        "VE.Defaults.Wire.decisionOf",
+        "VE.Defaults.Wire.maxZoneObservations",
+        "VE.Defaults.Wire.outcomeOf",
+        "VE.Defaults.Wire.replayZoneOn",
+        "VE.Defaults.Wire.tupleIn"
+      ],
+      "D[V]": [
+        "VE.Defaults.Wire.ZoneLine.json",
+        "VE.Defaults.Wire.exceptedRule",
+        "VE.Defaults.Wire.zoneFields",
+        "VE.Defaults.Wire.zoneFieldsOf"
+      ],
+      "G[V]": [
+        "VE.Defaults.Wire.ZoneLine",
+        "VE.Defaults.Wire.zoneCase",
+        "VE.Defaults.Wire.zoneLines"
+      ]
+    },
+    "VE/Defaults/ZoneWireExamples.lean": {
+      "T": [
+        "VE.Defaults.ZoneWireFixtures.at_",
+        "VE.Defaults.ZoneWireFixtures.byDefault",
+        "VE.Defaults.ZoneWireFixtures.de13x",
+        "VE.Defaults.ZoneWireFixtures.dec",
+        "VE.Defaults.ZoneWireFixtures.exR",
+        "VE.Defaults.ZoneWireFixtures.lam13",
+        "VE.Defaults.ZoneWireFixtures.lam2",
+        "VE.Defaults.ZoneWireFixtures.lamEnv",
+        "VE.Defaults.ZoneWireFixtures.lamR",
+        "VE.Defaults.ZoneWireFixtures.obsN",
+        "VE.Defaults.ZoneWireFixtures.oneCall",
+        "VE.Defaults.ZoneWireFixtures.recOff",
+        "VE.Defaults.ZoneWireFixtures.recOutw",
+        "VE.Defaults.ZoneWireFixtures.refusedZ",
+        "VE.Defaults.ZoneWireFixtures.rowJ",
+        "VE.Defaults.ZoneWireFixtures.run",
+        "VE.Defaults.ZoneWireFixtures.shownZ",
+        "VE.Defaults.ZoneWireFixtures.sitJ",
+        "VE.Defaults.ZoneWireFixtures.zoneOf",
+        "VE.Defaults.ZoneWireFixtures.zreq",
+        "VE.Defaults.ZoneWireFixtures.γSit",
+        "VE.Defaults.ZoneWireFixtures.δSit",
+        "VE.Defaults.ZoneWireFixtures.μ'Env",
+        "VE.Defaults.ZoneWireFixtures.μ'R",
+        "VE.Defaults.ZoneWireFixtures.ξ'Sit",
+        "VE.Defaults.ZoneWireFixtures.πEnv"
       ]
     }
   }
