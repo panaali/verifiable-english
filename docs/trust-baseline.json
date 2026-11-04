@@ -2000,6 +2000,13 @@
    "reason": "jt-3: VE/EnglishGrammar/JudgmentLines.lean +75, VE/EnglishGrammar/Run.lean +4 (S +39, untied V +40, K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3, 2026-11-02",
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
+   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   }
  ]
 }
