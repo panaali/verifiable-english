@@ -18343,6 +18343,7 @@
         "VE.Attitudes.Examples.c_e_guard",
         "VE.Attitudes.Examples.c_e_node",
         "VE.Attitudes.Examples.c_e_part",
+        "VE.Attitudes.Examples.c_e_three",
         "VE.Attitudes.Examples.categories",
         "VE.Attitudes.Examples.cond",
         "VE.Attitudes.Examples.contentOf",
@@ -18372,7 +18373,13 @@
         "VE.Attitudes.Examples.ruleOf",
         "VE.Attitudes.Examples.sortC",
         "VE.Attitudes.Examples.sortS",
-        "VE.Attitudes.Examples.vocabP"
+        "VE.Attitudes.Examples.tab",
+        "VE.Attitudes.Examples.threeDefinitions",
+        "VE.Attitudes.Examples.threeDoc",
+        "VE.Attitudes.Examples.threeRegulated",
+        "VE.Attitudes.Examples.vocabP",
+        "VE.Attitudes.Examples.vql",
+        "VE.Attitudes.Examples.vqlPairs"
       ]
     },
     "VE/Attitudes/Scale.lean": {

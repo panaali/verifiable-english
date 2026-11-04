@@ -3937,7 +3937,7 @@ module VE.Ask.ZeroWire 9a62220daa1f04ca7f9e6853e4e3954fdcf9edb10ac0be0d1c7f2fdcf
 434:0-434:95 def VE.Ask.replayZeroAsk@VE.Ask.ZeroWire
 436:0-443:13 theorem VE.Ask.replayZeroAsk_request@VE.Ask.ZeroWire
 445:0-459:80 theorem VE.Ask.zero_ask_wire_sound@VE.Ask.ZeroWire
-module VE.Attitudes.Examples 36586a76387bddc1fa4958625c007711de01592f9d8e48ff999f96004aec1538
+module VE.Attitudes.Examples 77399e02d1521bb84df6750d2d119fbb586a5027aebab2b77e6e4a3e1b14191a
 14:0-21:119 def VE.Attitudes.Examples.fixtureTable@VE.Attitudes.Examples
 23:0-24:67 def VE.Attitudes.Examples.fixtureTableNoPair@VE.Attitudes.Examples
 26:0-27:114 def VE.Attitudes.Examples.badTableKnows@VE.Attitudes.Examples
@@ -3976,6 +3976,13 @@ module VE.Attitudes.Examples 36586a76387bddc1fa4958625c007711de01592f9d8e48ff999
 140:0-140:65 def VE.Attitudes.Examples.c_e_guard@VE.Attitudes.Examples
 142:0-144:17 def VE.Attitudes.Examples.errOf@VE.Attitudes.Examples
 146:0-146:61 def VE.Attitudes.Examples.names@VE.Attitudes.Examples
+274:0-277:36 def VE.Attitudes.Examples.tab@VE.Attitudes.Examples
+279:0-279:64 def VE.Attitudes.Examples.vql@VE.Attitudes.Examples
+280:0-281:90 def VE.Attitudes.Examples.vqlPairs@VE.Attitudes.Examples
+300:0-302:65 def VE.Attitudes.Examples.threeRegulated@VE.Attitudes.Examples
+303:0-304:84 def VE.Attitudes.Examples.threeDefinitions@VE.Attitudes.Examples
+305:0-306:106 def VE.Attitudes.Examples.threeDoc@VE.Attitudes.Examples
+313:0-314:108 def VE.Attitudes.Examples.c_e_three@VE.Attitudes.Examples
 module VE.Attitudes.Scale e3bb530dc4cfb92ec6fa49e1c919312011e5a312b74336265383377b147d025d
 11:0-11:21 def VE.Attitudes.Word@VE.Attitudes.Scale
 12:0-13:21 def VE.Attitudes.Item@VE.Attitudes.Scale

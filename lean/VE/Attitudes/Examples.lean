@@ -268,4 +268,51 @@ def names (A : AttDoc) : List String := (keys A).map (name A)
   (baseEnvAtt fat1).predicates categories[6]! == some [sortS] &&
   (envAtt fat1).predicates "weapons_uplift_permitted" == some [sortC, sortS]
 
+/-! ## Fixtures for the trust mutants (R16): each table fails one conjunct of `Table.reviewed`, with its offending
+entry first or last; each document has three entries where F-AT1 has one. -/
+
+def tab (cs ws : List Word) (ps : List (Word × Word)) (f kb : Bool) (kt : List Word) : Table :=
+  { candidates := cs, lowerBound := ws.map (·, "i"), above := ps.map (fun p => (p.1, p.2, "i")),
+    factive := if f then some "i" else none, knowsBelieves := if kb then some "i" else none,
+    knowsThinks := kt.map (·, "i") }
+
+def vql : List Word := ["very likely", "quite likely", "likely"]
+def vqlPairs : List (Word × Word) :=
+  [("very likely", "quite likely"), ("quite likely", "likely"), ("very likely", "likely")]
+
+#guard [tab e1Words vql vqlPairs true true vql, tab (e1Words.take 7) [] [] true true [],
+    tab e1Words ["very unlikely", "almost certain"] [] true true [], tab e1Words vql vqlPairs true true ["likely"],
+    tab e1Words vql vqlPairs false false []].all Table.reviewed
+#guard [tab (e1Words ++ ["possible"]) [] [] true true [],
+    tab e1Words ["possible", "very likely"] [] true true [], tab e1Words ["very likely", "possible"] [] true true [],
+    tab e1Words vql (("unlikely", "very likely") :: vqlPairs) true true vql,
+    tab e1Words vql (vqlPairs ++ [("very likely", "unlikely")]) true true vql,
+    tab e1Words vql vqlPairs true true ("unlikely" :: vql), tab e1Words vql vqlPairs true true (vql ++ ["unlikely"]),
+    tab e1Words vql vqlPairs.dropLast true true [], tab e1Words vql.reverse vqlPairs.dropLast true true [],
+    tab e1Words vql vqlPairs true true ["likely", "very likely"], tab e1Words vql vqlPairs true true ["very likely", "likely"],
+    tab e1Words ["quite likely", "very likely"] [("very likely", "quite likely")] true true ["very likely"],
+    tab e1Words vql vqlPairs false true [], tab e1Words vql vqlPairs false false ["likely"]].all (!·.reviewed)
+-- `AFormula.conds` keeps both operands' conditions, in order, in the whole context
+#guard [AFormula.and, AFormula.or, AFormula.implies].all (fun f =>
+  (f (.att (cond .knows "p")) (.and (.att (cond ql "q")) (.att (cond ql "r")))).conds ["a", "b"] ==
+  [(["a", "b"], cond .knows "p"), (["a", "b"], cond ql "q"), (["a", "b"], cond ql "r")])
+-- three holder sorts, regulated predicates, definitions, declared pairs and parts
+def threeRegulated : List VE.Norms.Regulated :=
+  [{ regulatedP with name := categories[1]!, sorts := [sortS] }, regulatedP,
+    { regulatedP with name := categories[2]!, sorts := [sortS] }]
+def threeDefinitions : List VE.Norms.Definition :=
+  [3, 4, 5].map (fun i => { name := categories[i]!, args := [sortS], body := .top })
+def threeDoc : AttDoc :=
+  { fat1 with holders := ["x", sortC, "y"], regulated := threeRegulated, definitions := threeDefinitions }
+#guard keys threeDoc == keys fat1 && ruleContext threeDoc (ruleOf "r" guard1) == [sortS, sortC]
+#guard [1, 2, 3, 4, 5].all (fun i => (baseEnv threeDoc).predicates categories[i]! == none) &&
+  (baseEnv threeDoc).predicates "weapons_uplift_permitted" == none &&
+  [0, 6].all (fun i => (baseEnv threeDoc).predicates categories[i]! == some [sortS])
+#guard (docOf table (vqlPairs.map (fun p => (p.2, p.1))) []).scale.above ==
+  table.scale.above ++ vqlPairs.map (fun p => (p.2, p.1))
+def c_e_three : AttDoc :=
+  c_e_doc ([0, 1, 2].map (fun i => { c_e_node with content := .unary categories[i]! (.const "s1") })) guard1
+#guard (partsOf c_e_three).length == 3 && (names c_e_three).drop 3 ==
+  ["attitudes__wants__1", "attitudes__wants__2", "attitudes__wants__3"]
+
 end VE.Attitudes.Examples
