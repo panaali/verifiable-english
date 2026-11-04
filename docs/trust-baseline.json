@@ -1933,9 +1933,9 @@
   },
   {
    "class": "V",
-   "lines": 145,
-   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); lean/VE/Service/DocumentChainExamples.lean +109 (fixture helpers, unclassified until the merge train's --write); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-03",
+   "lines": 36,
+   "reason": "pc-2a: lean/VE/Service/Document.lean +36 (requestOf, layeredOf, softFrame, and the soft branches of check, admitGraph, decodedEnvironment, environmentOf, softSource, softLayer); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-2a, 2026-11-04",
    "commit": "90807e7f73e773d5dcee56d3014b0287cc9df24f"
   }
  ]
