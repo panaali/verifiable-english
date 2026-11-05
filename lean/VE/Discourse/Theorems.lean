@@ -282,8 +282,8 @@ theorem profile_adapter_base (profiles : List String) (environment : Json) (j : 
     "ve.discourse@1" ∉ baseProfiles profiles ∧
     (VE.Route.Gate.decodeEnvelope (baseEnvironment environment)).map VE.Route.Gate.Envelope.family =
       VE.Route.Gate.classify (baseProfiles profiles) := by
-  unfold wrapperOk at hw
-  simp only [runAll_cons, runAll_nil, and_true] at hw
+  unfold wrapperOk envelopeChecks at hw
+  simp only [List.cons_append, List.nil_append, runAll_cons, runAll_nil, and_true] at hw
   obtain ⟨_, _, _, _, _, h6, h7⟩ := hw
   have hp : VE.Route.Gate.profilesOf (baseEnvironment environment) = .ok (baseProfiles profiles) := by
     cases hq : VE.Route.Gate.profilesOf (baseEnvironment environment) with
