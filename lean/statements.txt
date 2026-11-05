@@ -28348,6 +28348,24 @@ theorem VE.Paths.warshall_sound
     (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
   -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
   -- expr 2609517366
+theorem VE.Presupposition.Examples.s22_neg_s2
+  VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s2"]
+      (VE.Norms.neg VE.Presupposition.Examples.mixed22 "p") =
+    Bool.false
+  -- uses VE.Norms.neg@VE.Norms.Elaborate VE.Presupposition.Examples.evAt@VE.Presupposition.Examples VE.Presupposition.Examples.m22p@VE.Presupposition.Examples VE.Presupposition.Examples.mixed22@VE.Presupposition.Examples
+  -- expr 2166059501
+theorem VE.Presupposition.Examples.s22_pos_s1
+  VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s1"]
+      (VE.Norms.pos VE.Presupposition.Examples.mixed22 "p") =
+    Bool.true
+  -- uses VE.Norms.pos@VE.Norms.Elaborate VE.Presupposition.Examples.evAt@VE.Presupposition.Examples VE.Presupposition.Examples.m22p@VE.Presupposition.Examples VE.Presupposition.Examples.mixed22@VE.Presupposition.Examples
+  -- expr 2412234532
+theorem VE.Presupposition.Examples.s22_pos_s2
+  VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s2"]
+      (VE.Norms.pos VE.Presupposition.Examples.mixed22 "p") =
+    Bool.false
+  -- uses VE.Norms.pos@VE.Norms.Elaborate VE.Presupposition.Examples.evAt@VE.Presupposition.Examples VE.Presupposition.Examples.m22p@VE.Presupposition.Examples VE.Presupposition.Examples.mixed22@VE.Presupposition.Examples
+  -- expr 4161490448
 theorem VE.Presupposition.Frame.shallowB_iff
   ∀ (f : VE.Presupposition.Frame), f.shallowB = Bool.true ↔ f.shallow
   -- uses VE.Presupposition.Frame.shallow@VE.Presupposition.Frame VE.Presupposition.Frame.shallowB@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame

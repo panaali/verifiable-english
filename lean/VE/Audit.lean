@@ -277,6 +277,7 @@ import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
 import VE.Presupposition.Agree
+import VE.Presupposition.Examples
 import VE.Presupposition.Frame
 import VE.Presupposition.Reading
 import VE.Presupposition.Rows
@@ -4378,6 +4379,9 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Presupposition.Examples.s22_neg_s2
+#print axioms VE.Presupposition.Examples.s22_pos_s1
+#print axioms VE.Presupposition.Examples.s22_pos_s2
 #print axioms VE.Presupposition.Frame.shallowB_iff
 #print axioms VE.Presupposition.asserted_false_off_goal
 #print axioms VE.Presupposition.carried_asserted
