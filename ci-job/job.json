@@ -1,0 +1,12 @@
+{
+ "job": "testmap-9672601e-t847137-s0",
+ "head": "c47399598104018e4b92f1416ed063b12ac16d35",
+ "argv": [
+  "testmap-9672601e-t847137-s0",
+  "c47399598104018e4b92f1416ed063b12ac16d35",
+  "c47399598104018e4b92f1416ed063b12ac16d35",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-7488ae89f82e.tar.zst",
+  "b94d635796c0ce5c11f1f53cfc6d02c5f171d95395e2ac279d86c468a3778c6a",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_select_tests.py tests/test_answer_cutoff.py tests/test_senses_route.py tests/test_lean_layers_once.py tests/test_arith_uncharged_costs.py tests/test_rd9_statements.py tests/test_scales_exercised.py tests/test_architecture_docs.py tests/test_rd9_dri_signatures.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
