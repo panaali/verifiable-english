@@ -7903,8 +7903,10 @@
 'VE.Weighing.always_no_override' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.atLeast_edge' depends on axioms: [propext, Quot.sound]
 'VE.Weighing.atLeast_of_above' depends on axioms: [propext, Quot.sound]
+'VE.Weighing.atom_inj' depends on axioms: [propext]
 'VE.Weighing.atom_rel' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.atom_wf' does not depend on any axioms
+'VE.Weighing.bindAll_not_inj' depends on axioms: [propext]
 'VE.Weighing.bindAll_wf' depends on axioms: [propext]
 'VE.Weighing.chainEdges_append' depends on axioms: [propext]
 'VE.Weighing.chain_head_reach' depends on axioms: [propext, Quot.sound]
@@ -7948,6 +7950,7 @@
 'VE.Weighing.mem_weighPremises' depends on axioms: [propext, Quot.sound]
 'VE.Weighing.nodup_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.not_outweighs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Weighing.outweighsName_inj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.path_ends' does not depend on any axioms
 'VE.Weighing.preds_declared' depends on axioms: [propext]
 'VE.Weighing.premise_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -7956,6 +7959,9 @@
 'VE.Weighing.qfree_target' depends on axioms: [propext]
 'VE.Weighing.rankOrder_above' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.regulatedName_arity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Weighing.regulated_of_sorts' depends on axioms: [propext]
+'VE.Weighing.split_dunder_left' depends on axioms: [propext]
+'VE.Weighing.strength_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Weighing.strength_mem' depends on axioms: [propext, Quot.sound]
 'VE.Weighing.strictFlag_act' does not depend on any axioms
 'VE.Weighing.strictFlag_children' does not depend on any axioms
