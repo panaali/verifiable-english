@@ -2215,20 +2215,13 @@ def usageJson (m : List (String × List String) × List String) : Json :=
       Json.mkObj [("term", .str t), ("units", Json.arr (us.map Json.str).toArray)]).toArray),
     ("unused", Json.arr (m.2.map Json.str).toArray)]
 
-/-- The report's legend (plan 2.4), in declaration order: each bound term with jt-3's lines. -/
+/-- The report's legend (plan 2.4): each bound term with jt-3's lines, in declaration order. An admitted term has a
+line: its arity is within `JudgmentLines.atom`'s wordings, which an environment's signature check bounds. -/
 def legendRows (js : List VE.Judgments.Judgment) : List (String × List String) :=
-  js.filterMap fun j => match VE.EnglishGrammar.JudgmentLines.legendLines j with
-    | [] => none
-    | lines => some (j.name, lines)
-
-/-- The bound terms with no declaration line (`JudgmentLines.atom` has no wording for their arity), named so that a
-term never drops out of the report unsaid. -/
-def unworded (js : List VE.Judgments.Judgment) : List String :=
-  (js.filter fun j => (VE.EnglishGrammar.JudgmentLines.declarationLine j).isNone).map (·.name)
+  js.map fun j => (j.name, VE.EnglishGrammar.JudgmentLines.legendLines j)
 
 /-- Each unit's status line (spec 9.2), in unit order, over the judgments its list depends on, in declaration order.
-A unit that depends on none has no row (`status_eq`: a unit that depends on one is OPEN), nor has one that depends on
-a term with no wording (`statusLine`). -/
+A unit that depends on none has no row; a unit that depends on one is OPEN (`status_eq`). -/
 def statusRows (defs : List VE.Definitions.Def) (js : List VE.Judgments.Judgment)
     (views : List VE.Judgments.UnitView) : List (String × String) :=
   let J := VE.Judgments.names js
@@ -2240,7 +2233,6 @@ def statusRows (defs : List VE.Definitions.Def) (js : List VE.Judgments.Judgment
 def linesJson (js : List VE.Judgments.Judgment) (status : List (String × String)) : Json :=
   Json.mkObj [("legend", Json.arr ((legendRows js).map fun (t, lines) =>
       Json.mkObj [("term", .str t), ("lines", Json.arr (lines.map Json.str).toArray)]).toArray),
-    ("unworded", Json.arr ((unworded js).map Json.str).toArray),
     ("status", Json.arr (status.map fun (u, l) =>
       Json.mkObj [("unit", .str u), ("line", .str l)]).toArray)]
 

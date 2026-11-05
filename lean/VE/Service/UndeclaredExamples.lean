@@ -143,7 +143,6 @@ def boundLines : Json := Json.mkObj [
   ("legend", toJson [Json.mkObj [("term", .str "reasonable_limit"), ("lines", toJson [
     "Whether a limit is classified as \"reasonable_limit\" is a judgment for the governance function.",
     "The text mentions these points: the budget."])]]),
-  ("unworded", toJson ([] : List String)),
   ("status", toJson [Json.mkObj [("unit", .str "a"), ("line", .str
     "Open: this uses the judgment whether a limit is classified as \"reasonable_limit\".")]])]
 #guard lines bound == some boundLines
@@ -151,13 +150,13 @@ def boundLines : Json := Json.mkObj [
 #guard lines (fenced fenceProfiles "Atlas is published." [term "reasonable_grounds"]) == some (Json.mkObj [
   ("legend", toJson [Json.mkObj [("term", .str "reasonable_grounds"), ("lines", toJson [
     "Whether a limit is classified as \"reasonable_grounds\" is a judgment; the text does not say who makes it."])]]),
-  ("unworded", toJson ([] : List String)), ("status", toJson ([] : List Json))])
+  ("status", toJson ([] : List Json))])
 #guard lines (fenced plainProfiles "Atlas is published.") == none
--- A term with no wording (arity above `mechanicalWording`'s) is named; its factors keep their line.
-def seven : List String := List.replicate 7 "limit"
-#guard (unworded [⟨"p", seven, "unstated", []⟩, ⟨"q", ["limit"], "unstated", []⟩]) == ["p"]
-#guard (legendRows [⟨"p", seven, "unstated", []⟩]) == []
-#guard (legendRows [⟨"p", seven, "unstated", ["f"]⟩]) == [("p", ["The text mentions these points: f."])]
+-- Every term has its row, the third argument's factors included, in declaration order.
+#guard legendRows [⟨"b", ["limit"], "unstated", ["f"]⟩, ⟨"a", ["limit", "limit"], "reviewer", []⟩] ==
+  [("b", ["Whether a limit is classified as \"b\" is a judgment; the text does not say who makes it.",
+      "The text mentions these points: f."]),
+   ("a", ["Whether a limit has the recorded relation \"a\" to a limit (the same or another) is a judgment for the reviewer."])]
 -- Two judgments of one unit, in declaration order, and the rows of the units that depend on them.
 def view (id : String) (ps : List String) : VE.Judgments.UnitView :=
   { id, meaning := "open", listed := ps, asserted := true, set := none,

@@ -524,28 +524,31 @@ def _judgments_bound(usage, open_terms, unit_ids) -> bool:
 
 def _judgment_lines_bound(lines, usage, open_terms, unit_ids) -> bool:
     """Whether `judgment_lines` (Lean's `linesJson`, plan 2.4 and docs/spec/judgment-terms.md 9.2) is bound to the
-    request: each declared open term has a legend row or is named `unworded`, in declaration order; each status row
-    is a unit the usage map lists, in the request's unit order, and with no term `unworded` every such unit has one.
-    The text is Lean's: it is a non-empty string, and nothing else about it is read."""
+    request: a legend row for each declared open term, in declaration order; a status row for each unit the usage map
+    lists, in the request's unit order. The text is Lean's: a non-empty string that can be shown, not repeated within a
+    row, and nothing else about it is read."""
     def text(value):
-        return type(value) is str and bool(value)
-    names = _open_term_names(open_terms)
-    if type(lines) is not dict or set(lines) != {"legend", "unworded", "status"}:
+        if type(value) is not str or not value:
+            return False
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError:
+            return False
+        return True
+    if type(lines) is not dict or set(lines) != {"legend", "status"}:
         return False
-    legend, unworded, status = lines["legend"], lines["unworded"], lines["status"]
-    if type(legend) is not list or type(unworded) is not list or type(status) is not list:
+    legend, status = lines["legend"], lines["status"]
+    if type(legend) is not list or type(status) is not list:
         return False
     if not all(type(r) is dict and set(r) == {"term", "lines"} and type(r["lines"]) is list and r["lines"]
-               and all(text(line) for line in r["lines"]) for r in legend):
+               and all(text(line) for line in r["lines"]) and len(set(map(str, r["lines"]))) == len(r["lines"])
+               for r in legend):
         return False
     if not all(type(r) is dict and set(r) == {"unit", "line"} and text(r["line"]) for r in status):
         return False
-    terms, units = [r["term"] for r in legend], [r["unit"] for r in status]
-    if not (_ordered(terms, names) and _ordered(unworded, names) and _ordered(units, unit_ids)):
-        return False
-    using = {unit for row in usage["used"] for unit in row["units"]}
-    return (set(terms) | set(unworded) == {n for n in names if type(n) is str} and set(units) <= using and
-            (bool(unworded) or set(units) == using))
+    units = [r["unit"] for r in status]
+    return ([r["term"] for r in legend] == _open_term_names(open_terms) and _ordered(units, unit_ids) and
+            set(units) == {unit for row in usage["used"] for unit in row["units"]})
 
 
 def _undeclared_bound(names, environment, open_terms) -> bool:
