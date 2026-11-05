@@ -20,7 +20,7 @@ spec's text after whitespace normalisation (section "Spec re-read"), so nothing 
 | (3) `Examples.lean`: a `#guard` for every value 2.1-2.4 compute on F-AT1. The keys and names (fresh, at most 64 bytes, distinct from the regulated and defined names); `keyOf` of each name; each key's sorts; `envAtt`'s added predicates; `Scale.atLeast` on the frozen table (nothing admitted before E1 and E2 report); C-e's part, with `c_e` in its name | F-AT1: keys :218, sorts :220, names :222, freshness/64 bytes/distinctness :224, `keyOf` :227. `envAtt` :252-:260, `baseEnv`/`baseEnvAtt` :262-:269. Scale :151-:188. "Before E1 and E2 reported" is `preReportTable` (:169: no word, no two words related); the frozen table's three refused words are related to no admitted word (:167). C-e: `c_e_node`, `c_e_part`, `c_e_guard`, `c_e_three`, guards :241-:247, :256. Also F-AT2, F-AT3, F-AT0 and C-a's two conditions | 2fac8cabf, 4405a6846, b0df5d0af | `lake build VE.Attitudes.Examples` |
 | (4) `lean/ATTITUDES.md`: the module map of the three parts, the owner of each spec section, the stand-ins in force | written | 71d7fc542 | — |
 | (5) imports and generated files only through `regen_generated.py --write` (R12) | `regen --write` wrote `lean/VE/Audit.lean`, `axioms.txt`, `statements.txt`, `declarations.txt`, `predicates.txt` and the code map; `lean/VE/Route/frozen-sources.sha256` did not change. `lean/VE.lean` has no writer: regen lists `lean-roots` as `[union]` with write `-`, so its one import line is written by hand (as the plan's "(import union)" says) | f31de636d | `regen_generated: wrote 35 entries` |
-| Seeded bugs (three Lean, one Python) and a mutant per new trusted definition | section "Seeded bugs and mutants" | db3d08cd9; pre-review fix | `docs/attitudes/at-1a/mutants.json`, `trust-mutants.json`; `tools/test_layer_policy.py::LayerSelectionTests::test_attitudes_modules_share_the_english_lexicon_layer` |
+| Seeded bugs (three Lean, one Python) and a mutant per new trusted definition | section "Seeded bugs and mutants" | db3d08cd9; ec677229d | `docs/attitudes/at-1a/mutants.json`, `trust-mutants.json`; `tools/test_layer_policy.py::LayerSelectionTests::test_attitudes_modules_share_the_english_lexicon_layer` |
 | R16 trust record and FOLLOW-UPS row under "## at-1a" | the DRI signed +221 beyond R16 (section "Trust"); FOLLOW-UPS.md row written | db3d08cd9 | `tools/trust_map.py --check` rc 0 |
 
 Not delivered: nothing. Kept out on purpose: `lean/VE/Attribution/`, and at-1b's and at-1's modules.
@@ -148,8 +148,9 @@ FOLLOW-UP: at-1a-tie: tie `keys`, `name`, `keyOf`, `envAtt` and `baseEnvAtt` (af
 4. PASS: `test_attitudes_modules_share_the_english_lexicon_layer` checks the layer-policy Python row;
    Lean is new and read by no route. No Rust code changed.
 5. N.A.: no relayed field.
-6. PASS: the chain's gate passed at 18f18b4e; it will gate the new final HEAD. `trust-mutants.json` names
-   b0df5d0af; later commits change no Lean file (`git diff --stat b0df5d0af HEAD -- lean/` is empty).
+6. N.A.: the chain owns the final HEAD gate after handoff; its previous gate passed at 18f18b4e.
+   `trust-mutants.json` names b0df5d0af; later commits change no Lean file
+   (`git diff --stat b0df5d0af HEAD -- lean/` is empty).
 7. PASS: DELTA row 1 cites the DRI's decision file; `review-ready.py --delta-dri-needed` gives `no DELTA row reserved
    for the DRI`.
 8. PASS: no user-visible output changes (no route reads the modules); DELTA says so.
