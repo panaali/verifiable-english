@@ -18323,24 +18323,30 @@
         {
           "name": "VE.Defaults.Wire.ZoneReplay.min",
           "tied": [
+            "VE.Defaults.Wire.ZoneReplay.min_early",
+            "VE.Defaults.Wire.ZoneReplay.min_none",
             "VE.Defaults.Wire.ZoneReplay.min_ok"
           ]
         },
         {
           "name": "VE.Defaults.Wire.zoneSizes",
           "tied": [
+            "VE.Defaults.Wire.zoneSizes_none_iff",
+            "VE.Defaults.Wire.zoneSizes_observations",
             "VE.Defaults.Wire.zoneSizes_record"
           ]
         },
         {
           "name": "VE.Defaults.Wire.ZoneLine.kind",
           "tied": [
+            "VE.Defaults.Wire.zoneLine_rows_distinct",
             "VE.Defaults.Wire.zoneWords_complete"
           ]
         },
         {
           "name": "VE.Defaults.Wire.ZoneLine.row",
           "tied": [
+            "VE.Defaults.Wire.zoneLine_rows_distinct",
             "VE.Defaults.Wire.zoneWords_complete"
           ]
         },
