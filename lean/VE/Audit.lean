@@ -44,6 +44,7 @@ import VE.Ask.Sources
 import VE.Ask.Wire
 import VE.Ask.ZeroAnswer
 import VE.Ask.ZeroWire
+import VE.Attitudes.Scale
 import VE.Attribution.Admission
 import VE.Attribution.Assess
 import VE.Attribution.Bridge
@@ -1129,6 +1130,7 @@ import VE.WireContract.Engine
 #print axioms VE.Ask.zeroSplitModels_base
 #print axioms VE.Ask.zeroSplit_sound
 #print axioms VE.Ask.zero_ask_wire_sound
+#print axioms VE.Attitudes.table_reviewed
 #print axioms VE.Bridge.CountermodelQuery.conclusion_typed
 #print axioms VE.Bridge.CountermodelQuery.premises_typed
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
