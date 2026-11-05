@@ -1,3 +1,4 @@
 - `lean/VE/RightClauses/Examples.lean` — The section 9.1 fixtures this part decides (docs/spec/right-clauses.md 9.1), as `#guard`s: the build fails if one is false.
 - `lean/VE/RightClauses/Plain.lean` — The elaboration `plain` (docs/spec/right-clauses.md 1.2, 8.3) and the head's checks on structured lines (1.1, 1.3, 1.5, 4.1 steps 3 and 4, 7).
+- `lean/VE/RightClauses/Relation.lean` — Totality premises and the slot of the head (docs/spec/right-clauses.md 1.3, 4.2-4.4, 8.4).
 - `lean/VE/RightClauses/Tree.lean` — Structured right lines (docs/spec/right-clauses.md 1.1, 8.2): a rights line with its clauses, at most one relation and its elided spans, and the document that …
