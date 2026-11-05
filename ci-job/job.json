@@ -1,0 +1,21 @@
+{
+ "job": "ap-3dc.s1of8-d7108e94",
+ "head": "e95985847ae01f4220dec293e73c8c4c3f6e9125",
+ "argv": [
+  "ap-3dc.s1of8-d7108e94",
+  "e95985847ae01f4220dec293e73c8c4c3f6e9125",
+  "28f076f045597af109ae3a1bf5242ad8efc5dcfd",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-81b9b763b31c.tar.zst",
+  "4e1c6fa793c9294b2cf60e4f19d6af4d7ca8e7d4d43a8ac1be1857c0f3c343d4",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Service/ActsExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "1/8",
+  "--jobs",
+  "4"
+ ]
+}
