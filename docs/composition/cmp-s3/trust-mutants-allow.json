@@ -1,0 +1,6 @@
+{"allow": [
+{"definition": "VE.RightClauses.totalF", "operator": "all-any", "reason": "ill-typed as generated: `VE.Formula.any` does not exist, so the mutant does not elaborate and no program has this behaviour"},
+{"definition": "VE.RightClauses.relPremisesLabelled", "operator": "list-empty", "reason": "ill-typed as generated: `[]` for `D.lines` leaves the entry type unknown (invalid projection), and `[]` for `rel.total` or its map is a list where an `Option` is expected; the mutant does not elaborate"},
+{"definition": "VE.RightClauses.clauseSlotLabelled", "operator": "list-empty", "reason": "ill-typed as generated: `[]` for `(plain D)`, a document, does not elaborate"},
+{"definition": "VE.RightClauses.clauseSlotLabelled", "operator": "append-right", "reason": "ill-typed as generated: the mutant drops `(plain D) ++` and applies `limPremisesLabelled` to a list, which does not elaborate"}
+]}
