@@ -656,6 +656,7 @@
 'VE.Ask.zeroSplitModels_base' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zeroSplit_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zero_ask_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.table_reviewed' depends on axioms: [propext]
 'VE.Bridge.CountermodelQuery.conclusion_typed' does not depend on any axioms
 'VE.Bridge.CountermodelQuery.premises_typed' does not depend on any axioms
 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]

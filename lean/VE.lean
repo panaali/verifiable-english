@@ -331,3 +331,4 @@ import VE.Weighing.Conditions
 import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Attitudes.Examples
