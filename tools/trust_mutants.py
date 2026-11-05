@@ -1412,7 +1412,8 @@ INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.
 #   LEDGER and sys.path line and that check. No other module the tool loads imports it. Its module level imports and
 #   assigns only: test_the_plan_only_argument_still_holds keeps all of this true.
 PLAN_ONLY_TOOL = frozenset({"tools/layer_policy.py"})
-CLASS_TABLE = "tools/trust-classes.json"  # read by `plan` alone, for `chosen` and each row's class: no verdict reads it
+CLASS_TABLE = "tools/trust-classes.json"  # read by `plan`, unless a Lean check also names it
+PLAN_INPUTS = PLAN_ONLY_TOOL | {CLASS_TABLE}
 # What Lake reads, or Lean when it builds or checks a module, whatever a module's own text names; a directory listing
 # there can read a file it never names (`no_build_reads`).
 LAKE_FILES = re.compile(r"(?:.*\.lean|lakefile\..*|lean-toolchain|lake-manifest\.json)")
@@ -1566,23 +1567,32 @@ def lake_reads(root: Path, outside: list[Path]) -> str:
     return "\n".join([*out, *(t.read_text() for t in outside)]).casefold()
 
 
+def unread_by_build(name: str, lake: str | None) -> bool:
+    """A plan input is absent from every Lake/Lean source and outside test that can read it."""
+    return lake is not None and not (LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)
+
+
 def no_build_reads(name: str, lake: str | None) -> bool:
     """Whether `name` (root-relative) is lean/checkers.lock or a .md under lean/ that no Lean build or check can read:
     `lake` (`lake_reads`) names it nowhere, by its bare file name, and lists no directory (a name a module computes
     from pieces is not looked for: reviewers run without --rescore). Any other file is not.
     `Scratch` restores a shared build by tools/lean_share.py's key, which leaves the lock out ("which no build reads")."""
     named = name == lean_share.LOCK_PINS or name.startswith("lean/") and name.endswith(".md")
-    return lake is not None and named and not (LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)
+    return named and unread_by_build(name, lake)
 
 
 def check_only(changed: list[str], reach: set[str], tests: set[str], lake: str | None = None) -> str | None:
     """Why the files that `changed` (root-relative) are no check-only change, else None: each must be a module of
     lean/ outside `reach` (every selected declaration's file and import closure), an outside --test file (`tests`), a
-    generated inventory (`INVENTORIES`), trust_map's table (`CLASS_TABLE`: `previous` still needs the same mutants) or
-    a file no build reads (`no_build_reads`). A lakefile, toolchain or any other file is none."""
+    generated inventory (`INVENTORIES`), an unread plan input (`CLASS_TABLE` or `PLAN_ONLY_TOOL`, with the same
+    mutants), or a file no build reads (`no_build_reads`). A lakefile, toolchain or any other file is none."""
     for name in changed:
-        if name in tests or name in INVENTORIES or name == CLASS_TABLE or no_build_reads(name, lake):
+        if (name in tests or name in INVENTORIES or
+                (name in PLAN_INPUTS and unread_by_build(name, lake)) or
+                no_build_reads(name, lake)):
             continue
+        if name in PLAN_INPUTS:
+            return f"{name} may be read by a Lean build or check"
         if not (name.startswith("lean/") and name.endswith(".lean")):
             return f"{name} is no module of lean/, --test file, generated inventory or file no build reads"
         if name.removeprefix("lean/") in reach:
@@ -1614,6 +1624,8 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not
             if fixed := [k for k in differ if k == "options" or k == "tool" and whole]:
                 return f"its inputs differ ({', '.join(fixed)})" + (
                     f": {', '.join(x for x in moved if x not in PLAN_ONLY_TOOL)}" if whole and moved else "")
+            if "tool" in differ and (why := why_not(moved)):
+                return f"its inputs differ (tool): {why}"
             if not isinstance(old.get("files"), dict):
                 return f"its inputs differ ({', '.join(differ)}) and it records no per-file digests"
             changed = sorted(k for k in old["files"].keys() | now["files"].keys()
