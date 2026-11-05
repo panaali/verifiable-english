@@ -1,0 +1,39 @@
+trust_mutants: 17 definitions, 427 mutants (54 to run), 4 jobs, base 28f076f04559
+UNKNOWN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-empty: (M.preds.map (·.2.1)).eraseDups.map -> [] (lean/VE/Acts/Run.lean:53: Function expected at)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-empty: ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"] -> []
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:47 ResponseShape.Schemas.NormDefaults.kind (G[V], trusted) list-empty: [ ("admission", kindIs "admission"), ("norm-defaults-elaborate", kindIs "norm-defaults-elaborate"... -> []
+UNKNOWN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-empty: e.D.acts -> [] (lean/VE/Acts/Run.lean:60: Invalid projection: Type of)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-empty: ["ELABORATED", "REFUSED"] -> []
+SURVIVOR lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) any-all: any -> all
+SURVIVOR lean/VE/Acts/Run.lean:45 VE.Acts.Run.rulesJson (D[V], trusted) list-empty: N.carveOuts.map VE.Norms.Wire.enc -> []
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-empty: ["null"] -> []
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:52 ResponseShape.Schemas.Norms.kind (G[V], trusted) list-drop-last: [ ("admission", kindIs "admission"), ("background", kindIs "background"), ("norms-elaborate", kin... -> ([ ("admission", kindIs "admission"), ("background", kindIs "background"), ("norms-elaborate", ki...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:166 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-empty: ["source", "parts", "text"] -> []
+SURVIVOR lean/VE/Acts/Run.lean:73 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-last: (VE.Norms.Wire.actsProfiles true environment) -> ((VE.Norms.Wire.actsProfiles true environment).dropLast)
+SURVIVOR lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-first: e.D.acts.map (·.1) -> ((e.D.acts.map (·.1)).take 1)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-first: ["ELABORATED", "REFUSED"] -> (["ELABORATED", "REFUSED"].take 1)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:166 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-first: [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json#... -> ([obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-first: ["allow", "deny", "unspecified"] -> (["allow", "deny", "unspecified"].take 1)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:141 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ obj, .required ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "sp... -> ([ obj, .required ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "s...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-first: [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [ ... -> ([obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-last: [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)] -> ([("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)].dropLast)
+SURVIVOR lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) list-drop-first: listed -> (listed.drop 1)
+SURVIVOR lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: e.D.acts -> (e.D.acts.reverse.take 1)
+SURVIVOR lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: e.M.preds -> (e.M.preds.reverse.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "predicates", -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common.... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:150 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "p... -> ([arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("diagnostic", str), -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .type ["null"]] -> ([str, .type ["null"]].drop 1)
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign"... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:151 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "act", -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("sorts", ref "common.json#/$defs/strings"), -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("rules", n [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", ... -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("source", str), -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:166 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "parts", -> 
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:150 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], clo... -> ([obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], cl...
+SURVIVOR lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "kept", -> 
+trust_mutants: 15 KILLED, 32 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 373 OTHER SHARD in 2819 s
+trust_mutants: D[V], trusted: 11 KILLED, 4 SURVIVOR, 2 UNKNOWN, 5 INVALID, 134 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 28 SURVIVOR, 239 OTHER SHARD
+trust_mutants: steps: wall plan 11.8 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1845.7 s, mutants 953.3 s, cleanup 3 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 4613.1 s (15), mutant_builds 673.2 s (54), mutant_checks 2253.1 s (49), stage_controls 91.9 s (2), mutant_probes 497 s (15)
