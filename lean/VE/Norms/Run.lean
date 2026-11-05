@@ -1,3 +1,4 @@
+import VE.Acts.Decode
 import VE.Norms.Admission
 import VE.Norms.Flagged
 import VE.Norms.Plain
@@ -82,8 +83,8 @@ def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
   VE.Route.Wire.ok id [("admitted", .bool true), ("report", reportJson res.report),
     ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray)]
 
-def runAdmission (id : String) (environment document : Json) : Except String Json := do
-  let res ← Admission.admitDocument environment document
+def runAdmissionIn (dec : Wire.SourceDecoder) (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocumentIn dec environment document
   let envId ← VE.Route.Wire.environmentId res.src.ne.profiles res.canonical
   let reportId ← VE.CertificateWire.digest (reportDomain res.src.ne.profiles)
     (reportPayload envId document res.report)
@@ -105,12 +106,12 @@ well-formed norm source, the answer is exactly the encoding of the checked
 admission, every binding is recomputed from source and regeneration, the
 report is admitted, and it is a semantic consequence of the regenerated
 Background and layer premises and its remaining assumptions. -/
-def AdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
+def AdmissionAnswerIn (dec : Wire.SourceDecoder) (id : String) (environment document answer : Json) : Prop :=
   ∃ res : Admission.Admitted, ∃ reportId : String,
-    Admission.admitDocument environment document = .ok res ∧
+    Admission.admitDocumentIn dec environment document = .ok res ∧
     WellFormed res.src.D = true ∧
     answer = encodeAdmitted id reportId res ∧
-    Admission.SourceDecoded environment document res ∧
+    Admission.SourceDecodedIn dec environment document res ∧
     BindingsMatchSourceAndRegeneration environment document res reportId ∧
     Admission.ReportAdmitted res ∧
     (∀ S : VE.Structure.{0}, S.Admissible res.src.ne.rv.environment →
@@ -119,48 +120,48 @@ def AdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
       Sat S ((Admission.otherAssumptions res).map (·.formula)) →
       res.report.root.formula.denote S [])
 
-theorem runAdmission_sound (id : String) (environment document answer : Json)
-    (h : runAdmission id environment document = .ok answer) :
-    AdmissionAnswer id environment document answer := by
-  unfold runAdmission at h
+theorem runAdmission_soundIn (dec : Wire.SourceDecoder) (id : String) (environment document answer : Json)
+    (h : runAdmissionIn dec id environment document = .ok answer) :
+    AdmissionAnswerIn dec id environment document answer := by
+  unfold runAdmissionIn at h
   obtain ⟨res, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨envId, he, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨reportId, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   cases h
   obtain ⟨hsrc, hbound, hsound, hnodes, hleaves, hcit, hch⟩ :=
-    Admission.admitDocument_spec.{0} environment document res hr
+    Admission.admitDocument_specIn.{0} dec environment document res hr
   exact ⟨res, reportId, hr, res.src.wf, rfl, hsrc, ⟨hbound, envId, he, hd⟩,
     ⟨hsound, hnodes, hleaves, hcit, hch⟩,
-    fun S hS hf hg ho => Admission.norms_wire_report_consequence environment document res hr S hS hf hg ho⟩
+    fun S hS hf hg ho => Admission.norms_wire_report_consequenceIn dec environment document res hr S hS hf hg ho⟩
 
 /-- An elaborate row's `wordings` (the norms and norm-defaults routes'): `Wire.plainWordings`, by predicate. -/
 def wordingsJson (ne : Wire.NormsEnvironment) : Json :=
   Json.mkObj ((Wire.plainWordings ne).map fun (p, w) => (p, .str w))
 
-def runCase (j : Json) : Except String Json := do
+def runCaseIn (dec : Wire.SourceDecoder) (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "admission" && usesNormsPath j then
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
-    return ← runAdmission id environment document
+    return ← runAdmissionIn dec id environment document
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← Wire.decodeSource (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms") (flags := true)
+    let src ← dec (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms")
     return VE.Route.Wire.ok id (Flagged.regenerated src ++ [("wordings", wordingsJson src.ne)])
   if kind == "norms-certificate" then
-    let r ← Flagged.replayEntailment j
+    let r ← Flagged.replayEntailmentIn dec j
     let steps := VE.Route.Steps.fol r.cert.trace
     if steps > (← VE.Route.Steps.limit j) then throw VE.Route.Steps.stepLimit
     return VE.Route.Wire.ok id [("valid", .bool (Flagged.valid r)),
       ("background", toJson (Flagged.flagPremises r.src ++ background r.src.D).length),
       ("layers", toJson (elaborate r.src.D.T).length), ("steps", toJson steps)]
   if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
-    let ⟨src, w⟩ ← Flagged.replayWitness j
+    let ⟨src, w⟩ ← Flagged.replayWitnessIn dec j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
       ("target", .str w.target.1), ("targets", toJson ((targets src.D).map (·.1)))]
   if kind == "norms-conflict" then
-    let res ← Flagged.replayConflict j
+    let res ← Flagged.replayConflictIn dec j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
       ("targets", toJson ((targets res.src.D).map (·.1)))] ++
@@ -177,11 +178,11 @@ def runCase (j : Json) : Except String Json := do
 /-- The public admission branch (11.4): from raw JSON, a successful norms
 admission answer satisfies the full admission obligation for the case's own
 id, environment and document; no successful norm input falls through to P0. -/
-theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+theorem norms_wire_acceptanceIn (dec : Wire.SourceDecoder) (j answer : Json) (h : runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesNormsPath j = true) :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
-      AdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer := by
-  unfold runCase at h
+      AdmissionAnswerIn dec id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCaseIn at h
   obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
   have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
@@ -194,11 +195,39 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   have hd' : j.getObjValD "document" = document := by
     simp only [Json.getObjValD, hd]; rfl
   rw [he', hd']
-  exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
+  exact ⟨id, hid, runAdmission_soundIn dec id environment document answer (by simpa using h)⟩
+
+/-! ## The route's own decoder -/
+
+def runAdmission : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeFlagged
+def AdmissionAnswer : String → Json → Json → Json → Prop := AdmissionAnswerIn Wire.decodeFlagged
+def runCase : Json → Except String Json := runCaseIn Wire.decodeFlagged
+
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    AdmissionAnswer id environment document answer :=
+  runAdmission_soundIn Wire.decodeFlagged id environment document answer h
+
+theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesNormsPath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      AdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer :=
+  norms_wire_acceptanceIn Wire.decodeFlagged j answer h hk hn
+
+/-- Whether a case's environment is read with `acts@0`. -/
+def underActs (environment : Json) : Bool := !(Wire.actsProfiles true environment).isEmpty
+
+/-- The norms route's decoder of `environment`: the elaborated document under `acts@0` (act-phrases 6.4); else
+today's. -/
+def decoderOf (environment : Json) : Wire.SourceDecoder :=
+  if underActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlagged
+
+/-- The norms route's public entry: `runCaseIn` at the decoder of the case's environment. -/
+def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j || Plain.layered (j.getObjValD "environment") then
-    match runCase j with
+    match runCaseRouted j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]

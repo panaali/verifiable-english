@@ -132,6 +132,9 @@ import VE.Discourse.ComposeExamples
 import VE.Service.ComposedAdmissionExamples
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
+import VE.Presupposition.Reading
+import VE.Presupposition.Rows
+import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Examples
@@ -241,6 +244,7 @@ import VE.Acts.ElaborateExamples
 import VE.Acts.Wire
 import VE.Acts.Decode
 import VE.Acts.DecodeExamples
+import VE.Acts.DecodeTwins
 import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
@@ -289,12 +293,17 @@ import VE.Scope.ReadingsExamples
 import VE.Scope.English
 import VE.Scope.Run
 import VE.Scope.RunExamples
+import VE.EnglishGrammar.JudgmentLinesExamples
+import VE.EnglishGrammar.JudgmentRunExamples
 import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach
 import VE.Scope.ReachExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
+import VE.Service.DocumentChain
+import VE.Service.DocumentChainExamples
+import VE.Service.DocumentChainChecks
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
 import VE.Service.CardinalityExamples
@@ -319,5 +328,8 @@ import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
+import VE.Weighing.Tree
+import VE.Weighing.Conditions
+import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples

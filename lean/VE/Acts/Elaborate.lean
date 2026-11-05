@@ -117,14 +117,18 @@ def splitDoc (D : ActsDoc) (sa : String → Option (List Atom)) (M : SplitMap) :
                                nodes := D.U.D.T.nodes.flatMap (splitNode sa) } },
     unspec := D.U.unspec.flatMap (partNamesIn M) }
 
+/-- AP's refusal of a `role` (`rule`, `definition`, or weighing's `act` and `rule` targets) named `name` that
+names a split predicate. -/
+def splitRefusal (role name : String) : String :=
+  s!"InvalidInput: {role} {name} names a predicate that is split into parts; name one of its parts"
+
 /-- Step 2 (D-25): no guard, exception or definition names a split predicate. -/
 def refsOk (D : ActsDoc) (sa : String → Option (List Atom)) : Except String Unit :=
   let split := fun φ => (preds φ).any (fun q => (sa q).isSome)
   match D.U.D.T.nodes.find? (fun N => (N.guard :: N.carveOuts).any split) with
-  | some N => .error s!"InvalidInput: rule {N.name} names a predicate that is split into parts; name one of its parts"
+  | some N => .error (splitRefusal "rule" N.name)
   | none => match D.U.D.T.definitions.find? (fun d => split d.body) with
-    | some d =>
-      .error s!"InvalidInput: definition {d.name} names a predicate that is split into parts; name one of its parts"
+    | some d => .error (splitRefusal "definition" d.name)
     | none => .ok ()
 
 /-- Step 3 (D-26): a part name is not declared in the source (environment, regulated, unspecified) or by another
