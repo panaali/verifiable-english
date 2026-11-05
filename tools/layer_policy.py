@@ -215,9 +215,7 @@ def lean_layer(module: str) -> int | None:
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",
         "VE.Tableau", "VE.TableauClosure", "VE.TableauChecker",
-        "VE.TableauChecks", "VE.TableauExtended", "VE.TableauExtendedRules",
-        "VE.TableauExtendedClosure", "VE.TableauExtendedExtra",
-        "VE.TableauExtendedInduction", "VE.TableauExtendedChecker",
+        "VE.TableauChecks", "VE.Closure.Tableau",
     }:
         return 1
     if module.startswith("VE."):
