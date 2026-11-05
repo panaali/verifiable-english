@@ -130,11 +130,11 @@ def decodeFilledDoc (s : Wire.SourceU) (j : Json) : Except String VE.Route.Admis
 def filledProfiles (s : Wire.SourceU) : List String :=
   s.src.ne.profiles.filter (· != Wire.profile)
 
-def admitDocument (environment document : Json) : Except String Admitted := do
+def admitDocumentIn (dec : Wire.UDecoder) (environment document : Json) : Except String Admitted := do
   VE.Bridge.displayFields document ["units", "graph"]
     ["lemmas", "open_terms", "reading_sets", "narrowings"]
   let (clean, norms, quoted) ← splitDocument document
-  let s ← Wire.decodeSourceU environment norms
+  let s ← dec environment norms
   VE.Route.Admission.require s.profiled "UnsupportedProfile: norm-defaults@0 is required"
   quoted.forM (checkQuoted s)
   let D₀ ← decodeFilledDoc s clean
@@ -159,9 +159,9 @@ def admitDocument (environment document : Json) : Except String Admitted := do
   pure ⟨s, D, filled, graphJson, nodeArray, decoded, wires, g, r,
     D.units.map (fun x => renderKind x.kind)⟩
 
-def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
+def SourceDecodedIn (dec : Wire.UDecoder) (environment document : Json) (res : Admitted) : Prop :=
   (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧
-    Wire.decodeSourceU environment norms = .ok res.s ∧
+    dec environment norms = .ok res.s ∧
     (∀ q ∈ quoted, checkQuoted res.s q = .ok ()) ∧
     ∃ D₀, decodeFilledDoc res.s clean = .ok D₀ ∧
       res.doc = { D₀ with literals := res.s.src.ne.rv.literals }) ∧
@@ -194,15 +194,15 @@ def ReportAdmitted (res : Admitted) : Prop :=
 theorem fill_lits_source (s : Wire.SourceU) : (fill s.U).lits = s.src.ne.rv.literals := by
   rw [fill_lits, s.doc]; exact s.src.lits
 
-theorem admitDocument_spec (environment document : Json) (res : Admitted)
-    (h : admitDocument environment document = .ok res) :
-    SourceDecoded environment document res ∧ CertificatesBound environment res ∧
+theorem admitDocument_specIn (dec : Wire.UDecoder) (environment document : Json) (res : Admitted)
+    (h : admitDocumentIn dec environment document = .ok res) :
+    SourceDecodedIn dec environment document res ∧ CertificatesBound environment res ∧
     VE.Graph.SoundReport.{u} (fill res.s.U).E res.graph res.report ∧
     (∀ w ∈ res.wires, NodeAdmitted res.s res.doc w) ∧
     (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
       w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.s res.doc w) ∧
     CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report := by
-  unfold admitDocument at h
+  unfold admitDocumentIn at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨⟨clean, norms, quoted⟩, hsplit, h⟩ := bind_ok h
   obtain ⟨s, hsrc, h⟩ := bind_ok h
@@ -276,15 +276,15 @@ def otherAssumptions (res : Admitted) : List VE.Graph.Claim :=
 /-- Semantic report consequence: in every structure admissible for `E‴` satisfying the
 regenerated Background of `fill U`, `Fill_T` and the layer premises of `T‴`, the
 remaining assumptions entail the root. -/
-theorem wire_report_consequence (environment document : Json) (res : Admitted)
-    (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
+theorem wire_report_consequenceIn (dec : Wire.UDecoder) (environment document : Json) (res : Admitted)
+    (h : admitDocumentIn dec environment document = .ok res) (S : VE.Structure.{u})
     (hS : S.Admissible (fill res.s.U).E)
     (hflags : Sat S (VE.Data.Background.generate res.doc.flags))
     (hregen : Sat S (background (fill res.s.U) ++ fillPremises res.s.U ++ elaborate (fill res.s.U).T))
     (hother : Sat S ((otherAssumptions res).map (·.formula))) :
     res.report.root.formula.denote S [] := by
   obtain ⟨⟨⟨_, _, _, _, _, _, _, _, hdoc⟩, _, _, hlits, _⟩, _, hsound, _, hleaves, _⟩ :=
-    admitDocument_spec.{u} environment document res h
+    admitDocument_specIn.{u} dec environment document res h
   apply hsound.2.2.2.1 S hS
   intro a ha
   obtain ⟨leaf, hl, rfl⟩ := List.mem_map.mp ha
@@ -340,5 +340,29 @@ theorem wire_report_consequence (environment document : Json) (res : Admitted)
     refine ⟨hl, ?_⟩
     simp only [Bool.not_eq_true] at hb
     simp [hb, hlayer]
+
+/-! ## The route's own decoder -/
+
+def admitDocument : Json → Json → Except String Admitted := admitDocumentIn Wire.decodeSourceU
+def SourceDecoded : Json → Json → Admitted → Prop := SourceDecodedIn Wire.decodeSourceU
+
+theorem admitDocument_spec (environment document : Json) (res : Admitted)
+    (h : admitDocument environment document = .ok res) :
+    SourceDecoded environment document res ∧ CertificatesBound environment res ∧
+    VE.Graph.SoundReport.{u} (fill res.s.U).E res.graph res.report ∧
+    (∀ w ∈ res.wires, NodeAdmitted res.s res.doc w) ∧
+    (∀ leaf ∈ res.report.assumptions, ∃ w ∈ res.wires,
+      w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.s res.doc w) ∧
+    CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report :=
+  admitDocument_specIn.{u} Wire.decodeSourceU environment document res h
+
+theorem wire_report_consequence (environment document : Json) (res : Admitted)
+    (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
+    (hS : S.Admissible (fill res.s.U).E)
+    (hflags : Sat S (VE.Data.Background.generate res.doc.flags))
+    (hregen : Sat S (background (fill res.s.U) ++ fillPremises res.s.U ++ elaborate (fill res.s.U).T))
+    (hother : Sat S ((otherAssumptions res).map (·.formula))) :
+    res.report.root.formula.denote S [] :=
+  wire_report_consequenceIn.{u} Wire.decodeSourceU environment document res h S hS hflags hregen hother
 
 end VE.NormDefaults.Admission

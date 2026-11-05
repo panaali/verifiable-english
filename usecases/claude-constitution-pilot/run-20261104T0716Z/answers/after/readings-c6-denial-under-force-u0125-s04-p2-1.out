@@ -1,0 +1,31 @@
+{
+  "assumed": [
+    [
+      "force-u0125-s04-p2",
+      1
+    ]
+  ],
+  "choice": [
+    [
+      "force-u0036-s05",
+      0
+    ],
+    [
+      "force-u0125-s04-p2",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      0
+    ],
+    [
+      "force-u0263-s04-p2",
+      0
+    ]
+  ],
+  "route": "enumerated",
+  "verdict": "UNKNOWN",
+  "english": [
+    "Read sentence 132 as *must* and sentence 471 as *should not* and sentence 589 as *must not* and sentence 1000 as *must*: VE could not check whether the conclusion follows."
+  ]
+}

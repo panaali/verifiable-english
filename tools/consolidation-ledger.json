@@ -22,7 +22,7 @@
     {"module": "VE/SoftNorms/Admission.lean", "names": "\\.decodeSoftDoc$"},
     {"module": "VE/NormDefaults/Admission.lean", "names": "\\.decodeFilledDoc$"},
     {"module": "VE/{Norms,NormDefaults,SoftNorms,Rights,Alternatives,Risk,Attribution}/Admission.lean",
-     "names": "\\.(admitDocument|admitNodes|Admitted|NodeAdmitted|nodeAdmitted|checkNodes|generated|otherAssumptions|SourceDecoded|CertificatesBound|ReportAdmitted|ReportsAdmitted|ReportsNodeAdmitted|admissionReports)$"},
+     "names": "\\.(admitDocument|admitNodes|Admitted|NodeAdmitted|nodeAdmitted|checkNodes|generated|otherAssumptions|SourceDecoded|CertificatesBound|ReportAdmitted|ReportsAdmitted|ReportsNodeAdmitted|admissionReports)(In)?$"},
     {"module": "VE/Time/Document.lean", "names": "\\.(admitDocument|Admitted|NodeAdmitted|LeafAdmitted|CitationsClosed|otherAssumptions)$"},
     {"module": "VE/*/Run.lean", "names": "AdmissionAnswer"},
     {"module": "VE/Norms/Replay.lean", "names": "\\.decodePackage$"},
@@ -57,7 +57,7 @@
     {"module": "VE/WireContract/**"}]},
   {"step": "7", "title": "Route and service skeleton", "days": 6, "risk": 2, "adds_est": 60,
    "removed": [
-    {"module": "VE/*/Run.lean", "names": "\\.Run\\.(runCase|runOne|runCaseReported|main|dispatch)$"},
+    {"module": "VE/*/Run.lean", "names": "\\.Run\\.(runCase|runOne|runCaseReported|main|dispatch)(In)?$"},
     {"module": "{EnglishLeanBenchMain,EnglishMain,EnglishRunMain,Main,MeteredMain,ScopeBenchMain,SensesMain,SpeechActsMain}.lean"}]},
   {"step": "8a", "title": "Formula codec", "days": 10, "risk": 1.5, "adds_est": 60,
    "tied": [

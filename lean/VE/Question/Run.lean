@@ -211,7 +211,7 @@ def codesCase (id : String) : Json :=
     ("fields", toJson statusFields), ("texts", toJson texts), ("callers", toJson [("speech-acts", speechPrefixes)]),
     ("question_version", .str questionVersion)])]
 
-/-- The fields a question case holds: `english.read`'s, `question`, and `caller` when it is present. -/
+/-- The fields a question case holds: `english.read`'s but `judgments`, `question`, and `caller` when present. -/
 def caseFields (j : Json) : List String :=
   ["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++ optionalFields j ++
     (if (j.getObjVal? "caller").toOption.isSome then ["caller"] else [])

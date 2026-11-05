@@ -423,6 +423,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Reports.scoped_fits
 #print axioms ResponseShape.Encoders.Reports.status_fits
 #print axioms ResponseShape.Encoders.Reports.status_render_fits
+#print axioms ResponseShape.Encoders.Reports.wants_fits
 #print axioms ResponseShape.Encoders.Rights.admission_fits
 #print axioms ResponseShape.Encoders.Rights.bar_fits
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits

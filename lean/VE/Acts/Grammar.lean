@@ -1,5 +1,4 @@
 import VE.Acts.Read
-import VE.Acts.LexicalProofs
 
 /-! The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
 

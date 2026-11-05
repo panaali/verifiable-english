@@ -32,14 +32,15 @@
   ["ConclusionNotDerived", "SyntaxError"],
   ["IllTyped", "TypeMismatch"],
   ["NotOneSentence", "SyntaxError"],
-  ["InvalidOverlay", "VEError"]
+  ["InvalidOverlay", "VEError"],
+  ["UndeclaredEvaluative", "SyntaxError"]
  ],
  "statuses": [
   ["none", ["NoDerivation"]],
   ["many", ["Ambiguous"]],
   ["budget", ["Budget"]],
   ["invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]],
-  ["rejected", ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit", "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated", "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal", "ConclusionWithoutPremise", "IllTyped", "NotOneSentence"]]
+  ["rejected", ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit", "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated", "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal", "ConclusionWithoutPremise", "IllTyped", "NotOneSentence", "UndeclaredEvaluative"]]
  ],
  "unsentenced": ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "NotOneSentence"]
 }

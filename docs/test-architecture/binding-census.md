@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 287 |
+| leaves:bound | 289 |
 | leaves:closed domain | 300 |
-| leaves:none | 1521 |
+| leaves:none | 1523 |
 | modes | 42 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1120 |
-| today:shape | 587 |
+| today:not probed | 1122 |
+| today:shape | 589 |
 | today:unbound | 137 |
 | answers | 589 |
 | probes | 10204 |
@@ -1056,6 +1056,8 @@ Delegates: `/` to route.
 | `/error` | string | none |  | minLength | 8 | not probed |
 | `/id` | any | bound | x-echo |  | 23 | shape |
 | `/id` | string | bound | x-equals |  | 23 | shape |
+| `/infinitives/*/finite` | string | none |  |  | 0 | not probed |
+| `/infinitives/*/infinitive` | string | bound | x-equals |  | 0 | shape |
 | `/keys/*/arguments/*` | string | none |  |  | 1 | unbound |
 | `/keys/*/key/act` | string | closed domain | enum |  | 1 | shape |
 | `/keys/*/key/assessment` | string | none |  |  | 0 | not probed |
@@ -1082,6 +1084,8 @@ Delegates: `/` to route.
 | `/open_terms/*/record/jurisdiction` | string | none |  |  | 0 | not probed |
 | `/open_terms/*/record/precedents/*` | string | none |  |  | 0 | not probed |
 | `/open_terms/*/record/version` | integer | none |  | minimum | 0 | not probed |
+| `/phrases/*/infinitive` | string | none |  |  | 0 | not probed |
+| `/phrases/*/phrase` | string | bound | x-equals |  | 0 | shape |
 | `/premises/*/label` | string | none |  | pattern | 1 | unbound |
 | `/report/assumptions/*/label` | string | bound | x-claim-nodes |  | 2 | shape |
 | `/report/assumptions/*/name` | string | bound | x-claim-nodes |  | 2 | shape |
@@ -1154,6 +1158,7 @@ Delegates: `/` to route.
 | `/bridge_formulas` |  |  |  |  |
 | `/content_ids` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/environment_reports/profiles` |  |  |  | drop: accept/ve/reports.py:__init__; duplicate: accept/ve/reports.py:__init__; replace: accept/ve/reports.py:__init__; reverse: accept/ve/reports.py:__init__ |
+| `/infinitives` | x-zip | x-zip |  |  |
 | `/keys` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/keys/*/arguments` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/kinds` |  |  |  |  |
@@ -1164,6 +1169,7 @@ Delegates: `/` to route.
 | `/open_terms/*/record/necessary` |  |  |  |  |
 | `/open_terms/*/record/precedents` |  |  |  |  |
 | `/open_terms/*/record/sufficient` |  |  |  |  |
+| `/phrases` | x-zip | x-zip |  |  |
 | `/premises` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/report/assumptions` |  |  |  |  |
 | `/residual_lines/literal_quotations` |  |  |  |  |
