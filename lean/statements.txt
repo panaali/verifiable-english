@@ -4595,6 +4595,10 @@ theorem VE.Ask.zero_ask_wire_sound
                       ∀ (x : VE.Ask.Reason), a.x.row.reason = Option.some x → VE.Ask.ReasonHoldsU a.x.U a.x.Γ a.x.ψ x
   -- uses VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.c@VE.Ask.ZeroWire VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.E@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.U@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.Γ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.ψ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire VE.Ask.replayZero@VE.Ask.ZeroWire VE.Ask.replayZeroAsk@VE.Ask.ZeroWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
   -- expr 3996193774
+theorem VE.Attitudes.table_reviewed
+  VE.Attitudes.table.reviewed = Bool.true
+  -- uses VE.Attitudes.Table.reviewed@VE.Attitudes.Scale VE.Attitudes.table@VE.Attitudes.Scale
+  -- expr 464222460
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
@@ -15152,6 +15156,14 @@ theorem VE.Discourse.caseManifest_wellFormed
         VE.Discourse.chainDDoc rv environment p K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
   -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.caseManifest@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 3320249793
+theorem VE.Discourse.chainBase_of
+  ∀ (profiles : List String) (environment j : Lean.Json) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Discourse.runAll (VE.Discourse.envelopeChecks profiles environment j) = Except.ok () →
+      VE.Discourse.chainEnvironment (VE.Discourse.baseProfiles profiles) (VE.Discourse.baseEnvironment environment) =
+          Except.ok ne →
+        VE.Discourse.chainBase environment j = VE.Discourse.chainBaseWith ne environment j
+  -- uses VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.baseEnvironment@VE.Discourse.Admission VE.Discourse.baseProfiles@VE.Discourse.Admission VE.Discourse.chainBase@VE.Discourse.Compose VE.Discourse.chainBaseWith@VE.Discourse.Compose VE.Discourse.chainEnvironment@VE.Discourse.Compose VE.Discourse.envelopeChecks@VE.Discourse.Admission VE.Discourse.runAll@VE.Layout.Anchors VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3894021518
 theorem VE.Discourse.chainChecks_wellFormed
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (environment j r : Lean.Json) (K : VE.Discourse.Manifest),
     VE.Discourse.chainChecks rv environment j K = Except.ok r →
@@ -15637,6 +15649,12 @@ theorem VE.Discourse.elaborate_typed
     VE.Discourse.elaborateD D d σ = Option.some A → (VE.Formula.check D.E [] A = Bool.true ↔ VE.Discourse.TreeTyped D d σ)
   -- uses VE.Discourse.Assignment@VE.Discourse.Elaborate VE.Discourse.DDoc.E@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.DTree@VE.Discourse.Grammar VE.Discourse.TreeTyped@VE.Discourse.WellFormed VE.Discourse.elaborateD@VE.Discourse.Elaborate VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax
   -- expr 4218214400
+theorem VE.Discourse.envelopeChecks_profiles
+  ∀ (profiles : List String) (environment j : Lean.Json),
+    VE.Discourse.runAll (VE.Discourse.envelopeChecks profiles environment j) = Except.ok () →
+      VE.Route.Gate.profilesOf environment = Except.ok profiles
+  -- uses VE.Discourse.envelopeChecks@VE.Discourse.Admission VE.Discourse.runAll@VE.Layout.Anchors VE.Route.Gate.profilesOf@VE.Route.Gate
+  -- expr 3238132805
 theorem VE.Discourse.eta_models
   VE.Discourse.Examples.eta (VE.Discourse.Examples.managerModel ["p1", "p2"] ["p1", "p2"]) =
       (Bool.false, Bool.false, Bool.true) ∧
@@ -44015,6 +44033,92 @@ theorem VE.RightClauses.checkEntry_ok
       VE.RightClauses.entryOk cl Dr src x = Bool.true ∧ VE.RightClauses.shapeOk x.snd.snd = Bool.true
   -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.checkEntry@VE.RightClauses.Plain VE.RightClauses.entryOk@VE.RightClauses.Plain VE.RightClauses.shapeOk@VE.RightClauses.Plain VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree
   -- expr 850674221
+theorem VE.RightClauses.clauseSlot_eq
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.clauseSlot D = VE.Rights.limPremises (VE.RightClauses.plain D) ++ VE.RightClauses.relPremises D
+  -- uses VE.Formula@VE.Syntax VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.clauseSlot@VE.RightClauses.Relation VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.relPremises@VE.RightClauses.Relation VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 621959421
+theorem VE.RightClauses.clauseSlot_labelled
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+        VE.Compose.Labelled.wellLabelled (VE.Rights.limPremisesLabelled D.doc) = Bool.true →
+          (VE.RightClauses.clauseSlotLabelled D).wellLabelled = Bool.true
+  -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.clauseSlotLabelled@VE.RightClauses.Relation VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 75751063
+theorem VE.RightClauses.clauseSlot_no_total
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    (∀ (x : String × String × VE.RightClauses.CLine),
+        x ∈ D.lines →
+          ∀ (rel : VE.RightClauses.Relation), x.snd.snd.relation = Option.some rel → rel.total = Option.none) →
+      VE.RightClauses.clauseSlot D = VE.Rights.limPremises (VE.RightClauses.plain D)
+  -- uses VE.Formula@VE.Syntax VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation.total@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.clauseSlot@VE.RightClauses.Relation VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.limPremises@VE.Rights.Correlate
+  -- expr 3841627243
+theorem VE.RightClauses.clause_fails_not_selected
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+        ∀ (R n : String) (L : VE.RightClauses.CLine),
+          (R, n, L) ∈ D.lines →
+            ∀ (N : VE.Rights.Line),
+              (R, N) ∈ VE.Rights.linesOf (VE.RightClauses.plain D) →
+                N.node.name = n →
+                  ∀ (S : VE.Structure) (vs : List S.Carrier),
+                    VE.TupleTyped S (VE.Rights.sortsOf (VE.RightClauses.plain D) N) vs →
+                      ((∃ c, c ∈ L.clauses ∧ ¬VE.Formula.denote S (VE.Norms.tupleVal vs) c.formula) ∨
+                          ∃ rel,
+                            L.relation = Option.some rel ∧
+                              ¬VE.Formula.denote S (VE.Norms.tupleVal vs)
+                                  (VE.RightClauses.relAtom (VE.Rights.sortsOf (VE.RightClauses.plain D) N).length rel)) →
+                        ¬VE.Rights.SelectsRN (VE.RightClauses.plain D) S (VE.Norms.tupleVal vs) N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.name@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause.formula@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.relAtom@VE.RightClauses.Plain VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SelectsRN@VE.Rights.Projections VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 350913553
+theorem VE.RightClauses.entry_facts
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      ∀ (R n : String) (L : VE.RightClauses.CLine),
+        (R, n, L) ∈ D.lines →
+          VE.RightClauses.shapeOk L = Bool.true ∧
+            (R, L.line) ∈ VE.Rights.sourceLines D.doc ∧
+              VE.RightClauses.lineName L.line = Option.some n ∧
+                List.filter (fun RS => VE.RightClauses.lineName RS.snd == Option.some n) (VE.Rights.sourceLines D.doc) =
+                    [(R, L.line)] ∧
+                  VE.RightClauses.plainSource D.doc.soft D.lines R L.line =
+                    have __src := L.line;
+                    { kind := __src.kind,
+                      norm :=
+                        Option.map
+                          (fun N =>
+                            { name := N.name, pred := N.pred, sign := N.sign,
+                              guard :=
+                                VE.RightClauses.plainGuard (VE.RightClauses.lineSorts D.doc.soft L.line).length N.guard L,
+                              carveOuts := N.carveOuts, over := N.over, mode := N.mode, rank := N.rank,
+                              alterable := N.alterable, exception := N.exception, hard := N.hard,
+                              splitFrom := N.splitFrom })
+                          L.line.norm,
+                      liberty := __src.liberty, recognition := __src.recognition, fanOut := __src.fanOut,
+                      holderSlot := __src.holderSlot, cites := __src.cites }
+  -- uses VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.RightClauses.CLine.line@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.lineName@VE.RightClauses.Tree VE.RightClauses.lineSorts@VE.RightClauses.Tree VE.RightClauses.plainGuard@VE.RightClauses.Plain VE.RightClauses.plainSource@VE.RightClauses.Plain VE.RightClauses.shapeOk@VE.RightClauses.Plain VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.holderSlot@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.liberty@VE.Rights.Tree VE.Rights.SourceLine.mk@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine.recognition@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.sourceLines@VE.Rights.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 4256515321
+theorem VE.RightClauses.entry_instance
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+        ∀ (R n : String) (L : VE.RightClauses.CLine),
+          (R, n, L) ∈ D.lines →
+            L.clauses ≠ [] ∨ L.relation.isSome = Bool.true →
+              ∀ (N : VE.Rights.Line),
+                (R, N) ∈ VE.Rights.linesOf (VE.RightClauses.plain D) →
+                  N.node.name = n →
+                    ∃ G,
+                      N.node.guard = VE.RightClauses.plainGuard (VE.RightClauses.lineSorts D.doc.soft L.line).length G L ∧
+                        VE.Rights.sortsOf (VE.RightClauses.plain D) N = VE.RightClauses.lineSorts D.doc.soft L.line
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.line@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.lineSorts@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.plainGuard@VE.RightClauses.Plain VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree
+  -- expr 2972520791
+theorem VE.RightClauses.eq_of_nodup_map
+  ∀ {α β : Type} (f : α → β) {l : List α}, (List.map f l).Nodup → ∀ {a b : α}, a ∈ l → b ∈ l → f a = f b → a = b
+  -- uses
+  -- expr 2912099309
 theorem VE.RightClauses.fanCount_plain
   ∀ (S : VE.Rights.SourceLine) (g : VE.SoftNorms.SoftNode → VE.Formula),
     VE.Rights.fanCount
@@ -44037,6 +44141,13 @@ theorem VE.RightClauses.filterMap_key
       ∀ (l1 l2 : List α), List.map k l1 = List.map k l2 → List.filterMap f l1 = List.filterMap g l2
   -- uses
   -- expr 1277679659
+theorem VE.RightClauses.filterMap_labels_nodup
+  ∀ {α β : Type} (k : α → String) (f : α → Option (String × β)) (g : String → String),
+    (∀ (a b : String), g a = g b → a = b) →
+      (∀ (a : α) (p : String × β), f a = Option.some p → p.fst = g (k a)) →
+        ∀ (l : List α), (List.map k l).Nodup → (List.map (fun x => x.fst) (List.filterMap f l)).Nodup
+  -- uses
+  -- expr 387141581
 theorem VE.RightClauses.findSome_unique
   ∀ {α β : Type} (f : α → Option β) (a : α) (l : List α),
     (∀ (y : α), y ∈ l → f y ≠ Option.none → y = a) → a ∈ l → List.findSome? f l = f a
@@ -44052,6 +44163,11 @@ theorem VE.RightClauses.forM_ok
   ∀ {α : Type} (f : α → Except String Unit) (l : List α), l.forM f = Except.ok () → ∀ (x : α), x ∈ l → f x = Except.ok ()
   -- uses
   -- expr 4168660937
+theorem VE.RightClauses.holderConj_left
+  ∀ (X : VE.Rights.RightsDoc) (N : VE.Rights.Line) (G : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.Formula.denote S ρ (VE.Rights.holderConj X N G) → VE.Formula.denote S ρ G
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.holderConj@VE.Rights.Correlate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 121684676
 theorem VE.RightClauses.instancesOf_key
   ∀ (R : String) (S : VE.Rights.SourceLine) (g : VE.SoftNorms.SoftNode → VE.Formula) (k : Nat),
     List.map (fun N => VE.RightClauses.lineKey (R, N))
@@ -44075,6 +44191,11 @@ theorem VE.RightClauses.limActs_plain
     VE.Rights.limActs (VE.RightClauses.plain D) L = VE.Rights.limActs D.doc L
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.Limitation@VE.Rights.Tree VE.Rights.limActs@VE.Rights.Tree
   -- expr 4263683692
+theorem VE.RightClauses.limLabel_at7
+  ∀ (X : VE.Rights.RightsDoc) (x : String × VE.Formula),
+    x ∈ VE.Rights.limPremisesLabelled X → (List.drop 7 x.fst.data).head? = Option.some 'l'
+  -- uses VE.Formula@VE.Syntax VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 3095208593
 theorem VE.RightClauses.lineRuleNames_plain
   ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine)) (R : String)
     (S : VE.Rights.SourceLine),
@@ -44095,6 +44216,24 @@ theorem VE.RightClauses.linesOf_plain_key
       List.map VE.RightClauses.lineKey (VE.Rights.linesOf D.doc)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.lineKey@VE.RightClauses.Plain VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.IKind@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree
   -- expr 1253446200
+theorem VE.RightClauses.map_nodup_of_filter
+  ∀ {α : Type} (k : α → String) (l : List α),
+    (∀ (x : α), x ∈ l → List.filter (fun y => k y == k x) l = [x]) → (List.map k l).Nodup
+  -- uses
+  -- expr 4152005545
+theorem VE.RightClauses.own_instance_mem
+  ∀ (R : String) (S : VE.Rights.SourceLine) (nm : VE.SoftNorms.SoftNode),
+    S.kind ≠ VE.Rights.Kind.power →
+      S.fanOut = [] →
+        S.norm = Option.some nm →
+          ∀ (l : List (String × VE.Rights.SourceLine)) (k : Nat),
+            (R, S) ∈ l →
+              (R,
+                  { right := R, source := S, kind := S.kind, ikind := VE.Rights.ikindOf S.kind, node := nm,
+                    bearer := Option.none }) ∈
+                VE.Rights.linesAux l k
+  -- uses VE.Rights.Kind.power@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Line.mk@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.ikindOf@VE.Rights.Tree VE.Rights.linesAux@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1390505138
 theorem VE.RightClauses.plainContent_declared
   ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine)) (c : VE.Compose.Content),
     (VE.RightClauses.plainContent E cl c).declared = c.declared ∧
@@ -44182,12 +44321,68 @@ theorem VE.RightClauses.plain_shape
                                 VE.Rights.lineAct (VE.RightClauses.plain D) RN.snd = VE.Rights.lineAct D.doc RN'.snd
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.Bar@VE.Rights.Tree VE.Rights.IKind@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line.bearer@VE.Rights.Tree VE.Rights.Line.ikind@VE.Rights.Tree VE.Rights.Line.kind@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsEnv@VE.Rights.Tree VE.Rights.holderSlot@VE.Rights.Tree VE.Rights.lineAct@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree
   -- expr 571648068
+theorem VE.RightClauses.relLabel_at7
+  ∀ (D : VE.RightClauses.ClauseDoc) (x : String × VE.Formula),
+    x ∈ VE.RightClauses.relPremisesLabelled D → (List.drop 7 x.fst.data).head? = Option.some 'r'
+  -- uses VE.Compose.Labelled@VE.Compose.Slot VE.Formula@VE.Syntax VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.relPremisesLabelled@VE.RightClauses.Relation
+  -- expr 2584872621
+theorem VE.RightClauses.relLabel_inj
+  ∀ {a b : String}, "rights:relation:" ++ a ++ ":total" = "rights:relation:" ++ b ++ ":total" → a = b
+  -- uses
+  -- expr 1687436502
+theorem VE.RightClauses.relation_some_bearer
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+        ∀ (R n : String) (L : VE.RightClauses.CLine),
+          (R, n, L) ∈ D.lines →
+            ∀ (N : VE.Rights.Line),
+              (R, N) ∈ VE.Rights.linesOf (VE.RightClauses.plain D) →
+                N.node.name = n →
+                  VE.Rights.dutyKind N = Bool.true →
+                    ∀ (rel : VE.RightClauses.Relation),
+                      L.relation = Option.some rel →
+                        rel.total = Option.some (VE.Rights.holderSlot (VE.RightClauses.plain D) N) →
+                          rel.slots = (0, VE.Rights.holderSlot (VE.RightClauses.plain D) N) →
+                            ∀ (S : VE.Structure),
+                              VE.Norms.Sat S (VE.RightClauses.relPremises D) →
+                                ∀ (sh : String),
+                                  (VE.Rights.sortsOf (VE.RightClauses.plain D)
+                                          N)[VE.Rights.holderSlot (VE.RightClauses.plain D) N]? =
+                                      Option.some sh →
+                                    ∀ (hv : S.Carrier),
+                                      S.domain sh hv →
+                                        VE.Formula.denote S [hv] (VE.RightClauses.holderGuardOf D R) →
+                                          ∃ bv,
+                                            (∃ sb,
+                                                (VE.Rights.sortsOf (VE.RightClauses.plain D) N).head? = Option.some sb ∧
+                                                  S.domain sb bv) ∧
+                                              S.relation rel.pred [bv, hv] ∧
+                                                ∀ (vs : List S.Carrier),
+                                                  VE.TupleTyped S (VE.Rights.sortsOf (VE.RightClauses.plain D) N) vs →
+                                                    vs.head? = Option.some bv →
+                                                      vs[VE.Rights.holderSlot (VE.RightClauses.plain D) N]? =
+                                                          Option.some hv →
+                                                        VE.Formula.denote S (VE.Norms.tupleVal vs)
+                                                            (VE.Rights.ownGuard (VE.RightClauses.plain D) N) →
+                                                          (¬∃ m,
+                                                                m ∈ VE.Rights.narrowings (VE.RightClauses.plain D) N ∧
+                                                                  VE.Rights.NarrowsAt (VE.RightClauses.plain D) S
+                                                                    (VE.Norms.tupleVal vs) N m) →
+                                                            VE.Rights.owes (VE.RightClauses.plain D) S N vs
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation.pred@VE.RightClauses.Tree VE.RightClauses.Relation.slots@VE.RightClauses.Tree VE.RightClauses.Relation.total@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.holderGuardOf@VE.RightClauses.Plain VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.relPremises@VE.RightClauses.Relation VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.NarrowsAt@VE.Rights.Scope VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.dutyKind@VE.Rights.Tree VE.Rights.holderSlot@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.owes@VE.Rights.Projections VE.Rights.ownGuard@VE.Rights.Correlate VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3399267938
 theorem VE.RightClauses.rightOf_plain
   ∀ (D : VE.RightClauses.ClauseDoc) (r : String),
     Option.map (fun x => x.holder) (VE.Rights.rightOf (VE.RightClauses.plain D) r) =
       Option.map (fun x => x.holder) (VE.Rights.rightOf D.doc r)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.Right.holder@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.rightOf@VE.Rights.Tree
   -- expr 662840221
+theorem VE.RightClauses.selects_own
+  ∀ (X : VE.Rights.RightsDoc) (S : VE.Structure) (ρ : VE.Valuation S) (N : VE.Rights.Line),
+    VE.Rights.SelectsRN X S ρ N → VE.Formula.denote S ρ (VE.Rights.ownGuard X N)
+  -- uses VE.Formula.denote@VE.Semantics VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SelectsRN@VE.Rights.Projections VE.Rights.ownGuard@VE.Rights.Correlate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3430013909
 theorem VE.RightClauses.sourceLines_plain
   ∀ (D : VE.RightClauses.ClauseDoc),
     VE.Rights.sourceLines (VE.RightClauses.plain D) =
