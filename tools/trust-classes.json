@@ -465,7 +465,10 @@
         "ResponseShape.Schemas.Discourse.admission",
         "ResponseShape.Schemas.Discourse.admissionFields",
         "ResponseShape.Schemas.Discourse.admissionRequired",
+        "ResponseShape.Schemas.Discourse.chainAdmission",
+        "ResponseShape.Schemas.Discourse.chain_admission",
         "ResponseShape.Schemas.Discourse.choices",
+        "ResponseShape.Schemas.Discourse.composed",
         "ResponseShape.Schemas.Discourse.discourse_path",
         "ResponseShape.Schemas.Discourse.file",
         "ResponseShape.Schemas.Discourse.joint",
@@ -478,6 +481,9 @@
         "ResponseShape.Schemas.Discourse.target_kind",
         "ResponseShape.Schemas.Discourse.validity",
         "ResponseShape.Schemas.Discourse.validity_map"
+      ],
+      "T": [
+        "ResponseShape.Schemas.Discourse.rendered"
       ]
     },
     "ResponseShape/Schemas/Document.lean": {
@@ -2839,6 +2845,7 @@
         "VE.Discourse.choicesOk",
         "VE.Discourse.depthOf",
         "VE.Discourse.documentSortOk",
+        "VE.Discourse.envelopeChecks",
         "VE.Discourse.gateOk",
         "VE.Discourse.importChain",
         "VE.Discourse.integrityOk",
@@ -3221,6 +3228,7 @@
       ],
       "G[V]": [
         "VE.Discourse.Run.DiscourseAdmissionAnswer",
+        "VE.Discourse.Run.chainCase",
         "VE.Discourse.Run.jointJson",
         "VE.Discourse.Run.loadCase",
         "VE.Discourse.Run.runCase",
@@ -18110,6 +18118,9 @@
       ],
       "D[V]": [
         "VE.Discourse.chainBase",
+        "VE.Discourse.chainBaseWith",
+        "VE.Discourse.chainEnvironment",
+        "VE.Discourse.composedFields",
         {
           "name": "VE.Discourse.chainDocument",
           "tied": [
@@ -18166,7 +18177,9 @@
         "VE.Discourse.ComposeExamples.fourUnits",
         "VE.Discourse.ComposeExamples.graph",
         "VE.Discourse.ComposeExamples.grouped",
+        "VE.Discourse.ComposeExamples.innerOf",
         "VE.Discourse.ComposeExamples.itText",
+        "VE.Discourse.ComposeExamples.listed",
         "VE.Discourse.ComposeExamples.loaded",
         "VE.Discourse.ComposeExamples.manifestOf",
         "VE.Discourse.ComposeExamples.mention",
@@ -18175,10 +18188,12 @@
         "VE.Discourse.ComposeExamples.ok?",
         "VE.Discourse.ComposeExamples.parsed",
         "VE.Discourse.ComposeExamples.payload",
+        "VE.Discourse.ComposeExamples.routeOf",
         "VE.Discourse.ComposeExamples.shape",
         "VE.Discourse.ComposeExamples.sortOk",
         "VE.Discourse.ComposeExamples.src1",
         "VE.Discourse.ComposeExamples.src2",
+        "VE.Discourse.ComposeExamples.todayOf",
         "VE.Discourse.ComposeExamples.twoMentions",
         "VE.Discourse.ComposeExamples.u1",
         "VE.Discourse.ComposeExamples.unitJ",
