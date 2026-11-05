@@ -601,4 +601,90 @@ def readingsOf (j : Json) : Json := j.setObjVal! "profiles" (toJson ["acts@0", "
 
 end Joined
 
+/-! ### ap-3dc: the `acts-elaborate` relay (act-phrases 6.7) and the environment row on a joined act
+
+`Acts.Run.runElaborate` on both modes: the parts, the part rules, the acts kept whole and D-28's text per split source;
+`REFUSED` with the elaboration's diagnostic; refused without `acts@0`. The environment row admits a joined act through
+the act check (DRI 2026-11-02 ap-3db item 5); every other path keeps D-4 (section Joined). -/
+
+section Relay
+open VE.Acts.DecodeExamples (envOf block6 nd6 plain6 norms27 blockJ a6 a7)
+
+def joinedE' : Json := envOf plain6 block6 (default := "deny")
+def elabCase (j : Json) (norms : Json := norms27) : Json :=
+  Json.mkObj [("id", .str "c"), ("kind", .str "acts-elaborate"), ("environment", j), ("norms", norms)]
+def elabRow (r : Except String Json) : Json := match r with | .ok a => a | .error m => .str m
+def ruleJ (n p : String) (sign : Bool) : Json := Json.mkObj [("norm", Json.mkObj [("name", .str n),
+  ("predicate", .str p), ("sign", .bool sign), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]),
+  ("over", Json.arr #[])])]
+def part (q p : String) (i : Nat) (act default : String) : Json := Json.mkObj [("name", .str q), ("source", .str p),
+  ("index", toJson i), ("sorts", toJson ["person"]), ("role", .str "permission"), ("default", .str default),
+  ("act", .str act), ("permission", .null)]
+def partRule (n r q : String) (i : Nat) : Json := Json.mkObj [("name", .str n), ("source", .str r),
+  ("index", toJson i), ("pred", .str q), ("sign", .bool false), ("guard", Json.arr #[.str "top"]),
+  ("unless", Json.arr #[]), ("over", Json.arr #[])]
+def d28 : String := "InvalidInput: name one of its parts: p027 is split into p027__1, p027__2"
+def a6Lists (default : String) : List (String × Json) :=
+  [("predicates", Json.arr #[part "p027__1" "p027" 1 "{0} be subjected to torture" default,
+     part "p027__2" "p027" 2 "{0} be subjected to cruel, inhuman or degrading treatment or punishment" default]),
+   ("rules", Json.arr #[partRule "r027-a1" "r027" "p027__1" 1, partRule "r027-a2" "r027" "p027__2" 2]),
+   ("kept", Json.arr #[]),
+   ("split", Json.arr #[Json.mkObj [("source", .str "p027"), ("parts", toJson ["p027__1", "p027__2"]),
+     ("text", .str d28)]])]
+def without (a : Json) (k : String) : Json := match a with
+  | .obj kvs => .obj (kvs.erase k)
+  | a => a
+def listsOf (a : Json) : List (String × Json) := ["predicates", "rules", "kept", "split"].map fun k => (k, a.getObjValD k)
+
+-- A6 on the norms route: two prohibitions, each part rule its source's with its index, D-28's text.
+#guard listsOf (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))) == a6Lists "deny"
+#guard (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))).getObjValD "verdict" == .str "ELABORATED"
+#guard ((elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))).getObjVal? "diagnostic").toOption.isNone
+-- On the norm-defaults route the same parts, each `unspecified` as its source (E5j).
+#guard listsOf (elabRow (VE.NormDefaults.Run.runGated (elabCase (envOf nd6 block6)))) == a6Lists "unspecified"
+-- The identity is the environment row's.
+#guard (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))).getObjValD "environment_id" ==
+  (elabRow (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", joinedE')]))).getObjValD
+    "environment_id"
+-- A7: one atom, kept whole; nothing split.
+#guard listsOf (elabRow (VE.Norms.Run.runCaseRouted (elabCase (envOf plain6 (blockJ VE.Acts.TableExamples.fx7
+    VE.Acts.Examples.V7) (act := a7) (role := "obligation") (default := "deny"))))) ==
+  [("predicates", Json.arr #[]), ("rules", Json.arr #[]), ("kept", toJson ["p027"]), ("split", Json.arr #[])]
+-- An elaboration's refusal is the row's (D-20), every list empty; a decoder's refusal is the case's error (D-16).
+#guard without (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE' (Json.arr #[])))) "environment_id" ==
+  Json.mkObj [("id", .str "c"), ("status", .str "ok"), ("verdict", .str "REFUSED"),
+    ("diagnostic", .str "InvalidInput: the joined act of p027 has no rule to read it by"), ("predicates", Json.arr #[]),
+    ("rules", Json.arr #[]), ("kept", Json.arr #[]), ("split", Json.arr #[])]
+#guard err (VE.Norms.Run.runCaseRouted (elabCase (envOf plain6 (blockJ VE.Acts.TableExamples.fx6 ⟨[], []⟩)
+  (default := "deny")))) == "InvalidInput: act phrase for p027 has no reading under the declared frames"
+-- Without `acts@0` the kind is refused.
+#guard err (VE.Norms.Run.runCaseRouted (elabCase (envOf ["norms@0", "relational-fol@0"] block6 (act := "{0} be held")
+  (default := "deny")))) == "UnsupportedProfile: acts-elaborate requires acts@0"
+-- Another kind on the same request is today's.
+#guard (elabRow (VE.Norms.Run.runCaseRouted ((elabCase joinedE').setObjVal! "kind" (.str "norms-elaborate")))).getObjValD
+  "status" == .str "ok"
+
+-- The environment row admits a joined act with one reading, and refuses one with none by the act check (D-16).
+#guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", joinedE')])) == "ok"
+#guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment",
+  envOf plain6 (blockJ VE.Acts.TableExamples.fx6 ⟨[], []⟩) (default := "deny"))])) ==
+  "InvalidInput: act phrase for p027 has no reading under the declared frames"
+
+-- A request at the limits: 32 joined sources and 128 rules give 64 parts and 256 part rules, within the decoder's
+-- limits (64 regulated predicates, 256 rules) and step 6's; each act is read once, by the decoder.
+/-- 32 distinct joined acts, so that no two parts are the same act of one role (`DuplicateActRole`). -/
+def bigAct (i : Nat) : String :=
+  let w := String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]
+  "{0} be subjected to torture" ++ w ++ " or to abuse" ++ w
+def bigE : Json := (envOf plain6 block6).setObjVal! "vocabulary" (((envOf plain6 block6).getObjValD "vocabulary").setObjVal!
+  "predicates" (Json.mkObj ((List.range 32).map fun i => ("p" ++ toString i, Json.mkObj [("arguments", toJson ["person"]),
+    ("description", .str "d"), ("regulated", Json.mkObj [("role", .str "permission"), ("default", .str "deny"),
+      ("act", .str (bigAct i))])]))))
+def bigNorms : Json := Json.arr ((List.range 128).map fun k => ruleJ ("r" ++ toString k) ("p" ++ toString (k % 32)) false).toArray
+#guard (let a := elabRow (VE.Norms.Run.runCaseRouted (elabCase bigE bigNorms))
+  ((a.getObjValD "predicates").getArr?.toOption.map (·.size), (a.getObjValD "rules").getArr?.toOption.map (·.size),
+    (a.getObjValD "split").getArr?.toOption.map (·.size))) == (some 64, some 256, some 32)
+
+end Relay
+
 end VE.Service.ActsExamples

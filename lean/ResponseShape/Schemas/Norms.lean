@@ -54,7 +54,8 @@ def kind : Def :=
     ("background", kindIs "background"),
     ("norms-elaborate", kindIs "norms-elaborate"),
     ("norms-certificate", kindIs "norms-certificate"),
-    ("norms-conflict", kindIs "norms-conflict")]
+    ("norms-conflict", kindIs "norms-conflict"),
+    ("acts-elaborate", kindIs "acts-elaborate")]
 
 /-- The `norms-elaborate` row over `formula`, with the `extra` members one route adds (required). -/
 def elaborateWith (formula : Shape) (extra : List (String × Shape) := []) : Shape :=
@@ -135,6 +136,36 @@ def «norms-conflict» : Shape :=
       ("targets", ref "common.json#/$defs/strings"),
       ("detail", str)]]
 
+/-- The `acts-elaborate` row (act-phrases 6.7), shared with the norm-defaults mode. -/
+def «acts-elaborate» : Shape :=
+  c "Acts.Run.runElaborate (runElaborate_fits): the elaborated document's parts, part rules, joined acts kept whole and, per split source, its parts with D-28's text; or REFUSED with the elaboration's diagnostic and every list empty. Python binds each source, index and copied field to the request (ve/norms.py bound_elaboration)." [
+    obj,
+    .required ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"],
+    closed [
+      ("id", n [str, .equals "/id"]),
+      ("status", constS "ok"),
+      ("environment_id", ref "common.json#/$defs/hex64"),
+      ("verdict", enumS ["ELABORATED", "REFUSED"]),
+      ("diagnostic", str),
+      ("predicates", n [arr, .items (n [obj,
+        .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"],
+        closed [
+          ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"),
+          ("sorts", ref "common.json#/$defs/strings"),
+          ("role", enumS ["permission", "obligation", "plain"]),
+          ("default", enumS ["allow", "deny", "unspecified"]),
+          ("act", .anyOf [str, .type ["null"]]), ("permission", .anyOf [str, .type ["null"]])]])]),
+      ("rules", n [arr, .items (n [obj,
+        .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"],
+        closed [
+          ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str),
+          ("sign", .type ["boolean"]), ("guard", ref "common.json#/$defs/generated_formula"),
+          ("unless", ref "common.json#/$defs/generated_formulas"),
+          ("over", ref "common.json#/$defs/strings")]])]),
+      ("kept", ref "common.json#/$defs/strings"),
+      ("split", n [arr, .items (n [obj, .required ["source", "parts", "text"],
+        closed [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/norms_path", .anyOf [
@@ -150,7 +181,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/norms-elaborate", ref "#/$defs/norms-elaborate"),
         (ref "#/$defs/kind/norms-certificate", ref "#/$defs/norms-certificate"),
         (.allOf [ref "#/$defs/kind/norms-conflict", .required ["witness"]], ref "#/$defs/norms-witness"),
-        (ref "#/$defs/kind/norms-conflict", ref "#/$defs/norms-conflict")]]),
+        (ref "#/$defs/kind/norms-conflict", ref "#/$defs/norms-conflict"),
+        (ref "#/$defs/kind/acts-elaborate", ref "#/$defs/acts-elaborate")]]),
     ((.bool true), ref "route.json#/row")]
 
 def file : File where
@@ -163,7 +195,8 @@ def file : File where
     ("norms-elaborate", .schema «norms-elaborate»),
     ("norms-certificate", .schema «norms-certificate»),
     ("norms-witness", .schema «norms-witness»),
-    ("norms-conflict", .schema «norms-conflict»)]
+    ("norms-conflict", .schema «norms-conflict»),
+    ("acts-elaborate", .schema «acts-elaborate»)]
 
 /- The `norms-elaborate` row as `tools/response_schemas.py` renders it, pinned (ap-1bb): every member required and
 closed, `wordings` a `string_map` beside the regenerated lists the encoder theorem reads. -/
