@@ -1,0 +1,9 @@
+trust_mutants: 10 definitions, 234 mutants (47 to run), 4 jobs, base d26fb9cbbe6a
+UNKNOWN lean/VE/Service/Document.lean:2228 VE.Service.Document.statusRows (G[V], trusted) list-empty: views.filterMap -> [] (lean/VE/Service/Document.lean:2228: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:1605 VE.Service.Document.contentOf (D[V], trusted) list-first: E.boundNames.toList -> (E.boundNames.toList.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2234 VE.Service.Document.linesJson (D[V], trusted) list-first: (legendRows js) -> ((legendRows js).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2236 VE.Service.Document.linesJson (D[V], trusted) list-first: status -> (status.take 1)
+trust_mutants: 42 KILLED, 3 SURVIVOR, 1 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 187 OTHER SHARD in 2538 s
+trust_mutants: D[V], trusted: 7 KILLED, 3 SURVIVOR, 61 OTHER SHARD
+trust_mutants: G[V], trusted: 35 KILLED, 1 UNKNOWN, 1 INVALID, 126 OTHER SHARD
+trust_mutants: steps: wall plan 7.2 s, scratch 2.2 s, control_build 0.2 s, probe_install 1 s, control_probes 1163.4 s, mutants 1359.1 s, cleanup 4.5 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 3104.3 s (12), mutant_builds 1087.3 s (49), mutant_checks 2455.6 s (24), stage_controls 490.7 s (6), mutant_probes 1255.7 s (42)
