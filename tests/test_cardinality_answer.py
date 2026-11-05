@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, PLAIN, TOP, text
+from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, PLAIN, TOP, chain_text, text
 from ve import cardinality
 from ve.admission import report_identity
 from ve.backends import relay
@@ -367,6 +367,48 @@ def test_a_row_s_leaf_labels_are_bound_to_the_request_graph(tmp_path, monkeypatc
         mutant["cardinality"]["leaf_labels"] = labels
         with pytest.raises(CheckerUnavailable):
             _lean_document(raw, path, mutant, admitted=True)
+
+
+def _chain_mutants(row):
+    composed, front = row["composed"], json.loads(row["composed"]["chain_document"].split("\n---\n")[0][4:])
+    body = row["composed"]["chain_document"].split("\n---\n", 1)[1]
+
+    def lowered(change):
+        changed = copy.deepcopy(front)
+        change(changed)
+        return "---\n" + json.dumps(changed) + "\n---\n" + body
+    yield from ({"not_certified": []}, {"not_certified": ["absent"]}, {"not_certified": ["one", "one"]}, {"not_certified": ["two"]},
+                {"scope": ""}, {"chain_document": None}, {"counting_document": composed["chain_document"]},
+                {"chain_document": composed["counting_document"]},
+                {"chain_document": "---\n" + json.dumps(front) + "\n---\nanother body\n"},
+                {"chain_document": lowered(lambda f: f["units"].pop(0))},
+                {"chain_document": lowered(lambda f: f["units"][1].update(content={"ast": ["bottom"]}))},
+                {"chain_document": lowered(lambda f: f["units"][0].update(span=[0, 1]))},
+                {"chain_document": lowered(lambda f: f["units"][0].update(content={"cardinality": TOP}))},
+                {"chain_document": lowered(lambda f: f["environment"].update(profiles=["relational-fol@0"]))},
+                {"chain_document": lowered(lambda f: f["environment"].update(extra=1))},
+                {"chain_document": lowered(lambda f: f.update(reading_sets=[]))})
+
+
+def test_a_chain_list_row_is_bound_to_the_request(tmp_path, monkeypatch):
+    """Past Lean: `composed` names the request's units in each reading, its own environment and body, none empty or extra."""
+    raw = chain_text([("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})])
+    path = tmp_path / "chain.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    doc = _lean_document(raw, path, row, admitted=True)
+    assert doc["composed"]["not_certified"] == ["one"] and doc["chain"]["units"][1]["id"] == "two"
+    for change in _chain_mutants(row):
+        with pytest.raises(CheckerUnavailable):
+            _lean_document(raw, path, {**row, "composed": {**row["composed"], **change}}, admitted=True)
+    with pytest.raises(CheckerUnavailable):
+        _lean_document(raw, path, {k: v for k, v in row.items() if k != "composed"}, admitted=True)
+    # The other side: a row under W6a's lists holds no `composed`.
+    other = text([{"name": "only", "statement": TOP}], graph=False)
+    plain = _lean_answer(other, True, tmp_path, {})
+    assert _lean_document(other, path, plain, admitted=True) and "composed" not in plain
+    with pytest.raises(CheckerUnavailable):
+        _lean_document(other, path, {**plain, "composed": row["composed"]}, admitted=True)
 
 
 def test_a_document_row_answers_the_case_it_asked(part):

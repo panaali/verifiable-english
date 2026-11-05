@@ -743,7 +743,11 @@ region table is never read (QT-A3 refuses a forged one).
 
 - **Environment** (identity-bound, decoded by Lean only): W6a's fields plus `"cardinality_schema": "ve-cardinality@1"`
   and `"cardinality": {"finite_sorts": [sort, …]}`. Profiles: `cardinality@0` with `order@0`, `relational-fol@0`,
-  `time@0`, and optionally `documents@1`.
+  `time@0`, and optionally `documents@1`; or the chain list `cardinality@0`, `norm-defaults@0`, `norms@0`, `readings@1`,
+  `relational-fol@0`. Under the chain list a document is read twice, each reading's identities its own: its `cardinality`
+  units by `Wire.decodeStatement`, every other unit by the chain on the environment without `cardinality@0` and the
+  cardinality and W6a fields. Counting statements neither enter nor are decided by the chain's premises, reading choices
+  or verdict; Lean's answer names them as not certified against it, and the list has no claim graph.
 - **Statement**: `{"format": "ve-cardinality@1", "formula": F}`. `F` is one of:
   - `["quantity", Q]`, `Q` a W6a `ve-quantity@1` formula tree, unchanged;
   - `["count", sort, [[k, body], …], rel, bound]`, `rel` one of `lt`, `le`, `eq`; `k` and `bound` canonical integer
@@ -775,9 +779,9 @@ Environment:
 | # | Check | Text |
 |---|---|---|
 | E1 | Fields | the frozen `exactFields` texts, over W6a's six fields plus `cardinality_schema` and `cardinality` |
-| E2 | Profiles (AR-10 row) | `UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1` |
+| E2 | Profiles (AR-10 row, then the gate's list check) | `UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1, or norm-defaults@0, norms@0, readings@1 and relational-fol@0` |
 | E3 | Schema | `UnsupportedProfile: Unsupported cardinality schema` |
-| E4 | The W6a part | `VE.Time.Wire.decodeEnvironment`'s own texts, in its order, on the projection `projectW6` (4.3): the environment without `cardinality_schema` and `cardinality`, and with `cardinality@0` removed from `profiles`. After E2 the projected profiles are one of W6a's two lists |
+| E4 | The W6a part | `VE.Time.Wire.decodeEnvironment`'s own texts, in its order, on the projection `projectW6` (4.3): the environment without `cardinality_schema` and `cardinality`, listing `Wire.projectedProfiles` in `profiles`: W6a's core list under the chain list, otherwise the list without `cardinality@0`. After E2 the projected profiles are one of W6a's two lists |
 | E5 | `finite_sorts` shape | `InvalidInput: cardinality.finite_sorts must be an array of sort names` |
 | E6 | Count | `ResourceLimit: At most 64 finite sorts` |
 | E7 | Each name | `DuplicateDeclaration: finite sort <s>`; then `UnknownSort(<s>)` for a name that is not a declared user sort |
@@ -830,6 +834,10 @@ one`, `erased problem differs from the regenerated one`. A limit is `ResourceLim
 answer; exhaustion of a search is UNKNOWN.
 
 ### 4.3 QT-A3 statements
+
+Changed by qt-a4b (DRI 2026-11-05, `reviews/dri-decisions-20261105-qt-a4b.md`): E2 admits the chain list, and
+`gate_cardinality` and `Wire.profileLists_projected` are restated (`lean/VE/Cardinality/Gate.lean`,
+`WireTheorems.lean`), with `projectW6` listing `Wire.projectedProfiles`. The stub below is the earlier form.
 
 ```lean
 /-- E4's projection: the W6a environment inside a cardinality environment. It removes `cardinality_schema` and
