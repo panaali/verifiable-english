@@ -18,4 +18,5 @@ What the tooling does, none of it a VE output:
   unchanged.
 - F1 fix: a changed plan input (`tools/trust-classes.json` or `tools/layer_policy.py`) permits a carried
   verdict only when the scanned Lake and Lean sources, including outside `--test` files, name no read
-  of it. A named or directory read causes a full run. This changes tooling reuse, not a VE verdict.
+  of it outside a Lean comment. A named or directory read causes a full run. This changes tooling reuse,
+  not a VE verdict.
