@@ -1,0 +1,25 @@
+{
+ "job": "et-4b.s2of6-3a41f691",
+ "head": "98b6e999df844cd74c1a8bcca1714aabcbe90a3a",
+ "argv": [
+  "et-4b.s2of6-3a41f691",
+  "98b6e999df844cd74c1a8bcca1714aabcbe90a3a",
+  "50c6842f84f750ae9b3882025cc847af1cff93cf",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-81b9b763b31c.tar.zst",
+  "4e1c6fa793c9294b2cf60e4f19d6af4d7ca8e7d4d43a8ac1be1857c0f3c343d4",
+  "--deadline",
+  "1793871973",
+  "--allow",
+  "docs/events-time-causation/et-4b/trust-mutants-allow.json",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Events/WireExamples.lean",
+  "--test",
+  "lean/VE/Events/RouteExamples.lean",
+  "--shard",
+  "2/6",
+  "--jobs",
+  "3"
+ ]
+}
