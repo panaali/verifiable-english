@@ -12,7 +12,8 @@ generated schemas of every relayed RD-9 answer: `soft-elaborate`, `soft-pairs`,
 `soft-conflict` (packages and witness), the soft and rights `admission`,
 `rights-elaborate`, `rights-scope`, `rights-bar` and `rights-conflict`, and the
 `document` row on the soft chain under `norm-defaults@0` (`document-soft-defaults`,
-PC-2a, D9: the retained Python branch is gone, so this row is the answer). A field
+PC-2a, D9: the retained Python branch no longer accepts this chain, so this row
+is the answer; its soft-source check and loader diagnostics stay until PC-2b). A field
 the Lean shape adds fails `test_every_schema_field_is_classified` until it is
 classified as bound or as Lean-derived, with a reason. Every bound field is
 fuzzed on genuine answers of sixteen sources: renamed, shifted, flipped,
