@@ -14,6 +14,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -50,6 +51,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
@@ -251,6 +253,9 @@ module VE.Closure.Surface
 module VE.Closure.Syntax
 module VE.Commands.Examples
 module VE.Commands.Read
+module VE.Commands.Run
+module VE.Commands.RunExamples
+module VE.Commands.RunSplit
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
@@ -582,6 +587,7 @@ module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
+module VE.RightClauses.Relation
 module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
