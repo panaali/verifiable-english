@@ -1,0 +1,10 @@
+trust_mutants: 10 definitions, 234 mutants (47 to run), 4 jobs, base d26fb9cbbe6a
+UNKNOWN lean/VE/Service/Document.lean:2228 VE.Service.Document.statusRows (G[V], trusted) list-empty: views -> [] (lean/VE/Service/Document.lean:2229: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/Document.lean:2230 VE.Service.Document.statusRows (G[V], trusted) list-empty: (VE.EnglishGrammar.JudgmentLines.statusLine (js.filter (deps.contains ·.name))) -> [] (lean/VE/Service/Document.lean:2230: Type mismatch)
+SURVIVOR lean/VE/Service/Document.lean:1604 VE.Service.Document.contentOf (D[V], trusted) list-empty: [("generated", Json.bool true)] -> []
+SURVIVOR lean/VE/Service/Document.lean:1605 VE.Service.Document.contentOf (D[V], trusted) list-last: E.boundNames.toList -> (E.boundNames.toList.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2440 VE.Service.Document.check (D[V], trusted) list-last: records.map (·.1) -> ((records.map (·.1)).reverse.take 1)
+trust_mutants: 36 KILLED, 3 SURVIVOR, 2 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 187 OTHER SHARD in 3060 s
+trust_mutants: D[V], trusted: 9 KILLED, 3 SURVIVOR, 3 INVALID, 56 OTHER SHARD
+trust_mutants: G[V], trusted: 27 KILLED, 2 UNKNOWN, 3 INVALID, 131 OTHER SHARD
+trust_mutants: steps: wall plan 9.5 s, scratch 2.9 s, control_build 0.3 s, probe_install 1.1 s, control_probes 1491.5 s, mutants 1549.9 s, cleanup 5.1 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 3898 s (12), mutant_builds 1147.5 s (49), mutant_checks 2830.4 s (24), stage_controls 446.8 s (4), mutant_probes 1583.2 s (36)
