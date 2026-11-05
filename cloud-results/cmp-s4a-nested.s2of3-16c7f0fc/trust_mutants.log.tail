@@ -1,0 +1,9 @@
+trust_mutants: 7 definitions, 34 mutants (11 to run), 4 jobs, base 176d50c05c2d
+UNKNOWN lean/VE/Discourse/PositionsExamples.lean:154 VE.Discourse.PositionsExamples.dOwner (?, trusted) lit-plus: 0 -> 1 (lean/VE/Discourse/PositionsExamples.lean:164: Expression (Lean elaborates it otherwise than witho...)
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:161 VE.Discourse.PositionsExamples.outer (?, trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:161 VE.Discourse.PositionsExamples.outer (?, trusted) lit-minus: 5 -> 4
+SURVIVOR lean/VE/Discourse/Positions.lean:195 VE.Discourse.inRestriction (?, trusted) le-lt: ≤ -> <
+UNKNOWN lean/VE/Discourse/PositionsExamples.lean:154 VE.Discourse.PositionsExamples.dOwner (?, trusted) lit-plus: 2 -> 3 (lean/VE/Discourse/PositionsExamples.lean:192: Expression (Lean elaborates it otherwise than witho...)
+trust_mutants: 6 KILLED, 3 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 23 OTHER SHARD in 188 s
+trust_mutants: ?, trusted: 6 KILLED, 3 SURVIVOR, 2 UNKNOWN, 23 OTHER SHARD
+trust_mutants: steps: wall plan 9 s, scratch 2.5 s, control_build 0.1 s, probe_install 1.1 s, control_probes 108.1 s, mutants 61.4 s, cleanup 5.5 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 112.6 s (2), mutant_builds 46.5 s (12), mutant_checks 105.6 s (9), stage_controls 46.4 s (4), mutant_probes 18.1 s (8)
