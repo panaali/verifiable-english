@@ -10,5 +10,6 @@
 - `docs/infra/eff-20261030-1/chunk_table.py` — Step 1 (and step 5) table of eff-20261030-1: how much of each heavy test file's wall time chunks could cut.
 - `docs/infra/eff-20261030-1/seeded_bugs.py` — Seeded bugs of eff-20261030-1: plant each in the product file, show the named test fails, restore the file.
 - `docs/infra/eff-20261030-1/step5_table.py` — Step 5 table of eff-20261030-1: each chunkable file whole vs in chunks on the Mac, from measure5.sh's logs.
+- `docs/infra/eff-20261104-1/evidence/replay.py` — eff-20261104-1's replay: what the new `previous` decides on recorded --rescore pairs, and whether each verdict it carries is the one the recorded full run at t…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
