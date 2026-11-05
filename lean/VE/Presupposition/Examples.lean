@@ -407,12 +407,15 @@ def m22p : VE.FiniteModel String := m22 [["s1"], ["s2"]]
   [[true, false], [true, false]]
 #guard [t22, mixed22].map (fun T => (VE.Norms.elaborate T).all (ev (m22 [["s1"]]))) == [true, true]
 -- `unsaid_iff` on the `unspecified` cell: `s2` (no rule decides) is `unsaid`, `s1` (a rule decides) is not.
+theorem s22_pos_s1 : evAt m22p ["s1"] (VE.Norms.pos mixed22 "p") = true := by decide
+theorem s22_pos_s2 : evAt m22p ["s2"] (VE.Norms.pos mixed22 "p") = false := by decide
+theorem s22_neg_s2 : evAt m22p ["s2"] (VE.Norms.neg mixed22 "p") = false := by decide
 example : VE.NormDefaults.value3 (evAt m22p ["s2"] (VE.Norms.pos mixed22 "p") = true)
     (evAt m22p ["s2"] (VE.Norms.neg mixed22 "p") = true) .unspecified = .unsaid :=
-  (unsaid_iff _ _).mpr ⟨by decide, by decide⟩
+  (unsaid_iff _ _).mpr ⟨by simp [s22_pos_s2], by simp [s22_neg_s2]⟩
 example : VE.NormDefaults.value3 (evAt m22p ["s1"] (VE.Norms.pos mixed22 "p") = true)
     (evAt m22p ["s1"] (VE.Norms.neg mixed22 "p") = true) .unspecified ≠ .unsaid :=
-  fun h => ((unsaid_iff _ _).mp h).1 (by decide)
+  fun h => ((unsaid_iff _ _).mp h).1 s22_pos_s1
 
 -- S8: `resides_in` total and functional; "the State wherein Alice resides". The last model is one more direction: total F.
 def flag8 : VE.Data.Background.Flag :=
