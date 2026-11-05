@@ -21,7 +21,7 @@ import pytest
 
 from tests.test_discourse_lean import lean, run  # noqa: F401  (the `lean` fixture builds the route)
 from ve.document import check_document
-from ve.errors import UnsupportedProfile, VEError
+from ve.errors import CheckerUnavailable, UnsupportedProfile, VEError
 
 S01 = ("As discussed above, Claude’s three main principals—Anthropic, operators, and users—warrant different "
        "sorts of treatment and trust from Claude. ")
@@ -278,7 +278,9 @@ def test_fenced_content_abstains(lean, tmp_path):
              SOURCE + "```ve u0214.s02.p2\nClaude helps.\n```\n")
 
 
-def test_norm_content_abstains(lean, tmp_path):
+def test_norm_content_is_read_on_the_composed_path(lean, tmp_path):
+    # cmp-s4c (DRI 2026-11-02 item 2): on `norms@0` with `ve.discourse@1` the composed path reads norm content; this
+    # object is no norm object, which the `@1` part's check (14.5 step 4, the document mode's text) cannot decide
     doc = example(mixed=False)
     doc["environment"] = environment(profiles=["norms@0"] + PROFILES, helps=True)
     rest = doc["units"][2]
@@ -288,8 +290,9 @@ def test_norm_content_abstains(lean, tmp_path):
                                             "condition": ["top"], "action": "helps"}}}
     del doc["discourse"]["mentions"][1]
     row = admit(doc)
-    assert row["status"] == "error" and row["error"].startswith("NotImplemented: norm content"), row
-    with pytest.raises(UnsupportedProfile):
+    assert row["status"] == "error" and row["error"].startswith("CheckerUnavailable: a norm object") and (
+        "expected [name, predicate, sign, guard, unless, over]" in row["error"]), row
+    with pytest.raises(CheckerUnavailable, match="expected \\[name, predicate"):
         python(doc, tmp_path)
 
 

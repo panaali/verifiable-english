@@ -2332,7 +2332,8 @@
       "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode",
       "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file",
       "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path",
-      "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file"
+      "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file",
+      "lean/ResponseShape/Schemas/Discourse.lean": "the discourse mode's response shapes (discourse.json) and #guards reading the members of its rendered composed row (cmp-s4c); test tooling beside lean/ResponseShape.lean, not on any runner path"
     }
   },
   "plan_operations": {
