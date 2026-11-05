@@ -67,6 +67,7 @@ abbrev «calc» : Skel := skel% "calc.json#/row"
 abbrev cardinality : Skel := skel% "cardinality.json#/row"
 abbrev scope : Skel := skel% "scope.json#/row"
 abbrev sensesProject : Skel := skel% "senses.project.json#/row"
+abbrev englishCommand : Skel := skel% "english.command.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -110,6 +111,7 @@ def row : VE.Service.Mode → Skel
   | .cardinality => cardinality
   | .scope => scope
   | .sensesProject => sensesProject
+  | .englishCommand => englishCommand
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])
