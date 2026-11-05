@@ -663,6 +663,18 @@ theorem readCommand_typed_of_facts (r : Reading) (D : VE.SpeechActs.SpeechDoc) (
         simp [hE ▸ hyou, hE, (hreg g0 hmem).1, hs, hguard, htyped, VE.SpeechActs.constsTyped, hrole]
         cases p.force <;> simp [roleOf]
 
+/-- Under `acts@0` a read command's act is one simple act of a decoded environment (commands-imperatives 9): AP-1's
+`check` read every act of the environment, so the reader needs no refusal of its own. -/
+theorem command_act_simple (j : Lean.Json) (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok se)
+    (h : "acts@0" ∈ se.profiles) (r : Reading) (hr : readCommand se sc E L b s = .one r) :
+    ∃ g a fx, g ∈ se.ne.regulated ∧ g.name = r.act ∧ g.act = some a ∧
+      VE.Norms.Wire.actsFixed se.profiles se.json = .ok fx ∧ VE.Acts.Lexical.joinFree fx a = true := by
+  obtain ⟨_, hc, _⟩ := (readCommand_one_iff se sc E L b s r).mp hr
+  have hm : r ∈ candidates se sc E L b s := (mem_dedup _ _ (Nat.le_refl _) r).mp (by simp [hc])
+  obtain ⟨_, g, a, _, _, _, hg, hn, _, ha, _⟩ := candidate_reads_back se sc E L b s r hm
+  obtain ⟨fx, hf, hj⟩ := VE.SpeechActs.Wire.decoded_act_simple hd h hg ha
+  exact ⟨g, a, fx, hg, hn, ha, hf, hj⟩
+
 end Statements
 
 end VE.Commands

@@ -761,9 +761,10 @@ def speechOthers : List String :=
   ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norm-defaults@0",
    "order@0", "reports@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
-/-- What `acts@0` refuses (act-phrases 4.4): every route whose norm decoder it does not hook. -/
+/-- What `acts@0` refuses (act-phrases 4.4): every route whose norm decoder it does not hook. The speech route's
+decoder hooks it (`VE.SpeechActs.Wire.decode_acts_compatible`). -/
 def actsRefuses : List (String × String) :=
-  (["soft-norms@0", "rights@0", "alternatives@0", "speech-acts@0"].map fun q =>
+  (["soft-norms@0", "rights@0", "alternatives@0"].map fun q =>
     (q, s!"acts@0 with {q} is not implemented")) ++
   (["closure", "order"].map fun f => (s!"{f}@0", VE.Norms.Wire.actsFamilyRefusal f)) ++
   [("ve.discourse@1", "acts@0 with ve.discourse@1 is not implemented")]
@@ -1249,11 +1250,12 @@ theorem baseGate_today (ps : List String) (h : ∀ p ∈ ps, p ∈ registered) :
   cases (baseRows.flatMap (rowChecks ps)).find? (·.1) <;> rfl
 
 
-/-! ### `gate_acts`: `acts@0` changes no route (act-phrases 4.4) -/
+/-! ### `gate_acts`: `acts@0` changes no route, and the speech route is one it may join (act-phrases 4.4) -/
 
 theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
     (hg : gateOf profileTable ps = .ok r) :
-    gateOf profileTable (ps.erase "acts@0") = .ok r ∧ (r = .norms ∨ r = .normDefaults ∨ r = .readings) := by
+    gateOf profileTable (ps.erase "acts@0") = .ok r ∧
+      (r = .norms ∨ r = .normDefaults ∨ r = .readings ∨ r = .speechActs) := by
   obtain ⟨⟨hs, hk, hrows⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
   have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
   have hmem : ∀ x, x ≠ "acts@0" → (x ∈ ps.erase "acts@0" ↔ x ∈ ps) := fun x hx => by
@@ -1263,7 +1265,7 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
   have hacts := row ⟨"acts@0", ["norms@0"], actsRefuses, "layer", .rewrite 11⟩ (by simp [profileTable, baseRows]) h
   simp only [actsRefuses, List.map_cons, List.map_nil, List.cons_append, List.nil_append, List.mem_cons,
     List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq, toString, String.reduceAppend] at hacts
-  obtain ⟨hno, hso, hri, hal, hsp, hcl, hor, hdi⟩ := hacts
+  obtain ⟨hno, hso, hri, hal, hcl, hor, hdi⟩ := hacts
   have hrc : "right-clauses@0" ∉ ps := fun hp =>
     hri ((row ⟨"right-clauses@0", ["rights@0"], [], "clauses", .rewrite 20⟩ (by simp [profileTable, wrapperRows])
       hp).1 _ (by simp))
@@ -1295,7 +1297,8 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
     simp only [todayHead, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11]
   · rw [routeOf_table]
     by_cases hr : "readings@1" ∈ ps <;> by_cases hd : "norm-defaults@0" ∈ ps <;>
-      simp [todayHead, hr, hd, hno, hso, hri, hal, hsp, hdi, hrc, hrk, hre]
+      by_cases hsa : "speech-acts@0" ∈ ps <;>
+      simp [todayHead, hr, hd, hsa, hno, hso, hri, hal, hdi, hrc, hrk, hre]
 
 /-! ### `gate_scope`: `scope@0` changes no route (scope 1.1, SC-1b) -/
 
