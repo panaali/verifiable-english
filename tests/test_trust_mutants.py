@@ -632,7 +632,8 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
         return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep, classes)
 
     def why_not(names: list[str]) -> str | None:
-        return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"})
+        return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"},
+                                        trust_mutants.lake_reads(root, [root / "outside/T.lean"]))
     prev, before = tmp_path / "prev.json", digests()
     prev.write_text(json.dumps({"inputs": before, "head": "h", "mutants": []}))
     assert trust_mutants.previous(prev, digests(), [], why_not) == ("identical", "h", {}, [], [])
@@ -809,20 +810,21 @@ def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, nam
 def test_a_check_only_change_lies_outside_every_selected_file_and_its_closure(tmp_path):
     """speed-tmchecks: the files a check-only change may touch: a module of lean/ outside every selected
     declaration's file and import closure (`reach`, read from the imports), an outside --test file or a generated
-    inventory; any other file is a full run."""
+    inventory, or an unread plan input or Markdown file; any other file is a full run."""
     import trust_mutants
     reads = layered(tmp_path, {})
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
     reach = trust_mutants.reach(reads, [m])
     assert reach == {"Demo/Defs.lean", "Demo/Base.lean"}
     ok = ["lean/Demo/Examples.lean", "lean/Demo/New.lean", "lean/declarations.txt", "lean/statements.txt",
-          "outside/T.lean", "tools/trust-classes.json"]
-    assert trust_mutants.check_only(ok, reach, {"outside/T.lean"}) is None
+          "outside/T.lean", "tools/trust-classes.json", "lean/SCOPE.md"]
+    lake = trust_mutants.lake_reads(tmp_path, [])
+    assert trust_mutants.check_only(ok, reach, {"outside/T.lean"}, lake) is None
     for name, why in (("lean/Demo/Defs.lean", "a selected declaration's file"),
                       ("lean/Demo/Base.lean", "in its import closure"), ("lean/lakefile.toml", "no module"),
-                      ("lean/lean-toolchain", "no module"), ("lean/SCOPE.md", "no module"),
+                      ("lean/lean-toolchain", "no module"),
                       ("outside/U.lean", "no module")):
-        assert why in (trust_mutants.check_only([*ok, name], reach, {"outside/T.lean"}) or ""), name
+        assert why in (trust_mutants.check_only([*ok, name], reach, {"outside/T.lean"}, lake) or ""), name
 
 
 def test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same(package, default_run, tmp_path,
