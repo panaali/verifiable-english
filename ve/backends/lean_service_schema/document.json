@@ -41,6 +41,15 @@
       "additionalProperties": false,
       "properties": {
         "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "leaf_labels": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"label": {"type": "string"}, "name": {"type": "string"}},
+            "required": ["name", "label"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "report": {
           "additionalProperties": false,
           "properties": {
@@ -54,7 +63,7 @@
         "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
         "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
       },
-      "required": ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "report_id"],
+      "required": ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "leaf_labels", "report_id"],
       "type": "object"
     },
     "cells": {

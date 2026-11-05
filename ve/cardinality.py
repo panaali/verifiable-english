@@ -272,6 +272,10 @@ def bind_document(ids: Identities, row: dict, declared: list, graph, admitted: b
         _require(("cardinality" in row) == (admitted and graph is not None), "report")
         if "cardinality" in row:
             bind_report(ids, graph, row["cardinality"])
+            labels = {node["name"]: node["label"] for node in graph["nodes"] if "label" in node}
+            _require(row["cardinality"]["leaf_labels"] == [
+                {"name": leaf["name"], "label": labels[leaf["name"]]}
+                for leaf in row["cardinality"]["report"]["leaves"] if leaf["name"] in labels], "leaf labels")
     except MALFORMED as exc:
         raise unbound(f"{type(exc).__name__}: {exc}"[:200]) from exc
 

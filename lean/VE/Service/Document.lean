@@ -2261,21 +2261,54 @@ open VE.Route.Admission (token)
 
 /-! ## The case -/
 
-/-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, each node then
-bound to the asserted unit of its name, which holds its statement, so a report rests on nothing the document does not
-assert (W6a's provenance rule for an asserted leaf, `VE.Time.Document`; bridges have no label here yet: qt-a4b). The
-report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`). -/
+/-- A claim graph's `label` members by node name, and the graph without them, which is what `admitGraph` decodes (its
+node has no label, and the `cardinality` mode, whose request has no units, refuses one). The nodes are counted first. -/
+def graphLabelled (graph : Json) : Except String (Json × Std.HashMap String String) := do
+  let .arr nodes := graph.getObjValD "nodes" | return (graph, ∅)
+  if nodes.size > VE.Cardinality.Document.maxGraphNodes then throw VE.Cardinality.Document.nodeLimit
+  let (bare, labels) ← nodes.foldlM (init := ((#[] : Array Json), (∅ : Std.HashMap String String))) fun (bare, labels) n =>
+    match n, n.getObjVal? "label" with
+    | .obj kvs, .ok l => do
+      let some text := l.getStr?.toOption | throw "claim graph node label must be a string"
+      let name := (n.getObjValD "name").getStr?.toOption.getD ""
+      pure (bare.push (.obj (kvs.erase "label")), labels.insert name text)
+    | _, _ => pure (bare.push n, labels)
+  pure (graph.setObjVal! "nodes" (.arr bare), labels)
+
+/-- W6a's provenance rule's quoted half (`VE.Time.Document.LeafAdmitted`): a leaf labelled `bridge:accepts(agent,unit)`
+states exactly a quoted unit's content, the unit attributed to that agent. A deduction is never a bridge. -/
+def bridgeAdmitted {w : VE.Cardinality.CardEnv} {γ : Type} (units : Std.HashMap String SourceUnit)
+    (n : VE.Cardinality.Document.CNode w γ) (label : String) : Bool :=
+  match VE.Route.Admission.parseLabel label, n.deduction with
+  | some (.bridge agent unit), none => match units[unit]? with
+    | some { decoded := .route k, meaningId := some m, .. } =>
+      k.quoted && VE.Route.Admission.agentMatches k agent && m == n.adm.meaningId
+    | _ => false
+  | _, _ => false
+
+/-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, then each node
+bound by W6a's provenance rule (`VE.Time.Document`). A node without a label, or labelled `asserted`, is the asserted
+unit of its name, holding its statement; a bridge leaf is `bridgeAdmitted`, so a quoted unit enters only through one.
+The report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`, whose
+document is the graph as written, labels included); `leaf_labels` names the leaves that carry a label. -/
 def cardinalityReport (w : VE.Cardinality.CardEnv) (graph : Json) (units : List SourceUnit) : Except String Json := do
-  let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction graph
-  let meanings : Std.HashMap String (Option String) := units.foldl
-    (fun m u => if u.kind == .str "asserted" then m.insert u.id u.meaningId else m) ∅
+  let (bare, labels) ← graphLabelled graph
+  let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction bare
+  let held : Std.HashMap String SourceUnit := units.foldl (fun m u => m.insert u.id u) ∅
   for n in g.nodes do
-    unless meanings[n.name]? == some (some n.adm.meaningId) do
-      throw s!"claim graph node {n.name} is not an asserted unit holding its statement"
+    match labels[n.name]? with
+    | none | some "asserted" =>
+      unless (held[n.name]?.any fun u => u.kind == .str "asserted" && u.meaningId == some n.adm.meaningId) do
+        throw s!"claim graph node {n.name} is not an asserted unit holding its statement"
+    | some label =>
+      unless bridgeAdmitted held n label do
+        throw s!"AdmissionError: node {n.name} is not admitted under label {label}"
   let report := VE.Cardinality.Run.reportJson g
+  let labelled := g.leaves.filterMap fun n => labels[n.name]?.map fun l =>
+    Json.mkObj [("name", .str n.name), ("label", .str l)]
   pure (Json.mkObj [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
     ("w6_target_environment_id", .str w.w6.targetId), ("report", report),
-    ("report_id", .str (← VE.Cardinality.Run.reportId w graph report))])
+    ("leaf_labels", Json.arr labelled.toArray), ("report_id", .str (← VE.Cardinality.Run.reportId w graph report))])
 
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
 structure Checked where

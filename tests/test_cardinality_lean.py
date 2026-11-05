@@ -166,6 +166,51 @@ def test_every_graph_node_is_a_unit_holding_its_statement(tmp_path):
     assert check_document(written(tmp_path, quoted, graph=False))
 
 
+QUOTED = ["attributed", "fomc", "says", "asserted"]
+
+
+def bridged(tmp_path, label, kind=QUOTED, statement=TOP):
+    """A graph whose one leaf `leaf` is labelled, over a unit `said` of `kind` holding `statement`."""
+    meta = json.loads(text([{"name": "said", "statement": statement, "kind": kind}], graph=False).split(b"---\n")[1])
+    meta["graph"] = {"root": "leaf", "nodes": [{"name": "leaf", "statement": TOP, "label": label}]}
+    path = tmp_path / "bridged.ve.md"
+    path.write_bytes(b"---\n" + json.dumps(meta).encode() + b"\n---\nSentence 0 about the count.\n")
+    return path
+
+
+def test_a_quoted_unit_enters_only_through_a_bridge_naming_it(tmp_path):
+    label = "bridge:accepts(fomc,said)"
+    answer = check_document(bridged(tmp_path, label))["cardinality"]
+    assert answer["leaf_labels"] == [{"name": "leaf", "label": label}]
+    assert [leaf["name"] for leaf in answer["report"]["leaves"]] == ["leaf"]
+    for wrong, kind, statement in (("bridge:accepts(other,said)", QUOTED, TOP), ("bridge:accepts(fomc,absent)", QUOTED, TOP),
+                                   (label, "asserted", TOP), (label, QUOTED, {"format": "ve-cardinality@1", "formula": ["quantity", ["bottom"]]}),
+                                   ("bridge:accepts(fomc, said)", QUOTED, TOP), ("open:said", QUOTED, TOP)):
+        with pytest.raises(VEError, match=re.escape(f"AdmissionError: node leaf is not admitted under label {wrong}")):
+            check_document(bridged(tmp_path, wrong, kind, statement))
+    # An asserted label is the unlabelled rule, and a label on an asserted leaf does not make it a bridge.
+    nodes = [{"name": "only", "statement": TOP, "label": "asserted"}]
+    assert check_document(written(tmp_path, nodes))["cardinality"]["leaf_labels"] == [{"name": "only", "label": "asserted"}]
+    assert check_document(written(tmp_path, [{"name": "only", "statement": TOP}]))["cardinality"]["leaf_labels"] == []
+
+
+def test_a_deduction_is_no_bridge_and_the_report_id_covers_the_label(tmp_path):
+    nodes = GRAPH["document"]["nodes"]
+    plain = check_document(written(tmp_path, nodes))["cardinality"]
+    labelled = [*nodes[:-1], {**nodes[-1], "label": "asserted"}]
+    assert check_document(written(tmp_path, labelled))["cardinality"]["report_id"] != plain["report_id"]
+    # The root is a deduction: naming its own quoted unit in a bridge label does not admit it.
+    root = {**nodes[-1], "kind": QUOTED, "label": f"bridge:accepts(fomc,{nodes[-1]['name']})"}
+    with pytest.raises(VEError, match=re.escape(f"node {root['name']} is not admitted under label {root['label']}")):
+        check_document(written(tmp_path, [*nodes[:-1], root]))
+
+
+def test_the_cardinality_mode_has_no_units_so_it_refuses_a_label():
+    graph = {"root": "only", "nodes": [{"name": "only", "statement": TOP, "label": "bridge:accepts(fomc,said)"}]}
+    with pytest.raises(VEError):
+        cardinality.document(ENV, graph)
+
+
 def test_a_stale_meaning_id_and_an_unproved_root_are_refused(tmp_path):
     node = {"name": "only", "statement": TOP}
     mid = load_document(written(tmp_path, [node], graph=False))["units"][0]["meaning_id"]
