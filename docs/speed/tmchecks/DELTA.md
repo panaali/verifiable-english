@@ -16,3 +16,6 @@ What the tooling does, none of it a VE output:
   the exit codes are unchanged. Without `--rescore` every verdict is computed as before.
 - No gate, merge train (R2) or nightly (R3) runs or reads the tool or its evidence; both stay complete and
   unchanged.
+- F1 fix: a changed plan input (`tools/trust-classes.json` or `tools/layer_policy.py`) permits a carried
+  verdict only when the scanned Lake and Lean sources, including outside `--test` files, name no read
+  of it. A named or directory read causes a full run. This changes tooling reuse, not a VE verdict.
