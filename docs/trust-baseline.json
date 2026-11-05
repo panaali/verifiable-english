@@ -2056,6 +2056,13 @@
    "reason": "ps-1b: VE/Presupposition/Reading.lean S +33 (Reading, Reading.DefinedAt, assertedAt, conditionedAt, inPlaceAt, Root, carried, peel); VE/Presupposition/Rows.lean S +10 (definite, plural, generic), D[V] +21 (buildReading, buildPre); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1b, 2026-10-18",
    "commit": "8205a8e6966811b10bd3bc793496bd15ea7c2fbb"
+  },
+  {
+   "class": "S",
+   "lines": 165,
+   "reason": "at-1b: Syntax.lean +165 (S), K +0, at-1a-tie first half -15 (gross +180; keys, name, keyOf, envAtt to D[V] tied)",
+   "signature": "SIGNED by the DRI 2026-11-05 (reviews/dri-decisions-20261105-at-1b-trust.md item 1)",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
   }
  ]
 }
