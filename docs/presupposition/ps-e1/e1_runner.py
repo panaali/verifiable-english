@@ -173,7 +173,7 @@ def run(items, cfg, raw, call=cli_call, pick=pick_account, head="uncommitted", f
                 answer, error, outage, reported = "", str(exc), False, None
                 with lock:
                     state["stop"] = f"stopped: {exc}"
-            used = RESERVE_CW if reported is None else reported
+            used = RESERVE_CW if reported is None or outage else reported
             retry = outage and base["attempts"] < MAX_ATTEMPTS
             record = base | {"state": "outage" if retry else "final", "charged_cw": used, "answer": answer,
                              "model_calls": base["model_calls"] + (0 if outage else 1), "exit_code": code,

@@ -287,7 +287,8 @@
    "claim": "a saved table that is not the generator's output",
    "find": "\"assumed\"",
    "replace": "\"conditioned\"",
-   "test": "test_saved_table_and_results_are_the_generators_output"
+   "test": "test_saved_table_and_results_are_the_generators_output",
+   "failed": "test_saved_table_and_results_are_the_generators_output"
   },
   {
    "id": "M33",
@@ -295,7 +296,8 @@
    "claim": "a saved raw answer changed after scoring",
    "find": "\"answer\": \"(c)\"",
    "replace": "\"answer\": \"(b)\"",
-   "test": "test_saved_table_and_results_are_the_generators_output"
+   "test": "test_saved_table_and_results_are_the_generators_output",
+   "failed": "test_saved_table_and_results_are_the_generators_output"
   },
   {
    "id": "M34",
@@ -303,7 +305,26 @@
    "claim": "a met proviso bar passes unnoted",
    "find": "elif all(n >= bars[\"proviso_min\"] for n in pair.values()):",
    "replace": "elif False:",
-   "test": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape"
+   "test": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape",
+   "failed": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape"
+  },
+  {
+   "id": "M35",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "an outage with zero reported usage is charged nothing",
+   "find": "used = RESERVE_CW if reported is None or outage else reported",
+   "replace": "used = RESERVE_CW if reported is None else reported",
+   "test": "test_outage_is_retried_and_three_failures_in_a_row_stop",
+   "failed": "test_outage_is_retried_and_three_failures_in_a_row_stop"
+  },
+  {
+   "id": "M36",
+   "file": "tools/regen_generated.py",
+   "claim": "the PS-E1 writers are not registered",
+   "find": "    \"docs/presupposition/ps-e1/e1_score.py\": \"PS-E1 results from saved raw answers, checked by tests/test_ps_e1.py\",\n",
+   "replace": "",
+   "test": "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason",
+   "failed": "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
   }
  ]
 }

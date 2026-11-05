@@ -354,6 +354,10 @@ def test_outage_is_retried_and_three_failures_in_a_row_stop(tmp_path):
     records = e1_score.load_records(tmp_path / "s")
     assert all(r["state"] == "outage" and r["model_calls"] == 0 for r in records.values())
     assert e1_runner.spent(records)[1] == 3 * e1_runner.RESERVE_CW
+    silent = copy.deepcopy(ok(3))  # a result that reports zero output tokens never reached the model either
+    silent[1]["usage"]["output_tokens"] = 0
+    assert run(tmp_path / "z", Fake(silent), cfg=one_at_a_time) == "done"
+    assert e1_score.load_records(tmp_path / "z")[ITEMS[0]["id"], 1]["prior_cw"] == e1_runner.RESERVE_CW
 
 
 def test_third_attempt_of_an_outage_is_a_final_call_error(tmp_path):
