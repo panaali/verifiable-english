@@ -1,0 +1,19 @@
+{
+ "job": "cmp-s4a-nested.s3of3-16c7f0fc",
+ "head": "850103907cf7f8f20b5dcba21afea59a548862db",
+ "argv": [
+  "cmp-s4a-nested.s3of3-16c7f0fc",
+  "850103907cf7f8f20b5dcba21afea59a548862db",
+  "176d50c05c2d6ee32e3d06b9a8059d7a3d73e113",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-882ba1f014ca.tar.zst",
+  "29f7e80bbc7df999b69f8a2f0ab9b466031883fa696055fec685b69c42a36450",
+  "--max-mutants",
+  "1000",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/3",
+  "--jobs",
+  "4"
+ ]
+}
