@@ -1,0 +1,84 @@
+{
+ "base": "e9a6ec8d5938051a70116918e34fc3cd92aac16e",
+ "files": 21,
+ "mechanical": true,
+ "per_file": {
+  "A1.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A1d.json": [],
+  "A2.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A3.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A4.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A5.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A7.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "A8.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "G1.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "G10.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "G2.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "G3.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "G4.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "U2.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "U3.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "U5.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "U6.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "U7.json": [
+   "/result/identities/actions_version",
+   "/seconds"
+  ],
+  "packages-a-conflict.json": [],
+  "packages-a-rules.json": [],
+  "packages-a-unspecified.json": []
+ },
+ "removed": {
+  "/result/identities/actions_version": 17,
+  "/seconds": 17
+ },
+ "same_names": true
+}
