@@ -497,6 +497,9 @@ def textD14d : String := "InvalidInput: an attitude condition names a symbol wit
 
 #guard passes fat1 && passes fat0 && passes fat2 && passes fat3 && passes fat3none && passes fat5 && passes fat6
 #guard passes fat7 && passes fat7item && passes fat8 && passes fat9 && passes ca1 && passes cb1 && passes cc1
+-- spec 7.1's computed values: F-AT5's 14 generated keys; F-AT9's one key and elaborated guard
+#guard (keys fat5).length == 14 && names fat9 == ["attitudes__knows__1"] &&
+  guard9.toFormula fat9 Γ1 == some (.and (contentOf cat0) (.not knows1))
 -- D14d: admitted exactly when every symbol has its entry (spec 7.4): C-b's first with `s1` in the lexicon, C-d's two
 #guard passes cb1 && fails cd1 textD14d && fails cd2 textD14d
 -- C-e: the part is admitted and named after the rules' keys; the same node in a guard, and the compound part, are not
