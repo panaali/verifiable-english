@@ -1,0 +1,6 @@
+trust_mutants: 1 definitions, 11 mutants (11 to run), 4 jobs, base c47399598104
+UNKNOWN lean/VE/Presupposition/Rules.lean:23 VE.Presupposition.conditionRule (S, trusted) list-empty: T.nodes -> [] (lean/VE/Presupposition/Examples.lean:415: Tactic `decide` proved that the proposition)
+UNKNOWN lean/VE/Presupposition/Rules.lean:23 VE.Presupposition.conditionRule (S, trusted) list-empty: T.nodes.map (fun M => if M.name == n then conditionNode M c else M) -> [] (lean/VE/Presupposition/Examples.lean:415: Tactic `decide` proved that the proposition)
+trust_mutants: 9 KILLED, 0 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 88 s
+trust_mutants: S, trusted: 9 KILLED, 2 UNKNOWN
+trust_mutants: steps: wall plan 11.3 s, scratch 3.5 s, control_build 0.2 s, probe_install 1.4 s, control_probes 9.6 s, mutants 59.6 s, cleanup 2.8 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 7.9 s (1), mutant_builds 27.3 s (22), mutant_checks 44 s (13), stage_controls 17.7 s (4), mutant_probes 25.6 s (9)
