@@ -276,9 +276,11 @@ import VE.Order.Wire
 import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
+import VE.Presupposition.Agree
 import VE.Presupposition.Frame
 import VE.Presupposition.Reading
 import VE.Presupposition.Rows
+import VE.Presupposition.Rules
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
@@ -4388,8 +4390,15 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.collapse
 #print axioms VE.Presupposition.collapse_assumed
 #print axioms VE.Presupposition.collapse_certified
+#print axioms VE.Presupposition.conditionRule_shape
+#print axioms VE.Presupposition.condition_applies
+#print axioms VE.Presupposition.conditioned_contributes_nothing
 #print axioms VE.Presupposition.conditioned_vacuous_off_goal
+#print axioms VE.Presupposition.data_attribute_proved
+#print axioms VE.Presupposition.decidesD_map
 #print axioms VE.Presupposition.definite_defined
+#print axioms VE.Presupposition.discourse_definite_is_row
+#print axioms VE.Presupposition.exists_child_map
 #print axioms VE.Presupposition.foldr_and_denote
 #print axioms VE.Presupposition.foldr_implies_denote
 #print axioms VE.Presupposition.generic_defined
@@ -4405,6 +4414,13 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.plural_defined
 #print axioms VE.Presupposition.raise1_denote
 #print axioms VE.Presupposition.reach_typed
+#print axioms VE.Presupposition.rule_collapse_certified
+#print axioms VE.Presupposition.rule_collapse_decides
+#print axioms VE.Presupposition.rule_collapse_typed
+#print axioms VE.Presupposition.source_identity_entails
+#print axioms VE.Presupposition.speech_question_top
+#print axioms VE.Presupposition.unsaid_iff
+#print axioms VE.Presupposition.yieldsD_map
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed
 #print axioms VE.Question.Str.bsize_toSubstring
