@@ -14,12 +14,16 @@ def coordinated : String × String := ("CoordinatedActs", "split into two comman
 def noReading : String × String := ("InvalidInput", "no single speech-act reading")
 def missingObligation : String := "MissingObligationRole"
 def missingPermission : String := "MissingPermissionRole"
+/-- The proof task's act (SA 2.1), the text of its `MissingObligationRole`. -/
+def proofAct : String := "{0} submit a proof of {1}"
+/-- No record, or two, has the sentence's target; the wire encoder writes the request's unit as the text (O1). -/
+def queryMismatch : String × String := ("QueryMismatch", "")
 
 /-- Every code the reader writes, with its class: `VEError`, the class Python raises for each today. -/
 def codeClasses : List (String × String) :=
   [("InvalidInput", "VEError"), ("PermissionNotCommand", "VEError"), ("UnboundSlot", "VEError"),
    ("TypeMismatch", "VEError"), ("MissingObligationRole", "VEError"), ("MissingPermissionRole", "VEError"),
-   ("AmbiguousDerivation", "VEError"), ("CoordinatedActs", "VEError")]
+   ("AmbiguousDerivation", "VEError"), ("CoordinatedActs", "VEError"), ("QueryMismatch", "VEError")]
 
 def limitText : String := "VE stopped reading this command at its work limit."
 

@@ -156,6 +156,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "cardinality": (60.0, 60.0),
     # The `senses.project` mode (senses B6): one projection and the identities of its environment and lexicon.
     "senses.project": _SENSES,
+    # The `english.command` mode (commands-imperatives CI-2): one Lean translation per sentence.
+    "english.command": _CORE,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
 }
