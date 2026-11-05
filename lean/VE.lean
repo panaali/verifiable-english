@@ -137,6 +137,7 @@ import VE.Presupposition.Rows
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
+import VE.RightClauses.Relation
 import VE.RightClauses.Examples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run

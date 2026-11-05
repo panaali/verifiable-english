@@ -349,6 +349,7 @@ import VE.Readings.Verdicts
 import VE.Readings.VerdictsWire
 import VE.Readings.Wire
 import VE.RightClauses.Plain
+import VE.RightClauses.Relation
 import VE.Rights.Admission
 import VE.Rights.Bar
 import VE.Rights.Correlate
@@ -6378,16 +6379,28 @@ import VE.WireContract.Engine
 #print axioms VE.Reports.unreported_key_free
 #print axioms VE.Reports.wf_of
 #print axioms VE.RightClauses.checkEntry_ok
+#print axioms VE.RightClauses.clauseSlot_eq
+#print axioms VE.RightClauses.clauseSlot_labelled
+#print axioms VE.RightClauses.clauseSlot_no_total
+#print axioms VE.RightClauses.clause_fails_not_selected
+#print axioms VE.RightClauses.entry_facts
+#print axioms VE.RightClauses.entry_instance
+#print axioms VE.RightClauses.eq_of_nodup_map
 #print axioms VE.RightClauses.fanCount_plain
 #print axioms VE.RightClauses.filterMap_key
+#print axioms VE.RightClauses.filterMap_labels_nodup
 #print axioms VE.RightClauses.findSome_unique
 #print axioms VE.RightClauses.foldl_and_denote
 #print axioms VE.RightClauses.forM_ok
+#print axioms VE.RightClauses.holderConj_left
 #print axioms VE.RightClauses.instancesOf_key
 #print axioms VE.RightClauses.limActs_plain
+#print axioms VE.RightClauses.limLabel_at7
 #print axioms VE.RightClauses.lineRuleNames_plain
 #print axioms VE.RightClauses.linesAux_key
 #print axioms VE.RightClauses.linesOf_plain_key
+#print axioms VE.RightClauses.map_nodup_of_filter
+#print axioms VE.RightClauses.own_instance_mem
 #print axioms VE.RightClauses.plainContent_declared
 #print axioms VE.RightClauses.plainContent_identity
 #print axioms VE.RightClauses.plainSource_eq
@@ -6396,7 +6409,11 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.plain_identity
 #print axioms VE.RightClauses.plain_limPremises
 #print axioms VE.RightClauses.plain_shape
+#print axioms VE.RightClauses.relLabel_at7
+#print axioms VE.RightClauses.relLabel_inj
+#print axioms VE.RightClauses.relation_some_bearer
 #print axioms VE.RightClauses.rightOf_plain
+#print axioms VE.RightClauses.selects_own
 #print axioms VE.RightClauses.sourceLines_plain
 #print axioms VE.Rights.Admission.admitDocument_spec
 #print axioms VE.Rights.Admission.admitNodes_ok
