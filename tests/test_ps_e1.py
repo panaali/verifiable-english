@@ -201,6 +201,7 @@ def test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape():
     c["V05"].update(c=40)
     c["V06"].update(c=40)
     assert generic_cells(c)["consequent"] == ["conditioned"]
+    assert "proviso bar met" in analyse(c)["cells"]["generic", "consequent"]["notes"][0]
     table = analyse(c)["table"]
     assert [t["row"] for t in table] == ["definite", "plural", "generic"]
     assert all(list(t["cells"]) == list(e1_score.ALL_CELLS) and t["cells"]["disjunct"] == [] for t in table)
