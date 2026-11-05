@@ -90,6 +90,125 @@
    "test": "tests/test_trust_mutants.py::test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[plan-only-module]",
    "failed": true,
    "line": "\"files\": files, \"tool_files\": tool_files}"
+  },
+  {
+   "name": "xiv-stripper-ignores-strings",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[string-dashes]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == 'NOT A MARK':"
+  },
+  {
+   "name": "xiv-b-stripper-ignores-strings-against-lean",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == 'NOT A MARK':"
+  },
+  {
+   "name": "xv-stripper-ignores-char-literals",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[char-quote]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == \"NOT A MARK\":"
+  },
+  {
+   "name": "xvi-stripper-ignores-raw-strings",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[raw-string]",
+   "failed": true,
+   "line": "r'(?P<raw>NOT A MARK)'"
+  },
+  {
+   "name": "xvii-holes-not-read-after-s!",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[interpolated]",
+   "failed": true,
+   "line": "i = LEAN_STRING_TAIL.match(text, i).end()"
+  },
+  {
+   "name": "xviii-a-brace-with-no-prefix-is-plain",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[holes-no-prefix-says]",
+   "failed": true,
+   "line": "if not tail:"
+  },
+  {
+   "name": "xix-block-comments-do-not-nest",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_name_only_in_a_lean_comment_carries[nested-block-NOTES.md]",
+   "failed": true,
+   "line": "nesting += 0 if mark[0] == \"/-\" else -1"
+  },
+  {
+   "name": "xix-b-a-block-runs-to-the-last-closer",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[nested-block-end]",
+   "failed": true,
+   "line": "i = text.rfind(\"-/\") + 2"
+  },
+  {
+   "name": "xx-unterminated-comment-is-blanked",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[unterminated-comment]",
+   "failed": true,
+   "line": "else:"
+  },
+  {
+   "name": "xxi-an-opener-inside-a-token-is-a-comment",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[dashes-inside-a-token]",
+   "failed": true,
+   "line": "if False:"
+  },
+  {
+   "name": "xxii-any-file-loses-comments",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_that_is_no_lean_source_stays_whole[lakefile-toml]",
+   "failed": true,
+   "line": "return lean_code(text)"
+  },
+  {
+   "name": "xxiii-comments-are-searched",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_the_real_trees_comments_cost_no_full_run",
+   "failed": true,
+   "line": "return text"
+  },
+  {
+   "name": "xxiv-prime-ends-a-word",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "LEAN_REST = LEAN_LETTER + \"0-9!?"
+  },
+  {
+   "name": "xxv-doc-comment-opens-with-two-chars",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "r\"|(?P<comment>--|/-)\""
+  },
+  {
+   "name": "xxvi-escaped-identifier-unknown",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[escaped-identifier]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == \"NOT A MARK\":"
+  },
+  {
+   "name": "xxvii-recursion-crashes",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_text_nested_past_the_recursion_limit_stays_whole",
+   "failed": true,
+   "line": "except LeanUnsure:"
+  },
+  {
+   "name": "xxviii-docstring-loses-the-condition",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_the_docstring_states_the_condition_where_it_claims_the_carry",
+   "failed": true,
+   "line": "an outside --test file, a generated inventory, trust_map's table, or a lean/*.md. Trust_map's table"
   }
  ]
 }
