@@ -196,15 +196,28 @@ def test_proviso_adds_unconditional_only_at_6_of_40_on_both(x, y, gains):
     assert "unconditional" not in first(analyse(c)["table"], row="plural")["cells"]["consequent"]
 
 
-def test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape():
+@pytest.mark.parametrize("target_status", ["one_reading", "no_carrier"])
+def test_proviso_adds_an_independent_candidate_even_when_target_is_decided(target_status):
     c = counts()
     c["V05"].update(c=40)
     c["V06"].update(c=40)
-    assert generic_cells(c)["consequent"] == ["conditioned"]
-    assert "proviso bar met" in analyse(c)["cells"]["generic", "consequent"]["notes"][0]
-    table = analyse(c)["table"]
+    if target_status == "no_carrier":
+        c[first(ITEMS, **{"class": "factive", "cell": "consequent"})["id"]].update(b=29, d=11)
+    out = analyse(c)
+    assert "unconditional" in generic_cells(c)["consequent"]
+    assert out["cells"]["generic", "consequent"]["status"] == "open"
+    assert target_status in out["cells"]["generic", "consequent"]["notes"][0]
+    table = out["table"]
     assert [t["row"] for t in table] == ["definite", "plural", "generic"]
     assert all(list(t["cells"]) == list(e1_score.ALL_CELLS) and t["cells"]["disjunct"] == [] for t in table)
+
+
+def test_proviso_is_applied_to_every_row_from_its_own_pair():
+    c = counts()
+    for i in ITEMS:
+        if i["family"] == "proviso":
+            c[i["id"]].update(c=6)
+    assert all("unconditional" in row["cells"]["consequent"] for row in analyse(c)["table"])
 
 
 def record(item, t, answer="(b)", **over):
@@ -310,11 +323,41 @@ def test_runner_call_cap(tmp_path, cap, n, status):
 
 def test_runner_cw_cap_stops_before_the_reserve_can_pass_it(tmp_path):
     fake = Fake()
-    cap = 1000 + e1_runner.RESERVE_CW
+    cap = 1000 + e1_runner.DISPATCH_CW
     assert run(tmp_path, fake, cfg=one_at_a_time | {"cw_cap": cap}) == "cap"
     assert len(fake.calls) == 11  # at 1,000 the 11th still fits with its reserve; at 1,100 the 12th does not
     assert e1_runner.spent(e1_score.load_records(tmp_path))[1] == 1100
     assert run(tmp_path / "wide", Fake(), cfg=one_at_a_time | {"cw_cap": 10 ** 7}) == "done"
+
+
+def test_runner_refuses_a_call_without_its_full_dispatch_allowance(tmp_path):
+    fake = Fake(ok(e1_runner.RESERVE_CW + 1))
+    assert run(tmp_path, fake, cfg=one_at_a_time | {"cw_cap": e1_runner.RESERVE_CW,
+                                                    "trials_per_item": 1}) == "cap"
+    assert fake.calls == [] and e1_runner.spent(e1_score.load_records(tmp_path)) == (0, 0)
+
+
+def test_runner_refuses_a_prompt_outside_the_dispatch_envelope(tmp_path):
+    fake = Fake()
+    cfg = one_at_a_time | {"reader_instruction": "x" * e1_runner.MAX_PROMPT_BYTES}
+    assert run(tmp_path, fake, cfg=cfg) == "cap"
+    assert fake.calls == []
+
+
+def test_runner_stops_on_reported_per_call_exhaustion_and_preserves_the_usage(tmp_path):
+    fake = Fake(ok(e1_runner.DISPATCH_CW + 1))
+    assert run(tmp_path, fake, cfg=one_at_a_time | {"cw_cap": e1_runner.DISPATCH_CW}) == "cap"
+    assert len(fake.calls) == 1
+    assert e1_runner.spent(e1_score.load_records(tmp_path)) == (1, e1_runner.DISPATCH_CW + 1)
+
+
+def test_runner_applies_dispatch_allowance_to_a_resumed_run(tmp_path):
+    item = ITEMS[0]
+    e1_runner.save(tmp_path / item["id"] / "01.json", record(item, 1, charged_cw=100))
+    fake = Fake()
+    assert run(tmp_path, fake, cfg=one_at_a_time | {"trials_per_item": 2,
+                                                    "cw_cap": e1_runner.DISPATCH_CW}) == "cap"
+    assert fake.calls == []
 
 
 def test_pilot_projection_against_the_cap():
@@ -345,23 +388,38 @@ def test_committed_refuses_a_dirty_frozen_file(monkeypatch):
 
 
 def test_outage_is_retried_and_three_failures_in_a_row_stop(tmp_path):
-    fake = Fake(DOWN)
+    never_started = (-1, e1_runner.NeverStarted(), "")
+    fake = Fake(never_started)
     assert run(tmp_path, fake, cfg=one_at_a_time) == "done" and len(fake.calls) == 41
     got = e1_score.load_records(tmp_path)[ITEMS[0]["id"], 1]
     assert (got["attempts"], got["state"], got["answer"], got["model_calls"]) == (2, "final", "(b)", 1)
-    fake = Fake(DOWN, DOWN, DOWN)
+    fake = Fake(never_started, never_started, never_started)
     assert run(tmp_path / "s", fake, cfg=one_at_a_time).startswith("stopped") and len(fake.calls) == 3
     records = e1_score.load_records(tmp_path / "s")
     assert all(r["state"] == "outage" and r["model_calls"] == 0 for r in records.values())
     assert e1_runner.spent(records)[1] == 3 * e1_runner.RESERVE_CW
-    silent = copy.deepcopy(ok(3))  # a result that reports zero output tokens never reached the model either
-    silent[1]["usage"]["output_tokens"] = 0
-    assert run(tmp_path / "z", Fake(silent), cfg=one_at_a_time) == "done"
-    assert e1_score.load_records(tmp_path / "z")[ITEMS[0]["id"], 1]["prior_cw"] == e1_runner.RESERVE_CW
+
+
+@pytest.mark.parametrize("wrapper", [DOWN[1], {"_never_started": True},
+                                     {**ok()[1], "usage": None}, {**ok()[1], "modelUsage": None},
+                                     {**ok()[1], "modelUsage": [{"bad": "shape"}]},
+                                     {**ok()[1], "modelUsage": {1: {}}},
+                                     {**ok()[1], "usage": {k: 0 for k in e1_runner.USAGE_KEYS}},
+                                     {**ok()[1], "usage": {**ok()[1]["usage"], "output_tokens": 0},
+                                      "subtype": "error_during_execution", "is_error": True, "result": ""}])
+def test_ambiguous_cli_failure_is_a_final_call_error_without_retry(tmp_path, wrapper):
+    fake = Fake((1, wrapper, ""))
+    assert run(tmp_path, fake, cfg=one_at_a_time | {"call_cap": 1, "trials_per_item": 1}) == "done"
+    assert len(fake.calls) == 1
+    got = e1_score.load_records(tmp_path)[ITEMS[0]["id"], 1]
+    assert got["state"] == "final" and got["model_calls"] == 1
+    assert e1_score.letter(ITEMS[0], got) == ("d", "error")
+    if e1_runner.usage_cw(wrapper) == 0:
+        assert got["charged_cw"] == e1_runner.RESERVE_CW
 
 
 def test_third_attempt_of_an_outage_is_a_final_call_error(tmp_path):
-    fake = Fake(DOWN, DOWN, DOWN)
+    fake = Fake(*[(-1, e1_runner.NeverStarted(), "")] * 3)
     assert run(tmp_path, fake, cfg=one_at_a_time | {"trials_per_item": 1}).startswith("stopped") and len(fake.calls) == 3
     got = e1_score.load_records(tmp_path)[ITEMS[0]["id"], 1]
     assert got["state"] == "final" and got["prior_cw"] == 2 * e1_runner.RESERVE_CW
@@ -377,13 +435,19 @@ def test_a_call_that_reached_the_model_but_failed_is_an_error_at_once(result, wh
     assert e1_runner.classify(*ok()[:2], CFG["model"]) == ("(b)", None, False)
 
 
+def test_zero_output_success_is_an_error_not_an_outage():
+    wrapper = copy.deepcopy(ok()[1])
+    wrapper["usage"]["output_tokens"] = 0
+    assert e1_runner.classify(0, wrapper, CFG["model"]) == ("", "success with zero output tokens", False)
+
+
 @pytest.mark.parametrize("key,value", [("input_tokens", True), ("output_tokens", None), ("input_tokens", -1),
                                        ("cache_read_input_tokens", "7")])
 def test_malformed_usage_is_no_reported_usage(key, value):
     assert e1_runner.usage_cw(ok(100)[1]) == 100
     wrapper = copy.deepcopy(ok()[1])
     wrapper["usage"][key] = value
-    assert e1_runner.usage_cw(wrapper) is None and e1_runner.classify(0, wrapper, CFG["model"])[2] is True
+    assert e1_runner.usage_cw(wrapper) is None and e1_runner.classify(0, wrapper, CFG["model"])[2] is False
 
 
 def test_paid_credit_fallback_and_picker_failure_stop_the_run(tmp_path):
@@ -416,6 +480,20 @@ def test_reader_command_is_the_smallest_context_and_strips_api_keys(monkeypatch)
     monkeypatch.setattr(e1_runner.subprocess, "run", fake_run)
     assert e1_runner.cli_call(CFG, ITEMS[0], "/acct/claude-x")[0] == 0
     assert "ANTHROPIC_API_KEY" not in seen["env"] and "CLAUDE_EFFORT" not in seen["env"] and seen["env"]["CLAUDE_CONFIG_DIR"] == "/acct/claude-x"
+    assert seen["env"]["CLAUDE_CODE_MAX_OUTPUT_TOKENS"] == str(e1_runner.MAX_OUTPUT_TOKENS)
+
+
+@pytest.mark.parametrize("failure", ["timeout", "invalid_json", "spawn_error"])
+def test_cli_failure_is_an_outage_only_when_the_process_never_started(monkeypatch, failure):
+    def fake_run(cmd, **kw):
+        if failure == "timeout":
+            raise e1_runner.subprocess.TimeoutExpired(cmd, 1)
+        if failure == "spawn_error":
+            raise OSError("executable not found")
+        return type("Done", (), {"stdout": "not json", "stderr": "", "returncode": 1})
+    monkeypatch.setattr(e1_runner.subprocess, "run", fake_run)
+    code, wrapper, _ = e1_runner.cli_call(CFG, ITEMS[0], "/acct/claude-x")
+    assert e1_runner.classify(code, wrapper, CFG["model"])[2] is (failure == "spawn_error")
 
 
 def test_saved_table_and_results_are_the_generators_output():

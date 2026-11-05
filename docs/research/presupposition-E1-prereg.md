@@ -78,8 +78,8 @@ items feed only `unconditional`, as follows.
 
 **Proviso.** The six proviso items are three pairs, one per row. A pair is reported as the share of (c) answers,
 which mean the unconditional goal `f.close pre`. If (c) gets at least 6/40 on both items of a row's pair,
-`unconditional` joins that row's `consequent` cell, unless the cell is `no_carrier` or `one_reading` (those two say
-what the cell may list, and the plan fixes them first). A proviso item's situation is the only one that separates the
+`unconditional` joins that row's `consequent` cell independently of the target items' status; a target one-reading
+or no-carrier classification does not decide the proviso goal. A proviso item's situation is the only one that separates the
 unconditional goal from the conditional one: the antecedent is false and `pre` fails, so the projected goal holds and
 `f.close pre` fails (table below, `goal` true, `close` false). The plan's "where the projected goal fails" cannot
 separate them, since there both goals fail.
@@ -168,11 +168,13 @@ the question and the options; ids, families, keys and this file never reach it.
 
 - **Caps.** At most 4,320 calls, 15M CW. CW is the sum of the four usage counters the CLI reports (the jt-e1r rule).
   One item's 40 trials run first and the projection for 4,320 calls goes in the report; above 15M the run stops there
-  and asks the decider. Otherwise all run, and the runner stops at 15M in any case.
-- **Resumable.** A re-run skips every trial with a final record. A call that never reached the model (no reported
-  model usage: an account limit, an overload, a network failure) is an outage, charged 25k CW and retried up to three
-  attempts in all; the third is a call error. Three failed calls in a row stop the run. Any other failure is a call
-  error at once. Call errors count as (d) and are listed by id.
+  and asks the decider. Otherwise all run. Before each dispatch the runner reserves 25k CW plus one output allowance,
+  bounds the prompt and CLI output, and stops on reported exhaustion. A CLI that exceeds its allowance is recorded
+  with its full reported usage and stops the run; its actual overage cannot be undone.
+- **Resumable.** A re-run skips every trial with a final record. Only a call known not to have started is an outage,
+  charged 25k CW and retried up to three attempts in all; the third is a call error. Missing usage, zero output,
+  timeout and malformed CLI JSON do not prove the model was not reached: they consume a call and are final call
+  errors. Three failed calls in a row stop the run. Call errors count as (d) and are listed by id.
 
 ## 9. Bars, verbatim from the plan
 

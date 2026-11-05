@@ -84,7 +84,7 @@ Calls: 4320. CW used (reported usage): 3746361. Call errors, counted as (d): 0. 
 | generic | top | assumed | one_reading | - |
 | generic | negated | assumed | one_reading | - |
 | generic | antecedent | assumed | one_reading | - |
-| generic | consequent | assumed | one_reading | proviso bar met, unconditional not added: the cell is one_reading (prereg rule 2) |
+| generic | consequent | assumed, unconditional | open | target cell was one_reading; proviso independently adds unconditional |
 | generic | rule_act | assumed | one_reading | - |
 | generic | rule_guard | assumed | open | - |
 

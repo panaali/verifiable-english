@@ -125,12 +125,14 @@ def analyse(cfg, items, counts, rows):
                for row in ROWS}
     for row, pair in proviso.items():
         cell = cells[row, "consequent"]
-        if all(n >= bars["proviso_min"] for n in pair.values()) and cell["status"] == "open":
+        if all(n >= bars["proviso_min"] for n in pair.values()):
+            previous = cell["status"]
             cell["total"] = cell["total"] + Counter({"unconditional": sum(pair.values())})
             order = cfg["candidate_order"]
             cell["cell"] = sorted(cell["cell"] + ["unconditional"], key=lambda k: (-cell["total"][k], order.index(k)))
-        elif all(n >= bars["proviso_min"] for n in pair.values()):
-            cell["notes"].append(f"proviso bar met, unconditional not added: the cell is {cell['status']} (prereg rule 2)")
+            if previous != "open":
+                cell["notes"].append(f"target cell was {previous}; proviso independently adds unconditional")
+                cell["status"] = "open"
     table = [{"row": row, "cells": {c: list(cells[row, c]["cell"]) if c != "disjunct" else [] for c in ALL_CELLS}}
              for row in ROWS]
     return {"cells": cells, "table": table, "controls": controls, "controls_passing": passing,
