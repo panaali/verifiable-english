@@ -1,0 +1,4 @@
+trust_mutants: 1 definitions, 11 mutants (2 to run), 4 jobs, base c47399598104
+trust_mutants: 11 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 43 s; 9 carried from 7a0dc8d7f950 (check-only change: lean/VE/Audit.lean, lean/VE/Presupposition/Examples.lean, lean/axioms.txt, lean/declarations.txt, lean/statements.txt)
+trust_mutants: S, trusted: 11 KILLED
+trust_mutants: steps: wall plan 11.4 s, scratch 1.9 s, control_build 0.2 s, probe_install 1.4 s, control_probes 9.3 s, mutants 17.4 s, cleanup 0.9 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 7.7 s (1), mutant_builds 2.9 s (4), mutant_checks 9.1 s (4), stage_controls 5.3 s (2), mutant_probes 4.4 s (2)
