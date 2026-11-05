@@ -1,0 +1,116 @@
+{
+ "item": "ci-2",
+ "note": "Seeded bugs, one per claimed behaviour and one per changed product language (Lean, Python; no Rust product code changed). Each was planted in the file named, the test or #guard named failed, and the file was restored (`lake build VE.Commands.RunExamples` and the Python test pass again). S2 to S4 also break the section 6 proofs; their fixture rows were shown with the statements section cut from the mutant copy (/tmp script, not committed). R16's mechanical mutants of every new trusted definition are trust-mutants.json, with trust-mutants-allow.json. Lines are those of the committed RunExamples.lean (the seeds ran one line earlier, before `proofEnv` gained its `consts` argument). hand_mutants: one mutant in each new or changed trusted definition that trust_mutants found no operator site in (readInstruction, Run.doc, Texts.proofAct, the englishCommand arms of Mode.name and runMode, Skeletons.englishCommand); the structures QueryRecord, Context and Request are read by every guard, and a dropped field does not compile.",
+ "seeds": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.Run.encode",
+   "behaviour": "the answer echoes its own request's unit (the plan's `caseReported` answering from a cached wording)",
+   "mutation": "(\"unit\", .str q.unit) -> (\"unit\", .str \"u1\")",
+   "test": "lean/VE/Commands/RunExamples.lean:142 (#guard: request r2/u2/bob echoes unit u2)",
+   "result": "KILLED: the #guard did not evaluate to true"
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.matchedRecord",
+   "behaviour": "the proof task reads the records' targets (P3)",
+   "mutation": "match ctx.queries.filter (·.target == φ) with | [q] => some q -> match ctx.queries with | [q] => some q",
+   "test": "lean/VE/Commands/RunExamples.lean:73 (#guard P3: one record with the wrong target is QueryMismatch u7); also :75, :125, :127; with the proofs kept, proofTask_one (Run.lean:211) fails",
+   "result": "KILLED"
+  },
+  {
+   "id": "S3",
+   "language": "Lean",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.matchedRecord",
+   "behaviour": "exactly one record, not the first (P3′)",
+   "mutation": "match ... | [q] => some q | _ => none -> (ctx.queries.filter (·.target == φ)).head?",
+   "test": "lean/VE/Commands/RunExamples.lean:74 (#guard P3′: two matching records are QueryMismatch); also :128; with the proofs kept, proofTask_one (Run.lean:208) fails",
+   "result": "KILLED"
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.proofTask",
+   "behaviour": "the proof task passes the shared addressee check (P7)",
+   "mutation": "| [g] => checkedAddressee ctx.se ctx.sc (proofReading g q) -> | [g] => .one (proofReading g q)",
+   "test": "lean/VE/Commands/RunExamples.lean:87 (#guard P7: no addressee is UnboundSlot you); with the proofs kept, proofTask_one (Run.lean:207) and readInstruction_refused_classed_of (Run.lean:260) fail",
+   "result": "KILLED"
+  },
+  {
+   "id": "S5",
+   "language": "Lean",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.proofMany",
+   "behaviour": "O2: a reading two records match is not listed",
+   "mutation": "gs.filterMap (matchedRecord ctx) -> gs.filterMap (fun φ => (ctx.queries.filter (·.target == φ)).head?)",
+   "test": "lean/VE/Commands/RunExamples.lean:128 (#guard O2: goA matching q1 and q2, goB q3 is QueryMismatch)",
+   "result": "KILLED"
+  },
+  {
+   "id": "P1",
+   "language": "Python",
+   "file": "ve/backends/lean_service.py",
+   "definition": "DEADLINES",
+   "behaviour": "the english.command mode has its CPU deadline",
+   "mutation": "drop the \"english.command\": _CORE entry",
+   "test": "tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes",
+   "result": "KILLED: 1 failed; restored: 1 passed"
+  }
+ ],
+ "hand_mutants": [
+  {
+   "id": "H1",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.readInstruction",
+   "mutation": "(proofTask ctx s).getD (readCommand …) -> readCommand …",
+   "test": "lean/VE/Commands/RunExamples.lean:71 (P1′; with the statements cut) and readInstruction_command, readInstruction_refused_classed_of (Run.lean:240, :280)",
+   "result": "KILLED"
+  },
+  {
+   "id": "H2",
+   "file": "lean/VE/Commands/Run.lean",
+   "definition": "VE.Commands.Run.doc",
+   "mutation": "regulated := [] in the paraphrase's document",
+   "test": "lean/VE/Commands/RunExamples.lean:71 (P1′'s paraphrase), :75",
+   "result": "KILLED"
+  },
+  {
+   "id": "H3",
+   "file": "lean/VE/Commands/Texts.lean",
+   "definition": "VE.Commands.Texts.proofAct",
+   "mutation": "\"{0} submit a proof of {1}\" -> \"{0} submit proof of {1}\"",
+   "test": "lean/VE/Commands/RunExamples.lean:71, :75",
+   "result": "KILLED"
+  },
+  {
+   "id": "H4",
+   "file": "lean/VE/Service/Registry.lean",
+   "definition": "VE.Service.Mode.name",
+   "mutation": "\"english.command\" -> \"english.commands\"",
+   "test": "lean/VE/Service/RegistryExamples.lean:6",
+   "result": "KILLED"
+  },
+  {
+   "id": "H5",
+   "file": "lean/VE/Service/Protocol.lean",
+   "definition": "VE.Service.runMode",
+   "mutation": "englishCommand dispatched to VE.Question.Run.caseReported",
+   "test": "VE.Service.runMode_englishCommand (Protocol.lean:952, rfl)",
+   "result": "KILLED"
+  },
+  {
+   "id": "H6",
+   "file": "lean/ResponseShape/Skeletons.lean",
+   "definition": "ResponseShape.Skeletons.englishCommand",
+   "mutation": "skel% \"english.command.json#/row\" -> \"english.question.json#/row\"",
+   "test": "lean/ResponseShape/Skeletons.lean:116 (#guard: every mode's skeleton is its schema's row)",
+   "result": "KILLED"
+  }
+ ]
+}
