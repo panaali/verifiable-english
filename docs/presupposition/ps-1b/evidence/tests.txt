@@ -1,0 +1,22 @@
+# ps-1b evidence extract (commands and their last lines; tree bc15aba101 = HEAD a62123ad0 for the Lean and test inputs)
+
+## mac-pytest.sh --select -- --base 8205a8e69 --run
+99/543 test units (map 8205a8e696, 1.93 s)
+recorded 99 units for tree bc15aba101; 1 others left to the static graph until they run; 0 failed
+[mac-pytest 23:27:09Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on ve-mac-1 within 600s; VM load 19.55 + 6 workers vs 32; wait 1 of 4; exit=0; 4188s
+
+## mac-pytest.sh -- tests/test_discourse{,_answer,_lean,_three_way,_constitution}.py (S11)
+163 passed in 122.21s (0:02:02)
+[mac-pytest 23:39:52Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on ve-mac-1 within 600s; VM load 23.82 + 6 workers vs 32; wait 1 of 4; exit=0; 733s
+
+## lake build (lean/)
+Build completed successfully (1298 jobs).
+
+## python3 lean/audit.py
+PASS: 771 source files; 8591 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+## uv run python tools/trust_map.py --check
+PASS: K, S and untied [V] within 8205a8e69668 and the allowances introduced since (K +0, S +43, D +21, trusted +64)
+
+## uv run python tools/gate_collection.py --check --prebuilt
+32263 collected, 32263 at 8205a8e69668; 0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
