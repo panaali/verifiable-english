@@ -375,6 +375,11 @@ def t14ex : VE.Norms.Tree := tree14 [rule14 "r1" true .top, rule14 "r4" false .t
 #guard ruleGoal reg14 (rule14 "r1" true pre14 [] ["r9"]) pre14 ==
   .all "agent" (.all "situation" (.implies (VE.Norms.applies (rule14 "r1" true pre14 [] ["r9"])) pre14))
 
+-- `rule_collapse_typed`'s `hname` is needed: the goal holds for `r14a`, and a second rule named `r1` changes the decision.
+def t14dup : VE.Norms.Tree := tree14 [r14a, rule14 "r1" true .top]
+#guard ev m14 (ruleGoal reg14 r14a pre14) == true
+#guard (dec14 t14dup at2, dec14 (conditionRule t14dup r14a.name pre14) at2) == (true, false)
+
 -- S22's formula-level rows: `p(situation)` is `unspecified` (`allowByDefault` is the placeholder deny); two rules on `p`
 -- with guard `g`, one goal. `SatUnder` and `SameModels` over these picks are PS-2a's.
 def reg22 : VE.Norms.Regulated :=
