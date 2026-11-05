@@ -2036,6 +2036,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.base_contains
 #print axioms VE.Compose.base_mem
 #print axioms VE.Compose.base_of_no_wrapper
+#print axioms VE.Compose.cardinality_absent
 #print axioms VE.Compose.checks_none
 #print axioms VE.Compose.conflictFreeP_append
 #print axioms VE.Compose.contains_eq
@@ -2067,6 +2068,8 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.ite_error_ok
 #print axioms VE.Compose.ite_ok_of
 #print axioms VE.Compose.known_registered
+#print axioms VE.Compose.listFault_absent
+#print axioms VE.Compose.listFault_none
 #print axioms VE.Compose.mem_base
 #print axioms VE.Compose.mem_wrappers
 #print axioms VE.Compose.needs_chain

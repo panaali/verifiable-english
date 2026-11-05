@@ -8282,9 +8282,9 @@ theorem VE.Cardinality.Wire.printed_eq
   -- expr 2636933300
 theorem VE.Cardinality.Wire.profileLists_projected
   ∀ {ps : List String},
-    ps ∈ VE.Cardinality.Wire.profileLists → List.filter (fun x => x != "cardinality@0") ps ∈ VE.Time.Wire.w6Profiles
-  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Time.Wire.w6Profiles@VE.Time.Wire
-  -- expr 4115151832
+    ps ∈ VE.Cardinality.Wire.profileLists → VE.Cardinality.Wire.projectedProfiles ps ∈ VE.Time.Wire.w6Profiles
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Cardinality.Wire.projectedProfiles@VE.Cardinality.Wire VE.Time.Wire.w6Profiles@VE.Time.Wire
+  -- expr 4011239192
 theorem VE.Cardinality.Wire.relNames_spelled
   ∀ (s : String) (r : VE.Cardinality.Rel),
     VE.Cardinality.Wire.elabName VE.Cardinality.Wire.relNames s = Except.ok r ↔
@@ -8662,9 +8662,10 @@ theorem VE.Cardinality.gate_cardinality
       ¬"judgments@0" ∈ ps →
         ∀ (r : VE.Compose.Route),
           VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r ↔
-            ps ∈ VE.Cardinality.Wire.profileLists ∧ r = VE.Compose.Route.frozen
-  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.Route.frozen@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
-  -- expr 3140971446
+            ps ∈ VE.Cardinality.Wire.profileLists ∧
+              r = if ps = VE.Cardinality.Wire.chainProfiles then VE.Compose.Route.readings else VE.Compose.Route.frozen
+  -- uses VE.Cardinality.Wire.chainProfiles@VE.Cardinality.Wire VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.Route.frozen@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3400338162
 theorem VE.Cardinality.get_of_data
   ∀ {s : String} {A rest : List Char} {c : Char},
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
@@ -10864,6 +10865,15 @@ theorem VE.Compose.base_of_no_wrapper
   ∀ {ps : List String}, (∀ (w : String), w ∈ VE.Compose.wrapperProfiles → ¬w ∈ ps) → VE.Compose.base ps = ps
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
   -- expr 1594941042
+theorem VE.Compose.cardinality_absent
+  ∀ {ps : List String},
+    (∀ (r : VE.Compose.ProfileRow),
+        r ∈ VE.Compose.profileTable →
+          r.profile ∈ ps ∨ r.profile ∈ r.requires →
+            (∀ (q : String), q ∈ r.requires → q ∈ ps) ∧ ∀ (x : String × String), x ∈ r.refuses → ¬x.fst ∈ ps) →
+      ∀ {q : String}, q ∈ VE.Compose.cardinalityOthers → q ∈ ps → ¬"cardinality@0" ∈ ps
+  -- uses VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow.refuses@VE.Compose.Dispatch VE.Compose.ProfileRow.requires@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.cardinalityOthers@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 311055167
 theorem VE.Compose.checks_none
   ∀ (t : List VE.Compose.ProfileRow) (ps : List String),
     List.find? (fun x => x.fst) (List.flatMap (VE.Compose.rowChecks ps) t) = Option.none ↔
@@ -11063,6 +11073,16 @@ theorem VE.Compose.known_registered
   ∀ (p : String), VE.Route.Gate.known p = Bool.true → VE.Compose.registered.contains p = Bool.true
   -- uses VE.Compose.registered@VE.Compose.Dispatch VE.Route.Gate.known@VE.Route.Gate
   -- expr 1832366362
+theorem VE.Compose.listFault_absent
+  ∀ {ps : List String}, ¬"cardinality@0" ∈ ps → VE.Compose.listFault ps = Option.none
+  -- uses VE.Compose.listFault@VE.Compose.Dispatch
+  -- expr 3133009550
+theorem VE.Compose.listFault_none
+  ∀ (ps : List String),
+    VE.Compose.listFault ps = Option.none ↔
+      "cardinality@0" ∈ ps → ps.erase "judgments@0" ∈ VE.Cardinality.Wire.profileLists
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.listFault@VE.Compose.Dispatch
+  -- expr 4291797644
 theorem VE.Compose.mem_base
   ∀ {ps : List String} {p : String}, p ∈ VE.Compose.base ps ↔ p ∈ ps ∧ ¬p ∈ VE.Compose.wrapperProfiles
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
