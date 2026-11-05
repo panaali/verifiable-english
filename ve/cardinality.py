@@ -16,6 +16,7 @@ import re
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
 from .errors import VEError
+from .profiles import CARDINALITY_CHAIN, CARDINALITY_CHAIN_PROJECTED
 
 PROFILE = "cardinality@0"
 _ID = re.compile(r"[0-9a-f]{64}\Z")
@@ -36,6 +37,11 @@ def _same(a, b) -> bool:
     return json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
 
 
+def is_chain_list(profiles) -> bool:
+    """Whether a list is E2's chain list (`Cardinality.Wire.chainProfiles`, from its generated table)."""
+    return profiles == CARDINALITY_CHAIN
+
+
 def is_cardinality(environment) -> bool:
     """Whether environment data lists the profile (routing, not a verdict; a malformed list is Lean's to refuse)."""
     return PROFILE in listed_profiles(environment)
@@ -49,7 +55,8 @@ class Identities:
         from .units import erased_environment
         self.identity_version = "v0.2:" + ",".join(environment["profiles"])
         self.w6 = Environment({**{k: v for k, v in environment.items() if k not in ("cardinality", "cardinality_schema")},
-                               "profiles": [p for p in environment["profiles"] if p != PROFILE]})
+                               "profiles": (CARDINALITY_CHAIN_PROJECTED if is_chain_list(environment["profiles"])
+                                            else [p for p in environment["profiles"] if p != PROFILE])})
         self.target = erased_environment(self.w6)
 
     def bind(self, row: dict) -> None:
@@ -259,6 +266,49 @@ def prove(environment: dict, premises: list, conclusion: dict, *, max_steps: int
                         "conclusion_meaning_id": erased["conclusion"]["core_meaning_id"]}}}
     valid = _verdict(environment, premises, conclusion, certificate=certificate, regions=row["regions"], erased=erased)
     return certificate if valid else None
+
+
+def _counting(unit: dict) -> bool:
+    return "cardinality" in (unit.get("content") or {})
+
+
+def _front_of(text: str, body: bytes, meta: dict, own) -> tuple[dict, bytes]:
+    """A reading's document of a chain list row: this body, the request's members, and the request's units with `own` as
+    written and every other unit's id and span, no content."""
+    from .document.source import _split
+    raw = text.encode("utf-8")
+    front, source, _ = _split(raw)
+    _require(source == body, "reading's body")
+    _require(len(front["units"]) == len(meta["units"]) and all(
+        (_same(mine, unit) if own(unit) else
+         (mine["id"], mine["span"], "content" in mine) == (unit["id"], unit["span"], False))
+        for mine, unit in zip(front["units"], meta["units"])), "reading's units")
+    _require(all(k in ("environment", "units") or _same(v, meta.get(k, ...)) for k, v in front.items()), "reading's members")
+    return front, raw
+
+
+def bind_composed(meta: dict, body: bytes, row: dict) -> tuple[dict, bytes | None]:
+    """A row's `composed` (`Service.Document.composedJson`), there exactly under the chain list: `not_certified` names the
+    request's counting units, each reading's document holds what `_front_of` says, the chain's environment is the request's
+    without `cardinality@0` and fields it does not read, and it is none when every unit is a counting unit. Returns the
+    front matter the row answers and the chain's text: Lean checks the chain on its own request, which is where its verdict comes from."""
+    composed = row.get("composed")
+    environment = meta["environment"]
+    _require((composed is not None) == is_chain_list(environment["profiles"]), "composed")
+    if composed is None:
+        return meta, None
+    counted = [u["id"] for u in meta["units"] if _counting(u)]
+    _require(counted == composed["not_certified"] and counted and composed["scope"], "not certified")
+    front, _ = _front_of(composed["counting_document"], body, meta, _counting)
+    _require(_same(front["environment"], environment), "counting environment")
+    if composed["chain_document"] is None:
+        _require(len(counted) == len(meta["units"]), "chain document")
+        return front, None
+    lowered, raw = _front_of(composed["chain_document"], body, meta, lambda unit: not _counting(unit))
+    chain = lowered["environment"]
+    _require(chain["profiles"] == [p for p in environment["profiles"] if p != PROFILE] and
+             all(k == "profiles" or (k in environment and _same(v, environment[k])) for k, v in chain.items()), "chain environment")
+    return front, raw
 
 
 def bind_document(ids: Identities, row: dict, declared: list, graph, admitted: bool) -> None:

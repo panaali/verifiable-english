@@ -299,7 +299,7 @@ def deepQuantity (k : Nat) : String := "[\"quantity\", " ++ around k "[\"top\"]"
 
 #guard (refusal (terms 1) (env.setObjVal! "extra" (p "1"))).startsWith "fields do not match"
 def e2 : String :=
-  "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1"
+  "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1, or norm-defaults@0, norms@0, readings@1 and relational-fol@0"
 #guard refusal (terms 1) (env.setObjVal! "profiles" (p r#"["order@0", "relational-fol@0", "time@0"]"#)) == e2
 #guard refusal (terms 1) (env.setObjVal! "profiles" (p r#"["cardinality@0", "norms@0", "order@0", "relational-fol@0",
   "time@0"]"#)) == e2

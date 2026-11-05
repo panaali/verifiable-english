@@ -324,7 +324,9 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
     stay Lean's: `environment` is its W6a projection, the one environment of it Python models, for display only."""
     from .. import cardinality
     try:
-        _bind_document_answer(body, meta, declared, row)
+        read, chain = cardinality.bind_composed(meta, body, row)
+        declared = [(u, parent) for u, parent in _parts(read["units"])]
+        _bind_document_answer(body, read, declared, row)
     except cardinality.MALFORMED as exc:
         raise cardinality.unbound("its row") from exc
     ids = cardinality.identities(meta["environment"])
@@ -340,7 +342,14 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
             "directory": path.parent, "document_id": row["document_id"], "units": units, "norms": None,
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
             "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
-            "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted}}
+            "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted},
+            **({"composed": row["composed"], "chain": _chain_document(path, chain, admitted)} if "composed" in row else {})}
+
+
+def _chain_document(path, chain, admitted):
+    """The chain's part of a chain list document, on its own Lean request; none when every unit is a counting unit."""
+    from .load import _load
+    return None if chain is None else _load(path, admit=admitted, raw=chain)
 
 
 # The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
@@ -371,8 +380,8 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
             ({"judgments", "undeclared_evaluative"} if judged else set()) |
             ({"composed_readings"} if composed else set()) |
-            ({"cardinality"} if "cardinality" in row and "cardinality@0" in listed_profiles(meta.get("environment"))
-             else set()))
+            ({key for key in ("cardinality", "composed") if key in row}
+             if "cardinality@0" in listed_profiles(meta.get("environment")) else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
         require(_undeclared_bound(row["undeclared_evaluative"], meta.get("environment"), meta.get("open_terms", [])))

@@ -17,6 +17,9 @@ BY_NAME = {name: tuple(row for row in ROWS if row["profile"] == name) for name i
 # `VE.Compose.documentLayers`: profiles whose records are the document's. Every mode decides without them, by Lean's
 # `VE.Compose.decidingEnvironment`; Python sends them as written (jt-2c).
 DOCUMENT_LAYERS = tuple(_TABLE["document_layers"])
+# `VE.Cardinality.Wire`: E2's chain list and the W6a list it projects onto (`projectedProfiles`).
+CARDINALITY_CHAIN = _TABLE["cardinality_chain"]
+CARDINALITY_CHAIN_PROJECTED = _TABLE["cardinality_chain_projected"]
 
 
 # Statement layers whose own Lean routes check them. They declare no vocabulary

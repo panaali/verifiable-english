@@ -253,7 +253,11 @@ def «row» : Shape :=
         ("undeclared_evaluative", ref "#/$defs/undeclared_evaluative"),
         ("composed_readings", ref "#/$defs/composed_readings"),
         ("cardinality", copied "Service.Document.cardinalityReport: the cardinality mode's report, its identities and the leaves; the client recomputes `report_id` over the request's graph" <|
-          ref "#/$defs/cardinality_report")]]]
+          ref "#/$defs/cardinality_report"),
+        ("composed", copied "Service.Document.composedJson: under cardinality@0's chain list, each reading's document and what the row does not certify; the client binds them to the request" <|
+          n [obj, .required ["counting_document", "chain_document", "not_certified", "scope"], closed [
+            ("counting_document", str), ("chain_document", nullable str),
+            ("not_certified", ref "common.json#/$defs/strings"), ("scope", str)]])]]]
 
 def file : File where
   name := "document.json"
@@ -268,6 +272,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 973993899234398332
+#guard (file.render.toOption.map (hash ·.compress)) == some 9646614839625587919
 
 end ResponseShape.Schemas.Document

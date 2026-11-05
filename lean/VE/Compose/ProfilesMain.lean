@@ -11,4 +11,6 @@ private def rowJson (r : ProfileRow) : Json :=
 
 def main : IO Unit :=
   IO.println <| (Json.mkObj [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers),
+    ("cardinality_chain", toJson VE.Cardinality.Wire.chainProfiles),
+    ("cardinality_chain_projected", toJson (VE.Cardinality.Wire.projectedProfiles VE.Cardinality.Wire.chainProfiles)),
     ("rows", toJson (profileTable.map rowJson))]).pretty

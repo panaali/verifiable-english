@@ -29,9 +29,10 @@ def w : Option VE.Cardinality.CardEnv := decoded.bind (·.cardinality)
   some (listed, true, false, true, false, false)
 #guard (decoded.map (·.envId)) == (w.map (·.environmentId)) && (decoded.map (·.envId)) != none
 #guard [(["cardinality@0", "norm-defaults@0", "norms@0", "readings@1"], "UnsupportedProfile: Missing profile relational-fol@0"),
-  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], "UnsupportedProfile: cardinality@0 with norms@0"),
+  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], s!"UnsupportedProfile: {VE.Cardinality.Wire.e2}"),
+  (["cardinality@0", "data@0", "order@0", "relational-fol@0", "time@0"], "UnsupportedProfile: cardinality@0 with data@0"),
   (["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"],
-    "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1")].all
+    s!"UnsupportedProfile: {VE.Cardinality.Wire.e2}")].all
   fun (ps, m) => said (cardinalityEnv (environment ps)) == m
 #guard said (cardinalityEnv ((environment).setObjVal! "cardinality_schema" (.str "x"))) ==
   "UnsupportedProfile: Unsupported cardinality schema"
