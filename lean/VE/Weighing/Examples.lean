@@ -239,9 +239,9 @@ def γd : SoftDoc := alphaOf ["e", "s"] [("s", "e")] "s" "e" false
   sides (wd β2 (W [("s", "e")])) "x_permitted" "h" "e" == (false, false)
 #guard hyps (wd γd (W [("s", "e")])) "x_permitted" "e" "s" && lettered γd && outweighsTriples γd == [] &&
   strictPair (wd γd (W [("s", "e")])) "s" "e" && sides (wd γd (W [("s", "e")])) "x_permitted" "e" "s" == (false, false)
--- F14: without `hr` the statement is false on `cxW`: every other hypothesis holds, the left side is true, the right false
+-- F19 (7.3): without `hr` the statement is false on `cxW`: every other hypothesis holds, the left side is true, the right false
 #guard hyps cxW "_x_permitted" "l" "c" && !lettered cxX && sides cxW "_x_permitted" "l" "c" == (true, false)
--- the narrower hypothesis, on the queried `a` alone, is not enough: the mirror `mxW` has the real triple
+-- F19: the narrower hypothesis, on the queried `a` alone, is not enough: the mirror `mxW` has the real triple
 -- `(_x_permitted, l, c)` and the query `(x_permitted, l, c_)`, one name; `x_permitted` begins with a letter
 def mxD : SoftDoc := alphaOf ["c", "c_", "l"] [("c", "l")] "c" "l"
 def mren (s : String) : String := if s = "x_permitted" then "_x_permitted" else s
