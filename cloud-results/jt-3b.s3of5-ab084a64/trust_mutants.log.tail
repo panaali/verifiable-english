@@ -1,0 +1,11 @@
+trust_mutants: 10 definitions, 234 mutants (47 to run), 4 jobs, base d26fb9cbbe6a
+UNKNOWN lean/VE/Service/Document.lean:2440 VE.Service.Document.check (D[V], trusted) list-empty: records -> [] (lean/VE/Service/Document.lean:2440: Invalid projection: Type of)
+SURVIVOR lean/VE/Service/Document.lean:1604 VE.Service.Document.contentOf (D[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Service/Document.lean:1605 VE.Service.Document.contentOf (D[V], trusted) list-first: E.boundNames.toList.map (("judgments", ·)) -> ((E.boundNames.toList.map (("judgments", ·))).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2440 VE.Service.Document.check (D[V], trusted) list-last: records -> (records.reverse.take 1)
+SURVIVOR lean/VE/Service/Document.lean:1604 VE.Service.Document.contentOf (D[V], trusted) list-drop-first: [("generated", Json.bool true)] -> ([("generated", Json.bool true)].drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2234 VE.Service.Document.linesJson (D[V], trusted) list-last: (legendRows js) -> ((legendRows js).reverse.take 1)
+trust_mutants: 36 KILLED, 5 SURVIVOR, 1 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 187 OTHER SHARD in 3875 s
+trust_mutants: D[V], trusted: 8 KILLED, 5 SURVIVOR, 1 UNKNOWN, 57 OTHER SHARD
+trust_mutants: G[V], trusted: 28 KILLED, 5 INVALID, 130 OTHER SHARD
+trust_mutants: steps: wall plan 12.3 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 2016.2 s, mutants 1838.3 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 5331.4 s (12), mutant_builds 1333.4 s (48), mutant_checks 3552.1 s (23), stage_controls 584.8 s (4), mutant_probes 1718 s (36)
