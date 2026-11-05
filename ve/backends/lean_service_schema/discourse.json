@@ -10,7 +10,10 @@
             {"$ref": "common.json#/$defs/route_path_error"},
             {
               "x-select": [
-                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {
+                  "then": {"anyOf": [{"$ref": "#/$defs/admission"}, {"$ref": "#/$defs/composed"}]},
+                  "when": {"$ref": "#/$defs/kind/admission"}
+                },
                 {"then": {"$ref": "#/$defs/validity"}, "when": {"$ref": "#/$defs/kind/discourse-validity"}},
                 {"then": {"$ref": "#/$defs/resolve"}, "when": {"$ref": "#/$defs/kind/discourse-resolve"}},
                 {"then": {"$ref": "#/$defs/joint"}, "when": {"$ref": "#/$defs/kind/discourse-joint"}}
@@ -161,6 +164,52 @@
         }
       ]
     },
+    "chain_admission": {
+      "$comment": "Discourse.dispatchAdmission: the admission answer of the route Compose.dispatch chooses for the base list (Norms, NormDefaults, SoftNorms or Rights Run.runAdmission, with the empty id) on Discourse.chainDocument of the resolved payload, which is not the request.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "admitted": {"const": true},
+            "id": {"const": ""},
+            "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+            "report": {"$ref": "common.json#/$defs/report"},
+            "report_id": {"$ref": "common.json#/$defs/hex64"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "admitted", "report", "report_id", "kinds"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "admitted": {"const": true},
+            "conditional_on": {"$ref": "soft-norms.json#/$defs/coherence_labels"},
+            "id": {"const": ""},
+            "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+            "report": {"$ref": "common.json#/$defs/report"},
+            "report_id": {"$ref": "common.json#/$defs/hex64"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "admitted": {"const": true},
+            "conditional_on": {"$ref": "rights.json#/$defs/conditional_labels"},
+            "id": {"const": ""},
+            "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+            "report": {"$ref": "common.json#/$defs/report"},
+            "report_id": {"$ref": "common.json#/$defs/hex64"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+          "type": "object"
+        }
+      ]
+    },
     "choices": {
       "$comment": "Discourse.Run.choicesJson: per compatible choice, [set, version, reading index] for each active open set.",
       "items": {
@@ -174,6 +223,21 @@
       },
       "minItems": 1,
       "type": "array"
+    },
+    "composed": {
+      "$comment": "Discourse.Run.encodeComposed: the composed path's admission (14.6): the wrapper's document id, report id and reference lines (7.1), and the chain route's answer verbatim with its report id.",
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "inner": {"$ref": "#/$defs/chain_admission"},
+        "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "references": {"items": {"$ref": "#/$defs/reference"}, "type": "array"},
+        "report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "document_id", "inner", "inner_report_id", "references", "report_id"],
+      "type": "object"
     },
     "discourse_path": {
       "$comment": "Discourse.Run.usesDiscoursePath: a document text, the ve.discourse@1 profile in a profile list of strings (Route.Gate.profilesOf), or a discourse-* kind.",
