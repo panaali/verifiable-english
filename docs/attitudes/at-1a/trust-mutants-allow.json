@@ -1,0 +1,20 @@
+{"allow": [
+ {"definition": "VE.Attitudes.Mode", "operator": "ctor-drop", "reason": "Lean refuses the program: Mode.slug and Mode.words name every constructor (Unknown constant)"},
+ {"definition": "VE.Attitudes.AFormula", "operator": "ctor-drop", "reason": "Lean refuses the program: AFormula.conds names every constructor (Unknown constant)"},
+ {"definition": "VE.Attitudes.AFormula.conds", "operator": "all-any", "reason": "does not elaborate: the pattern `.all` renamed `.any` names no constructor of AFormula (Unknown constant)"},
+ {"definition": "VE.Attitudes.Mode.slug", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of the String `w`, or of `w.map ...`, is no String (failed to synthesize)"},
+ {"definition": "VE.Attitudes.Cond.key", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of the Option `c.slot` or `c.slot.map (·.1)` is a type mismatch"},
+ {"definition": "VE.Attitudes.Table.words", "operator": "list-empty", "reason": "does not elaborate: `[].map (·.1)` leaves the element type stuck (invalid projection)"},
+ {"definition": "VE.Attitudes.Table.scale", "operator": "list-empty", "reason": "does not elaborate: `[].map (fun p => (p.1, p.2.1))` leaves the element type stuck (invalid projection)"},
+ {"definition": "VE.Attitudes.Table.hasPair", "operator": "list-empty", "reason": "does not elaborate: `[].any (fun p => p.1 == a && ...)` leaves the element type stuck (invalid projection)"},
+ {"definition": "VE.Attitudes.Table.reviewed", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `t.candidates`, `t.above` or `t.knowsThinks` leaves the element type stuck (invalid projection, implicit `α`); the one that elaborates, `ws` at Scale.lean:51, is killed by the lowerBound-not-candidate tables (Examples.lean, the second mutant-fixture guard)"},
+ {"definition": "VE.Attitudes.Table.reviewed", "operator": "list-first", "reason": "equivalent at Scale.lean:56 only: `(t.knowsThinks.take 1).isEmpty` is `t.knowsThinks.isEmpty`; every other list-first cut of Table.reviewed is killed by the mutant-fixture tables"},
+ {"definition": "VE.Attitudes.Table.reviewed", "operator": "list-last", "reason": "equivalent at Scale.lean:56 only: `(t.knowsThinks.reverse.take 1).isEmpty` is `t.knowsThinks.isEmpty`; every other list-last cut is killed by the mutant-fixture tables"},
+ {"definition": "VE.Attitudes.name", "operator": "list-drop-last", "reason": "equivalent: `idxOf` of a missing element is the list's length, and the key a `dropLast` removes is the last of its mode, so its index is that length; every other key's index is unchanged"},
+ {"definition": "VE.Attitudes.condsOf", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `A.rules` or `r.guard :: r.carveOuts` leaves the element type stuck (invalid field notation)"},
+ {"definition": "VE.Attitudes.ruleContext", "operator": "list-empty", "reason": "does not elaborate: `[].find? (·.name == r.pred)` leaves the element type stuck (invalid field notation)"},
+ {"definition": "VE.Attitudes.keys", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `A`, `condsOf A ++ partsOf A` or `partsOf A` is a type mismatch or leaves the element type stuck"},
+ {"definition": "VE.Attitudes.keys", "operator": "append-right", "reason": "does not elaborate: dropping the right operand of `condsOf A ++ partsOf A` applies `condsOf` to the wrong argument (type mismatch)"},
+ {"definition": "VE.Attitudes.baseEnv", "operator": "list-empty", "reason": "does not elaborate: `[]` in place of `A.regulated`, `A.definitions` or `(·.name)` is a type mismatch or leaves the element type stuck"},
+ {"definition": "VE.Attitudes.baseEnv", "operator": "append-right", "reason": "does not elaborate: dropping the right operand of the `++` applies `map` to the wrong argument (type mismatch)"}
+]}
