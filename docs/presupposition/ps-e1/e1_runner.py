@@ -18,6 +18,10 @@ import e1_stub  # noqa: E402
 PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
 PILOT = e1_items.DATA / "pilot.json"
 RESERVE_CW = 25_000
+MAX_OUTPUT_TOKENS = 4_096
+MAX_PROMPT_BYTES = 8_192
+# Keep a full output allowance beyond the outage charge while a call is in flight.
+DISPATCH_CW = RESERVE_CW + MAX_OUTPUT_TOKENS
 USAGE_KEYS = ("input_tokens", "output_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
 MAX_ATTEMPTS = 3
 STOP_AFTER_FAILURES = 3
@@ -29,6 +33,10 @@ FROZEN = ("docs/research/presupposition-E1-prereg.md", "docs/research/presupposi
 
 class Abort(RuntimeError):
     """A condition no retry may pass: a paid-credit fallback."""
+
+
+class NeverStarted(dict):
+    """Local process-spawn failure, distinct from any JSON emitted by the CLI."""
 
 
 def usage_cw(wrapper):
@@ -44,14 +52,18 @@ def usage_cw(wrapper):
 
 
 def classify(exit_code, wrapper, model):
-    """(answer, error, outage). An outage never reached the model: no reported model usage or no output."""
+    """(answer, error, outage). Only a process that never started is known not to have reached the model."""
     reported = usage_cw(wrapper)
-    usage = wrapper.get("usage") if isinstance(wrapper, dict) else None
     models = wrapper.get("modelUsage") if isinstance(wrapper, dict) else None
-    if reported is None or not models or not usage.get("output_tokens"):
-        return "", f"no model usage (exit {exit_code})", True
+    if isinstance(wrapper, NeverStarted):
+        return "", f"CLI never started (exit {exit_code})", True
+    if (reported is None or not isinstance(models, dict) or not models
+            or any(type(name) is not str or not isinstance(detail, dict) for name, detail in models.items())):
+        return "", f"model usage unknown (exit {exit_code})", False
     if exit_code or wrapper.get("subtype") != "success" or wrapper.get("is_error") is not False:
         return "", f"CLI exit {exit_code} or unsuccessful result", False
+    if wrapper["usage"]["output_tokens"] == 0:
+        return "", "success with zero output tokens", False
     if set(models) != {model}:
         return "", f"not {model} exclusively: {sorted(models)}", False
     if type(wrapper.get("result")) is not str:
@@ -70,14 +82,17 @@ def reader_command(cfg, body):
 def cli_call(cfg, item, account):
     env = {k: v for k, v in os.environ.items() if not k.endswith("API_KEY") and not k.startswith("CLAUDE")
            and k not in {"ANTHROPIC_BASE_URL", "OPENAI_BASE_URL"}}
-    env |= {"CLAUDE_CONFIG_DIR": account, "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}
+    env |= {"CLAUDE_CONFIG_DIR": account, "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS": str(MAX_OUTPUT_TOKENS)}
     with tempfile.TemporaryDirectory() as empty:
         try:
             done = subprocess.run(reader_command(cfg, e1_items.prompt(item)), capture_output=True, text=True, cwd=empty,
                                   env=env, stdin=subprocess.DEVNULL, timeout=1200)
             stdout, stderr, code = done.stdout, done.stderr, done.returncode
-        except (subprocess.TimeoutExpired, OSError) as exc:
+        except subprocess.TimeoutExpired as exc:
             stdout, stderr, code = "", f"CLI did not complete: {type(exc).__name__}", -1
+        except OSError as exc:
+            return -1, NeverStarted(), f"CLI could not start: {type(exc).__name__}"
     try:
         wrapper = json.loads(stdout)
     except ValueError:
@@ -126,7 +141,7 @@ def spent(records):
 
 
 def run(items, cfg, raw, call=cli_call, pick=pick_account, head="uncommitted", frame=None):
-    """Run every trial of `items` not yet final; returns 'done', 'cap' or 'stopped: <why>'. Never exceeds the caps."""
+    """Run unfinished trials; reserve before dispatch and stop on reported budget exhaustion."""
     records = e1_score.load_records(raw)
     e1_score.bound(frame or items, cfg, records)
     calls, charged = spent(records)
@@ -141,7 +156,11 @@ def run(items, cfg, raw, call=cli_call, pick=pick_account, head="uncommitted", f
                 if state["stop"] or not queue:
                     return
                 if (state["calls"] + state["inflight"] >= cfg["call_cap"]
-                        or state["charged"] + RESERVE_CW * (state["inflight"] + 1) > cfg["cw_cap"]):
+                        or state["charged"] + DISPATCH_CW * (state["inflight"] + 1) > cfg["cw_cap"]):
+                    state["stop"] = "cap"
+                    return
+                if (len(cfg["reader_instruction"].encode())
+                        + len(e1_items.prompt(queue[0][0]).encode()) > MAX_PROMPT_BYTES):
                     state["stop"] = "cap"
                     return
                 item, trial = queue.pop(0)
@@ -173,7 +192,7 @@ def run(items, cfg, raw, call=cli_call, pick=pick_account, head="uncommitted", f
                 answer, error, outage, reported = "", str(exc), False, None
                 with lock:
                     state["stop"] = f"stopped: {exc}"
-            used = RESERVE_CW if reported is None or outage else reported
+            used = RESERVE_CW if reported is None or reported == 0 or outage else reported
             retry = outage and base["attempts"] < MAX_ATTEMPTS
             record = base | {"state": "outage" if retry else "final", "charged_cw": used, "answer": answer,
                              "model_calls": base["model_calls"] + (0 if outage else 1), "exit_code": code,
@@ -184,6 +203,8 @@ def run(items, cfg, raw, call=cli_call, pick=pick_account, head="uncommitted", f
                 state["inflight"] -= 1
                 state["charged"] += used
                 state["calls"] += 0 if outage else 1
+                if (reported is not None and reported > RESERVE_CW) or state["charged"] > cfg["cw_cap"]:
+                    state["stop"] = "cap"
                 state["failures"] = state["failures"] + 1 if error else 0
                 if outage:
                     state["account"] = None

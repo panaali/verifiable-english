@@ -60,7 +60,8 @@
     "assumed"
    ],
    "consequent": [
-    "assumed"
+    "assumed",
+    "unconditional"
    ],
    "disjunct": [],
    "rule_act": [
