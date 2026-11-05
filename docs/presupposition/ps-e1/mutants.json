@@ -280,6 +280,30 @@
    "replace": "if not k.startswith(\"CLAUDE\")\n           and k not in",
    "test": "test_reader_command_is_the_smallest_context_and_strips_api_keys",
    "failed": "test_reader_command_is_the_smallest_context_and_strips_api_keys"
+  },
+  {
+   "id": "M32",
+   "file": "docs/research/presupposition-E1/candidate-table.json",
+   "claim": "a saved table that is not the generator's output",
+   "find": "\"assumed\"",
+   "replace": "\"conditioned\"",
+   "test": "test_saved_table_and_results_are_the_generators_output"
+  },
+  {
+   "id": "M33",
+   "file": "docs/research/presupposition-E1/raw/T-CS-TOP-a/01.json",
+   "claim": "a saved raw answer changed after scoring",
+   "find": "\"answer\": \"(c)\"",
+   "replace": "\"answer\": \"(b)\"",
+   "test": "test_saved_table_and_results_are_the_generators_output"
+  },
+  {
+   "id": "M34",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "a met proviso bar passes unnoted",
+   "find": "elif all(n >= bars[\"proviso_min\"] for n in pair.values()):",
+   "replace": "elif False:",
+   "test": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape"
   }
  ]
 }
