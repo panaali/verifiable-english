@@ -127,6 +127,21 @@ estimate.
 
 cmp-s3b (see "Cut"), with the DRI's rulings on Q1 and Q2; cmp-s3ab (`plain_wellFormed`) stays as cmp-s3a named it.
 
+## Pre-review gate repair (2026-11-05)
+
+The full gate on f330aff00 failed only
+`tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`:
+`lean/VE/RightClauses/Examples.lean` was absent from the manifest's JSON-handling inventory
+(`gate-result.json`, commit_sha f330aff00, counts.failed 1). Its `notChain` fixture builds JSON formulas
+for the Q1 depth `#guard`; no runtime decoder or runner imports that file. The file is now classified
+under `lean_decoders.other_json` in `ve/assurance-manifest.json` with that reason. This changes no
+checker, verdict or profile output, so DELTA.md needs no new row.
+
+`.venv/bin/pytest -q tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
+returned `1 passed`; `.venv/bin/python tools/regen_generated.py --write --only assurance-manifest`
+returned `wrote 1 entries` and left the manifest's layout intact. The full gate runs on the committed
+final HEAD; `gate-result.json` records its result.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained answers: N.A., no relayed answer (no mode, wire or Python in this item).
