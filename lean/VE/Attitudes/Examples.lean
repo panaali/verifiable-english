@@ -373,7 +373,8 @@ def fat1c : AttDoc :=
 -- C-e's part: no rule (`toNorms` elaborates the rules alone); its claim is its atom at its holder, closed
 #guard nodesOf c_e_part == nodesOf (c_e_doc [] guard1) && partClaim c_e_part c_e_node ==
   some (.unary "attitudes__wants__1" (.const "c0"))
-#guard partClaim c_e_part { c_e_node with holder := .var 0 } == none
+#guard partClaim c_e_part { c_e_node with holder := .var 0 } == none &&
+  partClaim { c_e_part with holders := [sortC, sortS] } { c_e_node with holder := .var 0 } == none
 
 /-! ## 2.6 The fixtures of 5.2 and 7.1 that 2.1 to 2.4 did not need (the stub's S5) -/
 
@@ -440,8 +441,13 @@ def cd2 : AttDoc :=
 def c_e_compound : AttDoc :=
   c_e_doc [{ c_e_node with content := .and (.unary cat0 (.const "s1")) (.unary categories[6]! (.const "s1")) }] guard1
 
+/-- D16: `E` declares a generated name. -/
+def d16 : AttDoc :=
+  { fat1 with E := { envP with predicates := fun p =>
+      if p == "attitudes__knows__1" then some [sortS] else envP.predicates p } }
+
 /-- `checkAtt`'s answer is exactly this text. -/
-def fails (A : AttDoc) (text : String) : Bool := errOf (checkAtt A) == text
+def fails (A : AttDoc) (text : String) : Bool := errOf (checkAtt A) == text && !WellFormedAtt A
 def passes (A : AttDoc) : Bool := errOf (checkAtt A) == "ok" && WellFormedAtt A
 def textD14c : String := "UnsupportedProfile: this 'wants' content has no reviewed wording in attitudes@0"
 def textD14d : String := "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon"
@@ -481,9 +487,7 @@ def textD14d : String := "InvalidInput: an attitude condition names a symbol wit
 #guard fails cc2 textD14c
 #guard fails cd1 textD14d
 #guard fails (fatMore 240) "ResourceLimit: MAX_PREDICATES"
-#guard fails { fat1 with E := { envP with predicates := fun p =>
-    if p == "attitudes__knows__1" then some [sortS] else envP.predicates p } }
-  "DuplicateDeclaration: generated predicate attitudes__knows__1"
+#guard fails d16 "DuplicateDeclaration: generated predicate attitudes__knows__1"
 #guard fails (docOf longTable [] [ruleOf "u0165-s01" (.att (cond (.thinks longWord) cat0))])
   "ResourceLimit: generated predicate attitudes__thinks_extraordinarily_overwhelmingly_and_almost_certainly_likely__1 exceeds 64 bytes"
 #guard fails { fat1 with rules := [ruleOf "u0165-s01" (.and qlA (.base (.unary cat0 (.var 1))))] }
@@ -546,13 +550,16 @@ def mapPreds (f : VE.EnglishGrammar.PredDecl → VE.EnglishGrammar.PredDecl) (e 
 -- `lexPred`: in the view with `E`'s sorts and matching arity, and with a wording
 #guard lexPred fat1 cat0 && !lexPred fat1 "absent" && !lexPred { fat1 with lex := lexWrongArgs } cat0 &&
   !lexPred { fat1 with lex := lexNoWording } cat0 && !lexPred (viewed (mapPreds ({ · with arity := 2 }))) cat0 &&
-  !lexPred { fat1 with E := { envP with predicates := fun _ => none } } cat0
+  !lexPred { fat1 with E := { envP with predicates := fun _ => none } } cat0 &&
+  !lexPred { fat1 with lex := { lexP with lexicon := { lexP.lexicon with wordings := [("absent", "{0} is absent")] } } } "absent"
 -- `lexTerm`: a variable needs none; a constant in the view with its sort, and with a spelling
 #guard lexTerm fat1 (.var 9) && lexTerm c_e_part (.const "s1") && !lexTerm c_e_part (.const "absent") &&
   !lexTerm { c_e_part with E := { c_e_part.E with constants := fun _ => none } } (.const "s1") &&
   !lexTerm { c_e_part with lex := { c_e_part.lex with lexicon := { c_e_part.lex.lexicon with spellings := [] } } }
     (.const "s1") &&
-  !lexTerm { c_e_part with E := { c_e_part.E with constants := fun _ => some sortC } } (.const "s1")
+  !lexTerm { c_e_part with E := { c_e_part.E with constants := fun _ => some sortC } } (.const "s1") &&
+  !lexTerm { fat1 with lex := { lexP with lexicon := { lexP.lexicon with spellings := [("absent", "absent")] } } }
+    (.const "absent")
 -- `lexCovers`: every connective reads both operands; both positions of a binary atom and of an equation
 def lexA : VE.Formula := .unary cat0 (.const "s1")
 def lexB : VE.Formula := .unary "absent" (.const "s1")
@@ -568,6 +575,10 @@ def wc (slot : Option (String × VE.Term)) (φ : VE.Formula) : Cond :=
   { holder := .const "c0", mode := .act .wants, slot := slot, content := φ }
 #guard errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (contentOf cat0))) == "ok" &&
   errOf (renderCheck c_e_part (wc none lexA) true) == "ok" && errOf (renderCheck c_e_part (wc none lexA)) == textD14c
+-- a part's wording is found wherever it stands in the lexicon, as a slotted condition's is
+#guard [categories[1]!, "weapons_uplift_permitted"].all (fun p =>
+  errOf (renderCheck c_e_part (wc none (.unary p (.const "s1"))) true) == "ok" &&
+  errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (.unary p (.var 0)))) == "ok")
 #guard errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (contentOf "absent"))) == textD14c &&
   errOf (renderCheck c_e_part (wc none lexB) true) == textD14c &&
   errOf (renderCheck c_e_part (wc none (.binary cat0 (.const "s1") (.const "s1"))) true) == textD14c &&
@@ -590,6 +601,7 @@ def undeclared : VE.EnglishGrammar.ConstDecl := { name := "gc", sort := sortS }
   lexAgrees (viewed ({ · with constants := [genconst, genconst] })) && lexAgrees c_e_part
 #guard [viewed ({ · with sorts := robot :: lexP.env.sorts }), viewed ({ · with sorts := lexP.env.sorts ++ [robot] }),
     viewed ({ · with sorts := lexP.env.sorts.drop 1 }), viewed ({ · with sorts := lexP.env.sorts.dropLast }),
+    viewed ({ · with sorts := lexP.env.sorts.drop 1 ++ [gensort] }),
     viewed ({ · with predicates := extra :: lexP.env.predicates }),
     viewed ({ · with predicates := lexP.env.predicates ++ [extra] }),
     viewed ({ · with predicates := lexP.env.predicates.drop 1 }),
@@ -624,10 +636,18 @@ def badCond : List String × Cond := ([], cond .knows cat0)
 #guard errOf (checkCond fat1 Γ1 { cond ql cat0 with content := .unary cat0 (.var 1) }) ==
   "UnboundVariable: Variable index 1 is outside its scope"
 -- `checkAtt`'s lists: the last entry of each counts
-#guard fails { fat1 with holders := [sortC, "robot"] } "UnknownSymbol: Unknown holder sort 'robot'"
-#guard fails { fat1 with declared := [("very likely", "quite likely"), ("very likely", "as likely as not")] }
-  "UnsupportedProfile: a declared scale pair names a word that attitudes@0 does not admit"
-#guard passes { fat1 with holders := [sortS, sortC] } &&
+#guard fails { fat1 with holders := [sortC, "robot"] } "UnknownSymbol: Unknown holder sort 'robot'" &&
+  fails { fat1 with holders := ["robot", sortC] } "UnknownSymbol: Unknown holder sort 'robot'"
+#guard [[("very likely", "quite likely"), ("very likely", "as likely as not")],
+    [("very likely", "as likely as not"), ("very likely", "quite likely")]].all (fun ps =>
+  fails { fat1 with declared := ps } "UnsupportedProfile: a declared scale pair names a word that attitudes@0 does not admit")
+-- the first and the last admitted word, on each side of a declared pair
+#guard passes { fat1 with declared := [("almost certain", "more likely than not"), ("more likely than not", "almost certain")] }
+-- several failures of the lexicon: the first is named
+#guard fails { fat1 with lex := { lexP with lexicon := { lexP.lexicon with
+    wordings := lexP.lexicon.wordings.filter (fun w => w.1 != cat0 && w.1 != categories[1]!) } } }
+  "InvalidInput: the English lexicon fails V1 for predicate mass_casualty_weapon_uplift"
+#guard passes { fat1 with holders := [sortS, sortC] } && passes { fat1 with holders := [sortC, sortS] } &&
   fails { fat1 with authorPredicates := "attitudes__x" :: fat1.authorPredicates }
     "InvalidInput: predicate attitudes__x uses the reserved prefix attitudes__"
 -- `checkNames`: each check, on the first and the last key; a regulated name and a defined one
@@ -640,10 +660,13 @@ def thinksDoc (ws : List Word) : AttDoc :=
   fails (thinksDoc ["a", "a:b"]) "InvalidInput: generated predicate attitudes__thinks_a:b__1 contains ':'"
 #guard fails (thinksDoc ["a b", "a_b"]) "InvalidInput: generated predicate names collide" && passes (thinksDoc ["a", "b"])
 #guard errOf (checkNames fat1 (keys fat1).reverse) == "ok"
-#guard errOf (checkNames { fat1 with regulated := [{ regulatedP with name := "attitudes__knows__1" }] } (keys fat1)) ==
-    "DuplicateDeclaration: generated predicate attitudes__knows__1" &&
-  errOf (checkNames { fat1 with definitions := [{ name := "attitudes__thinks_quite_likely__1", args := [], body := .top }] }
-    (keys fat1)) == "DuplicateDeclaration: generated predicate attitudes__thinks_quite_likely__1"
+def namedAs (rs ds : List String) : AttDoc :=
+  { fat1 with regulated := rs.map (fun n => { regulatedP with name := n }),
+              definitions := ds.map (fun n => { name := n, args := [], body := .top }) }
+#guard [namedAs ["attitudes__knows__1", "x"] [], namedAs ["x", "attitudes__knows__1"] [],
+    namedAs [] ["attitudes__knows__1", "x"], namedAs [] ["x", "attitudes__knows__1"],
+    namedAs ["attitudes__knows__1"] ["x"], namedAs ["x"] ["attitudes__knows__1"]].all (fun A =>
+  errOf (checkNames A (keys fat1)) == "DuplicateDeclaration: generated predicate attitudes__knows__1")
 -- 64 bytes is the limit: a word whose name has exactly 64 passes, one byte more does not
 def wordOf (n : Nat) : Word := String.mk (List.replicate n 'a')
 #guard (name (thinksDoc [wordOf 43]) (keys (thinksDoc [wordOf 43]))[0]!).utf8ByteSize == 64 && passes (thinksDoc [wordOf 43]) &&
