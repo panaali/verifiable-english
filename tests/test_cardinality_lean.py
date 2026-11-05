@@ -157,7 +157,7 @@ def test_the_chain_list_is_admitted_and_each_content_kind_read_by_its_decoder(tm
     # A formula beside a counting unit is the chain's, and a counting statement is not.
     beside = check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
     assert beside["not_certified"] == ["one"] and beside["chain"]["coverage"]["unformalised_reasons"] == {"counting": 1}
-    with pytest.raises(VEError, match="unit content|cardinality content requires"):
+    with pytest.raises(VEError, match="AST nodes must be"):
         check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": {"cardinality": TOP}})]))
     with pytest.raises(UnsupportedProfile, match="holds a counting unit"):
         check_document(chained(tmp_path, [("one", {"ast": ["top"]})]))
@@ -178,6 +178,29 @@ def test_a_counting_unit_changes_neither_the_chain_s_premises_nor_its_verdict(tm
     path = tmp_path / "plain.ve.md"
     path.write_bytes(b"---\n" + json.dumps(meta).encode() + b"\n---\n" + chain_text([("a", {}), ("b", {})]).split(b"\n---\n")[1])
     assert answer["chain"] == check_document(path)
+
+
+def test_the_chain_reads_open_terms_reading_sets_and_narrowings_beside_a_counting_unit(tmp_path):
+    """Accepted by the chain under the chain list; refused by the chain's own checks, and refused by name under W6a's lists."""
+    units = [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]
+    term = {"name": "fair", "arguments": ["user"], "decided_by": "court", "necessary": [], "sufficient": [], "factors": [],
+            "precedents": [], "jurisdiction": "here", "version": 1}
+    assert check_document(chained(tmp_path, units, open_terms=[term]))["chain"]["coverage"]["residual"]["open_terms"] == 1
+    assert check_document(chained(tmp_path, units, reading_sets=[], narrowings=[]))["chain"] is not None
+    with pytest.raises(VEError, match="open term"):
+        check_document(chained(tmp_path, units, open_terms=[{**term, "decided_by": ""}]))
+    with pytest.raises(VEError, match="narrowing"):
+        check_document(chained(tmp_path, units, narrowings=[{"id": 7}]))
+    with pytest.raises(VEError, match="reading"):
+        check_document(chained(tmp_path, units, reading_sets=[{"id": "s", "unit": "one", "version": 1}]))
+    with pytest.raises(UnsupportedProfile, match="senses beside cardinality@0 is not composed"):
+        check_document(chained(tmp_path, units, senses={}))
+
+
+def test_render_says_what_the_chain_does_not_cover(tmp_path):
+    shown = render_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
+    assert shown.startswith("The chain's premises and verdict cover no counting statement: one are admitted")
+    assert "for this reason: counting" in shown and "for this reason: chain" in shown
 
 
 def test_two_counting_units_that_contradict_are_named_not_certified(tmp_path):
