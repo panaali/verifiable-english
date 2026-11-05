@@ -1,3 +1,10 @@
+- `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
+- `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
+- `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
+- `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
+- `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
+- `tests/test_rights.py` — Rights holder-side elaboration regressions.
+- `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
@@ -74,11 +81,3 @@
 - `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
 - `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
 - `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
-- `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
-- `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
-- `tests/test_stage2_parse.py` — Parsing on the Lean authority: Lean's surface parsers decide acceptance.
-- `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
-- `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
-- `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
-- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
-- `tests/test_stats.py` — (no module docstring)

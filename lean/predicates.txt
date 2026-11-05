@@ -238,19 +238,16 @@ module VE.Checks
 module VE.ClaimGraph
 module VE.Closure.Bridge
 module VE.Closure.Checks
-module VE.Closure.Congruence
 module VE.Closure.Consequence
 module VE.Closure.CoreEquiv
 module VE.Closure.Finite
-module VE.Closure.Induction
 module VE.Closure.Order
 module VE.Closure.OrderChecks
-module VE.Closure.PathRules
 module VE.Closure.Paths
 module VE.Closure.RoundTrip
-module VE.Closure.Substitution
 module VE.Closure.Surface
 module VE.Closure.Syntax
+module VE.Closure.Tableau
 module VE.Commands.Examples
 module VE.Commands.Read
 module VE.Commands.Run
@@ -743,12 +740,6 @@ module VE.Tableau
 module VE.TableauChecker
 module VE.TableauChecks
 module VE.TableauClosure
-module VE.TableauExtended
-module VE.TableauExtendedChecker
-module VE.TableauExtendedClosure
-module VE.TableauExtendedExtra
-module VE.TableauExtendedInduction
-module VE.TableauExtendedRules
 module VE.Time.Budget
 module VE.Time.Calendar
 module VE.Time.Count
@@ -919,19 +910,12 @@ VE.Cardinality.Rel.holds@VE.Cardinality.Semantics
 VE.Cardinality.Render.Charges@VE.Cardinality.RenderTheorems
 VE.Cardinality.erasedRounding@VE.Cardinality.Ratio
 VE.Closure.ClosedAt@VE.Closure.Paths
-VE.Closure.Edge.Typed@VE.Closure.Substitution
-VE.Closure.Edge.denote@VE.Closure.Substitution
 VE.Closure.Entails@VE.Closure.Consequence
 VE.Closure.Formula.WellFormed@VE.Closure.Syntax
 VE.Closure.Formula.denote@VE.Closure.Syntax
 VE.Closure.Path.below@VE.Closure.Paths
 VE.Closure.Path@VE.Closure.Paths
 VE.Closure.Reachable@VE.Closure.Paths
-VE.Closure.Tableau.Assignment.Typed@VE.TableauExtended
-VE.Closure.Tableau.Atom.denote@VE.TableauExtendedClosure
-VE.Closure.Tableau.Branch.Holds@VE.TableauExtended
-VE.Closure.Tableau.Literal.Holds@VE.TableauExtendedClosure
-VE.Closure.Tableau.Signed.Holds@VE.TableauExtended
 VE.Compose.BaseAdmissibleP@VE.Compose.Slot
 VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
