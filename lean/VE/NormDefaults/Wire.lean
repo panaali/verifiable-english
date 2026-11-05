@@ -130,12 +130,12 @@ theorem checkAuthorN_split (environment : Lean.Json) (g : Nat) (U : VE.NormDefau
 /-- The norms route's author check: no generated predicates. -/
 def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAuthorN environment 0 U
 
-def decodeSourceU (environment norms : Json) : Except String SourceU :=
+def decodeSourceUWith (joined : Bool) (environment norms : Json) : Except String SourceU :=
   if hasProfile environment then do
     let env' ← placeholderJson environment
     -- `data@0` flags are admitted as Python's base did; every model a case supplies must satisfy them
     -- (`InvalidModel(flags)`, `Replay`, `Report`), and no check reads a flag premise, so each is conservative.
-    let src ← VE.Norms.Wire.decodeSource env' norms true true
+    let src ← VE.Norms.Wire.decodeSource env' norms true true joined
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U
@@ -145,9 +145,20 @@ def decodeSourceU (environment norms : Json) : Except String SourceU :=
   else do
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-    let src ← VE.Norms.Wire.decodeSource environment norms
+    let src ← VE.Norms.Wire.decodeSource environment norms (joined := joined)
     pure ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h),
       fun _ => rfl⟩
+
+/-- The decoded source. It admits a joined act, so every caller runs on the elaborated document
+(`Acts.Decode.decodeElaboratedU`, act-phrases 6.4), except `decodeSourceLexical`'s. -/
+def decodeSourceU : Json → Json → Except String SourceU := decodeSourceUWith true
+
+/-- `decodeSourceU` for an entry point that does not run on the elaborated document: a joined act keeps
+`Lexical.check`'s refusal (DRI 2026-11-02 ap-3db item 2). -/
+def decodeSourceLexical : Json → Json → Except String SourceU := decodeSourceUWith false
+
+/-- The decoder an entry point of the norm-defaults route reads its source with. -/
+abbrev UDecoder := Json → Json → Except String SourceU
 
 /-- The environment bytes identity is computed on: the original environment,
 canonicalised as the norms route does. -/
@@ -163,14 +174,14 @@ theorem decode_conservative (environment norms : Json) (hp : hasProfile environm
       (VE.Norms.Wire.decodeSource environment norms).map (fun s => (s, (⟨s.D, []⟩ : UDoc))) ∧
     canonicalEnvironmentJsonU environment = VE.Norms.Wire.canonicalEnvironmentJson environment := by
   refine ⟨?_, rfl⟩
-  unfold decodeSourceU
+  unfold decodeSourceU decodeSourceUWith
   simp only [hp, Bool.false_eq_true, if_false, hu, List.isEmpty_nil]
   cases VE.Norms.Wire.decodeSource environment norms <;> rfl
 
 theorem decodeSourceU_plain {environment norms : Json} {s : SourceU}
     (h : decodeSourceU environment norms = .ok s) (hp : hasProfile environment = false) :
     VE.Norms.Wire.decodeSource environment norms = .ok s.src ∧ s.U = ⟨s.src.D, []⟩ := by
-  unfold decodeSourceU at h
+  unfold decodeSourceU decodeSourceUWith at h
   simp only [hp, Bool.false_eq_true, if_false] at h
   split at h
   · obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -279,21 +290,23 @@ structure ConflictReplayU where
 
 def ConflictReplayU.conflictFree (r : ConflictReplayU) : Bool := conflictFreeCheckU r.s.U r.certs
 
-def replayConflictU (j : Json) : Except String ConflictReplayU := do
+def replayConflictUIn (dec : UDecoder) (j : Json) : Except String ConflictReplayU := do
   let environment ← j.getObjVal? "environment"
   let norms := j.getObjValD "norms"
-  let s ← decodeSourceU environment norms
+  let s ← dec environment norms
   let packages := j.getObjValD "packages"
   pure ⟨s, (targets (fill s.U)).map (decodePackageU s.U environment norms packages)⟩
+
+def replayConflictU : Json → Except String ConflictReplayU := replayConflictUIn decodeSourceU
 
 /-- `normDefaults_wire_conflict_sound` (CONFLICT-FREE half): a successful raw replay
 whose every target of `fill U` has an accepted certificate over
 `Background_base(E‴) ++ Fill_T` proves, for the document decoded from that very
 input, that it is CONFLICT-FREE under every admissible filling. -/
-theorem normDefaults_wire_conflict_sound (j : Json) (res : ConflictReplayU) (h : replayConflictU j = .ok res)
+theorem normDefaults_wire_conflict_soundIn (dec : UDecoder) (j : Json) (res : ConflictReplayU) (h : replayConflictUIn dec j = .ok res)
     (hv : res.conflictFree = true) :
-    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok res.s ∧ ConflictFreeU.{u} res.s.U := by
-  unfold replayConflictU at h
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok res.s ∧ ConflictFreeU.{u} res.s.U := by
+  unfold replayConflictUIn at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨s, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   cases h
@@ -301,6 +314,11 @@ theorem normDefaults_wire_conflict_sound (j : Json) (res : ConflictReplayU) (h :
     simp only [Json.getObjValD, henv]
     rfl
   exact ⟨by rw [he]; exact hd, conflictFreeCheckU_sound s.U s.wfFill _ hv⟩
+
+theorem normDefaults_wire_conflict_sound (j : Json) (res : ConflictReplayU) (h : replayConflictU j = .ok res)
+    (hv : res.conflictFree = true) :
+    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok res.s ∧ ConflictFreeU.{u} res.s.U :=
+  normDefaults_wire_conflict_soundIn.{u} decodeSourceU j res h hv
 
 /-- With W1's document iff on `fill U`: every admissible filling then has exactly
 one filled expansion. -/
@@ -407,9 +425,9 @@ universe u
 def EntailmentReplayU.valid (r : EntailmentReplayU) : Bool :=
   VE.Tableau.checkCertificate (envAt (fill r.s.U) (size (fill r.s.U))) (premisesU r.s.U r.premises) r.conclusion r.cert
 
-def replayEntailmentU (j : Json) : Except String EntailmentReplayU := do
+def replayEntailmentUIn (dec : UDecoder) (j : Json) : Except String EntailmentReplayU := do
   let environment ← j.getObjVal? "environment"
-  let s ← decodeSourceU environment (j.getObjValD "norms")
+  let s ← dec environment (j.getObjValD "norms")
   let E := envAt (fill s.U) (size (fill s.U))
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Route.Wire.decodeFormulas E premisesJson
@@ -425,14 +443,14 @@ def replayEntailmentU (j : Json) : Except String EntailmentReplayU := do
 from a successful raw replay with an accepted certificate, for the document
 decoded from that very input, the conclusion holds in every filled expansion of
 an admissible filling that satisfies the premises. -/
-theorem normDefaults_wire_acceptance (j : Json) (r : EntailmentReplayU) (h : replayEntailmentU j = .ok r)
+theorem normDefaults_wire_acceptanceIn (dec : UDecoder) (j : Json) (r : EntailmentReplayU) (h : replayEntailmentUIn dec j = .ok r)
     (hv : r.valid = true) :
-    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.s ∧
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.s ∧
     ∀ S : VE.Structure.{u}, BaseAdmissibleU r.s.U (restrictAll (fill r.s.U).T S) →
       DocumentExpansion (fill r.s.U) (restrictAll (fill r.s.U).T S) S → Sat S r.premises →
       r.conclusion.denote S [] := by
-  have hdec : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.s := by
-    unfold replayEntailmentU at h
+  have hdec : dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.s := by
+    unfold replayEntailmentUIn at h
     obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨s, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -458,5 +476,17 @@ theorem normDefaults_wire_acceptance (j : Json) (r : EntailmentReplayU) (h : rep
       intro a ha
       cases ha
   exact ⟨hdec, acceptance_of_fillTyped.{u} r.s.U hfill r.premises r.conclusion r.cert hv⟩
+
+/-! ## The route's own decoder -/
+
+def replayEntailmentU : Json → Except String EntailmentReplayU := replayEntailmentUIn decodeSourceU
+
+theorem normDefaults_wire_acceptance (j : Json) (r : EntailmentReplayU) (h : replayEntailmentU j = .ok r)
+    (hv : r.valid = true) :
+    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.s ∧
+    ∀ S : VE.Structure.{u}, BaseAdmissibleU r.s.U (restrictAll (fill r.s.U).T S) →
+      DocumentExpansion (fill r.s.U) (restrictAll (fill r.s.U).T S) S → Sat S r.premises →
+      r.conclusion.denote S [] :=
+  normDefaults_wire_acceptanceIn.{u} decodeSourceU j r h hv
 
 end VE.NormDefaults.Wire

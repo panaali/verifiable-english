@@ -159,8 +159,8 @@ def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
 /-- The report id is bound to the source environment under its own profiles
 (`norm-defaults@0` included), as the norms route binds it and as conflict packages
 are bound (`decodePackageU`); certificates are bound to the regenerated `E‴`. -/
-def runAdmission (id : String) (environment document : Json) : Except String Json := do
-  let res ← Admission.admitDocument environment document
+def runAdmissionIn (dec : Wire.UDecoder) (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocumentIn dec environment document
   let canonical ← Wire.canonicalEnvironmentJsonU environment
   let envId ← VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical
   let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
@@ -179,12 +179,12 @@ def BindingsMatchSourceAndRegeneration (environment document : Json) (res : Admi
 admission whose bindings equal the recomputed digests and the regenerated `E‴`, and
 whose report follows from the Background of `fill U`, `Fill_T`, the layers of `T‴`
 and its remaining assumptions. -/
-def AdmissionAnswerU (id : String) (environment document answer : Json) : Prop :=
+def AdmissionAnswerUIn (dec : Wire.UDecoder) (id : String) (environment document answer : Json) : Prop :=
   ∃ res : Admission.Admitted, ∃ reportId : String,
-    Admission.admitDocument environment document = .ok res ∧
+    Admission.admitDocumentIn dec environment document = .ok res ∧
     WellFormedU res.s.U = true ∧
     answer = encodeAdmitted id reportId res ∧
-    Admission.SourceDecoded environment document res ∧
+    Admission.SourceDecodedIn dec environment document res ∧
     BindingsMatchSourceAndRegeneration environment document res reportId ∧
     Admission.ReportAdmitted res ∧
     (∀ S : VE.Structure.{0}, S.Admissible (fill res.s.U).E →
@@ -195,24 +195,24 @@ def AdmissionAnswerU (id : String) (environment document answer : Json) : Prop :
       res.report.root.formula.denote S [])
 
 open VE.Order.ProfileGate (bind_ok) in
-theorem runAdmission_sound (id : String) (environment document answer : Json)
-    (h : runAdmission id environment document = .ok answer) :
-    AdmissionAnswerU id environment document answer := by
-  unfold runAdmission at h
+theorem runAdmission_soundIn (dec : Wire.UDecoder) (id : String) (environment document answer : Json)
+    (h : runAdmissionIn dec id environment document = .ok answer) :
+    AdmissionAnswerUIn dec id environment document answer := by
+  unfold runAdmissionIn at h
   obtain ⟨res, hr, h⟩ := bind_ok h
   obtain ⟨canonical, hc, h⟩ := bind_ok h
   obtain ⟨envId, he, h⟩ := bind_ok h
   obtain ⟨reportId, hd, h⟩ := bind_ok h
   cases h
   obtain ⟨hsrc, hbound, hsound, hnodes, hleaves, hcit, hch⟩ :=
-    Admission.admitDocument_spec.{0} environment document res hr
+    Admission.admitDocument_specIn.{0} dec environment document res hr
   exact ⟨res, reportId, hr, res.s.wfU hsrc.2.1, rfl, hsrc, ⟨hbound, canonical, envId, hc, he, hd⟩,
     ⟨hsound, hnodes, hleaves, hcit, hch⟩,
     fun S hS hf hg ho =>
-      Admission.wire_report_consequence environment document res hr S hS hf hg ho⟩
+      Admission.wire_report_consequenceIn dec environment document res hr S hS hf hg ho⟩
 
 /-- Every case but a profiled admission. -/
-def runOtherCase (id kind : String) (j : Json) : Except String Json := do
+def runOtherCaseIn (dec : Wire.UDecoder) (id kind : String) (j : Json) : Except String Json := do
   let env := j.getObjValD "environment"
   if !Wire.hasProfile env && !(Wire.unspecifiedNames env).isEmpty then
     throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
@@ -222,7 +222,7 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
   if kind == "norm-defaults-elaborate" then
     let environment ← j.getObjVal? "environment"
     -- Decided without the document layers (jt-2c); every identity below reads the environment as written.
-    let s ← Wire.decodeSourceU (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms")
+    let s ← dec (← VE.Compose.decidingEnvironment environment) (j.getObjValD "norms")
     let filled ← Admission.fillJson environment s.U
     let filledId ← VE.Route.Wire.environmentId (Wire.profilesOf filled) filled
     let sourceId ← VE.Route.Wire.environmentId (Wire.profilesOf environment)
@@ -240,12 +240,12 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
        ("environment_id", .str sourceId), ("document_hash", .str documentHash),
        ("wordings", VE.Norms.Run.wordingsJson s.src.ne)])
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
-    let ⟨s, w⟩ ← Wire.replayWitnessU j
+    let ⟨s, w⟩ ← Wire.replayWitnessUIn dec j
     return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
       ("target", .str w.target.1), ("targets", toJson ((VE.Norms.targets (fill s.U)).map (·.1)))] ++
       if w.conflict then Wire.conflictFields s.U w.M w.target.1 w.target.2.2 w.tuple else [])
   if kind == "norm-defaults-status" then
-    let d ← Wire.replayStatus j
+    let d ← Wire.replayStatusIn dec j
     let fillings ← if d.status = .undecided then
         some <$> ((·, ·) <$> Wire.decodeFilling d.s.U d.M (j.getObjValD "yes") <*>
           Wire.decodeFilling d.s.U d.M (j.getObjValD "no"))
@@ -253,15 +253,15 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
       Wire.statusFields d.s.U d.M d.r.name d.tuple (d.status != .undecided && d.status != .unknown) fillings)
   if kind == "norm-defaults-gaps" && (j.getObjVal? "model").toBool then
-    let ⟨_, d⟩ ← Wire.replayReached j
+    let ⟨_, d⟩ ← Wire.replayReachedIn dec j
     return VE.Route.Wire.ok id [("gaps", .str (if d.reached then "reachable" else "unknown")),
       ("predicate", .str d.r.name)]
   if kind == "norm-defaults-gaps" then
-    let g ← Wire.replayGaps j
+    let g ← Wire.replayGapsIn dec j
     return VE.Route.Wire.ok id [("gaps", .str (if g.none_ then "none" else "unknown")),
       ("predicate", .str g.r.name)]
   if kind == "norm-defaults-conflict" then
-    let res ← Wire.replayConflictU j
+    let res ← Wire.replayConflictUIn dec j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
       ("targets", toJson ((VE.Norms.targets (fill res.s.U)).map (·.1)))] ++
@@ -269,18 +269,36 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
   if kind == "norm-defaults-report" then
-    let rep ← Wire.reportFrom j
+    let rep ← Wire.reportFromIn dec j
     return VE.Route.Wire.ok id rep.rep.toJson
   if kind == "norm-defaults-certificate" then
-    let r ← Wire.replayEntailmentU j
+    let r ← Wire.replayEntailmentUIn dec j
     return VE.Route.Wire.ok id [("valid", .bool r.valid),
       ("premises", toJson (Wire.premisesU r.s.U []).length)]
   if usesNormDefaultsPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
-  VE.Norms.Run.runCase j
+  VE.Norms.Run.runCaseRouted j
 
 /-- The soft branch's `admission` and `norm-defaults-certificate` (`Admission.softCase`) first, for a soft source
 under the profile; then a profiled admission on the norms branch; then every other case. -/
+def runCaseIn (dec : Wire.UDecoder) (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let kind ← VE.Route.Run.caseKind j
+  let env := j.getObjValD "environment"
+  if Wire.hasProfile env && Wire.layeredRoute env == some "soft-norms@0" then
+    if let some a ← Admission.softCase id kind j then return a
+  if kind == "admission" && Wire.hasProfile env then
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    return ← runAdmissionIn dec id environment document
+  runOtherCaseIn dec id kind j
+
+def runAdmission : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeSourceU
+def AdmissionAnswerU : String → Json → Json → Json → Prop := AdmissionAnswerUIn Wire.decodeSourceU
+def runOtherCase : String → String → Json → Except String Json := runOtherCaseIn Wire.decodeSourceU
+
+/-- `runCase` as rd-9-soft-chain.md 6 approves its text (`tools/check_rd9_sc1_statements.py`): `runCaseIn` at
+`decodeSourceU` (`runCase_eq`). -/
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
@@ -293,17 +311,32 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   runOtherCase id kind j
 
+theorem runCase_eq : runCase = runCaseIn Wire.decodeSourceU := rfl
+
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    AdmissionAnswerU id environment document answer :=
+  runAdmission_soundIn Wire.decodeSourceU id environment document answer h
+
+/-- The norm-defaults route's decoder of `environment`: on the elaborated document under `acts@0` (act-phrases 6.4);
+else today's. -/
+def decoderOf (environment : Json) : Wire.UDecoder :=
+  if VE.Norms.Run.underActs environment then VE.Acts.Decode.elaboratedU else Wire.decodeSourceU
+
+/-- The norm-defaults route's public entry: `runCaseIn` at the decoder of the case's environment. -/
+def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j
+
 /-- The public admission branch: from raw JSON under the profile, a successful answer
 satisfies the full admission obligation on `fill U` for the case's own id, environment
 and document; no profiled admission falls through to the norms route. The soft branch
 (`layeredRoute = some "soft-norms@0"`) is `normDefaults_wire_admissionX`'s. -/
-theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answer)
+theorem normDefaults_wire_admissionIn (dec : Wire.UDecoder) (j answer : Json) (h : runCaseIn dec j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "admission")
     (hp : Wire.hasProfile (j.getObjValD "environment") = true)
     (hs : Wire.layeredRoute (j.getObjValD "environment") ≠ some "soft-norms@0") :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
-      AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer := by
-  unfold runCase at h
+      AdmissionAnswerUIn dec id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCaseIn at h
   obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
   have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
@@ -319,7 +352,15 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
   have hd' : j.getObjValD "document" = document := by
     simp only [Json.getObjValD, hd]; rfl
   rw [he', hd']
-  exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
+  exact ⟨id, hid, runAdmission_soundIn dec id environment document answer (by simpa using h)⟩
+
+theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission")
+    (hp : Wire.hasProfile (j.getObjValD "environment") = true)
+    (hs : Wire.layeredRoute (j.getObjValD "environment") ≠ some "soft-norms@0") :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer :=
+  normDefaults_wire_admissionIn Wire.decodeSourceU j answer (runCase_eq ▸ h) hk hp hs
 
 /-- The soft branch's admission: from raw JSON under the profile with a soft source, a successful answer satisfies
 the full admission obligation on the filled soft tree (`Admission.AdmissionAnswerX`) for the case's own id,
@@ -367,7 +408,7 @@ def runGated (j : Json) : Except String Json :=
   | some refusal => .error refusal
   | none => match pendingDocumentLayer j with
     | some refusal => .error refusal
-    | none => runCase j
+    | none => runCaseRouted j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then
