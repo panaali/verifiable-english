@@ -1,0 +1,95 @@
+{
+ "mutants": [
+  {
+   "name": "i-trust_mutants-is-plan-only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[tool-tools/trust_mutants.py]",
+   "failed": true,
+   "line": "PLAN_ONLY_TOOL = frozenset({\"tools/layer_policy.py\"})"
+  },
+  {
+   "name": "ii-no-list-check-for-the-new-cases",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_input_that_moves_the_mutant_list_is_a_full_run[base]",
+   "failed": true,
+   "line": "        if [tuple(r[k] for k in (\"id\", \"file\", \"line\", \"definition\", \"operator\", \"before\", \"after\"))"
+  },
+  {
+   "name": "iii-an-include_str-file-is-unread",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[include-str]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "iv-base-skips-the-file-checks",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[base-and-a-file-of-the-import-closure]",
+   "failed": true,
+   "line": "            if why := why_not(changed) if changed else \"its per-file digests show no change\" if {"
+  },
+  {
+   "name": "v-an-old-record-is-plan-only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[old-record-without-tool-files]",
+   "failed": true,
+   "line": "            whole = \"tool\" in differ and (not moved or not PLAN_ONLY_TOOL.issuperset(moved))"
+  },
+  {
+   "name": "vi-the-record-loses-plan_only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record[base]",
+   "failed": true,
+   "line": "if k in (\"full_run\", \"plan_only\")})}"
+  },
+  {
+   "name": "vii-merge-needs-a-changed-file",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record[base]",
+   "failed": true,
+   "line": "mode == \"checks\" and (not (rescore_part[\"changed\"] or rescore_part.get(\"plan_only\"))"
+  },
+  {
+   "name": "viii-parts-may-disagree-on-plan_only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_merge_binds_rescore_to_owned_rows[plan-only-disagrees]",
+   "failed": true,
+   "line": "for x in (\"mode\", \"head\", \"file\", \"changed\", \"plan_only\", \"full_run\"))]"
+  },
+  {
+   "name": "ix-outside-test-files-not-searched",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[outside-test]",
+   "failed": true,
+   "line": "return \"\\n\".join([*out, *(t.read_text() for t in outside)]).casefold()"
+  },
+  {
+   "name": "x-case-matters",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[bare-name]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "xi-directory-listing-is-no-read",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[read-dir]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "xii-table-digest-needs-no-listing",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[table]",
+   "failed": true,
+   "line": "*(x for x in changed if x == CLASS_TABLE or no_build_reads(x, \"\"))]"
+  },
+  {
+   "name": "xiii-tool_files-not-recorded",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[plan-only-module]",
+   "failed": true,
+   "line": "\"files\": files, \"tool_files\": tool_files}"
+  }
+ ]
+}
