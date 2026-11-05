@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 284 |
 | leaves:closed domain | 296 |
-| leaves:none | 1502 |
+| leaves:none | 1506 |
 | modes | 41 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1101 |
+| today:not probed | 1105 |
 | today:shape | 580 |
 | today:unbound | 137 |
 | answers | 583 |
@@ -3004,6 +3004,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 5 | not probed |
 | `/id` | any | bound | x-echo |  | 7 | shape |
 | `/id` | string | bound | x-equals |  | 7 | shape |
+| `/judgment_lines/legend/*/lines/*` | string | none |  |  | 0 | not probed |
+| `/judgment_lines/legend/*/term` | string | none |  | pattern | 0 | not probed |
+| `/judgment_lines/status/*/line` | string | none |  |  | 0 | not probed |
+| `/judgment_lines/status/*/unit` | string | none |  | pattern | 0 | not probed |
 | `/judgments/unused/*` | string | none |  | pattern | 2 | not probed |
 | `/judgments/used/*/term` | string | none |  | pattern | 3 | not probed |
 | `/judgments/used/*/units/*` | string | none |  | pattern | 4 | not probed |
@@ -3172,6 +3176,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/judgment_lines/legend` |  |  |  |  |
+| `/judgment_lines/legend/*/lines` |  |  |  |  |
+| `/judgment_lines/status` |  |  |  |  |
 | `/judgments/unused` |  |  |  |  |
 | `/judgments/used` |  |  |  |  |
 | `/judgments/used/*/units` |  |  |  |  |
