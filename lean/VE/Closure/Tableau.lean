@@ -83,10 +83,7 @@ theorem checkCertificate_sound (E : Environment) (premises : List Formula)
   intro S hS hp
   apply Classical.byContradiction
   intro hn
-  have hr : Core.Tableau.replay E true (c.checker_version == "ve-tableau-closure-checker@1") 125
-      (Core.Tableau.initial (premises.map embedClosure) (embedClosure conclusion))
-      (embedCert c).trace = true :=
-    (Bool.and_eq_true_iff.mp hc).2
+  have hr := (Bool.and_eq_true_iff.mp hc).2
   apply Core.Tableau.replay_sound hS _ _ _ _ (fun _ => none) _ _ _ hr
   · intro i s hi
     simp [Core.Tableau.initial] at hi
