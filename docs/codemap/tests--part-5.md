@@ -1,3 +1,4 @@
+- `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
 - `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
 - `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
@@ -75,4 +76,3 @@
 - `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
 - `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
 - `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
-- `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.

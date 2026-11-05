@@ -1,3 +1,5 @@
+- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
+- `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
 - `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
 - `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
 - `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
@@ -85,4 +87,3 @@
 - `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
 - `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
 - `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
-- `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
