@@ -108,6 +108,8 @@ import VE.Closure.RoundTrip
 import VE.Closure.Substitution
 import VE.Closure.Syntax
 import VE.Commands.Read
+import VE.Commands.Run
+import VE.Commands.RunSplit
 import VE.Compose.Adjoin
 import VE.Compose.Content
 import VE.Compose.Contract
@@ -1959,7 +1961,10 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
+#print axioms VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b
+#print axioms VE.Commands.RunSplit.typed_facts_are_ci1s
 #print axioms VE.Commands.candidate_reads_back
+#print axioms VE.Commands.caseReported_eq
 #print axioms VE.Commands.checked_many
 #print axioms VE.Commands.checked_one
 #print axioms VE.Commands.decodeClosedField_check
@@ -1975,6 +1980,10 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.outcome_checked
 #print axioms VE.Commands.parts_of_candidate
 #print axioms VE.Commands.parts_prefix
+#print axioms VE.Commands.proofMany_one
+#print axioms VE.Commands.proofTask_addressed
+#print axioms VE.Commands.proofTask_bound
+#print axioms VE.Commands.proofTask_one
 #print axioms VE.Commands.readCommand_bound
 #print axioms VE.Commands.readCommand_complete
 #print axioms VE.Commands.readCommand_empty
@@ -1983,6 +1992,9 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.readCommand_prefix
 #print axioms VE.Commands.readCommand_read
 #print axioms VE.Commands.readCommand_typed_of_facts
+#print axioms VE.Commands.readInstruction_command
+#print axioms VE.Commands.readInstruction_refused_classed_of
+#print axioms VE.Commands.readInstruction_typed_of_facts
 #print axioms VE.Commands.refusalOf_refused
 #print axioms VE.Commands.tuples_typed
 #print axioms VE.Compose.Contract.Rewriter.Laws.fresh
@@ -7718,6 +7730,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_discourse
 #print axioms VE.Service.runMode_english
 #print axioms VE.Service.runMode_englishCheck
+#print axioms VE.Service.runMode_englishCommand
 #print axioms VE.Service.runMode_englishGrammar
 #print axioms VE.Service.runMode_englishQuestion
 #print axioms VE.Service.runMode_englishRead
