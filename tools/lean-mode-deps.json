@@ -49,6 +49,10 @@
       "VE.EnglishGrammar.Run",
       "VE.Route.Run"
     ],
+    "english.command": [
+      "VE.Commands.Run",
+      "VE.Route.Run"
+    ],
     "english.grammar": [
       "VE.EnglishGrammar.Run",
       "VE.Route.Run"
@@ -170,8 +174,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "2b565653dbe81752c1f229355af16635b46b32f56041daba0100225e5fa87a7c",
-    "lean/VE/Service/Registry.lean": "d49f017e9c9b032805c177a629e9574cb2d1634bff17dfed78bbb702041b9794",
+    "lean/VE/Service/Protocol.lean": "a1212a66e6a13da319e160f643ac945425ac63195771023bc7d557e69dada09a",
+    "lean/VE/Service/Registry.lean": "e46fcba56c462fede719ca7bacab3b7f98f4fef75148246dcff743301caa89e9",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

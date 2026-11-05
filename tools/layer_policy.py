@@ -162,9 +162,9 @@ def lean_layer(module: str) -> int | None:
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
-                  "VE.EnglishGrammar.JudgmentRunExamples"}:
+                  "VE.Commands.RunExamples", "VE.Commands.RunSplit", "VE.EnglishGrammar.JudgmentRunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run or Commands.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
         return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
         # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run
@@ -203,6 +203,8 @@ def lean_layer(module: str) -> int | None:
         return 3  # weighing WG-2: a weighing document carries AP's split map (`VE.Acts.Elaborate`, weighing.md 1.1)
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
+    if module.startswith("VE.Attitudes."):
+        return 3  # AttDoc carries the English lexicon (attitudes.md 2.2, SR-3; reviews/dri-decisions-20261104-at-1a-layer.md)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
