@@ -177,11 +177,10 @@ def judgments : Shape :=
 the client, which binds each term to the request's open terms and each unit to its units. -/
 def judgmentLines : Shape :=
   c "Service.Document.linesJson: the legend and status lines of the bound judgments." [
-    obj, .required ["legend", "unworded", "status"],
+    obj, .required ["legend", "status"],
     closed [
       ("legend", n [arr, .items (n [obj, .required ["term", "lines"],
         closed [("term", ref "common.json#/$defs/token"), ("lines", n [arr, .minItems 1, .items str])]])]),
-      ("unworded", n [arr, .items (ref "common.json#/$defs/token")]),
       ("status", n [arr, .items (n [obj, .required ["unit", "line"],
         closed [("unit", ref "common.json#/$defs/token"), ("line", str)]])])]]
 
@@ -280,6 +279,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 15778410451502134736
+#guard (file.render.toOption.map (hash ·.compress)) == some 6599105763662197523
 
 end ResponseShape.Schemas.Document
