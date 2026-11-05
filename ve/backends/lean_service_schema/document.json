@@ -11,6 +11,17 @@
         "additionalProperties": false,
         "properties": {
           "cardinality": {"$ref": "#/$defs/cardinality_report"},
+          "composed": {
+            "additionalProperties": false,
+            "properties": {
+              "chain_document": {"anyOf": [{"type": "null"}, {"type": "string"}]},
+              "counting_document": {"type": "string"},
+              "not_certified": {"$ref": "common.json#/$defs/strings"},
+              "scope": {"type": "string"}
+            },
+            "required": ["counting_document", "chain_document", "not_certified", "scope"],
+            "type": "object"
+          },
           "composed_readings": {"$ref": "#/$defs/composed_readings"},
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},

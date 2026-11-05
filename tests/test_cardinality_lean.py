@@ -20,8 +20,10 @@ CASES = {case["id"]: case for case in cardinality_cases() if type(case) is dict 
 FA1, FA1B, GRAPH = CASES["fa1"], CASES["fa1b"], CASES["document-fa1"]
 ENV = GRAPH["environment"]
 W6A = ["cardinality@0", "order@0", "relational-fol@0", "time@0"]
-# The constitution pilot's list (backlog dr-qt-cardinality-doc): the gate fact it needs is qt-a4b's first row.
+# The literal four-member list stays refused: the base row requires relational-fol@0 on every list, so E2's chain list has
+# five members (DRI 2026-11-05, reviews/dri-decisions-20261105-qt-a4b.md item 1).
 FOUR = ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1"]
+CHAIN = [*FOUR, "relational-fol@0"]
 NEEDS_GATE = "UnsupportedProfile: Missing profile relational-fol@0"
 TOP = {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}
 
@@ -99,16 +101,89 @@ def test_a_document_without_a_graph_has_no_report_and_needs_no_document_layer(tm
         check_document(written(tmp_path, nodes, {**ENV, "profiles": W6A}))
 
 
+E2 = ("UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1, "
+      "or norm-defaults@0, norms@0, readings@1 and relational-fol@0")
+
+
 @pytest.mark.parametrize("profiles, message", [
     (FOUR, NEEDS_GATE),
-    (["cardinality@0", "documents@1", "norm-defaults@0", "norms@0", "order@0", "readings@1", "relational-fol@0", "time@0"],
-     "cardinality@0 with norm-defaults@0"),
-    (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], "cardinality@0 with norms@0"),
-    (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "cardinality@0 with readings@1"),
-    (["cardinality@0", "order@0", "relational-fol@0"], "cardinality@0 requires time@0")])
+    (["cardinality@0", "documents@1", "norm-defaults@0", "norms@0", "order@0", "readings@1", "relational-fol@0", "time@0"], E2),
+    (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], E2),
+    (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "readings@1 requires norms@0"),
+    (["cardinality@0", "order@0", "relational-fol@0"], E2),
+    (["cardinality@0", "norms@0", "relational-fol@0"], E2),
+    (["cardinality@0", "documents@1", *CHAIN[1:]], E2),
+    ([*CHAIN, "soft-norms@0"], "cardinality@0 with soft-norms@0"),
+    ([*CHAIN, "scope@0"], "cardinality@0 with scope@0"),
+    (["cardinality@0", "data@0", "order@0", "relational-fol@0", "time@0"], "cardinality@0 with data@0")])
 def test_the_gate_refuses_a_list_cardinality_does_not_compose_with(tmp_path, profiles, message):
-    with pytest.raises(UnsupportedProfile, match=message):
-        check_document(written(tmp_path, [{"name": "only", "statement": TOP}], {**ENV, "profiles": profiles}))
+    with pytest.raises(UnsupportedProfile, match=re.escape(message)):
+        check_document(written(tmp_path, [{"name": "only", "statement": TOP}], {**ENV, "profiles": profiles}, graph=False))
+
+
+# One vocabulary both readings read: W6a's unit tags on a constant are no first-order vocabulary.
+CHAIN_ENV = {**ENV, "profiles": CHAIN, "vocabulary": {**ENV["vocabulary"], "constants": {
+    name: entry for name, entry in ENV["vocabulary"]["constants"].items() if "unit" not in entry}}}
+
+
+def chain_text(units, **front) -> bytes:
+    """A part document under the chain list: `(id, content)` units over one line each."""
+    lines = [f"Sentence {i} about the count.\n" for i in range(len(units))]
+    spans, cursor = [], 0
+    for line in lines:
+        spans.append([cursor, cursor + len(line)])
+        cursor += len(line)
+    rows = [{"id": name, "span": span, "kind": "asserted", "meaning": "specified", "support": "testimony", "content": content}
+            for (name, content), span in zip(units, spans)]
+    return b"---\n" + json.dumps({"format": "ve-document@1", "environment": CHAIN_ENV, "units": rows, **front}).encode() + \
+        b"\n---\n" + "".join(lines).encode()
+
+
+NO = {"format": "ve-cardinality@1", "formula": ["quantity", ["bottom"]]}
+
+
+def chained(tmp_path, units, **front):
+    path = tmp_path / "chain.ve.md"
+    path.write_bytes(chain_text(units, **front))
+    return path
+
+
+def test_the_chain_list_is_admitted_and_each_content_kind_read_by_its_decoder(tmp_path):
+    answer = check_document(chained(tmp_path, [("one", {"cardinality": TOP})]))
+    assert answer["not_certified"] == ["one"] and answer["chain"] is None
+    assert "one are admitted and not certified" in answer["scope"] and answer["coverage"]["coverage_percent"] > 0
+    with pytest.raises(VEError, match="Unsupported cardinality format"):
+        check_document(chained(tmp_path, [("one", {"cardinality": {"format": "x"}})]))
+    # A formula beside a counting unit is the chain's, and a counting statement is not.
+    beside = check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
+    assert beside["not_certified"] == ["one"] and beside["chain"]["coverage"]["unformalised_reasons"] == {"counting": 1}
+    with pytest.raises(VEError, match="unit content|cardinality content requires"):
+        check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": {"cardinality": TOP}})]))
+    with pytest.raises(UnsupportedProfile, match="holds a counting unit"):
+        check_document(chained(tmp_path, [("one", {"ast": ["top"]})]))
+    # A statement the chain does not read as its own content is refused by the chain, by name.
+    with pytest.raises(UnsupportedProfile, match="quantity content requires ve-units@1"):
+        check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"quantity": TOP})]))
+    with pytest.raises(UnsupportedProfile, match="cardinality documents require documents@1"):
+        check_document(chained(tmp_path, [("one", {"cardinality": TOP})], graph={"root": "one", "nodes": [{"name": "one", "statement": TOP}]}))
+
+
+def test_a_counting_unit_changes_neither_the_chain_s_premises_nor_its_verdict(tmp_path):
+    """The chain's answer is the one for the same text with that passage unformalised, as it is without this profile."""
+    answer = check_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
+    meta = json.loads(chain_text([("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]).split(b"---\n")[1])
+    meta["environment"] = {k: CHAIN_ENV[k] for k in ("language", "spec_revision", "vocabulary")} | {"profiles": CHAIN[1:]}
+    meta["units"][0] = {"id": "one", "span": meta["units"][0]["span"], "kind": ["unformalised", "counting"],
+                        "meaning": {"unformalised": "counting"}, "support": "testimony"}
+    path = tmp_path / "plain.ve.md"
+    path.write_bytes(b"---\n" + json.dumps(meta).encode() + b"\n---\n" + chain_text([("a", {}), ("b", {})]).split(b"\n---\n")[1])
+    assert answer["chain"] == check_document(path)
+
+
+def test_two_counting_units_that_contradict_are_named_not_certified(tmp_path):
+    answer = check_document(chained(tmp_path, [("yes", {"cardinality": TOP}), ("no", {"cardinality": NO})]))
+    assert answer["not_certified"] == ["yes", "no"] and "yes, no are admitted and not certified" in answer["scope"]
+    assert answer["chain"] is None and answer["premises"]["status"] != "CONFLICT-FREE"
 
 
 def test_the_route_cases_answer_as_recorded():

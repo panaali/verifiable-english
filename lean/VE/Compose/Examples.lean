@@ -670,22 +670,34 @@ the gate's own. -/
 #guard gateOf profileTable ["alternatives@0", "norms@0", "relational-fol@0", "risk@0", "scope@0"] ==
   .error "UnsupportedProfile: scope@0 with risk@0"
 
-/-! QT-A3's row (quantities 4.2, E2; `VE.Cardinality.gate_cardinality`): W6a's two lists, with the document layer
-too; one requirement missing, one other profile, or the layer without `documents@1` is refused. -/
+/-! QT-A3's row (quantities 4.2, E2; `VE.Cardinality.gate_cardinality`): E2's three lists, W6a's with the document layer
+too; the rows' refusals by name win over the list check, which refuses anything else with E2's one text. -/
+def chainList : List String := ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"]
 #guard [["cardinality@0", "order@0", "relational-fol@0", "time@0"],
   ["cardinality@0", "documents@1", "order@0", "relational-fol@0", "time@0"],
   ["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"]].all
   (gateOf profileTable · == .ok .frozen)
-#guard [(["cardinality@0", "order@0", "relational-fol@0"], "cardinality@0 requires time@0"),
-  (["cardinality@0", "relational-fol@0", "time@0"], "cardinality@0 requires order@0"),
+#guard gateOf profileTable chainList == .ok .readings
+#guard [["cardinality@0", "order@0", "relational-fol@0"], ["cardinality@0", "relational-fol@0", "time@0"],
+  ["cardinality@0", "relational-fol@0"], ["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"],
+  ["cardinality@0", "norms@0", "relational-fol@0"], ["cardinality@0", "norm-defaults@0", "norms@0", "relational-fol@0"],
+  ["cardinality@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"],
+  ["cardinality@0", "norm-defaults@0", "norms@0", "order@0", "readings@1", "relational-fol@0", "time@0"],
+  ["cardinality@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"]].all
+  (gateOf profileTable · == .error s!"UnsupportedProfile: {VE.Cardinality.Wire.e2}")
+#guard [(["cardinality@0", "norm-defaults@0", "norms@0", "readings@1"], "Missing profile relational-fol@0"),
   (["cardinality@0"], "Missing profile relational-fol@0"),
-  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], "cardinality@0 with norms@0"),
-  (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "cardinality@0 with readings@1"),
+  (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "scope@0"], "cardinality@0 with scope@0"),
+  (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"], "cardinality@0 with soft-norms@0"),
+  (["cardinality@0", "data@0", "order@0", "relational-fol@0"], "cardinality@0 with data@0"),
+  (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "readings@1 requires norms@0"),
   (["cardinality@0", "judgments@0", "order@0", "relational-fol@0", "time@0"], "judgments@0 requires documents@1")].all
   fun (ps, e) => gateOf profileTable ps == .error s!"UnsupportedProfile: {e}"
--- The row refuses every other profile of the table, in code point order: a new row decides how it composes.
+#guard listFault ["relational-fol@0"] == none && listFault ["cardinality@0"] == some VE.Cardinality.Wire.e2 &&
+  listFault chainList == none && listFault ("judgments@0" :: chainList) == none
+-- The row refuses by name every other profile of the table, in code point order: a new row decides how it composes.
 #guard cardinalityOthers == ((profileTable.map (·.profile)).eraseDups.filter fun q =>
-  !["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"].contains q).mergeSort
+  !(["documents@1", "judgments@0", "order@0", "time@0"] ++ chainList).contains q).mergeSort
   fun a b => a < b || a == b
 
 /-! jt-2c: `decidingEnvironment`, what every mode that composes with a document layer decides over: the list
