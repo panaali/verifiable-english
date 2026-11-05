@@ -200,6 +200,9 @@ def threeEnv : Json := env actsP [("a_p", pred ["person"] (perm "{0} seek asylum
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
 #guard err (VE.Service.Standalone.validatedComposedEnvironment envA) == "ok"
+-- the row admits the speech route, whose decoder reads `acts@0` and then asks for its own block
+#guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "norms@0", "relational-fol@0",
+  "speech-acts@0"])) == "InvalidInput: speech_acts block"
 -- the row admits the readings route, whose decoder reads `acts@0` (ap-1bd; its refusals in section "ap-1bd")
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "norms@0", "readings@1",
   "relational-fol@0"])) == "ok"
@@ -225,8 +228,10 @@ def plainRun (j : Json) : String :=
 -- the submitted list is gated before the statement layers are set aside: the row's text, the whole list sorted
 #guard plainRun (envA ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"]) ==
   "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
-#guard plainRun (envA ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]) ==
-  "UnsupportedProfile: acts@0 with speech-acts@0 is not implemented"
+-- commands-imperatives 9: the row admits the speech route; the same act without `acts@0` is refused as before
+#guard plainRun (envA ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]) == "ok"
+#guard plainRun (envA ["norms@0", "relational-fol@0", "speech-acts@0"]) ==
+  "InvalidInput: invalid regulated fields for heard"
 #guard plainRun (envA ["acts@0", "soft-norms@0", "norms@0", "relational-fol@0"]) == sortedRefusal
 -- without `acts@0` the block is not read: today's vocabulary decoder refuses it, whatever its phrases
 #guard plainRun (env ["norms@0", "relational-fol@0"] seek (some (block ["the court that is competent"]))) ==
@@ -313,7 +318,7 @@ def admittedWithActs : List (List String) :=
     (VE.Compose.gateOf VE.Compose.profileTable ps).toOption.isSome
 #guard admittedWithActs.any (·.contains "norm-defaults@0") && admittedWithActs.any (·.contains "readings@1")
 #guard admittedWithActs.all fun ps => profilesOr (typingView (envA ps)) ==
-  toJson (ps.filter fun p => !["acts@0", "norm-defaults@0", "readings@1"].contains p)
+  toJson (ps.filter fun p => !["acts@0", "norm-defaults@0", "readings@1", "speech-acts@0"].contains p)
 #guard admittedWithActs.all fun ps =>
   err (typingView (envA ps) >>= fun v => (fun _ => ()) <$> VE.Service.Standalone.validated v) == "ok"
 -- `acts@0` is read from the submitted list, not the reduced one: this list is sorted once `norm-defaults@0` is erased

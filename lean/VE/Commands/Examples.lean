@@ -318,4 +318,135 @@ def readingSet (n : Nat) : Json :=
 #guard [1, 2, readingsBound].all fun n => (VE.SpeechActs.Wire.readingCandidates (readingSet n)).toOption.isSome
 #guard [0, readingsBound + 1].all fun n => (VE.SpeechActs.Wire.readingCandidates (readingSet n)).toOption.isNone
 
+/-! ## CI-5: `speech-acts@0` with `acts@0`, simple acts only (section 9) -/
+
+def actsProfiles : List String := ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]
+
+/-- A one-addressee environment with the given acts, with `acts@0` and these fixed phrases, or without either. -/
+def actsEnv (preds : List (String × Json)) (fixed : Option (List String)) : Json :=
+  let j := envOf ["user", "text"] preds [("reader", "user"), ("the_word", "text")] "webapp-copy"
+    (some ("user", "reader")) [("the new word", "the_word")]
+  match fixed, j.getObjValD "vocabulary" with
+  | some fx, .obj kvs => (j.setObjVal! "profiles" (Lean.toJson actsProfiles)).setObjVal! "vocabulary"
+      (Json.obj (kvs.insert "acts" (Json.mkObj [("fixed", Lean.toJson fx)])))
+  | _, _ => j
+
+def fixedPhrases : List String :=
+  ["a scenario and its listed facts", "clarification or restatement", "declared kinds of things for the new word"]
+
+def choices : List (String × Json) :=
+  [obligation "choose_scenario_required" ["user"] "{0} choose a scenario and its listed facts",
+   obligation "choose_kinds_required" ["user"] "{0} choose declared kinds of things for the new word",
+   obligation "enter_required" ["user"] "{0} enter a clarification or restatement"]
+
+def E_acts : Json := actsEnv choices (some fixedPhrases)
+
+/-- The error of decoding, or `ok`. -/
+def decodeErr (j : Json) : String :=
+  match decodeSpeechEnvironmentFull j with
+  | .ok _ => "ok"
+  | .error e => e
+
+/-- A gate's error, or `ok`. -/
+def gateErr (gate : List String → Except String Unit) (ps : List String) : String :=
+  match gate ps with
+  | .ok _ => "ok"
+  | .error e => e
+
+def choiceRows : List (String × String) :=
+  [("Choose a scenario and its listed facts.", "choose_scenario_required"),
+   ("Choose declared kinds of things for the new word.", "choose_kinds_required"),
+   ("Enter a clarification or restatement.", "enter_required")]
+
+-- The plan's three fixtures read as one simple act each.
+#guard choiceRows.all fun (s, a) => read E_acts s == .one ⟨.require, a, [], .top⟩
+-- `command_act_simple` on them: each act decoded is `joinFree` under the environment's fixed phrases, and is not
+-- without them, so the phrases carry it.
+#guard match decodeSpeechEnvironmentFull E_acts with
+  | .ok se => (se.ne.regulated.map (·.act)).all fun a =>
+      a.all (VE.Acts.Lexical.joinFree fixedPhrases) && a.all (!VE.Acts.Lexical.joinFree [] ·)
+  | .error _ => false
+#guard (decodeSpeechEnvironmentFull E_acts).toOption.map (·.profiles) == some actsProfiles
+#guard match decodeSpeechEnvironmentFull E_acts with
+  | .ok se => declared se && (VE.Norms.Wire.actsFixed se.profiles se.json).toOption == some fixedPhrases
+  | .error _ => false
+
+-- `joinFree`'s table (section 9): `and`, `or`, `nor`, `for` and a comma outside a fixed phrase; a lexing fault is not simple.
+#guard VE.Acts.Lexical.joinFree [] "{0} click Ask"
+#guard ["{0} click Check and save", "{0} pay for {1}", "{0} click A, B", "{0} pay or stay", "{0} pay nor stay",
+    "{0} click A,"].all (!VE.Acts.Lexical.joinFree [] ·)
+#guard VE.Acts.Lexical.joinFree ["Check and save"] "{0} click Check and save"
+#guard VE.Acts.Lexical.joinFree ["pay for it"] "{0} pay for it" && !VE.Acts.Lexical.joinFree ["pay for it"] "{0} pay for {1}"
+
+-- The counterexample of DRI item 3(b): a joined act under `speech-acts@0` is still refused, at declaration, by AP-1's
+-- join check; the same words in a declared fixed phrase are one act.
+def clickSave : List (String × Json) := [obligation "click_required" ["user"] "{0} click Check and save"]
+#guard decodeErr (actsEnv clickSave (some [])) ==
+  "InvalidInput: act phrase for click_required joins acts with 'and' outside a fixed phrase"
+#guard read (actsEnv clickSave (some ["Check and save"])) "Click Check and save." ==
+  .one ⟨.require, "click_required", [], .top⟩
+-- A marker `for` outside a fixed phrase is refused too, so a frame's slot after `for` cannot be declared: `joinFree`
+-- reads a fixed phrase, which holds no slot and cannot end in `for`.
+def chooseFor : List (String × Json) :=
+  [obligation "choose_kinds_required" ["user", "text"] "{0} choose declared kinds of things for {1}"]
+#guard decodeErr (actsEnv chooseFor (some [])) ==
+  "InvalidInput: act phrase for choose_kinds_required joins acts with 'for' outside a fixed phrase"
+#guard decodeErr (actsEnv chooseFor (some ["declared kinds of things for"])) ==
+  "InvalidInput: fixed phrase 'declared kinds of things for' must begin and end with a word other than and, or, nor and for"
+-- A comma outside a fixed phrase, in the speech route's decoder.
+#guard decodeErr (actsEnv [obligation "click_required" ["user"] "{0} click A, B"] (some [])) ==
+  "InvalidInput: act phrase for click_required has a comma outside a fixed phrase"
+
+-- With `acts@0` off: the merged gate refuses the list, the phrases are not declared acts, and the decoders agree.
+#guard decodeErr (actsEnv choices none) == "InvalidInput: invalid act phrase for choose_kinds_required"
+#guard (match VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ E_acts with
+    | .error e => e
+    | .ok _ => "ok") == "UnsupportedProfile: speech-acts@0 with acts@0"
+#guard gateErr VE.SpeechActs.Wire.profileGate₀ actsProfiles == "UnsupportedProfile: speech-acts@0 with acts@0" &&
+  gateErr VE.SpeechActs.Wire.profileGate actsProfiles == "ok"
+#guard [E_web, webWith none definitesWeb, actsEnv choices none].all fun j =>
+  (match decodeSpeechEnvironmentFull j, VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ j with
+    | .ok a, .ok b => a.ne.regulated == b.ne.regulated && a.profiles == b.profiles && a.canonical == b.canonical
+    | .error a, .error b => a == b
+    | _, _ => false)
+-- The gate's other refusals stand, whichever gate: the merged allowlist with `acts@0` beside an outside profile.
+#guard ["soft-norms@0", "rights@0", "alternatives@0", "definitions@0", "time@0"].all fun q =>
+  gateErr VE.SpeechActs.Wire.profileGate ((q :: actsProfiles).mergeSort (fun a b => !(b < a))) ==
+    s!"UnsupportedProfile: speech-acts@0 with {q}"
+#guard gateErr VE.SpeechActs.Wire.profileGate ["acts@0", "speech-acts@0"] ==
+  "UnsupportedProfile: speech-acts@0 requires norms@0"
+#guard gateErr VE.SpeechActs.Wire.profileGate ["acts@0", "norms@0", "relational-fol@0"] ==
+  "UnsupportedProfile: speech-acts@0 is required"
+#guard gateErr VE.SpeechActs.Wire.profileGate ["norms@0", "acts@0", "speech-acts@0"] ==
+  VE.Route.Gate.unsupported "profiles must be sorted and unique"
+
+-- The stripped environment: the norms decoder refuses `acts@0` by default and reads it with its hook (S16).
+#guard match VE.SpeechActs.Wire.stripSpeech E_acts with
+  | .ok j => (match VE.Norms.Wire.decodeNormsEnvironment j with
+      | .error e => e == "UnsupportedProfile: Unsupported profile acts@0"
+      | .ok _ => false) &&
+    (match VE.Norms.Wire.decodeNormsEnvironment j (acts := true), decodeSpeechEnvironmentFull E_acts with
+      | .ok n, .ok se => n.regulated == se.ne.regulated && n.profiles == se.ne.profiles
+      | _, _ => false)
+  | .error _ => false
+
+/-! `checkActsBlock`: on a tree no parser builds, `vocabulary` looked up hides the one the stripped environment rebuilds,
+so the act would read under fixed phrases the environment does not name (`joinFree [] _` is false). A parser's tree has
+one value per key: the guard never fires on it (`E_acts` above decodes). -/
+
+/-- `E_acts` with a second `vocabulary` to the right of the first: a lookup reads `first`, the rebuilt object `second`. -/
+def twoVocabularies (first second : Json) : Json :=
+  let leaf (k : String) : Std.DTreeMap.Internal.Impl String (fun _ => Json) :=
+    .inner 1 k (E_acts.getObjValD k) .leaf .leaf
+  .obj ⟨⟨.inner 6 "vocabulary" first
+    (.inner 4 "profiles" (E_acts.getObjValD "profiles") (leaf "language")
+      (.inner 2 "spec_revision" (E_acts.getObjValD "spec_revision") .leaf (leaf "speech_acts")))
+    (.inner 1 "vocabulary" second .leaf .leaf)⟩⟩
+
+def vocabulary (j : Json) : Json := j.getObjValD "vocabulary"
+def noPhrases : Json := vocabulary (actsEnv choices (some []))
+
+#guard decodeErr (twoVocabularies noPhrases (vocabulary E_acts)) == "InvalidInput: environment acts block"
+#guard decodeErr (twoVocabularies (vocabulary E_acts) (vocabulary E_acts)) == "ok"
+
 end VE.Commands.Examples
