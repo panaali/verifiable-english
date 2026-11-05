@@ -334,7 +334,7 @@ def part(tmp_path, monkeypatch):
 
 
 def _shown(doc):
-    return doc["source_id"], doc["document_id"], doc["units"], doc["cardinality"], doc["lean"]
+    return doc["source_id"], doc["document_id"], doc["units"], doc["cardinality"], doc["lean"], doc.get("composed"), doc.get("chain")
 
 
 def test_every_mutant_of_a_document_row_is_refused_or_changes_nothing(part):
@@ -373,21 +373,24 @@ def _chain_mutants(row):
     composed, front = row["composed"], json.loads(row["composed"]["chain_document"].split("\n---\n")[0][4:])
     body = row["composed"]["chain_document"].split("\n---\n", 1)[1]
 
-    def lowered(change):
-        changed = copy.deepcopy(front)
+    def lowered(change, start=front):
+        changed = copy.deepcopy(start)
         change(changed)
         return "---\n" + json.dumps(changed) + "\n---\n" + body
+    counting = json.loads(composed["counting_document"].split("\n---\n")[0][4:])
     yield from ({"not_certified": []}, {"not_certified": ["absent"]}, {"not_certified": ["one", "one"]}, {"not_certified": ["two"]},
                 {"scope": ""}, {"chain_document": None}, {"counting_document": composed["chain_document"]},
                 {"chain_document": composed["counting_document"]},
                 {"chain_document": "---\n" + json.dumps(front) + "\n---\nanother body\n"},
-                {"chain_document": lowered(lambda f: f["units"].pop(0))},
+                {"chain_document": lowered(lambda f: f["units"].pop(0))}, {"chain_document": lowered(lambda f: f["units"].pop())},
                 {"chain_document": lowered(lambda f: f["units"][1].update(content={"ast": ["bottom"]}))},
                 {"chain_document": lowered(lambda f: f["units"][0].update(span=[0, 1]))},
                 {"chain_document": lowered(lambda f: f["units"][0].update(content={"cardinality": TOP}))},
                 {"chain_document": lowered(lambda f: f["environment"].update(profiles=["relational-fol@0"]))},
                 {"chain_document": lowered(lambda f: f["environment"].update(extra=1))},
-                {"chain_document": lowered(lambda f: f.update(reading_sets=[]))})
+                {"chain_document": lowered(lambda f: f.update(reading_sets=[]))},
+                {"chain_document": lowered(lambda f: f["environment"].update(language="x"))},
+                {"counting_document": lowered(lambda f: f["environment"].update(language="x"), counting)})
 
 
 def test_a_chain_list_row_is_bound_to_the_request(tmp_path, monkeypatch):
@@ -465,9 +468,13 @@ def test_every_check_of_the_relay_is_one_a_test_can_fail(monkeypatch, genuine, p
     this, real_relay = sys.modules[__name__], cardinality
     raw, path, part_row = part
     bare = text(GRAPH["document"]["nodes"], graph=False)
-    documents = {"part": (raw, True), "not-admitted": (raw, False), "no-graph": (bare, True)}
+    chain = chain_text([("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})])
+    documents = {"part": (raw, True), "not-admitted": (raw, False), "no-graph": (bare, True), "chain": (chain, True)}
     rows_of = {kind: genuine(kind)[0] for kind in CALLS}
-    rows_of |= {"part": part_row, "not-admitted": part_row, "no-graph": _lean_answer(bare, True, path.parent, {})}
+    rows_of |= {"part": part_row, "not-admitted": part_row, "no-graph": _lean_answer(bare, True, path.parent, {}),
+                "chain": _lean_answer(chain, True, path.parent, {})}
+    # The chain's own request is answered apart (`test_a_chain_list_row_is_bound_to_the_request`): here, its text is the outcome.
+    monkeypatch.setattr("ve.document.lean._chain_document", lambda path, text, admitted: text)
     queue = []
     monkeypatch.setattr(relay, "rows", lambda mode, cases, **options: queue.pop(0) if len(queue) > 1 else queue[0])
     monkeypatch.setattr(this, "cardinality", real_relay)
@@ -494,6 +501,14 @@ def test_every_check_of_the_relay_is_one_a_test_can_fail(monkeypatch, genuine, p
             yield kind, mutant, mutant
         row = rows_of["paraphrase"]
         yield from (("paraphrase", shape, shape) for shape in ((row,), [row, row], [7], [], None))
+        chained = rows_of["chain"]
+        yield from (("chain", mutant, mutant) for mutant in (
+            {k: v for k, v in chained.items() if k != "composed"},
+            *({**chained, "composed": {**chained["composed"], **change}} for change in _chain_mutants(chained))))
+        # A `composed` that would bind to the document, on a row of a list that has none.
+        yield ("no-graph", *2 * [{**rows_of["no-graph"], "composed": {"counting_document": bare.decode(), "chain_document": None,
+                                                                      "not_certified": [u["id"] for u in rows_of["no-graph"]["units"]],
+                                                                      "scope": "x"}}])
         for kind, row in rows_of.items():
             yield kind, row, row
             for _, mutant in _mutants(row):

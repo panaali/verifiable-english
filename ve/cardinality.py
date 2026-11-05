@@ -298,7 +298,7 @@ def bind_composed(meta: dict, body: bytes, row: dict) -> tuple[dict, bytes | Non
     if composed is None:
         return meta, None
     counted = [u["id"] for u in meta["units"] if _counting(u)]
-    _require(counted == composed["not_certified"] and counted and composed["scope"], "not certified")
+    _require(counted == composed["not_certified"] and composed["scope"], "not certified")
     front, _ = _front_of(composed["counting_document"], body, meta, _counting)
     _require(_same(front["environment"], environment), "counting environment")
     if composed["chain_document"] is None:
@@ -307,7 +307,7 @@ def bind_composed(meta: dict, body: bytes, row: dict) -> tuple[dict, bytes | Non
     lowered, raw = _front_of(composed["chain_document"], body, meta, lambda unit: not _counting(unit))
     chain = lowered["environment"]
     _require(chain["profiles"] == [p for p in environment["profiles"] if p != PROFILE] and
-             all(k == "profiles" or (k in environment and _same(v, environment[k])) for k, v in chain.items()), "chain environment")
+             all(k == "profiles" or _same(v, environment[k]) for k, v in chain.items()), "chain environment")
     return front, raw
 
 
