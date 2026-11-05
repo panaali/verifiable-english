@@ -8,57 +8,57 @@
   {
    "definition": "VE.Defaults.Wire.exceptedRule",
    "operator": "list-empty",
-   "reason": "does not elaborate: `[]` has no `find?` result to match `.excepted` against (ZoneWire.lean:336, a type error in the mutated declaration); every other mutant of exceptedRule is killed by the two-forced-rules guard of lean/VE/Defaults/ZoneWireExamples.lean"
+   "reason": "does not elaborate: `[]` has no `find?` result to match `.excepted` against (ZoneWire.lean:423, a type error in the mutated declaration); every other mutant of exceptedRule is killed by the two-forced-rules guard of lean/VE/Defaults/ZoneWireExamples.lean"
   },
   {
    "definition": "VE.Defaults.Wire.ZoneLine",
    "operator": "ctor-drop",
-   "reason": "each constructor is built by zoneLines and read by ZoneLine.json, so dropping one leaves them naming an unknown constant (ZoneWire.lean:267-268); each is exercised by guards of lean/VE/Defaults/ZoneWireExamples.lean: stated (DF-ξ′, β2), forced (DF-μ, two tuples), assumed (DF-μ′, DF-ε, DF-δ)"
+   "reason": "each constructor is built by zoneLines and read by ZoneLine.json, so dropping one leaves them naming an unknown constant (ZoneWire.lean:347-348); each is exercised by guards of lean/VE/Defaults/ZoneWireExamples.lean: stated (DF-ξ′, β2), forced (DF-μ, two tuples), assumed (DF-μ′, DF-ε, DF-δ)"
   },
   {
    "definition": "VE.Defaults.Wire.zoneLines",
    "operator": "list-empty",
-   "reason": "does not elaborate: emptying a pair list or a node list leaves a projection, a field or `.excepted` of the wrong type (ZoneWire.lean:259-265, type errors in the mutated declaration); the list-first/last/drop mutants of the same lists are killed by lean/VE/Defaults/ZoneWireExamples.lean"
+   "reason": "does not elaborate: emptying a pair list or a node list leaves a projection, a field or `.excepted` of the wrong type (ZoneWire.lean:339-345, type errors in the mutated declaration); the list-first/last/drop mutants of the same lists are killed by lean/VE/Defaults/ZoneWireExamples.lean"
   },
   {
    "definition": "VE.Defaults.Wire.zoneLines",
    "operator": "list-first",
-   "reason": "the UNKNOWN ones at line 265 do not elaborate (`.take 1` of an Option's list, Invalid field notation at ZoneWire.lean:266); the rest are killed by lean/VE/Defaults/ZoneWireExamples.lean"
+   "reason": "the UNKNOWN ones at line 345 do not elaborate (`.take 1` of an Option's list, Invalid field notation at ZoneWire.lean:346); the rest are killed by lean/VE/Defaults/ZoneWireExamples.lean"
   },
   {
    "definition": "VE.Defaults.Wire.zoneLines",
    "operator": "list-last",
-   "reason": "as list-first: the UNKNOWN ones at line 265 do not elaborate (ZoneWire.lean:266)"
+   "reason": "as list-first: the UNKNOWN ones at line 345 do not elaborate (ZoneWire.lean:346)"
   },
   {
    "definition": "VE.Defaults.Wire.zoneLines",
    "operator": "list-drop-last",
-   "reason": "as list-first: the UNKNOWN ones at line 265 do not elaborate (ZoneWire.lean:266)"
+   "reason": "as list-first: the UNKNOWN ones at line 345 do not elaborate (ZoneWire.lean:346)"
   },
   {
    "definition": "VE.Defaults.Wire.zoneLines",
    "operator": "list-drop-first",
-   "reason": "as list-first: the UNKNOWN ones at line 265 do not elaborate (ZoneWire.lean:266)"
+   "reason": "as list-first: the UNKNOWN ones at line 345 do not elaborate (ZoneWire.lean:346)"
   },
   {
    "definition": "VE.Defaults.Wire.zoneFieldsOf",
    "operator": "list-first",
-   "reason": "line 345: the let-bound helpers cut do not elaborate (ZoneWire.lean:350, a type error in the mutated declaration); line 350: equivalent, `value` is `[(\"value\", b)]` or `[]`, so its first element is itself"
+   "reason": "line 432: the let-bound helpers cut do not elaborate (ZoneWire.lean:437, a type error in the mutated declaration); line 437: equivalent, `value` is `[(\"value\", b)]` or `[]`, so its first element is itself"
   },
   {
    "definition": "VE.Defaults.Wire.zoneFieldsOf",
    "operator": "list-last",
-   "reason": "line 345: does not elaborate (ZoneWire.lean:350); line 350: equivalent, `value` has at most one element"
+   "reason": "line 432: does not elaborate (ZoneWire.lean:437); line 437: equivalent, `value` has at most one element"
   },
   {
    "definition": "VE.Defaults.Wire.zoneFieldsOf",
    "operator": "list-drop-last",
-   "reason": "line 345: does not elaborate (ZoneWire.lean:350)"
+   "reason": "line 432: does not elaborate (ZoneWire.lean:437)"
   },
   {
    "definition": "VE.Defaults.Wire.zoneFieldsOf",
    "operator": "list-drop-first",
-   "reason": "line 345: does not elaborate (ZoneWire.lean:350)"
+   "reason": "line 432: does not elaborate (ZoneWire.lean:437)"
   },
   {
    "definition": "ResponseShape.Schemas.NormDefaults.row",
