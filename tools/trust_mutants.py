@@ -1568,7 +1568,8 @@ def lake_reads(root: Path, outside: list[Path]) -> str:
 
 def no_build_reads(name: str, lake: str | None) -> bool:
     """Whether `name` (root-relative) is lean/checkers.lock or a .md under lean/ that no Lean build or check can read:
-    `lake` (`lake_reads`) names it nowhere, by its bare file name, and lists no directory. Any other file is not.
+    `lake` (`lake_reads`) names it nowhere, by its bare file name, and lists no directory (a name a module computes
+    from pieces is not looked for: reviewers run without --rescore). Any other file is not.
     `Scratch` restores a shared build by tools/lean_share.py's key, which leaves the lock out ("which no build reads")."""
     named = name == lean_share.LOCK_PINS or name.startswith("lean/") and name.endswith(".md")
     return lake is not None and named and not (LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)

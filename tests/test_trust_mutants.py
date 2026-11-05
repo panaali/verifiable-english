@@ -3287,7 +3287,7 @@ def test_the_plan_only_argument_still_holds():
     assert imported(policy) <= {"__future__", "ast", "functools", "pathlib", "tomllib"}, imported(policy)
     for n in policy.body:
         assert isinstance(n, (ast.Import, ast.ImportFrom, ast.Assign, ast.AnnAssign, ast.FunctionDef)) or (
-            isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant)), ast.dump(n)
+            isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant)), type(n).__name__
     top = [n for n in policy.body if not isinstance(n, ast.FunctionDef)]
     named = {x.id for n in top for x in ast.walk(n) if isinstance(x, ast.Name)}
     assert not named & {"exec", "eval", "compile", "setattr", "delattr", "globals", "__import__", "open", "print"}
