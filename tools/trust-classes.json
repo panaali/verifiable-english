@@ -627,6 +627,7 @@
         "ResponseShape.Schemas.Norms.kind",
         "ResponseShape.Schemas.Norms.norms_path",
         "ResponseShape.Schemas.Norms.row",
+        "ResponseShape.Schemas.Norms.«acts-elaborate»",
         "ResponseShape.Schemas.Norms.«norms-certificate»",
         "ResponseShape.Schemas.Norms.«norms-conflict»",
         "ResponseShape.Schemas.Norms.«norms-elaborate»",
@@ -15380,21 +15381,28 @@
         "VE.Service.ActsExamples.a3",
         "VE.Service.ActsExamples.a5",
         "VE.Service.ActsExamples.a6",
+        "VE.Service.ActsExamples.a6Lists",
         "VE.Service.ActsExamples.ab",
         "VE.Service.ActsExamples.actsP",
         "VE.Service.ActsExamples.admittedWithActs",
         "VE.Service.ActsExamples.bad",
+        "VE.Service.ActsExamples.bigAct",
+        "VE.Service.ActsExamples.bigE",
+        "VE.Service.ActsExamples.bigNorms",
         "VE.Service.ActsExamples.block",
         "VE.Service.ActsExamples.caseOf",
         "VE.Service.ActsExamples.clause",
         "VE.Service.ActsExamples.closure01",
         "VE.Service.ActsExamples.core0",
         "VE.Service.ActsExamples.curly",
+        "VE.Service.ActsExamples.d28",
         "VE.Service.ActsExamples.d4",
         "VE.Service.ActsExamples.decodeA",
         "VE.Service.ActsExamples.desc",
         "VE.Service.ActsExamples.dual",
         "VE.Service.ActsExamples.dualEnv",
+        "VE.Service.ActsExamples.elabCase",
+        "VE.Service.ActsExamples.elabRow",
         "VE.Service.ActsExamples.env",
         "VE.Service.ActsExamples.envA",
         "VE.Service.ActsExamples.environmentRow",
@@ -15403,10 +15411,12 @@
         "VE.Service.ActsExamples.frozen",
         "VE.Service.ActsExamples.fxs",
         "VE.Service.ActsExamples.joinedE",
+        "VE.Service.ActsExamples.joinedE'",
         "VE.Service.ActsExamples.joinedU",
         "VE.Service.ActsExamples.late",
         "VE.Service.ActsExamples.lexicalE",
         "VE.Service.ActsExamples.lexiconOf",
+        "VE.Service.ActsExamples.listsOf",
         "VE.Service.ActsExamples.members",
         "VE.Service.ActsExamples.modal",
         "VE.Service.ActsExamples.modelActsOf",
@@ -15417,6 +15427,8 @@
         "VE.Service.ActsExamples.oblig",
         "VE.Service.ActsExamples.pair",
         "VE.Service.ActsExamples.pairEnv",
+        "VE.Service.ActsExamples.part",
+        "VE.Service.ActsExamples.partRule",
         "VE.Service.ActsExamples.perm",
         "VE.Service.ActsExamples.permEnv",
         "VE.Service.ActsExamples.plain",
@@ -15429,6 +15441,7 @@
         "VE.Service.ActsExamples.rels",
         "VE.Service.ActsExamples.routeWordings",
         "VE.Service.ActsExamples.rule",
+        "VE.Service.ActsExamples.ruleJ",
         "VE.Service.ActsExamples.ruleOn",
         "VE.Service.ActsExamples.seek",
         "VE.Service.ActsExamples.sortedRefusal",
@@ -15443,6 +15456,7 @@
         "VE.Service.ActsExamples.view",
         "VE.Service.ActsExamples.withBlock",
         "VE.Service.ActsExamples.withRevision",
+        "VE.Service.ActsExamples.without",
         "VE.Service.ActsExamples.wordings"
       ]
     },
@@ -19017,6 +19031,26 @@
         "VE.Commands.RunExamples.targets",
         "VE.Commands.RunExamples.withDual",
         "VE.Commands.RunExamples.youBob"
+      ]
+    },
+    "VE/Acts/Run.lean": {
+      "D[R]": [
+        "VE.Acts.Run.emptyFields",
+        "VE.Acts.Run.partsText"
+      ],
+      "D[V]": [
+        "VE.Acts.Run.completionJson",
+        "VE.Acts.Run.elaboratedFields",
+        "VE.Acts.Run.optJson",
+        "VE.Acts.Run.predicatesJson",
+        "VE.Acts.Run.roleJson",
+        "VE.Acts.Run.rulesJson",
+        "VE.Acts.Run.splitRows"
+      ],
+      "G[V]": [
+        "VE.Acts.Run.isElaborate",
+        "VE.Acts.Run.normsSource",
+        "VE.Acts.Run.runElaborate"
       ]
     }
   }
