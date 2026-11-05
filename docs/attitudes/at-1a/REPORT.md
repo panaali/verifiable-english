@@ -1,9 +1,9 @@
 # at-1a report: the attitudes Lean core, part one (spec 2.1-2.4)
 
-Status: done at the HEAD of this commit; deliverables (1)-(5) built; selected tests 105/542 units passed; the gate is the chain's.
-Changed: new lean/VE/Attitudes/{Scale,Syntax,Examples}.lean (spec 2.1-2.4, `table_reviewed`, F-AT0-3/C-a/C-e guards), lean/ATTITUDES.md.
+Status: done; deliverables (1)-(5) built; selected tests 105/542 units passed; the chain's gate passed at 18f18b4e, and will gate this final HEAD.
+Changed: new lean/VE/Attitudes/{Scale,Syntax,Examples}.lean (spec 2.1-2.4, `table_reviewed`, F-AT0-3/C-a/C-e guards), lean/ATTITUDES.md; the pre-review fix adds a Python layer-policy mutant and focused test.
 Signatures: none reserved; S +221 (K +0) SIGNED by the DRI (reviews/dri-decisions-20261104-at-1a.md item 1); layer row likewise (-layer.md).
-Open: cut-back row `at-1a-tie` (blocked by at-1b); hand-written size about 940 lines, over the ~600 guide (section "Size").
+Open: cut-back row `at-1a-tie` (blocked by at-1b); hand-written size about 960 lines, over the ~600 guide (section "Size").
 Next item: at-1b (elaboration and `checkAtt`, spec 2.5-2.6, with the five `WellFormedAtt` statements).
 
 Plan: docs/spec/attitudes-PLAN.md "AT-1. Lean core" (lines 792-~1000), on main. Spec: docs/spec/attitudes.md
@@ -20,7 +20,7 @@ spec's text after whitespace normalisation (section "Spec re-read"), so nothing 
 | (3) `Examples.lean`: a `#guard` for every value 2.1-2.4 compute on F-AT1. The keys and names (fresh, at most 64 bytes, distinct from the regulated and defined names); `keyOf` of each name; each key's sorts; `envAtt`'s added predicates; `Scale.atLeast` on the frozen table (nothing admitted before E1 and E2 report); C-e's part, with `c_e` in its name | F-AT1: keys :218, sorts :220, names :222, freshness/64 bytes/distinctness :224, `keyOf` :227. `envAtt` :252-:260, `baseEnv`/`baseEnvAtt` :262-:269. Scale :151-:188. "Before E1 and E2 reported" is `preReportTable` (:169: no word, no two words related); the frozen table's three refused words are related to no admitted word (:167). C-e: `c_e_node`, `c_e_part`, `c_e_guard`, `c_e_three`, guards :241-:247, :256. Also F-AT2, F-AT3, F-AT0 and C-a's two conditions | 2fac8cabf, 4405a6846, b0df5d0af | `lake build VE.Attitudes.Examples` |
 | (4) `lean/ATTITUDES.md`: the module map of the three parts, the owner of each spec section, the stand-ins in force | written | 71d7fc542 | — |
 | (5) imports and generated files only through `regen_generated.py --write` (R12) | `regen --write` wrote `lean/VE/Audit.lean`, `axioms.txt`, `statements.txt`, `declarations.txt`, `predicates.txt` and the code map; `lean/VE/Route/frozen-sources.sha256` did not change. `lean/VE.lean` has no writer: regen lists `lean-roots` as `[union]` with write `-`, so its one import line is written by hand (as the plan's "(import union)" says) | f31de636d | `regen_generated: wrote 35 entries` |
-| Seeded bugs (three named) and a mutant per new trusted definition | section "Seeded bugs and mutants" | db3d08cd9 | `docs/attitudes/at-1a/mutants.json`, `trust-mutants.json` |
+| Seeded bugs (three Lean, one Python) and a mutant per new trusted definition | section "Seeded bugs and mutants" | db3d08cd9; pre-review fix | `docs/attitudes/at-1a/mutants.json`, `trust-mutants.json`; `tools/test_layer_policy.py::LayerSelectionTests::test_attitudes_modules_share_the_english_lexicon_layer` |
 | R16 trust record and FOLLOW-UPS row under "## at-1a" | the DRI signed +221 beyond R16 (section "Trust"); FOLLOW-UPS.md row written | db3d08cd9 | `tools/trust_map.py --check` rc 0 |
 
 Not delivered: nothing. Kept out on purpose: `lean/VE/Attribution/`, and at-1b's and at-1's modules.
@@ -46,13 +46,17 @@ Not delivered: nothing. Kept out on purpose: `lean/VE/Attribution/`, and at-1b's
 
 ## Seeded bugs and mutants
 
-Each bug was planted, the build of `VE.Attitudes.Examples` run, and the file restored (`cmp` against a copy).
+Each Lean bug was planted, the build of `VE.Attitudes.Examples` run, and the file restored (`cmp` against a copy).
+For the changed Python file, `VE.Attitudes.*` was moved from layer 3 to layer 2; the focused pytest test failed in
+three subtests (exit 1). Restoring layer 3 made it pass (one test, three subtests). The test also checks that
+`VE.EnglishGrammar.Lexicon` is at layer 3.
 
 | Bug (task) | File | Failing check |
 |---|---|---|
 | `Scale.atLeast` without reflexivity (`toOrder.above`) | lean/VE/Attitudes/Scale.lean | Examples.lean:164 (`table.words.all (fun w => table.scale.atLeast w w)`) |
 | `name` without the key's slot sort (index over keys with `slotSort` erased) | lean/VE/Attitudes/Syntax.lean | Examples.lean:236 (C-a's two keys, which differ only in `slotSort`: names and `Nodup`). F-AT1's three keys differ in mode, so its distinct-names guard (:224) cannot see this bug; C-a is the fixture where two keys differ only there |
 | `keys` over `condsOf A` only | lean/VE/Attitudes/Syntax.lean | Examples.lean:242 (C-e's names), :247, :256 |
+| `VE.Attitudes.*` at layer 2 instead of 3 | tools/layer_policy.py | `tools/test_layer_policy.py::LayerSelectionTests::test_attitudes_modules_share_the_english_lexicon_layer` (three failed subtests) |
 
 Mutants per new trusted definition. `docs/attitudes/at-1a/trust-mutants.json` (head b0df5d0af, the final Lean;
 later commits change no Lean file) has 328 KILLED, 0 SURVIVOR, 0 UNKNOWN, 27 INVALID and 40 ALLOWED, with kills in
@@ -102,9 +106,9 @@ the same part of `lean_layer`; keep both.
 | Guards and fixtures | Examples.lean 319 |
 | Docs | ATTITUDES.md 33, DELTA.md 16, this report |
 | Evidence | mutants.json 12, trust-mutants-allow.json 20, spec_text_check.py 24 |
-| Side tables | trust-classes.json 92, trust-baseline.json 7, layer_policy.py 2, VE.lean 1 |
+| Side tables | trust-classes.json 92, trust-baseline.json 7, layer_policy.py 2, VE.lean 1; the pre-review fix adds 6 test lines |
 
-The total is about 940 with this report (155 lines), over the ~600 guide. The spec's Lean cannot shrink. 49 of the
+The total is about 960 with this report (now over 160 lines), over the ~600 guide. The spec's Lean cannot shrink. 49 of the
 guard lines (Examples.lean:271-319) are the trust-mutant fixtures R16 requires. The DRI ruled out a split (decision item 2: it adds a merge
 without lowering the total).
 
@@ -123,6 +127,10 @@ claimed.
   "Layer") before any test ran.
 - `uv run python tools/gate_collection.py --check --prebuilt`: `0 added, 0 removed by a trailer, 0 refused, 0 stale
   and 0 malformed`.
+- Pre-review Python mutant: `UV_CACHE_DIR=/tmp/ve-at-1a-uv-cache uv run pytest -q tools/test_layer_policy.py -k
+  attitudes_modules_share_the_english_lexicon_layer` failed with `3 failed, 1 passed` while the row returned layer 2,
+  then passed after restoration (`1 passed, 3 subtests passed`). The full `tools/test_layer_policy.py` passed
+  `49 passed, 110 subtests passed`.
 - No test in manage-agents/main-known-red.txt was touched. The full gate was not run here; the chain runs it.
 
 FOLLOW-UP: at-1a-tie: tie `keys`, `name`, `keyOf`, `envAtt` and `baseEnvAtt` (after at-1b), and `Cond.key`,
@@ -131,15 +139,17 @@ FOLLOW-UP: at-1a-tie: tie `keys`, `name`, `keyOf`, `envAtt` and `baseEnvAtt` (af
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer is relayed; no service mode, schema or relay changes.
-2. PASS: section "Deliverables" lists each task line with its commit and check. `git diff --name-only` shows no
-   Python and no report test. The two shared files outside the list (`tools/layer_policy.py`,
-   `tools/trust-classes.json`) are DRI-signed or the R16 classification.
-3. PASS: three seeded bugs fail their guards (Examples.lean:164, :236, :242). Trust mutants: 0 SURVIVOR, 0 UNKNOWN
+2. PASS: section "Deliverables" lists each task line with its commit and check. The one Python code row
+   (`tools/layer_policy.py`) is DRI-signed and has a killing test in `tools/test_layer_policy.py`;
+   `tools/trust-classes.json` is the R16 classification. No report test was added.
+3. PASS: three Lean seeded bugs fail their guards (Examples.lean:164, :236, :242); one Python seeded bug fails
+   `test_attitudes_modules_share_the_english_lexicon_layer`. Trust mutants: 0 SURVIVOR, 0 UNKNOWN
    (`docs/attitudes/at-1a/trust-mutants.json`); hand mutants in `mutants.json`.
-4. N.A.: no Python or Rust behaviour; Lean is new and read by no route.
+4. PASS: `test_attitudes_modules_share_the_english_lexicon_layer` checks the layer-policy Python row;
+   Lean is new and read by no route. No Rust code changed.
 5. N.A.: no relayed field.
-6. PASS: the gate is the chain's on the final HEAD. `trust-mutants.json` names b0df5d0af; later commits change no
-   Lean file (`git diff --stat b0df5d0af HEAD -- lean/` is empty).
+6. PASS: the chain's gate passed at 18f18b4e; it will gate the new final HEAD. `trust-mutants.json` names
+   b0df5d0af; later commits change no Lean file (`git diff --stat b0df5d0af HEAD -- lean/` is empty).
 7. PASS: DELTA row 1 cites the DRI's decision file; `review-ready.py --delta-dri-needed` gives `no DELTA row reserved
    for the DRI`.
 8. PASS: no user-visible output changes (no route reads the modules); DELTA says so.
