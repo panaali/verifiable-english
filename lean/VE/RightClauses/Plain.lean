@@ -308,12 +308,14 @@ theorem checkEntry_ok {D cl Dr src x} (h : checkEntry D cl Dr src x = .ok ()) :
       · simp_all
   · cases h
 
-/-- The plain guard, read (1.2). -/
-theorem plain_guard (D : ClauseDoc) (h : WellFormedClauses D = true) (R n : String) (L : CLine)
-    (hL : (R, n, L) ∈ D.lines) (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
-  (guardOf (plain D) n).denote S ρ ↔
-    (guardOf D.doc n).denote S ρ ∧ (∀ c ∈ L.clauses, c.formula.denote S ρ) ∧
-    (∀ rel, L.relation = some rel → (relAtom (lineSorts D.doc.soft L.line).length rel).denote S ρ) := by
+/-- A checked entry: its shape, its line is the one source line of its rule, and `plainSource` plains that line
+    through the entry. -/
+theorem entry_facts (D : ClauseDoc) (h : WellFormedClauses D = true) (R n : String) (L : CLine)
+    (hL : (R, n, L) ∈ D.lines) :
+    shapeOk L = true ∧ (R, L.line) ∈ sourceLines D.doc ∧ lineName L.line = some n ∧
+    (sourceLines D.doc).filter (fun RS => lineName RS.2 == some n) = [(R, L.line)] ∧
+    plainSource D.doc.soft D.lines R L.line = { L.line with norm := L.line.norm.map (fun N =>
+      { N with guard := plainGuard (lineSorts D.doc.soft L.line).length N.guard L }) } := by
   have hc : checkClauses D = .ok () := by
     unfold WellFormedClauses at h; split at h <;> simp_all
   obtain ⟨he, hs⟩ := checkEntry_ok (forM_ok _ _ hc _ hL)
@@ -338,10 +340,15 @@ theorem plain_guard (D : ClauseDoc) (h : WellFormedClauses D = true) (R n : Stri
       have : 1 ≤ (as.filter (·.2.1 == n)).length := List.length_pos_iff_exists_mem.2 ⟨_, List.mem_filter.2 ⟨hy, by simp⟩⟩
       omega
     · simp [hname, hyn]
-  have hplain : plainSource D.doc.soft D.lines R L.line =
-      { L.line with norm := L.line.norm.map (fun N =>
-        { N with guard := plainGuard (lineSorts D.doc.soft L.line).length N.guard L }) } := by
-    unfold plainSource; rw [hfind]
+  exact ⟨hs, hmem, hname, hsrc, by unfold plainSource; rw [hfind]⟩
+
+/-- The plain guard, read (1.2). -/
+theorem plain_guard (D : ClauseDoc) (h : WellFormedClauses D = true) (R n : String) (L : CLine)
+    (hL : (R, n, L) ∈ D.lines) (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
+  (guardOf (plain D) n).denote S ρ ↔
+    (guardOf D.doc n).denote S ρ ∧ (∀ c ∈ L.clauses, c.formula.denote S ρ) ∧
+    (∀ rel, L.relation = some rel → (relAtom (lineSorts D.doc.soft L.line).length rel).denote S ρ) := by
+  obtain ⟨hs, hmem, hname, hsrc, hplain⟩ := entry_facts D h R n L hL
   -- the only source line with a norm named `n` is `L.line`, before and after `plain`
   have huniq : ∀ RS ∈ sourceLines D.doc, (RS.2.norm.filter (·.name == n)) ≠ none → RS = (R, L.line) := by
     intro RS hRS hne

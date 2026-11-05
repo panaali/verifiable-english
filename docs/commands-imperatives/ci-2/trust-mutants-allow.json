@@ -1,0 +1,79 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Commands.Run.readingJson",
+   "operator": "list-first",
+   "reason": "a decoded environment has at most two argument sorts (ci-1's trust-mutants-allow.json, VE.Commands.firstMatch), so a reading holds at most one fill and take 1 of its fills, constants or numbered fills changes nothing"
+  },
+  {
+   "definition": "VE.Commands.Run.readingJson",
+   "operator": "list-last",
+   "reason": "a decoded environment has at most two argument sorts (ci-1's trust-mutants-allow.json, VE.Commands.firstMatch), so a reading holds at most one fill and take 1 of its fills, constants or numbered fills changes nothing"
+  },
+  {
+   "definition": "VE.Commands.proofPreds",
+   "operator": "list-first",
+   "reason": "a decoded environment has at most two argument sorts, so `g.sorts.drop 1` holds at most one sort and take 1 of it changes nothing; the regulated list's drop 1 is killed by the reversed-declarations guard (RunExamples.lean)"
+  },
+  {
+   "definition": "VE.Commands.proofPreds",
+   "operator": "list-last",
+   "reason": "a decoded environment has at most two argument sorts, so `g.sorts.drop 1` holds at most one sort and its last is its first"
+  },
+  {
+   "definition": "VE.Commands.Run.readingJson",
+   "operator": "eq-le",
+   "reason": "Lean refuses the text: `r.force \u2264 .forbid` has no order instance on `Force`"
+  },
+  {
+   "definition": "VE.Service.Mode",
+   "operator": "ctor-drop",
+   "reason": "Lean refuses the text: every match on `Mode` (Mode.name, runMode, Skeletons.row, runMode_fits) names each constructor, so a dropped one is an unknown constant"
+  },
+  {
+   "definition": "ResponseShape.Schemas.files",
+   "operator": "list-drop-first",
+   "reason": "Lean refuses the text: without common.json, `skel%` cannot resolve any mode's `common.json#/$defs/...` reference (Skeletons.lean)"
+  },
+  {
+   "definition": "VE.Commands.Run.decodeRequest",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.Run.readingJson",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.matchedRecord",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.proofMany",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.proofPreds",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.proofSentence",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "VE.Commands.proofTask",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  },
+  {
+   "definition": "ResponseShape.Schemas.files",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: [] in place of a list loses the type or the field the next token reads (each such mutant names its elaboration error in trust-mutants.json)"
+  }
+ ]
+}

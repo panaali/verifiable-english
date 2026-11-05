@@ -217,9 +217,71 @@ def cxW : WeighDoc := wd cxX (W [("c_", "l")])
 example (Wd : WeighDoc) (a L H : String) (ht : (a, L, H) ∈ outweighsTriples Wd.D) (hs : strictPair Wd H L = true) :
     bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd := strength_mem Wd ht hs
 
+/-! ## `strength_iff` with the DRI's hypothesis (weighing.md 5.1, 7.3; reviews/dri-decisions-20261104-wg-2-strength.md
+item 2): both directions, counterexamples without `hH` or `hr`, and the F10 collision without `ha`
+
+`sides` is the statement's left and right side at a query, `hyps` its hypotheses but `hr`, and `lettered` is `hr`:
+every regulated name begins with an ASCII letter. -/
+
+def sides (Wd : WeighDoc) (a L H : String) : Bool × Bool :=
+  ((strengthPremises Wd).contains (bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H))),
+    (outweighsTriples Wd.D).contains (a, L, H) && strictPair Wd H L)
+def hyps (Wd : WeighDoc) (a L H : String) : Bool :=
+  WellFormedWeigh Wd && Wd.D.soft.ranks.contains L && Wd.D.soft.ranks.contains H && (Wd.D.E.predicates a).isSome
+def lettered (D : SoftDoc) : Bool := D.T.regulated.all (fun r => r.name.data.head?.any Char.isAlpha)
+
+def β2 : SoftDoc := alphaOf ranks4 [("s", "e"), ("e", "g"), ("g", "h")] "e" "h"
+def γd : SoftDoc := alphaOf ["e", "s"] [("s", "e")] "s" "e" false
+-- W-β1 `(s, h)`: premise present, the pair strict
+#guard hyps (wβ [("s", "e")]) "x_permitted" "h" "s" && lettered β1 && sides (wβ [("s", "e")]) "x_permitted" "h" "s" == (true, true)
+-- W-β2 `(e, h)`: a triple, the pair holistic, premise absent; W-γ: the pair strict, no triple, premise absent
+#guard hyps (wd β2 (W [("s", "e")])) "x_permitted" "h" "e" && lettered β2 && (outweighsTriples β2).contains ("x_permitted", "h", "e") &&
+  sides (wd β2 (W [("s", "e")])) "x_permitted" "h" "e" == (false, false)
+#guard hyps (wd γd (W [("s", "e")])) "x_permitted" "e" "s" && lettered γd && outweighsTriples γd == [] &&
+  strictPair (wd γd (W [("s", "e")])) "s" "e" && sides (wd γd (W [("s", "e")])) "x_permitted" "e" "s" == (false, false)
+-- F19 (7.3): without `hr` the statement is false on `cxW`: every other hypothesis holds, the left side is true, the right false
+#guard hyps cxW "_x_permitted" "l" "c" && !lettered cxX && sides cxW "_x_permitted" "l" "c" == (true, false)
+-- F19: the narrower hypothesis, on the queried `a` alone, is not enough: the mirror `mxW` has the real triple
+-- `(_x_permitted, l, c)` and the query `(x_permitted, l, c_)`, one name; `x_permitted` begins with a letter
+def mxD : SoftDoc := alphaOf ["c", "c_", "l"] [("c", "l")] "c" "l"
+def mren (s : String) : String := if s = "x_permitted" then "_x_permitted" else s
+def mxX : SoftDoc :=
+  { mxD with
+    E := { mxD.E with predicates := fun n => if n = "x_permitted" then some ["assistant"]
+      else mxD.E.predicates (if n = "_x_permitted" then "x_permitted" else n) }
+    T := { mxD.T with
+      regulated := mxD.T.regulated.map (fun r => { r with name := mren r.name, permission := r.permission.map mren }) ++
+        [⟨"x_permitted", ["assistant"], true, .plain, none, none⟩]
+      nodes := mxD.T.nodes.map (fun N => { N with pred := mren N.pred }) } }
+def mxW : WeighDoc := wd mxX (W [("c", "l")])
+#guard outweighsTriples mxX == [("_x_permitted", "l", "c")] && "x_permitted".data.head?.any Char.isAlpha &&
+  hyps mxW "x_permitted" "l" "c_" && !lettered mxX && sides mxW "x_permitted" "l" "c_" == (true, false)
+-- F9 and F13 (7.3): without `hH` the statement is false; each document is lettered and decoded
+def f9 : SoftDoc := alphaOf ["a", "b_"] [("a", "b_")] "a" "b_"
+def f13 : SoftDoc := alphaOf ["c", "c_"] [("c", "c_")] "c" "c_"
+#guard WellFormedWeigh (wd f9 (W [("a", "b_")])) && lettered f9 && !f9.soft.ranks.contains "_a" &&
+  sides (wd f9 (W [("a", "b_")])) "x_permitted" "b" "_a" == (true, false)
+#guard WellFormedWeigh (wd f13 (W [("c", "c_")])) && lettered f13 && f13.soft.ranks.contains "c" &&
+  !f13.soft.ranks.contains "_c" && sides (wd f13 (W [("c", "c_")])) "x_permitted" "c" "_c" == (true, false)
+-- F10 (7.3): the alias names an undeclared act, so its formula is `¬⊥` and neither side holds.
+-- This collision does not show that `ha` is necessary when the other hypotheses hold.
+#guard WellFormedWeigh (wd cxD (W [("c_", "l")])) && lettered cxD &&
+  cxD.soft.ranks.contains "l" && cxD.soft.ranks.contains "c" &&
+  (cxD.E.predicates "_x_permitted").isNone && actSortsOf cxD "_x_permitted" == [] &&
+  outweighsTriples cxD == [("x_permitted", "l", "c_")] &&
+  outweighsName "_x_permitted" "l" "c" == outweighsName "x_permitted" "l" "c_" &&
+  outweighsF cxD "_x_permitted" "l" "c" == .bottom &&
+  sides (wd cxD (W [("c_", "l")])) "_x_permitted" "l" "c" == (false, false)
+example (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String) (hL : L ∈ Wd.D.soft.ranks)
+    (hH : H ∈ Wd.D.soft.ranks) (ha : ∃ ss, Wd.D.E.predicates a = some ss)
+    (hr : ∀ r ∈ Wd.D.T.regulated, ∃ c cs, r.name.data = c :: cs ∧ c.isAlpha) :
+    bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd ↔
+      (a, L, H) ∈ outweighsTriples Wd.D ∧ strictPair Wd H L = true := strength_iff Wd h a L H hL hH ha hr
+
 /-! ## The theorems of weighing.md 5 this item delivers (the review probe F1): the build fails if one is missing -/
 
 example : True := by
+  have _ := @strength_iff
   have _ := @strictWitness_isSome
   have _ := @strictWitness_chain
   have _ := @holistic_iff_no_always_chain

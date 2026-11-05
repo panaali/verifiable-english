@@ -49,7 +49,8 @@ ROUTES = {
     "rights-conflict": ("rights", "rights.json", "packages"),
     "rights-conflict-witness": ("rights", "soft-norms.json", "witness"),
     "rights-admission": ("rights", "rights.json", "admission"),
-    # PC-2a (D9): the document mode's row on the soft chain under norm-defaults@0, whose Python branch is deleted.
+    # PC-2a (D9): the document mode's row on the soft chain under norm-defaults@0. The retained Python
+    # branch no longer accepts this chain; its soft-source check and loader diagnostics stay until PC-2b.
     "document-soft-defaults": ("document", "document.json", "row"),
 }
 
