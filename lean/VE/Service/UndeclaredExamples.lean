@@ -157,6 +157,13 @@ def boundLines : Json := Json.mkObj [
   [("b", ["Whether a limit is classified as \"b\" is a judgment; the text does not say who makes it.",
       "The text mentions these points: f."]),
    ("a", ["Whether a limit has the recorded relation \"a\" to a limit (the same or another) is a judgment for the reviewer."])]
+-- A soft document's `E″` keeps the names (`softContentOf` reads its fences over it); `tests/test_judgments_document.py`
+-- runs a soft document's fence through the service.
+#guard (do
+    let E ← environmentOf ((Json.parse ((bound.drop 4).takeWhile (· != '\n'))).toOption.getD .null |>.getObjValD "environment")
+      (toJson ([] : List Json)) false
+    let X ← layeredIds { E with boundNames := some (toJson ["p"]) } E
+    pure X.boundNames).toOption == some (some (toJson ["p"]))
 -- Two judgments of one unit, in declaration order, and the rows of the units that depend on them.
 def view (id : String) (ps : List String) : VE.Judgments.UnitView :=
   { id, meaning := "open", listed := ps, asserted := true, set := none,

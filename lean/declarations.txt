@@ -24577,7 +24577,7 @@ module VE.Service.TypingDiagnostic 0e2dbed38401dd0a6e7eb3b6c1217ea3cafe56ac9b5b6
 145:0-234:16 def VE.Service.TypingDiagnostic.formula@VE.Service.TypingDiagnostic
 236:0-249:19 def VE.Service.TypingDiagnostic.diagnose@VE.Service.TypingDiagnostic
 242:12-246:15 def VE.Service.TypingDiagnostic.diagnose.go@VE.Service.TypingDiagnostic
-module VE.Service.UndeclaredExamples 452c50b132ee9c0fa5a2e191b2af9c07b13f0b5c45edcfe71318e0d432f9acb4
+module VE.Service.UndeclaredExamples 5abd7bd85f95af868c15bfdb5ad135c36c745a215b4b77f9ba485839c7e7342e
 11:0-11:92 def VE.Service.UndeclaredExamples.act@VE.Service.UndeclaredExamples
 13:0-26:31 def VE.Service.UndeclaredExamples.vocabulary@VE.Service.UndeclaredExamples
 28:0-36:50 def VE.Service.UndeclaredExamples.text@VE.Service.UndeclaredExamples
@@ -24598,8 +24598,8 @@ module VE.Service.UndeclaredExamples 452c50b132ee9c0fa5a2e191b2af9c07b13f0b5c45e
 122:0-124:17 def VE.Service.UndeclaredExamples.refused@VE.Service.UndeclaredExamples
 125:0-125:116 def VE.Service.UndeclaredExamples.lines@VE.Service.UndeclaredExamples
 142:0-147:94 def VE.Service.UndeclaredExamples.boundLines@VE.Service.UndeclaredExamples
-161:0-163:84 def VE.Service.UndeclaredExamples.view@VE.Service.UndeclaredExamples
-164:0-164:113 def VE.Service.UndeclaredExamples.declared@VE.Service.UndeclaredExamples
+168:0-170:84 def VE.Service.UndeclaredExamples.view@VE.Service.UndeclaredExamples
+171:0-171:113 def VE.Service.UndeclaredExamples.declared@VE.Service.UndeclaredExamples
 module VE.SoftNorms.ActsFrameExamples 591e558fcd23492430b4d35379a6166c7def13c37c03507d53ff7498d4140e22
 11:0-11:67 def VE.SoftNorms.ActsFrameExamples.parse@VE.SoftNorms.ActsFrameExamples
 12:0-13:122 def VE.SoftNorms.ActsFrameExamples.block@VE.SoftNorms.ActsFrameExamples
