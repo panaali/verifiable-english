@@ -1,0 +1,9 @@
+trust_mutants: 5 definitions, 81 mutants (40 to run), 4 jobs, base e440181e206c
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:400 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-empty: zoneHeads.map -> [] (lean/VE/Defaults/ZoneWire.lean:400: Function expected at)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:404 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-empty: zoneJoins.map -> [] (lean/VE/Defaults/ZoneWire.lean:404: Function expected at)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:403 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-first: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> ([("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)].take 1) (lean/VE/Defaults/ZoneWire.lean:403: Invalid dotted identifier notation: The expected type of `.st...)
+UNKNOWN lean/VE/Defaults/ZoneWire.lean:403 VE.Defaults.Wire.zoneWordsJson (G[V], trusted) list-last: [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)] -> ([("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)].reverse.take 1) (lean/VE/Defaults/ZoneWire.lean:403: Invalid dotted identifier notation: The expected type of `.st...)
+trust_mutants: 30 KILLED, 0 SURVIVOR, 4 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 41 OTHER SHARD in 2859 s
+trust_mutants: D[V], trusted: 11 KILLED, 8 OTHER SHARD
+trust_mutants: G[V], trusted: 19 KILLED, 4 UNKNOWN, 6 INVALID, 33 OTHER SHARD
+trust_mutants: steps: wall plan 6.6 s, scratch 2.4 s, control_build 0.2 s, probe_install 1 s, control_probes 230.5 s, mutants 2613.3 s, cleanup 5.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 477.3 s (4), mutant_builds 136.4 s (40), mutant_checks 3152.4 s (34), stage_controls 394.4 s (4), mutant_probes 6426.5 s (30)
