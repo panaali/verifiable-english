@@ -44,6 +44,7 @@ import VE.Ask.Sources
 import VE.Ask.Wire
 import VE.Ask.ZeroAnswer
 import VE.Ask.ZeroWire
+import VE.Attitudes.Scale
 import VE.Attribution.Admission
 import VE.Attribution.Assess
 import VE.Attribution.Bridge
@@ -276,6 +277,8 @@ import VE.Order.WireGate
 import VE.ParserContracts
 import VE.Paths
 import VE.Presupposition.Frame
+import VE.Presupposition.Reading
+import VE.Presupposition.Rows
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
@@ -1127,6 +1130,7 @@ import VE.WireContract.Engine
 #print axioms VE.Ask.zeroSplitModels_base
 #print axioms VE.Ask.zeroSplit_sound
 #print axioms VE.Ask.zero_ask_wire_sound
+#print axioms VE.Attitudes.table_reviewed
 #print axioms VE.Bridge.CountermodelQuery.conclusion_typed
 #print axioms VE.Bridge.CountermodelQuery.premises_typed
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
@@ -4373,12 +4377,33 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
 #print axioms VE.Presupposition.Frame.shallowB_iff
+#print axioms VE.Presupposition.asserted_false_off_goal
+#print axioms VE.Presupposition.carried_asserted
+#print axioms VE.Presupposition.carried_conditioned_off
+#print axioms VE.Presupposition.carried_denote
+#print axioms VE.Presupposition.carried_idle
+#print axioms VE.Presupposition.carried_on_goals
+#print axioms VE.Presupposition.carriers_on_goal
 #print axioms VE.Presupposition.close_wellFormed
+#print axioms VE.Presupposition.collapse
+#print axioms VE.Presupposition.collapse_assumed
+#print axioms VE.Presupposition.collapse_certified
+#print axioms VE.Presupposition.conditioned_vacuous_off_goal
+#print axioms VE.Presupposition.definite_defined
+#print axioms VE.Presupposition.foldr_and_denote
+#print axioms VE.Presupposition.foldr_implies_denote
+#print axioms VE.Presupposition.generic_defined
 #print axioms VE.Presupposition.goal_denote
 #print axioms VE.Presupposition.goal_wellFormed
+#print axioms VE.Presupposition.inPlace_iff_conditioned_shallow
 #print axioms VE.Presupposition.locate_plug
+#print axioms VE.Presupposition.peel_ands
+#print axioms VE.Presupposition.peel_carried
+#print axioms VE.Presupposition.peel_implies
 #print axioms VE.Presupposition.plug_congr
 #print axioms VE.Presupposition.plug_wellFormed
+#print axioms VE.Presupposition.plural_defined
+#print axioms VE.Presupposition.raise1_denote
 #print axioms VE.Presupposition.reach_typed
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed

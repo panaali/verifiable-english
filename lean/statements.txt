@@ -4595,6 +4595,10 @@ theorem VE.Ask.zero_ask_wire_sound
                       ∀ (x : VE.Ask.Reason), a.x.row.reason = Option.some x → VE.Ask.ReasonHoldsU a.x.U a.x.Γ a.x.ψ x
   -- uses VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.c@VE.Ask.ZeroWire VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.E@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.U@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.Γ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.ψ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire VE.Ask.replayZero@VE.Ask.ZeroWire VE.Ask.replayZeroAsk@VE.Ask.ZeroWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
   -- expr 3996193774
+theorem VE.Attitudes.table_reviewed
+  VE.Attitudes.table.reviewed = Bool.true
+  -- uses VE.Attitudes.Table.reviewed@VE.Attitudes.Scale VE.Attitudes.table@VE.Attitudes.Scale
+  -- expr 464222460
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
@@ -28348,12 +28352,130 @@ theorem VE.Presupposition.Frame.shallowB_iff
   ∀ (f : VE.Presupposition.Frame), f.shallowB = Bool.true ↔ f.shallow
   -- uses VE.Presupposition.Frame.shallow@VE.Presupposition.Frame VE.Presupposition.Frame.shallowB@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 921197128
+theorem VE.Presupposition.asserted_false_off_goal
+  ∀ (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading) (S : VE.Structure) (ρ : VE.Valuation S),
+    ¬VE.Formula.denote S ρ (f.goal r.pre) → ¬VE.Formula.denote S ρ (VE.Presupposition.assertedAt f r)
+  -- uses VE.Formula.denote@VE.Semantics VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.assertedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3468640569
+theorem VE.Presupposition.carried_asserted
+  ∀ (ms : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S)
+    (m : VE.Presupposition.Root × VE.Formula),
+    m ∈ ms →
+      m.fst = VE.Presupposition.Root.asserted →
+        VE.Formula.denote S ρ (VE.Presupposition.carried ms B) → VE.Formula.denote S ρ m.snd
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root.asserted@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2120740497
+theorem VE.Presupposition.carried_conditioned_off
+  ∀ (ms : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S)
+    (m : VE.Presupposition.Root × VE.Formula),
+    m ∈ ms →
+      m.fst = VE.Presupposition.Root.conditioned →
+        ¬VE.Formula.denote S ρ m.snd →
+          (VE.Formula.denote S ρ (VE.Presupposition.carried ms B) ↔
+            ∀ (m' : VE.Presupposition.Root × VE.Formula),
+              m' ∈ ms → m'.fst = VE.Presupposition.Root.asserted → VE.Formula.denote S ρ m'.snd)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root.asserted@VE.Presupposition.Reading VE.Presupposition.Root.conditioned@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1632496228
+theorem VE.Presupposition.carried_denote
+  ∀ (ms : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.Formula.denote S ρ (VE.Presupposition.carried ms B) ↔
+      (∀ (m : VE.Presupposition.Root × VE.Formula),
+          m ∈ ms → m.fst = VE.Presupposition.Root.asserted → VE.Formula.denote S ρ m.snd) ∧
+        ((∀ (m : VE.Presupposition.Root × VE.Formula),
+            m ∈ ms → m.fst = VE.Presupposition.Root.conditioned → VE.Formula.denote S ρ m.snd) →
+          VE.Formula.denote S ρ B)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root.asserted@VE.Presupposition.Reading VE.Presupposition.Root.conditioned@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 4021004245
+theorem VE.Presupposition.carried_idle
+  ∀ (ms₁ ms₂ : List (VE.Presupposition.Root × VE.Formula)) (g B : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    (¬VE.Formula.denote S ρ g → VE.Formula.denote S ρ B) →
+      (VE.Formula.denote S ρ (VE.Presupposition.carried (ms₁ ++ (VE.Presupposition.Root.conditioned, g) :: ms₂) B) ↔
+        VE.Formula.denote S ρ (VE.Presupposition.carried (ms₁ ++ (VE.Presupposition.Root.bare, g) :: ms₂) B))
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root.bare@VE.Presupposition.Reading VE.Presupposition.Root.conditioned@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 134721417
+theorem VE.Presupposition.carried_on_goals
+  ∀ (ms : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    (∀ (m : VE.Presupposition.Root × VE.Formula),
+        m ∈ ms → m.fst ≠ VE.Presupposition.Root.bare → VE.Formula.denote S ρ m.snd) →
+      (VE.Formula.denote S ρ (VE.Presupposition.carried ms B) ↔ VE.Formula.denote S ρ B)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root.bare@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1713490189
+theorem VE.Presupposition.carriers_on_goal
+  ∀ (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading) (S : VE.Structure) (ρ : VE.Valuation S),
+    (∀ (τ : VE.Valuation S), VE.Presupposition.Frame.Reach S f ρ τ → r.DefinedAt S τ) →
+      VE.Formula.denote S ρ (f.goal r.pre) →
+        (VE.Formula.denote S ρ (VE.Presupposition.assertedAt f r) ↔ VE.Formula.denote S ρ (f.plug r.weak)) ∧
+          (VE.Formula.denote S ρ (VE.Presupposition.conditionedAt f r) ↔ VE.Formula.denote S ρ (f.plug r.weak)) ∧
+            (VE.Formula.denote S ρ (VE.Presupposition.inPlaceAt f r) ↔ VE.Formula.denote S ρ (f.plug r.weak))
+  -- uses VE.Formula.denote@VE.Semantics VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.weak@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.assertedAt@VE.Presupposition.Reading VE.Presupposition.conditionedAt@VE.Presupposition.Reading VE.Presupposition.inPlaceAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3251667440
 theorem VE.Presupposition.close_wellFormed
   ∀ (E : VE.Environment) (f : VE.Presupposition.Frame) (a p : VE.Formula) (Γ : List String),
     VE.Formula.WellFormed E Γ (f.plug a) →
       VE.Formula.WellFormed E (f.binders ++ Γ) p → VE.Formula.WellFormed E Γ (f.close p)
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.close@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 290737351
+theorem VE.Presupposition.collapse
+  ∀ (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading) (S : VE.Structure) (ρ : VE.Valuation S),
+    (∀ (τ : VE.Valuation S), VE.Presupposition.Frame.Reach S f ρ τ → r.DefinedAt S τ) →
+      VE.Formula.denote S ρ (f.goal r.pre) →
+        (VE.Formula.denote S ρ (f.plug r.strong) ↔ VE.Formula.denote S ρ (f.plug r.weak))
+  -- uses VE.Formula.denote@VE.Semantics VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.strong@VE.Presupposition.Reading VE.Presupposition.Reading.weak@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3630915326
+theorem VE.Presupposition.collapse_assumed
+  ∀ (E : VE.Environment) (prem : List VE.Formula) (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading),
+    (∀ (S : VE.Structure),
+        S.Admissible E → ∀ (τ : VE.Valuation S), VE.Presupposition.Frame.Reach S f [] τ → r.DefinedAt S τ) →
+      ∀ (S : VE.Structure),
+        S.Admissible E →
+          VE.Norms.Sat S (prem ++ [f.goal r.pre]) →
+            (VE.Formula.denote S [] (f.plug r.strong) ↔ VE.Formula.denote S [] (f.plug r.weak))
+  -- uses VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.strong@VE.Presupposition.Reading VE.Presupposition.Reading.weak@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3883405064
+theorem VE.Presupposition.collapse_certified
+  ∀ (E : VE.Environment) (prem : List VE.Formula) (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading)
+    (c : VE.Tableau.Certificate),
+    VE.Tableau.checkCertificate E prem (f.goal r.pre) c = Bool.true →
+      (∀ (S : VE.Structure),
+          S.Admissible E → ∀ (τ : VE.Valuation S), VE.Presupposition.Frame.Reach S f [] τ → r.DefinedAt S τ) →
+        ∀ (S : VE.Structure),
+          S.Admissible E →
+            VE.Norms.Sat S prem → (VE.Formula.denote S [] (f.plug r.strong) ↔ VE.Formula.denote S [] (f.plug r.weak))
+  -- uses VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.strong@VE.Presupposition.Reading VE.Presupposition.Reading.weak@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker VE.Valuation@VE.Semantics
+  -- expr 697207866
+theorem VE.Presupposition.conditioned_vacuous_off_goal
+  ∀ (f : VE.Presupposition.Frame) (r : VE.Presupposition.Reading) (S : VE.Structure) (ρ : VE.Valuation S),
+    ¬VE.Formula.denote S ρ (f.goal r.pre) → VE.Formula.denote S ρ (VE.Presupposition.conditionedAt f r)
+  -- uses VE.Formula.denote@VE.Semantics VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.conditionedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1749067775
+theorem VE.Presupposition.definite_defined
+  ∀ (E : VE.Environment) (Δ : List String) (σ : String),
+    σ ∈ E.sorts →
+      ∀ (D P : VE.Formula),
+        VE.Formula.WellFormed E (σ :: Δ) D →
+          VE.Formula.WellFormed E (σ :: Δ) P →
+            ∀ (S : VE.Structure),
+              S.Admissible E →
+                ∀ (τ : VE.Valuation S),
+                  VE.Valuation.Typed S Δ τ → (VE.Presupposition.definite Δ.length σ D P).DefinedAt S τ
+  -- uses VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.definite@VE.Presupposition.Rows VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics VE.Valuation.Typed@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1098843071
+theorem VE.Presupposition.foldr_and_denote
+  ∀ (l : List (VE.Presupposition.Root × VE.Formula)) (X : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.Formula.denote S ρ (List.foldr (fun m a => m.snd.and a) X l) ↔
+      (∀ (m : VE.Presupposition.Root × VE.Formula), m ∈ l → VE.Formula.denote S ρ m.snd) ∧ VE.Formula.denote S ρ X
+  -- uses VE.Formula.and@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Root@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3132771531
+theorem VE.Presupposition.foldr_implies_denote
+  ∀ (l : List (VE.Presupposition.Root × VE.Formula)) (X : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
+    VE.Formula.denote S ρ (List.foldr (fun m a => m.snd.implies a) X l) ↔
+      (∀ (m : VE.Presupposition.Root × VE.Formula), m ∈ l → VE.Formula.denote S ρ m.snd) → VE.Formula.denote S ρ X
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Root@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1019766023
+theorem VE.Presupposition.generic_defined
+  ∀ (pre body : VE.Formula) (S : VE.Structure) (τ : VE.Valuation S), (VE.Presupposition.generic pre body).DefinedAt S τ
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3063898876
 theorem VE.Presupposition.goal_denote
   ∀ (f : VE.Presupposition.Frame) (p : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
     VE.Formula.denote S ρ (f.goal p) ↔
@@ -28366,11 +28488,42 @@ theorem VE.Presupposition.goal_wellFormed
       VE.Formula.WellFormed E (f.binders ++ Γ) p → VE.Formula.WellFormed E Γ (f.goal p)
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 3126596479
+theorem VE.Presupposition.inPlace_iff_conditioned_shallow
+  ∀ (f : VE.Presupposition.Frame),
+    f.shallow →
+      ∀ (r : VE.Presupposition.Reading) (ms₁ ms₂ : List (VE.Presupposition.Root × VE.Formula)) (S : VE.Structure)
+        (ρ : VE.Valuation S),
+        (∀ (τ : VE.Valuation S),
+            VE.Presupposition.Frame.Reach S f ρ τ → VE.Formula.denote S τ r.strong → VE.Formula.denote S τ r.pre) →
+          (VE.Formula.denote S ρ
+              (VE.Presupposition.carried (ms₁ ++ (VE.Presupposition.Root.bare, f.goal r.pre) :: ms₂) (f.plug r.strong)) ↔
+            VE.Formula.denote S ρ
+              (VE.Presupposition.carried (ms₁ ++ (VE.Presupposition.Root.conditioned, f.goal r.pre) :: ms₂)
+                (f.plug r.strong)))
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Presupposition.Frame.Reach@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame.shallow@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.strong@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.Root.bare@VE.Presupposition.Reading VE.Presupposition.Root.conditioned@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2852616222
 theorem VE.Presupposition.locate_plug
   ∀ (a : VE.Formula) (path : List Nat) (f : VE.Presupposition.Frame) (b : VE.Formula),
     VE.Presupposition.Frame.locate a path = Option.some (f, b) → f.plug b = a
   -- uses VE.Formula@VE.Syntax VE.Presupposition.Frame.locate@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 224701004
+theorem VE.Presupposition.peel_ands
+  ∀ (l : List (VE.Presupposition.Root × VE.Formula)) (m : Nat) (X : VE.Formula),
+    VE.Presupposition.peel l.length m (List.foldr (fun m a => m.snd.and a) X l) = VE.Presupposition.peel 0 m X
+  -- uses VE.Formula.and@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.peel@VE.Presupposition.Reading
+  -- expr 3089681803
+theorem VE.Presupposition.peel_carried
+  ∀ (ms : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula),
+    VE.Presupposition.peel (List.filter (fun m => m.fst == VE.Presupposition.Root.asserted) ms).length
+        (List.filter (fun m => m.fst == VE.Presupposition.Root.conditioned) ms).length (VE.Presupposition.carried ms B) =
+      Option.some B
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Root.asserted@VE.Presupposition.Reading VE.Presupposition.Root.conditioned@VE.Presupposition.Reading VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.carried@VE.Presupposition.Reading VE.Presupposition.instDecidableEqRoot@VE.Presupposition.Reading VE.Presupposition.peel@VE.Presupposition.Reading
+  -- expr 2230989106
+theorem VE.Presupposition.peel_implies
+  ∀ (l : List (VE.Presupposition.Root × VE.Formula)) (B : VE.Formula),
+    VE.Presupposition.peel 0 l.length (List.foldr (fun m a => m.snd.implies a) B l) = Option.some B
+  -- uses VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.peel@VE.Presupposition.Reading
+  -- expr 1279656837
 theorem VE.Presupposition.plug_congr
   ∀ (f : VE.Presupposition.Frame) (a b : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
     (∀ (τ : VE.Valuation S),
@@ -28383,6 +28536,20 @@ theorem VE.Presupposition.plug_wellFormed
     VE.Formula.WellFormed E Γ (f.plug a) → VE.Formula.WellFormed E (f.binders ++ Γ) a
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 386423840
+theorem VE.Presupposition.plural_defined
+  ∀ (σ : String) (D P : VE.Formula) (S : VE.Structure) (τ : VE.Valuation S),
+    (VE.Presupposition.plural σ D P).DefinedAt S τ
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Presupposition.plural@VE.Presupposition.Rows VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3066616244
+theorem VE.Presupposition.raise1_denote
+  ∀ (E : VE.Environment) (Δ : List String) (σ : String) (D : VE.Formula),
+    VE.Formula.WellFormed E (σ :: Δ) D →
+      ∀ (S : VE.Structure) (τ : VE.Valuation S),
+        VE.Valuation.Typed S Δ τ →
+          ∀ (a b : S.Carrier),
+            VE.Formula.denote S (b :: a :: τ) (VE.Discourse.raise1 Δ.length D) ↔ VE.Formula.denote S (b :: τ) D
+  -- uses VE.Discourse.raise1@VE.Discourse.Descriptions VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation.Typed@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 922657145
 theorem VE.Presupposition.reach_typed
   ∀ (f : VE.Presupposition.Frame) (S : VE.Structure) (Γ : List String) (ρ τ : VE.Valuation S),
     VE.Valuation.Typed S Γ ρ → VE.Presupposition.Frame.Reach S f ρ τ → VE.Valuation.Typed S (f.binders ++ Γ) τ

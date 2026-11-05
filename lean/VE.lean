@@ -132,6 +132,8 @@ import VE.Discourse.ComposeExamples
 import VE.Service.ComposedAdmissionExamples
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
+import VE.Presupposition.Reading
+import VE.Presupposition.Rows
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
@@ -329,3 +331,4 @@ import VE.Weighing.Conditions
 import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Attitudes.Examples
