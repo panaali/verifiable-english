@@ -276,8 +276,8 @@
    "id": "M31",
    "file": "docs/presupposition/ps-e1/e1_runner.py",
    "claim": "API keys reach the CLI",
-   "find": "if not k.endswith(\"API_KEY\") and k not in",
-   "replace": "if k not in",
+   "find": "if not k.endswith(\"API_KEY\") and not k.startswith(\"CLAUDE\")\n           and k not in",
+   "replace": "if not k.startswith(\"CLAUDE\")\n           and k not in",
    "test": "test_reader_command_is_the_smallest_context_and_strips_api_keys",
    "failed": "test_reader_command_is_the_smallest_context_and_strips_api_keys"
   }
