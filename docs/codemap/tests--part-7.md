@@ -1,3 +1,9 @@
+- `tests/test_stage2_parse.py` — Parsing on the Lean authority: Lean's surface parsers decide acceptance.
+- `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
+- `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
+- `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
+- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
+- `tests/test_stats.py` — (no module docstring)
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
 - `tests/test_surface_registry.py` — (no module docstring)
 - `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
