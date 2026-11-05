@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-ap-rust-replay-decode-cbffb763-t859173-s3",
+ "head": "28f076f045597af109ae3a1bf5242ad8efc5dcfd",
+ "argv": [
+  "armsh-cand-ap-rust-replay-decode-cbffb763-t859173-s3",
+  "28f076f045597af109ae3a1bf5242ad8efc5dcfd",
+  "51aca607c18c805ce95167027f08c5d10c802cc6",
+  "-",
+  "-",
+  "4",
+  "3/5"
+ ]
+}
