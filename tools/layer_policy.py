@@ -203,6 +203,8 @@ def lean_layer(module: str) -> int | None:
         return 3  # weighing WG-2: a weighing document carries AP's split map (`VE.Acts.Elaborate`, weighing.md 1.1)
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
+    if module.startswith("VE.Attitudes."):
+        return 3  # AttDoc carries the English lexicon (attitudes.md 2.2, SR-3; reviews/dri-decisions-20261104-at-1a-layer.md)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
