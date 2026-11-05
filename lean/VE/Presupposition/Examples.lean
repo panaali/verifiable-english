@@ -1,5 +1,6 @@
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
+import VE.Presupposition.Agree
 import VE.Discourse.Descriptions
 import VE.Finite
 
@@ -8,7 +9,7 @@ import VE.Finite
 Rows "4.1" (builders), "4.2" (`locate`, `cls`), S2, S3, S4, S5, S9 and S21 (frame and goal
 values in each listed model), the shallow-frame class facts used by S12 and S25-S27, and the
 readings and rows of 4.3 and 4.4: S1 and its definedness row, S12, S13, S16, S20, S23, S24, S25,
-and S26's whole-unit values; the rules of 4.5: S14 and S22's formula-level rows. Each `pre` and `strong` is built by `definite`, `plural` or
+and S26's whole-unit values; the rules of 4.5: S14 and S22's formula-level rows; 4.6's S8; and the pilot formulas P1-P4 and P13. Each `pre` and `strong` is built by `definite`, `plural` or
 `generic`; a guard beside each pins it to the literal formula (`definite 0`'s are discourse's
 `uniqueD` and `assertive`, `plural`'s are `∃x:σ D` and `∃x:σ D ∧ ∀x:σ (D → P)`). -/
 namespace VE.Presupposition.Examples
@@ -407,5 +408,58 @@ example : VE.NormDefaults.value3 (evAt m22p ["s2"] (VE.Norms.pos mixed22 "p") = 
 example : VE.NormDefaults.value3 (evAt m22p ["s1"] (VE.Norms.pos mixed22 "p") = true)
     (evAt m22p ["s1"] (VE.Norms.neg mixed22 "p") = true) .unspecified ≠ .unsaid :=
   fun h => ((unsaid_iff _ _).mp h).1 (by decide)
+
+-- S8: `resides_in` total and functional; "the State wherein Alice resides". The last model is one more direction: total F.
+def flag8 : VE.Data.Background.Flag :=
+  { name := "resides_in", source := "person", target := "state", functional := true, total := true }
+def u8 : VE.Formula := Frame.hole.goal (VE.Discourse.uniqueD "state" (.binary "resides_in" (.const "alice") (.var 0)))
+def m8 (rows : List (List String)) : VE.FiniteModel String :=
+  model [("person", ["alice"]), ("state", ["ohio", "iowa"])] [("resides_in", rows)] [("alice", "alice")]
+def row8 (M : VE.FiniteModel String) : Bool × Bool × Bool :=
+  (ev M (VE.Data.Background.functionalPremise flag8), ev M (VE.Data.Background.totalPremise flag8), ev M u8)
+#guard row8 (m8 [["alice", "ohio"]]) == (true, true, true)
+#guard row8 (m8 [["alice", "ohio"], ["alice", "iowa"]]) == (false, true, false)
+#guard row8 (m8 []) == (true, false, false)
+#guard VE.Data.Background.premises flag8 ==
+  [VE.Data.Background.functionalPremise flag8, VE.Data.Background.totalPremise flag8]
+
+-- `discourse_definite_is_row`: at 0 the row is discourse's description; open over a binder it is not.
+#guard (definite 0 "entity" owner ready).pre == VE.Discourse.uniqueD "entity" owner
+#guard (definite 1 "entity" opOf ready).pre != VE.Discourse.uniqueD "entity" opOf
+
+-- P1-P4: the heading formulas (`buildPre row 0`); their obligations are PS-2a's admission rows A24 and A25, their English PS-6r's.
+def guidelineOf : VE.Formula := .binary "guideline_of" (.var 0) (.const "anthropic")
+def missionOf : VE.Formula := .binary "mission_of" (.var 0) (.const "anthropic")
+def openProblem : VE.Formula := .ex "entity" (.unary "open_problem" (.var 0))
+def preIs (row : String) (a : Option String × Option VE.Formula × Option VE.Formula × Option VE.Formula)
+    (p : VE.Formula) : Bool :=
+  match buildPre row 0 a with | .ok q => q == p | .error _ => false
+#guard preIs "plural" (some "entity", some coreValueOf, none, none) (.ex "entity" coreValueOf)
+#guard preIs "plural" (some "entity", some guidelineOf, none, none) (.ex "entity" guidelineOf)
+#guard preIs "generic" (none, none, none, some openProblem) openProblem
+#guard preIs "definite" (some "entity", some missionOf, none, none) (VE.Discourse.uniqueD "entity" missionOf)
+-- Each formula separates a model where it holds from one where it does not; P4 two missions from one.
+def mP (rels : List (String × List (List String))) : VE.FiniteModel String :=
+  model [("entity", ["a", "b", "anthropic", "claude"])] rels [("anthropic", "anthropic"), ("claude", "claude")]
+#guard [ev (mP [("core_value_of", [["a", "claude"]])]) (.ex "entity" coreValueOf), ev (mP []) (.ex "entity" coreValueOf)] ==
+  [true, false]
+#guard [ev (mP [("guideline_of", [["a", "anthropic"]])]) (.ex "entity" guidelineOf), ev (mP []) (.ex "entity" guidelineOf)] ==
+  [true, false]
+#guard [ev (mP [("open_problem", [["a"]])]) openProblem, ev (mP []) openProblem] == [true, false]
+#guard [[["a", "anthropic"]], [["a", "anthropic"], ["b", "anthropic"]], []].map
+    (fun rows => ev (mP [("mission_of", rows)]) (VE.Discourse.uniqueD "entity" missionOf)) == [true, false, false]
+
+-- P13: S8 on the 14th Amendment use case's vocabulary, "the State wherein they reside": the description is open over the person.
+def stateOf : VE.Formula := .binary "resides_in" (.var 1) (.var 0)
+def r13 : Reading := definite 1 "state" stateOf (.unary "citizen_of_state" (.var 0))
+def goal13 : VE.Formula := (Frame.allF "person" .hole).goal r13.pre
+def m13 (doms : List String) (rows : List (List String)) : VE.FiniteModel String :=
+  model [("person", ["alice", "bob"]), ("state", doms)] [("resides_in", rows)] []
+def row13 (M : VE.FiniteModel String) : Bool × Bool × Bool :=
+  (ev M (VE.Data.Background.functionalPremise flag8), ev M (VE.Data.Background.totalPremise flag8), ev M goal13)
+#guard goal13 == .all "person" (VE.Discourse.uniqueOpen 1 "state" stateOf)
+#guard row13 (m13 ["arizona"] [["alice", "arizona"], ["bob", "arizona"]]) == (true, true, true)
+#guard row13 (m13 ["arizona", "ohio"] [["alice", "arizona"], ["alice", "ohio"], ["bob", "arizona"]]) == (false, true, false)
+#guard row13 (m13 ["arizona"] [["alice", "arizona"]]) == (true, false, false)
 
 end VE.Presupposition.Examples
