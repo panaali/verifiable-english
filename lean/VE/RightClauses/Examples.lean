@@ -1,4 +1,4 @@
-import VE.RightClauses.Plain
+import VE.RightClauses.Relation
 import VE.Rights.Examples
 
 /-! The section 9.1 fixtures this part decides (docs/spec/right-clauses.md 9.1), as `#guard`s: the build fails if
@@ -6,8 +6,8 @@ one is false. Environment: `VE.Rights.Examples`' (one state `Texas`, persons `An
 `country_of(state, person)` and `charged(person)`; right `r21`, holder `person`, guard `⊤`, one claim line
 `equal-access` on `public_service_access_required(state, person)`, obligation `+`, guard `⊤`; unit span `[0, 100)`.
 
-K9 and K15 (`elided` missing) and K10 (profile off) are the wire decoder's (Wire.lean); K3's premise and K13's slot are
-Relation.lean's. Each check has fixtures on its accepting and its refusing side, at and around each span boundary. -/
+K9 and K15 (`elided` missing) and K10 (profile off) are the wire decoder's (Wire.lean, cmp-s3b); K3's premise and K13's
+slot are Relation.lean's (the last section). Each check has fixtures on its accepting and its refusing side, at and around each span boundary. -/
 namespace VE.RightClauses.Examples
 open VE.Rights (RightsDoc SourceLine Right)
 open VE.Rights.Examples (mkRights block strictNode line diag selectsAt model epsilon fanLine fanMap tortureRegs l29)
@@ -274,5 +274,72 @@ def k5 : CLine := cline [trig (charged 0) 90 110] none []
 #guard verdict (checkCandidates ⟨many, [], [("s", 1, .rightLines "r21" mid.lines, midEntries k2)]⟩) == "ok"
 #guard plainContent many.soft (midEntries k2) (.right mid) == .right { mid with lines := [nl "b", accessLine k2Guard, nl "c"] }
 #guard plainContent many.soft (midEntries k2) (.rightLines "r21" mid.lines) == .rightLines "r21" [nl "b", accessLine k2Guard, nl "c"]
+
+/-! ## Relation.lean: `Rel_D` and the slot (K2, K3, K13) -/
+
+/-- K3's ρ: `∀x:person. ⊤ → ∃y:state. country_of(y, x)`. -/
+def k3Premise (H : VE.Formula := .top) : VE.Formula :=
+  .all "person" (.implies H (.ex "state" (.binary "country_of" (.var 0) (.var 1))))
+def onlyAnn : VE.FiniteModel String := model [("country_of", [["Texas", "Ann"]])]
+def both : VE.FiniteModel String := model [("country_of", [["Texas", "Ann"], ["Texas", "Bob"]])]
+def slotValid (D : ClauseDoc) (M : VE.FiniteModel String) : Bool :=
+  VE.Compose.backgroundValidP (VE.Rights.correlate (plain D)) (clauseSlot D) M
+
+-- K2: not total, so `Rel_D = []` and the slot is `Lim_D` (`clauseSlot_no_total`)
+#guard relPremisesLabelled (cdoc k2) == [] && clauseSlot (cdoc k2) == VE.Rights.limPremises (plain (cdoc k2))
+#guard relPremisesLabelled (cdoc k1) == [] && relPremisesLabelled (cdoc k4) == []
+-- K3: one premise, labelled by the rule; false where Bob has no country, true once he has one
+#guard relPremisesLabelled (cdoc k3) == [("rights:relation:equal-access:total", k3Premise)]
+#guard relPremises (cdoc k3) == [k3Premise] && clauseSlot (cdoc k3) == [k3Premise]
+#guard diag (plain (cdoc k3)) == "ok"
+#guard !slotValid (cdoc k3) onlyAnn && slotValid (cdoc k3) both && slotValid (cdoc k2) onlyAnn
+-- `relation_some_bearer` at Bob: Texas is related to him, and the line selects at (Texas, Bob)
+#guard both.relations "country_of" |>.contains ["Texas", "Bob"]
+#guard selectsAt (plain (cdoc k3)) "equal-access" both ["Texas", "Bob"] &&
+  !selectsAt (plain (cdoc k3)) "equal-access" onlyAnn ["Texas", "Bob"]
+-- the holder guard is the premise's antecedent; slots (1, 0) put the holder first
+#guard relPremises (cdoc k3 (r21Doc (guard := charged 0))) == [k3Premise (charged 0)]
+#guard relPremises (cdoc (cline [] (some (rel (1, 0) (some 1) "resident_of")) [])
+    (r21Doc (base := [("resident_of", ["person", "state"])]))) ==
+  [.all "person" (.implies .top (.ex "state" (.binary "resident_of" (.var 1) (.var 0))))]
+-- two entries, in document order; an entry without a total relation adds nothing
+#guard (relPremisesLabelled ⟨many, [("r20", "a", { unl "a" with relation := some (rel (0, 1) (some 1)) }),
+    ("r21", "equal-access", k2), ("r22", "d", { unl "d" with relation := some (rel (0, 1) (some 1)) })], []⟩).map (·.1) ==
+  ["rights:relation:a:total", "rights:relation:d:total"]
+-- K13: `Lim_D` of l29 first, then `Rel_D`; `plain` leaves `Lim_D` unchanged (`plain_limPremises`)
+def k13 : ClauseDoc := cdoc k3 (r21Doc (limits := [l29]))
+#guard clauseSlotLabelled k13 == VE.Rights.limPremisesLabelled (plain k13) ++ relPremisesLabelled k13
+#guard (clauseSlotLabelled k13).map (·.1) ==
+  (VE.Rights.limPremisesLabelled k13.doc).map (·.1) ++ ["rights:relation:equal-access:total"]
+#guard (VE.Rights.limPremisesLabelled k13.doc).length == 2 && clauseSlot k13 ==
+  VE.Rights.limPremises k13.doc ++ [k3Premise]
+#guard VE.Rights.limPremises (plain k13) == VE.Rights.limPremises k13.doc
+#guard VE.Compose.Labelled.wellLabelled (clauseSlotLabelled k13)
+-- two total relations: both premises, in document order, after `Lim_D`
+def twoTotal : ClauseDoc := ⟨{ many with limits := [l29] }, [("r20", "a", { unl "a" with relation := some (rel (0, 1) (some 1)) }),
+  ("r22", "d", { unl "d" with relation := some (rel (0, 1) (some 1)) })], []⟩
+#guard relPremises twoTotal == [k3Premise, k3Premise] &&
+  (clauseSlotLabelled twoTotal).map (·.1) == (VE.Rights.limPremisesLabelled twoTotal.doc).map (·.1) ++
+    ["rights:relation:a:total", "rights:relation:d:total"] &&
+  clauseSlot twoTotal == VE.Rights.limPremises twoTotal.doc ++ [k3Premise, k3Premise]
+-- `clauseSlot_labelled` needs `Lim_D`'s labels distinct (DRI question Q3): pk-1c's `cx`
+-- (lean/VE/NormDefaults/PacksLegacyExamples.lean), rebuilt here without importing `VE.Readings`, satisfies the
+-- spec's two hypotheses and repeats `rights:limitation:x:p:q:necessary:c`.
+open VE.Norms.Checks (perm) in
+def cxDoc : ClauseDoc := ⟨mkRights ["state", "person"] []
+    [perm "p:q" ["state", "person"] true "{0} arrest {1}", perm "q" ["state", "person"] true "{0} detain {1}"] [] block
+    [⟨"r9", "person", .top, [line .claim (strictNode "no-a" "p:q" false), line .claim (strictNode "no-b" "q" false)]⟩]
+    [⟨"x", none, none, some "unstated", [⟨"c", true, "c holds", none⟩], []⟩,
+     ⟨"x:p", none, none, some "unstated", [⟨"c", true, "c holds", none⟩], []⟩] [], [], []⟩
+#guard WellFormedClauses cxDoc && VE.Rights.WellFormedRights (plain cxDoc) &&
+  !VE.Compose.Labelled.wellLabelled (clauseSlotLabelled cxDoc) &&
+  !VE.Compose.Labelled.wellLabelled (VE.Rights.limPremisesLabelled cxDoc.doc)
+-- DRI question Q1 (`elaborate_plain`, Wire.lean, cmp-s3b): the rights decoder reads a clause of depth 64, but not
+-- that clause under the one `and` that `plain` adds, and `WellFormedRights` bounds no depth.
+def notChain : Nat → Lean.Json
+  | 0 => .arr #["top"]
+  | n + 1 => .arr #["not", notChain n]
+#guard (VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (notChain 63)).isOk &&
+  !(VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (.arr #["and", .arr #["top"], notChain 63])).isOk
 
 end VE.RightClauses.Examples

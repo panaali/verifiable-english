@@ -160,6 +160,9 @@ module VE.Ask.Sources
 module VE.Ask.Wire
 module VE.Ask.ZeroAnswer
 module VE.Ask.ZeroWire
+module VE.Attitudes.Examples
+module VE.Attitudes.Scale
+module VE.Attitudes.Syntax
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -579,6 +582,7 @@ module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
+module VE.RightClauses.Relation
 module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
