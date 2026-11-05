@@ -1,0 +1,14 @@
+[
+ {"id": "S1", "file": "usecases/agent-policy/check.py", "language": "Python",
+  "mutant": "parsed(): stdout.decode(\"utf-8\") -> stdout.decode(\"utf-8\", \"replace\") (drop the decode check)",
+  "test": "tests/test_agent_policy_replay_decode.py::test_rust_values_refuses_bad_output[not UTF-8]"},
+ {"id": "S2", "file": "usecases/agent-policy/check.py", "language": "Python",
+  "mutant": "parsed(): delete the `except RecursionError` clause",
+  "test": "tests/test_agent_policy_replay_decode.py::test_rust_values_refuses_bad_output[too deep]"},
+ {"id": "S3", "file": "usecases/agent-policy/check.py", "language": "Python",
+  "mutant": "replay_lean(): rows = parsed(done.stdout, \"Lean replay\") -> rows = json.loads(done.stdout)",
+  "test": "tests/test_agent_policy_replay_decode.py::test_lean_replay_refuses_bad_output_of_the_route[not UTF-8]"},
+ {"id": "S4", "file": "usecases/agent-policy/check.py", "language": "Python",
+  "mutant": "cli(): sys.exit(f\"CheckerUnavailable: {error}\") -> raise",
+  "test": "tests/test_agent_policy_replay_decode.py::test_the_harness_reports_the_refusal_and_exits_1_without_a_traceback[not UTF-8]"}
+]
