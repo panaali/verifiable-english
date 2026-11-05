@@ -1,0 +1,32 @@
+{
+  "item": "wg-2-siff",
+  "note": "Seeded bugs, each planted, shown to fail the named check, and restored. No new trusted definition (trust_map.py --check: trusted +0), so no per-definition trust mutants. Line numbers are of the final HEAD's files.",
+  "mutants": [
+    {"id": "L1", "language": "Lean", "file": "lean/VE/Weighing/Conditions.lean", "behaviour": "outweighsName injectivity needs the tail hypothesis (the counterexample case)",
+     "change": "split_dunder_left: p'.head? ≠ some '_' weakened to p'.head? ≠ some 'z'",
+     "test": "lake build VE.Weighing.Conditions", "result": "error: Conditions.lean:1466:10: unsolved goals (case k = c :: [], k' = [], the c_/c split)"},
+    {"id": "L2", "language": "Lean", "file": "lean/VE/Weighing/Conditions.lean", "behaviour": "strength_iff needs hH (F13)",
+     "change": "strength_iff: (hH : H ∈ Wd.D.soft.ranks) weakened to (hH : H ≠ \"\")",
+     "test": "lake build VE.Weighing.Conditions; F13's #guard (Examples.lean:264) is the refuting document", "result": "error: Conditions.lean:1563:37: Application type mismatch (hH : H ≠ \"\" where H ∈ Wd.D.soft.ranks is needed)"},
+    {"id": "L3", "language": "Lean", "file": "lean/VE/Weighing/Conditions.lean", "behaviour": "strength_iff is about the premise strengthEntries returns",
+     "change": "strengthEntries: outweighsF Wd.D a L H swapped to outweighsF Wd.D a H L",
+     "test": "lake build VE.Weighing.Examples", "result": "errors at Conditions.lean:902 (strength_mem), :1150 (all_always_is_strict), :1563 (strength_iff)"},
+    {"id": "L4", "language": "Lean", "file": "lean/VE/Bridge.lean", "behaviour": "the decoder refuses a _-initial identifier (hr holds on every wire document)",
+     "change": "checkVocabularyNames: unless Surface.identifier name || name.startsWith \"_\"",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:211:0: the decoder guard did not evaluate to true (only that guard)"},
+    {"id": "G1", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "W-β1 direction (premise present)", "change": "the W-β1 guard queried with no always edge",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:236:0"},
+    {"id": "G2", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "W-β2 direction (premise absent, pair holistic)", "change": "always e > g instead of s > e (the pair strict)",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:238:0"},
+    {"id": "G3", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "W-γ direction (no triple)", "change": "γd holistic",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:240:0"},
+    {"id": "G4", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "hr is needed (cxW) and needed for every regulated name (mxW)", "change": "lettered reads the last character",
+     "test": "lake build VE.Weighing.Examples", "result": "errors: Examples.lean:243:0 and :257:0"},
+    {"id": "G5", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "the mirror collides only with the query's act regulated", "change": "mxX without the regulated x_permitted",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:257:0"},
+    {"id": "G6", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "F9 refutes the statement without hL/hH", "change": "F9 queried at the real triple (b_, a)",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:262:0"},
+    {"id": "G7", "language": "Lean", "file": "lean/VE/Weighing/Examples.lean", "behaviour": "F13 refutes the statement without hH", "change": "F13 queried at the real triple (c_, c)",
+     "test": "lake build VE.Weighing.Examples", "result": "error: Examples.lean:264:0"}
+  ]
+}
