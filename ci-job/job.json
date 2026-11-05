@@ -1,0 +1,21 @@
+{
+ "job": "jt-3b.s5of5-ab084a64",
+ "head": "e3a802d0066e12c7e91030235df6454b3ef83612",
+ "argv": [
+  "jt-3b.s5of5-ab084a64",
+  "e3a802d0066e12c7e91030235df6454b3ef83612",
+  "d26fb9cbbe6a876b217d38b9d4adcee0f2502cc5",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c72942ac19cf.tar.zst",
+  "6951cf31ce587aea0d1d9da08fe9008f9598d83b8e364a582de59f05b3a43e9b",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Service/UndeclaredExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "5/5",
+  "--jobs",
+  "4"
+ ]
+}
