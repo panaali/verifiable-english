@@ -486,7 +486,7 @@ theorem today_speech (ps : List String) (h : today ps = .ok .speechActs) :
     rw [e] at he <;> try cases he
   obtain ⟨_, _, hsa⟩ := h
   obtain ⟨hn, hall⟩ := hl.2.2.2.2.2.1 hsa
-  unfold VE.SpeechActs.Wire.profileGate
+  unfold VE.SpeechActs.Wire.profileGate VE.SpeechActs.Wire.profileGateOf
   simp only [hl.1, decide_true, VE.SpeechActs.Wire.speechProfile, List.contains_iff_mem.mpr hsa,
     List.contains_iff_mem.mpr hn, if_true, pure_bind]
   rw [forIn_yield_ok ps ?_]
