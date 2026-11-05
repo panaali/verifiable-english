@@ -91,11 +91,12 @@ KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV'
   construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
   among them) and the NOT RUN that now fit --max-mutants run;
 - or only checks changed, or inputs that decide nothing but the plan (mode "checks", speed-tmchecks,
-  eff-20261104-1): the options (--deep, --test, --classes) are the same; the tool is the same but for
-  `PLAN_ONLY_TOOL` modules, both records holding per-module digests (`tool_files`); base may differ; and every file
-  that changed is a module of lean/ outside every selected declaration's file and import closure, an outside --test
-  file, a generated inventory, trust_map's table, or a lean/*.md or lean/checkers.lock that no file Lake or Lean
-  reads names (`check_only`, `lake_reads`, from the tree). Every one of these still needs PREV's mutants to be
+  eff-20261104-1): the options (--deep, --test, --classes) are the same; base may differ; the tool is the same but for
+  `PLAN_ONLY_TOOL` modules, both records holding per-module digests (`tool_files`); and every file that changed is a
+  module of lean/ outside every selected declaration's file and import closure, an outside --test file or a generated
+  inventory. Trust_map's table, those `PLAN_ONLY_TOOL` modules, a lean/*.md and lean/checkers.lock carry only when
+  nothing Lake or Lean reads names them outside a comment or lists a directory (`check_only`, `lake_reads`, from the
+  tree; where `lean_code` cannot tell a comment from code, the text counts). Every one of these still needs PREV's mutants to be
   exactly this plan's, so a change that moves the plan is a full run. Then a KILLED or INVALID verdict
   (before --allow) whose reads read the same (`Reads.carry`) is carried (`reused_from`, `carried: "checks"`); every
   other mutant runs (a SURVIVOR, UNKNOWN or ALLOWED one: a new check may kill it, and a KILLED one whose killing
@@ -1412,12 +1413,30 @@ INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.
 #   LEDGER and sys.path line and that check. No other module the tool loads imports it. Its module level imports and
 #   assigns only: test_the_plan_only_argument_still_holds keeps all of this true.
 PLAN_ONLY_TOOL = frozenset({"tools/layer_policy.py"})
-CLASS_TABLE = "tools/trust-classes.json"  # read by `plan`, unless a Lean check also names it
+CLASS_TABLE = "tools/trust-classes.json"  # read by `plan`, unless a Lean check also names it outside a comment
 PLAN_INPUTS = PLAN_ONLY_TOOL | {CLASS_TABLE}
 # What Lake reads, or Lean when it builds or checks a module, whatever a module's own text names; a directory listing
 # there can read a file it never names (`no_build_reads`).
 LAKE_FILES = re.compile(r"(?:.*\.lean|lakefile\..*|lean-toolchain|lake-manifest\.json)")
 LISTS_FILES = re.compile(r"readdir|walkdir|input_?dir")  # as `lake_reads` gives them, casefolded
+# Lean's lexer as far as `lean_code` needs it (toolchain 4.24: Lean/Parser/Basic.lean's whitespace and tokenFnAux, its
+# StrInterpolation.lean, Init/Meta/Defs.lean's isIdFirst and isIdRest). A word is taken whole because `'` continues one.
+LEAN_LETTER = ("_A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u017f\u0391-\u039f\u03a1\u03a2\u03a4-\u03a9\u03b1-\u03ba\u03bc-\u03c9"
+               "\u03ca-\u03fb\u1f00-\u1ffe\u2100-\u214f\U0001d49c-\U0001d59f")
+LEAN_REST = LEAN_LETTER + "0-9'!?\u2080-\u2089\u2090-\u209c\u1d62-\u1d6a\u2c7c"
+LEAN_TOKEN = re.compile(
+    r'(?P<raw>r#*")'
+    rf"|(?P<word>[{LEAN_LETTER}][{LEAN_REST}]*)"
+    r"|(?P<number>0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?)"
+    r"|(?P<comment>--|/-[-!]?)"
+    r"""|(?P<mark>["'«{}])""")
+LEAN_NESTING = re.compile(r"-/|/-")
+LEAN_CHAR = re.compile(r"""'(?:\\(?:[\\"'rnt]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})|[^\\'])'""", re.DOTALL)
+LEAN_STRING_TAIL = re.compile(r'[^"\\]*(?:\\.[^"\\]*)*"', re.DOTALL)
+LEAN_ESCAPE = re.compile(r"\\.", re.DOTALL)
+LEAN_HOLE = re.compile(r"\{(?:(?!--|/-)[^{}'«])*\}")  # with no comment or nested text, either reading of it is the same
+LEAN_STOP = re.compile(r'["\\{]')
+LEAN_INTERPOLATES = ("s!", "f!", "m!")
 
 
 def sha(*parts: str) -> str:
@@ -1555,27 +1574,121 @@ def reach(reads: Reads, found: list[Mutant]) -> set[str]:
     return {x for f in {m.file for m in found} for x in {f, *reads.imported(f)}}
 
 
+class LeanUnsure(Exception):
+    """`lean_code` cannot tell what the text from here on is."""
+
+
+def lean_interpolated(text: str, i: int, blanks: list[tuple[int, int]]) -> int:
+    """Past the string with holes (`s!"a {f "--"} b"`) whose opening quote ends at `i`."""
+    while stop := LEAN_STOP.search(text, i):
+        i = stop.end()
+        if stop[0] == '"':
+            return i
+        i = i + 1 if stop[0] == "\\" else lean_scan(text, i, blanks, inner=True)
+    raise LeanUnsure
+
+
+def lean_plain(text: str, i: int) -> int:
+    """Past the string whose opening quote ends at `i` and that no `s!` introduces. Other syntax may read one with holes
+    (`throwError "{x}"`) or not (`"{"`), which the text does not say, so a `{` both readings do not close alike is unsure."""
+    tail = LEAN_STRING_TAIL.match(text, i)
+    if not tail or "{" in LEAN_HOLE.sub("", LEAN_ESCAPE.sub("", text[i:tail.end() - 1])):
+        raise LeanUnsure
+    return tail.end()
+
+
+def lean_scan(text: str, i: int, blanks: list[tuple[int, int]], inner: bool = False) -> int:
+    """Read Lean code from `i` as Lean's lexer does, adding each comment's span to `blanks`: to the end of the text, or
+    with `inner` past the `}` that ends a string's hole. `LeanUnsure` where it cannot tell: a literal or comment with no
+    end, and a comment opener no white space precedes (`<--` is the token `<-`, then `-`; a module can declare others)."""
+    depth, word_end = 0, None
+    while token := LEAN_TOKEN.search(text, i):
+        start, i, kind = token.start(), token.end(), token.lastgroup
+        if kind == "word":
+            word_end = i if token[0] in LEAN_INTERPOLATES and text[start - 1:start] != "." else word_end
+        elif kind == "raw":
+            close = text.find('"' + "#" * (i - start - 2), i)
+            if close < 0:
+                raise LeanUnsure
+            i = close + i - start - 1
+        elif kind == "comment":
+            if start and text[start - 1] not in " \n\t\r":
+                raise LeanUnsure
+            if token[0] == "--":
+                i = close + 1 if (close := text.find("\n", i)) >= 0 else len(text)
+            else:
+                nesting = 1
+                for mark in LEAN_NESTING.finditer(text, i):
+                    nesting += 1 if mark[0] == "/-" else -1
+                    if not nesting:
+                        i = mark.end()
+                        break
+                else:
+                    raise LeanUnsure
+            blanks.append((start, i))
+        elif kind == "mark" and token[0] == '"':
+            holes = word_end is not None and not text[word_end:start].strip(" \n")
+            i = lean_interpolated(text, i, blanks) if holes else lean_plain(text, i)
+        elif kind == "mark" and token[0] == "'":
+            char = LEAN_CHAR.match(text, start)
+            if not char or text[start - 1:start].isalnum():
+                raise LeanUnsure
+            i = char.end()
+        elif kind == "mark" and token[0] == "«":
+            if (close := text.find("»", i)) < 0:
+                raise LeanUnsure
+            i = close + 1
+        elif kind == "mark" and token[0] == "}" and inner and not depth:
+            return i
+        elif kind == "mark":
+            depth += 1 if token[0] == "{" else -1
+    if inner:
+        raise LeanUnsure
+    return len(text)
+
+
+def lean_code(text: str) -> str:
+    """`text`, a Lean source, with its comments blanked (line, block and doc comments, nested) and every other position
+    as it was. Failing towards a full run is the rule: from where it cannot tell (`lean_scan`), the text stays whole."""
+    blanks: list[tuple[int, int]] = []
+    try:
+        lean_scan(text, 0, blanks)
+    except (LeanUnsure, RecursionError):
+        pass
+    parts, at = [], 0
+    for start, end in blanks:
+        parts += [text[at:start], re.sub(r"[^\n]", " ", text[start:end])]
+        at = end
+    return "".join([*parts, text[at:]])
+
+
+def lake_text(path: Path) -> str:
+    """A file `lake_reads` searches: a Lean source without its comments (a comment is no read), any other file whole."""
+    text = path.read_bytes().decode(errors="replace")
+    return lean_code(text) if path.suffix == ".lean" else text
+
+
 def lake_reads(root: Path, outside: list[Path]) -> str:
-    """Casefolded (a Mac's file system ignores case), the text of every file under lean/ that Lake reads
+    """Casefolded (a Mac's file system ignores case), the text (`lake_text`) of every file under lean/ that Lake reads
     (`LAKE_FILES`), each symlink's target among them, and of the outside --test files: what `no_build_reads` searches.
     `inputs` walks the same tree."""
     out = []
     for top, dirs, names in os.walk(root / "lean"):
         dirs[:] = [d for d in dirs if d not in (".lake", ".cache", "__pycache__")]
         out += [os.readlink(Path(top, n)) for n in [*names, *dirs] if Path(top, n).is_symlink()]
-        out += [Path(top, n).read_bytes().decode(errors="replace") for n in names if LAKE_FILES.fullmatch(n)]
-    return "\n".join([*out, *(t.read_text() for t in outside)]).casefold()
+        out += [lake_text(Path(top, n)) for n in names if LAKE_FILES.fullmatch(n)]
+    return "\n".join([*out, *(lake_text(t) for t in outside)]).casefold()
 
 
 def unread_by_build(name: str, lake: str | None) -> bool:
-    """A plan input is absent from every Lake/Lean source and outside test that can read it."""
+    """A plan input is absent, outside comments, from every Lake/Lean source and outside test that can read it."""
     return lake is not None and not (LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)
 
 
 def no_build_reads(name: str, lake: str | None) -> bool:
     """Whether `name` (root-relative) is lean/checkers.lock or a .md under lean/ that no Lean build or check can read:
-    `lake` (`lake_reads`) names it nowhere, by its bare file name, and lists no directory (a name a module computes
-    from pieces is not looked for: reviewers run without --rescore). Any other file is not.
+    `lake` (`lake_reads`) names it nowhere outside a comment, by its bare file name, and lists no directory (a name a
+    module computes from pieces is not looked for: reviewers run without --rescore). Any other file is not.
     `Scratch` restores a shared build by tools/lean_share.py's key, which leaves the lock out ("which no build reads")."""
     named = name == lean_share.LOCK_PINS or name.startswith("lean/") and name.endswith(".md")
     return named and unread_by_build(name, lake)
