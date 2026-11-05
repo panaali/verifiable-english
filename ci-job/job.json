@@ -1,0 +1,12 @@
+{
+ "job": "testmap-14e200f2-t843764-s0",
+ "head": "da3f11b6830817bc413b219b5f6d96a898c34367",
+ "argv": [
+  "testmap-14e200f2-t843764-s0",
+  "da3f11b6830817bc413b219b5f6d96a898c34367",
+  "da3f11b6830817bc413b219b5f6d96a898c34367",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-61085fc35739.tar.zst",
+  "63ebc3ac7ee996f4d0ae2d36bfbae4643f8696477479bda7ca9e0432f158cb7d",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_select_tests.py tests/test_lake_outputs.py tests/test_readings_defaults_rd6b_report.py tests/test_lean_first_b12_report.py tests/test_senses_lean.py tests/test_numbers_phrases.py tests/test_premise_packs_stub.py tests/test_lean_default_build.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
