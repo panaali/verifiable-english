@@ -14,6 +14,7 @@ import pytest
 
 from tests import lean_routes
 from tests.test_acts_joined_route import NORM_PROFILES, environment
+from tests.test_discourse_answer import _nodes, _replaced
 from ve import norms as norms_module
 from ve.backends import relay
 from ve.backends.service_schema import Invalid, check_row
@@ -169,25 +170,6 @@ def test_the_route_case_relays_the_row_on_both_modes():
 # Fuzz (6.7 step 5): genuine rows mutated one fault at a time; every mutant is no answer or shows nothing new.
 RETYPED = (7, True, None, [], {}, "x", -1, 999)
 TEXTS = {"act", "text", "name"}  # Lean's texts and generated names, relayed verbatim (SR12): retyped, never rewritten
-
-
-def _nodes(value, path=()):
-    yield path, value
-    if type(value) is dict:
-        for key, child in value.items():
-            yield from _nodes(child, (*path, key))
-    elif type(value) is list:
-        for index, child in enumerate(value):
-            yield from _nodes(child, (*path, index))
-
-
-def _replaced(row, path, value):
-    out = copy.deepcopy(row)
-    parent = out
-    for step in path[:-1]:
-        parent = parent[step]
-    parent[path[-1]] = value
-    return out
 
 
 def _mutants(row):
