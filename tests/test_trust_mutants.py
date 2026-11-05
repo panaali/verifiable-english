@@ -3213,6 +3213,23 @@ def test_a_file_lake_or_lean_may_read_is_a_full_run(tmp_path, name, setup, edite
     assert isinstance(got, str) and got.startswith(f"its inputs differ (lean): {edited} is no module"), got
 
 
+@pytest.mark.parametrize(("name", "change"), [
+    ("tools/trust-classes.json", wrote("tools/trust-classes.json")),
+    ("tools/layer_policy.py", tool_moved("tools/layer_policy.py")),
+], ids=["class-table", "plan-only-tool"])
+@pytest.mark.parametrize(("source", "content"), [
+    ("outside/T.lean", 'def s := include_str "../{name}"\n'),
+    ("lean/Demo/Examples.lean", 'def s := include_str "../../{name}"\n'),
+    ("outside/T.lean", '#eval System.FilePath.readDir "."\n'),
+], ids=["outside-check", "lean-check", "directory-listing"])
+def test_a_plan_input_read_by_a_check_forces_a_full_run(tmp_path, name, change, source, content):
+    """The plan-only exemption is conditional on the input being unread by every actual check source."""
+    planned_tree(tmp_path, reader(source, content.format(name=name)))
+    got = planned_previous(tmp_path, tmp_path, change)
+    kind = "tool" if name.endswith(".py") else "lean"
+    assert got == f"its inputs differ ({kind}): {name} may be read by a Lean build or check"
+
+
 def test_what_names_a_file_elsewhere_leaves_it_unread(tmp_path):
     """The opposite direction: another file's name, a file Lake does not read and the build tree name nothing."""
     planned_tree(tmp_path, reader("lean/Demo/Examples.lean", "-- see OTHER.md\n"))
@@ -3230,6 +3247,7 @@ def test_no_file_is_unread_when_no_tree_was_read():
     assert tm.no_build_reads("lean/NOTES.md", "") and tm.no_build_reads("lean/checkers.lock", "")
     assert not tm.no_build_reads("lean/NOTES.md", None) and not tm.no_build_reads("docs/NOTES.md", "")
     assert tm.check_only(["lean/checkers.lock"], set(), set()) is not None  # no `lake` given: fails closed
+    assert all(tm.check_only([name], set(), set()) is not None for name in tm.PLAN_INPUTS)
 
 
 def test_a_file_that_cannot_be_read_is_a_full_run(tmp_path):
