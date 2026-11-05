@@ -8408,8 +8408,10 @@ import VE.WireContract.Engine
 #print axioms VE.Weighing.always_no_override
 #print axioms VE.Weighing.atLeast_edge
 #print axioms VE.Weighing.atLeast_of_above
+#print axioms VE.Weighing.atom_inj
 #print axioms VE.Weighing.atom_rel
 #print axioms VE.Weighing.atom_wf
+#print axioms VE.Weighing.bindAll_not_inj
 #print axioms VE.Weighing.bindAll_wf
 #print axioms VE.Weighing.chainEdges_append
 #print axioms VE.Weighing.chain_head_reach
@@ -8453,6 +8455,7 @@ import VE.WireContract.Engine
 #print axioms VE.Weighing.mem_weighPremises
 #print axioms VE.Weighing.nodup_length_le
 #print axioms VE.Weighing.not_outweighs
+#print axioms VE.Weighing.outweighsName_inj
 #print axioms VE.Weighing.path_ends
 #print axioms VE.Weighing.preds_declared
 #print axioms VE.Weighing.premise_facts
@@ -8461,6 +8464,9 @@ import VE.WireContract.Engine
 #print axioms VE.Weighing.qfree_target
 #print axioms VE.Weighing.rankOrder_above
 #print axioms VE.Weighing.regulatedName_arity
+#print axioms VE.Weighing.regulated_of_sorts
+#print axioms VE.Weighing.split_dunder_left
+#print axioms VE.Weighing.strength_iff
 #print axioms VE.Weighing.strength_mem
 #print axioms VE.Weighing.strictFlag_act
 #print axioms VE.Weighing.strictFlag_children
