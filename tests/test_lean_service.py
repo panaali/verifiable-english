@@ -1343,6 +1343,8 @@ _SCHEMA_SEEDS = {
     "english.grammar": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.check": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.question": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "english.command": ({"id": "c"}, {"id": "c", "status": "ok", "result": {
+        "unit": "u", "wording": "w", "legend": [], "outcome": "limit", "text": "t"}}),
     "ask": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "words": ({"id": "c"}, {"id": "c", "status": "ok",
                            "result": {"environment_id": "a" * 64, "lexicon_id": "a" * 64, "lines": ["x"]}}),
@@ -1447,7 +1449,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
         field = ("status" if mode in ("english.read", "english.grammar", "english.check", "english.question",
-                                      "ask", "words") else
+                                      "english.command", "ask", "words") else
                  "id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else

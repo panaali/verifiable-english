@@ -52,14 +52,6 @@ def large : String :=
 #guard (composed (doc (us := units (some ("{\"norm\": {\"name\": \"bad\", \"predicate\": \"review_required\", " ++
   "\"sign\": true, \"guard\": [\"unary\", \"owns\", [\"var\", 0]], \"unless\": [], \"over\": []}}"))))).startsWith "error: "
 
--- S4-16, S4-17, the soft and rights lists: in item cmp-s4 the wrapper's FOL-family check is the frozen gate, which
--- refuses them as today (their chain decoders and `dispatchAdmission`'s refusals are item cmp-s4c)
-#guard composed (doc (profiles := "\"norms@0\", \"readings@1\", \"relational-fol@0\", \"ve.discourse@1\"")) ==
-  today (doc (profiles := "\"norms@0\", \"readings@1\", \"relational-fol@0\", \"ve.discourse@1\""))
-#guard composed (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"speech-acts@0\", \"ve.discourse@1\"")) ==
-  "error: UnsupportedProfile: Unsupported profile speech-acts@0"
-#guard composed (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"soft-norms@0\", \"ve.discourse@1\"")) ==
-  today (doc (profiles := "\"norms@0\", \"relational-fol@0\", \"soft-norms@0\", \"ve.discourse@1\""))
 -- S4-16 and S4-17 at `dispatchAdmission` itself (the list `dispatch` reads, base profiles)
 #guard (match dispatchAdmission ["norms@0", "readings@1", "relational-fol@0"] .null .null with
   | .error e => e | .ok _ => "") == "UnsupportedProfile: ve.discourse@1 with readings@1"

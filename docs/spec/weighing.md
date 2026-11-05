@@ -967,25 +967,32 @@ theorem strictWitness_chain (Wd : WeighDoc) (H L : String) (c : List String)
     (hc : strictWitness Wd H L = some c) : RankChain Wd H L c ∧ ∃ e ∈ chainEdges c, e ∈ Wd.W.always
 
 /-- `Str_T` has a premise exactly for the `outweighs` decisions of strict pairs, queried at declared ranks and a
-    declared predicate. -/
+    declared predicate, when every regulated name begins with an ASCII letter (the decoder's identifier rule). -/
 theorem strength_iff (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String)
     (hL : L ∈ Wd.D.soft.ranks) (hH : H ∈ Wd.D.soft.ranks)
-    (ha : ∃ ss, Wd.D.E.predicates a = some ss) :
+    (ha : ∃ ss, Wd.D.E.predicates a = some ss)
+    (hr : ∀ r ∈ Wd.D.T.regulated, ∃ c cs, r.name.data = c :: cs ∧ c.isAlpha) :
     bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd ↔
       (a, L, H) ∈ outweighsTriples Wd.D ∧ strictPair Wd H L = true
 ```
 
 Plain words: "always" protects every pair whose chain passes through the marked step, and only those
 (`holistic_iff_no_always_chain`, `strength_iff`). `strictPair_down`/`_up` are QS-1's `atLeast_trans` through
-`outranksPlus_eq_above`. `strength_iff`'s forward direction needs `outweighsName` injective on declared ranks and a
-declared predicate: every such name starts with a letter (`validSoftName`, `Surface.identifier`) and a rank name has
-no `__` (`validSoftName`), so each `__` separator is the last two underscores of its run, and `L`, `H` and `a` are
-recovered from the name. Without `hL` and `hH` the statement is false on two accepted documents: F9 (rank `b_`,
-query `(x_permitted, b, _a)`, neither `b` nor `_a` declared) and F13 (ranks `c > c_`, query `(x_permitted, c, _c)`,
-where `c` is declared, so `hH` alone excludes it). `ha` is the declared-predicate form (weaker than "regulated", so
-the theorem is stronger), and with it the proof rests on injectivity alone: F10's alias (query `(_x_permitted, l, c)`)
-names an undeclared act, its formula is `¬⊥`, and the unrestricted statement survives it. All three are rows of 7.3,
-never admission refusals: the three documents are accepted.
+`outranksPlus_eq_above`. `hr` is the decoder's identifier rule: a decoded document declares no name that does not begin
+with a letter ("Invalid ASCII identifier", `Surface.identifier`), so every wire document meets it and the hypothesis
+excludes only documents built directly (wg-2-siff, DRI 2026-11-04 wg-2-strength item 2). `strength_iff`'s forward
+direction needs `outweighsName` injective on declared ranks and regulated acts: a rank name starts with a letter and
+has no `__` (`validSoftName`), a regulated act starts with a letter (`hr`; the premise's act and the query's are both
+regulated, since their sorts are those of a regulated act), so each `__` separator is the last two underscores of its
+run (the name after it begins with a letter), and `L`, `H` and `a` are recovered from the name (`outweighsName_inj`).
+Without `hr` the statement is false on a directly built document with a regulated name starting with `_` (F19, 7.3),
+and `hr` on the queried `a` alone is not enough (F19's mirror). Without `hL` and `hH` the statement is false on two
+accepted documents: F9 (rank `b_`, query `(x_permitted, b, _a)`, neither `b` nor `_a` declared) and F13 (ranks `c >
+c_`, query `(x_permitted, c, _c)`, where `c` is declared, so `hH` alone excludes it). `ha` is the declared-predicate
+form (weaker than "regulated", so the theorem is stronger), and with it the proof rests on injectivity alone: F10's
+alias (query `(_x_permitted, l, c)`) names an undeclared act, its formula is `¬⊥`, and the unrestricted statement
+survives it. All three are rows of 7.3, never admission refusals: the three documents are accepted. F19's documents are
+not decoded: the decoder refuses them.
 
 ### 5.2 What `always` means
 
@@ -1496,7 +1503,7 @@ subset of the base atoms and every `excepted` assignment, `freeWitness` satisfie
 | Claim | Holds (one direction) | Fails (the other) |
 |---|---|---|
 | D4 / `holistic_iff_no_always_chain` / `strictWitness_isSome` | W-β: 3 strict pairs, each with a witness chain | W-β: 13 pairs, no chain with an `always` edge (e.g. `e,g,h`), witness `none` |
-| `strength_iff` | W-β1 `(s,h)`: premise present | W-β2 `(e,h)`: absent; W-γ: no triple, absent. Two accepted documents falsify draft 1's unrestricted statement (regressions, never refusals): W-α with the lower rank `b_`, query `(x_permitted, b, _a)` builds the name of the real triple `(x_permitted, b_, a)`: membership true, right side false; neither `b` nor `_a` declared (F9); W-α with ranks `c > c_` (`always [[c, c_]]`), query `(x_permitted, c, _c)` builds the name of the real triple `(x_permitted, c_, c)`: membership true, right side false; `c` declared, `_c` not, so `hH` alone excludes it (F13). A third accepted document is a name collision the unrestricted statement survives: ranks `c`, `c_`, `l` with triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)` builds the same name, but `_x_permitted` is undeclared, its formula is `¬⊥`, and both sides are false; `ha` alone excludes it (F10). All three computed by the stub's `#eval` |
+| `strength_iff` | W-β1 `(s,h)`: premise present | W-β2 `(e,h)`: absent; W-γ: no triple, absent. Two accepted documents falsify draft 1's unrestricted statement (regressions, never refusals): W-α with the lower rank `b_`, query `(x_permitted, b, _a)` builds the name of the real triple `(x_permitted, b_, a)`: membership true, right side false; neither `b` nor `_a` declared (F9); W-α with ranks `c > c_` (`always [[c, c_]]`), query `(x_permitted, c, _c)` builds the name of the real triple `(x_permitted, c_, c)`: membership true, right side false; `c` declared, `_c` not, so `hH` alone excludes it (F13). A third accepted document is a name collision the unrestricted statement survives: ranks `c`, `c_`, `l` with triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)` builds the same name, but `_x_permitted` is undeclared, its formula is `¬⊥`, and both sides are false; `ha` alone excludes it (F10). All three computed by the stub's `#eval`. F19 (wg-2-siff; named F14 in reviews/dri-decisions-20261104-wg-2-strength.md item 2; renumbered by reviews/dri-decisions-20261105-wg-2-siff.md item 1): two documents built directly, never decoded (the decoder refuses a `_`-initial name, "Invalid ASCII identifier"), falsify the statement without `hr`: `cxW` (ranks `c`, `c_`, `l`, triple `(x_permitted, l, c_)`, a regulated `_x_permitted` added), query `(_x_permitted, l, c)`: every other hypothesis holds, membership true, right side false; and its mirror `mxW` (the act renamed `_x_permitted`, a regulated `x_permitted` added, triple `(_x_permitted, l, c)`), query `(x_permitted, l, c_)`: the queried name begins with a letter, membership true, right side false, so `hr` is needed for every regulated name, not the queried one alone. W-β1/W-β2/W-γ, F9/F10/F13, and both F19 documents have `#guard` regressions in `lean/VE/Weighing/Examples.lean`; F10 checks the undeclared act and the false/false result, so it does not establish that `ha` is needed |
 | `all_always_is_strict` (↔) | W-β1: assignments with both sides yes | W-β1: assignments with both sides no; W-β2 shows `hall` is needed |
 | `wellFormedWeigh_empty` (=) | W-η: 8 documents, `true = true` | soft (α) with duplicate rules: `false = false` |
 | `factors_inert` (=) | W-δ with a factor entry: premises unchanged | control: W-δ against W-ε (a condition's kind changed): premises differ |
@@ -1709,3 +1716,4 @@ None of them moves a fixture's object, premises or refusal text; OPEN-3 may resp
 | 2026-10-28 | Draft 5 | The refresh against `main` `6d0a10526`, with weighing-PLAN.md draft 6 (debate `refresh-weighing-20261028`, DRI ruling item 1). Changed statements: `weighPack` (`consts`), `weighingRow` (`norm-defaults@0`, `refusing`, `layer`), `stripWeighing` (Risk's `dropField`, the generalised profile filter; `dropField` and `dropProfile` deleted), `LayeredU.core` (`packs`), `weighPack_shape` (`consts = []`), all elaborated in the untracked stub against `main`, with `weighPack_shape` proved and the AR-10 texts computed. English: Lean owns it, en-wg (NEW) reads it, two readers until E3 (2.4), new 2.5 for en-wg's statements. Fixtures: W-η's refusal texts and one new refusal; 7.6's source/object seeded bugs and disjointness fixtures. 3.2 steps 2, 4, 5 and 7; F6, 7.4 and 7.5 current status. |
 | 2026-11-02 | Draft 6 | WG-1's re-elaboration against `main` `9ba2140e2`: every statement elaborated, every value not needing WG-3's route computed, no value changed except W-ι's identities. Changed statements: `weighPack` (`conditions`), `weighPack_shape`, `weighingRow` (slot `pack`, `interface`), `targetCheck` (`splitRefusal` with a role). New: `Target.key`, `weighConditions`, 2.5's `WeighStatement`, `WeighFrame`, `grantCandidates`, `readFrame`, its refusals, `generallyRow`, the six `readFrame` statements. 2.4's W-ξ claim, 7.6's lists, 3.1's guard decoder, section 10. Findings F14 to F18. |
 | 2026-11-02 | Draft 6, wg-rev | wg-rev, DRI 2026-11-02 fp-weighing item 1, with weighing-PLAN.md's wg-rev revision (plan 2.8). 7.5: C-2 is GAP-W1, not a reading set (WG-R1); new C-8 and C-9 (WG-R2). 1.6, 2.1 and 2.5: notes for W-R2 and W-R3; 2.4: C-2's pair read one sentence at a time. 10: OPEN-1 to OPEN-11 RULED (`reviews/dri-decisions-20261102-wg-1.md` items 2 to 4, recorded under its item 5). No statement, wire field, diagnostic or synthetic fixture value changed. |
+| 2026-11-05 | Draft 6, wg-2-siff | wg-2-siff, DRI 2026-11-04 wg-2-strength item 2. Changed statement: `strength_iff` gets `hr` (every regulated name begins with an ASCII letter, the decoder's identifier rule), the form item 2 allows when the narrower one (the queried `a` alone) does not prove; F19's mirror shows it does not (reviews/dri-decisions-20261105-wg-2-siff.md item 2). 5.1: the statement and its proof note; 7.3: falsifying row F19 (`cxW` and its mirror `mxW`, documents the decoder refuses). No wire field, diagnostic text or fixture value changes |

@@ -5,6 +5,7 @@
 - `lean/ResponseShape/Schemas/Cardinality.lean` — The source of `ve/backends/lean_service_schema/cardinality.json` (`file`; `tools/response_schemas.py` writes it): the `cardinality` mode's row (`VE.Cardinality…
 - `lean/ResponseShape/Schemas/Check.lean` — The source of `ve/backends/lean_service_schema/check.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/CheckCertificate.lean` — The source of `ve/backends/lean_service_schema/check-certificate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Command.lean` — The source of `ve/backends/lean_service_schema/english.command.json` (`file`; `tools/response_schemas.py` writes it): the `english.command` mode's row (`VE.Com…
 - `lean/ResponseShape/Schemas/Common.lean` — `common.json`: the value domains every mode shares.
 - `lean/ResponseShape/Schemas/Diagnose.lean` — The source of `ve/backends/lean_service_schema/diagnose.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Discourse.lean` — The source of `ve/backends/lean_service_schema/discourse.json` (`file`; `tools/response_schemas.py` writes it).

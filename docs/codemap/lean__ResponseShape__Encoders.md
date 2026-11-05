@@ -2,6 +2,7 @@
 - `lean/ResponseShape/Encoders/Ask.lean` — The `ask` mode (`VE.Ask.Run.caseReported`) against `ask.json#/row`: every field of an answered question and of a refused one, typed.
 - `lean/ResponseShape/Encoders/Calc.lean` — The `calc` mode (`VE.Calc.Run.runCaseReported`) against `calc.json#/row` (math-evidence spec 3.4).
 - `lean/ResponseShape/Encoders/Cardinality.lean` — The `cardinality` mode (`VE.Cardinality.Run.runCaseReported`) against `cardinality.json#/row` (docs/spec/quantities.md 4.3).
+- `lean/ResponseShape/Encoders/Command.lean` — The `english.command` mode (`VE.Commands.Run.caseReported`) against `english.command.json#/row`.
 - `lean/ResponseShape/Encoders/Common.lean` — Encoders several modes share: the claims and reports of an admission (`Route.Run.claimJson`, `Norms.Run.reportJson`).
 - `lean/ResponseShape/Encoders/Conformance.lean` — The `ve_conformance` modes: `evaluate` (`Order.runEvaluationCaseReported`), `check-certificate` (the service's metered `CertificateWire.runCaseReportedSteps`) …
 - `lean/ResponseShape/Encoders/Discourse.lean` — The `discourse` mode (`Discourse.Run.runCaseReported`) against `discourse.json#/row`.
