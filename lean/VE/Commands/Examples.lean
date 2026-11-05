@@ -323,12 +323,13 @@ def readingSet (n : Nat) : Json :=
 def actsProfiles : List String := ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]
 
 /-- A one-addressee environment with the given acts, with `acts@0` and these fixed phrases, or without either. -/
-def actsEnv (preds : List (String × Json)) (fixed : Option (List String)) : Json :=
+def actsEnv (preds : List (String × Json)) (fixed : Option (List String)) (frames : List Json := []) : Json :=
   let j := envOf ["user", "text"] preds [("reader", "user"), ("the_word", "text")] "webapp-copy"
     (some ("user", "reader")) [("the new word", "the_word")]
   match fixed, j.getObjValD "vocabulary" with
   | some fx, .obj kvs => (j.setObjVal! "profiles" (Lean.toJson actsProfiles)).setObjVal! "vocabulary"
-      (Json.obj (kvs.insert "acts" (Json.mkObj [("fixed", Lean.toJson fx)])))
+      (Json.obj (kvs.insert "acts" (Json.mkObj ([("fixed", Lean.toJson fx)] ++
+        (if frames.isEmpty then [] else [("frames", Lean.toJson frames)])))))
   | _, _ => j
 
 def fixedPhrases : List String :=
@@ -393,6 +394,16 @@ def chooseFor : List (String × Json) :=
   "InvalidInput: act phrase for choose_kinds_required joins acts with 'for' outside a fixed phrase"
 #guard decodeErr (actsEnv chooseFor (some ["declared kinds of things for"])) ==
   "InvalidInput: fixed phrase 'declared kinds of things for' must begin and end with a word other than and, or, nor and for"
+-- DRI 2026-11-05 item 1(b): declaring a frame for `choose` with the marker `for` does not admit it: the speech decoder
+-- reads no frame into its act check (`joined` stays off).
+def chooseFrame : Json := Json.mkObj [("head", .str "choose"), ("markers", Lean.toJson ["for"]),
+  ("split", Lean.toJson ([] : List String)), ("modifiers", Lean.toJson ([] : List String))]
+#guard decodeErr (actsEnv chooseFor (some []) [chooseFrame]) ==
+  "InvalidInput: act phrase for choose_kinds_required joins acts with 'for' outside a fixed phrase"
+-- Its opposite: the block with that frame is itself well formed; a frame on a simple act decodes.
+#guard decodeErr (actsEnv choices (some fixedPhrases) [chooseFrame]) == "ok"
+-- DRI 2026-11-05 item 1(c): the fixed phrase does not generalise over its object.
+#guard read E_acts "Choose declared kinds of things for the old word." == .ofText Texts.noReading
 -- A comma outside a fixed phrase, in the speech route's decoder.
 #guard decodeErr (actsEnv [obligation "click_required" ["user"] "{0} click A, B"] (some [])) ==
   "InvalidInput: act phrase for click_required has a comma outside a fixed phrase"
@@ -430,9 +441,10 @@ def chooseFor : List (String × Json) :=
       | _, _ => false)
   | .error _ => false
 
-/-! `checkActsBlock`: on a tree no parser builds, `vocabulary` looked up hides the one the stripped environment rebuilds,
-so the act would read under fixed phrases the environment does not name (`joinFree [] _` is false). A parser's tree has
-one value per key: the guard never fires on it (`E_acts` above decodes). -/
+/-! `checkActsBlock`: on a tree with `vocabulary` twice, the lookup hides the value the stripped environment rebuilds, so
+the act would read under fixed phrases the environment does not name (`joinFree [] _` is false). What is shown of parsed
+trees: `E_acts`, printed and read back through `Lean.Json.parse`, decodes with no refusal (below); no theorem states it
+of every parsed tree. -/
 
 /-- `E_acts` with a second `vocabulary` to the right of the first: a lookup reads `first`, the rebuilt object `second`. -/
 def twoVocabularies (first second : Json) : Json :=
@@ -448,5 +460,6 @@ def noPhrases : Json := vocabulary (actsEnv choices (some []))
 
 #guard decodeErr (twoVocabularies noPhrases (vocabulary E_acts)) == "InvalidInput: environment acts block"
 #guard decodeErr (twoVocabularies (vocabulary E_acts) (vocabulary E_acts)) == "ok"
+#guard (Lean.Json.parse E_acts.compress).toOption.map decodeErr == some "ok"
 
 end VE.Commands.Examples
