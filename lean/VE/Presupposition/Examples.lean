@@ -1,4 +1,5 @@
 import VE.Presupposition.Rows
+import VE.Presupposition.Rules
 import VE.Discourse.Descriptions
 import VE.Finite
 
@@ -7,7 +8,7 @@ import VE.Finite
 Rows "4.1" (builders), "4.2" (`locate`, `cls`), S2, S3, S4, S5, S9 and S21 (frame and goal
 values in each listed model), the shallow-frame class facts used by S12 and S25-S27, and the
 readings and rows of 4.3 and 4.4: S1 and its definedness row, S12, S13, S16, S20, S23, S24, S25,
-and S26's whole-unit values. Each `pre` and `strong` is built by `definite`, `plural` or
+and S26's whole-unit values; the rules of 4.5: S14 and S22's formula-level rows. Each `pre` and `strong` is built by `definite`, `plural` or
 `generic`; a guard beside each pins it to the literal formula (`definite 0`'s are discourse's
 `uniqueD` and `assertive`, `plural`'s are `∃x:σ D` and `∃x:σ D ∧ ∀x:σ (D → P)`). -/
 namespace VE.Presupposition.Examples
@@ -315,5 +316,96 @@ def evAt (M : VE.FiniteModel String) (ρ : List String) (a : VE.Formula) : Bool 
   evAt M ρ theOp.strong == (evAt M ρ theOp.pre && evAt M ρ theOp.weak)))
 #guard [["s1"], ["s2"]].map (fun ρ => (evAt m24two ρ theOp.pre, evAt m24two ρ theOp.strong)) ==
   [(false, false), (true, false)]
+
+-- S14: a rule on `answer_required(agent, situation)`. `tupleVal` reads an (agent, situation) pair as `[situation, agent]`.
+def reg14 : VE.Norms.Regulated :=
+  { name := "answer_required", sorts := ["agent", "situation"], allowByDefault := false, role := .plain,
+    act := none, permission := none }
+def rule14 (name : String) (sign : Bool) (guard : VE.Formula) (carveOuts : List VE.Formula := [])
+    (over : List String := []) : VE.Norms.Node :=
+  { name := name, pred := "answer_required", sign := sign, guard := guard, carveOuts := carveOuts, over := over }
+def tree14 (nodes : List VE.Norms.Node) : VE.Norms.Tree := { regulated := [reg14], definitions := [], nodes := nodes }
+def pre14 : VE.Formula :=
+  .ex "request" (.and (.binary "request_in" (.var 0) (.var 1)) (.binary "addressed_to" (.var 0) (.var 2)))
+def noAddressee14 : VE.Formula := .ex "request" (.binary "request_in" (.var 0) (.var 1))
+def onDuty : VE.Formula := .unary "on_duty" (.var 1)
+def r14a : VE.Norms.Node := rule14 "r1" true pre14
+def r14b : VE.Norms.Node := rule14 "r1" true noAddressee14
+def r14other : VE.Norms.Node := rule14 "r2" true onDuty
+def m14 : VE.FiniteModel String :=
+  model [("agent", ["ag1", "ag2"]), ("situation", ["s1"]), ("request", ["q"])]
+    [("request_in", [["q", "s1"]]), ("addressed_to", [["q", "ag1"]]), ("on_duty", [["ag2"]])] []
+def at1 : List String := VE.Norms.tupleVal ["ag1", "s1"]
+def at2 : List String := VE.Norms.tupleVal ["ag2", "s1"]
+def dec14 (T : VE.Norms.Tree) (ρ : List String) : Bool := evAt m14 ρ (VE.Norms.decides T "answer_required" true)
+def app14 (N : VE.Norms.Node) (ρ : List String) : Bool := evAt m14 ρ (VE.Norms.applies N)
+#guard at1 == ["s1", "ag1"]
+-- S14a (guard = `pre`): the goal holds, and the conditioned rule decides where the original does.
+#guard ev m14 (ruleGoal reg14 r14a pre14) == true
+#guard (dec14 (tree14 [r14a]) at1, dec14 (conditionRule (tree14 [r14a]) "r1" pre14) at1) == (true, true)
+#guard (dec14 (tree14 [r14a]) at2, dec14 (conditionRule (tree14 [r14a]) "r1" pre14) at2) == (false, false)
+-- S14b (guard without the addressee): the goal fails (M3 makes it true), and `rule_collapse_decides`' hypothesis is needed.
+#guard ev m14 (ruleGoal reg14 r14b pre14) == false
+#guard (dec14 (tree14 [r14b]) at1, dec14 (conditionRule (tree14 [r14b]) "r1" pre14) at1) == (true, true)
+#guard (app14 r14b at2, evAt m14 at2 pre14) == (true, false)
+#guard (dec14 (tree14 [r14b]) at2, dec14 (conditionRule (tree14 [r14b]) "r1" pre14) at2) == (true, false)
+-- `condition_applies`, both directions; the last rows need the node's own guard and carve-outs.
+#guard (app14 r14b at1, evAt m14 at1 pre14, app14 (conditionNode r14b pre14) at1) == (true, true, true)
+#guard (app14 r14b at2, evAt m14 at2 pre14, app14 (conditionNode r14b pre14) at2) == (true, false, false)
+#guard (app14 r14other at1, evAt m14 at1 pre14, app14 (conditionNode r14other pre14) at1) == (false, true, false)
+#guard app14 (conditionNode (rule14 "r3" true .top [onDuty]) .top) at2 == false
+#guard app14 (conditionNode (rule14 "r3" true .top [onDuty]) .top) at1 == true
+-- The other rule: conditioning `r1` leaves `r2` deciding, conditioning `r2` does not; an unnamed rule keeps its node.
+#guard dec14 (conditionRule (tree14 [r14a, r14other]) "r1" pre14) at2 == true
+#guard dec14 (conditionRule (tree14 [r14a, r14other]) "r2" pre14) at2 == false
+#guard dec14 (conditionRule (tree14 [r14a, r14other]) "absent" pre14) at2 == true
+-- `conditionRule_shape`: only the named rule's guard moves.
+#guard (conditionRule (tree14 [r14a, r14other]) "r1" pre14).nodes == [conditionNode r14a pre14, r14other]
+#guard (conditionRule (tree14 [r14a, r14other]) "r1" pre14).regulated == [reg14]
+#guard (conditionNode r14a pre14).guard == .and pre14 pre14
+-- Exceptions read the conditioned tree: `r4` (over `r1`) blocks `r1` while it applies, and not once its condition fails.
+def t14ex : VE.Norms.Tree := tree14 [rule14 "r1" true .top, rule14 "r4" false .top [] ["r1"]]
+#guard dec14 t14ex at1 == false
+#guard dec14 (conditionRule t14ex "r4" .bottom) at1 == true
+-- `conditioned_contributes_nothing`: false where the condition is, and the node still selects where it holds.
+#guard evAt m14 at2 (VE.Norms.selects (tree14 [r14b]) 1 (conditionNode r14b pre14)) == false
+#guard evAt m14 at1 (VE.Norms.selects (tree14 [r14b]) 1 (conditionNode r14b pre14)) == true
+-- The goal binds the regulated sorts, whatever the node's `over`.
+#guard ruleGoal reg14 (rule14 "r1" true pre14 [] ["r9"]) pre14 ==
+  .all "agent" (.all "situation" (.implies (VE.Norms.applies (rule14 "r1" true pre14 [] ["r9"])) pre14))
+
+-- S22's formula-level rows: `p(situation)` is `unspecified` (`allowByDefault` is the placeholder deny); two rules on `p`
+-- with guard `g`, one goal. `SatUnder` and `SameModels` over these picks are PS-2a's.
+def reg22 : VE.Norms.Regulated :=
+  { name := "p", sorts := ["situation"], allowByDefault := false, role := .plain, act := none, permission := none }
+def rule22 (name : String) : VE.Norms.Node :=
+  { name := name, pred := "p", sign := true, guard := .unary "g" (.var 0), carveOuts := [], over := [] }
+def t22 : VE.Norms.Tree := { regulated := [reg22], definitions := [], nodes := [rule22 "r1", rule22 "r2"] }
+def pre22 : VE.Formula := .ex "entity" (.unary "instruction" (.var 0))
+def mixed22 : VE.Norms.Tree := conditionRule t22 "r2" pre22
+def m22 (ps : List (List String)) : VE.FiniteModel String :=
+  model [("situation", ["s1", "s2"]), ("entity", ["i1"])]
+    [("g", [["s1"]]), ("instruction", [["i1"]]), ("p", ps)] []
+def m22p : VE.FiniteModel String := m22 [["s1"], ["s2"]]
+#guard ev m22p (ruleGoal reg22 (rule22 "r1") pre22) && ev m22p (ruleGoal reg22 (rule22 "r2") pre22)
+-- Off the goal the rules still make the goal fail: no instruction, and `g(s1)`.
+#guard ev (model [("situation", ["s1", "s2"]), ("entity", ["i1"])] [("g", [["s1"]])] [])
+  (ruleGoal reg22 (rule22 "r1") pre22) == false
+-- The mixed pick and its representative decide alike: at `s1`, not at `s2`.
+#guard [t22, mixed22].map (fun T => (evAt m22p ["s1"] (VE.Norms.pos T "p"), evAt m22p ["s2"] (VE.Norms.pos T "p"))) ==
+  [(true, false), (true, false)]
+#guard [t22, mixed22].all (fun T => [["s1"], ["s2"]].all (fun ρ => !evAt m22p ρ (VE.Norms.neg T "p")))
+-- The raw W1 side: the placeholder deny makes `p(s2)` fail in both picks, and only `p(s2)` (the same model without it passes).
+#guard [t22, mixed22].map (fun T => (VE.Norms.elaborate T).all (ev m22p)) == [false, false]
+#guard [t22, mixed22].map (fun T => [["s1"], ["s2"]].map (fun ρ => evAt m22p ρ (VE.Norms.elabBody T reg22))) ==
+  [[true, false], [true, false]]
+#guard [t22, mixed22].map (fun T => (VE.Norms.elaborate T).all (ev (m22 [["s1"]]))) == [true, true]
+-- `unsaid_iff` on the `unspecified` cell: `s2` (no rule decides) is `unsaid`, `s1` (a rule decides) is not.
+example : VE.NormDefaults.value3 (evAt m22p ["s2"] (VE.Norms.pos mixed22 "p") = true)
+    (evAt m22p ["s2"] (VE.Norms.neg mixed22 "p") = true) .unspecified = .unsaid :=
+  (unsaid_iff _ _).mpr ⟨by decide, by decide⟩
+example : VE.NormDefaults.value3 (evAt m22p ["s1"] (VE.Norms.pos mixed22 "p") = true)
+    (evAt m22p ["s1"] (VE.Norms.neg mixed22 "p") = true) .unspecified ≠ .unsaid :=
+  fun h => ((unsaid_iff _ _).mp h).1 (by decide)
 
 end VE.Presupposition.Examples
