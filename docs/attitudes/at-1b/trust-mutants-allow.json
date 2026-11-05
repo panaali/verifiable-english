@@ -1,154 +1,32 @@
-{
- "allow": [
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "all-any",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "and-or",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "arm-false",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "arm-true",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "bool-flip",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "eq-le",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AWellFormed",
-   "operator": "eq-ne",
-   "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "all-any",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "list-drop-first",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "list-drop-last",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "list-first",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.AFormula.toFormula",
-   "operator": "list-last",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.ARule.toNode",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.toNorms",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkAtt",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.lexAgrees",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.lexCovers",
-   "operator": "all-any",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.lexPred",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.lexTerm",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.renderCheck",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "append-right",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "list-drop-last",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "list-empty",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "list-first",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "list-last",
-   "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"
-  },
-  {
-   "definition": "VE.Attitudes.checkNames",
-   "operator": "list-drop-first",
-   "reason": "Two sites: Lean refuses one (elaboration error); `n.drop 1` before the colon check is equivalent: every generated name starts with 'attitudes__', so its first character is never ':'"
-  },
-  {
-   "definition": "VE.Attitudes.checkAtt",
-   "operator": "list-first",
-   "reason": "Equivalent: `(failures).take 1` before `.head?` has the same head"
-  },
-  {
-   "definition": "VE.Attitudes.checkCond",
-   "operator": "bool-flip",
-   "reason": "The default `part := false` is copied into each caller at elaboration, so the tool's probe reads a changed checkConds and answers UNKNOWN; hand mutant checkCond-default-part-true fails Examples.lean's c_e_part and c_e_guard guards"
-  },
-  {
-   "definition": "VE.Attitudes.renderCheck",
-   "operator": "bool-flip",
-   "reason": "The default `part := false` is copied into each caller at elaboration, so the tool's probe reads a changed renderable and answers UNKNOWN; hand mutant renderCheck-default-part-true fails Examples.lean's renderable guard"
-  }
- ]
-}
+{"allow": [
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "all-any", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "and-or", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "arm-false", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "arm-true", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "bool-flip", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "eq-le", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AWellFormed", "operator": "eq-ne", "reason": "AWellFormed is a Prop no check can evaluate: this mutant breaks the proof awf_iff (lean/VE/Attitudes/Examples.lean), which ties it to the decision awf, whose #guards run both ways; hand mutants AWellFormed-* in mutants.json"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "all-any", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "list-drop-first", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "list-drop-last", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "list-first", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.AFormula.toFormula", "operator": "list-last", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.ARule.toNode", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.toNorms", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkAtt", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.lexAgrees", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.lexCovers", "operator": "all-any", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.lexPred", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.lexTerm", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.renderCheck", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "append-right", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "list-drop-last", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "list-empty", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "list-first", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "list-last", "reason": "Lean refuses the program: the replacement does not type-check in this position (the tool's verdict is UNKNOWN, an elaboration error, not a surviving behaviour)"},
+ {"definition": "VE.Attitudes.checkNames", "operator": "list-drop-first", "reason": "Two sites: Lean refuses one (elaboration error); `n.drop 1` before the colon check is equivalent: every generated name starts with 'attitudes__', so its first character is never ':'"},
+ {"definition": "VE.Attitudes.checkAtt", "operator": "list-first", "reason": "Equivalent: `(failures).take 1` before `.head?` has the same head"},
+ {"definition": "VE.Attitudes.checkCond", "operator": "bool-flip", "reason": "The default `part := false` is copied into each caller at elaboration, so the tool's probe reads a changed checkConds and answers UNKNOWN; hand mutant checkCond-default-part-true fails Examples.lean's c_e_part and c_e_guard guards"},
+ {"definition": "VE.Attitudes.renderCheck", "operator": "bool-flip", "reason": "The default `part := false` is copied into each caller at elaboration, so the tool's probe reads a changed renderable and answers UNKNOWN; hand mutant renderCheck-default-part-true fails Examples.lean's renderable guard"}
+]}
