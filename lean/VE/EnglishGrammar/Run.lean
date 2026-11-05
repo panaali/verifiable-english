@@ -262,7 +262,7 @@ def validateDeclarations (environment : Json) (generated : Bool := false) : Exce
     let _ ← VE.Alternatives.Wire.decodeAltSource (layerView environment) (Json.arr #[]) (Json.arr #[])
       .environment
   if ps.contains "norm-defaults@0" then
-    let _ ← VE.NormDefaults.Wire.decodeSourceU (blockRouteView environment) (Json.arr #[])
+    let _ ← VE.NormDefaults.Wire.decodeSourceLexical (blockRouteView environment) (Json.arr #[])
   else if ps.contains "soft-norms@0" then
     let _ ← VE.SoftNorms.Wire.decodeSoftSource (blockRouteView environment) (Json.arr #[])
   if ((environment.getObjVal? "units").isOk || (environment.getObjVal? "unit_schema").isOk) &&
