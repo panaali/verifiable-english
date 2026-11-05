@@ -2230,6 +2230,7 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/Readings/SupVerdictsWire.lean": "lean:runner-glue: readings-verdicts superposed request dispatch and response rows; evidence is checked by the existing pinned readings decoders and Lean folds its accepted results",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
+      "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
