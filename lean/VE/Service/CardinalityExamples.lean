@@ -83,6 +83,33 @@ def quoted : Json := toJson [toJson "attributed", toJson "x", toJson "says", toJ
   ([source "a" (idOf top), source "b" none], "b"), ([source "a" (idOf top) quoted, source "b" (idOf low)], "a"),
   ([source "a" (idOf top), source "b" (idOf low) (.str "meta")], "b")].all fun (us, n) => said (reportOf both us) == refused n
 
+/-! `graphLabelled` and `bridgeAdmitted`: W6a's provenance rule's quoted half, both sides of each condition. -/
+def labelled (label : Json) : Json :=
+  (graph "a" [("a", top)]).setObjVal! "nodes" (toJson [Json.mkObj [("name", .str "a"), ("statement", top), ("label", label)]])
+def bridge : Json := .str "bridge:accepts(x,q)"
+def atQ (kind : Json) (m : Option String := idOf top) : List SourceUnit :=
+  [{ source "q" m kind with decoded := (decodeRowKind false kind).toOption.getD (.route .asserted) }]
+#guard said (reportOf (labelled bridge) (atQ quoted)) == "ok" &&
+  ((reportOf (labelled bridge) (atQ quoted)).toOption.getD .null).getObjValD "leaf_labels" ==
+    toJson [Json.mkObj [("name", .str "a"), ("label", bridge)]] &&
+  (report.getObjValD "leaf_labels") == toJson ([] : List Json) &&
+  said (reportOf (labelled (.str "asserted")) [source "a" (idOf top)]) == "ok"
+def notAdmitted (l : String) : String := s!"AdmissionError: node a is not admitted under label {l}"
+#guard [(atQ quoted (idOf low), "bridge:accepts(x,q)"), (atQ quoted none, "bridge:accepts(x,q)"), (atQ (.str "asserted"), "bridge:accepts(x,q)"),
+  (atQ quoted, "bridge:accepts(y,q)"), (atQ quoted, "bridge:accepts(x,r)"), (atQ quoted, "bridge:accepts(x, q)"), (atQ quoted, "open:q")].all
+    fun (us, l) => said (reportOf (labelled (.str l)) us) == notAdmitted l
+#guard said (reportOf (labelled (.num 7)) (atQ quoted)) == "claim graph node label must be a string"
+-- a deduction is never a bridge, and the same leaf is
+def bridgedNode (deduction : Option (List String × Unit)) : Bool := match w with
+  | some w => match (VE.Cardinality.Wire.decodeStatement w top).toOption with
+    | some adm => bridgeAdmitted (Std.HashMap.ofList ((atQ quoted).map fun u => (u.id, u))) ⟨"a", adm, 1, deduction⟩ "bridge:accepts(x,q)"
+    | none => false
+  | none => false
+#guard bridgedNode none && !bridgedNode (some ([], ()))
+#guard (graphLabelled (Json.mkObj [("nodes", toJson (List.replicate 1001 (Json.mkObj [("label", .num 7)])))])).toOption.isNone &&
+  said (graphLabelled (Json.mkObj [("nodes", toJson (List.replicate 1001 (Json.mkObj [("label", .num 7)])))])) ==
+    VE.Cardinality.Document.nodeLimit
+
 /-! `check` and `encode`: an admitted row, with the report only when it is asked for. -/
 def unit (id : String) (c : Json) : Json := Json.mkObj [("id", .str id), ("span", toJson [0, 2]), ("kind", .str "asserted"),
   ("meaning", .str "specified"), ("support", .str "testimony"), ("content", c)]

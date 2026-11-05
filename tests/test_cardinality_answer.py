@@ -351,6 +351,24 @@ def test_every_mutant_of_a_document_row_is_refused_or_changes_nothing(part):
     assert not accepted
 
 
+def test_a_row_s_leaf_labels_are_bound_to_the_request_graph(tmp_path, monkeypatch):
+    """Past Lean: the relay's own check on `leaf_labels`, each row named by the request's graph, none empty or extra."""
+    raw = text([{"name": "only", "statement": TOP, "label": "asserted"}])
+    path = tmp_path / "part.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    monkeypatch.setattr(cardinality, "identities", _known())
+    good = {"name": "only", "label": "asserted"}
+    assert row["cardinality"]["leaf_labels"] == [good]
+    assert _lean_document(raw, path, row, admitted=True)["cardinality"]["leaf_labels"] == [good]
+    for labels in ([], [good, good], [{**good, "label": "bridge:accepts(fomc,only)"}], [{**good, "name": "absent"}], [{}],
+                   [{"name": "only"}], [{"label": "asserted"}], [good, {"name": "absent", "label": "asserted"}]):
+        mutant = copy.deepcopy(row)
+        mutant["cardinality"]["leaf_labels"] = labels
+        with pytest.raises(CheckerUnavailable):
+            _lean_document(raw, path, mutant, admitted=True)
+
+
 def test_a_document_row_answers_the_case_it_asked(part):
     """The report is there exactly when `check` asked for it, and a unit's statement is the authored one."""
     raw, path, row = part
