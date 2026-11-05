@@ -92,7 +92,9 @@ adds or changes:
 - Fix round, first run (head c1d557077, kept out of the evidence): 396 killed, 32 survivors and 11 unknown, all in
   the words generator's JSON builder (`ZoneWordsMain.main`) and `zoneJoins`, which only the Python freshness test
   read. Fixed by `zoneWordsJson` and three guards that read it back (commit 9028ce14a).
-- Fix round, final run (head 9028ce14a): TRUSTMUT_FINAL.
+- Fix round, final run: the run on the final Lean (d06883292) is moved to follow-up row df-5-tm by the DRI's
+  fix-round bound (lp0401 Q3, R9), and the committed records stay `trust-mutants.json` (head 54a4a2067) and
+  `trust-mutants-final.json` (head 66190bd0c), both from before the review fixes' Lean changes.
 - Every definition has killed mutants except the inductive `ZoneLine`: its three `ctor-drop` mutants do not elaborate,
   because `zoneLines` and `ZoneLine.json` name the dropped constructor (as df-5a's T8 for `DefaultZone`). Each
   constructor is exercised by guards: `stated` by DF-ξ′ and β2, `forced` by DF-μ and two tuples, `assumed` by DF-μ′,
