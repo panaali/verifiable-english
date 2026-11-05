@@ -108,6 +108,8 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 - **Lean, the route's files** (`Layered.lean`, `LayeredAdmission.lean`, `Run.lean`, `Compose/Dispatch.lean`,
   `Events/Chain.lean`, `Packs.lean`, the shapes): `tools/trust_mutants.py` with `--test WireExamples.lean --test
   RouteExamples.lean` (full Mac run at 28d5911b6, then an allow-only rescore at 01d9048b (385 verdicts reused, identical inputs): 454 mutants over 20 definitions, 316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0. The 84 allowed are in [trust-mutants-allow.json](trust-mutants-allow.json), one line per definition and operator: equivalent ones (a list of at most one element, a list only `isEmpty` reads, the key the next line sets again), texts Lean refuses, and mutants a broken proof or more than 100 failing guards stop. Each line names the same-operator mutants that are killed. The first runs (VM, ac7dfa4a3) left 44 survivors; each one got a fixture in `RouteExamples.lean` (the rights branch, an accepting replay, two decisions, two soft premises, two events and states, the view's profiles and constants)).
+  The run on the final Lean is moved to et-4b-tm by the DRI's fix-round bound (lp0401 Q3); the committed
+  `trust-mutants.json` is the run on 01d9048bc, before review F1's change.
 - **Lean, F1:** `f1-unblocked-certificate-refused` (`runCaseE` refuses after the replay) fails the guards at
   `RouteExamples.lean:333` and `:336`. `f1-unblocked-reads-the-raw-environment` (`replayUnblockedEntailment`
   decodes without the hook's view) breaks the proof of `unblocked_wire_acceptance`; with that proof stubbed, it fails
