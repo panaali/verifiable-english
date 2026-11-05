@@ -133,8 +133,8 @@ def chain_text(units, **front) -> bytes:
     for line in lines:
         spans.append([cursor, cursor + len(line)])
         cursor += len(line)
-    rows = [{"id": name, "span": span, "kind": "asserted", "meaning": "specified", "support": "testimony", "content": content}
-            for (name, content), span in zip(units, spans)]
+    rows = [{"id": name, "span": span, "kind": "asserted", "meaning": "specified", "support": "testimony",
+             **({} if content is None else {"content": content})} for (name, content), span in zip(units, spans)]
     return b"---\n" + json.dumps({"format": "ve-document@1", "environment": CHAIN_ENV, "units": rows, **front}).encode() + \
         b"\n---\n" + "".join(lines).encode()
 
@@ -151,6 +151,7 @@ def chained(tmp_path, units, **front):
 def test_the_chain_list_is_admitted_and_each_content_kind_read_by_its_decoder(tmp_path):
     answer = check_document(chained(tmp_path, [("one", {"cardinality": TOP})]))
     assert answer["not_certified"] == ["one"] and answer["chain"] is None
+    assert cardinality.admission(CHAIN_ENV, [], TOP)["conclusion"]["meaning_id"]
     assert "one are admitted and not certified" in answer["scope"] and answer["coverage"]["coverage_percent"] > 0
     with pytest.raises(VEError, match="Unsupported cardinality format"):
         check_document(chained(tmp_path, [("one", {"cardinality": {"format": "x"}})]))
@@ -186,13 +187,22 @@ def test_the_chain_reads_open_terms_reading_sets_and_narrowings_beside_a_countin
     term = {"name": "fair", "arguments": ["user"], "decided_by": "court", "necessary": [], "sufficient": [], "factors": [],
             "precedents": [], "jurisdiction": "here", "version": 1}
     assert check_document(chained(tmp_path, units, open_terms=[term]))["chain"]["coverage"]["residual"]["open_terms"] == 1
-    assert check_document(chained(tmp_path, units, reading_sets=[], narrowings=[]))["chain"] is not None
-    with pytest.raises(VEError, match="open term"):
+    reading = {"id": "r", "kind": "asserted", "meaning_id": "m", "content": None,
+               "admission": {"who": "w", "why": "y", "distinguishing_models": {}}}
+    held = {"id": "s", "unit": "two", "version": 1, "status": "open", "readings": [reading]}
+    narrowing = {"id": "n", "set": "s", "version": 1, "keeps": ["r"], "by": "w", "reason_spans": ["two"]}
+    open_set = [units[0], ("two", None)]
+    answer = check_document(chained(tmp_path, open_set, reading_sets=[held], narrowings=[narrowing]))["chain"]
+    assert answer["coverage"]["residual"]["unresolved_reading_sets"] == 1 and answer["reading_plan"]["choices"] == [{"s": 0}]
+    with pytest.raises(VEError, match="open-term|open term"):
         check_document(chained(tmp_path, units, open_terms=[{**term, "decided_by": ""}]))
-    with pytest.raises(VEError, match="narrowing"):
-        check_document(chained(tmp_path, units, narrowings=[{"id": 7}]))
+    with pytest.raises(VEError, match="narrowing must keep named readings"):
+        check_document(chained(tmp_path, open_set, reading_sets=[held], narrowings=[{**narrowing, "keeps": ["absent"]}]))
     with pytest.raises(VEError, match="reading"):
-        check_document(chained(tmp_path, units, reading_sets=[{"id": "s", "unit": "one", "version": 1}]))
+        check_document(chained(tmp_path, open_set, reading_sets=[{**held, "unit": "absent"}]))
+    # A reading set on a counting unit is the chain's to refuse: to it that passage has no reading.
+    with pytest.raises(VEError):
+        check_document(chained(tmp_path, open_set, reading_sets=[{**held, "unit": "one"}]))
     with pytest.raises(UnsupportedProfile, match="senses beside cardinality@0 is not composed"):
         check_document(chained(tmp_path, units, senses={}))
 
@@ -213,9 +223,10 @@ def test_the_route_cases_answer_as_recorded():
     from ve.backends.relay import rows
     cases = recorded("document")
     answers = rows("document", cases)
-    assert [case["id"] for case in cases] == ["cardinality-part", "cardinality-four-profiles"]
+    assert [case["id"] for case in cases] == ["cardinality-part", "cardinality-four-profiles", "cardinality-chain-list"]
     assert answers[0]["status"] == "ok" and answers[0]["cardinality"]["report"]["root"]["name"] == "root"
     assert answers[1]["error"] == NEEDS_GATE
+    assert answers[2]["status"] == "ok" and answers[2]["composed"]["not_certified"] == ["one"]
 
 
 @pytest.mark.parametrize("change, message", [

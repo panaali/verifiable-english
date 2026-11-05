@@ -2404,7 +2404,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let chainList := E.cardinality.any (·.profiles == VE.Cardinality.Wire.chainProfiles)
   let whole := front
   let front ← if chainList then countingFront front else pure front
-  -- Open terms, reading sets and narrowings read the first-order chain, which cardinality content is not (qt-a4b).
+  -- Open terms, reading sets and narrowings read the first-order chain, which W6a's lists have no words for (qt-a4c).
   if E.cardinality.isSome then
     if let some k := ["open_terms", "reading_sets", "narrowings"].find? (front.getObjVal? · |>.isOk) then
       throw s!"UnsupportedProfile: {k} beside cardinality@0 is not composed"
