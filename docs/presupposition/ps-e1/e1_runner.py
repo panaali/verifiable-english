@@ -68,9 +68,9 @@ def reader_command(cfg, body):
 
 
 def cli_call(cfg, item, account):
-    env = {k: v for k, v in os.environ.items()
-           if not k.endswith("API_KEY") and k not in {"ANTHROPIC_BASE_URL", "OPENAI_BASE_URL"}}
-    env["CLAUDE_CONFIG_DIR"] = account
+    env = {k: v for k, v in os.environ.items() if not k.endswith("API_KEY") and not k.startswith("CLAUDE")
+           and k not in {"ANTHROPIC_BASE_URL", "OPENAI_BASE_URL"}}
+    env |= {"CLAUDE_CONFIG_DIR": account, "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}
     with tempfile.TemporaryDirectory() as empty:
         try:
             done = subprocess.run(reader_command(cfg, e1_items.prompt(item)), capture_output=True, text=True, cwd=empty,
@@ -86,8 +86,9 @@ def cli_call(cfg, item, account):
 
 
 def pick_account():
+    """The picker's own class for short proxy answers (PICK_LIGHT): exempt from its worker cap, not from its limits."""
     picked = subprocess.run(["zsh", PICKER], capture_output=True, text=True,
-                            env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1"})
+                            env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1", "PICK_LIGHT": "1"})
     cfg = picked.stdout.strip()
     if picked.returncode or not cfg.startswith("/home/seyran/.agent-accounts/claude-"):
         raise RuntimeError(f"account picker unavailable: exit {picked.returncode}: {picked.stderr.strip()}")

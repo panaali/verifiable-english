@@ -407,9 +407,10 @@ def test_reader_command_is_the_smallest_context_and_strips_api_keys(monkeypatch)
         assert not list(Path(kw["cwd"]).iterdir())
         return type("Done", (), {"stdout": json.dumps(ok()[1]), "stderr": "", "returncode": 0})
     monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
+    monkeypatch.setenv("CLAUDE_EFFORT", "low")
     monkeypatch.setattr(e1_runner.subprocess, "run", fake_run)
     assert e1_runner.cli_call(CFG, ITEMS[0], "/acct/claude-x")[0] == 0
-    assert "ANTHROPIC_API_KEY" not in seen["env"] and seen["env"]["CLAUDE_CONFIG_DIR"] == "/acct/claude-x"
+    assert "ANTHROPIC_API_KEY" not in seen["env"] and "CLAUDE_EFFORT" not in seen["env"] and seen["env"]["CLAUDE_CONFIG_DIR"] == "/acct/claude-x"
 
 
 def test_saved_table_and_results_are_the_generators_output():
