@@ -359,12 +359,12 @@ theorem stripSpeech_profiles {j s : Json} {ps : List String} (hp : profilesField
         .ok (toJson (ps.filter (· != speechProfile))) := getObjVal_insert _ _ _
     simp [VE.Route.Gate.profilesOf, hg, strings_toJson, bind, Except.bind]
 
-private theorem map_some_ok {x : Except String String} {a : String} (h : (some <$> x) = .ok (some a)) : x = .ok a := by
+theorem map_some_ok {x : Except String String} {a : String} (h : (some <$> x) = .ok (some a)) : x = .ok a := by
   cases x with
   | error e => cases h
   | ok y => cases h; rfl
 
-private theorem pure_none_ne {a : String} (h : (pure none : Except String (Option String)) = .ok (some a)) : False := by
+theorem pure_none_ne {a : String} (h : (pure none : Except String (Option String)) = .ok (some a)) : False := by
   cases h
 
 /-- A decoded declaration keeps its name, and its act is what the act check accepted. -/
@@ -394,7 +394,7 @@ theorem decodeRegulatedIn_act {ps fx : List String} {p : String} {args : List St
   exact e ▸ hk
 
 /-- A value `filterMapM` kept is one the function gave. -/
-private theorem filterMapM_mem {α β ε : Type} {f : α → Except ε (Option β)} :
+theorem filterMapM_mem {α β ε : Type} {f : α → Except ε (Option β)} :
     ∀ {xs : List α} {ys : List β}, xs.filterMapM f = .ok ys → ∀ y ∈ ys, ∃ x ∈ xs, f x = .ok (some y)
   | [], ys, h, y, hy => by
     simp only [List.filterMapM_nil] at h
