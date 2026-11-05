@@ -191,4 +191,23 @@ theorem check_no_join {fx : List String} {name : String} {k : Nat} {raw : Lean.J
     next => cases hc
   next => cases hc
 
+/-- A loop whose body never stops early ran its body without error on every element. -/
+theorem forIn_ok {α ε : Type} {f : α → PUnit → Except ε (ForInStep PUnit)} :
+    ∀ {l : List α} {u : PUnit}, forIn l PUnit.unit f = .ok u → (∀ x, f x PUnit.unit ≠ .ok (.done PUnit.unit)) →
+      ∀ x ∈ l, (f x PUnit.unit).isOk = true
+  | [], _, _, _ => by simp
+  | x :: l, u, h, hf => by
+    rw [List.forIn_cons] at h
+    cases hx : f x PUnit.unit with
+    | error e => rw [hx] at h; cases h
+    | ok s =>
+      cases s with
+      | done b => exact (hf x hx).elim
+      | yield b =>
+        rw [hx] at h
+        intro y hy
+        rcases List.mem_cons.mp hy with rfl | hy
+        · rw [hx]; rfl
+        · exact forIn_ok h hf y hy
+
 end VE.Acts.Lexical

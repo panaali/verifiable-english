@@ -232,11 +232,12 @@ theorem joint_fits (profiles : List String) (environment : Json) (rv : VE.Route.
 /-- Each chain route's admission answer fits `chain_admission`. -/
 theorem dispatchAdmission_fits (ps : List String) (environment document : Json) :
     OkFits req (skel% "discourse.json#/$defs/chain_admission") (dispatchAdmission ps environment document) := by
-  unfold dispatchAdmission VE.Norms.Run.runAdmission VE.NormDefaults.Run.runAdmission VE.SoftNorms.Run.runAdmission
-    VE.Rights.Run.runAdmission
+  unfold dispatchAdmission VE.Norms.Run.runAdmission VE.Norms.Run.runAdmissionIn
+    VE.NormDefaults.Run.runAdmission VE.NormDefaults.Run.runAdmissionIn
+    VE.SoftNorms.Run.runAdmission VE.Rights.Run.runAdmission
   split
   all_goals okfits
-  all_goals simp only [VE.Norms.Run.encodeAdmitted, VE.NormDefaults.Run.encodeAdmitted, VE.SoftNorms.Run.encodeAdmitted,
+  all_goals try simp only [VE.Norms.Run.encodeAdmitted, VE.NormDefaults.Run.encodeAdmitted, VE.SoftNorms.Run.encodeAdmitted,
     VE.Rights.Run.encodeAdmitted, VE.Route.Wire.ok]
   all_goals fits
   all_goals exact Common.claimJson_fits _

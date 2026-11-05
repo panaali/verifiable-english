@@ -1,0 +1,78 @@
+{
+ "item": "eff-tm-probe-scope-build",
+ "note": "Seeded bugs planted one at a time in tools/trust_mutants.py (S7, S8 in its READS Lean text), each run against the one test named, then restored with git checkout of the file. Run 2026-11-04 by the builder.",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "reading refuses a key settle did not hand over (F5)",
+   "change": "Probes.__call__ no longer raises on an ungiven key",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_reading_refuses_a_key_settle_did_not_hand_over",
+   "result": "1 failed"
+  },
+  {
+   "id": "S2",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "settle hands its keys over before its first read",
+   "change": "settle's scope(...) call removed",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_settle_hands_its_keys_over_before_its_first_read",
+   "result": "1 failed"
+  },
+  {
+   "id": "S3",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "the whole-file fallback (F3, F4)",
+   "change": "Probes never falls back to the whole file",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_a_check_of_the_set_with_no_whole_entry_is_read_from_the_whole_file",
+   "result": "3 failed, 2 passed"
+  },
+  {
+   "id": "S4",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "an entry without done counts as absent (review 1)",
+   "change": "refusal checks only presence, not done",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_an_entry_without_its_done_marker_is_absent",
+   "result": "1 failed"
+  },
+  {
+   "id": "S5",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "probe(only=...) truncation",
+   "change": "kept keeps the next command's first line too (off by one)",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_kept_cuts_at_the_line_before_the_next_command",
+   "result": "7 failed, 1 passed"
+  },
+  {
+   "id": "S6",
+   "language": "python",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "probe(only=...) names the set in TM_TRUST_ONLY",
+   "change": "TM_TRUST_ONLY no longer set (every check walked)",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_probe_walks_only_its_checks_and_drops_the_text_after_them",
+   "result": "1 failed"
+  },
+  {
+   "id": "S7",
+   "language": "lean",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "the TM_TRUST_ONLY gate walks exactly the named checks",
+   "change": "READS gate inverted: walks the checks not named",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_a_cut_that_changes_a_parse_fails_closed_in_lean",
+   "result": "1 failed"
+  },
+  {
+   "id": "S8",
+   "language": "lean",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "the walk prints done as its last line",
+   "change": "READS no longer prints done",
+   "test": "tests/test_trust_mutants_probe_scope.py::test_a_cut_that_changes_a_parse_fails_closed_in_lean",
+   "result": "1 failed"
+  }
+ ]
+}

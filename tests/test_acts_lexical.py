@@ -58,11 +58,12 @@ def test_todays_document_is_answered():
 
 
 def test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check():
-    # ap-1b: the row landed; A1 (97 B) needs its fixed phrase for its "and"
+    # ap-1b: the row landed; A1 (97 B) needs its fixed phrase for its "and". ap-3db: the norms route elaborates, so
+    # without the phrase its "and" is a join the declared frames (none) do not read: D-16 (DELTA row 2)
     regulated = {"role": "permission", "default": "allow", "act": A1}
     profiles = ["acts@0", "norms@0", "relational-fol@0"]
     assert message(answer(regulated, profiles)) == (
-        "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase")
+        "InvalidInput: act phrase for heard has no reading under the declared frames")
     case = copy.deepcopy(BASE)
     case["environment"]["profiles"] = profiles
     case["environment"]["vocabulary"]["predicates"]["heard"]["regulated"] = regulated
