@@ -1,0 +1,5 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): tools/trust-classes.json is no module of lean/, --test file or generated inventory
+trust_mutants: 16 definitions, 481 mutants (68 to run), 4 jobs, base c47399598104
+trust_mutants: 43 KILLED, 0 SURVIVOR, 0 UNKNOWN, 13 INVALID, 12 ALLOWED, 0 NOT RUN, 413 OTHER SHARD in 332 s
+trust_mutants: S, trusted: 43 KILLED, 13 INVALID, 12 ALLOWED, 413 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 2.6 s, control_build 0.2 s, probe_install 1.2 s, control_probes 14.8 s, mutants 299.3 s, cleanup 4.6 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 12.8 s (1), mutant_builds 156.6 s (68), mutant_checks 328.4 s (51), stage_controls 4.6 s (2), mutant_probes 230.3 s (43)
