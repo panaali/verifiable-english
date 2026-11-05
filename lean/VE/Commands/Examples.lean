@@ -441,6 +441,22 @@ def chooseFrame : Json := Json.mkObj [("head", .str "choose"), ("markers", Lean.
       | _, _ => false)
   | .error _ => false
 
+-- The limits, charged before a wording is read. At each limit the environment decodes; one over is `ResourceLimit`.
+def phrases (n : Nat) : List String := (List.range n).map fun i => s!"phrase {VE.Service.Standalone.letterName i} end"
+def actOf (n : Nat) : String := "{0} click " ++ String.mk (List.replicate (n - 10) 'a')
+def manyActs (n : Nat) : List (String × Json) :=
+  (List.range n).map fun i => obligation s!"p{VE.Service.Standalone.letterName i}" ["user"]
+    s!"\{0} click phrase {VE.Service.Standalone.letterName (i % 128)} end"
+#guard decodeErr (actsEnv choices (some (fixedPhrases ++ phrases 125))) == "ok"
+#guard decodeErr (actsEnv choices (some (fixedPhrases ++ phrases 126))) == "ResourceLimit: more than 128 fixed phrases"
+#guard decodeErr (actsEnv [obligation "click_required" ["user"] (actOf 400)] (some [])) == "ok"
+#guard decodeErr (actsEnv [obligation "click_required" ["user"] (actOf 401)] (some [])) ==
+  "ResourceLimit: act phrase for click_required is over 400 bytes"
+-- The largest declaration a request can make: 64 acts over 128 phrases, each read once more by `checkActsBlock`.
+#guard decodeErr (actsEnv (manyActs 64) (some (phrases 128))) == "ok"
+#guard decodeErr (actsEnv (manyActs 65) (some (phrases 128))) == "ResourceLimit: regulated predicates"
+#guard read (actsEnv (manyActs 64) (some (phrases 128))) "Click phrase a end." == .one ⟨.require, "pa", [], .top⟩
+
 /-! `checkActsBlock`: on a tree with `vocabulary` twice, the lookup hides the value the stripped environment rebuilds, so
 the act would read under fixed phrases the environment does not name (`joinFree [] _` is false). What is shown of parsed
 trees: `E_acts`, printed and read back through `Lean.Json.parse`, decodes with no refusal (below); no theorem states it

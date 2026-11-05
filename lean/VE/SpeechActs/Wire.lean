@@ -225,7 +225,8 @@ def checkTemplates (preds : List (String × Json)) (regulated : List Regulated) 
     unless slotsApart (t.length + 1) ' ' t.toList do throw attachedSlot
 
 /-- Under `acts@0`, the fixed phrases of the submitted environment are those the decoder read from the stripped one.
-Only a tree no JSON parser builds can differ: looked up, a key of such a tree may hide its rebuilt value. -/
+They differ on a tree with `vocabulary` twice, whose lookup hides the value `stripSpeech` rebuilds (DRI 2026-11-05 item 3).
+Each read is bounded by `Acts.Lexical.maxPhrases`. -/
 def checkActsBlock (profiles : List String) (environment stripped : Json) : Except String Unit :=
   if profiles.contains "acts@0" &&
       (VE.Norms.Wire.actsFixed profiles environment).toOption != (VE.Norms.Wire.actsFixed profiles stripped).toOption then
