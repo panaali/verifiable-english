@@ -305,7 +305,7 @@ def checkNames (A : AttDoc) : List Key → Except String Unit
     let n := name A k
     throwIf ((A.E.predicates n).isSome || (A.regulated.map (·.name) ++ A.definitions.map (·.name)).contains n)
       s!"DuplicateDeclaration: generated predicate {n}"
-    throwIf (n.utf8ByteSize > 64) s!"ResourceLimit: generated predicate {n} exceeds 64 bytes"
+    throwIf (n.utf8ByteSize > VE.Limits.maxIdentifierBytes) s!"ResourceLimit: generated predicate {n} exceeds 64 bytes"
     throwIf (n.any (· == ':')) s!"InvalidInput: generated predicate {n} contains ':'"
     checkNames A rest
 

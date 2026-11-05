@@ -4145,7 +4145,7 @@ module VE.Attitudes.Scale e3bb530dc4cfb92ec6fa49e1c919312011e5a312b7433626538337
 62:0-82:73 def VE.Attitudes.table@VE.Attitudes.Scale
 84:0-85:42 def VE.Attitudes.scaleCaps@VE.Attitudes.Scale
 87:0-88:59 theorem VE.Attitudes.table_reviewed@VE.Attitudes.Scale
-module VE.Attitudes.Syntax 4ced297ef53a18bf13550763aedd537d0aea65f1ced32a496f8f701341c3ac51
+module VE.Attitudes.Syntax 5679dff468289a155fa03f7dca7325d9f05db204a081a09adfc903d767f28a97
 20:0-25:28 inductive VE.Attitudes.Mode@VE.Attitudes.Syntax
 25:11-25:22 def VE.Attitudes.instDecidableEqMode.decEq@VE.Attitudes.Syntax
 25:11-25:22 instance VE.Attitudes.instDecidableEqMode@VE.Attitudes.Syntax
