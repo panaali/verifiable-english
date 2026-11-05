@@ -1,0 +1,7 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Discourse/PositionsExamples.lean is a selected declaration's file or in its import closure
+trust_mutants: 5 definitions, 28 mutants (14 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:169 VE.Discourse.PositionsExamples.herIn (?, trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:169 VE.Discourse.PositionsExamples.herIn (?, trusted) lit-minus: 2 -> 1
+trust_mutants: 12 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 14 OTHER SHARD in 298 s
+trust_mutants: ?, trusted: 12 KILLED, 2 SURVIVOR, 14 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.4 s, control_probes 166.2 s, mutants 112.5 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 173.4 s (2), mutant_builds 107.7 s (15), mutant_checks 197.9 s (12), stage_controls 81.9 s (5), mutant_probes 38.7 s (12)
