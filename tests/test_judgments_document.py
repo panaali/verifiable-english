@@ -640,6 +640,11 @@ def test_the_refusal_names_the_first_fence_in_unit_order_before_any_unit_s_statu
     assert code == 1 and out["error"] == REASONABLE
     code, out = ve_check(fenced(said("reasonable_grounds"), grounds), tmp_path, capsys)
     assert code == 1 and out["error"] == "JudgmentNotChecked: a0 reasonable_grounds"
+    # A fence of two sentences: the reader's refusal comes before the document's one-sentence rule, under the profile.
+    code, out = ve_check(fenced(f'{said("reasonable_limit")} Atlas is published.'), tmp_path, capsys)
+    assert code == 1 and out["error"] == REASONABLE
+    code, out = ve_check(fenced("Atlas is published. Atlas is published."), tmp_path, capsys)
+    assert code == 1 and out["error"] == "each VE fence must contain exactly one sentence"
 
 
 def test_the_report_places_lean_s_lines(service, tmp_path, capsys):
