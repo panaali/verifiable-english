@@ -35,6 +35,7 @@
   {"definition": "VE.Events.openTermsOf", "operator": "list-first", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
   {"definition": "VE.Events.openTermsOf", "operator": "list-last", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
   {"definition": "VE.Events.routeView", "operator": "list-empty", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
+  {"definition": "VE.NormDefaults.Admission.softCase", "operator": "list-empty", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
   {"definition": "VE.NormDefaults.Run.runCaseE", "operator": "list-empty", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
   {"definition": "VE.NormDefaults.Run.usesNormDefaultsPath", "operator": "body-false", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
   {"definition": "VE.NormDefaults.Run.usesNormDefaultsPath", "operator": "body-true", "reason": "Lean refuses the mutant text (a type error in the mutated definition or its one caller), so no program runs it"},
