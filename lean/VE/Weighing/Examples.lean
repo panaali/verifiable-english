@@ -218,7 +218,7 @@ example (Wd : WeighDoc) (a L H : String) (ht : (a, L, H) ∈ outweighsTriples Wd
     bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd := strength_mem Wd ht hs
 
 /-! ## `strength_iff` with the DRI's hypothesis (weighing.md 5.1, 7.3; reviews/dri-decisions-20261104-wg-2-strength.md
-item 2): both directions, and each hypothesis needed
+item 2): both directions, counterexamples without `hH` or `hr`, and the F10 collision without `ha`
 
 `sides` is the statement's left and right side at a query, `hyps` its hypotheses but `hr`, and `lettered` is `hr`:
 every regulated name begins with an ASCII letter. -/
@@ -263,6 +263,15 @@ def f13 : SoftDoc := alphaOf ["c", "c_"] [("c", "c_")] "c" "c_"
   sides (wd f9 (W [("a", "b_")])) "x_permitted" "b" "_a" == (true, false)
 #guard WellFormedWeigh (wd f13 (W [("c", "c_")])) && lettered f13 && f13.soft.ranks.contains "c" &&
   !f13.soft.ranks.contains "_c" && sides (wd f13 (W [("c", "c_")])) "x_permitted" "c" "_c" == (true, false)
+-- F10 (7.3): the alias names an undeclared act, so its formula is `¬⊥` and neither side holds.
+-- This collision does not show that `ha` is necessary when the other hypotheses hold.
+#guard WellFormedWeigh (wd cxD (W [("c_", "l")])) && lettered cxD &&
+  cxD.soft.ranks.contains "l" && cxD.soft.ranks.contains "c" &&
+  (cxD.E.predicates "_x_permitted").isNone && actSortsOf cxD "_x_permitted" == [] &&
+  outweighsTriples cxD == [("x_permitted", "l", "c_")] &&
+  outweighsName "_x_permitted" "l" "c" == outweighsName "x_permitted" "l" "c_" &&
+  outweighsF cxD "_x_permitted" "l" "c" == .bottom &&
+  sides (wd cxD (W [("c_", "l")])) "_x_permitted" "l" "c" == (false, false)
 example (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String) (hL : L ∈ Wd.D.soft.ranks)
     (hH : H ∈ Wd.D.soft.ranks) (ha : ∃ ss, Wd.D.E.predicates a = some ss)
     (hr : ∀ r ∈ Wd.D.T.regulated, ∃ c cs, r.name.data = c :: cs ∧ c.isAlpha) :
