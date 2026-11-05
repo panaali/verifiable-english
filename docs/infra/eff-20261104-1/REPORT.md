@@ -1,9 +1,9 @@
 # eff-20261104-1: `--rescore` carries across inputs that only decide the plan
 
-Status: built; selected tests green after two fixes; no DRI signature needed; the full gate is left to the chain (not run by me).
+Status: built; F1, F2 and F3 of the recheck fixed; selected tests green on `1f57a8ecc`; no DRI signature needed; the full gate is left to the chain (not run by me).
 HEAD: the commit holding this report (branch infra/eff-20261104-1); tools/trust_mutants.py and its tests, no Lean, no Rust, no DELTA rows, trust +0.
-Changed: `tool_files`, `PLAN_ONLY_TOOL` (tools/layer_policy.py only), `base`, trust_map's table, and lean/checkers.lock and lean/*.md that nothing Lake or Lean reads names now go on to mode "checks"; the mutant list still decides.
-Replay: 9 recorded pairs, 6 of them carry; 1,056 carried verdicts, 0 differ from the recorded full runs.
+Changed: `tool_files`, `PLAN_ONLY_TOOL` (tools/layer_policy.py only), `base`, and trust_map's table, lean/checkers.lock and lean/*.md that nothing Lake or Lean reads names outside a comment now go on to mode "checks"; the mutant list still decides.
+Replay, rerun on this tool (blob `7a6457ca`): 9 recorded pairs, 6 of them carry; 1,056 carried verdicts, 0 differ from the recorded full runs. On this tree 22 of the 26 lean/*.md are accepted and 4 refused.
 Open: `base` has no measured carry (all 3 replayed base moves also changed a selected file, so they stay full); see "What this does not show".
 
 ## The cause
@@ -12,18 +12,40 @@ The eff pass of 2026-11-04 read the `rescore` fields of 7 days of Actions parts 
 
 ## What changed
 
-`git diff --numstat` for tools/trust_mutants.py: +96/-36. tests/test_trust_mutants.py: 660 tests collected, 564 before. Regenerated: docs/codemap/*, tests/history-dependent.json.
+`git diff --numstat` for tools/trust_mutants.py: +221/-36. tests/test_trust_mutants.py: 766 tests collected, 564 before. Regenerated: docs/codemap/*, tests/history-dependent.json.
 
 - `inputs`: `tool_files` beside `files`; `tool` is the same digest (`test_the_overall_tool_digest_is_what_it_was_with_each_modules_beside_it`). It is not in `files`, whose digests manage-agents/cloud-tm-verify.py recomputes.
 - `previous`: a `tool` that differs only by `PLAN_ONLY_TOOL` modules, both records holding `tool_files`, and/or a `base` that differs, goes on to the existing checks. The list check ("its mutants are not this tree's") and the `Reads.carry` rule are untouched. `options` stays fixed. A full run for the tool now names the modules ("its inputs differ (tool): tools/x.py"), so the follow-up can see which module to look at next.
 - `check_only`: accepts `tools/trust-classes.json` and any file `no_build_reads` accepts.
-- `no_build_reads` / `lake_reads`, at run time from the tree: lean/checkers.lock or a .md under lean/, only when nothing Lake reads names it. The lock's path is `lean_share.LOCK_PINS`, its one owner.
+- `no_build_reads` / `unread_by_build` / `lake_reads`, at run time from the tree: the table, a `PLAN_ONLY_TOOL` module, lean/checkers.lock or a .md under lean/, only when nothing Lake reads names it outside a comment (section "A comment is no read"). The lock's path is `lean_share.LOCK_PINS`, its one owner.
 - `rescore.plan_only` (only in mode "checks", only when non-empty) names what crossed: the modules, `base`, the table, the lean/ files. `--merge` agrees on it and binds it; `--resume` compares it through its existing facts.
 - `--merge` had to change: it refused a "checks" part with `changed: []`, which a base-only or tool-only carry writes. It now needs `changed` or `plan_only`, and it refuses `plan_only` on another mode, an empty one, and a name that is neither a `PLAN_ONLY_TOOL` module, `base` nor a changed file. Every earlier refusal stands (`checks-without-changed-files` still passes).
 
 Stricter than the task asked (each has a test in `test_a_file_lake_or_lean_may_read_is_a_full_run`): an outside --test file that names the file, a symlink under lean/ whose target names it, a name in another case (a Mac's file system ignores case), and a `readDir`, `walkDir` or `input_dir` anywhere Lake reads (a listing reads a file without naming it). This tree has no directory listing (`LISTS_FILES.search(lake_reads(...))` printed None).
 
-On this tree (probe in the replay section's command): lean/checkers.lock is accepted; 13 of the 26 .md files under lean/ are accepted and 13 refused, because some Lean file or comment names them.
+On this tree: the table, tools/layer_policy.py and lean/checkers.lock are accepted, and 22 of the 26 .md files under lean/, with 4 refused:
+- lean/README.md and lean/RISK.md: a Lean string names them (lean/VE/Question/Fixtures.lean:46, lean/ResponseShape/Schemas/Common.lean:448; lean/ResponseShape/Schemas/RiskEval.lean:39). A string counts as a read.
+- lean/WEIGHING.md and lean/NORMS.md: what still names them is a doc comment (first at lean/VE/Weighing/Examples.lean:163, lean/VE/SpeechActs/Run.lean:182), after a point where the stripper stopped being sure in that file, so the text counts. That costs a full run and no wrong verdict.
+
+## A comment is no read (F2, DRI note 2026-11-05)
+
+`lake_text` gives `lake_reads` a `.lean` file through `lean_code`, which blanks its comments; a symlink's target and every other file (lakefile.toml, lean-toolchain, lake-manifest.json, an outside --test file that is not `.lean`) stay whole. All of `unread_by_build`'s inputs search that one text: `LISTS_FILES`, the table, `PLAN_ONLY_TOOL`, the lock, lean/*.md. lean/VE/Calc/Ties.lean is not edited.
+
+`lean_scan` reads the text as Lean's lexer does (toolchain 4.24: Lean/Parser/Basic.lean's `whitespace` and `tokenFnAux`, StrInterpolation.lean, Init/Meta/Defs.lean's `isIdFirst` and `isIdRest`). `--` or `/-` in a string, a char literal, a raw string or an escaped identifier opens no comment. It keeps the rest of the file where it cannot tell:
+- a comment, string, raw string or escaped identifier with no end, or a broken char literal;
+- a `{` in a string no `s!`, `f!` or `m!` introduces, unless both readings of the string are the same: `throwError "{x}"` has holes and `"{"` has none, and the text does not say which;
+- a comment opener with no white space before it (`<--` is the token `<-` and then `-`; a module can declare other tokens);
+- a `'` straight after a number, and nesting past Python's recursion limit.
+
+48 of the 769 Lean files keep a tail this way (`evidence/oracle-result.json`): 37 stop at a brace in a plain string, for example the JSON fixture `"{\"cap\": 2, ..."`, and 11 at one of the other points.
+
+Lean's parser is the oracle, as build-checklist line 11 asks:
+- `test_lean_code_blanks_what_lean_skips_and_nothing_it_reads` compares both ways, on 48 pieces and 300 seeded mixtures, each with no parse error. Every token Lean reads stands at its place in `lean_code`'s text; when the stripper is sure, nothing else is left.
+- `evidence/oracle.py` compares the first way on every Lean source here: 2,504,061 tokens, 0 lost. That run has only `import Lean`'s syntax, so 41 files have commands it cannot parse, and the tokens of those commands are not compared.
+
+The test `bare-name` changed its text, as the DRI's note says: `-- see NOTES.md` no longer refuses, so the case is now `def n := NOTES.md`, a bare name in code. All 6 F1 regression cases are unedited and still selected.
+
+The read-after tests (`test_a_read_after_comment_like_text_is_still_a_read`, 28 cases) cannot fail on the old code, which blanked nothing; they fail on the seeded bugs below. The carry tests fail on the old code: with `lake_text` returning the text whole, 65 of the new tests fail.
 
 ## PLAN_ONLY_TOOL
 
@@ -35,11 +57,11 @@ From `grep -n "\bbase\b" tools/trust_mutants.py`: `main` resolves it (exit 2 if 
 
 The table: `classify_tree` takes its declarations from the tree (`place_tree`), and the table only sets `cls`, `tied` and `trusted`, read by `chosen` and each row's class (`grep -n "trust_class\|\.trusted"`), not by `roles`, `targets` or a verdict. A carried row takes its class from the current plan. Scratch copies lean/ only, so no build reads the table.
 
-The lock: `Scratch` restores a shared build by `lean_share.key`, whose `lean_tree` leaves the lock out. No file Lake reads names it on this tree.
+The lock: `Scratch` restores a shared build by `lean_share.key`, whose `lean_tree` leaves the lock out. No file Lake reads names it outside a comment on this tree.
 
 ## Replay
 
-`uv run python docs/infra/eff-20261104-1/evidence/replay.py replay` (scratch worktrees under tmp, removed after; `git worktree list | grep -c ve-replay` printed 0); result in evidence/replay-result.json, inputs in evidence/<job>/ (prev.json is the PREV committed at the later head; full-run.json the recorded parts' rows, with each part's sha256). No PREV holds `tool_files`, so both were recomputed: on all 9 pairs each tree's own modules give the recorded `tool` digest, and the recomputed lean, tests, base and options digests equal the recorded ones, except that the earlier records of qt-a3db, qt-a4 and ap-3db hold an uncommitted lean/checkers.lock (`previous` reads the recorded digests). On all 9 the plan equals the recorded full run's list.
+`uv run python docs/infra/eff-20261104-1/evidence/replay.py replay` (scratch worktrees under tmp, removed after; `git worktree list | grep -c ve-replay` printed 0); result in evidence/replay-result.json (rerun for this round on tools/trust_mutants.py blob `7a6457ca`, commit `1f57a8ecc`: the file came out byte-identical to the one committed before it), inputs in evidence/<job>/ (prev.json is the PREV committed at the later head; full-run.json the recorded parts' rows, with each part's sha256). No PREV holds `tool_files`, so both were recomputed: on all 9 pairs each tree's own modules give the recorded `tool` digest, and the recomputed lean, tests, base and options digests equal the recorded ones, except that the earlier records of qt-a3db, qt-a4 and ap-3db hold an uncommitted lean/checkers.lock (`previous` reads the recorded digests). On all 9 the plan equals the recorded full run's list.
 
 | pair (later head) | recorded full-run reason | new decision | mutants | carried (KILLED / INVALID) | rerun (of which KILLED in PREV) | carried verdicts differing from the full run | plan_only | reason, if full |
 |---|---|---|---|---|---|---|---|---|
@@ -61,13 +83,15 @@ The task describes ci-2 921abb0f -> ad415a76 as "tools/layer_policy.py and lean/
 
 - **`base` has no measured carry.** The 3 replayed sweeps whose reason named base all changed a selected file as well, so they stay full, rightly. ap-3d a838ea64 and ap-4a cb9c9dd1 (also "(tool, base)") could not be replayed: their trees lack `trust_map.inventory`, which this tool's `plan` calls; jt-2c's PREV is not committed. Base's carry rests on its tests, the real-tree one comparing with a full run. In these records, base alone saved nothing.
 - **Expect the reason strings to move, not all the hours.** "(tool, base)" and "(base)" should near 0, but at least 3 of those sweeps return as "(lean, base): ... selected declaration's file", which is a real Lean change.
+- **The stripper knows Lean's default lexer, not a module's own syntax.** A token a module declares holding a quote, and a macro or elaborator that reads a comment's text, are not looked for. Reviewers run without --rescore.
+- **The whole-tree oracle run is one direction and partial.** It shows that no token it could parse is blanked, not that every comment is found; `files_with_parse_errors` says how many files it could not parse fully.
 - **`no_build_reads` looks for names.** A module that builds a file's name from pieces and reads it, without listing a directory, is not found; the docstring says so. Dependencies under .lake/packages are not searched (lean/lake-manifest.json lists no package today). Reviewers run without --rescore.
 - No real sweep was run for the replay; the replay decides and builds nothing. Each carried verdict was compared with a recorded full run, not rerun.
 - `.gitignore` and any other file stay a reason for a full run, as the task said.
 
 ## Seeded bugs
 
-docs/infra/eff-20261104-1/mutants.json (13, each with file and test; all in tools/trust_mutants.py, each planted, the named test failing on an assertion, then restored; `git status --short` clean after). Task's three first; iii, x and xi were run again on the final `no_build_reads`.
+docs/infra/eff-20261104-1/mutants.json (30, each with file and test; all in tools/trust_mutants.py, each planted, the named test failing, then restored; `git status --short` clean after). The first round of xiv to xviii did not fail: the examples put `--` straight after a quote, which the white-space rule refuses on its own, so they showed nothing about strings. The examples now hold ` -- `, and these seeds fail. Task's three first; iii, x and xi were run again on the final `no_build_reads`.
 
 | bug | failing test (tests/test_trust_mutants.py::) |
 |---|---|
@@ -84,12 +108,29 @@ docs/infra/eff-20261104-1/mutants.json (13, each with file and test; all in tool
 | xi a directory listing is no read | test_a_file_lake_or_lean_may_read_is_a_full_run[read-dir] |
 | xii the table not named | test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[table] |
 | xiii tool_files not recorded | test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[plan-only-module] |
+| xiv the stripper ignores strings | test_a_read_after_comment_like_text_is_still_a_read[string-dashes] |
+| xiv-b the same, against Lean | test_lean_code_blanks_what_lean_skips_and_nothing_it_reads |
+| xv it ignores char literals | test_a_read_after_...[char-quote] |
+| xvi it ignores raw strings | test_a_read_after_...[raw-string] |
+| xvii no holes after `s!` | test_a_read_after_...[interpolated] |
+| xviii a brace with no prefix is plain | test_a_read_after_...[holes-no-prefix-says] |
+| xix block comments do not nest | test_a_name_only_in_a_lean_comment_carries[nested-block-NOTES.md] |
+| xix-b a block runs to the last closer | test_a_read_after_...[nested-block-end] |
+| xx an unterminated comment is blanked | test_a_read_after_...[unterminated-comment] |
+| xxi an opener inside a token is a comment | test_a_read_after_...[dashes-inside-a-token] |
+| xxii any file loses its comments | test_a_file_that_is_no_lean_source_stays_whole[lakefile-toml] |
+| xxiii comments are searched (the old code) | test_the_real_trees_comments_cost_no_full_run |
+| xxiv `'` ends a word | test_lean_code_blanks_what_lean_skips_and_nothing_it_reads |
+| xxv a doc comment opens with two characters | test_lean_code_blanks_what_lean_skips_and_nothing_it_reads |
+| xxvi escaped identifiers unknown | test_a_read_after_...[escaped-identifier] |
+| xxvii deep nesting crashes | test_text_nested_past_the_recursion_limit_stays_whole |
+| xxviii the docstring loses the condition | test_the_docstring_states_the_condition_where_it_claims_the_carry |
 
 ## Tests
 
-`uv run pytest --collect-only -q tests/test_trust_mutants.py`: 660, 564 at the merge base (+96); none removed, renamed or skipped. Three existing tests changed expectations because the behaviour changed as asked: `test_any_changed_input_but_checks_gives_a_full_run` (base and the table now carry; `previous` returns a fifth value), `test_a_check_only_change_lies_outside_every_selected_file_and_its_closure` (the table moved to the accepted list; lean/SCOPE.md stays refused with no tree read), `test_the_inputs_digest_the_tools_own_source` (`tool_files` moves too). The `sharded` fixture's stub `Reads` gained `carry`.
+`uv run pytest --collect-only -q tests/test_trust_mutants.py`: 766, 564 at the merge base (+202); none removed, renamed or skipped. Three existing tests changed expectations because the behaviour changed as asked: `test_any_changed_input_but_checks_gives_a_full_run` (base and the table now carry; `previous` returns a fifth value), `test_a_check_only_change_lies_outside_every_selected_file_and_its_closure` (the table moved to the accepted list; lean/SCOPE.md stays refused with no tree read), `test_the_inputs_digest_the_tools_own_source` (`tool_files` moves too). The `sharded` fixture's stub `Reads` gained `carry`.
 
-Selected tests, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (this replaces the task's ve-integration base, per the run's test-budget rule), on Actions, run eff-20261104-1-371ccb72-t862242: SHARD 2/2 17 units, 17 passed; SHARD 1/2 18 units, 17 passed; tests/test_trust_mutants.py 496 + 164 passed. Two failures, both mine: `test_gi2b_names_every_pin_reader`, in the run before that one (a literal lock path in the tool; now `lean_share.LOCK_PINS`), and `test_no_train_only_path_is_read_outside_the_accessor`, in that run (`ast.dump` in my new test read as the file's own `dump`; removed). Both passed after the fix (the second in `mac-pytest.sh -- <id>`, "2 passed"; the first in `uv run pytest`). After that run only that assert message and a docstring in `no_build_reads` changed; the whole selection was not rerun. `tools/regen_generated.py --check`: "checked 35 entries". `tests/test_hang_guards.py`: 69 passed. Full gate: not run by me; the chain runs it on the final HEAD.
+Selected tests, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on commit `1f57a8ecc`, on Actions, run eff-20261104-1-1f57a8ec-t871655: exit 0; 4 shards, 35 units, all passed; tests/test_trust_mutants.py 766 tests in 4 chunks (191 + 189 + 191 + 195), 0 skipped, 0 failed. After that commit only this report, evidence/oracle.py and its result, and docs/speed/tmchecks/DELTA.md changed; the whole selection was not rerun. `lake build`: 1296 jobs, success. `python3 lean/audit.py`: PASS, 769 source files, 8570 theorem declarations. `tools/regen_generated.py --check`: "checked 35 entries". Full gate: not run by me; the chain runs it on the final HEAD. The three tests in main-known-red.txt were neither edited nor fixed here.
 
 ## Deliverables
 
@@ -98,7 +139,8 @@ Selected tests, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main
 | 1 `tool_files`, `PLAN_ONLY_TOOL` with its argument | `inputs`, the comment above the constant, `test_the_plan_only_argument_still_holds` |
 | 2 `previous`, `plan_only`, base listed | `previous`; section "The uses of `base`"; `test_plan_only_inputs_go_on_to_the_checks_and_are_recorded` |
 | 3 `check_only`, run-time decision | `check_only`, `no_build_reads`, `lake_reads`; `test_a_file_lake_or_lean_may_read_is_a_full_run`, `test_what_names_a_file_elsewhere_leaves_it_unread` |
-| 4 the docstring's --rescore paragraph | module docstring |
+| 4 the docstring's --rescore paragraph | module docstring; `test_the_docstring_states_the_condition_where_it_claims_the_carry` (PROBE F3) |
+| F2: a comment is no read | `lean_code`, `lake_text`; `test_the_real_trees_comments_cost_no_full_run` (PROBE F2), `test_a_name_only_in_a_lean_comment_carries`, `test_a_read_after_comment_like_text_is_still_a_read`, `test_lean_code_blanks_what_lean_skips_and_nothing_it_reads` |
 | carry tests for each case | `test_rescore_on_a_real_tree_carries_across_each_plan_only_input[plan-only-module, base, table, lock, md]`, `..._every_plan_only_input_and_agrees_with_a_full_run` (KILLED, real Lean; the package has no INVALID row); INVALID: `test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record` (stub `carry`, M004) |
 | negative: trust_mutants.py | `test_rescore_on_a_real_tree_across_the_tool_itself_is_a_full_run` |
 | negative: table moves the list | `test_rescore_on_a_real_tree_across_a_table_that_moves_the_mutants_is_a_full_run` |
@@ -119,7 +161,7 @@ For the eff pass: count `rescore.full_run` reasons in cloud-jobs part JSONs for 
 
 1. N.A.: no relayed Lean answer. The part's new field is typed: `test_merge_binds_rescore_to_owned_rows[plan-only-not-a-list]`.
 2. PASS: section "Deliverables"; no new Python copy of a Lean decision, no permanent report test (the replay reads its evidence outside the suite).
-3. PASS: mutants.json, 13 seeded; both directions below.
+3. PASS: mutants.json, 30 seeded; both directions below.
 4. N.A.: no Python/Lean/Rust output changes.
 5. N.A.: no R8 binding; `plan_only` names bound in `--merge`: `test_merge_binds_rescore_to_owned_rows[plan-only-names-an-unchanged-file]`.
 6. PASS on the chain's gate at final HEAD; regen check run; gate not run by me.
@@ -128,7 +170,7 @@ For the eff pass: count `rescore.full_run` reasons in cloud-jobs part JSONs for 
 9. PASS: `tools/select_tests.py --base ...` selects 32/544 units with the changed tests; seed: `tests/test_gen_inv_design.py` and `tests/test_inventory_path.py` caught my two slips through that selection.
 10. N.A.: no Lean.
 11. N.A.: no budget or deadline code.
-12. PASS: `lake_reads` reads each Lake-read file once per rescore that has a changed file; 12.7 MB on this tree (probe printed 12697106 characters); `plan` already reads these sources. Not timed.
+12. PASS: `lake_reads` reads each Lake-read file once per rescore that has a changed file; 12.7 MB on this tree (probe printed 12697097 characters); `plan` already reads these sources. `lean_scan` over the 769 files took 2.8 s and 1.2 s in two one-off runs; nothing asserts it.
 13. PASS: no test removed or renamed; none owes a trailer.
 14. PASS: both directions: `test_plan_only_inputs_go_on...` / `test_any_other_change...`, `test_a_file_lake_or_lean_may_read...` / `test_what_names_a_file_elsewhere_leaves_it_unread`; claims cite commands above; spec re-read listed.
 15. No overclaim: PASS, the limits are in "What this does not show" and the docstring. No silent cut: PASS, "Deliverables". Every new check can fail: PASS, mutants.json. Limits charged before work: N.A., no limit added.
