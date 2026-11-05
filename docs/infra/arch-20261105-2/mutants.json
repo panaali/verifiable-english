@@ -116,7 +116,7 @@
    "command": [
     "bash",
     "-c",
-    "set -u; keep=$(mktemp -d); cp lean/VE/EnglishGrammar/Fixed/Version.lean ve/english_grammar/LOCK.json \"$keep\"/; trap 'cp \"$keep\"/Version.lean lean/VE/EnglishGrammar/Fixed/Version.lean; cp \"$keep\"/LOCK.json ve/english_grammar/LOCK.json; rm -rf \"$keep\"' EXIT; next=$(( $(python3 -c 'import json; print(json.load(open(\"ve/english_grammar/LOCK.json\"))[\"actions_version\"])') + 1 )); python3 tools/english_grammar_gen.py --write --actions-version \"$next\" >/dev/null || exit 2; cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+    "set -u; root=$(pwd); keep=$(mktemp -d); cp lean/VE/EnglishGrammar/Fixed/Version.lean ve/english_grammar/LOCK.json \"$keep\"/; trap 'cp \"$keep\"/Version.lean \"$root\"/lean/VE/EnglishGrammar/Fixed/Version.lean; cp \"$keep\"/LOCK.json \"$root\"/ve/english_grammar/LOCK.json; rm -rf \"$keep\"' EXIT; next=$(( $(python3 -c 'import json; print(json.load(open(\"ve/english_grammar/LOCK.json\"))[\"actions_version\"])') + 1 )); python3 tools/english_grammar_gen.py --write --actions-version \"$next\" >/dev/null || exit 2; cd \"$root\"/lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
    ]
   }
  ]
