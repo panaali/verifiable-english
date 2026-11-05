@@ -1,0 +1,92 @@
+{
+ "mutants": [
+  {
+   "id": "split-text-parts",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "splitRows",
+   "claim": "each split row's D-28 text names all the source's parts",
+   "mutation": "partsText p parts -> partsText p (parts.drop 1)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:640",
+   "guards": [
+    "VE/Service/ActsExamples.lean:640",
+    "VE/Service/ActsExamples.lean:644"
+   ]
+  },
+  {
+   "id": "part-index",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "predicatesJson",
+   "claim": "each part row carries its index in the SplitMap",
+   "mutation": "toJson i -> toJson (i + 1)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:640",
+   "guards": [
+    "VE/Service/ActsExamples.lean:640",
+    "VE/Service/ActsExamples.lean:644"
+   ]
+  },
+  {
+   "id": "refused-lists",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "runElaborate",
+   "claim": "a REFUSED row carries the elaboration's diagnostic and every list empty",
+   "mutation": "emptyFields -> kept [\"x\"]",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:654",
+   "guards": [
+    "VE/Service/ActsExamples.lean:654"
+   ]
+  },
+  {
+   "id": "env-row-lexical",
+   "file": "lean/VE/Service/Standalone.lean",
+   "definition": "environmentCase",
+   "claim": "the environment row admits a joined act through the act check (DRI ap-3db item 5)",
+   "mutation": "(joined := true) -> (joined := false)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:668",
+   "guards": [
+    "VE/Service/ActsExamples.lean:646",
+    "VE/Service/ActsExamples.lean:668",
+    "VE/Service/ActsExamples.lean:669"
+   ]
+  },
+  {
+   "id": "over-unbound",
+   "file": "ve/norms.py",
+   "definition": "bound_elaboration",
+   "claim": "a part rule's over is its source's mapped by index (R8)",
+   "mutation": "the over check replaced by False",
+   "status": "KILLED",
+   "test": "tests/test_acts_elaborate_relay.py::test_genuine_row_mutants_never_pass_as_answers"
+  },
+  {
+   "id": "searches-on-source",
+   "file": "ve/norms.py",
+   "definition": "NormDocument.conflict_targets",
+   "claim": "Python's conflict search and prover run on the relayed document",
+   "mutation": "the delegation to relayed() removed",
+   "status": "KILLED",
+   "test": "tests/test_acts_elaborate_relay.py::test_the_conflict_search_and_prover_run_on_the_parts"
+  },
+  {
+   "id": "split-not-refused",
+   "file": "ve/norms.py",
+   "definition": "NormDocument.refuse_split",
+   "claim": "a name of a split source is refused with Lean's D-28 text",
+   "mutation": "the refusal made unreachable",
+   "status": "KILLED",
+   "test": "tests/test_acts_elaborate_relay.py::test_a_split_source_is_refused_with_leans_text"
+  },
+  {
+   "id": "retained-decides",
+   "file": "ve/norms.py",
+   "definition": "_retained",
+   "claim": "the retained Python path refuses an acts@0 norms document",
+   "mutation": "the refusal made unreachable",
+   "status": "KILLED",
+   "test": "tests/test_acts_elaborate_relay.py::test_the_retained_python_path_refuses_an_acts_document"
+  }
+ ]
+}
