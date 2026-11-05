@@ -7,9 +7,12 @@ DE10's form (`zoneFormOf`), `forcedAllOf` (both from one `zoneMin`) and the rows
 
 The request names a situation (`model`, `situationX`), a `record` of decisions by key (`decisionKeyJson`), the
 `observations` and the `query` (an outcome and a tuple); the record's and the observations' sizes are charged before
-any entry is decoded (`zoneSizes`), and each decoded value is the request's (`replayZoneOn_sound`). Lean selects
-every English row and owns its words (`zoneHeads`, `zoneLineWords`, `zoneJoins`, generated into
-`ve/defaults_words.json`); Python fills their slots. -/
+any entry is decoded (`zoneSizes`). Each decoded value is bound to the request's field by a theorem: a decision to
+its key's strings (`decisionOf_mem`), an outcome to its name (`outcomeOf_mem`), a tuple to its ids and sorts
+(`tupleIn_typed`), an entry's value to its Bool (`recordEntry_sound`, `obsEntry_sound`), and the record and the
+observations entry by entry in request order (`replayZoneOn_sound`). Lean selects every English row and owns its
+words (`zoneHeads`, `zoneLineWords`, `zoneJoins`, generated into `ve/defaults_words.json`); Python fills their slots.
+-/
 namespace VE.Defaults.Wire
 open Lean
 open VE.Defaults
@@ -110,37 +113,71 @@ theorem replayBind_ok {ε α β : Type} {x : Except ε α} {f : α → Except ε
   | error e => cases h
   | ok a => exact ⟨a, rfl, h⟩
 
-theorem replayMapM_mem {α β ε : Type} {f : α → Except ε β} :
-    ∀ {l : List α} {r : List β}, l.mapM f = .ok r → ∀ y ∈ r, ∃ x ∈ l, f x = .ok y
-  | [], r, h => by cases h; intro y hy; cases hy
-  | x :: l, r, h => by
+theorem replayGetStr_mapM : ∀ {l : List Json} {ids : List String}, l.mapM Json.getStr? = .ok ids → l = ids.map .str
+  | [], ids, h => by cases h; rfl
+  | x :: l, ids, h => by
     rw [List.mapM_cons] at h
     obtain ⟨y, hx, h⟩ := replayBind_ok h
     obtain ⟨ys, hl, h⟩ := replayBind_ok h
     cases h
-    intro z hz
-    rcases List.mem_cons.mp hz with rfl | hz
-    · exact ⟨x, List.mem_cons_self .., hx⟩
-    · obtain ⟨w, hw, hf⟩ := replayMapM_mem hl z hz
-      exact ⟨w, List.mem_cons_of_mem _ hw, hf⟩
+    cases x <;> try (cases hx; done)
+    cases hx
+    simp [replayGetStr_mapM hl]
 
-theorem replayMapM_length {α β ε : Type} {f : α → Except ε β} :
-    ∀ {l : List α} {r : List β}, l.mapM f = .ok r → r.length = l.length
-  | [], r, h => by cases h; rfl
-  | x :: l, r, h => by
-    rw [List.mapM_cons] at h
-    obtain ⟨y, -, h⟩ := replayBind_ok h
-    obtain ⟨ys, hl, h⟩ := replayBind_ok h
-    cases h
-    simp [replayMapM_length hl]
+/-- The ids `strings` reads are the array's: it is their JSON (`toJson`, as `entityIds` writes them). -/
+theorem replayStrings_eq {t : Json} {ids : List String} (h : VE.Bridge.strings t = .ok ids) : t = toJson ids := by
+  unfold VE.Bridge.strings at h
+  obtain ⟨arr, harr, h⟩ := replayBind_ok h
+  cases t with
+  | arr a =>
+    obtain rfl : a = arr := by cases harr; rfl
+    have := replayGetStr_mapM h
+    show Json.arr a = Json.arr (ids.toArray.map toJson)
+    congr 1
+    apply Array.ext'
+    simp [this]; intros; rfl
+  | _ => cases harr
 
-/-- A decision the request names is one of the document's keyed decisions. -/
-theorem decisionOf_mem {L : LayeredU} {j : Json} {e : DecisionKey × String × List String}
-    (h : decisionOf L j = .ok e) : e ∈ keyedDecisions L.D := by
-  unfold decisionOf at h
-  obtain ⟨k, -, h⟩ := replayBind_ok h
+/-- The key the request names is its fields' (`decisionKeyJson`'s): each of the key's strings is the request's
+    string at that field. -/
+theorem decisionOf_key {j : Json} {k : DecisionKey} (h : decisionOf.key j = .ok k) :
+    match (generalizing := false) k with
+    | .excepted r => VE.Bridge.stringField j "excepted" = .ok r
+    | .off r π => VE.Bridge.stringField j "off" = .ok r ∧ VE.Bridge.stringField j "party" = .ok π
+    | .outweighs a lo hi => VE.Bridge.stringField j "outweighs" = .ok a ∧ VE.Bridge.stringField j "lower" = .ok lo ∧
+        VE.Bridge.stringField j "higher" = .ok hi := by
+  unfold decisionOf.key at h
+  dsimp only at h
+  obtain ⟨names, -, h⟩ := replayBind_ok h
   split at h
-  · rename_i he; cases h; exact List.mem_of_find?_eq_some he
+  · cases h1 : VE.Bridge.stringField j "excepted" <;> unfold VE.Bridge.stringField at h1 <;> rw [h1] at h <;>
+      cases h; rfl
+  · split at h
+    · cases h1 : VE.Bridge.stringField j "off" <;> cases h2 : VE.Bridge.stringField j "party" <;>
+        unfold VE.Bridge.stringField at h1 h2 <;> rw [h1, h2] at h <;> cases h; exact ⟨rfl, rfl⟩
+    · split at h
+      · cases h1 : VE.Bridge.stringField j "outweighs" <;> cases h2 : VE.Bridge.stringField j "lower" <;>
+          cases h3 : VE.Bridge.stringField j "higher" <;>
+          unfold VE.Bridge.stringField at h1 h2 h3 <;> rw [h1, h2, h3] at h <;> cases h; exact ⟨rfl, rfl, rfl⟩
+      · cases h
+
+/-- A decision the request names is one of the document's keyed decisions, the one of the request's key: each of
+    its key's strings is the request's at that field (`decisionOf_key`). -/
+theorem decisionOf_mem {L : LayeredU} {j : Json} {e : DecisionKey × String × List String}
+    (h : decisionOf L j = .ok e) : e ∈ keyedDecisions L.D ∧ decisionOf.key j = .ok e.1 ∧
+    match e.1 with
+    | .excepted r => VE.Bridge.stringField j "excepted" = .ok r
+    | .off r π => VE.Bridge.stringField j "off" = .ok r ∧ VE.Bridge.stringField j "party" = .ok π
+    | .outweighs a lo hi => VE.Bridge.stringField j "outweighs" = .ok a ∧ VE.Bridge.stringField j "lower" = .ok lo ∧
+        VE.Bridge.stringField j "higher" = .ok hi := by
+  unfold decisionOf at h
+  obtain ⟨k, hk, h⟩ := replayBind_ok h
+  split at h
+  · rename_i he; cases h
+    have hk' : e.1 = k :=
+      beq_iff_eq.mp (List.find?_some (p := fun x : DecisionKey × String × List String => x.1 == k) he)
+    have hkey : decisionOf.key j = .ok e.1 := hk.trans (congrArg Except.ok hk'.symm)
+    exact ⟨List.mem_of_find?_eq_some he, hkey, decisionOf_key hkey⟩
   · cases h
 
 /-- An outcome the request names is a regulated outcome of the document, of the name the request gives. -/
@@ -154,47 +191,86 @@ theorem outcomeOf_mem {L : LayeredU} {j : Json} {r : VE.Norms.Regulated} (h : ou
     exact ⟨List.mem_of_find?_eq_some hr, hn.trans (congrArg Except.ok hname.symm)⟩
   · cases h
 
-/-- A tuple the request gives is typed by its sorts in the situation. -/
+/-- A tuple the request gives is the request's: its `tuple` is the tuple's ids (`entityIds`), each of the sort in
+    `sorts` at its place, and the tuple is typed by `sorts` in the situation. -/
 theorem tupleIn_typed {M : VE.FiniteModel Entity} {ss : List String} {j : Json} {vs : List Entity}
-    (h : tupleIn M ss j = .ok vs) : VE.TupleTyped M.asStructure ss vs := by
+    (h : tupleIn M ss j = .ok vs) :
+    VE.TupleTyped M.asStructure ss vs ∧ vs.map Prod.fst = ss ∧ j.getObjValD "tuple" = entityIds vs := by
   unfold tupleIn at h
   cases ht : VE.NormDefaults.Wire.tupleOf M ss (j.getObjValD "tuple") with
   | error e => rw [ht] at h; cases h
   | ok t =>
     rw [ht] at h; cases h
-    exact (VE.NormDefaults.mem_allTuples M ss t.val).mp t.property
+    refine ⟨(VE.NormDefaults.mem_allTuples M ss t.val).mp t.property, ?_⟩
+    unfold VE.NormDefaults.Wire.tupleOf at ht
+    obtain ⟨ids, hids, ht⟩ := replayBind_ok ht
+    dsimp only at ht
+    split at ht
+    · rename_i hl; cases ht
+      simp only [Bool.and_eq_true, beq_iff_eq] at hl
+      refine ⟨List.map_fst_zip (by omega), ?_⟩
+      rw [entityIds, List.map_snd_zip (by omega)]
+      exact replayStrings_eq hids
+    · cases ht
 
-/-- A record entry names one of the document's keyed decisions at a tuple of its sorts in the situation. -/
+/-- A record entry is the request's: the keyed decision its `decision` names (`decisionOf_mem`: by the request's
+    key), at its `tuple`'s ids (`entityIds`) of that decision's sorts, typed in the situation, with its `value`. -/
 theorem recordEntry_sound {L : LayeredU} {M : VE.FiniteModel Entity} {e : Json} {a : (String × List Entity) × Bool}
     (h : recordEntry L M e = .ok a) :
-    ∃ k ss, (k, a.1.1, ss) ∈ keyedDecisions L.D ∧ VE.TupleTyped M.asStructure ss a.1.2 := by
+    ∃ d k ss, e.getObjVal? "decision" = .ok d ∧ decisionOf L d = .ok (k, a.1.1, ss) ∧
+      (k, a.1.1, ss) ∈ keyedDecisions L.D ∧ e.getObjValD "tuple" = entityIds a.1.2 ∧ a.1.2.map Prod.fst = ss ∧
+      VE.TupleTyped M.asStructure ss a.1.2 ∧ ((e.getObjVal? "value") >>= Json.getBool?) = .ok a.2 := by
   unfold recordEntry at h
   obtain ⟨_, -, h⟩ := replayBind_ok h
   obtain ⟨d, hd, h⟩ := replayBind_ok h
   obtain ⟨⟨k, n, ss⟩, hk, h⟩ := replayBind_ok h
   obtain ⟨vs, hv, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
+  obtain ⟨vj, hvj, h⟩ := replayBind_ok h
+  obtain ⟨b, hb, h⟩ := replayBind_ok h
   cases h
-  exact ⟨k, ss, decisionOf_mem hk, tupleIn_typed hv⟩
+  obtain ⟨ht, hs, hj⟩ := tupleIn_typed hv
+  exact ⟨d, k, ss, hd, hk, (decisionOf_mem hk).1, hj, hs, ht, by rw [hvj]; exact hb⟩
 
-/-- An observation names a regulated outcome of the document at a tuple of its sorts in the situation. -/
+/-- An observation is the request's: the regulated outcome of its `outcome`'s name, at its `tuple`'s ids
+    (`entityIds`) of the outcome's sorts, typed in the situation, with its `value`. -/
 theorem obsEntry_sound {L : LayeredU} {M : VE.FiniteModel Entity} {e : Json}
     {a : (VE.Norms.Regulated × List Entity) × Bool} (h : obsEntry L M e = .ok a) :
-    a.1.1 ∈ L.U.D.T.regulated ∧ VE.TupleTyped M.asStructure (VE.NormDefaults.sortsOf L.U.D a.1.1.name) a.1.2 := by
+    outcomeOf L e = .ok a.1.1 ∧ a.1.1 ∈ L.U.D.T.regulated ∧ ((e.getObjVal? "outcome") >>= Json.getStr?) = .ok a.1.1.name ∧
+      e.getObjValD "tuple" = entityIds a.1.2 ∧ a.1.2.map Prod.fst = VE.NormDefaults.sortsOf L.U.D a.1.1.name ∧
+      VE.TupleTyped M.asStructure (VE.NormDefaults.sortsOf L.U.D a.1.1.name) a.1.2 ∧
+      ((e.getObjVal? "value") >>= Json.getBool?) = .ok a.2 := by
   unfold obsEntry at h
   obtain ⟨_, -, h⟩ := replayBind_ok h
   obtain ⟨r, hr, h⟩ := replayBind_ok h
   obtain ⟨vs, hv, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
+  obtain ⟨vj, hvj, h⟩ := replayBind_ok h
+  obtain ⟨b, hb, h⟩ := replayBind_ok h
   cases h
-  exact ⟨(outcomeOf_mem hr).1, tupleIn_typed hv⟩
+  obtain ⟨ht, hs, hj⟩ := tupleIn_typed hv
+  exact ⟨hr, (outcomeOf_mem hr).1, (outcomeOf_mem hr).2, hj, hs, ht, by rw [hvj]; exact hb⟩
 
 /-- Past a size, the answer is the charge's: for the record exactly `zoneCharge`'s, whatever the situation. -/
 theorem zoneSizes_record {L : LayeredU} {M : VE.FiniteModel Entity} {record : List ((String × List Entity) × Bool)}
     (n : Nat) (h : maxZoneRecord < record.length) : zoneSizes record.length n = zoneCharge L M record := by
   simp [zoneSizes, zoneCharge, h]
+
+/-- Within the sizes, nothing is charged; past the observations' bound with the record within its own, the answer is
+    `observations size`: with `zoneSizes_record`, each of `zoneSizes`'s answers. -/
+theorem zoneSizes_none_iff (record obs : Nat) :
+    zoneSizes record obs = none ↔ record ≤ maxZoneRecord ∧ obs ≤ maxZoneObservations := by
+  unfold zoneSizes; by_cases h1 : maxZoneRecord < record <;> by_cases h2 : maxZoneObservations < obs <;> simp [h1, h2] <;> omega
+
+theorem zoneSizes_observations {record obs : Nat} (hr : record ≤ maxZoneRecord) (ho : maxZoneObservations < obs) :
+    zoneSizes record obs = some (.unknown (.branch [] "observations size")) := by
+  simp [zoneSizes, ho, Nat.not_lt.mpr hr]
+
+/-- The enumeration is `zoneSizes`'s answer when the sizes stopped the decoding, otherwise `zoneMin`'s on the decoded
+    request. -/
+theorem ZoneReplay.min_early {x : ZoneReplay} {z : DefaultZone Entity} (h : x.early = some z) : x.min = .error z := by
+  simp [ZoneReplay.min, h]
+
+theorem ZoneReplay.min_none {x : ZoneReplay} (h : x.early = none) : x.min = zoneMin x.v.L x.X x.S.M x.record x.obs := by
+  simp [ZoneReplay.min, h]
 
 /-- An enumeration the replay answers is `zoneMin`'s on the decoded request, read after the sizes passed. -/
 theorem ZoneReplay.min_ok {x : ZoneReplay} {Min : List (List (String × List Entity))} (h : x.min = .ok Min) :
@@ -204,41 +280,45 @@ theorem ZoneReplay.min_ok {x : ZoneReplay} {Min : List (List (String × List Ent
   · cases h
   · rename_i he; exact ⟨he, h⟩
 
-/-- What the replay decodes is the request's: the query's outcome is a regulated outcome of the document, of the
-    query's name, at a tuple of its sorts in the situation; with the sizes passed (`zoneSizes`), every record entry
-    names a keyed decision and every observation a regulated outcome, each at a tuple of its sorts in the situation,
-    and their numbers are the request's; past a size, nothing else is decoded. -/
+/-- What the replay decodes is the request's: the situation is `situationX`'s of its `model`; the query's outcome and
+    tuple are `outcomeOf`'s and `tupleIn`'s of its `query` (`outcomeOf_mem`, `tupleIn_typed`); `early` is
+    `zoneSizes`'s answer on the sizes of its `record` and `observations`; with no early answer, the record and the
+    observations are, entry by entry and in request order, `recordEntry`'s and `obsEntry`'s of the request's entries
+    (`recordEntry_sound`, `obsEntry_sound`); with one, nothing else is decoded. -/
 theorem replayZoneOn_sound {v : DefaultsView} {j : Json} {x : ZoneReplay} (h : replayZoneOn v j = .ok x) :
-    x.v = v ∧ x.r ∈ v.L.U.D.T.regulated ∧ VE.TupleTyped x.S.M.asStructure (VE.NormDefaults.sortsOf v.L.U.D x.r.name) x.vs ∧
-    (∀ e ∈ x.record, ∃ k ss, (k, e.1.1, ss) ∈ keyedDecisions v.L.D ∧ VE.TupleTyped x.S.M.asStructure ss e.1.2) ∧
-    (∀ o ∈ x.obs, o.1.1 ∈ v.L.U.D.T.regulated ∧
-      VE.TupleTyped x.S.M.asStructure (VE.NormDefaults.sortsOf v.L.U.D o.1.1.name) o.1.2) ∧
-    (x.early = none → zoneSizes x.record.length x.obs.length = none) := by
+    x.v = v ∧
+    (∃ m S, j.getObjVal? "model" = .ok m ∧ VE.NormDefaults.Wire.situationX v.L m = .ok S ∧ S.M = x.S.M) ∧
+    (∃ q, j.getObjVal? "query" = .ok q ∧ outcomeOf v.L q = .ok x.r ∧
+      tupleIn x.S.M (VE.NormDefaults.sortsOf v.L.U.D x.r.name) q = .ok x.vs) ∧
+    ∃ recordJ obsJ, ((j.getObjVal? "record") >>= Json.getArr?) = .ok recordJ ∧
+      ((j.getObjVal? "observations") >>= Json.getArr?) = .ok obsJ ∧ x.early = zoneSizes recordJ.size obsJ.size ∧
+      (x.early = none → recordJ.toList.mapM (recordEntry v.L x.S.M) = .ok x.record ∧
+        obsJ.toList.mapM (obsEntry v.L x.S.M) = .ok x.obs) ∧
+      (x.early ≠ none → x.record = [] ∧ x.obs = []) := by
   unfold replayZoneOn at h
+  obtain ⟨m, hm, h⟩ := replayBind_ok h
+  obtain ⟨S, hS, h⟩ := replayBind_ok h
   obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨S, -, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
+  obtain ⟨q, hq, h⟩ := replayBind_ok h
   obtain ⟨_, -, h⟩ := replayBind_ok h
   obtain ⟨r, hr, h⟩ := replayBind_ok h
   obtain ⟨vs, hvs, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨recordJ, -, h⟩ := replayBind_ok h
-  obtain ⟨_, -, h⟩ := replayBind_ok h
-  obtain ⟨obsJ, -, h⟩ := replayBind_ok h
-  have base := (outcomeOf_mem hr).1
-  have hq := tupleIn_typed hvs
+  obtain ⟨rj, hrj, h⟩ := replayBind_ok h
+  obtain ⟨recordJ, hrec, h⟩ := replayBind_ok h
+  obtain ⟨oj, hoj, h⟩ := replayBind_ok h
+  obtain ⟨obsJ, hobs, h⟩ := replayBind_ok h
+  have hR : ((j.getObjVal? "record") >>= Json.getArr?) = .ok recordJ := by rw [hrj]; exact hrec
+  have hO : ((j.getObjVal? "observations") >>= Json.getArr?) = .ok obsJ := by rw [hoj]; exact hobs
   split at h
-  · cases h
-    exact ⟨rfl, base, hq, by simp, by simp, by simp⟩
-  · rename_i hs
-    obtain ⟨record, hrec, h⟩ := replayBind_ok h
-    obtain ⟨obs, hobs, h⟩ := replayBind_ok h
+  · rename_i z hz
     cases h
-    refine ⟨rfl, base, hq, fun e he => ?_, fun o ho => ?_, fun _ => ?_⟩
-    · obtain ⟨_, _, he'⟩ := replayMapM_mem hrec e he; exact recordEntry_sound he'
-    · obtain ⟨_, _, ho'⟩ := replayMapM_mem hobs o ho; exact obsEntry_sound ho'
-    · rw [replayMapM_length hrec, replayMapM_length hobs, Array.length_toList, Array.length_toList]; exact hs
+    exact ⟨rfl, ⟨m, S, hm, hS, rfl⟩, ⟨q, hq, hr, hvs⟩, recordJ, obsJ, hR, hO, hz.symm, by simp, fun _ => ⟨rfl, rfl⟩⟩
+  · rename_i hz
+    obtain ⟨record, hrecs, h⟩ := replayBind_ok h
+    obtain ⟨obs, hobss, h⟩ := replayBind_ok h
+    cases h
+    exact ⟨rfl, ⟨m, S, hm, hS, rfl⟩, ⟨q, hq, hr, hvs⟩, recordJ, obsJ, hR, hO, hz.symm,
+      fun _ => ⟨hrecs, hobss⟩, fun hn => absurd rfl hn⟩
 
 /-! ## The rows after DE10 -/
 
@@ -329,6 +409,13 @@ theorem zoneWords_complete (f : Form) (l : ZoneLine) :
     (zoneHeads.filter fun h => h.1 == "leftTo" && h.2.1 == formLabel f).length = 1 ∧
     (zoneLineWords.filter fun w => w.1 == l.row && w.2.1 == l.kind).length = 1 := by
   rcases l with _ | _ | ⟨_ | _ | _, _⟩ <;> cases f <;> simp only [ZoneLine.row, ZoneLine.kind] <;> decide
+
+/-- A line's row and kind read back as the one kind of line they name: DE11, DE10f and DE13's three are distinct, so
+    each line has its own words row (`zoneWords_complete`). -/
+theorem zoneLine_rows_distinct (vs : List Entity) :
+    ([ZoneLine.stated "" 0 vs, .forced "" vs, .assumed (.excepted "") vs, .assumed (.off "" "") vs,
+      .assumed (.outweighs "" "" "") vs].map fun l => (l.row, l.kind)) =
+    [("DE11", ""), ("DE10f", ""), ("DE13", "excepted"), ("DE13", "off"), ("DE13", "outweighs")] := rfl
 
 /-- The rule of an exception atom, by its key (`keyedDecisions`), for `forced_all`. -/
 def exceptedRule (D : VE.SoftNorms.SoftDoc) (n : String) : String :=

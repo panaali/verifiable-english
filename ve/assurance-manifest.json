@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 42128,
+    "total_lines": 42215,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1989,12 +1989,12 @@
       },
       {
         "file": "lean/VE/Defaults/ZoneWire.lean",
-        "lines": 376,
-        "sha256": "2fbd8f56a9f4f057eb527349d9451aa1b1cb46c6716ca3c65298aa0cc19e8685",
+        "lines": 463,
+        "sha256": "1b2585cf4016730e4020e1a81ddbaa9fd12083f79c17f39d1ecd63fb15f0241c",
         "ranges": [
           [
             1,
-            376
+            463
           ]
         ],
         "declarations": [
@@ -2011,7 +2011,7 @@
           "zoneFields",
           "zoneCase"
         ],
-        "reason": "the defaults-zone kind (df-5): its request decoders (the situation by situationX, the query, the record's and the observations' sizes before any entry (zoneSizes), each record entry by decision key, each observation), each tied to the request by a soundness theorem (decisionOf_mem, outcomeOf_mem, tupleIn_typed, recordEntry_sound, obsEntry_sound, replayZoneOn_sound), its answer and the words of its rows (zoneHeads, zoneLineWords); the full file is pinned"
+        "reason": "the defaults-zone kind (df-5): its request decoders (the situation by situationX, the query, the record's and the observations' sizes before any entry (zoneSizes), each record entry by decision key, each observation), each tied to the request's values by a soundness theorem (decisionOf_mem, outcomeOf_mem, tupleIn_typed, recordEntry_sound, obsEntry_sound, replayZoneOn_sound), its answer and the words of its rows (zoneHeads, zoneLineWords); the full file is pinned"
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
