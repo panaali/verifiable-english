@@ -2002,10 +2002,10 @@
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   },
   {
-   "class": "S",
-   "lines": 13,
-   "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
+   "class": "V",
+   "lines": 76,
+   "reason": "cmp-s4c: ResponseShape/Schemas/Discourse.lean +36 (the composed row's shape), VE/Discourse/Compose.lean +24 (chainEnvironment, chainBaseWith, composedFields), VE/Discourse/Run.lean +12 (chainCase, the route entry), VE/Discourse/Admission.lean +4 (envelopeChecks); K +0, trusted +76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4c, 2026-10-18",
    "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   },
   {
@@ -2056,6 +2056,13 @@
    "reason": "ps-1b: VE/Presupposition/Reading.lean S +33 (Reading, Reading.DefinedAt, assertedAt, conditionedAt, inPlaceAt, Root, carried, peel); VE/Presupposition/Rows.lean S +10 (definite, plural, generic), D[V] +21 (buildReading, buildPre); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1b, 2026-10-18",
    "commit": "8205a8e6966811b10bd3bc793496bd15ea7c2fbb"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
+   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   },
   {
    "class": "S",

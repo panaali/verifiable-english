@@ -423,4 +423,4 @@ See [DELTA.md](DELTA.md), rows 1 to 6.
 - `3df00c12f` ap-3db: English actions_version 38 (EnglishGrammar/Run.lean reads decodeSourceLexical); the sense pins, ask fixtures and generated inventories
 - `daa658e1d` ap-3db: each joined act read once, in the decoder (actsOf on the decoded declarations; canonicalShape reads no act); the trees carried on NormsEnvironment; fixtures at the route's limits
 - `67cad1913` ap-3db: the twins of the reached soundness theorems (DecodeTwins.lean); canonicalShape reads no joined act; the response-shape proofs over each route's decoder; model gate and Background
-- `883064b16` ap-3db: the hook reads joined acts on the elaborating entry points: checkAct, decodeVocab, sourceOf, every norms and norm-defaults entry over its decoder; D-33 by readings_lexical_only; 
+- `883064b16` ap-3db: the hook reads joined acts on the elaborating entry points: checkAct, decodeVocab, sourceOf, every norms and norm-defaults entry over its decoder; D-33 by readings_lexical_only;

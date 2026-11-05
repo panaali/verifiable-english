@@ -15064,6 +15064,14 @@ theorem VE.Discourse.caseManifest_wellFormed
         VE.Discourse.chainDDoc rv environment p K = Except.ok D ∧ VE.Discourse.wellFormed D = Except.ok ()
   -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.caseManifest@VE.Discourse.Compose VE.Discourse.chainDDoc@VE.Discourse.Compose VE.Discourse.wellFormed@VE.Discourse.WellFormed VE.Environment@VE.Syntax VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 3320249793
+theorem VE.Discourse.chainBase_of
+  ∀ (profiles : List String) (environment j : Lean.Json) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Discourse.runAll (VE.Discourse.envelopeChecks profiles environment j) = Except.ok () →
+      VE.Discourse.chainEnvironment (VE.Discourse.baseProfiles profiles) (VE.Discourse.baseEnvironment environment) =
+          Except.ok ne →
+        VE.Discourse.chainBase environment j = VE.Discourse.chainBaseWith ne environment j
+  -- uses VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.baseEnvironment@VE.Discourse.Admission VE.Discourse.baseProfiles@VE.Discourse.Admission VE.Discourse.chainBase@VE.Discourse.Compose VE.Discourse.chainBaseWith@VE.Discourse.Compose VE.Discourse.chainEnvironment@VE.Discourse.Compose VE.Discourse.envelopeChecks@VE.Discourse.Admission VE.Discourse.runAll@VE.Layout.Anchors VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3894021518
 theorem VE.Discourse.chainChecks_wellFormed
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (environment j r : Lean.Json) (K : VE.Discourse.Manifest),
     VE.Discourse.chainChecks rv environment j K = Except.ok r →
@@ -15549,6 +15557,12 @@ theorem VE.Discourse.elaborate_typed
     VE.Discourse.elaborateD D d σ = Option.some A → (VE.Formula.check D.E [] A = Bool.true ↔ VE.Discourse.TreeTyped D d σ)
   -- uses VE.Discourse.Assignment@VE.Discourse.Elaborate VE.Discourse.DDoc.E@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.DTree@VE.Discourse.Grammar VE.Discourse.TreeTyped@VE.Discourse.WellFormed VE.Discourse.elaborateD@VE.Discourse.Elaborate VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax
   -- expr 4218214400
+theorem VE.Discourse.envelopeChecks_profiles
+  ∀ (profiles : List String) (environment j : Lean.Json),
+    VE.Discourse.runAll (VE.Discourse.envelopeChecks profiles environment j) = Except.ok () →
+      VE.Route.Gate.profilesOf environment = Except.ok profiles
+  -- uses VE.Discourse.envelopeChecks@VE.Discourse.Admission VE.Discourse.runAll@VE.Layout.Anchors VE.Route.Gate.profilesOf@VE.Route.Gate
+  -- expr 3238132805
 theorem VE.Discourse.eta_models
   VE.Discourse.Examples.eta (VE.Discourse.Examples.managerModel ["p1", "p2"] ["p1", "p2"]) =
       (Bool.false, Bool.false, Bool.true) ∧

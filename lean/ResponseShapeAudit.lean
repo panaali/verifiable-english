@@ -139,12 +139,17 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Discourse.admit1_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_status
+#print axioms ResponseShape.Encoders.Discourse.admitChain_fits
+#print axioms ResponseShape.Encoders.Discourse.admitChain_parts
 #print axioms ResponseShape.Encoders.Discourse.admitCore_kinds
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_kinds
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_references
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_status
+#print axioms ResponseShape.Encoders.Discourse.chainReferences_fits
 #print axioms ResponseShape.Encoders.Discourse.compileUnit_status
 #print axioms ResponseShape.Encoders.Discourse.compileUnits_status
+#print axioms ResponseShape.Encoders.Discourse.composed_fits
+#print axioms ResponseShape.Encoders.Discourse.dispatchAdmission_fits
 #print axioms ResponseShape.Encoders.Discourse.encodeAdmission_fits
 #print axioms ResponseShape.Encoders.Discourse.foldStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.joint_fits

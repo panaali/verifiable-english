@@ -2164,6 +2164,7 @@
       "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/Common.lean": "the response shapes' shared value domains (common.json) and their predicates over a JSON value; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
+      "lean/ResponseShape/Schemas/Discourse.lean": "the discourse mode's response shapes (discourse.json) and #guards reading the members of its rendered composed row (cmp-s4c); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
@@ -2244,7 +2245,6 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/Readings/SupVerdictsWire.lean": "lean:runner-glue: readings-verdicts superposed request dispatch and response rows; evidence is checked by the existing pinned readings decoders and Lean folds its accepted results",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
-      "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
@@ -2312,7 +2312,8 @@
       "lean/VE/Service/DocumentChainExamples.lean": "examples only: PC-2a's fixtures (profile-composition 5.2) are built as JSON documents and sent to `check` and `layeredOf` in `#guard`s; no service mode",
       "lean/VE/Service/DocumentChainChecks.lean": "examples only: PC-2a's fixtures of the branches around the chain, built as JSON documents and sent to `check`, `requestOf` and `environmentOf` in `#guard`s; no service mode",
       "lean/VE/Acts/DecodeTwins.lean": "ap-3db: theorems only: the twins of the reached soundness theorems over the elaborating decoders, and the predicates that state them; the JSON they name is read by the pinned Acts/Decode.lean",
-      "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file"
+      "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file",
+      "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file"
     }
   },
   "plan_operations": {
