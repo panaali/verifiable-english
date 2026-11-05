@@ -1,0 +1,123 @@
+{
+ "mutants": [
+  {
+   "id": "Pa",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (a): the replay leaves actions_version out of its comparison; an answer under another version than the lock's must fail",
+   "find": "        for key in sorted(recorded.keys() | answer.keys()):",
+   "replace": "        for key in sorted((recorded.keys() | answer.keys()) - {\"actions_version\"}):",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_an_answer_under_another_version_than_the_locks_fails_the_replay",
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ]
+  },
+  {
+   "id": "Pb",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (b): the replay leaves another answer field (the lead) out of its comparison",
+   "find": "        for key in sorted(recorded.keys() | answer.keys()):",
+   "replace": "        for key in sorted((recorded.keys() | answer.keys()) - {\"lead\"}):",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ]
+  },
+  {
+   "id": "Pc",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (c): the loader supplies a constant version instead of the lock's",
+   "find": "\"actions_version\": lock_version()}.items()))",
+   "replace": "\"actions_version\": \"45\"}.items()))",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_the_loader_takes_the_version_from_the_lock"
+   ]
+  },
+  {
+   "id": "Pd",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (d): the reader accepts a fixture in the old format (seconds, actions_version)",
+   "find": "    if stale := old_format(entry):",
+   "replace": "    if stale := []:",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ]
+  },
+  {
+   "id": "Pd2",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (d, second half): the old-format check misses a recorded actions_version",
+   "find": "        found.append(\"result/identities/actions_version\")",
+   "replace": "        pass",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ]
+  },
+  {
+   "id": "Ps",
+   "file": "tools/ask_fixtures.py",
+   "claim": "a record stores the version-free answer only when Lean answered under the lock's version",
+   "find": "    if identities.get(\"actions_version\") != lock_version():",
+   "replace": "    if False:",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_record_stores_no_version_and_refuses_another_version_than_the_locks"
+   ]
+  },
+  {
+   "id": "Pg",
+   "file": "conformance/english_lean_s3_compare.py",
+   "claim": "the S3 report command runs under its own hash seed, so rewriting the generated file reproduces it",
+   "find": "    if os.environ.get(\"PYTHONHASHSEED\") != HASH_SEED:",
+   "replace": "    if False:",
+   "tests": [
+    "tests/test_english_lean_s3_compare.py::test_the_report_is_the_same_whatever_hash_seed_the_command_starts_under"
+   ]
+  },
+  {
+   "id": "Le",
+   "file": "lean/VE/Senses/RunExamples.lean",
+   "claim": "seeded bug (e): the pin leaves out an answer field other than the version (environment_id); the pins fail",
+   "find": "(.obj (ids.erase \"actions_version\"))",
+   "replace": "(.obj ((ids.erase \"actions_version\").erase \"environment_id\"))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ]
+  },
+  {
+   "id": "Le2",
+   "file": "lean/VE/Senses/Run.lean",
+   "claim": "seeded bug (e, the answer side): a pinned answer field other than the version changes (the reading's used words written twice); the pins fail",
+   "find": "(\"used\", toJson used)] ++ preamble",
+   "replace": "(\"used\", toJson (used ++ used))] ++ preamble",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ]
+  },
+  {
+   "id": "Lh",
+   "file": "lean/VE/Senses/Run.lean",
+   "claim": "Lean's reading answer under another version than Fixed.actionsVersion: the pins leave it out, the version guard fails",
+   "find": "(own ++ source ++ [(\"actions_version\", .str VE.EnglishGrammar.Fixed.actionsVersion)])",
+   "replace": "(own ++ source ++ [(\"actions_version\", .str (VE.EnglishGrammar.Fixed.actionsVersion ++ \"x\"))])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ]
+  },
+  {
+   "id": "Lf",
+   "file": "lean/VE/Senses/RunExamples.lean",
+   "claim": "seeded bug (f): the version guard compares a literal instead of Fixed.actionsVersion; raising the version (english_grammar_gen.py --write --actions-version next) then fails RunExamples, which builds unchanged without the bug",
+   "find": "#guard versionOf \"reading\" (runCaseReported (src \"The riddle is funny.\")) == .str VE.EnglishGrammar.Fixed.actionsVersion",
+   "replace": "#guard versionOf \"reading\" (runCaseReported (src \"The riddle is funny.\")) == .str \"45\"",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; keep=$(mktemp -d); cp lean/VE/EnglishGrammar/Fixed/Version.lean ve/english_grammar/LOCK.json \"$keep\"/; trap 'cp \"$keep\"/Version.lean lean/VE/EnglishGrammar/Fixed/Version.lean; cp \"$keep\"/LOCK.json ve/english_grammar/LOCK.json; rm -rf \"$keep\"' EXIT; next=$(( $(python3 -c 'import json; print(json.load(open(\"ve/english_grammar/LOCK.json\"))[\"actions_version\"])') + 1 )); python3 tools/english_grammar_gen.py --write --actions-version \"$next\" >/dev/null || exit 2; cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ]
+  }
+ ]
+}
