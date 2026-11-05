@@ -221,13 +221,47 @@ def joint : Shape :=
           ("verdict", enumS ["UNKNOWN", "INVALID"]),
           ("diagnostic", ref "common.json#/$defs/text")]]]]
 
+/-- A chain route's admission answer without or with its `conditional_on` labels. -/
+def chainAdmission (conditional : Option Shape) : Shape :=
+  n [
+    obj,
+    .required (["id", "status", "admitted", "report", "report_id", "kinds"] ++ (conditional.map fun _ => "conditional_on").toList),
+    closed ([
+      ("id", constS ""),
+      ("status", constS "ok"),
+      ("admitted", .const (.bool true)),
+      ("report", ref "common.json#/$defs/report"),
+      ("report_id", ref "common.json#/$defs/hex64"),
+      ("kinds", copied "the units' kinds of Discourse.chainDocument, copied from the request's document" <|
+        n [arr, .items (ref "common.json#/$defs/kind")])] ++ (conditional.map ("conditional_on", ·)).toList)]
+
+def chain_admission : Shape :=
+  c "Discourse.dispatchAdmission: the admission answer of the route Compose.dispatch chooses for the base list (Norms, NormDefaults, SoftNorms or Rights Run.runAdmission, with the empty id) on Discourse.chainDocument of the resolved payload, which is not the request." [
+    .anyOf [
+      chainAdmission none,
+      chainAdmission (some (ref "soft-norms.json#/$defs/coherence_labels")),
+      chainAdmission (some (ref "rights.json#/$defs/conditional_labels"))]]
+
+def composed : Shape :=
+  c "Discourse.Run.encodeComposed: the composed path's admission (14.6): the wrapper's document id, report id and reference lines (7.1), and the chain route's answer verbatim with its report id." [
+    obj,
+    .required ["id", "status", "document_id", "inner", "inner_report_id", "references", "report_id"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("document_id", ref "common.json#/$defs/hex64_or_empty"),
+      ("inner", ref "#/$defs/chain_admission"),
+      ("inner_report_id", ref "common.json#/$defs/hex64_or_empty"),
+      ("references", n [arr, .items (ref "#/$defs/reference")]),
+      ("report_id", ref "common.json#/$defs/hex64_or_empty")]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/discourse_path", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
       .select [
-        (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
+        (ref "#/$defs/kind/admission", .anyOf [ref "#/$defs/admission", ref "#/$defs/composed"]),
         (ref "#/$defs/kind/discourse-validity", ref "#/$defs/validity"),
         (ref "#/$defs/kind/discourse-resolve", ref "#/$defs/resolve"),
         (ref "#/$defs/kind/discourse-joint", ref "#/$defs/joint")]]),
@@ -246,9 +280,35 @@ def file : File where
     ("joint_count", .schema joint_count),
     ("choices", .schema choices),
     ("admission", .schema admission),
+    ("chain_admission", .schema chain_admission),
+    ("composed", .schema composed),
     ("validity", .schema validity),
     ("resolved_target", .schema resolved_target),
     ("resolve", .schema resolve),
     ("joint", .schema joint)]
+
+/-- The composed row as `tools/response_schemas.py` renders it (cmp-s4c): a closed object, every member required, `inner`
+a chain admission; three chain admissions, by their `conditional_on`; the row's `admission` is either admission. -/
+def rendered (s : Shape) : Json := (ResponseShape.render "discourse.json" 64 s).toOption.getD .null
+#guard ((rendered composed).getObjValD "additionalProperties", (rendered composed).getObjValD "required",
+    ((rendered composed).getObjValD "properties").getObj?.toOption.map (·.toList.map (·.1)),
+    (((rendered composed).getObjValD "properties").getObjValD "inner").getObjValD "$ref") ==
+  (.bool false, toJson ["id", "status", "document_id", "inner", "inner_report_id", "references", "report_id"],
+    some ["document_id", "id", "inner", "inner_report_id", "references", "report_id", "status"],
+    .str "#/$defs/chain_admission")
+#guard ((rendered chain_admission).getObjValD "anyOf").getArr?.toOption.map (·.toList.map fun b =>
+    (b.getObjValD "additionalProperties", (b.getObjValD "required").getArr?.toOption.map (·.size),
+      (b.getObjValD "properties").getObj?.toOption.map (·.toList.map (·.1)),
+      (((b.getObjValD "properties").getObjValD "conditional_on").getObjValD "$ref"),
+      ((b.getObjValD "properties").getObjValD "id"), (((b.getObjValD "properties").getObjValD "kinds").getObjValD "items"))) ==
+  some ([Json.null, .str "soft-norms.json#/$defs/coherence_labels", .str "rights.json#/$defs/conditional_labels"].map fun c =>
+    (.bool false, some (if c == .null then 6 else 7), some ((["admitted"] ++ (if c == .null then [] else ["conditional_on"])) ++
+      ["id", "kinds", "report", "report_id", "status"]), c, Json.mkObj [("const", .str "")],
+      Json.mkObj [("$ref", .str "common.json#/$defs/kind")]))
+-- every byte of the three renderings, pinned by their hashes (`tools/response_schemas.py --check` pins the file)
+#guard (hash (rendered composed).compress, hash (rendered chain_admission).compress, hash (rendered «row»).compress) ==
+  (12206428144082085645, 3722857857802430111, 9102400883268217988)
+#guard file.defs.map (·.1) == ["discourse_path", "kind", "target_kind", "reference", "validity_map", "joint_count",
+  "choices", "admission", "chain_admission", "composed", "validity", "resolved_target", "resolve", "joint"]
 
 end ResponseShape.Schemas.Discourse

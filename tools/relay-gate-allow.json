@@ -2516,6 +2516,51 @@
    "kind": "follow-up",
    "id": "F4",
    "reason": "Names a request name (a sort, constant or word) that the schema does not check against the request; the relay binds the lexicon by lexicon_id (ve.backends.senses._projection_problem). Bind them with x-references in senses.project.json (sn-b6b)."
+  },
+  {
+   "route": "service:english.command",
+   "mutation": "rebind",
+   "path": [
+    "*/result/result/reading/command/act",
+    "*/result/result/reading/command/args/*",
+    "*/result/result/reading/fills/*/constant",
+    "*/result/result/reading/fills/*/words"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The act names a regulated predicate of the request's environment, each argument and fill constant one of its constants, and a fill's words the wording at its span; the schema does not check them against the request."
+  },
+  {
+   "route": "service:english.command",
+   "mutation": "retype",
+   "path": [
+    "*/result/result/reading/fills/*/span",
+    "*/result/result/reading/query"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). A span is null and the query set exactly for a proof task (`Prove that ... using these premises.`), whose query is one of the request's records; the schema allows either form."
+  },
+  {
+   "route": "service:english.command",
+   "mutation": "empty",
+   "path": [
+    "*/result/result/reading/command/args",
+    "*/result/result/reading/fills"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The act's arity in the request's environment fixes the number of arguments and fills (0 or 1); an emptied list is not checked against it."
+  },
+  {
+   "route": "service:english.command",
+   "mutation": "duplicate",
+   "path": [
+    "*/result/result/legend"
+   ],
+   "kind": "follow-up",
+   "id": "F10",
+   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The legend has one line for the task, one for the addressee and one per definite of the request's scope (VE.SpeechActs.Run.legend); a repeated line is not checked against it."
   }
  ]
 }
