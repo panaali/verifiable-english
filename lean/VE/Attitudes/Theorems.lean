@@ -6,20 +6,20 @@ adds the rest. -/
 
 namespace VE.Attitudes
 
-private theorem ok_of_bind {α β : Type} {x : Except String α} {f : α → Except String β} {b : β}
+theorem ok_of_bind {α β : Type} {x : Except String α} {f : α → Except String β} {b : β}
     (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b := by
   cases x with
   | error e => cases h
   | ok a => exact ⟨a, rfl, h⟩
 
 /-- `throwIf` passes exactly when its condition is false. -/
-private theorem not_of_throwIf {b : Bool} {m : String} (h : throwIf b m = .ok ()) : b = false := by
+theorem not_of_throwIf {b : Bool} {m : String} (h : throwIf b m = .ok ()) : b = false := by
   cases b
   · rfl
   · cases h
 
 /-- The last steps of `checkAtt`: the names, then their distinctness, then W1's check of the elaborated document. -/
-private theorem checkAtt_tail {A : AttDoc} (h : WellFormedAtt A = true) :
+theorem checkAtt_tail {A : AttDoc} (h : WellFormedAtt A = true) :
     checkNames A (keys A) = .ok () ∧ ((keys A).map (name A)).Nodup ∧
       ∃ D, toNorms A = some D ∧ VE.Norms.validate D = .ok () := by
   have h0 : checkAtt A = .ok () := by
@@ -44,7 +44,7 @@ private theorem checkAtt_tail {A : AttDoc} (h : WellFormedAtt A = true) :
   · exact ⟨_, ‹_›, h0⟩
 
 /-- `checkNames`'s three checks, for each key of the list it passes. -/
-private theorem checkNames_mem {A : AttDoc} : ∀ {l : List Key}, checkNames A l = .ok () → ∀ k ∈ l,
+theorem checkNames_mem {A : AttDoc} : ∀ {l : List Key}, checkNames A l = .ok () → ∀ k ∈ l,
     A.E.predicates (name A k) = none ∧ (name A k).utf8ByteSize ≤ 64 ∧
       name A k ∉ A.regulated.map (·.name) ++ A.definitions.map (·.name)
   | [], _, _, hk => by cases hk
@@ -63,7 +63,7 @@ private theorem checkNames_mem {A : AttDoc} : ∀ {l : List Key}, checkNames A l
       cases hc
     | tail _ hx => exact checkNames_mem h x hx
 
-private theorem inj_of_nodup_map {α β : Type} {f : α → β} : ∀ {l : List α}, (l.map f).Nodup →
+theorem inj_of_nodup_map {α β : Type} {f : α → β} : ∀ {l : List α}, (l.map f).Nodup →
     ∀ a ∈ l, ∀ b ∈ l, f a = f b → a = b
   | [], _, _, ha, _, _, _ => by cases ha
   | x :: xs, h, a, ha, b, hb, he => by
@@ -99,7 +99,7 @@ theorem keyOf_name (A : AttDoc) (h : WellFormedAtt A = true) : ∀ k ∈ keys A,
 
 /-- A name `keyOf` answers for is one of the generated names, so `E` does not declare it; so `envAtt` keeps every
     predicate `E` declares. -/
-private theorem envAtt_keeps (A : AttDoc) (h : WellFormedAtt A = true) {p : String} {sig : List String}
+theorem envAtt_keeps (A : AttDoc) (h : WellFormedAtt A = true) {p : String} {sig : List String}
     (hp : A.E.predicates p = some sig) : (envAtt A).predicates p = some sig := by
   show (match keyOf A p with | some k => some k.sorts | none => A.E.predicates p) = some sig
   cases hk : keyOf A p with
