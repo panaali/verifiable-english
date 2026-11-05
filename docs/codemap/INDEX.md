@@ -9,7 +9,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 1 modules — -
-- [docs/composition/](docs__composition.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -74,8 +73,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
-- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 30 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 41 modules — -
+- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 31 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 42 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 29 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -85,7 +84,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
-- [lean/VE/Commands/](lean__VE__Commands.md) — 3 modules — -
+- [lean/VE/Commands/](lean__VE__Commands.md) — 6 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -

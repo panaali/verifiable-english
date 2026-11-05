@@ -524,12 +524,10 @@ def readingJson (r : EFormula × Bool × DState) : Json :=
   Json.mkObj [("formula", r.1.encode), ("mark", .bool r.2.1), ("referents", toJson r.2.2.referents),
     ("binder_seen", .bool r.2.2.binderSeen)]
 
-/-- Translation mode (base 4.3): the status counts the readings that have a meaning. A set that is not
-complete is a verdict only when it already has two readings (`many`); with fewer it is `budget`, never
-`none` or `one`: the parser stopped at the cap. -/
-def translation (c : Case) (cap : Nat) (source : String) : List (String × Json) :=
-  if let some f := c.overlayFailure then invalidOverlayFields "english.read" f else
-  match translateRequest c.E {} c.L cap workBudget source with
+/-- Format a translation outcome without running the translator again. The command reader uses this same
+formatter when a condition or proof sentence is refused. -/
+def translationOf (c : Case) (source : String) (outcome : TranslateOutcome) : List (String × Json) :=
+  match outcome with
   | .readings rs complete =>
     let found := [("readings", Json.arr (rs.map readingJson).toArray), ("complete", .bool complete)]
     if 2 ≤ rs.length then
@@ -543,6 +541,13 @@ def translation (c : Case) (cap : Nat) (source : String) : List (String × Json)
       ((lexicalSpan source r).toList.map fun s => ("span", spanJson s))
   | .notOneSentence => status "rejected" ++ coded "NotOneSentence" notOneSentenceText
   | .budget => budgetFields 0
+
+/-- Translation mode (base 4.3): the status counts the readings that have a meaning. A set that is not
+complete is a verdict only when it already has two readings (`many`); with fewer it is `budget`, never
+`none` or `one`: the parser stopped at the cap. -/
+def translation (c : Case) (cap : Nat) (source : String) : List (String × Json) :=
+  if let some f := c.overlayFailure then invalidOverlayFields "english.read" f else
+  translationOf c source (translateRequest c.E {} c.L cap workBudget source)
 
 /-- What every refusal of a reading adds (spec 4.4), in `english.read` and `senses.read` alike: the span of the
 sentence it names, or of the whole source when it names none (a lexical rejection already carries its
