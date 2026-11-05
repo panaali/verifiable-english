@@ -3192,7 +3192,7 @@ def linked(root: Path) -> None:
 NAMED = [
     ("include-str", reader("lean/Demo/Examples.lean", 'def n := include_str "../NOTES.md"\n'), "lean/NOTES.md"),
     ("io-fs", reader("lean/Demo/Examples.lean", '#eval IO.FS.readFile "NOTES.md"\n'), "lean/NOTES.md"),
-    ("bare-name", reader("lean/Demo/Examples.lean", "-- see NOTES.md\n"), "lean/NOTES.md"),
+    ("bare-name", reader("lean/Demo/Examples.lean", "def n := NOTES.md\n"), "lean/NOTES.md"),
     ("another-case", reader("lean/Demo/Examples.lean", '#eval IO.FS.readFile "notes.MD"\n'), "lean/NOTES.md"),
     ("lakefile", reader("lean/lakefile.toml", 'name = "demo"\n# NOTES.md\n'), "lean/NOTES.md"),
     ("manifest", reader("lean/lake-manifest.json", '{"x": "NOTES.md"}\n'), "lean/NOTES.md"),
@@ -3242,6 +3242,216 @@ def test_what_names_a_file_elsewhere_leaves_it_unread(tmp_path):
     (tmp_path / "lean/.lake/packages").mkdir(parents=True)
     (tmp_path / "lean/.lake/packages/x.lean").write_text("-- NOTES.md\n")
     assert planned_previous(tmp_path, tmp_path, wrote("lean/NOTES.md"))[3:] == (["lean/NOTES.md"], ["lean/NOTES.md"])
+
+
+# Review F2 (DRI note 2026-11-05): a comment is not a read. Each text reads lean/NOTES.md after something a stripper can
+# take for a comment or for the end of a string; a stripper that does not know it blanks the read.
+READ = 'include_str "../NOTES.md"'
+READ_AFTER = {
+    "string-dashes": f'def s := "--" ++ {READ}\n',
+    "string-block": f'def s := "/-" ++ {READ} -- -/\n',
+    "string-escaped-quote": f'def s := "\\"--" ++ {READ}\n',
+    "char-quote": f"def c := '\"'\ndef d := \"--\" ++ {READ}\n",
+    "char-escaped-quote": f"def c := '\\\"'\ndef d := \"--\" ++ {READ}\n",
+    "raw-string": f'def r := r#"a"--"# ++ {READ}\n',
+    "raw-string-backslash": f'def r := r"\\" ++ "--" ++ {READ}\n',
+    "interpolated": f'def i := s!"a {{"--"}} b" ++ {READ}\n',
+    "interpolated-nested": f'def i := s!"{{s!"{{1}}--"}}" ++ "--" ++ {READ}\n',
+    "interpolated-hole-brace": f'def i := s!"{{ {{ x := "--" }} }}" ++ {READ}\n',
+    "holes-no-prefix-says": f'def i := throwError "a {{"--"}} b" ++ {READ}\n',
+    "brace-in-a-plain-string": f'def i := "{{" ++ "--" ++ "}}" ++ {READ}\n',
+    "escaped-identifier": f"def « --b» := {READ}\n",
+    "primed-word": f"def a' := 1\ndef b' := \"--\" ++ {READ}\n",
+    "nested-block-end": f"/- a /- b -/ c -/ def n := {READ}\n",
+    "doc-comment-end": f"/--/ a -/ def n := {READ}\n",
+    "dashes-inside-a-token": f"def l := do let a <--{READ}\n",
+    "block-opener-inside-a-token": f"def l := {{ x : Int //-x = {READ} }}\n",
+    "unterminated-comment": "/- NOTES.md\n",
+    "unterminated-nested-comment": "/- /- -/ NOTES.md\n",
+    "unterminated-string": '"NOTES.md\n',
+    "unterminated-raw-string": 'r#"NOTES.md"\n',
+    "unterminated-hole": 's!"{NOTES.md\n',
+    "unterminated-escaped-identifier": "«NOTES.md\n",
+    "no-char-literal": "def c := 'ab' -- NOTES.md\n",
+    "number-then-quote": "def c := 1'a' -- NOTES.md\n",
+}
+
+
+@pytest.mark.parametrize("text", READ_AFTER.values(), ids=READ_AFTER)
+def test_a_read_after_comment_like_text_is_still_a_read(tmp_path, text):
+    """The stripper knows strings and fails towards a full run where it cannot tell (`lean_code`)."""
+    planned_tree(tmp_path, reader("lean/Demo/Examples.lean", text))
+    got = planned_previous(tmp_path, tmp_path, wrote("lean/NOTES.md"))
+    assert isinstance(got, str) and got.startswith("its inputs differ (lean): lean/NOTES.md is no module"), got
+
+
+COMMENTS = {
+    "line": "-- {}\ndef n := 1\n",
+    "line-after-code": "def n := 1 -- {}\n",
+    "doc": "/-- {} -/\ndef n := 1\n",
+    "module-doc": "/-! {} -/\n",
+    "block": "/- {} -/\n",
+    "nested-block": "/- a /- b -/ {} /- c -/ d -/\n",
+    "block-closing-at-once": "/-/ {} -/\n",
+    "doc-with-a-quote": "/-- it's \"{} -/\n",
+    "comment-after-a-string": 'def s := "--" -- {}\n',
+    "comment-after-a-char": "def c := '\"' -- {}\n",
+    "comment-in-a-hole": 'def s := s!"{{1 /- {} -/}}"\n',
+    "comment-with-unicode": "-- α {} ₁\n",
+}
+
+
+@pytest.mark.parametrize("named", ["tools/trust-classes.json", "tools/layer_policy.py", "lean/checkers.lock",
+                                   "lean/NOTES.md", "lean/Demo/DEEP.md"], ids=lambda n: Path(n).name)
+@pytest.mark.parametrize("comment", COMMENTS.values(), ids=COMMENTS)
+def test_a_name_only_in_a_lean_comment_carries(tmp_path, comment, named):
+    """Every input of `unread_by_build` searches the same text, under lean/ and in an outside --test file."""
+    import trust_mutants as tm
+    planned_tree(tmp_path)
+    for where in ("lean/Demo/Examples.lean", "outside/T.lean"):
+        (tmp_path / where).write_text(comment.format(Path(named).name))
+        lake = tm.lake_reads(tmp_path, [tmp_path / "outside/T.lean"])
+        assert Path(named).name.casefold() not in lake
+        assert tm.check_only([named], set(), set(), lake) is None
+        (tmp_path / where).write_text("\n")
+
+
+@pytest.mark.parametrize("listing", ["readDir", "walkDir", "input_dir"])
+def test_a_directory_listing_named_only_in_a_comment_is_no_listing(tmp_path, listing):
+    import trust_mutants as tm
+    (tmp_path / "lean/Demo").mkdir(parents=True)
+    (tmp_path / "lean/Demo/Examples.lean").write_text(f"-- {listing}\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is None
+
+
+@pytest.mark.parametrize(("name", "text"), [
+    ("lean/lakefile.toml", "-- NOTES.md\n"), ("lean/lean-toolchain", "/- NOTES.md -/\n"),
+    ("lean/lake-manifest.json", "/- NOTES.md -/\n"), ("outside/T.txt", "-- NOTES.md\n"),
+], ids=["lakefile-toml", "toolchain", "manifest", "outside-test-not-lean"])
+def test_a_file_that_is_no_lean_source_stays_whole(tmp_path, name, text):
+    import trust_mutants as tm
+    (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / "lean").mkdir(exist_ok=True)
+    (tmp_path / name).write_text(text)
+    lake = tm.lake_reads(tmp_path, [tmp_path / name] if name.startswith("outside/") else [])
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), lake) is not None
+
+
+def test_a_lakefile_in_lean_loses_its_comments_and_a_symlink_keeps_its_target(tmp_path):
+    import trust_mutants as tm
+    (tmp_path / "lean").mkdir()
+    (tmp_path / "lean/lakefile.lean").write_text("-- NOTES.md\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is None
+    (tmp_path / "lean/Link.lean").symlink_to("NOTES.md")
+    (tmp_path / "lean/NOTES.md").write_text("notes\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is not None
+
+
+def test_text_nested_past_the_recursion_limit_stays_whole():
+    """The comment before it is blanked, and the nesting is unsure, no crash."""
+    import trust_mutants as tm
+    deep = 's!"{' * 100_000
+    assert tm.lean_code(f"-- a\n{deep} -- b\n") == f"    \n{deep} -- b\n"
+
+
+def test_the_real_trees_comments_cost_no_full_run():
+    """PROBE F2: lean/VE/Calc/Ties.lean's doc comment names the table, which forced a full run on every table change."""
+    import trust_mutants as tm
+    assert tm.check_only([tm.CLASS_TABLE], set(), set(), tm.lake_reads(tm.ROOT, [])) is None
+
+
+def test_the_docstring_states_the_condition_where_it_claims_the_carry():
+    """PROBE F3: the table and `PLAN_ONLY_TOOL` modules carry only when nothing Lake or Lean reads names them."""
+    import trust_mutants as tm
+    doc = " ".join(tm.__doc__.split())
+    assert "generated inventory, trust_map's table, or a lean/*.md" not in doc
+    assert ("Trust_map's table, those `PLAN_ONLY_TOOL` modules, a lean/*.md and lean/checkers.lock carry only when "
+            "nothing Lake or Lean reads names them outside a comment") in doc
+
+
+# Lean's own parser as the oracle for `lean_code`: every token it reads, with its byte position (doc comments left out).
+LEAN_TOKENS = """import Lean
+open Lean Parser
+
+partial def tokens (stx : Syntax) (out : Array (Nat × String)) : Array (Nat × String) :=
+  match stx with
+  | .node _ k args =>
+    if k == ``Command.docComment || k == ``Command.moduleDoc then out
+    else args.foldl (fun o a => tokens a o) out
+  | .atom (.original _ p _ _) v => out.push (p.byteIdx, v)
+  | .ident (.original _ p _ _) raw _ _ => out.push (p.byteIdx, raw.toString)
+  | _ => out
+
+def main (paths : List String) : IO Unit := do
+  initSearchPath (← findSysroot)
+  let env ← importModules #[{module := `Lean}] {} (loadExts := true)
+  let pmctx : ParserModuleContext := {env, options := {}}
+  for path in paths do
+    let ctx := mkInputContext (← IO.FS.readFile path) path
+    let mut (head, state, log) ← parseHeader ctx
+    let mut out := tokens head.raw #[]
+    repeat
+      let (cmd, s, l) := parseCommand ctx pmctx state log
+      state := s
+      log := l
+      out := tokens cmd out
+      if isTerminalCommand cmd then break
+    IO.println (Json.compress (Json.mkObj [("errors", toJson log.hasErrors),
+      ("tokens", toJson (out.map fun (p, v) => Json.arr #[toJson p, toJson v]))]))
+"""
+# (commands, whether `lean_code` is sure of them): comments and literals in every form it reads.
+LEAN_PIECES = [
+    ("-- it's \"a\n", True), ("/- a /- \" b -/ ' c -/\n", True), ("/-- doc ' -/\ndef d0 := 1\n", True),
+    ("/-! module ' \" -/\n", True), ("/--/ doc -/\ndef d1 := 1\n", True), ("/-/ block -/\n", True),
+    ("/- α -/ def d2 := 1 -- ₁\n", True), ('def s0 := "--"\n', True), ('def s1 := "/-" /- c -/\n', True),
+    ('def s2 := "\\"--" -- c\n', True), ('def s3 := "gap\\\n   --"\n', True), ('def s4 := "\\x22\\u0022--"\n', True),
+    ("def c0 := '\"'\n", True), ("def c1 := '\\''\n", True), ("def c2 := '\\\\'\n", True), ("def c3 := '\\x41'\n", True),
+    ("def c4 := '-'\n", True), ("def c5 := '\\u0041'\n", True), ("def c6 := '{'\n", True),
+    ('def r0 := r"--"\n', True), ('def r1 := r"\\" -- c\n', True), ('def r2 := r#"a"--"#\n', True),
+    ('def r3 := r##"a"#--"##\n', True), ('def i0 := s!"a {"--"} b"\n', True), ('def i1 := s!"{s!"{1}--"} /-"\n', True),
+    ('def i2 := s!"\\{ --"\n', True), ('def i3 := s! "x {1 /- c -/} y"\n', True), ('def i4 := f!"{1}"\n', True),
+    ('def i5 := m!"{"--"}"\n', True), ('def i6 := s!"{1 -- c\n}"\n', True), ("def i7 := s!\"{'}'}--\"\n", True),
+    ('def i8 := s!"{ ({ a := "--" } : T) }"\n', True), ('def p0 := "{x} -"\n', True), ('def p1 := "} {x - 1}"\n', True),
+    ("def x' := x'' -- c\n", True), ("def α' := β₁' -- c\n", True), ("def é' := ℕ' -- c\n", True),
+    ("def «a b--c» := 1\n", True), ("def n0 := 0xff + 1_000 + 1.5e3 + 0b1 + 0o7 -- c\n", True),
+    ("def a.b' := a.«c d».e' -- c\n", True), ("def n1 := `x' -- c\n", True), ("def n2 := ``Nat.add' -- c\n", True),
+    ('def q0 := "{" ++ "--" ++ "}"\n', False), ('def t0 : IO Unit := throwError "a {"--"}"\n', False),
+    ("def l0 := do\n  let a <--1\n  pure a\n", False), ("def e0 := { x : Int //-x = 1 }\n", False), ("def j0 := (1)--c\n", False),
+    ("def j1 := (1)/-c-/\n", False),
+]
+
+
+def test_lean_code_blanks_what_lean_skips_and_nothing_it_reads(tmp_path):
+    """Differential, in the two directions, on every piece and on seeded mixtures of them: every token Lean's parser
+    reads stands at its place in `lean_code`, and when the stripper is sure, nothing else is left."""
+    import random
+
+    import trust_mutants as tm
+    pick = random.Random(20261105)
+    documents = [[piece] for piece in LEAN_PIECES] + [pick.choices(LEAN_PIECES, k=pick.randint(2, 12)) for _ in range(300)]
+    paths = []
+    for i, pieces in enumerate(documents):
+        paths.append(tmp_path / f"D{i}.lean")
+        paths[-1].write_text("".join(text for text, _ in pieces))
+    (tmp_path / "Tokens.lean").write_text(LEAN_TOKENS)
+    done = subprocess.run(["lean", "--run", str(tmp_path / "Tokens.lean"), *map(str, paths)], capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT, cwd=ROOT / "lean", env={**os.environ, **PATH}, check=False)
+    assert done.returncode == 0, done.stderr[-2000:]
+    answers = [json.loads(line) for line in done.stdout.splitlines()]
+    assert len(answers) == len(documents)
+    for pieces, path, answer in zip(documents, paths, answers):
+        raw = path.read_bytes()
+        text, code = raw.decode(), tm.lean_code(raw.decode())
+        assert not answer["errors"], text
+        assert len(code) == len(text) and [i for i, c in enumerate(code) if c == "\n"] == [
+            i for i, c in enumerate(text) if c == "\n"]
+        read: set[int] = set()
+        for position, token in answer["tokens"]:
+            at = len(raw[:position].decode())
+            assert code[at:at + len(token)] == token, (text, token)
+            read |= set(range(at, at + len(token)))
+        if all(sure for _, sure in pieces):
+            assert {i for i, c in enumerate(code) if not c.isspace()} <= read, (text, code)
 
 
 def test_no_file_is_unread_when_no_tree_was_read():
