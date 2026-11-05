@@ -13,8 +13,8 @@ merge base 9672601e3. Every command's output is in `evidence/tests.txt`.
 
 - **Statement gate.** PASSED, as the task states. The stub file was read, not committed.
 - **Statements are the spec's text.** The probe in `evidence/tests.txt` found all 14 pieces of 4.5 and all 6 of 4.6 in the sources.
-- **Synthesis round 2.** Items 1, 5, 7 and DEC 10 belong to others, as the task says. A grep of the plan finds items 2, 3, 4
-  and 6 not yet applied; the plan is outside this item's file list, and none of them changes a 4.5 or 4.6 statement.
+- **Synthesis round 2.** Items 1, 5, 7 and DEC 10 belong to others, as the task says. A grep of the plan for their wording finds items 2, 3,
+  4 and 6 not yet applied; the plan is outside this item's file list, and none of them changes a 4.5 or 4.6 statement.
 - **Layers.** `tools/check_lean_imports.py` passes with no `layer_policy` edit and no new exception.
 - **In-flight overlap.** `lean/VE.lean`, `lean/VE/Audit.lean` and `tools/trust-classes.json` are shared with df-5, et-4b,
   pc-1g, pe-1, wg-2-siff, me-1 and AR-1. My hand edits are 2 import lines and added entries; Audit.lean is generated.
@@ -83,7 +83,7 @@ definitions; K +0. The allowance in `docs/trust-baseline.json` is "SIGNED by sta
 ## Size, bytes, evaluators
 
 - **Size.** `git diff --numstat 9672601e3`, without generated files and `trust-mutants.json`/`trust-baseline.json`: see the
-  last line of this section, swept over every hand-written file (ps-1b-review F1). About 50 lines of it are the pasted spec.
+  last line of this section, swept over every hand-written file (ps-1b-review F1). About 70 lines of it are the pasted spec.
 - **Pilot bytes.** 0, as the plan claims for PS-1. The RF census row (estimate) waits for PS-2a.
 - **Evaluators.** None added: `conditionRule` is one `map` over nodes the caller holds. PS-2a's runner charges them.
 - **Total: 560 additions, 1 deletions** (REPORT.md 113/0, tests.txt 39/0, mutants.json 20/0, VE.lean 2/0, Agree.lean 36/0, Examples.lean 155/1, Rules.lean 151/0, trust-classes.json 44/0).
@@ -91,7 +91,7 @@ definitions; K +0. The allowance in `docs/trust-baseline.json` is "SIGNED by sta
 ## Spec re-read
 
 - 4.5 against `presupposition.md:752-809`, 4.6 against `:811-833`, by the probe, and the note on `hname`.
-- 7.1 S14 `:1282`, S8 `:1283`, S22 `:1288`; 7.2 `:1304`, `:1305`, `:1309`, `:1318`; 7.4 P1-P4 `:1365-1369`, plan P13
+- 7.1 S14 `:1282`, S8 `:1283`, S22 `:1288`; 7.2 `:1304`, `:1305`, `:1309`, `:1318`; 7.4 P1-P4 `:1364-1367`, plan P13
   `PLAN:585`; 7.5 M3; checklist 9 item 5 (`rule_collapse_typed`'s binders and `conditionRule` against S14 and M3: :349, :375).
 
 ## Self-review against BUILDER-CHECKLIST
@@ -104,7 +104,7 @@ definitions; K +0. The allowance in `docs/trust-baseline.json` is "SIGNED by sta
 6. Gate evidence: PASS for the checks in `evidence/tests.txt`; the chain runs the gate on the final HEAD.
 7. Unsigned items: PASS, `trust_map --check`; no DELTA rows.
 8. User-visible changes: PASS, no answer path edited (`git diff --name-only`); 776 named tests pass.
-9. Test selection: PASS, `select_tests` picked 100/544 units rather than all.
+9. Test selection: PASS, `select_tests` picked 100/544 units rather than all; the seeded bugs fail at `lake build`, not in a selected test, so no seeded selection was run.
 10. Statements: PASS, the statement probe; S-definite-1, S-speech and S-unsaid break the build.
 11. Budgets: N.A., no operation with a budget.
 12. CPU or memory: N.A., only `#guard`s and proofs run new code, at build time.
