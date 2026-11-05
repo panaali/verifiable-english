@@ -5,10 +5,10 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 37 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 39 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/attitudes/](docs__attitudes.md) — 1 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 2 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -55,12 +55,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
+- [docs/presupposition/](docs__presupposition.md) — 4 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
-- [docs/spec/](docs__spec.md) — 8 modules — -
+- [docs/spec/](docs__spec.md) — 9 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
 - [docs/test-speed-b1/](docs__test-speed-b1.md) — 1 modules — -
@@ -76,7 +77,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 30 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 41 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 28 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 29 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
@@ -103,7 +104,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 2 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
@@ -119,19 +120,19 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
-- [lean/VE/Weighing/](lean__VE__Weighing.md) — 2 modules — -
+- [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
-- [tests/ part 1](tests--part-1.md) — 94 modules — -
-- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 1](tests--part-1.md) — 93 modules — -
+- [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
-- [tests/ part 4](tests--part-4.md) — 92 modules — -
-- [tests/ part 5](tests--part-5.md) — 80 modules — -
-- [tests/ part 6](tests--part-6.md) — 84 modules — -
-- [tests/ part 7](tests--part-7.md) — 48 modules — -
+- [tests/ part 4](tests--part-4.md) — 93 modules — -
+- [tests/ part 5](tests--part-5.md) — 78 modules — -
+- [tests/ part 6](tests--part-6.md) — 83 modules — -
+- [tests/ part 7](tests--part-7.md) — 55 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 99 modules — -
 - [tools/ part 2](tools--part-2.md) — 9 modules — -
