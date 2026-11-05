@@ -1,0 +1,1 @@
+{"kind": "lean-build", "status": "cold", "class": "download", "reason": "download of lean-build-882ba1f014ca.tar.zst failed: cold build", "asset": "lean-build-882ba1f014ca.tar.zst", "sha256": "29f7e80bbc7df999b69f8a2f0ab9b466031883fa696055fec685b69c42a36450", "platform": "Linux-x86_64", "lean": ""}

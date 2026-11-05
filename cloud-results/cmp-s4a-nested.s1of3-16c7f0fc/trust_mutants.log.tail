@@ -1,0 +1,7 @@
+trust_mutants: 7 definitions, 34 mutants (12 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:156 VE.Discourse.PositionsExamples.inner (?, trusted) lit-minus: 1 -> 0
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:161 VE.Discourse.PositionsExamples.outer (?, trusted) lit-plus: 5 -> 6
+SURVIVOR lean/VE/Discourse/PositionsExamples.lean:155 VE.Discourse.PositionsExamples.dOwner (?, trusted) lit-plus: 0 -> 1
+trust_mutants: 9 KILLED, 3 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 22 OTHER SHARD in 267 s
+trust_mutants: ?, trusted: 9 KILLED, 3 SURVIVOR, 22 OTHER SHARD
+trust_mutants: steps: wall plan 11.4 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.3 s, control_probes 162.1 s, mutants 85.4 s, cleanup 2.7 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 168.7 s (2), mutant_builds 66.6 s (13), mutant_checks 142 s (9), stage_controls 80.7 s (5), mutant_probes 28.6 s (9)
