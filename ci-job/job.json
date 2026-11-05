@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-ci-2-05995276-t852117-s1",
+ "head": "8328d8519b28e6aeafb7f7bbe90a962f58b73692",
+ "argv": [
+  "armsh-cand-ci-2-05995276-t852117-s1",
+  "8328d8519b28e6aeafb7f7bbe90a962f58b73692",
+  "3d7f0e70ac03fd9c3ca79ddd8ead77ff751901d0",
+  "-",
+  "-",
+  "4",
+  "1/4"
+ ]
+}
