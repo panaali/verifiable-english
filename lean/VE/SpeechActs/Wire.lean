@@ -9,11 +9,12 @@ import VE.Limits
 
 The frozen P0 envelope gate does not know `speech-acts@0`, and its envelope
 decoder rejects a `speech_acts` field. `decodeSpeechEnvironmentFull` therefore
-runs the profile allowlist of 1.6 (exactly `norms@0`, `relational-fol@0` and
-`speech-acts@0`), rejects W3 definitions and W5 flags with the route, decodes
-the scope block strictly (unknown fields rejected), strips exactly the block
-and the profile, decodes the rest with W1's unchanged `decodeNormsEnvironment`
-and keeps the original environment for identity.
+runs the profile allowlist of 1.6 (`norms@0`, `relational-fol@0` and
+`speech-acts@0`, with `acts@0` from commands-imperatives 9), rejects W3 definitions
+and W5 flags with the route, decodes the scope block strictly (unknown fields
+rejected), strips exactly the block and the profile, decodes the rest with W1's
+unchanged `decodeNormsEnvironment`, its `acts@0` hook on, and keeps the original
+environment for identity.
 
 The scope block is a top-level field `speech_acts` of the environment object
 (the placement `scope_in_identity`, 8.5, states); the canonical environment
@@ -38,8 +39,11 @@ open VE.Norms (Regulated Node background elaborate)
 
 def speechProfile : String := "speech-acts@0"
 
-/-- 1.6: the profiles this route admits, and nothing else. -/
-def allowlist : List String := ["norms@0", "relational-fol@0", "speech-acts@0"]
+/-- 1.6: the profiles this route admits without act phrases. -/
+def allowlist₀ : List String := ["norms@0", "relational-fol@0", "speech-acts@0"]
+
+/-- 1.6 with commands-imperatives 9: `acts@0` joins them, for simple acts only (`decoded_act_simple`). -/
+def allowlist : List String := "acts@0" :: allowlist₀
 
 def invalidBlock : String := "InvalidInput: speech_acts block"
 
@@ -109,14 +113,20 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   pure (Json.obj ((Std.TreeMap.Raw.ofList (fs.filter (·.1 != "speech_acts")) compare).insert
     "speech_acts" (encodeScope sc)))
 
-/-- The profile gate of 1.6, with the section 7 diagnostics. -/
-def profileGate (profiles : List String) : Except String Unit := do
+/-- The profile gate of 1.6 over an allowlist, with the section 7 diagnostics. -/
+def profileGateOf (allow profiles : List String) : Except String Unit := do
   unless decide (profiles.Pairwise (· < ·)) do
     throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   unless profiles.contains speechProfile do throw "UnsupportedProfile: speech-acts@0 is required"
   unless profiles.contains "norms@0" do throw "UnsupportedProfile: speech-acts@0 requires norms@0"
   for p in profiles do
-    unless allowlist.contains p do throw s!"UnsupportedProfile: speech-acts@0 with {p}"
+    unless allow.contains p do throw s!"UnsupportedProfile: speech-acts@0 with {p}"
+
+/-- The gate as merged before `acts@0` joined the allowlist. -/
+def profileGate₀ : List String → Except String Unit := profileGateOf allowlist₀
+
+/-- The profile gate of 1.6 and commands-imperatives 9. -/
+def profileGate : List String → Except String Unit := profileGateOf allowlist
 
 /-- A decoded speech-act environment: W1's decoding of the stripped environment, the scope block, the original
 profiles and JSON, and the canonical environment. -/
@@ -209,20 +219,37 @@ def checkTemplates (preds : List (String × Json)) (regulated : List Regulated) 
   for t in verbalisations ++ regulated.filterMap (·.act) do
     unless slotsApart (t.length + 1) ' ' t.toList do throw attachedSlot
 
-def decodeSpeechEnvironmentFull (environment : Json) : Except String SpeechEnvironment := do
+/-- Under `acts@0`, the fixed phrases of the submitted environment are those the decoder read from the stripped one.
+Only a tree no JSON parser builds can differ: looked up, a key of such a tree may hide its rebuilt value. -/
+def checkActsBlock (profiles : List String) (environment stripped : Json) : Except String Unit :=
+  if profiles.contains "acts@0" &&
+      (VE.Norms.Wire.actsFixed profiles environment).toOption != (VE.Norms.Wire.actsFixed profiles stripped).toOption then
+    throw "InvalidInput: environment acts block"
+  else pure ()
+
+/-- The speech decoder over a profile gate, with `acts@0`'s hook of W1's decoder on or off. -/
+def decodeEnvironmentWith (gate : List String → Except String Unit) (acts : Bool) (environment : Json) :
+    Except String SpeechEnvironment := do
   let profiles ← profilesField environment
-  profileGate profiles
+  gate profiles
   let preds ← predicatesOf environment
   checkDeclarations preds
   let block ← blockOf environment
   let sc ← parseScope block
   let canonical ← canonicalEnvironmentJson environment
   let stripped ← stripSpeech environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped (acts := acts)
+  checkActsBlock profiles environment stripped
   checkPhrases ne sc
   checkEnvironmentScope ne sc
   checkTemplates preds ne.regulated
   pure ⟨ne, sc, profiles, environment, canonical⟩
+
+/-- The decoder as merged before `acts@0` joined the allowlist. -/
+def decodeSpeechEnvironmentFull₀ : Json → Except String SpeechEnvironment := decodeEnvironmentWith profileGate₀ false
+
+/-- The decoder of this route: `acts@0` is read by W1's own decoder and hook (`decode_acts_compatible`). -/
+def decodeSpeechEnvironmentFull : Json → Except String SpeechEnvironment := decodeEnvironmentWith profileGate true
 
 /-- 8.5's signature: the complete environment, the scope and the validated regulated declarations. -/
 def decodeSpeechEnvironment (environment : Json) :
@@ -266,7 +293,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     rw [hf] at h
     simp only [Except.map, Except.ok.injEq, Prod.mk.injEq] at h
     obtain ⟨_, rfl, _⟩ := h
-    unfold decodeSpeechEnvironmentFull at hf
+    unfold decodeSpeechEnvironmentFull decodeEnvironmentWith at hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
@@ -274,6 +301,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     obtain ⟨blk, hblk, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨sc', hsc', hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨b, hb, hf⟩ := VE.Order.ProfileGate.bind_ok hf
+    obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
