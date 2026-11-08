@@ -694,6 +694,7 @@ def chainList : List String := ["cardinality@0", "norm-defaults@0", "norms@0", "
   (["cardinality@0", "judgments@0", "order@0", "relational-fol@0", "time@0"], "judgments@0 requires documents@1")].all
   fun (ps, e) => gateOf profileTable ps == .error s!"UnsupportedProfile: {e}"
 #guard listFault ["relational-fol@0"] == none && listFault ["cardinality@0"] == some VE.Cardinality.Wire.e2 &&
+  listFault ["acts@0", "cardinality@0", "order@0", "relational-fol@0", "time@0"] == some VE.Cardinality.Wire.e2 &&
   listFault chainList == none && listFault ("judgments@0" :: chainList) == none
 -- The row refuses by name every other profile of the table, in code point order: a new row decides how it composes.
 #guard cardinalityOthers == ((profileTable.map (·.profile)).eraseDups.filter fun q =>

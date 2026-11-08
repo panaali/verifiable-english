@@ -308,6 +308,10 @@ def test_a_deduction_is_no_bridge_and_the_report_id_covers_the_label(tmp_path):
     plain = check_document(written(tmp_path, nodes))["cardinality"]
     labelled = [*nodes[:-1], {**nodes[-1], "label": "asserted"}]
     assert check_document(written(tmp_path, labelled))["cardinality"]["report_id"] != plain["report_id"]
+    # Every labelled leaf is named, in the report's order (a list cut to its first or last leaf fails here).
+    leaves = [{**node, "label": "asserted"} for node in nodes[:-1]]
+    assert check_document(written(tmp_path, [*leaves, nodes[-1]]))["cardinality"]["leaf_labels"] == [
+        {"name": leaf["name"], "label": "asserted"} for leaf in plain["report"]["leaves"]]
     # The root is a deduction: naming its own quoted unit in a bridge label does not admit it.
     root = {**nodes[-1], "kind": QUOTED, "label": f"bridge:accepts(fomc,{nodes[-1]['name']})"}
     with pytest.raises(VEError, match=re.escape(f"node {root['name']} is not admitted under label {root['label']}")):

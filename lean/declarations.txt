@@ -6912,7 +6912,7 @@ module VE.Cardinality.Wire a22630ef379230956e3f4935252f1408f7cb9d11926f491008c31
 293:0-297:13 def VE.Cardinality.Wire.arrayDepth@VE.Cardinality.Wire
 299:0-303:67 def VE.Cardinality.Wire.sourceFits@VE.Cardinality.Wire
 305:0-315:54 def VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire
-module VE.Cardinality.WireExamples c33cc705f166741b325009486e18cd616c3ff7a83eb47b3761b20ef0514a2f4a
+module VE.Cardinality.WireExamples b751a03e06baa6431f49acb81c8c37aa6a2a96ef3c887d038b4e3561495ab5ac
 12:0-12:63 def VE.Cardinality.WireExamples.p@VE.Cardinality.WireExamples
 14:0-33:58 def VE.Cardinality.WireExamples.env@VE.Cardinality.WireExamples
 35:0-35:108 def VE.Cardinality.WireExamples.st@VE.Cardinality.WireExamples
@@ -6945,8 +6945,8 @@ module VE.Cardinality.WireExamples c33cc705f166741b325009486e18cd616c3ff7a83eb47
 285:0-286:95 def VE.Cardinality.WireExamples.deepBody@VE.Cardinality.WireExamples
 292:0-292:87 def VE.Cardinality.WireExamples.deepQuantity@VE.Cardinality.WireExamples
 301:0-302:174 def VE.Cardinality.WireExamples.e2@VE.Cardinality.WireExamples
-313:0-313:76 def VE.Cardinality.WireExamples.finite@VE.Cardinality.WireExamples
-343:0-343:86 def VE.Cardinality.WireExamples.badCount@VE.Cardinality.WireExamples
+320:0-320:76 def VE.Cardinality.WireExamples.finite@VE.Cardinality.WireExamples
+350:0-350:86 def VE.Cardinality.WireExamples.badCount@VE.Cardinality.WireExamples
 module VE.Cardinality.WireTheorems f7012aaa2252f2f57db20569e8f1b487c4f9784f5176981f476765524fcf8def
 10:0-16:42 theorem VE.Cardinality.Wire.profileLists_projected@VE.Cardinality.WireTheorems
 18:0-27:11 theorem VE.Cardinality.Wire.finiteSorts_length@VE.Cardinality.WireTheorems
@@ -7775,7 +7775,7 @@ module VE.Compose.Dispatch ad3c08d25ebaa3e1b3d0b5c404bf8565e00e050bbe8f301544e65
 1291:0-1298:79 theorem VE.Compose.cardinality_absent@VE.Compose.Dispatch
 1302:0-1347:75 theorem VE.Compose.gate_acts@VE.Compose.Dispatch
 1351:0-1393:75 theorem VE.Compose.gate_scope@VE.Compose.Dispatch
-module VE.Compose.Examples 372b12e85b2f41cad7cafe99a5200a815ad7dbf7e17adf9dec4e50f68c95ea52
+module VE.Compose.Examples 88b86b6bb2e778b4d114e5fce7e303695e79e9102a7c20367bcb52ab5f8e826c
 26:0-31:19 def VE.Compose.Examples.instBEqExceptStringRoute@VE.Compose.Examples
 162:0-164:224 def VE.Compose.Examples.registrySorted@VE.Compose.Examples
 170:0-172:106 def VE.Compose.Examples.maskList@VE.Compose.Examples
@@ -7792,8 +7792,8 @@ module VE.Compose.Examples 372b12e85b2f41cad7cafe99a5200a815ad7dbf7e17adf9dec4e5
 608:0-609:65 def VE.Compose.Examples.r9@VE.Compose.Examples
 611:0-612:48 def VE.Compose.Examples.r16@VE.Compose.Examples
 675:0-675:112 def VE.Compose.Examples.chainList@VE.Compose.Examples
-705:0-705:97 def VE.Compose.Examples.layerListing@VE.Compose.Examples
-706:0-709:17 def VE.Compose.Examples.layerDecided@VE.Compose.Examples
+706:0-706:97 def VE.Compose.Examples.layerListing@VE.Compose.Examples
+707:0-710:17 def VE.Compose.Examples.layerDecided@VE.Compose.Examples
 module VE.Compose.ProfilesMain 1ca3eb20c1f764ef9fa16b7586e1412a9fceff9db45ef3a77500336d46630e63
 8:0-10:92 def rowJson@VE.Compose.ProfilesMain
 12:0-16:56 def main@VE.Compose.ProfilesMain
@@ -23553,7 +23553,7 @@ module VE.Service.ActsExamples babc6063ddbd1e7f03556cb6b99606071534c0aeaed559c35
 529:0-533:111 def VE.Service.ActsExamples.plainJoined@VE.Service.ActsExamples
 534:0-535:111 def VE.Service.ActsExamples.ruleOn@VE.Service.ActsExamples
 586:0-586:124 def VE.Service.ActsExamples.readingsOf@VE.Service.ActsExamples
-module VE.Service.CardinalityExamples f172c180677bc70cb37dab4b532173b9b7abcee16bdc1176842e073e416495f0
+module VE.Service.CardinalityExamples 2be6527dd0ef214ce378bc51660a203369601be4dccbfe49a4bb5d1da0b8024e
 13:0-13:101 def VE.Service.CardinalityExamples.listed@VE.Service.CardinalityExamples
 14:0-14:104 def VE.Service.CardinalityExamples.environment@VE.Service.CardinalityExamples
 15:0-15:123 def VE.Service.CardinalityExamples.statement@VE.Service.CardinalityExamples
@@ -23591,8 +23591,8 @@ module VE.Service.CardinalityExamples f172c180677bc70cb37dab4b532173b9b7abcee16b
 140:0-141:52 def VE.Service.CardinalityExamples.formula@VE.Service.CardinalityExamples
 142:0-143:75 def VE.Service.CardinalityExamples.frontOf@VE.Service.CardinalityExamples
 150:0-150:130 def VE.Service.CardinalityExamples.unitsIn@VE.Service.CardinalityExamples
-155:0-155:96 def VE.Service.CardinalityExamples.lowered@VE.Service.CardinalityExamples
-160:0-160:127 def VE.Service.CardinalityExamples.answered@VE.Service.CardinalityExamples
+161:0-161:96 def VE.Service.CardinalityExamples.lowered@VE.Service.CardinalityExamples
+166:0-166:127 def VE.Service.CardinalityExamples.answered@VE.Service.CardinalityExamples
 module VE.Service.ComposedAdmissionExamples b514bd9b7f4f71329e1697ab458ab5d656e32e3c1f58603b61f232e7ce01c8e4
 10:0-17:32 def VE.Service.ComposedAdmissionExamples.composed@VE.Service.ComposedAdmissionExamples
 19:0-27:32 def VE.Service.ComposedAdmissionExamples.today@VE.Service.ComposedAdmissionExamples
