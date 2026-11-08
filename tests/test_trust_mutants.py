@@ -2447,7 +2447,8 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     assert printed(capsys.readouterr().out) == printed(out)
     assert bare(merged) == bare(one)
     data, each = json.loads(merged.read_text()), [json.loads(p.read_text()) for p in paths]
-    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "head": d["head"],
+                               "jobs": d["jobs"], "seconds": d["seconds"],
                                "steps": d["steps"]} for d in each]
     assert (data["jobs"], data["seconds"]) == (sum(d["jobs"] for d in each), max(d["seconds"] for d in each))
     assert data["steps"] == {p: {k: (sum(d["steps"][p][k] for d in each) if p == "runs" else
