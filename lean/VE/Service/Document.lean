@@ -380,13 +380,13 @@ def frontOf (j : Json) : Option (Json × String) :=
   (do let (front, body) ← Loader.frontText (← (j.getObjValD "document").getStr?)
       pure (← frontJson front, body)).toOption
 
-/-- The profiles a case's document lists; none when its front matter does not read. Inlined, so a run that has read
-the front matter (`frontOf`) reads it once. -/
-@[inline]
-def profilesOf (j : Json) : List String :=
-  match frontOf j with
-  | some (front, _) => listedProfiles (front.getObjValD "environment")
-  | none => []
+/-- The profiles a case's document lists; none when its front matter does not read. Inlined, so a run that has read  -- pc-1tm trust-mutant base marker
+the front matter (`frontOf`) reads it once. -/  -- pc-1tm trust-mutant base marker
+@[inline]  -- pc-1tm trust-mutant base marker
+def profilesOf (j : Json) : List String :=  -- pc-1tm trust-mutant base marker
+  match frontOf j with  -- pc-1tm trust-mutant base marker
+  | some (front, _) => listedProfiles (front.getObjValD "environment")  -- pc-1tm trust-mutant base marker
+  | none => []  -- pc-1tm trust-mutant base marker
 
 /-! ## The clash validation (PC-1; docs/spec/profile-composition.md 1.7, the G3 amendment, diagnostics row 16)
 
@@ -1106,9 +1106,9 @@ def cardinalityEnv (written : Json) : Except String Env := do
   pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles, w.environmentId, .none, false,
     none, some w⟩
 
-/-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by
-`UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
-def judgmentsApart : List String := ["alternatives@0", "risk@0"]
+/-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by  -- pc-1tm trust-mutant base marker
+`UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/  -- pc-1tm trust-mutant base marker
+def judgmentsApart : List String := ["alternatives@0", "risk@0"]  -- pc-1tm trust-mutant base marker
 
 /-- Conditions in a rule's exception are read by the soft theory, but not by the judgment scan. -/
 def ruleExceptionConditioned (rule : Json) : Bool :=
@@ -1151,9 +1151,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
   | _ => pure ()
-  if (listedProfiles environment).contains "cardinality@0" then
-    if senses then throw "UnsupportedProfile: senses beside cardinality@0 is not composed"
-    return ← cardinalityEnv environment
+  if (listedProfiles environment).contains "cardinality@0" then  -- pc-1tm trust-mutant base marker
+    if senses then throw "UnsupportedProfile: senses beside cardinality@0 is not composed"  -- pc-1tm trust-mutant base marker
+    return ← cardinalityEnv environment  -- pc-1tm trust-mutant base marker
   if Standalone.isLegacy environment then
     unless senses do
       throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
@@ -1162,11 +1162,11 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   if listed.contains "judgments@0" then
-    -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
-    VE.Compose.layersApart listed judgmentsApart
-    -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.
-    if exceptionConditioned units then
-      VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
+    -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.  -- pc-1tm trust-mutant base marker
+    VE.Compose.layersApart listed judgmentsApart  -- pc-1tm trust-mutant base marker
+    -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.  -- pc-1tm trust-mutant base marker
+    if exceptionConditioned units then  -- pc-1tm trust-mutant base marker
+      VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]  -- pc-1tm trust-mutant base marker
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
@@ -1174,13 +1174,13 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
   let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
-  if soft && (block != .none || listed.contains "readings@1") then
-    throw (unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route")
+  if soft && (block != .none || listed.contains "readings@1") then  -- pc-1tm trust-mutant base marker
+    throw (unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route")  -- pc-1tm trust-mutant base marker
   if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
     throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
     if let .arr _ := units then
-      let _ ← softSource (VE.Compose.withoutDocumentLayers environment) (softSourceNorms units)
+      let _ ← softSource (VE.Compose.withoutDocumentLayers environment) (softSourceNorms units)  -- pc-1tm trust-mutant base marker
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
@@ -1549,11 +1549,11 @@ def layeredIds (E : Env) (X : Env) : Except String Env := do
 /-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
 the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`
 over the norm content `_parts` yields before its first fault (`partsPrefix`). -/
-def softLayer (E : Env) (declared : List String) (raw : List Json) : Except String SoftLayer := do
-  let src ← softSource E.lower (softSourceNorms (Json.arr raw.toArray))
-  let prime ← VE.SoftNorms.Wire.primeJson src.D (← softFrame (wireJson 257 E.lower))
-  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← layeredIds E (← extendedEnv prime),
-    ← softRules prime (partsPrefix raw)⟩
+def softLayer (E : Env) (declared : List String) (raw : List Json) : Except String SoftLayer := do  -- pc-1tm trust-mutant base marker
+  let src ← softSource E.lower (softSourceNorms (Json.arr raw.toArray))  -- pc-1tm trust-mutant base marker
+  let prime ← VE.SoftNorms.Wire.primeJson src.D (← softFrame (wireJson 257 E.lower))  -- pc-1tm trust-mutant base marker
+  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← layeredIds E (← extendedEnv prime),  -- pc-1tm trust-mutant base marker
+    ← softRules prime (partsPrefix raw)⟩  -- pc-1tm trust-mutant base marker
 
 /-- `_content` for the owned profiles: the unit's checked formula and `meaning_id`, or the reason it has none
 here. -/
@@ -2217,16 +2217,16 @@ def listedOf (meaning : Json) : List String :=
 
 /-- Each unit's view (`Judgments.viewOf`), in unit order, over the active sets' candidates. -/
 def judgedViews (E : Env) (front : Json) (openNames : List String) (active : List (FrontSet × List Bool))
-    (units : List SourceUnit) (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) :
-    Except String (List VE.Judgments.UnitView) := do
+    (units : List SourceUnit) (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) :  -- pc-1tm trust-mutant base marker
+    Except String (List VE.Judgments.UnitView) := do  -- pc-1tm trust-mutant base marker
   let sets ← active.mapM fun (s, _) => return (s, ← setCandidates E front s)
   let candidates := fun s => ((sets.find? (·.1 == s)).map (·.2)).getD []
   units.mapM fun u => do
     let m ← Loader.meaningStatus openNames u.meaning (python := true)
-    let own ← match u.content with
-      | some c => c.judgedIn S R
-      | none => pure none
-    pure (VE.Judgments.viewOf active candidates u.id m (listedOf u.meaning) (u.kind == .str "asserted") own)
+    let own ← match u.content with  -- pc-1tm trust-mutant base marker
+      | some c => c.judgedIn S R  -- pc-1tm trust-mutant base marker
+      | none => pure none  -- pc-1tm trust-mutant base marker
+    pure (VE.Judgments.viewOf active candidates u.id m (listedOf u.meaning) (u.kind == .str "asserted") own)  -- pc-1tm trust-mutant base marker
 
 /-- The report field `judgments` (spec 8.3): `Judgments.usageMap`'s two lists. -/
 def usageJson (m : List (String × List String) × List String) : Json :=
@@ -2621,23 +2621,23 @@ theorem checkDocSets_clashFirst (j : Json)
   · have hc : checkCore j = .error swapClash := by unfold checkCore; rw [if_neg hs, h]
     simp [hs, hc]
 
-/-- `checkDocSets` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16, and calling
-no definition a `@[csimp]` twin replaces (`checkCore` here compiles to `checkCoreFast`). -/
-def checkDocSetsFast (j : Json) : Except String Json :=
-  match frontOf j with
-  | none => checkBody j
-  | some (front, body) =>
-    let ps := profilesOf j
-    if "scope@0" ∈ ps then do
-      if let some e := clashRefusalIn j front body ps then throw e
-      let _ ← VE.Compose.gateOf VE.Compose.profileTable ps
-      let D ← VE.Scope.decodeScope j
-      let out ← VE.Scope.governSetsWith VE.Scope.governFast D
-      let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
-      pure (VE.Scope.foldGovernors D a)
-    else match clashRefusalIn j front body ps with
-      | some e => .error e
-      | none => checkBody j
+/-- `checkDocSets` as it runs (pc-1 review F2): the front matter read once for the scope test and row 16, and calling  -- pc-1tm trust-mutant base marker
+no definition a `@[csimp]` twin replaces (`checkCore` here compiles to `checkCoreFast`). -/  -- pc-1tm trust-mutant base marker
+def checkDocSetsFast (j : Json) : Except String Json :=  -- pc-1tm trust-mutant base marker
+  match frontOf j with  -- pc-1tm trust-mutant base marker
+  | none => checkBody j  -- pc-1tm trust-mutant base marker
+  | some (front, body) =>  -- pc-1tm trust-mutant base marker
+    let ps := profilesOf j  -- pc-1tm trust-mutant base marker
+    if "scope@0" ∈ ps then do  -- pc-1tm trust-mutant base marker
+      if let some e := clashRefusalIn j front body ps then throw e  -- pc-1tm trust-mutant base marker
+      let _ ← VE.Compose.gateOf VE.Compose.profileTable ps  -- pc-1tm trust-mutant base marker
+      let D ← VE.Scope.decodeScope j  -- pc-1tm trust-mutant base marker
+      let out ← VE.Scope.governSetsWith VE.Scope.governFast D  -- pc-1tm trust-mutant base marker
+      let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)  -- pc-1tm trust-mutant base marker
+      pure (VE.Scope.foldGovernors D a)  -- pc-1tm trust-mutant base marker
+    else match clashRefusalIn j front body ps with  -- pc-1tm trust-mutant base marker
+      | some e => .error e  -- pc-1tm trust-mutant base marker
+      | none => checkBody j  -- pc-1tm trust-mutant base marker
 
 @[csimp] theorem checkDocSets_eq_fast : @checkDocSets = @checkDocSetsFast := by
   funext j
