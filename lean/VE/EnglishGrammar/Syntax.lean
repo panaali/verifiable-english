@@ -103,6 +103,8 @@ def DState.init : DState := ⟨[], false⟩
 inductive Ty where
   | tok | sentence | formula | term | intTerm | declaration | guard | relative
   | marker | unit | listMarker | noun | label | constant | adjective | natSubject | count | relation
+  -- the norm reader (docs/spec/english-lean-s6.md 2.5): a norm sentence, a consequence, a list of rule numbers
+  | norm | consequence | refs
   deriving DecidableEq, Repr
 
 end VE.EnglishGrammar

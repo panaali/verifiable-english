@@ -52,16 +52,46 @@ def chainConstructs (environment j : Json) : Bool :=
 
 /-! ## Documents and cases (14.4) -/
 
-/-- The chain decoder's vocabulary of the base pair (norms 4.1, decoded once: `chainDDoc` reads it), the manifest of
-a loaded payload, and the chain route's environment id of the base pair (the id its certificates bind, 14.5 step 3). -/
-def chainBase (environment j : Json) : Except String (VE.Route.Wire.RouteVocabulary × Manifest × String) := do
+/-- The route `dispatch` chooses for the base list, run on the base environment and a resolved document. -/
+def dispatchAdmission (ps : List String) (environment document : Json) : Except String Json :=
+  match VE.Compose.dispatch ps with
+  | .ok .norms => VE.Norms.Run.runAdmission "" environment document
+  | .ok .normDefaults => VE.NormDefaults.Run.runAdmission "" environment document
+  | .ok .soft => VE.SoftNorms.Run.runAdmission "" environment document
+  | .ok .rights => VE.Rights.Run.runAdmission "" environment document
+  | .ok .readings => .error "UnsupportedProfile: ve.discourse@1 with readings@1"
+  | .ok .clauses => .error "UnsupportedProfile: ve.discourse@1 with right-clauses@0"
+  | .ok r => .error (VE.Compose.refusal "ve.discourse@1" r)
+  | .error e => .error e
+
+/-- 14.5 step 1's chain decoder: the environment decoder of the route `dispatch` chooses for the base list, run
+without a document (each checks the FOL family); a list no chain route reads is `dispatchAdmission`'s refusal. -/
+def chainEnvironment (ps : List String) (be : Json) : Except String VE.Norms.Wire.NormsEnvironment :=
+  match VE.Compose.dispatch ps with
+  | .ok .norms => VE.Norms.Wire.decodeNormsEnvironment be
+  | .ok .normDefaults => VE.NormDefaults.Wire.decodeEnvironmentU be
+  | .ok .soft => (VE.SoftNorms.Phases.checkSource be (.arr #[])).map (·.ne) |>.mapError (·.message)
+  | .ok .rights => (·.se.ne) <$> VE.Rights.Wire.decodeRightsEnvironment be
+  | _ => match dispatchAdmission ps be .null with
+    | .error e => .error e
+    | .ok _ => .error (VE.Route.Gate.unsupported "discourse admission requires the FOL family")
+
+/-- `chainBase` over a decoded base environment `ne` (`chainEnvironment`'s, read once on the composed path). -/
+def chainBaseWith (ne : VE.Norms.Wire.NormsEnvironment) (environment j : Json) :
+    Except String (VE.Route.Wire.RouteVocabulary × Manifest × String) := do
   let be := baseEnvironment environment
   let bp := baseProfiles ((VE.Route.Gate.profilesOf environment).toOption.getD [])
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment be
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson be
   let envId ← VE.Route.Wire.environmentId bp canonical
   let K ← Wire.decodeManifest [] (Loader.filesOf j) envId ((Loader.metaOf j).getObjValD "discourse")
   pure (ne.rv, K, envId)
+
+/-- The chain decoder's vocabulary of the base pair (`chainEnvironment`: `chainDDoc` reads it), the manifest of
+a loaded payload, and the chain route's environment id of the base pair (the id its certificates bind, 14.5 step 3). -/
+def chainBase (environment j : Json) : Except String (VE.Route.Wire.RouteVocabulary × Manifest × String) := do
+  let be := baseEnvironment environment
+  chainBaseWith (← chainEnvironment (baseProfiles ((VE.Route.Gate.profilesOf environment).toOption.getD [])) be)
+    environment j
 
 /-- 14.3 step 6 and the abstentions of this item, for one unit or part: a JSON content keeps its answer (it has
 no slot), a fenced content and a bound prose unit are named abstentions. -/
@@ -277,18 +307,6 @@ theorem resolveCase_off (j : Json) (h : "ve.discourse@1" ∉ VE.Service.Document
 
 /-! ## The composed admission (14.5) -/
 
-/-- The route `dispatch` chooses for the base list, run on the base environment and a resolved document. -/
-def dispatchAdmission (ps : List String) (environment document : Json) : Except String Json :=
-  match VE.Compose.dispatch ps with
-  | .ok .norms => VE.Norms.Run.runAdmission "" environment document
-  | .ok .normDefaults => VE.NormDefaults.Run.runAdmission "" environment document
-  | .ok .soft => VE.SoftNorms.Run.runAdmission "" environment document
-  | .ok .rights => VE.Rights.Run.runAdmission "" environment document
-  | .ok .readings => .error "UnsupportedProfile: ve.discourse@1 with readings@1"
-  | .ok .clauses => .error "UnsupportedProfile: ve.discourse@1 with right-clauses@0"
-  | .ok r => .error (VE.Compose.refusal "ve.discourse@1" r)
-  | .error e => .error e
-
 /-- A unit or part of a resolved front matter as the chain route reads it: its id, span and kind, and its content
 in wire form (an `ast` content its formula, any other content as written). -/
 def chainUnit (u : Json) : Json :=
@@ -353,18 +371,20 @@ def chainReferences (front : Json) : Except String Json :=
   let r := referencesJson front []
   if (conditionalOnOf r).isEmpty then .ok r else .error "InvalidInput: a reference line carries conditional_on"
 
-/-- The composed path (14.5 steps 1 to 7; step 4 is `chainChecks`). The chain document is charged against `Loader.maxDocumentBytes`, the
+/-- The composed path (14.5 steps 1 to 7; step 1's family check is `chainEnvironment`, whose decoded environment
+step 3 reads; step 4 is `chainChecks`). The chain document is charged against `Loader.maxDocumentBytes`, the
 loader's limit on a document text, before the chain route reads it. -/
 def admitChain (profiles : List String) (environment j : Json) : Except String ChainAdmitted := do
-  wrapperOk profiles environment j
+  runAll (envelopeChecks profiles environment j)
+  let be := baseEnvironment environment
+  let ne ← chainEnvironment (baseProfiles profiles) be
   chainAbstentions (Loader.metaOf j)
   let tables := tablesOf j
   integrityOk j tables.1 tables.2
-  let b ← chainBase environment j
+  let b ← chainBaseWith ne environment j
   req (b.2.1.definitionsVersion == b.2.2) ("StaleTarget: definitions@" ++ b.2.1.definitionsVersion)
   let resolved ← chainChecks b.1 environment j b.2.1
   let route ← VE.Compose.dispatch (baseProfiles profiles)
-  let be := baseEnvironment environment
   let d ← chainDocument be resolved
   req (d.compress.utf8ByteSize ≤ Loader.maxDocumentBytes) "ResourceLimit: chain document bytes"
   let inner ← dispatchAdmission (baseProfiles profiles) be d
@@ -382,11 +402,15 @@ def admitComposed (profiles : List String) (environment j : Json) : Except Strin
     | .ok rv => (admitDiscourse profiles environment rv j fuelBudget).map .today
     | .error e => .error e
 
-/-- The wire answer of a composed admission: the wrapper fields of 3.5 (4) and 7, and `inner` verbatim. -/
-def composedJson (c : ChainAdmitted) : Json :=
-  Json.mkObj [("document_id", .str c.documentId), ("inner", c.inner),
+/-- The members of `composedJson`, in key order. -/
+def composedFields (c : ChainAdmitted) : List (String × Json) :=
+  [("document_id", .str c.documentId), ("inner", c.inner),
     ("inner_report_id", .str ((c.inner.getObjValD "report_id").getStr?.toOption.getD "")),
     ("references", c.references), ("report_id", .str c.reportId)]
+
+/-- The wire answer of a composed admission: the wrapper fields of 3.5 (4) and 7, and `inner` verbatim. -/
+def composedJson (c : ChainAdmitted) : Json :=
+  Json.mkObj (composedFields c)
 
 theorem admitChain_of (profiles : List String) (environment j : Json) (c : ChainAdmitted)
     (h : admitComposed profiles environment j = .ok (.chain c)) :
@@ -401,6 +425,25 @@ theorem admitChain_of (profiles : List String) (environment j : Json) (c : Chain
     · cases ha : admitDiscourse profiles environment _ j fuelBudget <;> rw [ha] at h <;> cases h
     · cases h
 
+/-- The envelope checks fix the environment's profile list. -/
+theorem envelopeChecks_profiles (profiles : List String) (environment j : Json)
+    (h : runAll (envelopeChecks profiles environment j) = .ok ()) :
+    VE.Route.Gate.profilesOf environment = .ok profiles := by
+  unfold envelopeChecks at h
+  simp only [runAll_cons, runAll_nil, and_true] at h
+  obtain ⟨_, _, _, h4, _⟩ := h
+  cases hq : VE.Route.Gate.profilesOf environment with
+  | error e => rw [hq] at h4; simp [req] at h4
+  | ok ps => rw [hq] at h4; simp only [req_ok, beq_iff_eq] at h4; rw [h4]
+
+/-- On the composed path, `chainBase` is the decoded environment's `chainBaseWith`. -/
+theorem chainBase_of (profiles : List String) (environment j : Json) (ne : VE.Norms.Wire.NormsEnvironment)
+    (hw : runAll (envelopeChecks profiles environment j) = .ok ())
+    (hne : chainEnvironment (baseProfiles profiles) (baseEnvironment environment) = .ok ne) :
+    chainBase environment j = chainBaseWith ne environment j := by
+  simp only [chainBase, envelopeChecks_profiles profiles environment j hw, Except.toOption, Option.getD, hne]
+  rfl
+
 /-- The composed admission is the chain's admission of the resolved document. -/
 theorem composed_admission (profiles : List String) (environment j : Json) (c : ChainAdmitted)
     (h : admitComposed profiles environment j = .ok (.chain c)) :
@@ -410,10 +453,12 @@ theorem composed_admission (profiles : List String) (environment j : Json) (c : 
         dispatchAdmission (baseProfiles profiles) (baseEnvironment environment) d = .ok c.inner := by
   have h := (admitChain_of profiles environment j c h).2
   unfold admitChain at h
-  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hw, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨ne, hne, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+  rw [← chainBase_of profiles environment j ne hw hne] at hb
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨resolved, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨route, hroute, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -440,10 +485,12 @@ theorem composed_wellFormed (profiles : List String) (environment j : Json) (c :
     ∃ b D, chainBase environment j = .ok b ∧ chainDDoc b.1 environment j b.2.1 = .ok D ∧ wellFormed D = .ok () := by
   have h := (admitChain_of profiles environment j c h).2
   unfold admitChain at h
-  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hw, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨ne, hne, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+  rw [← chainBase_of profiles environment j ne hw hne] at hb
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, hc, _⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, D, hD, hw⟩ := chainChecks_wellFormed _ _ _ _ _ hc
@@ -470,11 +517,11 @@ theorem conditions_retained (profiles : List String) (environment j : Json) (c :
   have h := (admitChain_of profiles environment j c h).2
   unfold admitChain at h
   have hrefs : conditionalOnOf c.references = [] := by
-    iterate 11 obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    iterate 12 obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨r, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     cases h; exact chainReferences_ok _ r hr
-  simp only [composedJson, Json.mkObj, Std.TreeMap.Raw.ofList, Std.DTreeMap.Raw.Const.ofList,
+  simp only [composedJson, composedFields, Json.mkObj, Std.TreeMap.Raw.ofList, Std.DTreeMap.Raw.Const.ofList,
     Std.DTreeMap.Internal.Impl.Const.ofList, Std.DTreeMap.Internal.Impl.Const.insertMany]
   simp (config := {decide := true}) [Std.DTreeMap.Internal.Impl.insert, Std.DTreeMap.Internal.Impl.empty,
     Std.DTreeMap.Internal.Impl.balanceL, Std.DTreeMap.Internal.Impl.balanceR, Std.DTreeMap.Internal.Impl.size,

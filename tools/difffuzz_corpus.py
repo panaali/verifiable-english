@@ -81,11 +81,8 @@ EXCLUDED = {
     "usecases/gatekeeper-exemption/*.json": ("no-input", "a glob@1 policy request, outside the VE checker"),
     "usecases/agent-policy/requirements.json": (
         "no-input", "the policy family's requirement register, read by its level reader (apol-req)"),
-    "usecases/udhr-pilot/*/answers/*.json": ("artifact", "a UDHR pilot run's recorded query answers"),
-    "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
-    "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
-    "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
-    "usecases/udhr-pilot/*/frozen-run.json": ("artifact", "an earlier UDHR pilot run's files, frozen for migration"),
+    "usecases/*-pilot/run-*/*.json": (
+        "artifact", "a pilot run's recorded outputs, not independent fuzzer inputs"),
 }
 
 def _generated(module, name, convert=lambda value: value):

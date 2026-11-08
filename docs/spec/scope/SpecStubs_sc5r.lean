@@ -191,9 +191,9 @@ theorem governSets_preserves (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) 
         ∀ k, k ≠ "content" → r.getObjVal? k = r'.getObjVal? k := by sorry
 
 /-- Per choice: every joint choice of the governed sets, read off the answer, is `govern` of that choice. -/
-theorem governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hs : governedSetUnits D ≠ [])
-    (out : Json) (ho : governSets D = .ok out) (cs : List VE.Discourse.Choice) (hcs : setChoices D = .ok cs)
-    (ch : VE.Discourse.Choice) (hc : ch ∈ cs) :
+theorem governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hd : (unitIds D.doc).Nodup)
+    (hs : governedSetUnits D ≠ []) (out : Json) (ho : governSets D = .ok out) (cs : List VE.Discourse.Choice)
+    (hcs : setChoices D = .ok cs) (ch : VE.Discourse.Choice) (hc : ch ∈ cs) :
     ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by sorry
 
 /-- `govern_strings`, per choice: no reading brings in a new symbol. -/

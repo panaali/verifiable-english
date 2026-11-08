@@ -11,11 +11,56 @@ choice function or witness constant is introduced. -/
 namespace VE.Discourse
 universe u
 
-def uniqueD (σ : String) (Dr : VE.Formula) : VE.Formula :=
-  .ex σ (.and Dr (.all σ (.implies Dr (.eq (.var 0) (.var 1)))))
+/-! ## The builders (presupposition 4.1): the restriction is written at each binder -/
 
-def assertive (σ : String) (Dr P : VE.Formula) : VE.Formula :=
-  .ex σ (.and Dr (.and (.all σ (.implies Dr (.eq (.var 0) (.var 1)))) P))
+def uniqueAt (σ : String) (Dr Dr' : VE.Formula) : VE.Formula :=
+  .ex σ (.and Dr (.all σ (.implies Dr' (.eq (.var 0) (.var 1)))))
+def assertiveAt (σ : String) (Dr Dr' P : VE.Formula) : VE.Formula :=
+  .ex σ (.and Dr (.and (.all σ (.implies Dr' (.eq (.var 0) (.var 1)))) P))
+
+/-- A restriction over `σ :: Δ` (`n = Δ.length`) weakened past one new binder at index 1, by W1's `inst`. -/
+def raise1 (n : Nat) (Dr : VE.Formula) : VE.Formula :=
+  VE.Norms.inst (.var 0 :: (List.range n).map (fun i => .var (i + 2))) Dr
+def uniqueOpen (n : Nat) (σ : String) (Dr : VE.Formula) : VE.Formula := uniqueAt σ Dr (raise1 n Dr)
+def assertiveOpen (n : Nat) (σ : String) (Dr P : VE.Formula) : VE.Formula := assertiveAt σ Dr (raise1 n Dr) P
+
+-- today's definitions become wrappers; each is `rfl`-equal to its current body (S11)
+def uniqueD (σ : String) (Dr : VE.Formula) : VE.Formula := uniqueAt σ Dr Dr
+def assertive (σ : String) (Dr P : VE.Formula) : VE.Formula := assertiveAt σ Dr Dr P
+
+example (σ : String) (Dr : VE.Formula) :
+    uniqueD σ Dr = .ex σ (.and Dr (.all σ (.implies Dr (.eq (.var 0) (.var 1))))) := rfl
+example (σ : String) (Dr P : VE.Formula) :
+    assertive σ Dr P = .ex σ (.and Dr (.and (.all σ (.implies Dr (.eq (.var 0) (.var 1)))) P)) := rfl
+
+theorem term_inst_range_id (k : Nat) (t : VE.Term) :
+    VE.Norms.Term.inst ((List.range k).map (fun i => .var i)) t = t := by
+  cases t with
+  | var i =>
+    simp only [VE.Norms.Term.inst, List.getElem?_map]
+    by_cases h : i < k <;> simp [h]
+  | const c => rfl
+
+/-- `inst` by the identity prefix `[var 0, …, var (k-1)]` changes nothing. -/
+theorem inst_range_id : ∀ (a : VE.Formula) (k : Nat),
+    VE.Norms.inst ((List.range k).map (fun i => .var i)) a = a
+  | .top, _ | .bottom, _ => rfl
+  | .unary p t, k => by simp only [VE.Norms.inst, term_inst_range_id]
+  | .binary p t w, k | .eq t w, k => by simp only [VE.Norms.inst, term_inst_range_id]
+  | .not a, k => by simp only [VE.Norms.inst, inst_range_id a k]
+  | .and a b, k | .or a b, k | .implies a b, k => by
+    simp only [VE.Norms.inst, inst_range_id a k, inst_range_id b k]
+  | .all s a, k | .ex s a, k => by
+    have h : (.var 0 :: ((List.range k).map (fun i => VE.Term.var i)).map VE.Norms.Term.shift) =
+        (List.range (k + 1)).map (fun i => VE.Term.var i) := by
+      simp [List.range_succ_eq_map, VE.Norms.Term.shift, Function.comp_def]
+    simp only [VE.Norms.inst, h, inst_range_id a (k + 1)]
+
+theorem raise1_zero (Dr : VE.Formula) : raise1 0 Dr = Dr := inst_range_id Dr 1
+theorem uniqueOpen_zero (σ : String) (Dr : VE.Formula) : uniqueOpen 0 σ Dr = uniqueD σ Dr := by
+  simp only [uniqueOpen, uniqueD, raise1_zero]
+theorem assertiveOpen_zero (σ : String) (Dr P : VE.Formula) : assertiveOpen 0 σ Dr P = assertive σ Dr P := by
+  simp only [assertiveOpen, assertive, raise1_zero]
 
 def presupposed (σ : String) (Dr P : VE.Formula) : VE.Formula := .all σ (.implies Dr P)
 
@@ -98,7 +143,7 @@ theorem uniqueD_denote (E : VE.Environment) (σ : String) (Dr : VE.Formula)
     (hD : Dr.WellFormed E [σ]) (S : VE.Structure.{u}) :
     (uniqueD σ Dr).denote S [] ↔
       ∃ a, S.domain σ a ∧ Dr.denote S [a] ∧ ∀ b, S.domain σ b → Dr.denote S [b] → b = a := by
-  simp only [uniqueD, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
+  simp only [uniqueD, uniqueAt, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
     List.getElem?_cons_succ, Option.some.injEq]
   constructor
   · rintro ⟨a, ha, hDa, hu⟩
@@ -119,7 +164,7 @@ theorem assertive_denote (E : VE.Environment) (σ : String) (hσ : σ ∈ E.sort
     (assertive σ Dr P).denote S [] ↔
       ∃ a, S.domain σ a ∧ Dr.denote S [a] ∧ (∀ b, S.domain σ b → Dr.denote S [b] → b = a) ∧
         P.denote S [a] := by
-  simp only [assertive, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
+  simp only [assertive, assertiveAt, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
     List.getElem?_cons_succ, Option.some.injEq]
   constructor
   · rintro ⟨a, ha, hDa, hu, hPa⟩

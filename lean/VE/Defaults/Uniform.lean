@@ -6,10 +6,12 @@ stated sufficient condition forces it. The conditions are soft's own exceptions 
 `Pack.conditions` (PK-1), looked up by the decision key of `decisionRule N` (PC-6a).
 
 `dfltUniform_legacy`: on packs that state no condition, today's `[soft]` and `[soft, rights]`, the uniform premises
-are today's, label for label. `dfltUniform_sound` is not proved here: its statement is held as the definition
-`DfltUniformSound` (DRI decision 2026-11-02, pc-9, item 1), for defeasible's DF-U to prove in the specification's own
-form; item 3 of that decision is open against it. Until EXP-D3 and DF-U settle, the defaults kinds refuse a document some of whose packs state a condition
-(`providerConditions` and `providerRefusal`, read by `defaultsRows` in `Defaults/Route.lean`; E1d's text is `providerE1d`, which no route produces yet). -/
+are today's, label for label. `dfltUniform_sound`: a default base satisfies the uniform premises wherever the stated
+conditions are exact (`ConditionsExact`: on every admissible base the least tables lie below the base's, the conjunct
+of DRI decision 2026-11-02, pc9-decide-check, item 2, and keep it admissible). It says nothing on a switch condition
+that ever holds, since `ConditionsExact` then fails through `SwitchesOff` (item 4). Until EXP-D3 settles, the defaults
+kinds refuse a document some of whose packs state a condition (`providerConditions` and `providerRefusal`, read by
+`defaultsRows` in `Defaults/Route.lean`; E1d's text is `providerE1d`, which no route produces yet). -/
 namespace VE.Defaults
 open VE.Norms (bindAll atom anyF Sat)
 open VE.SoftNorms (SoftDoc SoftNode DecisionKey decisionRule exceptedF exceptedName outweighsF outweighsName offName
@@ -85,36 +87,136 @@ theorem leastUniform_legacy (D : SoftDoc) {qs : List Pack} (h : ∀ p ∈ qs, p.
   funext p vs
   simp [leastUniform, leastDecisions, packConditions_nil h]
 
-/-- The stated conditions are all that force a decision: the least tables keep the base admissible (the uniform
+/-- The stated conditions are all that force a decision: on every admissible base the least tables lie below the
+base's (sa-no-exception, DRI decision 2026-11-02, pc9-decide-check, item 2) and keep it admissible (the uniform
 analogue of `ReplacementHolds`, Meaning.lean:70). -/
 def ConditionsExact (U : UDoc) (D : SoftDoc) (qs : List Pack) : Prop :=
   ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B →
-    ∃ F : String → List B.Carrier → Prop,
+    (∃ F : String → List B.Carrier → Prop,
       BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) (withOpen U D B (leastUniform D qs B) F) ∧
-      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)
+      SwitchesOff D (withOpen U D B (leastUniform D qs B) F)) ∧
+    ∀ p vs, leastUniform D qs B p vs → B.relation p vs
 
 /-- With no stated provider condition, `ConditionsExact` reads today's least tables. -/
 theorem conditionsExact_legacy (U : UDoc) (D : SoftDoc) {qs : List Pack} (h : ∀ p ∈ qs, p.conditions = []) :
     ConditionsExact.{u} U D qs ↔ ∀ B : VE.Structure.{u}, BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) B →
-      ∃ F : String → List B.Carrier → Prop,
+      (∃ F : String → List B.Carrier → Prop,
         BaseAdmissibleX U (VE.NormDefaults.Packs.X qs) (withOpen U D B (leastDecisions D B) F) ∧
-        SwitchesOff D (withOpen U D B (leastDecisions D B) F) := by
+        SwitchesOff D (withOpen U D B (leastDecisions D B) F)) ∧
+      ∀ p vs, leastDecisions D B p vs → B.relation p vs := by
   simp only [ConditionsExact, leastUniform_legacy D h]
 
-/-- The statement of `dfltUniform_sound` (1.9), binders and conclusion as the specification gives them. It is not
-proved here, and nothing in PC-9 reads it: defeasible's named batch DF-U (DRI ruling 2(b)) proves `dfltUniform_sound`
-in the specification's form and deletes this definition and its lock (DRI decision 2026-11-02, pc-9, item 1; item 3
-is open against the statement). The provider-conditions refusal stands until EXP-D3 and DF-U. -/
-def DfltUniformSound : Prop :=
-  ∀ (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
-    (hD : WellFormedSoft D = true) (qs : List Pack) (hex : ConditionsExact.{u} U D qs) (B : VE.Structure.{u})
-    (hB : DefaultBase U D (VE.NormDefaults.Packs.X qs) B), Sat B (dfltUniform D qs)
+/-! ## `dfltUniform_sound` -/
 
-/-- The lock (DRI decision 2026-11-02, pc-9, item 1(a)): `DfltUniformSound`'s text, as spec 1.9 states it. -/
-theorem dfltUniformSound_iff : DfltUniformSound.{u} ↔
-    ∀ (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
-      (hD : WellFormedSoft D = true) (qs : List Pack) (hex : ConditionsExact.{u} U D qs) (B : VE.Structure.{u})
-      (hB : DefaultBase U D (VE.NormDefaults.Packs.X qs) B), Sat B (dfltUniform D qs) := Iff.rfl
+theorem key_inj {α : Type} (key : α → String) {l : List α} (hk : (l.map key).Nodup) {x y : α} (hx : x ∈ l)
+    (hy : y ∈ l) (h : key x = key y) : x = y := by
+  have h1 := VE.SoftNorms.find_key key l hk x hx
+  rw [h] at h1
+  exact Option.some.inj (h1.symm.trans (VE.SoftNorms.find_key key l hk y hy))
+
+theorem noneOr_denote {B : VE.Structure.{u}} {d : VE.Formula} {cs : List VE.Formula} {ρ : VE.Valuation B}
+    (h : d.denote B ρ → ∃ C ∈ cs, C.denote B ρ) : (noneOr d cs).denote B ρ := by
+  cases cs with
+  | nil => exact fun hd => by obtain ⟨_, hC, _⟩ := h hd; cases hC
+  | cons c cs => exact fun hd => (VE.Norms.anyF_denote _ _ _).mpr (h hd)
+
+section Names
+variable {D : SoftDoc} (hD : WellFormedSoft D = true)
+include hD
+
+/-- A switch name and an `outweighs` name each name one decision, and never the same one. -/
+theorem off_names :
+    ((D.T.nodes.flatMap fun N => N.alterable.map (N, ·)).map fun x => offName x.1 x.2).Nodup ∧
+    ((outweighsTriples D).map fun t => outweighsName t.1 t.2.1 t.2.2).Nodup ∧
+    ∀ N ∈ D.T.nodes, ∀ π ∈ N.alterable, ∀ t ∈ outweighsTriples D, offName N π ≠ outweighsName t.1 t.2.1 t.2.2 := by
+  have hnd := (VE.SoftNorms.softValid_of_wellFormed D hD).decNodup
+  rw [decisionNames_split, List.nodup_append, List.nodup_append] at hnd
+  refine ⟨by simpa [VE.SoftNorms.offDecisions, List.map_flatMap, Function.comp_def] using hnd.1.2.1,
+    by simpa [VE.SoftNorms.outweighsDecisions, Function.comp_def] using hnd.2.1, fun N hN π hπ t ht => ?_⟩
+  exact hnd.2.2 _ (List.mem_append_right _ (List.mem_map.mpr ⟨_, List.mem_flatMap.mpr ⟨N, hN,
+    List.mem_map.mpr ⟨π, hπ, rfl⟩⟩, rfl⟩)) _ (List.mem_map.mpr ⟨_, List.mem_map.mpr ⟨t, ht, rfl⟩, rfl⟩)
+
+/-- `dfltUniform` holds wherever every decision table of `B` lies below the least tables. -/
+theorem sat_dfltUniform (qs : List Pack) (B : VE.Structure.{u})
+    (hle : ∀ p ∈ VE.SoftNorms.decisionNames D, ∀ vs, B.relation p vs → leastUniform D qs B p vs) :
+    Sat B (dfltUniform D qs) := by
+  have offMem : ∀ N ∈ D.T.nodes, ∀ π ∈ N.alterable, offName N π ∈ (VE.SoftNorms.offDecisions D).map (·.1) ++
+      (VE.SoftNorms.outweighsDecisions D).map (·.1) := fun N hN π hπ =>
+    List.mem_append_left _ (List.mem_map.mpr ⟨_, List.mem_flatMap.mpr ⟨N, hN, List.mem_map.mpr ⟨π, hπ, rfl⟩⟩, rfl⟩)
+  have owMem : ∀ t ∈ outweighsTriples D, outweighsName t.1 t.2.1 t.2.2 ∈ (VE.SoftNorms.offDecisions D).map (·.1) ++
+      (VE.SoftNorms.outweighsDecisions D).map (·.1) := fun t ht =>
+    List.mem_append_right _ (List.mem_map.mpr ⟨_, List.mem_map.mpr ⟨t, ht, rfl⟩, rfl⟩)
+  have pairMem : ∀ N ∈ D.T.nodes, ∀ π ∈ N.alterable, (N, π) ∈ D.T.nodes.flatMap fun N => N.alterable.map (N, ·) :=
+    fun N hN π hπ => List.mem_flatMap.mpr ⟨N, hN, List.mem_map.mpr ⟨π, hπ, rfl⟩⟩
+  obtain ⟨hoff, how, hapart⟩ := off_names hD
+  intro a ha
+  obtain ⟨⟨l, a⟩, hla, rfl⟩ := List.mem_map.mp ha
+  rcases List.mem_append.mp hla with hn | hr
+  · obtain ⟨N, hN, hx⟩ := List.mem_flatMap.mp hn
+    unfold dfltUniformOf at hx
+    rcases List.mem_append.mp hx with he | hw
+    · split at he
+      · rename_i e hm hexc
+        cases List.mem_singleton.mp he
+        have hd : (exceptedName N, sortsOf D N.pred) ∈ VE.SoftNorms.decisions D :=
+          VE.Readings.mem_decisions.mpr (Or.inl ⟨N, hN, hm, rfl⟩)
+        show (bindAll _ _).denote _ []
+        rw [VE.Norms.bindAll_denote_nil]
+        intro vs hvs hx
+        rcases hle _ (List.mem_map.mpr ⟨_, hd, rfl⟩) vs
+          ((VE.Norms.atom_denote _ _ _ (decision_arity hD hd) vs hvs).mp hx) with
+          ⟨N', hN', hm', hname, -, C, hC, hCd⟩ | ⟨N', hN', π, hπ, hname, -⟩ | ⟨t, ht, hname, -⟩
+        · cases excepted_inj hD hN hm hN' hm' hname
+          simp only [hexc, Option.map_some, Option.getD_some] at hC
+          exact (VE.Norms.anyF_denote _ _ _).mpr ⟨C, hC, hCd⟩
+        · have hn : exceptedName N = offName N' π := hname
+          exact absurd (hn ▸ offMem N' hN' π hπ) (excepted_only hD hN hm)
+        · have hn : exceptedName N = outweighsName t.1 t.2.1 t.2.2 := hname
+          exact absurd (hn ▸ owMem t ht) (excepted_only hD hN hm)
+      · cases he
+    · obtain ⟨π, hπ, hx⟩ := List.mem_map.mp hw
+      cases hx
+      have hd : (offName N π, sortsOf D N.pred) ∈ VE.SoftNorms.decisions D :=
+        VE.Readings.mem_decisions.mpr (Or.inr (Or.inl ⟨N, hN, π, hπ, rfl⟩))
+      show (bindAll _ _).denote _ []
+      rw [VE.Norms.bindAll_denote_nil]
+      intro vs hvs
+      refine noneOr_denote fun hx => ?_
+      rcases hle _ (List.mem_map.mpr ⟨_, hd, rfl⟩) vs
+        ((VE.Norms.atom_denote _ _ _ (decision_arity hD hd) vs hvs).mp hx) with
+        ⟨N', hN', hm', hname, -⟩ | ⟨N', hN', π', hπ', hname, -, C, hC, hCd⟩ | ⟨t, ht, hname, -⟩
+      · exact absurd (hname ▸ offMem N hN π hπ) (excepted_only hD hN' hm')
+      · cases key_inj (fun x => offName x.1 x.2) hoff (pairMem N hN π hπ) (pairMem N' hN' π' hπ') hname
+        exact ⟨C, hC, hCd⟩
+      · exact absurd hname (hapart N hN π hπ t ht)
+  · obtain ⟨⟨a', L, H⟩, ht, hx⟩ := List.mem_map.mp hr
+    cases hx
+    have hd : (outweighsName a' L H, actSortsOf D a') ∈ VE.SoftNorms.decisions D :=
+      VE.Readings.mem_decisions.mpr (Or.inr (Or.inr ⟨a', L, H, ht, rfl⟩))
+    show (bindAll _ _).denote _ []
+    rw [VE.Norms.bindAll_denote_nil]
+    intro vs hvs
+    refine noneOr_denote fun hx => ?_
+    rcases hle _ (List.mem_map.mpr ⟨_, hd, rfl⟩) vs
+      ((VE.Norms.atom_denote _ _ _ (decision_arity hD hd) vs hvs).mp hx) with
+      ⟨N', hN', hm', hname, -⟩ | ⟨N', hN', π, hπ, hname, -⟩ | ⟨t, ht', hname, -, C, hC, hCd⟩
+    · have hn : outweighsName a' L H = exceptedName N' := hname
+      exact absurd (hn ▸ owMem (a', L, H) ht) (excepted_only hD hN' hm')
+    · have hn : outweighsName a' L H = offName N' π := hname
+      exact absurd hn.symm (hapart N' hN' π hπ (a', L, H) ht)
+    · have hn : outweighsName a' L H = outweighsName t.1 t.2.1 t.2.2 := hname
+      have he : (a', L, H) = t := key_inj (x := (a', L, H)) (y := t) _ how ht ht' hn
+      subst he
+      exact ⟨C, hC, hCd⟩
+
+end Names
+
+/-- Proved by defeasible's named batch DF-U (DRI ruling 2(b)), against `DefaultBase`. -/
+theorem dfltUniform_sound (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (hU : U.D = soften D)
+    (hD : WellFormedSoft D = true) (qs : List Pack) (hex : ConditionsExact.{u} U D qs) (B : VE.Structure.{u})
+    (hB : DefaultBase U D (VE.NormDefaults.Packs.X qs) B) : Sat B (dfltUniform D qs) := by
+  obtain ⟨⟨F, hF, hsw⟩, hlu⟩ := hex B hB.1
+  exact sat_dfltUniform hD qs B (hB.2.2 _ F (fun p _ vs => hlu p vs) hF hsw)
 
 /-- The guard the defaults kinds read until EXP-D3 settles (one line in `defaultsRows`, `Defaults/Route.lean:17`):
 some provider states a decision condition. Every pack is read, not only `weighing`. -/

@@ -353,7 +353,7 @@ structure Env where
   constants : List ConstDecl
   profiles : List String := []
   forms : ProfileForms := {}
-  /-- The validated environment JSON; read by `typedDocument` only (S2 spec 2.3). -/
+  /-- The validated environment JSON; read by `typedDocument` (S2 spec 2.3) and `Norm.regulatedOf` (S6 spec R6). -/
   source : Lean.Json := .null
   /-- The `alternatives@0` block; present exactly when the profile is named, for a decoded `Env` (S3 spec
   2.3). -/

@@ -101,7 +101,7 @@ def read_source(path: Path) -> Estimates:
     file, which leaves the run to `load`. Entries that are not seconds are dropped, never coerced; a
     `measured` that is not a list of IDs is ignored."""
     try:
-        data = json.loads(path.read_text())
+        data = json_value(path.read_text())
     except (OSError, ValueError):
         return Estimates({}, UNRECORDED_SECONDS)
     if not isinstance(data, dict) or data.get("format") != FORMAT or not isinstance(data.get("seconds"), dict):
@@ -138,19 +138,39 @@ def record_field(timed: Mapping[str, float]) -> dict:
             "seconds_zlib": base64.b64encode(zlib.compress(raw, 9)).decode("ascii")}
 
 
-def read_record_field(field) -> Estimates | None:
-    """The durations of a gate record's `record_field`, or None when it is absent or malformed."""
-    if not isinstance(field, dict) or field.get("format") != FORMAT or type(field.get("seconds_zlib")) is not str \
-            or not seconds_value(field.get("unrecorded_seconds")):
+def json_value(raw: str | bytes):
+    """The JSON value `raw` holds, or None when it holds none: not JSON, not UTF-8, or nested deeper than the
+    parser's stack, which raises RecursionError, not ValueError. Every reader of a gate record or durations file
+    that leaves a malformed one unused decodes through this (or `zlib_json_value`), so none lets the parser's
+    errors out. JSON null is None too: each caller checks for the type it reads."""
+    try:
+        return json.loads(raw)
+    except (ValueError, RecursionError):
+        return None
+
+
+def zlib_json_value(encoded, max_bytes: int):
+    """The JSON value `encoded` holds as base64 of zlib-compressed JSON of at most `max_bytes` bytes, or None
+    when it holds none (`json_value`): the one decoder of a gate record's compressed fields, its durations
+    (`read_record_field`) and its collected IDs (`gate_collection.decode_ids`)."""
+    if type(encoded) is not str:
         return None
     try:
         decoder = zlib.decompressobj()
-        raw = decoder.decompress(base64.b64decode(field["seconds_zlib"], validate=True), MAX_RECORD_BYTES + 1)
-        if len(raw) > MAX_RECORD_BYTES or not decoder.eof or decoder.unused_data:
-            return None
-        seconds = json.loads(raw)
-    except (ValueError, zlib.error, UnicodeDecodeError):
+        raw = decoder.decompress(base64.b64decode(encoded, validate=True), max_bytes + 1)
+    except (ValueError, zlib.error):
         return None
+    if len(raw) > max_bytes or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
+        return None
+    return json_value(raw)
+
+
+def read_record_field(field) -> Estimates | None:
+    """The durations of a gate record's `record_field`, or None when it is absent or malformed."""
+    if not isinstance(field, dict) or field.get("format") != FORMAT \
+            or not seconds_value(field.get("unrecorded_seconds")):
+        return None
+    seconds = zlib_json_value(field.get("seconds_zlib"), MAX_RECORD_BYTES)
     if not isinstance(seconds, dict) or not all(isinstance(nodeid, str) and seconds_value(value)
                                                 for nodeid, value in seconds.items()):
         return None

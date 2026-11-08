@@ -6,6 +6,8 @@ import VE.Norms.Run
 import VE.Words.Situation
 import VE.NormDefaults.Run
 import VE.Readings.ActsExamples
+import VE.Acts.DecodeExamples
+import VE.Service.Document
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -64,10 +66,11 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
   "InvalidInput: act phrase for p joins acts with 'or' outside a fixed phrase"
 #guard err (decodeA (env actsP [("heard", pred ["person", "case"] (plain a1 "is entitled"))])) ==
   "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase"
--- the block: absent is empty; exactly `fixed`, a list of strings, each phrase checked (A18: D-12)
+-- the block: absent is empty; `fixed`, a list of strings, with `frames` and `adverbs` (ap-3db), each phrase checked
+-- (A18: D-12)
 #guard err (decodeA (env actsP seek)) == "ok"
 #guard err (decodeA (env actsP seek (some (Json.mkObj [("fixed", toJson ([] : List String)),
-  ("frames", Json.arr #[])])))) == "fields do not match: expected [fixed], got [fixed, frames]"
+  ("sources", Json.arr #[])])))) == "fields do not match: expected [fixed], got [fixed, sources]"
 #guard err (decodeA (env actsP seek (some (Json.mkObj [("fixed", Json.arr #[.num 7])])))) == "String expected"
 #guard err (decodeA (env actsP seek (some (block ["the court that is competent"])))) ==
   "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
@@ -495,5 +498,107 @@ def rels (may : Json) : List (String × Json) := [("must_hear", toJson [["p", "c
 -- the environment mode gives the readings route's D-33 (its fixtures in `VE.Readings.ActsExamples`)
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (VE.Readings.ActsExamples.env [("p", "plain", a5)])) ==
   VE.Readings.ActsExamples.d33 "p"
+
+/-! ### ap-3db: a joined act on every entry point (act-phrases 6.4; DRI 2026-11-02 ap-3db items 1 to 4)
+
+The entry points that run on the elaborated document name the parts and never the source; every other path keeps
+`Lexical.check`'s refusal, byte for byte. -/
+
+section Joined
+open VE.Acts.DecodeExamples (envOf block6 nd6 plain6 norms27)
+
+def joinedE : Json := envOf plain6 block6 (default := "deny")
+def joinedU : Json := envOf nd6 block6
+def lexicalE : Json := envOf plain6 block6 (name := "p027") (act := "{0} be held") (default := "deny")
+def caseOf (kind : String) (j : Json) (rest : List (String × Json) := []) : Json :=
+  Json.mkObj ([("id", .str "c"), ("kind", .str kind), ("environment", j), ("norms", norms27)] ++ rest)
+def targetsOf (answer : Except String Json) : Except String (List String) := do
+  (← (← answer).getObjVal? "conflict_targets" >>= (·.getArr?)).toList.mapM fun t => t.getObjVal? "target" >>= (·.getStr?)
+def d4 : String := "InvalidInput: act phrase for p027 joins acts with 'or' outside a fixed phrase"
+
+-- The norms route: the answer names the parts and never `p027`; the undecoded route reads `p027` as one predicate.
+#guard (targetsOf (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" joinedE))).toOption ==
+  some ["p027__1", "p027__2"]
+#guard (targetsOf (VE.Norms.Run.runCase (caseOf "norms-elaborate" joinedE))).toOption == some ["p027"]
+#guard ((VE.Norms.Run.runCaseRouted (caseOf "norms-conflict" joinedE)).toOption.map fun a => (a.getObjValD "targets")) ==
+  some (toJson ["p027__1", "p027__2"])
+-- The norm-defaults route, on `e.U'`.
+#guard (targetsOf (VE.NormDefaults.Run.runCaseRouted (caseOf "norm-defaults-elaborate" joinedU))).toOption ==
+  some ["p027__1", "p027__2"]
+-- A plain act: each part's wording reads its source's `form` (`splitJson`).
+def plainJoined : Json :=
+  let j := envOf plain6 block6 (role := "plain") (default := "deny")
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "predicates" (Json.mkObj [("p027", Json.mkObj [("arguments", toJson ["person"]),
+    ("description", .str "d"), ("regulated", Json.mkObj (plain VE.Acts.DecodeExamples.a6 "has the right"))])]))
+def ruleOn : Json := Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "r027"), ("predicate", .str "p027"),
+  ("sign", .bool true), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]]
+#guard ((VE.Norms.Run.runCaseRouted (Json.mkObj [("id", .str "c"), ("kind", .str "norms-elaborate"),
+    ("environment", plainJoined), ("norms", ruleOn)])).toOption.map fun a => a.getObjValD "wordings") ==
+  some (Json.mkObj [("p027__1", .str "{0} has the right to be subjected to torture"),
+    ("p027__2", .str "{0} has the right to be subjected to cruel, inhuman or degrading treatment or punishment")])
+-- A lexical document answers byte for byte as today, on both routes.
+#guard (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" lexicalE)).toOption ==
+  (VE.Norms.Run.runCase (caseOf "norms-elaborate" lexicalE)).toOption
+#guard (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" lexicalE)).toOption.isSome
+-- D-15 to D-17 and `elaborateMap`'s refusals replace D-4 on the routes that read a joined act (item 3).
+#guard err (VE.Norms.Run.runCaseRouted (caseOf "norms-elaborate" (envOf plain6 (block fxs) (default := "deny")))) ==
+  "InvalidInput: act phrase for p027 has no reading under the declared frames"
+
+-- Item 2: the paths Python reaches keep D-4, with the frames declared.
+#guard err (VE.Norms.Wire.decodeNormsEnvironment joinedE (acts := true)) == d4
+#guard err (VE.NormDefaults.Wire.decodeEnvironmentU joinedE) == d4
+#guard err (VE.NormDefaults.Wire.decodeSourceLexical joinedE norms27) == d4
+#guard err (VE.NormDefaults.Wire.decodeSourceLexical joinedU norms27) == d4
+#guard err (VE.Service.Standalone.validatedComposedEnvironment joinedE) == d4
+-- the model gate and Background read `regulatedOf`
+#guard err (VE.Service.Standalone.regulatedOf joinedE
+  (((joinedE.getObjValD "vocabulary").getObjValD "predicates") |> VE.Bridge.fields).toOption.get!) == d4
+#guard err (VE.Service.Standalone.modelCase (Json.mkObj [("id", .str "m"), ("environment", joinedE),
+  ("model", Json.mkObj [])])) == d4
+#guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground joinedE ne.rv)) == some d4
+#guard ((decodeA lexicalE).toOption.map fun ne => err (VE.Service.Standalone.folBackground lexicalE ne.rv)) == some "ok"
+-- the document route's environment gate, before its admission (which runs on the decoded source)
+#guard err (VE.Service.Document.decodedEnvironment joinedE .none) == d4
+#guard err (VE.Service.Document.decodedEnvironment joinedU .none) == d4
+#guard err (VE.Service.Document.decodedEnvironment lexicalE .none) == "ok"
+-- a quoted W1 block (`Reports.Wire.decodeNormNode`) refuses `acts@0` at its envelope, joined act or not
+#guard err (VE.Reports.Wire.decodeNormNode (Json.mkObj [("environment", joinedE), ("norms", Json.arr #[])])) ==
+  "UnsupportedProfile: Unsupported profile acts@0"
+#guard err (VE.Reports.Wire.decodeNormNode (Json.mkObj [("environment", lexicalE), ("norms", Json.arr #[])])) ==
+  "UnsupportedProfile: Unsupported profile acts@0"
+-- the English view's modal form
+#guard err (modalForm "p027" ["person"] (((joinedE.getObjValD "vocabulary").getObjValD "predicates").getObjValD "p027")
+  plain6 VE.Acts.TableExamples.fx6) == d4
+-- `canonicalEnvironmentJson` only canonicalises: the act's bytes are the act's, on the elaborating routes.
+#guard (VE.Norms.Wire.canonicalEnvironmentJson joinedE >>= VE.Norms.Wire.canonicalActs).toOption ==
+  some [("p027", VE.Acts.DecodeExamples.a6)]
+-- `canonicalShape`: the checks of 1.3 before a join, without `acts@0` `canonicalAct`.
+#guard (VE.Norms.Wire.canonicalShape plain6 [] "p" 1 (.str "{0}  seek  or enjoy")).toOption == some "{0} seek or enjoy"
+#guard err (VE.Norms.Wire.canonicalShape plain6 [] "p" 1 (.str "seek or enjoy")) == "InvalidInput: invalid act phrase for p"
+#guard err (VE.Norms.Wire.canonicalShape ["norms@0"] [] "p" 1 (.str "{0} seek or enjoy")) ==
+  "InvalidInput: invalid act phrase for p"
+-- The same decoders admit a lexical act.
+#guard err (VE.NormDefaults.Wire.decodeSourceLexical lexicalE norms27) == "ok"
+#guard err (VE.Norms.Wire.decodeNormsEnvironment lexicalE (acts := true)) == "ok"
+
+-- The readings route (D-33, `readings_lexical_only`): frames declared, joined act refused; a lexical act admitted.
+def readingsOf (j : Json) : Json := j.setObjVal! "profiles" (toJson ["acts@0", "norms@0", "readings@1", "relational-fol@0"])
+#guard err (VE.Readings.Wire.decodeEnvironment (readingsOf joinedE)) ==
+  "UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of p027 joins acts"
+#guard err (VE.Readings.Wire.decodeEnvironment (readingsOf (envOf plain6 (block fxs) (default := "deny")))) ==
+  "UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of p027 joins acts"
+#guard err (VE.Norms.Wire.canonicalEnvironmentJson (readingsOf joinedE)) == d4
+#guard err (VE.Readings.Wire.decodeEnvironment (readingsOf lexicalE)) == "ok"
+#guard VE.Readings.Wire.lexicalAct VE.Acts.TableExamples.fx6 ⟨"p", ["person"], false, .permission, some "{0} be held", none⟩
+#guard !VE.Readings.Wire.lexicalAct [] ⟨"p", ["person"], false, .permission, some VE.Acts.DecodeExamples.a6, none⟩
+#guard !VE.Readings.Wire.lexicalAct [] ⟨"p", ["person"], false, .permission, some "{0}  be held", none⟩
+#guard VE.Readings.Wire.lexicalAct [] ⟨"p", ["person"], false, .plain, none, none⟩
+-- `fixedOf`: the block's list, `[]` when absent or not a list of strings.
+#guard VE.Acts.Wire.fixedOf joinedE == VE.Acts.TableExamples.fx6
+#guard VE.Acts.Wire.fixedOf (env actsP seek) == []
+#guard VE.Acts.Wire.fixedOf (env actsP seek (some (Json.mkObj [("fixed", .num 7)]))) == []
+
+end Joined
 
 end VE.Service.ActsExamples

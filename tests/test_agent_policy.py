@@ -327,9 +327,10 @@ def _model_case(formula, value):
 
 
 def _replay_with(monkeypatch, stdout, cases=None):
-    """`replay_rust` on the given raw answer, in place of the binary."""
+    """`replay_rust` on the given raw answer (text is sent as UTF-8), in place of the binary."""
     monkeypatch.setattr(check, "RUST", HERE / "check.py")
-    answer = lambda *_, **__: type("Done", (), {"stdout": stdout})()  # noqa: E731
+    raw = stdout.encode() if isinstance(stdout, str) else stdout
+    answer = lambda *_, **__: type("Done", (), {"stdout": raw})()  # noqa: E731
     monkeypatch.setattr(check.subprocess, "run", answer)
     return check.replay_rust({"rust": cases or [_model_case("top", True)]})
 

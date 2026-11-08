@@ -2400,7 +2400,8 @@ def Formula.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Formula → Nat �
       | some (h, w) => quantLoop false (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
 end
 
-def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv :=
+-- the reference list lookup; `Defs.opEnv` builds hash tables of the same environment (me-12nc, `opEnv_eq_list`)
+def Defs.opEnvList (limit : Nat) (D : Defs) : OpEnv :=
   D.foldl (fun E d => match d with
     | .fn f n body => { E with funs := fun g => if g = f then some (n, fun xs w => Term.evalB E limit xs body w) else E.funs g }
     | .pred p n body => { E with preds := fun q => if q = p then some (n, fun xs w => Formula.evalB E limit xs body w) else E.preds q })
@@ -2491,9 +2492,13 @@ so does every value a step binds.
     [uncharged-costs.lean](../math-evidence/me-12nb/uncharged-costs.lean); interpreted with `lake env lean`, then
     compiled): reading the last of 4,000 parameters 1.3 s and 0.8 s; a range up to a 65,537-bit bound under 0.3 s
     and 0.05 s; a call of the first of 512 definitions whose 64-byte names differ only at the end, 1,024 times per
-    step, 37 s and 2.5 to 2.9 s. The name lookup's cost is the implementation's (a walk with a full-name compare), not
-    the charge's: me-12nc replaces it with a table built once per case, which changes no unit count, before me-12b
-    exposes the evaluator (DRI, 2026-10-27, `dri-decisions-20261027-me-12nb.md`).
+    step, 37 s and 2.5 to 2.9 s, measured on the list walk with a full-name compare that me-12nb had. The name
+    lookup's cost is the implementation's, not the charge's: me-12nc replaced the walk with hash tables
+    (`Defs.opEnv`, equal to the list by `opEnv_eq_list`), which changes no unit count (DRI, 2026-10-27,
+    `dri-decisions-20261027-me-12nb.md`); the 37 s is that walk's, not the tables'.
+  - The tables are built once per statement, uncharged: each `decideBounded` call builds them again, so a case of
+    512 statements over 511 definitions builds them 512 times. A scratch model of `OpTable.add`'s shape (not the
+    product code) took about 0.7 s for those 512 builds (escape check, 2026-11-02).
 - **Not charged.** A range's remaining count is a natural number of at most n + 1 bits, decremented at each step. A
   range up to a 65,537-bit bound measured as UNKNOWN within about a second.
 

@@ -10,11 +10,35 @@ the lexing passed) is a joined act: every slot must stand alone as a word, and i
 from one complete listing (`readings V rawCap stepBudget`, at most `maxReadings` meanings). The listing is computed
 once; `read`, which `checkAct_joined` names, is that listing's one-element case.
 
-No route calls `checkAct` yet: the norms decoder's hook switches to it with the entry points that elaborate (ap-3db).
+The norms decoder's hook calls `checkAct` (ap-3db). `decodeVocab` reads the `acts` block's `frames` and `adverbs`
+(3.1), and `checkVocab` raises D-31.
 -/
 
 namespace VE.Acts.Wire
 open Lean VE.Acts.Lexical
+open VE.Bridge (exactFields stringField strings)
+
+/-- One frame of the `acts` block (1.4, 3.1); `head` is its words as one string. -/
+def decodeFrame (j : Json) : Except String Frame := do
+  exactFields j ["head", "markers", "split", "modifiers"]
+  pure ⟨wordsOf (← stringField j "head"), ← strings (j.getObjValD "markers"), ← strings (j.getObjValD "split"),
+    ← strings (j.getObjValD "modifiers")⟩
+
+/-- The `acts` block's `frames` and `adverbs` (3.1): an absent field is empty, and `checkVocab` raises D-31. -/
+def decodeVocab (block : Json) : Except String Vocab := do
+  let frames ← match block.getObjVal? "frames" with
+    | .ok fs => (← fs.getArr?).toList.mapM decodeFrame
+    | .error _ => pure []
+  let adverbs ← match block.getObjVal? "adverbs" with
+    | .ok xs => strings xs
+    | .error _ => pure []
+  let V : Vocab := ⟨frames, adverbs⟩
+  checkVocab V
+  pure V
+
+/-- The `acts` block's `fixed` list, `[]` when absent or not a list of strings (6.4). -/
+def fixedOf (environment : Json) : List String :=
+  (strings (((environment.getObjValD "vocabulary").getObjValD "acts").getObjValD "fixed")).toOption.getD []
 
 /-- A joined act's one meaning from its tokens `ts` (6.4): the slots standing alone (D-18), then one complete
     listing: one meaning, none (D-16), two or more (D-15, every meaning's text), or the limit (D-17). -/

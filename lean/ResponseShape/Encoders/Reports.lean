@@ -107,6 +107,13 @@ theorem scoped_fits (c : Wire.Checked) (j : Json) (id : String) (verdicts : List
   fits
   exact OkP.mapM (fun x _ => scopedVerdict_fits _ j x) _ h _ ‹_›
 
+theorem wants_fits (id : String) (j : Json) :
+    OkFits req (skel% "reports.json#/$defs/wants") (runWants id j) := by
+  unfold runWants
+  okfits
+  simp only [VE.Route.Wire.ok]
+  fits
+
 theorem runCase_fits (j : Json) (hp : usesReportsPath j = true) : OkFits j Skeletons.reports (runCase j) := by
   unfold runCase
   simp only []
@@ -117,6 +124,7 @@ theorem runCase_fits (j : Json) (hp : usesReportsPath j = true) : OkFits j Skele
   all_goals (try contra)
   all_goals first
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | (intro v hv; fits_from wants_fits _ _ _ hv)
     | fits_from elaborate_fits _ _ _
     | fits_from content_fits _ _
     | (intro v hv; fits_from certificate_fits _ _ _ _ _ hv)

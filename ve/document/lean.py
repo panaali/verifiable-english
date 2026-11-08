@@ -120,9 +120,13 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
 
 def _lean_only(raw: bytes) -> bool:
     """Whether the document lists a wrapper profile only Lean's `document` mode reads (`chain_environment` lowers it):
-    Python's own path refuses it at the environment, so it never answers in Lean's place."""
+    Python's own path refuses it at the environment, so it never answers in Lean's place. So too the soft chain under
+    `norm-defaults@0` without `readings@1` (PC-2a), which that path never accepts."""
     try:
         environment = _split(raw)[0].get("environment")
+        profiles = set(listed_profiles(environment))
+        if {"soft-norms@0", "norm-defaults@0"} <= profiles and not {"readings@1", "rights@0"} & profiles:
+            return True
         return chain_environment(environment) is not environment or _lists_cardinality(raw)
     except (AttributeError, KeyError, TypeError, ValueError, VEError):
         return False
@@ -274,12 +278,14 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                     for u, (authored, _) in zip(units, declared, strict=True)]
         active = active_reading_sets(meta.get("reading_sets", []))
         selected = _free_norms(compiled, active, _s1_attached(base_environment(meta), meta))
-        if "norm-defaults@0" in env.profiles:
+        if soft_document is not None:
+            # On the soft chain Lean's layered route owns the layers (`DocumentChain.layeredOf`, rd-9-soft-chain 3.8):
+            # no W1 container is built over soft units.
+            norm_defaults = norms = None
+        elif "norm-defaults@0" in env.profiles:
             from ..norm_defaults import UnspecifiedDocument
             norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected)
             norms = None
-        elif soft_document is not None:
-            norm_defaults = norms = None
         else:
             # Batch 16f: the free norm document of a plain `norms@0` document, whose rules Lean's norms route
             # checked (`Service.Document.checkNorms`), built as Python's own path builds it.

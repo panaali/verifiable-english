@@ -101,9 +101,13 @@ theorem decodeBlock_ok (front : Json) (source : String) (re : VE.Readings.Wire.R
       unfold illFormed at hi; split at hi
       · assumption
       · cases hi
-    cases hp : decodeParts (front.getObjValD "scope") with
-    | error e => rw [hp] at h; cases h
-    | ok p => rw [hp] at h; cases h; exact ⟨hw, rfl, rfl, rfl⟩
+    cases hu : firstDup (unitIds front) with
+    | some u => rw [hu] at h; cases h
+    | none =>
+      rw [hu] at h
+      cases hp : decodeParts (front.getObjValD "scope") with
+      | error e => rw [hp] at h; cases h
+      | ok p => rw [hp] at h; cases h; exact ⟨hw, rfl, rfl, rfl⟩
 
 theorem decodeBlock_layout (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
     (h : decodeBlock front source re = .ok D) : D.layout = layoutOf front source ∧ D.doc = front :=
@@ -116,6 +120,20 @@ theorem decodeBlock_jsonWF (front : Json) (source : String) (re : VE.Readings.Wi
   obtain ⟨hw, _, hd, hb⟩ := decodeBlock_ok front source re D h
   have hf := jsonWF?_sound hw
   exact ⟨hd ▸ hf, hb ▸ jsonWF_getD front hf "scope"⟩
+
+/-- The boundary (the DRI's decision of 2026-10-31, sc-5rd item 2): the units of a decoded block have distinct ids,
+    the premise of `governSets_every_choice`, with no hypothesis on the document. -/
+theorem decodeBlock_unitIds_nodup (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment)
+    (D : SDoc) (h : decodeBlock front source re = .ok D) : (unitIds D.doc).Nodup := by
+  rw [(decodeBlock_ok front source re D h).2.2.1]
+  unfold decodeBlock at h
+  cases hi : illFormed front with
+  | some p => rw [hi] at h; cases h
+  | none =>
+    rw [hi] at h
+    cases hu : firstDup (unitIds front) with
+    | some u => rw [hu] at h; cases h
+    | none => exact firstDup_none_nodup _ hu
 
 /-! The payloads' `JsonWF` (spec 11.3: `governSets_strings` takes it of every governor's payload): each payload is a
     part of the scope block as decoded (`decodeParts`), and the block passes the boundary (`decodeBlock_jsonWF`). -/
@@ -214,17 +232,24 @@ theorem decodeBlock_payloads (front : Json) (source : String) (re : VE.Readings.
     (h : decodeBlock front source re = .ok D) : ∀ g ∈ D.governors, JsonWF (payload g.effect) := by
   have hb := (decodeBlock_jsonWF front source re D h).2
   unfold decodeBlock at h
-  split at h
-  · cases h
-  · cases hp : decodeParts (front.getObjValD "scope") with
-    | error e => rw [hp] at h; cases h
-    | ok p =>
-      rw [hp] at h; cases h
-      exact decodeParts_wf _ hb p hp
+  cases hi : illFormed front with
+  | some p => rw [hi] at h; cases h
+  | none =>
+    rw [hi] at h
+    cases hu : firstDup (unitIds front) with
+    | some u => rw [hu] at h; cases h
+    | none =>
+      rw [hu] at h
+      cases hp : decodeParts (front.getObjValD "scope") with
+      | error e => rw [hp] at h; cases h
+      | ok p =>
+        rw [hp] at h; cases h
+        exact decodeParts_wf _ hb p hp
 
-/-- Spec 11.3's statements on the route (sc-5rd): where the boundary admits a document (sc-1af's `jsonWF?`, proved
-    sound), `governSets_preserves`, `governSets_strings` and `governSets_readings_refused` hold for the decoded
-    document, the payloads' `JsonWF` included, so no caller takes `JsonWF` as a hypothesis. -/
+/-- Spec 11.3's statements on the route (sc-5rd, sc-5rdb): where the boundary admits a document (sc-1af's `jsonWF?`,
+    proved sound, and distinct unit ids), `governSets_preserves`, `governSets_strings`, `governSets_readings_refused`
+    and `governSets_every_choice` hold for the decoded document, the payloads' `JsonWF` and the distinct ids
+    included, so no caller takes `JsonWF` or distinct ids as a hypothesis. -/
 theorem decodeBlock_sets (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
     (h : decodeBlock front source re = .ok D) :
     (∀ out, governSets D = .ok out →
@@ -239,12 +264,16 @@ theorem decodeBlock_sets (front : Json) (source : String) (re : VE.Readings.Wire
           ∀ (n : Nat) (r r' : Json), (readingsJson x)[n]? = some r → (readingsJson y)[n]? = some r' →
             ∀ k, k ≠ "content" → r.getObjVal? k = r'.getObjVal? k) ∧
       ∀ s, HasStr s out → HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect)) ∧
-    ∀ g ∈ D.governors, ∀ us, covered D g.reach = .ok us → ∀ u, (u = g.unit ∨ u ∈ us) → u ∈ setUnits D.doc →
-      u ∉ governedSetUnits D → (governSets D).isOk = false := by
+    (∀ g ∈ D.governors, ∀ us, covered D g.reach = .ok us → ∀ u, (u = g.unit ∨ u ∈ us) → u ∈ setUnits D.doc →
+      u ∉ governedSetUnits D → (governSets D).isOk = false) ∧
+    ∀ out, governSets D = .ok out → governedSetUnits D ≠ [] → ∀ cs, setChoices D = .ok cs → ∀ ch ∈ cs,
+      ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by
   have hw := (decodeBlock_jsonWF front source re D h).1
   exact ⟨fun out ho => ⟨governSets_preserves D hw out ho,
       governSets_strings D hw (decodeBlock_payloads front source re D h) out ho⟩,
-    fun g hg us hc u hu hs hn => governSets_readings_refused D hw g hg us hc u hu hs hn⟩
+    fun g hg us hc u hu hs hn => governSets_readings_refused D hw g hg us hc u hu hs hn,
+    fun out ho hs cs hcs ch hc => governSets_every_choice D hw (decodeBlock_unitIds_nodup front source re D h) hs out
+      ho cs hcs ch hc⟩
 
 /-- SC-1b's decoder reads the layout of exactly the document's units, in order. -/
 theorem decodeScope_layout (front : Json) (D : SDoc) (h : decodeScope front = .ok D) :

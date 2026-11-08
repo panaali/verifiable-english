@@ -1,0 +1,734 @@
+{
+ "mutants": [
+  {
+   "id": "shape-is-lexical",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "canonicalShape",
+   "claim": "the hook admits a joined act under acts@0",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:153",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:153",
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:237",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:248"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:153",
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219"
+   ]
+  },
+  {
+   "id": "shape-without-profile",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "canonicalShape",
+   "claim": "without acts@0 the hook is canonicalAct, byte for byte",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:569",
+   "guards": [
+    "VE/Service/ActsExamples.lean:569"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:569"
+   ]
+  },
+  {
+   "id": "shape-declaration-no-acts",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "decodeRegulatedShape",
+   "claim": "a plain declaration keeps its act and form",
+   "status": "KILLED",
+   "test": "VE/Readings/ActsExamples.lean:79",
+   "guards": [
+    "VE/Readings/ActsExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:87"
+   ],
+   "errors": [
+    "VE/Readings/ActsExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:87"
+   ]
+  },
+  {
+   "id": "helper-dropped",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "canonicalActIn",
+   "claim": "environment, typing, model gate, Background and English keep D-4 (DRI item 2)",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:274",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:274",
+    "VE/Acts/LexicalExamples.lean:152",
+    "VE/Acts/LexicalExamples.lean:212",
+    "VE/Acts/LexicalExamples.lean:214",
+    "VE/Readings/ActsExamples.lean:107",
+    "VE/Readings/ActsExamples.lean:62"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:274",
+    "VE/Acts/LexicalExamples.lean:152",
+    "VE/Acts/LexicalExamples.lean:212",
+    "VE/Acts/LexicalExamples.lean:214"
+   ]
+  },
+  {
+   "id": "trees-dropped",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "actsOf",
+   "claim": "each joined act's tree reaches elaboration",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:179",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:267",
+    "VE/Acts/DecodeExamples.lean:271",
+    "VE/Acts/DecodeExamples.lean:278"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224"
+   ]
+  },
+  {
+   "id": "arity-constant",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "actsOf",
+   "claim": "each act is checked at its predicate's arity",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:79",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:87"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:79",
+    "VE/Readings/ActsExamples.lean:87"
+   ]
+  },
+  {
+   "id": "joined-not-asked",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "joinedActs",
+   "claim": "a lexical decoder reads no tree",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:281",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:281"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:281"
+   ]
+  },
+  {
+   "id": "joined-no-profile",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "joinedActs",
+   "claim": "without acts@0 no act is read",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:150",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:150",
+    "VE/Acts/DecodeExamples.lean:280"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:150",
+    "VE/Acts/DecodeExamples.lean:280"
+   ]
+  },
+  {
+   "id": "vocab-empty",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "actsVocab",
+   "claim": "the block's frames reach the act check",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:179",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:237",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:248",
+    "VE/Acts/DecodeExamples.lean:267"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224"
+   ]
+  },
+  {
+   "id": "frames-refused",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "actsFixed",
+   "claim": "the block admits frames and adverbs under acts@0 (DRI item 4)",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:179",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:237",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:248",
+    "VE/Acts/DecodeExamples.lean:251"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224"
+   ]
+  },
+  {
+   "id": "readings-canonical-joined",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "canonicalEnvironmentJson",
+   "claim": "the readings route's identity keeps Lexical.check",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:581",
+   "guards": [
+    "VE/Service/ActsExamples.lean:581"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:581"
+   ]
+  },
+  {
+   "id": "source-lexical",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "decodeSource",
+   "claim": "decodeSource admits a joined act by default",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:224",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:237",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:278"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:237",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:278"
+   ]
+  },
+  {
+   "id": "environment-joined",
+   "file": "lean/VE/Norms/Wire.lean",
+   "definition": "decodeNormsEnvironment",
+   "claim": "the decoder's default stays lexical (DRI item 2)",
+   "status": "KILLED",
+   "test": "VE/Readings/ActsExamples.lean:107",
+   "guards": [
+    "VE/Readings/ActsExamples.lean:107",
+    "VE/Readings/ActsExamples.lean:57",
+    "VE/Readings/ActsExamples.lean:59",
+    "VE/Readings/ActsExamples.lean:62"
+   ],
+   "errors": [
+    "VE/Readings/ActsExamples.lean:107",
+    "VE/Readings/ActsExamples.lean:57",
+    "VE/Readings/ActsExamples.lean:59",
+    "VE/Readings/ActsExamples.lean:62"
+   ]
+  },
+  {
+   "id": "frame-fields-swapped",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeFrame",
+   "claim": "markers and split are read from their keys",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:192",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:192",
+    "VE/Acts/DecodeExamples.lean:193",
+    "VE/Acts/DecodeExamples.lean:237"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:192",
+    "VE/Acts/DecodeExamples.lean:193",
+    "VE/Acts/DecodeExamples.lean:237"
+   ]
+  },
+  {
+   "id": "frame-modifiers",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeFrame",
+   "claim": "modifiers are read from their key",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:193",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:193"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:193"
+   ]
+  },
+  {
+   "id": "frame-head",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeFrame",
+   "claim": "a head is its words",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:193",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:193"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:193"
+   ]
+  },
+  {
+   "id": "vocab-unchecked",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeVocab",
+   "claim": "D-31 raised by checkVocab",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:197",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:197",
+    "VE/Acts/DecodeExamples.lean:199"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:197",
+    "VE/Acts/DecodeExamples.lean:199"
+   ]
+  },
+  {
+   "id": "adverbs-dropped",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeVocab",
+   "claim": "adverbs are read",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:196",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:196",
+    "VE/Acts/DecodeExamples.lean:199"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:196",
+    "VE/Acts/DecodeExamples.lean:199"
+   ]
+  },
+  {
+   "id": "frames-required",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "decodeVocab",
+   "claim": "an absent field is empty",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:145",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:145",
+    "VE/Acts/DecodeExamples.lean:146",
+    "VE/Acts/DecodeExamples.lean:153",
+    "VE/Acts/DecodeExamples.lean:195",
+    "VE/Acts/DecodeExamples.lean:196",
+    "VE/Acts/DecodeExamples.lean:199",
+    "VE/Readings/ActsExamples.lean:101",
+    "VE/Readings/ActsExamples.lean:107"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:145",
+    "VE/Acts/DecodeExamples.lean:146",
+    "VE/Acts/DecodeExamples.lean:153",
+    "VE/Acts/DecodeExamples.lean:195"
+   ]
+  },
+  {
+   "id": "fixed-empty",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "fixedOf",
+   "claim": "fixedOf reads the block's list",
+   "status": "KILLED",
+   "test": "VE/Readings/ActsExamples.lean:35",
+   "guards": [
+    "VE/Readings/ActsExamples.lean:35",
+    "VE/Readings/ActsExamples.lean:36",
+    "VE/Readings/ActsExamples.lean:42",
+    "VE/Readings/ActsExamples.lean:53"
+   ],
+   "errors": [
+    "VE/Readings/ActsExamples.lean:35",
+    "VE/Readings/ActsExamples.lean:36",
+    "VE/Readings/ActsExamples.lean:42",
+    "VE/Readings/ActsExamples.lean:53"
+   ]
+  },
+  {
+   "id": "source-kept",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "splitPredicates",
+   "claim": "a split source is no longer declared",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:219",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:232"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:232"
+   ]
+  },
+  {
+   "id": "name-kept",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "splitPredicates",
+   "claim": "a part takes over a colliding name",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:232",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:232"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:232"
+   ]
+  },
+  {
+   "id": "part-sorts",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "splitPredicates",
+   "claim": "each part keeps its source's sorts",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:232",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:232"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:232"
+   ]
+  },
+  {
+   "id": "json-own-name",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "splitJson",
+   "claim": "a part's declaration is its source's",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:228",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:228"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:228"
+   ]
+  },
+  {
+   "id": "regulated-source",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "sourceOf",
+   "claim": "the routes read the parts' declarations",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:219",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:219"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:219"
+   ]
+  },
+  {
+   "id": "json-source",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "sourceOf",
+   "claim": "a plain part reads its source's form",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:535",
+   "guards": [
+    "VE/Service/ActsExamples.lean:535"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:535"
+   ]
+  },
+  {
+   "id": "source-vocabulary",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "sourceOf",
+   "claim": "the source vocabulary declares the parts",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:219",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:219"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:219"
+   ]
+  },
+  {
+   "id": "flags-refused",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "decodeElaboratedFlagged",
+   "claim": "the norms route keeps its data@0 flags",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:246",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:251"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:251"
+   ]
+  },
+  {
+   "id": "elaborated-source",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "elaboratedU",
+   "claim": "norm-defaults reads e.U'",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:222",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:222"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:222"
+   ]
+  },
+  {
+   "id": "flagged-source",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "flaggedSource",
+   "claim": "the norms route reads e.U'",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:224",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:246"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:246"
+   ]
+  },
+  {
+   "id": "trees-not-read",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "elaborateSource",
+   "claim": "elaboration reads the decoder's trees",
+   "status": "KILLED",
+   "test": "VE/Acts/DecodeExamples.lean:179",
+   "guards": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224",
+    "VE/Acts/DecodeExamples.lean:246",
+    "VE/Acts/DecodeExamples.lean:267",
+    "VE/Acts/DecodeExamples.lean:271"
+   ],
+   "errors": [
+    "VE/Acts/DecodeExamples.lean:179",
+    "VE/Acts/DecodeExamples.lean:183",
+    "VE/Acts/DecodeExamples.lean:219",
+    "VE/Acts/DecodeExamples.lean:224"
+   ]
+  },
+  {
+   "id": "norms-entry-source",
+   "file": "lean/VE/Norms/Run.lean",
+   "definition": "Run.decoderOf",
+   "claim": "the entry point put back on the source (DRI item 1's seeded bug)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:519",
+   "guards": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:535"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:535"
+   ]
+  },
+  {
+   "id": "under-acts-false",
+   "file": "lean/VE/Norms/Run.lean",
+   "definition": "Run.underActs",
+   "claim": "acts@0 is read from the case's environment",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:519",
+   "guards": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:525",
+    "VE/Service/ActsExamples.lean:535"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:525",
+    "VE/Service/ActsExamples.lean:535"
+   ]
+  },
+  {
+   "id": "route-unrouted",
+   "file": "lean/VE/Norms/Run.lean",
+   "definition": "Run.runCaseRouted",
+   "claim": "runCaseRouted reads the case's decoder",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:519",
+   "guards": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:535"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:519",
+    "VE/Service/ActsExamples.lean:522",
+    "VE/Service/ActsExamples.lean:535"
+   ]
+  },
+  {
+   "id": "defaults-entry-source",
+   "file": "lean/VE/NormDefaults/Run.lean",
+   "definition": "NormDefaults.Run.decoderOf",
+   "claim": "norm-defaults put back on decodeSourceU (DRI item 1)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:525",
+   "guards": [
+    "VE/Service/ActsExamples.lean:525"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:525"
+   ]
+  },
+  {
+   "id": "defaults-unrouted",
+   "file": "lean/VE/NormDefaults/Run.lean",
+   "definition": "NormDefaults.Run.runCaseRouted",
+   "claim": "runCaseRouted reads the case's decoder",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:525",
+   "guards": [
+    "VE/Service/ActsExamples.lean:525"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:525"
+   ]
+  },
+  {
+   "id": "lexical-is-joined",
+   "file": "lean/VE/NormDefaults/Wire.lean",
+   "definition": "decodeSourceLexical",
+   "claim": "the lexical decoder keeps D-4 (DRI item 2)",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:550",
+   "guards": [
+    "VE/Service/ActsExamples.lean:550",
+    "VE/Service/ActsExamples.lean:551"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:550",
+    "VE/Service/ActsExamples.lean:551"
+   ]
+  },
+  {
+   "id": "profiled-joined",
+   "file": "lean/VE/NormDefaults/Wire.lean",
+   "definition": "decodeSourceUWith",
+   "claim": "the profiled branch passes joined on",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:551",
+   "guards": [
+    "VE/Service/ActsExamples.lean:551"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:551"
+   ]
+  },
+  {
+   "id": "plain-joined",
+   "file": "lean/VE/NormDefaults/Wire.lean",
+   "definition": "decodeSourceUWith",
+   "claim": "the plain branch passes joined on",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:550",
+   "guards": [
+    "VE/Service/ActsExamples.lean:550"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:550"
+   ]
+  },
+  {
+   "id": "readings-frame-joined",
+   "file": "lean/VE/Readings/Wire.lean",
+   "definition": "Readings.decodeFrame",
+   "claim": "the readings route's frame reads Lexical.check (D-33's text)",
+   "status": "KILLED",
+   "test": "VE/Readings/ActsExamples.lean:57",
+   "guards": [
+    "VE/Readings/ActsExamples.lean:57",
+    "VE/Readings/ActsExamples.lean:59",
+    "VE/Readings/ActsExamples.lean:62"
+   ],
+   "errors": [
+    "VE/Readings/ActsExamples.lean:57",
+    "VE/Readings/ActsExamples.lean:59",
+    "VE/Readings/ActsExamples.lean:62"
+   ]
+  },
+  {
+   "id": "lexical-act-true",
+   "file": "lean/VE/Readings/Wire.lean",
+   "definition": "Readings.lexicalAct",
+   "claim": "lexicalAct tells a joined act from a single one",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:584",
+   "guards": [
+    "VE/Service/ActsExamples.lean:584",
+    "VE/Service/ActsExamples.lean:585"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:584",
+    "VE/Service/ActsExamples.lean:585"
+   ]
+  },
+  {
+   "id": "lexical-act-first",
+   "file": "lean/VE/Readings/Wire.lean",
+   "definition": "Readings.lexicalAct",
+   "claim": "lexicalAct compares the act with its canonical form",
+   "status": "KILLED",
+   "test": "VE/Service/ActsExamples.lean:585",
+   "guards": [
+    "VE/Service/ActsExamples.lean:585"
+   ],
+   "errors": [
+    "VE/Service/ActsExamples.lean:585"
+   ]
+  },
+  {
+   "id": "readings-guard-dropped",
+   "file": "lean/VE/Readings/Wire.lean",
+   "definition": "Readings.decodeEnvironment",
+   "claim": "every act of the frame is lexical (D-33, by theorem)",
+   "status": "KILLED",
+   "test": "VE/Readings/Wire.lean:133",
+   "guards": [],
+   "errors": [
+    "VE/Readings/Wire.lean:133",
+    "VE/Readings/Wire.lean:140"
+   ]
+  }
+ ]
+}

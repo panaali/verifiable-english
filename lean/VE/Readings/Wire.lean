@@ -74,7 +74,7 @@ def singleActsOnly (predicates : List String) (message : String) : String :=
   (predicates.find? (fun p => message.startsWith s!"InvalidInput: act phrase for {p} joins acts with '")).elim message
     fun p => s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
 
-def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment := do
+def decodeFrame (environment : Json) : Except String ReadingsEnvironment := do
   let profiles ← match environment.getObjVal? "profiles" >>= strings with
     | .ok ps => pure ps
     | .error _ => throw (VE.Compose.unsupported "profiles must be a sorted unique array")
@@ -105,6 +105,49 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     let ne ← (VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false) (acts := true)).mapError
       (singleActsOnly (names.map Prod.fst))
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
+
+/-- A regulated declaration's act, read again by `Lexical.check`, is itself; a declaration with no act passes. -/
+def lexicalAct (fx : List String) (r : VE.Norms.Regulated) : Bool :=
+  match r.act with
+  | some a => (VE.Acts.Lexical.check fx r.name r.sorts.length (.str a)).toOption == some a
+  | none => true
+
+/-- The route's frame: `decodeFrame`, then, under `acts@0`, every act lexical (D-33, `readings_lexical_only`):
+nothing elaborates a reading set's candidates (act-phrases 6.4). -/
+def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :=
+  decodeFrame environment >>= fun re =>
+    match re.profiles.contains "acts@0",
+        re.se.ne.regulated.find? (!lexicalAct (VE.Acts.Wire.fixedOf environment) ·) with
+    | true, some r =>
+      throw s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {r.name} joins acts"
+    | _, _ => pure re
+
+theorem readings_lexical_only {environment : Lean.Json} {re : VE.Readings.Wire.ReadingsEnvironment}
+    (h : VE.Readings.Wire.decodeEnvironment environment = .ok re) (hp : "acts@0" ∈ re.profiles) :
+    ∀ r ∈ re.se.ne.regulated, ∀ a, r.act = some a →
+      VE.Acts.Lexical.check (VE.Acts.Wire.fixedOf environment) r.name r.sorts.length (.str a) = .ok a := by
+  unfold decodeEnvironment at h
+  cases hf : decodeFrame environment with
+  | error e => simp [hf, bind, Except.bind] at h
+  | ok re' =>
+    simp only [hf, bind, Except.bind] at h
+    have hre : re' = re := by
+      split at h
+      · cases h
+      · simpa [pure, Except.pure] using h
+    subst hre
+    have hc : re'.profiles.contains "acts@0" = true := List.contains_iff_mem.mpr hp
+    intro r hr a ha
+    cases hx : re'.se.ne.regulated.find? (!lexicalAct (VE.Acts.Wire.fixedOf environment) ·) with
+    | some q => rw [hc, hx] at h; cases h
+    | none =>
+      have hl := List.find?_eq_none.mp hx r hr
+      simp only [Bool.not_eq_true', Bool.not_eq_false] at hl
+      unfold lexicalAct at hl
+      rw [ha] at hl
+      cases hk : VE.Acts.Lexical.check (VE.Acts.Wire.fixedOf environment) r.name r.sorts.length (.str a) with
+      | error e => simp [hk, Except.toOption] at hl
+      | ok b => simp_all [Except.toOption]
 
 /-- The frame (1.2): the environment and no unit. -/
 def frameOf (re : ReadingsEnvironment) (unitIds : List String) : RightsDoc :=

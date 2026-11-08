@@ -437,9 +437,9 @@ def _dictionary(packs: list[bytes], own: list) -> tuple[str | None, set]:
 
 
 def _projection_problem(row: object, case: dict, env, expected_id: str | None) -> str | None:
-    """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, this relay's
-    senses version, and a projection whose identities are those of the environment and lexicon it returns
-    (Python's own over the returned JSON), or a sense fault with its arguments."""
+    """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, and a
+    projection whose identities are those of the environment and lexicon it returns (Python's own over the
+    returned JSON), or a sense fault with its arguments. The senses version is typed, not bound; sn-b6bb binds it."""
     if type(row) is not dict or row.keys() != {"id", "status", "result"} or row["id"] != case["id"] \
             or row["status"] != "ok":
         return "the row is not the answer to the request"

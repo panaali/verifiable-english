@@ -46,12 +46,14 @@ recorded expression; it is written with `Option.elim` instead). jt-2 merged (`6b
    `norm-defaults@0` row reads `unspecified` as `deny`. Lean checks every witness over the whole environment. Any
    other `acts@0` environment is passed unchanged and refused by Rust (ap-1bg).
 4. **The readings-choice inner `wordings`**: see section 1's last row.
-5. **A reading set over `acts@0` keeps the base's refusal.** With reading sets, the document check runs Python's
-   superposed route, whose soft frame (`readings_s1.soft_frame`) adds `soft-norms@0`, which `acts@0` refuses. Measured
-   on an F-ND1 variant: load passed and the check was `CheckerUnavailable: ReadingsConstruction` where the base
-   refused at load. `decodeDocument` therefore refuses such a document with the base's own text (identical records);
-   the filled environment's typed `form`/`acts`, its binding and fuzz tests, built for that path, were reverted with it
-   (ap-1bg).
+5. **A reading set with content over `acts@0` keeps the base's refusal; a content-free one is admitted.** With
+   reading sets, the document check runs Python's superposed route, whose soft frame (`readings_s1.soft_frame`) adds
+   `soft-norms@0`, which `acts@0` refuses. Measured on an F-ND1 variant: load passed and the check was
+   `CheckerUnavailable: ReadingsConstruction` where the base refused at load. `decodeDocument`
+   (`lean/VE/Readings/Wire.lean`) therefore refuses a document that reaches it with the base's own text (identical
+   records). A document the enumerated route answers, such as a content-free set, does not reach that decoder and is
+   admitted with `acts@0`, as [DELTA.md](DELTA.md)'s "Everything else" paragraph says. The filled environment's typed `form`/`acts`,
+   its binding and fuzz tests, built for that path, were reverted with it (ap-1bg, which later lifted the refusal).
 
 ## 3. Seeded bugs
 

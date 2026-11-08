@@ -33,7 +33,10 @@ from tests.lean_build import LEAN, lean_build
 LEXICAL, WIRE, EXAMPLES = (LEAN / f"VE/{name}.lean" for name in ("Acts/Lexical", "Norms/Wire", "Acts/LexicalExamples"))
 GUARD_FAILED = "did not evaluate to `true`"
 THEOREMS = "/-! ### Theorems (4.3) -/"
-INLINED = {"import VE.Acts.Lexical", "import VE.Norms.Wire"}
+INLINED = {"import VE.Acts.Lexical", "import VE.Norms.Wire", "import VE.Acts.Wire"}
+# ap-3db: `Wire.lean`'s decoder reads the act grammar (`VE.Acts.Wire`) from here on; the fixtures read none of it, and the
+# grammar's own `Lexical` would clash with the inlined one, so the file ends before it.
+WIRE_AP3 = "/-- The act check from AP-3 on, once per act"
 # The definitions the mutants change, by file: AP-1's act check and the decoder that calls it.
 SCOPE = {"lexical": ("checkWith", "joinCheck"), "wire": ("canonicalActIn", "decodeRegulatedWith", "decodeRegulatedIn")}
 # `check` is `checkWith (joinCheck name)` (ap-3d: conditions 1 to 5, then 6, in the order of its old body): its two
@@ -71,7 +74,9 @@ def _assemble(sources: dict[str, str], examples: str) -> str:
     lexical = sources["lexical"]
     lexical = lexical[:lexical.index(THEOREMS)] + "end VE.Acts.Lexical\n"
     imports, bodies = [], []
-    for text in (lexical, _without_proofs(sources["wire"]), examples):
+    wire = sources["wire"]
+    wire = wire[:wire.index(WIRE_AP3)] + "end VE.Norms.Wire\n"
+    for text in (lexical, _without_proofs(wire), examples):
         own, body = _split_imports(text)
         imports += [line for line in own if line not in INLINED and line not in imports]
         bodies.append(body)

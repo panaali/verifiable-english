@@ -13,8 +13,9 @@ step of a count. -/
 def wide : Defs := [.fn "p" 4000 (.countFromTo (lit 1) (lit 1000000) (.eq (.var 4000) (.var 4000)))]
 #guard decideBounded wide maxSteps (.le (lit 0) (.call "p" ((List.range 4000).map fun _ => lit 0))) = none
 
-/-! A call looks its name up among the definitions, newest first: 511 definitions of 64-byte names that differ only
-in their last bytes, and a 512th whose body is a product tree of 1,024 calls of the first one (about 6 units each). -/
+/-! A call looks its name up in the definitions' hash tables (me-12nc; me-12nb measured a walk newest first): 511
+definitions of 64-byte names that differ only in their last bytes, and a 512th whose body is a product tree of 1,024
+calls of the first one (about 6 units each). -/
 def nm (i : Nat) : String := "".pushn 'a' (62 - (toString i).length) ++ "_" ++ toString i ++ "_"
 def tree : Nat → Term
   | 0 => .call (nm 0) []
