@@ -8,6 +8,7 @@ import VE.NormDefaults.Run
 import VE.Readings.ActsExamples
 import VE.Acts.DecodeExamples
 import VE.Service.Document
+import ResponseShape.Schemas.NormDefaults
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -660,15 +661,57 @@ def listsOf (a : Json) : List (String × Json) := ["predicates", "rules", "kept"
 -- Without `acts@0` the kind is refused.
 #guard err (VE.Norms.Run.runCaseRouted (elabCase (envOf ["norms@0", "relational-fol@0"] block6 (act := "{0} be held")
   (default := "deny")))) == "UnsupportedProfile: acts-elaborate requires acts@0"
--- Another kind on the same request is today's.
-#guard (elabRow (VE.Norms.Run.runCaseRouted ((elabCase joinedE').setObjVal! "kind" (.str "norms-elaborate")))).getObjValD
-  "status" == .str "ok"
+-- Another kind on the same request is today's, and so is a case with no kind.
+#guard (targetsOf (VE.Norms.Run.runCaseRouted ((elabCase joinedE').setObjVal! "kind" (.str "norms-elaborate")))).toOption
+  == some ["p027__1", "p027__2"]
+#guard err (VE.Norms.Run.runCaseRouted (without (elabCase joinedE') "kind")) ==
+  "UnsupportedProfile: case kind evaluate is not available on the norms route"
+-- The REFUSED row has the environment's identity.
+#guard (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE' (Json.arr #[])))).getObjValD "environment_id" ==
+  (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))).getObjValD "environment_id"
+-- The norms route decodes with its `data@0` flags.
+def profiled (j : Json) (ps : List String) : Json := j.setObjVal! "profiles" (toJson ps)
+def withPred (j : Json) (n : String) (d : Json) : Json :=
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! n d))
+def pred1 : Json := Json.mkObj [("arguments", toJson ["person"]), ("description", .str "d")]
+#guard (elabRow (VE.Norms.Run.runCaseRouted (elabCase (withPred (profiled joinedE' ["acts@0", "data@0", "norms@0",
+  "relational-fol@0"]) "q" (Json.mkObj [("arguments", toJson ["person", "person"]), ("description", .str "d"),
+    ("functional", .bool true)]))))).getObjValD "verdict" == .str "ELABORATED"
+-- Each part rule keeps its source's carve-outs, in order.
+def unaryJ (p : String) : Json := Json.arr #[.str "unary", .str p, Json.arr #[.str "var", toJson 0]]
+#guard ((elabRow (VE.Norms.Run.runCaseRouted (elabCase (withPred (withPred joinedE' "q" pred1) "s" pred1)
+    (Json.arr #[Json.mkObj [("norm", Json.mkObj [("name", .str "r027"), ("predicate", .str "p027"), ("sign", .bool false),
+      ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[unaryJ "q", unaryJ "s"]), ("over", Json.arr #[])])]])))
+    ).getObjValD "rules").getArr?.toOption.map (·.toList.map (·.getObjValD "unless")) ==
+  some [Json.arr #[unaryJ "q", unaryJ "s"], Json.arr #[unaryJ "q", unaryJ "s"]]
+-- Two split sources and two acts kept whole, in the document's order.
+def regJ (role act : String) : Json := Json.mkObj [("arguments", toJson ["person"]), ("description", .str "d"),
+  ("regulated", Json.mkObj [("role", .str role), ("default", .str "deny"), ("act", .str act)])]
+def frameJ (h m : String) (split : List String) : Json := Json.mkObj [("head", .str h), ("markers", toJson [m]),
+  ("split", toJson split), ("modifiers", Json.arr #[])]
+def manyE : Json := joinedE'.setObjVal! "vocabulary" (Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj
+  [("description", .str "person")])]), ("constants", Json.mkObj []), ("acts", Json.mkObj [("fixed", Json.arr #[]),
+    ("frames", Json.arr #[frameJ "subjected" "to" ["to"], frameJ "held" "by" []]), ("adverbs", Json.arr #[])]),
+  ("predicates", Json.mkObj [("k1", regJ "obligation" "{0} be held by aa or by bb"),
+    ("s1", regJ "permission" "{0} be subjected to aa or to bb"), ("k2", regJ "obligation" "{0} be held by cc or by dd"),
+    ("s2", regJ "permission" "{0} be subjected to cc or to dd")])])
+def splitRow (p : String) : Json := Json.mkObj [("source", .str p), ("parts", toJson [p ++ "__1", p ++ "__2"]),
+  ("text", .str s!"InvalidInput: name one of its parts: {p} is split into {p}__1, {p}__2")]
+#guard (let a := elabRow (VE.Norms.Run.runCaseRouted (elabCase manyE (Json.arr #[ruleJ "rk1" "k1" false,
+    ruleJ "rs1" "s1" false, ruleJ "rk2" "k2" false, ruleJ "rs2" "s2" false])))
+  (a.getObjValD "kept", a.getObjValD "split")) == (toJson ["k1", "k2"], Json.arr #[splitRow "s1", splitRow "s2"])
 
 -- The environment row admits a joined act with one reading, and refuses one with none by the act check (D-16).
 #guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", joinedE')])) == "ok"
 #guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment",
   envOf plain6 (blockJ VE.Acts.TableExamples.fx6 ⟨[], []⟩) (default := "deny"))])) ==
   "InvalidInput: act phrase for p027 has no reading under the declared frames"
+
+-- Only the environment row admits it: the composed path keeps D-4 with a document layer listed, first or last.
+#guard ([["acts@0", "judgments@0", "norms@0", "relational-fol@0"], ["judgments@0", "acts@0", "norms@0", "relational-fol@0"],
+  ["acts@0", "norms@0", "relational-fol@0", "judgments@0"]].map fun ps =>
+    err (VE.Service.Standalone.validatedComposedEnvironment (profiled joinedE' ps))) == [d4, d4, d4]
 
 -- A request at the limits: 32 joined sources and 128 rules give 64 parts and 256 part rules, within the decoder's
 -- limits (64 regulated predicates, 256 rules) and step 6's; each act is read once, by the decoder.
@@ -684,6 +727,14 @@ def bigNorms : Json := Json.arr ((List.range 128).map fun k => ruleJ ("r" ++ toS
 #guard (let a := elabRow (VE.Norms.Run.runCaseRouted (elabCase bigE bigNorms))
   ((a.getObjValD "predicates").getArr?.toOption.map (·.size), (a.getObjValD "rules").getArr?.toOption.map (·.size),
     (a.getObjValD "split").getArr?.toOption.map (·.size))) == (some 64, some 256, some 32)
+
+-- The norm-defaults mode selects the shared row for the kind: its row selection and its kinds, as rendered, pinned.
+#guard (ResponseShape.render "norm-defaults.json" 64 ResponseShape.Schemas.NormDefaults.«row»).toOption.map (·.compress)
+  == some "{\"x-select\":[{\"then\":{\"anyOf\":[{\"$ref\":\"common.json#/$defs/case_error\"},{\"$ref\":\"common.json#/$defs/route_path_error\"},{\"x-select\":[{\"then\":{\"anyOf\":[{\"$ref\":\"common.json#/$defs/admission\"},{\"$ref\":\"#/$defs/soft_admission\"}]},\"when\":{\"$ref\":\"#/$defs/kind/admission\"}},{\"then\":{\"anyOf\":[{\"$ref\":\"#/$defs/elaborate\"},{\"$ref\":\"#/$defs/layered_elaborate\"}]},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-elaborate\"}},{\"then\":{\"$ref\":\"#/$defs/witness_conflict\"},\"when\":{\"allOf\":[{\"$ref\":\"#/$defs/kind/norm-defaults-conflict\"},{\"required\":[\"witness\"]}]}},{\"then\":{\"$ref\":\"common.json#/$defs/packages_conflict\"},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-conflict\"}},{\"then\":{\"$ref\":\"#/$defs/status\"},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-status\"}},{\"then\":{\"$ref\":\"#/$defs/gaps_model\"},\"when\":{\"allOf\":[{\"$ref\":\"#/$defs/kind/norm-defaults-gaps\"},{\"required\":[\"model\"]}]}},{\"then\":{\"$ref\":\"#/$defs/gaps\"},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-gaps\"}},{\"then\":{\"$ref\":\"#/$defs/certificate\"},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-certificate\"}},{\"then\":{\"$ref\":\"#/$defs/report_row\"},\"when\":{\"$ref\":\"#/$defs/kind/norm-defaults-report\"}},{\"then\":{\"$ref\":\"#/$defs/defaults_elaborate\"},\"when\":{\"$ref\":\"#/$defs/kind/defaults-elaborate\"}},{\"then\":{\"$ref\":\"#/$defs/defaults_coherence\"},\"when\":{\"$ref\":\"#/$defs/kind/defaults-coherence\"}},{\"then\":{\"$ref\":\"#/$defs/defaults_certificate\"},\"when\":{\"$ref\":\"#/$defs/kind/defaults-certificate\"}},{\"then\":{\"$ref\":\"#/$defs/defaults_model\"},\"when\":{\"$ref\":\"#/$defs/kind/defaults-model\"}},{\"then\":{\"$ref\":\"norms.json#/$defs/acts-elaborate\"},\"when\":{\"$ref\":\"#/$defs/kind/acts-elaborate\"}}]}]},\"when\":{\"$ref\":\"#/$defs/norm_defaults_path\"}},{\"then\":{\"$ref\":\"norms.json#/row\"},\"when\":true}]}"
+#guard (match ResponseShape.Schemas.NormDefaults.kind with | .group _ es => es.map (·.1) | _ => []) ==
+  ["admission", "norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-gaps",
+    "norm-defaults-certificate", "norm-defaults-report", "defaults-elaborate", "defaults-coherence",
+    "defaults-certificate", "defaults-model", "acts-elaborate"]
 
 end Relay
 

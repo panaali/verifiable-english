@@ -244,7 +244,7 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
 table for a list with `Compose.environmentWrapper`. -/
-def validatedLayerEnvironment (environment : Json) (joined : Bool := false) :
+def validatedLayerEnvironment (environment : Json) (joined : Bool) :
     Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
