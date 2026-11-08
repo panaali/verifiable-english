@@ -1,0 +1,30 @@
+# before side: main e9a6ec8d5 + english_grammar_gen.py --write --actions-version 46, then what the tree needs to pass again
+# regen_generated.py --write: exit 1, lake build fails on 12 #guard pin lines of lean/VE/Senses/RunExamples.lean
+# re-pinned those 12 (the answer's hash under main's pin), regen_generated.py --write: exit 0
+# ask_fixtures.py --check: 1 of 18 recorded answers replayed (exit 1); re-recorded with ask_fixtures.py --write (exit 0)
+# tests/test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records failed (version 45 in the records); rewritten with python -m conformance.english_lean_s3_compare --report-only
+$ git diff --stat -- . ":!docs/codemap"   (docs/codemap: main was already stale there before the bump, see the note)
+ .../english-lean/s3-fixture-comparison.json        | 344 ++++++++++-----------
+ lean/VE/EnglishGrammar/Fixed/Version.lean          |   2 +-
+ lean/VE/Senses/RunExamples.lean                    |  24 +-
+ lean/checkers.lock                                 |   1 +
+ lean/declarations.txt                              |   4 +-
+ tests/fixtures/ask/A1.json                         |   2 +-
+ tests/fixtures/ask/A2.json                         |   2 +-
+ tests/fixtures/ask/A3.json                         |   2 +-
+ tests/fixtures/ask/A4.json                         |   2 +-
+ tests/fixtures/ask/A5.json                         |   2 +-
+ tests/fixtures/ask/A7.json                         |   2 +-
+ tests/fixtures/ask/A8.json                         |   2 +-
+ tests/fixtures/ask/G1.json                         |   2 +-
+ tests/fixtures/ask/G10.json                        |   2 +-
+ tests/fixtures/ask/G2.json                         |   2 +-
+ tests/fixtures/ask/G3.json                         |   2 +-
+ tests/fixtures/ask/G4.json                         |   2 +-
+ tests/fixtures/ask/U2.json                         |   2 +-
+ tests/fixtures/ask/U3.json                         |   2 +-
+ tests/fixtures/ask/U5.json                         |   2 +-
+ tests/fixtures/ask/U6.json                         |   2 +-
+ tests/fixtures/ask/U7.json                         |   2 +-
+ ve/english_grammar/LOCK.json                       |   2 +-
+ 23 files changed, 206 insertions(+), 205 deletions(-)

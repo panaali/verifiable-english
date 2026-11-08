@@ -196,6 +196,10 @@ GENERATED = (
               ((PY, "tools/question_lock.py", "--write"),), ((PY, "tools/question_lock.py"),),
               note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version",
               fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
+    Generated("english-s3-comparison", ("conformance/english-lean/s3-fixture-comparison.json",),
+              ((PY, "-m", "conformance.english_lean_s3_compare", "--report-only"),), None,
+              note="its records carry Lean's actions_version, so a raised version rewrites it (arch-20261105-2)",
+              service="write"),
     Generated("assurance-manifest", ("ve/assurance-manifest.json",), ("write_assurance_layout",),
               ("check_assurance_layout", "check_assurance_pins"), merge="json",
               note="decoder pins are reviewed by hand; a merge keeps each side's pins; the writer only restores "
