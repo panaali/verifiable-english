@@ -1,5 +1,6 @@
 import VE.Attitudes.Semantics
 import VE.Attitudes.Route
+import VE.NormDefaults.LayeredEntail
 
 /-! `#guard`s on the values sections 2.1 to 2.4 of docs/spec/attitudes.md compute, on the fixtures of
 section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part), and from at-1b on sections
@@ -821,7 +822,8 @@ def Fno : VE.NormDefaults.FiniteFill U1 Nat := fun _ => []
 -- `attitudesPack_premises` (F-AT1, F-AT2): the labels and the premises, in order; one origin per label
 #guard [fat1, fat2].all (fun A => (attitudesPack A).labelled.map (·.2) == framePremises A &&
   (attitudesPack A).labelled.map (·.1) == frameLabels A &&
-  (attitudesPack A).origins == (frameLabels A).map (fun l => (l, labelOrigin A l)))
+  (attitudesPack A).origins == (frameLabels A).map (fun l => (l, labelOrigin A l)) &&
+  (attitudesPack A).origins.all (·.2.isEmpty))
 /-- Drafts 1–4's pack, which declared the keys' names a second time; kept only to show `assemble`'s refusal. -/
 def draft4Pack (A : AttDoc) : VE.NormDefaults.Packs.Pack :=
   { attitudesPack A with kind := .vocabulary, decls := (keys A).map (fun k => (name A k, k.sorts)) }
@@ -839,5 +841,127 @@ example : VE.NormDefaults.Packs.envX U1 [attitudesPack fat1] = VE.Norms.envAt (V
   attitudesRow.refuses == [("reports@0", "attitudes@0 with reports@0 is not admitted")] &&
   attitudesRow.slot == "pack" && VE.Compose.slotAgrees attitudesRow.slot attitudesRow.interface &&
   !VE.Compose.slotAgrees "constraint" attitudesRow.interface
+
+
+/-! ## 7.5 One guard per theorem (at-1c's six; `table_reviewed`'s is in 2.1 above) -/
+
+/-- Every mode once on one content: `knows`, two degrees, and the four acts. -/
+def guardAll : AFormula :=
+  [Mode.act .says, .act .believes, .act .wants, .act .intends, .thinks "very likely"].foldl
+    (fun g m => .or g (.att (cond m cat0))) (.or knowsA qlA)
+def fatAll : AttDoc := docOf table [] [ruleOf "u0165-s01" guardAll]
+-- `frame_wellFormed`, `frame_universalQF`, `frameLabels_nodup` (F-AT2)
+#guard WellFormedAtt fat2 && (framePremises fat2).all (fun φ => φ.check (baseEnvAtt fat2) [] &&
+    VE.SoftNorms.universalQF φ) && (frameLabels fat2).length == (framePremises fat2).length &&
+  decide (frameLabels fat2).Nodup
+-- `framePairs_modes` (F-AT6, and every mode on one content: pairs start at knows or a degree, none ends at knows)
+#guard WellFormedAtt fatAll && pairNames fatAll == [(kn "knows" 1, kn "thinks_quite_likely" 1),
+    (kn "knows" 1, kn "believes" 1), (kn "knows" 1, kn "thinks_very_likely" 1),
+    (kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)] &&
+  [fat6, fatAll].all (fun A => (framePairs A).all (fun p =>
+    (p.1.mode == .knows || match p.1.mode with | .thinks _ => true | _ => false) && p.2.mode != .knows))
+-- `framePairs_transitive` (F-AT6): its instance knows→very, very→quite, knows→quite; and closed on every pair
+#guard (match (knowsKeys fat6).head?, (keys fat6).find? (·.mode == .thinks "very likely"), (keys fat6).find? (·.mode == ql) with
+    | some k, some v, some q => [(k, v), (v, q), (k, q)].all (framePairs fat6).contains
+    | _, _, _ => false) &&
+  [fat6, fatAll].all (fun A => (framePairs A).all (fun p => (framePairs A).all (fun q =>
+    p.2 != q.1 || p.1 == q.2 || (framePairs A).contains (p.1, q.2))))
+-- `empty_relations_frame` (F-AT1, F-AT2): with no attitude tuple every frame premise holds, the category either way
+#guard [fat1, fat2].all (fun A => [true, false].all (fun b => frameHolds A (routeModel b [])))
+
+/-! ## 2.8 and 2.9's propositions, pinned on F-AT1's points: no `#guard` evaluates a proposition, so each example
+below stops elaborating when its definition changes what it says -/
+
+def keyQ : Key := { keyK with mode := ql }
+theorem keys_fat1 : keys fat1 = [keyK, { keyK with mode := .act .intends }, keyQ] := by decide
+theorem pairs_fat1 : framePairs fat1 = [(keyK, keyQ)] := by decide
+/-- A finite model as a structure whose carrier is `Nat` by unfolding. -/
+abbrev St (M : FM) : VE.Structure.{0} :=
+  { Carrier := Nat, domain := fun s v => v ∈ M.domains s, constant := M.constants,
+    relation := fun r vs => vs ∈ M.relations r }
+/-- F-AT1's points (7.2): the category true or false; the keys in `ks` hold at `[0, 1]`. -/
+def v01 : List Nat := [0, 1]
+def v1 : List Nat := [1]
+abbrev MA (A : AttDoc) (cat : Bool) (ks : List Key) : AttModel A :=
+  ⟨St (routeModel cat []), fun k vs => k ∈ ks ∧ vs = [0, 1]⟩
+abbrev M := MA fat1
+
+-- `contentAt`: the slot content at `[h, x]`, true with the category; never at a one-tuple for a slot key
+example : contentAt (St (routeModel true [])) keyK [0, 1] ∧ ¬ contentAt (St (routeModel false [])) keyK [0, 1] ∧
+    ¬ contentAt (St (routeModel true [])) keyK [0] ∧ contentAt (St (routeModel true [])) { keyK with
+      slotSort := none, content := .top } [0] := by
+  refine ⟨⟨rfl, 1, rfl, by decide⟩, ?_, ?_, ⟨rfl, trivial⟩⟩
+  · rintro ⟨_, v, hv, hr⟩
+    cases hv; exact absurd hr (by decide)
+  · rintro ⟨h, _⟩; exact nomatch h
+-- 7.2's "Intended" column: M1 and M4 intended
+example : Intended fat1 (M false [keyQ]) ∧ Intended fat1 (M true []) := by
+  refine ⟨⟨?_, ?_, ?_⟩, ⟨fun _ _ ⟨h, _⟩ => (nomatch h), fun _ _ _ _ ⟨h, _⟩ => (nomatch h),
+    fun _ _ _ ⟨h, _⟩ => (nomatch h)⟩⟩
+  · rintro k vs ⟨hk, rfl⟩
+    rw [List.mem_singleton] at hk; subst hk
+    exact ⟨by rw [keys_fat1]; decide, by simp only [keyQ, keyK, Key.sorts, Option.toList, VE.TupleTyped]; decide⟩
+  · rintro k _ hm vs ⟨hk, rfl⟩
+    rw [List.mem_singleton] at hk; subst hk; exact nomatch hm
+  · rintro p hp vs ⟨h1, rfl⟩
+    rw [pairs_fat1, List.mem_singleton] at hp; subst hp; exact absurd h1 (by decide)
+-- M2 is not (knowing a false content), M3 is not (the pair knows → thinks quite likely broken)
+example : ¬ Intended fat1 (M false [keyK, keyQ]) ∧ ¬ Intended fat1 (M true [keyK]) := by
+  refine ⟨fun ⟨_, h, _⟩ => ?_, fun ⟨_, _, h⟩ => ?_⟩
+  · obtain ⟨_, v, hv, hr⟩ := h keyK (by rw [keys_fat1]; decide) rfl [0, 1] ⟨by decide, rfl⟩
+    cases hv; exact absurd hr (by decide)
+  · exact absurd (h (keyK, keyQ) (by rw [pairs_fat1]; decide) [0, 1] ⟨by decide, rfl⟩).1 (by decide)
+-- an untyped tuple (reversed) is not intended
+example : ¬ Intended fat1 ⟨St (routeModel false []), fun k vs => k = keyQ ∧ vs = [1, 0]⟩ :=
+  fun ⟨h, _⟩ => absurd (h keyQ [1, 0] ⟨rfl, rfl⟩).2.1 (by decide)
+-- the guard under the attitude semantics (7.2): true at M1 and M2, false at M3 and M4
+example : AFormula.denote fat1 (M false [keyQ]) Γ1 [1, 0] guard1 ∧
+    AFormula.denote fat1 (M false [keyK, keyQ]) Γ1 [1, 0] guard1 ∧
+    ¬ AFormula.denote fat1 (M true [keyK]) Γ1 [1, 0] guard1 ∧ ¬ AFormula.denote fat1 (M true []) Γ1 [1, 0] guard1 := by
+  refine ⟨Or.inr ⟨keyQ, by decide, 0, rfl, 1, rfl, by decide, rfl⟩,
+    Or.inr ⟨keyQ, by decide, 0, rfl, 1, rfl, by decide, rfl⟩, ?_, ?_⟩
+  · rintro (⟨_, ⟨k, hk, _, _, _, _, h, _⟩⟩ | ⟨k, hk, _, _, _, _, h, _⟩)
+    · have : k = { keyK with mode := .act .intends } := Option.some.inj (hk.symm.trans (by decide))
+      subst this; exact absurd h (by decide)
+    · have : k = keyQ := Option.some.inj (hk.symm.trans (by decide))
+      subst this; exact absurd h (by decide)
+  · rintro (⟨⟨_, _, _, _, _, _, h, _⟩, _⟩ | ⟨_, _, _, _, _, _, h, _⟩) <;> exact nomatch h
+-- `interp` and `restrict` on F-AT9 (one key, `knows`; the kernel does not reduce `String.map`, so no degree's name):
+-- `interp` reads a generated name as its key's relation and any other name as the structure's
+example : (interp fat9 (MA fat9 false [keyK])).relation (kn "knows" 1) v01 ∧
+    ¬ (interp fat9 (MA fat9 true [])).relation (kn "knows" 1) v01 ∧ (interp fat9 (MA fat9 true [])).relation cat0 v1 ∧
+    ¬ (interp fat9 (MA fat9 false [keyK])).relation cat0 v1 := by
+  simp only [interp, show keyOf fat9 (kn "knows" 1) = some keyK by decide +kernel,
+    show keyOf fat9 cat0 = none by decide +kernel]
+  decide
+-- `restrict` reads the generated names back as the keys' relations, and hides them from the structure
+example : (restrict fat9 (St RM3)).J keyK v01 ∧ ¬ (restrict fat9 (St RM1)).J keyK v01 ∧
+    ¬ (restrict fat9 (St RM3)).S.relation (kn "knows" 1) v01 ∧
+    (restrict fat9 (St RM3)).S.relation cat0 v1 ∧ ¬ (restrict fat9 (St RM3)).J { keyK with content := .top } v01 := by
+  show (keyK ∈ keys fat9 ∧ v01 ∈ RM3.relations (name fat9 keyK)) ∧
+    ¬ (keyK ∈ keys fat9 ∧ v01 ∈ RM1.relations (name fat9 keyK)) ∧
+    ¬ (keyOf fat9 (kn "knows" 1) = none ∧ v01 ∈ RM3.relations (kn "knows" 1)) ∧
+    (keyOf fat9 cat0 = none ∧ v1 ∈ RM3.relations cat0) ∧
+    ¬ ({ keyK with content := .top } ∈ keys fat9 ∧ _)
+  decide +kernel
+-- the frame closure (7.4, `forced_iff_reachable`'s row): the seed [knows] reaches thinks quite likely at its tuple,
+-- the seed [thinks] does not reach knows, and nothing moves to another tuple
+example : seedClosure fat1 [(keyK, [0, 1])] keyQ [0, 1] ∧ ¬ seedClosure fat1 [(keyQ, [0, 1])] keyK [0, 1] ∧
+    ¬ seedClosure fat1 [(keyK, [0, 1])] keyQ [1, 0] ∧ seedClosure fat1 [(keyK, [0, 1])] keyK [0, 1] := by
+  refine ⟨⟨keyK, List.mem_singleton_self _, (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩,
+    ?_, ?_, ⟨keyK, List.mem_singleton_self _, (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩⟩
+  · rintro ⟨k, hk, hr⟩
+    rw [List.mem_singleton, Prod.mk.injEq] at hk
+    rw [hk.1] at hr
+    exact absurd ((VE.Closure.reachEval_iff .star _ _ _).2 hr) (by rw [pairs_fat1]; decide)
+  · rintro ⟨k, hk, _⟩
+    rw [List.mem_singleton, Prod.mk.injEq] at hk
+    exact absurd hk.2 (by decide)
+-- `SettledAsX` with no extra premise is norm-defaults' `SettledAs`; with `⊥` among them it holds of either answer
+example (U : VE.NormDefaults.UDoc) (B : VE.Structure.{0}) (r : VE.Norms.Regulated) (vs : List B.Carrier) (b : Bool) :
+    SettledAsX U [] B r vs b ↔ VE.NormDefaults.SettledAs U B r vs b := by
+  simp only [SettledAsX, VE.NormDefaults.SettledAs, VE.NormDefaults.baseAdmissibleX_nil]
+example (U : VE.NormDefaults.UDoc) (B : VE.Structure.{0}) (r : VE.Norms.Regulated) (vs : List B.Carrier) (b : Bool) :
+    SettledAsX U [.bottom] B r vs b := fun _ hX => absurd (hX.2 _ (List.mem_singleton_self _)) id
 
 end VE.Attitudes.Examples
