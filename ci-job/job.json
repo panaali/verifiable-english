@@ -1,0 +1,25 @@
+{
+ "job": "ci-5.s2of4-10f8be45",
+ "head": "dccc9ceb69d7e4a3ea3d7fe61f0173c473430346",
+ "argv": [
+  "ci-5.s2of4-10f8be45",
+  "dccc9ceb69d7e4a3ea3d7fe61f0173c473430346",
+  "176d50c05c2d6ee32e3d06b9a8059d7a3d73e113",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-e461b0daf778.tar.zst",
+  "7cdc20970d844c7cb9abf94aca424ad09fc9e59d5960f93299548907461dd94a",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Commands/Examples.lean",
+  "--test",
+  "lean/VE/Compose/Examples.lean",
+  "--test",
+  "lean/VE/Service/ActsExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "2/4",
+  "--jobs",
+  "4"
+ ]
+}
