@@ -132,9 +132,14 @@ import VE.Discourse.ComposeExamples
 import VE.Service.ComposedAdmissionExamples
 import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
+import VE.Presupposition.Reading
+import VE.Presupposition.Rows
+import VE.Presupposition.Rules
+import VE.Presupposition.Agree
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
+import VE.RightClauses.Relation
 import VE.RightClauses.Examples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
@@ -209,6 +214,8 @@ import VE.Question.Frames
 import VE.Question.Fixtures
 import VE.Question.Spans
 import VE.Commands.Examples
+import VE.Commands.RunExamples
+import VE.Commands.RunSplit
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -329,3 +336,5 @@ import VE.Weighing.Conditions
 import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Attitudes.Examples
+import VE.Attitudes.Theorems

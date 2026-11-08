@@ -14,6 +14,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -50,6 +51,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
@@ -160,6 +162,10 @@ module VE.Ask.Sources
 module VE.Ask.Wire
 module VE.Ask.ZeroAnswer
 module VE.Ask.ZeroWire
+module VE.Attitudes.Examples
+module VE.Attitudes.Scale
+module VE.Attitudes.Syntax
+module VE.Attitudes.Theorems
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -248,6 +254,9 @@ module VE.Closure.Surface
 module VE.Closure.Syntax
 module VE.Commands.Examples
 module VE.Commands.Read
+module VE.Commands.Run
+module VE.Commands.RunExamples
+module VE.Commands.RunSplit
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
@@ -485,8 +494,12 @@ module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
+module VE.Presupposition.Agree
 module VE.Presupposition.Examples
 module VE.Presupposition.Frame
+module VE.Presupposition.Reading
+module VE.Presupposition.Rows
+module VE.Presupposition.Rules
 module VE.Question.Basic
 module VE.Question.Examples
 module VE.Question.Fixtures
@@ -577,6 +590,7 @@ module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
+module VE.RightClauses.Relation
 module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
@@ -844,6 +858,7 @@ VE.Ask.SplitU@VE.Ask.Basic
 VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
+VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
 VE.Calc.Check.OutcomeMeans@VE.Calc.Run
@@ -1194,6 +1209,7 @@ VE.Paths.Path@VE.Paths
 VE.Paths.Reachable@VE.Paths
 VE.Presupposition.Frame.Reach@VE.Presupposition.Frame
 VE.Presupposition.Frame.shallow@VE.Presupposition.Frame
+VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading
 VE.Question.AtMostOneDerivation@VE.Question.Properties
 VE.Question.GrammarChecks@VE.Question.Properties
 VE.Question.HasReading@VE.Question.Properties
