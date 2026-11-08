@@ -1,0 +1,8 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 23 definitions, 471 mutants (79 to run), 4 jobs, base bcc5427f98ae
+SURVIVOR lean/VE/Service/Document.lean:2263 VE.Service.DocumentChain.requestOf (D[V], trusted) list-empty: (VE.Compose.listedProfiles environment) -> [] (the proofs it breaks: lean/VE/Service/DocumentChain.lean:29)
+trust_mutants: 54 KILLED, 1 SURVIVOR, 0 UNKNOWN, 7 INVALID, 17 ALLOWED, 0 NOT RUN, 392 OTHER SHARD in 4807 s
+trust_mutants: D[V], trusted: 29 KILLED, 1 SURVIVOR, 6 INVALID, 12 ALLOWED, 218 OTHER SHARD
+trust_mutants: G[V], trusted: 22 KILLED, 1 INVALID, 4 ALLOWED, 162 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 ALLOWED, 12 OTHER SHARD
+trust_mutants: steps: wall plan 9.4 s, scratch 1.7 s, control_build 0.3 s, probe_install 1.2 s, control_probes 1357.6 s, mutants 3431.7 s, cleanup 5 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 3309.9 s (23), mutant_builds 2856.1 s (83), mutant_checks 7737.1 s (56), stage_controls 1019.8 s (9), mutant_probes 1612.4 s (70)
