@@ -1,0 +1,27 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 18 definitions, 244 mutants (40 to run), 4 jobs, base cbc4c8a39533
+SURVIVOR lean/VE/Attitudes/Semantics.lean:34 VE.Attitudes.AFormula.denote (S, trusted) not-drop: ¬ -> 
+UNKNOWN lean/VE/Attitudes/Semantics.lean:25 VE.Attitudes.Intended (S, trusted) eq-le: = -> ≤ (lean/VE/Attitudes/Semantics.lean:25: failed to synthesize)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:52 VE.Attitudes.seedClosure (S, trusted) body-true: ∃ k, (k, vs) ∈ seed ∧ VE.Closure.Reachable .star (fun a b => (a, b) ∈ framePairs A) k k2 -> True (the proofs it breaks: lean/VE/Attitudes/Examples.lean:949)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:19 VE.Attitudes.contentAt (S, trusted) arm-false: k.slotSort = none ∧ k.content.denote S [] -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:38 VE.Attitudes.AFormula.denote (S, trusted) all-any: all -> any (lean/VE/Attitudes/Semantics.lean:38: Unknown constant `VE.Attitudes.AFormula.any`)
+UNKNOWN lean/VE/Attitudes/Route.lean:18 VE.Attitudes.toU (G[V], trusted) list-empty: (toNorms A) -> [] (lean/VE/Attitudes/Route.lean:18: Type mismatch)
+UNKNOWN lean/VE/Attitudes/Frame.lean:42 VE.Attitudes.framePremises (S, trusted) append-right: (factive A) ++ ->  (lean/VE/Attitudes/Frame.lean:42: Application type mismatch: The argument)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) arm-false: ∃ k, c.key A Γ = some k ∧ ∃ vh, c.holder.denote m.S ρ = some vh ∧ match c.slot with -> False (lean/VE/Attitudes/Semantics.lean:32: Inconsistent number of patterns in match alternatives: This ...)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) eq-le: = -> ≤ (lean/VE/Attitudes/Semantics.lean:30: failed to synthesize)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:20 VE.Attitudes.contentAt (S, trusted) list-empty: [_, x] -> [] (lean/VE/Attitudes/Semantics.lean:20: Unknown identifier `x`)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:19 VE.Attitudes.contentAt (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:25 VE.Attitudes.Intended (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:898, lean/VE/Attitudes/Examples.lean:909, l...)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:33 VE.Attitudes.AFormula.denote (S, trusted) arm-true: ∃ vx, t.denote m.S ρ = some vx ∧ m.J k [vh, vx] -> True (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:37 VE.Attitudes.AFormula.denote (S, trusted) arm-true: a.denote A m Γ ρ → b.denote A m Γ ρ -> True
+SURVIVOR lean/VE/Attitudes/Frame.lean:12 VE.Attitudes.entailsMode (S, trusted) list-first: A.T.knowsThinks -> (A.T.knowsThinks.take 1)
+UNKNOWN lean/VE/Attitudes/Route.lean:18 VE.Attitudes.toU (G[V], trusted) list-first: (toNorms A).map (fun D => ⟨D, unspec⟩) -> (((toNorms A).map (fun D => ⟨D, unspec⟩)).take 1) (lean/VE/Attitudes/Route.lean:18: Invalid `⟨...⟩` notation: The expected type of this term could n...)
+UNKNOWN lean/VE/Attitudes/Route.lean:18 VE.Attitudes.toU (G[V], trusted) list-drop-last: (toNorms A).map (fun D => ⟨D, unspec⟩) -> (((toNorms A).map (fun D => ⟨D, unspec⟩)).dropLast) (lean/VE/Attitudes/Route.lean:18: Invalid `⟨...⟩` notation: The expected type of this term could n...)
+UNKNOWN lean/VE/Attitudes/Route.lean:18 VE.Attitudes.toU (G[V], trusted) list-last: (toNorms A).map (fun D => ⟨D, unspec⟩) -> (((toNorms A).map (fun D => ⟨D, unspec⟩)).reverse.take 1) (lean/VE/Attitudes/Route.lean:18: Invalid `⟨...⟩` notation: The expected type of this term could n...)
+UNKNOWN lean/VE/Attitudes/Route.lean:18 VE.Attitudes.toU (G[V], trusted) list-drop-first: (toNorms A).map (fun D => ⟨D, unspec⟩) -> (((toNorms A).map (fun D => ⟨D, unspec⟩)).drop 1) (lean/VE/Attitudes/Route.lean:18: Invalid `⟨...⟩` notation: The expected type of this term could n...)
+SURVIVOR lean/VE/Attitudes/Frame.lean:21 VE.Attitudes.framePairs (S, trusted) list-drop-first: (keys A) -> ((keys A).drop 1)
+trust_mutants: 17 KILLED, 10 SURVIVOR, 11 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 204 OTHER SHARD in 177 s
+trust_mutants: G[V], trusted: 5 KILLED, 5 UNKNOWN, 28 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 10 SURVIVOR, 6 UNKNOWN, 2 INVALID, 176 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 1.8 s, control_build 0.2 s, probe_install 1.1 s, control_probes 19.1 s, mutants 142 s, cleanup 3.9 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 16.8 s (1), mutant_builds 24.6 s (40), mutant_checks 220.6 s (35), stage_controls 14.7 s (2), mutant_probes 45.6 s (17)
