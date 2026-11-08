@@ -46,14 +46,29 @@
    "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(w.takeWhile (· == '#'))` into `[]`, which does not elaborate (don't know how to synthesize implicit argument `α` at lean/VE/Scope/Authoring.lean:146); the definition is killed by not-drop at :148; and-or at :148; or-and at :151; le-lt at :148; le-eq at :148; eq-ne at :146; lit-plus at :148"
   },
   {
-   "definition": "VE.Scope.Pinned.attitude",
-   "operator": "append-right",
-   "reason": "ill-typed where it is UNKNOWN: `append-right` turns `((\"degree\", .str ·)) ++` into ``, which does not elaborate (Application type mismatch: The argument at lean/VE/Scope/Authoring.lean:44); the definition is killed by lit-plus at :43; list-empty at :43; append-left at :44"
-  },
-  {
    "definition": "VE.Scope.Pinned.Row",
    "operator": "ctor-drop",
    "reason": "ill-typed where it is UNKNOWN: dropping a constructor of `Row` leaves `classify`, `Row.wording` and `Row.paraphrase` naming it (\"Unknown constant\" at lean/VE/Scope/Authoring.lean:75), so the mutant does not elaborate; each constructor is the row of one round-trip #guard of lean/VE/Scope/AuthoringExamples.lean"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readings",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` puts `[]` in place of the row list (\"Function expected\"), of `c.splitOn \"its kind\"`, of `onList …` (an `Option`, \"Application type mismatch\") and of the section `s` (a `String`, \"don't know how to synthesize implicit argument\") at lean/VE/Scope/Authoring.lean:161-172, so those mutants do not elaborate; where it elaborates it is KILLED (:161, :163, :167, :168, :172, :173, :173, :173, :179)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.parseGovernor",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns the pattern `[b]` into `[]`, leaving `some b` with no `b` (\"Unknown identifier\" at lean/VE/Scope/Authoring.lean:185); the hand mutant `B2 parseGovernor` (`b :: _`, first reading wins) of docs/scope/sc-7/mutants.json is killed at AuthoringExamples.lean:88"
+  },
+  {
+   "definition": "VE.Scope.Pinned.spaced",
+   "operator": "list-first",
+   "reason": "equivalent where it is a SURVIVOR: `!w.isEmpty` becomes `!(w.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:24); every other `list-first` mutant of `spaced` is KILLED (:24, :24)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readings",
+   "operator": "list-first",
+   "reason": "equivalent where it is a SURVIVOR: the section's `!s.isEmpty` becomes `!(s.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:172); every other `list-first` mutant of `readings` is KILLED (:161, :161, :165, :172, :173, :179)"
   }
  ]
 }
