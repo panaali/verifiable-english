@@ -29425,6 +29425,14 @@ theorem VE.Presupposition.yieldsD_map
                 N ∈ T.nodes → (VE.Norms.YieldsD T' S ρ f (g N) ↔ VE.Norms.YieldsD T S ρ f N)
   -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 4200840417
+theorem VE.Purposes.Examples.notChecked_cases
+  ∀ (reason : VE.Purposes.NotChecked),
+    reason = VE.Purposes.NotChecked.purpose ∨
+      reason = VE.Purposes.NotChecked.denied ∨
+        reason = VE.Purposes.NotChecked.ruleTarget ∨
+          reason = VE.Purposes.NotChecked.readings ∨ reason = VE.Purposes.NotChecked.noFormula
+  -- uses VE.Purposes.NotChecked.denied@VE.Purposes.Decl VE.Purposes.NotChecked.noFormula@VE.Purposes.Decl VE.Purposes.NotChecked.purpose@VE.Purposes.Decl VE.Purposes.NotChecked.readings@VE.Purposes.Decl VE.Purposes.NotChecked.ruleTarget@VE.Purposes.Decl VE.Purposes.NotChecked@VE.Purposes.Decl
+  -- expr 3777866416
 theorem VE.Purposes.Polarity.ofWire_wire
   ∀ (p : VE.Purposes.Polarity), VE.Purposes.Polarity.ofWire? p.wire = Option.some p
   -- uses VE.Purposes.Polarity.ofWire?@VE.Purposes.Wire VE.Purposes.Polarity.wire@VE.Purposes.Wire VE.Purposes.Polarity@VE.Purposes.Decl
@@ -29590,6 +29598,11 @@ theorem VE.Purposes.sameUnit_parent
         L.partIds.Nodup ∧ ∃ p, ∀ (i : String), i ∈ L.partIds → ∃ x, U.find? i = Option.some x ∧ x.parent = Option.some p
   -- uses VE.Purposes.Link.partIds@VE.Purposes.WellFormed VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.parent@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.sameUnit@VE.Purposes.WellFormed
   -- expr 2599831344
+theorem VE.Purposes.shareOf_render
+  ∀ (id : String) (s : VE.Purposes.Share),
+    VE.Purposes.shareOf id (Lean.Json.mkObj [("share", Lean.Json.str s.wire)]) = Except.ok s
+  -- uses VE.Purposes.Share.wire@VE.Purposes.Wire VE.Purposes.Share@VE.Purposes.Decl VE.Purposes.shareOf@VE.Purposes.Wire
+  -- expr 2383924657
 theorem VE.Purposes.shareOk_iff
   ∀ (B : VE.Purposes.Block) (L : VE.Purposes.Link),
     VE.Purposes.shareOk B L = Bool.true ↔

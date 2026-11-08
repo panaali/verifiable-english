@@ -2154,6 +2154,13 @@
    "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
    "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "pe-1 F1: NotChecked in Decl.lean +9 S; shareOf_render ties Wire.lean shareOf -7 untied V; total pe-1 trusted growth +149, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1 F1, 2026-11-08",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
   }
  ]
 }

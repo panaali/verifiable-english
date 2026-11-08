@@ -19393,6 +19393,7 @@
       "S": [
         "VE.Purposes.Block",
         "VE.Purposes.Link",
+        "VE.Purposes.NotChecked",
         "VE.Purposes.Polarity",
         "VE.Purposes.Ref",
         "VE.Purposes.Relation",
@@ -19577,7 +19578,12 @@
           ]
         },
         "VE.Purposes.linksOf",
-        "VE.Purposes.shareOf",
+        {
+          "name": "VE.Purposes.shareOf",
+          "tied": [
+            "VE.Purposes.shareOf_render"
+          ]
+        },
         "VE.Purposes.wordOf"
       ],
       "D[R]": [

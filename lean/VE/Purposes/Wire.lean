@@ -144,6 +144,12 @@ theorem Polarity.ofWire_wire (p : Polarity) : Polarity.ofWire? p.wire = some p :
 theorem Share.ofWire_wire (s : Share) : Share.ofWire? s.wire = some s := by
   cases s <;> rfl
 
+theorem shareOf_render (id : String) (s : Share) :
+    shareOf id (Json.mkObj [("share", .str s.wire)]) = .ok s := by
+  have h : (Json.mkObj [("share", .str s.wire)]).getObjVal? "share" = .ok (.str s.wire) := rfl
+  simp only [shareOf, h, wordOf, Share.ofWire_wire]
+  rfl
+
 /-- The ids a ref names are tokens. -/
 def Ref.idOk : Ref → Bool
   | .part i | .mention i => token i
