@@ -1,41 +1,41 @@
 {
- "base": "2be443f7528170d44ca78dd16d5769f3666483df",
- "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+ "base": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
+ "head": "585b51b5621bc1113e168121f23dce3a9da27817",
  "tool": "uv run python tools/trust_map.py --files <a path outside the tree> at base (its own worktree) and head; --check at head. changed_files: every file whose counts differ; null = the file does not exist on that side",
  "totals": {
   "before": {
    "K": 994,
    "S": 14222,
-   "D": 17997,
-   "G": 36467,
+   "D": 18045,
+   "G": 36542,
    "C": 13170,
-   "P": 109048,
-   "T": 37498,
-   "o": 19797,
-   "D[V]": 15692,
-   "G[V]": 31501,
+   "P": 109082,
+   "T": 37640,
+   "o": 19828,
+   "D[V]": 15733,
+   "G[V]": 31576,
    "D[I]": 766,
    "tied": 1688,
    "unclassified": 0,
-   "trusted": 60865,
-   "lines": 249193
+   "trusted": 60981,
+   "lines": 249523
   },
   "after": {
    "K": 994,
    "S": 14222,
-   "D": 17997,
-   "G": 36467,
+   "D": 18045,
+   "G": 36542,
    "C": 12789,
-   "P": 107478,
-   "T": 37377,
-   "o": 19745,
-   "D[V]": 15692,
-   "G[V]": 31501,
+   "P": 107512,
+   "T": 37519,
+   "o": 19776,
+   "D[V]": 15733,
+   "G[V]": 31576,
    "D[I]": 766,
    "tied": 1688,
    "unclassified": 0,
-   "trusted": 60865,
-   "lines": 247069
+   "trusted": 60981,
+   "lines": 247399
   },
   "delta": {
    "K": 0,
@@ -56,19 +56,19 @@
   }
  },
  "files": {
-  "before": 791,
-  "after": 782
+  "before": 792,
+  "after": 783
  },
  "budget": {
   "before": {
    "K": 994,
    "S": 14222,
-   "V": 45649
+   "V": 45765
   },
   "after": {
    "K": 994,
    "S": 14222,
-   "V": 45649
+   "V": 45765
   }
  },
  "changed_files": {
@@ -410,5 +410,5 @@
    "after": null
   }
  },
- "check": "PASS: K, S and untied [V] within 2be443f75281 and the allowances introduced since (against 2be443f75281: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0)"
+ "check": "PASS: K, S and untied [V] within da5303b78769 and the allowances introduced since (against da5303b78769: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0)"
 }

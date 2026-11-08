@@ -1,22 +1,21 @@
 # AR-22: deltas
 
 None. No verdict, refusal text, step count, wire field or fault order changed. The corpus A/B over the nine
-corpora of the lean-first gate found 0 differences: 100,526 records the same and 27 unavailable on both sides with
-identical outputs (R7, below), 0 unlisted; the base and head recordings are byte-identical (`evidence/ab.json`). Four
-pilot records that the concurrent recording left timed out on the head side only (Rust's internal time-out of about
-19 s, or Lean's 600 s, at load 55 to 80) were re-run on both sides with the recorder's own `pilot_check`
-(`docs/arch/AR-20/pilot_rerun.py`); each answered, the same on both sides, and each equals the base's recorded answer
-(`evidence/pilot-rerun.json`). The Lean output differential (OUT) over 441 invocations of every `lean_exe` found no
-output change (`evidence/out.json`: its one listed difference is the backtrace addresses after two pre-existing PANIC
-lines that are the same on both builds).
+corpora of the lean-first gate found 0 differences: 100,538 records the same and 22 unavailable on both sides with
+identical outputs (R7, below), 0 unlisted; the base and head recordings are byte-identical (`evidence/ab.json`). One
+whole-UDHR pilot record that the concurrent recording left timed out (600 s) on the head side only was re-run on both
+sides with the recorder's own `pilot_check` (`docs/arch/AR-20/pilot_rerun.py`); it answered, the same on both sides,
+and equal to the base's recorded answer (`evidence/pilot-rerun.json`). The Lean output differential (OUT) over 441
+invocations of every `lean_exe` found no output change (`evidence/out.json`: its one listed difference is the
+backtrace addresses after two pre-existing PANIC lines that are the same on both builds).
 
 The only rows the A/B lists are records unavailable on both sides with identical outputs. None is a delta. Each is in
 `evidence/ab-delta.json` with its reason.
 
 | # | Records | What both sides return | Ruling | Test |
 |---|---|---|---|---|
-| 1 | 17 `pilots/default` `document_check` records, one `translation-companions-with_source_word.ve.md` per constitution pilot run | The same pre-existing `CheckerUnavailable` (`ReadingsConstruction: ... KeyError`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 2 | 7 `pilots/default` `document_check` records of whole-UDHR translations | The same pre-existing 600 s recorder time-out (L75), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 1 | 18 `pilots/default` `document_check` records, one `translation-companions-with_source_word.ve.md` per constitution pilot run | The same pre-existing `CheckerUnavailable` (`ReadingsConstruction: ... KeyError`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 2 | 1 `pilots/default` `document_check` record of a whole-UDHR translation | The same pre-existing 600 s recorder time-out (L75), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 3 | 1 `pilots/default` `document_check` record, `udhr-20261102T1800Z` `translation-whole.et0.ve.md` | The same pre-existing `CheckerUnavailable` (`readings-verdicts: more than 64 compatible readings`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 4 | 2 `discourse/default` records of text `2757af3b2b5456b1` (`document_check`, `document_render`) | The same pre-existing `CheckerUnavailable` (the norms route refuses a norm object: fields do not match), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
 

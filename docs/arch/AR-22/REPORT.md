@@ -15,30 +15,32 @@ not part of this batch.
 
 ## Measured outcome
 
-All numbers are against the merge base `2be443f75` (main, merged into this branch at `8fcc1e9a0`). Each comes from
-the tool output named here. Main moved four times during the build (`e433588f5`, `53fdabfde`, `a6d0d389a`,
-`2be443f75`). Each time it was merged and the generated files were regenerated. The evidence was measured again
-after the last merge.
+All numbers are against the merge base `da5303b78` (main, merged into this branch at `449be71e9`). Each comes from
+the tool output named here. Main moved five times during the build (`e433588f5`, `53fdabfde`, `a6d0d389a`,
+`2be443f75`, `da5303b78`). Each time it was merged and the generated files were regenerated. The evidence was
+measured again after the last merge. After that measurement, main moved once more (`b8266ee19`, one merge of
+`infra/eff-tm-headmoved`, which shares no file with this branch). I did not merge it: every merge moves the A/B base,
+and one A/B takes about three hours at this load. The merge train syncs main.
 
-- **Lean.** `git diff --stat 2be443f75 HEAD -- lean/VE` (hand-written files only):
+- **Lean.** `git diff --stat da5303b78 HEAD -- lean/VE` (hand-written files only):
   - 10 files deleted, 1,548 lines (`wc -l` at the base).
   - `Closure/Tableau.lean` is new, with 111 lines.
   - `Closure/CoreEquiv.lean` went from 676 to 119 lines.
   - `CertificateWire.lean`, `Route/Checker.lean` and `Route/Steps.lean` each changed one import line.
-- **Trust (D3).** `uv run python tools/trust_map.py --check` reports "against 2be443f75281: K +0, S +0, D +0, G +0, tied +0,
+- **Trust (D3).** `uv run python tools/trust_map.py --check` reports "against da5303b78769: K +0, S +0, D +0, G +0, tied +0,
   unclassified +0, trusted +0 ... PASS". No allowance was added.
 
   | Class | Before | After | Change |
   |---|---|---|---|
   | K | 994 | 994 | 0 |
   | S | 14,222 | 14,222 | 0 |
-  | untied V | 45,649 | 45,649 | 0 |
-  | trusted (K + S + untied V) | 60,865 | 60,865 | 0 |
+  | untied V | 45,765 | 45,765 | 0 |
+  | trusted (K + S + untied V) | 60,981 | 60,981 | 0 |
   | C | 13,170 | 12,789 | −381 |
-  | P | 109,048 | 107,478 | −1,570 |
-  | T | 37,498 | 37,377 | −121 (`VE/Audit.lean`) |
-  | o | 19,797 | 19,745 | −52 |
-  | all lines | 249,193 | 247,069 | −2,124 |
+  | P | 109,082 | 107,512 | −1,570 |
+  | T | 37,640 | 37,519 | −121 (`VE/Audit.lean`) |
+  | o | 19,828 | 19,776 | −52 |
+  | all lines | 249,523 | 247,399 | −2,124 |
 
   The plan estimated "K 0; removes about 1,550 untrusted lines (C and P) and one of the three trace decoders (D, about
   30 est.)". Measured: K 0, C and P −1,951, D 0. The C and P cut is larger than the plan's because AR-21's 557 lines of
@@ -54,21 +56,19 @@ after the last merge.
   Each of the 121 removed theorems is about a deleted copy, and each has a cover that is in the head's
   `statements.txt` (`removed_all_covered: true`). DELTA lists them one per row. `predicates.txt` loses the 10 deleted
   modules and the 7 predicates they declared, and gains `module VE.Closure.Tableau`.
-- **Behaviour (4.1 item 2).** `tools/lean_first_diff.py` over all nine corpora. The base was recorded at `2be443f75` from
-  its own worktree (`/home/seyran/code/ve-ar22-base`), and the head at `916c2785c` from this checkout, both at the
+- **Behaviour (4.1 item 2).** `tools/lean_first_diff.py` over all nine corpora. The base was recorded at `da5303b78` from
+  its own worktree (`/home/seyran/code/ve-ar22-base`), and the head at `585b51b56` from this checkout, both at the
   same time. They were compared by `python -m tools.evidence ab ... --delta evidence/ab-delta.json`: "ab PASS".
-  - **Result:** 100,526 records the same, 27 unavailable on both sides with identical outputs (R7), 0 unlisted. After
-    the reruns below, the two recordings are byte-identical (SHA-256 `f2501afc…` for both, `evidence/ab.json`).
-  - **The reruns.** In the raw head recording (`8481dcbc…`), 4 pilot `document_check` records differed from the base
-    (`f2501afc…`). Each was a head-side time-out under load 55 to 80: Lean's 600 s limit on three whole-UDHR
-    translations, and the Rust checker's internal time-out at about 19 s on one constitution document. Each of the 4
-    was run again on both sides with the recorder's own `pilot_check`, via `uv run python
-    docs/arch/AR-20/pilot_rerun.py` (AR-20's script, unchanged). Every rerun answered, base and head gave the same
-    answer, and each equals the base's recorded answer (`evidence/pilot-rerun.json`).
-  - **Earlier runs.** Each earlier merge base gave the same result. Against `53fdabfde` (head `73b73ad0d`): 100,524
-    the same, 29 R7 pairs, 0 unlisted, and byte-identical raw recordings (`41540eaf…`). Against `a6d0d389a` (head
-    `01d1e6030`): 100,522 the same, 31 R7 pairs, 0 unlisted, with 8 one-sided time-outs re-run the same way. Of
-    those 8, 7 were base-side and 1 head-side.
+  - **Result:** 100,538 records the same, 22 unavailable on both sides with identical outputs (R7), 0 unlisted. After
+    the rerun below, the two recordings are byte-identical (SHA-256 `8de0da3e…` for both, `evidence/ab.json`).
+  - **The rerun.** In the raw head recording (`ea663966…`), 1 pilot record differed from the base (`8de0da3e…`): a
+    whole-UDHR `document_check` that timed out on the head side only, at Lean's 600 s limit. It was run again on both
+    sides with the recorder's own `pilot_check`, via `uv run python docs/arch/AR-20/pilot_rerun.py` (AR-20's script,
+    unchanged). It answered, base and head gave the same answer, and the answer equals the base's recorded one
+    (`evidence/pilot-rerun.json`).
+  - **Earlier runs.** Each earlier merge base gave the same result: 0 unlisted. Against `53fdabfde`, the raw recordings
+    were byte-identical. Against `a6d0d389a`, 8 one-sided time-outs (7 base, 1 head) were re-run the same way, and
+    against `2be443f75`, 4 head-side ones. Every rerun answered, the same on both sides.
 - **Lean output differential (OUT, row 3b).** Every `lean_exe` was built in both checkouts. The baseline was saved
   from the base worktree with `tools/lean_output_diff.py --save-baseline`, and the head was compared with `--all`:
   "441 invocations, 441 run on both builds ...; 1 differences, 0 timed out". The one difference is the stderr of the
@@ -92,9 +92,9 @@ after the last merge.
 | `VE.Closure.Formula`, `Closure.Entails`, `Closure.Tableau.checkCertificate`, `Closure.embed` stay | all | All present. `checkCertificate_sound` and `checkCertificate_sound_v0` keep their statements, byte for byte |
 | Audited theorem names keep byte-identical statements unless about a deleted copy; each removed theorem listed with its cover in DELTA | `adcec8100`, regenerations | `evidence/statements.json`; DELTA's cover table (121 rows: 61 Core twins, 60 covered by the defining equation) |
 | Frozen files: edit only where 3b requires; name each edit | `1eccc87b0`, `262f2d231` | Below, "Frozen edits" |
-| Generated files only through `regen_generated.py --write`; rebuild and repin | `adcec8100`, `adc23b806`, `73b73ad0d`, `01d1e6030`, `916c2785c` | `regen_generated.py --check`: "checked 36 entries". `python3 tools/rust_build.py --check`: "pinned in lean/checkers.lock". `tools/trust-classes.json` has no writer. Its 10 file entries were removed with their files. `Closure/Tableau.lean`'s constants are class C, including `embedTrace`, `embedTraces` and `embedCert`, which moved there from `CoreEquiv.lean`'s P because the checker now runs them. `CoreEquiv.lean` keeps P for `embedEdge` |
+| Generated files only through `regen_generated.py --write`; rebuild and repin | `adcec8100`, `adc23b806`, `73b73ad0d`, `01d1e6030`, `916c2785c`, `585b51b56` | `regen_generated.py --check`: "checked 36 entries". `python3 tools/rust_build.py --check`: "pinned in lean/checkers.lock". `tools/trust-classes.json` has no writer. Its 10 file entries were removed with their files. `Closure/Tableau.lean`'s constants are class C, including `embedTrace`, `embedTraces` and `embedCert`, which moved there from `CoreEquiv.lean`'s P because the checker now runs them. `CoreEquiv.lean` keeps P for `embedEdge` |
 | `tools/consolidation-ledger.json`, `tools/layer_policy.py`, `tools/lean-layer-exceptions.json`: remove rows only because their file went | `1eccc87b0` | Ledger: the `VE/TableauExtended*` and 4 closure rows. Layer policy: the 6 `VE.TableauExtended*` module names were replaced by `VE.Closure.Tableau`. Layer exceptions: the 4 edges from `TableauExtended*` into the deleted closure files. `uv run python tools/check_lean_imports.py`: "Lean layer graph kept (777 modules, 18 reviewed legacy edges)" |
-| Trust (D3): K, S, untied V at or below base, no new allowance; measured before and after with the plan's estimate | `916c2785c` | Above (`evidence/trust.json`) |
+| Trust (D3): K, S, untied V at or below base, no new allowance; measured before and after with the plan's estimate | `585b51b56` | Above (`evidence/trust.json`) |
 | Behaviour A/B over all nine corpora; row 3b tests: closure three-way, `rust/fuzz_closure.py`, `test_closure*.py`, OUT; `@0`, `@1`, an atom formula the gate refuses, an unknown version | evidence commits | Above. Row 3b tests on the final Lean (`evidence/row3b-tests.json`): `test_closure.py`, `test_closure_certificates.py`, `test_closure_core_replay.py`, `test_closure_induction.py`, `test_closure_witnesses.py`, and the closure-carrying three-way suites `test_data_three_way.py` and `test_p0_three_way.py` gave "95 passed, 3 skipped". The 3 skips are the pre-existing "outside Rust scope" cells. `rust/fuzz_closure.py` gave 3,000 cases, 3,000 agreements. `test_closure_core_replay.py` covers `@0`, `@1`, `@2`, Core's version string, an n-ary `atom` invariant and conclusion, a stale binding and an unknown rule |
 | Seeded bugs (a) drop the atom-free gate, (b) `true` for `version == @1`, (c) change a refusal text | `171a04dd3` (spec), `3b7a0acaf` (run) | 7/7 killed (below) |
 | Evidence in `docs/arch/AR-22/` with `evidence.toml`, each file under 1 MB; `batch_evidence.py --check` | evidence commits | `ls -l docs/arch/AR-22/evidence`: the largest file is `statements.json`, about 30 KB. The check is under "Tests" |
@@ -147,18 +147,18 @@ jobs)"), and `regen_generated.py --check --only checker-pins` gave "checked 1 en
   selection is wide because `CertificateWire.lean` is imported widely. It is not every unit, and it includes every
   closure test file and `test_assurance_manifest.py`. The files of the `main-known-red.txt` tests
   (`test_lean_service.py`, `test_readings_defaults_rd8_report.py`) were selected, and nothing failed.
-- After the last merge (`2be443f75`, which changes no file this batch changes), the row 3b files, the three-way suites
+- After the later merges (`2be443f75` and `da5303b78`, which change no file this batch changes), the row 3b files, the three-way suites
   and `tests/test_assurance_manifest.py` were run again: "234 passed, 3 skipped" (`evidence/row3b-tests.json`). The
   selection was not rerun on the merged code, as the build rules ask. The chain's gate runs the full suite on the
   final HEAD.
-- `uv run python tools/gate_collection.py --check --prebuilt` on the merged head: "32911 collected, 32908 at
+- `uv run python tools/gate_collection.py --check --prebuilt` after the merge of `2be443f75`: "32911 collected, 32908 at
   2be443f75…; 3 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers". The 3 added are
   `test_closure_core_replay.py`'s tests. No test was removed or renamed, so no `Test-removed` trailer is needed.
 - `uv run python tools/repo_map.py --check`: "PASS: 42 modes, each with its schema file". `uv run python
   tools/assurance_manifest.py --check`: exit 0.
 - `batch_evidence.py --check docs/arch/AR-22`: stops at `[scope]`/`[gate]`, which are saved after the gate (as AR-21).
   Its other functions were run on the saved files: `mutant_problems` and `mutant_source_problems` at HEAD, and
-  `tools.evidence.ab.problems` with the recorded head `916c2785c` and base `2be443f75`. Each returned `[]`. The
+  `tools.evidence.ab.problems` with the recorded head `585b51b56` and base `da5303b78`. Each returned `[]`. The
   check itself, at the report commit, reports "evidence/scope.json: no such evidence file" (it reads the scope first).
 - Not run by me: the full gate (`tools/gate.py`). The chain runs it on the final HEAD.
 
@@ -207,14 +207,14 @@ that changes only `docs/arch/AR-22/`:
 
     cp gate-result.json docs/arch/AR-22/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-22/evidence/scope.json
-    uv run python -m tools.evidence ab ~/.cache/ve-ar22c/base2.jsonl ~/.cache/ve-ar22c/head2.jsonl \
-        --base-commit 2be443f7528170d44ca78dd16d5769f3666483df --head-commit <G> \
+    uv run python -m tools.evidence ab ~/.cache/ve-ar22d/base2.jsonl ~/.cache/ve-ar22d/head2.jsonl \
+        --base-commit da5303b7876924d4fba67866390ed6f0d0b36cbc --head-commit <G> \
         --out docs/arch/AR-22/evidence/ab.json --delta docs/arch/AR-22/evidence/ab-delta.json \
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-22 --report-commit HEAD
 
-The head recording was made at `916c2785c`. From there to `<G>`, only `docs/arch/AR-22/` changes
-(`git diff --stat 916c2785c <G> -- ve lean rust tools tests conformance` is empty). If main moves again before the
+The head recording was made at `585b51b56`. From there to `<G>`, only `docs/arch/AR-22/` changes
+(`git diff --stat 585b51b56 <G> -- ve lean rust tools tests conformance` is empty). If main moves again before the
 merge, the A/B must be recorded again against the new merge base.
 
 ## Spec re-read
@@ -250,8 +250,8 @@ merge, the A/B must be recorded again against the new merge base.
 4. Python, Lean and Rust agree; valid inputs pass: PASS. The corpus A/B has 0 unlisted. `rust/fuzz_closure.py`: 3,000
    of 3,000 agree. `test_p0_three_way.py` and `test_data_three_way.py` pass (`evidence/row3b-tests.json`).
 5. R8 binding: N.A. No field read from a Lean answer changed.
-6. Gate evidence matches the final HEAD: PASS for the parts this batch can do. Main was merged four times. The scope
-   base is `git merge-base HEAD main` (`2be443f75`), and the A/B, trust, statements, OUT and row 3b tests were
+6. Gate evidence matches the final HEAD: PASS for the parts this batch can do. Main was merged five times. The scope
+   base is `git merge-base HEAD main` (`da5303b78`), and the A/B, trust, statements, OUT and row 3b tests were
    measured again against it. "After the gate" re-saves the scope, the A/B and the gate for `<G>`.
 7. No unsigned item: PASS. DELTA's Ruling cells are R7 only, and the trust budget is +0. The decoder question is not
    a DELTA row.

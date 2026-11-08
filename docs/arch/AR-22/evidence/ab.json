@@ -1,5 +1,5 @@
 {
- "base_commit": "2be443f7528170d44ca78dd16d5769f3666483df",
+ "base_commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
  "corpora": [
   "conformance",
   "discourse",
@@ -565,55 +565,29 @@
   {
    "authority": "default",
    "base": {
-    "timeout": 600
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
    },
-   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "case": "pilot/cc-20261108T1800Z:usecases/claude-constitution-pilot/run-20261108T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
    },
    "listed": true,
    "op": "document_check"
@@ -624,34 +598,6 @@
     "timeout": 600
    },
    "case": "pilot/udhr-20261018T1800Z:usecases/udhr-pilot/run-20261018T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
@@ -691,10 +637,10 @@
    "op": "document_check"
   }
  ],
- "head_commit": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+ "head_commit": "585b51b5621bc1113e168121f23dce3a9da27817",
  "recordings": {
-  "base": "f2501afcd0b6244bc1cb0c4d8ca94e2437ebf956009bda43cd3dcaef4bb3e450",
-  "head": "f2501afcd0b6244bc1cb0c4d8ca94e2437ebf956009bda43cd3dcaef4bb3e450"
+  "base": "8de0da3e82ce3cba8a4ad199f541e778b39e76e6184302d6ed56b4d544da1200",
+  "head": "8de0da3e82ce3cba8a4ad199f541e778b39e76e6184302d6ed56b4d544da1200"
  },
  "records": {
   "conformance/lean": 19806,
@@ -702,7 +648,7 @@
   "discourse/default": 6350,
   "document/default": 3632,
   "norm_defaults/default": 2020,
-  "pilots/default": 706,
+  "pilots/default": 713,
   "probe/lean": 9435,
   "probe/python": 9435,
   "quantity/lean": 12863,
@@ -711,12 +657,12 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100526,
-  "unavailable": 27
+  "same": 100538,
+  "unavailable": 22
  },
  "unavailable_both": {
   "discourse/default": 2,
-  "pilots/default": 25
+  "pilots/default": 20
  },
  "unlisted": 0
 }
