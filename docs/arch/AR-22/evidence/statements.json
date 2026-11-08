@@ -1,6 +1,6 @@
 {
- "base": "2be443f7528170d44ca78dd16d5769f3666483df",
- "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+ "base": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
+ "head": "585b51b5621bc1113e168121f23dce3a9da27817",
  "tool": "uv run python tools/lean_statements.py --diff BASE HEAD (added/removed/changed); each changed entry compared field by field (statement text, `-- expr` hash, `-- uses` constants with and without their @Module tag); each removed entry with the head theorem that covers it",
  "statements": {
   "base_sha256": "b1253f5399ceb4fcc26cab5b6a62f13269d928fc5fee6191d5fa3a4eaace3173",
@@ -952,8 +952,8 @@
   "removed_all_covered": true
  },
  "predicates": {
-  "base_sha256": "3278ae7640e533088e973816458c148d5162ce7d69b1094311bbc93704f41aae",
-  "head_sha256": "770a600fb58beb544664532eb777462e6e8ecad2ebc51031e4fb416fd480a890",
+  "base_sha256": "eb0b72350b03d221aeb51a57cbb613c703d106d2c96fdb1d3141fdba71040111",
+  "head_sha256": "09bc1bf5e145b70b9b43cd2960b1196cc60867d12a8188b9d24dc491f66a995f",
   "lines_removed": [
    "module VE.Closure.Congruence",
    "module VE.Closure.Induction",

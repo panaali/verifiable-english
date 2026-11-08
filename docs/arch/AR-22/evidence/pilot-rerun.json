@@ -1,8 +1,8 @@
 {
  "recorded_answers_equal_to_rerun": {
   "base": {
-   "answered_in_recording": 4,
-   "equal_to_rerun": 4
+   "answered_in_recording": 1,
+   "equal_to_rerun": 1
   },
   "head": {
    "answered_in_recording": 0,
@@ -12,46 +12,13 @@
  "rows": [
   {
    "answered": true,
-   "base_outcome_sha256": "1c44adaf04e5ba7c9da242cdf215a1548e84d679ee6b0b885c1c1aea8c40ef54",
-   "base_seconds": 207,
-   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/evidence/ps6r/all-four-nd-all.ve.md",
-   "head_outcome_sha256": "1c44adaf04e5ba7c9da242cdf215a1548e84d679ee6b0b885c1c1aea8c40ef54",
-   "head_seconds": 210,
+   "base_outcome_sha256": "0f3b4f33d062f1e6c71a359d3bcbb608c8605ee16ff4354b30f607a4583329e3",
+   "base_seconds": 317,
+   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "0f3b4f33d062f1e6c71a359d3bcbb608c8605ee16ff4354b30f607a4583329e3",
+   "head_seconds": 319,
    "same": true,
-   "source_sha256": "03d10910afcb923d61ea6c996b266ef1b94f5077",
-   "timeout": 600
-  },
-  {
-   "answered": true,
-   "base_outcome_sha256": "39426be9bb19e0960157cf48b2f778d47d06b5a83718465ceba4cf16b33d9a6b",
-   "base_seconds": 257,
-   "case": "pilot/udhr-20261021T0600Z:usecases/udhr-pilot/run-20261021T0600Z/experiment-whole/translation-whole.ve.md",
-   "head_outcome_sha256": "39426be9bb19e0960157cf48b2f778d47d06b5a83718465ceba4cf16b33d9a6b",
-   "head_seconds": 258,
-   "same": true,
-   "source_sha256": "274f1b219bd1320d408e29947e85c100188f51fc",
-   "timeout": 600
-  },
-  {
-   "answered": true,
-   "base_outcome_sha256": "aed466c18654df755912a670b244eb1e7da6ade5899465cdb86c1783ecc6507a",
-   "base_seconds": 308,
-   "case": "pilot/udhr-20261021T1800Z:usecases/udhr-pilot/run-20261021T1800Z/experiment-whole/translation-whole.ve.md",
-   "head_outcome_sha256": "aed466c18654df755912a670b244eb1e7da6ade5899465cdb86c1783ecc6507a",
-   "head_seconds": 307,
-   "same": true,
-   "source_sha256": "5991ab2e317920104cf2df72862f1d30b12c5660",
-   "timeout": 600
-  },
-  {
-   "answered": true,
-   "base_outcome_sha256": "aace9f7f59f34ddd781853d26e97c64fd2764234d44e82b714447c9c2178b8ac",
-   "base_seconds": 385,
-   "case": "pilot/udhr-20261027T0600Z:usecases/udhr-pilot/run-20261027T0600Z/experiment-whole/translation-whole.ve.md",
-   "head_outcome_sha256": "aace9f7f59f34ddd781853d26e97c64fd2764234d44e82b714447c9c2178b8ac",
-   "head_seconds": 378,
-   "same": true,
-   "source_sha256": "38b102b5b545d57489f791d9c44738fb52bad149",
+   "source_sha256": "c2de2d5aaf7c47a6810102b70caa03a74ee4660a",
    "timeout": 600
   }
  ],

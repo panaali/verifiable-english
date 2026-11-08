@@ -1,9 +1,9 @@
 {
- "base": "2be443f7528170d44ca78dd16d5769f3666483df",
- "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+ "base": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
+ "head": "585b51b5621bc1113e168121f23dce3a9da27817",
  "tool": "base worktree: lake build of every lean_exe, then python3 tools/lean_output_diff.py --save-baseline --baseline ~/.cache/ve-ar22-out-baseline; head: lake build of every lean_exe, then uv run python tools/lean_output_diff.py --baseline ~/.cache/ve-ar22-out-baseline --all",
  "summary": [
-  "baseline 2be443f75281; executables rebuilt with a different digest: ve_conformance, ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_scope_bench, ve_senses_route, ve_service, ve_speech_acts_route",
+  "baseline da5303b78769; executables rebuilt with a different digest: ve_conformance, ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_scope_bench, ve_senses_route, ve_service, ve_speech_acts_route",
   "ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_scope_bench 1, ve_senses_route 1, ve_service 342, ve_speech_acts_route 17",
   "441 invocations, 441 run on both builds, 0 skipped as their executable is byte-identical to the baseline; 1 differences, 0 timed out"
  ],

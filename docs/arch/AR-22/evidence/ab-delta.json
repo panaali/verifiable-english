@@ -135,49 +135,14 @@
   },
   {
    "authority": "default",
-   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "case": "pilot/cc-20261108T1800Z:usecases/claude-constitution-pilot/run-20261108T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
    "corpus": "pilots",
    "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
-  },
-  {
-   "authority": "default",
-   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
-   "corpus": "pilots",
-   "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
-  },
-  {
-   "authority": "default",
-   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
-   "corpus": "pilots",
-   "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
-  },
-  {
-   "authority": "default",
-   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
-   "corpus": "pilots",
-   "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
   },
   {
    "authority": "default",
    "case": "pilot/udhr-20261018T1800Z:usecases/udhr-pilot/run-20261018T1800Z/experiment-whole/translation-whole.ve.md",
-   "corpus": "pilots",
-   "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
-  },
-  {
-   "authority": "default",
-   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
-   "corpus": "pilots",
-   "op": "document_check",
-   "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."
-  },
-  {
-   "authority": "default",
-   "case": "pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/experiment-whole/translation-whole.ve.md",
    "corpus": "pilots",
    "op": "document_check",
    "reason": "The same pre-existing 600 s time-out of the recorder's `ve document check` on the whole-UDHR translation at base and head (L75; listed by AR-20 and AR-21); identical outputs."

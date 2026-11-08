@@ -1,8 +1,8 @@
 {
- "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+ "head": "585b51b5621bc1113e168121f23dce3a9da27817",
  "pytest": {
   "command": "VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider tests/test_closure.py tests/test_closure_certificates.py tests/test_closure_core_replay.py tests/test_closure_induction.py tests/test_closure_witnesses.py tests/test_data_three_way.py tests/test_p0_three_way.py tests/test_assurance_manifest.py -n 8",
-  "result": "234 passed, 3 skipped in 31.49s",
+  "result": "234 passed, 3 skipped in 19.09s",
   "note": "the seven row 3b files give 95 passed and 3 skipped; tests/test_assurance_manifest.py gives the other 139",
   "skipped": [
    "SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope",
