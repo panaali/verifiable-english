@@ -850,11 +850,11 @@ def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
 /-- What a document layer does not compose with yet (JT-2): their contents are no `Judgments.Content`. -/
 def documentLayersApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
 
-/-- The refusal by name of a list that has a document layer beside a profile of `apart` (by default the profiles it
-does not compose with yet; the document mode passes its own, shorter list, PC-1). -/
-def layersApart (listed : List String) (apart : List String := documentLayersApart) : Except String Unit := do
+/-- The refusal by name of a list that has a document layer beside a profile of `apart` (by default the profiles it  -- pc-1tm trust-mutant base marker
+does not compose with yet; the document mode passes its own, shorter list, PC-1). -/  -- pc-1tm trust-mutant base marker
+def layersApart (listed : List String) (apart : List String := documentLayersApart) : Except String Unit := do  -- pc-1tm trust-mutant base marker
   if let some l := documentLayers.find? listed.contains then
-    if let some p := apart.find? listed.contains then
+    if let some p := apart.find? listed.contains then  -- pc-1tm trust-mutant base marker
       throw s!"CheckerUnavailable: {l} with {p} needs its composed Lean route"
 
 /-- The profiles only their own service mode reads (`cardinality`, QT-A3): Python models no environment with them
