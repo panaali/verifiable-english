@@ -1,0 +1,6 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Attitudes/Route.lean is a selected declaration's file or in its import closure
+trust_mutants: 18 definitions, 244 mutants (30 to run), 4 jobs, base cbc4c8a39533
+trust_mutants: 21 KILLED, 0 SURVIVOR, 0 UNKNOWN, 1 INVALID, 8 ALLOWED, 0 NOT RUN, 214 OTHER SHARD in 202 s
+trust_mutants: G[V], trusted: 4 KILLED, 1 ALLOWED, 33 OTHER SHARD
+trust_mutants: S, trusted: 17 KILLED, 1 INVALID, 7 ALLOWED, 181 OTHER SHARD
+trust_mutants: steps: wall plan 6.8 s, scratch 2.3 s, control_build 0.1 s, probe_install 1 s, control_probes 20.2 s, mutants 167.1 s, cleanup 4.5 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 17.9 s (1), mutant_builds 26.3 s (30), mutant_checks 295.2 s (33), stage_controls 3.2 s (2), mutant_probes 67.1 s (21)
