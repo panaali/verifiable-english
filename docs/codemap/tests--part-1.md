@@ -8,6 +8,7 @@
 - `tests/check_mutants.py` — Seeded bugs of a relay's checks, enumerated from its source: each check weakened or deleted in turn.
 - `tests/conftest.py` — Shared test setup for serial and xdist runs.
 - `tests/contract_input_recorder.py` — A pytest plugin that records every input of one wire unit that the tests themselves submit.
+- `tests/document_chain_corpus.py` — PC-2a's parity corpus (F2.3, docs/spec/profile-composition.md 5.2): every document of `tests/data` listing soft-norms@0 with norm-defaults@0, as written and wi…
 - `tests/explicit_inverse.py` — Independent structural decoder for the four fully grouped test surfaces.
 - `tests/fluent_inverse.py` — Test-only recursive-descent inverse, not a new VE source language.
 - `tests/lean_build.py` — The one way a test fixture builds named Lean targets.
@@ -32,6 +33,7 @@
 - `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
 - `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
 - `tests/test_acts_contract.py` — The `acts@0` wire table in shadow (ap-1bf): the legacy validator still owns the verdict; the engines name the member of 1.1 at and around each limit of `VE.Act…
+- `tests/test_acts_joined_route.py` — ap-3db: a joined act under `acts@0` on the routes that elaborate it (act-phrases 6.4, DRI 2026-11-02 ap-3db).
 - `tests/test_acts_lexical.py` — act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
 - `tests/test_acts_lexical_mutants.py` — Seeded mutants of the act-phrase decoder each fail a fixture (ap-1a review F1).
 - `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
@@ -40,6 +42,7 @@
 - `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
 - `tests/test_agent_policy.py` — Agent-policy use case: authored files, the frozen answer key, and the committed results.
 - `tests/test_agent_policy_level.py` — The policy family's requirement register and its level reader (apol-req), on both sides of each check.
+- `tests/test_agent_policy_replay_decode.py` — Agent-policy use case: a replay's raw output that is not UTF-8, or JSON nested too deeply to parse, is refused with `CheckerUnavailable`, never a traceback.
 - `tests/test_agent_policy_rerun.py` — Agent-policy use case: rerun VE on every logged action and every policy query.
 - `tests/test_agent_policy_unspecified.py` — Agent-policy under norm-defaults@0 (docs/spec/norm-defaults.md fixture u4).
 - `tests/test_alternatives_fill.py` — ET-7: `alternatives@0` with the completion (`norm-defaults@0`) on the Lean alternatives route (docs/spec/events-time-causation.md 5 and 6.4; plan ET-7; fixture…
@@ -88,7 +91,3 @@
 - `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
 - `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
 - `tests/test_background.py` — (no module docstring)
-- `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
-- `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
-- `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
-- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.

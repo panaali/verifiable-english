@@ -10,7 +10,10 @@ The complete, machine-checked inventory is `INVENTORY` in
 `tests/test_relay_binding_inventory.py`. Its field list is walked from the
 generated schemas of every relayed RD-9 answer: `soft-elaborate`, `soft-pairs`,
 `soft-conflict` (packages and witness), the soft and rights `admission`,
-`rights-elaborate`, `rights-scope`, `rights-bar` and `rights-conflict`. A field
+`rights-elaborate`, `rights-scope`, `rights-bar` and `rights-conflict`, and the
+`document` row on the soft chain under `norm-defaults@0` (`document-soft-defaults`,
+PC-2a, D9: the retained Python branch no longer accepts this chain, so this row
+is the answer; its soft-source check and loader diagnostics stay until PC-2b). A field
 the Lean shape adds fails `test_every_schema_field_is_classified` until it is
 classified as bound or as Lean-derived, with a reason. Every bound field is
 fuzzed on genuine answers of sixteen sources: renamed, shifted, flipped,
@@ -37,6 +40,8 @@ relations; the inventory is what is checked.
 | `incompatible_pairs` (soft) | Exact submitted rule pairs with opposite effects on one declared act. | `test_f14_each_soft_identity_field_is_bound` |
 | `soft_residual`, `default_exceptions_by_decider` (soft) | Exact counts implied by submitted defaults, switches, holistic decisions, open pairs and decider declarations. | `test_binding_audit_soft_fields_reject_forgery`, `test_f12_decider_counts_are_bound_per_decider` |
 | `soft_status` (soft) | Lean-derived status; schema and encoder theorem | `test_route_row_schemas` |
+| `units[]`, `source`, `source_id`, `document_id`, `coverage` (document row, soft chain under `norm-defaults@0`) | Bound by `_bind_document_answer` and `_lean_document`: one row per authored unit, in order, with its id, span, kind, meaning, support and parent as written; its content the rule as written (`_rule_bound`); its `meaning_id` recomputed; the source the body, its identities recomputed; the coverage a function of the request and the unit rows | `test_every_bound_field_mutant_is_unavailable[document-soft-defaults]` |
+| `completions` (request, soft chain under `norm-defaults@0`) | Not relayed back: Lean's `validateCompletions` on the `layeredOf` document refuses or accepts it, with one text from both entry points | `test_f2_1b_validate_completions_answers_from_both_entry_points` |
 | `overlaps`, `override_cycles` (soft, optional) | Rows that answer submitted witnesses. No relay submits a witness, so any such row is extra. | `test_unrequested_witness_rows_are_unavailable` |
 | `lines[].right`, `.kind`, `.instance`, `.rule`, `.predicate`, `.holder_slot`, `.node.sign`, `.node.hard`, `.node.over`, `.node.unless` (rights) | Each instance maps to its authored line, kind and field, and its node fields match the authored rule. The rule id is the authored name, or `rights-fan-<k>` for the k-th fan-out instance in document order (Tree.lean `instancesOf`). The holder slot is Tree.lean `holderSlot`: 0 for a liberty half, else the authored `holder_slot`, else the first object slot of the right's holder sort. `node.unless` holds the authored carve-outs, then one limitation pack exactly when a limitation is in scope (Correlate.lean `nodeOf`). Derived guards and the pack's formula remain Lean-owned. | `test_binding_audit_rights_fields_reject_forgery`, `test_f21_generated_rule_ids_follow_leans_naming`, `test_f23_an_authored_holder_slot_stays_the_lines_slot` |
 | `generated[].kind`, `.limitation`, `.act`, `.condition`, `.predicate`, `.name` (rights) | Exactly the in-scope limitation/act/condition keys and bar predicates, with key-ordered generated names; each generated declaration has the act's sorts. | `test_binding_audit_rights_fields_reject_forgery` |

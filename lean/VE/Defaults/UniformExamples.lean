@@ -161,4 +161,264 @@ def otherKinds : List String := ["norm-defaults-elaborate", "norm-defaults-confl
   askK L (wPack "weighing" cond) k == askK L (wPack "weighing" []) k && askK L (wPack "weighing" cond) k != refusedP
 #guard holds dπ fun L => (askK L (wPack "weighing" cond) "norm-defaults-elaborate").getObjValD "status" == .str "ok"
 
+/-! ## `ConditionsExact` refuses an unbacked decision and admits F9.3's shape (sa-no-exception)
+
+DRI decision 2026-11-02, pc9-decide-check, items 2 and 3 (the refutation of the old statement stays in
+reviews/pc9-decide-check-20261102.lean). One default rule `r1` with no sufficient condition, a base predicate `c`,
+nothing unspecified; its exception decision `d` and the stated condition `c(x)`. `wEx` forces `d` with no condition
+behind it (`∃x d(x)`): on the base {a, b} with `c = {a}`, `d = {b}`, a default base where `dfltUniform` fails, the
+least table `d = c` is admissible and no switch is on, but it is not below `d`, so `ConditionsExact` is false
+(`exact_refuses`). `wImp` has F9.3's `wPack` premise `C → d`, and `ConditionsExact` holds (`exact_holds`). -/
+namespace Exact
+open VE.NormDefaults (UDoc)
+open VE.NormDefaults.Wire (BaseAdmissibleX)
+open VE.Norms (Sat)
+universe u
+
+def nc : VE.SoftNorms.SoftNode :=
+  ⟨⟨"r1", "x_required", true, .top, [], []⟩, .default, none, [], some ⟨some "assistant", [], [], []⟩, false, none⟩
+
+def Dc : VE.SoftNorms.SoftDoc where
+  E.sorts := ["assistant"]
+  E.constants _ := none
+  E.predicates p := if p = "x_required" ∨ p = "x_permitted" ∨ p = "c" then some ["assistant"] else none
+  lits := []
+  soft.parties := []
+  soft.ranks := []
+  soft.outranks := []
+  soft.ties := []
+  soft.outranking := .strict
+  soft.outrankingDecider := none
+  soft.exceptionDecider := none
+  soft.instructionOf := []
+  soft.below := []
+  T.regulated := [
+    ⟨"x_permitted", ["assistant"], true, .permission, some "{0} do x", none⟩,
+    ⟨"x_required", ["assistant"], false, .obligation, some "{0} do x", some "x_permitted"⟩]
+  T.definitions := []
+  T.nodes := [nc]
+
+def Uc : UDoc := ⟨VE.SoftNorms.soften Dc, []⟩
+def dcJ : Except String LayeredU :=
+  layered (envJ [xReq "deny", xPerm, baseJ "c"] strictSoft) [ruleJ "r1" "x_required" true dfltJ]
+def dName : String := "soft__excepted__r1"
+def cC : VE.Formula := .unary "c" (.var 0)
+def exD : VE.Formula := .ex "assistant" (.unary dName (.var 0))
+def exC : VE.Formula := .ex "assistant" cC
+def impCD : VE.Formula := .all "assistant" (.implies cC (.unary dName (.var 0)))
+def wEx : Pack := ⟨"weighing", .constraint, [], [], [("p:0", exD), ("p:1", exC)], [], [(.excepted "r1", cC)]⟩
+def wImp : Pack := ⟨"weighing", .constraint, [], [], [("p:0", impCD)], [], [(.excepted "r1", cC)]⟩
+
+-- the literal is the decoded document, well-formed (`dfltUniform_sound`'s `h` and `hD`), and `assemble` takes both packs
+#guard holds dcJ fun L => L.D.T == Dc.T && L.D.soft == Dc.soft && L.D.lits == Dc.lits && L.D.E.sorts == Dc.E.sorts &&
+  L.U.unspec == Uc.unspec && L.U.D.T == Uc.D.T && ["x_required", "x_permitted", "c", dName, "r1"].all
+    fun p => L.D.E.predicates p == Dc.E.predicates p && L.U.D.E.predicates p == Uc.D.E.predicates p
+#guard VE.SoftNorms.WellFormedSoft Dc && VE.NormDefaults.WellFormedU Uc
+#guard [wEx, wImp].all fun w => match VE.NormDefaults.Packs.assembleIn VE.NormDefaults.Packs.reservedPrefixes
+    (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0) 0 [w] with
+  | .ok ps => ps.length == 1 | .error _ => false
+
+theorem X_ex : VE.NormDefaults.Packs.X [wEx] = [exD, exC] := rfl
+theorem X_imp : VE.NormDefaults.Packs.X [wImp] = [impCD] := rfl
+theorem cond_ex : packConditions [wEx] (.excepted "r1") = [cC] := rfl
+theorem cond_imp : packConditions [wImp] (.excepted "r1") = [cC] := rfl
+
+theorem exceptedName_c : VE.SoftNorms.exceptedName nc = dName :=
+  String.ext (by simp [VE.SoftNorms.exceptedName, VE.SoftNorms.ruleKey, VE.Readings.map_data, nc, dName])
+theorem decisions_c : VE.SoftNorms.decisions Dc = [(dName, ["assistant"])] := by
+  show [(VE.SoftNorms.exceptedName nc, ["assistant"])] ++ [] ++ [] = _
+  rw [exceptedName_c]; rfl
+theorem decisionNames_c : VE.SoftNorms.decisionNames Dc = [dName] := by simp [VE.SoftNorms.decisionNames, decisions_c]
+
+/-- `soften Dc` with r1's exception name written out. -/
+def Sc : VE.Norms.Doc where
+  E := { Dc.E with predicates := fun p => if p = dName then some ["assistant"] else Dc.E.predicates p }
+  lits := []
+  T.regulated := Dc.T.regulated
+  T.definitions := []
+  T.nodes := [⟨"r1", "x_required", true, .top,
+    [.or (.or (.or (.unary dName (.var 0)) .bottom) (.or (.or (.or (.or .bottom .bottom) .bottom) .bottom) .bottom)) .bottom],
+    []⟩]
+
+theorem Uc_eq : Uc = ⟨Sc, []⟩ := by
+  have hE : VE.SoftNorms.envPrime Dc = Sc.E := by
+    unfold VE.SoftNorms.envPrime
+    rw [decisions_c]
+    refine congrArg (fun f => ({ Dc.E with predicates := f } : VE.Environment)) (funext fun p => ?_)
+    by_cases h : p = dName
+    · subst h; rfl
+    · simp [List.find?, beq_false_of_ne (Ne.symm h), h]
+  have hN : Dc.T.nodes.map (VE.SoftNorms.primeNode Dc) = Sc.T.nodes := by
+    show [VE.SoftNorms.primeNode Dc nc] = _
+    simp only [VE.SoftNorms.primeNode, VE.SoftNorms.derivedList, VE.SoftNorms.derived, VE.SoftNorms.exceptedF,
+      exceptedName_c]
+    rfl
+  show (⟨⟨VE.SoftNorms.envPrime Dc, [], ⟨Dc.T.regulated, [], Dc.T.nodes.map (VE.SoftNorms.primeNode Dc)⟩⟩, []⟩ :
+    UDoc) = _
+  rw [hE, hN]
+  rfl
+
+theorem pred_d : (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0).predicates dName = some ["assistant"] := by
+  rw [Uc_eq]; decide
+theorem pred_cc : (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0).predicates "c" = some ["assistant"] := by
+  rw [Uc_eq]; decide
+
+theorem switchesOff_c (B : VE.Structure.{u}) : SwitchesOff Dc B := by
+  have h : (dfltLabelled Dc).filter (fun a => a.1.startsWith "default:switch:") = [] := by
+    show [("default:exception:r1", _)].filter _ = []
+    simp [VE.Defaults.MeaningFixtures.switch_π]
+  unfold SwitchesOff
+  rw [h]
+  exact fun _ h => nomatch h
+
+/-- Admissibility on this document: typed tables and the packs' premises (the base background and fill are empty). -/
+theorem admissible_c (qs : List Pack) (S : VE.Structure.{u})
+    (hrel : ∀ n vs, S.relation n vs → ∃ ss, (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0).predicates n = some ss ∧
+      VE.TupleTyped S ss vs) (hX : Sat S (VE.NormDefaults.Packs.X qs)) :
+    BaseAdmissibleX Uc (VE.NormDefaults.Packs.X qs) S := by
+  refine ⟨⟨⟨⟨fun c s h => (nomatch h), hrel⟩, ?_⟩, fun _ h => nomatch h⟩, hX⟩
+  show Sat S (VE.Route.Background.literals [])
+  simp [Sat, VE.Route.Background.literals, VE.Route.sortStrings, VE.Route.Background.pairs]
+
+theorem open_rel (B : VE.Structure.{u}) (δ F : String → List B.Carrier → Prop) (n : String) (vs : List B.Carrier) :
+    (withOpen Uc Dc B δ F).relation n vs ↔ if n = dName then δ n vs else B.relation n vs := by
+  show (if n ∈ VE.SoftNorms.decisionNames Dc then δ n vs else if n ∈ VE.NormDefaults.unsaidNames Uc then F n vs
+    else B.relation n vs) ↔ _
+  rw [decisionNames_c, show VE.NormDefaults.unsaidNames Uc = [] from rfl]
+  simp
+
+/-- With `c(x)` the only stated condition, the least table is `d = c` on typed tuples. -/
+theorem least_iff {qs : List Pack} (hq : packConditions qs (.excepted "r1") = [cC]) (B : VE.Structure.{u})
+    (p : String) (vs : List B.Carrier) : leastUniform Dc qs B p vs ↔
+      p = dName ∧ VE.TupleTyped B ["assistant"] vs ∧ cC.denote B (VE.Norms.tupleVal vs) := by
+  have hc : ((nc.exception.map (·.sufficient)).getD []) ++
+      packConditions qs (.excepted (VE.SoftNorms.decisionRule nc)) = [cC] := by rw [← hq]; rfl
+  constructor
+  · rintro (⟨N, hN, -, rfl, hvs, C, hC, hd⟩ | ⟨N, hN, π, hπ, -⟩ | ⟨t, ht, -⟩)
+    · cases List.mem_singleton.mp hN
+      rw [hc, List.mem_singleton] at hC
+      subst hC
+      exact ⟨exceptedName_c, hvs, hd⟩
+    · cases List.mem_singleton.mp hN
+      exact nomatch hπ
+    · exact nomatch ht
+  · rintro ⟨rfl, hvs, hd⟩
+    exact Or.inl ⟨nc, List.mem_singleton.mpr rfl, rfl, exceptedName_c.symm, hvs, cC, by rw [hc]; simp, hd⟩
+
+/-- The least tables keep every base typed. -/
+theorem least_typed {qs : List Pack} (hq : packConditions qs (.excepted "r1") = [cC]) (B : VE.Structure.{u})
+    (hrel : ∀ n vs, B.relation n vs → ∃ ss, (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0).predicates n = some ss ∧
+      VE.TupleTyped B ss vs) (n : String) (vs : List B.Carrier)
+    (h : (withOpen Uc Dc B (leastUniform Dc qs B) B.relation).relation n vs) :
+    ∃ ss, (VE.Norms.envAt (VE.NormDefaults.fill Uc) 0).predicates n = some ss ∧
+      VE.TupleTyped (withOpen Uc Dc B (leastUniform Dc qs B) B.relation) ss vs := by
+  have h' := (open_rel B _ _ n vs).mp h
+  by_cases hn : n = dName
+  · subst hn
+    rw [if_pos rfl] at h'
+    exact ⟨_, pred_d, (VE.Norms.tupleTyped_relation B _ _ vs).mpr ((least_iff hq B _ vs).mp h').2.1⟩
+  · rw [if_neg hn] at h'
+    obtain ⟨ss, hss, ht⟩ := hrel n vs h'
+    exact ⟨ss, hss, (VE.Norms.tupleTyped_relation B _ _ vs).mpr ht⟩
+
+/-- `false` is `a`, `true` is `b`: `c = {a}`, `d = {b}`. -/
+def Bc : VE.Structure.{0} where
+  Carrier := Bool
+  domain s _ := s = "assistant"
+  constant _ := none
+  relation n vs := (n = "c" ∧ vs = [false]) ∨ (n = dName ∧ vs = [true])
+
+theorem rel_d {vs : List Bool} (h : Bc.relation dName vs) : vs = [true] := by
+  rcases h with ⟨h, -⟩ | ⟨-, h⟩
+  · exact absurd h (by decide)
+  · exact h
+
+/-- The counterexample's base is a default base of `wEx`, and `dfltUniform` fails there (`d(b)`, not `c(b)`). -/
+theorem defaultBase_c : DefaultBase Uc Dc (VE.NormDefaults.Packs.X [wEx]) Bc ∧ ¬ Sat Bc (dfltUniform Dc [wEx]) := by
+  refine ⟨⟨admissible_c _ Bc (fun n vs h => ?_) ?_, switchesOff_c _, fun δ F hle hadm _ p hp vs hB => ?_⟩, fun h => ?_⟩
+  · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact ⟨_, pred_cc, rfl, trivial⟩
+    · exact ⟨_, pred_d, rfl, trivial⟩
+  · show ∀ φ ∈ [exD, exC], φ.denote Bc []
+    simp only [List.mem_cons, List.not_mem_nil, or_false]
+    rintro φ (rfl | rfl)
+    · exact ⟨true, rfl, true, rfl, Or.inr ⟨rfl, rfl⟩⟩
+    · exact ⟨false, rfl, false, rfl, Or.inl ⟨rfl, rfl⟩⟩
+  · rw [decisionNames_c, List.mem_singleton] at hp
+    subst hp
+    obtain rfl := rel_d hB
+    obtain ⟨v, -, w, hw, hr⟩ := hadm.2 exD (by rw [X_ex]; simp)
+    obtain rfl : v = w := Option.some.inj hw
+    have hδ := (open_rel Bc δ F _ _).mp hr
+    rw [if_pos rfl] at hδ
+    rw [← rel_d (hle dName (by rw [decisionNames_c]; simp) [v] hδ)]
+    exact hδ
+  · have hp := h _ (List.mem_singleton.mpr rfl)
+    rw [VE.Norms.bindAll_denote_nil] at hp
+    have hb : VE.TupleTyped Bc ["assistant"] [true] := ⟨rfl, trivial⟩
+    have hx : (VE.SoftNorms.exceptedF Dc nc).denote Bc (VE.Norms.tupleVal [true]) :=
+      (VE.Norms.atom_denote Bc _ _ (Or.inl rfl) [true] hb).mpr (by rw [exceptedName_c]; exact Or.inr ⟨rfl, rfl⟩)
+    obtain ⟨C, hC, hCd⟩ := (VE.Norms.anyF_denote _ _ _).mp (hp [true] hb hx)
+    obtain rfl := List.mem_singleton.mp hC
+    obtain ⟨w, hw, hr⟩ := hCd
+    obtain rfl : true = w := Option.some.inj hw
+    rcases hr with ⟨-, h⟩ | ⟨h, -⟩
+    · exact absurd (show ([true] : List Bool) = [false] from h) (by decide)
+    · exact absurd h (by decide)
+
+/-- `wEx`: the least table keeps every admissible base admissible with no switch on (the conjunct the old statement
+had), and the bound refuses the document at `Bc`, so `dfltUniform_sound` says nothing of it. -/
+theorem exact_refuses : (∀ B : VE.Structure.{u}, BaseAdmissibleX Uc (VE.NormDefaults.Packs.X [wEx]) B →
+      ∃ F : String → List B.Carrier → Prop,
+        BaseAdmissibleX Uc (VE.NormDefaults.Packs.X [wEx]) (withOpen Uc Dc B (leastUniform Dc [wEx] B) F) ∧
+        SwitchesOff Dc (withOpen Uc Dc B (leastUniform Dc [wEx] B) F)) ∧ ¬ ConditionsExact.{0} Uc Dc [wEx] := by
+  refine ⟨fun B hB => ?_, fun h => ?_⟩
+  · obtain ⟨⟨⟨⟨-, hrel⟩, -⟩, -⟩, hX⟩ := hB
+    obtain ⟨v, hv, w, hw, hr⟩ := hX exC (by rw [X_ex]; simp)
+    obtain rfl : v = w := Option.some.inj hw
+    refine ⟨B.relation, admissible_c _ _ (least_typed cond_ex B hrel) ?_, switchesOff_c _⟩
+    have hl : leastUniform Dc [wEx] B dName [v] := (least_iff cond_ex B _ [v]).mpr ⟨rfl, ⟨hv, trivial⟩, v, rfl, hr⟩
+    have hd := (open_rel B _ B.relation dName [v]).mpr (by rw [if_pos rfl]; exact hl)
+    have hc := (open_rel B (leastUniform Dc [wEx] B) B.relation "c" [v]).mpr (by rw [if_neg (by decide)]; exact hr)
+    rw [X_ex]
+    simp only [Sat, List.mem_cons, List.not_mem_nil, or_false]
+    rintro φ (rfl | rfl)
+    · exact ⟨v, hv, v, rfl, hd⟩
+    · exact ⟨v, hv, v, rfl, hc⟩
+  · have hb := (h Bc defaultBase_c.1.1).2 dName [false]
+      ((least_iff cond_ex Bc _ [false]).mpr ⟨rfl, ⟨rfl, trivial⟩, false, rfl, Or.inl ⟨rfl, rfl⟩⟩)
+    exact absurd (show ([false] : List Bool) = [true] from rel_d hb) (by decide)
+
+/-- `wImp` (F9.3's shape, premise `C → d`): `ConditionsExact` holds, so `dfltUniform_sound` applies. -/
+theorem exact_holds : ConditionsExact.{u} Uc Dc [wImp] := by
+  intro B hB
+  obtain ⟨⟨⟨⟨-, hrel⟩, -⟩, -⟩, hX⟩ := hB
+  have himp : impCD.denote B [] := hX impCD (by rw [X_imp]; simp)
+  refine ⟨⟨B.relation, admissible_c _ _ (least_typed cond_imp B hrel) ?_, switchesOff_c _⟩, fun p vs h => ?_⟩
+  · rw [X_imp]
+    simp only [Sat, List.mem_singleton]
+    rintro φ rfl v hv ⟨w, hw, hc⟩
+    obtain rfl : v = w := Option.some.inj hw
+    have hc' : B.relation "c" [v] := by
+      have := (open_rel B (leastUniform Dc [wImp] B) B.relation "c" [v]).mp hc
+      rwa [if_neg (by decide)] at this
+    have hl : leastUniform Dc [wImp] B dName [v] :=
+      (least_iff cond_imp B _ [v]).mpr ⟨rfl, ⟨hv, trivial⟩, v, rfl, hc'⟩
+    exact ⟨v, rfl, (open_rel B _ B.relation dName [v]).mpr (by rw [if_pos rfl]; exact hl)⟩
+  · obtain ⟨rfl, hvs, w, hw, hc⟩ := (least_iff cond_imp B p vs).mp h
+    match vs, hvs, hw with
+    | [v], ⟨hv, _⟩, hw =>
+      obtain rfl : v = w := Option.some.inj hw
+      obtain ⟨u, hu, hd⟩ := himp v hv ⟨v, rfl, hc⟩
+      obtain rfl : v = u := Option.some.inj hu
+      exact hd
+
+/-- `dfltUniform_sound` on `wImp`: every default base takes `d` only where `c` holds. -/
+theorem sound_holds (h : VE.NormDefaults.WellFormedU Uc = true) (hD : VE.SoftNorms.WellFormedSoft Dc = true)
+    (B : VE.Structure.{u}) (hB : DefaultBase Uc Dc (VE.NormDefaults.Packs.X [wImp]) B) :
+    Sat B (dfltUniform Dc [wImp]) :=
+  dfltUniform_sound Uc h Dc rfl hD [wImp] exact_holds B hB
+
+end Exact
+
 end VE.Defaults.UniformFixtures

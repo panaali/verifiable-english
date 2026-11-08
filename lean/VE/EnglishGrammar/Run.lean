@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.Read
+import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Fixed.Version
 import VE.EnglishGrammar.Fixed.Tables
 import VE.Service.Standalone
@@ -116,7 +117,7 @@ def codeClasses : List (String × String) :=
    ("NoDerivation", "SyntaxError"), ("Ambiguous", "AmbiguousDerivation"), ("Budget", "ResourceLimit"),
    ("InvalidGrammar", "CheckerUnavailable"), ("ConclusionWithoutPremise", "SyntaxError"),
    ("ConclusionNotDerived", "SyntaxError"), ("IllTyped", "TypeMismatch"), ("NotOneSentence", "SyntaxError"),
-   ("InvalidOverlay", "VEError")]
+   ("InvalidOverlay", "VEError"), ("UndeclaredEvaluative", "SyntaxError")]
 
 theorem codeClasses_total : ∀ r : Reject, (codeClasses.lookup r.code).isSome = true := by
   intro r
@@ -138,7 +139,7 @@ table: together they are the relay's whole table of codes, classes and statuses.
 def statusCodes : List (String × List String) :=
   [("none", ["NoDerivation"]), ("many", ["Ambiguous"]), ("budget", ["Budget"]),
    ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]),
-   ("rejected", rejectCodes ++ ["ConclusionWithoutPremise", "IllTyped", "NotOneSentence"])]
+   ("rejected", rejectCodes ++ ["ConclusionWithoutPremise", "IllTyped", "NotOneSentence", "UndeclaredEvaluative"])]
 
 theorem statusCodes_classed : ∀ s ∈ statusCodes, ∀ c ∈ s.2, (codeClasses.lookup c).isSome = true := by
   decide
@@ -226,7 +227,7 @@ def blockRouteView (environment : Json) : Json := Id.run do
   return environment.setObjVal! "vocabulary"
     ((vocabulary.setObjVal! "predicates" predicates).setObjVal! "constants" constants)
 
-/-- The optional fields of an English request: the overlay, and `generated` (E2.6). -/
+/-- The optional fields every English mode shares: the overlay, and `generated` (E2.6); `judgments` is `readCase`'s. -/
 def optionalFields (j : Json) : List String :=
   ["overlay", "generated"].filter fun k => (j.getObjVal? k).toOption.isSome
 
@@ -261,7 +262,7 @@ def validateDeclarations (environment : Json) (generated : Bool := false) : Exce
     let _ ← VE.Alternatives.Wire.decodeAltSource (layerView environment) (Json.arr #[]) (Json.arr #[])
       .environment
   if ps.contains "norm-defaults@0" then
-    let _ ← VE.NormDefaults.Wire.decodeSourceU (blockRouteView environment) (Json.arr #[])
+    let _ ← VE.NormDefaults.Wire.decodeSourceLexical (blockRouteView environment) (Json.arr #[])
   else if ps.contains "soft-norms@0" then
     let _ ← VE.SoftNorms.Wire.decodeSoftSource (blockRouteView environment) (Json.arr #[])
   if ((environment.getObjVal? "units").isOk || (environment.getObjVal? "unit_schema").isOk) &&
@@ -473,12 +474,26 @@ def derivations (G : Grammar Terminal) (source : String) : Except String (List J
       | some (.one t) => pure (treeJson tags t)
       | _ => throw "an accepted sentence has no single tree"
 
-def authoring (c : Case) (source : String) : Except String (List (String × Json)) := do
+/-- The bound names a request sends for spec 9.5's refusal (`judgments`). Absent, there is no such refusal: a caller opts
+in, so every request without the field answers as before (DRI 2026-11-02, jt-3 item 1). -/
+def judgmentsField (j : Json) : Except String (Option (List String)) :=
+  match j.getObjVal? "judgments" with
+  | .error _ => pure none
+  | .ok v => do
+    let names ← (VE.Bridge.strings v).mapError fun _ => "InvalidInput: judgments is a list of strings"
+    unless names.length ≤ JudgmentLines.maxJudgments do
+      throw s!"ResourceLimit: at most {JudgmentLines.maxJudgments} judgments in a request"
+    pure (some names)
+
+def authoring (c : Case) (source : String) (J : Option (List String) := none) :
+    Except String (List (String × Json)) := do
   if let some f := c.overlayFailure then return invalidOverlayFields "english.read" f
   let G := grammar c.E c.L
   let tags := G.rules.map (·.tag)
   match admitRequest c.E {} c.L workBudget source with
   | .ok rs obs =>
+    if let some (i, text) := J.bind (JudgmentLines.refusal c.E · (rs.map (·.1))) then
+      return status "rejected" ++ coded "UndeclaredEvaluative" text ++ [("sentence", toJson i)]
     pure (status "one" ++ [("ast", Json.arr (rs.map (·.1.encode)).toArray),
       ("conclusions", toJson ((List.range rs.length).filter fun i => (rs[i]?.map (·.2)).getD false)),
       ("derivation", Json.arr (← derivations G source).toArray),
@@ -509,12 +524,10 @@ def readingJson (r : EFormula × Bool × DState) : Json :=
   Json.mkObj [("formula", r.1.encode), ("mark", .bool r.2.1), ("referents", toJson r.2.2.referents),
     ("binder_seen", .bool r.2.2.binderSeen)]
 
-/-- Translation mode (base 4.3): the status counts the readings that have a meaning. A set that is not
-complete is a verdict only when it already has two readings (`many`); with fewer it is `budget`, never
-`none` or `one`: the parser stopped at the cap. -/
-def translation (c : Case) (cap : Nat) (source : String) : List (String × Json) :=
-  if let some f := c.overlayFailure then invalidOverlayFields "english.read" f else
-  match translateRequest c.E {} c.L cap workBudget source with
+/-- Format a translation outcome without running the translator again. The command reader uses this same
+formatter when a condition or proof sentence is refused. -/
+def translationOf (c : Case) (source : String) (outcome : TranslateOutcome) : List (String × Json) :=
+  match outcome with
   | .readings rs complete =>
     let found := [("readings", Json.arr (rs.map readingJson).toArray), ("complete", .bool complete)]
     if 2 ≤ rs.length then
@@ -528,6 +541,13 @@ def translation (c : Case) (cap : Nat) (source : String) : List (String × Json)
       ((lexicalSpan source r).toList.map fun s => ("span", spanJson s))
   | .notOneSentence => status "rejected" ++ coded "NotOneSentence" notOneSentenceText
   | .budget => budgetFields 0
+
+/-- Translation mode (base 4.3): the status counts the readings that have a meaning. A set that is not
+complete is a verdict only when it already has two readings (`many`); with fewer it is `budget`, never
+`none` or `one`: the parser stopped at the cap. -/
+def translation (c : Case) (cap : Nat) (source : String) : List (String × Json) :=
+  if let some f := c.overlayFailure then invalidOverlayFields "english.read" f else
+  translationOf c source (translateRequest c.E {} c.L cap workBudget source)
 
 /-- What every refusal of a reading adds (spec 4.4), in `english.read` and `senses.read` alike: the span of the
 sentence it names, or of the whole source when it names none (a lexical rejection already carries its
@@ -552,16 +572,17 @@ def refusalExtras (profiles : List String) (source : String) (fields : List (Str
 
 def readCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap"] ++
-    optionalFields j))
+    optionalFields j ++ (if (j.getObjVal? "judgments").toOption.isSome then ["judgments"] else [])))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   let source ← VE.Bridge.stringField j "source"
   let cap ← (← j.getObjVal? "cap").getNat?
+  let judgments ← judgmentsField j
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 source.toUTF8))] ++ c.identities)
   let fields ← match ← VE.Bridge.stringField j "mode" with
     | "authoring" => do
       unless cap == 2 do throw "InvalidInput: authoring mode reads at cap 2"
-      authoring c source
+      authoring c source judgments
     | "translation" => pure (translation c cap source)
     | m => throw s!"InvalidInput: unknown reading mode {m}"
   let fields := refusalExtras c.E.profiles source fields

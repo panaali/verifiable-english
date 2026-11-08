@@ -1,0 +1,384 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.Decode.Elaborated",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/Decode.lean:234"
+  },
+  {
+   "definition": "VE.Acts.Decode.Elaborated",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/Decode.lean:234"
+  },
+  {
+   "definition": "VE.Acts.Decode.Elaborated",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/Decode.lean:234"
+  },
+  {
+   "definition": "VE.Acts.Decode.Elaborated",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Acts.Decode.Elaborated",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/Decode.lean:234"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedDoc",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/DecodeTwins.lean:161, lean/VE/Acts/DecodeTwins.lean:168, lean/VE/Acts/DecodeTwins.lean:46"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedDoc",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/DecodeTwins.lean:161, lean/VE/Acts/DecodeTwins.lean:168, lean/VE/Acts/DecodeTwins.lean:46"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedDoc",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/DecodeTwins.lean:161, lean/VE/Acts/DecodeTwins.lean:168, lean/VE/Acts/DecodeTwins.lean:46"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedDoc",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedDoc",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Acts/DecodeTwins.lean:161, lean/VE/Acts/DecodeTwins.lean:168, lean/VE/Acts/DecodeTwins.lean:46"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "bool-flip",
+   "reason": "equivalent: the flip reads the frames of `actsProfiles false`, none; `ActsDoc.V` is read by no step of `elaborateMap` (act-phrases 6.3): each joined act's tree is the decoder's (`Norms.Wire.actsOf`, which reads the frames)"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "bool-flip",
+   "reason": "a proof term (`fill_eq_self`'s rewrite, and the profile flag `wfU` and `plain` are proved against): Lean refuses the mutant (unsolved goals, unexpected token)"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-drop-first",
+   "reason": "a proof term (`fill_eq_self`'s rewrite, and the profile flag `wfU` and `plain` are proved against): Lean refuses the mutant (unsolved goals, unexpected token)"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-drop-last",
+   "reason": "a proof term (`fill_eq_self`'s rewrite, and the profile flag `wfU` and `plain` are proved against): Lean refuses the mutant (unsolved goals, unexpected token)"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Acts.Decode.splitJson",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecoded",
+   "operator": "body-false",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/NormDefaults/Admission.lean:347) refuses the mutant"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecoded",
+   "operator": "body-true",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/NormDefaults/Admission.lean:347) refuses the mutant"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecodedIn",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lean:276"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecodedIn",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lean:276, lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecodedIn",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197, lean/VE/NormDefaults/Admission.lean:276, lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecodedIn",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.NormDefaults.Admission.SourceDecodedIn",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Admission.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerU",
+   "operator": "body-false",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/NormDefaults/Run.lean:297) refuses the mutant"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerU",
+   "operator": "body-true",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/NormDefaults/Run.lean:297) refuses the mutant"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerUIn",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerUIn",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerUIn",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerUIn",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.AdmissionAnswerUIn",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/NormDefaults/Run.lean:197"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.decodeSourceUWith",
+   "operator": "bool-flip",
+   "reason": "the base's `flags` and `displayConstants` arguments (`decodeSource env' norms true true`), unchanged, on the line this item extends with `joined`; `joined` itself is pinned by the seeded bugs `profiled-joined` and `plain-joined` (KILLED)"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecoded",
+   "operator": "body-false",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/Norms/Admission.lean:475) refuses the mutant"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecoded",
+   "operator": "body-true",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/Norms/Admission.lean:475) refuses the mutant"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecodedIn",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Admission.lean:317, lean/VE/Norms/Admission.lean:408"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecodedIn",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Admission.lean:317, lean/VE/Norms/Admission.lean:408"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecodedIn",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Admission.lean:317, lean/VE/Norms/Admission.lean:408"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecodedIn",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Admission.SourceDecodedIn",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Admission.lean:317"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswer",
+   "operator": "body-false",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/Norms/Run.lean:203) refuses the mutant"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswer",
+   "operator": "body-true",
+   "reason": "the base's name for the `In` form at the route's decoder: the original theorem that states it (the `Type mismatch` at lean/VE/Norms/Run.lean:203) refuses the mutant"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswerIn",
+   "operator": "and-or",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Run.lean:123"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswerIn",
+   "operator": "body-false",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Run.lean:123"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswerIn",
+   "operator": "body-true",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Run.lean:123"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswerIn",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Run.AdmissionAnswerIn",
+   "operator": "eq-ne",
+   "reason": "a Prop no check can evaluate: it states the route's admission or the twins of act-phrases 6.4, and only proofs read it; the proofs it breaks: lean/VE/Norms/Run.lean:123"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "body-true",
+   "reason": "equivalent: on a document without acts@0 `flaggedSource` elaborates nothing (`Norms.Wire.joinedActs` reads no tree, `sourceOf_lexical`), so it gives the source byte for byte; `underActs` only keeps such a case off the elaborator"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "list-drop-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Run.underActs",
+   "operator": "list-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsFixed",
+   "operator": "append-left",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsFixed",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsOf",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsVocab",
+   "operator": "list-drop-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsVocab",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsVocab",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsVocab",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.actsVocab",
+   "operator": "list-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.canonicalShape",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.canonicalShape",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeFlagged",
+   "operator": "bool-flip",
+   "reason": "`flags := true` is the norms route's own decoder as the base's theorems state it: the proofs it breaks: lean/VE/Norms/Flagged.lean:398, lean/VE/Norms/Flagged.lean:403, lean/VE/Norms/Flagged.lean:416, lean/VE/Norms/Flagged.lean:420, lean/VE/Norms/Flagged.lean:428; the route under acts@0 reads `decodeElaboratedFlagged`, whose `flags := true` the seeded bug `flags-refused` kills"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "bool-flip",
+   "reason": "the flip of `joined`'s default is refuted by the fixtures that read the default (UNKNOWN only because those #guards elaborate the default it changes: ActsExamples.lean:60, Readings/ActsExamples.lean:57, DecodeExamples.lean:224; seeded bugs `environment-joined`, `source-lexical` KILLED); the flip of `displayConstants := true` is the base's default on the signature line this item extends with `joined`, unchanged by it"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "list-drop-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "list-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeRegulatedShape",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeRegulatedShape",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeSource",
+   "operator": "bool-flip",
+   "reason": "the flip of `joined`'s default is refuted by the fixtures that read the default (UNKNOWN only because those #guards elaborate the default it changes: ActsExamples.lean:60, Readings/ActsExamples.lean:57, DecodeExamples.lean:224; seeded bugs `environment-joined`, `source-lexical` KILLED); the flip of `displayConstants := true` is the base's default on the signature line this item extends with `joined`, unchanged by it"
+  },
+  {
+   "definition": "VE.Norms.Wire.joinedActs",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Norms.Wire.joinedActs",
+   "operator": "list-first",
+   "reason": "equivalent: the profiles read here are [] or a sorted unique list that holds acts@0 and norms@0 (`Norms.Wire.readsActs`, `actsProfiles`); acts@0 sorts before every other profile and norms@0 after it, so the cut list is empty exactly when the list is, its first element is acts@0 and its last never is"
+  },
+  {
+   "definition": "VE.Readings.Wire.lexicalAct",
+   "operator": "body-false",
+   "reason": "refuted by `VE.Readings.ActsExamples` (line 42: a lexical act's reading set) and `VE.Service.ActsExamples` (`lexicalAct` on both sides); UNKNOWN only because that guard reads `abstention`, which reads the mutated definition; seeded bugs `lexical-act-true` and `lexical-act-first` KILLED"
+  },
+  {
+   "definition": "VE.Readings.Wire.lexicalAct",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, `≤` on a proposition's `=`, or an operator that splits a `fun` argument (failed to synthesize, Type mismatch, Function expected, Invalid projection, Application type mismatch)"
+  }
+ ]
+}

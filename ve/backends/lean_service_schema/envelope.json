@@ -110,7 +110,8 @@
           "calc",
           "cardinality",
           "scope",
-          "senses.project"
+          "senses.project",
+          "english.command"
         ]
       },
       "protocol": {"const": 2},
