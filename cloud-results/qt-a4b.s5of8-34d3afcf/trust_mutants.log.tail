@@ -1,0 +1,21 @@
+trust_mutants: 20 definitions, 404 mutants (50 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Cardinality/Wire.lean:22 VE.Cardinality.Wire.chainProfiles (D[V], trusted) list-empty: ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] -> []
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) append-right: ("cardinality@0" :: ·) ++ ->  (lean/VE/Cardinality/Wire.lean:68: Application type mismatch: The argument)
+UNKNOWN lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-empty: doc.fences -> [] (lean/VE/Service/Document.lean:2441: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Service/Document.lean:2283 VE.Service.Document.countingFront (D[V], trusted) list-empty: (fields front).map (·.filter fun kv => !["open_terms", "reading_sets", "narrowings"].contains kv.1) -> [] (lean/VE/Service/Document.lean:2283: Type mismatch)
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-empty: ("cardinality@0" :: ·) -> [] (lean/VE/Cardinality/Wire.lean:68: Application type mismatch: The argument)
+UNKNOWN lean/VE/Service/Document.lean:2283 VE.Service.Document.countingFront (D[V], trusted) list-empty: (·.filter -> (fun x_tm => [] (lean/VE/Service/Document.lean:2283: Function expected at)
+UNKNOWN lean/VE/Service/Document.lean:2296 VE.Service.Document.chainFront (D[V], trusted) list-empty: (listedProfiles environment).filter (· != "cardinality@0") -> [] (lean/VE/Service/Document.lean:2296: typeclass instance problem is stuck, it is often due to metav...)
+SURVIVOR lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-empty: ["order@0", "relational-fol@0", "time@0"] -> []
+SURVIVOR lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-drop-last: VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) ++ [chainProfiles] -> ((VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) ++ [chainProfiles]).dropLast)
+UNKNOWN lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) all-any: all -> any (lean/VE/Discourse/ComposeExamples.lean:126: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) or-and: || -> && (lean/VE/Discourse/ComposeExamples.lean:126: Expression (Lean could not elaborate it in the probe))
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-drop-last: doc.fences -> (doc.fences.dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-first: g.leaves -> (g.leaves.take 1)
+SURVIVOR lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-drop-last: ["order@0", "relational-fol@0", "time@0"] -> (["order@0", "relational-fol@0", "time@0"].dropLast)
+trust_mutants: 24 KILLED, 6 SURVIVOR, 8 UNKNOWN, 5 INVALID, 0 ALLOWED, 7 NOT RUN, 354 OTHER SHARD in 5106 s
+trust_mutants: D[V], trusted: 14 KILLED, 6 SURVIVOR, 8 UNKNOWN, 5 INVALID, 4 NOT RUN, 237 OTHER SHARD
+trust_mutants: G[V], trusted: 10 KILLED, 3 NOT RUN, 112 OTHER SHARD
+trust_mutants: S, trusted: 5 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 7 of its 50 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.3 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.4 s, control_probes 1999.2 s, mutants 3086.2 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 5148.2 s (18), mutant_builds 1418.3 s (47), mutant_checks 6413.1 s (31), stage_controls 1246.5 s (6), mutant_probes 2875.4 s (30)
