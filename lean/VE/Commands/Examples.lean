@@ -2,7 +2,7 @@ import VE.Commands.Read
 import VE.EnglishGrammar.E2Examples
 
 /-! The fixtures of docs/spec/commands-imperatives.md section 5: the W rows over `E_web`
-(F0's rows and the other 50 web segments are ci-1b's), and each limit at its boundary. -/
+(F0's rows and the other 50 web segments are ci-1c's), and each limit at its boundary. -/
 
 namespace VE.Commands.Examples
 
@@ -291,6 +291,44 @@ def extraEnv : Json :=
 #guard read (webWith (some ("user", "reader")) [("the key", "token1"), ("the token", "token1")])
     "Do not share the token." == .one ⟨.forbid, "share_permitted", [⟨"token1", "the token"⟩], .top⟩
 #guard (readingsOf ⟨.require, "x", none⟩ [("a", []), ("b", [])] [.top, .bottom]).length == 4
+
+/-! ## `readCommand_typed`'s `hw` (reviews/dri-decisions-20261102-ci-1.md item 1): every fixture environment passes
+`jsonWF?`, so `hw` excludes none; over the one misordered raw tree below, which fails it, the statement without `hw` is
+false, and `declared` is too -/
+
+#guard [E_web, webWith none definitesWeb, webWith (some ("control", "assistant")) definitesWeb,
+  webWith (some ("user", "reader")) [("the Token", "token1"), ("the token", "token1")],
+  webWith (some ("user", "reader")) [("the key", "token1"), ("the token", "token1")],
+  envWith 1, envWith 2, goSorts, goCase, extraEnv].all VE.Scope.jsonWF?
+
+/-- `arguments` twice: `getObjVal?` finds the first, and `Json.mkObj (fields entry)` keeps the second. -/
+def rawShare : String × Json :=
+  ("share_permitted",
+    match (permission "share_permitted" ["user", "token"] "{0} share {1}").2 with
+    | .obj kvs =>
+      let l : Std.TreeMap.Raw String Json compare :=
+        Std.TreeMap.Raw.ofList [("arguments", Lean.toJson ["user", "token"])] compare
+      let r : Std.TreeMap.Raw String Json compare := Std.TreeMap.Raw.ofList
+        [("regulated", kvs["regulated"]?.getD .null), ("arguments", Lean.toJson ["user", "control"])] compare
+      .obj ⟨⟨.inner 4 "description" (.str "x") l.inner.inner r.inner.inner⟩⟩
+    | _ => .null)
+
+def rawEnv : Json := envOf ["user", "control", "ledger", "text", "reading", "token"]
+    (actsWeb.filter (·.1 != "share_permitted") ++ [rawShare])
+    [("reader", "user"), ("draft", "reading"), ("assistant", "control"), ("calls", "ledger"),
+     ("question1", "text"), ("meaning1", "text"), ("token1", "token")]
+    "webapp-copy" (some ("user", "reader")) definitesWeb
+
+#guard !VE.Scope.jsonWF? rawEnv
+#guard match decodeSpeechEnvironmentFull rawEnv, lexOf E_web with
+  | .ok se, .ok (E, L) =>
+    !declared se &&
+    match readCommand se se.scope E L workBudget "Do not share the token." with
+    | .one r =>
+      let D : VE.SpeechActs.SpeechDoc := ⟨se.ne.rv.environment, [], se.scope, se.ne.regulated, [], [], [], [], []⟩
+      VE.SpeechActs.scopeOk D && !VE.SpeechActs.commandOk D (r.command "u")
+    | _ => false
+  | _, _ => false
 
 /-- The outcome of readings of these formulas, each with its mark. -/
 def outcomeOf (rs : List (VE.EnglishGrammar.EFormula × Bool)) : TranslateOutcome :=
