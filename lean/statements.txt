@@ -34973,6 +34973,19 @@ theorem VE.Readings.choiceX_softX
     VE.Readings.choiceX N c = VE.Defaults.softX (VE.Readings.choiceU N c) (VE.Readings.choiceSoft N c) []
   -- uses VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceSoft@VE.Readings.DefaultVerdicts VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults
   -- expr 2839538451
+theorem VE.Readings.choiceX_up
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Norms.Sat (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)) (VE.Readings.choiceX N c) ↔
+                    VE.Norms.Sat B₀ (VE.Readings.choiceX N c))
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1351659625
 theorem VE.Readings.choice_E
   ∀ {D : VE.Readings.Doc} (c : VE.Readings.Choice), (VE.Readings.choiceDoc D c).fst.soft.E = D.frame.soft.E
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree
@@ -35525,6 +35538,21 @@ theorem VE.Readings.conflictFree_empty
   ∀ {Dd : VE.Norms.Doc}, VE.Norms.Valid Dd → ∀ (B : VE.Structure), ¬Nonempty B.Carrier → VE.Norms.ConflictFree Dd B
   -- uses VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 371989434
+theorem VE.Readings.conflictFree_pullF
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      (VE.Norms.ConflictFree (VE.NormDefaults.fill (VE.Readings.supU N)) B ↔
+                        VE.Norms.ConflictFree (VE.NormDefaults.fill (VE.Readings.choiceU N c)) (VE.Readings.pullF N c B))
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Structure@VE.Semantics
+  -- expr 253015992
 theorem VE.Readings.conflictRowItems_label
   ∀ (ke : Nat × Lean.Json) (x : VE.Readings.PlanItem),
     x ∈ VE.Readings.conflictRowItems ke →
@@ -35561,6 +35589,22 @@ theorem VE.Readings.conflict_canon_valid
                         r.name Bool.false)
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.conflict@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3982993821
+theorem VE.Readings.conflict_fill_v
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Norms.Valid (VE.NormDefaults.fill U) →
+      ∀ {B : VE.Structure},
+        VE.Norms.ConstantsTyped (VE.NormDefaults.fill U) B →
+          ∀ {r : VE.Norms.Regulated},
+            r ∈ U.D.T.regulated →
+              ∀ (vs : List B.Carrier),
+                VE.TupleTyped B r.sorts vs →
+                  (VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.conflict (VE.NormDefaults.fill U) r) ↔
+                    VE.Norms.DecidesD (VE.NormDefaults.fill U).T (VE.SoftNorms.canon (VE.NormDefaults.fill U) B)
+                        (VE.Norms.tupleVal vs) r.name Bool.true ∧
+                      VE.Norms.DecidesD (VE.NormDefaults.fill U).T (VE.SoftNorms.canon (VE.NormDefaults.fill U) B)
+                        (VE.Norms.tupleVal vs) r.name Bool.false)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.conflict@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3064811812
 theorem VE.Readings.conj_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (l : List VE.Formula),
     VE.Formula.denote S ρ (VE.Readings.conj l) ↔ ∀ (a : VE.Formula), a ∈ l → VE.Formula.denote S ρ a
@@ -36273,6 +36317,19 @@ theorem VE.Readings.documentExpansion_canon
               (VE.Formula.denote S [] ψ ↔ VE.Formula.denote (VE.SoftNorms.canon D B) [] ψ)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2745152529
+theorem VE.Readings.dropUnsaid_admissible
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Readings.dropUnsaid N B₀).Admissible
+                    (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.choiceDoc N.D c).fst.soft) 0)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.dropUnsaid@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3795236272
 theorem VE.Readings.drop_append_ascii
   ∀ (p t : String), VE.Readings.AsciiL p.data → (p ++ t).drop p.length = t
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
@@ -36369,6 +36426,20 @@ theorem VE.Readings.encodes_unique
                       VE.Readings.complete D c' = Bool.true → VE.Readings.Encodes D c' B → c' = c
   -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.complete@VE.Readings.Choice VE.Readings.slotP@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Structure@VE.Semantics
   -- expr 1397100105
+theorem VE.Readings.encodes_unique_slot
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (B : VE.Structure),
+            VE.Norms.Sat B (VE.Readings.slotP D) →
+              ∃ c,
+                VE.Readings.Compatible D c ∧
+                  VE.Readings.Encodes D c B ∧
+                    ∀ (c' : VE.Readings.Choice),
+                      VE.Readings.complete D c' = Bool.true → VE.Readings.Encodes D c' B → c' = c
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.complete@VE.Readings.Choice VE.Readings.slotP@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Structure@VE.Semantics
+  -- expr 269348921
 theorem VE.Readings.endPos_data
   ∀ (s : String), s.endPos.byteIdx = String.utf8ByteSize.go s.data
   -- uses
@@ -36414,6 +36485,14 @@ theorem VE.Readings.envAt_fill_mono_lite
           (VE.Norms.envAt (VE.NormDefaults.fill U) k).predicates n = Option.some ss
   -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
   -- expr 3086908158
+theorem VE.Readings.envAt_fill_off_lite
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Readings.FillLite U →
+      ∀ (k : Nat) {p : String},
+        ¬p ∈ VE.NormDefaults.unsaidNames U →
+          (VE.Norms.envAt (VE.NormDefaults.fill U) k).predicates p = (VE.Norms.envAt U.D k).predicates p
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
+  -- expr 1625026294
 theorem VE.Readings.envAt_filledAuthor
   ∀ (N : VE.Readings.NDoc) (X : VE.Rights.RightsDoc),
     VE.Readings.KeepsFrame N.D X →
@@ -37940,6 +38019,14 @@ theorem VE.Readings.fuel_relax
     VE.SoftNorms.fuel (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.fuel C
   -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree
   -- expr 809100429
+theorem VE.Readings.fullF_nameMap
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} {p : String} {ss : List String},
+        (VE.NormDefaults.fill (VE.Readings.choiceU N c)).E.predicates p = Option.some ss →
+          (VE.NormDefaults.fill (VE.Readings.supU N)).E.predicates (VE.Readings.nameMap N.D c p) = Option.some ss
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.nameMap@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 3820694374
 theorem VE.Readings.gapF_fill_v
   ∀ {U : VE.NormDefaults.UDoc},
     VE.Norms.Valid (VE.NormDefaults.fill U) →
@@ -39621,6 +39708,27 @@ theorem VE.Readings.outcome_canon_valid
                         r.name Bool.true)
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1105199388
+theorem VE.Readings.outcome_pullF
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      ∀ {q : VE.Norms.Regulated},
+                        q ∈ (VE.Readings.supU N).D.T.regulated →
+                          ∀ (vs : List B.Carrier),
+                            VE.TupleTyped B q.sorts vs →
+                              (VE.Formula.denote B (VE.Norms.tupleVal vs)
+                                  (VE.Norms.outcomeBase (VE.NormDefaults.fill (VE.Readings.supU N)) q.name) ↔
+                                VE.Formula.denote (VE.Readings.pullF N c B) (VE.Norms.tupleVal vs)
+                                  (VE.Norms.outcomeBase (VE.NormDefaults.fill (VE.Readings.choiceU N c)) q.name))
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2595938925
 theorem VE.Readings.outweighsName_soft
   ∀ (a L H : String), (VE.SoftNorms.outweighsName a L H).startsWith "soft__" = Bool.true
   -- uses VE.SoftNorms.outweighsName@VE.SoftNorms.Tree
@@ -40167,6 +40275,18 @@ theorem VE.Readings.providedItems_only
     x ∈ VE.Readings.providedItems D ls → ∀ (l : String), x.label? = Option.some l → l ∈ ls
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.providedItems@VE.Readings.VerdictsWire
   -- expr 1845954944
+theorem VE.Readings.pullF_admissible
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B : VE.Structure),
+                B.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.supU N)) 0) →
+                  (VE.Readings.pullF N c B).Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0)
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1352052654
 theorem VE.Readings.pullF_canon
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -40240,6 +40360,15 @@ theorem VE.Readings.pullF_denote_frame
           ∀ (ρ : VE.Valuation S), VE.Formula.denote S ρ φ ↔ VE.Formula.denote (VE.Readings.pullF N c S) ρ φ
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2899933695
+theorem VE.Readings.pullF_literals
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} (B : VE.Structure),
+        VE.Norms.Sat B (VE.Norms.backgroundBase (VE.NormDefaults.fill (VE.Readings.supU N))) →
+          VE.Norms.Sat (VE.Readings.pullF N c B)
+            (VE.Norms.backgroundBase (VE.NormDefaults.fill (VE.Readings.choiceU N c)))
+  -- uses VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Structure@VE.Semantics
+  -- expr 1972009069
 theorem VE.Readings.pullF_pull
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -40258,6 +40387,38 @@ theorem VE.Readings.pullF_unsaid
               S.relation (VE.NormDefaults.unsaidName p) vs
   -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc.unspec@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 845482146
+theorem VE.Readings.pullF_up
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  ∀ (φ : VE.Formula) (Γ : List String),
+                    VE.Formula.WellFormed
+                        (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                          (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c))))
+                        Γ φ →
+                      ∀ (ρ : VE.Valuation B₀),
+                        VE.Formula.denote (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)) ρ φ ↔
+                          VE.Formula.denote B₀ ρ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2943011261
+theorem VE.Readings.pullF_upB
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  ∀ (p : String) (vs : List B₀.Carrier),
+                    (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)).relation p vs ↔ B₀.relation p vs
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3748178223
 theorem VE.Readings.pull_admissible
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -40765,6 +40926,21 @@ theorem VE.Readings.scanOthers_eq
       (want && Gs.any fun G => valid G && hits G, adm || Gs.any valid)
   -- uses VE.Readings.scanOthers@VE.Readings.Scan
   -- expr 97539792
+theorem VE.Readings.sd_superpose_conflict_free
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate N.D x.fst x.snd).isSome = Bool.true) →
+              (VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.supU N)
+                  (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) ↔
+                ∀ (c : VE.Readings.Choice),
+                  VE.Readings.Compatible N.D c →
+                    (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                      VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c))
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice
+  -- expr 3844361600
 theorem VE.Readings.search_eq
   ∀ (D : VE.Readings.Doc) (L : List VE.Readings.ReadingSet) (pre : VE.Readings.Choice) (b : Nat),
     VE.Readings.search D L pre b = List.take b (VE.Readings.allFrom D L pre)
@@ -40845,6 +41021,19 @@ theorem VE.Readings.selects_fill_fuel_lite
             VE.Norms.SelectsD U.D.T S ρ (VE.Norms.fuel U.D.T) N)
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.SelectsD@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Readings.AuthorLite@VE.Readings.SupFill VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 1570477413
+theorem VE.Readings.selects_fill_wf
+  ∀ {U : VE.NormDefaults.UDoc} {Z : VE.SoftNorms.SoftDoc},
+    U.D = VE.SoftNorms.soften Z →
+      VE.Norms.Valid (VE.NormDefaults.fill U) →
+        ∀ {K : VE.SoftNorms.SoftNode},
+          K ∈ Z.T.nodes →
+            K.pred ∈ List.map (fun x => x.name) Z.T.regulated →
+              VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U)))
+                (VE.SoftNorms.sortsOf Z K.pred).reverse
+                (VE.Norms.selects (VE.NormDefaults.fill U).T (VE.Norms.fuel (VE.NormDefaults.fill U).T)
+                  (VE.SoftNorms.primeNode Z K))
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Norms.selects@VE.Norms.Elaborate VE.Norms.size@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 2156766112
 theorem VE.Readings.selects_iff
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -41643,6 +41832,13 @@ theorem VE.Readings.sortsOf_choice
     VE.SoftNorms.sortsOf (VE.Readings.choiceDoc D c).fst.soft p = VE.SoftNorms.sortsOf (VE.Readings.sup D).fst.soft p
   -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 792238572
+theorem VE.Readings.sortsOf_choiceU
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} (p : String),
+        VE.NormDefaults.sortsOf (VE.Readings.choiceU N c).D p = VE.NormDefaults.sortsOf (VE.Readings.supU N).D p
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.sortsOf@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 3244860492
 theorem VE.Readings.sortsOf_eq
   ∀ {D : VE.Readings.Doc} (c : VE.Readings.Choice) (p : String),
     VE.SoftNorms.sortsOf (VE.Readings.sup D).fst.soft p = VE.SoftNorms.sortsOf (VE.Readings.choiceDoc D c).fst.soft p
@@ -42816,6 +43012,10 @@ theorem VE.Readings.unsaid_ascii
   VE.Readings.AsciiL "unsaid--".data
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
   -- expr 1854607218
+theorem VE.Readings.unsaid_not_bit
+  ∀ (D : VE.Readings.Doc) (q : String), ¬VE.Readings.IsBit D (VE.NormDefaults.unsaidName q)
+  -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.IsBit@VE.Readings.BaseUp
+  -- expr 1745946405
 theorem VE.Readings.unsaid_not_decision
   ∀ (X : VE.SoftNorms.SoftDoc) (p : String), ¬VE.NormDefaults.unsaidName p ∈ VE.SoftNorms.decisionNames X
   -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
@@ -42836,6 +43036,18 @@ theorem VE.Readings.upB_admissible
               (VE.Readings.upB D c B₀ e).Admissible (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.sup D).fst.soft) 0)
   -- uses VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.upB@VE.Readings.BaseUp VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 681371567
+theorem VE.Readings.upB_admissibleF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Readings.upB N.D c B₀ e).Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.supU N)) 0)
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4202825741
 theorem VE.Readings.upB_coh
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
