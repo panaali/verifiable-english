@@ -1,0 +1,46 @@
+{
+ "item": "me-7-signflip-bits",
+ "note": "Each mutant was planted in lean/VE/Calc/Stats.lean, run with `lake build VE.Calc.StatsExamples` and `uv run pytest -q tests/test_calc_stats.py`, then restored with git checkout. Guard lines are lean/VE/Calc/StatsExamples.lean's at the final HEAD. When a #guard fails, pytest cannot start (its fixture builds VE), so M1 was also run with those six guards commented out to show the Python tests catch it alone.",
+ "seeded": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipWork",
+   "language": "Lean",
+   "bug": "the charge reverted to the length only: n + 2^n * (n + 1)",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:56, :57, :58 (d16, the empty list), :65 (big16 refused), :66 (big12 refused), :67 (big12 boundary) fail; with those guards commented out, tests/test_calc_stats.py::test_fixture[sign-flip-16], [sign-flip-short], [sign-flip-empty], [sign-flip-big16], [sign-flip-big12] and test_sign_flip_charge_covers_work[d12], [v6], [synthetic], [coprime], [primes] fail (10 failed, 24 passed)"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipWork",
+   "language": "Lean",
+   "bug": "the denominator bits dropped: 0 * bits L instead of 2 * bits L",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:66 (big12: 1,000-bit numerators over 2,000-bit denominators, refused) and :67 fail, with :56, :57, :58, :65 (their charges change)"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipWork",
+   "language": "Lean",
+   "bug": "the numerator bits dropped: 0 * A instead of A",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:65 (big16: sixteen 2,000-bit integers, refused) fails, with :56, :57, :66, :67"
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipC",
+   "language": "Lean",
+   "bug": "the limit check is strict (signFlipWork d < limit), refusing a case whose charge equals the limit",
+   "test": "signFlipC_sound (Stats.lean:164) and signFlipC_complete (Stats.lean:168) no longer prove (lake build VE.Calc.StatsExamples: unsolved goals at Stats.lean:165 and :169)"
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/Calc/Stats.lean",
+   "definition": "signFlipWork",
+   "language": "Lean",
+   "bug": "the denominators' maximum instead of their least common multiple (under-charges coprime denominators)",
+   "test": "#guard lean/VE/Calc/StatsExamples.lean:66 (big12 refused) and :67 (big12 boundary) fail"
+  }
+ ]
+}
