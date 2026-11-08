@@ -1,6 +1,7 @@
 import VE.SpeechActs.Wire
 import VE.EnglishGrammar.Run
 import VE.Commands.Texts
+import VE.Scope.Theorems
 
 /-! The Lean command reader (docs/spec/commands-imperatives.md sections 1 to 4): a wording of the merged forms, read
 against a decoded speech environment, its scope and english-lean's lexicon. It has no caller until `english.command`
@@ -289,7 +290,7 @@ def declared (se : SpeechEnvironment) : Bool :=
 def Texts.classOf (code : String) : Option String :=
   (Texts.codeClasses.lookup code).orElse fun _ => VE.EnglishGrammar.Run.codeClasses.lookup code
 
-/-! ## The statements (section 3); the others are ci-1b's -/
+/-! ## The statements (section 3) -/
 
 theorem mem_dedup {α : Type} [BEq α] [LawfulBEq α] : ∀ (n : Nat) (l : List α), l.length ≤ n →
     ∀ a, a ∈ l.eraseDups ↔ a ∈ l
@@ -573,6 +574,298 @@ theorem candidate_reads_back (r : Reading) (hr : r ∈ candidates se sc E L b s)
       simp only [hact, Option.bind_some, Option.getD_some] at hv ht
       exact ⟨p, g', a', t, rfl, rfl, hreg, hn, hrole, hact, hv, ht, hf⟩
 
+/-! ### The guard, fill and refusal statements (ci-1b) -/
+
+theorem eraseDups_nodup {α : Type} [BEq α] [LawfulBEq α] : ∀ (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.Nodup
+  | _, [], _ => by simp
+  | 0, _ :: _, h => by simp at h
+  | n + 1, x :: xs, h => by
+    have hf := List.length_filter_le (fun b => !b == x) xs
+    have hl : (xs.filter fun b => !b == x).length ≤ n := by simp at h; omega
+    rw [List.eraseDups_cons, List.nodup_cons]
+    exact ⟨fun hm => by simpa using (List.mem_filter.mp ((mem_dedup n _ hl _).mp hm)).2, eraseDups_nodup n _ hl⟩
+
+/-- Every fill of a tuple comes from its slot's fills. -/
+theorem mem_tuples : ∀ {xss : List (List Fill)} {fs : List Fill}, fs ∈ tuples xss → ∀ f ∈ fs, ∃ xs ∈ xss, f ∈ xs
+  | [], fs, h, f, hf => by simp [tuples] at h; simp [h] at hf
+  | xs :: rest, fs, h, f, hf => by
+    simp only [tuples, List.mem_flatMap, List.mem_map] at h
+    obtain ⟨x, hx, ys, hys, rfl⟩ := h
+    rcases List.mem_cons.mp hf with rfl | hf
+    · exact ⟨xs, List.mem_cons_self, hx⟩
+    · obtain ⟨zs, hz, hm⟩ := mem_tuples hys f hf
+      exact ⟨zs, List.mem_cons_of_mem _ hz, hm⟩
+
+theorem mem_candidates {r : Reading} (hr : r ∈ candidates se sc E L b s) :
+    ∃ p a fs g, parts s = some p ∧ (a, fs) ∈ actMatches se sc s ∧
+      g ∈ guardList (conditionOf se E L b p (actMatches se sc s)) ∧ r = ⟨p.force, a, fs, g⟩ := by
+  unfold candidates at hr
+  cases hp : parts s with
+  | none => simp [hp] at hr
+  | some p =>
+    simp only [hp, readingsOf, List.mem_flatMap, List.mem_map] at hr
+    obtain ⟨⟨a, fs⟩, hm, g, hg, rfl⟩ := hr
+    exact ⟨p, a, fs, g, rfl, hm, hg, rfl⟩
+
+theorem candidate_guard (r : Reading) (hr : r ∈ candidates se sc E L b s) :
+    match (parts s).bind (·.condition) with
+    | none => r.guard = .top
+    | some c => r.guard ∈ guardsOf se E L b c := by
+  obtain ⟨p, a, fs, g, hp, hm, hg, rfl⟩ := mem_candidates se sc E L b s hr
+  cases hms : actMatches se sc s with
+  | nil => simp [hms] at hm
+  | cons x xs =>
+    rw [hms] at hg
+    cases hc : p.condition with
+    | none => simpa [hp, hc, conditionOf, guardList] using hg
+    | some c => simpa [hp, hc, conditionOf, guardsOf] using hg
+
+/-- A fill is a constant's own name or a phrase the scope binds to it (CI-4 adds the spelling). -/
+theorem candidate_fills (r : Reading) (hr : r ∈ candidates se sc E L b s) :
+    ∀ f ∈ r.fills, f.words = f.const ∨ (f.words, f.const) ∈ sc.definites := by
+  obtain ⟨p, a, fs, g, hp, hm, _, rfl⟩ := mem_candidates se sc E L b s hr
+  simp only [actMatches, hp] at hm
+  obtain ⟨g', hg, _, _⟩ := mem_ofForce hm
+  obtain ⟨_, _, ht, _⟩ := mem_phraseMatches hg
+  intro f hf
+  obtain ⟨xs, hxs, hfx⟩ := mem_tuples ht f hf
+  obtain ⟨srt, _, rfl⟩ := List.mem_map.mp hxs
+  exact (mem_slotFills hfx).2
+
+theorem bind_condition {c : String} (hc : (parts s).bind (·.condition) = some c) :
+    ∃ p, parts s = some p ∧ p.condition = some c := by
+  cases hp : parts s with
+  | none => simp [hp] at hc
+  | some p => exact ⟨p, rfl, by simpa [hp] using hc⟩
+
+/-- A faulted condition with one act match: the wording has no candidate and the refusal reads the fault. -/
+theorem readCommand_fault {c : String} {f : GuardFault} (hl : withinLimits se sc s = true)
+    (hc : (parts s).bind (·.condition) = some c) (hg : guardOf se E L b c = .error f)
+    (hf : guardList (.error f) = []) (hm : (actMatches se sc s).length = 1) :
+    ∃ p, parts s = some p ∧
+      readCommand se sc E L b s = refusalOf s p (phraseMatches se sc p.body) (actMatches se sc s) (.error f) := by
+  obtain ⟨p, hp, hpc⟩ := bind_condition s hc
+  match hms : actMatches se sc s, hm with
+  | [x], _ =>
+    have hgr : conditionOf se E L b p [x] = .error f := by simp [conditionOf, hpc, hg]
+    refine ⟨p, hp, ?_⟩
+    rw [readCommand_read se sc E L b s hp hl, hms, hgr]
+    simp [candidates, hp, hms, hgr, hf, readingsOf]
+
+/-- Exhaustion is `limit`, never a refusal and never "no reading" (verdicts are three-valued). -/
+theorem guard_limit (c : String) (hc : (parts s).bind (·.condition) = some c)
+    (hg : guardOf se E L b c = .error .limit) (hm : (actMatches se sc s).length = 1) :
+    readCommand se sc E L b s = .limit := by
+  obtain ⟨p, hp, _⟩ := bind_condition s hc
+  cases hl : withinLimits se sc s with
+  | false => simp [readCommand, parts_prefix hp, hl]
+  | true =>
+    obtain ⟨_, _, h⟩ := readCommand_fault se sc E L b s hl hc hg rfl hm
+    rw [h]
+    match hms : actMatches se sc s, hm with
+    | [x], _ => rfl
+
+/-- An unread condition refuses with english-lean's code and text. -/
+theorem guard_unread (c code text : String) (hl : withinLimits se sc s = true)
+    (hc : (parts s).bind (·.condition) = some c) (hg : guardOf se E L b c = .error (.unread code text))
+    (hm : (actMatches se sc s).length = 1) :
+    readCommand se sc E L b s = .refused code text := by
+  obtain ⟨_, _, h⟩ := readCommand_fault se sc E L b s hl hc hg rfl hm
+  rw [h]
+  match hms : actMatches se sc s, hm with
+  | [x], _ => rfl
+
+theorem outcome_ambiguous {c : String} {o : TranslateOutcome} {gs : List VE.Formula}
+    (h : guardOfOutcome se E L c o = .error (.ambiguous gs)) : gs.Nodup ∧ 2 ≤ gs.length := by
+  cases o with
+  | readings rs complete =>
+    simp only [guardOfOutcome] at h
+    split at h
+    · cases h
+    split at h
+    · cases h
+    split at h
+    · cases h
+    rename_i ys _
+    have hn := eraseDups_nodup _ ys (Nat.le_refl _)
+    cases he : ys.eraseDups with
+    | nil => simp [he, unreadOf] at h
+    | cons x xs =>
+      cases xs with
+      | nil => simp [he] at h
+      | cons y zs =>
+        simp only [he, Except.error.injEq, GuardFault.ambiguous.injEq] at h
+        subst h
+        exact ⟨he ▸ hn, by simp⟩
+  | invalidGrammar _ | lexical _ | notOneSentence => simp [guardOfOutcome, unreadOf] at h
+  | budget => simp [guardOfOutcome] at h
+
+/-- An ambiguous condition is never a silent choice: every guard is a reading. -/
+theorem guard_ambiguous (c : String) (gs : List VE.Formula) (m : String × List Fill)
+    (hl : withinLimits se sc s = true) (hc : (parts s).bind (·.condition) = some c)
+    (hg : guardOf se E L b c = .error (.ambiguous gs)) (hm : m ∈ actMatches se sc s)
+    (hn : (candidates se sc E L b s).eraseDups.length ≤ VE.SpeechActs.Wire.readingsBound) :
+    ∃ rs, readCommand se sc E L b s = .many rs ∧ ∀ g ∈ gs, ∃ r ∈ rs, r.guard = g := by
+  obtain ⟨p, hp, hpc⟩ := bind_condition s hc
+  obtain ⟨hnd, hlen⟩ := outcome_ambiguous se E L hg
+  have hr : ∀ g ∈ gs, (⟨p.force, m.1, m.2, g⟩ : Reading) ∈ (candidates se sc E L b s).eraseDups := by
+    intro g hgm
+    refine (mem_dedup _ _ (Nat.le_refl _) _).mpr ?_
+    cases hms : actMatches se sc s with
+    | nil => simp [hms] at hm
+    | cons x xs =>
+      have hgr : conditionOf se E L b p (x :: xs) = .error (.ambiguous gs) := by simp [conditionOf, hpc, hg]
+      simp only [candidates, hp, hms, hgr, guardList, readingsOf, List.mem_flatMap, List.mem_map]
+      exact ⟨m, by rw [← hms]; exact hm, g, hgm, rfl⟩
+  match gs, hlen, hnd, hr with
+  | g1 :: g2 :: rest, _, hnd, hr =>
+    have h1 := hr g1 (by simp)
+    have h2 := hr g2 (by simp)
+    have hne : g1 ≠ g2 := fun h => by simp [h] at hnd
+    generalize hl' : (candidates se sc E L b s).eraseDups = l at hr hn h1 h2
+    match l, h1, h2 with
+    | [x], h1, h2 =>
+      have e1 := List.mem_singleton.mp h1
+      have e2 := List.mem_singleton.mp h2
+      exact absurd (congrArg Reading.guard (e1.trans e2.symm)) hne
+    | x :: y :: zs, _, _ =>
+      exact ⟨_, (readCommand_many se sc E L b s _).mpr ⟨hl, hl'.symm, by simp, hn⟩, fun g hgm => ⟨_, hr g hgm, rfl⟩⟩
+
+theorem mapM_length {α β ε : Type} {f : α → Except ε β} : ∀ {l : List α} {t : List β},
+    l.mapM f = .ok t → t.length = l.length
+  | [], t, h => by cases h; rfl
+  | x :: l, t, h => by
+    simp only [List.mapM_cons] at h
+    obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨ys, hy, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    simp [mapM_length hy]
+
+theorem classOf_run {c : String} (h : (VE.EnglishGrammar.Run.codeClasses.lookup c).isSome = true) :
+    (Texts.classOf c).isSome = true := by
+  unfold Texts.classOf
+  cases Texts.codeClasses.lookup c with
+  | none => simpa [Option.orElse] using h
+  | some _ => rfl
+
+open VE.EnglishGrammar.Run (status coded noReadingFields translationOf) in
+/-- The fallback formats an outcome that is not one complete reading, so its row has a classed code. -/
+theorem unreadOf_classed {c code text : String} {o : TranslateOutcome} (hn : ∀ r, o ≠ .readings [r] true)
+    (h : unreadOf E L c o = .unread code text) : (Texts.classOf code).isSome = true := by
+  simp only [unreadOf, GuardFault.unread.injEq] at h
+  rw [← h.1]
+  unfold translationOf
+  cases o with
+  | readings rs complete =>
+    simp only
+    by_cases h2 : 2 ≤ rs.length
+    · rw [if_pos h2]; rfl
+    rw [if_neg h2]
+    cases complete with
+    | false => rfl
+    | true =>
+      match rs, h2, hn with
+      | [], _, _ =>
+        rw [if_neg (by decide), if_pos (by rfl)]
+        unfold noReadingFields
+        dsimp only
+        split <;> rfl
+      | [r], _, hn => exact absurd rfl (hn r)
+      | _ :: _ :: _, h2, _ => simp at h2
+  | lexical r =>
+    have hc : strField (status "rejected" ++ coded r.code (VE.EnglishGrammar.Run.rejectText 0 r) ++
+        ((VE.EnglishGrammar.Run.lexicalSpan (c ++ ".") r).toList.map fun s =>
+          ("span", VE.EnglishGrammar.Run.spanJson s))) "code" = r.code := by
+      simp [strField, status, coded, VE.Bridge.lookup]
+    rw [hc]
+    exact classOf_run (VE.EnglishGrammar.Run.codeClasses_total r)
+  | invalidGrammar _ | notOneSentence | budget => rfl
+
+/-- english-lean's refusal of a condition names a classed code: the fallback never formats one reading. -/
+theorem guardOf_classed (c code text : String) (h : guardOf se E L b c = .error (.unread code text)) :
+    (Texts.classOf code).isSome = true := by
+  unfold guardOf at h
+  generalize translateRequest E {} L maxCandidates b (c ++ ".") = o at h
+  cases o with
+  | budget => simp [guardOfOutcome] at h
+  | invalidGrammar _ | lexical _ | notOneSentence =>
+    refine unreadOf_classed E L ?_ (by simpa [guardOfOutcome] using h)
+    intro r hr; cases hr
+  | readings rs complete =>
+    simp only [guardOfOutcome] at h
+    split at h
+    · cases h
+    split at h
+    · simp only [Except.error.injEq, GuardFault.unread.injEq] at h
+      rw [← h.1]; rfl
+    split at h
+    · simp only [Except.error.injEq, GuardFault.unread.injEq] at h
+      rw [← h.1]; rfl
+    rename_i ys hy
+    cases he : ys.eraseDups with
+    | nil =>
+      have hys : ys = [] := List.eq_nil_iff_forall_not_mem.mpr fun x hx => by
+        simpa [he] using (mem_dedup _ _ (Nat.le_refl _) x).mpr hx
+      refine unreadOf_classed E L (fun r hr => ?_) (by simpa [he] using h)
+      have := mapM_length hy
+      simp only [TranslateOutcome.readings.injEq] at hr
+      simp [hys, hr.1] at this
+    | cons x xs => cases xs <;> simp [he] at h
+
+theorem conditionOf_classed {p : Parts} {ms : List (String × List Fill)} {code text : String}
+    (h : conditionOf se E L b p ms = .error (.unread code text)) : (Texts.classOf code).isSome = true := by
+  unfold conditionOf at h
+  split at h
+  · exact guardOf_classed se E L b _ _ _ h
+  · cases h
+
+/-- Every refusal names a classed code, or is english-lean's refusal of the condition. -/
+theorem refused_classed (code text : String) (h : readCommand se sc E L b s = .refused code text) :
+    (Texts.classOf code).isSome = true := by
+  have hn : ∀ {c t}, noReading s = .refused c t → (Texts.classOf c).isSome = true := by
+    intro c t hr
+    unfold noReading Outcome.ofText at hr
+    split at hr <;> (cases hr; rfl)
+  cases hpf : prefixRefusal s with
+  | some x =>
+    rw [readCommand_prefix se sc E L b s x.1 x.2 hpf] at h
+    cases h
+    simp only [prefixRefusal] at hpf
+    repeat' split at hpf
+    all_goals first | (cases hpf; rfl) | cases hpf
+  | none =>
+    cases hl : withinLimits se sc s with
+    | false => simp [readCommand, hpf, hl] at h
+    | true =>
+      cases hp : parts s with
+      | none => exact hn (by simpa [readCommand, hpf, hl, hp] using h)
+      | some p =>
+        rw [readCommand_read se sc E L b s hp hl] at h
+        generalize (candidates se sc E L b s).eraseDups = l at h
+        match l with
+        | [] =>
+          simp only at h
+          unfold refusalOf at h
+          split at h
+          · split at h
+            · cases h
+              simp only [Texts.missingObligation, Texts.missingPermission]
+              split <;> rfl
+            · exact hn h
+          · split at h
+            · cases h
+            · cases h; exact conditionOf_classed se E L b ‹_›
+            · exact hn h
+          · cases h; rfl
+        | [r'] =>
+          simp only [checkedAddressee, Outcome.ofText] at h
+          split at h
+          · cases h
+          · split at h <;> (cases h; rfl)
+        | _ :: _ :: _ =>
+          simp only [manyOf] at h
+          split at h <;> cases h
+
 /-- A guard of a condition is closed and typed: `decodeClosedField` checked it. -/
 theorem outcome_checked {c : String} {o : TranslateOutcome} {g : VE.Formula}
     (h : g ∈ guardList (guardOfOutcome se E L c o)) : g.check se.ne.rv.environment [] = true := by
@@ -664,5 +957,372 @@ theorem readCommand_typed_of_facts (r : Reading) (D : VE.SpeechActs.SpeechDoc) (
         cases p.force <;> simp [roleOf]
 
 end Statements
+
+/-! ## The decoder half of `readCommand_typed` (ci-1b; reviews/dri-decisions-20261102-ci-1.md item 1): a decoded
+environment whose JSON is `JsonWF` has the `declared` facts, since then `decodeRegulatedIn` and the vocabulary decoder
+read the same `arguments` of each predicate entry. -/
+
+section Decoded
+
+open Lean (Json)
+open VE.Kit.Except (bind_ok)
+
+theorem regulated_shape {ps fx : List String} {p : String} {args : List String} {raw : Json}
+    {g : VE.Norms.Regulated} (h : VE.Norms.Wire.decodeRegulatedIn ps fx p args raw = .ok g) :
+    g.name = p ∧ g.sorts = args := by
+  simp only [VE.Norms.Wire.decodeRegulatedIn, VE.Norms.Wire.decodeRegulatedWith] at h
+  repeat' (first
+    | (cases h; done)
+    | (cases h; exact ⟨rfl, rfl⟩)
+    | (have h' := VE.Kit.Except.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h'; try dsimp only at h)
+    | (have h' := VE.Norms.Wire.ite_ok_cases h; clear h
+       rcases h' with ⟨hc, h⟩ | ⟨hc, h⟩ <;> try (simp at hc; done))
+    | split at h)
+  all_goals simp_all [pure, Except.pure]
+
+theorem envelope_vocabulary {env : Json} {e : VE.Route.Gate.Envelope} (h : VE.Route.Gate.decodeEnvelope env = .ok e) :
+    env.getObjVal? "vocabulary" = .ok e.vocabulary := by
+  unfold VE.Route.Gate.decodeEnvelope at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, hv, h⟩ := VE.Kit.Except.bind_ok h
+  cases h
+  exact hv
+
+/-- What W1's decoder reads past the speech block: the vocabulary of the stripped environment is the original's. -/
+theorem strip_vocabulary {j s v : Json} (hw : VE.Scope.JsonWF j) (h : VE.SpeechActs.Wire.stripSpeech j = .ok s)
+    (hv : s.getObjVal? "vocabulary" = .ok v) : j.getObjVal? "vocabulary" = .ok v := by
+  unfold VE.SpeechActs.Wire.stripSpeech at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨fs, hfs, h⟩ := VE.Kit.Except.bind_ok h
+  cases h
+  cases j with
+  | obj kvs =>
+    have hfs' : fs = kvs.toList := by simpa [VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure] using hfs.symm
+    subst hfs'
+    have hwf := VE.Scope.jsonWF_top _ hw kvs rfl
+    have hnd : ((kvs.toList.filter (·.1 != "speech_acts")).map (·.1)).Nodup := by
+      have := VE.Scope.members_nodup kvs hwf
+      rw [VE.Scope.members_obj] at this
+      exact this.sublist (List.Sublist.map _ List.filter_sublist)
+    simp only [Json.mkObj] at hv
+    rcases (VE.Scope.setObjVal_get _ Std.TreeMap.Raw.WF.ofList _ _ _ _).mp hv with ⟨he, _⟩ | ⟨_, hv⟩
+    · exact absurd he (by decide)
+    have hm := (VE.Scope.mkObj_getObjVal _ hnd _ _).mp hv
+    exact VE.Scope.members_get kvs hwf _ _ (by rw [VE.Scope.members_obj]; exact (List.mem_filter.mp hm).1)
+  | _ => simp [VE.Bridge.fields, Json.getObj?, bind, Except.bind, throw, throwThe, MonadExceptOf.throw] at hfs
+
+theorem mapM_out {α β ε : Type} {f : α → Except ε β} : ∀ {l : List α} {t : List β},
+    l.mapM f = .ok t → ∀ x ∈ l, ∃ y ∈ t, f x = .ok y
+  | [], t, h, x, hx => by cases hx
+  | x :: l, t, h, z, hz => by
+    simp only [List.mapM_cons] at h
+    obtain ⟨_, hb, h⟩ := bind_ok h
+    obtain ⟨_, hbs, h⟩ := bind_ok h
+    cases h
+    rcases List.mem_cons.mp hz with rfl | hz
+    · exact ⟨_, List.mem_cons_self, hb⟩
+    · obtain ⟨y, hy, hf⟩ := mapM_out hbs z hz
+      exact ⟨y, List.mem_cons_of_mem _ hy, hf⟩
+
+theorem mapM_keys {α β γ ε : Type} {f : α → Except ε β} {g : β → γ} {k : α → γ}
+    (hk : ∀ x y, f x = .ok y → g y = k x) : ∀ {l : List α} {t : List β}, l.mapM f = .ok t → t.map g = l.map k
+  | [], t, h => by cases h; rfl
+  | x :: l, t, h => by
+    simp only [List.mapM_cons] at h
+    obtain ⟨_, hb, h⟩ := bind_ok h
+    obtain ⟨_, hbs, h⟩ := bind_ok h
+    cases h
+    simp [hk _ _ hb, mapM_keys hk hbs]
+
+theorem eraseDups_sublist {α : Type} [BEq α] : ∀ (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.Sublist l
+  | _, [], _ => by simp
+  | 0, _ :: _, h => by simp at h
+  | n + 1, x :: xs, h => by
+    have hf := List.length_filter_le (fun b => !b == x) xs
+    rw [List.eraseDups_cons]
+    exact ((eraseDups_sublist n _ (by simp at h; omega)).trans List.filter_sublist).cons₂ x
+
+theorem nodup_of_eraseDups {α : Type} [BEq α] [LawfulBEq α] {l : List α} (h : l.eraseDups.length = l.length) :
+    l.Nodup := by
+  have hs := eraseDups_sublist _ l (Nat.le_refl _)
+  rw [← hs.eq_of_length h]
+  exact eraseDups_nodup _ l (Nat.le_refl _)
+
+theorem mapM_rel {α β γ ε : Type} {f : α → Except ε β} {R : α → β → Prop} {g : β → γ} {k : α → γ}
+    (hR : ∀ x y, f x = .ok y → R x y) (hk : ∀ x y, R x y → g y = k x) {l : List α} {t : List β}
+    (h : l.mapM f = .ok t) : t.map g = l.map k ∧ ∀ x ∈ l, ∃ y ∈ t, R x y :=
+  ⟨mapM_keys (fun x y hf => hk x y (hR x y hf)) h, fun x hx => (mapM_out h x hx).imp fun _ ⟨hy, hf⟩ => ⟨hy, hR _ _ hf⟩⟩
+
+/-- What a decoded vocabulary keeps of its `predicates` and `constants` members: distinct names, and each predicate's
+sorts as its `arguments` decode. -/
+theorem vocabulary_facts {profiles : List String} {v : Json} {rv : VE.Route.Wire.RouteVocabulary}
+    (h : VE.Route.Wire.decodeVocabulary profiles v = .ok rv) :
+    ∃ P predicates, v.getObjVal? "predicates" = .ok P ∧ VE.Bridge.fields P = .ok predicates ∧
+      (rv.vocabulary.predicates.map (·.1)).Nodup ∧ (rv.vocabulary.constants.map (·.1)).Nodup ∧
+      ∀ p e, (p, e) ∈ predicates → ∃ a ss, e.getObjVal? "arguments" = .ok a ∧ VE.Bridge.strings a = .ok ss ∧
+        (p, ss) ∈ rv.vocabulary.predicates := by
+  unfold VE.Route.Wire.decodeVocabulary at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨sorts, _, h⟩ := bind_ok h
+  obtain ⟨P, hP, h⟩ := bind_ok h
+  obtain ⟨predicates, hpreds, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨constants, _, h⟩ := bind_ok h
+  split at h
+  case isTrue => cases h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  extract_lets names sortNames allowed flagged jpA at h
+  split at h
+  case isFalse => cases h
+  rename_i hnames
+  obtain ⟨_, _, h⟩ := bind_ok h
+  dsimp (config := { zeta := false }) only [jpA] at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨psAndFlags, hps, h⟩ := bind_ok h
+  extract_lets ps flags at h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨cs, hcs, h⟩ := bind_ok h
+  extract_lets literals result jpC at h
+  split at h
+  case isTrue => cases h
+  dsimp (config := { zeta := false }) only [jpC] at h
+  split at h
+  case isFalse => cases h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨entries, hentries, h⟩ := bind_ok h
+  split at h
+  case isFalse => cases h
+  split at h
+  case h_2 => cases h
+  cases h
+  have hnd : names.Nodup := nodup_of_eraseDups (by simpa using hnames)
+  have hpk : (predicates.map (·.1)).Nodup := hnd.sublist (by
+    simp only [names, List.map_append]; exact (List.sublist_append_right _ _).trans (List.sublist_append_left _ _))
+  have hck : (constants.map (·.1)).Nodup := hnd.sublist (by simp only [names, List.map_append]; exact List.sublist_append_right _ _)
+  obtain ⟨hkeys, hmem⟩ := mapM_rel (R := fun (x : String × Json) (y : (String × List String) × Option VE.Data.Background.Flag) =>
+      y.1.1 = x.1 ∧ ∃ a, x.2.getObjVal? "arguments" = .ok a ∧ VE.Bridge.strings a = .ok y.1.2)
+    (g := fun y => y.1.1) (k := Prod.fst) (fun x y hF => by
+      obtain ⟨p, e⟩ := x
+      dsimp only at hF ⊢
+      repeat' (first
+        | (cases hF; done)
+        | (cases hF; exact ⟨rfl, _, ‹_›, ‹_›⟩)
+        | (have h' := bind_ok hF; clear hF; obtain ⟨_, _, hF⟩ := h'; try dsimp only at hF)
+        | (have h' := VE.Norms.Wire.ite_ok_cases hF; clear hF
+           rcases h' with ⟨hc, hF⟩ | ⟨hc, hF⟩ <;> try (simp at hc; done))
+        | split at hF)) (fun _ _ h => h.1) hps
+  have hcs' := mapM_keys (g := Prod.fst) (k := Prod.fst) (fun x y hF => by
+      obtain ⟨c, e⟩ := x
+      dsimp only at hF ⊢
+      repeat' (first
+        | (cases hF; done)
+        | (cases hF; rfl)
+        | (have h' := bind_ok hF; clear hF; obtain ⟨_, _, hF⟩ := h'; try dsimp only at hF)
+        | (have h' := VE.Norms.Wire.ite_ok_cases hF; clear hF
+           rcases h' with ⟨hc, hF⟩ | ⟨hc, hF⟩ <;> try (simp at hc; done))
+        | split at hF)) hcs
+  refine ⟨P, predicates, hP, hpreds, ?_, ?_, ?_⟩
+  · show ((psAndFlags.map Prod.fst).map (·.1)).Nodup
+    rw [List.map_map]; exact hkeys ▸ hpk
+  · show (cs.map (·.1)).Nodup
+    exact hcs' ▸ hck
+  · intro p e hpe
+    obtain ⟨y, hy, hk, a, ha, hs⟩ := hmem _ hpe
+    exact ⟨a, y.1.2, ha, hs, List.mem_map.mpr ⟨y, hy, Prod.ext hk rfl⟩⟩
+
+theorem filterMapM_rel {α β γ ε : Type} {f : α → Except ε (Option β)} {R : α → β → Prop} {g : β → γ} {k : α → γ}
+    (hR : ∀ x y, f x = .ok (some y) → R x y) (hk : ∀ x y, R x y → g y = k x) :
+    ∀ {l : List α} {t : List β}, l.filterMapM f = .ok t → (t.map g).Sublist (l.map k) ∧ ∀ y ∈ t, ∃ x ∈ l, R x y
+  | [], t, h => by cases h; simp
+  | x :: l, t, h => by
+    rw [List.filterMapM_cons] at h
+    obtain ⟨o, ho, h⟩ := bind_ok h
+    cases o with
+    | none =>
+      obtain ⟨hs, hm⟩ := filterMapM_rel hR hk h
+      exact ⟨hs.cons _, fun y hy => (hm y hy).imp fun _ ⟨hx, hr⟩ => ⟨List.mem_cons_of_mem _ hx, hr⟩⟩
+    | some y =>
+      obtain ⟨ts, hts, h⟩ := bind_ok h
+      cases h
+      obtain ⟨hs, hm⟩ := filterMapM_rel hR hk hts
+      refine ⟨by rw [List.map_cons, List.map_cons, hk _ _ (hR _ _ ho)]; exact hs.cons₂ _, fun z hz => ?_⟩
+      rcases List.mem_cons.mp hz with rfl | hz
+      · exact ⟨x, List.mem_cons_self, hR _ _ ho⟩
+      · exact (hm z hz).imp fun _ ⟨hx, hr⟩ => ⟨List.mem_cons_of_mem _ hx, hr⟩
+
+theorem lookup_of_mem {β : Type} {k : String} {b : β} : ∀ {l : List (String × β)}, (k, b) ∈ l → (l.map (·.1)).Nodup →
+    VE.Bridge.lookup l k = some b
+  | x :: l, hm, hn => by
+    rw [List.map_cons, List.nodup_cons] at hn
+    rcases List.mem_cons.mp hm with rfl | hm
+    · simp [VE.Bridge.lookup]
+    · have hx : (x.1 == k) = false := by
+        simp only [beq_eq_false_iff_ne]; rintro rfl; exact hn.1 (List.mem_map.mpr ⟨_, hm, rfl⟩)
+      simpa [VE.Bridge.lookup, List.find?_cons, hx] using lookup_of_mem hm hn.2
+
+theorem wf_get {j v : Json} {k : String} (hw : VE.Scope.JsonWF j) (h : j.getObjVal? k = .ok v) : VE.Scope.JsonWF v := by
+  simpa [Json.getObjValD, h] using VE.Scope.jsonWF_getD j hw k
+
+theorem fields_obj {j : Json} {l : List (String × Json)} (h : VE.Bridge.fields j = .ok l) :
+    ∃ kvs, j = .obj kvs ∧ l = kvs.toList := by
+  cases j with
+  | obj kvs => exact ⟨kvs, rfl, by simpa [VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure] using h.symm⟩
+  | _ => simp [VE.Bridge.fields, Json.getObj?, bind, Except.bind, throw, throwThe, MonadExceptOf.throw] at h
+
+theorem map_some_ok {ε β : Type} {m : Except ε β} {y : β} (h : (some <$> m : Except ε (Option β)) = .ok (some y)) :
+    m = .ok y := by
+  cases m with
+  | error e => cases h
+  | ok x => cases h; rfl
+
+/-- A member of a well-formed object: its value is the one `getObjVal?` reads. -/
+theorem wf_member {kvs : Std.TreeMap.Raw String Json} (hw : VE.Scope.JsonWF (.obj kvs)) {k : String} {v : Json}
+    (h : (k, v) ∈ kvs.toList) : (Json.obj kvs).getObjVal? k = .ok v :=
+  VE.Scope.members_get kvs (VE.Scope.jsonWF_top _ hw kvs rfl) k v (by rwa [VE.Scope.members_obj])
+
+/-- W1's decoder over a vocabulary whose objects are well formed: each regulated predicate is declared with its
+sorts, and the regulated and constant names are distinct. -/
+theorem norms_facts {env : Json} {ne : VE.Norms.Wire.NormsEnvironment}
+    (h : VE.Norms.Wire.decodeNormsEnvironment env = .ok ne)
+    (hw : ∀ v, env.getObjVal? "vocabulary" = .ok v → VE.Scope.JsonWF v) :
+    (∀ g ∈ ne.regulated, ne.rv.environment.predicates g.name = some g.sorts) ∧ (ne.regulated.map (·.name)).Nodup ∧
+      (ne.rv.vocabulary.constants.map (·.1)).Nodup := by
+  unfold VE.Norms.Wire.decodeNormsEnvironment at h
+  simp only [VE.Norms.Wire.actsProfiles, List.isEmpty_nil, if_true, Bool.false_eq_true, if_false,
+    VE.Norms.Wire.joinedActs, Bool.false_and] at h
+  obtain ⟨e, he, h⟩ := bind_ok h
+  split at h <;> try (cases h; done)
+  obtain ⟨_, _, h⟩ := bind_ok h
+  split at h <;> try (cases h; done)
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨P, hP, h⟩ := bind_ok h
+  obtain ⟨predicates, hpreds, h⟩ := bind_ok h
+  obtain ⟨stripped, hstr, h⟩ := bind_ok h
+  obtain ⟨rv, hrv, h⟩ := bind_ok h
+  obtain ⟨regs, hregs, h⟩ := bind_ok h
+  split at h <;> try (cases h; done)
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  cases h
+  -- the vocabulary, its `predicates` object and each entry are well formed
+  have hv := hw _ (envelope_vocabulary he)
+  obtain ⟨vk, hvk⟩ : ∃ vk, e.vocabulary = .obj vk := by
+    cases hq : e.vocabulary with
+    | obj vk => exact ⟨vk, rfl⟩
+    | _ => rw [hq] at hP; simp [Json.getObjVal?, throw, throwThe, MonadExceptOf.throw] at hP
+  have hPw := wf_get hv hP
+  obtain ⟨pk, rfl, rfl⟩ := fields_obj hpreds
+  have hpk : ((pk.toList).map (·.1)).Nodup := by
+    simpa [VE.Scope.members_obj] using VE.Scope.members_nodup pk (VE.Scope.jsonWF_top _ hPw pk rfl)
+  have hentry : ∀ x ∈ pk.toList, VE.Scope.JsonWF x.2 := by
+    cases hPw with | obj _ _ hall => exact hall
+  -- the stripped entries, keyed as the original
+  obtain ⟨hskeys, hsmem⟩ := mapM_rel (R := fun (x y : String × Json) =>
+      y.1 = x.1 ∧ ∃ fs, VE.Bridge.fields x.2 = .ok fs ∧ y.2 = Json.mkObj (fs.filter (·.1 != "regulated")))
+    (g := Prod.fst) (k := Prod.fst) (fun x y hF => by
+      obtain ⟨_, hfs, hF⟩ := bind_ok hF
+      cases hF; exact ⟨rfl, _, hfs, rfl⟩) (fun _ _ h => h.1) hstr
+  have hsnd : (stripped.map (·.1)).Nodup := hskeys ▸ hpk
+  have hvp : (e.vocabulary.setObjVal! "predicates" (Json.mkObj stripped)).getObjVal? "predicates" =
+      .ok (Json.mkObj stripped) := by
+    rw [hvk]
+    exact (VE.Scope.setObjVal_get _ (VE.Scope.jsonWF_top _ (hvk ▸ hv) vk rfl) _ _ _ _).mpr (.inl ⟨rfl, rfl⟩)
+  obtain ⟨P', preds', hP', hpreds', hrk, hck, hargs⟩ := vocabulary_facts hrv
+  rw [hvp] at hP'
+  cases hP'
+  obtain ⟨sk, hsk, rfl⟩ := fields_obj hpreds'
+  -- the regulated declarations, each from a predicate entry
+  obtain ⟨hrsub, hrmem⟩ := filterMapM_rel (R := fun (x : String × Json) (g : VE.Norms.Regulated) =>
+      g.name = x.1 ∧ ∃ a, x.2.getObjVal? "arguments" = .ok a ∧ VE.Bridge.strings a = .ok g.sorts)
+    (g := (·.name)) (k := Prod.fst) (fun x y hF => by
+      repeat' (first
+        | (cases hF; done)
+        | (obtain ⟨h1, h2⟩ := regulated_shape (map_some_ok hF); exact ⟨h1, _, ‹_›, by rw [h2]; assumption⟩)
+        | (have h' := bind_ok hF; clear hF; obtain ⟨_, _, hF⟩ := h'; try dsimp only at hF)
+        | (have h' := VE.Norms.Wire.ite_ok_cases hF; clear hF
+           rcases h' with ⟨hc, hF⟩ | ⟨hc, hF⟩ <;> try (simp at hc; done))
+        | split at hF)) (fun _ _ h => h.1) hregs
+  refine ⟨fun g hg => ?_, hpk.sublist hrsub, hck⟩
+  obtain ⟨⟨p, entry⟩, hx, hn, a, ha, hs⟩ := hrmem g hg
+  obtain ⟨y, hy, hy1, fs, hfs, hy2⟩ := hsmem _ hx
+  have hyk : y ∈ sk.toList := by
+    rw [Json.mkObj] at hsk
+    cases hsk
+    refine (Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mpr ?_
+    exact (VE.Scope.getObjVal_obj _ _ _).mp ((VE.Scope.mkObj_getObjVal _ hsnd _ _).mpr hy)
+  obtain ⟨a', ss, ha', hs', hmem⟩ := hargs y.1 y.2 hyk
+  obtain ⟨ek, rfl, rfl⟩ := fields_obj hfs
+  have hew := hentry _ hx
+  have hfk : (((ek.toList).filter (·.1 != "regulated")).map (·.1)).Nodup :=
+    (by simpa [VE.Scope.members_obj] using VE.Scope.members_nodup ek (VE.Scope.jsonWF_top _ hew ek rfl) :
+      ((ek.toList).map (·.1)).Nodup).sublist (List.Sublist.map _ List.filter_sublist)
+  rw [hy2] at ha'
+  have := wf_member hew (List.mem_filter.mp ((VE.Scope.mkObj_getObjVal _ hfk _ _).mp ha')).1
+  rw [ha] at this
+  cases this
+  rw [hs] at hs'
+  cases hs'
+  show VE.Bridge.lookup rv.vocabulary.predicates g.name = some g.sorts
+  rw [hn, ← hy1]
+  exact lookup_of_mem hmem hrk
+
+theorem find?_of_nodup {g : VE.Norms.Regulated} : ∀ {l : List VE.Norms.Regulated}, g ∈ l → (l.map (·.name)).Nodup →
+    l.find? (·.name == g.name) = some g
+  | x :: l, hm, hn => by
+    rw [List.map_cons, List.nodup_cons] at hn
+    rcases List.mem_cons.mp hm with rfl | hm
+    · simp
+    · have hx : (x.name == g.name) = false := by
+        simp only [beq_eq_false_iff_ne]; intro he; exact hn.1 (List.mem_map.mpr ⟨g, hm, he.symm⟩)
+      simp [hx, find?_of_nodup hm hn.2]
+
+/-- The decoder half of `readCommand_typed`: a decoded environment whose JSON is well formed has the `declared`
+facts. -/
+theorem declared_of_decode {j : Json} {se : VE.SpeechActs.Wire.SpeechEnvironment} (hw : VE.Scope.JsonWF j)
+    (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok se) : declared se = true := by
+  unfold VE.SpeechActs.Wire.decodeSpeechEnvironmentFull at hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨st, hst, hd⟩ := bind_ok hd
+  obtain ⟨ne, hne, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  obtain ⟨_, _, hd⟩ := bind_ok hd
+  cases hd
+  obtain ⟨hp, hn, hc⟩ := norms_facts hne fun v hv => wf_get hw (strip_vocabulary hw hst hv)
+  simp only [declared, Bool.and_eq_true, List.all_eq_true, beq_iff_eq]
+  exact ⟨fun g hg => ⟨hp g hg, find?_of_nodup hg hn⟩, fun x hx => lookup_of_mem hx hc⟩
+
+variable (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lexicon) (b : Nat) (s : String)
+
+/-- A read command passes the semantic core's own check in every speech document over the same decoded environment
+with a valid scope. -/
+theorem readCommand_typed (j : Lean.Json) (r : Reading) (D : VE.SpeechActs.SpeechDoc) (u : String)
+    (hw : VE.Scope.JsonWF j)
+    (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok se)
+    (h : readCommand se sc E L b s = .one r)
+    (hE : D.E = se.ne.rv.environment) (hS : D.scope = sc) (hR : D.regulated = se.ne.regulated)
+    (hk : VE.SpeechActs.scopeOk D = true) :
+    VE.SpeechActs.commandOk D (r.command u) = true :=
+  readCommand_typed_of_facts se sc E L b s r D u (declared_of_decode hw hd) h hE hS hR hk
+
+end Decoded
 
 end VE.Commands
