@@ -143,8 +143,19 @@ R16's conditions:
 - Lean: `cd lean && lake build` gives "Build completed successfully (1324 jobs)". `python3 lean/audit.py` gives PASS.
 - `uv run python tools/gate_collection.py --check --prebuilt`: "32851 collected … 0 added, 0 removed by a trailer,
   0 refused, 0 stale and 0 malformed trailers".
-- Selected tests (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): SELECTED_RESULT.
-- No Python, Rust or `ve/` file changes, so the relay, schema and R8-binding rules have no new answer to bind. No
+- Selected tests, run once on 71866bc0e (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`,
+  on ve-mac-1): "1 failed, 138 passed" in the last pytest batch; the runner's summary line is "exit=1; failed/error
+  ids=1" (177 units recorded).
+  - The failure was `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`. It is not in
+    main-known-red.txt.
+  - Cause: the two new Lean files that handle JSON (`Purposes/Wire.lean`, `Purposes/Examples.lean`) had no entry in
+    `ve/assurance-manifest.json`.
+  - Fix (the next commit): two `other_json` entries, following `lean/VE/Events/Wire.lean`'s precedent ("no service
+    mode, route or runner path reaches it until …").
+  - Rerun: `uv run pytest -q tests/test_assurance_manifest.py` gives "139 passed".
+- Deviation from the task's file list ("no ve/ file"): `ve/assurance-manifest.json` gains those two data entries,
+  which the test requires. No Python file changes.
+- No Python or Rust file changes, so the relay, schema and R8-binding rules have no new answer to bind. No
   route, mode or relay calls `VE.Purposes`.
 
 ## Pilot bytes
@@ -192,7 +203,7 @@ as written (DRI 2(g)). `document.md` is not edited here.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. N.A.: no Lean answer reaches a relay. No route, mode or schema is added (no `ve/`, Python or Rust file changes).
+1. N.A.: no Lean answer reaches a relay. No route, mode or schema is added (no Python or Rust file changes; the one `ve/` change is the manifest's data entry).
 2. PASS: the Delivered and Not delivered tables. The cut of (3) is at the seam the task names. `NotChecked` moves
    to its first user. No Python copy of a Lean decision, and no report test. No in-flight branch touches these files:
    `git diff --name-only main...<branch>` for every `feature/*`, `lean-first/*`, `infra/*` and `foundation/*` branch
@@ -207,7 +218,7 @@ as written (DRI 2(g)). `document.md` is not edited here.
 8. PASS: DELTA.md says "no user-visible delta". No code path calls `VE.Purposes`
    (`grep -rn "VE.Purposes" lean/VE --include=*.lean` finds only the Purposes modules, the generated
    `lean/VE.lean` and `lean/VE/Audit.lean`).
-9. PASS: the selected-test run above, with the selection from `tools/select_tests.py --base $(git merge-base HEAD main)`.
+9. PASS: the selection (`tools/select_tests.py --base $(git merge-base HEAD main)`) held the one test the change broke (`test_every_json_handling_lean_file_is_classified`, above), so the selection finds this branch's tests.
 10. PASS: each seeded bug breaks the proof it should (`shareOk_iff`, `nonfactive_iff`, `markerHonest_labelled`,
     `normRole_inert`, `sideAdjacent_iff`). The statements are the spec's (Spec re-read). No `tools/check_*_statements.py`
     covers purposes.
