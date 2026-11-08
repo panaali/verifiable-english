@@ -1,0 +1,13 @@
+trust_mutants: 20 definitions, 404 mutants (50 to run), 4 jobs, base 176d50c05c2d
+UNKNOWN lean/VE/Service/Document.lean:2294 VE.Service.Document.chainFront (D[V], trusted) list-empty: (fields environment).map (·.filter fun kv => !["profiles", "cardinality_schema", "cardinality", "... -> [] (lean/VE/Service/Document.lean:2294: Type mismatch)
+UNKNOWN lean/VE/Service/Document.lean:2294 VE.Service.Document.chainFront (D[V], trusted) list-empty: (·.filter -> (fun x_tm => [] (lean/VE/Service/Document.lean:2294: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-first: doc.fences.map Prod.fst -> ((doc.fences.map Prod.fst).take 1)
+SURVIVOR lean/VE/Service/Document.lean:2283 VE.Service.Document.countingFront (D[V], trusted) list-drop-last: (· -> (fun x_tm => (x_tm.dropLast)
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-first: ? -> (?.take 1) (lean/VE/Service/Document.lean:2343: don't know how to synthesize placeholder)
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-drop-last: ?.map -> (?.map.dropLast) (lean/VE/Service/Document.lean:2343: don't know how to synthesize placeholder)
+trust_mutants: 19 KILLED, 2 SURVIVOR, 4 UNKNOWN, 3 INVALID, 0 ALLOWED, 22 NOT RUN, 354 OTHER SHARD in 5072 s
+trust_mutants: D[V], trusted: 16 KILLED, 2 SURVIVOR, 4 UNKNOWN, 3 INVALID, 16 NOT RUN, 233 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 6 NOT RUN, 116 OTHER SHARD
+trust_mutants: S, trusted: 5 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 22 of its 50 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.3 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.5 s, control_probes 2142.5 s, mutants 2908.9 s, cleanup 3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 6075.5 s (18), mutant_builds 1070.1 s (34), mutant_checks 7137.2 s (30), stage_controls 2215.2 s (8), mutant_probes 1155 s (19)
