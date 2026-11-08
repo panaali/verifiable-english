@@ -1,0 +1,1 @@
+{"shard": 2, "shards": 4, "units": ["tests/test_trust_mutants.py::chunk(1/4)", "tests/test_lean_dump_cache.py", "tests/test_trust_mutants_probe_scope.py", "tests/test_gate_quarantine.py", "tests/test_answer_cutoff.py", "tests/test_stage0_inventory.py", "tests/test_conformance.py"], "rc": 0, "seconds": 706.8, "passed": 7}
