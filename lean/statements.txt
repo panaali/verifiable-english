@@ -4595,10 +4595,90 @@ theorem VE.Ask.zero_ask_wire_sound
                       ∀ (x : VE.Ask.Reason), a.x.row.reason = Option.some x → VE.Ask.ReasonHoldsU a.x.U a.x.Γ a.x.ψ x
   -- uses VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.c@VE.Ask.ZeroWire VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.E@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.U@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.Γ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.ψ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire VE.Ask.replayZero@VE.Ask.ZeroWire VE.Ask.replayZeroAsk@VE.Ask.ZeroWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
   -- expr 3996193774
+theorem VE.Attitudes.Examples.awf_iff
+  ∀ (A : VE.Attitudes.AttDoc) (Γ : List String) (a : VE.Attitudes.AFormula),
+    VE.Attitudes.Examples.awf A Γ a = Bool.true ↔ VE.Attitudes.AWellFormed A Γ a
+  -- uses VE.Attitudes.AFormula@VE.Attitudes.Syntax VE.Attitudes.AWellFormed@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Examples.awf@VE.Attitudes.Examples
+  -- expr 2747630870
+theorem VE.Attitudes.checkAtt_tail
+  ∀ {A : VE.Attitudes.AttDoc},
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      VE.Attitudes.checkNames A (VE.Attitudes.keys A) = Except.ok () ∧
+        (List.map (VE.Attitudes.name A) (VE.Attitudes.keys A)).Nodup ∧
+          ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.validate D = Except.ok ()
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.validate@VE.Norms.Tree
+  -- expr 390254502
+theorem VE.Attitudes.checkNames_mem
+  ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Key},
+    VE.Attitudes.checkNames A l = Except.ok () →
+      ∀ (k : VE.Attitudes.Key),
+        k ∈ l →
+          A.E.predicates (VE.Attitudes.name A k) = Option.none ∧
+            (VE.Attitudes.name A k).utf8ByteSize ≤ 64 ∧
+              ¬VE.Attitudes.name A k ∈ List.map (fun x => x.name) A.regulated ++ List.map (fun x => x.name) A.definitions
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.definitions@VE.Attitudes.Syntax VE.Attitudes.AttDoc.regulated@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 620294592
+theorem VE.Attitudes.envAtt_extends
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (Γ : List String) (φ : VE.Formula),
+        VE.Formula.WellFormed A.E Γ φ → VE.Formula.WellFormed (VE.Attitudes.envAtt A) Γ φ
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.envAtt@VE.Attitudes.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 625734500
+theorem VE.Attitudes.envAtt_keeps
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ {p : String} {sig : List String},
+        A.E.predicates p = Option.some sig → (VE.Attitudes.envAtt A).predicates p = Option.some sig
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.envAtt@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax
+  -- expr 3135929563
+theorem VE.Attitudes.inj_of_nodup_map
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ (a : α), a ∈ l → ∀ (b : α), b ∈ l → f a = f b → a = b
+  -- uses
+  -- expr 380630431
+theorem VE.Attitudes.keyOf_name
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (k : VE.Attitudes.Key), k ∈ VE.Attitudes.keys A → VE.Attitudes.keyOf A (VE.Attitudes.name A k) = Option.some k
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keyOf@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
+  -- expr 2586438831
+theorem VE.Attitudes.names_fresh
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (k : VE.Attitudes.Key),
+        k ∈ VE.Attitudes.keys A →
+          A.E.predicates (VE.Attitudes.name A k) = Option.none ∧
+            (VE.Attitudes.name A k).utf8ByteSize ≤ 64 ∧
+              ¬VE.Attitudes.name A k ∈ List.map (fun x => x.name) A.regulated ++ List.map (fun x => x.name) A.definitions
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.definitions@VE.Attitudes.Syntax VE.Attitudes.AttDoc.regulated@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1364709225
+theorem VE.Attitudes.names_injective
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (k : VE.Attitudes.Key),
+        k ∈ VE.Attitudes.keys A →
+          ∀ (k2 : VE.Attitudes.Key), k2 ∈ VE.Attitudes.keys A → VE.Attitudes.name A k = VE.Attitudes.name A k2 → k = k2
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
+  -- expr 2029822371
+theorem VE.Attitudes.not_of_throwIf
+  ∀ {b : Bool} {m : String}, VE.Attitudes.throwIf b m = Except.ok () → b = Bool.false
+  -- uses VE.Attitudes.throwIf@VE.Attitudes.Syntax
+  -- expr 3649856137
+theorem VE.Attitudes.ok_of_bind
+  ∀ {α β : Type} {x : Except String α} {f : α → Except String β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3172643631
 theorem VE.Attitudes.table_reviewed
   VE.Attitudes.table.reviewed = Bool.true
   -- uses VE.Attitudes.Table.reviewed@VE.Attitudes.Scale VE.Attitudes.table@VE.Attitudes.Scale
   -- expr 464222460
+theorem VE.Attitudes.toNorms_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.WellFormed D = Bool.true
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
+  -- expr 1170091834
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
@@ -7083,16 +7163,14 @@ theorem VE.Calc.sidesAtB_eq
   -- expr 2994313240
 theorem VE.Calc.signFlipC_complete
   ∀ (limit : Nat) (d : List Rat),
-    VE.Calc.signFlipWork d.length ≤ limit →
-      VE.Calc.signFlipC limit d = Option.some (VE.Calc.signFlipP d, VE.Calc.signFlipWork d.length)
+    VE.Calc.signFlipWork d ≤ limit → VE.Calc.signFlipC limit d = Option.some (VE.Calc.signFlipP d, VE.Calc.signFlipWork d)
   -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
-  -- expr 3751497465
+  -- expr 2575474119
 theorem VE.Calc.signFlipC_sound
   ∀ (limit : Nat) (d : List Rat) (q : Rat) (w : Nat),
-    VE.Calc.signFlipC limit d = Option.some (q, w) →
-      q = VE.Calc.signFlipP d ∧ w = VE.Calc.signFlipWork d.length ∧ w ≤ limit
+    VE.Calc.signFlipC limit d = Option.some (q, w) → q = VE.Calc.signFlipP d ∧ w = VE.Calc.signFlipWork d ∧ w ≤ limit
   -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
-  -- expr 1110700147
+  -- expr 1396600608
 theorem VE.Calc.signFlipP_grain
   ∀ (d : List Rat), ∃ m, m ≤ 2 ^ d.length ∧ VE.Calc.signFlipP d = ↑m / ↑(2 ^ d.length)
   -- uses VE.Calc.signFlipP@VE.Calc.Stats

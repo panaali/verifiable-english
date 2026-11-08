@@ -44,7 +44,9 @@ import VE.Ask.Sources
 import VE.Ask.Wire
 import VE.Ask.ZeroAnswer
 import VE.Ask.ZeroWire
+import VE.Attitudes.Examples
 import VE.Attitudes.Scale
+import VE.Attitudes.Theorems
 import VE.Attribution.Admission
 import VE.Attribution.Assess
 import VE.Attribution.Bridge
@@ -1137,7 +1139,19 @@ import VE.WireContract.Engine
 #print axioms VE.Ask.zeroSplitModels_base
 #print axioms VE.Ask.zeroSplit_sound
 #print axioms VE.Ask.zero_ask_wire_sound
+#print axioms VE.Attitudes.Examples.awf_iff
+#print axioms VE.Attitudes.checkAtt_tail
+#print axioms VE.Attitudes.checkNames_mem
+#print axioms VE.Attitudes.envAtt_extends
+#print axioms VE.Attitudes.envAtt_keeps
+#print axioms VE.Attitudes.inj_of_nodup_map
+#print axioms VE.Attitudes.keyOf_name
+#print axioms VE.Attitudes.names_fresh
+#print axioms VE.Attitudes.names_injective
+#print axioms VE.Attitudes.not_of_throwIf
+#print axioms VE.Attitudes.ok_of_bind
 #print axioms VE.Attitudes.table_reviewed
+#print axioms VE.Attitudes.toNorms_wellFormed
 #print axioms VE.Bridge.CountermodelQuery.conclusion_typed
 #print axioms VE.Bridge.CountermodelQuery.premises_typed
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
