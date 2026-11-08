@@ -348,44 +348,13 @@ def textsJson (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b d : Nat)
   | .ok _ occ mixed _ P => [("warnings", warningsJson D d (body.map (·.1)) P occ mixed)]
   | _ => []
 
-/-- Lean's preamble line for a requested word and gloss (plan B7, `ve senses resolve`): the line of the sense of
-`w` whose gloss is `g` (`lineOf`), or `UnknownWord` or `UnknownGloss`. -/
-def lineJson (D : Dictionary) (w g : String) : Json :=
-  Json.mkObj ([("word", Json.str w), ("gloss", .str g)] ++
-    match (D.sensesOf w).find? (·.gloss == g) with
-    | some s => [("text", .str (lineOf w s))]
-    | none => [("code", .str (if (D.sensesOf w).isEmpty then "UnknownWord" else "UnknownGloss"))])
-
-/-- The re-read of a rendering of candidate `j` of the unit at `sentence` (plan 2.8;
-reviews/dri-decisions-20261101-sn-b7b8-reread.md item 1): the rendering, one sentence, read by the senses reader
-(`readOne`, without S2's policy) under the candidate's own projection (its lines over the body's `used` words, as
-its identities are computed) from the state before the unit. `same` when it reads with no quoted sense to the
-candidate's formula and mark, `unknown` when the budget ends, else `different`. -/
-def rereadJson (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b start : Nat) (used : List String)
-    (units : List SenseUnit) (sentence j : Nat) (rendering : String) : Except String Json := do
-  let some u := (if sentence < start then none else units[sentence - start]?)
-    | throw "InvalidInput: the re-read names no unit of the answer"
-  let some cand := u.candidates[j]? | throw "InvalidInput: the re-read names no candidate of its unit"
-  let Q ← match ← linesProjection D c b cand.lines used with
-    | .ok Q => pure Q
-    | .error _ => throw "a candidate's resolving lines do not project"
-  let outcome := match lex rendering, grammarFault Q with
-    | .ok #[w], none =>
-      match readOne Q (stateBefore units (sentence - start)) b w with
-      | .ok (some (t, F, m, _)) => if F == cand.formula && m == cand.mark && (quotedSenseOf Q t).isNone
-          then "same" else "different"
-      | .error .budget => "unknown"
-      | _ => "different"
-    | _, _ => "different"
-  pure (Json.mkObj [("sentence", toJson sentence), ("candidate", toJson j), ("outcome", .str outcome)])
-
 /-- A `senses.read` case. With `identified` (the route's runner, not the document mode's call) an admitted answer
 carries its identities (`admittedIds`) and its environment's profile list as written (`Projection.written`). -/
 def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let fenced := has j "fences"
   VE.Bridge.exactFields j (["id", "environment", "lexicon", "packs", "own", "budget",
     if fenced then "fences" else "source"] ++
-    (if fenced then ["fence_ids", "reading_set_units"] else ["line", "reread"].filter (has j)) ++
+    (if fenced then ["fence_ids", "reading_set_units"] else []) ++
     (["overlay", "defaults"].filter (has j)))
   let id ← VE.Bridge.stringField j "id"
   let c ← VE.EnglishGrammar.Run.decodeCase j
@@ -422,32 +391,20 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let (admitted, ids) ← if identified then do
       let (a, f) ← admittedIds D c environment budget count d text out; pure (a, some f)
     else pure ([], none)
-  let result ← if identified then do
+  let result ← if identified then
       let body := bodyOf D c budget sents
       let spans := match text with
         | .source s => (lexSpans s).toOption
         | .fences _ => none
-      let reread ← match out, j.getObjVal? "reread" with
-        | .ok units _ _ _ P, .ok r => do
-          VE.Bridge.exactFields r ["sentence", "candidate", "rendering"]
-          pure [("reread", ← rereadJson D c budget (count - units.length) (usedOf P) units
-            (← VE.Senses.natOf (← r.getObjVal? "sentence")) (← VE.Senses.natOf (← r.getObjVal? "candidate"))
-            (← VE.Bridge.stringField r "rendering"))]
-        | _, _ => pure []
       let entry := match out with
         | .ok _ _ _ _ P => senseEntryJson P spans d
         | _ => (occurrenceJson ·)
       outcomeJson c (refusalSource A text) count fences unitText admitted ids out true entry
-        (textsJson D c budget d body out ++ reread)
+        (textsJson D c budget d body out)
     else outcomeJson c (refusalSource A text) count fences unitText admitted ids out
-  let line ← match j.getObjVal? "line" with
-    | .ok l => do
-      VE.Bridge.exactFields l ["word", "gloss"]
-      pure [("line", lineJson D (← VE.Bridge.stringField l "word") (← VE.Bridge.stringField l "gloss"))]
-    | .error _ => pure []
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
-    ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
-     ("senses_version", .str sensesVersion), ("reading", result)] ++ line))])
+    [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
+     ("senses_version", .str sensesVersion), ("reading", result)])])
 
 def runCaseReported (j : Json) : Json :=
   match readCase j true with

@@ -247,9 +247,7 @@ def _response_problem(response: object, expected_id: str, request_id: str,
     """`fences`: the number of fences a fence request sent (Lean's `fenceUnits` map is then required on an
     admitted reading), or None for a source. `source`: the text a refusal's span is over (`_refusal_source`).
     `binding`: the request's environment, source and dictionary words, which the identities and used words name."""
-    # `line`, when asked, is `_line_problem`'s.
-    if type(response) is not dict or response.keys() - {"line"} != {"request_id", "dictionary_id", "senses_version",
-                                                                    "reading"}:
+    if type(response) is not dict or response.keys() != {"request_id", "dictionary_id", "senses_version", "reading"}:
         return "the result does not have request and dictionary identities, the senses version and a reading"
     if not _word(response["senses_version"]):
         return "the senses version is not a string"
@@ -263,8 +261,7 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         return "the reading has no known status"
     if reading["status"] in {"one", "open"}:
         admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used",
-                    "flips", "warnings"} | ({"preamble"} if fences is None else {"fences"}) | (
-                        {"reread"} if binding is not None and binding.get("reread") is not None else set())
+                    "flips", "warnings"} | ({"preamble"} if fences is None else {"fences"})
         if reading.keys() != admitted | {"code"} and reading.keys() != admitted:
             return "an admitted reading has missing or unknown fields"
         if (reading.get("code") != "Unresolved" if reading["status"] == "open" else "code" in reading):
@@ -387,10 +384,6 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         problem = _warnings_problem(reading["warnings"], reading["mixed"], binding)
         if problem:
             return problem
-        if "reread" in reading:
-            problem = _reread_problem(reading["reread"], binding["reread"], units)
-            if problem:
-                return problem
         if fences is not None:
             # One entry per fence sent: "line" for a preamble line (they lead), else the next unit in order.
             mapped = reading["fences"]
@@ -464,27 +457,10 @@ def _warnings_problem(warnings: object, mixed: list, binding: dict | None) -> st
     return None
 
 
-REREAD_OUTCOMES = {"same", "different", "unknown"}
-
-
-def _reread_problem(reread: object, asked: dict, units: dict) -> str | None:
-    """The re-read of one rendering (`VE.Senses.Run.rereadJson`): the unit and candidate the request named, one of
-    the answer's, and Lean's outcome."""
-    if type(reread) is not dict or reread.keys() != {"sentence", "candidate", "outcome"} \
-            or type(reread["outcome"]) is not str or reread["outcome"] not in REREAD_OUTCOMES:
-        return "the re-read is malformed"
-    if [reread["sentence"], reread["candidate"]] != [asked["sentence"], asked["candidate"]] \
-            or not all(_nat(reread[key]) for key in ("sentence", "candidate")) \
-            or reread["sentence"] not in units \
-            or reread["candidate"] >= len(units[reread["sentence"]]["candidates"]):
-        return "the re-read does not name the request's unit and candidate"
-    return None
-
 
 def request(env, source: str | None, texts: list[str], *, own: list[dict] = (), overlay: dict | None = None,
             budget: int = WORK_BUDGET, fences: list[str] | None = None, defaults=None,
-            fence_ids: list[str] | None = None, reading_set_units: list[str] | None = None,
-            line: dict | None = None, reread: dict | None = None) -> dict:
+            fence_ids: list[str] | None = None, reading_set_units: list[str] | None = None) -> dict:
     """The `ve_senses_route` case: the environment, the lexicon Python's vocabulary selects, the pack texts
     unchanged, the own senses, the source (or a document's English fences in unit order), the front
     matter's defaults as written, and the budget."""
@@ -493,11 +469,6 @@ def request(env, source: str | None, texts: list[str], *, own: list[dict] = (), 
             "own": list(own), "budget": budget}
     if fences is None:
         case["source"] = source
-        # sn-b6c: Lean's preamble line for a word and gloss, and the re-read of one candidate's rendering.
-        if line is not None:
-            case["line"] = line
-        if reread is not None:
-            case["reread"] = reread
     else:
         case["fences"] = list(fences)
         case["fence_ids"] = list(fence_ids if fence_ids is not None else map(str, range(len(fences))))
@@ -511,21 +482,12 @@ def request(env, source: str | None, texts: list[str], *, own: list[dict] = (), 
 
 def read(env, source: str, packs: list[bytes], *, own: list[dict] | None = None,
          overlay: dict | None = None,
-         budget: int = WORK_BUDGET, executable: Path = EXECUTABLE,
-         line: tuple[str, str] | None = None, reread: tuple[int, int, str] | None = None) -> dict:
-    """Return Lean's senses admission, including open readings, after validating its envelope. `line`, a word and
-    a gloss, asks for Lean's preamble line (`result["line"]`); `reread`, a unit's sentence, a candidate's index and
-    a rendering, asks Lean to re-read the rendering under that candidate's projection (`reading["reread"]`)."""
+         budget: int = WORK_BUDGET, executable: Path = EXECUTABLE) -> dict:
+    """Return Lean's senses admission, including open readings, after validating its envelope."""
     if type(source) is not str:
         raise VEError("Invalid senses request")
-    if line is not None and not (type(line) is tuple and len(line) == 2 and all(type(x) is str for x in line)) \
-            or reread is not None and not (type(reread) is tuple and len(reread) == 3 and _nat(reread[0])
-                                           and _nat(reread[1]) and type(reread[2]) is str):
-        raise VEError("Invalid senses request")
     return _read(env, source, None, packs, own=own, overlay=overlay, defaults=None, budget=budget,
-                 executable=executable,
-                 line=None if line is None else {"word": line[0], "gloss": line[1]},
-                 reread=None if reread is None else dict(zip(("sentence", "candidate", "rendering"), reread)))
+                 executable=executable)
 
 
 def read_fences(env, fences: list[str], packs: list[bytes], *, own: list[dict] | None = None, defaults=None,
@@ -553,31 +515,12 @@ def _dictionary(packs: list[bytes], own: list) -> tuple[str | None, set]:
 
 
 def _glosses(packs: list[bytes], own: list) -> set:
-    """The (word, gloss) pairs of the request's senses, which a gloss or a line of the answer must name."""
+    """The (word, gloss) pairs of the request's senses, which a sense-map gloss must name."""
     try:
         return {(sense["word"], sense["gloss"]) for sense in
                 [s for pack in packs for s in loads_json(pack)["senses"]] + list(own)}
     except (VEError, KeyError, TypeError, ValueError, RecursionError, OverflowError):
         return set()
-
-
-def _line_problem(result: object, line: dict | None, packs: list[bytes], own: list) -> str | None:
-    """The `line` member (`VE.Senses.Run.lineJson`) of a result, present exactly when asked: the word and gloss the
-    request named, with Lean's line when they name a sense of the request's dictionary, else Lean's code. The
-    result's other members are `_response_problem`'s."""
-    if type(result) is not dict or ("line" in result) != (line is not None):
-        return "the result's line is missing or unasked"
-    if line is None:
-        return None
-    answer = result["line"]
-    if type(answer) is not dict or answer.keys() not in ({"word", "gloss", "text"}, {"word", "gloss", "code"}) \
-            or not all(type(answer[key]) is str for key in answer) \
-            or [answer["word"], answer["gloss"]] != [line["word"], line["gloss"]]:
-        return "the line does not name the request's word and gloss"
-    if "text" in answer and (not answer["text"] or (line["word"], line["gloss"]) not in _glosses(packs, own)) \
-            or answer.get("code", "UnknownWord") not in ("UnknownWord", "UnknownGloss"):
-        return "the line is not one of a sense of the request's dictionary"
-    return None
 
 
 def _projection_problem(row: object, case: dict, env, expected_id: str | None) -> str | None:
@@ -644,7 +587,7 @@ def project(env, packs: list[bytes], lines: str, used: list[str], *, own: list[d
 
 
 def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executable,
-          fence_ids=None, reading_set_units=None, line=None, reread=None) -> dict:
+          fence_ids=None, reading_set_units=None) -> dict:
     deadline = time.monotonic() + configured_timeout(ROUTE_TIMEOUT)
     # A dictionary of own senses alone is Lean's to judge: no pack is required here.
     if type(packs) is not list or \
@@ -654,7 +597,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
     texts = [_text(pack) for pack in packs]
     expected_id, words = _dictionary(packs, own)
     case = request(env, source, texts, own=own, overlay=overlay, budget=budget, fences=fences, defaults=defaults,
-                   fence_ids=fence_ids, reading_set_units=reading_set_units, line=line, reread=reread)
+                   fence_ids=fence_ids, reading_set_units=reading_set_units)
     try:
         request_id = digest("ve-senses-request-v1\n", case)
         canonical_json([case])
@@ -668,12 +611,12 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
     [row] = lean_backend.run("senses.read", executable, [case], runner="ve_senses_route", timeout=remaining)
     if row["status"] != "ok" or row.keys() != {"id", "status", "result"}:
         raise VEError(row.get("error", "Invalid senses request"))
-    problem = _line_problem(row["result"], line, packs, own) or _response_problem(row["result"], expected_id, request_id, None if fences is None else len(fences),
+    problem = _response_problem(row["result"], expected_id, request_id, None if fences is None else len(fences),
                                 source=_refusal_source(source, fences, defaults),
                                 defaults_count=len(defaults) if type(defaults) is dict else 0,
                                 fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
                                 binding={"env": env, "source": source, "words": words, "case": case,
-                                         "glosses": _glosses(packs, own), "reread": reread})
+                                         "glosses": _glosses(packs, own)})
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses response: " + problem)
     if time.monotonic() > deadline:
