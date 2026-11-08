@@ -54,7 +54,13 @@ def answer_problem(row, case: dict) -> str | None:
 
 
 def read_answer(row, case: dict) -> dict:
-    """Lean's answer `row` to `case` after the binding check (`answer_problem`)."""
+    """Lean's answer `row` to `case` after the schema check (`act-readings.json`) and the binding check
+    (`answer_problem`)."""
+    from .backends.service_schema import Invalid, check_row
+    try:
+        check_row(MODE, row, case, 0)
+    except Invalid as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean's act-readings answer does not fit its schema: {exc}") from None
     problem = answer_problem(row, case)
     if problem is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean's act-readings answer is not bound to its request: {problem}")
@@ -66,3 +72,26 @@ def readings(phrase: str, **request_fields) -> dict:
     from .backends.relay import decide_once
     case = request(phrase, **request_fields)
     return read_answer(decide_once(MODE, case), case)
+
+
+def main(argv: list[str]) -> int:
+    """`ve acts readings PHRASE [--acts FILE] [--role R] [--negated] [--form F]`: Lean's readings of an act phrase
+    under the rule's modal, as JSON. Exit 0 when Lean listed them, 2 when it refused the phrase, 4 at a limit; an
+    unavailable checker is the caller's exit 5."""
+    import argparse
+    import json
+    from pathlib import Path
+    parser = argparse.ArgumentParser(prog="python -m ve acts")
+    commands = parser.add_subparsers(dest="command", required=True)
+    listing = commands.add_parser("readings", help="an act phrase's readings and paraphrases under a modal")
+    listing.add_argument("phrase", help='the act phrase, "{0} ..."')
+    listing.add_argument("--acts", help="JSON of the acts block: fixed, frames and adverbs")
+    listing.add_argument("--role", default="plain", choices=["plain", "permission", "obligation"])
+    listing.add_argument("--negated", action="store_true", help="the rule's sign is false (must not, need not)")
+    listing.add_argument("--form", choices=["has the right", "is entitled"], help="a plain act's form")
+    options = parser.parse_args(argv)
+    block = json.loads(Path(options.acts).read_text(encoding="utf-8")) if options.acts else {}
+    found = readings(options.phrase, fixed=block.get("fixed", []), frames=block.get("frames", []),
+                     adverbs=block.get("adverbs", []), role=options.role, sign=not options.negated, form=options.form)
+    print(json.dumps(found, ensure_ascii=False, indent=2))
+    return {"LISTED": 0, "REFUSED": 2}.get(found["verdict"], 4)
