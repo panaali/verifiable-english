@@ -1,5 +1,4 @@
 import VE.Acts.Decode
-import VE.Acts.Sources
 import VE.Compose.Dispatch
 
 /-! The `acts-elaborate` case kind of the `norms` and `norm-defaults` modes (act-phrases 6.7, C18): the elaborated
@@ -217,45 +216,5 @@ def actReadingsReported (j : Json) : Json :=
   match runActReadings j with
   | .ok row => row
   | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
-
-/-! ### Sources (act-phrases 1.8, 3.1; D7) -/
-
-/-- One source of the `acts` block (3.1): `default` is `deny` or `allow`, or `unspecified` under `norm-defaults@0`;
-    the template's guard, carve-outs and precedence are decoded as a norm's (`Norms.Wire.decodeNorm`). -/
-def decodeSource (nd : Bool) (j : Json) : Except String Source := do
-  VE.Bridge.exactFields j ["phrase", "role", "sign", "form", "default", "template", "units", "sets"]
-  let t := j.getObjValD "template"
-  VE.Bridge.exactFields t ["guard", "unless", "over"]
-  let .bool sign := j.getObjValD "sign" | throw "InvalidInput: a source's sign is not a boolean"
-  let N ← VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj [("name", .str ""), ("predicate", .str ""),
-    ("sign", .bool sign), ("guard", t.getObjValD "guard"), ("unless", t.getObjValD "unless"),
-    ("over", t.getObjValD "over")])])
-  let role ← match j.getObjValD "role" with
-    | .str "permission" => pure VE.Norms.Role.permission
-    | .str "obligation" => pure .obligation
-    | .str "plain" => pure .plain
-    | _ => throw "InvalidInput: a source's role is not permission, obligation or plain"
-  let form ← match j.getObjValD "form" with
-    | .null => pure none
-    | .str t => match Lexical.Form.ofText? t with
-      | some f => pure (some f)
-      | none => throw "InvalidInput: a source's form is not has the right or is entitled"
-    | _ => throw "InvalidInput: a source's form is not has the right or is entitled"
-  let completion ← match j.getObjValD "default" with
-    | .str "deny" => pure Completion.deny
-    | .str "allow" => pure .allow
-    | .str "unspecified" =>
-      if nd then pure .unspecified else throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-    | _ => throw "InvalidInput: a source's default is not deny, allow or unspecified"
-  pure ⟨← VE.Bridge.stringField j "phrase", role, sign, form, N, completion,
-    ← VE.Bridge.strings (j.getObjValD "units"), ← VE.Bridge.strings (j.getObjValD "sets")⟩
-
-/-- Under `acts@0`, the `acts` block's `sources` (3.1); `none` when the profiles do not read `acts@0` or the block has
-    no `sources`. -/
-def sourcesOf (environment : Json) : Option Json :=
-  match (VE.Norms.Wire.actsProfiles true environment).isEmpty,
-      ((environment.getObjValD "vocabulary").getObjValD "acts").getObjVal? "sources" with
-  | false, .ok ss => some ss
-  | _, _ => none
 
 end VE.Acts.Run

@@ -154,12 +154,11 @@ def plainWordings (ne : NormsEnvironment) : List (String × String) :=
     "predicates").getObjValD r.name).getObjValD "regulated")).map (r.name, ·)
 
 /-- The fixed phrases of an environment's `acts` block (act-phrases 3.1), each checked by `Lexical.decodeFixed`,
-when its profiles `ps` are read with `acts@0`; else none. An absent block is the empty block. The block may hold
-`frames`, `adverbs` and `sources`; `sources` is read by the readings route only (`Readings.Run.checkSources`). -/
+when its profiles `ps` are read with `acts@0`; else none. An absent block is the empty block. -/
 def actsFixed (ps : List String) (environment : Json) : Except String (List String) :=
   match ps.isEmpty, (environment.getObjValD "vocabulary").getObjVal? "acts" with
   | false, .ok block => do
-    exactFields block (["fixed"] ++ ["frames", "adverbs", "sources"].filter fun k => (block.getObjVal? k).isOk)
+    exactFields block (["fixed"] ++ ["frames", "adverbs"].filter fun k => (block.getObjVal? k).isOk)
     let fx ← strings (← block.getObjVal? "fixed")
     let _ ← VE.Acts.Lexical.decodeFixed fx
     pure fx
