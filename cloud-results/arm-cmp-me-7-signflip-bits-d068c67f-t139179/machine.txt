@@ -1,0 +1,8 @@
+job=arm-cmp-me-7-signflip-bits-d068c67f-t139179 shard=- nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-08T12:00:43Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   42G  104G  29% /
+ 12:00:44 up 1 min,  0 user,  load average: 0.97, 0.32, 0.11
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
+[gate] passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 32492 passed, 95 skipped, 0 failures
