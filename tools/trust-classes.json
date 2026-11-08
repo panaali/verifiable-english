@@ -10244,10 +10244,25 @@
         "VE.Service.Document.clashRefusal",
         "VE.Service.Document.clashRefusalIn",
         "VE.Service.Document.clashRefusalFast",
-        "VE.Service.Document.exceptionConditioned"
+        "VE.Service.Document.exceptionConditioned",
+        "VE.Service.Document.ruleExceptionConditioned",
+        "VE.Service.Document.rightsBlockRules",
+        "VE.Service.Document.unitRules"
       ],
       "G[I]": [
-        "VE.Service.Document.layeredIds"
+        "VE.Service.Document.layeredIds",
+        "VE.Service.Document.dropKey"
+      ],
+      "S": [
+        "VE.Service.Document.setVerdictFields",
+        "VE.Service.Document.verdictFields",
+        "VE.Service.Document.unitStatuses",
+        "VE.Service.Document.judgmentCodes",
+        "VE.Service.Document.judgmentGateTexts",
+        "VE.Service.Document.layerRefusal",
+        "VE.Service.Document.layerRelaxes",
+        "VE.Service.Document.noUnitStatus",
+        "VE.Service.Document.withoutStatuses"
       ]
     },
     "VE/Service/EnglishRun.lean": {
@@ -18028,7 +18043,15 @@
     },
     "VE/Judgments/Chain.lean": {
       "S": [
-        "VE.Judgments.softContent"
+        "VE.Judgments.softContent",
+        "VE.Judgments.rightsAuthorFormulas",
+        "VE.Judgments.andAll"
+      ],
+      "D[V]": [
+        "VE.Judgments.blockFormula",
+        "VE.Judgments.ruleFormulas",
+        "VE.Judgments.linesFormulas",
+        "VE.Judgments.blockFormulas"
       ]
     },
     "VE/Judgments/ChainExamples.lean": {
@@ -18049,7 +18072,23 @@
         "VE.Judgments.ChainExamples.f13o",
         "VE.Judgments.ChainExamples.bothRules",
         "VE.Judgments.ChainExamples.withCondition",
-        "VE.Judgments.ChainExamples.f13lWith"
+        "VE.Judgments.ChainExamples.rightsWithCondition",
+        "VE.Judgments.ChainExamples.rightsWithEmptyCondition",
+        "VE.Judgments.ChainExamples.f13lWith",
+        "VE.Judgments.ChainExamples.twoSets",
+        "VE.Judgments.ChainExamples.udhrTerms",
+        "VE.Judgments.ChainExamples.udhr",
+        "VE.Judgments.ChainExamples.rightsLayer",
+        "VE.Judgments.ChainExamples.udhrLim",
+        "VE.Judgments.ChainExamples.editUnit",
+        "VE.Judgments.ChainExamples.f11",
+        "VE.Judgments.ChainExamples.f13c",
+        "VE.Judgments.ChainExamples.twinFront",
+        "VE.Judgments.ChainExamples.drawnLeaf",
+        "VE.Judgments.ChainExamples.drawn",
+        "VE.Judgments.ChainExamples.udhrRights",
+        "VE.Judgments.ChainExamples.withStatuses",
+        "VE.Judgments.ChainExamples.answer2e"
       ]
     },
     "VE/Scope/Reach.lean": {
