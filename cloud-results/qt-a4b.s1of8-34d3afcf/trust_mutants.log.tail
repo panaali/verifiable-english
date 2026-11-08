@@ -1,0 +1,21 @@
+trust_mutants: 20 definitions, 404 mutants (51 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Compose/Dispatch.lean:934 VE.Compose.TableAdmits (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Compose/Dispatch.lean:968, lean/VE/Compose/Dispatch.lean:1302, lean...)
+SURVIVOR lean/VE/Compose/Dispatch.lean:933 VE.Compose.TableAdmits (S, trusted) body-true: ps.Pairwise (· < ·) ∧ (∀ p ∈ ps, ∃ r ∈ t, r.profile = p) ∧ (∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ... -> True (the proofs it breaks: lean/VE/Compose/Dispatch.lean:968, lean/VE/Compose/Dispatch.lean:1302, lean...)
+UNKNOWN lean/VE/Service/Document.lean:2273 VE.Service.Document.elsewhere (D[V], trusted) list-empty: ["unformalised", reason] -> [] (lean/VE/Service/Document.lean:2273: typeclass instance problem is stuck, it is often due to metav...)
+UNKNOWN lean/VE/Service/Document.lean:2404 VE.Service.Document.check (D[V], trusted) list-empty: E.cardinality -> [] (lean/VE/Service/Document.lean:2404: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-empty: used -> []
+UNKNOWN lean/VE/Service/Document.lean:2284 VE.Service.Document.countingFront (D[V], trusted) list-empty: units.toList.map -> [] (lean/VE/Service/Document.lean:2284: Function expected at)
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-first: used -> (used.take 1)
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-drop-last: used -> (used.dropLast)
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-first: ?.map -> (?.map.take 1) (lean/VE/Service/Document.lean:2343: don't know how to synthesize placeholder)
+SURVIVOR lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-drop-last: [chainProfiles] -> ([chainProfiles].dropLast)
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-drop-middle: ("cardinality_chain", toJson VE.Cardinality.Wire.chainProfiles), -> 
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-last: g.leaves.filterMap -> (g.leaves.filterMap.reverse.take 1) (lean/VE/Service/Document.lean:2347: Invalid field notation: Type of)
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-drop-first: g.leaves.filterMap -> (g.leaves.filterMap.drop 1) (lean/VE/Service/Document.lean:2347: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-last: g.leaves -> (g.leaves.reverse.take 1)
+trust_mutants: 29 KILLED, 8 SURVIVOR, 6 UNKNOWN, 5 INVALID, 0 ALLOWED, 3 NOT RUN, 353 OTHER SHARD in 5213 s
+trust_mutants: D[V], trusted: 17 KILLED, 5 SURVIVOR, 6 UNKNOWN, 5 INVALID, 1 NOT RUN, 240 OTHER SHARD
+trust_mutants: G[V], trusted: 12 KILLED, 1 SURVIVOR, 2 NOT RUN, 110 OTHER SHARD
+trust_mutants: S, trusted: 2 SURVIVOR, 3 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 3 of its 51 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.3 s, scratch 3.2 s, control_build 1.1 s, probe_install 1.4 s, control_probes 1863.9 s, mutants 3328.6 s, cleanup 2.4 s, reads 0.2 s; lake control_build 1.1 s (1), probe_install 1.3 s (1), control_probes 4767.5 s (18), mutant_builds 2841.4 s (55), mutant_checks 7698.4 s (36), stage_controls 1148.8 s (6), mutant_probes 1341.7 s (29)
