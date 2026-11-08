@@ -10,7 +10,6 @@ import VE.Readings.Companions
 import VE.Readings.ComponentsWire
 import VE.NormDefaults.Run
 import VE.Rights.Run
-import VE.Acts.Run
 
 /-! The `ve_service` mode `readings-route` (docs/spec/composition-s1.md 8.4), formerly the one-shot `ve_readings_route`. Each case is `{"id", "kind", "environment", "document",
 ...}` with `readings@1` in the environment's profiles and the document of `Wire.lean`.
@@ -759,29 +758,11 @@ def runCase (j : Json) : Except String Json := do
   | some p => Stage.part c fun _ => runOne j id kind p.2.1 p.2.2
   | none => throw (unknownComponent c)
 
-/-- Reading-set sources (act-phrases 7, D7): under `acts@0`, each source of the `acts` block's `sources` is checked
-    once by `sourceCheck`, against the main case's S1 admission and the frame's original `unspecified` predicates
-    (`unspecOf`), after that admission's own refusals; then the case runs as before. Without `acts@0`, or with no
-    `sources`, nothing is read. At most 128 sources. -/
-def checkSources (j : Json) : Except String Unit := do
-  let environment := j.getObjValD "environment"
-  let some raw := VE.Acts.Run.sourcesOf environment | return
-  let raw ← raw.getArr?
-  if 128 < raw.size then throw "ResourceLimit: more than 128 sources"
-  let nd := ((VE.Route.Gate.profilesOf environment).toOption.getD []).contains "norm-defaults@0"
-  let ss ← raw.toList.mapM (VE.Acts.Run.decodeSource nd)
-  let document ← j.getObjVal? "document"
-  let main := (((← splitCase environment document).find? (·.1 == "main")).map (·.2.2)).getD document
-  let a ← admitReadings environment main
-  let V ← VE.Norms.Wire.actsVocab (VE.Norms.Wire.actsProfiles true environment) environment
-  for s in ss do
-    VE.Acts.sourceCheck a.D (unspecOf a.re a.D) V (VE.Acts.Wire.fixedOf environment) VE.Acts.rawCap VE.Acts.stepBudget s
-
 def runCaseReported (j : Json) : Json :=
   match VE.Route.Run.caseKind j with
   | .ok k =>
     if k == "readings-validate" || k == "readings-separate" || s2Kinds.contains k then
-    match checkSources j >>= fun _ => runCase j with
+    match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
     else runLower j
@@ -794,7 +775,6 @@ def runCaseReportedMemo (memo : AdmissionMemo) (j : Json) : Json × AdmissionMem
     let kind ← VE.Route.Run.caseKind j
     unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do
       return runLower j
-    checkSources j
     let id ← stringField j "id"
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
