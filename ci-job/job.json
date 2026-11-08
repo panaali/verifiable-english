@@ -1,0 +1,23 @@
+{
+ "job": "qt-a4b.s3of8-e80c41e7",
+ "head": "c9aeb1bf2edfc2a1acc979638007b983d4b3a00e",
+ "argv": [
+  "qt-a4b.s3of8-e80c41e7",
+  "c9aeb1bf2edfc2a1acc979638007b983d4b3a00e",
+  "176d50c05c2d6ee32e3d06b9a8059d7a3d73e113",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b782dfe18f00.tar.zst",
+  "b2ebc5161f94aa7ae7cea635af4596999caf61b9f1cf688a59b719b016c43c65",
+  "--max-mutants",
+  "1000",
+  "--build-timeout",
+  "3600",
+  "--allow",
+  "docs/quantities/qt-a4b/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/8",
+  "--jobs",
+  "4"
+ ]
+}
