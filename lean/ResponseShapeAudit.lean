@@ -261,6 +261,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.zoneCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.zoneLine_fits
 #print axioms ResponseShape.Encoders.Norms.admission_fits
 #print axioms ResponseShape.Encoders.Norms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Norms.certificate_fits
