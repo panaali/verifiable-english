@@ -1,0 +1,7 @@
+trust_mutants: 20 definitions, 404 mutants (51 to run), 4 jobs, base 176d50c05c2d
+trust_mutants: 19 KILLED, 0 SURVIVOR, 0 UNKNOWN, 1 INVALID, 9 ALLOWED, 22 NOT RUN, 353 OTHER SHARD in 4947 s
+trust_mutants: D[V], trusted: 12 KILLED, 1 INVALID, 7 ALLOWED, 14 NOT RUN, 240 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 8 NOT RUN, 110 OTHER SHARD
+trust_mutants: S, trusted: 2 ALLOWED, 3 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 22 of its 51 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.3 s, scratch 3.5 s, control_build 1.1 s, probe_install 1.4 s, control_probes 2009.7 s, mutants 2915.8 s, cleanup 3.1 s, reads 0.1 s; lake control_build 1.1 s (1), probe_install 1.4 s (1), control_probes 5172.9 s (18), mutant_builds 2646 s (33), mutant_checks 6188.1 s (26), stage_controls 1284.9 s (5), mutant_probes 1174.4 s (19)
