@@ -2091,6 +2091,62 @@
    "reason": "sn-b6c: VE/Senses/Run.lean +25 (V: byteSpan, senseEntryJson, the texts and entries in outcomeJson and readCase); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6c, 2026-11-08",
    "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 140,
+   "reason": "df-5: the defaults-zone kind, remeasured at review F1: VE/Defaults/ZoneWire.lean +100 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase, ZoneReplay, ZoneReplay.X, maxZoneObservations, zoneJoins, zoneWordsJson; tied, not counted: decisionOf, outcomeOf, tupleIn, recordEntry, obsEntry, replayZoneOn, ZoneReplay.min, zoneSizes, ZoneLine.row, ZoneLine.kind, zoneHeads, zoneLineWords), VE/Defaults/ZoneWordsMain.lean +2 (G[V] main), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +140",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "S",
+   "lines": 84,
+   "reason": "pc-1g: VE/Service/Document.lean S +75 (verdictFields, setVerdictFields, unitStatuses, judgmentCodes, judgmentGateTexts, layerRefusal, layerRelaxes, noUnitStatus, withoutStatuses), V +9 (UnitContent.judgedIn: the rights block and a rights norm unit beside its cites); VE/Judgments/Chain.lean S +9 (rightsAuthorFormulas, andAll), V +36 (blockFormula, ruleFormulas, linesFormulas, blockFormulas)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 45,
+   "reason": "pc-1g: VE/Service/Document.lean S +75 (verdictFields, setVerdictFields, unitStatuses, judgmentCodes, judgmentGateTexts, layerRefusal, layerRelaxes, noUnitStatus, withoutStatuses), V +9 (UnitContent.judgedIn: the rights block and a rights norm unit beside its cites); VE/Judgments/Chain.lean S +9 (rightsAuthorFormulas, andAll), V +36 (blockFormula, ruleFormulas, linesFormulas, blockFormulas)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "pc-1g: VE/Service/Document.lean S +1 (verdictFields names undeclared_evaluative, DRI 2026-11-03 pc-1g stop item 4); item total S +85, V +45, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1g: VE/Judgments/Chain.lean V +1 (blockFormula written as a match on null, so blockFormula_null holds by rfl); item total S +85, V +46, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1g F1: lean/VE/Service/Document.lean D[V] +1 in environmentOf, refusing conditioned rights rules before their unchecked judgment usage; new ruleExceptionConditioned, rightsBlockRules and unitRules are G[R], reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g F1, 2026-11-04",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 8,
+   "reason": "ps-1c: lean/VE/Presupposition/Rules.lean S +8 (ruleGoal, conditionNode, conditionRule); Agree.lean +0; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1c, 2026-10-18",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
+  },
+  {
+   "class": "S",
+   "lines": 165,
+   "reason": "at-1b: Syntax.lean +165 (S), K +0, at-1a-tie first half -15 (gross +180; keys, name, keyOf, envAtt to D[V] tied)",
+   "signature": "SIGNED by the DRI 2026-11-05 (reviews/dri-decisions-20261105-at-1b-trust.md item 1)",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
   }
  ]
 }
