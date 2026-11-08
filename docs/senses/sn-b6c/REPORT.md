@@ -58,8 +58,10 @@ The re-read's seeded bug (a base-projection rendering accepted) goes with (5) to
   0 UNKNOWN, 33 INVALID, 34 ALLOWED, 0 NOT RUN.
 - Statement gate: `uv run python tools/lean_statements.py --check`: added 0, removed 0, changed 0.
   `python3 lean/audit.py --write`: PASS (782 source files, the standard axioms only).
-- Size (hand-written, `git diff --numstat` against the merge base, generated files and the trust-mutant evidence
-  out): about 640 lines with these docs; (4) and (5) were cut when the projection with tests and docs was ~800.
+- Size (hand-written lines added, `git diff --numstat` against the merge base, generated files and the tool's
+  evidence JSONs out): 728 = product code and side tables 273, tests and `#guard`s 272, docs, seeded-bug list and
+  allow list 183. Over the ~600 line by the tests and docs of (1)-(3): (4) and (5) were cut at the line, when the
+  projection with their tests and docs was ~800; (1)-(3) is the smallest part that passes its own fixtures.
 
 ## Tests run
 
@@ -76,7 +78,7 @@ The re-read's seeded bug (a base-projection rendering accepted) goes with (5) to
 - Overlap: `infra/arch-20261105-2` re-pins the same `#guard` lines of `RunExamples.lean` (another pin function);
   whichever merges second re-pins them.
 
-Pilot bytes: 0 expected (no pilot document uses senses yet). Main's known-red tests: none in this selection.
+Pilot bytes: 0 expected (no pilot document uses senses yet). No test failed in the selection but the three above (none of main-known-red.txt).
 
 ## Spec re-read
 
