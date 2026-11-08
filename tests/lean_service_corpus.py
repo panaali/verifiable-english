@@ -443,7 +443,51 @@ def corpus():
             "search-budget": [*search_budget_cases(), *ADVERSARIAL],
             "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL],
             "cardinality": [*cardinality_cases(), *ADVERSARIAL],
-            "scope": [*recorded("scope"), *ADVERSARIAL]}
+            "scope": [*recorded("scope"), *ADVERSARIAL],
+            "english.command": [*command_cases(), *ADVERSARIAL]}
+
+
+def command_cases():
+    """The `english.command` mode (commands-imperatives CI-2): a command with a fill, a proof task and its
+    `QueryMismatch`, a prefix refusal and a proof wording over 400 bytes, over F0's proof-task part and the
+    lexicon `english.read`'s producer selects (`ve.english_grammar.export`)."""
+    from ve import Environment
+    from ve.english import EnglishVocabulary
+    from ve.english_grammar import export
+    from ve.profiles import LANGUAGE, SPEC_REVISION
+
+    def regulated(role, act, **dual):
+        return {"role": role, "default": "deny" if role == "obligation" else "allow", "act": act, **dual}
+    proof = "{0} submit a proof of {1}"
+    env = Environment({
+        "language": LANGUAGE, "spec_revision": SPEC_REVISION,
+        "profiles": ["norms@0", "relational-fol@0", "speech-acts@0"],
+        "speech_acts": {"task": "t1", "addressee": {"sort": "user", "constant": "alice"},
+                        "definites": {"the token": "token1"}},
+        "vocabulary": {
+            "sorts": {s: {"description": s} for s in ("user", "control", "service", "query", "token")},
+            "predicates": {
+                "click_required": {"arguments": ["user", "control"], "description": "click",
+                                   "regulated": regulated("obligation", "{0} click {1}")},
+                "submit_required": {"arguments": ["user", "query"], "description": "submit",
+                                    "regulated": regulated("obligation", proof, permission="submit_permitted")},
+                "submit_permitted": {"arguments": ["user", "query"], "description": "submit",
+                                     "regulated": regulated("permission", proof)},
+                "share_permitted": {"arguments": ["user", "token"], "description": "share",
+                                    "regulated": regulated("permission", "{0} share {1}")},
+                "reviewed": {"arguments": ["service"], "description": "reviewed",
+                             "verbalisation": "{0} is reviewed"}},
+            "constants": {name: {"sort": sort, "description": name} for name, sort in {
+                "alice": "user", "check": "control", "atlas": "service", "q1": "query", "token1": "token"}.items()}}})
+    base = {"environment": env.to_dict(), "lexicon": export(EnglishVocabulary(env)), "unit": "u1"}
+    record = {"id": "q1", "premises": [], "target": {"ast": ["unary", "reviewed", ["const", "atlas"]]}}
+    prove = "Prove that atlas is reviewed using these premises."
+    return [{**base, "id": "click", "wording": "Click Check.", "queries": []},
+            {**base, "id": "prove", "wording": prove, "queries": [record]},
+            {**base, "id": "mismatch", "wording": prove, "queries": []},
+            {**base, "id": "permission", "wording": "Do not share the token.", "queries": []},
+            {**base, "id": "may", "wording": "You may share the token.", "queries": []},
+            {**base, "id": "long", "wording": prove.replace("atlas ", "atlas" + " " * 352), "queries": [record]}]
 
 
 def recorded(mode):

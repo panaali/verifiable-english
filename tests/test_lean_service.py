@@ -941,6 +941,9 @@ def test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline(tmp_path, monkey
 def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
     """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
     tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
+    # tests/ first, as pytest puts it when collecting a test file: an earlier test that left tools/ ahead of it on
+    # sys.path would make `import question_fixtures` find tools/'s generator, not the fixture table.
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parent))
     from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
     from test_lean_document_wrapper import test_a_document_past_its_cpu_deadline_is_unavailable_never_ok
     from ve.backends import lean_service
@@ -1340,6 +1343,8 @@ _SCHEMA_SEEDS = {
     "english.grammar": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.check": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.question": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "english.command": ({"id": "c"}, {"id": "c", "status": "ok", "result": {
+        "unit": "u", "wording": "w", "legend": [], "outcome": "limit", "text": "t"}}),
     "ask": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "words": ({"id": "c"}, {"id": "c", "status": "ok",
                            "result": {"environment_id": "a" * 64, "lexicon_id": "a" * 64, "lines": ["x"]}}),
@@ -1444,7 +1449,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
         field = ("status" if mode in ("english.read", "english.grammar", "english.check", "english.question",
-                                      "ask", "words") else
+                                      "english.command", "ask", "words") else
                  "id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else

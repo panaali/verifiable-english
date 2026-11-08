@@ -12,6 +12,7 @@
 - `ve/background.py` — Environment-derived premises and finite-model validity hooks.
 - `ve/bundle.py` — Checked lemma bundles with transitive, labelled premise provenance.
 - `ve/calc.py` — Python relay of the `calc` service mode: a `ve-calc@0` case (math-evidence plan ME-3, spec 3.4).
+- `ve/cardinality.py` — Python relay for the `cardinality@0` route (docs/spec/quantities.md 4, QT-A4).
 - `ve/check.py` — Acceptance records bind exact input bytes, AST, vocabulary and inventory.
 - `ve/closure.py` — Capture-avoiding closure rules, including supplied-invariant induction.
 - `ve/defaults.py` — Answers that hold unless an exception applies: the relay of Lean's `defaults-*` rows (docs/spec/defeasible-PLAN.md 2.2 and 2.3, batch DF-1b; spec docs/spec/def…
@@ -32,6 +33,7 @@
 - `ve/fol.py` — Explicit adapters from formal first-order AST data to typed VE.
 - `ve/grammar.py` — Environment-specific CFGs for canonical VE, without decoding dependencies.
 - `ve/identity.py` — Domain-separated artifact bindings; identities never certify truth.
+- `ve/judgment_lines.py` — Python relay of judgment terms' authoring refusal (docs/spec/judgment-terms.md 9.5; plan JT-3).
 - `ve/limits.py` — The initial v0 runtime envelope; these bounds are not logical axioms. Lean owns every limit (`lean/VE/Limits.lean`, lean-first batch 18).
 - `ve/model.py` — Validated finite structures for the relational v0 profile.
 - `ve/natural.py` — Deterministic, audited English candidates for the untrusted natural view.

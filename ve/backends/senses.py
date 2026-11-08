@@ -19,6 +19,7 @@ from ..errors import CheckerUnavailable, VEError
 from ..english import EnglishVocabulary
 from ..english_grammar import actions_version, export, grammar_id, lexicon_id
 from ..wire import canonical_json, digest, loads_json
+from .service_schema import Invalid, check_projected_environment
 
 ROOT = Path(__file__).resolve().parents[2]
 EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_senses_route"
@@ -147,11 +148,82 @@ def _identities_problem(ids: object, keys: tuple, binding: dict | None, projecte
         return None
     if ids["grammar_id"] != grammar_id(binding["env"].profiles) \
             or ids.get("actions_version", actions_version()) != actions_version():
-        return "the grammar identities do not match the request"
+        return "grammar identities do not match the request"
     if "source_sha256" in ids and ids["source_sha256"] != hashlib.sha256(binding["source"].encode()).hexdigest():
-        return "the source identity does not match the request"
+        return "source identity does not match the request"
     if projected is not None and ids["environment_id"] != projected.environment_id:
-        return "the environment identity is not the returned environment's"
+        return "environment identity is not the returned environment's"
+    return None
+
+
+def _preamble_problem(lines: object, count: int, source: str | None) -> str | None:
+    """A source answer's preamble lines (`VE.Senses.Run.writtenLines`), bound to the request: as many as the
+    sentences before the body, each non-empty, and together the source's leading sentences, in order, with only
+    white space before, between and after them."""
+    if type(lines) is not list or not all(_word(line) for line in lines) or len(lines) != count:
+        return "the preamble lines are malformed or not the sentences before the body"
+    at = 0
+    for line in lines:
+        rest = source[at:] if type(source) is str else ""
+        start = at + len(rest) - len(rest.lstrip())
+        at = start + len(line)
+        if not source.startswith(line, start) or not (source[at:at + 1].isspace() or at == len(source)):
+            return "a preamble line is not the next sentence of the request's source"
+    return None
+
+
+# The members of a flip model by its status (`VE.Senses.Run.flipJson`), besides its unit and pair.
+FLIP_FIELDS = {"distinguished": {"true", "values", "model"}, "undistinguished": set(), "unknown": set()}
+
+
+def _model_problem(model: object, projected) -> str | None:
+    """A flip model in the model wire form (`VE.Senses.FlipModel.json`), typed and bound to the projected
+    environment: its sorts, constants and predicates are the environment's, each domain distinct entities, each
+    constant an entity of its sort's domain and each tuple one of its predicate's sorts' entities. Which tuples
+    hold, and that the model separates the pair, are Lean's (`VE.Senses.flipValues_sound`)."""
+    if type(model) is not dict or model.keys() != {"complete", "domains", "constants", "relations"} \
+            or model["complete"] is not True or not all(type(model[key]) is dict
+                                                       for key in ("domains", "constants", "relations")):
+        return "is not in the model wire form"
+    domains, constants, relations = model["domains"], model["constants"], model["relations"]
+    if not all(name in projected.sorts and _words(entities) and len(set(entities)) == len(entities)
+               for name, entities in domains.items()):
+        return "has a domain of no projected sort, or one that is empty or repeats an entity"
+    if not all(name in projected.constants and type(entity) is str
+               and entity in domains.get(projected.constants[name].sort, ()) for name, entity in constants.items()):
+        return "has a constant of no projected constant, or one outside its sort's domain"
+    if not all(name in projected.predicates and type(rows) is list and all(
+            type(row) is list and len(row) == len(projected.predicates[name].arguments)
+            and all(type(entity) is str and entity in domains.get(sort, ())
+                    for entity, sort in zip(row, projected.predicates[name].arguments)) for row in rows)
+               for name, rows in relations.items()):
+        return "has a relation of no projected predicate, or a tuple outside its sorts' domains"
+    return None
+
+
+def _flips_problem(flips: object, units: list, projected) -> str | None:
+    """The flip models (`VE.Senses.flipsOf`): one row per pair `first < second` of each open unit's candidates,
+    in unit order, then pair order; a distinguishing model names predicates of the projection, gives the two
+    candidates' values and writes the model (`_model_problem`)."""
+    pairs = [(unit["sentence"], i, j) for unit in units
+             for i in range(len(unit["candidates"])) for j in range(i + 1, len(unit["candidates"]))]
+    if type(flips) is not list or len(flips) != len(pairs):
+        return "the flip models are not one per pair of an open unit's candidates"
+    for row, pair in zip(flips, pairs):
+        if type(row) is not dict or type(row.get("status")) is not str or row["status"] not in FLIP_FIELDS \
+                or row.keys() != {"sentence", "first", "second", "status"} | FLIP_FIELDS[row["status"]]:
+            return "a flip model has missing or unknown fields"
+        if not all(_nat(row[key]) for key in ("sentence", "first", "second")) \
+                or (row["sentence"], row["first"], row["second"]) != pair:
+            return "a flip model does not name the next pair of an open unit's candidates"
+        if row["status"] == "distinguished" and (
+                not _words(row["true"]) or not all(name in projected.predicates for name in row["true"])
+                or type(row["values"]) is not list or len(row["values"]) != 2
+                or not all(type(value) is bool for value in row["values"])):
+            return "a flip model's senses or values are malformed or not the projection's"
+        problem = row["status"] == "distinguished" and _model_problem(row["model"], projected)
+        if problem:
+            return "a flip model " + problem
     return None
 
 
@@ -175,8 +247,8 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             or reading["status"] not in STATUSES:
         return "the reading has no known status"
     if reading["status"] in {"one", "open"}:
-        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used"} | (
-            set() if fences is None else {"fences"})
+        admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used",
+                    "flips"} | ({"preamble"} if fences is None else {"fences"})
         if reading.keys() != admitted | {"code"} and reading.keys() != admitted:
             return "an admitted reading has missing or unknown fields"
         if (reading.get("code") != "Unresolved" if reading["status"] == "open" else "code" in reading):
@@ -185,6 +257,11 @@ def _response_problem(response: object, expected_id: str, request_id: str,
                 or type(reading["sense_map"]) is not list or type(reading["mixed"]) is not list
                 or type(reading["unused"]) is not list or type(reading["environment"]) is not dict):
             return "an admitted reading has malformed collections"
+        if binding is not None:
+            try:
+                check_projected_environment(reading["environment"], binding["case"])
+            except Invalid as exc:
+                return f"the projected environment is not the request's with the projection's added: {exc}"
         try:
             projected = Environment(reading["environment"])
         except VEError:
@@ -250,6 +327,14 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         if not all(_nat(s) for s in sentences) \
                 or sentences != list(range(sentences[0], sentences[0] + len(sentences))):
             return "the units are not the consecutive body sentences"
+        if fences is None:
+            problem = _preamble_problem(reading["preamble"], sentences[0] - defaults_count,
+                                        source if binding is None else binding["source"])
+            if problem:
+                return problem
+        problem = _flips_problem(reading["flips"], reading["units"], projected)
+        if problem:
+            return problem
         units = dict(zip(sentences, reading["units"]))
         if (reading["status"] == "one") != all(not u["candidates"] for u in reading["units"]):
             return "the status disagrees with the units"
@@ -352,9 +437,9 @@ def _dictionary(packs: list[bytes], own: list) -> tuple[str | None, set]:
 
 
 def _projection_problem(row: object, case: dict, env, expected_id: str | None) -> str | None:
-    """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, this relay's
-    senses version, and a projection whose identities are those of the environment and lexicon it returns
-    (Python's own over the returned JSON), or a sense fault with its arguments."""
+    """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, and a
+    projection whose identities are those of the environment and lexicon it returns (Python's own over the
+    returned JSON), or a sense fault with its arguments. The senses version is typed, not bound; sn-b6bb binds it."""
     if type(row) is not dict or row.keys() != {"id", "status", "result"} or row["id"] != case["id"] \
             or row["status"] != "ok":
         return "the row is not the answer to the request"
@@ -443,7 +528,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
                                 source=_refusal_source(source, fences, defaults),
                                 defaults_count=len(defaults) if type(defaults) is dict else 0,
                                 fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
-                                binding={"env": env, "source": source, "words": words})
+                                binding={"env": env, "source": source, "words": words, "case": case})
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses response: " + problem)
     if time.monotonic() > deadline:

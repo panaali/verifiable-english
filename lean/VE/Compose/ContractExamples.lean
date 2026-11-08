@@ -1,9 +1,10 @@
 import VE.Compose.Contract
+import VE.Readings.SupExtraExamples
 import VE.Service.ScopeExamples
 
-/-! PC-3's fixtures (profile-composition 5.3: F3.1, F3.1b, F3.4 to F3.7) as build-time checks. The scope documents
-are `VE.Service.ScopeExamples`': `doc` governs its two items `i1` and `i2` by one `frame` governor; `full` is the
-same rules written out, without scope. -/
+/-! PC-3's fixtures (profile-composition 5.3: F3.1, F3.1b, F3.4 to F3.7) as build-time checks, and one instance of
+`composed_superpose_all` (1.6). The scope documents are `VE.Service.ScopeExamples`': `doc` governs its two items `i1`
+and `i2` by one `frame` governor; `full` is the same rules written out, without scope. -/
 
 namespace VE.Compose.ContractExamples
 open Lean VE.Compose VE.Compose.Contract VE.Service.Document VE.Service.ScopeExamples
@@ -132,5 +133,115 @@ example : RouteFacts ["scope@0"] ↔ ScopeRuns ∧ ScopeFaithful ∧ ScopePreser
 example : ¬ RouteFacts ["acts@0", "scope@0"] := id
 example : ∀ s ∈ listedStacks, RouteFacts s := listed_evidence
 #guard listedStacks == [["scope@0"], ["scope@0", "readings@1"]]
+
+/-! G1 with G4 (1.6): `composed_superpose_all` on S2a's M1 document `K1`, under the strict reading `A`, with one
+constraint pack whose one premise `noAsks` is over the frame's base vocabulary. Every hypothesis is discharged at
+`bare`, as X3 (`SupExtraExamples`) discharges `superpose_all_extra`'s without `hQw`; the closed checker runs the kernel
+cannot reduce are the premise `G1Checks`, which Lean's evaluator runs. -/
+
+namespace G1
+open VE.Readings VE.Readings.SupExtraExamples
+open VE.Readings.Examples (K1 modelK)
+open VE.NormDefaults.Packs (Pack X)
+open VE.Rights (correlate)
+open VE.Norms (Sat envAt size)
+open VE.SoftNorms (soften circ)
+open VE.Compose (backgroundP backgroundValidP slotCheck slotConflictFreeCheck)
+universe u
+
+def noAsks : VE.Formula := .all "agent" (.all "user" (.not (.binary "asks" (.var 1) (.var 0))))
+/-- `noAsks` with its quantifiers swapped, so the certificate instantiates the premise, not only matches it. -/
+def noAsksUser : VE.Formula := .all "user" (.all "agent" (.not (.binary "asks" (.var 0) (.var 1))))
+def askPack : Pack := ⟨"attitudes", .constraint, [], [], [("no-asks", noAsks)], [], []⟩
+def qs : List Pack := [askPack]
+def Qc : Pack → Choice → List VE.Formula := fun _ _ => [noAsks]
+def A : Choice := [("rs1", 0)]
+/-- The branch is `slotUnder K1 A ++ X qs`, the two elaborated premises and the negated goal; 2 names `noAsks`. -/
+def cert : VE.Tableau.Certificate := ⟨"ve-tableau-checker@2", "", [], "",
+  .expand 5 none [.expand 6 none [.expand 7 none [.expand 2 (some "w:1") [.expand 9 (some "w:0")
+    [.expand 10 none [.close]]]]]]⟩
+/-- `conflictCert`, one premise on: the atom of `A` comes after the slot. -/
+def conflictCertA : VE.Tableau.Certificate :=
+  ⟨"ve-tableau-checker@2", "", [], "", .expand 2 none [.expand 3 none [.expand 4 none [.expand 5 none [.close]]]]⟩
+
+/-- `accepted` at a premise list in place of `slotUnder K1 A ++ X qs`. -/
+def acceptedOn (P : List VE.Formula) : Bool :=
+  let Y := correlate (sup K1).1
+  VE.Tableau.checkCertificate (envAt (soften Y) (size (soften Y)))
+    (backgroundP Y P ++ VE.Norms.elaborate (soften Y).T ++ (sup K1).2) noAsksUser cert
+
+-- `accepted` is the one premise list, the slot and then the packs; with no pack, or the packs first, it is refused
+#guard X qs == [noAsks]
+#guard supCertificateCheckExtra K1 A (X qs) [] noAsksUser cert
+#guard acceptedOn (slotUnder K1 A ++ X qs)
+#guard !acceptedOn (X qs ++ slotUnder K1 A)
+#guard !supCertificateCheckExtra K1 A [] [] noAsksUser cert
+-- `hQw`: `noAsks` is over `sup K1`'s base vocabulary; X1's `noAvoid` is not, though it is accepted the same way
+#guard slotCheck (correlate (sup K1).1) (X qs)
+#guard !slotCheck (correlate (sup K1).1) (X [{ askPack with labelled := [("no-avoid", noAvoid)] }])
+-- `hA`: a candidate no set has is refused
+#guard !(candidate K1 "rs1" 2).isSome
+-- `hB`: `bare` satisfies the pack; a base where one agent asks one user does not, and the conclusion fails there
+#guard backgroundValidP (correlate (choiceDoc K1 A).1) (VE.Rights.limPremises (choiceDoc K1 A).1 ++ qs.flatMap (Qc · A)) bare
+#guard (circ (correlate (choiceDoc K1 A).1) noAsksUser).eval bare []
+#guard !backgroundValidP (correlate (choiceDoc K1 A).1) (VE.Rights.limPremises (choiceDoc K1 A).1 ++ qs.flatMap (Qc · A))
+  (modelK ["u"] [["a", "u"]])
+#guard !(circ (correlate (choiceDoc K1 A).1) noAsksUser).eval (modelK ["u"] [["a", "u"]]) []
+
+/-- The closed checker runs of the instance: `X1Checks`, `accepted`, and the conflict certificates of `hcf`. -/
+def G1Checks : Prop :=
+  X1Checks ∧ supCertificateCheckExtra K1 A (X qs) [] noAsksUser cert = true ∧
+    slotConflictFreeCheck (correlate (sup K1).1) (slotUnder K1 A) [some conflictCertA, some conflictCertA] = true
+
+instance : Decidable G1Checks := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+#guard G1Checks
+
+/-- `hq` at the one pack: `noAsks` is over each choice's complete vocabulary, and over the frame's, which `pull` fixes. -/
+theorem transfers_ask (hx : X1Checks) : Transfers.{u} K1 [noAsks] (fun _ => [noAsks]) := by
+  refine ⟨fun c hc a ha => ?_, fun c _ B _ _ => ?_⟩
+  · simp only [List.mem_singleton] at ha; subst ha
+    rcases k1_compatible hc with rfl | rfl
+    · exact (VE.check_iff_wellFormed _ _ _).mp (by decide)
+    · exact (VE.check_iff_wellFormed _ _ _).mp (by decide)
+  · have hd := pull_denote_frame (k1_hyps hx) c B noAsks [] ((VE.check_iff_wellFormed _ _ _).mp (by decide)) []
+    constructor
+    · intro h a ha; simp only [List.mem_singleton] at ha; subst ha
+      exact hd.mp (h _ (.head _))
+    · intro h a ha; simp only [List.mem_singleton] at ha; subst ha
+      exact hd.mpr (h _ (.head _))
+
+/-- The hypothesis `hB`: `bare` is an admissible base of the strict reading's document with the pack. -/
+theorem bare_admissible_ask (hx : X1Checks) :
+    VE.Compose.BaseAdmissibleP (correlate (choiceDoc K1 A).1)
+      (VE.Rights.limPremises (choiceDoc K1 A).1 ++ qs.flatMap (fun p => Qc p A)) bare.asStructure := by
+  refine VE.Compose.baseAdmissibleP_of_valid _ _ bare ⟨fun x s hx' => ?_, fun _ _ hr => nomatch hr⟩
+    (by simp (config := { ground := true, decide := true }))
+  rw [VE.Norms.envAt_constants, soften_E, envPrime_constants, choice_correlate (k1_hyps hx), choice_E] at hx'
+  cases hx'
+
+/-- The hypothesis `hcf`: the one premise list, the slot under `A` and then the pack, is conflict-free. -/
+theorem conflict_free_ask (hx : G1Checks) :
+    VE.Compose.ConflictFreeP.{u} (correlate (sup K1).1) (slotUnder K1 A ++ X qs) :=
+  VE.Compose.conflictFreeP_append _ _ _ (VE.Compose.slot_conflict_free _
+    (by rw [sup_correlate (k1_hyps hx.1)]; exact sup_wfSoft (k1_hyps hx.1)) _ _ hx.2.2)
+
+/-- The instance: under the strict reading, on `bare`, the pack's premise gives the goal on the expansion. -/
+theorem composed_instance (hx : G1Checks) :
+    noAsksUser.denote (expand (choiceDoc K1 A).1 bare.asStructure) [] := by
+  refine VE.Readings.composed_superpose_all K1 hx.1.1 (by decide) hx.1.2.1 A (by decide) qs Qc ?_ ?_
+    (conflict_free_ask hx) [] noAsksUser
+    (fun _ h => nomatch h) ((VE.check_iff_wellFormed _ _ _).mp (by decide)) cert hx.2.1 A
+    (by decide : compatible K1 A = true)
+    (fun _ h => h) bare.asStructure (bare_admissible_ask hx.1) ?_
+  · intro p hp
+    simp only [qs, List.mem_singleton] at hp
+    subst hp
+    exact transfers_ask hx.1
+  · exact VE.Compose.slotCheck_sound _ _ (by decide)
+  · rw [show (choiceDoc K1 A).2 = [] by decide]
+    exact VE.Compose.sat_nil _
+
+end G1
 
 end VE.Compose.ContractExamples

@@ -1,0 +1,10 @@
+{
+ "item": "T-SD-TOP-a",
+ "calls": 40,
+ "cw_total": 30266,
+ "cw_per_call": 756.65,
+ "projection": 3268728,
+ "cw_cap": 15000000,
+ "within_cap": true,
+ "head": "04f81aa36a6f92e4ad45f1cee607a3c2a542d215"
+}

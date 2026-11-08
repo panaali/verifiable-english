@@ -1,4 +1,4 @@
-"""PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.5 (build
+"""PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build
 checklist 17), and the check's ability to fail."""
 
 from __future__ import annotations
@@ -22,7 +22,8 @@ def test_pc3_statements_equal_the_approved_text():
     checker = _checker()
     assert checker.main() == 0
     names = {name for _, name in checker.approved()}
-    assert {"interface_slot", "pipeline_names", "checkDocSets_pipeline", "listed_evidence", "Interface"} <= names
+    assert {"interface_slot", "pipeline_names", "checkDocSets_pipeline", "listed_evidence", "Interface",
+            "composed_superpose_all", "acceptanceXV"} <= names
 
 
 def test_a_changed_statement_or_a_later_declaration_fails(tmp_path, capsys):
@@ -31,6 +32,8 @@ def test_a_changed_statement_or_a_later_declaration_fails(tmp_path, capsys):
     text = contract.read_text()
     cases = {
         "weakened": text.replace("(hD : WF D) (h : pipeline rs D = .ok D')", "(h : pipeline rs D = .ok D')"),
+        "no hQw": text.replace("    (hQw : VE.Compose.SlotWellFormed (correlate (sup D).1) (VE.NormDefaults.Packs.X qs))\n", ""),
+        "swapped": text.replace("(slotUnder D A ++ VE.NormDefaults.Packs.X qs))", "(VE.NormDefaults.Packs.X qs ++ slotUnder D A))"),
         "unstaged": text.replace("  | _ => False\n", '  | ["acts@0", "scope@0"] => False\n  | _ => False\n'),
         "later": text + "\ndef LayerFacts : String → List String → Prop\n  | _, _ => False\n",
     }
@@ -42,3 +45,11 @@ def test_a_changed_statement_or_a_later_declaration_fails(tmp_path, capsys):
         assert checker.main(sources) == 1, name
     out = capsys.readouterr().out
     assert "pipeline_preserves: theorem differs" in out and "LayerFacts: listed as a later batch's but built" in out
+    assert "composed_superpose_all: theorem differs" in out
+
+
+def test_a_theorem_is_cut_at_its_proofs_assignment_not_one_inside_the_statement():
+    """Review sc-6 F1, as a class: the shared `proof_cut` keeps a record update's `:=` in the compared statement."""
+    checker = _checker()
+    text = "theorem t (N : Norm) : { N with guard := g }.guard = g := by\n  rfl\n"
+    assert checker.declarations(text)[("theorem", "t")] == ["theorem t (N : Norm) : { N with guard := g }.guard = g"]

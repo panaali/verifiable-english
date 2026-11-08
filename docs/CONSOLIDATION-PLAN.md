@@ -676,6 +676,9 @@ decoders; steps 4, 5 and 7 remeasured at the merge of ve-integration into rd-9/i
 steps 5 and 8b remeasured on act-phrases ap-1b (2026-10-20: the `acts@0` decoder lines; both again after review F1 and C1);
 steps 3 and 4 remeasured on AR-20 (2026-10-26: `VE/Closure/Paths.lean` re-exports the shared `VE/Paths.lean`, and
 `decodeSoftDoc` and `decodeFilledDoc` call `Route.Admission.decodeDoc`, step 4a);
+step 7 remeasured on cmp-s4c (2026-11-05: the discourse `runCase` decides the composed path;
+its 21 trusted lines, up from 18, bring step 7 to 734 lines); step 6 remeasured at this merge
+from the current ledger (1,835 reclassified lines);
 the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
@@ -687,12 +690,12 @@ the current source classification alongside the previously measured steps.
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 117 | 0 | 0 | 0 | 117 | 2 | 2 | 29.2 |
 | 3 | 30 | 0 | 0 | 10 | 20 | 14 | 2 | 0.7 |
-| 4 | 691 | 0 | 0 | 420 | 271 | 14 | 2 | 9.7 |
+| 4 | 697 | 0 | 0 | 420 | 277 | 14 | 2 | 9.9 |
 | 5 | 0 | 466 | 0 | 0 | 466 | 14 | 1 | 33.3 |
-| 6 | 35 | 0 | 1748 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 727 | 0 | 0 | 60 | 667 | 6 | 2 | 55.6 |
+| 6 | 35 | 0 | 1835 | 0 | 35 | 3 | 1 | 11.7 |
+| 7 | 734 | 0 | 0 | 60 | 674 | 6 | 2 | 56.2 |
 | 8a | 87 | 225 | 0 | 60 | 252 | 10 | 1.5 | 16.8 |
-| 8b | 0 | 3673 | 0 | 0 | 3673 | 30 | 3 | 40.8 |
+| 8b | 0 | 3719 | 0 | 0 | 3719 | 30 | 3 | 41.3 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 

@@ -44,9 +44,9 @@ def formatOf (j : Json) : Option String :=
   | some f => some f
   | none => ((Loader.metaOf j).getObjValD "format").getStr?.toOption
 
-/-- The original envelope: sorted, unique, both base and discourse profiles, the environment's
-`profiles` equal to the list, format `@2`; and the frozen gate on the base pair (FOL family). -/
-def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except String Unit := runAll [
+/-- The original envelope without its family check: sorted, unique, both base and discourse profiles, the
+environment's `profiles` equal to the list, format `@2`, the base pair's profiles. -/
+def envelopeChecks (profiles : List String) (environment : Json) (j : Json) : List (Unit → Except String Unit) := [
   fun _ => req (decide (profiles.Pairwise (· < ·))) (VE.Route.Gate.unsupported "profiles must be sorted and unique"),
   fun _ => req (profiles.contains "relational-fol@0") (VE.Route.Gate.unsupported "Missing profile relational-fol@0"),
   fun _ => req (profiles.contains discourseProfile) "UnsupportedProfile: ve-document@2 requires ve.discourse@1",
@@ -55,10 +55,14 @@ def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except 
   fun _ => req (formatOf j == some "ve-document@2") "UnsupportedProfile: ve.discourse@1 requires ve-document@2",
   fun _ => req (match VE.Route.Gate.profilesOf (baseEnvironment environment) with
       | .ok ps => ps == baseProfiles profiles
-      | .error _ => false) (VE.Route.Gate.unsupported "base environment profiles"),
+      | .error _ => false) (VE.Route.Gate.unsupported "base environment profiles")]
+
+/-- The original envelope: `envelopeChecks`, then the frozen gate on the base pair (FOL family). -/
+def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except String Unit :=
+  runAll (envelopeChecks profiles environment j ++ [
   fun _ => match VE.Route.Gate.decodeEnvelope (baseEnvironment environment) with
     | .ok e => req (e.family == .fol) (VE.Route.Gate.unsupported "discourse admission requires the FOL family")
-    | .error e => .error e]
+    | .error e => .error e])
 
 /-- The route vocabulary of the base pair. -/
 def baseVocabulary (environment : Json) : Except String Wire.RouteVocabulary := do
@@ -545,6 +549,11 @@ def bindingsOk (D : DDoc) (res : VE.Route.Admission.Admitted) (bound : String �
           | .error e => .error e
         | none => .ok ()]]
 
+/-- 4.1(3), 1.6: no constant other than a document name has the document sort. -/
+def documentSortOk (rv : Wire.RouteVocabulary) (K : Manifest) : Except String Unit :=
+  req (rv.vocabulary.constants.all fun (c, s) => s != K.documentSort || K.documents.any (·.name == c))
+    ("InvalidInput: document sort " ++ K.documentSort ++ " has other constants")
+
 /-- The validity-free core of a `@2` admission: everything W2 sees is computed from it. -/
 structure CoreResult where
   base : VE.Route.Admission.Admitted
@@ -563,8 +572,7 @@ def admitCore (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
   let be := baseEnvironment environment
   let data := bp.contains "data@0"
   req (K.definitionsVersion == envId) ("StaleTarget: definitions@" ++ K.definitionsVersion)
-  req (rv.vocabulary.constants.all fun (c, s) => s != K.documentSort || K.documents.any (·.name == c))
-    ("InvalidInput: document sort " ++ K.documentSort ++ " has other constants")
+  documentSortOk rv K
   wellFormed D
   Loader.explicitOk (D.status.map fun (u, _) => (u, unitStatus D u)) front.explicit
   let boundAll : String → Option VE.Formula := fun u =>
@@ -710,6 +718,9 @@ def outcomeWith (check : List String → Json → Wire.RouteVocabulary → Json 
     | .ok ps, .ok rv => outcomeOf (check ps env rv p)
     | .error e, _ => .rejected e
     | _, .error e => .rejected e
+
+/-- The nesting budget the discourse route admits a document with (moved from `Discourse/Run.lean`, 14.5). -/
+def fuelBudget : Nat := 5
 
 /-- The discourse admission with a nesting budget: the second phase checks other documents
 one level down, each under its own environment. -/

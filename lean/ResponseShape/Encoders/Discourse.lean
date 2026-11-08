@@ -229,9 +229,64 @@ theorem joint_fits (profiles : List String) (environment : Json) (rv : VE.Route.
   all_goals simp only [VE.Route.Wire.ok]
   all_goals fits
 
+/-- Each chain route's admission answer fits `chain_admission`. -/
+theorem dispatchAdmission_fits (ps : List String) (environment document : Json) :
+    OkFits req (skel% "discourse.json#/$defs/chain_admission") (dispatchAdmission ps environment document) := by
+  unfold dispatchAdmission VE.Norms.Run.runAdmission VE.Norms.Run.runAdmissionIn
+    VE.NormDefaults.Run.runAdmission VE.NormDefaults.Run.runAdmissionIn
+    VE.SoftNorms.Run.runAdmission VE.Rights.Run.runAdmission
+  split
+  all_goals okfits
+  all_goals try simp only [VE.Norms.Run.encodeAdmitted, VE.NormDefaults.Run.encodeAdmitted, VE.SoftNorms.Run.encodeAdmitted,
+    VE.Rights.Run.encodeAdmitted, VE.Route.Wire.ok]
+  all_goals fits
+  all_goals exact Common.claimJson_fits _
+
+/-- The composed path's answer parts: `inner` is a chain route's answer, the references are `chainReferences`'. -/
+theorem admitChain_parts (profiles : List String) (environment j : Json) (c : ChainAdmitted)
+    (h : admitChain profiles environment j = .ok c) :
+    (∃ ps be d, dispatchAdmission ps be d = .ok c.inner) ∧ ∃ front, chainReferences front = .ok c.references := by
+  unfold admitChain at h
+  iterate 10 obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨inner, hi, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨r, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  exact ⟨⟨_, _, _, hi⟩, _, hr⟩
+
+theorem composed_fits (id : String) (c : ChainAdmitted)
+    (hi : Fits req (skel% "discourse.json#/$defs/chain_admission") c.inner)
+    (hr : Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) c.references) :
+    Fits req (skel% "discourse.json#/$defs/composed") (encodeComposed id c) := by
+  unfold encodeComposed composedFields
+  simp only [VE.Route.Wire.ok]
+  fits
+  all_goals first | exact hi | exact hr
+
+theorem chainReferences_fits (front r : Json) (h : chainReferences front = .ok r) :
+    Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) r := by
+  unfold chainReferences at h
+  simp only at h
+  split at h
+  · cases h; exact references_fits front []
+  · cases h
+
+theorem admitChain_fits (id : String) (profiles : List String) (environment document : Json) :
+    OkFits req (skel% "discourse.json#/$defs/composed") (encodeComposed id <$> admitChain profiles environment document) := by
+  intro v hv
+  cases ha : admitChain profiles environment document with
+  | error e => rw [ha] at hv; cases hv
+  | ok c =>
+    rw [ha] at hv
+    simp only [Functor.map, Except.map, Except.ok.injEq] at hv
+    subst hv
+    obtain ⟨⟨_, _, _, hd⟩, _, hr⟩ := admitChain_parts _ _ _ c ha
+    exact composed_fits id c (dispatchAdmission_fits _ _ _ _ hd) (chainReferences_fits _ _ hr)
+
 theorem runCase_fits (j : Json) (hp : usesDiscoursePath j = true) : OkFits j Skeletons.discourse (runCase j) := by
-  unfold runCase
-  simp only []
+  unfold runCase chainCase
+  try simp only []
   okfits
   all_goals read_kind
   all_goals (try contra)
@@ -240,6 +295,7 @@ theorem runCase_fits (j : Json) (hp : usesDiscoursePath j = true) : OkFits j Ske
        fits_from encodeAdmission_fits _ _ (admitDiscourse_references _ _ _ _ _ _ ‹_›)
          (admitDiscourse_status _ _ _ _ _ _ ‹_›) (admitDiscourse_kinds _ _ _ _ _ _ ‹_›) v hv)
     | (intro v hv; fits_from resolve_fits _ _ _ _ _ v hv)
+    | (intro v hv; fits_from admitChain_fits _ _ _ _ v hv)
     | (intro v hv; fits_from joint_fits _ _ _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits)
 

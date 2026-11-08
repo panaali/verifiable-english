@@ -1,0 +1,365 @@
+{
+  "conditional_on": [],
+  "evidence": "certificates",
+  "proofs": [
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    }
+  ],
+  "reading_premises_used": [],
+  "restrictions": [],
+  "route": "enumerated",
+  "verdict": "ALL",
+  "english": [
+    "Under every reading of the 4 open sentences, the conclusion follows: *For every operator, for every operator input that is classified as \"instruction_claim_human_when_asked\", it is not the case that that operator may give Claude that operator input.*"
+  ]
+}
