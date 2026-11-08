@@ -4,7 +4,7 @@ Status: all six deliverables built; awaiting review. HEAD: the final commit of f
 Changed: AR-10's `actsRefuses` admits `speech-acts@0`, `gate_acts` revised as spec section 9, the speech allowlist gains
 `acts@0`, `command_act_simple` proved; the plan's three fixtures read as one simple act each, "Click Check and save." is
 refused at declaration. No signature is reserved; every DELTA row cites a DRI decision or R12/R16.
-Open: size 844 hand-written lines against the ~600 cap (question sent to the DRI, "Size" below); FOLLOW-UP ci-5-for-slot.
+Open: FOLLOW-UP ci-5-for-slot. Size over the ~600 cap, kept whole: SIGNED, reviews/dri-decisions-20261108-ci-5-size.md item 1.
 
 Plan and spec: `9a12df17a` on design/commands-imperatives, PLAN "CI-5" (lines 840-922) and section 9; spec section 9
 (lines 1276-1349), S28 (line 71), section 14's row (line 1653), checklist item 8 (line 1696). Statement gate: passed
@@ -71,7 +71,9 @@ R16's mutants: TRUST-MUTANTS (filled below when the run ends).
 +160, `tests/test_speech_acts_acts0.py` +108, `ab.py` +109 and `AB.json` +11, `Acts/Lexical.lean` +42, the rest +57/-16.
 Over the ~600 cap. The six deliverables were built before the size was measured, and the fixtures past the task's seam
 (after (3)) carry conditions of item 3(b) (the counterexample) and item 2(b) (the A/B and its pin). Asked the DRI
-(inbox/dri/20261108T102318Z-ci-5-2509481.md) whether to keep the item whole or cut; DRI-ANSWER.
+(inbox/dri/20261108T102318Z-ci-5-2509481.md): SIGNED, keep ci-5 whole, no cut to ci-5b, no further growth beyond review
+fixes and this section (reviews/dri-decisions-20261108-ci-5-size.md item 1). With REPORT.md, DELTA.md and mutants.json
+the count by the task's rule is FINAL-COUNT.
 
 ## Tests
 
