@@ -1,0 +1,12 @@
+{
+ "job": "testmap-bb350a96-t151664-s6",
+ "head": "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+ "argv": [
+  "testmap-bb350a96-t151664-s6",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c5870a888bb9.tar.zst",
+  "920e2aa8ae36c04c0b05cdf85c3d41eff287bd7a362db93e310895cef70646c9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s6.json.gz\" tests/test_difffuzz.py tests/test_safety_framework.py tests/test_lean_conformance.py tests/test_lean_audit_record.py tests/test_document_chain.py tests/test_relay_binding_inventory.py tests/test_agent_policy.py tests/test_discourse_answer.py tests/test_readings_defaults_rd6b_report.py tests/test_platform_contract.py tests/test_readings_sup_verdicts.py tests/test_document_split.py tests/test_wire_contract_faults.py tests/test_answer_cutoff.py tests/test_discourse.py tests/test_lineage_lint.py tests/test_heavy_tests.py tests/test_norms_contract.py tests/test_w6a_limits.py tests/test_route_transport.py tests/test_readings_defaults_rd8_report.py tests/test_lean_budget_types.py tests/test_select_fast_stage.py tests/test_scope_5_6_statements.py tests/test_scope_rights_reach.py tests/test_suite_tail.py tests/test_ar6_report.py tests/test_wire_contract_lean.py tests/test_wire_contract_three_way.py tests/test_merge_tooling_evidence.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
