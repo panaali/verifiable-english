@@ -78,7 +78,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 31 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 42 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 29 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 30 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
@@ -127,8 +127,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
-- [tests/ part 1](tests--part-1.md) — 93 modules — -
-- [tests/ part 2](tests--part-2.md) — 89 modules — -
+- [tests/ part 1](tests--part-1.md) — 92 modules — -
+- [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
 - [tests/ part 4](tests--part-4.md) — 90 modules — -
 - [tests/ part 5](tests--part-5.md) — 80 modules — -

@@ -1,3 +1,5 @@
+- `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
+- `tests/test_background.py` — (no module docstring)
 - `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
 - `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
 - `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
