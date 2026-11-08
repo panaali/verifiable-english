@@ -1,0 +1,26 @@
+trust_mutants: 20 definitions, 290 mutants (41 to run), 4 jobs, base 80a076f0c1fa
+UNKNOWN lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) body-false: s.all fun r => match r.partId? >>= U.find? with | some p => p.status == "CHECKED" || p.status == ... -> false (lean/VE/Purposes/Examples.lean:71: Expression (VE.Purposes.nonfactive, which it reads, is not wha...)
+UNKNOWN lean/VE/Route/Inert.lean:13 VE.Route.Admission.Kind.inert (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:40: Expression)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:105 VE.Purposes.markerHonest (S, trusted) any-all: any -> all (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:268)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-empty: s -> [] (lean/VE/Purposes/WellFormed.lean:43: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-empty: B.links -> [] (lean/VE/Purposes/WellFormed.lean:131: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:70 VE.Purposes.rivals (S, trusted) list-empty: B.links.filter -> [] (lean/VE/Purposes/WellFormed.lean:70: Function expected at)
+UNKNOWN lean/VE/Purposes/Decl.lean:40 VE.Purposes.Share (S, trusted) ctor-drop: | plain ->  (lean/VE/Purposes/WellFormed.lean:209: the failing proof cannot be cut: Unknown constant `VE.Purpo...)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-first: s -> (s.take 1)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:27 VE.Purposes.Units.find? (S, trusted) list-drop-last: Units -> (Units.dropLast) (lean/VE/Purposes/WellFormed.lean:27: unexpected token '('; expected identifier)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:135 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:83 VE.Purposes.markersLinked (S, trusted) list-drop-last: U.parts -> (U.parts.dropLast)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-first: B.links -> (B.links.take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:27 VE.Purposes.Units.find? (S, trusted) list-last: Units -> (Units.reverse.take 1) (lean/VE/Purposes/WellFormed.lean:27: unexpected token '('; expected identifier)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:70 VE.Purposes.rivals (S, trusted) list-last: B.links -> (B.links.reverse.take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:203)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-first: B.links -> (B.links.drop 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-first: B.links -> (B.links.drop 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+trust_mutants: 15 KILLED, 13 SURVIVOR, 8 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 249 OTHER SHARD in 180 s
+trust_mutants: D[V], trusted: 1 KILLED, 2 OTHER SHARD
+trust_mutants: S, trusted: 14 KILLED, 13 SURVIVOR, 8 UNKNOWN, 5 INVALID, 247 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 2.6 s, control_build 0.1 s, probe_install 1.1 s, control_probes 4.1 s, mutants 158.2 s, cleanup 4.7 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 3.9 s (1), mutant_builds 361.8 s (61), mutant_checks 159 s (38), stage_controls 50.8 s (6), mutant_probes 36.4 s (16)
