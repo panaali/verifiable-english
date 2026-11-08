@@ -1173,7 +1173,7 @@ module ResponseShape.Schemas.NormDefaults a72bf41a8cbf92a0255b99c08f2b6ff84a8c16
 339:0-359:102 def ResponseShape.Schemas.NormDefaults.defaults_zone@ResponseShape.Schemas.NormDefaults
 366:0-387:42 def ResponseShape.Schemas.NormDefaults.row@ResponseShape.Schemas.NormDefaults
 389:0-414:45 def ResponseShape.Schemas.NormDefaults.file@ResponseShape.Schemas.NormDefaults
-module ResponseShape.Schemas.Norms ff7a8cf57225b6c4418f316161e9e1b137019b2073b61c4dd5846453d10cf338
+module ResponseShape.Schemas.Norms 0bc58c17a58440e792beffe42a6374791fa0e800813aabc83e45f345febd8842
 9:0-49:119 def ResponseShape.Schemas.Norms.norms_path@ResponseShape.Schemas.Norms
 51:0-58:48 def ResponseShape.Schemas.Norms.kind@ResponseShape.Schemas.Norms
 60:0-97:51 def ResponseShape.Schemas.Norms.elaborateWith@ResponseShape.Schemas.Norms
@@ -1181,9 +1181,9 @@ module ResponseShape.Schemas.Norms ff7a8cf57225b6c4418f316161e9e1b137019b2073b61
 105:0-115:62 def ResponseShape.Schemas.Norms.«norms-certificate»@ResponseShape.Schemas.Norms
 117:0-126:53 def ResponseShape.Schemas.Norms.«norms-witness»@ResponseShape.Schemas.Norms
 128:0-137:23 def ResponseShape.Schemas.Norms.«norms-conflict»@ResponseShape.Schemas.Norms
-139:0-170:98 def ResponseShape.Schemas.Norms.«acts-elaborate»@ResponseShape.Schemas.Norms
-172:0-189:42 def ResponseShape.Schemas.Norms.row@ResponseShape.Schemas.Norms
-191:0-202:49 def ResponseShape.Schemas.Norms.file@ResponseShape.Schemas.Norms
+139:0-168:98 def ResponseShape.Schemas.Norms.«acts-elaborate»@ResponseShape.Schemas.Norms
+170:0-187:42 def ResponseShape.Schemas.Norms.row@ResponseShape.Schemas.Norms
+189:0-200:49 def ResponseShape.Schemas.Norms.file@ResponseShape.Schemas.Norms
 module ResponseShape.Schemas.Order 04b7a07a363b251d4dce918707ddfcf848659a7eb800bd4acd0c418df661f954
 7:0-12:42 def ResponseShape.Schemas.Order.kind@ResponseShape.Schemas.Order
 14:0-23:75 def ResponseShape.Schemas.Order.surface@ResponseShape.Schemas.Order

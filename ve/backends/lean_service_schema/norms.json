@@ -49,10 +49,8 @@
     "acts-elaborate": {
       "$comment": "Acts.Run.runElaborate (runElaborate_fits): the elaborated document's parts, part rules, joined acts kept whole and, per split source, its parts with D-28's text; or REFUSED with the elaboration's diagnostic and every list empty. Python binds each source, index and copied field to the request (ve/norms.py bound_elaboration).",
       "additionalProperties": false,
-      "anyOf": [
-        {"not": {"required": ["diagnostic"]}, "properties": {"verdict": {"const": "ELABORATED"}}},
-        {"properties": {"verdict": {"const": "REFUSED"}}, "required": ["diagnostic"]}
-      ],
+      "else": {"not": {"required": ["diagnostic"]}},
+      "if": {"properties": {"verdict": {"const": "REFUSED"}}},
       "properties": {
         "diagnostic": {"type": "string"},
         "environment_id": {"$ref": "common.json#/$defs/hex64"},
@@ -111,6 +109,7 @@
         "verdict": {"enum": ["ELABORATED", "REFUSED"]}
       },
       "required": ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"],
+      "then": {"required": ["diagnostic"]},
       "type": "object"
     },
     "kind": {
