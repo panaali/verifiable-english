@@ -2084,6 +2084,13 @@
    "reason": "ci-2 review F1: V +6 above the existing +141 allowance: VE/EnglishGrammar/Run.lean +5 for translationOf, the shared formatter of the existing translation outcome; VE/Commands/Read.lean +1 to pass that outcome to the formatter. CI-2 total V +147, K +0, S +0, within R16 150-line cap.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2 review F1, 2026-11-04",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }
