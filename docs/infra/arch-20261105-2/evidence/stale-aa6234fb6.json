@@ -1,0 +1,65 @@
+{
+ "commit": "aa6234fb69b4e42a0a36ee451938fe7e10c5a162",
+ "explained": 12,
+ "re_pinned": 12,
+ "stale_pin_matches": {
+  "projectCaseReported ((projectReq \"\" [\"funny\", \"tells\"]).setObjVal! \"packs\" (Json.arr #[]) |>.setObjVal! \"own\" (Json.arr ": [
+   "35"
+  ],
+  "projectCaseReported (projectReq \"\" [\"funny\", \"odd\", \"tells\", \"deployed\", \"reviewed\", \"access\"])": [
+   "35"
+  ],
+  "projectCaseReported (projectReq \"\" [\"funny\", \"tells\"])": [
+   "35"
+  ],
+  "projectCaseReported (projectReq lineFunny2 [\"funny\"])": [
+   "35"
+  ],
+  "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])": [
+   "35"
+  ],
+  "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])": [
+   "35"
+  ],
+  "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])": [
+   "35"
+  ],
+  "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")": [
+   "35"
+  ],
+  "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")": [
+   "35"
+  ],
+  "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")": [
+   "35"
+  ],
+  "runCaseReported (src \"The riddle is funny.\")": [
+   "35"
+  ],
+  "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))": [
+   "35"
+  ]
+ },
+ "versions_tried": [
+  "9",
+  "17",
+  "18",
+  "19",
+  "20",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36"
+ ]
+}

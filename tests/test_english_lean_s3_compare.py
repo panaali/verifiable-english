@@ -3,8 +3,11 @@ from __future__ import annotations
 
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import re
+import subprocess
+import sys
 
 import pytest
 
@@ -13,6 +16,7 @@ from conformance import english_lean_s3_python as F
 from ve import Environment
 from ve.backends import english_lean as adapter
 from ve.english import EnglishVocabulary
+from subprocesses import HANG_TIMEOUT
 
 
 def _case(fixture_id):
@@ -117,3 +121,20 @@ def test_spec_report_numbers_follow_the_committed_case_records():
         assert line is not None, name
         assert tuple(map(int, line.groups())) == (
             summary["cases"], summary["agreement"], summary["differences"])
+
+
+def test_the_report_is_the_same_whatever_hash_seed_the_command_starts_under(tmp_path):
+    """The report is a generated file checked by rewriting it (tools/regen_generated.py, english-s3-comparison), so
+    the command writes it under one seed: Lark lists a refusal's expected terminals in set order, which seeds 1 and
+    2 order differently. Started under either, it writes the same bytes, and the refusal is in them."""
+    written = []
+    for seed in ("1", "2"):
+        out = tmp_path / f"seed-{seed}.json"
+        done = subprocess.run([sys.executable, "-m", "conformance.english_lean_s3_compare", "--report-only",
+                               "--output", str(out)], cwd=Path(__file__).resolve().parents[1],
+                              env={**os.environ, "PYTHONHASHSEED": seed}, capture_output=True, text=True,
+                              timeout=HANG_TIMEOUT)
+        assert done.returncode == 0, done.stderr[-2000:]
+        written.append(out.read_bytes())
+    assert written[0] == written[1]
+    assert b"Expected one of" in written[0]
