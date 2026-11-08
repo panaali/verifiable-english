@@ -1,3 +1,8 @@
+- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
+- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
+- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
+- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
+- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
 - `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
 - `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
 - `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
@@ -76,17 +81,10 @@
 - `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
 - `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
 - `tests/test_parser_renderer.py` — (no module docstring)
+- `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
-- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
-- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
-- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
-- `tests/test_profiles.py` — (no module docstring)
-- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
-- `tests/test_properties.py` — (no module docstring)
-- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
-- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.

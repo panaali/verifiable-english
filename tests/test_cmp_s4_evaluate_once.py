@@ -14,18 +14,24 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, lean_build
 
-PATH = ["chainBase", "resolveWith", "resolveDocument", "chainDDoc", "chainChecks", "caseManifest", "admitChain",
-        "admitComposed"]
+PATH = ["chainEnvironment", "chainBaseWith", "chainBase", "resolveWith", "resolveDocument", "chainDDoc", "chainChecks",
+        "caseManifest", "admitChain", "admitComposed"]
 
 # (label, definition or "path" for the sum over PATH, constant): its expected count
 EXPECTED = {
+    # cmp-s4c: step 1's chain decoder, read once on the path (`admitChain`) and once by `chainBase` (off it)
     ("path", "VE.Norms.Wire.decodeNormsEnvironment"): 1,
-    ("chainBase", "VE.Norms.Wire.decodeNormsEnvironment"): 1,
+    ("chainEnvironment", "VE.Norms.Wire.decodeNormsEnvironment"): 1,
+    ("path", "VE.Discourse.chainEnvironment"): 2,
+    ("chainBase", "VE.Discourse.chainEnvironment"): 1,
+    ("admitChain", "VE.Discourse.chainEnvironment"): 1,
+    ("admitChain", "VE.Discourse.chainBaseWith"): 1,
+    ("chainBaseWith", "VE.Norms.Wire.canonicalEnvironmentJson"): 1,
     ("path", "VE.Discourse.contentOk"): 1,
     ("resolveWith", "VE.Discourse.contentOk"): 1,
     ("chainChecks", "VE.Discourse.resolveWith"): 1,
     ("admitChain", "VE.Discourse.resolveWith"): 0,
-    ("admitChain", "VE.Discourse.chainBase"): 1,
+    ("admitChain", "VE.Discourse.chainBase"): 0,
     ("admitChain", "VE.Discourse.chainChecks"): 1,
     ("admitChain", "VE.Discourse.tablesOf"): 1,
     ("caseManifest", "VE.Discourse.chainBase"): 1,

@@ -68,8 +68,10 @@ def idsOf (lines : String) : List (String × Json) :=
 /-! ## The runner's answers to whole requests
 
 Requests over the joke's environment, overlay and lexicon (`EJ`, `LJ`) and the fixture pack, as the relay sends
-them. Each answer is pinned by the SHA-256 of its compact JSON (`pin`), so a change to any member it writes is
-caught; the members are checked by the relay's tests (tests/test_senses_project.py, tests/test_senses_route.py). -/
+them. Each answer is pinned by the SHA-256 of its compact JSON without its `actions_version` (`pin`), so a change to
+any other member it writes is caught; the version is checked once per answer form against `Fixed.actionsVersion`
+(below the pins), so raising it re-pins nothing. The members are checked by the relay's tests
+(tests/test_senses_project.py, tests/test_senses_route.py). -/
 
 def overlayJ : Json := Json.mkObj [("constants", Json.mkObj [("riddle", Json.mkObj [("verbalisation", .str "the riddle")])])]
 
@@ -80,7 +82,27 @@ def req (extra : List (String × Json)) (pack : String := packF.toJson.compress)
   ("environment", EJ.source), ("overlay", overlayJ), ("lexicon", lexJ), ("packs", Json.arr #[.str pack]),
   ("own", Json.arr #[]), ("budget", toJson workBudget)] ++ extra)
 
-def pin (j : Json) : String := VE.CertificateWire.sha256 j.compress.toUTF8
+/-- An answer without the `actions_version` of its identities, the one place each answer form writes it
+(`result.reading` of a run, `result.projection` of a projection); every other member is kept. -/
+def withoutVersion (j : Json) : Json :=
+  ["reading", "projection"].foldl (fun j form =>
+    let result := j.getObjValD "result"
+    match (result.getObjValD form).getObjValD "identities" with
+    | .obj ids => j.setObjVal! "result" (result.setObjVal! form
+        ((result.getObjValD form).setObjVal! "identities" (.obj (ids.erase "actions_version"))))
+    | _ => j) j
+
+/-- The `actions_version` an answer of `form` writes. -/
+def versionOf (form : String) (j : Json) : Json :=
+  (((j.getObjValD "result").getObjValD form).getObjValD "identities").getObjValD "actions_version"
+
+/-- An answer of `form` with `v` as the `actions_version` of its identities. -/
+def withVersion (form : String) (v : Json) (j : Json) : Json :=
+  let result := j.getObjValD "result"
+  j.setObjVal! "result" (result.setObjVal! form ((result.getObjValD form).setObjVal! "identities"
+    (((result.getObjValD form).getObjValD "identities").setObjVal! "actions_version" v)))
+
+def pin (j : Json) : String := VE.CertificateWire.sha256 (withoutVersion j).compress.toUTF8
 
 def projectReq (lines : String) (used : List String) (pack : String := packF.toJson.compress) : Json :=
   req [("lines", .str lines), ("used", toJson used)] pack
@@ -95,23 +117,23 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- an open unit: two candidates with their identities
-#guard pin (runCaseReported (src "The riddle is funny.")) == "1104bec421267a61892a83fd6f6cf7263d360a4efaafbb6dd9b35e5572835e35"
+#guard pin (runCaseReported (src "The riddle is funny.")) == "6ee6e93e6d4c2543b1736bbe7da70ca049788800671676e213822e5fdfad6354"
 -- resolved by its line
-#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "3d903b0d362694c89fee5e5c301d214301b8581ccd0fd66f5520b538b155912b"
+#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "8c302fd926430f668bbdb2f6a7bb8a961647df85ca43901a0a9a6242ea31d483"
 -- a sense fault
-#guard pin (runCaseReported (src "In this document, funny means purple. The riddle is funny.")) == "95f53c1f0395ccf75fc3c669473b6ef312fdad77607b8900c047a4a4ef4a85d2"
+#guard pin (runCaseReported (src "In this document, funny means purple. The riddle is funny.")) == "8aa7234e6df92e54d69f44f1bba92872c35e84323286f05e888703a7b6a12076"
 -- S2's outcome
-#guard pin (runCaseReported (src "Every joke that is funny (meaning strange) is not funny.")) == "feec3bb464919db664bec1018709bb45b5722ab78ea43711ecc19c365abe3c66"
+#guard pin (runCaseReported (src "Every joke that is funny (meaning strange) is not funny.")) == "fb9e6abd68375e75c51b0e110d13523925c83a7a26f675d72e380e9e81219367"
 -- an open unit beside a glossed one
-#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "95f47258de5208b47f0fe9f5fe0aec7ab2d3465095a98b18a5751bfb44748880"
+#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "1fa2458b4dd847832d333f6566af2173e1ad8541bc815de939d5599933815a37"
 -- an open fence without a reading set
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [])) == "1b6b6d44dcc4b67a043c3acd17db11d58f3191b8dc529039fa04c3e54bd3a3bd"
 -- an open fence with its reading set
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "8bb396436c04dc203ae5c9067e04508b6b2ae8f0c4f8edbad49f4d997c951e28"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "80ec199e72aa7c9fd075b2cc3fbe50ec7f6347459cd0f8039c7a2715dd4e5c53"
 -- a fence that is a line
-#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "4dbaf002ea56b26c51c4fa41941d323a0a6a5de93a41d56d59da3f8780a676a0"
+#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "81a67f2d4300e05dbb5b54f6cc0250c56263203462b1900a175ab63b639fe167"
 -- front-matter defaults
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "e6dd255d059dc020f8b240f4b08161c3ad908be682817ef101ad9ddce01c1d8c"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "f73f2199749f63d665e84726d97815d159fc9310c59b498024810d6f2805cfb5"
 -- fence identities refused
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1", "u2"] [])) == "2047a621e3c95f46bbf587bd22854141989afcd335200861aa63d0748985cb0b"
 -- an unknown member refused
@@ -121,9 +143,9 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 -- budget 0
 #guard pin (runCaseReported ((src "The riddle is funny.").setObjVal! "budget" (toJson 0))) == "3b520a3ca8a86a3df1a98ab6df2acc3b8b5a509e4edb8fcfe9337b2a41330a39"
 -- a projection
-#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "cc032dcd89a6742026c8fd09e89d60176557feb6ae840edc45369fc95e11ee38"
+#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "b52883a8b67fc1b86f3760ea569dbd661fe0d9d62f5bb6d25b385503e074da5b"
 -- no lines
-#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "1360f817ce083d7b26479e90d98c29c77848cc9511780898b8787ff44599e38c"
+#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "b57e299dcbb7f22b3a60e759b23fd3264c0d4ff2da6e03e9be8c8ef66fa4d00e"
 -- a fault of the lines
 #guard pin (projectCaseReported (projectReq "In this document, funny means purple." ["funny"])) == "8f22518a9d293069fa4adb2a75cf1c72d0d6721a468e11037fda2f32aac69f18"
 -- a repeated default
@@ -146,21 +168,31 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- two unresolved words: choices of two senses
-#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "930643626e09807bec247dd33a7f537d8d5f1a6430c4167d3aa3583ca466d5cc"
+#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "f220964f1a6d2d5459ea9dfa43d730e535be2e98715895067f738c56049f23e2"
 -- two units
-#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "8d18da541a185c28d43f9f4d48a4ed351de9b3a80159e19dd8b70d8120ac9d9c"
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "30a6a5ea3f23a80a75d61fc44c066b523a45262185cef8eda2e42ddf7af0caa8"
 -- own senses whose kinds are the document's sorts
-#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "271f0139d6bd6267b3afb104a8672dd6b94b944c7d2e3c2caf7f16f353aafd35"
+#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "08943366b5fe4a578e4b902d6f77ca06d5879cfffd0f3e9bec6a8553919da21c"
 -- a second used word outside the dictionary
 #guard pin (projectCaseReported (projectReq lineFunny2 ["funny", "giggle"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- the used word outside the dictionary first
 #guard pin (projectCaseReported (projectReq lineFunny2 ["giggle", "funny"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- every word of the dictionary
-#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "a2885dba507d2dffedcb92d55895bbb4ca08421a6bee40410c501c7e1ca11cf0"
+#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "f705e96b12737c57ce9dca498666b29a834a4ebbe986557a06842b55c86fe7a4"
 -- a one-character line
 #guard pin (projectCaseReported (projectReq "x" ["funny"])) == "50c8b279ed22fc5d46e876ac027ba3d93f52cbdb0cfc8dbdc1fab42c05488de3"
 -- a lexicon english.read refuses
 #guard pin (projectCaseReported ((projectReq lineFunny2 ["funny"]).setObjVal! "lexicon" (lexiconJson ((VE.EnglishGrammar.Run.environmentId (displayJson EJ.source overlayJ)).toOption.getD "") { LJ with nouns := [("joke", "joke")] }))) == "97d9cdc7cda6f59b517a91ca091ccb4264362263ac3afec2b0efccc55a12015e"
+
+-- The version the pins leave out, one guard per answer form: Lean's generated `Fixed.actionsVersion`, never a copy.
+#guard versionOf "reading" (runCaseReported (src "The riddle is funny.")) == .str VE.EnglishGrammar.Fixed.actionsVersion
+#guard versionOf "projection" (projectCaseReported (projectReq lineFunny2 ["funny"])) ==
+  .str VE.EnglishGrammar.Fixed.actionsVersion
+-- `withoutVersion` takes out that member and no other: put back, it is the answer again.
+#guard let j := runCaseReported (src "The riddle is funny.")
+  withoutVersion j != j && withVersion "reading" (versionOf "reading" j) (withoutVersion j) == j
+#guard let j := projectCaseReported (projectReq lineFunny2 ["funny"])
+  withoutVersion j != j && withVersion "projection" (versionOf "projection" j) (withoutVersion j) == j
 
 /-! ## The preamble lines of a source answer (plan B6): the source's sentences before the body, as written -/
 

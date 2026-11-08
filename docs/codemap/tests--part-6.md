@@ -1,3 +1,10 @@
+- `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
+- `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
+- `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
+- `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
+- `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
+- `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
+- `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
@@ -52,6 +59,7 @@
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
 - `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
 - `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
+- `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
 - `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
@@ -73,11 +81,3 @@
 - `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
 - `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
 - `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
-- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
-- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
-- `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
-- `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
-- `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
-- `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
-- `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
-- `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.

@@ -1,0 +1,24 @@
+{
+ "cases": 62,
+ "kinds": {
+  "admission": 4,
+  "defaults-certificate": 10,
+  "defaults-coherence": 5,
+  "defaults-elaborate": 6,
+  "defaults-model": 3,
+  "no-such-kind": 1,
+  "norm-defaults-certificate": 4,
+  "norm-defaults-conflict": 7,
+  "norm-defaults-elaborate": 10,
+  "norm-defaults-gaps": 3,
+  "norm-defaults-report": 6,
+  "norm-defaults-status": 3
+ },
+ "identical": 62,
+ "differ": [],
+ "main_rows": [],
+ "sha256": {
+  "main": "d09ddcd5c1291150b40434752f1db61234cefc36dcf3b22b2780c27d4feb8ed6",
+  "head": "d09ddcd5c1291150b40434752f1db61234cefc36dcf3b22b2780c27d4feb8ed6"
+ }
+}

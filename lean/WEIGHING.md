@@ -96,15 +96,17 @@ decoder, the pack and the profile row are WG-3's. The zone interface is `Weighin
 - `weigh_alone_base_free`: for every structure `B` there is a structure with `B`'s base predicates that satisfies the
   weighing premises: they alone never constrain the base.
 
-`strength_iff` (weighing.md 5.1) is not proved: as approved it is false on a document built without the decoder
-(a regulated predicate named `_x_permitted`; `Examples.lean`'s guards). Its reverse direction is `strength_mem`. The
-statement waits for the DRI (docs/weighing/wg-2/REPORT.md section 3).
+- `strength_iff` (weighing.md 5.1, wg-2-siff): when every regulated name begins with an ASCII letter (the decoder's
+  identifier rule, so every wire document), `Str_T` has a premise exactly for the `outweighs` decisions of strict
+  pairs. Without that hypothesis it is false on a document built without the decoder (a regulated predicate named
+  `_x_permitted`, or its mirror; `Examples.lean`'s guards, weighing.md 7.3 F19). The proof recovers the ranks and the
+  act from the `outweighs` name (`outweighsName_inj`). Its reverse direction, `strength_mem`, holds for every triple.
 
 The helpers `weighFacts` and `condFacts` (what an accepted block guarantees), `rankOrder_above` (soft's `outranksPlus`
 is QS-1's `above`), `evalProp_denote`, `condPremise_mem`, the chain lemmas, `premise_facts` and the arity lemmas are
 lemmas for these proofs.
 
 Not in this part (wg-2b): `holistic_iff_no_always_chain`, `strictWitness` with `strictWitness_isSome` and
-`strictWitness_chain`, `strength_iff`, `always_dominates`, `always_no_override`, `all_always_is_strict`,
+`strictWitness_chain`, `always_dominates`, `always_no_override`, `all_always_is_strict`,
 `grant_within_grantor`, `weighPremises_wellFormed`, `weighPremises_substructure`, `weigh_alone_base_free`, and the
 rest of weighing.md 7.2's fixtures.

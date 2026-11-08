@@ -34,6 +34,7 @@ import VE.EnglishGrammar.SourceWordsExamples
 import VE.Senses.Examples
 import VE.Senses.DocumentExamples
 import VE.Senses.RunExamples
+import VE.Senses.TextsExamples
 import VE.Service.RegistryExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
@@ -134,6 +135,8 @@ import VE.Discourse.Positions
 import VE.Discourse.PositionsExamples
 import VE.Presupposition.Reading
 import VE.Presupposition.Rows
+import VE.Presupposition.Rules
+import VE.Presupposition.Agree
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
@@ -212,6 +215,8 @@ import VE.Question.Frames
 import VE.Question.Fixtures
 import VE.Question.Spans
 import VE.Commands.Examples
+import VE.Commands.RunExamples
+import VE.Commands.RunSplit
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -332,4 +337,7 @@ import VE.Weighing.Conditions
 import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Defaults.ZoneWire
+import VE.Defaults.ZoneWireExamples
 import VE.Attitudes.Examples
+import VE.Attitudes.Theorems

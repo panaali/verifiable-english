@@ -221,4 +221,67 @@ def envCase (ps : List String) (kind : String := "admission") : Json :=
 #guard VE.Discourse.Run.usesDiscoursePath (envCase ["relational-fol@0"] "discourse-joint")
 #guard VE.Discourse.Run.usesDiscoursePath (caseOf doc)
 
+/-! ## The route entry (14.6, item cmp-s4c) -/
+
+/-- The discourse route's answer to a case of `kind` on `text`, as text. -/
+def routeOf (kind text : String) : String :=
+  match VE.Discourse.Run.runCase (Json.mkObj [("id", .str "s4"), ("kind", .str kind), ("document", .str text)]) with
+  | .ok j => j.compress
+  | .error e => "error: " ++ e
+/-- Today's discourse admission of the case, as the route encodes it. -/
+def todayOf (text : String) : String :=
+  match VE.Discourse.Run.loadCase (caseOf text) >>= fun (d, env) => do
+      admitDiscourse (← VE.Route.Gate.profilesOf env) env (← baseVocabulary env) d fuelBudget with
+  | .ok r => ((VE.Discourse.Run.encodeAdmission "s4" r).toOption.getD .null).compress
+  | .error e => "error: " ++ e
+def innerOf (kind text : String) : Json := (parsed (routeOf kind text)).getObjValD "inner"
+def listed (ps : List String) : String := ", ".intercalate (ps.map fun p => "\"" ++ p ++ "\"")
+
+-- Two checks, each read once by the trust mutants' probe (a check that runs the route reaches every route).
+-- `runCase`: S4-27, an `admission` case is `encodeComposed` of the composed admission, the other discourse kinds by
+-- name, any other kind as today; off the composed path today's answer (S4-28: no `ve.discourse@1`; S4-3: no chain
+-- construct); step 1's chain decoder (`chainEnvironment`), the route `dispatch` chooses, or `dispatchAdmission`'s
+-- refusal of a list no chain route reads (S4-16, S4-17)
+#guard [(parsed (routeOf "admission" doc)).getObjValD "status" == .str "ok" && innerOf "admission" doc != .null &&
+    (parsed (routeOf "admission" doc)).getObjValD "inner_report_id" == (innerOf "admission" doc).getObjValD "report_id",
+  ["discourse-joint", "discourse-validity", "discourse-resolve"].all fun k =>
+    routeOf k doc == "error: NotImplemented: " ++ k ++ " on the chain",
+  routeOf "no-such" doc == "error: UnsupportedProfile: case kind no-such is not available on the discourse route",
+  routeOf "admission" (doc (format := "ve-document@1") (profiles := listed ["norms@0", "relational-fol@0"])
+    (discourse := "")) ==
+    "error: fields do not match: expected [arguments, description], got [arguments, description, regulated]",
+  routeOf "admission" (doc (us := "[" ++ u1 ++ "]") (regulated := false) (body := src1)) ==
+    todayOf (doc (us := "[" ++ u1 ++ "]") (regulated := false) (body := src1)),
+  (innerOf "admission" (doc (profiles := listed ["norms@0", "relational-fol@0", "soft-norms@0", "ve.discourse@1"]))).getObjValD
+    "conditional_on" == Json.arr #[],
+  (innerOf "admission" (doc (profiles := listed ["norm-defaults@0", "norms@0", "relational-fol@0", "ve.discourse@1"]))).getObjValD
+    "admitted" == .bool true,
+  routeOf "admission" (doc (profiles := listed ["norms@0", "relational-fol@0", "rights@0", "soft-norms@0", "ve.discourse@1"])) ==
+    "error: InvalidInput: invalid rights block",
+  routeOf "admission" (doc (profiles := listed ["norms@0", "readings@1", "relational-fol@0", "ve.discourse@1"])) ==
+    "error: UnsupportedProfile: ve.discourse@1 with readings@1",
+  routeOf "admission" (doc (profiles := listed ["norms@0", "relational-fol@0", "speech-acts@0", "ve.discourse@1"])) ==
+    "error: UnsupportedProfile: ve.discourse@1 with speech-acts@0"].all id
+-- step 1: on the composed path the envelope checks come first, with today's texts (`admitChain`, the path's body);
+-- off it, today's FOL-family check
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => (match admitChain ["norms@0", "relational-fol@0", "ve.discourse@1"] (env.setObjVal! "profiles"
+      (toJson ["norms@0", "relational-fol@0", "ve.discourse@1", "zz@0"])) d with | .error e => e | .ok _ => "") ==
+    "UnsupportedProfile: environment profiles differ from the declared list"
+  | .error _ => false
+#guard todayOf (doc (profiles := listed ["order@0", "relational-fol@0", "ve.discourse@1"]) (us := "[" ++ u1 ++ "]")
+  (regulated := false) (body := src1)) == "error: UnsupportedProfile: discourse admission requires the FOL family"
+-- `envelopeChecks` on its own: the environment's profile list must be the declared one
+#guard (match runAll (envelopeChecks ["norms@0", "relational-fol@0", "ve.discourse@1"]
+    (Json.mkObj [("profiles", toJson ["x@0"])]) .null) with | .error e => e | .ok _ => "") ==
+  "UnsupportedProfile: environment profiles differ from the declared list"
+
+-- 14.5 step 3: the chain route's environment id is the one over the base pair's profiles
+#guard match VE.Discourse.Run.loadCase (caseOf doc) with
+  | .ok (d, env) => (do
+      let id ← VE.Route.Wire.environmentId ["norms@0", "relational-fol@0"]
+        (← VE.Norms.Wire.canonicalEnvironmentJson (baseEnvironment env))
+      pure ((← chainBase env d).2.2 == id)).toOption == some true
+  | .error _ => false
+
 end VE.Discourse.ComposeExamples

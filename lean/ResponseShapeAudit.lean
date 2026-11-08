@@ -6,6 +6,7 @@ import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Cardinality
+import ResponseShape.Encoders.Command
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.Discourse
@@ -114,6 +115,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Cardinality.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Cardinality.runCase_fits
 #print axioms ResponseShape.Encoders.Cardinality.sizesJson_fits
+#print axioms ResponseShape.Encoders.Command.caseReported_fits
+#print axioms ResponseShape.Encoders.Command.encode_fits
+#print axioms ResponseShape.Encoders.Command.readingJson_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
@@ -139,12 +143,17 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Discourse.admit1_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_status
+#print axioms ResponseShape.Encoders.Discourse.admitChain_fits
+#print axioms ResponseShape.Encoders.Discourse.admitChain_parts
 #print axioms ResponseShape.Encoders.Discourse.admitCore_kinds
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_kinds
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_references
 #print axioms ResponseShape.Encoders.Discourse.admitDiscourse_status
+#print axioms ResponseShape.Encoders.Discourse.chainReferences_fits
 #print axioms ResponseShape.Encoders.Discourse.compileUnit_status
 #print axioms ResponseShape.Encoders.Discourse.compileUnits_status
+#print axioms ResponseShape.Encoders.Discourse.composed_fits
+#print axioms ResponseShape.Encoders.Discourse.dispatchAdmission_fits
 #print axioms ResponseShape.Encoders.Discourse.encodeAdmission_fits
 #print axioms ResponseShape.Encoders.Discourse.foldStatus_mem
 #print axioms ResponseShape.Encoders.Discourse.joint_fits
@@ -245,6 +254,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.layeredKindCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
+#print axioms ResponseShape.Encoders.NormDefaults.of_elaborate
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
@@ -253,14 +263,18 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.zoneCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.zoneLine_fits
 #print axioms ResponseShape.Encoders.Norms.admission_fits
 #print axioms ResponseShape.Encoders.Norms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Norms.certificate_fits
+#print axioms ResponseShape.Encoders.Norms.of_elaborate
 #print axioms ResponseShape.Encoders.Norms.of_plain_route
 #print axioms ResponseShape.Encoders.Norms.of_route
 #print axioms ResponseShape.Encoders.Norms.plain_fits
 #print axioms ResponseShape.Encoders.Norms.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Norms.runCase_fits
+#print axioms ResponseShape.Encoders.Norms.runElaborate_fits
 #print axioms ResponseShape.Encoders.Quantity.kind_read
 #print axioms ResponseShape.Encoders.Quantity.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Quantity.runCase_fits

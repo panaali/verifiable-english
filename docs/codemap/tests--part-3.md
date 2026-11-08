@@ -1,3 +1,9 @@
+- `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
+- `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
+- `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
+- `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
+- `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
+- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
 - `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
 - `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
 - `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
@@ -81,8 +87,3 @@
 - `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
 - `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
-- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
-- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
-- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
-- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
-- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
