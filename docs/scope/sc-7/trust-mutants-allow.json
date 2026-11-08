@@ -1,0 +1,59 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Scope.Pinned.clause",
+   "operator": "body-true",
+   "reason": "ill-typed where it is UNKNOWN: `body-true` turns `spaced s && !s.endsWith \".\" && !s.endsWith` into `true`, which does not elaborate (Function expected at lean/VE/Scope/Authoring.lean:27); the definition is killed by not-drop at :27; and-or at :27; not-drop at :27; and-or at :27"
+  },
+  {
+   "definition": "VE.Scope.Pinned.clause",
+   "operator": "body-false",
+   "reason": "ill-typed where it is UNKNOWN: `body-false` turns `spaced s && !s.endsWith \".\" && !s.endsWith` into `false`, which does not elaborate (Function expected at lean/VE/Scope/Authoring.lean:27); the definition is killed by not-drop at :27; and-or at :27; not-drop at :27; and-or at :27"
+  },
+  {
+   "definition": "VE.Scope.Pinned.spaced",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:24); the definition is killed by body-true at :24; body-false at :24; not-drop at :24; and-or at :24; all-any at :24; not-drop at :24"
+  },
+  {
+   "definition": "VE.Scope.Pinned.cap",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `n` into `[]`, which does not elaborate (failed to synthesize at lean/VE/Scope/Authoring.lean:33); the definition is killed by lit-plus at :33; lit-minus at :33"
+  },
+  {
+   "definition": "VE.Scope.Pinned.uncap",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `h` into `[]`, which does not elaborate (failed to synthesize at lean/VE/Scope/Authoring.lean:34); the definition is killed by lit-plus at :34; lit-minus at :34"
+  },
+  {
+   "definition": "VE.Scope.Pinned.between",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.toString.dropSuffix? suf)` into `[]`, which does not elaborate (Type mismatch at lean/VE/Scope/Authoring.lean:130); the definition is killed by the hand mutant `between` (no suffix drop) of docs/scope/sc-7/mutants.json, killed at AuthoringExamples.lean:25"
+  },
+  {
+   "definition": "VE.Scope.Pinned.splitOnce",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `[a, b]` into `[]`, which does not elaborate (Unknown identifier `a` at lean/VE/Scope/Authoring.lean:133); the definition is killed by the hand mutant `splitOnce` (first separator wins) of docs/scope/sc-7/mutants.json, killed at AuthoringExamples.lean:90"
+  },
+  {
+   "definition": "VE.Scope.Pinned.onList",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(rest.dropSuffix? \".\")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:140); the definition is killed by and-or at :141"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readHeading",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(w.takeWhile (· == '#'))` into `[]`, which does not elaborate (don't know how to synthesize implicit argument `α` at lean/VE/Scope/Authoring.lean:146); the definition is killed by not-drop at :148; and-or at :148; or-and at :151; le-lt at :148; le-eq at :148; eq-ne at :146; lit-plus at :148"
+  },
+  {
+   "definition": "VE.Scope.Pinned.attitude",
+   "operator": "append-right",
+   "reason": "ill-typed where it is UNKNOWN: `append-right` turns `((\"degree\", .str ·)) ++` into ``, which does not elaborate (Application type mismatch: The argument at lean/VE/Scope/Authoring.lean:44); the definition is killed by lit-plus at :43; list-empty at :43; append-left at :44"
+  },
+  {
+   "definition": "VE.Scope.Pinned.Row",
+   "operator": "ctor-drop",
+   "reason": "ill-typed where it is UNKNOWN: dropping a constructor of `Row` leaves `classify`, `Row.wording` and `Row.paraphrase` naming it (\"Unknown constant\" at lean/VE/Scope/Authoring.lean:75), so the mutant does not elaborate; each constructor is the row of one round-trip #guard of lean/VE/Scope/AuthoringExamples.lean"
+  }
+ ]
+}
