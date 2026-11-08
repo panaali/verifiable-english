@@ -12,10 +12,9 @@ open Lean VE.Acts VE.Acts.Run VE.Acts.Examples VE.Acts.RuleExamples VE.Acts.Tabl
 
 def frameJ (f : Frame) : Json := Json.mkObj [("head", .str (" ".intercalate f.head)), ("markers", toJson f.markers),
   ("split", toJson f.split), ("modifiers", toJson f.mods)]
-def req (V : Vocab) (fx : List String) (s : String) (role : String := "plain") (sign := true) (form : Json := .null) :
-    Json :=
+def req (V : Vocab) (fx : List String) (s : String) (role : String := "plain") (sign := true) : Json :=
   Json.mkObj [("id", "c"), ("phrase", .str s), ("fixed", toJson fx), ("frames", toJson (V.frames.map frameJ)),
-    ("adverbs", toJson V.adverbs), ("role", .str role), ("sign", .bool sign), ("form", form)]
+    ("adverbs", toJson V.adverbs), ("role", .str role), ("sign", .bool sign)]
 def row (j : Json) : Json := actReadingsReported j
 def verdict (j : Json) : Json := (row j).getObjValD "verdict"
 def diag (j : Json) : Json := (row j).getObjValD "diagnostic"
@@ -97,5 +96,8 @@ def f300 := "ab" ++ String.join (List.replicate 149 " a")
 #guard diag (req V5 fx5 "{0} to seek asylum,") == "InvalidInput: this act phrase ends with a comma"
 #guard (row ((req V5 fx5 g5).setObjVal! "extra" .null)).getObjValD "status" == "error"
 #guard (row ((req V5 fx5 g5).setObjVal! "form" "may")).getObjValD "status" == "error"
+-- the form is the plain act's: *is entitled* words each sentence with it
+#guard paraphraseAt ((req V11 fx11 g11s).setObjVal! "form" "is entitled") 0 == some (.str (paraphrase fx11 .right
+  (some .entitled) (atoms g11)))
 
 end VE.Acts.RunExamples
