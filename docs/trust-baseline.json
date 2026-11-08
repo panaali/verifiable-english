@@ -2084,6 +2084,20 @@
    "reason": "ci-2 review F1: V +6 above the existing +141 allowance: VE/EnglishGrammar/Run.lean +5 for translationOf, the shared formatter of the existing translation outcome; VE/Commands/Read.lean +1 to pass that outcome to the formatter. CI-2 total V +147, K +0, S +0, within R16 150-line cap.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2 review F1, 2026-11-04",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 115,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }
