@@ -40,6 +40,7 @@ its merge strategy:
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
+| english-s3-comparison | `conformance/english-lean/s3-fixture-comparison.json` (its records carry Lean's `actions_version`; written under one hash seed) | regenerate |
 | assurance-manifest | `ve/assurance-manifest.json` (decoder total recomputed) | json (check only) |
 | assurance-doc | `docs/spec/assurance-manifest.md` (`assurance_manifest.py --check`, new) | regenerate |
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
