@@ -300,6 +300,9 @@ module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Defaults.Zone
 module VE.Defaults.ZoneExamples
+module VE.Defaults.ZoneWire
+module VE.Defaults.ZoneWireExamples
+module VE.Defaults.ZoneWordsMain
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
