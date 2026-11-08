@@ -691,6 +691,8 @@ module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
 module VE.Senses.RunExamples
+module VE.Senses.Texts
+module VE.Senses.TextsExamples
 module VE.Senses.Version
 module VE.Service.ActsExamples
 module VE.Service.CardinalityExamples

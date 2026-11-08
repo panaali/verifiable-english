@@ -9653,14 +9653,19 @@
         "VE.Senses.Run.projectCase",
         "VE.Senses.Run.projectCaseReported",
         "VE.Senses.Run.writtenLines",
-        "VE.Senses.Run.flipJson"
+        "VE.Senses.Run.flipJson",
+        "VE.Senses.Run.byteSpan",
+        "VE.Senses.Run.senseEntryJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
         "VE.Senses.Run.fenceReject",
         "VE.Senses.Run.refusalSource",
         "VE.Senses.Run.shiftReject",
-        "VE.Senses.Run.faultJson"
+        "VE.Senses.Run.faultJson",
+        "VE.Senses.Run.bodyOf",
+        "VE.Senses.Run.textsJson",
+        "VE.Senses.Run.warningsJson"
       ],
       "G[I]": [
         "VE.Senses.Run.projectionIds",
@@ -19385,6 +19390,24 @@
     "VE/Defaults/ZoneWordsMain.lean": {
       "G[V]": [
         "main"
+      ]
+    },
+    "VE/Senses/Texts.lean": {
+      "G[R]": [
+        "VE.Senses.glossList",
+        "VE.Senses.unknownGlossText",
+        "VE.Senses.tooManyText",
+        "VE.Senses.divergeText",
+        "VE.Senses.noSenseFitsText",
+        "VE.Senses.mixedText",
+        "VE.Senses.unneededText",
+        "VE.Senses.divergeGlosses"
+      ]
+    },
+    "VE/Senses/TextsExamples.lean": {
+      "T": [
+        "VE.Senses.TextsExamples.reading",
+        "VE.Senses.TextsExamples.entries"
       ]
     }
   }
