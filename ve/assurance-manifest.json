@@ -2364,7 +2364,9 @@
       "lean/VE/Acts/DecodeTwins.lean": "ap-3db: theorems only: the twins of the reached soundness theorems over the elaborating decoders, and the predicates that state them; the JSON they name is read by the pinned Acts/Decode.lean",
       "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file",
       "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file",
-      "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path"
+      "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path",
+      "lean/VE/Purposes/Wire.lean": "the purposes block decoder (purpose-explanation PE-1, spec 1.2: exact fields, prevents refused); no service mode, route or runner path reaches it until pe-2 reads the purposes block in the document mode and pins it here",
+      "lean/VE/Purposes/Examples.lean": "fixtures only: #guard checks of purpose-explanation spec 7.1 and 9 decode purposes blocks built with Json.parse and renderBlock; no runner path"
     }
   },
   "plan_operations": {
