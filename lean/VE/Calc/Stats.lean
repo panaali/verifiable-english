@@ -146,9 +146,9 @@ def maxSignFlip : Nat := 16
 /-- 12.2's units for `signFlipP d` (one per value computed plus its bits, `bits` of the numerator and of the
 denominator), known before it runs and never below its work. There are `2ⁿ + 2` rows: the 2ⁿ sign vectors, the
 observed mean, and the values read with the final share. Each row has at most `4n + 8` values: a sign, its entry in
-the vector, a product and a partial sum per value, then the length, the mean, its absolute value and the comparison.
+the vector, a product and a running sum per value, then the length, the mean, its absolute value and the comparison.
 Each value is one visit plus at most `A + 2 · bits L + 2n + 2` bits, `A` the largest numerator's bits and `L` the
-least common multiple of the denominators: a partial sum's denominator divides `L` and its numerator is below
+least common multiple of the denominators: a running sum's denominator divides `L` and its numerator is below
 `n · 2^A · L`, and dividing by `n` adds `bits n ≤ n + 1` (me-7-signflip-bits; the charge before it counted the
 length only). -/
 def signFlipWork (d : List Rat) : Nat :=

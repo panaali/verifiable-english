@@ -7083,16 +7083,14 @@ theorem VE.Calc.sidesAtB_eq
   -- expr 2994313240
 theorem VE.Calc.signFlipC_complete
   ∀ (limit : Nat) (d : List Rat),
-    VE.Calc.signFlipWork d.length ≤ limit →
-      VE.Calc.signFlipC limit d = Option.some (VE.Calc.signFlipP d, VE.Calc.signFlipWork d.length)
+    VE.Calc.signFlipWork d ≤ limit → VE.Calc.signFlipC limit d = Option.some (VE.Calc.signFlipP d, VE.Calc.signFlipWork d)
   -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
-  -- expr 3751497465
+  -- expr 2575474119
 theorem VE.Calc.signFlipC_sound
   ∀ (limit : Nat) (d : List Rat) (q : Rat) (w : Nat),
-    VE.Calc.signFlipC limit d = Option.some (q, w) →
-      q = VE.Calc.signFlipP d ∧ w = VE.Calc.signFlipWork d.length ∧ w ≤ limit
+    VE.Calc.signFlipC limit d = Option.some (q, w) → q = VE.Calc.signFlipP d ∧ w = VE.Calc.signFlipWork d ∧ w ≤ limit
   -- uses VE.Calc.signFlipC@VE.Calc.Stats VE.Calc.signFlipP@VE.Calc.Stats VE.Calc.signFlipWork@VE.Calc.Stats
-  -- expr 1110700147
+  -- expr 1396600608
 theorem VE.Calc.signFlipP_grain
   ∀ (d : List Rat), ∃ m, m ≤ 2 ^ d.length ∧ VE.Calc.signFlipP d = ↑m / ↑(2 ^ d.length)
   -- uses VE.Calc.signFlipP@VE.Calc.Stats
