@@ -147,11 +147,51 @@ def twoDescriptions : VE.Formula :=
   (.assertion twoDescriptions)
 #guard okIs (resolveContent E (manifest [dPerson, dService]) "u1" (.assertion (.binary "owns" (slot "m1") (slot "m2"))))
   (.assertion twoDescriptions)
--- A mention nested in a description's span (its possessive) is no separate slot; one outside the span needs one.
-#guard okIs (resolveContent E (manifest [m7, mention "m3" .possessive (entityTarget "alice") (span := (0, 1))]) "u1" s4_7)
-  (.norm (node "notify" "notify_required" (assertive "service" (g "api") (.binary "owns" (.var 1) (.var 0)))))
-#guard errIs (resolveContent E (manifest [m7, mention "m3" .possessive (entityTarget "alice") (span := (3, 4))]) "u1" s4_7)
-  "MentionNotSlot: m3"
+/-! The nested-mention exemption (14.3 step 2, 1.4): only the possessive supplying a definite's relational restriction
+("Its owner is notified.", `Its` → `web_api`, restriction `owns(x, web_api)`) has no separate slot. Any other mention
+nested in a span is checked like an outermost one. -/
+def ownsApi : VE.Formula := .binary "owns" (.var 0) (.const "web_api")
+def dOwner (span : Nat × Nat) (r : Option VE.Formula := some ownsApi) : Mention := { m7 with span, restriction := r }
+def inner (span : Nat × Nat) (form : Form := .possessive) (t : Target := entityTarget "web_api") : Mention :=
+  mention "m2" form t (span := span)
+def plural2 (span : Nat × Nat) : Mention :=
+  mention "m1" .plural (listTarget ["alice", "bob"]) (rd := some .distributive) (span := span)
+def notified (m : String) : VE.Formula := .unary "notify_required" (slot m)
+def runOn (ms : List Mention) (φ : VE.Formula) := resolveContent E (manifest ms) "u1" (.assertion φ)
+def ownerNotified : Content := .assertion (assertive "person" ownsApi (.unary "notify_required" (.var 0)))
+-- The possessive inside the definite's restriction: no slot of its own, in either manifest order, wherever it lies
+-- inside the span.
+#guard okIs (runOn [dOwner (0, 2), inner (0, 1)] (notified "m1")) ownerNotified
+#guard okIs (runOn [inner (0, 1), dOwner (0, 2)] (notified "m1")) ownerNotified
+#guard okIs (runOn [dOwner (0, 2), inner (1, 2)] (notified "m1")) ownerNotified
+#guard okIs (runOn [dOwner (2, 6), inner (3, 5)] (notified "m1")) ownerNotified
+-- A pronoun inside a plural's span: refused without a slot; with one it is checked and its target used.
+def herIn := inner (1, 2) .pronoun (entityTarget "alice")
+#guard errIs (runOn [plural2 (0, 5), herIn] (notified "m1")) "MentionNotSlot: m2"
+#guard okIs (runOn [plural2 (0, 5), herIn] (.and (notified "m1") (notified "m2")))
+  (.assertion (conj [.and (.unary "notify_required" (.const "alice")) (.unary "notify_required" (.const "alice")),
+    .and (.unary "notify_required" (.const "bob")) (.unary "notify_required" (.const "alice"))]))
+#guard errIs (runOn [plural2 (0, 5), herIn] (.and (notified "m1") (.unary "deployed" (slot "m2"))))
+  "IllTypedTarget: m1: alice, bob"
+-- Inside another non-definite formula-producing mention, even a possessive with a relational restriction recorded.
+#guard errIs (runOn [mention "m1" .demonstrative (entityTarget "web_api") (span := (0, 5)), inner (1, 2) .pronoun]
+  (.unary "deployed" (slot "m1"))) "MentionNotSlot: m2"
+#guard errIs (runOn [{ dOwner (0, 2) with form := .demonstrative, target := entityTarget "alice" }, inner (0, 1)]
+  (notified "m1")) "MentionNotSlot: m2"
+-- Inside a definite but no possessive.
+#guard errIs (runOn [dOwner (0, 2), inner (0, 1) .pronoun] (notified "m1")) "MentionNotSlot: m2"
+-- A possessive whose target the restriction does not carry: none, unary, another argument, or no constant.
+#guard errIs (runOn [dOwner (0, 2) none, inner (0, 1)] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (resolveContent E (manifest [m7, inner (0, 1)]) "u1" s4_7) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (0, 2), inner (0, 1) (t := entityTarget "alice")] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (0, 2), inner (0, 1) (t := binderTarget 0)] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (0, 2) (some (.binary "owns" (.const "alice") (.const "web_api"))), inner (0, 1)] (notified "m1"))
+  "MentionNotSlot: m2"
+-- Outside the definite's span: after it, past its end, before its start, and on the same span.
+#guard errIs (runOn [dOwner (0, 2), inner (3, 4)] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (0, 2), inner (1, 3)] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (1, 3), inner (0, 2)] (notified "m1")) "MentionNotSlot: m2"
+#guard errIs (runOn [dOwner (0, 2), inner (0, 2)] (notified "m1")) "MentionNotSlot: m2"
 -- Step 4's position without a slot, and step 3's other kinds.
 #guard errIs (resolveContent E k4 "u1" (.norm { (node "review-it" "review_required" (.eq (.var 0) (slot "m1"))) with
   carveOuts := [.unary "owns" (.var 0)] })) "InvalidInput: u1: position 1"
