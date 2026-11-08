@@ -18606,6 +18606,17 @@
     },
     "VE/Attitudes/Examples.lean": {
       "T": [
+        "VE.Attitudes.Examples.FM",
+        "VE.Attitudes.Examples.Fno",
+        "VE.Attitudes.Examples.Fyes",
+        "VE.Attitudes.Examples.M",
+        "VE.Attitudes.Examples.MA",
+        "VE.Attitudes.Examples.RM1",
+        "VE.Attitudes.Examples.RM2",
+        "VE.Attitudes.Examples.RM3",
+        "VE.Attitudes.Examples.RM4",
+        "VE.Attitudes.Examples.St",
+        "VE.Attitudes.Examples.U1",
         "VE.Attitudes.Examples.actions",
         "VE.Attitudes.Examples.att2",
         "VE.Attitudes.Examples.awf",
@@ -18636,6 +18647,7 @@
         "VE.Attitudes.Examples.declaredWording",
         "VE.Attitudes.Examples.docOf",
         "VE.Attitudes.Examples.docWith",
+        "VE.Attitudes.Examples.draft4Pack",
         "VE.Attitudes.Examples.envP",
         "VE.Attitudes.Examples.errOf",
         "VE.Attitudes.Examples.extra",
@@ -18652,9 +18664,13 @@
         "VE.Attitudes.Examples.fat7item",
         "VE.Attitudes.Examples.fat8",
         "VE.Attitudes.Examples.fat9",
+        "VE.Attitudes.Examples.fatAll",
+        "VE.Attitudes.Examples.fatB",
         "VE.Attitudes.Examples.fatMore",
+        "VE.Attitudes.Examples.firstFailing",
         "VE.Attitudes.Examples.fixtureTable",
         "VE.Attitudes.Examples.fixtureTableNoPair",
+        "VE.Attitudes.Examples.frameHolds",
         "VE.Attitudes.Examples.genconst",
         "VE.Attitudes.Examples.genpred",
         "VE.Attitudes.Examples.gensort",
@@ -18665,8 +18681,14 @@
         "VE.Attitudes.Examples.guard6",
         "VE.Attitudes.Examples.guard7",
         "VE.Attitudes.Examples.guard9",
+        "VE.Attitudes.Examples.guardAll",
+        "VE.Attitudes.Examples.guardAt",
         "VE.Attitudes.Examples.guardP",
+        "VE.Attitudes.Examples.instDecidableUnsaidFree",
         "VE.Attitudes.Examples.instInhabitedKey",
+        "VE.Attitudes.Examples.keyK",
+        "VE.Attitudes.Examples.keyQ",
+        "VE.Attitudes.Examples.kn",
         "VE.Attitudes.Examples.knows1",
         "VE.Attitudes.Examples.knowsA",
         "VE.Attitudes.Examples.lexA",
@@ -18685,6 +18707,7 @@
         "VE.Attitudes.Examples.noKey",
         "VE.Attitudes.Examples.nodesOf",
         "VE.Attitudes.Examples.nounOf",
+        "VE.Attitudes.Examples.pairNames",
         "VE.Attitudes.Examples.passes",
         "VE.Attitudes.Examples.preReportTable",
         "VE.Attitudes.Examples.predicateList",
@@ -18694,6 +18717,7 @@
         "VE.Attitudes.Examples.qlA",
         "VE.Attitudes.Examples.regulatedP",
         "VE.Attitudes.Examples.robot",
+        "VE.Attitudes.Examples.routeModel",
         "VE.Attitudes.Examples.ruleOf",
         "VE.Attitudes.Examples.sortC",
         "VE.Attitudes.Examples.sortS",
@@ -18707,6 +18731,8 @@
         "VE.Attitudes.Examples.threeRegulated",
         "VE.Attitudes.Examples.undeclared",
         "VE.Attitudes.Examples.unsaidP",
+        "VE.Attitudes.Examples.v01",
+        "VE.Attitudes.Examples.v1",
         "VE.Attitudes.Examples.viewed",
         "VE.Attitudes.Examples.vocabP",
         "VE.Attitudes.Examples.vql",
@@ -18719,6 +18745,34 @@
         "VE.Attitudes.Examples.wordedDoc",
         "VE.Attitudes.Examples.wordsTable",
         "VE.Attitudes.Examples.Γ1"
+      ]
+    },
+    "VE/Attitudes/Frame.lean": {
+      "S": [
+        "VE.Attitudes.atomAt",
+        "VE.Attitudes.closeOver",
+        "VE.Attitudes.entails",
+        "VE.Attitudes.entailsMode",
+        "VE.Attitudes.factive",
+        "VE.Attitudes.frameLabels",
+        "VE.Attitudes.framePairs",
+        "VE.Attitudes.framePremises",
+        "VE.Attitudes.knowsKeys",
+        "VE.Attitudes.sameSubject"
+      ]
+    },
+    "VE/Attitudes/Route.lean": {
+      "G[I]": [
+        "VE.Attitudes.labelOrigin"
+      ],
+      "G[V]": [
+        "VE.Attitudes.attitudesPack",
+        "VE.Attitudes.attitudesRow",
+        "VE.Attitudes.toU"
+      ],
+      "S": [
+        "VE.Attitudes.SettledAsX",
+        "VE.Attitudes.UnsaidFree"
       ]
     },
     "VE/Attitudes/Scale.lean": {
@@ -18736,6 +18790,17 @@
         "VE.Attitudes.e1Words",
         "VE.Attitudes.scaleCaps",
         "VE.Attitudes.table"
+      ]
+    },
+    "VE/Attitudes/Semantics.lean": {
+      "S": [
+        "VE.Attitudes.AFormula.denote",
+        "VE.Attitudes.AttModel",
+        "VE.Attitudes.Intended",
+        "VE.Attitudes.contentAt",
+        "VE.Attitudes.interp",
+        "VE.Attitudes.restrict",
+        "VE.Attitudes.seedClosure"
       ]
     },
     "VE/Attitudes/Syntax.lean": {
@@ -18759,7 +18824,6 @@
         "VE.Attitudes.WellFormedAtt",
         "VE.Attitudes.atom",
         "VE.Attitudes.baseEnv",
-        "VE.Attitudes.baseEnvAtt",
         "VE.Attitudes.checkAtt",
         "VE.Attitudes.checkCond",
         "VE.Attitudes.checkConds",
@@ -18780,6 +18844,12 @@
         "VE.Attitudes.toNorms"
       ],
       "D[V]": [
+        {
+          "name": "VE.Attitudes.baseEnvAtt",
+          "tied": [
+            "VE.Attitudes.frame_wellFormed"
+          ]
+        },
         {
           "name": "VE.Attitudes.envAtt",
           "tied": [
