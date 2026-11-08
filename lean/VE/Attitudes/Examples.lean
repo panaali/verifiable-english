@@ -1,4 +1,5 @@
-import VE.Attitudes.Frame
+import VE.Attitudes.Semantics
+import VE.Attitudes.Route
 
 /-! `#guard`s on the values sections 2.1 to 2.4 of docs/spec/attitudes.md compute, on the fixtures of
 section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part), and from at-1b on sections
@@ -757,5 +758,86 @@ def fatB (T : Table) : AttDoc := docOf T [] [ruleOf "u0165-s01" (.or knowsA (.at
 def keyK : Key := ⟨.knows, sortC, some sortS, contentOf cat0⟩
 #guard sameSubject keyK { keyK with mode := ql } && !sameSubject keyK { keyK with holderSort := sortS } &&
   !sameSubject keyK { keyK with slotSort := none } && !sameSubject keyK { keyK with content := .top }
+
+
+/-! ## 2.8 F-AT1's points (spec 7.2), on what is decidable: the frame and the elaborated guard on `interp`'s finite
+model; `Intended` and `AFormula.denote` are propositions, pinned by the examples further below -/
+
+abbrev FM := VE.FiniteModel Nat
+/-- One instance `0`, one situation `1`, the category true or false, and the attitude tuples by generated name. -/
+def routeModel (cat : Bool) (J : List (String × List Nat)) : FM :=
+  { domains := fun s => if s == sortC then [0] else if s == sortS then [1] else [],
+    constants := fun _ => none,
+    relations := fun r => if cat && r == cat0 then [[1]] else (J.filter (·.1 == r)).map (·.2) }
+def RM1 : FM := routeModel false [(kn "thinks_quite_likely" 1, [0, 1])]
+def RM2 : FM := routeModel false [(kn "knows" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1])]
+def RM3 : FM := routeModel true [(kn "knows" 1, [0, 1])]
+def RM4 : FM := routeModel true []
+def frameHolds (A : AttDoc) (M : FM) : Bool := (framePremises A).all (·.eval M [])
+def guardAt (M : FM) : Bool := ((guard1.toFormula fat1 Γ1).map (·.eval M [1, 0])).getD false
+-- 7.2's "frame holds" column: M1 true, M2 false, M3 false, M4 true; the elaborated guard: true, true, false, false
+#guard [RM1, RM2, RM3, RM4].map (frameHolds fat1) == [true, false, false, true] &&
+  [RM1, RM2, RM3, RM4].map guardAt == [true, true, false, false]
+
+/-! ## 2.9 The route views and the pack, on F-AT1 (spec 7.3, what is computable without AT-2) -/
+
+def U1 : VE.NormDefaults.UDoc :=
+  match toU fat1 ["weapons_uplift_permitted"] with
+  | some U => U
+  | none => ⟨⟨envP, [], ⟨[], [], []⟩⟩, []⟩
+/-- The first failing frame premise's label (PK-1's diagnostic names it), or none. -/
+instance (U : VE.NormDefaults.UDoc) (φ : VE.Formula) : Decidable (UnsaidFree U φ) := by
+  unfold UnsaidFree; infer_instance
+def firstFailing (A : AttDoc) (M : FM) : Option String :=
+  (((attitudesPack A).labelled).find? (fun p => !p.2.eval M [])).map (·.1)
+-- `toU`: the elaborated document with the unspecified list, `WellFormedU` true; none when elaboration fails
+#guard (toU fat1 ["weapons_uplift_permitted"]).isSome && VE.NormDefaults.WellFormedU U1 &&
+  U1.unspec == ["weapons_uplift_permitted"] && (match toNorms fat1 with
+    | some D => U1.D.T.nodes == D.T.nodes | none => false) &&
+  (toU { fat1 with rules := [ruleOf "u0165-s01" noKey] } []).isNone
+-- RM1-RM4: the first failing frame label: none, the factive premise, the entailment, none
+#guard [RM1, RM2, RM3, RM4].map (firstFailing fat1) == [none, some "attitude:factive:attitudes__knows__1",
+  some "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1", none]
+-- `table3` and `enumerateSettled`: `some false` at RM1, `none` at RM4
+#guard VE.NormDefaults.table3 U1 RM1 "weapons_uplift_permitted" [0, 1] == some false &&
+  VE.NormDefaults.table3 U1 RM4 "weapons_uplift_permitted" [0, 1] == none &&
+  VE.NormDefaults.enumerateSettled U1 RM1 "weapons_uplift_permitted" [0, 1] == some false &&
+  VE.NormDefaults.enumerateSettled U1 RM4 "weapons_uplift_permitted" [0, 1] == none
+-- the frame reads no unsaid table on U1 (`UnsaidFree`, decided) and is typed over `envAt (fill U1) 0` and `baseEnvAtt`
+#guard (framePremises fat1).all (fun φ => decide (UnsaidFree U1 φ) &&
+  φ.check (VE.Norms.envAt (VE.NormDefaults.fill U1) 0) [] && φ.check (baseEnvAtt fat1) [])
+-- F-AT8 (SR-1): a factive premise names `unsaid__weapons_uplift_permitted`, and `WellFormedU` is false
+#guard (match toU fat8 ["weapons_uplift_permitted"] with
+    | some U => !VE.NormDefaults.WellFormedU U && (framePremises fat8).any (fun φ => !decide (UnsaidFree U φ))
+    | none => false)
+-- the frame holds on RM4's two filled situations
+def Fyes : VE.NormDefaults.FiniteFill U1 Nat := fun n => if n == unsaidP then [[0, 1]] else []
+def Fno : VE.NormDefaults.FiniteFill U1 Nat := fun _ => []
+#guard frameHolds fat1 (RM4.withFill Fyes) && frameHolds fat1 (RM4.withFill Fno)
+-- PK-1 as built: a `constraint` pack with no names and no conditions, the frame as its labelled premises
+#guard (attitudesPack fat1).id == "attitudes" && (attitudesPack fat1).kind == .constraint &&
+  (attitudesPack fat1).decls.isEmpty && (attitudesPack fat1).consts.isEmpty &&
+  (attitudesPack fat1).conditions.isEmpty && (attitudesPack fat1).names.isEmpty
+-- `attitudesPack_premises` (F-AT1, F-AT2): the labels and the premises, in order; one origin per label
+#guard [fat1, fat2].all (fun A => (attitudesPack A).labelled.map (·.2) == framePremises A &&
+  (attitudesPack A).labelled.map (·.1) == frameLabels A &&
+  (attitudesPack A).origins == (frameLabels A).map (fun l => (l, labelOrigin A l)))
+/-- Drafts 1–4's pack, which declared the keys' names a second time; kept only to show `assemble`'s refusal. -/
+def draft4Pack (A : AttDoc) : VE.NormDefaults.Packs.Pack :=
+  { attitudesPack A with kind := .vocabulary, decls := (keys A).map (fun k => (name A k, k.sorts)) }
+-- `assemble` takes the pack (it has no name); a pack declaring the keys' names is refused
+#guard (match VE.NormDefaults.Packs.assemble U1 0 [attitudesPack fat1] with
+    | .ok ps => ps.map (·.id) == ["attitudes"] | .error _ => false) &&
+  errOf ((VE.NormDefaults.Packs.assemble U1 0 [draft4Pack fat1]).map (fun _ => ())) ==
+    "InvalidInput: generated name attitudes__knows__1 of pack attitudes is already declared"
+-- the base vocabulary of U1 declares each key's name with its sorts; `envX` is that environment
+#guard (keys fat1).all (fun k => (VE.Norms.envAt (VE.NormDefaults.fill U1) 0).predicates (name fat1 k) ==
+  some [sortC, sortS])
+example : VE.NormDefaults.Packs.envX U1 [attitudesPack fat1] = VE.Norms.envAt (VE.NormDefaults.fill U1) 0 := rfl
+-- `attitudesRow`: its fields as 2.9 writes them, and the slot agrees with the interface (PC-3's C1)
+#guard attitudesRow.profile == "attitudes@0" && attitudesRow.requires == ["norm-defaults@0", "norms@0"] &&
+  attitudesRow.refuses == [("reports@0", "attitudes@0 with reports@0 is not admitted")] &&
+  attitudesRow.slot == "pack" && VE.Compose.slotAgrees attitudesRow.slot attitudesRow.interface &&
+  !VE.Compose.slotAgrees "constraint" attitudesRow.interface
 
 end VE.Attitudes.Examples
