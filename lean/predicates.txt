@@ -165,6 +165,7 @@ module VE.Ask.ZeroWire
 module VE.Attitudes.Examples
 module VE.Attitudes.Scale
 module VE.Attitudes.Syntax
+module VE.Attitudes.Theorems
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -860,6 +861,7 @@ VE.Ask.SplitU@VE.Ask.Basic
 VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
+VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
 VE.Calc.Check.OutcomeMeans@VE.Calc.Run
