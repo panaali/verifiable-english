@@ -669,8 +669,11 @@ def listsOf (a : Json) : List (String × Json) := ["predicates", "rules", "kept"
 -- The REFUSED row has the environment's identity.
 #guard (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE' (Json.arr #[])))).getObjValD "environment_id" ==
   (elabRow (VE.Norms.Run.runCaseRouted (elabCase joinedE'))).getObjValD "environment_id"
--- The norms route decodes with its `data@0` flags.
 def profiled (j : Json) (ps : List String) : Json := j.setObjVal! "profiles" (toJson ps)
+-- `acts@0` alone is read, and the decoder refuses the list.
+#guard err (VE.Acts.Run.runElaborate VE.Acts.Run.normsSource (elabCase (profiled joinedE' ["acts@0"]))) ==
+  "UnsupportedProfile: Missing profile relational-fol@0"
+-- The norms route decodes with its `data@0` flags.
 def withPred (j : Json) (n : String) (d : Json) : Json :=
   let v := j.getObjValD "vocabulary"
   j.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! n d))
