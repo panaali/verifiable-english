@@ -1,5 +1,6 @@
 import VE.NormDefaults.Run
 import VE.Defaults.Examples
+import VE.Service.DocumentChain
 
 /-! et-4b's route fixtures (docs/spec/events-time-causation.md 3, 4; plan ET-4): the hook through the layered decoders
 and the service, the identities, the date constants in the vocabulary limit and the kinds a list with `events@0` is
@@ -347,5 +348,43 @@ def excBare : Json := envOf none listed [VE.Defaults.Fixtures.baseJ "s", VE.Defa
 #guard (match VE.Events.replayUnblockedEntailment (caseOf "norm-defaults-certificate" envOf) with
   | .error e => e == "InvalidInput: events" | .ok _ => false)
 #guard status (caseOf "norm-defaults-certificate" envOf) == "property not found: premises"
+
+/-! ## requestOf refuses events@0 (et-4b trust-mutant barrier, DRI 2026-11-08) -/
+
+/-- An environment over `profiles`, with no predicate (the shape of `DocumentChainExamples.environmentOver`). -/
+def chainEnv (profiles : List String) : Json :=
+  Json.mkObj [("language", .str "ve.core@0.2"), ("profiles", toJson profiles),
+    ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
+    ("vocabulary", Json.mkObj [("constants", Json.mkObj []), ("predicates", Json.mkObj []),
+      ("sorts", Json.mkObj [("claude_instance", Json.mkObj [("description", .str "Claude")])])])]
+
+/-- The soft-norms@0 environment that `environmentOf` decodes, with `listed` as its profiles. `environmentOf` already
+refuses an events@0 list by `ownedProfiles` (below), so the list goes on the decoded `Env`. That leaves `requestOf`'s
+own test of events@0 as the only thing that can refuse it (`DocumentChainExamples.plainCase`'s style, no `check`). -/
+def requestCase (listed : List String) : Except String Json := do
+  let E ← VE.Service.Document.environmentOf (chainEnv ["norms@0", "relational-fol@0", "soft-norms@0"])
+  pure (VE.Service.DocumentChain.requestOf
+    { E with json := E.json.setObjVal! "profiles" (toJson listed), profiles := listed } (Json.mkObj []) [])
+
+def requestIsNull (listed : List String) : Bool :=
+  match requestCase listed with
+  | .ok j => j == .null
+  | .error _ => false
+
+def requestIsCase (listed : List String) : Bool :=
+  match requestCase listed with
+  | .ok j => j != .null && j.getObjValD "norms" == Json.arr #[]
+  | .error _ => false
+
+-- The decoder refuses events@0 by itself, and accepts the list without it.
+#guard (VE.Service.Document.environmentOf (chainEnv ["events@0", "norms@0", "soft-norms@0"])).toOption.isNone
+#guard (VE.Service.Document.environmentOf (chainEnv ["norms@0", "relational-fol@0", "soft-norms@0"])).toOption.isSome
+-- (a) events@0 the only profile beside soft-norms@0, (b) first of three, (c) last of three: no case.
+#guard requestIsNull ["events@0", "soft-norms@0"]
+#guard requestIsNull ["events@0", "norms@0", "soft-norms@0"]
+#guard requestIsNull ["norms@0", "soft-norms@0", "events@0"]
+-- The same lists without events@0 make a case, so no guard above passes because of an earlier refusal.
+#guard requestIsCase ["soft-norms@0"]
+#guard requestIsCase ["norms@0", "soft-norms@0"]
 
 end VE.Events.RouteExamples
