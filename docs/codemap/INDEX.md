@@ -104,7 +104,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 4 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 6 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
@@ -129,10 +129,10 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 93 modules — -
 - [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
-- [tests/ part 4](tests--part-4.md) — 92 modules — -
-- [tests/ part 5](tests--part-5.md) — 78 modules — -
+- [tests/ part 4](tests--part-4.md) — 90 modules — -
+- [tests/ part 5](tests--part-5.md) — 79 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
-- [tests/ part 7](tests--part-7.md) — 57 modules — -
+- [tests/ part 7](tests--part-7.md) — 60 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 99 modules — -
 - [tools/ part 2](tools--part-2.md) — 9 modules — -
