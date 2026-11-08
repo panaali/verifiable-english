@@ -5962,7 +5962,7 @@ module VE.Calc.Stats f5c3d91fa95aa1ea523d706854ab86b1cce781d095840c88ca23ffddb7c
 294:0-297:10 def VE.Calc.Stat.minLength@VE.Calc.Stats
 299:0-303:66 def VE.Calc.Stat.run@VE.Calc.Stats
 305:0-307:90 theorem VE.Calc.Stat.run_isSome@VE.Calc.Stats
-module VE.Calc.StatsExamples daec15b7ed0bc818bd595f821d1cd2def5d010c0ce929fdcc69605a3f69855f2
+module VE.Calc.StatsExamples d69fc4e79ecf9fff13524bf83236df848ea38aa3a09a141f46df418c3ff9910d
 10:0-10:84 def VE.Calc.StatsExamples.milli@VE.Calc.StatsExamples
 11:0-12:85 def VE.Calc.StatsExamples.v6@VE.Calc.StatsExamples
 13:0-13:43 def VE.Calc.StatsExamples.sv@VE.Calc.StatsExamples
