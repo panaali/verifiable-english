@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,25 @@ from ve.wire import digest
 ROOT = Path(__file__).resolve().parents[1]
 AB = json.loads((ROOT / "docs/commands-imperatives/ci-5/AB.json").read_text())
 ACTS = ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]
+
+
+def test_the_spec_names_the_speech_profile_gate_and_points_other_claims_to_it():
+    """The route's documented profile list follows the CI-5 gate, including its simple-act limit."""
+    spec = (ROOT / "docs/spec/speech-acts.md").read_text()
+    gate = spec.split("### 1.6 Supported combinations", 1)[1].split("\n### ", 1)[0]
+    first_paragraph = gate.split("\n\n", 1)[1].split("\n\n", 1)[0]
+    admitted = first_paragraph.split("among statement and checker profiles", 1)[0]
+    assert set(re.findall(r"`([\w.-]+@\d+)`", admitted)) == set(ACTS)
+    assert "optional `acts@0`" in first_paragraph
+    assert "simple acts" in first_paragraph
+    assert "joined acts outside a declared fixed phrase are" in first_paragraph
+
+    well_formed = spec.split("### 4.1 Well-formedness", 1)[1].split("\n### ", 1)[0]
+    diagnostics = spec.split("## 7. Diagnostics", 1)[1].split("\n## ", 1)[0]
+    choices = spec.split("## 12. Resolved choices", 1)[1].split("\n## ", 1)[0]
+    assert all("allowlist of 1.6" in part for part in (well_formed, diagnostics, choices))
+    lean_route_doc = (ROOT / "lean/SPEECH-ACTS.md").read_text()
+    assert "allowlist in spec 1.6 (including optional `acts@0` for simple acts)" in lean_route_doc
 
 
 def with_act(env, predicate, act, fixed):
