@@ -2,7 +2,7 @@ import VE.Commands.Read
 import VE.EnglishGrammar.E2Examples
 
 /-! The fixtures of docs/spec/commands-imperatives.md section 5: the W rows over `E_web`
-(F0's rows and the other 50 web segments are ci-1b's), and each limit at its boundary. -/
+(F0's rows and the other 50 web segments are ci-1c's), and each limit at its boundary. -/
 
 namespace VE.Commands.Examples
 

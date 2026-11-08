@@ -52,7 +52,7 @@ Only Lean product code changed, so all seeded bugs are Lean. There is no new tru
 
 ## Tests
 
-- `mac-pytest.sh --select -- --base e9a6ec8d5 --run` at 85de43189 (only this file changed after it): exit 0. Run ci-1b-85de4318-t123901, 444 units in 6 shards, every shard passed. None of the 3 rows in main-known-red.txt is in this area.
+- `mac-pytest.sh --select -- --base e9a6ec8d5 --run` at 85de43189 (after it only this file, two comments and their regenerated declarations and code map changed): exit 0. Run ci-1b-85de4318-t123901, 444 units in 6 shards, every shard passed. None of the 3 rows in main-known-red.txt is in this area.
 - Selection took 429 of 547 units. It widened because of the regenerated inventories (`lean/statements.txt`, `lean/declarations.txt`, `lean/VE/Audit.lean`) and `tools/trust-classes.json`, which many tests read. That cause is known and expected.
 - `uv run python tools/regen_generated.py --write --skip route-cases --skip checker-pins`: exit 0. The two skipped entries need the Rust release binary, which this worktree lacks. Rust is unchanged, so their outputs are not stale. They stay for the chain's gate.
 - `tools/gate_collection.py --check --prebuilt`: "0 added, 0 removed …, 0 refused, 0 stale and 0 malformed". `tools/repo_map.py --check`: PASS.
