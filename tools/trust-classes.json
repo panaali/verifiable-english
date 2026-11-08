@@ -19532,6 +19532,7 @@
         "VE.Scope.Pinned.paraphrase"
       ],
       "D[V]": [
+        "VE.Scope.Pinned.wordChar",
         "VE.Scope.Pinned.spaced",
         "VE.Scope.Pinned.clause",
         "VE.Scope.Pinned.listName",

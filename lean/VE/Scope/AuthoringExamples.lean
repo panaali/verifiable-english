@@ -79,8 +79,14 @@ def u0170s01 := "The list of hard constraints above is not a list of all the beh
 -- a slot's words: no tab inside or before a word, one space after every word; a section is one word
 #guard ["The hard constraints apply only where the act\tis irreversible.", "The hard constraints apply only where the act \tis irreversible.",
   "The hard constraints apply only where the act  is irreversible.", "Notwithstanding the rules of section 3 x, every operator may share.",
-  "Notwithstanding the rules of section  3, every operator may share.", "Notwithstanding the rules of section 3\t, every operator may share."].all
-  (parseGovernor · == none)
+  "Notwithstanding the rules of section  3, every operator may share.", "Notwithstanding the rules of section 3\t, every operator may share.",
+  "Notwithstanding the rules of section 3\u00A0, every operator may share.", "Notwithstanding the rules of section 3\x07, every operator may share.",
+  "The hard constraints apply only where the act\u00A0is irreversible.", "The hard constraints apply only where the act\u2003is irreversible.",
+  "The hard constraints apply only where the act is irreversible\r.", "The hard\u00A0constraints apply only where the act is irreversible.",
+  "The hard constraints apply only where the act\x07is irreversible.", "The hard constraints apply only where the act\x7Fis irreversible.",
+  "## Hard\u3000constraints"].all (parseGovernor · == none)
+-- what a slot may hold: curly quotes, digits and any other letter
+#guard trip "The hard constraints apply only where the act is in Claude’s “sandbox” 2." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is in Claude’s “sandbox” 2\"}]}}"
 -- levels 1 to 6
 #guard trip "###### Notes" "{\"reach\": {\"anchor\": {\"heading\": \"Notes\", \"level\": 6}}, \"effect\": \"title\"}"
 -- a line with no "#" is no heading, whatever follows
