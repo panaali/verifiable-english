@@ -27,6 +27,7 @@ its merge strategy:
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | lake-build | (the build every later entry reads) | - |
 | numbers-phrases | `ve/numbers_phrases.json` (from `VE.Numbers.Phrases`) | regenerate |
+| defaults-words | `ve/defaults_words.json` (from `VE.Defaults.Wire.zoneHeads`, `zoneLineWords`, `zoneJoins`) | regenerate |
 | profile-table | `ve/profile_table.json` (from `VE.Compose.profileTable`) | regenerate |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
