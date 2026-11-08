@@ -12857,6 +12857,20 @@ theorem VE.Defaults.Wire.ViewRest.hl
     VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled L.D) = Bool.true
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
   -- expr 662367307
+theorem VE.Defaults.Wire.ZoneReplay.min_early
+  ∀ {x : VE.Defaults.Wire.ZoneReplay} {z : VE.Defaults.DefaultZone VE.Bridge.Entity},
+    x.early = Option.some z → x.min = Except.error z
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.ZoneReplay.early@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.min@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay@VE.Defaults.ZoneWire
+  -- expr 4185816203
+theorem VE.Defaults.Wire.ZoneReplay.min_none
+  ∀ {x : VE.Defaults.Wire.ZoneReplay}, x.early = Option.none → x.min = VE.Defaults.zoneMin x.v.L x.X x.S.M x.record x.obs
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ZoneReplay.S@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.X@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.early@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.min@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.obs@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.record@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.v@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay@VE.Defaults.ZoneWire VE.Defaults.zoneMin@VE.Defaults.Zone VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report
+  -- expr 2937323208
+theorem VE.Defaults.Wire.ZoneReplay.min_ok
+  ∀ {x : VE.Defaults.Wire.ZoneReplay} {Min : List (List (String × List VE.Bridge.Entity))},
+    x.min = Except.ok Min → x.early = Option.none ∧ VE.Defaults.zoneMin x.v.L x.X x.S.M x.record x.obs = Except.ok Min
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ZoneReplay.S@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.X@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.early@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.min@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.obs@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.record@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.v@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay@VE.Defaults.ZoneWire VE.Defaults.zoneMin@VE.Defaults.Zone VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report
+  -- expr 3529882000
 theorem VE.Defaults.Wire.coherence_collision_named
   ∀ (x : VE.Defaults.Wire.CoherenceReplay),
     (∀ (P Q : VE.SoftNorms.SoftNode),
@@ -12896,6 +12910,32 @@ theorem VE.Defaults.Wire.collisionOf_request
               w.getObjVal? "rules" = Except.ok rs ∧ VE.Bridge.strings rs = Except.ok [c.m, c.n]
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Defaults.Wire.Collision.F@VE.Defaults.Wire VE.Defaults.Wire.Collision.S@VE.Defaults.Wire VE.Defaults.Wire.Collision.m@VE.Defaults.Wire VE.Defaults.Wire.Collision.n@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.collisionOf@VE.Defaults.Wire VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.Wire.SituationG@VE.NormDefaults.Report VE.NormDefaults.Wire.decodeFilling@VE.NormDefaults.Replay VE.NormDefaults.Wire.situationX@VE.NormDefaults.Layered
   -- expr 4040462694
+theorem VE.Defaults.Wire.decisionOf_key
+  ∀ {j : Lean.Json} {k : VE.SoftNorms.DecisionKey},
+    VE.Defaults.Wire.decisionOf.key j = Except.ok k →
+      match k with
+      | VE.SoftNorms.DecisionKey.excepted r => VE.Bridge.stringField j "excepted" = Except.ok r
+      | VE.SoftNorms.DecisionKey.off r π =>
+        VE.Bridge.stringField j "off" = Except.ok r ∧ VE.Bridge.stringField j "party" = Except.ok π
+      | VE.SoftNorms.DecisionKey.outweighs a lo hi =>
+        VE.Bridge.stringField j "outweighs" = Except.ok a ∧
+          VE.Bridge.stringField j "lower" = Except.ok lo ∧ VE.Bridge.stringField j "higher" = Except.ok hi
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Defaults.Wire.decisionOf.key@VE.Defaults.ZoneWire VE.Defaults.Wire.decisionOf_key.match_1@VE.Defaults.ZoneWire VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 515125833
+theorem VE.Defaults.Wire.decisionOf_mem
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {j : Lean.Json} {e : VE.SoftNorms.DecisionKey × String × List String},
+    VE.Defaults.Wire.decisionOf L j = Except.ok e →
+      e ∈ VE.SoftNorms.keyedDecisions L.D ∧
+        VE.Defaults.Wire.decisionOf.key j = Except.ok e.fst ∧
+          match e.fst with
+          | VE.SoftNorms.DecisionKey.excepted r => VE.Bridge.stringField j "excepted" = Except.ok r
+          | VE.SoftNorms.DecisionKey.off r π =>
+            VE.Bridge.stringField j "off" = Except.ok r ∧ VE.Bridge.stringField j "party" = Except.ok π
+          | VE.SoftNorms.DecisionKey.outweighs a lo hi =>
+            VE.Bridge.stringField j "outweighs" = Except.ok a ∧
+              VE.Bridge.stringField j "lower" = Except.ok lo ∧ VE.Bridge.stringField j "higher" = Except.ok hi
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Defaults.Wire.decisionOf.key@VE.Defaults.ZoneWire VE.Defaults.Wire.decisionOf@VE.Defaults.ZoneWire VE.Defaults.Wire.decisionOf_key.match_1@VE.Defaults.ZoneWire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.keyedDecisions@VE.SoftNorms.Tree
+  -- expr 2520413687
 theorem VE.Defaults.Wire.decodeLayered_soften
   ∀ (j : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
     VE.NormDefaults.Wire.decodeLayered j = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
@@ -13008,6 +13048,43 @@ theorem VE.Defaults.Wire.forcedAt_sound
                             Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.forced@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.m@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.ok@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Norms.Node.name@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften
   -- expr 198406497
+theorem VE.Defaults.Wire.obsEntry_sound
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {M : VE.FiniteModel VE.Bridge.Entity} {e : Lean.Json}
+    {a : (VE.Norms.Regulated × List VE.Bridge.Entity) × Bool},
+    VE.Defaults.Wire.obsEntry L M e = Except.ok a →
+      VE.Defaults.Wire.outcomeOf L e = Except.ok a.fst.fst ∧
+        a.fst.fst ∈ L.U.D.T.regulated ∧
+          e.getObjVal? "outcome" >>= Lean.Json.getStr? = Except.ok a.fst.fst.name ∧
+            e.getObjValD "tuple" = VE.Defaults.Wire.entityIds a.fst.snd ∧
+              List.map Prod.fst a.fst.snd = VE.NormDefaults.sortsOf L.U.D a.fst.fst.name ∧
+                VE.TupleTyped M.asStructure (VE.NormDefaults.sortsOf L.U.D a.fst.fst.name) a.fst.snd ∧
+                  e.getObjVal? "value" >>= Lean.Json.getBool? = Except.ok a.snd
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.entityIds@VE.Defaults.Wire VE.Defaults.Wire.obsEntry@VE.Defaults.ZoneWire VE.Defaults.Wire.outcomeOf@VE.Defaults.ZoneWire VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.sortsOf@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.TupleTyped@VE.Semantics
+  -- expr 1811548369
+theorem VE.Defaults.Wire.outcomeOf_mem
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {j : Lean.Json} {r : VE.Norms.Regulated},
+    VE.Defaults.Wire.outcomeOf L j = Except.ok r →
+      r ∈ L.U.D.T.regulated ∧ j.getObjVal? "outcome" >>= Lean.Json.getStr? = Except.ok r.name
+  -- uses VE.Defaults.Wire.outcomeOf@VE.Defaults.ZoneWire VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 1303814239
+theorem VE.Defaults.Wire.recordEntry_sound
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {M : VE.FiniteModel VE.Bridge.Entity} {e : Lean.Json}
+    {a : (String × List VE.Bridge.Entity) × Bool},
+    VE.Defaults.Wire.recordEntry L M e = Except.ok a →
+      ∃ d k ss,
+        e.getObjVal? "decision" = Except.ok d ∧
+          VE.Defaults.Wire.decisionOf L d = Except.ok (k, a.fst.fst, ss) ∧
+            (k, a.fst.fst, ss) ∈ VE.SoftNorms.keyedDecisions L.D ∧
+              e.getObjValD "tuple" = VE.Defaults.Wire.entityIds a.fst.snd ∧
+                List.map Prod.fst a.fst.snd = ss ∧
+                  VE.TupleTyped M.asStructure ss a.fst.snd ∧ e.getObjVal? "value" >>= Lean.Json.getBool? = Except.ok a.snd
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.decisionOf@VE.Defaults.ZoneWire VE.Defaults.Wire.entityIds@VE.Defaults.Wire VE.Defaults.Wire.recordEntry@VE.Defaults.ZoneWire VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.keyedDecisions@VE.SoftNorms.Tree VE.TupleTyped@VE.Semantics
+  -- expr 4034312566
+theorem VE.Defaults.Wire.replayBind_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 1148682251
 theorem VE.Defaults.Wire.replayCertOn_request
   ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.CertReplay},
     VE.Defaults.Wire.replayCertOn v j = Except.ok x →
@@ -13046,6 +13123,11 @@ theorem VE.Defaults.Wire.replayCoherenceOn_request
               VE.Defaults.Wire.pieceWith j "collision" (VE.Defaults.Wire.collisionOf x.v.L) = Except.ok x.collision
   -- uses VE.Defaults.Wire.CoherenceReplay.collision@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairCerts@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.collisionOf@VE.Defaults.Wire VE.Defaults.Wire.pairCertsOf@VE.Defaults.Wire VE.Defaults.Wire.pieceWith@VE.Defaults.Wire VE.Defaults.Wire.replayCoherenceOn@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Tableau.Certificate@VE.Tableau
   -- expr 1593173597
+theorem VE.Defaults.Wire.replayGetStr_mapM
+  ∀ {l : List Lean.Json} {ids : List String},
+    List.mapM Lean.Json.getStr? l = Except.ok ids → l = List.map Lean.Json.str ids
+  -- uses
+  -- expr 3271026675
 theorem VE.Defaults.Wire.replayModelOn_request
   ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.ModelReplay},
     VE.Defaults.Wire.replayModelOn v j = Except.ok x →
@@ -13063,6 +13145,35 @@ theorem VE.Defaults.Wire.replayModelOn_request
                     VE.Defaults.Wire.filledOf x.v.L w = Except.ok x.m
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.m@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.Defaults.Wire.filledOf@VE.Defaults.Wire VE.Defaults.Wire.replayModelOn@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 794883851
+theorem VE.Defaults.Wire.replayStrings_eq
+  ∀ {t : Lean.Json} {ids : List String}, VE.Bridge.strings t = Except.ok ids → t = Lean.ToJson.toJson ids
+  -- uses VE.Bridge.strings@VE.Bridge
+  -- expr 2012071612
+theorem VE.Defaults.Wire.replayZoneOn_sound
+  ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.ZoneReplay},
+    VE.Defaults.Wire.replayZoneOn v j = Except.ok x →
+      x.v = v ∧
+        (∃ m S, j.getObjVal? "model" = Except.ok m ∧ VE.NormDefaults.Wire.situationX v.L m = Except.ok S ∧ S.M = x.S.M) ∧
+          (∃ q,
+              j.getObjVal? "query" = Except.ok q ∧
+                VE.Defaults.Wire.outcomeOf v.L q = Except.ok x.r ∧
+                  VE.Defaults.Wire.tupleIn x.S.M (VE.NormDefaults.sortsOf v.L.U.D x.r.name) q = Except.ok x.vs) ∧
+            ∃ recordJ obsJ,
+              j.getObjVal? "record" >>= Lean.Json.getArr? = Except.ok recordJ ∧
+                j.getObjVal? "observations" >>= Lean.Json.getArr? = Except.ok obsJ ∧
+                  x.early = VE.Defaults.Wire.zoneSizes recordJ.size obsJ.size ∧
+                    (x.early = Option.none →
+                        List.mapM (VE.Defaults.Wire.recordEntry v.L x.S.M) recordJ.toList = Except.ok x.record ∧
+                          List.mapM (VE.Defaults.Wire.obsEntry v.L x.S.M) obsJ.toList = Except.ok x.obs) ∧
+                      (x.early ≠ Option.none → x.record = [] ∧ x.obs = [])
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.ZoneReplay.S@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.early@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.obs@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.r@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.record@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.v@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay.vs@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneReplay@VE.Defaults.ZoneWire VE.Defaults.Wire.obsEntry@VE.Defaults.ZoneWire VE.Defaults.Wire.outcomeOf@VE.Defaults.ZoneWire VE.Defaults.Wire.recordEntry@VE.Defaults.ZoneWire VE.Defaults.Wire.replayZoneOn@VE.Defaults.ZoneWire VE.Defaults.Wire.tupleIn@VE.Defaults.ZoneWire VE.Defaults.Wire.zoneSizes@VE.Defaults.ZoneWire VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.Wire.SituationG@VE.NormDefaults.Report VE.NormDefaults.Wire.situationX@VE.NormDefaults.Layered VE.NormDefaults.sortsOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 287039107
+theorem VE.Defaults.Wire.tupleIn_typed
+  ∀ {M : VE.FiniteModel VE.Bridge.Entity} {ss : List String} {j : Lean.Json} {vs : List VE.Bridge.Entity},
+    VE.Defaults.Wire.tupleIn M ss j = Except.ok vs →
+      VE.TupleTyped M.asStructure ss vs ∧ List.map Prod.fst vs = ss ∧ j.getObjValD "tuple" = VE.Defaults.Wire.entityIds vs
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.entityIds@VE.Defaults.Wire VE.Defaults.Wire.tupleIn@VE.Defaults.ZoneWire VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.TupleTyped@VE.Semantics
+  -- expr 988038461
 theorem VE.Defaults.Wire.viewOf_layered
   ∀ (j : Lean.Json) (v : VE.Defaults.Wire.DefaultsView),
     VE.Defaults.Wire.viewOf j = Except.ok v → VE.NormDefaults.Wire.decodeLayered j = Except.ok v.L
@@ -13073,6 +13184,48 @@ theorem VE.Defaults.Wire.viewOn_L
     {v : VE.Defaults.Wire.DefaultsView}, VE.Defaults.Wire.viewOn j L hU = Except.ok v → v.L = L
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.viewOn@VE.Defaults.Wire VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3284563906
+theorem VE.Defaults.Wire.zoneLine_rows_distinct
+  ∀ (vs : List VE.Bridge.Entity),
+    List.map (fun l => (l.row, l.kind))
+        [VE.Defaults.Wire.ZoneLine.stated "" 0 vs, VE.Defaults.Wire.ZoneLine.forced "" vs,
+          VE.Defaults.Wire.ZoneLine.assumed (VE.SoftNorms.DecisionKey.excepted "") vs,
+          VE.Defaults.Wire.ZoneLine.assumed (VE.SoftNorms.DecisionKey.off "" "") vs,
+          VE.Defaults.Wire.ZoneLine.assumed (VE.SoftNorms.DecisionKey.outweighs "" "" "") vs] =
+      [("DE11", ""), ("DE10f", ""), ("DE13", "excepted"), ("DE13", "off"), ("DE13", "outweighs")]
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.ZoneLine.assumed@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine.forced@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine.kind@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine.row@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine.stated@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine@VE.Defaults.ZoneWire VE.SoftNorms.DecisionKey.excepted@VE.SoftNorms.Tree VE.SoftNorms.DecisionKey.off@VE.SoftNorms.Tree VE.SoftNorms.DecisionKey.outweighs@VE.SoftNorms.Tree
+  -- expr 1473239330
+theorem VE.Defaults.Wire.zoneSizes_none_iff
+  ∀ (record obs : Nat),
+    VE.Defaults.Wire.zoneSizes record obs = Option.none ↔
+      record ≤ VE.Defaults.maxZoneRecord ∧ obs ≤ VE.Defaults.Wire.maxZoneObservations
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.maxZoneObservations@VE.Defaults.ZoneWire VE.Defaults.Wire.zoneSizes@VE.Defaults.ZoneWire VE.Defaults.maxZoneRecord@VE.Defaults.Zone
+  -- expr 2877581963
+theorem VE.Defaults.Wire.zoneSizes_observations
+  ∀ {record obs : Nat},
+    record ≤ VE.Defaults.maxZoneRecord →
+      VE.Defaults.Wire.maxZoneObservations < obs →
+        VE.Defaults.Wire.zoneSizes record obs =
+          Option.some (VE.Defaults.DefaultZone.unknown (VE.Weighing.ZoneUnknown.branch [] "observations size"))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone.unknown@VE.Defaults.Zone VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.maxZoneObservations@VE.Defaults.ZoneWire VE.Defaults.Wire.zoneSizes@VE.Defaults.ZoneWire VE.Defaults.maxZoneRecord@VE.Defaults.Zone VE.Weighing.ZoneUnknown.branch@VE.Weighing.Zone
+  -- expr 93642523
+theorem VE.Defaults.Wire.zoneSizes_record
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {M : VE.FiniteModel VE.Bridge.Entity}
+    {record : List ((String × List VE.Bridge.Entity) × Bool)} (n : Nat),
+    VE.Defaults.maxZoneRecord < record.length →
+      VE.Defaults.Wire.zoneSizes record.length n = VE.Defaults.zoneCharge L M record
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.Wire.zoneSizes@VE.Defaults.ZoneWire VE.Defaults.maxZoneRecord@VE.Defaults.Zone VE.Defaults.zoneCharge@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 1473961940
+theorem VE.Defaults.Wire.zoneWords_complete
+  ∀ (f : VE.Defaults.Form) (l : VE.Defaults.Wire.ZoneLine),
+    (List.filter (fun h => h.fst == "byDefault" && h.snd.fst == VE.Defaults.Wire.formLabel f)
+            VE.Defaults.Wire.zoneHeads).length =
+        1 ∧
+      (List.filter (fun h => h.fst == "leftTo" && h.snd.fst == VE.Defaults.Wire.formLabel f)
+              VE.Defaults.Wire.zoneHeads).length =
+          1 ∧
+        (List.filter (fun w => w.fst == l.row && w.snd.fst == l.kind) VE.Defaults.Wire.zoneLineWords).length = 1
+  -- uses VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.Wire.ZoneLine.kind@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine.row@VE.Defaults.ZoneWire VE.Defaults.Wire.ZoneLine@VE.Defaults.ZoneWire VE.Defaults.Wire.formLabel@VE.Defaults.Wire VE.Defaults.Wire.zoneHeads@VE.Defaults.ZoneWire VE.Defaults.Wire.zoneLineWords@VE.Defaults.ZoneWire
+  -- expr 1036645647
 theorem VE.Defaults.act_arity
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -13339,6 +13492,16 @@ theorem VE.Defaults.defaultCompletion_below
         ∃ R', VE.Defaults.DefaultCompletion L X M record obs R' ∧ VE.Defaults.DecLe L.D M R' R
   -- uses VE.Defaults.DecLe@VE.Defaults.Zone VE.Defaults.DefaultCompletion@VE.Defaults.Zone VE.Defaults.Observed@VE.Defaults.Zone VE.Defaults.switchesOffRecord@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone VE.Weighing.openNames@VE.Weighing.Zone
   -- expr 1072912096
+theorem VE.Defaults.defaultZoneOf_eq
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))),
+    VE.Defaults.defaultZoneOf L X M record obs r vs proposed =
+      match VE.Defaults.zoneMin L X M record obs with
+      | Except.error z => z
+      | Except.ok Min => VE.Defaults.zoneOfMin L M record r vs Min
+  -- uses VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.defaultZoneOf.match_1@VE.Defaults.Zone VE.Defaults.defaultZoneOf@VE.Defaults.Zone VE.Defaults.zoneMin@VE.Defaults.Zone VE.Defaults.zoneOfMin@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1285445637
 theorem VE.Defaults.defaultZone_budget
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
     (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
@@ -13530,6 +13693,16 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.forcedAllOf_eq
+  ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
+    (M : VE.FiniteModel α) (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (proposed : List (List ((String × List α) × Bool))),
+    VE.Defaults.forcedAllOf L X M record obs proposed =
+      match VE.Defaults.zoneMin L X M record obs with
+      | Except.error a => Option.none
+      | Except.ok Min => VE.Defaults.forcedOfMin L M record Min
+  -- uses VE.Defaults.DefaultZone@VE.Defaults.Zone VE.Defaults.defaultZoneOf.match_1@VE.Defaults.Zone VE.Defaults.forcedAllOf@VE.Defaults.Zone VE.Defaults.forcedOfMin@VE.Defaults.Zone VE.Defaults.zoneMin@VE.Defaults.Zone VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1231546800
 theorem VE.Defaults.forcedAll_sound
   ∀ {α : Type} [inst : DecidableEq α] (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula))
     (M : VE.FiniteModel α),
