@@ -11,11 +11,17 @@ e39a245f3.
 
 ## Delivered
 
+F1 review fix: the required `NotChecked` type and all five constructors are restored in `Decl.lean`. The review's
+probe failed with `lean.unknownIdentifier` before the fix and prints `VE.Purposes.NotChecked : Type` after it.
+`Examples.notChecked_cases` proves the constructors exhaustive; its adjacent `#guard` checks they are distinct.
+Renaming each constructor alone in a temporary copy of `Decl.lean` made the matching `#check` fail. This exercises
+the full declaration class while `eligible` remains PE-2's user.
+
 | Plan row / deliverable | Where | Evidence |
 |---|---|---|
-| (1) `Decl.lean`: `Relation` (no `prevents`), `Polarity`, `Share`, `Ref`, `Link`, `Block`, `maxLinks` and the three `Relation` theorems | fab019c2d | `lake build` (1324 jobs, 0 errors); statements below |
+| (1) `Decl.lean`: `Relation` (no `prevents`), `Polarity`, `Share`, `Ref`, `Link`, `Block`, `maxLinks`, `NotChecked` (all five constructors) and the three `Relation` theorems | fab019c2d; F1 fix | `lake build` (1324 jobs, 0 errors); `Examples.notChecked_cases` and the distinctness `#guard` |
 | (1) `Wire.lean`: `decodeBlock` (exact fields, `prevents` refused, F5), `renderBlock`, `decodeBlock_render`, `decodeBlock_relations` | b07d1ed28 | the wire #guards in `Examples.lean` (spec 7.1 texts) |
-| (1) `WellFormed.lean`: `check` in spec 7.2's fault order, `shareOk`, `markerAgrees`, `markerHonest`, `nonfactive`, `sideAdjacent`, `WellFormed`, `check_ok_iff` and every other spec 4.4 theorem except the † ones | 655d9fcce | `python3 lean/audit.py`: "PASS: 791 source files; 8780 named theorem declarations audited" |
+| (1) `WellFormed.lean`: `check` in spec 7.2's fault order, `shareOk`, `markerAgrees`, `markerHonest`, `nonfactive`, `sideAdjacent`, `WellFormed`, `check_ok_iff` and every other spec 4.4 theorem except the † ones | 655d9fcce | `python3 lean/audit.py`: "PASS: 791 source files; 8782 named theorem declarations audited" |
 | (1) `Route/Inert.lean` (namespace `VE.Route.Admission`): `Kind.inert`, `Kind.inert_active`, `inert_unnamed`, `admit_inert`, `normRole_inert`, `inForce_inert` (D8a). `Route/Admission.lean` is not edited | fab019c2d | `git diff --stat $(git merge-base HEAD main) -- lean/VE/Route/Admission.lean` is empty |
 | (2) `Examples.lean`: F1-F8 with F7e, F7f, F8a, F8b and every mutant the plan lists for them, plus the decoder's texts | 8b18582da | `lake build VE.Purposes.Examples`: 0 errors |
 | R16: a fixture for each surviving trust mutant ("Each part of the check alone") | 517c1d279 | `trust-mutants.json` exit 0 |
@@ -59,10 +65,7 @@ and `Relation.wire_mem` read `VE.Route.Admission.relations`.
     - F3: `unlinkedActive = []`.
     - F1, F2 and F8: `shownUnder = []`.
   - So pe-1b needs no DRI question.
-- **`NotChecked` (spec 1.1) → PE-2, with `eligible` (spec 6.3, "used from PE-2"), its first user.**
-  - Nothing in PE-1 reads it, so no test or mutant can exercise it. R16 signs only trusted definitions that a
-    failing test exercises.
-  - It was in Decl.lean at the pause. Commit f482b1c53 removes it.
+- **`eligible` (spec 6.3) → PE-2**, its first user. The `NotChecked` vocabulary it consumes is delivered in PE-1.
 - **Regen skipped `route-cases` only.** Its writer needs the Rust release binary, which this worktree has not
   built ("missing Rust executable"). This branch changes none of its inputs, and the file is main's.
 
@@ -96,14 +99,15 @@ Five more hand-planted mutants cover the trusted definitions that got no killed 
 
 ## Trust (R16)
 
-`uv run python tools/trust_map.py --check` on the final HEAD: "against a6d0d389a07b: K +0, S +124, D +121, G +26,
-tied +134, unclassified +0, trusted +147 … PASS: K, S and untied [V] within a6d0d389a07b and the allowances
-introduced since". The allowance is recorded as `SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18`
-(`docs/trust-baseline.json`). DELTA.md row 1 itemises it per file:
+`python tools/trust_map.py --check` after the F1 fix: "against a6d0d389a07b: K +0, S +133, D +121, G +26,
+tied +141, unclassified +0, trusted +149 … PASS: K, S and untied [V] within a6d0d389a07b and the allowances
+introduced since". The original allowance is `SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18`;
+the F1 allowance is `SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1 F1, 2026-11-08`
+(`docs/trust-baseline.json`). DELTA.md rows 1–2 itemise the growth per file:
 - WellFormed.lean +77 S
-- Decl.lean +42 S
+- Decl.lean +51 S, including `NotChecked`'s five constructors (+9)
 - Inert.lean +5 S
-- Wire.lean +23 untied D[V] (`wordOf`, `shareOf`, `linksOf`)
+- Wire.lean +16 untied D[V] (`wordOf`, `linksOf`); `shareOf_render` ties `shareOf` (-7)
 
 The classes, in `tools/trust-classes.json`:
 - **S:** the meaning definitions and types.
@@ -114,12 +118,14 @@ The classes, in `tools/trust-classes.json`:
 - **T:** the fixtures.
 
 R16's conditions:
-- 147 ≤ 150, and K +0.
+- 149 ≤ 150, and K +0.
 - **Every new trusted definition is exercised by a check that can fail.**
   - The run: `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Purposes/Examples.lean --allow
     docs/purpose-explanation/pe-1/trust-mutants-allow.json --json docs/purpose-explanation/pe-1/trust-mutants.json`.
   - Its history: the first run was at f482b1c53. Two `--rescore` runs followed the fixture commit 517c1d279; the
-    final one was at 3a816e76f. Result: **exit 0, KILLED 154, INVALID 32, ALLOWED 104, SURVIVOR 0, UNKNOWN 0, NOT RUN 0.**
+    prior final one was at 3a816e76f. The F1 run at 70b7564d produced five UNKNOWN constructor drops. Its
+    `--rescore` with the exact `NotChecked`/`ctor-drop` allowance exited 0: **KILLED 154, INVALID 32,
+    ALLOWED 109, SURVIVOR 0, UNKNOWN 0, NOT RUN 0.** The five removals each fail the named constructor check.
   - The allow file gives one reason per definition and operator:
     - The Prop `WellFormed`. Each mutant breaks `check_ok_iff` (WellFormed.lean:151). Each also fails the
       `wf` #guards, which decide `WellFormed`; the tool reads those failures as UNKNOWN because the `Decidable`
@@ -132,9 +138,10 @@ R16's conditions:
       UNKNOWN because Lean shares their `Option` matcher with a later definition.
     - `Kind.inert`'s `bool-flip`, refuted by the #guard at `Examples.lean:40` with a message the tool leaves
       unexplained.
-  - In the final record, the allowed mutants' raw verdicts are: 54 UNKNOWN (later reruns add the `WellFormed` ones),
-    and 4 SURVIVOR, all equivalent: `rivals` `list-first` and `list-last` on the filtered list, `sameUnit`
-    `list-drop-first` on `L.partIds`, and `WellFormed` `eq-le` on `isSome`.
+  - In the prior record, the allowed mutants' raw verdicts were 98 UNKNOWN and 6 SURVIVOR. The F1 record has
+    103 UNKNOWN (including the five constructor drops) and the same 6 equivalent SURVIVOR cases:
+    `sideOfKind` and `rivals` each have `list-first` and `list-last`; the other two are `sameUnit`
+    `list-drop-first` on `L.partIds` and `WellFormed` `eq-le` on `isSome`.
   - `Link` and `Block`, structures that no operator mutates, are read by every #guard.
 - The FOLLOW-UPS.md row is under "## pe-1" (ties pass).
 
@@ -180,12 +187,12 @@ as written (DRI 2(g)). `document.md` is not edited here.
 ## Next items
 
 - `FOLLOW-UP: pe-1b PE-R11 and PE-R8 in VE.Purposes: packsInert (check step 6a and its WellFormed conjunct), targetKind, holdsTarget, shownUnder, unlinkedActive, their four theorems, F2c-F2e, F9, F9a, F10, F3's [] and the plan's four seeded bugs (statements elaborated and values computed in pe-1's REPORT)`
-- `FOLLOW-UP: pe-2-notchecked add Decl's NotChecked (purpose-explanation spec 1.1) with its first user eligible (spec 6.3) in PE-2`
+- `FOLLOW-UP: pe-2-eligible use Decl's NotChecked in eligible (spec 6.3) in PE-2`
 - pe-2 (the `purposes` block in the document mode) follows pe-1b. PE-E1 sits beside it.
 
 ## Spec re-read
 
-- `Relation`, `Polarity`, `Share`, `Ref`, `Link`, `Block`, `maxLinks`, `Relation.wire`, `Relation.ofWire?`,
+- `Relation`, `Polarity`, `Share`, `Ref`, `Link`, `Block`, `maxLinks`, `NotChecked`, `Relation.wire`, `Relation.ofWire?`,
   `Share.wire` against spec 1.1-1.2 (`purpose-explanation.md` lines 59-176): the same text after normalising
   whitespace.
 - `Units.find?`, `Units.kind?`, `Ref.partId?`, `Link.partIds`, `Link.slots`, `sideOfKind`, `markerAgrees`,
@@ -204,8 +211,8 @@ as written (DRI 2(g)). `document.md` is not edited here.
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer reaches a relay. No route, mode or schema is added (no Python or Rust file changes; the one `ve/` change is the manifest's data entry).
-2. PASS: the Delivered and Not delivered tables. The cut of (3) is at the seam the task names. `NotChecked` moves
-   to its first user. No Python copy of a Lean decision, and no report test. No in-flight branch touches these files:
+2. PASS: the Delivered and Not delivered tables. The cut of (3) is at the seam the task names. `NotChecked` is
+   delivered here; `eligible` remains with its first user. No Python copy of a Lean decision, and no report test. No in-flight branch touches these files:
    `git diff --name-only main...<branch>` for every `feature/*`, `lean-first/*`, `infra/*` and `foundation/*` branch
    not on main finds no `lean/VE/Purposes/`, `lean/VE/Route/Inert.lean` or `docs/spec/purpose-explanation*`.
 3. PASS: 9 plan seeded bugs and 5 hand-planted mutants, each failing a named #guard (`mutants.json`). The trust
