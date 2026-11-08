@@ -1,4 +1,7 @@
+- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
+- `tests/test_properties.py` — (no module docstring)
 - `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
+- `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
 - `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
 - `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
@@ -74,5 +77,3 @@
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
-- `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
-- `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
