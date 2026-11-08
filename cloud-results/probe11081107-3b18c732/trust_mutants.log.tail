@@ -1,0 +1,200 @@
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:173 ResponseShape.Schemas.Norms.row (G[V], trusted) list-drop-first: [ (ref "#/$defs/norms_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$def... -> ([ (ref "#/$defs/norms_path", .anyOf [ ref "common.json#/$defs/case_error", ref "common.json#/$de...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:195 ResponseShape.Schemas.Norms.file (G[V], trusted) list-drop-first: [ ("norms_path", .schema norms_path), ("kind", kind), ("norms-elaborate", .schema «norms-elaborat... -> ([ ("norms_path", .schema norms_path), ("kind", kind), ("norms-elaborate", .schema «norms-elabora...
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: U'.D.T.regulated -> (U'.D.T.regulated.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: U'.D.T.nodes -> (U'.D.T.nodes.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: (M.preds.map (·.2.1)).eraseDups.map -> (((M.preds.map (·.2.1)).eraseDups.map).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:59 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-first: [("predicates", predicatesJson e.U' e.M), ("rules", rulesJson e.U' e.M), ("kept", toJson ((e.D.ac... -> ([("predicates", predicatesJson e.U' e.M), ("rules", rulesJson e.U' e.M), ("kept", toJson ((e.D.a...
+NOT RUN lean/VE/Acts/Run.lean:73 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: (VE.Norms.Wire.actsProfiles true environment) -> ((VE.Norms.Wire.actsProfiles true environment).drop 1)
+NOT RUN lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) list-drop-first: listed -> (listed.drop 1)
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:57 ResponseShape.Schemas.NormDefaults.kind (G[V], trusted) list-drop-middle: ("defaults-model", kindIs "defaults-model"), -> 
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:345 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-drop-middle: (ref "#/$defs/kind/defaults-model", ref "#/$defs/defaults_model"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:56 ResponseShape.Schemas.Norms.kind (G[V], trusted) list-drop-middle: ("norms-conflict", kindIs "norms-conflict"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:142 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:186 ResponseShape.Schemas.Norms.row (G[V], trusted) list-drop-middle: (ref "#/$defs/kind/norms-conflict", ref "#/$defs/norms-conflict"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:200 ResponseShape.Schemas.Norms.file (G[V], trusted) list-drop-middle: ("norms-conflict", .schema «norms-conflict»), -> 
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("source", .str p), -> 
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("source", .str n), -> 
+NOT RUN lean/VE/Acts/Run.lean:55 VE.Acts.Run.splitRows (D[V], trusted) list-drop-middle: ("parts", toJson parts), -> 
+NOT RUN lean/VE/Acts/Run.lean:59 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-middle: ("rules", rulesJson e.U' e.M), -> 
+NOT RUN lean/VE/Acts/Run.lean:81 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-middle: ("verdict", .str "REFUSED"), -> 
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:330 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-last: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref ... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"] -> (["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"].reverse.ta...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:174 ResponseShape.Schemas.Norms.row (G[V], trusted) list-last: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/error", .select [ (ref "common.jso... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/error", .select [ (ref "common.js...
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-last: U'.D.T.regulated.filterMap -> (U'.D.T.regulated.filterMap.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-last: U'.D.T.nodes.filterMap -> (U'.D.T.nodes.filterMap.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-last: (M.preds.map (·.2.1)).eraseDups -> (((M.preds.map (·.2.1)).eraseDups).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: (e.D.acts.map (·.1)).filter -> (((e.D.acts.map (·.1)).filter).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:77 VE.Acts.Run.runElaborate (G[V], trusted) list-last: (VE.Acts.Decode.sourceOf e) -> ((VE.Acts.Decode.sourceOf e).reverse.take 1)
+NOT RUN lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) list-last: VE.Compose.documentLayers -> (VE.Compose.documentLayers.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:330 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-drop-first: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref ... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/route_path_error", .select [ (ref...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"] -> (["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:174 ResponseShape.Schemas.Norms.row (G[V], trusted) list-drop-first: [ ref "common.json#/$defs/case_error", ref "common.json#/$defs/error", .select [ (ref "common.jso... -> ([ ref "common.json#/$defs/case_error", ref "common.json#/$defs/error", .select [ (ref "common.js...
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: U'.D.T.regulated.filterMap -> (U'.D.T.regulated.filterMap.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: U'.D.T.nodes.filterMap -> (U'.D.T.nodes.filterMap.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: (M.preds.map (·.2.1)).eraseDups -> (((M.preds.map (·.2.1)).eraseDups).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-first: (e.D.acts.map (·.1)).filter -> (((e.D.acts.map (·.1)).filter).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:77 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: (VE.Acts.Decode.sourceOf e) -> ((VE.Acts.Decode.sourceOf e).drop 1)
+NOT RUN lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) list-drop-first: VE.Compose.documentLayers -> (VE.Compose.documentLayers.drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "status", -> 
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("index", toJson i), -> 
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("index", toJson i), -> 
+NOT RUN lean/VE/Acts/Run.lean:59 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-middle: ("kept", toJson ((e.D.acts.map (·.1)).filter fun p => !e.M.preds.any (·.2.1 == p))), -> 
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:333 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-last: [ (ref "#/$defs/kind/admission", .anyOf [ref "common.json#/$defs/admission", ref "#/$defs/soft_ad... -> ([ (ref "#/$defs/kind/admission", .anyOf [ref "common.json#/$defs/admission", ref "#/$defs/soft_a...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:144 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ n [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])], n [props [("verd... -> ([ n [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])], n [props [("ver...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:177 ResponseShape.Schemas.Norms.row (G[V], trusted) list-last: [ (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"), (ref "#/$defs/kind/admiss... -> ([ (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"), (ref "#/$defs/kind/admis...
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-last: (M.preds.find? (·.1 == r.name)) -> ((M.preds.find? (·.1 == r.name)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-last: (M.rules.find? (·.1 == N.name)) -> ((M.rules.find? (·.1 == N.name)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-last: M.preds -> (M.preds.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: e.D.acts -> (e.D.acts.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:77 VE.Acts.Run.runElaborate (G[V], trusted) list-last: (VE.Acts.Decode.sourceOf e).map -> (((VE.Acts.Decode.sourceOf e).map).reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:333 ResponseShape.Schemas.NormDefaults.row (G[V], trusted) list-drop-first: [ (ref "#/$defs/kind/admission", .anyOf [ref "common.json#/$defs/admission", ref "#/$defs/soft_ad... -> ([ (ref "#/$defs/kind/admission", .anyOf [ref "common.json#/$defs/admission", ref "#/$defs/soft_a...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:144 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ n [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])], n [props [("verd... -> ([ n [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])], n [props [("ver...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:177 ResponseShape.Schemas.Norms.row (G[V], trusted) list-drop-first: [ (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"), (ref "#/$defs/kind/admiss... -> ([ (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"), (ref "#/$defs/kind/admis...
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: (M.preds.find? (·.1 == r.name)) -> ((M.preds.find? (·.1 == r.name)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: (M.rules.find? (·.1 == N.name)) -> ((M.rules.find? (·.1 == N.name)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: M.preds -> (M.preds.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-first: e.D.acts -> (e.D.acts.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:77 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: (VE.Acts.Decode.sourceOf e).map -> (((VE.Acts.Decode.sourceOf e).map).drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "environment_id", -> 
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("sorts", toJson r.sorts), -> 
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("pred", .str N.pred), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:145 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])] -> ([props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])].reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-last: (M.preds.find? (·.1 == r.name)).map -> (((M.preds.find? (·.1 == r.name)).map).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-last: (M.rules.find? (·.1 == N.name)).map -> (((M.rules.find? (·.1 == N.name)).map).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-last: M.preds.map (·.2.1) -> ((M.preds.map (·.2.1)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: e.D.acts.map (·.1) -> ((e.D.acts.map (·.1)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:79 VE.Acts.Run.runElaborate (G[V], trusted) list-last: [("environment_id", .str envId), ("verdict", .str "ELABORATED")] -> ([("environment_id", .str envId), ("verdict", .str "ELABORATED")].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:145 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])] -> ([props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])].drop 1)
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: (M.preds.find? (·.1 == r.name)).map -> (((M.preds.find? (·.1 == r.name)).map).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: (M.rules.find? (·.1 == N.name)).map -> (((M.rules.find? (·.1 == N.name)).map).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: M.preds.map (·.2.1) -> ((M.preds.map (·.2.1)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-first: e.D.acts.map (·.1) -> ((e.D.acts.map (·.1)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:79 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: [("environment_id", .str envId), ("verdict", .str "ELABORATED")] -> ([("environment_id", .str envId), ("verdict", .str "ELABORATED")].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "verdict", -> 
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("role", roleJson r.role), -> 
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("sign", .bool N.sign), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:146 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [props [("verdict", constS "REFUSED")], .required ["diagnostic"]] -> ([props [("verdict", constS "REFUSED")], .required ["diagnostic"]].reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-last: M.preds -> (M.preds.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-last: M.rules -> (M.rules.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-last: (M.preds.filter (·.2.1 == p)).map (·.1) -> (((M.preds.filter (·.2.1 == p)).map (·.1)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-last: e.M.preds -> (e.M.preds.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:79 VE.Acts.Run.runElaborate (G[V], trusted) list-last: elaboratedFields e -> ((elaboratedFields e).reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:145 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [("verdict", constS "ELABORATED")] -> ([("verdict", constS "ELABORATED")].drop 1)
+NOT RUN lean/VE/Acts/Run.lean:35 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: M.preds -> (M.preds.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: M.rules -> (M.rules.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: (M.preds.filter (·.2.1 == p)).map (·.1) -> (((M.preds.filter (·.2.1 == p)).map (·.1)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-drop-first: e.M.preds -> (e.M.preds.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:79 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: elaboratedFields e -> ((elaboratedFields e).drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "predicates", -> 
+NOT RUN lean/VE/Acts/Run.lean:37 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("default", completionJson U' r), -> 
+NOT RUN lean/VE/Acts/Run.lean:44 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("guard", VE.Norms.Wire.enc N.guard), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:147 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("id", n [str, .equals "/id"]), ("status", constS "ok"), ("environment_id", ref "common.json#/$... -> ([ ("id", n [str, .equals "/id"]), ("status", constS "ok"), ("environment_id", ref "common.json#/...
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-last: [("name", .str r.name), ("source", .str p), ("index", toJson i), ("sorts", toJson r.sorts), ("rol... -> ([("name", .str r.name), ("source", .str p), ("index", toJson i), ("sorts", toJson r.sorts), ("ro...
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-last: [("name", .str N.name), ("source", .str n), ("index", toJson i), ("pred", .str N.pred), ("sign", ... -> ([("name", .str N.name), ("source", .str n), ("index", toJson i), ("pred", .str N.pred), ("sign",...
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-last: M.preds -> (M.preds.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:81 VE.Acts.Run.runElaborate (G[V], trusted) list-last: [("environment_id", .str envId), ("verdict", .str "REFUSED"), ("diagnostic", .str d)] -> ([("environment_id", .str envId), ("verdict", .str "REFUSED"), ("diagnostic", .str d)].reverse.ta...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:145 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["diagnostic"] -> (["diagnostic"].drop 1)
+NOT RUN lean/VE/Acts/Run.lean:36 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-first: [("name", .str r.name), ("source", .str p), ("index", toJson i), ("sorts", toJson r.sorts), ("rol... -> ([("name", .str r.name), ("source", .str p), ("index", toJson i), ("sorts", toJson r.sorts), ("ro...
+NOT RUN lean/VE/Acts/Run.lean:43 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: [("name", .str N.name), ("source", .str n), ("index", toJson i), ("pred", .str N.pred), ("sign", ... -> ([("name", .str N.name), ("source", .str n), ("index", toJson i), ("pred", .str N.pred), ("sign",...
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: M.preds -> (M.preds.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:81 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: [("environment_id", .str envId), ("verdict", .str "REFUSED"), ("diagnostic", .str d)] -> ([("environment_id", .str envId), ("verdict", .str "REFUSED"), ("diagnostic", .str d)].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "rules", -> 
+NOT RUN lean/VE/Acts/Run.lean:37 VE.Acts.Run.predicatesJson (D[V], trusted) list-drop-middle: ("act", optJson r.act), -> 
+NOT RUN lean/VE/Acts/Run.lean:44 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-middle: ("unless", Json.arr (N.carveOuts.map VE.Norms.Wire.enc).toArray), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [str, .equals "/id"] -> ([str, .equals "/id"].reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:45 VE.Acts.Run.rulesJson (D[V], trusted) list-last: N.carveOuts -> (N.carveOuts.reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-last: M.preds.filter (·.2.1 == p) -> ((M.preds.filter (·.2.1 == p)).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:81 VE.Acts.Run.runElaborate (G[V], trusted) list-last: emptyFields -> (emptyFields.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:146 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [props [("verdict", constS "REFUSED")], .required ["diagnostic"]] -> ([props [("verdict", constS "REFUSED")], .required ["diagnostic"]].drop 1)
+NOT RUN lean/VE/Acts/Run.lean:45 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: N.carveOuts -> (N.carveOuts.drop 1)
+NOT RUN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: M.preds.filter (·.2.1 == p) -> ((M.preds.filter (·.2.1 == p)).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:81 VE.Acts.Run.runElaborate (G[V], trusted) list-drop-first: emptyFields -> (emptyFields.drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "kept", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:151 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["ELABORATED", "REFUSED"] -> (["ELABORATED", "REFUSED"].reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:45 VE.Acts.Run.rulesJson (D[V], trusted) list-last: N.carveOuts.map VE.Norms.Wire.enc -> ((N.carveOuts.map VE.Norms.Wire.enc).reverse.take 1)
+NOT RUN lean/VE/Acts/Run.lean:55 VE.Acts.Run.splitRows (D[V], trusted) list-last: [("source", .str p), ("parts", toJson parts), ("text", .str (partsText p parts))] -> ([("source", .str p), ("parts", toJson parts), ("text", .str (partsText p parts))].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:146 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [("verdict", constS "REFUSED")] -> ([("verdict", constS "REFUSED")].drop 1)
+NOT RUN lean/VE/Acts/Run.lean:45 VE.Acts.Run.rulesJson (D[V], trusted) list-drop-first: N.carveOuts.map VE.Norms.Wire.enc -> ((N.carveOuts.map VE.Norms.Wire.enc).drop 1)
+NOT RUN lean/VE/Acts/Run.lean:55 VE.Acts.Run.splitRows (D[V], trusted) list-drop-first: [("source", .str p), ("parts", toJson parts), ("text", .str (partsText p parts))] -> ([("source", .str p), ("parts", toJson parts), ("text", .str (partsText p parts))].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:143 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .anyOf [ n [props [("verdict", constS "ELABORATED")], .not (.required ["diagnostic"])], n [props ... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "p... -> ([arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:146 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["diagnostic"] -> (["diagnostic"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("status", constS "ok"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], clo... -> ([obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], cl...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:147 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ ("id", n [str, .equals "/id"]), ("status", constS "ok"), ("environment_id", ref "common.json#/$... -> ([ ("id", n [str, .equals "/id"]), ("status", constS "ok"), ("environment_id", ref "common.json#/...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:149 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("environment_id", ref "common.json#/$defs/hex64"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["name", "source", "index", "sorts", "role", "default", "act", "permission"] -> (["name", "source", "index", "sorts", "role", "default", "act", "permission"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .equals "/id"] -> ([str, .equals "/id"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:150 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("verdict", enumS ["ELABORATED", "REFUSED"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:155 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common.... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:151 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["ELABORATED", "REFUSED"] -> (["ELABORATED", "REFUSED"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:151 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("diagnostic", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["permission", "obligation", "plain"] -> (["permission", "obligation", "plain"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "p... -> ([arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("predicates", n [arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "de... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["allow", "deny", "unspecified"] -> (["allow", "deny", "unspecified"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], clo... -> ([obj, .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], cl...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [str, .type ["null"]] -> ([str, .type ["null"]].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["name", "source", "index", "sorts", "role", "default", "act", "permission"] -> (["name", "source", "index", "sorts", "role", "default", "act", "permission"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "source", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [str, .type ["null"]] -> ([str, .type ["null"]].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:155 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common.... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "index", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "o... -> ([arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["permission", "obligation", "plain"] -> (["permission", "obligation", "plain"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "sorts", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [ ... -> ([obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["allow", "deny", "unspecified"] -> (["allow", "deny", "unspecified"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "role", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["name", "source", "index", "pred", "sign", "guard", "unless", "over"] -> (["name", "source", "index", "pred", "sign", "guard", "unless", "over"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .type ["null"]] -> ([str, .type ["null"]].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "default", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:163 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign"... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "act", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", r... -> ([arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .type ["null"]] -> ([str, .type ["null"]].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("source", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json#... -> ([obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("index", ref "common.json#/$defs/nat"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["source", "parts", "text"] -> (["source", "parts", "text"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "o... -> ([arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("sorts", ref "common.json#/$defs/strings"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:170 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)] -> ([("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [ ... -> ([obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("role", enumS ["permission", "obligation", "plain"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["name", "source", "index", "pred", "sign", "guard", "unless", "over"] -> (["name", "source", "index", "pred", "sign", "guard", "unless", "over"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "obligation", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:163 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign"... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("default", enumS ["allow", "deny", "unspecified"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:165 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["boolean"] -> (["boolean"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "deny", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", r... -> ([arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("act", .anyOf [str, .type ["null"]]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json#... -> ([obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("rules", n [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", ... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["source", "parts", "text"] -> (["source", "parts", "text"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:170 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)] -> ([("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "source", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "index", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "pred", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "sign", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "guard", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "unless", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:164 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("source", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:164 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("index", ref "common.json#/$defs/nat"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:164 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("pred", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:164 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("sign", .type ["boolean"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:165 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("guard", ref "common.json#/$defs/generated_formula"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:165 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("unless", ref "common.json#/$defs/generated_formulas"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("kept", ref "common.json#/$defs/strings"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["source", "parts", "text"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:169 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "parts", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:170 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("parts", ref "common.json#/$defs/strings"), -> 
+trust_mutants: 0 KILLED, 3 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 453 NOT RUN in 11 s
+trust_mutants: D[V], trusted: 1 SURVIVOR, 155 NOT RUN
+trust_mutants: G[V], trusted: 2 SURVIVOR, 298 NOT RUN
+trust_mutants: steps: wall plan 6.4 s, scratch 1.8 s, control_build 0.2 s, probe_install 0.9 s, mutants 0.8 s, cleanup 1 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), mutant_builds 2.3 s (3)
