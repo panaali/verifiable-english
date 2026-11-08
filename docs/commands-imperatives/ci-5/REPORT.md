@@ -4,7 +4,8 @@ Status: all six deliverables built; awaiting review. HEAD: the final commit of f
 Changed: AR-10's `actsRefuses` admits `speech-acts@0`, `gate_acts` revised as spec section 9, the speech allowlist gains
 `acts@0`, `command_act_simple` proved; the plan's three fixtures read as one simple act each, "Click Check and save." is
 refused at declaration. No signature is reserved; every DELTA row cites a DRI decision or R12/R16.
-Open: FOLLOW-UP ci-5-for-slot. Size over the ~600 cap, kept whole: SIGNED, reviews/dri-decisions-20261108-ci-5-size.md item 1.
+Open: FOLLOW-UP ci-5-for-slot, ci-5-tm-sweep. Size over the ~600 cap, kept whole (SIGNED, dri-decisions-20261108-ci-5-size.md
+item 1); R16 mutants by hand, the unfinished sweep after the merge (SIGNED, dri-decisions-20261108-ci-5-tm.md item 1).
 
 Plan and spec: `9a12df17a` on design/commands-imperatives, PLAN "CI-5" (lines 840-922) and section 9; spec section 9
 (lines 1276-1349), S28 (line 71), section 14's row (line 1653), checklist item 8 (line 1696). Statement gate: passed
@@ -70,7 +71,9 @@ did not finish: its 4 GitHub Actions parts (at 10f8be450, Lean identical to HEAD
 INVALID 3, NOT RUN 29. Every UNKNOWN is "lake build did not finish in 1800 s (--build-timeout)" (or a mutant Lean refuses):
 a mutant of `Wire`, `Dispatch` or `Lexical` rebuilds the import cone up to the fixture files. Two VM fallbacks (10:23Z and
 14:47Z, load 50-130 beside 7-8 other sweeps) gave only build-timeout UNKNOWNs, so I stopped both; no run found a
-SURVIVOR. So no `trust-mutants.json` is committed, and BUILDER-CHECKLIST item 3's "until it exits 0" is NOT met.
+SURVIVOR. So no `trust-mutants.json` is committed. Checklist 13a's "until it exits 0" is waived for ci-5 and the hand
+evidence below meets R16's mutant condition (SIGNED, reviews/dri-decisions-20261108-ci-5-tm.md item 1); the full sweep
+runs on main after the merge (row ci-5-tm-sweep, --build-timeout 3600, --jobs 2).
 In its place every new or changed trusted definition has a planted mutant killed by a named `#guard` (`mutants.json`):
 `allowlist` S1, `joinFree` S2 and cloud bool-flip, `actsRefuses` S3 and cloud list-empty, `checkActsBlock` S4 and cloud
 and-or/ne-eq/list-empty, `allowlist₀` H1, `profileGateOf` H2, `profileGate₀` H3, `decodeEnvironmentWith` H4,
@@ -150,7 +153,8 @@ PC-6 (profile composition), after pc-revise-20261104 and sn-wire-pc6.
 2. Deliverables: PASS, the Deliverables table (each row: commit and test); deviations signed (DRI 20261105 items 1-3,
    20261108-ci-5-size item 1); no Python copy of a Lean decision (no `ve/` code changed); in-flight overlap reported (et-4b).
 3. Tests can fail: PASS for seeds S1-S4 and hand mutants H1-H6 (`mutants.json`), each killed by a named `#guard`;
-   NOT MET: the mechanical R16 sweep did not finish (build timeouts, "Trust" above), so no `trust-mutants.json`.
+   the mechanical R16 sweep did not finish (build timeouts, "Trust" above): waived for ci-5, the hand mutants meet R16
+   (reviews/dri-decisions-20261108-ci-5-tm.md item 1).
 4. Python, Lean and Rust agree: PASS for Lean and the service: `AB.json` (base vs HEAD, 9 rows plus 6 acts-off rows
    identical); no Rust path reads `speech-acts@0` with `acts@0`, and no Rust code changed.
 5. R8 binding: N.A., no relayed field is added; undeclared phrases stay refused (`Examples.lean:406`,
