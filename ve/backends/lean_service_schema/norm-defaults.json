@@ -49,7 +49,12 @@
                   "then": {"$ref": "#/$defs/defaults_certificate"},
                   "when": {"$ref": "#/$defs/kind/defaults-certificate"}
                 },
-                {"then": {"$ref": "#/$defs/defaults_model"}, "when": {"$ref": "#/$defs/kind/defaults-model"}}
+                {"then": {"$ref": "#/$defs/defaults_model"}, "when": {"$ref": "#/$defs/kind/defaults-model"}},
+                {"then": {"$ref": "#/$defs/defaults_zone"}, "when": {"$ref": "#/$defs/kind/defaults-zone"}},
+                {
+                  "then": {"$ref": "norms.json#/$defs/acts-elaborate"},
+                  "when": {"$ref": "#/$defs/kind/acts-elaborate"}
+                }
               ]
             }
           ]
@@ -239,6 +244,95 @@
       "required": ["filling"],
       "type": "object"
     },
+    "defaults_zone": {
+      "$comment": "Defaults.Wire.zoneFields (defaults-zone): the zone (defaultZoneOf); with byDefault (its value) or leftTo, DE10's form (zoneFormOf), forcedAll (forcedAllOf) and the completions shown, each a list of rows; with noCompletion its labels; with unknown its reason.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "allOf": [
+              {"not": {"required": ["form"]}},
+              {"not": {"required": ["forced_all"]}},
+              {"not": {"required": ["completions"]}}
+            ]
+          },
+          "if": {"properties": {"zone": {"enum": ["byDefault", "leftTo"]}}},
+          "then": {"required": ["form", "forced_all", "completions"]}
+        },
+        {
+          "else": {"not": {"required": ["value"]}},
+          "if": {"properties": {"zone": {"const": "byDefault"}}},
+          "then": {"required": ["value"]}
+        },
+        {
+          "else": {"not": {"required": ["labels"]}},
+          "if": {"properties": {"zone": {"const": "noCompletion"}}},
+          "then": {"required": ["labels"]}
+        },
+        {
+          "else": {"not": {"required": ["reason"]}},
+          "if": {"properties": {"zone": {"const": "unknown"}}},
+          "then": {"required": ["reason"]}
+        }
+      ],
+      "properties": {
+        "completions": {"items": {"items": {"$ref": "#/$defs/defaults_zone_line"}, "type": "array"}, "type": "array"},
+        "forced_all": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"rule": {"type": "string"}, "tuple": {"$ref": "common.json#/$defs/strings"}},
+            "required": ["rule", "tuple"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "form": {"enum": ["short", "long"]},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "labels": {"$ref": "common.json#/$defs/strings"},
+        "reason": {"type": "string"},
+        "status": {"const": "ok"},
+        "value": {"type": "boolean"},
+        "zone": {"enum": ["byDefault", "leftTo", "notSaid", "noCompletion", "unknown"]}
+      },
+      "required": ["id", "status", "zone"],
+      "type": "object"
+    },
+    "defaults_zone_line": {
+      "$comment": "Defaults.Wire.ZoneLine.json: one true decision of the completion shown, DE11 (a stated condition's index), DE10f (in forcedAll) or DE13 (the decision by its key).",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "condition": {"$ref": "common.json#/$defs/nat"},
+            "row": {"const": "DE11"},
+            "rule": {"type": "string"},
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["row", "rule", "condition", "tuple"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "row": {"const": "DE10f"},
+            "rule": {"type": "string"},
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["row", "rule", "tuple"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "decision": {"$ref": "soft-norms.json#/$defs/decision_key"},
+            "row": {"const": "DE13"},
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["row", "decision", "tuple"],
+          "type": "object"
+        }
+      ]
+    },
     "elaborate": {
       "$comment": "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U.",
       "additionalProperties": false,
@@ -344,11 +438,13 @@
       "type": "object"
     },
     "kind": {
+      "acts-elaborate": {"properties": {"kind": {"const": "acts-elaborate"}}, "required": ["kind"], "type": "object"},
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "defaults-certificate": {"properties": {"kind": {"const": "defaults-certificate"}}, "required": ["kind"], "type": "object"},
       "defaults-coherence": {"properties": {"kind": {"const": "defaults-coherence"}}, "required": ["kind"], "type": "object"},
       "defaults-elaborate": {"properties": {"kind": {"const": "defaults-elaborate"}}, "required": ["kind"], "type": "object"},
       "defaults-model": {"properties": {"kind": {"const": "defaults-model"}}, "required": ["kind"], "type": "object"},
+      "defaults-zone": {"properties": {"kind": {"const": "defaults-zone"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-certificate": {"properties": {"kind": {"const": "norm-defaults-certificate"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-conflict": {"properties": {"kind": {"const": "norm-defaults-conflict"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-elaborate": {"properties": {"kind": {"const": "norm-defaults-elaborate"}}, "required": ["kind"], "type": "object"},

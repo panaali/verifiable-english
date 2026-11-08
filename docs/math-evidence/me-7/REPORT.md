@@ -28,7 +28,7 @@ task's "3.6") and 2.1, 2.2, 4.2. The synthesis-2 edits implement none of their f
 | Sign-flip p over 12 synthetic differences against a hand enumeration | yes | nine +1, three −1: 2 · (1 + 12 + 66 + 220) = 598 of 4,096 (`:44-47`); `sign-flip-synthetic` and `sign-flip-v6` against an exhaustive enumeration in the test |
 | A binomial tail; a kappa of a 2 × 2 table | yes | 7/128 (`:60`), κ = 2/5 (`:66`); `binomial-third` against `math.comb` |
 | Seeded bug: the sample variance divides by n | yes | S1 below |
-| Evaluator rule (2026-10-27): each value read once, size charged against a stated limit, a large request within it | yes | `signFlipC`: the observed mean once, then 2ⁿ vectors of n products, charged before it runs; 16 values (the largest a decoder admits) end in 1,114,128 units, within `maxWork`; one unit short is UNKNOWN (`:55-57`, test `sign-flip-16`, `sign-flip-short`). The binomial and kappa charges come with the `evalC` arms (me-7b) |
+| Evaluator rule (2026-10-27): each value read once, size charged against a stated limit, a large request within it | no (corrected by me-7-signflip-bits) | `signFlipC` charged before it runs, but `signFlipWork` counted the list's length only (`n + 2ⁿ (n + 1)`, 1,114,128 units for 16 values), not 12.2's unit with each value's bits, so it under-charged: large values were admitted far over `maxWork` (me-7-review-ov F1). me-7-signflip-bits charges the bits (`docs/math-evidence/me-7-signflip-bits/REPORT.md`). The binomial and kappa charges come with the `evalC` arms (me-7b) |
 
 **Statement gate.** Spec 7 is the accepted 3.6 (ME-S statement review, cited in me-5e's REPORT). Every meaning is
 spec 7's text. `maxSignFlip`, `signFlipWork`, `signFlipC` and the two `signFlipC_*` theorems are not in spec 7; they

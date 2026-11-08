@@ -54,6 +54,7 @@ Each planted alone, the named check seen failing, the file restored (docs/judgme
 | L1 | lean/VE/Service/Document.lean (`contentOf`) | fences sent without `judgments` | UndeclaredExamples.lean:128, :131 |
 | L2 | lean/VE/Service/Document.lean (`check`) | the names sent without `judgments@0` (J-λ) | UndeclaredExamples.lean:129 |
 | L3 | lean/VE/Service/Document.lean (`legendRows`) | the legend line drops the decider | UndeclaredExamples.lean:148, :156 |
+| L4 | lean/VE/Service/Document.lean (`verdictFields`, merge with pc-1g) | `judgment_lines` kept in the verdict fields | ChainExamples.lean:474, :479 |
 | P1 | ve/document/lean.py (`_lean_document`) | `judgment_lines` dropped from the report | `test_the_report_places_lean_s_lines` |
 | P2 | ve/document/lean.py (`_judgment_lines_bound`) | any `judgment_lines` accepted | `test_every_mutant_of_the_lines_is_refused` (5 cases) |
 | P3 | ve/document/lean.py (`_document_case`) | the proposal keeps the document layers (DRI (e)) | conditions (a), (b), (d): the three tests above |
@@ -69,6 +70,20 @@ run, identical inputs). Allowed: four `Option.toList` equivalents on line 1605 (
 on main's `generated` line 1604 (lf-16f, unchanged here); nine ill-typed `list-empty` mutants in `check`, `statusRows`,
 `linesJson` and `legendRows` that Lean refuses in the mutated definition itself. The three-term
 and `linesJson` guards were added for the survivors of the first run (bound names, records, legend and status `take 1`).
+
+## Merge with ve-integration (da5303b78)
+
+Conflicts: `tests/data/relay-gate-cases.jsonl` and `tests/data/route-cases.jsonl` (both sides appended cases; kept
+both, this branch's first); `ve/assurance-manifest.json` (generated; both sides repinned `lean/VE/Service/Document.lean`:
+ve-integration's file taken, this branch's `_checked_report` key kept, the file repinned to the merged text and
+`total_lines` carrying both sides' growth); every other generated file by `tools/regen_generated.py`.
+
+Composition: pc-1g's `verdictFields` (spec 2e, the twin guards F1.1/F1.6) and this branch's report member
+`judgment_lines` (present only with judgments@0) did not compose: the F1.1/F1.6 `#guard` failed. `judgment_lines` is
+a field the layer adds, like `undeclared_evaluative` (pc-1g ruling item 4), so `verdictFields` drops it too, as this
+branch's Python twin tests already do; the 2e guard's answer now carries it (seeded bug L4). Gap: spec 2e's list of
+the fields the layer may change does not name `judgment_lines` (nor yet `undeclared_evaluative`, ruling item 6);
+follow-up for the DRI: amend 2e to name both.
 
 ## Trust
 

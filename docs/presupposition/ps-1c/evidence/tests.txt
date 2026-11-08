@@ -1,0 +1,39 @@
+# ps-1c evidence extract (commands and their last lines). Lean and test inputs: head ce04a3fb2; later commits add only docs/presupposition/ps-1c/.
+
+## statement probe: each `lean` block of spec 4.5 and 4.6, split at def/theorem/import, whitespace-normalised, against the source
+Rules 14 pieces; missing: []
+Agree 6 pieces; missing: []
+
+## python3 tools/check_lean_imports.py
+Lean layer graph kept (776 modules, 22 reviewed legacy edges)
+
+## lake build (lean/), on cf7bdd3be's Lean
+Build completed successfully (1303 jobs).
+
+## python3 lean/audit.py
+PASS: 776 source files; 8609 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+## uv run python tools/trust_map.py --check
+against 9672601e3d6a: K +0, S +8, D +0, G +0, tied +0, unclassified +0, trusted +8
+  VE/Presupposition/Rules.lean: trusted +8
+PASS: K, S and untied [V] within 9672601e3d6a and the allowances introduced since
+
+## uv run python tools/regen_generated.py --check
+regen_generated: checked 35 entries
+
+## uv run python tools/gate_collection.py --check --prebuilt
+32293 collected, 32293 at 9672601e3d6abfb5dc2a711c72bf68ba19f18270; 0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
+
+## mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/presupposition/ps-1c/trust-mutants.json --test lean/VE/Presupposition/Examples.lean
+first run: 9 KILLED, 0 SURVIVOR, 2 UNKNOWN, exit 1 (conditionRule list-empty, a `decide` inside a term proof at Examples.lean:415)
+rerun with --rescore: 11 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, exit 0; 9 carried, head cf7bdd3be
+
+## mac-pytest.sh --select -- --base 9672601e3 --run
+100/544 test units (map 9672601e3d, 1.44 s)
+SHARD 2/2: exit 0 in 2199.3 s; 55 units, 55 passed
+SHARD 1/2: exit 0 in 3432.9 s; 54 units, 54 passed
+[gha-select 08:03:45Z] summary: selected tests ran on GitHub Actions (2 shards, run ps-1c-ce04a3fb-t862272); exit=0; 3552s
+
+## mac-pytest.sh -- -q tests/test_discourse{,_answer,_constitution,_lean,_three_way}.py tests/test_norm_admission.py tests/test_norm_defaults{,_contract,_differential,_layered,_relay_english,_report,_soft_kinds,_switch,_three_way}.py tests/test_norm_english.py tests/test_norms{,_contract,_three_way}.py
+776 passed in 22.62s
+[mac-pytest 09:03:49Z] summary: ran on ve-mac-1 (aarch64), pytest with 22 args, workers 6; HEAD ce04a3fb + uncommitted changes (snapshot 2ee8219f); 1969s; exit=0; failed/error ids=0
