@@ -2133,6 +2133,20 @@
    "reason": "pc-1g F1: lean/VE/Service/Document.lean D[V] +1 in environmentOf, refusing conditioned rights rules before their unchecked judgment usage; new ruleExceptionConditioned, rightsBlockRules and unitRules are G[R], reject-only",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g F1, 2026-11-04",
    "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 82,
+   "reason": "at-1c: S +82, G[V] +22 untied (trusted +104, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +31 (labelOrigin G[I] +5 untrusted), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "at-1c: S +82, G[V] +22 untied (trusted +104, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +31 (labelOrigin G[I] +5 untrusted), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
   }
  ]
 }
