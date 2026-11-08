@@ -1,0 +1,4 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+usage: gate.py [-h] [--output OUTPUT] [--workers WORKERS] [--base BASE]
+               [--rerun-failed [RECORD]] [--no-quarantine] [--contract [LIST]]
+gate.py: error: unrecognized arguments: --shard 3/7
