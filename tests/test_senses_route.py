@@ -139,7 +139,9 @@ REFUSALS = [
     ("unknown-word", "joke", PACK, "In this document, zany means amusing. Alice tells the riddle.", None,
      {"status": "rejected", "code": "UnknownWord", "details": {"line": 0, "word": "zany"}}),
     ("s4", "joke", PACK, "In this document, funny means purple. The riddle is funny.", None,
-     {"status": "rejected", "code": "UnknownGloss", "details": {"line": 0, "word": "funny", "gloss": "purple"}}),
+     {"status": "rejected", "code": "UnknownGloss", "details": {"line": 0, "word": "funny", "gloss": "purple"},
+      # sn-b6c: spec 3.2's text, Lean's (R3)
+      "text": "Line 1 says funny means purple. The senses of funny here are: amusing; strange. Use one of them."}),
     ("dotted-i", "joke", PACK, "İn this document, funny means amusing.\nThe riddle is funny (meaning strange).", None,
      {"status": "rejected", "code": "MalformedPreamble", "details": {"line": 0}}),
     ("preamble-budget", "joke", PACK, LINE + "\nAlice tells the riddle.", 1,
@@ -157,10 +159,16 @@ REFUSALS = [
      pack_with([sense(w, i, g, ["joke"], "{0} is " + w) for w in MANY_WORDS
                 for i, g in ((1, "plain kind"), (2, "usual kind"))]),
      "The riddle is " + ", ".join(MANY_WORDS) + ".", None,
-     {"status": "rejected", "code": "TooManyCandidates", "details": {"sentence": 0, "words": MANY_WORDS}}),
+     {"status": "rejected", "code": "TooManyCandidates", "details": {"sentence": 0, "words": MANY_WORDS},
+      "text": "Sentence 1 uses 30 words with no chosen sense: " + ", ".join(MANY_WORDS[:-1]) + " and "
+              + MANY_WORDS[-1] + ". Choose a sense for at least one of them first."}),
     ("s17", "near", pack_with(NEAR), "Alice is near bob.", None,
      {"status": "rejected", "code": "CandidatesDiverge",
-      "details": {"sentence": 0, "words": ["near"], "why": {"referent": "bob"}}}),
+      "details": {"sentence": 0, "words": ["near"], "why": {"referent": "bob"}},
+      "text": "Sentence 1 uses near with no chosen sense, and its senses do not agree on what the sentence is about: "
+              "read as beside it mentions bob, read as beside bob it does not. Later sentences depend on that, so "
+              "choose: add the line \"In this document, near means beside.\" (or beside bob), or write near "
+              "(meaning beside)."}),
     ("s23", "near", pack_with(NEAR),
      "In this document, near means beside.\nAlice is near bob.\n"
      "Starting from alice, bob is reachable by one or more \"sense__near_2\" steps.", None,
