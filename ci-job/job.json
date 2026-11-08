@@ -1,0 +1,12 @@
+{
+ "job": "testmap-bb350a96-t151664-s4",
+ "head": "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+ "argv": [
+  "testmap-bb350a96-t151664-s4",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c5870a888bb9.tar.zst",
+  "920e2aa8ae36c04c0b05cdf85c3d41eff287bd7a362db93e310895cef70646c9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s4.json.gz\" tests/test_wire_gate_corpus.py tests/test_scope_answer.py tests/test_b16f_senses_document.py tests/test_trust_ratchet.py tests/test_gate_quarantine.py tests/test_precommit_hook.py tests/test_frozen_sources.py tests/test_stage2_faults.py tests/test_lean_service.py tests/test_gate_integrity.py tests/test_binding_census.py tests/test_gate.py tests/test_ci_workflow.py tests/test_single_owner.py tests/test_readings_verdicts_split.py tests/test_speech_source_switch.py tests/test_senses_lean.py tests/test_w6a_looprecheck2.py tests/test_softnorms_public_contract.py tests/test_wire_contract_s4_lean.py tests/test_norm_defaults_switch.py tests/test_wire_contract_corpus.py tests/test_select_defer.py tests/test_readings_defaults_rd6a_report.py tests/test_lean_first_b3b_report.py tests/test_et_e1_probe.py tests/test_lean_default_build.py tests/test_lean_first_b3d_report.py tests/test_b16b_evidence.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
