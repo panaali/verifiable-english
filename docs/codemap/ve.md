@@ -33,6 +33,7 @@
 - `ve/fol.py` — Explicit adapters from formal first-order AST data to typed VE.
 - `ve/grammar.py` — Environment-specific CFGs for canonical VE, without decoding dependencies.
 - `ve/identity.py` — Domain-separated artifact bindings; identities never certify truth.
+- `ve/judgment_lines.py` — Python relay of judgment terms' authoring refusal (docs/spec/judgment-terms.md 9.5; plan JT-3).
 - `ve/limits.py` — The initial v0 runtime envelope; these bounds are not logical axioms. Lean owns every limit (`lean/VE/Limits.lean`, lean-first batch 18).
 - `ve/model.py` — Validated finite structures for the relational v0 profile.
 - `ve/natural.py` — Deterministic, audited English candidates for the untrusted natural view.

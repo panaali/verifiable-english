@@ -37,7 +37,7 @@ PYTHON = {
     # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope cardinality "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope judgment_lines cardinality "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
         "backends.senses backends.speech_source senses.display").split(),
@@ -160,10 +160,11 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
-                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
-                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples"}:
+                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
+                  "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
+                  "VE.Commands.RunExamples", "VE.Commands.RunSplit", "VE.EnglishGrammar.JudgmentRunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run or Senses.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run or Commands.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
         return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
         # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run
@@ -173,6 +174,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
     if module in {"VE.Norms.FlaggedSpec"}:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
+    if module in {"VE.Acts.DecodeTwins"}:
+        return 4  # states the twins of Norms.Run's and NormDefaults.Run's theorems (act-phrases 6.4)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Calc.Ties"}:
@@ -190,8 +193,18 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
                   "VE.Acts.LexicalExamples"}:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
+    if module in {"VE.Acts.Wire", "VE.Acts.Readings", "VE.Acts.Meaning", "VE.Acts.Grammar", "VE.Acts.Read",
+                  "VE.Acts.Syntax", "VE.Acts.Table", "VE.Acts.Linearize", "VE.Acts.Tree"} or module in {
+        "VE.Grammar.Basic", "VE.Grammar.Derives", "VE.Grammar.Reading", "VE.Grammar.Table",
+        "VE.Grammar.TableInvariant", "VE.Grammar.TableProofs",
+    }:
+        return 2  # act-phrases AP-3: the act check and the grammar it reads, below the norms decoder that calls it
+    if module in {"VE.Weighing.Tree", "VE.Weighing.Conditions", "VE.Weighing.Examples"}:
+        return 3  # weighing WG-2: a weighing document carries AP's split map (`VE.Acts.Elaborate`, weighing.md 1.1)
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
+    if module.startswith("VE.Attitudes."):
+        return 3  # AttDoc carries the English lexicon (attitudes.md 2.2, SR-3; reviews/dri-decisions-20261104-at-1a-layer.md)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.", "VE.Commands.", "VE.Acts.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",

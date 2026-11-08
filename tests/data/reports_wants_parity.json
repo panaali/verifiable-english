@@ -1,0 +1,372 @@
+{
+ "format": "reports-wants-parity@1",
+ "checkout": "94580b39b",
+ "tests": [
+  "tests/test_report_english.py",
+  "tests/test_reports.py"
+ ],
+ "infinitive": [
+  [
+   "audits service",
+   "audit service"
+  ],
+  [
+   "is safe",
+   "be safe"
+  ],
+  [
+   "publishes service",
+   "publish service"
+  ]
+ ],
+ "finite": [
+  [
+   "audit service",
+   "audits service"
+  ],
+  [
+   "be safe",
+   "is safe"
+  ],
+  [
+   "publish service",
+   "publishes service"
+  ]
+ ],
+ "infinitive_probes": [
+  [
+   "is classified as \"mass_casualty_weapon_uplift\"",
+   "be classified as \"mass_casualty_weapon_uplift\""
+  ],
+  [
+   "is",
+   "be"
+  ],
+  [
+   "has a key",
+   "have a key"
+  ],
+  [
+   "does work",
+   "do work"
+  ],
+  [
+   "is not safe",
+   null
+  ],
+  [
+   "does not work",
+   null
+  ],
+  [
+   "is not",
+   "be not"
+  ],
+  [
+   "is  safe",
+   "be  safe"
+  ],
+  [
+   "Is safe",
+   null
+  ],
+  [
+   " is",
+   null
+  ],
+  [
+   "is\tsafe",
+   null
+  ],
+  [
+   "",
+   null
+  ],
+  [
+   "s",
+   null
+  ],
+  [
+   "be",
+   null
+  ],
+  [
+   "isnt",
+   null
+  ],
+  [
+   "carries x",
+   "carry x"
+  ],
+  [
+   "studies",
+   "study"
+  ],
+  [
+   "plays x",
+   "play x"
+  ],
+  [
+   "says x",
+   "say x"
+  ],
+  [
+   "passes x",
+   "pass x"
+  ],
+  [
+   "wishes",
+   "wish"
+  ],
+  [
+   "watches",
+   "watch"
+  ],
+  [
+   "fixes",
+   "fix"
+  ],
+  [
+   "fizzes",
+   "fizz"
+  ],
+  [
+   "goes",
+   "go"
+  ],
+  [
+   "toes",
+   "to"
+  ],
+  [
+   "buses",
+   "buse"
+  ],
+  [
+   "runs",
+   "run"
+  ],
+  [
+   "pass x",
+   null
+  ],
+  [
+   "boxs",
+   null
+  ],
+  [
+   "trys",
+   null
+  ],
+  [
+   "gos",
+   null
+  ],
+  [
+   "ies",
+   "ie"
+  ],
+  [
+   "oes",
+   "o"
+  ],
+  [
+   "es",
+   "e"
+  ],
+  [
+   "zes",
+   "z"
+  ],
+  [
+   "sses",
+   "ss"
+  ],
+  [
+   "yies",
+   "yy"
+  ],
+  [
+   "aies",
+   "aie"
+  ],
+  [
+   "eies",
+   "eie"
+  ],
+  [
+   "iies",
+   "iie"
+  ],
+  [
+   "oies",
+   "oie"
+  ],
+  [
+   "uies",
+   "uie"
+  ],
+  [
+   "bathes",
+   "bathe"
+  ],
+  [
+   "x1s",
+   null
+  ],
+  [
+   "dоes",
+   null
+  ],
+  [
+   "élèves",
+   null
+  ],
+  [
+   "is safe",
+   null
+  ],
+  [
+   "is safe\r",
+   "be safe\r"
+  ],
+  [
+   "is “safe”",
+   "be “safe”"
+  ],
+  [
+   "Keeps x",
+   null
+  ],
+  [
+   "İs safe",
+   null
+  ],
+  [
+   "is\u0000",
+   null
+  ]
+ ],
+ "finite_probes": [
+  [
+   "be classified as \"mass_casualty_weapon_uplift\"",
+   "is classified as \"mass_casualty_weapon_uplift\""
+  ],
+  [
+   "be safe",
+   "is safe"
+  ],
+  [
+   "have a key",
+   "has a key"
+  ],
+  [
+   "do work",
+   "does work"
+  ],
+  [
+   "be not safe",
+   "is not safe"
+  ],
+  [
+   "try x",
+   "tries x"
+  ],
+  [
+   "play",
+   "plays"
+  ],
+  [
+   "pass",
+   "passes"
+  ],
+  [
+   "wish",
+   "wishes"
+  ],
+  [
+   "watch",
+   "watches"
+  ],
+  [
+   "fix",
+   "fixes"
+  ],
+  [
+   "buzz",
+   "buzzes"
+  ],
+  [
+   "go",
+   "goes"
+  ],
+  [
+   "",
+   "s"
+  ],
+  [
+   " x",
+   "s x"
+  ],
+  [
+   "Be safe",
+   "Bes safe"
+  ],
+  [
+   "y",
+   "ys"
+  ],
+  [
+   "ay",
+   "ays"
+  ],
+  [
+   "Ay",
+   "Aies"
+  ],
+  [
+   "1y",
+   "1ies"
+  ],
+  [
+   "é",
+   "és"
+  ],
+  [
+   "run fast",
+   "runs fast"
+  ],
+  [
+   "key",
+   "keys"
+  ],
+  [
+   "skiy",
+   "skiys"
+  ],
+  [
+   "toy",
+   "toys"
+  ],
+  [
+   "buy",
+   "buys"
+  ],
+  [
+   "bath",
+   "baths"
+  ],
+  [
+   "be safe",
+   "be safes"
+  ],
+  [
+   "be safe\r",
+   "is safe\r"
+  ],
+  [
+   "Keep",
+   "Keeps"
+  ]
+ ]
+}

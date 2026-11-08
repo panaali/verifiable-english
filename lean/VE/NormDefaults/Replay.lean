@@ -141,9 +141,9 @@ def witnessFromU (s : SourceU) (w : Json) : Except String (WitnessDataU s) := do
     else throw (VE.Route.Wire.invalidModel "literals")
   else throw "UnsupportedProfile: filled witnesses require norm-defaults@0"
 
-def replayWitnessU (j : Json) : Except String ((s : SourceU) × WitnessDataU s) := do
+def replayWitnessUIn (dec : UDecoder) (j : Json) : Except String ((s : SourceU) × WitnessDataU s) := do
   let environment ← j.getObjVal? "environment"
-  let s ← decodeSourceU environment (j.getObjValD "norms")
+  let s ← dec environment (j.getObjValD "norms")
   let wd ← witnessFromU s (← j.getObjVal? "witness")
   pure ⟨s, wd⟩
 
@@ -169,10 +169,10 @@ theorem targetU_refutes (U : UDoc) (h : WellFormed (fill U) = true) (t : String 
 replay whose regenerated target formula is true at the typed tuple of the checked
 filled model refutes, for the document decoded from that very input,
 CONFLICT-FREE under every admissible filling (a settled or latent conflict). -/
-theorem normDefaults_wire_witness_sound (j : Json) (s : SourceU) (w : WitnessDataU s)
-    (h : replayWitnessU j = .ok ⟨s, w⟩) (hw : w.conflict = true) :
-    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok s ∧ ¬ ConflictFreeU.{0} s.U := by
-  unfold replayWitnessU at h
+theorem normDefaults_wire_witness_soundIn (dec : UDecoder) (j : Json) (s : SourceU) (w : WitnessDataU s)
+    (h : replayWitnessUIn dec j = .ok ⟨s, w⟩) (hw : w.conflict = true) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok s ∧ ¬ ConflictFreeU.{0} s.U := by
+  unfold replayWitnessUIn at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨s', hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -221,9 +221,9 @@ def decodeFilling (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (j : Json) :
     pure (unsaidName p, tuples)
   pure fun n => (VE.Bridge.lookup tables n).getD []
 
-structure StatusData (j : Json) where
+structure StatusDataIn (dec : UDecoder) (j : Json) where
   s : SourceU
-  decoded : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok s
+  decoded : dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok s
   profiled : s.profiled = true
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt s.U.D 0)
@@ -238,8 +238,8 @@ structure StatusData (j : Json) where
   sound₂ : status = .undecided → UndecidedAt.{0} s.U M.asStructure r tuple
 
 /-- The status of `p` at a tuple of a base model, by the named method. -/
-def replayStatus (j : Json) : Except String (StatusData j) :=
-  match hs0 : decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") with
+def replayStatusIn (dec : UDecoder) (j : Json) : Except String (StatusDataIn dec j) :=
+  match hs0 : dec (j.getObjValD "environment") (j.getObjValD "norms") with
   | .error e => throw e
   | .ok s => do
   if hs : s.profiled = true then
@@ -263,7 +263,7 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
           have hmem : r ∈ s.U.D.T.regulated := List.mem_of_find?_eq_some hfind
           have htyped : VE.TupleTyped M.asStructure r.sorts tuple :=
             (VE.Bridge.tupleCheck_iff M _ _).mp (by simp only [Bool.and_eq_true] at ht; exact ht.2)
-          let unknown : StatusData j := ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .unknown,
+          let unknown : StatusDataIn dec j := ⟨s, hs0, hs, M, hvalid, a.flags, hb, r, hmem, tuple, htyped, .unknown,
             (fun _ hb'' => by cases hb''), (fun hu => by cases hu)⟩
           if method == "table3" then
             match h3 : table3 s.U M r.name tuple with
@@ -300,8 +300,8 @@ def replayStatus (j : Json) : Except String (StatusData j) :=
 /-- `normDefaults_wire_status_sound`: a replayed SETTLED status is `SettledAs` and a
 replayed UNDECIDED status is `UndecidedAt`, for the document and model decoded from
 that very input; UNKNOWN claims nothing. -/
-theorem normDefaults_wire_status_sound (j : Json) (d : StatusData j) (_h : replayStatus j = .ok d) :
-    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok d.s ∧
+theorem normDefaults_wire_status_soundIn (dec : UDecoder) (j : Json) (d : StatusDataIn dec j) (_h : replayStatusIn dec j = .ok d) :
+    dec (j.getObjValD "environment") (j.getObjValD "norms") = .ok d.s ∧
     (∀ b, d.status = .settled b → SettledAs.{0} d.s.U d.M.asStructure d.r d.tuple b) ∧
     (d.status = .undecided → UndecidedAt.{0} d.s.U d.M.asStructure d.r d.tuple) :=
   ⟨d.decoded, d.sound₁, d.sound₂⟩
@@ -337,10 +337,10 @@ def GapsReplay.none_ (g : GapsReplay) : Bool := match g.cert with
       (targetConclusion (reachedTarget g.s.U g.r)) c
   | none => false
 
-def replayGaps (j : Json) : Except String GapsReplay := do
+def replayGapsIn (dec : UDecoder) (j : Json) : Except String GapsReplay := do
   let environment ← j.getObjVal? "environment"
   let norms := j.getObjValD "norms"
-  let s ← decodeSourceU environment norms
+  let s ← dec environment norms
   let name ← VE.Bridge.stringField j "predicate"
   match s.U.D.T.regulated.find? (·.name == name) with
   | none => throw s!"InvalidInput: unknown regulated predicate {name}"
@@ -391,21 +391,46 @@ def reachedFromU (s : SourceU) (name : Except String String) (w : Json) : Except
 
 /-- Decode a filled model of `E‴_base` (checked against `Background_base` and `Fill_T`),
 the predicate and the typed tuple. -/
-def replayReached (j : Json) : Except String ((s : SourceU) × ReachedData s) := do
+def replayReachedIn (dec : UDecoder) (j : Json) : Except String ((s : SourceU) × ReachedData s) := do
   let environment ← j.getObjVal? "environment"
-  let s ← decodeSourceU environment (j.getObjValD "norms")
+  let s ← dec environment (j.getObjValD "norms")
   pure ⟨s, ← reachedFromU s (VE.Bridge.stringField j "predicate") j⟩
 
 /-- `normDefaults_wire_reached_sound`: a replayed filled model at which `reached_p`
 evaluates true is an admissible filling at which no author rule decides `p` at the
 typed tuple: `gaps: reachable` (for an unspecified `p`) or `default reached` (for a
 deny/allow `p`, the evidence behind `UngroundedDefault`). -/
-theorem normDefaults_wire_reached_sound (j : Json) (s : SourceU) (d : ReachedData s)
-    (_h : replayReached j = .ok ⟨s, d⟩) (hr : d.reached = true) :
+theorem normDefaults_wire_reached_soundIn (dec : UDecoder) (j : Json) (s : SourceU) (d : ReachedData s)
+    (_h : replayReachedIn dec j = .ok ⟨s, d⟩) (hr : d.reached = true) :
     BaseAdmissibleU s.U d.M.asStructure ∧ VE.TupleTyped d.M.asStructure d.r.sorts d.tuple ∧
       (reachedF s.U d.r.name).denote d.M.asStructure (tupleVal d.tuple) :=
   ⟨⟨baseAdmissible_of_valid (fill s.U) d.M d.valid d.background, fun φ hφ =>
       (VE.eval_iff_denote d.M [] φ).mp (List.all_eq_true.mp d.filled φ hφ)⟩,
     d.typed, (VE.eval_iff_denote d.M _ _).mp hr⟩
+
+/-! ## The route's own decoder -/
+
+def replayWitnessU : Json → Except String ((s : SourceU) × WitnessDataU s) := replayWitnessUIn decodeSourceU
+abbrev StatusData := StatusDataIn decodeSourceU
+def replayStatus : (j : Json) → Except String (StatusData j) := replayStatusIn decodeSourceU
+def replayGaps : Json → Except String GapsReplay := replayGapsIn decodeSourceU
+def replayReached : Json → Except String ((s : SourceU) × ReachedData s) := replayReachedIn decodeSourceU
+
+theorem normDefaults_wire_witness_sound (j : Json) (s : SourceU) (w : WitnessDataU s)
+    (h : replayWitnessU j = .ok ⟨s, w⟩) (hw : w.conflict = true) :
+    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok s ∧ ¬ ConflictFreeU.{0} s.U :=
+  normDefaults_wire_witness_soundIn decodeSourceU j s w h hw
+
+theorem normDefaults_wire_status_sound (j : Json) (d : StatusData j) (_h : replayStatus j = .ok d) :
+    decodeSourceU (j.getObjValD "environment") (j.getObjValD "norms") = .ok d.s ∧
+    (∀ b, d.status = .settled b → SettledAs.{0} d.s.U d.M.asStructure d.r d.tuple b) ∧
+    (d.status = .undecided → UndecidedAt.{0} d.s.U d.M.asStructure d.r d.tuple) :=
+  normDefaults_wire_status_soundIn decodeSourceU j d _h
+
+theorem normDefaults_wire_reached_sound (j : Json) (s : SourceU) (d : ReachedData s)
+    (_h : replayReached j = .ok ⟨s, d⟩) (hr : d.reached = true) :
+    BaseAdmissibleU s.U d.M.asStructure ∧ VE.TupleTyped d.M.asStructure d.r.sorts d.tuple ∧
+      (reachedF s.U d.r.name).denote d.M.asStructure (tupleVal d.tuple) :=
+  normDefaults_wire_reached_soundIn decodeSourceU j s d _h hr
 
 end VE.NormDefaults.Wire

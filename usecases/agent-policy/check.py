@@ -732,9 +732,9 @@ def replay_lean(exported, batch=100):
         chunk = cases[start:start + batch]
         payload = [{k: v for k, v in c.items() if k != "norm"} | {"id": str(start + i)}
                    for i, c in enumerate(chunk)]
-        done = subprocess.run([str(LEAN_ROUTE), "route", "-"], input=json.dumps(payload), text=True,
+        done = subprocess.run([str(LEAN_ROUTE), "route", "-"], input=json.dumps(payload).encode(),
                               capture_output=True, timeout=3600)
-        rows = json.loads(done.stdout)
+        rows = parsed(done.stdout, "Lean replay")
         for case, row in zip(chunk, rows):
             kind = "norm layers as premises" if case["norm"] else "base"
             total[kind] += 1
@@ -742,13 +742,25 @@ def replay_lean(exported, batch=100):
     return {"certificates": total, "valid": valid}
 
 
+def parsed(stdout, who):
+    """A replay's raw stdout as JSON; output that is not UTF-8, not JSON or too deeply
+    nested to parse is refused, never a traceback."""
+    try:
+        text = stdout.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise CheckerUnavailable(f"{who}: output is not UTF-8: {error}") from error
+    try:
+        return json.loads(text)
+    except ValueError as error:
+        raise CheckerUnavailable(f"{who}: unreadable output: {error}") from error
+    except RecursionError as error:
+        raise CheckerUnavailable(f"{who}: output nested too deeply to read") from error
+
+
 def rust_values(stdout, ids):
     """The value of each `evaluate-budgeted` row, in request order; None is an exhausted
     budget. A row that is not typed and bound to the request is refused, never counted."""
-    try:
-        rows = json.loads(stdout)
-    except ValueError as error:
-        raise CheckerUnavailable(f"Rust replay: unreadable output: {error}") from error
+    rows = parsed(stdout, "Rust replay")
     if not isinstance(rows, list) or len(rows) != len(ids):
         raise CheckerUnavailable("Rust replay: the rows do not match the request")
     values = []
@@ -772,7 +784,7 @@ def replay_rust(exported, batch=200):
         chunk = cases[start:start + batch]
         payload = [{k: v for k, v in c.items() if k != "value"}
                    | {"id": str(start + i), "kind": "evaluate-budgeted"} for i, c in enumerate(chunk)]
-        done = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(payload), text=True,
+        done = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(payload).encode(),
                               capture_output=True, timeout=3600)
         values = rust_values(done.stdout, [c["id"] for c in payload])
         agree += sum(got is case["value"] for case, got in zip(chunk, values))
@@ -1013,5 +1025,13 @@ def main(argv=None):
     return results
 
 
+def cli(argv=None):
+    """`main`, with a refusal reported as one line on stderr and exit code 1, not a traceback."""
+    try:
+        main(argv)
+    except CheckerUnavailable as error:
+        sys.exit(f"CheckerUnavailable: {error}")
+
+
 if __name__ == "__main__":
-    main()
+    cli()

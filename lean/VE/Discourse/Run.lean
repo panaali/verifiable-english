@@ -148,12 +148,27 @@ def runJoint (profiles : List String) (environment : Json) (rv : VE.Route.Wire.R
   | .error e => pure (VE.Route.Wire.ok id [("verdict", .str (if e.startsWith "ResourceLimit" then "UNKNOWN" else "INVALID")),
       ("diagnostic", .str e)])
 
+/-- The `admission` answer of a composed admission: `composedJson c` with the case id. -/
+def encodeComposed (id : String) (c : ChainAdmitted) : Json :=
+  VE.Route.Wire.ok id (composedFields c)
+
+/-- A case on the composed path (14.6, the wire entry): an `admission` is `encodeComposed` of the composed admission;
+the other discourse kinds are named abstentions; any other kind is refused as today. -/
+def chainCase (id kind : String) (profiles : List String) (environment document : Json) : Except String Json :=
+  if kind == "admission" then encodeComposed id <$> admitChain profiles environment document
+  else if ["discourse-validity", "discourse-resolve", "discourse-joint"].contains kind then
+    .error (Loader.notImplemented (kind ++ " on the chain"))
+  else .error s!"UnsupportedProfile: case kind {kind} is not available on the discourse route"
+
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if !usesDiscoursePath j then return ← VE.Route.Run.runCase j
   let (document, environment) ← loadCase j
   let profiles ← VE.Route.Gate.profilesOf environment
+  -- 14.6, the wire entry: the composed path is decided before `baseVocabulary`, which rejects every chain environment
+  if "norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ chainConstructs environment document = true then
+    return ← chainCase id kind profiles environment document
   let rv ← baseVocabulary environment
   if kind == "admission" then
     let res ← admitDiscourse profiles environment rv document fuelBudget
@@ -174,9 +189,6 @@ def DiscourseAdmissionAnswer (id : String) (j answer : Json) : Prop :=
     VE.Route.Gate.profilesOf environment = .ok profiles ∧ baseVocabulary environment = .ok rv ∧
     admitDiscourse profiles environment rv document fuelBudget = .ok res ∧ encodeAdmission id res = .ok answer
 
-/-- The `admission` answer of a composed admission: `composedJson c` with the case id. -/
-def encodeComposed (id : String) (c : ChainAdmitted) : Json :=
-  ((composedJson c).setObjVal! "id" (.str id)).setObjVal! "status" (.str "ok")
 def ComposedAdmissionAnswer (id : String) (j answer : Json) : Prop :=
   ∃ document environment profiles c, loadCase j = .ok (document, environment) ∧
     VE.Route.Gate.profilesOf environment = .ok profiles ∧
@@ -197,10 +209,22 @@ theorem discourse_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨⟨document, environment⟩, hl, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨profiles, hp, h⟩ := VE.Order.ProfileGate.bind_ok h
-  obtain ⟨rv, hrv, h⟩ := VE.Order.ProfileGate.bind_ok h
-  simp only [beq_self_eq_true, if_true] at h
-  obtain ⟨res, hres, h⟩ := VE.Order.ProfileGate.bind_ok h
-  exact ⟨id, hid, .inl ⟨document, environment, profiles, rv, res, hl, hp, hrv, hres, h⟩⟩
+  by_cases hc : "norms@0" ∈ profiles ∧ "ve.discourse@1" ∈ profiles ∧ chainConstructs environment document = true
+  · simp only [hc, and_self, ↓reduceIte, chainCase, beq_self_eq_true] at h
+    obtain ⟨a, ha, h⟩ := VE.Order.ProfileGate.bind_ok h
+    cases h
+    cases hcase : admitChain profiles environment document with
+    | error e => rw [hcase] at ha; cases ha
+    | ok c =>
+      rw [hcase] at ha; cases ha
+      exact ⟨id, hid, .inr ⟨document, environment, profiles, c, hl, hp,
+        by simp only [admitComposed, hc, and_self, ↓reduceIte, hcase]; rfl, rfl⟩⟩
+  · simp only [hc, ↓reduceIte] at h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨rv, hrv, h⟩ := VE.Order.ProfileGate.bind_ok h
+    simp only [beq_self_eq_true, if_true] at h
+    obtain ⟨res, hres, h⟩ := VE.Order.ProfileGate.bind_ok h
+    exact ⟨id, hid, .inl ⟨document, environment, profiles, rv, res, hl, hp, hrv, hres, h⟩⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesDiscoursePath j then

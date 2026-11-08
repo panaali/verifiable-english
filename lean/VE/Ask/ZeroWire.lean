@@ -152,7 +152,7 @@ def zeroParts (case : Json) : Except String { p : ZeroParts // p.conclusion = ca
   let norms := Json.arr (us.filterMap fun u =>
     if strOf? (u.getObjValD "kind") == some "norm" && !(u.getObjValD "content" == .null) then
       some (u.getObjValD "content") else none).toArray
-  let s ← decodeSourceU environment norms
+  let s ← decodeSourceLexical environment norms
   if hp : s.profiled = true then
     let E := envAt (fill s.U) (size (fill s.U))
     let data := ps.contains "data@0"

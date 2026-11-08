@@ -1,0 +1,1109 @@
+{
+ "admitted": true,
+ "route": "enumerated",
+ "finding": {
+  "cause": "the unspecified completion",
+  "text": "ReadingsNotSuperposable: force-u0036-s05, force-u0125-s04-p2, force-u0156-s03, force-u0263-s04-p2"
+ },
+ "choices": 16,
+ "soft_premises": [
+  {
+   "index": 0,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0036-s05"
+  },
+  {
+   "index": 1,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0036-s05"
+  },
+  {
+   "index": 0,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0125-s04-p2"
+  },
+  {
+   "index": 1,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0125-s04-p2"
+  },
+  {
+   "index": 0,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0156-s03"
+  },
+  {
+   "index": 1,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0156-s03"
+  },
+  {
+   "index": 0,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0263-s04-p2"
+  },
+  {
+   "index": 1,
+   "premises": [
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unsafe",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:0"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_unethical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:1"
+    },
+    {
+     "ast": [
+      "forall",
+      "claude_instance",
+      [
+       "forall",
+       "situation",
+       [
+        "implies",
+        [
+         "unary",
+         "compliance_against_guidelines",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "soft__excepted__comply_operator_prompt",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "soft:exception:comply-operator-prompt:sufficient:2"
+    }
+   ],
+   "set": "force-u0263-s04-p2"
+  }
+ ],
+ "units": {
+  "u0001": [
+   "LABELLED",
+   null
+  ],
+  "u0002.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0008.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0013.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0023": [
+   "LABELLED",
+   null
+  ],
+  "u0027.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0032.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0036.s05": [
+   "OPEN",
+   null
+  ],
+  "u0040.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0042.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0052.s01": [
+   "OPEN",
+   "41352b81a06b9c0873e93f81e1b299ba5eec33cbde3a4f94ba86993bf008d126"
+  ],
+  "u0055.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0062.s01": [
+   "OPEN",
+   "2d25c7e50ca7966384bd4862d3fe8f9ff3192a741b7bf58fc4ad65cc3a5cbe4a"
+  ],
+  "u0069.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0073.s05": [
+   "OPEN",
+   "4f244b393b68b17ab8022ae5b9602e18648800c2664c04fe2d62b2f90915a5fa"
+  ],
+  "u0075.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0083.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0095.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0103": [
+   "LABELLED",
+   null
+  ],
+  "u0108": [
+   "LABELLED",
+   null
+  ],
+  "u0123.s01.p1": [
+   "OPEN",
+   "a3dcaf698f9d5dd437687353af37105130f2bf7526a5cd7d7d78992d8a07bb74"
+  ],
+  "u0123.s02.p1": [
+   "OPEN",
+   "7fe6303e815c2a3aa38c1adbea43047c5afb47796be7239d93c9c86fcba5cffa"
+  ],
+  "u0123.s03": [
+   "OPEN",
+   "74567bd8649c0a8825fec485bdda1bf34fc287e2bb149aae2bf51efa8d9f9bf7"
+  ],
+  "u0125.s04.p2": [
+   "OPEN",
+   null
+  ],
+  "u0126": [
+   "LABELLED",
+   null
+  ],
+  "u0130.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0143.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0151.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0156.s03": [
+   "OPEN",
+   null
+  ],
+  "u0162.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0165.s01": [
+   "OPEN",
+   "2a68c36186fdfb883cf6cc73e97566331181e6060a58ffa8605c0340fd43b31e"
+  ],
+  "u0165.s02": [
+   "OPEN",
+   "3b54e6e69029b6a8f70f1578d3465ef167fd2a7677e910af2f56c3dd8ee04c64"
+  ],
+  "u0165.s03": [
+   "OPEN",
+   "016b999a3323ccdb8f50130933d6e0e5366be2235f1089a511d28d2b994946fa"
+  ],
+  "u0165.s04": [
+   "OPEN",
+   "a855ab3741c0f5a9c8e75c72810c52682b6757d94c710e5797e4bfadfb1ef1bd"
+  ],
+  "u0165.s05": [
+   "OPEN",
+   "fe156c92060e19e41e64df087419aeea9aa9b5a1a0bd62a8ef3bd77dedeb6601"
+  ],
+  "u0165.s06": [
+   "OPEN",
+   "2e8705d9e067856981453ef958c4fae5dd0c981d087e4f1ff4c4a3b226424506"
+  ],
+  "u0165.s07": [
+   "OPEN",
+   "554e3a7a17d37f29753f1243a55df9a94d82e6199fe073359a34342a38e861f8"
+  ],
+  "u0168.s01": [
+   "OPEN",
+   "e230a48061b33a8bbc0345b3d53caa7acd941d970eeeb2b45df1c1febe10815d"
+  ],
+  "u0174.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0195.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0207.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0212.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0219.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0235.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0238.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0245.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0248": [
+   "CHECKED",
+   "225f686ef26c0b43e08cdbe40b25c9ff89f8d6d35b8dabef24c38d2ff7fdd9d6"
+  ],
+  "u0254.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0257.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0260.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0263.s04.p2": [
+   "OPEN",
+   null
+  ],
+  "u0265": [
+   "LABELLED",
+   null
+  ],
+  "u0268.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0277": [
+   "LABELLED",
+   null
+  ],
+  "u0282": [
+   "LABELLED",
+   null
+  ],
+  "u0286.heading": [
+   "LABELLED",
+   null
+  ],
+  "u0294": [
+   "LABELLED",
+   null
+  ],
+  "u0298": [
+   "LABELLED",
+   null
+  ]
+ }
+}

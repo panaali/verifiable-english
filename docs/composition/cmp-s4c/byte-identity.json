@@ -1,0 +1,407 @@
+[
+ [
+  "S4-2 recorded 0",
+  {
+   "id": "admission",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@1\", \"units\": [{\"id\": \"u1\", \"span\": [0, 20], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]], \"unit\": \"u1\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed."
+  },
+  "{\"error\":\"UnsupportedProfile: ve.discourse@1 requires ve-document@2\",\"id\":\"admission\",\"status\":\"error\"}"
+ ],
+ [
+  "S4-2 recorded 1",
+  {
+   "id": "admission",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@1\", \"units\": [{\"id\": \"u1\", \"span\": [0, 20], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]], \"unit\": \"u1\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed."
+  },
+  "{\"admitted\":true,\"bound\":{},\"definitions_version\":\"\",\"document_id\":\"\",\"environment_id\":\"\",\"id\":\"admission\",\"inner_report_id\":\"\",\"joint\":\"UnsupportedProfile: no discourse manifest\",\"kinds\":[\"asserted\"],\"meaning_ids\":{},\"pending\":[],\"presuppositions\":{},\"reading_verdicts\":{},\"references\":[],\"report\":{\"assumptions\":[{\"ast\":[\"unary\",\"reviewed\",[\"const\",\"api\"]],\"name\":\"n\"}],\"root\":{\"ast\":[\"unary\",\"reviewed\",[\"const\",\"api\"]],\"name\":\"n\"}},\"report_id\":\"\",\"self_truth\":[],\"source_id\":\"\",\"status\":\"ok\",\"statuses\":{\"u1\":\"CHECKED\"},\"validity\":{}}"
+ ],
+ [
+  "S4-2 recorded 2",
+  {
+   "id": "python-admission",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@2\", \"environment\": {\"language\": \"ve.core@0.2\", \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"item\": {\"description\": \"Item\", \"verbalisation\": {\"singular\": \"service\", \"plural\": \"services\"}}, \"agent\": {\"description\": \"Agent\", \"verbalisation\": {\"singular\": \"person\", \"plural\": \"people\"}}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"item\"], \"description\": \"Reviewed\", \"verbalisation\": \"{0} is reviewed\"}, \"exempt\": {\"arguments\": [\"item\"], \"description\": \"Exempt\", \"verbalisation\": \"{0} is exempt\"}, \"owns\": {\"arguments\": [\"agent\", \"item\"], \"description\": \"Owner\", \"verbalisation\": \"{0} owns {1}\"}, \"links\": {\"arguments\": [\"item\", \"item\"], \"description\": \"Link\", \"verbalisation\": \"{0} depends on {1}\"}, \"ready\": {\"arguments\": [\"agent\"], \"description\": \"Ready\", \"verbalisation\": \"{0} is ready\"}, \"deployed\": {\"arguments\": [\"item\"], \"description\": \"Deployed\", \"verbalisation\": \"{0} is deployed\"}}, \"constants\": {\"api\": {\"sort\": \"item\", \"description\": \"API\"}, \"alice\": {\"sort\": \"agent\", \"description\": \"Alice\"}}}, \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"]}, \"units\": [{\"id\": \"u1\", \"span\": [0, 17], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}, {\"id\": \"u2\", \"span\": [17, 34], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"api\"]]}}], \"discourse\": {}, \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}]}\n---\nApi is reviewed.\nApi is deployed.\n",
+   "files": {}
+  },
+  "{\"admitted\":true,\"bound\":{},\"definitions_version\":\"e9e7943234247bb29beec02e16c49e441dc4588a5e55a3b01ed7a171b1ed074a\",\"document_id\":\"dc83d682ba79dca860704c2bb7f29c095869c6e4b074361742e972a0b17b8ad6\",\"environment_id\":\"e9e7943234247bb29beec02e16c49e441dc4588a5e55a3b01ed7a171b1ed074a\",\"id\":\"python-admission\",\"inner_report_id\":\"3325cb057a7d2db287a4281ce4d268ff76fe0655c4ef09fe12e523ea56081455\",\"joint\":1,\"joint_choices\":[[]],\"joint_formula\":[\"top\"],\"kinds\":[\"asserted\",\"asserted\"],\"meaning_ids\":{},\"pending\":[],\"presuppositions\":{},\"reading_verdicts\":{},\"references\":[],\"report\":{\"assumptions\":[{\"ast\":[\"top\"],\"label\":\"open:t\",\"name\":\"n\"}],\"root\":{\"ast\":[\"top\"],\"label\":\"open:t\",\"name\":\"n\"}},\"report_id\":\"2ee74ca9bc1df9efeb88836dccd2c2b183f70ae8bf86c789925bd2ff4e2ba924\",\"self_truth\":[],\"source_id\":\"57bbc810f94e55ed35dbf1dd63e459376498096ac55492e463e438ae362c1508\",\"status\":\"ok\",\"statuses\":{\"u1\":\"CHECKED\",\"u2\":\"CHECKED\"},\"validity\":{}}"
+ ],
+ [
+  "S4-2 recorded 3",
+  {
+   "id": "admission",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@1\", \"units\": [{\"id\": \"u1\", \"span\": [0, 16], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"label\": \"readings:rs1@1:0\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"reading_sets\": [{\"id\": \"rs1\", \"unit\": \"u1\", \"version\": 1, \"status\": \"authored\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {}}}], \"signature\": \"author\"}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is safe."
+  },
+  "{\"admitted\":true,\"bound\":{},\"definitions_version\":\"\",\"document_id\":\"\",\"environment_id\":\"\",\"id\":\"admission\",\"inner_report_id\":\"\",\"joint\":\"UnsupportedProfile: no discourse manifest\",\"kinds\":[\"asserted\"],\"meaning_ids\":{},\"pending\":[],\"presuppositions\":{},\"reading_verdicts\":{},\"references\":[],\"report\":{\"assumptions\":[{\"ast\":[\"unary\",\"safe\",[\"const\",\"api\"]],\"label\":\"readings:rs1@1:0\",\"name\":\"n\"}],\"root\":{\"ast\":[\"unary\",\"safe\",[\"const\",\"api\"]],\"label\":\"readings:rs1@1:0\",\"name\":\"n\"}},\"report_id\":\"\",\"self_truth\":[],\"source_id\":\"\",\"status\":\"ok\",\"statuses\":{\"u1\":\"LABELLED\"},\"validity\":{}}"
+ ],
+ [
+  "S4-2 recorded 4",
+  {
+   "id": "bridge-background",
+   "kind": "admission",
+   "environment": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "a person"
+      }
+     },
+     "predicates": {
+      "in_finance": {
+       "arguments": [
+        "person"
+       ],
+       "description": "works in finance"
+      },
+      "in_legal": {
+       "arguments": [
+        "person"
+       ],
+       "description": "works in legal"
+      },
+      "senior": {
+       "arguments": [
+        "person"
+       ],
+       "description": "is senior"
+      }
+     },
+     "constants": {
+      "alice": {
+       "sort": "person",
+       "description": "Alice"
+      },
+      "bob": {
+       "sort": "person",
+       "description": "Bob"
+      },
+      "finance": {
+       "sort": "$string",
+       "description": "the string finance"
+      },
+      "legal": {
+       "sort": "$string"
+      }
+     }
+    }
+   },
+   "document": {
+    "units": [
+     {
+      "id": "u1",
+      "span": [
+       0,
+       20
+      ],
+      "kind": "asserted",
+      "content": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ]
+     },
+     {
+      "id": "u2",
+      "span": [
+       21,
+       60
+      ],
+      "kind": [
+       "attributed",
+       "bob",
+       "says",
+       "asserted"
+      ],
+      "content": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "unary",
+        "in_finance",
+        [
+         "const",
+         "alice"
+        ]
+       ]
+      ]
+     },
+     {
+      "id": "u3",
+      "span": [
+       61,
+       120
+      ],
+      "kind": [
+       "attributed",
+       "alice",
+       "believes",
+       [
+        "hedged",
+        "likely",
+        [
+         "causal",
+         "because",
+         "asserted",
+         "asserted"
+        ]
+       ]
+      ]
+     },
+     {
+      "id": "u4",
+      "span": [
+       120,
+       130
+      ],
+      "kind": [
+       "unformalised",
+       "rhetoric"
+      ]
+     }
+    ],
+    "graph": {
+     "root": "root",
+     "nodes": [
+      {
+       "name": "claim-u2",
+       "ast": [
+        "or",
+        [
+         "eq",
+         [
+          "const",
+          "finance"
+         ],
+         [
+          "const",
+          "legal"
+         ]
+        ],
+        [
+         "unary",
+         "in_finance",
+         [
+          "const",
+          "alice"
+         ]
+        ]
+       ],
+       "label": "bridge:accepts(bob,u2)",
+       "unit": "u2"
+      },
+      {
+       "name": "distinct",
+       "ast": [
+        "not",
+        [
+         "eq",
+         [
+          "const",
+          "finance"
+         ],
+         [
+          "const",
+          "legal"
+         ]
+        ]
+       ],
+       "label": "background:literals"
+      },
+      {
+       "name": "senior",
+       "ast": [
+        "unary",
+        "senior",
+        [
+         "const",
+         "alice"
+        ]
+       ],
+       "unit": "u1"
+      },
+      {
+       "name": "root",
+       "ast": [
+        "unary",
+        "in_finance",
+        [
+         "const",
+         "alice"
+        ]
+       ],
+       "premises": [
+        "claim-u2",
+        "distinct"
+       ],
+       "certificate": {
+        "checker_version": "ve-tableau-checker@2",
+        "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+        "premise_meaning_ids": [
+         "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+         "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+        ],
+        "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+        "trace": {
+         "rule": "expand",
+         "at": 0,
+         "children": [
+          {
+           "rule": "expand",
+           "at": 1,
+           "children": [
+            {
+             "rule": "close"
+            }
+           ]
+          },
+          {
+           "rule": "close"
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  "{\"admitted\":true,\"id\":\"bridge-background\",\"kinds\":[\"asserted\",[\"attributed\",\"bob\",\"says\",\"asserted\"],[\"attributed\",\"alice\",\"believes\",[\"hedged\",\"likely\",[\"causal\",\"because\",\"asserted\",\"asserted\"]]],[\"unformalised\",\"rhetoric\"]],\"report\":{\"assumptions\":[{\"ast\":[\"or\",[\"eq\",[\"const\",\"finance\"],[\"const\",\"legal\"]],[\"unary\",\"in_finance\",[\"const\",\"alice\"]]],\"label\":\"bridge:accepts(bob,u2)\",\"name\":\"claim-u2\"},{\"ast\":[\"not\",[\"eq\",[\"const\",\"finance\"],[\"const\",\"legal\"]]],\"label\":\"background:literals\",\"name\":\"distinct\"}],\"root\":{\"ast\":[\"unary\",\"in_finance\",[\"const\",\"alice\"]],\"name\":\"root\"}},\"report_id\":\"00ab80c87dd94bb739c7427651ec7f1cf969e45daf292f1e4dc6a3ae16206047\",\"status\":\"ok\"}"
+ ],
+ [
+  "S4-2 recorded 5",
+  {
+   "id": "discourse-joint",
+   "kind": "discourse-joint",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}, {\"id\": \"u2\", \"span\": [21, 38], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u3\", \"span\": [38, 54], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 54]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [], \"constraints\": [{\"kind\": \"requires\", \"a\": [\"rs5\", 1, \"pattern-z\"], \"b\": [\"rs6\", 1, \"r0\"]}]}, \"reading_sets\": [{\"id\": \"rs5\", \"unit\": \"u2\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs6\", \"unit\": \"u3\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed. The API is safe. The API is safe."
+  },
+  "{\"error\":\"InvalidInput: reading pattern-z not in rs5@1\",\"id\":\"discourse-joint\",\"status\":\"error\"}"
+ ],
+ [
+  "S4-2 recorded 6",
+  {
+   "id": "discourse-joint",
+   "kind": "discourse-joint",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 20], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 20]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [], \"constraints\": []}, \"reading_sets\": [], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed."
+  },
+  "{\"choices\":[[]],\"id\":\"discourse-joint\",\"joint\":[\"top\"],\"status\":\"ok\",\"verdict\":\"COMPLETE\"}"
+ ],
+ [
+  "S4-2 recorded 7",
+  {
+   "id": "discourse-joint",
+   "kind": "discourse-joint",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}, {\"id\": \"u2\", \"span\": [21, 38], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u3\", \"span\": [38, 54], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 54]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [], \"constraints\": [{\"kind\": \"requires\", \"a\": [\"rs5\", 1, \"r0\"], \"b\": [\"rs6\", 1, \"r0\"]}, {\"kind\": \"requires\", \"a\": [\"rs5\", 1, \"r1\"], \"b\": [\"rs6\", 1, \"r1\"]}]}, \"reading_sets\": [{\"id\": \"rs5\", \"unit\": \"u2\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs6\", \"unit\": \"u3\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed. The API is safe. The API is safe."
+  },
+  "{\"choices\":[[[\"rs5\",1,0],[\"rs6\",1,0]],[[\"rs5\",1,1],[\"rs6\",1,1]]],\"id\":\"discourse-joint\",\"joint\":[\"or\",[\"and\",[\"unary\",\"safe\",[\"const\",\"api\"]],[\"unary\",\"safe\",[\"const\",\"api\"]]],[\"and\",[\"unary\",\"deployed\",[\"const\",\"api\"]],[\"unary\",\"deployed\",[\"const\",\"api\"]]]],\"status\":\"ok\",\"verdict\":\"COMPLETE\"}"
+ ],
+ [
+  "S4-2 recorded 8",
+  {
+   "id": "discourse-joint",
+   "kind": "discourse-joint",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}, {\"id\": \"u2\", \"span\": [21, 38], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u3\", \"span\": [38, 54], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 54]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [], \"constraints\": [{\"kind\": \"excludes\", \"a\": [\"rs5\", 1, \"r0\"], \"b\": [\"rs6\", 1, \"r0\"]}, {\"kind\": \"excludes\", \"a\": [\"rs5\", 1, \"r0\"], \"b\": [\"rs6\", 1, \"r1\"]}, {\"kind\": \"excludes\", \"a\": [\"rs5\", 1, \"r1\"], \"b\": [\"rs6\", 1, \"r0\"]}, {\"kind\": \"excludes\", \"a\": [\"rs5\", 1, \"r1\"], \"b\": [\"rs6\", 1, \"r1\"]}]}, \"reading_sets\": [{\"id\": \"rs5\", \"unit\": \"u2\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs6\", \"unit\": \"u3\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed. The API is safe. The API is safe."
+  },
+  "{\"diagnostic\":\"InvalidCompatibility: rs5, rs6\",\"id\":\"discourse-joint\",\"status\":\"ok\",\"verdict\":\"INVALID\"}"
+ ],
+ [
+  "S4-2 recorded 9",
+  {
+   "id": "discourse-joint",
+   "kind": "discourse-joint",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}, {\"id\": \"u2\", \"span\": [21, 38], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u3\", \"span\": [38, 55], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u4\", \"span\": [55, 72], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u5\", \"span\": [72, 89], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u6\", \"span\": [89, 106], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u7\", \"span\": [106, 123], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}, {\"id\": \"u8\", \"span\": [123, 139], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 139]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [], \"constraints\": []}, \"reading_sets\": [{\"id\": \"rs5\", \"unit\": \"u2\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs6\", \"unit\": \"u3\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs7\", \"unit\": \"u4\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs8\", \"unit\": \"u5\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs9\", \"unit\": \"u6\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs10\", \"unit\": \"u7\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}, {\"id\": \"rs11\", \"unit\": \"u8\", \"version\": 1, \"status\": \"open\", \"readings\": [{\"id\": \"r0\", \"kind\": \"asserted\", \"content\": [\"unary\", \"safe\", [\"const\", \"api\"]], \"meaning_id\": \"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r1\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}, {\"id\": \"r1\", \"kind\": \"asserted\", \"content\": [\"unary\", \"deployed\", [\"const\", \"api\"]], \"meaning_id\": \"129b83ae7ad0286aed15abaa2730dae178e23c7d44396556769aa4980b77ad9c\", \"admission\": {\"who\": \"author\", \"why\": \"fixture\", \"distinguishing_models\": {\"r0\": \"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\"}}}], \"models\": {\"72885d25e9ffa9321e4b12744af11b4cde5153ecab53c3badcf8112df8689fc5\": {\"complete\": true, \"domains\": {\"service\": [\"e_service\"], \"person\": [\"e_person\"], \"document\": [\"e_document\"]}, \"constants\": {\"api\": \"e_service\", \"alice\": \"e_person\", \"bob\": \"e_person\"}, \"relations\": {\"reviewed\": [], \"deployed\": [], \"safe\": [[\"e_service\"]], \"eligible\": [], \"ready\": [], \"owner\": [], \"manager_of\": [], \"supersedes\": []}}}}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed. The API is safe. The API is safe. The API is safe. The API is safe. The API is safe. The API is safe. The API is safe."
+  },
+  "{\"diagnostic\":\"ResourceLimit: joint choices\",\"id\":\"discourse-joint\",\"status\":\"ok\",\"verdict\":\"UNKNOWN\"}"
+ ],
+ [
+  "S4-2 recorded 10",
+  {
+   "id": "discourse-resolve",
+   "kind": "discourse-resolve",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 11], \"kind\": \"exposition\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 11]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [{\"id\": \"m1\", \"unit\": \"u1\", \"span\": [0, 2], \"form\": \"pronoun\", \"target\": {\"kind\": \"entity\", \"name\": \"api\"}}]}, \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nIt is safe."
+  },
+  "{\"environment_id\":\"9643d9cc3be4edead907f50e00945bafbb0f9fc7ee852f57c1989deac9335354\",\"id\":\"discourse-resolve\",\"joint\":1,\"mentions\":{\"m1\":{\"accessible\":[{\"kind\":\"entity\",\"name\":\"api\"},{\"kind\":\"entity\",\"name\":\"alice\"},{\"kind\":\"entity\",\"name\":\"bob\"}],\"accessible_recorded\":true,\"recorded\":{\"kind\":\"entity\",\"name\":\"api\"}}},\"source_id\":\"0d09e92c6ad0a506eb01b53cfff45477c00f567719161133d7a25f07e6e78b43\",\"status\":\"ok\",\"units\":{\"u1\":{\"formula\":[\"unary\",\"safe\",[\"const\",\"api\"]],\"meaning_id\":\"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\",\"status\":\"resolved\"}},\"well_formed\":\"ok\"}"
+ ],
+ [
+  "S4-2 recorded 11",
+  {
+   "id": "discourse-resolve",
+   "kind": "discourse-resolve",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"exposition\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 21]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [{\"id\": \"m1\", \"unit\": \"u1\", \"span\": [0, 12], \"form\": \"demonstrative\", \"target\": {\"kind\": \"entity\", \"name\": \"api\"}}]}, \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThis service is safe."
+  },
+  "{\"environment_id\":\"9643d9cc3be4edead907f50e00945bafbb0f9fc7ee852f57c1989deac9335354\",\"id\":\"discourse-resolve\",\"joint\":1,\"mentions\":{\"m1\":{\"accessible\":[{\"kind\":\"entity\",\"name\":\"api\"},{\"kind\":\"entity\",\"name\":\"alice\"},{\"kind\":\"entity\",\"name\":\"bob\"}],\"accessible_recorded\":true,\"recorded\":{\"kind\":\"entity\",\"name\":\"api\"}}},\"source_id\":\"11a4b987433438a99d86e07b3a893e5d354cc5b1a71d7b88786ff53312b9857c\",\"status\":\"ok\",\"units\":{\"u1\":{\"formula\":[\"unary\",\"safe\",[\"const\",\"api\"]],\"meaning_id\":\"86ab4f040c2f3351206445b47809910053daa8ebd3f73780dd39be2b52c2dae1\",\"status\":\"resolved\"}},\"well_formed\":\"ok\"}"
+ ],
+ [
+  "S4-2 recorded 12",
+  {
+   "id": "discourse-resolve",
+   "kind": "discourse-resolve",
+   "document": "---\n{\"format\": \"ve-document@2\", \"units\": [{\"id\": \"u1\", \"span\": [0, 19], \"kind\": \"exposition\", \"meaning\": \"specified\", \"support\": \"none\"}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"discourse\": {\"version\": \"ve.discourse@1\", \"document_sort\": \"document\", \"anchors\": [{\"id\": \"doc\", \"kind\": \"document\", \"label\": \"Policy\", \"span\": [0, 19]}], \"names\": [{\"constant\": \"api\", \"display\": \"the API\", \"scope\": \"doc\"}, {\"constant\": \"alice\", \"display\": \"Alice\", \"scope\": \"doc\"}, {\"constant\": \"bob\", \"display\": \"Bob\", \"scope\": \"doc\"}], \"mentions\": [{\"id\": \"m1\", \"unit\": \"u1\", \"span\": [0, 9], \"form\": \"definite\", \"target\": {\"kind\": \"entity\", \"name\": \"binder:0\"}, \"reading\": \"presuppositional\", \"restriction\": [\"unary\", \"owner\", [\"var\", 0]]}]}, \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe owner is ready."
+  },
+  "{\"environment_id\":\"9643d9cc3be4edead907f50e00945bafbb0f9fc7ee852f57c1989deac9335354\",\"id\":\"discourse-resolve\",\"joint\":1,\"mentions\":{\"m1\":{\"accessible\":[{\"kind\":\"entity\",\"name\":\"binder:0\"}],\"accessible_recorded\":true,\"recorded\":{\"kind\":\"entity\",\"name\":\"binder:0\"}}},\"source_id\":\"ba5a0b0b16319df75675fd05398750fb23928d58e8f2a79d151fc349ce7e2fe8\",\"status\":\"ok\",\"units\":{\"u1\":{\"formula\":[\"forall\",\"person\",[\"implies\",[\"unary\",\"owner\",[\"var\",0]],[\"unary\",\"ready\",[\"var\",0]]]],\"meaning_id\":\"79eba28a46f259f4558459942f412d942e598b429fb47681f44fd86f868cc3ee\",\"status\":\"resolved\"}},\"well_formed\":\"ok\"}"
+ ],
+ [
+  "S4-2 recorded 13",
+  {
+   "id": "v",
+   "kind": "discourse-validity",
+   "document": "---\n{\"format\": \"ve-document@1\", \"units\": [{\"id\": \"u1\", \"span\": [0, 20], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]]}}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"unary\", \"reviewed\", [\"const\", \"api\"]], \"unit\": \"u1\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}], \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"service\"}, \"person\": {\"description\": \"person\"}, \"document\": {\"description\": \"document\"}}, \"predicates\": {\"reviewed\": {\"arguments\": [\"service\"], \"description\": \"reviewed\"}, \"deployed\": {\"arguments\": [\"service\"], \"description\": \"deployed\"}, \"safe\": {\"arguments\": [\"service\"], \"description\": \"safe\"}, \"eligible\": {\"arguments\": [\"service\"], \"description\": \"eligible\"}, \"ready\": {\"arguments\": [\"person\"], \"description\": \"ready\"}, \"owner\": {\"arguments\": [\"person\"], \"description\": \"owner\"}, \"manager_of\": {\"arguments\": [\"person\", \"person\"], \"description\": \"manager_of\"}, \"supersedes\": {\"arguments\": [\"document\", \"document\"], \"description\": \"supersedes\"}}, \"constants\": {\"api\": {\"sort\": \"service\", \"description\": \"api\"}, \"alice\": {\"sort\": \"person\", \"description\": \"alice\"}, \"bob\": {\"sort\": \"person\", \"description\": \"bob\"}}}}}\n---\nThe API is reviewed."
+  },
+  "{\"id\":\"v\",\"status\":\"ok\",\"validity\":{}}"
+ ],
+ [
+  "S4-2 recorded 14",
+  {
+   "id": "x",
+   "kind": "no-such-kind",
+   "unit": "soft-norms@0"
+  },
+  "{\"error\":\"property not found: environment\",\"id\":\"x\",\"status\":\"error\"}"
+ ],
+ [
+  "S4-3",
+  {
+   "id": "s4c",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@2\", \"environment\": {\"language\": \"ve.core@0.2\", \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"Service\"}, \"person\": {\"description\": \"Person\"}}, \"predicates\": {\"deployed\": {\"arguments\": [\"service\"], \"description\": \"Deployed\"}, \"api\": {\"arguments\": [\"service\"], \"description\": \"API\"}, \"owns\": {\"arguments\": [\"person\", \"service\"], \"description\": \"Owner\"}}, \"constants\": {\"web_api\": {\"sort\": \"service\", \"description\": \"Web API\"}, \"alice\": {\"sort\": \"person\", \"description\": \"Alice\"}}}, \"profiles\": [\"norms@0\", \"relational-fol@0\", \"ve.discourse@1\"]}, \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"web_api\"]]}}], \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": []}, \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}]}\n---\nWeb API is deployed.\n"
+  },
+  "{\"admitted\":true,\"bound\":{},\"definitions_version\":\"905e9f063c8ff205ebbaded8ef2b6bb58521dea0dee921db75b3ba50069a4880\",\"document_id\":\"fffd90af147f370ddaf3c08a447c997181eb0879a3943ba3ced5eda1c34f1c6c\",\"environment_id\":\"905e9f063c8ff205ebbaded8ef2b6bb58521dea0dee921db75b3ba50069a4880\",\"id\":\"s4c\",\"inner_report_id\":\"be204b6c191a8b1ce0e5d72e695ce6ae52d73957265a590d98f668f9effb0e5d\",\"joint\":1,\"joint_choices\":[[]],\"joint_formula\":[\"top\"],\"kinds\":[\"asserted\"],\"meaning_ids\":{},\"pending\":[],\"presuppositions\":{},\"reading_verdicts\":{},\"references\":[],\"report\":{\"assumptions\":[{\"ast\":[\"top\"],\"label\":\"open:t\",\"name\":\"n\"}],\"root\":{\"ast\":[\"top\"],\"label\":\"open:t\",\"name\":\"n\"}},\"report_id\":\"bde782916a5a3ee216e7f0c227ca4e1fca8dae95622b2e70f88103cf96ed5228\",\"self_truth\":[],\"source_id\":\"f6e86168c83120a55500720405f8b2deaccad5c4e7b2e7754626757b4ce71dbe\",\"status\":\"ok\",\"statuses\":{\"u1\":\"CHECKED\"},\"validity\":{}}"
+ ],
+ [
+  "S4-25",
+  {
+   "id": "s4c",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@2\", \"environment\": {\"language\": \"ve.core@0.2\", \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"Service\"}, \"person\": {\"description\": \"Person\"}}, \"predicates\": {\"deployed\": {\"arguments\": [\"service\"], \"description\": \"Deployed\"}, \"api\": {\"arguments\": [\"service\"], \"description\": \"API\"}, \"owns\": {\"arguments\": [\"person\", \"service\"], \"description\": \"Owner\"}, \"review_required\": {\"arguments\": [\"service\"], \"description\": \"must be reviewed\", \"regulated\": {\"role\": \"obligation\", \"default\": \"allow\", \"act\": \"{0} be reviewed\"}}}, \"constants\": {\"web_api\": {\"sort\": \"service\", \"description\": \"Web API\"}, \"alice\": {\"sort\": \"person\", \"description\": \"Alice\"}}}, \"profiles\": [\"relational-fol@0\", \"ve.discourse@1\"]}, \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"web_api\"]]}}], \"discourse\": {\"version\": \"ve.discourse@1\", \"anchors\": []}, \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}]}\n---\nWeb API is deployed.\n"
+  },
+  "{\"error\":\"fields do not match: expected [arguments, description], got [arguments, description, regulated]\",\"id\":\"s4c\",\"status\":\"error\"}"
+ ],
+ [
+  "S4-28",
+  {
+   "id": "s4c",
+   "kind": "admission",
+   "document": "---\n{\"format\": \"ve-document@1\", \"environment\": {\"language\": \"ve.core@0.2\", \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"service\": {\"description\": \"Service\"}, \"person\": {\"description\": \"Person\"}}, \"predicates\": {\"deployed\": {\"arguments\": [\"service\"], \"description\": \"Deployed\"}, \"api\": {\"arguments\": [\"service\"], \"description\": \"API\"}, \"owns\": {\"arguments\": [\"person\", \"service\"], \"description\": \"Owner\"}, \"review_required\": {\"arguments\": [\"service\"], \"description\": \"must be reviewed\", \"regulated\": {\"role\": \"obligation\", \"default\": \"allow\", \"act\": \"{0} be reviewed\"}}}, \"constants\": {\"web_api\": {\"sort\": \"service\", \"description\": \"Web API\"}, \"alice\": {\"sort\": \"person\", \"description\": \"Alice\"}}}, \"profiles\": [\"norms@0\", \"relational-fol@0\"]}, \"units\": [{\"id\": \"u1\", \"span\": [0, 21], \"kind\": \"asserted\", \"meaning\": \"specified\", \"support\": \"assumption\", \"content\": {\"ast\": [\"unary\", \"deployed\", [\"const\", \"web_api\"]]}}, {\"id\": \"u2\", \"span\": [21, 62], \"kind\": \"norm\", \"meaning\": \"specified\", \"support\": \"none\", \"content\": {\"norm\": {\"name\": \"rule-u2\", \"predicate\": \"review_required\", \"sign\": true, \"guard\": [\"unary\", \"deployed\", [\"var\", 0]], \"unless\": [], \"over\": []}}}], \"graph\": {\"root\": \"n\", \"nodes\": [{\"name\": \"n\", \"ast\": [\"top\"], \"label\": \"open:t\"}]}, \"open_terms\": [{\"name\": \"t\", \"arguments\": [], \"decided_by\": \"reviewer\", \"necessary\": [], \"sufficient\": [], \"factors\": [], \"precedents\": [], \"jurisdiction\": \"policy\", \"version\": 1}]}\n---\nWeb API is deployed.\nEvery deployed service must be reviewed.\n"
+  },
+  "{\"error\":\"fields do not match: expected [arguments, description], got [arguments, description, regulated]\",\"id\":\"s4c\",\"status\":\"error\"}"
+ ]
+]
