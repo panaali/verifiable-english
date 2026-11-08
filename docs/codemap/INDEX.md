@@ -9,6 +9,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 2 modules — -
+- [docs/commands-imperatives/](docs__commands-imperatives.md) — 1 modules — -
 - [docs/composition/](docs__composition.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
@@ -132,7 +133,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 92 modules — -
 - [tests/ part 5](tests--part-5.md) — 78 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
-- [tests/ part 7](tests--part-7.md) — 57 modules — -
+- [tests/ part 7](tests--part-7.md) — 58 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 99 modules — -
 - [tools/ part 2](tools--part-2.md) — 9 modules — -
