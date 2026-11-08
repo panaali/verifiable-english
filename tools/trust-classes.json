@@ -17912,7 +17912,11 @@
         "VE.Events.RouteExamples.unlisted",
         "VE.Events.RouteExamples.onBranch",
         "VE.Events.RouteExamples.everyKind",
-        "VE.Events.RouteExamples.excBare"
+        "VE.Events.RouteExamples.excBare",
+        "VE.Events.RouteExamples.chainEnv",
+        "VE.Events.RouteExamples.requestCase",
+        "VE.Events.RouteExamples.requestIsNull",
+        "VE.Events.RouteExamples.requestIsCase"
       ]
     },
     "VE/Discourse/Compose.lean": {
