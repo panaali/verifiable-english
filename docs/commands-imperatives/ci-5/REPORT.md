@@ -62,7 +62,23 @@ and untied [V] within e9a6ec8d5938 and the allowances introduced since" with the
 re-pins `Acts/Lexical.lean` (16-161 -> 16-170, `joinFree` added to its declarations) and `SpeechActs/Wire.lean` (whole
 file, 1322 lines); `uv run pytest -q tests/test_assurance_manifest.py`: "139 passed".
 
-R16's mutants: TRUST-MUTANTS (filled below when the run ends).
+R16's mutants. The mechanical sweep (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json
+docs/commands-imperatives/ci-5/trust-mutants.json --test lean/VE/Commands/Examples.lean --test
+lean/VE/Compose/Examples.lean --test lean/VE/Service/ActsExamples.lean`) found 8 definitions with 51 operator sites but
+did not finish: its 4 GitHub Actions parts (at 10f8be450, Lean identical to HEAD;
+/home/seyran/code/manage-agents/cloud-jobs/ci-5-10f8be45/part-1..4.json) gave KILLED 8, SURVIVOR 0, UNKNOWN 11,
+INVALID 3, NOT RUN 29. Every UNKNOWN is "lake build did not finish in 1800 s (--build-timeout)" (or a mutant Lean refuses):
+a mutant of `Wire`, `Dispatch` or `Lexical` rebuilds the import cone up to the fixture files. Two VM fallbacks (10:23Z and
+14:47Z, load 50-130 beside 7-8 other sweeps) gave only build-timeout UNKNOWNs, so I stopped both; no run found a
+SURVIVOR. So no `trust-mutants.json` is committed, and BUILDER-CHECKLIST item 3's "until it exits 0" is NOT met.
+In its place every new or changed trusted definition has a planted mutant killed by a named `#guard` (`mutants.json`):
+`allowlist` S1, `joinFree` S2 and cloud bool-flip, `actsRefuses` S3 and cloud list-empty, `checkActsBlock` S4 and cloud
+and-or/ne-eq/list-empty, `allowlist₀` H1, `profileGateOf` H2, `profileGate₀` H3, `decodeEnvironmentWith` H4,
+`decodeSpeechEnvironmentFull₀` H5, `profileGate` H6, `profilesAllowed` cloud list-empty, `decodeSpeechEnvironmentFull`
+cloud bool-flip. Each H mutant was built with a script (/tmp, not committed) that replaces each proof the mutant broke
+with `sorry` in the mutant copy only and rebuilds until only fixture files report. The broken proofs are named in
+`mutants.json` too. Sources restored with git; `lake build VE.Commands.Examples VE.Compose.Examples
+VE.Service.ActsExamples`: "Build completed successfully (396 jobs)".
 
 ## Size
 
@@ -130,8 +146,8 @@ PC-6 (profile composition), after pc-revise-20261104 and sn-wire-pc6.
    and speech-elaborate shapes, read live in `tests/test_speech_acts_acts0.py::test_each_b1_row_is_its_lean_fixture_and_reads_one_simple_act`.
 2. Deliverables: PASS, the Deliverables table (each row: commit and test); deviations signed (DRI 20261105 items 1-3,
    20261108-ci-5-size item 1); no Python copy of a Lean decision (no `ve/` code changed); in-flight overlap reported (et-4b).
-3. Tests can fail: PASS, seeds S1-S4 (`mutants.json`), each killed by a named `#guard` and proof; R16 mutants in
-   `trust-mutants.json`.
+3. Tests can fail: PASS for seeds S1-S4 and hand mutants H1-H6 (`mutants.json`), each killed by a named `#guard`;
+   NOT MET: the mechanical R16 sweep did not finish (build timeouts, "Trust" above), so no `trust-mutants.json`.
 4. Python, Lean and Rust agree: PASS for Lean and the service: `AB.json` (base vs HEAD, 9 rows plus 6 acts-off rows
    identical); no Rust path reads `speech-acts@0` with `acts@0`, and no Rust code changed.
 5. R8 binding: N.A., no relayed field is added; undeclared phrases stay refused (`Examples.lean:406`,
