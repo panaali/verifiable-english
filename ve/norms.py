@@ -451,6 +451,9 @@ class NormDocument:
 
     def outcome(self, predicate, *, base=False, nary_atoms=False):
         self._require_completion()
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            self.refuse_split(predicate)
+            return self.relayed().outcome(predicate, base=base, nary_atoms=nary_atoms)
         positive, negative, _ = self.selection(predicate)
         default = self.env.predicates[predicate].regulated.default
         outcome = positive if default == "deny" else Not(negative)
