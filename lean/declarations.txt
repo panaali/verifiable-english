@@ -23486,7 +23486,7 @@ module VE.Senses.Texts db53bdf07c7264bc2f48028a16ef1a313f28f9377c43014c2bd81a969
 43:0-47:72 def VE.Senses.mixedText@VE.Senses.Texts
 49:0-50:110 def VE.Senses.unneededText@VE.Senses.Texts
 52:0-64:109 def VE.Senses.divergeGlosses@VE.Senses.Texts
-module VE.Senses.TextsExamples 9d78011c7f80b7812543170ada588138631c1e592ff506c20467803278571715
+module VE.Senses.TextsExamples d42e4562e751f0fb6023d657e0f292c83d3780c2feae2fbad7ddcc917b2ecc5e
 36:0-37:103 def VE.Senses.TextsExamples.reading@VE.Senses.TextsExamples
 39:0-46:11 def VE.Senses.TextsExamples.entries@VE.Senses.TextsExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f

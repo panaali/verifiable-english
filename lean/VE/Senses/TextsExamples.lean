@@ -66,5 +66,9 @@ def entries (s : String) : List (String × String) :=
 -- NoSenseFits beside S2's `none`: one unresolved word, no candidate
 #guard (reading "Alice is funny.").getObjValD "hint" == Json.mkObj [("code", "NoSenseFits"),
   ("text", "Sentence 1 has no reading under any sense of funny. The senses of funny here are: amusing; strange.")]
+-- a refusal under front-matter defaults has no source: S2's fields as they are, every one of them
+#guard (((runCaseReported (fenced ["Alice is funny.\n"] ["u1"] [] [("funny", 1)])).getObjValD "result").getObjValD
+  "reading").compress == "{\"class\":\"TypeMismatch\",\"code\":\"IllTyped\",\"status\":\"rejected\"," ++
+  "\"text\":\"The text was read, and its formulas do not pass the type check.\"}"
 
 end VE.Senses.TextsExamples
