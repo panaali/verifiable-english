@@ -1,0 +1,11 @@
+trust_mutants: 8 definitions, 51 mutants (13 to run), 4 jobs, base 176d50c05c2d
+UNKNOWN lean/VE/Acts/Lexical.lean:150 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:149 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-true: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:44 VE.SpeechActs.Wire.allowlist₀ (D[V], trusted) list-empty: ["norms@0", "relational-fol@0", "speech-acts@0"] -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:767 VE.Compose.actsRefuses (G[V], trusted) list-empty: ["soft-norms@0", "rights@0", "alternatives@0"].map -> [] (lean/VE/Compose/Dispatch.lean:767: Function expected at)
+trust_mutants: 0 KILLED, 0 SURVIVOR, 5 UNKNOWN, 3 INVALID, 0 ALLOWED, 5 NOT RUN, 38 OTHER SHARD in 4833 s
+trust_mutants: D[V], trusted: 4 UNKNOWN, 2 INVALID, 5 NOT RUN, 24 OTHER SHARD
+trust_mutants: G[V], trusted: 1 UNKNOWN, 1 INVALID, 14 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 5 of its 13 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.7 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.4 s, control_probes 453.6 s, mutants 4359.5 s, cleanup 3.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 1113.6 s (17), mutant_builds 803.7 s (17), mutant_checks 15563.8 s (13), stage_controls 1068.9 s (4)
