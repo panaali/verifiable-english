@@ -1,5 +1,8 @@
 {
  "allow": [
-  {"definition": "VE.Service.Document.judgedViews", "operator": "eq-ne", "reason": "equivalent: the mutated `==` is the view's `asserted` flag (`u.kind == .str \"asserted\"`), and no status, usage or refusal reads `UnitView.asserted` (lean/VE/Judgments/Status.lean only stores it; grep of lean/VE finds no reader), so flipping it changes no answer"}
+  {"definition": "VE.Service.Document.judgedViews", "operator": "eq-ne", "reason": "equivalent: the mutated `==` is the view's `asserted` flag (`u.kind == .str \"asserted\"`), and no status, usage or refusal reads `UnitView.asserted` (lean/VE/Judgments/Status.lean only stores it; grep of lean/VE finds no reader), so flipping it changes no answer"},
+  {"definition": "VE.Service.Document.checkDocSetsFast", "operator": "list-first", "reason": "equivalent: the mutated list `VE.Scope.governedSetUnits D` is read only by `.isEmpty` (the branch between `withSets` and `withUnits`), and `.take 1` of a list is empty exactly when the list is; the drop mutants, which change that, are killed by ChainExamples' governedSet guard (pc-1tm)"},
+  {"definition": "VE.Service.Document.checkDocSetsFast", "operator": "list-last", "reason": "equivalent: the mutated list `VE.Scope.governedSetUnits D` is read only by `.isEmpty` (the branch between `withSets` and `withUnits`), and `.reverse.take 1` of a list is empty exactly when the list is; the drop mutants, which change that, are killed by ChainExamples' governedSet guard (pc-1tm)"},
+  {"definition": "VE.Service.Document.checkDocSetsFast", "operator": "list-empty", "reason": "no program: the mutant writes `if [].isEmpty then`, whose `[]` has no element type, and Lean refuses it (`don't know how to synthesize implicit argument α`, an elaboration error the tool does not count as a refusal, so UNKNOWN, not INVALID)"}
  ]
 }
