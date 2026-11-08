@@ -27,7 +27,7 @@ def result : Shape :=
       ("status", constS "ok"),
       ("verdict", enumS ["LISTED", "LIMIT", "REFUSED"]),
       ("tokens", n [arr, .items (n [arr, .prefixItems [nat, nat], .minItems 2, .maxItems 2])]),
-      ("readings", n [arr, .items (ref "#/$defs/reading")]),
+      ("readings", n [arr, .items (ref "#/$defs/reading"), .maxItems VE.Acts.maxReadings]),
       ("diagnostic", str)]]
 
 def «row» : Shape :=

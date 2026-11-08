@@ -178,19 +178,20 @@ def refusedRow (id d : String) : Json :=
   VE.Route.Wire.ok id [("verdict", .str (verdictOf d)), ("tokens", Json.arr #[]), ("readings", Json.arr #[]),
     ("diagnostic", .str d)]
 
-/-- The request's members (7): `form` is `null` or a plain act's form. -/
+/-- The request's members (7): `form`, a plain act's form, may be absent (the service's JSON has no `null`). -/
 def decodeRequest (j : Json) :
     Except String (String × String × List String × VE.Norms.Role × Bool × Option Lexical.Form) := do
-  VE.Bridge.exactFields j ["id", "phrase", "fixed", "frames", "adverbs", "role", "sign", "form"]
+  VE.Bridge.exactFields j (["id", "phrase", "fixed", "frames", "adverbs", "role", "sign"] ++
+    if (j.getObjVal? "form").isOk then ["form"] else [])
   let role ← match j.getObjValD "role" with
     | .str "permission" => pure VE.Norms.Role.permission
     | .str "obligation" => pure .obligation
     | .str "plain" => pure .plain
     | _ => throw "InvalidInput: role is not permission, obligation or plain"
   let .bool sign := j.getObjValD "sign" | throw "InvalidInput: sign is not a boolean"
-  let f ← match j.getObjValD "form" with
-    | .null => pure none
-    | .str t => match Lexical.Form.ofText? t with
+  let f ← match j.getObjVal? "form" with
+    | .error _ => pure none
+    | .ok (.str t) => match Lexical.Form.ofText? t with
       | some f => pure (some f)
       | none => throw "InvalidInput: form is not has the right or is entitled"
     | _ => throw "InvalidInput: form is not has the right or is entitled"
