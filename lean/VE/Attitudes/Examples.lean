@@ -1,6 +1,7 @@
 import VE.Attitudes.Semantics
 import VE.Attitudes.Route
 import VE.NormDefaults.LayeredEntail
+import VE.Defaults.Route
 
 /-! `#guard`s on the values sections 2.1 to 2.4 of docs/spec/attitudes.md compute, on the fixtures of
 section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part), and from at-1b on sections
@@ -823,7 +824,8 @@ def Fno : VE.NormDefaults.FiniteFill U1 Nat := fun _ => []
 #guard (attitudesPack fat1).id == "attitudes" && (attitudesPack fat1).kind == .constraint &&
   (attitudesPack fat1).decls.isEmpty && (attitudesPack fat1).consts.isEmpty &&
   (attitudesPack fat1).conditions.isEmpty && (attitudesPack fat1).names.isEmpty
--- `attitudesPack_premises` (F-AT1, F-AT2): the labels and the premises, in order; one origin per label
+-- `attitudesPack_premises` (F-AT1, F-AT2): the labels and the premises, in order; one origin per label, each the root
+-- while `labelOrigin` is the stand-in (reviews/dri-decisions-20261108-at-1c.md item 1(b))
 #guard [fat1, fat2].all (fun A => (attitudesPack A).labelled.map (·.2) == framePremises A &&
   (attitudesPack A).labelled.map (·.1) == frameLabels A &&
   (attitudesPack A).origins == (frameLabels A).map (fun l => (l, labelOrigin A l)) &&
@@ -832,6 +834,13 @@ def Fno : VE.NormDefaults.FiniteFill U1 Nat := fun _ => []
 def draft4Pack (A : AttDoc) : VE.NormDefaults.Packs.Pack :=
   { attitudesPack A with kind := .vocabulary, decls := (keys A).map (fun k => (name A k, k.sorts)) }
 -- `assemble` takes the pack (it has no name); a pack declaring the keys' names is refused
+/-- reviews/dri-decisions-20261108-at-1c.md item 1(a): while `labelOrigin` is AT-2's stand-in (every origin the root,
+    pinned just above), no route registers the `attitudes` pack: no profile row for `attitudes@0`, no layered kind that
+    needs the pack. AT-2 lifts it when it writes the body. -/
+def labelOriginStandInUnread : Bool :=
+  !(labelOrigin fat1 "attitude:factive:attitudes__knows__1").isEmpty ||
+    (!VE.Compose.profileTable.any (·.profile == "attitudes@0") && !VE.NormDefaults.Wire.layeredRows.any (·.pack == some "attitudes"))
+#guard labelOriginStandInUnread
 #guard (match VE.NormDefaults.Packs.assemble U1 0 [attitudesPack fat1] with
     | .ok ps => ps.map (·.id) == ["attitudes"] | .error _ => false) &&
   errOf ((VE.NormDefaults.Packs.assemble U1 0 [draft4Pack fat1]).map (fun _ => ())) ==

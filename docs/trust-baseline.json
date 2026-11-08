@@ -2136,15 +2136,15 @@
   },
   {
    "class": "S",
-   "lines": 82,
-   "reason": "at-1c: S +82, G[V] +22 untied (trusted +104, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +31 (labelOrigin G[I] +5 untrusted), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "lines": 87,
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
    "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
   },
   {
    "class": "V",
    "lines": 22,
-   "reason": "at-1c: S +82, G[V] +22 untied (trusted +104, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +31 (labelOrigin G[I] +5 untrusted), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
    "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
   }
