@@ -1,5 +1,11 @@
 # ap-3dc report: the `acts-elaborate` relay and the norms routes under `acts@0` on Lean's elaborated document
 
+Review fix F1: `NormDocument.outcome` now delegates the entire operation to the relayed document for generated
+parts, with D-28 retained for split source names. `tests/test_acts_elaborate_relay.py::test_outcome_uses_the_elaborated_vocabulary_for_every_part_and_expansion`
+failed for both defaults before the fix (`KeyError: 'p027__1'`) and passes after it; the review's `PROBE F1` likewise
+failed before and passes after. No DRI signature is reserved for this correction; DELTA row 1 cites the item-specific
+DRI ruling that signs joined-act operations on the elaborated document.
+
 No DRI signature is reserved. Every DELTA row cites a standing ruling or the item-specific DRI ruling of 2026-11-02
 (reviews/dri-decisions-20261102-ap-3db.md item 1, applied as the task directs). Cut at the size line in the task's
 order: deliverables (1), (2) and the norms-route part of (4) are built; (3), (5), the document route and the Python
