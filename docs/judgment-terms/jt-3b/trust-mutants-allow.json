@@ -5,6 +5,10 @@
   {"definition": "VE.Service.Document.contentOf", "operator": "bool-flip", "reason": "main's line (lf-16f 88768fe72, the soft frame's `generated` flag), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py), outside this item's --test file."},
   {"definition": "VE.Service.Document.contentOf", "operator": "list-empty", "reason": "the survivor is main's `generated` line (lf-16f 88768fe72), unchanged by jt-3b; the same operator on this item's line 1605 is killed by the `refused` guards."},
   {"definition": "VE.Service.Document.contentOf", "operator": "list-drop-last", "reason": "main's line (lf-16f 88768fe72, the one-element `generated` list), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py)."},
-  {"definition": "VE.Service.Document.contentOf", "operator": "list-drop-first", "reason": "main's line (lf-16f 88768fe72, the one-element `generated` list), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py)."}
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-drop-first", "reason": "main's line (lf-16f 88768fe72, the one-element `generated` list), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py)."},
+  {"definition": "VE.Service.Document.check", "operator": "list-empty", "reason": "ill-typed: `records` and `records.map (·.1)` are projected (`.1`, `views`), so `[]` in their place does not elaborate (Invalid projection)."},
+  {"definition": "VE.Service.Document.statusRows", "operator": "list-empty", "reason": "ill-typed: `views.filterMap` and `statusLine …` are applied or mapped, so `[]` in their place does not elaborate (Function expected, Type mismatch: `statusLine` is an Option)."},
+  {"definition": "VE.Service.Document.linesJson", "operator": "list-empty", "reason": "ill-typed: `(legendRows js).map` and `status.map` are applied, so `[]` in their place does not elaborate (Function expected, Invalid field notation)."},
+  {"definition": "VE.Service.Document.legendRows", "operator": "list-empty", "reason": "ill-typed: `js.map` is applied to its function, so `[]` in its place does not elaborate (Function expected)."}
  ]
 }
