@@ -76,11 +76,18 @@ def u0170s01 := "The list of hard constraints above is not a list of all the beh
   "Notwithstanding the rules of section , every operator may share.", "Notwithstanding the rules of section 3, every operator may share:.",
   "##When there is no operator prompt", "##  Hard constraints", "####### Hard constraints", "## ",
   "## When there is no operator prompt:", "## If", "This applies only where ."].all (parseGovernor · == none)
+-- a line with no "#" is no heading, whatever follows
+#guard parseGovernor " Hard constraints" == none && parseGovernor "Hard constraints" == none
+-- a block no wording gives (a heading with no level, an empty object) renders to a line that is no wording
+#guard [j "{\"reach\": {\"anchor\": {\"heading\": \"Hard constraints\"}}, \"effect\": \"title\"}", j "{}", .null].all
+  fun b => parseGovernor (renderGovernor b) == none
 -- a narrowing whose condition mentions "its kind" takes the "In place of" wording (2.2, F4)
 #guard parseGovernor "The hard constraints apply only where the act is of its kind." == none
 -- two rows read it (a list name, and a narrowing of a list called "the rules below are called the x"): refused
 def twoReadings := "The rules below are called the x apply only where y."
 #guard (readings twoReadings).length == 2 && parseGovernor twoReadings == none
+-- the row's words twice: the name or the condition could hold them, so it is refused
+#guard parseGovernor "The hard constraints apply only where x apply only where y." == none
 -- the same, a carve-out over the name "the rules below are called the x"
 #guard parseGovernor "The rules below are called the x do not apply when y." == none
 
