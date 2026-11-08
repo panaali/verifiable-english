@@ -122,9 +122,9 @@ Next: ME-8 (consistency of printed numbers) uses the corrected charge.
 8. DELTA: PASS (none). No CLI mode reaches `signFlipC` (grep: only Stats, StatsExamples, Audit and the test).
 9. Test selection: PASS. The selection run listed `tests/test_calc_stats.py` as changed and ran it.
 10. Statements: PASS. The two changed statements are listed before and after. M4 shows the proofs break when
-    `signFlipC` changes. Spec re-read: 12.2's unit against docs/spec/math-evidence.md:834-838 (one per node plus
+    `signFlipC` changes. Spec re-read: 12.2's unit against docs/spec/math-evidence.md:836-838 (one per node plus
     each value's bits, a rational's numerator and denominator bits), and `signFlipC` charges before evaluation
-    (:837-838).
+    (:839).
 11. Budgets fail closed: PASS. The charge is tested both ways:
     - refusals: budget 0 refuses `d16` (`:58`, `sign-flip-empty`); one unit short refuses (`:57`, `:58`, `:67`);
     - acceptances: the exact charge admits (`:57`, `:58`, `:67`);
