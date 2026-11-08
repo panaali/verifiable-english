@@ -1,0 +1,21 @@
+trust_mutants: 20 definitions, 290 mutants (41 to run), 4 jobs, base 80a076f0c1fa
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) all-any: all -> any
+UNKNOWN lean/VE/Purposes/WellFormed.lean:28 VE.Purposes.Units.kind? (S, trusted) list-empty: (U.find? i) -> [] (lean/VE/Purposes/WellFormed.lean:28: Type mismatch)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) list-empty: s -> [] (lean/VE/Purposes/WellFormed.lean:88: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:84 VE.Purposes.markersLinked (S, trusted) list-empty: B.links -> [] (lean/VE/Purposes/WellFormed.lean:84: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:28 VE.Purposes.Units.kind? (S, trusted) list-empty: U -> [] (lean/VE/Purposes/WellFormed.lean:28: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:132 VE.Purposes.WellFormed (S, trusted) list-empty: U -> [] (lean/VE/Purposes/WellFormed.lean:132: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (lean/VE/Purposes/WellFormed.lean:134: failed to synthesize)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) list-first: s -> (s.take 1)
+UNKNOWN lean/VE/Purposes/Decl.lean:49 VE.Purposes.Ref (S, trusted) ctor-drop: | mention (id : String) ->  (lean/VE/Purposes/WellFormed.lean:32: Unknown constant `VE.Purposes.Ref.mention`)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-last: s -> (s.reverse.take 1)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:27 VE.Purposes.Units.find? (S, trusted) list-drop-first: Units -> (Units.drop 1) (lean/VE/Purposes/WellFormed.lean:27: unexpected token '('; expected identifier)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:83 VE.Purposes.markersLinked (S, trusted) list-drop-first: U.parts -> (U.parts.drop 1)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:56 VE.Purposes.sameUnit (S, trusted) list-drop-last: L.partIds -> (L.partIds.dropLast) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:156)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-last: B.links -> (B.links.reverse.take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+trust_mutants: 20 KILLED, 8 SURVIVOR, 8 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 249 OTHER SHARD in 210 s
+trust_mutants: D[V], trusted: 1 KILLED, 2 OTHER SHARD
+trust_mutants: S, trusted: 19 KILLED, 8 SURVIVOR, 8 UNKNOWN, 5 INVALID, 247 OTHER SHARD
+trust_mutants: steps: wall plan 9.5 s, scratch 2.8 s, control_build 0.2 s, probe_install 1.5 s, control_probes 4.6 s, mutants 186.1 s, cleanup 5 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 4.4 s (1), mutant_builds 372.8 s (56), mutant_checks 185 s (37), stage_controls 89.6 s (8), mutant_probes 53.1 s (20)
