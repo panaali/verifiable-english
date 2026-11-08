@@ -89,7 +89,10 @@ Over the ~600 cap. The six deliverables were built before the size was measured,
 (after (3)) carry conditions of item 3(b) (the counterexample) and item 2(b) (the A/B and its pin). Asked the DRI
 (inbox/dri/20261108T102318Z-ci-5-2509481.md): SIGNED, keep ci-5 whole, no cut to ci-5b, no further growth beyond review
 fixes and this section (reviews/dri-decisions-20261108-ci-5-size.md item 1). With REPORT.md, DELTA.md and mutants.json
-the count by the task's rule is FINAL-COUNT.
+the count by the task's rule is 1,191 lines (1,149 added, 42 removed), of which
+the docs and evidence of this item (REPORT 179, mutants.json 122, ab.py 109, DELTA 19, AB.json 11) are 440 and the
+hand-curated assurance pins 25; code, fixtures and tests are unchanged from the 844 the DRI ruled on, less the dropped
+report test (10 lines).
 
 ## Tests
 
