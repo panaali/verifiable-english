@@ -140,6 +140,27 @@ theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
       simp only [h, ↓reduceIte, Bool.false_eq_true, String.reduceBEq, beq_self_eq_true] <;> fits
   · by_cases h : x.ok = true <;> simp only [h, ↓reduceIte, Bool.false_eq_true] <;> fits
 
+open VE.Defaults.Wire in
+theorem zoneLine_fits (l : ZoneLine) : Fits req (skel% "norm-defaults.json#/$defs/defaults_zone_line") l.json := by
+  cases l with
+  | assumed k vs => cases k <;> simp only [ZoneLine.json, ZoneLine.row, List.cons_append, List.nil_append,
+      VE.SoftNorms.Wire.decisionKeyJson, entityIds] <;> fits
+  | _ => simp only [ZoneLine.json, ZoneLine.row, List.cons_append, List.nil_append, entityIds]; fits
+
+open VE.Defaults.Wire in
+theorem zoneCase_fits (v : DefaultsView) (id kind : String) (j : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
+    OkP (fun o => ∀ a, o = some a → Fits j Skeletons.normDefaults a) (zoneCase v id kind j) := by
+  unfold zoneCase
+  apply OkP.ite <;> intro hz
+  · refine OkP.map (fun x a ha => ?_)
+    cases ha
+    read_kind
+    all_goals simp only [VE.Route.Wire.ok, zoneFields, zoneFieldsOf, formLabel, entityIds]
+    all_goals (repeat' split) <;> fits using zoneLine_fits
+  · exact defaultsCase_fits v id kind j hi hk hp
+
 theorem layeredKindCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)
     (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
@@ -160,7 +181,7 @@ theorem layeredKindCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
     refine OkP.bind (fun v _ => OkP.bind (fun o ho => ?_))
     cases o with
     | none => exact OkP.throw
-    | some a => exact OkP.pure (defaultsCase_fits v id _ j hi hk hp _ ho _ rfl)
+    | some a => exact OkP.pure (zoneCase_fits v id _ j hi hk hp _ ho _ rfl)
 
 theorem runLayered_fits (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)

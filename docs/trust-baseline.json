@@ -2147,6 +2147,13 @@
    "reason": "pc-1g F1: lean/VE/Service/Document.lean D[V] +1 in environmentOf, refusing conditioned rights rules before their unchecked judgment usage; new ruleExceptionConditioned, rightsBlockRules and unitRules are G[R], reject-only",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g F1, 2026-11-04",
    "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 140,
+   "reason": "df-5: the defaults-zone kind, remeasured at review F1: VE/Defaults/ZoneWire.lean +100 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase, ZoneReplay, ZoneReplay.X, maxZoneObservations, zoneJoins, zoneWordsJson; tied, not counted: decisionOf, outcomeOf, tupleIn, recordEntry, obsEntry, replayZoneOn, ZoneReplay.min, zoneSizes, ZoneLine.row, ZoneLine.kind, zoneHeads, zoneLineWords), VE/Defaults/ZoneWordsMain.lean +2 (G[V] main), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +140",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   }
  ]
 }
