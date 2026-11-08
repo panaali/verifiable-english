@@ -1,0 +1,8 @@
+job=x86sh-nightly-20f27749-t120537-s3 shard=3/4 nproc=4 arch=x86_64 host=runnervm7aw5e date=2026-11-08T07:25:18Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   63G   82G  44% /
+ 07:25:18 up 1 min,  0 user,  load average: 1.21, 0.42, 0.15
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key 08ea152f6dbb asset lean-build-08ea152f6dbb.tar.zst sha256 9ba67d22514c ok, seal ok, from download, 8.8 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
