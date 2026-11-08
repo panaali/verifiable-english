@@ -1,3 +1,5 @@
+- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
+- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
 - `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
 - `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
 - `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
@@ -88,6 +90,3 @@
 - `tests/test_profiles.py` — (no module docstring)
 - `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
 - `tests/test_properties.py` — (no module docstring)
-- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
-- `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
-- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
