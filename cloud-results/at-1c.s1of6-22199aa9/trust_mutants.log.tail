@@ -1,0 +1,18 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 18 definitions, 244 mutants (41 to run), 4 jobs, base cbc4c8a39533
+SURVIVOR lean/VE/Attitudes/Route.lean:23 VE.Attitudes.SettledAsX (S, trusted) body-false: ∀ F : FillTables U B, BaseAdmissibleX U X (withFill U B F) → ((VE.Norms.outcomeBase (fill U) r.na... -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:961, lean/VE/Attitudes/Examples.lean:964)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:52 VE.Attitudes.seedClosure (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:949)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:48 VE.Attitudes.restrict (S, trusted) eq-le: = -> ≤ (lean/VE/Attitudes/Semantics.lean:48: failed to synthesize)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:20 VE.Attitudes.contentAt (S, trusted) arm-true: k.slotSort.isSome ∧ k.content.denote S [x] -> True (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890, lean/VE/Attitudes/Examples.lean:909)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:20 VE.Attitudes.contentAt (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890, lean/VE/Attitudes/Examples.lean:909)
+UNKNOWN lean/VE/Attitudes/Semantics.lean:33 VE.Attitudes.AFormula.denote (S, trusted) eq-le: = -> ≤ (lean/VE/Attitudes/Semantics.lean:33: failed to synthesize)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:35 VE.Attitudes.AFormula.denote (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:34 VE.Attitudes.AFormula.denote (S, trusted) arm-false: ¬ a.denote A m Γ ρ -> False
+SURVIVOR lean/VE/Attitudes/Semantics.lean:38 VE.Attitudes.AFormula.denote (S, trusted) arm-true: ∀ v, m.S.domain s v → a.denote A m (s :: Γ) (v :: ρ) -> True
+SURVIVOR lean/VE/Attitudes/Semantics.lean:35 VE.Attitudes.AFormula.denote (S, trusted) arm-false: a.denote A m Γ ρ ∧ b.denote A m Γ ρ -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+trust_mutants: 27 KILLED, 10 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 203 OTHER SHARD in 238 s
+trust_mutants: G[V], trusted: 5 KILLED, 33 OTHER SHARD
+trust_mutants: S, trusted: 22 KILLED, 10 SURVIVOR, 2 UNKNOWN, 2 INVALID, 170 OTHER SHARD
+trust_mutants: steps: wall plan 9 s, scratch 4 s, control_build 0.2 s, probe_install 1.3 s, control_probes 19.1 s, mutants 199.6 s, cleanup 4.6 s; lake control_build 0.1 s (1), probe_install 1.3 s (1), control_probes 16.6 s (1), mutant_builds 31.2 s (41), mutant_checks 316 s (48), stage_controls 4.1 s (3), mutant_probes 79 s (27)
