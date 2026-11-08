@@ -1,0 +1,12 @@
+trust_mutants: 20 definitions, 291 mutants (60 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> [] (lean/VE/Scope/Authoring.lean:159: Function expected at)
+UNKNOWN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when").map -> [] (lean/VE/Scope/Authoring.lean:166: Function expected at)
+SURVIVOR lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: (s.splitOn " ") -> ((s.splitOn " ").take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-first: degree -> (degree.take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: w -> (w.take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-last: degree.map (("degree", .str ·)) -> ((degree.map (("degree", .str ·))).reverse.take 1)
+UNKNOWN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: (("degree", .str ·)) -> ((("degree", .str ·)).drop 1) (lean/VE/Scope/Authoring.lean:44: Invalid dotted identifier notation: The expected type of `.str` ...)
+trust_mutants: 45 KILLED, 4 SURVIVOR, 3 UNKNOWN, 15 INVALID, 5 ALLOWED, 0 NOT RUN, 219 OTHER SHARD in 73 s; 12 reused from be09a656cd2e (identical inputs)
+trust_mutants: D[V], trusted: 31 KILLED, 2 SURVIVOR, 2 UNKNOWN, 15 INVALID, 4 ALLOWED, 161 OTHER SHARD
+trust_mutants: S, trusted: 14 KILLED, 2 SURVIVOR, 1 UNKNOWN, 1 ALLOWED, 58 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 2.7 s, control_build 0.2 s, probe_install 1.1 s, control_probes 1.3 s, mutants 53.6 s, cleanup 5.1 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 1.1 s (1), mutant_builds 126.7 s (64), mutant_checks 27 s (39), stage_controls 4.6 s (3), mutant_probes 42.6 s (33)
