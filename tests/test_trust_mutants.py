@@ -3039,6 +3039,19 @@ def test_merge_carries_parts_from_identical_inputs_at_different_commits(sharded,
     assert data["shards"][1]["carried"] == "inputs identical"
 
 
+def test_the_testing_guide_states_resume_as_the_tool_does():
+    """eff-tm-headmoved review F2: docs/TESTING.md summarises the docstring, so it says what the tool does: --resume
+    carries verdicts across commits whose inputs and plan are identical, with the tool's own `carried` wording, and
+    makes no claim that another HEAD's record is ignored or that --resume needs the same HEAD."""
+    import trust_mutants as tm
+    guide = re.sub(r"\s+", " ", (ROOT / "docs/TESTING.md").read_text())
+    section = guide[guide.index("## Mutants of Lean definitions"):]
+    section = section[:section.index(" ## ")]
+    assert f'carried: "{tm.CARRIED}"' in section and f'carried: "{tm.CARRIED}"' in tm.__doc__
+    for stale in ("another HEAD is ignored", "at the same HEAD (commit, tree", "another HEAD's are ignored"):
+        assert stale not in section and stale not in re.sub(r"\s+", " ", tm.__doc__), stale
+
+
 IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says)
     ("another-tree", lambda go, p: p.update(tree="0" * 40), "not at this HEAD"),
     ("no-tree", lambda go, p: p.pop("tree"), "records no tree"),
