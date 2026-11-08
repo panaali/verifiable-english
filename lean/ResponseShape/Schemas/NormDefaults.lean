@@ -56,7 +56,8 @@ def kind : Def :=
     ("defaults-coherence", kindIs "defaults-coherence"),
     ("defaults-certificate", kindIs "defaults-certificate"),
     ("defaults-model", kindIs "defaults-model"),
-    ("defaults-zone", kindIs "defaults-zone")]
+    ("defaults-zone", kindIs "defaults-zone"),
+    ("acts-elaborate", kindIs "acts-elaborate")]
 
 /-- The fields of `elaborate`, shared with `layered_elaborate`. -/
 def elaborateFields : List (String × Shape) := [
@@ -381,7 +382,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/defaults-coherence", ref "#/$defs/defaults_coherence"),
         (ref "#/$defs/kind/defaults-certificate", ref "#/$defs/defaults_certificate"),
         (ref "#/$defs/kind/defaults-model", ref "#/$defs/defaults_model"),
-        (ref "#/$defs/kind/defaults-zone", ref "#/$defs/defaults_zone")]]),
+        (ref "#/$defs/kind/defaults-zone", ref "#/$defs/defaults_zone"),
+        (ref "#/$defs/kind/acts-elaborate", ref "norms.json#/$defs/acts-elaborate")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
