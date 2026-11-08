@@ -2392,6 +2392,50 @@ def parts(go, n: int, *args) -> list[Path]:
     return out
 
 
+def test_control_probe_mode_is_recorded_but_not_a_verdict_input(sharded, capsys):
+    first = sharded.tmp / "old.json"
+    sharded("--json", first, "--max-mutants", 6)
+    old = json.loads(first.read_text())
+    assert old["control_probes"] == "lazy"
+    del old["control_probes"]  # records written before this option are eager
+    first.write_text(json.dumps(old))
+    resumed = sharded.tmp / "resumed.json"
+    assert sharded("--json", resumed, "--resume", first, "--control-probes", "eager",
+                   "--max-mutants", 6)[3] == []
+    assert json.loads(resumed.read_text())["resumed"]["kept"] == 6
+    rescored = sharded.tmp / "rescored.json"
+    assert sharded("--json", rescored, "--rescore", first, "--max-mutants", 6)[0] in (0, 1)
+    assert json.loads(rescored.read_text())["rescore"]["mode"] == "identical"
+
+    paths = parts(sharded, 2, "--max-mutants", 6)
+    second = json.loads(paths[1].read_text())
+    del second["control_probes"]
+    paths[1].write_text(json.dumps(second))
+    merged = sharded.tmp / "mixed.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1)
+    assert json.loads(merged.read_text())["control_probes"] == "mixed"
+
+
+def test_control_scratch_is_never_given_to_a_mutant(sharded, monkeypatch):
+    tm = sharded.tm
+    original_scratch, original_run = tm.Scratch, tm.run
+    control = []
+
+    class TrackedScratch(original_scratch):
+        def __init__(self, lean, parent, source=None):
+            super().__init__(lean, parent, source)
+            if source is None:
+                control.append(self)
+
+    def checked_run(m, scratch, *args):
+        assert control and scratch is not control[0]
+        return original_run(m, scratch, *args)
+
+    monkeypatch.setattr(tm, "Scratch", TrackedScratch)
+    monkeypatch.setattr(tm, "run", checked_run)
+    assert sharded("--max-mutants", 2)[3] == ["M001", "M002"]
+
+
 def test_a_shard_owns_a_disjoint_stable_part_of_the_mutants_that_run(sharded):
     """Part K of N owns the mutants that run whose id M<i> has (i - 1) % N == K - 1, the same on every call; it runs
     and control-builds only those, lists the others OTHER SHARD, and the NOT RUN ones as an unsharded run does."""
