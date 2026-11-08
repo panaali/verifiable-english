@@ -1720,6 +1720,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.holds_withRegions
 #print axioms VE.Cardinality.inRegion_iff
 #print axioms VE.Cardinality.length_filter_or
+#print axioms VE.Cardinality.listFault_some
 #print axioms VE.Cardinality.lower_unary
 #print axioms VE.Cardinality.mem_firstUse
 #print axioms VE.Cardinality.mem_firstUse_foldl
