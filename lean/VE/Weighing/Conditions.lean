@@ -12,9 +12,10 @@ import VE.NormDefaults.FillCheck
 
 `Weigh_T := Str_T ++ Dec_T ++ Grant_T`, each premise with its label and the request path of its entry; the one
 premise generator `condPremise` (a grant premise is its necessary `.off` case); the propositional implication check;
-`checkWeigh` (weighing.md 1.6, steps 3 to 7) and `WellFormedWeigh`. The theorems of weighing.md 5 follow, all but
-`strength_iff`, which is false as approved off the decoder (`Examples.lean`) and waits for the DRI; its reverse
-direction is `strength_mem`.
+`checkWeigh` (weighing.md 1.6, steps 3 to 7) and `WellFormedWeigh`. The theorems of weighing.md 5 follow;
+`strength_iff` carries the DRI's added hypothesis (every regulated name begins with an ASCII letter, the decoder's
+identifier rule): without it the statement is false off the decoder (`Examples.lean`). Its reverse direction,
+`strength_mem`, holds for every triple.
 Each condition is the formula the block decoder (WG-3) gives: today W1's budgeted decoder, since AT-3a's guard
 node is not on `main`.
 -/
@@ -1440,6 +1441,128 @@ theorem triple_arity (D : SoftDoc) (hw : WellFormedSoft D = true) {a L H : Strin
       · exact act_arity D hw hM
     · cases ht
   · cases ht
+
+/-! ## `strength_iff` (5.1): `outweighsName` is injective on the names a well-formed document reaches -/
+
+/-- A split at `__` after a dunder-free head and before a tail not starting with `_` is unique. -/
+theorem split_dunder_left : ∀ (k k' p p' : List Char),
+    (∀ u v, k ≠ u ++ '_' :: '_' :: v) → (∀ u v, k' ≠ u ++ '_' :: '_' :: v) →
+    p.head? ≠ some '_' → p'.head? ≠ some '_' →
+    k ++ '_' :: '_' :: p = k' ++ '_' :: '_' :: p' → k = k' ∧ p = p'
+  | [], [], _, _, _, _, _, _, h => by simpa using h
+  | [], c :: k', p, p', _, hk', h0, _, h => by
+    simp only [List.nil_append, List.cons_append, List.cons.injEq] at h
+    obtain ⟨rfl, h⟩ := h
+    cases k' with
+    | nil => simp at h; obtain ⟨_, rfl⟩ := h; simp at h0
+    | cons d k'' =>
+      simp only [List.cons_append, List.cons.injEq] at h
+      obtain ⟨rfl, -⟩ := h
+      exact absurd rfl (hk' [] k'')
+  | c :: k, [], p, p', hk, _, _, h0', h => by
+    simp only [List.nil_append, List.cons_append, List.cons.injEq] at h
+    obtain ⟨rfl, h⟩ := h
+    cases k with
+    | nil => simp at h; obtain ⟨_, rfl⟩ := h; simp at h0'
+    | cons d k'' =>
+      simp only [List.cons_append, List.cons.injEq] at h
+      obtain ⟨rfl, -⟩ := h
+      exact absurd rfl (hk [] k'')
+  | c :: k, c' :: k', p, p', hk, hk', h0, h0', h => by
+    simp only [List.cons_append, List.cons.injEq] at h
+    obtain ⟨rfl, h⟩ := h
+    obtain ⟨h1, h2⟩ := split_dunder_left k k' p p' (fun u v e => hk (c :: u) v (by simp [e]))
+      (fun u v e => hk' (c :: u) v (by simp [e])) h0 h0' h
+    exact ⟨by rw [h1], h2⟩
+
+/-- `outweighsName` is injective on valid rank names and acts not starting with `_`. -/
+theorem outweighsName_inj {a L H a' L' H' : String} (hL : validSoftName L = true) (hL' : validSoftName L' = true)
+    (hH : validSoftName H = true) (hH' : validSoftName H' = true) (ha : a.data.head? ≠ some '_')
+    (ha' : a'.data.head? ≠ some '_') (h : outweighsName a L H = outweighsName a' L' H') :
+    a = a' ∧ L = L' ∧ H = H' := by
+  have hd := congrArg String.data h
+  simp only [outweighsName, String.data_append, List.append_assoc] at hd
+  have hd' := List.append_cancel_left hd
+  simp only [List.cons_append, List.nil_append] at hd'
+  obtain ⟨-, hpL⟩ := VE.Readings.validSoftName_data hL
+  obtain ⟨-, hpL'⟩ := VE.Readings.validSoftName_data hL'
+  obtain ⟨⟨c, l, hc, hc1, _⟩, hpH⟩ := VE.Readings.validSoftName_data hH
+  obtain ⟨⟨c', l', hc', hc1', _⟩, hpH'⟩ := VE.Readings.validSoftName_data hH'
+  have h0 : (H.data ++ '_' :: '_' :: a.data).head? ≠ some '_' := by
+    rw [hc]; simp only [List.cons_append, List.head?_cons, ne_eq, Option.some.injEq]
+    intro e; subst e; exact absurd hc1 (by decide)
+  have h0' : (H'.data ++ '_' :: '_' :: a'.data).head? ≠ some '_' := by
+    rw [hc']; simp only [List.cons_append, List.head?_cons, ne_eq, Option.some.injEq]
+    intro e; subst e; exact absurd hc1' (by decide)
+  obtain ⟨h1, h2⟩ := split_dunder_left _ _ _ _ hpL hpL' h0 h0' hd'
+  obtain ⟨h3, h4⟩ := split_dunder_left _ _ _ _ hpH hpH' ha ha' h2
+  exact ⟨String.ext h4, String.ext h1, String.ext h3⟩
+
+theorem bindAll_not_inj : ∀ {s s' : List String} {x y : VE.Formula},
+    bindAll s (.not x) = bindAll s' (.not y) → s = s' ∧ x = y
+  | [], [], _, _, h => by simpa [bindAll] using h
+  | [], _ :: _, _, _, h => by simp [bindAll] at h
+  | _ :: _, [], _, _, h => by simp [bindAll] at h
+  | _ :: s, _ :: s', _, _, h => by
+    simp only [bindAll, List.foldr_cons, VE.Formula.all.injEq] at h
+    obtain ⟨rfl, h⟩ := h
+    obtain ⟨rfl, rfl⟩ := bindAll_not_inj (s := s) (s' := s') h
+    exact ⟨rfl, rfl⟩
+
+theorem atom_inj {n n' : String} {s : List String} (hs : Arity s) (h : atom n s = atom n' s) : n = n' := by
+  match s, hs with
+  | [_], _ => simpa [atom] using h
+  | [_, _], _ => simpa [atom] using h
+
+theorem regulated_of_sorts {D : SoftDoc} {a : String} (h : sortsOf D a ≠ []) : ∃ r ∈ D.T.regulated, r.name = a := by
+  unfold sortsOf sortsIn at h
+  cases hf : D.T.regulated.find? (·.name == a) with
+  | none => rw [hf] at h; exact absurd rfl h
+  | some r => exact ⟨r, List.mem_of_find?_eq_some hf, by simpa using List.find?_some hf⟩
+
+/-- `Str_T` has a premise exactly for the `outweighs` decisions of strict pairs, queried at declared ranks and a
+    declared predicate, when every regulated name begins with an ASCII letter (the decoder's identifier rule). -/
+theorem strength_iff (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String)
+    (hL : L ∈ Wd.D.soft.ranks) (hH : H ∈ Wd.D.soft.ranks)
+    (ha : ∃ ss, Wd.D.E.predicates a = some ss)
+    (hr : ∀ r ∈ Wd.D.T.regulated, ∃ c cs, r.name.data = c :: cs ∧ c.isAlpha) :
+    bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd ↔
+      (a, L, H) ∈ outweighsTriples Wd.D ∧ strictPair Wd H L = true := by
+  refine ⟨fun hm => ?_, fun ⟨ht, hs⟩ => strength_mem Wd ht hs⟩
+  have hw : WellFormedSoft Wd.D = true := ((Bool.and_eq_true _ _).mp h).1
+  have hrk := VE.Readings.checkSoftEnv_names _ (VE.Readings.checkSoft_parts _ (VE.Readings.wellFormedSoft_check _ hw)).1
+  simp only [strengthPremises, strengthEntries, List.mem_map, List.mem_filterMap] at hm
+  obtain ⟨⟨l, φ, p⟩, ⟨⟨a', L', H'⟩, ht, hf⟩, hφ⟩ := hm
+  split at hf
+  · rename_i e i hfe
+    simp only [Option.some.injEq, Prod.mk.injEq] at hf
+    obtain ⟨-, rfl, -⟩ := hf
+    have hs : strictPair Wd H' L' = true := by
+      have hp := List.find?_some hfe
+      simp only [Bool.and_eq_true] at hp
+      have he := List.mem_map_of_mem (f := Prod.fst) (List.mem_of_find?_eq_some hfe)
+      rw [List.zipIdx_map_fst] at he
+      exact strictPair_edge.mpr ⟨e, he, hp⟩
+    obtain ⟨hss, hat⟩ := bindAll_not_inj hφ
+    have har := triple_arity Wd.D hw ht
+    have hne : actSortsOf Wd.D a' ≠ [] := by rcases har with h1 | h1 <;> intro e <;> simp [e] at h1
+    simp only [outweighsF] at hat
+    rw [← hss] at hat
+    have hn := atom_inj har hat
+    have head : ∀ x, actSortsOf Wd.D x ≠ [] → x.data.head? ≠ some '_' := by
+      intro x hx
+      obtain ⟨r, hr', rfl⟩ := regulated_of_sorts hx
+      obtain ⟨c, cs, hc, hca⟩ := hr r hr'
+      rw [hc]; simp only [List.head?_cons, ne_eq, Option.some.injEq]
+      intro e; subst e; exact absurd hca (by decide)
+    obtain ⟨c, hc, ⟨e', he', -⟩⟩ := chain_of_strictPair h hs
+    have hmem := chain_members_ranks Wd hw c hc.2.2.1 hc.2.2.2
+    have hH' := hrk H' (List.mem_append_left _ (hmem H' (List.mem_of_mem_head? hc.1)))
+    have hL' := hrk L' (List.mem_append_left _ (hmem L' (List.mem_of_getLast? hc.2.1)))
+    obtain ⟨rfl, rfl, rfl⟩ := outweighsName_inj hL' (hrk L (List.mem_append_left _ hL)) hH'
+      (hrk H (List.mem_append_left _ hH)) (head a' hne) (head a (hss ▸ hne)) hn
+    exact ⟨ht, hs⟩
+  · cases hf
 
 /-- `B'` agrees with `B` on every predicate that is not a decision of `E′`. -/
 def SameBase (Wd : WeighDoc) (B B' : VE.Structure.{u}) : Prop :=

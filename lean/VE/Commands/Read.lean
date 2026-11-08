@@ -140,16 +140,25 @@ def strField (fs : List (String × Lean.Json)) (k : String) : String :=
   | some (.str t) => t
   | _ => ""
 
-/-- `english.read`'s refusal of the sentence `c.`, said of the condition. -/
-def unreadOf (E : Env) (L : Lexicon) (c : String) : GuardFault :=
-  let fs := VE.EnglishGrammar.Run.translation ⟨E, {}, L, none, []⟩ maxCandidates (c ++ ".")
+/-- `english.read`'s refusal of the sentence `c.`, said of the condition, from its existing translation. -/
+def unreadOf (E : Env) (L : Lexicon) (c : String) (o : TranslateOutcome) : GuardFault :=
+  let fs := VE.EnglishGrammar.Run.translationOf ⟨E, {}, L, none, []⟩ (c ++ ".") o
   .unread (strField fs "code") (ofCondition (strField fs "text"))
+
+/- Injected refusals retain their original translation result, even if the sentence would translate
+differently against this environment. Both proof tasks and command conditions use `guardOfOutcome`. -/
+#guard let E : Env := { sorts := [], predicates := [], constants := [] }
+  let L : Lexicon := { nouns := [], letters := [], wordings := [], negatives := [], aliases := [], spellings := [] }
+  match unreadOf E L "x" .notOneSentence, unreadOf E L "x" (.lexical (.badCharacter 0)) with
+  | .unread c _, .unread d _ => c == "NotOneSentence" && d == "BadCharacter"
+  | _, _ => false
 
 /-- The decision on one translation outcome of the sentence `c ++ "."`: an incomplete set or `.budget` is `limit`;
 a marked reading is `ConclusionWithoutPremise`; a reading that does not decode closed and typed is `IllTyped`;
 otherwise the distinct guards: one is `.ok`, two or more `ambiguous`, none (and every other outcome) `unreadOf`. -/
-def guardOfOutcome (se : SpeechEnvironment) (E : Env) (L : Lexicon) (c : String) :
-    TranslateOutcome → Except GuardFault VE.Formula
+def guardOfOutcome (se : SpeechEnvironment) (E : Env) (L : Lexicon) (c : String)
+    (o : TranslateOutcome) : Except GuardFault VE.Formula :=
+  match o with
   | .readings rs complete =>
     if !complete then .error .limit
     else if rs.any (·.2.1) then
@@ -158,10 +167,10 @@ def guardOfOutcome (se : SpeechEnvironment) (E : Env) (L : Lexicon) (c : String)
       | .error _ => .error (.unread "IllTyped" (ofCondition (VE.EnglishGrammar.Run.illTypedText (some 0))))
       | .ok gs => match gs.eraseDups with
         | [g] => .ok g
-        | [] => .error (unreadOf E L c)
+        | [] => .error (unreadOf E L c o)
         | gs => .error (.ambiguous gs)
   | .budget => .error .limit
-  | _ => .error (unreadOf E L c)
+  | _ => .error (unreadOf E L c o)
 
 /-- A condition's guard, over english-lean's translation of the one sentence `c ++ "."`. -/
 def guardOf (se : SpeechEnvironment) (E : Env) (L : Lexicon) (b : Nat) (c : String) :
