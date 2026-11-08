@@ -1,3 +1,7 @@
+- `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
+- `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
+- `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
+- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
 - `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
 - `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
@@ -26,6 +30,7 @@
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
+- `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's deferred-route claims.
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -44,6 +49,8 @@
 - `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
 - `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
+- `tests/test_defaults_zone.py` — The `defaults-zone` kind through the Lean service (defeasible plan 2.7 and batch DF-5; spec 3.8, 4 and 8.6).
+- `tests/test_defaults_zone_ties.py` — df-5 loop recheck F1: the zone wire's tied definitions are bound to the request's values, not only to its types.
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
@@ -52,10 +59,12 @@
 - `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
 - `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
 - `tests/test_discourse_answer.py` — The Python relay never accepts a Lean discourse answer that is not an answer to the document it asked about (lf-4 review B; FINDING-CLASSES 8 and 15).
+- `tests/test_discourse_composed_route.py` — cmp-s4c: the discourse route's entry on the composed path (docs/spec/discourse.md 14.5, 14.6 and 14.8) through the Lean service: norm content answered on a lis…
 - `tests/test_discourse_constitution.py` — The constitution example of docs/spec/discourse.md 2.5 (u0214.s02) as a regression fixture.
 - `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
+- `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 - `tests/test_e1_core.py` — (no module docstring)
@@ -78,13 +87,3 @@
 - `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
 - `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.
 - `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
-- `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
-- `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
-- `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
-- `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
-- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
-- `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
-- `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
-- `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
-- `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
-- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
