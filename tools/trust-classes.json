@@ -614,7 +614,9 @@
         "ResponseShape.Schemas.NormDefaults.defaults_situation",
         "ResponseShape.Schemas.NormDefaults.defaults_coherence",
         "ResponseShape.Schemas.NormDefaults.defaults_certificate",
-        "ResponseShape.Schemas.NormDefaults.defaults_model"
+        "ResponseShape.Schemas.NormDefaults.defaults_model",
+        "ResponseShape.Schemas.NormDefaults.defaults_zone_line",
+        "ResponseShape.Schemas.NormDefaults.defaults_zone"
       ],
       "G[R]": [
         "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -15726,7 +15728,13 @@
         "ResponseShape.DefaultsExamples.set",
         "ResponseShape.DefaultsExamples.strictJ",
         "ResponseShape.DefaultsExamples.unsettled",
-        "ResponseShape.DefaultsExamples.variants"
+        "ResponseShape.DefaultsExamples.variants",
+        "ResponseShape.DefaultsExamples.zμ",
+        "ResponseShape.DefaultsExamples.zμ'",
+        "ResponseShape.DefaultsExamples.zNot",
+        "ResponseShape.DefaultsExamples.zNone",
+        "ResponseShape.DefaultsExamples.zBudget",
+        "ResponseShape.DefaultsExamples.zones"
       ]
     },
     "VE/Arith/Bounded.lean": {
@@ -17623,6 +17631,7 @@
         "VE.Defaults.decSub",
         "VE.Defaults.defaultZoneOf",
         "VE.Defaults.forcedAllOf",
+        "VE.Defaults.forcedOfMin",
         "VE.Defaults.maxDefaultAtoms",
         "VE.Defaults.maxZoneRecord",
         "VE.Defaults.openAtomsAll",
@@ -17636,6 +17645,7 @@
         "VE.Defaults.zoneDeclOk",
         "VE.Defaults.zoneGens",
         "VE.Defaults.zoneMin",
+        "VE.Defaults.zoneOfMin",
         "VE.Defaults.zoneRecordOk",
         "VE.Defaults.zoneRow"
       ],
@@ -19236,6 +19246,140 @@
         "VE.Presupposition.conditionNode",
         "VE.Presupposition.conditionRule",
         "VE.Presupposition.ruleGoal"
+      ]
+    },
+    "VE/Defaults/ZoneWire.lean": {
+      "D[V]": [
+        "VE.Defaults.Wire.ZoneLine.json",
+        "VE.Defaults.Wire.exceptedRule",
+        "VE.Defaults.Wire.zoneFields",
+        "VE.Defaults.Wire.zoneFieldsOf",
+        {
+          "name": "VE.Defaults.Wire.decisionOf",
+          "tied": [
+            "VE.Defaults.Wire.decisionOf_mem"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.obsEntry",
+          "tied": [
+            "VE.Defaults.Wire.obsEntry_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.outcomeOf",
+          "tied": [
+            "VE.Defaults.Wire.outcomeOf_mem"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.recordEntry",
+          "tied": [
+            "VE.Defaults.Wire.recordEntry_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.replayZoneOn",
+          "tied": [
+            "VE.Defaults.Wire.replayZoneOn_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.tupleIn",
+          "tied": [
+            "VE.Defaults.Wire.tupleIn_typed"
+          ]
+        }
+      ],
+      "G[V]": [
+        "VE.Defaults.Wire.zoneWordsJson",
+        "VE.Defaults.Wire.ZoneLine",
+        "VE.Defaults.Wire.ZoneReplay",
+        "VE.Defaults.Wire.ZoneReplay.X",
+        "VE.Defaults.Wire.maxZoneObservations",
+        "VE.Defaults.Wire.zoneCase",
+        "VE.Defaults.Wire.zoneJoins",
+        "VE.Defaults.Wire.zoneLines",
+        {
+          "name": "VE.Defaults.Wire.ZoneReplay.min",
+          "tied": [
+            "VE.Defaults.Wire.ZoneReplay.min_early",
+            "VE.Defaults.Wire.ZoneReplay.min_none",
+            "VE.Defaults.Wire.ZoneReplay.min_ok"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneSizes",
+          "tied": [
+            "VE.Defaults.Wire.zoneSizes_none_iff",
+            "VE.Defaults.Wire.zoneSizes_observations",
+            "VE.Defaults.Wire.zoneSizes_record"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.ZoneLine.kind",
+          "tied": [
+            "VE.Defaults.Wire.zoneLine_rows_distinct",
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.ZoneLine.row",
+          "tied": [
+            "VE.Defaults.Wire.zoneLine_rows_distinct",
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneHeads",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.zoneLineWords",
+          "tied": [
+            "VE.Defaults.Wire.zoneWords_complete"
+          ]
+        }
+      ]
+    },
+    "VE/Defaults/ZoneWireExamples.lean": {
+      "T": [
+        "VE.Defaults.ZoneWireFixtures.at_",
+        "VE.Defaults.ZoneWireFixtures.byDefault",
+        "VE.Defaults.ZoneWireFixtures.de13x",
+        "VE.Defaults.ZoneWireFixtures.dec",
+        "VE.Defaults.ZoneWireFixtures.exR",
+        "VE.Defaults.ZoneWireFixtures.lam13",
+        "VE.Defaults.ZoneWireFixtures.lam2",
+        "VE.Defaults.ZoneWireFixtures.lamEnv",
+        "VE.Defaults.ZoneWireFixtures.lamR",
+        "VE.Defaults.ZoneWireFixtures.obsN",
+        "VE.Defaults.ZoneWireFixtures.oneCall",
+        "VE.Defaults.ZoneWireFixtures.recOff",
+        "VE.Defaults.ZoneWireFixtures.recOutw",
+        "VE.Defaults.ZoneWireFixtures.refusedZ",
+        "VE.Defaults.ZoneWireFixtures.rowJ",
+        "VE.Defaults.ZoneWireFixtures.run",
+        "VE.Defaults.ZoneWireFixtures.shownZ",
+        "VE.Defaults.ZoneWireFixtures.sitJ",
+        "VE.Defaults.ZoneWireFixtures.zoneOf",
+        "VE.Defaults.ZoneWireFixtures.zreq",
+        "VE.Defaults.ZoneWireFixtures.γSit",
+        "VE.Defaults.ZoneWireFixtures.δSit",
+        "VE.Defaults.ZoneWireFixtures.μ'Env",
+        "VE.Defaults.ZoneWireFixtures.μ'R",
+        "VE.Defaults.ZoneWireFixtures.ξ'Sit",
+        "VE.Defaults.ZoneWireFixtures.πEnv",
+        "VE.Defaults.ZoneWireFixtures.noOutcome",
+        "VE.Defaults.ZoneWireFixtures.recN",
+        "VE.Defaults.ZoneWireFixtures.wordsOf"
+      ]
+    },
+    "VE/Defaults/ZoneWordsMain.lean": {
+      "G[V]": [
+        "main"
       ]
     }
   }

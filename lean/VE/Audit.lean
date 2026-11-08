@@ -148,6 +148,7 @@ import VE.Defaults.Uniform
 import VE.Defaults.UniformExamples
 import VE.Defaults.Wire
 import VE.Defaults.Zone
+import VE.Defaults.ZoneWire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -2318,9 +2319,14 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.ViewRest.hR
 #print axioms VE.Defaults.Wire.ViewRest.hX
 #print axioms VE.Defaults.Wire.ViewRest.hl
+#print axioms VE.Defaults.Wire.ZoneReplay.min_early
+#print axioms VE.Defaults.Wire.ZoneReplay.min_none
+#print axioms VE.Defaults.Wire.ZoneReplay.min_ok
 #print axioms VE.Defaults.Wire.coherence_collision_named
 #print axioms VE.Defaults.Wire.coherence_collision_shown
 #print axioms VE.Defaults.Wire.collisionOf_request
+#print axioms VE.Defaults.Wire.decisionOf_key
+#print axioms VE.Defaults.Wire.decisionOf_mem
 #print axioms VE.Defaults.Wire.decodeLayered_soften
 #print axioms VE.Defaults.Wire.decodeRightsU_soften
 #print axioms VE.Defaults.Wire.default_exception
@@ -2333,11 +2339,24 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.eval_of_xModelOk
 #print axioms VE.Defaults.Wire.filledOf_request
 #print axioms VE.Defaults.Wire.forcedAt_sound
+#print axioms VE.Defaults.Wire.obsEntry_sound
+#print axioms VE.Defaults.Wire.outcomeOf_mem
+#print axioms VE.Defaults.Wire.recordEntry_sound
+#print axioms VE.Defaults.Wire.replayBind_ok
 #print axioms VE.Defaults.Wire.replayCertOn_request
 #print axioms VE.Defaults.Wire.replayCoherenceOn_request
+#print axioms VE.Defaults.Wire.replayGetStr_mapM
 #print axioms VE.Defaults.Wire.replayModelOn_request
+#print axioms VE.Defaults.Wire.replayStrings_eq
+#print axioms VE.Defaults.Wire.replayZoneOn_sound
+#print axioms VE.Defaults.Wire.tupleIn_typed
 #print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.Wire.viewOn_L
+#print axioms VE.Defaults.Wire.zoneLine_rows_distinct
+#print axioms VE.Defaults.Wire.zoneSizes_none_iff
+#print axioms VE.Defaults.Wire.zoneSizes_observations
+#print axioms VE.Defaults.Wire.zoneSizes_record
+#print axioms VE.Defaults.Wire.zoneWords_complete
 #print axioms VE.Defaults.act_arity
 #print axioms VE.Defaults.any_eq_recTuples
 #print axioms VE.Defaults.assumptions_sound
@@ -2366,6 +2385,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.defaultBase_of_dflt
 #print axioms VE.Defaults.defaultCoherenceCheck_sound
 #print axioms VE.Defaults.defaultCompletion_below
+#print axioms VE.Defaults.defaultZoneOf_eq
 #print axioms VE.Defaults.defaultZone_budget
 #print axioms VE.Defaults.defaultZone_byDefault_sound
 #print axioms VE.Defaults.defaultZone_eq_noException
@@ -2382,6 +2402,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.excepted_inj
 #print axioms VE.Defaults.excepted_only
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.forcedAllOf_eq
 #print axioms VE.Defaults.forcedAll_sound
 #print axioms VE.Defaults.forced_everywhere
 #print axioms VE.Defaults.key_inj
