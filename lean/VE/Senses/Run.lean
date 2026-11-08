@@ -2,6 +2,7 @@ import VE.Senses.Request
 import VE.Senses.Decode
 import VE.Senses.Version
 import VE.Senses.Flip
+import VE.Senses.Texts
 import VE.EnglishGrammar.Run
 
 /-! A one-shot admission boundary for the senses reader. The pack text reaches
@@ -40,13 +41,25 @@ def fenceJson : Option Nat → Json
   | some i => toJson i
   | none => .str "line"
 
-def occurrenceJson (o : SenseOccurrence) : Json := Json.mkObj
+def occurrenceJson (o : SenseOccurrence) (extra : List (String × Json) := []) : Json := Json.mkObj
   ([("sentence", toJson o.sentence), ("token_start", toJson o.start),
     ("token_stop", toJson o.stop), ("symbol", .str o.symbol),
     ("is_default", .bool o.isDefault)] ++
-    match o.candidate with
+    (match o.candidate with
     | some i => [("candidate", toJson i)]
-    | none => [])
+    | none => []) ++ extra)
+
+/-- An occurrence's bytes in a source whose sentences `lexSpans` gives as `spans`, after `d` rendered defaults:
+from its first token's first byte to the end of its last token, exclusive as `lexSpans`'s are (plan B6, sn-b6c). -/
+def byteSpan (spans : Array (Array Spanned)) (d : Nat) (o : SenseOccurrence) : Option (Nat × Nat) := do
+  let sent ← spans[o.sentence - d]?
+  pure ((← sent[o.start]?).2.1, (← sent[o.stop - 1]?).2.2)
+
+/-- A sense-map entry of a route answer: the gloss of its sense (plan 2.8, hover) and, over a source, its bytes. -/
+def senseEntryJson (P : Projection) (spans : Option (Array (Array Spanned))) (d : Nat) (o : SenseOccurrence) :
+    Json :=
+  occurrenceJson o (((P.map.find? (·.1 == o.symbol)).map fun x => ("gloss", Json.str x.2.1.gloss)).toList ++
+    ((spans.bind (byteSpan · d o)).toList.flatMap fun (a, z) => [("byte_start", toJson a), ("byte_stop", toJson z)]))
 
 /-- The arguments of a fault (spec 2.6 and 4.1), under the names of `SenseFault`'s fields. -/
 def faultFields : SenseFault → List (String × Json)
@@ -103,26 +116,29 @@ def s2Fields (c : VE.EnglishGrammar.Run.Case) (source : Option String) :
 (`readBody_good`). A fence request's admitted answer also maps each fence to its unit (`fenceUnits`), and its
 open units carry `text`. A refusal over a `source` has E2's span and advice (`refusalExtras`). An admitted
 answer also has the identities of its projection and the words its body uses (`admitted`), and each candidate
-the identities of its own projection (`ids`). -/
+the identities of its own projection (`ids`). On a route answer (`texts`) every open unit has its `text`, each
+sense-map entry is `entry`'s, and `extra` (the texts of 3.2, sn-b6c) is added. -/
 def outcomeJson (c : VE.EnglishGrammar.Run.Case) (source : Option String) (count : Nat)
     (fences : Option (List (Option Nat))) (text : Nat → SenseUnit → String)
-    (admitted : List (String × Json)) (ids : Option (String → Json)) (out : SensesOutcome) :
-    Except String Json := do
+    (admitted : List (String × Json)) (ids : Option (String → Json)) (out : SensesOutcome)
+    (texts : Bool := false) (entry : SenseOccurrence → Json := (occurrenceJson ·))
+    (extra : List (String × Json) := []) : Except String Json := do
   let (status, code) ← out.statusCode
   let common := [("status", .str status)] ++ (code.toList.map fun c => ("code", .str c))
   match out with
   | .ok units senses mixed unused P =>
     pure (Json.mkObj (common ++
-      [("units", Json.arr (units.mapIdx (unitJson ids (fences.map fun _ => text) (count - units.length))).toArray),
-       ("sense_map", Json.arr (senses.map occurrenceJson).toArray),
+      [("units", Json.arr (units.mapIdx (unitJson ids (if texts || fences.isSome then some text else none)
+          (count - units.length))).toArray),
+       ("sense_map", Json.arr (senses.map entry).toArray),
        ("mixed", toJson mixed), ("unused", toJson unused),
        ("environment", P.envJson)] ++ admitted ++
-      (fences.toList.map fun fs => ("fences", Json.arr (fs.map fenceJson).toArray))))
-  | .fault f => pure (Json.mkObj (common ++ faultFields f))
+      (fences.toList.map fun fs => ("fences", Json.arr (fs.map fenceJson).toArray)) ++ extra))
+  | .fault f => pure (Json.mkObj (common ++ faultFields f ++ extra))
   | _ =>
     let fields ← s2Fields c source out
     unless fields.take 2 == common do throw "S2's status and code differ from the reader's"
-    pure (Json.mkObj ((source.map (VE.EnglishGrammar.Run.refusalExtras c.E.profiles · fields)).getD fields))
+    pure (Json.mkObj ((source.map (VE.EnglishGrammar.Run.refusalExtras c.E.profiles · fields)).getD fields ++ extra))
 
 /-- A fence's sentence without the line break that closes a document fence. -/
 def fenceLine (f : String) : String := if f.endsWith "\n" then f.dropRight 1 else f
@@ -293,6 +309,45 @@ def admittedIds (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (environment :
       fun l => (VE.Bridge.lookup table l).getD (Json.mkObj []))
   | _ => pure ([], fun _ => Json.mkObj [])
 
+/-- What the texts of 3.2 read, by `readSents`'s steps over the text's sentences: the preamble's assignment and
+its line count, the body, its used words and its projection. -/
+def bodyOf (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b : Nat) (sents : List (Array Tok)) :
+    Option (Assignment × Nat × List (Array Tok) × List String × Projection) := do
+  let (A, k) ← (readPreamble D b (sents.map (·.toList))).toOption
+  let body := sents.drop k
+  let used := usedWords D (body.map (·.toList))
+  pure (A, k, body, used, ← (project D A c.E c.L used).toOption)
+
+/-- An admitted reading's warnings (plan 2.8): a `Mixed` warning per word of `mixed`, with each sense's gloss and
+the sentences of its occurrences in resolved units, then an `Unneeded` warning per line of a word with one sense. -/
+def warningsJson (D : Dictionary) (d : Nat) (A : Option Assignment) (P : Projection) (occ : List SenseOccurrence)
+    (mixed : List (String × List String)) : Json :=
+  let warning (code w t : String) := Json.mkObj [("code", .str code), ("word", .str w), ("text", .str t)]
+  let uses (id : String) : String × List Nat :=
+    ((((P.map.find? (·.1 == id)).map (·.2.1.gloss)).getD id),
+     ((occ.filter fun o => o.symbol == id && o.candidate.isNone).map (·.sentence - d)).eraseDups)
+  Json.arr ((mixed.map fun (w, ids) => warning "Mixed" w (mixedText w (List.map uses ids))) ++
+    ((A.map (unneeded D)).getD []).map fun w => warning "Unneeded" w (unneededText w)).toArray
+
+/-- The texts of an answer (spec 3.2, plan 2.8; sn-b6c), `d` rendered defaults first: a fault's `text`
+(`UnknownGloss`, `TooManyCandidates`, a one-word `CandidatesDiverge`), the `NoSenseFits` hint beside S2's `none` for
+a sentence with one unresolved word, and an admitted reading's `Mixed` and `Unneeded` warnings. -/
+def textsJson (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b d : Nat)
+    (body : Option (Assignment × Nat × List (Array Tok) × List String × Projection)) :
+    SensesOutcome → List (String × Json)
+  | .fault (.unknownGloss line w g) => [("text", .str (unknownGlossText D line w g))]
+  | .fault (.tooManyCandidates i ws) => [("text", .str (tooManyText (i - d) ws))]
+  | .fault (.candidatesDiverge i [w] why) => (do
+      let (A, k, sents, used, P) ← body
+      let (g1, g2) ← divergeGlosses D A c.E c.L used P b k i sents w why
+      pure ("text", Json.str (divergeText (i - d) w g1 g2 why))).toList
+  | .stopped i .noDerivation _ =>
+    match (do let (A, k, sents, _, _) ← body; pure (unresolvedIn D A (← sents[i - k]?).toList)) with
+    | some [w] => [("hint", Json.mkObj [("code", .str "NoSenseFits"), ("text", .str (noSenseFitsText D (i - d) w))])]
+    | _ => []
+  | .ok _ occ mixed _ P => [("warnings", warningsJson D d (body.map (·.1)) P occ mixed)]
+  | _ => []
+
 /-- A `senses.read` case. With `identified` (the route's runner, not the document mode's call) an admitted answer
 carries its identities (`admittedIds`) and its environment's profile list as written (`Projection.written`). -/
 def readCase (j : Json) (identified : Bool := false) : Except String Json := do
@@ -315,10 +370,10 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let budget ← VE.Senses.natOf (← j.getObjVal? "budget")
   let requestId ← VE.CertificateWire.digest "ve-senses-request-v1\n" j
   let out ← documentRequest D c.E c.L budget A text
-  let (count, d, fences) := match documentInput D A text, text with
-    | .ok (.ok (d, sents)), .fences fs => (sents.length, d, some (fenceUnits D budget d sents fs.length))
-    | .ok (.ok (d, sents)), .source _ => (sents.length, d, none)
-    | _, _ => (0, 0, none)
+  let (count, d, fences, sents) := match documentInput D A text, text with
+    | .ok (.ok (d, sents)), .fences fs => (sents.length, d, some (fenceUnits D budget d sents fs.length), sents)
+    | .ok (.ok (d, sents)), .source _ => (sents.length, d, none, sents)
+    | _, _ => (0, 0, none, [])
   let unitText := documentText D A d
   if let .ok units _ _ _ _ := out then
     if let some mapped := fences then
@@ -336,7 +391,17 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
   let (admitted, ids) ← if identified then do
       let (a, f) ← admittedIds D c environment budget count d text out; pure (a, some f)
     else pure ([], none)
-  let result ← outcomeJson c (refusalSource A text) count fences unitText admitted ids out
+  let result ← if identified then
+      let body := bodyOf D c budget sents
+      let spans := match text with
+        | .source s => (lexSpans s).toOption
+        | .fences _ => none
+      let entry := match out with
+        | .ok _ _ _ _ P => senseEntryJson P spans d
+        | _ => (occurrenceJson ·)
+      outcomeJson c (refusalSource A text) count fences unitText admitted ids out true entry
+        (textsJson D c budget d body out)
+    else outcomeJson c (refusalSource A text) count fences unitText admitted ids out
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     [("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
      ("senses_version", .str sensesVersion), ("reading", result)])])
