@@ -184,6 +184,51 @@ def F8b : Units :=
 -- The reason's two parts cover "B, C." exactly.
 #guard (F8.source.toUTF8.extract 10 15) == "B, C.".toUTF8
 
+/-! ## Each part of the check alone (R16: a fixture for each mutant of a trusted definition) -/
+
+-- `WellFormed` is decidable: it holds on the passing fixtures, and each negative fails exactly one conjunct.
+instance wfDecidable (U : Units) (B : Block) : Decidable (WellFormed U B) := by unfold WellFormed; infer_instance
+def wf (U : Units) (B : Block) : Bool := decide (WellFormed U B)
+def f5r : Link := { f5l with id := "l2", reason := [.part "b.p1"] }
+#guard wf F1 ⟨[f1l]⟩ && wf F2 ⟨[f2l]⟩ && wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p3"]⟩ &&
+  wf F5 ⟨(List.range 256).map fun n => { f5l with id := s!"l{n}" }⟩
+#guard !wf F5 ⟨(List.range 257).map fun n => { f5l with id := s!"l{n}" }⟩ && !wf F5 ⟨[f5l, f5l]⟩ &&
+  !wf F5 ⟨[f5l, f5r]⟩ && !wf F5 ⟨[f5r, f5l]⟩ && !wf F5 ⟨[{ f5l with reason := [.part "a.p9"] }]⟩ &&
+  !wf F8 ⟨[{ f8l with reason := [.part "h.p4", .part "h.p3"] }]⟩ &&
+  !wf (f1u (io .explanation .norm) .explanation) ⟨[f1l]⟩ && !wf (f1u (io .norm .asserted) .asserted) ⟨[f1l]⟩ &&
+  !wf F2 ⟨[{ f2l with share := .sole }]⟩ && !wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p5"]⟩ && !wf F1 ⟨[]⟩ &&
+  !wf (f1u (io .norm .explanation) .explanation "LABELLED") ⟨[f1l]⟩
+-- `Link.partIds`: the marker, then every part of the reason and the target, in order.
+#guard { f8l with target := [.part "h.p1", .mention "m", .part "h.p5"] }.partIds == ["h.p2", "h.p3", "h.p4", "h.p1", "h.p5"]
+-- `sideOfKind`: every part of a non-empty side has the kind; a mention passes until PE-4.
+#guard sideOfKind F8 [.part "h.p3", .part "h.p4"] .asserted && sideOfKind F8 [.part "h.p3", .mention "m"] .asserted &&
+  !sideOfKind F8b [.part "h.p3", .part "h.p4"] .asserted && !sideOfKind F8b [.part "h.p4", .part "h.p5"] .asserted &&
+  !sideOfKind F8 [] .asserted
+-- `markerAgrees`: the marker is `causal` with the link's own relation word.
+#guard !markerAgrees (f1u .norm .explanation) f1l && !markerAgrees (f1u (bc .norm .explanation) .explanation) f1l
+-- `sameUnit`: every side ref is a part, and every id's unit is the marker's.
+#guard !sameUnit { F1 with parts := F1.parts.map fun p => if p.id == "u0146.s01.p2" then { p with parent := none } else p } f1l
+#guard [[.part "u0146.s01.p3", .mention "m"], [.mention "m", .part "u0146.s01.p3"]].all fun s =>
+  !sameUnit F1 { f1l with reason := s } && !sameUnit F1 { f1l with reason := [], target := s }
+#guard !sameUnit F5 { f5l with target := [.part "b.p1"] }
+-- `rivals`: a rival before the `sole` link counts.
+#guard !shareOk ⟨[f7l2 .plain "g.p5", f7l1 .sole]⟩ (f7l1 .sole)
+-- `markersLinked` and `markerHonest` read every part, wherever the marker is in the view.
+def f1L : Units := f1u (io .norm .explanation) .explanation "LABELLED"
+#guard [1, 2].all fun n => !markersLinked { F1 with parts := F1.parts.rotateLeft n } ⟨[]⟩ &&
+  !markerHonest { f1L with parts := f1L.parts.rotateLeft n } ⟨[f1l]⟩
+-- `markerHonest` with two links: only the LABELLED marker's own link is read, in either order.
+def f7m (cov : Bool) : Units :=
+  { F7 with parts := F7.parts.map fun p => { p with status :=
+      if p.id == "g.p2" then "LABELLED" else if cov && (p.id == "g.p1" || p.id == "g.p3") then "CHECKED" else p.status } }
+#guard [[f7l1 .plain, f7l2 .plain "g.p5"], [f7l2 .plain "g.p5", f7l1 .plain]].all fun ls =>
+  !markerHonest (f7m false) ⟨ls⟩ && markerHonest (f7m true) ⟨ls⟩
+-- `covered`: every ref is a CHECKED or OPEN part.
+#guard covered (f1s "OPEN" "CHECKED") [.part "u0146.s01.p1", .part "u0146.s01.p3"] &&
+  !covered (f1s "OPEN" "CHECKED") [.part "u0146.s01.p1", .part "u0146.s01.p2"] &&
+  !covered (f1s "OPEN" "CHECKED") [.part "u0146.s01.p2", .part "u0146.s01.p3"] &&
+  !covered (f1s "OPEN" "CHECKED") [.mention "m"]
+
 /-! ## The wire (spec 1.2, 7.1) -/
 
 def wire (s : String) : Json := (Json.parse s).toOption.getD .null
