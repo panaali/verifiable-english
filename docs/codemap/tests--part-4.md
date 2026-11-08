@@ -1,3 +1,5 @@
+- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
+- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
 - `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
 - `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
 - `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
@@ -86,6 +88,3 @@
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
 - `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
-- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
-- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
-- `tests/test_profiles.py` — (no module docstring)

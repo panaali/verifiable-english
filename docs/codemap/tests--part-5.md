@@ -1,3 +1,6 @@
+- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
+- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
+- `tests/test_profiles.py` — (no module docstring)
 - `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
 - `tests/test_properties.py` — (no module docstring)
 - `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
@@ -75,5 +78,3 @@
 - `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
 - `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
-- `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
-- `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…

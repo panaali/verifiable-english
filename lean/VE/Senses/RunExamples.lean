@@ -68,8 +68,10 @@ def idsOf (lines : String) : List (String × Json) :=
 /-! ## The runner's answers to whole requests
 
 Requests over the joke's environment, overlay and lexicon (`EJ`, `LJ`) and the fixture pack, as the relay sends
-them. Each answer is pinned by the SHA-256 of its compact JSON (`pin`), so a change to any member it writes is
-caught; the members are checked by the relay's tests (tests/test_senses_project.py, tests/test_senses_route.py). -/
+them. Each answer is pinned by the SHA-256 of its compact JSON without its `actions_version` (`pin`), so a change to
+any other member it writes is caught; the version is checked once per answer form against `Fixed.actionsVersion`
+(below the pins), so raising it re-pins nothing. The members are checked by the relay's tests
+(tests/test_senses_project.py, tests/test_senses_route.py). -/
 
 def overlayJ : Json := Json.mkObj [("constants", Json.mkObj [("riddle", Json.mkObj [("verbalisation", .str "the riddle")])])]
 
@@ -80,7 +82,27 @@ def req (extra : List (String × Json)) (pack : String := packF.toJson.compress)
   ("environment", EJ.source), ("overlay", overlayJ), ("lexicon", lexJ), ("packs", Json.arr #[.str pack]),
   ("own", Json.arr #[]), ("budget", toJson workBudget)] ++ extra)
 
-def pin (j : Json) : String := VE.CertificateWire.sha256 j.compress.toUTF8
+/-- An answer without the `actions_version` of its identities, the one place each answer form writes it
+(`result.reading` of a run, `result.projection` of a projection); every other member is kept. -/
+def withoutVersion (j : Json) : Json :=
+  ["reading", "projection"].foldl (fun j form =>
+    let result := j.getObjValD "result"
+    match (result.getObjValD form).getObjValD "identities" with
+    | .obj ids => j.setObjVal! "result" (result.setObjVal! form
+        ((result.getObjValD form).setObjVal! "identities" (.obj (ids.erase "actions_version"))))
+    | _ => j) j
+
+/-- The `actions_version` an answer of `form` writes. -/
+def versionOf (form : String) (j : Json) : Json :=
+  (((j.getObjValD "result").getObjValD form).getObjValD "identities").getObjValD "actions_version"
+
+/-- An answer of `form` with `v` as the `actions_version` of its identities. -/
+def withVersion (form : String) (v : Json) (j : Json) : Json :=
+  let result := j.getObjValD "result"
+  j.setObjVal! "result" (result.setObjVal! form ((result.getObjValD form).setObjVal! "identities"
+    (((result.getObjValD form).getObjValD "identities").setObjVal! "actions_version" v)))
+
+def pin (j : Json) : String := VE.CertificateWire.sha256 (withoutVersion j).compress.toUTF8
 
 def projectReq (lines : String) (used : List String) (pack : String := packF.toJson.compress) : Json :=
   req [("lines", .str lines), ("used", toJson used)] pack
@@ -95,23 +117,23 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- an open unit: two candidates with their identities
-#guard pin (runCaseReported (src "The riddle is funny.")) == "95ab85b0f39aa8313783e0814ce62250019bd65b7be0aca71e11f1bf851883f3"
+#guard pin (runCaseReported (src "The riddle is funny.")) == "6ee6e93e6d4c2543b1736bbe7da70ca049788800671676e213822e5fdfad6354"
 -- resolved by its line
-#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "e5d7a5e7139d574430ba5940e4b4e6fddfac9d21bec52d6f88c5f11634de06ad"
+#guard pin (runCaseReported (src (lineFunny2 ++ " The riddle is funny."))) == "8c302fd926430f668bbdb2f6a7bb8a961647df85ca43901a0a9a6242ea31d483"
 -- a sense fault
 #guard pin (runCaseReported (src "In this document, funny means purple. The riddle is funny.")) == "8aa7234e6df92e54d69f44f1bba92872c35e84323286f05e888703a7b6a12076"
 -- S2's outcome
 #guard pin (runCaseReported (src "Every joke that is funny (meaning strange) is not funny.")) == "fb9e6abd68375e75c51b0e110d13523925c83a7a26f675d72e380e9e81219367"
 -- an open unit beside a glossed one
-#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "81eae149392a4a35263d785e71679ab166958425473cee364be7519a270b0e20"
+#guard pin (runCaseReported (src "Both the riddle is odd and the riddle is funny (meaning strange).")) == "1fa2458b4dd847832d333f6566af2173e1ad8541bc815de939d5599933815a37"
 -- an open fence without a reading set
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [])) == "1b6b6d44dcc4b67a043c3acd17db11d58f3191b8dc529039fa04c3e54bd3a3bd"
 -- an open fence with its reading set
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "8f820a874db60819f2a0ad2a2ce98a11d9da2a7936a8cae19f54769094933ffc"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] ["u1"])) == "80ec199e72aa7c9fd075b2cc3fbe50ec7f6347459cd0f8039c7a2715dd4e5c53"
 -- a fence that is a line
-#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "85380772e3bc5bf78c6ce2a6f05da8b3b780a3f8209136cb63d78818d10b0e28"
+#guard pin (runCaseReported (fenced [lineFunny2 ++ "\n", "The riddle is funny.\n"] ["l", "u1"] [])) == "81a67f2d4300e05dbb5b54f6cc0250c56263203462b1900a175ab63b639fe167"
 -- front-matter defaults
-#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "2369458d22f985314c40fd652081222b6b8c890d355e7f417c572cb5d7675e7a"
+#guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1"] [] [("funny", 2)])) == "f73f2199749f63d665e84726d97815d159fc9310c59b498024810d6f2805cfb5"
 -- fence identities refused
 #guard pin (runCaseReported (fenced ["The riddle is funny.\n"] ["u1", "u2"] [])) == "2047a621e3c95f46bbf587bd22854141989afcd335200861aa63d0748985cb0b"
 -- an unknown member refused
@@ -121,9 +143,9 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 -- budget 0
 #guard pin (runCaseReported ((src "The riddle is funny.").setObjVal! "budget" (toJson 0))) == "3b520a3ca8a86a3df1a98ab6df2acc3b8b5a509e4edb8fcfe9337b2a41330a39"
 -- a projection
-#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "cf67f18ae3b10f982a299153adf8b09b260d8d50c51f405a2605b3ec53a32b3a"
+#guard pin (projectCaseReported (projectReq lineFunny2 ["funny"])) == "b52883a8b67fc1b86f3760ea569dbd661fe0d9d62f5bb6d25b385503e074da5b"
 -- no lines
-#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "681e7907ae445ab3a9d62772eba5754fe59d3e438a8f24982e788f664436ff35"
+#guard pin (projectCaseReported (projectReq "" ["funny", "tells"])) == "b57e299dcbb7f22b3a60e759b23fd3264c0d4ff2da6e03e9be8c8ef66fa4d00e"
 -- a fault of the lines
 #guard pin (projectCaseReported (projectReq "In this document, funny means purple." ["funny"])) == "8f22518a9d293069fa4adb2a75cf1c72d0d6721a468e11037fda2f32aac69f18"
 -- a repeated default
@@ -146,21 +168,31 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 
 
 -- two unresolved words: choices of two senses
-#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "82c044bb14fc2eb488c01039e703c80c2f86acc80c6fb598bdd4f21570ff0ffe"
+#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "f220964f1a6d2d5459ea9dfa43d730e535be2e98715895067f738c56049f23e2"
 -- two units
-#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "f419593241e61c61910fb775839c75f766e9e35c07b7d936f0007d1d1bb51130"
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "30a6a5ea3f23a80a75d61fc44c066b523a45262185cef8eda2e42ddf7af0caa8"
 -- own senses whose kinds are the document's sorts
-#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "0a37d021aacd544b51c7bd4c16a14c27f00abd06b9b6797d8cc1991ea0d83429"
+#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "08943366b5fe4a578e4b902d6f77ca06d5879cfffd0f3e9bec6a8553919da21c"
 -- a second used word outside the dictionary
 #guard pin (projectCaseReported (projectReq lineFunny2 ["funny", "giggle"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- the used word outside the dictionary first
 #guard pin (projectCaseReported (projectReq lineFunny2 ["giggle", "funny"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- every word of the dictionary
-#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "0e10b821801906f79ff599ccc1171711b9722a5e2dfcf75a6f55103d60a3c301"
+#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "f705e96b12737c57ce9dca498666b29a834a4ebbe986557a06842b55c86fe7a4"
 -- a one-character line
 #guard pin (projectCaseReported (projectReq "x" ["funny"])) == "50c8b279ed22fc5d46e876ac027ba3d93f52cbdb0cfc8dbdc1fab42c05488de3"
 -- a lexicon english.read refuses
 #guard pin (projectCaseReported ((projectReq lineFunny2 ["funny"]).setObjVal! "lexicon" (lexiconJson ((VE.EnglishGrammar.Run.environmentId (displayJson EJ.source overlayJ)).toOption.getD "") { LJ with nouns := [("joke", "joke")] }))) == "97d9cdc7cda6f59b517a91ca091ccb4264362263ac3afec2b0efccc55a12015e"
+
+-- The version the pins leave out, one guard per answer form: Lean's generated `Fixed.actionsVersion`, never a copy.
+#guard versionOf "reading" (runCaseReported (src "The riddle is funny.")) == .str VE.EnglishGrammar.Fixed.actionsVersion
+#guard versionOf "projection" (projectCaseReported (projectReq lineFunny2 ["funny"])) ==
+  .str VE.EnglishGrammar.Fixed.actionsVersion
+-- `withoutVersion` takes out that member and no other: put back, it is the answer again.
+#guard let j := runCaseReported (src "The riddle is funny.")
+  withoutVersion j != j && withVersion "reading" (versionOf "reading" j) (withoutVersion j) == j
+#guard let j := projectCaseReported (projectReq lineFunny2 ["funny"])
+  withoutVersion j != j && withVersion "projection" (versionOf "projection" j) (withoutVersion j) == j
 
 /-! ## The preamble lines of a source answer (plan B6): the source's sentences before the body, as written -/
 
