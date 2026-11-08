@@ -1,0 +1,14 @@
+trust_mutants: 20 definitions, 404 mutants (50 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-empty: doc.fences.map Prod.fst -> []
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-empty: g.leaves.filterMap -> [] (lean/VE/Service/Document.lean:2343: Function expected at)
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-first: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> ([("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("card...
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-drop-last: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> ([("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("card...
+UNKNOWN lean/VE/Compose/Dispatch.lean:899 VE.Compose.listFault (G[V], trusted) and-or: && -> || (lean/VE/Scope/Examples.lean:457: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Service/Document.lean:2404 VE.Service.Document.check (D[V], trusted) any-all: any -> all (lean/VE/Discourse/ComposeExamples.lean:126: Expression (Lean could not elaborate it in the probe))
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-drop-last: doc.fences.map Prod.fst -> ((doc.fences.map Prod.fst).dropLast)
+trust_mutants: 11 KILLED, 4 SURVIVOR, 3 UNKNOWN, 1 INVALID, 0 ALLOWED, 31 NOT RUN, 354 OTHER SHARD in 5114 s
+trust_mutants: D[V], trusted: 5 KILLED, 2 SURVIVOR, 2 UNKNOWN, 1 INVALID, 23 NOT RUN, 241 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 2 SURVIVOR, 1 UNKNOWN, 8 NOT RUN, 108 OTHER SHARD
+trust_mutants: S, trusted: 5 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 31 of its 50 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.5 s, scratch 3.5 s, control_build 1.1 s, probe_install 1.4 s, control_probes 2123.3 s, mutants 2969.7 s, cleanup 2.8 s, reads 0.1 s; lake control_build 1.1 s (1), probe_install 1.4 s (1), control_probes 6016.9 s (18), mutant_builds 1914 s (26), mutant_checks 5736.2 s (19), stage_controls 1760.4 s (7), mutant_probes 2314.6 s (15)
