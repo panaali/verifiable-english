@@ -20460,6 +20460,48 @@ theorem VE.Judgments.admit_ok_iff
         ∀ (r : VE.Judgments.Rec), r ∈ rs → VE.Judgments.faultOf E defs regulated r = Option.none
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
   -- expr 4037456850
+theorem VE.Judgments.blockFormula_null
+  VE.Judgments.blockFormula Lean.Json.null = Except.ok VE.Formula.top
+  -- uses VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.blockFormula@VE.Judgments.Chain
+  -- expr 342197865
+theorem VE.Judgments.blockFormulas_bar
+  ∀ (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (b : Lean.Json),
+    kvs.toList = [("bar", b)] → VE.Judgments.blockFormulas R (Lean.Json.obj kvs) = Except.ok []
+  -- uses VE.Formula@VE.Syntax VE.Judgments.blockFormulas@VE.Judgments.Chain VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1494586108
+theorem VE.Judgments.blockFormulas_limitation
+  ∀ (R : VE.Rights.RightsDoc) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (l : Lean.Json)
+    (L : VE.Rights.Limitation),
+    kvs.toList = [("limitation", l)] →
+      List.find? (fun L => Lean.Json.str L.name == l.getObjValD "name") R.limits = Option.some L →
+        VE.Judgments.blockFormulas R (Lean.Json.obj kvs) =
+          Except.ok (List.map (fun c => VE.Formula.unary c.name (VE.Term.var 0)) L.conditions)
+  -- uses VE.Formula.unary@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.blockFormulas@VE.Judgments.Chain VE.Rights.Condition.name@VE.Rights.Tree VE.Rights.Condition@VE.Rights.Tree VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation.name@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Term.var@VE.Syntax
+  -- expr 3938196696
+theorem VE.Judgments.correlate_covered
+  ∀ (R : VE.Rights.RightsDoc) (φ : VE.Formula),
+    φ ∈
+        List.flatMap VE.Judgments.Content.formulas
+          (List.map (fun N => VE.Judgments.Content.rule N.toNode) (VE.Rights.correlate R).T.nodes ++
+            List.map VE.Judgments.Content.formula (VE.Rights.limPremises R)) →
+      ∀ (p : String),
+        p ∈ VE.Norms.preds φ →
+          VE.NormDefaults.Packs.reserved p = Bool.true ∨
+            ∃ ψ, ψ ∈ VE.Judgments.rightsAuthorFormulas R ∧ p ∈ VE.Norms.preds ψ
+  -- uses VE.Formula@VE.Syntax VE.Judgments.Content.formula@VE.Judgments.Status VE.Judgments.Content.formulas@VE.Judgments.Status VE.Judgments.Content.rule@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.rightsAuthorFormulas@VE.Judgments.Chain VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs VE.Norms.preds@VE.Norms.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 1781718123
+theorem VE.Judgments.correlate_judged
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (R : VE.Rights.RightsDoc),
+    (∀ (j : String), j ∈ J → VE.NormDefaults.Packs.reserved j = Bool.false) →
+      (∀ (d : VE.Definitions.Def), d ∈ defs → VE.NormDefaults.Packs.reserved d.name = Bool.false) →
+        ∀ (j : String),
+          j ∈
+              VE.Judgments.dependsOnC defs J
+                (List.map (fun N => VE.Judgments.Content.rule N.toNode) (VE.Rights.correlate R).T.nodes ++
+                  List.map VE.Judgments.Content.formula (VE.Rights.limPremises R)) →
+            j ∈ VE.Judgments.dependsOn defs J (VE.Judgments.rightsAuthorFormulas R)
+  -- uses VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Formula@VE.Syntax VE.Judgments.Content.formula@VE.Judgments.Status VE.Judgments.Content.rule@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.dependsOn@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.rightsAuthorFormulas@VE.Judgments.Chain VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 3736431619
 theorem VE.Judgments.dependsOnC_remove
   ∀ (defs : List VE.Definitions.Def) (J : List String) (cs : List VE.Judgments.Content) (j : String),
     ¬j ∈ VE.Judgments.dependsOnC defs J cs →
@@ -20518,11 +20560,30 @@ theorem VE.Judgments.hasPhrase_iff
   ∀ (ph ws : List String), VE.Judgments.hasPhrase ph ws = Bool.true ↔ ph <:+: ws
   -- uses VE.Judgments.hasPhrase@VE.Judgments.Undeclared
   -- expr 2123165226
+theorem VE.Judgments.linesFormulas_none
+  ∀ (b : Lean.Json), b.getObjValD "lines" = Lean.Json.arr #[] → VE.Judgments.linesFormulas b = Except.ok []
+  -- uses VE.Formula@VE.Syntax VE.Judgments.linesFormulas@VE.Judgments.Chain
+  -- expr 2187402933
 theorem VE.Judgments.matches_iff
   ∀ (row : VE.Judgments.EvaluativeRow) (ws : List String),
     row.matches ws = Bool.true ↔ row.word <:+: ws ∧ ∀ (ph : List String), ph ∈ row.otherSenses → ¬ph <:+: ws
   -- uses VE.Judgments.EvaluativeRow.matches@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.otherSenses@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow.word@VE.Judgments.Undeclared VE.Judgments.EvaluativeRow@VE.Judgments.Undeclared
   -- expr 3309011010
+theorem VE.Judgments.mem_author_holder
+  ∀ (R : VE.Rights.RightsDoc) (H : VE.Rights.Right), H ∈ R.rs → H.guard ∈ VE.Judgments.rightsAuthorFormulas R
+  -- uses VE.Formula@VE.Syntax VE.Judgments.rightsAuthorFormulas@VE.Judgments.Chain VE.Rights.Right.guard@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2492955587
+theorem VE.Judgments.mem_author_line
+  ∀ (R : VE.Rights.RightsDoc) (RN : String × VE.Rights.Line),
+    RN ∈ VE.Rights.linesOf R →
+      ∀ (φ : VE.Formula), φ ∈ RN.snd.node.guard :: RN.snd.node.carveOuts → φ ∈ VE.Judgments.rightsAuthorFormulas R
+  -- uses VE.Formula@VE.Syntax VE.Judgments.rightsAuthorFormulas@VE.Judgments.Chain VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree
+  -- expr 2301579682
+theorem VE.Judgments.mem_author_outside
+  ∀ (R : VE.Rights.RightsDoc) (N : VE.SoftNorms.SoftNode),
+    N ∈ R.soft.T.nodes → ∀ (φ : VE.Formula), φ ∈ N.guard :: N.carveOuts → φ ∈ VE.Judgments.rightsAuthorFormulas R
+  -- uses VE.Formula@VE.Syntax VE.Judgments.rightsAuthorFormulas@VE.Judgments.Chain VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 2292991687
 theorem VE.Judgments.mem_defEdges
   ∀ (defs : List VE.Definitions.Def) (a b : String),
     (a, b) ∈ VE.Judgments.defEdges defs ↔ ∃ d, d ∈ defs ∧ d.name = a ∧ b ∈ VE.Norms.preds d.body
@@ -20572,6 +20633,27 @@ theorem VE.Judgments.predicateWords_name
       VE.Judgments.predicateWords name Option.none = name.toLower.splitOn "_"
   -- uses VE.Judgments.predicateWords@VE.Judgments.Undeclared
   -- expr 4215424577
+theorem VE.Judgments.preds_andAll
+  ∀ (fs : List VE.Formula), VE.Norms.preds (VE.Judgments.andAll fs) = List.flatMap VE.Norms.preds fs
+  -- uses VE.Formula@VE.Syntax VE.Judgments.andAll@VE.Judgments.Chain VE.Norms.preds@VE.Norms.Tree
+  -- expr 3294021027
+theorem VE.Judgments.preds_atom
+  ∀ (p : String) (ss : List String) (x : String), x ∈ VE.Norms.preds (VE.Norms.atom p ss) → x = p
+  -- uses VE.Norms.atom@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
+  -- expr 3740268972
+theorem VE.Judgments.preds_bindAll_eq
+  ∀ (ss : List String) (φ : VE.Formula), VE.Norms.preds (VE.Norms.bindAll ss φ) = VE.Norms.preds φ
+  -- uses VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
+  -- expr 880113216
+theorem VE.Judgments.preds_foldl_or
+  ∀ (l : List VE.Formula) (a : VE.Formula),
+    VE.Norms.preds (List.foldl VE.Formula.or a l) = VE.Norms.preds a ++ List.flatMap VE.Norms.preds l
+  -- uses VE.Formula.or@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
+  -- expr 530207778
+theorem VE.Judgments.preds_inst
+  ∀ (σ : List VE.Term) (φ : VE.Formula), VE.Norms.preds (VE.Norms.inst σ φ) = VE.Norms.preds φ
+  -- uses VE.Formula@VE.Syntax VE.Norms.inst@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree VE.Term@VE.Syntax
+  -- expr 592146749
 theorem VE.Judgments.records_names
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (data : Bool) (formula : Option (Lean.Json → Except String Unit))
     (rs : List VE.Judgments.Rec),
@@ -20587,6 +20669,34 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Judgments.reserved_generated
+  ∀ (k : Nat),
+    VE.NormDefaults.Packs.reserved (VE.Rights.limName k) = Bool.true ∧
+      VE.NormDefaults.Packs.reserved (VE.Rights.condName k) = Bool.true ∧
+        VE.NormDefaults.Packs.reserved (VE.Rights.aimedName k) = Bool.true
+  -- uses VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs VE.Rights.aimedName@VE.Rights.Tree VE.Rights.condName@VE.Rights.Tree VE.Rights.limName@VE.Rights.Tree
+  -- expr 2918300216
+theorem VE.Judgments.reserved_reaches_none
+  ∀ (defs : List VE.Definitions.Def) (J : List String),
+    (∀ (j : String), j ∈ J → VE.NormDefaults.Packs.reserved j = Bool.false) →
+      (∀ (d : VE.Definitions.Def), d ∈ defs → VE.NormDefaults.Packs.reserved d.name = Bool.false) →
+        ∀ (p j : String),
+          j ∈ J →
+            VE.NormDefaults.Packs.reserved p = Bool.true →
+              ¬(p = j ∨ VE.Closure.Reachable VE.Closure.Kind.plus (fun a b => (a, b) ∈ VE.Judgments.defEdges defs) p j)
+  -- uses VE.Closure.Kind.plus@VE.Closure.Paths VE.Closure.Reachable@VE.Closure.Paths VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.defEdges@VE.Judgments.Status VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs
+  -- expr 337946019
+theorem VE.Judgments.reserved_rights
+  ∀ (t : String), VE.NormDefaults.Packs.reserved ("rights__" ++ t) = Bool.true
+  -- uses VE.NormDefaults.Packs.reserved@VE.NormDefaults.Packs
+  -- expr 2453092427
+theorem VE.Judgments.ruleFormulas_ok
+  ∀ (n : Lean.Json) (g : VE.Formula) (us : Array Lean.Json) (cs : List VE.Formula),
+    VE.Judgments.blockFormula (n.getObjValD "guard") = Except.ok g →
+      n.getObjValD "unless" = Lean.Json.arr us →
+        List.mapM VE.Judgments.blockFormula us.toList = Except.ok cs → VE.Judgments.ruleFormulas n = Except.ok (g :: cs)
+  -- uses VE.Formula@VE.Syntax VE.Judgments.blockFormula@VE.Judgments.Chain VE.Judgments.ruleFormulas@VE.Judgments.Chain
+  -- expr 939269028
 theorem VE.Judgments.singleton_infix_iff
   ∀ (w : String) (ws : List String), [w] <:+: ws ↔ w ∈ ws
   -- uses

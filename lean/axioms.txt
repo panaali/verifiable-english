@@ -2839,6 +2839,11 @@
 'VE.Judgments.Examples.viewOf_xi' does not depend on any axioms
 'VE.Judgments.admit_first_fault' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.admit_ok_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.blockFormula_null' does not depend on any axioms
+'VE.Judgments.blockFormulas_bar' depends on axioms: [propext]
+'VE.Judgments.blockFormulas_limitation' depends on axioms: [propext]
+'VE.Judgments.correlate_covered' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.correlate_judged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.dependsOnC_remove' depends on axioms: [propext]
 'VE.Judgments.dependsOnC_sub' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.dependsOn_iff' depends on axioms: [propext, Quot.sound]
@@ -2849,7 +2854,11 @@
 'VE.Judgments.foldlM_ok_length' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.foldlM_ok_mono' depends on axioms: [propext]
 'VE.Judgments.hasPhrase_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.linesFormulas_none' depends on axioms: [propext]
 'VE.Judgments.matches_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_holder' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_line' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_outside' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.mem_defEdges' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.openTermNames_length' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.openTermNames_sorts' depends on axioms: [propext, Quot.sound]
@@ -2858,8 +2867,17 @@
 'VE.Judgments.opensIn_isEmpty' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.path_last' does not depend on any axioms
 'VE.Judgments.predicateWords_name' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.preds_andAll' depends on axioms: [propext]
+'VE.Judgments.preds_atom' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.preds_bindAll_eq' does not depend on any axioms
+'VE.Judgments.preds_foldl_or' depends on axioms: [propext]
+'VE.Judgments.preds_inst' depends on axioms: [propext]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Judgments.reserved_generated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.reserved_reaches_none' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.reserved_rights' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.ruleFormulas_ok' depends on axioms: [propext]
 'VE.Judgments.singleton_infix_iff' depends on axioms: [propext]
 'VE.Judgments.softContent_formulas' does not depend on any axioms
 'VE.Judgments.status_checked' depends on axioms: [propext, Quot.sound]
