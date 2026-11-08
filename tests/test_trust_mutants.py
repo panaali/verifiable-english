@@ -3075,12 +3075,40 @@ def test_a_resume_of_another_heads_or_unbound_record_is_ignored(sharded, monkeyp
     assert not any("reused_from" in r for r in json.loads(again.read_text())["mutants"])
 
 
-RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too few: no part this tool writes
-    *((f"resumed-{f}-{v!r}", lambda ps, f=f, v=v: ps[0].update(resumed={
-        "file": "p", "head": "h", "kept": 1, "rerun": 1, f: v}), NOT_WRITTEN)
-      for f, v in (("kept", True), ("rerun", "1"), ("head", 1), ("file", None), ("ignored", None), ("x", 1))),
-    ("resumed-missing-kept", lambda ps: ps[0].update(resumed={"file": "p", "head": "h", "rerun": 1}), NOT_WRITTEN),
-    ("resumed-not-a-dict", lambda ps: ps[0].update(resumed=[1]), NOT_WRITTEN),
+MOVED = "0123456789abcdef" * 2 + "01234567"  # another commit than the part's own
+
+
+def resumed_base(part, moved=False):
+    """A `resumed` as `sweep` writes it: PREV at the part's own commit, or at another commit with `carried`. Each
+    RESUMED_PARTS case is one fault of one of these bases, and `test_a_part_resumed_at_its_head_or_carried_merges`
+    shows both bases merge, so a case is refused for its own fault and never for an earlier check (eff-tm-headmoved
+    review F1: a base at a wrong head hid every type check behind the `carried` rule)."""
+    return {"file": "p", "head": MOVED if moved else part["head"], "kept": 1, "rerun": 1,
+            **({"carried": "inputs identical"} if moved else {})}
+
+
+def resumed_fault(change, moved=False):
+    """Part 1's `resumed`: a base, then `change` applied to it (or, when `change` returns a value, that value)."""
+    def go(ps):
+        r = resumed_base(ps[0], moved)
+        ps[0]["resumed"] = r if (v := change(r)) is None else v
+    return go
+
+
+RESUMED_PARTS = [  # one fault of a part's `resumed` (retyped, a key too many or too few) or tree: no part this tool writes
+    *((f"resumed-{f}-{v!r}", resumed_fault(lambda r, f=f, v=v: r.update({f: v})), NOT_WRITTEN)
+      for f, v in (("kept", True), ("rerun", "1"), ("file", None), ("ignored", None), ("x", 1))),
+    # on the moved base, which has `carried`: a head of another type is no other commit's, so only its type refuses it
+    ("resumed-head-1", resumed_fault(lambda r: r.update(head=1), True), NOT_WRITTEN),
+    ("resumed-missing-kept", resumed_fault(lambda r: r.pop("kept") and None), NOT_WRITTEN),
+    ("resumed-not-a-dict", resumed_fault(lambda r: [1]), NOT_WRITTEN),
+    # the `carried` rule: present exactly when PREV's head is another commit than the part's, and only that value
+    ("resumed-carried-wrong-value", resumed_fault(lambda r: r.update(carried="inputs similar"), True), NOT_WRITTEN),
+    ("resumed-carried-retyped", resumed_fault(lambda r: r.update(carried=1), True), NOT_WRITTEN),
+    ("resumed-moved-head-no-carried", resumed_fault(lambda r: r.pop("carried") and None, True), NOT_WRITTEN),
+    ("resumed-carried-at-same-head", resumed_fault(lambda r: r.update(carried="inputs identical")), NOT_WRITTEN),
+    ("resumed-carried-when-ignored", resumed_fault(lambda r: r.update(head=None, ignored="x",
+                                                                      carried="inputs identical")), NOT_WRITTEN),
     ("tree-retyped", lambda ps: ps[0].update(tree=1), NOT_WRITTEN),
     ("tree-missing", lambda ps: ps[0].pop("tree"), NOT_WRITTEN),
 ]
@@ -3089,6 +3117,23 @@ RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too f
 @pytest.mark.parametrize(("name", "change", "says"), RESUMED_PARTS, ids=[r[0] for r in RESUMED_PARTS])
 def test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool(sharded, capsys, name, change, says):
     test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
+
+
+@pytest.mark.parametrize("base", [
+    resumed_fault(lambda r: None), resumed_fault(lambda r: None, True),
+    resumed_fault(lambda r: r.update(head=None, ignored="x"))], ids=["own-head", "moved-carried", "ignored"])
+def test_a_part_resumed_at_its_head_or_carried_merges(sharded, capsys, base):
+    """The faultless bases of RESUMED_PARTS merge (exit 0 or 1, never 2) and keep `resumed` in the part's shards entry:
+    each refusal there is its one fault's."""
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    data = [json.loads(p.read_text()) for p in paths]
+    base(data)
+    for p, d in zip(paths, data):
+        p.write_text(json.dumps(d))
+    capsys.readouterr()
+    merged = sharded.tmp / "merged.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1), capsys.readouterr().err
+    assert json.loads(merged.read_text())["shards"][0]["resumed"] == data[0]["resumed"]
 
 
 def test_a_runs_deadline_ends_with_the_run(sharded, monkeypatch):
