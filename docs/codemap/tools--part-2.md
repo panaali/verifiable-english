@@ -1,3 +1,6 @@
+- `tools/test_map_recorder.py` — Record what one process of a test-map run executes, reads and starts.
+- `tools/test_profile_report.py` — Summarise the JSON-lines files `tools/pytest_profile.py` writes.
+- `tools/test_schedule.py` — The order an xdist run starts its tests in: the slowest first, so no long test starts last.
 - `tools/trust_changes.py` — The trust report's changed files (architecture decision D2, AR-2): each Lean file changed since a base commit, with the lines it holds in each trusted class.
 - `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
 - `tools/trust_mutants.py` — Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted growth only when "every new trusted definitio…

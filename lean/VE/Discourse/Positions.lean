@@ -173,7 +173,7 @@ def Row.typed (E : VE.Environment) (ctx : List String) : Row → Bool
   | .plural cs => cs.all fun c => (E.constants c).isSome
   | .pred _ => true
 
-/-- The mentions whose slot occurs in `A`, in span order (the slots of a position have disjoint spans). -/
+/-- The mentions whose slot occurs in `A`, in order of span start. -/
 def slotsIn (ms : List Mention) (A : VE.Formula) : List Mention :=
   let syms := symbolsOf A
   (ms.filter fun m => syms.contains (slotName m.id)).mergeSort fun a b => a.span.1 ≤ b.span.1
@@ -189,11 +189,19 @@ def rewrite (xs : List (Mention × Row)) (A : VE.Formula) : VE.Formula :=
 
 /-! ## Resolution (14.3) -/
 
-/-- A mention nested in another formula-producing mention of the unit: no separate slot (14.3 step 2, 1.4). -/
-def nested (ms : List Mention) (m : Mention) : Bool :=
-  ms.any fun o => o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2
+/-- `m` lies inside the definite `o`'s restriction (1.4, 4.5): a possessive properly inside `o`'s span whose term is
+    the other argument of `o`'s recorded relational restriction, the form `restrFormula` builds. -/
+def inRestriction (o m : Mention) : Bool :=
+  o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&
+    match o.restriction with
+    | some (.binary _ (.var 0) (.const c)) => termConst m.target == some c
+    | _ => false
 
-/-- Resolution step 2: each (outermost) mention has a slot in `c`, and each slot of `c` is a mention. -/
+/-- A nested mention (1.4): resolved inside its definite's restriction, so no separate slot (14.3 step 2). -/
+def nested (ms : List Mention) (m : Mention) : Bool :=
+  ms.any (inRestriction · m)
+
+/-- Resolution step 2: each mention not `nested` has a slot in `c`, and each slot of `c` is a mention. -/
 def slotCheck (ms : List Mention) (ps : List (List String × VE.Formula)) : Except String Unit :=
   let syms := ps.flatMap fun x => symbolsOf x.2
   match ms.find? (fun m => !nested ms m && !syms.contains (slotName m.id)),
@@ -503,8 +511,8 @@ theorem rewrite_denote (E : VE.Environment) (ctx : List String) (A : VE.Formula)
       simp only [Row.apply, place_binder S _ j a ρ ha, ih, slotMeaning, ha, Option.some.injEq, exists_eq_left']
     | assertive σ Dr =>
       have hD := restriction_at (by simpa [Row.typed] using ht.1) S
-      simp only [Row.apply, VE.Discourse.assertive, VE.Formula.denote, place_var, ih, slotMeaning, hD,
-        VE.Term.denote, List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq]
+      simp only [Row.apply, VE.Discourse.assertive, VE.Discourse.assertiveAt, VE.Formula.denote, place_var, ih,
+        slotMeaning, hD, VE.Term.denote, List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq]
       exact exists_congr fun a => and_congr_right fun _ => and_congr_right fun _ => and_congr_left fun _ =>
         forall_congr' fun b => imp_congr_right fun _ => imp_congr_right fun _ =>
           ⟨fun ⟨_, h1, h2⟩ => h1.trans h2.symm, fun h => ⟨a, h, rfl⟩⟩

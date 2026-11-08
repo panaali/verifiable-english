@@ -29,9 +29,10 @@ theorem of_plain_route {v : Json} {kind : String} (hp : (usesNormsPath req || Pl
     all_goals fits_from h
 
 /-- Every admission's kinds are its units' rendered kinds. -/
-theorem admitDocument_kinds (environment document : Json) :
-    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
-  unfold Admission.admitDocument
+theorem admitDocument_kinds (dec : Wire.SourceDecoder) (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds)
+      (Admission.admitDocumentIn dec environment document) := by
+  unfold Admission.admitDocumentIn
   okfits
   all_goals exact Common.kindsRendered_map _ _
 
@@ -77,10 +78,10 @@ theorem plain_fits (j : Json) (hj : CaseWF j)
        -- The route's own generators, re-emitted beside the profile premises.
        all_goals exact Route.background_generators_fit hr hK ‹_› ‹_› _ ‹_›)
 
-theorem runCase_fits (j : Json) (hj : CaseWF j)
+theorem runCase_fits (dec : Wire.SourceDecoder) (j : Json) (hj : CaseWF j)
     (hp : (usesNormsPath j || Plain.layered (j.getObjValD "environment")) = true) :
-    OkFits j Skeletons.norms (runCase j) := by
-  unfold runCase
+    OkFits j Skeletons.norms (runCaseIn dec j) := by
+  unfold runCaseIn
   okfits
   all_goals
     obtain ⟨_, hobj⟩ := Common.stringField_obj ‹VE.Bridge.stringField j "id" = .ok _›
@@ -99,14 +100,14 @@ theorem runCase_fits (j : Json) (hj : CaseWF j)
   all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, wordingsJson, List.map_cons,
     List.map_nil, String.reduceBEq])
   all_goals first
-    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
+    | (unfold runAdmissionIn; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ _ ‹Admission.admitDocumentIn _ _ _ = .ok _›))
     | fits
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.norms (runCaseReported j) := by
-  unfold runCaseReported
+  unfold runCaseReported runCaseRouted
   split
   · split
-    · exact runCase_fits j hj ‹_› _ ‹_›
+    · exact runCase_fits _ j hj ‹_› _ ‹_›
     · fits
   · exact of_route (Bool.eq_false_iff.mpr ‹_›) (Route.runCaseReported_fits j)
 

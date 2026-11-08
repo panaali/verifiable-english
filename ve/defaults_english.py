@@ -6,11 +6,15 @@ the exceptions a situation `forced` and the deciders of a collision (`giveWayDec
 `ve.defaults` bound, and chooses nothing: DE1 or DE1′ is Lean's `form`, DE6 or DE6′ is whether Lean's `forced` is
 empty, DE12 is Lean's basis `unsettled`, and DE7's decider sentence is the shape of Lean's `deciders`. The conclusion,
 the conditions, the situation and the effects are the existing renderers' (`canonical_sentence`, the soft rules'
-condition text `norm_english._guard_text`, Lean's `words` lines). An assumption is read from Lean's label
-(`lean/VE/Defaults/Premises.lean`, `dfltLabelled`: its kind, then the rule, party or ranks it names), and every name
-it gives is bound to the request: a label the request cannot give is `CheckerUnavailable`.
+condition text `norm_english._guard_text`, Lean's `words` lines). The words of DE10 to DE13 (DE11's after DE6′ too)
+are Lean's, generated into `ve/defaults_words.json` (`tools/defaults_words.py`); this module fills their slots. An
+assumption is read from Lean's label (`lean/VE/Defaults/Premises.lean`, `dfltLabelled`: its kind, then the rule,
+party or ranks it names), and every name it gives is bound to the request: a label the request cannot give is
+`CheckerUnavailable`.
 """
 from __future__ import annotations
+
+import functools
 
 from .defaults import _decider, _rules, _unbound
 
@@ -156,7 +160,7 @@ def fails(case, row):
     out = [f"{head}, the conclusion does not follow. It fails here: {text.situation(model)}."]
     for entry in row["forced"]:
         condition = text.condition(text.rule(entry["rule"]), entry["condition"], entry["tuple"])
-        out.append(f"The text's own exception to rule {entry['rule']} applies here: {condition}.")
+        out.append(_line_words("DE11")["sentence"].format(rule=entry["rule"], condition=condition))
     return out
 
 
@@ -185,8 +189,67 @@ def collision(case, row):
     return out
 
 
+@functools.cache
+def _words():
+    """The words of DE10 to DE13, generated from their Lean owner (`ve/defaults_words.json`: `zoneHeads`,
+    `zoneLineWords` and `zoneJoins` in `lean/VE/Defaults/ZoneWire.lean`), each row keyed by the answer's fields that
+    select it."""
+    import json
+    from pathlib import Path
+    return json.loads(Path(__file__).with_name("defaults_words.json").read_text())
+
+
+def _line_words(row, kind=""):
+    """Lean's words of the line `row` (with a DE13's decision kind)."""
+    found = [w for w in _words()["lines"] if w["row"] == row and w["kind"] == kind]
+    if len(found) != 1:
+        raise _unbound("row")
+    return found[0]
+
+
+def _decision(text, line, inline=False):
+    """A row after DE10 (Lean's choice) in Lean's words for its `row` and decision kind, its slots filled by the
+    existing renderers; `inline`, its words inside DE10″'s two completions."""
+    from .softnorms import _decision_key
+    slots, kind = {"tuple": _words()["joins"]["tuple"].join(line["tuple"])}, ""
+    if line["row"] == "DE13":
+        kind, *parts = _decision_key(line["decision"])
+        slots.update({"excepted": lambda r: {"rule": r},
+                      "off": lambda r, party: {"rule": r, "party": _who(party)},
+                      "outweighs": lambda act, low, high: {"act": text.act(act), "lower": low, "higher": high}
+                      }[kind](*parts))
+    else:
+        slots["rule"] = line["rule"]
+        if line["row"] == "DE11":
+            slots["condition"] = text.condition(text.rule(line["rule"]), line["condition"], line["tuple"])
+    return _line_words(line["row"], kind)["inline" if inline else "sentence"].format_map(slots)
+
+
+def zone(case, row):
+    """DE10, DE10′ or DE10″, the one Lean's zone and `form` select, with the outcome Lean's zone gives, then one
+    sentence per row of the completion shown; for `leftTo`, its two completions in those rows' words; no sentence
+    for a zone no row is keyed by."""
+    heads = [h for h in _words()["heads"] if h["zone"] == row["zone"]]
+    if not heads:
+        return []
+    from . import words
+    text = _Text(case)
+    heads = [h for h in heads if h["form"] == row["form"]]
+    if len(heads) != 1:
+        raise _unbound("form")
+    if row["zone"] == "leftTo":
+        first, second = (_words()["joins"]["and"].join(_decision(text, line, inline=True) for line in lines)
+                         for lines in row["completions"])
+        return [heads[0]["words"].format(first=first, second=second)]
+    query = case["query"]
+    result = words.clause(text.env, words.constants_of(case["model"]), query["outcome"], query["tuple"], row["value"])
+    return [heads[0]["words"].format(result=result)] + [_decision(text, line) for line in row["completions"][0]]
+
+
 def sentences(case, row):
-    """The English of one bound `defaults-certificate`, `defaults-model` or `defaults-coherence` row."""
+    """The English of one bound `defaults-certificate`, `defaults-model`, `defaults-coherence` or `defaults-zone` row."""
+    if case.get("kind") == "defaults-zone":
+        return zone(case, row)
     if row.get("verdict") == "FOLLOWS":
         return follows(case, row)
     if row.get("verdict") == "DOES-NOT-FOLLOW":
