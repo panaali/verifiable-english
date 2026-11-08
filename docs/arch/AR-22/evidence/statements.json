@@ -1,12 +1,12 @@
 {
- "base": "53fdabfde4a66850c82ced932c8ffb749a1a81f7",
- "head": "73b73ad0dfdae7d315b2f5d080a69b62cd941e09",
+ "base": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
+ "head": "01d1e6030353433cf9de9c9aeef796c453703561",
  "tool": "uv run python tools/lean_statements.py --diff BASE HEAD (added/removed/changed); each changed entry compared field by field (statement text, `-- expr` hash, `-- uses` constants with and without their @Module tag); each removed entry with the head theorem that covers it",
  "statements": {
-  "base_sha256": "c15e4e10cc45c0482894d94c832b30493ab5d6c8ce1dc3a59cc405a909edefec",
-  "head_sha256": "052f380c4145dc24f956f14e99e041d0d36d39f69e0aa7afc65a496439719dd8",
-  "base_entries": 8098,
-  "head_entries": 7977,
+  "base_sha256": "5aeb980f9f09011c5c3bb2eccee682f85dfbc042616f440dd81298960b033417",
+  "head_sha256": "185ba7f7599b464e12649fd3495cc346d6fa16aad344bda2bd60fb8fe44b0e03",
+  "base_entries": 8154,
+  "head_entries": 8033,
   "added": [],
   "removed": [
    {
@@ -948,11 +948,12 @@
   "changed_note": "every changed entry has a byte-identical statement text and expr hash and the same used constants; only the @Module tag of a moved constant differs (Trace, Certificate and checkCertificate from VE.TableauExtended*, extraRule from VE.TableauExtendedExtra, embedTrace/embedTraces/embedCert from VE.Closure.CoreEquiv, all now in VE.Closure.Tableau)",
   "changed_all_text_identical": true,
   "changed_all_expr_identical": true,
-  "changed_all_uses_names_identical": true
+  "changed_all_uses_names_identical": true,
+  "removed_all_covered": true
  },
  "predicates": {
-  "base_sha256": "eaec33415f1e31ea88cef450f93dba09a37c6bc32b7eae0233319b0f817e1db5",
-  "head_sha256": "67e5afa451ef3ddd7a85172617a822ee3054a7c638f656a4e3ac0ee5405ea570",
+  "base_sha256": "bedf29d7b990d31d76866d5a869734bdba885a3042d8a7b645d6071bcc9d4b7f",
+  "head_sha256": "83994d9eadab875bf5859629a1957ded1d247ad183a3ad01914b675feb236505",
   "lines_removed": [
    "module VE.Closure.Congruence",
    "module VE.Closure.Induction",
