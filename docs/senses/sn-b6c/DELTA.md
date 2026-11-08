@@ -1,0 +1,15 @@
+# sn-b6c DELTA (senses.read members: spans, glosses, the texts of spec 3.2)
+
+Base: the merge base with main, `e9a6ec8d5`. Only `senses.read` route answers (`ve_senses_route`, `ve senses check`)
+change; the document mode's call of the reader (`identified = false`) and `senses.project` do not. Nothing is
+removed or renamed. Every added field is Lean's (`lean/VE/Senses/Run.lean`, `lean/VE/Senses/Texts.lean`), typed
+and bound by the relay (`ve/backends/senses.py`; reviews/dri-decisions-20261108-sn-b6c.md item 1).
+
+| # | Delta | Evidence | Ruling |
+|---|---|---|---|
+| 1 | Each sense-map entry gains `gloss` (its sense's gloss); on a source request also `byte_start`, `byte_stop` (UTF-8 bytes of its tokens, `lexSpans`). Bound: the gloss is one of the request's senses; the span lies in the source's body, on character boundaries, with no white space or cut word at either edge, in its tokens' order | `tests/test_senses_read_members.py::test_each_span_is_the_bytes_of_its_words` (3 goldens, a no-break space among them), `::test_a_span_off_by_one_byte_is_refused` (7), `::test_spans_follow_their_tokens`, `::test_a_tampered_entry_through_the_route_is_unavailable` (3); `#guard`s in `lean/VE/Senses/TextsExamples.lean` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 2 | Every open unit of a source answer gains `text`, Lean's `Unresolved` text (fence answers had it already) | `TextsExamples.lean` (plan 2.8's text); `tests/test_senses_document.py::test_open_fence_refused_with_leans_unresolved_text` (equals the fence refusal's); `::test_text_rebinding_is_refused[unit-text-dropped, resolved-unit-text]` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 3 | `UnknownGloss`, `TooManyCandidates` and a one-word `CandidatesDiverge` refusal gain `text`, spec 3.2's | `tests/test_senses_route.py::test_every_refusal_carries_its_arguments[s4, a1-30-words, s17]` (whole reading equal); `TextsExamples.lean`; `::test_text_rebinding_is_refused[fault-text-dropped, fault-text-unasked]` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 4 | S2's `none` for a sentence with exactly one unresolved word and no candidate gains `hint` `{code: NoSenseFits, text}` | `test_senses_read_members.py::test_the_texts_of_a_source_answer_are_leans` (and no hint for two words), `::test_text_rebinding_is_refused[hint-*]` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 5 | Admitted readings gain `warnings`: one `Mixed` per `mixed` word (plan 2.8's text, sentences of each sense), then one `Unneeded` per line of a word with one sense | `::test_the_texts_of_a_source_answer_are_leans`, `::test_warning_rebinding_is_refused` (7) | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 6 | Trusted Lean growth V +25, K +0, S +0 over `e9a6ec8d5`: `lean/VE/Senses/Run.lean` +25 (G[V] `byteSpan`, `senseEntryJson`; the entry and texts arguments of `outcomeJson` and `readCase`). The texts (`Texts.lean`, `bodyOf`, `textsJson`, `warningsJson`) are G[R] | `uv run python tools/trust_map.py --check` (PASS, "allowed V +25"); `docs/senses/sn-b6c/trust-mutants.json`; FOLLOW-UPS.md "## sn-b6c" | SIGNED by standing ruling R16 (DRI-RULINGS.md) |
