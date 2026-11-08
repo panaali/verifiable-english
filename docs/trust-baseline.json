@@ -1751,20 +1751,6 @@
   },
   {
    "class": "S",
-   "lines": 88,
-   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
-   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
-  },
-  {
-   "class": "V",
-   "lines": 61,
-   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
-   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
-  },
-  {
-   "class": "S",
    "lines": 4,
    "reason": "jt-3p: lean/VE/Judgments/Undeclared.lean S +1, lean/VE/EnglishGrammar/Evaluative.lean S +3; K +0, V +0 (the fixtures are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3p, 2026-11-02",
@@ -1967,6 +1953,55 @@
    "commit": "287d5dc601e634a3d1720b907e79522a3464c8aa"
   },
   {
+   "class": "S",
+   "lines": 84,
+   "reason": "pc-1g: VE/Service/Document.lean S +75 (verdictFields, setVerdictFields, unitStatuses, judgmentCodes, judgmentGateTexts, layerRefusal, layerRelaxes, noUnitStatus, withoutStatuses), V +9 (UnitContent.judgedIn: the rights block and a rights norm unit beside its cites); VE/Judgments/Chain.lean S +9 (rightsAuthorFormulas, andAll), V +36 (blockFormula, ruleFormulas, linesFormulas, blockFormulas)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 45,
+   "reason": "pc-1g: VE/Service/Document.lean S +75 (verdictFields, setVerdictFields, unitStatuses, judgmentCodes, judgmentGateTexts, layerRefusal, layerRelaxes, noUnitStatus, withoutStatuses), V +9 (UnitContent.judgedIn: the rights block and a rights norm unit beside its cites); VE/Judgments/Chain.lean S +9 (rightsAuthorFormulas, andAll), V +36 (blockFormula, ruleFormulas, linesFormulas, blockFormulas)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "pc-1g: VE/Service/Document.lean S +1 (verdictFields names undeclared_evaluative, DRI 2026-11-03 pc-1g stop item 4); item total S +85, V +45, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1g: VE/Judgments/Chain.lean V +1 (blockFormula written as a match on null, so blockFormula_null holds by rfl); item total S +85, V +46, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g, 2026-10-18",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "pc-1g F1: lean/VE/Service/Document.lean D[V] +1 in environmentOf, refusing conditioned rights rules before their unchecked judgment usage; new ruleExceptionConditioned, rightsBlockRules and unitRules are G[R], reject-only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-1g F1, 2026-11-04",
+   "commit": "fd9f25f9bfaaa42b3fb7fec84a603606ad0bf006"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
+   "class": "V",
+   "lines": 61,
+   "reason": "en-s6b: Norm/Rules.lean +94 (S 81, V 13), Fixed/Norms.lean +25 (V), Norm/Elab.lean +18 (V), Norm/Read.lean +7 (S), Actions.lean +3 (V), Syntax.lean +2 (V); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-s6b, 2026-10-18",
+   "commit": "3b4e471f8c29002d4cfbd9557cf2ee49c80e7760"
+  },
+  {
    "class": "V",
    "lines": 2,
    "reason": "sc-5rdb: VE/Scope/Wire.lean +2 (decodeBlock's repeated unit id refusal)",
@@ -2084,6 +2119,13 @@
    "reason": "ci-2 review F1: V +6 above the existing +141 allowance: VE/EnglishGrammar/Run.lean +5 for translationOf, the shared formatter of the existing translation outcome; VE/Commands/Read.lean +1 to pass that outcome to the formatter. CI-2 total V +147, K +0, S +0, within R16 150-line cap.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2 review F1, 2026-11-04",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "S",
+   "lines": 8,
+   "reason": "ps-1c: lean/VE/Presupposition/Rules.lean S +8 (ruleGoal, conditionNode, conditionRule); Agree.lean +0; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1c, 2026-10-18",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
   }
  ]
 }
