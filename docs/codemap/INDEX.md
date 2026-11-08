@@ -8,7 +8,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/act-phrases/](docs__act-phrases.md) — 39 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/attitudes/](docs__attitudes.md) — 2 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 3 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -55,7 +55,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/presupposition/](docs__presupposition.md) — 4 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
@@ -81,7 +80,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
-- [lean/VE/Attitudes/](lean__VE__Attitudes.md) — 3 modules — -
+- [lean/VE/Attitudes/](lean__VE__Attitudes.md) — 4 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 16 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
@@ -129,7 +128,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 93 modules — -
 - [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
-- [tests/ part 4](tests--part-4.md) — 93 modules — -
+- [tests/ part 4](tests--part-4.md) — 92 modules — -
 - [tests/ part 5](tests--part-5.md) — 78 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
 - [tests/ part 7](tests--part-7.md) — 55 modules — -

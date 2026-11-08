@@ -656,7 +656,19 @@
 'VE.Ask.zeroSplitModels_base' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zeroSplit_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zero_ask_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.Examples.awf_iff' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.checkAtt_tail' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.checkNames_mem' depends on axioms: [propext]
+'VE.Attitudes.envAtt_extends' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.envAtt_keeps' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.inj_of_nodup_map' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.keyOf_name' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.names_fresh' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.names_injective' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.not_of_throwIf' does not depend on any axioms
+'VE.Attitudes.ok_of_bind' does not depend on any axioms
 'VE.Attitudes.table_reviewed' depends on axioms: [propext]
+'VE.Attitudes.toNorms_wellFormed' depends on axioms: [propext, Quot.sound]
 'VE.Bridge.CountermodelQuery.conclusion_typed' does not depend on any axioms
 'VE.Bridge.CountermodelQuery.premises_typed' does not depend on any axioms
 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
