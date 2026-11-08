@@ -2756,6 +2756,32 @@ def test_plan_prints_the_counts_and_builds_nothing(sharded, capsys):
         assert out.splitlines() == [json.dumps({**counts, **({"owned": owned} if owned is not None else {})})]
 
 
+# tm-inventory-flag: --only IDS keeps exactly the named planned mutants (the targeted inventory, committed in the tool).
+@pytest.mark.parametrize("ids", ["M005,M002", "M002 M005", " M005, M002 ,M005 ", "@ids.txt"])
+def test_only_keeps_exactly_the_named_mutants(sharded, capsys, ids):
+    (sharded.tmp / "ids.txt").write_text("M005\n\nM002\n")
+    ids = ids.replace("@", "@" + str(sharded.tmp) + "/")
+    code, _, err, ran, _ = sharded("--only", ids, "--json", sharded.tmp / "run.json", capsys=capsys)
+    record = json.loads((sharded.tmp / "run.json").read_text())
+    assert code == 1 and sorted(ran) == ["M002", "M005"], (code, ran, err)
+    assert [(m["id"], m["status"] != "NOT RUN") for m in record["mutants"]] == [("M002", True), ("M005", True)]
+
+
+@pytest.mark.parametrize("ids", ["M002,M099", "M099 X1", "", " , "])
+def test_only_an_id_not_in_the_plan_stops_the_run(sharded, capsys, ids):
+    code, out, err, ran, builds = sharded("--only", ids, "--json", sharded.tmp / "run.json", capsys=capsys)
+    assert code == 2 and not ran and not builds and not (sharded.tmp / "run.json").exists() and not out
+    assert ("not in the plan: " + " ".join(i for i in ids.split(",")[-1].split() if i != "M002")) in err or (
+        not ids.strip(" ,") and "no mutant id" in err), err
+
+
+def test_only_with_plan_prints_only_the_kept_mutants(sharded, capsys):
+    code, out, _, ran, builds = sharded("--plan", "--only", "M007,M001,M004", "--max-mutants", 2, capsys=capsys)
+    assert code == 0 and not ran and not builds
+    assert json.loads(out) == {"base": json.loads(out)["base"], "definitions": 2, "mutants": 3, "to_run": 2,
+                               "not_run": 1, "only": ["M001", "M004", "M007"]}
+
+
 # eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume at the same HEAD judges only
 # what it left; another HEAD's record, and a partial record at --merge or --rescore, are never a sweep. The clock is
 # injected (`tm.clock`): each mutant `run` takes STEP seconds of it, so no test waits.
