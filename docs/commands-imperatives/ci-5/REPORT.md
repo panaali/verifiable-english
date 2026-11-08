@@ -77,7 +77,14 @@ the count by the task's rule is FINAL-COUNT.
 
 ## Tests
 
-SELECTED (filled below when the run ends).
+Selected tests (`zsh mac-pytest.sh --select -- --base e9a6ec8d5 --run`, log /tmp/ci5-select.log, run
+`ci-5-034b4ee3-t133509` on the Claude cloud, at 89228a34f; later commits change only docs, the ledger row and evidence): 563 units in 6 shards.
+Shards 1-5: "97 units, 97 passed", "97 passed", "98 passed", "99 passed", "97 passed". Shard 6: "1 failed, 287 passed"
+(`tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`: the plan's step 8b quoted 3719 tied
+lines, the ledger now measures 3750, the +31 of `SpeechActs/Wire.lean`). Fixed in b3c0b5bc2 (the row remeasured, as
+cmp-s4c did); rerun of exactly that id (`mac-pytest.sh -- <id>`, ve-mac-1, HEAD b3c0b5bc): "1 passed", exit 0. Not in
+main-known-red. `uv run python tools/gate_collection.py --check --prebuilt`: "32479 collected, 32468 at e9a6ec8d5…; 11
+added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
 
 While iterating: `uv run pytest -q tests/test_speech_acts_acts0.py`: "11 passed"; `tests/test_assurance_manifest.py`:
 "139 passed"; `uv run python tools/regen_generated.py --write`: rc 0. Not run here: the full gate (the chain runs it).
@@ -118,4 +125,39 @@ PC-6 (profile composition), after pc-revise-20261104 and sn-wire-pc6.
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELF-REVIEW (filled below).
+1. Typed and contained: N.A., no response field, schema or relay changes (`git diff --stat main...HEAD` touches no
+   `lean/ResponseShape/`, `ve/backends/` or schema file); the answers under `acts@0` are the existing `english.command`
+   and speech-elaborate shapes, read live in `tests/test_speech_acts_acts0.py::test_each_b1_row_is_its_lean_fixture_and_reads_one_simple_act`.
+2. Deliverables: PASS, the Deliverables table (each row: commit and test); deviations signed (DRI 20261105 items 1-3,
+   20261108-ci-5-size item 1); no Python copy of a Lean decision (no `ve/` code changed); in-flight overlap reported (et-4b).
+3. Tests can fail: PASS, seeds S1-S4 (`mutants.json`), each killed by a named `#guard` and proof; R16 mutants in
+   `trust-mutants.json`.
+4. Python, Lean and Rust agree: PASS for Lean and the service: `AB.json` (base vs HEAD, 9 rows plus 6 acts-off rows
+   identical); no Rust path reads `speech-acts@0` with `acts@0`, and no Rust code changed.
+5. R8 binding: N.A., no relayed field is added; undeclared phrases stay refused (`Examples.lean:406`,
+   `tests/test_speech_acts_acts0.py::test_a_fixed_phrase_does_not_generalise_over_its_object`).
+6. Gate evidence: PASS as far as the builder goes: main has not moved since the merge base (`git log
+   $(git merge-base HEAD main)..main`: empty); the chain runs the full gate on the final HEAD; no evidence commit list.
+7. No unsigned item: PASS, `python3 /home/seyran/code/manage-agents/review-ready.py --delta-dri-needed
+   /home/seyran/code/ve-ci-5`: "no DELTA row reserved for the DRI", rc 0; trust growth: R16 allowance.
+8. Every user-visible change in DELTA: PASS, the A/B's changed rows (b1, b2) and the gate, decoder and trust rows are
+   DELTA rows 1-9; acts-off rows identical (`"acts_off_identical": true`).
+9. Test selection: PASS, `tools/select_tests.py --base e9a6ec8d5` selects `tests/test_speech_acts_acts0.py`,
+   `tests/test_assurance_manifest.py` and the speech and acts suites, not every unit (563 units); the seeded Lean bugs are
+   caught by `#guard`s that every `lake build` runs.
+10. Statements: PASS, "Spec re-read" above; S1, S3 and S4 break `decode_without_acts`, `gate_acts` and
+    `decoded_act_simple`; `python3 lean/audit.py`: "PASS: 780 source files; 8655 named theorem declarations audited".
+11. Budgets and limits: PASS, at-limit and over-limit fixtures `Examples.lean:450-458` (ResourceLimit, never success);
+    no budgeted operation is added (budget 0: N.A.).
+12. CPU and memory: N.A., no new evaluator or enumeration; `checkActsBlock` is skipped without `acts@0` (a `contains`
+    test, `decode_without_acts`), so the pilots, which do not list `acts@0` with `speech-acts@0`, are not on the path;
+    the largest request decodes and reads in a `#guard` (`Examples.lean:456-458`).
+13. Test-removed trailers: PASS, `uv run python tools/gate_collection.py --check --prebuilt`: "11 added, 0 removed by a
+    trailer, 0 refused, 0 stale and 0 malformed" (the dropped report test was never on main).
+14. Both directions, cited evidence, spec re-read: PASS, every new refusal has its accepted twin (`Examples.lean:477`/`:478`,
+    `:401`/`:404`, `:385`/`:387`, `:451`/`:450`, `:453`/`:452`, `:457`/`:456`; the gate: `:424`-`:431` against
+    `profileGate actsProfiles == "ok"`, `:416-417`); "Spec re-read" above.
+15. Overclaim / silent cut / every check can fail / limits charged first: PASS. Overclaim: the parsed-tree claim is
+    stated as shown on `E_acts` only (DRI 20261105 item 3), "the new word" is reported as not bound; no cut (DRI
+    20261108-ci-5-size item 1); S1-S4 and the R16 mutants; the phrase limit is charged before the phrases are walked
+    (`:451`).
