@@ -152,6 +152,12 @@ def unitsIn (j : Option Json) : List Json := j.map (fun f => ((f.getObjValD "uni
     ((f.getObjVal? "open_terms").toOption.isNone, unitsIn (some f))) == some (true, [counting, elsewhere "chain" formula])
 #guard said (countingFront (frontOf [formula])) == "UnsupportedProfile: a document under cardinality@0's chain list holds a counting unit"
 #guard ((chainFront (frontOf [counting]) plainEnv).toOption) == some none
+-- A counting unit anywhere in the list; the three members the chain reads go, and every other member stays.
+#guard said (countingFront (frontOf [formula, counting])) == "ok" &&
+  ((chainFront (frontOf [formula, counting]) plainEnv).toOption.join.isSome) &&
+  ((countingFront (frontOf [counting] (["narrowings", "open_terms", "reading_sets"].map (·, toJson ([] : List Json)) ++
+    [("version", toJson 1)]))).toOption.bind fun f => (VE.Bridge.fields f).toOption.map (·.map Prod.fst)) ==
+    some ["environment", "units", "version"]
 def lowered : Option Json := ((chainFront (frontOf [counting, formula]) plainEnv).toOption).join
 #guard unitsIn lowered == [elsewhere "counting" (counting), formula] &&
   ((lowered.map (·.getObjValD "environment")).bind fun e => (VE.Bridge.fields e).toOption.map (·.map Prod.fst)) ==
@@ -168,6 +174,9 @@ def answered : Json := (composedJson "---\n{}\n---\nAB" (frontOf [counting, form
   ((rowOf (text environment one)).getObjVal? "composed").toOption.isNone
 #guard said (run (text plainEnv [unit "u" (card top)] [("graph", graph "u" [("u", top)])])) ==
   "UnsupportedProfile: cardinality documents require documents@1"
+-- Outside the chain list a `ve` fence no unit binds is still refused.
+#guard said (run ("---\n" ++ (Json.mkObj [("format", .str "ve-document@1"), ("environment", plain), ("units", toJson [unit "u"
+    (Json.mkObj [("ast", toJson ["top"])])])]).compress ++ "\n---\nA\n```ve v\nthere is\n```\n")) == "unbound VE fence"
 
 /-! `check`: what reads the first-order chain is refused by name; the flag `decodedEnvironment` keeps is the retained
 reader's; a graph's nodes are bound on this path too. -/

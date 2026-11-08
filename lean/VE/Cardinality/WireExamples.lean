@@ -303,6 +303,13 @@ def e2 : String :=
 #guard refusal (terms 1) (env.setObjVal! "profiles" (p r#"["order@0", "relational-fol@0", "time@0"]"#)) == e2
 #guard refusal (terms 1) (env.setObjVal! "profiles" (p r#"["cardinality@0", "norms@0", "order@0", "relational-fol@0",
   "time@0"]"#)) == e2
+-- E2's lists (DRI 2026-11-05 item 1): W6a's two with `cardinality@0`, then the chain list, each projected onto a W6a list.
+#guard chainProfiles == ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] &&
+  profileLists.length == 3 && profileLists.getLast? == some chainProfiles &&
+  profileLists.all (VE.Time.Wire.w6Profiles.contains <| projectedProfiles ·)
+#guard projectedProfiles chainProfiles == ["order@0", "relational-fol@0", "time@0"] &&
+  projectedProfiles ["cardinality@0", "documents@1", "order@0", "relational-fol@0", "time@0"] ==
+    ["documents@1", "order@0", "relational-fol@0", "time@0"]
 -- E2 before E3, E3 before E4, E4 (W6a's own text) before E5.
 #guard refusal (terms 1) ((env.setObjVal! "profiles" (p r#"["cardinality@0", "order@0"]"#)).setObjVal!
   "cardinality_schema" (.str "x")) == e2
