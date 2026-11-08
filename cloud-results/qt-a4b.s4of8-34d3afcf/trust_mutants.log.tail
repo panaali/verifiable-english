@@ -1,0 +1,16 @@
+trust_mutants: 20 definitions, 404 mutants (51 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Compose/Dispatch.lean:933 VE.Compose.TableAdmits (S, trusted) body-false: ps.Pairwise (· < ·) ∧ (∀ p ∈ ps, ∃ r ∈ t, r.profile = p) ∧ (∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ... -> False (the proofs it breaks: lean/VE/Compose/Dispatch.lean:968, lean/VE/Compose/Dispatch.lean:1302, lean...)
+SURVIVOR lean/VE/Compose/Dispatch.lean:934 VE.Compose.TableAdmits (S, trusted) or-and: ∨ -> ∧ (the proofs it breaks: lean/VE/Compose/Dispatch.lean:968, lean/VE/Compose/Dispatch.lean:1302, lean...)
+SURVIVOR lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-empty: [chainProfiles] -> []
+UNKNOWN lean/VE/Service/Document.lean:2343 VE.Service.Document.cardinalityReport (D[V], trusted) list-drop-last: ? -> (?.dropLast) (lean/VE/Service/Document.lean:2343: don't know how to synthesize placeholder)
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-last: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> ([("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("card...
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-drop-first: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> ([("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("card...
+SURVIVOR lean/VE/Service/Document.lean:2283 VE.Service.Document.countingFront (D[V], trusted) list-drop-last: ["open_terms", "reading_sets", "narrowings"] -> (["open_terms", "reading_sets", "narrowings"].dropLast)
+SURVIVOR lean/VE/Service/Document.lean:2441 VE.Service.Document.check (D[V], trusted) list-drop-first: doc.fences.map Prod.fst -> ((doc.fences.map Prod.fst).drop 1)
+SURVIVOR lean/VE/Service/Document.lean:2295 VE.Service.Document.chainFront (D[V], trusted) list-drop-first: ["profiles", "cardinality_schema", "cardinality", "unit_schema", "units"] -> (["profiles", "cardinality_schema", "cardinality", "unit_schema", "units"].drop 1)
+trust_mutants: 34 KILLED, 8 SURVIVOR, 1 UNKNOWN, 6 INVALID, 0 ALLOWED, 2 NOT RUN, 353 OTHER SHARD in 5097 s
+trust_mutants: D[V], trusted: 20 KILLED, 4 SURVIVOR, 1 UNKNOWN, 6 INVALID, 243 OTHER SHARD
+trust_mutants: G[V], trusted: 14 KILLED, 2 SURVIVOR, 2 NOT RUN, 107 OTHER SHARD
+trust_mutants: S, trusted: 2 SURVIVOR, 3 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 2 of its 51 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12.3 s, scratch 3.6 s, control_build 1 s, probe_install 1.4 s, control_probes 2116.8 s, mutants 2958.9 s, cleanup 3.1 s, reads 0.1 s; lake control_build 0.9 s (1), probe_install 1.4 s (1), control_probes 6047.5 s (18), mutant_builds 2668.8 s (54), mutant_checks 6382.4 s (33), stage_controls 922.9 s (6), mutant_probes 775.9 s (34)
