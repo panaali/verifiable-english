@@ -1,0 +1,10 @@
+trust_mutants: 8 definitions, 51 mutants (51 to run), 4 jobs, base 176d50c05c2d
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-false: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-true: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:231 VE.SpeechActs.Wire.checkActsBlock (D[V], trusted) and-or: && -> || (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:232 VE.SpeechActs.Wire.checkActsBlock (D[V], trusted) ne-eq: != -> == (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:149 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:258 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:47 VE.SpeechActs.Wire.allowlist (D[V], trusted) list-empty: :: allowlist₀ -> [] (lean/VE/SpeechActs/Wire.lean:47: Function expected at)
+UNKNOWN lean/VE/Compose/Dispatch.lean:767 VE.Compose.actsRefuses (G[V], trusted) list-empty: (["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not implem... -> [] (lake build did not finish in 1800 s (--build-timeout))
