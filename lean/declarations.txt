@@ -15926,7 +15926,7 @@ module VE.Presupposition.Rules 772dc31ffb2d25e8805aadfd76532154b97c28aca02a99a2b
 137:0-140:53 theorem VE.Presupposition.conditioned_contributes_nothing@VE.Presupposition.Rules
 142:0-143:79 theorem VE.Presupposition.unsaid_iff@VE.Presupposition.Rules
 145:0-149:63 theorem VE.Presupposition.source_identity_entails@VE.Presupposition.Rules
-module VE.Purposes.Decl eff0e7a777448fb10fefb6cbe6822c510477c5bc067e0f7ba0b5cce24c13da23
+module VE.Purposes.Decl ef99656c8b03a4f5a23d3aca6fb58fdfc4639d246b6c6d4f6b97099b577fae1c
 8:0-12:28 inductive VE.Purposes.Relation@VE.Purposes.Decl
 12:11-12:22 instance VE.Purposes.instDecidableEqRelation@VE.Purposes.Decl
 12:24-12:28 def VE.Purposes.instReprRelation.repr@VE.Purposes.Decl
@@ -15968,10 +15968,6 @@ module VE.Purposes.Decl eff0e7a777448fb10fefb6cbe6822c510477c5bc067e0f7ba0b5cce2
 64:24-64:28 def VE.Purposes.instReprBlock.repr@VE.Purposes.Decl
 64:24-64:28 instance VE.Purposes.instReprBlock@VE.Purposes.Decl
 66:0-66:25 def VE.Purposes.maxLinks@VE.Purposes.Decl
-68:0-75:28 inductive VE.Purposes.NotChecked@VE.Purposes.Decl
-75:11-75:22 instance VE.Purposes.instDecidableEqNotChecked@VE.Purposes.Decl
-75:24-75:28 def VE.Purposes.instReprNotChecked.repr@VE.Purposes.Decl
-75:24-75:28 instance VE.Purposes.instReprNotChecked@VE.Purposes.Decl
 module VE.Purposes.Examples 280eac6962ea452e1463e7fc1b019a56d8cdc89ceeab658fcac876296b01fd97
 14:0-17:22 def VE.Purposes.Examples.result@VE.Purposes.Examples
 19:0-21:22 def VE.Purposes.Examples.pt@VE.Purposes.Examples

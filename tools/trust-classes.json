@@ -19383,6 +19383,246 @@
       "G[V]": [
         "main"
       ]
+    },
+    "VE/Route/Inert.lean": {
+      "S": [
+        "VE.Route.Admission.Kind.inert"
+      ]
+    },
+    "VE/Purposes/Decl.lean": {
+      "S": [
+        "VE.Purposes.Block",
+        "VE.Purposes.Link",
+        "VE.Purposes.Polarity",
+        "VE.Purposes.Ref",
+        "VE.Purposes.Relation",
+        "VE.Purposes.Share",
+        "VE.Purposes.maxLinks"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Purposes.Relation.ofWire?",
+          "tied": [
+            "VE.Purposes.Relation.ofWire_wire"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Relation.wire",
+          "tied": [
+            "VE.Purposes.Relation.ofWire_wire",
+            "VE.Purposes.Relation.wire_mem"
+          ]
+        }
+      ]
+    },
+    "VE/Purposes/WellFormed.lean": {
+      "S": [
+        "VE.Purposes.Link.partIds",
+        "VE.Purposes.Link.slots",
+        "VE.Purposes.Part",
+        "VE.Purposes.Ref.partId?",
+        "VE.Purposes.Units",
+        "VE.Purposes.Units.find?",
+        "VE.Purposes.Units.kind?",
+        "VE.Purposes.WellFormed",
+        "VE.Purposes.covered",
+        "VE.Purposes.markerAgrees",
+        "VE.Purposes.markerHonest",
+        "VE.Purposes.markersLinked",
+        "VE.Purposes.rivals",
+        "VE.Purposes.sameUnit",
+        "VE.Purposes.sideOfKind",
+        "VE.Purposes.sidesAdjacent"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Purposes.nonfactive",
+          "tied": [
+            "VE.Purposes.nonfactive_iff"
+          ]
+        },
+        {
+          "name": "VE.Purposes.shareOk",
+          "tied": [
+            "VE.Purposes.shareOk_iff"
+          ]
+        },
+        {
+          "name": "VE.Purposes.sideAdjacent",
+          "tied": [
+            "VE.Purposes.sideAdjacent_iff"
+          ]
+        },
+        {
+          "name": "VE.Purposes.unstated",
+          "tied": [
+            "VE.Purposes.unstated_eq"
+          ]
+        }
+      ],
+      "C": [
+        {
+          "name": "VE.Purposes.check",
+          "tied": [
+            "VE.Purposes.check_ok_iff"
+          ]
+        }
+      ]
+    },
+    "VE/Purposes/Wire.lean": {
+      "D[V]": [
+        {
+          "name": "VE.Purposes.Link.idsOk",
+          "tied": [
+            "VE.Purposes.decodeLink_ok",
+            "VE.Purposes.decodeLink_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Link.render",
+          "tied": [
+            "VE.Purposes.decodeLink_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Polarity.ofWire?",
+          "tied": [
+            "VE.Purposes.Polarity.ofWire_wire"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Polarity.wire",
+          "tied": [
+            "VE.Purposes.Polarity.ofWire_wire"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Ref.idOk",
+          "tied": [
+            "VE.Purposes.decodeRef_ok",
+            "VE.Purposes.decodeRef_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Ref.render",
+          "tied": [
+            "VE.Purposes.decodeRef_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Share.ofWire?",
+          "tied": [
+            "VE.Purposes.Share.ofWire_wire"
+          ]
+        },
+        {
+          "name": "VE.Purposes.Share.wire",
+          "tied": [
+            "VE.Purposes.Share.ofWire_wire"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeBlock",
+          "tied": [
+            "VE.Purposes.decodeBlock_render",
+            "VE.Purposes.decodeBlock_relations"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeLink",
+          "tied": [
+            "VE.Purposes.decodeLink_ok",
+            "VE.Purposes.decodeLink_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeLinks",
+          "tied": [
+            "VE.Purposes.decodeLinks_ok",
+            "VE.Purposes.decodeLinks_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeRef",
+          "tied": [
+            "VE.Purposes.decodeRef_ok",
+            "VE.Purposes.decodeRef_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeRefs",
+          "tied": [
+            "VE.Purposes.decodeRefs_ok",
+            "VE.Purposes.decodeRefs_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.decodeSide",
+          "tied": [
+            "VE.Purposes.decodeSide_ok",
+            "VE.Purposes.decodeSide_render"
+          ]
+        },
+        {
+          "name": "VE.Purposes.idOf",
+          "tied": [
+            "VE.Purposes.idOf_ok",
+            "VE.Purposes.idOf_str"
+          ]
+        },
+        {
+          "name": "VE.Purposes.renderBlock",
+          "tied": [
+            "VE.Purposes.decodeBlock_render"
+          ]
+        },
+        "VE.Purposes.linksOf",
+        "VE.Purposes.shareOf",
+        "VE.Purposes.wordOf"
+      ],
+      "D[R]": [
+        "VE.Purposes.linkFields",
+        "VE.Purposes.linkFieldsOk",
+        "VE.Purposes.sideText"
+      ]
+    },
+    "VE/Purposes/Examples.lean": {
+      "T": [
+        "VE.Purposes.Examples.result",
+        "VE.Purposes.Examples.pt",
+        "VE.Purposes.Examples.lk",
+        "VE.Purposes.Examples.bc",
+        "VE.Purposes.Examples.io",
+        "VE.Purposes.Examples.nonfactiveText",
+        "VE.Purposes.Examples.soleText",
+        "VE.Purposes.Examples.unlinkedText",
+        "VE.Purposes.Examples.joinText",
+        "VE.Purposes.Examples.adjacentText",
+        "VE.Purposes.Examples.f1u",
+        "VE.Purposes.Examples.f1l",
+        "VE.Purposes.Examples.F1",
+        "VE.Purposes.Examples.f1s",
+        "VE.Purposes.Examples.f2u",
+        "VE.Purposes.Examples.f2l",
+        "VE.Purposes.Examples.F2",
+        "VE.Purposes.Examples.F3",
+        "VE.Purposes.Examples.f3l1",
+        "VE.Purposes.Examples.f3l2",
+        "VE.Purposes.Examples.F4",
+        "VE.Purposes.Examples.F5",
+        "VE.Purposes.Examples.f5l",
+        "VE.Purposes.Examples.F6",
+        "VE.Purposes.Examples.f7u",
+        "VE.Purposes.Examples.F7",
+        "VE.Purposes.Examples.f7l1",
+        "VE.Purposes.Examples.f7l2",
+        "VE.Purposes.Examples.F8",
+        "VE.Purposes.Examples.f8l",
+        "VE.Purposes.Examples.F8b",
+        "VE.Purposes.Examples.wire",
+        "VE.Purposes.Examples.decoded",
+        "VE.Purposes.Examples.f1Wire"
+      ]
     }
   }
 }
