@@ -55,4 +55,11 @@ theorem gate_cardinality (ps : List String) (h : "cardinality@0" ∈ ps) (hj : "
   · rintro ⟨hp, rfl⟩
     exact hlists ps hp
 
+/-- The list check's one refusal is E2's text (DRI 2026-11-05 item 4), on a list with `cardinality@0` outside E2's. -/
+theorem listFault_some (ps : List String) (m : String) : listFault ps = some m ↔
+    ("cardinality@0" ∈ ps ∧ ps.erase "judgments@0" ∉ Wire.profileLists) ∧ m = Wire.e2 := by
+  unfold listFault
+  by_cases hc : "cardinality@0" ∈ ps <;> by_cases hl : ps.erase "judgments@0" ∈ Wire.profileLists <;>
+    simp [hc, hl, eq_comm]
+
 end VE.Cardinality

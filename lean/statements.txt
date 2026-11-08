@@ -8730,6 +8730,12 @@ theorem VE.Cardinality.length_filter_or
         (List.filter (fun x => p x || q x) xs).length = (List.filter p xs).length + (List.filter q xs).length
   -- uses
   -- expr 3377248532
+theorem VE.Cardinality.listFault_some
+  ∀ (ps : List String) (m : String),
+    VE.Compose.listFault ps = Option.some m ↔
+      ("cardinality@0" ∈ ps ∧ ¬ps.erase "judgments@0" ∈ VE.Cardinality.Wire.profileLists) ∧ m = VE.Cardinality.Wire.e2
+  -- uses VE.Cardinality.Wire.e2@VE.Cardinality.Wire VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.listFault@VE.Compose.Dispatch
+  -- expr 1923384507
 theorem VE.Cardinality.lower_unary
   ∀ {α : Type u} (T : VE.Time.TStructure α) (p : String) (x : α),
     T.lower.relation p [Sum.inl x] ↔ T.relation p [VE.Time.TValue.obj x]

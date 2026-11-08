@@ -4844,7 +4844,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 75ab3f0a468b01cdfe06758d7920d8ea84290db09555e411fdc9ca0e6925a168
+module VE.Audit 9f6544dfe29a577a6a3f5a0f65c1b9afacbfc9fad482919f58562f55a7f7ca55
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -6432,9 +6432,10 @@ module VE.Cardinality.Examples 0bf93613a5890630a28922c6be853aa1b0deae888f61545b5
 704:0-705:60 theorem VE.Cardinality.Examples.admittedRules_cases@VE.Cardinality.Examples
 708:0-714:65 theorem VE.Cardinality.Examples.cterm_typed_cases@VE.Cardinality.Examples
 717:0-730:63 theorem VE.Cardinality.Examples.admitted_ratio_cases@VE.Cardinality.Examples
-module VE.Cardinality.Gate 2e65b2e99a5ecbee358b7f218260ccf8e8b74d3c184ce622776999e7a7b1c0a7
+module VE.Cardinality.Gate d993d4f702173b74ff15fc2a0012d6a833ac96efa92523006bf65560d0f78331
 10:0-31:17 theorem VE.Cardinality.sublist_of_sorted@VE.Cardinality.Gate
 33:0-56:22 theorem VE.Cardinality.gate_cardinality@VE.Cardinality.Gate
+58:0-63:26 theorem VE.Cardinality.listFault_some@VE.Cardinality.Gate
 module VE.Cardinality.Ratio f1fdec8742865c07ea5a46aa427ea57d565ce2c20e3b76ab16d0a60d7f35c17f
 15:0-22:68 def VE.Cardinality.erasedRounding@VE.Cardinality.Ratio
 24:0-33:79 def VE.Cardinality.roundingQ@VE.Cardinality.Ratio
