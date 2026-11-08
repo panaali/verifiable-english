@@ -8,7 +8,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/act-phrases/](docs__act-phrases.md) — 39 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/attitudes/](docs__attitudes.md) — 1 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 2 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -80,6 +80,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
+- [lean/VE/Attitudes/](lean__VE__Attitudes.md) — 3 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 16 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
@@ -102,7 +103,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 4 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 6 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
