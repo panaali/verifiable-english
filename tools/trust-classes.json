@@ -17956,6 +17956,8 @@
         "VE.Commands.Examples.outcomeOf",
         "VE.Commands.Examples.permission",
         "VE.Commands.Examples.predEntry",
+        "VE.Commands.Examples.rawEnv",
+        "VE.Commands.Examples.rawShare",
         "VE.Commands.Examples.read",
         "VE.Commands.Examples.readingSet",
         "VE.Commands.Examples.se0",
