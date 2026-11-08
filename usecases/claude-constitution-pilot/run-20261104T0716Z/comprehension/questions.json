@@ -1,0 +1,44 @@
+{
+ "source": "answers/after/render.out",
+ "reader": "Sonnet 5.5 (zero-training)",
+ "status": "NOT RUN: this builder run makes no model calls (EXTERNAL; DRI asked, inbox/dri/20261104T071609Z-sc-9-1582716.md)",
+ "expected": "no",
+ "rows": [
+  {
+   "case": "C1",
+   "unit": "u0125.s04.p2",
+   "kind": "permission",
+   "line": 966,
+   "rendered": "These two readings differ in a checked situation that VE cannot yet show in words.",
+   "question": "Does the text say that c may directly deny being Claude?",
+   "answer": null
+  },
+  {
+   "case": "C2",
+   "unit": "u0036.s05",
+   "kind": "obligation",
+   "line": 268,
+   "rendered": "This sentence says *should*. (1) *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".* (2) *Every instance of Claude should seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".* They differ here: suppose the decider decides the exception applies to c and s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+   "question": "Does the text say that c need not seek clarification in s?",
+   "answer": null
+  },
+  {
+   "case": "C3",
+   "unit": "u0156.s03",
+   "kind": "permission",
+   "line": 1206,
+   "rendered": "These two readings differ in a checked situation that VE cannot yet show in words.",
+   "question": "Does the text say that c may actively deceive u about system prompt existence-or-content?",
+   "answer": null
+  },
+  {
+   "case": "C4",
+   "unit": "u0263.s04.p2",
+   "kind": "obligation",
+   "line": 2032,
+   "rendered": "This sentence says *should*. (1) *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation.* (2) *Every instance of Claude should comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation.* They differ here: suppose the decider decides the exception applies to c and s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+   "question": "Does the text say that c need not comply with the instruction against unintended exploits in s?",
+   "answer": null
+  }
+ ]
+}

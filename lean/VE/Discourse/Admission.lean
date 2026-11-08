@@ -44,9 +44,9 @@ def formatOf (j : Json) : Option String :=
   | some f => some f
   | none => ((Loader.metaOf j).getObjValD "format").getStr?.toOption
 
-/-- The original envelope: sorted, unique, both base and discourse profiles, the environment's
-`profiles` equal to the list, format `@2`; and the frozen gate on the base pair (FOL family). -/
-def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except String Unit := runAll [
+/-- The original envelope without its family check: sorted, unique, both base and discourse profiles, the
+environment's `profiles` equal to the list, format `@2`, the base pair's profiles. -/
+def envelopeChecks (profiles : List String) (environment : Json) (j : Json) : List (Unit → Except String Unit) := [
   fun _ => req (decide (profiles.Pairwise (· < ·))) (VE.Route.Gate.unsupported "profiles must be sorted and unique"),
   fun _ => req (profiles.contains "relational-fol@0") (VE.Route.Gate.unsupported "Missing profile relational-fol@0"),
   fun _ => req (profiles.contains discourseProfile) "UnsupportedProfile: ve-document@2 requires ve.discourse@1",
@@ -55,10 +55,14 @@ def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except 
   fun _ => req (formatOf j == some "ve-document@2") "UnsupportedProfile: ve.discourse@1 requires ve-document@2",
   fun _ => req (match VE.Route.Gate.profilesOf (baseEnvironment environment) with
       | .ok ps => ps == baseProfiles profiles
-      | .error _ => false) (VE.Route.Gate.unsupported "base environment profiles"),
+      | .error _ => false) (VE.Route.Gate.unsupported "base environment profiles")]
+
+/-- The original envelope: `envelopeChecks`, then the frozen gate on the base pair (FOL family). -/
+def wrapperOk (profiles : List String) (environment : Json) (j : Json) : Except String Unit :=
+  runAll (envelopeChecks profiles environment j ++ [
   fun _ => match VE.Route.Gate.decodeEnvelope (baseEnvironment environment) with
     | .ok e => req (e.family == .fol) (VE.Route.Gate.unsupported "discourse admission requires the FOL family")
-    | .error e => .error e]
+    | .error e => .error e])
 
 /-- The route vocabulary of the base pair. -/
 def baseVocabulary (environment : Json) : Except String Wire.RouteVocabulary := do

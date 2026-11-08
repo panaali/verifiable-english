@@ -425,6 +425,12 @@ class LayerSelectionTests(unittest.TestCase):
         for module in ("Alien", "VE.RiskMain", "Launch"):
             self.assertNotEqual(layer_policy.lean_layer(module), 4, module)
 
+    def test_attitudes_modules_share_the_english_lexicon_layer(self):
+        self.assertEqual(layer_policy.lean_layer("VE.EnglishGrammar.Lexicon"), 3)
+        for module in ("VE.Attitudes.Scale", "VE.Attitudes.Syntax", "VE.Attitudes.Examples"):
+            with self.subTest(module=module):
+                self.assertEqual(layer_policy.lean_layer(module), 3)
+
     def test_new_entry_module_passes_the_lean_checker(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)

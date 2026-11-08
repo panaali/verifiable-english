@@ -22,6 +22,9 @@
 - `usecases/bluedot-grant/build_document.py` — Deterministically wrap the unchanged grant draft as a VE use case.
 - `usecases/bluedot-grant/semantic_readings.py` — Authored readings for the 93 unchanged source spans.
 - `usecases/claude-constitution-excerpt/verify_definitions.py` — Bind the four named properties to the excerpt's recorded content.
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/c9_status.py` — SC-9 C9 concrete point-status requests over every reading choice, with Lean as the sole status owner.
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/measure.py` — SC-9: the checks, queries and measurements of the probe translation, before and after (plan SC-9 items 2, 3, 5).
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/migrate_soft.py` — SC-9: the probe translation of run 20261010T1800Z under the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9, 5.2).
 - `usecases/closure-induction/verify.py` — Regenerate and independently replay the four closure-induction examples.
 - `usecases/eligibility/reference.py` — Independent reference reading of the Winter Fuel Payment rules for winter 2026 to 2027.
 - `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.

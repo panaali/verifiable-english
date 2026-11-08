@@ -10,7 +10,7 @@ from copy import deepcopy
 
 from .environment import Environment
 from .errors import CheckerUnavailable
-from .reports_route import run_case
+from .reports_route import run_case, wants_forms
 
 class ReportsDocument:
     def __init__(self, environment: Environment, contexts, assessments, units, *,
@@ -85,6 +85,30 @@ class ReportsDocument:
                 return self._meaning_ids[unit["id"]]
         return run_case("reports-content", self._environment, self._document, content=node)["meaning_id"]
 
+    def wants_forms(self, phrases=(), infinitives=()):
+        """Lean's `wants` test (`VE.Reports.wantsPhrase?`, kind `reports-wants`): each phrase's
+        infinitive (None where the test refuses it) and each infinitive's finite form. Each row
+        must answer the phrase sent at its place, once, and nothing else (R8)."""
+        phrases, infinitives = list(phrases), list(infinitives)
+        answer = wants_forms(phrases, infinitives)
+        answer = answer if type(answer) is dict else {}
+        return (_bound(answer.get("phrases"), "phrase", phrases, "infinitive"),
+                _bound(answer.get("infinitives"), "infinitive", infinitives, "finite"))
+
+    def infinitive(self, phrase):
+        return self.wants_forms(phrases=[phrase])[0][0]
+
+    def finite(self, infinitive):
+        return self.wants_forms(infinitives=[infinitive])[1][0]
+
     def _node(self, node, _label, *, top=False):
         self.meaning_id(node)
         return node
+
+
+def _bound(rows, key, sent, field):
+    """`rows[i][field]` for each `rows[i][key] == sent[i]`; any other rows are unavailable."""
+    if (type(rows) is not list or len(rows) != len(sent)
+            or not all(type(row) is dict and row.get(key) == item and field in row for row, item in zip(rows, sent))):
+        raise CheckerUnavailable(f"Lean returned the wants test's {key} rows for different phrases")
+    return [row[field] for row in rows]
