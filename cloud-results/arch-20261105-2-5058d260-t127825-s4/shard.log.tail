@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 5/6: 80 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [110/798] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [125/798] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [133/798] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (5140 lines cut; full output in shard-full.txt)
+warning: VE/Numbers/Decimal.lean:18:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [607/755] Replayed VE.Numbers.Round
+warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+  ← Rat.intCast_add
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [618/755] Replayed VE.Service.Document
+warning: VE/Service/Document.lean:2193:33: This simp argument is unused:
+  Except.mapError
+
+Hint: Omit it from the simp argument list.
+  simp [UnitContent.judgedIn, h, E̵x̵c̵e̵p̵t̵.̵m̵a̵p̵E̵r̵r̵o̵r̵,̵ ̵bind, Except.bind, pure, Except.pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [750/755] Built ScopeBenchMain (1.4s)
+✔ [751/755] Built EnglishLeanBenchMain (1.6s)
+✔ [753/755] Built ScopeBenchMain:c.o (8.1s)
+✔ [754/755] Built ve_english_lean_bench:exe (11s)
+✔ [755/755] Built ve_scope_bench:exe (3.3s)
+Build completed successfully (755 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded crypto-common v0.1.7
+  Downloaded cpufeatures v0.2.17
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded digest v0.10.7
+  Downloaded memchr v2.8.3
+  Downloaded cfg-if v1.0.5
+  Downloaded autocfg v1.5.1
+  Downloaded version_check v0.9.5
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded num-bigint v0.4.8
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded num-traits v0.2.19
+  Downloaded serde v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.72s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.97s
+order: failed last time []; changed ['tests/test_ask_fixtures.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_english_evidence.py::chunk(1/4), tests/test_english_evidence.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(2/4)
+recording 80 units with 4 jobs in /var/tmp/cct/ve-select-run-ghxlvqmg
+  tests/test_merge_tooling_evidence.py: exit 1 in 0.9 s, 188 functions
+chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 173.4 s in all, longest chunk 173.4 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 2 of 4 chunks, exit 0, 517.7 s in all, longest chunk 268.6 s; 38 passed, 0 skipped, 0 failed; each of its 38 tests ran in exactly one chunk
+FAILED tests/test_merge_tooling_evidence.py (exit 1): tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry; log /var/tmp/cct/ve-select-run-ghxlvqmg/tests__test_merge_tooling_evidence.py.log
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+....F                                                                    [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/var/tmp/cct/ve-english-comparator-yulfml_y)
+
+=================================== FAILURES ===================================
+_______________ test_the_generated_file_table_names_every_entry ________________
+
+    def test_the_generated_file_table_names_every_entry():
+        sys.path.insert(0, str(ROOT / "tools"))
+        import regen_generated
+        section = DOC.split("## 1.", 1)[1].split("`python tools/regen_generated.py --list`", 1)[0]
+        listed = re.findall(r"^\| ([a-z-]+) \|", section, re.M)
+>       assert listed == [entry.name for entry in regen_generated.GENERATED]
+E       AssertionError: assert ['gitattribut...ixtures', ...] == ['gitattribut...ixtures', ...]
+E         
+E         At index 25 diff: 'assurance-manifest' != 'english-s3-comparison'
+E         Right contains one more item: 'history-tests'
+E         Use -v to get more diff
+
+tests/test_merge_tooling_evidence.py:105: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry
+1 failed, 4 passed in 0.14s
+recorded 77 units for tree ceb1653585; 2 others left to the static graph until they run (2 with only some of their chunks here); 1 failed
+SHARD 5/6: exit 1 in 911.5 s; 80 units, 79 passed
