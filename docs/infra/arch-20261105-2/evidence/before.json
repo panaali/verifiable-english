@@ -1,0 +1,528 @@
+{
+ "fixtures": {
+  "changed_fields": {
+   "/result/identities/actions_version": 136,
+   "/seconds": 95
+  },
+  "commits": 8,
+  "file_edits": 136,
+  "files_added": 0,
+  "files_deleted": 0,
+  "per_commit": {
+   "3df00c12f5eedc0e9a88fffb3972015b4aabbe6e": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 12
+    },
+    "files": 17
+   },
+   "533c4cb68329f89fb1498dd974ed06cc48cb6f91": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 12
+    },
+    "files": 17
+   },
+   "6be07421fa7276ea09f5afcff5157e2a161e44fa": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 11
+    },
+    "files": 17
+   },
+   "6ced17a85bb69945d6e2568d4cb5551d40bb70e9": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 13
+    },
+    "files": 17
+   },
+   "76c4cc904baf1b380e6cf2825d8da1accbc5ccad": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 13
+    },
+    "files": 17
+   },
+   "865b21cf551b575fee9d06a086afebc3edb0f032": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 10
+    },
+    "files": 17
+   },
+   "dda9540c240d3e31cfe1331388a9de2d6553e14f": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 12
+    },
+    "files": 17
+   },
+   "e6c92129c76c295a6b04ad74298b3e74c9f68565": {
+    "fields": {
+     "/result/identities/actions_version": 17,
+     "/seconds": 12
+    },
+    "files": 17
+   }
+  }
+ },
+ "pins": {
+  "added": 8,
+  "answers_with_version": 12,
+  "built": {
+   "1ea08edfde7b89371e2a89229e58de2c8d2d99c2": {
+    "explained_by_version": 0,
+    "parent_pins_stale": [],
+    "pin_changes": 8,
+    "pins_not_reproduced": [],
+    "real_changes": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "versions": [
+     "36->36"
+    ]
+   },
+   "533c4cb68329f89fb1498dd974ed06cc48cb6f91": {
+    "explained_by_version": 12,
+    "parent_pins_stale": [],
+    "pin_changes": 12,
+    "pins_not_reproduced": [],
+    "real_changes": [],
+    "versions": [
+     "41->42"
+    ]
+   },
+   "5447bb29a30259d3afdac44c9261c69ecb13bc24": {
+    "explained_by_version": 12,
+    "parent_pins_stale": [],
+    "pin_changes": 12,
+    "pins_not_reproduced": [],
+    "real_changes": [],
+    "versions": [
+     "38->39"
+    ]
+   },
+   "6be07421fa7276ea09f5afcff5157e2a161e44fa": {
+    "explained_by_version": 12,
+    "parent_pins_stale": [],
+    "pin_changes": 12,
+    "pins_not_reproduced": [],
+    "real_changes": [],
+    "versions": [
+     "40->41"
+    ]
+   },
+   "a5443602f0da2cb73ad67b29736069b9fc077f80": {
+    "explained_by_version": 0,
+    "parent_pins_stale": [],
+    "pin_changes": 3,
+    "pins_not_reproduced": [],
+    "real_changes": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")"
+    ],
+    "versions": [
+     "36->36"
+    ]
+   },
+   "aa6234fb69b4e42a0a36ee451938fe7e10c5a162": {
+    "explained_by_version": 12,
+    "parent_pins_stale": [
+     "projectCaseReported ((projectReq \"\" [\"funny\", \"tells\"]).setObjVal! \"packs\" (Json.arr #[]) |>.setObjVal! \"own\" (Json.arr ",
+     "projectCaseReported (projectReq \"\" [\"funny\", \"odd\", \"tells\", \"deployed\", \"reviewed\", \"access\"])",
+     "projectCaseReported (projectReq \"\" [\"funny\", \"tells\"])",
+     "projectCaseReported (projectReq lineFunny2 [\"funny\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "pins_not_reproduced": [],
+    "real_changes": [],
+    "versions": [
+     "36->36"
+    ]
+   },
+   "fcf9004f185ab5488d460812c081f1b49fe6b24d": {
+    "explained_by_version": 12,
+    "parent_pins_stale": [],
+    "pin_changes": 12,
+    "pins_not_reproduced": [],
+    "real_changes": [],
+    "versions": [
+     "39->40"
+    ]
+   }
+  },
+  "commits": 18,
+  "explained_by_head_answer": 44,
+  "explained_by_version": 76,
+  "explained_statically": 48,
+  "head_pins": 32,
+  "head_pins_not_reproduced": [],
+  "per_commit": [
+   {
+    "changed_imports": [
+     "lean/VE/EnglishGrammar/Run.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "ed1aca6ceaf7325f15e348b8bcca6701ae6d263d",
+    "explained_by_head_answer": 12,
+    "explained_by_version": 12,
+    "not_explained": [],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "38",
+     "39"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/EnglishGrammar/Run.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "533c4cb68329f89fb1498dd974ed06cc48cb6f91",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 4,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "41",
+     "42"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/EnglishGrammar/JudgmentLines.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "6be07421fa7276ea09f5afcff5157e2a161e44fa",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 4,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "40",
+     "41"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/EnglishGrammar/JudgmentLines.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "fcf9004f185ab5488d460812c081f1b49fe6b24d",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 4,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "39",
+     "40"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/EnglishGrammar/JudgmentLines.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "5447bb29a30259d3afdac44c9261c69ecb13bc24",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 4,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "38",
+     "39"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "3df00c12f5eedc0e9a88fffb3972015b4aabbe6e",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 12,
+    "not_explained": [],
+    "pin_changes": 12,
+    "static": "no imported Lean file but Version.lean changed, and no definition of RunExamples",
+    "version": [
+     "37",
+     "38"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "183b2d70557edae247ad7c414aa3a6deed996c24",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 12,
+    "not_explained": [],
+    "pin_changes": 12,
+    "static": "no imported Lean file but Version.lean changed, and no definition of RunExamples",
+    "version": [
+     "37",
+     "38"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "54d602eff4fc516317adc5ac1c22c90b90602b7f",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "46ed6cca5aeee56cba9a827e098d75c1671b50b6",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/Flip.lean",
+     "lean/VE/Senses/Run.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "a5443602f0da2cb73ad67b29736069b9fc077f80",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")"
+    ],
+    "pin_changes": 3,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "26c47969bceae20703ac0c3adc885057aa6867b9",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/Run.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "6def0e55cf9c7a15c9f50605ba88dbb389c52372",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "ea8d15a6148a6c5a77cf4b0d09cfcb0fabcd1545",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 12,
+    "not_explained": [],
+    "pin_changes": 12,
+    "static": "no imported Lean file but Version.lean changed, and no definition of RunExamples",
+    "version": [
+     "36",
+     "37"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "6ccb5e6e3acf5b4ce7dfccd5f96bed32a329031a",
+    "explained_by_head_answer": 4,
+    "explained_by_version": 12,
+    "not_explained": [],
+    "pin_changes": 12,
+    "static": "no imported Lean file but Version.lean changed, and no definition of RunExamples",
+    "version": [
+     "36",
+     "37"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/Flip.lean",
+     "lean/VE/Senses/Run.lean",
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "1ea08edfde7b89371e2a89229e58de2c8d2d99c2",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 8,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "aa6234fb69b4e42a0a36ee451938fe7e10c5a162",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [
+     "projectCaseReported ((projectReq \"\" [\"funny\", \"tells\"]).setObjVal! \"packs\" (Json.arr #[]) |>.setObjVal! \"own\" (Json.arr ",
+     "projectCaseReported (projectReq \"\" [\"funny\", \"odd\", \"tells\", \"deployed\", \"reviewed\", \"access\"])",
+     "projectCaseReported (projectReq \"\" [\"funny\", \"tells\"])",
+     "projectCaseReported (projectReq lineFunny2 [\"funny\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [\"u1\"])",
+     "runCaseReported (fenced [\"The riddle is funny.\\n\"] [\"u1\"] [] [(\"funny\", 2)])",
+     "runCaseReported (fenced [lineFunny2 ++ \"\\n\", \"The riddle is funny.\\n\"] [\"l\", \"u1\"] [])",
+     "runCaseReported (src \"Both the riddle is funny and the riddle is odd.\")",
+     "runCaseReported (src \"Both the riddle is odd and the riddle is funny (meaning strange).\")",
+     "runCaseReported (src \"The riddle is funny. Alice tells the riddle.\")",
+     "runCaseReported (src \"The riddle is funny.\")",
+     "runCaseReported (src (lineFunny2 ++ \" The riddle is funny.\"))"
+    ],
+    "pin_changes": 12,
+    "static": null,
+    "version": [
+     "36",
+     "36"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "0ec1a82857bc413b682ee637603f6891bd58b670",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "34",
+     "34"
+    ]
+   },
+   {
+    "changed_imports": [
+     "lean/VE/Senses/RunExamples.lean"
+    ],
+    "commit": "8849e2dcbed07b110eb149399e0db5dbf59e5b39",
+    "explained_by_head_answer": 0,
+    "explained_by_version": 0,
+    "not_explained": [],
+    "pin_changes": 0,
+    "static": null,
+    "version": [
+     "34",
+     "34"
+    ]
+   }
+  ],
+  "pin_changes": 131,
+  "pin_changes_in_version_commits": 108,
+  "removed": 0
+ },
+ "rev": "e9a6ec8d5938051a70116918e34fc3cd92aac16e",
+ "since": "2026-10-31",
+ "version_commits": 10
+}
