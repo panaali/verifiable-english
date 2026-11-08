@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-me-7-signflip-bits-d068c67f-t126586-s4",
+ "head": "9912730193af3893cd05ef483717e6c801c59ce0",
+ "argv": [
+  "armsh-cand-me-7-signflip-bits-d068c67f-t126586-s4",
+  "9912730193af3893cd05ef483717e6c801c59ce0",
+  "cbc4c8a39533dcc0196d4a96a7c96dfb417b4232",
+  "-",
+  "-",
+  "4",
+  "4/5"
+ ]
+}
