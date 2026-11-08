@@ -1,0 +1,9 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Scope/Authoring.lean is a selected declaration's file or in its import closure
+trust_mutants: 19 definitions, 276 mutants (69 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Scope/Authoring.lean:165 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (c.splitOn "its kind") -> [] (lean/VE/Scope/Authoring.lean:165: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Scope/Authoring.lean:168 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when").map -> [] (lean/VE/Scope/Authoring.lean:168: Function expected at)
+SURVIVOR lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: w -> (w.take 1)
+trust_mutants: 43 KILLED, 1 SURVIVOR, 2 UNKNOWN, 17 INVALID, 6 ALLOWED, 0 NOT RUN, 207 OTHER SHARD in 109 s
+trust_mutants: D[V], trusted: 26 KILLED, 1 SURVIVOR, 2 UNKNOWN, 17 INVALID, 6 ALLOWED, 163 OTHER SHARD
+trust_mutants: S, trusted: 17 KILLED, 44 OTHER SHARD
+trust_mutants: steps: wall plan 13.2 s, scratch 3.7 s, control_build 0.2 s, probe_install 1.4 s, control_probes 1.5 s, mutants 86.6 s, cleanup 2.9 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 1.4 s (1), mutant_builds 192.9 s (71), mutant_checks 51 s (49), stage_controls 15 s (5), mutant_probes 69.5 s (43)
