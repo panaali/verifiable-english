@@ -68,7 +68,8 @@ def answer(service, uid, fm):
 def verdict(row):
     """The answer without the fields the layer may change and the environment-dependent identities (spec 2e)."""
     out = {k: v for k, v in row.items()
-           if k not in ("judgments", "undeclared_evaluative", "document_id", "source_id", "coverage")}
+           if k not in ("judgments", "judgment_lines", "undeclared_evaluative", "document_id", "source_id",
+                         "coverage")}
     out["units"] = [{k: v for k, v in u.items() if k not in ("status", "meaning_id")} for u in row["units"]]
     return out
 
