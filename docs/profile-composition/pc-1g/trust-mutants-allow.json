@@ -1,0 +1,354 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "lit-plus",
+   "reason": "equivalent: `.var 0` -> `.var 1` in a limitation condition's name atom; every reader reads predicate names only (`VE.Norms.preds` drops terms: `opensIn`, `dependsOn`, `correlate_judged`)"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "lit-plus",
+   "reason": "equivalent: `.var 0` -> `.var 1` in a limitation condition's name atom; `judgedIn` carries the block's formulas in `andAll` for the scan, which reads predicate names only (`preds_andAll`)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "le-lt",
+   "reason": "equivalent: the models are sorted by their compact text, and `<` and `≤` differ only on equal texts, whose values are equal (the compress/parse round-trip `#guard`), so the sorted list is the same"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "list-first",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "list-last",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "list-drop-first",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "list-drop-last",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "list-empty",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "append-left",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentGateTexts",
+   "operator": "append-right",
+   "reason": "equivalent on the table it reads: `VE.Compose.profileTable` has 26 rows and `judgments@0`'s is the 19th, its profile's only row, with `requires = [\"documents@1\"]` and `refuses = []` (scratch `#eval`); so taking or dropping the first or last element of the table (neither is that row), of the filter (one row), of `requires` (one entry) or of `refuses` (empty), or dropping the `refuses` part, changes no text; any other mutant of these operators is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-first",
+   "reason": "equivalent where it reads `judgmentGateTexts`, which holds one text (see judgmentGateTexts), so its first and last are that text; the `judgmentCodes` mutants of these operators are killed by the 2d `#guard` over every code"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-last",
+   "reason": "equivalent where it reads `judgmentGateTexts`, which holds one text (see judgmentGateTexts), so its first and last are that text; the `judgmentCodes` mutants of these operators are killed by the 2d `#guard` over every code"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "list-first",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "list-last",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "list-drop-first",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "list-drop-last",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "list-empty",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "append-left",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Judgments.rightsAuthorFormulas",
+   "operator": "append-right",
+   "reason": "a surviving mutant drops holder guards (`R.rs`), line instances or outside norms from the author formulas, which breaks the proof of `correlate_judged` (`mem_author_holder`, `mem_author_line`, `mem_author_outside`: the tool's \"proofs it breaks\"); the limitation mutants are killed by the two-limitation `#guard` (`udhrRights true`), and two break it where the tool's probe could not re-elaborate it (UNKNOWN); any other UNKNOWN is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.UnitContent.judgedIn",
+   "operator": "list-empty",
+   "reason": "the mutants empty the rule-alone retry (`[(\"norm\", ...)]`) for a rights document's norm unit with its `cites`; tests/test_judgments_chain.py::test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2] fails on it (`a soft rule the soft route accepted does not decode again`; mutants.json seeded bug 8); no Lean check builds such a document"
+  },
+  {
+   "definition": "VE.Service.Document.UnitContent.judgedIn",
+   "operator": "list-drop-first",
+   "reason": "the mutants empty the rule-alone retry (`[(\"norm\", ...)]`) for a rights document's norm unit with its `cites`; tests/test_judgments_chain.py::test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2] fails on it (`a soft rule the soft route accepted does not decode again`; mutants.json seeded bug 8); no Lean check builds such a document"
+  },
+  {
+   "definition": "VE.Service.Document.UnitContent.judgedIn",
+   "operator": "list-drop-last",
+   "reason": "the mutants empty the rule-alone retry (`[(\"norm\", ...)]`) for a rights document's norm unit with its `cites`; tests/test_judgments_chain.py::test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2] fails on it (`a soft rule the soft route accepted does not decode again`; mutants.json seeded bug 8); no Lean check builds such a document"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "list-empty",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the `R.limits` mutants are killed by the two-limitation `#guard`, and the bar pattern's by the bar `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "list-first",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the `R.limits` mutants are killed by the two-limitation `#guard`, and the bar pattern's by the bar `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "list-last",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the `R.limits` mutants are killed by the two-limitation `#guard`, and the bar pattern's by the bar `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "list-drop-first",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the `R.limits` mutants are killed by the two-limitation `#guard`, and the bar pattern's by the bar `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "list-drop-last",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the `R.limits` mutants are killed by the two-limitation `#guard`, and the bar pattern's by the bar `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.linesFormulas",
+   "operator": "list-empty",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the others are killed by the lines `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.linesFormulas",
+   "operator": "list-first",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the others are killed by the lines `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.linesFormulas",
+   "operator": "list-last",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the others are killed by the lines `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.linesFormulas",
+   "operator": "list-drop-first",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the others are killed by the lines `#guard`"
+  },
+  {
+   "definition": "VE.Judgments.linesFormulas",
+   "operator": "list-drop-last",
+   "reason": "an UNKNOWN mutant here is the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); the others are killed by the lines `#guard`"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); `us.toList.drop 1` breaks the F1.4 `#guard` (ChainExamples), which the tool's probe could not re-elaborate (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-drop-first",
+   "reason": "the mutant does not elaborate (Lean refuses it in the mutated declaration: invalid field notation or projection, function expected, invalid dotted identifier, unknown identifier, application type mismatch or invalid match expression); `us.toList.drop 1` breaks the F1.4 `#guard` (ChainExamples), which the tool's probe could not re-elaborate (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.andAll",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Judgments.blockFormulas",
+   "operator": "eq-ne",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-drop-middle",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentCodes",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.judgmentsApart",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:159 (the layer stays apart from alternatives and risk) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals), ChainExamples:390 (2d, every code) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "list-empty",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRefusal",
+   "operator": "or-and",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:383 (2d, the layer's refusals) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRelaxes",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:371 (F1.3c) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.layerRelaxes",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:371 (F1.3c) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "body-true",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "bool-flip",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.noUnitStatus",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:406 (2b on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.setVerdictFields",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.unitStatuses",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:283 (F1.4 and its twin) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-drop-middle",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i), ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.verdictFields",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:431 (2e, verdictFields on two sets) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-drop-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:373 (F1.3i) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-first",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:410 (2c, withoutStatuses on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  },
+  {
+   "definition": "VE.Service.Document.withoutStatuses",
+   "operator": "list-last",
+   "reason": "UNKNOWN in the record of 3e66f10e: the mutant makes the `#guard` at ChainExamples:410 (2c, withoutStatuses on two units) fail (Lean: the expression did not evaluate to `true`), and the tool's probe could not re-elaborate that guard to confirm the refutation; checked by hand on two such mutants (noUnitStatus bool-flip: ChainExamples:406 fails; andAll list-first: preds_andAll's proof breaks, Chain.lean:212)"
+  }
+ ]
+}

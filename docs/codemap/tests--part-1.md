@@ -42,6 +42,7 @@
 - `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
 - `tests/test_agent_policy.py` — Agent-policy use case: authored files, the frozen answer key, and the committed results.
 - `tests/test_agent_policy_level.py` — The policy family's requirement register and its level reader (apol-req), on both sides of each check.
+- `tests/test_agent_policy_replay_decode.py` — Agent-policy use case: a replay's raw output that is not UTF-8, or JSON nested too deeply to parse, is refused with `CheckerUnavailable`, never a traceback.
 - `tests/test_agent_policy_rerun.py` — Agent-policy use case: rerun VE on every logged action and every policy query.
 - `tests/test_agent_policy_unspecified.py` — Agent-policy under norm-defaults@0 (docs/spec/norm-defaults.md fixture u4).
 - `tests/test_alternatives_fill.py` — ET-7: `alternatives@0` with the completion (`norm-defaults@0`) on the Lean alternatives route (docs/spec/events-time-causation.md 5 and 6.4; plan ET-7; fixture…
@@ -90,4 +91,3 @@
 - `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
 - `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
 - `tests/test_background.py` — (no module docstring)
-- `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
