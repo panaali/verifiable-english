@@ -103,11 +103,34 @@ theorem runCase_fits (dec : Wire.SourceDecoder) (j : Json) (hj : CaseWF j)
     | (unfold runAdmissionIn; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ _ ‹Admission.admitDocumentIn _ _ _ = .ok _›))
     | fits
 
+/-- `acts-elaborate` (act-phrases 6.7): every row `Acts.Run.runElaborate` writes, at either route's decoder, fits
+the row shape the norms and norm-defaults modes share. -/
+theorem runElaborate_fits (decode : Json → Json → Except String VE.NormDefaults.Wire.SourceU) (j : Json) :
+    OkFits j (skel% "norms.json#/$defs/acts-elaborate") (VE.Acts.Run.runElaborate decode j) := by
+  unfold VE.Acts.Run.runElaborate
+  okfits
+  all_goals simp only [VE.Route.Wire.ok, VE.Acts.Run.elaboratedFields, VE.Acts.Run.emptyFields,
+    VE.Acts.Run.predicatesJson, VE.Acts.Run.rulesJson, VE.Acts.Run.splitRows, VE.Acts.Run.roleJson,
+    VE.Acts.Run.completionJson, VE.Acts.Run.optJson, List.cons_append, List.nil_append]
+  all_goals fits
+
+/-- On the norms path, an `acts-elaborate` row is a norms row. -/
+theorem of_elaborate {v : Json} (hp : (usesNormsPath req || Plain.layered (req.getObjValD "environment")) = true)
+    (hk : VE.Acts.Run.isElaborate req = true) (h : Fits req (skel% "norms.json#/$defs/acts-elaborate") v) :
+    Fits req Skeletons.norms v := by
+  have hK : req.getObjValD "kind" = .str "acts-elaborate" := by
+    unfold VE.Acts.Run.isElaborate at hk
+    split at hk <;> simp_all
+  fits_invert h
+  all_goals fits_from h
+
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.norms (runCaseReported j) := by
   unfold runCaseReported runCaseRouted
   split
   · split
-    · exact runCase_fits _ j hj ‹_› _ ‹_›
+    · split at *
+      · exact OkP.of (runElaborate_fits _ j) (fun _ h => of_elaborate ‹_› ‹_› h) _ ‹_›
+      · exact runCase_fits _ j hj ‹_› _ ‹_›
     · fits
   · exact of_route (Bool.eq_false_iff.mpr ‹_›) (Route.runCaseReported_fits j)
 
