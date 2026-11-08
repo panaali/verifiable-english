@@ -523,13 +523,16 @@ def drawn : Nat → Nat → Json
   (Json.parse v.compress).toOption == some v
 
 /-! pc-1tm (trust mutants of `checkDocSetsFast`, the run `checkDocSets_eq_fast` makes the compiler use): with one
-governed set, on `i1` (`VE.Compose.ContractExamples.governedSet`), the run hands the chain the governed sets, as
-`checkDocSets` does, and it admits the case; the units alone (`withUnits`) are refused. -/
+governed set, on `i1` (`VE.Compose.ContractExamples.governedSet`), the run admits the case and hands the chain the
+governed sets (`withSets`); the units alone (`withUnits`) are refused. It reads no `checkDocSets`: a mutant of the run
+breaks that `@[csimp]` lemma, and a check reading it is no kill (trust_mutants' probe). -/
 
 #guard let j := VE.Compose.ContractExamples.governedSet
-  (checkDocSetsFast j).isOk && (checkDocSetsFast j).toOption == (checkDocSets j).toOption &&
-    ((do let D ← VE.Scope.decodeScope j
-         pure (VE.Scope.governedSetUnits D, (checkCore (withUnits j (← VE.Scope.governSetsWith VE.Scope.governFast D))).isOk)) :
-      Except String _).toOption == some (["i1"], false)
+  (checkDocSetsFast j).isOk && ((do
+    let D ← VE.Scope.decodeScope j
+    let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+    pure (VE.Scope.governedSetUnits D, (checkCore (withUnits j out)).isOk,
+      (checkDocSetsFast j).toOption == (do pure (VE.Scope.foldGovernors D (← checkCore (withSets j out)))).toOption)) :
+    Except String _).toOption == some (["i1"], false, true)
 
 end VE.Judgments.ChainExamples
