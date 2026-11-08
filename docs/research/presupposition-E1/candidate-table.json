@@ -1,0 +1,75 @@
+[
+ {
+  "row": "definite",
+  "cells": {
+   "top": [
+    "assumed"
+   ],
+   "negated": [
+    "assumed"
+   ],
+   "antecedent": [
+    "assumed"
+   ],
+   "consequent": [
+    "assumed"
+   ],
+   "disjunct": [],
+   "rule_act": [
+    "assumed"
+   ],
+   "rule_guard": [
+    "assumed"
+   ]
+  }
+ },
+ {
+  "row": "plural",
+  "cells": {
+   "top": [
+    "assumed"
+   ],
+   "negated": [
+    "assumed"
+   ],
+   "antecedent": [
+    "assumed"
+   ],
+   "consequent": [
+    "assumed"
+   ],
+   "disjunct": [],
+   "rule_act": [
+    "assumed"
+   ],
+   "rule_guard": [
+    "assumed"
+   ]
+  }
+ },
+ {
+  "row": "generic",
+  "cells": {
+   "top": [
+    "assumed"
+   ],
+   "negated": [
+    "assumed"
+   ],
+   "antecedent": [
+    "assumed"
+   ],
+   "consequent": [
+    "assumed",
+    "unconditional"
+   ],
+   "disjunct": [],
+   "rule_act": [
+    "assumed"
+   ],
+   "rule_guard": [
+    "assumed"
+   ]
+  }
+ }
+]
