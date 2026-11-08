@@ -74,10 +74,14 @@ FIXTURES = [
     ("kappa", "q (kappa? [[20, 5], [10, 15]])", "2/5"),
     # The sign-flip p over twelve differences: nine +1, three −1; by hand 2 · (1 + 12 + 66 + 220) = 598 of 4096.
     ("sign-flip-hand", "q (some (signFlipP d12))", "299/2048"),
-    # The limit: 16 values within `maxWork`; one unit short of their work is UNKNOWN.
+    # The limit: 16 values within `maxWork`; one unit short of their work is UNKNOWN. The charge counts value bits.
     ("sign-flip-16", "toString ((signFlipC Work.maxWork d16).map fun (p, w) => (q (some p), w))",
-     "(some (1/32768, 1114128))"),
-    ("sign-flip-short", "toString ((signFlipC 1114127 d16).isNone)", "true"),
+     "(some (1/32768, 179311968))"),
+    ("sign-flip-short", "toString ((signFlipC 179311967 d16).isNone)", "true"),
+    ("sign-flip-empty", "toString [(signFlipC 120 []).isSome, (signFlipC 119 []).isNone]", "[true, true]"),
+    # Large values the length-only charge admitted (1,114,128 and 53,260 units): refused, UNKNOWN, by their bits.
+    ("sign-flip-big16", "toString (signFlipWork big16, (signFlipC Work.maxWork big16).isNone)", "(9612065232, true)"),
+    ("sign-flip-big12", "toString (signFlipWork big12, (signFlipC Work.maxWork big12).isNone)", "(11241469680, true)"),
     # ME-4's aggregates over T-1 (scores 3 and 5 for 32B).
     ("agg-variance", "toString ((Agg.run TableExamples.T1 (.isText \"judge\" \"32B\") (.variance \"score\")).map toString)",
      "(some 2)"),
@@ -95,6 +99,44 @@ ENUMERATED = [
 ]
 
 
+# The charge is never below the work: 12.2's units counted here by running the sign flip (one per value plus its bits).
+COPRIME = [Fraction(2 ** 999, 2 ** 1999 + 2 * i + 1) for i in range(6)]
+PRIMES = [Fraction(1, 3), Fraction(-2, 5), Fraction(7, 11), Fraction(-13, 17), Fraction(19, 23), Fraction(29, 31),
+          Fraction(-37, 41), Fraction(43, 47)]
+WORK_CASES = {
+    "d12": ("d12", [1] * 9 + [-1] * 3),
+    "v6": ("v6", [Fraction(x, 1000) for x in V6]),
+    "synthetic": (f"rats {json.dumps(SYNTH)} 1000", [Fraction(x, 1000) for x in SYNTH]),
+    "coprime": ("(List.range 6).map fun i => ((2 ^ 999 : Nat) : Rat) / ((2 ^ 1999 + 2 * i + 1 : Nat) : Rat)", COPRIME),
+    "primes": ("[1/3, -2/5, 7/11, -13/17, 19/23, 29/31, -37/41, 43/47]", PRIMES),
+}
+WORKS = [(f"work-{name}", f"toString (signFlipWork ({expression}))", None)
+         for name, (expression, _) in WORK_CASES.items()]
+
+
+def qbits(x):
+    x = Fraction(x)
+    return max(1, abs(x.numerator).bit_length()) + max(1, x.denominator.bit_length())
+
+
+def counted_work(d):
+    """`signFlipP d` run here, each value it computes charged one visit plus its bits."""
+    d = [Fraction(x) for x in d]
+    n = len(d)
+
+    def units(values):
+        return sum(1 + qbits(v) for v in values)
+
+    def vector(signs):
+        products = [k * x for k, x in zip(signs, d)]
+        mean = sum(products) / n if n else Fraction(0)
+        return units([Fraction(k) for k in signs] + products + [sum(products[i:]) for i in range(n + 1)]
+                     + [Fraction(n), mean, abs(mean)]) + 2
+
+    return (units(d) + vector([1] * n) + sum(vector(s) for s in itertools.product((1, -1), repeat=n))
+            + qbits(sign_flip(d)) + 1)
+
+
 @pytest.fixture(scope="module")
 def lean(tmp_path_factory):
     lake = shutil.which("lake")
@@ -103,7 +145,7 @@ def lean(tmp_path_factory):
     lean_build("VE")
     path = tmp_path_factory.mktemp("stats") / "Stats.lean"
     path.write_text(HEADER + "".join(f"#eval line {json.dumps(key)} ({expression})\n"
-                                     for key, expression, _ in FIXTURES + ENUMERATED))
+                                     for key, expression, _ in FIXTURES + ENUMERATED + WORKS))
     done = subprocess.run([lake, "env", "lean", str(path)], cwd=LEAN, capture_output=True, text=True,
                           timeout=HANG_TIMEOUT)
     assert done.returncode == 0, done.stdout + done.stderr
@@ -117,7 +159,14 @@ def test_fixture(lean, key, expected):
 
 
 def test_every_fixture_printed_once(lean):
-    assert sorted(lean) == sorted(key for key, _, _ in FIXTURES + ENUMERATED)
+    assert sorted(lean) == sorted(key for key, _, _ in FIXTURES + ENUMERATED + WORKS)
+
+
+@pytest.mark.parametrize("name", list(WORK_CASES))
+def test_sign_flip_charge_covers_work(lean, name):
+    """Conservative: Lean's charge is at least the units the run takes, and within 16 times of them."""
+    work = counted_work(WORK_CASES[name][1])
+    assert work <= int(lean[f"work-{name}"]) <= 16 * work
 
 
 def test_hand_numbers_agree_with_enumeration():

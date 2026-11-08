@@ -1,4 +1,5 @@
 import VE.Numbers.Round
+import VE.Numbers.Bits
 
 /-! Exact statistics (math-evidence spec 7, ME-7): the mean, the sample and population variances, a square root
 rounded by squared bounds, the exact sign-flip p value, the Stats.binomial tail and Cohen's kappa. Each statistic of a list
@@ -142,19 +143,30 @@ theorem signFlipP_grain (d : List Rat) :
 /-- The limit of spec 7: a sign flip over more than 16 values is refused at decode (`SignFlipTooLong`). -/
 def maxSignFlip : Nat := 16
 
-/-- The units `signFlipP` takes over `n` values: the observed mean, then 2ⁿ sign vectors of `n` products each. -/
-def signFlipWork (n : Nat) : Nat := n + 2 ^ n * (n + 1)
+/-- 12.2's units for `signFlipP d` (one per value computed plus its bits, `bits` of the numerator and of the
+denominator), known before it runs and never below its work. There are `2ⁿ + 2` rows: the 2ⁿ sign vectors, the
+observed mean, and the values read with the final share. Each row has at most `4n + 8` values: a sign, its entry in
+the vector, a product and a partial sum per value, then the length, the mean, its absolute value and the comparison.
+Each value is one visit plus at most `A + 2 · bits L + 2n + 2` bits, `A` the largest numerator's bits and `L` the
+least common multiple of the denominators: a partial sum's denominator divides `L` and its numerator is below
+`n · 2^A · L`, and dividing by `n` adds `bits n ≤ n + 1` (me-7-signflip-bits; the charge before it counted the
+length only). -/
+def signFlipWork (d : List Rat) : Nat :=
+  let n := d.length
+  let A := (d.map fun x => bits x.num).foldl max 0
+  let L := (d.map (·.den)).foldl Nat.lcm 1
+  (2 ^ n + 2) * (4 * n + 8) * (A + 2 * bits L + 2 * n + 3)
 
 /-- The sign-flip p value charged its work first: none (UNKNOWN) when the work passes the limit. -/
 def signFlipC (limit : Nat) (d : List Rat) : Option (Rat × Nat) :=
-  if signFlipWork d.length ≤ limit then some (signFlipP d, signFlipWork d.length) else none
+  if signFlipWork d ≤ limit then some (signFlipP d, signFlipWork d) else none
 
 theorem signFlipC_sound (limit : Nat) (d : List Rat) (q : Rat) (w : Nat) (h : signFlipC limit d = some (q, w)) :
-    q = signFlipP d ∧ w = signFlipWork d.length ∧ w ≤ limit := by
+    q = signFlipP d ∧ w = signFlipWork d ∧ w ≤ limit := by
   unfold signFlipC at h; split at h <;> simp_all
 
-theorem signFlipC_complete (limit : Nat) (d : List Rat) (h : signFlipWork d.length ≤ limit) :
-    signFlipC limit d = some (signFlipP d, signFlipWork d.length) := by
+theorem signFlipC_complete (limit : Nat) (d : List Rat) (h : signFlipWork d ≤ limit) :
+    signFlipC limit d = some (signFlipP d, signFlipWork d) := by
   simp [signFlipC, h]
 
 /-- Core Lean v4.24.0 has no `Nat.choose` (checked in the stub), so ME-7 defines it. -/
