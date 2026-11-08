@@ -1,0 +1,19 @@
+{
+ "job": "sc-7.s4of5-3eb8e61f",
+ "head": "5e07c2a8aa360f6cb97b203517cbfad1a9d1b7b3",
+ "argv": [
+  "sc-7.s4of5-3eb8e61f",
+  "5e07c2a8aa360f6cb97b203517cbfad1a9d1b7b3",
+  "d962e66a76e5b250d1a6ef85309f0b6644eb320c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b782dfe18f00.tar.zst",
+  "b2ebc5161f94aa7ae7cea635af4596999caf61b9f1cf688a59b719b016c43c65",
+  "--test",
+  "lean/VE/Scope/AuthoringExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "4/5",
+  "--jobs",
+  "4"
+ ]
+}
