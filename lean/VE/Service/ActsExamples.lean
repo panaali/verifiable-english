@@ -707,6 +707,8 @@ def splitRow (p : String) : Json := Json.mkObj [("source", .str p), ("parts", to
 
 -- The environment row admits a joined act with one reading, and refuses one with none by the act check (D-16).
 #guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", joinedE')])) == "ok"
+-- and so does the `acts@0` wire contract's decoder, which reads it as the row does
+#guard err (VE.WireContract.Hooks.Acts.decoded joinedE') == "ok"
 #guard err (VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment",
   envOf plain6 (blockJ VE.Acts.TableExamples.fx6 ⟨[], []⟩) (default := "deny"))])) ==
   "InvalidInput: act phrase for p027 has no reading under the declared frames"

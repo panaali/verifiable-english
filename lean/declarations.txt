@@ -23491,7 +23491,7 @@ module VE.Senses.RunExamples 0586d8bef78a663f596d29f9a4aea8e77d36a700098190b3a4c
 328:0-330:106 def VE.Senses.RunExamples.atLimit@VE.Senses.RunExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f
 3:0-5:33 def VE.Senses.sensesVersion@VE.Senses.Version
-module VE.Service.ActsExamples 80da1d1d72fcc2724c6678b4626c13531752ccfeef2f994cef57a9092f5fdb69
+module VE.Service.ActsExamples a8f6cdef4a6e87cef17bfcd2e87bfc9f33a1dd0e0b21a0feff3daca8e3259e6a
 20:0-20:109 def VE.Service.ActsExamples.a1@VE.Service.ActsExamples
 21:0-21:70 def VE.Service.ActsExamples.a2@VE.Service.ActsExamples
 22:0-22:88 def VE.Service.ActsExamples.a3@VE.Service.ActsExamples
@@ -23579,9 +23579,9 @@ module VE.Service.ActsExamples 80da1d1d72fcc2724c6678b4626c13531752ccfeef2f994ce
 694:0-695:55 def VE.Service.ActsExamples.frameJ@VE.Service.ActsExamples
 696:0-701:67 def VE.Service.ActsExamples.manyE@VE.Service.ActsExamples
 702:0-703:91 def VE.Service.ActsExamples.splitRow@VE.Service.ActsExamples
-721:0-724:59 def VE.Service.ActsExamples.bigAct@VE.Service.ActsExamples
-725:0-728:37 def VE.Service.ActsExamples.bigE@VE.Service.ActsExamples
-729:0-729:130 def VE.Service.ActsExamples.bigNorms@VE.Service.ActsExamples
+723:0-726:59 def VE.Service.ActsExamples.bigAct@VE.Service.ActsExamples
+727:0-730:37 def VE.Service.ActsExamples.bigE@VE.Service.ActsExamples
+731:0-731:130 def VE.Service.ActsExamples.bigNorms@VE.Service.ActsExamples
 module VE.Service.CardinalityExamples 27b4274abcc38ff3b2eee1b6e6e26fc5900c64c4164ebc642509842bf8714ff5
 13:0-13:101 def VE.Service.CardinalityExamples.listed@VE.Service.CardinalityExamples
 14:0-14:104 def VE.Service.CardinalityExamples.environment@VE.Service.CardinalityExamples
