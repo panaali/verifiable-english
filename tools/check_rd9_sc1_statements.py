@@ -1,8 +1,9 @@
 """Compare the implemented RD-9 declarations against the approved Lean blocks of docs/spec/rd-9-soft-chain.md 6.
 
 Each section of 6 is one batch's block (SC-1's 6.3 to 6.5, SC-2's 6.6, SC-3's 6.7, SC-4's 6.8, SC-5's 6.9, SC-6's
-6.10), compared with the files 6.1 places it in by `check_readings_defaults_statements.compare`: every declaration
-of the block, a theorem up to its proof's `:=`, a definition stated without a body up to its signature.
+6.10; SC-10's block is 13.3), compared with the files 6.1 (13.3 for SC-10) places it in by
+`check_readings_defaults_statements.compare`: every declaration of the block, a theorem up to its proof's `:=`, a
+definition stated without a body up to its signature.
 
 A section's last field names approved declarations that are not built yet. They are reported as not built ("SC-1
 unbuilt: ..." for SC-1, whose acceptance probe greps for the word), and a marker whose declaration exists fails the
@@ -36,6 +37,8 @@ SECTIONS = (
     ("SC-6 layered kinds", "### 6.10", "### 6.11",
      [LEAN / "NormDefaults/LayeredAdmission.lean", LEAN / "NormDefaults/Admission.lean", LEAN / "NormDefaults/Run.lean"],
      {"theorem": 6, "def": 18, "structure": 2}, set()),
+    ("SC-10 superposition", "### 13.3", "### 13.4", [LEAN / "Readings/SoftSup.lean"],
+     {"theorem": 7, "def": 4, "structure": 0}, {"sd_superpose_all", "sd_superpose_countermodel"}),
 )
 
 
@@ -119,7 +122,7 @@ def main(sections=SECTIONS) -> int:
         for line in signed:
             print(line)
         if later:
-            word = "unbuilt" if title.startswith("SC-1") else "not built yet"
+            word = "unbuilt" if title.split()[0] == "SC-1" else "not built yet"
             print(f"{title.split()[0]} {word}: {', '.join(sorted(later))}")
     if errors:
         print("\n".join(errors))

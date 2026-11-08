@@ -26,12 +26,16 @@ def _checker():
 
 
 def test_rd9_statements_match_the_approved_text_with_nothing_unbuilt(capsys):
-    """PROBE A of rd-9-looprecheck1: no RD-9 statement is reported unbuilt, and every block matches."""
+    """PROBE A of rd-9-looprecheck1: no RD-9 statement is reported unbuilt, and every block matches. The one exception
+    is SC-10's 13.3, whose two theorems sc-10b cut to sc-10bb: they are reported not built, and the list can only
+    shrink."""
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
-    assert "unbuilt" not in out and "not built yet" not in out
-    assert all(not section[5] for section in checker.SECTIONS)
+    assert "unbuilt" not in out
+    assert re.findall(r"^.* not built yet: .*$", out, re.M) == ["SC-10 not built yet: sd_superpose_all, sd_superpose_countermodel"]
+    assert {section[0]: section[5] for section in checker.SECTIONS if section[5]} == {
+        "SC-10 superposition": {"sd_superpose_all", "sd_superpose_countermodel"}}
     assert "softX_wellFormed" in {name for _, name in checker.approved_block("### 6.4", "### 6.5")}
 
 
@@ -39,7 +43,7 @@ def test_every_built_batch_block_is_compared():
     """The sections cover SC-1's three blocks and every later batch's block that is built."""
     titles = [section[0].split()[0] for section in _checker().SECTIONS]
     assert titles[:3] == ["SC-1", "SC-1", "SC-1"]
-    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6"]
+    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6", "SC-10"]
 
 
 def _mutated_sections(checker, tmp_path, section_index, name):
@@ -68,7 +72,7 @@ def _mutated_sections(checker, tmp_path, section_index, name):
     (4, "readings_wire_sd_separate_sound"), (4, "readings_wire_sd_choice_entails"),
     (6, "normDefaults_wire_admissionX"), (6, "layered_wire_acceptance"),
     (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
-    (5, "readings_wire_sd_verdicts_inconsistent"),
+    (5, "readings_wire_sd_verdicts_inconsistent"), (7, "sd_superpose_conflict_free"), (7, "supX_pull"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()

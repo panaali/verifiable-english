@@ -1,0 +1,30 @@
+{
+  "comment": "sc-10b seeded bugs (Lean, the only product language this item changes). Each was planted alone in the final lean/VE/Readings/SoftSup.lean; `lake build VE.Readings.SoftSupExamples` was run, the failing proof or #guard is recorded, and the file was restored. M3 was run twice: as planted (supX_pull's proof fails), and again with supX_pull's proof stubbed for that run only, so that the examples file elaborates and the #guards it breaks are listed. Line numbers are of the files at the commit that adds this file.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Readings.supCertificateCheckSD", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "slotUnder N.D [] in place of slotUnder N.D A: the check ignores A (the task's seeded bug 1)",
+     "test": "lean/VE/Readings/SoftSupExamples.lean:80 #guard: each atom of A closes from itself",
+     "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Readings.supX", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "supX N := [] (the task's seeded bug 3)",
+     "test": "lean/VE/Readings/SoftSup.lean:1035 supX_pull (proof fails); with the proof stubbed: lean/VE/Readings/SoftSupExamples.lean:214 (NSD4a under [(rs1,1)]: the CONFLICT model becomes a base of the superposed side), and :39, :43, :44, :145, :146, :154",
+     "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Readings.dropUnsaid", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "p ∉ [] in place of p ∉ N.unspec.map unsaidName: the unsaid__ tables are kept on the base S2a's lift reads",
+     "test": "lean/VE/Readings/SoftSup.lean:1163 dropUnsaid_admissible (proof fails at :1170: S2a's unfilled vocabulary declares no unsaid__ table), then upB_admissibleF (:1202) and pullF_upB (:1236)",
+     "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Readings.sharedEnvSD", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "envAt (fill (supU N)) (size (fill (supU N))): the queries' vocabulary read on supU (sc-10a review F2's survivor)",
+     "test": "lean/VE/Readings/SoftSupExamples.lean:227 #guard: a query naming a superposed decision table or a bit is not typed over sharedEnvSD NSD1 (the only guard that fails)",
+     "result": "KILLED"},
+    {"id": "M6", "definition": "VE.Readings.sd_superpose_conflict_free", "file": "lean/VE/Readings/SoftSup.lean",
+     "change": "[] in place of choiceX N c on the choice's side of the statement",
+     "test": "lean/VE/Readings/SoftSup.lean:1357 sd_superpose_conflict_free (proof fails at :1384: without choiceX the lift does not satisfy supX)",
+     "result": "KILLED"},
+    {"id": "P1", "definition": "check_rd9_sc1_statements.main (tooling, Python)", "file": "tools/check_rd9_sc1_statements.py",
+     "change": "title.startswith(\"SC-1\") in place of title.split()[0] == \"SC-1\": SC-10's not-built line says \"unbuilt\", which SC-1's acceptance probe greps for",
+     "test": "tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt",
+     "result": "KILLED"}
+  ],
+  "not_run": "The task's seeded bug 2 (the countermodel's bits naming the other choice) needs sd_superpose_countermodel and its fixture, which move to sc-10bb with the theorem (REPORT, Cut). Ids follow the task's numbering; M2 is that bug."
+}
