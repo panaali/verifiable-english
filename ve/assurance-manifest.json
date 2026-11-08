@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 42569,
+    "total_lines": 42634,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1756,12 +1756,12 @@
       },
       {
         "file": "lean/VE/Senses/Run.lean",
-        "lines": 411,
-        "sha256": "7ce5690587685042aa83747a0aff3650b75d3c16016d90ccd0a9061bd5f677a4",
+        "lines": 476,
+        "sha256": "faad7417eafe7808c24f8c0c2cf5aa3507cbd7d27c82701abfb33f3e57085db4",
         "ranges": [
           [
             1,
-            411
+            476
           ]
         ],
         "declarations": [
@@ -1785,7 +1785,12 @@
           "projectCase",
           "projectCaseReported",
           "_root_.VE.Senses.Projection.written",
-          "_root_.VE.Senses.SensesOutcome.written"
+          "_root_.VE.Senses.SensesOutcome.written",
+          "byteSpan",
+          "senseEntryJson",
+          "bodyOf",
+          "warningsJson",
+          "textsJson"
         ],
         "reason": "senses admission runner: exact request fields, restricted pack decoder, and response rows; RD-8: source or fenced documents with defaults. Fence identities and reading-set units enter Lean, which refuses a bad one by its fault (`fenceIdsProblem`) and decides open-fence admission; only fence units carry unresolved English, preserving source-mode output. B6: the senses.project case (exact fields, used words of the dictionary, lines read as a preamble) and the identities of a projection. The full file is pinned conservatively"
       },

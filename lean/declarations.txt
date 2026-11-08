@@ -27366,4 +27366,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 0cc8566744f4713005b640a152972bce45379b537f37ad99f2dd8aa52e135019
+module VE a63f84f64479674222fd458d563de74223eb34d73741988cf00120dbfa90402b
