@@ -9619,14 +9619,19 @@
         "VE.Senses.Run.projectCase",
         "VE.Senses.Run.projectCaseReported",
         "VE.Senses.Run.writtenLines",
-        "VE.Senses.Run.flipJson"
+        "VE.Senses.Run.flipJson",
+        "VE.Senses.Run.byteSpan",
+        "VE.Senses.Run.senseEntryJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
         "VE.Senses.Run.fenceReject",
         "VE.Senses.Run.refusalSource",
         "VE.Senses.Run.shiftReject",
-        "VE.Senses.Run.faultJson"
+        "VE.Senses.Run.faultJson",
+        "VE.Senses.Run.bodyOf",
+        "VE.Senses.Run.textsJson",
+        "VE.Senses.Run.warningsJson"
       ],
       "G[I]": [
         "VE.Senses.Run.projectionIds",
@@ -16885,6 +16890,9 @@
         "VE.Senses.RunExamples.overlayJ",
         "VE.Senses.RunExamples.lexJ",
         "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.withoutVersion",
+        "VE.Senses.RunExamples.versionOf",
+        "VE.Senses.RunExamples.withVersion",
         "VE.Senses.RunExamples.pin",
         "VE.Senses.RunExamples.projectReq",
         "VE.Senses.RunExamples.src",
@@ -18859,6 +18867,17 @@
     },
     "VE/Attitudes/Examples.lean": {
       "T": [
+        "VE.Attitudes.Examples.FM",
+        "VE.Attitudes.Examples.Fno",
+        "VE.Attitudes.Examples.Fyes",
+        "VE.Attitudes.Examples.M",
+        "VE.Attitudes.Examples.MA",
+        "VE.Attitudes.Examples.RM1",
+        "VE.Attitudes.Examples.RM2",
+        "VE.Attitudes.Examples.RM3",
+        "VE.Attitudes.Examples.RM4",
+        "VE.Attitudes.Examples.St",
+        "VE.Attitudes.Examples.U1",
         "VE.Attitudes.Examples.actions",
         "VE.Attitudes.Examples.att2",
         "VE.Attitudes.Examples.awf",
@@ -18884,11 +18903,13 @@
         "VE.Attitudes.Examples.cd2",
         "VE.Attitudes.Examples.closedC1",
         "VE.Attitudes.Examples.cond",
+        "VE.Attitudes.Examples.condC",
         "VE.Attitudes.Examples.contentOf",
         "VE.Attitudes.Examples.d16",
         "VE.Attitudes.Examples.declaredWording",
         "VE.Attitudes.Examples.docOf",
         "VE.Attitudes.Examples.docWith",
+        "VE.Attitudes.Examples.draft4Pack",
         "VE.Attitudes.Examples.envP",
         "VE.Attitudes.Examples.errOf",
         "VE.Attitudes.Examples.extra",
@@ -18905,9 +18926,13 @@
         "VE.Attitudes.Examples.fat7item",
         "VE.Attitudes.Examples.fat8",
         "VE.Attitudes.Examples.fat9",
+        "VE.Attitudes.Examples.fatAll",
+        "VE.Attitudes.Examples.fatB",
         "VE.Attitudes.Examples.fatMore",
+        "VE.Attitudes.Examples.firstFailing",
         "VE.Attitudes.Examples.fixtureTable",
         "VE.Attitudes.Examples.fixtureTableNoPair",
+        "VE.Attitudes.Examples.frameHolds",
         "VE.Attitudes.Examples.genconst",
         "VE.Attitudes.Examples.genpred",
         "VE.Attitudes.Examples.gensort",
@@ -18918,10 +18943,18 @@
         "VE.Attitudes.Examples.guard6",
         "VE.Attitudes.Examples.guard7",
         "VE.Attitudes.Examples.guard9",
+        "VE.Attitudes.Examples.guardAll",
+        "VE.Attitudes.Examples.guardAt",
         "VE.Attitudes.Examples.guardP",
+        "VE.Attitudes.Examples.instDecidableUnsaidFree",
         "VE.Attitudes.Examples.instInhabitedKey",
+        "VE.Attitudes.Examples.keyC",
+        "VE.Attitudes.Examples.keyK",
+        "VE.Attitudes.Examples.keyQ",
+        "VE.Attitudes.Examples.kn",
         "VE.Attitudes.Examples.knows1",
         "VE.Attitudes.Examples.knowsA",
+        "VE.Attitudes.Examples.labelOriginStandInUnread",
         "VE.Attitudes.Examples.lexA",
         "VE.Attitudes.Examples.lexB",
         "VE.Attitudes.Examples.lexC",
@@ -18938,6 +18971,7 @@
         "VE.Attitudes.Examples.noKey",
         "VE.Attitudes.Examples.nodesOf",
         "VE.Attitudes.Examples.nounOf",
+        "VE.Attitudes.Examples.pairNames",
         "VE.Attitudes.Examples.passes",
         "VE.Attitudes.Examples.preReportTable",
         "VE.Attitudes.Examples.predicateList",
@@ -18947,6 +18981,7 @@
         "VE.Attitudes.Examples.qlA",
         "VE.Attitudes.Examples.regulatedP",
         "VE.Attitudes.Examples.robot",
+        "VE.Attitudes.Examples.routeModel",
         "VE.Attitudes.Examples.ruleOf",
         "VE.Attitudes.Examples.sortC",
         "VE.Attitudes.Examples.sortS",
@@ -18960,6 +18995,8 @@
         "VE.Attitudes.Examples.threeRegulated",
         "VE.Attitudes.Examples.undeclared",
         "VE.Attitudes.Examples.unsaidP",
+        "VE.Attitudes.Examples.v01",
+        "VE.Attitudes.Examples.v1",
         "VE.Attitudes.Examples.viewed",
         "VE.Attitudes.Examples.vocabP",
         "VE.Attitudes.Examples.vql",
@@ -19012,7 +19049,6 @@
         "VE.Attitudes.WellFormedAtt",
         "VE.Attitudes.atom",
         "VE.Attitudes.baseEnv",
-        "VE.Attitudes.baseEnvAtt",
         "VE.Attitudes.checkAtt",
         "VE.Attitudes.checkCond",
         "VE.Attitudes.checkConds",
@@ -19033,6 +19069,12 @@
         "VE.Attitudes.toNorms"
       ],
       "D[V]": [
+        {
+          "name": "VE.Attitudes.baseEnvAtt",
+          "tied": [
+            "VE.Attitudes.frame_wellFormed"
+          ]
+        },
         {
           "name": "VE.Attitudes.envAtt",
           "tied": [
@@ -19265,6 +19307,61 @@
     "VE/Defaults/ZoneWordsMain.lean": {
       "G[V]": [
         "main"
+      ]
+    },
+    "VE/Senses/Texts.lean": {
+      "G[R]": [
+        "VE.Senses.glossList",
+        "VE.Senses.unknownGlossText",
+        "VE.Senses.tooManyText",
+        "VE.Senses.divergeText",
+        "VE.Senses.noSenseFitsText",
+        "VE.Senses.mixedText",
+        "VE.Senses.unneededText",
+        "VE.Senses.divergeGlosses"
+      ]
+    },
+    "VE/Senses/TextsExamples.lean": {
+      "T": [
+        "VE.Senses.TextsExamples.reading",
+        "VE.Senses.TextsExamples.entries"
+      ]
+    },
+    "VE/Attitudes/Frame.lean": {
+      "S": [
+        "VE.Attitudes.atomAt",
+        "VE.Attitudes.closeOver",
+        "VE.Attitudes.entails",
+        "VE.Attitudes.entailsMode",
+        "VE.Attitudes.factive",
+        "VE.Attitudes.frameLabels",
+        "VE.Attitudes.framePairs",
+        "VE.Attitudes.framePremises",
+        "VE.Attitudes.knowsKeys",
+        "VE.Attitudes.sameSubject"
+      ]
+    },
+    "VE/Attitudes/Route.lean": {
+      "G[V]": [
+        "VE.Attitudes.attitudesPack",
+        "VE.Attitudes.attitudesRow",
+        "VE.Attitudes.toU"
+      ],
+      "S": [
+        "VE.Attitudes.SettledAsX",
+        "VE.Attitudes.UnsaidFree",
+        "VE.Attitudes.labelOrigin"
+      ]
+    },
+    "VE/Attitudes/Semantics.lean": {
+      "S": [
+        "VE.Attitudes.AFormula.denote",
+        "VE.Attitudes.AttModel",
+        "VE.Attitudes.Intended",
+        "VE.Attitudes.contentAt",
+        "VE.Attitudes.interp",
+        "VE.Attitudes.restrict",
+        "VE.Attitudes.seedClosure"
       ]
     }
   }
