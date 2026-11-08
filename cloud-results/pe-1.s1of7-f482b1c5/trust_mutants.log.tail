@@ -1,0 +1,29 @@
+trust_mutants: 20 definitions, 290 mutants (42 to run), 4 jobs, base 80a076f0c1fa
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) body-true: B.links.length ≤ maxLinks ∧ (B.links.map (·.id)).Nodup ∧ (∀ L ∈ B.links, (∀ i ∈ L.partIds, (U.fin... -> True (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) le-lt: ≤ -> < (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) body-true: !s.isEmpty && s.all fun r => match r.partId? with | some i => U.kind? i == some k | none => true -> true (lean/VE/Purposes/Examples.lean:53: Expression (VE.Purposes.sameUnit, which it reads, is not what ...)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:45 VE.Purposes.sideOfKind (S, trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) all-any: all -> any (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:226)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:54 VE.Purposes.sameUnit (S, trusted) list-empty: (L.reason ++ L.target) -> [] (lean/VE/Purposes/WellFormed.lean:54: Invalid field notation: Type of)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:132 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-empty: s -> [] (lean/VE/Purposes/WellFormed.lean:43: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/Decl.lean:11 VE.Purposes.Relation (S, trusted) ctor-drop: | inOrderTo ->  (lean/VE/Purposes/Decl.lean:16: Unknown constant `VE.Purposes.Relation.inOrderTo`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:106 VE.Purposes.markerHonest (S, trusted) list-empty: B.links -> [] (lean/VE/Purposes/WellFormed.lean:106: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/Decl.lean:48 VE.Purposes.Ref (S, trusted) ctor-drop: | part (id : String) ->  (lean/VE/Purposes/WellFormed.lean:157: the failing proof cannot be cut: Unknown constant `VE.Purpo...)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:135 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:54 VE.Purposes.sameUnit (S, trusted) list-first: (L.reason ++ L.target) -> ((L.reason ++ L.target).take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:156)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) list-drop-last: U -> (U.dropLast) (lean/VE/Purposes/WellFormed.lean:89: Invalid field notation: Type of)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-first: s -> (s.take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:226)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:106 VE.Purposes.markerHonest (S, trusted) list-first: B.links -> (B.links.take 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:268)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:34 VE.Purposes.Link.partIds (S, trusted) list-first: L.target -> (L.target.take 1)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-last: B.links.map (·.id) -> ((B.links.map (·.id)).dropLast) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:151)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:88 VE.Purposes.covered (S, trusted) list-last: s -> (s.reverse.take 1)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:56 VE.Purposes.sameUnit (S, trusted) list-drop-first: L.partIds -> (L.partIds.drop 1) (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:156)
+trust_mutants: 14 KILLED, 17 SURVIVOR, 7 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 248 OTHER SHARD in 153 s
+trust_mutants: D[V], trusted: 1 KILLED, 2 OTHER SHARD
+trust_mutants: S, trusted: 13 KILLED, 17 SURVIVOR, 7 UNKNOWN, 4 INVALID, 246 OTHER SHARD
+trust_mutants: steps: wall plan 6.6 s, scratch 2.3 s, control_build 0.1 s, probe_install 1 s, control_probes 3.1 s, mutants 135.9 s, cleanup 4.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 3 s (1), mutant_builds 279.1 s (64), mutant_checks 129.7 s (40), stage_controls 33.8 s (7), mutant_probes 27.4 s (15)
