@@ -219,6 +219,11 @@
    "definition": "VE.Purposes.sideOfKind",
    "operator": "list-last",
    "reason": "equivalent on `!s.isEmpty` (a reverse.take 1 keeps emptiness); the case on `s.all` is killed by the sideOfKind #guard"
+  },
+  {
+   "definition": "VE.Purposes.NotChecked",
+   "operator": "ctor-drop",
+   "reason": "each removed constructor makes Examples.notChecked_cases or its distinctness #guard fail to elaborate with Unknown constant; the tool reports these compile failures as UNKNOWN"
   }
  ]
 }
