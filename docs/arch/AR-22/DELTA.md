@@ -1,10 +1,13 @@
 # AR-22: deltas
 
 None. No verdict, refusal text, step count, wire field or fault order changed. The corpus A/B over the nine
-corpora of the lean-first gate found 0 differences: 100,524 records the same, and the base and head recordings
-are byte-identical (`evidence/ab.json`). The Lean output differential (OUT) over 441 invocations of every
-`lean_exe` found no output change (`evidence/out.json`: its one listed difference is the backtrace addresses after
-two pre-existing PANIC lines that are the same on both builds).
+corpora of the lean-first gate found 0 differences: 100,522 records the same and 31 unavailable on both sides with
+identical outputs (R7, below), 0 unlisted; the base and head recordings are byte-identical (`evidence/ab.json`). Eight
+pilot records that the concurrent recording at load 90 to 110 left timed out on one side only were re-run on both sides
+with the recorder's own `pilot_check` (`docs/arch/AR-20/pilot_rerun.py`); each answered, the same on both sides, and
+each answer recorded on either side equals its re-run (`evidence/pilot-rerun.json`). The Lean output differential (OUT)
+over 441 invocations of every `lean_exe` found no output change (`evidence/out.json`: its one listed difference is
+the backtrace addresses after two pre-existing PANIC lines that are the same on both builds).
 
 The only rows the A/B lists are records unavailable on both sides with identical outputs. None is a delta. Each is in
 `evidence/ab-delta.json` with its reason.
@@ -12,13 +15,12 @@ The only rows the A/B lists are records unavailable on both sides with identical
 | # | Records | What both sides return | Ruling | Test |
 |---|---|---|---|---|
 | 1 | 17 `pilots/default` `document_check` records, one `translation-companions-with_source_word.ve.md` per constitution pilot run | The same pre-existing `CheckerUnavailable` (`ReadingsConstruction: ... KeyError`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 2 | 9 `pilots/default` `document_check` records of whole-UDHR translations | The same pre-existing 600 s recorder time-out (L75), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 3 | 1 `pilots/default` `document_check` record, `udhr-20261102T1800Z` `translation-whole.et0.ve.md` | The same pre-existing `CheckerUnavailable` (`readings-verdicts: more than 64 compatible readings`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 4 | 2 `discourse/default` records of text `2757af3b2b5456b1` (`document_check`, `document_render`) | The same pre-existing `CheckerUnavailable` (the norms route refuses a norm object: fields do not match), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 2 | 12 `pilots/default` `document_check` records of whole-UDHR translations | The same pre-existing 600 s recorder time-out (L75), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 3 | 2 `discourse/default` records of text `2757af3b2b5456b1` (`document_check`, `document_render`) | The same pre-existing `CheckerUnavailable` (the norms route refuses a norm object: fields do not match), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-22/evidence/ab-delta.json` (PASS, 0 unlisted) |
 
 ## Removed theorems and their covers (not deltas)
 
-`lean/statements.txt`: 8098 → 7977 entries, 0 added, 121 removed, 24 changed. Every removed theorem
+`lean/statements.txt`: 8154 → 8033 entries, 0 added, 121 removed, 24 changed. Every removed theorem
 is about a deleted copy: closure's tableau (`VE/TableauExtended*`, `Closure/{PathRules,Induction,Substitution,Congruence}`)
 or AR-21's lemmas equating that copy's `replay` with Core's. The 24 changed entries keep their statement text and
 `expr` hash byte for byte; only the defining module of moved constants on their `-- uses` line differs

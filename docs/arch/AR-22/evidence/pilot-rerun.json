@@ -1,0 +1,101 @@
+{
+ "rows": [
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "b1d3ecf952dba048c788f623a0f6e4302531cd3e4317dbb8f535ca86f7d1a85f",
+   "base_seconds": 35,
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/readings/all-strict.ve.md",
+   "head_outcome_sha256": "b1d3ecf952dba048c788f623a0f6e4302531cd3e4317dbb8f535ca86f7d1a85f",
+   "head_seconds": 26,
+   "same": true,
+   "source_sha256": "e5196ed8d8d8776a4b474c4a3d2bf62834ea278e",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "9aa1d6a9c687bb16cd0aabf80d446afdffa07fedb9aedc00358dc162ddf16c2a",
+   "base_seconds": 23,
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/readings/all-strict.ve.md",
+   "head_outcome_sha256": "9aa1d6a9c687bb16cd0aabf80d446afdffa07fedb9aedc00358dc162ddf16c2a",
+   "head_seconds": 30,
+   "same": true,
+   "source_sha256": "633e73b7144f86535c2e3d424f321bc4da816bf4",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "b969b25f7ca9b6592e7519d18f7d6f893a64c2221aef581f78e2aa7f464b5b98",
+   "base_seconds": 379,
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/readings/nd-all.ve.md",
+   "head_outcome_sha256": "b969b25f7ca9b6592e7519d18f7d6f893a64c2221aef581f78e2aa7f464b5b98",
+   "head_seconds": 370,
+   "same": true,
+   "source_sha256": "f8af2e2d34d26c52d5593a828f5a5efb7c5a67a4",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "6d6b2357e3eb644c235b5cf9d463ba0b0abda2177fcb4f22ad4ed812b6c4c307",
+   "base_seconds": 308,
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/readings/soft-chain.ve.md",
+   "head_outcome_sha256": "6d6b2357e3eb644c235b5cf9d463ba0b0abda2177fcb4f22ad4ed812b6c4c307",
+   "head_seconds": 347,
+   "same": true,
+   "source_sha256": "5e6152a0af18801d6fce6d6bfd3b88988b7af448",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "657d1ba189c4dade40b8de711b74f87d17ee37ae462f6504165daa16ae49d43e",
+   "base_seconds": 31,
+   "case": "pilot/cc-20261021T1800Z:usecases/claude-constitution-pilot/run-20261021T1800Z/readings/all-strict.ve.md",
+   "head_outcome_sha256": "657d1ba189c4dade40b8de711b74f87d17ee37ae462f6504165daa16ae49d43e",
+   "head_seconds": 28,
+   "same": true,
+   "source_sha256": "35ee993333529ee099bd9f6b80547c910417d1c6",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "f8642ba2be2ef946fff7873d62fa720ab3ce799cd28bcf8e92b6d990eb7c5bb8",
+   "base_seconds": 30,
+   "case": "pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/readings/all-strict.ve.md",
+   "head_outcome_sha256": "f8642ba2be2ef946fff7873d62fa720ab3ce799cd28bcf8e92b6d990eb7c5bb8",
+   "head_seconds": 31,
+   "same": true,
+   "source_sha256": "1c5bfc591d7eb756275ec617a608f709a64e6322",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "ae4f348e3523bb1f6e895be4cbcee92a26fe607d83873bb3b98f3cb4b551cd50",
+   "base_seconds": 406,
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "ae4f348e3523bb1f6e895be4cbcee92a26fe607d83873bb3b98f3cb4b551cd50",
+   "head_seconds": 374,
+   "same": true,
+   "source_sha256": "d95fe816730f136d6d2cd95fcd9d5c11d581b648",
+   "timeout": 600
+  },
+  {
+   "answer_kind": "answered",
+   "answered": true,
+   "base_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280",
+   "base_seconds": 376,
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280",
+   "head_seconds": 405,
+   "same": true,
+   "source_sha256": "7fd6d251519d2ad3ccff1d7c4ff094eefbd72650",
+   "timeout": 600
+  }
+ ],
+ "tool": "uv run python docs/arch/AR-20/pilot_rerun.py --base-root <base worktree at the merge base> --head-root <this checkout> --case <the 8 records whose outcomes differed in the concurrent recording> --out <file>; the full outcomes (1.2 MB) stay outside the tree, each side's outcome here as the SHA-256 of its compact sorted JSON, the form the recorder writes. They replace the 8 records in both recordings before `python -m tools.evidence ab` (ab.json names the resulting recordings)."
+}

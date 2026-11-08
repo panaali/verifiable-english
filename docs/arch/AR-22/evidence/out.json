@@ -1,9 +1,9 @@
 {
- "base": "53fdabfde4a66850c82ced932c8ffb749a1a81f7",
- "head": "73b73ad0dfdae7d315b2f5d080a69b62cd941e09",
- "tool": "base worktree: python3 tools/lean_output_diff.py --save-baseline --baseline ~/.cache/ve-ar22-out-baseline (after lake build of every lean_exe); head: uv run python tools/lean_output_diff.py --baseline ~/.cache/ve-ar22-out-baseline --all",
+ "base": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
+ "head": "01d1e6030353433cf9de9c9aeef796c453703561",
+ "tool": "base worktree: lake build of every lean_exe, then python3 tools/lean_output_diff.py --save-baseline --baseline ~/.cache/ve-ar22-out-baseline; head: lake build of every lean_exe, then uv run python tools/lean_output_diff.py --baseline ~/.cache/ve-ar22-out-baseline --all",
  "summary": [
-  "baseline 53fdabfde4a6; executables rebuilt with a different digest: ve_conformance, ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_scope_bench, ve_senses_route, ve_service, ve_speech_acts_route",
+  "baseline a6d0d389a07b; executables rebuilt with a different digest: ve_conformance, ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_scope_bench, ve_senses_route, ve_service, ve_speech_acts_route",
   "ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_scope_bench 1, ve_senses_route 1, ve_service 342, ve_speech_acts_route 17",
   "441 invocations, 441 run on both builds, 0 skipped as their executable is byte-identical to the baseline; 1 differences, 0 timed out"
  ],
@@ -14,11 +14,12 @@
   "invocation": "ve_service corpus session",
   "exit_code_same": true,
   "stdout_same": true,
+  "stderr_same": false,
   "stderr_without_backtrace_frames_same": true,
   "stderr_lines_without_frames": 4,
   "panic_lines_both_sides": 2,
   "baseline_against_itself_stderr_same": false,
   "reason": "the session reaches two pre-existing PANIC messages (Json.setObjVal!: not an object), identical on both builds; only the backtrace frames after them differ: they carry the executable path and ASLR addresses, and two runs of the baseline binary differ the same way. Not an output change.",
-  "tool": "/tmp script: lean_output_diff.harness_invocations + run on both binaries, unified diff of stderr, then stderr with lines matching (+0x..) [0x..] removed"
+  "tool": "a scratch script outside the tree: lean_output_diff.harness_invocations and run on both binaries and twice on the baseline; stderr compared whole and with the lines matching (+0x..) [0x..] removed"
  }
 }

@@ -1,5 +1,5 @@
 {
- "base_commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7",
+ "base_commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
  "corpora": [
   "conformance",
   "discourse",
@@ -581,7 +581,35 @@
    "base": {
     "timeout": 600
    },
+   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
    "case": "pilot/udhr-20261018T1800Z:usecases/udhr-pilot/run-20261018T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261021T0600Z:usecases/udhr-pilot/run-20261021T0600Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
@@ -677,29 +705,13 @@
   {
    "authority": "default",
    "base": {
-    "exit": 5,
-    "stderr": [],
-    "stdout": {
-     "error": {
-      "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: the Lean document answer could not be built: VEError: readings-verdicts: more than 64 compatible readings"
-     },
-     "status": "CheckerUnavailable"
-    }
+    "timeout": 600
    },
    "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/evidence/et0-not-landed/translation-whole.et0.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
-    "exit": 5,
-    "stderr": [],
-    "stdout": {
-     "error": {
-      "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: the Lean document answer could not be built: VEError: readings-verdicts: more than 64 compatible readings"
-     },
-     "status": "CheckerUnavailable"
-    }
+    "timeout": 600
    },
    "listed": true,
    "op": "document_check"
@@ -719,10 +731,10 @@
    "op": "document_check"
   }
  ],
- "head_commit": "73b73ad0dfdae7d315b2f5d080a69b62cd941e09",
+ "head_commit": "01d1e6030353433cf9de9c9aeef796c453703561",
  "recordings": {
-  "base": "41540eafad4d5690e949a05db53b7c2799380bb47b68152e1d521cd43bdec962",
-  "head": "41540eafad4d5690e949a05db53b7c2799380bb47b68152e1d521cd43bdec962"
+  "base": "a9cf0b4372b8ef0ac37ffd88767778e4aa7501a4be2c5afcb4ba4e580b0168e0",
+  "head": "a9cf0b4372b8ef0ac37ffd88767778e4aa7501a4be2c5afcb4ba4e580b0168e0"
  },
  "records": {
   "conformance/lean": 19806,
@@ -739,12 +751,12 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100524,
-  "unavailable": 29
+  "same": 100522,
+  "unavailable": 31
  },
  "unavailable_both": {
   "discourse/default": 2,
-  "pilots/default": 27
+  "pilots/default": 29
  },
  "unlisted": 0
 }
