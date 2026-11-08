@@ -1,0 +1,8 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Scope/Authoring.lean is a selected declaration's file or in its import closure
+trust_mutants: 19 definitions, 276 mutants (69 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Scope/Authoring.lean:161 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> [] (lean/VE/Scope/Authoring.lean:161: Function expected at)
+UNKNOWN lean/VE/Scope/Authoring.lean:168 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when") -> [] (lean/VE/Scope/Authoring.lean:168: Application type mismatch: The argument)
+trust_mutants: 44 KILLED, 0 SURVIVOR, 2 UNKNOWN, 18 INVALID, 5 ALLOWED, 0 NOT RUN, 207 OTHER SHARD in 102 s
+trust_mutants: D[V], trusted: 29 KILLED, 2 UNKNOWN, 18 INVALID, 4 ALLOWED, 162 OTHER SHARD
+trust_mutants: S, trusted: 15 KILLED, 1 ALLOWED, 45 OTHER SHARD
+trust_mutants: steps: wall plan 12.7 s, scratch 2.2 s, control_build 0.2 s, probe_install 1.3 s, control_probes 1.2 s, mutants 82.3 s, cleanup 1.9 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 1.1 s (1), mutant_builds 184.4 s (72), mutant_checks 47.7 s (49), stage_controls 16.8 s (6), mutant_probes 61.4 s (44)
