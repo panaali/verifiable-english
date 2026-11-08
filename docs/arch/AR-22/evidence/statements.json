@@ -1,0 +1,979 @@
+{
+ "base": "53fdabfde4a66850c82ced932c8ffb749a1a81f7",
+ "head": "73b73ad0dfdae7d315b2f5d080a69b62cd941e09",
+ "tool": "uv run python tools/lean_statements.py --diff BASE HEAD (added/removed/changed); each changed entry compared field by field (statement text, `-- expr` hash, `-- uses` constants with and without their @Module tag); each removed entry with the head theorem that covers it",
+ "statements": {
+  "base_sha256": "c15e4e10cc45c0482894d94c832b30493ab5d6c8ce1dc3a59cc405a909edefec",
+  "head_sha256": "052f380c4145dc24f956f14e99e041d0d36d39f69e0aa7afc65a496439719dd8",
+  "base_entries": 8098,
+  "head_entries": 7977,
+  "added": [],
+  "removed": [
+   {
+    "name": "VE.Closure.CoreEquiv.add_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.at_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.atomMatches_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.checkChildren_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.closed_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.closes_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.complementary_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.composeKind_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.composeStep_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.dedup_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.deriveExtra_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.edgeCheck_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.edgeStep_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.embedBranch_expanded",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.embedBranch_instantiated",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.embedSigned_bindings",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.embedToken_inj",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.endEdge_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.endStep_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.equalities_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.equivalent_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.extra_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.getElem?_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.groundMatch_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.ground_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.grow_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.induct_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.inductionStep_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.initial_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.invariantAt_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.isReach_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.known_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.liftMatch_eq",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.liftSub_eq",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.liftTerm_eq",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.literals_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.map_embedToken_inj",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.matches_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.mem_instantiated",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.mem_map_embedToken",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.namedStep_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.next_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.parse_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.reachClosed_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.reachable_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.replay_certificate_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.replay_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.rule_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.scoped_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.shift_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.sortOf_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.sortsOf_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.step_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.substTerm_eq",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.subst_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.tag_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.termToken_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.unfoldAt_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.unfold_embed",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.unlift_eq",
+    "covered_by": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Path.first",
+    "covered_by": "VE.Core.Path.first",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Path.last",
+    "covered_by": "VE.Core.Path.last",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.add_holds",
+    "covered_by": "VE.Core.Tableau.add_holds",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.bindings_extend",
+    "covered_by": "VE.Core.Tableau.bindings_extend",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.bindings_get",
+    "covered_by": "VE.Core.Tableau.bindings_get",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.checkChildren_member",
+    "covered_by": "VE.Core.Tableau.checkChildren_member",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.closed_sound",
+    "covered_by": "VE.Core.Tableau.closed_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.closes_sound",
+    "covered_by": "VE.Core.Tableau.closes_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.closure_holds",
+    "covered_by": "VE.Core.Tableau.closure_holds",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.complementary_sound",
+    "covered_by": "VE.Core.Tableau.complementary_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.composeStep_sound",
+    "covered_by": "VE.Core.Tableau.composeStep_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.delta_witness",
+    "covered_by": "VE.Core.Tableau.delta_witness",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.edgeStep_sound",
+    "covered_by": "VE.Core.Tableau.edgeStep_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.endStep_sound",
+    "covered_by": "VE.Core.Tableau.endStep_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.equalities_sound",
+    "covered_by": "VE.Core.Tableau.equalities_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.equivalent_sound",
+    "covered_by": "VE.Core.Tableau.equivalent_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.extra_sound",
+    "covered_by": "VE.Core.Tableau.extra_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.gamma_holds",
+    "covered_by": "VE.Core.Tableau.gamma_holds",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.ground_denote",
+    "covered_by": "VE.Core.Tableau.ground_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.grow_sound",
+    "covered_by": "VE.Core.Tableau.grow_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.holds_extend",
+    "covered_by": "VE.Core.Tableau.holds_extend",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.induct_sound",
+    "covered_by": "VE.Core.Tableau.induct_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.known_bindings",
+    "covered_by": "VE.Core.Tableau.known_bindings",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.literals_hold",
+    "covered_by": "VE.Core.Tableau.literals_hold",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.matches_sound",
+    "covered_by": "VE.Core.Tableau.matches_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.mem_dedup",
+    "covered_by": "VE.Core.Tableau.mem_dedup",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.namedStep_sound",
+    "covered_by": "VE.Core.Tableau.namedStep_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.next_sound",
+    "covered_by": "VE.Core.Tableau.next_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.one_holds",
+    "covered_by": "VE.Core.Tableau.one_holds",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.reachClosed_sound",
+    "covered_by": "VE.Core.Tableau.reachClosed_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.reachable_sound",
+    "covered_by": "VE.Core.Tableau.reachable_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.replay_sound",
+    "covered_by": "VE.Core.Tableau.replay_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.rule_closure_formula",
+    "covered_by": "VE.Core.Tableau.rule_closure_formula",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.step_sound",
+    "covered_by": "VE.Core.Tableau.step_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.termToken_denote",
+    "covered_by": "VE.Core.Tableau.termToken_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.token_defined",
+    "covered_by": "VE.Core.Tableau.token_defined",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.two_holds",
+    "covered_by": "VE.Core.Tableau.two_holds",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.typed_extend",
+    "covered_by": "VE.Core.Tableau.typed_extend",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.Tableau.unfoldAt_sound",
+    "covered_by": "VE.Core.Tableau.unfoldAt_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.closure_induction",
+    "covered_by": "VE.Core.closure_induction",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.edge_at_denote",
+    "covered_by": "VE.Core.edge_at_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.edge_inclusion",
+    "covered_by": "VE.Core.edge_inclusion",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.edge_shift_denote",
+    "covered_by": "VE.Core.edge_shift_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.edge_typed",
+    "covered_by": "VE.Core.edge_typed",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.endEdge_sound",
+    "covered_by": "VE.Core.endEdge_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.formula_matches_sound",
+    "covered_by": "VE.Core.formula_matches_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.inductionStep_denote",
+    "covered_by": "VE.Core.inductionStep_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.invariantAt_denote",
+    "covered_by": "VE.Core.invariantAt_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.liftMatch_sound",
+    "covered_by": "VE.Core.liftMatch_sound",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.liftSub_denote",
+    "covered_by": "VE.Core.liftSub_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.liftTerm_denote",
+    "covered_by": "VE.Core.liftTerm_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.named_body_denote",
+    "covered_by": "VE.Core.named_body_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.pair_values",
+    "covered_by": "VE.Core.pair_values",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.reach_compose",
+    "covered_by": "VE.Core.reach_compose",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.reach_denote",
+    "covered_by": "VE.Core.reach_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.reachable_induction",
+    "covered_by": "VE.Core.reachable_induction",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.reachable_trans",
+    "covered_by": "VE.Core.reachable_trans",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.substTerm_denote",
+    "covered_by": "VE.Core.substTerm_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.subst_denote",
+    "covered_by": "VE.Core.subst_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.unfold_denote",
+    "covered_by": "VE.Core.unfold_denote",
+    "cover_in_head": true
+   },
+   {
+    "name": "VE.Closure.unlift_denote",
+    "covered_by": "VE.Core.unlift_denote",
+    "cover_in_head": true
+   }
+  ],
+  "changed": [
+   {
+    "name": "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.TableauExtended",
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.checkCertificate_other_version",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate.checker_version@VE.TableauExtended",
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate.checker_version@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.checkCertificate_v0",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.TableauExtended",
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.checkCertificate_v1",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.TableauExtended",
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedCert@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate.checker_version@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.decodeTrace_ne_embed",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedTrace@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Trace@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedTrace@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Trace@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.extraRule_eq",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.extraRule@VE.TableauExtendedExtra"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.extraRule@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.stepsList_embed",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedTraces@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Trace@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedTraces@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Trace@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.CoreEquiv.steps_embed",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.CoreEquiv.embedTrace@VE.Closure.CoreEquiv",
+     "VE.Closure.Tableau.Trace@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.CoreEquiv.embedTrace@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Trace@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.Tableau.checkCertificate_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Closure.Tableau.checkCertificate_sound_v0",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Data.Background.closure_data_route_acceptance",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Definitions.closure_acceptance",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Route.Background.closure_route_acceptance",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended",
+     "VE.Closure.Tableau.checkCertificate@VE.TableauExtendedChecker"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau",
+     "VE.Closure.Tableau.checkCertificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Route.RunSound.route_closure_certificate",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Route.WireSound.runClosure_certificate_acceptance",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Route.closureValid_certificateSound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.Family.closure_graph_entails",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.Family.closure_graph_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.Family.closure_graph_unfolds",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.Family.closure_readings_all_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.Family.closure_readings_some_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.FamilyBundle.closure_bundle_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate.trace@VE.TableauExtended",
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate.trace@VE.Closure.Tableau",
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.FamilyNorms.closure_conflict_target_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   },
+   {
+    "name": "VE.Service.FamilyNorms.closure_norms_certificate_sound",
+    "text_identical": true,
+    "expr_identical": true,
+    "uses_names_identical": true,
+    "uses_removed": [
+     "VE.Closure.Tableau.Certificate@VE.TableauExtended"
+    ],
+    "uses_added": [
+     "VE.Closure.Tableau.Certificate@VE.Closure.Tableau"
+    ]
+   }
+  ],
+  "changed_note": "every changed entry has a byte-identical statement text and expr hash and the same used constants; only the @Module tag of a moved constant differs (Trace, Certificate and checkCertificate from VE.TableauExtended*, extraRule from VE.TableauExtendedExtra, embedTrace/embedTraces/embedCert from VE.Closure.CoreEquiv, all now in VE.Closure.Tableau)",
+  "changed_all_text_identical": true,
+  "changed_all_expr_identical": true,
+  "changed_all_uses_names_identical": true
+ },
+ "predicates": {
+  "base_sha256": "eaec33415f1e31ea88cef450f93dba09a37c6bc32b7eae0233319b0f817e1db5",
+  "head_sha256": "67e5afa451ef3ddd7a85172617a822ee3054a7c638f656a4e3ac0ee5405ea570",
+  "lines_removed": [
+   "module VE.Closure.Congruence",
+   "module VE.Closure.Induction",
+   "module VE.Closure.PathRules",
+   "module VE.Closure.Substitution",
+   "module VE.TableauExtended",
+   "module VE.TableauExtendedChecker",
+   "module VE.TableauExtendedClosure",
+   "module VE.TableauExtendedExtra",
+   "module VE.TableauExtendedInduction",
+   "module VE.TableauExtendedRules",
+   "VE.Closure.Edge.Typed@VE.Closure.Substitution",
+   "VE.Closure.Edge.denote@VE.Closure.Substitution",
+   "VE.Closure.Tableau.Assignment.Typed@VE.TableauExtended",
+   "VE.Closure.Tableau.Atom.denote@VE.TableauExtendedClosure",
+   "VE.Closure.Tableau.Branch.Holds@VE.TableauExtended",
+   "VE.Closure.Tableau.Literal.Holds@VE.TableauExtendedClosure",
+   "VE.Closure.Tableau.Signed.Holds@VE.TableauExtended"
+  ],
+  "lines_added": [
+   "module VE.Closure.Tableau"
+  ]
+ }
+}
