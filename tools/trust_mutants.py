@@ -137,8 +137,9 @@ nothing, so each verdict it had judged was lost):
   `partial: {deadline, unjudged}` (those ids, plan order), one PARTIAL line says so, and the exit code is 4;
 - every --json records `tree`, HEAD's tree, beside `head`, its commit;
 - --resume PREV.json keeps PREV's verdicts (before --allow; the current --allow applies) of the mutants this run
-  owns across commits when `inputs` (including the Lean and selected test bytes), plan,
-  --max-mutants, --shard part and --rescore facts (`resumable`). Only the rest (its `unjudged`) run, and the JSON
+  owns, also across commits, when PREV's `inputs` (all of lean/, the tool, the selected test bytes, base and
+  options), plan, --max-mutants, --shard part and --rescore facts are this run's, and at PREV's own commit its tree is
+  HEAD's (`resumable`). Only the rest (its `unjudged`) run, and the JSON
   gains `resumed: {file, head, kept, rerun}`, with `carried: "inputs identical"` when HEAD moved. Any PREV
   with different inputs is ignored with one line why (`ignored`) and the run is a full one;
 - a partial record never counts as a sweep: --merge refuses a part that has `partial` (run that part again with
@@ -1884,7 +1885,8 @@ RESCORE = {"file": str, "head": str | None, "mode": str, "changed": list[str], "
            "full_run": str, "plan_only": list[str]}  # full_run only when it was one; plan_only only when mode "checks"
 PARTIAL_RECORD = {"deadline": int, "unjudged": list[str]}
 RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str,
-           "carried": str}  # ignored only when it was; carried only when HEAD moved
+           "carried": str}  # ignored only when it was; carried (CARRIED) only when HEAD moved
+CARRIED = "inputs identical"  # the one wording of a verdict kept from another commit (`resumed`, `shards[]`)
 PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
 AGREED = ("base", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
 
@@ -1945,7 +1947,7 @@ def unread(d) -> str | None:
             "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run", "plan_only")) and d["rescore"]["mode"] in (
                 "full", "identical", "checks")) and ("partial" not in d or fits(d["partial"], PARTIAL_RECORD))
             and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored", "carried"))
-                 and d["resumed"].get("carried", "inputs identical") == "inputs identical"
+                 and d["resumed"].get("carried", CARRIED) == CARRIED
                  and ("carried" in d["resumed"]) == (d["resumed"]["head"] is not None
                                                     and d["resumed"]["head"] != d["head"]))):
         return "a field is missing or not of its type"
@@ -2065,7 +2067,7 @@ def merge(out: Path, paths: list[Path]) -> int:
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
         shards = [{"k": d["shard"]["k"], "n": n, "head": d["head"], "jobs": d["jobs"], "seconds": d["seconds"],
-                   **({"carried": "inputs identical"} if d["head"] != first["head"] else {}),
+                   **({"carried": CARRIED} if d["head"] != first["head"] else {}),
                    **({"steps": d["steps"]} if "steps" in d else {}),
                    **({"resumed": d["resumed"]} if "resumed" in d else {})} for d, _ in parts]
         steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
@@ -2202,7 +2204,7 @@ def sweep(argv: list[str] | None = None) -> int:
                   flush=True)
         resumed = {"file": str(args.resume), "head": None if isinstance(got, str) else got[0], "kept": 0,
                    "rerun": 0, **({"ignored": got} if isinstance(got, str) else
-                                  {"carried": "inputs identical"} if got[0] != head else {})}
+                                  {"carried": CARRIED} if got[0] != head else {})}
         kept = {} if isinstance(got, str) else got[1]
     for m in mine:
         if r := kept.get(m.id):
