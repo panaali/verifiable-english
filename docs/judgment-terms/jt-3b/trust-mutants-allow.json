@@ -1,0 +1,10 @@
+{
+ "allow": [
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-first", "reason": "equivalent: `E.boundNames.toList` is an `Option.toList`, at most one element (the whole names array), so `take 1` is the identity."},
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-last", "reason": "equivalent: `E.boundNames.toList` is an `Option.toList`, at most one element, so `reverse.take 1` is the identity."},
+  {"definition": "VE.Service.Document.contentOf", "operator": "bool-flip", "reason": "main's line (lf-16f 88768fe72, the soft frame's `generated` flag), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py), outside this item's --test file."},
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-empty", "reason": "the survivor is main's `generated` line (lf-16f 88768fe72), unchanged by jt-3b; the same operator on this item's line 1605 is killed by the `refused` guards."},
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-drop-last", "reason": "main's line (lf-16f 88768fe72, the one-element `generated` list), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py)."},
+  {"definition": "VE.Service.Document.contentOf", "operator": "list-drop-first", "reason": "main's line (lf-16f 88768fe72, the one-element `generated` list), unchanged by jt-3b; its fixtures are lf-16f's (tests/test_b16f_document.py)."}
+ ]
+}

@@ -173,10 +173,11 @@ def declared : List VE.Judgments.Judgment := [⟨"a", ["limit"], "unstated", []�
   [("u1", "Open: this uses the judgments whether a limit is classified as \"a\" and whether a limit is classified as \"b\"."),
    ("u3", "Open: this uses the judgment whether a limit is classified as \"b\".")]
 -- Three bound terms, the fence's in the middle: every name reaches the fence, and every term has its legend row.
-def three : String := fenced fenceProfiles (said "reasonable_grounds")
-  [term "reasonable_limit", term "reasonable_grounds", term "published"] (opened ["reasonable_grounds"])
-#guard refused three == none
-#guard ((lines three).bind fun j => (j.getObjValD "legend").getArr?.toOption.map (·.toList.map (·.getObjValD "term"))) ==
+#guard refused (fenced fenceProfiles (said "reasonable_grounds")
+  [term "reasonable_limit", term "reasonable_grounds", term "published"] (opened ["reasonable_grounds"])) == none
+#guard ((lines (fenced fenceProfiles (said "reasonable_grounds")
+    [term "reasonable_limit", term "reasonable_grounds", term "published"] (opened ["reasonable_grounds"]))).bind
+    fun j => (j.getObjValD "legend").getArr?.toOption.map (·.toList.map (·.getObjValD "term"))) ==
   some [.str "reasonable_limit", .str "reasonable_grounds", .str "published"]
 -- `linesJson` writes every status row, in order.
 #guard linesJson [] [("u1", "x"), ("u2", "y"), ("u3", "z")] == Json.mkObj [("legend", toJson ([] : List Json)),
