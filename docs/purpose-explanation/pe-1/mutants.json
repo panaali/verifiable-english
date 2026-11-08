@@ -135,6 +135,17 @@
    "fails_at": "lean/VE/Purposes/Examples.lean:242",
    "plan_bug": null,
    "why": "a trusted definition with no KILLED trust mutant (its operators gave only INVALID or type-error mutants, or none)"
+  },
+  {
+   "definition": "Ref.partId?",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "| .mention _ => none",
+   "to": "| .mention i => some i",
+   "killed": true,
+   "test": "F5 mention: #guard result (check F5 ⟨[{ f5l with reason := [.mention \"a.m1\"] }]⟩) == some joinText; also breaks sameUnit_parent and nonfactive_iff",
+   "fails_at": "lean/VE/Purposes/Examples.lean:131",
+   "plan_bug": null,
+   "why": "a trusted definition no trust-mutant operator applies to"
   }
  ],
  "per_definition": [
