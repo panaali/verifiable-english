@@ -168,7 +168,7 @@ def test_the_route_case_relays_the_row_on_both_modes():
 
 
 # Fuzz (6.7 step 5): genuine rows mutated one fault at a time; every mutant is no answer or shows nothing new.
-RETYPED = (7, True, None, [], {}, "x", -1, 999)
+RETYPED = (7, True, None, [], {}, "x", -1, 999, 1.5)
 TEXTS = {"act", "text", "name"}  # Lean's texts and generated names, relayed verbatim (SR12): retyped, never rewritten
 
 
