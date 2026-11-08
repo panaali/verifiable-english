@@ -17543,6 +17543,8 @@
     },
     "VE/Calc/StatsExamples.lean": {
       "T": [
+        "VE.Calc.StatsExamples.big12",
+        "VE.Calc.StatsExamples.big16",
         "VE.Calc.StatsExamples.d12",
         "VE.Calc.StatsExamples.d16",
         "VE.Calc.StatsExamples.grid",
