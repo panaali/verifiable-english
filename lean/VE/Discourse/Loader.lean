@@ -656,6 +656,11 @@ def admissionObject (units : List (String × (Nat × Nat) × Json × Option VE.F
     ("lemmas", optionalList front "lemmas"), ("open_terms", Json.arr (openNames.map Json.str).toArray),
     ("reading_sets", Json.arr w2sets.toArray), ("narrowings", Json.arr (narrowings.map Json.str).toArray)]
 
+/-- The one refusal of a body fence no unit's content reads (the fence compiler is item cmp-s4ab): `loadFront`'s
+and the composed path's (`resolveWith`). -/
+def fencesOk (fences : List (String × String)) : Except String Unit :=
+  unless fences.isEmpty do throw (notImplemented "fenced English or strict content")
+
 /-- `load_document` and the admission object of `_check_document`, for a front matter under
 the base profiles `profiles` with environment identity `envId`. -/
 def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
@@ -671,7 +676,7 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
     | _ => throw "document needs units"
   let parents ← mixedParents unitsJ
   let units ← compileUnits rv profiles envId source openNames parents 0 unitsJ
-  unless fences.isEmpty do throw (notImplemented "fenced English or strict content")
+  fencesOk fences
   let all ← compileSets rv profiles envId (units.map Unit₀.id) (optionalList front "reading_sets")
   let active := activeOf all
   let status := units.map fun x => (x.id, foldStatus active x.id x.status)

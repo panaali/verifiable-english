@@ -1,0 +1,577 @@
+{
+ "translation": "76922d6c:usecases/claude-constitution-pilot/run-20261010T1800Z/translation.ve.md",
+ "steps": [
+  {
+   "document": "before",
+   "step": "load",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.86279296875,
+     37.40283203125,
+     38.38525390625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 118313068
+   },
+   "wall_s": 6.68,
+   "cpu_s": 6.67,
+   "max_rss_kb": 115164,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "check",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.49609375,
+     37.04345703125,
+     38.25732421875
+    ],
+    "cpus": 32,
+    "mem_available_kb": 118217532
+   },
+   "wall_s": 53.7,
+   "cpu_s": 53.65,
+   "max_rss_kb": 115256,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "render",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.552734375,
+     35.689453125,
+     37.72900390625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 116939000
+   },
+   "wall_s": 9.34,
+   "cpu_s": 9.3,
+   "max_rss_kb": 115196,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "coverage",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.9296875,
+     35.53466796875,
+     37.65625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 116905376
+   },
+   "wall_s": 52.66,
+   "cpu_s": 52.6,
+   "max_rss_kb": 115636,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-c6-denial",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     30.642578125,
+     35.04443359375,
+     37.37353515625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 118676972
+   },
+   "wall_s": 98.23,
+   "cpu_s": 98.2,
+   "max_rss_kb": 115616,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-c6-denial-under-force-u0125-s04-p2-0",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     31.294921875,
+     34.021484375,
+     36.77734375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 118045988
+   },
+   "wall_s": 20.4,
+   "cpu_s": 20.35,
+   "max_rss_kb": 114860,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-c6-denial-under-force-u0125-s04-p2-1",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     31.98681640625,
+     33.97021484375,
+     36.6865234375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 118597820
+   },
+   "wall_s": 62.92,
+   "cpu_s": 62.9,
+   "max_rss_kb": 114968,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-c7-clarification",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     34.7578125,
+     34.29833984375,
+     36.62060546875
+    ],
+    "cpus": 32,
+    "mem_available_kb": 115354216
+   },
+   "wall_s": 148.84,
+   "cpu_s": 148.53,
+   "max_rss_kb": 115256,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-c7-clarification-under-force-u0036-s05-0",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     30.47607421875,
+     33.4033203125,
+     35.9912109375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 101102924
+   },
+   "wall_s": 23.02,
+   "cpu_s": 22.96,
+   "max_rss_kb": 114436,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "readings-claim-human",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     29.76513671875,
+     33.00146484375,
+     35.78857421875
+    ],
+    "cpus": 32,
+    "mem_available_kb": 98338664
+   },
+   "wall_s": 25.47,
+   "cpu_s": 25.47,
+   "max_rss_kb": 115004,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "load",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     31.77978515625,
+     33.1982421875,
+     35.7783203125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 95202468
+   },
+   "wall_s": 2.46,
+   "cpu_s": 2.44,
+   "max_rss_kb": 111800,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "check",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     31.77978515625,
+     33.1982421875,
+     35.7783203125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 94904544
+   },
+   "wall_s": 46.34,
+   "cpu_s": 46.02,
+   "max_rss_kb": 111420,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "render",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     36.80078125,
+     34.33837890625,
+     36.04345703125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 89690928
+   },
+   "wall_s": 4.94,
+   "cpu_s": 4.93,
+   "max_rss_kb": 111248,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "coverage",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     36.576171875,
+     34.33251953125,
+     36.0322265625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 89230104
+   },
+   "wall_s": 43.0,
+   "cpu_s": 42.91,
+   "max_rss_kb": 111716,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c6-denial",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     35.15087890625,
+     34.2578125,
+     35.92431640625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 83904712
+   },
+   "wall_s": 50.01,
+   "cpu_s": 49.85,
+   "max_rss_kb": 111040,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c6-denial-under-force-u0125-s04-p2-0",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     35.31396484375,
+     34.42333984375,
+     35.8916015625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 78252088
+   },
+   "wall_s": 37.9,
+   "cpu_s": 37.86,
+   "max_rss_kb": 110728,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c6-denial-under-force-u0125-s04-p2-1",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     39.1591796875,
+     35.5185546875,
+     36.19873046875
+    ],
+    "cpus": 32,
+    "mem_available_kb": 72992088
+   },
+   "wall_s": 43.72,
+   "cpu_s": 43.67,
+   "max_rss_kb": 111252,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c7-clarification",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     39.734375,
+     36.12744140625,
+     36.37548828125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 70564492
+   },
+   "wall_s": 107.64,
+   "cpu_s": 107.19,
+   "max_rss_kb": 110744,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c7-clarification-under-force-u0036-s05-0",
+   "returncode": 5,
+   "host_at_start": {
+    "loadavg": [
+     36.50927734375,
+     36.18896484375,
+     36.37109375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 58739364
+   },
+   "wall_s": 47.12,
+   "cpu_s": 46.91,
+   "max_rss_kb": 114424,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-claim-human",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     34.90625,
+     35.7802734375,
+     36.22119140625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 55276620
+   },
+   "wall_s": 43.81,
+   "cpu_s": 43.8,
+   "max_rss_kb": 111352,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c9-unsafe-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     34.83740234375,
+     35.62646484375,
+     36.146484375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 50441624
+   },
+   "wall_s": 254.66,
+   "cpu_s": 254.21,
+   "max_rss_kb": 110168,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c9-unsafe-not-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     45.30859375,
+     38.62939453125,
+     37.04443359375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 116852184
+   },
+   "wall_s": 100.77,
+   "cpu_s": 100.67,
+   "max_rss_kb": 110132,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "after",
+   "step": "readings-c9-none-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     35.744140625,
+     37.13330078125,
+     36.66455078125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 116673900
+   },
+   "wall_s": 211.25,
+   "cpu_s": 211.08,
+   "max_rss_kb": 111700,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "strict",
+   "step": "readings-c9-unsafe-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     40.392578125,
+     38.92822265625,
+     37.458984375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 114620684
+   },
+   "wall_s": 524.47,
+   "cpu_s": 524.1,
+   "max_rss_kb": 140868,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "strict",
+   "step": "readings-c9-unsafe-not-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     50.861328125,
+     45.84521484375,
+     40.64599609375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 113011712
+   },
+   "wall_s": 107.82,
+   "cpu_s": 107.72,
+   "max_rss_kb": 110964,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "strict",
+   "step": "readings-c9-none-required",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     60.66748046875,
+     50.5244140625,
+     42.89111328125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 112305340
+   },
+   "wall_s": 700.72,
+   "cpu_s": 700.01,
+   "max_rss_kb": 141344,
+   "stderr_last_line": "",
+   "commit": "c4d6e79f4893cc99d9b5b98359534c9279b172b9"
+  },
+  {
+   "document": "before",
+   "step": "decided",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     28.15576171875,
+     42.62548828125,
+     45.42041015625
+    ],
+    "cpus": 32,
+    "mem_available_kb": 56091940
+   },
+   "wall_s": 44.02,
+   "cpu_s": 44.03,
+   "max_rss_kb": 114808,
+   "stderr_last_line": "",
+   "commit": "2d0b9d1a912be88451767feb8b5c819144ed6f6d"
+  },
+  {
+   "document": "after",
+   "step": "decided",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     26.1240234375,
+     40.26318359375,
+     44.505859375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 51380384
+   },
+   "wall_s": 39.9,
+   "cpu_s": 39.98,
+   "max_rss_kb": 111888,
+   "stderr_last_line": "",
+   "commit": "2d0b9d1a912be88451767feb8b5c819144ed6f6d"
+  },
+  {
+   "document": "after",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     35.55419921875,
+     45.71142578125,
+     51.751953125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 117881480
+   },
+   "memory_limit": "RLIMIT_AS=16G (user bus unavailable)",
+   "wall_s": 25.18,
+   "cpu_s": 46.48,
+   "max_rss_kb": 173156,
+   "stderr_last_line": "",
+   "commit": "427f406847513c28972d6fc57b6c5fbb879b0742"
+  },
+  {
+   "document": "strict",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     34.25537109375,
+     44.59228515625,
+     51.22021484375
+    ],
+    "cpus": 32,
+    "mem_available_kb": 117130352
+   },
+   "memory_limit": "RLIMIT_AS=16G (user bus unavailable)",
+   "wall_s": 23.28,
+   "cpu_s": 41.63,
+   "max_rss_kb": 185704,
+   "stderr_last_line": "",
+   "commit": "427f406847513c28972d6fc57b6c5fbb879b0742"
+  }
+ ]
+}

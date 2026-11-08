@@ -1,0 +1,256 @@
+{
+  "comment": "qt-a4 seeded bugs: each planted alone, shown failing the named test, then restored (git status clean). Lean ones ran against a mutated service build pinned in a temporary lean/checkers.lock, so a kill is the test's assertion, not the pin (scratch scripts, not kept).",
+  "python": [
+    {
+      "id": "region-table-skipped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_renamed_region_is_refused_by_the_relay_itself",
+      "killed": true,
+      "claim": "plan QT-A4's seeded bug: the binding check skips the region table"
+    },
+    {
+      "id": "region-order-untied",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[table-reordered]",
+      "killed": true,
+      "claim": "the table's order is tied to the problem's region premises"
+    },
+    {
+      "id": "confirmation-skipped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_region_table_and_problem_are_bound[predicates-reversed]",
+      "killed": true,
+      "claim": "Lean is not asked to confirm the claimed table and problem"
+    },
+    {
+      "id": "leaves-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_report_s_rows_are_bound_with_and_without_a_matching_id[duplicated]",
+      "killed": true,
+      "claim": "the leaves are not bound to the graph (qt-a3d's gap)"
+    },
+    {
+      "id": "report-id-not-recomputed",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[document]",
+      "killed": true,
+      "claim": "report_id is not recomputed"
+    },
+    {
+      "id": "statement-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[another-statement]",
+      "killed": true,
+      "claim": "an answered statement is not compared with the one sent"
+    },
+    {
+      "id": "ids-untyped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[paraphrase]",
+      "killed": true,
+      "claim": "a statement's meaning id is not typed as an identity (D7: typed, never recomputed)"
+    },
+    {
+      "id": "w6-identity-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[paraphrase]",
+      "killed": true,
+      "claim": "the W6a identities are not bound to the request's projection"
+    },
+    {
+      "id": "unsendable-claim-escapes",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[admission]",
+      "killed": true,
+      "claim": "a claim the wire cannot carry escapes as a VEError from the confirmation"
+    },
+    {
+      "id": "report-presence-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_document_row_answers_the_case_it_asked",
+      "killed": true,
+      "claim": "a report may be there when check did not ask, or absent when it did"
+    },
+    {
+      "id": "sizes-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[sizes-dropped]",
+      "killed": true,
+      "claim": "a countermodel's sizes are not typed or bound to the table"
+    },
+    {
+      "id": "python-falls-back",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_lean.py::test_lean_answering_unavailable_is_no_python_verdict",
+      "killed": true,
+      "claim": "Lean's CheckerUnavailable falls back to Python's path"
+    },
+    {
+      "id": "report-keys-unbound",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_lean.py::test_a_part_document_is_admitted_with_lean_s_report",
+      "killed": true,
+      "claim": "the document row's member set omits the report"
+    },
+    {
+      "id": "identities-unbound",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_answer.py::test_every_mutant_of_a_document_row_is_refused_or_changes_nothing",
+      "killed": true,
+      "claim": "the document row's source and document ids are not bound"
+    },
+    {
+      "id": "check-skips-the-hook",
+      "file": "ve/document/report.py",
+      "test": "tests/test_cardinality_lean.py::test_a_part_document_is_admitted_with_lean_s_report",
+      "killed": true,
+      "claim": "ve document check does not route to the relay's report"
+    },
+    {
+      "id": "render-without-lean",
+      "file": "ve/document/render.py",
+      "test": "tests/test_cardinality_lean.py::test_a_part_document_is_admitted_with_lean_s_report",
+      "killed": true,
+      "claim": "ve document render does not use Lean's line"
+    },
+    {
+      "id": "search-verdict-ignored",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_search_s_verdict_is_lean_s_and_typed",
+      "killed": true,
+      "claim": "prove returns what Lean refused"
+    },
+    {
+      "id": "decimal-rule-dropped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_a_statement_lean_respells_is_answered_at_every_entry[decimal]",
+      "killed": true,
+      "claim": "a decimal is compared as sent, so Lean's canonical answer is refused (review F1)"
+    },
+    {
+      "id": "date-rule-dropped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_a_statement_lean_respells_is_answered_at_every_entry[date]",
+      "killed": true,
+      "claim": "a date is compared as sent (review F1)"
+    },
+    {
+      "id": "negative-zero-kept",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_a_statement_lean_respells_is_answered_at_every_entry[negative-zero]",
+      "killed": true,
+      "claim": "a printed -0.0 is compared as sent (review F1)"
+    },
+    {
+      "id": "every-negative-unsigned",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_the_relay_and_lean_agree_at_each_literal[printed]",
+      "killed": true,
+      "claim": "-1.50 is read as 1.50"
+    },
+    {
+      "id": "tag-rule-dropped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_a_statement_lean_respells_is_answered_at_every_entry[untagged]",
+      "killed": true,
+      "claim": "an omitted tag is compared as sent (the sweep)"
+    },
+    {
+      "id": "any-lowered-number-passes",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[decimal-another-number]",
+      "killed": true,
+      "claim": "the value of a lowered decimal is not bound"
+    },
+    {
+      "id": "sort-and-predicate-check-dropped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[admission-sort-not-finite]",
+      "killed": true,
+      "claim": "review F2: the region's sort and predicates are not bound"
+    },
+    {
+      "id": "admission-skips-regions",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[admission-region-renamed]",
+      "killed": true,
+      "claim": "review F2: admission skips the region table (the plan's seeded bug on admission)"
+    },
+    {
+      "id": "assumption-count-dropped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_the_relay_s_own_checks_hold_when_lean_cannot_confirm[lines-short]",
+      "killed": true,
+      "claim": "review F2: another number of assumption lines"
+    },
+    {
+      "id": "region-rows-untyped",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_every_one_fault_mutant_is_refused_or_changes_nothing[no-premises-answered-alike]",
+      "killed": true,
+      "claim": "regions.constants retyped as a mapping"
+    }
+  ],
+  "lean": [
+    {
+      "id": "content-any-key",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_a_unit_s_content_is_a_statement_lean_admits[<lambda>-a",
+      "killed": true,
+      "claim": "any content key is read under cardinality@0"
+    },
+    {
+      "id": "graph-node-unbound",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_every_graph_node_is_a_unit_holding_its_statement",
+      "killed": true,
+      "claim": "a graph node need not be a unit holding its statement"
+    },
+    {
+      "id": "gate-skipped",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_the_gate_refuses_a_list_cardinality_does_not_compose_with[profiles0-UnsupportedProfile:",
+      "killed": true,
+      "claim": "the AR-10 gate is not asked"
+    },
+    {
+      "id": "report-left-out",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_a_part_document_is_admitted_with_lean_s_report",
+      "killed": true,
+      "claim": "encode leaves out the report"
+    },
+    {
+      "id": "chain-members-read",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_what_the_chain_does_not_compose_is_refused_by_name[open_terms-value0]",
+      "killed": true,
+      "claim": "open_terms is read under cardinality@0"
+    },
+    {
+      "id": "content-without-profile",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_cardinality_content_needs_the_profile",
+      "killed": true,
+      "claim": "cardinality content without the profile gets the fence text"
+    }
+  ],
+  "per_definition": {
+    "evidence": "docs/quantities/qt-a4/trust-mutants.json",
+    "allowed": "docs/quantities/qt-a4/trust-mutants-allow.json",
+    "counts": {
+      "ResponseShape.Schemas.Document.cardinalityReport": "43 killed",
+      "ResponseShape.Schemas.Document.file": "18 killed",
+      "ResponseShape.Schemas.Document.row": "16 killed",
+      "ResponseShape.Schemas.Document.unit": "18 killed",
+      "VE.Service.Document.UnitContent": "1 allowed (does not build)",
+      "VE.Service.Document.cardinalityEnv": "7 killed",
+      "VE.Service.Document.cardinalityReport": "18 killed, 2 allowed (do not build)",
+      "VE.Service.Document.check": "6 killed",
+      "VE.Service.Document.contentOf": "2 killed",
+      "VE.Service.Document.decodedEnvironment": "1 killed",
+      "VE.Service.Document.encode": "8 killed",
+      "VE.Service.Document.environmentOf": "4 killed, 1 allowed (equivalent)"
+    }
+  }
+}

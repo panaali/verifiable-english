@@ -760,6 +760,14 @@ class _LazyRef:
 
 
 RIGHTS_BLOCK = _LazyRef("document.json", "#/$defs/rights_block")
+PROJECTED_ENVIRONMENT = _LazyRef("senses.project.json", "#/$defs/environment")
+
+
+def check_projected_environment(environment: object, case: object) -> None:
+    """Raise `Invalid` unless `environment` is a projection of `case`'s environment as the `senses.project` schema
+    types and binds it (`ResponseShape.Schemas.SensesProject.environment`): a `senses.read` answer carries the same
+    projection and has no schema of its own."""
+    PROJECTED_ENVIRONMENT[0](environment, Context(case), {})
 
 
 def validate_copied_rights_source(units, wire):

@@ -17,9 +17,10 @@ theorem of_norms {v : Json} (hp : usesNormDefaultsPath req = false) (h : Fits re
     Fits req Skeletons.normDefaults v :=
   Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
-theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wire.replayConflictU j = .ok res)
+theorem firstFailure_of_not_free (dec : Wire.UDecoder) (j : Json) (res : Wire.ConflictReplayU)
+    (h : Wire.replayConflictUIn dec j = .ok res)
     (hf : res.conflictFree = false) : (firstFailureU res).isSome = true := by
-  unfold Wire.replayConflictU at h
+  unfold Wire.replayConflictUIn at h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨s, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   cases h
@@ -31,9 +32,10 @@ theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wi
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
 /-- Every admission's kinds are its units' rendered kinds. -/
-theorem admitDocument_kinds (environment document : Json) :
-    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds) (Admission.admitDocument environment document) := by
-  unfold Admission.admitDocument
+theorem admitDocument_kinds (dec : Wire.UDecoder) (environment document : Json) :
+    OkP (fun res : Admission.Admitted => Common.KindsRendered res.kinds)
+      (Admission.admitDocumentIn dec environment document) := by
+  unfold Admission.admitDocumentIn
   okfits
   all_goals exact Common.kindsRendered_map _ _
 
@@ -152,6 +154,9 @@ theorem layeredKindCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
     | some a => exact OkP.pure (layeredCase_fits L id _ j hi hk hp _ ho _ rfl)
   · obtain ⟨k, -, rfl⟩ := List.mem_map.mp hr
     cases hrk
+    by_cases hc : VE.Defaults.providerConditions L.packs = true
+    · simp only [hc, ↓reduceIte]; exact OkP.throw
+    simp only [hc, Bool.false_eq_true, ↓reduceIte]
     refine OkP.bind (fun v _ => OkP.bind (fun o ho => ?_))
     cases o with
     | none => exact OkP.throw
@@ -209,9 +214,9 @@ theorem softCase_fits (id kind : String) (j : Json)
     simp only [Admission.certificateAnswer, VE.Route.Wire.ok]
     fits
 
-theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
-    OkFits j Skeletons.normDefaults (runCase j) := by
-  unfold runCase runOtherCase runAdmission
+theorem runCase_fits (dec : Wire.UDecoder) (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runCaseIn dec j) := by
+  unfold runCaseIn runOtherCaseIn runAdmissionIn
   simp only []
   okfits
   all_goals first
@@ -225,19 +230,19 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     VE.Norms.Run.wordingsJson, Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
   all_goals fits using line_fits
   all_goals try exact Common.claimJson_fits _
-  all_goals try exact Common.kind_fits (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›) ‹_›
+  all_goals try exact Common.kind_fits (admitDocument_kinds _ _ _ _ ‹Admission.admitDocumentIn _ _ _ = .ok _›) ‹_›
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals try
     exfalso
-    have := firstFailure_of_not_free j _ ‹Wire.replayConflictU j = .ok _› (by simp_all)
+    have := firstFailure_of_not_free _ j _ ‹Wire.replayConflictUIn _ j = .ok _› (by simp_all)
     simp_all
 
 theorem runCaseE_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runCaseE j) := by
-  unfold runCaseE
+  unfold runCaseE runCaseRouted
   okfits
   all_goals first
-    | exact runCase_fits j hp
+    | exact runCase_fits _ j hp
     | skip
   all_goals read_kind
   all_goals (try contra)

@@ -100,8 +100,8 @@ theorem composedSetRow_fits (j out authored : Json) :
     have hrows := OkP.mapM (fun r _ => composedReadingRow_fits j r) readings hreadings
     fits using composedList_fits j _ readings hrows
 
-theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
-  unfold VE.Service.Document.checkCore VE.Service.Document.encode
+theorem body_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkBody j) := by
+  unfold VE.Service.Document.checkBody VE.Service.Document.encode
   okfits
   all_goals split
   all_goals (try simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append, List.append_nil])
@@ -113,6 +113,15 @@ theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Docum
       List.mem_toArray, List.mem_map] at hx
     obtain ⟨u, _, rfl⟩ := hx
     exact unit_fits j u
+
+/-- Row 16 (PC-1) answers no row, and the body's rows fit. -/
+theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
+  unfold VE.Service.Document.checkCore
+  split
+  · exact body_fits j
+  split
+  · intro _ h; cases h
+  · exact body_fits j
 
 /-! scope@0 (SC-1b): the fold of a governor unit's status keeps the row's shape. -/
 
@@ -220,7 +229,14 @@ theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
 /-- The entry without scope's branch answers an encoded row. -/
 theorem checkCore_encode {j a : Json} (h : VE.Service.Document.checkCore j = .ok a) :
     ∃ id c, a = VE.Service.Document.encode id c := by
-  unfold VE.Service.Document.checkCore at h
+  replace h : VE.Service.Document.checkBody j = .ok a := by
+    unfold VE.Service.Document.checkCore at h
+    split at h
+    · exact h
+    split at h
+    · cases h
+    · exact h
+  unfold VE.Service.Document.checkBody at h
   obtain ⟨id, _, h⟩ := VE.Scope.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Scope.bind_ok h
   dsimp only at h

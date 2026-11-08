@@ -1,0 +1,19 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Service.Document.environmentOf",
+   "operator": "list-first",
+   "reason": "equivalent where it survives (line 716, the route to cardinalityEnv): cardinality@0 sorts first in every list the gate admits, and a list with an earlier profile is refused with the same gate text on both paths (the guard over [alternatives@0, cardinality@0] in CardinalityExamples.lean and the probe in the REPORT)"
+  },
+  {
+   "definition": "VE.Service.Document.UnitContent",
+   "operator": "ctor-drop",
+   "reason": "does not build: UnitContent.json, UnitContent.judged and contentOf use the constructor, so the mutant is refused by the compiler and has no behaviour"
+  },
+  {
+   "definition": "VE.Service.Document.cardinalityReport",
+   "operator": "list-empty",
+   "reason": "does not build: an empty list literal in place of `units` or `g.nodes` has no element type for the method after it (Invalid field notation); list-drop-last, list-first and list-last on both are built and killed"
+  }
+ ]
+}

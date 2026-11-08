@@ -236,7 +236,7 @@ theorem definite_agree (D : DDoc) (S : VE.Structure.{u}) (σ : Assignment) (m : 
           simp only [Option.some.injEq] at h
           subst h
           refine ⟨_, rfl, ?_⟩
-          simp only [assertive, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
+          simp only [assertive, assertiveAt, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
             List.getElem?_cons_succ, Option.some.injEq, unary_var0]
           constructor
           · rintro ⟨a, ha, hDa, hu, ⟨v, hv, hPa⟩⟩

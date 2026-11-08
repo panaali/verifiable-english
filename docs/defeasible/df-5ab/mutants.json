@@ -1,0 +1,189 @@
+{
+ "item": "df-5ab",
+ "runner": "docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-5ab/mutants.json",
+ "result": "docs/defeasible/df-5ab/evidence/mutants.out",
+ "language": "Lean",
+ "file": "lean/VE/Defaults/Zone.lean",
+ "source": "VE/Defaults/Zone.lean",
+ "fixtures": "VE/Defaults/ZoneExamples.lean",
+ "module": "VE.Defaults.Zone",
+ "keep": [],
+ "note": "Each mutant edits lean/VE/Defaults/Zone.lean (Lean, the only product language this item changes). kind plan: spec 8.9's seeded bug 'forcedAll read from one default completion' (S6), which DF-μ′ and DF-μ″ catch. kind R16: the one new trusted definition, forcedAllOf, mutated in each of its parts (F1-F8): the value off the enumerated atoms, the 'every minimal assignment' test, the incomplete enumeration, the emptiness test, the candidate list, the deduplication and the branch. The four theorems are proved by the kernel and add no trusted lines. kind proof (P1-P3, checklist item 10): each keeps every theorem and must fail inside the theorems named: forcedAll_sound on a wrong forcedAllOf, defaultCompletion_below and forced_everywhere on a wrong DefaultCompletion or DecLe.",
+ "mutants": [
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "S6",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "plan",
+   "bug": "forcedAll read from one default completion (spec 8.9: DF-μ′ and DF-μ″ report r2's exception as forced)",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then (Min.take 1).all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "guards": [
+    "#guard holds dμ' fun L => forced L (sit \"assistant\" 1 [\"cond_a\", \"cond_b\"]) [] [] == some [] && forced L M1 [] [] == some []",
+    "#guard holds dγ fun L => forced L M1 [] [] == some []"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dμ' and dγ forcedAll guards"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F1",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "an exception the record fixes true is never forced (the value off the enumerated atoms ignored)",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then Min.all (·.contains a) else false)).eraseDups",
+   "guards": [
+    "#guard holds dlam fun L => forced L M2 [(exc \"g1\" (el \"operator\" 1), true)] [] == some [exc \"g1\" (el \"operator\" 1)] &&"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam record-fixed forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F2",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "an atom off the enumerated atoms is forced whatever its value",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 != none)).eraseDups",
+   "guards": [
+    "#guard holds dlam fun L => forced L M2 [(exc \"g1\" (el \"operator\" 1), true)] [] == some [exc \"g1\" (el \"operator\" 1)] &&"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam record-fixed forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F3",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "an enumerated atom is forced when some minimal assignment holds it",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then Min.any (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "guards": [
+    "#guard holds dμ' fun L => forced L (sit \"assistant\" 1 [\"cond_a\", \"cond_b\"]) [] [] == some [] && forced L M1 [] [] == some []",
+    "#guard holds dγ fun L => forced L M1 [] [] == some []"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dμ' and dγ forcedAll guards"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F4",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "an incomplete enumeration (budget, record, no completion) answers the empty list",
+   "find": "  | .error _ => none\n  | .ok Min =>\n    if Min.isEmpty then none else",
+   "replace": "  | .error _ => some []\n  | .ok Min =>\n    if Min.isEmpty then none else",
+   "guards": [
+    "#guard holds dlam fun L => forced L (sit \"operator\" 13 []) [] [] == none &&",
+    "#guard holds dα fun L => forced L M1 [] [((reg L \"x_permitted\", [a0]), false)] == none"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam and dα forcedAll none guards"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F5",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "the emptiness test inverted: a found completion answers none",
+   "find": "    if Min.isEmpty then none else",
+   "replace": "    if !Min.isEmpty then none else",
+   "guards": [
+    "#guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc \"g1\" (el \"operator\" 0)] && forced L M2 [] [] == some []"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam DF-μ forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F6",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "every decision atom is a candidate, not only the exceptions",
+   "find": "    some (((noExceptionRecord L.D M).map (·.1)).filter",
+   "replace": "    some ((decisionAtoms L.D M).filter",
+   "guards": [
+    "#guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dδ outweighs forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F7",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "an atom listed more than once is reported more than once",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true))",
+   "guards": [
+    "#guard holds dlam fun L =>"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam large-situation forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "F8",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "R16",
+   "bug": "the enumerated atoms read off the record's valuation (the branches swapped)",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if !C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "guards": [
+    "#guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc \"g1\" (el \"operator\" 0)] && forced L M2 [] [] == some []"
+   ],
+   "test": "lean/VE/Defaults/ZoneExamples.lean: dlam DF-μ forcedAll guard"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "P1",
+   "definition": "VE.Defaults.forcedAllOf",
+   "kind": "proof",
+   "bug": "an atom off the enumerated atoms is forced whatever its value (F2), with every theorem kept",
+   "find": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups",
+   "replace": "if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 != none)).eraseDups",
+   "guards": [],
+   "theorems": [
+    "forcedAll_sound"
+   ],
+   "test": "theorem VE.Defaults.forcedAll_sound (about the list forcedAllOf returns)"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "P2",
+   "definition": "VE.Defaults.DefaultCompletion",
+   "kind": "proof",
+   "bug": "minimality over every admissible completion, the observations dropped, with every theorem kept",
+   "find": "  ∀ R', AdmissibleCompletion L.U X M (openNames L) rec' R' → Observed L.U M obs R' → DecLe L.D M R' R →",
+   "replace": "  ∀ R', AdmissibleCompletion L.U X M (openNames L) rec' R' → DecLe L.D M R' R →",
+   "guards": [],
+   "theorems": [
+    "defaultCompletion_below"
+   ],
+   "test": "theorem VE.Defaults.defaultCompletion_below"
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Zone.lean",
+   "id": "P3",
+   "definition": "VE.Defaults.DecLe",
+   "kind": "proof",
+   "bug": "DecLe compares the wrong way round, with every theorem kept",
+   "find": "  ∀ a ∈ decisionAtoms D M, R₁ a.1 a.2 → R₂ a.1 a.2",
+   "replace": "  ∀ a ∈ decisionAtoms D M, R₂ a.1 a.2 → R₁ a.1 a.2",
+   "guards": [],
+   "theorems": [
+    "defaultCompletion_below",
+    "forced_everywhere"
+   ],
+   "test": "theorems VE.Defaults.defaultCompletion_below and forced_everywhere"
+  }
+ ]
+}

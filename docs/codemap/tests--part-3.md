@@ -1,7 +1,21 @@
+- `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
+- `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
+- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
+- `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
+- `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
+- `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
+- `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
+- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
+- `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
+- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
+- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
+- `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
+- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
+- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
-- `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks and Python's recorded node for each (en-e3-norm EN-0; spec english-lean-s6 f22).
+- `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
 - `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
@@ -18,6 +32,7 @@
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
 - `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
+- `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
 - `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
 - `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
 - `tests/test_fol_names.py` — (no module docstring)
@@ -42,6 +57,7 @@
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
+- `tests/test_jt3_english.py` — JT-3's authoring refusal through the service (docs/spec/judgment-terms.md 9.5; DRI 2026-11-02, jt-3 items 1, 3 and 4).
 - `tests/test_jt_2c_delta.py` — jt-2c's saved delta (docs/judgment-terms/jt-2c/evidence, DELTA row 3, standing ruling R1): read from the saved records, never from a live service.
 - `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
 - `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
@@ -49,6 +65,7 @@
 - `tests/test_jt_e1s.py` — JT-E1s frame, revision and scoring checks.
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
+- `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
 - `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
 - `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
@@ -70,18 +87,3 @@
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
 - `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
 - `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
-- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
-- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
-- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
-- `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
-- `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
-- `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
-- `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
-- `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
-- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
-- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
-- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
-- `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
-- `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
-- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
-- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…

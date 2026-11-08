@@ -52,12 +52,14 @@ def narrowG2 : Option String :=
 #guard contentStr (sets (setDoc [s03]) [g1]) "u0165.s01" == contentStr (gov (hcDoc parts) [g1]) "u0165.s01" &&
   (contentStr (sets (setDoc [s03]) [g1]) "u0165.s01").isSome
 -- the per-choice statement on SR-1: each choice read off the answer is `govern` of that choice
-def perChoice (doc : Json) (gs : List Governor) : Except String Bool := do
-  let D := sdoc doc gs [] (← VE.Readings.Wire.decodeEnvironment envJ)
+def perChoice (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := []) :
+    Except String Bool := do
+  let D := sdoc doc gs ln (← VE.Readings.Wire.decodeEnvironment envJ)
   let out ← governSets D
   let cs ← setChoices D
   cs.allM fun ch => do pure (VE.Readings.Wire.jeq (atChoiceOn (governedSetUnits D) out ch) (← governChoice D ch))
 #guard (perChoice (setDoc [s03]) [g1]).toOption == some true
+#guard (perChoice (setDoc [s03]) [g1, g2] hcNames).toOption == some true
 -- with g2 (the re-guard over the list name) too: every reading is re-guarded, as the items are
 #guard (readingContents (sets (setDoc [s03]) [g1, g2] hcNames) "u0165.s03") == (narrowG2.map fun n => [wideG2, n]) && narrowG2.isSome &&
   contentStr (sets (setDoc [s03]) [g1, g2] hcNames) "u0165.s01" == contentStr (gov (hcDoc parts) [g1, g2] hcNames) "u0165.s01"

@@ -265,6 +265,8 @@ NOT_REGENERATED = {
     "conformance/english_lean_e2_ab.py": "batch report",
     "conformance/english_lean_e2_readability_report.py": "batch report",
     "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
+    "docs/presupposition/ps-e1/e1_stub.py": "PS-E1 prereg table: frozen before the model calls, checked by tests/test_ps_e1.py",
+    "docs/presupposition/ps-e1/e1_score.py": "PS-E1 results from saved raw answers, checked by tests/test_ps_e1.py",
     "docs/test-speed-b2/shadow.py": "fixed-merge shadow evidence, recorded once and checked at the batch gate",
     "docs/test-architecture/select/replay.py": "17-merge selection replay, recorded once at a pinned commit and "
                                                "checked at the batch gate",

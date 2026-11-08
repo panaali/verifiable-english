@@ -10,7 +10,7 @@ open Lean VE.Scope
 def ceDoc : Json := j "{\"units\": [{\"id\": \"a\"}, 5, {}], \"reading_sets\": [{\"id\": \"S\", \"version\": 1, \"readings\": [{\"id\": \"r\", \"content\": \"x\"}]}]}"
 def ceG : Governor := ⟨"g", "a", .reguard (j "[\"top\"]"), .list "a", [""]⟩
 def ceD (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc :=
-  ⟨Examples.layoutOf [("a", "Rules:\n"), ("", "- x\n")], ceDoc, .null, [ceG], [], [], re⟩
+  ⟨Examples.layoutOf [("a", "Rules:\n"), ("", "- x\n")], ceDoc, .null, [ceG], [], [], re, []⟩
 
 -- every hypothesis holds: the tree is well formed, a set is governed, `governSets` succeeds, the choice is checked
 #guard jsonWF? ceDoc

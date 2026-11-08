@@ -482,3 +482,16 @@ def test_rd4b_checker_fails_on_a_dropped_gate_and_a_missing_declaration(tmp_path
     checker.SOURCE_RD4B = path
     assert checker.main_rd4b() == 1
     assert "setDecided: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+def test_a_theorem_is_cut_at_its_proofs_assignment_not_one_inside_the_statement():
+    """Review sc-6 F1, as a class: a `:=` inside a record update is part of the statement, so the conjunct after it is
+    compared (RD and RD-9 read `declarations`, the scope gates `proof_cut`)."""
+    checker = _checker()
+    text = "theorem t (L : Lim) : L.scope = s ∧ { L with scope := L.scope } = L := by\n  rfl\n"
+    assert checker.declarations(text, statements_only=True)[("theorem", "t")] == [
+        "theorem t (L : Lim) : L.scope = s ∧ { L with scope := L.scope } = L"]
+    changed = text.replace("scope := L.scope }", "scope := none }")
+    assert checker.declarations(changed, True) != checker.declarations(text, True)
+    assert checker.proof_cut("theorem u : ⟨a, fun x => x⟩ = b := rfl") == len("theorem u : ⟨a, fun x => x⟩ = b ")
+    assert checker.proof_cut("theorem v : True") == len("theorem v : True")

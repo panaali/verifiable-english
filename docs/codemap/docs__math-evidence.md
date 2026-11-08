@@ -2,3 +2,6 @@
 - `docs/math-evidence/me-12a/tools/proofkill.py` — Build each trust mutant of this branch against the uncut proofs and examples; record what breaks.
 - `docs/math-evidence/me-12nb/uncharged-costs.lean` — me-12nb evidence, not product code (nothing imports it): the three costs spec 12.2 leaves uncharged, each at its worst within 12.5's wire limits, and each unkn…
 - `docs/math-evidence/me-7/evidence/check_statements.py` — me-7 statement gate: each declaration of spec 7's Lean block appears in Stats.lean, whitespace and comments normalised.
+- `docs/math-evidence/me-8/evidence/check_statements.py` — me-8 statement gate: each declaration of spec 8.1's Lean block appears in Interval.lean or Consistency.lean, whitespace and comments normalised (an opaque defi…
+- `docs/math-evidence/me-8/evidence/limit_bench.lean` — Native time of `consistencyRun` at `Work.maxWork` on the request shapes that stress each kind of work (F1 of the me-8 review).
+- `docs/math-evidence/me-8/evidence/seed.py` — Seeded bugs of me-8: each planted alone, `lake build VE.Calc.ConsistencyExamples`, restored.

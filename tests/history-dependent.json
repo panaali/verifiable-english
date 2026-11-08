@@ -1136,6 +1136,16 @@
    ]
   },
   {
+   "test": "tests/test_ps_e1.py",
+   "why": "starts git (git rev-parse, git show) in docs/presupposition/ps-e1/e1_runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/presupposition/ps-e1/e1_runner.py:committed: git rev-parse, git show"
+   ]
+  },
+  {
    "test": "tests/test_question_answering_measure_report.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
@@ -1861,6 +1871,16 @@
     "tests/test_trust_mutants.py:git: git",
     "tools/lean_share.py:_git: git",
     "tools/trust_mutants.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_trust_mutants_probe_scope.py",
+   "why": "starts git in tests/test_trust_mutants.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_trust_mutants.py:git: git"
    ]
   },
   {

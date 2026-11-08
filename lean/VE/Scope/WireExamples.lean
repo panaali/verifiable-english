@@ -188,4 +188,16 @@ open Examples in
   boundary (withScope (withUnit (Json.mkObj [("id", "u0165.s01"), ("content", Json.mkObj [("norm", leadPart)])]))),
   boundary (hcDoc parts)] == ["ok", "ok", "ok", "InvalidInput: scope@0 scope must be an object"]
 
+/-! sc-5rdb: the boundary refuses a repeated unit id (the DRI's decision of 2026-10-31, sc-5rd item 2), naming it, or
+    `units` when the repeated id is the one read from a unit without an id. sc-5rd's counterexample to
+    `governSets_every_choice` (`5` and `{}` both read the id `""`) is refused; with its ids made distinct it is admitted;
+    two units without an id are refused, one is admitted. -/
+def idDoc (units : List Json) : Json := withScope (Json.mkObj [("units", .arr units.toArray), ("reading_sets",
+  Examples.j "[{\"id\": \"S\", \"version\": 1, \"readings\": [{\"id\": \"r\", \"content\": \"x\"}]}]")])
+def dupFault (path : String) : String := wireFault path "a unit id no other unit has"
+def idU (u : String) : Json := Json.mkObj [("id", u)]
+#guard [boundary (idDoc [idU "a", toJson (5 : Nat), Json.mkObj []]), boundary (idDoc [idU "a", toJson (5 : Nat), idU "c"]),
+  boundary (idDoc [idU "a", Json.mkObj [], Json.mkObj []]), boundary (idDoc [idU "a", Json.mkObj []]),
+  boundary (idDoc [idU "a", idU "b", idU "a"])] == [dupFault "units", "ok", dupFault "units", "ok", dupFault "units.a"]
+
 end VE.Scope.WireExamples

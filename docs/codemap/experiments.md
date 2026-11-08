@@ -64,6 +64,8 @@
 - `experiments/colab_common.py` — Offline Colab exports.
 - `experiments/colab_scoring.py` — Conservative Colab scoring with paired item contrasts and template-cluster t CIs.
 - `experiments/events-time-causation/et8_component.py` — ET-8: the ET-1 component (the seven hard constraints, as run in phase 1) on the completion.
+- `experiments/exp-g1/ExpG1.lean` — EXP-G1: may one pack's premises mention another pack's names?
+- `experiments/exp-g1/run.py` — Compile ExpG1.lean as is and under each mutant; write the saved evidence (usage: python3 experiments/exp-g1/run.py).
 - `experiments/obfuscated-arguments/Feasibility.lean` — Small feasibility probes for the three physics trees linked by Barnes (2020).
 - `experiments/obfuscated-arguments/iceberg/cost_ledger.py` — Aggregate this worker's Codex token_count events; never copies conversation text.
 - `experiments/obfuscated-arguments/iceberg/qualitative.py` — Render and check ONLY the relational skeleton, with explicit Lean theorem imports.

@@ -50,3 +50,13 @@ def review_status(name: str, dictionary_id: str) -> str:
     except (OSError, VEError):
         pass
     return "unreviewed"
+
+
+def pack_review(packs: list[bytes], dictionary_id: str) -> dict[str, str]:
+    """The `review_status` of a one-pack request's pack, by its name, from Lean's `dictionary_id` of the request,
+    which is the pack's alone (plan 2.7, fixture i4); none for several packs, whose identity Lean gives together."""
+    try:
+        name = loads_json(packs[0])["name"] if len(packs) == 1 else None
+    except (VEError, KeyError, TypeError):
+        return {}
+    return {name: review_status(name, dictionary_id)} if type(name) is str else {}

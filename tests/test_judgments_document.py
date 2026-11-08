@@ -347,10 +347,15 @@ def test_the_profile_requires_documents_and_its_records_are_w2s(service):
 
 
 def test_layers_judgments_does_not_compose_with_are_unavailable(service):
-    soft = sorted(PROFILES + ["soft-norms@0"])
-    text = document(service, [unit("u1", kind="meta")], J1, profiles=soft)
-    assert outcome(answer(service, text)) == (
-        "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route", None)
+    # PC-1 composes the soft chain and pc-1g the rights chain (tests/test_judgments_chain.py): a document listing
+    # `rights@0` without a rights block answers its twin's own refusal.
+    rights = sorted(PROFILES + ["rights@0", "soft-norms@0"])
+    text = document(service, [unit("u1", kind="meta")], J1, profiles=rights)
+    refusal = ("CheckerUnavailable: a rights environment the rights route rejects keeps its loader's diagnostic: "
+               "InvalidInput: invalid rights block", None)
+    assert outcome(answer(service, text)) == refusal
+    plain = document(service, [unit("u1", kind="meta")], J1, profiles=[p for p in rights if p != "judgments@0"])
+    assert outcome(answer(service, plain)) == refusal
     front, body = document(service, [unit("u1", kind="meta")], J1).split("\n---\n")
     senses = front[:-1] + ', "senses": []}\n---\n' + body
     assert outcome(answer(service, senses)) == (

@@ -1,4 +1,4 @@
-import VE.Defaults.Wire
+import VE.Defaults.Uniform
 import VE.NormDefaults.PacksLegacy
 
 /-! The layered route's kind table with defeasible's row (docs/spec/premise-packs.md 2.10; plan DF-1a; DRI DF4).
@@ -13,9 +13,12 @@ open Lean
 
 def defaultsKinds : List String := ["defaults-elaborate", "defaults-coherence", "defaults-certificate", "defaults-model"]
 
-/-- Defeasible's row (DF4): the four kinds, each needing the soft pack, answered by `defaultsCase` (spec 7.2). -/
+/-- Defeasible's row (DF4): the four kinds, each needing the soft pack, answered by `defaultsCase` (spec 7.2). A
+    document some of whose packs state a decision condition is refused (`providerConditions`, profile-composition 1.9):
+    `Dflt_T` would assume the negation of every such condition. -/
 def defaultsRows : List (Packs.KindRow LayeredU) := defaultsKinds.map fun k =>
-  ⟨k, some "soft", fun _ id j => do
+  ⟨k, some "soft", fun L id j =>
+    if VE.Defaults.providerConditions L.packs then throw VE.Defaults.providerRefusal else do
     match ← VE.Defaults.Wire.defaultsCase (← VE.Defaults.Wire.viewOf j) id k j with
     | some a => pure a
     | none => throw "unreachable"⟩

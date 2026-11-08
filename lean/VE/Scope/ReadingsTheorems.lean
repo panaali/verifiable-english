@@ -3,8 +3,9 @@ import VE.Scope.ReadingsLemmas
 /-! Scope spec 11.3's statements on `governSets` (sc-5rb), as sc-5r's statement stub writes them. Of the four that take
     `Pinned.JsonWF`, sc-5rd proves `governSets_preserves`, `governSets_strings` and `governSets_readings_refused`
     (lemmas in `ReadingsLemmas.lean`); the route discharges `JsonWF` from sc-1af's boundary check
-    (`decodeBlock_sets`, `VE/Service/ScopeAdmission.lean`). `governSets_every_choice` is false as written (two units
-    with one id, docs/scope/sc-5rd/every-choice-counterexample.md); the DRI's fix adds distinct unit ids (sc-5rdb). -/
+    (`decodeBlock_sets`, `VE/Service/ScopeAdmission.lean`). `governSets_every_choice` holds for a document whose unit ids
+    are distinct (sc-5rdb; without them it is false, docs/scope/sc-5rd/every-choice-counterexample.md), which the
+    boundary checks (`decodeBlock_unitIds_nodup`). -/
 
 namespace VE.Scope
 open Lean
@@ -132,7 +133,7 @@ theorem governSets_preserves (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) 
     exact ⟨fun _ => rfl, fun _ _ => rfl, rfl, fun n r r' hr hr' => by rw [hr] at hr'; cases hr'; exact fun _ _ => rfl⟩
   obtain ⟨t, hd⟩ := su_obj D he
   have ht := jsonWF_top _ hw t hd
-  obtain ⟨ch₀, o₀, outs, hall, hm, ha⟩ := governSets_ok D he out ho
+  obtain ⟨ch₀, o₀, outs, hall, hm, ha, -⟩ := governSets_ok D he out ho
   obtain ⟨sets, hout, hl, hi⟩ := assemble_ok D ch₀ o₀ outs out ha
   have hK : ∀ k, k ≠ "units" → k ≠ "reading_sets" → out.getObjVal? k = D.doc.getObjVal? k := fun k h₁ h₂ => by
     rw [hout, setObjVal_ne _ (top_set _ (jsonWF_top _ hw) _ _) _ _ _ (Ne.symm h₂),
@@ -197,6 +198,209 @@ theorem governSets_preserves (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) 
       exact setObjVal_ne _ (jsonWF_top _ ((arrAt_mem y r' "readings" (List.mem_of_getElem? hr')).2 hyW)) _ _ _
         (Ne.symm hk)
 
+/-- Per choice: every joint choice of the governed sets, read off the answer, is `govern` of that choice. -/
+theorem governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hd : (unitIds D.doc).Nodup)
+    (hs : governedSetUnits D ≠ []) (out : Json) (ho : governSets D = .ok out) (cs : List VE.Discourse.Choice)
+    (hcs : setChoices D = .ok cs) (ch : VE.Discourse.Choice) (hc : ch ∈ cs) :
+    ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by
+  obtain ⟨ch₀, o₀, outs, hall, -, ha, hcov⟩ := governSets_ok D hs out ho
+  obtain ⟨sets, hout, hl, hi⟩ := assemble_ok D ch₀ o₀ outs out ha
+  have hU := assemble_units D ch₀ o₀ outs out ha
+  obtain ⟨o, hmo⟩ := hcov cs hcs ch hc
+  have go : governChoice D ch = .ok o := hall (ch, o) hmo
+  refine ⟨o, go, ?_⟩
+  unfold governChoice at go
+  have hP := governSets_preserves D hw out ho
+  obtain ⟨t, hdt⟩ := su_obj D hs
+  have ht := jsonWF_top _ hw
+  have hwX : JsonWF (atChoice D ch).doc := jsonWF_atChoiceOn _ _ _ hw
+  have hX := govern_preserves _ hwX o go
+  have hg : D.governors ≠ [] := by
+    obtain ⟨u, hu⟩ := List.exists_mem_of_ne_nil _ hs
+    have := (List.mem_filter.mp hu).2
+    simp only [Bool.and_eq_true] at this
+    obtain ⟨g, hg, -⟩ := List.any_eq_true.mp this.1.2
+    exact List.ne_nil_of_mem hg
+  rcases govern_ok _ o go with ⟨h0, -, -⟩ | ⟨comp, tt, -, -, ho'⟩
+  · exact absurd h0 hg
+  -- what the answer and the document under the choice read back
+  have hUo : unitsOf out = ((unitsOf o₀).zip (unitsOf D.doc)).map fun (x, y) =>
+      if (governedSetUnits D).contains (idOf y) then y else x := by
+    rw [hout, hdt]; unfold unitsOf
+    rw [(getD_set2 t (ht t hdt) "units" "reading_sets" (by decide) _ _).2]
+  have hSo : setsJson out = sets := by
+    rw [hout, hdt]; unfold setsJson
+    rw [(getD_set2 t (ht t hdt) "units" "reading_sets" (by decide) _ _).1]
+  have hUX := unitsOf_atChoiceOn (governedSetUnits D) D.doc ch ht
+  have hids : (unitsOf o).map idOf = unitIds D.doc := by
+    rw [hX.2.1]; exact unitIds_atChoiceOn _ _ _ hw
+  have hnX : ((unitsOf (atChoice D ch).doc).map idOf).Nodup := by
+    show (unitIds (atChoiceOn _ D.doc ch)).Nodup
+    rw [unitIds_atChoiceOn _ _ _ hw]; exact hd
+  have hno : ((unitsOf o).map idOf).Nodup := hids ▸ hd
+  have hlo : (unitsOf o).length = (unitsOf D.doc).length := by
+    simpa [unitIds] using congrArg List.length hids
+  have hlout : (unitsOf out).length = (unitsOf D.doc).length := by
+    simpa using congrArg List.length hP.2.1
+  -- a set of the answer keeps its unit, id and version
+  have hsU : ∀ j s s', (setsJson D.doc)[j]? = some s → sets[j]? = some s' →
+      setUnit s' = setUnit s ∧ idOf s' = idOf s ∧ setVersion s' = setVersion s := fun j s s' hs hs' => by
+    have hst := jsonWF_top _ ((arrAt_mem D.doc s "reading_sets" (List.mem_of_getElem? hs)).2 hw)
+    cases hc : (governedSetUnits D).contains (setUnit s)
+    · rw [(hi j s s' hs hs').1 hc]; exact ⟨rfl, rfl, rfl⟩
+    · obtain ⟨rs, rfl, -⟩ := (hi j s s' hs hs').2 hc
+      refine ⟨?_, ?_, ?_⟩ <;> simp only [setUnit, idOf, setVersion, getD_setObjVal s hst "readings" "unit" (by decide),
+        getD_setObjVal s hst "readings" "id" (by decide), getD_setObjVal s hst "readings" "version" (by decide)]
+  have hwo : ∀ kvs, out = .obj kvs → kvs.WF := hout ▸ top_set _ (top_set _ ht _ _) _ _
+  -- the units of the answer under the choice are `govern`'s under it
+  have hUL : unitsOf (atChoiceOn (governedSetUnits D) out ch) = unitsOf o := by
+    rw [unitsOf_atChoiceOn _ _ _ hwo, hSo]
+    apply List.ext_getElem?
+    intro i
+    rw [List.getElem?_map]
+    cases hy : (unitsOf D.doc)[i]? with
+    | none =>
+      have h1 : (unitsOf out)[i]? = none := by rw [List.getElem?_eq_none_iff] at hy ⊢; omega
+      have h2 : (unitsOf o)[i]? = none := by rw [List.getElem?_eq_none_iff] at hy ⊢; omega
+      rw [h1, h2]; rfl
+    | some y =>
+      have hyw := jsonWF_top _ ((unitsOf_mem _ y (List.mem_of_getElem? hy)).2 hw)
+      obtain ⟨u, hu⟩ : ∃ u, (unitsOf out)[i]? = some u :=
+        ⟨_, List.getElem?_eq_getElem (hlout ▸ (List.getElem?_eq_some_iff.mp hy).1)⟩
+      obtain ⟨w, hw'⟩ : ∃ w, (unitsOf o)[i]? = some w :=
+        ⟨_, List.getElem?_eq_getElem (hlo ▸ (List.getElem?_eq_some_iff.mp hy).1)⟩
+      have hidu : idOf u = idOf y := by
+        have := congrArg (·[i]?) hP.2.1
+        simpa only [List.getElem?_map, hu, hy, Option.map_some, Option.some.injEq] using this
+      have hidw : idOf w = idOf y := by
+        have := congrArg (·[i]?) hids
+        simpa only [unitIds, List.getElem?_map, hw', hy, Option.map_some, Option.some.injEq] using this
+      obtain ⟨x₀, hx₀, hux⟩ : ∃ x₀, (unitsOf o₀)[i]? = some x₀ ∧
+          u = if (governedSetUnits D).contains (idOf y) then y else x₀ := by
+        rw [hUo, List.getElem?_map] at hu
+        cases hz : ((unitsOf o₀).zip (unitsOf D.doc))[i]? with
+        | none => rw [hz] at hu; cases hu
+        | some z =>
+          obtain ⟨x₀, y'⟩ := z
+          obtain ⟨h1, h2⟩ := List.getElem?_zip_eq_some.mp hz
+          rw [hy] at h2; cases h2
+          rw [hz] at hu; cases hu
+          exact ⟨x₀, h1, rfl⟩
+      rw [hu, hw', Option.map_some, Option.some.injEq]
+      cases hc : (governedSetUnits D).contains (idOf y)
+      · -- outside the governed set units: `o₀`'s unit on both sides
+        rw [hc] at hux; simp only [Bool.false_eq_true, if_false] at hux; subst hux
+        have hf : sets.find? (fun s => (governedSetUnits D).contains (setUnit s) && setUnit s == idOf u) = none := by
+          rw [List.find?_eq_none]; intro s _ h
+          simp only [Bool.and_eq_true, beq_iff_eq] at h
+          rw [h.2, hidu, hc] at h; exact absurd h.1 (by decide)
+        rw [hf]
+        rcases hU (ch, o) hmo i w u hw' hx₀ with h | h
+        · rw [hidw, hc] at h; cases h
+        · exact h.symm
+      · rw [hc] at hux; simp only [if_true] at hux; subst hux
+        rcases find?_pair (fun s => (governedSetUnits D).contains (setUnit s) && setUnit s == idOf u)
+            (fun s => (governedSetUnits D).contains (setUnit s) && setUnit s == idOf u) (setsJson D.doc) sets hl
+            (fun j s s' h1 h2 => by simp only [(hsU j s s' h1 h2).1]) with ⟨h1, -⟩ | ⟨j, s, s', hs, hs', h1, h2⟩
+        · exfalso
+          have hm := (List.mem_filter.mp (List.contains_iff_mem.mp hc)).2
+          simp only [Bool.and_eq_true] at hm
+          cases hf : (setsJson D.doc).find? (setUnit · == idOf u) with
+          | none => rw [hf] at hm; cases hm.1.1.2
+          | some s =>
+            have := List.find?_eq_none.mp h1 s (List.mem_of_find?_eq_some hf)
+            have he := List.find?_some hf
+            simp only [beq_iff_eq] at he
+            simp only [he, Bool.and_true, beq_self_eq_true, List.contains_iff_mem] at this
+            exact this (List.contains_iff_mem.mp hc)
+        · have hP1 := List.find?_some h1
+          simp only [Bool.and_eq_true, beq_iff_eq] at hP1
+          obtain ⟨rs, hs'e, hrl, hri⟩ := (hi j s s' hs hs').2 hP1.1
+          have hst := jsonWF_top _ ((arrAt_mem D.doc s "reading_sets" (List.mem_of_getElem? hs)).2 hw)
+          rw [h2]; dsimp only
+          generalize ha : ((pickOf ch s).map (readingAt s)).getD .null = a
+          have hXi : (unitsOf (atChoice D ch).doc)[i]? = some (u.setObjVal! "content" a) := by
+            show (unitsOf (atChoiceOn _ D.doc ch))[i]? = _
+            rw [hUX, List.getElem?_map, hy, Option.map_some, h1]; dsimp only; rw [ha]
+          have hwF : w = u.setObjVal! "content" a ∨ ∃ c, w = (u.setObjVal! "content" a).setObjVal! "content" c := by
+            rw [ho', unitsOf_patch _ hwX, List.getElem?_map, hXi, Option.map_some, Option.some.injEq] at hw'
+            split at hw'
+            · exact .inr ⟨_, hw'.symm⟩
+            · exact .inl hw'.symm
+          have hpk : pickOf ch s' = pickOf ch s := by
+            simp only [pickOf, (hsU j s s' hs hs').2.1, (hsU j s s' hs hs').2.2]
+          rw [hpk]
+          cases u with
+          | obj ty =>
+            have hty := hyw ty rfl
+            have hwb : w = (Json.obj ty).setObjVal! "content" (w.getObjValD "content") := by
+              rcases hwF with rfl | ⟨c, rfl⟩
+              · simp only [Json.getObjValD, setObjVal_self ty hty]; rfl
+              · rw [setObjVal_twice _ hyw]; simp only [Json.getObjValD, setObjVal_self ty hty]; rfl
+            rw [hwb]; congr 1
+            have getC : ∀ (tr : Std.TreeMap.Raw String Json) (c : Json), tr.WF →
+                ((Json.obj tr).setObjVal! "content" c).getObjValD "content" = c := fun tr c h => by
+              simp only [Json.getObjValD, setObjVal_self tr h]; rfl
+            have hcont : contentOf o (idOf (Json.obj ty)) = w.getObjValD "content" := by
+              unfold contentOf; rw [← hidw, find?_idOf _ hno i w hw']; rfl
+            -- a unit given no content under the choice is no rule, so `govern` leaves it
+            have hnull : a = .null → w.getObjValD "content" = a := fun han => by
+              have hcX : contentOf (atChoice D ch).doc (idOf (Json.obj ty)) = a := by
+                unfold contentOf
+                rw [← idOf_set _ hyw a, find?_idOf _ hnX i _ hXi, Option.map_some, Option.getD_some, getC ty a hty]
+              have hna : idOf ((Json.obj ty).setObjVal! "content" a) ∉ affected (atChoice D ch) := fun hm => by
+                have := (List.mem_filter.mp (List.mem_filter.mp hm).1).2
+                rw [idOf_set _ hyw, hcX, han] at this
+                exact absurd this (by decide)
+              rw [(hX.2.2 i w _ hw' hXi).2 hna, getC ty a hty]
+            cases hpc : pickOf ch s with
+            | none =>
+              rw [hpc] at ha
+              simp only [Option.map_none, Option.getD_none] at ha ⊢
+              exact ((hnull ha.symm).trans ha.symm).symm
+            | some n =>
+              rw [hpc] at ha
+              simp only [Option.map_some, Option.getD_some] at ha ⊢
+              have hR : readingsJson s' = rs := hs'e ▸ readingsJson_set s hst rs hrl
+              cases hr : (readingsJson s)[n]? with
+              | none =>
+                have hr' : rs[n]? = none := by rw [List.getElem?_eq_none_iff] at hr ⊢; omega
+                have ha0 : a = .null := ha.symm.trans (by simp only [readingAt, hr]; rfl)
+                rw [show readingAt s' n = .null by simp only [readingAt, hR, hr']; rfl]
+                exact ((hnull ha0).trans ha0).symm
+              | some r =>
+                obtain ⟨r', hr'⟩ : ∃ r', rs[n]? = some r' :=
+                  ⟨_, List.getElem?_eq_getElem (hrl ▸ (List.getElem?_eq_some_iff.mp hr).1)⟩
+                obtain ⟨c, hr'e, -, hallc⟩ := hri n r r' hr hr'
+                have hrw := jsonWF_top _ ((arrAt_mem s r "readings" (List.mem_of_getElem? hr)).2
+                  ((arrAt_mem D.doc s "reading_sets" (List.mem_of_getElem? hs)).2 hw))
+                rw [show readingAt s' n = r'.getObjValD "content" by simp only [readingAt, hR, hr']; rfl, hr'e]
+                cases r with
+                | obj tr => rw [getC tr c (hrw tr rfl), hallc (ch, o) hmo hpc, hP1.2, hcont]
+                | _ =>
+                  have ha0 : a = .null := ha.symm.trans (by simp only [readingAt, hr]; rfl)
+                  exact ((hnull ha0).trans ha0).symm
+          | _ =>
+            rcases hwF with rfl | ⟨c, rfl⟩ <;> rfl
+  have hpo : o = (atChoice D ch).doc.setObjVal! "units" (.arr (unitsOf o).toArray) := by
+    rw [ho', unitsOf_patch _ hwX]; rfl
+  have hXd : (atChoice D ch).doc = (D.doc.setObjVal! "units" (.arr (unitsOf (atChoice D ch).doc).toArray)).setObjVal!
+      "reading_sets" (.arr ((setsJson D.doc).filter fun s => !(governedSetUnits D).contains (setUnit s)).toArray) := by
+    simp only [atChoice]
+    rw [unitsOf_atChoiceOn _ _ _ ht]; rfl
+  have hLd : atChoiceOn (governedSetUnits D) out ch = (out.setObjVal! "units"
+      (.arr (unitsOf (atChoiceOn (governedSetUnits D) out ch)).toArray)).setObjVal!
+      "reading_sets" (.arr ((setsJson out).filter fun s => !(governedSetUnits D).contains (setUnit s)).toArray) := by
+    rw [unitsOf_atChoiceOn _ _ _ hwo]; rfl
+  rw [hLd, hUL, hSo]
+  generalize unitsOf o = W at hpo ⊢
+  rw [hpo, hXd]
+  generalize unitsOf (atChoice D ch).doc = V
+  rw [hout, setObjVal_swap _ ht "units" "reading_sets" (by decide), setObjVal_twice _ (top_set _ ht _ _),
+    setObjVal_swap _ ht "units" "reading_sets" (by decide)]
+  rw [filter_pair _ (setsJson D.doc) sets hl fun j s s' h1 h2 =>
+    ⟨by simp only [(hsU j s s' h1 h2).1], fun hq => (hi j s s' h1 h2).1 (by simpa using hq)⟩]
+
 set_option linter.unusedVariables false in
 /-- `govern_strings`, per choice: no reading brings in a new symbol. -/
 theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc)
@@ -205,7 +409,7 @@ theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc)
     Pinned.HasStr s D.doc ∨ ∃ g ∈ D.governors, Pinned.HasStr s (Pinned.payload g.effect) := by
   by_cases he : governedSetUnits D = []
   · rw [governSets_no_sets D he] at ho; exact govern_strings D hw out ho s hs
-  obtain ⟨ch₀, o₀, outs, hall, hm, ha⟩ := governSets_ok D he out ho
+  obtain ⟨ch₀, o₀, outs, hall, hm, ha, -⟩ := governSets_ok D he out ho
   obtain ⟨sets, hout, hl, hi⟩ := assemble_ok D ch₀ o₀ outs out ha
   -- a string of a per-choice answer is the document's or a payload's
   have hper : ∀ p ∈ outs, HasStr s p.2 → HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect) :=
@@ -247,7 +451,7 @@ theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc)
             obtain ⟨r, hr⟩ : ∃ r, (readingsJson y)[n]? = some r :=
               ⟨_, List.getElem?_eq_getElem (hrl ▸ (List.getElem?_eq_some_iff.mp hn).1)⟩
             have hrd := arrAt_mem y r "readings" (List.mem_of_getElem? hr)
-            obtain ⟨c, rfl, hc'⟩ := hri n r _ hr hn
+            obtain ⟨c, rfl, hc', -⟩ := hri n r _ hr hn
             rcases hasStr_set s _ (jsonWF_top _ (hrd.2 (hyd.2 hw))) _ _ h with h | h
             · exact .inl (hyd.1 s (hrd.1 s h))
             · rcases hc' with rfl | ⟨p, hp, rfl⟩

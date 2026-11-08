@@ -1,0 +1,84 @@
+{
+ "how": "each mutant in a scratch overlay with the proofs cut, so each fails its #guard, not a proof (control: no failure); per-definition mutants are trust-mutants.json",
+ "mutants": [
+  {
+   "definition": "VE.Commands.roleOf",
+   "mutant": "roleOf .forbid = .obligation",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard web \"Do not share the token.\" == .one ⟨.forbid, \"share_permitted\", [⟨\"tok",
+   "plan_row": "W9, W22 row",
+   "fails": 5
+  },
+  {
+   "definition": "VE.Commands.readingsOf",
+   "mutant": "readingsOf keeps the first fill tuple only",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard web \"Review the meaning.\" == .many",
+   "plan_row": "W10",
+   "fails": 3
+  },
+  {
+   "definition": "VE.Commands.readingsOf",
+   "mutant": "the guard dropped",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard web \"Click Check rule conflict, if draft is approved.\" ==",
+   "plan_row": "W8",
+   "fails": 2
+  },
+  {
+   "definition": "VE.Commands.guardOfOutcome",
+   "mutant": "guardOfOutcome keeps the first guard",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard match se0, lex0 with",
+   "plan_row": "W17",
+   "fails": 1
+  },
+  {
+   "definition": "VE.Commands.refusalOf",
+   "mutant": "limit mapped to a refusal",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard web \"Click Check rule conflict, if draft is approved.\" 0 == .limit",
+   "plan_row": "W18",
+   "fails": 1
+  },
+  {
+   "definition": "VE.Commands.fold",
+   "mutant": "fold replaced by surfaceWords",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard web \"Click  Ask.\" == noReadingOutcome",
+   "plan_row": "W28",
+   "fails": 1
+  },
+  {
+   "definition": "VE.Commands.checkedAddressee",
+   "mutant": "addressee check dropped",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard read (webWith none definitesWeb) \"Click Ask.\" == .refused \"UnboundSlot\" \"",
+   "plan_row": "S3 TypeMismatch",
+   "fails": 3
+  },
+  {
+   "definition": "VE.Commands.manyOf",
+   "mutant": "manyOf truncates to 64",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard manyOf (nReadings (readingsBound + 1)) == .limit",
+   "plan_row": "W31",
+   "fails": 1
+  },
+  {
+   "definition": "VE.Commands.conditionOf",
+   "mutant": "condition read with no act match",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean #guard match se0, lex0 with",
+   "plan_row": "evaluated once",
+   "fails": 1
+  },
+  {
+   "definition": "tools/layer_policy.py lean_layer",
+   "mutant": "VE.Commands.Read left on layer 3",
+   "file": "tools/layer_policy.py",
+   "test": "tools/check_lean_imports.py: new outward Lean import: VE.Commands.Read -> VE.EnglishGrammar.Run",
+   "plan_row": "layer"
+  }
+ ]
+}

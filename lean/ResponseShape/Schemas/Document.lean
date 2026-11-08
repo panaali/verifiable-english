@@ -21,6 +21,8 @@ def unit : Shape :=
       ("parent_id", ref "common.json#/$defs/token"), ("content", .anyOf [
         ref "common.json#/$defs/generated_formula",
         n [obj, .required ["norm"], closed [("norm", ref "common.json#/$defs/norm_node")]],
+        copied "Service.Document.UnitContent.cardinality: Cardinality.Run.statementJson of the unit's statement; the client binds its formula and meaning id to the unit's content" <|
+          ref "cardinality.json#/$defs/statement",
         copied "Service.Document.UnitContent.rights: a rights block of the document's rights source, as written (authored nulls included); the client binds it to the unit's content" <|
           ref "#/$defs/rights_block",
         copied "Service.Document.softCanonical: the unit's soft norm as the single-rule check decoded it, each soft field away from its default and the unit's cites; the client binds every member but the formulas to the unit's content" <|
@@ -221,6 +223,15 @@ def fence_error : Shape :=
           ("line", ref "common.json#/$defs/nat"),
           ("column", ref "common.json#/$defs/nat")]])]]
 
+/-- Under `cardinality@0`, `Service.Document.cardinalityReport`: the three environment identities, the report and its id. -/
+def cardinalityReport : Shape :=
+  n [obj, .required ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "report_id"], closed [
+    ("environment_id", ref "common.json#/$defs/hex64"), ("w6_environment_id", ref "common.json#/$defs/hex64"),
+    ("w6_target_environment_id", ref "common.json#/$defs/hex64"),
+    ("report", n [obj, .required ["root", "leaves"], closed [("root", ref "cardinality.json#/$defs/claim"),
+      ("leaves", n [arr, .items (ref "cardinality.json#/$defs/claim")])]]),
+    ("report_id", ref "common.json#/$defs/hex64")]]
+
 def «row» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
@@ -239,14 +250,16 @@ def «row» : Shape :=
         ("coverage", ref "#/$defs/coverage"),
         ("judgments", ref "#/$defs/judgments"),
         ("undeclared_evaluative", ref "#/$defs/undeclared_evaluative"),
-        ("composed_readings", ref "#/$defs/composed_readings")]]]
+        ("composed_readings", ref "#/$defs/composed_readings"),
+        ("cardinality", copied "Service.Document.cardinalityReport: the cardinality mode's report, its identities and the leaves; the client recomputes `report_id` over the request's graph" <|
+          ref "#/$defs/cardinality_report")]]]
 
 def file : File where
   name := "document.json"
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
   defs := [("plain_error", .schema plain_error), ("model_error", .schema model_error),
-    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("undeclared_evaluative", .schema undeclaredEvaluative), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
+    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("cardinality_report", .schema cardinalityReport), ("undeclared_evaluative", .schema undeclaredEvaluative), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
@@ -254,6 +267,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 14901777319946045223
+#guard (file.render.toOption.map (hash ·.compress)) == some 13020308835680380576
 
 end ResponseShape.Schemas.Document

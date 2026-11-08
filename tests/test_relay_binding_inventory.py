@@ -29,6 +29,7 @@ from pathlib import Path
 import pytest
 
 from ve import rights_route, soft_route
+from ve.backends import relay as service_relay
 from ve.backends.service_schema import Invalid, check_row, same_json
 from ve.errors import CheckerUnavailable
 
@@ -48,6 +49,9 @@ ROUTES = {
     "rights-conflict": ("rights", "rights.json", "packages"),
     "rights-conflict-witness": ("rights", "soft-norms.json", "witness"),
     "rights-admission": ("rights", "rights.json", "admission"),
+    # PC-2a (D9): the document mode's row on the soft chain under norm-defaults@0. The retained Python
+    # branch no longer accepts this chain; its soft-source check and loader diagnostics stay until PC-2b.
+    "document-soft-defaults": ("document", "document.json", "row"),
 }
 
 
@@ -110,7 +114,8 @@ def schema_fields(route):
     """Every field path of the route's row (`a.b`, `a[]` an item, `a{}` a map value) with its kinds."""
     _, name, definition = ROUTES[route]
     out = {}
-    _walk(_load(name)["$defs"][definition], name, "", out)
+    schema = _load(name)
+    _walk(schema["$defs"].get(definition, schema.get(definition)), name, "", out)
     return {path: kinds for path, kinds in out.items() if path and kinds != {"object"}}
 
 
@@ -277,6 +282,53 @@ INVENTORY = {
     "soft-admission": {**_ADMISSION, "kinds": BOUND, "kinds[]": BOUND},
     "rights-admission": _ADMISSION,
 }
+
+# The fields of the document row this chain's answer carries. A soft norm's content is bound to the rule as written
+# (`_rule_bound`), its condition formulas to the same rule, all through the one path `units[].content`.
+_SOFT_DEFAULTS_ROW = {
+    "id": BOUND, "status": BOUND, "source": BOUND, "source_id": BOUND, "document_id": BOUND,
+    "units": BOUND, "units[].id": BOUND, "units[].kind": BOUND, "units[].meaning": BOUND, "units[].support": BOUND,
+    "units[].span": BOUND, "units[].span[]": BOUND, "units[].parent_id": BOUND, "units[].status": BOUND,
+    "units[].meaning_id": BOUND, "units[].content": BOUND, "units[].meaning.open": BOUND, "units[].meaning.open[]": BOUND,
+    "units[].meaning.contextual": BOUND, "units[].meaning.unformalised": BOUND, "coverage.residual_total": BOUND,
+    "coverage.source_bytes": BOUND, "coverage.accounted_bytes": BOUND, "coverage.coverage_percent": BOUND,
+    "coverage.bytes_by_kind": BOUND, "coverage.bytes_by_kind{}": BOUND,
+    "coverage.bytes_by_status": BOUND, "coverage.bytes_by_status{}": BOUND,
+    "coverage.unformalised_reasons": BOUND, "coverage.unformalised_reasons{}": BOUND,
+    "coverage.residual": BOUND, "coverage.residual{}": BOUND,
+}
+
+# What a row of this chain cannot carry, each with the check that refuses it there: an error row is a refusal, raised
+# as Lean's text; the other members and contents are other routes', and `_bind_document_answer` compares the row's and
+# each unit's member set, and each content with the rule as written.
+_NOT_THIS_CHAIN = {
+    "case_index": lean("an error row's position; a refusal is raised, not read"),
+    "error": lean("a refusal's text, Lean's diagnostic"),
+    "path": lean("a located refusal's model path, bound by `_names_a_model_member`"),
+    "span": lean("a located refusal's span, bound by `_spans_a_strict_fence`"),
+    "composed_readings": lean("`scope@0`'s; refused by the row's member set without a composed set"),
+    "cardinality": lean("`cardinality@0`'s; refused by the row's member set without that profile"),
+    "judgments": lean("`judgments@0`'s; refused by the row's member set without the layer"),
+    "undeclared_evaluative": lean("`judgments@0`'s; refused by the row's member set without the layer"),
+    "coverage.alternatives": lean("`alternatives@0`'s, which this chain refuses; refused by the coverage's equality"),
+    "units[].content.": lean("a form of `units[].content`, bound as a whole by `_rule_bound` to the rule as written"),
+}
+
+
+def _soft_defaults_inventory():
+    """Every field of the document row: `_SOFT_DEFAULTS_ROW`, or a family of `_NOT_THIS_CHAIN`, or none (the test below
+    fails on a field no entry names)."""
+    classified = dict(_SOFT_DEFAULTS_ROW)
+    for path in schema_fields("document-soft-defaults"):
+        if path not in classified:
+            family = next((f for f in _NOT_THIS_CHAIN if path == f or path.startswith(f) or
+                           path.startswith((f"{f}.", f"{f}[", f"{f}{{"))), None)
+            if family is not None:
+                classified[path] = _NOT_THIS_CHAIN[family]
+    return classified
+
+
+INVENTORY["document-soft-defaults"] = _soft_defaults_inventory()
 
 
 @pytest.mark.parametrize("route", sorted(ROUTES))
@@ -592,6 +644,41 @@ class Relay:
         self.calls[route]()
 
 
+class DocumentRelay(Relay):
+    """The `document` mode's row of one document (`relay.answer` answers `(row, error)`), read by `load_document`."""
+
+    def record(self, monkeypatch):
+        real = service_relay.answer
+
+        def recording(mode, case):
+            row, error = real(mode, case)
+            assert error is None, error
+            self.answers.setdefault("document-soft-defaults", (case, copy.deepcopy(row)))
+            return row, error
+        monkeypatch.setattr(service_relay, "answer", recording)
+        for call in self.calls.values():
+            call()
+
+    def replay(self, monkeypatch, route, forged):
+        monkeypatch.setattr(service_relay, "answer", lambda mode, case: (copy.deepcopy(forged), None))
+        self.calls[route]()
+
+
+def _document_relays(monkeypatch):
+    """Every document of F2.3's corpus Lean answers with a row: rules, parts, reading sets, open terms, claim graphs."""
+    from tests.document_chain_corpus import corpus
+    from ve.document.load import _load
+    relays = {}
+    for name, raw in corpus()[0].items():
+        if service_relay.answer("document", {"id": "document", "document": raw.decode(), "admit": False})[1] is None:
+            calls = {"document-soft-defaults": lambda raw=raw: _load(Path("document.ve.md"), admit=False, raw=raw)}
+            relay = DocumentRelay("document", calls, None, [])
+            with monkeypatch.context() as patch:
+                relay.record(patch)
+            relays[name] = relay
+    return relays
+
+
 def _soft_relays(monkeypatch):
     from ve.softnorms import SoftEnvironment, SoftNormDocument
     relays = {}
@@ -624,7 +711,8 @@ def relays():
         pytest.skip("the Lean service has not been built")
     with pytest.MonkeyPatch.context() as monkeypatch:
         return {**{("soft", name): relay for name, relay in _soft_relays(monkeypatch).items()},
-                **{("rights", name): relay for name, relay in _rights_relays(monkeypatch).items()}}
+                **{("rights", name): relay for name, relay in _rights_relays(monkeypatch).items()},
+                **{("document", name): relay for name, relay in _document_relays(monkeypatch).items()}}
 
 
 def _survivors(relay, route, pool=None):

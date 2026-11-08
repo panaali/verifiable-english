@@ -1,0 +1,1 @@
+15 of 15 spec 8.1 declarations appear verbatim (whitespace and comments normalised) in Interval.lean and Consistency.lean

@@ -5,10 +5,12 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 37 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 39 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/defeasible/](docs__defeasible.md) — 10 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 3 modules — -
+- [docs/composition/](docs__composition.md) — 1 modules — -
+- [docs/defeasible/](docs__defeasible.md) — 11 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
@@ -47,18 +49,20 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/lean-first/b8/](docs__lean-first__b8.md) — 4 modules — -
 - [docs/lean-first/b9/](docs__lean-first__b9.md) — 5 modules — -
 - [docs/lean-first/e2/](docs__lean-first__e2.md) — 2 modules — -
-- [docs/math-evidence/](docs__math-evidence.md) — 4 modules — -
+- [docs/math-evidence/](docs__math-evidence.md) — 7 modules — -
 - [docs/math-evidence-me-1c/](docs__math-evidence-me-1c.md) — 2 modules — -
 - [docs/merge-tooling/](docs__merge-tooling.md) — 1 modules — -
 - [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
+- [docs/presupposition/](docs__presupposition.md) — 4 modules — -
+- [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
-- [docs/scope/](docs__scope.md) — 8 modules — -
-- [docs/spec/](docs__spec.md) — 7 modules — -
+- [docs/scope/](docs__scope.md) — 9 modules — -
+- [docs/spec/](docs__spec.md) — 9 modules — -
 - [docs/speed/](docs__speed.md) — 10 modules — -
 - [docs/test-architecture/](docs__test-architecture.md) — 20 modules — -
 - [docs/test-speed-b1/](docs__test-speed-b1.md) — 1 modules — -
@@ -68,73 +72,76 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
 - [docs/weighing/](docs__weighing.md) — 1 modules — -
 - [examples/](examples.md) — 1 modules — -
-- [experiments/](experiments.md) — 77 modules — -
+- [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
-- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 30 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 41 modules — -
+- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 31 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 42 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 28 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 29 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
-- [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
-- [lean/VE/Calc/](lean__VE__Calc.md) — 30 modules — -
+- [lean/VE/Attitudes/](lean__VE__Attitudes.md) — 4 modules — -
+- [lean/VE/Attribution/](lean__VE__Attribution.md) — 16 modules — -
+- [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
+- [lean/VE/Commands/](lean__VE__Commands.md) — 6 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
-- [lean/VE/Defaults/](lean__VE__Defaults.md) — 10 modules — -
+- [lean/VE/Defaults/](lean__VE__Defaults.md) — 12 modules — -
 - [lean/VE/Definitions/](lean__VE__Definitions.md) — 5 modules — -
-- [lean/VE/Discourse/](lean__VE__Discourse.md) — 19 modules — -
+- [lean/VE/Discourse/](lean__VE__Discourse.md) — 22 modules — -
 - [lean/VE/English/](lean__VE__English.md) — 11 modules — -
-- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 34 modules — -
+- [lean/VE/EnglishGrammar/](lean__VE__EnglishGrammar.md) — 41 modules — -
 - [lean/VE/Events/](lean__VE__Events.md) — 10 modules — -
 - [lean/VE/Grammar/](lean__VE__Grammar.md) — 9 modules — -
-- [lean/VE/Judgments/](lean__VE__Judgments.md) — 5 modules — -
+- [lean/VE/Judgments/](lean__VE__Judgments.md) — 7 modules — -
 - [lean/VE/Kit/](lean__VE__Kit.md) — 1 modules — -
 - [lean/VE/Layout/](lean__VE__Layout.md) — 3 modules — -
 - [lean/VE/NormDefaults/](lean__VE__NormDefaults.md) — 25 modules — -
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 6 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
-- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 3 modules — -
+- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 4 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 12 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
-- [lean/VE/Scope/](lean__VE__Scope.md) — 16 modules — -
+- [lean/VE/Scope/](lean__VE__Scope.md) — 18 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
-- [lean/VE/Senses/](lean__VE__Senses.md) — 14 modules — -
-- [lean/VE/Service/](lean__VE__Service.md) — 25 modules — -
+- [lean/VE/Senses/](lean__VE__Senses.md) — 15 modules — -
+- [lean/VE/Service/](lean__VE__Service.md) — 30 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
-- [lean/VE/Weighing/](lean__VE__Weighing.md) — 2 modules — -
+- [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
-- [tests/ part 1](tests--part-1.md) — 94 modules — -
-- [tests/ part 2](tests--part-2.md) — 91 modules — -
-- [tests/ part 3](tests--part-3.md) — 87 modules — -
-- [tests/ part 4](tests--part-4.md) — 93 modules — -
-- [tests/ part 5](tests--part-5.md) — 81 modules — -
+- [tests/ part 1](tests--part-1.md) — 93 modules — -
+- [tests/ part 2](tests--part-2.md) — 89 modules — -
+- [tests/ part 3](tests--part-3.md) — 89 modules — -
+- [tests/ part 4](tests--part-4.md) — 90 modules — -
+- [tests/ part 5](tests--part-5.md) — 80 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
-- [tests/ part 7](tests--part-7.md) — 34 modules — -
+- [tests/ part 7](tests--part-7.md) — 60 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
-- [tools/ part 1](tools--part-1.md) — 100 modules — -
-- [tools/ part 2](tools--part-2.md) — 6 modules — -
+- [tools/ part 1](tools--part-1.md) — 99 modules — -
+- [tools/ part 2](tools--part-2.md) — 9 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 61 modules — -
-- [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [usecases/](usecases.md) — 64 modules — -
+- [ve/](ve.md) — 81 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).

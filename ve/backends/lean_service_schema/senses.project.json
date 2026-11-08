@@ -32,6 +32,244 @@
     ]
   },
   "$defs": {
+    "environment": {
+      "$comment": "VE.Senses.projectedJson: the request's environment with the projection's sorts and predicates added (2.5), its profile list as written (VE.Senses.Projection.written); every other member is the request's (profileMembers), equal to it and present when it is; the relay binds the whole by environment_id.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["language"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["language"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["profile"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["profile"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["profiles"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["profiles"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["spec_revision"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["spec_revision"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["alternatives"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["alternatives"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["cardinality"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["cardinality"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["cardinality_schema"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["cardinality_schema"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["unit_schema"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["unit_schema"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["units"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["units"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["events"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["events"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["risk"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["risk"]}
+        },
+        {
+          "if": {
+            "x-case": {
+              "properties": {"environment": {"required": ["speech_acts"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["speech_acts"]}
+        }
+      ],
+      "properties": {
+        "alternatives": {"x-equals": "/environment/alternatives"},
+        "cardinality": {"x-equals": "/environment/cardinality"},
+        "cardinality_schema": {"x-equals": "/environment/cardinality_schema"},
+        "events": {"x-equals": "/environment/events"},
+        "language": {"x-equals": "/environment/language"},
+        "profile": {"x-equals": "/environment/profile"},
+        "profiles": {"x-equals": "/environment/profiles"},
+        "risk": {"x-equals": "/environment/risk"},
+        "spec_revision": {"x-equals": "/environment/spec_revision"},
+        "speech_acts": {"x-equals": "/environment/speech_acts"},
+        "unit_schema": {"x-equals": "/environment/unit_schema"},
+        "units": {"x-equals": "/environment/units"},
+        "vocabulary": {
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["constants"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["constants"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["acts"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["acts"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["reports"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["reports"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["rights"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["rights"]}
+            },
+            {
+              "if": {
+                "x-case": {
+                  "properties": {
+                    "environment": {
+                      "properties": {"vocabulary": {"required": ["soft"], "type": "object"}},
+                      "required": ["vocabulary"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["environment"],
+                  "type": "object"
+                }
+              },
+              "then": {"required": ["soft"]}
+            }
+          ],
+          "properties": {
+            "acts": {"x-equals": "/environment/vocabulary/acts"},
+            "constants": {"x-equals": "/environment/vocabulary/constants"},
+            "predicates": {"additionalProperties": {"$ref": "common.json#/$defs/environment_predicate"}, "type": "object"},
+            "reports": {"x-equals": "/environment/vocabulary/reports"},
+            "rights": {"x-equals": "/environment/vocabulary/rights"},
+            "soft": {"x-equals": "/environment/vocabulary/soft"},
+            "sorts": {"additionalProperties": {"$ref": "#/$defs/sort"}, "type": "object"}
+          },
+          "required": ["sorts", "predicates", "constants"],
+          "type": "object"
+        }
+      },
+      "required": ["language", "spec_revision", "vocabulary"],
+      "type": "object"
+    },
     "identities": {
       "$comment": "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar.",
       "additionalProperties": false,
@@ -75,7 +313,7 @@
           "$comment": "The projection: its environment, its lexicon and their identities.",
           "additionalProperties": false,
           "properties": {
-            "environment": {"type": "object"},
+            "environment": {"$ref": "#/$defs/environment"},
             "identities": {"$ref": "#/$defs/identities"},
             "lexicon": {"$ref": "#/$defs/lexicon"},
             "status": {"const": "ok"}
@@ -283,6 +521,21 @@
           "type": "object"
         }
       ]
+    },
+    "sort": {
+      "$comment": "A sort of the projected environment, the request's or a fresh sort of the dictionary's (VE.Senses.projectedJson): its description and its nouns.",
+      "additionalProperties": false,
+      "properties": {
+        "description": {"type": "string"},
+        "verbalisation": {
+          "additionalProperties": false,
+          "properties": {"plural": {"type": "string"}, "singular": {"type": "string"}},
+          "required": ["singular", "plural"],
+          "type": "object"
+        }
+      },
+      "required": ["description"],
+      "type": "object"
     }
   }
 }

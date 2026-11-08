@@ -1,0 +1,456 @@
+{
+ "item": "cmp-s4",
+ "command": "lake build VE.Discourse.ComposeExamples VE.Service.ComposedAdmissionExamples (each mutant planted alone, then restored)",
+ "mutants": [
+  {
+   "definition": "VE.Discourse.admitComposed",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the ve.discourse@1 check dropped from the composed path (S4-28)",
+   "from": "if \"norms@0\" ∈ profiles ∧ \"ve.discourse@1\" ∈ profiles ∧ chainConstructs",
+   "to": "if \"norms@0\" ∈ profiles ∧ chainConstructs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:309",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.dispatchAdmission",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "readings@1 beside norms@0 accepted (S4-16)",
+   "from": "| .ok .readings => .error \"UnsupportedProfile: ve.discourse@1 with readings@1\"",
+   "to": "| .ok .readings => VE.Norms.Run.runAdmission \"\" environment document",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:64",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.composedJson",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a coherence premise dropped from conditional_on (S4-18)",
+   "from": "(\"inner\", c.inner),",
+   "to": "(\"inner\", c.inner.setObjVal! \"conditional_on\" (.arr #[])),",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:359",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.writtenText",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "resolveCase leaves the discourse key (S4-22)",
+   "from": "| .obj kvs => Json.obj (kvs.erase \"discourse\")",
+   "to": "| .obj kvs => Json.obj kvs",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:126",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainKeys",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "right dropped from the chain keys",
+   "from": "[\"norm\", \"right\", \"right_lines\"",
+   "to": "[\"norm\", \"right_lines\"",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:76",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentKey",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a content's key never read",
+   "from": "| [(k, _)] => some k",
+   "to": "| [(_, _)] => none",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:75",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.unitsAndParts",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "MIXED parts not read",
+   "from": "u :: ((u.getObjValD \"parts\").getArr?.toOption.getD #[]).toList",
+   "to": "[u]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:150",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainConstructs",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a rights block is no chain construct",
+   "from": "(vocabulary.getObjVal? \"soft\").toBool || (vocabulary.getObjVal? \"rights\").toBool ||",
+   "to": "(vocabulary.getObjVal? \"soft\").toBool ||",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:142",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentOk",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a fenced unit passes unresolved",
+   "from": "| some \"fence\" => .error (Loader.notImplemented \"fenced content on the chain\")",
+   "to": "| some \"fence\" => .ok ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:80",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainAbstentions",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "reading sets not refused",
+   "from": "if (front.getObjValD \"reading_sets\").getArr?.toOption.any (!·.isEmpty) then throw (Loader.notImplemented \"reading sets on the chain\")",
+   "to": "",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:93",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.editObj",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "fields not edited",
+   "from": "| .obj kvs => .obj (kvs.map f)",
+   "to": "| .obj kvs => .obj kvs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:109",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.editArr",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "elements not edited",
+   "from": "| .arr xs => .arr (xs.map f)",
+   "to": "| .arr xs => .arr xs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:109",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.unitFree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "parts' content kept",
+   "from": "else if k == \"parts\" then editArr",
+   "to": "else if k == \"partz\" then editArr",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:155",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.frontShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "format part of the shape",
+   "from": "| .obj kvs => .obj ((kvs.erase \"format\").erase \"discourse\")",
+   "to": "| .obj kvs => .obj (kvs.erase \"discourse\")",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:109",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.textShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the raw front matter as the shape",
+   "from": "pure (s.source, (frontShape s.front).compress)",
+   "to": "pure (s.source, s.front.compress)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:109",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseParts",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the document's shape dropped",
+   "from": "((j.getObjValD \"id\").getStr?.toOption, textShape (j.getObjValD \"document\"))",
+   "to": "((j.getObjValD \"id\").getStr?.toOption, none)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:111",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.contentFree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "fences kept",
+   "from": "else if k == \"fences\" then Json.mkObj [] else v) j",
+   "to": "else v) j",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:155",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseShape",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the document's shape not in caseShape",
+   "from": "| some (source, front) => Json.arr #[.str source, .str front] | none => .null)]",
+   "to": "| some _ => .null | none => .null)]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:111",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainUnit",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "an ast content passed wrapped",
+   "from": "[(\"content\", (c.getObjVal? \"ast\").toOption.getD c)]",
+   "to": "[(\"content\", c)]",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:99",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "arrays not searched",
+   "from": "| .arr ⟨xs⟩ => list xs",
+   "to": "| .arr _ => []",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:163",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf.tree",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "keys in reverse order",
+   "from": "| .inner _ k v l r => tree l ++",
+   "to": "| .inner _ k v r l => tree l ++",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:163",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.conditionalOnOf.list",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "array elements skipped",
+   "from": "| x :: xs => conditionalOnOf x ++ list xs",
+   "to": "| _ :: xs => list xs",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:163",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainBase",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the manifest decoded without the environment id",
+   "from": "let K ← Wire.decodeManifest [] (Loader.filesOf j) envId",
+   "to": "let K ← Wire.decodeManifest [] (Loader.filesOf j) \"\"",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:122",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseManifest",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the case's mentions dropped",
+   "from": "pure (E, K)",
+   "to": "pure (E, { K with mentions := [] })",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:125",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDocument",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "open terms not passed",
+   "from": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr openTerms)",
+   "to": "(\"lemmas\", Loader.optionalList front \"lemmas\"), (\"open_terms\", .arr #[])",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:35",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "the payload rewritten outside contents",
+   "from": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure j",
+   "to": "(unitsAndParts (Loader.metaOf j)).forM (contentOk K)\n  pure (j.setObjVal! \"fences\" (Json.mkObj []))",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:170",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "definitions_version not checked",
+   "from": "req (b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
+   "to": "req (true || b.2.1.definitionsVersion == b.2.2) (\"StaleTarget",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:91",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveCase",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "a case without ve.discourse@1 rewritten",
+   "from": "if (VE.Service.Document.profilesOf j).contains \"ve.discourse@1\" then resolveOn j else pure j",
+   "to": "resolveOn j",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:174",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.Run.encodeComposed",
+   "file": "lean/VE/Discourse/Run.lean",
+   "mutant": "the status field dropped",
+   "from": "((composedJson c).setObjVal! \"id\" (.str id)).setObjVal! \"status\" (.str \"ok\")",
+   "to": "(composedJson c).setObjVal! \"id\" (.str id)",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/ComposeExamples.lean:131",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: 14.5 step 4 skipped again (the state the review found)",
+   "from": "chainChecks environment j b.2.1",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:420",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.chainChecks",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: the @1 part's load (4.1(1)) skipped",
+   "from": "let _ ← VE.Service.Document.check (← (writtenText environment j (Loader.sourceOf j)).getStr?) (withGraph := false)",
+   "to": "let _ ← (fun (_ : String) => (pure () : Except String Unit)) (← (writtenText environment j (Loader.sourceOf j)).getStr?)",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:107 (PROBE F1, unit spans), :164-165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: no chain content's unit is a unit with meaning",
+   "from": "nouns := sortNouns environment, chain }",
+   "to": "nouns := sortNouns environment, chain := [] }",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:108 (PROBE F1, unrecorded It), :165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.coveredOk",
+   "file": "lean/VE/Discourse/WellFormed.lean",
+   "mutant": "review F1: coverage ignores chain contents (S4-14's class)",
+   "from": "if contentUnit D u || D.chain.contains u then",
+   "to": "if contentUnit D u then",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:108, :165",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.slotUnit",
+   "file": "lean/VE/Discourse/WellFormed.lean",
+   "mutant": "review F1: a chain content's unit is no slot position",
+   "from": "(contentOf D u).isSome || D.chain.contains u || setUnit D u",
+   "to": "(contentOf D u).isSome || setUnit D u",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (pronoun naming a unit)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: the document sort unchecked on the chain",
+   "from": "documentSortOk rv tokK",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (document_sort)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.caseManifest",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1 sweep: caseManifest hands out an unchecked manifest",
+   "from": "chainChecks environment p b.2.1",
+   "to": "pure ()",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean:162",
+   "check": "proof"
+  },
+  {
+   "definition": "VE.Discourse.formulaUnit",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F1: W2's view drops ast contents",
+   "from": "| .ok f => [(\"content\", f)]",
+   "to": "| .ok _ => []",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:165 (It in the ast unit u1)",
+   "check": "#guard"
+  },
+  {
+   "definition": "tools/layer_policy.py lean_layer",
+   "file": "tools/layer_policy.py",
+   "mutant": "review F-ready1 (Python): Compose's layer-4 rule dropped",
+   "from": "if module in {\"VE.Discourse.Compose\", \"VE.Discourse.ComposeExamples\"}:",
+   "to": "if module in {\"VE.Discourse.ComposeExamples\"}:",
+   "result": "KILLED",
+   "test": "python3 tools/check_lean_imports.py (tools/select_tests.py CHECK_LEAN, run when tools/layer_policy.py changes; the gate's import check): exit 1, \"new outward Lean import: VE.Discourse.Compose -> VE.Service.Document\"",
+   "check": "lint"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the unbound-fence refusal reads no fence",
+   "from": "Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk []",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/Compose.lean resolveWith_fenceless (unsolved goals, case cons)",
+   "check": "theorem"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the unbound-fence refusal reads no fence, resolveWith_fenceless's proof replaced by sorry",
+   "from": "Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk []",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:102 (PROBE F7), :103, :104 (caseManifest), :106 (resolveCase)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.Loader.fencesOk",
+   "file": "lean/VE/Discourse/Loader.lean",
+   "mutant": "review F7: the refusal's text is not the loader's",
+   "from": "throw (notImplemented \"fenced English or strict content\")",
+   "to": "throw (notImplemented \"fenced content\")",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:103, :104, :106, :108 (the exact text on every entry)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.resolveWith",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F7: the fence refusal before contentOk, resolveWith_fenceless's proof replaced by sorry",
+   "from": "contentOk K)\n  Loader.fencesOk (Loader.fencesOf j)",
+   "to": "Loader.fencesOk (Loader.fencesOf j)\n  ... forM (contentOk K)",
+   "result": "KILLED",
+   "test": "lean/VE/Service/ComposedAdmissionExamples.lean:111 (a bound fence keeps its unit's abstention)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: chainDDoc decodes the base environment again",
+   "from": "let bp := ...",
+   "to": "let bp := ...\n  let _ ← VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment environment)",
+   "result": "KILLED",
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('path', 'VE.Norms.Wire.decodeNormsEnvironment'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
+  },
+  {
+   "definition": "VE.Discourse.chainDDoc",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: contentOk runs a second time on the path",
+   "from": "let front := Loader.metaOf j",
+   "to": "let front := Loader.metaOf j\n  (unitsAndParts front).forM (contentOk K)",
+   "result": "KILLED",
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('path', 'VE.Discourse.contentOk'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
+  },
+  {
+   "definition": "VE.Discourse.admitChain",
+   "file": "lean/VE/Discourse/Compose.lean",
+   "mutant": "review F8: admitChain reads tablesOf twice",
+   "from": "let tables := tablesOf j\n  integrityOk j tables.1 tables.2",
+   "to": "integrityOk j (tablesOf j).1 (tablesOf j).2",
+   "result": "KILLED",
+   "test": "tests/test_cmp_s4_evaluate_once.py::test_the_composed_path_computes_each_value_once ({('admitChain', 'VE.Discourse.tablesOf'): 2} != … 1)",
+   "check": "pytest (lake env lean on the compiled definitions)"
+  }
+ ]
+}

@@ -1,0 +1,1719 @@
+# Weighing (`weighing@0`), item 1: statement specification
+
+## Changes in this revision (wg-rev, DRI 2026-11-02 fp-weighing item 1)
+
+This revision is synchronised with [weighing-PLAN.md](weighing-PLAN.md)'s wg-rev revision: the 2026-11-02 fidelity
+pilot's WG-R1 to WG-R5, applied as `reviews/dri-decisions-20261102-fp-weighing.md` item 1 orders them. The writing
+rules W-R1 to W-R5 and the GAP-W names are plan 2.8.
+
+1. **7.5, C-2 (WG-R1):** the choice between `always outranks` and plain `outranks` is refused under
+   profile-composition rule 8 as GAP-W1. It is no longer a reading set, and the sentences stay 7.6's minimal pair.
+2. **7.5, C-8 and C-9; 1.6 and 2.1 notes (WG-R2):** E5 is written only on a collision the source states. `targetCheck`
+   and `NoSuchDecision` are unchanged.
+3. **1.6, 2.1 and 2.5 notes (WG-R3):** a consideration is one verbatim string, always quoted, and
+   an item over 200 bytes is written as its head.
+4. **Section 10:** OPEN-1 to OPEN-11 are marked RULED, with `reviews/dri-decisions-20261102-wg-1.md`'s item and its
+   one-line ruling (item 5). No statement changes for them. OPEN-5's request row is in plan 6.1.
+
+No Lean statement changes in sections 1, 2.5, 5 or 6, and no wire field, diagnostic text or synthetic fixture value
+changes. The stub has nothing to re-elaborate.
+
+## Changes in this draft (WG-1 re-elaboration, 2026-11-02)
+
+Draft 6 discharges WG-1's remaining obligation (plan WG-1, "Re-elaboration"). It re-elaborates every statement against
+`main` at `9ba2140e2`, not `rd-9/integrate`, and runs every fixture value that needs no WG-3 route.
+
+1. **The stub is whole.** `lean/SpecStubs_weighing.lean` holds sections 1, 2.5, 5 and 6 as written here, and 7's values
+   as checks. Findings F14 to F18 (0).
+2. **1.4, 1.7, the pack:** `Pack` has a seventh field on `main`; `weighPack` fills it with the new `weighConditions`,
+   as profile-composition 1.9 requires, and `weighPack_shape` says so (F14).
+3. **1.7, the row:** `ProfileRow` has five fields on `main`; `weighingRow` takes the slot `pack` and the interface
+   `.pack "weighing"`, as plan WG-3 asks of WG-1 (F15).
+4. **1.6, `VE.Acts.splitRefusal`:** its signature is fixed as `(role name : String)`, with `"act"` and `"rule"` here
+   (F16; DRI apply-step item 2).
+5. **2.5, en-wg's statements:** frames, objects, refusals with their texts, the word row. 2.4 states W-ξ as a claim, and
+   7.6 gives its list. The soft reader's half of that list was run.
+6. **3.1, 6, 8, the synthesis round 2 items** the spec had not taken up: the chain's guard decoder, `record_eq_dflt`,
+   EXP-G1.
+7. **Section 10, new:** the OPEN lines. No statement is guessed where the plan leaves a choice.
+
+## Changes in draft 5 (refresh 2026-10-28)
+
+Draft 5 is synchronised with [weighing-PLAN.md](weighing-PLAN.md) draft 6. It applies the refresh debate's adopted
+position (`manage-agents/debates/refresh-weighing-20261028/`; DRI ruling
+`reviews/dri-decisions-20261028-weighing-refresh.md` item 1) to main at `6d0a10526`. A*n* and F*n* are Astra's and
+Fable's round *n*; "DRI (x)" is the ruling's item 1 (x).
+
+1. **1.7, the pack and the row:** `weighPack` fills PK-1's `consts := []`. `weighingRow` requires `norm-defaults@0`,
+   its `rights@0` refusal comes from `refusing` without the prefix, and its slot is `layer`. (A1 item 3; F1 disputed
+   point 2; A2; F2)
+2. **1.8, the wire helpers:** the local `dropField` is deleted in favour of `VE.Risk.Wire.dropField`. `dropProfile`
+   is replaced by a profile filter generalised from `withoutDocumentLayers` (NEW). `LayeredU.core` reads `packs`, not
+   `labelled` and `rightsCount`. (A1 item 3; F1 disputed point 3; A2 disputed point 3; F2)
+3. **3.2 and 6, the route:** `norm-defaults@0` is required, `assemble U used ps` gains `weighPack`, the kinds are
+   `Packs.KindRow` rows forwarded by `runOtherCase`, and leaf recognition covers every pack. Regressions show a
+   weighing premise changing an admission and a certificate. `weighPack_shape` states `consts = []`. (A1 item 3; A2
+   disputed point 2; F2)
+4. **4 and 7.2 (W-η), the refusal texts and fixtures:** `weighing@0 with rights@0`, and the first missing
+   prerequisite in `requires` order; a new refusal row for a missing `norm-defaults@0`. (A2; F2)
+5. **2, the English:** Lean owns the templates, paraphrases, resolution and diagnostics, and Python binds and
+   displays. en-wg (NEW, english-lean) reads the sentences, and WG-1's re-elaboration writes its statements in 2.5.
+   (DRI (a), (b); A3 items 1 and 2; F3 point 3)
+6. **2.4 restated as a disjointness claim** (two readers until E3), tested in 7.6 with C-2's minimal pair and the
+   soft-frame refusals. 7.6 also gains the source/object seeded bugs. (DRI (c), (d); A3 item 3; F3 point 1)
+7. **2.2, "generally" is a D6 word:** its row goes into en-sw's `SourceWords.lean`. Weighing owns only the rank-frame
+   row; the plain normality frame stays DF-4's. (DRI (e); F3 point 2)
+8. **2, the E3 migration** of soft's frames is governed by signed edit 10; no DRI signature is reserved. (DRI (g);
+   A3 item 4; F2)
+9. **Header, F6, 7.4 and 7.5, current status:** QS-1, PK-1, AR-10 and AP's `SplitMap` are on main. F6's "no gate
+   change for documents without `norm-defaults@0`" is superseded. 7.5 is re-anchored on run `20261028T0600Z`, with
+   the census's 132 WG units (25,225 B, either role). (A1 items 1 and 6; F1)
+10. **Statements re-elaborated:** the statements this draft changes (1.7, 1.8, `weighPack_shape`) were elaborated in
+    the untracked stub against main (header). No other statement changed.
+11. **Checker fix: an absent block contributes no pack** (1.8's prose, 3.2 step 5, 6's note on `runWeigh_delegates`).
+    With `core` reading `packs` (item 2), adding an empty `weighPack` for a case without a block would make its `core`
+    differ from the stripped case's and falsify `runWeigh_delegates`; the pack is added only when the block is
+    present. No Lean statement changed. (Completes item 2's and item 3's edits: A1 item 3; F1; F2)
+
+## Changes in draft 4 (2026-10-13)
+
+Draft 4 (2026-10-13) is synchronised with [weighing-PLAN.md](weighing-PLAN.md) draft 5, which applies phase 1
+([weighing-phase1.md](../research/weighing-phase1.md)). Phase 1 tested nothing this file specifies, so:
+
+- **No Lean statement, definition, wording, diagnostic or fixture changes.** The stub `lean/SpecStubs_weighing.lean`
+  is not tracked (and is not in the checkout), and no statement changed, so there is nothing to re-elaborate. The
+  ruling's item 14 is unchanged: the stub is re-elaborated before WG-2.
+- **8, "Not claimed":** collisions between different acts are now residual. WG-E1 failed its bar (1 of 40 sampled
+  CROSSACT units, none changing a checked answer), and WG-10 is closed, so they no longer point to WG-10 or
+  `alternatives@0`.
+- **7.5:** WG-0, which records the constitution's unit ids, is DEFERRED until RD-9 SC-8 is on `main` (plan 5.0).
+- The header cites plan draft 5.
+
+> Status: item-1 specification, draft 6 (2026-11-02), WG-1's re-elaboration against `main` at `9ba2140e2`, on branch
+> `refresh/weighing-20261028`; see "Changes in this draft". Drafts 5 and 4 follow, as history.
+>
+> **Checked at draft 6.** The stub `lean/SpecStubs_weighing.lean` (committed on this branch) is generated from this
+> file's Lean blocks by `manage-agents/debates/wg-1/gen-stub.py`, each theorem of 2.5, 5 and 6 as `def T binders : Prop`
+> with the same text. `spec-stub-check.sh` on a detached worktree of `main` at `9ba2140e2`: `lake env lean` rc 0, 0
+> errors, 0 warnings, 0 `sorry`. Proved there: `weigh_conservative`, `factors_inert`, `weighPack_shape` and the six
+> `readFrame` statements. Every other theorem is elaborated, not proved. The fixture checks compare each value with
+> the text below, and a difference is a Lean error. Every value this file used to mark *derived* now holds as computed.
+> Not run, because they need WG-3's route: the combined fault, the W-η route comparison, 7.4's probes, W-ι's
+> stale-binding text and W-ε's E1d rows.
+>
+> Draft 4 (2026-10-13), written by WG-1 from [weighing-PLAN.md](weighing-PLAN.md),
+> now at draft 5. Draft 4 records phase 1's results where they touch this file (8, 7.5) and changes no statement. The
+> plan carries the converged Astra/Fable debate (`manage-agents/debates/design-weighing/`, rounds 1 to 3) and
+> the cross-plan synthesis edits of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 carries
+> the statement review of draft 1 (`manage-agents/debates/weighing-spec/`: Astra and Fable, verdict FIX, settled by
+> `DRI-RULING.md`, items 1 to 14); it changes no frozen W1, soft or P0 semantics. Draft 3 carries the bounded re-check
+> of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1): the second accepted document that
+> falsifies `strength_iff`'s unrestricted statement (F13, 7.3); it changes no statement. This file covers the
+> plan's item 1, "constrain the open decisions" (batches WG-2 to WG-5): the block, strength, conditions and grants,
+> their premises and theorems (WG-2), the wire, the pack and identity (WG-3), the English (WG-4) and the constitution
+> fixtures (WG-5). Item 2 (zone answers and decision records, WG-6 to WG-8) is not specified here, beyond the zone
+> answer that some item-1 fixtures predict.
+>
+> **Checked, not proved.** Every definition and theorem statement below was elaborated in an untracked stub
+> (`lean/SpecStubs_weighing.lean`, deleted before commit) with
+> `lake --dir /home/seyran/code/ve-rd-9-int/lean env lean <stub>`, against the build of `rd-9/integrate` at `321e610a`,
+> whose `lean/VE/{SoftNorms,Norms,Closure}` and `lean/VE/{Syntax,Semantics,Finite}.lean` equal `main` at `49de179e`
+> (`git diff --stat` empty). Each theorem was written as `def T (binders) : Prop := C`; the theorem below is
+> `theorem T (binders) : C` with the same text, and the plan's spellings where they differ (3.1 to 3.3 of the plan)
+> were elaborated too. Three short facts were proved there (`weigh_conservative`, `weighPack_shape`, and F2's
+> reduction of `strict_pair_coherent` to soft's theorem); the others are WG-2's and WG-3's obligations. Every fixture value in section 7 was computed by
+> `#eval` in the same stub: fixture documents are wire JSON decoded by Lean's own `VE.SoftNorms.Wire.decodeSoftSource`,
+> premises are generated by the definitions of section 1, and outcomes are `outcomeBase (soften D)` evaluated on
+> one-element finite situations over every assignment of the decision atoms. No draft 1 value was computed by hand; no
+> model was called.
+>
+> **Draft 2 is not yet elaborated.** Its new and changed statements (the change log lists them) are written into the
+> same untracked stub, beside `#eval`s for every new fixture value, but the session that wrote draft 2 had no Lean
+> access. Values new in draft 2 are marked *derived*: derived by hand from the definitions of this file, or taken from
+> a reviewer's Lean evaluation where the row says so. The ruling's item 14 applies: the stub is re-elaborated against
+> these statements, and its `#eval`s are run, before WG-2 starts; a difference is a fix to this file, not to the stub.
+> Draft 3's three `strength_iff` rows of 7.3 (F9, F10, F13) were computed by `#eval` in the stub with
+> `lake --dir /home/seyran/code/ve-rd-9-int/lean env lean <stub>`, against `rd-9/integrate` at `ec064fa9` (its
+> `lean/VE/{SoftNorms,Norms,Closure,NormDefaults}` and `lean/VE/{Syntax,Semantics,Finite}.lean` equal `321e610a`'s);
+> every other value new in draft 2 stays *derived* until that re-elaboration.
+>
+> **Interfaces not on `main`** (draft 4; superseded below). QS-1's `VE.Closure.Order` (`atLeast := reachEval .star`, SYNTHESIS 2.3), PK-1's
+> `VE.NormDefaults.Packs.Pack` (2.1), AR-10's `VE.Compose.ProfileRow` (2.2) and AP's `VE.Acts.SplitMap` with its
+> refusal text (2.6) were written in the stub from those shapes. Every statement that names them is re-elaborated
+> when the item lands; the batch that consumes it does that first.
+>
+> **Refresh 2026-10-28 (history): those interfaces are on `main`** (`Closure/Order.lean`, `NormDefaults/Packs.lean`,
+> `Compose/Dispatch.lean`, `Acts/Elaborate.lean`). PK-1's `Pack` gained `consts`, `LayeredU` carries `packs`, and
+> `assemble` takes `U used ps`. The statements this draft changes (1.7's `weighPack` and `weighingRow`, 1.8's
+> `stripWeighing`, `stripCase` and `LayeredU.core`, 6's `weighPack_shape`) were elaborated in the untracked stub with
+> `lake env lean SpecStubs_weighing.lean` in `lean/`, against `main` at `6d0a10526`. The interfaces were imported, and
+> weighing's own definitions were stand-ins of section 1's types. Draft 6 did the full re-elaboration.
+
+## 0. What the stub found (WG-1 questions answered)
+
+| # | Finding | Evidence | Consequence |
+|---|---|---|---|
+| F1 | Draft 1's `always_no_override` (`¬ OutweighsD … (act N) (rk N) (rk M)`) is false: under the strict flag `Str_T = []`, and a structure with the raw atom true satisfies `Sat S []` | W-α′ (7.2): strict flag, `Str_T` empty, atom `soft__outweighs__b__a__x_permitted` true | restated on `DomWithD`'s override disjunct (5, `always_no_override`), as the debate agreed; it holds on every assignment of W-α, W-α′ and W-β1 |
+| F2 | `strict_pair_coherent` adds nothing: its conclusion is soft's `coh_rank_valid_unconditional` (`lean/VE/SoftNorms/RankProof.lean:169`), which needs no `Sat B (strengthPremises Wd)` | proved in the stub as one application of `coh_rank_valid_unconditional`, `Str_T` unused | dropped, as the plan's WG-1 question allowed |
+| F3 | `holistic_iff_no_always_chain` needs no `outranksPlus H L` hypothesis; it holds on every ordered pair | W-β: `strictPair` agrees with a brute-force chain search on 16 of 16 pairs | hypothesis removed |
+| F4 | The typing hypotheses must name the sorts the premise binds: `actSortsOf (act D N)` (and `actSortsOf (actKey D p)` for `all_always_is_strict`), not `actSorts N` | the premise `∀x̄:actSortsOf a. ¬outweighs…` | used throughout section 5 |
+| F5 | The synthesis's `Sat B' (strengthPremises Wd ++ weighPremises Wd)` repeats `Str_T` (`weighPremises` contains it) | definitions of 1.4 | `weigh_alone_base_free` concludes `Sat B' (weighPremises Wd)` |
+| F6 | The layered decoder on `rd-9/integrate` decodes a `soft-norms@0` case that lacks `norm-defaults@0` (debate E4's question: yes), and refuses `weighing@0` today (`UnsupportedProfile: Unsupported profile weighing@0`) | WG-3 probes (7.4) | WG-3's strip step is required. Superseded on `main` (refresh 2026-10-28): the layered branch runs only when `norm-defaults@0` is listed (`hasProfile`, `NormDefaults/Run.lean`), so `weighingRow` requires it (1.7) |
+| F7 | With the block absent, the decoded document of a `weighing@0` case equals that of its stripped case, but `environment_id` differs (`abba5441…` against `cb371a0b…`) | WG-3 probes | `runWeigh_delegates` compares the decoded document, never the identity fields (debate E4) |
+| F8 | Today's canonical environment keeps a `weighing` block, and two blocks give two `environment_id`s | WG-3 probes | `weigh_identity` needs no change to `canonicalEnvironmentJsonU` |
+
+The statement review of draft 1 (`manage-agents/debates/weighing-spec/`) found:
+
+| # | Finding | Evidence | Consequence |
+|---|---|---|---|
+| F9 | Draft 1's `strength_iff` is false: `validSoftName` allows a trailing `_`, so `outweighsName` aliases across rank names | Astra's Lean evaluation (round 1), and the stub's `#eval` (draft 3): W-α with the lower rank `b_`, query `(x_permitted, b, _a)`: `WellFormedWeigh` true, membership true, right side false; neither `b` nor `_a` a declared rank | `hL`, `hH`, `ha` added (5.1); the first falsifying regression in 7.3 |
+| F10 | The second alias of the ruling (ranks `c`, `c_`, `l`, triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)`) builds the same name, but draft 1's statement holds there: `_x_permitted` is no declared predicate, so `actSortsOf D "_x_permitted" = []` and `atom _ [] = ⊥`; the query's formula is `¬⊥`, never a strength premise (regulated arity is 1 or 2, `regulated_arity`) | the stub's `#eval` (draft 3): `WellFormedWeigh` true, query formula `["not",["bottom"]]`, membership false, right side false; `l` and `c` declared, `_x_permitted` not | kept in 7.3 as a name collision that the statement survives, not as one of ruling item 1's two falsifying documents (F13 supplies the second); `ha` alone excludes the query, and with it the proof rests on injectivity alone |
+| F11 | Draft 1's `runWeigh_delegates` is false: profiles `[norms@0, relational-fol@0, weighing@0]` without a block answer `…weighing@0 requires soft-norms@0` against the stripped case's `…needs soft-norms@0 or rights@0`; `j = {}` panics in `Json.setObjVal!` | Fable, round 1 (`Lean/Data/Json/Basic.lean:281`) | `weighGate` hypothesis, total strip, `stripCase_idem`, wider `core` (1.8, 6) |
+| F12 | W-κ's predicted single-label "inconsistent" cannot be produced: with nothing assigned, every premise of X evaluates to Kleene `none` | Astra and Fable, rounds 1 and 3 | the zone evidence contract of plan D9/D10 widened to a complete enumeration with Lean-recomputed labels (7.2, W-κ) |
+
+The bounded re-check of draft 2 (`manage-agents/weighing-p3ver1.final.md`) found:
+
+| # | Finding | Evidence | Consequence |
+|---|---|---|---|
+| F13 | Ruling item 1 asks for two accepted documents that falsify draft 1's `strength_iff`; draft 2 had one (F9), since F10's does not falsify it. F10's alias crosses the boundary between the higher rank and the act, so its query names an act starting with `_`, which is undeclared; F9's crosses the boundary between the lower and the higher rank and keeps the declared act. The second falsifying document crosses F9's boundary with the lower rank's twin declared: W-α with ranks `c > c_` (`always [[c, c_]]`, `h` ranked `c`, `l` ranked `c_`), query `(x_permitted, c, _c)`, which builds the name of the real triple `(x_permitted, c_, c)` | the stub's `#eval` (draft 3): names equal, `WellFormedWeigh` true, triples `[(x_permitted, c_, c)]`, membership true, right side false; `c` declared, `_c` not | the second falsifying regression in 7.3; `hL` holds there, so `hH` alone excludes the query. No statement changes |
+
+The re-elaboration of 2026-11-02 (`main` at `9ba2140e2`) found:
+
+| # | Finding | Evidence | Consequence |
+|---|---|---|---|
+| F14 | `weighPack` did not elaborate: `Pack` has a seventh field, `conditions` (profile-composition 1.9), and the guard `providerConditions` reads it. Left empty, a weighing sufficient condition would reach `--assume-no-exception` unseen, which is the hazard 1.9 names | `Constructor Pack.mk has 7 explicit field`; `conditions ε`, `conditions δ`, `conditions ζ2` | `weighConditions` (1.4), `weighPack` (1.7), `weighPack_shape` (6). Sufficient conditions only. `decodeLayered_conditions` stops being true at WG-3: OPEN-6 |
+| F15 | `weighingRow` did not elaborate: `ProfileRow` has a fifth field, `interface` | `ProfileRow.mk has 5 explicit field`; `slotAgrees` true on the new row | slot `pack`, `.pack "weighing"` (1.7) |
+| F16 | `targetCheck` did not elaborate: AP's refusal needs a role | 1.6 against `refsOk` | `splitRefusal (role name)`; `AP's texts` check, byte for byte; W-λ's `act` and `rule` texts |
+| F17 | Everything else in sections 1, 5 and 6 elaborates on `main` unchanged, and no fixture value changed | the stub, rc 0 | 7's *derived* marks removed |
+| F18 | W-ι's identities moved: the layered branch needs `norm-defaults@0`, so the profiles differ from draft 1's | the `ι ids` check | new values in W-ι |
+
+## 1. Definitions (WG-2: `lean/VE/Weighing/Tree.lean`, `Conditions.lean`)
+
+### 1.1 The block
+
+```lean
+namespace VE.Weighing
+open VE.Norms VE.SoftNorms
+universe u
+
+inductive CondKind | necessary | sufficient
+  deriving DecidableEq, Repr
+
+def CondKind.label : CondKind → String
+  | .necessary => "necessary"
+  | .sufficient => "sufficient"
+
+/-- The open decision a condition constrains (soft 1.3). -/
+inductive Target
+  | outweighs (act lower higher : String)
+  | off (rule party : String)
+  deriving DecidableEq, Repr
+
+structure CondDecl where
+  target : Target
+  kind : CondKind
+  condition : VE.Formula    -- context (targetSorts target).reverse; base predicates of E only; quantifier-free;
+                            -- decoded through the chain's guard decoder (3.1)
+  deriving DecidableEq, Repr
+
+structure FactorDecl where
+  target : Target
+  factors : List String
+  deriving DecidableEq, Repr
+
+structure GrantDecl where
+  rule : String
+  party : String
+  grantor : String
+  predicate : String        -- a base predicate with instruction_of = grantor, over the rule's argument sorts
+  deriving DecidableEq, Repr
+
+/-- The decoded block. Only `always` edges are on the wire: "generally outranks" is an input synonym of a plain
+    "outranks" (plan D5). -/
+structure WeighEnv where
+  always : List (String × String)
+  conditions : List CondDecl
+  factors : List FactorDecl
+  grants : List GrantDecl
+  deriving DecidableEq, Repr
+
+def WeighEnv.empty : WeighEnv := ⟨[], [], [], []⟩
+
+/-- A soft document with its block, and AP's split map (empty unless `acts@0` split a rule or an act). -/
+structure WeighDoc where
+  D : SoftDoc
+  W : WeighEnv
+  split : VE.Acts.SplitMap
+```
+
+### 1.2 Strength (plan D4)
+
+```lean
+/-- Soft's ranks and declared edges as QS-1's order (`atLeast := reachEval .star`). -/
+def rankOrder (Wd : WeighDoc) : VE.Closure.Order String := ⟨Wd.D.soft.ranks, Wd.D.soft.outranks⟩
+
+/-- `(H, L)` is strict: some `always` edge `(a, b)` has `H` at or above `a` and `b` at or above `L`. -/
+def strictPair (Wd : WeighDoc) (H L : String) : Bool :=
+  Wd.W.always.any (fun e => (rankOrder Wd).atLeast H e.1 && (rankOrder Wd).atLeast e.2 L)
+
+def chainEdges : List String → List (String × String)
+  | a :: b :: rest => (a, b) :: chainEdges (b :: rest)
+  | _ => []
+
+/-- A chain of declared edges from `H` down to `L`. -/
+def RankChain (Wd : WeighDoc) (H L : String) (c : List String) : Prop :=
+  c.head? = some H ∧ c.getLast? = some L ∧ 2 ≤ c.length ∧ ∀ e ∈ chainEdges c, e ∈ Wd.D.soft.outranks
+
+/-- Every chain of declared edges from `a` down to `L`, with fuel (the rank graph is acyclic, soft 4.1). -/
+def chainsFrom (E : List (String × String)) (L : String) : Nat → String → List (List String)
+  | 0, _ => []
+  | f + 1, a => (E.filter (·.1 == a)).flatMap (fun e =>
+      if e.2 == L then [[a, L]] else (chainsFrom E L f e.2).map (a :: ·))
+
+def chainLt (c d : List String) : Bool :=
+  c.length < d.length || (c.length == d.length && decide (c < d))
+
+/-- The chain the paraphrase shows (2.3): the shortest chain from `H` to `L` that contains an `always` edge, the
+    least in `String` list order on ties; `none` exactly when the pair is not strict (`strictWitness_isSome`).
+    Display only; at most 2^14 chains on 16 ranks. -/
+def strictWitness (Wd : WeighDoc) (H L : String) : Option (List String) :=
+  ((chainsFrom Wd.D.soft.outranks L Wd.D.soft.ranks.length H).filter
+      (fun c => (chainEdges c).any (Wd.W.always.contains ·))).foldl
+    (fun best c => match best with
+      | none => some c
+      | some b => if chainLt c b then some c else some b) none
+```
+
+`strictPair` owns no closure: reachability is QS-1's `atLeast` over `VE.Closure.reachEval`, and QS-1's
+`outranksPlus_eq_above` ties it to soft's `outranksPlus` (synthesis edit 5).
+
+### 1.3 Targets
+
+```lean
+def nodeNamed (D : SoftDoc) (n : String) : Option SoftNode := D.T.nodes.find? (·.name == n)
+
+def ruleSorts (Wd : WeighDoc) (n : String) : List String :=
+  match nodeNamed Wd.D n with
+  | some N => sortsOf Wd.D N.pred
+  | none => []
+
+def targetSorts (Wd : WeighDoc) : Target → List String
+  | .outweighs a _ _ => actSortsOf Wd.D a
+  | .off n _ => ruleSorts Wd n
+
+def targetF (Wd : WeighDoc) : Target → VE.Formula
+  | .outweighs a L H => outweighsF Wd.D a L H
+  | .off n π => match nodeNamed Wd.D n with
+    | some N => atom (offName N π) (sortsOf Wd.D N.pred)
+    | none => .bottom
+
+/-- The decision exists in `E′` (soft 1.3): an `outweighs` triple of a comparable colliding pair under the holistic
+    flag, or a switch the rule declares. -/
+def targetExists (Wd : WeighDoc) : Target → Bool
+  | .outweighs a L H => (outweighsTriples Wd.D).contains (a, L, H)
+  | .off n π => match nodeNamed Wd.D n with
+    | some N => N.alterable.contains π
+    | none => false
+
+def renderTarget : Target → String
+  | .outweighs a L H => s!"outweighs {a}, {L}, {H}"
+  | .off n π => s!"off rule {n}, {π}"
+```
+
+### 1.4 `Weigh_T`, its labels and origins
+
+```lean
+abbrev RequestPath := VE.NormDefaults.Packs.RequestPath
+
+def blockPath : RequestPath := ["environment", "vocabulary", "weighing"]
+
+/-- `Str_T`: one premise per `outweighs` decision of a strict pair, in `outweighsTriples` order; its origin is the
+    first `always` edge (block order) through which the pair is strict. -/
+def strengthEntries (Wd : WeighDoc) : List (String × VE.Formula × RequestPath) :=
+  (outweighsTriples Wd.D).filterMap (fun (a, L, H) =>
+    match Wd.W.always.zipIdx.find? (fun (e, _) => (rankOrder Wd).atLeast H e.1 && (rankOrder Wd).atLeast e.2 L) with
+    | some (_, i) => some (s!"weigh:strength:{H}:{L}:{a}",
+        bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)), blockPath ++ ["always", toString i])
+    | none => none)
+
+/-- The one premise generator (soft's `excPremisesOf` shape). -/
+def condPremise (Wd : WeighDoc) (c : CondDecl) : VE.Formula :=
+  match c.kind with
+  | .sufficient => bindAll (targetSorts Wd c.target) (.implies c.condition (targetF Wd c.target))
+  | .necessary => bindAll (targetSorts Wd c.target) (.implies (targetF Wd c.target) c.condition)
+
+/-- `Dec_T`, in block order. -/
+def condEntries (Wd : WeighDoc) : List (String × VE.Formula × RequestPath) :=
+  Wd.W.conditions.zipIdx.map (fun (c, i) =>
+    (s!"weigh:condition:{i}:{c.kind.label}", condPremise Wd c, blockPath ++ ["conditions", toString i]))
+
+def grantEdges (Wd : WeighDoc) (n : String) : List (String × String) :=
+  (Wd.W.grants.filter (·.rule == n)).map (fun g => (g.party, g.grantor))
+
+/-- `ρ` is reached from `π` through the grants on rule `n`: `π`'s grantor, that grantor's grantor, … -/
+def grantReach (Wd : WeighDoc) (n π ρ : String) : Bool := VE.Closure.reachEval .plus (grantEdges Wd n) π ρ
+
+/-- The parties `π`'s switch on rule `n` is granted through, in declared party order, `π` excluded (on an accepted
+    document `π` never reaches itself: grant cycles are refused, 4.5). -/
+def grantedThrough (Wd : WeighDoc) (n π : String) : List String :=
+  Wd.D.soft.parties.filter (fun ρ => ρ != π && grantReach Wd n π ρ)
+
+/-- `Grant_T` as necessary `.off` conditions on the grantee's switch (debate E3): the grant itself, then for each
+    party the switch is granted through, that party's necessary switch conditions and that party's own grant. -/
+def grantConds (Wd : WeighDoc) : List (String × CondDecl × RequestPath) :=
+  Wd.W.grants.zipIdx.flatMap (fun (g, j) =>
+    let tgt := Target.off g.rule g.party
+    (s!"weigh:grant:{g.rule}:{g.party}", ⟨tgt, .necessary, atom g.predicate (ruleSorts Wd g.rule)⟩,
+        blockPath ++ ["grants", toString j]) ::
+    (grantedThrough Wd g.rule g.party).flatMap (fun ρ =>
+      (Wd.W.conditions.zipIdx.filterMap (fun (c, i) =>
+        if c.target == Target.off g.rule ρ && c.kind == .necessary then
+          some (s!"weigh:grant:{g.rule}:{g.party}:condition:{i}", ⟨tgt, .necessary, c.condition⟩,
+            blockPath ++ ["conditions", toString i])
+        else none)) ++
+      (Wd.W.grants.zipIdx.filterMap (fun (g', k) =>
+        if g'.rule == g.rule && g'.party == ρ then
+          some (s!"weigh:grant:{g.rule}:{g.party}:grant:{ρ}",
+            ⟨tgt, .necessary, atom g'.predicate (ruleSorts Wd g.rule)⟩, blockPath ++ ["grants", toString k])
+        else none))))
+
+def grantEntries (Wd : WeighDoc) : List (String × VE.Formula × RequestPath) :=
+  (grantConds Wd).map (fun (l, c, p) => (l, condPremise Wd c, p))
+
+/-- `Weigh_T := Str_T ++ Dec_T ++ Grant_T`, each premise with its label and the request path of its entry. -/
+def weighEntries (Wd : WeighDoc) : List (String × VE.Formula × RequestPath) :=
+  strengthEntries Wd ++ condEntries Wd ++ grantEntries Wd
+
+def strengthPremises (Wd : WeighDoc) : List VE.Formula := (strengthEntries Wd).map (·.2.1)
+def weighLabelled (Wd : WeighDoc) : List (String × VE.Formula) := (weighEntries Wd).map (fun (l, φ, _) => (l, φ))
+def weighOrigins (Wd : WeighDoc) : List (String × RequestPath) := (weighEntries Wd).map (fun (l, _, p) => (l, p))
+def weighPremises (Wd : WeighDoc) : List VE.Formula := (weighLabelled Wd).map (·.2)
+
+/-- The decision a target names, as soft's key (profile-composition 1.9: a reader finds a decision by its key). -/
+def Target.key : Target → DecisionKey
+  | .outweighs a L H => .outweighs a L H
+  | .off n π => .off n π
+
+/-- `Pack.conditions` (PK-1's field, profile-composition 1.9): each stated sufficient condition with its decision,
+    in block order. Necessary conditions and grants export nothing. -/
+def weighConditions (Wd : WeighDoc) : List (DecisionKey × VE.Formula) :=
+  Wd.W.conditions.filterMap (fun c => if c.kind == .sufficient then some (c.target.key, c.condition) else none)
+```
+
+Labels are distinct: rank and party names are soft names (no `:`), conditions and grants are numbered, and there is
+at most one grant per rule and party (diagnostic 4.5). The origin of an inherited premise is the entry it inherits
+(W-ζ2, W-ζ3).
+
+### 1.5 The implication check (debate E2)
+
+```lean
+def atomsOf : VE.Formula → List VE.Formula
+  | .unary p t => [.unary p t]
+  | .binary p t w => [.binary p t w]
+  | .eq t w => [.eq t w]
+  | .not a => atomsOf a
+  | .and a b | .or a b | .implies a b => atomsOf a ++ atomsOf b
+  | _ => []
+
+/-- A formula read propositionally: each distinct atom is a variable. -/
+def evalProp (v : VE.Formula → Bool) : VE.Formula → Bool
+  | .top => true
+  | .bottom => false
+  | .unary p t => v (.unary p t)
+  | .binary p t w => v (.binary p t w)
+  | .eq t w => v (.eq t w)
+  | .not a => !evalProp v a
+  | .and a b => evalProp v a && evalProp v b
+  | .or a b => evalProp v a || evalProp v b
+  | .implies a b => !evalProp v a || evalProp v b
+  | .all _ _ | .ex _ _ => false
+
+def subsetsOf {α : Type} : List α → List (List α)
+  | [] => [[]]
+  | x :: xs => (subsetsOf xs).map (x :: ·) ++ subsetsOf xs
+
+def maxPropAtoms : Nat := 12
+
+def propAtoms (a b : VE.Formula) : List VE.Formula := (atomsOf a ++ atomsOf b).eraseDups
+
+/-- `a → b` holds under every truth assignment to their atoms. Sound (`propImplies_sound`), not complete: equality
+    and definitions are not read (W-θ12). Decided exactly; it never searches. -/
+def propImplies (a b : VE.Formula) : Bool :=
+  VE.Norms.Formula.qfree a && VE.Norms.Formula.qfree b && decide ((propAtoms a b).length ≤ maxPropAtoms) &&
+    (subsetsOf (propAtoms a b)).all (fun t =>
+      !evalProp (fun φ => t.contains φ) a || evalProp (fun φ => t.contains φ) b)
+```
+
+`maxPropAtoms` bounds the table at 4,096 rows per pair of conditions; a pair over the bound is refused at admission
+(`ResourceLimit: conditions <i>, <j>`, 4.6), never answered UNKNOWN or "cannot show". It is 12 because
+norm-defaults' enumeration budget is 12 (`MAX_UNSAID_ATOMS`, at most 4,096 fillings, `NormDefaults/Evidence.lean:688`);
+the statement review kept it (ruling item 11), with boundary fixtures θ19 (12 atoms, accepted) and θ20 (13 atoms,
+refused).
+
+### 1.6 Well-formedness
+
+```lean
+def targetCheck (Wd : WeighDoc) (t : Target) : Except String Unit := do
+  match t with
+  | .outweighs a _ _ => if Wd.split.preds.any (·.2.1 == a) then throw (VE.Acts.splitRefusal "act" a)
+  | .off n _ => if Wd.split.rules.any (·.2.1 == n) then throw (VE.Acts.splitRefusal "rule" n)
+  unless targetExists Wd t do throw s!"NoSuchDecision: {renderTarget t}"
+
+/-- Section 4, steps 3 to 7, in order. -/
+def checkWeigh (Wd : WeighDoc) : Except String Unit := do
+  let D := Wd.D
+  for e in Wd.W.always do
+    unless D.soft.outranks.contains e do throw s!"StrengthOnUndeclaredEdge: {e.1}, {e.2}"
+    if Wd.W.always.count e > 1 then throw s!"DuplicateDeclaration: strength {e.1}, {e.2}"
+  for (c, i) in Wd.W.conditions.zipIdx do
+    targetCheck Wd c.target
+    match c.target, c.kind with
+    | .off _ _, .sufficient => throw s!"InvalidInput: condition {i} on a switch must be necessary"
+    | .outweighs _ L H, _ =>
+      if strictPair Wd H L then throw s!"ConditionOnStrictPair: {renderTarget c.target}"
+    | _, _ => pure ()
+    let Γ := (targetSorts Wd c.target).reverse
+    typeDiagnostic D.E Γ c.condition
+    unless c.condition.check D.E Γ do throw s!"InvalidInput: ill-typed condition {i}"
+    if let some q := (preds c.condition).find? (fun q => definedOrRegulated D q || reservedPredicate q) then
+      throw s!"InvalidInput: condition {i} mentions {q}"
+    unless VE.Norms.Formula.qfree c.condition do throw s!"InvalidInput: condition {i} is not quantifier-free"
+  for (f, i) in Wd.W.factors.zipIdx do
+    targetCheck Wd f.target
+    unless f.factors.length ≤ 16 && f.factors.all (·.utf8ByteSize ≤ 200) do
+      throw s!"InvalidInput: invalid factors {i}"
+  for g in Wd.W.grants do
+    if (Wd.W.grants.filter (fun g' => g'.rule == g.rule && g'.party == g.party)).length > 1 then
+      throw s!"DuplicateDeclaration: grant {g.rule}, {g.party}"
+    targetCheck Wd (.off g.rule g.party)
+    unless targetExists Wd (.off g.rule g.grantor) do
+      throw s!"DelegationExceedsGrantor: rule {g.rule}, {g.party}, {g.grantor}"
+    unless D.soft.instructionOf.contains (g.predicate, g.grantor) do
+      throw s!"GrantNotAttributed: {g.predicate}, {g.grantor}"
+    unless D.E.predicates g.predicate == some (ruleSorts Wd g.rule) do
+      throw s!"InvalidInput: grant predicate {g.predicate} does not take the arguments of rule {g.rule}"
+  for g in Wd.W.grants do
+    if grantReach Wd g.rule g.party g.party then throw s!"DelegationCycle: rule {g.rule}, {g.party}"
+  for (s, i) in Wd.W.conditions.zipIdx do
+    if s.kind == .sufficient then
+      for (n, j) in Wd.W.conditions.zipIdx do
+        if n.kind == .necessary && n.target == s.target then
+          if (propAtoms s.condition n.condition).length > maxPropAtoms then
+            throw s!"ResourceLimit: conditions {i}, {j}"
+          unless propImplies s.condition n.condition do
+            throw s!"ConditionsDisagree: the checker cannot show that condition {i} implies condition {j}"
+  for (l, φ) in weighLabelled Wd do
+    unless withinLimits φ do throw s!"ResourceLimit: generated weighing premise {l}"
+
+def weighWarnings (Wd : WeighDoc) : List String :=
+  if Wd.D.soft.outranking = .strict then Wd.W.always.map (fun e => s!"StrengthInert: {e.1}, {e.2}") else []
+
+def WellFormedWeigh (Wd : WeighDoc) : Bool :=
+  WellFormedSoft Wd.D && (match checkWeigh Wd with
+    | .ok () => true
+    | .error _ => false)
+```
+
+`VE.Acts.splitRefusal (role name : String) : String` is
+`s!"InvalidInput: {role} {name} names a predicate that is split into parts; name one of its parts"`, in
+`Acts/Elaborate.lean`. It is not on `main`: WG-2 factors AP's two inline texts into it (`refsOk`'s `"rule"` and
+`"definition"`), byte-identical, with `Acts/ElaborateExamples.lean`'s guard unchanged. Weighing passes `"act"` and
+`"rule"`. A split rule's predicate is split (`splitNode`), so "rule n names a predicate that is split" is true of it.
+
+`typeDiagnostic`, `definedOrRegulated`, `reservedPredicate` and `withinLimits` are W1's and soft's (one owner each);
+a switch exists on strict rules too (`offDecisions`), so a switch condition or grant may name a strict rule
+(W-ζ). Under the strict flag no `outweighs` decision exists, so every `outweighs` target is `NoSuchDecision`
+(W-θ18).
+
+The source text has its own rules (wg-rev; plan 2.8). `targetCheck` and `NoSuchDecision` are unchanged. A
+translator writes a target only for a decision the source's own sentences create, never for one created by an added
+frame rule (W-R2). The 200-byte limit on a factor string is unchanged. A longer consideration is written as its
+verbatim head, never reworded (W-R3).
+
+Grant cycles are refused: after every grant has passed its own checks, the grants are checked in list order, and the
+first whose party reaches itself through the grants on its rule (`grantReach Wd n π π`, a self-grant included) is
+`DelegationCycle: rule <n>, <party>`. This is an explicit restriction of `weighing@0`, not a soundness necessity: the
+premises of a cycle are finite and well defined, and a cycle creates no authority; refusing it keeps the delegation
+reading simple and can be lifted later without breaking an accepted document.
+
+### 1.7 The pack and the profile row (WG-3)
+
+```lean
+/-- PK-1's `weighing` pack: it constrains existing decisions and declares no symbol and no constant. -/
+def weighPack (Wd : WeighDoc) : VE.NormDefaults.Packs.Pack :=
+  ⟨"weighing", .constraint, [], [], weighLabelled Wd, weighOrigins Wd, weighConditions Wd⟩
+
+/-- AR-10's row in `Compose/Dispatch.lean`'s `baseRows`. `norm-defaults@0` is required because the layered branch
+    runs only when it is listed (plan D11). `rights@0` is refused until AR-10's composition proof and a fixture both
+    cover the combination (ruling item 12). -/
+def weighingRow : VE.Compose.ProfileRow :=
+  ⟨"weighing@0", ["norm-defaults@0", "norms@0", "soft-norms@0"], VE.Compose.refusing "weighing@0" ["rights@0"],
+    "pack", .pack "weighing"⟩
+```
+
+The refusal text is the table's own (`refusing`: `weighing@0 with rights@0`), and `gateOf` adds the
+`UnsupportedProfile:` prefix. A missing prerequisite answers `UnsupportedProfile: weighing@0 requires <q>` for the
+first missing `q` in `requires` order (`needText`). The slot is `pack` and the `interface` is `.pack "weighing"`
+(synthesis round 2, N1; `slotAgrees`, `interface_slot`, on `main` since PC-3). Without `unspecified` predicates `norm-defaults@0` has no effect
+(`fill_conservative`). `weighConditions` fills `Pack.conditions` as profile-composition 1.9 requires, so
+`providerConditions` is true of a document with a sufficient condition: until EXP-D3 and defeasible's DF-U, the
+defaults kinds refuse it (`UnsupportedProfile: defaults with provider conditions is not implemented`, sentence E1d)
+and the same document without `--assume-no-exception` routes (plan WG-3). The two item-2 kinds, `weighing-zone` and `weighing-record`, are `Packs.KindRow` rows beside
+`Defaults/Route.lean`'s `defaultsRows` (plan D11, WG-7).
+
+### 1.8 Wire helpers (WG-3, `lean/VE/Weighing/Wire.lean`)
+
+```lean
+namespace Wire
+open Lean
+
+def blockOf (environment : Json) : Option Json :=
+  ((environment.getObjValD "vocabulary").getObjVal? "weighing").toOption
+
+/-- The environment the soft decoder receives: `weighing@0` and the `weighing` block removed, nothing else. Total:
+    a non-object is returned unchanged, `profiles` and `vocabulary` are rewritten only when present, and
+    `Json.setObjVal!` is applied only to an object. The block is dropped by `VE.Risk.Wire.dropField` (no second copy),
+    and the profile by the profile filter `VE.Compose.withoutProfiles` (NEW, owner composition), generalised from
+    `withoutDocumentLayers`, which becomes `withoutProfiles documentLayers`. Weighing is not a document layer: an
+    environment decoder reads its block. -/
+def stripWeighing (environment : Json) : Json :=
+  match VE.Bridge.fields environment with
+  | .ok kvs => VE.Compose.withoutProfiles ["weighing@0"] (Json.mkObj (kvs.map (fun (k, v) =>
+      (k, if k == "vocabulary" then VE.Risk.Wire.dropField "weighing" v else v))))
+  | .error _ => environment
+
+/-- The case with its environment stripped; total in the same way (`stripCase {} = {}`). -/
+def stripCase (j : Json) : Json :=
+  match VE.Bridge.fields j with
+  | .ok kvs => Json.mkObj (kvs.map (fun (k, v) => (k, if k == "environment" then stripWeighing v else v)))
+  | .error _ => j
+
+/-- WG-3's step-1 gate (3.2 step 1, diagnostic 4.1), on the original environment, before anything is stripped: the
+    envelope's profile list (a string array), then AR-10's gate over it (sorted, unique, `weighingRow`'s
+    prerequisites present and its refused profiles absent, in AR-10's fault order and texts), then a `weighing` block
+    only with `weighing@0`. -/
+def weighGate (environment : Json) : Except String Unit := do
+  let ps ← VE.Route.Gate.profilesOf environment
+  discard (VE.Compose.gateOf VE.Compose.profileTable ps)
+  if !ps.contains "weighing@0" && (blockOf environment).isSome then
+    throw "UnsupportedProfile: the weighing block requires weighing@0"
+
+/-- The decoded document without its identity fields `envId` and `docHash`: everything a layered kind reads.
+    `D` carries `D.E`; WG-3's decoder takes `baseEnv` from the stripped environment (the block declares no base
+    symbol). PK-1's `L.packs` replaced `labelled` and `rightsCount` on `main`. -/
+def LayeredU.core (L : VE.NormDefaults.Wire.LayeredU) :=
+  (L.route, L.D, L.U, L.packs, L.sitVocab, L.baseEnv)
+
+end Wire
+end VE.Weighing
+```
+
+WG-3 writes `decodeWeighEnv : SoftDoc → Json → Except String WeighEnv` (3.2) and its edit to the layered decoder
+(`VE.NormDefaults.Wire.decodeLayered`, through PK-1's provider line): run `weighGate` on the original environment,
+strip, decode the stripped case, decode the block, check `WellFormedWeigh`, add `weighPack` to the list `decodeSoftU`
+hands `Packs.assemble U used ps` (today `[softPack U src.D]`) when the block is present and nothing when it is
+absent (3.2 step 5), compute `environment_id` and `document_hash` over the
+full environment. The stub elaborated sections 5 and 6 against a stand-in with that shape (`decodeLayeredW`); the
+statements name the real function once it exists. `VE.Compose.gateOf` and `profileTable` are AR-10's, on `main`
+(`Compose/Dispatch.lean`), and the table holds `weighingRow`. The stub applies `gateOf` to the table with `weighingRow`
+after `baseRows` and again after `wrapperRows`. 4.1's texts are the same at both places, and WG-3 recomputes them where
+it puts the row (DRI apply-step item 3).
+
+## 2. The English (WG-4)
+
+Each wording has one reading; the paraphrase is what the IDE shows. No decision predicate, label, formula or rank
+number appears in what a reader sees. Without `weighing@0` each is refused as today.
+
+**Who owns what (plan D12; refresh 2026-10-28).**
+- **Lean owns** the weighing templates, the paraphrases (computed from `strictPair`, `strictWitness`, the labels and
+  `grantConds`), E7's resolution and every diagnostic with its text.
+- **Python binds and displays** the returned records. Its records are passive: no wording text, no matcher.
+- **en-wg** (NEW, owned by english-lean) reads the original sentence through the shared grammar machinery and returns
+  the weighing object of 1.1, embedded conditions included. Its closest abstraction is
+  `lean/VE/EnglishGrammar/Actions.lean`, which today produces formulas, terms and declarations; a weighing-statement
+  value type is NEW. There is no separate weighing matcher. en-wg's statements are 2.5.
+- **Word rows.** *generally* is a D6 word: its row goes into en-sw's `SourceWords.lean` beside soft's rows, not into a
+  weighing table (C1). Weighing owns only the rank-frame row; the plain normality frame stays DF-4's
+  (hedges-generics item 2(a), DF3).
+- **E3.** The wider migration of soft's existing frames follows signed edit 10 ("rows in english-lean's catalogue once
+  it owns norm wordings"; never both). No DRI signature is reserved for it.
+
+### 2.1 Wordings
+
+| # | Wording | Reading (the paraphrase) | Effect |
+|---|---|---|---|
+| E1 | `<Rank a> always outranks <rank b>.` | Where a rule serving <a>, or a rank above <a>, collides on one act with a rule serving <b>, or a rank below <b>, the lower rule gives way to an effective higher rule, and <decider> may not find that the lower consideration outweighs it: pairwise defeat, as for *outranks*. The IDE lists the ranks: "a rule serving <a or each rank above it> … a rule serving <b or each rank below it>". | `always` edge `(a, b)`; `Str_T` |
+| E2 | `<Rank a> outranks <rank b>.` under the holistic flag; `<Rank a> generally outranks <rank b>.` is the same sentence and is shown in this form | If the pair is holistic: where a rule serving <a> collides on one act with a rule serving <b>, the lower rule gives way to an effective <a> rule unless <decider> finds that the <b> consideration outweighs it there; this document's ranking is holistic, and no step between them is marked *always*. If the pair is strict through another chain: the strict pair paraphrase (2.3). | soft's edge (unchanged) |
+| E3 | `<Rank l> outweighs <rank h> on <act phrase> only when <condition>.` | <decider> may find that the <l> consideration outweighs the <h> consideration on <act phrase> only in situations where <condition>. | necessary condition on `outweighs_{act,l,h}` |
+| E4 | `<Rank l> outweighs <rank h> on <act phrase> when <condition>.` | Wherever <condition>, the <l> consideration outweighs the <h> consideration on <act phrase>. Outside this condition, this sentence imposes no requirement; other conditions still apply. | sufficient condition |
+| E5 | `Whether <rank l> outweighs <rank h> on <act phrase> takes account of <consideration>[, <consideration>]*.` | Declared considerations for this finding: <c1>; <c2>; the checker does not verify that they were weighed. | factors (no premise) |
+| E6 | `<Party> may turn off rule n only when <condition>.` | <Party>'s switch on rule n works only in situations where <condition>. | necessary condition on `off_{n,party}` |
+| E7 | `<Party> may turn off rule n only where <grantor> allows it.` | <Party>'s switch on rule n works only where <grantor> has allowed it, and only where <grantor> could turn rule n off itself: <each inherited condition and grant, written out>. | grant; `Grant_T` with inheritance |
+| E7′ | `<Party> may turn off rule n only where <grantor> allows it, namely where <verbalisation of p>.` | E7's, with the grant's predicate named. | the same `GrantDecl` as E7 with predicate `p`; inherits as E7 |
+
+The legend line for a grant's predicate is soft's `instruction_of` line ("<verbalisation> records an instruction of
+<grantor>").
+
+Writing E1, E2 and E5 from a source (wg-rev; plan 2.8):
+- E5 is written only where the source states both colliding rules and their ranks (W-R2). A consideration with no
+  stated collision goes to soft's factors on the rule the source ties it to, or to GAP-W2.
+- Each consideration is one verbatim string, always in the quoted form (W-R3).
+- A choice between E1 and E2 on one edge is not a reading set (GAP-W1, W-R1).
+- A rank clause inside an analogy declares no edge (W-R4).
+
+E1 and E2 promise pairwise defeat by an effective higher rule, as soft's own `outranks` wording does (soft 2.1: "the
+lower rule gives way to an effective higher rule … This is pairwise defeat, not a guarantee that the higher rule
+finally decides"); no paraphrase promises that the higher rule finally decides. Where the higher rule's exception applies, the lower rule
+may decide despite *always* (W-α, record "h's exception applies").
+
+E7's "<grantor> allows it" names no predicate, so the English layer resolves it only when exactly one predicate is
+attributed to the grantor (`instruction_of`) and typed over rule n's argument sorts; that predicate is the grant's.
+With none, the sentence is refused and the refusal says that such a predicate must be declared first. With several,
+it is refused, the refusal lists them, and offers E7′ for each. E7′ elaborates to the same `GrantDecl` and inherits
+the grantor's conditions; it is accepted subject to the normal grant checks (4.5), never unconditionally.
+
+### 2.2 Refused or not a wording
+
+| Text | Answer |
+|---|---|
+| `<Rank a> generally outranks <rank b>.` under the strict flag | refused: `GenerallyUnderStrictOutranking: <a>, <b>` ("this document ranks strictly; *generally* would not change that"). The English layer's refusal: the wire has no `generally` |
+| `<Party> may turn off rule n when <condition>.` | refused: a switch condition must say "only when" (no sufficient switch condition exists; Lean refuses a hand-written one, `InvalidInput: condition <i> on a switch must be necessary`) |
+| `<Rank l> outweighs <rank h> on <act phrase> when <condition>.` where the pair is strict | refused by Lean, `ConditionOnStrictPair` (4.4) |
+| `<Party> may turn off rule n only where <grantor> allows it.` where no predicate attributed to <grantor> is typed over rule n's arguments | refused by the English layer: such a predicate must be declared first (with soft's `instruction_of: <grantor>`) |
+| the same where several such predicates exist | refused by the English layer: the refusal lists them and offers E7′ (`… namely where <verbalisation of p>.`) for each |
+| "normally", "typically", "usually", "in most cases" | not `weighing@0` wordings: they stay with their owners, soft 2.2's reading sets (a default rule or a frequency claim) and DF-4's plain normality frame |
+| "all things considered", "on balance" | no wording: the decider's judgment (plan D1) |
+
+### 2.3 Paraphrases of pairs, and inherited conditions
+
+- **Strict pair** `(H, L)`: "A <L> rule never outweighs a <H> rule: <the chain of `strictWitness H L`, each edge as
+  '<x> outranks <y>', the `always` edges as '<x> always outranks <y>'>." W-β: `strictWitness s h = [s, e, g, h]`:
+  "A h rule never outweighs a s rule: s always outranks e, e outranks g, and g outranks h." With the `always` edge
+  on `(g, h)` the same pair reads "… s outranks e, e outranks g, and g always outranks h." (upward closure).
+- **Holistic pair**: "A <L> rule outweighs a <H> rule only where <decider> finds so; every step between them is a
+  plain *outranks*, which this document's holistic ranking leaves to <decider>."
+- **Grant with inheritance** (W-ζ2): "Users may turn off rule n only where the operator allows it." reads "The user's
+  switch on rule n works only where the operator has allowed it, and only when there is an emergency (the
+  operator's own condition for turning rule n off)." W-ζ3 adds "… and only where the developer has allowed the
+  operator's switch (the operator's own grant)."
+- A condition is rendered by soft's verbalisation of base formulas; a split part `<rule>-a<i>` or `p__i` by its
+  source phrase through AP's map (synthesis edit 8).
+
+### 2.4 One reading, by construction and by disjointness
+
+**Two readers until E3 (refresh 2026-10-28).** E2's plain *outranks* stays in soft's Python reader
+(`parse_declaration`, `ve/surface/softnorms.py`). E1 and E2's input synonym *generally outranks* are en-wg's, in Lean.
+So the one-reading argument rests on how a sentence is routed to a reader, not on one parser, and it is stated and
+tested as a **disjointness claim**:
+- **W-ξ.** For every sentence `s` of 7.6's disjointness list, exactly one holds: `parse_declaration(s)` returns, or
+  en-wg returns an object for `s`. That list holds each E1–E7′ fixture and each sentence of its minimal pair (C-2:
+  "Safety always outranks ethics." / "Safety outranks ethics.", each read on its own; since wg-rev, C-2 is not a
+  reading set, 7.5).
+- The weighing reader refuses every soft-frame fixture of that list.
+
+Why the claim holds: soft's regular expressions take a rank sentence only as `<Rank> outranks <rank>.`, with one word
+before *outranks*, so *always* and *generally* fall outside them. en-wg has no frame for that plain form, and
+no frame of 2.5 is one of soft's six declaration forms.
+
+7.6 holds the fixtures. When E3 moves soft's frames into Lean, the parser itself carries the check. The argument below
+holds inside each reader.
+
+E1 and E2 differ by the word *always*, which no other wording contains. E3 and E4 differ by *only*; the paraphrase
+of E4 says "Outside this condition, this sentence imposes no requirement; other conditions still apply.", so a
+biconditional reading of "when" is excluded in what the reader sees, and the reader is not told that the decider
+decides there (a necessary condition on the same target may force the finding, θ11). E6 and E7 both say "only", the
+only form a switch condition has; E7 has one reading because "allows it" resolves to exactly one predicate or is
+refused (2.1), and E7′ names its predicate. WG-4's `tests/test_english_unambiguity.py` covers each row, and the plan's
+open question (8) on whether readers take D4's closure from "always" is answered by a Sonnet 5.5 comprehension check
+on the paraphrases of E1 and of a strict pair through the closure. That check is saved evidence under the batch's
+`docs/<batch>/`, not a suite test: suite tests make no model calls.
+
+### 2.5 en-wg's statements
+
+WG-1's re-elaboration (2026-11-02). en-wg reads one sentence through the shared grammar machinery. Its result is a
+**frame**: the sentence's form with its slots resolved. `readFrame` then gives the weighing object or the refusal. The
+frame is the boundary: how a sentence reaches a frame is the grammar's (no weighing matcher, D12), and everything
+after it is below. The value types and `readFrame` are NEW and english-lean's; the objects are 1.1's, which WG-2 builds.
+
+| # | Sentence | Frame | Object returned |
+|---|---|---|---|
+| E1 | `<Rank a> always outranks <rank b>.` | `.always a b` | `.always a b`: the `always` edge |
+| E2 | `<Rank a> generally outranks <rank b>.` | `.generally a b` | `.edge a b`, shown as `<Rank a> outranks <rank b>.`; adds nothing to the block (D5). Refused under the strict flag |
+| E2 | `<Rank a> outranks <rank b>.` | none | not en-wg's: soft's reader takes it (2.4) |
+| E3 | `<Rank l> outweighs <rank h> on <act phrase> only when <condition>.` | `.onlyWhen a l h c` | `.condition ⟨.outweighs a l h, .necessary, c⟩` |
+| E4 | `<Rank l> outweighs <rank h> on <act phrase> when <condition>.` | `.whenever a l h c` | `.condition ⟨.outweighs a l h, .sufficient, c⟩` |
+| E5 | `Whether <rank l> outweighs <rank h> on <act phrase> takes account of <consideration>[, <consideration>]*.` | `.account a l h fs` | `.factors ⟨.outweighs a l h, fs⟩` |
+| E6 | `<Party> may turn off rule n only when <condition>.` | `.switchOnly π n c` | `.condition ⟨.off n π, .necessary, c⟩` |
+| E7 | `<Party> may turn off rule n only where <grantor> allows it.` | `.allows π n g` | `.grant ⟨n, π, g, p⟩`, `p` resolved by `grantCandidates` |
+| E7′ | `… only where <grantor> allows it, namely where <verbalisation of p>.` | `.allowsNamely π n g p` | `.grant ⟨n, π, g, p⟩` |
+| refused | `<Party> may turn off rule n when <condition>.` | `.switchWhen π n c` | refused: no such condition exists |
+
+Slots:
+- `<Rank a>`: the rank name, its initial capital lowered as soft's reader does (`parse_declaration`, soft 2.1).
+- `rule n`: OPEN-3 (10). The frame holds the rule's name.
+- `<consideration>`: a list as in soft's `takes account of`, whose canonical form quotes each factor. A translator
+  writes only the quoted form, since an unquoted list splits on ", " and " and ", and rewords none (plan 2.8 W-R3).
+- `<act phrase>`, `<condition>`, `<verbalisation of p>` and the spelling of `<Party>` and `<grantor>`: OPEN-1 to OPEN-3
+  (10).
+
+```lean
+/-- en-wg's value: 1.1's objects, plus the edge E2's input synonym repeats. -/
+inductive WeighStatement
+  | always (a b : String)
+  | edge (a b : String)
+  | condition (c : CondDecl)
+  | factors (f : FactorDecl)
+  | grant (g : GrantDecl)
+  deriving DecidableEq, Repr
+
+/-- A sentence's form with its slots resolved. -/
+inductive WeighFrame
+  | always (a b : String)
+  | generally (a b : String)
+  | onlyWhen (act lower higher : String) (c : VE.Formula)
+  | whenever (act lower higher : String) (c : VE.Formula)
+  | account (act lower higher : String) (fs : List String)
+  | switchOnly (party rule : String) (c : VE.Formula)
+  | switchWhen (party rule : String) (c : VE.Formula)
+  | allows (party rule grantor : String)
+  | allowsNamely (party rule grantor predicate : String)
+  deriving DecidableEq, Repr
+
+/-- E7's candidates: the predicates attributed to `g`, typed over rule `n`'s argument sorts, in `instruction_of` order. -/
+def grantCandidates (D : SoftDoc) (n g : String) : List String :=
+  (D.soft.instructionOf.filter (fun e =>
+    e.2 == g && D.E.predicates e.1 == some (ruleSorts ⟨D, WeighEnv.empty, ⟨[], []⟩⟩ n))).map (·.1)
+
+def generallyRefusal (a b : String) : String := s!"GenerallyUnderStrictOutranking: {a}, {b}"
+def switchWhenRefusal : String := "InvalidInput: a switch condition must say \"only when\""
+def noGrantRefusal (n g : String) : String :=
+  s!"InvalidInput: rule {n}: no predicate records an instruction of {g} over this rule's arguments; declare one first"
+/-- `verbal` is the predicate's verbalisation (soft's `instruction_of` legend line): a reader never sees a symbol. -/
+def severalGrantsRefusal (verbal : String → String) (n g : String) (ps : List String) : String :=
+  s!"InvalidInput: rule {n}: several predicates record an instruction of {g}; add one of: " ++
+    "; ".intercalate (ps.map (fun p => s!"namely where {verbal p}"))
+
+/-- The object of a frame, or its refusal. Block-level faults stay `checkWeigh`'s (1.6). -/
+def readFrame (D : SoftDoc) (verbal : String → String) : WeighFrame → Except String WeighStatement
+  | .always a b => .ok (.always a b)
+  | .generally a b =>
+    if D.soft.outranking = .strict then .error (generallyRefusal a b) else .ok (.edge a b)
+  | .onlyWhen x l h c => .ok (.condition ⟨.outweighs x l h, .necessary, c⟩)
+  | .whenever x l h c => .ok (.condition ⟨.outweighs x l h, .sufficient, c⟩)
+  | .account x l h fs => .ok (.factors ⟨.outweighs x l h, fs⟩)
+  | .switchOnly π n c => .ok (.condition ⟨.off n π, .necessary, c⟩)
+  | .switchWhen _ _ _ => .error switchWhenRefusal
+  | .allowsNamely π n g p => .ok (.grant ⟨n, π, g, p⟩)
+  | .allows π n g =>
+    match grantCandidates D n g with
+    | [] => .error (noGrantRefusal n g)
+    | [p] => .ok (.grant ⟨n, π, g, p⟩)
+    | ps => .error (severalGrantsRefusal verbal n g ps)
+
+/-- W-ν: E3 and E4 give one target with opposite kinds, and `always` is never dropped. -/
+theorem readFrame_kinds (D : SoftDoc) (verbal : String → String) (x l h : String) (c : VE.Formula) :
+    readFrame D verbal (.onlyWhen x l h c) = .ok (.condition ⟨.outweighs x l h, .necessary, c⟩) ∧
+    readFrame D verbal (.whenever x l h c) = .ok (.condition ⟨.outweighs x l h, .sufficient, c⟩)
+theorem readFrame_always (D : SoftDoc) (verbal : String → String) (a b : String) :
+    readFrame D verbal (.always a b) = .ok (.always a b)
+
+/-- E2's synonym: an edge exactly under the holistic flag, and it never carries `always`. -/
+theorem readFrame_generally (D : SoftDoc) (verbal : String → String) (a b : String) :
+    (D.soft.outranking = .holistic → readFrame D verbal (.generally a b) = .ok (.edge a b)) ∧
+    (D.soft.outranking = .strict → readFrame D verbal (.generally a b) = .error (generallyRefusal a b))
+
+/-- E7 resolves exactly when there is one candidate, and E7′ with it returns the same grant. -/
+theorem readFrame_allows (D : SoftDoc) (verbal : String → String) (π n g p : String)
+    (hc : grantCandidates D n g = [p]) :
+    readFrame D verbal (.allows π n g) = .ok (.grant ⟨n, π, g, p⟩) ∧
+    readFrame D verbal (.allows π n g) = readFrame D verbal (.allowsNamely π n g p)
+theorem readFrame_allows_none (D : SoftDoc) (verbal : String → String) (π n g : String)
+    (hc : grantCandidates D n g = []) :
+    readFrame D verbal (.allows π n g) = .error (noGrantRefusal n g)
+theorem readFrame_allows_several (D : SoftDoc) (verbal : String → String) (π n g : String) (ps : List String)
+    (hc : grantCandidates D n g = ps) (hl : 2 ≤ ps.length) :
+    readFrame D verbal (.allows π n g) = .error (severalGrantsRefusal verbal n g ps)
+
+/-- The word row in en-sw's `SourceWords.lean` (2): *generally* in the rank frame is the plain sentence. -/
+def generallyRow : VE.EnglishGrammar.SourceWordRow :=
+  ⟨"generally", "<Rank a> generally outranks <rank b>.", "weighing@0", "en-wg",
+    .fixed "<Rank a> outranks <rank b>."⟩
+```
+
+`readFrame` adds no check of its own beyond the English refusals of 2.2: an unknown rank, a missing decision, a strict
+pair and a grant's checks are `checkWeigh`'s answers on the object (4.3 to 4.7). So en-wg never decides what WG-2
+refuses. A frame is one sentence, and the block is the objects in sentence order. `.edge` adds no block entry, and no check reads it: OPEN-8.
+
+The acceptance checks are 7.6's: the object must agree with the sentence, and well-formedness of the wire object is
+not enough.
+
+## 3. Wire (WG-3)
+
+### 3.1 The block
+
+```json
+"weighing": {
+  "always":     [["safety", "ethics"]],
+  "conditions": [{"target": {"outweighs": {"act": "comply_permitted", "lower": "helpfulness", "higher": "ethics"}},
+                  "kind": "necessary", "condition": ["unary", "emergency", ["var", 0]]}],
+  "factors":    [{"target": {"outweighs": {"act": "comply_permitted", "lower": "helpfulness", "higher": "ethics"}},
+                  "factors": ["how much the user would lose", "how severe the ethical cost is"]}],
+  "grants":     [{"rule": "r7", "party": "user", "grantor": "operator", "predicate": "operator_allows_user_switch"}]
+}
+```
+
+A switch target is `{"off": {"rule": <name>, "party": <party>}}`. Every list is optional and defaults to empty; the
+block is absent when empty; unknown fields are refused (`InvalidInput: invalid weighing block`). Limits, checked
+before anything is built: at most 64 `always` edges, 128 conditions, 64 factor entries, 32 grants; each condition
+through the chain's guard decoder (synthesis round 2): today W1's budgeted formula decoder
+(`Norms.Wire.decodeBudgeted`, `MAX_NODES` and `MAX_DEPTH`), and with AT-3a's guard node when `attitudes@0` is on, so a
+condition may hold an attitude atom; `condPremise` takes the decoded formula. OPEN-4 (10).
+
+### 3.2 Decoding order (the layered decoder, WG-3)
+
+1. `weighGate` (1.8) on the original environment, before anything is stripped: the envelope (`profiles` a string
+   array, else `UnsupportedProfile: profiles must be a sorted unique array`), then AR-10's gate: the profiles sorted
+   and unique (`UnsupportedProfile: profiles must be sorted and unique`), `weighing@0` needs `norm-defaults@0`,
+   `norms@0` and `soft-norms@0` (`UnsupportedProfile: weighing@0 requires <the first missing one>`) and refuses
+   `rights@0` (`UnsupportedProfile: weighing@0 with rights@0`); a `weighing` block without `weighing@0` is
+   `UnsupportedProfile: the weighing block requires weighing@0`.
+2. `stripCase j` goes to today's layered decoder (soft branch, reached because `norm-defaults@0` is listed),
+   unchanged: `WellFormedSoft`, `WellFormedU`.
+3. `decodeWeighEnv D (blockOf environment)`: shape, types, limits (3.1). It takes the decoded `D`, so it cannot run
+   before step 2: a case with a faulty soft document and a faulty block answers with the soft text.
+4. `checkWeigh` (section 4) with AP's split map. While `acts@0` refuses `soft-norms@0` (`actsRefuses`) the map is
+   empty; an act-phrases-owned prerequisite (NEW) admits the combination (plan D6).
+5. PK-1 assembles X: when the block is present, `decodeSoftU`'s list for `Packs.assemble U used ps` gains
+   `weighPack Wd`, in PK-1's order (soft, rights, weighing, attitudes, scales, events). An absent block contributes
+   no pack, not an empty `weighPack`: the list stays the stripped case's, so `LayeredU.core`'s `packs` are equal on
+   both sides of `runWeigh_delegates` (an empty `weighPack` would make them differ).
+6. `environment_id` and `document_hash` over the **full** environment, block and `weighing@0` included
+   (`weigh_identity`); every certificate binds them (`bindCertX`).
+7. Kinds (plan D11): the existing kinds answer from the complete regenerated pack list. `runOtherCase` forwards the
+   weighing kinds, which are `Packs.KindRow` rows. Admission and certificate replay recognise a premise of any pack,
+   generalising `SoftLeafX` (NEW, owner RD-9). WG-3's regressions show a weighing premise changing an `admission`
+   answer and a certificate answer.
+
+## 4. Diagnostics
+
+In order; the first failure is the answer. The order is 3.2's, in both documents: the gate, then the stripped
+document, then the block, then the weighing checks. Texts are the contract until AR-13's codes land (plan 2.5),
+identical in Lean and Python's display. Each row names the fixture that produces it (7.2, W-θ unless marked).
+
+| Step | Text | When | Fixture |
+|---|---|---|---|
+| 4.1 | `UnsupportedProfile: profiles must be a sorted unique array`; `UnsupportedProfile: profiles must be sorted and unique` | the envelope's profile list malformed, unsorted or repeated (`weighGate`, before stripping) | W-η refusals |
+| 4.1 | `UnsupportedProfile: weighing@0 requires <q>` (the first missing of `norm-defaults@0`, `norms@0`, `soft-norms@0`, `needText`); `UnsupportedProfile: weighing@0 with rights@0` (`refusing`); `UnsupportedProfile: the weighing block requires weighing@0` | AR-10 row (prerequisite missing; `rights@0` refused); block without profile | W-η refusals |
+| 4.2 | the soft and layered decoders' texts, unchanged | stripped document | W-η, combined fault |
+| 4.2 | `InvalidInput: invalid weighing block`; `ResourceLimit: weighing <list>` | block shape, unknown fields, list limits, after the stripped document decodes | WG-3 |
+| 4.3 | `StrengthOnUndeclaredEdge: <a>, <b>` | an `always` edge that is not a declared `outranks` edge | θ1 |
+| 4.3 | `DuplicateDeclaration: strength <a>, <b>` | the edge twice | θ2 |
+| 4.4 | AP's text: `InvalidInput: act <a> names a predicate that is split into parts; name one of its parts`; `InvalidInput: rule <n> names a predicate that is split into parts; name one of its parts` (`VE.Acts.splitRefusal role name`, 1.6) | a target naming a split act or rule | W-λ |
+| 4.4 | `NoSuchDecision: <rendered target>` | no such decision in `E′` | θ3, θ14, θ18, W-ζ |
+| 4.4 | `InvalidInput: condition <i> on a switch must be necessary` | a sufficient switch condition | θ9 |
+| 4.4 | `ConditionOnStrictPair: <rendered target>` | a condition on an `outweighs` decision of a strict pair (D4's closure) | θ7, θ8 |
+| 4.4 | W1's type diagnostics; `InvalidInput: ill-typed condition <i>` | typing over the target's sorts | θ6 |
+| 4.4 | `InvalidInput: condition <i> mentions <q>` | a regulated, defined or reserved predicate | θ4 |
+| 4.4 | `InvalidInput: condition <i> is not quantifier-free` | soft 6.1's gate | θ5 |
+| 4.4 | `InvalidInput: invalid factors <i>` | more than 16 strings or one over 200 bytes | θ13 |
+| 4.5 | `DuplicateDeclaration: grant <rule>, <party>` | two grants for one switch | W-ζ |
+| 4.5 | `NoSuchDecision: off rule <n>, <party>` | the grantee holds no switch | W-ζ |
+| 4.5 | `DelegationExceedsGrantor: rule <n>, <party>, <grantor>` | the grantor holds no switch on rule n | W-ζ |
+| 4.5 | `GrantNotAttributed: <predicate>, <grantor>` | the predicate is not attributed to the grantor | W-ζ |
+| 4.5 | `InvalidInput: grant predicate <p> does not take the arguments of rule <n>` | sorts differ | W-ζ |
+| 4.5 | `DelegationCycle: rule <n>, <party>` | after every grant's own checks, the first grant in list order whose party reaches itself (`grantReach Wd n π π`; a self-grant included) | W-ζ cycles |
+| 4.6 | `ResourceLimit: conditions <i>, <j>` | more than 12 distinct atoms in a pair | θ20 (θ19, 12 atoms, accepted) |
+| 4.6 | `ConditionsDisagree: the checker cannot show that condition <i> implies condition <j>` | `propImplies` fails for a sufficient `i` and necessary `j` on one target | θ10, θ12 |
+| 4.7 | `ResourceLimit: generated weighing premise <label>` | a premise over `MAX_DEPTH` or `MAX_NODES` | θ15 |
+| warning | `StrengthInert: <a>, <b>` | an `always` edge under the strict flag | W-γ, W-α′ |
+| English (en-wg, Lean) | `GenerallyUnderStrictOutranking: <a>, <b>` | "generally outranks" under the strict flag | en-wg, 7.6; WG-4 through the service |
+| English (en-wg, Lean) | `InvalidInput: a switch condition must say "only when"` | `<Party> may turn off rule n when <condition>.` | en-wg, 7.6 |
+| English (en-wg, Lean) | `InvalidInput: rule <n>: no predicate records an instruction of <g> over this rule's arguments; declare one first` | E7 with no candidate predicate (2.1, 2.5) | en-wg, 7.6; WG-4 through the service |
+| English (en-wg, Lean) | `InvalidInput: rule <n>: several predicates record an instruction of <g>; add one of: namely where <verbalisation>; …` | E7 with several candidates, one offer of E7′ for each | en-wg, 7.6; WG-4 through the service |
+
+The joint budget of X with the background (soft's `fitsTogether`) is PK-1's assembled check, not weighing's.
+
+## 5. Theorems (WG-2)
+
+Every statement here and in section 6 elaborates on `main` (header). `h : WellFormedWeigh Wd = true` gives `WellFormedSoft Wd.D` and `checkWeigh Wd = .ok ()`.
+
+### 5.1 Strength
+
+```lean
+namespace VE.Weighing
+
+/-- A strict pair is ordered. -/
+theorem strictPair_outranks (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H L : String)
+    (hs : strictPair Wd H L = true) : outranksPlus Wd.D.soft H L = true
+
+/-- An `always` edge is a strict pair. -/
+theorem strictPair_of_always (Wd : WeighDoc) (a b : String) (hab : (a, b) ∈ Wd.W.always) :
+    strictPair Wd a b = true
+
+/-- Strictness is inherited downward and upward along the order. -/
+theorem strictPair_down (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : String)
+    (h₁ : strictPair Wd H M = true) (h₂ : outranksPlus Wd.D.soft M L = true) : strictPair Wd H L = true
+theorem strictPair_up (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : String)
+    (h₁ : outranksPlus Wd.D.soft H M = true) (h₂ : strictPair Wd M L = true) : strictPair Wd H L = true
+
+/-- D4, exactly: a pair is holistic iff no chain of declared edges from `H` to `L` contains an `always` edge. -/
+theorem holistic_iff_no_always_chain (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H L : String) :
+    strictPair Wd H L = false ↔ ∀ c, RankChain Wd H L c → ∀ e ∈ chainEdges c, e ∉ Wd.W.always
+
+/-- The paraphrase names a chain exactly for strict pairs, and the chain it names is one. -/
+theorem strictWitness_isSome (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H L : String) :
+    (strictWitness Wd H L).isSome = strictPair Wd H L
+theorem strictWitness_chain (Wd : WeighDoc) (H L : String) (c : List String)
+    (hc : strictWitness Wd H L = some c) : RankChain Wd H L c ∧ ∃ e ∈ chainEdges c, e ∈ Wd.W.always
+
+/-- `Str_T` has a premise exactly for the `outweighs` decisions of strict pairs, queried at declared ranks and a
+    declared predicate, when every regulated name begins with an ASCII letter (the decoder's identifier rule). -/
+theorem strength_iff (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String)
+    (hL : L ∈ Wd.D.soft.ranks) (hH : H ∈ Wd.D.soft.ranks)
+    (ha : ∃ ss, Wd.D.E.predicates a = some ss)
+    (hr : ∀ r ∈ Wd.D.T.regulated, ∃ c cs, r.name.data = c :: cs ∧ c.isAlpha) :
+    bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd ↔
+      (a, L, H) ∈ outweighsTriples Wd.D ∧ strictPair Wd H L = true
+```
+
+Plain words: "always" protects every pair whose chain passes through the marked step, and only those
+(`holistic_iff_no_always_chain`, `strength_iff`). `strictPair_down`/`_up` are QS-1's `atLeast_trans` through
+`outranksPlus_eq_above`. `hr` is the decoder's identifier rule: a decoded document declares no name that does not begin
+with a letter ("Invalid ASCII identifier", `Surface.identifier`), so every wire document meets it and the hypothesis
+excludes only documents built directly (wg-2-siff, DRI 2026-11-04 wg-2-strength item 2). `strength_iff`'s forward
+direction needs `outweighsName` injective on declared ranks and regulated acts: a rank name starts with a letter and
+has no `__` (`validSoftName`), a regulated act starts with a letter (`hr`; the premise's act and the query's are both
+regulated, since their sorts are those of a regulated act), so each `__` separator is the last two underscores of its
+run (the name after it begins with a letter), and `L`, `H` and `a` are recovered from the name (`outweighsName_inj`).
+Without `hr` the statement is false on a directly built document with a regulated name starting with `_` (F19, 7.3),
+and `hr` on the queried `a` alone is not enough (F19's mirror). Without `hL` and `hH` the statement is false on two
+accepted documents: F9 (rank `b_`, query `(x_permitted, b, _a)`, neither `b` nor `_a` declared) and F13 (ranks `c >
+c_`, query `(x_permitted, c, _c)`, where `c` is declared, so `hH` alone excludes it). `ha` is the declared-predicate
+form (weaker than "regulated", so the theorem is stronger), and with it the proof rests on injectivity alone: F10's
+alias (query `(_x_permitted, l, c)`) names an undeclared act, its formula is `¬⊥`, and the unrestricted statement
+survives it. All three are rows of 7.3, never admission refusals: the three documents are accepted. F19's documents are
+not decoded: the decoder refuses them.
+
+### 5.2 What `always` means
+
+```lean
+/-- In every structure satisfying `Str_T`, an effective higher default rule dominates a colliding lower default
+    rule of a strict pair. Fixtures W-α, W-β1. -/
+theorem always_dominates (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (strengthPremises Wd)) (M N : SoftNode) (hM : M ∈ Wd.D.T.nodes) (hN : N ∈ Wd.D.T.nodes)
+    (hMd : M.mode = .default) (hNd : N.mode = .default) (hi : Incompatible Wd.D M N = true)
+    (hh : higher Wd.D M N = true) (hs : strictPair Wd (rk M) (rk N) = true)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (actSortsOf Wd.D (act Wd.D N)) vs)
+    (heff : EffD Wd.D S (tupleVal vs) (rankFuel Wd.D) M) :
+    DominatedD Wd.D S (tupleVal vs) (rankFuel Wd.D) N
+
+/-- ... and the lower rule never dominates the higher one by override: `DomWithD`'s override disjunct for `M` with
+    opponent `N` is false (under the strict flag it is false by its first conjunct). Fixtures W-α, W-α′, W-β1. -/
+theorem always_no_override (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (strengthPremises Wd)) (M N : SoftNode) (hM : M ∈ Wd.D.T.nodes) (hN : N ∈ Wd.D.T.nodes)
+    (hMd : M.mode = .default) (hNd : N.mode = .default) (hi : Incompatible Wd.D M N = true)
+    (hh : higher Wd.D M N = true) (hs : strictPair Wd (rk M) (rk N) = true)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (actSortsOf Wd.D (act Wd.D M)) vs) :
+    ¬ (Wd.D.soft.outranking = .holistic ∧ higher Wd.D M N = true ∧ EligibleD Wd.D S (tupleVal vs) N ∧
+        OutweighsD Wd.D S (tupleVal vs) (act Wd.D M) (rk N) (rk M))
+
+def strictFlag (D : SoftDoc) : SoftDoc :=
+  { D with soft := { D.soft with outranking := .strict, outrankingDecider := none } }
+
+/-- Where every comparable colliding pair is strict, the document decides as the same document under the strict
+    flag, on every structure satisfying `Str_T`, at tuples typed for the act. Fixtures W-β1 (both directions), W-β2
+    (the hypothesis is needed). -/
+theorem all_always_is_strict (Wd : WeighDoc) (h : WellFormedWeigh Wd = true)
+    (hall : ∀ M N, (M, N) ∈ collidingPairs Wd.D → Comparable Wd.D M N = true →
+      strictPair Wd (rk M) (rk N) = true ∨ strictPair Wd (rk N) (rk M) = true)
+    (S : VE.Structure.{u}) (hS : Sat S (strengthPremises Wd)) (p : String) (sign : Bool)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (actSortsOf Wd.D (actKey Wd.D p)) vs) :
+    DecidesSoftD Wd.D S (tupleVal vs) p sign ↔ DecidesSoftD (strictFlag Wd.D) S (tupleVal vs) p sign
+```
+
+Proof notes. `always_dominates`: `M` is an opponent of `N` (`Incompatible`, default, `Comparable` from `higher`), the
+first disjunct of `DomWithD` holds with `heff`, and its holistic conjunct `¬ OutweighsD … (act N) (rk N) (rk M)` is
+`Str_T`'s premise for the triple `pairTriple` gives (`act_eq` makes the act the same). `always_no_override`: the same
+premise at `act M`. `all_always_is_strict`: induction on the fuel of `EffD`; every `outweighs` atom `DomWithD` reads
+at a typed tuple is false by `Str_T`, so both disjuncts agree with the strict flag's (`strictPair_outranks` and
+`outranksPlus_asymm` exclude the wrong orientation).
+
+### 5.3 Conditions and grants
+
+```lean
+/-- The implication check is sound. -/
+theorem propImplies_sound (a b : VE.Formula) (hp : propImplies a b = true) (S : VE.Structure.{u})
+    (ρ : VE.Valuation S) (ha : a.denote S ρ) : b.denote S ρ
+
+/-- E3 and E6: outside a necessary condition its decision is false. Fixtures W-δ, W-ζ2, W-μ. -/
+theorem condition_necessary (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .necessary → ¬ c.condition.denote S (tupleVal vs) → ¬ (targetF Wd c.target).denote S (tupleVal vs)
+
+/-- E4: inside a sufficient condition its decision is true. Fixtures W-ε, θ11. -/
+theorem condition_sufficient (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .sufficient → c.condition.denote S (tupleVal vs) → (targetF Wd c.target).denote S (tupleVal vs)
+
+/-- E5: factor lists add no premise. -/
+theorem factors_inert (D : SoftDoc) (W : WeighEnv) (sm : VE.Acts.SplitMap) (fs : List FactorDecl) :
+    weighPremises ⟨D, {W with factors := fs}, sm⟩ = weighPremises ⟨D, W, sm⟩
+
+/-- A delegated switch works only where its grant holds. Fixture W-ζ. -/
+theorem grant_needed (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (g : GrantDecl) (hg : g ∈ Wd.W.grants)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (ruleSorts Wd g.rule) vs)
+    (hng : ¬ (atom g.predicate (ruleSorts Wd g.rule)).denote S (tupleVal vs)) :
+    ¬ (targetF Wd (.off g.rule g.party)).denote S (tupleVal vs)
+
+/-- :138 ("operators cannot grant users more than operator-level trust"): a switch carries every necessary
+    condition and every grant of each party it is granted through (`ρ`: the grantor, its grantor, …).
+    Fixtures W-ζ2, W-ζ3. -/
+theorem grant_within_grantor (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (n π ρ : String) (hr : grantReach Wd n π ρ = true)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (ruleSorts Wd n) vs)
+    (hoff : (targetF Wd (.off n π)).denote S (tupleVal vs)) :
+    (∀ c ∈ Wd.W.conditions, c.target = .off n ρ → c.condition.denote S (tupleVal vs)) ∧
+    (∀ g ∈ Wd.W.grants, g.rule = n → g.party = ρ →
+      (atom g.predicate (ruleSorts Wd n)).denote S (tupleVal vs))
+
+/-- No party is granted a switch its grantor lacks. -/
+theorem delegation_bounded (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (g : GrantDecl)
+    (hg : g ∈ Wd.W.grants) :
+    ∃ N ∈ Wd.D.T.nodes, N.name = g.rule ∧ g.party ∈ N.alterable ∧ g.grantor ∈ N.alterable ∧
+      (g.predicate, g.grantor) ∈ Wd.D.soft.instructionOf
+```
+
+`condition_necessary` and `condition_sufficient` instantiate `c`'s own premise (`condPremise Wd c`, a member of
+`Dec_T` through `condEntries`) at `vs`; `factors_inert` holds because no premise generator reads `factors` (`rfl`, in
+the stub). `grant_within_grantor` is proved through the
+inherited premises of `grantConds`, which exist because `grantReach` reaches `ρ`, `ρ` is a declared party
+(`DelegationExceedsGrantor` keeps every grantor in the rule's `alterable`), and `ρ ≠ π`: grant cycles are refused
+(`DelegationCycle`, 4.5), so on an accepted document no party reaches itself, and `grantedThrough`'s exclusion of
+`π` removes nothing.
+
+### 5.4 Typing, fragment, base-freedom, conservativity
+
+```lean
+/-- Weighing's typing obligation to PK-1 (provider obligation 2): closed base formulas of the filled environment. -/
+theorem weighPremises_wellFormed (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (unspec : List String)
+    (hw : VE.NormDefaults.WellFormedU ⟨soften Wd.D, unspec⟩ = true) :
+    ∀ a ∈ weighPremises Wd, a.WellFormed (envAt (VE.NormDefaults.fill ⟨soften Wd.D, unspec⟩) 0) []
+
+/-- The fragment (soft's gate, plan D6): every premise survives sort-respecting substructures. -/
+theorem weighPremises_substructure (Wd : WeighDoc) (h : WellFormedWeigh Wd = true)
+    (B₀ B : VE.Structure.{u}) (hsub : BaseSubstructure Wd.D B₀ B) (hs : Sat B (weighPremises Wd)) :
+    Sat B₀ (weighPremises Wd)
+
+/-- `B'` agrees with `B` on every predicate that is not a decision of `E′`. -/
+def SameBase (Wd : WeighDoc) (B B' : VE.Structure.{u}) : Prop :=
+  ∃ R : String → List B.Carrier → Prop, B' = { B with relation := R } ∧
+    ∀ p vs, p ∉ decisionNames Wd.D → (R p vs ↔ B.relation p vs)
+
+/-- The narrow base-freedom of synthesis edit 1: `Weigh_T` alone never constrains the base. It says nothing about
+    `Weigh_T` together with soft's coherence (W-κ). -/
+theorem weigh_alone_base_free (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (B : VE.Structure.{u}) :
+    ∃ B' : VE.Structure.{u}, SameBase Wd B B' ∧ Sat B' (weighPremises Wd)
+
+/-- The witness: each `outweighs` atom is the disjunction of its sufficient conditions, each switch is off,
+    every other relation is `B`'s. -/
+def freeWitness (Wd : WeighDoc) (B : VE.Structure.{u}) : String → List B.Carrier → Prop := fun p vs =>
+  match (outweighsTriples Wd.D).find? (fun t => outweighsName t.1 t.2.1 t.2.2 == p) with
+  | some (a, L, H) => ∃ c ∈ Wd.W.conditions, c.target = .outweighs a L H ∧ c.kind = .sufficient ∧
+      c.condition.denote B (tupleVal vs)
+  | none => if ((offDecisions Wd.D).map (·.1)).contains p then False else B.relation p vs
+
+/-- Plan D2: an empty block adds nothing (proved in the stub by `simp`). -/
+theorem weigh_conservative (D : SoftDoc) (sm : VE.Acts.SplitMap) : weighPremises ⟨D, WeighEnv.empty, sm⟩ = []
+theorem wellFormedWeigh_empty (D : SoftDoc) (sm : VE.Acts.SplitMap) :
+    WellFormedWeigh ⟨D, WeighEnv.empty, sm⟩ = WellFormedSoft D
+```
+
+Why `freeWitness` works, check by check: `Str_T` holds because `ConditionOnStrictPair` leaves a strict pair no
+sufficient condition (its `outweighs` atom is an empty disjunction); a sufficient premise holds by construction (its
+condition mentions no decision symbol, so it reads `B`); a necessary `outweighs` premise holds because each sufficient
+condition implies it (`ConditionsDisagree`, `propImplies_sound`); every switch premise, direct or inherited, holds
+because every switch is off. Each of the two checks is needed: with either bypassed, `Weigh_T` alone admits no
+assignment where `urgent` holds (W-θ, bypassed).
+
+## 6. Theorems (WG-3)
+
+```lean
+namespace VE.Weighing
+open VE.NormDefaults
+
+/-- `weighPack` declares nothing, labels every premise with an origin and exports its sufficient conditions. Proved in
+    the stub by `simp`, against `main`'s `Pack`. -/
+theorem weighPack_shape (Wd : WeighDoc) :
+    (weighPack Wd).id = "weighing" ∧ (weighPack Wd).kind = .constraint ∧ (weighPack Wd).decls = [] ∧
+      (weighPack Wd).consts = [] ∧ (weighPack Wd).labelled = weighLabelled Wd ∧
+      (weighPack Wd).origins.map (·.1) = (weighLabelled Wd).map (·.1) ∧
+      (weighPack Wd).conditions = weighConditions Wd
+
+/-- Certified entailment on a weighing document: RD-9's `acceptanceX` at PK-1's assembled X, whose members are
+    weighing premises or typed by their own provider (`assemble_wellFormed`). -/
+theorem weigh_acceptance (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (unspec : List String)
+    (hw : WellFormedU ⟨soften Wd.D, unspec⟩ = true) (X : List VE.Formula)
+    (hX : ∀ a ∈ X, a ∈ weighPremises Wd ∨ a.WellFormed (envAt (fill ⟨soften Wd.D, unspec⟩) 0) [])
+    (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate)
+    (hv : VE.Tableau.checkCertificate (envAt (fill ⟨soften Wd.D, unspec⟩) (size (fill ⟨soften Wd.D, unspec⟩)))
+      (Wire.premisesX ⟨soften Wd.D, unspec⟩ X Γ) φ cert = true) :
+    EntailsX.{u} ⟨soften Wd.D, unspec⟩ X Γ φ
+
+/-- Conflict-freedom on a weighing document: RD-9's `conflictFreeCheckX_sound` at PK-1's X. -/
+theorem weigh_conflict_free (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (unspec : List String)
+    (hw : WellFormedU ⟨soften Wd.D, unspec⟩ = true) (X : List VE.Formula)
+    (hX : ∀ a ∈ X, a ∈ weighPremises Wd ∨ a.WellFormed (envAt (fill ⟨soften Wd.D, unspec⟩) 0) [])
+    (certs : List (Option VE.Tableau.Certificate))
+    (hc : Wire.conflictFreeCheckX ⟨soften Wd.D, unspec⟩ X certs = true) :
+    Wire.ConflictFreeX.{u} ⟨soften Wd.D, unspec⟩ X
+
+namespace Wire
+
+/-- The strip keeps every other vocabulary entry. -/
+theorem stripWeighing_other (environment : Json) (k : String) (hk : k ≠ "weighing") :
+    ((stripWeighing environment).getObjValD "vocabulary").getObjValD k =
+      (environment.getObjValD "vocabulary").getObjValD k
+theorem stripWeighing_profiles (environment : Json) :
+    VE.NormDefaults.Wire.profilesOf (stripWeighing environment) =
+      (VE.NormDefaults.Wire.profilesOf environment).filter (· != "weighing@0")
+
+/-- The strip is idempotent; `runWeigh_delegates` needs it because the decoder strips the stripped case again. -/
+theorem stripCase_idem (j : Json) : stripCase (stripCase j) = stripCase j
+
+/-- Debate E4 as restated by synthesis edit 3 and the statement review: a case that passes the original envelope
+    and profile validation (`hg`, run before stripping) and has no `weighing` block decodes to the document of its
+    stripped case. `core` is everything a layered kind reads except `envId` and `docHash`, so every layered kind but
+    the `defaults-*` kinds (diagnostic 1, until DF-6) answers as on the stripped case except for those two fields and
+    admission's `report_id`; certificates are bound to the full source and
+    compared through packages rebound to it (W-η). -/
+theorem runWeigh_delegates (j : Json) (hg : weighGate (j.getObjValD "environment") = .ok ())
+    (hb : blockOf (j.getObjValD "environment") = none) :
+    (VE.NormDefaults.Wire.decodeLayered j).map LayeredU.core =
+      (VE.NormDefaults.Wire.decodeLayered (stripCase j)).map LayeredU.core
+
+/-- Identity: a decoded weighing document is bound to the full environment, block included. -/
+theorem weigh_identity (j : Json) (L : VE.NormDefaults.Wire.LayeredU)
+    (hL : VE.NormDefaults.Wire.decodeLayered j = .ok L) :
+    ∃ c, VE.NormDefaults.Wire.canonicalEnvironmentJsonU (j.getObjValD "environment") = .ok c ∧
+      VE.Route.Wire.environmentId (VE.NormDefaults.Wire.profilesOf (j.getObjValD "environment")) c = .ok L.envId ∧
+      ((c.getObjValD "vocabulary").getObjVal? "weighing").toOption = blockOf (j.getObjValD "environment")
+end Wire
+end VE.Weighing
+```
+
+`decodeLayered` in `runWeigh_delegates` and `weigh_identity` is the function after WG-3's edit (3.2), which keeps
+today's type: both statements elaborate as written against today's function, and WG-3's body is what makes them
+true. The stub's stand-in of that body (gate, strip, decode, rebind the identity) gave F7's values. Without `hg` the
+statement is false (F11): the gate refuses cases that stripping would repair (a missing prerequisite, `weighing@0`
+twice, an unsorted list), and with `hg` both sides pass the same gate, the stripped case's own gate included, so the
+two sides decode `stripCase j` and `stripCase (stripCase j)`, equal by `stripCase_idem`; neither has a block, so
+neither adds a pack (3.2 step 5) and the `packs` in `core` agree. `weigh_acceptance` and `weigh_conflict_free` are one-line instances
+of `acceptanceX` and `conflictFreeCheckX_sound` with `hX` discharged by `weighPremises_wellFormed`; `weighX`,
+`weighX_wellFormed` and `runMode_weighing` are deleted (synthesis edits 2 and 3). `weighing-zone` and
+`weighing-record` are item 2's. `weigh_acceptance` and `weigh_conflict_free` hold of the route's answers only once
+WG-3 widens the route (3.2 steps 5 and 7): today `decodeSoftU` assembles only the soft pack, and `SoftLeafX` accepts
+only soft premises. WG-3's regressions (a weighing premise changing an `admission` answer and a certificate answer)
+check that the widening happened.
+
+Weighing's record is `dfltUniform`'s instance only if EXP-D3 proves `record_eq_dflt`. W × At rests on EXP-G1, whose
+fixture must be non-vacuous: the attitude atom decides a weighing guard in at least one model (plan WG-3, synthesis
+round 2).
+
+Two obligations are AR-10's and PK-1's, and WG-3 states them when their interfaces are reviewed: the composition
+theorem for the combinations `weighingRow` newly admits (AR-10's rule), and `Transfers` for the weighing premises on
+the superposed readings route (PK-1 provider obligation 4), which the constitution needs because its translation is
+under `readings@1`. `rights@0` beside `weighing@0` is refused by the row until AR-10's composition proof and a fixture
+both cover that combination; the refusal is a fixture now (W-η).
+
+## 7. Acceptance fixtures (computed)
+
+### 7.1 Frame
+
+Soft 10's frame, as wire JSON: sorts `assistant` and `user`; act X with `x_required` (obligation, deny-by-default,
+permission `x_permitted`) and `x_permitted` (permission, allow-by-default); base predicates as each fixture names
+(`urgent`, `serious`, `emergency`: one `assistant` argument); guards `⊤`; profiles `norms@0`, `relational-fol@0`,
+`soft-norms@0`. "Situation" means the one-element situation `a : assistant`; "assignments" are the subsets of the
+decision atoms at `a` not fixed by the record; "admissible" means satisfying soft's labelled premises
+(`VE.SoftNorms.Wire.softLabelled`) followed by `weighLabelled`; "outcome" is `outcomeBase (soften D) "x_required"` at
+`a` (yes = required). Records are named in each row (plan 4.1, debate concession): "no exception applies" fixes every
+`excepted` atom false.
+
+### 7.2 Synthetic fixtures
+
+**W-α (always).** Soft (α): holistic, decided by the assistant, ranks `a > b`; `h` (rank a) "should do x", `l`
+(rank b) "should not do x"; block `always [[a, b]]`.
+
+| Check | Value |
+|---|---|
+| `Str_T` | `weigh:strength:a:b:x_permitted` = `["forall","assistant",["not",["unary","soft__outweighs__b__a__x_permitted",["var",0]]]]`, origin `environment.vocabulary.weighing.always.0`; `checkWeigh` accepted |
+| record no exception applies: admissible assignments, outcome | `{}` → yes (the only one): **settled yes** |
+| record h's exception applies, l's does not (E1 is pairwise defeat) | accepted; `{excepted_h}` → no (the only one; `Str_T` keeps `outweighs` false): the lower rule decides despite `always` (computed; first found by Astra's Lean evaluation, review round 1) |
+| same, without the block | `{outweighs}` → no; `{}` → yes: soft (α)'s two answers |
+| situation with the `outweighs` atom true | refused, failing labels `[weigh:strength:a:b:x_permitted]` |
+| `always_dominates`, `always_no_override` on the 4 assignments satisfying `Str_T` | both hold on all 4 |
+| without the block (counterexample models) | `always_no_override`'s disjunct holds at `{excepted_h, outweighs}` and `{outweighs}`; `always_dominates` fails at `{excepted_l, outweighs}` |
+
+**W-α′ (draft 1's statement, F1).** Soft (α) under the strict flag, `always [[a, b]]`: warning `StrengthInert: a, b`,
+`Str_T = []`, decisions `[soft__excepted__h, soft__excepted__l]` (no `outweighs`). The raw atom
+`soft__outweighs__b__a__x_permitted` true at `a` makes `OutweighsD` true in a structure satisfying `Str_T`: draft 1's
+conclusion fails. The restated `always_no_override` holds on all 4 assignments.
+
+**W-β (closure).** Ranks `s > e > g > h` (declared `s>e`, `e>g`, `g>h`), holistic; `always [[s, e]]`.
+
+| Check | Value |
+|---|---|
+| ordered pairs | `(s,e)`, `(s,g)`, `(s,h)` strict; `(e,g)`, `(e,h)`, `(g,h)` holistic |
+| all 16 pairs | strict exactly for those 3; `strictPair` = brute-force chain search on 16 of 16 |
+| `strictWitness` | `s,h ↦ [s,e,g,h]`; `s,g ↦ [s,e,g]`; `s,e ↦ [s,e]`; `e,h`, `g,h`, `h,s ↦ none`; each witness a chain with an `always` edge |
+| `always [[e, g]]` instead | strict: `(s,g)`, `(s,h)`, `(e,g)`, `(e,h)` (upward and downward closure) |
+| `always [[g, h]]` instead | strict: `(s,h)`, `(e,h)`, `(g,h)`; `strictWitness s h = [s,e,g,h]` |
+| `strictPair_down`, `strictPair_up` | hold for all 64 rank triples, for each of the 3 placements of one `always` edge |
+| W-β1: rules `ra` (rank s, should do x), `rb` (rank h, should not) | triple `(x_permitted, h, s)`; `Str_T` = `[weigh:strength:s:h:x_permitted]`; record no exception applies: outcomes `{yes}` (no override) |
+| W-β2: ranks e and h instead | triple `(x_permitted, h, e)`, holistic; `Str_T = []`; outcomes `{no, yes}` (override possible) |
+| `strength_iff` | W-β1: premise present, pair strict; W-β2: premise absent, pair holistic |
+| `always_dominates`, `always_no_override`, W-β1 | hold on all 4 assignments satisfying `Str_T` |
+| `all_always_is_strict`, W-β1 | on the 4 assignments, (holistic, strict flag) for "decides yes" / "decides no": `{exc_ra, exc_rb}` (no,no)/(no,no); `{exc_ra}` (no,no)/(yes,yes); `{exc_rb}` (yes,yes)/(no,no); `{}` (yes,yes)/(no,no) |
+| W-β2 (the hypothesis fails) | at `{soft__outweighs__h__e__x_permitted}`: decides yes (no, yes), decides no (yes, no): the two documents differ |
+
+**W-γ (flags).** Strict flag, ranks `s > e`, rules ranked s and e, `always [[s, e]]`: accepted, warning
+`StrengthInert: s, e`, `Str_T = []`, no `outweighs` decision. "e generally outranks g" under the strict flag:
+`GenerallyUnderStrictOutranking` (English layer, WG-4).
+
+**W-δ (necessary override condition).** Soft (α), condition 0: `outweighs (x_permitted, b, a)` necessary
+`urgent(x)`. Premise `weigh:condition:0:necessary` = `∀x. soft__outweighs__b__a__x_permitted(x) → urgent(x)`.
+Record no exception applies:
+
+| Situation | Admissible (outcome) | Zone answer it predicts (item 2) |
+|---|---|---|
+| `urgent(a)` false | `{}` (yes) | settled yes |
+| `urgent(a)` true | `{outweighs}` (no), `{}` (yes) | left to the assistant, on the one `outweighs` atom |
+
+`condition_necessary` is checked on W-δ (and on W-ζ2 and W-μ) over every base and every assignment satisfying
+`Weigh_T`: no assignment has the `outweighs` atom true and `urgent` false (computed, the stub's `condNec`).
+
+**W-ε (sufficient override condition).** As W-δ with `sufficient`:
+
+| Situation | Admissible (outcome) | Predicted |
+|---|---|---|
+| `urgent(a)` true | `{outweighs}` (no) | settled no (L alone selects) |
+| `urgent(a)` false | `{outweighs}` (no), `{}` (yes) | left to the assistant |
+
+`condition_sufficient` is checked on W-ε and θ11 the same way: no assignment has `urgent` (θ11: `urgent` and
+`serious`) true and the `outweighs` atom false. `factors_inert`: W-δ with the factor entry of 3.1 added
+has the same `weighPremises` as W-δ; the control is W-δ against W-ε, whose premises differ.
+
+Through the route (WG-3, after PC-9): W-ε with `--assume-no-exception` answers `UnsupportedProfile: defaults with
+provider conditions is not implemented`; without the flag it routes. W-δ with the flag states no sufficient condition,
+so this guard passes it, and defeasible's diagnostic 1 answers until DF-6 (`UnsupportedProfile: answers that assume no
+exception are not available with weighing@0 yet`). W-ε's row needs PC-9's guard to run before `viewOf`, whose `viewRest`
+would answer diagnostic 1 first.
+
+**W-ζ (grant).** Parties operator and user, strict flag; rule `n`: strict "must do x", `alterable [operator, user]`;
+predicate `operator_allows` with `instruction_of: operator`; grant `(n, user, operator, operator_allows)`. Premise
+`weigh:grant:n:user` = `∀x. soft__off__n__user(x) → operator_allows(x)`, origin `…weighing.grants.0`.
+
+| Record / situation | Admissible (outcome) | Predicted |
+|---|---|---|
+| operator's switch off; `operator_allows(a)` false | `{}` (yes) | settled yes |
+| operator's switch off; `operator_allows(a)` true | `{off_user}` (no), `{}` (yes) | left to the user's switch |
+| no record; `operator_allows(a)` false | `{off_operator}` (no), `{}` (yes) | left to the operator (its own switch is open; why the record is named) |
+
+Diagnostics on the same document: `alterable [user]` only: `DelegationExceedsGrantor: rule n, user, operator`;
+`instruction_of: user`: `GrantNotAttributed: operator_allows, operator`; the grant twice:
+`DuplicateDeclaration: grant n, user`; party `nobody`: `NoSuchDecision: off rule n, nobody`; predicate `emergency`
+(unattributed): `GrantNotAttributed: emergency, operator`; predicate `operator_allows_for` (over assistant and user):
+`InvalidInput: grant predicate operator_allows_for does not take the arguments of rule n`.
+
+**W-ζ cycles (4.5).** W-ζ's frame with predicates `operator_allows` (`instruction_of: operator`) and `user_allows`
+(`instruction_of: user`). A self-grant `(n, user, user, user_allows)`: `DelegationCycle: rule n, user`. A two-party
+cycle, grants `(n, user, operator, operator_allows)` and `(n, operator, user, user_allows)`: each grant passes its own
+checks, then the first in list order is `DelegationCycle: rule n, user`. The chain of W-ζ3 is still accepted (all
+computed from `checkWeigh`).
+
+**W-ζ2 (inherited condition).** W-ζ plus condition 0: `off (n, operator)` necessary `emergency(x)`. Premises:
+`weigh:condition:0:necessary`, `weigh:grant:n:user`, `weigh:grant:n:user:condition:0` =
+`∀x. soft__off__n__user(x) → emergency(x)` (origin `…weighing.conditions.0`). Record: operator's switch off.
+`operator_allows` only: `{}` (yes), the user's switch is forced off; `operator_allows` and `emergency`: `{off_user}`
+(no), `{}` (yes).
+
+**W-ζ3 (grant chain).** Parties developer, operator, user; `alterable [developer, operator, user]`; grants
+`(n, user, operator, operator_allows)` and `(n, operator, developer, developer_allows)`. `grantedThrough n user =
+[developer, operator]`. Premises: `weigh:grant:n:user`, `weigh:grant:n:user:grant:operator` =
+`∀x. soft__off__n__user(x) → developer_allows(x)` (origin `…grants.1`), `weigh:grant:n:operator`. Record: developer's
+and operator's switches off. `operator_allows` only: `{}` (yes); both allow: `{off_user}` (no), `{}` (yes).
+
+Over every base and every assignment satisfying `Weigh_T`: `grant_needed` holds on W-ζ, `grant_within_grantor` on
+W-ζ2 (emergency) and W-ζ3 (developer_allows); the control (W-ζ, user's switch implies `emergency`) fails, so the check
+is not vacuous.
+
+**W-η (conservativity).** For soft (α), W-β1, W-β2, W-γ, W-ζ, W-ζ3, W-κ and W-λ's soft documents: `weighPremises` of
+the empty block is `[]`, and `WellFormedWeigh ⟨D, empty⟩ = WellFormedSoft D = true`. Soft (α) with its rules listed
+twice: `false = false`. Through the route (WG-3): every soft fixture α to υ under `weighing@0` and `norm-defaults@0` with no block passes
+the gate, decodes to the document of its stripped case (`runWeigh_delegates`) and answers as it (the four `defaults-*`
+kinds apart: they answer diagnostic 1 until DF-6, and WG-3 moves the guard at `Defaults/WireExamples.lean:71` to that
+text), except `environment_id`, `document_hash` and admission's `report_id`, which W-η compares separately (F7);
+`base_environment` is the stripped
+environment's and is compared with `core`. Certificate answers are compared through packages rebound to the full
+case's identity: a package made for the stripped case, rebound, answers as the full case's own.
+
+Refusals, each answered by the gate before anything is stripped (`hg` excludes them from `runWeigh_delegates`); WG-3
+records each exact text from Lean through the route, and `stripCase` returns, without a panic, on every one
+(`stripCase_idem` holds on each). Every text below is computed by `weighGate`'s body over the table with
+`weighingRow` (1.8):
+
+| Case | Gate's answer | Stripped case (why the gate is needed) |
+|---|---|---|
+| profiles `[norm-defaults@0, norms@0, relational-fol@0, weighing@0]`, no block (missing prerequisite) | `UnsupportedProfile: weighing@0 requires soft-norms@0` | `UnsupportedProfile: the layered norm-defaults branch needs soft-norms@0 or rights@0` (F11) |
+| profiles `[norms@0, relational-fol@0, soft-norms@0, weighing@0]`, no block (refresh: `norm-defaults@0` missing) | `UnsupportedProfile: weighing@0 requires norm-defaults@0` | — |
+| `j = {}` | `UnsupportedProfile: profiles must be a sorted unique array` | draft 1's `stripCase` panicked here (F11) |
+| malformed envelope: `environment` not an object; `profiles` a string | `UnsupportedProfile: profiles must be a sorted unique array` | — |
+| `weighing@0` twice | `UnsupportedProfile: profiles must be sorted and unique` | draft 1's strip removed both entries and decoded |
+| profiles unsorted | `UnsupportedProfile: profiles must be sorted and unique` | — |
+| `rights@0` with `weighing@0` (ruling item 12) | `UnsupportedProfile: weighing@0 with rights@0` | — |
+| a `weighing` block with `weighing@0` off | `UnsupportedProfile: the weighing block requires weighing@0` | — |
+
+Combined fault (diagnostic precedence, 3.2): soft (α) under `weighing@0` with its rules listed twice and a block with
+an unknown field answers exactly as its stripped case does (soft's text), never `InvalidInput: invalid weighing block`.
+
+**W-θ (diagnostics).** On soft (α) unless named; condition indexes from 0.
+
+| # | Block | Answer |
+|---|---|---|
+| θ1 | `always [[b, a]]` | `StrengthOnUndeclaredEdge: b, a` |
+| θ2 | `always [[a, b], [a, b]]` | `DuplicateDeclaration: strength a, b` |
+| θ3 | necessary on `outweighs (x_permitted, a, b)` | `NoSuchDecision: outweighs x_permitted, a, b` |
+| θ4 | condition `x_required(x)` | `InvalidInput: condition 0 mentions x_required` |
+| θ5 | condition `∀y:assistant. urgent(y)` | `InvalidInput: condition 0 is not quantifier-free` |
+| θ6 | condition `urgent(var 1)` | `UnboundVariable: Variable index 1 is outside its scope` (W1's text) |
+| θ7 | `always [[a, b]]`, sufficient on `outweighs (x_permitted, b, a)` | `ConditionOnStrictPair: outweighs x_permitted, b, a` |
+| θ8 | W-β1, `always [[s, e]]`, condition on `outweighs (x_permitted, h, s)` | `ConditionOnStrictPair: outweighs x_permitted, h, s` (through the closure) |
+| θ9 | W-ζ, sufficient on `off (n, user)` | `InvalidInput: condition 0 on a switch must be necessary` |
+| θ10 | sufficient `urgent`, necessary `¬urgent` (the regression: contradictory conditions) | `ConditionsDisagree: the checker cannot show that condition 0 implies condition 1` |
+| θ11 | sufficient `urgent ∧ serious`, necessary `urgent` | accepted; record no exception applies: `urgent(a)` false, outside the sufficient condition: `{}` (yes) only, the necessary condition forces the finding "no" (settled yes); `urgent` only: `{outweighs}` (no), `{}` (yes); both: `{outweighs}` (no) only (computed). So E4's paraphrase may not say that the decider decides outside its condition (2.1) |
+| θ12 | sufficient `urgent`, necessary `urgent ∧ x = x` | `ConditionsDisagree: …` (valid, but not propositionally: the check is incomplete and says "cannot show") |
+| θ13 | 17 factors | `InvalidInput: invalid factors 0` |
+| θ14 | factors on `outweighs (x_permitted, a, b)` | `NoSuchDecision: outweighs x_permitted, a, b` |
+| θ15 | necessary condition of depth 63 (62 negations of `urgent`) | `ResourceLimit: generated weighing premise weigh:condition:0:necessary` |
+| θ16 | the same at depth 61 | accepted |
+| θ17 | W-β2, `always [[s, e]]`, condition on `outweighs (x_permitted, h, e)` | accepted (holistic through the closure) |
+| θ18 | soft (α) under the strict flag, condition on `outweighs (x_permitted, b, a)` | `NoSuchDecision: outweighs x_permitted, b, a` |
+| θ19 | soft (α) with base predicates `p0` to `p12`; sufficient `p0 ∧ … ∧ p11`, necessary `p0` (12 distinct atoms) | accepted |
+| θ20 | the same with sufficient `p0 ∧ … ∧ p12` (13 distinct atoms) | `ResourceLimit: conditions 0, 1` |
+
+**W-θ, bypassed (why θ7 and θ10 exist).** With `checkWeigh` skipped, `Weigh_T` alone (no soft premise) on θ7's block
+admits 0 assignments where `urgent(a)` holds and 4 where it does not; on θ10's block, 0 and 8. So without either
+check, X would certify `∀x. ¬urgent(x)`, a fact about the world; and any zone answer at an urgent situation would be a
+vacuous "settled" (Astra's regression). Item 2 answers "inconsistent at this situation" instead: with X = soft's
+premises and `Weigh_T`, every one of the 8 assignments at `urgent(a)` true is refuted, θ7's by
+`[weigh:condition:0:sufficient, weigh:strength:a:b:x_permitted]` and θ10's by
+`[weigh:condition:0:sufficient, weigh:condition:1:necessary]` (first refuted premise per assignment, deduplicated and
+sorted; soft's coherence premise of a comparable pair is valid, F2). This is an internal counterexample,
+reachable only by bypassing admission: the ordinary answer to both documents is θ7's and θ10's refusal, which stay
+fixtures.
+
+**W-κ (mandatory regression, synthesis edit 1).** Parties operator and user; `ra` "should do x" with
+`alterable [operator]`, `rb` "should not do x" with `alterable [user]`, both unranked, exceptions forbidden
+(necessary condition `⊥`); conditions 0 and 1: `off (ra, operator)` and `off (rb, user)` necessary `urgent(x)`.
+Accepted. X labels: `soft:exception:ra:necessary:0`, `soft:exception:rb:necessary:0`, `soft:coherence:ra,rb`,
+`weigh:condition:0:necessary`, `weigh:condition:1:necessary`. The pair `(ra, rb)` collides and is not comparable.
+
+| Premises | `urgent(a)` false | `urgent(a)` true |
+|---|---|---|
+| X (soft and weighing) | 0 admissible assignments of the 16 | 3 |
+| soft alone | 3 | — |
+| `Weigh_T` alone | 4 | — |
+
+X entails `urgent`: weighing is a constraint on existing decisions, not a conservative extension.
+
+With no record, every decision atom is open, and with nothing assigned every premise of X evaluates to Kleene `none`
+(F12), so no single premise is refuted. The evidence is the complete enumeration of the 16 assignments at `urgent(a)`
+false, each refuted by the first premise of X (in X's order, the five labels above; `Fill_T = []`) that it falsifies
+(computed):
+
+| `excepted_ra` | `excepted_rb` | `off_ra_operator` | `off_rb_user` | first refuted premise |
+|---|---|---|---|---|
+| false | false | false | false | `soft:coherence:ra,rb` |
+| false | false | false | true | `weigh:condition:1:necessary` |
+| false | false | true | false | `weigh:condition:0:necessary` |
+| false | false | true | true | `weigh:condition:0:necessary` |
+| false | true | false | false | `soft:exception:rb:necessary:0` |
+| false | true | false | true | `soft:exception:rb:necessary:0` |
+| false | true | true | false | `soft:exception:rb:necessary:0` |
+| false | true | true | true | `soft:exception:rb:necessary:0` |
+| true | false | false | false | `soft:exception:ra:necessary:0` |
+| true | false | false | true | `soft:exception:ra:necessary:0` |
+| true | false | true | false | `soft:exception:ra:necessary:0` |
+| true | false | true | true | `soft:exception:ra:necessary:0` |
+| true | true | false | false | `soft:exception:ra:necessary:0` |
+| true | true | false | true | `soft:exception:ra:necessary:0` |
+| true | true | true | false | `soft:exception:ra:necessary:0` |
+| true | true | true | true | `soft:exception:ra:necessary:0` |
+
+No branch survives. Predicted zone answer (item 2, plan D9): "inconsistent at this situation", with the labels Lean
+computes, deduplicated and sorted: `[soft:coherence:ra,rb, soft:exception:ra:necessary:0,
+soft:exception:rb:necessary:0, weigh:condition:0:necessary, weigh:condition:1:necessary]`, all five X labels; the two
+`soft:exception:*` labels come from the branches with an `excepted` atom true. This is the plan's regression for a
+complete refutation.
+
+**W-λ (split names, synthesis edit 8).** Rules `n-a1` and `n-a2` (strict, `alterable [user]`), AP's map
+`n-a1 ↦ (n, 1)`, `n-a2 ↦ (n, 2)`. A condition on `off (n, user)`: AP's refusal (`InvalidInput: rule n names a predicate
+that is split into parts; name one of its parts`); on `off (n-a1, user)`: accepted. Without the map, `off (n, user)`
+is `NoSuchDecision: off rule n, user`. On soft (α) with `x_permitted` in the map's predicates, a condition on
+`outweighs (x_permitted, b, a)` is AP's refusal with the role `act`. OPEN-5 (10).
+
+**W-μ (argument order).** Every other fixture is unary on a one-element situation, so the order of the arguments
+(`(targetSorts _).reverse`, `tupleVal`, `atom`'s `.binary p (var 1) (var 0)`) is never exercised. Parties operator
+and user, strict flag; act Y with `y_required(assistant, user)` (obligation, deny-by-default, permission
+`y_permitted`) and `y_permitted(assistant, user)` (permission, allow-by-default); base predicates `trusts(assistant,
+user)` and `operator_allows_for(assistant, user)` with `instruction_of: operator`; rule `n`: strict "must do y",
+`alterable [operator, user]`. Condition 0: `off (n, operator)` necessary `trusts(x, u)` (wire
+`["binary", "trusts", ["var", 1], ["var", 0]]`); grant `(n, user, operator, operator_allows_for)`. Premises:
+`weigh:condition:0:necessary`, `weigh:grant:n:user`, `weigh:grant:n:user:condition:0` (the user's switch inherits
+`trusts`). Situation: assistants `a1`, `a2`, users `u1`, `u2`; `trusts = {(a1, u2)}`, `operator_allows_for =
+{(a1, u2), (a2, u1)}`; no record. Expected:
+
+| Check | Value |
+|---|---|
+| `checkWeigh` | accepted |
+| admissible assignments of the 8 decision atoms (2 switches × 4 tuples) | 4 of 256: every subset of `{off_operator(a1, u2), off_user(a1, u2)}` |
+| outcome of `y_required` at `(a1, u2)` | yes in `{}`, no in the other three: left to the operator and the user (item 2) |
+| at `(a2, u1)` (granted, not trusted) | yes only: the user's switch is forced off through the inherited `trusts` |
+| at `(a1, u1)`, `(a2, u2)` | yes only |
+| the condition with its indices swapped (`trusts(var 0, var 1)`) | refused by the typing check (4.4): `TypeMismatch: Predicate 'trusts' expects ('assistant', 'user'), received ('user', 'assistant')` |
+
+Seeded-bug record (WG-2): swapping the index in `(targetSorts _).reverse`, in `tupleVal` or in `atom`'s
+`.binary p (var 1) (var 0)` must fail this fixture; WG-2 records each with the failing check. Since the two sorts
+differ, a swapped tuple is ill-sorted and never in a relation, so each swap changes the admissible set or refuses the
+document.
+
+**W-ι (identity, WG-3).** Soft (α)'s environment under `norm-defaults@0`, `norms@0`, `relational-fol@0`, `soft-norms@0`
+and `weighing@0`: with no block, with the block `{"always": [["a","b"]]}`, and with that block plus one factor entry:
+today's `canonicalEnvironmentJsonU` keeps the block, and the three `environment_id`s differ (`025c8e3d…`, `9bf0a856…`,
+`1eb9fdd2…`). A certificate made for one and replayed on the other is refused with the stale-binding
+text (WG-3, through `bindCertX`).
+
+**`weigh_alone_base_free` on the accepted fixtures.** On W-α, W-β1, W-δ, W-ε, W-ζ, W-ζ2, W-ζ3 and W-κ, for every
+subset of the base atoms and every `excepted` assignment, `freeWitness` satisfies `weighPremises`.
+
+### 7.3 Both directions of every "exactly when"
+
+| Claim | Holds (one direction) | Fails (the other) |
+|---|---|---|
+| D4 / `holistic_iff_no_always_chain` / `strictWitness_isSome` | W-β: 3 strict pairs, each with a witness chain | W-β: 13 pairs, no chain with an `always` edge (e.g. `e,g,h`), witness `none` |
+| `strength_iff` | W-β1 `(s,h)`: premise present | W-β2 `(e,h)`: absent; W-γ: no triple, absent. Two accepted documents falsify draft 1's unrestricted statement (regressions, never refusals): W-α with the lower rank `b_`, query `(x_permitted, b, _a)` builds the name of the real triple `(x_permitted, b_, a)`: membership true, right side false; neither `b` nor `_a` declared (F9); W-α with ranks `c > c_` (`always [[c, c_]]`), query `(x_permitted, c, _c)` builds the name of the real triple `(x_permitted, c_, c)`: membership true, right side false; `c` declared, `_c` not, so `hH` alone excludes it (F13). A third accepted document is a name collision the unrestricted statement survives: ranks `c`, `c_`, `l` with triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)` builds the same name, but `_x_permitted` is undeclared, its formula is `¬⊥`, and both sides are false; `ha` alone excludes it (F10). All three computed by the stub's `#eval`. F19 (wg-2-siff; named F14 in reviews/dri-decisions-20261104-wg-2-strength.md item 2; renumbered by reviews/dri-decisions-20261105-wg-2-siff.md item 1): two documents built directly, never decoded (the decoder refuses a `_`-initial name, "Invalid ASCII identifier"), falsify the statement without `hr`: `cxW` (ranks `c`, `c_`, `l`, triple `(x_permitted, l, c_)`, a regulated `_x_permitted` added), query `(_x_permitted, l, c)`: every other hypothesis holds, membership true, right side false; and its mirror `mxW` (the act renamed `_x_permitted`, a regulated `x_permitted` added, triple `(_x_permitted, l, c)`), query `(x_permitted, l, c_)`: the queried name begins with a letter, membership true, right side false, so `hr` is needed for every regulated name, not the queried one alone. W-β1/W-β2/W-γ, F9/F10/F13, and both F19 documents have `#guard` regressions in `lean/VE/Weighing/Examples.lean`; F10 checks the undeclared act and the false/false result, so it does not establish that `ha` is needed |
+| `all_always_is_strict` (↔) | W-β1: assignments with both sides yes | W-β1: assignments with both sides no; W-β2 shows `hall` is needed |
+| `wellFormedWeigh_empty` (=) | W-η: 8 documents, `true = true` | soft (α) with duplicate rules: `false = false` |
+| `factors_inert` (=) | W-δ with a factor entry: premises unchanged | control: W-δ against W-ε (a condition's kind changed): premises differ |
+| E1, pairwise defeat | W-α, no exception applies: the higher rule decides | W-α, h's exception applies: the lower rule decides despite `always` |
+| necessary override condition (`condition_necessary`) | W-δ, `urgent` false: forced yes | W-δ, `urgent` true: open |
+| sufficient override condition (`condition_sufficient`) | W-ε, `urgent` true: forced no | W-ε, `urgent` false: open |
+| E4's "outside this condition" | θ11, `urgent` false: forced yes by the necessary condition | θ11, `urgent` only: open |
+| grant (`grant_needed`) | W-ζ, not allowed: switch forced off | W-ζ, allowed: switch open |
+| inheritance (`grant_within_grantor`) | W-ζ2 emergency false, W-ζ3 developer not allowing, W-μ `(a2, u1)`: forced off | both hold: open (W-μ `(a1, u2)`); control without the condition fails |
+| argument order | W-μ: 4 admissible assignments | each seeded swap: a different set, or a refusal |
+| `DelegationCycle` | W-ζ cycles: self-grant, two-party cycle | W-ζ3's chain: accepted |
+| `ConditionOnStrictPair` | θ7, θ8 | θ17, W-δ |
+| `ConditionsDisagree` | θ10, θ12 | θ11 |
+| `ResourceLimit: conditions i, j` (`maxPropAtoms`) | θ20, 13 atoms | θ19, 12 atoms: accepted |
+| `DelegationExceedsGrantor` | `alterable [user]` | W-ζ |
+| `GrantNotAttributed` | `instruction_of: user`; `emergency` | W-ζ |
+| generated-premise limit | θ15 | θ16 |
+| AP's split refusal | W-λ, `n` | W-λ, `n-a1` |
+| the gate (`runWeigh_delegates`' `hg`) | W-η refusals, each answered by the gate | soft fixtures under `weighing@0` without a block: pass, decode as stripped |
+| W-κ: X admits nothing | `urgent` false: 0, every one of the 16 branches refuted | `urgent` true: 3 |
+
+### 7.4 WG-3 probes on today's layered decoder (`rd-9/integrate`)
+
+These are history (2026-10-13, `rd-9/integrate`). On `main` the layered branch runs only when `norm-defaults@0` is
+listed (F6; 1.7), so WG-3 re-runs these probes with it.
+
+| Case | Answer |
+|---|---|
+| soft (α) under `soft-norms@0`, no `norm-defaults@0` | decodes: route `soft-norms@0`, `unspec = []`, X `[soft:coherence:h,l]`, `envId cb371a0b…` |
+| the same with `weighing@0` and no block | `UnsupportedProfile: Unsupported profile weighing@0` |
+| stand-in for WG-3's decoder on that case, and its stripped case | both decode to the same document; `envId abba5441…` against `cb371a0b…` |
+| `stripWeighing` of soft (α) with `weighing@0` and a block | exactly soft (α)'s environment; profiles `[norms@0, relational-fol@0, soft-norms@0]` |
+
+### 7.5 The constitution (WG-5, pilot branch, through `ve document`)
+
+Unit ids and spans come from the pilot's ledger at WG-0 (research 2.5 is unfilled; plan 4.2). They are re-anchored on
+run `20261028T0600Z` (1,133 units). The census of 2026-10-28 puts WG in either role on 132 units, 25,225 B: census
+bytes, not a forecast. WG-0 is still DEFERRED, now until the RD-9-owned document-routing repair and the part-document
+design (plan 5.0), so these rows still name sources, not units.
+
+| Fixture | Source | VE sentences | Expected |
+|---|---|---|---|
+| C-2 | :40 "even if Claude is confident in its reasoning" | the safety edge as C-1 declares it; no `always` entry and no reading set on its strength (:34 says the order is holistic, :40 that the safety step is robust; under profile-composition rule 8 that choice has no candidate form: plan 2.8 W-R1) | GAP-W1 on the strength, its words UNFORMALISED, the unit OPEN; never READINGS. The two sentences stay 7.6's minimal pair, each read on its own and accepted by exactly one reader (wg-rev, WG-R1) |
+| C-3 | :42 "Exceptions to this are any hard constraints … and any cases where Anthropic's guidelines overlap with broad safety" | the hard constraints are strict rules (already); guideline rules overlapping safety carry rank safety (a narrowing per rule, attributed) | OPEN (the overlap is an open classification) |
+| C-4 | :138 "operators cannot grant users more than operator-level trust" | grants on the instructable-behaviour rules | CHECKED where the rules are declared: `DelegationExceedsGrantor` and the inherited conditions (`grant_within_grantor`) are the checked content |
+| C-5 | :405-423 instructable behaviours | default rules `(operators may turn off)` / `(users may turn off)` with grants where the source says "absent increased or decreased trust granted by operators" | OPEN (each default's exception) |
+| C-6 | :443 "cannot be unlocked by any operator or user" | soft's `hard: true` narrowing | CHECKED (`HardConstraintAltered`) |
+| C-8 | u0135.s03's shape: a list item (:332-343) under a lead-in that says what the items bear on, with no collision the source states | no E5 line and no added rule or frame (plan 2.8 W-R2). Each item is one verbatim string in the quoted form (W-R3), as soft's `factors` on the rule the source ties it to, only where that rule is in the document and the item bears on whether it is excepted | no `weighing` block entry from the unit; otherwise GAP-W2. Control: the item as an E5 line with no stated collision is `NoSuchDecision: outweighs <act>, <lower>, <higher>` (θ14) (wg-rev, WG-R2) |
+| C-9 | u0183's shape: considerations stated for one assessment ("In the weighing the harms at stake", in the power-concentration passage :463-479), with a duty to consider them | as C-8, declared only on the rule of that assessment, never on every requested action. The duty is main's `should`. Every item is quoted, never reworded (W-R3) | no factor on a target wider than the source's assessment; with no such rule in the document, GAP-W2 (wg-rev, WG-R2) |
+
+WG-5's required evidence, per new grant (debate split): the situation where the grantee's switch is on and the grant
+is off is refused by `modelCheckX`, citing `weigh:grant:<rule>:<party>` (W-ζ's shape on a real rule). The zone answer
+per grant is WG-8's.
+
+### 7.6 English fixtures (en-wg, in Lean; WG-4 through the service)
+
+The values are computed in Lean by en-wg. Accepting a well-formed wire object is not enough: each check compares the
+returned object with the original sentence.
+
+**Source and object agree (plan W-ν).** Each seeded bug must fail a fixture:
+
+| Seeded bug in en-wg | Fixture that must fail |
+|---|---|
+| drop `always` (E1 returned as E2) | W-α's E1 sentence: expected the `always` edge `(a, b)`, so an object without it fails |
+| swap necessary and sufficient (E3 returned as E4) | W-δ's E3 sentence: expected `kind = necessary` |
+| swap sufficient and necessary (E4 returned as E3) | W-ε's E4 sentence: expected `kind = sufficient` |
+
+**Frames and objects (2.5), computed by `readFrame` in the stub.** On W-α's, W-δ's, W-ε's and W-ζ's documents, with
+the act `x_permitted`:
+
+| Frame | Object or refusal |
+|---|---|
+| `.always a b` | `.always a b` |
+| `.generally a b`, holistic | `.edge a b` |
+| `.generally a b`, W-α′ (strict flag) | `GenerallyUnderStrictOutranking: a, b` |
+| `.onlyWhen x_permitted b a urgent` | W-δ's condition: `.condition ⟨.outweighs x_permitted b a, .necessary, urgent⟩` |
+| `.whenever x_permitted b a urgent` | W-ε's condition, `.sufficient` |
+| `.account x_permitted b a fs` | `.factors ⟨.outweighs x_permitted b a, fs⟩` |
+| `.switchOnly operator n emergency` | W-ζ2's condition 0 |
+| `.switchWhen user n emergency` | `InvalidInput: a switch condition must say "only when"` |
+
+**Two readers, disjoint (plan W-ξ, 2.4).** The disjointness list is these sentences; `R` is the reader that accepts,
+and the other refuses:
+
+| Sentence | R |
+|---|---|
+| `Safety always outranks ethics.` (E1, C-2) | en-wg |
+| `Safety outranks ethics.` (C-2) | soft |
+| `Safety generally outranks ethics.` (E2, holistic flag) | en-wg |
+| E3, E4, E5, E6, E7 and E7′ on W-δ's, W-ε's and W-ζ2's documents | en-wg |
+| `Safety and ethics are not ranked.` | soft |
+| `Outranking in this document is strict.` | soft |
+| `Outranking in this document is holistic; the assistant decides when a lower-ranked rule outweighs a higher-ranked one in a situation.` | soft |
+| `Exceptions to rules in this document are decided by the assistant, unless a rule says otherwise.` | soft |
+| `"The operator allows it records an instruction of operator."` | soft |
+
+The soft column was run through `parse_declaration` at `main` `9ba2140e2`: it refuses E1, E2's synonym and E3 to E7′,
+and accepts the six soft sentences. The en-wg column is en-wg's and WG-4's to run.
+
+The seeded-bug fixtures, the minimal pair and the soft-frame refusals stay selected once built (DRI condition).
+
+**Resolving E7's "allows it".** On W-ζ2's frame (rule `n` over one `assistant` argument; `operator_allows_for` is attributed to the operator but
+takes two arguments, so it is never a candidate):
+
+| Fixture | Text | Expected |
+|---|---|---|
+| one match | W-ζ2's document; "Users may turn off rule n only where the operator allows it." | accepted: the grant `(n, user, operator, operator_allows)`, W-ζ2's premises |
+| zero matches | the same with `operator_allows` attributed to the user | `InvalidInput: rule n: no predicate records an instruction of operator over this rule's arguments; declare one first` |
+| several matches | W-ζ2 plus `operator_permits` (`instruction_of: operator`, one `assistant` argument) | `InvalidInput: rule n: several predicates record an instruction of operator; add one of: namely where the operator allows it; namely where the operator permits it`, with those two verbalisations |
+| the offered form | E7′ naming `operator_allows` on the several-match document | accepted subject to the grant checks: the same `GrantDecl`, and the user's switch inherits `emergency` (`grant_within_grantor`); the control without the operator's condition (W-ζ) fails, as in 7.2 |
+
+## 8. Not claimed
+
+- That any finding is right, or that a decider weighed the declared considerations (E5's paraphrase says so).
+- That X is conservative over the base. Through soft coherence, switch and override conditions can leave a situation
+  with no admissible decision assignment, and X then entails base facts (W-κ entails `urgent`). The guarantee is
+  `weigh_alone_base_free`: `Weigh_T` alone never does.
+- Completeness of `propImplies`: equality and definitions are not read (θ12); its text says "cannot show".
+- That a grant cycle would be unsound: `DelegationCycle` is a restriction of `weighing@0` (1.6), not a soundness
+  necessity.
+- That the higher rule of a strict pair finally decides: E1 and `always_dominates` are pairwise defeat by an effective
+  higher rule (W-α, h's exception applies).
+- Anything about collisions between different acts. They are residual: WG-E1 failed its bar (1 of 40 sampled CROSSACT
+  units were two exclusive positive acts, 95% upper bound 0.13, and none would change a checked answer;
+  [weighing-phase1.md](../research/weighing-phase1.md) 2.3), WG-10 is closed, and no exclusive-act construct is
+  planned (plan D14).
+- `Transfers` on the readings route and AR-10's composition theorem: stated by WG-3 once PK-1 and AR-10 are reviewed
+  (section 6).
+- That `--assume-no-exception` works on a `weighing@0` document: the defaults kinds refuse every one until DF-6, and
+  one with a sufficient condition until EXP-D3 and DF-U (1.7).
+- One reading by a single parser, until E3. Two readers share the rank sentences, so one reading is a disjointness
+  claim, tested by 7.6's fixtures (2.4), not proved of one grammar.
+
+## 9. Questions for the statement review, answered
+
+Reviewed by Astra and Fable (`manage-agents/debates/weighing-spec/`); Astra converged in round 2, Fable held two points
+through round 3, and the DRI's ruling (`DRI-RULING.md`) settled the verdict FIX. Draft 2 carries all 14 items; draft 3
+completes item 1's two falsifying regressions after the bounded re-check (F13).
+
+1. `maxPropAtoms = 12`, and a pair over it refused (`ResourceLimit: conditions i, j`), never answered: kept, with
+   boundary fixtures θ19 and θ20 (item 11).
+2. `ConditionOnStrictPair` on necessary conditions too: kept (item 11).
+3. Grant cycles: refused, self-grants included (`DelegationCycle`, 4.5), as an explicit restriction of `weighing@0`;
+   `grant_within_grantor` no longer describes the `ρ = π` case (item 6).
+4. `runWeigh_delegates`: compares `core`, now everything a layered kind reads except `envId` and `docHash`, under the
+   gate hypothesis `hg`, with a total strip and `stripCase_idem` (item 2).
+5. 2.3's paraphrases: E2's second case stands; E1 and E2 say pairwise defeat by an effective higher rule; E4 no longer
+   says the decider decides elsewhere (items 3 and 4).
+6. `rights@0` with `weighing@0`: refused by the row until AR-10's composition proof and a fixture cover it; the
+   refusal is a fixture now (item 12).
+
+## 10. OPEN lines, RULED
+
+Each was a choice the plan and the frozen contracts left open, and this file did not guess it. All eleven are
+RULED by `reviews/dri-decisions-20261102-wg-1.md` items 2 to 4 (recorded by wg-rev, item 5). Each line keeps its original text after the ruling. No
+statement here changes for them; the rulings bind the batches named below, and a batch that needs a statement for
+one states it at its own gate. None blocks WG-2:
+OPEN-1 to OPEN-3, OPEN-7 and OPEN-8 bind en-wg, OPEN-4, OPEN-6 and OPEN-9 to OPEN-11 bind WG-3, and OPEN-5 binds the
+act-phrases prerequisite.
+None of them moves a fixture's object, premises or refusal text; OPEN-3 may respell the sentence of 7.6's one-match row.
+
+- **OPEN-1, `<act phrase>` (en-wg).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 2:** An `<act phrase>` resolves to an act key only through a row en-wg states; a phrase that matches no row or names no act is refused, and no gerund is guessed. Originally: The plan's examples are gerunds ("on doing x", "on complying with an operator
+  instruction"), while a regulated predicate's `act` is `{0} do x`. No statement says how a phrase resolves to soft's
+  act key, or what a phrase that names no act answers.
+- **OPEN-2, `<condition>` and `<verbalisation of p>` (en-wg).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 2:** The condition slot is read by Lean only; until en-wg states the nonterminal, the pronoun context and the verbalisation, a sentence with an embedded condition is refused, and Python's `_guard_text` is never relayed as Lean's rendering (D12). Originally: "Embedded conditions included" names no grammar entry.
+  Lean has no reader of soft's condition sentences: `Rule <i> is excepted when …` is read and rendered in Python
+  (`ve/norm_english.py`). Open: which nonterminal reads the slot, how its pronouns bind to the context
+  `(targetSorts t).reverse`, how a verbalisation resolves to its predicate, and how Lean gets the rendering that 2.3
+  attributes to soft's verbalisation (D12 gives it to Lean; today it is Python's `_guard_text`).
+- **OPEN-3, party spelling (en-wg).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 2:** Parties map through an explicit table in en-wg's statements (`Users` to `user`, `the operator` to `operator`), and anything else is refused; `rule n` is the rule's number, and a rule name there is refused. Originally: The sentences say "Users" and "the operator", the fixtures' parties are `user` and
+  `operator`, and soft's header writes party names literally (`users may turn off`). No statement maps one to the other.
+  Also open: whether `rule n` is the rule's number or its name. The plan's example is "rule 7"; `ve/norm_english.py`
+  numbers rules, and `ve/document/render.py` names them.
+- **OPEN-4, an attitude atom in a condition (WG-3).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 3:** An attitude atom in a condition is refused, by 1.6's check as written; admitting it needs its own ruling after AT-3a and EXP-G1. Originally: Plan WG-3 lets a condition hold an attitude atom. 1.6 requires a
+  condition to type over `D.E` and to mention base predicates of `E` only, which a pack's generated name is not. The
+  environment that check reads depends on AT-0's hook point, AT-3a and EXP-G1. WG-2 builds D6's check as written;
+  admitting an attitude atom would restate `checkWeigh` and `weighPremises_wellFormed`, which meets OPEN-6's
+  additions-only question.
+- **OPEN-5, a target on a split part (the act-phrases prerequisite).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 4:** Unreachable while `acts@0` refuses `soft-norms@0`, so WG-2 builds W-λ as written; when that refusal lifts, a target on a split part is refused until a ruling covers it (request row in plan 6.1). Originally: Plan D6 and W-λ let a target name a generated
+  part and refuse the source rule. Under profile-composition 1.10 and PC-6, parts share the source's decision: a
+  condition on `off (n-a1, u)` then constrains every part, the source's `off (n, u)` is the decision's key, and
+  `grantConds` compares written rule names, so a grant on `n-a2` inherits neither a condition nor a grant on `n-a1`'s
+  switch. Unreachable while `acts@0` refuses `soft-norms@0`, so WG-2 builds W-λ as written.
+- **OPEN-6, `decodeLayered_conditions` (WG-3).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 3:** WG-3 may restate `decodeLayered_conditions` so it excludes the weighing pack's block, the one exception to WG-3's additions-only rule, with the exact text passing WG-3's statement gate; the verdict side is not signed, and the refusal becoming reachable needs its own DELTA row. Originally: That theorem (`NormDefaults/PacksExamples.lean`) says every pack of a
+  decoded layered source has empty `conditions`. It stops being true once WG-3 adds `weighPack` to a block with a
+  sufficient condition (F14), so WG-3 changes an existing statement, where the batch rule says additions only. No
+  standing ruling is cited here for that change.
+- **OPEN-7, paraphrase wording (en-wg's templates).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 2:** This file's wordings are the templates, since the fixtures and the comprehension check name them. Originally: Plan 2.2 and 2.1 and 2.3 here word E6, E7 and the holistic pair
+  differently, with the same reading. Which text is the template is not stated. This file's are the ones the fixtures
+  and the comprehension check name.
+- **OPEN-8, `generally` on an undeclared edge (en-wg).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 2:** en-wg's reader refuses `generally` on an edge or rank the document lacks; no environment editor is added. Originally: `.edge a b` reaches no check, so no statement says who refuses
+  it when the document lacks that edge or rank, or with what text. `parse_declaration` leaves the comparison to an
+  "environment editor" that has no caller on `main`.
+- **OPEN-9, rule-and-rank priority (WG-3).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 3:** The refusal stands as profile-composition 1.8 and 2.3 word it; WG-3's statement gate names the tokens and the trigger. Originally: profile-composition 1.8 and 2.3 have WG-3's specification refuse a priority
+  between a rule and a rank as `UnsupportedProfile: <rule-priority token> with <rank-priority token> is not
+  implemented`, with tokens WG-3 registers. Neither the tokens nor the trigger is stated.
+- **OPEN-10, `StrengthInert`'s carrier (WG-3).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 3:** No new wire field; on the layered route, which has no warnings field, a document whose strength would be inert is refused rather than losing `StrengthInert` silently. Originally: D5 requires the warning, and the layered route's answers have no
+  warnings field.
+- **OPEN-11, `"weighing": {}` (WG-3).** **RULED, `reviews/dri-decisions-20261102-wg-1.md` item 3:** `"weighing": {}` is refused, and no empty pack is added. Originally: Refused, or treated as absent. If decoded as `WeighEnv.empty` and present,
+  step 5 adds an empty pack.
+
+## Change log
+
+| Date | Revision | Changes |
+|---|---|---|
+| 2026-10-13 | Draft 1 | WG-1's item-1 statement specification for weighing-PLAN.md draft 2: definitions, English, wire, diagnostics, WG-2 and WG-3 theorems, fixtures W-α to W-λ and C-2 to C-6. Every statement elaborated in an untracked stub against `rd-9/integrate` (equal to `main` on the files read); every fixture value computed by `#eval` from wire JSON through Lean's soft decoder. Findings F1 to F8. |
+| 2026-10-13 | Draft 2 | The statement review's ruling (`manage-agents/debates/weighing-spec/DRI-RULING.md`), items 1 to 14, with weighing-PLAN.md draft 3. Changed statements: `strength_iff` (`hL`, `hH`, `ha`), `runWeigh_delegates` (`hg`), `stripWeighing` and `stripCase` (total), `LayeredU.core` (seven fields), `checkWeigh` (`DelegationCycle`), `weighingRow` (`rights@0` refused). New: `dropField`, `dropProfile`, `weighGate`, `stripCase_idem`, `condition_necessary`, `condition_sufficient`, `factors_inert`. English: E1, E2 (pairwise defeat by an effective higher rule), E4 ("Outside this condition, …"), E7's resolution and E7′, the comprehension check as saved evidence. Diagnostics: 3.2's order authoritative (block shape after the stripped document), `DelegationCycle` at 4.5, gate texts at 4.1. Fixtures: W-α with h excepted, θ11's zone, θ19/θ20, W-ζ cycles, W-η refusals and the combined fault, W-κ's sixteen branches and five labels, the bypassed W-θ labels, W-μ, the `strength_iff` regressions, 7.6. Findings F9 to F12. Not yet elaborated: new values are marked *derived*, and the stub (with an `#eval` for each) is re-elaborated before WG-2. |
+| 2026-10-13 | Draft 3 | The bounded re-check of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1), with weighing-PLAN.md draft 4. Finding F13: the ruling's second alias (F10) does not falsify the unrestricted `strength_iff`; a second accepted document that does, W-α with ranks `c > c_` and query `(x_permitted, c, _c)`, joins 7.3 beside F9, and F10's document stays there as a collision the statement survives. 0, 5.1, 7.3 and 9 updated. The three `strength_iff` rows computed by `#eval` in the stub (header); no statement, wording, diagnostic or other fixture changed. |
+| 2026-10-13 | Draft 4 | Synchronised with weighing-PLAN.md draft 5 (phase 1, [weighing-phase1.md](../research/weighing-phase1.md)). 8: collisions between different acts are residual (WG-E1 FAIL, WG-10 closed). 7.5: WG-0 DEFERRED until RD-9 SC-8 is on `main`. Header and "Changes in this draft". No statement, wording, diagnostic or fixture changed, so the stub (untracked) has nothing to re-elaborate. |
+| 2026-10-28 | Draft 5 | The refresh against `main` `6d0a10526`, with weighing-PLAN.md draft 6 (debate `refresh-weighing-20261028`, DRI ruling item 1). Changed statements: `weighPack` (`consts`), `weighingRow` (`norm-defaults@0`, `refusing`, `layer`), `stripWeighing` (Risk's `dropField`, the generalised profile filter; `dropField` and `dropProfile` deleted), `LayeredU.core` (`packs`), `weighPack_shape` (`consts = []`), all elaborated in the untracked stub against `main`, with `weighPack_shape` proved and the AR-10 texts computed. English: Lean owns it, en-wg (NEW) reads it, two readers until E3 (2.4), new 2.5 for en-wg's statements. Fixtures: W-η's refusal texts and one new refusal; 7.6's source/object seeded bugs and disjointness fixtures. 3.2 steps 2, 4, 5 and 7; F6, 7.4 and 7.5 current status. |
+| 2026-11-02 | Draft 6 | WG-1's re-elaboration against `main` `9ba2140e2`: every statement elaborated, every value not needing WG-3's route computed, no value changed except W-ι's identities. Changed statements: `weighPack` (`conditions`), `weighPack_shape`, `weighingRow` (slot `pack`, `interface`), `targetCheck` (`splitRefusal` with a role). New: `Target.key`, `weighConditions`, 2.5's `WeighStatement`, `WeighFrame`, `grantCandidates`, `readFrame`, its refusals, `generallyRow`, the six `readFrame` statements. 2.4's W-ξ claim, 7.6's lists, 3.1's guard decoder, section 10. Findings F14 to F18. |
+| 2026-11-02 | Draft 6, wg-rev | wg-rev, DRI 2026-11-02 fp-weighing item 1, with weighing-PLAN.md's wg-rev revision (plan 2.8). 7.5: C-2 is GAP-W1, not a reading set (WG-R1); new C-8 and C-9 (WG-R2). 1.6, 2.1 and 2.5: notes for W-R2 and W-R3; 2.4: C-2's pair read one sentence at a time. 10: OPEN-1 to OPEN-11 RULED (`reviews/dri-decisions-20261102-wg-1.md` items 2 to 4, recorded under its item 5). No statement, wire field, diagnostic or synthetic fixture value changed. |
+| 2026-11-05 | Draft 6, wg-2-siff | wg-2-siff, DRI 2026-11-04 wg-2-strength item 2. Changed statement: `strength_iff` gets `hr` (every regulated name begins with an ASCII letter, the decoder's identifier rule), the form item 2 allows when the narrower one (the queried `a` alone) does not prove; F19's mirror shows it does not (reviews/dri-decisions-20261105-wg-2-siff.md item 2). 5.1: the statement and its proof note; 7.3: falsifying row F19 (`cxW` and its mirror `mxW`, documents the decoder refuses). No wire field, diagnostic text or fixture value changes |

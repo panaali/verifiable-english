@@ -1,0 +1,30 @@
+{
+ "allow": [
+  {"definition": "VE.Senses.candidatePairs", "operator": "list-drop-last",
+   "reason": "equivalent: the last first index i = n - 1 has no second index (its range n - i - 1 is empty), so dropping it removes no pair; the other cuts are killed by `candidatePairs 3` in RunExamples"},
+  {"definition": "VE.Senses.candidatePairs", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected); the whole list's cut is killed by RunExamples"},
+  {"definition": "VE.Senses.formulaCore", "operator": "all-any",
+   "reason": "does not elaborate: neither EFormula.any nor VE.Formula.any exists"},
+  {"definition": "VE.Senses.formulaCore", "operator": "list-empty",
+   "reason": "does not elaborate: the pattern's variables t and u are then unbound; each arm is killed by the formulaCore guard"},
+  {"definition": "VE.Senses.Flip", "operator": "ctor-drop",
+   "reason": "does not elaborate: flipPair and flipJson build or match each constructor (Unknown constant); each is checked by the flip guards"},
+  {"definition": "VE.Senses.flipOn", "operator": "list-empty",
+   "reason": "does not elaborate (Invalid projection or field notation); the whole result's cut is killed by RunExamples"},
+  {"definition": "VE.Senses.flipModelOf", "operator": "list-empty",
+   "reason": "does not elaborate (Application type mismatch, field notation); the constants' cut is killed by RunExamples"},
+  {"definition": "VE.Senses.flipsOf", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected, an implicit argument); the whole result's cut is killed by RunExamples"},
+  {"definition": "VE.Senses.Run.writtenLines", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected, field notation); the whole match's cut is killed by the writtenLines guards"},
+  {"definition": "VE.Senses.FlipModel.finite", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected: `List` of `List.lookup` replaced by `[]`); each table's lookup is killed by the model guards of RunExamples"},
+  {"definition": "VE.Senses.tuples", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected: `d.flatMap` replaced by `[]` and applied to its function); the product's cut is killed by the model guards of RunExamples"},
+  {"definition": "VE.Senses.Run.flipModelJson", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected, or a pattern variable whose type holds a metavariable: `m.domains`, `m.relations` or their `.map` replaced by `[]`); the wire form is killed by the flipJson guard of RunExamples"},
+  {"definition": "VE.Senses.flipModelOf", "operator": "le-lt",
+   "reason": "equivalent: the domain's comparator sorts distinct entities only (a sort's name and the distinct names of its constants, none a sort's name), on which `<` and `≤` agree"}
+ ]
+}

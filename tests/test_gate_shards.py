@@ -11,6 +11,7 @@ import pytest
 
 from tools import batch_evidence, gate, gate_collection, gate_shards, test_schedule
 
+SUITE_DURATIONS = gate.suite_durations  # before `patch_gate_stages` replaces it
 
 IDS = ["tests/a.py::test_one", "tests/a.py::test_two", "tests/b.py::test_skip",
        "tests/c.py::test_three", "tests/d.py::test_four"]
@@ -378,7 +379,7 @@ def patch_gate_stages(monkeypatch, root, rust, policy, base_ids, durations):
                         (result.update(collection={"base": "c" * 40, "base_ids": len(base_ids(args[2]))})
                          or base_ids(args[2]), None))
     monkeypatch.setattr(gate.gate_shards.gate_collection, "merge_base", lambda **kwargs: "c" * 40)
-    monkeypatch.setattr(gate, "suite_durations", lambda result, env, path:
+    monkeypatch.setattr(gate, "suite_durations", lambda result, env, path, record=None:
                         path.write_text(test_schedule.durations_text(durations, source="fixture")))
 
     @contextmanager
@@ -450,6 +451,78 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
     assert batch_evidence.gate_problems("a" * 40, merged) == []
     note = gate_collection.record_text("a" * 40, "b" * 40, all_ids, result=merged)
     assert gate_collection.parse_record(note, "a" * 40, "b" * 40) == sorted(all_ids)
+
+
+@pytest.mark.parametrize("record", ["good", "malformed"])
+def test_a_durations_record_changes_only_the_plan(tmp_path, monkeypatch, record):
+    """`--durations-record` (the merge base has no gate record) reweighs the plan's files; what the shards collect
+    and select, the collection check, the merged record and the union of their shares (each selected test once)
+    are those of the same gate without it. A malformed record file leaves the committed durations' plan."""
+    live_id = "tests/live.py::test_live"
+    all_ids = [*IDS, live_id]
+    root = tmp_path / "project"
+    root.mkdir()
+    rust, policy = gate_project(root, POLICY["optional_tests"],
+                                [{"nodeid": live_id, "reason": "Calls real model CLIs; excluded by the non-live gate."}])
+    patch_gate_stages(monkeypatch, root, rust, policy, lambda env: all_ids, {})
+    monkeypatch.setattr(gate, "suite_durations", SUITE_DURATIONS)
+    monkeypatch.setattr(gate, "base_durations", lambda result, env: None)
+    committed = tmp_path / "committed-durations.json"
+    committed.write_text(test_schedule.durations_text({IDS[0]: 9.0, IDS[2]: 5.0, IDS[3]: 3.0}, source="fixture"))
+    monkeypatch.setattr(test_schedule, "DURATIONS", committed)
+    durations_record = tmp_path / "gate-record.json"
+    durations_record.write_text(json.dumps({
+        "status": "passed", "counts": {"selected": len(IDS)},
+        "durations": test_schedule.record_field({IDS[0]: 2.0, IDS[2]: 1.0, IDS[3]: 3.0, IDS[4]: 40.0}),
+        "collection": {"collected_zlib": gate_collection.encode_ids(all_ids)}})
+        if record == "good" else "{not json")
+
+    def fake_command(args, *, env, stage, cwd=None):
+        if stage == "Python collection":
+            Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({
+                "collected": all_ids, "selected": IDS, "deselected": [live_id], "collection_reports": []}))
+        if stage == "Python suite":
+            selected = json.loads(Path(env["VE_GATE_PYTEST_IDS_FILE"]).read_text())
+            Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({
+                "tests": {node: OUTCOMES[node] for node in selected},
+                "seconds": {node: 1.0 for node in selected}, "workers": {"gw0": selected}}))
+        return other_stage(args, stage)
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    legs = {}
+    for name, extra in [("committed", []), ("record", ["--durations-record", str(durations_record)])]:
+        rows = []
+        for k in (1, 2):
+            output = tmp_path / f"{name}{k}.json"
+            monkeypatch.setattr(sys, "argv", ["gate.py", "--shard", f"{k}/2", "--output", str(output), *extra])
+            assert gate.main() == 0
+            rows.append(json.loads(output.read_text()))
+        legs[name] = rows
+    before, after = legs["committed"], legs["record"]
+    for old, new in zip(before, after):
+        assert gate_collection.decode_ids(new["shard"]["plan"]["selected"]) == \
+            gate_collection.decode_ids(old["shard"]["plan"]["selected"]) == sorted(IDS)
+        assert new["shard"]["collected"] == old["shard"]["collected"]
+        # A shard's counts (and its head_ids, `interpret_pytest`'s of its share) are its share's; the merged counts
+        # below are the whole selection's.
+        assert {**new["collection"], "head_ids": None} == {**old["collection"], "head_ids": None}
+        assert (new["status"], new["failures"]) == (old["status"], old["failures"])
+    for rows in (before, after):
+        ran = [node for row in rows for node in row["shard"]["ran"]]
+        assert sorted(ran) == sorted(IDS) and len(ran) == len(set(ran))
+    merged = {name: gate_shards.merge_records(rows) for name, rows in legs.items()}
+    assert merged["record"]["status"] == merged["committed"]["status"] == "passed"
+    for key in ("counts", "failures", "skips", "collection", "stages"):
+        assert merged["record"][key] == merged["committed"][key]
+    source = after[0]["durations_source"]["record_file"]
+    if record == "good":
+        assert source["used"] is True and source["recorded"] == 4
+        assert after[0]["shard"]["plan"]["assignments"]["tests/d.py"] != \
+            after[0]["shard"]["plan"]["assignments"]["tests/a.py"]
+        assert after[0]["shard"]["digest"] != before[0]["shard"]["digest"]
+    else:
+        assert source == {"used": False, "sha256": None, "recorded": None}
+        assert after[0]["shard"]["plan"] == before[0]["shard"]["plan"]
 
 
 @pytest.mark.parametrize("replacement", ["selected", "other_selected"])

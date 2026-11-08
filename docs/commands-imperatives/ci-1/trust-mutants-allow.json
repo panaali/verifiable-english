@@ -1,0 +1,119 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Commands.firstMatch",
+   "operator": "list-first",
+   "reason": "a decoded environment has at most two argument sorts, so a tuple holds at most one fill and take 1 of its fills or constants changes nothing; the acc mutants are killed by extraEnv"
+  },
+  {
+   "definition": "VE.Commands.firstMatch",
+   "operator": "list-last",
+   "reason": "a decoded environment has at most two argument sorts, so a tuple holds at most one fill; a repeat of (predicate, constants) is next to its first (slotFills lists one constant's phrases together), so the last row of acc is enough"
+  },
+  {
+   "definition": "VE.Commands.firstMatch",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: `acc`, `gs` or `m.2` as [] loses the field the next token reads, or a guard row refutes it"
+  },
+  {
+   "definition": "VE.Commands.tuples",
+   "operator": "list-first",
+   "reason": "a decoded environment has at most two argument sorts, so tuples has at most one slot and (tuples rest) is [[]]; it breaks tuples_typed, Read.lean:596"
+  },
+  {
+   "definition": "VE.Commands.tuples",
+   "operator": "list-last",
+   "reason": "same as list-first: at most one slot, (tuples rest) is [[]]; it breaks tuples_typed, Read.lean:596"
+  },
+  {
+   "definition": "VE.Commands.tuples",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: a list literal is applied as a function"
+  },
+  {
+   "definition": "VE.Commands.splitLastIf",
+   "operator": "list-last",
+   "reason": "on xs.getLast? the last of the one-element reverse is the same element"
+  },
+  {
+   "definition": "VE.Commands.splitLastIf",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: the arm binds x, and [] loses it"
+  },
+  {
+   "definition": "VE.Commands.addressed",
+   "operator": "list-first",
+   "reason": "g.sorts.head? of g.sorts.take 1 is the same head"
+  },
+  {
+   "definition": "VE.Commands.addressed",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: the field access on [] has no type"
+  },
+  {
+   "definition": "VE.Commands.slotFills",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: a list literal is applied as a function or projected"
+  },
+  {
+   "definition": "VE.Commands.readingsOf",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: a list literal is applied as a function"
+  },
+  {
+   "definition": "VE.Commands.manyOf",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: rs as [] leaves the element type open"
+  },
+  {
+   "definition": "VE.Commands.actMatches",
+   "operator": "list-empty",
+   "reason": "it breaks readCommand_read (Read.lean:406), which states that this is what readCommand reads; the mutant cannot reach a check"
+  },
+  {
+   "definition": "VE.Commands.actMatches",
+   "operator": "list-first",
+   "reason": "same as list-empty: it breaks readCommand_read, Read.lean:406"
+  },
+  {
+   "definition": "VE.Commands.actMatches",
+   "operator": "list-last",
+   "reason": "same as list-empty: it breaks readCommand_read, Read.lean:406"
+  },
+  {
+   "definition": "VE.Commands.actMatches",
+   "operator": "list-drop-last",
+   "reason": "same as list-empty: it breaks readCommand_read, Read.lean:406"
+  },
+  {
+   "definition": "VE.Commands.actMatches",
+   "operator": "list-drop-first",
+   "reason": "same as list-empty: it breaks readCommand_read, Read.lean:406"
+  },
+  {
+   "definition": "VE.Commands.GuardFault",
+   "operator": "ctor-drop",
+   "reason": "Lean refuses the program: guardOfOutcome and refusalOf name every constructor"
+  },
+  {
+   "definition": "VE.Commands.Outcome",
+   "operator": "ctor-drop",
+   "reason": "Lean refuses the program: readCommand and its statements name every constructor"
+  },
+  {
+   "definition": "VE.Commands.guardOfOutcome",
+   "operator": "arm-default",
+   "reason": "M001 and M067 replace an arm by a term of the wrong type; Lean refuses the program"
+  },
+  {
+   "definition": "VE.Commands.guardOfOutcome",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: rs as [] has no element type, and the [g] arm binds g"
+  },
+  {
+   "definition": "VE.Commands.splitLastIf",
+   "operator": "list-drop-first",
+   "reason": "this arm has at least two parts (splitOn is never empty and [x] is the first arm), so xs.drop 1 keeps the last part; the mutant on xs.dropLast is killed by the row 'Click Ask, if Click Ask, if draft is approved.'"
+  }
+ ]
+}

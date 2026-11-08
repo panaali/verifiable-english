@@ -68,10 +68,14 @@ def test_spec_keeps_scope_admission_text_by_the_document_level_statement():
 
 
 # sc-5rb's statement gate: each statement the build proves is the stub's after whitespace normalisation. sc-5rd proves
-# three of the four that take `Pinned.JsonWF`; the one it leaves is false as written (two units with one id,
-# docs/scope/sc-5rd/every-choice-counterexample.md) and carried by sc-5rdb (reviews/dri-decisions-20261031-sc-5rd.md).
+# three of the four that take `Pinned.JsonWF`; sc-5rdb the fourth, `governSets_every_choice`, with the one premise the
+# DRI signed (distinct unit ids: two units with one id are its counterexample, docs/scope/sc-5rd/
+# every-choice-counterexample.md; reviews/dri-decisions-20261031-sc-5rd.md item 1).
 PROVED = [ROOT / "lean/VE/Scope/ReadingsTheorems.lean", ROOT / "lean/VE/Service/ScopeAdmission.lean"]
-LEFT = {"governSets_every_choice"}
+EVERY_CHOICE = ("governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hd : (unitIds D.doc).Nodup) "
+                "(hs : governedSetUnits D ≠ []) (out : Json) (ho : governSets D = .ok out) "
+                "(cs : List VE.Discourse.Choice) (hcs : setChoices D = .ok cs) (ch : VE.Discourse.Choice) (hc : ch ∈ cs) "
+                ": ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o")
 
 
 def by_name(text: str) -> dict[str, str]:
@@ -83,9 +87,8 @@ def test_each_statement_sc5rb_proves_is_the_stubs_text():
     built = {}
     for path in PROVED:
         built |= by_name(path.read_text())
-    assert {name: built.get(name) for name in stub if name not in LEFT} == {n: t for n, t in stub.items()
-                                                                           if n not in LEFT}
-    assert not LEFT & set(built) and LEFT <= set(stub)
+    assert {name: built.get(name) for name in stub} == stub
+    assert stub["governSets_every_choice"] == EVERY_CHOICE
 
 
 def test_the_definitions_are_the_stubs_verbatim():

@@ -19,7 +19,8 @@
                   "when": {"$ref": "#/$defs/kind/reports-countermodel"}
                 },
                 {"then": {"$ref": "#/$defs/scoped"}, "when": {"$ref": "#/$defs/kind/reports-scoped"}},
-                {"then": {"$ref": "#/$defs/status"}, "when": {"$ref": "#/$defs/kind/reports-status"}}
+                {"then": {"$ref": "#/$defs/status"}, "when": {"$ref": "#/$defs/kind/reports-status"}},
+                {"then": {"$ref": "#/$defs/wants"}, "when": {"$ref": "#/$defs/kind/reports-wants"}}
               ]
             }
           ]
@@ -302,7 +303,8 @@
       "reports-countermodel": {"properties": {"kind": {"const": "reports-countermodel"}}, "required": ["kind"], "type": "object"},
       "reports-elaborate": {"properties": {"kind": {"const": "reports-elaborate"}}, "required": ["kind"], "type": "object"},
       "reports-scoped": {"properties": {"kind": {"const": "reports-scoped"}}, "required": ["kind"], "type": "object"},
-      "reports-status": {"properties": {"kind": {"const": "reports-status"}}, "required": ["kind"], "type": "object"}
+      "reports-status": {"properties": {"kind": {"const": "reports-status"}}, "required": ["kind"], "type": "object"},
+      "reports-wants": {"properties": {"kind": {"const": "reports-wants"}}, "required": ["kind"], "type": "object"}
     },
     "nested": {
       "anyOf": [
@@ -515,6 +517,40 @@
           "type": "object"
         }
       ]
+    },
+    "wants": {
+      "$comment": "Reports.Run.runWants: each phrase sent with its infinitive under the wants test (null where refused), each infinitive sent with its finite form, in order.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "infinitives": {
+          "type": "array",
+          "x-zip": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"finite": {"type": "string"}, "infinitive": {"type": "string", "x-equals": ""}},
+              "required": ["infinitive", "finite"],
+              "type": "object"
+            },
+            "of": "/infinitives"
+          }
+        },
+        "phrases": {
+          "type": "array",
+          "x-zip": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"infinitive": {"type": ["string", "null"]}, "phrase": {"type": "string", "x-equals": ""}},
+              "required": ["phrase", "infinitive"],
+              "type": "object"
+            },
+            "of": "/phrases"
+          }
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "phrases", "infinitives"],
+      "type": "object"
     }
   }
 }
