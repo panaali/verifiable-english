@@ -1,0 +1,5 @@
+job=eff-tm-headmoved-e6b373c3-t174956-s0 nproc=4 host=vm date=2026-11-08T21:58:07Z
+Mem:              15           0          13           0           1          15
+/dev/vda        252G   14G   25G  36% /
+ 21:58:07 up 1 min,  0 user,  load average: 0.63, 0.19, 0.07
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
