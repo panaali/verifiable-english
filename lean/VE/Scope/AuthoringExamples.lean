@@ -76,6 +76,13 @@ def u0170s01 := "The list of hard constraints above is not a list of all the beh
   "Notwithstanding the rules of section , every operator may share.", "Notwithstanding the rules of section 3, every operator may share:.",
   "##When there is no operator prompt", "##  Hard constraints", "####### Hard constraints", "## ",
   "## When there is no operator prompt:", "## If", "This applies only where ."].all (parseGovernor · == none)
+-- a slot's words: no tab inside or before a word, one space after every word; a section is one word
+#guard ["The hard constraints apply only where the act\tis irreversible.", "The hard constraints apply only where the act \tis irreversible.",
+  "The hard constraints apply only where the act  is irreversible.", "Notwithstanding the rules of section 3 x, every operator may share.",
+  "Notwithstanding the rules of section  3, every operator may share.", "Notwithstanding the rules of section 3\t, every operator may share."].all
+  (parseGovernor · == none)
+-- levels 1 to 6
+#guard trip "###### Notes" "{\"reach\": {\"anchor\": {\"heading\": \"Notes\", \"level\": 6}}, \"effect\": \"title\"}"
 -- a line with no "#" is no heading, whatever follows
 #guard parseGovernor " Hard constraints" == none && parseGovernor "Hard constraints" == none
 -- a block no wording gives (a heading with no level, an empty object) renders to a line that is no wording

@@ -39,12 +39,14 @@ def kindWording : String := "Claude knows that the act is of its kind, or thinks
 
 def english (s : String) : Json := Json.mkObj [("english", .str s)]
 def narrowing (c : String) : Json := Json.mkObj [("reguard", Json.arr #[.str "and", .str "own", english c])]
-def attitude (mode : String) (degree : List String) : Json :=
-  Json.mkObj [("attitude", Json.mkObj ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)] ++
-    degree.map (("degree", .str ·)) ++ [("content", .str "own")]))]
+def attitude (mode : String) (degree : Option String) : Json :=
+  let holder := Json.arr #[.str "var", toJson (0 : Nat)]
+  Json.mkObj [("attitude", match degree with
+    | none => Json.mkObj [("holder", holder), ("mode", .str mode), ("content", .str "own")]
+    | some d => Json.mkObj [("holder", holder), ("mode", .str mode), ("degree", .str d), ("content", .str "own")])]
 /-- F3's condition, as spec 3's `g2` writes it. -/
 def kindCondition : Json :=
-  Json.arr #[.str "or", Json.arr #[.str "and", .str "own", attitude "knows" []], attitude "thinks" ["quite likely"]]
+  Json.arr #[.str "or", Json.arr #[.str "and", .str "own", attitude "knows" none], attitude "thinks" (some "quite likely")]
 def frameBlock : Json := Json.mkObj [("reach", .str "list"), ("effect", Json.mkObj [("frame",
   Json.mkObj [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])])])]
 def onName (n : String) (effect : Json) : Json := Json.mkObj [("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)]
