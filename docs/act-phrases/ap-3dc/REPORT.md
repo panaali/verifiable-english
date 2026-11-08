@@ -123,7 +123,7 @@ ap-3dcb (section 3); then ap-4.
 2. Deliverables: PASS for (1), (2) and (4)'s norms-route part (section 1). (3), (5) and the rest of (4) are cut at the size
    line, as the task's "cutting at the size line" allows; they are named as ap-3dcb (section 3).
 3. Tests can fail: PASS. 8 seeded bugs (section 4, mutants.json); trust mutants exit 0 (section 5).
-4. Python, Lean and Rust agree: PASS. The 469 existing route cases are unchanged and 3 are added
+4. Python, Lean and Rust agree: PASS. The 481 existing route cases (at main 094254625) are unchanged and 3 are added
    (`tests/test_route_row_schemas.py::test_genuine_route_answers_are_accepted_by_schema_and_lean`). A7 relays unchanged
    (`::test_a7_is_one_obligation_kept_whole`). No Rust changed.
 5. R8 binding: PASS. `bound_elaboration` checks each source, index, part and copied field against the request, tested by
