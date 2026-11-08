@@ -1,11 +1,10 @@
 # ci-5 report: `speech-acts@0` with `acts@0`, simple acts only
 
-Status: all six deliverables built; awaiting review. HEAD: the final commit of feature/ci-5 (`git log -1`).
-Changed: AR-10's `actsRefuses` admits `speech-acts@0`, `gate_acts` revised as spec section 9, the speech allowlist gains
-`acts@0`, `command_act_simple` proved; the plan's three fixtures read as one simple act each, "Click Check and save." is
-refused at declaration. No signature is reserved; every DELTA row cites a DRI decision or R12/R16.
-Open: FOLLOW-UP ci-5-for-slot, ci-5-tm-sweep. Size over the ~600 cap, kept whole (SIGNED, dri-decisions-20261108-ci-5-size.md
-item 1); R16 mutants by hand, the unfinished sweep after the merge (SIGNED, dri-decisions-20261108-ci-5-tm.md item 1).
+Status: all six deliverables built, awaiting the chain gate and review; HEAD is feature/ci-5's last commit. No signature reserved.
+Changed: `actsRefuses` admits `speech-acts@0`, `gate_acts` revised as spec 9, the speech allowlist gains `acts@0`,
+`command_act_simple` proved; the plan's three fixtures read as one simple act each; "Click Check and save." refused at declaration.
+Open: FOLLOW-UP ci-5-for-slot, ci-5-tm-sweep. Size over the cap kept whole (SIGNED, dri-decisions-20261108-ci-5-size.md 1);
+R16 mutants by hand, the unfinished sweep after the merge (SIGNED, dri-decisions-20261108-ci-5-tm.md 1).
 
 Plan and spec: `9a12df17a` on design/commands-imperatives, PLAN "CI-5" (lines 840-922) and section 9; spec section 9
 (lines 1276-1349), S28 (line 71), section 14's row (line 1653), checklist item 8 (line 1696). Statement gate: passed
