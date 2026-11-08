@@ -1,0 +1,21 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 18 definitions, 244 mutants (41 to run), 4 jobs, base cbc4c8a39533
+SURVIVOR lean/VE/Attitudes/Semantics.lean:29 VE.Attitudes.AFormula.denote (S, trusted) arm-true: φ.denote m.S ρ -> True
+SURVIVOR lean/VE/Attitudes/Semantics.lean:24 VE.Attitudes.Intended (S, trusted) body-false: (∀ k vs, m.J k vs → k ∈ keys A ∧ VE.TupleTyped m.S k.sorts vs) ∧ (∀ k ∈ keys A, k.mode = .knows →... -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:898, lean/VE/Attitudes/Examples.lean:909, l...)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:19 VE.Attitudes.contentAt (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890)
+SURVIVOR lean/VE/Attitudes/Route.lean:24 VE.Attitudes.SettledAsX (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:961)
+UNKNOWN lean/VE/Attitudes/Route.lean:27 VE.Attitudes.UnsaidFree (S, trusted) body-true: ∀ p ∈ U.unspec, unsaidName p ∉ VE.Norms.preds φ -> True (lean/VE/Attitudes/Examples.lean:811: Expression (VE.Attitudes.Examples.instDecidableUnsaidFree, w...)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:21 VE.Attitudes.contentAt (S, trusted) bool-flip: False -> True
+SURVIVOR lean/VE/Attitudes/Semantics.lean:32 VE.Attitudes.AFormula.denote (S, trusted) list-empty: [vh] -> []
+SURVIVOR lean/VE/Attitudes/Semantics.lean:30 VE.Attitudes.AFormula.denote (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:33 VE.Attitudes.AFormula.denote (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+UNKNOWN lean/VE/Attitudes/Frame.lean:42 VE.Attitudes.framePremises (S, trusted) list-empty: (factive A) -> [] (lean/VE/Attitudes/Frame.lean:42: Application type mismatch: The argument)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:39 VE.Attitudes.AFormula.denote (S, trusted) arm-true: ∃ v, m.S.domain s v ∧ a.denote A m (s :: Γ) (v :: ρ) -> True
+SURVIVOR lean/VE/Attitudes/Semantics.lean:36 VE.Attitudes.AFormula.denote (S, trusted) arm-true: a.denote A m Γ ρ ∨ b.denote A m Γ ρ -> True (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Frame.lean:12 VE.Attitudes.entailsMode (S, trusted) list-drop-last: A.T.knowsThinks -> (A.T.knowsThinks.dropLast)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:33 VE.Attitudes.AFormula.denote (S, trusted) list-drop-last: [vh, vx] -> ([vh, vx].dropLast) (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:33 VE.Attitudes.AFormula.denote (S, trusted) list-drop-first: [vh, vx] -> ([vh, vx].drop 1) (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+trust_mutants: 26 KILLED, 13 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 203 OTHER SHARD in 278 s
+trust_mutants: G[V], trusted: 4 KILLED, 34 OTHER SHARD
+trust_mutants: S, trusted: 22 KILLED, 13 SURVIVOR, 2 UNKNOWN, 169 OTHER SHARD
+trust_mutants: steps: wall plan 11 s, scratch 2.3 s, control_build 0.2 s, probe_install 1.6 s, control_probes 25.2 s, mutants 232.1 s, cleanup 5.3 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.6 s (1), control_probes 21.9 s (1), mutant_builds 30 s (41), mutant_checks 388.3 s (49), stage_controls 0.6 s (1), mutant_probes 90.6 s (27)
