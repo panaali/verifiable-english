@@ -4,12 +4,12 @@ Summary: `nested` (lean/VE/Discourse/Positions.lean:201-202) now exempts a menti
 possessive that supplies the other argument of a definite's relational restriction (`inRestriction`, :192-199),
 as discourse.md 14.3 step 2 and 1.4 say. A mention nested in any other span (a plural's, a demonstrative's, a
 definite's without that possessive) is checked like an outermost one, so a missing slot is `MentionNotSlot`.
-No DRI signature is needed. Bytes 0 (no CLI answer reaches the changed path today, see "DELTA"). Trust: trusted +20, K +0, S +0 (R16).
+No DRI signature is needed. Bytes 0 (no CLI answer reaches the changed path today, see "DELTA"). Trust: trusted +0, K +0, S +0 (no allowance).
 
 Base: main at the merge base `e9a6ec8d5`. Commits (`git log --oneline main..HEAD --no-merges` on this branch):
 `bd7b2b4fd` (the fix), `16c7f0fcc` (regenerated inventories and code map), `df175a622` (explicit-span guards and
-the end-boundary guard), `87af0964c` (mutant evidence), the baseline commit (R16 allowance in
-docs/trust-baseline.json), and this report's commit.
+the end-boundary guard), `87af0964c` (mutant evidence), and the commits of this report and of the class table
+(tools/trust-classes.json; an R16 allowance recorded on the way was withdrawn, see "Trust").
 
 ## Deliverables (task cmp-s4a-nested)
 
@@ -45,8 +45,8 @@ nested non-restriction mention is refused rather than accepted; that item writes
 ## Size
 
 `git diff --numstat e9a6ec8d5` (hand-written): lean/VE/Discourse/Positions.lean +12 -4, PositionsExamples.lean
-+45 -5, mutants.json +98, trust-mutants-allow.json +14, this REPORT. Generated or tool-written: docs/codemap/*,
-lean/declarations.txt, lean/checkers.lock, trust-mutants.json, docs/trust-baseline.json.
++45 -5, mutants.json +98, trust-mutants-allow.json +14, tools/trust-classes.json +9, this REPORT. Generated or
+tool-written: docs/codemap/*, lean/declarations.txt, lean/checkers.lock, trust-mutants.json.
 
 ## Seeded bugs (each planted alone in lean/VE/Discourse/Positions.lean, `lake build VE.Discourse.PositionsExamples`, then restored)
 
@@ -66,18 +66,24 @@ docs/composition/cmp-s4a-nested/mutants.json with its file and test; line number
 | `inRestriction` | the possessive's target is ignored | :186, :187 |
 | `inRestriction` | the restriction's first term is not read | :188 |
 
-The trust mutants (`tools/trust_mutants.py`, every new or changed trusted definition, saved in
-trust-mutants.json at `df175a622`): 24 KILLED, 0 SURVIVOR, 0 UNKNOWN, 4 ALLOWED. The allowed ones are span literals
+The trust mutants (`tools/trust_mutants.py` over every new or changed definition, run at `df175a622` while they
+were still unclassified and so counted as trusted; saved in trust-mutants.json): 24 KILLED, 0 SURVIVOR, 0 UNKNOWN, 4 ALLOWED. The allowed ones are span literals
 of the fixture `herIn` moved by ±1 (`trust-mutants-allow.json`): the moved span still lies inside the plural's
 (0, 5), so the guards read the same mention; the span boundaries are tested at :191-194.
 
 ## Trust
 
-`uv run python tools/trust_map.py --check` on this HEAD: `against e9a6ec8d5938: K +0, S +0, D +0, G +0, tied +0,
-unclassified +20, trusted +20` (Positions.lean +8, PositionsExamples.lean +12), `PASS`. Recorded with
-`tools/trust_map.py --allow` in docs/trust-baseline.json, "SIGNED by standing ruling R16 (DRI-RULINGS.md),
-cmp-s4a-nested, 2026-11-05", within R16's 150-line cap, no K growth, every new trusted definition (`inRestriction`,
-`nested`) killed by a #guard above. FOLLOW-UPS.md row: "## cmp-s4a-nested (2026-11-05)", the R16 ties pass.
+The new declarations are classified in tools/trust-classes.json (+9 lines): `inRestriction` is C (checker code),
+like `nested`, `slotCheck` and `resolveAll` beside it on main; the eight new fixtures of PositionsExamples.lean
+(`ownsApi`, `dOwner`, `inner`, `plural2`, `notified`, `runOn`, `ownerNotified`, `herIn`) are T. Neither class
+counts as trusted (K + S + untied [V] + unclassified). `uv run python tools/trust_map.py --check` on this HEAD:
+`against e9a6ec8d5938: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0`, `PASS`. So no R16
+allowance is needed. The one recorded while the declarations were unclassified (V 20) was withdrawn:
+docs/trust-baseline.json is the merge base's. The selected tests caught the unclassified lines
+(`tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`, `assert 20 == 0`);
+after the classification it passes (`uv run pytest -q tests/test_consolidation_tools.py -k
+test_committed_trust_table_covers_every_declaration`: `1 passed`). The FOLLOW-UPS.md row "## cmp-s4a-nested"
+now says no R16 ties pass is needed.
 
 ## Checks on this HEAD
 
@@ -91,7 +97,14 @@ cmp-s4a-nested, 2026-11-05", within R16's 150-line cap, no K growth, every new t
 
 ## Tests
 
-TESTS_PLACEHOLDER
+- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the
+  tree of the report commit (run cmp-s4a-nested-8787e18f-t124473, 6 shards, 445 units): shards 1 to 5 `81, 80, 81,
+  81, 61 units, all passed`; shard 6 `61 units, 60 passed`, the one failure
+  `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration` (`assert 20 == 0`, the
+  unclassified declarations; fixed by the class table, see "Trust").
+- The failed id rerun on the fixed tree: see the line below.
+- The condition #guards (PositionsExamples.lean and ComposeExamples.lean) build on this HEAD ("Checks on this HEAD").
+- Pre-existing failures on main (main-known-red.txt): none in this selection.
 
 ## Pilot bytes
 
@@ -110,7 +123,7 @@ cmp-s4 (Compose.lean and the route) relies on the corrected exemption.
 4. Agreement, valid inputs pass: PASS, PositionsExamples.lean:164-167 and :171 (accepted inputs), ComposeExamples.lean:75-85, :245-264 (route unchanged); no Python or Rust path changed.
 5. R8 binding: N.A., no field Python reads from a Lean answer changed.
 6. Gate evidence: N.A. for the builder (the chain runs the gate on the final HEAD); commit list above from `main..HEAD --no-merges`.
-7. No unsigned item: PASS, trust growth cites R16 (docs/trust-baseline.json); no DELTA row.
+7. No unsigned item: PASS, no trust growth (`trust_map.py --check`: trusted +0) and no DELTA row.
 8. DELTA: PASS, none, with the reason (Compose.lean `contentOk` abstains before `resolveContent`; ComposeExamples.lean:75-85).
 9. Test selection: PASS, the selected-tests run in "Tests" (Positions.lean's changes are checked by its own Lean #guards in the build).
 10. Lean statements: PASS, no theorem statement changed (`lean/declarations.txt` regenerated in `16c7f0fcc`; `resolveAll_ok` builds and is audited, lean/audit.py PASS).
