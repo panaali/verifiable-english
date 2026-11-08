@@ -15968,7 +15968,7 @@ module VE.Purposes.Decl ef99656c8b03a4f5a23d3aca6fb58fdfc4639d246b6c6d4f6b97099b
 64:24-64:28 def VE.Purposes.instReprBlock.repr@VE.Purposes.Decl
 64:24-64:28 instance VE.Purposes.instReprBlock@VE.Purposes.Decl
 66:0-66:25 def VE.Purposes.maxLinks@VE.Purposes.Decl
-module VE.Purposes.Examples 280eac6962ea452e1463e7fc1b019a56d8cdc89ceeab658fcac876296b01fd97
+module VE.Purposes.Examples efa6e931cca978a5dd121dd30e417449b6d38e50722a2bd6c60f7a12bad954a4
 14:0-17:22 def VE.Purposes.Examples.result@VE.Purposes.Examples
 19:0-21:22 def VE.Purposes.Examples.pt@VE.Purposes.Examples
 23:0-25:17 def VE.Purposes.Examples.lk@VE.Purposes.Examples
@@ -16000,9 +16000,14 @@ module VE.Purposes.Examples 280eac6962ea452e1463e7fc1b019a56d8cdc89ceeab658fcac8
 172:0-175:33 def VE.Purposes.Examples.F8@VE.Purposes.Examples
 176:0-176:84 def VE.Purposes.Examples.f8l@VE.Purposes.Examples
 177:0-179:69 def VE.Purposes.Examples.F8b@VE.Purposes.Examples
-189:0-189:66 def VE.Purposes.Examples.wire@VE.Purposes.Examples
-190:0-193:22 def VE.Purposes.Examples.decoded@VE.Purposes.Examples
-195:0-195:255 def VE.Purposes.Examples.f1Wire@VE.Purposes.Examples
+190:0-190:113 instance VE.Purposes.Examples.wfDecidable@VE.Purposes.Examples
+191:0-191:64 def VE.Purposes.Examples.wf@VE.Purposes.Examples
+192:0-192:67 def VE.Purposes.Examples.f5r@VE.Purposes.Examples
+217:0-217:70 def VE.Purposes.Examples.f1L@VE.Purposes.Examples
+221:0-223:122 def VE.Purposes.Examples.f7m@VE.Purposes.Examples
+234:0-234:66 def VE.Purposes.Examples.wire@VE.Purposes.Examples
+235:0-238:22 def VE.Purposes.Examples.decoded@VE.Purposes.Examples
+240:0-240:255 def VE.Purposes.Examples.f1Wire@VE.Purposes.Examples
 module VE.Purposes.WellFormed 972195e7ea6409ea6ea5eb0d8c9ab1bf97a21adde1d938ce9c88316ee232a50b
 12:0-20:15 structure VE.Purposes.Part@VE.Purposes.WellFormed
 13:2-13:4 def VE.Purposes.Part.id@VE.Purposes.WellFormed

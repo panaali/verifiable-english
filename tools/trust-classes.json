@@ -19621,7 +19621,12 @@
         "VE.Purposes.Examples.F8b",
         "VE.Purposes.Examples.wire",
         "VE.Purposes.Examples.decoded",
-        "VE.Purposes.Examples.f1Wire"
+        "VE.Purposes.Examples.f1Wire",
+        "VE.Purposes.Examples.wfDecidable",
+        "VE.Purposes.Examples.wf",
+        "VE.Purposes.Examples.f5r",
+        "VE.Purposes.Examples.f1L",
+        "VE.Purposes.Examples.f7m"
       ]
     }
   }

@@ -1,0 +1,159 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "eq-le",
+   "reason": "`L.polarity = .denied` to `≤`: Polarity has no order, so Lean refuses it (failed to synthesize), read as UNKNOWN; the Bool `= true` to `≤ true` cases are killed by the wf #guards"
+  },
+  {
+   "definition": "VE.Purposes.sideOfKind",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.sideOfKind",
+   "operator": "body-true",
+   "reason": "the #guard on this definition refutes it (Examples, the 'Each part of the check alone' section); UNKNOWN only because Lean shares this definition's Option matcher with a later definition, so the tool reads that one as changed too (sameUnit)"
+  },
+  {
+   "definition": "VE.Purposes.sideOfKind",
+   "operator": "body-false",
+   "reason": "the #guard on this definition refutes it (Examples, the 'Each part of the check alone' section); UNKNOWN only because Lean shares this definition's Option matcher with a later definition, so the tool reads that one as changed too (sameUnit)"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block); the cases on the side `s` are killed by the covered #guards"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "list-first",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block); the cases on the side `s` are killed by the covered #guards"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "list-last",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block); the cases on the side `s` are killed by the covered #guards"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "list-drop-last",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block); the cases on the side `s` are killed by the covered #guards"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "list-drop-first",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block); the cases on the side `s` are killed by the covered #guards"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "body-true",
+   "reason": "the #guard on this definition refutes it (Examples, the 'Each part of the check alone' section); UNKNOWN only because Lean shares this definition's Option matcher with a later definition, so the tool reads that one as changed too (nonfactive)"
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "operator": "body-false",
+   "reason": "the #guard on this definition refutes it (Examples, the 'Each part of the check alone' section); UNKNOWN only because Lean shares this definition's Option matcher with a later definition, so the tool reads that one as changed too (nonfactive)"
+  },
+  {
+   "definition": "VE.Purposes.markerHonest",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.markersLinked",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.sameUnit",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.sameUnit",
+   "operator": "list-drop-first",
+   "reason": "equivalent on L.partIds (line 56): the first id is the marker, whose unit is the matched one by construction; the cases on L.target are killed by the sameUnit #guards"
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "operator": "list-first",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "operator": "list-last",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "operator": "list-drop-last",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "operator": "list-drop-first",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Units.kind?",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.Link.slots",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.rivals",
+   "operator": "list-empty",
+   "reason": "a type error the tool reads as UNKNOWN: the operator puts a list where the code has a Units, an Option, a pair or a namespace (Lean refuses the text, outside a tactic block)"
+  },
+  {
+   "definition": "VE.Purposes.rivals",
+   "operator": "list-first",
+   "reason": "equivalent on the filtered list: shareOk reads only `(rivals B L).isEmpty`, which a take 1 keeps; the case on B.links is killed by the rivals #guard"
+  },
+  {
+   "definition": "VE.Purposes.rivals",
+   "operator": "list-last",
+   "reason": "equivalent on the filtered list: shareOk reads only `(rivals B L).isEmpty`, which a take 1 keeps; the case on B.links is killed by the rivals #guard"
+  },
+  {
+   "definition": "VE.Route.Admission.Kind.inert",
+   "operator": "bool-flip",
+   "reason": "the #guard at Examples.lean:40 (the five inert kinds) refutes it; the tool reports that refutation's message as unexplained (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Purposes.Relation",
+   "operator": "ctor-drop",
+   "reason": "dropping the constructor is a name error at its users (Decl, Wire, WellFormed and the #guards name every constructor), which the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Purposes.Polarity",
+   "operator": "ctor-drop",
+   "reason": "dropping the constructor is a name error at its users (Decl, Wire, WellFormed and the #guards name every constructor), which the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Purposes.Share",
+   "operator": "ctor-drop",
+   "reason": "dropping the constructor is a name error at its users (Decl, Wire, WellFormed and the #guards name every constructor), which the tool reads as UNKNOWN"
+  },
+  {
+   "definition": "VE.Purposes.Ref",
+   "operator": "ctor-drop",
+   "reason": "dropping the constructor is a name error at its users (Decl, Wire, WellFormed and the #guards name every constructor), which the tool reads as UNKNOWN"
+  }
+ ]
+}
