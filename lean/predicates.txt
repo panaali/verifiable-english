@@ -165,6 +165,7 @@ module VE.Ask.ZeroWire
 module VE.Attitudes.Examples
 module VE.Attitudes.Scale
 module VE.Attitudes.Syntax
+module VE.Attitudes.Theorems
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -302,6 +303,9 @@ module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Defaults.Zone
 module VE.Defaults.ZoneExamples
+module VE.Defaults.ZoneWire
+module VE.Defaults.ZoneWireExamples
+module VE.Defaults.ZoneWordsMain
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -493,10 +497,12 @@ module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
+module VE.Presupposition.Agree
 module VE.Presupposition.Examples
 module VE.Presupposition.Frame
 module VE.Presupposition.Reading
 module VE.Presupposition.Rows
+module VE.Presupposition.Rules
 module VE.Question.Basic
 module VE.Question.Examples
 module VE.Question.Fixtures
@@ -857,6 +863,7 @@ VE.Ask.SplitU@VE.Ask.Basic
 VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
+VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
 VE.Calc.Check.OutcomeMeans@VE.Calc.Run
