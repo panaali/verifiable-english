@@ -290,7 +290,7 @@ def declared (se : SpeechEnvironment) : Bool :=
 def Texts.classOf (code : String) : Option String :=
   (Texts.codeClasses.lookup code).orElse fun _ => VE.EnglishGrammar.Run.codeClasses.lookup code
 
-/-! ## The statements (section 3); the others are ci-1b's -/
+/-! ## The statements (section 3) -/
 
 theorem mem_dedup {α : Type} [BEq α] [LawfulBEq α] : ∀ (n : Nat) (l : List α), l.length ≤ n →
     ∀ a, a ∈ l.eraseDups ↔ a ∈ l
