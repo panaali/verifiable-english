@@ -471,7 +471,11 @@ GENUINE = [("open", "joke", PACK, "The riddle is odd.", W),
            ("budget", "joke", PACK, "Alice tells the riddle.", 1),
            ("many", "s2", MINI, "Every deployed service is reviewed.", W),
            ("diverge", "near", pack_with(NEAR), "Alice is near bob.", W),
-           ("dictionary", "joke", REFUSALS[0][2], "Alice tells the riddle.", W)]
+           ("dictionary", "joke", REFUSALS[0][2], "Alice tells the riddle.", W),
+           # sn-b6c: Mixed and Unneeded warnings, and a NoSenseFits hint
+           ("warnings", "joke", PACK, LINE + " In this document, tells means says aloud. The riddle is funny "
+                                      "(meaning strange). Alice tells the riddle. The riddle is funny.", W),
+           ("hint", "joke", PACK, "Alice is funny.", W)]
 
 
 @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
@@ -494,7 +498,8 @@ def test_genuine_response_field_mutations_are_rejected(name, place, pack, source
             for part in path[:-1]:
                 parent = parent[part]
             if mutate == "delete":
-                if type(parent) is not dict:
+                # NoSenseFits is Lean's to give (one unresolved word, spec 3.2); without it the answer is S2's `none`
+                if type(parent) is not dict or path == ("reading", "hint"):
                     continue
                 del parent[path[-1]]
             else:
