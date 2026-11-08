@@ -1,0 +1,232 @@
+{
+ "item": "df-5",
+ "note": "Planted by hand, one at a time, in the tree at b83b03bf6's code (each restored after; `git diff --quiet` checked): the wire is imported by the service mode its fixtures run through, so df-1a's joined-file runner does not apply. One mutant per new trusted definition: trust-mutants-final.json (tools/trust_mutants.py, with trust-mutants-allow.json). df-5a's and df-5ab's Zone mutants on the refactored Zone.lean: evidence/df-5a-mutants-rerun.out, evidence/df-5ab-mutants-rerun.out (F4 re-targeted as F4': its find text moved into forcedAllOf's error branch). Review fix round 1 (S4-S9): planted one at a time in the tree at c1d557077 and restored (`cmp` against the saved file); a Lean plant that a soundness theorem's proof also refutes was rerun with that proof `sorry`, so the named guard judges it alone. Loop round (S10-S22, review loop F1): one value mutant per tied definition, planted by tests/test_defaults_zone_ties.py itself, alone, in a copy of ZoneWire.lean under tmp_path; each breaks its tied theorem's proof and nothing else, and the unmutated copy elaborates. On the head before this round (d0e6c05c4), ten of the thirteen elaborated (the old theorems bound types, not values).",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneFields, zoneFieldsOf",
+   "bug": "DE10f emitted from an unknown zone: forcedAll read as [] from an incomplete enumeration, and an unknown (branch) zone shown with its assignment's rows, form and forced_all",
+   "find": [
+    "(match m with | .error _ => none | .ok Min => forcedOfMin x.v.L x.S.M x.record Min)",
+    "  | .unknown (.branch _ why) => unknownF why"
+   ],
+   "replace": [
+    "(match m with | .error _ => some [] | .ok Min => forcedOfMin x.v.L x.S.M x.record Min)",
+    "  | .unknown (.branch w why) => shown \"unknown\" [] [w]"
+   ],
+   "test": "lean/VE/Defaults/ZoneWireExamples.lean: the observations-size guard (#guard run (zreq lamEnv lamR lam2 (at_ \"instructs\" [\"o2\"]) (obsN 1025)) == ...), lake build VE.Defaults.ZoneWireExamples: error at the guard"
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneFieldsOf",
+   "bug": "DE10's 'exceptions' form chosen although a non-exception decision atom (DF-δ's ranking) is open",
+   "find": "(\"form\", .str (formLabel f))",
+   "replace": "(\"form\", .str \"short\")",
+   "test": "lean/VE/Defaults/ZoneWireExamples.lean: the DF-δz guard (#guard run (zreq δEnv δR δSit (at_ \"x_required\" [\"a\"])) == byDefault true \"long\" [] [])"
+  },
+  {
+   "id": "S3",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "Python accepts a tampered forced_all entry (its rule and tuple not bound to the request)",
+   "find": "    for name, values in forced:\n        exception(name, list(values), \"forced exception\")\n",
+   "replace": "",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_its_tampered_field (its first tamper: an absent rule in forced_all)"
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.replayZoneOn",
+   "bug": "review F4: the observations decoded before the size answer",
+   "find": "  | some z => pure ⟨v, S, some z, [], [], r, vs⟩",
+   "replace": "  | some z => do let _ ← obsJ.toList.mapM (obsEntry v.L S.M); pure ⟨v, S, some z, [], [], r, vs⟩",
+   "test": "replayZoneOn_sound's proof (lake build VE.Defaults.ZoneWire: error); with it sorry, lean/VE/Defaults/ZoneWireExamples.lean:134 (1,024 observations then one with no outcome: unknown, observations size)"
+  },
+  {
+   "id": "S5",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "review F2: a decision the record sets false accepted in a completion",
+   "find": "        if named & recorded[False]:\n            raise _unbound(\"recorded false\")\n",
+   "replace": "",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_a_row_its_request_contradicts, ::test_review_f2_probe_a_switch_recorded_false_is_not_shown, ::test_each_binding_refuses_its_tampered_field"
+  },
+  {
+   "id": "S6",
+   "language": "Python",
+   "file": "ve/defaults.py",
+   "definition": "bind_zone",
+   "bug": "review F2: a zone other than the observed query's value accepted",
+   "find": "        raise _unbound(\"observed outcome\")",
+   "replace": "        pass",
+   "test": "tests/test_defaults_zone.py::test_each_binding_refuses_a_row_its_request_contradicts, ::test_each_binding_refuses_its_tampered_field"
+  },
+  {
+   "id": "S7",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.outcomeOf",
+   "bug": "review F1: an outcome decoded without the request's name (the first regulated outcome)",
+   "find": "match L.U.D.T.regulated.find? (·.name == n) with",
+   "replace": "match L.U.D.T.regulated.find? (fun _ => true) with",
+   "test": "outcomeOf_mem's proof (error); with it sorry, lean/VE/Defaults/ZoneWireExamples.lean:74, :102 and :149 (orders is not a regulated outcome)"
+  },
+  {
+   "id": "S8",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneLineWords",
+   "bug": "review F3: DE10f's words changed in Lean without the generated table",
+   "find": "(\"DE10f\", \"\", \"The facts here force the exception to rule {rule} for {tuple}.\",",
+   "replace": "(\"DE10f\", \"\", \"The facts here may force the exception to rule {rule} for {tuple}.\",",
+   "test": "tests/test_defaults_zone.py::test_review_f3_the_committed_words_are_the_lean_generators_output (ve/defaults_words.json is stale)"
+  },
+  {
+   "id": "S9",
+   "language": "Python",
+   "file": "ve/defaults_english.py",
+   "definition": "zone",
+   "bug": "review F3: DE10's words written in Python",
+   "find": "    return [heads[0][\"words\"].format(result=result)] + [_decision(text, line) for line in row[\"completions\"][0]]",
+   "replace": "    head = {\"short\": \"exceptions\", \"long\": \"assumptions\"}[row[\"form\"]]\n    return [f\"With no {head} here that could be dropped, alone or together, {result}.\"] + [\n        _decision(text, line) for line in row[\"completions\"][0]]",
+   "test": "tests/test_defaults_zone.py::test_review_f3_every_zone_sentence_is_lean_s_words_filled"
+  },
+  {
+   "id": "S10",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.recordEntry",
+   "bug": "review loop F1: a record entry's value flipped (the recheck's mutant)",
+   "find": "  pure ((n, ← tupleIn M ss e), ← (← e.getObjVal? \"value\").getBool?)",
+   "replace": "  pure ((n, ← tupleIn M ss e), !(← (← e.getObjVal? \"value\").getBool?))",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[recordEntry-value] (`recordEntry_sound`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S11",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.obsEntry",
+   "bug": "review loop F1: an observation's value flipped",
+   "find": "  pure ((r, ← tupleIn M (VE.NormDefaults.sortsOf L.U.D r.name) e), ← (← e.getObjVal? \"value\").getBool?)",
+   "replace": "  pure ((r, ← tupleIn M (VE.NormDefaults.sortsOf L.U.D r.name) e), !(← (← e.getObjVal? \"value\").getBool?))",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[obsEntry-value] (`obsEntry_sound`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S12",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.decisionOf",
+   "bug": "review loop F1: a ranking's lower and higher read from each other's fields",
+   "find": ".outweighs <$> s \"outweighs\" <*> s \"lower\" <*> s \"higher\"",
+   "replace": ".outweighs <$> s \"outweighs\" <*> s \"higher\" <*> s \"lower\"",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[decisionOf-key] (`decisionOf_key`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S13",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.decisionOf",
+   "bug": "review loop F1: the first keyed decision, whatever the request's key",
+   "find": "match (keyedDecisions L.D).find? (·.1 == k) with",
+   "replace": "match (keyedDecisions L.D).find? (fun _ => true) with",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[decisionOf-lookup] (`decisionOf_mem`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S14",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.outcomeOf",
+   "bug": "review loop F1: the first regulated outcome, whatever the request's name (S7's bug, now against the value tie)",
+   "find": "match L.U.D.T.regulated.find? (·.name == n) with",
+   "replace": "match L.U.D.T.regulated.find? (fun _ => true) with",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[outcomeOf-name] (`outcomeOf_mem`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S15",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.tupleIn",
+   "bug": "review loop F1: the tuple decoded in reverse order",
+   "find": "(·.val) <$> VE.NormDefaults.Wire.tupleOf",
+   "replace": "(·.val.reverse) <$> VE.NormDefaults.Wire.tupleOf",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[tupleIn-order] (`tupleIn_typed`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S16",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.replayZoneOn",
+   "bug": "review loop F1: the observations decoded in reverse order",
+   "find": "← obsJ.toList.mapM (obsEntry v.L S.M)",
+   "replace": "← obsJ.toList.reverse.mapM (obsEntry v.L S.M)",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[replayZoneOn-order] (`replayZoneOn_sound`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S17",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.replayZoneOn",
+   "bug": "review loop F1: the record decoded from the observations' list",
+   "find": "let recordJ ← (← j.getObjVal? \"record\").getArr?",
+   "replace": "let recordJ ← (← j.getObjVal? \"observations\").getArr?",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[replayZoneOn-sibling] (`replayZoneOn_sound`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S18",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.ZoneReplay.min",
+   "bug": "review loop F1: the sizes' early answer replaced by another unknown",
+   "find": "  | some z => .error z",
+   "replace": "  | some _ => .error (.unknown (.branch [] \"size\"))",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[min-early] (`ZoneReplay.min_early`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S19",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneSizes",
+   "bug": "review loop F1: past the observations' bound, the reason 'size' instead of 'observations size'",
+   "find": "if maxZoneObservations < obs then some (.unknown (.branch [] \"observations size\")) else none",
+   "replace": "if maxZoneObservations < obs then some (.unknown (.branch [] \"size\")) else none",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[zoneSizes-reason] (`zoneSizes_observations`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S20",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.zoneSizes",
+   "bug": "review loop F1: the observations' bound one higher",
+   "find": "if maxZoneObservations < obs then",
+   "replace": "if maxZoneObservations + 1 < obs then",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[zoneSizes-bound] (`zoneSizes_none_iff` or `zoneSizes_observations`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S21",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.ZoneLine.row",
+   "bug": "review loop F1: a stated condition's line labelled DE10f",
+   "find": "| .stated .. => \"DE11\" | .forced .. => \"DE10f\"",
+   "replace": "| .stated .. => \"DE10f\" | .forced .. => \"DE10f\"",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[row-label] (`zoneLine_rows_distinct`'s proof fails, and nothing else)"
+  },
+  {
+   "id": "S22",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/ZoneWire.lean",
+   "definition": "VE.Defaults.Wire.ZoneLine.kind",
+   "bug": "review loop F1: a switch's DE13 line given the exception's kind",
+   "find": "| .assumed (.off ..) _ => \"off\"",
+   "replace": "| .assumed (.off ..) _ => \"excepted\"",
+   "test": "tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[kind-label] (`zoneLine_rows_distinct`'s proof fails, and nothing else)"
+  }
+ ]
+}
