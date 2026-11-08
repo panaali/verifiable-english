@@ -66,8 +66,11 @@ def placeholderJson (environment : Json) : Except String Json := do
     "profiles" (toJson (profiles.filter (· != profile))))
 
 /-- Validate the authored environment without charging document-level fill
-limits. Those limits belong to `decodeSourceU` when a norm document is read. -/
-def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsEnvironment := do
+limits. Those limits belong to `decodeSourceU` when a norm document is read. `joined` admits a joined act under
+`acts@0` (the act check of 6.4, each act read once): only the environment row passes it (ap-3dc, DRI 2026-11-02
+ap-3db item 5). -/
+def decodeEnvironmentU (environment : Json) (joined : Bool := false) :
+    Except String VE.Norms.Wire.NormsEnvironment := do
   let profiled := hasProfile environment
   let frame ← if profiled then do
     for n in declaredNames environment do
@@ -77,7 +80,7 @@ def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsE
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     pure environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame (acts := true)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame (acts := true) (joined := joined)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "Definitions require definitions@0"
   pure ne

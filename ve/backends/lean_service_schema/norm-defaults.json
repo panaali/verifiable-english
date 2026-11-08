@@ -50,7 +50,11 @@
                   "when": {"$ref": "#/$defs/kind/defaults-certificate"}
                 },
                 {"then": {"$ref": "#/$defs/defaults_model"}, "when": {"$ref": "#/$defs/kind/defaults-model"}},
-                {"then": {"$ref": "#/$defs/defaults_zone"}, "when": {"$ref": "#/$defs/kind/defaults-zone"}}
+                {"then": {"$ref": "#/$defs/defaults_zone"}, "when": {"$ref": "#/$defs/kind/defaults-zone"}},
+                {
+                  "then": {"$ref": "norms.json#/$defs/acts-elaborate"},
+                  "when": {"$ref": "#/$defs/kind/acts-elaborate"}
+                }
               ]
             }
           ]
@@ -434,6 +438,7 @@
       "type": "object"
     },
     "kind": {
+      "acts-elaborate": {"properties": {"kind": {"const": "acts-elaborate"}}, "required": ["kind"], "type": "object"},
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "defaults-certificate": {"properties": {"kind": {"const": "defaults-certificate"}}, "required": ["kind"], "type": "object"},
       "defaults-coherence": {"properties": {"kind": {"const": "defaults-coherence"}}, "required": ["kind"], "type": "object"},

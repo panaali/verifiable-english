@@ -33,6 +33,7 @@
 - `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
 - `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
 - `tests/test_acts_contract.py` — The `acts@0` wire table in shadow (ap-1bf): the legacy validator still owns the verdict; the engines name the member of 1.1 at and around each limit of `VE.Act…
+- `tests/test_acts_elaborate_relay.py` — ap-3dc: the `acts-elaborate` relay (act-phrases 6.7) and the norms route under `acts@0` on Lean's elaborated document.
 - `tests/test_acts_joined_route.py` — ap-3db: a joined act under `acts@0` on the routes that elaborate it (act-phrases 6.4, DRI 2026-11-02 ap-3db).
 - `tests/test_acts_lexical.py` — act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
 - `tests/test_acts_lexical_mutants.py` — Seeded mutants of the act-phrase decoder each fail a fixture (ap-1a review F1).
@@ -89,5 +90,3 @@
 - `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
 - `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
 - `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
-- `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
-- `tests/test_background.py` — (no module docstring)
