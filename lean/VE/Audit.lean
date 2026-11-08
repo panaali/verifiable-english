@@ -288,6 +288,7 @@ import VE.Presupposition.Reading
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Purposes.Decl
+import VE.Purposes.Examples
 import VE.Purposes.WellFormed
 import VE.Purposes.Wire
 import VE.Question.Frames
@@ -4533,6 +4534,7 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.speech_question_top
 #print axioms VE.Presupposition.unsaid_iff
 #print axioms VE.Presupposition.yieldsD_map
+#print axioms VE.Purposes.Examples.notChecked_cases
 #print axioms VE.Purposes.Polarity.ofWire_wire
 #print axioms VE.Purposes.Relation.ofWire_wire
 #print axioms VE.Purposes.Relation.wire_mem
@@ -4563,6 +4565,7 @@ import VE.WireContract.Engine
 #print axioms VE.Purposes.nonfactive_iff
 #print axioms VE.Purposes.require_iff
 #print axioms VE.Purposes.sameUnit_parent
+#print axioms VE.Purposes.shareOf_render
 #print axioms VE.Purposes.shareOk_iff
 #print axioms VE.Purposes.sideAdjacent_iff
 #print axioms VE.Purposes.side_kind

@@ -11,6 +11,14 @@ namespace VE.Purposes.Examples
 open Lean VE.Purposes
 open VE.Route.Admission (Kind)
 
+/-- The PE-1 support-refusal vocabulary is present, distinct, and exhaustive. -/
+theorem notChecked_cases (reason : NotChecked) :
+    reason = .purpose ∨ reason = .denied ∨ reason = .ruleTarget ∨
+    reason = .readings ∨ reason = .noFormula := by
+  cases reason <;> simp
+
+#guard ([NotChecked.purpose, .denied, .ruleTarget, .readings, .noFormula] : List NotChecked).Nodup
+
 /-- `none` when the check passes, else its text. -/
 def result : Except String Unit → Option String
   | .ok () => none

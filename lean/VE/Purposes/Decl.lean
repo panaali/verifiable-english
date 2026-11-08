@@ -65,4 +65,13 @@ structure Block where
 
 def maxLinks : Nat := 256
 
+/-- Why a link gets no support question (plan D5), in the order `eligible` tests them (6.3). -/
+inductive NotChecked where
+  | purpose      -- `in order to`: whether a rule serves its purpose is never checked
+  | denied       -- nothing is claimed to support
+  | ruleTarget   -- the target is a rule (practical reasons are not tested)
+  | readings     -- a side has an active reading set
+  | noFormula    -- the target is not one stated, checked formula, or a reason part is not
+  deriving DecidableEq, Repr
+
 end VE.Purposes

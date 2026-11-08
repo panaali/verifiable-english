@@ -4050,6 +4050,7 @@
 'VE.Presupposition.speech_question_top' does not depend on any axioms
 'VE.Presupposition.unsaid_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Presupposition.yieldsD_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Purposes.Examples.notChecked_cases' depends on axioms: [propext]
 'VE.Purposes.Polarity.ofWire_wire' does not depend on any axioms
 'VE.Purposes.Relation.ofWire_wire' does not depend on any axioms
 'VE.Purposes.Relation.wire_mem' depends on axioms: [propext]
@@ -4080,6 +4081,7 @@
 'VE.Purposes.nonfactive_iff' depends on axioms: [propext, Quot.sound]
 'VE.Purposes.require_iff' depends on axioms: [propext]
 'VE.Purposes.sameUnit_parent' depends on axioms: [propext, Quot.sound]
+'VE.Purposes.shareOf_render' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Purposes.shareOk_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Purposes.sideAdjacent_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Purposes.side_kind' depends on axioms: [propext, Quot.sound]
