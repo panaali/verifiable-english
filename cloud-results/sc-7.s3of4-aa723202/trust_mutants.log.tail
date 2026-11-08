@@ -1,0 +1,15 @@
+trust_mutants: 20 definitions, 291 mutants (61 to run), 4 jobs, base d962e66a76e5
+SURVIVOR lean/VE/Scope/Authoring.lean:148 VE.Scope.Pinned.readHeading (D[V], trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) all-any: all -> any
+UNKNOWN lean/VE/Scope/Authoring.lean:183 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-empty: [b] -> [] (lean/VE/Scope/Authoring.lean:183: Unknown identifier `b`)
+UNKNOWN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-empty: (("degree", .str ·)) -> [] (lean/VE/Scope/Authoring.lean:44: Application type mismatch: The argument)
+UNKNOWN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when") -> [] (lean/VE/Scope/Authoring.lean:166: Application type mismatch: The argument)
+UNKNOWN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-first: (("degree", .str ·)) -> ((("degree", .str ·)).take 1) (lean/VE/Scope/Authoring.lean:44: Invalid dotted identifier notation: The expected type of `.str` ...)
+UNKNOWN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: (("degree", .str ·)) -> ((("degree", .str ·)).dropLast) (lean/VE/Scope/Authoring.lean:44: Invalid dotted identifier notation: The expected type of `.str` ...)
+SURVIVOR lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-first: w -> (w.drop 1)
+UNKNOWN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-last: (("degree", .str ·)) -> ((("degree", .str ·)).reverse.take 1) (lean/VE/Scope/Authoring.lean:44: Invalid dotted identifier notation: The expected type of `.str` ...)
+SURVIVOR lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: s -> (s.drop 1)
+trust_mutants: 43 KILLED, 4 SURVIVOR, 6 UNKNOWN, 15 INVALID, 5 ALLOWED, 0 NOT RUN, 218 OTHER SHARD in 85 s; 12 reused from be09a656cd2e (identical inputs)
+trust_mutants: D[V], trusted: 29 KILLED, 4 SURVIVOR, 2 UNKNOWN, 15 INVALID, 4 ALLOWED, 161 OTHER SHARD
+trust_mutants: S, trusted: 14 KILLED, 4 UNKNOWN, 1 ALLOWED, 57 OTHER SHARD
+trust_mutants: steps: wall plan 10 s, scratch 2.2 s, control_build 0.2 s, probe_install 1.4 s, control_probes 1.4 s, mutants 65 s, cleanup 4.9 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 1.3 s (1), mutant_builds 153.6 s (63), mutant_checks 35.2 s (38), stage_controls 8.3 s (3), mutant_probes 45.2 s (31)
