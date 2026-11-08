@@ -78,7 +78,8 @@ FIXTURES = [
     ("sign-flip-16", "toString ((signFlipC Work.maxWork d16).map fun (p, w) => (q (some p), w))",
      "(some (1/32768, 179311968))"),
     ("sign-flip-short", "toString ((signFlipC 179311967 d16).isNone)", "true"),
-    ("sign-flip-empty", "toString [(signFlipC 120 []).isSome, (signFlipC 119 []).isNone]", "[true, true]"),
+    ("sign-flip-empty", "toString [(signFlipC 120 []).isSome, (signFlipC 119 []).isNone, (signFlipC 0 d16).isNone]",
+     "[true, true, true]"),
     # Large values the length-only charge admitted (1,114,128 and 53,260 units): refused, UNKNOWN, by their bits.
     ("sign-flip-big16", "toString (signFlipWork big16, (signFlipC Work.maxWork big16).isNone)", "(9612065232, true)"),
     ("sign-flip-big12", "toString (signFlipWork big12, (signFlipC Work.maxWork big12).isNone)", "(11241469680, true)"),

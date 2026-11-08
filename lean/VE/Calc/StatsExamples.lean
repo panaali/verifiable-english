@@ -55,7 +55,7 @@ refuses. The charge counts value bits (12.2's unit): `(2¹⁶ + 2) · 72 · (1 +
 def d16 : List Rat := List.replicate 16 1
 #guard signFlipWork d16 = 179311968 ∧ signFlipWork d16 ≤ Work.maxWork
 #guard signFlipC Work.maxWork d16 = some (1 / 32768, 179311968) ∧ signFlipC 179311967 d16 = none
-#guard signFlipC 120 [] = some (1, 120) ∧ signFlipC 119 [] = none
+#guard signFlipC 120 [] = some (1, 120) ∧ signFlipC 119 [] = none ∧ signFlipC 0 d16 = none
 
 /-! Large values the length-only charge (`n + 2ⁿ (n + 1)`: 1,114,128 and 53,260 units) admitted within `Work.maxWork`
 and the bits refuse: sixteen 2,000-bit integers (the numerators' bits), and twelve 1,000-bit numerators over

@@ -47,7 +47,7 @@ eight prime denominators 6.0.
 | Case | Old charge | New charge | `maxWork` = 8,589,934,592 |
 |---|---|---|---|
 | sixteen 1s (`d16`) | 1,114,128 | 179,311,968 | within; 179,311,967 refuses |
-| `[]` | 1 | 120 | 119 refuses |
+| `[]` | 1 | 120 | 119 refuses; budget 0 refuses `d16` (`:58`) |
 | sixteen 2,000-bit integers (`big16`) | 1,114,128 | 9,612,065,232 | refused (was admitted) |
 | twelve 1,000-bit numerators over 2,000-bit odd denominators (`big12`) | 53,260 | 11,241,469,680 | refused (was admitted); 11,241,469,680 admits, one less refuses |
 
@@ -82,15 +82,61 @@ Guard lines are `lean/VE/Calc/StatsExamples.lean`'s.
   (`tools/trust-classes.json`). No S line changed, so no R16 allowance and no FOLLOW-UPS ties row were needed.
 - **DELTA.** None. `signFlipC` is read by no route or CLI mode (`Expr` has no `.stat` arm until me-7b), so no CLI
   verdict changes; no DELTA.md.
-- **Size.** About 95 hand-written lines changed in Lean, tests and the me-7 REPORT row, plus this report and
-  mutants.json. Generated: `lean/statements.txt`, `lean/declarations.txt`, docs/codemap (main's lag, regenerated).
+- **Size.** `git diff --numstat e9a6ec8d5`, hand-written: Stats.lean +18 −6, StatsExamples.lean +14 −4,
+  tests/test_calc_stats.py +55 −5, me-7 REPORT +1 −1, trust-classes.json +2. That is 90 added and 16 removed outside
+  this report and mutants.json. Generated: `lean/statements.txt`, `lean/declarations.txt`, docs/codemap (main's lag,
+  regenerated).
 
-## Tests run
+## Tests run (final code)
 
-`lake build` (all, 1,311 jobs) and `python3 lean/audit.py` passed. `uv run pytest -q tests/test_calc_stats.py`
-passed (34 tests). The selected tests are in the build report.
+- `lake build`: all 1,311 jobs passed, which includes every StatsExamples #guard.
+- `python3 lean/audit.py`: PASS, 780 source files, 8,635 theorems audited.
+- `uv run pytest -q tests/test_calc_stats.py`: 34 passed.
+- `uv run python tools/regen_generated.py --check`: rc 0, 35 entries.
+- `uv run python tools/gate_collection.py --check --prebuilt`: 8 added, 0 removed, 0 refused, 0 stale.
+- `mac-pytest.sh --select -- --base e9a6ec8d5 --run` on HEAD 34bdfad7, ve-mac-1:
+  - exit 0; 105 of 547 test units selected, 0 failed ids, test_calc_stats.py among them;
+  - two heavy files were deferred to the chain gate (test_safety_framework.py, test_test_chunks.py).
+- The only later change is the budget-0 conjunct on `:58` and its `sign-flip-empty` entry, rerun with the two
+  file-level checks above.
+- Known-red on main (main-known-red.txt): none touch these files.
 
 ## Pilot bytes and next item
 
 Pilot bytes: 0 (the charge only refuses oversized sign flips; no pilot document states one).
 Next: ME-8 (consistency of printed numbers) uses the corrected charge.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained answers: N.A. No route, relay or schema changes; `signFlipC` is read by no service mode.
+2. Deliverables: PASS. Every task row is in "Delivered" with its file and test. No Python copy of a Lean decision:
+   `counted_work` in the test is an oracle that runs the sign flip, not the charge. No in-flight branch edits these
+   files (checked with `git diff --name-only main...<branch>` for every lean-first/feature/infra/foundation branch).
+3. Tests can fail: PASS. M1-M5 in mutants.json, each with its failing #guard or theorem; M1 is also caught by 10
+   pytest ids alone. No R16 growth, so trust_mutants are not required.
+4. Python, Lean and Rust agree: N.A. No Python or Rust product code changed. The Python oracle agrees with Lean in
+   `test_sign_flip_charge_covers_work`.
+5. R8 binding: N.A. No relayed field is added.
+6. Gate evidence: PASS. The chain runs the gate on the final HEAD; this report reads no live git.
+7. Unsigned items: PASS. There is no DELTA row and no trust growth (`trust_map.py --check`: K, S, D, G +0).
+8. DELTA: PASS (none). No CLI mode reaches `signFlipC` (grep: only Stats, StatsExamples, Audit and the test).
+9. Test selection: PASS. The selection run listed `tests/test_calc_stats.py` as changed and ran it.
+10. Statements: PASS. The two changed statements are listed before and after. M4 shows the proofs break when
+    `signFlipC` changes. Spec re-read: 12.2's unit against docs/spec/math-evidence.md:834-838 (one per node plus
+    each value's bits, a rational's numerator and denominator bits), and `signFlipC` charges before evaluation
+    (:837-838).
+11. Budgets fail closed: PASS. The charge is tested both ways:
+    - refusals: budget 0 refuses `d16` (`:58`, `sign-flip-empty`); one unit short refuses (`:57`, `:58`, `:67`);
+    - acceptances: the exact charge admits (`:57`, `:58`, `:67`);
+    - oversized cases end at once as UNKNOWN, because the charge comes before the 2ⁿ enumeration (`:65`, `:66`).
+12. CPU and memory: PASS. The charge is computed in one pass before the enumeration, and refuses the large cases
+    without enumerating them. StatsExamples builds in about 4 s.
+13. Test-removed trailers: N.A. No test is removed (`gate_collection.py --check --prebuilt`: 0 removed, 0 stale).
+14. Both directions and cited evidence: PASS. Every refusal case has its admitted twin (`:57`/`:58`/`:67`). Each
+    claim above names its command.
+15. Overclaim, silent cut, every check can fail, limits charged first: PASS.
+    - "never below its work" is checked on five cases by `test_sign_flip_charge_covers_work`. It is argued, not
+      proved in Lean.
+    - Nothing is cut.
+    - Every new #guard (`:56`-`:58`, `:65`-`:67`) breaks under M1, M2 or M3.
+    - `signFlipC` charges before it evaluates (M4, `:65`).
