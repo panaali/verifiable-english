@@ -163,7 +163,10 @@ module VE.Ask.Wire
 module VE.Ask.ZeroAnswer
 module VE.Ask.ZeroWire
 module VE.Attitudes.Examples
+module VE.Attitudes.Frame
+module VE.Attitudes.Route
 module VE.Attitudes.Scale
+module VE.Attitudes.Semantics
 module VE.Attitudes.Syntax
 module VE.Attitudes.Theorems
 module VE.Attribution.Admission
@@ -858,7 +861,14 @@ VE.Ask.SplitU@VE.Ask.Basic
 VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
+VE.Attitudes.AFormula.denote@VE.Attitudes.Semantics
 VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
+VE.Attitudes.AttModel.J@VE.Attitudes.Semantics
+VE.Attitudes.Intended@VE.Attitudes.Semantics
+VE.Attitudes.SettledAsX@VE.Attitudes.Route
+VE.Attitudes.UnsaidFree@VE.Attitudes.Route
+VE.Attitudes.contentAt@VE.Attitudes.Semantics
+VE.Attitudes.seedClosure@VE.Attitudes.Semantics
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
 VE.Calc.Check.OutcomeMeans@VE.Calc.Run
