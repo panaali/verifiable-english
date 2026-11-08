@@ -1,0 +1,8 @@
+trust_mutants: 6 definitions, 77 mutants (77 to run), 4 jobs, base bcc5427f98ae
+SURVIVOR lean/VE/Service/Document.lean:2263 VE.Service.DocumentChain.requestOf (D[V], trusted) list-empty: (VE.Compose.listedProfiles environment) -> [] (the proofs it breaks: lean/VE/Service/DocumentChain.lean:29)
+trust_mutants: 9 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 4 ALLOWED, 63 NOT RUN in 3115 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 20 NOT RUN
+trust_mutants: G[V], trusted: 6 KILLED, 1 ALLOWED, 32 NOT RUN
+trust_mutants: S, trusted: 2 KILLED, 3 ALLOWED, 11 NOT RUN
+trust_mutants: PARTIAL: the deadline stopped the run with 63 of its 77 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.4 s, control_probes 2017.2 s, mutants 1077.3 s, cleanup 3.1 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 5565.6 s (16), mutant_builds 104.6 s (16), mutant_checks 1601.9 s (21), stage_controls 526.9 s (5), mutant_probes 1904.6 s (11)
