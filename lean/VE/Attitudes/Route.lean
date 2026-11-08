@@ -26,9 +26,9 @@ def SettledAsX (U : UDoc) (X : List VE.Formula) (B : VE.Structure.{u}) (r : Regu
 /-- A premise that reads no `unsaid__` table of `U`. -/
 def UnsaidFree (U : UDoc) (φ : VE.Formula) : Prop := ∀ p ∈ U.unspec, unsaidName p ∉ VE.Norms.preds φ
 
-/-- AT-2's stand-in (spec section 0; the stub declares it without a body, which `lean/audit.py` refuses): a frame
-    label's request occurrence. AT-2 writes the body, AT-3a fixes the paths; until then every label's origin is the
-    root. -/
+/-- AT-2's stand-in (spec section 0; reviews/dri-decisions-20261108-at-1c.md item 1): a frame label's request
+    occurrence. AT-2 writes the body and AT-3a fixes the paths; until then every origin is the root, and no route
+    registers the pack (Examples.lean's guard on `labelOriginStandInUnread`). -/
 def labelOrigin (_A : AttDoc) (_l : String) : VE.NormDefaults.Packs.RequestPath := []
 
 /-- The `attitudes` pack (edit 6), restated against PK-1 as built (refresh, RF-5): a `constraint` pack with no

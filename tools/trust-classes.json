@@ -18693,6 +18693,7 @@
         "VE.Attitudes.Examples.kn",
         "VE.Attitudes.Examples.knows1",
         "VE.Attitudes.Examples.knowsA",
+        "VE.Attitudes.Examples.labelOriginStandInUnread",
         "VE.Attitudes.Examples.lexA",
         "VE.Attitudes.Examples.lexB",
         "VE.Attitudes.Examples.lexC",
@@ -18764,9 +18765,6 @@
       ]
     },
     "VE/Attitudes/Route.lean": {
-      "G[I]": [
-        "VE.Attitudes.labelOrigin"
-      ],
       "G[V]": [
         "VE.Attitudes.attitudesPack",
         "VE.Attitudes.attitudesRow",
@@ -18774,7 +18772,8 @@
       ],
       "S": [
         "VE.Attitudes.SettledAsX",
-        "VE.Attitudes.UnsaidFree"
+        "VE.Attitudes.UnsaidFree",
+        "VE.Attitudes.labelOrigin"
       ]
     },
     "VE/Attitudes/Scale.lean": {
