@@ -17,13 +17,13 @@ from pathlib import Path
 import pytest
 
 from tests import check_mutants, test_defaults_lean
-from tests import test_defaults_answer
+from tests import test_defaults_answer, test_defaults_zone
 from tests.test_defaults_answer import BOTH_SIDES, NOT_BOTH_SIDES
 from ve import defaults
 from ve.document import cli
 
 ROOT = Path(__file__).resolve().parents[1]
-TESTS = (*BOTH_SIDES, test_defaults_lean.test_flag_refusals, test_defaults_lean.test_flag_asks_with_the_documents_norms_and_facts)
+TESTS = (*BOTH_SIDES, *test_defaults_zone.BOTH_SIDES, test_defaults_lean.test_flag_refusals, test_defaults_lean.test_flag_asks_with_the_documents_norms_and_facts)
 
 
 def _flag_check(function, node):
