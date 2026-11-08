@@ -22,6 +22,8 @@ The required selected command `zsh /home/seyran/code/manage-agents/mac-pytest.sh
 
 `uv run python tools/repo_map.py file tools/trust_mutants.py` reported `generator: -` and layer 4 (tools). No Lean or Rust product code changed, so Lean build, `lean/audit.py`, generated-file regeneration, and a trust-mutant sweep do not apply. `df -h .` reported 83G free. `rg` over `main-known-red.txt` found no related known-red test.
 
+`UV_CACHE_DIR=/tmp/uv-cache uv run python tools/gate_collection.py --check --prebuilt` reported `7 added, 4 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers` (`/tmp/eff-tm-collection2.log`). The three trailers missing from the first collection check were added in `b62378d4c` as one contiguous commit-message block.
+
 ## Caller delegate: manage-agents/mac-pytest.sh
 
 In `tmparts()`, remove the early equality exit at line 255 that compares current `git rev-parse HEAD` with `vm_head`. Keep the `wt-snapshot.sh` call at lines 265–266 as a successful-snapshot check, but remove its `o[1] == vm_head` early exit. Continue pinning the cloud parent base through `pa+=(--base $vb)`. Run missing or partial parts at the current checkout; `trust_mutants --resume` checks the saved plan, all input digests, and selected tests, and `--merge` refuses parts whose inputs or plans differ. If snapshot creation fails, retain a fallback to the full sweep. Update the caller's header comments at lines 92–104, which still say moved HEAD is never resumable. This exact caller change is outside this VE item.
@@ -61,6 +63,6 @@ Each temporary Python product-code mutation was made in `tools/trust_mutants.py`
 10. N.A. — no Lean theorem or source statement changed.
 11. N.A. — no budget, deadline, or limit logic changed; `test_a_deadline_stops_new_mutants_and_lists_the_rest_unjudged` remains in the existing suite.
 12. N.A. — no VE check/render path changed; avoided rerun hours are deferred to three measured sweeps.
-13. PASS — removed parameter IDs receive `Test-removed` trailers in this branch's commit history; `git diff --check main...HEAD` exited 0.
+13. PASS — removed parameter IDs receive `Test-removed` trailers; `gate_collection.py --check --prebuilt` reported `0 refused, 0 stale and 0 malformed`.
 14. PASS — opposite directions are the docs-only carry and changed-input/plan reruns; command outputs and spec re-read are above.
 15. PASS — overclaim: this report marks caller work and measurements deferred; silent cut: acceptance table names both; checks can fail: five seeds above; limits charged before work: N.A. (limit logic unchanged).
