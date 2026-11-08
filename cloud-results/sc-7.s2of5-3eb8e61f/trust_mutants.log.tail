@@ -1,0 +1,200 @@
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-empty: w.drop k -> []
+NOT RUN lean/VE/Scope/Authoring.lean:165 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("reguard", kindCondition)] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-empty: [("content", .str "own")] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when") -> []
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-empty: (onList w "do not apply when").map -> []
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("carve_out", english c)] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-empty: s -> []
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-empty: s -> []
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes"... -> []
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("anchor", Json.mkObj [("section", .str s)])] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("section", .str s)] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:177 VE.Scope.Pinned.readings (D[V], trusted) list-empty: [("reach", .str "frontier"), ("effect", narrowing c)] -> []
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: (s.splitOn " ") -> ((s.splitOn " ").take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-first: n -> (n.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-first: h -> (h.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-first: [("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)] -> ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-first: [("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("un... -> ([("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("u...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-first: [("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)] -> ([("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-first: [("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("eff... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("ef...
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-first: (s.toString.dropSuffix? suf) -> ((s.toString.dropSuffix? suf).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:133 VE.Scope.Pinned.splitOnce (D[V], trusted) list-first: [a, b] -> ([a, b].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-first: (rest.dropSuffix? ".") -> ((rest.dropSuffix? ".").take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:146 VE.Scope.Pinned.readHeading (D[V], trusted) list-first: (w.takeWhile (· == '#')) -> ((w.takeWhile (· == '#')).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-first: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> (([if w == frameWording then some frameBlock else none, (between w "The rules below are called " ...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-first: (readings w) -> ((readings w).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-last: (s.splitOn " ") -> ((s.splitOn " ").dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-drop-last: n -> (n.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-drop-last: h -> (h.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:40 VE.Scope.Pinned.english (S, trusted) list-drop-last: [("english", .str s)] -> ([("english", .str s)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:41 VE.Scope.Pinned.narrowing (S, trusted) list-drop-last: [("reguard", Json.arr #[.str "and", .str "own", english c])] -> ([("reguard", Json.arr #[.str "and", .str "own", english c])].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: [("attitude", Json.mkObj ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mo... -> ([("attitude", Json.mkObj ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str m...
+NOT RUN lean/VE/Scope/Authoring.lean:47 VE.Scope.Pinned.kindCondition (S, trusted) list-drop-last: ["quite likely"] -> (["quite likely"].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-last: [("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("un... -> ([("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("u...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-drop-last: [("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)] -> ([("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-last: [("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("eff... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("ef...
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-drop-last: (s.toString.dropSuffix? suf) -> ((s.toString.dropSuffix? suf).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:133 VE.Scope.Pinned.splitOnce (D[V], trusted) list-drop-last: [a, b] -> ([a, b].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-drop-last: (rest.dropSuffix? ".") -> ((rest.dropSuffix? ".").dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:146 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-last: (w.takeWhile (· == '#')) -> ((w.takeWhile (· == '#')).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> (([if w == frameWording then some frameBlock else none, (between w "The rules below are called " ...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-last: (readings w) -> ((readings w).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: w -> (w.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-first: n.drop 3 -> ((n.drop 3).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-first: h.drop 3 -> ((h.drop 3).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-first: degree -> (degree.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:49 VE.Scope.Pinned.frameBlock (S, trusted) list-first: [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])] -> ([("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-first: [("heading", .str h), ("level", toJson k)] -> ([("heading", .str h), ("level", toJson k)].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-first: (s.toString.dropSuffix? suf).map (·.toString) -> (((s.toString.dropSuffix? suf).map (·.toString)).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-first: (rest.dropSuffix? ".").map (·.toString) -> (((rest.dropSuffix? ".").map (·.toString)).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-first: ((w.drop k).dropPrefix? " ") -> (((w.drop k).dropPrefix? " ").take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-first: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> ([if w == frameWording then some frameBlock else none, (between w "The rules below are called " "...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-first: (readings w).filter (renderGovernor · == w) -> (((readings w).filter (renderGovernor · == w)).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-last: w -> (w.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-drop-last: n.drop 3 -> ((n.drop 3).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-drop-last: h.drop 3 -> ((h.drop 3).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: [("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)] -> ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-last: [("frame", Json.mkObj [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])])] -> ([("frame", Json.mkObj [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])])...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-drop-last: [("list_name", .str n)] -> ([("list_name", .str n)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-last: [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])] -> ([("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-drop-last: (s.toString.dropSuffix? suf).map (·.toString) -> (((s.toString.dropSuffix? suf).map (·.toString)).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-drop-last: (rest.dropSuffix? ".").map (·.toString) -> (((rest.dropSuffix? ".").map (·.toString)).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-last: ((w.drop k).dropPrefix? " ") -> (((w.drop k).dropPrefix? " ").dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> ([if w == frameWording then some frameBlock else none, (between w "The rules below are called " "...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-last: (readings w).filter (renderGovernor · == w) -> (((readings w).filter (renderGovernor · == w)).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-first: w -> (w.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-first: degree.map (("degree", .str ·)) -> ((degree.map (("degree", .str ·))).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-first: ((w.drop k).dropPrefix? " ").map (·.toString) -> ((((w.drop k).dropPrefix? " ").map (·.toString)).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:163 VE.Scope.Pinned.readings (D[V], trusted) list-first: (c.splitOn "its kind") -> ((c.splitOn "its kind").take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-last: w -> (w.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: degree -> (degree.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:49 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-last: [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])] -> ([("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-last: [("heading", .str h), ("level", toJson k)] -> ([("heading", .str h), ("level", toJson k)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-last: ((w.drop k).dropPrefix? " ").map (·.toString) -> ((((w.drop k).dropPrefix? " ").map (·.toString)).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:161 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("list_name", .str n)] -> ([("list_name", .str n)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:183 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-last: [b] -> ([b].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-first: (("degree", .str ·)) -> ((("degree", .str ·)).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-first: w -> (w.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-first: (onList w "do not apply when") -> ((onList w "do not apply when").take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: degree.map (("degree", .str ·)) -> ((degree.map (("degree", .str ·))).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-last: w -> (w.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:163 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: (c.splitOn "its kind") -> ((c.splitOn "its kind").dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-first: w.drop k -> ((w.drop k).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-first: (onList w "do not apply when").map -> (((onList w "do not apply when").map).take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: (("degree", .str ·)) -> ((("degree", .str ·)).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-last: w.drop k -> ((w.drop k).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:165 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("reguard", kindCondition)] -> ([("reguard", kindCondition)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-first: s -> (s.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-last: [("content", .str "own")] -> ([("content", .str "own")].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: (onList w "do not apply when") -> ((onList w "do not apply when").dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-first: s -> (s.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: (onList w "do not apply when").map -> (((onList w "do not apply when").map).dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-first: [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes"... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes...
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("carve_out", english c)] -> ([("carve_out", english c)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:177 VE.Scope.Pinned.readings (D[V], trusted) list-first: [("reach", .str "frontier"), ("effect", narrowing c)] -> ([("reach", .str "frontier"), ("effect", narrowing c)].take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: s -> (s.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: s -> (s.dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes"... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes...
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("anchor", Json.mkObj [("section", .str s)])] -> ([("anchor", Json.mkObj [("section", .str s)])].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("section", .str s)] -> ([("section", .str s)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:177 VE.Scope.Pinned.readings (D[V], trusted) list-drop-last: [("reach", .str "frontier"), ("effect", narrowing c)] -> ([("reach", .str "frontier"), ("effect", narrowing c)].dropLast)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-last: (s.splitOn " ") -> ((s.splitOn " ").reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-last: n -> (n.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-last: h -> (h.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-last: [("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)] -> ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-last: [("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("un... -> ([("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("u...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-last: [("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)] -> ([("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-last: [("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("eff... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("ef...
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-last: (s.toString.dropSuffix? suf) -> ((s.toString.dropSuffix? suf).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:133 VE.Scope.Pinned.splitOnce (D[V], trusted) list-last: [a, b] -> ([a, b].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-last: (rest.dropSuffix? ".") -> ((rest.dropSuffix? ".").reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:146 VE.Scope.Pinned.readHeading (D[V], trusted) list-last: (w.takeWhile (· == '#')) -> ((w.takeWhile (· == '#')).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-last: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> (([if w == frameWording then some frameBlock else none, (between w "The rules below are called " ...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-last: (readings w) -> ((readings w).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-first: (s.splitOn " ") -> ((s.splitOn " ").drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-drop-first: n -> (n.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-drop-first: h -> (h.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:40 VE.Scope.Pinned.english (S, trusted) list-drop-first: [("english", .str s)] -> ([("english", .str s)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:41 VE.Scope.Pinned.narrowing (S, trusted) list-drop-first: [("reguard", Json.arr #[.str "and", .str "own", english c])] -> ([("reguard", Json.arr #[.str "and", .str "own", english c])].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: [("attitude", Json.mkObj ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mo... -> ([("attitude", Json.mkObj ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str m...
+NOT RUN lean/VE/Scope/Authoring.lean:47 VE.Scope.Pinned.kindCondition (S, trusted) list-drop-first: ["quite likely"] -> (["quite likely"].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-first: [("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("un... -> ([("reach", .str "list"), ("effect", Json.mkObj [("frame", Json.mkObj [("sign", .bool false), ("u...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-drop-first: [("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)] -> ([("reach", Json.mkObj [("list_name", .str n)]), ("effect", effect)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-first: [("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("eff... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])]), ("ef...
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-drop-first: (s.toString.dropSuffix? suf) -> ((s.toString.dropSuffix? suf).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:133 VE.Scope.Pinned.splitOnce (D[V], trusted) list-drop-first: [a, b] -> ([a, b].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-drop-first: (rest.dropSuffix? ".") -> ((rest.dropSuffix? ".").drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:146 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-first: (w.takeWhile (· == '#')) -> ((w.takeWhile (· == '#')).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> (([if w == frameWording then some frameBlock else none, (between w "The rules below are called " ...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-first: (readings w) -> ((readings w).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:49 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-middle: ("unless", Json.arr #[]), -> 
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: (between w "The rules below are called " ".").bind fun n => if listName n then some (Json.mkObj [... -> 
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-last: w -> (w.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-last: n.drop 3 -> ((n.drop 3).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-last: h.drop 3 -> ((h.drop 3).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-last: degree -> (degree.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:49 VE.Scope.Pinned.frameBlock (S, trusted) list-last: [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])] -> ([("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-last: [("heading", .str h), ("level", toJson k)] -> ([("heading", .str h), ("level", toJson k)].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-last: (s.toString.dropSuffix? suf).map (·.toString) -> (((s.toString.dropSuffix? suf).map (·.toString)).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-last: (rest.dropSuffix? ".").map (·.toString) -> (((rest.dropSuffix? ".").map (·.toString)).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-last: ((w.drop k).dropPrefix? " ") -> (((w.drop k).dropPrefix? " ").reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-last: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> ([if w == frameWording then some frameBlock else none, (between w "The rules below are called " "...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-last: (readings w).filter (renderGovernor · == w) -> (((readings w).filter (renderGovernor · == w)).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-first: w -> (w.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:33 VE.Scope.Pinned.cap (D[V], trusted) list-drop-first: n.drop 3 -> ((n.drop 3).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:34 VE.Scope.Pinned.uncap (D[V], trusted) list-drop-first: h.drop 3 -> ((h.drop 3).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:43 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: [("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)] -> ([("holder", Json.arr #[.str "var", toJson (0 : Nat)]), ("mode", .str mode)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:48 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-first: [("frame", Json.mkObj [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])])] -> ([("frame", Json.mkObj [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])])...
+NOT RUN lean/VE/Scope/Authoring.lean:50 VE.Scope.Pinned.onName (S, trusted) list-drop-first: [("list_name", .str n)] -> ([("list_name", .str n)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-first: [("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])] -> ([("anchor", Json.mkObj [("heading", .str h), ("level", toJson k)])].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:130 VE.Scope.Pinned.between (D[V], trusted) list-drop-first: (s.toString.dropSuffix? suf).map (·.toString) -> (((s.toString.dropSuffix? suf).map (·.toString)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:140 VE.Scope.Pinned.onList (D[V], trusted) list-drop-first: (rest.dropSuffix? ".").map (·.toString) -> (((rest.dropSuffix? ".").map (·.toString)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-first: ((w.drop k).dropPrefix? " ") -> (((w.drop k).dropPrefix? " ").drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:159 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [if w == frameWording then some frameBlock else none, (between w "The rules below are called " ".... -> ([if w == frameWording then some frameBlock else none, (between w "The rules below are called " "...
+NOT RUN lean/VE/Scope/Authoring.lean:182 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-first: (readings w).filter (renderGovernor · == w) -> (((readings w).filter (renderGovernor · == w)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:161 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: (onList w "apply only where").bind fun (n, c) => if (c.splitOn "its kind").length == 1 then some ... -> 
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-last: w -> (w.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-last: degree.map (("degree", .str ·)) -> ((degree.map (("degree", .str ·))).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-last: ((w.drop k).dropPrefix? " ").map (·.toString) -> ((((w.drop k).dropPrefix? " ").map (·.toString)).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:163 VE.Scope.Pinned.readings (D[V], trusted) list-last: (c.splitOn "its kind") -> ((c.splitOn "its kind").reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:24 VE.Scope.Pinned.spaced (D[V], trusted) list-drop-first: w -> (w.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: degree -> (degree.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:49 VE.Scope.Pinned.frameBlock (S, trusted) list-drop-first: [("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])] -> ([("sign", .bool false), ("unless", Json.arr #[]), ("over", Json.arr #[])].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:52 VE.Scope.Pinned.heading (S, trusted) list-drop-first: [("heading", .str h), ("level", toJson k)] -> ([("heading", .str h), ("level", toJson k)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-first: ((w.drop k).dropPrefix? " ").map (·.toString) -> ((((w.drop k).dropPrefix? " ").map (·.toString)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:161 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("list_name", .str n)] -> ([("list_name", .str n)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:183 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-drop-first: [b] -> ([b].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:163 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: (between w "In place of their own condition, " s!" apply only where {kindWording}.").bind fun n =... -> 
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-last: (("degree", .str ·)) -> ((("degree", .str ·)).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-last: w -> (w.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-last: (onList w "do not apply when") -> ((onList w "do not apply when").reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: degree.map (("degree", .str ·)) -> ((degree.map (("degree", .str ·))).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-first: w -> (w.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:163 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: (c.splitOn "its kind") -> ((c.splitOn "its kind").drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:165 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: (onList w "do not apply when").map fun (n, c) => onName n (Json.mkObj [("carve_out", english c)]), -> 
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-last: w.drop k -> ((w.drop k).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-last: (onList w "do not apply when").map -> (((onList w "do not apply when").map).reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: (("degree", .str ·)) -> ((("degree", .str ·)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:147 VE.Scope.Pinned.readHeading (D[V], trusted) list-drop-first: w.drop k -> ((w.drop k).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:165 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("reguard", kindCondition)] -> ([("reguard", kindCondition)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: (between w "Notwithstanding the rules of section " ".").bind fun rest => match rest.splitOn ", " ... -> 
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-last: s -> (s.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:44 VE.Scope.Pinned.attitude (S, trusted) list-drop-first: [("content", .str "own")] -> ([("content", .str "own")].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: (onList w "do not apply when") -> ((onList w "do not apply when").drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: ("effect", .str "precedes"), -> 
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-last: s -> (s.reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: (onList w "do not apply when").map -> (((onList w "do not apply when").map).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:174 VE.Scope.Pinned.readings (D[V], trusted) list-drop-middle: readHeading w, -> 
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-last: [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes"... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes...
+NOT RUN lean/VE/Scope/Authoring.lean:166 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("carve_out", english c)] -> ([("carve_out", english c)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:177 VE.Scope.Pinned.readings (D[V], trusted) list-last: [("reach", .str "frontier"), ("effect", narrowing c)] -> ([("reach", .str "frontier"), ("effect", narrowing c)].reverse.take 1)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: s -> (s.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:170 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: s -> (s.drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes"... -> ([("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]), ("effect", .str "precedes...
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("anchor", Json.mkObj [("section", .str s)])] -> ([("anchor", Json.mkObj [("section", .str s)])].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:171 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("section", .str s)] -> ([("section", .str s)].drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:177 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("reach", .str "frontier"), ("effect", narrowing c)] -> ([("reach", .str "frontier"), ("effect", narrowing c)].drop 1)
+trust_mutants: 11 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 231 NOT RUN, 48 OTHER SHARD in 43 s
+trust_mutants: D[V], trusted: 8 KILLED, 1 UNKNOWN, 167 NOT RUN, 39 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 64 NOT RUN, 9 OTHER SHARD
+trust_mutants: steps: wall plan 11.8 s, scratch 3.6 s, control_build 0.2 s, probe_install 1.4 s, control_probes 1.4 s, mutants 22.9 s, cleanup 1.3 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 1.4 s (1), mutant_builds 34 s (12), mutant_checks 21.3 s (15), stage_controls 11.6 s (4), mutant_probes 17.1 s (11)
