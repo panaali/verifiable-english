@@ -1,0 +1,59 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Discourse.chainEnvironment",
+      "operator": "list-empty",
+      "reason": "a type error: `(checkSource be (.arr #[]))` -> `[]` has no field `map` at the type the body reads, so the mutant does not compile; the tool reads it as UNKNOWN, not INVALID"
+    },
+    {
+      "definition": "VE.Discourse.wrapperOk",
+      "operator": "append-right",
+      "reason": "a type error: `envelopeChecks profiles environment j ++` -> `envelopeChecks profiles environment` applies the list builder to too few arguments (Application type mismatch), so the mutant does not compile"
+    },
+    {
+      "definition": "VE.Discourse.wrapperOk",
+      "operator": "list-empty",
+      "reason": "the cut of the argument `j` to `[]` is a type error (Application type mismatch: `[]` is no Json); the cut of the gate's list is killed by ComposeExamples.lean's FOL-family guard"
+    },
+    {
+      "definition": "VE.Discourse.envelopeChecks",
+      "operator": "list-first",
+      "reason": "does not elaborate: `([...]).take 1` of the list of checks is stuck at solving a universe constraint (Admission.lean:53)"
+    },
+    {
+      "definition": "VE.Discourse.envelopeChecks",
+      "operator": "list-last",
+      "reason": "does not elaborate: stuck at solving a universe constraint (Admission.lean:53)"
+    },
+    {
+      "definition": "VE.Discourse.envelopeChecks",
+      "operator": "list-drop-first",
+      "reason": "does not elaborate: stuck at solving a universe constraint (Admission.lean:53)"
+    },
+    {
+      "definition": "VE.Discourse.envelopeChecks",
+      "operator": "list-drop-last",
+      "reason": "does not elaborate: stuck at solving a universe constraint (Admission.lean:53)"
+    },
+    {
+      "definition": "VE.Discourse.envelopeChecks",
+      "operator": "bool-flip",
+      "reason": "equivalent at the last check: `profilesOf (baseEnvironment environment)` errs only when `profilesOf environment` does, which the fourth check refuses first (runAll stops at the first error), so `| .error _ => false` is unreachable"
+    },
+    {
+      "definition": "ResponseShape.Schemas.Discourse.chainAdmission",
+      "operator": "list-empty",
+      "reason": "the cuts of `conditional.map …` to `[]` are type errors (Function expected; no field `toList`), so they do not compile; every other cut changes the rendering, which the hash #guard pins"
+    },
+    {
+      "definition": "ResponseShape.Schemas.Discourse.chainAdmission",
+      "operator": "list-first",
+      "reason": "equivalent: the list it cuts is an `Option.toList` (`conditional.map …`), at most one element, so its first (last) element alone is the list; every other cut of chainAdmission changes the rendering, which the hash #guard pins"
+    },
+    {
+      "definition": "ResponseShape.Schemas.Discourse.chainAdmission",
+      "operator": "list-last",
+      "reason": "equivalent: the list it cuts is an `Option.toList` (`conditional.map …`), at most one element, so its first (last) element alone is the list; every other cut of chainAdmission changes the rendering, which the hash #guard pins"
+    }
+  ]
+}
