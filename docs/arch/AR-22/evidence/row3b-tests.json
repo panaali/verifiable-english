@@ -1,8 +1,9 @@
 {
- "head": "01d1e6030353433cf9de9c9aeef796c453703561",
+ "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
  "pytest": {
-  "command": "VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider tests/test_closure.py tests/test_closure_certificates.py tests/test_closure_core_replay.py tests/test_closure_induction.py tests/test_closure_witnesses.py tests/test_data_three_way.py tests/test_p0_three_way.py -n 8",
-  "result": "95 passed, 3 skipped in 20.47s",
+  "command": "VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider tests/test_closure.py tests/test_closure_certificates.py tests/test_closure_core_replay.py tests/test_closure_induction.py tests/test_closure_witnesses.py tests/test_data_three_way.py tests/test_p0_three_way.py tests/test_assurance_manifest.py -n 8",
+  "result": "234 passed, 3 skipped in 31.49s",
+  "note": "the seven row 3b files give 95 passed and 3 skipped; tests/test_assurance_manifest.py gives the other 139",
   "skipped": [
    "SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope",
    "SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope",

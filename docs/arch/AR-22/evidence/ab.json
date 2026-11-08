@@ -1,5 +1,5 @@
 {
- "base_commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
+ "base_commit": "2be443f7528170d44ca78dd16d5769f3666483df",
  "corpora": [
   "conformance",
   "discourse",
@@ -567,6 +567,34 @@
    "base": {
     "timeout": 600
    },
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
    "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
@@ -609,77 +637,7 @@
    "base": {
     "timeout": 600
    },
-   "case": "pilot/udhr-20261021T0600Z:usecases/udhr-pilot/run-20261021T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261021T1800Z:usecases/udhr-pilot/run-20261021T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
    "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261027T0600Z:usecases/udhr-pilot/run-20261027T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261028T0600Z:usecases/udhr-pilot/run-20261028T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261028T1800Z:usecases/udhr-pilot/run-20261028T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
@@ -705,36 +663,38 @@
   {
    "authority": "default",
    "base": {
-    "timeout": 600
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: the Lean document answer could not be built: VEError: readings-verdicts: more than 64 compatible readings"
+     },
+     "status": "CheckerUnavailable"
+    }
    },
    "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/evidence/et0-not-landed/translation-whole.et0.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: the Lean document answer could not be built: VEError: readings-verdicts: more than 64 compatible readings"
+     },
+     "status": "CheckerUnavailable"
+    }
    },
    "listed": true,
    "op": "document_check"
   }
  ],
- "head_commit": "01d1e6030353433cf9de9c9aeef796c453703561",
+ "head_commit": "916c2785cc7350d76e20a15da5c5181061b68a2f",
  "recordings": {
-  "base": "a9cf0b4372b8ef0ac37ffd88767778e4aa7501a4be2c5afcb4ba4e580b0168e0",
-  "head": "a9cf0b4372b8ef0ac37ffd88767778e4aa7501a4be2c5afcb4ba4e580b0168e0"
+  "base": "f2501afcd0b6244bc1cb0c4d8ca94e2437ebf956009bda43cd3dcaef4bb3e450",
+  "head": "f2501afcd0b6244bc1cb0c4d8ca94e2437ebf956009bda43cd3dcaef4bb3e450"
  },
  "records": {
   "conformance/lean": 19806,
@@ -751,12 +711,12 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100522,
-  "unavailable": 31
+  "same": 100526,
+  "unavailable": 27
  },
  "unavailable_both": {
   "discourse/default": 2,
-  "pilots/default": 29
+  "pilots/default": 25
  },
  "unlisted": 0
 }

@@ -1,41 +1,41 @@
 {
- "base": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
- "head": "01d1e6030353433cf9de9c9aeef796c453703561",
+ "base": "2be443f7528170d44ca78dd16d5769f3666483df",
+ "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
  "tool": "uv run python tools/trust_map.py --files <a path outside the tree> at base (its own worktree) and head; --check at head. changed_files: every file whose counts differ; null = the file does not exist on that side",
  "totals": {
   "before": {
    "K": 994,
-   "S": 14135,
-   "D": 17990,
-   "G": 36328,
+   "S": 14222,
+   "D": 17997,
+   "G": 36467,
    "C": 13170,
-   "P": 108677,
-   "T": 37091,
-   "o": 19708,
-   "D[V]": 15685,
-   "G[V]": 31454,
+   "P": 109048,
+   "T": 37498,
+   "o": 19797,
+   "D[V]": 15692,
+   "G[V]": 31501,
    "D[I]": 766,
-   "tied": 1681,
+   "tied": 1688,
    "unclassified": 0,
-   "trusted": 60731,
-   "lines": 248093
+   "trusted": 60865,
+   "lines": 249193
   },
   "after": {
    "K": 994,
-   "S": 14135,
-   "D": 17990,
-   "G": 36328,
+   "S": 14222,
+   "D": 17997,
+   "G": 36467,
    "C": 12789,
-   "P": 107107,
-   "T": 36970,
-   "o": 19656,
-   "D[V]": 15685,
-   "G[V]": 31454,
+   "P": 107478,
+   "T": 37377,
+   "o": 19745,
+   "D[V]": 15692,
+   "G[V]": 31501,
    "D[I]": 766,
-   "tied": 1681,
+   "tied": 1688,
    "unclassified": 0,
-   "trusted": 60731,
-   "lines": 245969
+   "trusted": 60865,
+   "lines": 247069
   },
   "delta": {
    "K": 0,
@@ -56,19 +56,19 @@
   }
  },
  "files": {
-  "before": 786,
-  "after": 777
+  "before": 791,
+  "after": 782
  },
  "budget": {
   "before": {
    "K": 994,
-   "S": 14135,
-   "V": 45602
+   "S": 14222,
+   "V": 45649
   },
   "after": {
    "K": 994,
-   "S": 14135,
-   "V": 45602
+   "S": 14222,
+   "V": 45649
   }
  },
  "changed_files": {
@@ -80,7 +80,7 @@
     "G": 0,
     "C": 0,
     "P": 0,
-    "T": 8154,
+    "T": 8181,
     "o": 483,
     "D[V]": 0,
     "D[R]": 0,
@@ -91,7 +91,7 @@
     "tied": 0,
     "unclassified": 0,
     "trusted": 0,
-    "lines": 8637
+    "lines": 8664
    },
    "after": {
     "K": 0,
@@ -100,7 +100,7 @@
     "G": 0,
     "C": 0,
     "P": 0,
-    "T": 8033,
+    "T": 8060,
     "o": 474,
     "D[V]": 0,
     "D[R]": 0,
@@ -111,7 +111,7 @@
     "tied": 0,
     "unclassified": 0,
     "trusted": 0,
-    "lines": 8507
+    "lines": 8534
    }
   },
   "VE/Closure/Congruence.lean": {
@@ -410,5 +410,5 @@
    "after": null
   }
  },
- "check": "PASS: K, S and untied [V] within a6d0d389a07b and the allowances introduced since (against a6d0d389a07b: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0)"
+ "check": "PASS: K, S and untied [V] within 2be443f75281 and the allowances introduced since (against 2be443f75281: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0)"
 }

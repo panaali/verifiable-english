@@ -1,12 +1,12 @@
 {
- "base": "a6d0d389a07b606e27881aacad9b01be8e8844ca",
- "head": "01d1e6030353433cf9de9c9aeef796c453703561",
+ "base": "2be443f7528170d44ca78dd16d5769f3666483df",
+ "head": "916c2785cc7350d76e20a15da5c5181061b68a2f",
  "tool": "uv run python tools/lean_statements.py --diff BASE HEAD (added/removed/changed); each changed entry compared field by field (statement text, `-- expr` hash, `-- uses` constants with and without their @Module tag); each removed entry with the head theorem that covers it",
  "statements": {
-  "base_sha256": "5aeb980f9f09011c5c3bb2eccee682f85dfbc042616f440dd81298960b033417",
-  "head_sha256": "185ba7f7599b464e12649fd3495cc346d6fa16aad344bda2bd60fb8fe44b0e03",
-  "base_entries": 8154,
-  "head_entries": 8033,
+  "base_sha256": "b1253f5399ceb4fcc26cab5b6a62f13269d928fc5fee6191d5fa3a4eaace3173",
+  "head_sha256": "148c28818c109c4c0379dc43a151714e5813f3e52ed25156723f173ff87ab811",
+  "base_entries": 8181,
+  "head_entries": 8060,
   "added": [],
   "removed": [
    {
@@ -952,8 +952,8 @@
   "removed_all_covered": true
  },
  "predicates": {
-  "base_sha256": "bedf29d7b990d31d76866d5a869734bdba885a3042d8a7b645d6071bcc9d4b7f",
-  "head_sha256": "83994d9eadab875bf5859629a1957ded1d247ad183a3ad01914b675feb236505",
+  "base_sha256": "3278ae7640e533088e973816458c148d5162ce7d69b1094311bbc93704f41aae",
+  "head_sha256": "770a600fb58beb544664532eb777462e6e8ecad2ebc51031e4fb416fd480a890",
   "lines_removed": [
    "module VE.Closure.Congruence",
    "module VE.Closure.Induction",
