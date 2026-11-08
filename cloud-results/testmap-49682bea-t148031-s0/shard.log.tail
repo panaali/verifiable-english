@@ -1,0 +1,140 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded digest v0.10.7
+  Downloaded generic-array v0.14.7
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded itoa v1.0.18
+  Downloaded crypto-common v0.1.7
+  Downloaded num-integer v0.1.47
+  Downloaded block-buffer v0.10.4
+  Downloaded num-bigint v0.4.8
+  Downloaded num-traits v0.2.19
+  Downloaded sha2 v0.10.9
+  Downloaded version_check v0.9.5
+  Downloaded memchr v2.8.3
+  Downloaded zmij v1.0.23
+  Downloaded serde_core v1.0.229
+  Downloaded quote v1.0.47
+  Downloaded serde_derive v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling serde_json v1.0.151
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.22s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.76s
+recording 45 units with 4 jobs in /var/tmp/cct/ve-testmap-a21124eaa5cd6fb27a66f8b7d35a568a5b8e8761
+  tests/test_b17_owner.py: exit 0 in 3.5 s, 717 functions
+  tests/test_compose_integration.py: exit 0 in 3.8 s, 839 functions
+  tests/test_b17_evidence.py: exit 0 in 6.4 s, 734 functions
+  tests/test_defaults_zone.py: exit 0 in 3.1 s, 606 functions
+  tests/test_equivalence_properties.py: exit 0 in 10.9 s, 588 functions
+  tests/test_evaluate_search.py: exit 0 in 1.0 s, 510 functions
+  tests/test_defaults_zone_ties.py: exit 0 in 36.4 s, 183 functions
+  tests/test_grammar_backends.py: exit 0 in 0.8 s, 388 functions
+  tests/test_grammar_cli.py: exit 0 in 2.0 s, 392 functions
+  tests/test_lean_layers_once.py: exit 0 in 7.1 s, 478 functions
+  tests/test_lean_limits.py: exit 0 in 1.5 s, 173 functions
+  tests/test_lean_statements_parts.py: exit 0 in 0.9 s, 196 functions
+  tests/test_nary.py: exit 0 in 1.1 s, 751 functions
+  tests/test_norm_english.py: exit 0 in 1.1 s, 535 functions
+  tests/test_gate_quarantine.py: exit 0 in 49.7 s, 3146 functions
+  tests/test_assist_recovery_replay.py: exit 0 in 70.7 s, 846 functions
+  tests/test_p1_amendment11.py: exit 0 in 4.5 s, 758 functions
+  tests/test_pc9_statements.py: exit 0 in 0.7 s, 209 functions
+  tests/test_question_lean_relay.py: exit 0 in 0.7 s, 431 functions
+  tests/test_readings_budget_zero.py: exit 0 in 7.2 s, 1442 functions
+  tests/test_order.py: exit 0 in 38.3 s, 860 functions
+  tests/test_readings_components_lean.py: exit 0 in 15.8 s, 965 functions
+  tests/test_p1_amendment9.py: exit 0 in 27.7 s, 789 functions
+  tests/test_readings_s2_lean.py: exit 0 in 1.0 s, 712 functions
+  tests/test_reports_agreement.py: exit 0 in 1.3 s, 442 functions
+  tests/test_relay_english_scale.py: exit 0 in 1.6 s, 509 functions
+  tests/test_readings_lazy_pairs.py: exit 0 in 4.3 s, 427 functions
+  tests/test_rights_lean.py: exit 0 in 1.1 s, 701 functions
+  tests/test_risk_profile.py: exit 0 in 1.6 s, 671 functions
+  tests/test_rust_memory_budget.py: exit 0 in 2.9 s, 341 functions
+  tests/test_search_budget_answer.py: exit 0 in 0.8 s, 357 functions
+  tests/test_senses_packs.py: exit 0 in 2.5 s, 574 functions
+  tests/test_senses_project.py: exit 0 in 13.8 s, 603 functions
+  tests/test_rights.py: exit 0 in 30.4 s, 1132 functions
+  tests/test_speech_source_switch.py: exit 0 in 3.3 s, 888 functions
+  tests/test_senses_route.py: exit 0 in 11.5 s, 596 functions
+  tests/test_stage2_dispatch.py: exit 0 in 0.8 s, 652 functions
+  tests/test_stage2_validation.py: exit 0 in 4.7 s, 832 functions
+  tests/test_units_lean_w6a.py: exit 0 in 2.6 s, 610 functions
+  tests/test_w6a_certificate_steps.py: exit 0 in 8.5 s, 712 functions
+  tests/test_wire_contract_lint.py: exit 0 in 2.5 s, 808 functions
+  tests/test_risk_generated_policies.py: exit 0 in 123.2 s, 529 functions
+  tests/test_trust_mutants_probe_scope.py: exit 0 in 281.1 s, 424 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 640.6 s, 3785 functions
+  tests/test_consolidation_tools.py: exit 0 in 1462.2 s, 1224 functions
+wrote /tmp/ccrt/out/map-s0.json.gz (77 KiB); recorded 45 units; 0 failed and are left to the static graph: []
