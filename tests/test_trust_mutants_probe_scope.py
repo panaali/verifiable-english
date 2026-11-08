@@ -115,6 +115,66 @@ def test_an_entry_without_its_done_marker_is_absent():
         assert tm.refusal(entry, control) == "Lean could not elaborate it in the probe"
 
 
+def test_lazy_controls_only_probe_read_checks_and_reuse_entries():
+    calls = []
+    spans = {(1, 1), (2, 2), (3, 3)}
+
+    def probing(file, only):
+        calls.append((file, only))
+        return {s: whole() for s in (spans if only is None else only)}, spans
+
+    cache = tm.ControlProbes({"A.lean": None, "B.lean": None}, probing)
+    assert calls == []  # a file with no candidate kill is never probed
+    assert cache.get(("A.lean", (1, 1)), {(1, 1)}) == whole()
+    assert cache.get(("A.lean", (1, 1)), {(1, 1)}) == whole()
+    assert cache.get(("A.lean", (2, 2)), {(1, 1), (2, 2)}) == whole()
+    assert calls == [("A.lean", {(1, 1)}), ("A.lean", {(2, 2)})]
+
+
+def test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown():
+    calls = []
+
+    def probing(file, only):
+        calls.append(only)
+        if only is None:
+            return {(1, 1): whole(**{"Demo.f": "old"}), (2, 2): whole()}, {(1, 1), (2, 2)}
+        return {(1, 1): {"flags": {"hash 1"}, "consts": {}}}, {(1, 1), (2, 2)}
+
+    cache = tm.ControlProbes({"A.lean": None}, probing)
+    control = cache.get(("A.lean", (1, 1)), {(1, 1)})
+    assert calls == [{(1, 1)}, None] and control == whole(**{"Demo.f": "old"})
+    assert tm.refusal(whole(**{"Demo.f": "drift"}), control) == (
+        "Demo.f, which it reads, is not what it is without the mutant")
+    assert cache.get(("A.lean", (2, 2)), {(2, 2)}) == whole() and len(calls) == 2
+
+    timed_out = tm.ControlProbes({"A.lean": None}, lambda f, only: ({}, {(1, 1)}))
+    assert tm.refusal(whole(), timed_out.get(("A.lean", (1, 1)), {(1, 1)})) == (
+        "Lean could not elaborate it in the probe")
+
+
+def test_concurrent_lazy_control_of_one_file_is_computed_once():
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+
+    entered, release = Event(), Event()
+    calls = []
+
+    def probing(file, only):
+        calls.append(only)
+        entered.set()
+        assert release.wait(timeout=HANG_TIMEOUT)
+        return {(1, 1): whole()}, {(1, 1)}
+
+    cache = tm.ControlProbes({"A.lean": None}, probing)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        one = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        assert entered.wait(timeout=HANG_TIMEOUT)
+        two = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        release.set()
+        assert one.result() == two.result() == whole()
+    assert calls == [{(1, 1)}]
+
+
 # --- `probe(only=...)` and `kept`, without Lean ------------------------------------------------------------------
 
 
@@ -448,7 +508,8 @@ def write(row):
 
 
 def probing(lake, env, text, roles, path, outside=False, only=None):
-    row = {"file": path.name, "only": None if only is None else sorted(only)}
+    row = {"file": path.name, "only": None if only is None else sorted(only),
+           "control": "TM_TRUST_MUTATED" not in env}
     if mode == "naive" and only is not None:
         roles = [r for r in roles if (r[0], r[1]) in only]
     got = probe(lake, env, text, roles, path, outside, None if mode == "off" else only)
@@ -485,27 +546,25 @@ sys.exit(tm.main(sys.argv[4:]))
 MODES = ("off", "on", "dual", "cut-1", "naive")
 
 
-def seeded(root: Path, scratch: Path, mode: str) -> tuple[dict, list[dict], str]:
+def seeded(root: Path, scratch: Path, mode: str, control_mode: str = "eager",
+           max_mutants: int = 1000, jobs: int = 4) -> tuple[dict, list[dict], str]:
     scratch.mkdir(parents=True, exist_ok=True)
     (wrapper := scratch / "wrapper.py").write_text(WRAPPER)
     log, out = scratch / "probes.jsonl", scratch / "evidence.json"
     env = {**os.environ, **PATH, "TMPDIR": str(scratch), "VE_LEAN_SHARE": "off"}
     done = subprocess.run([sys.executable, str(wrapper), str(ROOT / "tools"), mode, str(log), "--root", str(root),
-                           "--base", "HEAD~1", "--jobs", "4", "--json", str(out), "--test", "outside/Check.lean",
-                           "--max-mutants", "1000"], env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+                           "--base", "HEAD~1", "--jobs", str(jobs), "--control-probes", control_mode,
+                           "--json", str(out), "--test", "outside/Check.lean",
+                           "--max-mutants", str(max_mutants)], env=env, capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT)
     mutants = json.loads(out.read_text())["mutants"] if out.is_file() else []
     rows = [json.loads(x) for x in log.read_text().splitlines()] if log.is_file() else []
     return {m["id"]: (m["definition"], m["operator"], m["status"], m["raw_status"], m["detail"])
             for m in mutants}, rows, done.stderr[-3000:]
 
 
-def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(tmp_path_factory):
-    """Design 6 and review 8: the seed package's mutants get the same status, raw_status and detail with the scoped
-    probe (`on`, `dual`, and `cut-1`, which must fall back) as with the whole file's (`off`); in `dual` every scoped
-    entry carries `done` and equals the whole file's, none absent in both and none falling back; the controls'
-    probes are whole-file in every mode; `reading` refuses a key `settle` did not hand over; and the wrong design
-    (`naive`) changes S1. A KILLED detail cites the first kill in Lake's output order, which two check modules built
-    at once can swap (without the probe too), so it is compared up to that."""
+@pytest.fixture(scope="module")
+def seed_package(tmp_path_factory):
     root = tmp_path_factory.mktemp("seeds")
     scaffold(root, ".")
     for name, text in (("Defs", SEED_DEFS), ("Mid", SEED_MID), ("Examples", SEED_EXAMPLES), ("Second", SEED_SECOND)):
@@ -515,9 +574,31 @@ def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(tmp_path_
     dump(root, tmp_path_factory.mktemp("dump"), ["pre", "Demo.small_lt"])
     git(root, "add", ".")
     git(root, "commit", "-qm", "head")
+    return root
+
+
+def test_eager_and_lazy_controls_agree_on_seeded_package(seed_package, tmp_path_factory):
+    eager, eager_rows, err = seeded(seed_package, tmp_path_factory.mktemp("eager-control"), "on", "eager", 30, 1)
+    assert eager, err
+    lazy, lazy_rows, err = seeded(seed_package, tmp_path_factory.mktemp("lazy-control"), "on", "lazy", 30, 1)
+    assert lazy, err
+    assert eager == lazy
+    eager_controls = [r for r in eager_rows if r.get("control")]
+    lazy_controls = [r for r in lazy_rows if r.get("control")]
+    assert eager_controls and lazy_controls
+    assert all(r["only"] is None for r in eager_controls)
+    assert any(r["only"] is not None for r in lazy_controls)
+
+
+def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(seed_package, tmp_path_factory):
+    """Design 6 and review 8: the seed package's mutants get the same status, raw_status and detail with the scoped
+    probe (`on`, `dual`, and `cut-1`, which must fall back) as with the whole file's (`off`); in `dual every scoped
+    entry carries `done` and equals the whole file's, none absent in both and none falling back; eager controls
+    are whole-file; `reading` refuses a key `settle` did not hand over. A KILLED detail cites the first kill in
+    Lake's output order, which two check modules built at once can swap, so it is compared up to that."""
     got, rows = {}, {}
     for mode in MODES:
-        got[mode], rows[mode], err = seeded(root, tmp_path_factory.mktemp(mode), mode)
+        got[mode], rows[mode], err = seeded(seed_package, tmp_path_factory.mktemp(mode), mode)
         assert got[mode], (mode, err)
     off = got["off"]
     same = lambda v: v[:4] + (("KILLED",) if v[3] == "KILLED" else (v[4],))  # noqa: E731
