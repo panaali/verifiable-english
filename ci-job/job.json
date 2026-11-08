@@ -1,0 +1,12 @@
+{
+ "job": "testmap-d068c67f-t140228-s6",
+ "head": "9912730193af3893cd05ef483717e6c801c59ce0",
+ "argv": [
+  "testmap-d068c67f-t140228-s6",
+  "9912730193af3893cd05ef483717e6c801c59ce0",
+  "9912730193af3893cd05ef483717e6c801c59ce0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ac686c08dc39.tar.zst",
+  "c0b8b55d763a2f69c91c0d418f6dc7f7c3e508845f893b68f7ec73f8b0fb5324",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s6.json.gz\" tests/test_difffuzz.py tests/test_safety_framework.py tests/test_lean_conformance.py tests/test_english_lean_route.py tests/test_encoder_shapes.py tests/test_gate_quarantine.py tests/test_readings_verdicts_lean.py tests/test_readings_defaults_statements.py tests/test_frozen_sources.py tests/test_lean_import_reader.py tests/test_regen_generated.py tests/test_calc_consistency.py tests/test_cmp_s4_evaluate_once.py tests/test_lean_first_b12_report.py tests/test_calc_stats.py tests/test_w6a_looprecheck2.py tests/test_rd9_followup_bindings.py tests/test_premise_packs_stub.py tests/test_scope_5_6_statements.py tests/test_scope_5_4_statements.py tests/test_lean_default_build.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
