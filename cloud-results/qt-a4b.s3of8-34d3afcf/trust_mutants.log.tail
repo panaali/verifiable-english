@@ -1,0 +1,11 @@
+trust_mutants: 20 definitions, 404 mutants (51 to run), 4 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-empty: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> []
+SURVIVOR lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) append-left: ++ [chainProfiles] -> 
+UNKNOWN lean/VE/Service/Document.lean:2294 VE.Service.Document.chainFront (D[V], trusted) list-empty: (fields environment) -> [] (lean/VE/Service/Document.lean:2294: Type mismatch)
+SURVIVOR lean/VE/Service/Document.lean:2296 VE.Service.Document.chainFront (D[V], trusted) list-drop-first: (listedProfiles environment) -> ((listedProfiles environment).drop 1)
+trust_mutants: 39 KILLED, 3 SURVIVOR, 1 UNKNOWN, 5 INVALID, 0 ALLOWED, 3 NOT RUN, 353 OTHER SHARD in 5188 s
+trust_mutants: D[V], trusted: 18 KILLED, 2 SURVIVOR, 1 UNKNOWN, 5 INVALID, 2 NOT RUN, 246 OTHER SHARD
+trust_mutants: G[V], trusted: 21 KILLED, 1 SURVIVOR, 1 NOT RUN, 102 OTHER SHARD
+trust_mutants: S, trusted: 5 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 3 of its 51 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 12 s, scratch 2.1 s, control_build 0.9 s, probe_install 1.3 s, control_probes 1504.3 s, mutants 3665.3 s, cleanup 1.9 s, reads 0.2 s; lake control_build 0.9 s (1), probe_install 1.2 s (1), control_probes 4029.7 s (18), mutant_builds 2859.4 s (54), mutant_checks 7945 s (33), stage_controls 2699.4 s (9), mutant_probes 825.9 s (39)
