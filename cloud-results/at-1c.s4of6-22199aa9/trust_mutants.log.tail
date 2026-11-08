@@ -1,0 +1,20 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 18 definitions, 244 mutants (41 to run), 4 jobs, base cbc4c8a39533
+SURVIVOR lean/VE/Attitudes/Semantics.lean:24 VE.Attitudes.Intended (S, trusted) body-true: (∀ k vs, m.J k vs → k ∈ keys A ∧ VE.TupleTyped m.S k.sorts vs) ∧ (∀ k ∈ keys A, k.mode = .knows →... -> True (the proofs it breaks: lean/VE/Attitudes/Examples.lean:898, lean/VE/Attitudes/Examples.lean:909, l...)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:52 VE.Attitudes.seedClosure (S, trusted) body-false: ∃ k, (k, vs) ∈ seed ∧ VE.Closure.Reachable .star (fun a b => (a, b) ∈ framePairs A) k k2 -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:949)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:24 VE.Attitudes.Intended (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:898, lean/VE/Attitudes/Examples.lean:915)
+UNKNOWN lean/VE/Attitudes/Frame.lean:26 VE.Attitudes.closeOver (S, trusted) all-any: all -> any (lean/VE/Attitudes/Frame.lean:26: Unknown constant `VE.Formula.any`)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:19 VE.Attitudes.contentAt (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890)
+SURVIVOR lean/VE/Attitudes/Route.lean:24 VE.Attitudes.SettledAsX (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:961)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:20 VE.Attitudes.contentAt (S, trusted) arm-false: k.slotSort.isSome ∧ k.content.denote S [x] -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890, lean/VE/Attitudes/Examples.lean:909)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:49 VE.Attitudes.restrict (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Attitudes/Examples.lean:938)
+UNKNOWN lean/VE/Attitudes/Frame.lean:27 VE.Attitudes.closeOver (S, trusted) all-any: all -> any (lean/VE/Attitudes/Frame.lean:27: Unknown constant `VE.Formula.any`)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:32 VE.Attitudes.AFormula.denote (S, trusted) arm-false: m.J k [vh] -> False
+UNKNOWN lean/VE/Attitudes/Frame.lean:47 VE.Attitudes.frameLabels (S, trusted) list-empty: (framePairs A) -> [] (lean/VE/Attitudes/Frame.lean:47: Invalid projection: Type of)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:20 VE.Attitudes.contentAt (S, trusted) list-empty: [x] -> [] (the proofs it breaks: lean/VE/Attitudes/Examples.lean:890, lean/VE/Attitudes/Examples.lean:909)
+SURVIVOR lean/VE/Attitudes/Semantics.lean:39 VE.Attitudes.AFormula.denote (S, trusted) arm-false: ∃ v, m.S.domain s v ∧ a.denote A m (s :: Γ) (v :: ρ) -> False
+SURVIVOR lean/VE/Attitudes/Semantics.lean:36 VE.Attitudes.AFormula.denote (S, trusted) arm-false: a.denote A m Γ ρ ∨ b.denote A m Γ ρ -> False (the proofs it breaks: lean/VE/Attitudes/Examples.lean:918)
+trust_mutants: 25 KILLED, 11 SURVIVOR, 3 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 203 OTHER SHARD in 268 s
+trust_mutants: G[V], trusted: 5 KILLED, 2 INVALID, 31 OTHER SHARD
+trust_mutants: S, trusted: 20 KILLED, 11 SURVIVOR, 3 UNKNOWN, 172 OTHER SHARD
+trust_mutants: steps: wall plan 12.1 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.5 s, control_probes 24.1 s, mutants 222.2 s, cleanup 4.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 21 s (1), mutant_builds 32.1 s (41), mutant_checks 372.6 s (46), stage_controls 1.5 s (1), mutant_probes 83.5 s (25)
