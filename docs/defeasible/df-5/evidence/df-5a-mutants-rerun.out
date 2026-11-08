@@ -1,0 +1,122 @@
+control: 0 failures
+S1 VE.Defaults.zoneMin: FAILS 9 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dμ' fun L => zone L (sit "assistant" 1 ["cond_a", "cond_b"]) [] "p" [a0] == "
+    #guard holds dμ' fun L => zone L M1 [] "p" [a0] == "notSaid" && minCount L M1 [] [] == 2
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+S2 VE.Defaults.zoneMin: FAILS 1 guards
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+S3 VE.Defaults.defaultZoneOf: FAILS 1 guards
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+S4 VE.Defaults.zoneMin: FAILS 1 guards
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+S5 VE.Defaults.zoneForm: FAILS 4 guards
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dδ fun L => zoneForm L A2 [((outw, [a0]), true), ((outw, [a1]), true)] == .sh
+    #guard holds dδ3 fun L => zoneForm L M1 [(("soft__outweighs__honesty__safety__x_permitted"
+    #guard holds dδ fun L => zoneFormOf L M1 [] == some .long && zoneFormOf L A2 [((outw, [a0]
+T1 VE.Defaults.DecLe: FAILS 11 guards
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM decLe_iff
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultCompletion_below
+    THEOREM defaultCompletion_below
+    THEOREM defaultCompletion_below
+    THEOREM forced_everywhere
+T2 VE.Defaults.Observed: FAILS 2 guards
+    THEOREM realized_admissible
+    THEOREM row_of_completion
+T3 VE.Defaults.switchesOffRecord: FAILS 2 guards
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+    #guard holds dε2 fun L => switchesOffRecord L.D A2 [] ==
+T4 VE.Defaults.DefaultCompletion: FAILS 9 guards
+    THEOREM dc_of_min
+    THEOREM dc_of_min
+    THEOREM min_of_dc
+    THEOREM val_dc
+    THEOREM defaultZone_noCompletion_sound
+    THEOREM defaultZone_eq_noException
+    THEOREM defaultZone_eq_noException
+    THEOREM forcedAll_sound
+    THEOREM defaultCompletion_below
+T5 VE.Defaults.ByDefaultZ: FAILS 2 guards
+    THEOREM defaultZone_byDefault_sound
+    THEOREM defaultZone_eq_noException
+T6 VE.Defaults.ByDefaultLeftTo: FAILS 2 guards
+    THEOREM defaultZone_leftTo_sound
+    THEOREM defaultZone_notSaid_sound
+T7 VE.Defaults.noExceptionRecord: FAILS 5 guards
+    #guard holds dα fun L => zone L M1 [] "x_required" [a0] == "yes" &&
+    #guard holds dπ fun L => settled L M1 (noExceptionRecord L.D M1) "x_required" == some true
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dβ fun L => zoneR L M1 (noExceptionRecord L.D M1) [] "x_required" [a0] == "ye
+    #guard holds dγ fun L => noExceptionRecord L.D A2 ==
+C1 VE.Defaults.maxDefaultAtoms: FAILS 5 guards
+    #guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] 
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+    #guard holds dwide fun L => zone L (sit "o" 1000 []) [] "p0" [el "o" 0, el "o" 0] == "budg
+    #guard holds dwide fun L => zone L (sit "o" 100000 []) [] "p0" [el "o" 0, el "o" 0] == "bu
+    #guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+C2 VE.Defaults.openAtomsAll: FAILS 18 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dμ' fun L => zone L (sit "assistant" 1 ["cond_a", "cond_b"]) [] "p" [a0] == "
+    #guard holds dμ' fun L => zone L M1 [] "p" [a0] == "notSaid" && minCount L M1 [] [] == 2
+    #guard holds dγ fun L => zone L M1 [] "x_permitted" [a0] == "leftTo" && minCount L M1 [] [
+    #guard holds dδ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => zone L M1 [] "x_required" [a0] == "yes" && minCount L M1 [] [] ==
+    #guard holds dπ fun L => settled L M1 (noExceptionRecord L.D M1) "x_required" == some true
+    #guard holds dβ fun L => zone L Mu [] "x_required" [a0] == "notSaid" && zone L Mu [] "x_pe
+    #guard holds dε fun L => switchesOffRecord L.D M1 [] == [(("soft__off__r1__user", [a0]), f
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+    #guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>
+    #guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc "g1" (el "operator" 0)] &&
+    #guard holds dγ fun L => forced L M1 [] [] == some []
+    #guard holds dδ fun L => forced L M1 [] [] == some []
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dδ fun L => forced L M1 [((outw, [a0]), true)] [] == some []
+    #guard holds dlam fun L =>
+C3 VE.Defaults.zoneRow: FAILS 6 guards
+    #guard holds dlam fun L => (openAtomsAll L M2 []).length == 4 && minCount L M2 [] (obsμ L)
+    #guard holds dα fun L => zone L M1 [((reg L "x_permitted", [a0]), false)] "x_required" [a0
+    #guard holds dlam fun L => (openAtomsAll L (sit "operator" 6 []) []).length == maxDefaultA
+    #guard holds dlam fun L => forced L M2 [] (obsμ L) == some [exc "g1" (el "operator" 0)] &&
+    #guard holds dlam fun L => forced L M2 [(exc "g1" (el "operator" 1), true)] [] == some [ex
+    #guard holds dlam fun L =>
+C4 VE.Defaults.zoneRecordOk: FAILS 1 guards
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+C5 VE.Defaults.zoneDeclOk: FAILS 1 guards
+    #guard holds dα fun L => zoneR L M1 [(("soft__excepted__r1", [a0]), true), (("soft__except
+T8 VE.Defaults.DefaultZone: not run here (lake build VE.Defaults.Zone: defaultZoneOf no longer elaborates (it returns notSaid); run by hand, evidence/T8.out)
+C6 VE.Defaults.openAtomsCount: FAILS 4 guards
+    #guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+    #guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>
+    #guard holds dδ fun L => openAtomsCount L dupA [((outw, [a0]), true)] == 10 && openAtomsCo
+    #guard holds dlam fun L =>
+C7 VE.Defaults.tupleMult: FAILS 4 guards
+    #guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+    #guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>
+    #guard holds dδ fun L => openAtomsCount L dupA [((outw, [a0]), true)] == 10 && openAtomsCo
+    #guard holds dlam fun L =>
+C8 VE.Defaults.tuplesOutside: FAILS 1 guards
+    #guard holds dδ3 fun L => [M1, A2, dupA].all fun M => recs.all fun r =>
+C9 VE.Defaults.zoneCharge: FAILS 2 guards
+    #guard holds dlam fun L => zoneR L (sit "operator" 2 []) (recN maxZoneRecord) [] "instruct
+    #guard holds dlam fun L => forced L (sit "operator" 13 []) [] [] == none &&
+C10 VE.Defaults.zoneCharge: FAILS 2 guards
+    #guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+    #guard holds dlam fun L =>
+C11 VE.Defaults.zoneFormOf: FAILS 2 guards
+    #guard holds dlam fun L => zone L (sit "operator" 13 []) [] "instructs" [el "operator" 0] 
+    #guard holds dlam fun L => zoneR L (dupSit 518) fixBoth [] "instructs" [e0] == "yes" &&
+F1 VE.Defaults.zoneCharge: not run here (lean/VE/Defaults/ZoneExamples.lean: dwide guard (20,000,000 open atoms) no longer ends; run by hand under `timeout`, evidence/F1.out)
+ALL MUTANTS FAIL THEIR GUARDS
