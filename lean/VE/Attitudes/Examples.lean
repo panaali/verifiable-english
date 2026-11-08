@@ -1,4 +1,4 @@
-import VE.Attitudes.Syntax
+import VE.Attitudes.Frame
 
 /-! `#guard`s on the values sections 2.1 to 2.4 of docs/spec/attitudes.md compute, on the fixtures of
 section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part), and from at-1b on sections
@@ -707,5 +707,55 @@ theorem awf_iff (A : AttDoc) (Γ : List String) (a : AFormula) : awf A Γ a = tr
   !awf fat1 Γ1 (f noKey qlA) && !awf fat1 Γ1 (f knowsA noKey))
 #guard [AFormula.all, AFormula.ex].all (fun f => awf fat1 Γ1 (f sortS (.base .top)) && !awf fat1 Γ1 (f "place" (.base .top)) &&
   !awf fat1 Γ1 (f sortS noKey))
+
+
+/-! ## 2.7 The frame (at-1c): F-AT1, F-AT2 (labels, premise count), F-AT3, F-AT6 (the pairs), F-AT7, F-AT0 -/
+
+def pairNames (A : AttDoc) : List (String × String) := (framePairs A).map (fun p => (name A p.1, name A p.2))
+def kn (m : String) (i : Nat) : String := "attitudes__" ++ m ++ "__" ++ toString i
+
+-- F-AT1 (spec 7.1): two premises, with their labels
+#guard frameLabels fat1 == ["attitude:factive:attitudes__knows__1",
+  "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1"] && (framePremises fat1).length == 2
+-- F-AT1's premises as written: ∀h ∀x. knows(h, x) → C(x), and ∀h ∀x. knows(h, x) → thinks_quite_likely(h, x)
+#guard framePremises fat1 == [.all sortC (.all sortS (.implies knows1 (contentOf cat0))),
+  .all sortC (.all sortS (.implies knows1 ql1))]
+-- F-AT2: four premises (factive ×2, knows→thinks ×2), one distinct label each, no pair across contents
+#guard (framePremises fat2).length == 4 && (frameLabels fat2).length == 4 && decide (frameLabels fat2).Nodup &&
+  pairNames fat2 == [(kn "knows" 1, kn "thinks_quite_likely" 1), (kn "knows" 2, kn "thinks_quite_likely" 2)] &&
+  (frameLabels fat2).take 2 == ["attitude:factive:" ++ kn "knows" 1, "attitude:factive:" ++ kn "knows" 2]
+-- F-AT6: four premises; the pairs knows→very, knows→quite, very→quite (`framePairs_transitive`'s instance)
+#guard (framePremises fat6).length == 4 && pairNames fat6 ==
+  [(kn "knows" 1, kn "thinks_very_likely" 1), (kn "knows" 1, kn "thinks_quite_likely" 1),
+    (kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)]
+-- F-AT3 (7.4, premise 4 exactly when the scale orders the words): with the pair one premise, without it none
+#guard pairNames fat3 == [(kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)] && pairNames fat3none == [] &&
+  (framePremises fat3).length == 1 && fat3.scale.atLeast "very likely" "quite likely" &&
+  !fat3.scale.atLeast "quite likely" "very likely"
+-- F-AT7 (7.4, premise 3 exactly where its item passed): without very likely's item only the factive premise
+#guard framePremises fat7 == [factive fat7 ((knowsKeys fat7).head!)] &&
+  pairNames fat7item == [(kn "knows" 1, kn "thinks_very_likely" 1)] && (framePremises fat7item).length == 2
+-- F-AT0 no premise; F-AT5 fourteen
+#guard framePremises fat0 == [] && frameLabels fat0 == [] && (framePremises fat5).length == 14 &&
+  (frameLabels fat5).length == 14 && decide (frameLabels fat5).Nodup
+-- C-a: a closed key is closed over its holder only (variable 0); no pair between keys differing in `slotSort`
+#guard framePremises c_a_both == [.all sortC (.implies (.unary (kn "knows" 1) (.var 0)) .top),
+  .all sortC (.all sortS (.implies (.binary (kn "knows" 2) (.var 1) (.var 0)) .top))]
+-- `knows → believes` exactly when the table has premise 2
+def fatB (T : Table) : AttDoc := docOf T [] [ruleOf "u0165-s01" (.or knowsA (.att (cond (.act .believes) cat0)))]
+#guard pairNames (fatB table) == [(kn "knows" 1, kn "believes" 1)] &&
+  pairNames (fatB { table with knowsBelieves := none }) == []
+-- `entailsMode`: no pair starts at says, believes, wants, intends, none ends at knows, `thinks w` not to itself
+#guard [Mode.act .says, .act .believes, .act .wants, .act .intends].all (fun m =>
+    [Mode.act .believes, .knows, .thinks "likely", .act .says].all (fun m2 => !entailsMode fat1 m m2)) &&
+  [Mode.knows, .thinks "very likely", .act .believes].all (fun m => !entailsMode fat1 m .knows) &&
+  !entailsMode fat1 (.thinks "likely") (.thinks "likely") && entailsMode fat1 (.thinks "very likely") (.thinks "likely") &&
+  !entailsMode fat1 (.thinks "likely") (.thinks "very likely") && entailsMode fat1 .knows (.thinks "likely") &&
+  !entailsMode { fat1 with T := { table with knowsThinks := [] } } .knows (.thinks "likely") &&
+  !entailsMode fat1 .knows (.act .intends)
+-- `sameSubject`: each of holder sort, slot sort and content separates
+def keyK : Key := ⟨.knows, sortC, some sortS, contentOf cat0⟩
+#guard sameSubject keyK { keyK with mode := ql } && !sameSubject keyK { keyK with holderSort := sortS } &&
+  !sameSubject keyK { keyK with slotSort := none } && !sameSubject keyK { keyK with content := .top }
 
 end VE.Attitudes.Examples
