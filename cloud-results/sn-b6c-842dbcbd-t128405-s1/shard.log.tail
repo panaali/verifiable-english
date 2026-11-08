@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 2/4: 115 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [110/912] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [125/912] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [133/912] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (5128 lines cut; full output in shard-full.txt)
+⚠ [607/757] Replayed VE.Numbers.Decimal
+warning: VE/Numbers/Decimal.lean:16:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: VE/Numbers/Decimal.lean:18:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [608/757] Replayed VE.Numbers.Round
+warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+  ← Rat.intCast_add
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [752/757] Built ScopeBenchMain (727ms)
+✔ [753/757] Built EnglishLeanBenchMain (833ms)
+✔ [755/757] Built ScopeBenchMain:c.o (161ms)
+✔ [756/757] Built ve_english_lean_bench:exe (547ms)
+✔ [757/757] Built ve_scope_bench:exe (587ms)
+Build completed successfully (757 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded itoa v1.0.18
+  Downloaded memchr v2.8.3
+  Downloaded block-buffer v0.10.4
+  Downloaded digest v0.10.7
+  Downloaded generic-array v0.14.7
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded version_check v0.9.5
+  Downloaded num-integer v0.1.47
+  Downloaded zmij v1.0.23
+  Downloaded num-bigint v0.4.8
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.15s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.33s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(1/4), tests/test_acts_vocab_mutants.py::chunk(2/4), tests/test_acts_vocab_mutants.py::chunk(1/4), tests/test_readings_rd6b_differential.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(1/4), tests/test_readings_rd6b_differential.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(1/4)
+recording 115 units with 4 jobs in /var/tmp/cct/ve-select-run-wkif7ma6
+  tests/test_assurance_manifest.py: exit 1 in 21.8 s, 1508 functions
+chunked tests/test_acts_vocab_mutants.py: 2 of 4 chunks, exit 0, 830.4 s in all, longest chunk 418.6 s; 322 passed, 0 skipped, 0 failed; each of its 322 tests ran in exactly one chunk
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 618.3 s in all, longest chunk 618.3 s; 138 passed, 0 skipped, 0 failed; each of its 138 tests ran in exactly one chunk
+chunked tests/test_readings_rd6b_differential.py: 3 of 4 chunks, exit 0, 484.2 s in all, longest chunk 181.6 s; 12 passed, 0 skipped, 0 failed; each of its 12 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 261.1 s in all, longest chunk 261.1 s; 2386 passed, 0 skipped, 0 failed; each of its 2386 tests ran in exactly one chunk
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified, tests/test_assurance_manifest.py::test_spec_tables_are_generated_from_the_manifest; log /var/tmp/cct/ve-select-run-wkif7ma6/tests__test_assurance_manifest.py.log
+    def test_spec_tables_are_generated_from_the_manifest():
+        text = inventory_path("docs/spec/assurance-manifest.md").read_text()
+        end = "<!-- END GENERATED -->"
+        for begin, render in (
+                ("<!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->\n",
+                 assurance.render_decoders_markdown),
+                ("<!-- BEGIN GENERATED: python tools/assurance_manifest.py --write -->\n", assurance.render_markdown)):
+            assert begin in text and end in text
+>           assert text.split(begin, 1)[1].split(end, 1)[0] == render()
+E           AssertionError: assert '| File | Fil...569** | | |\n' == '| File | Fil...634** | | |\n'
+E             
+E             Skipping 5876 identical leading characters in diff, use -v to show
+E             - .lean` | 476 | 476 | 1–476 | `faad7417eafe…` |
+E             + .lean` | 411 | 411 | 1–411 | `7ce569058768…` |
+E               | `lean/VE/Service/Document.lean` | 2751 | 2751 | 1–2751 | `e89170a0f364…` |
+E               | `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
+E               | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |...
+E             
+E             ...Full output truncated (17 lines hidden), use '-vv' to show
+
+tests/test_assurance_manifest.py:1252: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
+FAILED tests/test_assurance_manifest.py::test_spec_tables_are_generated_from_the_manifest
+2 failed, 137 passed in 21.06s
+recorded 108 units for tree 846d0b48ce; 4 others left to the static graph until they run (4 with only some of their chunks here); 1 failed
+SHARD 2/4: exit 1 in 1409.5 s; 115 units, 114 passed
