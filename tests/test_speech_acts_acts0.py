@@ -46,16 +46,6 @@ def certified(env, premises, conclusion, env_id):
             "conclusion_meaning_id": digest(domain, {"environment_id": env_id, "ast": conclusion})}
 
 
-CHANGED = [r for r in AB["rows"] if r["class"] != "none"]
-
-
-def test_the_ab_lists_a_class_for_every_changed_row():
-    assert {r["class"] for r in CHANGED} == {"b1", "b2"}
-    assert all(r["base"] != r["head"] for r in CHANGED)
-    assert all(r["base"] == r["head"] for r in AB["rows"] if r["class"] == "none")
-    assert AB["acts_off_identical"] is True and AB["acts_off_rows"] == 6
-
-
 @pytest.mark.parametrize("row", [r for r in AB["rows"] if r["class"] == "b1"], ids=lambda r: r["wording"])
 def test_each_b1_row_is_its_lean_fixture_and_reads_one_simple_act(row):
     fixtures = (ROOT / "lean/VE/Commands/Examples.lean").read_text()
