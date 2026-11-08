@@ -1,0 +1,19 @@
+trust_mutants: 20 definitions, 290 mutants (44 to run), 4 jobs, base 80a076f0c1fa
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) le-lt: ≤ -> < (lean/VE/Purposes/Examples.lean:193: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) body-true: B.links.length ≤ maxLinks ∧ (B.links.map (·.id)).Nodup ∧ (∀ L ∈ B.links, (∀ i ∈ L.partIds, (U.fin... -> True (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:193: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:193: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:133 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:135 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:193: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:134 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:193: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+SURVIVOR lean/VE/Purposes/WellFormed.lean:43 VE.Purposes.sideOfKind (S, trusted) list-first: s -> (s.take 1)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-first: B.links -> (B.links.take 1) (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-first: B.links -> (B.links.drop 1) (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-first: B.links -> (B.links.drop 1) (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-last: B.links.map (·.id) -> ((B.links.map (·.id)).reverse.take 1) (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:131 VE.Purposes.WellFormed (S, trusted) list-drop-first: B.links.map (·.id) -> ((B.links.map (·.id)).drop 1) (lean/VE/Purposes/Examples.lean:195: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 52 KILLED, 1 SURVIVOR, 13 UNKNOWN, 12 INVALID, 19 ALLOWED, 0 NOT RUN, 193 OTHER SHARD in 345 s; 53 carried from f482b1c531b0 (check-only change: lean/VE/Purposes/Examples.lean, lean/declarations.txt; plan-only: tools/trust-classes.json)
+trust_mutants: D[V], trusted: 1 KILLED, 2 OTHER SHARD
+trust_mutants: S, trusted: 51 KILLED, 1 SURVIVOR, 13 UNKNOWN, 12 INVALID, 19 ALLOWED, 191 OTHER SHARD
+trust_mutants: steps: wall plan 13.4 s, scratch 3.7 s, control_build 0.2 s, probe_install 1.4 s, control_probes 6.3 s, mutants 317.1 s, cleanup 3 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 5.9 s (1), mutant_builds 557.8 s (68), mutant_checks 424 s (46), stage_controls 150.8 s (9), mutant_probes 68.3 s (28)
