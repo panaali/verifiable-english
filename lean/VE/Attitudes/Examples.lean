@@ -755,6 +755,10 @@ def fatB (T : Table) : AttDoc := docOf T [] [ruleOf "u0165-s01" (.or knowsA (.at
   !entailsMode fat1 (.thinks "likely") (.thinks "very likely") && entailsMode fat1 .knows (.thinks "likely") &&
   !entailsMode { fat1 with T := { table with knowsThinks := [] } } .knows (.thinks "likely") &&
   !entailsMode fat1 .knows (.act .intends)
+-- a pair whose target is the document's first key; premise 3 from a table's last item only
+#guard pairNames (docOf table [] [ruleOf "u0165-s01" (.or qlA knowsA)]) == [(kn "knows" 1, kn "thinks_quite_likely" 1)] &&
+  entailsMode (docOf fixtureTableNoPair [] []) .knows ql && !entailsMode (docOf fixtureTableNoPair [] []) .knows
+    (.thinks "likely")
 -- `sameSubject`: each of holder sort, slot sort and content separates
 def keyK : Key := ⟨.knows, sortC, some sortS, contentOf cat0⟩
 #guard sameSubject keyK { keyK with mode := ql } && !sameSubject keyK { keyK with holderSort := sortS } &&
@@ -926,6 +930,40 @@ example : AFormula.denote fat1 (M false [keyQ]) Γ1 [1, 0] guard1 ∧
     · have : k = keyQ := Option.some.inj (hk.symm.trans (by decide))
       subst this; exact absurd h (by decide)
   · rintro (⟨⟨_, _, _, _, _, _, h, _⟩, _⟩ | ⟨_, _, _, _, _, _, h, _⟩) <;> exact nomatch h
+-- each connective of `AFormula.denote` both ways, on F-AT1's points (base, not, implies, all, ex)
+example : AFormula.denote fat1 (M true []) Γ1 [1, 0] (.base (contentOf cat0)) ∧
+    ¬ AFormula.denote fat1 (M false []) Γ1 [1, 0] (.base (contentOf cat0)) ∧
+    ¬ AFormula.denote fat1 (M false [keyQ]) Γ1 [1, 0] (.not qlA) ∧ AFormula.denote fat1 (M true []) Γ1 [1, 0] (.not qlA) ∧
+    ¬ AFormula.denote fat1 (M true [keyK]) Γ1 [1, 0] (.implies knowsA qlA) ∧
+    AFormula.denote fat1 (M true [keyK, keyQ]) Γ1 [1, 0] (.implies knowsA qlA) ∧
+    AFormula.denote fat1 (M true []) Γ1 [1, 0] (.all sortS (.base (contentOf cat0))) ∧
+    ¬ AFormula.denote fat1 (M false []) Γ1 [1, 0] (.all sortS (.base (contentOf cat0))) ∧
+    AFormula.denote fat1 (M true []) Γ1 [1, 0] (.ex sortC (.base .top)) ∧
+    ¬ AFormula.denote fat1 (M true []) Γ1 [1, 0] (.ex sortS (.base .bottom)) := by
+  have hq : (cond ql cat0).key fat1 Γ1 = some keyQ := by decide
+  have hk : (cond .knows cat0).key fat1 Γ1 = some keyK := by decide
+  refine ⟨⟨1, rfl, by decide⟩, fun ⟨_, hv, hr⟩ => ?_, fun h => h ⟨keyQ, hq, 0, rfl, 1, rfl, by decide, rfl⟩, ?_, ?_,
+    fun _ => ⟨keyQ, hq, 0, rfl, 1, rfl, by decide, rfl⟩, fun v hv => ?_, fun h => ?_, ⟨0, by decide, trivial⟩,
+    fun ⟨_, _, h⟩ => h⟩
+  · cases hv; exact absurd hr (by decide)
+  · rintro ⟨_, _, _, _, _, _, h, _⟩; exact nomatch h
+  · intro h
+    obtain ⟨k, hk', _, _, _, _, hJ, _⟩ := h ⟨keyK, hk, 0, rfl, 1, rfl, by decide, rfl⟩
+    rw [hq] at hk'; cases hk'; exact absurd hJ (by decide)
+  · have : v = 1 := by simpa [routeModel, sortC, sortS] using hv
+    subst this; exact ⟨1, rfl, by decide⟩
+  · obtain ⟨_, hv, hr⟩ := h 1 (by decide); cases hv; exact absurd hr (by decide)
+-- a closed condition reads the holder's one-tuple (C-a's closed `knows`, holder variable 1, so instance `0`)
+def condC : Cond := { cond .knows cat0 with slot := none, content := .top }
+def keyC : Key := ⟨.knows, sortC, none, .top⟩
+example : AFormula.denote ca1 ⟨St (routeModel false []), fun k vs => k = keyC ∧ vs = [0]⟩ Γ1 [1, 0] (.att condC) ∧
+    ¬ AFormula.denote ca1 ⟨St (routeModel false []), fun k vs => k = keyC ∧ vs = [0, 1]⟩ Γ1 [1, 0] (.att condC) := by
+  have hk : condC.key ca1 Γ1 = some keyC := by decide
+  refine ⟨⟨keyC, hk, 0, rfl, rfl, rfl⟩, fun ⟨k, hk', _, hv, hJ⟩ => ?_⟩
+  rw [hk] at hk'; cases hk'; cases hv; exact absurd hJ.2 (by decide)
+-- `contentAt` holds at no other tuple length
+example : ¬ contentAt (St (routeModel true [])) keyK [] ∧ ¬ contentAt (St (routeModel true [])) keyK [0, 1, 1] :=
+  ⟨id, id⟩
 -- `interp` and `restrict` on F-AT9 (one key, `knows`; the kernel does not reduce `String.map`, so no degree's name):
 -- `interp` reads a generated name as its key's relation and any other name as the structure's
 example : (interp fat9 (MA fat9 false [keyK])).relation (kn "knows" 1) v01 ∧
