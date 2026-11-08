@@ -1,0 +1,306 @@
+{
+ "base": "e433588f51099f2a839b746a194c847491b8ecc5",
+ "changes": [
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": ".gitattributes"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "conformance/english-lean/s3-fixture-comparison.json"
+  },
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "conformance/english_lean_s3_compare.py"
+  },
+  {
+   "added": 15,
+   "deleted": 13,
+   "path": "docs/codemap/INDEX.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/codemap/docs__attitudes.md"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/codemap/docs__infra.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/tests--part-1.md"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/codemap/tests--part-2.md"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/codemap/tests--part-3.md"
+  },
+  {
+   "added": 6,
+   "deleted": 7,
+   "path": "docs/codemap/tests--part-4.md"
+  },
+  {
+   "added": 7,
+   "deleted": 8,
+   "path": "docs/codemap/tests--part-5.md"
+  },
+  {
+   "added": 8,
+   "deleted": 9,
+   "path": "docs/codemap/tests--part-6.md"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/codemap/tests--part-7.md"
+  },
+  {
+   "added": 80,
+   "deleted": 4,
+   "path": "docs/infra/arch-20261105-2/convert.py"
+  },
+  {
+   "added": 528,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/before.json"
+  },
+  {
+   "added": 16,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/bump-after.txt"
+  },
+  {
+   "added": 30,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/bump-before.txt"
+  },
+  {
+   "added": 84,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/conversion.json"
+  },
+  {
+   "added": 189,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/mutants-result.json"
+  },
+  {
+   "added": 65,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/stale-aa6234fb6.json"
+  },
+  {
+   "added": 7,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/evidence/trust-check.txt"
+  },
+  {
+   "added": 300,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/measure.py"
+  },
+  {
+   "added": 124,
+   "deleted": 1,
+   "path": "docs/infra/arch-20261105-2/mutants.json"
+  },
+  {
+   "added": 74,
+   "deleted": 0,
+   "path": "docs/infra/arch-20261105-2/rerun_timeouts.py"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/merge-tooling.md"
+  },
+  {
+   "added": 47,
+   "deleted": 15,
+   "path": "lean/VE/Senses/RunExamples.lean"
+  },
+  {
+   "added": 395,
+   "deleted": 280,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A1.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A2.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A3.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A4.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A5.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A7.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/A8.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/G1.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/G10.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/G2.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/G3.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/G4.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/U2.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/U3.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/U5.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/U6.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/fixtures/ask/U7.json"
+  },
+  {
+   "added": 122,
+   "deleted": 4,
+   "path": "tests/test_ask_fixtures.py"
+  },
+  {
+   "added": 21,
+   "deleted": 0,
+   "path": "tests/test_english_lean_s3_compare.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/test_merge_tooling_evidence.py"
+  },
+  {
+   "added": 70,
+   "deleted": 9,
+   "path": "tools/ask_fixtures.py"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "tools/regen_generated.py"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "tools/trust-classes.json"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "54625b35f88b78174e8b5d31ae922cb8a918eb0e",
+   "subject": "arch-20261105-2: the A/B re-run of records lost to the recorder's timeout under load (evidence aid); codemap regenerated"
+  },
+  {
+   "hash": "4b63f08f4031f7b6024d08eb9b982da0449b5408",
+   "subject": "arch-20261105-2: docs/merge-tooling.md lists the english-s3-comparison entry; the table test reads names with digits"
+  },
+  {
+   "hash": "5058d260933e86aa45b56c2f3fb9e251b84276b8",
+   "subject": "arch-20261105-2: seeded-bug results after the main merge (11 of 11 killed)"
+  },
+  {
+   "hash": "b7c0dbdd4fcc2a7541515d4dc00a6799958a2e8d",
+   "subject": "arch-20261105-2: regenerated files after the main merge (regen_generated.py --write)"
+  },
+  {
+   "hash": "f3f01ea29e4640f79d475d1386cda174155e9bcf",
+   "subject": "arch-20261105-2: the version-raise mutant restores the lock and version by absolute path"
+  },
+  {
+   "hash": "120b55adbb77b15e27b5f9b62b1ebc7d78fd5211",
+   "subject": "arch-20261105-2: the seeded bugs (input of tools/mutants.py)"
+  },
+  {
+   "hash": "6ed1cc56a891b312ab312f8eae2dd922b72fd790",
+   "subject": "arch-20261105-2: the S3 report is written the same under any starting hash seed (test)"
+  },
+  {
+   "hash": "59b5ed07621f410185fd0e9c25bd0d2d6e1de3d8",
+   "subject": "arch-20261105-2: the measured bump: main lists 23 files, this branch 5 (the generator's 2 and 3 generated)"
+  },
+  {
+   "hash": "4a1c42e88ee99f15261e2896f55d08c9501a5f56",
+   "subject": "arch-20261105-2: regenerated files (regen_generated.py --write) and the three RunExamples helpers classed T"
+  },
+  {
+   "hash": "3a07132544d20df715f62d9ce81e6608f6aa00ed",
+   "subject": "arch-20261105-2: the S3 fixture comparison is a generated entry, written under one hash seed"
+  },
+  {
+   "hash": "829dabad11358b7c92e4b1f1a7b503f4fa339e7b",
+   "subject": "arch-20261105-2: RunExamples pins hash the answer without actions_version; one version guard per answer form"
+  },
+  {
+   "hash": "0f2bea593de3022cb0ecba1e770fbdddcb490497",
+   "subject": "arch-20261105-2: ask fixtures store no seconds and no actions_version; the loader supplies the lock's"
+  }
+ ],
+ "head": "54625b35f88b78174e8b5d31ae922cb8a918eb0e"
+}

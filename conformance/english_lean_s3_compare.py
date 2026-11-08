@@ -9,6 +9,11 @@ This is the fixture slice of G3, not a claim about its sealed or reverse corpus.
 
 Without ``--report-only`` any unexplained difference makes the command fail. The JSON report
 contains the individual records and the two spec dispositions so a gate cannot pass from a summary alone.
+
+The report is a generated file (``tools/regen_generated.py``, entry ``english-s3-comparison``): each record
+carries Lean's ``actions_version``, so raising the version rewrites it, and a merge regenerates it. The command
+runs under one string hash seed, since Lark lists a refusal's expected terminals in set order; rewriting the
+report then reproduces it byte for byte, which is how the entry is checked.
 """
 from __future__ import annotations
 
@@ -17,6 +22,8 @@ from collections import Counter
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 from types import SimpleNamespace
 import warnings
 
@@ -165,7 +172,15 @@ def compare(rows: list[dict] | None = None, *, transport=service_rows) -> dict:
             "by_environment": by_environment, "rows": records}
 
 
+HASH_SEED = "0"
+
+
 def main(argv: list[str] | None = None) -> int:
+    if os.environ.get("PYTHONHASHSEED") != HASH_SEED:
+        # Run again under the report's seed (module docstring): the report must not depend on the run.
+        argv = sys.argv[1:] if argv is None else argv
+        return subprocess.run([sys.executable, "-m", "conformance.english_lean_s3_compare", *argv],
+                              env={**os.environ, "PYTHONHASHSEED": HASH_SEED}).returncode
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--output", type=Path, default=REPORT)
     parser.add_argument("--report-only", action="store_true")
