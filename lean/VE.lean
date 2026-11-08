@@ -339,3 +339,4 @@ import VE.Defaults.ZoneExamples
 import VE.Defaults.ZoneWire
 import VE.Defaults.ZoneWireExamples
 import VE.Attitudes.Examples
+import VE.Attitudes.Theorems

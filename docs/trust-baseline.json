@@ -2133,6 +2133,13 @@
    "reason": "ps-1c: lean/VE/Presupposition/Rules.lean S +8 (ruleGoal, conditionNode, conditionRule); Agree.lean +0; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1c, 2026-10-18",
    "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
+  },
+  {
+   "class": "S",
+   "lines": 165,
+   "reason": "at-1b: Syntax.lean +165 (S), K +0, at-1a-tie first half -15 (gross +180; keys, name, keyOf, envAtt to D[V] tied)",
+   "signature": "SIGNED by the DRI 2026-11-05 (reviews/dri-decisions-20261105-at-1b-trust.md item 1)",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
   }
  ]
 }
