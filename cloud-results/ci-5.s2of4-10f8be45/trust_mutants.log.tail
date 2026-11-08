@@ -1,0 +1,12 @@
+trust_mutants: 8 definitions, 51 mutants (13 to run), 4 jobs, base 176d50c05c2d
+UNKNOWN lean/VE/SpeechActs/Wire.lean:47 VE.SpeechActs.Wire.allowlist (D[V], trusted) list-empty: :: allowlist₀ -> [] (lean/VE/SpeechActs/Wire.lean:47: Function expected at)
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-false: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:767 VE.Compose.actsRefuses (G[V], trusted) list-empty: ["soft-norms@0", "rights@0", "alternatives@0"] -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:767 VE.Compose.actsRefuses (G[V], trusted) list-first: (["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not implem... -> (((["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not impl... (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:231 VE.SpeechActs.Wire.checkActsBlock (D[V], trusted) list-first: profiles -> (profiles.take 1) (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 0 KILLED, 0 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 7 NOT RUN, 38 OTHER SHARD in 4836 s
+trust_mutants: D[V], trusted: 4 UNKNOWN, 3 NOT RUN, 28 OTHER SHARD
+trust_mutants: G[V], trusted: 2 UNKNOWN, 4 NOT RUN, 10 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 7 of its 13 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.8 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.5 s, control_probes 432.3 s, mutants 4383.2 s, cleanup 3.3 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 1118.2 s (17), mutant_builds 725.8 s (17), mutant_checks 14326.6 s (9), stage_controls 1801.7 s (3)
