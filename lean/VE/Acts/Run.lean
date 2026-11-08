@@ -1,4 +1,5 @@
 import VE.Acts.Decode
+import VE.Acts.Sources
 import VE.Compose.Dispatch
 
 /-! The `acts-elaborate` case kind of the `norms` and `norm-defaults` modes (act-phrases 6.7, C18): the elaborated
@@ -88,5 +89,173 @@ def isElaborate (j : Json) : Bool :=
   match j.getObjValD "kind" with
   | .str k => k == "acts-elaborate"
   | _ => false
+
+/-! ### The `act-readings` mode (act-phrases 7, AP-4)
+
+The readings of one act phrase under a rule's modal words, and their paraphrases, which the translator's tool writes
+into a reading set that `sourceCheck` then checks. Lean lexes the phrase: `tokens` is each token's UTF-8 byte span in
+the request's `phrase`, and each act's `from` the indices of the tokens its text reads. The request is charged
+against the act phrase's 400 bytes (`Lexical.maxActBytes`), the fixed phrases' and frames' limits (`decodeFixed`,
+`checkVocab`) and the parse limits (`rawCap`, `stepBudget`, 64 readings): the phrase is lexed once, its readings
+listed once (`phraseReadings`, at most 64: `phraseReadings_length`) and paraphrased once. -/
+
+/-- Each token's UTF-8 byte span in `s` as written: its text (`tokStr`, folded, single-spaced) read after the
+    whitespace before it. `none` only for a slot written with leading zeros. -/
+def spans (fx : List String) (s : String) (ts : List Lexical.Tok) : Option (List (Nat × Nat)) :=
+  let ws : Char → Bool := VE.Norms.Wire.pyWhitespace
+  let rec skip : List Char → Nat → List Char × Nat
+    | c :: cs, p => if ws c then skip cs (p + c.utf8Size) else (c :: cs, p)
+    | [], p => ([], p)
+  let rec read : List Char → List Char → Nat → Option (List Char × Nat)
+    | [], cs, p => some (cs, p)
+    | x :: t, c :: cs, p =>
+      if x == ' ' then (if ws c then let (r, q) := skip cs (p + c.utf8Size); read t r q else none)
+      else if (if c.toNat == 0x2019 then '\'' else c) == x then read t cs (p + c.utf8Size) else none
+    | _ :: _, [], _ => none
+  (ts.foldlM (fun (acc : List (Nat × Nat) × List Char × Nat) t => do
+    let (r, p) := skip acc.2.1 acc.2.2
+    let (r', q) ← read (tokStr fx t).toList r p
+    pure (acc.1 ++ [(p, q)], r', q)) ([], s.toList, 0)).map Prod.fst
+
+/-- One token, read as the grammar's terminals read a word (`Term.accepts`: case-insensitively). -/
+def sameTok : Lexical.Tok → Lexical.Tok → Bool
+  | .word v, .word w => v.toLower == w.toLower
+  | t, u => t == u
+
+/-- An act's `from`: each of its tokens `xs` in order placed at a phrase token of `ps`, first rightmost as a
+    subsequence (each at the last equal token before the next one's), then each one left at the first equal token
+    not yet used; a token the rendering adds that the phrase lacks (*to* after *has the right*) has none. The
+    indices are in range and none occurs twice. -/
+def fromOf (ps xs : List Lexical.Tok) : List Nat :=
+  let ips := (List.range ps.length).zip ps
+  let placed := (xs.foldr (fun x (acc : List (Option Nat) × Nat) =>
+    match ((ips.take acc.2).reverse.find? (sameTok x ·.2)) with
+    | some (i, _) => (some i :: acc.1, i)
+    | none => (none :: acc.1, acc.2)) ([], ps.length)).1
+  ((xs.zip placed).foldl (fun (acc : List Nat × List Nat) (x, o) => match o with
+    | some i => (acc.1 ++ [i], acc.2)
+    | none => match ips.find? (fun (i, t) => sameTok x t && !acc.2.contains i) with
+      | some (i, _) => (acc.1 ++ [i], acc.2 ++ [i])
+      | none => acc) ([], placed.filterMap id)).1
+
+/-- One simple act of a reading: `act`, its text as a predicate declares it (*to* exactly when `plain`, as
+    `Sources.expected` renders it); `text`, the act under the modal (`sentence`); `from`, its tokens in the phrase. -/
+def actJson (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool) (ps : List Lexical.Tok) (x : Simple) :
+    Except String Json := do
+  let act := Simple.text fx (some plain) x
+  pure (Json.mkObj [("act", .str act), ("text", .str (sentence fx op f x)),
+    ("from", toJson (fromOf ps (← Lexical.lex fx act)))])
+
+/-- One reading: its simple acts in order and its paraphrase. -/
+def readingJson (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool) (ps : List Lexical.Tok)
+    (x : List Simple × String) : Except String Json := do
+  let acts ← x.1.mapM (actJson fx op f plain ps)
+  pure (Json.mkObj [("acts", Json.arr acts.toArray), ("paraphrase", .str x.2)])
+
+/-- The `LISTED` row: the phrase's token spans, then each reading's acts and paraphrase. The limits come first: the
+    act phrase's 400 bytes, the lexing (`decodeFixed`'s limits), the parse limits; then D-32 (`paraphrases`). -/
+def listReadings (id : String) (fx : List String) (V : Vocab) (op : Op) (f : Option Lexical.Form) (plain : Bool)
+    (phrase : String) : Except String Json := do
+  if Lexical.maxActBytes < phrase.utf8ByteSize then
+    throw s!"ResourceLimit: this act phrase is over {Lexical.maxActBytes} bytes"
+  let ts ← (Lexical.lex fx phrase).mapError fun e =>
+    if e == "comma" then "InvalidInput: this act phrase ends with a comma" else e
+  let some sp := spans fx phrase ts | throw "InvalidInput: this act phrase writes a slot with a leading zero"
+  match phraseReadings V op rawCap stepBudget ts.toArray with
+  | .limit => throw "ResourceLimit: this act phrase has too many readings to list; split the sentence"
+  | .ok [] => throw "InvalidInput: this act phrase has no reading under the declared frames and its modal words"
+  | .ok Rs =>
+    let texts ← paraphrases fx op f "this act phrase" Rs
+    let rows ← (Rs.zip texts).mapM (readingJson fx op f plain ts)
+    pure (VE.Route.Wire.ok id [("verdict", .str "LISTED"),
+      ("tokens", Json.arr (sp.map fun (a, b) => Json.arr #[toJson a, toJson b]).toArray),
+      ("readings", Json.arr rows.toArray)])
+
+/-- A refusal's verdict: `LIMIT` exactly when it is a `ResourceLimit`, else `REFUSED`. -/
+def verdictOf (d : String) : String := if d.startsWith "ResourceLimit:" then "LIMIT" else "REFUSED"
+
+/-- A refusal of the phrase: its verdict and diagnostic, both lists empty. -/
+def refusedRow (id d : String) : Json :=
+  VE.Route.Wire.ok id [("verdict", .str (verdictOf d)), ("tokens", Json.arr #[]), ("readings", Json.arr #[]),
+    ("diagnostic", .str d)]
+
+/-- The request's members (7): `form` is `null` or a plain act's form. -/
+def decodeRequest (j : Json) :
+    Except String (String × String × List String × VE.Norms.Role × Bool × Option Lexical.Form) := do
+  VE.Bridge.exactFields j ["id", "phrase", "fixed", "frames", "adverbs", "role", "sign", "form"]
+  let role ← match j.getObjValD "role" with
+    | .str "permission" => pure VE.Norms.Role.permission
+    | .str "obligation" => pure .obligation
+    | .str "plain" => pure .plain
+    | _ => throw "InvalidInput: role is not permission, obligation or plain"
+  let .bool sign := j.getObjValD "sign" | throw "InvalidInput: sign is not a boolean"
+  let f ← match j.getObjValD "form" with
+    | .null => pure none
+    | .str t => match Lexical.Form.ofText? t with
+      | some f => pure (some f)
+      | none => throw "InvalidInput: form is not has the right or is entitled"
+    | _ => throw "InvalidInput: form is not has the right or is entitled"
+  pure (← VE.Bridge.stringField j "id", ← VE.Bridge.stringField j "phrase", ← VE.Bridge.strings (j.getObjValD "fixed"),
+    role, sign, f)
+
+/-- The frames and adverbs (`decodeVocab`, D-31), the op of the role and sign (`opOf`), then `listReadings`. -/
+def listed (j : Json) (id phrase : String) (fx : List String) (role : VE.Norms.Role) (sign : Bool)
+    (f : Option Lexical.Form) : Except String Json := do
+  let V ← VE.Acts.Wire.decodeVocab (Json.mkObj [("frames", j.getObjValD "frames"), ("adverbs", j.getObjValD "adverbs")])
+  let some op := opOf ⟨"", [], false, role, none, none⟩ sign
+    | throw "InvalidInput: this act phrase has no modal word: a plain act with sign false"
+  listReadings id fx V op f (role == .plain) phrase
+
+/-- `act-readings`: a malformed request is the case's error, a refusal of its content a `REFUSED` or `LIMIT` row. -/
+def runActReadings (j : Json) : Except String Json := do
+  let (id, phrase, fx, role, sign, f) ← decodeRequest j
+  pure (match listed j id phrase fx role sign f with
+    | .ok row => row
+    | .error d => refusedRow id d)
+
+def actReadingsReported (j : Json) : Json :=
+  match runActReadings j with
+  | .ok row => row
+  | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+
+/-! ### Sources (act-phrases 1.8, 3.1; D7) -/
+
+/-- One source of the `acts` block (3.1): `default` is `deny` or `allow`, or `unspecified` under `norm-defaults@0`;
+    the template's guard, carve-outs and precedence are decoded as a norm's (`Norms.Wire.decodeNorm`). -/
+def decodeSource (nd : Bool) (j : Json) : Except String Source := do
+  VE.Bridge.exactFields j ["phrase", "role", "sign", "form", "default", "template", "units", "sets"]
+  let t := j.getObjValD "template"
+  VE.Bridge.exactFields t ["guard", "unless", "over"]
+  let .bool sign := j.getObjValD "sign" | throw "InvalidInput: a source's sign is not a boolean"
+  let N ← VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj [("name", .str ""), ("predicate", .str ""),
+    ("sign", .bool sign), ("guard", t.getObjValD "guard"), ("unless", t.getObjValD "unless"),
+    ("over", t.getObjValD "over")])])
+  let role ← match j.getObjValD "role" with
+    | .str "permission" => pure VE.Norms.Role.permission
+    | .str "obligation" => pure .obligation
+    | .str "plain" => pure .plain
+    | _ => throw "InvalidInput: a source's role is not permission, obligation or plain"
+  let form ← match j.getObjValD "form" with
+    | .null => pure none
+    | .str t => match Lexical.Form.ofText? t with
+      | some f => pure (some f)
+      | none => throw "InvalidInput: a source's form is not has the right or is entitled"
+    | _ => throw "InvalidInput: a source's form is not has the right or is entitled"
+  let completion ← match j.getObjValD "default" with
+    | .str "deny" => pure Completion.deny
+    | .str "allow" => pure .allow
+    | .str "unspecified" =>
+      if nd then pure .unspecified else throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    | _ => throw "InvalidInput: a source's default is not deny, allow or unspecified"
+  pure ⟨← VE.Bridge.stringField j "phrase", role, sign, form, N, completion,
+    ← VE.Bridge.strings (j.getObjValD "units"), ← VE.Bridge.strings (j.getObjValD "sets")⟩
+
+/-- Under `acts@0`, the `acts` block's `sources` (3.1); `none` when the profiles do not read `acts@0` or the block has
+    no `sources`. -/
+def sourcesOf (environment : Json) : Option Json :=
+  match (VE.Norms.Wire.actsProfiles true environment).isEmpty,
+      ((environment.getObjValD "vocabulary").getObjValD "acts").getObjVal? "sources" with
+  | false, .ok ss => some ss
+  | _, _ => none
 
 end VE.Acts.Run

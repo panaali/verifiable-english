@@ -1494,7 +1494,9 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
     split
     · rename_i hr
       split
-      · exact runCase_fits j _ ‹_›
+      · -- AP-4: the sources check (`checkSources`) passed, then the case's own row.
+        obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok ‹_›
+        exact runCase_fits j _ h
       · -- The runner's error row, for a case of a readings kind.
         have hK : j.getObjValD "kind" = .str k := by
           unfold VE.Route.Run.caseKind at hk
