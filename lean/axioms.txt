@@ -2718,6 +2718,11 @@
 'VE.Judgments.Examples.viewOf_xi' does not depend on any axioms
 'VE.Judgments.admit_first_fault' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.admit_ok_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.blockFormula_null' does not depend on any axioms
+'VE.Judgments.blockFormulas_bar' depends on axioms: [propext]
+'VE.Judgments.blockFormulas_limitation' depends on axioms: [propext]
+'VE.Judgments.correlate_covered' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.correlate_judged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.dependsOnC_remove' depends on axioms: [propext]
 'VE.Judgments.dependsOnC_sub' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.dependsOn_iff' depends on axioms: [propext, Quot.sound]
@@ -2728,7 +2733,11 @@
 'VE.Judgments.foldlM_ok_length' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.foldlM_ok_mono' depends on axioms: [propext]
 'VE.Judgments.hasPhrase_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.linesFormulas_none' depends on axioms: [propext]
 'VE.Judgments.matches_iff' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_holder' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_line' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.mem_author_outside' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.mem_defEdges' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.openTermNames_length' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.openTermNames_sorts' depends on axioms: [propext, Quot.sound]
@@ -2737,8 +2746,17 @@
 'VE.Judgments.opensIn_isEmpty' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.path_last' does not depend on any axioms
 'VE.Judgments.predicateWords_name' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.preds_andAll' depends on axioms: [propext]
+'VE.Judgments.preds_atom' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.preds_bindAll_eq' does not depend on any axioms
+'VE.Judgments.preds_foldl_or' depends on axioms: [propext]
+'VE.Judgments.preds_inst' depends on axioms: [propext]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Judgments.reserved_generated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.reserved_reaches_none' depends on axioms: [propext, Quot.sound]
+'VE.Judgments.reserved_rights' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Judgments.ruleFormulas_ok' depends on axioms: [propext]
 'VE.Judgments.singleton_infix_iff' depends on axioms: [propext]
 'VE.Judgments.softContent_formulas' does not depend on any axioms
 'VE.Judgments.status_checked' depends on axioms: [propext, Quot.sound]
@@ -3797,6 +3815,9 @@
 'VE.Paths.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_sound' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.Examples.s22_neg_s2' depends on axioms: [propext]
+'VE.Presupposition.Examples.s22_pos_s1' depends on axioms: [propext]
+'VE.Presupposition.Examples.s22_pos_s2' depends on axioms: [propext]
 'VE.Presupposition.Frame.shallowB_iff' depends on axioms: [propext, Quot.sound]
 'VE.Presupposition.asserted_false_off_goal' does not depend on any axioms
 'VE.Presupposition.carried_asserted' depends on axioms: [propext, Quot.sound]
@@ -3809,8 +3830,15 @@
 'VE.Presupposition.collapse' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Presupposition.collapse_assumed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Presupposition.collapse_certified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.conditionRule_shape' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.condition_applies' does not depend on any axioms
+'VE.Presupposition.conditioned_contributes_nothing' does not depend on any axioms
 'VE.Presupposition.conditioned_vacuous_off_goal' does not depend on any axioms
+'VE.Presupposition.data_attribute_proved' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.decidesD_map' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Presupposition.definite_defined' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.discourse_definite_is_row' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.exists_child_map' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Presupposition.foldr_and_denote' depends on axioms: [propext, Quot.sound]
 'VE.Presupposition.foldr_implies_denote' depends on axioms: [propext, Quot.sound]
 'VE.Presupposition.generic_defined' does not depend on any axioms
@@ -3826,6 +3854,13 @@
 'VE.Presupposition.plural_defined' does not depend on any axioms
 'VE.Presupposition.raise1_denote' depends on axioms: [propext, Quot.sound]
 'VE.Presupposition.reach_typed' depends on axioms: [propext]
+'VE.Presupposition.rule_collapse_certified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.rule_collapse_decides' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.rule_collapse_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.source_identity_entails' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.speech_question_top' does not depend on any axioms
+'VE.Presupposition.unsaid_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.yieldsD_map' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Question.Run.oneFields_gated' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Question.Run.statusCodes_classed' does not depend on any axioms
 'VE.Question.Str.bsize_toSubstring' depends on axioms: [propext]
