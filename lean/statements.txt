@@ -4600,6 +4600,48 @@ theorem VE.Attitudes.Examples.awf_iff
     VE.Attitudes.Examples.awf A Γ a = Bool.true ↔ VE.Attitudes.AWellFormed A Γ a
   -- uses VE.Attitudes.AFormula@VE.Attitudes.Syntax VE.Attitudes.AWellFormed@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Examples.awf@VE.Attitudes.Examples
   -- expr 2747630870
+theorem VE.Attitudes.Examples.keys_fat1
+  VE.Attitudes.keys VE.Attitudes.Examples.fat1 =
+    [VE.Attitudes.Examples.keyK,
+      have __src := VE.Attitudes.Examples.keyK;
+      { mode := VE.Attitudes.Mode.act VE.Reports.Act.intends, holderSort := __src.holderSort, slotSort := __src.slotSort,
+        content := __src.content },
+      VE.Attitudes.Examples.keyQ]
+  -- uses VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.keyK@VE.Attitudes.Examples VE.Attitudes.Examples.keyQ@VE.Attitudes.Examples VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.mk@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.Mode.act@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Reports.Act.intends@VE.Attribution.Content
+  -- expr 1928094738
+theorem VE.Attitudes.Examples.pairs_fat1
+  VE.Attitudes.framePairs VE.Attitudes.Examples.fat1 = [(VE.Attitudes.Examples.keyK, VE.Attitudes.Examples.keyQ)]
+  -- uses VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.keyK@VE.Attitudes.Examples VE.Attitudes.Examples.keyQ@VE.Attitudes.Examples VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 3571132232
+theorem VE.Attitudes.atomAt_qfree
+  ∀ (A : VE.Attitudes.AttDoc) (k : VE.Attitudes.Key), VE.Norms.Formula.qfree (VE.Attitudes.atomAt A k) = Bool.true
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.atomAt@VE.Attitudes.Frame VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2731148559
+theorem VE.Attitudes.atomAt_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ {k k2 : VE.Attitudes.Key},
+        k2 ∈ VE.Attitudes.keys A →
+          k.holderSort = k2.holderSort ∧ k.slotSort = k2.slotSort →
+            VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) (k.slotSort.toList ++ [k.holderSort])
+              (VE.Attitudes.atomAt A k2)
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.atomAt@VE.Attitudes.Frame VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Formula.WellFormed@VE.Syntax
+  -- expr 2037254817
+theorem VE.Attitudes.baseEnvAtt_extends
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ {Γ : List String} {φ : VE.Formula},
+        VE.Formula.WellFormed (VE.Attitudes.baseEnv A) Γ φ → VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) Γ φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 2738125427
+theorem VE.Attitudes.checkAtt_conds
+  ∀ {A : VE.Attitudes.AttDoc},
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      (∀ (s : String), s ∈ A.holders → s ∈ A.E.sorts) ∧
+        VE.Attitudes.checkConds A (VE.Attitudes.condsOf A) = Except.ok () ∧
+          VE.Attitudes.checkParts A A.parts = Except.ok ()
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.holders@VE.Attitudes.Syntax VE.Attitudes.AttDoc.parts@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.checkConds@VE.Attitudes.Syntax VE.Attitudes.checkParts@VE.Attitudes.Syntax VE.Attitudes.condsOf@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax
+  -- expr 498888587
 theorem VE.Attitudes.checkAtt_tail
   ∀ {A : VE.Attitudes.AttDoc},
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4608,6 +4650,27 @@ theorem VE.Attitudes.checkAtt_tail
           ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.validate D = Except.ok ()
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.validate@VE.Norms.Tree
   -- expr 390254502
+theorem VE.Attitudes.checkCond_key
+  ∀ {A : VE.Attitudes.AttDoc} {Γ : List String} {c : VE.Attitudes.Cond} {part : Bool} {k : VE.Attitudes.Key},
+    VE.Attitudes.checkCond A Γ c part = Except.ok () →
+      VE.Attitudes.Cond.key A Γ c = Option.some k →
+        (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) ∧
+          VE.Norms.Formula.qfree k.content = Bool.true ∧
+            VE.Formula.check (VE.Attitudes.baseEnv A) k.slotSort.toList k.content = Bool.true ∧
+              A.holders.contains k.holderSort = Bool.true
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.holders@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond.key@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax VE.Formula.check@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2088245218
+theorem VE.Attitudes.checkConds_mem
+  ∀ {A : VE.Attitudes.AttDoc} {l : List (List String × VE.Attitudes.Cond)},
+    VE.Attitudes.checkConds A l = Except.ok () →
+      ∀ (p : List String × VE.Attitudes.Cond), p ∈ l → VE.Attitudes.checkCond A p.fst p.snd = Except.ok ()
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Attitudes.checkConds@VE.Attitudes.Syntax
+  -- expr 751062917
+theorem VE.Attitudes.checkNames_colon
+  ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Key},
+    VE.Attitudes.checkNames A l = Except.ok () → ∀ (k : VE.Attitudes.Key), k ∈ l → ¬':' ∈ (VE.Attitudes.name A k).data
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
+  -- expr 1412592241
 theorem VE.Attitudes.checkNames_mem
   ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Key},
     VE.Attitudes.checkNames A l = Except.ok () →
@@ -4618,6 +4681,35 @@ theorem VE.Attitudes.checkNames_mem
               ¬VE.Attitudes.name A k ∈ List.map (fun x => x.name) A.regulated ++ List.map (fun x => x.name) A.definitions
   -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.definitions@VE.Attitudes.Syntax VE.Attitudes.AttDoc.regulated@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 620294592
+theorem VE.Attitudes.checkParts_mem
+  ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Cond},
+    VE.Attitudes.checkParts A l = Except.ok () →
+      ∀ (c : VE.Attitudes.Cond), c ∈ l → VE.Attitudes.checkCond A [] c Bool.true = Except.ok ()
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Attitudes.checkParts@VE.Attitudes.Syntax
+  -- expr 4259128643
+theorem VE.Attitudes.closeOver_universalQF
+  ∀ {k : VE.Attitudes.Key} {a b : VE.Formula},
+    VE.Norms.Formula.qfree (a.implies b) = Bool.true →
+      VE.NormDefaults.UniversalQF (VE.Attitudes.closeOver k (a.implies b))
+  -- uses VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.closeOver@VE.Attitudes.Frame VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 3681453874
+theorem VE.Attitudes.closeOver_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc) {k : VE.Attitudes.Key} {body : VE.Formula},
+    k.holderSort ∈ A.E.sorts →
+      (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) →
+        VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) (k.slotSort.toList ++ [k.holderSort]) body →
+          VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) [] (VE.Attitudes.closeOver k body)
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.closeOver@VE.Attitudes.Frame VE.Environment.sorts@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 4059388143
+theorem VE.Attitudes.colon_split
+  ∀ {a b c d : List Char}, ¬':' ∈ a → ¬':' ∈ c → a ++ ':' :: b = c ++ ':' :: d → a = c ∧ b = d
+  -- uses
+  -- expr 861720422
+theorem VE.Attitudes.empty_relations_frame
+  ∀ (A : VE.Attitudes.AttDoc) (S : VE.Structure),
+    VE.Norms.Sat (VE.Attitudes.interp A { S := S, J := fun x x => False }) (VE.Attitudes.framePremises A)
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.AttModel.mk@VE.Attitudes.Semantics VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Attitudes.interp@VE.Attitudes.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2431949764
 theorem VE.Attitudes.envAtt_extends
   ∀ (A : VE.Attitudes.AttDoc),
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4632,6 +4724,50 @@ theorem VE.Attitudes.envAtt_keeps
         A.E.predicates p = Option.some sig → (VE.Attitudes.envAtt A).predicates p = Option.some sig
   -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.envAtt@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax
   -- expr 3135929563
+theorem VE.Attitudes.forIn_throwIf
+  ∀ {l : List String} {P : String → Bool} {m : String → String},
+    (ForIn.forIn l PUnit.unit fun s x => do
+          VE.Attitudes.throwIf (P s) (m s)
+          Pure.pure (ForInStep.yield PUnit.unit)) =
+        Except.ok PUnit.unit →
+      ∀ (s : String), s ∈ l → P s = Bool.false
+  -- uses VE.Attitudes.throwIf@VE.Attitudes.Syntax
+  -- expr 3009394849
+theorem VE.Attitudes.frameLabels_nodup
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      (VE.Attitudes.frameLabels A).length = (VE.Attitudes.framePremises A).length ∧ (VE.Attitudes.frameLabels A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.frameLabels@VE.Attitudes.Frame VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula@VE.Syntax
+  -- expr 620032507
+theorem VE.Attitudes.framePairs_modes
+  ∀ (A : VE.Attitudes.AttDoc) (p : VE.Attitudes.Key × VE.Attitudes.Key),
+    p ∈ VE.Attitudes.framePairs A →
+      (p.fst.mode = VE.Attitudes.Mode.knows ∨ ∃ w, p.fst.mode = VE.Attitudes.Mode.thinks w) ∧
+        p.snd.mode ≠ VE.Attitudes.Mode.knows
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.mode@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.Mode.knows@VE.Attitudes.Syntax VE.Attitudes.Mode.thinks@VE.Attitudes.Syntax VE.Attitudes.Mode@VE.Attitudes.Syntax VE.Attitudes.Word@VE.Attitudes.Scale VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 1084766230
+theorem VE.Attitudes.framePairs_nodup
+  ∀ (A : VE.Attitudes.AttDoc), VE.Attitudes.WellFormedAtt A = Bool.true → (VE.Attitudes.framePairs A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 3723703777
+theorem VE.Attitudes.framePairs_transitive
+  ∀ (A : VE.Attitudes.AttDoc) (k1 k2 k3 : VE.Attitudes.Key),
+    (k1, k2) ∈ VE.Attitudes.framePairs A →
+      (k2, k3) ∈ VE.Attitudes.framePairs A → k1 ≠ k3 → (k1, k3) ∈ VE.Attitudes.framePairs A
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 479550622
+theorem VE.Attitudes.frame_universalQF
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (φ : VE.Formula), φ ∈ VE.Attitudes.framePremises A → VE.NormDefaults.UniversalQF φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula@VE.Syntax VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence
+  -- expr 660306680
+theorem VE.Attitudes.frame_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (φ : VE.Formula), φ ∈ VE.Attitudes.framePremises A → VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) [] φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3920348073
 theorem VE.Attitudes.inj_of_nodup_map
   ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ (a : α), a ∈ l → ∀ (b : α), b ∈ l → f a = f b → a = b
   -- uses
@@ -4642,6 +4778,29 @@ theorem VE.Attitudes.keyOf_name
       ∀ (k : VE.Attitudes.Key), k ∈ VE.Attitudes.keys A → VE.Attitudes.keyOf A (VE.Attitudes.name A k) = Option.some k
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keyOf@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
   -- expr 2586438831
+theorem VE.Attitudes.key_checked
+  ∀ {A : VE.Attitudes.AttDoc},
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (k : VE.Attitudes.Key),
+        k ∈ VE.Attitudes.keys A →
+          k.holderSort ∈ A.E.sorts ∧
+            (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) ∧
+              VE.Norms.Formula.qfree k.content = Bool.true ∧
+                VE.Formula.check (VE.Attitudes.baseEnv A) k.slotSort.toList k.content = Bool.true
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax VE.Formula.check@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2872634018
+theorem VE.Attitudes.keys_nodup
+  ∀ (A : VE.Attitudes.AttDoc), VE.Attitudes.WellFormedAtt A = Bool.true → (VE.Attitudes.keys A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax
+  -- expr 2878884293
+theorem VE.Attitudes.mem_framePairs
+  ∀ {A : VE.Attitudes.AttDoc} {k k2 : VE.Attitudes.Key},
+    (k, k2) ∈ VE.Attitudes.framePairs A ↔
+      k ∈ VE.Attitudes.keys A ∧
+        k2 ∈ VE.Attitudes.keys A ∧
+          VE.Attitudes.sameSubject k k2 = Bool.true ∧ VE.Attitudes.entailsMode A k.mode k2.mode = Bool.true
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.mode@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.entailsMode@VE.Attitudes.Frame VE.Attitudes.framePairs@VE.Attitudes.Frame VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.sameSubject@VE.Attitudes.Frame
+  -- expr 2280194609
 theorem VE.Attitudes.names_fresh
   ∀ (A : VE.Attitudes.AttDoc),
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4660,6 +4819,11 @@ theorem VE.Attitudes.names_injective
           ∀ (k2 : VE.Attitudes.Key), k2 ∈ VE.Attitudes.keys A → VE.Attitudes.name A k = VE.Attitudes.name A k2 → k = k2
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
   -- expr 2029822371
+theorem VE.Attitudes.nodup_map_on
+  ∀ {α β : Type} {f : α → β} {l : List α},
+    l.Nodup → (∀ (a : α), a ∈ l → ∀ (b : α), b ∈ l → f a = f b → a = b) → (List.map f l).Nodup
+  -- uses
+  -- expr 1827740593
 theorem VE.Attitudes.not_of_throwIf
   ∀ {b : Bool} {m : String}, VE.Attitudes.throwIf b m = Except.ok () → b = Bool.false
   -- uses VE.Attitudes.throwIf@VE.Attitudes.Syntax
@@ -4669,6 +4833,12 @@ theorem VE.Attitudes.ok_of_bind
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
   -- uses
   -- expr 3172643631
+theorem VE.Attitudes.sameSubject_eq
+  ∀ {k k2 : VE.Attitudes.Key},
+    VE.Attitudes.sameSubject k k2 = Bool.true →
+      k.holderSort = k2.holderSort ∧ k.slotSort = k2.slotSort ∧ k.content = k2.content
+  -- uses VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.sameSubject@VE.Attitudes.Frame VE.Formula@VE.Syntax
+  -- expr 2943233522
 theorem VE.Attitudes.table_reviewed
   VE.Attitudes.table.reviewed = Bool.true
   -- uses VE.Attitudes.Table.reviewed@VE.Attitudes.Scale VE.Attitudes.table@VE.Attitudes.Scale
@@ -4679,6 +4849,11 @@ theorem VE.Attitudes.toNorms_wellFormed
       ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.WellFormed D = Bool.true
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
   -- expr 1170091834
+theorem VE.Attitudes.wellFormed_append
+  ∀ {E : VE.Environment} {Γ Δ : List String} {φ : VE.Formula},
+    VE.Formula.WellFormed E Γ φ → VE.Formula.WellFormed E (Γ ++ Δ) φ
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3433869311
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
