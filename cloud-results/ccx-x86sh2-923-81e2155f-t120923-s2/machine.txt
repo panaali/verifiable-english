@@ -1,0 +1,7 @@
+job=ccx-x86sh2-923-81e2155f-t120923-s2 shard=2/7 nproc=4 arch=x86_64 host=vm date=2026-11-08T06:57:48Z ulimit_s=8192
+Mem:              15           0          13           0           1          15
+/dev/vda        252G   14G   25G  36% /
+ 06:57:48 up 1 min,  0 user,  load average: 0.82, 0.26, 0.09
+pilot/codex branches: 98
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
