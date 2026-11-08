@@ -70,6 +70,21 @@ def test_a6_gives_two_prohibitions_named_by_their_parts():
     assert doc._split == {"p027": D28}
 
 
+@pytest.mark.parametrize("default", ["deny", "allow"])
+def test_outcome_uses_the_elaborated_vocabulary_for_every_part_and_expansion(default):
+    doc = document(environment(NORM_PROFILES, default=default))
+    relayed = doc.relayed()
+    for predicate in relayed.env.predicates:
+        for base in (False, True):
+            for nary_atoms in (False, True):
+                assert doc.outcome(predicate, base=base, nary_atoms=nary_atoms) == relayed.outcome(
+                    predicate, base=base, nary_atoms=nary_atoms)
+    for base in (False, True):
+        with pytest.raises(VEError) as caught:
+            doc.outcome("p027", base=base)
+        assert str(caught.value) == D28
+
+
 def test_a14_gives_five_prohibitions_through_the_route():
     data = one(environment(NORM_PROFILES), "p123", A14, FX14,
                [{"head": h, "markers": [""], "split": [], "modifiers": []}
