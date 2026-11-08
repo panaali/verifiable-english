@@ -2154,6 +2154,27 @@
    "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
    "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "S",
+   "lines": 87,
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "sn-b6c: VE/Senses/Run.lean +25 (V: byteSpan, senseEntryJson, the texts and entries in outcomeJson and readCase); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6c, 2026-11-08",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }

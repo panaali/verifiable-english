@@ -1,0 +1,189 @@
+{
+ "mutants": [
+  {
+   "id": "Pa",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (a): the replay leaves actions_version out of its comparison; an answer under another version than the lock's must fail",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_an_answer_under_another_version_than_the_locks_fails_the_replay",
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_an_answer_under_another_version_than_the_locks_fails_the_replay",
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 40.8,
+   "output_tail": "0`, as JSON has them.\"\"\"\n        for ident in (\"G1\", \"U3\", \"A1\"):\n            recorded = AF.load(ident)[\"result\"]\n            assert AF.differences(recorded, copy.deepcopy(recorded)) == []\n            for at in _leaves(recorded):\n                if not at:\n                    continue\n                path = \"/\" + \"/\".join(map(str, at))\n                node = recorded\n                for step in at:\n                    node = node[step]\n                for new in ([] if isinstance(node, list) else [7], \"x\" if node != \"x\" else \"y\", None):\n                    if type(new) is type(node) and new == node:\n                        continue\n>                   assert AF.differences(recorded, _set(recorded, at, new)) == [path], (ident, path, new)\nE                   AssertionError: ('G1', '/identities/actions_version', [7])\nE                   assert [] == ['/identities...ions_version']\nE                     \nE                     Right contains one more item: '/identities/actions_version'\nE                     Use -v to get more diff\n\ntests/test_ask_fixtures.py:232: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_an_answer_under_another_version_than_the_locks_fails_the_replay\nFAILED tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer\n2 failed in 0.71s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-btadj4_r)\n"
+  },
+  {
+   "id": "Pb",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (b): the replay leaves another answer field (the lead) out of its comparison",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.1,
+   "output_tail": "ld of a genuine answer of each route, retyped, changed or dropped, is a difference at its path; the\n        genuine answer has none. `true` is not `1` and `1` is not `1.0`, as JSON has them.\"\"\"\n        for ident in (\"G1\", \"U3\", \"A1\"):\n            recorded = AF.load(ident)[\"result\"]\n            assert AF.differences(recorded, copy.deepcopy(recorded)) == []\n            for at in _leaves(recorded):\n                if not at:\n                    continue\n                path = \"/\" + \"/\".join(map(str, at))\n                node = recorded\n                for step in at:\n                    node = node[step]\n                for new in ([] if isinstance(node, list) else [7], \"x\" if node != \"x\" else \"y\", None):\n                    if type(new) is type(node) and new == node:\n                        continue\n>                   assert AF.differences(recorded, _set(recorded, at, new)) == [path], (ident, path, new)\nE                   AssertionError: ('G1', '/lead', [7])\nE                   assert [] == ['/lead']\nE                     \nE                     Right contains one more item: '/lead'\nE                     Use -v to get more diff\n\ntests/test_ask_fixtures.py:232: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_the_replay_compares_every_field_of_the_answer\n1 failed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mtqjs5am)\n"
+  },
+  {
+   "id": "Pc",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (c): the loader supplies a constant version instead of the lock's",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_the_loader_takes_the_version_from_the_lock"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_the_loader_takes_the_version_from_the_lock"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________ test_the_loader_takes_the_version_from_the_lock ________________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-48/test_the_loader_takes_the_vers0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747077cc3230>\n\n    def test_the_loader_takes_the_version_from_the_lock(tmp_path, monkeypatch):\n        from ve import english_grammar\n        stored = json.loads((ROOT / \"tests/fixtures/ask/G1.json\").read_text())\n        assert \"actions_version\" not in stored[\"result\"][\"identities\"] and \"seconds\" not in stored\n        assert AF.load(\"G1\")[\"result\"][\"identities\"][\"actions_version\"] == english_grammar.actions_version()\n        monkeypatch.setattr(english_grammar, \"HERE\", _lock(tmp_path, \"999\"))\n        entry = AF.load(\"G1\")\n>       assert entry[\"result\"][\"identities\"][\"actions_version\"] == \"999\"\nE       AssertionError: assert '45' == '999'\nE         \nE         - 999\nE         + 45\n\ntests/test_ask_fixtures.py:177: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_the_loader_takes_the_version_from_the_lock\n1 failed in 0.33s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pnk5nvgr)\n"
+  },
+  {
+   "id": "Pd",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (d): the reader accepts a fixture in the old format (seconds, actions_version)",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": " monkeypatch):\n        \"\"\"A branch that recorded fixtures before this format merges loudly: the loader names the field and the\n        command that records the fixture again. The same fixture in the new format loads.\"\"\"\n        entry = json.loads((ROOT / \"tests/fixtures/ask/G1.json\").read_text())\n        (tmp_path / \"G1.json\").write_text(json.dumps(entry))\n        monkeypatch.setattr(AF, \"OUT\", tmp_path)\n        assert AF.load(\"G1\")[\"result\"][\"lead\"] == \"yes\"\n        if old in (\"seconds\", \"both\"):\n            entry[\"seconds\"] = 1.5\n        if old in (\"actions_version\", \"both\"):\n            entry[\"result\"][\"identities\"][\"actions_version\"] = AF.lock_version()\n        (tmp_path / \"G1.json\").write_text(json.dumps(entry))\n>       with pytest.raises(ValueError, match=r\"tools/ask_fixtures\\.py --write G1\") as refused:\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE ValueError\n\ntests/test_ask_fixtures.py:257: Failed\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name[seconds]\nFAILED tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name[actions_version]\nFAILED tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name[both]\n3 failed in 0.37s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-48xbdfi7)\n"
+  },
+  {
+   "id": "Pd2",
+   "file": "tools/ask_fixtures.py",
+   "claim": "seeded bug (d, second half): the old-format check misses a recorded actions_version",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.6,
+   "output_tail": "sed.value)) == (old != \"actions_version\")\n>       assert (\"result/identities/actions_version\" in str(refused.value)) == (old != \"seconds\")\nE       AssertionError: assert ('result/identities/actions_version' in 'G1: the fixture still records seconds, which fixtures no longer hold; record it again with `python tools/ask_fixtures.py --write G1`') == ('both' != 'seconds')\nE        +  where 'G1: the fixture still records seconds, which fixtures no longer hold; record it again with `python tools/ask_fixtures.py --write G1`' = str(ValueError('G1: the fixture still records seconds, which fixtures no longer hold; record it again with `python tools/ask_fixtures.py --write G1`'))\nE        +    where ValueError('G1: the fixture still records seconds, which fixtures no longer hold; record it again with `python tools/ask_fixtures.py --write G1`') = <ExceptionInfo ValueError('G1: the fixture still records seconds, which fixtures no longer hold; record it again with `python tools/ask_fixtures.py --write G1`') tblen=2>.value\n\ntests/test_ask_fixtures.py:260: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name[actions_version]\nFAILED tests/test_ask_fixtures.py::test_a_fixture_in_the_old_format_is_refused_by_name[both]\n2 failed, 1 passed in 0.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1_t822wv)\n"
+  },
+  {
+   "id": "Ps",
+   "file": "tools/ask_fixtures.py",
+   "claim": "a record stores the version-free answer only when Lean answered under the lock's version",
+   "source_sha256": "f0df12ed2f4050dc9a6bcff5948a794ba739984e1a379ce39d1927543364f6bf",
+   "tests": [
+    "tests/test_ask_fixtures.py::test_a_record_stores_no_version_and_refuses_another_version_than_the_locks"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_ask_fixtures.py::test_a_record_stores_no_version_and_refuses_another_version_than_the_locks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__ test_a_record_stores_no_version_and_refuses_another_version_than_the_locks __\n\n    def test_a_record_stores_no_version_and_refuses_another_version_than_the_locks():\n        answer = {\"lead\": \"yes\", \"identities\": {\"actions_version\": AF.lock_version(), \"document_id\": \"d\"}}\n        assert AF.stored(answer) == {\"lead\": \"yes\", \"identities\": {\"document_id\": \"d\"}}\n>       with pytest.raises(SystemExit, match=\"build Lean\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE SystemExit\n\ntests/test_ask_fixtures.py:273: Failed\n=========================== short test summary info ============================\nFAILED tests/test_ask_fixtures.py::test_a_record_stores_no_version_and_refuses_another_version_than_the_locks\n1 failed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cewsg2uo)\n"
+  },
+  {
+   "id": "Pg",
+   "file": "conformance/english_lean_s3_compare.py",
+   "claim": "the S3 report command runs under its own hash seed, so rewriting the generated file reproduces it",
+   "source_sha256": "158fe9f94ef7939fbb6262b98408c3da7683aefbfdbeed5076016cb13b4ccad5",
+   "tests": [
+    "tests/test_english_lean_s3_compare.py::test_the_report_is_the_same_whatever_hash_seed_the_command_starts_under"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_lean_s3_compare.py::test_the_report_is_the_same_whatever_hash_seed_the_command_starts_under"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 36.2,
+   "output_tail": "checked by rewriting it (tools/regen_generated.py, english-s3-comparison), so\n        the command writes it under one seed: Lark lists a refusal's expected terminals in set order, which seeds 1 and\n        2 order differently. Started under either, it writes the same bytes, and the refusal is in them.\"\"\"\n        written = []\n        for seed in (\"1\", \"2\"):\n            out = tmp_path / f\"seed-{seed}.json\"\n            done = subprocess.run([sys.executable, \"-m\", \"conformance.english_lean_s3_compare\", \"--report-only\",\n                                   \"--output\", str(out)], cwd=Path(__file__).resolve().parents[1],\n                                  env={**os.environ, \"PYTHONHASHSEED\": seed}, capture_output=True, text=True,\n                                  timeout=HANG_TIMEOUT)\n            assert done.returncode == 0, done.stderr[-2000:]\n            written.append(out.read_bytes())\n>       assert written[0] == written[1]\nE       assert b'{\\n \"format...n  }\\n ]\\n}\\n' == b'{\\n \"format...n  }\\n ]\\n}\\n'\nE         \nE         At index 40066 diff: b'L' != b'M'\nE         Use -v to get more diff\n\ntests/test_english_lean_s3_compare.py:139: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_english_lean_s3_compare.py::test_the_report_is_the_same_whatever_hash_seed_the_command_starts_under\n1 failed in 16.07s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-er1ozvhx)\n"
+  },
+  {
+   "id": "Le",
+   "file": "lean/VE/Senses/RunExamples.lean",
+   "claim": "seeded bug (e): the pin leaves out an answer field other than the version (environment_id); the pins fail",
+   "source_sha256": "a3b94b9e0b600132f6ad3c395b4533cce7893dbf16753e6658ab8c085c0eb7f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 70.6,
+   "output_tail": "error: VE/Senses/RunExamples.lean:120:0: Expression\nerror: VE/Senses/RunExamples.lean:122:0: Expression\nerror: VE/Senses/RunExamples.lean:128:0: Expression\nerror: VE/Senses/RunExamples.lean:132:0: Expression\nerror: VE/Senses/RunExamples.lean:134:0: Expression\nerror: VE/Senses/RunExamples.lean:136:0: Expression\nerror: VE/Senses/RunExamples.lean:146:0: Expression\nerror: VE/Senses/RunExamples.lean:148:0: Expression\n"
+  },
+  {
+   "id": "Le2",
+   "file": "lean/VE/Senses/Run.lean",
+   "claim": "seeded bug (e, the answer side): a pinned answer field other than the version changes (the reading's used words written twice); the pins fail",
+   "source_sha256": "7ce5690587685042aa83747a0aff3650b75d3c16016d90ccd0a9061bd5f677a4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 86.8,
+   "output_tail": "error: VE/Senses/RunExamples.lean:120:0: Expression\nerror: VE/Senses/RunExamples.lean:122:0: Expression\nerror: VE/Senses/RunExamples.lean:128:0: Expression\nerror: VE/Senses/RunExamples.lean:132:0: Expression\nerror: VE/Senses/RunExamples.lean:134:0: Expression\nerror: VE/Senses/RunExamples.lean:136:0: Expression\nerror: VE/Senses/RunExamples.lean:171:0: Expression\nerror: VE/Senses/RunExamples.lean:173:0: Expression\n"
+  },
+  {
+   "id": "Lh",
+   "file": "lean/VE/Senses/Run.lean",
+   "claim": "Lean's reading answer under another version than Fixed.actionsVersion: the pins leave it out, the version guard fails",
+   "source_sha256": "7ce5690587685042aa83747a0aff3650b75d3c16016d90ccd0a9061bd5f677a4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 69.7,
+   "output_tail": "error: VE/Senses/RunExamples.lean:188:0: Expression\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "Lf",
+   "file": "lean/VE/Senses/RunExamples.lean",
+   "claim": "seeded bug (f): the version guard compares a literal instead of Fixed.actionsVersion; raising the version (english_grammar_gen.py --write --actions-version next) then fails RunExamples, which builds unchanged without the bug",
+   "source_sha256": "a3b94b9e0b600132f6ad3c395b4533cce7893dbf16753e6658ab8c085c0eb7f9",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; root=$(pwd); keep=$(mktemp -d); cp lean/VE/EnglishGrammar/Fixed/Version.lean ve/english_grammar/LOCK.json \"$keep\"/; trap 'cp \"$keep\"/Version.lean \"$root\"/lean/VE/EnglishGrammar/Fixed/Version.lean; cp \"$keep\"/LOCK.json \"$root\"/ve/english_grammar/LOCK.json; rm -rf \"$keep\"' EXIT; next=$(( $(python3 -c 'import json; print(json.load(open(\"ve/english_grammar/LOCK.json\"))[\"actions_version\"])') + 1 )); python3 tools/english_grammar_gen.py --write --actions-version \"$next\" >/dev/null || exit 2; cd \"$root\"/lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Senses.RunExamples 2>&1 | grep -E '^error|Build completed' | head -n 8; exit ${PIPESTATUS[0]}"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 196.1,
+   "output_tail": "error: VE/Senses/RunExamples.lean:188:0: Expression\nerror: Lean exited with code 1\nerror: build failed\n"
+  }
+ ]
+}

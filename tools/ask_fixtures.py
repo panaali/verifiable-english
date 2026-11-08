@@ -11,6 +11,12 @@ VE's prover cannot prove the `permitted` conflict package within its budget, so 
 case's focused prover (`usecases/agent-policy/focused.py`, untrusted tooling) for the packages it leaves open; Lean
 checks every package as it checks every piece.
 
+A fixture holds no run-time value and no copy of a version: `--write` prints the seconds a record took without
+storing them, and stores Lean's answer without its `actions_version`, which `load` puts back from the one owner,
+`ve/english_grammar/LOCK.json` (the source of `lean/VE/EnglishGrammar/Fixed/Version.lean`). A replay still compares
+Lean's whole live answer with the whole recording, version included (`differences`), so an answer under another
+version than the lock's fails, and raising the version re-records nothing.
+
 This is evidence tooling, not a product path: nothing here decides an answer.
 """
 from __future__ import annotations
@@ -212,7 +218,8 @@ def agent_evidence(prepared_for, base: dict, packages: dict) -> tuple:
     return prepared, result
 
 
-def record(ident: str, path: str, question: str, packages: dict | None) -> dict:
+def record(ident: str, path: str, question: str, packages: dict | None) -> tuple[dict, float]:
+    """The fixture of one question with Lean's answer, and the seconds it took (printed, never stored)."""
     from ve.ask import prepare
     raw = (ROOT / path).read_bytes()
     started = time.monotonic()
@@ -224,9 +231,9 @@ def record(ident: str, path: str, question: str, packages: dict | None) -> dict:
     else:
         prepared = prepare(ROOT / path, raw, question)
         result = prepared.ask()
-    return {"id": ident, "path": path, "sha256": hashlib.sha256(raw).hexdigest(), "question": question,
-            "case": prepared.request["case"], "names": prepared.request["names"], "result": result,
-            "seconds": round(time.monotonic() - started, 1)}
+    entry = {"id": ident, "path": path, "sha256": hashlib.sha256(raw).hexdigest(), "question": question,
+             "case": prepared.request["case"], "names": prepared.request["names"], "result": result}
+    return entry, round(time.monotonic() - started, 1)
 
 
 def write(ids: list[str]) -> int:
@@ -245,7 +252,7 @@ def write(ids: list[str]) -> int:
                     cache[path] = {}
             packages = cache[path]
         try:
-            entry = record(ident, path, question, packages)
+            entry, seconds = record(ident, path, question, packages)
         except VEError as exc:
             # A refusal is recorded as the fixture's outcome (its class and Lean's text).
             raw = (ROOT / path).read_bytes()
@@ -253,7 +260,8 @@ def write(ids: list[str]) -> int:
                      "error": {"class": type(exc).__name__, "message": str(exc)}}
             print(f"{ident}: {entry['error']['class']}: {entry['error']['message']}")
         else:
-            print(f"{ident}: {entry['result']['lead']} ({entry['seconds']} s)")
+            print(f"{ident}: {entry['result']['lead']} ({seconds} s)")
+            entry["result"] = stored(entry["result"])
             conflict = entry["case"]["evidence"].get("conflict") if path.startswith(AGENT) else None
             if conflict is not None:
                 # One document's packages, recorded once beside its fixtures (`load` puts them back).
@@ -268,9 +276,42 @@ def _dump(value) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
 
 
+def lock_version() -> str:
+    """The `actions_version` of `ve/english_grammar/LOCK.json`, read by its one reader in Python."""
+    from ve import english_grammar
+    return english_grammar.actions_version()
+
+
+def stored(result: dict) -> dict:
+    """Lean's answer as a fixture stores it: without `actions_version`, which must be the lock's (an answer of a
+    stale build is not recorded, since `load` would put the lock's version in its place)."""
+    identities = result["identities"]
+    if identities.get("actions_version") != lock_version():
+        raise SystemExit(f"Lean answered under actions_version {identities.get('actions_version')!r}, the lock has "
+                         f"{lock_version()!r}: build Lean (cd lean && lake build) and record again")
+    return {**result, "identities": {k: v for k, v in identities.items() if k != "actions_version"}}
+
+
+def old_format(entry: dict) -> list[str]:
+    """The fields of an older fixture format that `entry` still carries: a run-time `seconds`, or a copy of
+    `actions_version` in its answer's identities."""
+    found = ["seconds"] if "seconds" in entry else []
+    identities = entry.get("result", {}).get("identities") if isinstance(entry.get("result"), dict) else None
+    if isinstance(identities, dict) and "actions_version" in identities:
+        found.append("result/identities/actions_version")
+    return found
+
+
 def load(ident: str) -> dict:
-    """A recorded fixture, its document's recorded packages put back in its case."""
+    """A recorded fixture, its document's recorded packages put back in its case and the lock's `actions_version`
+    in its answer's identities. A fixture in the older format (a merge of a branch that recorded it so) is refused."""
     entry = json.loads((OUT / f"{ident}.json").read_text())
+    if stale := old_format(entry):
+        raise ValueError(f"{ident}: the fixture still records {' and '.join(stale)}, which fixtures no longer hold; "
+                         f"record it again with `python tools/ask_fixtures.py --write {ident}`")
+    if "result" in entry:
+        entry["result"]["identities"] = dict(sorted({**entry["result"]["identities"],
+                                                     "actions_version": lock_version()}.items()))
     evidence = (entry.get("case") or {}).get("evidence")
     conflict = evidence.get("conflict") if isinstance(evidence, dict) else None
     if conflict is not None and set(conflict) == {"recorded"}:
@@ -298,14 +339,34 @@ def replay(entry: dict) -> dict:
     return Prepared(request, _context(request, doc, raw, reading, route), expected, _NoSplits()).ask()
 
 
+def differences(recorded, answer, at: str = "") -> list[str]:
+    """The JSON paths where Lean's live answer differs from the recorded one: a value, a type (`true` is not `1`),
+    a key on one side only, a list's length. Every field is compared; none is left out."""
+    if type(recorded) is not type(answer):
+        return [at or "/"]
+    if isinstance(recorded, dict):
+        out = []
+        for key in sorted(recorded.keys() | answer.keys()):
+            if key not in recorded or key not in answer:
+                out.append(f"{at}/{key}")
+            else:
+                out += differences(recorded[key], answer[key], f"{at}/{key}")
+        return out
+    if isinstance(recorded, list):
+        if len(recorded) != len(answer):
+            return [at or "/"]
+        return [p for i, (x, y) in enumerate(zip(recorded, answer)) for p in differences(x, y, f"{at}/{i}")]
+    return [] if recorded == answer else [at or "/"]
+
+
 def check() -> int:
     failures = 0
     for ident, _, _ in FIXTURES:
         entry = load(ident)
         if "error" in entry:
             continue
-        if replay(entry) != entry["result"]:
-            print(f"{ident}: Lean's answer differs from the recorded one")
+        if found := differences(entry["result"], replay(entry)):
+            print(f"{ident}: Lean's answer differs from the recorded one at {', '.join(found[:5])}")
             failures += 1
     print(f"{len(FIXTURES) - failures} of {len(FIXTURES)} recorded answers replayed")
     return 1 if failures else 0

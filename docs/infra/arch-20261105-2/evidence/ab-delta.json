@@ -1,0 +1,158 @@
+{
+ "unavailable": [
+  {
+   "authority": "default",
+   "case": "2757af3b2b5456b1",
+   "corpus": "discourse",
+   "op": "document_check",
+   "reason": "The same pre-existing CheckerUnavailable at base and head (a norm object the norms route refuses keeps its loader's diagnostic); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "2757af3b2b5456b1",
+   "corpus": "discourse",
+   "op": "document_render",
+   "reason": "The same pre-existing CheckerUnavailable at base and head (a norm object the norms route refuses keeps its loader's diagnostic); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T1800Z:usecases/claude-constitution-pilot/run-20261017T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261018T1800Z:usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T0600Z:usecases/claude-constitution-pilot/run-20261019T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T0600Z:usecases/claude-constitution-pilot/run-20261021T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T1800Z:usecases/claude-constitution-pilot/run-20261021T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261028T0600Z:usecases/claude-constitution-pilot/run-20261028T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261103T0600Z:usecases/claude-constitution-pilot/run-20261103T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable at base and head; identical outputs (listed by lf-18, AR-16a, AR-20 and AR-21)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261028T1800Z:usecases/udhr-pilot/run-20261028T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "A whole-UDHR document check that reached the recorder's 600 s timeout on both sides under machine load (load average above 100 on 32 cores); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "A whole-UDHR document check that reached the recorder's 600 s timeout on both sides under machine load (load average above 100 on 32 cores); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/evidence/et0-not-landed/translation-whole.et0.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing CheckerUnavailable at base and head (the Lean document answer could not be built: readings-verdicts: more than 64 compatible readings); identical outputs."
+  }
+ ]
+}
