@@ -7,10 +7,10 @@
    "claim": "each split row's D-28 text names all the source's parts",
    "mutation": "partsText p parts -> partsText p (parts.drop 1)",
    "status": "KILLED",
-   "test": "VE/Service/ActsExamples.lean:640",
+   "test": "VE/Service/ActsExamples.lean:641",
    "guards": [
-    "VE/Service/ActsExamples.lean:640",
-    "VE/Service/ActsExamples.lean:644"
+    "VE/Service/ActsExamples.lean:641",
+    "VE/Service/ActsExamples.lean:645"
    ]
   },
   {
@@ -20,10 +20,10 @@
    "claim": "each part row carries its index in the SplitMap",
    "mutation": "toJson i -> toJson (i + 1)",
    "status": "KILLED",
-   "test": "VE/Service/ActsExamples.lean:640",
+   "test": "VE/Service/ActsExamples.lean:641",
    "guards": [
-    "VE/Service/ActsExamples.lean:640",
-    "VE/Service/ActsExamples.lean:644"
+    "VE/Service/ActsExamples.lean:641",
+    "VE/Service/ActsExamples.lean:645"
    ]
   },
   {
@@ -33,9 +33,9 @@
    "claim": "a REFUSED row carries the elaboration's diagnostic and every list empty",
    "mutation": "emptyFields -> kept [\"x\"]",
    "status": "KILLED",
-   "test": "VE/Service/ActsExamples.lean:654",
+   "test": "VE/Service/ActsExamples.lean:655",
    "guards": [
-    "VE/Service/ActsExamples.lean:654"
+    "VE/Service/ActsExamples.lean:655"
    ]
   },
   {
@@ -45,11 +45,11 @@
    "claim": "the environment row admits a joined act through the act check (DRI ap-3db item 5)",
    "mutation": "(joined := true) -> (joined := false)",
    "status": "KILLED",
-   "test": "VE/Service/ActsExamples.lean:668",
+   "test": "VE/Service/ActsExamples.lean:709",
    "guards": [
-    "VE/Service/ActsExamples.lean:646",
-    "VE/Service/ActsExamples.lean:668",
-    "VE/Service/ActsExamples.lean:669"
+    "VE/Service/ActsExamples.lean:647",
+    "VE/Service/ActsExamples.lean:709",
+    "VE/Service/ActsExamples.lean:712"
    ]
   },
   {
