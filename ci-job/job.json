@@ -1,0 +1,13 @@
+{
+ "job": "ccx-x86sh1-3148e87c-t117262-s6",
+ "head": "484f3bc11b030089c5d4bb5f38d1f281fd7229aa",
+ "argv": [
+  "ccx-x86sh1-3148e87c-t117262-s6",
+  "484f3bc11b030089c5d4bb5f38d1f281fd7229aa",
+  "78640038dca4545de1c54ac479b7f2ff5abfebf2",
+  "-",
+  "-",
+  "4",
+  "6/7"
+ ]
+}
