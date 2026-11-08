@@ -102,9 +102,9 @@ now says no R16 ties pass is needed.
   81, 61 units, all passed`; shard 6 `61 units, 60 passed`, the one failure
   `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration` (`assert 20 == 0`, the
   unclassified declarations; fixed by the class table, see "Trust").
-- The failed id rerun on the fixed tree: see the line below.
+- The failed id rerun on the fixed tree (`zsh /home/seyran/code/manage-agents/mac-pytest.sh -- tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`, HEAD `830c7600`): `1 passed`, exit 0.
 - The condition #guards (PositionsExamples.lean and ComposeExamples.lean) build on this HEAD ("Checks on this HEAD").
-- Pre-existing failures on main (main-known-red.txt): none in this selection.
+- Pre-existing failures on main (main-known-red.txt): none surfaced (the one failure above was this branch's and is fixed).
 
 ## Pilot bytes
 
