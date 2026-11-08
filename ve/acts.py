@@ -6,7 +6,8 @@ span and each act's token indices. This module builds the request, relays the ro
 (DRI ruling R8): the row's schema (the service checks `act-readings.json`, which bounds the readings at Lean's 64) and
 its binding to the request: the readings are non-empty exactly when the verdict is `LISTED`; every span lies within
 the phrase's UTF-8 bytes, in order and disjoint; every `from` index names a token, none twice in one act; no two
-readings have the same acts or the same paraphrase. It lexes nothing and composes no text. Binding cannot see a
+readings have the same acts or the same paraphrase; no reading, act, text or diagnostic is empty and no act occurs
+twice in one reading. It lexes nothing and composes no text. Binding cannot see a
 reading dropped with its row (spec 7, "What binding cannot show"): that is Lean's content (`phraseReadings_exact`).
 """
 from __future__ import annotations
@@ -41,11 +42,19 @@ def answer_problem(row, case: dict) -> str | None:
             return "a token span is not within the phrase, in order and disjoint"
         end = span[1]
     for reading in readings:
+        if not reading["acts"] or not reading["paraphrase"]:
+            return "a reading has no acts or no paraphrase"
+        if len({repr(act) for act in reading["acts"]}) != len(reading["acts"]):
+            return "an act occurs twice in one reading"
         for act in reading["acts"]:
+            if not act["act"] or not act["text"] or not act["from"]:
+                return "an act has no text or no tokens"
             if any(not 0 <= i < len(tokens) for i in act["from"]):
                 return "a token index is out of range"
             if len(set(act["from"])) != len(act["from"]):
                 return "a token index occurs twice in one act"
+    if verdict != "LISTED" and not row.get("diagnostic"):
+        return "a refusal has no diagnostic"
     if len({repr(r["acts"]) for r in readings}) != len(readings):
         return "two readings have the same acts"
     if len({r["paraphrase"] for r in readings}) != len(readings):
