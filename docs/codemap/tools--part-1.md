@@ -24,6 +24,7 @@
 - `tools/check_rust_deps.py` — Check the Rust workspace's crate graph against the inward-only rule, as cargo reads it.
 - `tools/code_map.py` — Build a compact, deterministic index of source modules from the working tree.
 - `tools/coverage_dashboard.py` — Rebuild the use-case baseline table without changing historical audits.
+- `tools/defaults_words.py` — Write `ve/defaults_words.json`, the words of DE10 to DE13, from its Lean owner (`VE.Defaults.Wire.zoneHeads`, `zoneLineWords`, `zoneJoins`; plan DF-5, delivera…
 - `tools/difffuzz.py` — Cross-language differential fuzzer: Python, the Lean routes and Rust on seeded mutants.
 - `tools/difffuzz_corpus.py` — The differential fuzzer's corpus: every fixture of `conformance/` and `usecases/`, read into seeds.
 - `tools/english_codes.py` — Write or check `ve/english_grammar/codes.json`, Lean's table of codes, classes and statuses.
@@ -96,4 +97,3 @@
 - `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
 - `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
 - `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
-- `tools/test_map_recorder.py` — Record what one process of a test-map run executes, reads and starts.
