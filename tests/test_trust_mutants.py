@@ -2483,7 +2483,7 @@ REFUSED_MERGES = [
     ("k-repeated", lambda ps: ps[2]["shard"].update(k=2), "[2] repeated"),
     ("k-missing", lambda ps: ps.pop(), "[3] missing"),
     *((f, lambda ps, f=f: ps[1].update({f: shifted(ps[1][f])}), f"disagree on {f}:")
-      for f in ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs")),
+      for f in ("base", "max_mutants", "deep", "tests", "classes", "inputs")),
     ("inputs-bool-for-int", lambda ps: [d["inputs"].update(x=True if d is ps[1] else 1) for d in ps],
      "disagree on inputs:"),
     ("rescore", lambda ps: ps[2].update(rescore={"file": "p", "head": None, "mode": "full", "changed": [], "reused": 0,
@@ -2756,8 +2756,8 @@ def test_plan_prints_the_counts_and_builds_nothing(sharded, capsys):
         assert out.splitlines() == [json.dumps({**counts, **({"owned": owned} if owned is not None else {})})]
 
 
-# eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume at the same HEAD judges only
-# what it left; another HEAD's record, and a partial record at --merge or --rescore, are never a sweep. The clock is
+# eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume with identical inputs judges only
+# what it left; a partial record at --merge or --rescore is never a sweep. The clock is
 # injected (`tm.clock`): each mutant `run` takes STEP seconds of it, so no test waits.
 START, STEP = 1000, 100
 
@@ -2936,7 +2936,7 @@ def test_merge_refuses_a_partial_part_as_complete(sharded, monkeypatch, capsys):
 
 
 def test_rescore_of_a_partial_record_is_a_full_run(sharded, monkeypatch, capsys):
-    """--rescore reads no partial record: its verdicts are --resume's, at its HEAD only."""
+    """--rescore reads no partial record: its verdicts are --resume's with identical inputs."""
     clocked(sharded, monkeypatch)
     prev = sharded.tmp / "prev.json"
     sharded("--json", prev, "--max-mutants", 6, "--deadline", START + 250)
@@ -2945,16 +2945,105 @@ def test_rescore_of_a_partial_record_is_a_full_run(sharded, monkeypatch, capsys)
     assert len(ran) == 6 and "a full run, since it is a partial record" in out
 
 
-def commit_again(go):
-    git(go.root, "commit", "-q", "--allow-empty", "-m", "moved")
+def bound_resume_inputs(go, monkeypatch):
+    """Give the synthetic shard run byte hashes for its Lean and selected test inputs."""
+    lean = go.root / "lean/Demo/Defs.lean"
+    test = go.root / "tests/T.lean"
+    lean.parent.mkdir(parents=True, exist_ok=True)
+    test.parent.mkdir(parents=True, exist_ok=True)
+    lean.write_text("def x := 1\n")
+    test.write_text("#check Nat\n")
+    base = "a" * 40  # the unchanged merge base of the synthetic run
+
+    def inputs(root, _base, tests, outside, deep, classes):
+        files = {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in (lean, test)}
+        return {"tool": "t", "lean": files["lean/Demo/Defs.lean"], "tests": files["tests/T.lean"],
+                "base": base, "options": json.dumps({"deep": deep, "test": [str(p) for p in outside]}),
+                "files": files}
+
+    monkeypatch.setattr(go.tm, "inputs", inputs)
+    return lean, test
+
+
+def commit_file(go, name, content):
+    path = go.root / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content)
+    git(go.root, "add", name)
+    git(go.root, "commit", "-q", "-m", "moved")
+
+
+def test_resume_carries_judged_verdicts_after_a_docs_only_commit(sharded, monkeypatch):
+    clocked(sharded, monkeypatch)
+    bound_resume_inputs(sharded, monkeypatch)
+    prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    assert sharded("--json", prev, *args, "--deadline", START + 250)[3] == ["M001", "M002"]
+    old = json.loads(prev.read_text())["head"]
+    commit_file(sharded, "docs/note.md", "docs only\n")
+    got = sharded("--json", again, *args, "--resume", prev)
+    data = json.loads(again.read_text())
+    assert got[3] == ["M003", "M004", "M005", "M006"]
+    assert data["head"] != old and data["resumed"] == {"file": str(prev), "head": old,
+                                                         "kept": 2, "rerun": 4, "carried": "inputs identical"}
+    assert [r["raw_status"] for r in data["mutants"][:2]] == ["KILLED", "SURVIVOR"]
+
+
+@pytest.mark.parametrize("changed", ["lean", "test", "plan"])
+def test_resume_reruns_judged_verdicts_when_an_input_or_plan_changes(sharded, monkeypatch, capsys, changed):
+    clocked(sharded, monkeypatch)
+    lean, test = bound_resume_inputs(sharded, monkeypatch)
+    prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    sharded("--json", prev, *args, "--deadline", START + 250)
+    if changed == "plan":
+        original = sharded.tm.plan
+
+        def plan(*a):
+            found, tree, fatal = original(*a)
+            found[0].after = "another edit"
+            return found, tree, fatal
+        monkeypatch.setattr(sharded.tm, "plan", plan)
+        commit_file(sharded, "docs/note.md", "docs only\n")
+    else:
+        path = lean if changed == "lean" else test
+        commit_file(sharded, path.relative_to(sharded.root).as_posix(), "changed\n")
+    _, out, _, ran, _ = sharded("--json", again, *args, "--resume", prev, capsys=capsys)
+    assert ran == [f"M{i:03d}" for i in range(1, 7)]
+    assert json.loads(again.read_text())["resumed"]["kept"] == 0
+    assert ("inputs differ" if changed != "plan" else "mutants are not this tree's") in out
+
+
+def test_merge_carries_parts_from_identical_inputs_at_different_commits(sharded, monkeypatch):
+    now = clocked(sharded, monkeypatch)
+    bound_resume_inputs(sharded, monkeypatch)
+    prev = sharded.tmp / "first.partial.json"
+    first = sharded.tmp / "first.json"
+    second = sharded.tmp / "second.json"
+    merged = sharded.tmp / "merged.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    assert sharded("--shard", "1/2", "--json", prev, *args, "--deadline", START + 150)[3] == ["M001"]
+    now[0] = START
+    sharded("--shard", "2/2", "--json", second, *args)
+    old = json.loads(second.read_text())["head"]
+    commit_file(sharded, "docs/note.md", "docs only\n")
+    assert sharded("--shard", "1/2", "--json", first, *args, "--resume", prev)[3] == ["M003", "M005"]
+    new = json.loads(first.read_text())["head"]
+    assert sharded.tm.main(["--merge", str(merged), str(first), str(second)]) == 1
+    data = json.loads(merged.read_text())
+    assert data["head"] == new and data["shards"][0]["head"] == new
+    assert data["shards"][0]["resumed"]["head"] == old
+    assert data["shards"][0]["resumed"]["carried"] == "inputs identical"
+    assert data["shards"][1]["head"] == old
+    assert data["shards"][1]["carried"] == "inputs identical"
 
 
 IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says)
-    ("another-head", lambda go, p: commit_again(go), "not at this HEAD"),
     ("another-tree", lambda go, p: p.update(tree="0" * 40), "not at this HEAD"),
-    ("another-commit-same-tree", lambda go, p: p.update(head="0" * 40), "not at this HEAD"),
     ("no-tree", lambda go, p: p.pop("tree"), "records no tree"),
     ("tree-retyped", lambda go, p: p.update(tree=1), "records no tree"),
+    ("head-missing", lambda go, p: p.pop("head"), "records no HEAD commit"),
+    ("head-retyped", lambda go, p: p.update(head=True), "records no HEAD commit"),
     ("inputs", lambda go, p: p["inputs"].update(lean="other"), "its inputs differ"),
     ("max-mutants", lambda go, p: p.update(max_mutants=5), "--max-mutants or --shard"),
     ("shard", lambda go, p: p.update(shard={"k": 1, "n": 1, "owned": []}), "--max-mutants or --shard"),
@@ -2970,7 +3059,7 @@ IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says
 
 @pytest.mark.parametrize(("name", "change", "says"), IGNORED_RESUMES, ids=[r[0] for r in IGNORED_RESUMES])
 def test_a_resume_of_another_heads_or_unbound_record_is_ignored(sharded, monkeypatch, capsys, name, change, says):
-    """--resume reuses no verdict of a PREV of another commit or tree, other inputs, plan, part or --rescore, or one
+    """--resume reuses no verdict of a PREV with a mismatched tree at this commit, inputs, plan, part or --rescore, or one
     whose rows or `partial` are not what this tool writes: one line says why and every mutant runs again."""
     clocked(sharded, monkeypatch)
     prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
@@ -2993,7 +3082,6 @@ RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too f
     ("resumed-not-a-dict", lambda ps: ps[0].update(resumed=[1]), NOT_WRITTEN),
     ("tree-retyped", lambda ps: ps[0].update(tree=1), NOT_WRITTEN),
     ("tree-missing", lambda ps: ps[0].pop("tree"), NOT_WRITTEN),
-    ("tree", lambda ps: ps[1].update(tree=shifted(ps[1]["tree"])), "disagree on tree:"),
 ]
 
 
