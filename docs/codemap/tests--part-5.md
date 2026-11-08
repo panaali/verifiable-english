@@ -1,3 +1,13 @@
+- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
+- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
+- `tests/test_profiles.py` — (no module docstring)
+- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
+- `tests/test_properties.py` — (no module docstring)
+- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
+- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
+- `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
+- `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
+- `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
 - `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
 - `tests/test_question_lean_relay.py` — Request binding at the Python side of the Lean question reader.
 - `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
@@ -68,13 +78,3 @@
 - `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
-- `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
-- `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
-- `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
-- `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
-- `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
-- `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
-- `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
-- `tests/test_rights.py` — Rights holder-side elaboration regressions.
-- `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
-- `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…

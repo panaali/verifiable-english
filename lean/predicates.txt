@@ -14,6 +14,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -50,6 +51,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
 module ResponseShape.Schemas.Discourse
@@ -96,6 +98,7 @@ module SpeechActsMain
 module VE.Acts.Compat
 module VE.Acts.Decode
 module VE.Acts.DecodeExamples
+module VE.Acts.DecodeTwins
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
 module VE.Acts.Faithful
@@ -159,6 +162,9 @@ module VE.Ask.Sources
 module VE.Ask.Wire
 module VE.Ask.ZeroAnswer
 module VE.Ask.ZeroWire
+module VE.Attitudes.Examples
+module VE.Attitudes.Scale
+module VE.Attitudes.Syntax
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -174,6 +180,7 @@ module VE.Attribution.Semantics
 module VE.Attribution.Status
 module VE.Attribution.Structure
 module VE.Attribution.Wire
+module VE.Attribution.Words
 module VE.Audit
 module VE.Bridge
 module VE.Calc.Consistency
@@ -246,6 +253,9 @@ module VE.Closure.Surface
 module VE.Closure.Syntax
 module VE.Commands.Examples
 module VE.Commands.Read
+module VE.Commands.Run
+module VE.Commands.RunExamples
+module VE.Commands.RunSplit
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
@@ -351,6 +361,9 @@ module VE.EnglishGrammar.Fixed.Staged
 module VE.EnglishGrammar.Fixed.Tables
 module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
+module VE.EnglishGrammar.JudgmentLines
+module VE.EnglishGrammar.JudgmentLinesExamples
+module VE.EnglishGrammar.JudgmentRunExamples
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
@@ -483,6 +496,12 @@ module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
+module VE.Presupposition.Agree
+module VE.Presupposition.Examples
+module VE.Presupposition.Frame
+module VE.Presupposition.Reading
+module VE.Presupposition.Rows
+module VE.Presupposition.Rules
 module VE.Question.Basic
 module VE.Question.Examples
 module VE.Question.Fixtures
@@ -573,6 +592,7 @@ module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
+module VE.RightClauses.Relation
 module VE.RightClauses.Tree
 module VE.Rights.Admission
 module VE.Rights.Bar
@@ -676,6 +696,9 @@ module VE.Service.CardinalityExamples
 module VE.Service.ComposedAdmissionExamples
 module VE.Service.Diagnose
 module VE.Service.Document
+module VE.Service.DocumentChain
+module VE.Service.DocumentChainChecks
+module VE.Service.DocumentChainExamples
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
@@ -740,6 +763,9 @@ module VE.Time.Semantics
 module VE.Time.Syntax
 module VE.Time.Wire
 module VE.Typing
+module VE.Weighing.Conditions
+module VE.Weighing.Examples
+module VE.Weighing.Tree
 module VE.Weighing.Zone
 module VE.Weighing.ZoneExamples
 module VE.WireContract.Diagnose
@@ -779,6 +805,8 @@ ResponseShape.Fits@ResponseShape.Skeleton
 ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
+VE.Acts.Decode.Elaborated@VE.Acts.Decode
+VE.Acts.Decode.ElaboratedDoc@VE.Acts.DecodeTwins
 VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.IntendedActs@VE.Acts.Faithful
@@ -1084,6 +1112,7 @@ VE.NormDefaults.Admission.ReportAdmitted@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.ReportAdmittedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SoftLeafX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SourceDecoded@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.SourceDecodedIn@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.SourceDecodedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes
 VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
@@ -1101,6 +1130,7 @@ VE.NormDefaults.OverOK@VE.NormDefaults.Check
 VE.NormDefaults.RegOK@VE.NormDefaults.Check
 VE.NormDefaults.RulesOK@VE.NormDefaults.Check
 VE.NormDefaults.Run.AdmissionAnswerU@VE.NormDefaults.Run
+VE.NormDefaults.Run.AdmissionAnswerUIn@VE.NormDefaults.Run
 VE.NormDefaults.Run.BindingsMatchSourceAndRegeneration@VE.NormDefaults.Run
 VE.NormDefaults.SettledAs@VE.NormDefaults.Status
 VE.NormDefaults.UValid@VE.NormDefaults.Fill
@@ -1123,6 +1153,7 @@ VE.Norms.Admission.NodeAdmitted@VE.Norms.Admission
 VE.Norms.Admission.ProfileLeaf@VE.Norms.Admission
 VE.Norms.Admission.ReportAdmitted@VE.Norms.Admission
 VE.Norms.Admission.SourceDecoded@VE.Norms.Admission
+VE.Norms.Admission.SourceDecodedIn@VE.Norms.Admission
 VE.Norms.AgreesBelow@VE.Norms.Subst
 VE.Norms.AppliesD@VE.Norms.Elaborate
 VE.Norms.Arity@VE.Norms.Basic
@@ -1144,6 +1175,7 @@ VE.Norms.PairsBelow@VE.Norms.Prefix
 VE.Norms.PrefixAdmissible@VE.Norms.Prefix
 VE.Norms.RulesTyped@VE.Norms.Elaborate
 VE.Norms.Run.AdmissionAnswer@VE.Norms.Run
+VE.Norms.Run.AdmissionAnswerIn@VE.Norms.Run
 VE.Norms.Run.BindingsMatchSourceAndRegeneration@VE.Norms.Run
 VE.Norms.Sat@VE.Norms.Prefix
 VE.Norms.SelectsD@VE.Norms.Elaborate
@@ -1176,6 +1208,9 @@ VE.Paths.ClosedAt@VE.Paths
 VE.Paths.Path.below@VE.Paths
 VE.Paths.Path@VE.Paths
 VE.Paths.Reachable@VE.Paths
+VE.Presupposition.Frame.Reach@VE.Presupposition.Frame
+VE.Presupposition.Frame.shallow@VE.Presupposition.Frame
+VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading
 VE.Question.AtMostOneDerivation@VE.Question.Properties
 VE.Question.GrammarChecks@VE.Question.Properties
 VE.Question.HasReading@VE.Question.Properties
@@ -1535,6 +1570,10 @@ VE.TupleTyped@VE.Semantics
 VE.Valuation.Typed@VE.Semantics
 VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone
 VE.Weighing.OutcomeIn@VE.Weighing.Zone
+VE.Weighing.RankChain@VE.Weighing.Tree
+VE.Weighing.SameBase@VE.Weighing.Conditions
 VE.Weighing.SettledZ@VE.Weighing.Zone
+VE.Weighing.WeighFacts@VE.Weighing.Conditions
 VE.Weighing.ZoneFixtures.R0@VE.Weighing.ZoneExamples
+VE.Weighing.freeWitness@VE.Weighing.Conditions
 VE.WireContract.Holds@VE.WireContract.Engine

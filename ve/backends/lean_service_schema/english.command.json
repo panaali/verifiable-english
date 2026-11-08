@@ -1,0 +1,128 @@
+{
+  "$id": "english.command.json",
+  "$comment": "Mode english.command: VE.Commands.Run.caseReported. readInstruction's outcome for one command wording.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {"$ref": "#/$defs/answer"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "answer": {
+      "anyOf": [
+        {
+          "$comment": "readInstruction's one reading.",
+          "additionalProperties": false,
+          "properties": {
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "one"},
+            "reading": {"$ref": "#/$defs/reading"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "reading"],
+          "type": "object"
+        },
+        {
+          "$comment": "readInstruction's readings (2 to readingsBound).",
+          "additionalProperties": false,
+          "properties": {
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "many"},
+            "readings": {"items": {"$ref": "#/$defs/reading"}, "type": "array"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "readings"],
+          "type": "object"
+        },
+        {
+          "$comment": "readInstruction's refusal: its code, class and text (QueryMismatch's text is the unit).",
+          "additionalProperties": false,
+          "properties": {
+            "class": {"$ref": "common.json#/$defs/text"},
+            "code": {"$ref": "common.json#/$defs/text"},
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "refused"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "code", "class", "text"],
+          "type": "object"
+        },
+        {
+          "$comment": "readInstruction at its work limit (Texts.limitText).",
+          "additionalProperties": false,
+          "properties": {
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "limit"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "text"],
+          "type": "object"
+        }
+      ]
+    },
+    "fill": {
+      "$comment": "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query).",
+      "additionalProperties": false,
+      "properties": {
+        "constant": {"$ref": "common.json#/$defs/text"},
+        "span": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+              "type": "array"
+            }
+          ]
+        },
+        "words": {"$ref": "common.json#/$defs/text"}
+      },
+      "required": ["constant", "words", "span"],
+      "type": "object"
+    },
+    "reading": {
+      "$comment": "VE.Commands.Run.readingJson: the command object (SA 3.2), its fills (at most one: a decoded environment's predicates have at most two argument sorts), the proof task's query (else null) and speech-acts' paraphrase.",
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"$ref": "common.json#/$defs/text"},
+            "args": {"items": {"$ref": "common.json#/$defs/text"}, "maxItems": 1, "type": "array"},
+            "force": {"enum": ["require", "forbid"]},
+            "guard": {"$ref": "common.json#/$defs/generated_formula"}
+          },
+          "required": ["force", "act", "args", "guard"],
+          "type": "object"
+        },
+        "fills": {"items": {"$ref": "#/$defs/fill"}, "maxItems": 1, "type": "array"},
+        "paraphrase": {"$ref": "common.json#/$defs/text"},
+        "query": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/text"}]}
+      },
+      "required": ["command", "fills", "query", "paraphrase"],
+      "type": "object"
+    }
+  }
+}
