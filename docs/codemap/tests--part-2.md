@@ -1,4 +1,3 @@
-- `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
 - `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
 - `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
 - `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
@@ -30,7 +29,6 @@
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
-- `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's deferred-route claims.
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -57,7 +55,6 @@
 - `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
 - `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
 - `tests/test_discourse_answer.py` — The Python relay never accepts a Lean discourse answer that is not an answer to the document it asked about (lf-4 review B; FINDING-CLASSES 8 and 15).
-- `tests/test_discourse_composed_route.py` — cmp-s4c: the discourse route's entry on the composed path (docs/spec/discourse.md 14.5, 14.6 and 14.8) through the Lean service: norm content answered on a lis…
 - `tests/test_discourse_constitution.py` — The constitution example of docs/spec/discourse.md 2.5 (u0214.s02) as a regression fixture.
 - `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
@@ -87,3 +84,6 @@
 - `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
 - `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
 - `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
+- `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
+- `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
+- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
