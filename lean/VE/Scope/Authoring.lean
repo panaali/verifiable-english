@@ -1,4 +1,5 @@
 import Lean.Data.Json
+import VE.EnglishGrammar.Lexer
 
 /-! Scope's authoring wordings (docs/spec/scope.md 2.2, 5.8 and 8.1; SC-7): a writer types one of 2.2's wordings, and
     `Pinned.parseGovernor` gives the part of the scope@0 block (spec 3) the wording fixes; `Pinned.renderGovernor`
@@ -20,8 +21,12 @@ open Lean
 
 namespace Pinned
 
-/-- Words with one space between them, no other whitespace, and at least one word. -/
-def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all (!·.isWhitespace)
+/-- A character of a word: no space of the English lexer (`VE.EnglishGrammar.isSpace`, its 29 code points), no
+    control character and no DEL. -/
+def wordChar (c : Char) : Bool := !VE.EnglishGrammar.isSpace c && 0x20 ≤ c.toNat && c.toNat != 0x7F
+
+/-- Words with one space between them, no other space or control character, and at least one word. -/
+def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all wordChar
 
 /-- A condition or a rule: spaced, and not itself ending a sentence or a lead-in. -/
 def clause (s : String) : Bool := spaced s && !s.endsWith "." && !s.endsWith ":"
@@ -169,7 +174,7 @@ def readings (w : String) : List Json :=
    (between w "Notwithstanding the rules of section " ".").bind fun rest =>
      match rest.splitOn ", " with
      | s :: more => let r := ", ".intercalate more
-       if !s.isEmpty && s.all (fun ch => !ch.isWhitespace && ch != ',') && clause r then
+       if !s.isEmpty && s.all (fun ch => wordChar ch && ch != ',') && clause r then
          some (Json.mkObj [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]),
            ("effect", .str "precedes"), ("rule", english r)])
        else none
