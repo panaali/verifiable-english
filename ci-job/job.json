@@ -1,0 +1,12 @@
+{
+ "job": "testmap-bb350a96-t151664-s1",
+ "head": "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+ "argv": [
+  "testmap-bb350a96-t151664-s1",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "5a3a94116606a40d1fa46619111fa14f9389ebc2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c5870a888bb9.tar.zst",
+  "920e2aa8ae36c04c0b05cdf85c3d41eff287bd7a362db93e310895cef70646c9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_speech_polar_lean.py tests/test_route_row_schemas.py tests/test_speech_source_lean.py tests/test_shape_binding_mutants.py tests/test_lake_outputs.py tests/test_hang_guards.py tests/test_rust_reproducible.py tests/test_relay.py tests/test_lean_first_b13a.py tests/test_gen_inv_design.py tests/test_gate_rerun.py tests/test_gate_durations.py tests/test_premise_packs_stub.py tests/test_b16c_evidence.py tests/test_scope_5_4_statements.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
