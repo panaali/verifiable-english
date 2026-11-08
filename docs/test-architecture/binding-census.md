@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 289 |
-| leaves:closed domain | 309 |
-| leaves:none | 1564 |
+| leaves:closed domain | 311 |
+| leaves:none | 1576 |
 | modes | 42 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1162 |
-| today:shape | 598 |
+| today:not probed | 1174 |
+| today:shape | 600 |
 | today:unbound | 137 |
 | answers | 589 |
 | probes | 10204 |
@@ -1689,6 +1689,16 @@ Delegates: `/` to norms.
 | `/collision/rules/0` | string | bound | x-equals |  | 0 | shape |
 | `/collision/rules/1` | string | bound | x-equals |  | 0 | shape |
 | `/collision/tuple/*` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/condition` | integer | none |  | minimum | 0 | not probed |
+| `/completions/*/*/decision/excepted` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/decision/higher` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/decision/lower` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/decision/off` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/decision/outweighs` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/decision/party` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/row` | string | closed domain | const |  | 0 | shape |
+| `/completions/*/*/rule` | string | none |  |  | 0 | not probed |
+| `/completions/*/*/tuple/*` | string | none |  |  | 0 | not probed |
 | `/conditional_on/*` | string | none |  | pattern | 0 | not probed |
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | hand: `ve/norm_defaults.py:__init__` |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | hand: `ve/norm_defaults.py:__init__` |
@@ -1710,6 +1720,8 @@ Delegates: `/` to norms.
 | `/forced/*/condition` | integer | none |  | minimum | 0 | not probed |
 | `/forced/*/rule` | string | none |  |  | 0 | not probed |
 | `/forced/*/tuple/*` | string | none |  |  | 0 | not probed |
+| `/forced_all/*/rule` | string | none |  |  | 0 | not probed |
+| `/forced_all/*/tuple/*` | string | none |  |  | 0 | not probed |
 | `/form` | string | closed domain | enum |  | 0 | shape |
 | `/gaps` | string | closed domain | enum |  | 3 | shape |
 | `/id` | any | bound | x-echo |  | 31 | shape |
@@ -1718,6 +1730,7 @@ Delegates: `/` to norms.
 | `/kind` | string | closed domain | enum |  | 3 | shape |
 | `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 3 | shape |
+| `/labels/*` | string | none |  |  | 0 | not probed |
 | `/order/*` | string | none |  |  | 6 | hand: `ve/norm_defaults.py:__init__` |
 | `/pairs/*/rules/0` | string | none |  |  | 0 | not probed |
 | `/pairs/*/rules/1` | string | none |  |  | 0 | not probed |
@@ -1784,6 +1797,7 @@ Delegates: `/` to norms.
 | `/verdict` | string | closed domain | enum |  | 10 | shape |
 | `/wordings/@key` | key | none |  |  | 0 | not probed |
 | `/wordings/{}` | string | none |  |  | 0 | not probed |
+| `/zone` | string | closed domain | enum |  | 0 | shape |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
@@ -1813,6 +1827,9 @@ Delegates: `/` to norms.
 | `/collision/deciders` |  |  |  |  |
 | `/collision/rules` | x-equals | x-equals |  |  |
 | `/collision/tuple` |  |  |  |  |
+| `/completions` |  |  |  |  |
+| `/completions/*` |  |  |  |  |
+| `/completions/*/*/tuple` |  |  |  |  |
 | `/conditional_on` |  |  |  |  |
 | `/conflict_targets` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
 | `/conflict_targets/*/sorts` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
@@ -1826,8 +1843,11 @@ Delegates: `/` to norms.
 | `/findings` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/forced` |  |  |  |  |
 | `/forced/*/tuple` |  |  |  |  |
+| `/forced_all` |  |  |  |  |
+| `/forced_all/*/tuple` |  |  |  |  |
 | `/kept` |  |  |  |  |
 | `/kinds` | x-equals | x-equals |  | drop: refuse/accepted; duplicate: refuse/accepted |
+| `/labels` |  |  |  |  |
 | `/order` |  |  |  | drop: accept/ve/norm_defaults.py:__init__; duplicate: accept/ve/norm_defaults.py:__init__; replace: accept/ve/norm_defaults.py:__init__; reverse: accept/ve/norm_defaults.py:__init__ |
 | `/pairs` |  |  |  |  |
 | `/pairs/*/rules` |  |  |  |  |
