@@ -1,0 +1,62 @@
+{
+  "comment": "qt-a4b seeded bugs: each planted alone, shown failing the named test or #guard, then restored (git status clean, the modules rebuilt). Lean ones were built with `lake build` of the module holding the guards; L1 also breaks the proof at Dispatch.lean:1372, so that step was stubbed with `sorry` to show the guards catch it on their own. The mechanical mutants of every new trusted definition are in trust-mutants.json.",
+  "python": [
+    {
+      "id": "leaf-labels-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_row_s_leaf_labels_are_bound_to_the_request_graph",
+      "killed": true,
+      "claim": "row 2: the row's leaf_labels are bound to the request graph (bind_document)"
+    },
+    {
+      "id": "not-certified-unbound",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_answer.py::test_a_chain_list_row_is_bound_to_the_request",
+      "killed": true,
+      "claim": "row 1, DRI 2026-11-05 item 3: composed.not_certified names exactly the request's counting units (bind_composed)"
+    }
+  ],
+  "lean": [
+    {
+      "id": "fifth-profile-scope",
+      "file": "lean/VE/Cardinality/Wire.lean",
+      "also": "lean/VE/Compose/Dispatch.lean",
+      "test": "lean/VE/Compose/Examples.lean:688",
+      "also_fails": ["lean/VE/Compose/Examples.lean:699", "proof lean/VE/Compose/Dispatch.lean:1372"],
+      "killed": true,
+      "claim": "the task's seeded bug: the gate admits a fifth profile (scope@0) beside the chain list"
+    },
+    {
+      "id": "quoted-unit-as-premise",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "lean/VE/Service/CardinalityExamples.lean:82",
+      "killed": true,
+      "claim": "the task's seeded bug: a node with no bridge label may be a quoted unit, so a quoted unit becomes a premise (cardinalityReport)"
+    },
+    {
+      "id": "bridge-to-asserted",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "lean/VE/Service/CardinalityExamples.lean:99",
+      "killed": true,
+      "claim": "DRI 2026-11-08 item 1: bridgeAdmitted without its quoted test"
+    },
+    {
+      "id": "bridge-any-meaning",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "lean/VE/Service/CardinalityExamples.lean:99",
+      "killed": true,
+      "claim": "DRI 2026-11-08 item 1: bridgeAdmitted without its meaning-id test"
+    },
+    {
+      "id": "list-fault-text",
+      "file": "lean/VE/Compose/Dispatch.lean",
+      "test": "theorem VE.Cardinality.listFault_some (lean/VE/Cardinality/Gate.lean:60)",
+      "killed": true,
+      "claim": "checklist item 10: the new theorem breaks when listFault answers another text"
+    }
+  ],
+  "not_planted": {
+    "premises-written-by-python": "row 4 (premises status from Lean) is cut to qt-a4c (reviews/dri-decisions-20261108-qt-a4b-bridge.md item 2)",
+    "rust": "no Rust code changed"
+  }
+}
