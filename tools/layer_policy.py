@@ -160,7 +160,7 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
-                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
+                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
                   "VE.Commands.RunExamples", "VE.Commands.RunSplit", "VE.EnglishGrammar.JudgmentRunExamples",
                   "VE.Senses.TextsExamples"}:

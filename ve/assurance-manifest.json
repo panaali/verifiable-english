@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 42634,
+    "total_lines": 43211,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -753,12 +753,12 @@
       },
       {
         "file": "lean/VE/Defaults/Route.lean",
-        "lines": 49,
-        "sha256": "dc63ff3235d98ce55e6d282109a6363a10ebd77b5a69ee842fed94ac1bb13154",
+        "lines": 52,
+        "sha256": "b8db22d003e7f2281eaf4dd4bee5f61f9c9763bfe889b8a1836fdb012666aa54",
         "ranges": [
           [
             1,
-            49
+            52
           ]
         ],
         "declarations": [
@@ -766,7 +766,7 @@
           "layeredKindCase",
           "runLayered"
         ],
-        "reason": "the layered norm-defaults route's runner, moved from Layered.lean (df-1ae): decodeLayered, then the kind table with the defaults-* row (defaultsCase on viewOf); the full file is pinned"
+        "reason": "the layered norm-defaults route's runner, moved from Layered.lean (df-1ae): decodeLayered, then the kind table with the defaults-* row (zoneCase, then defaultsCase, on viewOf; defaults-zone added by df-5); the full file is pinned"
       },
       {
         "file": "lean/VE/Defaults/Wire.lean",
@@ -1796,12 +1796,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2751,
-        "sha256": "e89170a0f364510f7b79558d3c2ee5780a6fda65019361381451975b932e6afe",
+        "lines": 2862,
+        "sha256": "70a40ac7c329af9ab59d473c840042bafb8e84bcd72e56074ba6fde703b81513",
         "ranges": [
           [
             1,
-            2751
+            2862
           ]
         ],
         "declarations": [
@@ -1810,6 +1810,9 @@
           "frontJson",
           "noLoneSurrogate",
           "split",
+          "ruleExceptionConditioned",
+          "rightsBlockRules",
+          "unitRules",
           "environmentOf",
           "rightsWireJson",
           "rightsChildContext",
@@ -2154,6 +2157,32 @@
           "wordsCase"
         ],
         "reason": "question answering Q2.4: the words mode decodes the environment, the lexicon (bound to the environment's id, policy-checked) and each item, and words its line"
+      },
+      {
+        "file": "lean/VE/Defaults/ZoneWire.lean",
+        "lines": 463,
+        "sha256": "1b2585cf4016730e4020e1a81ddbaa9fd12083f79c17f39d1ecd63fb15f0241c",
+        "ranges": [
+          [
+            1,
+            463
+          ]
+        ],
+        "declarations": [
+          "zoneSizes",
+          "decisionOf",
+          "outcomeOf",
+          "tupleIn",
+          "recordEntry",
+          "obsEntry",
+          "replayZoneOn",
+          "ZoneReplay.min",
+          "zoneLines",
+          "zoneFieldsOf",
+          "zoneFields",
+          "zoneCase"
+        ],
+        "reason": "the defaults-zone kind (df-5): its request decoders (the situation by situationX, the query, the record's and the observations' sizes before any entry (zoneSizes), each record entry by decision key, each observation), each tied to the request's values by a soundness theorem (decisionOf_mem, outcomeOf_mem, tupleIn_typed, recordEntry_sound, obsEntry_sound, replayZoneOn_sound), its answer and the words of its rows (zoneHeads, zoneLineWords); the full file is pinned"
       }
     ],
     "other_json": {
@@ -2339,7 +2368,9 @@
       "lean/VE/Weighing/Examples.lean": "test fixtures only: wg-2's `#guard`s parse their soft documents from JSON literals with the pinned decoder (`decodeSoftSource`) and check weighing's premises and checks on them; no service mode reads this file",
       "lean/VE/RightClauses/Examples.lean": "fixtures only: the cmp-s3 Q1 depth counterexample builds JSON formulas for a #guard; no decoder or runner path imports this file",
       "lean/VE/Commands/RunExamples.lean": "test fixtures only: CI-2's `#guard`s build english.command requests as JSON and read the answers of the pinned `VE.Commands.Run.caseReported`; no runner path",
-      "lean/VE/Senses/TextsExamples.lean": "fixtures only: #guard checks of the senses runner's sense-map glosses and byte spans and the texts of spec 3.2 (sn-b6c); no runner path"
+      "lean/VE/Senses/TextsExamples.lean": "fixtures only: #guard checks of the senses runner's sense-map glosses and byte spans and the texts of spec 3.2 (sn-b6c); no runner path",
+      "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path",
+      "lean/VE/Judgments/Chain.lean": "lean:judgments-rights-reader: `blockFormulas` re-reads a rights block the rights route already accepted with the whole source (`rightsDoc`, `decodeRightsSource`) for the names its formulas use (`VE.Bridge.decodeFormula`, guards and `unless` clauses; a limitation's conditions from the decoded `RightsDoc`); a block it does not read is `CheckerUnavailable` in `UnitContent.judgedIn`; it admits nothing"
     }
   },
   "plan_operations": {
