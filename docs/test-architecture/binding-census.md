@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 289 |
-| leaves:closed domain | 307 |
+| leaves:closed domain | 309 |
 | leaves:none | 1564 |
 | modes | 42 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
 | today:not probed | 1162 |
-| today:shape | 596 |
+| today:shape | 598 |
 | today:unbound | 137 |
 | answers | 589 |
 | probes | 10204 |
@@ -280,6 +280,7 @@ Delegates: `/` to route.
 | `/steps` | integer | bound | x-max-steps | minimum | 4 | shape |
 | `/target` | string | bound | x-equals |  | 2 | shape |
 | `/targets/*` | string | none |  |  | 15 | hand: `ve/norms.py:_bound_targets` |
+| `/verdict` | string | closed domain | const |  | 7 | shape |
 | `/verdict` | string | closed domain | enum |  | 7 | shape |
 | `/wordings/@key` | key | none |  |  | 0 | not probed |
 | `/wordings/{}` | string | none |  |  | 0 | not probed |
@@ -1779,6 +1780,7 @@ Delegates: `/` to norms.
 | `/unsaid/*/name` | string | none |  | pattern | 3 | hand: `ve/ast.py:formula` |
 | `/unsaid/*/sorts/*` | string | none |  |  | 4 | hand: `ve/ast.py:formula` |
 | `/unspecified/*` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
+| `/verdict` | string | closed domain | const |  | 10 | shape |
 | `/verdict` | string | closed domain | enum |  | 10 | shape |
 | `/wordings/@key` | key | none |  |  | 0 | not probed |
 | `/wordings/{}` | string | none |  |  | 0 | not probed |
