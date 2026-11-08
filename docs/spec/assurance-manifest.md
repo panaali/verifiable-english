@@ -168,7 +168,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Commands/Run.lean` | 311 | 311 | 1–311 | `e10c4a393dff…` |
 | `lean/VE/Core/Bridge.lean` | 156 | 112 | 11–122 | `778e45637441…` |
 | `lean/VE/Core/Wire.lean` | 209 | 209 | 1–209 | `1d5198a59d4c…` |
-| `lean/VE/Defaults/Route.lean` | 49 | 49 | 1–49 | `dc63ff3235d9…` |
+| `lean/VE/Defaults/Route.lean` | 52 | 52 | 1–52 | `b8db22d003e7…` |
 | `lean/VE/Defaults/Wire.lean` | 801 | 801 | 1–801 | `65c1110e5084…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 764 | 764 | 1–764 | `c68b8627d4e6…` |
@@ -230,7 +230,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
-| **total** | | **42,680** | | |
+| `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
+| **total** | | **43,146** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
