@@ -258,6 +258,15 @@ theorem runCase_fits (dec : Wire.UDecoder) (j : Json) (hp : usesNormDefaultsPath
     have := firstFailure_of_not_free _ j _ ‹Wire.replayConflictUIn _ j = .ok _› (by simp_all)
     simp_all
 
+/-- On the norm-defaults path, an `acts-elaborate` row (`Norms.runElaborate_fits`) is a norm-defaults row. -/
+theorem of_elaborate {v : Json} (hp : usesNormDefaultsPath req = true) (hk : VE.Acts.Run.isElaborate req = true)
+    (h : Fits req (skel% "norms.json#/$defs/acts-elaborate") v) : Fits req Skeletons.normDefaults v := by
+  have hK : req.getObjValD "kind" = .str "acts-elaborate" := by
+    unfold VE.Acts.Run.isElaborate at hk
+    split at hk <;> simp_all
+  fits_invert h
+  all_goals fits_from h
+
 theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runGated j) := by
   unfold runGated runCaseRouted
@@ -265,7 +274,9 @@ theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
   · exact OkP.error
   · split
     · exact OkP.error
-    · exact runCase_fits _ j hp
+    · split
+      · exact OkP.of (Norms.runElaborate_fits _ j) (fun _ h => of_elaborate hp ‹_› h)
+      · exact runCase_fits _ j hp
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
