@@ -1974,20 +1974,6 @@
    "commit": "7252a643e1ade80670e9b54efd14aa71f08b65e2"
   },
   {
-   "class": "S",
-   "lines": 64,
-   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
-   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
-  },
-  {
-   "class": "V",
-   "lines": 9,
-   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
-   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
-  },
-  {
    "class": "V",
    "lines": 85,
    "reason": "at-1w: V +85 (K +0, S +0): lean/VE/Attribution/Words.lean +47 (wantsPhrase?, finitePhrase, baseOf, headRest, vowel: replace ve/report_english.py's _infinitive and _finite, deleted in the same change; R6); lean/VE/Attribution/Run.lean +23 (runWants, the reports-wants kind's relay plumbing; R16) and lean/ResponseShape/Schemas/Reports.lean +15 (its row; R16), R16 total +38; trust mutants docs/attitudes/at-1w/trust-mutants.json: 204 killed, 0 survivors",
@@ -2016,11 +2002,11 @@
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   },
   {
-   "class": "S",
-   "lines": 221,
-   "reason": "at-1a: Syntax.lean +145, Scale.lean +76 (S), K +0",
-   "signature": "SIGNED by the DRI 2026-11-04 (reviews/dri-decisions-20261104-at-1a.md item 1)",
-   "commit": "f67a18feb78c98399aa3f217beaf26cf6f28032e"
+   "class": "V",
+   "lines": 76,
+   "reason": "cmp-s4c: ResponseShape/Schemas/Discourse.lean +36 (the composed row's shape), VE/Discourse/Compose.lean +24 (chainEnvironment, chainBaseWith, composedFields), VE/Discourse/Run.lean +12 (chainCase, the route entry), VE/Discourse/Admission.lean +4 (envelopeChecks); K +0, trusted +76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4c, 2026-10-18",
+   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   },
   {
    "class": "S",
@@ -2035,6 +2021,20 @@
    "reason": "ap-3db: K +0, S +15, untied V +107 (trusted +122): VE/Norms/Wire.lean +46, VE/Acts/Wire.lean +18, VE/Norms/Run.lean +15, VE/NormDefaults/Run.lean +12, VE/NormDefaults/Wire.lean +11, VE/Acts/Decode.lean +6, VE/Readings/Wire.lean +6, VE/Acts/DecodeTwins.lean +4, VE/NormDefaults/Admission.lean +2, VE/Norms/Admission.lean +2",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3db, 2026-11-03",
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 9,
+   "reason": "ps-1: VE/Presupposition/Frame.lean S +64 (Frame, plug, binders, goal, close, Reach, PositionClass, cls, shallow); VE/Discourse/Descriptions.lean D[V] +9 (uniqueAt, assertiveAt, raise1, uniqueOpen, assertiveOpen); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1, 2026-10-18",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   },
   {
    "class": "S",
@@ -2059,31 +2059,17 @@
   },
   {
    "class": "S",
-   "lines": 165,
-   "reason": "at-1b: Syntax.lean +165 (S), K +0, at-1a-tie first half -15 (gross +180; keys, name, keyOf, envAtt to D[V] tied)",
-   "signature": "SIGNED by the DRI 2026-11-05 (reviews/dri-decisions-20261105-at-1b-trust.md item 1)",
-   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
-  },
-  {
-   "class": "S",
-   "lines": 8,
-   "reason": "ps-1c: lean/VE/Presupposition/Rules.lean S +8 (ruleGoal, conditionNode, conditionRule); Agree.lean +0; K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1c, 2026-10-18",
-   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
-  },
-  {
-   "class": "V",
-   "lines": 76,
-   "reason": "cmp-s4c: ResponseShape/Schemas/Discourse.lean +36 (the composed row's shape), VE/Discourse/Compose.lean +24 (chainEnvironment, chainBaseWith, composedFields), VE/Discourse/Run.lean +12 (chainCase, the route entry), VE/Discourse/Admission.lean +4 (envelopeChecks); K +0, trusted +76",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4c, 2026-10-18",
-   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
-  },
-  {
-   "class": "S",
    "lines": 13,
    "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
    "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
+  },
+  {
+   "class": "S",
+   "lines": 221,
+   "reason": "at-1a: Syntax.lean +145, Scale.lean +76 (S), K +0",
+   "signature": "SIGNED by the DRI 2026-11-04 (reviews/dri-decisions-20261104-at-1a.md item 1)",
+   "commit": "f67a18feb78c98399aa3f217beaf26cf6f28032e"
   },
   {
    "class": "V",
@@ -2097,6 +2083,27 @@
    "lines": 6,
    "reason": "ci-2 review F1: V +6 above the existing +141 allowance: VE/EnglishGrammar/Run.lean +5 for translationOf, the shared formatter of the existing translation outcome; VE/Commands/Read.lean +1 to pass that outcome to the formatter. CI-2 total V +147, K +0, S +0, within R16 150-line cap.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2 review F1, 2026-11-04",
+   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 114,
+   "reason": "ap-3dc: VE/Acts/Run.lean +67, ResponseShape/Schemas/Norms.lean +33, VE/Service/Standalone.lean +3, VE/Norms/Run.lean +3, VE/NormDefaults/Wire.lean +3, VE/NormDefaults/Run.lean +3, ResponseShape/Schemas/NormDefaults.lean +2 (K +0, S +0, V +114)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dc, 2026-11-05",
+   "commit": "cbffb7633ad21b1cb172933dfb61b74ca4815c4f"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "ap-3dc: the REFUSED row's diagnostic (ResponseShape/Schemas/Norms.lean +3) and the environment hook's joined act (VE/WireContract/Hooks/Acts.lean +1); item total V +118 (K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dc, 2026-10-18",
+   "commit": "cbffb7633ad21b1cb172933dfb61b74ca4815c4f"
+  },
+  {
+   "class": "V",
+   "lines": 140,
+   "reason": "df-5: the defaults-zone kind, remeasured at review F1: VE/Defaults/ZoneWire.lean +100 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase, ZoneReplay, ZoneReplay.X, maxZoneObservations, zoneJoins, zoneWordsJson; tied, not counted: decisionOf, outcomeOf, tupleIn, recordEntry, obsEntry, replayZoneOn, ZoneReplay.min, zoneSizes, ZoneLine.row, ZoneLine.kind, zoneHeads, zoneLineWords), VE/Defaults/ZoneWordsMain.lean +2 (G[V] main), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +140",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   },
   {
@@ -2136,6 +2143,20 @@
   },
   {
    "class": "S",
+   "lines": 8,
+   "reason": "ps-1c: lean/VE/Presupposition/Rules.lean S +8 (ruleGoal, conditionNode, conditionRule); Agree.lean +0; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-1c, 2026-10-18",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
+  },
+  {
+   "class": "S",
+   "lines": 165,
+   "reason": "at-1b: Syntax.lean +165 (S), K +0, at-1a-tie first half -15 (gross +180; keys, name, keyOf, envAtt to D[V] tied)",
+   "signature": "SIGNED by the DRI 2026-11-05 (reviews/dri-decisions-20261105-at-1b-trust.md item 1)",
+   "commit": "9672601e3d6abfb5dc2a711c72bf68ba19f18270"
+  },
+  {
+   "class": "S",
    "lines": 87,
    "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
@@ -2147,13 +2168,6 @@
    "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
    "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
-  },
-  {
-   "class": "V",
-   "lines": 140,
-   "reason": "df-5: the defaults-zone kind, remeasured at review F1: VE/Defaults/ZoneWire.lean +100 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase, ZoneReplay, ZoneReplay.X, maxZoneObservations, zoneJoins, zoneWordsJson; tied, not counted: decisionOf, outcomeOf, tupleIn, recordEntry, obsEntry, replayZoneOn, ZoneReplay.min, zoneSizes, ZoneLine.row, ZoneLine.kind, zoneHeads, zoneLineWords), VE/Defaults/ZoneWordsMain.lean +2 (G[V] main), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +140",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
-   "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
   },
   {
    "class": "V",

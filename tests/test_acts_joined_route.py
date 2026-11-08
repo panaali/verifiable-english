@@ -1,9 +1,9 @@
 """ap-3db: a joined act under `acts@0` on the routes that elaborate it (act-phrases 6.4, DRI 2026-11-02 ap-3db).
 
 The norms and norm-defaults routes run on the elaborated document, so their answers name the parts and never the
-source predicate. Nothing relays this yet (ap-3dc): each case goes to the service directly, and `Environment(data)`
-still refuses a joined act (`tests/test_acts_profile.py`). The Lean fixtures are in `lean/VE/Service/ActsExamples.lean`
-and `lean/VE/Acts/DecodeExamples.lean`.
+source predicate. Each case goes to the service directly; ap-3dc relays the elaboration
+(`tests/test_acts_elaborate_relay.py`). The Lean fixtures are in `lean/VE/Service/ActsExamples.lean` and
+`lean/VE/Acts/DecodeExamples.lean`.
 """
 from __future__ import annotations
 

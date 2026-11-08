@@ -147,6 +147,8 @@ def _lean_route(document) -> bool:
     from .profiles import STATEMENT_LAYERS
     if type(document) is not NormDocument or env.language != "ve.core@0.2":
         return False
+    if "acts@0" in env.profiles:
+        return True  # act-phrases 6.7: on the elaborated document, which only Lean computes
     if env.closure or env.order:
         return family_in_scope(env)
     return (env.alternatives is None and getattr(env, "unit_schema", None) is None
@@ -169,6 +171,121 @@ def _lean_case(document, kind, **fields):
 def _lean_formula(data):
     """A formula Lean regenerated and typed, read structurally."""
     return _Decoder().decode(data)
+
+
+def _retained(document) -> None:
+    """The retained Python path decides no `acts@0` norms document: only Lean elaborates one (act-phrases 6.7). A
+    statement layer's view of an `acts@0` frame (the readings route's soft view, ap-1bg) keeps its path: it holds single
+    acts only (D-33)."""
+    if type(document) is NormDocument and "acts@0" in document.env.profiles:
+        raise CheckerUnavailable("CheckerUnavailable: acts@0 is decided on Lean's norms route only")
+
+
+def _unbound(what: str) -> CheckerUnavailable:
+    return CheckerUnavailable(f"CheckerUnavailable: the acts-elaborate {what} is not bound to the request")
+
+
+def _indexed(rows, what) -> dict:
+    """The rows by source, each source's indices exactly 1 to n in order."""
+    by_source = {}
+    for row in rows:
+        by_source.setdefault(row["source"], []).append(row)
+    if any([r["index"] for r in items] != list(range(1, len(items) + 1)) for items in by_source.values()):
+        raise _unbound(what)
+    return by_source
+
+
+def bound_elaboration(document, row) -> tuple[dict, tuple, dict]:
+    """R8: the `acts-elaborate` row (act-phrases 6.7, `Acts.Run.runElaborate`) bound to `document`'s request: the
+    part declarations by name, the document's rules with each split rule replaced by its parts, and per split source
+    Lean's D-28 text. Every source is the request's, its indices are 1 to n, each copied field is its source's, the
+    `over` of a part rule is its source's mapped by index, no generated name is declared in the request, and the
+    `split` rows name exactly the sources, once each, with their parts in index order. A `REFUSED` row raises Lean's
+    diagnostic. Python composes no name and no text."""
+    from .backends.relay import rejection
+    env, rules = document.env, {r.name: r for r in document.rules}
+    lists = (row["predicates"], row["rules"], row["kept"], row["split"])
+    if row["environment_id"] != env.environment_id:
+        raise _unbound("environment identity")
+    if row["verdict"] == "REFUSED":
+        if type(row.get("diagnostic")) is not str or any(lists):
+            raise _unbound("refusal")
+        raise rejection(row["diagnostic"].split(":", 1)[0], row["diagnostic"])
+    if "diagnostic" in row:
+        raise _unbound("refusal")
+    declared = {p: d for p, d in env.predicates.items() if d.regulated is not None and d.regulated.act is not None}
+    parts = {r["name"]: r for r in row["predicates"]}
+    by_source = _indexed(row["predicates"], "predicates")
+    named = {(r["source"], r["index"]): r["name"] for r in row["predicates"]}
+    if (len(parts) != len(row["predicates"]) or set(parts) & set(env.predicates) or not set(by_source) <= set(declared)
+            or set(row["kept"]) & set(by_source) or not set(row["kept"]) <= set(declared)
+            or len(set(row["kept"])) != len(row["kept"])):
+        raise _unbound("predicates")
+    for r in row["predicates"]:
+        source = declared[r["source"]]
+        reg = source.regulated
+        dual = None if reg.permission is None else named.get((reg.permission, r["index"]))
+        if (r["sorts"] != list(source.arguments) or r["role"] != reg.role or r["default"] != reg.default
+                or type(r["act"]) is not str or (reg.permission is None) != (r["permission"] is None)
+                or (reg.permission is not None and r["permission"] != dual)):
+            raise _unbound("predicates")
+    if (len(row["split"]) != len(by_source) or {s["source"]: s["parts"] for s in row["split"]} != {
+            p: [r["name"] for r in items] for p, items in by_source.items()}
+            or not all(s["text"].startswith("InvalidInput: ") for s in row["split"])):
+        raise _unbound("split")
+    split_rules = _indexed(row["rules"], "rules")
+    if (len({r["name"] for r in row["rules"]}) != len(row["rules"]) or {r["name"] for r in row["rules"]} & set(rules)
+            or set(split_rules) != {n for n, r in rules.items() if r.predicate in by_source}):
+        raise _unbound("rules")
+    generated = {(r["source"], r["index"]): r["name"] for r in row["rules"]}
+    relayed = []
+    for rule in document.rules:
+        if rule.name not in split_rules:
+            relayed.append(rule)
+            continue
+        items = split_rules[rule.name]
+        if len(items) != len(by_source[rule.predicate]):
+            raise _unbound("rules")
+        for r in items:
+            part = Norm(r["name"], r["pred"], r["sign"], _lean_formula(r["guard"]),
+                        tuple(_lean_formula(x) for x in r["unless"]), tuple(r["over"]))
+            if (r["pred"] != named[(rule.predicate, r["index"])] or part.sign != rule.sign or part.guard != rule.guard
+                    or part.unless != rule.unless
+                    or list(part.over) != [generated.get((m, r["index"])) for m in rule.over]):
+                raise _unbound("rules")
+            relayed.append(part)
+    return parts, tuple(relayed), {s["source"]: s["text"] for s in row["split"]}
+
+
+def _relayed_document(document) -> "NormDocument":
+    """Lean's elaborated document of an `acts@0` norms document (the `acts-elaborate` row, bound): each split source
+    replaced by its parts, declared as the row gives them, and each rule on it by its part rules."""
+    from .backends.relay import decide
+    from .environment import Environment
+    mode = "norm-defaults" if NORM_DEFAULTS_PROFILE in document.env.profiles else "norms"
+    row = decide(mode, [_lean_case(document, "acts-elaborate")])[0]
+    parts, rules, split = bound_elaboration(document, row)
+    if not split:
+        document._split = {}
+        return document
+    data = document.env.to_dict()
+    predicates = data["vocabulary"]["predicates"]
+    for name, r in parts.items():
+        source = predicates[r["source"]]
+        regulated = {"role": r["role"], "default": r["default"], "act": r["act"],
+                     **({"permission": r["permission"]} if r["permission"] is not None else {}),
+                     **({"form": source["regulated"]["form"]} if "form" in source["regulated"] else {})}
+        predicates[name] = {**source, "regulated": regulated}
+    for source in split:
+        del predicates[source]
+    relayed = NormDocument.__new__(NormDocument)
+    relayed._relayed, relayed._split = relayed, {}
+    try:
+        NormDocument.__init__(relayed, Environment(data), rules)
+    except VEError as exc:
+        raise CheckerUnavailable("CheckerUnavailable: Lean elaborated a document Python could not construct") from exc
+    document._split = split
+    return relayed
 
 
 @dataclass(frozen=True, slots=True)
@@ -307,6 +424,9 @@ class NormDocument:
     def selection(self, predicate):
         if type(self) is NormDocument and "soft-norms@0" in self.env.profiles:
             raise VEError("UnsupportedProfile: soft rules require SoftNormDocument.elaborated")
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            self.refuse_split(predicate)
+            return self.relayed().selection(predicate)
         rules = [r for r in self.rules if r.predicate == predicate]
         if predicate not in self.env.predicates or self.env.predicates[predicate].regulated is None:
             raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
@@ -331,6 +451,9 @@ class NormDocument:
 
     def outcome(self, predicate, *, base=False, nary_atoms=False):
         self._require_completion()
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            self.refuse_split(predicate)
+            return self.relayed().outcome(predicate, base=base, nary_atoms=nary_atoms)
         positive, negative, _ = self.selection(predicate)
         default = self.env.predicates[predicate].regulated.default
         outcome = positive if default == "deny" else Not(negative)
@@ -358,6 +481,23 @@ class NormDocument:
                                                             nary_atoms=nary_atoms))
         return formula
 
+    def relayed(self) -> "NormDocument":
+        """The document Python's searches run on (act-phrases 6.7): under `acts@0`, Lean's elaborated document
+        (`_relayed_document`), so that their witnesses and certificates name the targets Lean has; else this one."""
+        cached = getattr(self, "_relayed", None)
+        if cached is None:
+            cached = self._relayed = (_relayed_document(self) if "acts@0" in self.env.profiles
+                                      and type(self) is NormDocument else self)
+        return cached
+
+    def refuse_split(self, name) -> None:
+        """A model, target or predicate that names a split source is refused with Lean's D-28 text for it."""
+        self.relayed()
+        text = getattr(self, "_split", {}).get(name)
+        if text is not None:
+            from .backends.relay import rejection
+            raise rejection("InvalidInput", text)
+
     def _lean_regenerated(self) -> dict:
         """Lean's `norms-elaborate` answer for this document, kept per document.
 
@@ -368,19 +508,20 @@ class NormDocument:
         if cached is None:
             from .backends.relay import decide
             row = decide(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
-            regulated = {p for p, d in self.env.predicates.items() if d.regulated is not None}
-            defined = {p for p, d in self.env.predicates.items() if d.defined is not None}
+            env = self.relayed().env  # under `acts@0` the row names the parts (act-phrases 6.7)
+            regulated = {p for p, d in env.predicates.items() if d.regulated is not None}
+            defined = {p for p, d in env.predicates.items() if d.defined is not None}
             order = row["order"]
             if (len(set(order)) != len(order) or not regulated <= set(order) <= regulated | defined
                     or [p["label"] for p in row["premises"]] != [f"layer:norms:{p}" for p in order
                                                                 if p in regulated]):
                 raise CheckerUnavailable("CheckerUnavailable: norms-elaborate row is not bound to the request")
-            expected = _target_sorts(self.env)
+            expected = _target_sorts(env)
             targets = row["conflict_targets"]
             if (len(targets) != len(expected) or {t["target"] for t in targets} != set(expected)
                     or any(t["sorts"] != expected[t["target"]] for t in targets)):
                 raise CheckerUnavailable("CheckerUnavailable: norms-elaborate targets are not bound to the request")
-            _bind_wordings(self.env, row)
+            _bind_wordings(env, row)
             cached = self._regenerated = row
         return cached
 
@@ -389,9 +530,11 @@ class NormDocument:
         """The generated layer premise of `predicate`, from Lean."""
         self._require_completion()
         if not _lean_route(self):
+            _retained(self)
             return self._elaborate_python(predicate)
 
         def lean():
+            self.refuse_split(predicate)
             label = f"layer:norms:{predicate}"
             for item in self._lean_regenerated()["premises"]:
                 if item.get("label") == label:
@@ -423,6 +566,7 @@ class NormDocument:
         return owned("norms_elaborate", lean)
 
     def _premises_python(self):
+        _retained(self)
         return tuple((f"layer:norms:{p}", self._elaborate_python(p)) for p in self.order)
 
     def meaning_id(self, name):
@@ -430,6 +574,8 @@ class NormDocument:
         return norm_meaning_id(self.env, self.by_name[name])
 
     def conflict_targets(self, *, nary_atoms=False):
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            return self.relayed().conflict_targets(nary_atoms=nary_atoms)
         targets = []
         for p in self.order:
             positive, negative, _ = self.selection(p)
@@ -445,6 +591,10 @@ class NormDocument:
         return tuple(targets)
 
     def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000, nary_atoms=False):
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            self.refuse_split(predicate)
+            return self.relayed().selected_rules(predicate, model, values, max_evaluations=max_evaluations,
+                                                 nary_atoms=nary_atoms)
         from .evaluate import _Evaluator
         sorts = self.env.predicates[predicate].arguments
         if len(values) != len(sorts) or any(v not in model.domains[s] for s, v in zip(sorts, values)):
@@ -458,6 +608,9 @@ class NormDocument:
 
     def overlap_witnesses(self, model):
         """Same-sign selections with a checked example; overlap is not conflict."""
+        if "acts@0" in self.env.profiles and self.relayed() is not self:
+            _reject_split(self, model)
+            return self.relayed().overlap_witnesses(model)
         from .model import FiniteModel
         env = self.base_environment()
         model = FiniteModel.from_dict(env, model) if type(model) is dict else model
@@ -521,12 +674,23 @@ def _reject_filling(document, model):
                                    generator="norms")
 
 
+def _reject_split(document, model):
+    """A model relation that names a split source is refused with Lean's D-28 text for it (act-phrases 6.5)."""
+    relations = model.get("relations") if type(model) is dict else None
+    if type(relations) is dict and "acts@0" in document.env.profiles:
+        for name in sorted(relations):
+            document.refuse_split(name)
+
+
 @semantic_entry("norms.conflict")
 def check_witness(document: NormDocument, target: str, model, values):
     """Independently validate an asserted target and typed tuple."""
     from .evaluate import _Evaluator
     from .model import FiniteModel
     _reject_filling(document, model)
+    _reject_split(document, model)
+    if "acts@0" in document.env.profiles:
+        document.refuse_split(target)
     env = document.base_environment()
     model = FiniteModel.from_dict(env, model) if type(model) is dict else model
     if model.environment_id != env.environment_id:
@@ -565,6 +729,7 @@ def check_norm_entailment_certificate(document: NormDocument, premises, conclusi
 
 
 def _norm_certificate_python(document, premises, conclusion, certificate):
+    _retained(document)
     from .entailment import check_entailment_certificate
     layers = tuple(formula for _, formula in document.premises())
     return check_entailment_certificate(document.env, (*layers, *premises), conclusion, certificate)
@@ -586,7 +751,7 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
     except VEError as exc:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
-    if row["layers"] != sum(d.regulated is not None for d in document.env.predicates.values()):
+    if row["layers"] != sum(d.regulated is not None for d in document.relayed().env.predicates.values()):
         raise CheckerUnavailable("CheckerUnavailable: Lean certificate layer count is not bound to the request")
     if row["valid"]:
         return EntailmentCertificateCheck(True, "Valid", row["steps"])
@@ -637,6 +802,7 @@ def _find_conflict(document, env, model, max_evaluations, *, lean=False):
 def _conflict_report(document, target, sorts, model, values, *, lean=False):
     """The CONFLICT record; its situation names the rules Python selects there."""
     setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
+    document = document.relayed() if lean else document
     if target in document.order:
         selected = document.selected_rules(target, model, values, nary_atoms=lean)
         role = document.env.predicates[target].regulated.role
@@ -674,6 +840,7 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
         raise VEError("UnsupportedProfile: soft rules require the soft route")
     document._require_completion()
     _reject_filling(document, model)
+    _reject_split(document, model)
     options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
                "prove": prove, "tableau_steps": tableau_steps}
     if not _lean_route(document):
@@ -682,6 +849,7 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
 
 
 def _check_conflict_python(document, *, model, certificates, max_evaluations, prove, tableau_steps):
+    _retained(document)
     from .evaluate import _Exhausted
     from .entailment import check_entailment_certificate
     env = document.base_environment()
@@ -726,7 +894,7 @@ def _target_sorts(env):
 
 
 def _bound_targets(document, row):
-    expected = _target_names(document.env)
+    expected = _target_names(document.relayed().env)
     if len(row["targets"]) != len(expected) or set(row["targets"]) != expected:
         raise CheckerUnavailable("CheckerUnavailable: Lean conflict targets are not bound to the request")
 
@@ -775,7 +943,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             return ConflictReport("CONFLICT-FREE")
         if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean conflict result")
-        names = _target_names(document.env)
+        names = _target_names(document.relayed().env)
         named = re.fullmatch(r"(?:missing|invalid) certificate for (.+)", row["detail"])
         if named is None or named.group(1) not in names:
             raise CheckerUnavailable("CheckerUnavailable: Lean conflict result is not bound to the request")

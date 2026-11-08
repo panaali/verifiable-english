@@ -75,15 +75,27 @@ def test_an_acts_environment_loads_with_its_block_and_forms_as_data():
     assert env.environment_id.startswith("sha256:") or len(env.environment_id) > 16
 
 
-@pytest.mark.parametrize("act, fixed, word", [(A5, [], "and"), (A6, FIXED, "or")], ids=["A5", "A6"])
-def test_a_joined_act_is_refused_with_leans_text(act, fixed, word):
+def joined(act, fixed):
     data = environment(p=predicate(["person"], {"role": "plain", "default": "deny", "act": act,
                                                 "form": "has the right"}))
     data["vocabulary"]["acts"]["fixed"] = fixed
     del data["vocabulary"]["predicates"]["heard"], data["vocabulary"]["predicates"]["protected"]
     if not fixed:
         del data["vocabulary"]["predicates"]["paid"]
-    assert refusal(data) == f"InvalidInput: act phrase for p joins acts with '{word}' outside a fixed phrase"
+    return data
+
+
+@pytest.mark.parametrize("act, fixed", [(A5, []), (A6, FIXED)], ids=["A5", "A6"])
+def test_a_joined_act_is_refused_with_leans_text(act, fixed):
+    """ap-3dc (DRI 2026-11-02 ap-3db item 5): the environment row reads a joined act with the act check, so one the
+    declared frames do not read is refused with D-16, where AP-1 gave D-4."""
+    assert refusal(joined(act, fixed)) == "InvalidInput: act phrase for p has no reading under the declared frames"
+
+
+def test_a_joined_act_the_frames_read_loads():
+    data = joined(A6, FIXED)
+    data["vocabulary"]["acts"]["frames"] = [{"head": "subjected", "markers": ["to"], "split": ["to"], "modifiers": []}]
+    assert Environment(data).predicates["p"].regulated.act == A6
 
 
 @pytest.mark.parametrize("profiles, text", [
@@ -410,7 +422,9 @@ def test_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
     else:
         row["wordings"] = dict(_rebound(row["wordings"]))[mutant]
     monkeypatch.setattr(relay, "decide_once", lambda mode, case: row)
-    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: [row])
+    real = relay.decide  # the document's `acts-elaborate` case (ap-3dc) is Lean's own
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: [row] if cases[0].get("kind") != "acts-elaborate"
+                        else real(mode, cases, **kw))
     with pytest.raises(CheckerUnavailable, match="wordings are not bound"):
         plain_wordings(env)
     with pytest.raises(CheckerUnavailable, match="wordings are not bound"):
@@ -683,7 +697,8 @@ def test_the_readings_route_reads_single_acts_and_refuses_a_joined_act():
     assert readings_row(joined, [])["error"] == ("UnsupportedProfile: acts@0 on the readings route admits single acts "
                                                  "only; the act of paid joins acts")
     joined["profiles"].remove("readings@1")
-    assert refusal(joined) == "InvalidInput: act phrase for paid joins acts with 'and' outside a fixed phrase"
+    # without `readings@1` the environment row reads it with the act check (ap-3dc, DRI 2026-11-02 ap-3db item 5)
+    assert refusal(joined) == "InvalidInput: act phrase for paid has no reading under the declared frames"
 
 
 U076 = "1. Everyone has the right to take part in the government of his country, directly or through freely chosen " \
