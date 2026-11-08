@@ -497,6 +497,7 @@
         "ResponseShape.Schemas.Document.composedSet",
         "ResponseShape.Schemas.Document.coverage",
         "ResponseShape.Schemas.Document.file",
+        "ResponseShape.Schemas.Document.judgmentLines",
         "ResponseShape.Schemas.Document.judgments",
         "ResponseShape.Schemas.Document.meaning",
         "ResponseShape.Schemas.Document.narrowing",
@@ -9932,6 +9933,7 @@
         "VE.Service.Document.frontJson",
         "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
+        "VE.Service.Document.linesJson",
         "VE.Service.Document.listedProfiles",
         "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
@@ -10033,6 +10035,7 @@
         "VE.Service.Document.freeNorms",
         "VE.Service.Document.judgedViews",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.legendRows",
         "VE.Service.Document.listedOf",
         "VE.Service.Document.lowerReadings",
         "VE.Service.Document.readingSetHasStrayNull",
@@ -10044,6 +10047,7 @@
         "VE.Service.Document.softLayer",
         "VE.Service.Document.softRules",
         "VE.Service.Document.softSource",
+        "VE.Service.Document.statusRows",
         "VE.Service.Document.unitJson",
         "VE.Service.Document.checkCore",
         {
@@ -17522,9 +17526,26 @@
     "VE/Service/UndeclaredExamples.lean": {
       "T": [
         "VE.Service.UndeclaredExamples.act",
+        "VE.Service.UndeclaredExamples.answer",
+        "VE.Service.UndeclaredExamples.bound",
+        "VE.Service.UndeclaredExamples.boundLines",
+        "VE.Service.UndeclaredExamples.declared",
+        "VE.Service.UndeclaredExamples.fenceProfiles",
+        "VE.Service.UndeclaredExamples.fenceVocabulary",
+        "VE.Service.UndeclaredExamples.fenced",
         "VE.Service.UndeclaredExamples.judged",
+        "VE.Service.UndeclaredExamples.lexicon",
+        "VE.Service.UndeclaredExamples.lines",
         "VE.Service.UndeclaredExamples.member",
+        "VE.Service.UndeclaredExamples.opened",
+        "VE.Service.UndeclaredExamples.pairs",
+        "VE.Service.UndeclaredExamples.plainProfiles",
+        "VE.Service.UndeclaredExamples.refusal",
+        "VE.Service.UndeclaredExamples.refused",
+        "VE.Service.UndeclaredExamples.said",
+        "VE.Service.UndeclaredExamples.term",
         "VE.Service.UndeclaredExamples.text",
+        "VE.Service.UndeclaredExamples.view",
         "VE.Service.UndeclaredExamples.vocabulary"
       ]
     },
@@ -17900,6 +17921,15 @@
       ],
       "P": [
         "VE.RightClauses.lineKey"
+      ]
+    },
+    "VE/RightClauses/Relation.lean": {
+      "S": [
+        "VE.RightClauses.clauseSlot",
+        "VE.RightClauses.clauseSlotLabelled",
+        "VE.RightClauses.relPremises",
+        "VE.RightClauses.relPremisesLabelled",
+        "VE.RightClauses.totalF"
       ]
     },
     "VE/RightClauses/Examples.lean": {
@@ -18993,15 +19023,6 @@
         "VE.Weighing.Examples.ζd",
         "VE.Weighing.Examples.μAll",
         "VE.Weighing.Examples.μd"
-      ]
-    },
-    "VE/RightClauses/Relation.lean": {
-      "S": [
-        "VE.RightClauses.clauseSlot",
-        "VE.RightClauses.clauseSlotLabelled",
-        "VE.RightClauses.relPremises",
-        "VE.RightClauses.relPremisesLabelled",
-        "VE.RightClauses.totalF"
       ]
     },
     "VE/Attitudes/Examples.lean": {

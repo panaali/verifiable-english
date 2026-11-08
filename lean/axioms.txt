@@ -8337,6 +8337,7 @@
 'ResponseShape.Encoders.Document.fold_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.fold_status_mem' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.Document.fold_with_readings_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.lines_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.locatedRow_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.meaning_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.rowKind_fits' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -2002,10 +2002,10 @@
    "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
   },
   {
-   "class": "V",
-   "lines": 76,
-   "reason": "cmp-s4c: ResponseShape/Schemas/Discourse.lean +36 (the composed row's shape), VE/Discourse/Compose.lean +24 (chainEnvironment, chainBaseWith, composedFields), VE/Discourse/Run.lean +12 (chainCase, the route entry), VE/Discourse/Admission.lean +4 (envelopeChecks); K +0, trusted +76",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4c, 2026-10-18",
+   "class": "S",
+   "lines": 13,
+   "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
    "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   },
   {
@@ -2059,17 +2059,24 @@
   },
   {
    "class": "S",
-   "lines": 13,
-   "reason": "cmp-s3: VE/RightClauses/Relation.lean S +13 (totalF, relPremisesLabelled, relPremises, clauseSlotLabelled, clauseSlot); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3, 2026-10-18",
-   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
-  },
-  {
-   "class": "S",
    "lines": 221,
    "reason": "at-1a: Syntax.lean +145, Scale.lean +76 (S), K +0",
    "signature": "SIGNED by the DRI 2026-11-04 (reviews/dri-decisions-20261104-at-1a.md item 1)",
    "commit": "f67a18feb78c98399aa3f217beaf26cf6f28032e"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "jt-3b: VE/Service/Document.lean +30 (contentOf's bound names, legendRows, statusRows, linesJson, check, encode), ResponseShape/Schemas/Document.lean +12 (judgmentLines, row, file)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3b, 2026-10-18",
+   "commit": "b13cf9e3e6172571628acfeb875ca2549a75fdc8"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "cmp-s4c: ResponseShape/Schemas/Discourse.lean +36 (the composed row's shape), VE/Discourse/Compose.lean +24 (chainEnvironment, chainBaseWith, composedFields), VE/Discourse/Run.lean +12 (chainCase, the route entry), VE/Discourse/Admission.lean +4 (envelopeChecks); K +0, trusted +76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s4c, 2026-10-18",
+   "commit": "5c6a544446dcf847031ac9bb68f7b5e09fb7b1d6"
   },
   {
    "class": "V",

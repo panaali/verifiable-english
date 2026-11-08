@@ -467,7 +467,8 @@ def answer2e (ids : Bool) : Json :=
     ("models", if ids then Json.mkObj [("k1", "A"), ("k2", "C"), ("k3", "B")] else Json.arr #["A", "B", "C"])]
   Json.mkObj (always [("id", "c"), ("status", "ok"), ("source", "t"), ("units", Json.arr #[unit "u0", unit "u1"]),
     ("reading_sets", Json.arr #[set "s0", set "s1"])] ++ given [("document_id", "d"), ("source_id", "s"),
-      ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("undeclared_evaluative", Json.arr #[])])
+      ("coverage", Json.mkObj []), ("judgments", Json.mkObj []), ("judgment_lines", Json.mkObj []),
+      ("undeclared_evaluative", Json.arr #[])])
 
 -- 2e on an answer: the fields the layer may change and the identities are dropped, every other field kept.
 #guard verdictFields (answer2e true) == answer2e false
