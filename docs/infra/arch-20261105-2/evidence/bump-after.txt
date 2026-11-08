@@ -1,0 +1,16 @@
+# after side: 4a1c42e88 ar + english_grammar_gen.py --write --actions-version 46 + regen_generated.py --write (exit 0)
+$ git diff --stat
+ .../english-lean/s3-fixture-comparison.json        | 340 ++++++++++-----------
+ lean/VE/EnglishGrammar/Fixed/Version.lean          |   2 +-
+ lean/checkers.lock                                 |   1 +
+ lean/declarations.txt                              |   2 +-
+ ve/english_grammar/LOCK.json                       |   2 +-
+ 5 files changed, 174 insertions(+), 173 deletions(-)
+$ (cd lean && lake build VE.Senses.RunExamples)
+Build completed successfully (261 jobs).
+$ uv run python tools/ask_fixtures.py --check
+18 of 18 recorded answers replayed
+exit 0
+$ uv run pytest -q tests/test_ask_fixtures.py tests/test_ask_relay.py tests/test_ask_cli.py tests/test_english_lean_s3_compare.py tests/test_english_e2_report.py
+
+123 passed in 232.04s (0:03:52)
