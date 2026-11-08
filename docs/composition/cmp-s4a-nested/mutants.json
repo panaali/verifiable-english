@@ -1,0 +1,98 @@
+{
+ "item": "cmp-s4a-nested",
+ "command": "lake build VE.Discourse.PositionsExamples (each bug planted alone in lean/VE/Discourse/Positions.lean at df175a622, then restored; line numbers are that commit's). The tool's mutants of every new or changed trusted definition are trust-mutants.json.",
+ "mutants": [
+  {
+   "definition": "VE.Discourse.nested",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the old any-span exemption restored",
+   "from": "ms.any (inRestriction · m)",
+   "to": "ms.any fun o => o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:170 (a pronoun inside a plural's span, no slot: MentionNotSlot); also :177, :179, :182, :184-188",
+   "check": "#guard",
+   "note": "the plural-span #guard, the task's first seeded bug"
+  },
+  {
+   "definition": "VE.Discourse.nested",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "exempt nothing",
+   "from": "ms.any (inRestriction · m)",
+   "to": "ms.any (inRestriction · m) && false",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:164 (the possessive inside the definite's restriction accepted); also :165-167",
+   "check": "#guard",
+   "note": "the definite-restriction #guard, the task's second seeded bug"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the encloser may have any form",
+   "from": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "to": "m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:179 (a possessive inside a demonstrative with a relational restriction recorded)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the nested mention may have any form",
+   "from": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "to": "o.form == .definite && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:182 (a pronoun inside a definite's span)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the same span counts as nested",
+   "from": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "to": "o.form == .definite && m.form == .possessive && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:194 (the possessive on the definite's own span)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the start of the span is not checked",
+   "from": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "to": "o.form == .definite && m.form == .possessive && o.span != m.span && m.span.2 ≤ o.span.2 &&",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:193 (the possessive starting before the definite)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the end of the span is not checked",
+   "from": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && m.span.2 ≤ o.span.2 &&",
+   "to": "o.form == .definite && m.form == .possessive && o.span != m.span && o.span.1 ≤ m.span.1 && true &&",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:191 (after the definite) and :192 (past its end)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the target is ignored: any relational restriction exempts",
+   "from": "| some (.binary _ (.var 0) (.const c)) => termConst m.target == some c",
+   "to": "| some (.binary _ (.var 0) (.const _)) => true",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:186 (another target than the restriction's argument) and :187 (a binder target)",
+   "check": "#guard"
+  },
+  {
+   "definition": "VE.Discourse.inRestriction",
+   "file": "lean/VE/Discourse/Positions.lean",
+   "mutant": "the restriction argument position is not read: any first term",
+   "from": "| some (.binary _ (.var 0) (.const c)) => termConst m.target == some c",
+   "to": "| some (.binary _ _ (.const c)) => termConst m.target == some c",
+   "result": "KILLED",
+   "test": "lean/VE/Discourse/PositionsExamples.lean:188 (a restriction over two constants)",
+   "check": "#guard"
+  }
+ ]
+}
