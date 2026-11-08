@@ -151,7 +151,8 @@ jobs)"), and `regen_generated.py --check --only checker-pins` gave "checked 1 en
   tools/assurance_manifest.py --check`: exit 0.
 - `batch_evidence.py --check docs/arch/AR-22`: stops at `[scope]`/`[gate]`, which are saved after the gate (as AR-21).
   Its other functions were run on the saved files: `mutant_problems` and `mutant_source_problems` at HEAD, and
-  `tools.evidence.ab.problems` with the recorded head `01d1e6030` and base `a6d0d389a` (results below this list).
+  `tools.evidence.ab.problems` with the recorded head `01d1e6030` and base `a6d0d389a`. Each returned `[]`. The
+  check itself, at `7a67d0a32`, reports "evidence/scope.json: no such evidence file" (it reads the scope first).
 - Not run by me: the full gate (`tools/gate.py`). The chain runs it on the final HEAD.
 
 ## Coordination
