@@ -1,0 +1,8 @@
+trust_mutants: 8 definitions, 51 mutants (13 to run), 2 jobs, base 176d50c05c2d
+SURVIVOR lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/SpeechActs/Wire.lean:530)
+UNKNOWN lean/VE/SpeechActs/Wire.lean:47 VE.SpeechActs.Wire.allowlist (D[V], trusted) list-empty: :: allowlist₀ -> [] (lean/VE/SpeechActs/Wire.lean:47: Function expected at)
+trust_mutants: 2 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 9 NOT RUN, 38 OTHER SHARD in 4959 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 4 NOT RUN, 28 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 5 NOT RUN, 10 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 9 of its 13 mutants unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those
+trust_mutants: steps: wall plan 11.7 s, scratch 1.8 s, control_build 0.3 s, probe_install 1.4 s, control_probes 489 s, mutants 4453.7 s, cleanup 1.3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 760.8 s (17), mutant_builds 158.7 s (9), mutant_checks 5561.5 s (6), stage_controls 2494.6 s (3), mutant_probes 10 s (3)
