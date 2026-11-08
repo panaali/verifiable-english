@@ -1,0 +1,12 @@
+{
+ "job": "testmap-d068c67f-t140228-s3",
+ "head": "9912730193af3893cd05ef483717e6c801c59ce0",
+ "argv": [
+  "testmap-d068c67f-t140228-s3",
+  "9912730193af3893cd05ef483717e6c801c59ce0",
+  "9912730193af3893cd05ef483717e6c801c59ce0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ac686c08dc39.tar.zst",
+  "c0b8b55d763a2f69c91c0d418f6dc7f7c3e508845f893b68f7ec73f8b0fb5324",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s3.json.gz\" tests/test_acts_vocab_mutants.py tests/test_lean_share.py tests/test_identity_lint.py tests/test_lean_dump_cache.py tests/test_events_wire_mutants.py tests/test_calc_units.py tests/test_hang_guards.py tests/test_readings_lean_sharing.py tests/test_question_statements.py tests/test_profile_table.py tests/test_readings_defaults_rd3_report.py tests/test_wire_contract_lean.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
