@@ -1,0 +1,28 @@
+{
+ "note": "F1.4 (docs/spec/profile-composition.md 5.1): UDHR Art. 19 as a right and u111 (Art. 29(2)) as its limitation, a part document of the UDHR pilot's text; the limitation's conditions are the four bound judgments.",
+ "body": [
+  "Everyone has the right to freedom of opinion and expression.\n",
+  "In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law solely for the purpose of securing due recognition and respect for the rights and freedoms of others and of meeting the just requirements of morality, public order and the general welfare in a democratic society.\n"
+ ],
+ "terms": ["general_welfare", "just_requirements", "morality", "public_order"],
+ "vocabulary": {
+  "sorts": {"person": {"description": "a person"}},
+  "predicates": {
+   "express_permitted": {"arguments": ["person"], "description": "the person may hold opinions and express them", "regulated": {"role": "permission", "default": "allow", "act": "{0} express opinions"}},
+   "just_requirements": {"arguments": ["person"], "description": "the limitation meets the just requirements of a democratic society"},
+   "morality": {"arguments": ["person"], "description": "the limitation serves morality"},
+   "public_order": {"arguments": ["person"], "description": "the limitation serves public order"},
+   "general_welfare": {"arguments": ["person"], "description": "the limitation serves the general welfare"}
+  },
+  "constants": {},
+  "rights": {"holders": ["person"], "bearers": ["person"], "protected": [], "alters": {}},
+  "soft": {"parties": [], "ranks": [], "outranks": [], "outranking": {"mode": "strict"}}
+ },
+ "right": {"right": {"name": "r19", "holder": "person", "lines": [{"kind": "liberty", "cites": {}, "norm": {"name": "express-19", "predicate": "express_permitted", "sign": true, "guard": ["top"], "unless": [], "over": []}}]}},
+ "limitation": {"limitation": {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [], "conditions": [
+  {"name": "just_requirements", "role": "necessary", "verbalisation": "the limitation meets the just requirements of a democratic society", "decided_by": null},
+  {"name": "morality", "role": "sufficient", "verbalisation": "the limitation serves morality", "decided_by": null},
+  {"name": "public_order", "role": "sufficient", "verbalisation": "the limitation serves public order", "decided_by": null},
+  {"name": "general_welfare", "role": "sufficient", "verbalisation": "the limitation serves the general welfare", "decided_by": null}
+ ]}}
+}
