@@ -65,6 +65,10 @@ LEAN_FROM_CHECK = "lean-from check"
 TOKEN = "${{ github.token }}"
 GH_CALL = re.compile(r"(?<![\w-])gh\s+([^\n|;&)]*)")
 GH_ALLOWED = re.compile(r'release (view|upload) "\$REL" [^\n]*')
+CURL = re.compile(r"(?<![\w-])curl\s+([^\n|;&)]*)")
+SHA_CHECK = re.compile(r'^[ \t]*echo "([0-9a-f]{64})  (\S+)" \| sha256sum -c -[ \t]*$', re.M)
+RELEASE_ASSET = re.compile(r"https://[^\s/]+/(?:\S*/)?releases/download/(\S+)")
+TOOLS_STEP = "tools"
 KEY = re.compile(r"([A-Za-z0-9_-]+):(?:\s+(.*))?")
 BLOCK_SCALAR = re.compile(r"[|>][-+]?")
 
@@ -272,6 +276,40 @@ def check_pins(document: dict, text: str) -> None:
         assert isinstance(value, str) and PINNED.fullmatch(value), f"not pinned by commit: {value!r}"
 
 
+def downloads(block: str) -> tuple[str, list[tuple[str, list[str], int]]]:
+    """The block with its line continuations joined, and each curl in it: (output file, URLs, end offset)."""
+    joined = block.replace("\\\n", " ")
+    found = []
+    for match in CURL.finditer(joined):
+        args = shlex.split(match.group(1))
+        output = next((args[i + 1] for i, arg in enumerate(args[:-1]) if arg in ("-o", "--output")), "")
+        found.append((output, [arg for arg in args if "://" in arg], match.end()))
+    return joined, found
+
+
+def check_downloads(document: dict) -> None:
+    """Every curl that fetches a release asset (gha-uv-mirror) names its file, fetches it over https, and a
+    later `sha256sum -c` checks that file against a pinned sha256. A fallback URL into the same file must
+    fetch the same asset (the same `releases/download/<version>/<name>`), so the one pin checks either."""
+    for job, block in run_blocks(document):
+        joined, found = downloads(block)
+        assets: dict[str, set[str]] = {}
+        last: dict[str, int] = {}
+        for output, urls, end in found:
+            if not output and not any("releases/download/" in url for url in urls):
+                continue  # not a download (the GitHub API rule covers the publish job's calls)
+            assert output and urls,f"{job}: a release download names no file: {urls}"
+            for url in urls:
+                asset = RELEASE_ASSET.fullmatch(url)
+                assert asset, f"{job}: {url} is not a release asset over https"
+                assets.setdefault(output, set()).add(asset.group(1))
+            last[output] = end
+        checked = {match.group(2): match.start() for match in SHA_CHECK.finditer(joined)}
+        for output, names in assets.items():
+            assert len(names) == 1, f"{job}: {output} may be one of several assets {sorted(names)}"
+            assert checked.get(output, -1) > last[output], f"{job}: {output} is not checked by a pinned sha256"
+
+
 def check_timeouts(document: dict) -> None:
     jobs = document["jobs"]
     assert isinstance(jobs, dict) and jobs
@@ -289,6 +327,7 @@ def check_workflow(text: str) -> None:
     check_secrets(document, text)
     check_pins(document, text)
     check_timeouts(document)
+    check_downloads(document)
 
 
 def check_ve_job(text: str) -> None:
@@ -326,6 +365,7 @@ def check_ve_job(text: str) -> None:
     check_tokens(text)
     check_asset_step(publish)
     check_lean_from_step(run)
+    check_downloads(document)
 
 
 def check_tokens(text: str) -> None:
@@ -442,6 +482,28 @@ SEEDED = [
      "          T: ${{ github.token }}\n", "not only the lean-from download step's"),
     ("download may fail", "        continue-on-error: true\n        uses: actions/download-artifact",
      "        uses: actions/download-artifact", "may fail the result"),
+    # gha-uv-mirror: each release download stays pinned, whichever URL fetched it.
+    ("uv unchecked", '          echo "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c8  uv.tgz" | sha256sum -c -\n',
+     "", "uv.tgz is not checked by a pinned sha256"),
+    ("lean unchecked", '          echo "b14f5e5159219dd1a1956c3b806813319f5e94ccd5bdfd56f54520609a5bb5ec  lean.tar.zst" | sha256sum -c -\n',
+     "", "lean.tar.zst is not checked by a pinned sha256"),
+    ("uv check of another file", "8c8  uv.tgz\" | sha256sum", "8c8  uv.tar\" | sha256sum",
+     "uv.tgz is not checked by a pinned sha256"),
+    ("uv check warns only", "8c8  uv.tgz\" | sha256sum -c -", "8c8  uv.tgz\" | sha256sum -c - || true",
+     "uv.tgz is not checked by a pinned sha256"),
+    ("uv short pin", "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c8  uv.tgz",
+     "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c  uv.tgz", "uv.tgz is not checked by a pinned sha256"),
+    ("mirror of another version", "releases.astral.sh/github/uv/releases/download/0.12.19/",
+     "releases.astral.sh/github/uv/releases/download/0.12.18/", "uv.tgz may be one of several assets"),
+    ("mirror of another arch", "download/0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz\n",
+     "download/0.12.19/uv-aarch64-unknown-linux-gnu.tar.gz\n", "uv.tgz may be one of several assets"),
+    ("mirror over http", "|| curl -sSfL --retry 3 -o uv.tgz https://releases.astral.sh/",
+     "|| curl -sSfL --retry 3 -o uv.tgz http://releases.astral.sh/", "is not a release asset over https"),
+    ("mirror into another file", "|| curl -sSfL --retry 3 -o uv.tgz https://releases.astral.sh/",
+     "|| curl -sSfL --retry 3 -o uv2.tgz https://releases.astral.sh/", "uv2.tgz is not checked by a pinned sha256"),
+    ("download after the check", "          command -v zstd",
+     "          curl -sSfL -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/"
+     "uv-x86_64-unknown-linux-gnu.tar.gz\n          command -v zstd", "uv.tgz is not checked by a pinned sha256"),
 ]
 
 
@@ -463,6 +525,70 @@ def test_a_new_workflow_file_keeps_the_common_rules():
     check_workflow(reader)
     with pytest.raises(AssertionError, match="forbidden triggers"):
         check_workflow(reader.replace("on:\n  push:\n", "on:\n  schedule:\n  push:\n"))
+
+
+# --- the tools step's downloads, run against a fake `curl` (gha-uv-mirror)
+FAKE_CURL = """#!/bin/bash
+out=""; url=""
+while [ $# -gt 0 ]; do
+  case "$1" in -o) out=$2; shift 2;; --retry) shift 2;; -*) shift;; *) url=$1; shift;; esac
+done
+echo "$url" >> "$CURL_LOG"
+for prefix in ${CURL_FAIL:-}; do case "$url" in "$prefix"*) exit 22;; esac; done
+body=asset; for prefix in ${CURL_OTHER:-}; do case "$url" in "$prefix"*) body=other;; esac; done
+printf '%s:%s' "$body" "${url##*/}" > "$out"
+"""
+GITHUB_UV = "https://github.com/astral-sh/uv/releases/download/"
+MIRROR_UV = "https://releases.astral.sh/github/uv/releases/download/"
+
+
+def run_tools_downloads(tmp_path: Path, fail: str = "", other: str = "") -> tuple[int, list[str], str]:
+    """The tools step's curl and sha256 lines, in order, with each pin replaced by the sha256 of the bytes the
+    fake curl serves for that asset; returns (exit code, URLs fetched, output)."""
+    run = next(step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if step.get("name") == TOOLS_STEP)
+    joined, found = downloads(run["run"])
+    asset = {output: urls[0].rsplit("/", 1)[1] for output, urls, _ in found}
+    kept = [line.strip() for line in joined.splitlines() if CURL.search(line) or SHA_CHECK.fullmatch(line)]
+    assert len(kept) == 4, kept
+    script = "\n".join(["set -euo pipefail", *kept]) + "\n"
+    for match in SHA_CHECK.finditer(joined):
+        served = hashlib.sha256(f"asset:{asset[match.group(2)]}".encode()).hexdigest()
+        script = script.replace(match.group(1), served)
+    fake = tmp_path / "fake"
+    fake.mkdir()
+    (fake / "curl").write_text(FAKE_CURL)
+    (fake / "curl").chmod(0o755)
+    work = tmp_path / "work"
+    work.mkdir()
+    log = tmp_path / "curl.log"
+    log.touch()
+    env = {**os.environ, "PATH": f"{fake}{os.pathsep}{os.environ['PATH']}", "CURL_LOG": str(log),
+           "CURL_FAIL": fail, "CURL_OTHER": other}
+    done = subprocess.run(["bash", "-c", script], cwd=work, env=env, capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT)
+    return done.returncode, log.read_text().split(), done.stdout + done.stderr
+
+
+def test_uv_comes_from_github_when_it_answers(tmp_path):
+    rc, urls, said = run_tools_downloads(tmp_path)
+    assert rc == 0, said
+    assert [url for url in urls if "/uv" in url] == [GITHUB_UV + "0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz"]
+
+
+def test_uv_falls_back_to_the_astral_mirror_of_the_same_asset(tmp_path):
+    rc, urls, said = run_tools_downloads(tmp_path, fail=GITHUB_UV)
+    assert rc == 0, said
+    assert [url for url in urls if "/uv" in url] == [GITHUB_UV + "0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz",
+                                                     MIRROR_UV + "0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz"]
+    assert "uv.tgz: OK" in said
+
+
+@pytest.mark.parametrize("fail, other", [(GITHUB_UV, MIRROR_UV), (f"{GITHUB_UV} {MIRROR_UV}", ""), ("", GITHUB_UV)],
+                         ids=["mirror serves other bytes", "both fail", "github serves other bytes"])
+def test_uv_from_either_url_must_match_the_pin(tmp_path, fail, other):
+    rc, _, said = run_tools_downloads(tmp_path, fail=fail, other=other)
+    assert rc != 0, said
+    assert "uv.tgz: OK" not in said
 
 
 # --- the lean-build asset step's own script, run against a fake `gh` (gha-wf2)
