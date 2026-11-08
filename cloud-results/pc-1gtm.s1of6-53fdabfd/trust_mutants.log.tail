@@ -1,0 +1,7 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 17 definitions, 331 mutants (56 to run), 4 jobs, base 0fdaaf862ed7
+trust_mutants: 25 KILLED, 0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 19 ALLOWED, 0 NOT RUN, 275 OTHER SHARD in 2813 s
+trust_mutants: D[V], trusted: 6 KILLED, 3 INVALID, 5 ALLOWED, 59 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 7 OTHER SHARD
+trust_mutants: S, trusted: 18 KILLED, 9 INVALID, 14 ALLOWED, 209 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 2.4 s, control_build 0.3 s, probe_install 37.2 s, control_probes 1481 s, mutants 1276.3 s, cleanup 4.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 37.1 s (1), control_probes 3928.9 s (13), mutant_builds 425.3 s (66), mutant_checks 3042.1 s (42), stage_controls 552.2 s (8), mutant_probes 926.2 s (25)
