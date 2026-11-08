@@ -1,0 +1,7 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Scope/Authoring.lean is a selected declaration's file or in its import closure
+trust_mutants: 19 definitions, 276 mutants (69 to run), 4 jobs, base d962e66a76e5
+SURVIVOR lean/VE/Scope/Authoring.lean:172 VE.Scope.Pinned.readings (D[V], trusted) list-first: s -> (s.take 1)
+trust_mutants: 51 KILLED, 1 SURVIVOR, 0 UNKNOWN, 11 INVALID, 6 ALLOWED, 0 NOT RUN, 207 OTHER SHARD in 89 s
+trust_mutants: D[V], trusted: 37 KILLED, 1 SURVIVOR, 11 INVALID, 5 ALLOWED, 161 OTHER SHARD
+trust_mutants: S, trusted: 14 KILLED, 1 ALLOWED, 46 OTHER SHARD
+trust_mutants: steps: wall plan 10.2 s, scratch 2.8 s, control_build 0.2 s, probe_install 1.1 s, control_probes 1.2 s, mutants 68.7 s, cleanup 4.4 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 1.1 s (1), mutant_builds 138.7 s (71), mutant_checks 43.8 s (57), stage_controls 13 s (6), mutant_probes 64 s (51)
