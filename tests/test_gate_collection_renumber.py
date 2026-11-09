@@ -1,5 +1,4 @@
-"""A mutant renumbered by an inserted one is paired by its text, not refused; a mutant whose text is gone stays
-refused (tools/gate_collection.py, `CASES_HOOK`)."""
+"""A mutant renumbered by an inserted one is paired by its text; a gone one stays refused (gate_collection.py)."""
 from __future__ import annotations
 
 import json
