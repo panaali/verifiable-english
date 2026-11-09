@@ -81,6 +81,8 @@ def internalRow : List Json :=
   str ["rejected", "Internal", "CheckerUnavailable", Run.rowsInternalText] ++ [.null]
 #guard get (.ok [.source []]) ["status", "code", "class", "text", "sentence"] == internalRow
 #guard get (.ok [.rule ⟨1, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] "Rule 1. X.\nRule 2. Y." == internalRow
+-- only a translation-mode statement is refused: no statements over no blocks are rows, none of them one
+#guard Run.oneSpans "" [] == some [] && Run.oneSpans "" [.source []] == none
 -- E13: a block over two lines is one span, from the lexer's positions: header to period.
 #guard Run.statementSpans "Rule 1.\nX." == [(0, 10)] &&
   get (.ok [.rule ⟨1, []⟩ cPub]) ["status"] "Rule 1.\nX." == str ["one"] &&
