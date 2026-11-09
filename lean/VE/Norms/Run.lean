@@ -1,4 +1,4 @@
-import VE.Acts.Decode
+import VE.Acts.Run
 import VE.Norms.Admission
 import VE.Norms.Flagged
 import VE.Norms.Plain
@@ -222,8 +222,11 @@ today's. -/
 def decoderOf (environment : Json) : Wire.SourceDecoder :=
   if underActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlagged
 
-/-- The norms route's public entry: `runCaseIn` at the decoder of the case's environment. -/
-def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j
+/-- The norms route's public entry: `acts-elaborate` (act-phrases 6.7); else `runCaseIn` at the decoder of the case's
+environment. -/
+def runCaseRouted (j : Json) : Except String Json :=
+  if VE.Acts.Run.isElaborate j then VE.Acts.Run.runElaborate VE.Acts.Run.normsSource j
+  else runCaseIn (decoderOf (j.getObjValD "environment")) j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j || Plain.layered (j.getObjValD "environment") then

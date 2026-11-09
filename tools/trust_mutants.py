@@ -120,14 +120,19 @@ names of the tool modules, `base`, the table and the lean/ files no build reads 
   with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
   writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
-  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
+  (their sums) and `shards: [{k, n, head, jobs, seconds, steps}]`, by k. A part from another commit adds
+  `carried: "inputs identical"`; the merged `head` is the first part's, and the shards name every source commit.
+  It prints that run's lines and exits with its
   code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
-  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs,
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, options, inputs,
   the plan or --rescore's file, head, mode, changed, plan_only or full_run, miss or repeat a k, own a mutant twice,
   never, or with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not
   run, OTHER SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
-  line and builds nothing: what sizes N.
+  line and builds nothing: what sizes N;
+- --only IDS (ids comma- or space-separated, or @FILE with one per line) keeps only those planned mutants, in plan
+  order, before --max-mutants; an id not in the plan stops the run (exit 2, naming it); --plan adds `"only"`, the
+  kept ids (tm-inventory-flag: the targeted inventory in the committed tool, not an uncommitted line in it).
 
 --deadline, --budget and --resume (eff-tm-partial: an Actions part cancelled at its 120-min job limit returned
 nothing, so each verdict it had judged was lost):
@@ -138,10 +143,11 @@ nothing, so each verdict it had judged was lost):
   `partial: {deadline, unjudged}` (those ids, plan order), one PARTIAL line says so, and the exit code is 4;
 - every --json records `tree`, HEAD's tree, beside `head`, its commit;
 - --resume PREV.json keeps PREV's verdicts (before --allow; the current --allow applies) of the mutants this run
-  owns when PREV ran at this HEAD: the same commit and tree, the same `inputs` (so no worktree edit since), plan,
-  --max-mutants, --shard part and --rescore facts (`resumable`). Only the rest (its `unjudged`) run, and the JSON
-  gains `resumed: {file, head, kept, rerun}`. Any other PREV, another HEAD's above all, is ignored with one line
-  why (`ignored`) and the run is a full one: no verdict of another HEAD is reused;
+  owns, also across commits, when PREV's `inputs` (all of lean/, the tool, the selected test bytes, base and
+  options), plan, --max-mutants, --shard part and --rescore facts are this run's, and at PREV's own commit its tree is
+  HEAD's (`resumable`). Only the rest (its `unjudged`) run, and the JSON
+  gains `resumed: {file, head, kept, rerun}`, with `carried: "inputs identical"` when HEAD moved. Any PREV
+  with different inputs is ignored with one line why (`ignored`) and the run is a full one;
 - a partial record never counts as a sweep: --merge refuses a part that has `partial` (run that part again with
   --resume), --rescore reads none (a full run), and --merge keeps each part's `resumed` in its `shards` entry.
 
@@ -1756,8 +1762,8 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or "inputs" not in data:
             return "it records no inputs"
-        if "partial" in data:  # eff-tm-partial: its judged verdicts are reused by --resume at its HEAD only
-            return "it is a partial record (its --deadline left mutants unjudged): --resume it at its HEAD"
+        if "partial" in data:  # its judged verdicts are reused by --resume with identical inputs
+            return "it is a partial record (its --deadline left mutants unjudged): --resume it with identical inputs"
         old, changed, plan_only = data["inputs"], [], []
         if not isinstance(old, dict):
             return "its inputs differ (keys)"
@@ -1798,8 +1804,7 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not
 def resumable(path: Path, head: str, tree: str, now: dict, found: list[Mutant], shard: dict | None,
               max_mutants: int, rescore: dict | None) -> tuple[str, dict[str, dict]] | str:
     """--resume PREV (eff-tm-partial): (its head, by mutant id its row) for every mutant of this run's that PREV
-    judged, when PREV ran at this commit and tree (`head`, `tree`: never another HEAD's verdicts), with these
-    `inputs` (the bytes, so a worktree edit since is no resume), plan, --max-mutants, --shard part and --rescore
+    judged, across commits when `inputs` (the bytes), plan, --max-mutants, --shard part and --rescore
     facts, and its rows are rows this tool writes (`unwritten`, `unfinished`); else why not (a full run)."""
     def facts(r):  # --rescore's facts but its counts, which the resumed run makes again
         return r and {k: v for k, v in r.items() if k not in ("reused", "rerun")}
@@ -1807,7 +1812,9 @@ def resumable(path: Path, head: str, tree: str, now: dict, found: list[Mutant], 
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or type(data.get("tree")) is not str or not data["tree"]:
             return "it records no tree (no record this tool writes, or an older one)"
-        if data.get("head") != head or data["tree"] != tree:
+        if type(data.get("head")) is not str or not data["head"]:
+            return "it records no HEAD commit"
+        if data.get("head") == head and data["tree"] != tree:
             return (f"it ran at {str(data.get('head'))[:12]} (tree {data['tree'][:12]}), not at this HEAD "
                     f"{head[:12]} (tree {tree[:12]})")
         if canon(data.get("inputs")) != canon(now):
@@ -1914,9 +1921,11 @@ SHARD = {"k": int, "n": int, "owned": list[str]}
 RESCORE = {"file": str, "head": str | None, "mode": str, "changed": list[str], "reused": int, "rerun": int,
            "full_run": str, "plan_only": list[str]}  # full_run only when it was one; plan_only only when mode "checks"
 PARTIAL_RECORD = {"deadline": int, "unjudged": list[str]}
-RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str}  # ignored only when it was
+RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str,
+           "carried": str}  # ignored only when it was; carried (CARRIED) only when HEAD moved
+CARRIED = "inputs identical"  # the one wording of a verdict kept from another commit (`resumed`, `shards[]`)
 PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
-AGREED = ("base", "head", "tree", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
+AGREED = ("base", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
 
 
 def typed(v, t) -> bool:
@@ -1975,7 +1984,10 @@ def unread(d) -> str | None:
             "control_probes" not in d or d["control_probes"] in ("lazy", "eager")) and (
             "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run", "plan_only")) and d["rescore"]["mode"] in (
                 "full", "identical", "checks")) and ("partial" not in d or fits(d["partial"], PARTIAL_RECORD))
-            and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored",)))):
+            and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored", "carried"))
+                 and d["resumed"].get("carried", CARRIED) == CARRIED
+                 and ("carried" in d["resumed"]) == (d["resumed"]["head"] is not None
+                                                    and d["resumed"]["head"] != d["head"]))):
         return "a field is missing or not of its type"
     if "steps" in d and not timed(d["steps"]):
         return "its steps are not a record of seconds by step"
@@ -2020,7 +2032,7 @@ def merge(out: Path, paths: list[Path]) -> int:
         return refuse(f'no "shard" key {{k, n, owned}} (no --shard part): {", ".join(bad)}')
     if bad := next((p for d, p in parts if "partial" in d), None):  # eff-tm-partial: the DRI's condition
         return refuse(f"{bad} is a partial record (its --deadline left mutants unjudged): a merge needs every planned "
-                      f"mutant judged; run that part again with --resume {bad} at its HEAD")
+                      f"mutant judged; run that part again with --resume {bad} with identical inputs")
     if bad := next(((p, why) for d, p in parts if (why := unread(d))), None):
         return refuse(f"{bad[0]} is not a part this tool writes: {bad[1]}")
     parts.sort(key=lambda x: x[0]["shard"]["k"])
@@ -2093,7 +2105,8 @@ def merge(out: Path, paths: list[Path]) -> int:
         found = [row_mutant(rows.get(r["id"], (r,))[0]) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
-        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+        shards = [{"k": d["shard"]["k"], "n": n, "head": d["head"], "jobs": d["jobs"], "seconds": d["seconds"],
+                   **({"carried": CARRIED} if d["head"] != first["head"] else {}),
                    **({"steps": d["steps"]} if "steps" in d else {}),
                    **({"resumed": d["resumed"]} if "resumed" in d else {})} for d, _ in parts]
         steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
@@ -2154,14 +2167,25 @@ def sweep(argv: list[str] | None = None) -> int:
                         "unjudged (a partial record, exit 4)")
     parser.add_argument("--budget", type=float, metavar="SECONDS", help="--deadline this many seconds from the start")
     parser.add_argument("--resume", type=Path, metavar="PREV.json",
-                        help="keep PREV's verdicts when it ran at this HEAD (commit, tree and inputs) and judge only "
-                        "the rest; another HEAD's are ignored")
+                        help="keep PREV's verdicts across commits when the plan and inputs are identical, and judge "
+                        "only the rest")
+    parser.add_argument("--only", metavar="IDS",
+                        help="keep only these planned mutants: ids comma- or space-separated, or @FILE with one id "
+                        "per line; an id not in the plan stops the run (exit 2)")
     args = parser.parse_args(argv)
     if args.merge:
         if args.shard or args.plan or len(args.merge) < 2:
             return print("--merge OUT.json PART.json...: at least one part, and no --shard or --plan",
                          file=sys.stderr) or 2
         return merge(args.merge[0], args.merge[1:])
+    only = None
+    if args.only is not None:  # tm-inventory-flag: a targeted inventory, at the plan, in the committed tool
+        try:
+            text = Path(args.only[1:]).read_text() if args.only.startswith("@") else args.only
+        except OSError as error:
+            return print(f"--only {args.only}: {error}", file=sys.stderr) or 2
+        if not (only := list(dict.fromkeys(x for x in re.split(r"[\s,]+", text) if x))):
+            return print(f"--only {args.only!r}: no mutant id", file=sys.stderr) or 2
     shard = None
     if args.shard is not None:
         if not (got := re.fullmatch(r"([0-9]+)/([0-9]+)", args.shard)) or not 1 <= int(got[1]) <= int(got[2]):
@@ -2192,6 +2216,10 @@ def sweep(argv: list[str] | None = None) -> int:
     DEADLINE.reset(min(at) if at else None)
     STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
+    if only is not None:
+        if unknown := [i for i in only if i not in {m.id for m in found}]:
+            fatal.append(f"--only: not in the plan: {' '.join(unknown)}")
+        found = [m for m in found if m.id in only]
     for t in outside:
         try:
             tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
@@ -2204,7 +2232,8 @@ def sweep(argv: list[str] | None = None) -> int:
     if args.plan:
         print(json.dumps({"base": git(root, "rev-parse", base).stdout.strip(), "definitions": len(
             {(m.file, m.definition) for m in found}), "mutants": len(found), "to_run": len(run_now),
-            "not_run": len(not_run), **({"owned": len(mine)} if shard else {})}))
+            "not_run": len(not_run), **({"owned": len(mine)} if shard else {}),
+            **({"only": [m.id for m in found]} if only is not None else {})}))
         return 0
     for m in run_now:
         if not owns(m.id, shard):
@@ -2228,13 +2257,14 @@ def sweep(argv: list[str] | None = None) -> int:
                    **({"plan_only": plan_only} if plan_only else {}),
                    **({} if reused else {"full_run": why})}  # its facts; the counts are added at the end
     resumed, kept = None, {}
-    if args.resume:  # eff-tm-partial: the verdicts PREV judged at this HEAD, kept as they are
+    if args.resume:  # finished verdicts at identical inputs, even when HEAD moved
         got = resumable(args.resume, head, head_tree, digests, found, owned, args.max_mutants, rescore)
         if isinstance(got, str):
             print(f"trust_mutants: --resume {args.resume}: its verdicts are not reused (a full run), since {got}",
                   flush=True)
         resumed = {"file": str(args.resume), "head": None if isinstance(got, str) else got[0], "kept": 0,
-                   "rerun": 0, **({"ignored": got} if isinstance(got, str) else {})}
+                   "rerun": 0, **({"ignored": got} if isinstance(got, str) else
+                                  {"carried": CARRIED} if got[0] != head else {})}
         kept = {} if isinstance(got, str) else got[1]
     for m in mine:
         if r := kept.get(m.id):
@@ -2349,7 +2379,7 @@ def sweep(argv: list[str] | None = None) -> int:
     partial = {"deadline": int(DEADLINE.at or 0), "unjudged": left} if left else None
     if partial:
         print(f"trust_mutants: PARTIAL: the deadline stopped the run with {len(left)} of its {len(mine)} mutants "
-              f"unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those", flush=True)
+              f"unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those", flush=True)
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
