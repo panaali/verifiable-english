@@ -12,7 +12,8 @@ The bindings, a closed list of relations to the request's block (dates with the 
 - `base_environment.vocabulary.constants`: the request's constants as written, plus exactly one constant
   `date__YYYY_MM_DD` per named date, of the block's day sort, described by its own ISO date (the anchor's description
   is Lean's wording, spec 1.3, and is not shown).
-- `events_premises[].label`: each once, of a closed list of kinds (spec 1.4, `_bind_labels`). One per request item,
+- `events_premises[].label`: each once, of a closed list of kinds (spec 1.4, `_bind_labels`), each exactly the label
+  `label` renders from the request's names (no prefix is stripped; pairs by `_pair`). One per request item,
   none missing: the three order axioms; `events:one_day:<s>` per event sort; `events:one_begin:<s>`,
   `events:one_end:<s>` and `events:not_before_begin:<s>` per state sort; `events:link_forward:<p>` per link.
   Counted: `events:date:A:B` over two named dates, one fewer than the named dates, chaining them all. Named only:
@@ -91,27 +92,51 @@ def _bind_constants(row: dict, environment: dict, block: dict, dates: list) -> d
     return named
 
 
+def label(kind: str, *names: str) -> str:
+    """The label Lean gives a premise of `kind` over `names` (`VE.Events.eventsLabelled`: `events:` then the kind and
+    the names, joined by `:`). The one renderer: every label the relay accepts is one of these, re-rendered exactly."""
+    return ":".join(("events", kind, *names))
+
+
+def _pair(text: str, kind: str, left, right):
+    """The one pair (a, b) of `left` × `right`, a ≠ b, whose label of `kind` is exactly `text`; else None. The label is
+    never parsed loosely: its prefix and kind are required, and every split of the rest at a `:` is tried, so a name
+    holding a `:` neither breaks a genuine label nor lets two readings of one label pass."""
+    head = label(kind, "")
+    if not text.startswith(head):
+        return None
+    rest = text[len(head):]
+    found = [(rest[:i], rest[i + 1:]) for i, ch in enumerate(rest)
+             if ch == ":" and rest[:i] in left and rest[i + 1:] in right and rest[:i] != rest[i + 1:]]
+    return found[0] if len(found) == 1 and label(kind, *found[0]) == text else None
+
+
 def _bind_labels(rows: list, block: dict, dates: list) -> None:
-    """Each label once, of a closed list of kinds, naming the request's dates, sorts and links (spec 1.4). The rows
-    one per request item are all there: the order axioms, each event and state sort's conventions, each link's
-    forward premise. The date facts are counted: one fewer than the named dates, chaining them all. Which named
-    dates are consecutive, which are one day apart and which links are weaker are Lean's (`calendarLabelled`,
-    `weakerPairs`); Python names, counts and checks membership only (R8)."""
+    """Each label once, of a closed list of kinds, naming the request's dates, sorts and links (spec 1.4). Every
+    label is one `label` renders from the request's names, exactly (`_pair` for the pairs): no prefix is stripped,
+    so no row outside the closed list passes beside its genuine twin. The rows one per request item are all there:
+    the order axioms, each event and state sort's conventions, each link's forward premise. The date facts are
+    counted: one fewer than the named dates, chaining them all. Which named dates are consecutive, which are one day
+    apart and which links are weaker are Lean's (`calendarLabelled`, `weakerPairs`); Python names, counts and checks
+    membership only (R8)."""
     labels = [p["label"] for p in rows]
     if len(set(labels)) != len(labels):
         _unavailable("a premise label is repeated")
     forms = {link["predicate"]: link["form"] for link in block["links"]}
-    each = {*ORDER_LABELS, *(f"events:one_day:{e['sort']}" for e in block["events"]),
-            *(f"events:{kind}:{s['sort']}" for s in block["states"] for kind in STATE_KINDS),
-            *(f"events:link_forward:{name}" for name in forms)}
+    necessary = {name for name, form in forms.items() if form == "necessary"}
+    contributed = {name for name, form in forms.items() if form == "contributed"}
+    each = {*ORDER_LABELS, *(label("one_day", e["sort"]) for e in block["events"]),
+            *(label(kind, s["sort"]) for s in block["states"] for kind in STATE_KINDS),
+            *(label("link_forward", name) for name in forms)}
+    named = set(dates)
     facts, adjacent = set(), set()
-    for label in set(labels) - each:
-        kind, _, pair = label.removeprefix("events:").partition(":")
-        a, _, b = pair.partition(":")
-        if kind in ("date", "adjacent") and a in dates and b in dates and a != b:
-            (facts if kind == "date" else adjacent).add((a, b))
-        elif not (kind == "link_weaker" and forms.get(a) == "necessary" and forms.get(b) == "contributed"):
-            _unavailable(f"premise {label!r} names nothing of the request")
+    for text in set(labels) - each:
+        if pair := _pair(text, "date", named, named):
+            facts.add(pair)
+        elif pair := _pair(text, "adjacent", named, named):
+            adjacent.add(pair)
+        elif not _pair(text, "link_weaker", necessary, contributed):
+            _unavailable(f"premise {text!r} names nothing of the request")
     if missing := each - set(labels):
         _unavailable(f"the premise for {sorted(missing)[0]!r} of the request is missing")
     # The chain from the one date no fact ends at, each date followed once: it must reach every named date.
@@ -123,7 +148,7 @@ def _bind_labels(rows: list, block: dict, dates: list) -> None:
     if len(facts) != len(dates) - 1 or sorted(chain) != sorted(dates):
         _unavailable("the date facts do not chain the request's named dates, one fewer than they")
     if adjacent - facts:
-        _unavailable(f"premise 'events:adjacent:{':'.join(sorted(adjacent - facts)[0])}' names nothing of the request")
+        _unavailable(f"premise {label('adjacent', *sorted(adjacent - facts)[0])!r} names nothing of the request")
 
 
 def _bind_formula(ast: list, names: dict) -> None:

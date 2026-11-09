@@ -57,7 +57,9 @@ branch, run by the self-reviewer at `c2d1f4dbe`): no in-flight branch edits a ha
 
 - Constants: the request's as written, plus exactly one `date__…` per named date, of the day sort, described by its
   own date (the anchor's wording is Lean's and is not shown).
-- Labels: each once, of a closed list of kinds. One per request item, none missing: the order axioms, each sort's
+- Labels: each once, of a closed list of kinds, each exactly the label `events.label` renders from the request's
+  names (`events:` then the kind and the names; the pairs by `_pair`, every split tried, one reading only): no prefix
+  is stripped (review F1). One per request item, none missing: the order axioms, each sort's
   conventions, each link's forward premise. Counted: the date facts, one fewer than the named dates, chaining them
   all. Named only: an adjacency over a date fact's pair, a weaker pair over a necessary and a contributed link.
   Which dates are consecutive or one day apart, and which links are weaker, are Lean's (`calendarLabelled`,
@@ -80,6 +82,8 @@ branch, run by the self-reviewer at `c2d1f4dbe`): no in-flight branch edits a ha
 | P4 | Python, `ve/events.py` | a date constant's sort and day unbound | `test_named_binding_faults_are_unavailable` |
 | P5 | Python, `ve/events.py` | the date facts' chain unchecked | `test_named_binding_faults_are_unavailable` |
 | P6 | Python, `ve/events.py` | the request's shape unchecked | `test_a_request_not_of_the_block_s_shape_is_unavailable` |
+| P8 | Python, `ve/events.py` | fix round 1 (review F1): the pre-fix parse, `events:` stripped and never required | `test_named_binding_faults_are_unavailable`, `test_every_single_fault_mutant_*` (3 sources) |
+| P9 | Python, `ve/events.py` | fix round 1: `_pair` finds the kind anywhere and skips the exact re-render | `test_a_label_is_bound_only_as_lean_renders_it` and the four above |
 
 No Rust changed.
 
@@ -185,6 +189,27 @@ patterns, now stated in DELTA row 2).
 15. Four classes: overclaim PASS (T9 and T11d marked partial; R1 not reached); silent cut PASS (cuts ruled by DRI
     20261109-et-5); every new check can fail PASS (`mutants.json`); limits charged before work PASS (the shape check
     precedes every walk; `test_a_request_at_the_date_limit_with_many_links_is_bound`).
+
+## Fix round 1 (review `et-5-review.final.md` of `70ab5fe95`)
+
+- **F1 (B, R8)**: `ve/events.py` now has one label renderer (`label`, Lean's `eventsLabelled` form) and accepts a
+  label only as that renderer gives it from the request's names. The one-per-item rows match exactly, as before. The
+  pairs go through `_pair`: the prefix and kind are required, every split at a `:` is tried, and exactly one reading
+  must name the request. No prefix is stripped. The fuzzer gains `_mangled` (a label's prefix dropped or respelled,
+  a segment added, emptied or padded), applied in place and as an extra row beside its genuine twin. `_rebound` could
+  not produce that class. Regression tests: the reviewer's probe as
+  `test_a_label_is_bound_only_as_lean_renders_it`; the unprefixed twin of each kind (date, adjacent, weaker link, one
+  per item, order axiom) in `test_named_binding_faults_are_unavailable`; `_mangled` in both fault fuzzers. Seeded
+  bugs P8 and P9 above. Sweep of the class in `ve/`: the readings pair labels require their prefix
+  (`readings_verdicts/binding.py`); the `unsaid__` names are prefix-checked by the generated schema; the defaults
+  assumptions bind by exact membership in Lean's labels (`defaults.bind_certificate`). None loose.
+- **F2 (B)**: the FOLLOW-UPS.md row "## et-5 (2026-11-09)" now exists on this host
+  (`/home/seyran/code/manage-agents/FOLLOW-UPS.md`). It asks for the ties pass of the V +76 per file (R16), and it
+  also carries F6's plan/spec disagreement on "while". It is no repo test, because the file is outside the repository
+  and tests are hermetic; the probe (`grep -q '^## et-5'`) passes.
+- **F-ready1 (B)**: the relay mutation gate found no `ve_service` in this worktree. `lake build` (1320 jobs) builds
+  it, and the review-ready check reruns on the fix HEAD.
+- C findings F3 to F6 are left as follow-ups (F6 is noted in the FOLLOW-UPS row).
 
 ## Next items
 
