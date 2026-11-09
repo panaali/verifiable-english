@@ -34,6 +34,8 @@ def inNear := act ["other countries"] "{0} to seek asylum in other countries nea
 def nearInFor := act ["other countries"] "{0} to nearly seek asylum in other countries for safety"
 def refugeFrom := act [] "{0} to seek refuge from persecution"
 def fromAgainst := act [] "{0} to seek asylum from persecution against expulsion"
+/-- *seek from persecution* with no object, which `Vsp` does not read: built by hand. -/
+def fromOnly : Atom := ⟨true, false, ["seek"], [("from", .one (.words ["persecution"]))], []⟩
 
 -- each act is `analyse`'s simple act, as written
 #guard a == ⟨true, false, ["seek"], [("", .one (.words ["asylum"]))], [.prep "in" (.fixed 0)]⟩
@@ -71,8 +73,9 @@ def fromAgainst := act [] "{0} to seek asylum from persecution against expulsion
   specialises ⟨["from", "against"], []⟩ fromAgainst b && specialises ⟨["against", "from"], []⟩ fromAgainst b &&
   specialises ⟨["against"], []⟩ fromAgainst fromP
 -- `b` with two arguments, `a` with only the last: never, even with `a`'s object declared restrictive
-#guard !specialises ⟨["", "from"], []⟩ refugeFrom fromP &&
-  specialises ⟨[""], []⟩ refugeFrom ⟨true, false, ["seek"], [("from", .one (.words ["persecution"]))], []⟩
+#guard !specialises ⟨["", "from"], []⟩ refugeFrom fromP && specialises ⟨[""], []⟩ refugeFrom fromOnly
+-- `a`'s first argument extra and not restrictive: never
+#guard !specialises ⟨["from"], []⟩ refugeFrom fromOnly
 
 /-! ### `specPremises` -/
 
@@ -90,6 +93,9 @@ def sp (rs : List Regulated) (acts : List (String × Atom)) : List VE.Formula :=
 #guard sp [reg "pa" .permission, reg "pb" .permission] [("pa", a), ("pb", b)] == [prem "pa" "pb"]
 #guard sp [reg "pa" .permission, reg "pb" .permission] [("pb", b), ("pa", a)] == [prem "pa" "pb"]
 #guard sp [reg "pa" .obligation, reg "pb" .obligation] [("pa", a), ("pb", b)] == [prem "pa" "pb"]
+-- three acts, each pair in `acts` order: every premise, none dropped
+#guard specPremises (doc [reg "pa" .permission, reg "pb" .permission, reg "pc" .permission]) ⟨["in"], ["nearly"]⟩
+    [("pa", a), ("pb", b), ("pc", nearIn)] == [prem "pa" "pb", prem "pc" "pa", prem "pc" "pb"]
 -- two plain entitlements: none
 #guard sp [reg "pa" .plain, reg "pb" .plain] [("pa", a), ("pb", b)] == []
 -- one permission and one obligation: none
