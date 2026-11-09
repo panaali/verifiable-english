@@ -113,7 +113,7 @@ def test_the_gate_refuses_a_list_cardinality_does_not_compose_with(tmp_path, pro
 
 def test_the_route_cases_answer_as_recorded():
     from ve.backends.relay import rows
-    cases = recorded("document")
+    cases = [case for case in recorded("document") if case["id"].startswith("cardinality")]
     answers = rows("document", cases)
     assert [case["id"] for case in cases] == ["cardinality-part", "cardinality-four-profiles"]
     assert answers[0]["status"] == "ok" and answers[0]["cardinality"]["report"]["root"]["name"] == "root"
