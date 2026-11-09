@@ -77,7 +77,14 @@ deleted, so R6 covers nothing here.
 
 ## Size
 
-SIZE-PLACEHOLDER
+`git diff --numstat 6db6ee16d` on this HEAD, added + removed. Hand-written: product 111 (`lean/VE/Service/Document.lean`
+64, `lean/VE/SoftNorms/Wire.lean` 17, `ve/readings.py` 30); tests 274 (`tests/test_rights_meaning_id.py` 268, the
+recorded fixture `tests/data/rights-cfr-1-verdicts.jsonl` 6); docs about 150 (REPORT, DELTA, `mutants.json`, the allow
+file): about 535 of the ~600 cap. Saved command output, not hand-written: `evidence/` 87, `trust-mutants.json` 61.
+Generated (excluded): `lean/declarations.txt`, `lean/checkers.lock`, `docs/trust-baseline.json`, `docs/codemap/`.
+Files checked against the 7 in-flight branches (`git diff --name-only main...<branch>` for `lean-first/*`, `feature/*`,
+`infra/*`, `foundation/*`): none edits `ve/readings.py`, `lean/VE/Service/Document.lean` or `lean/VE/SoftNorms/Wire.lean`;
+main has moved 59 commits past the base without touching them (not synced in this branch: the merge train syncs).
 
 ## Pilot bytes
 
@@ -90,4 +97,37 @@ None.
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELFCHECK-PLACEHOLDER
+1. Typed and contained: PASS. No new response field or route; the changed field, a rights unit's `meaning_id` in
+   the `document` answer, is rebound in `test_a_lean_rights_id_away_from_the_normal_form_is_refused` (main's stale id,
+   another unit's id: `CheckerUnavailable`).
+2. Deliverables and rules: PASS. The task's deliverables (1)-(3), the negative test and the trust rows are in the table
+   above with their tests. The Python twin `_SOFT_DEFAULTS` is the pair that deliverable (1) holds equal by a
+   differential (`test_lean_and_python_rights_meaning_ids_agree`, the condition test), named in FOLLOW-UPS. No new
+   permanent report test: the snapshot is a recorded fixture of behaviour, not git evidence. No in-flight overlap (Size).
+3. Tests can fail: PASS. Seeded bugs 1-5 (`evidence/seeded-*.txt`); trust mutants exit 0 (`trust-mutants.json`).
+4. Python and Lean agree: PASS. `test_lean_and_python_rights_meaning_ids_agree`, `test_rights_meaning_id_omits_soft_defaults`
+   (Lean's id against Python's in all 15 cases); the base against HEAD on the fixtures is `evidence/answers-head-vs-main.txt`.
+5. R8 binding: PASS. `test_a_lean_rights_id_away_from_the_normal_form_is_refused` (shifted and swapped id); no new
+   input field.
+6. Gate evidence: N.A. here: the chain runs the gate on the committed final HEAD; no batch commit list is saved by this item.
+7. No unsigned item: PASS. DELTA 1 SIGNED by the DRI (reviews/dri-decisions-20261109-lp0801.md item 1) with its
+   condition and negative test; DELTA 2 cites R16; nothing reserved.
+8. Every user-visible change in DELTA: PASS. The ids and the stale-id refusal (DELTA 1, on Lean's and the retained
+   Python path: `test_a_stored_pre_change_id_is_not_its_new_id`); the full answers otherwise identical
+   (`evidence/answers-head-vs-main.txt`).
+9. Test selection: PASS. `tools/select_tests.py --base 6db6ee16d` selects `tests/test_rights_meaning_id.py`,
+   `tests/test_rights.py` and the soft-norms suites; seeded bug 1 fails `test_rights_meaning_id_omits_soft_defaults`.
+10. Lean statements and proofs: N.A. No new theorem or statement (`#guard`s only).
+11. Budgets and limits: N.A. No new evaluator, runner or budget: `rightsNormalForm` is one pass over a unit's content
+    already decoded under the document limits.
+12. CPU and memory: N.A. No Lean call added; one linear pass per rights unit on each side.
+13. Test-removed trailers: PASS. No test removed or renamed against main; `uv run python tools/gate_collection.py --check --prebuilt` exits 0: "33092 collected, 33066 at 6db6ee16d; 26 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
+14. Both directions, cited evidence, spec re-read: PASS. Defaults and `null` omitted against non-defaults kept
+    (condition test), a non-soft `null` and a soft name outside a norm object kept
+    (`test_the_normal_form_leaves_other_content_and_shapes_unchanged`), the stale id refused against the new id accepted;
+    spec re-read listed above.
+15. Overclaim, silent cut, checks can fail, limits: PASS. Each "no" / "every" / "unchanged" above names its test or
+    evidence file; no deliverable cut; every new check has a mutant (seeded bugs, trust mutants); limits N.A. (11).
+
+SELF-REVIEW: 0 A, 7 B, 5 C; fixed 11 (B1-B5, B7; C2-C5 and the wording of C1). B6 (the Python table twin) is kept as
+the task's differential pair and named in FOLLOW-UPS.
