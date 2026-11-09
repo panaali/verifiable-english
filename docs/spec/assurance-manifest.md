@@ -135,7 +135,7 @@ through the pinned `Gate.decodeEnvelope`.
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
 |---|---:|---:|---|---|
 | `lean/VE/Acts/Decode.lean` | 265 | 265 | 1–265 | `1c31983a3502…` |
-| `lean/VE/Acts/Lexical.lean` | 213 | 146 | 16–161 | `3bc34305ffec…` |
+| `lean/VE/Acts/Lexical.lean` | 255 | 155 | 16–170 | `5248192e2469…` |
 | `lean/VE/Acts/Wire.lean` | 119 | 119 | 1–119 | `5258c889cf60…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
 | `lean/VE/Alternatives/FillWire.lean` | 564 | 564 | 1–564 | `5b736870014d…` |
@@ -226,14 +226,14 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Wire.lean` | 525 | 525 | 1–525 | `308401c5e256…` |
 | `lean/VE/SpeechActs/Source/Admission/Run.lean` | 632 | 632 | 1–632 | `776cebdcc648…` |
 | `lean/VE/SpeechActs/Source/Run.lean` | 934 | 934 | 1–934 | `95fb8af85ded…` |
-| `lean/VE/SpeechActs/Wire.lean` | 1011 | 1011 | 1–1011 | `6255650542a6…` |
+| `lean/VE/SpeechActs/Wire.lean` | 1322 | 1322 | 1–1322 | `84a51fbbe86c…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
 | `lean/VE/Events/Wire.lean` | 281 | 281 | 1–281 | `29d30fe8c593…` |
 | `lean/VE/Events/Chain.lean` | 204 | 204 | 1–204 | `80d03aefca6e…` |
-| **total** | | **43,832** | | |
+| **total** | | **44,152** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
