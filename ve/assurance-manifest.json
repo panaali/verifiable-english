@@ -2427,7 +2427,9 @@
       "lean/VE/Events/RouteExamples.lean": "fixtures only: #guard checks of the hook through decodeLayered and the norm-defaults mode on JSON environments built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Acts/RunExamples.lean": "fixtures only: `#guard`s that build act-readings requests as JSON and read the rows `actReadingsReported` writes (act-phrases ap-4, spec 7 and 11.4: the pilot counts, AR1 pinned, the limits); no admission path or record reads them",
       "lean/VE/Commands/StepsExamples.lean": "test fixtures only: ci-3a's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
-      "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path"
+      "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path",
+      "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
+      "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling"
     }
   },
   "plan_operations": {
