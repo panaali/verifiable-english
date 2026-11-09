@@ -598,7 +598,8 @@ def badAt (r : String) (c : PositionClass) (cell : List Candidate) : CandidateTa
 #guard !entersRestriction "definite" [] [0, 1, 0, 0, 1] && (Frame.locate rOwner.strong [0, 1, 0, 0, 1]).map (·.2) ==
   some (.eq (.var 0) (.var 1))
 #guard !entersRestriction "plural" [] [0] && entersRestriction "plural" [] [0, 0] && !entersRestriction "plural" [] [1, 0]
-#guard entersRestriction "plural" [1, 1] [1, 1, 0, 0, 2] && !entersRestriction "plural" [1, 0] [1, 0, 0]
+#guard entersRestriction "plural" [1, 1] [1, 1, 0, 0, 2] && !entersRestriction "plural" [1, 0] [1, 0, 0] &&
+  entersRestriction "plural" [1, 0] [1, 0, 0, 0]
 #guard ruleConditions { repR with checked := repR.checked.drop 1 } "r1" == [q26, ready]
 
 end VE.Presupposition.Examples
