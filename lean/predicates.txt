@@ -604,6 +604,7 @@ module VE.RightClauses.Examples
 module VE.RightClauses.Plain
 module VE.RightClauses.Relation
 module VE.RightClauses.Run
+module VE.RightClauses.RunExamples
 module VE.RightClauses.Tree
 module VE.RightClauses.Wire
 module VE.RightClauses.WireDecode

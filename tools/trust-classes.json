@@ -20033,6 +20033,20 @@
         "ResponseShape.Schemas.ClausesElaborate.result",
         "ResponseShape.Schemas.ClausesElaborate.row"
       ]
+    },
+    "VE/RightClauses/RunExamples.lean": {
+      "T": [
+        "VE.RightClauses.RunExamples.parse",
+        "VE.RightClauses.RunExamples.profiles",
+        "VE.RightClauses.RunExamples.on",
+        "VE.RightClauses.RunExamples.doc",
+        "VE.RightClauses.RunExamples.ask",
+        "VE.RightClauses.RunExamples.says",
+        "VE.RightClauses.RunExamples.off",
+        "VE.RightClauses.RunExamples.rel",
+        "VE.RightClauses.RunExamples.charged",
+        "VE.RightClauses.RunExamples.countryOf"
+      ]
     }
   }
 }
