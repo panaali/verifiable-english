@@ -504,6 +504,9 @@ module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
+module VE.Presupposition.Admit.Facts
+module VE.Presupposition.Admit.Statements
+module VE.Presupposition.Admit
 module VE.Presupposition.Agree
 module VE.Presupposition.Examples
 module VE.Presupposition.Frame
