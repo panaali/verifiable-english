@@ -1,0 +1,15 @@
+{
+ "job": "armsh-val-seedhand2-5bb704d2-t246158-cold",
+ "head": "a8511c5266e9a5204c2c90a6cf5731a65b51d51b",
+ "argv": [
+  "armsh-val-seedhand2-5bb704d2-t246158-cold",
+  "a8511c5266e9a5204c2c90a6cf5731a65b51d51b",
+  "1e10139936611d54e557c4d304be541338a7a495",
+  "-",
+  "-",
+  "4",
+  "-",
+  "-"
+ ],
+ "shadow_of": "armsh-val-seedhand2-5bb704d2-t246158"
+}
