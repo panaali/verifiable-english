@@ -1,0 +1,12 @@
+{
+ "job": "testmap-600e3433-t231095-s4",
+ "head": "bc38ddec872b74376489970c2b21f8f288b23885",
+ "argv": [
+  "testmap-600e3433-t231095-s4",
+  "bc38ddec872b74376489970c2b21f8f288b23885",
+  "bc38ddec872b74376489970c2b21f8f288b23885",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-2ecf797ca7bf.tar.zst",
+  "6cf3a463001a7fb7416015388bfcf6620cb62da998fb3e0ef0b85f95f1db282e",
+  "shard=if [ -f /tmp/cc-run.sh ] && [ -d /tmp/cc-out ]; then mkdir -p /tmp/ccrt /var/tmp/cct && ln -sfn /tmp/cc-out /tmp/ccrt/out && export RUNNER_TEMP=/tmp/ccrt TMPDIR=/var/tmp/cct; git fetch -q --unshallow --tags origin 2>/dev/null || git fetch -q --tags origin 2>/dev/null; fi; ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s4.json.gz\" tests/test_acts_vocab_mutants.py tests/test_trust_mutants_probe_scope.py tests/test_scope_answer.py tests/test_english_lean_route.py tests/test_document_chain.py tests/test_events_wire_mutants.py tests/test_readings_defaults_rd6b_report.py tests/test_lean_import_reader.py tests/test_regen_generated.py tests/test_english_grammar_gen.py tests/test_test_chunks.py tests/test_run_order.py tests/test_p0_three_way.py tests/test_readings_verdicts_split.py tests/test_english_e2_statements.py tests/test_assist_split.py tests/test_rd9_followup_bindings.py tests/test_profile_table.py tests/test_lean_first_b13b.py tests/test_gen_inv_design.py tests/test_defaults_zone.py tests/test_pc3_statements.py tests/test_architecture_docs.py tests/test_wire_contract_lean.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
