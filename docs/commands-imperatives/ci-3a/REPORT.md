@@ -24,10 +24,15 @@ changes. DELTA row 1 is signed. Next item: ci-3.
 computed answer stands: `hs` stays. ci-3 proves it. `preposed_eq` needs `String.splitOn` lemmas that core Lean 4.24
 lacks.
 
-## Seeded bugs and mutants (Lean only)
+## Seeded bugs and mutants
 
-`mutants.json` has 21 hand mutants, each with its `old` and `new` text, and each fails a fixture (StepsExamples
-lines). The four the task names:
+`mutants.json` has 21 Lean hand mutants, each with its `old` and `new` text, and each fails a fixture (StepsExamples
+lines), plus one Python seeded bug:
+- `tools/layer_policy.py`: `lean_layer` with `VE.Commands.Steps` and `VE.Commands.StepsExamples` left out of
+  layer 4 (back to `module == "VE.Commands.Read"`). `python3 tools/check_lean_imports.py` fails with exit 1 and
+  reports two new outward Lean imports, Steps -> Read and StepsExamples -> Examples. Restored, it exits 0.
+
+The four Lean seeded bugs the task names:
 - `shapes` without `preposed`'s condition: 60-61;
 - the generic refusal for one shape: 64;
 - `many` beside a `limit`: 88;
