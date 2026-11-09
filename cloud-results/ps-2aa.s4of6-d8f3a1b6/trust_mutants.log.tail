@@ -1,0 +1,13 @@
+trust_mutants: 14 definitions, 200 mutants (33 to run), 4 jobs, base 66242432df01
+UNKNOWN lean/VE/Presupposition/Wire.lean:17 VE.Presupposition.Carrier (S, trusted) ctor-drop: | proved (node : String) ->  (lean/VE/Presupposition/Wire.lean:41: Unknown constant `VE.Presupposition.Carrier.proved`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:134 VE.Presupposition.ruleConditions (S, trusted) list-empty: R.checked.filter (fun d => d.ob.position == .ruleAct n && d.ob.carrier == .conditioned) -> [] (lean/VE/Presupposition/Wire.lean:134: Invalid field notation: Type of)
+SURVIVOR lean/VE/Presupposition/Wire.lean:125 VE.Presupposition.restrictionPaths (S, trusted) list-first: [0, 0] -> ([0, 0].take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-last: rows -> (rows.reverse.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-last: cs -> (cs.reverse.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-drop-first: cs -> (cs.drop 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-drop-middle: .antecedent, -> 
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-drop-middle: .consequent, -> 
+trust_mutants: 25 KILLED, 6 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 167 OTHER SHARD in 212 s
+trust_mutants: D[V], trusted: 3 OTHER SHARD
+trust_mutants: S, trusted: 25 KILLED, 6 SURVIVOR, 2 UNKNOWN, 164 OTHER SHARD
+trust_mutants: steps: wall plan 11.9 s, scratch 3.6 s, control_build 0.2 s, probe_install 1.5 s, control_probes 12.7 s, mutants 179 s, cleanup 2.8 s; lake control_build 0.2 s (1), probe_install 1.5 s (1), control_probes 10.2 s (1), mutant_builds 64.8 s (33), mutant_checks 132.4 s (35), stage_controls 11 s (5), mutant_probes 69.3 s (25)
