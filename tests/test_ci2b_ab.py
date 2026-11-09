@@ -4,6 +4,7 @@ and DRI 2026-10-28 item 2(a) ask for, read from the saved file only. Every sente
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -22,7 +23,9 @@ def _ab():
 def test_the_saved_ab_has_no_forbidden_row():
     ab, saved = _ab(), json.loads((EVIDENCE / "ab.json").read_text())
     assert ab.problems(saved) == []
-    assert saved["rows"] > 20_000 and saved["counts"]["same"] < saved["rows"]
+    assert saved["corpus_sha256"] == hashlib.sha256((EVIDENCE / "corpus.json.gz").read_bytes()).hexdigest()
+    assert saved["rows"] > 20_000 and not saved["tree_dirty"]
+    assert ab.problems({"rows": 0, "counts": {}, "changed": []})  # an empty corpus fails
     assert {row["class"] for row in saved["changed"]} == {"R1", "b2", "many"}
 
 

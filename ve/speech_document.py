@@ -19,11 +19,12 @@ from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .readings import active_reading_sets, plan_choices
 from .speech_acts import wording_text
 from .speech_english import _sentence, legend, parse_speech
-
-# Lean's answers to a first call without the fences' contents: an English fence needs Python's parser (until E3),
-# and a command fence needs the reading context (A2, commands-imperatives CI-2).
-_UNRESOLVED = ("NotImplemented: fenced English content", "InvalidInput: command reading context")
 from .vacuity import search_premise_status_witness
+
+# Lean's diagnostics for a first call without the fences' contents, on which the contents are resolved and sent: an
+# English fence needs Python's parser (until E3), and a command fence the reading context (A2, commands-imperatives
+# CI-2). Lean writes both texts; they select the retry and are never shown.
+_UNRESOLVED = ("NotImplemented: fenced English content", "InvalidInput: command reading context")
 
 
 class SpeechSource:
@@ -158,7 +159,8 @@ def _resolve_fences(meta, fences):
         env = Environment({**meta["environment"], "speech_acts": scope})
     except VEError as exc:
         raise CheckerUnavailable("CheckerUnavailable: Python could not construct Lean's effective speech scope") from exc
-    reading_context = {"lexicon": export(EnglishVocabulary(env, _defer_overlay_refusals=True))}
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True)  # one lexicon for the context and every command
+    reading_context = {"lexicon": export(words)}
     latest = {}
     for reading_set in meta.get("reading_sets", []):
         uid = reading_set["unit"]
@@ -187,7 +189,8 @@ def _resolve_fences(meta, fences):
                 matches = [q["id"] for q in meta.get("queries", []) if q["target"]["ast"] == target]
                 if len(matches) == 1:
                     context["query"] = matches[0]
-            parsed, kind = parse_speech(env, wording, scope, unit=uid, queries=meta.get("queries", []), **context)
+            parsed, kind = parse_speech(env, wording, scope, unit=uid, queries=meta.get("queries", []), words=words,
+                                        **context)
         resolved[uid] = {"ast" if kind == "asserted" else
                          "command" if kind == "instruction" else "question": parsed}
     return resolved, reading_context

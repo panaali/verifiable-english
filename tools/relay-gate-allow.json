@@ -29,7 +29,6 @@
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "duplicate",
    "path": [
-    "*/legend",
     "*/policy/background",
     "*/policy/conflict_targets",
     "*/policy/order",
@@ -45,7 +44,6 @@
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "empty",
    "path": [
-    "*/legend",
     "*/policy/background",
     "*/policy/conflict_targets",
     "*/policy/order",
