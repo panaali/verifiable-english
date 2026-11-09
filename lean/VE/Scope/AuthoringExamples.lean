@@ -123,6 +123,9 @@ def twoReadings := "The rules below are called the x apply only where y."
   ].all (parseGovernor · == none)
 -- sc-7 review F5: a comma inside the section slot
 #guard parseGovernor "Notwithstanding the rules of section 3,4, every operator may share." == none
+-- the section slot's first character is checked too: a comma, or a control character before the number
+#guard ["Notwithstanding the rules of section ,3, every operator may share.",
+  "Notwithstanding the rules of section \x073, every operator may share."].all (parseGovernor · == none)
 -- the other direction: a question that is no "When"/"If" heading is a title, and a "." inside a word stays in a slot
 #guard trip "## Should Claude refuse?" "{\"reach\": {\"anchor\": {\"heading\": \"Should Claude refuse?\", \"level\": 2}}, \"effect\": \"title\"}"
 #guard trip "The hard constraints apply only where the act is in section 3.2." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is in section 3.2\"}]}}"
