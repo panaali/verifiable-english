@@ -640,6 +640,9 @@ def rep25 : Report := { checked := [chk25], bases := [("u12", negNegF.plug rOwne
 #guard !ev m26 (contentOf (claimReading rep26 outer26 b26 .asserted))
 #guard (claimReading rep26 outer26 b26 .assumed).premise == some q26 && !ev m26 q26
 #guard contentOf (claimReading rep26 outer26 b26 .assumed) == carried [(.bare, q26), (.conditioned, pAtom)] b26
+-- an obligation of another unit, recorded conditioned, does not enter this unit's content
+#guard contentOf (claimReading { rep26 with checked := [outer26, inner26, { chk12 with ob := { ob12 with
+  carrier := .conditioned } }] } outer26 b26 .assumed) == carried [(.bare, q26), (.conditioned, pAtom)] b26
 #guard shape (expectedReadings fixtureTable rep26 outer26) == some [(Candidate.assumed, []), (Candidate.conditioned, [])]
 
 -- S27 (R-4, seeded bug 2): other negated frames that are not shallow: no in-place reading and no alias.
@@ -674,6 +677,12 @@ def repRR : Report :=
   some [(Candidate.assumed, []), (Candidate.conditioned, [])]
 #guard (expectedReadings fixtureTable { repRR with baseTree := emptyTree } (chkR "a" "r1" .unresolved pAtom)).isNone
 #guard ruleConditions repRR "r1" == [q26] && ruleConditions repRR "r2" == []
+-- another rule first in the tree, and a condition recorded on it, change nothing on `r1`
+def repR2 : Report :=
+  { checked := repRR.checked ++ [chkR "d" "r2" .conditioned busy], bases := [],
+    baseTree := { emptyTree with nodes := [{ nodeR with name := "r2" }, nodeR] } }
+#guard (expectedReadings fixtureTable repR2 (chkR "a" "r1" .unresolved pAtom)).map (·.map (·.content)) ==
+  some [.rule (conditionNode nodeR q26), .rule (conditionNode (conditionNode nodeR pAtom) q26)]
 
 -- R-D6: restriction paths point at `D` in `strong`; the body `P` sits at `[0, 1, 1]` (definite) and `[1, 0, 1]`
 
