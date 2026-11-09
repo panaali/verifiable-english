@@ -1,0 +1,49 @@
+{
+ "item": "gate-mutant-id-renumber",
+ "language": "Python (no Lean or Rust product code changed)",
+ "how": "each planted in a committed tree, the one test run (it failed), the file restored with git checkout",
+ "seeded_bugs": [
+  {
+   "id": "S1",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases pairs by ID only: every head case is free under one key, the text ignored",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[text-changed]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S2",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases: a kept ID whose text changed consumes no head case",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-id-reused]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S3",
+   "file": "tools/gate.py",
+   "bug": "interpret_pytest does not print the pairing table to the gate log",
+   "test": "tests/test_gate_collection_renumber.py::test_the_gate_logs_the_pairing_table_and_records_it",
+   "result": "1 failed"
+  },
+  {
+   "id": "S4",
+   "file": "tools/gate_collection.py",
+   "bug": "renumbered reads the head's mutant texts from the base's tree",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[inserted-worktree]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S5",
+   "file": "tools/gate_collection.py",
+   "bug": "renumbered gives a case without a text a shared empty text, so an ordinary parametrised test pairs",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-hook]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S6",
+   "file": "tools/gate_collection.py",
+   "bug": "missing pairs IDs a Test-removed trailer already records",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[trailer-first]",
+   "result": "1 failed"
+  }
+ ]
+}
