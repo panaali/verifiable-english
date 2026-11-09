@@ -59,7 +59,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 - **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +139, trusted +148 against da5303b78769, all in Authoring.lean.
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
   docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on b4fa6691a (review
-  F7's fix; later commits change no Lean), rescored on f87dbbb19's allow file: 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, 60
+  F7's fix; later commits change no Lean), rescored on 502511501 (its allow-reason edit): 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, 60
   INVALID, 26 ALLOWED (ill-typed, or one of 3 equivalent), exit 0. F1's full run on 971464587 gave 196 KILLED, 58 INVALID. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
   Earlier runs left 15 survivors; each was closed by a new `#guard` or by giving `attitude` an `Option` degree.
 - **Hand mutants** (`docs/scope/sc-7/mutants.json`): each was planted, `lake build VE.Scope.AuthoringExamples` was run,
@@ -149,7 +149,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   manage-agents FOLLOW-UPS.md sc-7 ties row now says +111/+148 and names `closers`. Trust mutants: full run on b4fa6691a
   (ve-mac-1), 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. `closers` is a string literal with no sweep operator; the
   seeded bugs above kill it. `clause`'s allow reason now cites :38/:39 (the line shift from this fix; the other stale
-  references stay F4's follow-up). Rescored on f87dbbb19: exit 0.
+  references stay F4's follow-up). Rescored on 502511501: exit 0.
 - **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 2810cac86 (ve-cloud-3, 4305 s):
   exit 0, 120 units, 0 failed; `test_scope_authoring.py` and `test_scope_lean.py` among them. `(cd lean && lake
   build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files. `regen_generated.py
