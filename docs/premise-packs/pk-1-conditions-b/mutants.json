@@ -1,0 +1,105 @@
+{
+  "item": "pk-1-conditions-b",
+  "base": "5fc9d8c7f",
+  "mutants": [
+    {
+      "id": "M1",
+      "language": "Lean",
+      "file": "lean/VE/Events/Wire.lean",
+      "behaviour": "eventsPack exports no decision condition (task 3a)",
+      "edits": [
+        {
+          "from": "origins := d.origins, conditions := [] }",
+          "to": "origins := d.origins, conditions := [(.excepted \"x\", .top)] }"
+        }
+      ],
+      "test": "WireExamples.lean eventsPack_conditions (line 294)",
+      "also_fails": "WireExamples.lean #guard (line 295)",
+      "build": {
+        "target": "VE.Events.WireExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/WireExamples.lean:294:80: Type mismatch",
+          "error: VE/Events/WireExamples.lean:295:0: Expression"
+        ]
+      },
+      "restored": true
+    },
+    {
+      "id": "M2",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "the readings route's soft branch builds its LayeredU with packs that state no condition (task 3b)",
+      "edits": [
+        {
+          "from": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],",
+          "to": "wfc, [{ VE.NormDefaults.Wire.softPack U (correlate X) with conditions := [(.excepted \"x\", .top)] }],"
+        }
+      ],
+      "test": "UnspecifiedExamples.lean choiceLayeredG_conditions (line 211)",
+      "build": {
+        "target": "VE.Readings.UnspecifiedExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Readings/UnspecifiedExamples.lean:211:10: Type mismatch"
+        ]
+      },
+      "restored": true,
+      "note": "The soft branch's one pack carries one condition. A second pack appended to the list would break UnspecifiedWire.lean's own X_single proof before the fixture is reached, so the mutant replaces the pack's conditions instead."
+    },
+    {
+      "id": "M3",
+      "language": "Lean",
+      "file": "lean/VE/Service/Document.lean",
+      "behaviour": "a soft document listing events@0 as owned is refused by layeredOf, never a silent case (DRI 2026-11-08 adv1416 item 4)",
+      "edits": [
+        {
+          "from": "requestOf: if layeredRoute environment != some \"soft-norms@0\" || listedProfiles environment contains \"events@0\" then .null",
+          "to": "requestOf: environment with events@0 erased from its profiles; only the layeredRoute test makes .null (events@0 silently dropped)"
+        },
+        {
+          "from": "DocumentChain.lean requestOf_environment and layeredOf_soft proofs",
+          "to": "sorry (this mutant run only, so the fixture module is reached; the proofs fail first otherwise: DocumentChain.lean:25, :39, :54)"
+        }
+      ],
+      "test": "RouteExamples.lean #guard line 409 (layeredCase owned lists: toOption.isNone)",
+      "also_fails": "RouteExamples.lean #guard lines 410, 412 (this item) and 383-385 (et-4b's requestIsNull)",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:383:0: Expression",
+          "error: VE/Events/RouteExamples.lean:384:0: Expression",
+          "error: VE/Events/RouteExamples.lean:385:0: Expression",
+          "error: VE/Events/RouteExamples.lean:409:0: Expression",
+          "error: VE/Events/RouteExamples.lean:410:0: Expression",
+          "error: VE/Events/RouteExamples.lean:412:0: Expression"
+        ]
+      },
+      "restored": true
+    },
+    {
+      "id": "M4",
+      "language": "Lean",
+      "file": "lean/VE/Events/RouteExamples.lean",
+      "behaviour": "the owned-case fixture reaches requestOf's null path (it keeps events@0 on the Env it passes to layeredOf)",
+      "edits": [
+        {
+          "from": "layeredCase: profiles := listed",
+          "to": "layeredCase: profiles := listed.erase \"events@0\" (json and profiles)"
+        }
+      ],
+      "test": "RouteExamples.lean #guard line 409",
+      "also_fails": "RouteExamples.lean #guard line 412",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:409:0: Expression",
+          "error: VE/Events/RouteExamples.lean:412:0: Expression"
+        ]
+      },
+      "restored": true
+    }
+  ]
+}
