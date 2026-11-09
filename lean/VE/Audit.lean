@@ -1924,8 +1924,6 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
-#print axioms VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b
-#print axioms VE.Commands.RunSplit.typed_facts_are_ci1s
 #print axioms VE.Commands.after_eq
 #print axioms VE.Commands.bind_condition
 #print axioms VE.Commands.candidate_fills
@@ -1992,7 +1990,9 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.readCommand_typed
 #print axioms VE.Commands.readCommand_typed_of_facts
 #print axioms VE.Commands.readInstruction_command
+#print axioms VE.Commands.readInstruction_refused_classed
 #print axioms VE.Commands.readInstruction_refused_classed_of
+#print axioms VE.Commands.readInstruction_typed
 #print axioms VE.Commands.readInstruction_typed_of_facts
 #print axioms VE.Commands.readStep_combine
 #print axioms VE.Commands.readStep_one
@@ -8535,6 +8535,7 @@ import VE.WireContract.Engine
 #print axioms VE.SpeechActs.Source.SpeechSource.metadata_eq
 #print axioms VE.SpeechActs.Source.SpeechSource.source_eq
 #print axioms VE.SpeechActs.Source.answers_sound
+#print axioms VE.SpeechActs.Source.commandFence_needs_context
 #print axioms VE.SpeechActs.Source.coverage_partition
 #print axioms VE.SpeechActs.Source.external_records_sound
 #print axioms VE.SpeechActs.Source.gap_records_sound
