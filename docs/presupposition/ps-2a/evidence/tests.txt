@@ -1,0 +1,37 @@
+# ps-2a evidence extract (commands and their last lines).
+
+## statement probe (script: evidence/probe.py): each Wire.lean declaration against the PS-S stub's 4.7 section (SpecStubs_presupposition.lean, Carrier .. before stmt_admit_regenerates) and spec 4.7's lean blocks (presupposition.md:841-1069); comments stripped, whitespace-normalised
+declarations 39 in stub 39 differing from stub ['candidateTable']
+in spec 4.7 blocks 39 differing from spec ['candidateTable']
+not in stub: [] stub 4.7 names not in Wire.lean: ['stmt_candidates_ruleAct']
+
+## uv run python tools/check_lean_imports.py
+Lean layer graph kept (790 modules, 18 reviewed legacy edges)
+
+## grep -c '^#guard' lean/VE/Presupposition/Examples.lean (main: 213)
+251
+
+## hand mutants (mutants.json): each find/replace applied alone, one lake build VE.Presupposition.Examples, file restored
+37 Lean mutants (Wire.lean, generated Table.lean), 37 with a failing location, 0 survivors; 2 Python (tools/presupposition_table.py), each failing one test of tests/test_presupposition_table.py
+first run: 33 KILLED, 3 SURVIVED (L-expectedReadings-rule, L-claimReading-unit, L-ruleReading-rule); the guards at Examples.lean:645-647 and :682-687 kill them
+
+## uv run python tools/presupposition_table.py --check
+PASS: candidateTable is PS-E1's table
+
+## uv run pytest -q tests/test_presupposition_table.py
+6 passed
+
+## uv run python tools/regen_generated.py --write --skip route-cases (exit 0; route-cases reads no presupposition file)
+regen_generated: wrote 37 entries
+
+## python3 lean/audit.py
+PASS: 791 source files; 8746 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+## uv run python tools/trust_map.py --check (exit 0)
+against 098dbe6886d6: K +0, S +74, D +25, G +18, tied +0, unclassified +0, trusted +117
+PASS: K, S and untied [V] within 098dbe6886d6 and the allowances introduced since
+
+## mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/presupposition/ps-2a/trust-mutants.json --test lean/VE/Presupposition/Examples.lean [--allow docs/presupposition/ps-2a/trust-mutants-allow.json --rescore docs/presupposition/ps-2a/trust-mutants.json]
+first run (bd818c4d, no allow file): 171 KILLED, 16 SURVIVOR, 21 UNKNOWN, 36 INVALID, exit 1
+rescore (fixtures at Examples.lean:714-730, allow file): trust_mutants: 186 KILLED, 0 SURVIVOR, 0 UNKNOWN, 36 INVALID, 22 ALLOWED, 0 NOT RUN in 921 s; 176 carried from bd818c4d85d6; exit 0
+(INVALID: Lean refused the mutant's own text, e.g. `Option.take`)
