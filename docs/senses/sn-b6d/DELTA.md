@@ -1,0 +1,13 @@
+# sn-b6d DELTA (senses.read: the re-read of a rendering, Lean's line for a word and gloss)
+
+Base: the merge base with main, `9ba8aeaed`. Only `senses.read` route answers (`ve_senses_route`) to source requests
+that ask for the new members change; a request without them keeps its answer byte for byte, and the document mode's
+call of the reader and `senses.project` do not change. Nothing is removed or renamed. Every added field is Lean's
+(`lean/VE/Senses/Run.lean` `rereadJson`, `lineJson`), typed and bound by the relay (`ve/backends/senses.py`;
+reviews/dri-decisions-20261108-sn-b6c.md items 1 and 3).
+
+| # | Delta | Evidence | Ruling |
+|---|---|---|---|
+| 1 | A source request may carry `reread` `{sentence, candidate, rendering}`; an admitted reading then gains `reread` `{sentence, candidate, outcome}`, `outcome` Lean's `same` / `different` / `unknown` (budget) for the rendering read under that candidate's projection. A rendering that does not lex to one sentence, or a unit or candidate the answer does not have, is Lean's `InvalidInput`. Bound: the unit and candidate are the request's and the answer's | `tests/test_senses_read_members.py::test_each_candidate_rereads_under_its_own_projection` (7), `::test_a_base_projection_rendering_is_refused`, `::test_the_reread_is_unknown_when_its_budget_ends`, `::test_a_rendering_that_is_not_one_sentence_is_refused_by_lean`, `::test_a_golden_request_without_the_members_keeps_its_answer` (9 goldens, main's digests), `::test_the_members_only_add_to_the_answer`, `::test_reread_rebinding_is_refused` (6), `::test_an_unasked_reread_is_refused`; `#guard`s in `lean/VE/Senses/TextsExamples.lean` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 2 | A source request may carry `line` `{word, gloss}`; the result then gains `line` `{word, gloss, text}` with Lean's `In this document, <word> means <gloss>.` (`lineOf`), or `{word, gloss, code}` with `UnknownWord` / `UnknownGloss`. Bound: the word and gloss are the request's, a `text` names a sense of the request's dictionary and a `code` none | `::test_the_line_is_leans`, `::test_line_rebinding_is_refused` (6), `::test_a_line_is_there_exactly_when_asked` (2); a `#guard` per slot in `TextsExamples.lean` | SIGNED by standing ruling R3 (DRI-RULINGS.md) |
+| 3 | Trusted Lean growth V +41, K +0, S +0 over `9ba8aeaed`: `lean/VE/Senses/Run.lean` +41 (G[V] `rereadJson` and the `readCase` wiring of both members; `lineJson` is G[R]) | `uv run python tools/trust_map.py --check` (PASS, "allowed V +41"); `docs/senses/sn-b6d/trust-mutants.json`; FOLLOW-UPS.md "## sn-b6d" | SIGNED by standing ruling R16 (DRI-RULINGS.md) |
