@@ -222,6 +222,28 @@ theorem TRel.checkW1 (hT : TypesAt Q L f E r)
     · rw [hrl]
       exact ⟨Or.inr ⟨_, rfl, ⟨"AST exceeds 10,000 nodes", by decide⟩⟩, fun h' => by cases h'⟩
 
+theorem TRel.check (hP : ∀ p a b, Q p a b → (VE.Norms.preds b).filter (keepOf r d) = (VE.Norms.preds a).filter (keepOf r d))
+    (hA : VE.Norms.check ⟨E, lits, ⟨r, d, L.map f⟩⟩ = .ok ()) (hR : RulesOK ⟨E, lits, ⟨r, d, L.map f'⟩⟩) :
+    VE.Norms.check ⟨E, lits, ⟨r, d, L.map f'⟩⟩ = .ok () := by
+  rw [VE.NormDefaults.check_iff] at hA ⊢
+  obtain ⟨c1, c2, c3, c4, c5, c6, -, c8, c9, c10, c11⟩ := hA
+  refine ⟨c1, c2, c3, c4, c5, by simpa using c6, hR, ?_, ?_, ?_, ?_⟩
+  · intro N hN m hm
+    obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hN
+    rw [h.over] at hm
+    obtain ⟨M, hM, hMp⟩ := c8 (f x) (List.mem_map_of_mem hx) m hm
+    simp only [List.find?_map, Option.map_eq_some_iff, Function.comp_def] at hM ⊢
+    obtain ⟨y, hy, rfl⟩ := hM
+    refine ⟨f' y, ⟨y, by simpa only [h.name] using hy, rfl⟩, ?_⟩
+    rw [h.pred, h.pred, hMp]
+  · simp only [h.precedenceNodes]; exact c9
+  · intro N hN
+    obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hN
+    simp only [List.length_map] at c10 ⊢
+    rw [h.height]
+    simpa using c10 (f x) (List.mem_map_of_mem hx)
+  · simp only [h.dependencyOrder r d hP]; exact c11
+
 end Transfer
 
 end VE.RightClauses.PWF
