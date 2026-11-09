@@ -30,27 +30,9 @@ def test_rd9_statements_match_the_approved_text_with_nothing_unbuilt(capsys):
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
-    assert "unbuilt" not in out
-    assert all(not section[5] for section in checker.SECTIONS if section[0].split()[0] != "SC-11")
+    assert "unbuilt" not in out and "not built yet" not in out
+    assert all(not section[5] for section in checker.SECTIONS)
     assert "softX_wellFormed" in {name for _, name in checker.approved_block("### 6.4", "### 6.5")}
-
-
-# SC-11's declarations moved to sc-11c by the size rule (docs/rd-9/sc-11/REPORT.md); the set can only shrink.
-SC11_LATER = {
-    "SC-11 labels": {"labelImage_functional", "supLabel_pull", "supLabel_other"},
-    "SC-11 wire": {"SupReplaySD", "readings_wire_sd_choices", "readings_wire_sd_conflict_sound",
-                   "readings_wire_sd_all_sound", "readings_wire_sd_model_sound", "readings_wire_sd_consistent_sound",
-                   "readings_wire_sd_witness_sound"},
-}
-
-
-def test_sc11_not_built_is_exactly_sc11cs_set(capsys):
-    checker = _checker()
-    assert checker.main() == 0
-    out = capsys.readouterr().out
-    assert {s[0]: s[5] for s in checker.SECTIONS if s[0] in SC11_LATER} == SC11_LATER
-    for later in SC11_LATER.values():
-        assert f"SC-11 not built yet: {', '.join(sorted(later))}" in out
 
 
 def test_every_built_batch_block_is_compared():
@@ -88,7 +70,8 @@ def _mutated_sections(checker, tmp_path, section_index, name):
     (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
     (5, "readings_wire_sd_verdicts_inconsistent"), (7, "sd_superpose_conflict_free"), (7, "supX_pull"),
     (7, "sd_superpose_all"), (7, "sd_superpose_countermodel"), (8, "labelImage_fst"), (8, "sdShown_image"),
-    (8, "fillLabels_choice"), (9, "routeSD_superposed_iff"), (9, "sdCheck_of_admitted"),
+    (8, "fillLabels_choice"), (8, "labelImage_functional"), (8, "supLabel_pull"), (8, "supLabel_other"),
+    (9, "routeSD_superposed_iff"), (9, "sdCheck_of_admitted"), (9, "readings_wire_sd_witness_sound"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()
