@@ -15,13 +15,28 @@ There is no ci-3b follow-up item. No route calls `readStep`, so no verdict, word
 DELTA row: the item adds theorems only. Trust growth is `splitOnL` (V +12), under R16
 (reviews/dri-decisions-20261109-ci-3b.md item 2). Next item: ci-4, after ci-3.
 
+## Review fix (ci-3b-review.final.md, review of 5f4760e2c)
+
+One finding, F1 (A, wording-only overclaim), fixed in 0bdf509e8. There is no B finding. C1-C4 are follow-ups for the
+DRI and are not changed here, except that the StepsProofs line numbers above and in `mutants.json` now point at the
+new lines.
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1: the module comment said ConditionScope "never fires" for `If <c>, <x>.`, but that holds only for the wording's only shape | The module comment, `shapes_preposed` and `hasThen_preposed` now state the one-shape condition (`shapes s = [.preposed c x]`, `preposed_eq`'s `h`). A `#guard` (StepsProofs.lean:676-682) pins the two-shape counterexample: the first `<x>` holds `, then ` and the step is ConditionScope. The REPORT's lemma list states the same condition | `tests/test_commands_ci3b_review.py` (both tests); the `#guard` under `lake build`; seeds S8 and S9 | 0bdf509e8 |
+
+- PROBE F1 exits 1 on 5f4760e2c and 0 after the fix.
+- The class: every StepsProofs doc comment that claims `<x>` is one piece of the split, holds no `, then `, or
+  escapes ConditionScope must name the hypothesis. The test scans all of them, not only line 7.
+- No DELTA row: the change is comments, a `#guard` and evidence. Nothing calls `readStep`.
+
 ## Plan rows delivered (spec 9a12df17a section 7; plan CI-3; task deliverables)
 
 | Deliverable | Commit | Evidence |
 |---|---|---|
 | (1) SplitOnLemmas.lean: splitOn and intercalate lemmas for a multi-character separator, with `#guard`s | 7116b078a, 469f86398, 93b8395cd | `lake build` PASS; `#guard`s at SplitOnLemmas.lean:295-304 |
-| (2) `preposed_eq` (with `hb`) | 7116b078a | StepsProofs.lean `preposed_eq`; `hb` fixture (`let p`) at :665-669 |
-| (2) `readStep_conservative` | 469f86398 | StepsProofs.lean `readStep_conservative`; the conservative `#guard` at :659-661 |
+| (2) `preposed_eq` (with `hb`) | 7116b078a | StepsProofs.lean `preposed_eq`; `hb` fixture (`let p`) at :670-674 |
+| (2) `readStep_conservative` | 469f86398 | StepsProofs.lean `readStep_conservative`; the conservative `#guard` at :664-666 |
 | (2) answer "Does W1's act linter make `hs` unnecessary?" | this REPORT | below |
 | (3) lean/VE.lean import; tools/layer_policy.py layer 4 | 7116b078a | `python3 tools/check_lean_imports.py` exit 0 (S4 shows that it can fail) |
 | (3) generated inventories (R12) | 5976ca50c | `uv run python tools/regen_generated.py --write` rc=0 |
@@ -54,7 +69,8 @@ left in place because their files are outside this item.
 
 ### StepsProofs.lean
 
-- `preposed_eq` uses three lemmas:
+- `preposed_eq` uses three lemmas, the first two under its `h` (`If <c>, <x>.` is the wording's only shape,
+  `shapes s = [.preposed c x]`):
   - `shapes_preposed`: `<x>` is a piece of the split at `, `;
   - `hasThen_preposed`: `<x>.` holds no `, then `;
   - `trimmed_infix`.
@@ -71,12 +87,14 @@ left in place because their files are outside this item.
   - `decode_templates` and `templates_act`: `slotsApart` holds for the act (`checkTemplates`).
   - `filled_word`: `fillHoles` copies the verb unchanged, and `slotsApart` refuses a slot attached to a letter, so the
     filled text begins `if `/`then ` only if the verb is `if`/`then`. The linter refuses that verb.
-- Fixtures (:652-669):
+- Fixtures (:657-682):
   - the rewritten wording "Click Ask, if draft is approved.";
   - `hasThen`;
   - the merged shape;
   - a conservative row over `E_web`;
-  - `hb`'s counterexample.
+  - `hb`'s counterexample;
+  - `h`'s counterexample (review F1): with two `If` shapes the first `<x>` holds `, then ` and the step is
+    `ConditionScope`.
 - The module defines no `def`: the `hb` fixture is a `let` inside its `#guard`.
 
 ### Statement comparison
@@ -91,7 +109,7 @@ snippet: it cuts `theorem <name> ` up to the first blank line or `:=` in the spe
 The one addition, in `preposed_eq` after `h`: `(hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes)`. SIGNED by the DRI
 2026-11-09, reviews/dri-decisions-20261109-ci-3a-wording.md item 1. `readStep_conservative` does not need it.
 
-`hb` is needed. The counterexample is mechanised in the `#guard`s at StepsProofs.lean:665-669:
+`hb` is needed. The counterexample is mechanised in the `#guard`s at StepsProofs.lean:670-674:
 - "If draft is approved," ++ 390 spaces ++ "click Ask." has the shape `.preposed "draft is approved" (389 spaces ++ "click Ask")`.
 - Its trimmed form is over `maxWordingBytes`, so `step` gives `.limit`.
 - `web` of the rewritten wording gives `.one ⟨.require, "click_ask_required", [], approvedDraft⟩`, because
@@ -128,7 +146,7 @@ act `{0} then{1}` passes `canonicalAct`. With a definite whose text begins with 
 Each was planted, shown failing, and restored. Lines are on the final HEAD.
 
 1. **S1 (Lean, `preposed_eq` fixture):** `capitalise` lower-cases the first letter in `lean/VE/Commands/Steps.lean:24`.
-   - StepsProofs.lean:655 fails. This was shown with `lake env lean` on a copy without the `E_web` fixtures, because
+   - StepsProofs.lean:660 fails. This was shown with `lake env lean` on a copy without the `E_web` fixtures, because
      StepsProofs imports StepsExamples and StepsExamples.lean:40 fails first.
 2. **S2 (Lean, splitOn `#guard`):** the separator `", then "` is shortened to `", "` at SplitOnLemmas.lean:298. That
    line fails.
@@ -138,18 +156,26 @@ Each was planted, shown failing, and restored. Lines are on the final HEAD.
    `python3 tools/check_lean_imports.py` exits 1 with "new outward Lean import: VE.Commands.StepsProofs ->
    VE.Commands.Steps". Restored, it exits 0.
 5. **S5 (Lean, conservative):** in Steps.lean:40, `shapes` makes an `after` shape for a body that begins `C`.
-   - `readStep_core` fails at StepsProofs.lean:575 and `shapes_preposed` at :60.
+   - `readStep_core` fails at StepsProofs.lean:580 and `shapes_preposed` at :64.
    - StepsExamples.lean 43, 45, 50, 57, 58, 77, 163 and 185 fail.
 6. **S6 (Lean, act linter):** `actVerb` accepts a slot as its verb (`lean/VE/SpeechActs/Wire.lean:943`).
-   - `verb_head` fails at StepsProofs.lean:327 (shown on a copy without fixtures).
+   - `verb_head` fails at StepsProofs.lean:332 (shown on a copy without fixtures).
    - Examples.lean:288 fails.
 7. **S7 (Lean, act linter):** `checkTemplates` without its `slotsApart` test (Wire.lean:225). `templates_act` fails at
-   StepsProofs.lean:403 and :407.
+   StepsProofs.lean:408 and :412.
+8. **S8 (Lean, review F1):** `shapeOutcome` no longer refuses a preposed `<x>` that holds `, then `
+   (Steps.lean:86, `if false then conditionScope`). StepsExamples.lean:70 fails; with that guard commented out,
+   StepsProofs.lean:678 (the two-shape counterexample) fails.
+9. **S9 (comment, review F1):** StepsProofs.lean's comments as at 5f4760e2c. Both tests of
+   tests/test_commands_ci3b_review.py fail.
 
 The trust-mutants sweep was run with `mac-pytest.sh --trustmut -- --max-mutants 1000`.
 - `trust-mutants-full.json`: 15 KILLED, 11 UNKNOWN, 1 INVALID.
-- With `trust-mutants-allow.json`, `--rescore` on the final table gives `trust-mutants.json`: 15 KILLED, 11 ALLOWED,
-  1 INVALID, 0 SURVIVOR, exit 0.
+- With `trust-mutants-allow.json`, `--rescore` on the final table gave 15 KILLED, 11 ALLOWED, 1 INVALID,
+  0 SURVIVOR, exit 0 (at 17e6b4e3b).
+- After the review fix, which is the final Lean change, a full run (no `--rescore`) with
+  `--allow trust-mutants-allow.json` on 0bdf509e8 gives `trust-mutants.json`: 15 KILLED, 11 ALLOWED, 1 INVALID,
+  0 SURVIVOR, 0 UNKNOWN, 0 NOT RUN, exit 0. It ran in the cloud pool as four merged shards (`shards`).
 - Lean refuses the text of every allowed mutant. Nine break `splitOnL`'s own termination proof (`decreasing_by`,
   SplitOnLemmas.lean:26), and the two `<` mutants split the `<+:` token.
 
@@ -189,7 +215,7 @@ The trust-mutants sweep was run with `mac-pytest.sh --trustmut -- --max-mutants 
 1. Lean answers typed and contained: N.A. No relayed route or response field changes; the item is proofs only.
 2. Every deliverable built: PASS. The plan-row table above gives a commit per row, and the DRI decisions cover the cut
    question. The rule-break grep found no Python copy, no new report test and no authority switch. Overlap is listed.
-3. Tests can fail: PASS. Seeds S1-S7 (mutants.json). The trust-mutants sweep exits 0 (trust-mutants.json); `splitOnL`'s
+3. Tests can fail: PASS. Seeds S1-S9 (mutants.json). The trust-mutants sweep exits 0 (trust-mutants.json); `splitOnL`'s
    mutant S3 is killed by the `#guard`s at SplitOnLemmas.lean:303-304.
 4. Python, Lean and Rust agree: N.A. No product behaviour changes; `readStep` has no caller.
 5. R8 binding: N.A. No relayed field.
@@ -202,7 +228,7 @@ The trust-mutants sweep was run with `mac-pytest.sh --trustmut -- --max-mutants 
    generated inventories changed. The two classification tests it selected failed as they should, and pass after
    ec76949a9.
 10. Lean statements say what is claimed: PASS. The statement comparison is above. `hb` has its mechanised
-    counterexample (StepsProofs.lean:665-669). Seeds S5-S7 break the proofs.
+    counterexample (StepsProofs.lean:670-674). Seeds S5-S7 break the proofs.
 11. Budgets fail closed: N.A. No evaluator or limit is added. `preposed_eq` keeps `readStep`'s byte charge (`hb`).
 12. No CPU or memory regression: N.A. No runtime code changes.
 13. Test-removed trailers: PASS. `gate_collection.py --check --prebuilt` reports 0 removed and 0 malformed.
