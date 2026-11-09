@@ -1,0 +1,105 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded proc-macro2 v1.0.107
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded serde_derive v1.0.229
+  Downloaded num-integer v0.1.47
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+  Downloaded num-bigint v0.4.8
+  Downloaded cfg-if v1.0.5
+  Downloaded sha2 v0.10.9
+  Downloaded quote v1.0.47
+  Downloaded block-buffer v0.10.4
+  Downloaded unicode-ident v1.0.26
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded num-traits v0.2.19
+  Downloaded crypto-common v0.1.7
+  Downloaded digest v0.10.7
+  Downloaded serde_core v1.0.229
+  Downloaded zmij v1.0.23
+  Downloaded memchr v2.8.3
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.34s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling serde_json v1.0.151
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.31s
+recording 10 units with 4 jobs in /var/tmp/cct/ve-testmap-1ec25018885d789c69cd774e147c7b4dc46f7e03
+  tests/test_gen_inv_design.py: exit 0 in 4.0 s, 215 functions
+  tests/test_lean_first_b13b.py: exit 0 in 2.7 s, 657 functions
+  tests/test_nested_pytest.py: exit 0 in 21.2 s, 731 functions
+  tests/test_answer_cutoff.py: exit 0 in 32.5 s, 559 functions, OPAQUE
+  tests/test_inventory_path.py: exit 0 in 41.3 s, 289 functions
+  tests/test_history_tests.py: exit 0 in 50.0 s, 338 functions
+  tests/test_regen_generated.py: exit 0 in 41.5 s, 793 functions
+  tools/test_layer_policy.py: exit 0 in 88.5 s, 251 functions
+  tests/test_trust_mutants_probe_scope.py: exit 0 in 226.5 s, 431 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 469.6 s, 3757 functions
+wrote /tmp/ccrt/out/map-s1.json.gz (56 KiB); recorded 10 units; 0 failed and are left to the static graph: []
