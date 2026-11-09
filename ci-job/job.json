@@ -1,0 +1,12 @@
+{
+ "job": "testmap-1531891a-t248043-s0",
+ "head": "531f4754dea6d66c57d7ab86827f696ca6ca856d",
+ "argv": [
+  "testmap-1531891a-t248043-s0",
+  "531f4754dea6d66c57d7ab86827f696ca6ca856d",
+  "531f4754dea6d66c57d7ab86827f696ca6ca856d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-db81ea96615c.tar.zst",
+  "077d8ab5d3566c8dc7c41d1fc099999b74bac26b2e4a82310d9dc151bad8edd7",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_lean_document_wrapper.py tests/test_assist.py tests/test_scope_answer.py tests/test_asimov_extended.py tests/test_assist_recovery_replay.py tests/test_question_reading.py tests/test_readings_verdicts_lean.py tests/test_norm_defaults_three_way.py tests/test_readings_nd_document.py tests/test_grammar.py tests/test_discourse_lean.py tests/test_cardinality_answer.py tests/test_test_schedule.py tests/test_since_pass.py tests/test_cmp_s4_evaluate_once.py tests/test_speech_source_relay.py tests/test_closure_induction.py tests/test_stage2_graph.py tests/test_b17_evidence.py tests/test_relay_lint.py tests/test_readings_s1_lean.py tests/test_senses_packs.py tests/test_reports.py tests/test_batch_scope.py tests/test_lean_first_diff_cache.py tests/test_risk_lean_route.py tests/test_source_words.py tests/test_acts_joined_route.py tests/test_norm_defaults_layered.py tests/test_cardinality_exercised.py tests/test_rust_jsonl_schema.py tests/test_stage2_bundle.py tests/test_english_e26_diagnosis.py tests/test_wire_contract_s4_lean.py tests/test_judgments_document.py tests/test_lean_first_b13b.py tests/test_discourse_constitution.py tests/test_b17_owner.py tests/test_background.py tests/test_metered_answer.py tests/test_statement_block_environment.py tests/test_question_lean_relay.py tests/test_reports_wants.py tests/test_english_lean_s0.py tests/test_me_2d_f2_delta.py tests/test_norms.py tests/test_architecture_docs.py tests/test_stage2_dispatch.py tests/test_gate_rerun.py tests/test_select_fast_stage.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
