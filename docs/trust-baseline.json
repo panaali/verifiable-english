@@ -2350,6 +2350,27 @@
    "reason": "cmp-s3a-cfr-2: lean/VE/RightClauses/Plain.lean S +11 (entryError, classed S beside checkEntry); Examples.lean fixtures twice, twoHolders, across classed T; K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18",
    "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 13,
+   "reason": "sn-b6-f8-written (DRI reviews/dri-decisions-20261109-sn-b6-f8-written.md item 1, from sn-b6-f8-trust): reclassification only, no Lean definition change; VE/Senses/Run.lean +13 V (Projection.written +8, SensesOutcome.written +5 moved from G[I] to G[V]: they write the request's profile list into the projection environment senses.project and senses.read return, and admittedIds reads it); K +0, S +0; trusted +13. FOLLOW-UP: a ties pass binding these lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6-f8-written, 2026-11-09",
+   "commit": "223babd3d047fbd14cf5ddd01fdd5dd2ba9ba9a6"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "ci-2b: VE/SpeechActs/Source/Run.lean V +25 (readSource: the A2 re-read of every resolved command fence and the fence charge against maxCases; decodeSpeechSource: the A2 reading-context check; hasCommandFence, hasContext, commandContext and readingContextText are D[R]/G[R])",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2b, 2026-11-09",
+   "commit": "63b2b596f79a2675139900b9a02b00296e7f415d"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "ci-2b F1: VE/SpeechActs/Source/Run.lean V +7 (readSource: every resolved fence must decode to the role its kind reads, Wire.roleFits; kindTag, Role.tag and roleFits are D[R]); ci-2b total untied V +32, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-2b F1, 2026-11-09",
+   "commit": "63b2b596f79a2675139900b9a02b00296e7f415d"
   }
  ]
 }
