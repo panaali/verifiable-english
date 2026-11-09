@@ -1268,11 +1268,15 @@ def family_test(unit: str, changed) -> bool:
     return False
 
 
-def unit_text(unit: str) -> str:
+def unit_text(unit: str, root: Path = ROOT) -> str:
+    """What `names_changed_lean` reads of a unit: its source, then each path its source builds by a join of
+    literal parts (history_tests.built_paths: `ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`, `os.path.join`,
+    `Path(a, b)`, `.joinpath`, `+`), one per line, so a module named in pieces is named as one path."""
     try:
-        return (ROOT / unit).read_text(encoding="utf-8", errors="replace")
+        source = (root / unit).read_text(encoding="utf-8", errors="replace")
     except OSError:
         return ""
+    return "\n".join([source, *sorted(history_tests.built_paths(unit, root))])
 
 
 def deferral(unit: str, reasons: list[str], plan: dict, shares: dict[str, float] | None, text) -> str | None:
