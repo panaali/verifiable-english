@@ -1,0 +1,9 @@
+trust_mutants: 4 definitions, 153 mutants (19 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Acts/Specialise.lean:33 VE.Acts.declaredOnce (G[V], trusted) list-empty: [r] -> [] (lean/VE/Acts/Specialise.lean:33: Unknown identifier `r`)
+UNKNOWN lean/VE/Acts/Specialise.lean:41 VE.Acts.specPremises (S, trusted) list-empty: ds -> [] (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+SURVIVOR lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-first: let ds := acts.filterMap fun p => (declaredOnce E p.1).map (·, p.2) ds.flatMap fun x => ds.filter... -> ((let ds := acts.filterMap fun p => (declaredOnce E p.1).map (·, p.2) ds.flatMap fun x => ds.filt... (the proofs it breaks: lean/VE/Acts/Specialise.lean:84)
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-last: (declaredOnce E p.1).map (·, p.2) -> (((declaredOnce E p.1).map (·, p.2)).reverse.take 1) (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+trust_mutants: 12 KILLED, 1 SURVIVOR, 3 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 123 s
+trust_mutants: G[V], trusted: 2 KILLED, 1 UNKNOWN, 1 INVALID, 10 OTHER SHARD
+trust_mutants: S, trusted: 10 KILLED, 1 SURVIVOR, 2 UNKNOWN, 2 INVALID, 124 OTHER SHARD
+trust_mutants: steps: wall plan 6.4 s, scratch 2.9 s, control_build 0.1 s, probe_install 0.9 s, mutants 106.9 s, cleanup 5.3 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 7.5 s (4), mutant_builds 29.3 s (31), mutant_checks 231.9 s (20), stage_controls 87.1 s (7), mutant_probes 29.6 s (12)
