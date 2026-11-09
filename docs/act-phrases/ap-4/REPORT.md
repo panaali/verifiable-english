@@ -63,9 +63,12 @@ every route, as on the base.
 6. **Binding beyond spec 7's list**, all of R8's "no row is empty": a reading needs acts and a paraphrase, an act needs
    text and tokens, no act twice in a reading, a refusal needs a diagnostic, token spans only with `LISTED`. The
    64-reading bound is the schema's (`maxItems` = `VE.Acts.maxReadings`), so Python holds no copy of it.
-7. **`ve/backends/lean_service.py` and `tools/relay_lint.py`, `tools/layer_policy.py`** are touched beyond the task's
-   file list: the mode's deadline (recipe step 4), the relay lint's module list and the layer map (`ve.acts` in layer
-   4, which the import contract requires).
+7. **Files beyond the task's list**, each a registration a new mode or module needs: `ve/backends/lean_service.py`
+   (the deadline, recipe step 4), `tools/relay_lint.py`, `tools/layer_policy.py` and `docs/ARCHITECTURE-LAYERS.md`
+   (`ve.acts` in layer 4, RunExamples a layer-4 fixture), `tools/relay_mutation_gate.py` (the reader),
+   `tests/lean_service_corpus.py`, `tests/test_lean_service.py` (a schema seed), `tests/test_route_row_schemas.py`,
+   `ve/assurance-manifest.json`, `lean/VE/Service/RegistryExamples.lean` and the recorded fixtures
+   (`route-cases.jsonl`, `relay-gate-cases.jsonl`, `binding-answers.jsonl.gz`).
 
 ## Cost at the limits (DRI 2026-11-09, option A)
 
@@ -136,7 +139,26 @@ UNKNOWN, 4 INVALID, 7 ALLOWED, exit 0**, 163 s (`--rescore` of the first run, wh
 - `uv run python tools/regen_generated.py --write`: "wrote 37 entries" (the first run stopped at `import-contract`:
   `ve.acts` unmapped, fixed in `tools/layer_policy.py`).
 - `uv run python tools/lean_statements.py`: "removed: 0, changed: 0" (no approved statement changed).
-- Selected tests: see "Selected tests" below.
+- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): the selector picks 555 of
+  555 units, because every service test reads `lean/checkers.lock` and `envelope.json`, which a new mode changes
+  (`select_tests.py --explain`). First run (ve-cloud-2) stopped at `check_lean_imports.py` ("new outward Lean import:
+  VE.Acts.RunExamples -> VE.Acts.Run"): fixed by listing RunExamples with the layer-4 runner fixtures. Second run
+  (ve-cloud-3, 6082 s): "recorded 161 units …; 4 failed", then `--maxfail 5` left 394 units unrun. The four:
+  `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (RunExamples' `other_json` reason),
+  `test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder` (`seed_bugs.py` now builds its pytest
+  command with `nested_pytest`), `test_relay_mutation_gate.py::test_every_route_has_fixtures` and
+  `::test_the_gate_passes_on_every_route[service:act-readings]` (the route's fixtures and its reader
+  `ve.acts.read_answer`), `test_shape_binding_mutants.py::…[act-readings]` (the five answers recorded with
+  `binding_census.py --answers`, keeping every other mode's committed answers; census rewritten). Then the five ids
+  and the 393 unrun test files on ve-mac-1: "1 failed, 11044 passed, 7 skipped, 83 xfailed" in 645 s, the failure
+  `test_lean_service.py::test_random_malformed_responses_never_escape_schema` (no `_SCHEMA_SEEDS` row for the mode;
+  added, all 11 mutations run for it directly), rerun on ve-mac-1: "1 passed", exit 0. The unrun
+  `tools/test_layer_policy.py` failed locally on the undocumented layer of `ve.acts` (`docs/ARCHITECTURE-LAYERS.md`
+  row 4 now lists it): "Ran 49 tests … OK".
+- `uv run python tools/gate_collection.py --check --prebuilt`: "32962 collected, 32928 at da5303b78…; 34 added, 0
+  removed by a trailer, 0 refused, 0 stale and 0 malformed trailers". `regen_generated.py --check`: "checked 37
+  entries", exit 0.
+- Known red on main (`main-known-red.txt`): none of the failures above is listed; each was this branch's and is fixed.
 - Not run: the full release gate (the chain runs it on the final HEAD); Rust tests (no Rust change).
 
 ## Pilot bytes
@@ -184,7 +206,9 @@ code against the ~600 line (tests and guards exempt, the qt-a4 / jt-3b precedent
 6. Gate evidence: PASS for the saved evidence (base from `git merge-base`); the full gate is the chain's.
 7. No unsigned item: PASS, DELTA rows cite DRI item 1 and R16; nothing reserved.
 8. Every user-visible change in DELTA: PASS, the mode and CLI (row 1), trust (row 2); `sources` unchanged (refused).
-9. Test selection: PASS, see "Selected tests" (the selector's run includes both new files).
+9. Test selection: PASS, the selector picks every unit for a stated cause (a new mode changes `checkers.lock` and
+   `envelope.json`, read by every service test: `select_tests.py --explain`), and the run included both new files;
+   seeded bugs fail named tests in that selection (mutants.json).
 10. Lean statements: PASS, `runActReadings_fits` is about `runActReadings`'s own result; plant
     `listReadings-bogus-verdict` breaks it; `lean_statements.py`: 0 changed.
 11. Budgets fail closed: PASS, every limit is `LIMIT` with Lean's text before the work (`test_the_act_phrase_limit_is_400_bytes`,
