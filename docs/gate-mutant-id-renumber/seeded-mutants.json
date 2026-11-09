@@ -1,0 +1,106 @@
+{
+ "item": "gate-mutant-id-renumber",
+ "language": "Python (no Lean or Rust product code changed)",
+ "how": "each planted in a committed tree, the one test run (it failed), the file restored with git checkout",
+ "seeded_bugs": [
+  {
+   "id": "S1",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases pairs by ID only: every head case is free under one key, the text ignored",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[text-changed]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S2",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases: a kept ID whose text changed consumes no head case",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-id-reused]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S3",
+   "file": "tools/gate.py",
+   "bug": "interpret_pytest does not print the pairing table to the gate log",
+   "test": "tests/test_gate_collection_renumber.py::test_the_gate_logs_the_pairing_table_and_records_it",
+   "result": "1 failed"
+  },
+  {
+   "id": "S4",
+   "file": "tools/gate_collection.py",
+   "bug": "renumbered reads the head's mutant texts from the base's tree",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[inserted-worktree]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S5",
+   "file": "tools/gate_collection.py",
+   "bug": "renumbered gives a case without a text a shared empty text, so an ordinary parametrised test pairs",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-hook]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S6",
+   "file": "tools/gate_collection.py",
+   "bug": "missing pairs IDs a Test-removed trailer already records",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[trailer-first]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S7",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases pairs nothing in a function once any base text is gone (the review's F1 rule)",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[text-changed] tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[case-deleted]",
+   "result": "2 failed"
+  },
+  {
+   "id": "S8",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases matches the base cases in ID order, not the kept IDs first",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-first]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S9",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases lets a head case with no text (None) be claimed",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text]",
+   "result": "1 failed",
+   "note": "superseded at F5 (e7e5f6fcf): the filter is removed as dead code and the [no-text] row is replaced; a None at a kept ID now returns {} first (S12, S13)"
+  },
+  {
+   "id": "S10",
+   "file": "tools/gate_collection.py",
+   "bug": "missing passes every base ID to renumbered, so a trailer-recorded ID takes a head case",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[trailer-on-a-twin]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S11",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases skips a kept ID whose text is gone instead of pairing nothing",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-id-reused]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S12",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases has no None check at a kept ID (the review's F5: 'None in (text, head[nodeid]) or' removed)",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-both] and tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-head]",
+   "result": "2 failed"
+  },
+  {
+   "id": "S13",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases checks only the base side for None at a kept ID ('text is None')",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-head]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S14",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases checks only the head side for None at a kept ID ('head[nodeid] is None')",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused",
+   "result": "0 failed: equivalent mutant; a base None at a kept ID finds no free head case except at a kept ID whose head is None, which blocks (REPORT F5)"
+  }
+ ]
+}
