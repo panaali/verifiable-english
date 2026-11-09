@@ -45,13 +45,14 @@ fixture and `clauseSlot_wellFormed`.
 | Bug | Language, file | Fails |
 |---|---|---|
 | The decoder accepts a structured line with two relations (an array, first taken) | Lean, lean/VE/RightClauses/Wire.lean `decodeRelation` | tests/test_right_clauses.py::test_right_clauses_k_fixtures_service (`two-relations`) |
-| Registration dropped (`environmentWrappers := ["readings@1"]`) | Lean, lean/VE/Compose/Dispatch.lean | PENDING |
-| Plained bytes changed for an unstructured document (`elided` kept) | Lean, lean/VE/RightClauses/Wire.lean `plainLineJson` | PENDING |
-| No model reduction for `right-clauses@0` | Python, ve/profiles.py | PENDING |
-| No deadline for `clauses-elaborate` | Python, ve/backends/lean_service.py | PENDING |
-| DELTA negative test: a profile-off rights answer changes | Lean, lean/VE/Rights/Run.lean (frozen; planted and restored only) | PENDING |
+| Registration dropped (`environmentWrappers := ["readings@1"]`) | Lean, lean/VE/Compose/Dispatch.lean | tests/test_right_clauses.py::test_right_clauses_k1_service_identity (the environment is refused: `UnsupportedProfile`); also the `environmentProfiles` #guard of lean/VE/Compose/Examples.lean at build |
+| Plained bytes changed for an unstructured document (`elided` kept in the plained line) | Lean, lean/VE/RightClauses/Wire.lean `plainLineJson` | tests/test_right_clauses.py::test_right_clauses_k1_service_identity (the bytes assertion, line 111) |
+| No model reduction for `right-clauses@0` | Python, ve/profiles.py `MODEL_REDUCTIONS` | tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction (and ::test_the_oracle_reaches_every_profile_and_display_field) |
+| No deadline for `clauses-elaborate` | Python, ve/backends/lean_service.py `DEADLINES` | tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes |
+| DELTA's negative test: a profile-off rights record changes (a rights refusal text edited) | Lean, lean/VE/Rights/Run.lean (frozen; planted for this run only and restored) | tests/test_right_clauses.py::test_right_clauses_profile_off_regression (the saved-digest assertion, line 184) |
 
-One mutant per new trusted definition: trust mutants, below.
+Each was planted alone by /tmp's seed script: plant, `lake build ve_service`, run the named test with the build
+pinned in a temporary lock, restore, rebuild. The Python ones needed no build. mutants.json lists them. One mutant per new trusted definition: trust mutants, below.
 
 ## Trust (R16)
 
@@ -67,15 +68,20 @@ untied [V] +118). Untied [V] is Wire.lean's clause, relation and elided readers 
 
 ## Size
 
-Exempt proof lines (dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1), measured: WireDecode.lean 324,
-WireName.lean 161, WireTheorems.lean 912 (about 1,400). That is past the ruling's ~800 trigger, so the DRI was asked
-(inbox 20261109T135759Z). Counted (hand-written) lines, `git diff --numstat` against the merge base: Wire.lean 230,
-Run.lean 37, response shape and encoder 50, Dispatch 21, Standalone 15, Registry/Protocol/examples 17,
-Compose/Examples 4, VE.lean 5, RIGHT-CLAUSES.md 23, tests/test_right_clauses.py 202, other tests and corpus 28,
-relay-gate rows and allow-list 23, tools/trust-classes.json 168, Python 5, the evidence script 20, plus this REPORT
-and DELTA.md. That is about 850 without the REPORT, over the ~600 line. The DRI is asked with these numbers.
-Generated, not counted: statements, predicates, declarations, Audit, schemas, profile_table.json, binding answers,
-profile-off.json (the evidence script's output).
+Exempt proof lines, measured with `git diff --numstat` against the merge base: WireDecode.lean 324, WireName.lean
+161 and WireTheorems.lean 912, which is 1,397. That is past the ~800 trigger of
+dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1. The DRI accepted them as delivered: exempt, with no cut and no
+compaction (reviews/dri-decisions-20261109-cmp-s3-cfr-1-proofsize.md item 1).
+
+Counted hand-written lines:
+- Product, about 410: Wire.lean 230, Run.lean 37, the response shape and encoder 50, Dispatch 21, Standalone 15,
+  Registry/Protocol/RegistryExamples 17, Compose/Examples 4, VE.lean 5, Python 5.
+- Tests, evidence and side tables: tests/test_right_clauses.py 202, other test and corpus edits 28, relay-gate rows
+  and allow-list 23, the evidence script 20, tools/trust-classes.json 168.
+- Docs: RIGHT-CLAUSES.md 23, this REPORT and DELTA.md.
+
+Generated, not counted: statements.txt, predicates.txt, declarations.txt, Audit, the schemas, profile_table.json, the
+binding answers and profile-off.json (the evidence script's output).
 
 ## Not changed
 
