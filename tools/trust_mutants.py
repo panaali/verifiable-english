@@ -126,7 +126,10 @@ names of the tool modules, `base`, the table and the lean/ files no build reads 
   never, or with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not
   run, OTHER SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
-  line and builds nothing: what sizes N.
+  line and builds nothing: what sizes N;
+- --only IDS (ids comma- or space-separated, or @FILE with one per line) keeps only those planned mutants, in plan
+  order, before --max-mutants; an id not in the plan stops the run (exit 2, naming it); --plan adds `"only"`, the
+  kept ids (tm-inventory-flag: the targeted inventory in the committed tool, not an uncommitted line in it).
 
 --deadline, --budget and --resume (eff-tm-partial: an Actions part cancelled at its 120-min job limit returned
 nothing, so each verdict it had judged was lost):
@@ -2125,12 +2128,23 @@ def sweep(argv: list[str] | None = None) -> int:
     parser.add_argument("--resume", type=Path, metavar="PREV.json",
                         help="keep PREV's verdicts across commits when the plan and inputs are identical, and judge "
                         "only the rest")
+    parser.add_argument("--only", metavar="IDS",
+                        help="keep only these planned mutants: ids comma- or space-separated, or @FILE with one id "
+                        "per line; an id not in the plan stops the run (exit 2)")
     args = parser.parse_args(argv)
     if args.merge:
         if args.shard or args.plan or len(args.merge) < 2:
             return print("--merge OUT.json PART.json...: at least one part, and no --shard or --plan",
                          file=sys.stderr) or 2
         return merge(args.merge[0], args.merge[1:])
+    only = None
+    if args.only is not None:  # tm-inventory-flag: a targeted inventory, at the plan, in the committed tool
+        try:
+            text = Path(args.only[1:]).read_text() if args.only.startswith("@") else args.only
+        except OSError as error:
+            return print(f"--only {args.only}: {error}", file=sys.stderr) or 2
+        if not (only := list(dict.fromkeys(x for x in re.split(r"[\s,]+", text) if x))):
+            return print(f"--only {args.only!r}: no mutant id", file=sys.stderr) or 2
     shard = None
     if args.shard is not None:
         if not (got := re.fullmatch(r"([0-9]+)/([0-9]+)", args.shard)) or not 1 <= int(got[1]) <= int(got[2]):
@@ -2161,6 +2175,10 @@ def sweep(argv: list[str] | None = None) -> int:
     DEADLINE.reset(min(at) if at else None)
     STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
+    if only is not None:
+        if unknown := [i for i in only if i not in {m.id for m in found}]:
+            fatal.append(f"--only: not in the plan: {' '.join(unknown)}")
+        found = [m for m in found if m.id in only]
     for t in outside:
         try:
             tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
@@ -2173,7 +2191,8 @@ def sweep(argv: list[str] | None = None) -> int:
     if args.plan:
         print(json.dumps({"base": git(root, "rev-parse", base).stdout.strip(), "definitions": len(
             {(m.file, m.definition) for m in found}), "mutants": len(found), "to_run": len(run_now),
-            "not_run": len(not_run), **({"owned": len(mine)} if shard else {})}))
+            "not_run": len(not_run), **({"owned": len(mine)} if shard else {}),
+            **({"only": [m.id for m in found]} if only is not None else {})}))
         return 0
     for m in run_now:
         if not owns(m.id, shard):
