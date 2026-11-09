@@ -29,10 +29,12 @@ open VE.Order.ProfileGate (bind_ok)
 
 /-- What `decodeSoftU` builds `L` from: the soft source over the placeholder completions, its softened and filled
     tree, and soft's premises regenerated on it. -/
-theorem decodeSoftU_source (environment norms : Json) (L : LayeredU) (h : decodeSoftU environment norms = .ok L) :
-    ∃ env' src, placeholderJson environment = .ok env' ∧ VE.SoftNorms.Wire.decodeSoftSource env' norms = .ok src ∧
+theorem decodeSoftU_source (environment norms : Json) (L : LayeredU) {H : Option VE.Events.EventsHook}
+    (h : decodeSoftU environment norms H = .ok L) :
+    ∃ env' src, placeholderJson (hookView H environment) = .ok env' ∧
+      VE.SoftNorms.Wire.decodeSoftSource env' norms = .ok src ∧
       L.D = src.D ∧ L.U = ⟨VE.SoftNorms.soften src.D, unspecOf environment (VE.SoftNorms.soften src.D)⟩ ∧
-      L.packs = [softPack L.U src.D] ∧ L.route = "soft-norms@0" := by
+      L.packs = [softPack L.U src.D] ++ hookPacks H ∧ L.route = "soft-norms@0" := by
   unfold decodeSoftU at h
   obtain ⟨env', he, h⟩ := bind_ok h
   obtain ⟨src, hs, h⟩ := bind_ok h
@@ -47,7 +49,11 @@ theorem decodeSoftU_source (environment norms : Json) (L : LayeredU) (h : decode
     cases h
     refine ⟨env', src, he, hs, rfl, rfl, ?_, rfl⟩
     rw [(Packs.assemble_order hq).1]
-    simp [Packs.ordered, Packs.packOrder, softPack]
+    cases H with
+    | none => simp [Packs.ordered, Packs.packOrder, softPack, hookPacks, hookBlock]
+    | some k =>
+      cases hd : k.decoded <;>
+        simp [Packs.ordered, Packs.packOrder, softPack, hookPacks, hookBlock, hd, VE.Events.eventsPack]
   · cases h
 
 theorem decodeSoftU_X_wellFormed (environment norms : Json) (L : LayeredU) (h : decodeSoftU environment norms = .ok L) :
@@ -57,7 +63,7 @@ theorem decodeSoftU_X_wellFormed (environment norms : Json) (L : LayeredU) (h : 
   unfold LayeredU.X
   rw [hl]
   rw [hU] at hw ⊢
-  simpa [Packs.X, Packs.labelledX, softPack] using softLabelledU_wellFormed src.D _ src.wf hw
+  simpa [Packs.X, Packs.labelledX, softPack, hookPacks, hookBlock] using softLabelledU_wellFormed src.D _ src.wf hw
 
 structure LayeredEntailment where
   L : LayeredU
@@ -68,27 +74,42 @@ structure LayeredEntailment where
   valid : Bool
   hvalid : valid = VE.Tableau.checkCertificate (envAt (fill L.U) (size (fill L.U)))
     (premisesX L.U L.X premises) conclusion cert
-/-- 4.5: `decodeSoftU`, the formulas over `envAt (fill L.U) (size (fill L.U))`, `bindCertX environment L.U L.X []`. -/
+/-- The case's formulas over `envAt (fill L.U) (size (fill L.U))`, `bindCertX environment L.U L.X []`, on a decoded
+    source. -/
+def replayLayeredOn (L : LayeredU) (hX : ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []) (j : Json) :
+    Except String LayeredEntailment := do
+  let environment ← j.getObjVal? "environment"
+  let E := envAt (fill L.U) (size (fill L.U))
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← VE.Route.Wire.decodeFormulas E premisesJson
+  let conclusionJson ← j.getObjVal? "conclusion"
+  let c ← VE.Route.Wire.decodeClosed E conclusionJson
+  let cert ← bindCertX environment L.U L.X [] (← premisesJson.getArr?).toList conclusionJson
+    (← j.getObjVal? "certificate")
+  pure ⟨L, hX, ps, c, cert, VE.Tableau.checkCertificate E (premisesX L.U L.X ps) c cert, rfl⟩
+
+/-- 4.5: `decodeSoftU`, then `replayLayeredOn`. -/
 def replayLayeredEntailment (j : Json) : Except String LayeredEntailment := do
   let environment ← j.getObjVal? "environment"
-  let norms := j.getObjValD "norms"
-  match hL : decodeSoftU environment norms with
+  match hL : decodeSoftU environment (j.getObjValD "norms") with
   | .error e => throw e
-  | .ok L =>
-    let E := envAt (fill L.U) (size (fill L.U))
-    let premisesJson ← j.getObjVal? "premises"
-    let ps ← VE.Route.Wire.decodeFormulas E premisesJson
-    let conclusionJson ← j.getObjVal? "conclusion"
-    let c ← VE.Route.Wire.decodeClosed E conclusionJson
-    let cert ← bindCertX environment L.U L.X [] (← premisesJson.getArr?).toList conclusionJson
-      (← j.getObjVal? "certificate")
-    pure ⟨L, decodeSoftU_X_wellFormed environment norms L hL, ps, c, cert,
-      VE.Tableau.checkCertificate E (premisesX L.U L.X ps) c cert, rfl⟩
+  | .ok L => replayLayeredOn L (decodeSoftU_X_wellFormed environment _ L hL) j
+
+theorem replayLayeredOn_L {L : LayeredU} {hX : ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []} {j : Json}
+    {r : LayeredEntailment} (h : replayLayeredOn L hX j = .ok r) : r.L = L := by
+  unfold replayLayeredOn at h
+  repeat (obtain ⟨_, _, h⟩ := bind_ok h)
+  cases h
+  rfl
+
+theorem layered_entailment_of_valid (r : LayeredEntailment) (hv : r.valid = true) :
+    VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
+  VE.NormDefaults.acceptanceX r.L.U r.L.wfU r.L.X r.hX r.premises r.conclusion r.cert (r.hvalid ▸ hv)
 
 theorem layered_wire_acceptance (j : Json) (r : LayeredEntailment) (h : replayLayeredEntailment j = .ok r)
     (hv : r.valid = true) : VE.NormDefaults.EntailsX.{u} r.L.U r.L.X r.premises r.conclusion :=
   have _ := h
-  VE.NormDefaults.acceptanceX r.L.U r.L.wfU r.L.X r.hX r.premises r.conclusion r.cert (r.hvalid ▸ hv)
+  layered_entailment_of_valid r hv
 
 end VE.NormDefaults.Wire
 
@@ -250,6 +271,7 @@ theorem admitDocumentX_spec (environment document : Json) (res : AdmittedX)
   obtain ⟨_, hch, h⟩ := bind_ok h
   cases h
   obtain ⟨env'', src', he', hsrc', hLD, hU, _⟩ := Wire.decodeSoftU_source environment norms L hL
+  change Wire.placeholderJson environment = _ at he'
   rw [he] at he'
   cases he'
   rw [hsrc] at hsrc'
