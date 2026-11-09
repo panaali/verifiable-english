@@ -8,9 +8,8 @@ own labels.
 document: an exception label keeps its role and index under the image name `fmap N.D c`, and a coherence label is
 rebuilt with the two image names ascending. `sdShown` reads the used superposed labels back as choice labels of the
 compatible choices taking `A`. The label theorems say the first components are the choice's labels
-(`labelImage_fst`), the second components superposed labels (`labelImage_snd_mem`), and one superposed label has one
-choice label in every choice that has it (`labelImage_functional`, through `fmap_name_cases`: a qualified name fixes
-its candidate's author name). -/
+(`labelImage_fst`) and the second components superposed labels (`labelImage_snd_mem`); 14.4's other three
+(`labelImage_functional`, `supLabel_pull`, `supLabel_other`) are sc-11c's (docs/rd-9/sc-11/REPORT.md). -/
 namespace VE.Readings
 open VE.Norms (Sat)
 open VE.SoftNorms (SoftNode SoftDoc)
@@ -174,80 +173,6 @@ theorem labelImage_snd_mem (N : NDoc) (hN : WellFormedSD N = true) (hs : superpo
   rcases mem_labelImage hp with ⟨M, hM, hz⟩ | ⟨x, hx, -, h2⟩
   · exact List.mem_append_left _ (List.mem_flatMap.mpr ⟨_, fmap_mem hh c hM, (List.of_mem_zip hz).2⟩)
   · exact List.mem_append_right _ (List.mem_map.mpr ⟨_, image_pair_mem hh c hx, h2.symm⟩)
-
-/-- Two rules of compatible choices whose images have one name have one author name. -/
-theorem fmap_name_det {N : NDoc} (hh : Hyps N.D) {c₁ c₂ : Choice} {M₁ M₂ : SoftNode}
-    (h₁ : M₁ ∈ (choiceDoc N.D c₁).1.soft.T.nodes) (h₂ : M₂ ∈ (choiceDoc N.D c₂).1.soft.T.nodes)
-    (he : (fmap N.D c₁ M₁).name = (fmap N.D c₂ M₂).name) : M₁.name = M₂.name := by
-  rcases fmap_name_cases hh c₁ h₁ with ⟨r₁, e₁⟩ | ⟨k₁, e₁⟩ <;>
-    rcases fmap_name_cases hh c₂ h₂ with ⟨r₂, e₂⟩ | ⟨k₂, e₂⟩ <;> rw [e₁, e₂] at he
-  · exact he
-  · exact absurd he.symm (qualify_ne r₁)
-  · exact absurd he (qualify_ne r₂)
-  · exact (qualify_inj he).2
-
-/-- The names of the superposed document's rules have no `:` and no `,`. -/
-theorem sup_name_sep {N : NDoc} (hh : Hyps N.D) {K : SoftNode} (hK : K ∈ (sup N.D).1.soft.T.nodes) :
-    ':' ∉ K.name.data ∧ ',' ∉ K.name.data := by
-  have h := (sup_wellFormed N.D hh.sp).2
-  rw [sup_correlate hh] at h
-  exact VE.NormDefaults.Packs.pk_ruleName_sep (VE.NormDefaults.Packs.pk_ruleName h hK)
-
-theorem labelImage_functional (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
-    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c₁ c₂ : Choice) (h₁ : Compatible N.D c₁)
-    (h₂ : Compatible N.D c₂) (l₁ l₂ s : String) (hp₁ : (l₁, s) ∈ labelImage N c₁) (hp₂ : (l₂, s) ∈ labelImage N c₂) :
-    l₁ = l₂ := by
-  have hh := hyps_sd hN hs
-  rcases mem_labelImage hp₁ with ⟨M₁, hM₁, hz₁⟩ | ⟨x₁, hx₁, e₁, f₁⟩ <;>
-    rcases mem_labelImage hp₂ with ⟨M₂, hM₂, hz₂⟩ | ⟨x₂, hx₂, e₂, f₂⟩
-  · obtain ⟨k₁, i₁, hk₁, a₁, b₁⟩ := mem_zip_nodeExcLabels (fmap_fields hh c₁ hM₁).2.2.1
-      (fmap_exception_shape hh c₁ hM₁) hz₁
-    obtain ⟨k₂, i₂, hk₂, a₂, b₂⟩ := mem_zip_nodeExcLabels (fmap_fields hh c₂ hM₂).2.2.1
-      (fmap_exception_shape hh c₂ hM₂) hz₂
-    obtain ⟨hn, hk, hi⟩ := VE.NormDefaults.Packs.pk_exc_inj (sup_name_sep hh (fmap_mem hh c₁ hM₁)).1
-      (sup_name_sep hh (fmap_mem hh c₂ hM₂)).1 (VE.NormDefaults.Packs.pk_kind_sep hk₁)
-      (VE.NormDefaults.Packs.pk_kind_sep hk₂) (b₁.symm.trans b₂)
-    apply String.ext
-    simp only at a₁ a₂
-    rw [a₁, a₂, fmap_name_det hh hM₁ hM₂ hn, hk, hi]
-  · obtain ⟨k₁, i₁, -, -, b₁⟩ := mem_zip_nodeExcLabels (fmap_fields hh c₁ hM₁).2.2.1
-      (fmap_exception_shape hh c₁ hM₁) hz₁
-    simp only at f₂ b₁
-    split at f₂ <;> exact absurd (b₁.symm.trans (by rw [f₂, VE.NormDefaults.Packs.pk_coh]))
-      VE.NormDefaults.Packs.pk_exc_ne_coh
-  · obtain ⟨k₂, i₂, -, -, b₂⟩ := mem_zip_nodeExcLabels (fmap_fields hh c₂ hM₂).2.2.1
-      (fmap_exception_shape hh c₂ hM₂) hz₂
-    simp only at f₁ b₂
-    split at f₁ <;> exact absurd (b₂.symm.trans (by rw [f₁, VE.NormDefaults.Packs.pk_coh]))
-      VE.NormDefaults.Packs.pk_exc_ne_coh
-  · -- one coherence label: the ascending image names agree, so the author names agree as a pair
-    have hm₁ := image_pair_mem hh c₁ hx₁
-    have hm₂ := image_pair_mem hh c₂ hx₂
-    obtain ⟨hA₁, hB₁, -, -, hlt₁, -⟩ := VE.SoftNorms.mem_collidingPairs.mp hx₁
-    obtain ⟨hA₂, hB₂, -, -, hlt₂, -⟩ := VE.SoftNorms.mem_collidingPairs.mp hx₂
-    have key : ∀ (y₁ y₂ : SoftNode × SoftNode), y₁ ∈ VE.SoftNorms.collidingPairs (sup N.D).1.soft →
-        y₂ ∈ VE.SoftNorms.collidingPairs (sup N.D).1.soft →
-        VE.SoftNorms.Wire.cohLabel y₁.1 y₁.2 = VE.SoftNorms.Wire.cohLabel y₂.1 y₂.2 →
-        y₁.1.name = y₂.1.name ∧ y₁.2.name = y₂.2.name := by
-      intro y₁ y₂ hy₁ hy₂ he
-      obtain ⟨hP₁, hQ₁, _⟩ := VE.SoftNorms.mem_collidingPairs.mp hy₁
-      obtain ⟨hP₂, hQ₂, _⟩ := VE.SoftNorms.mem_collidingPairs.mp hy₂
-      have := congrArg String.data he
-      rw [VE.NormDefaults.Packs.pk_coh, VE.NormDefaults.Packs.pk_coh] at this
-      obtain ⟨h1, h2⟩ := VE.NormDefaults.Packs.pk_split _ _ _ _ (sup_name_sep hh hP₁).2 (sup_name_sep hh hP₂).2
-        (List.append_cancel_left this)
-      exact ⟨String.ext h1, String.ext h2⟩
-    have hk := key _ _ hm₁ hm₂ (f₁.symm.trans f₂)
-    simp only at e₁ e₂
-    rw [e₁, e₂]
-    unfold VE.SoftNorms.Wire.cohLabel
-    have lt_asymm : ∀ a b : String, a < b → b < a → False := fun a b h h' =>
-      String.lt_irrefl _ (String.lt_trans h h')
-    split at hk <;> split at hk <;> simp only at hk <;> obtain ⟨n₁, n₂⟩ := hk
-    · rw [fmap_name_det hh hA₁ hA₂ n₁, fmap_name_det hh hB₁ hB₂ n₂]
-    · exact (lt_asymm _ _ hlt₂ (by rw [← fmap_name_det hh hA₁ hB₂ n₁, ← fmap_name_det hh hB₁ hA₂ n₂]; exact hlt₁)).elim
-    · exact (lt_asymm _ _ hlt₂ (by rw [← fmap_name_det hh hB₁ hA₂ n₁, ← fmap_name_det hh hA₁ hB₂ n₂]; exact hlt₁)).elim
-    · rw [fmap_name_det hh hB₁ hB₂ n₁, fmap_name_det hh hA₁ hA₂ n₂]
 
 /-! ## The shown labels -/
 
