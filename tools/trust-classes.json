@@ -19800,11 +19800,13 @@
         "VE.Commands.combineShapes",
         "VE.Commands.hasThen",
         "VE.Commands.lift",
+        "VE.Commands.productSize",
         "VE.Commands.readStep",
         "VE.Commands.readingTuples",
         "VE.Commands.reads",
         "VE.Commands.shapeAlts",
         "VE.Commands.shapeOutcome",
+        "VE.Commands.shapeOutcomeCharged",
         "VE.Commands.shapes"
       ]
     },
@@ -19813,11 +19815,14 @@
         "VE.Commands.StepsExamples.ask",
         "VE.Commands.StepsExamples.check",
         "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.noStep",
         "VE.Commands.StepsExamples.readS",
         "VE.Commands.StepsExamples.readsWeb",
         "VE.Commands.StepsExamples.reviewIt",
         "VE.Commands.StepsExamples.reviewMeaning",
-        "VE.Commands.StepsExamples.step"
+        "VE.Commands.StepsExamples.spellings",
+        "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.wideEnv"
       ]
     }
   }

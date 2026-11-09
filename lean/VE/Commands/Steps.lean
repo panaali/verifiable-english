@@ -111,6 +111,56 @@ def shapeOutcome (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lexicon) (
           | alts => if alts.length ≤ VE.SpeechActs.Wire.readingsBound
               then .many (alts.map fun rs => .shape (.seq xs) rs) else .limit
 
+/-! The compiled form: the product charged before it is built, installed before `readStep` and `reads` are
+compiled so that their code calls it. -/
+
+/-- The size of the product `readingTuples cs`, counted without building it. -/
+def productSize : List (List Reading) → Nat
+  | [] => 1
+  | xs :: rest => xs.length * productSize rest
+
+theorem readingTuples_length : ∀ cs : List (List Reading), (readingTuples cs).length = productSize cs
+  | [] => rfl
+  | xs :: rest => by
+    have h : ∀ ys : List Reading, (ys.flatMap fun x => (readingTuples rest).map (x :: ·)).length =
+        ys.length * productSize rest := fun ys => by
+      induction ys <;> simp_all [Nat.succ_mul, Nat.add_comm, readingTuples_length rest]
+    simp only [readingTuples, h, productSize]
+
+/-- `shapeOutcome` as compiled: a sequence's product is counted against `maxCandidates` before it is built
+(reviews/dri-decisions-20261109-ci-3a.md item 1); `shapeOutcome_charged` proves the two equal. -/
+def shapeOutcomeCharged (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lexicon) (b : Nat) : Shape → StepOutcome
+  | .seq xs =>
+    let os := xs.map fun x => readCommand se sc E L b (capitalise x ++ ".")
+    let firstFault := os.findSome? fun o => match o with
+      | .refused code text => some (.refused code text)
+      | .one r => if r.guard == .top then none else some conditionScope
+      | .many rs => if rs.any (·.guard != .top) then some conditionScope else none
+      | .limit => none
+    match firstFault with
+    | some fault => fault
+    | none =>
+      if os.any (fun o => match o with | .limit => true | _ => false) then .limit
+      else
+        let choices := os.map fun o => match o with
+          | .one r => [r]
+          | .many rs => rs
+          | _ => []
+        if productSize choices > maxCandidates then .limit
+        else match readingTuples choices with
+          | [rs] => .steps rs
+          | [] => .refused "InvalidInput" "no single speech-act reading"
+          | alts => if alts.length ≤ VE.SpeechActs.Wire.readingsBound
+              then .many (alts.map fun rs => .shape (.seq xs) rs) else .limit
+  | sh => shapeOutcome se sc E L b sh
+
+@[csimp] theorem shapeOutcome_charged : @shapeOutcome = @shapeOutcomeCharged := by
+  funext se sc E L b sh
+  cases sh with
+  | seq xs =>
+    simp only [shapeOutcome, shapeOutcomeCharged, readingTuples_length]
+  | _ => rfl
+
 /-- Each alternative is a complete interpretation of its shape: a sequence alternative has exactly one reading
 for every step. `one` and `steps` contribute one alternative; `many` contributes each of its alternatives. -/
 def shapeAlts (sh : Shape) (o : StepOutcome) : List Alt :=
@@ -218,9 +268,6 @@ theorem lift_one {sh : Shape} {a a' : Bool} {o : Outcome} {r : Reading} :
     lift sh a o = .one r a' ↔ o = .one r ∧ a = a' := by
   cases o <;> simp [lift]
 
-theorem guard_top (g : VE.Formula) : (g == .top) = true ↔ g = .top := by
-  cases g <;> simp <;> rfl
-
 theorem two_le {α : Type} : ∀ (l : List α), (l = [] → False) → (∀ x, l = [x] → False) → 2 ≤ l.length
   | [], h, _ => absurd rfl h
   | [x], _, h => absurd rfl (h x)
@@ -241,7 +288,8 @@ theorem seqFault {os : List Outcome} {f : StepOutcome} (h : os.findSome? (fun o 
 
 /-- Every `many` alternative of a sequence holds one reading per step, and there are at least two. -/
 theorem seq_many (xs : List String) (alts : List Alt) (h : shapeOutcome se sc E L b (.seq xs) = .many alts) :
-    ∃ all : List (List Reading), alts = all.map (fun rs => .shape (.seq xs) rs) ∧ 2 ≤ all.length ∧ ∀ rs ∈ all, rs.length = xs.length := by
+    ∃ all : List (List Reading), alts = all.map (fun rs => .shape (.seq xs) rs) ∧ 2 ≤ all.length ∧
+      ∀ rs ∈ all, rs.length = xs.length := by
   simp only [shapeOutcome] at h
   split at h
   · obtain ⟨_, _, rfl⟩ := seqFault ‹_›

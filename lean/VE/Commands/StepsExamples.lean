@@ -7,7 +7,7 @@ import VE.Commands.Examples
 namespace VE.Commands.StepsExamples
 
 open Lean (Json)
-open VE.Commands.Examples (E_web read lexOf web approvedDraft noReadingOutcome)
+open VE.Commands.Examples (E_web envOf obligation read lexOf web approvedDraft noReadingOutcome)
 open VE.SpeechActs.Wire (decodeSpeechEnvironmentFull readingsBound)
 open VE.EnglishGrammar (workBudget)
 
@@ -104,6 +104,27 @@ def conditionScopeText : String :=
   noStep
 #guard step "Click Ask, if draft is approved, then add an exception or precedence." 0 ==
   noStep
+
+/-! ## The product is charged before it is built (reviews/dri-decisions-20261109-ci-3a.md item 1) -/
+
+/-- The 64 spellings of `review`, each of its six letters in either case: one obligation each, so "Review." has
+`readingsBound` readings. -/
+def spellings : List String := (List.range 64).map fun i =>
+  String.mk (("review".toList.zipIdx).map fun (c, k) => if (i >>> k) % 2 == 1 then c.toUpper else c)
+
+def wideEnv : Json :=
+  envOf ["user"] (spellings.zipIdx.map fun (w, i) => obligation s!"r{i}_required" ["user"] ("{0} " ++ w))
+    [("reader", "user")] "t" (some ("user", "reader")) []
+
+#guard match read wideEnv "Review." with
+  | .many rs => rs.length == readingsBound
+  | _ => false
+#guard productSize [[ask, check], [ask], []] == 0 && productSize [[ask, check], [ask, check, ask]] == 6
+-- Eight steps of 64 readings: 64^8 products, `limit` without building one (built eagerly, this does not end).
+#guard productSize (List.replicate 8 (List.replicate readingsBound ask)) > maxCandidates
+#guard readS wideEnv (", then ".intercalate (List.replicate 8 "Review") ++ ".") == .limit
+-- Two steps: 4096 products, within `maxCandidates`, more than `readingsBound` alternatives.
+#guard readS wideEnv "Review, then review." == .limit
 
 /-! ## `lift`, `shapeAlts` and `reads` -/
 
