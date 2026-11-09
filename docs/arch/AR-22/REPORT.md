@@ -96,7 +96,7 @@ and one A/B takes about three hours at this load. The merge train syncs main.
 | `tools/consolidation-ledger.json`, `tools/layer_policy.py`, `tools/lean-layer-exceptions.json`: remove rows only because their file went | `1eccc87b0` | Ledger: the `VE/TableauExtended*` and 4 closure rows. Layer policy: the 6 `VE.TableauExtended*` module names were replaced by `VE.Closure.Tableau`. Layer exceptions: the 4 edges from `TableauExtended*` into the deleted closure files. `uv run python tools/check_lean_imports.py`: "Lean layer graph kept (777 modules, 18 reviewed legacy edges)" |
 | Trust (D3): K, S, untied V at or below base, no new allowance; measured before and after with the plan's estimate | `585b51b56` | Above (`evidence/trust.json`) |
 | Behaviour A/B over all nine corpora; row 3b tests: closure three-way, `rust/fuzz_closure.py`, `test_closure*.py`, OUT; `@0`, `@1`, an atom formula the gate refuses, an unknown version | evidence commits | Above. Row 3b tests on the final Lean (`evidence/row3b-tests.json`): `test_closure.py`, `test_closure_certificates.py`, `test_closure_core_replay.py`, `test_closure_induction.py`, `test_closure_witnesses.py`, and the closure-carrying three-way suites `test_data_three_way.py` and `test_p0_three_way.py` gave "95 passed, 3 skipped". The 3 skips are the pre-existing "outside Rust scope" cells. `rust/fuzz_closure.py` gave 3,000 cases, 3,000 agreements. `test_closure_core_replay.py` covers `@0`, `@1`, `@2`, Core's version string, an n-ary `atom` invariant and conclusion, a stale binding and an unknown rule |
-| Seeded bugs (a) drop the atom-free gate, (b) `true` for `version == @1`, (c) change a refusal text | `171a04dd3` (spec), `3b7a0acaf` (run) | 7/7 killed (below) |
+| Seeded bugs (a) drop the atom-free gate, (b) `true` for `version == @1`, (c) change a refusal text | `171a04dd3` (spec), `3b7a0acaf` (run) | 7/7 killed (below); M8 (Python, `tools/layer_policy.py`) 1/1 killed |
 | Evidence in `docs/arch/AR-22/` with `evidence.toml`, each file under 1 MB; `batch_evidence.py --check` | evidence commits | `ls -l docs/arch/AR-22/evidence`: the largest file is `statements.json`, about 30 KB. The check is under "Tests" |
 
 ### Frozen edits (`lean/VE/Route/frozen-sources.sha256`)
@@ -121,10 +121,15 @@ M2 (embedding side) show that each half is tested.
 ## Seeded bugs
 
 `docs/arch/AR-22/mutants.json`, run by `uv run python tools/mutants.py docs/arch/AR-22/mutants.json --evidence
-docs/arch/AR-22/evidence/mutants.json`: "mutants: 7/7 killed". Before each mutant, the unmutated baseline of its
-command passed (`baseline_exit` 0). For the test mutants, each command rebuilds `ve_conformance` and `ve_service`,
-repins them in a scratch copy of `checkers.lock`, and runs the named tests. Only Lean product code changed in this
-batch (Python product: none; Rust: none). Every mutant is in a Lean file this batch changed.
+docs/arch/AR-22/evidence/mutants.json`: "mutants: 7/7 killed" for M1 to M7. Before each mutant, the unmutated baseline of its
+command passed (`baseline_exit` 0). For the Lean test mutants, each command rebuilds `ve_conformance` and
+`ve_service`, repins them in a scratch copy of `checkers.lock`, and runs the named tests. The batch changed Lean
+product code and one Python tool, `tools/layer_policy.py` (its layer-1 row for the deleted `VE.TableauExtended*`
+modules became a row for `VE.Closure.Tableau`); Rust: none. M1 to M7 are in Lean files this batch changed; M8 is in
+`tools/layer_policy.py`, added after the pre-review gate asked for a seeded bug in each changed language and run by
+`uv run python tools/mutants.py docs/arch/AR-22/mutants.json --id M8` ("mutants: 1/1 killed"), its record merged
+into `evidence/mutants.json`. `tools/test_layer_policy.py` (49 tests) still passes with M8 in place; the catch is the
+gate's import check, `python3 tools/check_lean_imports.py`, which the selection adds for every Lean-layer input.
 
 | Id | File | Seeded bug (task item) | Failing test or build line |
 |---|---|---|---|
@@ -135,6 +140,7 @@ batch (Python product: none; Rust: none). Every mutant is in a Lean file this ba
 | M5 | `lean/VE/CertificateWire.lean` | (c) refusal text: `unknown tableau rule` → `unknown closure tableau rule` | `::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts`, `::test_route_runner_keeps_closures_version_gate_and_refusal_texts` |
 | M6 | `lean/VE/CertificateWire.lean` | (c) refusal text: `certificate is stale or bound to different inputs` → `certificate is stale` | `::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts` |
 | M7 | `lean/VE/Closure/Tableau.lean` | the version gate accepts `@2` instead of `@0` (`@0` certificates keep their verdicts) | `::test_certificates_without_induction_keep_their_verdict_at_both_versions`, `::test_route_runner_keeps_closures_version_gate_and_refusal_texts`, `test_closure_induction.py::test_previous_closure_version_replays_all_original_rules` |
+| M8 | `tools/layer_policy.py` | Python: `VE.Closure.Tableau` dropped from layer 1, so it falls to layer 2 below its importer `VE.CertificateWire` | `python3 tools/check_lean_imports.py` exits 1: `new outward Lean import: VE.CertificateWire -> VE.Closure.Tableau` |
 
 After the run, `git status` showed the sources restored. `lake build` passed ("Build completed successfully (1296
 jobs)"), and `regen_generated.py --check --only checker-pins` gave "checked 1 entries".
@@ -245,8 +251,8 @@ merge, the A/B must be recorded again against the new merge base.
    `Steps.closure` is kept because an approved statement uses it. No Python copy of a Lean decision, no report test
    and no per-batch mutant script were added. The pilot rerun reuses AR-20's script. Coordination found no source
    overlap.
-3. Tests can fail: PASS. 7/7 seeded mutants were killed, each by a named test or the build of
-   `checkCertificate_eq_core_replay` (`evidence/mutants.json`). Trust mutants (13a): N.A., no trusted growth (+0).
+3. Tests can fail: PASS. 8/8 seeded mutants were killed, each by a named test, the build of
+   `checkCertificate_eq_core_replay` or (M8, Python) the import check (`evidence/mutants.json`). Trust mutants (13a): N.A., no trusted growth (+0).
 4. Python, Lean and Rust agree; valid inputs pass: PASS. The corpus A/B has 0 unlisted. `rust/fuzz_closure.py`: 3,000
    of 3,000 agree. `test_p0_three_way.py` and `test_data_three_way.py` pass (`evidence/row3b-tests.json`).
 5. R8 binding: N.A. No field read from a Lean answer changed.
