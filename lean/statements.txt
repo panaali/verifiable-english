@@ -55756,6 +55756,16 @@ theorem VE.Scope.scope_admission_sets
                 ans = VE.Scope.foldGovernors D a
   -- uses VE.Scope.Pinned.withGoverned@VE.Service.ScopeAdmission VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.foldGovernors@VE.Scope.Wire VE.Scope.governSets@VE.Scope.Readings VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
   -- expr 1272908474
+theorem VE.Scope.scope_parseRender
+  ∀ (w : String) (b : Lean.Json), VE.Scope.Pinned.parseGovernor w = Option.some b → VE.Scope.Pinned.renderGovernor b = w
+  -- uses VE.Scope.Pinned.parseGovernor@VE.Scope.Authoring VE.Scope.Pinned.renderGovernor@VE.Scope.Authoring
+  -- expr 234398404
+theorem VE.Scope.scope_renderParse
+  ∀ (w : String) (b : Lean.Json),
+    VE.Scope.Pinned.parseGovernor w = Option.some b →
+      VE.Scope.Pinned.parseGovernor (VE.Scope.Pinned.renderGovernor b) = Option.some b
+  -- uses VE.Scope.Pinned.parseGovernor@VE.Scope.Authoring VE.Scope.Pinned.renderGovernor@VE.Scope.Authoring
+  -- expr 3097024052
 theorem VE.Scope.scope_set_choices
   ∀ (D : VE.Scope.SDoc) (cs : List VE.Discourse.Choice),
     VE.Scope.setChoices D = Except.ok cs →
