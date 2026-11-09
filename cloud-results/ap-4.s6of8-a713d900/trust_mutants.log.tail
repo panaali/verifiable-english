@@ -1,0 +1,6 @@
+trust_mutants: 8 definitions, 75 mutants (9 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/ResponseShape/Schemas.lean:51 ResponseShape.Schemas.files (G[V], trusted) list-empty: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> [] (lean/ResponseShape/Schemas.lean:51: Function expected at)
+trust_mutants: 8 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 66 OTHER SHARD in 603 s
+trust_mutants: D[V], trusted: 4 KILLED, 22 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 UNKNOWN, 44 OTHER SHARD
+trust_mutants: steps: wall plan 12 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.4 s, control_probes 388.1 s, mutants 195.3 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 739.4 s (9), mutant_builds 20.3 s (11), mutant_checks 359.2 s (10), stage_controls 42.2 s (4), mutant_probes 38.8 s (8)
