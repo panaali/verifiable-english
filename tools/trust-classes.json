@@ -16271,6 +16271,7 @@
         "VE.Acts.SpecialiseExamples.doc",
         "VE.Acts.SpecialiseExamples.env",
         "VE.Acts.SpecialiseExamples.fromAgainst",
+        "VE.Acts.SpecialiseExamples.fromOnly",
         "VE.Acts.SpecialiseExamples.fromP",
         "VE.Acts.SpecialiseExamples.inNear",
         "VE.Acts.SpecialiseExamples.nearIn",
