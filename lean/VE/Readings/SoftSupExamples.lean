@@ -227,4 +227,48 @@ def q6 : VE.Formula := .unary "ve__bit__1__0" (.const "ve__here")
 #guard [q5, q6].all fun q => !q.check (sharedEnvSD NSD1) [] &&
   q.check (envAt (fill (supU NSD1)) (size (fill (supU NSD1)))) []
 
+/-! ## `sd_superpose_all` and `sd_superpose_countermodel` (13.5)
+
+A filled finite model is checked as the per-choice route checks one: `modelCheckX` (a base where the premises hold, and
+the query's value) and `localFree`; the choice's side reads the model's filled pull. The certificate rows are the
+per-choice route's (`tests/test_readings_sd_lean.py::test_fsd1_verdicts_query_some_all_none`: `(rs1,0)` proved, ALL
+under `rs1:0`, `(rs1,1)` refuted); no superposed certificate exists under `A = []`, since the countermodel below names
+`(rs1,1)`. -/
+
+/-- A finite model over `Entity`, each entity named by itself. -/
+def toE (M : VE.FiniteModel String) : VE.FiniteModel VE.Bridge.Entity where
+  domains s := (M.domains s).map (("", ·))
+  constants x := (M.constants x).map (("", ·))
+  relations p := (M.relations p).map (·.map (("", ·)))
+def avoidAll : VE.Formula := .all "agent" (.all "user" (.binary "avoid_required" (.var 1) (.var 0)))
+def fillOf {U : VE.NormDefaults.UDoc} (F : List (String × List (List String))) :
+    VE.NormDefaults.FiniteFill U VE.Bridge.Entity :=
+  fun n => (((F.find? (·.1 == n)).map (·.2)).getD []).map (·.map (("", ·)))
+/-- `modelCheckX` and `localFree` on the superposed side under `A` and on choice `c`'s side. -/
+def checkSides (N : NDoc) (A c : Choice) (M : VE.FiniteModel String) (F : List (String × List (List String)))
+    (Γ : List VE.Formula) (φ : VE.Formula) : (Bool × Bool × Bool) × (Bool × Bool × Bool) :=
+  let r1 := VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) (toE M) (fillOf F) ((sup N.D).2 ++ Γ) φ
+  let r2 := VE.NormDefaults.modelCheckX (choiceU N c) (choiceX N c) (toE (pullFM N c M)) (fillOf F)
+    ((choiceDoc N.D c).2 ++ Γ) φ
+  ((r1.1, r1.2, VE.Readings.Wire.localFree (supU N) (toE M) (fillOf F)),
+   (r2.1, r2.2, VE.Readings.Wire.localFree (choiceU N c) (toE (pullFM N c M)) (fillOf F)))
+/-- The choices a model's bits name. -/
+def named (N : NDoc) (M : VE.FiniteModel String) : List Choice :=
+  (choices N.D).filter fun c => (atoms N.D c).all (·.eval M [])
+
+-- the countermodel: NSD1 under `A = []`, the bit on, `soft__excepted__rd_2_no_deception = {(a,u)}`, the filling no.
+-- It passes with the query false and `localFree`; its bits name `(rs1,1)`, whose side it is a countermodel of. Read as
+-- `(rs1,0)` (the other choice) it holds the query: that choice's strict rule decides it
+#guard named NSD1 (m1 true [["a", "u"]] []) == [[("rs1", 1)]]
+#guard checkSides NSD1 [] [("rs1", 1)] (m1 true [["a", "u"]] []) [] [] avoidAll ==
+  ((true, false, true), (true, false, true))
+#guard (checkSides NSD1 [] [("rs1", 0)] (m1 true [["a", "u"]] []) [] [] avoidAll).2 == (true, true, true)
+-- under `A = [(rs1,0)]` a model naming `(rs1,0)` holds the query on both sides (ALL)
+#guard checkSides NSD1 [("rs1", 0)] [("rs1", 0)] (m1 false [] []) [] [] avoidAll == ((true, true, true), (true, true, true))
+-- without `hl`: NSD4 under `A = [(rs1,0)]`, `Γ = [∃a. y_permitted a]`, `φ = ⊥`, the bit naming `(rs1,0)`, the filling yes
+-- for `y_permitted`, every excepted table empty. The model passes `modelCheckX` with `⊥` false, but it is not
+-- `localFree` on either side, so it has no expansion and is no `CounterX`
+#guard checkSides NSD4 [("rs1", 0)] [("rs1", 0)] (m4 false [] []) [("unsaid__y_permitted", [["a"]])]
+  [.ex "assistant" (.unary "y_permitted" (.var 0))] .bottom == ((true, false, false), (true, false, false))
+
 end VE.Readings.SoftSupExamples
