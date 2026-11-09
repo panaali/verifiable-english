@@ -2012,9 +2012,11 @@ The `w2`, `pending` and abstention rows are unchanged. `routeOf` and `routeND` a
 `routeND`, and the rights chain keeps the abstention. `routeSD` is read only under `underSoftCompletion`.
 
 - **When the check can fail on a document admission accepted.** Admission already refuses a failing choice at most 64
-  (3.3 step 5, with its text). So `sdChecked` can fail only past 64 choices: a choice from 65 to 1024 that fails,
-  more than 1024 choices, or `sdCheckWork` over the limit. Each of these gives the enumerated row (`choice_count:
-  "over 64"`, verdicts UNKNOWN by budget), never a verdict over an unchecked choice. This differs from RD-6b, whose row
+  (3.3 step 5, with its text). So `sdChecked` can fail on a document admission accepted only past 64 choices (a choice
+  from 65 to 1024 that fails, or more than 1024 choices), or when `sdCheckWork` is over the limit at any choice count.
+  Past 64 choices each gives the enumerated row (`choice_count: "over 64"`, verdicts UNKNOWN by budget); at most 64
+  choices, the work limit gives the enumerated row that document has today, unchanged (its count and its enumerated
+  verdicts), never a verdict over an unchecked choice. This differs from RD-6b, whose row
   stays superposed and refuses with the text. The batch text makes the check part of the route's condition, and an
   UNKNOWN from the enumerated row is the answer the document already has today.
 - **No compatible choice.** `unsatText` first on every kind, as today (4.1 step 3), whichever row `routeSD` gives.
