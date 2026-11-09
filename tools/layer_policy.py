@@ -187,7 +187,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
-    if module in {"VE.Commands.Read", "VE.Commands.Steps", "VE.Commands.StepsExamples"}:
+    if module in {"VE.Commands.Read", "VE.Commands.Steps", "VE.Commands.StepsExamples", "VE.Commands.SplitOnLemmas",
+                  "VE.Commands.StepsProofs"}:
         return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1); CI-3's steps over it
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
