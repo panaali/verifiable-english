@@ -138,6 +138,7 @@ import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
 import VE.Presupposition.Wire
+import VE.Presupposition.Table
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
