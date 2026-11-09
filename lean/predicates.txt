@@ -606,6 +606,7 @@ module VE.Rights.Bar
 module VE.Rights.Correlate
 module VE.Rights.Distinction
 module VE.Rights.Examples
+module VE.Rights.OpenActExamples
 module VE.Rights.Projections
 module VE.Rights.Route
 module VE.Rights.Run
