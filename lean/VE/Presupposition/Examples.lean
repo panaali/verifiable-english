@@ -765,9 +765,21 @@ def rdAs : RReading := { cand := .assumed, aliases := [], content := .claim theO
 def rdCo : RReading :=
   { cand := .conditioned, aliases := [], content := .claim (.implies theOwnerU theOwner), premise := none }
 def docA1 : PDoc := docA [⟨"u1", true, .readings [rdAs, rdCo]⟩] [pA .unresolved]
-#guard errOf (admitWith fixtureTable fxN docA1) == "admitted"
-#guard (admitWith fixtureTable fxN docA1).toOption.map (fun R => (R.checked.map (·.goal), R.bases)) ==
+-- separated by the no-owner situation (readings@1 4.5): the conditioned reading (1) holds there, the assumed (0) not
+def sitNo : VE.Readings.Situation String := ⟨mNone, [], [], .holds, true⟩
+def fx1 : Fixed := ⟨.norms, [("u1", 1, 0, sitNo)]⟩
+#guard errOf (admitWith fixtureTable fx1 docA1) == "admitted"
+#guard (admitWith fixtureTable fx1 docA1).toOption.map (fun R => (R.checked.map (·.goal), R.bases)) ==
   some ([theOwnerU], [("u1", theOwner)])
+-- step 5's separation: no situation (`admit`'s own inputs), a situation that does not separate (one ready owner), the
+-- witness reversed, a situation recorded for another unit: refused, naming the pair
+#guard errOf (admitWith fixtureTable fxN docA1) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 1, 0, ⟨mOne, [], [], .holds, true⟩)]⟩ docA1) ==
+  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 0, 1, sitNo)]⟩ docA1) ==
+  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u2", 1, 0, sitNo)]⟩ docA1) ==
+  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
 #guard errOf (admit docA1) == "PresuppositionCandidates: p1"
 -- A2: the conditioned reading missing; the readings out of the cell's order; a third reading.
 #guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdAs]⟩] [pA .unresolved])) ==
@@ -820,16 +832,25 @@ def doc7u (allow : Bool) (unspec : List String) (rs : List RReading := rr7) : PD
 #guard errOf (admitWith fixtureTable fxN (doc7u true [])) == "PresuppositionDefault: p1: p"
 #guard errOf (admitWith fixtureTable fxN (doc7u false [])) == "PresuppositionDefault: p1: p"
 -- the same open rule with `p` unspecified on the norms chain: admitted (the opposite direction of A5u)
-#guard errOf (admitWith fixtureTable fxN (doc7u false ["p"])) == "admitted"
-#guard (admitWith fixtureTable fxN (doc7u false ["p"])).toOption.map (·.baseTree.nodes) == some [r7]
+-- separated under the unspecified completion (`fillDoc`, `fillHolds`) where `g` holds and there is no instruction:
+-- the assumed reading (0) decides `p` true, the conditioned one does not
+def m7 (rels : List (String × List (List String))) : VE.FiniteModel String :=
+  model [("situation", ["s1"]), ("entity", ["i1"])] rels []
+def sit7 : VE.Readings.Situation String := ⟨m7 [("g", [["s1"]])], [], [], .outcome "p" ["s1"], true⟩
+def fx7 (ch : VE.Readings.Chain) : Fixed := ⟨ch, [("u7", 0, 1, sit7)]⟩
+#guard errOf (admitWith fixtureTable (fx7 .norms) (doc7u false ["p"])) == "admitted"
+#guard (admitWith fixtureTable (fx7 .norms) (doc7u false ["p"])).toOption.map (·.baseTree.nodes) == some [r7]
+-- with an instruction both readings decide `p`: not separated
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, { sit7 with base := m7 [("g", [["s1"]]),
+  ("instruction", [["i1"]])] })]⟩ (doc7u false ["p"])) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
 -- A26 (R-8): the same set on the soft chain is refused at step 5 before separation; on the rights chain this check
 -- does not refuse it (readings@1's `abstention` does, before `admit` runs: A27 below).
-#guard errOf (admitWith fixtureTable ⟨.soft⟩ (doc7u false ["p"])) == softText
+#guard errOf (admitWith fixtureTable (fx7 .soft) (doc7u false ["p"])) == softText
 #guard softText == "UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"
-#guard errOf (admitWith fixtureTable ⟨.rights⟩ (doc7u false ["p"])) == "admitted"
+#guard errOf (admitWith fixtureTable (fx7 .rights) (doc7u false ["p"])) == "admitted"
 -- an open set with no conditioned rule reading is not refused on the soft chain
-#guard softOk ⟨.soft⟩ (rr7.take 1) && !softOk ⟨.soft⟩ rr7 && softOk ⟨.norms⟩ rr7 &&
-  softOk ⟨.soft⟩ [{ rdCo with cand := .conditioned }]
+#guard softOk (fx7 .soft) (rr7.take 1) && !softOk (fx7 .soft) rr7 && softOk (fx7 .norms) rr7 &&
+  softOk (fx7 .soft) [rdCo]
 -- A6 (S20): a rule act with `body`; A28 (R-10): a heading with `body`.
 #guard errOf (admitWith fixtureTable fxN (docA [⟨"u7", true, .rule "r1"⟩]
   [p7 .conditioned { instrArgs with body := some .top }] (tree7 [conditionNode r7 pre22]) true ["p"])) ==
