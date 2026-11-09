@@ -1,0 +1,51 @@
+{
+ "base": "49f1682dcb7e4aa304a86a3c8c6e240d1ff7752f",
+ "parties": [
+  "operator",
+  "user"
+ ],
+ "equal": 46,
+ "differ": [
+  {
+   "source": "Claim of right life (user and operator may turn off). Every state must protect each person.",
+   "base": {
+    "refused": "VEError: SyntaxError: expected Claim, Liberty or Immunity of right"
+   },
+   "head": {
+    "refused": "VEError: InvalidInput: alterable of rule rule-1 must be sorted and distinct"
+   }
+  },
+  {
+   "source": "Claim of right life (guest may turn off). Every state must protect each person.",
+   "base": {
+    "refused": "VEError: SyntaxError: expected Claim, Liberty or Immunity of right"
+   },
+   "head": {
+    "refused": "UnknownSymbol: UnknownSymbol: party guest"
+   }
+  },
+  {
+   "source": "Claim of right life (user may turn off). Every state must protect each person.",
+   "base": {
+    "refused": "VEError: SyntaxError: expected Claim, Liberty or Immunity of right"
+   },
+   "head": {
+    "accepted": [
+     "user"
+    ]
+   }
+  },
+  {
+   "source": "Claim of right life (operator and user may turn off). Every state must protect each person.",
+   "base": {
+    "refused": "VEError: SyntaxError: expected Claim, Liberty or Immunity of right"
+   },
+   "head": {
+    "accepted": [
+     "operator",
+     "user"
+    ]
+   }
+  }
+ ]
+}
