@@ -24,6 +24,9 @@ the head still collects. A trailer without a target and a reason fails too.
 * none of these: a `conftest.py` that deselects or ignores it, or a parameter list that shrinks while its
   source in the test module is unchanged (a data file, a glob, an imported list).
 
+A lost mutant ID no trailer records is paired with a head ID of the same text (logged by `pairing_text`), not refused,
+when its module names each case by its text (`CASES_HOOK`) and no text of a kept ID is gone or unknown (`pair_cases`).
+
 A module that no longer imports or is skipped at collection is a collection report, which fails on its own
 as well. Every head collection is attached as the record of its commit.
 
@@ -35,6 +38,7 @@ from __future__ import annotations
 import argparse
 import ast
 import base64
+import contextlib
 from dataclasses import dataclass, field
 import json
 import os
@@ -69,6 +73,14 @@ TRAILER = "Test-removed"
 SEPARATOR = " — "
 # The label of a removal the diff neither deletes nor re-parametrises.
 UNLABELLED = "the diff neither deletes its file, function or class nor changes its parametrisation"
+# A mutant test module names each case by its mutant: a module-level `CASES_HOOK()` returning {its parameter ID:
+# its definition, operator and text}, run in the module's own tree; the IDs are escaped as pytest escapes them.
+CASES_HOOK = "mutant_cases"
+CASES_SCRIPT = f"""import importlib.util, json, sys
+spec = importlib.util.spec_from_file_location("ve_gate_cases", sys.argv[1])
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+print(json.dumps({{k.encode("unicode_escape").decode("ascii"): v for k, v in module.{CASES_HOOK}().items()}}))
+"""
 
 
 class CollectionError(RuntimeError):
@@ -243,9 +255,7 @@ def collect_commit(commit: str, scratch: Path, *, build_env: dict[str, str], env
     """The collection of `commit`, in a scratch worktree of it under `scratch`: its Lean build is `root`'s
     copied and rebuilt there (`lake` from `build_env`), its Rust binary `build_rust`'s, and its tests collected
     by `python` in `env`."""
-    tree = scratch / "base-worktree"
-    git(["worktree", "add", "--detach", str(tree), commit], cwd=root, env=build_env)
-    try:
+    with worktree(commit, scratch / "base-worktree", root=root, env=build_env) as tree:
         for name in ("lean/lean-toolchain", "rust-toolchain.toml"):
             pins = [(side / name).read_bytes() if (side / name).is_file() else None for side in (tree, root)]
             if pins[0] != pins[1]:
@@ -259,10 +269,18 @@ def collect_commit(commit: str, scratch: Path, *, build_env: dict[str, str], env
         if (tree / "rust/Cargo.toml").is_file():
             build_rust(tree, root, build_env)
         return collect(tree, python=python, env=env)
+
+
+@contextlib.contextmanager
+def worktree(commit: str, tree: Path, *, root: Path = ROOT, env: dict[str, str] | None = None):
+    """A detached scratch worktree of `commit` at `tree`, removed afterwards."""
+    git(["worktree", "add", "--detach", str(tree), commit], cwd=root, env=env)
+    try:
+        yield tree
     finally:
-        git(["worktree", "remove", "--force", str(tree)], cwd=root, env=build_env, check=False)
+        git(["worktree", "remove", "--force", str(tree)], cwd=root, env=env, check=False)
         shutil.rmtree(tree, ignore_errors=True)
-        git(["worktree", "prune"], cwd=root, env=build_env, check=False)
+        git(["worktree", "prune"], cwd=root, env=env, check=False)
 
 
 # --- the rule ---------------------------------------------------------------------------------------------
@@ -386,6 +404,7 @@ class Changes:
     env: dict[str, str] | None = None
     removals: list[Removal] = field(default_factory=list)
     malformed: list[dict] = field(default_factory=list)
+    python: str = sys.executable  # runs the test modules' `CASES_HOOK`
     _modules: dict = field(default_factory=dict)
 
     def module(self, side: str, path: str) -> ast.Module | None:
@@ -442,8 +461,50 @@ class Changes:
         return UNLABELLED
 
 
+    def renumbered(self, expected: set[str], collected: list[str], lost: set[str]) -> dict[str, str]:
+        """{lost base ID: its head ID} (`pair_cases`) by the `CASES_HOOK` of each side's tree (head None: `root`)."""
+        functions = {nodeid.split("[", 1)[0] for nodeid in lost if "[" in nodeid and nodeid.endswith("]")}
+        texts: dict[str, list] = {function.partition("::")[0]: [] for function in functions}
+        with tempfile.TemporaryDirectory(prefix="ve-gate-cases-") as scratch:
+            for side, commit in (("base", self.base), ("head", self.head)) if texts else ():
+                with contextlib.ExitStack() as stack:
+                    try:
+                        tree = self.root if commit is None else stack.enter_context(
+                            worktree(commit, Path(scratch) / side, root=self.root, env=self.env))
+                    except RuntimeError:  # no tree of that side: nothing pairs, the lost IDs stay refused
+                        return {}
+                    env = {name: value for name, value in (self.env or os.environ).items() if name in INHERITED}
+                    env.update(PYTHONPATH=f"{tree}{os.pathsep}{tree / 'tests'}", PYTHONPYCACHEPREFIX=f"{scratch}/pyc")
+                    for path, cases in texts.items():
+                        run = subprocess.run([self.python, "-c", CASES_SCRIPT, str(tree / path)], cwd=tree,
+                                             env=env, text=True, capture_output=True)
+                        value = test_schedule.json_value(run.stdout) if run.returncode == 0 else None
+                        cases.append(value if type(value) is dict and set(map(type, value.values())) <= {str} else {})
+        pairs = {}
+        for function in sorted(functions):
+            sides = zip((expected, collected), texts[function.partition("::")[0]])
+            pairs.update(pair_cases(*[{nodeid: cases.get(nodeid[len(function) + 1:-1]) for nodeid in ids
+                                       if nodeid.startswith(function + "[")} for ids, cases in sides]))
+        return {nodeid: head for nodeid, head in pairs.items() if nodeid in lost}
+
+
+def pair_cases(base: dict[str, str | None], head: dict[str, str | None]) -> dict[str, str]:
+    """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text or None} on
+    each side. A lost ID whose text is gone or None stays unpaired; a kept ID with None on a side or a gone text: {}."""
+    free, pairs = {}, {}  # {a head text or None: its head IDs}, {base ID: head ID}
+    for nodeid, text in head.items():
+        if base.get(nodeid) != text:  # a head case, not at an ID that keeps its text
+            free.setdefault(text, []).append(nodeid)
+    for nodeid, text in sorted(base.items(), key=lambda item: (item[0] not in head, item[0])):  # kept IDs first
+        if nodeid in head and (None in (text, head[nodeid]) or (head[nodeid] != text and not free.get(text))):
+            return {}  # a kept ID's text is unknown, or gone and shown by no lost ID: the function pairs nothing
+        if head.get(nodeid) != text and free.get(text):  # never None: a lost ID's None equals head.get's
+            pairs[nodeid] = free[text].pop(0)
+    return {nodeid: paired for nodeid, paired in pairs.items() if nodeid not in head}
+
+
 def changes(base: str, head: str | None = "HEAD", *, root: Path = ROOT,
-            env: dict[str, str] | None = None) -> Changes:
+            env: dict[str, str] | None = None, python: str = sys.executable) -> Changes:
     """The changes `git diff --no-renames base..head` makes (a rename is a deletion and an addition), with the
     removal records of base..head (base..HEAD for the worktree, whose edits carry none)."""
     sides = [base] if head is None else [base, head]
@@ -452,7 +513,7 @@ def changes(base: str, head: str | None = "HEAD", *, root: Path = ROOT,
     statuses = {fields[index + 1]: fields[index][0] for index in range(0, len(fields) - 1, 2)}
     tip = rev(f"{head or 'HEAD'}^{{commit}}", cwd=root, env=env)
     removals, malformed = removal_records(base, tip, root=root, env=env)
-    return Changes(base, None if head is None else tip, statuses, root, env, removals, malformed)
+    return Changes(base, None if head is None else tip, statuses, root, env, removals, malformed, python)
 
 
 @dataclass
@@ -463,12 +524,13 @@ class Verdict:
     stale: list[dict]  # each trailer covering an ID the head still collects
     malformed: list[dict]  # each trailer that is not `<target> — <reason>`
     suggested: list[str]  # a trailer target for each refused ID: its deleted file, class or function, or itself
+    paired: dict[str, str] = field(default_factory=dict)  # each lost base ID renumbered: its head ID, same text
 
     def failed(self) -> bool:
         return bool(self.refused or self.stale or self.malformed)
 
     def record(self) -> dict:
-        return {"removed": self.removed, "refused": self.refused, "stale": self.stale, "malformed": self.malformed}
+        return {key: getattr(self, key) for key in ("removed", "refused", "stale", "malformed", "paired")}
 
 
 def missing(expected: list[str], collected: list[str], diff: Changes | None) -> Verdict:
@@ -476,14 +538,20 @@ def missing(expected: list[str], collected: list[str], diff: Changes | None) -> 
     Without `diff`, every lost ID is refused unlabelled."""
     removals = diff.removals if diff else []
     head = set(collected)
-    removed, refused, suggested = {}, {}, []
+    removed, refused, suggested, records = {}, {}, [], {}
     for nodeid in sorted(set(expected) - head):
-        label = diff.label(nodeid) if diff else UNLABELLED
         deleted = diff.deleted(nodeid) if diff else None
         # A prefix records its definition's deletion, not a changed parameter
         # list or collection rule on a definition that still exists.
-        removal = next((removal for removal in removals if removal.covers(nodeid) and
-                        (removal.target == nodeid or removal.target == deleted)), None)
+        records[nodeid] = deleted, next((removal for removal in removals if removal.covers(nodeid) and
+                                         (removal.target == nodeid or removal.target == deleted)), None)
+    unrecorded = {nodeid for nodeid, (_, removal) in records.items() if removal is None}
+    kept = head.intersection(expected)  # the base cases pairing sees, with the unrecorded: a recorded ID takes none
+    paired = diff.renumbered(kept | unrecorded, collected, unrecorded) if diff and unrecorded else {}
+    for nodeid, (deleted, removal) in records.items():
+        if nodeid in paired:
+            continue
+        label = diff.label(nodeid) if diff else UNLABELLED
         if removal is None:
             refused[nodeid] = label
             # A deleted file's or function's trailer, unless the head still collects an ID it would cover.
@@ -502,7 +570,7 @@ def missing(expected: list[str], collected: list[str], diff: Changes | None) -> 
             removal.target in lost and nodeid.startswith(removal.target + "["))), None)
         if still is not None:
             stale.append({"target": removal.target, "commit": removal.commit, "collected": still})
-    return Verdict(removed, refused, stale, list(diff.malformed) if diff else [], suggested)
+    return Verdict(removed, refused, stale, list(diff.malformed) if diff else [], suggested, paired)
 
 
 def difference_text(base: str, verdict: Verdict) -> str:
@@ -525,6 +593,11 @@ def difference_text(base: str, verdict: Verdict) -> str:
         lines.append(f"{len(verdict.malformed)} `{TRAILER}:` trailers are not `<test ID>{SEPARATOR}<reason>`:")
         lines.extend(f"  commit {row['commit'][:12]}: {row['trailer']}" for row in verdict.malformed)
     return "\n".join(lines)
+
+
+def pairing_text(verdict: Verdict) -> str:
+    """The gate log's table of renumbered mutants: each lost base ID and the head ID with its text."""
+    return "".join(f"renumbered: {nodeid} -> {head}\n" for nodeid, head in verdict.paired.items())
 
 
 def main() -> int:
@@ -552,6 +625,7 @@ def main() -> int:
         return 2
     for nodeid, row in verdict.removed.items():
         print(f"removed: {nodeid}: {row['reason']} (commit {row['commit'][:12]}; {row['label']})")
+    print(pairing_text(verdict), end="")
     print(f"{len(collected)} collected, {len(expected)} at {base}; {len(set(collected) - set(expected))} added, "
           f"{len(verdict.removed)} removed by a trailer, {len(verdict.refused)} refused, "
           f"{len(verdict.stale)} stale and {len(verdict.malformed)} malformed trailers")
