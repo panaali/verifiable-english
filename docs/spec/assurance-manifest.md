@@ -163,7 +163,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
 | `lean/VE/Cardinality/Run.lean` | 292 | 292 | 1–292 | `e55af9708515…` |
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
-| `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `d81be730d087…` |
+| `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `45b337e58cd3…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
 | `lean/VE/Commands/Run.lean` | 311 | 311 | 1–311 | `e10c4a393dff…` |
 | `lean/VE/Core/Bridge.lean` | 156 | 112 | 11–122 | `778e45637441…` |
