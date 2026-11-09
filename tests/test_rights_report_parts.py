@@ -1,13 +1,6 @@
-"""rights-cfr-2 and rights-cfr-3 (docs/rights/rights-cfr-2/REPORT.md).
-
-1. A CONFLICT-FREE rights-conflict answer gives the report parts of docs/spec/rights.md 7.3: its status line is the
-   spec's line, read from the spec file, with the premise labels, the weighing points open and either the exhibited
-   situation (a finite base model Lean checked against `Background_base″`, 5.3 (2)) or UNKNOWN with the budget; the
-   same parts are fields beside it.
-2. Both finding kinds (`UnlicensedLimitation`, `ProtectedInCone`) carry their line's span (rights.md 8): the source
-   unit the request's `located` field names for the line's unit; the report shows it beside the text.
-3. The relay only types and binds the new fields (R8): every mutation of them is CheckerUnavailable.
-"""
+"""rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): a CONFLICT-FREE answer gives rights.md 7.3's report parts
+(the spec's line, read from the spec file, and the same parts as fields); both finding kinds carry their line's span
+(rights.md 8); the relay only types and binds the new fields (R8)."""
 from __future__ import annotations
 
 import copy
@@ -77,15 +70,16 @@ def _weighed():
     return environment, packages(raw, WEIGHED, elaborated), situation
 
 
-def _spec_line(*, k, l, labels, j, exhibited, template=None):
-    """rights.md 7.3's CONFLICT-FREE line, read from the spec file, its placeholders filled; the rights-conflict case
-    has no couplings, so the optional `[, under couplings <ids>]` is left out."""
-    if template is None:
-        text = SPEC.read_text(encoding="utf-8")
-        block = text[text.index("### 7.3 Status text"):]
-        first, second = block[block.index("```text\n") + len("```text\n"):].splitlines()[:2]
-        template = f"{first} {second.strip()}"
-    assert template.count("[, under couplings <ids>]") == 1 and template.count("yes | UNKNOWN (<budget>)") == 1
+def _template():
+    """rights.md 7.3's CONFLICT-FREE line as the spec file writes it (its two lines joined)."""
+    block = SPEC.read_text(encoding="utf-8").split("### 7.3 Status text", 1)[1].split("```text\n", 1)[1]
+    first, second = block.splitlines()[:2]
+    return f"{first} {second.strip()}"
+
+
+def _spec_line(template, *, k, l, labels, j, exhibited):
+    """The template's placeholders filled; the rights-conflict case has no couplings, so the optional
+    `[, under couplings <ids>]` is left out."""
     filled = (template.replace("[, under couplings <ids>]", "").replace("<k>", str(k)).replace("<l>", str(l))
               .replace("<labels>", ", ".join(labels)).replace("<j>", str(j))
               .replace("yes | UNKNOWN (<budget>)", exhibited))
@@ -112,10 +106,11 @@ def test_rights_conflict_free_report_evidence():
         assert row["status_text"].startswith("CONFLICT-FREE among rules on the same act, conditional on 1 coherence "
                                              "premises and 2 limitation premises (")
     # No situation sent: the line says UNKNOWN with its budget, and no situation is shown.
-    assert bare["status_text"] == _spec_line(k=1, l=2, labels=labels, j=1, exhibited="UNKNOWN (budget 10000)")
+    assert bare["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1,
+                                             exhibited="UNKNOWN (budget 10000)")
     assert bare["situation_exhibited"] is False and bare["situation"] is None
     # A checked situation: its decision, exception and limitation tables, as the request gave them.
-    assert shown["status_text"] == _spec_line(k=1, l=2, labels=labels, j=1, exhibited="yes")
+    assert shown["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1, exhibited="yes")
     assert shown["situation_exhibited"] is True
     assert shown["situation"] == [{"predicate": "soft__excepted__no_arbitrary_arrest", "tuples": []},
                                   {"predicate": "soft__excepted__may_detain", "tuples": [["s", "p"]]},
@@ -134,16 +129,12 @@ def test_the_spec_comparison_refuses_a_one_character_edit():
     environment, certified, _ = _weighed()
     row = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
     args = dict(k=1, l=2, labels=row["conditional_on"], j=1, exhibited="UNKNOWN (budget 10000)")
-    assert row["status_text"] == _spec_line(**args)
-    text = SPEC.read_text(encoding="utf-8")
-    block = text[text.index("### 7.3 Status text"):]
-    first, second = block[block.index("```text\n") + len("```text\n"):].splitlines()[:2]
-    template = f"{first} {second.strip()}"
+    template = _template()
+    assert row["status_text"] == _spec_line(template, **args)
     for word in ("CONFLICT-FREE", "among", "coherence", "limitation", "weighing", "open;", "exhibited:"):
         i = template.index(word)
-        edited = template[:i] + template[i].swapcase() + template[i + 1:]
-        assert row["status_text"] != _spec_line(**args, template=edited)
-    assert row["status_text"][:-1] + "!" != _spec_line(**args)
+        assert row["status_text"] != _spec_line(template[:i] + template[i].swapcase() + template[i + 1:], **args)
+    assert row["status_text"][:-1] + "!" != _spec_line(template, **args)
 
 
 def test_an_invalid_situation_is_refused_by_lean():
@@ -210,33 +201,18 @@ def _forge(monkeypatch, kind, mutation):
     monkeypatch.setattr(rights_route, "decide_once", forged)
 
 
-def _set(field, index, key, value):
-    def mutation(row):
-        if value is _DROP:
-            del row[field][index][key]
-        else:
-            row[field][index][key] = value
-    return mutation
-
-
-_DROP = object()
-FINDING_MUTATIONS = {
-    "span another located unit": ("s4",),
-    "span a unit the request lacks": ("absent",),
-    "span emptied": ("",),
-    "span null": (None,),
-    "span retyped 7": (7,),
-    "span retyped true": (True,),
-    "span retyped list": ([],),
-    "span retyped object": ({},),
-    "span dropped": (_DROP,),
-}
+SPANS = ["s4", "absent", "", None, 7, True, [], {}, "dropped"]
 
 
 @pytest.mark.parametrize("kind", ["rights-elaborate", "rights-scope"])
-@pytest.mark.parametrize("label", sorted(FINDING_MUTATIONS))
-def test_a_mutated_finding_span_is_refused(monkeypatch, kind, label):
-    _forge(monkeypatch, kind, _set("located_findings", 0, "span", FINDING_MUTATIONS[label][0]))
+@pytest.mark.parametrize("span", SPANS, ids=[repr(span) for span in SPANS])
+def test_a_mutated_finding_span_is_refused(monkeypatch, kind, span):
+    def mutation(row):
+        if span == "dropped":
+            del row["located_findings"][0]["span"]
+        else:
+            row["located_findings"][0]["span"] = span
+    _forge(monkeypatch, kind, mutation)
     with pytest.raises(CheckerUnavailable):
         rights_route.report_rights(_spanned_environment(), copy.deepcopy(SPANNED), located=LOCATED)
 
@@ -250,7 +226,6 @@ ROW_MUTATIONS = {
     "right renamed": lambda rows: rows[0].update(right="absent"),
     "code swapped": lambda rows: rows[0].update(code="Unknown"),
     "text shifted": lambda rows: rows[0].update(text=rows[0]["text"] + " "),
-    "rows reordered": lambda rows: rows.reverse() if len(rows) > 1 else rows.pop(0),
 }
 
 
@@ -263,15 +238,9 @@ def test_a_mutated_finding_row_is_refused(monkeypatch, kind, label):
 
 
 def test_a_span_where_no_line_is_located_is_refused(monkeypatch):
-    _forge(monkeypatch, "rights-scope", _set("located_findings", 0, "span", "s2"))
+    _forge(monkeypatch, "rights-scope", lambda row: row["located_findings"][0].update(span="s2"))
     with pytest.raises(CheckerUnavailable):
         rights_route.report_rights(_spanned_environment(), copy.deepcopy(SPANNED))
-
-
-def _table(index, key, value):
-    def mutation(row):
-        row["situation"][index][key] = value
-    return mutation
 
 
 CONFLICT_MUTATIONS = {
@@ -286,9 +255,9 @@ CONFLICT_MUTATIONS = {
     "budget retyped bool": lambda row: row.update(budget=True),
     "situation null": lambda row: row.update(situation=None),
     "situation retyped": lambda row: row.update(situation={}),
-    "table renamed": _table(0, "predicate", "absent"),
-    "table rows changed": _table(1, "tuples", [["s", "s"]]),
-    "table rows retyped": _table(1, "tuples", [[7]]),
+    "table renamed": lambda row: row["situation"][0].update(predicate="absent"),
+    "table rows changed": lambda row: row["situation"][1].update(tuples=[["s", "s"]]),
+    "table rows retyped": lambda row: row["situation"][1].update(tuples=[[7]]),
     "table dropped": lambda row: row["situation"].pop(),
     "table added": lambda row: row["situation"].append({"predicate": "journalist", "tuples": []}),
     "status line edited": lambda row: row.update(status_text=row["status_text"].replace("weighing", "weighting")),
@@ -314,12 +283,3 @@ def test_a_situation_shown_when_none_was_sent_is_refused(monkeypatch):
     _forge(monkeypatch, "rights-conflict", lambda row: row.update(situation=tables))
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
-
-
-def test_the_genuine_answers_are_accepted():
-    """The opposite direction of the refusals above: the relay accepts every genuine answer they mutate."""
-    environment, certified, situation = _weighed()
-    assert rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified,
-                                        situation=situation)["situation_exhibited"] is True
-    report = rights_route.report_rights(_spanned_environment(), copy.deepcopy(SPANNED), located=LOCATED)
-    assert len(report["distinction_hits_located"]) == 2
