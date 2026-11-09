@@ -2266,6 +2266,13 @@
    "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
    "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }
