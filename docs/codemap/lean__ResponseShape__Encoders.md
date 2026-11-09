@@ -1,3 +1,4 @@
+- `lean/ResponseShape/Encoders/ActReadings.lean` — The `act-readings` mode (`VE.Acts.Run.actReadingsReported`) against `act-readings.json#/row`: a listed row's spans, readings and acts, and a refused or limited…
 - `lean/ResponseShape/Encoders/Alternatives.lean` — The `alternatives` mode (`Alternatives.Run.runCaseReported`) against `alternatives.json#/row`.
 - `lean/ResponseShape/Encoders/Ask.lean` — The `ask` mode (`VE.Ask.Run.caseReported`) against `ask.json#/row`: every field of an answered question and of a refused one, typed.
 - `lean/ResponseShape/Encoders/Calc.lean` — The `calc` mode (`VE.Calc.Run.runCaseReported`) against `calc.json#/row` (math-evidence spec 3.4).
