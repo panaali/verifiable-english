@@ -1,45 +1,45 @@
 {
  "base": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
- "head": "c494438df29a6d2f81846c13dae54d8262c950d3",
- "tree": "1ddf57b7d0d26e4a549244563c48ce32cc44f3f7",
+ "head": "5dd5256c5555fb2d83de507d4729b2409463ea96",
+ "tree": "66a298a51ca4b5009f2f94c4376a98bbda0bb00e",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [
   "lean/VE/Scope/AuthoringExamples.lean"
  ],
- "seconds": 1035,
+ "seconds": 66,
  "steps": {
   "wall": {
-   "plan": 23.8,
-   "scratch": 32.8,
-   "control_build": 0.5,
-   "probe_install": 3.8,
-   "control_probes": 12.8,
-   "mutants": 958.5,
+   "plan": 16.3,
+   "scratch": 22.3,
+   "control_build": 0.2,
+   "probe_install": 2.6,
+   "control_probes": 8.6,
+   "mutants": 14.0,
    "cleanup": 2.5,
    "reads": 0.0
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 3.6,
-   "control_probes": 12.2,
-   "mutant_builds": 2932.0,
-   "mutant_checks": 2993.9,
+   "control_build": 0.2,
+   "probe_install": 2.6,
+   "control_probes": 8.2,
+   "mutant_builds": 106.7,
+   "mutant_checks": 0.0,
    "outside_checks": 0.0,
-   "stage_controls": 92.9,
-   "mutant_probes": 1207.8,
+   "stage_controls": 0.2,
+   "mutant_probes": 0.0,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
    "control_probes": 1,
-   "mutant_builds": 310,
-   "mutant_checks": 221,
+   "mutant_builds": 24,
+   "mutant_checks": 0,
    "outside_checks": 0,
-   "stage_controls": 7,
-   "mutant_probes": 213,
+   "stage_controls": 1,
+   "mutant_probes": 0,
    "other": 0
   }
  },
@@ -927,6 +927,14 @@
    "tools/trust_mutants.py": "d0ba9c8cb1a73888e71d0a71381e05ac501209ef05edc7c855a0573285b934d7"
   }
  },
+ "rescore": {
+  "file": "docs/scope/sc-7/trust-mutants.json",
+  "head": "c494438df29a6d2f81846c13dae54d8262c950d3",
+  "mode": "identical",
+  "changed": [],
+  "reused": 275,
+  "rerun": 24
+ },
  "definitions": [
   "lean/VE/Scope/Authoring.lean: VE.Scope.Pinned.Row",
   "lean/VE/Scope/Authoring.lean: VE.Scope.Pinned.attitude",
@@ -965,6 +973,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -988,6 +997,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -1011,6 +1021,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -1034,6 +1045,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "1680c15bd1afd655639c98520616da0fd5d31ee98da9abc35cde3e66928c7f49",
    "killed_at": [
     69,
@@ -1057,6 +1069,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "89acbd5270934e6efb266e6a511680104260616f6a4ffc4a2698f74083abfc0b",
    "killed_at": [
     25,
@@ -1080,6 +1093,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f08f27b83918befafeee51d8c7df0857277154f89595552f1e853d23782329bb",
    "killed_at": [
     25,
@@ -1103,6 +1117,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "d7a8c158d4c3f190f0d278fa001607c963ce838fadaf07cf9be75f6fb74924fc",
    "killed_at": [
     25,
@@ -1126,6 +1141,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f98939d1e392d547cfdc5aa75577d2c2ab41b94c29ff78938dfb867247076a58",
    "killed_at": [
     25,
@@ -1149,6 +1165,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "89acbd5270934e6efb266e6a511680104260616f6a4ffc4a2698f74083abfc0b",
    "killed_at": [
     25,
@@ -1172,6 +1189,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f08f27b83918befafeee51d8c7df0857277154f89595552f1e853d23782329bb",
    "killed_at": [
     25,
@@ -1195,6 +1213,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -1218,6 +1237,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -1241,6 +1261,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -1264,6 +1285,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -1287,6 +1309,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "1680c15bd1afd655639c98520616da0fd5d31ee98da9abc35cde3e66928c7f49",
    "killed_at": [
     69,
@@ -1310,6 +1333,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "10fd92c9a862112eecf1bec79ce49bbe7f51557a6b6989a2066d321b18cd621d",
    "killed_at": [
     69,
@@ -1333,6 +1357,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "12ecbf2221a893f70493de3bb751071a28040352878d07e65837f53285f4fc7e",
    "killed_at": [
     69,
@@ -1356,6 +1381,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "918cb6436ec421beec05ac865a21c1fb65c00b824b6c932fadb3c5895ae32423",
    "killed_at": [
     69,
@@ -1379,6 +1405,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:113: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3563b35bd2153eb42bedbe7bdd9bda542d82f1180cda86515679839d4f5bf79",
    "killed_at": [
     113,
@@ -1402,6 +1429,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -1425,6 +1453,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:163: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "ffd492a1d74f676661cc36d54c83346617699da91ae9fe30e65bf38e21b9797c",
    "killed_at": [
     163,
@@ -1449,6 +1478,7 @@
    "detail": "equivalent where it is a SURVIVOR: `0x20 \u2264 c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.Discourse.spaceChar c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1467,6 +1497,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:53: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9bb0e3e2eba4da106d033db85e0870e206f34748b169a76cada12961d0330e47",
    "killed_at": [
     53,
@@ -1490,6 +1521,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -1513,6 +1545,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "89acbd5270934e6efb266e6a511680104260616f6a4ffc4a2698f74083abfc0b",
    "killed_at": [
     25,
@@ -1536,6 +1569,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -1559,6 +1593,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "07a363210b4df954d6d25585ce393e98d05491d1a3439023fd7229352b6e422f",
    "killed_at": [
     29,
@@ -1582,6 +1617,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -1605,6 +1641,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -1628,6 +1665,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -1651,6 +1689,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -1674,6 +1713,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -1697,6 +1737,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -1720,6 +1761,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "be3027756947d846f421de8ccc1fa8d7e19132051d040183373c3d86f2bbb763",
    "killed_at": [
     80,
@@ -1743,6 +1785,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -1766,6 +1809,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -1789,6 +1833,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -1812,6 +1857,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -1835,6 +1881,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:95: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "c9b601279f79d31b4684c8028b8215ab61eb7e803f2819e73aaf94f9cb4998e2",
    "killed_at": [
     95,
@@ -1858,6 +1905,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:53: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9bb0e3e2eba4da106d033db85e0870e206f34748b169a76cada12961d0330e47",
    "killed_at": [
     53,
@@ -1881,6 +1929,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -1904,6 +1953,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -1927,6 +1977,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -1950,6 +2001,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:93: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "717cce0ef956bee01e81fbb0edc50e3585c6be73af9420a2465aa07466029e0c",
    "killed_at": [
     93,
@@ -1973,6 +2025,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -1996,6 +2049,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -2036,7 +2090,7 @@
    "before": "(s.splitOn \" \")",
    "after": "[]",
    "status": "ALLOWED",
-   "detail": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:39); the definition is killed by body-true at :38; body-false at :38; and-or at :38; all-any at :38; list-first at :38; list-last at :38; list-drop-first at :38; list-drop-last at :38",
+   "detail": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:40); the definition is killed by body-true at :40; body-false at :40; and-or at :40; all-any at :40; list-first at :40; list-last at :40; list-drop-first at :40; list-drop-last at :40",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Scope/Authoring.lean:40: Invalid field notation: Type of",
    "trust_class": "D[V]",
@@ -2095,6 +2149,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "508edd512ea37ccbbddd53b64b1ad077403c175cad17743f10e307df681fb03b",
    "killed_at": [
     29,
@@ -2118,6 +2173,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "411b04c193016cbf492f72a3bc191946f778ce96a7dd7c0eb8dc52ee5e6f14d1",
    "killed_at": [
     29,
@@ -2141,6 +2197,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -2164,6 +2221,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -2187,6 +2245,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -2210,6 +2269,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -2309,6 +2369,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -2332,6 +2393,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -2374,6 +2436,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "89acbd5270934e6efb266e6a511680104260616f6a4ffc4a2698f74083abfc0b",
    "killed_at": [
     25,
@@ -2397,6 +2460,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -2420,6 +2484,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "12ecbf2221a893f70493de3bb751071a28040352878d07e65837f53285f4fc7e",
    "killed_at": [
     69,
@@ -2443,6 +2508,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "be3027756947d846f421de8ccc1fa8d7e19132051d040183373c3d86f2bbb763",
    "killed_at": [
     80,
@@ -2466,6 +2532,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -2489,6 +2556,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:91: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "d814198fd2de190212cd4c53906a3308e3444a52978fb2f0ec6c9877d4b036d9",
    "killed_at": [
     91,
@@ -2512,6 +2580,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -2535,6 +2604,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -2558,6 +2628,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -2581,6 +2652,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -2604,6 +2676,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -2627,6 +2700,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a7028166b73c83273b3397d437131ceed63e340523341b46cbd424f5598cea95",
    "killed_at": [
     80,
@@ -2650,6 +2724,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "12ecbf2221a893f70493de3bb751071a28040352878d07e65837f53285f4fc7e",
    "killed_at": [
     69,
@@ -2673,6 +2748,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:91: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "d814198fd2de190212cd4c53906a3308e3444a52978fb2f0ec6c9877d4b036d9",
    "killed_at": [
     91,
@@ -2715,6 +2791,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:113: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3563b35bd2153eb42bedbe7bdd9bda542d82f1180cda86515679839d4f5bf79",
    "killed_at": [
     113,
@@ -2776,6 +2853,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -2799,6 +2877,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -2822,6 +2901,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -2845,6 +2925,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -2944,6 +3025,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -2986,6 +3068,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "89acbd5270934e6efb266e6a511680104260616f6a4ffc4a2698f74083abfc0b",
    "killed_at": [
     25,
@@ -3009,6 +3092,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "918cb6436ec421beec05ac865a21c1fb65c00b824b6c932fadb3c5895ae32423",
    "killed_at": [
     69,
@@ -3032,6 +3116,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -3055,6 +3140,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -3078,6 +3164,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:48: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "84e8c3364c39ba42595915fee0dbd20d43d460d0afb36b8c76fe472bb3f100e5",
    "killed_at": [
     48,
@@ -3101,6 +3188,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a7028166b73c83273b3397d437131ceed63e340523341b46cbd424f5598cea95",
    "killed_at": [
     80,
@@ -3124,6 +3212,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -3147,6 +3236,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -3170,6 +3260,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -3212,6 +3303,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4249fec3503af5fb9cb3be34d7f8f13ab7dd5299efa649554d01495b10c300ea",
    "killed_at": [
     25,
@@ -3254,6 +3346,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4f191c2c34def07c132e4a815ca7f6c6c882bce7be2853e9ac5d4ab4e705ae35",
    "killed_at": [
     80,
@@ -3334,6 +3427,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "06aeff693f33bc39ff6c2a75cb817991dc75ec68ea3021609d1933afae2b09d2",
    "killed_at": [
     34,
@@ -3395,6 +3489,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:38: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "168040365a2c2cc1b90e474c6703c19d7419cc8699e5ac4679393625095b68d6",
    "killed_at": [
     38,
@@ -3418,6 +3513,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "be3027756947d846f421de8ccc1fa8d7e19132051d040183373c3d86f2bbb763",
    "killed_at": [
     80,
@@ -3441,6 +3537,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -3464,6 +3561,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -3487,6 +3585,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -3510,6 +3609,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
@@ -3533,6 +3633,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -3556,6 +3657,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a7028166b73c83273b3397d437131ceed63e340523341b46cbd424f5598cea95",
    "killed_at": [
     80,
@@ -3579,6 +3681,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -3602,6 +3705,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -3625,6 +3729,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -3648,6 +3753,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -3671,6 +3777,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -3694,6 +3801,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -3717,6 +3825,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -3740,6 +3849,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -3759,6 +3869,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern: Expected an identifier in function position, but found",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7506ade7694a558c4a792aa2554cf4f639a0919085d85c111da8016087c6f3e1",
    "trust_class": "D[V]",
    "trusted": true
@@ -3778,6 +3889,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -3797,6 +3909,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -3820,6 +3933,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "12db7f0a555b5788d8e1ea64bb6d437c763020c8957578b8359b94429544c992",
    "killed_at": [
     101,
@@ -3843,6 +3957,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "0ea4f6f1d61f96756ee1e62406e879c5487e1e8c04de66d936e25d1a38fc4375",
    "killed_at": [
     101,
@@ -3866,6 +3981,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -3889,6 +4005,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -3912,6 +4029,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2f2ae02b59084c26643529d482bcd4c8857bb7c47e67dd9c2dca435e4035c605",
    "killed_at": [
     69,
@@ -3935,6 +4053,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4fcb53b661d902d559243044398fd983c250cb56b2e12eb39836542ba2308032",
    "trust_class": "D[V]",
    "trusted": true
@@ -3954,6 +4073,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9ea94a9d47e0bec65b10ae33f00f271206663c685a28552aec5bb26e99ade98a",
    "trust_class": "D[V]",
    "trusted": true
@@ -3973,6 +4093,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "508edd512ea37ccbbddd53b64b1ad077403c175cad17743f10e307df681fb03b",
    "killed_at": [
     29,
@@ -3996,6 +4117,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "411b04c193016cbf492f72a3bc191946f778ce96a7dd7c0eb8dc52ee5e6f14d1",
    "killed_at": [
     29,
@@ -4019,6 +4141,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -4042,6 +4165,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -4065,6 +4189,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -4088,6 +4213,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -4111,6 +4237,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -4130,6 +4257,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7506ade7694a558c4a792aa2554cf4f639a0919085d85c111da8016087c6f3e1",
    "trust_class": "D[V]",
    "trusted": true
@@ -4149,6 +4277,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -4168,6 +4297,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -4187,6 +4317,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -4210,6 +4341,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -4234,6 +4366,7 @@
    "detail": "equivalent where it is a SURVIVOR: `!w.isEmpty` becomes `!(w.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:24); every other `list-first` mutant of `spaced` is KILLED (:24, :24)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -4252,6 +4385,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:113: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3563b35bd2153eb42bedbe7bdd9bda542d82f1180cda86515679839d4f5bf79",
    "killed_at": [
     113,
@@ -4275,6 +4409,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -4298,6 +4433,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -4321,6 +4457,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -4344,6 +4481,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -4367,6 +4505,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -4390,6 +4529,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -4409,6 +4549,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -4428,6 +4569,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -4447,6 +4589,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4249fec3503af5fb9cb3be34d7f8f13ab7dd5299efa649554d01495b10c300ea",
    "killed_at": [
     25,
@@ -4470,6 +4613,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "0ea4f6f1d61f96756ee1e62406e879c5487e1e8c04de66d936e25d1a38fc4375",
    "killed_at": [
     101,
@@ -4493,6 +4637,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f38f95f470ac92dae2cad046ba21ec639520b3466bcf318bb313f4047f8c4daa",
    "trust_class": "D[V]",
    "trusted": true
@@ -4512,6 +4657,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cf9c39ae5932c7d038e44dd7b4a48941392a2e3fad9092c9daaf5e57b797181d",
    "trust_class": "D[V]",
    "trusted": true
@@ -4531,6 +4677,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4fcb53b661d902d559243044398fd983c250cb56b2e12eb39836542ba2308032",
    "trust_class": "D[V]",
    "trusted": true
@@ -4550,6 +4697,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9ea94a9d47e0bec65b10ae33f00f271206663c685a28552aec5bb26e99ade98a",
    "trust_class": "D[V]",
    "trusted": true
@@ -4569,6 +4717,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -4592,6 +4741,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -4615,6 +4765,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -4638,6 +4789,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -4661,6 +4813,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -4680,6 +4833,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -4699,6 +4853,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -4718,6 +4873,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
@@ -4741,6 +4897,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -4764,6 +4921,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a7028166b73c83273b3397d437131ceed63e340523341b46cbd424f5598cea95",
    "killed_at": [
     80,
@@ -4787,6 +4945,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -4806,6 +4965,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:98: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "765cbf0e44bb2c10bdaf28f5c6b88a2223473bac5c7a7f3f0231d1a0df383e04",
    "killed_at": [
     98,
@@ -4829,6 +4989,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f38f95f470ac92dae2cad046ba21ec639520b3466bcf318bb313f4047f8c4daa",
    "trust_class": "D[V]",
    "trusted": true
@@ -4848,6 +5009,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -4871,6 +5033,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -4894,6 +5057,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -4917,6 +5081,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -4936,6 +5101,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4249fec3503af5fb9cb3be34d7f8f13ab7dd5299efa649554d01495b10c300ea",
    "killed_at": [
     25,
@@ -4959,6 +5125,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "03bd898ad9596817fac92ca29d0b81447359ea9fc3266f5955a35f53d6c757fa",
    "trust_class": "D[V]",
    "trusted": true
@@ -4978,6 +5145,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -5001,6 +5169,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -5020,6 +5189,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -5039,6 +5209,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -5062,6 +5233,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -5085,6 +5257,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -5104,6 +5277,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -5123,6 +5297,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "06aeff693f33bc39ff6c2a75cb817991dc75ec68ea3021609d1933afae2b09d2",
    "killed_at": [
     34,
@@ -5146,6 +5321,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "be3027756947d846f421de8ccc1fa8d7e19132051d040183373c3d86f2bbb763",
    "killed_at": [
     80,
@@ -5169,6 +5345,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -5188,6 +5365,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -5211,6 +5389,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -5230,6 +5409,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
@@ -5253,6 +5433,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:38: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "168040365a2c2cc1b90e474c6703c19d7419cc8699e5ac4679393625095b68d6",
    "killed_at": [
     38,
@@ -5276,6 +5457,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `String.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -5295,6 +5477,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -5318,6 +5501,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -5341,6 +5525,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -5364,6 +5549,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
@@ -5387,6 +5573,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -5410,6 +5597,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -5433,6 +5621,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:113: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3563b35bd2153eb42bedbe7bdd9bda542d82f1180cda86515679839d4f5bf79",
    "killed_at": [
     113,
@@ -5456,6 +5645,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4fcb53b661d902d559243044398fd983c250cb56b2e12eb39836542ba2308032",
    "trust_class": "D[V]",
    "trusted": true
@@ -5475,6 +5665,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9ea94a9d47e0bec65b10ae33f00f271206663c685a28552aec5bb26e99ade98a",
    "trust_class": "D[V]",
    "trusted": true
@@ -5494,6 +5685,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -5517,6 +5709,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -5540,6 +5733,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -5563,6 +5757,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -5586,6 +5781,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -5605,6 +5801,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern: Expected an identifier in function position, but found",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7506ade7694a558c4a792aa2554cf4f639a0919085d85c111da8016087c6f3e1",
    "trust_class": "D[V]",
    "trusted": true
@@ -5624,6 +5821,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -5643,6 +5841,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -5662,6 +5861,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "12db7f0a555b5788d8e1ea64bb6d437c763020c8957578b8359b94429544c992",
    "killed_at": [
     101,
@@ -5685,6 +5885,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "0ea4f6f1d61f96756ee1e62406e879c5487e1e8c04de66d936e25d1a38fc4375",
    "killed_at": [
     101,
@@ -5708,6 +5909,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:189: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "08e87549d4b5199038e2e6158065d95072824dc21206a6df5fa742f097277c77",
    "killed_at": [
     189,
@@ -5731,6 +5933,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:69: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8f7466da4f44a524637921afaf6ca7bcb51932ab9ce1362bb56cc78e612129dc",
    "killed_at": [
     69,
@@ -5754,6 +5957,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:113: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3563b35bd2153eb42bedbe7bdd9bda542d82f1180cda86515679839d4f5bf79",
    "killed_at": [
     113,
@@ -5777,6 +5981,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -5800,6 +6005,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -5823,6 +6029,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "508edd512ea37ccbbddd53b64b1ad077403c175cad17743f10e307df681fb03b",
    "killed_at": [
     29,
@@ -5846,6 +6053,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "411b04c193016cbf492f72a3bc191946f778ce96a7dd7c0eb8dc52ee5e6f14d1",
    "killed_at": [
     29,
@@ -5869,6 +6077,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -5892,6 +6101,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -5915,6 +6125,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -5938,6 +6149,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -5961,6 +6173,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -5980,6 +6193,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern: Expected an identifier in function position, but found",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7506ade7694a558c4a792aa2554cf4f639a0919085d85c111da8016087c6f3e1",
    "trust_class": "D[V]",
    "trusted": true
@@ -5999,6 +6213,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -6018,6 +6233,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -6041,6 +6257,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -6064,6 +6281,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -6087,6 +6305,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6110,6 +6329,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -6133,6 +6353,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4249fec3503af5fb9cb3be34d7f8f13ab7dd5299efa649554d01495b10c300ea",
    "killed_at": [
     25,
@@ -6156,6 +6377,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f38f95f470ac92dae2cad046ba21ec639520b3466bcf318bb313f4047f8c4daa",
    "trust_class": "D[V]",
    "trusted": true
@@ -6175,6 +6397,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cf9c39ae5932c7d038e44dd7b4a48941392a2e3fad9092c9daaf5e57b797181d",
    "trust_class": "D[V]",
    "trusted": true
@@ -6194,6 +6417,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4fcb53b661d902d559243044398fd983c250cb56b2e12eb39836542ba2308032",
    "trust_class": "D[V]",
    "trusted": true
@@ -6213,6 +6437,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9ea94a9d47e0bec65b10ae33f00f271206663c685a28552aec5bb26e99ade98a",
    "trust_class": "D[V]",
    "trusted": true
@@ -6232,6 +6457,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6255,6 +6481,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -6278,6 +6505,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -6301,6 +6529,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -6320,6 +6549,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -6339,6 +6569,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -6358,6 +6589,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -6381,6 +6613,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:101: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "0ea4f6f1d61f96756ee1e62406e879c5487e1e8c04de66d936e25d1a38fc4375",
    "killed_at": [
     101,
@@ -6404,6 +6637,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3dc0e5ed1da01967cb782e00e3711a77f5e821c333253c290ed4b6677fa2091",
    "killed_at": [
     42,
@@ -6427,6 +6661,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:150: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b3bae5db95f0e223bfae1916ed487827a7b8ce8e2675d9e1caf126df4d6e9608",
    "killed_at": [
     150,
@@ -6450,6 +6685,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:26: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "5a85a4889828ed6867cd778f672a04a0a257b46af0d71c8a13b6ce0df2d8da31",
    "killed_at": [
     26,
@@ -6473,6 +6709,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "b35bbb354b86b4a09686c12a1d449cc39aaf84ec2ae35b1c0bd0fba4d775edb5",
    "killed_at": [
     29,
@@ -6496,6 +6733,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6519,6 +6757,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -6542,6 +6781,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a43356cc732ab73180b5b5e1d77144d1ff96f220eae7531fa3af2baf8416d358",
    "killed_at": [
     29,
@@ -6565,6 +6805,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -6588,6 +6829,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "7966ee9e3e307350aa6333ca7f3ede8bbbdfacb883ec336baf07363f74c3355c",
    "trust_class": "D[V]",
    "trusted": true
@@ -6607,6 +6849,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "fbdd65787d23df14f5a0cdb19bc2095c385df703ad6b57c21b7ed5741ec6ed92",
    "trust_class": "D[V]",
    "trusted": true
@@ -6626,6 +6869,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -6645,6 +6889,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "104ad1793c207954f37d02bb3ae913339d4b235130c0e233997768a310461f37",
    "killed_at": [
     21,
@@ -6668,6 +6913,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "8e3ac896d76be079ba77ccacbcce387fa8b01d611746f9e9b32d4cd0f4c88736",
    "killed_at": [
     21,
@@ -6691,6 +6937,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6714,6 +6961,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -6737,6 +6985,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f38f95f470ac92dae2cad046ba21ec639520b3466bcf318bb313f4047f8c4daa",
    "trust_class": "D[V]",
    "trusted": true
@@ -6756,6 +7005,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -6775,6 +7025,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:98: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "765cbf0e44bb2c10bdaf28f5c6b88a2223473bac5c7a7f3f0231d1a0df383e04",
    "killed_at": [
     98,
@@ -6798,6 +7049,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "a7028166b73c83273b3397d437131ceed63e340523341b46cbd424f5598cea95",
    "killed_at": [
     80,
@@ -6821,6 +7073,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6844,6 +7097,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:21: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "cbb8cc33622913387e94e6a3259020aab1d9e21540823c543cabf2df0e53ceea",
    "killed_at": [
     21,
@@ -6867,6 +7121,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "e2bc907f0589696f97ea98815663c545da868b696283f1b5f62ac92906e61977",
    "killed_at": [
     46,
@@ -6890,6 +7145,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -6909,6 +7165,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:25: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "4249fec3503af5fb9cb3be34d7f8f13ab7dd5299efa649554d01495b10c300ea",
    "killed_at": [
     25,
@@ -6932,6 +7189,7 @@
    "status": "INVALID",
    "detail": "Invalid pattern: Expected an identifier in function position, but found",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "03bd898ad9596817fac92ca29d0b81447359ea9fc3266f5955a35f53d6c757fa",
    "trust_class": "D[V]",
    "trusted": true
@@ -6951,6 +7209,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "776f11b06f2c5fb95f4e1aa46b9f58bd34310dc5daf328ff14243160665291c1",
    "killed_at": [
     34,
@@ -6974,6 +7233,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "06aeff693f33bc39ff6c2a75cb817991dc75ec68ea3021609d1933afae2b09d2",
    "killed_at": [
     34,
@@ -6997,6 +7257,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -7016,6 +7277,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -7035,6 +7297,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -7058,6 +7321,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:29: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "65c2c6865a93c45a0e95715dcb42b4404db3b5145a1aa334937c6eb497955c16",
    "killed_at": [
     29,
@@ -7081,6 +7345,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:38: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "168040365a2c2cc1b90e474c6703c19d7419cc8699e5ac4679393625095b68d6",
    "killed_at": [
     38,
@@ -7104,6 +7369,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "2a0523e2b4c155a674dd4d91b86b9dcd51b0ebd8a5bb8b9c3a4bee4ff8d4198e",
    "trust_class": "D[V]",
    "trusted": true
@@ -7123,6 +7389,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -7142,6 +7409,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "f3123ae4529383979a24ef17eb183210b73c6431ad810040255b16440352817d",
    "killed_at": [
     46,
@@ -7165,6 +7433,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:34: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "06aeff693f33bc39ff6c2a75cb817991dc75ec68ea3021609d1933afae2b09d2",
    "killed_at": [
     34,
@@ -7188,6 +7457,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7211,6 +7481,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `String.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -7230,6 +7501,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -7249,6 +7521,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7272,6 +7545,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7295,6 +7569,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "134e218c1b9c6c2b33217456896ebb25b206bede964ac3f602b032c0b7142310",
    "trust_class": "D[V]",
    "trusted": true
@@ -7314,6 +7589,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:46: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "3c4717d4d5cb132fd98912a52e2d1dcbf8c08dff27786ac2c6953474f10fd629",
    "killed_at": [
     46,
@@ -7337,6 +7613,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
@@ -7360,6 +7637,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:38: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "168040365a2c2cc1b90e474c6703c19d7419cc8699e5ac4679393625095b68d6",
    "killed_at": [
     38,
@@ -7383,6 +7661,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:127: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "0a04d58bc03fd39455eeff6a92e0eedb56f23a066639305bd2d4683e4c2c6907",
    "killed_at": [
     127,
@@ -7406,6 +7685,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7429,6 +7709,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7452,6 +7733,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "18aaeac4323656c44259df8279efc57cfb5a1bc18f62741e8d1f3f7374be2599",
    "killed_at": [
     42,
@@ -7475,6 +7757,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Scope/AuthoringExamples.lean:57: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c494438df29a6d2f81846c13dae54d8262c950d3",
    "reads": "9879b0da17400ba42634a08e786c65545c07907b3ff403acb479870c3d07d458",
    "killed_at": [
     57,
