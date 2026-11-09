@@ -138,6 +138,8 @@ def twoReadings := "The rules below are called the x apply only where y."
 #guard ["## If the user says 'stop.'", "The rules below are called the x.' The rules below are called the y.",
   "The hard constraints apply only where x.} y.", "The hard constraints apply only where x。」 y.",
   "The hard constraints apply only where x.› y.", "The hard constraints apply only where x.） y."].all (parseGovernor · == none)
+-- the DRI note's closers and the ASCII and Markdown ones are closers (tests/test_scope_authoring.py checks all of Pe, Pf, Pi)
+#guard "'}›’」』）］｝〉》】〕”\")]»＂＇>*_`~«“‘‹".all closers.contains
 -- the class: every closer, alone or after another, after every sentence end, in every slot
 def slotsEnding (e : String) : List String :=
   [s!"## If the user says stop{e}", s!"## When asked{e} refuse", s!"The hard constraints apply only where x{e} y.",
