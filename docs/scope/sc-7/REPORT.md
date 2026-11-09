@@ -2,9 +2,9 @@
 
 **Summary.** Built (1)-(3): `Pinned.parseGovernor`/`renderGovernor` (spec 2.2), `scope_parseRender`/`scope_renderParse`
 (spec 5.8's text), F5a, one round-trip and one paraphrase `#guard` per 2.2 row, and the folded sc-4-f12. (4), the IDE
-wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +113, trusted +150 (R16). No DRI signature is
-reserved. Tests: the selected run passes after two classification fixes (see "Tests run"). Fix rounds: "Review F1",
-"Review F7", "Recheck F8 and F9".
+wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +112, trusted +149 (R16). No DRI signature is
+reserved. Tests: the selected run passes (see the last fix round). Fix rounds: "Review F1", "Review F7", "Recheck F8 and
+F9", "Recheck F10 and DRI note (c)": `clause` is now an allow-list (two F9 accept-direction guards could not stay; see there).
 
 FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 
@@ -57,11 +57,11 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Evidence
 
-- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +141, trusted +150 against da5303b78769, all in Authoring.lean.
+- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +140, trusted +149 against da5303b78769, all in Authoring.lean.
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
-  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on c494438df (recheck
-  F8 and F9's fix; later commits change no Lean), rescored on 5dd5256c5 (its allow-reason edit): 213 KILLED, 0 SURVIVOR, 0
-  UNKNOWN, 60 INVALID, 26 ALLOWED (ill-typed, or one of 3 equivalent), exit 0. F7's full run on b4fa6691a gave 199
+  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on b11beab23 (the
+  allow-list round; later commits change no Lean): 229 KILLED, 0 SURVIVOR, 0 UNKNOWN, 64 INVALID, 27 ALLOWED (ill-typed, or
+  one of 4 equivalent), exit 0. F8 and F9's full run on c494438df gave 213 KILLED. F7's full run on b4fa6691a gave 199
   KILLED. F1's full run on 971464587 gave 196 KILLED, 58 INVALID. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
   Earlier runs left 15 survivors; each was closed by a new `#guard` or by giving `attitude` an `Option` degree.
 - **Hand mutants** (`docs/scope/sc-7/mutants.json`): each was planted, `lake build VE.Scope.AuthoringExamples` was run,
@@ -163,45 +163,18 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   list name, and `x⁉ y`, `x؟ y`, `x｡ y`, `x﹖ y` and `x। y` were conditions. F9: `clause` dropped only `closers` before
   it read a word's last character, so U+200B, U+2060, U+00AD, U+FE0F or U+0301 after a "." hid the sentence end.
   PROBE F8 and PROBE F9 exit 1 on 3fa303c51 and 0 on f5b2f2124.
-- **Fix (the class), Lean only** (`lean/VE/Scope/Authoring.lean:24-41`; no Python or Rust reads a wording before sc-7b):
-  - `clause`'s sentence ends are every Unicode 16.0 Sentence_Terminal, ":" and every character whose NFKC form ends in
-    one of them: 199 characters. The NFKC part adds the colons and ellipses (`…`, `：`, `﹕`, `︓`, `︙`), the vertical
-    forms of "!", "?" and "。" (Sentence_Terminal leaves them out), `⒈` to `⒛`, `🄀` and `㏂` `㏇` `㏘`.
-  - Before that test, `clause` drops every trailing character of `closers`, of Unicode 16.0's Cf, Mn and Me, of
-    Default_Ignorable_Code_Point and U+2800, mixed in any order. That is the DRI note's amended set: 5977 characters in
-    369 ranges, looked up by `Array.binSearchContains`. `wordChar` also refuses the C1 controls (its docstring already
-    said "no control character") and the five fillers drawn as a space (U+115F, U+1160, U+2800, U+3164, U+FFA0), which
-    stood in for a space in "x.\u3164The rules below are called the y".
-  - The two docstrings name these sets exactly. No new definition: trusted +2 lines (the `clause` docstring),
-    sc-7 at +150.
-  - A mark or an invisible character after no sentence end stays in its slot: "the cafe\u0301 rules" and
-    "the act is final\u200B" round-trip.
-- **Where the sets come from.** Python's unicodedata (16.0.0, the docstrings' version) gives the categories and NFKC.
-  It has neither property, so the test holds them as literal ranges. Sentence_Terminal is Unicode 15.1's (this
-  checkout's Node, ICU 74) plus the seven characters 16.0 added (U+1B4E, U+1B4F, U+1B7F, U+113D4, U+113D5, U+16D6E,
-  U+16D6F). Default_Ignorable_Code_Point is 15.1's ranges, which 16.0 keeps. Neither list was compared with a 16.0 data
-  file, because no copy of one is available offline.
-- **Regression tests.**
-  - `AuthoringExamples.lean:159`: PROBE F8, verbatim.
-  - `:163`: one guard per added sentence end. Its literal names each of the 188 once (the DRI note's 13 among them),
-    in every slot, alone, before `’`, before `)”` and before U+200B.
-  - `:169`: PROBE F9, verbatim.
-  - `:171`: U+00AD, U+FE0F, "x.)\u0301 y" and the mixed orders.
-  - `:177`: a sample of Cf, Mn, Me and Default_Ignorable characters after each of F7's sentence ends, alone and on either
-    side of a closer.
-  - `:183-:187`: `#guard !clause` on "x." followed by U+3164, U+115F, U+1160, U+FFA0 and U+2800.
-  - `:189`: C1 controls, and fillers in place of a space.
-  - `:194-:195`: the accepted direction.
-  - `tests/test_scope_authoring.py`: the Lean sweep, 8 chunks run side by side (about 30 s), checks every Unicode
-    scalar. `::test_review_f8_clause_refuses_exactly_the_documented_sentence_ends` checks that the characters refused
-    after "x" are exactly the 199, that the docstring names the set, that PROBE F8 is refused and in a guard, and that
-    the `:163` literal is exactly the added ones. `::test_review_f9_no_invisible_character_hides_a_sentence_end` checks
-    that each of the 5977 characters after each of the 199 sentence ends is refused (both mixed orders with `)` after
-    F7's eleven), that the non-word characters are exactly `wordChar`'s docstring's, and that the docstrings, the probe
-    and the DRI note's guards are present. `::test_review_f7_clause_refuses_exactly_the_documented_closers` now expects
-    the refused set after "x." to be sentence ends ∪ closers ∪ the stripped set. `::test_the_docstrings_name_unicode_16_0_the_version_of_this_python`
-    fails first if Python's Unicode version moves, so no version difference enters the expected sets.
-- **Seeded bugs** (`mutants.json`, the 6 marked "sc-7 recheck", each planted and then restored, all KILLED):
+- **Fix (since replaced), Lean only.** `clause` refused a word whose last character, once its trailing closers and
+  invisible characters were dropped, was in a literal list of sentence ends; `wordChar` also refused the C1 controls and
+  the five fillers drawn as a space (U+115F, U+1160, U+2800, U+3164, U+FFA0), which stood in for a space in
+  "x.\u3164The rules below are called the y" (this part stays). The recheck (F10) found the list incomplete and more
+  invisible characters outside the dropped set, so the next round replaced both lists with an allow-list, and the claims
+  this round made about the two sets' completeness, their sources and the sweeps over them are withdrawn.
+- **Regression tests.** PROBE F8 and PROBE F9, verbatim, in `AuthoringExamples.lean`; the F8 guard over the sentence
+  ends F8 named; F9's guards on U+00AD, U+FE0F, "x.)\u0301 y", invisible characters mixed with closers, the Hangul
+  fillers, the braille blank and the C1 controls. All of them stay. The Python sweeps over the two sets were replaced by
+  the next round's exactness sweep.
+- **Seeded bugs** (`mutants.json`, the 6 marked "sc-7 recheck", on the code of that round, each planted and then restored,
+  all KILLED):
   - `‼` dropped from the sentence ends: fails :159, :163 and :171;
   - U+200B dropped from the stripped set: fails :163, :169, :171 and :177;
   - U+0301 dropped: fails :169 and :171;
@@ -220,6 +193,80 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   shards, 3013 s): exit 0, 129 units, 0 failed. `test_scope_authoring.py` and `test_scope_lean.py` were among them.
   `(cd lean && lake build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files.
   No test listed in main-known-red.txt failed. Not run: the full gate (the merge train runs it).
+
+## Recheck F10 and DRI note (c) (fix round, reviews/sc-7-dri-note-20261109c.md, sc-7-c091054-looprecheck1.final.md)
+
+- **Findings.** F10 (A): the sentence-end literal left out U+2CF9..U+2CFB, so "x⳹ y" was a condition. Deferred to the
+  DRI: U+1D159, U+E000 and U+FFFC after a "." hid the sentence end. The DRI note (c) rules on the class (a character at
+  a word's end that hides a sentence end from `clause`): an allow-list. PROBE F10 exits 1 on c82b303ed and 0 on b880471cf.
+  The same probe with "x. y", "x.￼ y" and "x.\U0001D159 y" fails on c82b303ed and passes on b880471cf.
+- **Fix (the class), Lean only** (`lean/VE/Scope/Authoring.lean:36-40`; no Python or Rust reads a wording before sc-7b).
+  `clause` drops a word's trailing `closers` as before. The word must then be non-empty, and its last character must be
+  in this allow-list and no other:
+  - an ASCII letter or digit;
+  - a Latin letter of U+00C0 to U+024F, except U+00D7 "×", U+00F7 "÷" and U+01C3 "ǃ";
+  - one of `,` `;` `-` `%` `/` `&` `+` `=` `#` `$` `@`.
+
+  The sentence-end literal and the Cf/Mn/Me/Default_Ignorable range table are gone. An empty word (one made only of
+  closers) is now refused through `Option.any` on `getLast?`, so it no longer falls through to `String.back`'s default.
+  `wordChar` is unchanged, including its refusal of the fillers anywhere in a word. `closers` is unchanged.
+  - **U+01C3 is left out, beyond the note's start list.** LATIN LETTER RETROFLEX CLICK is a letter (Lo) drawn exactly as
+    "!", so "the xǃ The rules below are called the y." would read as two sentences to a person and as one list name to
+    `clause`. That is a hole in the allow-list itself. The note's widening rule is not used: no character was added.
+  - **Two accept-direction guards could not stay.** F9's round had guards that accepted "the café rules" and "the
+    act is final​". Those words end in a mark and a format character. The note asks both "do not admit any … mark,
+    format … character" (with the exactness sweep) and "do not narrow the existing accepted-direction guards". These
+    two guards cannot meet both. The guards now assert refusal (`AuthoringExamples.lean:194`), and the precomposed
+    "café" carries the accepted direction (`:228`, `:229`). The DRI may overrule this. No answer on main changes, since
+    no route reads the code.
+- **Regression tests** (`lean/VE/Scope/AuthoringExamples.lean`):
+  - `:200`: PROBE F10, verbatim.
+  - `:203`, `:206`: U+FFFC and U+E000 after "." as a condition and as a list name, and U+1D159, U+E000 and U+FFFC in
+    every slot (alone, after ".", and before "”").
+  - `:209`, `:210`: an empty word, as a word, in a condition and in a list name.
+  - `:213`, `:214`: a C1 control inside a word.
+  - `:217`, `:218`: every closer dropped after an allowed character, and a condition in ASCII quotes.
+  - `:221`, `:223`: one accepted word per allow-list class (ASCII letters, digits, the Latin range's ends, "café", each
+    allowed punctuation character), and the refused neighbours (×, ÷, ¿, ɐ, ".", "!", "?", ":", U+0301, U+200B, α, ٣).
+  - `:225`, `:227`: "ǃ" refused, with its neighbours ǀ ǁ ǂ Ǆ accepted.
+  - `:228` to `:230`: round trips with "café" and with every allowed punctuation character.
+
+  PROBE F7, F8 and F9's guards, F7's closer sweep and F9's sample stay. `tests/test_scope_authoring.py` replaces the
+  terminator and strip-set sweeps with one exactness sweep: a single `lake env lean` process (one `#eval`, about 60 s).
+  For every Unicode scalar value c, `::test_clause_accepts_exactly_its_documented_allow_list` checks that `clause`
+  accepts "x" c and "x" c ")" exactly when c is in `ALLOW` or is a closer (less `wordChar`'s refusals), and accepts
+  "x." c exactly when c is in `ALLOW`. `ALLOW` is written in the test from the note, apart from the Lean code (470
+  characters). The test also checks that the docstring states the allow-list in those words and names no enumerated
+  Unicode set. `::test_word_char_refuses_exactly_its_documented_characters` keeps `wordChar`'s sweep.
+  `::test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded` covers the probe wordings (with U+1D159, U+E000
+  and U+FFFC) and the guards.
+- **Seeded bugs** (`mutants.json`, the 5 marked "DRI note 2026-11-09 (c)", planted on b880471cf and then restored, all
+  KILLED; the line numbers are b880471cf's):
+  - (1) `.` added to the allow-list: fails :69, :113, :138, :150 and the refused-neighbour guard;
+  - (2) U+FFFC admitted: fails the two U+FFFC guards;
+  - (3) the Latin range dropped: fails the accepted-class guard, the ǃ-neighbour guard and both "café" round trips;
+  - (4) an empty word let through (`.any` → `.all`): fails both empty-word guards;
+  - (5) U+FFFD admitted, which no guard names: `lake build` passes, and
+    `test_clause_accepts_exactly_its_documented_allow_list` fails ("accepted, not allowed": U+FFFD). This ran after
+    `tools/lean_statements.py` on the planted tree, which was then restored and regenerated.
+- **Trust** (`tools/trust_map.py --check` on the final HEAD). Per file: `lean/VE/Scope/Authoring.lean` was +150 at
+  c82b303ed and is +149 now. Per definition: `clause` goes from 7 lines to 6 (3 docstring lines, 2 code lines, 1
+  blank); `closers` (5) and `wordChar` (4) are unchanged. The item is K +0, S +37, V +112, trusted +149, under R16's
+  cap. No new allowance is recorded: the ledger's allowances total +150. Both DELTA Ruling cells cite R16, and no DRI
+  signature is reserved. No new definition, so `test_scope_lean.py`'s AUTHORING list is unchanged.
+- **Trust mutants** (full runs, ve-cloud-3):
+  - On b880471cf, exit 1 with 3 survivors:
+    - `wordChar` `0x7F ≤` → `=`, because the C1 guards put the control after a "." where the allow-list already
+      refuses it;
+    - `clause` `closers` → `closers.drop 1`;
+    - `clause` `toList` → `toList.reverse.take 1`, which is equivalent under `getLast?`.
+
+    The first two are now killed by `:213`/`:214` and `:217`/`:218`. `:213` also kills `c.toNat ≤ 0x9F` → `<` (M100).
+    M100 had been hidden under `wordChar`'s le-lt allowance, which matches on definition and operator and was written
+    for the equivalent `0x20 ≤`. The third is allowed with its equivalence reason, and `clause`'s list-empty reason now
+    cites :39 and :40.
+  - On b11beab23: 229 KILLED, 0 SURVIVOR, 0 UNKNOWN, 64 INVALID, 27 ALLOWED, exit 0.
+- **Tests.** TESTS_PLACEHOLDER
 
 ## Spec re-read
 
@@ -240,7 +287,7 @@ waits on sc-2c/sc-2d); sc-e1/sc-e2 come after Nov 12; sc-7b is the follow-up.
    pairs, each with its reason.
 4. N.A.: Lean only, with no Python or Rust path. Valid inputs pass: nine `trip`s, plus the curly-quote slot.
 5. N.A.: no relay and no Python reader.
-6. PASS: trust-mutants.json is for head 5dd5256c5, whose Lean tree is HEAD's. The gate is the chain's, on the final HEAD.
+6. PASS: trust-mutants.json is for head b11beab23, whose Lean tree is HEAD's. The gate is the chain's, on the final HEAD.
 7. PASS: both DELTA rows cite R16 with evidence. Nothing reserved.
 8. PASS: no existing answer changes, since no route reaches the code. The selected run passes after the fix.
 9. PASS: the selection held test_scope_authoring.py, test_scope_lean.py and test_assurance_manifest.py, and it found
