@@ -1696,9 +1696,9 @@ def test_an_elaboration_error_in_the_mutants_own_text_is_invalid(case, errors, v
 
 
 # tm-column-per-copy (review tm-elab-unknown-ov F2, DRI adv0314 item 1): the M170 mutant at ZoneWire.lean's lines
-# 399-404, its text at 401, columns 15 to 95 (81 characters), and Lake's errors on the mutated file (column, message), each read through `run`'s
-# own build: the same message twice on one line keeps each copy's column, so one outside the mutant's text is no
-# refusal, whichever copy Lake prints last.
+# 399-404, its text at 401, columns 15 to 95 (81 characters), and Lake's errors on the mutated file (column,
+# message), each read through `run`'s own build: the same message twice on one line keeps each copy's column, so
+# one outside the mutant's text is no refusal, whichever copy Lake prints last.
 COPIES = [
     ("M170-four-inside", [(26, DOTTED), (44, DOTTED), (61, DOTTED), (80, DOTTED)], "INVALID"),
     ("F2-outside-then-inside", [(4, DOTTED), (26, DOTTED)], "UNKNOWN"),
