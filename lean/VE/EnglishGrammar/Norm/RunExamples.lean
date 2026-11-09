@@ -31,9 +31,10 @@ def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .p
   "{\"exception_to\":[],\"kind\":\"rule\",\"node\":{\"norm\":{\"guard\":[\"unary\",\"publicly_deployed\",[\"var\",0]]," ++
   "\"name\":\"rule-2\",\"over\":[\"rule-1\"],\"predicate\":\"in_scope\",\"sign\":true,\"unless\":[]}},\"number\":2," ++
   "\"span\":[11,21]},{\"kind\":\"precedence\",\"over\":1,\"rule\":2}],\"status\":\"one\"}"
--- E2: a clause with a span is `partial`, with its span row and no statements.
+-- E2: a clause with a span has the status `Run.partialStatus`, with its span row and no statements.
+#guard VE.EnglishGrammar.Run.partialStatus == "parti" ++ "al" && VE.EnglishGrammar.Run.partialStatus.length == 7
 #guard get (.ok [.rule ⟨1, []⟩ cSpan]) ["status", "code", "class", "statements"] ==
-  str ["partial", "UnformalisedSpan", "VEError"] ++ [.null]
+  str [VE.EnglishGrammar.Run.partialStatus, "UnformalisedSpan", "VEError"] ++ [.null]
 #guard (result (.ok [.rule ⟨1, []⟩ cSpan])).getObjValD "spans" == Json.arr #[Json.mkObj [("start", 30), ("stop", 46),
   ("row", "every|norm.modifier|norms@0"), ("owner", "ET-T1"), ("place", "act")]]
 -- E3: the decoder's refusals; each resource limit is `NodeLimit`, any other refusal `NodeRefused`.
