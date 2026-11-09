@@ -287,6 +287,12 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
         check_row("speech-acts", elaboration, {"id": case["id"], "kind": "speech-elaborate"}, 0)
     except Invalid as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned an invalid elaboration ({exc})") from exc
+    # The legend `ve speech-acts` shows (ci-2b): one line for the task, one for an addressee and one per definite of
+    # the row's scope, none repeated; the lines are Lean's (`VE.SpeechActs.Run.legend`).
+    scope, legend = row["scope"], row["legend"]
+    if len(legend) != 1 + ("addressee" in scope) + len(scope.get("definites", {})) or len(set(legend)) != len(legend):
+        raise CheckerUnavailable("CheckerUnavailable: speech-source route returned a legend that is not one line per "
+                                 "scope sentence")
     for field in ("document_id", "source_id", "environment_id"):
         value = row[field]
         if len(value) != 64 or any(c not in "0123456789abcdef" for c in value):

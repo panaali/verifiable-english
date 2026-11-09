@@ -46,7 +46,7 @@ theorem readInstruction_typed (j : Lean.Json) (ctx : Context) (r : Reading) (D :
 #guard match decodeSpeechEnvironmentFull RunExamples.proofEnv with
   | .ok se => match VE.SpeechActs.Source.commandContext
       (Lean.Json.mkObj [("reading_context", Lean.Json.mkObj [("lexicon", RunExamples.rawEnv)])]) RunExamples.proofEnv
-      se.scope with
+      se se.scope with
     | .error e => e == "InvalidInput: the request is not a well-formed JSON tree"
     | .ok _ => false
   | .error _ => false

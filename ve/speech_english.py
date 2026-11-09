@@ -140,12 +140,14 @@ def _polar(env, text):
     return {"mode": "polar", "body": answer["ast"]}, "question"
 
 
-def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None, unit="command", queries=()):
+def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None, unit="command", queries=(),
+                 words=None):
     """Return a typed wire content object and its kind; reject other wordings.
 
     A wording of no question form is a command, read by Lean (`read_command`, commands-imperatives CI-2) as the
-    command `unit` of a document with the query records `queries`. Advisory lints (`OpaqueWording`) are appended to
-    `warnings` when given.
+    command `unit` of a document with the query records `queries`, over the speech vocabulary `words` (built here
+    when not given). Advisory lints (`OpaqueWording`) of a question's sentence are appended to `warnings` when given;
+    a command's wording has none.
     """
     if type(source) is not str:
         raise VEError("InvalidInput: speech wording")
@@ -176,7 +178,7 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
                     "body": _body(env, domain[0], rest, warnings)}, "question"
     if text.startswith("Which "):
         raise VEError("OpenDomainWhich: list the named alternatives")
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True) if words is None else words
     return read_command(env, text, words, {}, unit=unit, queries=list(queries))["reading"]["command"], "instruction"
 
 

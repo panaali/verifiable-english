@@ -60,9 +60,17 @@ def pin(raw: Path) -> None:
             continue
         if text and not text.startswith(("Is ", "Must ", "Can ", "Which ", "Does it follow")):
             add(q14._environment(r["env"]).to_dict(), r["wording"], [], None, "q1-4")
+    from test_speech_acts_lean import U
     from test_speech_source_lean import base_env
     for wording in ("Click check, if .", "Click check, if atlas is reviewed and beacon is reviewed or tom is a cat."):
         add(base_env(), wording, [], None, "ci-1 F3")
+    # P2, P3, P3′, P3″ (spec section 6) over a document whose records name declared `query` constants.
+    env = base_env()
+    env["vocabulary"]["constants"]["q2"] = {"sort": "query", "description": "q2"}
+    atlas, beacon = ({"ast": U("reviewed", name)} for name in ("atlas", "beacon"))
+    for records in ([], [("q1", beacon)], [("q1", atlas), ("q2", atlas)], [("q1", beacon), ("q2", atlas)]):
+        add(env, "Prove that atlas is reviewed using these premises.",
+            [{"id": i, "premises": [], "target": target} for i, target in records], None, "spec P2-P3")
     CORPUS.write_bytes(gzip.compress(json.dumps({"environments": environments, "rows": list(rows.values())},
                                                 sort_keys=True).encode(), mtime=0))
 
@@ -149,7 +157,10 @@ def run() -> dict:
         if cls != "same":
             rows.append({"class": cls, "env": row["env"], "wording": row["wording"], "source": row["source"],
                          "base": base, "head": head})
-    result = {"corpus_sha256": hashlib.sha256(CORPUS.read_bytes()).hexdigest(), "rows": len(corpus["rows"]),
+    import subprocess
+    git = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True).stdout.strip()  # noqa: E731
+    result = {"head": git("rev-parse", "HEAD"), "tree_dirty": bool(git("status", "--porcelain", "--", "lean", "ve")),
+              "corpus_sha256": hashlib.sha256(CORPUS.read_bytes()).hexdigest(), "rows": len(corpus["rows"]),
               "counts": dict(sorted(counts.items())), "changed": rows}
     RESULT.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     return result
@@ -161,6 +172,8 @@ def problems(result: dict) -> list[str]:
     out += [f"misclassed: {r['wording']!r}" for r in result["changed"] if classify(r["base"], r["head"]) != r["class"]]
     if sum(result["counts"].values()) != result["rows"]:
         out.append("the counts do not total the rows")
+    if result["counts"].get("same", 0) == result["rows"]:
+        out.append("no row differs: an empty corpus, or the base read as the head")
     return out
 
 

@@ -4,6 +4,8 @@ payload's reading context (A2, `commandFence_needs_context`)."""
 from __future__ import annotations
 
 import copy
+import json
+from pathlib import Path
 
 import pytest
 
@@ -16,7 +18,7 @@ from ve.english import EnglishVocabulary
 from ve.english_grammar import export
 from ve.environment import Environment
 from ve.errors import AmbiguousDerivation, CheckerUnavailable, ResourceLimit, VEError
-from ve.speech_document import SpeechSource
+from ve.speech_document import SpeechSource, load_speech_document
 
 pytestmark = pytest.mark.skipif(not EXECUTABLE.exists(), reason="the Lean routes have not been built")
 
@@ -48,7 +50,8 @@ def test_many_is_raised_with_leans_paraphrases():
     with pytest.raises(AmbiguousDerivation) as caught:
         _read({"environment": raw, "wording": wording, "queries": queries, "unit": "u1"})
     lines = caught.value.message.split("\n")
-    assert len(lines) == 2 and all(line.startswith("In this task, you are required to review") for line in lines)
+    assert sorted(line.split(": ", 1)[0] for line in lines) == ["recheck_required", "review_required"]
+    assert all(line.endswith("In this task, you are required to review the meaning.") for line in lines)
 
 
 @pytest.mark.parametrize("fill", [{"constant": "ghost"}, {"constant": "alice"}, {"constant": "q1", "words": "q1"},
@@ -121,3 +124,110 @@ def test_a_document_reads_its_command_fence_through_lean():
     metadata, source, fences, _, _ = _fenced("Click Ask.")
     with pytest.raises(VEError, match="^InvalidInput: no single speech-act reading$"):
         SpeechSource(metadata, source.encode(), fences)
+
+
+def _document(tmp_path, lines, units, **meta):
+    """A `ve-document@2` file of `lines` whose fenced units read their own line (A2's product path)."""
+    from test_speech_acts_lean import F0
+    env = meta.pop("environment", None) or F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    starts = [sum(len(line) for line in lines[:i]) for i in range(len(lines) + 1)]
+    placed = [{**u, "span": [starts[i], starts[i + 1]]} for i, u in enumerate(units)]
+    fences = "".join(f"```ve {u['id']}\n{lines[i]}```\n" for i, u in enumerate(units)
+                     if (u.get("content") or {}).get("fence"))
+    path = tmp_path / "speech.ve.md"
+    path.write_text("---\n" + json.dumps({"format": "ve-document@2", "environment": env, "units": placed, **meta})
+                    + "\n---\n" + "".join(lines) + fences)
+    return path
+
+
+def _fence(uid, kind="instruction"):
+    return {**unit(uid, 0, kind, {"fence": uid}), "surface": "english"}
+
+
+RECORD = {"id": "q1", "premises": ["p"], "target": {"ast": U("reviewed", "atlas")}}
+PROVE = "Prove that atlas is reviewed using these premises.\n"
+
+
+def test_a_fenced_proof_task_reads_the_documents_records(tmp_path):
+    """The wrapper's context carries the document's query records: one matching record is the proof task's fill;
+    two are `QueryMismatch` (P3′); a follows question's record whose id is no `query` constant is not sent."""
+    from test_speech_acts_lean import F0
+    env = F0()
+    env["vocabulary"]["constants"]["q2"] = {"sort": "query", "description": "q2"}
+    lines, asserted = ["Atlas is reviewed.\n", PROVE], unit("p", 0, "asserted", {"ast": U("reviewed", "atlas")})
+    document = load_speech_document(_document(tmp_path, lines, [asserted, _fence("f")], queries=[RECORD],
+                                              environment=copy.deepcopy(env)))
+    [command] = document.report["commands"]
+    assert command["unit"] == "f" and command["paraphrase"].endswith("to submit a proof of q1.")
+    with pytest.raises(VEError, match="^QueryMismatch: f$"):
+        load_speech_document(_document(tmp_path, lines, [asserted, _fence("f")], environment=copy.deepcopy(env),
+                                       queries=[RECORD, {**RECORD, "id": "q2"}]))
+    lines = ["Atlas is reviewed.\n", "Does it follow from these premises that atlas is reviewed?\n", "Click check.\n"]
+    follows = unit("w", 0, "question", {"question": {"mode": "follows", "query": "q9"}})
+    path = _document(tmp_path, lines, [asserted, follows, _fence("c")], queries=[{**RECORD, "id": "q9"}])
+    assert [c["unit"] for c in load_speech_document(path).report["commands"]] == ["c"]
+
+
+def test_a_fenced_command_reads_the_effective_scope_and_its_condition(tmp_path):
+    """A document's binding gives the addressee the wrapper reads with; a condition is the reading's guard."""
+    from test_speech_acts_lean import F0
+    env = F0()
+    env["speech_acts"].pop("addressee")
+    lines = ["In this task, you are alice.\n", "Click check, if atlas is reviewed.\n"]
+    units = [unit("u0", 0, "binding", {"binding": {"you": "alice"}}), _fence("c")]
+    document = load_speech_document(_document(tmp_path, lines, units, environment=env))
+    [command] = document.report["commands"]
+    assert command["paraphrase"] == "In this task, you are required to click check, where the stated condition holds."
+    assert document.legend.split("\n")[1] == "In this task, you are alice."
+    with pytest.raises(VEError, match="^UnboundSlot: you$"):
+        load_speech_document(_document(tmp_path, lines[1:], [_fence("c")], environment=copy.deepcopy(env)))
+
+
+def test_an_attributed_instruction_fence_is_a_command_fence(tmp_path):
+    """`hasCommandFence` reads a kind that wraps `instruction` (S34): an attributed one is read and needs the context."""
+    from ve.speech_document import _resolve_fences
+    lines = ["Click check.\n"]
+    path = _document(tmp_path, lines, [_fence("c", ["attributed", "bob", "says", "instruction"])])
+    assert load_speech_document(path).report["dormant"] == ["c"]
+    meta = json.loads(path.read_text().split("\n---\n")[0][4:])
+    resolved, _ = _resolve_fences(meta, {"c": lines[0]})
+    with pytest.raises(VEError, match="^InvalidInput: command reading context$"):
+        decide_source(meta, lines[0], {"c": lines[0]}, resolved_fences=resolved)
+
+
+@pytest.mark.parametrize("wording, status", [("Click check.", 0), ("Click Ask.", 2)])
+def test_ve_speech_acts_reads_a_fenced_command(tmp_path, wording, status):
+    """The plan's fixture through the CLI: a command Lean reads exits 0, one it refuses exits 2 with Lean's text."""
+    import subprocess
+    import sys
+    from subprocesses import HANG_TIMEOUT
+    path = _document(tmp_path, [wording + "\n"], [_fence("c")])
+    run = subprocess.run([sys.executable, "-m", "ve", "speech-acts", str(path)], capture_output=True, text=True,
+                         timeout=HANG_TIMEOUT, cwd=Path(__file__).resolve().parents[1])
+    assert run.returncode == status, run.stderr
+    if status:
+        assert json.loads(run.stdout)["error"]["message"] == "InvalidInput: no single speech-act reading"
+
+
+def _many_fences(n):
+    """`n` units, each a fenced "Click check." with Lean's reading resolved, and the reading context."""
+    metadata, _, _, command, context = _fenced()
+    line = "Click check.\n"
+    metadata["units"] = [{**_fence(f"c{i}"), "span": [i * len(line), (i + 1) * len(line)]} for i in range(n)]
+    return metadata, line * n, {f"c{i}": line for i in range(n)}, {f"c{i}": {"command": command} for i in range(n)}, \
+        context
+
+
+def test_command_fences_are_charged_before_they_are_read():
+    """The common rule: 200 command fences (a large well-formed document, under the 256 rules every document may
+    hold) are each read once under one context; past `VE.Limits.maxCases` fences the wrapper refuses before reading
+    any, and so before Python resolves one."""
+    from ve.limits import MAX_CASES
+    metadata, source, fences, resolved, context = _many_fences(200)
+    assert len(decide_source(metadata, source, fences, resolved_fences=resolved,
+                             reading_context=context)["commands"]) == 200
+    metadata, source, fences, resolved, context = _many_fences(MAX_CASES + 1)
+    for extra in ({}, {"resolved_fences": resolved, "reading_context": context}):
+        with pytest.raises(ResourceLimit, match=f"^ResourceLimit: speech fences exceed {MAX_CASES}$"):
+            decide_source(metadata, source, fences, **extra)

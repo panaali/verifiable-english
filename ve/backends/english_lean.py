@@ -534,11 +534,14 @@ COMMAND_MODE = "english.command"
 
 
 def command_request(env, wording: str, words, options: dict, *, unit: str, queries: list) -> dict:
-    """The `english.command` request (commands-imperatives CI-2): the `english.read` request's environment, overlay
-    and lexicon producer, the command unit, the wording and the document's query records. No proof-task selection
-    is sent: Lean matches the records' targets (N7)."""
-    case = {"id": COMMAND_MODE, "environment": env.to_dict(), "lexicon": export(words), "unit": unit,
-            "wording": wording, "queries": list(queries)}
+    """The `english.command` request (commands-imperatives CI-2), with the unit as its id: the `english.read`
+    request's environment, overlay and lexicon producer, the command unit, the wording and the document's query
+    records that name a declared constant of sort `query` (the records a proof task can name, as the source
+    wrapper's `commandContext` keeps them). No proof-task selection is sent: Lean matches the records' targets (N7)."""
+    named = [record for record in queries if type(record) is dict and type(record.get("id")) is str
+             and (constant := env.constants.get(record["id"])) is not None and constant.sort == "query"]
+    case = {"id": unit, "environment": env.to_dict(), "lexicon": export(words), "unit": unit,
+            "wording": wording, "queries": named}
     if options.get("vocabulary") is not None:
         case["overlay"] = options["vocabulary"]
     return _frame(env, case)
@@ -619,8 +622,8 @@ def command_answer(row: dict, case: dict) -> dict:
 def read_command(env, wording: str, words, options: dict, *, unit: str, queries: list) -> dict:
     """Relay one command wording to Lean's `english.command` (`VE.Commands.readInstruction`, the one owner of
     command English) and return its checked `one` answer. A refusal is raised as the class Lean names with Lean's
-    `code: text` verbatim; `many` as `AmbiguousDerivation` with Lean's paraphrases, one line per reading; `limit` as
-    `ResourceLimit` with Lean's text. An answer not bound to the request is `CheckerUnavailable`."""
+    `code: text` verbatim; `many` as `AmbiguousDerivation` with each reading's act and Lean's paraphrase, one line per
+    reading; `limit` as `ResourceLimit` with Lean's text. An answer not bound to the request is `CheckerUnavailable`."""
     if type(wording) is not str:
         raise TypeError("wording must be str")
     result = command_answer(relay.decide_once(COMMAND_MODE, case := command_request(
@@ -628,7 +631,8 @@ def read_command(env, wording: str, words, options: dict, *, unit: str, queries:
     if result["outcome"] == "one":
         return result
     if result["outcome"] == "many":
-        lines = "\n".join(reading["paraphrase"] for reading in result["readings"])  # Lean's, one per reading
+        # Each reading as Lean gives it, its act and paraphrase, one per line.
+        lines = "\n".join(f'{reading["command"]["act"]}: {reading["paraphrase"]}' for reading in result["readings"])
         raise AmbiguousDerivation(lines)
     if result["outcome"] == "limit":
         raise ResourceLimit(result["text"])

@@ -1,6 +1,8 @@
 import VE.SpeechActs.Run
 import VE.Commands.Run
 import VE.Discourse.Loader
+import Std.Data.HashMap
+import Std.Data.HashSet
 import VE.Limits
 
 /-! # The decoded-source wrapper and its records (docs/spec/speech-acts.md 3.2, 3.3, 3.5, 5, 6, 8.5)
@@ -678,13 +680,24 @@ def hasCommandFence (payload : Json) : Bool :=
 
 def readingContextText : String := "InvalidInput: command reading context"
 
+/-- The payload carries a reading context (an object). -/
+def hasContext (payload : Json) : Bool :=
+  match payload.getObjVal? "reading_context" with
+  | .ok (.obj _) => true
+  | _ => false
+
 /-- The command fences' reading context, decoded once: the `english.command` request (`VE.Commands.Run.decodeRequest`)
 of the payload's `reading_context` (its lexicon and overlay) with the document's environment under its effective
-scope `sc` and the document's query records. -/
-def commandContext (payload environment : Json) (sc : Scope) : Except String VE.Commands.Context := do
+scope `sc` and the document's query records that name a declared constant of sort `query` (the records a proof task
+can name; a follows question's record whose id is no such constant is not the proof task's). -/
+def commandContext (payload environment : Json) (se : Wire.SpeechEnvironment) (sc : Scope) :
+    Except String VE.Commands.Context := do
   let .ok rc@(.obj _) := payload.getObjVal? "reading_context" | throw readingContextText
+  let named := fun (r : Json) => match (r.getObjValD "id").getStr? with
+    | .ok i => se.ne.rv.vocabulary.constants.contains (i, "query")
+    | .error _ => false
   let queries := match (payload.getObjValD "metadata").getObjValD "queries" with
-    | .arr q => Json.arr q
+    | .arr q => Json.arr (q.filter named)
     | _ => Json.arr #[]
   let request := [("id", Json.str "speech-source"), ("unit", .str ""), ("wording", .str ""), ("queries", queries),
     ("environment", environment.setObjVal! "speech_acts" (Wire.encodeScope sc))].foldl (fun j (k, v) => j.setObjVal! k v) rc
@@ -726,6 +739,8 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
   -- fences. The source payload and its identity remain the authored ones; the
   -- speech core checks every supplied content after this projection.
   let needed := units.filter fun u => u.content.any (fun c => (c.getObjVal? "fence").isOk) && !chosen u
+  -- The fences Python resolves, one english.command or speech read each, charged before any is read.
+  if VE.Limits.maxCases < needed.length then throw s!"ResourceLimit: speech fences exceed {VE.Limits.maxCases}"
   let translations ← if needed.isEmpty then pure [] else match payload.getObjVal? "resolved_fences" with
     | .ok (.obj pairs) => pure pairs.toList
     | _ => throw (Loader.notImplemented "fenced English content")
@@ -750,13 +765,15 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
   let dec ← Run.checkedDocument environment document
   -- A2: every resolved command fence is Lean's one reading of its wording, read once under one context; a payload
   -- with none is refused by `decodeSpeechSource`.
+  let neededIds : Std.HashSet String := Std.HashSet.ofList (needed.map (·.id))
   let commands := dec.units.filterMap fun i => match i.role with
-    | .command c => if needed.any (·.id == i.id) then some (i.id, c) else none
+    | .command c => if neededIds.contains i.id then some (i.id, c) else none
     | _ => none
-  unless commands.isEmpty || (payload.getObjVal? "reading_context").toOption.isNone do
-    let ctx ← commandContext payload environment dec.D.scope
+  unless commands.isEmpty || !hasContext payload do
+    let ctx ← commandContext payload environment dec.se dec.D.scope
+    let texts : Std.HashMap String String := Std.HashMap.ofList fences.reverse  -- the first fence of an id
     for (id, c) in commands do
-      let wording := Loader.byteStrip (((fences.find? (·.1 == id)).map Prod.snd).getD "")
+      let wording := Loader.byteStrip (texts.getD id "")
       let read := match VE.Commands.readInstruction ctx wording with
         | .one r => r.command id == c
         | _ => false
@@ -778,17 +795,22 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
 other check of `readSource`. -/
 def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechSource // src.payload = payload } := do
   let src ← readSource payload evidence
-  if hasCommandFence payload && (payload.getObjVal? "reading_context").toOption.isNone then throw readingContextText
+  if hasCommandFence payload && !hasContext payload then throw readingContextText
   pure src
 
 /-- A2: a command fence is never taken from the payload: one without the reading context is refused. -/
 theorem commandFence_needs_context (payload evidence : Lean.Json) (h : hasCommandFence payload = true)
     (hc : (payload.getObjVal? "reading_context").toOption = none) :
     ∃ e, VE.SpeechActs.Source.decodeSpeechSource payload evidence = .error e := by
+  have hx : hasContext payload = false := by
+    unfold hasContext
+    cases hg : payload.getObjVal? "reading_context" with
+    | error _ => rfl
+    | ok v => simp [hg, Except.toOption] at hc
   unfold decodeSpeechSource
   cases readSource payload evidence with
   | error e => exact ⟨e, rfl⟩
-  | ok src => exact ⟨readingContextText, by simp [bind, Except.bind, h, hc]⟩
+  | ok src => exact ⟨readingContextText, by simp [bind, Except.bind, h, hx]⟩
 
 /-! ## The report -/
 
