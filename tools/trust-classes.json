@@ -19954,6 +19954,11 @@
         "VE.Closure.Tableau.extraRule"
       ]
     },
+    "VE/Commands/SplitOnLemmas.lean": {
+      "G[V]": [
+        "VE.Commands.SplitOn.splitOnL"
+      ]
+    },
     "VE/Commands/Steps.lean": {
       "G[R]": [
         "VE.Commands.conditionScope"
