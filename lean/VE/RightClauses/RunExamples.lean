@@ -74,6 +74,9 @@ def countryOf : String := "[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\
 #guard says (doc ",\"elided\":[],\"clauses\":[{\"role\":\"reason\",\"formula\":[\"top\"],\"span\":[10,20]}]") ==
   "InvalidInput: invalid clause 0 of rule equal-access"
 #guard says (doc ",\"elided\":[]" ",\"span\":[0]") == "InvalidInput: invalid unit span"
+#guard says (doc ",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"span\":[10,20]}]") ==
+  "InvalidInput: invalid clause 0 of rule equal-access"
+#guard says (doc ",\"elided\":[[0,1]]" "") == "ClauseSpan: equal-access: [0, 1)"
 #guard says (doc (",\"elided\":[],\"clauses\":[" ++ charged ++ "]") "") == "ClauseSpan: equal-access: [10, 20)"
 #guard says (doc (",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"span\":[10,20],\"formula\":" ++
   (List.range 65).foldl (fun f _ => "[\"not\"," ++ f ++ "]") "[\"top\"]" ++ "}]")) == "ResourceLimit: formula depth exceeds 64"
