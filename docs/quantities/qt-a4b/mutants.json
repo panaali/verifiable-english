@@ -14,6 +14,30 @@
       "test": "tests/test_cardinality_answer.py::test_a_chain_list_row_is_bound_to_the_request",
       "killed": true,
       "claim": "row 1, DRI 2026-11-05 item 3: composed.not_certified names exactly the request's counting units (bind_composed)"
+    },
+    {
+      "id": "chain-reading-falls-back",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_answer.py::test_the_chain_s_request_is_its_parent_s_chain_reading_and_nothing_else",
+      "killed": true,
+      "claim": "review F2: a chain reading Lean refuses is never Python's (the raise of Lean's CheckerUnavailable or ResourceLimit under chain_of in _lean_answer dropped): DID NOT RAISE CheckerUnavailable, both cases"
+    },
+    {
+      "id": "chain-of-not-sent",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_answer.py::test_the_chain_s_request_is_its_parent_s_chain_reading_and_nothing_else",
+      "also_fails": [
+        "tests/test_cardinality_answer.py::test_the_chain_s_request_names_the_document_and_has_no_python_path"
+      ],
+      "killed": true,
+      "claim": "review F2: the chain's case names the document as written (chain_of dropped from _document_case)"
+    },
+    {
+      "id": "no-chain-when-counting-only",
+      "file": "ve/cardinality.py",
+      "test": "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks",
+      "killed": true,
+      "claim": "review F1: bind_composed returns no chain text when every unit is a counting unit (the base's branch restored); all 4 cases fail (Lean refuses the parent read in the chain reading's place as unbound)"
     }
   ],
   "lean": [
@@ -63,6 +87,29 @@
       "test": "tests/test_cardinality_lean.py::test_a_deduction_is_no_bridge_and_the_report_id_covers_the_label",
       "killed": true,
       "claim": "row 2: leaf_labels names every labelled leaf ((g.leaves.take 1) in cardinalityReport; run against the mutated ve_service build pinned in a temporary lean/checkers.lock; the relay refuses the leaf labels)"
+    },
+    {
+      "id": "counting-only-chain-drops-members",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_reads_the_document",
+      "also_fails": [
+        "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks[an open term decided by nobody]",
+        "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks[a reading set on an absent unit]",
+        "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks[a narrowing of an absent set]"
+      ],
+      "killed": true,
+      "claim": "review F1: chainFront drops open_terms, reading_sets and narrowings when every unit is a counting unit (ve_service rebuilt and pinned for the run); the fence case is P5's"
+    },
+    {
+      "id": "chain-bound-profiles-only",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "lean/VE/Service/CardinalityExamples.lean:180",
+      "also_fails": [
+        "lean/VE/Service/CardinalityExamples.lean:190",
+        "tests/test_cardinality_answer.py::test_the_chain_s_request_is_its_parent_s_chain_reading_and_nothing_else (with those two guards as #eval: DID NOT RAISE CheckerUnavailable, both cases)"
+      ],
+      "killed": true,
+      "claim": "review F2: chainBound checks only the parent's list, not that the request is its chain reading"
     }
   ],
   "not_planted": {
