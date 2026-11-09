@@ -257,6 +257,16 @@
    ]
   },
   {
+   "test": "tests/test_ci2b_ab.py",
+   "why": "starts git in docs/commands-imperatives/ci-2b/evidence/ab.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/commands-imperatives/ci-2b/evidence/ab.py:run.<locals>.<lambda>: git"
+   ]
+  },
+  {
    "test": "tests/test_ci_workflow.py",
    "why": "starts git in tests/test_ci_workflow.py",
    "recorded": [
