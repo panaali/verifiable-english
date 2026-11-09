@@ -4,8 +4,8 @@ No DRI signature is reserved in this item. There are no DELTA rows (DELTA.md): n
 Status: built: (1) `admit`; (2) the 19 statements, all proved with standard axioms only, each also over `admitWith`
 for every table and fixed input; (3) A1-A28. Run.lean (4) is cut to ps-2ac by the task's pre-approved seam ("Cut").
 Trust: V +123 untied, K +0, within R16.
-Open: three questions to the DRI, unanswered when I finished (17:55Z, 18:25Z, 19:24Z): `admit`'s fixed separation
-inputs, A10's outcome, and the counted size (see "Points for the DRI"). Next items: ps-2ac (Run.lean), then ps-2b.
+DRI rulings: reviews/dri-decisions-20261109-ps-2ab.md and -ps-2ab-2.md (separation inputs, fixtures, A10 is `clause`,
+size accepted); see "DRI rulings". Next items: ps-2ac (Run.lean), then ps-2b.
 
 Feature item ps-2ab (plan `docs/spec/presupposition-PLAN.md` "PS-2a" and 4.6; spec `docs/spec/presupposition.md` 4.7,
 5, 7.2, 7.3, 7.5). Branch `feature/ps-2ab`, merge base a0102f0e5 (main's tip at launch, ps-2a merged). Command outputs:
@@ -50,9 +50,14 @@ the DRI the measured numbers (msg.sh dri ps-2ab, 2026-11-09T18:25Z). `admit`, it
 
 FOLLOW-UP: ps-2ac Run.lean report value (PS-2a part 4)
 
-## Points for the DRI (asked with msg.sh; no ruling file when I finished)
+## DRI rulings (reviews/dri-decisions-20261109-ps-2ab.md, reviews/dri-decisions-20261109-ps-2ab-2.md)
 
-- **`admit`'s fixed separation inputs (17:55Z, corrected 19:24Z).** `PDoc` holds no readings@1 document and no
+- **`admit`'s fixed separation inputs: ACCEPTED** (ps-2ab item 1; ps-2ab-2 item 1 keeps `admitInputs` and accepts
+  readings@1's texts and the `admitWith_*` twins). Its conditions are guarded: `admitWith fixtureTable admitInputs`
+  refuses S7's open rule with `needsModelText`, `admitWith fixtureTable fx1 docA1` is admitted, and the
+  `notSeparatedText` guards cover a non-separating situation and a reversed witness. `admit` itself refuses PS-E1's
+  generic consequent set for want of a situation (guard). As ruled, spec section 5 now names the two texts as step 5's
+  refusal (one row). What was built: `PDoc` holds no readings@1 document and no
   situations. In readings@1 the situations come with each set, in the document (`SetJ.situations`). The spec makes
   them a fixed input of `admit` (4.7 step 5, `:1104-1108`). I built: `Fixed` holds the readings environment's `chain`
   and the situations `sits` (unit, witness, other, situation). `readingsDoc` builds the open unit's readings@1 document
@@ -63,17 +68,15 @@ FOLLOW-UP: ps-2ac Run.lean report value (PS-2a part 4)
   (`lean/VE/Readings/Run.lean:209-220`). They are copied there as `needsModelText` and `notSeparatedText`, because
   readings@1 writes them inline (FOLLOW-UPS: give them one owner). `admitInputs` is the norms chain with no
   situation, so `admit` itself refuses every set of two or more readings until PS-4 passes the document's situations
-  through `admitWith`. The ruling wanted: accept that, or put situations in `PDoc` (a type change, not proposed). A
-  different ruling changes only step 5's refusal; no statement reads it. `Fixed` holds the chain, not a whole
+  through `admitWith` (PS-4's task file says so). `Fixed` holds the chain, not a whole
   `ReadingsEnvironment`: building one needs a `RouteVocabulary`, and step 5 reads only `re.chain`. `readingsDoc`'s
   rules are strict W1 rules and its frame has no soft or rights block, so no decision key is generated and
   `separates`' 12-cell bound is never reached (guards: `cells … = 0`).
-- **A10's outcome is `clause`, not 7.3's `content` (19:24Z).** A conditioned carrier recorded `B → G` peels (one
-  antecedent) to `G`. Step 4 then finds `G`, not `strong`, at the path. So the spec's own step order answers
-  `PresuppositionMismatch: p1: clause`, on `admit` and under the fixture table; no document of that shape reaches
-  `content`. A11 (a nesting that does not peel) and a peeled but different content give `content`. I kept the
-  spec's order. A spec fix or a ruling is wanted.
-- **Size (18:25Z, 19:24Z).** Counted lines are over ~600 after the cut ("Size"). Acceptance is wanted, as for ps-2a.
+- **A10's outcome is `clause` (ps-2ab-2 item 2, SIGNED: the spec's step order wins).** A conditioned carrier recorded
+  `B → G` peels (one antecedent) to `G`. Step 4 then finds `G`, not `strong`, at the path, and answers
+  `PresuppositionMismatch: p1: clause`, on `admit` and under the fixture table. As ruled, I edited spec 7.3's A10 row.
+  A11 (a nesting that does not peel) and a peeled but different content give `content`.
+- **Size: ACCEPTED** (ps-2ab item 3, ps-2ab-2 item 3). Counted lines are over ~600 after the Run.lean cut ("Size").
 
 ## Deviations (no ruling needed)
 

@@ -980,8 +980,17 @@ def pGa (c : Carrier) : Obligation := { pG c with position := .path [0, 1] }
 #guard errOf (admit (docA [cu "u0" (.all "entity" owner) false, cu "u1" bG] [pGa (.unconditional "u0")])) ==
   "PresuppositionAssumedUnit: p1: u0"
 
+-- on `admit` itself: PS-E1's generic consequent cell `[assumed, unconditional]` gives a two-reading set, refused for
+-- want of a recorded situation (`admitInputs` has none)
+def fG : Frame := .allF "entity" (.impR busy .hole)
+def rrG : List RReading :=
+  [{ cand := .assumed, aliases := [], content := .claim bG, premise := some (fG.goal owner) },
+   { cand := .unconditional, aliases := [], content := .claim bG, premise := some (fG.close owner) }]
+#guard errOf (admit (docA [⟨"u1", true, .readings rrG⟩] [pGa .unresolved])) == needsModelText
+#guard errOf (admit (docA [⟨"u1", true, .readings (rrG.take 1)⟩] [pGa .unresolved])) == "PresuppositionCandidates: p1"
 -- A10: conditioned recorded `B → G` instead of `G → B`. Peeling one antecedent leaves `G`, so step 4 finds `G`, not
--- `strong`, at the path: `clause` (see the REPORT: 7.3 writes `content`). `G → B` is admitted.
+-- `strong`, at the path: `clause` (spec 7.3 as amended, DRI reviews/dri-decisions-20261109-ps-2ab-2.md item 2).
+-- `G → B` is admitted.
 #guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (.implies theOwner theOwnerU)] [pA .conditioned])) ==
   "PresuppositionMismatch: p1: clause"
 #guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (.implies theOwnerU theOwner)] [pA .conditioned])) == "admitted"
