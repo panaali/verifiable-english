@@ -1,7 +1,8 @@
 import VE.Senses.RunExamples
 
 /-! The members sn-b6c adds to a `senses.read` route answer, as `#guard` checks: each text of spec 3.2 and plan 2.8
-with its slots filled, exactly as the spec words it; each sense-map entry's gloss and bytes in its source. -/
+with its slots filled, exactly as the spec words it; each sense-map entry's gloss and bytes in its source. sn-b6d adds
+Lean's line for a word and gloss and the re-read of a rendering. -/
 
 namespace VE.Senses.TextsExamples
 open Lean VE.EnglishGrammar VE.Senses VE.Senses.Fixtures VE.Senses.Run VE.Senses.RunExamples
@@ -70,5 +71,27 @@ def entries (s : String) : List (String × String) :=
 #guard (((runCaseReported (fenced ["Alice is funny.\n"] ["u1"] [] [("funny", 1)])).getObjValD "result").getObjValD
   "reading").compress == "{\"class\":\"TypeMismatch\",\"code\":\"IllTyped\",\"status\":\"rejected\"," ++
   "\"text\":\"The text was read, and its formulas do not pass the type check.\"}"
+
+-- sn-b6d: Lean's line for a requested word and gloss (`lineJson`, `lineOf`), slot by slot: one gloss under two words,
+-- then two glosses of one word; a pair of no sense has Lean's code
+#guard (lineJson F "odd" "strange").getObjValD "text" == .str "In this document, odd means strange."
+#guard (lineJson F "funny" "strange").getObjValD "text" == .str "In this document, funny means strange."
+#guard (lineJson F "funny" "amusing").getObjValD "text" == .str "In this document, funny means amusing."
+#guard lineJson F "funny" "purple" == Json.mkObj [("word", "funny"), ("gloss", "purple"), ("code", "UnknownGloss")]
+#guard lineJson F "zany" "amusing" == Json.mkObj [("word", "zany"), ("gloss", "amusing"), ("code", "UnknownWord")]
+
+/-- The outcome of the re-read of `rendering` as candidate `j` of the unit at `sentence` of the source `s`. -/
+def reread (s : String) (sentence j : Nat) (rendering : String) : Json :=
+  ((((runCaseReported (req [("source", .str s), ("reread", Json.mkObj [("sentence", toJson sentence),
+    ("candidate", toJson j), ("rendering", .str rendering)])])).getObjValD "result").getObjValD "reading").getObjValD
+    "reread").getObjValD "outcome"
+
+-- sn-b6d: each candidate's bare rendering is `same` under its own projection (the base one leaves the unit open);
+-- the other candidate's formula, or a sense named in quotation marks, is `different`
+#guard reread "The riddle is funny." 0 0 "The riddle is funny." == "same"
+#guard reread "The riddle is funny." 0 1 "The riddle is funny." == "same"
+#guard reread "The riddle is funny." 0 0 "The riddle is funny (meaning strange)." == "different"
+#guard reread "The riddle is funny." 0 1 "The riddle is classified as \"sense__funny_2\"." == "different"
+#guard reread (lineFunny2 ++ " The riddle is odd.") 1 0 "The riddle is odd." == "same"
 
 end VE.Senses.TextsExamples
