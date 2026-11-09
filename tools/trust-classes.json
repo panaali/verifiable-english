@@ -9749,6 +9749,8 @@
         "VE.Service.Document.elsewhere",
         "VE.Service.Document.countingFront",
         "VE.Service.Document.chainFront",
+        "VE.Service.Document.readingText",
+        "VE.Service.Document.chainDocument",
         "VE.Service.Document.composedJson",
         "VE.Service.Document.graphLabelled",
         "VE.Service.Document.bridgeAdmitted"
@@ -9791,7 +9793,8 @@
         "VE.Service.Document.unitHasStrayNull",
         "VE.Service.Document.verbalisedBy",
         "VE.Service.Document.vocabularyFault",
-        "VE.Service.Document.walked"
+        "VE.Service.Document.walked",
+        "VE.Service.Document.chainBound"
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
@@ -17809,7 +17812,11 @@
         "VE.Service.CardinalityExamples.frontOf",
         "VE.Service.CardinalityExamples.unitsIn",
         "VE.Service.CardinalityExamples.lowered",
-        "VE.Service.CardinalityExamples.answered"
+        "VE.Service.CardinalityExamples.answered",
+        "VE.Service.CardinalityExamples.chainUnits",
+        "VE.Service.CardinalityExamples.parentText",
+        "VE.Service.CardinalityExamples.chainOf",
+        "VE.Service.CardinalityExamples.unbound"
       ]
     },
     "VE/Judgments/Chain.lean": {

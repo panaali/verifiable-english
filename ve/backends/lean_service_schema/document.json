@@ -14,7 +14,7 @@
           "composed": {
             "additionalProperties": false,
             "properties": {
-              "chain_document": {"anyOf": [{"type": "null"}, {"type": "string"}]},
+              "chain_document": {"type": "string"},
               "counting_document": {"type": "string"},
               "not_certified": {"$ref": "common.json#/$defs/strings"},
               "scope": {"type": "string"}

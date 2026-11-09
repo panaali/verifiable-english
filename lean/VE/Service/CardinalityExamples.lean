@@ -151,14 +151,15 @@ def unitsIn (j : Option Json) : List Json := j.map (fun f => ((f.getObjValD "uni
 #guard ((countingFront (frontOf [counting, formula] [("open_terms", toJson ([] : List Json))])).toOption.map fun f =>
     ((f.getObjVal? "open_terms").toOption.isNone, unitsIn (some f))) == some (true, [counting, elsewhere "chain" formula])
 #guard said (countingFront (frontOf [formula])) == "UnsupportedProfile: a document under cardinality@0's chain list holds a counting unit"
-#guard ((chainFront (frontOf [counting]) plainEnv).toOption) == some none
+-- With every unit a counting unit the chain still reads the document (qt-a4b review F1): never none.
+#guard unitsIn (chainFront (frontOf [counting]) plainEnv).toOption == [elsewhere "counting" (counting)]
 -- A counting unit anywhere in the list; the three members the chain reads go, and every other member stays.
 #guard said (countingFront (frontOf [formula, counting])) == "ok" &&
-  ((chainFront (frontOf [formula, counting]) plainEnv).toOption.join.isSome) &&
+  ((chainFront (frontOf [formula, counting]) plainEnv).toOption.isSome) &&
   ((countingFront (frontOf [counting] (["narrowings", "open_terms", "reading_sets"].map (·, toJson ([] : List Json)) ++
     [("version", toJson 1)]))).toOption.bind fun f => (VE.Bridge.fields f).toOption.map (·.map Prod.fst)) ==
     some ["environment", "units", "version"]
-def lowered : Option Json := ((chainFront (frontOf [counting, formula]) plainEnv).toOption).join
+def lowered : Option Json := (chainFront (frontOf [counting, formula]) plainEnv).toOption
 #guard unitsIn lowered == [elsewhere "counting" (counting), formula] &&
   ((lowered.map (·.getObjValD "environment")).bind fun e => (VE.Bridge.fields e).toOption.map (·.map Prod.fst)) ==
     some ["language", "profiles", "spec_revision", "vocabulary"] &&
@@ -167,7 +168,27 @@ def answered : Json := (composedJson "---\n{}\n---\nAB" (frontOf [counting, form
 #guard answered.getObjValD "not_certified" == toJson ["c"] && answered.getObjValD "counting_document" != .null &&
   answered.getObjValD "chain_document" != .null &&
   (answered.getObjValD "scope").getStr?.toOption == some "The chain's premises and verdict cover no counting statement: c are admitted and not certified against them." &&
-  (composedJson "---\n{}\n---\nAB" (frontOf [counting]) (frontOf [counting])).toOption.map (·.getObjValD "chain_document") == some .null
+  (composedJson "---\n{}\n---\nAB" (frontOf [counting]) (frontOf [counting])).toOption.map (·.getObjValD "chain_document") ==
+    ((chainFront (frontOf [counting]) plainEnv).toOption.map fun f => .str (readingText "AB" f))
+/-! `chainBound`: the chain's request is exactly the chain reading of the chain list document it names (qt-a4b review F2). -/
+def chainUnits : List Json := [unit "u" (card top), unit "f" (Json.mkObj [("ast", toJson ["top"])])]
+def parentText : String := text plainEnv chainUnits [("narrowings", toJson ([] : List Json))]
+def chainOf (t : String) : String := (do let (f, _) ← VE.Discourse.Loader.frontText t; chainDocument t (← frontJson f)).toOption.getD ""
+def unbound : String := unavailable "the chain's request is not the chain reading of the chain list document it names"
+#guard (chainOf parentText).startsWith "---\n" && said (chainBound (chainOf parentText) (.str parentText)) == "ok"
+-- A member, a byte of the body, a unit's kind or an environment key of another document; a parent outside the list.
+#guard said (chainBound (chainOf (text plainEnv chainUnits)) (.str parentText)) == unbound &&
+  said (chainBound (chainOf parentText ++ " ") (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text plainEnv [unit "u" (card top), unit "f" (Json.mkObj [("ast", toJson ["bottom"])])]
+    [("narrowings", toJson ([] : List Json))])) (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text (plainEnv.setObjVal! "language" (.str "x")) chainUnits
+    [("narrowings", toJson ([] : List Json))])) (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text environment one)) (.str (text environment one))) == unbound &&
+  said (chainBound (chainOf parentText) (.str "no front matter")) == unbound &&
+  said (chainBound (chainOf parentText) (toJson 1)) == "InvalidInput: chain_of must be a string"
+-- The document mode binds it before any other check.
+#guard said (checkCore (Json.mkObj [("id", .str "d"), ("document", .str "not a document"),
+  ("chain_of", .str parentText)])) == unbound
 -- `check`: a chain list row reads its counting units only, and a graph is refused on this path too.
 #guard let row := rowOf (text plainEnv [unit "u" (card top)])
   row.getObjValD "status" == .str "ok" && (row.getObjValD "composed").getObjValD "not_certified" == toJson ["u"] &&

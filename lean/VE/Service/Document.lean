@@ -2286,16 +2286,41 @@ def countingFront (front : Json) : Except String Json := do
 
 /-- The chain list's document as the chain reads it: every counting unit `elsewhere` (the form a counting passage has
 without this profile), under the environment without `cardinality@0` and without the cardinality and W6a fields (E4's
-other projection), or none when no other unit is left. It is an ordinary chain document, which Lean checks on its own
-request, so its premises and verdict are those of the same text with no counting statement. -/
-def chainFront (front environment : Json) : Except String (Option Json) := do
+other projection). It is an ordinary chain document, which Lean checks on its own request, so its premises and verdict
+are those of the same text with no counting statement. It is there whatever the units are (qt-a4b review F1): with no
+other unit left the chain still reads the fences, open terms, reading sets and narrowings, which no counting reading
+checks, so a document never leaves the chain's checks by holding counting units only. -/
+def chainFront (front environment : Json) : Except String Json := do
   let units := (Loader.optionalList front "units").getArr?.toOption.getD #[]
-  if units.all countingUnit then return none
   let kept ← (fields environment).map (·.filter fun kv =>
     !["profiles", "cardinality_schema", "cardinality", "unit_schema", "units"].contains kv.1)
   let lowered := Json.mkObj (kept ++ [("profiles", toJson ((listedProfiles environment).filter (· != "cardinality@0")))])
-  pure (some ((front.setObjVal! "environment" lowered).setObjVal! "units" (toJson (units.toList.map fun u =>
-    if countingUnit u then elsewhere "counting" u else u))))
+  pure ((front.setObjVal! "environment" lowered).setObjVal! "units" (toJson (units.toList.map fun u =>
+    if countingUnit u then elsewhere "counting" u else u)))
+
+/-- A reading's document of a chain list text: its front matter over the text's own body. -/
+def readingText (body : String) (front : Json) : String := "---\n" ++ front.compress ++ "\n---\n" ++ body
+
+/-- The chain's document of a chain list text `text` whose front matter is `whole`: `chainFront` over the same body.
+The one definition of the chain's request, which the answer carries (`composedJson`) and the chain's own check binds
+(`chainBound`). -/
+def chainDocument (text : String) (whole : Json) : Except String String := do
+  let (_, body) ← Loader.frontText text
+  pure (readingText body (← chainFront whole (whole.getObjValD "environment")))
+
+/-- The chain reading of a chain list document, asked on its own request with the document as written (`chain_of`):
+the text the chain checks is exactly the parent's `chainDocument`, so the chain answers for the parent's own chain
+reading, with no member, environment key, unit or body of another document (qt-a4b review F2). The parent is a document
+under the chain list; any other relay of a chain request is the relay's fault, never the document's. -/
+def chainBound (text : String) (parent : Json) : Except String Unit := do
+  let .str p := parent | throw "InvalidInput: chain_of must be a string"
+  let bound : Except String Bool := do
+    let (front, _) ← Loader.frontText p
+    let whole ← frontJson front
+    pure (listedProfiles (whole.getObjValD "environment") == VE.Cardinality.Wire.chainProfiles &&
+      (← chainDocument p whole) == text)
+  unless bound matches .ok true do
+    throw (unavailable "the chain's request is not the chain reading of the chain list document it names")
 
 /-- A claim graph's `label` members by node name, and the graph without them, which is what `admitGraph` decodes (its
 node has no label, and the `cardinality` mode, whose request has no units, refuses one). The nodes are counted first. -/
@@ -2349,11 +2374,10 @@ def cardinalityReport (w : VE.Cardinality.CardEnv) (graph : Json) (units : List 
 /-- What a chain list row says of itself: each reading's document, and that the chain's verdict covers no counting unit. -/
 def composedJson (text : String) (whole counting : Json) : Except String Json := do
   let (_, body) ← Loader.frontText text
-  let document (front : Json) := Json.str ("---\n" ++ front.compress ++ "\n---\n" ++ body)
   let counted := (Loader.optionalList whole "units").getArr?.toOption.getD #[] |>.toList.filter countingUnit
     |>.filterMap fun u => (u.getObjValD "id").getStr?.toOption
-  pure (Json.mkObj [("counting_document", document counting),
-    ("chain_document", (← chainFront whole (whole.getObjValD "environment")).elim .null document),
+  pure (Json.mkObj [("counting_document", .str (readingText body counting)),
+    ("chain_document", .str (← chainDocument text whole)),
     ("not_certified", toJson counted),
     ("scope", .str s!"The chain's premises and verdict cover no counting statement: {", ".intercalate counted} are admitted and not certified against them.")])
 
@@ -2377,9 +2401,12 @@ structure Checked where
   composed : Option Json := none
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
-admission and the narrowing choices), which `check_document` adds (batch 16b). -/
+admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
+whose chain reading `text` is (`chainBound`), bound before anything else is read. -/
 def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
-    (governed : Option Json := none) (governedSets : Option Json := none) : Except String Checked := do
+    (governed : Option Json := none) (governedSets : Option Json := none) (parent : Option Json := none) :
+    Except String Checked := do
+  if let some p := parent then chainBound text p
   let doc ← split text (senses := true)
   -- `scope@0`'s fold (`VE.Scope.foldGovernors`) writes no `judgments` member: the two do not compose yet.
   if ["scope@0", "judgments@0"].all (listedProfiles (doc.front.getObjValD "environment")).contains then
@@ -2518,7 +2545,7 @@ def checkBody (j : Json) : Except String Json := do
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
   pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
-    (j.getObjVal? "reading_sets").toOption))
+    (j.getObjVal? "reading_sets").toOption (j.getObjVal? "chain_of").toOption))
 
 /-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
 every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls

@@ -256,7 +256,7 @@ def «row» : Shape :=
           ref "#/$defs/cardinality_report"),
         ("composed", copied "Service.Document.composedJson: under cardinality@0's chain list, each reading's document and what the row does not certify; the client binds them to the request" <|
           n [obj, .required ["counting_document", "chain_document", "not_certified", "scope"], closed [
-            ("counting_document", str), ("chain_document", nullable str),
+            ("counting_document", str), ("chain_document", str),
             ("not_certified", ref "common.json#/$defs/strings"), ("scope", str)]])]]]
 
 def file : File where
@@ -272,6 +272,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 9646614839625587919
+#guard (file.render.toOption.map (hash ·.compress)) == some 1547469822624155158
 
 end ResponseShape.Schemas.Document
