@@ -1,0 +1,15 @@
+trust_mutants: 133 definitions, 414 mutants (38 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:45 VE.Purposes.sideOfKind (S, trusted) body-true: !s.isEmpty && s.all fun r => match r.partId? with | some i => U.kind? i == some k | none => true -> true (lean/VE/Purposes/Examples.lean:63: Expression (VE.Purposes.sameUnit, which it reads, is not what ...)
+UNKNOWN lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) ne-eq: != -> == (lean/VE/Commands/StepsExamples.lean:73: Expression (it computes through a proof the mutant broke ...)
+SURVIVOR lean/VE/Service/Document.lean:1620 VE.Service.Document.contentOf (D[V], trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Compose/Dispatch.lean:830 VE.Compose.packRows (G[V], trusted) list-empty: [ ⟨"events@0", ["relational-fol@0", "norms@0", "norm-defaults@0"], refusing "events@0" eventsRefu... -> [] (lean/VE/Compose/Dispatch.lean:1041: the failing proof cannot be cut: unexpected token ':='; expec...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:153 VE.Presupposition.nodeCertificate (G[V], trusted) list-empty: (D.proofs.find? (fun x => x.1 == n)) -> [] (lean/VE/Presupposition/Wire.lean:153: Type mismatch)
+UNKNOWN lean/VE/Service/Document.lean:2465 VE.Service.Document.check (D[V], trusted) list-empty: records -> [] (lean/VE/Service/Document.lean:2465: Invalid projection: Type of)
+UNKNOWN lean/VE/Senses/Run.lean:460 VE.Senses.Run.readCase (G[V], trusted) append-right: out ++ ->  (lean/VE/Senses/Run.lean:460: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/Decl.lean:33 VE.Purposes.Polarity (S, trusted) ctor-drop: | affirmed ->  (lean/VE/Purposes/WellFormed.lean:243: the failing proof cannot be cut: Unknown constant `VE.Purpo...)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:112 VE.NormDefaults.Wire.hookNames (D[V], trusted) list-empty: (hookBlock H).map (·.V.dates.length) -> [] (lean/VE/NormDefaults/Layered.lean:112: Type mismatch)
+trust_mutants: 26 KILLED, 1 SURVIVOR, 8 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 376 OTHER SHARD in 5406 s
+trust_mutants: D[V], trusted: 4 KILLED, 1 SURVIVOR, 2 UNKNOWN, 1 INVALID, 74 OTHER SHARD
+trust_mutants: G[V], trusted: 9 KILLED, 4 UNKNOWN, 1 INVALID, 137 OTHER SHARD
+trust_mutants: S, trusted: 13 KILLED, 2 UNKNOWN, 1 INVALID, 165 OTHER SHARD
+trust_mutants: steps: wall plan 14.7 s, scratch 4.7 s, control_build 0.3 s, probe_install 1.4 s, mutants 5380.8 s, cleanup 3.8 s, reads 0.3 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 705.5 s (26), mutant_builds 899.5 s (47), mutant_checks 8042.4 s (41), stage_controls 2718.7 s (14), mutant_probes 616.4 s (29)
