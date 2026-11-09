@@ -24,10 +24,8 @@ the head still collects. A trailer without a target and a reason fails too.
 * none of these: a `conftest.py` that deselects or ignores it, or a parameter list that shrinks while its
   source in the test module is unchanged (a data file, a glob, an imported list).
 
-A parametrised mutant ID that an inserted mutant renumbers (a case named by its definition and its position)
-is paired with its head ID, not refused, when its module names each case by its mutant text (`CASES_HOOK`)
-on both sides and every base case of its function has a head case with that text (`pair_cases`); a function
-one of whose base texts is gone pairs nothing. The gate logs each pair (`pairing_text`).
+A mutant ID renumbered by an inserted mutant is paired with its head ID (logged by `pairing_text`), not refused,
+when its module names each case by its text (`CASES_HOOK`) and no base text of its function is gone (`pair_cases`).
 
 A module that no longer imports or is skipped at collection is a collection report, which fails on its own
 as well. Every head collection is attached as the record of its commit.
@@ -75,18 +73,13 @@ TRAILER = "Test-removed"
 SEPARATOR = " — "
 # The label of a removal the diff neither deletes nor re-parametrises.
 UNLABELLED = "the diff neither deletes its file, function or class nor changes its parametrisation"
-# A test module whose parametrised cases are mutants names each case's mutant by its text: a module-level
-# `CASES_HOOK()` returning {the case's parameter ID: its definition, operator and text, as one string}. Run
-# from the module's own tree with its directory and the tree on the import path; it prints the IDs escaped
-# as pytest escapes them.
+# A mutant test module names each case by its mutant: a module-level `CASES_HOOK()` returning {its parameter ID:
+# its definition, operator and text}, run in the module's own tree; the IDs are escaped as pytest escapes them.
 CASES_HOOK = "mutant_cases"
 CASES_SCRIPT = f"""import importlib.util, json, sys
 spec = importlib.util.spec_from_file_location("ve_gate_cases", sys.argv[1])
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
-cases = module.{CASES_HOOK}()
-assert type(cases) is dict and all(type(k) is str and type(v) is str for k, v in cases.items())
-print(json.dumps({{k.encode("unicode_escape").decode("ascii"): v for k, v in cases.items()}}))
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+print(json.dumps({{k.encode("unicode_escape").decode("ascii"): v for k, v in module.{CASES_HOOK}().items()}}))
 """
 
 
@@ -468,75 +461,50 @@ class Changes:
         return UNLABELLED
 
 
-    def _hooked(self, side: str, path: str) -> bool:
-        try:
-            module = self.module(side, path)
-        except (OSError, RuntimeError):  # not in the tree on that side
-            return False
-        return module is not None and any(isinstance(node, ast.FunctionDef) and node.name == CASES_HOOK
-                                          for node in module.body)
-
-    def case_texts(self, paths: set[str], scratch: Path) -> dict[str, list[dict[str, str] | None]]:
-        """{path: [the base's, the head's {parameter ID: mutant text}, or None where its hook fails]}, each side
-        run in its own tree (the head's: `root` for the worktree, else a scratch worktree of it)."""
-        texts: dict[str, list] = {path: [] for path in paths}
-        for side, commit in (("base", self.base), ("head", self.head)):
-            with contextlib.ExitStack() as stack:
-                tree = self.root if commit is None else stack.enter_context(
-                    worktree(commit, scratch / side, root=self.root, env=self.env))
-                inherited = os.environ if self.env is None else self.env
-                env = {name: inherited[name] for name in INHERITED if name in inherited}
-                env.update(PYTHONPATH=os.pathsep.join([str(tree), str(tree / "tests")]),
-                           PYTHONPYCACHEPREFIX=str(scratch / "pycache"))
-                for path in paths:
-                    run = subprocess.run([self.python, "-c", CASES_SCRIPT, str(tree / path)], cwd=tree,
-                                         env=env, text=True, capture_output=True)
-                    value = test_schedule.json_value(run.stdout) if run.returncode == 0 else None
-                    texts[path].append(value if isinstance(value, dict) else None)
-        return texts
-
     def renumbered(self, expected: list[str], collected: list[str], lost: list[str]) -> dict[str, str]:
-        """{lost base ID: the head ID of the same mutant} (`pair_cases`) for the lost parametrised IDs of the
-        modules that name their cases by text (`CASES_HOOK`) on both sides."""
-        lost = set(lost)
+        """{lost base ID: its head ID} (`pair_cases`) by the `CASES_HOOK` of each side's tree (head None: `root`)."""
         functions = {nodeid.split("[", 1)[0] for nodeid in lost if "[" in nodeid and nodeid.endswith("]")}
-        paths = {function.partition("::")[0] for function in functions}
-        paths = {path for path in paths if self._hooked("base", path) and self._hooked("head", path)}
-        if not paths:
-            return {}
+        texts: dict[str, list] = {function.partition("::")[0]: [] for function in functions}
         with tempfile.TemporaryDirectory(prefix="ve-gate-cases-") as scratch:
-            texts = self.case_texts(paths, Path(scratch))
+            for side, commit in (("base", self.base), ("head", self.head)) if texts else ():
+                with contextlib.ExitStack() as stack:
+                    try:
+                        tree = self.root if commit is None else stack.enter_context(
+                            worktree(commit, Path(scratch) / side, root=self.root, env=self.env))
+                    except RuntimeError:  # no tree of that side: nothing pairs, the lost IDs stay refused
+                        return {}
+                    env = {name: value for name, value in (self.env or os.environ).items() if name in INHERITED}
+                    env.update(PYTHONPATH=f"{tree}{os.pathsep}{tree / 'tests'}", PYTHONPYCACHEPREFIX=f"{scratch}/pyc")
+                    for path, cases in texts.items():
+                        run = subprocess.run([self.python, "-c", CASES_SCRIPT, str(tree / path)], cwd=tree,
+                                             env=env, text=True, capture_output=True)
+                        value = test_schedule.json_value(run.stdout) if run.returncode == 0 else None
+                        cases.append(value if isinstance(value, dict) and all(type(text) is str for text in
+                                                                              value.values()) else {})
         pairs = {}
-        for function in sorted(f for f in functions if f.partition("::")[0] in paths):
-            sides = []
-            for ids, cases in zip((expected, collected), texts[function.partition("::")[0]]):
-                ids = [nodeid for nodeid in ids if nodeid.startswith(function + "[")]
-                params = [nodeid[len(function) + 1:-1] for nodeid in ids]
-                sides.append(None if cases is None or not all(param in cases for param in params) else
-                             {nodeid: cases[param] for nodeid, param in zip(ids, params)})
-            if None not in sides:
+        for function in sorted(functions):
+            sides = [{nodeid: cases.get(nodeid[len(function) + 1:-1]) for nodeid in ids
+                      if nodeid.startswith(function + "[")}
+                     for ids, cases in zip((expected, collected), texts[function.partition("::")[0]])]
+            if all(None not in side.values() for side in sides):  # every case has its text on both sides
                 pairs.update(pair_cases(*sides))
         return {nodeid: head for nodeid, head in pairs.items() if nodeid in lost}
 
 
 def pair_cases(base: dict[str, str], head: dict[str, str]) -> dict[str, str]:
-    """{base ID the head lacks: the head ID with its text}, one head case each, from one function's cases on
-    each side ({ID: mutant text}), when every base case's text has a head case: an inserted mutant renumbers
-    the others and removes none. A base text the head lacks pairs nothing, so the lost IDs stay refused."""
+    """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text} on each
+    side, when every base text has a head case; when one is gone, nothing, so the lost IDs stay refused."""
     free: dict[str, list[str]] = {}
     for nodeid, text in head.items():
         if base.get(nodeid) != text:  # not a case that keeps its ID and its text
             free.setdefault(text, []).append(nodeid)
     pairs = {}
     for nodeid, text in sorted(base.items()):
-        if head.get(nodeid) == text:
-            continue
-        if not free.get(text):
-            return {}
-        paired = free[text].pop(0)
-        if nodeid not in head:
-            pairs[nodeid] = paired
-    return pairs
+        if head.get(nodeid) != text:
+            if not free.get(text):
+                return {}
+            pairs[nodeid] = free[text].pop(0)
+    return {nodeid: paired for nodeid, paired in pairs.items() if nodeid not in head}
 
 
 def changes(base: str, head: str | None = "HEAD", *, root: Path = ROOT,
@@ -566,8 +534,7 @@ class Verdict:
         return bool(self.refused or self.stale or self.malformed)
 
     def record(self) -> dict:
-        return {"removed": self.removed, "refused": self.refused, "stale": self.stale, "malformed": self.malformed,
-                "paired": self.paired}
+        return {key: getattr(self, key) for key in ("removed", "refused", "stale", "malformed", "paired")}
 
 
 def missing(expected: list[str], collected: list[str], diff: Changes | None) -> Verdict:
