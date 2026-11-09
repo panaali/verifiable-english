@@ -312,4 +312,141 @@ theorem decodeRight_plain (se : SoftEnvironment) (b : Json) (f1 f2 : Json → Js
     rw [ok_bind (decodeLines_plain se b f1 f2 (φ nm) hls hl)]
     rfl
 
+
+/-- The units decoded so far with every line through `plainSource` (what `plain` does to the document they build). -/
+def plainUnits (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × CLine)) (us : Units) : Units :=
+  { us with rs := us.rs.map (fun R => { R with lines := R.lines.map (plainSource E cl R.name) }),
+            order := us.order.map (fun RS => (RS.1, plainSource E cl RS.1 RS.2)) }
+
+theorem decodeRight_name (se : SoftEnvironment) (j : Json) {R : VE.Rights.Right}
+    (h : VE.Rights.Wire.decodeRight se j = .ok R) : VE.Bridge.stringField j "name" = .ok R.name := by
+  unfold VE.Rights.Wire.decodeRight at h
+  obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨nm, hn, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  rw [hn]
+  rcases hgd : j.getObjVal? "guard" with e | gj <;> simp only [hgd] at h <;>
+    (obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h; obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h; cases h; rfl)
+
+theorem bodyRight_of (k : String) (b : Json) {r : String} (h : VE.Bridge.stringField b (if k == "right" then "name" else "right") = .ok r) :
+    bodyRight k b = r := by
+  unfold VE.Bridge.stringField at h
+  obtain ⟨v, hv, hs⟩ := VE.Kit.Except.bind_ok h
+  unfold bodyRight
+  rw [getObjValD_of_ok hv, hs]; rfl
+
+
+theorem any_plain (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × CLine)) (us : Units) (r : String) :
+    (plainUnits E cl us).rs.any (·.name == r) = us.rs.any (·.name == r) := by
+  simp [plainUnits, List.any_map, Function.comp_def]
+
+/-- One unit whose body's lines are rewritten: rights' `addUnit` on the plained lines adds the plained right or lines. -/
+theorem addUnit_plain (se : SoftEnvironment) (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × CLine))
+    (u0 b : Json) (k : String) (hk : k = "right" ∨ k = "right_lines") (hb : u0.getObjVal? k = .ok b)
+    (f1 f2 : Json → Json) {acc acc' : Units}
+    (h : addUnit se acc (mapMember k (mapMember "lines" (mapArr f1)) u0) = .ok acc')
+    (hl : ∀ l ∈ bodyLines b, ∀ S, decodeLine se (f1 l) = .ok S → (bodyRight k b, S) ∈ acc'.order →
+      decodeLine se (f2 l) = .ok (plainSource E cl (bodyRight k b) S)) :
+    addUnit se (plainUnits E cl acc) (mapMember k (mapMember "lines" (mapArr f2)) u0) =
+      .ok (plainUnits E cl acc') := by
+  obtain ⟨fs, hfs, hkm⟩ := VE.Order.ProfileGate.getObjVal_mem hb
+  have hu : ∀ f, (mapMember k (mapMember "lines" (mapArr f)) u0).getObjValD k = mapMember "lines" (mapArr f) b :=
+    fun f => by simp only [Json.getObjValD, getObjVal_mapMember, if_pos rfl, hb]; rfl
+  have hne : ∀ f a, a ≠ k → (mapMember k (mapMember "lines" (mapArr f)) u0).getObjValD a = u0.getObjValD a :=
+    fun f a ha => getObjValD_mapMember_ne _ _ ha
+  unfold addUnit at h ⊢
+  rw [fields_mapMember, hfs] at h ⊢
+  simp only [Functor.map, Except.map, bind, Except.bind, map_fst_mapPair, List.map_map, fst_comp_mapPair] at h ⊢
+  generalize hK : fs.map Prod.fst = K at h ⊢ hkm
+  by_cases c1 : (K == ["source_units"]) = true
+  · exfalso; simp only [beq_iff_eq] at c1; subst c1; rcases hk with rfl | rfl <;> simp at hkm
+  rw [if_neg c1] at h ⊢
+  by_cases c2 : (K == ["right"]) = true
+  · rw [if_pos c2] at h ⊢
+    simp only [beq_iff_eq] at c2; subst c2
+    have hk' : k = "right" := by simpa using hkm
+    subst hk'
+    rw [hu f1] at h; rw [hu f2]
+    cases hR : VE.Rights.Wire.decodeRight se (mapMember "lines" (mapArr f1) b) with
+    | error e => rw [hR] at h; cases h
+    | ok R =>
+      rw [hR] at h; simp only [pure, Except.pure, Except.ok.injEq] at h; subst h
+      have hn : bodyRight "right" b = R.name := bodyRight_of _ _ (by
+        have := decodeRight_name se _ hR
+        simp only [VE.Bridge.stringField, getObjVal_mapMember_ne _ _ (show "name" ≠ "lines" by decide)] at this
+        simpa using this)
+      rw [decodeRight_plain se b f1 f2 (plainSource E cl) hR (fun l hlb S hS hd => by
+        rw [← hn]; exact hl l hlb S hd (by simp [hn, hS]))]
+      simp only [plainUnits, List.map_append, List.map_cons, List.map_nil, List.map_map]
+      rfl
+  rw [if_neg c2] at h ⊢
+  by_cases c3 : (K == ["right_lines"]) = true
+  · rw [if_pos c3] at h ⊢
+    simp only [beq_iff_eq] at c3; subst c3
+    have hk' : k = "right_lines" := by simpa using hkm
+    subst hk'
+    rw [hu f1] at h; rw [hu f2, displayFields_mapMember]
+    rw [displayFields_mapMember] at h
+    simp only [VE.Bridge.stringField, getObjVal_mapMember_ne _ _ (show "right" ≠ "lines" by decide)] at h ⊢
+    cases hD : VE.Bridge.displayFields b ["right", "lines"] [] with
+    | error e => rw [hD] at h; cases h
+    | ok _ =>
+      simp only [hD] at h ⊢
+      cases hr : (b.getObjVal? "right" >>= fun x => x.getStr?) with
+      | error e => rw [hr] at h; cases h
+      | ok r =>
+        simp only [hr] at h ⊢
+        rw [any_plain]
+        by_cases ha : (acc.rs.any fun x => x.name == r) = true
+        case neg => rw [if_neg ha] at h; cases h
+        rw [if_pos ha] at h ⊢
+        simp only [pure, Except.pure] at h ⊢
+        cases hls : VE.Rights.Wire.decodeLines se (mapMember "lines" (mapArr f1) b) with
+        | error e => rw [hls] at h; cases h
+        | ok ls =>
+          rw [hls] at h; simp only [Except.ok.injEq] at h; subst h
+          have hn : bodyRight "right_lines" b = r := bodyRight_of _ _ (by simpa [VE.Bridge.stringField] using hr)
+          rw [decodeLines_plain se b f1 f2 (plainSource E cl r) hls (fun l hlb S hS hd => by
+            rw [← hn]; exact hl l hlb S hd (by simp [hn, hS]))]
+          simp only [plainUnits, List.map_map, List.map_append, Except.ok.injEq, Units.mk.injEq]
+          refine ⟨List.map_congr_left fun R _ => ?_, trivial, trivial, trivial, trivial, ?_, trivial⟩
+          · by_cases hRn : (R.name == r) = true
+            · simp only [Function.comp, hRn, ↓reduceIte, List.map_append]
+              simp only [beq_iff_eq] at hRn; rw [hRn]
+            · simp only [Function.comp, hRn, ↓reduceIte, Bool.false_eq_true]
+          · rfl
+  rw [if_neg c3] at h ⊢
+  have n1 : "limitation" ≠ k := by rcases hk with rfl | rfl <;> decide
+  have n2 : "bar" ≠ k := by rcases hk with rfl | rfl <;> decide
+  have n3 : "norm" ≠ k := by rcases hk with rfl | rfl <;> decide
+  have n4 : "cites" ≠ k := by rcases hk with rfl | rfl <;> decide
+  simp only [hne f1 _ n1, hne f1 _ n2, hne f1 _ n3, displayFields_mapMember, VE.Rights.Wire.optCites,
+    getObjVal_mapMember_ne _ _ n4] at h
+  simp only [hne f2 _ n1, hne f2 _ n2, hne f2 _ n3, displayFields_mapMember, VE.Rights.Wire.optCites,
+    getObjVal_mapMember_ne _ _ n4]
+  by_cases c4 : (K == ["limitation"]) = true
+  · rw [if_pos c4] at h ⊢
+    cases hL : VE.Rights.Wire.decodeLimitation (u0.getObjValD "limitation") <;> simp only [hL] at h ⊢
+    · cases h
+    · simp only [pure, Except.pure, Except.ok.injEq] at h ⊢; subst h; rfl
+  rw [if_neg c4] at h ⊢
+  by_cases c5 : (K == ["bar"]) = true
+  · rw [if_pos c5] at h ⊢
+    cases hB : VE.Rights.Wire.decodeBar (u0.getObjValD "bar") <;> simp only [hB] at h ⊢
+    · cases h
+    · simp only [pure, Except.pure, Except.ok.injEq] at h ⊢; subst h; rfl
+  rw [if_neg c5] at h ⊢
+  by_cases c6 : K.contains "norm" = true
+  · rw [if_pos c6] at h ⊢
+    cases hD : VE.Bridge.displayFields u0 ["norm"] ["cites"] <;> simp only [hD] at h ⊢
+    · cases h
+    cases hN : decodeLineNorm se (u0.getObjValD "norm") none <;> simp only [hN] at h ⊢
+    · cases h
+    cases hC : u0.getObjVal? "cites" <;> simp only [hC] at h ⊢
+    all_goals first
+      | (simp only [pure, Except.pure, Except.ok.injEq] at h ⊢; subst h; rfl)
+      | (cases hc : VE.Rights.Wire.decodeCites _ <;> simp only [hc] at h ⊢ <;>
+          first | (cases h; done) | (cases h; rfl))
+  rw [if_neg c6] at h; cases h
+
 end VE.RightClauses
