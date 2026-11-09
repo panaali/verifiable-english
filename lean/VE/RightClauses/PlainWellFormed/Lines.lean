@@ -86,7 +86,7 @@ theorem plainSource_fields (E : VE.SoftNorms.SoftDoc) (cl : List (String × Stri
 @[simp] theorem hL_liberty (D : ClauseDoc) (RN : String × Line) :
     (hL D RN).2.source.liberty = RN.2.source.liberty := (plainSource_fields _ _ _ _).2.1
 
-theorem rightOf_plain' (D : ClauseDoc) (r : String) : rightOf (plain D) r = (rightOf D.doc r).map (hR D) := by
+theorem rightOf_plainR (D : ClauseDoc) (r : String) : rightOf (plain D) r = (rightOf D.doc r).map (hR D) := by
   simp [rightOf, plain_rs, List.find?_map, Function.comp_def]
 
 @[simp] theorem sortsOf_hL (D : ClauseDoc) (RN : String × Line) : sortsOf (plain D) (hL D RN).2 = sortsOf D.doc RN.2 := by
@@ -95,7 +95,7 @@ theorem rightOf_plain' (D : ClauseDoc) (r : String) : rightOf (plain D) r = (rig
 @[simp] theorem holderSlot_hL (D : ClauseDoc) (RN : String × Line) :
     holderSlot (plain D) (hL D RN).2 = holderSlot D.doc RN.2 := by
   unfold holderSlot
-  simp only [hL_ikind, hL_holderSlot, sortsOf_hL, rightOf_plain', hL_right]
+  simp only [hL_ikind, hL_holderSlot, sortsOf_hL, rightOf_plainR, hL_right]
   cases rightOf D.doc RN.2.right <;> rfl
 
 theorem checkSourceLine_plain (D : ClauseDoc) (R : VE.Rights.Right) (S : SourceLine) :
@@ -180,7 +180,7 @@ theorem checkRights_plain (D : ClauseDoc) : VE.Rights.checkRights (plain D) = VE
   · rfl
   case h =>
     intro RN _; funext y
-    simp only [rightOf_plain']
+    simp only [rightOf_plainR]
     cases rightOf D.doc RN.1 with
     | none => rfl
     | some R => simp only [Option.map_some, checkShape_plain, hL_carveOuts, hL_name]
@@ -190,7 +190,7 @@ theorem checkRights_plain (D : ClauseDoc) : VE.Rights.checkRights (plain D) = VE
 theorem holderConj_hL (D : ClauseDoc) (RN : String × Line) (G : VE.Formula) :
     VE.Rights.holderConj (plain D) (hL D RN).2 G = VE.Rights.holderConj D.doc RN.2 G := by
   unfold VE.Rights.holderConj
-  simp only [rightOf_plain', hL_right, sortsOf_hL, holderSlot_hL]
+  simp only [rightOf_plainR, hL_right, sortsOf_hL, holderSlot_hL]
   cases rightOf D.doc RN.2.right <;> rfl
 
 @[simp] theorem lineAct_hL (D : ClauseDoc) (RN : String × Line) :

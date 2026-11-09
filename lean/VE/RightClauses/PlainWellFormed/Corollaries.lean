@@ -2,8 +2,9 @@ import VE.RightClauses.Relation
 import VE.RightClauses.PlainWellFormed
 
 /-! The theorems of `Relation.lean` that assume `WellFormedRights (plain D)`, with that hypothesis discharged by
-`plain_wellFormed` (8.3): it holds whenever the rights document is well formed and the check of `plain D` reports no
-resource limit, the one outcome 8.3 leaves open. Relation.lean is unchanged (DRI adv0947 item 4). -/
+`plain_wellFormed` (8.3): it holds whenever the structured lines check (`WellFormedClauses D`), the rights document
+is well formed and `validateRights (plain D)` does not fail with a `ResourceLimit: ` error (`hr`), the one outcome
+8.3 leaves open. Relation.lean is unchanged (DRI adv0947 item 4). -/
 namespace VE.RightClauses
 open VE.Norms (Sat tupleVal)
 open VE.Rights (RightsDoc Line linesOf holderSlot sortsOf dutyKind ownGuard narrowings NarrowsAt owes SelectsRN

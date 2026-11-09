@@ -1,6 +1,7 @@
 import VE.RightClauses.PlainWellFormed.Clauses
 
-/-! `correlate (plain D)` is `mapG (γ D) (correlate D.doc)` (`correlate_plain_mapG`), and the new guards meet
+/-! `correlate (plain D)` is `mapG (γP D) (correlate D.doc)` (`plainNodes_mapG`; `correlate_mapG` in
+RightsSem.lean), and the new guards meet
 `GHyp` (`ghyp`): each extends the old one by the line's clauses and relation atom, typed over the base vocabulary
 in the line's context (8.3, `plain_wellFormed`). Proof vocabulary only. -/
 namespace VE.RightClauses.PWF
@@ -180,7 +181,7 @@ theorem baseEnv_keep {p : String} {s : List String} (hp : (baseEnv D).predicates
     obtain ⟨M, hM, rfl⟩ := hN
     exact ⟨M, by simp [VE.Rights.correlate, hM], rfl, rfl, fun _ h => h⟩
 
-theorem envC : EnvOK' (baseEnv D) (keepOf (VE.Rights.correlate D.doc).T.regulated
+theorem envC : EnvOKB (baseEnv D) (keepOf (VE.Rights.correlate D.doc).T.regulated
     (VE.Rights.correlate D.doc).T.definitions) (VE.Rights.correlate D.doc).E := by
   refine ⟨rfl, rfl, fun p s hp _ => ?_⟩
   obtain ⟨-, hE⟩ := baseEnv_keep F hp
@@ -194,7 +195,7 @@ theorem envC : EnvOK' (baseEnv D) (keepOf (VE.Rights.correlate D.doc).T.regulate
     simp only [beq_iff_eq] at this
     rw [this, hE] at hd; cases hd
 
-theorem envP : EnvOK' (baseEnv D) (keepOf (VE.Rights.correlate D.doc).T.regulated
+theorem envP : EnvOKB (baseEnv D) (keepOf (VE.Rights.correlate D.doc).T.regulated
     (VE.Rights.correlate D.doc).T.definitions) (VE.SoftNorms.envPrime (VE.Rights.correlate D.doc)) := by
   refine ⟨rfl, rfl, fun p s hp hk => ?_⟩
   have hC := (envC F).2.2 p s hp hk

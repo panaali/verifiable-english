@@ -3,7 +3,7 @@ import VE.RightClauses.PlainWellFormed.SoftValid
 /-! What a checked structured line and a well-formed rights document give `plain_wellFormed` (8.3): each line
 instance's node is its source line's norm (`mem_linesOf`); a checked entry's clauses and relation atom are typed
 over the base vocabulary in the line's context (`entry_typed`); the base stratum order exists, so a base
-predicate is never regulated or defined (`base_keep`); no generated rights predicate is an author predicate
+predicate is never regulated or defined (`layer_names`, used by `baseEnv_keep` in Hyp.lean); no generated rights predicate is an author predicate
 (`genDecls_fresh`). Proof vocabulary only. -/
 namespace VE.RightClauses.PWF
 open VE.Rights (RightsDoc SourceLine Line linesOf sourceLines)
