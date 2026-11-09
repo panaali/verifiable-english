@@ -1,0 +1,14 @@
+trust_mutants: 14 definitions, 200 mutants (33 to run), 4 jobs, base 66242432df01
+UNKNOWN lean/VE/Presupposition/Wire.lean:27 VE.Presupposition.Candidate (S, trusted) ctor-drop: | assumed | conditioned | asserted | inPlace | unconditional ->  (lean/VE/Presupposition/Wire.lean:36: Unknown constant `VE.Presupposition.Candidate.assumed`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:19 VE.Presupposition.Carrier (S, trusted) ctor-drop: | conditioned ->  (lean/VE/Presupposition/Wire.lean:32: Unknown constant `VE.Presupposition.Carrier.conditioned`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:22 VE.Presupposition.Carrier (S, trusted) ctor-drop: | unconditional (unit : String) ->  (lean/VE/Presupposition/Wire.lean:40: Unknown constant `VE.Presupposition.Carrier.unconditional`)
+SURVIVOR lean/VE/Presupposition/Wire.lean:87 VE.Presupposition.cellOk (S, trusted) list-first: cs -> (cs.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:98 VE.Presupposition.rowNames (S, trusted) list-last: ["definite", "plural", "generic"] -> (["definite", "plural", "generic"].reverse.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-drop-first: [PositionClass.top, .negated, .antecedent, .consequent, .disjunct, .ruleAct, .ruleGuard] -> ([PositionClass.top, .negated, .antecedent, .consequent, .disjunct, .ruleAct, .ruleGuard].drop 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:124 VE.Presupposition.restrictionPaths (S, trusted) list-drop-middle: 0, -> 
+SURVIVOR lean/VE/Presupposition/Wire.lean:124 VE.Presupposition.restrictionPaths (S, trusted) list-drop-middle: 0, -> 
+SURVIVOR lean/VE/Presupposition/Wire.lean:125 VE.Presupposition.restrictionPaths (S, trusted) list-drop-first: [0, 0] -> ([0, 0].drop 1)
+trust_mutants: 24 KILLED, 6 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 167 OTHER SHARD in 182 s
+trust_mutants: D[V], trusted: 3 OTHER SHARD
+trust_mutants: S, trusted: 24 KILLED, 6 SURVIVOR, 3 UNKNOWN, 164 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 2.1 s, control_build 0.2 s, probe_install 1.2 s, control_probes 8.8 s, mutants 157.3 s, cleanup 1.6 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 6.5 s (1), mutant_builds 52.1 s (33), mutant_checks 103.2 s (34), stage_controls 9.3 s (5), mutant_probes 54 s (24)
