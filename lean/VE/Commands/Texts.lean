@@ -18,12 +18,18 @@ def missingPermission : String := "MissingPermissionRole"
 def proofAct : String := "{0} submit a proof of {1}"
 /-- No record, or two, has the sentence's target; the wire encoder writes the request's unit as the text (O1). -/
 def queryMismatch : String × String := ("QueryMismatch", "")
+/-- An authored `Then <x>.` instruction unit with no earlier translated instruction unit named as its antecedent
+(section 7, finding (c); OPEN O3 ruled: no unit field names one, so every authored `Then` unit is refused). -/
+def thenWithoutStep : String × String :=
+  ("ThenWithoutStep", "a step written with Then names no earlier instruction step: write the steps in one sentence, joined by ', then '")
 
-/-- Every code the reader writes, with its class: `VEError`, the class Python raises for each today. -/
+/-- Every code the reader writes, with its class: `VEError`, the class Python raises for each today. CI-3 adds
+`ConditionScope` and `ThenWithoutStep` (section 10). -/
 def codeClasses : List (String × String) :=
   [("InvalidInput", "VEError"), ("PermissionNotCommand", "VEError"), ("UnboundSlot", "VEError"),
    ("TypeMismatch", "VEError"), ("MissingObligationRole", "VEError"), ("MissingPermissionRole", "VEError"),
-   ("AmbiguousDerivation", "VEError"), ("CoordinatedActs", "VEError"), ("QueryMismatch", "VEError")]
+   ("AmbiguousDerivation", "VEError"), ("CoordinatedActs", "VEError"), ("QueryMismatch", "VEError"),
+   ("ConditionScope", "VEError"), ("ThenWithoutStep", "VEError")]
 
 def limitText : String := "VE stopped reading this command at its work limit."
 

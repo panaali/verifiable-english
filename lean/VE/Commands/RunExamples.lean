@@ -138,7 +138,7 @@ def proveGo : String := "Prove that reader must go using these premises."
 def proofOf (q : String) : Reading := ⟨.require, "submit_required", [⟨q, q⟩], .top⟩
 
 #guard (Run.decodeRequest (request proveGo [("q1", goA), ("q2", goB)] (env := goProof))).toOption.map (fun q =>
-  readInstruction q.ctx q.s) == some (.many [proofOf "q1", proofOf "q2"])
+  readInstruction q.ctx q.s) == some (.many [.shape (.core proveGo) [proofOf "q1"], .shape (.core proveGo) [proofOf "q2"]])
 #guard refuses (request proveGo [("q1", goA)] (env := goProof)) "QueryMismatch" "u1"
 #guard refuses (request proveGo [("q1", goA), ("q2", goA), ("q3", goB)] (env := goProof)) "QueryMismatch" "u1"
 #guard ((get (request proveGo [("q1", goA), ("q2", goB)] (env := goProof)) "readings").getArr?.toOption.map
@@ -191,7 +191,7 @@ def rawEnv : Json := .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool tr
 -- The proof predicate first among the regulated declarations.
 #guard ((ctxOf (request "x") [⟨"q1", atlasReviewed⟩]).map fun c =>
   readInstruction { c with se := { c.se with ne := { c.se.ne with regulated := c.se.ne.regulated.reverse } } }
-    proveAtlas) == some (.one (proofOf "q1"))
+    proveAtlas) == some (.one (proofOf "q1") false)
 
 #guard [request proveAtlas [("q1", atlasReviewed)], request proveAtlas, request "Click Check." (env := youBob),
   request proveGo [("q1", goA), ("q2", goB)] (env := goProof), request (proveSpaced 401),

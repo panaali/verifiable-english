@@ -60,6 +60,13 @@ def paraphrase (D : SpeechDoc) (c : Command) : String :=
   "In this task, you are " ++ (if c.force = .require then "required to " else "not permitted to ") ++
     actRest D c ++ (if c.guard == .top then "" else ", where the stated condition holds") ++ "."
 
+/-- The paraphrase of a stated sequence of commands (commands-imperatives section 7), from `actRest` as `paraphrase`
+writes each step: the order is stated, and VE does not reason about it. -/
+def paraphraseSteps (D : SpeechDoc) (cs : List Command) : String :=
+  let step (c : Command) : String := (if c.force = .require then "" else "do not ") ++ actRest D c
+  "In this task, you are required to do these in order: first " ++ ", then ".intercalate (cs.map step) ++
+    ". The order is stated; VE does not reason about it."
+
 /-- The legend sentences of the scope (2.1). -/
 def legend (sc : Scope) : List String :=
   [s!"This document is task {sc.task}."] ++

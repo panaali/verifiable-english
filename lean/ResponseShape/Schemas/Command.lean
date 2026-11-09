@@ -8,7 +8,7 @@ namespace ResponseShape.Schemas.Command
 open Lean ResponseShape
 
 def fill : Shape :=
-  c "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query)." [
+  c "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query, and when the reading's start in the wording is not known)." [
     obj, .required ["constant", "words", "span"],
     closed [("constant", ref "common.json#/$defs/text"), ("words", ref "common.json#/$defs/text"), ("span", .anyOf [n [.type ["null"]],
       n [arr, .prefixItems [ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"], .minItems 2, .maxItems 2]])]]
@@ -25,21 +25,37 @@ def reading : Shape :=
       ("query", .anyOf [n [.type ["null"]], ref "common.json#/$defs/text"]),
       ("paraphrase", ref "common.json#/$defs/text")]]
 
+def alternative : Shape :=
+  c "VE.Commands.Run.altIndexes: one alternative of many (StepOutcome.many): its shape and the positions of its readings in the answer's readings, one per step of a sequence." [
+    obj, .required ["shape", "readings"],
+    closed [("shape", enumS ["core", "preposed", "after", "seq", "form", "purpose"]),
+      ("readings", n [arr, .items (ref "common.json#/$defs/nat")])]]
+
 def answer : Shape :=
   let text := ref "common.json#/$defs/text"
   let base : List (String × Shape) := [("unit", n [str, .equals "/unit"]), ("wording", n [str, .equals "/wording"]),
     ("legend", n [arr, .items text, .minItems 1])]
   let base_keys := ["unit", "wording", "legend", "outcome"]
   .anyOf [
-    c "readInstruction's one reading." [obj, .required (base_keys ++ ["reading"]),
-      closed (base ++ [("outcome", constS "one"), ("reading", ref "#/$defs/reading")])],
-    c "readInstruction's readings (2 to readingsBound)." [obj, .required (base_keys ++ ["readings"]),
-      closed (base ++ [("outcome", constS "many"), ("readings", n [arr, .items (ref "#/$defs/reading")])])],
+    c "readInstruction's one reading, and whether it is a Then step (after_previous)." [obj,
+      .required (base_keys ++ ["reading", "after_previous"]),
+      closed (base ++ [("outcome", constS "one"), ("reading", ref "#/$defs/reading"),
+        ("after_previous", .type ["boolean"])])],
+    c "readInstruction's stated sequence: one reading per step, in order, and speech-acts' paraphraseSteps." [obj,
+      .required (base_keys ++ ["readings", "paraphrase"]),
+      closed (base ++ [("outcome", constS "steps"), ("readings", n [arr, .items (ref "#/$defs/reading")]),
+        ("paraphrase", text)])],
+    c "readInstruction's competing alternatives (2 to readingsBound): every alternative's readings, in order, and each alternative's shape and reading positions." [obj,
+      .required (base_keys ++ ["readings", "alternatives"]),
+      closed (base ++ [("outcome", constS "many"), ("readings", n [arr, .items (ref "#/$defs/reading")]),
+        ("alternatives", n [arr, .items (ref "#/$defs/alternative")])])],
     c "readInstruction's refusal: its code, class and text (QueryMismatch's text is the unit)." [obj,
       .required (base_keys ++ ["code", "class", "text"]),
       closed (base ++ [("outcome", constS "refused"), ("code", text), ("class", text), ("text", text)])],
     c "readInstruction at its work limit (Texts.limitText)." [obj, .required (base_keys ++ ["text"]),
-      closed (base ++ [("outcome", constS "limit"), ("text", text)])]]
+      closed (base ++ [("outcome", constS "limit"), ("text", text)])],
+    c "A reading with a purpose clause (CI-7b; no reader writes it yet)." [obj, .required (base_keys ++ ["reading", "purpose"]),
+      closed (base ++ [("outcome", constS "mixed"), ("reading", ref "#/$defs/reading"), ("purpose", text)])]]
 
 def «row» : Shape :=
   .anyOf [
@@ -53,6 +69,7 @@ def file : File where
   name := "english.command.json"
   comment := some "Mode english.command: VE.Commands.Run.caseReported. readInstruction's outcome for one command wording."
   top := [("row", «row»)]
-  defs := [("fill", .schema fill), ("reading", .schema reading), ("answer", .schema answer)]
+  defs := [("fill", .schema fill), ("reading", .schema reading), ("alternative", .schema alternative),
+    ("answer", .schema answer)]
 
 end ResponseShape.Schemas.Command
