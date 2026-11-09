@@ -1006,7 +1006,8 @@
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
         "ResponseShape.Skeletons.scope",
-        "ResponseShape.Skeletons.sensesProject"
+        "ResponseShape.Skeletons.sensesProject",
+        "ResponseShape.Skeletons.actReadings"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -11284,8 +11285,10 @@
         "VE.SpeechActs.Wire.actVerb",
         "VE.SpeechActs.Wire.activeCommand",
         "VE.SpeechActs.Wire.allowlist",
+        "VE.SpeechActs.Wire.allowlist₀",
         "VE.SpeechActs.Wire.asciiSpace",
         "VE.SpeechActs.Wire.attachedSlot",
+        "VE.SpeechActs.Wire.checkActsBlock",
         "VE.SpeechActs.Wire.checkCandidate",
         "VE.SpeechActs.Wire.checkCandidateCommand",
         "VE.SpeechActs.Wire.checkDeclarations",
@@ -11301,11 +11304,13 @@
         "VE.SpeechActs.Wire.decodeClosedField",
         "VE.SpeechActs.Wire.decodeCommand",
         "VE.SpeechActs.Wire.decodeDocument",
+        "VE.SpeechActs.Wire.decodeEnvironmentWith",
         "VE.SpeechActs.Wire.decodeMode",
         "VE.SpeechActs.Wire.decodeQuery",
         "VE.SpeechActs.Wire.decodeQuestion",
         "VE.SpeechActs.Wire.decodeSpeechEnvironment",
         "VE.SpeechActs.Wire.decodeSpeechEnvironmentFull",
+        "VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀",
         "VE.SpeechActs.Wire.decodeUnit",
         "VE.SpeechActs.Wire.decodeUnitIn",
         "VE.SpeechActs.Wire.encodeAnswer",
@@ -11320,6 +11325,9 @@
         "VE.SpeechActs.Wire.phraseOk",
         "VE.SpeechActs.Wire.predicatesOf",
         "VE.SpeechActs.Wire.profileGate",
+        "VE.SpeechActs.Wire.profileGateOf",
+        "VE.SpeechActs.Wire.profileGate₀",
+        "VE.SpeechActs.Wire.profilesAllowed",
         "VE.SpeechActs.Wire.queryOf",
         "VE.SpeechActs.Wire.readingCandidates",
         "VE.SpeechActs.Wire.readingSetKeys",
@@ -14391,6 +14399,7 @@
           ]
         },
         "VE.Acts.Lexical.joinCheck",
+        "VE.Acts.Lexical.joinFree",
         {
           "name": "VE.Acts.Lexical.lex",
           "tied": [
@@ -18174,16 +18183,28 @@
     },
     "VE/Commands/Examples.lean": {
       "T": [
+        "VE.Commands.Examples.E_acts",
         "VE.Commands.Examples.E_web",
+        "VE.Commands.Examples.actOf",
+        "VE.Commands.Examples.actsEnv",
+        "VE.Commands.Examples.actsProfiles",
         "VE.Commands.Examples.actsWeb",
         "VE.Commands.Examples.approvedDraft",
         "VE.Commands.Examples.approvedE",
+        "VE.Commands.Examples.choiceRows",
+        "VE.Commands.Examples.choices",
+        "VE.Commands.Examples.chooseFor",
+        "VE.Commands.Examples.chooseFrame",
+        "VE.Commands.Examples.clickSave",
         "VE.Commands.Examples.constEntry",
+        "VE.Commands.Examples.decodeErr",
         "VE.Commands.Examples.definitesWeb",
         "VE.Commands.Examples.derivesTwo",
         "VE.Commands.Examples.envOf",
         "VE.Commands.Examples.envWith",
         "VE.Commands.Examples.extraEnv",
+        "VE.Commands.Examples.fixedPhrases",
+        "VE.Commands.Examples.gateErr",
         "VE.Commands.Examples.goA",
         "VE.Commands.Examples.goB",
         "VE.Commands.Examples.goCase",
@@ -18191,11 +18212,14 @@
         "VE.Commands.Examples.goSorts",
         "VE.Commands.Examples.lex0",
         "VE.Commands.Examples.lexOf",
+        "VE.Commands.Examples.manyActs",
         "VE.Commands.Examples.nReadings",
+        "VE.Commands.Examples.noPhrases",
         "VE.Commands.Examples.noReadingOutcome",
         "VE.Commands.Examples.obligation",
         "VE.Commands.Examples.outcomeOf",
         "VE.Commands.Examples.permission",
+        "VE.Commands.Examples.phrases",
         "VE.Commands.Examples.predEntry",
         "VE.Commands.Examples.rawEnv",
         "VE.Commands.Examples.rawShare",
@@ -18205,6 +18229,8 @@
         "VE.Commands.Examples.sortEntry",
         "VE.Commands.Examples.tuplesOf",
         "VE.Commands.Examples.twoReadings",
+        "VE.Commands.Examples.twoVocabularies",
+        "VE.Commands.Examples.vocabulary",
         "VE.Commands.Examples.web",
         "VE.Commands.Examples.webWith",
         "VE.Commands.Examples.wordingOf"
@@ -19371,22 +19397,59 @@
     },
     "VE/Acts/Run.lean": {
       "D[R]": [
+        "VE.Acts.Run.decodeRequest",
         "VE.Acts.Run.emptyFields",
-        "VE.Acts.Run.partsText"
+        "VE.Acts.Run.partsText",
+        "VE.Acts.Run.refusedRow",
+        "VE.Acts.Run.verdictOf"
       ],
       "D[V]": [
+        "VE.Acts.Run.actJson",
         "VE.Acts.Run.completionJson",
         "VE.Acts.Run.elaboratedFields",
+        {
+          "name": "VE.Acts.Run.firstsBy",
+          "tied": [
+            "VE.Acts.Run.firstsBy_map"
+          ]
+        },
         "VE.Acts.Run.optJson",
         "VE.Acts.Run.predicatesJson",
+        "VE.Acts.Run.readingJson",
         "VE.Acts.Run.roleJson",
+        "VE.Acts.Run.rowsOf",
         "VE.Acts.Run.rulesJson",
         "VE.Acts.Run.splitRows"
       ],
       "G[V]": [
         "VE.Acts.Run.isElaborate",
+        "VE.Acts.Run.listReadings",
+        "VE.Acts.Run.listed",
         "VE.Acts.Run.normsSource",
-        "VE.Acts.Run.runElaborate"
+        "VE.Acts.Run.runActReadings",
+        "VE.Acts.Run.runElaborate",
+        {
+          "name": "VE.Acts.Run.witnessed",
+          "tied": [
+            "VE.Acts.Run.witnessed_readings"
+          ]
+        }
+      ],
+      "D[I]": [
+        "VE.Acts.Run.Act.toks",
+        "VE.Acts.Run.Simple.toks",
+        "VE.Acts.Run.fromOf",
+        "VE.Acts.Run.placeOf",
+        "VE.Acts.Run.spans",
+        "VE.Acts.Run.tagBase",
+        "VE.Acts.Run.tagTree",
+        "VE.Acts.Run.tagged"
+      ],
+      "G[I]": [
+        "VE.Acts.Run.sameTok"
+      ],
+      "G[R]": [
+        "VE.Acts.Run.actReadingsReported"
       ]
     },
     "VE/Presupposition/Rules.lean": {
@@ -19713,13 +19776,15 @@
         "VE.Purposes.Units.kind?",
         "VE.Purposes.WellFormed",
         "VE.Purposes.covered",
+        "VE.Purposes.holdsTarget",
         "VE.Purposes.markerAgrees",
         "VE.Purposes.markerHonest",
         "VE.Purposes.markersLinked",
         "VE.Purposes.rivals",
         "VE.Purposes.sameUnit",
         "VE.Purposes.sideOfKind",
-        "VE.Purposes.sidesAdjacent"
+        "VE.Purposes.sidesAdjacent",
+        "VE.Purposes.targetKind"
       ],
       "G[V]": [
         {
@@ -19729,15 +19794,34 @@
           ]
         },
         {
+          "name": "VE.Purposes.packsInert",
+          "tied": [
+            "VE.Purposes.packsInert_iff",
+            "VE.Purposes.packsInert_nil"
+          ]
+        },
+        {
           "name": "VE.Purposes.shareOk",
           "tied": [
             "VE.Purposes.shareOk_iff"
           ]
         },
         {
+          "name": "VE.Purposes.shownUnder",
+          "tied": [
+            "VE.Purposes.shownUnder_iff"
+          ]
+        },
+        {
           "name": "VE.Purposes.sideAdjacent",
           "tied": [
             "VE.Purposes.sideAdjacent_iff"
+          ]
+        },
+        {
+          "name": "VE.Purposes.unlinkedActive",
+          "tied": [
+            "VE.Purposes.unlinkedActive_iff"
           ]
         },
         {
@@ -19911,6 +19995,13 @@
         "VE.Purposes.Examples.F8",
         "VE.Purposes.Examples.f8l",
         "VE.Purposes.Examples.F8b",
+        "VE.Purposes.Examples.packText",
+        "VE.Purposes.Examples.f9u",
+        "VE.Purposes.Examples.F9",
+        "VE.Purposes.Examples.f9l",
+        "VE.Purposes.Examples.f10u",
+        "VE.Purposes.Examples.F10",
+        "VE.Purposes.Examples.f10l",
         "VE.Purposes.Examples.wire",
         "VE.Purposes.Examples.decoded",
         "VE.Purposes.Examples.f1Wire",
@@ -19960,6 +20051,87 @@
       "G[V]": [
         "VE.Presupposition.Checked",
         "VE.Presupposition.Report"
+      ]
+    },
+    "ResponseShape/Schemas/ActReadings.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ActReadings.act",
+        "ResponseShape.Schemas.ActReadings.file",
+        "ResponseShape.Schemas.ActReadings.nat",
+        "ResponseShape.Schemas.ActReadings.reading",
+        "ResponseShape.Schemas.ActReadings.result",
+        "ResponseShape.Schemas.ActReadings.row"
+      ]
+    },
+    "VE/Acts/RunExamples.lean": {
+      "T": [
+        "VE.Acts.RunExamples.Vsf",
+        "VE.Acts.RunExamples.acts",
+        "VE.Acts.RunExamples.count",
+        "VE.Acts.RunExamples.diag",
+        "VE.Acts.RunExamples.f300",
+        "VE.Acts.RunExamples.fnsOf",
+        "VE.Acts.RunExamples.frameJ",
+        "VE.Acts.RunExamples.fromsAt",
+        "VE.Acts.RunExamples.lastAdv",
+        "VE.Acts.RunExamples.p400",
+        "VE.Acts.RunExamples.paraphraseAt",
+        "VE.Acts.RunExamples.req",
+        "VE.Acts.RunExamples.row",
+        "VE.Acts.RunExamples.verdict"
+      ]
+    },
+    "VE/Commands/Steps.lean": {
+      "G[R]": [
+        "VE.Commands.conditionScope"
+      ],
+      "G[V]": [
+        "VE.Commands.Alt",
+        "VE.Commands.Form",
+        "VE.Commands.Shape",
+        "VE.Commands.StepOutcome",
+        "VE.Commands.capitalise",
+        "VE.Commands.combineShapes",
+        "VE.Commands.hasThen",
+        "VE.Commands.lift",
+        {
+          "name": "VE.Commands.productSize",
+          "tied": [
+            "VE.Commands.readingTuples_length"
+          ]
+        },
+        "VE.Commands.readStep",
+        "VE.Commands.readingTuples",
+        "VE.Commands.reads",
+        "VE.Commands.shapeAlts",
+        "VE.Commands.shapeOutcome",
+        {
+          "name": "VE.Commands.shapeOutcomeCharged",
+          "tied": [
+            "VE.Commands.shapeOutcome_charged"
+          ]
+        },
+        "VE.Commands.shapes"
+      ]
+    },
+    "VE/Commands/StepsExamples.lean": {
+      "T": [
+        "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.chargeInstalled",
+        "VE.Commands.StepsExamples.check",
+        "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.eightReviews",
+        "VE.Commands.StepsExamples.elabChargeInstalled",
+        "VE.Commands.StepsExamples.noStep",
+        "VE.Commands.StepsExamples.readS",
+        "VE.Commands.StepsExamples.readsWeb",
+        "VE.Commands.StepsExamples.reviewIt",
+        "VE.Commands.StepsExamples.reviewMeaning",
+        "VE.Commands.StepsExamples.spelled",
+        "VE.Commands.StepsExamples.spellings",
+        "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.twoSteps",
+        "VE.Commands.StepsExamples.wideEnv"
       ]
     }
   }
