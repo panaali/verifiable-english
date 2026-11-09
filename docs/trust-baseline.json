@@ -2231,6 +2231,20 @@
    "reason": "jt-3b: VE/Service/Document.lean +30 (contentOf's bound names, legendRows, statusRows, linesJson, check, encode), ResponseShape/Schemas/Document.lean +12 (judgmentLines, row, file)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3b, 2026-10-18",
    "commit": "b13cf9e3e6172571628acfeb875ca2549a75fdc8"
+  },
+  {
+   "class": "S",
+   "lines": 74,
+   "reason": "ps-2a: lean/VE/Presupposition/Wire.lean +94 (S +51, D[V] +25, G[V] +18), lean/VE/Presupposition/Table.lean +23 (S, generated candidateTable); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2a, 2026-10-18",
+   "commit": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "ps-2a: lean/VE/Presupposition/Wire.lean +94 (S +51, D[V] +25, G[V] +18), lean/VE/Presupposition/Table.lean +23 (S, generated candidateTable); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2a, 2026-10-18",
+   "commit": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684"
   }
  ]
 }
