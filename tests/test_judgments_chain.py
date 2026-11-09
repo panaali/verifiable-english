@@ -68,7 +68,8 @@ def answer(service, uid, fm):
 def verdict(row):
     """The answer without the fields the layer may change and the environment-dependent identities (spec 2e)."""
     out = {k: v for k, v in row.items()
-           if k not in ("judgments", "undeclared_evaluative", "document_id", "source_id", "coverage")}
+           if k not in ("judgments", "judgment_lines", "undeclared_evaluative", "document_id", "source_id",
+                         "coverage")}
     out["units"] = [{k: v for k, v in u.items() if k not in ("status", "meaning_id")} for u in row["units"]]
     return out
 
@@ -116,11 +117,13 @@ def test_f1_2_the_reader_scans_the_guard_and_the_author_carve_outs(service, wher
     ("F1.3", "JudgmentListedUnused: u0036.s05 reasonable"),
     ("F1.3d", "UnsupportedProfile: judgments@0 requires documents@1"),
     ("F1.5", "CheckerUnavailable: judgments@0 with alternatives@0 needs its composed Lean route"),
-    ("rights", "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route"),
+    ("rights", "CheckerUnavailable: a rights environment the rights route rejects keeps its loader's diagnostic: "
+               "InvalidInput: invalid rights block"),
     ("risk", "CheckerUnavailable: judgments@0 with risk@0 needs its composed Lean route")])
 def test_the_layer_s_own_refusals_and_the_profiles_it_stays_apart_from(service, case, expected):
     """F1.3 (a listed judgment the unit does not use, today's text and order), F1.3d (the gate) and F1.5 (kept), each
-    a refusal with the layer whose twin is admitted; `rights@0` stays apart until pc-1g's reader."""
+    a refusal with the layer whose twin is admitted. Since pc-1g `rights@0` is read (spec section 4 row 2 deleted):
+    a document listing it without a rights block answers its twin's own refusal."""
     uid = "u0036.s05" if case == "F1.3" else "u0052.s01"
     profiles = {"F1.3d": [p for p in LAYER if p != "documents@1"], "F1.5": sorted(LAYER + ["alternatives@0"]),
                 "rights": sorted(LAYER + ["rights@0"]), "risk": sorted(LAYER + ["risk@0"])}.get(case, LAYER)
@@ -128,6 +131,8 @@ def test_the_layer_s_own_refusals_and_the_profiles_it_stays_apart_from(service, 
     assert answer(service, uid, fm).get("error") == expected
     if case in ("F1.3", "F1.3d"):
         assert answer(service, uid, twin(fm))["status"] == "ok"
+    if case == "rights":
+        assert answer(service, uid, twin(fm)).get("error") == expected
 
 
 APART = "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
@@ -263,3 +268,96 @@ def test_a_plain_request_over_the_readings_limit_is_refused_within_its_budget(se
                                                      for r in ids], {}))
     assert answer(service, "u0052.s01", fm) == {"id": "c", "status": "error",
                                                  "error": "reading sets hold 1 to 64 readings"}
+
+
+# ------------------------------------------------------------------ pc-1g: the rights chain's reader (spec 3.1, F1.4)
+
+U111 = json.loads((ROOT / "tests/data/composition/pc1g/udhr-u111.json").read_text())
+RIGHTS = sorted(LAYER + ["rights@0"])
+
+
+def udhr(profiles=RIGHTS, line_term=None, where="guard"):
+    """F1.4's part document: Art. 19 as a right (its liberty line reading `line_term` in its `guard` or an `unless`
+    clause, a judgment the right's unit then lists) and u111 as its limitation, whose conditions are the four bound
+    judgments."""
+    right = deepcopy(U111["right"])
+    listed = []
+    if line_term:
+        atom = ["unary", line_term, ["var", 0]]
+        right["right"]["lines"][0]["norm"][where] = atom if where == "guard" else [atom]
+        listed = [line_term]
+    body, first = "".join(U111["body"]), len(U111["body"][0])
+    fm = {"format": "ve-document@1", "environment": {"language": LANGUAGE, "profiles": list(profiles),
+                                                     "spec_revision": SPEC_REVISION,
+                                                     "vocabulary": deepcopy(U111["vocabulary"])},
+          "units": [{"id": "u029", "span": [0, first], "kind": "right",
+                     "meaning": {"open": listed} if listed else "specified", "support": "none", "content": right},
+                    {"id": "u111", "span": [first, len(body)], "kind": "limitation",
+                     "meaning": {"open": U111["terms"]}, "support": "none", "content": U111["limitation"]}],
+          "open_terms": [{**record(t), "arguments": ["person"]} for t in U111["terms"]]}
+    return "---\n" + json.dumps(fm) + "\n---\n" + body
+
+
+def run(service, text_):
+    return service.run("document", [{"id": "c", "document": text_}])[0]
+
+
+def test_f1_4_udhr_u111_as_a_rights_limitation_is_admitted_and_open(service):
+    """F1.4: admitted with the layer, u111 OPEN and using its four conditions' judgments (`blockFormulas`); Lim_D is
+    the same with and without the layer (ChainExamples `udhrLim`)."""
+    row = run(service, udhr())
+    assert row["status"] == "ok", row
+    assert [(u["id"], u["status"]) for u in row["units"]] == [("u029", "OPEN"), ("u111", "OPEN")]
+    assert row["judgments"] == {"used": [{"term": t, "units": ["u111"]} for t in U111["terms"]], "unused": []}
+
+
+@pytest.mark.parametrize("where", ["guard", "unless"])
+def test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit(service, where):
+    """A right block reads its lines as written: a judgment in its liberty line's guard or author carve-out is used by
+    the right's unit."""
+    row = run(service, udhr(line_term="morality", where=where))
+    assert row["status"] == "ok", row
+    assert {"term": "morality", "units": ["u029", "u111"]} in row["judgments"]["used"]
+
+
+@pytest.mark.parametrize("block,kind,rule_key", [
+    ("right", "claim", "norm"), ("right", "liberty", "norm"),
+    ("right", "immunity", "norm"), ("right", "fan", "norm"),
+    ("right", "power", "liberty"), ("right", "power", "recognition"),
+    ("right_lines", None, None),
+])
+@pytest.mark.parametrize("condition", ["sufficient", "necessary"])
+def test_a_rights_rule_with_an_exception_condition_keeps_the_layer_apart(
+        service, block, kind, rule_key, condition):
+    """F1: every written rights rule, including added lines and powers, reaches the early Lean refusal."""
+    from conformance import rights_differential as generator
+    seed = 1 if block == "right_lines" or kind == "fan" else 0
+    raw, units = generator.document(seed)
+    raw["profiles"] = sorted(set(raw["profiles"]) | {"documents@1", "judgments@0"})
+    selected = next(line for unit in units if block in unit for line in unit[block]["lines"]
+                    if kind is None or (kind == "fan" and "fan_out" in line)
+                    or (kind != "fan" and line["kind"] == kind))
+    key = rule_key or ("liberty" if selected["kind"] == "power" else "norm")
+    selected[key]["mode"] = "default"
+    selected[key]["exception"] = {**EXCEPTION, condition: [["unary", "adult", ["var", 0]]]}
+    row = run(service, generator.document_text(raw, units))
+    assert row.get("error") == "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route", row
+
+
+@pytest.mark.parametrize("seed", [2, 5])
+def test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities(service, seed):
+    """The rights twin test (reviews/dri-decisions-20261101-pc-1.md item 3): F1.4, and the rights conformance
+    generator's documents (rights, limitations, a bar, norm units with `cites`) with the layer added, are admitted
+    with the twin's verdict fields and their own `document_id`."""
+    from conformance import rights_differential as generator
+    raw, units = generator.document(seed)
+    meta, body = generator.document_text(raw, units)[4:].split("\n---\n", 1)
+    meta = json.loads(meta)
+    meta["environment"]["profiles"] = sorted(meta["environment"]["profiles"] + ["documents@1", "judgments@0"])
+    texts = [udhr(), "---\n" + json.dumps(meta) + "\n---\n" + body]
+    for case in texts:
+        plain = case.replace('"judgments@0", ', "")
+        row, other = run(service, case), run(service, plain)
+        assert row["status"] == other["status"] == "ok", (row, other)
+        assert "judgments" in row and "judgments" not in other
+        assert verdict(row) == verdict(other) and row["document_id"] != other["document_id"]

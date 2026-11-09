@@ -802,6 +802,8 @@ structure Env where
   legacy : Option Standalone.Legacy := none
   /-- A `cardinality@0` document's decoded environment (QT-A4): its units read `Cardinality.Wire.decodeStatement`. -/
   cardinality : Option VE.Cardinality.CardEnv := none
+  /-- Under `judgments@0`, the bound names each authored fence is read with (spec 9.5), encoded once. -/
+  boundNames : Option Json := none
 
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
 def Env.version (E : Env) : String := (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion E.profiles)
@@ -1006,7 +1008,7 @@ def decodedEnvironment (written : Json) (block : Block) : Except String Env := d
   let profiles ← VE.Route.Gate.profilesOf written
   if profiles.any VE.Compose.documentLayers.contains then
     let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
-  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none, none⟩
+  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none, none, none⟩
 
 /-- A `MIXED` unit's parts as Python's `_parts` generator yields them from `cursor`: each part that starts at the
 cursor (`Loader.partOk`), until the first that does not; with the cursor after the last part when every part was
@@ -1104,28 +1106,43 @@ def cardinalityEnv (written : Json) : Except String Env := do
   let empty := Json.mkObj [("sorts", Json.mkObj []), ("predicates", Json.mkObj []), ("constants", Json.mkObj [])]
   let checked ← Standalone.validated (w.w6.target.setObjVal! "vocabulary" empty)
   pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles, w.environmentId, .none, false,
-    none, some w⟩
+    none, some w, none⟩
 
-/-- What `judgments@0` does not compose with in this mode (PC-1): the soft chain is read by `UnitContent.judgedIn`;
-the rights chain's reader is pc-1g's. Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
-def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0"]
+/-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by
+`UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
+def judgmentsApart : List String := ["alternatives@0", "risk@0"]
 
-/-- Whether a front matter's units, each unit and its parts as written, hold a norm with exception conditions
-(`exception.sufficient` or `exception.necessary` present and not `[]`). The soft route makes those conditions rules of
-its theory (`SoftNorms.excPremisesOf`), which `Judgments.softContent` does not read, so the document mode keeps
-`judgments@0` apart from `soft-norms@0` on such a document (pc-1 review F1; their reader is pc-1x's). -/
+/-- Conditions in a rule's exception are read by the soft theory, but not by the judgment scan. -/
+def ruleExceptionConditioned (rule : Json) : Bool :=
+  let e := rule.getObjValD "exception"
+  ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
+    | .ok (.arr xs) => !xs.isEmpty
+    | .ok _ => true
+    | .error _ => false
+
+/-- The written rules in a rights block, including a power's two rules and added `right_lines`. -/
+def rightsBlockRules (block : Json) : List Json :=
+  let lines := match (block.getObjValD "lines") with
+    | .arr ls => ls.toList
+    | _ => []
+  lines.flatMap fun line => ["norm", "liberty", "recognition"].filterMap fun k =>
+    (line.getObjVal? k).toOption
+
+/-- All rules in one written unit, before any rights or soft decoding. -/
+def unitRules (unit : Json) : List Json :=
+  let content := unit.getObjValD "content"
+  (content.getObjVal? "norm").toOption.toList ++
+    (["right", "right_lines"].filterMap fun k => (content.getObjVal? k).toOption).flatMap rightsBlockRules
+
+/-- Whether a front matter's units or MIXED parts contain an exception condition the judgment reader cannot see.
+This covers standalone norms and every rule shape in `right` and `right_lines` (pc-1 review F1, pc-1g review F1). -/
 def exceptionConditioned (units : Json) : Bool :=
   let us := match units with
     | .arr xs => xs.toList
     | _ => []
   (us.flatMap fun u => u :: match u.getObjValD "parts" with
     | .arr ps => ps.toList
-    | _ => []).any fun u =>
-      let e := ((u.getObjValD "content").getObjValD "norm").getObjValD "exception"
-      ["sufficient", "necessary"].any fun k => match e.getObjVal? k with
-        | .ok (.arr xs) => !xs.isEmpty
-        | .ok _ => true
-        | .error _ => false
+    | _ => []).any fun u => (unitRules u).any ruleExceptionConditioned
 
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
@@ -1149,8 +1166,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "judgments@0" then
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed judgmentsApart
-    -- Main's refusal, in its place, for a soft document whose exception conditions the layer does not read yet.
-    if exceptionConditioned units then VE.Compose.layersApart listed ["soft-norms@0"]
+    -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.
+    if exceptionConditioned units then
+      VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
@@ -1528,7 +1546,8 @@ def layeredIds (E : Env) (X : Env) : Except String Env := do
   let layers := E.profiles.filter VE.Compose.documentLayers.contains
   if layers.isEmpty then return X
   let profiles := (X.profiles ++ layers).mergeSort fun a b => decide (a ≤ b)
-  pure { X with profiles, envId := ← Standalone.environmentIdOf profiles (X.json.setObjVal! "profiles" (toJson profiles)) }
+  pure { X with profiles, boundNames := E.boundNames,
+                envId := ← Standalone.environmentIdOf profiles (X.json.setObjVal! "profiles" (toJson profiles)) }
 
 /-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
 the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`
@@ -1598,10 +1617,13 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     let parsed ← VE.EnglishGrammar.Run.readCase (Json.mkObj
       ([("id", .str id), ("environment", E.forModes), ("lexicon", lexicon),
         ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))] ++
-       (if E.generated then [("generated", Json.bool true)] else [])))
+       (if E.generated then [("generated", Json.bool true)] else []) ++
+       E.boundNames.toList.map (("judgments", ·))))
     let result ← parsed.getObjVal? "result"
     unless result.getObjValD "status" == .str "one" do
-      throw ((result.getObjValD "class").getStr?.toOption.getD "VEError" ++ ": " ++
+      -- 9.5's refusal keeps its own code, as the document's other judgment refusals do (spec 8.2).
+      let head := if result.getObjValD "code" == .str "UndeclaredEvaluative" then "code" else "class"
+      throw ((result.getObjValD head).getStr?.toOption.getD "VEError" ++ ": " ++
         (result.getObjValD "text").getStr?.toOption.getD "English fence was not read")
     let ast ← (← result.getObjVal? "ast").getArr?
     unless ast.size == 1 do throw "each VE fence must contain exactly one sentence"
@@ -2146,16 +2168,25 @@ def UnitContent.judged : UnitContent → Option VE.Judgments.Content
   | _ => none
 
 /-- PC-1 (4). What a unit reads for judgment dependence: formulas and W1 rules as before (`judged`), a soft rule
-through the soft route's decoder and `softContent`; a rights block reads nothing yet (its reader, `blockFormulas`, is
-pc-1g's, and the mode keeps `rights@0` apart from the layer until then). -/
-def UnitContent.judgedIn (S : Option VE.SoftNorms.Wire.SoftEnvironment) (_R : Option RightsDoc) :
+through the soft route's decoder and `softContent`, a rights block through `blockFormulas` and `andAll`. -/
+def UnitContent.judgedIn (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) :
     UnitContent → Except String (Option VE.Judgments.Content)
   | .soft rule => match S with
     | some se => do
-      let N ← (VE.SoftNorms.Wire.decodeSoftNorm se rule).mapError fun m =>
-        unavailable s!"a soft rule the soft route accepted does not decode again: {m}"
+      -- A rights document's norm unit keeps its `cites` beside the rule; the rule alone is what the route decoded.
+      let N ← match VE.SoftNorms.Wire.decodeSoftNorm se rule with
+        | .ok N => pure N
+        | .error m =>
+          let again := VE.SoftNorms.Wire.decodeSoftNorm se (Json.mkObj [("norm", rule.getObjValD "norm")])
+          again.mapError fun _ => unavailable s!"a soft rule the soft route accepted does not decode again: {m}"
       pure (some (VE.Judgments.softContent N))
     | none => throw (unavailable "a soft rule outside the soft rule source")
+  | .rights block => match R with
+    | some R => do
+      let fs ← (VE.Judgments.blockFormulas R.src.D block).mapError fun m =>
+        unavailable s!"a rights block the rights route accepted does not read again: {m}"
+      pure (some (.formula (VE.Judgments.andAll fs)))
+    | none => pure none
   | c => pure c.judged
 
 theorem judgedIn_legacy (S : Option VE.SoftNorms.Wire.SoftEnvironment) (R : Option RightsDoc) (c : UnitContent)
@@ -2209,6 +2240,27 @@ def usageJson (m : List (String × List String) × List String) : Json :=
       Json.mkObj [("term", .str t), ("units", Json.arr (us.map Json.str).toArray)]).toArray),
     ("unused", Json.arr (m.2.map Json.str).toArray)]
 
+/-- The report's legend (plan 2.4): each bound term with jt-3's lines, in declaration order. An admitted term has a
+line: its arity is within `JudgmentLines.atom`'s wordings, which an environment's signature check bounds. -/
+def legendRows (js : List VE.Judgments.Judgment) : List (String × List String) :=
+  js.map fun j => (j.name, VE.EnglishGrammar.JudgmentLines.legendLines j)
+
+/-- Each unit's status line (spec 9.2), in unit order, over the judgments its list depends on, in declaration order.
+A unit that depends on none has no row; a unit that depends on one is OPEN (`status_eq`). -/
+def statusRows (defs : List VE.Definitions.Def) (js : List VE.Judgments.Judgment)
+    (views : List VE.Judgments.UnitView) : List (String × String) :=
+  let J := VE.Judgments.names js
+  views.filterMap fun v =>
+    let deps := VE.Judgments.dependsOnC defs J v.reads
+    (VE.EnglishGrammar.JudgmentLines.statusLine (js.filter (deps.contains ·.name))).map (v.id, ·)
+
+/-- The report field `judgment_lines`: Lean's English for the bound terms, verbatim in the relay. -/
+def linesJson (js : List VE.Judgments.Judgment) (status : List (String × String)) : Json :=
+  Json.mkObj [("legend", Json.arr ((legendRows js).map fun (t, lines) =>
+      Json.mkObj [("term", .str t), ("lines", Json.arr (lines.map Json.str).toArray)]).toArray),
+    ("status", Json.arr (status.map fun (u, l) =>
+      Json.mkObj [("unit", .str u), ("line", .str l)]).toArray)]
+
 /-- Every predicate of the base environment `baseEnv E defs` (W3-defined names excluded, regulated ones included), in
 the vocabulary's order, with its words (`Judgments.predicateWords`: its name, then its `verbalisation`). -/
 def Env.basePredicates (E : Env) : List (String × List String) :=
@@ -2231,11 +2283,11 @@ open VE.Service.Document
 
 /-- The `norm-defaults` mode's case that a document's soft units make: environment `E.lower` and the free norms (each
 unit of kind `norm` with soft content, under no reading set: Python's `_free_norms`, whose attached units PC-2b
-adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. An environment on any
-other route makes no case (`null`): the rights document is PC-2c's. -/
+adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. Another route, or `events@0`
+(refused by `ownedProfiles`), makes no case (`null`): the rights document is PC-2c's. -/
 def requestOf (E : Env) (front : Json) (units : List SourceUnit) : Json :=
   let environment := wireJson 257 E.lower
-  if VE.NormDefaults.Wire.layeredRoute environment != some "soft-norms@0" then .null else
+  if VE.NormDefaults.Wire.layeredRoute environment != some "soft-norms@0" || (VE.Compose.listedProfiles environment).contains "events@0" then .null else
   let sets : List Json := match Loader.optionalList front "reading_sets" with
     | .arr xs => xs.toList
     | _ => []
@@ -2288,6 +2340,8 @@ structure Checked where
   block : Option BlockCoverage
   /-- Under `judgments@0`, the usage map (spec 8.3). -/
   judgments : Option (List (String × List String) × List String) := none
+  /-- Under `judgments@0`, the bound judgments and their status rows, which `linesJson` writes. -/
+  lines : List VE.Judgments.Judgment × List (String × String) := ([], [])
   /-- Under `judgments@0`, the base predicates whose words match english-lean's catalogue and that are not bound
   (spec 7 and 8.4): "these words match the catalogue; review them". -/
   undeclared : List String := []
@@ -2335,6 +2389,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let J ← if judged then
       VE.Judgments.names <$> VE.Judgments.admit E.rv.environment E.rv.definitions E.regulated records
     else pure []
+  let E := if judged then { E with boundNames := some (toJson J) } else E
   let raw ← match front.getObjValD "units" with
     | .arr xs => if xs.isEmpty then throw "document needs units" else pure xs.toList
     | _ => throw "document needs units"
@@ -2407,6 +2462,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   pure ⟨← documentId doc, Loader.sourceIdOf E.version doc.source,
     doc.source, units, ← units.mapM rowOf, front, block,
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
+    (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
     if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report⟩
 
 def encode (id : String) (c : Checked) : Json :=
@@ -2414,7 +2470,7 @@ def encode (id : String) (c : Checked) : Json :=
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
     match c.judgments, c.cardinality with
-    | some m, _ => [("judgments", usageJson m),
+    | some m, _ => [("judgments", usageJson m), ("judgment_lines", linesJson c.lines.1 c.lines.2),
         ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
     | none, some r => [("cardinality", r)]
     | none, none => [])
@@ -2747,5 +2803,91 @@ def runCaseReported (j : Json) : Json :=
     match locatedOf j message with
     | some (text, at_) => locatedRow j text at_
     | none => Standalone.reported (fun _ => .error message) j
+
+/-! ## G3: success-only transparency (pc-1g; docs/spec/profile-composition.md 1.7, 2b to 2e)
+
+What G3 compares and what it accepts as the layer's own: an answer's verdict fields (2e), its units' statuses, and
+the layer's refusals (2d). -/
+
+/-- A member of an object dropped; any other value kept. -/
+def dropKey (k : String) : Json → Json
+  | .obj kvs => Json.mkObj (kvs.toList.filter (·.1 != k))
+  | v => v
+
+/-- An echoed reading set without its environment-dependent identities (2e): each reading's `meaning_id` and its
+`distinguishing_models` references (the reading ids they are stated for kept), and the models' keys (the models
+kept, in the order of their text). -/
+def setVerdictFields (s : Json) : Json :=
+  let s := match s.getObjValD "models" with
+    | .obj kvs => s.setObjVal! "models" (.arr ((kvs.toList.map fun (kv : String × Json) => kv.2).mergeSort
+        fun (a b : Json) => decide (a.compress ≤ b.compress)).toArray)
+    | _ => s
+  match s.getObjValD "readings" with
+  | .arr rs => s.setObjVal! "readings" (.arr (rs.map fun r =>
+      let r := dropKey "meaning_id" r
+      let admission := r.getObjValD "admission"
+      match admission.getObjValD "distinguishing_models" with
+      | .obj kvs => r.setObjVal! "admission" (admission.setObjVal! "distinguishing_models"
+          (.arr (kvs.toList.map fun (o, _) => Json.str o).toArray))
+      | _ => r))
+  | _ => s
+
+/-- An answer without the fields the layer may change (`judgments`, `judgment_lines` (jt-3b), `undeclared_evaluative`,
+`document_id`, `source_id`, `coverage`, every unit's `status`; DRI 2026-11-03, pc-1g stop item 4) and without exactly the
+environment-dependent identities (2e): each unit's `meaning_id`, each echoed reading's `meaning_id`, each echoed model
+key and `distinguishing_models` reference. -/
+def verdictFields (a : Json) : Json :=
+  let a := ["judgments", "judgment_lines", "undeclared_evaluative", "document_id", "source_id", "coverage"].foldl (flip dropKey) a
+  let a := match a.getObjValD "units" with
+    | .arr us => a.setObjVal! "units" (.arr (us.map fun u => dropKey "meaning_id" (dropKey "status" u)))
+    | _ => a
+  match a.getObjValD "reading_sets" with
+  | .arr ss => a.setObjVal! "reading_sets" (.arr (ss.map setVerdictFields))
+  | _ => a
+
+/-- No unit of the case states a `status` (2b). -/
+def noUnitStatus (j : Json) : Bool :=
+  match frontOf j with
+  | some (front, _) => match front.getObjValD "units" with
+    | .arr us => us.all fun u => (u.getObjVal? "status").toOption.isNone
+    | _ => true
+  | none => true
+
+/-- The case with every unit's authored `status` removed, every other value as written (2c); the front matter is
+written again compactly (`Json.compress`), the body as written. -/
+def withoutStatuses (j : Json) : Json :=
+  match frontOf j with
+  | none => j
+  | some (front, body) =>
+    let front := match front.getObjValD "units" with
+      | .arr us => front.setObjVal! "units" (.arr (us.map (dropKey "status")))
+      | _ => front
+    j.setObjVal! "document" (.str ("---\n" ++ front.compress ++ "\n---\n" ++ body))
+
+/-- Each unit's id and status, in unit order. -/
+def unitStatuses (a : Json) : List (String × String) :=
+  match a.getObjValD "units" with
+  | .arr us => us.toList.map fun u =>
+      ((u.getObjValD "id").getStr?.toOption.getD "", (u.getObjValD "status").getStr?.toOption.getD "")
+  | _ => []
+
+/-- The layer's own refusal codes, in judgment-terms 8.2's order, `JudgmentListedUnused` first. -/
+def judgmentCodes : List String :=
+  ["JudgmentListedUnused", "JudgmentNotListed", "JudgmentNotChecked", "JudgmentUnbound", "JudgmentArguments",
+   "JudgmentRegulated", "JudgmentCriterionAsUnit", "JudgmentDecider"]
+
+/-- The gate texts of `judgments@0`'s rows, read from `profileTable` (2d): each requirement's, then each refusal's. -/
+def judgmentGateTexts : List String :=
+  (VE.Compose.profileTable.filter (·.profile == "judgments@0")).flatMap fun r =>
+    (r.requires.map (VE.Compose.needText r) ++ r.refuses.map (·.2)).map VE.Compose.unsupported
+
+/-- A refusal of the layer: one of its codes, a document-mode refusal that names it (until PC-4 and PC-5 replace
+those, 4), or exactly a gate text of its rows (2d). -/
+def layerRefusal (e : String) : Bool :=
+  judgmentCodes.any (fun c => e.startsWith (c ++ ": ")) || e.startsWith "CheckerUnavailable: judgments@0 with " ||
+    judgmentGateTexts.contains e
+
+/-- The W2 check the layer relaxes (judgment-terms 8.2, row (W2): repeated `arguments`). -/
+def layerRelaxes : List String := ["invalid open-term arguments"]
 
 end VE.Service.Document

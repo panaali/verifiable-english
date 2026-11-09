@@ -1,5 +1,6 @@
 import ResponseShape.Schemas
 import VE.Defaults.RouteExamples
+import VE.Defaults.ZoneWireExamples
 
 /-! The `defaults-*` rows of `norm-defaults.json` (`Schemas.NormDefaults`) on the mode's own answers to the route's
 fixtures (`Defaults/RouteExamples.lean`): every answer is accepted, and an answer with a member added, dropped,
@@ -90,5 +91,34 @@ def long : Json := βFact [exAt "urgent"] [exAt "urgent"]
   [drop a "situation", drop a "forced", set a "forced" (toJson [Json.mkObj [("rule", .str "r1"),
     ("condition", .str "0"), ("tuple", toJson ["e1"])]]), drop (set a "verdict" (.str "UNKNOWN")) "situation",
     drop (set a "verdict" (.str "UNKNOWN")) "forced"].all (!accepts (βTwo L) ·)
+
+/-! ## `defaults-zone` (df-5): each zone's answer accepted and every variant refused; a member its zone does not
+carry, or one it lacks, refused -/
+section Zone
+open VE.Defaults.ZoneWireFixtures (zreq at_ dec sitJ exR lamEnv lamR lam2 lam13 μ'Env μ'R δSit ξ'Sit recOutw)
+def zμ : Json := zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [at_ "instructs" ["o1"] (some false)]
+def zμ' : Json := zreq μ'Env μ'R (sitJ "assistant" ["a"] [exR "r1", exR "r2"] [("cond_a", [["a"]]), ("cond_b", [["a"]])])
+  (at_ "p" ["a"])
+def zNot : Json := zreq μ'Env μ'R (sitJ "assistant" ["a"] [exR "r1", exR "r2"] [("cond_a", []), ("cond_b", [])]) (at_ "p" ["a"])
+def zNone : Json := zreq lamEnv lamR lam2 (at_ "instructs" ["o2"]) [at_ "instructs" ["o1"] (some false)]
+  [dec [("excepted", "g1")] ["o1"] false]
+def zBudget : Json := zreq lamEnv lamR lam13 (at_ "instructs" ["o0"])
+def zones : List Json := [zμ, zμ', zNot, zNone, zBudget, zreq βEnv βR ξ'Sit (at_ "x_permitted" ["a"]),
+  zreq δEnv δR δSit (at_ "x_required" ["a"]) (record := recOutw)]
+#guard zones.all fun j => accepts j (run j) && refusesAll j
+#guard let b := run zμ; let l := run zμ'; let n := run zNot; let o := run zNone; let u := run zBudget
+  [drop b "value", drop b "form", drop b "forced_all", drop b "completions", set b "reason" (.str "x"),
+    set b "labels" (toJson ["observed"]), set b "zone" (.str "notSaid"), set l "value" (.bool true),
+    set n "form" (.str "short"), set n "forced_all" (toJson ([] : List Json)), set n "completions" (toJson [([] : List Json)]),
+    drop o "labels", set o "value" (.bool true), drop u "reason", set u "forced_all" (toJson ([] : List Json)),
+    set b "completions" (toJson [[Json.mkObj [("row", .str "DE12"), ("rule", .str "g1"), ("tuple", toJson ["o1"])]]])].all
+    (!accepts zμ ·)
+-- df-5-tm: the kinds `kind` lists are the kinds `row`'s selection names, as rendered (one dropped from either fails)
+#guard match Schemas.NormDefaults.kind, (render "norm-defaults.json" 64 Schemas.NormDefaults.«row»).toOption with
+  | .group _ es, some r =>
+    let named := ((r.compress.splitOn "\"#/$defs/kind/").drop 1).map (·.takeWhile (· != '"'))
+    !named.isEmpty && es.all (named.contains ·.1) && named.all fun k => es.any (·.1 == k)
+  | _, _ => false
+end Zone
 
 end ResponseShape.DefaultsExamples

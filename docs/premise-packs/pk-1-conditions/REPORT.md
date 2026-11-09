@@ -1,5 +1,10 @@
 # pk-1-conditions: `Pack.conditions` (REPORT)
 
+Summary: MERGED (review MERGE 2026-10-31; merge 33114d122; branch tip 11c045741). `Pack.conditions` added; every
+pack built today exports `[]`, with fixtures and seeded bugs M1-M4. Trust V +2 under R16; pilot bytes 0. Open items:
+none here; review F1 is pk-1-conditions-b, F2-F4 are corrected in pk-1-conditions-b (row pk-1-conditions-c, DRI
+2026-11-05 cfr2 item 2). No DRI signature is reserved.
+
 No DRI signature is reserved, and there is no DELTA row (no answer changes).
 
 This item implements **edit 1 of synthesis round 2 for premise-packs**: the `Pack.conditions` field only. The edit
@@ -15,13 +20,13 @@ Commits (`git log --oneline main..HEAD --no-merges`, base 8c28fe286):
 
 ## Deliverables
 
-| # | Row (task / DRI item 2) | Delivered by |
-|---|---|---|
-| 1 | `conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)` as the last field of `Packs.Pack`, with the spec 1.9 doc comment; `import VE.SoftNorms.Tree` | 4bb19d2fd, `lean/VE/NormDefaults/Packs.lean:36-37`, import :3. No cycle: Packs.lean already imported Tree transitively, and Tree's closure does not contain Packs (import-closure probe, see "Checks") |
-| 2 | Every `Pack` built on main exports `[]` | 4bb19d2fd. `softPack`, `rightsPack` (Layered.lean:58, 62); `eventsPack` (Events/Wire.lean:182, structure-instance notation: `, conditions := []`); Events/WireExamples.lean:285; Defaults/RouteExamples.lean:48; NormDefaults/PacksExamples.lean (soft, rights, weighing, att, ev); PacksLegacyExamples.lean:31. Two sites the task's grep did not list, found by `lake build`: Defaults/WireExamples.lean:76 (an inline pack) and ResponseShape/Encoders/NormDefaults.lean:82 (`⟨·, …⟩`). Each line only gains the field. Senses/Fixtures.lean's `Pack` (a different structure) and the spec stub docs/spec/premise-packs/SpecStubs_pk1.lean are untouched |
-| 3 | Condition fixture (DRI item 2) in PacksExamples.lean | `softPack_conditions`, `rightsPack_conditions` (:138-139, `rfl` for every `U D` / `R`); `assemble_conditions` (:142, assembly permutes its input, so it adds no condition); `decodeLayered_conditions` (:147, every pack a decoded layered source carries, on both the soft and the rights route, has empty `conditions`); `#guard` on the rights example documents α, γ, γ7, ρ, ε (:156) and `#guard` on the decoded soft documents dα…dσ (:160, each assembles exactly `["soft"]` with empty conditions). `X` and every answer are unchanged: no reader of `Pack.conditions` exists (`git grep -n '\.conditions' -- lean/VE/NormDefaults` lists the fixture and, otherwise, only `RightsDoc` limitation conditions in PacksLabels.lean and PacksLegacyExamples.lean:26), and the existing Packs, PacksLegacy and Layered `#guard`s and theorems build unchanged (`lake build`, "Checks") |
-| 4 | Seeded bug: `softPack` exports one dummy condition, so the fixture fails; then restored | M1 below |
-| 5 | lean/statements.txt regenerated; lean/axioms.txt unchanged | statements.txt: +21 lines, the four fixture theorems only (`regen_generated.py --write`). **Deviation:** axioms.txt gains 4 rows, the same four theorems, each on the standard allowlist (`[propext, Classical.choice, Quot.sound]` or fewer). No axiom is added (`python3 lean/audit.py`: PASS). The task expected no new theorem rows. I kept the fixtures as theorems because `decodeLayered_conditions` is the only check that covers every decoded source, not just the example documents |
+| # | Row (task / DRI item 2) | Tag | Delivered by |
+|---|---|---|---|
+| 1 | `conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)` as the last field of `Packs.Pack`, with the spec 1.9 doc comment; `import VE.SoftNorms.Tree` | AGENT | 4bb19d2fd, `lean/VE/NormDefaults/Packs.lean:36-37`, import :3. No cycle: Packs.lean already imported Tree transitively, and Tree's closure does not contain Packs (import-closure probe, see "Checks") |
+| 2 | Every `Pack` built on main exports `[]` | AGENT | 4bb19d2fd. `softPack`, `rightsPack` (Layered.lean:58, 62); `eventsPack` (Events/Wire.lean:182, structure-instance notation: `, conditions := []`); Events/WireExamples.lean:285; Defaults/RouteExamples.lean:48; NormDefaults/PacksExamples.lean (soft, rights, weighing, att, ev); PacksLegacyExamples.lean:31. Two sites the task's grep did not list, found by `lake build`: Defaults/WireExamples.lean:76 (an inline pack) and ResponseShape/Encoders/NormDefaults.lean:82 (`⟨·, …⟩`). Each line only gains the field. Senses/Fixtures.lean's `Pack` (a different structure) and the spec stub docs/spec/premise-packs/SpecStubs_pk1.lean are untouched |
+| 3 | Condition fixture (DRI item 2) in PacksExamples.lean | AGENT | `softPack_conditions`, `rightsPack_conditions` (:138-139, `rfl` for every `U D` / `R`); `assemble_conditions` (:142, assembly permutes its input, so it adds no condition); `decodeLayered_conditions` (:147, every pack a decoded layered source carries, on both the soft and the rights route, has empty `conditions`); `#guard` on the rights example documents α, γ, γ7, ρ, ε (:156) and `#guard` on the decoded soft documents dα…dσ (:160, each assembles exactly `["soft"]` with empty conditions). `X` and every answer are unchanged: no reader of `Pack.conditions` exists (`git grep -n '\.conditions' -- lean/VE/NormDefaults` lists the fixture and, otherwise, only `RightsDoc` limitation conditions in PacksLabels.lean and PacksLegacyExamples.lean:26), and the existing Packs, PacksLegacy and Layered `#guard`s and theorems build unchanged (`lake build`, "Checks") |
+| 4 | Seeded bug: `softPack` exports one dummy condition, so the fixture fails; then restored | AGENT | M1 below |
+| 5 | lean/statements.txt regenerated; lean/axioms.txt unchanged | AGENT | statements.txt: +21 lines, the four fixture theorems only (`regen_generated.py --write`). **Deviation:** axioms.txt gains 4 rows, the same four theorems, each on the standard allowlist (`[propext, Classical.choice, Quot.sound]` or fewer). No axiom is added (`python3 lean/audit.py`: PASS). The task expected no new theorem rows. I kept the fixtures as theorems because `decodeLayered_conditions` is the only check that covers every decoded source, not just the example documents |
 
 No reader of `conditions` was added (PC-9 adds the first one).
 
@@ -58,7 +63,9 @@ gives the operators nothing to mutate, so M4 is the hand mutant for it.
 - `lake build` (full default targets): `Build completed successfully (1192 jobs)`.
 - `python3 lean/audit.py`: `PASS: 692 source files; 7813 named theorem declarations audited …`.
 - `uv run python tools/regen_generated.py --write`: wrote 34 entries. This needed the Rust release binary, built
-  with `python3 tools/rust_build.py`, which pinned it in lean/checkers.lock. The codemap files it rewrote were
+  with `python3 tools/rust_build.py`. The one hash this item added to lean/checkers.lock (4bb19d2fd, :252) is a
+  `ve_service` pin (the rebuilt Lean service); the `rust_jsonl` list is unchanged (correction, pk-1-conditions-b,
+  review F2). The codemap files it rewrote were
   stale on main. After the manifest re-pin I ran `--only assurance-manifest` and `--only assurance-doc`, and
   `--check --only assurance-manifest` passes.
 - Import-closure probe (a python script over `import` lines): `Tree->Packs? False`, `Packs already ->Tree? True`.
